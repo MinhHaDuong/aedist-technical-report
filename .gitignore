@@ -23,3 +23,12 @@
 *~
 *.swp
 *.bak
+
+# Input data
+inputs/*
+
+# Results
+Experiments/*
+
+# Figures
+*.png
