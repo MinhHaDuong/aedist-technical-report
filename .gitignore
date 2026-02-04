@@ -25,7 +25,8 @@
 *.bak
 
 # Input data
-inputs/*
+inputs/documents/*
+inputs/feeds/*
 
 # Results
 Experiments/*
