@@ -1,0 +1,111 @@
+# TODO: Report Revision Plan
+
+**Target genre**: Technology assessment - a systematic evaluation of AI technologies for energy statistics production, using Vietnam's thermal power plant inventory as benchmark.
+
+---
+
+## Priority 1: Structural Changes
+
+### Merge Chapters 2 and 3
+- [ ] Combine "Les LLM généralistes rechignent à produire des statistiques" (chap 2) and "Même si ils peuvent en savoir beaucoup" (chap 3) into a single chapter
+- [ ] Proposed new title: "Évaluation des LLM pour la production de statistiques"
+- [ ] Reorganize sections: Methodology → Results (both prompts) → Discussion
+- [ ] Consolidate the two methodology sections (lines 110-130 and 182-230)
+
+### Reduce ToC depth
+- [ ] Change `\setcounter{secnumdepth}{3}` to `\setcounter{secnumdepth}{2}` (line 25)
+- [ ] Review subsection structure - some subsections may need promotion to sections
+
+## Priority 2: Tone Adjustment (Grant Proposal → Technology Assessment)
+
+### Conclusion chapter overhaul
+The conclusion reads like a grant proposal with budgets, team composition, and business models. Reframe as assessment findings and recommendations:
+
+- [ ] **Remove or drastically reduce**:
+  - Cost analysis sections (lines 1558-1575): "Coûts des méthodes actuelles", "Économies d'échelle"
+  - ROI/cost-benefit analysis (lines 1577-1585)
+  - Business model section (lines 1597-1606): "Modèle économique envisagé"
+  - Detailed budget and team composition (lines 1629-1668)
+
+- [ ] **Reframe remaining content**:
+  - "Pour une preuve de concept" → describe what was actually built/tested
+  - "Apports et faisabilité" → focus on technical findings, not funding justification
+  - "Urgence et bénéfices stratégiques" → move to introduction or remove
+
+### Architecture chapter de-slop
+Chapter 8 contains generic textbook explanations that dilute the contribution:
+
+- [ ] **Trim generic definitions**:
+  - Microservices explanation (lines 1098-1112) - overly basic
+  - Browser extension features list (lines 1129-1139) - too detailed for feasibility study
+  - Zotero plugin description (lines 1141-1149) - excessive detail
+
+- [ ] **Keep and strengthen**:
+  - The actual proposed architecture (Figure 1)
+  - Specific design decisions relevant to energy statistics
+  - Integration points with existing tools
+
+## Priority 3: Automation
+
+### Generate tables automatically
+- [ ] Table 1 (line 236-251): LLM comparison results - automate from `AssistantsComparison/` data
+- [ ] Review `aedist/src/tables.py` for existing automation
+- [ ] Create scripts to regenerate tables from raw experimental data
+- [ ] Add `make tables` dependency to `make all` if tables are prerequisites
+
+### Address existing TODOs in document
+- [ ] Line 259: "Automatiser les tests. Scorer les résultats (utiliser compare.py)"
+- [ ] Line 269: "Les techniques développées dans ce cadre pourraient informer nos stratégies de conversation"
+
+## Priority 4: Content Improvements
+
+### Introduction adjustments
+- [ ] Remove forward-looking grant language ("Ce rapport explore la question au niveau faisabilité")
+- [ ] Reframe as documenting completed experiments and findings
+
+### Tighten verbose sections
+- [ ] Section "Veille" (lines 282-330): long enumeration of bibliometric services - summarize or move to appendix
+- [ ] Reddit quotes in conclusion (lines 1485-1529): excessive - select key points only
+- [ ] "Perspective historique" (lines 1429-1479): market analysis feels tangential
+
+### Fix minor issues
+- [ ] Typo line 52: "soitnt" → "soient"
+- [ ] Inconsistent date references (some say 2025, document dated 2025 but references 2024 events)
+
+## Priority 5: Style and Formatting
+
+- [ ] Ensure consistent terminology (RAG vs Retrieval Augmented Generation)
+- [ ] Standardize citation format
+- [ ] Review figure/table captions for completeness
+- [ ] Check all cross-references (\ref commands)
+
+## Proposed New Structure
+
+```
+1. Introduction (keep, minor edits)
+2. Évaluation des LLM [MERGED from 2+3]
+   - Méthodologie
+   - Résultats avec prompt simple
+   - Résultats avec approche conversationnelle
+   - Discussion et limites
+3. Documents sources [was 4, keep]
+4. RAG [was 5, keep]
+5. Graphes de connaissances [was 6, keep]
+6. Systèmes agentiques [was 7, keep]
+7. Architecture proposée [was 8, TRIMMED]
+8. Conclusion [was 9, REWRITTEN as research findings]
+```
+
+## Notes
+
+**Technology assessment structure** (what to preserve):
+- Problem definition and benchmark task (Introduction)
+- Systematic evaluation of technologies (LLM, RAG, KG, agents chapters)
+- Comparative results and limitations found
+- Recommended architecture based on findings
+
+**Grant proposal artifacts** (what to cut):
+- Budget estimates, team composition, project phases
+- Business models, ROI, cost-benefit analysis
+- "Urgence" and funding justification rhetoric
+- Market opportunity language
