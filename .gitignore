@@ -28,6 +28,9 @@
 inputs/documents/*
 inputs/feeds/*
 
+# Generated LaTeX fragments
+inputs/generated/*
+
 # Results
 Experiments/*
 AssistantsComparison/*

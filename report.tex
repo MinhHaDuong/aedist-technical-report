@@ -32,6 +32,8 @@
 \usepackage[round,authoryear]{natbib}
 \bibliographystyle{plainnat}
 
+\input{inputs/generated/macros}
+
 \begin{document}
 
 \maketitle
@@ -233,22 +235,7 @@ On examine un échantillon de convenance, sans inclure les modèles qui avaient 
 
 Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesures, on ne contrôle pas la température. Les résultats sont susceptible de varier de plusieurs unités entre deux run. Ils peuvent aussi varier avec l'environnement du modèle (temps de calcul alloué...), son implémentation (quantification, contrôle de la longueur du contexte ...), les mises à jour silencieuses du modèle (changement du prompt système selon l'heure, nouvelle version, ...).
 
-\begin{longtable}[]{@{}llllll@{}}
-\caption{Évolution du nombre de centrales thermiques identifiées par les modèles de langage après relances successives.}\label{tab:relances}\\
-\toprule\noalign{}
-Modèle & Prompt 1 & Relance 1 & Relance 2 & Relance 3 & Relance 4 \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Claude 3.5 Sonnet & 34 & 24 & 50 & 73 & +14 = 87 \\
-DeepSeek (COT off, Search off) & 10 & 24 & 48 & 70 & 80 \\
-GPT-4o (on Poe) & 25 & 36 & 50 & 60+ & 70+ \\
-Llama 3.3 70B (on Poe) & 32 & 18 & 44 & bloque & n/a \\
-Qwen 2.5 72B T (on Poe) & 19 & 36 & bloque & & \\
-o3-mini (medium) & 12 & 7 & 14 & 25 & =c'est possible \\
-o3-mini (high) & 15 & 8 & 19 & 25 & =Potentially \\
-\end{longtable}
+\input{inputs/generated/tab_relances}
 
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le protocole ne fonctionne pas bien avec les modèles 70B qui mettent trop longtemps à répondre.
 
@@ -527,34 +514,7 @@ On commence par extraire les pages du PDF, ce sont certaines annexes. On convert
 
 On dispose de 15 fichiers markdown, chacun contenant une table en HTML, au total 138,6~kB soit 63545 tokens. On a aussi un fichier HTML contenant les références bibliographiques des six documents -- en particulier l'année de publication, 3451 tokens. On joint les documents au Prompt 2 (section \ref{sec:methode}).
 
-\begin{ThreePartTable}
-\begin{TableNotes}[flushleft]\footnotesize
-\item[a] Liste les Units et non les Plants.
-\item[b] Stoppé par limite.
-\item[c] Liste l'hydroélectricité.
-\item[cc] La relance est «~Thermal power is coal, gas and oil~».
-\item[d] Stoppé limite RPD.
-\item[e] Includes a nonsense line at the end about thermal renewable.
-\item[f] Se limite aux projets opérationnels.
-\item[g] Source himself instead of from the provided docs.
-\end{TableNotes}
-\begin{longtable}[]{@{}lll@{}}
-\caption{Comparaison du nombre de centrales thermiques vietnamiennes identifiées par différents modèles, avec et sans documents sources, janvier-février 2025}\label{tab:comparaison}\\
-\toprule
-Modèle & Sans documents & Avec documents \\
-\midrule
-\endhead
-\bottomrule
-\insertTableNotes\\
-\endlastfoot
-Claude 3.5 Sonnet & 63 & \tnote{a,b} \\
-DeepSeek-R1 (on Poe) & 40 & 65 \\
-GPT-4o (on Poe) & \tnote{c,cc} puis 33 & 49 \\
-o1-mini (on Poe) & 37\tnote{c,e} & 39\tnote{c,f} \\
-o3-mini medium & 32\tnote{g} & 41 \\
-o3-mini high & 39\tnote{g} & 78 \\
-\end{longtable}
-\end{ThreePartTable}
+\input{inputs/generated/tab_comparaison}
 
 \subsection{Analyse}
 
