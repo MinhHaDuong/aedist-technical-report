@@ -13,7 +13,7 @@
 - [ ] Consolidate the two methodology sections (lines 110-130 and 182-230)
 
 ### Reduce ToC depth
-- [ ] Change `\setcounter{secnumdepth}{3}` to `\setcounter{secnumdepth}{2}` (line 25)
+- [x] Add `\setcounter{tocdepth}{2}` to show only chapters, sections, and subsections
 - [ ] Review subsection structure - some subsections may need promotion to sections
 
 ## Priority 2: Tone Adjustment (Grant Proposal → Technology Assessment)
