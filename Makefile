@@ -3,27 +3,53 @@
 
 export UV_CACHE_DIR := /scratch/uv
 
-.PHONY: all query tables clean cleaner
+AEDIST       := aedist
+RESULTS      := Results/1_simply_ask
+GENERATED    := inputs/generated
+
+.PHONY: all query evaluate tables clean cleaner
 
 all: report.pdf
 
-# Query LLMs via OpenRouter (expensive, run manually)
+# ---------------------------------------------------------------------------
+# Data pipeline (run manually, costs money / time)
+# ---------------------------------------------------------------------------
+
+# Query LLMs via OpenRouter (~$5 per full run)
 query:
-	uv run --project aedist aedist/src/query.py \
-	    --prompt aedist/src/prompts/prompt1.txt \
-	    --models aedist/src/models.yaml --output Results/1_simply_ask/
+	uv run --project $(AEDIST) python -m aedist.query \
+	    --prompt $(AEDIST)/prompts/prompt_1_singleshot.txt \
+	    --models $(AEDIST)/models.yaml \
+	    --output $(RESULTS)/
 
-# Generate LaTeX tables and macros from results (cheap, run before build)
+# Evaluate all system outputs against reference → JSON metrics
+evaluate:
+	uv run --project $(AEDIST) python -m aedist.runner evaluate-all \
+	    --outputs-dir $(AEDIST)/outputs \
+	    --output $(AEDIST)/results/summary
+
+# ---------------------------------------------------------------------------
+# LaTeX generation (cheap, run before build)
+# ---------------------------------------------------------------------------
+
+# Generate LaTeX tables and macros from results
 tables:
-	uv run --project aedist aedist/src/convert.py --output inputs/generated/
+	uv run --project $(AEDIST) python -m aedist.convert \
+	    --output $(GENERATED)/
 
-report.pdf: report.tex refs.bib $(wildcard inputs/generated/*.tex)
-	tectonic $<
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
 
-# Intermediate files
+report.pdf: report.tex refs.bib $(wildcard $(GENERATED)/*.tex)
+	tectonic $
+
+# ---------------------------------------------------------------------------
+# Clean
+# ---------------------------------------------------------------------------
+
 clean:
 	rm -f *.log *.bbl *.blg *.run.xml report.synctex.gz
 
-# Also the output
 cleaner: clean
 	rm -f report.pdf
