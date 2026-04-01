@@ -279,365 +279,38 @@ Les deux techniques (relance et RAG) sont complémentaires. Il manque encore bea
 
 Les progrès dans la technologie RAG sont rapides \citep{UEIVYTV4,SQX6VZRP}. L'écosystème comprend des solutions RAG-as-a-Service (GraphLit, SciPhi/R2R) et de nombreuses piles libres (Kotaemon, RagFlow, Verba, Khoj, AnythingLLM). Le système Deep Research d'OpenAI \citep{Y6A39QJJ} est capable de trouver et analyser des sources en ligne pour produire un rapport structuré. L'analyse de documents joints est devenue une fonctionnalité standard des interfaces de chat.
 
-\chapter{Web sémantique et graphe de connaissances (KG)}\label{chap:kg}
+\chapter{Graphes de connaissances}\label{chap:kg}
 
-\section{L'extraction d'information}
+Pour produire des statistiques rigoureusement sourcées et traçables, on s'intéresse à l'\textbf{extraction d'information} structurée \citep{MZNGHBPG,D2S7WQT2,P7LFRX4U}. Cette approche repose sur trois piliers~: la résolution d'entités (associer les différentes mentions d'une même centrale à une entité canonique), la traçabilité des sources (lier chaque assertion à sa provenance conformément aux normes W3C PROV \citep{LXQUK658}), et la fusion de données pour résoudre les conflits entre sources divergentes \citep{RI2MXYYS}.
 
-Dans le but de produire des statistiques rigoureusement sourcées et traçables, on s'intéresse à une branche de l'IA qui \textbf{gère la connaissance de manière plus structurée que les réseaux de neurones: l'extraction d'information}\citep{MZNGHBPG,D2S7WQT2,P7LFRX4U}.
+\section{Ontologie et modèle de données}
 
-\textbf{Résolution et harmonisation des listes d'entités et d'attributs} Pour identifier les sujets et objets mentionnés dans les documents, il est nécessaire de construire et de maintenir des référentiels standardisés, des listes d'entités et d'attributs. Ce processus utilise des techniques de \textbf{résolution d'entités} (Entity Resolution) et d'\textbf{alignement sémantique} (Ontology Alignment).
+Un modèle de données reste indispensable pour structurer le graphe. L'\textbf{Open Energy Ontology} (OEO)\footnote{\url{https://openenergyplatform.org/ontology/}} définit un modèle sémantique ouvert pour le domaine de l'énergie, avec 15 types de centrale électrique \citep{G49STI5L}. Elle fournit un vocabulaire commun pour harmoniser les données entre systèmes, tout en restant extensible aux spécificités régionales. D'autres ontologies comme Schema.org, Dublin Core ou DBpedia offrent des dénominateurs communs moins spécialisés.
 
-\begin{itemize}
-  \item Par exemple, il s'agit d'associer différentes mentions de la même centrale thermique (ex. : "EDF Tricastin" et "Centrale nucléaire du Tricastin") à une unique entité canonique.
-  \item Des outils tels que WordNet \citep{HCJ9T9WB}, ou des modèles de traitement du langage naturel comme BERT \citep{8D7DVVLH} ou la bibliothèque SpaCy, voire des LLM généraux sont mobilisables pour accomplir cette tâche -- sous contrainte de multilinguisme.
-\end{itemize}
+\section{Interrogation des graphes globaux}
 
-Une ontologie \citep{LZZR746L} est utilisée pour définir les concepts, relations, et contraintes entre entités, en s'appuyant sur des standards tels qu'OWL (Web Ontology Language).
-
-\textbf{Traçabilité des sources} Chaque assertion doit être explicitement liée à une source précise, afin de garantir une traçabilité complète des données.
+Plusieurs graphes de connaissance globaux ont été interrogés sur notre cas d'étude. Les exemples historiques incluent Cyc (1984), DBpedia (2007), le Google Knowledge Graph (2012) et Wikidata (2012). Les résultats varient considérablement~:
 
 \begin{description}
-  \item[Référencement sémantique] : Chaque source est décrite par des métadonnées structurées (titre du document, section, table, index de ligne, colonne, etc.).
-  \item[Référencement physique] : Les informations sur le fichier d'origine (nom, numéro de ligne, format) ainsi que la chaîne complète de transformations (du PDF brut à la version structurée) sont conservées conformément aux principes de \textbf{provenance des données} \citep{LXQUK658}
+\item[OpenStreetMap] Une requête Overpass retourne \textbf{42 centrales} existantes avec coordonnées géographiques et périmètres. C'est la source la plus riche pour les centrales en service, avec des informations sourcées (Wikidata, GEM). En revanche, OSM ne contient pas les projets planifiés.
+\item[Diffbot] Retourne \textbf{54 résultats} pour les SPV de centrales thermiques au Vietnam, avec adresse, employés et revenus. Les informations ne sont pas sourcées \citep{U6PVXXZP}.
+\item[Wikidata] Une requête SPARQL retourne \textbf{20 centrales} avec capacité pour 9 d'entre elles. La classification des types est peu claire, la liste incomplète, les sources lacunaires.
+\item[DBpedia] Retourne entre 4 et 20 centrales selon la formulation de la requête, avec de nombreux doublons liés aux versions linguistiques multiples de Wikipedia et aux jointures SPARQL. La disponibilité du service est intermittente.
 \end{description}
 
-Ce niveau de traçabilité s'appuie sur les normes W3C PROV, qui permettent de modéliser les étapes de transformation des données et de garantir leur auditabilité.
+Ces résultats montrent que les graphes globaux sont complémentaires mais aucun n'est suffisant seul. La fiabilité et la disponibilité des points d'accès SPARQL posent un défi supplémentaire.
 
-\textbf{Intégration et mise en cohérence des données} Une fois les assertions élémentaires extraites, il est nécessaire de regrouper toutes les informations disponibles pour chaque entité. Les techniques de \textbf{fusion de données} (Data Fusion) permettent de résoudre les conflits entre sources divergentes.
+\section{Fusion graphes de connaissances et LLM}
 
-\begin{itemize}
-  \item Les approches probabilistes telles que celles introduites par \citep{RI2MXYYS} permettent de modéliser la fiabilité des sources et d'arbitrer entre des valeurs contradictoires.
-  \item Des règles métier ou des moteurs d'inférence basés sur des systèmes experts peuvent être utilisés pour vérifier la cohérence et compléter les données manquantes.
-\end{itemize}
+Les graphes de connaissance (approche symbolique) et les LLM (approche statistique) sont complémentaires~: les premiers offrent une structure explicite et vérifiable, les seconds excellent en génération et compréhension contextuelle. La fusion de ces approches est un axe de recherche très actif \citep{8U2Q2H5E,8XXG9DKM,HFQGE3UK,MNQFVIVR,D7EXWP53,THNWVF3G,E42E7D4X,AZ5B27ML,TDG5RFPC,MZNGHBPG}.
 
-\section{Modèle de données et ontologie}
+Le framework \textbf{KAG} (Knowledge Augmented Generation) \citep{74SRYH2Q} illustre bien cette direction. Il introduit une représentation des connaissances adaptée aux LLM, une indexation croisée entre graphe et texte assurant la traçabilité, un alignement sémantique pour harmoniser les entités, et un moteur hybride décomposant les requêtes complexes en sous-questions logiques. Ces idées sont directement pertinentes pour produire des statistiques énergétiques traçables.
 
-Bien qu'un réseau de connaissance soit plus flexible qu'une base de donnée relationnelle, un modèle de données reste indispensable pour savoir quoi y stocker et comment. L'intégration des ontologies avec un réseau de connaissance apporte plusieurs avantages:
+L'approche G-T2KG \citep{A8YXRKGQ} propose une construction de graphes indépendante du domaine, combinant OpenIE avec validation par LLM, démontrant un bon rappel et une bonne précision sur des domaines variés.
 
-\begin{description}
-\item[Représentation Structurée des Connaissances]~
-  \begin{itemize}
-  \item L'ontologie fournit un schéma prédéfini pour les relations entre entités
-  \item Les concepts techniques énergétiques sont correctement hiérarchisés
-  \item Les relations entre composants sont formellement définies
-  \end{itemize}
-\item[Amélioration de la Recherche]~
-  \begin{itemize}
-  \item Le parcours du graphe suit les chemins sémantiques définis par l'ontologie
-  \item Les requêtes sont mappées aux concepts ontologiques pour une meilleure compréhension
-  \item Plusieurs chemins de recherche : sémantique (graphe) et similarité (vecteurs)
-  \end{itemize}
-\item[Meilleur Assemblage du Contexte]~
-  \begin{itemize}
-  \item L'ontologie aide à filtrer et prioriser les informations pertinentes
-  \item Les concepts liés peuvent être inclus selon les relations ontologiques
-  \item La terminologie technique est traitée de manière cohérente
-  \end{itemize}
-\item[Qualité de Génération Améliorée]~
-  \begin{itemize}
-  \item Les réponses sont structurées selon le modèle du domaine
-  \item La précision technique est améliorée par les contraintes ontologiques
-  \item Les relations entre concepts sont préservées dans la sortie
-  \end{itemize}
-\end{description}
+\section{Synthèse}
 
-De nombreuses ontologies ou schéma de données existent. Certains visent un dénominateur commun dans un domaine général, comme Schema.org, ou spécialisé, comme le Dublin Core. D'autres sont encyclopédiques, par exemple l'ontologie de DBpedia. Cette dernière dit que «~dbo:NuclearPowerStation~» est une sous classe de «~dbo~:PowerStation~» qui est une sous classe de «~dbo~:Infrastructure~». Cette ontologie ne connaît pas d'autres sorte de PowerStation. Il existe enfin des ontologies disciplinaires, qui visent à représenter la structure du savoir dans un domaine donné.
-
-L'\textbf{Open Energy Ontology} (OEO\footnote{\begin{quote}
-  \url{https://openenergyplatform.org/ontology/}
-  \end{quote}}) est une telle initiative. Elle vise à définir un modèle sémantique ouvert et interopérable pour le domaine de l'énergie. Cette ontologie décrit 15 types de centrale électrique -- les sous-classes directes du type OEO\_00000334 «~power generating unit~». Le but de l'OEO est de permettre aux différents acteurs du secteur --- entreprises, institutions, chercheurs et développeurs --- de partager, intégrer et analyser des données énergétiques de façon cohérente \citep{G49STI5L}. Voici quelques points clés pour présenter cette ontologie :
-
-\begin{description}
-\item[Modélisation des concepts du domaine énergétique] L'onglets conceptualise les entités et phénomènes caractéristiques du secteur de l'énergie. Cela peut inclure des concepts tels que les sources d'énergie (renouvelables et non renouvelables), les dispositifs de conversion (panneaux solaires, éoliennes, turbines, etc.), les réseaux de distribution, et les consommateurs (particuliers, industriels, etc.), mais aussi tout le domaine de la modélisation.
-\item[Interopérabilité et échanges de données] En fournissant un vocabulaire commun et une structure normalisée, l'Open Energy Ontology facilite la communication entre différents systèmes d'information et applications. Elle permet, par exemple, d'harmoniser les données issues de capteurs, des réseaux intelligents (smart grids) ou encore des bases de données de consommation énergétique.
-\item[Sémantique enrichie] Grâce à l'ajout d'annotations sémantiques, cette ontologie aide à donner un contexte aux données, rendant leur interprétation plus précise. Cela est particulièrement utile pour améliorer la pertinence des analyses, des recommandations et pour optimiser la gestion des réseaux d'énergie.
-\item[Flexibilité et extensibilité] Conçue pour évoluer avec les avancées technologiques et les nouvelles exigences du secteur énergétique, l'Open Energy Ontology peut être étendue pour intégrer de nouveaux concepts ou ajustée aux spécificités régionales et sectorielles.
-\item[Applications multiples] L'implémentation d'une telle ontologie peut bénéficier à~divers domaines, notamment :
-  \begin{itemize}
-  \item La gestion et l'optimisation de réseaux électriques
-  \item L'analyse et la prédiction de la consommation énergétique
-  \item Le développement d'outils de monitoring et de contrôle pour les smart grids
-  \item La recherche et l'innovation dans les solutions énergétiques durables
-  \end{itemize}
-\end{description}
-
-En résumé, l'Open Energy Ontology représente un outil puissant pour structurer et rendre intelligibles les vastes ensembles de données relatives à l'énergie. Elle facilite la collaboration interdisciplinaire et permet de développer des applications plus robustes et innovantes dans le secteur énergétique, en s'appuyant sur des données harmonisées et enrichies sémantiquement.
-
-\section{Graphes de connaissance globaux}
-
-Notre projet souscrit au programme de construire le Web Sémantique comme une réseau pair à pair de graphes de connaissance interopérables. A contrario, plusieurs équipes et projets tentent de longue date de représenter le savoir dans un graphe de connaissance global.
-
-Les exemples incluent Cyc (lancé en 1984), DBpedia (lancé en 2007, basé sur l'extraction automatique des données de Wikipedia), le Google Knowledge Graph (lancé en 2012, contenant des centaines de million d'entités, a grandi depuis), Wolfram Alpha ou encore Wikidata (lancé en 2012, les informations sont directement saisies par la communauté). Les sociétés américaines Bing (Microsoft) et Diffbot ont aussi construit un tel graphe --en 2022 ce dernier contenait 5.9 milliards d'entités \citep{U6PVXXZP}. Les systèmes d'information géographique globaux (OpenStreetMap et autres systèmes propriétaires) peuvent aussi être vus comme des graphes de connaissances sur le monde physique tel qu'il est au présent.
-
-\subsection{Google}
-
-Le Google Knowledge Graph ne dispose pas d'un point d'accès SPARQL public comme Wikidata, ce qui limite les possibilités d'interrogation complexe. Pour y accéder, on peut utiliser:
-
-\begin{description}
-\item[L'API Google Knowledge Graph Search] Elle nécessite une clé API de Google Cloud, permet uniquement des recherches textuelles simples, avec des limites de requêtes et des coûts associés
-\item[L'API Google Custom Search] Alternative indirecte pour rechercher des informations.
-\item[L'extraction de texte dans les Knowledge Panels] Pratique aléatoire et douteuse par rapport aux conditions générales d'utilisation.
-\end{description}
-
-Pour une utilisation statistique, le Google Knowledge Graph présente des limitations importantes: Manque de flexibilité dans les requêtes, Focus limité sur les données d'infrastructure énergétique détaillées, Restrictions d'utilisation, Opacité des sources.
-
-\subsection{Diffbot}
-
-la requête suivante~:
-
-\begin{Prompt}
-type:Organization location.name:"Vietnam" categories.name:"Thermal Power Generation Companies"
-\end{Prompt}
-
-retourne 54 résultats dont la grande majorité sont effectivement des SPV de centrales thermiques. Les informations supplémentaires comprennent aussi une adresse, un nombre d'employés, un chiffre de revenu annuel. Les informations ne sont pas sourcées.
-
-\subsection{OpenStreetMap}
-
-Une requête sur overpass-turbo.de~:
-
-\begin{Prompt}
-[out:csv(::id, ::type, ::lat, ::lon, name, "plant:output:electricity",
-         "plant:source", source, "name:en", landuse, wikidata, operator,
-         "operator:wikidata", "addr:province", "addr:district",
-         "addr:subdistrict")][timeout:25];
-{{geocodeArea:Vietnam}}->.searchArea;
-(
-  node["power"="plant"]["plant:method"="combustion"](area.searchArea);
-  way["power"="plant"]["plant:method"="combustion"](area.searchArea);
-  relation["power"="plant"]["plant:method"="combustion"](area.searchArea);
-);
-out center;
-\end{Prompt}
-
-retourne une table contenant 42 centrales. OpenStreetMap ne contient pas les futurs projets d'infrastructure planifiés, seulement les centrales existantes, mais pour celles ci c'est une source riche. On dispose non seulement des coordonnés géographiques mais aussi du périmètre. Le crowdsourcing fait que les colonnes ne sont pas systématiquement renseignées, mais peuvent être récentes. Les informations sont sourcées, principalement avec Wikidata et GEM.
-
-Au niveau technique, la requête en CSV est fragile et il est préférable de ressortir en JSON s'il s'agit de traiter derrière par un script. La clé pour faire fonctionner la requête est d'utiliser geocodeArea .
-
-OpenStreetMap contient aussi le réseau de transmission électrique.
-
-\subsection{Wikidata}
-
-La requête SPARQL suivante sur le \href{https://query.wikidata.org/}{https://query.wikidata.org} retourne 20 centrales, la capacité est incluse pour 9 d'entre elles.
-
-\begin{Prompt}
-SELECT DISTINCT ?plant ?plantLabel ?plantDescription ?type ?typeLabel
-                ?coordinates ?capacity
-WHERE {
-  # Vietnam location constraint
-  ?plant wdt:P17 wd:Q881.
-
-  # Match any of the specified power station types or their subclasses
-  ?plant wdt:P31/wdt:P279* ?stationType.
-
-  # Capture the specific direct type (just one type per result)
-  ?plant wdt:P31 ?type.
-
-  # List of all thermal power station types we want to find
-  VALUES ?stationType {
-    wd:Q200297   # Thermal power station
-    wd:Q900729   # Combined cycle power station
-    wd:Q1427536  # Gas turbine power station
-    wd:Q1158818  # Steam-electric power station
-    wd:Q3498533  # Natural gas-fired power station
-    wd:Q6558431  # Coal-fired power station
-    wd:Q1434958  # Fossil-fuel power station
-    wd:Q2944640  # Gas-fired power station
-  }
-
-  # Optional additional properties
-  OPTIONAL { ?plant wdt:P625 ?coordinates. }  # Coordinates
-  OPTIONAL { ?plant wdt:P2109 ?capacity. }    # Installed capacity
-
-  # Get labels in English and Vietnamese
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,vi". }
-}
-GROUP BY ?plant ?plantLabel ?plantDescription ?type ?typeLabel
-         ?coordinates ?capacity
-ORDER BY ?plantLabel
-\end{Prompt}
-
-La classifications des types d'entité est peu claire, il semble y avoir des doublons. La liste est incomplète. Les sources sont très lacunaires et incluent des pages Wikipedia, le Google Knowledge Graph qui ne sont pas des références primaires.
-
-\subsection{DBpedia}
-
-Le point d'accès SPARQL de DBpedia est \url{https://dbpedia.org/sparql}. Comme pour OpenStreetMap et WikiData, Claude ne formule pas la bonne requête au premier essai~: Une requête directe sur
-
-\begin{Prompt}
-?plant a dbo:PowerStation . ?plant dbo:country dbr:Vietnam .
-\end{Prompt}
-
-ne retourne que 4 centrales. Toutefois la base offre de nombreuses informations pour chacune. Aller voir l'ontologie permet de trouver une catégorie spécifique et reformuler la requête~:
-
-\begin{Prompt}
-SELECT DISTINCT ?plant ?plantLabel ?desc ?type ?coordinates ?capacity
-WHERE {
-  # Utiliser la catégorie "Fossil fuel power stations in Vietnam"
-  {
-    ?plant dcterms:subject dbc:Fossil_fuel_power_stations_in_Vietnam .
-  } UNION {
-    # Ou ses sous-catégories
-    ?plant dcterms:subject ?subcat .
-    ?subcat skos:broader dbc:Fossil_fuel_power_stations_in_Vietnam .
-  }
-
-  # Obtenir le label et la description
-  OPTIONAL { ?plant rdfs:label ?plantLabel . FILTER(LANG(?plantLabel) = 'en') }
-  OPTIONAL { ?plant dbo:abstract ?desc . FILTER(LANG(?desc) = 'en') }
-
-  # Obtenir le type plus spécifique
-  OPTIONAL {
-    ?plant rdf:type ?type .
-    FILTER(?type != owl:Thing && ?type != schema:Thing)
-  }
-
-  # Coordonnées et capacité
-  OPTIONAL { ?plant geo:lat ?lat . ?plant geo:long ?long .
-             BIND(CONCAT(STR(?lat), ",", STR(?long)) AS ?coordinates) }
-  OPTIONAL { ?plant dbo:installedCapacity ?capacity }
-}
-\end{Prompt}
-
-qui retourne trop de doublons pour être exploitable. Les résultats en double dans les requêtes SPARQL sur DBpedia sont un problème courant qui peut avoir plusieurs causes: Une même centrale peut être catégorisée de plusieurs façons différentes
-
-\begin{itemize}
-\item Une même centrale peut être catégorisée de plusieurs façons différentes
-\item Un même objet peut avoir plusieurs URI qui le représentent (problème d'identité)
-\end{itemize}
-
-\begin{itemize}
-\item DBpedia extrait les données de différentes versions linguistiques de Wikipedia. Une centrale peut apparaître dans les versions anglaise, française et vietnamienne avec de légères différences
-\end{itemize}
-
-\begin{itemize}
-\item Problèmes avec la requête SPARQL: Le mot-clé DISTINCT ne suffit pas toujours,~les jointures OPTIONAL peuvent créer des duplications si plusieurs valeurs correspondent
-\end{itemize}
-
-Une version améliorée~:
-
-\begin{Prompt}
-SELECT DISTINCT ?plant (SAMPLE(?plantLabel) AS ?name) (SAMPLE(?desc) AS ?description)
-       (GROUP_CONCAT(DISTINCT ?type; SEPARATOR=", ") AS ?types)
-       (SAMPLE(?coordinates) AS ?coords) (SAMPLE(?capacity) AS ?cap)
-WHERE {
-  # Utiliser la catégorie "Fossil fuel power stations in Vietnam"
-  {
-    ?plant dcterms:subject dbc:Fossil_fuel_power_stations_in_Vietnam .
-  } UNION {
-    # Ou ses sous-catégories
-    ?plant dcterms:subject ?subcat .
-    ?subcat skos:broader dbc:Fossil_fuel_power_stations_in_Vietnam .
-  }
-
-  # Obtenir le label et la description
-  OPTIONAL { ?plant rdfs:label ?plantLabel . FILTER(LANG(?plantLabel) = 'en') }
-  OPTIONAL { ?plant dbo:abstract ?desc . FILTER(LANG(?desc) = 'en') }
-
-  # Obtenir le type plus spécifique
-  OPTIONAL {
-    ?plant rdf:type ?type .
-    FILTER(?type != owl:Thing && ?type != schema:Thing)
-  }
-
-  # Coordonnées et capacité
-  OPTIONAL { ?plant geo:lat ?lat . ?plant geo:long ?longitude .
-             BIND(CONCAT(STR(?lat), ",", STR(?longitude)) AS ?coordinates) }
-  OPTIONAL { ?plant dbo:installedCapacity ?capacity }
-}
-GROUP BY ?plant
-ORDER BY ?name
-\end{Prompt}
-
-échoue pour cause de mainteance du site. Cette situation illustre un autre défi: la fiabilité et la disponibilité des sources de données. Une solution d'IA pour l'extraction automatisée pourrait inclure des mécanismes de redondance et de basculement entre différentes sources pour garantir la continuité des mises à jour de données.
-
-\section{Knowledge-augmented LLM}
-
-Les graphes de connaissance et les réseaux de neurones sont deux approches complémentaires. Les graphes de connaissance incarnent l'approche symbolique et structurée issue des débuts de l'IA, les grands modèles de langage représentent l'évolution vers des méthodes d'apprentissage statistique et l'extraction implicite de larges volumes de données. Les LLM excellent dans la génération de textes et la compréhension contextuelle, mais ils traitent souvent le savoir de manière implicite et peuvent parfois générer des informations inexactes ou "hallucinées". Les graphes de connaissance, en revanche, offrent une structure explicite, basée sur des relations validées et interconnectées, garantissant ainsi une information factuelle et vérifiable.
-
-Depuis quelques années, les recherches se concentrent sur la fusion de ces approches pour combiner le meilleur des deux mondes \citep{8U2Q2H5E,8XXG9DKM,HFQGE3UK,MNQFVIVR,D7EXWP53,THNWVF3G,E42E7D4X,AZ5B27ML} et en France \citep{TDG5RFPC,MZNGHBPG}. Leur interaction et leur intégration progressive témoignent d'une tendance actuelle forte : celle de réconcilier l'\textbf{explicitement structuré} et l'\textbf{implicitement appris} pour créer des systèmes d'intelligence artificielle plus robustes, fiables et intelligibles.
-
-Voici quelques outils dans le domaine~:
-
-\subsection{neo4j}
-
-Il existe de nombreuses bases de données orientées graphe, l'une des plus populaires est \emph{neo4j}, mais pour une application fusionne dynamiquement des graphes d'information, une base comme \emph{Memgraph}entièrement en mémoire pourrait être plus rapide. Les deux utilisent le langage Cypher comme langage de requête. Il faut aussi surveiller les solutions émergentes optimisées pour les LLM, l'IA et le RAG comme ReI8 ou GraphBase.
-
-Les graphes de propriétés dans Neo4j et les triplets RDF représentent tous deux des données connectées, mais les gèrent différemment. Alors que RDF représente tout sous forme de triplets Sujet-Prédicat-Objet, Neo4j utilise une approche plus structurée avec des nœuds étiquetés contenant des propriétés et des relations typées entre eux. Par exemple, ce que RDF exprimerait comme plusieurs triplets (jean ->{} aAge ->{} 25, jean ->{} aNom ->{} "Jean"), Neo4j le représente comme un seul nœud avec des propriétés (:Personne \{nom: "Jean", age: 25\}). Le modèle de Neo4j est généralement plus intuitif pour les développeurs et offre de meilleures performances, bien qu'il soit moins flexible que l'approche sans schéma obligatoire de RDF. La différence principale réside dans la façon dont les propriétés sont stockées : RDF traite tout comme une relation, tandis que Neo4j stocke les propriétés directement sur les nœuds et les relations, permettant un stockage et des requêtes plus efficaces via son langage Cypher, comparé au SPARQL de RDFo
-\subsection{G-T2KG}
-
-Une approche récente particulièrement intéressante pour notre projet est G-T2KG (General Text to Knowledge Graph), proposée par \citep{A8YXRKGQ}. Cette méthode vise à construire des graphes de connaissances de manière indépendante du domaine, tout en maintenant une haute qualité d'information.
-
-G-T2KG aborde deux défis majeurs dans la construction de graphes de connaissances. D'une part, les approches spécialisées par domaine, qui utilisent typiquement la reconnaissance d'entités nommées (NER), nécessitent des adaptations coûteuses pour chaque nouveau domaine et peuvent manquer des informations importantes. D'autre part, les approches basées sur l'extraction d'information ouverte (OpenIE), bien qu'indépendantes du domaine, génèrent souvent de nombreux triplets incorrects.
-
-La solution proposée combine :
-
-\begin{itemize}
-\item Un système OpenIE moderne pour extraire un large éventail de relations sans connaissance préalable du domaine
-\item Un nettoyage des triplets basé sur l'analyse syntaxique, qui exploite le fait que les entités sont généralement des syntagmes nominaux
-\item Une validation des triplets par LLM qui compare chaque triplet extrait avec sa phrase d'origine
-\end{itemize}
-
-Les résultats expérimentaux montrent que cette approche atteint un meilleur rappel que les méthodes spécialisées comme SciCero, et une précision supérieure à celle d'un OpenIE standard. Sa performance a été validée sur deux domaines distincts (l'informatique et la musique), démontrant son adaptabilité.
-
-Pour notre projet de suivi des centrales thermiques, G-T2KG offre plusieurs avantages :
-
-\begin{itemize}
-\item Son indépendance vis-à-vis du domaine permettrait de traiter non seulement les informations techniques sur les centrales, mais aussi les aspects économiques, environnementaux et administratifs
-\item Sa capacité à traiter des documents en plusieurs langues est particulièrement utile pour gérer les sources en vietnamien et en anglais
-\item L'utilisation d'un LLM pour la validation pourrait être adaptée pour prendre en compte des règles métier spécifiques au secteur de l'énergie
-\end{itemize}
-
-Cependant, comme toute approche basée sur les LLM, G-T2KG nécessite une attention particulière à la confidentialité des données. De plus, son coût computationnel pourrait être significatif sur un grand volume de documents.
-
-\subsection{KAG}
-
-Le framework \textbf{KAG} (Knowledge Augmented Generation) propose une approche innovante pour renforcer les capacités des grands modèles de langage (LLM) dans des domaines professionnels à forte technicité, en intégrant explicitement des graphes de connaissances dans le processus de génération de réponses \citep{74SRYH2Q}. Les idées principales du papier s'articulent autour de plusieurs axes complémentaires :
-
-\begin{description}
-\item[Représentation des Connaissances adaptée aux LLM]
-  KAG introduit une représentation dite \emph{LLMFriSPG} qui se base sur la hiérarchie des données, de l'information et de la connaissance (concept DIKW). Ce modèle permet de structurer le savoir de manière à ce que les LLM puissent exploiter à la fois des informations extraites de façon libre et des connaissances issues d'un schéma expert. En séparant les instances et les concepts, ce mécanisme favorise une meilleure compréhension sémantique des données, facilitant ainsi les tâches d'extraction et de synthèse.
-\end{description}
-
-\begin{description}
-\item[Mutual Indexing entre les Graphes de Connaissances et le Texte]
-  Une innovation majeure de KAG est l'indexation croisée entre les structures graphiques (qui stockent les entités, événements et relations) et les segments textuels extraits, ou «~chunks~», des documents. Ce procédé de mutual indexing permet de relier chaque fragment de texte à son équivalent dans le graphe, assurant ainsi une traçabilité rigoureuse et une vérification fine des sources, tout en offrant une meilleure contextualisation pour la génération d'informations détaillées.
-\item[Alignement Sémantique et Normalisation des Connaissances]
-  Pour pallier les écarts et la dispersion des informations (notamment en cas de synonymie ou de variations dans les expressions), KAG intègre un mécanisme d'alignement qui harmonise les entités et complète les relations manquantes au sein du graphe de connaissances. Cette démarche permet non seulement de réduire les erreurs d'extraction -- ou « hallucinations » --, mais aussi de renforcer la cohérence et la fiabilité de l'information produite, crucial dans des contextes décisionnels pointus comme les statistiques énergétiques.
-\end{description}
-
-\begin{description}
-\item[Moteur Hybride guidé par une Forme Logique]
-  Le framework décompose les requêtes complexes en plusieurs sous-questions, chacune représentée sous forme de fonctions logiques (telles que « Retrieval », « Sort », « Math » et « Deduce »). Cette décomposition agit comme un plan de résolution qui combine la recherche dans le texte basé sur la similarité vectorielle et le raisonnement explicite sur les données structurées. Ainsi, KAG permet de gérer plus efficacement les problèmes nécessitant des opérations numériques ou une logique complexe, tout en améliorant la rigueur des réponses.
-\end{description}
-
-\begin{description}
-\item[Intégration des Capacités de Compréhension, d'Inférence et de Génération]
-  En optimisant simultanément trois fondamentaux du traitement du langage naturel (la compréhension de la langue -- NLU, l'inférence -- NLI, et la génération -- NLG), KAG parvient à produire des réponses à la fois détaillées, logiques et bien étayées. L'approche bidirectionnelle de KAG, où l'activation du raisonnement vient renforcer la génération de texte et vice-versa, offre une performance accrue dans la résolution de tâches complexes nécessitant une expertise spécialisée.
-\end{description}
-
-\begin{description}
-\item[One-Pass Inference : Simplification du Pipeline]
-  Pour réduire la complexité du système et les pertes d'information dues aux chaînes de traitement multiples, KAG explore également l'intégration d'un processus d'inférence en une seule passe. Cette méthode combine extraction, raisonnement et génération dans un seul flux de travail, optimisant ainsi les coûts d'exécution tout en améliorant la cohérence globale du résulta
-\end{description}
-
-L'architecture KAG apporte de nombreuses idées utiles pour produire des statistiques et des scénarios de transition énergétique.
-
-\subsection{Approche ad hoc}
-
-Il n'y pas aujourd'hui de solution automatique pour extraire la connaissance structurée d'une collection de documents. Cependant, l'état de l'art permet de penser qu'une approche avec validation humaine pourrait être efficace. Par exemple, pour construire une table des centrales thermiques, le processus se décompose ainsi~:
-
-\begin{enumerate}
-\item Comprendre la tâche en termes de mot clés et d'entités/relations OEO
-\item Sélection des documents pertinents.
-\item Sélection parmi ces documents des sections, tables, figures pertinentes.
-\item Ingestion pour construire un graphe de connaissances propre à chaque fraction de document, selon un modèle de données tiré de 1.
-\item Identifier les entités correspondant à des centrales thermiques
-\item Compiler toutes les assertions pertinentes concernant chaque centrale.
-\item Fusionner pour déterminer les valeurs finales des attributs demandés (ex. : capacité installée, type de combustible, etc.).
-\item Vérifier le résultat, itérer au besoin en modifiant 1 à 3
-\item Réinjecter dans la collection de documents pour réutilisation ultérieure.
-\end{enumerate}
-
-Un processus par fusion des graphes de connaissances garantit que chaque donnée est vérifiée, traçable, et accompagnée de métadonnées explicites qui facilitent son interprétation et sa réutilisation. Des modèles IA capables d'apprentissage peuvent assister l'utilisateur à chaque étape, voire pour la planification globale du processus.
+Il n'existe pas aujourd'hui de solution automatique complète pour extraire la connaissance structurée d'une collection de documents. Cependant, une approche avec validation humaine est envisageable~: comprendre la tâche en termes d'entités OEO, sélectionner les documents et passages pertinents, construire un graphe par document, identifier et compiler les assertions sur chaque centrale, fusionner les graphes pour déterminer les valeurs finales, et vérifier le résultat. Ce processus garantit que chaque donnée est traçable et accompagnée de métadonnées explicites.
 
 \chapter{Les systèmes agentiques}\label{chap:agents}
 
