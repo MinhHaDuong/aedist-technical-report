@@ -378,282 +378,42 @@ L'interface au chercheur s'intègre aux outils existants (navigateur web, Zotero
 
 \chapter{Conclusion}\label{chap:conclusion}
 
-\section{Résultats obtenus et Perspective historique}
+\section{Résultats quantitatifs}
 
-\subsection{Limites des approches directes avec LLM}
-
-Les grands modèles de langage (400B+ paramètres) retournent environ 30--40 centrales thermiques lorsqu'ils sont sollicités directement, ce qui reste largement en deçà de l'inventaire complet (plus de 110 centrales recensées sur Wikipédia).
-
-Une approche conversationnelle, basée sur des prompts simples et itératifs, permet d'atteindre jusqu'à 80--90 centrales après plusieurs relances, démontrant que ces modèles cachent une connaissance plus étendue encore inexploitée en une première réponse.
-
-Les modèles optimisés pour le raisonnement montrent de meilleures performances lorsqu'ils sont relancés, bien que la qualité des sources citées reste souvent limitée (risque d'hallucinations ou de références imprécises).
-
-\subsection{Apports du RAG (Retrieval Augmented Generation)}
-
-L'intégration de documents sources dans le processus (via le RAG) améliore significativement la complétude et la qualité des réponses, en enrichissant les tableaux de données par des informations vérifiables.
-
-Le format Markdown s'avère plus adapté au traitement par les LLM que le format PDF, même si la conversion PDF → Markdown nécessite encore une supervision humaine pour corriger les erreurs et assurer une qualité optimale.
-
-\subsection{Nécessité d'une approche hybride}
-
-L'extraction automatique d'entités et de relations reste un défi technique. Les outils spécialisés intégrés comme R2R sont encore en développement. L'alignement avec une ontologie de référence (OEO) est essentiel pour assurer une cohérence et une normalisation des données extraites.
-
-Une architecture en trois niveaux (base documentaire, graphe de connaissances, base vectorielle) permet de combiner les atouts des approches symbolique et statistique pour optimiser la qualité de la réponse.
-
-\subsection{Démonstration de faisabilité}
-
-Le cas d'étude sur le parc de centrales thermiques du Vietnam a permis de valider les concepts clés et de prouver la faisabilité technique de l'approche hybride.
-
-Les outils et techniques actuellement disponibles permettent déjà de construire un système capable de générer des tableaux statistiques enrichis, même si certaines lacunes (incomplétude, normalisation, traçabilité) doivent encore être corrigées.
-
-Enfin, une équipe de 2 à 3 personnes, sur une période de 9 à 12 mois, serait suffisante pour développer un premier système opérationnel preuve de concept, qui pourra évoluer progressivement vers une automatisation complète tout en maintenant la qualité des données.
-
-Ces résultats démontrent que, même si le système ne peut pas être entièrement automatisé dans l'immédiat, l'approche hybride -- combinant optimisation des prompts, utilisation du RAG et structuration via des graphes de connaissances -- représente une solution prometteuse pour le suivi statistique de la transition énergétique, tout en nécessitant une supervision humaine pour garantir la fiabilité et la traçabilité des données. Une approche multi-agents, qui décompose la tâche en modules spécialisés (veille, indexation, extraction, analyse statistique, rédaction), permettra de continuer à automatiser progressivement et traiter plus efficacement les aspects complexes du suivi de la transition énergétique, tout en préservant la traçabilité des sources
-
-\subsection{Perspective historique}
-
-Le suivi statistique de la transition énergétique s'inscrit dans une longue tradition d'observation des changements socio-techniques. Des précurseurs comme Prospero/Marlowe \citep{4I2B7RMB} ont ouvert la voie dès les années 2000 en proposant une approche socio-informatique de l'analyse des controverses. Mais si ce système était déjà capable de suivre l'actualité sur internet et d'en livrer une discussion en Français, l'outil était d'un usage pointu, en pratique réservé à l'équipe qui l'a développé. Où en sommes nous une génération plus tard~?Pour examiner l'évolution temporelle et les tendances technologiques, nous avons analysé et comparé les fonctionalités de 23 assistants de recherche (voir feuille de calcul à part).
-
-Le paysage des outils de recherche a considérablement évolué au cours des deux dernières décennies. Les gestionnaires de références traditionnels comme \textbf{Zotero} (2006) et \textbf{Mendeley} (2008) étaient initialement conçus pour l'organisation des documents et la gestion des citations. Cependant, une vague récente d'outils alimentés par l'IA a fait son apparition, en particulier en 2023 avec des lancements notables tels que \textbf{Phind}, \textbf{ScholarAI}, \textbf{AutoExpert}, et \textbf{R Discovery}. Ce changement indique non seulement une évolution technologique --- passant d'applications de bureau à des interfaces web largement accessibles --- mais reflète également l'évolution constante des besoins des chercheurs, des développeurs et des équipes, rendue possible par les avancées du cloud computing et de l'intelligence artificielle.
-
-\subsection{Spécialisation des Fonctionnalités et Répartition}
-
-Les outils présentés varient considérablement en termes de fonctionnalités proposées :
+Ce rapport évalue les capacités de l'IA à produire des statistiques énergétiques, en utilisant l'inventaire des centrales thermiques du Vietnam comme benchmark.
 
 \begin{description}
-\item[Fonctionnalités de Découverte] Environ 17 outils offrent des fonctions telles que la recherche d'articles, la cartographie de la littérature et la recommandation d'articles connexes.
-\item[Fonctionnalités d'Analyse] Près de 21 outils intègrent des fonctionnalités d'analyse, comme l'analyse contextuelle des citations, l'extraction de métadonnées et l'analyse approfondie des contenus.
-\item[Fonctionnalités d'Écriture/Mise en Forme] Environ 12 outils proposent un support solide pour la rédaction et la mise en forme. L'étude a privilégié les outils pour la découverte et l'analyse.
+\item[LLM seuls] Les modèles flagship (400B+) retournent 30--40 centrales en requête directe, contre plus de 110 dans l'inventaire de référence. Une approche conversationnelle avec relances permet d'atteindre 80--90 centrales, confirmant que les modèles ne révèlent qu'un tiers de leur connaissance à la première réponse.
+\item[RAG] L'intégration de documents sources améliore significativement les résultats. Avec Claude~3.5~Sonnet, RAG et relances, on atteint 61 correspondances exactes et 12 approximatives. Les deux techniques (relance et RAG) sont complémentaires.
+\item[Graphes de connaissances] Les graphes globaux (OSM, Wikidata, Diffbot, DBpedia) retournent entre 20 et 54 centrales chacun, avec des couvertures complémentaires. Les outils de construction automatique de graphes (R2R, TrustGraph) restent immatures pour notre cas d'usage.
 \end{description}
 
-Seuls quelques outils (par exemple, \textbf{SciSpace}, \textbf{Iris.ai} et \textbf{Readwise Reader}) combinent efficacement ces trois aspects. La tendance est clairement à la spécialisation : de nombreux outils excellent dans un ou deux domaines spécifiques plutôt que d'offrir une solution complète. Cela suggère que dans le contexte actuel, l'intégration de plusieurs outils spécialisés pourrait être plus bénéfique pour les utilisateurs qu'un outil unique couvrant toutes les fonctions de manière superficielle.
+\section{Évaluation technologique}
 
-\subsection{Segmentation du Marché et Utilisateurs Cibles}
+\textbf{Ce qui fonctionne}~: L'approche RAG avec relances conversationnelles produit déjà des résultats utiles. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
 
-Le marché se segmente nettement selon les utilisateurs et les usages visés :
+\textbf{Ce qui est nécessaire}~: Un graphe de connaissances local aligné sur une ontologie (OEO) pour assurer la traçabilité. Des agents spécialisés (curateur, analyste, rédacteur) pour décomposer et automatiser le processus. Une architecture en quatre niveaux (document store, base validée, couche vectorielle, graphe structuré) pour combiner rigueur et flexibilité.
 
-\begin{description}
-\item[Focus Académique] La majorité des outils visés dans l'étude s'adresse principalement aux chercheurs et étudiants (environ 15 outils ciblant directement ce segment), en mettant l'accent sur la gestion des citations et l'analyse de la littérature.
-\item[Industrie et Collaboration] Certains outils, comme \textbf{Bit.ai}, visent plutôt les équipes et les entreprises, en mettant en avant la collaboration sur les documents et la gestion de contenu.
-\item[Solutions de Niche] D'autres plateformes, comme \textbf{Phind} avec son orientation vers les développeurs, ou le \textbf{Plugin Zotero ChatGPT} qui combine gestion de références et intelligence artificielle, répondent à des besoins spécifiques.
-\end{description}
+\textbf{Ce qui est faisable maintenant}~: Les briques technologiques existent~: RAG mature, frameworks agentiques en expansion rapide, bases de graphes opérationnelles (Neo4j). L'intégration reste un défi d'ingénierie plutôt qu'un verrou scientifique.
 
-Cette segmentation illustre la diversité des besoins des utilisateurs et les stratégies spécifiques des développeurs pour se distinguer sur le marché.
+\section{Apports de l'approche proposée}
 
-\subsection{Intégration, Types de Sortie et Interopérabilité}
-
-L'intégration des bases de connaissances externes et la disponibilité des API sont des éléments cruciaux :
-
-\begin{description}
-\item[Intégration avec des Plates-formes Établies] Un nombre important d'outils s'intègre aux référentiels académiques tels que Semantic Scholar (environ 12 outils) et Zotero (environ 8 outils), facilitant ainsi l'accès à une vaste base de données de documents scientifiques.
-\item[Variété de Types de Sorties] Les outils offrent une gamme d'outputs allant des résumés d'articles aux rapports de citations, des cartes visuelles de la recherche aux rapports complets, permettant aux utilisateurs de présenter et analyser l'information de façon exploitables.
-\item[Défis en Matière d'Interopérabilité] La disponibilité limitée des API (seulement environ 6 outils) suggère des opportunités d'amélioration pour faciliter l'interconnexion entre différents outils, ce qui pourrait améliorer les flux de travail et les synergies entre la découverte, l'analyse et la rédaction.
-\end{description}
-
-\subsection{Modèles Économiques et Lacunes du Marché}
-
-Les stratégies de tarification et les modalités d'accès influencent fortement l'adoption de ces outils :
-
-\begin{description}
-\item[Stratégies Tarifaires] Le marché présente une variété de modèles --- freemium, par abonnement, et open source --- avec une tendance marquée pour les outils alimentés par l'IA qui optent généralement pour des modèles par abonnement ou freemium, soulignant la premiumisation des fonctionnalités avancées.
-\item[Modalités d'Accès] La quasi-totalité des outils (20 sur 23) est accessible via une interface web, confirmant ainsi la transition vers des solutions cloud qui permettent une utilisation flexible et en tout lieu.
-\item[Opportunités et Lacunes] Malgré la diversité des outils, il existe des lacunes. Très peu d'outils offrent une synergie complète entre découverte, analyse et rédaction. De plus, l'interopérabilité, notamment via une meilleure disponibilité des API, et l'absence d'outils spécifiquement conçus pour des disciplines académiques particulières représentent des pistes d'innovation pour combler ces manques.
-\end{description}
-
-L'analyse synthétisée révèle un paysage dynamique et segmenté des outils de recherche. La montée rapide des fonctionnalités basées sur l'IA, l'évolution vers des solutions web intégrées et la spécialisation fonctionnelle des différents outils montrent que cet écosystème s'adapte rapidement aux défis de la recherche moderne. En reconnaissant tant les atouts actuels que les lacunes du marché, les parties prenantes disposent d'une vision plus claire des domaines où l'innovation est la plus prometteuse, ouvrant la voie à des solutions de recherche encore plus complètes et efficaces.
-
-\subsection{La nouvelle donne}
-
-Cependant, l'arrivée des grandes sociétés d'IA générative comme OpenAI Deep Research \citep{Y6A39QJJ} dans le domaine de la rédaction automatique des rapports de recherche rebat les cartes .
-
-La discussion sur reddit «~\href{https://www.reddit.com/r/Rag/comments/1ismm88/rag_deep_research/}{RAG + Deep Research}~» illustre l'état de l'art fin février 2025:
-
-\begin{quote}
-\href{https://www.reddit.com/user/GPTeaheeMaster/}{GPTeaheeMaster}.. You would seen the news around "deep research" from the likes of ChatGPT and Perplexity -\/- that is certainly a cool new development.
-\end{quote}
-
-\begin{quote}
-But one question to ask is: If instead of just reading the "deep research" sources, what would happen if one creates a full-fledged RAG on the topic from different perspectives. So basically create a RAG with 200 sources and then do the research on it.
-\end{quote}
-
-\begin{quote}
-I've been exploring this idea for a couple of months now, so would like to invite early enthusiasts to try it out (its free!)
-\end{quote}
-
-\begin{quote}
-Launching this next week: \href{https://researcher.customgpt.ai/}{CustomGPT.ai Researcher}
-\end{quote}
-
-\begin{quote}
-PS: Big differentiation against ChatGPT is: It allows you to do "deep research" on your own content.
-\end{quote}
-
-\begin{quote}
-\href{https://www.reddit.com/user/Particular_Volume440/}{Particular\_Volume440}~: I have done this. I set up a python script which searches PubMed and OpenAlex for articles of interest (i downloaded 947 last time) then set it up as a custom knowledge base for a specific domain. Once the script identifies the articles of interest the PDF's are downloaded using UnPaywall, but I can only download opensource ones so my initial query returns like 2,400 articles but only download like 947. From the I use Zotero API to extract metadata like bibliographies, authors, journal name, etc. and save the references to zotero. then the script uses azure document intelligence to extract text and tables and do an initial extraction and have an LLM extract things specific to the knowledge base. From there it is vectorized with Qdrant (i was using faiss but supposedly Qdrant is better) and then a user can ask their query and the answer is routed through 3 LLM calls, one initial summary, one refines the answer and ensures that the metrics and references cited by the first LLM are correct, then goes through another "synthesis" prompt, then a QA prompt. then the user gets the answer. currently uses a while loop for multiple queries but i need to set it up to where the LLM's can remember their responses and make it more interactive. Took about 2 weeks to build but i developed peptic ulcers in the process.
-\end{quote}
-
-\begin{quote}
-\href{https://www.reddit.com/user/Fancy_Dress3486/}{Fancy\_Dress3486 }: How do you measure the accuracy of the citations generated by the LLM? Are you performing a hybrid search or purely using vector databases?
-\end{quote}
-
-\begin{quote}
-\href{https://www.reddit.com/user/Particular_Volume440/}{Particular\_Volume440}~: hybrid search approach, its combining vector-based semantic retrieval and keyword filtering to pull relevant data from both structured and unstructured sources. The structured data contains the domain specific fields/metrics and metadata, and the unstructured is the pdf text and extracted tables, which is also embedded with metadata. each article is enriched with metadata (including DOI, ZoteroKey, PMID for the ones that have one), and at each stage, the LLM cross-references this metadata to ensure that the citations in the final output accurately reflect the original sources. the results are merged and re-ranked to form the set of articles the LLM use for generating the output.
-\end{quote}
-
-\begin{quote}
-I've checked the references the LLM's cite in their answers and so far both the information and the citations accurately reflect the source information. but it is bias if I say it is accurate 100\% of the time. Right now I am in the process of setting up a "gold standard" measure using topic modeling and topic clustering to first identify articles of interest for the gold standard, then the articles are reviewed and validated by students or PI's for the specific domain. articles identified as the gold standard will serve as the benchmark for evaluation the accuracy, precision, relevance of the articles and citations retrieved by the system. we use the same fields we use for the ETL steps for example "crop type", "soil type", "tillage practices" and the metadata. will probably use F1 scores
-\end{quote}
-
-\begin{quote}
-That whole process will be infinitely more difficult and time-consuming than coding the ETL and RAG systems in the first place, but it will be required because given that this is to aid academic research they will want to make sure i objectively measure the accuracy and reliability of the RAG system.
-\end{quote}
-
-\begin{quote}
-\href{https://www.reddit.com/user/snow-crash-1794/}{snow-crash-1794}~: Yes, the main thing that is missing in current "deep research" tools - alignment with domain data.
-\end{quote}
-
-\section{Apports et faisabilité du projet}
-
-Nous ne proposons pas de construire un nouvel assistant à la recherche, mais une solution pour produire des statistiques énergétiques. Notre approche se distingue par plusieurs aspects essentiels :
+Notre approche se distingue des assistants de recherche existants par~:
 
 \begin{enumerate}
-\item La construction d'une la base de connaissance par accumulation plutôt que par une recherche instantanée.
-\item Les sources d'information ne se limite pas aux articles académiques et au contenu immédiatement visible du web. Elle inclut aussi les documents administratifs, présentations et rapports institutionnels, réseaux sociaux, bases d'information structurées comme OpenStreetMap.
-\item Un contrôle qualité en amont, avant l'ingestion des documents. L'index des ressources vues sur le web par un robot est séparé de la base de documents approuvés par l'expert. Cette étape cruciale permet d'assurer la qualité et la pertinence des documents utilisés.
-\item On construit un graphe de connaissance pour chaque document, et on les fusionne pour produire les statistiques recherchées en garantissant la traçabilité des sources et l'intelligibilité des arbitrages lorsqu'elles se contredisent.
-\item Un traitement local et souverain de l'information, privilégiant des outils ouverts et contrôlés. Cette approche garantit l'indépendance du système et sa pérennité, tout en respectant les contraintes de confidentialité des données.
-\item L'utilisation d'outils innovants, avec une architecture hybride combinant graphe de connaissances, RAG en deux étapes et agents spécialisés.
-\item Un système formé d'outils indépendants plutôt que monolithique, avec le couple Navigateur / Zotero comme interface utilisateur.
+\item La construction de la base de connaissance par accumulation plutôt que par recherche instantanée.
+\item Des sources incluant le deep web~: documents administratifs, rapports institutionnels, réseaux sociaux, bases structurées (OpenStreetMap).
+\item Un contrôle qualité en amont, avec séparation entre l'index des ressources découvertes et la base de documents validés par l'expert.
+\item La fusion de graphes de connaissances par document, garantissant la traçabilité des sources et l'intelligibilité des arbitrages entre sources contradictoires.
+\item Un traitement local et souverain de l'information, privilégiant des outils ouverts et contrôlés.
+\item Une architecture modulaire, avec le couple Navigateur / Zotero comme interface utilisateur.
 \end{enumerate}
 
-L'urgence de développer un tel système est motivée par plusieurs facteurs :
+\section{Perspectives}
 
-\begin{itemize}
-\item La rapidité des transformations du secteur énergétique, particulièrement dans les pays émergents, nécessite des outils de suivi plus réactifs et plus précis
-\item Le besoin croissant de transparence et de traçabilité dans les données énergétiques
-\item L'importance stratégique d'avoir des systèmes d'observation indépendants des grands acteurs commerciaux
-\item La nécessité de développer des compétences locales en matière d'analyse des transitions énergétiques
-\end{itemize}
+Les résultats de ce rapport montrent que l'automatisation complète de la production statistique n'est pas encore à portée, mais qu'une approche hybride -- combinant RAG, graphes de connaissances et agents spécialisés, avec supervision humaine -- est réaliste. Le cas du Vietnam constitue un premier benchmark~; les méthodes proposées sont transposables à d'autres pays et à d'autres secteurs nécessitant un suivi rigoureux des transformations socio-techniques.
 
-Les premières expérimentations démontrent la faisabilité technique de l'approche. Un déploiement rapide permettrait de combler une lacune importante dans l'observation des transformations énergétiques des pays en développement.
-
-Au-delà de ce domaine, les méthodes proposées pour extraire des statistiques fiables à partir de sources hétérogènes et multilingues pourraient s'appliquer à d'autres secteurs nécessitant un suivi rigoureux des transformations socio-techniques, comme les mutations industrielles, les évolutions technologiques ou les transitions agricoles, et l'intelligence économique open source en général.
-
-\subsection{Coûts des méthodes actuelles}
-
-Une comparaison des coûts et bénéfices des méthodes actuelles de suivi statistique dans le secteur énergétique montre l'intérêt de l'approche proposée. Actuellement, le suivi des statistiques énergétiques repose sur des approches coûteuses et souvent limitées en termes de couverture et de réactivité :
-
-\begin{description}
-\item[Recours à des cabinets de conseil spécialisés] Les études réalisées par des experts ou des cabinets de conseil internationaux représentent un investissement conséquent, de l'ordre de 1 ETP par an soit entre \textbf{100 000 et 200 000 euros par pays et par an} pour un suivi complet. Ces coûts incluent l'accès aux bases de données propriétaires et le travail d'analyse.
-\item[Bases de données commerciales] Les solutions comme S\&P Global Platts Power Plants ou d'autres bases similaires nécessitent des abonnements annuels coûteux (souvent supérieurs à \textbf{50 000 euros}), tout en restant incomplètes pour les pays émergents ou en développement. Ces bases ne garantissent pas une traçabilité totale des données, ni une mise à jour en temps réel.
-\end{description}
-
-\subsection{Économies d'échelle offertes par AEDIST}
-
-L'approche AEDIST permet de réaliser des économies importantes grâce à une architecture hybride et modulaire :
-
-\begin{description}
-\item[Réduction des coûts initiaux] Un investissement initial de \textbf{150 000 à 200 000 euros} suffirait pour développer une preuve de concept fonctionnelle, couvrant un pays et reposant sur des technologies ouvertes et locales.
-\item[Coûts marginaux faibles] Une fois le système en place, l'ajout de nouveaux pays ou régions ne nécessiterait qu'une adaptation mineure des agents et des modules existants. Les coûts d'extension seraient donc très faibles, comparés à une approche par projet.
-\item[Faibles coûts de maintenance] L'entretien annuel du système, incluant la mise à jour des modèles et la gestion des agents, est estimé entre \textbf{30 000 et 50 000 euros par an}, soit bien en dessous des coûts récurrents des solutions traditionnelles.
-\end{description}
-
-\subsection{Analyse coût-bénéfice}
-
-L'approche AEDIST présente donc un retour sur investissement clair :
-
-\begin{description}
-\item[Investissement initial amorti en 2 à 3 ans] En réduisant les coûts de suivi annuel par rapport aux méthodes traditionnelles.
-\item[Rapidité et réactivité accrues] Contrairement aux rapports traditionnels, souvent publiés une fois par an, le système AEDIST permet des mises à jour trimestrielles, voire en quasi-temps réel, ce qui améliore la pertinence des données pour les prises de décision stratégiques.
-\item[Amélioration de la qualité des données] La traçabilité complète et l'intégration des données hétérogènes garantissent une meilleure fiabilité des statistiques produites, réduisant les risques d'erreur dans les analyses ou les investissements.
-\end{description}
-
-\subsection{Valorisation indirecte et opportunités économiques}
-
-Outre les économies directes, AEDIST apporte une valeur ajoutée significative :
-
-\begin{description}
-\item[Amélioration de la prise de décision] Les données fiables et actualisées permettent aux décideurs publics et privés de mieux anticiper les évolutions du secteur énergétique. Cela réduit les risques liés aux investissements dans les infrastructures énergétiques, et donc facilite l'accès au capital.
-\item[Contribution à la transition énergétique] En fournissant des données transparentes, le système favorise une meilleure coordination entre les acteurs et soutient les politiques de transition énergétique. Il contribue également à une meilleure allocation des ressources, en identifiant les projets prioritaires.
-\item[Exportabilité du système] Une fois développé, AEDIST pourrait être adapté à d'autres secteurs (transport, agriculture, industrie) ou à d'autres pays, ouvrant des opportunités commerciales. Le système pourrait également être proposé en tant que service par abonnement pour les gouvernements, les ONG ou les entreprises.
-\end{description}
-
-\subsection{Modèle économique envisagé}
-
-Pour assurer la viabilité du projet, plusieurs options de monétisation peuvent être envisagées :
-
-\begin{description}
-\item[Service par abonnement] Une offre destinée aux institutions publiques, agences de développement et entreprises, avec des niveaux de service différenciés (freemium pour les données de base, premium pour les analyses approfondies).
-\item[Collaboration institutionnelle] Partenariats avec des universités, think tanks ou organisations internationales pour cofinancer le développement et partager les bénéfices des outils.
-\item[Licence des modules logiciels] Les composants logiciels créés dans le cadre du projet (notamment les agents ou le graphe de connaissances) pourraient être proposés sous licence à d'autres projets ou entreprises.
-\item[Open source et innovation ouverte] Une partie des outils pourrait être mise en open source pour encourager leur adoption et bénéficier des contributions de la communauté, tout en monétisant des services avancés.
-\end{description}
-
-\subsection{Urgence et bénéfices stratégiques}
-
-Le développement d'un système comme AEDIST est particulièrement urgent pour répondre aux enjeux suivants :
-
-\begin{description}
-\item[Accélération des transformations énergétiques] Les pays émergents, souvent absents des bases de données globales, ont besoin de statistiques fiables pour guider leur transition énergétique.
-\item[Indépendance et souveraineté] En s'appuyant sur des outils locaux et ouverts, AEDIST offre une alternative indépendante aux solutions dominées par des acteurs commerciaux internationaux.
-\item[Renforcement des capacités locales] Le projet permet de développer les compétences techniques et analytiques des pays partenaires, en offrant une expertise locale pour le suivi de la transition énergétique.
-\end{description}
-
-En conclusion, AEDIST représente une solution économiquement viable et stratégiquement pertinente pour le suivi des statistiques énergétiques, tout en réduisant la dépendance aux solutions traditionnelles coûteuses et peu adaptées aux spécificités des pays en développement.
-
-\section{Pour une preuve de concept}
-
-Un projet de preuve de concept doit cibler les éléments fondamentaux du système tout en limitant le périmètre :
-
-\begin{description}
-\item[Focus géographique et thématique restreint] maintenir le cas des centrales électriques au Vietnam comme cas d'étude permettrait de réutiliser le travail d'exploration déjà réalisé.
-\item[Sélection de composants prioritaires] Développer le cœur du système RAG avec graphe de connaissances en implémentant 3 agents clés (curateur, analyste, rédacteur) avec leurs services essentiels, et en créant une interface minimale mais fonctionnelle (plugin Zotero et dashboard simple).
-\end{description}
-
-\subsection{Équipe proposée (sur 9 mois)}
-
-\begin{itemize}
-\item1 data scientist/ingénieur IA senior (80-90K€ charges comprises)
-\item1 développeur full-stack (50-60K€ charges comprises)
-\item Expertise en statistiques énergétiques : consultations ponctuelles (10K€)
-\end{itemize}
-
-\subsection{Répartition des efforts}
-
-\begin{description}
-\item[Phase 1 (2 mois)] Architecture et infrastructure
-
-  \begin{description}
-    \item  Mise en place des bases de données (documentaire, vectorielle, graphe)
-  \item  Développement d'un système d'ingestion de documents basique
-  \item  Création d'un environnement de test avec données existantes
-  \end{description}
-\item[Phase 2 (3 mois)] Extraction et représentation des connaissances
-
-  \begin{description}
-    \item  Développement des modules d'extraction d'information depuis des PDF/textes
-  \item  Implémentation d'un modèle de données basé sur l'ontologie Open Energy
-  \item  Création d'un système de traçabilité des sources
-  \end{description}
-\item[Phase 3 (3 mois)] Interface et génération
-
-  \begin{description}
-    \item  Développement du plugin Zotero basique
-  \item  Création d'un dashboard de visualisation
-  \item  Implémentation du système de génération de tables statistiques
-  \end{description}
-\item[Phase 4 (1 mois)] Tests et raffinement
-
-  \begin{description}
-    \item  Validation avec des experts du domaine
-  \item  Documentation des usages
-  \item  Release en logiciel libre
-  \end{description}
-\end{description}
-
-Cette preuve de concept s'impose des limitations par rapport à la vision à long terme. Les agents Expert-pays, Rédacteur et Veilleur ne sont pas mis en place. Loin d'être global, le multilinguisme reste français/anglais/vietnamien. L'interface utilisateur est simplifiée.
-
-Cette preuve de concept permettrait de démontrer les principes fondamentaux de l'architecture - notamment la traçabilité des sources et la fusion des données contradictoires - tout en restant dans une enveloppe budgétaire contenue. Elle fournirait une base solide pour décider d'un déploiement plus complet ultérieurement.
+Le développement rapide des modèles de langage et des frameworks agentiques (de nouveaux outils apparaissent chaque mois) laisse prévoir que les lacunes identifiées -- en particulier l'intégration RAG-graphe et la construction automatique d'ontologies -- seront progressivement comblées. L'enjeu est de constituer dès maintenant les bases documentaires et les référentiels de qualité qui permettront d'exploiter pleinement ces avancées.
 
 \bibliography{refs}
 
