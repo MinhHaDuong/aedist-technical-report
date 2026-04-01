@@ -27,7 +27,7 @@
 \title{AEDIST: AI for Energy Data, Information and Statistics\\
 \large Rapport technique}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
-\date{2025}
+\date{2026}
 
 \usepackage[round,authoryear]{natbib}
 \bibliographystyle{plainnat}
@@ -41,18 +41,18 @@
 \tableofcontents
 
 \begin{abstract}
-Ce rapport examine la faisabilité du projet AEDIST (AI-driven Energy Data Integration for Sustainable Transition) visant à créer un système de suivi de la transition énergétique dans les pays ne disposant pas d'offices statistiques performants dans ce domaine. L'étude se concentre sur une tâche représentative : l'inventaire du parc de centrales thermiques du Vietnam.
+Nous évaluons la capacité de l'IA à produire des statistiques énergétiques, en utilisant l'inventaire des centrales thermiques du Vietnam comme benchmark. Seize grands modèles de langage sont testés en requête directe puis en approche conversationnelle avec relances~; les résultats sont ensuite améliorés par Retrieval Augmented Generation (RAG) à partir de documents sources, et comparés aux données disponibles dans les graphes de connaissances globaux (OpenStreetMap, Wikidata, Diffbot, DBpedia).
 
-À travers une analyse comparative des technologies disponibles, nous démontrons les limites des grands modèles de langage utilisés seuls et explorons l'apport des approches plus sophistiquées comme le Retrieval Augmented Generation (RAG), les graphes de connaissances et les systèmes multi-agents. Nous évaluons leur capacité à produire des statistiques fiables, traçables et actualisées à partir de sources hétérogènes et multilingues.
+Les LLM seuls retournent 30 à 40 centrales sur plus de 110 recensées~; l'approche RAG avec relances atteint 73 correspondances (exactes et approximatives) sur l'inventaire de référence. Les graphes globaux apportent des données complémentaires mais aucun n'est suffisant seul. Les outils intégrés (R2R, TrustGraph) combinant agents, RAG et graphes de connaissances restent immatures.
 
-Le rapport propose une architecture hybride combinant ces technologies pour répondre aux défis spécifiques du suivi statistique de la transition énergétique. Cette solution privilégie l'utilisation d'outils d'IA ouverts et contrôlés, exécutés localement, pour garantir la souveraineté des données et l'indépendance du système.
+Ces résultats montrent qu'une approche hybride -- combinant RAG, graphes de connaissances alignés sur une ontologie du domaine, et agents spécialisés -- est nécessaire et faisable pour produire des statistiques énergétiques traçables à partir de sources hétérogènes et multilingues.
 \end{abstract}
 
 \chapter{Introduction}
 
 \section{Problématique}
 
-Est-il possible de suivre la transition énergétique d'un pays qui ne dispose pas d'un office de statistique performant dans ce domaine, sur la base de sources ouvertes? La tâche est faisable par un expert~: pendant plusieurs années, nous avons maintenu des tables de référence des projets de génération électrique au Vietnam, qu'ils soitnt opérationnels, en construction ou planifiés \citep{NLN8GPNI}.
+Est-il possible de suivre la transition énergétique d'un pays qui ne dispose pas d'un office de statistique performant dans ce domaine, sur la base de sources ouvertes? La tâche est faisable par un expert~: pendant plusieurs années, nous avons maintenu des tables de référence des projets de génération électrique au Vietnam, qu'ils soient opérationnels, en construction ou planifiés \citep{NLN8GPNI}.
 
 Dans quelle mesure peut on automatiser ce processus avec les nouveaux outils de data science?
 Ce rapport examine les conditions de création d'un système qui collectera et analysera les données disponibles sur le deep web en quasi temps-réel, et utilisera des outils AI ouverts, contrôlés et exécutés localement.
@@ -96,17 +96,7 @@ Ce rapport explore la question au niveau faisabilité. L'optimisation du coût, 
 
 \section{Plan}
 
-Ce rapport est structuré comme suit :
-
-D'abord, nous analysons les limites des grands modèles de langage (chapitres \ref{chap:llm-stats} et \ref{chap:llm-knowledge}) : bien qu'ils puissent contenir des connaissances sur l'inventaire demandé, ils ne permettent pas d'obtenir des tables statistiques fiables en raison des hallucinations.
-
-Nous explorons ensuite l'approche du Retrieval Augmented Generation (RAG) qui améliore les résultats en fournissant des documents pertinents aux LLM (chapitres \ref{chap:documents} et \ref{chap:rag}).
-
-Les chapitres \ref{chap:kg} et \ref{chap:agents} examinent comment structurer les informations dans un graphe de connaissances, permettant une traçabilité complète des sources et l'intégration avec des systèmes multi-agents.
-
-Enfin, le chapitre \ref{chap:architecture} propose une architecture complète pour un système de statistiques énergétiques, suivie d'une conclusion (chapitre \ref{chap:conclusion}) qui replace cette étude dans une perspective historique et justifie l'urgence du projet AEDIST.
-
-Cette étude de faisabilité vise à démontrer qu'une combinaison d'approches hybrides (RAG, graphes de connaissances et agents spécialisés) offre une solution prometteuse au défi du suivi statistique de la transition énergétique.
+Ce rapport progresse du plus simple au plus sophistiqué. Le chapitre~\ref{chap:evaluation} évalue la capacité des LLM à produire des tables statistiques, d'abord en requête directe, puis par approche conversationnelle avec relances. Le chapitre~\ref{chap:rag} traite de la découverte des documents sources et de l'amélioration des résultats par Retrieval Augmented Generation (RAG). Le chapitre~\ref{chap:kg} examine l'apport des graphes de connaissances pour la traçabilité et la structuration des données. Le chapitre~\ref{chap:agents} évalue les systèmes multi-agents existants. Le chapitre~\ref{chap:architecture} propose une architecture hybride combinant ces approches. Le chapitre~\ref{chap:conclusion} dresse le bilan des résultats quantitatifs et évalue la faisabilité de l'approche.
 
 \chapter{Évaluation des LLM}\label{chap:evaluation}
 
