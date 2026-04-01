@@ -333,332 +333,48 @@ L'écosystème des frameworks agentiques est en pleine expansion~: LangGraph, Ll
 
 Ces résultats confirment que l'écosystème est encore immature pour notre cas d'usage~: la construction automatique de graphes sans ontologie produit des résultats incomplets, et l'intégration RAG-graphe n'est pas encore opérationnelle dans les outils testés.
 
-\chapter{Architecture d'un système de statistiques énergétiques}\label{chap:architecture}
+\chapter{Architecture proposée}\label{chap:architecture}
 
-\section{Cahier des charges et principes architecturaux}
+\section{Objectifs et principes}
 
-\subsection{Contexte et objectifs}
+Le système AEDIST doit intégrer des données statistiques sur les infrastructures énergétiques provenant de sources hétérogènes et multilingues, avec traçabilité complète jusqu'aux sources primaires. Les cas d'usage principaux sont la production de tables statistiques, l'interrogation flexible, la production de rapports de synthèse, et la génération de datasets pour les modèles de transition énergétique.
 
-Le système doit intégrer des données statistiques sur les infrastructures énergétiques provenant de sources hétérogènes et multilingues. Ces données comportent une dimension temporelle importante, incluant des faits avérés et des projections futures. Le système doit permettre un suivi à jour des évolutions tout en maintenant une traçabilité complète des informations.
-
-\subsection{Cas d'usage principaux}
-
-\begin{itemize}
-\item Production de tables statistiques d'entités (centrales, infrastructures, etc.) dans une zone géographique donnée
-\item Interrogation flexible sur les caractéristiques techniques et l'évolution des projets
-\item Production de rapports de synthèse à fréquence variable (selon les besoins plutôt que forcément quotidienne) sur la transition énérgétique dans un pays ou sur des sous secteurs spécifiques.
-\item Visualisation des données et tendances temporelles
-\item Production de datasets pour les modèles de la transition énergétique
-\item Production de scénarios prospectifs basés sur des données historiques et actuelles, y compris qualitatives (orientations politiques).
-\end{itemize}
-
-\subsection{Besoins fonctionnels}
-
-\begin{itemize}
-\item Extraction structurée d'informations à partir de documents variés (rapports techniques, communiqués officiels, articles de presse)
-\item Traitement multilingue (adaptable à différentes régions du monde)
-\item Traçabilité complète des données jusqu'aux sources primaires
-\item Alignement avec des ontologies de référence (notamment Open Energy Ontology)
-\item Distinction claire entre faits établis et projections
-\item Capacité à répondre à des requêtes complexes avec des sources vérifiables
-\end{itemize}
-
-\subsection{Architecture générale en microservices}
-
-Une architecture en microservices est une approche de développement logiciel qui structure une application comme un ensemble de services faiblement couplés et hautement maintenables. Contrairement aux architectures monolithiques traditionnelles, où toutes les fonctionnalités sont regroupées dans une seule base de code, les microservices décomposent l'application en composants indépendants qui communiquent entre eux via des API bien définies.
-
-Dans le contexte de notre système de statistiques énergétiques, l'architecture en microservices permet:
-
-\begin{description}
-\item[Spécialisation des services] Services d'indexation documentaire, d'extraction d'entités, de génération de rapports, chacun optimisé pour sa tâche spécifique.
-\item[Évolution technologique graduelle] Possibilité d'améliorer les modèles d'IA pour l'extraction ou l'analyse sans perturber les autres composants.
-\item[Résilience] Le dysfonctionnement d'un service d'extraction n'empêche pas la consultation des données déjà présentes dans le système.
-\item[Intégration flexible] Facilité d'ajouter de nouvelles sources de données ou de nouveaux types d'analyses.
-\item[Équilibrage des ressources] Allocation proportionnée des ressources computationnelles entre les tâches intensives (traitement de PDF) et légères (interrogation du graphe).
-\end{description}
-
-Cette approche est particulièrement adaptée à un système évolutif qui doit s'intégrer avec des outils existants comme Zotero tout en offrant des capacités d'analyse avancées et une pérennité sur plusieurs années.
+L'architecture en microservices permet la spécialisation des composants, l'évolution technologique graduelle, la résilience, et l'équilibrage des ressources entre tâches intensives (traitement de PDF) et légères (interrogation du graphe).
 
 \includegraphics[width=170mm,height=162.28mm]{Pictures/figure1.png}
 
-\section{La couche d'interface au chercheur}
-
-\subsection{Rôle et objectifs}
-
-La couche d'interface au chercheur constitue le point de contact entre le système AEDIST et son utilisateur. Elle est conçue pour s'intégrer naturellement dans le workflow quotidien des chercheurs et experts énergétiques, plutôt que d'imposer de nouveaux outils ou habitudes de travail. Cette couche répond à deux principes essentiels :
-
-\begin{description}
-\item[Intégration aux outils existants] Privilégier l'extension d'outils déjà utilisés par les chercheurs
-\item[Minimisation de la friction] Réduire au maximum les étapes supplémentaires dans le processus de recherche
-\end{description}
-
-Les composantes de cette couche sont~:
-
-\subsection{Extension de navigateur}
-
-L'extension de navigateur représente l'outil principal de découverte et de capture d'information :
-
-\begin{description}
-\item[Détection automatique de contenu pertinent] Identification du contenu énergétique lors de la navigation normale
-\item[Surbrillance intelligente] Mise en évidence des entités importantes (centrales, projets, organisations)
-\item[Capture one-click] Sauvegarde du contenu vers Zotero avec métadonnées enrichies
-\item[Recommandations contextuelles] Suggestion de sources complémentaires en fonction du contenu consulté
-\item[Validation des sources] Interface pour confirmer/rejeter les suggestions du système de veille
-\end{description}
-
-\subsection{Plugin Zotero}
-
-Zotero sert de hub central pour la gestion des connaissances du chercheur :
-
-\begin{description}
-\item[Métadonnées spécialisées] Champs supplémentaires adaptés au domaine énergétique
-\item[Organisation automatique] Classement intelligent des documents selon leur contenu
-\item[Visualisation des relations] Interface pour explorer les liens entre documents
-\item[Déclenchement d'analyses] Lancement de traitements sur des collections ou documents spécifiques
-\item[Synchronisation bidirectionnelle] Mise à jour du graphe de connaissances et récupération d'informations complémentaires
-\end{description}
-
-\subsection{Dashboard analytique}
-
-Le dashboard fournit des vues synthétiques et analytiques des données sur la transition énergétique dans les pays concernés :
-
-\begin{description}
-\item[Visualisations interactives] Graphiques, cartes, et tableaux dynamiques
-\item[Filtres multicritères] Exploration des données selon différentes dimensions
-\item[Requêtes en langage naturel] Interface conversationnelle pour interroger les données
-\item[Accès aux sources] Lien direct vers les documents source pour chaque information
-\item[Export personnalisé] Génération de rapports et extractions de données
-\end{description}
-
-\subsection{Interface de digest d'information}
-
-Cette interface permet de recevoir et configurer les synthèses d'information :
-
-\begin{description}
-\item[Rapports configurables] Paramétrage du contenu, format et fréquence
-\item[Alertes personnalisées] Notification sur des événements spécifiques
-\item[Hiérarchisation flexible] Présentation par importance, thématique ou géographie
-\item[Retour d'expérience] Mécanisme pour améliorer la pertinence des futures synthèses
-\item[Archivage consultable] Accès à l'historique des synthèses précédentes
-\end{description}
-
-La couche d'interface s'insère dans le cycle de travail naturel d'un chercheur expert en transition énergétique :
-
-\begin{description}
-\item[Phase de découverte] Navigation web enrichie par l'extension qui identifie le contenu pertinent
-\item[Phase d'organisation] Capture et classification automatique dans Zotero
-\item[Phase d'analyse] Exploration des données via le dashboard et les fonctionnalités étendues de Zotero
-\item[Phase de synthèse] Génération de rapports et partage de résultats
-\item[Phase de veille] Réception de digests d'information selon les préférences définies
-\end{description}
-
-Cette intégration transparente permet une accumulation progressive de connaissances, où chaque interaction enrichit le système global.
-
-La couche d'interface communique avec le reste du système via le "Research Event Bus" :
-
-\begin{description}
-\item[Événements utilisateur → Microservices] Les actions du chercheur (sauvegarde d'un document, lancement d'une requête) génèrent des événements qui déclenchent les services appropriés
-\item[Microservices → Interface] Les résultats des traitements sont retournés aux interfaces sous forme d'événements (nouvelles entités identifiées, résultats d'analyse)
-\end{description}
-
-Ce modèle événementiel permet un découplage entre les interfaces et les traitements, facilitant l'évolution indépendante des différentes parties du système.
-
-\subsection{Avantages de cette approche}
-
-L'approche centrée chercheur de cette couche d'interface présente plusieurs avantages significatifs :
-
-\begin{description}
-\item[Courbe d'apprentissage réduite] L'utilisation d'outils familiers facilite l'adoption
-\item[Accumulation de connaissance organique] Chaque action de recherche normale contribue à enrichir la base de connaissances
-\item[Contrôle utilisateur] Le chercheur reste maître du processus, avec une validation humaine des étapes critiques
-\item[Flexibilité d'usage] Adaptation aux différents styles de travail (proactif vs réactif, structuré vs exploratoire)
-\item[Évolutivité de l'expérience] Possibilité d'automatiser progressivement plus de tâches à mesure que la confiance dans le système augmente
-\end{description}
-
-Cette couche représente ainsi le pont essentiel entre les capacités techniques sophistiquées du système (microservices, graphe de connaissances, IA) et les besoins pratiques et quotidiens des experts du domaine énergétique.
-
 \section{Architecture informationnelle en quatre niveaux}
 
-À l'autre bout du système, AEDIST propose une architecture de données en quatre niveaux complémentaires, assurant à la fois richesse sémantique, performance et flexibilité :
-
-\subsection{1. Document store}
-
-\begin{itemize}
-\item C'est essentiellement un cache web, versionné.
-\item Inclut des ressources inaccessibles, illisibles, changeantes.
-\item Un archivage des fichiers bruts dans leurs formats natifs.
-\end{itemize}
-
-\subsection{2. Base documentaire validée}
-
-\begin{itemize}
-\item \textbf{Zotero} comme gestionnaire de références et point d'entrée utilisateur
-\item Métadonnées complètes incluant provenance et information contextuelle
-\item Support du multilinguisme avec titres et résumés traduits
-\end{itemize}
-
-\subsection{3. Couche vectorielle sémantique}
-
-\begin{itemize}
-\item \textbf{Base de vecteurs} pour la recherche par similarité conceptuelle
-\item Embeddings multilingues pour transcender les barrières linguistiques
-\item Indexation optimisée pour le RAG (Retrieval Augmented Generation)
-\item Clustering sémantique pour regrouper les informations connexes
-\end{itemize}
-
-\subsection{4. Couche de connaissance structurée}
-
-\begin{itemize}
-\item \textbf{Graphe de connaissances} basé sur l'ontologie Open Energy Ontology
-\item Structure explicite des entités et relations du domaine énergétique
-\item Traçabilité intégrale des assertions jusqu'aux sources documentaires
-\item Lien bidirectionnel avec la couche sémantique.
-\end{itemize}
-
-Cette architecture hybride évite les limites des approches purement RDF (connaissances qualitatives ou hors du domaine) ou uniquement vectorielles (manque de traçabilité rigoureuse). Elle permet d'exploiter le meilleur des deux mondes :
-
-\begin{itemize}
-\item Traçabilité et rigueur du graphe de connaissances
-\item Performance et flexibilité de la recherche sémantique
-\item Richesse documentaire de la base de références
-\end{itemize}
-
-L'application utilise deux autres systèmes de stockage~:
-
-\subsection{5. Report Archive}
-
-\begin{itemize}
-\item Historique des interactions avec l'utilisateur, des résultats produits (veille, chat, rapports, tables...)
-\item Mémoire des préférences et intérêts de l'utilisateur.
-\item Modèles pour les rapports futurs.
-\end{itemize}
-
-\subsection{6. Analytics Cache}
-
-\begin{itemize}
-\item Stocke les statistiques dérivées de la base de connaissances
-\item Mise à jour continue avec arrivée de nouvelles informations
-\item Persistence non critique, peut être régénéré
-\end{itemize}
-
-\section{Microservices, flux et points d'attention}
-
-L'architecture des microservices est organisée en groupes fonctionnels pour faciliter la maintenance et l'évolution. Chaque groupe est orchestré par un agent spécialisé :
-
-\subsection{Services de gestion documentaire -- Agent Curateur}
-
 \begin{description}
-\item[Service d'indexation intelligente] extraction automatique des métadonnées (type, titre, auteur, date, langue)
-\item[Service de normalisation] harmonisation des formes de noms, formats de dates et types de documents
-\item[Service de relations documentaires] gestion des liens entre documents (citations, versions, traductions)
-\item[Service de résumé] génération de résumés multilingues
+\item[1. Document store] Cache web versionné des fichiers bruts dans leurs formats natifs.
+\item[2. Base documentaire validée] \textbf{Zotero} comme gestionnaire de références et point d'entrée utilisateur, avec métadonnées complètes et support multilingue.
+\item[3. Couche vectorielle sémantique] Base de vecteurs pour la recherche par similarité conceptuelle, avec embeddings multilingues et indexation optimisée pour le RAG.
+\item[4. Couche de connaissance structurée] \textbf{Graphe de connaissances} basé sur l'Open Energy Ontology, avec traçabilité intégrale des assertions jusqu'aux sources documentaires et lien bidirectionnel avec la couche sémantique.
 \end{description}
 
-\subsection{Services d'extraction et d'intégration -- Agent Analyste}
+Cette architecture hybride combine la traçabilité et la rigueur du graphe de connaissances, la performance de la recherche sémantique, et la richesse documentaire de la base de références.
+
+\section{Services et agents}
+
+Les microservices sont organisés en groupes fonctionnels, chacun orchestré par un agent spécialisé~:
 
 \begin{description}
-\item[Service d'extraction d'entités] identification des infrastructures, organisations, technologies, etc.
-\item[Service de résolution d'entités] réconciliation des mentions à la même entité
-\item[Service de validation factuelle] vérification et qualification des informations extraites
-\item[Service d'intégration au graphe] mise à jour cohérente du graphe de connaissances
+\item[Agent Curateur] Indexation intelligente, normalisation des métadonnées, gestion des relations entre documents, résumés multilingues.
+\item[Agent Analyste] Extraction et résolution d'entités, validation factuelle, intégration au graphe de connaissances.
+\item[Agent Veilleur] Surveillance des sources, classification thématique, génération de digests, analyse statistique.
+\item[Agent Rédacteur] Requêtes structurées sur le graphe, recherche sémantique via RAG, génération de rapports, export de données.
 \end{description}
 
-\subsection{Services de veille et d'analyse -- Agent Veilleur}
+L'interface au chercheur s'intègre aux outils existants (navigateur web, Zotero) et communique avec les microservices via un bus événementiel, permettant une accumulation progressive de connaissances.
+
+\section{Points d'attention}
 
 \begin{description}
-\item[Service de veille sources] surveillance des sources pertinentes à fréquence configurable
-\item[Service de classification] catégorisation thématique du contenu
-\item[Service de génération de digest] production de synthèses à la demande ou selon planning personnalisé
-\item[Service statistique] analyse quantitative et production de visualisations
+\item[Échelle] Architecture optimisée pour l'usage personnel~: millions d'entités dans le graphe, milliers de documents dans Zotero. Évolution possible vers un système pair à pair.
+\item[Qualité des données] Validation avant ingestion, contrôle ontologique, vérification par LLM spécialisé, traçabilité complète de chaque assertion.
+\item[Pérennité] Formats ouverts et standards, modules indépendants facilitant l'évolution technologique.
+\item[Intégration] Interface via des outils familiers, automatisation progressive, contrôle utilisateur sur les processus critiques.
 \end{description}
-
-\subsection{Services d'interrogation -- Agent Rédacteur}
-
-\begin{description}
-\item[Service de requêtes structurées] interrogation du graphe de connaissances
-\item[Service de recherche sémantique] requêtes en langage naturel via RAG
-\item[Service de génération de rapports] production de documents synthétiques
-\item[Service d'export] extraction des données dans différents formats
-\end{description}
-
-\subsection{Flux de données et interactions}
-
-\begin{description}
-\item[Acquisition documentaire]~
-
-  \begin{description}
-    \item  Découverte via navigation web (extension navigateur)
-  \item  Veille automatisée sur sources identifiées
-  \item  Importation directe par l'utilisateur
-  \end{description}
-\item[Traitement et enrichissement]~
-
-  \begin{description}
-    \item  Indexation et métadonnées
-  \item  Extraction de texte et conversion en formats structurés
-  \item  Analyse et extraction d'entités/relations
-  \item  Alignement sur l'ontologie de référence
-  \end{description}
-\item[Intégration à la base de connaissances]~
-
-  \begin{description}
-    \item  Ajout au graphe avec provenance
-  \item  Résolution des conflits éventuels
-  \item  Génération des embeddings vectoriels
-  \item  Mise à jour des indices
-  \end{description}
-\item[Exploitation]~
-
-  \begin{description}
-    \item  Requêtes utilisateur via interface Zotero, dashboard ou API
-  \item  Génération de rapports de synthèse
-  \item  Production de visualisations
-  \item  Extraction de données statistiques
-  \end{description}
-\end{description}
-
-\subsection{Points d'attention}
-
-Performance et passage à l'échelle~:
-
-\begin{itemize}
-\item Architecture optimisée pour l'échelle personnelle~: millions d'entités dans le graphe de connaissance, milliers de documents dans Zotero, douzaines de références dans les collections thématiques.
-\item Indexation efficace du graphe pour des requêtes rapides
-\item Traitement par lots pour les opérations intensives
-\item Mise en cache des requêtes fréquentes
-\item Évolution vers un système ouvert pair à pair pour partager les sources et les connaissances.
-\end{itemize}
-
-Qualité des données
-
-\begin{itemize}
-\item Validation avant ingestion dans Zotero
-\item Validation par contrôle ontologique
-\item Vérification des résultats systématique par LLM spécialisé
-\item Détection et résolution transparente des contradictions
-\item Qualification des sources (fiabilité, fraîcheur)
-\item Traçabilité complète de chaque assertion
-\end{itemize}
-
-Pérennité du système
-
-\begin{itemize}
-\item Formats ouverts et standards pour toutes les données
-\item Documentation continue de l'architecture
-\item Modules indépendants facilitant l'évolution technologique
-\item Stratégie de migration de données prévue dès la conception
-\end{itemize}
-
-Intégration dans le workflow du chercheur
-
-\begin{itemize}
-\item Interface principale via des outils familiers (navigateur, Zotero)
-\item Automatisation progressive des tâches répétitives
-\item Contrôle utilisateur sur les processus critiques
-\item Adaptabilité aux préférences individuelles de fréquence et de format
-\end{itemize}
-
-Cette architecture vise à combiner rigueur scientifique, praticité d'usage et flexibilité technique, en permettant une évolution progressive vers plus d'automatisation tout en maintenant la qualité et la traçabilité des données énergétiques.
 
 \chapter{Conclusion}\label{chap:conclusion}
 
