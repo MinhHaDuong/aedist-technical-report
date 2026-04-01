@@ -208,283 +208,58 @@ Deux limites fondamentales demeurent~:
 
 La technique RAG a le potentiel d'assurer la traçabilité des résultats et de connaître le pedigree des données.
 
-\chapter{Trouver et préparer les documents sources}\label{chap:documents}
+\chapter{Documents sources et RAG}\label{chap:rag}
 
-\section{Veille}
+Ce chapitre traite de la découverte et préparation des documents sources, puis de leur utilisation pour améliorer les résultats des LLM via le Retrieval Augmented Generation (RAG).
 
-Nous découvrons les documents par~:
+\section{Découverte et préparation des documents}
 
-\begin{itemize}
-\item Suivi des posts LinkedIn sur mon profil identifié par l'algorithme comme intéressé par le sujet.
-\item Abonnement aux newsletters Vietnam Energy Transition Update et Vietnam Infrastructure Updates
-\item Examen des sommaires du site NangLuongVietnam.vn
-\item Occasionnellement, recherche Google
-\item Occasionnellement, suivi des références dans les sections bibliographiques des documents existants.
-\end{itemize}
+\subsection{Veille}
 
-Les documents découverts sont traduits si besoin, puis examinés pour déterminer si ils méritent d'être archivés. La validation est une étape clé~: avoir une archive de références de qualité c'est un facteur différentiant pour une organisation. On s'attachera à un critère de qualité élevé~: le contenu doit avoir été vérifié deux fois par un expert pour entrer dans la base. C'est le cas en particulier des articles scientifiques. La seconde validation peut être par l'utilisateur.
+Les documents sont découverts par veille manuelle~: suivi de LinkedIn, abonnement à des newsletters spécialisées (Vietnam Energy Transition Update, Vietnam Infrastructure Updates), examen des sommaires de NangLuongVietnam.vn, et suivi des références bibliographiques. Les documents sont traduits si besoin, puis validés avant archivage~: le contenu doit avoir été vérifié par un expert pour entrer dans la base.
 
-Il sera donc nécessaire de maintenir un index des sources (éditeurs/groupes, séries/revues/newsletters..., journalistes/influenceurs\ldots) détaillant la temporalité de leur activité et la qualité de leurs pratiques. Ce métacatalogue sera initialisé sur la collection Zotero existante et mis à jour en continu. Il déterminera l'activité de veille.
+Il existe de nombreux services de bibliométrie académique et scientifique \citep{5WPNTHNM}, des bases traditionnelles (Web of Science, Scopus, Dimensions) aux outils AI récents (Elicit, Connected Papers, Scite). Au-delà des publications académiques, des acteurs comme AlphaSense ou Bloomberg proposent de l'intelligence économique. Notre optique est différente~: nous visons une connaissance ouverte du deep web, à l'échelle personnelle, accumulée sur le temps long, avec validation humaine avant ingestion dans la base.
 
-Les articles de presse reprennent souvent un contenu extérieur. On tente de remonter à la source.
+\subsection{Indexation dans Zotero}
 
-Par exemple, on a vu sur le site de la newsletter Vietnam Energy Transition Update que des numéros anciens étaient disponibles et on les a indexés, sans toutefois remonter l'intégralité (économie de temps).
+Les documents sont indexés dans Zotero \citep{9666795Z}, avec attention aux contraintes de multilinguisme et de normalisation des métadonnées. L'indexation automatique reste un défi~: plusieurs approches sont envisageables (métadonnées embarquées, archives DOI/ISBN, adaptateurs par source, LLM généraliste, ou modèles spécialisés comme GROBID).
 
-Concernant la veille par le réseau des citations entre articles scientifiques, il existe de nombreux services de bibliométrie académique et scientifique \citep{5WPNTHNM} et aucun n'ignore la révolution IA en cours.
+\subsection{Conversion PDF vers Markdown}\label{sec:pdf-to-md}
 
-Dans les acteurs du monde de l'édition scientifique traditionnel, le premier est Web of Science, fondé dans les années 60 chez Thomson Reuters, et aujourd'hui possédé par Clarivariate Analytics. L'autre groupe dominant de la bibliométrie scientifique est Scopus de Elsevier (groupe RELX). On peut ajouter la base Dimensions de Digital Science. Cette base bibliométrique lancée en 2010, appartenant au groupe Holzbrinck qui contrôle Springer Nature, s'étend aux financements et aux brevets.
+La conversion des documents en Markdown améliore le traitement ultérieur par les LLM. Nous avons développé \emph{pdfOCR2md.py}, un script qui délègue l'OCR à un LLM et retourne du Markdown structuré. Selon les comparatifs \citep{ULQGRISS,RM4KCTEG}, faire reconnaître un PDF par un LLM généraliste est la solution la plus qualitative mais aussi la plus lente et onéreuse. Des solutions comme Docling, Marker, ou Mistral OCR offrent des compromis intéressants.
 
-Les acteurs d`internet s'intéressent aussi à la connaissance scientifique et disposent d'un pouvoir de négociation avec les éditeurs. Le périmètre de Google Scholar, lancé fin 2004, est très étendu mais opaque. Les données du Microsoft Academic Graph ont été repris en 2021 dans la base OpenAlex, créée à cet effet par l'organisation à but non lucratif OurResearch. Les données ont aussi été reprises par SemanticScholar, projet lancé en 2015 par la fondation Paul Allen, qui non seulement indexe les métadonnées mais aussi en analyse le contenu.
+\section{Stratégie RAG}
 
-Des startups AI proposent des services innovants au dessus de ces bases. Cette nouvelle génération d'assistants à la recherche combine souvent IA, visualisation et analyse de réseaux. Scite, fondé en 2018, exploite le réseau des citations entre les travaux. Elicit, lancé en 2020, se concentre sur l'aide à la revue systématique de littérature. Connected Papers permet de visualiser et explorer la littérature scientifique à travers un graphe de similarité d'articles, utilisant l'analyse de citations et la similarité sémantique. Research Rabbit et Litmaps proposent de la veille sur un sujet donné. On peut aussi mentionner Iris.ai, VOSviewer, Inciteful, Open Knowledge Maps.
-
-Au delà de ces bases centrées sur les publications académiques, d'autres acteurs proposent de l'intelligence économique comme AlphaSense, Bloomberg ou Guidepoint. Ils diffèrent par leur domaine de spécialité (finance, énergie, ...), par leurs type de source (interview d'experts, media, télédétection, \ldots), par leur géographie.
-
-Peu d'acteurs hors du monde occidental sont mentionnés dans cette section, les efforts se sont d'abord concentrés sur la valorisation de la production nationale.
-
-La Chinese National Knowledge Infrastructure (CNKI) une bases de données académiques essentielle de Chine. Elle regroupe un vaste ensemble de ressources incluant la quasi-totalité des journaux académiques chinois, ainsi que des thèses, des mémoires, des actes de conférence, des rapports techniques. L'autre fournisseur important est Wanfang Data, d'accès moins coûteux et qui couvre aussi brevets, normes et procédures
-
-La CiNii (Citation Information by National Institute of Informatics) est une base de données offrant un accès à une large collection d'articles de revues, de thèses, de rapports de conférences et d'autres publications scientifiques, orientée vers la production scientifique japonaise.
-
-D'autres bases régionales qui comptent sont Airiti à Taiwan, SciELO pour l'Amérique Latine, et KCI en Corée du Sud.
-
-À moyen terme, il ne fait pas de doute que beaucoup de pays non-OCDE disposent des ressources nécessaires et de la motivation pour faire une copie locale organisée de l'ensemble de la connaissance scientifique de l'humanité.
-
-Notre optique est différente~:
-
-On s'intéresse à la connaissance ouverte sans biais entre nations ou aires culturelles.
-
-L'échelle est personnelle. Le futur est de disposer d'un agent AI persistant qui va périodiquement moissonner les sources, filtrer les documents récoltés, les indexer, et les résumer. Garder l'humain dans la boucle et faire valider (ou non) les documents avant ajout à la base de connaissances semble encore utile -- un apprentissage par renforcement avec feedback humain (HFRL) permet d'adapter l'assistant aux attentes de l'utilisateur.
-
-La veille concerne le deep web. Elle ne se limite pas aux écrits académiques, et aux pages offertes à l'indexation par les robots. Beaucoup de documents nécessite explicitement un humain pour être acquis.
-
-Le but est de produire une connaissance approfondie sur un dossier précis. Il s'agit autant d'accumuler un savoir sur le temps long que de pouvoir répondre à une requête immédiate.
-
-\section{Indexation}
-
-Les documents sont stockés indexés dans notre système de gestion de documents Zotero. Pour cela, plusieurs manières voies sont utilisées~:
-
-\begin{itemize}
-\item Saisie de l'identifiant DOI, ISBN ou ArXiV.
-\item Plugin Firefox.
-\item Téléchargement, création d'un enregistrement ex nihilo et saisie manuelle.
-\end{itemize}
-
-Le problème de l'indexation est délicat. Selon nos pratiques \citep{9666795Z}~:
-
-\subsection{Normalisation des métadonnées de base}
-
-Le titre est en Sentence case et non en ALL CAPS ni en Title Case.
-
-Le nom complet est utilisé au lieu du schéma Nom / Prénom.
-
-Le champ date est au format YYYY-MM-DD.
-
-\subsection{Gestion du multi langues}
-
-Le Nom est écrit dans la langue originale. Comme sur le document original s'il s'agit d'une traduction.
-
-On utilise le champ «~Titre abrégé~» pour la traduction du titre en anglais (le champ Extra est plus approprié théoriquement. Sinon il y a Jurism qui est le fork multilingue~?)
-
-On doit réindexer certains documents dont le titre est en anglais, ou en bilingue.
-
-Pour les documents longs, la version traduite doit être indexée séparément de la version originale, avec un lien entre les 2 fiches. Il faut splitter les enregistrements qui contiennent des pièces jointes dans les deux langues.
-
-Par exemple pour la Décision 500, on crée une entrée pour la traduction anglaise et on y déplace le PDF traduit.
-
-Pour les documents courts, la version traduite peut être stockée en Note. La première ligne de la note commence par «~Fulltext~» et contient le mot «~translated~». Ce header peut contenir d'autres informations. Le texte commence après un marqueur de ligne horizontale «~-\/-\/-~»
-
-L'indexation automatique dans Zotero reste une fonctionalité à améliorer\footnote{\begin{quote}
-  \url{https://github.com/zotero/zotero/pull/1582}
-  \end{quote}}. Pour aller plus loin, plusieurs approches sont à envisager pour indexer les métadonnées.
-
-\begin{itemize}
-\item Utiliser les métadonnées embarquées dans le document. Celles ci sont rarement de qualité.
-\item Utiliser les métadonnées des archives (ISBN, DOI, ArXiV, OAI dont HAL\ldots) (cf. baguette magique Zotero). À privilégier, même quand le document n'est pas fourni par un lien vers une archive officielle il faut chercher s'il s'y trouve. Ne concerne que certains types de documents~: articles et manuscrits académiques, livres, certains rapports techniques.
-\item Écrire un adaptateur spécifique à chaque source (cf. plugins Zotero). On peut utiliser un LLM spécialisé en code auquel on fournit des exemples de documents bien indexés provenant de la même source.
-\item Utiliser une AI généraliste, par exemple un LLM avec Pydantic et Instructor.
-\item Entraîner un modèle spécifique. Par exemple, GROBID fait de l'extraction de métadonnées (en plus de l'extraction structurée du contenu) pour les PDF académiques.
-\end{itemize}
-
-On portera attention aux contraintes de multilinguisme, à la variété de types de documents et de formats. Le système d'indexation doit s'intégrer au quotidien du chercheur qui découvre des documents intéressants sur internet (LinkedIn, sites d'information, sites académiques\ldots) ou les reçoit par email. Il doit aussi offrir une API pour le système de veille et d'ingestion automatique. Il peut aussi être une brique importante d'un système d'amélioration de la qualité de la base de données, un cas d'usage qui demande une performance élevée.
-
-\subsection{Stockage}
-
-Le texte intégral original est enregistré en Pièce Jointe. Réciproquement, une pièce jointe doit être le texte intégral du document. Sinon utiliser une Note, le champ Résumé, voire créer un enregistrement séparé s'il s'agit d'un autre document.
-
-Lorsque le document contient un résumé en Note, on met celui ci dans le champ Résumé et on supprime cette Note.
-
-Par exemple pour le rapport 32/BC-BCT on crée une entrée séparée pour un article compte rendu qui était archivé comme une Note au rapport.
-
-On cherche le texte intégral quand il manque. On stocke la source la plus originale, accessible et officielle.
-
-Pour la Décision 500, on garde le PDF Journal Officiel, et la version Texte Intégral publiée sur le site du Gouvernement en HTML.
-
-Les préférences de format sont Markdown > HTML > DOC > PDF texte natif > PDF scanné > Screenshot image.
-
-TODO~: Stocker version Markdown comme Pièce Jointe plutôt que Note car c'est le texte intégral du document. Il peut être long.
-
-\subsection{Gestion des droits d'accès}
-
-On vérifie si le document est trouvable en ligne, sachant qu'on recherche dans le web profond. Par exemple Google archive mal LinkedIn.
-
-Exemple~: On dispose de la traduction d'un article de \href{https://nangluongsachvietnam.vn/}{https://nangluongsachvietnam.vn} . Ce site est fermé, mais on trouve la page sur web.archive.org et on l'ajoute en Pièce Jointe.
-
-En l'absence de source du texte intégral, on cherche une synthèse la plus descriptive possible. Par exemple pour la lettre 6633/BCT-DL, qui n'est pas publiée officiellement, on trouve un blogpost décrivant son contenu. Comme ce post est plus détaillé que le post LinkedIn qu'on a déjà, on l'ajoute à la collection.
-
-L'utilisation des documents administratifs publiés hors des canaux officiels (sur les réseaux sociaux par exemple) est un sujet sensible. Il importe de savoir si le document est indexé et disponible sur les portails officiels du Ministère <{}\url{https://moit.gov.vn/van-ban-phap-luat}>{} ou du gouvernement <{} \url{https://vpcp.chinhphu.vn/van-ban-ban-hanh.htm} >{} (selon que l'identifiant du document contient BCT ou VPCP). En pratique il est suffisant et plus efficace d'utiliser les sites juridiques comme \url{https://luatvietnam.vn/} et \url{https://thuvienphapluat.vn/}. On tag le champ Autorisation \#InMOITCatalog, \#NotInMOITCatalog, ou \#NotGooglable selon le résultat des test effectués. TODO~: Posssibilité d'utiliser les champs Archive / Localisation.
-
-\section{Reconnaissance et balisage (PDF to Markdown)}\label{sec:pdf-to-md}
-
-La conversion des documents en Markdown vise à améliorer le traitement ultérieur. Contrairement au PDF organisé en pages et qui peut être une succession d'images, c'est un format texte balisé. Différents cas de figure se sont présentés~:
-
-\begin{itemize}
-\item Des articles de journaux ayant déja le texte intégral traduit en Note. Une édition manuelle rapide a permis de baliser le titre et les sections.
-\item Des numéros de newsletter, en PDF texte mais formatés dans un tableau. On a convertit le PDF en Markdown avec Claude avant de l'attacher en Note. Le prompt utilisé était «~\emph{OCR the contents verbatim, as written without changing the language, and reformat as Markdown.}~»
-\item Des documents administratifs ayant déjà le texte intégral en Note, obtenu par copié/collé depuis un site juridique.
-\item Des documents administratifs de 5 à 70 pages en PDF image.
-\item Un document administratif de 69 pages, dispomible en PDF et en HTML.
-\item Un rapport technique de 843 pages et son annexe de 174 pages, en PDF texte.
-\end{itemize}
-
-Leur traitement nous a conduit à développer quelques outils~: pdfOCR2md.py , mergetables.py, counttokens.py.
-
-Exemple~: Traitement du document Décision 500 (PDP8). On nettoie la version HTML de 557K pour passer à 470K. La conversion en Markdown avec Pandoc descend à 355K mais abîme les tables. Constat d'échec, on repart de la version PDF publiée au journal officiel pour conversion avec le script. Succès partiel, on sature mon quota OpenAI avant les 5 dernières pages, et à partir de la table 15 il y a des erreurs de conversion. On splite le PDF à partir de la page 69 en quatre morceaux entre les tables et on recommence de pdfOCR2md. On remplace les espaces par des underscore dans les noms de fichiers. On rajoute de l'argent sur le compte OpenAI mais ça marche toujours pas. On essaye DeepSeek mais l'API n'est pas exactement compatible. Après le déjeuner, OpenAI remarche il devait avoir un délai pour traiter le payement. On transforme en Markdown par morceaux et on recolle à la main. Au final il pèse environ 112~857 tokens.
-
-\subsection{pdfOCR2md.py}
-
-Nous avons écrit un prototype de script qui prend un PDF images, délègue l'OCR à un LLM et retourne le Markdown structuré.
-
-TODO~: Ajouter un header «~<~!-\/-Fulltext in Markdown-\/->~». Capacité multi-LLM. Test harness. Captions dans la table. Supprimer les running headers. Réassembler les tables multi-pages.
-
-TODO~: Prompt différent pour une page de titre. Prompt différent selon le type de document. Inclure aussi le plan du document so far.
-
-On a utilisé ce prompt pour vérifier un document avec GPT-40~:
-
-\begin{quote}
-Examine this Markdown file, and verify it. Are all tables well formated? Is the hierarchical flow natural? Is anything unexpected?
-\end{quote}
-
-Exemple~: Il trouve des incohérences sur les tables 14, 15, 16, 17, 18, 19. Il suggère de retirer le running head répétant le numéro et la data du journal officiel sur chaque page -- on édite le fichier en ce sens. On supprime aussi les trailing spaces, les double ligne blanches. D'autres remarques inutiles, e.g. réécrire du contenu pour simplifier, ajouter une table des matières\ldots{} sont ignorées.
-
-TODO~: Agent LLM qui supervise la conversion et assure la qualité. Tente un modèle rapide et bon marché d'abord, et escalade si pas suffisant. Vérification des tables. Re-tenter les pages manquantes. Capture et traite les messages d'erreur des outils. Suppression espaces en fin de ligne. Suppression des running heads.
-
-\section{Outils et services}
-
-Paras Madan \citep{QMIERWZB} liste 5 outils de moissonage/ingestion open source pour convertir des pages web, PDF ou autre contenu non structuré en format prêt à traiter par LLM.
-
-\begin{description}
-\item[OneFileLLM] Aggregates and preprocesses diverse data sources into a single text file for seamless LLM ingestion.
-\item[Firecrawl] Scrapes websites, including dynamic content, and outputs clean markdown suitable for LLMs.
-\item[Ingest] Parses directories of text files into structured markdown and integrates with LLMs for immediate processing.
-\item[Jina Al Reader] Converts web content and URLs into clean, structured text for LLM use, with integrated web search capabilities.
-\item[Git Ingest] Transforms Git repositories into prompt-friendly text formats via simple URL modifications or a browser extension.
-\end{description}
-
-Pour l'étape de conversion PDF en Markdown, comme notre script, selon \citep{ULQGRISS}:
-
-\begin{enumerate}
-\item PyPDF2 fournit du texte non balisé.
-\item PyMuPDF4LLM fournit du Markdown, mais pas bon avec les tables.
-\item Docling produit du Markdown, bon en tables, mais lent.
-\item Marker est aussi qualitatif mais encore plus lent.
-\end{enumerate}
-
-Utiliser un service cloud pour distribuer et paralléliser Docling est une option intéressante pour les grandes collections. Toutefois, selon les tests comparatifs de \citep{RM4KCTEG} faire reconnaître un PDF par un LLM généraliste --comme le fait notre script-- est la solution la plus qualitative mais aussi la plus lente et onéreuse. Le domaine évolue rapidement~: la nouvelle offre Mistral OCR du 6 mars pourrait offrir un rapport performance/prix intéressant selon le comparatif de Jerry Liu (2025). La solution GROBID n'est pas à négliger dans le domaine des articles scientifiques.
-
-\chapter{Retrieval Augmented Generation}\label{chap:rag}
-
-\section{Stratégie}
-
-On pourrait procéder en deux temps pour construire une table complètement sourcée et à jour des centrales thermiques Vietnamiennes~: d'abord construire une table historique en utilisant les documents officiels, puis la mettre à jour en suivant l'actualité des dernières années. Cette section se concentre sur la première étape.
-
-Cette section est basée sur quelques hypothèses~:
-
-\begin{itemize}
-\item Démontrer la faisabilité de la construction initiale de la table suffit, les techniques pour la mise à jour sont semblables.
-\item Le LLM traite mieux du Markdown que des pages PDF.
-\item Le LLM répond mieux si on lui donne une information limitée aux tables pertinentes que les documents entiers.
-\item La stratégie serait automatisable par un agent AI.
-\end{itemize}
-
-Ces hypothèses peuvent sembler acquises début 2025, mais elles dépendent de la technologie utilisée pour le traitement qui est en progrès rapide.
-
-Le retrieval au sens de RAG se réfère à la recherche de fragments de texte susceptible de contenir une information. On met en œuvre une sélection à deux étages. Premièrement, on trouve un sous ensemble de 30 documents pertinents parmi une base bibliographique de plusieurs milliers. Deuxièmement, on trouve parmi ces documents les passages intéressants, soit quinze tables parmi des centaines de pages.
-
-\section{Le retrieval}
-
-Pour l'étude de faisabilité, on ne travaille pas sur l'ensemble de la base qui contient plus de 5000 documents. Un nombre restreint de sources suffit. Par exemple~: la page Wikipedia \href{https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam}{List\_of\_power\_stations\_in\_Vietnam} liste 40 documents sources pour justifier les tables des centrales à charbon et à gaz à jour en 2019.
+On procède en deux temps~: d'abord construire une table historique en utilisant les documents officiels, puis la mettre à jour. Le retrieval opère en deux étages~: trouver les documents pertinents parmi une base de milliers, puis extraire les passages intéressants (tables) parmi ces documents.
 
 \subsection{Retrieval par LLM}
 
-Une première approche consiste à exporter toute la bibliothèque Zotero et à demander à un LLM «~\emph{Trouve les 20 documents les plus susceptibles de contenir des listes de centrales thermiques au Vietnam.}~». Le fichier fait 1.3~MB en format Wikidata QuickStatements, 3.8~MB en COinS, 5.6~MB en JSON, il dépasse la longueur (context window) que la plupart des modèles peuvent traiter. Le modèle Gemini-1.5-Pro-2M est capable de traiter la requête, pour un coût 350 fois supérieur à la version 2.0-Flash. Le résultat est peu convaincant~: la première réponse dit que «~\emph{les plans de développement du secteur électrique \emph{incluent généralement la liste des centrales}}~», mais ne retourne pas ces plans dans la liste des documents, ni aucun document en Vietnamien. L'examen des table des matière des documents montre que sur les 20, seuls deux contiennent des inventaires nationaux. TODO~: Réindexer le rapport JICA de 2006 pour le PDP6.
-
-En continuant la conversation, il retourne partiellement les plans de développement en Vietnamien. Il cite des documents intéressants mais absents de la base.
+Exporter toute la bibliothèque Zotero (5.6~MB en JSON) et demander à un LLM de trouver les documents pertinents dépasse le context window de la plupart des modèles. Gemini-1.5-Pro-2M traite la requête pour un coût 350 fois supérieur à la version Flash, avec des résultats peu convaincants~: seuls 2 documents sur 20 contiennent des inventaires nationaux.
 
 \subsection{Techniques de retrieval}
 
-Une seconde approche consiste à coder un système pour chercher dans la base. Le système doit être multilingue. Il doit se coordonner avec la partie structure de la base de donnée et les pratiques d'indexation. De nombreuses techniques existent, les systèmes efficaces sont souvent hybrides et adaptatifs à la requête~:
+Les systèmes efficaces sont souvent hybrides~: scoring par LLM, recherche vectorielle par similarité sémantique, filtrage par mots-clés, ou encodage dans un réseau de connaissance. Pour cette étude de faisabilité, nous avons procédé par sélection manuelle raisonnée dans Zotero, en retenant les plans de développement du secteur électrique (PDP7, PDP7A, PDP8), des rapports d'implémentation, des newsletters et articles de presse, et trois jeux de données (Wikipedia, notre inventaire, Global Energy Monitor).
 
-\begin{itemize}
-\item Parcourir les documents un par un, soumettre le titre et le résumé à un petit LLM, et faire scorer la pertinence par rapport à la requête.
-\item Vectoriser (calculer et stocker les embeddings) les métadonnées titre, résumé, puis prendre les documents par proximité sémantique avec la requête. Il est utile de reformuler la requête.
-\item Vectoriser le contenu des documents à diverses échelles (volume, chapitre, section, sous-section, paragraphe / table / figure, phrase), trouver les feuilles pertinentes de l'arbre du document et remonter les niveaux. Il est utile d'ajouter le contexte aux fragments de document avant de les vectoriser.
-\item Filtrer par mots-clés déterminés à partir de la requête. On peut créer les mots-clés automatiquement à l'indexation.
-\item Trouver par similarité à partir d'exemples de documents pertinents.
-\item Regarder dans les notes et sources des tables similaires.
-\item Parcourir les documents, noter si ils contiennent des tables, noter la liste des tables (du document ou synthétique), chercher dans ces listes.
-\item Encoder les informations de tous les documents dans un réseau de connaissance représentant les entités évoquées et leurs relations. Utiliser ce réseau pour extraire les informations demandées et leurs sources.
-\end{itemize}
+\subsection{Extraction des tables pertinentes}
 
-TODO~: Le développer. Déconnecté mais synchronisé avec Zotero. Traitement par lot.
+Les pages d'annexes sont extraites des PDF et converties en Markdown (section~\ref{sec:pdf-to-md}), avec retouches manuelles. Au total, 15 fichiers Markdown contenant chacun une table, pour 138,6~kB soit 63~545 tokens.
 
-\subsection{Sélection manuelle}
+\section{Résultats du RAG}
 
-Afin de continuer cette étude de faisabilité, nous avons créé la collection «~List of thermal power plants in Vietnam~» dans Zotero par sélection manuelle raisonnée.
-
-Les documents pour la première étape sont les plans de développement du secteur électrique PDP7, PDP7A et PDP8 (décision 1208/2011/QD-TTg, 428/2016/QD-TTg, 500/2023/QD-TTg). On a aussi des rapports sur l'implémentation de ces plan (58/2019/BC-BCT , 32/2020/BC-BCT ), ainsi que le rapport préparatoire du PDP8 (Institute of Energy, rapport E-542, 2022/2). Les deux derniers documents sont de la littérature grise.
-
-Pour la seconde étape, on a en particulier regardé parmi les documents postérieurs à 2020-01-01 dont le titre contient «~PDP8~» «~Adjust~» ou «~điều chỉnh~» (adjust en Vietnamien), ainsi que parmi les documents dernièrement ajoutés à la base. On retiendra ainsi cinq newsletters en Anglais, et six articles de journal -- cinq en Vietnamien, un en Anglais.
-
-On ajoute trois jeux de données plus complets~: la page Wikipedia, notre «~List of coal and gas power projects in Vietnam~» et les tables produites depuis le Global Energy Monitor.
-
-\subsection{Extraction et préparation des tables pertinentes}
-
-On commence par extraire les pages du PDF, ce sont certaines annexes. On convertit ces pages en Markdown (voir section \ref{sec:pdf-to-md}) automatiquement. Nous retouchons à la main pour palier aux limitations du script -- c'est une étude de faisabilité. Nous stockons une table par fichier.
-
-\section{La génération}
-
-\subsection{Méthode et résultats}
-
-On dispose de 15 fichiers markdown, chacun contenant une table en HTML, au total 138,6~kB soit 63545 tokens. On a aussi un fichier HTML contenant les références bibliographiques des six documents -- en particulier l'année de publication, 3451 tokens. On joint les documents au Prompt 2 (section \ref{sec:methode}).
+On joint les 15 tables et leurs références bibliographiques au Prompt~2 (section~\ref{sec:methode}).
 
 \input{inputs/generated/tab_comparaison}
 
-\subsection{Analyse}
+Les modèles de raisonnement sortis en janvier 2025 (Deepseek R1, o3-mini-high) donnent les meilleurs résultats avec relance. Les sources sont souvent citées de manière imprécise~: références globales au modèle plutôt que ligne par ligne, ou bien citations de documents plausibles mais non fournis.
 
-Certains modèles ne comprennent pas que TĐ signifie Hydroélectricité et devraient être exclus. Mais ils ne se privent pas de dire que le barrage est alimenté au charbon.
+Certaines centrales manquent systématiquement~: les anciennes retirées du service, celles antérieures au PDP7 (2011), les projets LNG non retenus par le PDP8, et les petites centrales captives industrielles. En ajoutant les rapports annuels de Vietnam Electricity, Claude~3.5~Sonnet atteint 101 centrales après relance.
 
-C'est sourcé, mais parfois en trichant~: tout est référencé par `Nom du modèle, à partir des sources fournies'. Ou alors après la relance, sourcé à partir de documents plausibles mais pas fourni au modèle, et qui après vérification existent mais ne contiennent pas l'information.
+\subsection{Évaluation par réconciliation}
 
-Les modèles de raisonnement sortis en Janvier 2025 -- Deepseek R1 et o3-mini-high donnent les meilleurs résultats avec une relance. Cependant ils ont encore du mal à compter et à normaliser la table `une centrale par ligne~`.
-
-On vérifie que les fichiers fournis ne comprennent pas~:
-
-\begin{itemize}
-\item Les centrales anciennes retirées du service~: Phả Lại 1 (440\,MW, COD 1983) et Phả Lại 2 (600\,MW, COD 2001) in Hải Dương~; Uông Bí Thermal Power Plant (630\,MW, COD 1994) in Quảng Ninh~; Ninh Bình Thermal Power Plant (200\,MW, COD 1974) in Ninh Bình
-\item Les centrales anciennes toujours en service. La source la plus ancienne fournie est le PDP7 de 2011. Les centrales construites avant ne sont pas mentionnées. Il faudrait aller chercher dans les rapports annuels des compagnies de production d'électricité. Une centrale électrique dure 40 ans, donc il faudrait remonter aux PDP4 à PDP6.
-\item Les projets LNG proposés pour mais non retenus par le PDP8.
-\item Certaines petites centrales à charbon captives attachées à des établissement industriels~: An Khanh, Cao Ngan
-\end{itemize}
-
-On ajoute donc les tables de centrales électriques publiées dans trois rapports annuels de Vietnam Electricity 2010-2011, 2017, 2018. Avec Claude 3.5 Sonnet, la table obtenue en réponse au Prompt 2 comporte 59 centrales, et après relance 101 centrales. Le compte du nombre de lignes par le modèle est faux.
-
-On compare les résultats avec l'inventaire exhaustif compilé par nos soins. Pour cela, on a développé \emph{reconcile.py} , un script Python qui permet de comparer deux inventaires de centrales électriques au Vietnam et de produire une table de réconciliation des données. Il fonctionne de la manière suivante : il prend en entrée deux fichiers CSV contenant chacun une liste de centrales, nettoie les données, puis tente de faire correspondre les entrées entre les deux fichiers, en identifiant les centrales qui apparaissent dans les deux inventaires ainsi que celles qui n'apparaissent que dans l'un des deux.
-
-Le script détecte plusieurs types de correspondances : exactes, exactes avec différence de capacité, approximatives (fuzzy matching), et approximatives avec différence de capacité. Les résultats sont enregistrés dans un fichier CSV qui indique pour chaque centrale son nom dans les deux fichiers, sa capacité, la différence éventuelle, et son statut de correspondance. Le code fournit des statistiques sur le nombre de correspondances de chaque type trouvées. C'est une preuve de concept pour un système d'évaluation des solutions de synthèse de tables statistiques.
+On compare les résultats avec l'inventaire exhaustif compilé par nos soins à l'aide de \emph{reconcile.py}, un script de réconciliation par correspondance exacte et fuzzy matching.
 
 \begin{longtable}[]{@{}lllll@{}}
-\caption{Comparaison des performances de Claude selon différentes configurations : nombre de centrales correctes, incorrectes et manquantes}\label{tab:performances}\\
+\caption{Performances de Claude selon différentes configurations~: nombre de centrales correctes, incorrectes et manquantes}\label{tab:performances}\\
 \toprule
 Configuration & Exactes & Approximatives & Incorrectes & Manquantes \\
 \midrule
@@ -498,19 +273,11 @@ Claude + RAG & 43 & 6 & 1 & 105 \\
 Claude + RAG + Relance & 61 & 12 & 9 & 72 \\
 \end{longtable}
 
-La rappelle l'importance d'une approche conversationnelle (relancer le LLM) discutée plus haut, ainsi que l'utilité de fournir les documents au LLM. On voit que les deux techniques sont complémentaires. Il manque certes beaucoup de lignes dans la table du LLM par rapport à notre référence, mais les centrales les plus importantes sont probablement incluses. Cette approche ne permet toutefois pas de remonter le pedigree des résultats.
-
-TODO: Améliorer encore la réconcilation. Examiner la nature des manques. Scorer -- c'est plus grave d'oublier une centrale opérationnelle qu'une annonce qui a durée 6 mois. Ajouter encore des documents. Vérifier le sourcing (LLM).
+Les deux techniques (relance et RAG) sont complémentaires. Il manque encore beaucoup de lignes par rapport à notre référence, mais les centrales les plus importantes sont probablement incluses. Cette approche ne permet toutefois pas de remonter le pedigree complet des résultats.
 
 \section{Discussion}
 
-Le résultat de la section précédente a été obtenu avec un LLM d'une génération de retard sur le state of the art en Février 2025. Les progrès dans la technologie RAG sont incessants \citep{UEIVYTV4,SQX6VZRP}.
-
-Sur la partie Retrieval, on trouve des acteurs proposant des solutions RAG-as-a-Service commerciales, e.g. GraphLit ou SciPhi, cette dernière société publiant la bibliothèque sous-jacente R2R en open source. L'offre de services évolue vers la création d'agents IA, e.g. Restack qui publie aussi son back-end \textbf{AnythingLLM} en open source. On trouve sur GitHub de nombreuses autres piles RAG libres comme \textbf{Kotaemon, RagFlow, Verba}, ou encore \textbf{Khoj}. L'analyse de documents joints est devenu une fonctionnalité standard dans les interfaces web d'utilisation des modèles de langage. C'est une base pour créer des agents personnalisés (`Projets` sur Claude.ai, des `Bot` sur Poe, des `GPTs` sur OpenAI\ldots).
-
-Sur la partie Génération, le système Deep research de OpenAI \citep{Y6A39QJJ} publié le 2 février 2025 est capable de trouver et analyser des sources en ligne, et d'écrire un rapport de synthèse structuré sur le sujet. Il ne nous est toutefois pas encore accessible.
-
-On retrouve la division services commerciaux / solutions libres pour le RAG basé sur Zotero. Ces dernières incluent PapersGPT for Zotero, Zotero ChatGPT Plugin, A.R.I.A. , AnythingLLM\ldots{} Côté commercial, les services AskYourPDF et Scite proposent un connecteur pour utiliser sa collection Zotero.
+Les progrès dans la technologie RAG sont rapides \citep{UEIVYTV4,SQX6VZRP}. L'écosystème comprend des solutions RAG-as-a-Service (GraphLit, SciPhi/R2R) et de nombreuses piles libres (Kotaemon, RagFlow, Verba, Khoj, AnythingLLM). Le système Deep Research d'OpenAI \citep{Y6A39QJJ} est capable de trouver et analyser des sources en ligne pour produire un rapport structuré. L'analyse de documents joints est devenue une fonctionnalité standard des interfaces de chat.
 
 \chapter{Web sémantique et graphe de connaissances (KG)}\label{chap:kg}
 
