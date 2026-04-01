@@ -312,102 +312,26 @@ L'approche G-T2KG \citep{A8YXRKGQ} propose une construction de graphes indépend
 
 Il n'existe pas aujourd'hui de solution automatique complète pour extraire la connaissance structurée d'une collection de documents. Cependant, une approche avec validation humaine est envisageable~: comprendre la tâche en termes d'entités OEO, sélectionner les documents et passages pertinents, construire un graphe par document, identifier et compiler les assertions sur chaque centrale, fusionner les graphes pour déterminer les valeurs finales, et vérifier le résultat. Ce processus garantit que chaque donnée est traçable et accompagnée de métadonnées explicites.
 
-\chapter{Les systèmes agentiques}\label{chap:agents}
+\chapter{Systèmes agentiques}\label{chap:agents}
 
-\section{Les agents AI}
-
-Il convient d'explorer le rôle possible des agents AI dans la mise en place d'un système de suivi de la transition énergétique. Leur utilisation repose sur un ensemble de principes qui permettent d'aborder des tâches complexes de manière décomposée, coordonnée et évolutive.
-
-\textbf{Modularisation et spécialisation}\\
-La première piste consiste à décliner le système global en une série d'agents spécialisés, chacun étant dédié à une fonction particulière. Par exemple, un agent peut se concentrer sur la collecte et la prétraitement des données issues de diverses sources, tandis qu'un autre se charge de l'analyse statistique ou de la vérification des informations techniques. Cette approche permet de garantir une expertise pointue pour chaque tâche et facilite la maintenance ainsi que l'actualisation des composants individuels, sans affecter l'ensemble du système.
-
-\textbf{Coordination par un orchestrateur central}\\
-La complexité inhérente à la gestion de multiples agents nécessite la mise en place d'un mécanisme de coordination centralisé. Un orchestrateur, capable de synchroniser les flux d'informations et de prioriser les tâches, assure une cohérence globale dans la production des résultats. Ce rôle de chef d'orchestre est crucial pour agréger les contributions de chaque agent et produire une réponse structurée et complète, tout en veillant à la traçabilité des sources et à la précision des analyses fournies.
-
-\textbf{Adaptabilité et apprentissage continu}\\
-Enfin, dans un environnement caractérisé par la diversité et la rapidité des évolutions du secteur énergétique, les agents doivent pouvoir s'adapter en temps réel. L'intégration de mécanismes d'auto-évaluation et de feedback permet à chaque agent d'ajuster ses méthodes et d'optimiser ses performances en fonction des nouvelles données ou retours terrain. Ainsi, le système peut automatiquement améliorer la qualité et la pertinence des informations traitées, assurant une veille efficace sur l'évolution des infrastructures et des pratiques de production énergétique.
-
-En synthèse, la technologie des agents AI repose sur une architecture modulaire qui favorise la spécialisation, un dispositif centralisé garantissant une coordination opérationnelle fluide, ainsi qu'un mécanisme d'adaptation continue qui enrichit les analyses par des retours d'expérience constante. Cette approche intégrée pourrait aider à répondre aux exigences d'exactitude, de traçabilité et de réactivité indispensables pour assurer un suivi rigoureux de la transition énergétique.
-
-Quelques références~: Agentic systems design primer \citep{W45HUZN5}. Google Vertex whitepaper on Agents \citep{MW2ME5P3}. Agentic RAG with Langchain and Gemini \citep{ZF27JTIS}. Agentic Document Workflow with LlamaIndex \citep{CVBHDNL3}. \citep{LKNBDMMK} Langgraph Concepts Guide.
-
-Frameworks à comparer~: OpenManus, HuggingFace Smolagent, PydanticAI + Haystack on Python, LangGraph, LlamaIndex AgentWorkflow, Microsoft Semantic Kernel (+ MS Autogen, MS Azure AI), Letta, Agno (former phidata), Langroid, Swarms. MCP communication protocol.
-
-\section{Agents pour un système d'observation de la transition énergétique}
-
-Que pourrait comprendre un système capable de rédiger des rapports de veille sectorielle pour divers pays, comme par exemple "La transition énergétique au Vietnam l'année dernière" ou bien "Note sur le secteur gazier au Sénégal"~?
-
-On a peu d'expérience sur les architectures RAG + Graphe de connaissance + agents AI, c'est la frontière de l'ingénierie. Imaginons la conception d'un système d'observation de la transition énergétique fondé sur une approche multi-agent. Dans ce modèle, chaque agent possède un rôle spécialisé qui, mis en commun, permet de traiter de manière exhaustive les multiples facettes de la collecte, de l'analyse et de la synthèse des données énergétiques.
-
-Pour illustrer cette architecture, le système intègrerait plusieurs agents aux missions complémentaires :
+Les systèmes multi-agents permettent de décomposer la tâche complexe du suivi de la transition énergétique en modules spécialisés coordonnés par un orchestrateur \citep{W45HUZN5,MW2ME5P3}. Pour un système d'observation, on distingue plusieurs rôles~:
 
 \begin{description}
-\item[Agent Veilleur] Cet agent est chargé de surveiller en continu l'évolution des technologies, des pratiques et des tendances du secteur énergétique. Il collecte des informations issues de diverses sources afin de classifier et prioritiser les nouveaux contenus.
-\item[Agent Curateur]
-  Cet agent gère les documents, assure leur indexation avec des métadonnées exactes, leur ingestion dans une base de vecteurs sémantiques, et la création du graphe de connaissances associé.
-\item[Agent Analyste]
-  Il facilite l'extraction d'entités et de relations, fusionne les informations des différents documents en tenant compte de leur date et de la fiabilité des sources, assure que chaque information est validée et intégrée de manière cohérente.
-\item[Agent Statistique]
-  Consacré à l'analyse et à la visualisation des données quantitatives, cet agent s'occupe de traiter les chiffres et d'identifier des tendances à partir d'analyses statistiques précises. Son rôle est essentiel pour extraire des indicateurs fiables, utiles à la compréhension de l'évolution du secteur.
-\item[Agent Expert Pays]
-  Spécialisé dans la contextualisation des données, cet agent apporte une expertise spécifique en fonction des régions ou pays étudiés. Il interprète les données en tenant compte du contexte local --- réglementaire, économique et industriel --- pour adapter l'analyse aux réalités propres à chaque territoire.
-\item[Agent Rédacteur]
-  Cet agent a pour mission de synthétiser l'ensemble des informations collectées et analysées par les autres modules. Il sait structurer un rapport en proposant un argumentaire narratif, un plan détaillé adapté au format demandé, des figures et tables. En consolidant les résultats, il assure la qualité, vérifie les sources, et génère les résumés exécutifs et techniques.
+\item[Agent Veilleur] Surveille les sources et classifie les nouveaux contenus.
+\item[Agent Curateur] Gère l'indexation, l'ingestion vectorielle et la construction du graphe de connaissances.
+\item[Agent Analyste] Extrait les entités et relations, fusionne les informations en tenant compte de la fiabilité des sources.
+\item[Agent Rédacteur] Synthétise les résultats en rapports structurés avec vérification des sources.
 \end{description}
 
-Le système pourrait offrir une interface de dialogue avec un agent expert en statistique énergétique, entraîné sur les ouvrages de base du secteur, il comprend la demande initiale et ses implications sectorielles. Il définit la stratégie globale de recherche, assure la cohérence technique des informations collectées et vérifie la pertinence des sources.
+L'écosystème des frameworks agentiques est en pleine expansion~: LangGraph, LlamaIndex, PydanticAI, Microsoft Semantic Kernel, Agno, et d'autres\footnote{OpenManus, HuggingFace Smolagent, Letta, Langroid, Swarms. Le protocole MCP standardise la communication.} \citep{ZF27JTIS,CVBHDNL3,LKNBDMMK}. Cependant, les systèmes combinant agents, RAG et graphes de connaissances restent à la frontière de l'ingénierie.
 
-Pour assurer la cohérence globale du système, un orchestrateur central traduit la stratégie définie par le modèle d'expertise énergétique en actions concrètes. Il synchronise les flux d'informations entre les différents agents, garantissant ainsi une coordination harmonieuse et une traçabilité renforcée des données traitées.
+\section{Tests de systèmes existants}
 
-Pour une requête typique comme "Analyser le marché gazier au Sénégal", le Modèle de Base identifie les aspects clés à couvrir (upstream, downstream, réglementation\ldots), détermine les sources pertinentes, définit les indicateurs statistiques nécessaires -- en dialogue avec l'agent rédacteur. L'Orchestrateur traduit cela en workflow : il lance l'agent Veilleur sur les sources identifiées , déclenche l'agent Statisticien sur les indicateurs, active l'agent Expert Pays pour le cadre réglementaire, coordonne la synthèse finale.
+\textbf{R2R} (SciPhi) \citep{S95D9L3Y} combine ingestion multimodale, recherche hybride et construction automatique de graphes de connaissances. Testé sur nos 18 tables en Markdown, le système construit un graphe d'environ 270 entités et 290 relations (version Docker locale), mais sans ontologie claire. Le mode RAG Agent retourne 29 centrales, le mode Question and Answer 43. L'interface entre le graphe et le RAG reste préliminaire.
 
-\section{Limites des systèmes Agents + RAG + KG actuels}
+\textbf{TrustGraph} propose une infrastructure modulaire combinant graphes de connaissances et bases vectorielles pour déployer des agents AI. La plateforme se positionne davantage comme une solution entreprise.
 
-\subsection{R2R}
-
-Sciphi R2R (Reason to Retrieve) est un système de récupération d'intelligence artificielle avancé, conçu pour supporter la génération augmentée par récupération (RAG) avec des fonctionnalités prêtes pour la production. Voici un aperçu des principales caractéristiques et fonctionnalités \citep{S95D9L3Y}:
-
-\begin{description}
-\item[Ingestion Multimodale] R2R permet l'ingestion de divers types de contenu, y compris des fichiers .txt, .pdf, .json, .png, et .mp3, facilitant ainsi la gestion de données variées.
-\item[Recherche Hybride] Le système combine la recherche sémantique et par mots-clés, utilisant une fusion de rang réciproque pour améliorer la pertinence des résultats.
-\item[Graphes de Connaissances] R2R extrait automatiquement des entités et des relations pour construire des graphes de connaissances, ce qui enrichit les capacités de recherche et d'analyse.
-\item[Agents de Raisonnement] Intégrant des agents de raisonnement avec RAG, R2R offre des réponses contextuellement riches et informatives pour des requêtes complexes.
-\item[Développement Web et Authentification] La plateforme permet de construire des applications web et inclut des fonctionnalités d'authentification des utilisateurs, garantissant la sécurité et la gestion des accès.
-\item[Déploiement et Configuration] R2R peut être déployé facilement via Docker, et sa configuration est simplifiée grâce à des fichiers intuitifs.
-\item[Communauté et Support] Les utilisateurs peuvent rejoindre un serveur Discord pour obtenir de l'aide et échanger avec d'autres développeurs et l'équipe R2R.
-\end{description}
-
-En résumé, Sciphi R2R est une solution complète pour la génération augmentée par récupération, offrant des outils puissants pour l'ingestion, la recherche et la gestion des données, tout en favorisant une communauté active de développeurs.
-
-On teste R2R via sciphi.ai. Afin de faciliter la tâche, on envoie les 18 tables en Markdown plutôt que les documents PDF intégraux. Le système prend quelques minutes pour ingérer et extraire (identifier les entités et relations) ces documents. Le système avertit que «~\emph{SciPhi Knowledge Graphs are still under development, results below are limited to 200 entries returned}.~»
-
-Reconnaissance des entités~: Sciphi reconnaît moins de 70 entités. Il les classe dans les catégories~: Project, Project Type, Infrastructure, Power Plant, Coal-Fired Power Plant, Capacity, Energy Source, Organization, Country, Province, City, Document, Planning Document, National Planning Document, Plan. Il associe un nom et une description à chacune.
-
-Reconnaissance des relations~: Sciphi reconnaît moins de 40 relations. Les prédicats sont~: Contains, Included In, Compiles Information For, Alternative Energy Source For, Mandates, Includes, Focuses On, Represents, Comprises, Invests In, Managed By, Located In, Regulates, Subset Of.
-
-Communities~: Sciphi reconnaît 5 collections d'entités~: Vietnam Power Generation Community, Vietnam Energy Development Community, Vietnam Coal-Fired Power Plant Community, et Vietnam Coal-Fired Power Projects Community (répétée).
-
-Le résultat de la construction du graphe est très incomplet. Il s'agit d'une Preuve de Concept mise en ligne afin de voir ce que les utilisateurs veulent en faire. Il semble difficile de construire des relations qui font du sens sans spécifier d'ontologie.
-
-L'interface de discussion avec le Chat dans Sciphi.ai ne répond pas lorsque nous la testons, alors nous recommençons en local avec la version docker installée le 2025-02-12 utilisant openai/gpt-4o .
-
-La création du graphe de connaissance est lancée par «~Pull document extractions into graph~». Pas de feedback mais on suppose que cela va prendre du temps. Il y a environ 270 entités et 290 relations. Parmi les entités, 38 sont de type Power Plant, 6 de type Coal-Fired Power Plant, 16 de type Power Project, 46 de type Project. L'interface pour explorer et exploiter le graphe reste préliminaire. Il y a plus de résultats, la preuve de concept est plus avancée que la version en ligne. Mais toujours pas d'ontologie claire. Et l'interface entre le graphe et le RAG ne semble pas encore codée.
-
-Prompt 1~: Le mode RAG Agent retourne 29 centrales, le mode Question and Answer en retourne 43 et bloque au milieu de la ligne 44, sans exécuter la question suivante «~Continue~». Les deux modes citent 10 sources.
-
-\subsection{TrustGraph}
-
-TrustGraph est une plateforme avancée dédiée à l'optimisation des agents d'intelligence artificielle grâce à des graphes de connaissances ultra-denses. Elle propose une infrastructure modulaire qui permet de déployer des agents AI fiables, évolutifs et précis. Voici quelques-unes de ses principales caractéristiques :
-
-\begin{itemize}
-\item Moteur TrustGraph : Il fournit tous les outils nécessaires pour l'ingestion de documents en masse, la construction automatisée de graphes de connaissances et l'intégration de modèles de langage (LLM) agnostiques.
-\item Graphes de Connaissances et VectorDBs : TrustGraph combine des graphes de connaissances avec des bases de données vectorielles pour améliorer la capacité de raisonnement des agents AI.
-\item Cores Cognitifs : La plateforme permet de créer des cores cognitifs réutilisables qui transforment les LLMs génériques en spécialistes de la connaissance, adaptés à des cas d'utilisation spécifiques.
-\item Observabilité : Un tableau de bord d'observabilité permet de surveiller en temps réel la latence des LLMs, la gestion des ressources et le débit des tokens.
-\item Déploiement Flexible : TrustGraph supporte divers environnements de déploiement, y compris Docker, Kubernetes et d'autres solutions de conteneurisation.
-\end{itemize}
-
-En résumé, TrustGraph se positionne comme une solution pour les entreprises.
+Ces résultats confirment que l'écosystème est encore immature pour notre cas d'usage~: la construction automatique de graphes sans ontologie produit des résultats incomplets, et l'intégration RAG-graphe n'est pas encore opérationnelle dans les outils testés.
 
 \chapter{Architecture d'un système de statistiques énergétiques}\label{chap:architecture}
 
