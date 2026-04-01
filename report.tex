@@ -108,19 +108,21 @@ Enfin, le chapitre \ref{chap:architecture} propose une architecture complète po
 
 Cette étude de faisabilité vise à démontrer qu'une combinaison d'approches hybrides (RAG, graphes de connaissances et agents spécialisés) offre une solution prometteuse au défi du suivi statistique de la transition énergétique.
 
-\chapter{Les LLM généralistes rechignent à produire des statistiques}\label{chap:llm-stats}
+\chapter{Évaluation des LLM}\label{chap:evaluation}
+
+Ce chapitre évalue la capacité des grands modèles de langage à produire des tables statistiques, d'abord en requête directe (expérience~1), puis par approche conversationnelle avec relances (expérience~2).
 
 \section{Méthodologie}
 
-On évalue la performance de différents modèles d'IA dans la production directe de données statistiques, sur un exemple spécifique du secteur énergétique, en trois temps~:
+On évalue la performance de différents modèles d'IA dans la production directe de données statistiques, sur la tâche d'inventaire des centrales thermiques du Vietnam. La méthodologie procède en trois temps~:
 
 \begin{enumerate}
-\item La sélection d'un échantillon diversifié de modèles d'IA, incluant des modèles de grande taille (plus de 400B de paramètres) et des modèles plus modestes (70B de paramètres). Nous disposons pour l'étude de nos abonnements personnels Poe et Anthropic, avec des comptes développeurs OpenAI et Google non utilisés ici. Les systèmes Athena-V2 et ScrapeGraph-AI semblent intéressants mais inaccessibles.
-\item Requête standardisée à chaque modèle demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques. Les modèles ont été interrogés majoritairement via l'interface Poe, la 4e semaine de 2025.
-\item Évaluation systématique des stratégies réponses par un LLM pour définir une typologie, et évaluation qualitative intéressée principalement par l'exhaustivité de la table. On laisse de côté ici la précision, le format, et la qualité de contextualisation.
+\item Sélection d'un échantillon diversifié de modèles, incluant des modèles de grande taille (400B+ paramètres) et des modèles plus modestes (70B).
+\item Requête standardisée demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques (Prompt~1 pour l'expérience~1, Prompt~2 avec relances pour l'expérience~2).
+\item Évaluation de l'exhaustivité des réponses par rapport à la page Wikipedia \citep{TQ8TFB8H} qui recense 88 centrales à charbon et 26 centrales à gaz.
 \end{enumerate}
 
-Texte de la requête (\emph{Prompt~1})~:
+Texte de la requête initiale (\emph{Prompt~1})~:
 
 \begin{Prompt}
 Provide a table listing all thermal power plants in Vietnam, including their
@@ -129,64 +131,19 @@ connection date (observed or planned COD), province, and generation capacity
 (in MWe). Format the response in CSV.
 \end{Prompt}
 
-Il s'agit d'une requête en language naturel. Le terme "stade de construction" est ambigu et peut être interprété de manière incohérente par les différents modèles (par exemple, certains excluent les projets proposés ou planifiés). La requête ne précise pas d'ordre de tri, il n'y a pas de standard en la matière mais une IA devrait prendre l'initiative de présenter les résultats de façon ordonnée. La source des données n'est pas explicitement demandée dans la requête, c'est un point faible des LLM.
+\section{Expérience 1~: requête directe (single-shot)}\label{sec:exp1}
 
-\section{Stratégies de réponse}
+Les résultats sont loin de la qualité statistique. Les modèles flagship retournent entre 18 et 64 centrales~: R1-DeepSeek with search en trouve 64, Gemini-2-flash 41, Claude~3.5 Sonnet 38, GPT-4o 33. La performance est corrélée à la nouveauté des modèles.
 
-L'analyse des réponses des différents modèles d'IA à la demande de données sur les centrales thermiques vietnamiennes révèle des stratégies de réponse distinctes:
+On observe trois stratégies de réponse distinctes~: (a) fourniture de données étendues avec avertissements (Claude, GPT-4o), (b) fourniture d'une structure sans données incertaines (Mistral-Large-2), (c) conseils méthodologiques plutôt que données (Qwen-QwQ-32b-preview). Aucun modèle ne répond exactement à la question.
 
-Les réponses les plus complètes proviennent des modèles de grande taille comme Claude et GPT-4o, qui ont fourni des ensembles de données étendus tout en maintenant la transparence sur les limitations potentielles. Ces modèles incluent généralement 25 installations ou plus, avec des informations complètes sur les caractéristiques des centrales, leur statut opérationnel et leurs spécifications techniques.
+La limite de taille des réponses (4K--8K tokens) joue un rôle critique~: l'information demandée représente au minimum 2~267 tokens même avec des cellules vides, alors que notre table de référence \citep{NLN8GPNI} en compte 27~946. C'est d'autant plus un problème pour les modèles de raisonnement, qui allouent une partie du résultat à la réflexion.
 
-En contraste, certains modèles ont adopté une approche plus prudente. Mistral-Large-2, par exemple, a choisi de fournir une structure de modèle plutôt que des données potentiellement incertaines, démontrant un équilibre minutieux entre utilité et précision. Cette approche, bien que moins riche en données, offrait des indications claires pour l'organisation et la collecte des données.
+\input{inputs/generated/tab_census}
 
-Une troisième catégorie de réponses, exemplifiée par Qwen-QwQ-32b-preview, s'est concentrée sur la fourniture de conseils méthodologiques plutôt que de données directes. Ces réponses ont mis l'accent sur l'importance d'accéder à des sources faisant autorité et ont décrit des étapes spécifiques pour la collecte et la vérification des données. Cette approche s'est révélée particulièrement précieuse pour comprendre le contexte plus large du secteur énergétique vietnamien.La variation dans les réponses souligne les limites des capacités actuelles de l'IA. Aucun modèle n'est capable de répondre exactement à la question. Ils emploient diverses stratégies pour gérer cette limite de manière responsable, en optimisant différents aspects de la livraison d'information. Certains privilégient la fourniture exhaustive de données, d'autres mettent l'accent sur la précision à travers des informations limitées mais vérifiées, tandis que d'autres se concentrent sur l'orientation des utilisateurs vers des sources faisant autorité.
+\section{Expérience 2~: approche conversationnelle avec relances}\label{sec:exp2}
 
-Tous les modèles ont inclus des avertissements sur la fiabilité des données, quelle que soit leur stratégie de réponse. Cette cohérence dans la reconnaissance des limitations suggère l'existence de garde-fous explicites concernant le traitement d'informations potentiellement sensibles ou en évolution rapide.
-
-\section{Analyse des réponses}
-
-Dans l'ensemble, les résultats sont loin de la qualité statistique. Il manque des données par rapport à la page Wikipedia anglaise des centrales électriques du Vietnam \citep{TQ8TFB8H} qui compte 88 centrales à charbon et 26 centrales à gaz, y compris les projets abandonnés ou annoncés. De plus, le modèle n'observe pas quelques bonnes pratiques attendues d'un statisticien~:
-
-\begin{enumerate}
-\item Concernant l'exhaustivité des réponses, R1-DeepSeek with search trouve 64 centrales (mais pas toujours, il se replie parfois sur les exemples illustratifs), Gemini-2-flash (on Poe) en identifie 41 centrales, Claude 3.5 Sonnet retourne 38 centrales, GPT-4o trouve 33 centrales. Pour ces quatre modèles flagship de DeepSeek, Google, Anthropic et OpenAi, la performance est corrélée à la nouveauté~: les modèles plus récents retournent une liste plus complète.
-\item Perplexity pro en trouve 22, ce qui est décevant compte tenu de sa capacité de recherche sur internet. Par contre, si on refuse à R1-DeepSeek la permission de chercher sur internet, il ne tente pas de répondre à la question et propose seulement des exemples illustratifs.
-\item Llama-3.3-70B retourne 18 centrales au prompt initial, en notant qu'il n'a omis les projets proposés ou planifiés. En lui demandant ensuite de le faire, il est capable d'augmenter la liste à 26.
-\item Les réponses utilisent les versions anglaises des noms de lieu, en ignorant l'orthographe des centrales et provinces dans la langue originale.
-\item Les résultats sont rarement triés.
-\item Contrairement à Wikipedia qui source les informations ligne-par-ligne, les modèles donnent des sources générales, en nombre limité, sans les liens. Les données n´ont pas la traçabilité intégrale, ce qui est un problème car on connaît la propension des modèles à halluciner.
-\end{enumerate}
-
-La vitesse et le coût de la réponse varient sensiblement selon les modèles, mais ce n'est pas l'objet de ce rapport. On pourrait développer cette analyse en explorant diverses hypothèses~: Est-ce que les grands modèles retournent plus de données que les petits~? Est-ce que les systèmes avec accès à internet retournent plus de données que sans~? Est-ce que la courbe de progression dans le temps des performances laisse prévoir que l'approche «~just ask~» fonctionnera bientôt~? Les modèles optimisés pour le raisonnement logique semblent retourner moins de résultats~: est-ce toujours le cas, si oui pourquoi et comment peut-on corriger cet effet~?
-
-La limite de taille des réponses des modèles joue un rôle critique. A ce jour, GPT-4 et Claude 3 sont limitées à des réponses de 4K tokens. Gemini 1.5 Pro, qui accepte 1M tokens en entrée, n'en produit pas plus de 8K en sortie.
-
-Par exemple ma table des centrales thermiques \citep{NLN8GPNI}, qui contient 255 lignes et 39 colonnes soit 9945 cellules, compte 27~946 tokens en version CSV, elle est assez creuse. L'information demandée est une table de 6 colonnes et environ 77 lignes, soit 462 informations. Une table CSV dans laquelle chaque information est «~Unknown~» compte 2~267 tokens. C'est environ quatre fois plus. Même si chaque cellule ne contient qu'un mot, il y a deux guillemets et un séparateur.
-
-C'est d'autant plus un problème pour les modèles de raisonnement, qui allouent une partie du résultat à la réflexion.
-
-\section{Techniques d'amélioration}
-
-L'évaluation initiale des outils d'IA disponibles permet d'établir une base de référence pour leurs capacités. L'ingénierie d'IA propose plusieurs techniques d'amélioration :
-
-\begin{itemize}
-\item Le Prompt engineering constitue la base de cette optimisation, à travers la formulation précise des requêtes, l'attribution de rôles spécifiques (e.g. Tu es un expert en statistique énergétique) et l'utilisation de prompts système pour établir des directives durables. Le Few-shot learning optimise les performances en fournissant des exemples directement dans la requête.
-\item Les techniques de raisonnement comme Chain of Thought et Tree of Thoughts permettent d'améliorer la qualité des réponses. La première décompose le raisonnement en étapes explicites pour garantir la logique du processus, tandis que la seconde explore plusieurs chemins de raisonnement en parallèle pour les problèmes complexes. La technique peut être intégrée au modèle, ou implémentée à la main en utilisant une séquence de questions/réponses.
-\item Le Fine tuning permet d'adapter un modèle de base sur des manuels et rapports de statistique énergétiques, pour qu'il développe une expertise sur le sujet. Même sans aller jusque là et en restant dans l'offre de modèles déjà disponibles, il importe de choisir un modèle entraîné pour le type de tâche qu'on veut lui faire accomplir~: conversation, écriture de code, raisonnement mathématique, utilisation d'ordinateur, agent autonome.
-\item La Self-Consistency renforce la fiabilité en générant plusieurs réponses indépendantes puis en sélectionnant la meilleure par consensus.
-\item L'augmented generation, notamment dans sa forme évoluée du Retrieval-Augmented Generation ou RAG \citep{2U9Y8AJK} , enrichit les capacités du modèle en intégrant des documents de référence externes dans le contexte de génération. Pour les modèles capables de traiter un contenu long, par exemple Gemini en contexte étendu à 2M de token, il peut suffire de fournir tout un livre au lieu d'en pré-selectionner les bonnes pages \citep{JNKUDLN8}. Il importe aussi de gérer le cache des LLM \citep{Y95UBRJ9}
-\end{itemize}
-
-Ces techniques peuvent être combinées selon les besoins spécifiques du projet, créant ainsi des systèmes plus robustes et performants. Leur efficacité dépend du contexte d'utilisation, des ressources disponibles et des objectifs visés.
-
-\chapter{Même si ils peuvent en savoir beaucoup}\label{chap:llm-knowledge}
-
-Les résultats de la section précédente déçoivent. Les grands modèles ont fourni des résultats très fragmentaires par rapport à la page Wikipedia, alors que l'encyclopédie est certainement dans les documents d'apprentissage. Comment faire mieux~?
-
-\section{Méthode}\label{sec:methode}
-
-Les modèles de chat sont entraînés pour la conversation. Ils tendent donc à fournir des réponses intéressantes, c'est à dire courtes , pertinentes et centrées sur l'essentiel. Or quoi de plus ennuyeux qu'une longue table statistique~? Et les réponses doivent tenir dans 4K, alors que représenter une table peut demander beaucoup plus. Une approche conversationnelle permettrait elle de découvrir toute l'étendue des connaissances statistiques de ces LLM~?
-
-Pour vérifier cette hypothèse, utilisons le \emph{Prompt~2}~:
+Les modèles de chat tendent à fournir des réponses courtes. Une approche conversationnelle permet-elle de découvrir toute l'étendue de leurs connaissances~? Pour vérifier cette hypothèse, on utilise le \emph{Prompt~2}\label{sec:methode}, plus détaillé, suivi de trois relances~:
 
 \begin{Prompt}
 Role:
@@ -230,37 +187,23 @@ Can you try harder still? Let's establish the full complete list.
 Is there any plant missing from the table?
 \end{Prompt}
 
-On examine un échantillon de convenance, sans inclure les modèles qui avaient refusé de répondre.
-
-\section{Résultats}
-
-Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesures, on ne contrôle pas la température. Les résultats sont susceptible de varier de plusieurs unités entre deux run. Ils peuvent aussi varier avec l'environnement du modèle (temps de calcul alloué...), son implémentation (quantification, contrôle de la longueur du contexte ...), les mises à jour silencieuses du modèle (changement du prompt système selon l'heure, nouvelle version, ...).
+Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesures, on ne contrôle pas la température. Les résultats sont susceptibles de varier de plusieurs unités entre deux runs.
 
 \input{inputs/generated/tab_relances}
 
-Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le protocole ne fonctionne pas bien avec les modèles 70B qui mettent trop longtemps à répondre.
-
-Le prompt 2 ne retourne pas toujours plus de résultats que le prompt 1. \citep{2UNSUP7I} avertit explicitement que le modèle de raisonnement o3-mini fonctionne mieux avec un prompt simple et direct, et qu'il est inutile voire contre-productif de dire «~Think carefully~» .
-
-La limite de réponse de o3-mini s`étend à 100k tokens, mais cela ne lui fait pas donner une table plus exhaustive.
-
-TODO~: Automatiser les tests. Scorer les résultats (utiliser compare.py).
+Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
 \section{Discussion}
 
-Les résultats confirment l'hypothèse~: Une approche conversationnelle est indispensable pour en savoir plus. Ces modèles de conversation ne révèlent qu'un tiers de leur connaissance à la première réponse.
+Les résultats confirment que les modèles ne révèlent qu'un tiers de leur connaissance à la première réponse. L'approche conversationnelle est indispensable, mais même après relances, les résultats n'atteignent pas l'exhaustivité de la liste Wikipedia.
 
-Les résultats n'atteignent pas l'exhaustivité de la liste Wikipedia. Mais la différence est-elle significative~? On n'a pas évalué la qualité des réponses, seulement le nombre de lignes et on s'en approche. L'utilité de la réponse dépendra certainement de l'usage prévu des données.
+Plusieurs techniques d'amélioration existent~: prompt engineering avancé, Chain of Thought, Few-shot learning, Self-Consistency, ou encore optimisation automatique des prompts via DSPy \citep{ATRGAC9J}. Le Retrieval-Augmented Generation (RAG) \citep{2U9Y8AJK} enrichit les capacités du modèle en intégrant des documents de référence \citep{JNKUDLN8,Y95UBRJ9}.
 
-On pourrait aller plus loin dans le prompt engineering, les techniques de DSPy utilisent l'IA pour optimiser le texte des requêtes \citep{ATRGAC9J}. Certains articles montrent que l'Automatic Prompt Engineering fournit des performances au moins égales à celles obtenues par les humains.
-
-Cette partie a demandé des résultats sans renseigner de tableau aux modèles. Il s'agissait donc de savoir à quel point les modèles ont mémorisé des donnés d'entraînement, et savoir comment leur faire restituer. La littérature sur la sécurité d'usage des modèles, en particulier concernant la protection des données sensibles \citep{HYX8XPZI,YNTQGTBQ} aborde ces questions importantes à l'inverse~: comment éviter la mémorisation, comment défendre contre les attaques visant à révéler ce que les modèles savent de leur données d'entraînement. TODO~: Les techniques développées dans ce cadre pourraient informer nos stratégies de conversation.
-
-Il reste toutefois que l'approche ci dessus ne résout pas deux des limites identifiées précédemment.
+Deux limites fondamentales demeurent~:
 
 \begin{itemize}
-\item On ne peut pas croire les modèles quand ils citent des sources externes. On sait que les LLM peuvent facilement halluciner les références bibliographiques quand on leur en demande. Ici on ne leur demandait pas, et pourtant ils donnent des sources externes. De plus la traçabilité reste incomplète~: sans le lien pour les accéder à la source, ni la localisation de l'information dans la source.
-\item Ces modèles pré-entrainés suivent pas l'actualité. Leurs informations ne sont donc pas totalement à jour. Cette approche ne permet pas de faire des rapports trimestriels sur un secteur d'activité.
+\item On ne peut pas croire les modèles quand ils citent des sources externes~: les LLM hallucinent facilement les références bibliographiques. La traçabilité reste incomplète.
+\item Ces modèles pré-entraînés ne suivent pas l'actualité. Cette approche ne permet pas de faire des rapports trimestriels sur un secteur d'activité.
 \end{itemize}
 
 La technique RAG a le potentiel d'assurer la traçabilité des résultats et de connaître le pedigree des données.
