@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 #
 # Minh Ha-Duong, CNRS (2025)
 # CC-BY-SA

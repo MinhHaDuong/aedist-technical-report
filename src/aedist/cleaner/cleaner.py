@@ -5,7 +5,6 @@ import re
 import logging
 import traceback
 import json
-from typing import Optional, Union
 
 # Configure logging
 logging.basicConfig(
@@ -100,7 +99,7 @@ class PowerPlantDataframeCleaner:
 
         logging.info("DataFrame validation completed successfully.")
 
-    def clean_text(self, text: str, drops=None, substitutions=None) -> Optional[str]:
+    def clean_text(self, text: str, drops=None, substitutions=None) -> str | None:
         """
         Clean a text string by removing patterns, applying substitutions, and standardizing whitespace.
 
@@ -110,7 +109,7 @@ class PowerPlantDataframeCleaner:
             substitutions (Optional[dict[str, str]]): Regex substitution patterns.
 
         Returns:
-            Optional[str]: The cleaned text, or None if the input was NaN.
+            str | None: The cleaned text, or None if the input was NaN.
         """
         if pd.isna(text):
             logging.debug("Encountered NaN value during text cleaning.")
@@ -165,15 +164,15 @@ class PowerPlantDataframeCleaner:
         """Clean the 'province' column."""
         return self.clean_text(province, substitutions=self.province_substitutions)
 
-    def clean_capacity(self, value: Union[str, float, int]) -> Optional[float]:
+    def clean_capacity(self, value: str | float | int) -> float | None:
         """
         Clean the 'capacity' column by extracting the first numeric value.
 
         Args:
-            value (Union[str, float, int]): The capacity value.
+            value (str | float | int): The capacity value.
 
         Returns:
-            Optional[float]: The cleaned capacity as a float, or None if invalid.
+            float | None: The cleaned capacity as a float, or None if invalid.
         """
         if pd.isna(value):
             return None
@@ -185,7 +184,7 @@ class PowerPlantDataframeCleaner:
         numbers = re.findall(r"\d*\.?\d+", value_str)
         return float(numbers[0]) if numbers else None
 
-    def clean_fuel(self, fuel: str) -> Optional[str]:
+    def clean_fuel(self, fuel: str) -> str | None:
         """
         Clean the 'fuel' column and handle multiple fuel types.
 
@@ -193,7 +192,7 @@ class PowerPlantDataframeCleaner:
             fuel (str): The fuel value.
 
         Returns:
-            Optional[str]: The cleaned and standardized fuel value.
+            str | None: The cleaned and standardized fuel value.
         """
         cleaned = self.clean_text(fuel, substitutions=self.fuel_substitutions)
         if cleaned is None:
@@ -205,7 +204,7 @@ class PowerPlantDataframeCleaner:
 
         return cleaned
 
-    def clean_status(self, status: str) -> Optional[str]:
+    def clean_status(self, status: str) -> str | None:
         """Clean the 'status' column."""
         return self.clean_text(status, substitutions=self.status_substitutions)
 
