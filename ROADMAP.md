@@ -4,16 +4,17 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Monorepo — single self-contained repo
-- [x] Test harness: query, extract, evaluate, verify (116 tests)
-- [x] Model registry: 24 OpenRouter + 8 Padme local
-- [x] Report restructured: 7 chapters, 410 lines
-- [x] Census: 32 models evaluated (F1 range 2-66%, $0.73)
-- [x] Per-table pipeline: one script per table/figure, Makefile orchestrates (#43)
-- [ ] Pipeline UX: progress, checkpointing, parallelism (#22)
-- [ ] Select top models: `make select` (#20)
-- [ ] Information regime comparison — top models × 7 conditions (#10)
-- [ ] Beamer slides with generated data (#15)
+- [x] Reproducible test harness: query, extract, evaluate, verify (WP2-WP6)
+- [x] Updated model registry ~24 models (WP1)
+- [x] Report restructured 9→7 chapters (WP7)
+- [x] Model census sweep — 32 models × 3 runs (WP8)
+- [x] Monorepo merge — single self-contained repo (PR #18)
+- [ ] Fix diacritics matcher → real F1 scores
+- [ ] Select top 5 + best local model (#20)
+- [ ] Information regime comparison — top 5 × 7 conditions (WP9, #10)
+- [ ] Update convert.py for flat outputs (#19)
+- [ ] All tables generated from data, none hardcoded (WP13, #14)
+- [x] Beamer slide deck — 15 slides, placeholder charts (#15)
 
 ## Next milestone
 
@@ -22,5 +23,6 @@ Submit to journal (TBD — after conference feedback).
 ## Backlog
 
 - Chunked RAG strategy (currently only wholesale)
-- Reasoning effort sweep — needs reasoning models on Padme (#11)
+- Agent orchestration experiment (multi-agent pipeline)
+- Reasoning effort sweep (WP10, #11) — needs reasoning models on Padme
 - Extend benchmark to other countries / sectors
