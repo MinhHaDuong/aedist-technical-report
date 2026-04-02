@@ -44,6 +44,8 @@ Adjustable parameters:
   - capacity_weight: Weight factor for the capacity difference term.
 """
 
+import math
+
 import pandas as pd
 from pulp import (
     PULP_CBC_CMD,
@@ -170,6 +172,9 @@ def _compute_costs(
             name2 = str(df2.loc[j, "name_clean"])
             cap1 = df1.loc[i, "capacity_clean"]
             cap2 = df2.loc[j, "capacity_clean"]
+            if math.isnan(cap1) or math.isnan(cap2):
+                costs[(i, j)] = mismatch_penalty
+                continue
             diff = abs(cap1 - cap2)
             if name1 == name2:
                 base_cost = 0
