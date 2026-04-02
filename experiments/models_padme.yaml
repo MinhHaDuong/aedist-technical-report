@@ -1,0 +1,99 @@
+# Local models on Padme (Ollama)
+# A4000 16GB + RTX 3060 12GB + 128GB RAM
+# Access via SSH tunnel: ssh -L 11434:127.0.0.1:11434 padme
+
+- id: qwen3.5:122b
+  name: Qwen 3.5 122B (local)
+  provider: Ollama/Padme
+  country: CN
+  architecture: moe
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: large
+  license: open-apache
+
+- id: qwen3.5:35b
+  name: Qwen 3.5 35B (local)
+  provider: Ollama/Padme
+  country: CN
+  architecture: moe
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
+- id: qwen3.5:27b
+  name: Qwen 3.5 27B (local)
+  provider: Ollama/Padme
+  country: CN
+  architecture: dense
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
+- id: qwen3.5:9b
+  name: Qwen 3.5 9B (local)
+  provider: Ollama/Padme
+  country: CN
+  architecture: moe
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: mistral-small3.2
+  name: Mistral Small 3.2 (local)
+  provider: Ollama/Padme
+  country: FR
+  architecture: dense
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: glm-4.7-flash
+  name: GLM 4.7 Flash (local)
+  provider: Ollama/Padme
+  country: CN
+  architecture: dense
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
+- id: nemotron-3-nano
+  name: Nemotron 3 Nano (local)
+  provider: Ollama/Padme
+  country: US
+  architecture: moe
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
+
+- id: devstral-small-2
+  name: Devstral Small 2 (local)
+  provider: Ollama/Padme
+  country: FR
+  architecture: dense
+  reasoning: instruct
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache

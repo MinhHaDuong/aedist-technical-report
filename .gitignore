@@ -1,6 +1,19 @@
 # Secrets
 .env
 
+# Python
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+
 # LaTeX build artifacts
 *.aux
 *.bbl
@@ -18,29 +31,34 @@
 *.idx
 *.ilg
 *.ind
-
-# PDF output (uncomment to track)
 *.pdf
 
-# Editor backups
+# Generated LaTeX fragments
+report/inputs/generated/*
+
+# Experiment outputs and results (reproducible from code)
+experiments/outputs/
+results/
+
+# Report input data
+report/inputs/documents/*
+report/inputs/feeds/*
+
+# Legacy directories
+Results/
+Experiments/
+AssistantsComparison/
+attic/
+
+# Editor / IDE / OS
 *~
 *.swp
-*.bak
+*.swo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 
-# Input data
-inputs/documents/*
-inputs/feeds/*
-
-# Generated LaTeX fragments
-inputs/generated/*
-
-# Results
-Results/*
-Experiments/*
-AssistantsComparison/*
-
-# Figures
-*.png
-
-# Attic
-attic/*
+# Figures (tracked selectively in report/Pictures/)
+# *.png — removed, let git track what's committed
+.claude/worktrees/
