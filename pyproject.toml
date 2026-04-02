@@ -1,0 +1,41 @@
+[project]
+name = "aedist"
+version = "0.2.0"
+description = "AI-driven Energy Data Integration for Sustainable Transition"
+authors = [{ name = "Minh Ha-Duong", email = "minh.ha-duong@cnrs.fr" }]
+license = { text = "CC-BY-SA-4.0" }
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "rapidfuzz>=3.0",
+    "pandas>=2.0",
+    "pulp>=2.7",
+    "openai>=1.0",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+pdf = ["pypdf", "pdf2image", "tiktoken"]
+dev = ["pytest>=8.0", "ruff>=0.4", "pylint", "mypy", "types-PyYAML"]
+
+[project.scripts]
+aedist = "aedist.runner:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aedist"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

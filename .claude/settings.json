@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ssh -f -N -L 11434:127.0.0.1:11434 padme)"
+      "Bash(ssh -f -N -L 11434:127.0.0.1:11434 padme)",
+      "Bash(cp __TRACKED_VAR__/ADR.md .)",
+      "Bash(cp -r __TRACKED_VAR__/diagrams report/)",
+      "Bash(mkdir -p tools/pdfOCR2md)",
+      "Bash(cp __TRACKED_VAR__/pdfOCR2md/Makefile __TRACKED_VAR__/pdfOCR2md/pdfOCR2md.py tools/pdfOCR2md/)",
+      "Bash(mkdir -p publications/journal-article)"
     ]
   }
 }

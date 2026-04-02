@@ -1,4 +1,4 @@
-# AI Agent Guidelines for Climate Finance History Project
+# AI Agent Guidelines
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
@@ -9,9 +9,9 @@
 | `~/.claude/rules/` | Generic rules (git, workflow, coding, state-roadmap) |
 | `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
 | `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
-| `.claude/rules/` | Project-specific rules (writing, architecture, oeconomia-style, etc.) |
-| `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness, update-publist) |
-| `.claude/hooks/` | Project-specific hooks (merge gate review check) |
+| `.claude/rules/` | Project-specific rules |
+| `.claude/skills/` | Project-specific skills |
+| `.claude/hooks/` | Project-specific hooks |
 | `.claude/settings.json` | Project permissions and hooks |
 | `hooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
 

@@ -1,0 +1,40 @@
+{
+    "name_drops": [
+        "^tbkhh\\s*",
+        "^lng\\s*",
+        "^nd\\s*",
+        "power\\s*plant",
+        "thermal",
+        "\\(.*?\\)"
+    ],
+    "name_substitutions": {
+        "\\biv\\b": "4",
+        "\\biii\\b": "3",
+        "\\bii\\b": "2",
+        "\\bi\\b": "1"
+    },
+    "province_substitutions": {
+        "ba\\s*ria\\s*[-]?\\s*vung\\s*tau": "ba ria - vung tau",
+        "tp\\s*hcm": "tp ho chi minh",
+        "ho\\s*chi\\s*minh\\s*city": "tp ho chi minh",
+        "thanh\\s*pho\\s*ho\\s*chi\\s*minh": "tp ho chi minh"
+    },
+    "fuel_substitutions": {
+        "lng": "gas",
+        "natural gas": "gas",
+        "(?i).*coal.*": "coal"
+    },
+    "status_substitutions": {
+        "^\\d+\\s*(.+)$": "\\1",
+        "operating": "operating",
+        "retired": "retired",
+        "cancelled": "cancelled",
+        "construction": "construction",
+        "pre-permit": "pre-permit",
+        "permitted": "permitted",
+        "announced": "announced",
+        "exploring": "exploring",
+        "pre-construction": "pre-construction",
+        "shelved": "shelved"
+    }
+}

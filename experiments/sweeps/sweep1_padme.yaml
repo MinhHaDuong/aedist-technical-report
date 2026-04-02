@@ -1,0 +1,8 @@
+# Sweep 1 local: Padme models via Ollama
+mode: single
+prompt: prompts/prompt_structured.txt
+models: models_padme.yaml
+repeat: 3
+budget_usd: 0
+output: outputs/sweep1_census
+ollama_url: http://localhost:11434/v1

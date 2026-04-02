@@ -4,41 +4,44 @@ Technical feasibility report for the **AEDIST** project (AI-driven Energy Data I
 
 ## About
 
-This report (in French) evaluates AI technologies for tracking energy transitions in countries lacking robust statistical offices. It uses Vietnam's thermal power plant inventory as a benchmark case study.
+This report (in French) evaluates AI technologies for tracking energy transitions in countries lacking robust statistical offices. It uses Vietnam's thermal power plant inventory (164 plants) as a benchmark case study.
 
-The report explores:
-- **LLM limitations** for statistical data production
-- **RAG (Retrieval Augmented Generation)** approaches
-- **Knowledge graphs** for data traceability
-- **Multi-agent systems** for complex data integration
-- A proposed **hybrid architecture** combining these technologies
+The benchmark tests 32 AI models across multiple configurations: single-shot, multi-turn, RAG, web-augmented, and verified — measuring recall, precision, F1, cost, and latency.
 
 ## Author
 
-Minh Ha-Duong
-CIRED – CNRS
-
-## Building
-
-Requires [Tectonic](https://tectonic-typesetting.github.io/) (XeTeX-based LaTeX engine).
-
-```bash
-make          # Build report.pdf
-make tables   # Generate tables from aedist codebase
-make clean    # Remove intermediate files
-make cleaner  # Remove all generated files including PDF
-```
+Minh Ha-Duong, CIRED – CNRS
 
 ## Structure
 
 ```
-├── report.tex              # Main LaTeX document
-├── refs.bib                # Bibliography (BibTeX)
-├── inputs/                 # Supporting documents and data
-├── Pictures/               # Figures
-├── AssistantsComparison/   # AI assistant benchmark data
-├── Experiments/            # Experimental results
-└── aedist -> ...           # Symlink to aedist source code
+├── src/aedist/              # Python benchmark package
+├── tests/                   # 61 tests
+├── experiments/             # Sweep configs, Makefile, model registries
+│   ├── sweeps/*.yaml        # Experiment definitions
+│   ├── models.yaml          # 24 OpenRouter models
+│   └── models_padme.yaml   # 8 local Ollama models
+├── data/reference/          # Ground truth CSVs
+├── report/                  # LaTeX technical report
+├── slides/                  # Beamer slides (Econom'IA 2026)
+├── Makefile                 # Root dispatcher
+└── pyproject.toml           # Python package config
+```
+
+## Building
+
+Requires [Tectonic](https://tectonic-typesetting.github.io/) and [uv](https://docs.astral.sh/uv/).
+
+```bash
+make test              # Run all 61 Python tests
+make report            # Build report/report.pdf
+make slides            # Build slides/slides.pdf
+make tables            # Generate LaTeX tables from experiment results
+
+# Experiments (from experiments/ directory):
+cd experiments
+make -j8 sweep1        # Census: all models × 3 runs (parallel)
+make sweep1-summary    # Extract → evaluate → summarize
 ```
 
 ## License

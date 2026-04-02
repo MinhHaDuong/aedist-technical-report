@@ -1,0 +1,154 @@
+Name,Province,Fuel,Capacity,Status,Aggregated Units
+An Khanh - Bac Giang,Bac Giang,Coal,650.0,pre-permit,"Unit 1, Unit 2"
+An Khanh Phase 1,Thai Nguyen,Coal,100.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+An Khanh Phase 2,Thai Nguyen,Coal,300.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Ba Ria,Ba Ria - Vung Tau,gas,1200.0,cancelled - inferred 4 y,2
+Ba Ria,Ba Ria - Vung Tau,gas,389.0,operating,1
+Bac Lieu,Bac Lieu,gas,3200.0,pre-construction,"CC1, CC2, CC3, CC4"
+Bao Dai,Bac Giang,Coal,600.0,cancelled,--
+Binh Dinh,Binh Dinh,Coal,3200.0,cancelled,"Unit 1, Unit 2"
+Ca Mau,Ca Mau,gas,1500.0,cancelled,3
+Ca Mau,Ca Mau,gas/oil,1500.0,operating,"1, 2"
+Ca Na,Ninh Thuan,gas,4500.0,cancelled,"2, 3, 4"
+Ca Na,Ninh Thuan,gas,1500.0,pre-construction,1
+Cai Mep Ha,Ba Ria - Vung Tau,gas,6000.0,cancelled - inferred 4 y,1
+Cai Trap Island,Hai Phong,gas,800.0,cancelled,1-1
+Cai Trap Island,Hai Phong,gas,800.0,cancelled,1-2
+Cam Pha Phase I,Quang Ninh,Coal,340.0,operating,Phase I
+Cam Pha Phase II,Quang Ninh,Coal,340.0,operating,Phase II
+Cam Pha Phase III,Quang Ninh,Coal,440.0,cancelled,"Phase III Unit 1, Phase III Unit 2"
+Can Duoc,Long An,Coal,1600.0,cancelled,--
+Cao Ngan,Thai Nguyen,Coal,115.0,operating,"Unit 1, Unit 2"
+Chan May,Thua Thien Hue,gas,1500.0,announced,1-1
+Cong Thanh,Thanh Hoa,Coal,660.0,cancelled,"Unit 1, Unit 2"
+Cong Thanh,Thanh Hoa,gas,600.0,pre-construction,1
+Duc Giang - Lao Cai Chemical,Lao Cai,Coal,100.0,shelved,"Unit 1, Unit 2"
+Dung Quat,Quang Ngai,gas,2250.0,announced,"CC1, CC2, CC3"
+Dung Quat,Quang Ngai,Coal,1200.0,cancelled,"Unit 1, Unit 2"
+Dung Quat Phase I,Quang Ngai,Coal,2400.0,cancelled,Phase I
+Dung Quat Phase II,Quang Ngai,Coal,2000.0,cancelled,Phase II
+Duyen Hai,Tra Vinh,Coal,3690.0,operating,"Unit 1-1, Unit 1-2, Unit 2-1, Unit 2-2, Unit 3-1, Unit 3-2"
+Duyen Hai,Tra Vinh,Coal,688.0,operating,Unit 3 Extension
+Embark-Quantum,Khanh Hoa,gas,6000.0,cancelled,1
+Ganh Dau,Kien Giang,Coal,200.0,cancelled,"Unit 1, Unit 2"
+Ha Tinh,Ha Tinh,gas,600.0,cancelled,2-1
+Ha Tinh,Ha Tinh,Coal,450.0,operating,"Unit 1, Unit 2, Unit 5"
+Ha Tinh,Ha Tinh,Coal,450.0,shelved,"Unit 10, Unit 6, Unit 7"
+Hai Duong,Hai Duong,Coal,1200.0,operating,"Unit 1, Unit 2"
+Hai Ha CHP,Quang Ninh,Coal,2100.0,shelved,"Unit 1, Unit 10, Unit 11, Unit 12, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9"
+Hai Lang,Quảng Trị,gas,1500.0,cancelled,1-2
+Hai Lang,Quảng Trị,gas,1500.0,construction,1-1
+Hai Phong Phase I,Hai Phong,Coal,600.0,operating,"Phase I Unit 1, Phase I Unit 2"
+Hai Phong Phase II,Hai Phong,Coal,600.0,operating,"Phase II Unit 3, Phase II Unit 4"
+Hai Phong Phase III,Hai Phong,Coal,2400.0,cancelled,"Phase III Unit 1, Phase III Unit 2, Phase III Unit 3, Phase III Unit 4"
+Hau Giang Lee & Man,Hau Giang,Coal,125.0,operating,"Unit 1, Unit 2"
+Hiep Phuoc,Ho Chi Minh City,gas,260.0,construction,1-4
+Hiep Phuoc,Ho Chi Minh City,gas,260.0,construction,1-5
+Hiep Phuoc,Ho Chi Minh City,gas,260.0,construction,1-6
+Hiep Phuoc,Ho Chi Minh City,gas,125.0,operating,1-1
+Hiep Phuoc,Ho Chi Minh City,gas,125.0,operating,1-2
+Hiep Phuoc,Ho Chi Minh City,gas,125.0,operating,1-3
+Hoa Dau Long Son,Vung Tau,Coal,225.0,cancelled,"Unit 1, Unit 2, Unit 3"
+Hon Chong,Kien Giang,Coal,1000.0,cancelled,--
+Ka Ga,Bình Thuận,gas,3600.0,announced,1
+Kien Giang,Kiên Giang,gas,1500.0,cancelled,"1, 2"
+Kien Luong Phase 1,Kien Giang,Coal,1200.0,cancelled,"Phase 1 Unit 1, Phase 1 Unit 2"
+Kien Luong Phase 2,Kien Giang,Coal,1200.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Kien Luong Phase 3,Kien Giang,Coal,2000.0,cancelled,"Phase 3 Unit 1, Phase 3 Unit 2"
+Long An,Long An,gas,3000.0,announced,"1, 2"
+Long An Phase I,Long An,Coal,1200.0,cancelled,"Phase I Unit 1, Phase I Unit 2"
+Long An Phase II,Long An,Coal,1600.0,cancelled,"Phase II Unit 1, Phase II Unit 2"
+Long Phu,Soc Trang,Coal,3120.0,cancelled,"Unit 2-1, Unit 2-2, Unit 3-1, Unit 3-2, Unit 3-3"
+Long Phu,Soc Trang,Coal,1200.0,construction,"Unit 1-1, Unit 1-2"
+Long Son,Ba Ria - Vung Tau,gas,1500.0,announced,"CC1, CC2"
+Long Son,Ba Ria - Vung Tau,gas,2400.0,cancelled,"CC3, CC4, CC5, CC6"
+Mao Khe,Quang Ninh,Coal,440.0,operating,"Unit 1, Unit 2"
+Mien Bac,Unknown,Coal,2000.0,cancelled,--
+Mien Trung,Quang Nam,gas,1500.0,announced,"1, 2"
+Millenium,Khanh Hoa,gas,9600.0,announced,"1, 2"
+Mong Duong Phase 1,Quang Ninh,Coal,1080.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Mong Duong Phase 2,Quang Ninh,Coal,1240.0,operating,"Phase 2 Unit 1, Phase 2 Unit 2"
+My Giang,Đắk Lắk,gas,6000.0,cancelled,"1, 2, 3, 4"
+Na Duong Phase 1,Lang Son,Coal,100.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Na Duong Phase 2,Lang Son,Coal,110.0,construction,Phase 2 Unit 1
+Nam Dinh,Nam Dinh,gas,2400.0,announced,"1, 2, 3, 4"
+Nam Dinh Phase 1,Nam Dinh,Coal,1200.0,shelved,"Phase 1 Unit 1, Phase 1 Unit 2"
+Nam Dinh Phase 2,Nam Dinh,Coal,1200.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Nghi Son,Thanh Hóa,gas,3200.0,cancelled,"3, 4, 5, 6"
+Nghi Son,Thanh Hóa,gas,1500.0,pre-construction,"1, 2"
+Nghi Son Phase 1,Thanh Hoa,Coal,600.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Nghi Son Phase 2,Thanh Hoa,Coal,1320.0,operating,"Phase 2 Unit 1, Phase 2 Unit 2"
+Nhon Hoi,Binh Dinh,gas,700.0,cancelled,1
+Nhon Trach,Dong Nai,gas,1624.0,construction,"3, 4"
+Nhon Trach,Dong Nai,gas,1215.0,operating,"1, 2"
+Nhon Trach Formosa,Dong Nai,Coal,450.0,operating,"Unit 1, Unit 2, Unit 3"
+Ninh Binh,Ninh Binh,Coal,330.0,cancelled,Unit 5
+Nong Son,Quang Nam,Coal,30.0,operating,--
+O Mon,Can Tho,gas/oil,330.0,operating,1-1
+O Mon,Can Tho,gas/oil,330.0,operating,1-2
+O Mon,Can Tho,gas,3150.0,pre-construction,"2, 3, 4"
+One Asia Quang Tri,Quang Tri,gas,1200.0,cancelled - inferred 4 y,1
+Pha Lai Phase I,Hai Duong,Coal,440.0,operating,"Phase I Unit 1, Phase I Unit 2, Phase I Unit 3, Phase I Unit 4"
+Pha Lai Phase II,Hai Duong,Coal,600.0,operating,"Phase II Unit 1, Phase II Unit 2"
+Pha Lai Phase III,Hai Duong,Coal,660.0,cancelled,Phase III
+Phu My 1,Ba Ria - Vung Tau,gas,1118.0,operating,1
+Phu My 2.1,Ba Ria - Vung Tau,gas,946.0,operating,"1, 2"
+Phu My 2.2,Ba Ria - Vung Tau,gas,733.0,operating,1
+Phu My 3,Ba Ria - Vung Tau,gas,733.0,operating,1
+Phu My 3.1,Ba Ria - Vung Tau,gas,850.0,cancelled,1
+Phu My 4,Ba Ria - Vung Tau,gas,477.0,operating,1
+Phu Tho,Phu Tho,Coal,600.0,cancelled,--
+Phu Yen,Phu Yen,Coal,2400.0,cancelled,"Unit 1, Unit 2, Unit 3, Unit 4"
+Quang Ninh,Quang Ninh,gas,1500.0,pre-construction,1
+Quang Ninh Phase 1,Quang Ninh,Coal,600.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Quang Ninh Phase 2,Quang Ninh,Coal,600.0,operating,"Phase 2 Unit 1, Phase 2 Unit 2"
+Quang Ninh Phase 3,Quang Ninh,Coal,1200.0,cancelled,"Phase 3 Unit 1, Phase 3 Unit 2"
+Quang Trach,Quang Binh,Coal,1200.0,cancelled,"Unit 2-1, Unit 2-2"
+Quang Trach,Quang Binh,Coal,1403.0,construction,"Unit 1-1, Unit 1-2"
+Quang Trach,Quang Binh,gas,1500.0,pre-construction,2
+Quang Tri,Quảng Trị,gas,340.0,announced,1
+Quang Tri Phase 1,Quang Tri,Coal,1200.0,cancelled,"Phase 1 Unit 1, Phase 1 Unit 2"
+Quang Tri Phase 2,Quang Tri,Coal,1200.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Quynh Lap,Nghe An,gas,1500.0,pre-construction,1
+Quynh Lap Phase 1,Nghe An,Coal,1200.0,cancelled,"Phase 1 Unit 1, Phase 1 Unit 2"
+Quynh Lap Phase 2,Nghe An,Coal,1200.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Rang Dong,Nam Dinh,Coal,100.0,cancelled,--
+Son Dong,Bac Giang,Coal,220.0,operating,"Unit 1, Unit 2"
+Son My,Binh Thuan,Coal,3600.0,cancelled,"Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6"
+Son My I,Binh Thuan,gas,2250.0,pre-construction,1
+Son My II,Binh Thuan,gas,2250.0,pre-construction,"1, 2, 3"
+Song Hau,Hau Giang,Coal,2000.0,cancelled,"Unit 3-1, Unit 3-2"
+Song Hau,Hau Giang,Coal,1200.0,operating,"Unit 1-1, Unit 1-2"
+Song Hau,Hau Giang,Coal,2000.0,permitted,"Unit 2-1, Unit 2-2"
+Tan Phuoc,Tien Giang,gas,3550.0,cancelled,"1, 2, 3, 4"
+Tan Phuoc Phase 1,Tien Giang,Coal,1200.0,cancelled,"Phase 1 Unit 1, Phase 1 Unit 2"
+Tan Phuoc Phase 2,Tien Giang,Coal,1200.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Tan Thanh,Ba Ria-Vung Tau,Coal,2400.0,cancelled,"Unit 1, Unit 2, Unit 3, Unit 4"
+Thai Binh,Thai Binh,Coal,440.0,cancelled,Unit 3-1
+Thai Binh,Thai Binh,gas,3000.0,cancelled,"3, 4, 5, 6"
+Thai Binh,Thai Binh,Coal,1800.0,operating,"Unit 1-1, Unit 1-2, Unit 2-1, Unit 2-2"
+Thai Binh,Thai Binh,gas,1500.0,pre-construction,"1, 2"
+Than An Giang,An Giang,Coal,2000.0,cancelled,--
+Than Bac Lieu,Bac Lieu,Coal,1200.0,cancelled,"Unit 1, Unit 2"
+Thang Long,Quang Ninh,Coal,600.0,operating,"Unit 1, Unit 2"
+Thanh Hoa,Thanh Hóa,gas,4800.0,cancelled,"1, 2, 3, 4, 5, 6"
+Tien Lang,Hai Phong,gas,750.0,cancelled,1-1
+Tien Lang,Hai Phong,gas,750.0,cancelled,1-2
+Tien Lang,Hai Phong,gas,750.0,cancelled,2-1
+Tien Lang,Hai Phong,gas,750.0,cancelled,2-2
+Tien Lang,Hai Phong,gas,750.0,cancelled,3-1
+Tien Lang,Hai Phong,gas,750.0,cancelled,3-2
+Uong Bi,Quang Ninh,Coal,735.0,operating,"Unit 5, Unit 6, Unit 7, Unit 8"
+Van Phong,Khanh Hoa,gas,3000.0,cancelled,"1, 2"
+Van Phong Phase 1,Khanh Hoa,Coal,1432.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Van Phong Phase 2,Khanh Hoa,Coal,1320.0,cancelled,"Phase 2 Unit 1, Phase 2 Unit 2"
+Vedan Vietnam,Dong Nai,Coal,60.0,operating,--
+Vinh Tan Phase 1,Binh Thuan,Coal,1200.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Vinh Tan Phase 2,Binh Thuan,Coal,1244.0,operating,"Phase 2 Unit 1, Phase 2 Unit 2"
+Vinh Tan Phase 3,Binh Thuan,Coal,1980.0,shelved,"Phase 3 Unit 1, Phase 3 Unit 2, Phase 3 Unit 3"
+Vinh Tan Phase 4,Binh Thuan,Coal,1200.0,operating,"Phase 4 Unit 1, Phase 4 Unit 2"
+Vinh Tan Phase 4,Binh Thuan,Coal,600.0,operating,Phase 4 extension
+Vung Ang,Ha Tinh,gas,4800.0,cancelled,3-CC1
+Vung Ang Phase 1,Ha Tinh,Coal,1200.0,operating,"Phase 1 Unit 1, Phase 1 Unit 2"
+Vung Ang Phase 2,Ha Tinh,Coal,1330.0,construction,"Phase 2 Unit 1, Phase 2 Unit 2"
+Vung Ang Phase 3,Ha Tinh,Coal,2400.0,cancelled,"Phase 3 Unit 1, Phase 3 Unit 2, Phase 3 Unit 3, Phase 3 Unit 4"

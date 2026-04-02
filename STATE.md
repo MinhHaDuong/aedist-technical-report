@@ -2,17 +2,16 @@ Last updated: 2026-04-02
 
 ## Status
 
-Wave 1 complete. Census queries done (32 models, 97 JSON, $0.73 spent). Evaluation pipeline has a matching bug — diacritics prevent name reconciliation.
+Monorepo merged (PR #18). Census done (32 models, $0.73). Blocked on diacritics fix before F1 scores are meaningful.
 
 ## Blockers
 
-1. **Matcher diacritics bug**: LLM outputs use ASCII ("Vung Ang"), reference uses Vietnamese ("An Khánh"). Fuzzy matcher doesn't bridge. F1 scores near 0% are artifacts. GPT-5.4 actually found 76 plants.
-2. Padme model pulls failed (network timeout) — retry later.
+1. **Matcher diacritics bug**: LLM outputs use ASCII names, reference uses Vietnamese diacritics. F1 near 0% is an artifact — GPT-5.4 actually found 76 plants. Fix: strip accents before fuzzy matching.
 
 ## Next actions
 
-1. Fix diacritics normalization in cleaner/matcher — strip accents before comparison
-2. Re-run evaluate-all with fixed matcher → real F1 scores
-3. Run summarize_sweep.py → census results table
-4. Select top 5 + best local for Sweep 2
-5. Waves 3-4: information regimes, tables, slides
+1. Fix diacritics in matcher, re-evaluate census (#20 depends on this)
+2. Update convert.py for flat output structure (#19)
+3. Select top 5 + best local model → models_top5.yaml (#20)
+4. Run Sweep 2: information regimes (#10)
+5. Generate tables, build slides (#14, #15)

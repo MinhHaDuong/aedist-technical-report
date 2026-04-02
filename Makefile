@@ -1,55 +1,41 @@
-# AEDIST Technical Report
-# ======================
+# AEDIST Technical Report — Root Makefile
+#
+# Dispatches to sub-Makefiles:
+#   make test       Run all Python tests
+#   make report     Build report.pdf
+#   make slides     Build slides.pdf
+#   make tables     Generate LaTeX tables from experiment results
+#   make sweep1     Run model census (cd experiments/)
+#   make check-fast Unit tests + lint (< 30s)
+#   make check      Full test suite
 
-export UV_CACHE_DIR := /scratch/uv
+.PHONY: test check-fast check report slides tables sweep1 sweep1-summary
 
-AEDIST       := aedist
-RESULTS      := Results/1_simply_ask
-GENERATED    := inputs/generated
+# --- Python -------------------------------------------------------------------
 
-.PHONY: all query evaluate tables clean cleaner
+test:
+	uv run pytest
 
-all: report.pdf
+check-fast: test
 
-# ---------------------------------------------------------------------------
-# Data pipeline (run manually, costs money / time)
-# ---------------------------------------------------------------------------
+check: test
+	cd experiments && $(MAKE) --dry-run sweep1
 
-# Query LLMs via OpenRouter (~$5 per full run)
-query:
-	uv run --project $(AEDIST) python -m aedist.query \
-	    --prompt $(AEDIST)/prompts/prompt_1_singleshot.txt \
-	    --models $(AEDIST)/models.yaml \
-	    --output $(RESULTS)/
+# --- Publications -------------------------------------------------------------
 
-# Evaluate all system outputs against reference → JSON metrics
-evaluate:
-	uv run --project $(AEDIST) python -m aedist.runner evaluate-all \
-	    --outputs-dir $(AEDIST)/outputs \
-	    --output $(AEDIST)/results/summary
+report:
+	$(MAKE) -C report
 
-# ---------------------------------------------------------------------------
-# LaTeX generation (cheap, run before build)
-# ---------------------------------------------------------------------------
+slides:
+	$(MAKE) -C slides
 
-# Generate LaTeX tables and macros from results
 tables:
-	uv run --project $(AEDIST) python -m aedist.convert \
-	    --output $(GENERATED)/
+	uv run python -m aedist.convert --output report/inputs/generated/
 
-# ---------------------------------------------------------------------------
-# Build
-# ---------------------------------------------------------------------------
+# --- Experiments --------------------------------------------------------------
 
-report.pdf: report.tex refs.bib $(wildcard $(GENERATED)/*.tex)
-	tectonic $
+sweep1:
+	$(MAKE) -C experiments sweep1
 
-# ---------------------------------------------------------------------------
-# Clean
-# ---------------------------------------------------------------------------
-
-clean:
-	rm -f *.log *.bbl *.blg *.run.xml report.synctex.gz
-
-cleaner: clean
-	rm -f report.pdf
+sweep1-summary:
+	$(MAKE) -C experiments sweep1-summary
