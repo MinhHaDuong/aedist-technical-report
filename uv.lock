@@ -27,6 +27,13 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+pdf = [
+    { name = "pdf2image" },
+    { name = "pypdf" },
+    { name = "tiktoken" },
+]
+
+[package.dev-dependencies]
 dev = [
     { name = "mypy" },
     { name = "pylint" },
@@ -34,30 +41,29 @@ dev = [
     { name = "ruff" },
     { name = "types-pyyaml" },
 ]
-pdf = [
-    { name = "pdf2image" },
-    { name = "pypdf" },
-    { name = "tiktoken" },
-]
 
 [package.metadata]
 requires-dist = [
-    { name = "mypy", marker = "extra == 'dev'" },
     { name = "openai", specifier = ">=1.0" },
     { name = "pandas", specifier = ">=2.0" },
     { name = "pdf2image", marker = "extra == 'pdf'" },
     { name = "pulp", specifier = ">=2.7" },
     { name = "pydantic", specifier = ">=2.0" },
-    { name = "pylint", marker = "extra == 'dev'" },
     { name = "pypdf", marker = "extra == 'pdf'" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pyyaml" },
     { name = "rapidfuzz", specifier = ">=3.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
     { name = "tiktoken", marker = "extra == 'pdf'" },
-    { name = "types-pyyaml", marker = "extra == 'dev'" },
 ]
-provides-extras = ["pdf", "dev"]
+provides-extras = ["pdf"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "ruff", specifier = ">=0.4" },
+    { name = "types-pyyaml" },
+]
 
 [[package]]
 name = "annotated-types"

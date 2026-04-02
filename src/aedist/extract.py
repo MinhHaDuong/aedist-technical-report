@@ -69,6 +69,29 @@ def _score_csv_like_block(block: str) -> float:
     return (delimiter_hits / max(len(lines), 1)) + header_bonus + length_bonus
 
 
+def _extract_pipe_table(text: str) -> str | None:
+    """Convert a Markdown pipe table to CSV.
+
+    Finds lines with ≥3 pipe characters, strips the separator row (---),
+    and converts to comma-delimited CSV.
+    """
+    lines = text.splitlines()
+    table_lines: list[str] = []
+    for ln in lines:
+        stripped = ln.strip()
+        if "|" in stripped and stripped.count("|") >= 3:
+            # Skip separator rows like |---|---|---|
+            if re.match(r"^\|?[\s\-:|]+\|?$", stripped):
+                continue
+            # Strip leading/trailing pipes, split on |
+            cells = [c.strip() for c in stripped.strip("|").split("|")]
+            table_lines.append(",".join(f'"{c}"' for c in cells))
+
+    if len(table_lines) < 2:
+        return None
+    return "\n".join(table_lines)
+
+
 def _fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
@@ -146,7 +169,7 @@ _CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
 
 
 def _map_header_to_canonical(norm: str) -> str | None:
-    if norm in {"name", "plant", "plant_name"}:
+    if norm in {"name", "plant", "plant_name", "plantname", "power_plant_name"}:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype"}:
         return "fuel"
@@ -232,9 +255,14 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
 
     blocks = _extract_fenced_blocks(response)
     candidates = blocks[:]
-    inline = _fallback_extract_inline_csv(response)
-    if inline:
-        candidates.append(inline)
+    pipe_csv = _extract_pipe_table(response)
+    if pipe_csv:
+        candidates.append(pipe_csv)
+    # Only try inline fallback when no fenced blocks or pipe tables found
+    if not candidates:
+        inline = _fallback_extract_inline_csv(response)
+        if inline:
+            candidates.append(inline)
 
     if not candidates:
         return ExtractResult(False, None, f"{json_path.name}: no CSV found")
