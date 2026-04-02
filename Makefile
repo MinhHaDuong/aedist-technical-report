@@ -30,7 +30,8 @@ slides:
 	$(MAKE) -C slides
 
 tables:
-	uv run python -m aedist.convert --output report/inputs/generated/
+	uv run python -m aedist.convert --output report/inputs/generated/ \
+		--metrics experiments/results/sweep1_census/all_metrics.json
 
 # --- Experiments --------------------------------------------------------------
 

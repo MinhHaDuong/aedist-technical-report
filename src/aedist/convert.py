@@ -1,8 +1,9 @@
 """Convert experiment results to LaTeX tables and macros.
 
 Usage:
-    python src/convert.py --output inputs/generated/
-    python src/convert.py --output inputs/generated/ --date 2025-01-28
+    python -m aedist.convert --output report/inputs/generated/
+    python -m aedist.convert --output report/inputs/generated/ \\
+        --metrics experiments/results/sweep1_census/all_metrics.json
 
 Generates:
     macros.tex         - \newcommand definitions for inline numbers
@@ -11,101 +12,51 @@ Generates:
 """
 
 import argparse
-import csv
-import io
 import json
 import logging
+import re
 from pathlib import Path
 
 log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Result loading
+# Metrics loading
 # ---------------------------------------------------------------------------
 
-def find_latest_run(results_dir: Path) -> Path | None:
-    """Find the most recent dated subdirectory in a results folder."""
-    if not results_dir.exists():
-        return None
-    dated_dirs = sorted(
-        [d for d in results_dir.iterdir() if d.is_dir() and d.name[:4].isdigit()],
-        key=lambda d: d.name,
-    )
-    return dated_dirs[-1] if dated_dirs else None
+def load_metrics(metrics_path: Path) -> dict[str, dict]:
+    """Load all_metrics.json and return best-run metrics per model.
 
+    The file contains one entry per model/run with labels like
+    ``sweep1_census/claude-3.5-sonnet-run1``.  We group by model slug
+    (stripping ``-runN``) and keep the run with the highest F1 score.
 
-def load_results(results_dir: Path, run_date: str | None = None) -> dict[str, dict]:
-    """Load all JSON result files from a run. Returns {model_slug: record}."""
-    if run_date:
-        run_dir = results_dir / run_date
-    else:
-        run_dir = find_latest_run(results_dir)
-
-    if run_dir is None or not run_dir.exists():
+    Returns ``{model_slug: metrics_dict}``.
+    """
+    if not metrics_path.exists():
+        log.warning("Metrics file not found: %s", metrics_path)
         return {}
 
-    results = {}
-    for f in sorted(run_dir.glob("*.json")):
-        with open(f) as fh:
-            record = json.load(fh)
-        slug = f.stem  # e.g. "claude-3.5-sonnet"
-        results[slug] = record
-    return results
+    with open(metrics_path) as fh:
+        raw = json.load(fh)
 
-
-# ---------------------------------------------------------------------------
-# Response parsing
-# ---------------------------------------------------------------------------
-
-def count_csv_rows(response_text: str) -> int:
-    """Count data rows in a CSV response (excluding header)."""
-    if not response_text:
-        return 0
-    # Find the CSV block: look for lines with commas that form a table
-    lines = response_text.strip().split("\n")
-    csv_lines = []
-    in_csv = False
-    for line in lines:
-        stripped = line.strip()
-        # Detect CSV start: line with multiple commas or starts with quote
-        if not in_csv and stripped.count(",") >= 2:
-            in_csv = True
-        if in_csv:
-            if stripped == "" or stripped.startswith("```"):
-                if csv_lines:
-                    break
-                continue
-            csv_lines.append(stripped)
-
-    if len(csv_lines) < 2:
-        return 0
-
-    # Parse to count valid data rows
-    try:
-        reader = csv.reader(io.StringIO("\n".join(csv_lines)))
-        rows = list(reader)
-        return len(rows) - 1  # subtract header
-    except csv.Error:
-        return len(csv_lines) - 1
+    best: dict[str, dict] = {}
+    for entry in raw:
+        label = entry.get("label", "")
+        # label format: "sweep1_census/model-slug-runN"
+        name = label.rsplit("/", 1)[-1]
+        slug = re.sub(r"-run\d+$", "", name)
+        if slug not in best or entry.get("f1", 0) > best[slug].get("f1", 0):
+            best[slug] = entry
+    return best
 
 
 # ---------------------------------------------------------------------------
 # Macros generation
 # ---------------------------------------------------------------------------
 
-# Fallback values from the current report (used when results aren't available)
-EXPERIMENT1_FALLBACKS = {
-    "SimplyAskDeepSeek": 64,
-    "SimplyAskGeminiFlash": 41,
-    "SimplyAskClaudeSonnet": 38,
-    "SimplyAskGPTFourO": 33,
-    "SimplyAskPerplexityPro": 22,
-    "SimplyAskLlama": 18,
-}
-
-# Map from result file slug to macro name
-EXPERIMENT1_MACRO_MAP = {
+# Map from model slug (as it appears in output filenames) to LaTeX macro name
+MACRO_MAP = {
     "deepseek-r1": "SimplyAskDeepSeek",
     "gemini-2.0-flash-001": "SimplyAskGeminiFlash",
     "claude-3.5-sonnet": "SimplyAskClaudeSonnet",
@@ -114,21 +65,34 @@ EXPERIMENT1_MACRO_MAP = {
     "llama-3.3-70b-instruct": "SimplyAskLlama",
 }
 
+# Fallback values (used when metrics aren't available)
+MACRO_FALLBACKS = {
+    "SimplyAskDeepSeek": 64,
+    "SimplyAskGeminiFlash": 41,
+    "SimplyAskClaudeSonnet": 38,
+    "SimplyAskGPTFourO": 33,
+    "SimplyAskPerplexityPro": 22,
+    "SimplyAskLlama": 18,
+}
 
-def generate_macros(exp1_results: dict[str, dict]) -> str:
-    """Generate LaTeX \\newcommand definitions for inline numbers."""
-    values = dict(EXPERIMENT1_FALLBACKS)
 
-    # Override with actual results where available
-    for slug, record in exp1_results.items():
-        macro_name = EXPERIMENT1_MACRO_MAP.get(slug)
-        if macro_name and record.get("response"):
-            count = count_csv_rows(record["response"])
-            if count > 0:
-                values[macro_name] = count
+def generate_macros(metrics: dict[str, dict]) -> str:
+    r"""Generate LaTeX ``\newcommand`` definitions for inline numbers.
 
-    lines = ["% Auto-generated by src/convert.py — do not edit",
-             "% Experiment 1: Simply ask"]
+    When *metrics* are available the macro value is the number of matched
+    plants (``n_matched``).  Otherwise the legacy fallback count is used.
+    """
+    values = dict(MACRO_FALLBACKS)
+
+    for slug, m in metrics.items():
+        macro_name = MACRO_MAP.get(slug)
+        if macro_name and "n_matched" in m:
+            values[macro_name] = m["n_matched"]
+
+    lines = [
+        "% Auto-generated by src/convert.py — do not edit",
+        "% Experiment 1: Simply ask",
+    ]
     for name, value in values.items():
         lines.append(f"\\newcommand{{\\{name}}}{{{value}}}")
 
@@ -154,11 +118,11 @@ TAB_RELANCES_DATA = [
 ]
 
 
-def generate_tab_relances(exp1_results: dict[str, dict]) -> str:
+def generate_tab_relances(metrics: dict[str, dict]) -> str:
     """Generate the tab:relances longtable."""
     rows = []
     for label, p1, r1, r2, r3, r4 in TAB_RELANCES_DATA:
-        # TODO: override p1 from exp1_results when Experiment 1 is re-run
+        # TODO: override p1 from metrics when Experiment 1 is re-run
         # TODO: override r1-r4 from exp2_results when Experiment 2 is automated
         rows.append(f"{label} & {p1} & {r1} & {r2} & {r3} & {r4} \\\\")
 
@@ -207,14 +171,14 @@ TAB_COMPARAISON_NOTES = [
 ]
 
 
-def generate_tab_comparaison(exp1_results: dict[str, dict]) -> str:
+def generate_tab_comparaison(metrics: dict[str, dict]) -> str:
     """Generate the tab:comparaison ThreePartTable."""
     notes = "\n".join(
         f"\\item[{key}] {text}" for key, text in TAB_COMPARAISON_NOTES
     )
     rows = []
     for label, sans, avec in TAB_COMPARAISON_DATA:
-        # TODO: override sans from exp1_results when Experiment 1 is re-run
+        # TODO: override sans from metrics when Experiment 1 is re-run
         # TODO: override avec from exp3_results when Experiment 3 is automated
         rows.append(f"{label} & {sans} & {avec} \\\\")
 
@@ -251,29 +215,36 @@ def main():
         description="Convert experiment results to LaTeX"
     )
     parser.add_argument("--output", required=True, help="Output directory")
-    parser.add_argument("--date", help="Use results from this date (YYYY-MM-DD)")
+    parser.add_argument(
+        "--metrics",
+        help="Path to all_metrics.json (from sweep1-summary)",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    base = Path("Results")
+    # Load metrics from flat JSON structure
+    if args.metrics:
+        metrics = load_metrics(Path(args.metrics))
+    else:
+        metrics = {}
 
-    # Load available results
-    exp1_results = load_results(base / "1_simply_ask", args.date)
+    if not metrics:
+        log.info("No metrics loaded — using fallback values")
 
     # Generate macros
     macros_path = output_dir / "macros.tex"
-    macros_path.write_text(generate_macros(exp1_results))
+    macros_path.write_text(generate_macros(metrics))
     log.info("Wrote %s", macros_path)
 
     # Generate tables
     tab_path = output_dir / "tab_relances.tex"
-    tab_path.write_text(generate_tab_relances(exp1_results))
+    tab_path.write_text(generate_tab_relances(metrics))
     log.info("Wrote %s", tab_path)
 
     tab_path = output_dir / "tab_comparaison.tex"
-    tab_path.write_text(generate_tab_comparaison(exp1_results))
+    tab_path.write_text(generate_tab_comparaison(metrics))
     log.info("Wrote %s", tab_path)
 
 
