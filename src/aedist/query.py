@@ -104,21 +104,6 @@ def main():
                 log.info("  Done. cost=%.6f total=%.6f USD", cost, budget.total_cost)
             except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
-                filepath = output_path(output_dir, model_id, run)
-                record = {
-                    "model": model_id,
-                    "date": date.today().isoformat(),
-                    "run": run,
-                    "prompt": prompt,
-                    "response": None,
-                    "finish_reason": "error",
-                    "error": str(e),
-                    "usage": None,
-                    "wall_seconds": 0.0,
-                    "cost_usd": 0.0,
-                    "model_metadata": model_metadata(model),
-                }
-                save_json(filepath, record)
 
     log.info("Completed. Total cost: %.6f USD", budget.total_cost)
 
