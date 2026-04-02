@@ -179,7 +179,7 @@ Is there any plant missing from the table?
 
 Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesures, on ne contrôle pas la température. Les résultats sont susceptibles de varier de plusieurs unités entre deux runs.
 
-\input{inputs/generated/tab_relances}
+\InputIfFileExists{inputs/generated/tab_relances}{}{}
 
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
@@ -238,7 +238,7 @@ Les pages d'annexes sont extraites des PDF et converties en Markdown (section~\r
 
 On joint les 15 tables et leurs références bibliographiques au Prompt~2 (section~\ref{sec:methode}).
 
-\input{inputs/generated/tab_comparaison}
+\InputIfFileExists{inputs/generated/tab_comparaison}{}{}
 
 Les modèles de raisonnement sortis en janvier 2025 (Deepseek R1, o3-mini-high) donnent les meilleurs résultats avec relance. Les sources sont souvent citées de manière imprécise~: références globales au modèle plutôt que ligne par ligne, ou bien citations de documents plausibles mais non fournis.
 

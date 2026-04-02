@@ -44,12 +44,11 @@ sweep1-padme: $(S1_PAD_JSONS)
 
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
-	uv run --project .. python -m aedist.runner evaluate-all --outputs-dir $(S1_OUTPUT)
-	@mkdir -p results/sweep1_census
+	uv run --project .. python -m aedist.runner evaluate-all --outputs-dir $(S1_OUTPUT) --output ../results/summary
 	uv run --project .. python scripts/summarize_sweep.py \
-	    --metrics results/sweep1_census/all_metrics.json \
+	    --metrics ../results/summary/all_metrics.json \
 	    --queries $(S1_OUTPUT) \
-	    --output results/sweep1_census/summary.csv
+	    --output ../results/summary/sweep1_summary.csv
 
 # OpenRouter: query.py --repeat 3 produces all 3 run files in one call.
 # Grouped target (GNU Make 4.3+): one recipe produces all 3 files.

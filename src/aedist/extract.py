@@ -72,7 +72,7 @@ def _score_csv_like_block(block: str) -> float:
 def _extract_pipe_table(text: str) -> str | None:
     """Convert a Markdown pipe table to CSV.
 
-    Finds lines with >=3 pipe characters, strips the separator row (---),
+    Finds lines with ≥3 pipe characters, strips the separator row (---),
     and converts to comma-delimited CSV.
     """
     lines = text.splitlines()
