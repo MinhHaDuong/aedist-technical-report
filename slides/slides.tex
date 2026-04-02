@@ -8,7 +8,8 @@
 \pgfplotsset{compat=1.18}
 \usepackage{pgfplotstable}
 
-\usetheme{metropolis}
+\usetheme[numbering=fraction]{metropolis}
+% Note: XeTeX scans system fonts (~1000 harmless warnings). Builds fine.
 
 \InputIfFileExists{inputs/generated/macros}{}{}
 
