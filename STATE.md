@@ -2,7 +2,7 @@ Last updated: 2026-04-02
 
 ## Status
 
-Monorepo merged (PR #18). Census done (32 models, $0.73). Blocked on diacritics fix before F1 scores are meaningful. convert.py updated for flat output structure (#19). models_top5.yaml created with 4 frontier + 4 local models (#20).
+Monorepo merged (PR #18). Census done (32 models, $0.73). Blocked on diacritics fix before F1 scores are meaningful. models_top5.yaml created with 4 frontier + 4 local models (#20).
 
 ## Blockers
 

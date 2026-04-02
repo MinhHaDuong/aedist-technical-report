@@ -12,7 +12,7 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 - [ ] Fix diacritics matcher → real F1 scores
 - [x] Select top 5 + best local model — 4 frontier + 4 local (#20)
 - [ ] Information regime comparison — top 5 × 7 conditions (WP9, #10)
-- [x] Update convert.py for flat outputs (#19)
+- [ ] Update convert.py for flat outputs (#19)
 - [ ] All tables generated from data, none hardcoded (WP13, #14)
 - [ ] Beamer slide deck (WP14, #15)
 
