@@ -7,11 +7,7 @@ import unicodedata
 
 import pandas as pd
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,  # Change to DEBUG when debugging
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+log = logging.getLogger(__name__)
 
 
 class PowerPlantDataframeCleaner:
@@ -47,12 +43,12 @@ class PowerPlantDataframeCleaner:
             self.status_substitutions: dict[str, str] = config.get(
                 "status_substitutions", {}
             )
-            logging.info("Cleaning patterns loaded successfully from JSON.")
+            log.info("Cleaning patterns loaded successfully from JSON.")
         except FileNotFoundError:
-            logging.error(f"Configuration file '{config_path}' not found.")
+            log.error(f"Configuration file '{config_path}' not found.")
             raise
         except json.JSONDecodeError as e:
-            logging.error(
+            log.error(
                 f"Error decoding JSON configuration file '{config_path}': {e}"
             )
             raise
@@ -70,17 +66,17 @@ class PowerPlantDataframeCleaner:
         Raises:
             ValueError: If the DataFrame is empty or required columns are missing.
         """
-        logging.info(f"Validating DataFrame with shape: {df.shape}")
+        log.info(f"Validating DataFrame with shape: {df.shape}")
         if df.empty:
-            logging.error("The input DataFrame is empty.")
+            log.error("The input DataFrame is empty.")
             raise ValueError("The input DataFrame is empty.")
 
         df_cols = set(df.columns.str.lower())
-        logging.debug(f"Columns in DataFrame: {df_cols}")
+        log.debug(f"Columns in DataFrame: {df_cols}")
 
         # Check if 'name' is missing but 'Plant name' and 'Unit name' exist
         if "name" not in df_cols and "plant name" in df_cols and "unit name" in df_cols:
-            logging.info(
+            log.info(
                 "The 'name' column is missing but 'Plant name' and 'Unit name' columns are found. "
                 "Creating 'name' column by concatenating 'Plant name' and 'Unit name'."
             )
@@ -91,14 +87,14 @@ class PowerPlantDataframeCleaner:
 
         missing_cols = self.REQUIRED_COLUMNS - df_cols
         if missing_cols:
-            logging.error(f"Missing required columns: {missing_cols}")
+            log.error(f"Missing required columns: {missing_cols}")
             raise ValueError(
                 f"DataFrame missing required columns: {missing_cols}\n"
                 f"Required: {self.REQUIRED_COLUMNS}\n"
                 f"Found: {df_cols}"
             )
 
-        logging.info("DataFrame validation completed successfully.")
+        log.info("DataFrame validation completed successfully.")
 
     def clean_text(self, text: str, drops=None, substitutions=None) -> str | None:
         """
@@ -113,11 +109,11 @@ class PowerPlantDataframeCleaner:
             str | None: The cleaned text, or None if the input was NaN.
         """
         if pd.isna(text):
-            logging.debug("Encountered NaN value during text cleaning.")
+            log.debug("Encountered NaN value during text cleaning.")
             return None
 
         s = str(text).lower().strip()
-        logging.debug(f"Initial text: '{text}', normalized to: '{s}'")
+        log.debug(f"Initial text: '{text}', normalized to: '{s}'")
 
         # Remove diacritics
         s = "".join(
@@ -131,20 +127,20 @@ class PowerPlantDataframeCleaner:
             for pattern in drops:
                 s_before = s
                 s = re.sub(pattern, "", s, flags=re.IGNORECASE)
-                logging.debug(f"Dropped pattern '{pattern}': '{s_before}' -> '{s}'")
+                log.debug(f"Dropped pattern '{pattern}': '{s_before}' -> '{s}'")
 
         # Apply substitutions
         if substitutions:
             for pattern, replacement in substitutions.items():
                 s_before = s
                 s = re.sub(pattern, replacement, s, flags=re.IGNORECASE)
-                logging.debug(
+                log.debug(
                     f"Substituted '{pattern}' with '{replacement}': '{s_before}' -> '{s}'"
                 )
 
         # Clean up whitespace
         s = re.sub(r"\s+", " ", s).strip()
-        logging.debug(f"Final cleaned text: '{s}'")
+        log.debug(f"Final cleaned text: '{s}'")
         return s
 
     def clean_name(self, name: str) -> str:
@@ -224,7 +220,7 @@ class PowerPlantDataframeCleaner:
         """
         try:
             self.validate_dataframe(df)
-            logging.info("Starting DataFrame cleaning process.")
+            log.info("Starting DataFrame cleaning process.")
 
             df = df.copy()
             df.columns = df.columns.str.lower()
@@ -235,12 +231,12 @@ class PowerPlantDataframeCleaner:
             df["status_clean"] = df["status"].apply(self.clean_status)
             df["fuel_clean"] = df["fuel"].apply(self.clean_fuel)
 
-            logging.info(f"DataFrame cleaning completed. Final shape: {df.shape}")
+            log.info(f"DataFrame cleaning completed. Final shape: {df.shape}")
             return df
 
         except Exception as e:
-            logging.error(f"An error occurred during DataFrame cleaning: {e}")
-            logging.debug(traceback.format_exc())
+            log.error(f"An error occurred during DataFrame cleaning: {e}")
+            log.debug(traceback.format_exc())
             raise
 
 
@@ -257,7 +253,7 @@ if __name__ == "__main__":
         cleaner = PowerPlantDataframeCleaner()
         cleaned_df = cleaner.clean_dataframe(input_df)
         cleaned_df.to_csv(sys.stdout, index=False)
-        logging.info("Data cleaning completed successfully.")
+        log.info("Data cleaning completed successfully.")
     except Exception as e:
-        logging.error(f"An error occurred: {e}")
+        log.error(f"An error occurred: {e}")
         sys.exit(1)
