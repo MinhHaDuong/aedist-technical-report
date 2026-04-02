@@ -17,6 +17,9 @@ import os
 from datetime import date
 from pathlib import Path
 
+import httpx
+import openai
+
 from .harness import (
     BudgetTracker,
     compute_cost,
@@ -41,8 +44,6 @@ _SEARCH_QUERIES = [
 
 def tavily_search(query: str, api_key: str) -> list[dict]:
     """Search via Tavily API, return list of result dicts."""
-    import httpx
-
     resp = httpx.post(
         "https://api.tavily.com/search",
         json={
@@ -73,7 +74,7 @@ def run_web_searches(api_key: str) -> tuple[str, list[dict]]:
             search_log.append({"query": query, "results": results})
             for r in results:
                 context_parts.append(f"## {r['title']}\n{r['content']}")
-        except Exception as e:
+        except httpx.HTTPError as e:
             log.error("Search failed for '%s': %s", query, e)
             search_log.append({"query": query, "error": str(e), "results": []})
 
@@ -169,7 +170,7 @@ def main():
                 }
                 save_json(filepath, record)
                 log.info("  Done. cost=%.6f total=%.6f USD", cost, budget.total_cost)
-            except Exception as e:
+            except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 
     log.info("Completed. Total cost: %.6f USD", budget.total_cost)

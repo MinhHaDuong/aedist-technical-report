@@ -295,7 +295,7 @@ def main():
         log.info("Wrote %s", summary_path)
 
     elif args.mode == "web":
-        log.warning("Web verification not yet implemented.")
+        raise NotImplementedError("Web verification mode is not yet implemented.")
 
     log.info("Verification complete.")
 
