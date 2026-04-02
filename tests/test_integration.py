@@ -12,25 +12,35 @@ from aedist.schema import MatchType
 DATA_DIR = Path(__file__).parent.parent / "data" / "reference"
 OUTPUTS_DIR = Path(__file__).parent.parent / "experiments" / "outputs"
 
+_REF_PATH = DATA_DIR / "vietnam_thermal_v1.csv"
+_CONCISE_PATH = OUTPUTS_DIR / "llm_direct" / "claude_sonnet_concise.csv"
+
+_SKIP_REF = pytest.mark.skipif(not _REF_PATH.exists(), reason=f"Missing {_REF_PATH}")
+_SKIP_CONCISE = pytest.mark.skipif(not _CONCISE_PATH.exists(), reason=f"Missing {_CONCISE_PATH}")
+
 
 @pytest.fixture
 def reference():
-    return load_plants_csv(DATA_DIR / "vietnam_thermal_v1.csv")
+    return load_plants_csv(_REF_PATH)
 
 
 @pytest.fixture
 def claude_concise():
-    return load_plants_csv(OUTPUTS_DIR / "llm_direct" / "claude_sonnet_concise.csv")
+    return load_plants_csv(_CONCISE_PATH)
 
 
 class TestLoadData:
+    @_SKIP_REF
     def test_reference_count(self, reference):
         assert len(reference) == 163
 
+    @_SKIP_CONCISE
     def test_claude_concise_count(self, claude_concise):
         assert len(claude_concise) == 30  # 31 lines - 1 header
 
 
+@_SKIP_REF
+@_SKIP_CONCISE
 class TestReconciliation:
     def test_reconcile_produces_entries(self, reference, claude_concise):
         entries = reconcile(reference, claude_concise)
@@ -52,6 +62,8 @@ class TestReconciliation:
         print("\n" + format_metrics(m))
 
 
+@_SKIP_REF
+@_SKIP_CONCISE
 class TestMetricsAttributes:
     def test_error_taxonomy_keys(self, reference, claude_concise):
         entries = reconcile(reference, claude_concise)
