@@ -1,5 +1,5 @@
 # AEDIST Benchmark — Model Registry
-# 24 models, updated 2026-04-01
+# 25 models, updated 2026-04-02
 # Panachage: US/CN/FR/Other × Frontier→Edge × Open/Commercial
 # Validated against OpenRouter API. Prices in USD per million tokens.
 # OpenRouter IDs — use with: uv run python -m aedist.query
@@ -78,6 +78,19 @@
   params: "671B MoE"
   size_class: frontier
   license: open-MIT
+
+- id: mistralai/mistral-large-2512
+  name: Mistral Large 3
+  provider: Mistral
+  country: FR
+  architecture: dense
+  reasoning: instruct
+  context_window: 262144
+  price_per_mtok_in: 2.0
+  price_per_mtok_out: 6.0
+  params: "41B active"
+  size_class: frontier
+  license: open-apache
 
 # --- Large ---
 

@@ -40,7 +40,9 @@ sweep1: sweep1-openrouter sweep1-padme
 
 sweep1-openrouter: $(S1_OR_JSONS)
 
-sweep1-padme: $(S1_PAD_JSONS)
+# Padme: sequential — Ollama serves one model at a time
+sweep1-padme:
+	$(MAKE) -j1 $(S1_PAD_JSONS)
 
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
@@ -53,7 +55,7 @@ sweep1-summary:
 # OpenRouter: query.py --repeat 3 produces all 3 run files in one call.
 # Grouped target (GNU Make 4.3+): one recipe produces all 3 files.
 define or_rule
-$(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) $(S1_MODELS) sweeps/sweep1_census.yaml
+$(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_census.yaml
 	$$(eval FULL_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); hits=[m['id'] for m in ms if m['id'].split('/')[-1].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(FULL_ID)" ]; then echo "SKIP $(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
@@ -66,7 +68,7 @@ $(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
 
 # Padme: query_padme.py --repeat 3 produces all 3 files.
 define padme_rule
-$(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) $(S1P_MODELS) sweeps/sweep1_padme.yaml
+$(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_padme.yaml
 	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
 	uv run --project .. python scripts/query_padme.py \
