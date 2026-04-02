@@ -5,16 +5,15 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 ## Current milestone: Econom'IA 2026 (April 11)
 
 - [x] Monorepo — single self-contained repo
-- [x] Test harness: query, extract, evaluate, verify (61 tests)
+- [x] Test harness: query, extract, evaluate, verify (109 tests)
 - [x] Model registry: 24 OpenRouter + 8 Padme local
 - [x] Report restructured: 7 chapters, 410 lines
 - [x] Census: 32 models evaluated (F1 range 2-66%, $0.73)
+- [x] Per-table pipeline: one script per table/figure, Makefile orchestrates (#43)
 - [ ] Pipeline UX: progress, checkpointing, parallelism (#22)
-- [ ] Select top 5 + best local model (#20)
-- [ ] Information regime comparison — top 5 × 7 conditions (#10)
-- [ ] Update convert.py for flat outputs (#19)
-- [ ] All tables generated from data (#14)
-- [ ] Beamer slide deck (#15)
+- [ ] Select top models: `make select` (#20)
+- [ ] Information regime comparison — top models × 7 conditions (#10)
+- [ ] Beamer slides with generated data (#15)
 
 ## Next milestone
 
