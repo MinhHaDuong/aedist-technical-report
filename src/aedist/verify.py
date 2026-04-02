@@ -176,10 +176,11 @@ def verify_llm(
     result = query_single_turn(client, model_id, [{"role": "user", "content": prompt}])
     response_text = result["content"]
 
-    # Parse verification results (best-effort)
-    verified = response_text.lower().count("verified") - response_text.lower().count("unverified")
-    fabricated = response_text.lower().count("fabricated")
-    uncertain = response_text.lower().count("uncertain")
+    # Parse verification results (best-effort, word-boundary matching)
+    text_lower = response_text.lower()
+    verified = len(re.findall(r"\bverified\b", text_lower)) - len(re.findall(r"\bunverified\b", text_lower))
+    fabricated = len(re.findall(r"\bfabricated\b", text_lower))
+    uncertain = len(re.findall(r"\buncertain\b", text_lower))
     total = max(len(rows), 1)
 
     summary = {

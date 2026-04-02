@@ -4,6 +4,7 @@ import re
 import sys
 import traceback
 import unicodedata
+from pathlib import Path
 
 import pandas as pd
 
@@ -20,13 +21,16 @@ class PowerPlantDataframeCleaner:
 
     REQUIRED_COLUMNS: set[str] = {"name", "province", "fuel", "capacity", "status"}
 
-    def __init__(self, config_path: str = "config.json") -> None:
+    def __init__(self, config_path: str | None = None) -> None:
         """
         Initialize the cleaner by loading patterns from a JSON configuration file.
 
         Args:
-            config_path (str): Path to the JSON configuration file.
+            config_path: Path to the JSON configuration file.
+                         Defaults to config.json in the module directory.
         """
+        if config_path is None:
+            config_path = str(Path(__file__).parent / "config.json")
         try:
             with open(config_path) as file:
                 config = json.load(file)

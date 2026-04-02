@@ -17,6 +17,8 @@ dependencies = [
 
 [project.optional-dependencies]
 pdf = ["pypdf", "pdf2image", "tiktoken"]
+
+[dependency-groups]
 dev = ["pytest>=8.0", "ruff>=0.4", "pylint", "mypy", "types-PyYAML"]
 
 [project.scripts]

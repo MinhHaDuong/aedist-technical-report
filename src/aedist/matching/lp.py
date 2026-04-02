@@ -44,6 +44,8 @@ Adjustable parameters:
   - capacity_weight: Weight factor for the capacity difference term.
 """
 
+import math
+
 import pandas as pd
 from pulp import (
     PULP_CBC_CMD,
@@ -170,6 +172,9 @@ def _compute_costs(
             name2 = str(df2.loc[j, "name_clean"])
             cap1 = df1.loc[i, "capacity_clean"]
             cap2 = df2.loc[j, "capacity_clean"]
+            if math.isnan(cap1) or math.isnan(cap2):
+                costs[(i, j)] = mismatch_penalty
+                continue
             diff = abs(cap1 - cap2)
             if name1 == name2:
                 base_cost = 0
@@ -296,11 +301,10 @@ def _extract_results(
     matched_pairs: list[tuple[int, int]] = []
     for i in indices1:
         for j in indices2:
-            # Here we expect binary values (0 or 1); if near-binary values appear, consider rounding.
-            if x_vars[(i, j)].varValue == 1:
+            if x_vars[(i, j)].varValue >= 0.5:
                 matched_pairs.append((i, j))
-    unmatched_df1: list[int] = [i for i in indices1 if u_vars[i].varValue == 1]
-    unmatched_df2: list[int] = [j for j in indices2 if v_vars[j].varValue == 1]
+    unmatched_df1: list[int] = [i for i in indices1 if u_vars[i].varValue >= 0.5]
+    unmatched_df2: list[int] = [j for j in indices2 if v_vars[j].varValue >= 0.5]
 
     for i, j in matched_pairs:
         cap1: float = df1.loc[i, "capacity_clean"]

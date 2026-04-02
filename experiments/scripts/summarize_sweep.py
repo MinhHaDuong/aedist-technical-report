@@ -85,13 +85,13 @@ def main():
         rows.append({
             "model": model_short,
             "n_runs": n_runs,
-            "median_f1": round(median(f1s), 4),
-            "median_coverage": round(median(coverages), 4),
-            "median_precision": round(median(precisions), 4),
-            "median_fuel_accuracy": round(median(fuel_accs), 4),
-            "median_n_plants": round(median(n_plants)),
+            "median_f1": round(median(f1s), 4) if f1s else 0.0,
+            "median_coverage": round(median(coverages), 4) if coverages else 0.0,
+            "median_precision": round(median(precisions), 4) if precisions else 0.0,
+            "median_fuel_accuracy": round(median(fuel_accs), 4) if fuel_accs else 0.0,
+            "median_n_plants": round(median(n_plants)) if n_plants else 0,
             "total_cost_usd": round(sum(costs), 6),
-            "median_latency_s": round(median(latencies), 1),
+            "median_latency_s": round(median(latencies), 1) if latencies else 0.0,
         })
 
     # Sort by median F1 descending

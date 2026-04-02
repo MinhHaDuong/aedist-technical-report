@@ -80,14 +80,10 @@ def find_exact_match(
             - matched_index (int): The index of the matched row.
             Returns (None, None) if no exact match is found.
     """
-    # Assert required columns exist on row1 and unmatched_group2.
-    assert (
-        "name_clean" in row1 and "capacity_clean" in row1
-    ), "row1 is missing required columns 'name_clean' and/or 'capacity_clean'."
-    assert (
-        "name_clean" in unmatched_group2.columns
-        and "capacity_clean" in unmatched_group2.columns
-    ), "unmatched_group2 is missing required columns 'name_clean' and/or 'capacity_clean'."
+    if "name_clean" not in row1 or "capacity_clean" not in row1:
+        raise ValueError("row1 is missing required columns 'name_clean' and/or 'capacity_clean'.")
+    if "name_clean" not in unmatched_group2.columns or "capacity_clean" not in unmatched_group2.columns:
+        raise ValueError("unmatched_group2 is missing required columns 'name_clean' and/or 'capacity_clean'.")
 
     exact_matches = unmatched_group2[
         (unmatched_group2["name_clean"] == row1["name_clean"])
@@ -121,11 +117,10 @@ def find_fuzzy_match(
             - matched_index (int): The index of that row.
             Returns (None, None) if no match meets the threshold.
     """
-    # Assert required columns exist.
-    assert "name_clean" in row1, "row1 is missing required column 'name_clean'."
-    assert (
-        "name_clean" in unmatched_group2.columns
-    ), "unmatched_group2 is missing required column 'name_clean'."
+    if "name_clean" not in row1:
+        raise ValueError("row1 is missing required column 'name_clean'.")
+    if "name_clean" not in unmatched_group2.columns:
+        raise ValueError("unmatched_group2 is missing required column 'name_clean'.")
 
     best_match = process.extractOne(
         row1["name_clean"],
@@ -157,10 +152,13 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     similarity_threshold = kwargs.get("similarity_threshold", 90)
     tol = kwargs.get("capacity_tolerance", 0)
 
-    # Assert that both groups have the required columns.
     required_columns = {"name", "name_clean", "capacity_clean"}
-    assert required_columns.issubset(group1.columns), "group1 missing required columns."
-    assert required_columns.issubset(group2.columns), "group2 missing required columns."
+    missing_g1 = required_columns - set(group1.columns)
+    missing_g2 = required_columns - set(group2.columns)
+    if missing_g1:
+        raise ValueError(f"group1 missing required columns: {missing_g1}")
+    if missing_g2:
+        raise ValueError(f"group2 missing required columns: {missing_g2}")
 
     # Make copies to avoid modifying the original data.
     unmatched_group1 = group1.copy()
