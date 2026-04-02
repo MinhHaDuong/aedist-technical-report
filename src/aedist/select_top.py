@@ -83,100 +83,45 @@ def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, di
 
 
 # ---------------------------------------------------------------------------
-# Diverse selection
+# Selection
 # ---------------------------------------------------------------------------
 
-def _is_us(model: dict) -> bool:
-    return model.get("country") == "US"
-
-
-def _is_cn(model: dict) -> bool:
-    return model.get("country") == "CN"
-
-
-def _is_local(model: dict) -> bool:
-    return "Padme" in model.get("provider", "")
-
-
-def _is_cheap(model: dict) -> bool:
-    return model.get("price_per_mtok_out", float("inf")) < 1.0
-
-
-def select_top_diverse(
+def select_top(
     rankings: dict[str, float],
-    registry: dict[str, dict],
-    n: int = 5,
+    cloud_registry: dict[str, dict],
+    local_registry: dict[str, dict],
+    n: int = 1,
 ) -> list[dict]:
-    """Select top N models by median F1 with diversity constraints.
+    """Select top N cloud + N local models by median F1.
 
-    Ensures at least one model from each category:
-    - US provider
-    - CN provider
-    - Local (Padme) provider
-    - Cheap (<$1/Mtok output)
+    Two independent rankings: best N from cloud, best N from local.
+    Total selected = 2N.
 
-    Models not found in the registry are skipped.
+    Models not found in their registry are skipped.
     """
-    # Filter to models present in both rankings and registry
-    candidates = []
-    for slug in rankings:
-        if slug in registry:
-            entry = registry[slug].copy()
-            entry["_median_f1"] = rankings[slug]
-            candidates.append(entry)
-
-    if not candidates:
-        return []
-
-    # Clamp n to available candidates
-    n = min(n, len(candidates))
-
-    # Greedy selection: fill diversity slots first, then top by F1
-    selected_slugs: set[str] = set()
-    selected: list[dict] = []
-
-    # Diversity constraints: (predicate, label)
-    constraints = [
-        (_is_us, "US"),
-        (_is_cn, "CN"),
-        (_is_local, "local/Padme"),
-        (_is_cheap, "cheap (<$1/Mtok)"),
-    ]
-
-    # For each constraint, pick the highest-F1 candidate that satisfies it
-    for predicate, label in constraints:
-        if len(selected) >= n:
-            break
-        for candidate in candidates:
-            slug = candidate["_slug"]
-            if slug not in selected_slugs and predicate(candidate):
-                selected.append(candidate)
-                selected_slugs.add(slug)
-                log.info(
-                    "  Diversity slot [%s]: %s (median F1=%.1f%%)",
-                    label, candidate.get("name", slug),
-                    candidate["_median_f1"] * 100,
-                )
-                break
-
-    # Fill remaining slots with top F1 models not yet selected
-    for candidate in candidates:
-        if len(selected) >= n:
-            break
-        slug = candidate["_slug"]
-        if slug not in selected_slugs:
-            selected.append(candidate)
-            selected_slugs.add(slug)
+    def _pick_top_n(registry: dict[str, dict], label: str) -> list[dict]:
+        candidates = []
+        for slug in rankings:
+            if slug in registry:
+                entry = registry[slug].copy()
+                entry["_median_f1"] = rankings[slug]
+                candidates.append(entry)
+        picked = candidates[:n]
+        for m in picked:
             log.info(
-                "  Top F1 slot: %s (median F1=%.1f%%)",
-                candidate.get("name", slug),
-                candidate["_median_f1"] * 100,
+                "  %s: %s (median F1=%.1f%%)",
+                label, m.get("name", m["_slug"]),
+                m["_median_f1"] * 100,
             )
+        return picked
 
-    # Sort final selection by median F1 descending
+    log.info("Selecting top %d cloud + %d local:", n, n)
+    cloud = _pick_top_n(cloud_registry, "cloud")
+    local = _pick_top_n(local_registry, "local")
+
+    selected = cloud + local
     selected.sort(key=lambda x: x["_median_f1"], reverse=True)
 
-    # Strip internal fields before returning
     for model in selected:
         model.pop("_median_f1", None)
         model.pop("_slug", None)
@@ -212,8 +157,8 @@ def main() -> None:
         help="Output path for selected models YAML",
     )
     parser.add_argument(
-        "--n", type=int, default=5,
-        help="Number of models to select (default: 5)",
+        "--n", type=int, default=1,
+        help="Select N cloud + N local models (default: 1, i.e. 2 total)",
     )
 
     args = parser.parse_args()
@@ -231,19 +176,18 @@ def main() -> None:
 
     cloud_reg = load_registry(cloud_models, is_padme=False)
     padme_reg = load_registry(padme_models, is_padme=True)
-    combined = {**cloud_reg, **padme_reg}
-    log.info("Registry: %d cloud + %d local = %d models", len(cloud_reg), len(padme_reg), len(combined))
+    log.info("Registry: %d cloud + %d local", len(cloud_reg), len(padme_reg))
 
     # Rank
     rankings = group_median_f1(metrics)
     log.info("Rankings (median F1):")
+    all_known = {**cloud_reg, **padme_reg}
     for slug, f1 in rankings.items():
-        marker = " *" if slug in combined else " ?"
+        marker = " *" if slug in all_known else " ?"
         log.info("  %s  %.1f%%%s", slug.ljust(35), f1 * 100, marker)
 
     # Select
-    log.info("Selecting top %d with diversity constraints:", args.n)
-    selected = select_top_diverse(rankings, combined, n=args.n)
+    selected = select_top(rankings, cloud_reg, padme_reg, n=args.n)
 
     # Write output
     # Strip internal fields and write clean YAML
