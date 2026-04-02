@@ -44,10 +44,7 @@ results/
 report/inputs/documents/*
 report/inputs/feeds/*
 
-# Legacy directories
-Results/
-Experiments/
-AssistantsComparison/
+# Attic (old manual experiments, legacy results)
 attic/
 
 # Editor / IDE / OS
