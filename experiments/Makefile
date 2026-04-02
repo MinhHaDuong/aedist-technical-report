@@ -4,8 +4,8 @@
 # Output files are Make targets: prompt or model list change → re-query.
 #
 # Usage:
-#   make -j8 sweep1          # All models, 3 runs each (parallel)
-#   make -j4 sweep1-padme    # Padme local models only
+#   make -j8 sweep1          # All models, 3 runs each (OpenRouter parallel, Padme sequential)
+#   make sweep1-padme        # Padme local models only (always sequential)
 #   make sweep1-summary      # Extract → evaluate → summarize
 #
 # Adding a model to models.yaml → `make sweep1` queries only the new model.
@@ -130,8 +130,8 @@ sweep2-web:
 
 help:
 	@echo "Sweeps:"
-	@echo "  make -j8 sweep1           Census: all models × 3 runs"
-	@echo "  make -j4 sweep1-padme     Padme local models only"
+	@echo "  make -j8 sweep1           Census (OpenRouter parallel, Padme sequential)"
+	@echo "  make sweep1-padme         Padme local models (always sequential)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               All information regimes"
 	@echo ""
