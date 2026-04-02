@@ -5,7 +5,7 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 ## Current milestone: Econom'IA 2026 (April 11)
 
 - [x] Monorepo — single self-contained repo
-- [x] Test harness: query, extract, evaluate, verify (109 tests)
+- [x] Test harness: query, extract, evaluate, verify (116 tests)
 - [x] Model registry: 24 OpenRouter + 8 Padme local
 - [x] Report restructured: 7 chapters, 410 lines
 - [x] Census: 32 models evaluated (F1 range 2-66%, $0.73)
