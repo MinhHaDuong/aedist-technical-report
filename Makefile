@@ -29,8 +29,11 @@ report:
 slides:
 	$(MAKE) -C slides
 
-tables:
+tables: report/inputs/generated/tab_census.tex
 	uv run python -m aedist.convert --output report/inputs/generated/
+
+report/inputs/generated/tab_census.tex: results/summary/all_metrics.json
+	uv run python -m aedist.tabulate_census --input $< --output $@
 
 # --- Experiments --------------------------------------------------------------
 
