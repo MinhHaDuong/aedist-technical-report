@@ -6,8 +6,11 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
+\usepackage{pgfplotstable}
 
 \usetheme{metropolis}
+
+\InputIfFileExists{inputs/generated/macros}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
 \definecolor{missed}{HTML}{E8505B}
@@ -153,38 +156,25 @@ Cost: \textbf{\$0.73}
 \textit{Pending diacritics fix in matcher for real F1 scores.}
 
 \medskip
+\pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
+\pgfplotstablegetrowsof{\censusdata}
+\pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
 \begin{tikzpicture}
 \begin{axis}[
     width=0.85\textwidth,
     height=5.5cm,
-    symbolic x coords={Claude S4.6, GPT-5.4, DeepSeek V3.2, Gemini 3 Flash,
-                       Qwen 3.5 397B, Kimi K2.5, Llama 4 Mav,
-                       Qwen 3.5 122B\textsuperscript{L}, Mistral Sm 3.2\textsuperscript{L}},
-    xtick=data,
-    x tick label style={rotate=35, anchor=east, font=\scriptsize},
-    ylabel={Plants found (n\_system)},
-    ymin=0, ymax=100,
-    bar width=10pt,
-    enlarge x limits=0.08,
-    nodes near coords,
-    nodes near coords style={font=\tiny},
-    every axis plot/.append style={fill=matched!70},
+    ylabel={F1 score},
+    ymin=0, ymax=1,
+    bar width=6pt,
+    xtick={0,...,\censusrows},
+    x tick label style={rotate=45, anchor=east, font=\tiny},
+    xticklabel={\pgfplotstablegetelem{\tick}{model}\of{\censusdata}\pgfplotsretval},
+    enlarge x limits=0.05,
 ]
-\addplot[ybar, fill=matched!70] coordinates {
-    (Claude S4.6, 79)
-    (GPT-5.4, 76)
-    (DeepSeek V3.2, 68)
-    (Gemini 3 Flash, 62)
-    (Qwen 3.5 397B, 58)
-    (Kimi K2.5, 55)
-    (Llama 4 Mav, 52)
-    (Qwen 3.5 122B\textsuperscript{L}, 45)
-    (Mistral Sm 3.2\textsuperscript{L}, 38)
-};
+\addplot[ybar, fill=matched!70]
+    table [x expr=\coordindex, y=f1] {\censusdata};
 \end{axis}
 \end{tikzpicture}
-
-\scriptsize\textit{Illustrative data -- actual scores pending diacritics fix}
 \end{center}
 \end{frame}
 
@@ -311,32 +301,19 @@ The main problem is \textbf{coverage}, not accuracy.
     height=6cm,
     xlabel={Cost per run (USD)},
     ylabel={F1 score},
-    xmode=log,
-    xmin=0.001, xmax=1,
+    xmin=0,
     ymin=0, ymax=1,
     grid=major,
     legend pos=south east,
     legend style={font=\scriptsize},
 ]
-% Illustrative frontier models
+\pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
 \addplot[only marks, mark=*, mark size=3pt, color=matched]
-    coordinates {(0.15, 0.78) (0.12, 0.75) (0.02, 0.70) (0.03, 0.65)};
-\addlegendentry{Frontier}
-
-% Illustrative local models
-\addplot[only marks, mark=triangle*, mark size=3pt, color=halluc]
-    coordinates {(0.001, 0.55) (0.001, 0.48) (0.001, 0.42) (0.001, 0.35)};
-\addlegendentry{Local (Padme)}
-
-% Illustrative small/edge
-\addplot[only marks, mark=square*, mark size=3pt, color=missed]
-    coordinates {(0.005, 0.58) (0.008, 0.52) (0.003, 0.45)};
-\addlegendentry{Small/Edge}
+    table [x=cost_usd, y=f1] {\paretodata};
+\addlegendentry{Models}
 
 \end{axis}
 \end{tikzpicture}
-
-\scriptsize\textit{Illustrative data -- actual Pareto front from sweep1 metrics}
 \end{center}
 \end{frame}
 
