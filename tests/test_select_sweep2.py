@@ -1,12 +1,12 @@
-"""Tests for select_top — model selection from census metrics."""
+"""Tests for select_sweep2 — model selection from census metrics."""
 
 import pytest
 
-from aedist.select_top import (
+from aedist.select_sweep2 import (
     extract_slug,
     group_median_f1,
     load_registry,
-    select_top,
+    select_sweep2,
 )
 
 # ---------------------------------------------------------------------------
@@ -75,15 +75,15 @@ class TestGroupMedianF1:
 
 
 # ---------------------------------------------------------------------------
-# select_top — N cloud + N local
+# select_sweep2 — N cloud + N local
 # ---------------------------------------------------------------------------
 
-class TestSelectTop:
+class TestSelectSweep2:
     def _select(self, n=1):
         rankings = group_median_f1(SAMPLE_METRICS)
         cloud = load_registry(SAMPLE_CLOUD, is_padme=False)
         local = load_registry(SAMPLE_PADME, is_padme=True)
-        return select_top(rankings, cloud, local, n=n)
+        return select_sweep2(rankings, cloud, local, n=n)
 
     def test_n1_gives_two_models(self):
         """--n 1 → 1 cloud + 1 local = 2 total."""

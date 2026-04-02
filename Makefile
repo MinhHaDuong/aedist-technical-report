@@ -36,13 +36,13 @@ sweep1-summary:
 	$(MAKE) -C experiments sweep1-summary
 
 # Stage 4a: model selection (computed from census, not hardcoded)
-experiments/models_top5.yaml: $(METRICS) experiments/models.yaml experiments/models_padme.yaml
-	uv run python -m aedist.select_top \
+experiments/models_sweep2.yaml: $(METRICS) experiments/models.yaml experiments/models_padme.yaml
+	uv run python -m aedist.select_sweep2 \
 	    --input $< --registry experiments/models.yaml \
 	    --padme experiments/models_padme.yaml \
 	    --output $@ --n 1
 
-select: experiments/models_top5.yaml
+select: experiments/models_sweep2.yaml
 
 # Stage 4b: tables for report
 tables: $(GEN)/tab_census.tex $(GEN)/macros.tex
