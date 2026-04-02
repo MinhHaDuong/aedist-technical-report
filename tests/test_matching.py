@@ -1,6 +1,8 @@
 import importlib
-import pytest
+
 import pandas as pd
+import pytest
+
 
 # Parameterize the fixture over both implementations to run after this change.
 @pytest.fixture(params=["lp", "phased"])
@@ -153,18 +155,18 @@ def test_main_example(reconcile):
         capacity_tolerance=10,
         mismatch_penalty=1000,
     )
-    
+
     # There should be exactly two rows of matches.
     assert len(result) == 2
 
     # Identify the matched pairs based on file1's name.
     row_a = result[result["name_file1"] == "Plant A"].iloc[0]
     row_b = result[result["name_file1"] == "Plant B"].iloc[0]
-    
+
     # For Plant A: capacity difference = 100 - 105 = -5 (fuzzy match within tolerance)
     assert row_a["capacity_difference"] == -5
     assert row_a["status"] == "Matched (Fuzzy)"
-    
+
     # For Plant B: capacity difference = 200 - 200 = 0 (exact match)
     assert row_b["capacity_difference"] == 0
     assert row_b["status"] == "Matched"

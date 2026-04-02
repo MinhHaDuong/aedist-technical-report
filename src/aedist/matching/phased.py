@@ -6,6 +6,7 @@
 """Module for reconciling power plant data using fuzzy and exact matching."""
 
 from typing import Any
+
 import pandas as pd
 from rapidfuzz import fuzz, process
 
@@ -155,7 +156,7 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     """
     similarity_threshold = kwargs.get("similarity_threshold", 90)
     tol = kwargs.get("capacity_tolerance", 0)
-            
+
     # Assert that both groups have the required columns.
     required_columns = {"name", "name_clean", "capacity_clean"}
     assert required_columns.issubset(group1.columns), "group1 missing required columns."

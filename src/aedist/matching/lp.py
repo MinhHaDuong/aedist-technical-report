@@ -17,9 +17,9 @@ Let:
   - vⱼ be a binary variable that is 1 if record j from df2 is left unmatched.
 
 The goal is to minimize the total cost:
-    
+
   Minimize: ∑₍ᵢ,j₎ [cost(i, j) · X₍ᵢⱼ₎] + dummy_cost · (∑ᵢ uᵢ + ∑ⱼ vⱼ)
-  
+
 Subject to the assignment constraints:
   For each record i in df1:
     ∑ⱼ X₍ᵢⱼ₎ + uᵢ = 1
@@ -46,12 +46,12 @@ Adjustable parameters:
 
 import pandas as pd
 from pulp import (
+    PULP_CBC_CMD,
+    LpMinimize,
     LpProblem,
+    LpStatusOptimal,
     LpVariable,
     lpSum,
-    LpMinimize,
-    PULP_CBC_CMD,
-    LpStatusOptimal,
 )
 from rapidfuzz import fuzz
 
@@ -89,7 +89,7 @@ def _build_result_row(
 
     Returns:
         dict[str, object | None]: A dictionary with details on the match and associated metadata.
-        
+
     Note:
         The keys in the returned dictionary still use the "file1"/"file2" naming to maintain test compatibility.
     """
@@ -289,7 +289,7 @@ def _extract_results(
     v_vars = context["v_vars"]  # type: dict[int, LpVariable]
     sim_thresh: int = config["similarity_threshold"]  # type: ignore
     cap_tol: float = float(config["capacity_tolerance"])
-    
+
     results: list[dict[str, object]] = []
     indices1: list[int] = list(df1.index)
     indices2: list[int] = list(df2.index)
@@ -345,10 +345,10 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
         x_vars[(i,j)]: 1 if record i (from df1) is matched with record j (from df2).
         u_vars[i]: 1 if record i (from df1) remains unmatched.
         v_vars[j]: 1 if record j (from df2) remains unmatched.
-      
+
       Objective Function:
         Minimize ∑₍ᵢ,j₎ [cost(i, j) * x_vars[(i,j)]] + dummy_cost * (∑ᵢ u_vars[i] + ∑ⱼ v_vars[j])
-      
+
       Constraints:
         For every record i in df1:
           ∑ⱼ x_vars[(i,j)] + u_vars[i] = 1

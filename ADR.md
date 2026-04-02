@@ -1,12 +1,12 @@
 # Architecture Decision Records — aedist-bench
 
-## ADR-1: Deux repos (code+bench fusionnés, rapport séparé)
+## ADR-1: Deux repos → Monorepo
 
-**Décidé** : 2026-02-16
+**Décidé** : 2026-02-16, **supercédé** : 2026-04-02
 
-Fusionner `aedist-feasibility-demonstrator` et `aedist-bench` dans un repo unique `aedist`. Le rapport LaTeX (`aedist-technical-report`) reste un repo séparé et pointe vers `aedist/` comme sous-dossier.
+~~Deux repos séparés (code dans `aedist`, rapport dans `aedist-technical-report`).~~
 
-**Justification** : Un seul package Python installable, pas de duplication du code de normalisation/matching. Le rapport a un cycle de build différent (tectonic + BibTeX).
+Monorepo unique. Le repo `aedist` est archivé sur GitHub. Code, tests, expériences, rapport et slides dans un seul repo. Les cycles de build différents sont gérés par des sous-Makefiles.
 
 ---
 

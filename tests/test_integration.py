@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from aedist.runner import load_plants_csv
-from aedist.reconcile import reconcile
 from aedist.metrics import compute_metrics, format_metrics
+from aedist.reconcile import reconcile
+from aedist.runner import load_plants_csv
 from aedist.schema import MatchType
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "reference"
@@ -37,7 +37,7 @@ class TestReconciliation:
         assert len(entries) > 0
         # Every reference plant must appear (matched or missed)
         ref_entries = [e for e in entries if e.match_type != MatchType.SYSTEM_ONLY]
-        sys_entries = [e for e in entries if e.match_type != MatchType.REFERENCE_ONLY]
+        [e for e in entries if e.match_type != MatchType.REFERENCE_ONLY]
         assert len(ref_entries) >= len(reference)
 
     def test_metrics_are_plausible(self, reference, claude_concise):

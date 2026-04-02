@@ -14,7 +14,10 @@ import argparse
 import csv
 import io
 import json
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -243,6 +246,7 @@ def generate_tab_comparaison(exp1_results: dict[str, dict]) -> str:
 # ---------------------------------------------------------------------------
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
         description="Convert experiment results to LaTeX"
     )
@@ -261,16 +265,16 @@ def main():
     # Generate macros
     macros_path = output_dir / "macros.tex"
     macros_path.write_text(generate_macros(exp1_results))
-    print(f"Wrote {macros_path}")
+    log.info("Wrote %s", macros_path)
 
     # Generate tables
     tab_path = output_dir / "tab_relances.tex"
     tab_path.write_text(generate_tab_relances(exp1_results))
-    print(f"Wrote {tab_path}")
+    log.info("Wrote %s", tab_path)
 
     tab_path = output_dir / "tab_comparaison.tex"
     tab_path.write_text(generate_tab_comparaison(exp1_results))
-    print(f"Wrote {tab_path}")
+    log.info("Wrote %s", tab_path)
 
 
 if __name__ == "__main__":

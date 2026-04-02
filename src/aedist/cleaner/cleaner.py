@@ -1,10 +1,11 @@
-import sys
-import pandas as pd
-import unicodedata
-import re
-import logging
-import traceback
 import json
+import logging
+import re
+import sys
+import traceback
+import unicodedata
+
+import pandas as pd
 
 # Configure logging
 logging.basicConfig(
@@ -31,7 +32,7 @@ class PowerPlantDataframeCleaner:
             config_path (str): Path to the JSON configuration file.
         """
         try:
-            with open(config_path, "r") as file:
+            with open(config_path) as file:
                 config = json.load(file)
             self.name_drops: list[str] = config.get("name_drops", [])
             self.name_substitutions: dict[str, str] = config.get(

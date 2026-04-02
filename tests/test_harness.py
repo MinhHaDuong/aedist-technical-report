@@ -1,6 +1,5 @@
 """Tests for aedist.harness — shared query utilities."""
 
-from pathlib import Path
 
 from aedist.harness import (
     BudgetTracker,

@@ -8,6 +8,7 @@ Usage:
 import argparse
 import csv
 import json
+import logging
 import sys
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
 from .schema import FuelType, Plant, PlantStatus
 
+log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # I/O
@@ -114,23 +116,20 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
     reference = load_plants_csv(ref_path)
     system = load_plants_csv(system_path)
 
-    print(f"Reference: {len(reference)} plants from {ref_path.name}")
-    print(f"System:    {len(system)} plants from {system_path.name}")
-    print()
+    log.info("Reference: %d plants from %s", len(reference), ref_path.name)
+    log.info("System:    %d plants from %s", len(system), system_path.name)
 
     entries = reconcile(reference, system)
     metrics = compute_metrics(entries)
-    print(format_metrics(metrics))
+    log.info(format_metrics(metrics))
 
     if args.output:
         out = Path(args.output)
-        # Save reconciliation table
         recon_path = out / f"reconciliation_{system_path.stem}.csv"
         _save_reconciliation_csv(entries, recon_path)
-        # Save metrics
         metrics_path = out / f"metrics_{system_path.stem}.json"
         _save_metrics_json(metrics, system_path.name, metrics_path)
-        print(f"\nSaved: {recon_path}, {metrics_path}")
+        log.info("Saved: %s, %s", recon_path, metrics_path)
 
 
 def cmd_evaluate_all(args: argparse.Namespace) -> None:
@@ -151,12 +150,14 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
         all_metrics.append({"label": label, **_metrics_to_dict(metrics)})
-        print(f"{label:50s}  cov={metrics.coverage:.1%}  prec={metrics.precision:.1%}  F1={metrics.f1:.1%}  ({metrics.n_matched}/{metrics.n_reference})")
+        log.info("%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
+                 label.ljust(50), metrics.coverage * 100, metrics.precision * 100,
+                 metrics.f1 * 100, metrics.n_matched, metrics.n_reference)
 
     summary_path = result_dir / "all_metrics.json"
     with open(summary_path, "w") as f:
         json.dump(all_metrics, f, indent=2)
-    print(f"\nSummary: {summary_path}")
+    log.info("Summary: %s", summary_path)
 
 
 def _save_reconciliation_csv(entries: list, path: Path) -> None:
@@ -199,6 +200,7 @@ def _save_metrics_json(m: BenchmarkMetrics, label: str, path: Path) -> None:
 
 
 def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(prog="aedist", description="AEDIST benchmark tools")
     sub = parser.add_subparsers(dest="command")
 

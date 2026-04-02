@@ -1,8 +1,9 @@
 """Tests for models.yaml schema and coverage."""
 
-import yaml
-import pytest
 from pathlib import Path
+
+import pytest
+import yaml
 
 MODELS_PATH = Path(__file__).parent.parent / "experiments" / "models.yaml"
 

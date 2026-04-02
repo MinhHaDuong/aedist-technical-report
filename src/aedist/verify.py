@@ -56,7 +56,6 @@ def extract_csv_rows(response_text: str) -> list[dict]:
             normalized = {k.strip().lower().replace(" ", "_"): v.strip() if v else ""
                          for k, v in row.items() if k}
             if normalized.get("name") or normalized.get("plant_name") or normalized.get("plant"):
-                name_key = "name"
                 if "plant_name" in normalized:
                     normalized["name"] = normalized.pop("plant_name")
                 elif "plant" in normalized:

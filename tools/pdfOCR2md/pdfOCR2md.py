@@ -4,15 +4,15 @@ Minh Ha-Duong, CNRS, 2025-
 License CC-BY-SA
 """
 
-import sys
-import os
 import base64
-import re
 import datetime
+import os
 import platform
+import re
+import sys
 
-from pdf2image import convert_from_path
 from openai import OpenAI
+from pdf2image import convert_from_path
 
 MODEL = "gpt-4o"
 # MODEL = "gpt-4o-mini"  makes too many OCR errors
@@ -77,7 +77,7 @@ def validate_inputs(pdf_path):
     if not os.path.exists(pdf_path):
         raise FileNotFoundError(f"File {pdf_path} not found.")
     if not os.getenv("OPENAI_API_KEY"):
-        raise EnvironmentError("OpenAI API key not set in environment variables.")
+        raise OSError("OpenAI API key not set in environment variables.")
 
 
 def get_output_path(pdf_path):
@@ -212,7 +212,7 @@ if __name__ == "__main__":
         print(f"Error: {str(fnfe)}")
     except ValueError as ve:
         print(f"Validation error: {str(ve)}")
-    except EnvironmentError as ee:
+    except OSError as ee:
         print(f"Environment error: {str(ee)}")
     except Exception as e:
         print(f"An unexpected error occurred: {str(e)}")

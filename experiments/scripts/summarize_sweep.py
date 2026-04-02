@@ -58,7 +58,7 @@ def main():
         except Exception:
             continue
         model_id = record.get("model", "")
-        short = model_id.split("/")[-1] if "/" in model_id else model_id
+        model_id.split("/")[-1] if "/" in model_id else model_id
         # Remove :free suffix for matching
         base_short = re.sub(r"-run\d+$", "", jf.stem)
         cost = record.get("cost_usd", 0.0) or 0.0

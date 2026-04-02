@@ -8,7 +8,6 @@ For manual review, the output includes province and fuel columns so results
 can be sorted/filtered by province+fuel after the fact.
 """
 
-import importlib.resources
 from pathlib import Path
 
 import pandas as pd
@@ -16,7 +15,6 @@ import pandas as pd
 from .cleaner import PowerPlantDataframeCleaner
 from .matching.lp import reconcile as reconcile_lp
 from .schema import MatchType, Plant, ReconciliationEntry
-
 
 # ---------------------------------------------------------------------------
 # Config path resolution

@@ -5,8 +5,6 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 
 def _make_mock_response(prompt_tokens=100, completion_tokens=200):
     """Create a mock OpenAI ChatCompletion response."""

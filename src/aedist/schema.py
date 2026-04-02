@@ -5,12 +5,12 @@ and for system outputs. All evaluation is performed on normalized instances
 of these models.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class FuelType(str, Enum):
+class FuelType(StrEnum):
     COAL = "coal"
     GAS = "gas"
     IMPORTED_LNG = "imported lng"
@@ -18,7 +18,7 @@ class FuelType(str, Enum):
     UNKNOWN = "unknown"
 
 
-class PlantStatus(str, Enum):
+class PlantStatus(StrEnum):
     RETIRED = "retired"
     OPERATIONAL = "operational"
     CONSTRUCTING = "constructing"
@@ -49,7 +49,7 @@ class SourcedPlant(Plant):
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
-class MatchType(str, Enum):
+class MatchType(StrEnum):
     EXACT = "exact"
     EXACT_CAPACITY_DIFF = "exact_capacity_diff"
     FUZZY = "fuzzy"

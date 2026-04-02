@@ -9,7 +9,6 @@ from dataclasses import dataclass, field
 
 from .schema import MatchType, ReconciliationEntry
 
-
 _MATCHED_TYPES = {
     MatchType.EXACT,
     MatchType.EXACT_CAPACITY_DIFF,

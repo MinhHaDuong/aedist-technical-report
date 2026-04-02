@@ -16,11 +16,14 @@ import argparse
 import csv
 import io
 import json
+import logging
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
+
+log = logging.getLogger(__name__)
 
 
 _DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -72,17 +75,19 @@ def _fallback_extract_inline_csv(text: str) -> str | None:
     # Find likely header
     header_idx = None
     for i, ln in enumerate(lines):
-        l = ln.strip()
-        if not l:
+        stripped = ln.strip()
+        if not stripped:
             continue
-        if ("," in l or ";" in l or "\t" in l) and ("name" in l.lower() or "plant" in l.lower()):
+        if ("," in stripped or ";" in stripped or "\t" in stripped) and (
+            "name" in stripped.lower() or "plant" in stripped.lower()
+        ):
             header_idx = i
             break
     if header_idx is None:
         # Otherwise, take the first sufficiently CSV-like line
         for i, ln in enumerate(lines):
-            l = ln.strip()
-            if l.count(",") >= 2 or l.count(";") >= 2 or l.count("\t") >= 2:
+            stripped = ln.strip()
+            if stripped.count(",") >= 2 or stripped.count(";") >= 2 or stripped.count("\t") >= 2:
                 header_idx = i
                 break
 
@@ -250,6 +255,7 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
 
 
 def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     p = argparse.ArgumentParser(description="Extract CSV from LLM JSON outputs")
     p.add_argument(
         "--input",
@@ -285,7 +291,7 @@ def main() -> None:
     skipped = 0
     for jf in json_files:
         res = extract_one(jf, output_dir, overwrite=args.overwrite)
-        print(res.message)
+        log.info(res.message)
         if "wrote" in res.message:
             wrote += 1
         elif "skip" in res.message:
@@ -293,7 +299,7 @@ def main() -> None:
         else:
             failed += 1
 
-    print(f"\nDone. wrote={wrote} skipped={skipped} failed={failed} (from {json_dir})")
+    log.info("Done. wrote=%d skipped=%d failed=%d (from %s)", wrote, skipped, failed, json_dir)
     if wrote == 0 and failed > 0:
         sys.exit(2)
 
