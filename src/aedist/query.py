@@ -16,6 +16,8 @@ import logging
 from datetime import date
 from pathlib import Path
 
+import openai
+
 from .harness import (
     BudgetTracker,
     compute_cost,
@@ -100,7 +102,7 @@ def main():
                 }
                 save_json(filepath, record)
                 log.info("  Done. cost=%.6f total=%.6f USD", cost, budget.total_cost)
-            except Exception as e:
+            except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
                 filepath = output_path(output_dir, model_id, run)
                 record = {
