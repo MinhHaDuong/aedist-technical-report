@@ -55,14 +55,22 @@ def load_metrics(metrics_path: Path) -> dict[str, dict]:
 # Macros generation
 # ---------------------------------------------------------------------------
 
-# Map from model slug (as it appears in output filenames) to LaTeX macro name
+# Map from model slug (as it appears in output filenames) to LaTeX macro name.
+# Includes both legacy slugs (pre-monorepo) and current model registry slugs.
 MACRO_MAP = {
+    # Legacy slugs (from earlier experiments)
     "deepseek-r1": "SimplyAskDeepSeek",
     "gemini-2.0-flash-001": "SimplyAskGeminiFlash",
     "claude-3.5-sonnet": "SimplyAskClaudeSonnet",
     "gpt-4o": "SimplyAskGPTFourO",
     "sonar-pro": "SimplyAskPerplexityPro",
     "llama-3.3-70b-instruct": "SimplyAskLlama",
+    # Current model registry slugs
+    "deepseek-v3.2": "SimplyAskDeepSeek",
+    "gemini-3-flash-preview": "SimplyAskGeminiFlash",
+    "claude-sonnet-4.6": "SimplyAskClaudeSonnet",
+    "gpt-5.4": "SimplyAskGPTFourO",
+    "llama-4-maverick": "SimplyAskLlama",
 }
 
 # Fallback values (used when metrics aren't available)
