@@ -4,11 +4,12 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Monorepo with 109 tests
-- [x] Census: 32 models, F1 2-66%, $0.73
+- [x] Monorepo with 116 tests
+- [x] Census: 33 models, F1 2-66%, $0.73
 - [x] Per-table pipeline: one script, one output, Make orchestrates (#43)
 - [x] Slides read from generated CSVs (PR #40)
 - [x] select_sweep2 computes model selection (PR #60)
+- [x] Mistral Large added, incremental sweep1 verified (PR #63)
 - [ ] Run Sweep 2: information regimes (#10)
 - [ ] Cost data in Pareto chart (#59)
 - [ ] Tabulate relances and comparaison (#47, #48)
@@ -20,6 +21,7 @@ Submit to journal (TBD — after conference feedback).
 
 ## Backlog
 
+- Sweep 2 Padme support (query scripts need Ollama backend)
 - Chunked RAG strategy (currently only wholesale)
 - Reasoning effort sweep (#11) — needs reasoning models on Padme
 - Verification sweep (#12)
