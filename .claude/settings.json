@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh -f -N -L 11434:127.0.0.1:11434 padme)"
+    ]
+  }
+}
