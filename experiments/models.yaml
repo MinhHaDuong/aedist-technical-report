@@ -83,12 +83,12 @@
   name: Mistral Large 3
   provider: Mistral
   country: FR
-  architecture: dense
+  architecture: moe
   reasoning: instruct
   context_window: 262144
-  price_per_mtok_in: 2.0
-  price_per_mtok_out: 6.0
-  params: "41B active"
+  price_per_mtok_in: 0.5
+  price_per_mtok_out: 1.5
+  params: "675B MoE (41B active)"
   size_class: frontier
   license: open-apache
 

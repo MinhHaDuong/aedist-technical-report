@@ -13,6 +13,13 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
 
+# --- Load API key from .env if not already set --------------------------------
+ifeq ($(OPENROUTER_API_KEY),)
+  OPENROUTER_API_KEY := $(shell grep '^OPENROUTER_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
+endif
+export OPENROUTER_API_KEY
+$(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+
 # --- Read sweep configs ------------------------------------------------------
 cfg = $(shell python3 -c "import yaml; c=yaml.safe_load(open('sweeps/$(1).yaml')); print(c.get('$(2)',''))")
 
