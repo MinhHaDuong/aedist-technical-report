@@ -5,11 +5,11 @@ ranks by median F1, and selects top N ensuring diversity across
 geography, provider type, and price tier.
 
 Usage:
-    uv run python -m aedist.select_top \
+    uv run python -m aedist.select_sweep2 \
         --input results/summary/all_metrics.json \
         --registry experiments/models.yaml \
         --padme experiments/models_padme.yaml \
-        --output experiments/models_top5.yaml \
+        --output experiments/models_sweep2.yaml \
         --n 8
 """
 
@@ -86,7 +86,7 @@ def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, di
 # Selection
 # ---------------------------------------------------------------------------
 
-def select_top(
+def select_sweep2(
     rankings: dict[str, float],
     cloud_registry: dict[str, dict],
     local_registry: dict[str, dict],
@@ -137,7 +137,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     parser = argparse.ArgumentParser(
-        prog="aedist.select_top",
+        prog="aedist.select_sweep2",
         description="Select top models from census evaluation metrics",
     )
     parser.add_argument(
@@ -187,7 +187,7 @@ def main() -> None:
         log.info("  %s  %.1f%%%s", slug.ljust(35), f1 * 100, marker)
 
     # Select
-    selected = select_top(rankings, cloud_reg, padme_reg, n=args.n)
+    selected = select_sweep2(rankings, cloud_reg, padme_reg, n=args.n)
 
     # Write output
     # Strip internal fields and write clean YAML
