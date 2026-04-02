@@ -4,17 +4,15 @@ Demonstrate — with reproducible quantitative evidence — what AI can and cann
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Reproducible test harness: query, extract, evaluate, verify (WP2-WP6)
-- [x] Updated model registry ~24 models (WP1)
-- [x] Report restructured 9→7 chapters (WP7)
-- [x] Model census sweep — 32 models × 3 runs (WP8)
-- [x] Monorepo merge — single self-contained repo (PR #18)
-- [ ] Fix diacritics matcher → real F1 scores
-- [ ] Select top 5 + best local model (#20)
-- [ ] Information regime comparison — top 5 × 7 conditions (WP9, #10)
-- [ ] Update convert.py for flat outputs (#19)
-- [ ] All tables generated from data, none hardcoded (WP13, #14)
-- [x] Beamer slide deck — 15 slides, placeholder charts (#15)
+- [x] Monorepo with 109 tests
+- [x] Census: 32 models, F1 2-66%, $0.73
+- [x] Per-table pipeline: one script, one output, Make orchestrates (#43)
+- [x] Slides read from generated CSVs (PR #40)
+- [x] select_sweep2 computes model selection (PR #60)
+- [ ] Run Sweep 2: information regimes (#10)
+- [ ] Cost data in Pareto chart (#59)
+- [ ] Tabulate relances and comparaison (#47, #48)
+- [ ] Pipeline UX: progress, checkpointing (#22)
 
 ## Next milestone
 
@@ -23,6 +21,7 @@ Submit to journal (TBD — after conference feedback).
 ## Backlog
 
 - Chunked RAG strategy (currently only wholesale)
-- Agent orchestration experiment (multi-agent pipeline)
-- Reasoning effort sweep (WP10, #11) — needs reasoning models on Padme
+- Reasoning effort sweep (#11) — needs reasoning models on Padme
+- Verification sweep (#12)
+- Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
