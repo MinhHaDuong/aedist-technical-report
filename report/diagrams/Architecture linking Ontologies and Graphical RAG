@@ -1,0 +1,26 @@
+graph TD
+    subgraph Knowledge_Layer["Knowledge Organization Layer"]
+        A[Energy System Ontology] -->|defines structure| B[Knowledge Graph]
+        B -->|enriches| C[Vector Database]
+    end
+
+    subgraph RAG_System["RAG Components"]
+        D[Query Understanding] -->|semantic parsing| E[Graph Traversal]
+        E -->|relevant paths| F[Context Assembly]
+        F -->|structured context| G[Generation]
+        H[Vector Similarity] -->|additional context| F
+    end
+
+    B -->|graph structure| E
+    C -->|embeddings| H
+    
+    subgraph Document_Processing["Document Processing"]
+        I[Raw Documents] -->|extraction| J[Triple Extraction]
+        J -->|populates| B
+        I -->|embedding| C
+    end
+
+    style Knowledge_Layer fill:#f5f5f5
+    style RAG_System fill:#e6f3ff
+    style Document_Processing fill:#fff0f0
+

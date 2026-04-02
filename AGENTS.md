@@ -1,4 +1,4 @@
-# AI Agent Guidelines for AEDIST Technical Report
+# AI Agent Guidelines
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 

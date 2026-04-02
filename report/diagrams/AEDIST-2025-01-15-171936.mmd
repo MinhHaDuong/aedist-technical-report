@@ -1,0 +1,75 @@
+---
+config:
+  look: classic
+---
+flowchart LR
+ subgraph Discovery["Information discovery"]
+        Monitoring["Monitoring"]
+        DocTypes["DocTypes"]
+  end
+ subgraph Monitoring["Open intelligence sources"]
+        sources["Newsletters<br>LinkedIn flows<br>RSS<br>Bibliographies<br>Web search"]
+  end
+ subgraph DocTypes["Document types"]
+        type["Administrative texts<br>Corporate reports<br>Technical reports<br>Media articles<br>Statistical reports<br>Academic datasets"]
+  end
+ subgraph Input["Input channel"]
+        channels["Web Scraping<br>File Upload<br>API Integration"]
+  end
+ subgraph Processing["Document Processing"]
+        Input
+        extract["Metadata Extraction"]
+        filter["New Content filtering"]
+        validate["Validation"]
+  end
+ subgraph Storage["Document Storage (e.g. Zotero)"]
+        db[("Document DB")]
+        index["Search Index"]
+        meta["Metadata Store"]
+  end
+ subgraph RAG["RAG Pipeline"]
+        chunk["Text Chunking"]
+        embed["Embeddings Generation"]
+        vector[("Vector Store")]
+        rerank["Re-ranking"]
+  end
+ subgraph EntityGraph["Entity Graph"]
+        ner["Named Entity Recognition"]
+        rel["Relationship Extraction"]
+        kgraph[("Knowledge Graph")]
+        enrichment["Entity Enrichment"]
+  end
+ subgraph AI["AI Processing (e.g. R2R)"]
+        RAG
+        EntityGraph
+  end
+ subgraph Stats["Statistics & Reporting"]
+        simpleout["Table<br>Graph"]
+        scenario["Narrative<br>scenario"]
+        aggregate["Statistical Dataset"]
+        business["Business intellingence<br>report"]
+        modeling["Modeling<br>dataset"]
+  end
+    Monitoring --> DocTypes
+    Input --> extract
+    extract --> filter
+    filter --> validate
+    db --> index & meta
+    chunk --> embed
+    embed --> vector
+    vector --> rerank
+    ner --> rel
+    rel --> kgraph
+    kgraph --> enrichment
+    chunk ~~~ rel
+    simpleout --> aggregate
+    aggregate --> business & modeling
+    scenario --> modeling
+    Discovery --> Processing
+    Processing --> Storage
+    Storage --> AI
+    AI --> Stats & Chat["Chat"]
+    sources@{ shape: text}
+    type@{ shape: text}
+    channels@{ shape: text}
+    style Discovery color:none,fill:transparent
