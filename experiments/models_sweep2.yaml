@@ -9,39 +9,6 @@
   price_per_mtok_out: 15.0
   size_class: frontier
   license: commercial
-- id: anthropic/claude-opus-4.6
-  name: Claude Opus 4.6
-  provider: Anthropic
-  country: US
-  architecture: dense
-  reasoning: instruct
-  context_window: 1000000
-  price_per_mtok_in: 5.0
-  price_per_mtok_out: 25.0
-  size_class: frontier
-  license: commercial
-- id: anthropic/claude-sonnet-4.6
-  name: Claude Sonnet 4.6
-  provider: Anthropic
-  country: US
-  architecture: dense
-  reasoning: instruct
-  context_window: 1000000
-  price_per_mtok_in: 3.0
-  price_per_mtok_out: 15.0
-  size_class: frontier
-  license: commercial
-- id: z-ai/glm-5-turbo
-  name: GLM-5 Turbo
-  provider: Zhipu AI
-  country: CN
-  architecture: dense
-  reasoning: instruct
-  context_window: 202752
-  price_per_mtok_in: 1.2
-  price_per_mtok_out: 4.0
-  size_class: large
-  license: commercial
 - id: google/gemini-2.5-flash-lite
   name: Gemini 2.5 Flash Lite
   provider: Google
@@ -53,3 +20,39 @@
   price_per_mtok_out: 0.4
   size_class: edge
   license: commercial
+- id: mistralai/mistral-small-2603
+  name: Mistral Small 4
+  provider: Mistral
+  country: FR
+  architecture: dense
+  reasoning: instruct
+  context_window: 262144
+  price_per_mtok_in: 0.15
+  price_per_mtok_out: 0.6
+  params: 24B
+  size_class: small
+  license: open-apache
+- id: mistralai/mistral-large-2512
+  name: Mistral Large 3
+  provider: Mistral
+  country: FR
+  architecture: moe
+  reasoning: instruct
+  context_window: 262144
+  price_per_mtok_in: 0.5
+  price_per_mtok_out: 1.5
+  params: 675B MoE (41B active)
+  size_class: frontier
+  license: open-apache
+- id: deepseek/deepseek-v3.2
+  name: DeepSeek V3.2
+  provider: DeepSeek
+  country: CN
+  architecture: moe
+  reasoning: instruct
+  context_window: 163840
+  price_per_mtok_in: 0.26
+  price_per_mtok_out: 0.38
+  params: 671B MoE
+  size_class: frontier
+  license: open-MIT
