@@ -158,7 +158,7 @@ CORPUS_VISION  ?= gemma4:26b
 CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
-.PHONY: pdf2md build-corpus help
+.PHONY: pdf2md build-corpus preflight help
 
 pdf2md:
 ifndef PDF
@@ -183,6 +183,45 @@ endif
 	    --converter $(CORPUS_CONVERT) --local-vision-model $(CORPUS_VISION) \
 	    --scorer-model $(CORPUS_SCORER)
 
+preflight:
+	@echo "=== AEDIST Preflight Checks ==="
+	@ok=true; \
+	if [ -n "$(OPENROUTER_API_KEY)" ]; then \
+	    printf "  ✓ OPENROUTER_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ OPENROUTER_API_KEY not set\n"; ok=false; \
+	fi; \
+	if [ -n "$(ZOTERO_API_KEY)" ]; then \
+	    printf "  ✓ ZOTERO_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ ZOTERO_API_KEY not set (needed for build-corpus)\n"; \
+	fi; \
+	if [ -n "$(TAVILY_API_KEY)" ]; then \
+	    printf "  ✓ TAVILY_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ TAVILY_API_KEY not set (needed for sweep2-web)\n"; \
+	fi; \
+	if command -v uv >/dev/null 2>&1; then \
+	    printf "  ✓ uv found: $$(uv --version)\n"; \
+	else \
+	    printf "  ✗ uv not found on PATH\n"; ok=false; \
+	fi; \
+	if curl -sf http://localhost:11434/api/tags >/dev/null 2>&1; then \
+	    printf "  ✓ Ollama is running\n"; \
+	else \
+	    printf "  ✗ Ollama not reachable at localhost:11434\n"; \
+	fi; \
+	if curl -sf http://localhost:8070/api/isalive >/dev/null 2>&1; then \
+	    printf "  ✓ GROBID is running\n"; \
+	else \
+	    printf "  ✗ GROBID not reachable at localhost:8070\n"; \
+	fi; \
+	if [ "$$ok" = "false" ]; then \
+	    echo ""; echo "FAIL: critical checks failed"; exit 1; \
+	else \
+	    echo ""; echo "All critical checks passed."; \
+	fi
+
 help:
 	@echo "Sweeps:"
 	@echo "  make -j8 sweep1           Census (OpenRouter parallel, Padme sequential)"
@@ -194,5 +233,7 @@ help:
 	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"
 	@echo "  make build-corpus ITEMS=SSRTCPP8,44XYCWMC  Build corpus from Zotero PDFs"
 	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
+	@echo ""
+	@echo "  make preflight             Check env vars and services before long jobs"
 	@echo ""
 	@echo "Config files in sweeps/*.yaml"
