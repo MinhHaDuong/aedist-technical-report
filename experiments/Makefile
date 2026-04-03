@@ -73,14 +73,17 @@ endef
 
 $(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
 
-# Padme: query_padme.py --repeat 3 produces all 3 files.
+# Padme: aedist.query with --base-url for Ollama, --output-prefix padme.
 define padme_rule
 $(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_padme.yaml
 	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
-	uv run --project .. python scripts/query_padme.py \
-	    --prompt $(S1_PROMPT) --output $(S1_OUTPUT) \
-	    --repeat $(S1_REPEAT) --model $$(OLLAMA_ID)
+	uv run --project .. python -m aedist.query \
+	    --prompt $(S1_PROMPT) --models $(S1P_MODELS) \
+	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
+	    --model $$(OLLAMA_ID) \
+	    --base-url http://localhost:11434/v1 \
+	    --output-prefix padme
 endef
 
 $(foreach m,$(S1_PAD_SHORTS),$(eval $(call padme_rule,$(m))))

@@ -1,4 +1,4 @@
-"""Query LLMs via OpenRouter and save results.
+"""Query LLMs via OpenRouter (or any OpenAI-compatible endpoint) and save results.
 
 Usage:
     python -m aedist.query --prompt prompts/prompt1.txt \
@@ -9,6 +9,13 @@ Usage:
                            --output outputs/sweep1/ \
                            --model deepseek/deepseek-r1 \
                            --repeat 3 --budget-usd 5
+
+    # Local Ollama backend:
+    python -m aedist.query --prompt prompts/prompt1.txt \
+                           --models models_padme.yaml \
+                           --output outputs/sweep1/ \
+                           --base-url http://localhost:11434/v1 \
+                           --output-prefix padme
 """
 
 import argparse
@@ -34,14 +41,16 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Query LLMs via OpenRouter")
+    parser = argparse.ArgumentParser(description="Query LLMs via OpenRouter or compatible endpoint")
     parser.add_argument("--prompt", required=True, help="Path to prompt text file")
     parser.add_argument("--models", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
-    parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
+    parser.add_argument("--model", help="Query only this model (full ID from YAML)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
     parser.add_argument("--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget")
     parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
+    parser.add_argument("--base-url", default=None, help="Override API base URL (e.g. http://localhost:11434/v1 for Ollama)")
+    parser.add_argument("--output-prefix", default="", help="Prefix for output filenames (e.g. 'padme')")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -62,8 +71,9 @@ def main():
                 log.info("Would query %s run %d", model["id"], run)
         return
 
-    client = make_client()
+    client = make_client(args.base_url)
     budget = BudgetTracker(args.budget_usd)
+    prefix = args.output_prefix
 
     for model in models:
         model_id = model["id"]
@@ -73,7 +83,7 @@ def main():
             if not budget.check_or_warn():
                 return
 
-            if should_skip(output_dir, model_id, run):
+            if should_skip(output_dir, model_id, run, prefix):
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
@@ -87,7 +97,7 @@ def main():
                 cost = compute_cost(usage, model)
                 budget.add(cost)
 
-                filepath = output_path(output_dir, model_id, run)
+                filepath = output_path(output_dir, model_id, run, prefix)
                 record = {
                     "model": model_id,
                     "date": date.today().isoformat(),
