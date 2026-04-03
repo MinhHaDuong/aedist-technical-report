@@ -35,6 +35,12 @@ from .harness import (
 
 log = logging.getLogger(__name__)
 
+# Approximate characters per token for English text (actual varies 3-5)
+CHARS_PER_TOKEN = 4
+
+# Fraction of model context window to use (safety margin)
+CONTEXT_WINDOW_SAFETY_MARGIN = 0.8
+
 
 def load_corpus(corpus_dir: Path) -> tuple[str, list[str]]:
     """Load all .md files from corpus directory, return (text, filenames)."""
@@ -53,7 +59,7 @@ def load_corpus(corpus_dir: Path) -> tuple[str, list[str]]:
 
 def estimate_tokens(text: str) -> int:
     """Rough token estimate: ~4 chars per token for English text."""
-    return len(text) // 4
+    return len(text) // CHARS_PER_TOKEN
 
 
 def main():
@@ -88,7 +94,7 @@ def main():
     if args.dry_run:
         for model in models:
             ctx = model.get("context_window", 0)
-            fits = "OK" if corpus_tokens < ctx * 0.8 else "SKIP (too large)"
+            fits = "OK" if corpus_tokens < ctx * CONTEXT_WINDOW_SAFETY_MARGIN else "SKIP (too large)"
             for run in range(1, args.repeat + 1):
                 log.info("Would query %s run %d [%s]", model["id"], run, fits)
         return
@@ -102,7 +108,7 @@ def main():
         ctx_window = model.get("context_window", 0)
 
         # Context window guard
-        if corpus_tokens > ctx_window * 0.8:
+        if corpus_tokens > ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN:
             log.warning(
                 "Skip %s: corpus ~%d tokens exceeds 80%% of context window (%d)",
                 label, corpus_tokens, ctx_window,

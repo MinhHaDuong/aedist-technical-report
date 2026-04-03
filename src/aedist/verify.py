@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 _DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "gem_thermal.csv"
 
 # Similarity threshold for fuzzy name matching
-_SIMILARITY_THRESHOLD = 70.0
+SIMILARITY_THRESHOLD = 70.0
 
 
 # ---------------------------------------------------------------------------
@@ -99,7 +99,7 @@ def fuzzy_match_gem(plant_name: str, gem_plants: list[dict]) -> dict | None:
             best_score = score
             best_match = gem
 
-    if best_score >= _SIMILARITY_THRESHOLD:
+    if best_score >= SIMILARITY_THRESHOLD:
         return best_match
     return None
 

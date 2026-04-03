@@ -34,6 +34,9 @@ from .harness import (
 
 log = logging.getLogger(__name__)
 
+# Tavily API timeout in seconds
+TAVILY_TIMEOUT_SECONDS = 30.0
+
 # Predefined search queries for Vietnam thermal power plants
 _SEARCH_QUERIES = [
     "Vietnam thermal power plants list coal gas LNG 2024 2025",
@@ -52,7 +55,7 @@ def tavily_search(query: str, api_key: str) -> list[dict]:
             "search_depth": "advanced",
             "max_results": 5,
         },
-        timeout=30.0,
+        timeout=TAVILY_TIMEOUT_SECONDS,
     )
     resp.raise_for_status()
     data = resp.json()
