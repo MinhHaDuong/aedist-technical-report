@@ -13,7 +13,6 @@ import base64
 import json
 import logging
 import platform
-import re
 import sys
 import tempfile
 import urllib.request
@@ -46,7 +45,10 @@ def _ollama_chat_vision(model: str, messages: list[dict],
     # Vision inference on large pages can be slow; 10 min timeout per page
     with urllib.request.urlopen(req, timeout=600) as resp:
         result = json.loads(resp.read())
-    return result.get("message", {}).get("content", "")
+    content = result.get("message", {}).get("content", "")
+    if not content:
+        log.warning("Ollama returned empty response for model %s", model)
+    return content
 
 
 def metadata_comment(pdf_path, model, argv):
