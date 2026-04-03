@@ -41,7 +41,7 @@ def _pick_latest_date_dir(base: Path) -> Path | None:
     return max(candidates, key=lambda p: p.name) if candidates else None
 
 
-def _extract_fenced_blocks(text: str) -> list[str]:
+def extract_fenced_blocks(text: str) -> list[str]:
     # Capture content in ```csv ...``` or ``` ... ```
     blocks: list[str] = []
     for m in re.finditer(r"```(?:csv)?\s*\n(.*?)\n```", text, flags=re.IGNORECASE | re.DOTALL):
@@ -97,7 +97,7 @@ def _extract_pipe_table(text: str) -> str | None:
     return "\n".join(table_lines)
 
 
-def _fallback_extract_inline_csv(text: str) -> str | None:
+def fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
     # Find likely header
@@ -136,7 +136,7 @@ def _fallback_extract_inline_csv(text: str) -> str | None:
     return "\n".join(out).strip() if out else None
 
 
-def _sniff_dialect(sample: str) -> csv.Dialect:
+def sniff_dialect(sample: str) -> csv.Dialect:
     sample = sample.strip()
     # Some LLMs emit a leading Excel hint: sep=;
     if sample.lower().startswith("sep="):
@@ -204,7 +204,7 @@ def _parse_and_canonicalize(csv_text: str) -> str:
     if csv_text.lower().startswith("sep="):
         csv_text = "\n".join(csv_text.splitlines()[1:]).lstrip()
 
-    dialect = _sniff_dialect(csv_text)
+    dialect = sniff_dialect(csv_text)
     reader = csv.reader(io.StringIO(csv_text), dialect=dialect)
     rows = [row for row in reader if any((cell or "").strip() for cell in row)]
     if len(rows) < 2:
@@ -264,14 +264,14 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     if not isinstance(response, str) or not response.strip():
         return ExtractResult(False, None, f"{json_path.name}: no response text")
 
-    blocks = _extract_fenced_blocks(response)
+    blocks = extract_fenced_blocks(response)
     candidates = blocks[:]
     pipe_csv = _extract_pipe_table(response)
     if pipe_csv:
         candidates.append(pipe_csv)
     # Only try inline fallback when no fenced blocks or pipe tables found
     if not candidates:
-        inline = _fallback_extract_inline_csv(response)
+        inline = fallback_extract_inline_csv(response)
         if inline:
             candidates.append(inline)
 
