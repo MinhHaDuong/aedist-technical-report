@@ -1,0 +1,145 @@
+"""Convert PDF pages to Markdown via local multimodal LLM (Ollama).
+
+Same approach as pdf2md.py (render pages → vision model → Markdown)
+but uses a local Ollama model instead of a cloud API.
+
+Usage:
+    python -m aedist.pdf2md_vision input.pdf
+    python -m aedist.pdf2md_vision input.pdf --model gemma4:26b --dpi 200
+"""
+
+import argparse
+import base64
+import json
+import logging
+import platform
+import re
+import sys
+import tempfile
+import urllib.request
+from datetime import UTC, datetime
+from pathlib import Path
+
+log = logging.getLogger(__name__)
+
+# Reuse prompts and cleaning from the cloud converter
+from .pdf2md import SYSTEM_PROMPT, USER_PROMPT, _PREV_PAGE_PLACEHOLDER, clean_markdown
+
+DEFAULT_MODEL = "gemma4:26b"
+DEFAULT_OLLAMA_URL = "http://localhost:11434"
+
+
+def _ollama_chat_vision(model: str, messages: list[dict],
+                        ollama_url: str = DEFAULT_OLLAMA_URL) -> str:
+    """Call Ollama chat API with image content, return text response."""
+    url = f"{ollama_url}/api/chat"
+    payload = json.dumps({
+        "model": model,
+        "messages": messages,
+        "stream": False,
+    }).encode()
+    req = urllib.request.Request(
+        url, data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    # Vision inference on large pages can be slow; 10 min timeout per page
+    with urllib.request.urlopen(req, timeout=600) as resp:
+        result = json.loads(resp.read())
+    return result.get("message", {}).get("content", "")
+
+
+def metadata_comment(pdf_path, model, argv):
+    """Conversion metadata appended as HTML comment."""
+    return (
+        f"\n\n<!-- Converted from PDF using:\n"
+        f"Command: python {' '.join(argv)}\n"
+        f"Date: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+        f"Source: {pdf_path.name}\n"
+        f"Platform: {platform.platform()}\n"
+        f"Python: {platform.python_version()}\n"
+        f"Model: {model} (Ollama local)\n"
+        f"-->"
+    )
+
+
+def pdf_to_markdown_vision(pdf_path, *, model=DEFAULT_MODEL, dpi=200,
+                           ollama_url=DEFAULT_OLLAMA_URL):
+    """Convert a PDF to Markdown by sending each page image to a local vision LLM."""
+    from pdf2image import convert_from_path  # heavy dep, import lazily
+
+    log.info("Converting %s to images at %d DPI...", pdf_path.name, dpi)
+    images = convert_from_path(str(pdf_path), dpi=dpi, fmt="jpeg")
+
+    markdown_pieces = []
+    previous_page_markdown = ""
+
+    for page_num, image in enumerate(images):
+        log.info("Processing page %d/%d...", page_num + 1, len(images))
+
+        with tempfile.NamedTemporaryFile(suffix=".jpeg", delete=True) as tmp:
+            image.save(tmp, "JPEG")
+            tmp.flush()
+            tmp.seek(0)
+            encoded_image = base64.b64encode(tmp.read()).decode("utf-8")
+
+        user_text = USER_PROMPT.replace(
+            _PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1
+        )
+
+        # Ollama multimodal format: images as base64 in the message
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": user_text,
+                "images": [encoded_image],
+            },
+        ]
+
+        raw = _ollama_chat_vision(model, messages, ollama_url)
+        cleaned = clean_markdown(raw)
+        markdown_text = f"<!-- PDF page {page_num + 1} -->\n" + cleaned
+        markdown_pieces.append(markdown_text)
+        previous_page_markdown = markdown_text
+
+        log.info("Page %d/%d done.", page_num + 1, len(images))
+
+    return "\n".join(markdown_pieces)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Convert PDF to Markdown via local vision LLM (Ollama)"
+    )
+    parser.add_argument("pdf", type=Path, help="Input PDF file")
+    parser.add_argument("--output", "-o", type=Path, default=None,
+                        help="Output .md path (default: same name as PDF)")
+    parser.add_argument("--model", default=DEFAULT_MODEL,
+                        help=f"Ollama vision model (default: {DEFAULT_MODEL})")
+    parser.add_argument("--dpi", type=int, default=200,
+                        help="DPI for PDF rasterisation (default: 200)")
+    parser.add_argument("--ollama-url", default=DEFAULT_OLLAMA_URL,
+                        help=f"Ollama service URL (default: {DEFAULT_OLLAMA_URL})")
+    args = parser.parse_args(argv)
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    if not args.pdf.exists():
+        parser.error(f"File not found: {args.pdf}")
+    if args.pdf.suffix.lower() != ".pdf":
+        parser.error(f"Not a PDF: {args.pdf}")
+
+    result = pdf_to_markdown_vision(args.pdf, model=args.model, dpi=args.dpi,
+                                    ollama_url=args.ollama_url)
+
+    from .pdf2md import get_output_path
+    output = get_output_path(args.pdf, args.output)
+    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_vision"] + argv
+    output.write_text(result + metadata_comment(args.pdf, args.model, actual_argv),
+                      encoding="utf-8")
+    log.info("Wrote %s", output)
+
+
+if __name__ == "__main__":
+    main()
