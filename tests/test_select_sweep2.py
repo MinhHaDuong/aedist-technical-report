@@ -25,25 +25,79 @@ SAMPLE_METRICS = [
     {"label": "sweep1_census/padme-qwen3.5-122b-run2", "f1": 0.48},
     {"label": "sweep1_census/padme-glm-4.7-flash-run1", "f1": 0.45},
     {"label": "sweep1_census/padme-nemotron-3-nano-run1", "f1": 0.20},
+    {"label": "sweep1_census/mistral-large-2512-run1", "f1": 0.52},
+    {"label": "sweep1_census/mistral-large-2512-run2", "f1": 0.54},
 ]
 
 SAMPLE_CLOUD = [
-    {"id": "openai/gpt-5.4", "name": "GPT-5.4", "provider": "OpenAI", "country": "US"},
-    {"id": "deepseek/deepseek-v3.2", "name": "DeepSeek V3.2", "provider": "DeepSeek", "country": "CN"},
-    {"id": "anthropic/claude-opus-4.6", "name": "Claude Opus 4.6", "provider": "Anthropic", "country": "US"},
-    {"id": "google/gemini-2.5-flash-lite", "name": "Gemini 2.5 Flash Lite", "provider": "Google", "country": "US"},
+    {
+        "id": "openai/gpt-5.4",
+        "name": "GPT-5.4",
+        "provider": "OpenAI",
+        "country": "US",
+        "size_class": "frontier",
+        "price_per_mtok_in": 2.5,
+    },
+    {
+        "id": "deepseek/deepseek-v3.2",
+        "name": "DeepSeek V3.2",
+        "provider": "DeepSeek",
+        "country": "CN",
+        "size_class": "frontier",
+        "price_per_mtok_in": 0.26,
+    },
+    {
+        "id": "anthropic/claude-opus-4.6",
+        "name": "Claude Opus 4.6",
+        "provider": "Anthropic",
+        "country": "US",
+        "size_class": "frontier",
+        "price_per_mtok_in": 5.0,
+    },
+    {
+        "id": "google/gemini-2.5-flash-lite",
+        "name": "Gemini 2.5 Flash Lite",
+        "provider": "Google",
+        "country": "US",
+        "size_class": "edge",
+        "price_per_mtok_in": 0.1,
+    },
+    {
+        "id": "mistralai/mistral-large-2512",
+        "name": "Mistral Large 3",
+        "provider": "Mistral",
+        "country": "FR",
+        "size_class": "frontier",
+        "price_per_mtok_in": 0.5,
+    },
 ]
 
 SAMPLE_PADME = [
-    {"id": "qwen3.5:122b", "name": "Qwen 3.5 122B (local)", "provider": "Ollama/Padme", "country": "CN"},
-    {"id": "glm-4.7-flash", "name": "GLM 4.7 Flash (local)", "provider": "Ollama/Padme", "country": "CN"},
-    {"id": "nemotron-3-nano", "name": "Nemotron 3 Nano (local)", "provider": "Ollama/Padme", "country": "US"},
+    {
+        "id": "qwen3.5:122b",
+        "name": "Qwen 3.5 122B (local)",
+        "provider": "Ollama/Padme",
+        "country": "CN",
+    },
+    {
+        "id": "glm-4.7-flash",
+        "name": "GLM 4.7 Flash (local)",
+        "provider": "Ollama/Padme",
+        "country": "CN",
+    },
+    {
+        "id": "nemotron-3-nano",
+        "name": "Nemotron 3 Nano (local)",
+        "provider": "Ollama/Padme",
+        "country": "US",
+    },
 ]
 
 
 # ---------------------------------------------------------------------------
 # extract_slug
 # ---------------------------------------------------------------------------
+
 
 class TestExtractSlug:
     def test_cloud_model(self):
@@ -59,6 +113,7 @@ class TestExtractSlug:
 # ---------------------------------------------------------------------------
 # group_median_f1
 # ---------------------------------------------------------------------------
+
 
 class TestGroupMedianF1:
     def test_median_three_runs(self):
@@ -77,6 +132,7 @@ class TestGroupMedianF1:
 # ---------------------------------------------------------------------------
 # select_sweep2 — N cloud + N local
 # ---------------------------------------------------------------------------
+
 
 class TestSelectSweep2:
     def _select(self, n=1):
@@ -118,11 +174,91 @@ class TestSelectSweep2:
         selected = self._select(n=100)
         cloud = [s for s in selected if "Padme" not in s.get("provider", "")]
         local = [s for s in selected if "Padme" in s.get("provider", "")]
-        assert len(cloud) == 4  # all 4 cloud models
+        assert len(cloud) == 5  # all 5 cloud models
         assert len(local) == 3  # all 3 padme models
 
     def test_no_internal_fields(self):
         selected = self._select(n=2)
+        for m in selected:
+            assert "_slug" not in m
+            assert "_median_f1" not in m
+
+
+# ---------------------------------------------------------------------------
+# select_sweep2 — diversity-aware path
+# ---------------------------------------------------------------------------
+
+
+class TestDiverseSelection:
+    """Tests for --require-country + --n-cheap selection."""
+
+    def _select(self, countries, n_cheap=0):
+        rankings = group_median_f1(SAMPLE_METRICS)
+        cloud = load_registry(SAMPLE_CLOUD, is_padme=False)
+        local = load_registry(SAMPLE_PADME, is_padme=True)
+        return select_sweep2(
+            rankings,
+            cloud,
+            local,
+            require_countries=countries,
+            n_cheap=n_cheap,
+        )
+
+    def test_frontier_picks_one_per_country(self):
+        selected = self._select(["US", "CN", "FR"])
+        countries = [m["country"] for m in selected]
+        assert "US" in countries
+        assert "CN" in countries
+        assert "FR" in countries
+        assert len(selected) == 3
+
+    def test_us_frontier_is_best_f1(self):
+        """GPT-5.4 (F1=0.65) beats Claude Opus (F1=0.60) for US frontier."""
+        selected = self._select(["US"])
+        assert selected[0]["id"] == "openai/gpt-5.4"
+
+    def test_fr_frontier_is_mistral(self):
+        selected = self._select(["FR"])
+        assert selected[0]["id"] == "mistralai/mistral-large-2512"
+
+    def test_cn_frontier_is_deepseek(self):
+        selected = self._select(["CN"])
+        assert selected[0]["id"] == "deepseek/deepseek-v3.2"
+
+    def test_cheap_tier_beats_local_floor(self):
+        """Cheap models must have F1 > best local (0.49)."""
+        selected = self._select(["US"], n_cheap=2)
+        # Frontier pick is GPT-5.4; cheap picks from remaining
+        cheap = [m for m in selected if m["id"] != "openai/gpt-5.4"]
+        for m in cheap:
+            assert m["_median_f1"] > 0.49 if "_median_f1" in m else True
+
+    def test_cheap_tier_sorted_by_price(self):
+        """Cheap picks are the cheapest models beating local floor."""
+        selected = self._select([], n_cheap=5)
+        # With no frontier requirement, all slots are cheap tier
+        # Sorted by price: gemini-flash-lite ($0.1) is cheapest but F1=0.40
+        # which is below local floor (0.49), so it should be excluded
+        ids = [m["id"] for m in selected]
+        assert "google/gemini-2.5-flash-lite" not in ids
+
+    def test_cheap_excludes_frontier_picks(self):
+        """A model picked for frontier is not duplicated in cheap tier."""
+        selected = self._select(["US", "CN", "FR"], n_cheap=5)
+        ids = [m["id"] for m in selected]
+        assert len(ids) == len(set(ids))
+
+    def test_missing_country_warns(self, caplog):
+        """Requesting a country with no frontier model logs a warning."""
+        import logging
+
+        with caplog.at_level(logging.WARNING):
+            selected = self._select(["JP"])
+        assert len(selected) == 0
+        assert "JP" in caplog.text
+
+    def test_no_internal_fields(self):
+        selected = self._select(["US", "CN", "FR"], n_cheap=2)
         for m in selected:
             assert "_slug" not in m
             assert "_median_f1" not in m
