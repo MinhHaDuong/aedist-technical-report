@@ -11,12 +11,12 @@ Usage:
 
 import argparse
 import base64
-import datetime
 import logging
 import platform
 import re
 import sys
 import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
 
 from openai import OpenAI
@@ -80,9 +80,9 @@ def clean_markdown(raw_text):
     text = re.sub(r"^```(?:markdown|html)?[ \t]*\n", "", raw_text)
     text = re.sub(r"\n```[ \t]*$", "", text)
 
-    text = re.sub(r"^(\s*)<tr", r"  <tr", text, flags=re.MULTILINE)
-    text = re.sub(r"^(\s*)<td", r"    <td", text, flags=re.MULTILINE)
-    text = re.sub(r"^(\s*)<th", r"    <th", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*<tr", r"  <tr", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*<td", r"    <td", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*<th", r"    <th", text, flags=re.MULTILINE)
 
     text = "\n".join(line.rstrip() for line in text.splitlines())
     return text
@@ -116,7 +116,7 @@ def metadata_comment(pdf_path, model, argv):
     return (
         f"\n\n<!-- Converted from PDF using:\n"
         f"Command: python {' '.join(argv)}\n"
-        f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"Date: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
         f"Source: {pdf_path.name}\n"
         f"Platform: {platform.platform()}\n"
         f"Python: {platform.python_version()}\n"
