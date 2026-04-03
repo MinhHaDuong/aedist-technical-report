@@ -68,7 +68,7 @@ The agent must always know and declare its current phase.
 | Skill | When | Purpose |
 |-------|------|---------|
 | `/start-ticket N` | Starting work on a GitHub issue | Create worktree, write first test, transition to Execute |
-| `/celebrate` | After completing a ticket | Reflect, update STATE/ROADMAP, clean up |
+| `/celebrate` | After completing a ticket | Reflect, update STATE, clean up |
 | `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
 | `/new-ticket` | Creating a GitHub issue | Write handoff document with test spec |
 | `/review-pr N` | Reviewing a pull request (code) | Multi-perspective agent review |
