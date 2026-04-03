@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 # Slug extraction
 # ---------------------------------------------------------------------------
 
+
 def extract_slug(label: str) -> str:
     """Extract model slug from a metrics label.
 
@@ -47,6 +48,7 @@ def extract_slug(label: str) -> str:
 # Grouping and ranking
 # ---------------------------------------------------------------------------
 
+
 def group_median_f1(metrics: list[dict]) -> dict[str, float]:
     """Group metrics by model slug and compute median F1 per model.
 
@@ -64,6 +66,7 @@ def group_median_f1(metrics: list[dict]) -> dict[str, float]:
 # ---------------------------------------------------------------------------
 # Registry loading
 # ---------------------------------------------------------------------------
+
 
 def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, dict]:
     """Build slug -> model entry mapping from a registry list.
@@ -86,52 +89,125 @@ def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, di
 # Selection
 # ---------------------------------------------------------------------------
 
+
 def select_sweep2(
     rankings: dict[str, float],
     cloud_registry: dict[str, dict],
     local_registry: dict[str, dict],
     n: int = 1,
+    *,
+    require_countries: list[str] | None = None,
+    n_cheap: int = 0,
 ) -> list[dict]:
-    """Select top N cloud + N local models by median F1.
+    """Select models with optional diversity constraints.
 
-    Two independent rankings: best N from cloud, best N from local.
-    Total selected = 2N.
+    When *require_countries* is empty (default), falls back to the original
+    behaviour: top N cloud + top N local by median F1.
 
-    Models not found in their registry are skipped.
+    With diversity constraints:
+      1. **Frontier tier** — one model per required country, best F1 among
+         that country's ``size_class: frontier`` cloud models.
+      2. **Cheap tier** — *n_cheap* cheapest cloud models whose F1 exceeds
+         the best local model's F1 (the "local floor"), excluding models
+         already picked in the frontier tier.
     """
-    def _pick_top_n(registry: dict[str, dict], label: str) -> list[dict]:
-        candidates = []
-        for slug in rankings:
-            if slug in registry:
-                entry = registry[slug].copy()
-                entry["_median_f1"] = rankings[slug]
-                candidates.append(entry)
-        picked = candidates[:n]
-        for m in picked:
+    # --- legacy path (no diversity flags) ---------------------------------
+    if not require_countries:
+
+        def _pick_top_n(registry: dict[str, dict], label: str) -> list[dict]:
+            candidates = []
+            for slug in rankings:
+                if slug in registry:
+                    entry = registry[slug].copy()
+                    entry["_median_f1"] = rankings[slug]
+                    candidates.append(entry)
+            picked = candidates[:n]
+            for m in picked:
+                log.info(
+                    "  %s: %s (median F1=%.1f%%)",
+                    label,
+                    m.get("name", m["_slug"]),
+                    m["_median_f1"] * 100,
+                )
+            return picked
+
+        log.info("Selecting top %d cloud + %d local:", n, n)
+        cloud = _pick_top_n(cloud_registry, "cloud")
+        local = _pick_top_n(local_registry, "local")
+
+        selected = cloud + local
+        selected.sort(key=lambda x: x["_median_f1"], reverse=True)
+        for model in selected:
+            model.pop("_median_f1", None)
+            model.pop("_slug", None)
+        return selected
+
+    # --- diversity-aware path ---------------------------------------------
+
+    # Annotate cloud candidates with rankings
+    scored: list[dict] = []
+    for slug in rankings:
+        if slug in cloud_registry:
+            entry = cloud_registry[slug].copy()
+            entry["_median_f1"] = rankings[slug]
+            scored.append(entry)
+
+    # 1. Frontier tier: best F1 per required country (frontier only)
+    picked_ids: set[str] = set()
+    frontier_picks: list[dict] = []
+    for country in require_countries:
+        candidates = [
+            m
+            for m in scored
+            if m.get("country") == country
+            and m.get("size_class") == "frontier"
+            and m["id"] not in picked_ids
+        ]
+        candidates.sort(key=lambda m: m["_median_f1"], reverse=True)
+        if candidates:
+            pick = candidates[0]
+            frontier_picks.append(pick)
+            picked_ids.add(pick["id"])
             log.info(
-                "  %s: %s (median F1=%.1f%%)",
-                label, m.get("name", m["_slug"]),
-                m["_median_f1"] * 100,
+                "  frontier %s: %s (F1=%.1f%%)",
+                country,
+                pick.get("name", pick["id"]),
+                pick["_median_f1"] * 100,
             )
-        return picked
+        else:
+            log.warning("  frontier %s: no candidate found", country)
 
-    log.info("Selecting top %d cloud + %d local:", n, n)
-    cloud = _pick_top_n(cloud_registry, "cloud")
-    local = _pick_top_n(local_registry, "local")
+    # 2. Cheap tier: cheapest cloud models beating the local floor
+    local_f1s = [rankings[slug] for slug in rankings if slug in local_registry]
+    local_floor = max(local_f1s) if local_f1s else 0.0
+    log.info("  local floor: F1=%.1f%%", local_floor * 100)
 
-    selected = cloud + local
+    cheap_candidates = [
+        m for m in scored if m["id"] not in picked_ids and m["_median_f1"] > local_floor
+    ]
+    cheap_candidates.sort(key=lambda m: m.get("price_per_mtok_in", 999))
+    cheap_picks = cheap_candidates[:n_cheap]
+    for m in cheap_picks:
+        log.info(
+            "  cheap: %s ($%.2f/Mtok, F1=%.1f%%)",
+            m.get("name", m["id"]),
+            m.get("price_per_mtok_in", 0),
+            m["_median_f1"] * 100,
+        )
+
+    # Combine and clean
+    selected = frontier_picks + cheap_picks
     selected.sort(key=lambda x: x["_median_f1"], reverse=True)
-
     for model in selected:
         model.pop("_median_f1", None)
         model.pop("_slug", None)
-
     return selected
 
 
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -141,24 +217,47 @@ def main() -> None:
         description="Select top models from census evaluation metrics",
     )
     parser.add_argument(
-        "--input", required=True, type=Path,
+        "--input",
+        required=True,
+        type=Path,
         help="Path to all_metrics.json",
     )
     parser.add_argument(
-        "--registry", required=True, type=Path,
+        "--registry",
+        required=True,
+        type=Path,
         help="Path to models.yaml (cloud registry)",
     )
     parser.add_argument(
-        "--padme", required=True, type=Path,
+        "--padme",
+        required=True,
+        type=Path,
         help="Path to models_padme.yaml (local registry)",
     )
     parser.add_argument(
-        "--output", required=True, type=Path,
+        "--output",
+        required=True,
+        type=Path,
         help="Output path for selected models YAML",
     )
     parser.add_argument(
-        "--n", type=int, default=1,
+        "--n",
+        type=int,
+        default=1,
         help="Select N cloud + N local models (default: 1, i.e. 2 total)",
+    )
+    parser.add_argument(
+        "--require-country",
+        action="append",
+        dest="require_countries",
+        metavar="CC",
+        help="Reserve one frontier slot for this country (repeatable)",
+    )
+    parser.add_argument(
+        "--n-cheap",
+        type=int,
+        default=0,
+        help="Number of cheap models beating local floor (default: 0)",
     )
 
     args = parser.parse_args()
@@ -187,7 +286,14 @@ def main() -> None:
         log.info("  %s  %.1f%%%s", slug.ljust(35), f1 * 100, marker)
 
     # Select
-    selected = select_sweep2(rankings, cloud_reg, padme_reg, n=args.n)
+    selected = select_sweep2(
+        rankings,
+        cloud_reg,
+        padme_reg,
+        n=args.n,
+        require_countries=args.require_countries,
+        n_cheap=args.n_cheap,
+    )
 
     # Write output
     # Strip internal fields and write clean YAML
