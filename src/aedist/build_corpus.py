@@ -42,6 +42,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from .pdf2md_utils import metadata_comment as _meta_comment
+
 log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -475,33 +477,25 @@ def main(argv=None):
         log.info("  Converting: %s", pdf_path.name)
         try:
             if args.converter == "grobid":
-                from .pdf2md_local import metadata_comment as local_meta
-                from .pdf2md_local import pdf_to_markdown_local
-
-                result = pdf_to_markdown_local(
-                    pdf_path, grobid_url=args.grobid_url,
-                )
-                comment = local_meta(pdf_path, ["build_corpus", str(pdf_path)])
+                from .pdf2md_grobid import pdf_to_markdown
+                result = pdf_to_markdown(pdf_path, grobid_url=args.grobid_url)
+                backend, model = "GROBID", "n/a"
             elif args.converter == "vision":
-                from .pdf2md_vision import metadata_comment as vision_meta
-                from .pdf2md_vision import pdf_to_markdown_vision
-
-                result = pdf_to_markdown_vision(
+                from .pdf2md_ollama import pdf_to_markdown
+                result = pdf_to_markdown(
                     pdf_path, model=args.local_vision_model,
                     dpi=args.dpi, ollama_url=args.ollama_url,
                 )
-                comment = vision_meta(pdf_path, args.local_vision_model,
-                                      ["build_corpus", str(pdf_path)])
+                backend, model = "Ollama", args.local_vision_model
             else:
-                from .pdf2md import metadata_comment as cloud_meta
-                from .pdf2md import pdf_to_markdown
-
+                from .pdf2md_openrouter import pdf_to_markdown
                 result = pdf_to_markdown(
                     pdf_path, model=args.vision_model,
                     dpi=args.dpi, max_tokens=4096,
                 )
-                comment = cloud_meta(pdf_path, args.vision_model,
-                                     ["build_corpus", str(pdf_path)])
+                backend, model = "OpenRouter", args.vision_model
+            comment = _meta_comment(pdf_path, backend=backend, model=model,
+                                       argv=["build_corpus", str(pdf_path)])
             md_path.write_text(result + comment, encoding="utf-8")
             md_paths.append(md_path)
             log.info("  Wrote: %s", md_path.name)

@@ -4,20 +4,20 @@ Uses GROBID's TEI XML output and converts to structured Markdown,
 preserving tables as HTML. No cloud API required.
 
 Usage:
-    python -m aedist.pdf2md_local input.pdf
-    python -m aedist.pdf2md_local input.pdf --output output.md --grobid-url http://localhost:8070
+    python -m aedist.pdf2md_grobid input.pdf
+    python -m aedist.pdf2md_grobid input.pdf --output output.md --grobid-url http://localhost:8070
 
 Requires: GROBID running locally (e.g., podman start grobid).
 """
 
 import argparse
 import logging
-import platform
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import UTC, datetime
 from pathlib import Path
+
+from .pdf2md_utils import get_output_path, metadata_comment
 
 log = logging.getLogger(__name__)
 
@@ -168,37 +168,13 @@ def _emit_table(fig, doc_title: str, section: str, parts: list[str]):
     parts.append(f"\n{html}\n")
 
 
-def metadata_comment(pdf_path: Path, argv: list[str]) -> str:
-    """Conversion metadata appended as HTML comment."""
-    return (
-        f"\n\n<!-- Converted from PDF using:\n"
-        f"Command: python {' '.join(argv)}\n"
-        f"Date: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-        f"Source: {pdf_path.name}\n"
-        f"Platform: {platform.platform()}\n"
-        f"Python: {platform.python_version()}\n"
-        f"Backend: GROBID (local)\n"
-        f"-->"
-    )
-
-
-def pdf_to_markdown_local(pdf_path: Path, *,
-                          grobid_url: str = DEFAULT_GROBID_URL) -> str:
+def pdf_to_markdown(pdf_path: Path, *,
+                    grobid_url: str = DEFAULT_GROBID_URL) -> str:
     """Convert a PDF to Markdown using local GROBID."""
     log.info("Sending %s to GROBID...", pdf_path.name)
     tei_xml = grobid_process(pdf_path, grobid_url)
     log.info("Converting TEI XML to Markdown...")
     return tei_to_markdown(tei_xml)
-
-
-def get_output_path(pdf_path: Path, output_arg: Path | None) -> Path:
-    """Determine output path: explicit arg > stem.md > stem_converted.md."""
-    if output_arg:
-        return output_arg
-    candidate = pdf_path.with_suffix(".md")
-    if candidate.exists():
-        return pdf_path.with_name(pdf_path.stem + "_converted.md")
-    return candidate
 
 
 def main(argv=None):
@@ -219,12 +195,15 @@ def main(argv=None):
     if args.pdf.suffix.lower() != ".pdf":
         parser.error(f"Not a PDF: {args.pdf}")
 
-    result = pdf_to_markdown_local(args.pdf, grobid_url=args.grobid_url)
+    result = pdf_to_markdown(args.pdf, grobid_url=args.grobid_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_local"] + argv
-    output.write_text(result + metadata_comment(args.pdf, actual_argv),
-                      encoding="utf-8")
+    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_grobid"] + argv
+    output.write_text(
+        result + metadata_comment(args.pdf, backend="GROBID", model="n/a",
+                                  argv=actual_argv),
+        encoding="utf-8",
+    )
     log.info("Wrote %s", output)
 
 

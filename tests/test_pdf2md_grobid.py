@@ -1,6 +1,9 @@
-"""Tests for aedist.pdf2md_local — GROBID-based PDF conversion."""
+"""Tests for aedist.pdf2md_grobid — GROBID-based PDF conversion."""
 
-from aedist.pdf2md_local import tei_to_markdown
+import re
+from pathlib import Path
+
+from aedist.pdf2md_grobid import tei_to_markdown
 
 SAMPLE_TEI = """<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -93,9 +96,43 @@ def test_tables_have_own_heading():
     assert "## Table 1: Power Plants" in md
 
 
+# ---------------------------------------------------------------------------
+# Argparse and code quality (source inspection)
+# ---------------------------------------------------------------------------
+
 def test_cli_has_grobid_url_flag():
     """CLI accepts --grobid-url flag."""
-    source_path = __import__("pathlib").Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_local.py"
+    source_path = Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_grobid.py"
     text = source_path.read_text()
     assert "--grobid-url" in text
     assert "localhost:8070" in text
+
+
+def test_main_uses_argparse():
+    source = Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_grobid.py"
+    text = source.read_text()
+    assert "ArgumentParser" in text
+    assert "add_argument" in text
+
+
+def test_no_print_calls():
+    source = Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_grobid.py"
+    text = source.read_text()
+    lines = text.splitlines()
+    for i, line in enumerate(lines, 1):
+        stripped = line.lstrip()
+        if stripped.startswith("#") or stripped.startswith('"'):
+            continue
+        assert not re.match(r".*\bprint\s*\(", stripped), (
+            f"Found print() call at line {i}: {line.strip()}"
+        )
+
+
+def test_uses_shared_metadata_comment():
+    """Grobid converter imports metadata_comment from utils, not defines its own."""
+    source = Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_grobid.py"
+    text = source.read_text()
+    assert "from .pdf2md_utils import" in text
+    assert "metadata_comment" in text
+    # Should NOT define its own
+    assert "def metadata_comment" not in text
