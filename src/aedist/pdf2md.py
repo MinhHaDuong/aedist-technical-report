@@ -66,8 +66,10 @@ Tables:
 - Keep all table section headings and subheadings within the table structure
 """
 
-USER_PROMPT = """Here is the Markdown from the previous page (if empty, this is the first page):
-{}
+_PREV_PAGE_PLACEHOLDER = "<<PREVIOUS_PAGE>>"
+
+USER_PROMPT = f"""Here is the Markdown from the previous page (if empty, this is the first page):
+{_PREV_PAGE_PLACEHOLDER}
 
 Now, convert the following base64-encoded page to Markdown, without adding explanations or comments.
 Limit your response to the image content, without repeating the text above."""
@@ -92,7 +94,7 @@ def process_model_response(response, page_num):
         raise ValueError("Unexpected model response: 'choices' is empty.")
 
     message = response.choices[0].message
-    if not (message and hasattr(message, "content")):
+    if not (message and getattr(message, "content", None)):
         raise ValueError(f"Unexpected model response for page {page_num + 1}")
 
     cleaned = clean_markdown(message.content)
@@ -151,7 +153,9 @@ def pdf_to_markdown(pdf_path, *, model, dpi, max_tokens):
                 "content": [
                     {
                         "type": "text",
-                        "text": USER_PROMPT.format(previous_page_markdown),
+                        "text": USER_PROMPT.replace(
+                            _PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1
+                        ),
                     },
                     {
                         "type": "image_url",
@@ -176,7 +180,7 @@ def pdf_to_markdown(pdf_path, *, model, dpi, max_tokens):
     return "\n".join(markdown_pieces)
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Convert PDF to Markdown via vision LLM"
     )
@@ -189,7 +193,7 @@ def main():
                         help="DPI for PDF rasterisation (default: 300)")
     parser.add_argument("--max-tokens", type=int, default=4096,
                         help="Max output tokens per page (default: 4096)")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 

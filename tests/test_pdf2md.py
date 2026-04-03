@@ -75,8 +75,15 @@ class TestProcessModelResponse:
         with pytest.raises(ValueError, match="choices"):
             process_model_response(resp, 0)
 
-    def test_missing_content_raises(self):
+    def test_missing_message_raises(self):
         choice = SimpleNamespace(message=None)
+        resp = SimpleNamespace(choices=[choice])
+        with pytest.raises(ValueError, match="Unexpected"):
+            process_model_response(resp, 0)
+
+    def test_none_content_raises(self):
+        message = SimpleNamespace(content=None)
+        choice = SimpleNamespace(message=message)
         resp = SimpleNamespace(choices=[choice])
         with pytest.raises(ValueError, match="Unexpected"):
             process_model_response(resp, 0)
@@ -102,6 +109,22 @@ class TestGetOutputPath:
         (tmp_path / "doc.md").write_text("existing")
         result = get_output_path(pdf, None)
         assert result == tmp_path / "doc_converted.md"
+
+
+# ---------------------------------------------------------------------------
+# Argparse presence (source inspection)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# USER_PROMPT placeholder safety
+# ---------------------------------------------------------------------------
+
+def test_user_prompt_handles_braces():
+    """Markdown with literal {} must not crash the prompt substitution."""
+    from aedist.pdf2md import _PREV_PAGE_PLACEHOLDER, USER_PROMPT
+    tricky = "style={color: red}"
+    result = USER_PROMPT.replace(_PREV_PAGE_PLACEHOLDER, tricky, 1)
+    assert tricky in result
 
 
 # ---------------------------------------------------------------------------

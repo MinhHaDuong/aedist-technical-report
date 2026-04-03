@@ -133,7 +133,19 @@ sweep2-web:
 
 # --- Utility -----------------------------------------------------------------
 
-.PHONY: help
+# Convert a PDF to Markdown for the RAG corpus.
+# Usage: make pdf2md PDF=path/to/file.pdf [MODEL=gpt-4o] [DPI=300]
+MODEL ?= gpt-4o
+DPI   ?= 300
+
+.PHONY: pdf2md help
+
+pdf2md:
+ifndef PDF
+	$(error PDF variable is required. Usage: make pdf2md PDF=path/to/file.pdf)
+endif
+	uv run --project .. --extra pdf python -m aedist.pdf2md $(PDF) \
+	    --model $(MODEL) --dpi $(DPI)
 
 help:
 	@echo "Sweeps:"
@@ -141,5 +153,8 @@ help:
 	@echo "  make sweep1-padme         Padme local models (always sequential)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               All information regimes"
+	@echo ""
+	@echo "Tools:"
+	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"
 	@echo ""
 	@echo "Config files in sweeps/*.yaml"
