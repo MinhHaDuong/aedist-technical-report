@@ -1,7 +1,6 @@
 """Tests for aedist.pdf2md_local — GROBID-based PDF conversion."""
 
-from aedist.pdf2md_local import _table_to_html, _text, tei_to_markdown
-
+from aedist.pdf2md_local import tei_to_markdown
 
 SAMPLE_TEI = """<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">

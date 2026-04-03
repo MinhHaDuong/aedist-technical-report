@@ -13,10 +13,10 @@ Usage (fully local — default):
         --reference report/inputs/README.md \\
         --output experiments/data/rag_corpus
 
-Usage (cloud fallback):
+Usage (cloud PDF conversion fallback):
     python -m aedist.build_corpus --query "thermal power vietnam" \\
-        --converter cloud --scorer ollama+cloud \\
-        --output experiments/data/rag_corpus --budget-usd 5
+        --converter cloud \\
+        --output experiments/data/rag_corpus
 
 Requires: GROBID on localhost:8070, Ollama on localhost:11434.
     podman start grobid
@@ -387,7 +387,7 @@ def main(argv=None):
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     zotero_key = os.environ.get("ZOTERO_API_KEY")
-    if not zotero_key and not args.skip_download and not args.items:
+    if not zotero_key and not args.skip_download:
         raise SystemExit("Set ZOTERO_API_KEY environment variable")
 
     work_dir = args.work_dir or args.output.parent / "rag_work"

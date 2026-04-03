@@ -152,6 +152,7 @@ CORPUS_OUTPUT  ?= data/rag_corpus
 CORPUS_WORKDIR ?= data/rag_work
 CORPUS_CONVERT ?= grobid
 CORPUS_SCORER  ?= qwen3.5:9b
+CORPUS_REF     ?= ../report/inputs/README.md
 
 .PHONY: pdf2md build-corpus help
 
@@ -173,6 +174,7 @@ endif
 endif
 	uv run --project .. python -m aedist.build_corpus \
 	    $(if $(ITEMS),--items $(ITEMS),--query "$(QUERY)") \
+	    --reference $(CORPUS_REF) \
 	    --output $(CORPUS_OUTPUT) --work-dir $(CORPUS_WORKDIR) \
 	    --converter $(CORPUS_CONVERT) --scorer-model $(CORPUS_SCORER)
 
