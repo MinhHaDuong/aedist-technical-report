@@ -24,6 +24,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from .extract import _extract_fenced_blocks, _fallback_extract_inline_csv, _sniff_dialect
 from .harness import make_client, query_single_turn
 
 log = logging.getLogger(__name__)
@@ -39,17 +40,22 @@ _SIMILARITY_THRESHOLD = 70.0
 # ---------------------------------------------------------------------------
 
 def extract_csv_rows(response_text: str) -> list[dict]:
-    """Extract CSV rows from LLM response text (handles fenced blocks)."""
-    # Try fenced blocks first
-    blocks = re.findall(r"```(?:csv)?\s*\n(.*?)\n```", response_text, re.DOTALL | re.IGNORECASE)
+    """Extract CSV rows from LLM response text (handles fenced blocks).
+
+    Uses shared extraction utilities from aedist.extract.
+    """
+    # Try fenced blocks first (reuse extract.py logic)
+    blocks = _extract_fenced_blocks(response_text)
     if blocks:
         text = max(blocks, key=lambda b: b.count("\n"))
     else:
         # Fallback: look for CSV-like content
-        text = response_text
+        inline = _fallback_extract_inline_csv(response_text)
+        text = inline if inline else response_text
 
     try:
-        reader = csv.DictReader(io.StringIO(text.strip()))
+        dialect = _sniff_dialect(text.strip())
+        reader = csv.DictReader(io.StringIO(text.strip()), dialect=dialect)
         rows = []
         for row in reader:
             # Normalize keys
