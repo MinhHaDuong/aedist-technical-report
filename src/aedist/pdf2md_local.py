@@ -13,7 +13,6 @@ Requires: GROBID running locally (e.g., podman start grobid).
 import argparse
 import logging
 import platform
-import re
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -86,16 +85,6 @@ def _table_to_html(table_elem) -> str:
     return "<table>\n" + "\n".join(parts) + "\n</table>"
 
 
-def _find_nearest_section(table_elem) -> str:
-    """Walk up from a table element to find the nearest section heading."""
-    # In GROBID TEI, tables are <figure type="table"> inside <body> or <div>.
-    # Walk preceding siblings and parent divs to find context.
-    parent = table_elem
-    # ElementTree doesn't support parent traversal, so we return "" here.
-    # The caller builds context from the document structure instead.
-    return ""
-
-
 def tei_to_markdown(tei_xml: str) -> str:
     """Convert TEI XML from GROBID to Markdown with HTML tables.
 
@@ -117,6 +106,7 @@ def tei_to_markdown(tei_xml: str) -> str:
         return parts[0]
 
     current_section = ""
+    emitted: set[int] = set()  # track by id() to avoid duplicates
 
     for div in body.findall(".//tei:div", TEI_NS):
         # Section heading
@@ -134,20 +124,23 @@ def tei_to_markdown(tei_xml: str) -> str:
             if text:
                 parts.append(f"\n{text}\n")
 
-        # Tables within this div — emit inline with section context
-        for fig in div.findall('.//tei:figure[@type="table"]', TEI_NS):
-            _emit_table(fig, title, current_section, parts)
+        # Direct child tables only (not nested div tables)
+        for fig in div.findall('tei:figure[@type="table"]', TEI_NS):
+            if id(fig) not in emitted:
+                _emit_table(fig, title, current_section, parts)
+                emitted.add(id(fig))
 
-    # Tables outside divs (directly under body or elsewhere in the tree)
+    # Tables directly under body (not inside any div)
     for fig in body.findall('tei:figure[@type="table"]', TEI_NS):
-        _emit_table(fig, title, current_section, parts)
+        if id(fig) not in emitted:
+            _emit_table(fig, title, current_section, parts)
+            emitted.add(id(fig))
 
     # Tables outside body (some TEI variants put them under <text>)
     for fig in root.findall('.//tei:figure[@type="table"]', TEI_NS):
-        # Skip if already emitted (inside body)
-        if body is not None and fig in body.iter():
-            continue
-        _emit_table(fig, title, current_section, parts)
+        if id(fig) not in emitted:
+            _emit_table(fig, title, current_section, parts)
+            emitted.add(id(fig))
 
     return "\n".join(parts)
 

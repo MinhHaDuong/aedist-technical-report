@@ -32,6 +32,7 @@ import logging
 import os
 import re
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -87,7 +88,7 @@ def zotero_search(user_id: str, api_key: str, query: str,
                         f"/children?format=json")
         try:
             children = _zotero_get(children_url, api_key)
-        except Exception:
+        except (urllib.error.URLError, json.JSONDecodeError):
             continue
         for child in children:
             cd = child["data"]
@@ -150,9 +151,6 @@ def select_by_reference(items: list[dict],
 
     Uses rapidfuzz for efficient fuzzy matching. Items that match a reference
     title above the threshold are kept, sorted by match score.
-
-    Returns (selected_items, match_details) where match_details maps
-    item keys to (score, matched_title).
     """
     from rapidfuzz import fuzz
 
@@ -382,8 +380,6 @@ def main(argv=None):
     # Modes
     parser.add_argument("--skip-download", action="store_true",
                         help="Skip download, use existing PDFs in work-dir")
-    parser.add_argument("--skip-convert", action="store_true",
-                        help="Skip conversion, use existing .md files in work-dir")
     parser.add_argument("--dry-run", action="store_true",
                         help="Show what would be done without calling APIs")
 
