@@ -5,22 +5,28 @@ Fully local pipeline (no cloud APIs required for conversion or scoring):
   1. Search  — query Zotero library for candidate documents
   2. Select  — document-level reranking (fuzzy match against reference set)
   3. Fetch   — download PDFs from Zotero API
-  4. Convert — PDF → Markdown via local GROBID service
+  4. Convert — PDF → Markdown (GROBID, local vision, or cloud)
   5. Score   — local LLM (Ollama) selects relevant sections
 
-Usage (fully local — default):
+Usage (GROBID — default, best for academic papers):
     python -m aedist.build_corpus --query "thermal power vietnam" \\
         --reference report/inputs/README.md \\
         --output experiments/data/rag_corpus
 
-Usage (cloud PDF conversion fallback):
+Usage (local vision — best for scanned/government docs):
+    python -m aedist.build_corpus --query "thermal power vietnam" \\
+        --converter vision --local-vision-model gemma4:26b \\
+        --output experiments/data/rag_corpus
+
+Usage (cloud vision fallback):
     python -m aedist.build_corpus --query "thermal power vietnam" \\
         --converter cloud \\
         --output experiments/data/rag_corpus
 
-Requires: GROBID on localhost:8070, Ollama on localhost:11434.
-    podman start grobid
+Requires: Ollama on localhost:11434 (scoring + vision converter).
     ollama serve
+Optional: GROBID on localhost:8070 (grobid converter only).
+    podman start grobid
 
 Minh Ha-Duong, CNRS, 2025–
 License CC-BY-SA
@@ -273,7 +279,8 @@ def _ollama_generate(model: str, messages: list[dict],
         method="POST",
     )
     t0 = time.monotonic()
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    # 10 min: local models on large sections can be slow (qwen3.5:9b on A4000)
+    with urllib.request.urlopen(req, timeout=600) as resp:
         result = json.loads(resp.read())
     wall = round(time.monotonic() - t0, 3)
     msg = result.get("message", {})
@@ -360,12 +367,16 @@ def main(argv=None):
 
     # Conversion backend
     parser.add_argument("--converter", default="grobid",
-                        choices=["grobid", "cloud"],
-                        help="PDF converter: grobid (local, free) or cloud (GPT-4o vision)")
+                        choices=["grobid", "cloud", "vision"],
+                        help="PDF converter: grobid (local GROBID), "
+                             "vision (local Ollama multimodal), "
+                             "or cloud (OpenRouter vision)")
     parser.add_argument("--grobid-url", default="http://localhost:8070",
                         help="GROBID service URL (default: http://localhost:8070)")
     parser.add_argument("--vision-model", default="gpt-4o",
                         help="Vision model for cloud conversion (default: gpt-4o)")
+    parser.add_argument("--local-vision-model", default="gemma4:26b",
+                        help="Ollama vision model for local conversion (default: gemma4:26b)")
     parser.add_argument("--dpi", type=int, default=200,
                         help="DPI for cloud PDF rasterisation (default: 200)")
 
@@ -471,6 +482,16 @@ def main(argv=None):
                     pdf_path, grobid_url=args.grobid_url,
                 )
                 comment = local_meta(pdf_path, ["build_corpus", str(pdf_path)])
+            elif args.converter == "vision":
+                from .pdf2md_vision import metadata_comment as vision_meta
+                from .pdf2md_vision import pdf_to_markdown_vision
+
+                result = pdf_to_markdown_vision(
+                    pdf_path, model=args.local_vision_model,
+                    dpi=args.dpi, ollama_url=args.ollama_url,
+                )
+                comment = vision_meta(pdf_path, args.local_vision_model,
+                                      ["build_corpus", str(pdf_path)])
             else:
                 from .pdf2md import metadata_comment as cloud_meta
                 from .pdf2md import pdf_to_markdown
