@@ -54,7 +54,7 @@ sweep1-padme:
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
 	uv run --project .. python -m aedist.runner evaluate-all --outputs-dir $(S1_OUTPUT) --output ../results/summary
-	uv run --project .. python scripts/summarize_sweep.py \
+	uv run --project .. python -m aedist.summarize_sweep \
 	    --metrics ../results/summary/all_metrics.json \
 	    --queries $(S1_OUTPUT) \
 	    --output ../results/summary/sweep1_summary.csv
