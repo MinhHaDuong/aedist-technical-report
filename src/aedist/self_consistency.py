@@ -15,6 +15,7 @@ import csv
 import json
 import logging
 import re
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -22,16 +23,13 @@ from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
 from .runner import _DEFAULT_REF, load_plants_csv
+from .schema import Plant
 
 log = logging.getLogger(__name__)
-
-_CLEANER_CONFIG = Path(__file__).parent / "cleaner" / "config.json"
 
 
 def _normalize_name(name: str) -> str:
     """Cheap name normalization: lower, strip accents-neutral, collapse spaces."""
-    import unicodedata
-
     n = unicodedata.normalize("NFC", name.strip().lower())
     n = re.sub(r"\s+", " ", n)
     return n
@@ -47,7 +45,7 @@ def _extract_to_csv(json_path: Path, work_dir: Path) -> Path | None:
     return None
 
 
-def _canonical_name(plant) -> str:
+def _canonical_name(plant: Plant) -> str:
     """Return a cleaned name for a Plant using the existing cleaner pipeline."""
     return _normalize_name(plant.name)
 
@@ -211,13 +209,13 @@ def run_analysis(
 
         consistency_metrics = None
         union_metrics = None
-        n_majority: list = []
+        voted_plants: list = []
 
         if len(valid_plant_lists) < 2:
             log.warning("Fewer than 2 valid runs for %s — cannot do majority vote", model)
             consistency_metrics = valid_metrics[0] if valid_metrics else None
             union_metrics = consistency_metrics
-            n_majority = valid_plant_lists[0] if valid_plant_lists else []
+            voted_plants = valid_plant_lists[0] if valid_plant_lists else []
         else:
             run_sizes = [len(pl) for pl in valid_plant_lists]
 
@@ -235,7 +233,7 @@ def run_analysis(
             log.info("Wrote %s", consolidated_path)
             entries = reconcile(reference, majority_plants)
             consistency_metrics = compute_metrics(entries)
-            n_majority = majority_plants
+            voted_plants = majority_plants
 
             # Save and evaluate union-vote CSV
             union_path = output_dir / f"{model}-union.csv"
@@ -280,7 +278,7 @@ def run_analysis(
                 "majority_n_hallucinated": consistency_metrics.n_hallucinated
                 if consistency_metrics
                 else None,
-                "n_majority_plants": len(n_majority),
+                "n_majority_plants": len(voted_plants),
                 "union_f1": round(union_metrics.f1, 4) if union_metrics else None,
                 "union_coverage": round(union_metrics.coverage, 4) if union_metrics else None,
                 "union_precision": round(union_metrics.precision, 4) if union_metrics else None,
