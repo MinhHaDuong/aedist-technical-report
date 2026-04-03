@@ -34,8 +34,11 @@ from .harness import (
 
 log = logging.getLogger(__name__)
 
-# Predefined search queries for Vietnam thermal power plants
-_SEARCH_QUERIES = [
+# Tavily API timeout in seconds
+TAVILY_TIMEOUT_SECONDS = 30.0
+
+# Default search queries (Vietnam thermal power plants)
+_DEFAULT_SEARCH_QUERIES = [
     "Vietnam thermal power plants list coal gas LNG 2024 2025",
     "Vietnam power development plan PDP8 thermal plants capacity",
     "Vietnam LNG import terminal gas-fired power plants under construction",
@@ -52,7 +55,7 @@ def tavily_search(query: str, api_key: str) -> list[dict]:
             "search_depth": "advanced",
             "max_results": 5,
         },
-        timeout=30.0,
+        timeout=TAVILY_TIMEOUT_SECONDS,
     )
     resp.raise_for_status()
     data = resp.json()
@@ -62,12 +65,22 @@ def tavily_search(query: str, api_key: str) -> list[dict]:
     ]
 
 
-def run_web_searches(api_key: str) -> tuple[str, list[dict]]:
-    """Run predefined searches, return (context_text, search_log)."""
+def run_web_searches(
+    api_key: str,
+    queries: list[str] | None = None,
+) -> tuple[str, list[dict]]:
+    """Run web searches, return (context_text, search_log).
+
+    Args:
+        api_key: Tavily API key.
+        queries: Custom search queries. Defaults to _DEFAULT_SEARCH_QUERIES.
+    """
+    if queries is None:
+        queries = _DEFAULT_SEARCH_QUERIES
     search_log: list[dict] = []
     context_parts: list[str] = []
 
-    for query in _SEARCH_QUERIES:
+    for query in queries:
         log.info("Searching: %s", query)
         try:
             results = tavily_search(query, api_key)
@@ -116,7 +129,7 @@ def main():
         return
 
     # Run web searches once (same context for all models/runs)
-    log.info("Running %d predefined web searches...", len(_SEARCH_QUERIES))
+    log.info("Running %d predefined web searches...", len(_DEFAULT_SEARCH_QUERIES))
     web_context, search_log = run_web_searches(tavily_key)
 
     if not web_context.strip():

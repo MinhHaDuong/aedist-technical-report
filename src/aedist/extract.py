@@ -26,6 +26,11 @@ from typing import Any, cast
 log = logging.getLogger(__name__)
 
 
+# Bonus per recognized header keyword in CSV scoring
+HEADER_KEYWORD_BONUS = 0.2
+# Cap for length bonus normalization (number of lines)
+LENGTH_BONUS_CAP_LINES = 50.0
+
 _DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -62,10 +67,10 @@ def _score_csv_like_block(block: str) -> float:
     header_bonus = 0.0
     for token in ["name", "plant", "fuel", "status", "stage", "cod", "connection", "province", "capacity"]:
         if token in header:
-            header_bonus += 0.2
+            header_bonus += HEADER_KEYWORD_BONUS
 
     # Prefer longer blocks and those with many delimited lines
-    length_bonus = min(len(lines) / 50.0, 1.0)  # cap
+    length_bonus = min(len(lines) / LENGTH_BONUS_CAP_LINES, 1.0)  # cap
     return (delimiter_hits / max(len(lines), 1)) + header_bonus + length_bonus
 
 
@@ -250,6 +255,12 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(False, None, f"{json_path.name}: invalid JSON ({e})")
 
     response = record.get("response")
+    # Handle multiturn JSON format: extract from turns[-1]["content"]
+    if (not response or not isinstance(response, str)) and "turns" in record:
+        turns = record["turns"]
+        assistant_turns = [t for t in turns if t.get("role") == "assistant"]
+        if assistant_turns:
+            response = assistant_turns[-1].get("content", "")
     if not isinstance(response, str) or not response.strip():
         return ExtractResult(False, None, f"{json_path.name}: no response text")
 
