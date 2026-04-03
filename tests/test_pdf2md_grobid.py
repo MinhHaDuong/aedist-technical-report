@@ -1,6 +1,6 @@
-"""Tests for aedist.pdf2md_local — GROBID-based PDF conversion."""
+"""Tests for aedist.pdf2md_grobid — GROBID-based PDF conversion."""
 
-from aedist.pdf2md_local import tei_to_markdown
+from aedist.pdf2md_grobid import tei_to_markdown
 
 SAMPLE_TEI = """<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -95,7 +95,7 @@ def test_tables_have_own_heading():
 
 def test_cli_has_grobid_url_flag():
     """CLI accepts --grobid-url flag."""
-    source_path = __import__("pathlib").Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_local.py"
+    source_path = __import__("pathlib").Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_grobid.py"
     text = source_path.read_text()
     assert "--grobid-url" in text
     assert "localhost:8070" in text

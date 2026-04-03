@@ -4,8 +4,8 @@ Uses GROBID's TEI XML output and converts to structured Markdown,
 preserving tables as HTML. No cloud API required.
 
 Usage:
-    python -m aedist.pdf2md_local input.pdf
-    python -m aedist.pdf2md_local input.pdf --output output.md --grobid-url http://localhost:8070
+    python -m aedist.pdf2md_grobid input.pdf
+    python -m aedist.pdf2md_grobid input.pdf --output output.md --grobid-url http://localhost:8070
 
 Requires: GROBID running locally (e.g., podman start grobid).
 """
@@ -222,7 +222,7 @@ def main(argv=None):
     result = pdf_to_markdown_local(args.pdf, grobid_url=args.grobid_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_local"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_grobid"] + argv
     output.write_text(result + metadata_comment(args.pdf, actual_argv),
                       encoding="utf-8")
     log.info("Wrote %s", output)

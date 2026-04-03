@@ -1,4 +1,4 @@
-"""Tests for aedist.pdf2md — PDF-to-Markdown converter."""
+"""Tests for aedist.pdf2md_openrouter — OpenRouter PDF-to-Markdown converter."""
 
 import re
 from pathlib import Path
@@ -6,7 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from aedist.pdf2md import clean_markdown, get_output_path, process_model_response
+from aedist.pdf2md_openrouter import process_model_response
+from aedist.pdf2md_utils import clean_markdown, get_output_path
 
 # ---------------------------------------------------------------------------
 # clean_markdown
@@ -117,9 +118,9 @@ class TestGetOutputPath:
 
 def test_user_prompt_handles_braces():
     """Markdown with literal {} must not crash the prompt substitution."""
-    from aedist.pdf2md import _PREV_PAGE_PLACEHOLDER, USER_PROMPT
+    from aedist.pdf2md_utils import PREV_PAGE_PLACEHOLDER, USER_PROMPT
     tricky = "style={color: red}"
-    result = USER_PROMPT.replace(_PREV_PAGE_PLACEHOLDER, tricky, 1)
+    result = USER_PROMPT.replace(PREV_PAGE_PLACEHOLDER, tricky, 1)
     assert tricky in result
 
 
@@ -128,7 +129,7 @@ def test_user_prompt_handles_braces():
 # ---------------------------------------------------------------------------
 
 def test_main_uses_argparse():
-    source = Path(__file__).resolve().parent.parent / "src" / "aedist" / "pdf2md.py"
+    source = Path(__file__).resolve().parent.parent / "src" / "aedist" / "pdf2md_openrouter.py"
     text = source.read_text()
     assert "ArgumentParser" in text
     assert "add_argument" in text
@@ -139,7 +140,7 @@ def test_main_uses_argparse():
 # ---------------------------------------------------------------------------
 
 def test_no_print_calls():
-    source = Path(__file__).resolve().parent.parent / "src" / "aedist" / "pdf2md.py"
+    source = Path(__file__).resolve().parent.parent / "src" / "aedist" / "pdf2md_openrouter.py"
     text = source.read_text()
     # Match print( but not inside strings or comments
     lines = text.splitlines()

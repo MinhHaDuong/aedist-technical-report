@@ -1,11 +1,11 @@
 """Convert PDF pages to Markdown via local multimodal LLM (Ollama).
 
-Same approach as pdf2md.py (render pages → vision model → Markdown)
-but uses a local Ollama model instead of a cloud API.
+Renders each page as JPEG, sends to a local Ollama vision model,
+returns structured Markdown. No cloud API required.
 
 Usage:
-    python -m aedist.pdf2md_vision input.pdf
-    python -m aedist.pdf2md_vision input.pdf --model gemma4:26b --dpi 200
+    python -m aedist.pdf2md_ollama input.pdf
+    python -m aedist.pdf2md_ollama input.pdf --output out.md --model gemma4:26b --dpi 200
 """
 
 import argparse
@@ -19,10 +19,15 @@ import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
-log = logging.getLogger(__name__)
+from .pdf2md_utils import (
+    PREV_PAGE_PLACEHOLDER,
+    SYSTEM_PROMPT,
+    USER_PROMPT,
+    clean_markdown,
+    get_output_path,
+)
 
-# Reuse prompts and cleaning from the cloud converter
-from .pdf2md import SYSTEM_PROMPT, USER_PROMPT, _PREV_PAGE_PLACEHOLDER, clean_markdown
+log = logging.getLogger(__name__)
 
 DEFAULT_MODEL = "gemma4:26b"
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
@@ -65,7 +70,7 @@ def metadata_comment(pdf_path, model, argv):
     )
 
 
-def pdf_to_markdown_vision(pdf_path, *, model=DEFAULT_MODEL, dpi=200,
+def pdf_to_markdown_ollama(pdf_path, *, model=DEFAULT_MODEL, dpi=200,
                            ollama_url=DEFAULT_OLLAMA_URL):
     """Convert a PDF to Markdown by sending each page image to a local vision LLM."""
     from pdf2image import convert_from_path  # heavy dep, import lazily
@@ -86,7 +91,7 @@ def pdf_to_markdown_vision(pdf_path, *, model=DEFAULT_MODEL, dpi=200,
             encoded_image = base64.b64encode(tmp.read()).decode("utf-8")
 
         user_text = USER_PROMPT.replace(
-            _PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1
+            PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1
         )
 
         # Ollama multimodal format: images as base64 in the message
@@ -132,12 +137,11 @@ def main(argv=None):
     if args.pdf.suffix.lower() != ".pdf":
         parser.error(f"Not a PDF: {args.pdf}")
 
-    result = pdf_to_markdown_vision(args.pdf, model=args.model, dpi=args.dpi,
+    result = pdf_to_markdown_ollama(args.pdf, model=args.model, dpi=args.dpi,
                                     ollama_url=args.ollama_url)
 
-    from .pdf2md import get_output_path
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_vision"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_ollama"] + argv
     output.write_text(result + metadata_comment(args.pdf, args.model, actual_argv),
                       encoding="utf-8")
     log.info("Wrote %s", output)

@@ -164,7 +164,7 @@ pdf2md:
 ifndef PDF
 	$(error PDF variable is required. Usage: make pdf2md PDF=path/to/file.pdf)
 endif
-	uv run --project .. --extra pdf python -m aedist.pdf2md $(PDF) \
+	uv run --project .. --extra pdf python -m aedist.pdf2md_openrouter $(PDF) \
 	    --model $(MODEL) --dpi $(DPI)
 
 build-corpus:

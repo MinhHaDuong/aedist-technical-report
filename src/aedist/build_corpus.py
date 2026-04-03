@@ -475,26 +475,26 @@ def main(argv=None):
         log.info("  Converting: %s", pdf_path.name)
         try:
             if args.converter == "grobid":
-                from .pdf2md_local import metadata_comment as local_meta
-                from .pdf2md_local import pdf_to_markdown_local
+                from .pdf2md_grobid import metadata_comment as grobid_meta
+                from .pdf2md_grobid import pdf_to_markdown_local
 
                 result = pdf_to_markdown_local(
                     pdf_path, grobid_url=args.grobid_url,
                 )
-                comment = local_meta(pdf_path, ["build_corpus", str(pdf_path)])
+                comment = grobid_meta(pdf_path, ["build_corpus", str(pdf_path)])
             elif args.converter == "vision":
-                from .pdf2md_vision import metadata_comment as vision_meta
-                from .pdf2md_vision import pdf_to_markdown_vision
+                from .pdf2md_ollama import metadata_comment as ollama_meta
+                from .pdf2md_ollama import pdf_to_markdown_ollama
 
-                result = pdf_to_markdown_vision(
+                result = pdf_to_markdown_ollama(
                     pdf_path, model=args.local_vision_model,
                     dpi=args.dpi, ollama_url=args.ollama_url,
                 )
-                comment = vision_meta(pdf_path, args.local_vision_model,
+                comment = ollama_meta(pdf_path, args.local_vision_model,
                                       ["build_corpus", str(pdf_path)])
             else:
-                from .pdf2md import metadata_comment as cloud_meta
-                from .pdf2md import pdf_to_markdown
+                from .pdf2md_openrouter import metadata_comment as cloud_meta
+                from .pdf2md_openrouter import pdf_to_markdown
 
                 result = pdf_to_markdown(
                     pdf_path, model=args.vision_model,
