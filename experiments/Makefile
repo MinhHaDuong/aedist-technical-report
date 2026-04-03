@@ -18,7 +18,11 @@ ifeq ($(OPENROUTER_API_KEY),)
   OPENROUTER_API_KEY := $(shell grep '^OPENROUTER_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
 endif
 export OPENROUTER_API_KEY
-$(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+# Guard: only require OPENROUTER_API_KEY for targets that actually need it
+_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web
+ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
+  $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+endif
 
 # --- Read sweep configs ------------------------------------------------------
 cfg = $(shell python3 -c "import yaml; c=yaml.safe_load(open('sweeps/$(1).yaml')); print(c.get('$(2)',''))")
