@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import csv
+import io
 import json
 import logging
 import re
@@ -23,7 +24,7 @@ from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
 from .runner import _DEFAULT_REF, load_plants_csv
-from .schema import Plant
+from .schema import FuelType, Plant, PlantStatus
 
 log = logging.getLogger(__name__)
 
@@ -109,10 +110,6 @@ def union_vote(run_plant_lists: list[list]) -> list:
 
 def plants_to_csv_text(plants: list) -> str:
     """Serialize a list of Plant objects to canonical CSV text."""
-    import io
-
-    from .schema import FuelType, PlantStatus
-
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow(["name", "fuel", "status", "cod", "province", "capacity_mwe"])
