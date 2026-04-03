@@ -206,7 +206,8 @@ def main(argv=None):
                              max_tokens=args.max_tokens)
 
     output = get_output_path(args.pdf, args.output)
-    output.write_text(result + metadata_comment(args.pdf, args.model, sys.argv),
+    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md"] + argv
+    output.write_text(result + metadata_comment(args.pdf, args.model, actual_argv),
                       encoding="utf-8")
     log.info("Wrote %s", output)
 
