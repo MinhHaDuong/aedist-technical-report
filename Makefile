@@ -49,9 +49,11 @@ $(SLIDE_GEN)/census_bars.csv: $(METRICS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_census --input $< --output $@
 
-$(SLIDE_GEN)/pareto.csv: $(METRICS)
+SWEEP1_SUMMARY := results/summary/sweep1_summary.csv
+
+$(SLIDE_GEN)/pareto.csv: $(METRICS) $(SWEEP1_SUMMARY)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_pareto --input $< --output $@
+	uv run python -m aedist.plot_pareto --input $< --costs $(SWEEP1_SUMMARY) --output $@
 
 # --- Publications -------------------------------------------------------------
 
