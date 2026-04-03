@@ -54,7 +54,7 @@ sweep1-padme:
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
 	uv run --project .. python -m aedist.runner evaluate-all --outputs-dir $(S1_OUTPUT) --output ../results/summary
-	uv run --project .. python scripts/summarize_sweep.py \
+	uv run --project .. python -m aedist.summarize_sweep \
 	    --metrics ../results/summary/all_metrics.json \
 	    --queries $(S1_OUTPUT) \
 	    --output ../results/summary/sweep1_summary.csv
@@ -73,14 +73,17 @@ endef
 
 $(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
 
-# Padme: query_padme.py --repeat 3 produces all 3 files.
+# Padme: aedist.query with --base-url for Ollama, --output-prefix padme.
 define padme_rule
 $(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_padme.yaml
 	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
-	uv run --project .. python scripts/query_padme.py \
-	    --prompt $(S1_PROMPT) --output $(S1_OUTPUT) \
-	    --repeat $(S1_REPEAT) --model $$(OLLAMA_ID)
+	uv run --project .. python -m aedist.query \
+	    --prompt $(S1_PROMPT) --models $(S1P_MODELS) \
+	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
+	    --model $$(OLLAMA_ID) \
+	    --base-url http://localhost:11434/v1 \
+	    --output-prefix padme
 endef
 
 $(foreach m,$(S1_PAD_SHORTS),$(eval $(call padme_rule,$(m))))
@@ -133,7 +136,50 @@ sweep2-web:
 
 # --- Utility -----------------------------------------------------------------
 
-.PHONY: help
+# Convert a PDF to Markdown for the RAG corpus.
+# Usage: make pdf2md PDF=path/to/file.pdf [MODEL=gpt-4o] [DPI=300]
+MODEL ?= gpt-4o
+DPI   ?= 300
+
+# Load Zotero API key from .env or ~/.claude/.env
+ifeq ($(ZOTERO_API_KEY),)
+  ZOTERO_API_KEY := $(shell grep '^ZOTERO_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
+endif
+ifeq ($(ZOTERO_API_KEY),)
+  ZOTERO_API_KEY := $(shell grep '^ZOTERO_API_KEY=' ~/.claude/.env 2>/dev/null | cut -d= -f2-)
+endif
+export ZOTERO_API_KEY
+
+# Build RAG corpus configuration
+CORPUS_OUTPUT  ?= data/rag_corpus
+CORPUS_WORKDIR ?= data/rag_work
+CORPUS_CONVERT ?= grobid
+CORPUS_SCORER  ?= qwen3.5:9b
+CORPUS_REF     ?= ../report/inputs/README.md
+
+.PHONY: pdf2md build-corpus help
+
+pdf2md:
+ifndef PDF
+	$(error PDF variable is required. Usage: make pdf2md PDF=path/to/file.pdf)
+endif
+	uv run --project .. --extra pdf python -m aedist.pdf2md $(PDF) \
+	    --model $(MODEL) --dpi $(DPI)
+
+build-corpus:
+ifndef ZOTERO_API_KEY
+	$(error ZOTERO_API_KEY not set — export it or add to .env)
+endif
+ifndef ITEMS
+ifndef QUERY
+	$(error Specify ITEMS=key1,key2 or QUERY="search terms")
+endif
+endif
+	uv run --project .. python -m aedist.build_corpus \
+	    $(if $(ITEMS),--items $(ITEMS),--query "$(QUERY)") \
+	    --reference $(CORPUS_REF) \
+	    --output $(CORPUS_OUTPUT) --work-dir $(CORPUS_WORKDIR) \
+	    --converter $(CORPUS_CONVERT) --scorer-model $(CORPUS_SCORER)
 
 help:
 	@echo "Sweeps:"
@@ -141,5 +187,10 @@ help:
 	@echo "  make sweep1-padme         Padme local models (always sequential)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               All information regimes"
+	@echo ""
+	@echo "Tools:"
+	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"
+	@echo "  make build-corpus ITEMS=SSRTCPP8,44XYCWMC  Build corpus from Zotero PDFs"
+	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
 	@echo ""
 	@echo "Config files in sweeps/*.yaml"

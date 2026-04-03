@@ -4,7 +4,7 @@ Reads the per-run metrics from evaluate-all output and the JSON query records
 to compute cost/latency, then produces a summary CSV.
 
 Usage:
-    uv run python scripts/summarize_sweep.py \
+    uv run python -m aedist.summarize_sweep \
         --metrics results/sweep1_census/all_metrics.json \
         --queries outputs/sweep1_census/ \
         --output results/sweep1_census/summary.csv
@@ -18,16 +18,9 @@ import re
 from pathlib import Path
 from statistics import median
 
+from .tabulate_macros import slug_from_label
+
 log = logging.getLogger(__name__)
-
-
-def _parse_label(label: str) -> tuple[str, int]:
-    """Extract model short name and run number from label like '2026-04-01/deepseek-v3.2-run2'."""
-    stem = label.split("/")[-1] if "/" in label else label
-    m = re.match(r"(.+)-run(\d+)$", stem)
-    if m:
-        return m.group(1), int(m.group(2))
-    return stem, 1
 
 
 def main():
@@ -46,7 +39,7 @@ def main():
     # Group by model
     by_model: dict[str, list[dict]] = {}
     for entry in all_metrics:
-        model_short, run = _parse_label(entry["label"])
+        model_short = slug_from_label(entry["label"])
         by_model.setdefault(model_short, []).append(entry)
 
     # Load cost/latency from JSON query records
@@ -57,9 +50,6 @@ def main():
             record = json.loads(jf.read_text())
         except Exception:
             continue
-        model_id = record.get("model", "")
-        model_id.split("/")[-1] if "/" in model_id else model_id
-        # Remove :free suffix for matching
         base_short = re.sub(r"-run\d+$", "", jf.stem)
         cost = record.get("cost_usd", 0.0) or 0.0
         wall = record.get("wall_seconds", 0.0) or 0.0

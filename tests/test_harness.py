@@ -73,3 +73,36 @@ def test_should_skip_false(tmp_path):
 def test_should_skip_true(tmp_path):
     (tmp_path / "model-run1.json").write_text("{}")
     assert should_skip(tmp_path, "test/model", 1)
+
+
+def test_output_filename_with_prefix():
+    assert output_filename("qwen3.5:122b", 1, prefix="padme") == "padme-qwen3.5-122b-run1.json"
+
+
+def test_output_filename_colon_replaced():
+    assert output_filename("mistral-small3.2", 3) == "mistral-small3.2-run3.json"
+
+
+def test_should_skip_with_prefix(tmp_path):
+    (tmp_path / "padme-qwen3.5-9b-run1.json").write_text("{}")
+    assert should_skip(tmp_path, "qwen3.5:9b", 1, prefix="padme")
+    assert not should_skip(tmp_path, "qwen3.5:9b", 1)  # no prefix → different file
+
+
+def test_compute_cost_missing_pricing():
+    """Models with no pricing fields (e.g. local Ollama) yield cost 0."""
+    usage = {"prompt_tokens": 1000, "completion_tokens": 500}
+    model = {"id": "qwen3.5:9b", "name": "Qwen local"}
+    assert compute_cost(usage, model) == 0.0
+
+
+def test_make_client_custom_base_url():
+    """make_client with base_url doesn't require OPENROUTER_API_KEY."""
+    from unittest.mock import patch
+    with patch("aedist.harness.OpenAI") as mock_cls:
+        from aedist.harness import make_client
+        make_client(base_url="http://localhost:11434/v1")
+        mock_cls.assert_called_once_with(
+            base_url="http://localhost:11434/v1",
+            api_key="ollama",
+        )
