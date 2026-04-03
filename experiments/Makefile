@@ -138,7 +138,22 @@ sweep2-web:
 MODEL ?= gpt-4o
 DPI   ?= 300
 
-.PHONY: pdf2md help
+# Load Zotero API key from .env or ~/.claude/.env
+ifeq ($(ZOTERO_API_KEY),)
+  ZOTERO_API_KEY := $(shell grep '^ZOTERO_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
+endif
+ifeq ($(ZOTERO_API_KEY),)
+  ZOTERO_API_KEY := $(shell grep '^ZOTERO_API_KEY=' ~/.claude/.env 2>/dev/null | cut -d= -f2-)
+endif
+export ZOTERO_API_KEY
+
+# Build RAG corpus configuration
+CORPUS_OUTPUT  ?= data/rag_corpus
+CORPUS_WORKDIR ?= data/rag_work
+CORPUS_CONVERT ?= grobid
+CORPUS_SCORER  ?= qwen3.5:9b
+
+.PHONY: pdf2md build-corpus help
 
 pdf2md:
 ifndef PDF
@@ -146,6 +161,20 @@ ifndef PDF
 endif
 	uv run --project .. --extra pdf python -m aedist.pdf2md $(PDF) \
 	    --model $(MODEL) --dpi $(DPI)
+
+build-corpus:
+ifndef ZOTERO_API_KEY
+	$(error ZOTERO_API_KEY not set — export it or add to .env)
+endif
+ifndef ITEMS
+ifndef QUERY
+	$(error Specify ITEMS=key1,key2 or QUERY="search terms")
+endif
+endif
+	uv run --project .. python -m aedist.build_corpus \
+	    $(if $(ITEMS),--items $(ITEMS),--query "$(QUERY)") \
+	    --output $(CORPUS_OUTPUT) --work-dir $(CORPUS_WORKDIR) \
+	    --converter $(CORPUS_CONVERT) --scorer-model $(CORPUS_SCORER)
 
 help:
 	@echo "Sweeps:"
@@ -156,5 +185,7 @@ help:
 	@echo ""
 	@echo "Tools:"
 	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"
+	@echo "  make build-corpus ITEMS=SSRTCPP8,44XYCWMC  Build corpus from Zotero PDFs"
+	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
 	@echo ""
 	@echo "Config files in sweeps/*.yaml"
