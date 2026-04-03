@@ -250,6 +250,12 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(False, None, f"{json_path.name}: invalid JSON ({e})")
 
     response = record.get("response")
+    # Handle multiturn JSON format: extract from turns[-1]["content"]
+    if (not response or not isinstance(response, str)) and "turns" in record:
+        turns = record["turns"]
+        assistant_turns = [t for t in turns if t.get("role") == "assistant"]
+        if assistant_turns:
+            response = assistant_turns[-1].get("content", "")
     if not isinstance(response, str) or not response.strip():
         return ExtractResult(False, None, f"{json_path.name}: no response text")
 
