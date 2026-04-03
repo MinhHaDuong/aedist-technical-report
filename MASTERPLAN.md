@@ -1,7 +1,7 @@
 # MASTERPLAN — AEDIST Methods Benchmark
 
-> This document is the long-term vision. ROADMAP.md tracks the current
-> milestone's operational checkboxes. When they overlap, ROADMAP.md governs
+> This document is the long-term vision. STATE.md tracks the current
+> milestone's operational checkboxes. When they overlap, STATE.md governs
 > what to do this week; MASTERPLAN governs why.
 
 ## Vision
