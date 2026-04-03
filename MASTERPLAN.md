@@ -1,5 +1,9 @@
 # MASTERPLAN — AEDIST Methods Benchmark
 
+> This document is the long-term vision. ROADMAP.md tracks the current
+> milestone's operational checkboxes. When they overlap, ROADMAP.md governs
+> what to do this week; MASTERPLAN governs why.
+
 ## Vision
 
 Demonstrate — with reproducible quantitative evidence — what AI methods can
@@ -9,9 +13,9 @@ and cannot do for statistical production. Not which model is best, but which
 A method is the whole pipeline: prompt design, information regime, extraction
 logic, reconciliation strategy, verification pass. A model is one parameter.
 
-The benchmark is also a feasibility study. The code that measures methods
-*becomes* the production pipeline. The measurements table becomes the audit
-log. The evaluation metrics become quality monitoring.
+The benchmark converges toward the production pipeline. Its measurements
+table becomes the audit log. Its evaluation metrics become quality monitoring.
+Design decisions are made with this convergence in mind.
 
 ## Why this matters
 
@@ -31,7 +35,7 @@ what justification?"
 | Integrated assessment models | Complete coverage, capacity accuracy | Can accept aggregates |
 | Infrastructure mapping | Geolocation, status, commissioning dates | Tolerates gaps if flagged |
 | Business intelligence | Timeliness, ownership, planned capacity | Needs update pipeline |
-| Military targeting | Zero hallucination, source provenance | No tolerance for fabrication |
+| Regulatory compliance | Zero hallucination, source provenance | No tolerance for fabrication |
 | Legal defense | Auditable trail, confidence intervals | Needs "I don't know" |
 
 One pipeline, different quality bars. The benchmark measures all levels.
@@ -39,7 +43,8 @@ One pipeline, different quality bars. The benchmark measures all levels.
 ## Multi-level evaluation framework
 
 ### Level 1 — Resources (measured now)
-Wall time, API cost, token counts, CO₂ estimate.
+Wall time, API cost, token counts.
+CO₂ estimate aspirational (requires CodeCarbon or provider-reported data).
 Every run has a price tag.
 
 ### Level 2 — Document quality (measured now)
@@ -47,7 +52,7 @@ Benchmark against gold standard: coverage, precision, F1, attribute
 accuracy, capacity error, hallucination rate.
 The table either matches reality or it doesn't.
 
-### Level 3 — Findings justification (to build)
+### Level 3 — Output provenance (to build)
 The table comes with sources and notes. Claims are attributed.
 The method says "I don't know" when uncertain.
 Confidence intervals on counts and capacities.
@@ -114,7 +119,8 @@ bolted on. In production:
 Present "methods benchmark" with data from sweeps 1–2.
 
 **Work remaining:**
-- Run sweep 2: 5 models × 3 methods × 3 runs (#10)
+- Run sweep 2 (#10): 5 models × 3 information regimes (multi-turn,
+  RAG-wholesale, web-augmented) × 3 runs = 45 calls
 - Merge cost/latency into metrics (#59)
 - Tabulate relances (#47) and comparison (#48)
 - Reframe slides: methods not models, multi-level evaluation vision
@@ -147,19 +153,19 @@ Replace Makefile sweeps with file-based job execution.
 - Resume = re-scan pending + check lease expiry on running
 - Run sweeps 3–5 (#11, #12, #13) on the new infrastructure
 
-### Phase 4: Justification layer
+### Phase 4: Output provenance (depends on phase 2)
 
-Level 3 evaluation.
+Level 3 evaluation. Can start alongside phase 3.
 
 - Extend query methods to request source attribution
 - Parse and validate source citations
 - "I don't know" detection and scoring
 - Confidence interval estimation on aggregates
-- Verification sweep (#12) produces the first justification data
+- Verification sweep (#12) produces the first provenance data
 
-### Phase 5: Usability evaluation
+### Phase 5: Usability evaluation (depends on phase 3)
 
-Level 4 evaluation.
+Level 4 evaluation. Can start alongside phase 4.
 
 - Test with second country (scale)
 - Test with updated reference data (temporal stability)
@@ -167,11 +173,26 @@ Level 4 evaluation.
 - Incoherence detection and escalation protocol
 - Source prioritization when references conflict
 
-### Phase 6: Journal submission
+### Phase 6: Journal submission (depends on phases 4 + 5)
 
 Package phases 1–5 into a paper.
 
 - Methods benchmark results (sweeps 1–5)
 - Multi-level evaluation framework with data at all levels
-- Architecture: from benchmark to production pipeline
+- Architecture: from benchmark toward production pipeline
 - Reproducibility: the code *is* the evidence
+
+## Non-goals
+
+- **Real-time serving.** This is a batch benchmark, not an API.
+- **Model training or fine-tuning.** We evaluate off-the-shelf models.
+- **Full factorial design.** Sweeps are targeted, not exhaustive.
+- **GUI or dashboard.** Tables and charts are LaTeX artifacts.
+
+## Reproducibility strategy
+
+- Model IDs pinned in YAML registries (OpenRouter IDs, Ollama tags)
+- Temperature 0.0 as default; stochasticity measured via 3-run repeats
+- All prompts versioned in `experiments/prompts/`
+- Raw JSON outputs committed (or retrievable via sweep config + model ID)
+- Evaluation code deterministic: MILP solver, string matching thresholds
