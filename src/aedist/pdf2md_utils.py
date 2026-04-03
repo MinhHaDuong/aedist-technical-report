@@ -1,10 +1,12 @@
 """Shared utilities for PDF-to-Markdown converters.
 
-Contains prompts, cleaning, and output path logic used by all three
-converter backends (grobid, ollama, openrouter).
+Contains prompts, cleaning, output path logic, and metadata used by all
+three converter backends (grobid, ollama, openrouter).
 """
 
+import platform
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -92,3 +94,25 @@ def get_output_path(pdf_path, output_arg):
     if candidate.exists():
         return pdf_path.with_name(pdf_path.stem + "_converted.md")
     return candidate
+
+
+# ---------------------------------------------------------------------------
+# Metadata
+# ---------------------------------------------------------------------------
+
+def metadata_comment(pdf_path, *, backend, model, argv):
+    """Conversion metadata appended as HTML comment.
+
+    All three converters use this same function and format.
+    """
+    return (
+        f"\n\n<!-- Converted from PDF using:\n"
+        f"Command: python {' '.join(argv)}\n"
+        f"Date: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+        f"Source: {pdf_path.name}\n"
+        f"Platform: {platform.platform()}\n"
+        f"Python: {platform.python_version()}\n"
+        f"Backend: {backend}\n"
+        f"Model: {model}\n"
+        f"-->"
+    )

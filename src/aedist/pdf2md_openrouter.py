@@ -14,10 +14,8 @@ License CC-BY-SA
 import argparse
 import base64
 import logging
-import platform
 import sys
 import tempfile
-from datetime import UTC, datetime
 from pathlib import Path
 
 from openai import OpenAI
@@ -28,9 +26,12 @@ from .pdf2md_utils import (
     USER_PROMPT,
     clean_markdown,
     get_output_path,
+    metadata_comment,
 )
 
 log = logging.getLogger(__name__)
+
+DEFAULT_DPI = 300  # higher than local (200) — cloud has no GPU bottleneck
 
 
 def process_model_response(response, page_num):
@@ -46,21 +47,7 @@ def process_model_response(response, page_num):
     return f"<!-- PDF page {page_num + 1} -->\n" + cleaned
 
 
-def metadata_comment(pdf_path, model, argv):
-    """Conversion metadata appended as HTML comment."""
-    return (
-        f"\n\n<!-- Converted from PDF using:\n"
-        f"Command: python {' '.join(argv)}\n"
-        f"Date: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-        f"Source: {pdf_path.name}\n"
-        f"Platform: {platform.platform()}\n"
-        f"Python: {platform.python_version()}\n"
-        f"Model: {model}\n"
-        f"-->"
-    )
-
-
-def pdf_to_markdown(pdf_path, *, model, dpi, max_tokens):
+def pdf_to_markdown(pdf_path, *, model="gpt-4o", dpi=DEFAULT_DPI, max_tokens=4096):
     """Convert a PDF to Markdown by sending each page image to a vision LLM."""
     from pdf2image import convert_from_path  # heavy dep, import lazily
 
@@ -124,8 +111,8 @@ def main(argv=None):
                         help="Output .md path (default: same name as PDF)")
     parser.add_argument("--model", default="gpt-4o",
                         help="Vision model to use (default: gpt-4o)")
-    parser.add_argument("--dpi", type=int, default=300,
-                        help="DPI for PDF rasterisation (default: 300)")
+    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI,
+                        help=f"DPI for PDF rasterisation (default: {DEFAULT_DPI})")
     parser.add_argument("--max-tokens", type=int, default=4096,
                         help="Max output tokens per page (default: 4096)")
     args = parser.parse_args(argv)
@@ -142,8 +129,11 @@ def main(argv=None):
 
     output = get_output_path(args.pdf, args.output)
     actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_openrouter"] + argv
-    output.write_text(result + metadata_comment(args.pdf, args.model, actual_argv),
-                      encoding="utf-8")
+    output.write_text(
+        result + metadata_comment(args.pdf, backend="OpenRouter", model=args.model,
+                                  argv=actual_argv),
+        encoding="utf-8",
+    )
     log.info("Wrote %s", output)
 
 
