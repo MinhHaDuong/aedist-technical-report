@@ -20,7 +20,7 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 
-def _slug_from_label(label: str) -> str:
+def slug_from_label(label: str) -> str:
     """Extract model slug from a label like 'sweep1_census/gpt-5.4-run1'.
 
     Strips the directory prefix (everything up to '/') and the -runN suffix.
@@ -39,7 +39,7 @@ def load_and_summarize(metrics: list[dict]) -> dict[str, dict]:
     """
     by_model: dict[str, list[float]] = {}
     for entry in metrics:
-        slug = _slug_from_label(entry["label"])
+        slug = slug_from_label(entry["label"])
         by_model.setdefault(slug, []).append(entry["f1"])
 
     summary = {}

@@ -84,8 +84,15 @@ class BudgetTracker:
 # OpenAI client
 # ---------------------------------------------------------------------------
 
-def make_client() -> OpenAI:
-    """Create an OpenRouter-compatible OpenAI client."""
+def make_client(base_url: str | None = None) -> OpenAI:
+    """Create an OpenAI-compatible client.
+
+    When *base_url* is provided (e.g. Ollama), use it directly with a
+    dummy API key.  Otherwise default to OpenRouter.
+    """
+    if base_url:
+        api_key = os.environ.get("OPENROUTER_API_KEY", "ollama")
+        return OpenAI(base_url=base_url, api_key=api_key)
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise SystemExit("Set OPENROUTER_API_KEY environment variable")
@@ -99,21 +106,23 @@ def make_client() -> OpenAI:
 # File naming and skip logic
 # ---------------------------------------------------------------------------
 
-def output_filename(model_id: str, run: int) -> str:
-    """Generate output filename: {short_name}-run{n}.json."""
+def output_filename(model_id: str, run: int, prefix: str = "") -> str:
+    """Generate output filename: {prefix}{short_name}-run{n}.json."""
     short = model_id.split("/")[-1].replace(":", "-")
+    if prefix:
+        return f"{prefix}-{short}-run{run}.json"
     return f"{short}-run{run}.json"
 
 
-def output_path(output_dir: Path, model_id: str, run: int) -> Path:
+def output_path(output_dir: Path, model_id: str, run: int, prefix: str = "") -> Path:
     """Return the full output path for a model run."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    return output_dir / output_filename(model_id, run)
+    return output_dir / output_filename(model_id, run, prefix)
 
 
-def should_skip(output_dir: Path, model_id: str, run: int) -> bool:
+def should_skip(output_dir: Path, model_id: str, run: int, prefix: str = "") -> bool:
     """Return True if the output file already exists."""
-    return output_path(output_dir, model_id, run).exists()
+    return output_path(output_dir, model_id, run, prefix).exists()
 
 
 # ---------------------------------------------------------------------------

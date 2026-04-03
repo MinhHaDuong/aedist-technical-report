@@ -179,3 +179,55 @@ def test_skip_existing_files(mock_openai_cls, tmp_path):
 
     # Only 1 API call (second run should skip)
     assert mock_client.chat.completions.create.call_count == 1
+
+
+@patch("aedist.harness.OpenAI")
+def test_output_prefix_in_filenames(mock_openai_cls, tmp_path):
+    """--output-prefix adds prefix to output filenames."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query", "--prompt", str(prompt_path),
+            "--models", str(models_path),
+            "--output", str(output_dir),
+            "--output-prefix", "padme",
+        ]):
+            from aedist.query import main
+            main()
+
+    json_files = list(output_dir.rglob("*.json"))
+    assert len(json_files) == 1
+    assert json_files[0].name == "padme-tiny-model-run1.json"
+
+
+@patch("aedist.harness.OpenAI")
+def test_base_url_passed_to_client(mock_openai_cls, tmp_path):
+    """--base-url is forwarded to make_client."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.object(sys, "argv", [
+        "query", "--prompt", str(prompt_path),
+        "--models", str(models_path),
+        "--output", str(output_dir),
+        "--base-url", "http://localhost:11434/v1",
+    ]):
+        from aedist.query import main
+        main()
+
+    mock_openai_cls.assert_called_with(
+        base_url="http://localhost:11434/v1",
+        api_key="ollama",
+    )
