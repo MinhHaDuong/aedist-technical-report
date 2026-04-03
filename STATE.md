@@ -2,23 +2,22 @@ Last updated: 2026-04-03
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census done (33 models, F1 2–66%, $0.73). 130 tests pass. Pareto chart wired to real cost data (PR #79). Sweep 2 multiturn complete ($2.81). RAG corpus pipeline merged (PR #71). PDF converters unified: 3 backends (grobid, ollama, openrouter) with shared Protocol-ready interface (PRs #80, #86). Corpus build attempted — GROBID failed on 16/18 scanned Vietnamese PDFs; only 2 usable docs.
+Pipeline end-to-end via Makefile. Census done (28 cloud + 8 local models, best 107/163 plants, $0.73). 182 tests pass. Sweep 2 RAG complete (5 models × 3 runs, $0.89) — Mistral Small 4 finds 141/163 plants at $0.15/Mtok, beating GPT-5.4 at $2.50/Mtok. Sweep 2 multiturn running on Padme. Gold truth corpus: 18 manually verified tables (155 KB) from PDP7/PDP7A/PDP8/EVN/E542. Model selection with diversity constraints: --require-country for geographic representation (#88, PR #89). Slides wired to real data (PR #91).
 
 ## Blockers
 
 - Makefile OPENROUTER_API_KEY guard blocks non-OpenRouter targets (#75)
-- Padme: Ollama upgrade to 0.20.0 done, Gemma 4 model pull in progress
+- evaluate-all overwrites all_metrics.json instead of appending (#92)
+- Padme: Gemma 4 model pulls still in progress (gemma4:26b + gemma4:31b)
 
 ## Next actions
 
-1. Build RAG corpus with vision converter once Gemma 4 pulled (#10)
-2. Add Protocol interface + registry dispatch (#82)
-3. Add Marker containerized backend (#83)
-4. Add MinerU 3.x containerized backend (#84)
-5. Table conversion benchmark across all backends (#85)
-6. Run Sweep 2 RAG + web after corpus ready (#10)
-7. Tabulate relances and comparaison after Sweep 2 (#47, #48)
-8. Reframe slides: methods not models
+1. Pull and evaluate sweep 2 multiturn results, wire into slides
+2. Tabulate relances and comparaison (#47, #48)
+3. Add Protocol interface + registry dispatch (#82)
+4. LP solver warm start for faster evaluation (#90)
+5. Table conversion benchmark across backends (#85)
+6. Layout-aware converters: Marker + MinerU (#81, #83, #84)
 
 ## North star
 
@@ -26,14 +25,12 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Census: 33 models, F1 2-66%, $0.73
-- [x] Per-table pipeline: one script, one output, Make orchestrates (#43)
-- [x] Fold experiments/scripts/ into src/aedist (#66, PR #70)
-- [x] RAG corpus builder: Zotero → GROBID → Ollama (PR #71)
-- [x] Cost data in Pareto chart (PR #79)
-- [x] Unified PDF converter interface (PRs #80, #86)
-- [ ] Layout-aware converters: Marker + MinerU (#81)
-- [ ] Build RAG corpus and run Sweep 2 (#10)
+- [x] Census: 28 cloud + 8 local models, best 107/163, $0.73
+- [x] Gold truth RAG corpus: 18 tables from official sources
+- [x] Sweep 2 RAG: 5 models × 3 runs, $0.89
+- [x] Diversity model selection: 1 US + 1 CN + 1 FR frontier + 2 cheap (#88)
+- [x] Slides wired to real data: census bars, regime comparison, cost/time scatter
+- [ ] Sweep 2 multiturn: running on Padme
 - [ ] Tabulate relances and comparaison (#47, #48)
 
 ## Next milestone
@@ -43,6 +40,8 @@ Submit to journal (TBD — after conference feedback).
 ## Backlog
 
 - Makefile: guard OPENROUTER_API_KEY only for sweep targets (#75)
+- evaluate-all append/merge instead of overwrite (#92)
+- LP solver warm start (#90)
 - Chunked RAG strategy (currently only wholesale)
 - Reasoning effort sweep (#11) — needs reasoning models on Padme
 - Verification sweep (#12)
