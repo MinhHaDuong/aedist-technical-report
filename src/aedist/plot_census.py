@@ -16,7 +16,7 @@ import json
 import logging
 from pathlib import Path
 
-from .tabulate_macros import _slug_from_label, load_and_summarize
+from .tabulate_macros import slug_from_label, load_and_summarize
 
 log = logging.getLogger(__name__)
 
