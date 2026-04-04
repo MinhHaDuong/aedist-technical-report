@@ -1,12 +1,22 @@
-"""Canonical schema for power plant entries.
+"""Canonical schema for power plant entries and run records.
 
 This module defines the data model used both for the expert reference dataset
 and for system outputs. All evaluation is performed on normalized instances
 of these models.
+
+RunRecord is the unified representation of a single benchmark run,
+forming the measurements table (the single source of truth for all results).
 """
 
-from enum import StrEnum
+from __future__ import annotations
 
+from datetime import datetime, timezone
+from enum import StrEnum
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+import yaml
 from pydantic import BaseModel, Field
 
 
@@ -81,3 +91,194 @@ class ReconciliationEntry(BaseModel):
     reference_source_ref: str | None = None
     system_source_ref: str | None = None
     notes: str = ""
+
+
+# ---------------------------------------------------------------------------
+# RunRecord — measurements table
+# ---------------------------------------------------------------------------
+
+
+class Method(StrEnum):
+    SINGLE = "single"
+    MULTITURN = "multiturn"
+    RAG = "rag"
+    WEB = "web"
+
+
+class MethodParams(BaseModel):
+    """Method-specific parameters captured at run time."""
+
+    model: str = Field(..., description="Model identifier (e.g. openai/gpt-4o).")
+    temperature: float | None = None
+    max_tokens: int | None = None
+    prompt_version: str | None = Field(
+        default=None, description="Prompt template identifier."
+    )
+    extra: dict | None = Field(
+        default=None, description="Arbitrary method-specific parameters."
+    )
+
+
+class ResourceUse(BaseModel):
+    """Resource consumption for one run."""
+
+    wall_s: float | None = Field(default=None, ge=0, description="Wall-clock seconds.")
+    cost_usd: float | None = Field(default=None, ge=0, description="API cost in USD.")
+    tokens_in: int | None = Field(default=None, ge=0)
+    tokens_out: int | None = Field(default=None, ge=0)
+
+
+class ResultSummary(BaseModel):
+    """Compact evaluation result for one run."""
+
+    status: str = Field(
+        default="ok", description="Run outcome: ok, error, empty, etc."
+    )
+    n_plants: int | None = Field(default=None, ge=0)
+    tp: int | None = Field(default=None, ge=0, description="True positives (matched).")
+    fp: int | None = Field(default=None, ge=0, description="False positives (hallucinated).")
+    fn: int | None = Field(default=None, ge=0, description="False negatives (missed).")
+    f1: float | None = Field(default=None, ge=0.0, le=1.0)
+
+
+class RunRecord(BaseModel):
+    """One row in the measurements table.
+
+    Each RunRecord captures a single benchmark run end-to-end:
+    what method was used, what resources it consumed, and what
+    it scored.
+    """
+
+    run_id: str = Field(default_factory=lambda: uuid4().hex[:12])
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        description="UTC time the run completed.",
+    )
+    method: Method
+    method_params: MethodParams
+    resource_use: ResourceUse = Field(default_factory=ResourceUse)
+    result_file: str | None = Field(
+        default=None, description="Path to the raw result file (relative to repo root)."
+    )
+    result_summary: ResultSummary = Field(default_factory=ResultSummary)
+    justification: dict | None = Field(
+        default=None, description="Optional justification metadata."
+    )
+
+    # -- serialization helpers ------------------------------------------------
+
+    def to_jsonl_line(self) -> str:
+        """Serialize to a single JSON-lines string (no trailing newline)."""
+        return self.model_dump_json()
+
+    @classmethod
+    def from_jsonl_line(cls, line: str) -> RunRecord:
+        """Deserialize from a single JSON-lines string."""
+        return cls.model_validate_json(line)
+
+    @classmethod
+    def load_jsonl(cls, path: str | Path) -> list[RunRecord]:
+        """Load all records from a JSON-lines file."""
+        records = []
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    records.append(cls.from_jsonl_line(line))
+        return records
+
+    @classmethod
+    def save_jsonl(cls, records: list[RunRecord], path: str | Path) -> None:
+        """Write records to a JSON-lines file."""
+        with open(path, "w") as f:
+            for r in records:
+                f.write(r.to_jsonl_line() + "\n")
+
+
+# ---------------------------------------------------------------------------
+# JobSpec / LeaseInfo — worker job board
+# ---------------------------------------------------------------------------
+
+
+class WorkerPool(StrEnum):
+    OPENROUTER = "openrouter"
+    PADME = "padme"
+
+
+class JobSpec(BaseModel):
+    """Specification for a single benchmark job dispatched to a worker.
+
+    Mirrors the sweep YAML configs with additional per-job fields
+    for scheduling and resource management.
+    """
+
+    job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
+    priority: int = Field(default=0, description="Higher value = higher priority.")
+    mode: Method
+    prompt: str = Field(..., description="Path to prompt file.")
+    models_file: str = Field(..., description="Path to models YAML file.")
+    model_filter: str | None = Field(
+        default=None, description="Glob or regex to select a subset of models."
+    )
+    corpus: str | None = Field(
+        default=None, description="Path to RAG corpus directory (rag mode)."
+    )
+    followups: str | None = Field(
+        default=None, description="Path to followups file (multiturn mode)."
+    )
+    strategy: str | None = Field(
+        default=None, description="RAG retrieval strategy (e.g. wholesale)."
+    )
+    repeat: int = Field(default=3, ge=1)
+    budget_usd: float = Field(default=10.0, ge=0)
+    output_dir: str = Field(..., description="Output directory for results.")
+    timeout_seconds: int = Field(default=600, ge=0)
+    estimated_duration: float | None = Field(
+        default=None, ge=0, description="Estimated wall-clock seconds."
+    )
+    worker_pool: WorkerPool = WorkerPool.OPENROUTER
+
+    # -- YAML serialization ---------------------------------------------------
+
+    def to_yaml(self) -> str:
+        """Serialize to YAML string."""
+        return yaml.dump(
+            self.model_dump(mode="json", exclude_none=True),
+            default_flow_style=False,
+            sort_keys=False,
+        )
+
+    @classmethod
+    def from_yaml(cls, text: str) -> JobSpec:
+        """Deserialize from a YAML string."""
+        data: dict[str, Any] = yaml.safe_load(text)
+        return cls.model_validate(data)
+
+    @classmethod
+    def from_sweep_yaml(cls, path: str | Path) -> JobSpec:
+        """Load a JobSpec from an existing sweep config YAML.
+
+        Maps sweep config fields (models, output) to JobSpec fields
+        (models_file, output_dir).
+        """
+        with open(path) as f:
+            data: dict[str, Any] = yaml.safe_load(f)
+        # Remap sweep-config field names to JobSpec field names
+        if "models" in data and "models_file" not in data:
+            data["models_file"] = data.pop("models")
+        if "output" in data and "output_dir" not in data:
+            data["output_dir"] = data.pop("output")
+        return cls.model_validate(data)
+
+
+class LeaseInfo(BaseModel):
+    """Tracks an exclusive claim on a job by a worker."""
+
+    job_id: str
+    worker_id: str
+    start_time: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
+    expiry_time: datetime = Field(
+        ..., description="UTC time after which the lease expires and the job can be reclaimed."
+    )

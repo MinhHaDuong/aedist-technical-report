@@ -1,6 +1,6 @@
 %erg v1
 Title: Define JobSpec and LeaseInfo Pydantic models
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0001
@@ -8,6 +8,7 @@ Blocked-by: 0001
 --- log ---
 2026-04-04T12:51Z claude created
 2026-04-04T12:51Z claude note Phase 3 entry point — job board foundation
+2026-04-04T13:10Z claude status closed — JobSpec, LeaseInfo, WorkerPool implemented with YAML serialization and 14 passing tests
 
 --- body ---
 ## Context

@@ -1,12 +1,13 @@
 %erg v1
 Title: Implement experiment manager script
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0005
 
 --- log ---
 2026-04-04T12:51Z claude created
+2026-04-04T13:30Z claude status closed — manager.py with CLI, idempotent fan-out, and 6 passing tests
 
 --- body ---
 ## Context
