@@ -93,7 +93,7 @@ class Worker:
         src.rename(dst)
 
         record = RunRecord(
-            method=Method(job.mode),
+            method=job.mode,
             method_params=MethodParams(model=job.model_filter or "unknown"),
             resource_use=ResourceUse(
                 wall_s=result.get("wall_seconds"),
@@ -124,7 +124,7 @@ class Worker:
         """Poll, acquire, execute, and complete/fail a single job.
 
         Returns a RunRecord on success, or None if no job was available.
-        Uses signal.alarm for timeout enforcement on POSIX systems.
+        Uses signal.alarm for timeout enforcement (POSIX-only).
         """
         job = self.poll()
         if job is None:

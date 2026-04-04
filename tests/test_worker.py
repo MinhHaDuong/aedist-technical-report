@@ -216,3 +216,49 @@ def test_full_lifecycle(tmp_path: Path) -> None:
     assert record.method == Method.SINGLE
     assert record.method_params.model == "openai/gpt-4o"
     assert record.resource_use.wall_s == 12.5
+
+
+def test_run_one_success(tmp_path: Path) -> None:
+    """run_one() completes the full lifecycle and returns a RunRecord."""
+    jobs_root = tmp_path / "jobs"
+    worker = _ConcreteWorker("w1", jobs_root=jobs_root)
+
+    job = _make_job(job_id="runone-ok", priority=50)
+    _write_pending(jobs_root, job)
+
+    record = worker.run_one()
+
+    assert record is not None
+    assert record.method == Method.SINGLE
+    assert record.resource_use.wall_s == 12.5
+    assert (jobs_root / "done" / "runone-ok.yaml").exists()
+    assert not list((jobs_root / "pending").iterdir())
+
+
+def test_run_one_empty(tmp_path: Path) -> None:
+    """run_one() returns None when no jobs are pending."""
+    worker = _ConcreteWorker("w1", jobs_root=tmp_path / "jobs")
+    assert worker.run_one() is None
+
+
+class _FailingWorker(Worker):
+    """Worker whose execute() always raises."""
+
+    def execute(self, job: JobSpec) -> dict:
+        raise RuntimeError("execution failed")
+
+
+def test_run_one_failure(tmp_path: Path) -> None:
+    """run_one() catches execute errors, moves job to failed/, returns None."""
+    jobs_root = tmp_path / "jobs"
+    worker = _FailingWorker("w1", jobs_root=jobs_root)
+
+    job = _make_job(job_id="runone-fail")
+    _write_pending(jobs_root, job)
+
+    record = worker.run_one()
+
+    assert record is None
+    assert (jobs_root / "failed" / "runone-fail.yaml").exists()
+    error_txt = (jobs_root / "failed" / "runone-fail.error.txt").read_text()
+    assert "execution failed" in error_txt
