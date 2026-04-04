@@ -1,0 +1,27 @@
+%erg v1
+Title: Refactor reporting to read from measurements table
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0002
+
+--- log ---
+2026-04-04T12:50Z claude created
+
+--- body ---
+## Context
+Report tables and charts currently read from scattered sources
+(all_metrics.json, per-sweep CSVs, raw JSON outputs). After migration,
+all reporting must derive from the measurements table.
+
+## Actions
+1. Refactor `summarize_sweep.py` to read from measurements table
+2. Refactor `tabulate_census.py` to read from measurements table
+3. Refactor `plot_pareto.py` to read from measurements table
+4. Refactor `plot_census.py` to read from measurements table
+5. `runner.py evaluate-all` appends RunRecord rows (not all_metrics.json)
+
+## Exit criteria
+- All report tables and charts render correctly from measurements.jsonl
+- No code path reads all_metrics.json for reporting
+- `make` builds report successfully

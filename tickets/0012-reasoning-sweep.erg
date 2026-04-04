@@ -1,0 +1,27 @@
+%erg v1
+Title: Run reasoning effort sweep on Workers infra
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0011
+Blocked-by: gh#11
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Corresponds to gh#11 — reasoning effort sweep
+
+--- body ---
+## Context
+Sweep 3 tests reasoning models (o1, o3, DeepSeek-R1) with varying
+reasoning effort. Needs Padme worker for local reasoning models.
+
+## Actions
+1. Write sweeps/sweep3_reasoning.yaml
+2. Generate jobs via experiment manager
+3. Run on Padme worker (reasoning models need local GPU)
+4. Results land in measurements table automatically
+
+## Exit criteria
+- sweep3_reasoning.yaml defined
+- All jobs complete (done/ or failed/ with diagnosis)
+- Results in measurements.jsonl

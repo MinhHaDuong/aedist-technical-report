@@ -1,0 +1,25 @@
+%erg v1
+Title: Implement Padme worker for local GPU execution
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0007
+
+--- log ---
+2026-04-04T12:51Z claude created
+
+--- body ---
+## Context
+Padme is the local machine with a GPU running Ollama. The Padme worker
+executes jobs sequentially (one model at a time) using the local endpoint.
+
+## Actions
+1. Subclass Worker -> PadmeWorker in worker.py
+2. Sequential execution: process one job, complete, then poll next
+3. Pass --base-url http://localhost:11434/v1 to harness.make_client()
+4. CLI: `python -m aedist.worker padme`
+
+## Exit criteria
+- PadmeWorker executes jobs sequentially via Ollama
+- Reuses existing query*.py functions via harness
+- CLI entry point works

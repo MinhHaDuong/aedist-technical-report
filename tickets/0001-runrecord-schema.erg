@@ -1,0 +1,30 @@
+%erg v1
+Title: Define RunRecord Pydantic schema
+Status: open
+Created: 2026-04-04
+Author: claude
+
+--- log ---
+2026-04-04T12:50Z claude created
+2026-04-04T12:50Z claude note Phase 2 entry point — measurements table foundation
+
+--- body ---
+## Context
+The measurements table is the single source of truth for all benchmark
+runs. Currently results are scattered across `all_metrics.json` and
+per-sweep summary CSVs. RunRecord unifies them.
+
+## Actions
+1. Define `RunRecord` Pydantic model in `src/aedist/schema.py`
+   - Fields: run_id, timestamp, method (single/multiturn/rag/web),
+     method_params (JSON), resource_use (JSON: wall_s, cost_usd,
+     tokens_in, tokens_out), result_file, result_summary (JSON:
+     status, n_plants, TP, FP, FN, F1), justification (JSON)
+2. Add `Method` and `MethodParams` Pydantic sub-models
+3. Add serialization: RunRecord to/from JSON lines
+4. Unit tests for schema round-trip
+
+## Exit criteria
+- `RunRecord` model defined with all fields
+- Round-trip test: construct → serialize → deserialize → assert equal
+- Tests pass

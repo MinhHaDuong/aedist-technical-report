@@ -1,0 +1,27 @@
+%erg v1
+Title: Retire all_metrics.json and per-sweep summary paths
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0003
+
+--- log ---
+2026-04-04T12:50Z claude created
+2026-04-04T12:50Z claude note Phase 2 gate — all reporting on measurements table
+
+--- body ---
+## Context
+Once all reporting reads from the measurements table, the old patchwork
+of all_metrics.json and per-sweep summary CSVs can be deleted.
+
+## Actions
+1. Remove all_metrics.json generation path from runner.py
+2. Remove per-sweep summary CSV generation from summarize_sweep.py
+3. Update experiments/Makefile summary targets
+4. Delete stale summary files
+
+## Exit criteria
+- No code generates all_metrics.json
+- No code generates per-sweep summary CSVs
+- All tests pass
+- Report builds correctly

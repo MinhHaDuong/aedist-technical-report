@@ -1,0 +1,26 @@
+%erg v1
+Title: Migrate existing sweep results to measurements table
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0001
+
+--- log ---
+2026-04-04T12:50Z claude created
+
+--- body ---
+## Context
+Sweep 1 (33 models) and Sweep 2 (multiturn, RAG, web) produced JSON
+output files. These must be migrated into RunRecord rows so the new
+schema becomes the canonical data store.
+
+## Actions
+1. Write migration script: sweep 1 output JSONs → RunRecord rows
+2. Write migration script: sweep 2 output JSONs → RunRecord rows
+3. Validate: migrated row count = expected run count
+4. Commit `measurements.jsonl` as canonical data file
+
+## Exit criteria
+- `measurements.jsonl` exists with all sweep 1 + sweep 2 runs
+- Row count matches expected (33×3 + sweep 2 runs)
+- Each row passes RunRecord validation

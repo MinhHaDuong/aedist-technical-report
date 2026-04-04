@@ -1,0 +1,27 @@
+%erg v1
+Title: Implement pipeline intelligence features
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0011
+Blocked-by: gh#22
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Absorbs gh#22 (pipeline UX)
+
+--- body ---
+## Context
+Beyond accuracy: can the pipeline handle real-world messiness? Gap-fill
+from aggregate constraints, detect incoherences, prioritize conflicting
+sources. This is what makes it usable for statistical production.
+
+## Actions
+1. Gap-filling from aggregate constraints (total capacity known, fill units)
+2. Incoherence detection and escalation protocol
+3. Source prioritization when references conflict
+
+## Exit criteria
+- Gap-filling produces plausible completions from constraints
+- Incoherences flagged and escalated (not silently resolved)
+- Source conflicts resolved with documented priority rules

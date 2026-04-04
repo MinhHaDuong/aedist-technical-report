@@ -1,0 +1,27 @@
+%erg v1
+Title: Implement OpenRouter worker with parallel execution
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0007
+
+--- log ---
+2026-04-04T12:51Z claude created
+
+--- body ---
+## Context
+The OpenRouter worker processes multiple jobs concurrently via the
+OpenRouter API, with rate limiting and budget controls.
+
+## Actions
+1. Subclass Worker -> OpenRouterWorker in worker.py
+2. Parallel execution with configurable concurrency
+3. Rate limiting to respect OpenRouter API limits
+4. Per-job and global budget tracking via BudgetTracker
+5. CLI: `python -m aedist.worker openrouter --concurrency 8`
+
+## Exit criteria
+- OpenRouterWorker processes jobs in parallel up to concurrency limit
+- Rate limiting prevents API throttling
+- Budget exceeded stops all workers gracefully
+- CLI entry point works

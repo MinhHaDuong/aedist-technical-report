@@ -1,0 +1,27 @@
+%erg v1
+Title: Test pipeline on second country for scale validation
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0011
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Phase 6 — Level 4 evaluation (usability)
+
+--- body ---
+## Context
+Level 4 evaluation tests whether the method generalizes. Same pipeline,
+different country and reference data. Workers make this straightforward:
+new sweep YAML, same infrastructure.
+
+## Actions
+1. Select second country and build reference dataset
+2. Adapt prompts for new country
+3. Run full sweep via Workers
+4. Test with updated reference data for temporal stability
+
+## Exit criteria
+- Pipeline runs on second country without code changes
+- Results comparable to Vietnam benchmark
+- Temporal stability measured with updated reference

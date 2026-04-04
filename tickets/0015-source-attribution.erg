@@ -1,0 +1,27 @@
+%erg v1
+Title: Implement source attribution in query pipeline
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0004
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Phase 5 — Level 3 evaluation (provenance)
+
+--- body ---
+## Context
+Level 3 evaluation requires output provenance: claims attributed to
+sources, confidence expressed, "I don't know" when uncertain. Can start
+alongside Phase 3 once measurements table exists.
+
+## Actions
+1. Extend query methods to request source citations in prompts
+2. Parse and validate citations in extraction step
+3. Add sources_provided, sources_verified to RunRecord.justification
+4. Scoring: fraction of claims with valid sources
+
+## Exit criteria
+- Query methods produce source-attributed outputs
+- Extraction parses citations
+- Justification fields populated in RunRecord

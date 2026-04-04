@@ -1,0 +1,36 @@
+%erg v1
+Title: Implement base Worker class with lease semantics
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0005
+Blocked-by: 0001
+
+--- log ---
+2026-04-04T12:51Z claude created
+
+--- body ---
+## Context
+The Worker is the core execution engine. It polls for jobs, acquires
+exclusive leases via atomic file renames, executes the query pipeline,
+and writes results. The base class is subclassed by PadmeWorker and
+OpenRouterWorker.
+
+## Actions
+1. Create `src/aedist/worker.py` with base `Worker` class
+2. `poll()`: scan jobs/pending/, pick highest priority (FIFO within tier)
+3. `acquire(job)`: atomic rename to jobs/running/{id}-lease-{expiry}.yaml
+4. `execute(job)`: abstract — calls appropriate query*.py function
+5. `complete(job, result)`: move to jobs/done/, append RunRecord
+6. `fail(job, error)`: move to jobs/failed/, write error log
+7. Timeout guard: kill execution if timeout_seconds exceeded
+8. Lease expiry timestamp embedded in running filename
+9. Integration test: job flows pending -> running -> done
+
+## Exit criteria
+- Worker.poll() finds and sorts pending jobs correctly
+- Worker.acquire() performs atomic rename with lease timestamp
+- Worker.complete() produces valid RunRecord in done/
+- Worker.fail() moves to failed/ with error log
+- Timeout guard kills long-running jobs
+- Integration test passes full lifecycle

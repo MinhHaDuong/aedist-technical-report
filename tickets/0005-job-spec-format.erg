@@ -1,0 +1,30 @@
+%erg v1
+Title: Define JobSpec and LeaseInfo Pydantic models
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0001
+
+--- log ---
+2026-04-04T12:51Z claude created
+2026-04-04T12:51Z claude note Phase 3 entry point — job board foundation
+
+--- body ---
+## Context
+Workers need a structured job specification format and lease metadata.
+JobSpec extends the current sweep YAML configs with per-job fields.
+LeaseInfo tracks exclusive claims.
+
+## Actions
+1. Define `JobSpec` Pydantic model in `src/aedist/schema.py`
+   - Fields: job_id, priority, mode (single/multiturn/rag/web),
+     prompt, models_file, model_filter, corpus (optional),
+     strategy (optional), repeat, budget_usd, output_dir,
+     timeout_seconds, estimated_duration, worker_pool (openrouter/padme)
+2. Define `LeaseInfo` model: job_id, worker_id, start_time, expiry_time
+3. Unit tests for JobSpec serialization to/from YAML
+
+## Exit criteria
+- JobSpec and LeaseInfo models defined
+- Serialization round-trip tests pass
+- Current sweep YAML configs are representable as JobSpec instances

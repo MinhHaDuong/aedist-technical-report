@@ -1,0 +1,32 @@
+%erg v1
+Title: Retire Makefile sweep dispatch in favor of Workers
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0008
+Blocked-by: 0009
+
+--- log ---
+2026-04-04T12:51Z claude created
+2026-04-04T12:51Z claude note Phase 3 gate — Workers fully operational
+
+--- body ---
+## Context
+Once both Padme and OpenRouter workers are operational, the Makefile
+sweep targets (or_rule, padme_rule, foreach loops) are replaced by
+the experiment manager + worker pipeline. gh#75 (API key guard) becomes
+moot since workers manage their own credentials.
+
+## Actions
+1. Replace experiments/Makefile sweep targets with manager calls
+   e.g. `sweep1: python -m aedist.manager generate sweeps/sweep1_census.yaml`
+2. Keep summary/reporting targets (they read measurements table)
+3. Update `make help` text
+4. Verify gh#75 is no longer relevant
+
+## Exit criteria
+- `python -m aedist.manager generate` + `python -m aedist.worker` can
+  execute a full sweep end-to-end
+- Makefile foreach macro expansion removed
+- make help reflects new workflow
+- All tests pass

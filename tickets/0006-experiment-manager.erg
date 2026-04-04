@@ -1,0 +1,31 @@
+%erg v1
+Title: Implement experiment manager script
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0005
+
+--- log ---
+2026-04-04T12:51Z claude created
+
+--- body ---
+## Context
+The experiment manager reads a sweep YAML and fans out one JobSpec file
+per (model x run) combination into jobs/pending/. It replaces the
+Makefile's foreach macro expansion with a standalone script.
+
+## Actions
+1. Create `src/aedist/manager.py`
+2. Read sweep YAML, load model registry, generate JobSpec per (model, run)
+3. Write to `jobs/pending/` with priority-prefixed filenames:
+   `{priority:03d}-{job_id}.yaml`
+4. Idempotent: skip if job file already exists in pending/, running/,
+   done/, or failed/
+5. CLI: `python -m aedist.manager generate sweeps/sweep2_rag.yaml`
+6. Unit tests: correct fan-out count, idempotency, filename format
+
+## Exit criteria
+- `manager.py generate` produces correct job files from sweep YAML
+- Fan-out count = len(models) x repeat
+- Re-running produces no duplicates
+- Tests pass

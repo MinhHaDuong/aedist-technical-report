@@ -1,0 +1,27 @@
+%erg v1
+Title: Run sensitivity analysis sweep
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0011
+Blocked-by: gh#13
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Corresponds to gh#13 — sensitivity analysis
+
+--- body ---
+## Context
+Sweep 5 varies parameters (temperature, prompt wording, model size)
+to measure sensitivity. Each variation is a separate job spec —
+Workers make this trivial.
+
+## Actions
+1. Write sweeps/sweep5_sensitivity.yaml
+2. Parameter variations as separate job specs
+3. Generate jobs, run, analyze variance across repeats
+
+## Exit criteria
+- Sensitivity sweep defined and executed
+- Variance analysis across parameter variations
+- Results in measurements table

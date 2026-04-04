@@ -1,0 +1,27 @@
+%erg v1
+Title: Implement observer for lease monitoring and status
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0007
+
+--- log ---
+2026-04-04T12:51Z claude created
+
+--- body ---
+## Context
+The observer is a read-only monitor that scans job directories, detects
+stale leases, requeues expired jobs, and reports pipeline status.
+
+## Actions
+1. Create `src/aedist/observer.py`
+2. Scan jobs/running/ for expired leases (current_time > expiry_ts)
+3. Requeue expired jobs: move back to jobs/pending/
+4. Status report: counts per directory, stalled jobs, total cost so far
+5. CLI: `python -m aedist.observer [--requeue]`
+
+## Exit criteria
+- Observer detects expired leases correctly
+- --requeue moves expired jobs back to pending/
+- Status report shows accurate counts
+- Does not interfere with running workers
