@@ -1,12 +1,13 @@
 %erg v1
 Title: Implement observer for lease monitoring and status
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0007
 
 --- log ---
 2026-04-04T12:51Z claude created
+2026-04-04T16:45Z claude status closed — observer with expired lease detection, requeue, status report, 9 tests
 
 --- body ---
 ## Context
