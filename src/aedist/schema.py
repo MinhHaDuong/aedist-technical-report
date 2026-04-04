@@ -13,8 +13,10 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import StrEnum
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
+import yaml
 from pydantic import BaseModel, Field
 
 
@@ -191,3 +193,92 @@ class RunRecord(BaseModel):
         with open(path, "w") as f:
             for r in records:
                 f.write(r.to_jsonl_line() + "\n")
+
+
+# ---------------------------------------------------------------------------
+# JobSpec / LeaseInfo — worker job board
+# ---------------------------------------------------------------------------
+
+
+class WorkerPool(StrEnum):
+    OPENROUTER = "openrouter"
+    PADME = "padme"
+
+
+class JobSpec(BaseModel):
+    """Specification for a single benchmark job dispatched to a worker.
+
+    Mirrors the sweep YAML configs with additional per-job fields
+    for scheduling and resource management.
+    """
+
+    job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
+    priority: int = Field(default=0, description="Higher value = higher priority.")
+    mode: Method
+    prompt: str = Field(..., description="Path to prompt file.")
+    models_file: str = Field(..., description="Path to models YAML file.")
+    model_filter: str | None = Field(
+        default=None, description="Glob or regex to select a subset of models."
+    )
+    corpus: str | None = Field(
+        default=None, description="Path to RAG corpus directory (rag mode)."
+    )
+    followups: str | None = Field(
+        default=None, description="Path to followups file (multiturn mode)."
+    )
+    strategy: str | None = Field(
+        default=None, description="RAG retrieval strategy (e.g. wholesale)."
+    )
+    repeat: int = Field(default=3, ge=1)
+    budget_usd: float = Field(default=10.0, ge=0)
+    output_dir: str = Field(..., description="Output directory for results.")
+    timeout_seconds: int = Field(default=600, ge=0)
+    estimated_duration: float | None = Field(
+        default=None, ge=0, description="Estimated wall-clock seconds."
+    )
+    worker_pool: WorkerPool = WorkerPool.OPENROUTER
+
+    # -- YAML serialization ---------------------------------------------------
+
+    def to_yaml(self) -> str:
+        """Serialize to YAML string."""
+        return yaml.dump(
+            self.model_dump(mode="json", exclude_none=True),
+            default_flow_style=False,
+            sort_keys=False,
+        )
+
+    @classmethod
+    def from_yaml(cls, text: str) -> JobSpec:
+        """Deserialize from a YAML string."""
+        data: dict[str, Any] = yaml.safe_load(text)
+        return cls.model_validate(data)
+
+    @classmethod
+    def from_sweep_yaml(cls, path: str | Path) -> JobSpec:
+        """Load a JobSpec from an existing sweep config YAML.
+
+        Maps sweep config fields (models, output) to JobSpec fields
+        (models_file, output_dir).
+        """
+        with open(path) as f:
+            data: dict[str, Any] = yaml.safe_load(f)
+        # Remap sweep-config field names to JobSpec field names
+        if "models" in data and "models_file" not in data:
+            data["models_file"] = data.pop("models")
+        if "output" in data and "output_dir" not in data:
+            data["output_dir"] = data.pop("output")
+        return cls.model_validate(data)
+
+
+class LeaseInfo(BaseModel):
+    """Tracks an exclusive claim on a job by a worker."""
+
+    job_id: str
+    worker_id: str
+    start_time: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
+    expiry_time: datetime = Field(
+        ..., description="UTC time after which the lease expires and the job can be reclaimed."
+    )
