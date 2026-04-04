@@ -3,9 +3,12 @@
 from pathlib import Path
 
 from aedist.pdf2md_utils import (
+    CONVERTERS,
+    Converter,
     PREV_PAGE_PLACEHOLDER,
     USER_PROMPT,
     clean_markdown,
+    get_converter,
     get_output_path,
     metadata_comment,
 )
@@ -102,3 +105,31 @@ def test_user_prompt_handles_braces():
     tricky = "style={color: red}"
     result = USER_PROMPT.replace(PREV_PAGE_PLACEHOLDER, tricky, 1)
     assert tricky in result
+
+
+# ---------------------------------------------------------------------------
+# Converter Protocol and registry
+# ---------------------------------------------------------------------------
+
+class TestConverterRegistry:
+    def test_all_backends_registered(self):
+        assert set(CONVERTERS) == {"grobid", "vision", "cloud"}
+
+    def test_registered_backends_satisfy_protocol(self):
+        for name, conv in CONVERTERS.items():
+            assert isinstance(conv, Converter), f"{name} does not satisfy Converter"
+
+    def test_get_converter_returns_entry(self):
+        assert get_converter("grobid") is CONVERTERS["grobid"]
+
+    def test_get_converter_unknown_raises(self):
+        import pytest
+        with pytest.raises(KeyError, match="Unknown converter 'bogus'"):
+            get_converter("bogus")
+
+    def test_custom_converter_satisfies_protocol(self):
+        """A plain class with pdf_to_markdown is a valid Converter."""
+        class Dummy:
+            def pdf_to_markdown(self, pdf_path, **kwargs):
+                return ""
+        assert isinstance(Dummy(), Converter)

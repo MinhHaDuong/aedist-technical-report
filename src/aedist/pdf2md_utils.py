@@ -1,13 +1,64 @@
 """Shared utilities for PDF-to-Markdown converters.
 
-Contains prompts, cleaning, output path logic, and metadata used by all
-three converter backends (grobid, ollama, openrouter).
+Contains the ``Converter`` Protocol, a lazy registry, prompts, cleaning,
+output path logic, and metadata used by all converter backends.
 """
 
+from __future__ import annotations
+
+import importlib
 import platform
 import re
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, Protocol, runtime_checkable
+
+
+# ---------------------------------------------------------------------------
+# Converter Protocol
+# ---------------------------------------------------------------------------
+
+@runtime_checkable
+class Converter(Protocol):
+    """Structural interface every PDF-to-Markdown backend must satisfy."""
+
+    def pdf_to_markdown(self, pdf_path: Path, **kwargs: Any) -> str: ...
+
+
+class _ModuleConverter:
+    """Adapt a backend *module* (with a module-level ``pdf_to_markdown``) to Converter."""
+
+    def __init__(self, module_path: str) -> None:
+        self._module_path = module_path
+        self._module: Any = None
+
+    def _load(self) -> Any:
+        if self._module is None:
+            self._module = importlib.import_module(self._module_path)
+        return self._module
+
+    def pdf_to_markdown(self, pdf_path: Path, **kwargs: Any) -> str:
+        return self._load().pdf_to_markdown(pdf_path, **kwargs)
+
+
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+
+CONVERTERS: dict[str, Converter] = {
+    "grobid": _ModuleConverter("aedist.pdf2md_grobid"),
+    "vision": _ModuleConverter("aedist.pdf2md_ollama"),
+    "cloud": _ModuleConverter("aedist.pdf2md_openrouter"),
+}
+
+
+def get_converter(name: str) -> Converter:
+    """Look up a converter by name, raise KeyError with available names on miss."""
+    try:
+        return CONVERTERS[name]
+    except KeyError:
+        available = ", ".join(sorted(CONVERTERS))
+        raise KeyError(f"Unknown converter {name!r} (available: {available})") from None
 
 # ---------------------------------------------------------------------------
 # Prompts

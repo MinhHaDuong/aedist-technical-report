@@ -42,7 +42,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from .pdf2md_utils import metadata_comment as _meta_comment
+from .pdf2md_utils import CONVERTERS, get_converter, metadata_comment as _meta_comment
 
 log = logging.getLogger(__name__)
 
@@ -369,10 +369,8 @@ def main(argv=None):
 
     # Conversion backend
     parser.add_argument("--converter", default="grobid",
-                        choices=["grobid", "cloud", "vision"],
-                        help="PDF converter: grobid (local GROBID), "
-                             "vision (local Ollama multimodal), "
-                             "or cloud (OpenRouter vision)")
+                        choices=sorted(CONVERTERS),
+                        help="PDF converter backend (default: grobid)")
     parser.add_argument("--grobid-url", default="http://localhost:8070",
                         help="GROBID service URL (default: http://localhost:8070)")
     parser.add_argument("--vision-model", default="gpt-4o",
@@ -476,24 +474,21 @@ def main(argv=None):
 
         log.info("  Converting: %s", pdf_path.name)
         try:
+            converter = get_converter(args.converter)
+            # Build backend-specific kwargs from CLI args
+            convert_kwargs: dict = {}
             if args.converter == "grobid":
-                from .pdf2md_grobid import pdf_to_markdown
-                result = pdf_to_markdown(pdf_path, grobid_url=args.grobid_url)
+                convert_kwargs["grobid_url"] = args.grobid_url
                 backend, model = "GROBID", "n/a"
             elif args.converter == "vision":
-                from .pdf2md_ollama import pdf_to_markdown
-                result = pdf_to_markdown(
-                    pdf_path, model=args.local_vision_model,
-                    dpi=args.dpi, ollama_url=args.ollama_url,
-                )
+                convert_kwargs.update(model=args.local_vision_model,
+                                      dpi=args.dpi, ollama_url=args.ollama_url)
                 backend, model = "Ollama", args.local_vision_model
             else:
-                from .pdf2md_openrouter import pdf_to_markdown
-                result = pdf_to_markdown(
-                    pdf_path, model=args.vision_model,
-                    dpi=args.dpi, max_tokens=4096,
-                )
+                convert_kwargs.update(model=args.vision_model,
+                                      dpi=args.dpi, max_tokens=4096)
                 backend, model = "OpenRouter", args.vision_model
+            result = converter.pdf_to_markdown(pdf_path, **convert_kwargs)
             comment = _meta_comment(pdf_path, backend=backend, model=model,
                                        argv=["build_corpus", str(pdf_path)])
             md_path.write_text(result + comment, encoding="utf-8")
