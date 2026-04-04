@@ -63,6 +63,10 @@ def test_generate_relances_table_no_multiturn_entries():
     assert "\\begin{longtable}" in latex
     assert "\\end{longtable}" in latex
     assert "\\label{tab:relances}" in latex
+    # Table should have no data rows (only boilerplate)
+    lines = latex.splitlines()
+    data_lines = [l for l in lines if "\\\\" in l and "toprule" not in l and "midrule" not in l and "endhead" not in l and "bottomrule" not in l and "endlastfoot" not in l and "caption" not in l and "Model &" not in l]
+    assert len(data_lines) == 0
 
 
 def test_generate_relances_table_empty_list():
@@ -112,9 +116,12 @@ def test_generate_per_turn_table_model_names():
 def test_generate_per_turn_table_sorted_by_final_turn_f1():
     """Models sorted by final-turn F1 descending (GPT before padme)."""
     latex = _generate_per_turn_table(SAMPLE_PER_TURN_METRICS)
-    gpt_pos = latex.index("GPT-5.4")
-    local_pos = latex.index("(L)")
-    assert gpt_pos < local_pos
+    lines = latex.splitlines()
+    data_lines = [l for l in lines if "\\\\" in l and "toprule" not in l and "midrule" not in l and "endhead" not in l and "bottomrule" not in l and "endlastfoot" not in l and "caption" not in l and "Model &" not in l]
+    gpt_line = next((i for i, l in enumerate(data_lines) if "GPT-5.4" in l), None)
+    padme_line = next((i for i, l in enumerate(data_lines) if "(L)" in l), None)
+    assert gpt_line is not None and padme_line is not None
+    assert gpt_line < padme_line
 
 
 # --- _generate_summary_table ---
@@ -151,7 +158,6 @@ def test_generate_summary_table_matched_over_total():
 def test_generate_summary_table_used_when_no_turn_field():
     """generate_relances_table dispatches to summary when turn field absent."""
     latex = generate_relances_table(SAMPLE_SUMMARY_METRICS)
-    # Summary table has F1/Precision/Recall columns, not Prompt/Relance
     assert "F1" in latex
     assert "Precision" in latex
     assert "Prompt" not in latex

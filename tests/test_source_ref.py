@@ -69,11 +69,10 @@ def test_reconcile_propagates_source_ref() -> None:
     matched = [e for e in entries if e.match_type not in (MatchType.REFERENCE_ONLY, MatchType.SYSTEM_ONLY)]
     assert len(matched) == 2
 
-    for entry in matched:
-        assert entry.reference_source_ref is not None
-        assert entry.system_source_ref is not None
-        assert entry.reference_source_ref.startswith("Ref-Doc-")
-        assert entry.system_source_ref.startswith("Sys-Doc-")
+    ref_srcs = {e.reference_source_ref for e in matched}
+    sys_srcs = {e.system_source_ref for e in matched}
+    assert ref_srcs == {"Ref-Doc-1", "Ref-Doc-2"}
+    assert sys_srcs == {"Sys-Doc-1", "Sys-Doc-2"}
 
 
 # ---------------------------------------------------------------------------
