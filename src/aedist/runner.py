@@ -140,7 +140,7 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     result_dir.mkdir(parents=True, exist_ok=True)
 
     reference = load_plants_csv(ref_path)
-    all_metrics = []
+    new_metrics = []
 
     for csv_file in sorted(outputs_dir.rglob("*.csv")):
         system = load_plants_csv(csv_file)
@@ -149,15 +149,29 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         entries = reconcile(reference, system)
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
-        all_metrics.append({"label": label, **_metrics_to_dict(metrics)})
+        new_metrics.append({"label": label, **_metrics_to_dict(metrics)})
         log.info("%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
                  label.ljust(50), metrics.coverage * 100, metrics.precision * 100,
                  metrics.f1 * 100, metrics.n_matched, metrics.n_reference)
 
+    # Merge with existing metrics (preserve data from other sweeps)
     summary_path = result_dir / "all_metrics.json"
+    existing: list[dict] = []
+    if summary_path.exists():
+        try:
+            existing = json.loads(summary_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            log.warning("Could not read existing %s, starting fresh", summary_path)
+
+    # Build set of new labels for replacement
+    new_labels = {m["label"] for m in new_metrics}
+    # Keep existing entries whose labels are not being replaced
+    merged = [m for m in existing if m["label"] not in new_labels]
+    merged.extend(new_metrics)
+
     with open(summary_path, "w") as f:
-        json.dump(all_metrics, f, indent=2)
-    log.info("Summary: %s", summary_path)
+        json.dump(merged, f, indent=2)
+    log.info("Summary: %s (%d entries, %d new)", summary_path, len(merged), len(new_metrics))
 
 
 def _save_reconciliation_csv(entries: list, path: Path) -> None:

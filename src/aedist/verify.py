@@ -24,14 +24,15 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from .extract import extract_fenced_blocks, fallback_extract_inline_csv, sniff_dialect
 from .harness import make_client, query_single_turn
 
 log = logging.getLogger(__name__)
 
 _DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "gem_thermal.csv"
 
-# Similarity threshold for fuzzy name matching
-_SIMILARITY_THRESHOLD = 70.0
+# Similarity threshold (0-100) for fuzzy name matching against GEM database
+SIMILARITY_THRESHOLD = 70.0
 
 
 # ---------------------------------------------------------------------------
@@ -39,17 +40,22 @@ _SIMILARITY_THRESHOLD = 70.0
 # ---------------------------------------------------------------------------
 
 def extract_csv_rows(response_text: str) -> list[dict]:
-    """Extract CSV rows from LLM response text (handles fenced blocks)."""
-    # Try fenced blocks first
-    blocks = re.findall(r"```(?:csv)?\s*\n(.*?)\n```", response_text, re.DOTALL | re.IGNORECASE)
+    """Extract CSV rows from LLM response text (handles fenced blocks).
+
+    Uses shared extraction utilities from aedist.extract.
+    """
+    # Try fenced blocks first (reuse extract.py logic)
+    blocks = extract_fenced_blocks(response_text)
     if blocks:
         text = max(blocks, key=lambda b: b.count("\n"))
     else:
         # Fallback: look for CSV-like content
-        text = response_text
+        inline = fallback_extract_inline_csv(response_text)
+        text = inline if inline else response_text
 
     try:
-        reader = csv.DictReader(io.StringIO(text.strip()))
+        dialect = sniff_dialect(text.strip())
+        reader = csv.DictReader(io.StringIO(text.strip()), dialect=dialect)
         rows = []
         for row in reader:
             # Normalize keys
@@ -99,7 +105,7 @@ def fuzzy_match_gem(plant_name: str, gem_plants: list[dict]) -> dict | None:
             best_score = score
             best_match = gem
 
-    if best_score >= _SIMILARITY_THRESHOLD:
+    if best_score >= SIMILARITY_THRESHOLD:
         return best_match
     return None
 

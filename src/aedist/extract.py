@@ -26,6 +26,11 @@ from typing import Any, cast
 log = logging.getLogger(__name__)
 
 
+# Bonus per recognized header keyword in CSV scoring
+HEADER_KEYWORD_BONUS = 0.2
+# Cap for length bonus normalization (number of lines)
+LENGTH_BONUS_CAP_LINES = 50.0
+
 _DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -36,7 +41,7 @@ def _pick_latest_date_dir(base: Path) -> Path | None:
     return max(candidates, key=lambda p: p.name) if candidates else None
 
 
-def _extract_fenced_blocks(text: str) -> list[str]:
+def extract_fenced_blocks(text: str) -> list[str]:
     # Capture content in ```csv ...``` or ``` ... ```
     blocks: list[str] = []
     for m in re.finditer(r"```(?:csv)?\s*\n(.*?)\n```", text, flags=re.IGNORECASE | re.DOTALL):
@@ -62,10 +67,10 @@ def _score_csv_like_block(block: str) -> float:
     header_bonus = 0.0
     for token in ["name", "plant", "fuel", "status", "stage", "cod", "connection", "province", "capacity"]:
         if token in header:
-            header_bonus += 0.2
+            header_bonus += HEADER_KEYWORD_BONUS
 
     # Prefer longer blocks and those with many delimited lines
-    length_bonus = min(len(lines) / 50.0, 1.0)  # cap
+    length_bonus = min(len(lines) / LENGTH_BONUS_CAP_LINES, 1.0)  # cap
     return (delimiter_hits / max(len(lines), 1)) + header_bonus + length_bonus
 
 
@@ -92,7 +97,7 @@ def _extract_pipe_table(text: str) -> str | None:
     return "\n".join(table_lines)
 
 
-def _fallback_extract_inline_csv(text: str) -> str | None:
+def fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
     # Find likely header
@@ -131,7 +136,7 @@ def _fallback_extract_inline_csv(text: str) -> str | None:
     return "\n".join(out).strip() if out else None
 
 
-def _sniff_dialect(sample: str) -> csv.Dialect:
+def sniff_dialect(sample: str) -> csv.Dialect:
     sample = sample.strip()
     # Some LLMs emit a leading Excel hint: sep=;
     if sample.lower().startswith("sep="):
@@ -199,7 +204,7 @@ def _parse_and_canonicalize(csv_text: str) -> str:
     if csv_text.lower().startswith("sep="):
         csv_text = "\n".join(csv_text.splitlines()[1:]).lstrip()
 
-    dialect = _sniff_dialect(csv_text)
+    dialect = sniff_dialect(csv_text)
     reader = csv.reader(io.StringIO(csv_text), dialect=dialect)
     rows = [row for row in reader if any((cell or "").strip() for cell in row)]
     if len(rows) < 2:
@@ -250,17 +255,23 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(False, None, f"{json_path.name}: invalid JSON ({e})")
 
     response = record.get("response")
+    # Handle multiturn JSON format: extract from turns[-1]["content"]
+    if (not response or not isinstance(response, str)) and "turns" in record:
+        turns = record["turns"]
+        assistant_turns = [t for t in turns if t.get("role") == "assistant"]
+        if assistant_turns:
+            response = assistant_turns[-1].get("content", "")
     if not isinstance(response, str) or not response.strip():
         return ExtractResult(False, None, f"{json_path.name}: no response text")
 
-    blocks = _extract_fenced_blocks(response)
+    blocks = extract_fenced_blocks(response)
     candidates = blocks[:]
     pipe_csv = _extract_pipe_table(response)
     if pipe_csv:
         candidates.append(pipe_csv)
     # Only try inline fallback when no fenced blocks or pipe tables found
     if not candidates:
-        inline = _fallback_extract_inline_csv(response)
+        inline = fallback_extract_inline_csv(response)
         if inline:
             candidates.append(inline)
 

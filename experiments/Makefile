@@ -18,7 +18,12 @@ ifeq ($(OPENROUTER_API_KEY),)
   OPENROUTER_API_KEY := $(shell grep '^OPENROUTER_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
 endif
 export OPENROUTER_API_KEY
-$(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+
+# Guard: only require OPENROUTER_API_KEY for targets that actually need it
+_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web
+ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
+  $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+endif
 
 # --- Read sweep configs ------------------------------------------------------
 cfg = $(shell python3 -c "import yaml; c=yaml.safe_load(open('sweeps/$(1).yaml')); print(c.get('$(2)',''))")
@@ -158,7 +163,7 @@ CORPUS_VISION  ?= gemma4:26b
 CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
-.PHONY: pdf2md build-corpus help
+.PHONY: pdf2md build-corpus preflight help
 
 pdf2md:
 ifndef PDF
@@ -183,6 +188,45 @@ endif
 	    --converter $(CORPUS_CONVERT) --local-vision-model $(CORPUS_VISION) \
 	    --scorer-model $(CORPUS_SCORER)
 
+preflight:
+	@echo "=== AEDIST Preflight Checks ==="
+	@ok=true; \
+	if [ -n "$(OPENROUTER_API_KEY)" ]; then \
+	    printf "  ✓ OPENROUTER_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ OPENROUTER_API_KEY not set\n"; ok=false; \
+	fi; \
+	if [ -n "$(ZOTERO_API_KEY)" ]; then \
+	    printf "  ✓ ZOTERO_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ ZOTERO_API_KEY not set (needed for build-corpus)\n"; \
+	fi; \
+	if [ -n "$(TAVILY_API_KEY)" ]; then \
+	    printf "  ✓ TAVILY_API_KEY is set\n"; \
+	else \
+	    printf "  ✗ TAVILY_API_KEY not set (needed for sweep2-web)\n"; \
+	fi; \
+	if command -v uv >/dev/null 2>&1; then \
+	    printf "  ✓ uv found: $$(uv --version)\n"; \
+	else \
+	    printf "  ✗ uv not found on PATH\n"; ok=false; \
+	fi; \
+	if curl -sf http://localhost:11434/api/tags >/dev/null 2>&1; then \
+	    printf "  ✓ Ollama is running\n"; \
+	else \
+	    printf "  ✗ Ollama not reachable at localhost:11434\n"; \
+	fi; \
+	if curl -sf http://localhost:8070/api/isalive >/dev/null 2>&1; then \
+	    printf "  ✓ GROBID is running\n"; \
+	else \
+	    printf "  ✗ GROBID not reachable at localhost:8070\n"; \
+	fi; \
+	if [ "$$ok" = "false" ]; then \
+	    echo ""; echo "FAIL: critical checks failed"; exit 1; \
+	else \
+	    echo ""; echo "All critical checks passed."; \
+	fi
+
 help:
 	@echo "Sweeps:"
 	@echo "  make -j8 sweep1           Census (OpenRouter parallel, Padme sequential)"
@@ -194,5 +238,7 @@ help:
 	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"
 	@echo "  make build-corpus ITEMS=SSRTCPP8,44XYCWMC  Build corpus from Zotero PDFs"
 	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
+	@echo ""
+	@echo "  make preflight             Check env vars and services before long jobs"
 	@echo ""
 	@echo "Config files in sweeps/*.yaml"
