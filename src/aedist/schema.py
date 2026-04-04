@@ -10,7 +10,6 @@ forming the measurements table (the single source of truth for all results).
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timezone
 from enum import StrEnum
 from pathlib import Path
