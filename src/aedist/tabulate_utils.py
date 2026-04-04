@@ -58,7 +58,38 @@ def format_model_name(slug: str) -> str:
     return titlecase_slug(slug)
 
 
-def median_metric(entries: list[dict], key: str) -> float:
-    """Compute median of a metric across entries."""
+def group_and_summarize(
+    metrics: list[dict],
+    filter_fn: object = None,
+) -> list[dict]:
+    """Group metrics by model slug and compute medians.
+
+    Args:
+        metrics: List of per-run metric dicts (must have 'label', 'f1', etc.).
+        filter_fn: Optional callable(entry) -> bool to pre-filter entries.
+
+    Returns a list of dicts sorted by median F1 descending:
+        slug, f1, precision, coverage, n_matched, n_reference
+    """
     import statistics
-    return statistics.median(e[key] for e in entries)
+
+    groups: dict[str, list[dict]] = {}
+    for entry in metrics:
+        if filter_fn and not filter_fn(entry):
+            continue
+        slug = strip_label(entry["label"])
+        groups.setdefault(slug, []).append(entry)
+
+    rows = []
+    for slug, entries in groups.items():
+        rows.append({
+            "slug": slug,
+            "f1": statistics.median(e["f1"] for e in entries),
+            "precision": statistics.median(e["precision"] for e in entries),
+            "coverage": statistics.median(e["coverage"] for e in entries),
+            "n_matched": int(statistics.median(e["n_matched"] for e in entries)),
+            "n_reference": entries[0]["n_reference"],
+        })
+
+    rows.sort(key=lambda r: r["f1"], reverse=True)
+    return rows

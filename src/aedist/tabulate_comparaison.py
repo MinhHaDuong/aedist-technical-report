@@ -48,8 +48,11 @@ def group_by_sweep(metrics: list[dict]) -> tuple[dict[str, list[dict]], dict[str
 # ---------------------------------------------------------------------------
 
 
-def generate_comparaison_table(metrics: list[dict]) -> str:
-    """Generate a LaTeX longtable comparing baseline vs. RAG F1."""
+def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
+    """Generate a LaTeX longtable comparing baseline vs. RAG F1.
+
+    Returns (latex_string, number_of_models_compared).
+    """
     census, rag = group_by_sweep(metrics)
 
     # Only include models present in both sweeps
@@ -100,7 +103,7 @@ def generate_comparaison_table(metrics: list[dict]) -> str:
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     lines.append("\\end{longtable}")
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n", len(common_slugs)
 
 
 # ---------------------------------------------------------------------------
@@ -123,14 +126,11 @@ def main(argv: list[str] | None = None):
     with open(input_path) as f:
         metrics = json.load(f)
 
-    latex = generate_comparaison_table(metrics)
+    latex, n_compared = generate_comparaison_table(metrics)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(latex)
-
-    census, rag = group_by_sweep(metrics)
-    common = len(set(census) & set(rag))
-    log.info("Wrote %s (%d models compared)", output_path, common)
+    log.info("Wrote %s (%d models compared)", output_path, n_compared)
 
 
 if __name__ == "__main__":

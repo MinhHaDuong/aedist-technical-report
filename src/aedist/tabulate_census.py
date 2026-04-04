@@ -13,44 +13,11 @@ Local (Padme) models are marked with (L).
 import argparse
 import json
 import logging
-import statistics
 from pathlib import Path
 
-from .tabulate_utils import format_model_name, strip_label
+from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Aggregation
-# ---------------------------------------------------------------------------
-
-
-def group_and_summarize(metrics: list[dict]) -> list[dict]:
-    """Group metrics by model slug and compute medians.
-
-    Returns a list of dicts sorted by median F1 descending:
-        slug, local, f1, precision, coverage, n_matched, n_reference
-    """
-    groups: dict[str, list[dict]] = {}
-    for entry in metrics:
-        slug = strip_label(entry["label"])
-        groups.setdefault(slug, []).append(entry)
-
-    rows = []
-    for slug, entries in groups.items():
-        rows.append({
-            "slug": slug,
-            "local": slug.startswith("padme-"),
-            "f1": statistics.median(e["f1"] for e in entries),
-            "precision": statistics.median(e["precision"] for e in entries),
-            "coverage": statistics.median(e["coverage"] for e in entries),
-            "n_matched": int(statistics.median(e["n_matched"] for e in entries)),
-            "n_reference": entries[0]["n_reference"],
-        })
-
-    rows.sort(key=lambda r: r["f1"], reverse=True)
-    return rows
 
 
 # ---------------------------------------------------------------------------

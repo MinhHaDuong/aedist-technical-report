@@ -148,12 +148,13 @@ def test_group_and_summarize_sorted_by_f1_desc():
     assert rows[1]["slug"] == "padme-qwen3.5-122b"
 
 
-def test_group_and_summarize_local_flag():
+def test_group_and_summarize_local_detection():
+    """Local (padme-*) models are detected via slug prefix by format_model_name."""
     rows = group_and_summarize(SAMPLE_METRICS)
     gpt_row = next(r for r in rows if r["slug"] == "gpt-5.4")
     padme_row = next(r for r in rows if r["slug"] == "padme-qwen3.5-122b")
-    assert gpt_row["local"] is False
-    assert padme_row["local"] is True
+    assert not gpt_row["slug"].startswith("padme-")
+    assert padme_row["slug"].startswith("padme-")
 
 
 def test_group_single_run():

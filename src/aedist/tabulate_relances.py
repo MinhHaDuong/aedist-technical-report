@@ -20,7 +20,7 @@ import logging
 import statistics
 from pathlib import Path
 
-from .tabulate_utils import format_model_name, strip_label
+from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
 
@@ -42,47 +42,20 @@ def _has_turn_data(entries: list[dict]) -> bool:
     return any("turn" in e for e in entries)
 
 
-def group_by_model_and_turn(metrics: list[dict]) -> dict[str, dict[int, list[dict]]]:
+def group_by_model_and_turn(mt_entries: list[dict]) -> dict[str, dict[int, list[dict]]]:
     """Group multiturn metrics by model slug and turn number.
+
+    Args:
+        mt_entries: Pre-filtered list of multiturn metric entries.
 
     Returns {slug: {turn: [entries]}}.
     """
     result: dict[str, dict[int, list[dict]]] = {}
-    for entry in metrics:
-        if not is_multiturn(entry):
-            continue
+    for entry in mt_entries:
         slug = strip_label(entry["label"])
         turn = entry.get("turn", -1)
         result.setdefault(slug, {}).setdefault(turn, []).append(entry)
     return result
-
-
-def group_final_only(metrics: list[dict]) -> list[dict]:
-    """Group multiturn metrics by model slug (final results only).
-
-    Returns a list of dicts sorted by median F1 descending.
-    """
-    groups: dict[str, list[dict]] = {}
-    for entry in metrics:
-        if not is_multiturn(entry):
-            continue
-        slug = strip_label(entry["label"])
-        groups.setdefault(slug, []).append(entry)
-
-    rows = []
-    for slug, entries in groups.items():
-        rows.append({
-            "slug": slug,
-            "local": slug.startswith("padme-"),
-            "f1": statistics.median(e["f1"] for e in entries),
-            "precision": statistics.median(e["precision"] for e in entries),
-            "coverage": statistics.median(e["coverage"] for e in entries),
-            "n_matched": int(statistics.median(e["n_matched"] for e in entries)),
-            "n_reference": entries[0]["n_reference"],
-        })
-
-    rows.sort(key=lambda r: r["f1"], reverse=True)
-    return rows
 
 
 # ---------------------------------------------------------------------------
@@ -90,9 +63,9 @@ def group_final_only(metrics: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def _generate_per_turn_table(metrics: list[dict]) -> str:
+def _generate_per_turn_table(mt_entries: list[dict]) -> str:
     """Generate table with columns for each turn (Prompt, Relance 1-3)."""
-    grouped = group_by_model_and_turn(metrics)
+    grouped = group_by_model_and_turn(mt_entries)
 
     # Discover all turn numbers
     all_turns: set[int] = set()
@@ -108,7 +81,6 @@ def _generate_per_turn_table(metrics: list[dict]) -> str:
         else:
             turn_headers.append(f"Relance {t}")
 
-    n_cols = 1 + len(turn_list)  # Model + turns
     col_spec = "@{}l" + "r" * len(turn_list) + "@{}"
 
     lines = [
@@ -149,9 +121,9 @@ def _generate_per_turn_table(metrics: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _generate_summary_table(metrics: list[dict]) -> str:
+def _generate_summary_table(mt_entries: list[dict]) -> str:
     """Fallback: summary table when per-turn data is not available."""
-    rows = group_final_only(metrics)
+    rows = group_and_summarize(mt_entries)
 
     lines = [
         "% Auto-generated — do not edit",
@@ -188,11 +160,11 @@ def generate_relances_table(metrics: list[dict]) -> str:
     mt_entries = [e for e in metrics if is_multiturn(e)]
     if not mt_entries:
         log.warning("No sweep2_multiturn entries found in metrics.")
-        return _generate_summary_table(metrics)
+        return _generate_summary_table([])
 
     if _has_turn_data(mt_entries):
-        return _generate_per_turn_table(metrics)
-    return _generate_summary_table(metrics)
+        return _generate_per_turn_table(mt_entries)
+    return _generate_summary_table(mt_entries)
 
 
 # ---------------------------------------------------------------------------
@@ -219,9 +191,7 @@ def main(argv: list[str] | None = None):
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(latex)
-
-    mt_count = len([e for e in metrics if is_multiturn(e)])
-    log.info("Wrote %s (%d multiturn entries)", output_path, mt_count)
+    log.info("Wrote %s", output_path)
 
 
 if __name__ == "__main__":

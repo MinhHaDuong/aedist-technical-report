@@ -13,23 +13,12 @@ Usage:
 import argparse
 import json
 import logging
-import re
 import statistics
 from pathlib import Path
 
+from .tabulate_utils import strip_label as slug_from_label
+
 log = logging.getLogger(__name__)
-
-
-def slug_from_label(label: str) -> str:
-    """Extract model slug from a label like 'sweep1_census/gpt-5.4-run1'.
-
-    Strips the directory prefix (everything up to '/') and the -runN suffix.
-    """
-    # Remove directory prefix
-    slug = label.rsplit("/", 1)[-1]
-    # Remove -runN suffix
-    slug = re.sub(r"-run\d+$", "", slug)
-    return slug
 
 
 def load_and_summarize(metrics: list[dict]) -> dict[str, dict]:
