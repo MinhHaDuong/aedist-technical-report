@@ -5,6 +5,8 @@ tabulate_census, tabulate_relances, and tabulate_comparaison.
 """
 
 import re
+import statistics
+from collections.abc import Callable
 
 _RUN_SUFFIX = re.compile(r"-run\d+$")
 
@@ -60,7 +62,7 @@ def format_model_name(slug: str) -> str:
 
 def group_and_summarize(
     metrics: list[dict],
-    filter_fn: object = None,
+    filter_fn: Callable[[dict], bool] | None = None,
 ) -> list[dict]:
     """Group metrics by model slug and compute medians.
 
@@ -71,8 +73,6 @@ def group_and_summarize(
     Returns a list of dicts sorted by median F1 descending:
         slug, f1, precision, coverage, n_matched, n_reference
     """
-    import statistics
-
     groups: dict[str, list[dict]] = {}
     for entry in metrics:
         if filter_fn and not filter_fn(entry):
