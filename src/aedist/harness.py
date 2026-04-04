@@ -40,13 +40,17 @@ def model_metadata(model: dict) -> dict:
 # Cost computation
 # ---------------------------------------------------------------------------
 
+# Pricing is per million tokens; divide by this to get per-token cost.
+TOKENS_PER_MTOK = 1_000_000
+
+
 def compute_cost(usage: dict, model: dict) -> float:
     """Compute USD cost from token usage and model pricing."""
     price_in = model.get("price_per_mtok_in", 0.0)
     price_out = model.get("price_per_mtok_out", 0.0)
     prompt_tokens = usage.get("prompt_tokens", 0) or 0
     completion_tokens = usage.get("completion_tokens", 0) or 0
-    return (prompt_tokens * price_in + completion_tokens * price_out) / 1_000_000
+    return (prompt_tokens * price_in + completion_tokens * price_out) / TOKENS_PER_MTOK
 
 
 # ---------------------------------------------------------------------------
