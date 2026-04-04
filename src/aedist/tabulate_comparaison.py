@@ -13,60 +13,20 @@ RAG affects F1 for each model.
 import argparse
 import json
 import logging
-import re
 import statistics
 from pathlib import Path
 
+from .tabulate_utils import format_model_name, strip_label
+
 log = logging.getLogger(__name__)
 
-_RUN_SUFFIX = re.compile(r"-run\d+$")
 _CENSUS_PREFIX = "sweep1_census/"
 _RAG_PREFIX = "sweep2_rag/"
 
 
-def strip_label(label: str) -> str:
-    """Extract model slug from a metrics label."""
-    slug = label.rsplit("/", 1)[-1]
-    slug = _RUN_SUFFIX.sub("", slug)
-    return slug
-
-
-# Known capitalisations for model name segments
-_KNOWN_CAPS: dict[str, str] = {
-    "gpt": "GPT",
-    "glm": "GLM",
-    "mimo": "MiMo",
-    "deepseek": "DeepSeek",
-}
-
-
-def _titlecase_slug(slug: str) -> str:
-    parts = slug.split("-")
-    result = []
-    for part in parts:
-        known = _KNOWN_CAPS.get(part.lower())
-        if known:
-            result.append(known)
-        elif part and part[0].isalpha():
-            result.append(part[0].upper() + part[1:])
-        else:
-            result.append(part)
-    return "-".join(result)
-
-
-def format_model_name(slug: str) -> str:
-    if slug.startswith("padme-"):
-        base = slug.removeprefix("padme-")
-        return _titlecase_slug(base) + " (L)"
-    return _titlecase_slug(slug)
-
-
-def _median_f1(entries: list[dict]) -> float:
-    return statistics.median(e["f1"] for e in entries)
-
-
-def _median_coverage(entries: list[dict]) -> float:
-    return statistics.median(e["coverage"] for e in entries)
+# ---------------------------------------------------------------------------
+# Aggregation
+# ---------------------------------------------------------------------------
 
 
 def group_by_sweep(metrics: list[dict]) -> tuple[dict[str, list[dict]], dict[str, list[dict]]]:
@@ -83,6 +43,11 @@ def group_by_sweep(metrics: list[dict]) -> tuple[dict[str, list[dict]], dict[str
     return census, rag
 
 
+# ---------------------------------------------------------------------------
+# LaTeX generation
+# ---------------------------------------------------------------------------
+
+
 def generate_comparaison_table(metrics: list[dict]) -> str:
     """Generate a LaTeX longtable comparing baseline vs. RAG F1."""
     census, rag = group_by_sweep(metrics)
@@ -90,12 +55,15 @@ def generate_comparaison_table(metrics: list[dict]) -> str:
     # Only include models present in both sweeps
     common_slugs = sorted(set(census) & set(rag))
 
+    if not common_slugs:
+        log.warning("No models found in both census and RAG sweeps — table will be empty.")
+
     rows = []
     for slug in common_slugs:
-        f1_base = _median_f1(census[slug])
-        f1_rag = _median_f1(rag[slug])
-        cov_base = _median_coverage(census[slug])
-        cov_rag = _median_coverage(rag[slug])
+        f1_base = statistics.median(e["f1"] for e in census[slug])
+        f1_rag = statistics.median(e["f1"] for e in rag[slug])
+        cov_base = statistics.median(e["coverage"] for e in census[slug])
+        cov_rag = statistics.median(e["coverage"] for e in rag[slug])
         delta = f1_rag - f1_base
         rows.append({
             "slug": slug,
@@ -128,11 +96,16 @@ def generate_comparaison_table(metrics: list[dict]) -> str:
         cb = f'{row["cov_base"] * 100:.1f}\\%'
         cr = f'{row["cov_rag"] * 100:.1f}\\%'
         sign = "+" if row["delta"] >= 0 else ""
-        delta = f'{sign}{row["delta"] * 100:.1f}'
+        delta = f'{sign}{row["delta"] * 100:.1f}\\%'
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     lines.append("\\end{longtable}")
     return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 
 def main(argv: list[str] | None = None):

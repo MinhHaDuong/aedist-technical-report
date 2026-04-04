@@ -350,14 +350,15 @@ def _greedy_prealign(
     df1: pd.DataFrame,
     df2: pd.DataFrame,
     costs: dict[tuple[int, int], float],
-) -> dict[tuple[int, int], float]:
+    dummy_cost: float,
+) -> dict[tuple, float]:
     """Compute a greedy pre-alignment for warm-starting CBC.
 
     For each pair (i, j), sorted by ascending cost, greedily assign matches
-    (each i and j used at most once).  Returns a dict mapping every
-    (i, j) / u_i / v_j variable key to its initial value (0 or 1).
+    (each i and j used at most once).  Pairs with cost >= dummy_cost are
+    skipped (cheaper to leave unmatched).
 
-    The returned dict has keys:
+    Returns a dict mapping variable keys to initial values (0 or 1):
       ("x", i, j) -> 0 or 1
       ("u", i)    -> 0 or 1
       ("v", j)    -> 0 or 1
@@ -373,9 +374,9 @@ def _greedy_prealign(
     solution: dict[tuple, float] = {}
 
     for i, j in pairs:
+        if costs[(i, j)] >= dummy_cost:
+            break  # All remaining pairs are too expensive
         if i not in matched_i and j not in matched_j:
-            # Only match if cost is below the dummy cost threshold
-            # (otherwise it's cheaper to leave unmatched)
             solution[("x", i, j)] = 1.0
             matched_i.add(i)
             matched_j.add(j)
@@ -459,7 +460,7 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
 
     # Warm start: set initial values from greedy pre-alignment
-    greedy = _greedy_prealign(df1, df2, costs)
+    greedy = _greedy_prealign(df1, df2, costs, dummy_cost)
     for (i, j), var in x_vars.items():
         var.setInitialValue(greedy.get(("x", i, j), 0.0))
     for i, var in u_vars.items():

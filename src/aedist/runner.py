@@ -86,6 +86,8 @@ def load_plants_csv(path: Path) -> list[Plant]:
                 except ValueError:
                     cap = None
 
+            source_ref = _get(row, col_map, ["source_ref"])
+
             plants.append(Plant(
                 name=name.strip(),
                 fuel=fuel,
@@ -93,6 +95,7 @@ def load_plants_csv(path: Path) -> list[Plant]:
                 cod=cod.strip() if cod else None,
                 province=province.strip() if province else None,
                 capacity_mwe=cap,
+                source_ref=source_ref.strip() if source_ref else None,
             ))
     return plants
 

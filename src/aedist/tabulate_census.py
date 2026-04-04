@@ -13,71 +13,12 @@ Local (Padme) models are marked with (L).
 import argparse
 import json
 import logging
-import re
 import statistics
 from pathlib import Path
 
+from .tabulate_utils import format_model_name, strip_label
+
 log = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Label parsing
-# ---------------------------------------------------------------------------
-
-_RUN_SUFFIX = re.compile(r"-run\d+$")
-
-
-def strip_label(label: str) -> str:
-    """Extract model slug from a metrics label.
-
-    'sweep1_census/gpt-5.4-run1' -> 'gpt-5.4'
-    'sweep1_census/padme-qwen3.5-122b-run3' -> 'padme-qwen3.5-122b'
-    """
-    # Strip directory prefix
-    slug = label.rsplit("/", 1)[-1]
-    # Strip -runN suffix
-    slug = _RUN_SUFFIX.sub("", slug)
-    return slug
-
-
-def format_model_name(slug: str) -> str:
-    """Turn a slug into a display name for the LaTeX table.
-
-    Local models (padme-*) get '(L)' suffix with the padme- prefix removed.
-    All slugs are title-cased with hyphens preserved.
-    """
-    if slug.startswith("padme-"):
-        base = slug.removeprefix("padme-")
-        return _titlecase_slug(base) + " (L)"
-    return _titlecase_slug(slug)
-
-
-# Known capitalisations for model name segments
-_KNOWN_CAPS: dict[str, str] = {
-    "gpt": "GPT",
-    "glm": "GLM",
-    "mimo": "MiMo",
-    "deepseek": "DeepSeek",
-}
-
-
-def _titlecase_slug(slug: str) -> str:
-    """Title-case each hyphen-separated segment of a slug.
-
-    Uses a lookup for known brand capitalisations (GPT, GLM, DeepSeek...),
-    falls back to capitalising the first letter.
-    """
-    parts = slug.split("-")
-    result = []
-    for part in parts:
-        known = _KNOWN_CAPS.get(part.lower())
-        if known:
-            result.append(known)
-        elif part and part[0].isalpha():
-            result.append(part[0].upper() + part[1:])
-        else:
-            result.append(part)
-    return "-".join(result)
 
 
 # ---------------------------------------------------------------------------
