@@ -19,6 +19,7 @@ ifeq ($(OPENROUTER_API_KEY),)
 endif
 export OPENROUTER_API_KEY
 
+
 # Guard: only require OPENROUTER_API_KEY for targets that actually need it
 _NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
