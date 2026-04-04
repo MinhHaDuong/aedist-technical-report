@@ -45,6 +45,8 @@ def _has_turn_data(entries: list[dict]) -> bool:
 def group_by_model_and_turn(mt_entries: list[dict]) -> dict[str, dict[int, list[dict]]]:
     """Group multiturn metrics by model slug and turn number.
 
+    Entries without a ``turn`` field are skipped (they lack per-turn data).
+
     Args:
         mt_entries: Pre-filtered list of multiturn metric entries.
 
@@ -52,8 +54,10 @@ def group_by_model_and_turn(mt_entries: list[dict]) -> dict[str, dict[int, list[
     """
     result: dict[str, dict[int, list[dict]]] = {}
     for entry in mt_entries:
+        if "turn" not in entry:
+            continue
         slug = strip_label(entry["label"])
-        turn = entry.get("turn", -1)
+        turn = entry["turn"]
         result.setdefault(slug, {}).setdefault(turn, []).append(entry)
     return result
 

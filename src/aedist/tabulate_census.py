@@ -25,9 +25,16 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
+_CENSUS_PREFIX = "sweep1_census/"
+
+
+def _is_census(entry: dict) -> bool:
+    return entry.get("label", "").startswith(_CENSUS_PREFIX)
+
+
 def generate_census_table(metrics: list[dict]) -> str:
     """Generate a LaTeX longtable from per-run metrics."""
-    rows = group_and_summarize(metrics)
+    rows = group_and_summarize(metrics, filter_fn=_is_census)
 
     lines = [
         "% Auto-generated — do not edit",
