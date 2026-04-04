@@ -1,11 +1,12 @@
-"""Tests for the Worker base class with lease semantics."""
+"""Tests for the Worker base class and PadmeWorker."""
 
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from aedist.schema import JobSpec, Method
-from aedist.worker import Worker
+from aedist.worker import PadmeWorker, Worker
 
 
 def _make_job(
@@ -262,3 +263,102 @@ def test_run_one_failure(tmp_path: Path) -> None:
     assert (jobs_root / "failed" / "runone-fail.yaml").exists()
     error_txt = (jobs_root / "failed" / "runone-fail.error.txt").read_text()
     assert "execution failed" in error_txt
+
+
+# ---------------------------------------------------------------------------
+# PadmeWorker tests
+# ---------------------------------------------------------------------------
+
+
+def test_padme_worker_id(tmp_path: Path) -> None:
+    """PadmeWorker always has worker_id='padme'."""
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    assert worker.worker_id == "padme"
+
+
+def test_padme_worker_base_url(tmp_path: Path) -> None:
+    """PadmeWorker uses the Ollama base URL by default."""
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    assert "11434" in worker.base_url
+
+
+def test_padme_worker_custom_base_url(tmp_path: Path) -> None:
+    """PadmeWorker accepts a custom base URL."""
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs", base_url="http://gpu:8080/v1")
+    assert worker.base_url == "http://gpu:8080/v1"
+
+
+def _harness_patches(tmp_path):
+    """Context manager dict for patching harness functions in aedist.worker."""
+    return {
+        "make_client": MagicMock(),
+        "load_models": MagicMock(return_value=[{"id": "qwen3:8b"}]),
+        "query_single_turn": MagicMock(return_value={
+            "content": "Plant A,coal,operational",
+            "finish_reason": "stop",
+            "usage": {"prompt_tokens": 50, "completion_tokens": 100},
+            "wall_seconds": 3.5,
+        }),
+        "compute_cost": MagicMock(return_value=0.0),
+        "model_metadata": MagicMock(return_value={}),
+        "save_json": MagicMock(),
+        "should_skip": MagicMock(return_value=False),
+        "output_path": MagicMock(return_value=tmp_path / "out" / "r.json"),
+    }
+
+
+def test_padme_worker_execute(tmp_path: Path) -> None:
+    """PadmeWorker.execute() calls harness functions correctly."""
+    jobs_root = tmp_path / "jobs"
+    worker = PadmeWorker(jobs_root=jobs_root)
+
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="padme-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
+        result = worker.execute(job)
+
+    assert result["wall_seconds"] == 3.5
+    assert result["tokens_in"] == 50
+    assert result["tokens_out"] == 100
+
+
+def test_padme_full_lifecycle(tmp_path: Path) -> None:
+    """PadmeWorker full lifecycle: poll -> run_one with mocked harness."""
+    jobs_root = tmp_path / "jobs"
+    worker = PadmeWorker(jobs_root=jobs_root)
+
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="padme-lc",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+    _write_pending(jobs_root, job)
+
+    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
+        record = worker.run_one()
+
+    assert record is not None
+    assert record.method == Method.SINGLE
+    assert (jobs_root / "done" / "padme-lc.yaml").exists()

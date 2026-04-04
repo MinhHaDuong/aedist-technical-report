@@ -1,17 +1,34 @@
-"""Base Worker class with lease semantics for the job board.
+"""Worker classes with lease semantics for the job board.
 
 Workers poll for pending jobs, acquire exclusive leases via atomic file
 renames, execute the query pipeline, and write results to done/ or failed/.
+
+Subclasses:
+    PadmeWorker  — sequential execution via local Ollama (GPU)
+    OpenRouterWorker — parallel execution via OpenRouter cloud API
 """
 
 from __future__ import annotations
 
+import logging
 import re
 import signal
 import traceback
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+import openai
+
+from .harness import (
+    compute_cost,
+    load_models,
+    make_client,
+    model_metadata,
+    output_path,
+    query_single_turn,
+    save_json,
+    should_skip,
+)
 from .schema import (
     JobSpec,
     LeaseInfo,
@@ -20,6 +37,8 @@ from .schema import (
     ResourceUse,
     RunRecord,
 )
+
+log = logging.getLogger(__name__)
 
 _PENDING_RE = re.compile(r"^(\d{3})-(.+)\.yaml$")
 
@@ -170,3 +189,144 @@ class Worker:
             msg = f"No running file found for job {job.job_id}"
             raise FileNotFoundError(msg)
         return matches[0]
+
+
+# ---------------------------------------------------------------------------
+# PadmeWorker — local GPU execution via Ollama
+# ---------------------------------------------------------------------------
+
+OLLAMA_BASE_URL = "http://localhost:11434/v1"
+
+
+class PadmeWorker(Worker):
+    """Worker for local GPU execution via Ollama.
+
+    Executes jobs sequentially (one model at a time) using the local
+    Ollama endpoint.
+    """
+
+    def __init__(
+        self,
+        jobs_root: Path = Path("jobs"),
+        base_url: str = OLLAMA_BASE_URL,
+    ) -> None:
+        super().__init__(worker_id="padme", jobs_root=jobs_root)
+        self.base_url = base_url
+
+    def execute(self, job: JobSpec) -> dict:
+        """Run a single-turn query against Ollama for each model in the job."""
+        client = make_client(self.base_url)
+        prompt = Path(job.prompt).read_text().strip()
+        models = load_models(job.models_file)
+        output_dir = Path(job.output_dir)
+
+        if job.model_filter:
+            models = [m for m in models if job.model_filter in m["id"]]
+
+        total_cost = 0.0
+        total_wall = 0.0
+        total_in = 0
+        total_out = 0
+        result_files: list[str] = []
+        budget_hit = False
+
+        for model_entry in models:
+            if budget_hit:
+                break
+            model_id = model_entry["id"]
+            for run in range(1, job.repeat + 1):
+                if should_skip(output_dir, model_id, run, "padme"):
+                    log.info("Skip %s run %d (cached)", model_id, run)
+                    continue
+
+                log.info("Querying %s run %d/%d...", model_id, run, job.repeat)
+                try:
+                    result = query_single_turn(
+                        client, model_id,
+                        [{"role": "user", "content": prompt}],
+                    )
+                except openai.APIError as e:
+                    log.error("Error querying %s run %d: %s", model_id, run, e)
+                    continue
+
+                usage = result.get("usage") or {}
+                cost = compute_cost(usage, model_entry)
+                total_cost += cost
+                total_wall += result["wall_seconds"]
+                total_in += usage.get("prompt_tokens", 0)
+                total_out += usage.get("completion_tokens", 0)
+
+                filepath = output_path(output_dir, model_id, run, "padme")
+                save_json(filepath, {
+                    "model": model_id,
+                    "date": date.today().isoformat(),
+                    "run": run,
+                    "prompt": prompt,
+                    "response": result["content"],
+                    "finish_reason": result["finish_reason"],
+                    "usage": usage,
+                    "wall_seconds": result["wall_seconds"],
+                    "cost_usd": cost,
+                    "model_metadata": model_metadata(model_entry),
+                })
+                result_files.append(str(filepath))
+
+                if total_cost >= job.budget_usd:
+                    log.warning("Budget exhausted (%.4f USD)", total_cost)
+                    budget_hit = True
+                    break
+
+        return {
+            "wall_seconds": total_wall,
+            "cost_usd": total_cost,
+            "tokens_in": total_in,
+            "tokens_out": total_out,
+            "result_file": result_files[0] if result_files else None,
+        }
+
+
+# ---------------------------------------------------------------------------
+# CLI entry point
+# ---------------------------------------------------------------------------
+
+def main(argv=None):
+    """Run a worker from the command line."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run an AEDIST worker")
+    parser.add_argument(
+        "pool", choices=["padme"],
+        help="Worker pool to run (padme for local Ollama)",
+    )
+    parser.add_argument(
+        "--jobs-root", type=Path, default=Path("jobs"),
+        help="Root directory for job board (default: jobs/)",
+    )
+    parser.add_argument(
+        "--base-url", default=OLLAMA_BASE_URL,
+        help=f"Ollama API base URL (default: {OLLAMA_BASE_URL})",
+    )
+    parser.add_argument(
+        "--loop", action="store_true",
+        help="Run continuously, polling for jobs",
+    )
+    args = parser.parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    workers = {
+        "padme": lambda: PadmeWorker(jobs_root=args.jobs_root, base_url=args.base_url),
+    }
+    worker = workers[args.pool]()
+
+    if args.loop:
+        import time
+        while True:
+            record = worker.run_one()
+            if record is None:
+                time.sleep(5)
+    else:
+        record = worker.run_one()
+        if record is None:
+            log.info("No pending jobs.")
+        else:
+            log.info("Completed job, method=%s", record.method)
