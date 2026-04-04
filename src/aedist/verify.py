@@ -90,9 +90,11 @@ def extract_csv_rows(response_text: str) -> list[dict]:
 def load_reference(path: Path) -> list[dict]:
     """Load reference CSV into list of dicts with normalized names.
 
-    Supports both vietnam_thermal_v1.csv (lowercase headers: name, province,
-    fuel, capacity_mwe, status) and gem_thermal.csv (title-case headers:
-    Name, Province, Fuel, Capacity, Status).
+    Supports both lowercase headers (name, province, fuel, capacity_mwe,
+    status) and title-case headers (Name, Province, Fuel, Capacity, Status).
+    The primary reference is vietnam_thermal_v1.csv, hand-assembled from
+    government sources (PDP7, PDP7A, PDP8, EVN reports). Secondary sources
+    like GEM may use title-case headers and serve as cross-checks only.
     """
     rows = []
     with open(path, newline="", encoding="utf-8") as f:
