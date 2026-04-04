@@ -19,9 +19,9 @@ def _make_input_json(tmp_path: Path, csv_content: str) -> Path:
     return p
 
 
-def _make_gem_csv(tmp_path: Path) -> Path:
-    """Create a minimal GEM reference CSV."""
-    p = tmp_path / "gem_thermal.csv"
+def _make_reference_csv(tmp_path: Path) -> Path:
+    """Create a minimal reference CSV."""
+    p = tmp_path / "reference.csv"
     with open(p, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["Name", "Province", "Fuel", "Capacity", "Status", "Aggregated Units"])
@@ -32,21 +32,21 @@ def _make_gem_csv(tmp_path: Path) -> Path:
 
 
 def test_tool_mode_verifies_known_plants(tmp_path):
-    """--mode tool correctly identifies plants found in GEM database."""
+    """--mode tool correctly identifies plants found in reference database."""
     input_json = _make_input_json(tmp_path, (
         "name,fuel,status,cod,province,capacity_mwe\n"
         "Pha Lai,coal,operating,1985,Hai Duong,1040\n"
         "Fake Plant,coal,planned,2030,Nowhere,500\n"
         "Ba Ria,gas,cancelled,,Ba Ria - Vung Tau,1200\n"
     ))
-    gem_path = _make_gem_csv(tmp_path)
+    ref_path = _make_reference_csv(tmp_path)
     output_dir = tmp_path / "verified"
 
     with patch.object(sys, "argv", [
         "verify",
         "--input", str(input_json),
         "--mode", "tool",
-        "--reference", str(gem_path),
+        "--reference", str(ref_path),
         "--output", str(output_dir),
     ]):
         from aedist.verify import main
@@ -85,14 +85,14 @@ def test_tool_mode_verifies_known_plants(tmp_path):
 def test_tool_mode_empty_csv(tmp_path):
     """--mode tool handles input with no CSV gracefully."""
     input_json = _make_input_json(tmp_path, "No CSV here, just text.")
-    gem_path = _make_gem_csv(tmp_path)
+    ref_path = _make_reference_csv(tmp_path)
     output_dir = tmp_path / "verified"
 
     with patch.object(sys, "argv", [
         "verify",
         "--input", str(input_json),
         "--mode", "tool",
-        "--reference", str(gem_path),
+        "--reference", str(ref_path),
         "--output", str(output_dir),
     ]):
         from aedist.verify import main

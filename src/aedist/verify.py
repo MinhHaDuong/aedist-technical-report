@@ -1,7 +1,7 @@
 """Verification pipeline for LLM-generated power plant data.
 
 Modes:
-  tool  — Check each plant against GEM database using fuzzy name matching.
+  tool  — Check each plant against a reference CSV using fuzzy name matching.
   self  — Send CSV back to same model for self-verification.
   cross — Send CSV to a different verifier model.
   web   — Verify each plant via web search (requires Tavily).
@@ -10,7 +10,7 @@ Usage:
     python -m aedist.verify \
         --input outputs/sweep2_rag/2026-04-02/claude-sonnet-4.6-run1.json \
         --mode tool \
-        --reference data/reference/gem_thermal.csv \
+        --reference data/reference/vietnam_thermal_v1.csv \
         --output outputs/sweep4_verification/
 """
 
@@ -35,12 +35,12 @@ from .harness import make_client, query_single_turn
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "gem_thermal.csv"
+_DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
 
 # Default subject for LLM verification prompts (configurable for other domains)
 DEFAULT_VERIFICATION_SUBJECT = "thermal power plants in Vietnam"
 
-# Similarity threshold (0-100) for fuzzy name matching against GEM database
+# Similarity threshold (0-100) for fuzzy name matching against reference database
 SIMILARITY_THRESHOLD = 70.0
 
 
@@ -84,37 +84,44 @@ def extract_csv_rows(response_text: str) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# GEM reference loading
+# Reference loading
 # ---------------------------------------------------------------------------
 
-def load_gem_reference(path: Path) -> list[dict]:
-    """Load GEM thermal CSV into list of dicts with normalized names."""
+def load_reference(path: Path) -> list[dict]:
+    """Load reference CSV into list of dicts with normalized names.
+
+    Supports both vietnam_thermal_v1.csv (lowercase headers: name, province,
+    fuel, capacity_mwe, status) and gem_thermal.csv (title-case headers:
+    Name, Province, Fuel, Capacity, Status).
+    """
     rows = []
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            # Support both header conventions
+            name = (row.get("name") or row.get("Name") or "").strip()
             rows.append({
-                "name": row.get("Name", "").strip(),
-                "name_lower": row.get("Name", "").strip().lower(),
-                "province": row.get("Province", "").strip(),
-                "fuel": row.get("Fuel", "").strip().lower(),
-                "capacity": row.get("Capacity", "").strip(),
-                "status": row.get("Status", "").strip(),
+                "name": name,
+                "name_lower": name.lower(),
+                "province": (row.get("province") or row.get("Province") or "").strip(),
+                "fuel": (row.get("fuel") or row.get("Fuel") or "").strip().lower(),
+                "capacity": (row.get("capacity_mwe") or row.get("Capacity") or "").strip(),
+                "status": (row.get("status") or row.get("Status") or "").strip(),
             })
     return rows
 
 
-def fuzzy_match_gem(plant_name: str, gem_plants: list[dict]) -> dict | None:
-    """Find best fuzzy match in GEM database."""
+def fuzzy_match_reference(plant_name: str, ref_plants: list[dict]) -> dict | None:
+    """Find best fuzzy match in reference database."""
     best_score = 0.0
     best_match = None
     name_lower = plant_name.lower().strip()
 
-    for gem in gem_plants:
-        score = fuzz.token_sort_ratio(name_lower, gem["name_lower"])
+    for ref in ref_plants:
+        score = fuzz.token_sort_ratio(name_lower, ref["name_lower"])
         if score > best_score:
             best_score = score
-            best_match = gem
+            best_match = ref
 
     if best_score >= SIMILARITY_THRESHOLD:
         return best_match
@@ -126,9 +133,9 @@ def fuzzy_match_gem(plant_name: str, gem_plants: list[dict]) -> dict | None:
 # ---------------------------------------------------------------------------
 
 def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dict]:
-    """Verify plants against GEM database. Returns (annotated_rows, summary)."""
-    gem_plants = load_gem_reference(reference_path)
-    log.info("Loaded %d plants from GEM reference", len(gem_plants))
+    """Verify plants against reference database. Returns (annotated_rows, summary)."""
+    ref_plants = load_reference(reference_path)
+    log.info("Loaded %d plants from reference: %s", len(ref_plants), reference_path.name)
 
     verified_count = 0
     fabricated_count = 0
@@ -137,19 +144,19 @@ def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dic
     annotated = []
     for row in rows:
         name = row.get("name", "")
-        match = fuzzy_match_gem(name, gem_plants)
+        match = fuzzy_match_reference(name, ref_plants)
 
         entry = dict(row)
         if match:
             entry["verified"] = "True"
-            entry["verification_source"] = f"GEM: {match['name']}"
+            entry["verification_source"] = f"ref: {match['name']}"
             entry["confidence"] = str(round(fuzz.token_sort_ratio(
                 name.lower(), match["name_lower"]
             ) / 100, 2))
             verified_count += 1
         else:
             entry["verified"] = "False"
-            entry["verification_source"] = "Not found in GEM"
+            entry["verification_source"] = "Not found in reference"
             entry["confidence"] = "0.0"
             fabricated_count += 1
 
@@ -238,7 +245,7 @@ def main():
     parser.add_argument("--mode", required=True, choices=["tool", "self", "cross", "web"],
                         help="Verification mode")
     parser.add_argument("--reference", default=None,
-                        help="Path to GEM reference CSV (for --mode tool)")
+                        help="Path to reference CSV (for --mode tool)")
     parser.add_argument("--verifier-model", default=None,
                         help="Model ID for cross-verification (--mode cross)")
     parser.add_argument("--output", required=True, help="Output directory")

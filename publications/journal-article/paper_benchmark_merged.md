@@ -94,7 +94,7 @@ The task is to generate a structured table listing all thermal power plants in V
 
 ## 3.2 Reference Dataset
 
-<!-- Expert-compiled from official planning documents (PDP7, PDP7A, PDP8), utility reports (EVN annual reports), open databases (Wikipedia, GEM), and long-term expert monitoring -->
+<!-- Expert-compiled from primary government sources (PDP7, PDP7A, PDP8 planning documents), utility reports (EVN annual reports), and long-term expert monitoring. GEM and Wikipedia served as secondary cross-references, not primary inputs. -->
 <!-- ~135 plants, 6 attributes -->
 <!-- Not error-free but consistent; represents the best available open-source approximation -->
 <!-- Versioned; available as CSV in the benchmark repository -->
@@ -152,7 +152,7 @@ $$\text{Precision} = \frac{|\text{Reference} \cap \text{System}|}{|\text{System}
 
 ### 4.1.3 RAG Configurations
 
-<!-- Curated RAG: 15 manually selected authoritative documents (PDP7/7A/8, EVN reports, GEM) -->
+<!-- Curated RAG: 15 manually selected authoritative documents (PDP7/7A/8, EVN reports, government decisions). GEM data included as secondary cross-reference. -->
 <!-- Total: 138.6 kB Markdown, ~63.5k tokens + 3.5k tokens bibliographic references -->
 <!-- Extended RAG: curated + EVN annual reports 2010-2018 -->
 <!-- Multi-turn RAG: RAG + iterative follow-ups -->
