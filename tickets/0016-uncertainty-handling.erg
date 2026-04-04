@@ -1,0 +1,25 @@
+%erg v1
+Title: Implement uncertainty detection and confidence intervals
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0015
+
+--- log ---
+2026-04-04T12:52Z claude created
+
+--- body ---
+## Context
+A trustworthy statistical table must express uncertainty. Models should
+say "I don't know" rather than hallucinate, and aggregates should carry
+confidence intervals.
+
+## Actions
+1. "I don't know" detection and scoring in extraction
+2. Confidence interval estimation on capacity aggregates
+3. Add confidence metrics to RunRecord.result_summary
+
+## Exit criteria
+- "I don't know" responses detected and scored
+- Confidence intervals computed for aggregate statistics
+- Metrics visible in measurements table

@@ -1,0 +1,27 @@
+%erg v1
+Title: Run verification sweep with source attribution
+Status: open
+Created: 2026-04-04
+Author: claude
+Blocked-by: 0011
+Blocked-by: gh#12
+
+--- log ---
+2026-04-04T12:52Z claude created
+2026-04-04T12:52Z claude note Corresponds to gh#12 — verification sweep
+
+--- body ---
+## Context
+Sweep 4 adds a verification pass: the model checks its own output
+against sources. First provenance data captured. Bridges to Phase 5.
+
+## Actions
+1. Write sweeps/sweep4_verification.yaml
+2. Define verification pass method (extends query pipeline)
+3. Generate jobs, run on OpenRouter worker
+4. Capture sources_provided, sources_verified in RunRecord.justification
+
+## Exit criteria
+- Verification method implemented and tested
+- Sweep 4 jobs complete
+- Provenance fields populated in measurements table
