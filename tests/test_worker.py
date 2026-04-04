@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from aedist.schema import JobSpec, Method
-from aedist.worker import PadmeWorker, Worker
+from aedist.worker import OpenRouterWorker, PadmeWorker, Worker
 
 
 def _make_job(
@@ -362,3 +362,84 @@ def test_padme_full_lifecycle(tmp_path: Path) -> None:
     assert record is not None
     assert record.method == Method.SINGLE
     assert (jobs_root / "done" / "padme-lc.yaml").exists()
+
+
+# ---------------------------------------------------------------------------
+# OpenRouterWorker tests
+# ---------------------------------------------------------------------------
+
+
+def test_openrouter_worker_id(tmp_path: Path) -> None:
+    """OpenRouterWorker always has worker_id='openrouter'."""
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    assert worker.worker_id == "openrouter"
+
+
+def test_openrouter_worker_concurrency(tmp_path: Path) -> None:
+    """OpenRouterWorker uses default concurrency of 8."""
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    assert worker.concurrency == 8
+
+
+def test_openrouter_worker_custom_concurrency(tmp_path: Path) -> None:
+    """OpenRouterWorker accepts custom concurrency."""
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs", concurrency=4)
+    assert worker.concurrency == 4
+
+
+def test_openrouter_worker_execute(tmp_path: Path) -> None:
+    """OpenRouterWorker.execute() processes models in parallel."""
+    jobs_root = tmp_path / "jobs"
+    worker = OpenRouterWorker(jobs_root=jobs_root, concurrency=2)
+
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="or-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=2,
+        budget_usd=10.0,
+    )
+
+    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
+        result = worker.execute(job)
+
+    # 1 model x 2 runs = 2 queries, each 3.5s wall
+    assert result["wall_seconds"] == 7.0
+    assert result["tokens_in"] == 100
+    assert result["tokens_out"] == 200
+
+
+def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
+    """OpenRouterWorker full lifecycle: poll -> run_one with mocked harness."""
+    jobs_root = tmp_path / "jobs"
+    worker = OpenRouterWorker(jobs_root=jobs_root, concurrency=2)
+
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="or-lc",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=10.0,
+    )
+    _write_pending(jobs_root, job)
+
+    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
+        record = worker.run_one()
+
+    assert record is not None
+    assert record.method == Method.SINGLE
+    assert (jobs_root / "done" / "or-lc.yaml").exists()

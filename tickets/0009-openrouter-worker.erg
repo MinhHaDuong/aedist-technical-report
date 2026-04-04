@@ -1,12 +1,13 @@
 %erg v1
 Title: Implement OpenRouter worker with parallel execution
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0007
 
 --- log ---
 2026-04-04T12:51Z claude created
+2026-04-04T16:30Z claude status closed — OpenRouterWorker with ThreadPoolExecutor, BudgetTracker, 5 tests
 
 --- body ---
 ## Context
