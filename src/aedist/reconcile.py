@@ -41,10 +41,11 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
             "fuel": p.fuel.value if p.fuel else "",
             "capacity": str(p.capacity_mwe) if p.capacity_mwe is not None else "",
             "status": p.status.value if p.status else "",
+            "source_ref": p.source_ref or "",
         })
     df = pd.DataFrame(rows)
     if df.empty:
-        df = pd.DataFrame(columns=["name", "province", "fuel", "capacity", "status"])
+        df = pd.DataFrame(columns=["name", "province", "fuel", "capacity", "status", "source_ref"])
 
     # Use the existing cleaner for normalization
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
@@ -91,9 +92,9 @@ def _extract_entries(
         elif ref_cap is not None and sys_cap is not None and ref_cap == 0:
             cap_diff_pct = None
 
-        # Look up province/fuel/status from original DataFrames
-        ref_prov, ref_fuel, ref_status = _lookup_attrs(ref_df, row, "file1")
-        sys_prov, sys_fuel, sys_status = _lookup_attrs(sys_df, row, "file2")
+        # Look up province/fuel/status/source_ref from original DataFrames
+        ref_prov, ref_fuel, ref_status, ref_src = _lookup_attrs(ref_df, row, "file1")
+        sys_prov, sys_fuel, sys_status, sys_src = _lookup_attrs(sys_df, row, "file2")
 
         # Attribute matches (only for matched pairs)
         fuel_match = None
@@ -121,6 +122,8 @@ def _extract_entries(
             fuel_match=fuel_match,
             status_match=status_match,
             province_match=province_match,
+            reference_source_ref=ref_src,
+            system_source_ref=sys_src,
         ))
     return entries
 
@@ -144,20 +147,21 @@ def _safe_float(row: pd.Series, key: str) -> float | None:
 
 def _lookup_attrs(
     df: pd.DataFrame, row: pd.Series, suffix: str
-) -> tuple[str | None, str | None, str | None]:
-    """Look up province_clean, fuel_clean, status_clean from original df by name_clean."""
+) -> tuple[str | None, str | None, str | None, str | None]:
+    """Look up province_clean, fuel_clean, status_clean, source_ref from original df by name_clean."""
     name_key = f"name_clean_{suffix}"
     name_clean = row.get(name_key)
     if name_clean is None or pd.isna(name_clean):
-        return None, None, None
+        return None, None, None, None
     matches = df[df["name_clean"] == name_clean]
     if matches.empty:
-        return None, None, None
+        return None, None, None, None
     first = matches.iloc[0]
     return (
         str(first.get("province_clean", "")) or None,
         str(first.get("fuel_clean", "")) or None,
         str(first.get("status_clean", "")) or None,
+        str(first.get("source_ref", "")) or None,
     )
 
 

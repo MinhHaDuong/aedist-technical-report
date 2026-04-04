@@ -40,6 +40,10 @@ class Plant(BaseModel):
     cod: str | None = Field(default=None, description="Connection date (year or YYYY-MM-DD).")
     province: str | None = Field(default=None)
     capacity_mwe: float | None = Field(default=None, ge=0)
+    source_ref: str | None = Field(
+        default=None,
+        description="Primary source document reference, e.g. 'Decision 1509/QĐ-BCT, Annexe II.1'.",
+    )
 
 
 class SourcedPlant(Plant):
@@ -74,4 +78,6 @@ class ReconciliationEntry(BaseModel):
     fuel_match: bool | None = None
     status_match: bool | None = None
     province_match: bool | None = None
+    reference_source_ref: str | None = None
+    system_source_ref: str | None = None
     notes: str = ""

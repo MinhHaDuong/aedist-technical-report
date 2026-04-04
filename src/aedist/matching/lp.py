@@ -346,6 +346,49 @@ def _extract_results(
     return results
 
 
+def _greedy_prealign(
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+    costs: dict[tuple[int, int], float],
+) -> dict[tuple[int, int], float]:
+    """Compute a greedy pre-alignment for warm-starting CBC.
+
+    For each pair (i, j), sorted by ascending cost, greedily assign matches
+    (each i and j used at most once).  Returns a dict mapping every
+    (i, j) / u_i / v_j variable key to its initial value (0 or 1).
+
+    The returned dict has keys:
+      ("x", i, j) -> 0 or 1
+      ("u", i)    -> 0 or 1
+      ("v", j)    -> 0 or 1
+    """
+    indices1 = list(df1.index)
+    indices2 = list(df2.index)
+
+    # Sort candidate pairs by cost (cheapest first)
+    pairs = sorted(costs.keys(), key=lambda k: costs[k])
+
+    matched_i: set[int] = set()
+    matched_j: set[int] = set()
+    solution: dict[tuple, float] = {}
+
+    for i, j in pairs:
+        if i not in matched_i and j not in matched_j:
+            # Only match if cost is below the dummy cost threshold
+            # (otherwise it's cheaper to leave unmatched)
+            solution[("x", i, j)] = 1.0
+            matched_i.add(i)
+            matched_j.add(j)
+
+    # Set unmatched flags
+    for i in indices1:
+        solution[("u", i)] = 0.0 if i in matched_i else 1.0
+    for j in indices2:
+        solution[("v", j)] = 0.0 if j in matched_j else 1.0
+
+    return solution
+
+
 def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.DataFrame:
     """
     Reconcile power plant records between two DataFrames using a MILP assignment approach.
@@ -414,7 +457,17 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
 
     costs = _compute_costs(df1, df2, similarity_threshold, mismatch_penalty, capacity_weight)
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
-    prob.solve(PULP_CBC_CMD(msg=False))
+
+    # Warm start: set initial values from greedy pre-alignment
+    greedy = _greedy_prealign(df1, df2, costs)
+    for (i, j), var in x_vars.items():
+        var.setInitialValue(greedy.get(("x", i, j), 0.0))
+    for i, var in u_vars.items():
+        var.setInitialValue(greedy.get(("u", i), 1.0))
+    for j, var in v_vars.items():
+        var.setInitialValue(greedy.get(("v", j), 1.0))
+
+    prob.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     if prob.status != LpStatusOptimal:
         raise RuntimeError("Assignment MILP did not solve to optimality.")
 

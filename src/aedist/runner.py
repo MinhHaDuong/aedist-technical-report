@@ -184,6 +184,7 @@ def _save_reconciliation_csv(entries: list, path: Path) -> None:
             "reference_fuel", "system_fuel",
             "reference_capacity_mwe", "system_capacity_mwe",
             "capacity_diff_pct", "fuel_match", "status_match", "province_match",
+            "reference_source_ref", "system_source_ref",
         ])
         for e in entries:
             w.writerow([
@@ -192,6 +193,7 @@ def _save_reconciliation_csv(entries: list, path: Path) -> None:
                 e.reference_fuel, e.system_fuel,
                 e.reference_capacity_mwe, e.system_capacity_mwe,
                 e.capacity_diff_pct, e.fuel_match, e.status_match, e.province_match,
+                e.reference_source_ref, e.system_source_ref,
             ])
 
 

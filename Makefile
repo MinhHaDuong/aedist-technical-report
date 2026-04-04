@@ -43,6 +43,14 @@ $(GEN)/macros.tex: $(METRICS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --input $< --output $@
 
+$(GEN)/tab_relances.tex: $(METRICS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_relances --input $< --output $@
+
+$(GEN)/tab_comparaison.tex: $(METRICS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_comparaison --input $< --output $@
+
 # --- Chart data for slides ---------------------------------------------------
 
 $(SLIDE_GEN)/census_bars.csv: $(METRICS)
@@ -69,7 +77,7 @@ slides/slides.pdf: slides/slides.tex $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/p
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
 select: experiments/models_sweep2.yaml
 sweep1:
