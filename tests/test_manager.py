@@ -109,12 +109,17 @@ def test_idempotency_across_dirs(tmp_path: Path):
 
     # First run creates 3 jobs
     generate(str(sweep_path), jobs_root)
-    files = list((jobs_root / "pending").iterdir())
+    files = sorted((jobs_root / "pending").iterdir())
     assert len(files) == 3
 
-    # Move one to "done"
+    # Move one to "done" (keeps pending filename format)
     moved = files[0]
     moved.rename(jobs_root / "done" / moved.name)
+
+    # Move another to "running" with lease format (as Worker.acquire does)
+    moved2 = files[1]
+    job_id = moved2.stem.split("-", 1)[1]
+    moved2.rename(jobs_root / "running" / f"{job_id}-lease-20260404T120000Z.yaml")
 
     # Second run should still skip all 3
     gen, skipped = generate(str(sweep_path), jobs_root)

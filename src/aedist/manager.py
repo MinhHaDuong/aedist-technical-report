@@ -32,9 +32,13 @@ def _existing_job_ids(jobs_root: Path) -> set[str]:
         for f in d.iterdir():
             if f.suffix == ".yaml" and f.is_file():
                 stem = f.stem
+                # pending/done/failed: {priority:03d}-{job_id}
                 parts = stem.split("-", 1)
-                if len(parts) == 2:
+                if len(parts) == 2 and parts[0].isdigit():
                     ids.add(parts[1])
+                # running: {job_id}-lease-{expiry}
+                elif "-lease-" in stem:
+                    ids.add(stem.split("-lease-")[0])
     return ids
 
 
