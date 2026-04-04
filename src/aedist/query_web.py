@@ -103,6 +103,8 @@ def main():
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
     parser.add_argument("--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget")
+    parser.add_argument("--search-queries", nargs="+", default=None,
+                        help="Custom Tavily search queries (default: Vietnam thermal plants)")
     parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
     args = parser.parse_args()
 
@@ -129,8 +131,9 @@ def main():
         return
 
     # Run web searches once (same context for all models/runs)
-    log.info("Running %d predefined web searches...", len(_DEFAULT_SEARCH_QUERIES))
-    web_context, search_log = run_web_searches(tavily_key)
+    queries = args.search_queries or _DEFAULT_SEARCH_QUERIES
+    log.info("Running %d web searches...", len(queries))
+    web_context, search_log = run_web_searches(tavily_key, queries=queries)
 
     if not web_context.strip():
         log.warning("No web search results obtained. Aborting.")

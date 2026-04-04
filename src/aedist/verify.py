@@ -24,12 +24,21 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from .extract import extract_fenced_blocks, fallback_extract_inline_csv, sniff_dialect
+from .extract import (
+    map_header_to_canonical,
+    norm_header,
+    extract_fenced_blocks,
+    fallback_extract_inline_csv,
+    sniff_dialect,
+)
 from .harness import make_client, query_single_turn
 
 log = logging.getLogger(__name__)
 
 _DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "gem_thermal.csv"
+
+# Default subject for LLM verification prompts (configurable for other domains)
+DEFAULT_VERIFICATION_SUBJECT = "thermal power plants in Vietnam"
 
 # Similarity threshold (0-100) for fuzzy name matching against GEM database
 SIMILARITY_THRESHOLD = 70.0
@@ -58,14 +67,16 @@ def extract_csv_rows(response_text: str) -> list[dict]:
         reader = csv.DictReader(io.StringIO(text.strip()), dialect=dialect)
         rows = []
         for row in reader:
-            # Normalize keys
-            normalized = {k.strip().lower().replace(" ", "_"): v.strip() if v else ""
-                         for k, v in row.items() if k}
-            if normalized.get("name") or normalized.get("plant_name") or normalized.get("plant"):
-                if "plant_name" in normalized:
-                    normalized["name"] = normalized.pop("plant_name")
-                elif "plant" in normalized:
-                    normalized["name"] = normalized.pop("plant")
+            # Normalize keys using shared extract.py utilities
+            normalized: dict[str, str] = {}
+            for k, v in row.items():
+                if not k:
+                    continue
+                norm = norm_header(k)
+                canon = map_header_to_canonical(norm)
+                key = canon if canon else norm
+                normalized[key] = v.strip() if v else ""
+            if normalized.get("name"):
                 rows.append(normalized)
         return rows
     except Exception:
@@ -165,15 +176,20 @@ def verify_llm(
     rows: list[dict],
     model_id: str,
     input_path: Path,
+    subject: str = DEFAULT_VERIFICATION_SUBJECT,
 ) -> tuple[str, dict]:
-    """Send CSV to an LLM for verification. Returns (raw_response, summary)."""
+    """Send CSV to an LLM for verification. Returns (raw_response, summary).
+
+    Args:
+        subject: Domain description for the prompt, e.g. "thermal power plants in Vietnam".
+    """
     client = make_client()
 
     # Format rows as CSV text for the prompt
     csv_text = _rows_to_csv_text(rows)
 
     prompt = (
-        "I have the following CSV data about thermal power plants in Vietnam. "
+        f"I have the following CSV data about {subject}. "
         "Please verify each plant: does it exist? Is the information correct? "
         "For each plant, state VERIFIED, FABRICATED, or UNCERTAIN.\n\n"
         f"```csv\n{csv_text}\n```"
@@ -226,6 +242,9 @@ def main():
     parser.add_argument("--verifier-model", default=None,
                         help="Model ID for cross-verification (--mode cross)")
     parser.add_argument("--output", required=True, help="Output directory")
+    parser.add_argument("--subject", default=DEFAULT_VERIFICATION_SUBJECT,
+                        help="Domain description for LLM verification prompt "
+                             "(default: '%(default)s')")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -282,7 +301,8 @@ def main():
         model_id = record.get("model")
         if not model_id:
             raise SystemExit("Input JSON missing 'model' field for self-verification")
-        raw_response, summary = verify_llm(rows, model_id, input_path)
+        raw_response, summary = verify_llm(rows, model_id, input_path,
+                                             subject=args.subject)
 
         summary_path = output_dir / f"{stem}_summary.json"
         with open(summary_path, "w") as f:
@@ -293,7 +313,8 @@ def main():
         verifier = args.verifier_model
         if not verifier:
             raise SystemExit("--verifier-model required for --mode cross")
-        raw_response, summary = verify_llm(rows, verifier, input_path)
+        raw_response, summary = verify_llm(rows, verifier, input_path,
+                                             subject=args.subject)
 
         summary_path = output_dir / f"{stem}_summary.json"
         with open(summary_path, "w") as f:

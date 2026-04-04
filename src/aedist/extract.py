@@ -163,7 +163,7 @@ def sniff_dialect(sample: str) -> csv.Dialect:
         return _Comma()
 
 
-def _norm_header(h: str) -> str:
+def norm_header(h: str) -> str:
     h = h.strip().lower()
     h = re.sub(r"\([^)]*\)", "", h)  # drop parenthesized units
     h = re.sub(r"[^a-z0-9]+", "_", h)
@@ -173,7 +173,7 @@ def _norm_header(h: str) -> str:
 _CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
 
 
-def _map_header_to_canonical(norm: str) -> str | None:
+def map_header_to_canonical(norm: str) -> str | None:
     if norm in {"name", "plant", "plant_name", "plantname", "power_plant_name"}:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype"}:
@@ -211,10 +211,10 @@ def _parse_and_canonicalize(csv_text: str) -> str:
         raise ValueError("CSV seems empty (missing data rows)")
 
     raw_headers = rows[0]
-    norm_headers = [_norm_header(h) for h in raw_headers]
+    norm_headers = [norm_header(h) for h in raw_headers]
     idx_by_canon: dict[str, int] = {}
     for i, nh in enumerate(norm_headers):
-        canon = _map_header_to_canonical(nh)
+        canon = map_header_to_canonical(nh)
         if canon and canon not in idx_by_canon:
             idx_by_canon[canon] = i
 

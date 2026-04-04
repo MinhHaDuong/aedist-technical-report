@@ -57,6 +57,21 @@ from pulp import (
 )
 from rapidfuzz import fuzz
 
+# ---------------------------------------------------------------------------
+# Default MILP parameters for record reconciliation
+# ---------------------------------------------------------------------------
+
+# Penalty for pairings where fuzzy similarity is below threshold
+DEFAULT_MISMATCH_PENALTY: float = 1000
+# Minimum fuzzy similarity score (0-100) to consider a potential match
+DEFAULT_SIMILARITY_THRESHOLD: int = 90
+# Capacity difference tolerance for fuzzy matches
+DEFAULT_CAPACITY_TOLERANCE: float = 0
+# Penalty for leaving a record unmatched (should exceed mismatch_penalty)
+DEFAULT_DUMMY_COST: float = 10000
+# Weight for capacity difference term in cost calculation
+DEFAULT_CAPACITY_WEIGHT: float = 0.001
+
 
 def _safe_get(row: pd.Series | None, key: str) -> object | None:
     """
@@ -381,11 +396,11 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
         ValueError: If either input DataFrame lacks the required columns.
         RuntimeError: If the MILP does not solve to optimality.
     """
-    mismatch_penalty: float = kwargs.get("mismatch_penalty", 1000)
-    similarity_threshold: int = kwargs.get("similarity_threshold", 90)
-    capacity_tolerance: float = kwargs.get("capacity_tolerance", 0)
-    dummy_cost: float = kwargs.get("dummy_cost", 10000)
-    capacity_weight: float = kwargs.get("capacity_weight", 0.001)
+    mismatch_penalty: float = kwargs.get("mismatch_penalty", DEFAULT_MISMATCH_PENALTY)
+    similarity_threshold: int = kwargs.get("similarity_threshold", DEFAULT_SIMILARITY_THRESHOLD)
+    capacity_tolerance: float = kwargs.get("capacity_tolerance", DEFAULT_CAPACITY_TOLERANCE)
+    dummy_cost: float = kwargs.get("dummy_cost", DEFAULT_DUMMY_COST)
+    capacity_weight: float = kwargs.get("capacity_weight", DEFAULT_CAPACITY_WEIGHT)
 
     req_cols = {"name", "name_clean", "capacity_clean"}
     if not req_cols.issubset(df1.columns):
