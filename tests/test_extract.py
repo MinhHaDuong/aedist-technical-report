@@ -2,8 +2,8 @@
 
 from aedist.extract import (
     _extract_pipe_table,
-    _map_header_to_canonical,
-    _norm_header,
+    map_header_to_canonical,
+    norm_header,
 )
 
 
@@ -11,16 +11,16 @@ class TestHeaderMapping:
     """Header variants that LLMs actually produce must map to canonical names."""
 
     def test_power_plant_name(self):
-        assert _map_header_to_canonical(_norm_header("Power Plant Name")) == "name"
+        assert map_header_to_canonical(norm_header("Power Plant Name")) == "name"
 
     def test_plantname_no_space(self):
-        assert _map_header_to_canonical(_norm_header("PlantName")) == "name"
+        assert map_header_to_canonical(norm_header("PlantName")) == "name"
 
     def test_plant_name(self):
-        assert _map_header_to_canonical(_norm_header("Plant Name")) == "name"
+        assert map_header_to_canonical(norm_header("Plant Name")) == "name"
 
     def test_generation_capacity(self):
-        assert _map_header_to_canonical(_norm_header("Generation Capacity (MWe)")) == "capacity_mwe"
+        assert map_header_to_canonical(norm_header("Generation Capacity (MWe)")) == "capacity_mwe"
 
 
 class TestPipeTable:

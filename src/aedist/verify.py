@@ -25,8 +25,8 @@ from pathlib import Path
 from rapidfuzz import fuzz
 
 from .extract import (
-    _map_header_to_canonical,
-    _norm_header,
+    map_header_to_canonical,
+    norm_header,
     extract_fenced_blocks,
     fallback_extract_inline_csv,
     sniff_dialect,
@@ -72,8 +72,8 @@ def extract_csv_rows(response_text: str) -> list[dict]:
             for k, v in row.items():
                 if not k:
                     continue
-                norm = _norm_header(k)
-                canon = _map_header_to_canonical(norm)
+                norm = norm_header(k)
+                canon = map_header_to_canonical(norm)
                 key = canon if canon else norm
                 normalized[key] = v.strip() if v else ""
             if normalized.get("name"):
