@@ -1,7 +1,7 @@
 """Convert PDF to Markdown using Marker API container.
 
 Uses the marker-api container for layout-aware PDF conversion with
-table structure preservation. No Python deps beyond stdlib + httpx.
+table structure preservation. No Python deps beyond stdlib.
 
 Usage:
     python -m aedist.pdf2md_marker input.pdf
