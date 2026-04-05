@@ -37,10 +37,8 @@ htmlcov/
 report/inputs/generated/*
 slides/inputs/generated/
 
-# Experiment outputs and results (reproducible from code)
-experiments/outputs/
-experiments/results/
-results/
+# Experiment working files (large intermediates, not needed for analysis)
+experiments/data/rag_work/
 
 # Report input data
 report/inputs/documents/*

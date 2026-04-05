@@ -1,0 +1,43 @@
+{
+  "model": "mistralai/mistral-large-2512",
+  "run": 1,
+  "date": "2026-04-03",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is a CSV-formatted table listing thermal power plants in Vietnam, including their fuel type, construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe):\n\n```csv\nName,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nUong Bi,Coal,Operational,1976,Quang Ninh,105\nPha Lai I,Coal,Operational,1983,Hai Duong,440\nPhu My 1,Local Natural Gas,Operational,2000,Ba Ria - Vung Tau,1090\nPhu My 2.1,Local Natural Gas,Operational,2004,Ba Ria - Vung Tau,900\nPhu My 4,Local Natural Gas,Operational,2004,Ba Ria - Vung Tau,450\nPhu My 2.2 BOT (BOT),Imported LNG,Operational,2005,Ba Ria - Vung Tau,740\nPhu My 3 BOT (BOT),Imported LNG,Operational,2004,Ba Ria - Vung Tau,720\nBa Ria,Local Natural Gas,Operational,2005,Ba Ria - Vung Tau,389\nNhon Trach 1,Local Natural Gas,Operational,2008,Dong Nai,465\nNhon Trach 2,Local Natural Gas,Operational,2011,Dong Nai,750\nCa Mau 1,Local Natural Gas,Operational,2008,Ca Mau,750\nCa Mau 2,Local Natural Gas,Operational,2008,Ca Mau,750\nO Mon I,Local Natural Gas,Operational,2013,Can Tho,660\nThac Mo,Coal,Operational,2001,Binh Phuoc,150\nCan Tho,Local Natural Gas,Operational,2010,Can Tho,33\nThu Duc (Oil),Oil,Operational,1960,Ho Chi Minh City,165\nHiep Phuoc (Oil),Oil,Operational,2000,Ho Chi Minh City,375\nPhu My 3 Extension,Local Natural Gas,Operational,2014,Ba Ria - Vung Tau,740\nVung Ang 1,Coal,Operational,2015,Ha Tinh,1200\nMong Duong 1,Coal,Operational,2015,Quang Ninh,1080\nDuyen Hai 1,Coal,Operational,2015,Tra Vinh,1244\nDuyen Hai 3,Coal,Operational,2018,Tra Vinh,1245\nVinh Tan 2,Coal,Operational,2014,Binh Thuan,1244\nVinh Tan 4,Coal,Operational,2018,Binh Thuan,600\nFormosa Ha Tinh,Coal,Operational,2017,Ha Tinh,150\nNghi Son 1,Coal,Operational,2013,Thanh Hoa,600\nHai Phong 1,Coal,Operational,2011,Hai Phong,600\nHai Phong 2,Coal,Operational,2014,Hai Phong,600\nQuang Ninh 1,Coal,Operational,2011,Quang Ninh,600\nQuang Ninh 2,Coal,Operational,2014,Quang Ninh,600\nCam Pha,Coal,Operational,2012,Quang Ninh,600\nNa Duong,Coal,Operational,2014,Lang Son,110\nCao Ngan,Coal,Operational,2014,Thai Nguyen,115\nSon Dong,Coal,Operational,2014,Bac Giang,220\nNinh Binh,Coal,Operational,2011,Ninh Binh,100\nAn Khanh,Coal,Operational,2014,Bac Giang,100\nThai Binh 1,Coal,Operational,2018,Thai Binh,600\nVinh Tan 4 Extension,Coal,Operational,2019,Binh Thuan,600\nDuyen Hai 1 Extension,Coal,Operational,2019,Tra Vinh,600\nMong Duong 2,Coal,Operational,2015,Quang Ninh,1240\nVinh Tan 1,Coal,Operational,2018,Binh Thuan,1240\nNam Dinh 1 (BOT),Coal,Under Construction,2024,Nam Dinh,1200\nVung Ang 2 (BOT),Coal,Under Construction,2025,Ha Tinh,1200\nVan Phong 1 (BOT),Coal,Under Construction,2023,Khanh Hoa,1320\nQuang Trach 1,Coal,Under Construction,2024,Quang Binh,1200\nSong Hau 1,Coal,Operational,2020,Hau Giang,1200\nSong Hau 2 (BOT),Coal,Under Construction,2024,Hau Giang,2000\nLong Phu 1,Coal,Under Construction,2023,Soc Trang,1200\nLong Phu 2 (BOT),Coal,Planned,2029,Soc Trang,1320\nLong Phu 3,Coal,Planned,2025,Soc Trang,1800\nQuang Ninh 3,Coal,Planned,2030,Quang Ninh,1200\nHai Phong 3,Coal,Planned,2028,Hai Phong,1200\nQuynh Lap 1,Coal,Planned,2026,Nghe An,1200\nQuynh Lap 2,Coal,Planned,2028,Nghe An,1200\nVung Ang 3 (BOT),Coal,Planned,2030,Ha Tinh,1200\nQuang Tri 1 (BOT),Coal,Planned,2027,Quang Tri,1320\nQuang Tri 2,Coal,Planned,2030,Quang Tri,1200\nVinh Tan 3 (BOT),Coal,Under Construction,2024,Binh Thuan,1980\nO Mon II,Local Natural Gas,Planned,2026,Can Tho,1050\nO Mon III,Local Natural Gas,Planned,2025,Can Tho,1050\nO Mon IV,Local Natural Gas,Planned,2026,Can Tho,1050\nDung Quat I,Local Natural Gas,Planned,2024,Quang Ngai,750\nDung Quat II,Local Natural Gas,Planned,2026,Quang Ngai,750\nDung Quat III,Local Natural Gas,Planned,2025,Quang Ngai,750\nMien Trung I,Local Natural Gas,Planned,2024,Quang Nam,750\nMien Trung II,Local Natural Gas,Planned,2025,Quang Ngai,750\nQuang Tri (Bao Vang Gas Field),Local Natural Gas,Planned,2025,Quang Tri,340\nQuang Ninh LNG,LNG,Planned,2026,Quang Ninh,1500\nThai Binh LNG,LNG,Planned,2027,Thai Binh,1500\nNghi Son LNG,LNG,Planned,2028,Thanh Hoa,1500\nQuang Trach II LNG,LNG,Planned,2027,Quang Binh,1500\nHai Lang LNG,LNG,Planned,2026,Quang Tri,1500\nCa Na LNG,LNG,Planned,2025,Ninh Thuan,1500\nSon My II LNG,LNG,Planned,2027,Binh Thuan,2250\nSon My I LNG,LNG,Planned,2028,Binh Thuan,2250\nNhon Trach 3&4 LNG,LNG,Planned,2023,Dong Nai,1500\nKien Giang LNG,LNG,Planned,2025,Kien Giang,1500\nBac Lieu LNG,LNG,Planned,2026,Bac Lieu,3200\nHiep Phuoc LNG,LNG,Planned,2024,Ho Chi Minh City,1200\nLong Son LNG,LNG,Planned,2027,Ba Ria - Vung Tau,1500\nLong An I LNG,LNG,Planned,2025,Long An,1500\nLong An II LNG,LNG,Planned,2030,Long An,1500\n```\n\nThis CSV includes operational, under-construction, and planned thermal power plants in Vietnam, categorized by their fuel type, construction stage, connection date, province, and capacity.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 73683,
+    "completion_tokens": 2265
+  },
+  "wall_seconds": 90.925,
+  "cost_usd": 0.040239,
+  "model_metadata": {
+    "size_class": "frontier",
+    "country": "FR",
+    "architecture": "moe",
+    "provider": "Mistral",
+    "context_window": 262144
+  }
+}

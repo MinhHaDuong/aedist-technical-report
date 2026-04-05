@@ -1,0 +1,43 @@
+{
+  "model": "mistralai/mistral-small-2603",
+  "run": 3,
+  "date": "2026-04-03",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nName,Province,Fuel,Stage,Connection year,Capacity (MWe)\nUông Bí 1,Hải Phòng,coal,operating,1974,105\nUông Bí MR,Hải Phòng,coal,operating,1998,330\nUông Bí Extension 1,Hải Phòng,coal,operating,2010,300\nUông Bí Extension 2,Hải Phòng,coal,operating,2012,330\nQuảng Ninh 1,Quảng Ninh,coal,operating,2014,600\nQuảng Ninh 2,Quảng Ninh,coal,operating,2014,600\nNinh Bình,Ninh Bình,coal,operating,2014,100\nHai Phòng 1,Hải Phòng,LNG,operating,2018,300\nHai Phòng 2,Hải Phòng,LNG,operating,2018,300\nPhả Lại 1,Hải Dương,LNG,operating,1994,440\nPhả Lại 2,Hải Dương,LNG,operating,2001,600\nCẩn Thơ,Cần Thơ,oil,operating,2010,33\nThủ Đức,Thành phố Hồ Chí Minh,oil,operating,2011,165\nCà Mau I,Cà Mau,LNG,operating,2015,750\nCà Mau II,Cà Mau,LNG,operating,2015,750\nPhú Mỹ 1,Bà Rịa–Vũng Tàu,LNG,operating,2003,1090\nPhú Mỹ 2.1,Bà Rịa–Vũng Tàu,LNG,operating,2004,900\nPhú Mỹ 4,Bà Rịa–Vũng Tàu,LNG,operating,2016,450\nThu Duc,Thành phố Hồ Chí Minh,LNG,operating,2017,128\nNhơn Trạch 1,Đồng Nai,LNG,operating,2016,465\nNhơn Trạch 2,Đồng Nai,LNG,operating,2017,750\nBà Rịa,Bà Rịa–Vũng Tàu,LNG,operating,2018,389\nCan Tho,Can Tho,gas,operating,2023,150\nNam Định 1,Nam Định,LNG,other,2024,1200\nNghi Son 1,Thanh Hóa,LNG,other,2025,300\nHai Phong 3,Hải Phòng,LNG,other,2025,600\nQuang Tri 1,Quảng Trị,LNG,planned,2025,600\nVung Ang 2,Hà Tĩnh,LNG,planned,2026,1000\nPhu My 3.1,Phú Yên,LNG,planned,2025,850\nBac Lieu,Bạc Liêu,LNG,planned,2025,1200\nLong An 1,Long An,LNG,planned,2025,1500\nLong An 2,Long An,LNG,planned,2026,1500\nThai Binh 1,Thái Bình,LNG,planned,2026,1500\nSon My 1,Bà Rịa–Vũng Tàu,LNG,planned,2028,1090\nSon My 2,Bà Rịa–Vũng Tàu,LNG,planned,2027,1090\nHiep Phuoc 1,Hồ Chí Minh,LNG,planned,2026,1200\nHiep Phuoc 2,Hồ Chí Minh,LNG,planned,2027,1500\nKien Giang,Kiên Giang,LNG,planned,2026,1500\nCao Ngan,Thái Nguyên,coal,other,2016,115\nCam Pha,Quảng Ninh,coal,other,2015,600\nSon Dong,Quảng Ninh,coal,other,2018,220\nCua Lon,Thái Bình,other,2029,300\nCua Lon,Thái Bình,other,2030,300\nCat Hai 1,Hải Phòng,other,2030,1500\nNam Dinh 2,Nam Định,other,2026,1200\nCam Pha 3,Quảng Ninh,coal,other,2030,440\nRang Dong,Nam Định,other,2030,1200\nKim Son,Ninh Bình,other,2030,1500\nHoa Binh Ha Hoa Binh,coal,other,2030,1200\nQuang Ninh 3,Quảng Ninh,other,2030,1800\nQuang Ninh 4,Quảng Ninh,other,2030,1200\nThai Binh 2,Thái Bình,coal,other,2025,1200\nCao Ngan 2,Thái Nguyên,coal,other,2035,300\nNui Nhe,Bình Phước,coal,other,2035,600\nVinh Tan 2,Bình Thuận,coal,other,2019,1244\nThuan Hai 2,Bình Thuận,other,2021,1200\nSoc Trang,Trà Vinh,other,2025,660\nFormosa HaTinh 2,Hà Tĩnh,coal,other,2025,755\nFormosa HaTinh 3,Hà Tĩnh,other,2026,200\nFormosa HaTinh 4,Hà Tĩnh,other,2026,200\nFormosa HaTinh 5,Hà Tĩnh,coal,other,2026,600\nFormosa HaTinh 6,Hà Tĩnh,coal,other,2028,300\nFormosa HaTinh 7,Hà Tĩnh,coal,other,2028,300\nFormosa HaTinh 8,Hà Tĩnh,other,2028,200\nFormosa HaTinh 9,Hà Tĩnh,other,2028,200\nFormosa HaTinh 10,Hà Tĩnh,coal,other,2030,300\nVung Ang 3,Hà Tĩnh,coal,other,2025,1200\nNa Duong II,Lạng Sơn,coal,other,2019,110\nQuang Tri 1,Quảng Trị,coal,other,2023,1320\nQuang Tri 2,Quảng Trị,coal,other,2028,1320\nDuyen Hai 1,Trà Vinh,coal,operating,2015,1244\nDuyen Hai 3,Trà Vinh,coal,operating,2016,1245\nVinh Tan 1,Bình Thuận,coal,operating,2000,230\nVinh Tan 3,Bình Thuận,coal,operating,2011,230\nVinh Tan 4,Bình Thuận,coal,operating,2019,1200\nMong Duong 1,Quảng Ninh,coal,other,2015,1080\nThai Binh 1,Thái Bình,LNG,planned,2026,1500\nThai Binh 2,Thái Bình,coal,planned,2028,600\nThai Binh 3,Thái Bình,other,2028,600\nHai Phong 3,Hải Phòng,other,2027,1200\nHai Phong 4,Hải Phòng,other,2030,1200\nQuan Trang 1,Thanh Hóa,other,2028,1200\nQuan Trang 2,Thanh Hóa,other,2030,1200\nQuan Trang 3,Thanh Hóa,other,2030,1200\nNghe An 1,Nghệ An,other,2029,1200\nNghe An 2,Nghệ An,other,2030,1200\nNghe An 3,Nghệ An,other,2030,1200\nHuu Hiep 1,Huế,other,2028,1320\nHuu Hiep 2,Huế,other,2030,1280\nDien Chau 2,Nghệ An,other,2029,1320\nDien Chau 1,Nghệ An,other,2030,1320\nCam Pha 2,Quảng Ninh,other,2030,600\nHa Long 1,Quảng Ninh,other,2029,1000\nHa Long 2,Quảng Ninh,other,2030,1000\nO Mon 1,Cần Thơ,LNG,operating,2010,330\nO Mon 2,Cần Thơ,LNG,planned,2026,705\nO Mon 3,Cần Thơ,LNG,planned,2028,750\nO Mon 4,Cần Thơ,LNG,planned,2030,750\nSoc Trang 1,Sóc Trăng,other,2018,270\nSong Hau 1,Hậu Giang,LNG,operating,2021,1200\nSong Hau 2,Hậu Giang,LNG,planned,2026,2000\nLong Phu 1,Sóc Trăng,other,2018,1200\nLong Phu 2,Sóc Trăng,other,2021,1320\nLong Phu 3,Sóc Trăng,other,2022,1800\nTan Phuoc 1,Tiền Giang,other,2029,1200\nTan Phuoc 2,Tiền Giang,other,2030,1200\nTan Phước 3,Tiền Giang,other,2030,1200\nKien Luong 1,Kiên Giang,other,2017,600\nKien Luong 2,Kiên Giang,other,2025,1200\nBac Lieu 1,Bạc Liêu,other,2028,1200\nKhanh Hoa 1,Khánh Hòa,other,2023,600\nKhanh Hoa 2,Khánh Hòa,other,2025,1200\nVinh Tan 5,Bình Thuận,coal,operating,2022,1200\nVinh Tan 6,Bình Thuận,other,2024,1200\nQuang Nam 1,Quảng Nam,other,2027,600\nQuang Nam 2,Quảng Nam,other,2030,1200\nQuang Ngai 1,Quảng Ngãi,other,2027,1300\nQuang Ngai 2,Quảng Ngãi,other,2030,1300\nBinh Dinh 1,Bình Định,other,2023,1200\nDuyen Hai 2,Trà Vinh,other,2021,1200\nBac Giang 1,Bắc Giang,other,2029,300\nBac Giang 2,Bắc Giang,other,2030,300\nMong Duong 2,Quảng Ninh,other,2026,1200\nMong Duong 3,Quảng Ninh,coal,other,2028,1200\nCam Pha 1,Quảng Ninh,coal,other,2030,660\nCam Pha 2 Ext,Quảng Ninh,coal,planned,2030,660\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 73695,
+    "completion_tokens": 2966
+  },
+  "wall_seconds": 32.237,
+  "cost_usd": 0.01283385,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "FR",
+    "architecture": "dense",
+    "provider": "Mistral",
+    "context_window": 262144
+  }
+}

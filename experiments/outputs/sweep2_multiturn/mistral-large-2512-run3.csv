@@ -1,0 +1,75 @@
+name,fuel,status,cod,province,capacity_mwe
+**Operational Coal Plants**,,,,,0
+Vinh Tan 1,Coal,Operational,2015,Binh Thuan,1245
+Vinh Tan 2,Coal,Operational,2014,Binh Thuan,1244
+Vinh Tan 4,Coal,Operational,2018,Binh Thuan,1200
+Duyen Hai 1,Coal,Operational,2015,Tra Vinh,1245
+Duyen Hai 2,Coal,Operational,2015,Tra Vinh,1245
+Duyen Hai 3,Coal,Operational,2020,Tra Vinh,1920
+Mong Duong 1,Coal,Operational,2015,Quang Ninh,1080
+Mong Duong 2,Coal,Operational,2015,Quang Ninh,1240
+Nghi Son 1,Coal,Operational,2013,Thanh Hoa,600
+Nghi Son 2,Coal,Operational,2022,Thanh Hoa,1200
+Hai Phong 1,Coal,Operational,2011,Haiphong,1200
+Hai Phong 2,Coal,Operational,2014,Haiphong,1200
+Quang Ninh 1,Coal,Operational,2011,Quang Ninh,1050
+Quang Ninh 2,Coal,Operational,2013,Quang Ninh,1050
+Song Hau 1,Coal,Operational,2015,Hau Giang,1200
+Formosa Ha Tinh,Coal,Operational,2019,Ha Tinh,1200
+Vung Ang 1,Coal,Operational,2015,Ha Tinh,1200
+Uong Bi,Coal,Operational,1975,Quang Ninh,105
+Pha Lai 1,Coal,Operational,1985,Haiphong,440
+Pha Lai 2,Coal,Operational,2001,Haiphong,600
+An Khanh - Bac Giang,Coal,Operational,2015,Bac Giang,110
+Cam Pha,Coal,Operational,2006,Quang Ninh,600
+Na Duong,Coal,Operational,2014,Lang Son,110
+Ninh Binh,Coal,Operational,1974,Ninh Binh,100
+**Under-Construction Coal Plants**,,,,,0
+Vinh Tan 4 Extension,Coal,Under Construction,Planned 2025,Binh Thuan,600
+Song Hau 2,Coal,Under Construction,Planned 2026,Hau Giang,1200
+Van Phong 1,Coal,Under Construction,Planned 2025,Khanh Hoa,1320
+Vung Ang 2,Coal,Under Construction,Planned 2025,Ha Tinh,1200
+Quang Trach 1,Coal,Under Construction,Planned 2026,Quang Binh,1200
+Long Phu 1,Coal,Under Construction,Planned 2025,Soc Trang,1200
+**Planned Coal Plants (PDP7 & PDP8)**,,,,,0
+Nghi Son 3,Coal,Planned,Planned 2028,Thanh Hoa,1800
+Long Phu 2,Coal,Planned,Planned 2027,Soc Trang,1200
+Long Phu 3,Coal,Planned,Planned 2029,Soc Trang,1200
+Quang Trach 2,Coal,Planned,Planned 2028,Quang Binh,1200
+Quang Ninh 3,Coal,Planned,Planned 2030,Quang Ninh,1200
+Quang Ninh 4,Coal,Planned,Planned 2030,Quang Ninh,1200
+**Operational Gas Plants (Local Gas)**,,,,,0
+Ca Mau 1,Local Natural Gas,Operational,2008,Ca Mau,771
+Ca Mau 2,Local Natural Gas,Operational,2008,Ca Mau,771
+O Mon 1,Local Natural Gas,Operational,2015,Can Tho,660
+O Mon 2,Local Natural Gas,Operational,2015,Can Tho,750
+Nhon Trach 1,Local Natural Gas,Operational,2008,Dong Nai,450
+Nhon Trach 2,Local Natural Gas,Operational,2011,Dong Nai,750
+Phu My 1,Local Natural Gas,Operational,2000,Ba Ria-Vung Tau,1090
+Phu My 2.1,Local Natural Gas,Operational,2004,Ba Ria-Vung Tau,450
+Phu My 2.2,Local Natural Gas,Operational,2005,Ba Ria-Vung Tau,715
+Phu My 3,Local Natural Gas,Operational,2003,Ba Ria-Vung Tau,720
+Phu My 4,Local Natural Gas,Operational,2004,Ba Ria-Vung Tau,450
+**Under-Construction Gas Plants (LNG)**,,,,,0
+Nhon Trach 3,Imported LNG,Under Construction,Planned 2025,Dong Nai,800
+Son My 1,Imported LNG,Under Construction,Planned 2026,Binh Thuan,2400
+Bac Lieu LNG,Imported LNG,Under Construction,Planned 2026,Bac Lieu,3200
+**Planned Gas Plants (LNG) (PDP8)**,,,,,0
+Nhon Trach 4,Imported LNG,Planned,Planned 2027,Dong Nai,800
+Son My 2,Imported LNG,Planned,Planned 2028,Binh Thuan,2400
+Thi Vai LNG,Imported LNG,Planned,Planned 2027,Ba Ria-Vung Tau,3200
+Hai Phong LNG,Imported LNG,Planned,Planned 2028,Haiphong,1500
+Quang Ninh LNG,Imported LNG,Planned,Planned 2029,Quang Ninh,1500
+Vung Ang 3 LNG,Imported LNG,Planned,Planned 2030,Ha Tinh,1500
+Tra Vinh LNG,Imported LNG,Planned,Planned 2030,Tra Vinh,1500
+O Mon 3,Local Natural Gas,Planned,Planned 2027,Can Tho,750
+O Mon 4,Local Natural Gas,Planned,Planned 2028,Can Tho,750
+**LNG Import Terminals**,,,,,0
+Thi Vai LNG Terminal,Imported LNG,Under Construction,Planned 2026,Ba Ria-Vung Tau,3200
+Son My LNG Terminal,Imported LNG,Under Construction,Planned 2025,Binh Thuan,4800
+Bac Lieu LNG Terminal,Imported LNG,Under Construction,Planned 2026,Bac Lieu,3200
+Hai Phong LNG Terminal,Imported LNG,Planned,Planned 2028,Haiphong,1500
+**Operational Oil Plants**,,,,,0
+Thac Mo,Oil,Operational,1995,Binh Phuoc,150
+Hiep Phuoc,Oil,Operational,2008,Ho Chi Minh City,375
+Thu Duc,Oil,Operational,1966,Ho Chi Minh City,250

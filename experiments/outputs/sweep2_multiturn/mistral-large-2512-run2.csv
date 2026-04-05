@@ -1,0 +1,66 @@
+name,fuel,status,cod,province,capacity_mwe
+Vinh Tan 1,Coal,Operational,2015,Binh Thuan,1245
+Vinh Tan 2,Coal,Operational,2014,Binh Thuan,1244
+Vinh Tan 3,Coal,Operational,2020,Binh Thuan,1980
+Vinh Tan 4 (Phase 1),Coal,Operational,2018,Binh Thuan,600
+Vinh Tan 4 (Phase 2),Coal,Operational,2020,Binh Thuan,600
+Duyen Hai 1,Coal,Operational,2015,Tra Vinh,1245
+Duyen Hai 2,Coal,Operational,2015,Tra Vinh,1245
+Duyen Hai 3,Coal,Operational,2020,Tra Vinh,1245
+Duyen Hai 4,Coal,Under Construction,2025,Tra Vinh,1200
+Nghi Son 1,Coal,Operational,2013,Thanh Hoa,600
+Nghi Son 2,Coal,Operational,2022,Thanh Hoa,1200
+Mong Duong 1,Coal,Operational,2015,Quang Ninh,1080
+Mong Duong 2,Coal,Operational,2015,Quang Ninh,1240
+Hai Phong 1,Coal,Operational,2011,Haiphong,600
+Hai Phong 2,Coal,Operational,2014,Haiphong,600
+Quang Ninh 1,Coal,Operational,2011,Quang Ninh,600
+Quang Ninh 2,Coal,Operational,2013,Quang Ninh,600
+Cam Pha,Coal,Operational,2006,Quang Ninh,600
+Uong Bi,Coal,Operational,1975,Quang Ninh,100
+Pha Lai 1,Coal,Operational,1986,Haiduong,440
+Pha Lai 2,Coal,Operational,2001,Haiduong,600
+Formosa Ha Tinh,Coal,Operational,2017,Ha Tinh,1200
+Van Phong 1,Coal,Under Construction,2025,Khanh Hoa,1320
+Song Hau 1,Coal,Under Construction,2024,Hau Giang,1200
+Song Hau 2,Coal,Planned,2027,Hau Giang,1200
+Quang Trach 1,Coal,Under Construction,2025,Quang Binh,1200
+Quang Trach 2,Coal,Planned,2027,Quang Binh,1200
+Vung Ang 1,Coal,Operational,2015,Ha Tinh,1200
+Vung Ang 2,Coal,Under Construction,2025,Ha Tinh,1200
+Vung Ang 3,Coal,Planned,2028,Ha Tinh,1200
+Thang Long,Coal,Planned,2029,Quang Ninh,1200
+An Khanh,Coal,Planned,2030,Bac Ninh,1200
+Quynh Lap 1,Coal,Planned,2028,Nghe An,1200
+Quynh Lap 2,Coal,Planned,2030,Nghe An,1200
+O Mon 1,Local Natural Gas,Operational,2010,Can Tho,330
+O Mon 2,Local Natural Gas,Operational,2014,Can Tho,750
+O Mon 3,Local Natural Gas,Planned,2026,Can Tho,750
+O Mon 4,Local Natural Gas,Planned,2027,Can Tho,750
+Ca Mau 1,Local Natural Gas,Operational,2008,Ca Mau,750
+Ca Mau 2,Local Natural Gas,Operational,2010,Ca Mau,750
+Phu My 1,Local Natural Gas,Operational,1997,Baria-Vung Tau,1090
+Phu My 2.1,Local Natural Gas,Operational,2005,Baria-Vung Tau,450
+Phu My 2.2,Local Natural Gas,Operational,2005,Baria-Vung Tau,715
+Phu My 3,Local Natural Gas,Operational,2003,Baria-Vung Tau,720
+Phu My 4,Local Natural Gas,Operational,2004,Baria-Vung Tau,450
+Nhon Trach 1,Local Natural Gas,Operational,2008,Dong Nai,450
+Nhon Trach 2,Local Natural Gas,Operational,2011,Dong Nai,750
+Nhon Trach 3,Local Natural Gas,Under Construction,2025,Dong Nai,800
+Nhon Trach 4,Local Natural Gas,Planned,2026,Dong Nai,750
+Bac Lieu 1,Local Natural Gas,Operational,2010,Bac Lieu,750
+Khanh Hoa,Local Natural Gas,Operational,2009,Khanh Hoa,120
+Thi Vai LNG Terminal,LNG Import Terminal,Under Construction,2024,Baria-Vung Tau,0
+Son My LNG Terminal,LNG Import Terminal,Under Construction,2025,Binh Thuan,0
+Bac Lieu LNG Terminal,LNG Import Terminal,Under Construction,2024,Bac Lieu,0
+Ca Na LNG Terminal,LNG Import Terminal,Planned,2027,Ninh Thuan,0
+Hai Phong LNG Terminal,LNG Import Terminal,Planned,2028,Haiphong,0
+Long An LNG Terminal,LNG Import Terminal,Planned,2027,Long An,0
+Son My 1,Imported LNG,Under Construction,2026,Binh Thuan,2250
+Son My 2,Imported LNG,Planned,2027,Binh Thuan,2250
+Bac Lieu LNG,Imported LNG,Under Construction,2024,Bac Lieu,3200
+Long An LNG,Imported LNG,Planned,2027,Long An,1500
+Hai Phong LNG,Imported LNG,Planned,2028,Haiphong,1500
+Ca Na LNG,Imported LNG,Planned,2029,Ninh Thuan,1500
+Thi Vai LNG,Imported LNG,Planned,2030,Baria-Vung Tau,1500
+Quang Ninh LNG,Imported LNG,Planned,2030,Quang Ninh,1200
