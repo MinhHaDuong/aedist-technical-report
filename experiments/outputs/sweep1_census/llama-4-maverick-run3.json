@@ -1,0 +1,21 @@
+{
+  "model": "meta-llama/llama-4-maverick",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "\"Fuel Type\",\"Project Name\",\"Province\",\"Capacity (MWe)\",\"Construction Stage\",\"COD\"\n\"Coal\",\"Na Duong 1\",\"Lang Son\",110,\"Operating\",2005\n\"Coal\",\"Cua Dong\",\"Nghe An\",100,\"Operating\",2014\n\"Coal\",\"Ninh Binh\",\"Ninh Binh\",100,\"Operating\",1974\n\"Coal\",\"Uong Bi I\",\"Quang Ninh\",300,\"Operating\",1976 (extension in 2009)\n\"Coal\",\"Uong Bi II\",\"Quang Ninh\",330,\"Mothballed\",2009 (never operated)\n\"Coal\",\"Vang Danh\",\"Quang Ninh\",440,\"Operating\",2009\n\"Coal\",\"Mong Duong 1\",\"Quang Ninh\",1120,\"Operating\",2015\n\"Coal\",\"Mong Duong 2\",\"Quang Ninh\",1240,\"Operating\",2015\n\"Coal\",\"Hai Phong I\",\"Hai Phong\",1200,\"Operating\",2011 (phase 1: 600MW), 2014 (phase 2: 600MW)\n\"Coal\",\"Duyen Hai 1\",\"Tra Vinh\",1200,\"Operating\",2015\n\"Coal\",\"Duyen Hai 3\",\"Tra Vinh\",1200,\"Operating\",2016\n\"Coal\",\"Vung Ang 1\",\"Ha Tinh\",1200,\"Operating\",2015\n\"Coal\",\"Thai Binh I\",\"Thai Binh\",600,\"Mothballed\",2018 (never fully operated)\n\"Coal\",\"Thai Binh II\",\"Thai Binh\",1200,\"Under construction\",2025 (planned)\n\"Coal\",\"Song Hau 1\",\"Tra Vinh\",1200,\"Cancelled\",N/A\n\"Coal\",\"Long Phu 1\",\"Soc Trang\",1200,\"Under construction\",2024 (planned)\n\"Coal\",\"An Hoa\",\"Quang Nam\",2x600,\"Cancelled\",N/A\n\"Coal\",\"Quang Trach 1\",\"Quang Binh\",1200,\"Under construction\",2024 (planned)\n\"Coal\",\"Quang Trach 2\",\"Quang Binh\",1200,\"Pre-construction\",2025 (planned)\n\"Coal\",\"Na Hang (Nham Hao)\",\"Tuyen Quang\",342,\"Cancelled\",N/A\n\"Local Natural Gas\",\"Phu My 2.1\",\"Ba Ria-Vung Tau\",450,\"Operating\",1997 (Block A)\n\"Local Natural Gas\",\"Phu My 2.1 Extension\",\"Ba Ria-Vung Tau\",450,\"Operating\",2002 (Block B & C)\n\"Local Natural Gas\",\"Phu My 3\",\"Ba Ria-Vung Tau\",720,\"Operating\",2004\n\"Local Natural Gas\",\"Phu My 4\",\"Ba Ria-Vung Tau\",450,\"Operating\",2004\n\"Local Natural Gas\",\"Cai Mep\",\"Ba Ria-Vung Tau\",400,\"Mothballed\",2016 (Never operated)\n\"Local Natural Gas\",\"Nhon Trach 2\",\"Dong Nai\",750,\"Operating\",2011\n\"Local Natural Gas\",\"Nhon Trach 3\",\"Dong Nai\",750,\"Under construction\",2024 (planned)\n\"Local Natural Gas\",\"Nhon Trach 4\",\"Dong Nai\",450,\"Pre-construction\",2025 (planned)\n\"Local Natural Gas\",\"O Mon C\",\"Can Tho\",750,\"Under construction\",2024 (planned)\n\"Local Natural Gas\",\"O Mon B\",\"Can Tho\",330,\"Mothballed\",2009 (Never fully operated)\n\"Imported LNG\",\"Thi Vai LNG\",\"Ba Ria-Vung Tau\",2400,\"Pre-construction\",2027 (planned)\n\"Imported LNG\",\"Son My LNG\",\"Binh Thuan\",4500,\"Pre-construction\",2027-2030 (planned)\n\"Imported LNG\",\"Ca Na LNG\",\"Ninh Thuan\",4500,\"Pre-construction\",2028-2031 (planned)",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 830
+  },
+  "wall_seconds": 5.568,
+  "cost_usd": 0.00050745,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "Meta",
+    "context_window": 1048576
+  }
+}

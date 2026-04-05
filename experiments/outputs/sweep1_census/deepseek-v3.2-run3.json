@@ -1,0 +1,21 @@
+{
+  "model": "deepseek/deepseek-v3.2",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is a table listing major thermal power plants in Vietnam, formatted as CSV. The list is based on available public data up to early 2024 and includes significant operational, under-construction, and planned projects. Note that this list may not be exhaustive for smaller or older plants, and planned dates/capacities are subject to change.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nVung Ang 1,Coal,Operational,2015,Ha Tinh,1200\nVinh Tan 2,Coal,Operational,2014,Binh Thuan,1244\nVinh Tan 4,Coal,Operational,2017,Binh Thuan,600\nDuyen Hai 1,Coal,Operational,2015,Tra Vinh,1245\nDuyen Hai 3 Expanded,Coal,Operational,2016,Tra Vinh,720\nMong Duong 2,Coal,Operational,2016,Quang Ninh,1200\nThai Binh 2,Coal,Operational,2023,Thai Binh,1200\nNghi Son 1,Coal,Operational,2013,Thanh Hoa,600\nNghi Son 2,Coal,Operational,2020,Thanh Hoa,1200\nVan Phong 1,Coal,Operational,2022,Khanh Hoa,1320\nLong Phu 1,Coal,Operational,2022,Soc Trang,1200\nSong Hau 1,Coal,Operational,2020,Hau Giang,1200\nNhon Trach 1 & 2,Local Natural Gas,Operational,2009/2011,Dong Nai,750\nNhon Trach 3 & 4,Local Natural Gas,Under Construction,Planned 2025-2026,Dong Nai,1500\nO Mon 1,Local Natural Gas,Operational,2003,Can Tho,660\nO Mon 3,Local Natural Gas,Operational,2016,Can Tho,660\nO Mon 4,Local Natural Gas,Operational,2021,Can Tho,660\nPhu My Complex,Local Natural Gas,Operational,1997-2005,Ba Ria - Vung Tau,3900\nCa Mau 1 & 2,Local Natural Gas,Operational,2007,Ca Mau,1500\nHai Lang LNG,Imported LNG,Planned,Planned 2027,Quang Tri,1500\nSon My 1 LNG,Imported LNG,Planned,Planned 2026-2027,Binh Thuan,2250\nSon My 2 LNG,Imported LNG,Planned,Planned 2027,Binh Thuan,2200\nBac Lieu LNG,Imported LNG,Under Construction,Planned 2025-2027,Bac Lieu,3200\nNhon Trach 3 & 4 (Initial Gas: LNG),Imported LNG,Under Construction,Planned 2025-2026,Dong Nai,1500\nQuang Ninh LNG,Imported LNG,Planned,Planned 2028,Quang Ninh,1500\nThai Binh LNG,Imported LNG,Planned,Planned 2028,Thai Binh,1500\nQuang Tri LNG,Imported LNG,Planned,Planned 2028,Quang Tri,1500\nLong An 1 & 2 LNG,Imported LNG,Planned,Planned 2027-2028,Long An,3000\nHoa Binh Expansion (Moist Coal),Coal,Planned,Planned after 2030,Hoa Binh,600\nQuynh Lap 1 & 2,Coal,Planned / Suspended,Unclear,Nghe An,2400\nVung Ang 2,Coal,Planned / Delayed,Unclear,Ha Tinh,1200\nNam Dinh 1,Coal,Planned / Delayed,Unclear,Nam Dinh,1200\nVinh Tan 3,Coal,Operational,2021,Binh Thuan,1980\nDuyen Hai 2,Coal,Operational,2016,Tra Vinh,1200\nDuyen Hai 3 (Initial),Coal,Operational,2015,Tra Vinh,720\n```\n\n**Important Notes:**\n1.  **Capacity:** Figures are in gross Megawatt electric (MWe). Net capacity available to the grid is typically slightly lower.\n2.  **Stages:** \"Operational\" = commercially operating; \"Under Construction\" = active building phase; \"Planned\" = approved and in advanced development but construction not started; \"Suspended/Delayed\" = facing significant legal, financial, or policy hurdles.\n3.  **Fuel for New Plants:** Some plants under construction (like Nhon Trach 3&4) are designed to start with domestic gas but will transition to **Imported LNG** as local gas fields deplete.\n4.  **COD Dates:** Planned dates for LNG projects are indicative and often face delays due to final investment decisions, infrastructure (FSRU, pipelines), and supply contracts.\n5.  **Policy Context:** Vietnam's Power Development Plan 8 (PDP8) emphasizes a shift from new coal to gas/LNG and renewables. Many planned coal projects (Quynh Lap, Vung Ang 2, Nam Dinh 1) are effectively suspended or canceled under this policy, while LNG projects are prioritized.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 56,
+    "completion_tokens": 1210
+  },
+  "wall_seconds": 90.304,
+  "cost_usd": 0.00047436,
+  "model_metadata": {
+    "size_class": "frontier",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "DeepSeek",
+    "context_window": 163840
+  }
+}

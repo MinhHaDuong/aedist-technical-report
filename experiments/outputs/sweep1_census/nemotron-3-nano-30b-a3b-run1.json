@@ -1,0 +1,21 @@
+{
+  "model": "nvidia/nemotron-3-nano-30b-a3b",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,Connection Date,Province,Generation Capacity (MWe)\nThi Vai Thermal Power Plant,Coal,Operational,2005,Bac Giang,600\nHai Phong Thermal Power Plant,Coal,Operational,1995,Hai Phong,600\nLong Phu 1 Thermal Power Plant,Coal,Operational,2007,Binh Thuan,600\nLong Phu 2 Thermal Power Plant,Coal,Operational,2010,Binh Thuan,600\nVung Ang 1 Coal Power Plant,Coal,Operational,2008,Ha Tinh,600\nVung Ang 2 Coal Power Plant,Coal,Operational,2014,Ha Tinh,660\nDuyen Hai 1 Coal Power Plant,Coal,Operational,2008,Thanh Hoa,900\nDuyen Hai 2 Coal Power Plant,Coal,Operational,2009,Thanh Hoa,900\nNghi Son 1 Coal Power Plant,Coal,Operational,2015,Thanh Hoa,900\nVinh Tan 1 Coal Power Plant,Coal,Operational,2001,Binh Duong,600\nVinh Tan 2 Coal Power Plant,Coal,Operational,2008,Binh Duong,600\nVinh Tan 3 Coal Power Plant,Coal,Under Construction,2026,Binh Duong,1200\nVinh Tan 4 Coal Power Plant,Coal,Under Construction,2027,Binh Duong,1200\nDa Nang LNG Power Plant,Imported LNG,Operational,2015,Da Nang,600\nPhu My 2 Gas Power Plant,Local Natural Gas,Operational,2013,Ba Ria-Vung Tau,120",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 5564
+  },
+  "wall_seconds": 88.291,
+  "cost_usd": 0.0011163999999999998,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "NVIDIA",
+    "context_window": 262144
+  }
+}

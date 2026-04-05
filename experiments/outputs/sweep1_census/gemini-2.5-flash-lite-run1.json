@@ -1,0 +1,21 @@
+{
+  "model": "google/gemini-2.5-flash-lite",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date,Province,Capacity (MWe)\nVinh Tan 1,Coal,Operational,2019,Binh Thuan,1200\nVinh Tan 2,Coal,Operational,2014,Binh Thuan,600\nVinh Tan 3,Coal,Under Construction,2024,Binh Thuan,1980\nVinh Tan 4,Coal,Operational,2019,Binh Thuan,600\nVinh Tan 4 Open Cycle,Coal,Operational,2020,Binh Thuan,200\nMong Duong 1,Coal,Operational,2015,Quang Ninh,1080\nMong Duong 2,Coal,Operational,2018,Quang Ninh,1080\nCong Thanh,Coal,Operational,2017,Ninh Thuan,600\nDuyen Hai 1,Coal,Operational,2015,Tra Vinh,1200\nDuyen Hai 2,Coal,Operational,2016,Tra Vinh,600\nDuyen Hai 3,Coal,Operational,2016,Tra Vinh,600\nDuyen Hai 3 Open Cycle,Coal,Operational,2017,Tra Vinh,200\nNghi Son 1,Coal,Operational,2014,Thanh Hoa,600\nNghi Son 2,Coal,Operational,2020,Thanh Hoa,1200\nHai Phong,Coal,Operational,2017,Hai Phong,600\nCao Son,Coal,Operational,2010,Quang Ninh,600\nThuan An,Coal,Operational,2012,Thua Thien Hue,400\nHoi Xuan,Coal,Operational,2016,Thanh Hoa,600\nSon Dong,Coal,Operational,2017,Bac Giang,1320\nQuang Trach 1,Coal,Under Construction,2023,Quang Binh,1200\nQuang Trach 2,Coal,Planned,2027,Quang Binh,1200\nLong Phu 1,Coal,Under Construction,2024,Soc Trang,1320\nLong Phu 2,Coal,Planned,2030,Soc Trang,1320\nNa Duong,Coal,Operational,2009,Lang Son,100\nPhan Thiet,Coal,Operational,2020,Binh Thuan,600\nThu Duc,Local Natural Gas,Operational,1999,Ho Chi Minh City,393\nPhu My 1,Local Natural Gas,Operational,2000,Ba Ria - Vung Tau,437\nPhu My 2,Local Natural Gas,Operational,2004,Ba Ria - Vung Tau,437\nPhu My 3,Local Natural Gas,Operational,2006,Ba Ria - Vung Tau,720\nNhon Trach 1,Local Natural Gas,Operational,2007,Dong Nai,750\nNhon Trach 2,Local Natural Gas,Operational,2010,Dong Nai,750\nBa Ria,Local Natural Gas,Operational,2008,Ba Ria - Vung Tau,249\nCa Mau,Local Natural Gas,Operational,2008,Ca Mau,300\nBinh Phu,Local Natural Gas,Operational,2011,Binh Phuoc,450\nMien Trung,Local Natural Gas,Operational,2012,Quang Nam,150\nBao Thang,Local Natural Gas,Operational,2014,Lao Cai,49\nCam Pha,Local Natural Gas,Operational,2015,Quang Ninh,150\nDien Luc Tri An,Local Natural Gas,Operational,2015,Dong Nai,150\nPhu My 4,Local Natural Gas,Operational,2016,Ba Ria - Vung Tau,750\nQuy Nhon,Local Natural Gas,Operational,2017,Binh Dinh,135\nPV Gas South,Local Natural Gas,Operational,2017,Dong Nai,450\nHiep Phuoc 1,Local Natural Gas,Operational,2018,Ho Chi Minh City,800\nHua Na,Local Natural Gas,Operational,2019,Binh Thuan,40\nNam Dinh,Local Natural Gas,Operational,2020,Nam Dinh,150\nPetro Vietnam Power Nhon Trach 3 & 4,Local Natural Gas,Under Construction,2024,Dong Nai,1500\nPetro Vietnam Power Nhon Trach 3 & 4 Combined Cycle,Local Natural Gas,Under Construction,2025,Dong Nai,750\nPetro Vietnam Power Nhon Trach 3 & 4 Open Cycle,Local Natural Gas,Under Construction,2024,Dong Nai,750\nSon My 1,Imported LNG,Planned,2026,Binh Thuan,2200\nSon My 2,Imported LNG,Planned,2027,Binh Thuan,2000\nBac Lieu,Imported LNG,Planned,2025,Bac Lieu,3200\nHiep Phuoc Gas Power Plant,Imported LNG,Planned,2026,Ho Chi Minh City,1200\nNhon Trach 5,Imported LNG,Planned,2028,Dong Nai,750\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 52,
+    "completion_tokens": 1298
+  },
+  "wall_seconds": 5.43,
+  "cost_usd": 0.0005244000000000001,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Google",
+    "context_window": 1048576
+  }
+}

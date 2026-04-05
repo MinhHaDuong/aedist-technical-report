@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-397b-a17b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,Connection Date,Province,Capacity MWe\n\"Phu My 1\",\"Local Natural Gas\",\"Operational\",\"2004\",\"Ba Ria-Vung Tau\",\"1200\"\n\"Phu My 2.1 & 2.2\",\"Local Natural Gas\",\"Operational\",\"2002-2006\",\"Ba Ria-Vung Tau\",\"1200\"\n\"Phu My 3\",\"Local Natural Gas\",\"Operational\",\"2005\",\"Ba Ria-Vung Tau\",\"1000\"\n\"Phu My 4\",\"Local Natural Gas\",\"Operational\",\"2007\",\"Ba Ria-Vung Tau\",\"450\"\n\"Ba Ria\",\"Local Natural Gas\",\"Operational\",\"1993-2004\",\"Ba Ria-Vung Tau\",\"450\"\n\"Ca Mau 1\",\"Local Natural Gas\",\"Operational\",\"2007\",\"Ca Mau\",\"750\"\n\"Ca Mau 2\",\"Local Natural Gas\",\"Operational\",\"2008\",\"Ca Mau\",\"690\"\n\"Nhon Trach 1\",\"Local Natural Gas\",\"Operational\",\"2007\",\"Dong Nai\",\"450\"\n\"Nhon Trach 2\",\"Local Natural Gas\",\"Operational\",\"2011\",\"Dong Nai\",\"1030\"\n\"Nhon Trach 3 & 4\",\"Imported LNG\",\"Under Construction\",\"2025 (Planned)\",\"Dong Nai\",\"1500\"\n\"O Mon 1\",\"Local Natural Gas\",\"Operational\",\"2010\",\"Can Tho\",\"660\"\n\"O Mon 2\",\"Local Natural Gas\",\"Operational\",\"2013\",\"Can Tho\",\"660\"\n\"Can Tho\",\"Local Natural Gas\",\"Operational\",\"2011\",\"Can Tho\",\"225\"\n\"Thu Duc 2\",\"Local Natural Gas\",\"Operational\",\"2011\",\"Ho Chi Minh City\",\"670\"\n\"Vinh Tan 1\",\"Coal\",\"Operational\",\"2016\",\"Binh Thuan\",\"1200\"\n\"Vinh Tan 2\",\"Coal\",\"Operational\",\"2015\",\"Binh Thuan\",\"1200\"\n\"Vinh Tan 4\",\"Coal\",\"Operational\",\"2018\",\"Binh Thuan\",\"1200\"\n\"Nghi Son 1 & 2\",\"Coal\",\"Operational\",\"2018-2019\",\"Thanh Hoa\",\"1200\"\n\"Quang Ninh 1 & 2\",\"Coal\",\"Operational\",\"2011-2012\",\"Quang Ninh\",\"1200\"\n\"Hai Phong 1 & 2\",\"Coal\",\"Operational\",\"2005-2006\",\"Hai Phong\",\"1200\"\n\"Duyen Hai 1\",\"Coal\",\"Operational\",\"2016\",\"Tra Vinh\",\"1200\"\n\"Duyen Hai 3\",\"Coal\",\"Operational\",\"2019\",\"Tra Vinh\",\"1240\"\n\"Vung Ang 1\",\"Coal\",\"Operational\",\"2016\",\"Ha Tinh\",\"1200\"\n\"Thai Binh 1\",\"Coal\",\"Operational\",\"2011\",\"Thai Binh\",\"1100\"\n\"Thai Binh 2\",\"Coal\",\"Operational\",\"2021\",\"Thai Binh\",\"1200\"\n\"Long Phu 1\",\"Coal\",\"Operational\",\"2020\",\"Soc Trang\",\"1200\"\n\"Hiep Phuoc\",\"Imported LNG\",\"Planned\",\"2027 (Planned)\",\"Ho Chi Minh City\",\"1600\"\n\"Thi Vai\",\"Imported LNG\",\"Planned\",\"2026 (Planned)\",\"Ba Ria-Vung Tau\",\"1200\"\n\"Quang Ninh LNG Conversion\",\"Imported LNG\",\"Planned\",\"2028 (Planned)\",\"Quang Ninh\",\"1200\"\n\"Nam Dinh 1\",\"Coal\",\"Cancelled\",\"N/A\",\"Nam Dinh\",\"0\"",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 4145
+  },
+  "wall_seconds": 60.202,
+  "cost_usd": 0.009723869999999999,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

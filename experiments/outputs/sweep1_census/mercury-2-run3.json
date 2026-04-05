@@ -1,0 +1,21 @@
+{
+  "model": "inception/mercury-2",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant_Name,Fuel_Type,Construction_Stage,COD,Province,Capacity_MW\nNghi Son 1,Coal,Operational,2015,Thanh Hóa,1200\nNghi Son 2,Coal,Operational,2021,Thanh Hóa,1200\nVung Ang 1,Coal,Operational,2015,Hà Tĩnh,1200\nVung Ang 2,Coal,Operational,2020,Hà Tĩnh,1200\nVung Ang 3,Coal,Under Construction,2024,Hà Tĩnh,1200\nVung Ang 4,Coal,Planned,2027,Hà Tĩnh,1200\nNam Dinh 1,Coal,Operational,2015,Nam Đình,1200\nNam Dinh 2,Coal,Operational,2020,Nam Đình,1200\nQuang Tri 1,Coal,Operational,2015,Quảng Trị,1200\nQuang Tri 2,Coal,Operational,2020,Quảng Trị,1200\nHai Phong 1,Coal,Operational,2015,Hải Phòng,1200\nHai Phong 2,Coal,Under Construction,2024,Hải Phòng,1200\nDung Quat,Coal,Operational,2015,Quảng Ngãi,1200\nBac Ninh,Coal,Operational,2020,Bắc Ninh,1200\nNinh Thuan 1,Coal,Operational,2020,Ninh Thuận,1200\nThai Binh 1,Coal,Operational,2020,Thái Bình,1200\nBinh Phuoc 1,Coal,Under Construction,2025,Bình Phước,1200\nQuang Ninh 1,Coal,Under Construction,2025,Quảng Ninh,1200\nPhu My 1,Imported LNG,Operational,2015,Bình Thuận,1200\nPhu My 2,Imported LNG,Operational,2020,Bình Thuận,1200\nPhu My 3,Imported LNG,Under Construction,2025,Bình Thuận,1200\nVung Tau 1,Imported LNG,Operational,2018,Bà Rịa - Vũng Tàu,300\nVung Tau 2,Imported LNG,Under Construction,2024,Bà Rịa - Vũng Tàu,300\nDa Nang 1,Imported LNG,Operational,2019,Đà Nẵng,300\nDa Nang 2,Imported LNG,Under Construction,2025,Đà Nẵng,300\nHai Phong 3,Local Natural Gas,Operational,2018,Hải Phòng,300\nKhanh Hoa 1,Local Natural Gas,Operational,2019,Khánh Hòa,300\nBac Ninh 1,Local Natural Gas,Operational,2020,Bắc Ninh,300\nBac Ninh 2,Local Natural Gas,Under Construction,2025,Bắc Ninh,300\nVung Ang 5,Local Natural Gas,Under Construction,2025,Hà Tĩnh,300\nBinh Duong 1,Local Natural Gas,Operational,2021,Bình Dương,300\nBinh Duong 2,Local Natural Gas,Under Construction,2024,Bình Dương,300\nQuang Ninh 2,Local Natural Gas,Planned,2026,Quảng Ninh,300",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 53,
+    "completion_tokens": 5949
+  },
+  "wall_seconds": 7.044,
+  "cost_usd": 0.004475,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "Other",
+    "architecture": "dense",
+    "provider": "Inception",
+    "context_window": 128000
+  }
+}

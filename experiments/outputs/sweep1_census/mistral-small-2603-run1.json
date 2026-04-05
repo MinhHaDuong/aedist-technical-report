@@ -1,0 +1,21 @@
+{
+  "model": "mistralai/mistral-small-2603",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is the requested data in CSV format. Note that the list includes operational plants, under-construction projects, and some delayed or planned developments as of the latest available data (2023–2024). Some figures are estimates or based on approved MOUs.\n\n```csv\nPlant Name,Province,Status,Connection Date,Capacity (MWe),Fuel Type\nVinh Tan 1,Tuy Phong, Binh Thuan,Operational,2018,1244,Coal\nVinh Tan 2,Tuy Phong, Binh Thuan,Operational,2019,1244,Coal\nVinh Tan 3,Tuy Phong, Binh Thuan,Operational,2023,1243,Coal\nVinh Tan 4,Tuy Phong, Binh Thuan,Under Construction,Planned 2024,1243,Coal\nVinh Tan 5,Tuy Phong, Binh Thuan,Planned,Proposed 2026,1200,Coal\nUong Bi 1,Uong Bi, Quang Ninh,Operational,1998,300,Coal\nUong Bi 2,Uong Bi, Quang Ninh,Operational,2003,300,Coal\nUong Bi 3,Uong Bi, Quang Ninh,Operational,2006,420,Coal\nUong Bi 4,Tam Thanh, Uong Bi, Quang Ninh,Operational,2013,483,Coal\nNha Trang No.1,Phu Vang, Thua Thien Hue,Operational,2004,110,Natural Gas (local)\nTri An 1,Trang Bom, Dong Nai,Operational,1994,300,Hydro (not thermal, included for completeness reference)\nTri An 2,Trang Bom, Dong Nai,Operational,2005,300,Hydro\nMong Duong 1,Cam Pha, Quang Ninh,Operational,2015,1080,Coal\nMong Duong 2,Cam Pha, Quang Ninh,Operational,2016,1080,Coal\nMong Duong 3,Cam Pha, Quang Ninh,Operational,2015,600,Coal\nSơn Mỹ 1,Ba Tri, Ben Tre,Under Construction,Planned 2025,1337,Imported LNG\nSơn Mỹ 2,Ba Tri, Ben Tre,Under Construction,Planned 2026,1337,Imported LNG\nNhơn Trạch 1,Nhơn Trạch, Dong Nai,Operational,2009,434,Natural Gas (local)\nNhơn Trạch 2,Nhơn Trạch, Dong Nai,Operational,2011,433,Natural Gas (local)\nSơn Động 1,Nho Quan, Ninh Binh,Operational,2010,220,Coal\nSơn Động 2,Nho Quan, Ninh Binh,Operational,2012,220,Coal\nHà Tĩnh 1,Thach Ganh,Kỳ Anh,Ha Tinh,Operational,2015,1200,Coal\nMinh Quang,Cam Pha, Quang Ninh,Operational,2001,100,Hydro\nO Mon 1,Ó Môn, Can Tho,Operational,2010,720,Natural Gas (local)\nO Mon 2,Ó Môn, Can Tho,Operational,2011,720,Natural Gas (local)\nO Mon 3,Ó Môn, Can Tho,Under Construction,Planned 2025,720,Imported LNG\nO Mon 4,Ó Môn, Can Tho,Planned,Proposed 2026,720,Imported LNG\nNam Định 1,Nam Dinh City,Nam Dinh,Under Construction,Planned 2025,600,Coal\nDinh Cố,Phu My,Tuy Phong, Binh Thuan,Under Construction,Planned 2025,760,Imported LNG\nLong Phu 1,Long Phu,Sóc Trăng,Under Construction,Planned 2024,1088,Coal\nLong Phu 2,Long Phu,Sóc Trăng,Under Construction,Planned 2025,1088,Coal\nQuảng Trạch 1,Quảng Trạch,Quảng Bình,Under Construction,Planned 2027,1000,Coal\nQuảng Trạch 2,Quảng Trạch,Quảng Bình,Planned,Proposed 2028,1000,Coal\nCà Ná 1,Cà Ná,Thuận Bắc, Ninh Thuận,Planned,Proposed 2026,1200,Coal\nCà Ná 2,Cà Ná,Thuận Bắc, Ninh Thuận,Planned,Proposed 2027,1200,Coal\nThai Binh 1,Hưng Hà,Thái Bình,Approved,Construction start 2023,600,Coal\nThai Binh 2,Hưng Hà,Thái Bình,Approved,Construction start 2024,600,Coal\nBac Giang,Lang Giang,Bac Giang,Planned,Proposed 2027,1200,Coal\nNghi Sơn 1,Nghi Sơn,Thanh Hóa,Operational,2014,1200,Coal\nNghi Sơn 2,Nghi Sơn,Thanh Hóa,Planned,Proposed 2026,600,Coal\nLễ Môn,Thach An,Dong Trieu,Quang Ninh,Operational,2007,150,Hydro\nVinh Tan 2 Expansion,Tuy Phong, Binh Thuan,Planned,Proposed 2026,1243,Coal\nLNG Thị Vải,Hiệp Phước, Đồng Nai,Under Construction,Planned 2024,1500,Imported LNG\nLNG Nhơn Trạch,Đồng Nai, Under Construction,Planned 2025,1500,Imported LNG\nLNG Bạc Liêu,Bạc Liêu,Bac Lieu,Planned,Proposed 2026,3600,Imported LNG (3x1200)\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 71,
+    "completion_tokens": 1521
+  },
+  "wall_seconds": 16.086,
+  "cost_usd": 0.00092325,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "FR",
+    "architecture": "dense",
+    "provider": "Mistral",
+    "context_window": 262144
+  }
+}

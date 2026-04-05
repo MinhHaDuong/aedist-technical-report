@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-397b-a17b",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nPhu My 2.1,Natural Gas,Operational,2001,Ba Ria - Vung Tau,450\nPhu My 2.2,Natural Gas,Operational,2001,Ba Ria - Vung Tau,450\nPhu My 3,Natural Gas,Operational,2004,Ba Ria - Vung Tau,450\nPhu My 4,Natural Gas,Operational,2006,Ba Ria - Vung Tau,450\nBa Ria,Natural Gas,Operational,1997,Ba Ria - Vung Tau,411\nCa Mau 1,Natural Gas,Operational,2008,Ca Mau,750\nCa Mau 2,Natural Gas,Operational,2008,Ca Mau,750\nNhon Trach 1,Natural Gas,Operational,2007,Dong Nai,450\nNhon Trach 2,Natural Gas,Operational,2011,Dong Nai,450\nO Mon 1,Natural Gas,Operational,2015,Can Tho,660\nMong Duong 1,Coal,Operational,2012,Quang Ninh,1080\nMong Duong 2,Coal,Operational,2015,Quang Ninh,1240\nQuang Ninh 1,Coal,Operational,2011,Quang Ninh,300\nQuang Ninh 2,Coal,Operational,2014,Quang Ninh,600\nHai Duong,Coal,Operational,2015,Hai Duong,600\nThai Binh 1,Coal,Operational,2015,Thai Binh,676\nThai Binh 2,Coal,Operational,2021,Thai Binh,676\nVinh Tan 1,Coal,Operational,2016,Binh Thuan,600\nVinh Tan 2,Coal,Operational,2016,Binh Thuan,1200\nVinh Tan 3,Coal,Operational,2017,Binh Thuan,600\nVinh Tan 4,Coal,Operational,2018,Binh Thuan,600\nDuyen Hai 1,Coal,Operational,2016,Tra Vinh,1200\nDuyen Hai 3,Coal,Operational,2017,Tra Vinh,1240\nNghi Son 1,Coal,Operational,2018,Thanh Hoa,600\nNghi Son 2,Coal,Operational,2020,Thanh Hoa,600\nVung Ang 1,Coal,Operational,2016,Ha Tinh,1200\nQuang Trach 1,Coal,Under Construction,2025 (Planned),Quang Binh,1080\nLong Phu 1,Coal,Deferred/Review,2028 (Planned),Soc Trang,1200\nNhon Trach 3,Imported LNG,Under Construction,2025 (Planned),Dong Nai,750\nNhon Trach 4,Imported LNG,Under Construction,2025 (Planned),Dong Nai,750\nThi Vai,Imported LNG,Planned,2026 (Planned),Ba Ria - Vung Tau,1500\nSon My 1,Imported LNG,Planned,2027 (Planned),Binh Thuan,1000\nSon My 2,Imported LNG,Planned,2028 (Planned),Binh Thuan,1000\nHai Lang,Imported LNG,Planned,2027 (Planned),Quang Tri,1000\nQuang Ninh LNG,Imported LNG,Planned,2026 (Planned),Quang Ninh,1500\nBac Lieu 1,Imported LNG,Planned,2027 (Planned),Bac Lieu,1500\nBac Lieu 2,Imported LNG,Planned,2028 (Planned),Bac Lieu,1500\nCa Mau LNG,Imported LNG,Planned,2027 (Planned),Ca Mau,1500\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 3542
+  },
+  "wall_seconds": 81.344,
+  "cost_usd": 0.008312849999999998,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

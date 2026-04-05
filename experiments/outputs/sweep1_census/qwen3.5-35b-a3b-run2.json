@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-35b-a3b",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "| Plant Name, Fuel Type, Construction Stage, Connection Date (COD), Province, Generation Capacity (MWe) |\n| :--- |\n| Uong Bi 1,Coal,Operational,2013,Quang Ninh,600 |\n| Song Cong,Coal,Operational,2014,Tay Ninh,600 |\n| Thang Loi,Coal,Operational,2014,Vinh Phuc,600 |\n| Nhon Hoi,Coal,Operational,2019,Khanh Hoa,1000 |\n| Ca Nhat,Coal,Operational,2016,Ninh Thuan,1050 |\n| Van Coi,Coal,Operational,2012,Long An,600 |\n| Dai Thanh 2,Coal,Operational,2013,Binh Thuan,1100 |\n| Tra Vinh,Coal,Operational,2015,Tra Vinh,1000 |\n| Thai Binh 1,Coal,Operational,2021,Thai Binh,1000 |\n| Dat Quynh 1,Coal,Operational,2021,Thai Binh,600 |\n| Dat Quynh 2,Coal,Operational,2021,Thai Binh,600 |\n| Ha Tinh 1,Coal,Operational,2020,Ha Tinh,1200 |\n| Son My 1 & 2,Gas (Local),Operational,2012,Ha Tinh,2300 |\n| Phap Dien,Gas (LNG),Operational,2020,Ninh Thuan,1500 |\n| Phu My 3,Gas (Local),Operational,2010,Ba Ria - Vung Tau,1050 |\n| Phu My 4,Gas (LNG),Operational,2023,Ba Ria - Vung Tau,1050 |\n| Tan Phu,Gas (LNG),Operational,2022,Dong Nai,1500 |\n| Ca Ma,Gas (LNG),Operational,2023,Khanh Hoa,600 |\n| Tan An,Gas (Local),Operational,2010,Long An,800 |\n| Ninh Thuan 2,Coal,Planned,2025,Ninh Thuan,350 |\n| Nhon Hoi 2,Coal,Planned,2026,Khanh Hoa,1000 |\n| Quang Ngu,Gas (Local),Operational,1999,Binh Dinh,150 |\n| Dai Phat 1,Gas (Local),Operational,2011,Dong Nai,800 |\n| Van Phong,Coal,Deferred,N/A,Khanh Hoa,1500 |\n| Hoa Lac,Coal,Deferred,N/A,Hanoi,1000 |\n| Quang Ninh 1,Coal,Operational,2015,Quang Ninh,600 |\n\n*Note: This list focuses on major utility-scale thermal power plants. Connection dates for \"Planned\" and \"Deferred\" projects are subject to significant changes under Vietnam's Power Development Plan 8 (PDP8) revisions and policy shifts regarding coal phase-out. Capacity figures are approximate and represent nameplate capacity.*",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 4736
+  },
+  "wall_seconds": 40.603,
+  "cost_usd": 0.0061668800000000005,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}
