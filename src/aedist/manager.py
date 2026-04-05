@@ -4,8 +4,6 @@ Reads a sweep YAML config, loads the model registry, and creates one
 JobSpec file per (model, run) combination in ``jobs/pending/``.
 """
 
-from __future__ import annotations
-
 import argparse
 import hashlib
 from pathlib import Path

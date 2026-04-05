@@ -1,7 +1,5 @@
 """Tests for the experiment manager fan-out logic."""
 
-from __future__ import annotations
-
 import re
 from pathlib import Path
 

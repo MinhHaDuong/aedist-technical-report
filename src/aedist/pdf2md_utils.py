@@ -4,8 +4,6 @@ Contains the ``Converter`` Protocol, a lazy registry, prompts, cleaning,
 output path logic, and metadata used by all converter backends.
 """
 
-from __future__ import annotations
-
 import importlib
 import platform
 import re
@@ -13,10 +11,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
-
 # ---------------------------------------------------------------------------
 # Converter Protocol
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class Converter(Protocol):
@@ -59,6 +57,7 @@ def get_converter(name: str) -> Converter:
     except KeyError:
         available = ", ".join(sorted(CONVERTERS))
         raise KeyError(f"Unknown converter {name!r} (available: {available})") from None
+
 
 # ---------------------------------------------------------------------------
 # Prompts
@@ -120,6 +119,7 @@ Limit your response to the image content, without repeating the text above."""
 # Cleaning
 # ---------------------------------------------------------------------------
 
+
 def clean_markdown(raw_text):
     """Strip code fences, normalise table indentation, trim trailing whitespace."""
     text = re.sub(r"^```(?:markdown|html)?[ \t]*\n", "", raw_text)
@@ -137,6 +137,7 @@ def clean_markdown(raw_text):
 # Output path
 # ---------------------------------------------------------------------------
 
+
 def get_output_path(pdf_path, output_arg):
     """Determine output path: explicit arg > stem.md > stem_converted.md."""
     if output_arg:
@@ -150,6 +151,7 @@ def get_output_path(pdf_path, output_arg):
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
+
 
 def metadata_comment(pdf_path, *, backend, model, argv):
     """Conversion metadata appended as HTML comment.
