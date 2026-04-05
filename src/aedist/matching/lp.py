@@ -185,6 +185,79 @@ def _compute_costs(
     return costs
 
 
+def _greedy_prealign(
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+) -> list[tuple[int, int]]:
+    """Greedy pre-alignment using name similarity + capacity proximity.
+
+    For each candidate, compute a composite score (0.7 * name + 0.3 * capacity)
+    against every reference, then greedily assign top-scoring pairs above a
+    threshold.  The result is a feasible (but not necessarily optimal) matching
+    that CBC can use as a warm start.
+    """
+    indices1 = list(df1.index)
+    indices2 = list(df2.index)
+
+    # Build (score, i, j) triples for all pairs
+    triples: list[tuple[float, int, int]] = []
+    for i in indices1:
+        name1 = str(df1.loc[i, "name_clean"])
+        cap1 = df1.loc[i, "capacity_clean"]
+        for j in indices2:
+            name2 = str(df2.loc[j, "name_clean"])
+            cap2 = df2.loc[j, "capacity_clean"]
+
+            name_score = fuzz.token_sort_ratio(name1, name2) / 100.0
+
+            if math.isnan(cap1) or math.isnan(cap2) or max(cap1, cap2) == 0:
+                cap_score = 0.0
+            else:
+                cap_score = 1.0 - abs(cap1 - cap2) / max(cap1, cap2)
+
+            combined = 0.7 * name_score + 0.3 * cap_score
+            triples.append((combined, i, j))
+
+    triples.sort(reverse=True)
+
+    matched_i: set[int] = set()
+    matched_j: set[int] = set()
+    pairs: list[tuple[int, int]] = []
+    threshold = 0.6
+
+    for combined, i, j in triples:
+        if combined < threshold:
+            break
+        if i in matched_i or j in matched_j:
+            continue
+        pairs.append((i, j))
+        matched_i.add(i)
+        matched_j.add(j)
+
+    return pairs
+
+
+def _apply_warm_start(
+    pairs: list[tuple[int, int]],
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+    x_vars: dict[tuple[int, int], LpVariable],
+    u_vars: dict[int, LpVariable],
+    v_vars: dict[int, LpVariable],
+) -> None:
+    """Set initial values on LP variables from a greedy pre-alignment."""
+    pair_set = set(pairs)
+    matched_i = {i for i, _ in pairs}
+    matched_j = {j for _, j in pairs}
+
+    for key, var in x_vars.items():
+        var.setInitialValue(1 if key in pair_set else 0)
+    for i, var in u_vars.items():
+        var.setInitialValue(0 if i in matched_i else 1)
+    for j, var in v_vars.items():
+        var.setInitialValue(0 if j in matched_j else 1)
+
+
 def _setup_lp(
     df1: pd.DataFrame,
     df2: pd.DataFrame,
@@ -234,18 +307,16 @@ def _setup_lp(
     indices1: list[int] = list(df1.index)
     indices2: list[int] = list(df2.index)
     x_vars: dict[tuple[int, int], LpVariable] = {
-        (i, j): LpVariable(f"x_{i}_{j}", cat="Binary")
-        for i in indices1 for j in indices2
+        (i, j): LpVariable(f"x_{i}_{j}", cat="Binary") for i in indices1 for j in indices2
     }
     u_vars: dict[int, LpVariable] = {i: LpVariable(f"u_{i}", cat="Binary") for i in indices1}
     v_vars: dict[int, LpVariable] = {j: LpVariable(f"v_{j}", cat="Binary") for j in indices2}
 
     # Objective:
     #   minimize ∑₍ᵢ,j₎ [cost(i, j) * x_vars[(i, j)]] + dummy_cost * (∑ᵢ u_vars[i] + ∑ⱼ v_vars[j])
-    prob += (
-        lpSum(costs[(i, j)] * x_vars[(i, j)] for i in indices1 for j in indices2)
-        + dummy_cost * (lpSum(u_vars[i] for i in indices1) + lpSum(v_vars[j] for j in indices2))
-    )
+    prob += lpSum(
+        costs[(i, j)] * x_vars[(i, j)] for i in indices1 for j in indices2
+    ) + dummy_cost * (lpSum(u_vars[i] for i in indices1) + lpSum(v_vars[j] for j in indices2))
 
     # Assignment constraints:
     # Each record from df1 must be either matched (across all j) or marked as unmatched.
@@ -399,7 +470,10 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
 
     costs = _compute_costs(df1, df2, similarity_threshold, mismatch_penalty, capacity_weight)
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
-    prob.solve(PULP_CBC_CMD(msg=False))
+
+    pairs = _greedy_prealign(df1, df2)
+    _apply_warm_start(pairs, df1, df2, x_vars, u_vars, v_vars)
+    prob.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     if prob.status != LpStatusOptimal:
         raise RuntimeError("Assignment MILP did not solve to optimality.")
 
@@ -410,6 +484,9 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
         "u_vars": u_vars,
         "v_vars": v_vars,
     }
-    config: dict[str, int | float] = {"similarity_threshold": similarity_threshold, "capacity_tolerance": capacity_tolerance}
+    config: dict[str, int | float] = {
+        "similarity_threshold": similarity_threshold,
+        "capacity_tolerance": capacity_tolerance,
+    }
     results = _extract_results(context, config)
     return pd.DataFrame(results)
