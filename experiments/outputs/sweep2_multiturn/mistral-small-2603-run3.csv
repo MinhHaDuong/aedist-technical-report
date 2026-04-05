@@ -1,0 +1,73 @@
+name,fuel,status,cod,province,capacity_mwe
+---,,,,,0
+### **EXISTING PLANTS (Operational or Decommissioned)**,,,,,0
+Hai Phong 1 (Unit 1),Coal,PDP7,2001-08-01,Hai Phong,150
+Hai Phong 1 (Unit 2),Coal,PDP7,2004-11-01,Hai Phong,300
+Hai Phong 2 (Unit 1),Coal,PDP7,2018-08-01,Hai Phong,600
+Hai Phong 2 (Unit 2),Coal,PDP7,2020-12-01,Hai Phong,600
+Pha Lai 1 (Units 1-4),Coal,PDP7,2005-12-20,Hai Duong,1040
+Pha Lai 2 (Unit 1),Coal,PDP7,2010-12-01,Hai Duong,300
+Pha Lai 2 (Unit 2),Coal,PDP7,2012-06-01,Hai Duong,300
+Pha Lai 3 (Units 1-2),Coal,PDP7,2015-05-30,Hai Duong,600
+Ninh Binh,Coal,PDP7,1975-12-01,Ninh Binh,200
+Hoa Binh-1,Coal,PDP7,1986-12-01,Hoa Binh,1920
+Vinh Tan 1 (Units 1-3),Coal,PDP7,2005-2012,Binh Thuan,3746
+Vinh Tan 2 (Units 1-2),Coal,PDP7,2015-11-01,Binh Thuan,1244
+Vinh Tan 3 (Units 1-2),Coal,PDP7,2017-08-2018-12,Binh Thuan,1376
+Formosa Dung Quất 1,Coal,PDP7,2015-10-01,Quang Ngai,548
+Formosa Dung Quất 2,Coal,PDP7,2018-04-25,Quang Ngai,550
+Mong Duong 1 (Units 1-2),Coal,PDP7,2015-11-2015-12,Quang Ninh,1080
+Mong Duong 2 (Units 1-2),Coal,PDP7,2015-12-01,Quang Ninh,1200
+Mong Duong 3 (Units 1-2),Coal,PDP7,2015-12-2016-07,Quang Ninh,1200
+Cam Pha 1 (Units 1-2),Coal,PDP7,2005-06-01,Quang Ninh,600
+Cam Pha 3,Coal,PDP7,2020-10-01,Quang Ninh,1522
+Duyen Ha 1 (Units 1-2),Coal,PDP7,2015-05-2021-06,Tra Vinh,1248
+Duyen Ha 3 (Units 1-2),Coal,PDP7,2016-12-012017-04-15,Tra Vinh,1244
+Vung Ang 1 (Units 1-2),Coal,PDP7,2015-2016,Ha Tinh,2098
+Dinh Cua,Local Natural Gas,PDP7,1994-01-20,Ba Ria-Vung Tau,140
+Tri An,Local Natural Gas,PDP7,1997-10-01,Dong Nai,150
+Phu My 2.2 (KNPP),Local Natural Gas,PDP7,2005-06-01,Ba Ria-Vung Tau,715
+Phu My 3.1,Local Natural Gas,PDP7,2012-03-01,Ba Ria-Vung Tau,715
+Phu My 3.2,Local Natural Gas,PDP7,2018-07-15,Ba Ria-Vung Tau,430
+Phu My 4,Local Natural Gas,PDP7,2004-05-01,Ba Ria-Vung Tau,464
+Phu My 5 (Units 1-2),Local Natural Gas,PDP7,2011-02-15,Ba Ria-Vung Tau,1254
+Phu My 1.1 (Extension),Local Natural Gas,PDP7,2016-09-30,Ba Ria-Vung Tau,423
+Ca Mau 1.1 (CT6),Local Natural Gas,PDP7,2012-01-05,Ca Mau,728
+Ca Mau 1.2 (CT2),Local Natural Gas,PDP7,2012-07-31,Ca Mau,728
+Honda Dung Quất,Local Natural Gas,PDP7,2017-10-01,Quang Ngai,210
+Chau Doc,Local Natural Gas,PDP7,2018-06-01,An Giang,60
+---,,,,,0
+### **UNDER CONSTRUCTION (Existing PDP7 Projects)**,,,,,0
+Vinh Tan 4 (Unit 1),Coal,PDP7,Planned 2025,Binh Thuan,1062
+Vinh Tan 4 (Unit 2),Coal,PDP7,Planned 2026,Binh Thuan,1062
+Long Phu 1 (Unit 1),Coal,PDP7,Planned 2026,Soc Trang,622
+Long Phu 1 (Unit 2),Coal,PDP7,Planned 2027,Soc Trang,622
+Thien Tan 1 (Unit 1),Coal,PDP7,Planned 2025,Quang Ninh,1200
+Thien Tan 2 (Unit 2),Coal,PDP7,Planned 2027,Quang Ninh,1200
+Nam Định B1 (Unit 1),Coal (Flex LNG),PDP7,Planned 2026,Nam Định,330
+Son My 2,Imported LNG,PDP8,Planned 2026,Ninh Thuan,1200
+Bac Lieu LNG Terminal (Phase 1),Imported LNG,PDP8,Planned 2025,Bac Lieu,1330
+---,,,,,0
+### **PLANNED FROM PDP7 (Not Yet Built)**,,,,,0
+Long Phu 2 (Units 1-2),Coal,PDP7,Planned 2028-2029,Soc Trang,1244
+Quynh Lap 1,Coal,PDP7,Planned 2027,Nghe An,1200
+Quynh Lap 2,Coal,PDP7,Planned 2028,Nghe An,1200
+O Mon 1 (Unit 1),Coal,PDP7,TBA,Can Tho,622
+O Mon 1 (Unit 2),Coal,PDP7,TBA,Can Tho,622
+---,,,,,0
+### **PLANNED FROM PDP8 (New 2023 Updates)**,,,,,0
+Nghi Son 1 (Unit 1),Imported LNG (Dual-fuel),PDP8,Planned 2026,Thanh Hoa,300
+Nghi Son 1 (Unit 2),Imported LNG (Dual-fuel),PDP8,Planned 2027,Thanh Hoa,300
+Nghi Son 2 (Phase 1),Imported LNG,PDP8,Planned 2028,Thanh Hoa,1500
+Nghi Son 3 (Unit 1),Coal,PDP8,Planned 2030,Thanh Hoa,1500
+Son My 1 (Unit 1),Imported LNG (Flexible),PDP8,Planned 2029,Binh Thuan,1330
+Son My 1 (Unit 2),Coal (Backup),PDP8,Planned 2029,Binh Thuan,1330
+Tan Phuoc 1,Imported LNG,PDP8,Planned 2027,Bac Lieu,330
+LOTUS II LNG Terminal,Terminal,Under Construction,,Thuan An (Thua Thien Hue),0
+Binh Thuan LNG Terminal,Terminal,Permitting,,Binh Thuan,0
+Ninh Thuan LNG Terminal,Terminal,Under EIA,,Ninh Thuan,0
+---,,,,,0
+### **CANCELLED OR DELAYED (PDP7 Revisions)**,,,,,0
+O Mon 2 (Dong Nai),Coal,PDP7 Revised,2023,Can Tho,1200
+Ha Tinh 1,Coal,PDP7 Revised,TBA,Ha Tinh,1200
+---,,,,,0

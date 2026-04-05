@@ -1,0 +1,72 @@
+name,fuel,status,cod,province,capacity_mwe
+Vinh Tan 1,Coal,Operational,2011-01-01,Binh Thuan,1200
+Vinh Tan 2,Coal,Operational,2010-12-01,Binh Thuan,600
+Vinh Tan 3,Coal,Under Construction,2024-06-01,Binh Thuan,1800
+Vinh Tan 4,Coal,Operational,2018-03-10,Binh Thuan,600
+Vinh Tan 4 mở rộng (Extended),Coal,Operational,2021-01-01,Binh Thuan,600
+Duyen Hai 1,Coal,Operational,2015-05-13,Tra Vinh,1200
+Duyen Hai 3,Coal,Operational,2016-01-26,Tra Vinh,600
+Duyen Hai 3 Extended,Coal,Under Construction,2023-10-01,Tra Vinh,600
+Long Phu 1,Coal,Under Construction,2025-12-01,Soc Trang,1200
+Nghi Son 1,Coal,Operational,2017-10-15,Thanh Hoa,600
+Nghi Son 2,Coal,Operational,2018-11-01,Thanh Hoa,1200
+Cam Pha,Coal,Operational,2003-03-01,Quang Ninh,300
+Cao Ngan,Coal,Operational,2014-06-01,Thai Nguyen,110
+Uong Bi,Coal,Operational,2003-01-01,Quang Ninh,300
+Hao Duong,Coal,Operational,unknown,Hai Duong,300
+Hai Duong,Coal,Operational,2018-05-01,Hai Duong,600
+Ninh Binh 1,Local Natural Gas / Imported LNG,Operational,2008-10-01,Ninh Binh,750
+Ninh Binh 2,Local Natural Gas / Imported LNG,Operational,2010-05-01,Ninh Binh,750
+Phan Thiet,Coal,Operational,2010-05-01,Binh Thuan,600
+Quang Trach 1,Coal,Under Construction,2023-12-31,Quang Binh,1200
+Quang Trach 2,Coal,Planned,2026-12-31,Quang Binh,1200
+Na Duong,Coal,Operational,2002-01-01,Lang Son,100
+Son Dong,Coal,Operational,2015-01-01,Bac Giang,100
+Hoang Thach,Coal,Operational,1999-01-01,Hai Duong,130
+Dong Nai 1,Coal,Operational,2014-01-01,Dong Nai,300
+Dong Nai 2,Coal,Operational,2015-01-01,Dong Nai,300
+Thuan My 1,Coal,Planned,2026-01-01,Binh Thuan,1200
+Thuan My 2,Coal,Planned,2027-01-01,Binh Thuan,1200
+Ha Tien 1,Coal,Operational,2011-01-01,Kien Giang,140
+Bao Minh,Coal,Operational,2010-01-01,Nam Dinh,100
+Thanh Hoa,Coal,Operational,2012-01-01,Thanh Hoa,120
+NHA BE GAS POWER PLANT,Local Natural Gas,Operational,2008-01-01,Ho Chi Minh City,750
+BA RIA GAS POWER PLANT,Local Natural Gas,Operational,2003-01-01,Ba Ria - Vung Tau,150
+PHU MY 1 GAS POWER PLANT (PM1),Local Natural Gas,Operational,2000-01-01,Ba Ria - Vung Tau,400
+PHU MY 2 GAS POWER PLANT (PM2),Local Natural Gas,Operational,2007-09-01,Ba Ria - Vung Tau,600
+PHU MY 3 GAS POWER PLANT (PM3),Local Natural Gas,Operational,2011-07-01,Ba Ria - Vung Tau,750
+CA MAU 1 GAS POWER PLANT (CM1),Local Natural Gas,Operational,2008-01-01,Ca Mau,300
+CA MAU 2 GAS POWER PLANT (CM2),Local Natural Gas,Operational,2010-01-01,Ca Mau,300
+KIEN GIANG GAS POWER PLANT,Local Natural Gas,Operational,2013-01-01,Kien Giang,0
+PHU QUOC GAS POWER PLANT,Local Natural Gas,Operational,2014-01-01,Kien Giang,0
+SON MY 1 LNG POWER PLANT,Imported LNG,Under Construction,2026-06-30,Binh Thuan,2700
+SON MY 2 LNG POWER PLANT,Imported LNG,Under Construction,2027-12-31,Binh Thuan,2500
+SON MY 3 LNG POWER PLANT,Imported LNG,Planned,2028-12-31,Binh Thuan,2000
+NAM VAN PHONG LNG TERMINAL (and Power Plant),Imported LNG,Under Construction,2027-01-01,Khanh Hoa,3000
+BAC LIEU LNG POWER PLANT,Imported LNG,Under Construction,2025-12-01,Bac Lieu,3200
+CA MAU LNG POWER PLANT,Imported LNG,Under Construction,2025-06-30,Ca Mau,1500
+QUANG TRI LNG POWER PLANT,Imported LNG,Planned,2027-12-31,Quang Tri,1760
+HAI LANG LNG POWER PLANT,Imported LNG,Planned,2028-12-31,Quang Tri,1320
+NHON TRACH 3 LNG POWER PLANT,Imported LNG,Under Construction,2027-07-01,Dong Nai,1500
+NHON TRACH 4 LNG POWER PLANT,Imported LNG,Planned,2028-07-01,Dong Nai,1500
+DO QUYEN LNG POWER PLANT,Imported LNG,Planned,2029-01-01,Ba Ria - Vung Tau,1500
+LONG SON LNG TERMINAL (and potentially Power Plant),Imported LNG,Planned,unknown,Ba Ria - Vung Tau,0
+PHI LONG LNG TERMINAL (and potentially Power Plant),Imported LNG,Planned,unknown,Ba Ria - Vung Tau,0
+GULF/NEO ENERGY LNG TERMINAL (and potentially Power Plant),Imported LNG,Planned,unknown,Vung Tau,0
+T3 PETROCHEMICAL LNG TERMINAL (and potentially Power Plant),Imported LNG,Planned,unknown,Vinh Long,0
+CAO LANH LNG TERMINAL (and potentially Power Plant),Imported LNG,Planned,unknown,Dong Thap,0
+PHU MY 5,Imported LNG,Planned,2030-12-31,Ba Ria - Vung Tau,1500
+LONG AN LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Long An,1500
+BINH THUAN LNG POWER PLANT (multiple phases),Imported LNG,Planned,2030-12-31,Binh Thuan,4000
+QUANG NAM LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Quang Nam,1500
+CONG SON LNG,Imported LNG,Planned,2030-12-31,Ba Ria - Vung Tau,3000
+THAI BINH LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Thai Binh,1200
+VUNG TAU LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Ba Ria - Vung Tau,1500
+QUY NHON LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Binh Dinh,1500
+THANH HOA LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Thanh Hoa,1500
+HA TINH LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Ha Tinh,1500
+NINH THUAN LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Ninh Thuan,1500
+PHU YEN LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Phu Yen,1500
+DUNG QUAT LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Quang Ngai,1500
+VINH LONG SME LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Vinh Long,0
+CAI MEP LNG POWER PLANT,Imported LNG,Planned,2030-12-31,Ba Ria - Vung Tau,1500
