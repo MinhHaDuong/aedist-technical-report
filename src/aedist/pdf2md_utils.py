@@ -47,6 +47,8 @@ CONVERTERS: dict[str, Converter] = {
     "grobid": _ModuleConverter("aedist.pdf2md_grobid"),
     "vision": _ModuleConverter("aedist.pdf2md_ollama"),
     "cloud": _ModuleConverter("aedist.pdf2md_openrouter"),
+    "marker": _ModuleConverter("aedist.pdf2md_marker"),
+    "mineru": _ModuleConverter("aedist.pdf2md_mineru"),
 }
 
 
@@ -156,7 +158,7 @@ def get_output_path(pdf_path, output_arg):
 def metadata_comment(pdf_path, *, backend, model, argv):
     """Conversion metadata appended as HTML comment.
 
-    All three converters use this same function and format.
+    All converters use this same function and format.
     """
     return (
         f"\n\n<!-- Converted from PDF using:\n"
