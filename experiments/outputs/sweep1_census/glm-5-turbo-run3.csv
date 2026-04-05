@@ -1,0 +1,82 @@
+name,fuel,status,cod,province,capacity_mwe
+Mong Duong 1,coal,Operational,2015,Quang Ninh,1000
+Mong Duong 2,coal,Operational,2015,Quang Ninh,1240
+Quang Ninh,coal,Operational,2012,Quang Ninh,1200
+Mao Khe,coal,Operational,2012,Quang Ninh,600
+Cam Pha,coal,Operational,2010,Quang Ninh,660
+Uong Bi (Expansion),coal,Operational,2006,Quang Ninh,300
+Cao Ngan,coal,Operational,2005,Thai Nguyen,100
+Song Cong,coal,Operational,2005,Thai Nguyen,200
+Thai Nguyen,coal,Operational,2009,Thai Nguyen,300
+Na Duong,coal,Operational,2005,Lang Son,100
+Pho Noi,coal,Operational,2010,Phu Tho,100
+Viet Tri,coal,Operational,2005,Phu Tho,300
+Bai Bang,coal,Operational,1996,Phu Tho,220
+Ninh Binh,coal,Operational,1992,Ninh Binh,100
+Ha Nam,coal,Operational,2016,Ha Nam,300
+Nam Dinh 1,coal,Operational,2018,Nam Dinh,600
+Nam Dinh 2,coal,Under Construction,2025 (Planned),Nam Dinh,600
+Nghi Son 1,coal,Operational,2013,Thanh Hoa,600
+Nghi Son 2,coal,Operational,2023,Thanh Hoa,1200
+Hoang Long,coal,Operational,2011,Thanh Hoa,300
+Bim Son,coal,Operational,2013,Thanh Hoa,300
+Nghe An 1,coal,Operational,2010,Nghe An,300
+Nghe An 2,coal,Operational,2014,Nghe An,300
+Do Luong,coal,Operational,2006,Nghe An,150
+Cuong Son,coal,Operational,2017,Nghe An,120
+Vung Ang 1,coal,Operational,2018,Ha Tinh,1200
+Ky Anh,coal,Operational,2013,Ha Tinh,600
+Quang Tri 1,coal,Operational,2015,Quang Tri,660
+Dung Quat 1,coal,Operational,2013,Quang Ngai,600
+Tuy Hoa,coal,Operational,2015,Phu Yen,330
+Thai Binh 1,coal,Operational,2020,Thai Binh,600
+Thai Binh 2,coal,Operational,2022,Thai Binh,600
+Thai Binh 2 Extension,coal,Under Construction,2025 (Planned),Thai Binh,600
+Vinh Tan 1,coal,Operational,2015,Binh Thuan,1240
+Vinh Tan 2,coal,Operational,2014,Binh Thuan,1240
+Vinh Tan 3,coal,Operational,2022,Binh Thuan,1320
+Vinh Tan 4,coal,Operational,2021,Binh Thuan,1800
+Duyen Hai 1,coal,Operational,2015,Tra Vinh,1240
+Duyen Hai 2,coal,Operational,2014,Tra Vinh,1240
+Duyen Hai 3,coal,Operational,2018,Tra Vinh,1240
+Duyen Hai 3 Extension,coal,Operational,2022,Tra Vinh,660
+Song Hau 1,coal,Operational,2018,Hau Giang,600
+Phu My 1,local natural gas,Operational,2003,Ho Chi Minh City,1090
+Phu My 2.1,local natural gas,Operational,1998,Ho Chi Minh City,360
+Phu My 2.2,local natural gas,Operational,2003,Ho Chi Minh City,715
+Phu My 3,local natural gas,Operational,2004,Ho Chi Minh City,715
+Phu My 4,local natural gas,Operational,2005,Ho Chi Minh City,450
+Nhon Trach 1,local natural gas,Operational,2004,Dong Nai,450
+Nhon Trach 2,local natural gas,Operational,2011,Dong Nai,750
+Phuoc Dong,local natural gas,Operational,1998,Dong Nai,330
+Ba Ria,local natural gas,Operational,2002,Ba Ria - Vung Tau,450
+Ca Mau 1,local natural gas,Operational,2008,Ca Mau,720
+Ca Mau 2,local natural gas,Operational,2009,Ca Mau,720
+Can Tho,local natural gas,Operational,2010,Can Tho,330
+O Mon 1,local natural gas,Operational,2003,Can Tho,260
+O Mon 2,local natural gas,Operational,2004,Can Tho,330
+Hau Giang,local natural gas,Operational,2013,Hau Giang,330
+Long An 1,local natural gas,Operational,2010,Long An,330
+Tay Ninh,local natural gas,Operational,2003,Tay Ninh,150
+Ben Tre,local natural gas,Under Construction,2025 (Planned),Ben Tre,330
+Nhon Trach 3,imported LNG,Under Construction,2024 (Planned),Dong Nai,800
+Nhon Trach 4,imported LNG,Under Construction,2025 (Planned),Dong Nai,800
+O Mon 3 CCGT,imported LNG,Planned,2028 (Planned),Can Tho,1050
+O Mon 4,imported LNG,Under Construction,2026 (Planned),Can Tho,1050
+Long An 2,imported LNG,Planned,2028 (Planned),Long An,1050
+Van Phong 1,imported LNG,Under Construction,2028 (Planned),Khanh Hoa,1800
+Bac Lieu LNG,imported LNG,Planned,2030 (Planned),Bac Lieu,1800
+Soc Trang LNG,imported LNG,Planned,2030 (Planned),Soc Trang,1800
+Kien Giang LNG,imported LNG,Planned,2030 (Planned),Kien Giang,2400
+Tra Vinh 1 LNG,imported LNG,Planned,2028 (Planned),Tra Vinh,1500
+Tra Vinh 2 LNG,imported LNG,Planned,2030 (Planned),Tra Vinh,1500
+Ba Ria LNG,imported LNG,Planned,2030 (Planned),Ba Ria - Vung Tau,1800
+Quang Tri LNG,imported LNG,Planned,2030 (Planned),Quang Tri,1500
+Vung Ang 2,imported LNG,Planned,2028 (Planned),Ha Tinh,1320
+Dung Quat 2,imported LNG,Planned,2028 (Planned),Quang Ngai,1200
+Nhon Hoi,coal,Canceled,-,Binh Dinh,1200
+Kien Luong,coal,Canceled,-,Kien Giang,1200
+Long Phu 1,coal,Canceled,-,Soc Trang,1200
+Song Hau 2,coal,Canceled,-,Hau Giang,1200
+Ea Sup,coal,Canceled,-,Dak Lak,600
+Vinh Tan 4 Expansion,coal,Canceled,-,Binh Thuan,600

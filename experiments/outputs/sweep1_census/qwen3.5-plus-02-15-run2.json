@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-plus-02-15",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "**Note on Data Accuracy:** The following list comprises major utility-scale thermal power plants in Vietnam based on the Power Development Plan 8 (PDP8), Global Energy Monitor data, and EVN reports. The status of power plants in Vietnam is dynamic; many previously planned coal plants have been converted to LNG or postponed under PDP8 (approved May 2023). Capacities are nominal net capacities where available. \"COD\" refers to Commercial Operation Date.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nMong Duong 1,Coal,Operational,2012,Quang Ninh,540\nMong Duong 2,Coal,Operational,2015,Quang Ninh,1200\nMong Duong 3,Coal,Operational,2016,Quang Ninh,1200\nQuang Ninh 1,Coal,Operational,2005,Quang Ninh,300\nQuang Ninh 2,Coal,Operational,2010,Quang Ninh,600\nHai Phong 1,Coal,Operational,2006,Hai Phong,600\nHai Phong 2,Coal,Operational,2007,Hai Phong,600\nUong Bi 1,Coal,Operational,1970,Quang Ninh,150\nUong Bi 2,Coal,Operational,1975,Quang Ninh,150\nPha Lai 1,Coal,Operational,1984,Hai Duong,110\nPha Lai 2,Coal,Operational,2003,Hai Duong,600\nNghi Son 1,Coal,Operational,2018,Thanh Hoa,600\nNghi Son 2,Coal,Operational,2019,Thanh Hoa,600\nVinh Tan 1,Coal,Operational,2013,Binh Thuan,1200\nVinh Tan 2,Coal,Operational,2014,Binh Thuan,1200\nVinh Tan 4,Coal,Operational,2016,Binh Thuan,1240\nVinh Tan 4 Extension,Coal,Operational,2018,Binh Thuan,1240\nDuyen Hai 1,Coal,Operational,2015,Tra Vinh,1200\nDuyen Hai 3,Coal,Operational,2017,Tra Vinh,1200\nLong Phu 1,Coal,Operational,2020,Soc Trang,1200\nThai Binh 1,Coal,Operational,2012,Thai Binh,600\nThai Binh 2,Coal,Operational,2021,Thai Binh,600\nQuang Trach 1,Coal,Under Construction,2025 (Planned),Quang Binh,1200\nSong Hau 1,Coal/NG,Postponed/Converted,Indefinite,Hau Giang,1200\nPhu My 1,Local Natural Gas,Operational,1996,Ba Ria - Vung Tau,465\nPhu My 2.1,Local Natural Gas,Operational,2001,Ba Ria - Vung Tau,440\nPhu My 2.2,Local Natural Gas,Operational,2006,Ba Ria - Vung Tau,440\nPhu My 3,Local Natural Gas,Operational,2004,Ba Ria - Vung Tau,440\nPhu My 4,Local Natural Gas,Operational,2006,Ba Ria - Vung Tau,440\nBa Ria,Local Natural Gas,Operational,1995,Ba Ria - Vung Tau,450\nCa Mau 1,Local Natural Gas,Operational,2008,Ca Mau,750\nCa Mau 2,Local Natural Gas,Operational,2008,Ca Mau,750\nNam Con Son,Local Natural Gas,Operational,2004,Ba Ria - Vung Tau,650\nNhon Trach 1,Local Natural Gas,Operational,2007,Dong Nai,450\nNhon Trach 2,Local Natural Gas,Operational,2008,Dong Nai,450\nO Mon 1,Local Natural Gas,Operational,2011,Can Tho,110\nO Mon 2.1,Local Natural Gas,Operational,2017,Can Tho,200\nO Mon 2.2,Local Natural Gas,Operational,2019,Can Tho,200\nVung Tau 1 (PV Gas),Local Natural Gas,Operational,2020,Ba Ria - Vung Tau,250\nNhon Trach 3,Imported LNG,Under Construction,2025 (Planned),Dong Nai,750\nNhon Trach 4,Imported LNG,Under Construction,2025 (Planned),Dong Nai,750\nThi Vai,Imported LNG,Planned,2026 (Planned),Ba Ria - Vung Tau,1350\nQuang Ngai,Imported LNG,Planned,2027 (Planned),Quang Ngai,1200\nSong Hau 1 (Converted),Imported LNG,Planned,2028 (Planned),Hau Giang,1200\nBac Lieu 1,Imported LNG,Planned,2027 (Planned),Bac Lieu,1200\nTu Khuong,Imported LNG,Planned,2028 (Planned),Ho Chi Minh City,1200\nHiep Phuoc,Imported LNG,Planned,2028 (Planned),Ho Chi Minh City,1200\nNghi Son 3,Imported LNG,Planned,2028 (Planned),Thanh Hoa,1200\nVung Ang 2,Imported LNG,Planned,2028 (Planned),Ha Tinh,1200\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 3678
+  },
+  "wall_seconds": 66.188,
+  "cost_usd": 0.00575406,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 1000000
+  }
+}

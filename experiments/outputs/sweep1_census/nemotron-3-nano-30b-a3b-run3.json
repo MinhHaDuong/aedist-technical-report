@@ -1,0 +1,21 @@
+{
+  "model": "nvidia/nemotron-3-nano-30b-a3b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "\"Plant Name\",\"Fuel Type\",\"Construction Stage\",\"Connection Date (Observed or Planned COD)\",\"Province\",\"Capacity (MWe)\"\n\"Thai Binh 1\",\"Coal\",\"Operational\",\"1994\",\"Thai Binh\",\"1200\"\n\"Vung Ang 1\",\"Coal\",\"Operational\",\"2004\",\"Ha Tinh\",\"600\"\n\"Vung Ang 2\",\"Coal\",\"Operational\",\"2008\",\"Ha Tinh\",\"600\"\n\"Vung Ang 3\",\"Coal\",\"Under Construction\",\"Planned 2025\",\"Ha Tinh\",\"1200\"\n\"Ninh Thuan 1\",\"Coal\",\"Under Construction\",\"Planned 2025\",\"Ninh Thuan\",\"600\"\n\"Danang Thermal Power Plant\",\"Gas/Oil\",\"Operational\",\"1995\",\"Da Nang\",\"200\"\n\"Can Gio Thermal Power Plant\",\"Oil\",\"Operational\",\"1995\",\"Can Gio (Ho Chi Minh City)\",\"200\"\n\"Quang Ninh Thermal Power Plant\",\"Coal\",\"Operational\",\"1992\",\"Quang Ninh\",\"600\"\n\"Phu Lai 1\",\"Coal\",\"Operational\",\"2005\",\"Bac Ninh\",\"600\"\n\"Phu Lai 2\",\"Coal\",\"Operational\",\"2007\",\"Bac Ninh\",\"600\"\n\"Pha Lai 3\",\"Coal\",\"Under Construction\",\"Planned 2023\",\"Bac Ninh\",\"300\"\n\"Bac Ninh Gas Power Plant\",\"Local Natural Gas\",\"Operational\",\"2015\",\"Bac Ninh\",\"700\"\n\"O Mon 1\",\"Imported LNG\",\"Operational\",\"2015\",\"Binh Thuan\",\"300\"\n\"O Mon 2\",\"Imported LNG\",\"Operational\",\"2016\",\"Binh Thuan\",\"300\"\n\"Thi Vai Thermal Power Plant\",\"Coal\",\"Operational\",\"1995\",\"Binh Duong\",\"600\"\n\"Nhon Trach Gas Power Plant\",\"Imported LNG\",\"Operational\",\"2012\",\"Binh Duong\",\"150\"\n\"Nam Dinh Thermal Power Plant\",\"Coal\",\"Operational\",\"1995\",\"Nam Dinh\",\"300\"\n\"Hoa Binh Coal Power Plant\",\"Coal\",\"Operational\",\"2000\",\"Hoa Binh\",\"200\"\n\"Cai Lon 1 Power Plant\",\"Coal\",\"Operational\",\"2000\",\"Bac Lieu\",\"120\"\n\"Long Son Coal Power Plant\",\"Coal\",\"Operational\",\"1995\",\"Binh Thuan\",\"200\"\n\"Linh Khe Gas Power Plant\",\"Imported LNG\",\"Operational\",\"2018\",\"Da Nang\",\"100\"\n\"Bac Son Gas Power Plant\",\"Imported LNG\",\"Operational\",\"2020\",\"Bac Giang\",\"100\"",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 5092
+  },
+  "wall_seconds": 64.51,
+  "cost_usd": 0.0010220000000000001,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "NVIDIA",
+    "context_window": 262144
+  }
+}

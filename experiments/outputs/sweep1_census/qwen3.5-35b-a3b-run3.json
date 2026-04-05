@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-35b-a3b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Disclaimer: The following table lists the **major utility-scale thermal power plants** in Vietnam based on the latest Power Development Plan (PDP8) and Ministry of Industry and Trade (MOIT) data. Due to the dynamic nature of the energy sector and frequent project cancellations or delays under PDP8, this list represents the significant registered capacity rather than every minor peaking unit. Many \"Planned\" or \"Under Construction\" coal projects have been cancelled or paused recently.\n\n```csv\nPlant Name,Province,Fuel Type,Capacity (MWe),Construction Stage,Commercial Operation Date (COD)\nVung Ang 1,Ha Tinh,Coal,675,Operating,2009\nVung Ang 2,Ha Tinh,Coal,675,Operating,2011\nNinh Binh 1,Ninh Binh,Coal,675,Operating,2017\nNinh Binh 2,Ninh Binh,Coal,675,Under Construction,2025\nNam Dinh 1,Nam Dinh,Coal,660,Operating,2016\nNam Dinh 2,Nam Dinh,Coal,1320,Planned,2025\nThai Binh,Thai Binh,Coal,660,Operating,2016\nThai Binh 2,Thai Binh,Coal,1320,Planned,2025\nHai Duong,Hai Duong,Coal,660,Under Construction,2024\nHa Nam,Ha Nam,Coal,660,Under Construction,2024\nUong Bi,Quang Ninh,Coal,1150,Operating,2010\nUong Bi 2,Quang Ninh,Coal,1150,Planned,2025\nBai Chay,Quang Ninh,Coal,1000,Operating,2011\nHai Phong (Dinh Vu),Hai Phong,Coal,2000,Operating,2011\nDa Nang Thermal,Da Nang,Local Natural Gas,1830,Operating,2001\nNhat Tan 1,Binh Dinh,Local Natural Gas,324,Operating,2014\nNhat Tan 2,Binh Dinh,Local Natural Gas,324,Operating,2014\nNhat Tan 3,Binh Dinh,Local Natural Gas,324,Operating,2015\nNhat Tan 4,Binh Dinh,Local Natural Gas,324,Operating,2016\nNhat Tan 5,Binh Dinh,Local Natural Gas,324,Operating,2017\nPhu My 2.1,Ba Ria - Vung Tau,Local Natural Gas,1000,Operating,1994\nPhu My 2.2,Ba Ria - Vung Tau,Local Natural Gas,1000,Operating,1994\nPhu My 3,Ba Ria - Vung Tau,Local Natural Gas,1000,Operating,1994\nPhu My 4,Ba Ria - Vung Tau,Local Natural Gas,1400,Operating,2003\nDa Miem 1,Ninh Thuan,Local Natural Gas,2000,Operating,2014\nDa Miem 2,Ninh Thuan,Local Natural Gas,2000,Operating,2015\nSoc Trang,Soc Trang,Local Natural Gas,1500,Operating,2013\nSoc Trang LNG,Soc Trang,Imported LNG,2000,Planned,2026\nCan Tho,Can Tho,Local Natural Gas,1200,Operating,2006\nCa Mau 1,Ca Mau,Local Natural Gas,1500,Operating,2008\nBach Ho,Ca Mau,Local Natural Gas,1500,Operating,2010\nTan Thanh,Ca Mau,Imported LNG,2700,Under Construction,2026\nKien Giang,Kien Giang,Local Natural Gas,1500,Operating,2014\nLong An,Long An,Local Natural Gas,1500,Operating,2013\nTay Ninh,Tay Ninh,Local Natural Gas,1000,Operating,2015\nBinh Thuan 1,Binh Thuan,Local Natural Gas,1500,Operating,2013\nHa Long,Quang Ninh,Local Natural Gas,1000,Planned,2025\nBac Ha,Ha Tinh,Local Natural Gas,1500,Planned,2025\nThi Vai,Binh Thuan,Coal,2000,Cancelled,N/A\nNinh Thuan Coal,Ninh Thuan,Coal,4000,Cancelled,N/A\nQuang Nam Coal,Quang Nam,Coal,3000,Cancelled,N/A\nNgan Son,Ha Tinh,Coal,1300,Cancelled,N/A\nLai Chau,Lai Chau,Coal,1000,Cancelled,N/A\nTay Bac,Nghe An,Local Natural Gas,500,Under Construction,2024\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 6883
+  },
+  "wall_seconds": 49.622,
+  "cost_usd": 0.008957979999999999,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

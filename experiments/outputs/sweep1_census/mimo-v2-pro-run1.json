@@ -1,0 +1,21 @@
+{
+  "model": "xiaomi/mimo-v2-pro",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "I can provide a structured example based on publicly known data, but please note that a complete, real-time, and officially verified list requires access to databases from Vietnam's Ministry of Industry and Trade (MOIT) or Electricity of Vietnam (EVN), which I don't have.\n\nBelow is a CSV-formatted table with representative examples based on typical project classifications and known major plants. Fuel types, capacities, and CODs are often updated during planning and construction.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,COD (Actual/Planned),Province,Capacity (MWe)\nPha Lai 2,Coal,Operational,2004,Hai Duong,600\nMong Duong 1,Coal,Operational,2015,Quang Ninh,1,080\nDuyen Hai 3,Coal,Operational,2016,Tra Vinh,1,245\nThai Binh 2,Coal,Operational,2022,Thai Binh,1,200\nVung Ang 2,Coal,Under Construction,2025 (Planned),Ha Tinh,1,330\nPhu My 3,Local Natural Gas,Operational,2004,Ba Ria–Vung Tau,717\nPhu My 1,Local Natural Gas,Operational,2000,Ba Ria–Vung Tau,1,020\nCa Mau 1,Local Natural Gas,Operational,2005,Ca Mau,714\nNhon Trach 2,Local Natural Gas,Operational,2011,Dong Nai,750\nNhon Trach 3 & 4,Imported LNG,Under Construction,2025 (Planned),Dong Nai,1,624\nThi Vai LNG Terminal & Power,Imported LNG,Under Construction,2024 (Planned),Ba Ria–Vung Tau,1,500\nSon My 1,Imported LNG,Planned,2027 (Planned),Binh Thuan,2,250\n```\n\n**Important Notes:**\n1.  **Data Source:** This is illustrative. Official and complete lists are published by **EVN**, **MOIT**, or in Vietnam's **Power Development Master Plans (e.g., PDP 8)**.\n2.  **Dynamic Information:** Capacities, CODs, and project stages (Planned → Under Construction → Operational) change frequently. Many LNG projects have been delayed.\n3.  **Fuel Evolution:** Some plants initially designed for domestic gas are being adapted or considered for LNG imports (e.g., Nhon Trach expansion).\n4.  **Completeness:** This table includes only a sample of major plants. Vietnam has dozens of thermal plants, including many smaller gas-fired facilities and older coal plants.\n\nFor the most current and authoritative data, please consult:\n*   **Electricity of Vietnam (EVN)**\n*   **Vietnam Ministry of Industry and Trade (MOIT)**\n*   **National Load Dispatch Center (NLDC) reports**\n*   Official project documents for **Power Development Master Plan 8 (PDP8)**.\n\nWould you like me to explain any specific aspect of Vietnam's thermal power landscape in more detail?",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 302,
+    "completion_tokens": 904
+  },
+  "wall_seconds": 15.76,
+  "cost_usd": 0.003014,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Xiaomi",
+    "context_window": 1048576
+  }
+}

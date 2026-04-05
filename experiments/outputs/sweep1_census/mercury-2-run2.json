@@ -1,0 +1,21 @@
+{
+  "model": "inception/mercury-2",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "PlantPlant_Name\",\"Fuel_Type\",\"Construction_Stage\",\"COD\",\"Province\",\"Capacity_MW\"\n\"Ninh Binh Power Plant\",\"Coal\",\"Operational\",\"2012-03-15\",\"Ninh Binh\",\"1200\"\n\"Vung Ang 1 Power Plant\",\"Coal\",\"Operational\",\"2014-06-20\",\"Bà Rịa‑Vũng Tàu\",\"1200\"\n\"Vung Ang 2 Power Plant\",\"Coal\",\"Operational\",\"2016-09-01\",\"Bà Rịa‑Vũng Tàu\",\"1000\"\n\"Hải Phòng Power Plant\",\"Coal\",\"Operational\",\"2015-08-10\",\"Hải Phòng\",\"1500\"\n\"Quang Ninh Power Plant\",\"Coal\",\"Operational\",\"2020-11-30\",\"Quang Ninh\",\"1200\"\n\"Thai Nguyen Power Plant\",\"Coal\",\"Operational\",\"2021-05-12\",\"Thai Nguyen\",\"1200\"\n\"Cam Pha Power Plant\",\"Coal\",\"Operational\",\"2021-03-05\",\"Quang Ninh\",\"1200\"\n\"Ha Tinh Power Plant\",\"Coal\",\"Operational\",\"2021-10-18\",\"Ha Tinh\",\"1200\"\n\"Mong Duong Power Plant\",\"Coal\",\"Operational\",\"2022-02-28\",\"Quang Ninh\",\"1200\"\n\"Phu My 2 Power Plant\",\"Coal\",\"Operational\",\"2022-07-14\",\"Bình Thuận\",\"1200\"\n\"Ninh Thuan Power Plant\",\"Coal\",\"Operational\",\"2022-09-01\",\"Bình Thuận\",\"1200\"\n\"Bình Thuận Power Plant\",\"Coal\",\"Operational\",\"2022-12-20\",\"Bình Thuận\",\"1200\"\n\"Bac Ninh Power Plant\",\"Coal\",\"Under Construction\",\"2025-06-30\",\"Bac Ninh\",\"1200\"\n\"Nghe An Power Plant\",\"Coal\",\"Planned\",\"2027-03-31\",\"Nghe An\",\"1200\"\n\"Phu My 1 Power Plant\",\"Local Natural Gas\",\"Operational\",\"2009-04-01\",\"Bình Thuận\",\"1200\"\n\"Vinh Tan 1 Power Plant\",\"Local Natural Gas\",\"Operational\",\"2015-12-15\",\"Bình Thuận\",\"1200\"\n\"Cần Thơ 1 Power Plant\",\"Local Natural Gas\",\"Operational\",\"2015-09-20\",\"Cần Thơ\",\"1200\"\n\"Da Nang 1 Power Plant\",\"Local Natural Gas\",\"Operational\",\"2015-05-10\",\"Da Nang\",\"1200\"\n\"Hải Phòng 2 Power Plant\",\"Local Natural Gas\",\"Operational\",\"2017-03-22\",\"Hải Phòng\",\"1200\"\n\"Nha Trang Power Plant\",\"Local Natural Gas\",\"Operational\",\"2018-11-05\",\"Khánh Hòa\",\"500\"\n\"Thanh Hóa Power Plant\",\"Local Natural Gas\",\"Operational\",\"2020-06-30\",\"Thanh Hóa\",\"600\"\n\"Lao Cai Power Plant\",\"Local Natural Gas\",\"Under Construction\",\"2024-10-31\",\"Lao Cai\",\"300\"\n\"Vinh Tan 2 Power Plant\",\"Imported LNG\",\"Under Construction\",\"2024-04-30\",\"Bình Thuận\",\"1200\"\n\"Nam Định LNG Power Plant\",\"Imported LNG\",\"Planned\",\"2026-08-15\",\"Nam Định\",\"1000\"\n\"Bac Ninh LNG Power Plant\",\"Imported LNG\",\"Planned\",\"2027-02-28\",\"Bac Ninh\",\"1200\"\n\"Quang Ninh LNG Power Plant\",\"Imported LNG\",\"Planned\",\"2025-09-30\",\"Quang Ninh\",\"1200\"\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 53,
+    "completion_tokens": 3514
+  },
+  "wall_seconds": 4.523,
+  "cost_usd": 0.00264875,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "Other",
+    "architecture": "dense",
+    "provider": "Inception",
+    "context_window": 128000
+  }
+}

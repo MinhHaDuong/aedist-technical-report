@@ -1,0 +1,76 @@
+name,fuel,status,cod,province,capacity_mwe
+Mong Duong 1,Coal,Operational,2015,Quang Ninh,1080
+Mong Duong 2,Coal,Operational,2015,Quang Ninh,1200
+Cam Pha,Coal,Operational,2012,Quang Ninh,680
+Nghi Son 1,Coal,Operational,2013,Thanh Hoa,600
+Nghi Son 2,Coal,Operational,2021,Thanh Hoa,1200
+Vinh Tan 1,Coal,Operational,2018,Binh Thuan,620
+Vinh Tan 2,Coal,Operational,2014,Binh Thuan,1244
+Vinh Tan 4,Coal,Operational,2019,Binh Thuan,1200
+Vinh Tan 4 Extension,Coal,Operational,2019,Binh Thuan,600
+Duyen Hai 1,Coal,Operational,2015,Tra Vinh,1080
+Duyen Hai 2,Coal,Operational,2021,Tra Vinh,1200
+Duyen Hai 3,Coal,Operational,2022,Tra Vinh,1800
+Song Hau 1,Coal,Operational,2021,Hau Giang,1200
+Thai Binh 1,Coal,Operational,2018,Thai Binh,300
+Thai Binh 2,Coal,Operational,2021,Thai Binh,600
+Vung Ang 1,Coal,Operational,2014,Ha Tinh,1200
+Pha Lai 1,Coal,Operational,1986,Hai Duong,440
+Pha Lai 2,Coal,Operational,2001,Hai Duong,600
+Na Duong,Coal,Operational,2015,Lang Son,110
+Cao Ngan,Coal,Operational,2017,Thai Nguyen,115
+Son Dong,Coal,Operational,2009,Bac Giang,110
+Quang Ninh,Coal,Operational,2009,Quang Ninh,1200
+Uong Bi 1,Coal,Operational,2007,Quang Ninh,300
+Uong Bi 2,Coal,Operational,2010,Quang Ninh,300
+Hai Phong 1,Coal,Operational,2011,Hai Phong,300
+Hai Phong 2,Coal,Operational,2014,Hai Phong,600
+Coal-fired Bot Van Phong 1,Coal,Under Construction,2026,Khanh Hoa,1320
+Vinh Tan 3,Coal,Suspended/Uncertain,N/A,Binh Thuan,1980
+Quang Trach 1,Coal,Under Construction,2025,Quang Binh,1200
+Quang Trach 2,Coal,Planned,2028,Quang Binh,1200
+Song Hau 2,Coal,Suspended/Uncertain,N/A,Hau Giang,2000
+Long Phu 1,Coal,Under Construction,2025,Soc Trang,1200
+Long Phu 2,Coal,Suspended/Uncertain,N/A,Soc Trang,1200
+Long Phu 3,Coal,Suspended/Uncertain,N/A,Soc Trang,1980
+Tay Ninh,Coal,Cancelled,N/A,Tay Ninh,0
+Phu My 1,Local Natural Gas,Operational,1990s,Ba Ria-Vung Tau,1000
+Phu My 2.1,Local Natural Gas,Operational,2000,Ba Ria-Vung Tau,720
+Phu My 2.2,Local Natural Gas,Operational,2004,Ba Ria-Vung Tau,750
+Phu My 3,Local Natural Gas,Operational,2004,Ba Ria-Vung Tau,720
+Phu My 4,Local Natural Gas,Operational,2004,Ba Ria-Vung Tau,450
+Nhon Trach 1,Local Natural Gas,Operational,2008,Dong Nai,450
+Nhon Trach 2,Local Natural Gas,Operational,2011,Dong Nai,750
+Nhon Trach 3,Local Natural Gas,Operational,2022,Dong Nai,750
+Nhon Trach 4,Local Natural Gas,Under Construction,2025,Dong Nai,750
+Ca Mau 1,Local Natural Gas,Operational,2006,Ca Mau,800
+Ca Mau 2,Local Natural Gas,Operational,2008,Ca Mau,800
+O Mon 1,Local Natural Gas,Operational,2009,Can Tho,660
+O Mon 2,Local Natural Gas,Operational,2013,Can Tho,720
+O Mon 3,Local Natural Gas,Under Construction,2026,Can Tho,1000
+O Mon 4,Local Natural Gas,Planned,2028,Can Tho,1000
+Ba Ria,Local Natural Gas,Operational,1994,Ba Ria-Vung Tau,300
+Go Dau,Local Natural Gas,Operational,2005,Dong Nai,330
+Thu Duc,Local Natural Gas,Operational,2000,Ho Chi Minh City,186
+Bac Lieu LNG,Imported LNG,Under Construction,2025,Bac Lieu,3000
+Hai Lang (Quang Tri) LNG,Imported LNG,Under Construction,2027,Quang Tri,1500
+Son My 1,Imported LNG,Under Construction,2026,Binh Thuan,1500
+Son My 2,Imported LNG,Under Construction,2027,Binh Thuan,1500
+Thi Vai LNG,Imported LNG,Under Construction,2025,Ba Ria-Vung Tau,1200
+Long An I,Imported LNG,Planned,2028,Long An,1500
+Long An II,Imported LNG,Planned,2029,Long An,1500
+Lao Cai LNG,Imported LNG,Planned,2030,Lao Cai,1500
+Quang Ninh LNG,Imported LNG,Planned,2029,Quang Ninh,1500
+Vung Ang LNG,Imported LNG,Planned,2028,Ha Tinh,1200
+Dung Quat LNG,Imported LNG,Planned,2028,Quang Ngai,1000
+Ke Ga LNG,Imported LNG,Planned,2028,Binh Thuan,1500
+Nhon Hoi LNG,Imported LNG,Planned,2029,Binh Dinh,1500
+Binh Thuan LNG,Imported LNG,Early Development,N/A,Binh Thuan,1500
+Southwest Nhon Trach LNG,Imported LNG,Under Construction,2026,Dong Nai,1200
+**Notes on data:**,,,,,0
+- *Connection Date (COD)* indicates Commercial Operation Date (actual for operational plants,target for under construction/planned),,,,0
+- *Suspended/Uncertain*: Projects delayed due to financing/environmental issues or policy changes under Power Development Plan 8 (PDP8),,,,,0
+- *Local Natural Gas*: Plants supplied from domestic fields (Nam Con Son,Cuu Long,PM3-CAA),,,0
+- *Imported LNG*: New wave of gas power using imported liquefied natural gas via receiving terminals,,,,,0
+- Capacities listed are nameplate capacities (MWe),,,,,0
+- Several planned coal projects were removed from PDP8 (2023) and converted to LNG or cancelled entirely,,,,,0

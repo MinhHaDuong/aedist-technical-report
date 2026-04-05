@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-35b-a3b",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Note: The energy sector in Vietnam is undergoing significant restructuring due to the Power Development Plan 8 (PDP8). Many coal-fired projects have been cancelled, delayed, or converted, and LNG projects are in early stages. The list below represents the major utility-scale thermal power plants identified in public data as of early 2024. Statuses (Planned/Construction) are subject to rapid change.\n\n```csv\nFuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe),Plant Name\nCoal,Operational,2015,Quang Ninh,980,Ngan Duong 1 & 2\nCoal,Operational,2003,Quang Ninh,478,Uong Bi 1\nCoal,Under Construction,2024,Quang Ninh,500,Uong Bi 2\nCoal,Operational,2021,Ba Ria-Vung Tau,250,Phu My 2.4\nCoal,Planned,2027,Dong Nai,3600,Thoi Nhat\nCoal,Planned,2028,Thai Binh,2000,Thai Binh 1\nCoal,Planned,2029,Thai Binh,2000,Thai Binh 2\nCoal,Cancelled,-,Khanh Hoa,1440,Ham Hoi (Van Phong)\nNatural Gas (Domestic),Operational,2000,Ba Ria-Vung Tau,1805,Phu My 2.1 & 2.2\nNatural Gas (Domestic),Operational,1997,Ba Ria-Vung Tau,605,Phu My 3\nNatural Gas (Domestic),Operational,2004,Tra Vinh,2268,Tra Cu 1 & 2\nNatural Gas (Domestic),Operational,2004,Ca Mau,640,Ca Mau 1\nNatural Gas (Domestic),Operational,2010,Ca Mau,460,U Minh Thuong 1\nNatural Gas (Domestic),Operational,2020,Soc Trang,1460,Nam Can\nNatural Gas (Domestic),Operational,2014,Bac Lieu,640,Dat Ham\nNatural Gas (Domestic),Operational,2014,Hai Duong,1000,Bac Cau 1\nLNG (Imported),Under Construction,2026,Ca Mau,4200,Ca Mau 3 LNG\nLNG (Imported),Planned,2029,Binh Thuan,2500,Ham Tan\nLNG (Imported),Planned,2030,Ca Mau,2000,Ca Mau 4\nNatural Gas (Domestic),Operational,2015,Ha Nam,1000,Dong Tri 1\nNatural Gas (Domestic),Operational,2018,Ben Tre,640,Ben Tre (Huan Son)\nCoal,Cancelled,-,Quang Ninh,1150,Quang Ninh 3\nCoal,Cancelled,-,Thua Thien-Hue,1140,Phu Lam\nNatural Gas (Domestic),Under Construction,2026,Vinh Phuc,800,Vinh Phuc Gas\nNatural Gas (Domestic),Operational,2021,Hai Phong,700,Haiphong 1\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 5054
+  },
+  "wall_seconds": 24.288,
+  "cost_usd": 0.00658028,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}
