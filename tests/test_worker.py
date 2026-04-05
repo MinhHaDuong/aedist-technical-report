@@ -1,7 +1,5 @@
 """Tests for the Worker base class and PadmeWorker."""
 
-from __future__ import annotations
-
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -293,12 +291,14 @@ def _harness_patches(tmp_path):
     return {
         "make_client": MagicMock(),
         "load_models": MagicMock(return_value=[{"id": "qwen3:8b"}]),
-        "query_single_turn": MagicMock(return_value={
-            "content": "Plant A,coal,operational",
-            "finish_reason": "stop",
-            "usage": {"prompt_tokens": 50, "completion_tokens": 100},
-            "wall_seconds": 3.5,
-        }),
+        "query_single_turn": MagicMock(
+            return_value={
+                "content": "Plant A,coal,operational",
+                "finish_reason": "stop",
+                "usage": {"prompt_tokens": 50, "completion_tokens": 100},
+                "wall_seconds": 3.5,
+            }
+        ),
         "compute_cost": MagicMock(return_value=0.0),
         "model_metadata": MagicMock(return_value={}),
         "save_json": MagicMock(),
