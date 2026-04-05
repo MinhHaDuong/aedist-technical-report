@@ -1,0 +1,21 @@
+{
+  "model": "nemotron-3-nano",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "**CSV – Thermal Power Plants in Vietnam**\n\n```csv\nPlantName,FuelType,ConstructionStage,ConnectionDate,Province,CapacityMWe\n\"Long Phu 1\",\"Coal (imported)\",\"Operational\",\"2015\",\"Binh Thuan\",\"1200\"\n\"Vung Ang 1\",\"Coal (imported)\",\"Operational\",\"2014\",\"Ha Tinh\",\"600\"\n\"Vung Ang 2\",\"Coal (imported)\",\"Operational\",\"2017\",\"Ha Tinh\",\"600\"\n\"Duyen Hai 1\",\"Coal (imported)\",\"Operational\",\"2015\",\"Bac Lieu\",\"300\"\n\"Duyen Hai 2\",\"Coal (imported)\",\"Operational\",\"2016\",\"Bac Lieu\",\"300\"\n\"Cai Lay 1\",\"Coal (imported)\",\"Operational\",\"2019\",\"Dong Nai\",\"600\"\n\"Cai Lay 2\",\"Coal (imported)\",\"Operational\",\"2020\",\"Dong Nai\",\"600\"\n\"Hong Ngu 1\",\"Natural Gas (local)\",\"Operational\",\"2013\",\"Nghe An\",\"120\"\n\"Hong Ngu 2\",\"Natural Gas (local)\",\"Operational\",\"2014\",\"Nghe An\",\"120\"\n\"Thang Long Gas Plant\",\"Natural Gas (local)\",\"Operational\",\"2012\",\"Bac Ninh\",\"100\"\n\"Hai Phong Gas Plant\",\"Natural Gas (local)\",\"Operational\",\"2012\",\"Hai Phong\",\"150\"\n\"Da Nang LNG Power Plant\",\"LNG (imported)\",\"Planned\",\"2025\",\"Da Nang\",\"120\"\n\"Long Son LNG Plant\",\"LNG (imported)\",\"Planned\",\"2026\",\"Long An\",\"200\"\n\"Bac Ninh LNG Combined Cycle\",\"LNG (imported)\",\"Planned\",\"2024\",\"Bac Ninh\",\"150\"\n\"Ninh Thuan 1\",\"Coal (imported)\",\"Under Construction\",\"2023\",\"Ninh Thuan\",\"1200\"\n\"Bac Son 1\",\"Coal (imported)\",\"Planned\",\"2027\",\"Bac Giang\",\"600\"\n\"Bac Son 2\",\"Coal (imported)\",\"Planned\",\"2028\",\"Bac Giang\",\"600\"\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 2970
+  },
+  "wall_seconds": 31.866,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

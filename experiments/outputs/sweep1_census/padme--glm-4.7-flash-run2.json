@@ -1,0 +1,21 @@
+{
+  "model": "glm-4.7-flash",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant_Name,Fuel_Type,Province,Capacity_MW,Construction_Stage,Connection_Date\nNinh Binh,Coal,Ninh Binh,1200,Completed,2016\nDai Tu,Coal,Thai Binh,1200,Completed,2016\nVinh Tan 1,Coal,Binh Thuan,1200,Completed,2005\nVinh Tan 2,Coal,Binh Thuan,1200,Completed,2008\nVinh Tan 3,Coal,Binh Thuan,1200,Completed,2013\nVinh Tan 4,Coal,Binh Thuan,1200,Completed,2018\nVinh Tan 5,Coal,Binh Thuan,1200,Completed,2020\nVinh Tan 6,Coal,Binh Thuan,3000,Completed,2021\nVinh Tan 7,Coal,Binh Thuan,3000,Under Construction,2024\nThai Binh,Coal,Thai Binh,1200,Completed,2017\nMong Duong 1,Coal,Quang Ninh,1200,Completed,2018\nMong Duong 2,Coal,Quang Ninh,2000,Completed,2020\nPhu My 4,Coal,Ba Ria-Vung Tau,1200,Completed,2016\nSon Dinh,Coal,Ba Ria-Vung Tau,1200,Completed,2020\nBinh Dinh,Coal,Binh Dinh,200,Completed,2004\nTien Hai,Coal,Thai Binh,1200,Completed,2015\nNha Be,Imported LNG,Ho Chi Minh,1000,Completed,1979\nPha Lai 1,Local Natural Gas,Hai Duong,1000,Completed,1979\nPha Lai 2,Local Natural Gas,Hai Duong,300,Completed,1997\nTien Sa,Local Natural Gas,Da Nang,600,Completed,1995\nDinh Vu,Local Natural Gas,Hai Phong,1030,Completed,2006\nDung Quat 1,Imported LNG,Quang Ngai,1800,Completed,2009\nDung Quat 2,Imported LNG,Quang Ngai,1800,Under Construction,2024\nChu Lai,Imported LNG,Quang Nam,2700,Completed,2020\nVinh Tan (CCGT),Imported LNG,Binh Thuan,1200,Completed,2021\nKhanh Hoa 1,Imported LNG,Khanh Hoa,1400,Under Construction,2026\nThai Binh 2 (Dong Hai),Local Natural Gas,Thai Binh,2600,Completed,2024\nSong Hinh,Imported LNG,Binh Phuoc,1800,Under Construction,2024\nQuang Ninh CCGT,Imported LNG,Quang Ninh,660,Under Construction,2025\nCam Lo,Imported LNG,Quang Binh,550,Completed,2003\nDuyen Hai,Imported LNG,Tien Giang,2000,Completed,2021\nDuyen Hai 2,Imported LNG,Tien Giang,2000,Under Construction,2027\nBinh Thuan,Imported LNG,Binh Thuan,660,Completed,2017\nNghi Son,Imported LNG,Ha Tinh,1100,Completed,2017\nNam Dinh 2 (Khoai My),Imported LNG,Nam Dinh,800,Under Construction,2025\nThai Nguyen (Thermal),Coal,Thai Nguyen,100,Completed,2016\nDong Nai (Dai Hung),Coal,Long An,540,Completed,1978\nHung Yen,Toluene,Hung Yen,180,Completed,2020\nThai Nguyen (Lignite),Coal,Thai Nguyen,300,Completed,2018\nYen Phu,Thermal,Hanoi,300,Completed,1981\nThai Nguyen (Dong Trieu),Coal,Thai Nguyen,100,Completed,2020\nVijoco Power (Vinh Tan),Coal,Binh Thuan,600,Completed,2022\nViet Tri,Toluene,Vinh Phuc,300,Completed,2014\nKien Giang,Toluene,Kien Giang,400,Completed,2015\nPhu My (Moc Chau),Coal,Son La,100,Completed,2016\nHai Phong (Do Son),Coal,Hai Phong,100,Completed,2015\nNam Dinh (Viet An),Imported LNG,Nam Dinh,700,Under Construction,2026\nHa Tinh (Nha Tien),Imported LNG,Ha Tinh,720,Under Construction,2026\nDa Nang (Cam Pha),Imported LNG,Quang Nam,600,Under Construction,2027\nNam Dinh (Dien Bien),Imported LNG,Nam Dinh,800,Under Construction,2027\nLien Chieu,Imported LNG,Da Nang,2100,Planned,2030\nLia,Coal,Quang Ninh,3000,Planned,2030\nDai Nam,Coal,Thai Binh,3000,Planned,2027\nDai Tu 2,Coal,Thai Binh,1200,Under Construction,2026\nDien Bien 1 (Phu Nong),Gas,Dien Bien,750,Under Construction,2025\nThai Binh LNG,Imported LNG,Thai Binh,2000,Under Construction,2026",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 58,
+    "completion_tokens": 4500
+  },
+  "wall_seconds": 72.799,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

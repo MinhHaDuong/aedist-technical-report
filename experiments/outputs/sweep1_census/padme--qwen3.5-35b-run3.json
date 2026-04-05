@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:35b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Note: The table below lists major utility-scale thermal power plants in Vietnam based on available data as of early 2024. Due to the dynamic nature of Vietnam's Power Development Plan (PDP8), some projects marked as \"Planned\" are currently suspended or subject to cancellation. Total listed capacity reflects installed or planned capacities. Smaller industrial or district heating plants may not be included.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nUong Bi Thermal Power Plant,Coal,Operational,2001,Quang Ninh,869\nThai Nguyen Thermal Power Plant,Coal,Operational,2014,Thai Nguyen,1250\nThai Nguyen 1,Coal,Operational,2014,Thai Nguyen,650\nUong Bi 2,Coal,Suspended,N/A,Quang Ninh,880\nCa Mau Thermal Power Plant 1,Coal,Operational,2016,Ca Mau,445\nCa Mau Thermal Power Plant 2,LNG (Import),Planned,2025,Ca Mau,2000\nCa Mau Thermal Power Plant 2,Coal,Suspended,N/A,Ca Mau,2000\nThai Nguyen 2,Coal,Operational,2015,Thai Nguyen,600\nNghi Son Thermal Power Plant,Natural Gas (Local),Operational,2014,Thanh Hoa,1520\nDai Phuong Thermal Power Plant,Natural Gas (Local),Operational,2005,Ha Noi,368\nDai Nam Thermal Power Plant,Natural Gas (Local),Operational,2005,Hcm City,368\nLong Phuoc 1 Thermal Power Plant,Natural Gas (Local),Operational,2016,Binh Duong,534\nLong Phuoc 2 Thermal Power Plant,LNG (Import),Operational,2017,Binh Duong,750\nLong Phuoc 3 Thermal Power Plant,LNG (Import),Planned,2025,Binh Duong,1000\nDa Nang Thermal Power Plant,Natural Gas (Local),Operational,2005,Da Nang,350\nDa Nang Thermal Power Plant 2,Natural Gas (Local),Operational,2005,Da Nang,350\nQuy Nhon Thermal Power Plant,Natural Gas (Local),Operational,2012,Binh Dinh,568\nQuy Nhon Thermal Power Plant 2,Natural Gas (Local),Planned,2025,Binh Dinh,500\nDa Nang 3 Thermal Power Plant,Coal,Suspended,N/A,Da Nang,1100\nDa Nang 4 Thermal Power Plant (Coal),Coal,Suspended,N/A,Da Nang,1570\nNam Dinh Thermal Power Plant,Coal,Operational,2020,Nam Dinh,1190\nThoi Binh Thermal Power Plant,Coal,Operational,2016,Ha Noid,738\nSong Cong Thermal Power Plant,Natural Gas (Local),Operational,2007,Hai Duong,480\nSong Cong 2 Thermal Power Plant,Coal/Coal,Operational,2010,Hai Duong,480\nNinh Binh Thermal Power Plant,Coal,Operational,2010,Ninh Binh,500\nBinh Son Thermal Power Plant,Coal,Canceled,N/A,Quang Ngai,1000\nThai Bui Thermal Power Plant,Coal,Canceled,N/A,Yen Bai,1200\nLong Son Thermal Power Plant,LNG (Import),Operational,2019,Lam Dong,450\nNam Hoi Thermal Power Plant,Coal,Operational,2017,Ba Ria,600\nNinh Binh 2 Thermal Power Plant,Coal,Planned,2024,Ninh Binh,500\nUong Bi 3,Coal,Canceled,N/A,Quang Ninh,890\nThoi Binh II,Coal,Canceled,N/A,Ha Long,730\nVung Ang 1,Coal,Operational,2013,Quang Binh,1000\nVung Ang 2,Coal,Suspended,N/A,Quang Binh,1000\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 5192
+  },
+  "wall_seconds": 116.981,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

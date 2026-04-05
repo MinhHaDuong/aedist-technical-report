@@ -1,0 +1,21 @@
+{
+  "model": "gemma4:31b",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,COD,Province,Capacity (MWe)\nPhả Lại 1,Coal,Operational,2004,Hải Dương,600\nPhả Lại 2,Coal,Operational,2013,Hải Dương,600\nUông Bí,Coal,Operational,2004,Quảng Ninh,600\nMông Điện,Coal,Operational,2014,Quảng Ninh,600\nVĩnh Tân 1,Coal,Operational,2013,Bình Thuận,1200\nVĩnh Tân 2,Coal,Operational,2016,Bình Thuận,1200\nDuyên Hải 1,Coal,Operational,2011,Trà Vinh,750\nDuyên Hải 2,Coal,Operational,2014,Trà Vinh,1200\nDuyên Hải 3,Coal,Planned,TBD,Trà Vinh,1200\nVũng Áng 1,Coal,Operational,2013,Hà Tĩnh,1200\nVũng Áng 2,Coal,Operational,2015,Hà Tĩnh,1200\nNghi Sơn 1,Coal,Operational,2013,Thanh Hóa,1200\nNghi Sơn 2,Coal,Operational,2018,Thanh Hóa,1200\nCà Mau 1 & 2,Local Natural Gas,Operational,2008,Cà Mau,1500\nBạc Liêu,Local Natural Gas,Operational,2011,Bạc Liêu,600\nNhơn Trạch 1,Local Natural Gas,Operational,2010,Đồng Nai,850\nNhơn Trạch 2,Local Natural Gas,Operational,2011,Đồng Nai,750\nNhơn Trạch 3,Local Natural Gas,Operational,2020,Đồng Nai,850\nNhơn Trạch 4,Local Natural Gas,Operational,2023,Đồng Nai,850\nLong An LNG,Imported LNG,Planned,2028,Long An,3500\nSơn Mỹ LNG,Imported LNG,Planned,2030,Bình Thuận,2250\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 2061
+  },
+  "wall_seconds": 229.614,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

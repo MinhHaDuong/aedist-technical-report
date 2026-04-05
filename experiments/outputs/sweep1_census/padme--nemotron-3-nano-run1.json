@@ -1,0 +1,21 @@
+{
+  "model": "nemotron-3-nano",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nVinh Tan 1,Coal,Operational,2008,Binh Thuan,600\nVinh Tan 2,Coal,Operational,2015,Binh Thuan,600\nLong Son 1,Coal,Operational,1995,Binh Thuan,300\nDuyen Hai 1,Coal,Operational,2008,Binh Thuan,600\nDuyen Hai 2,Coal,Operational,2015,Binh Thuan,600\nCam Pha,Coal,Operational,1995,Quang Ninh,300\nPha Lai,Coal,Operational,1995,Ninh Binh,600\nThi Vai Power Plant,Gas (imported LNG),Under construction,Planned 2026,Binh Duong,1200\nVinh Long Power Plant,Gas (imported LNG),Planned,2027,Thanh Hoa,1200",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 2380
+  },
+  "wall_seconds": 35.107,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
