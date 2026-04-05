@@ -239,8 +239,6 @@ def _greedy_prealign(
 
 def _apply_warm_start(
     pairs: list[tuple[int, int]],
-    df1: pd.DataFrame,
-    df2: pd.DataFrame,
     x_vars: dict[tuple[int, int], LpVariable],
     u_vars: dict[int, LpVariable],
     v_vars: dict[int, LpVariable],
@@ -472,7 +470,7 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
 
     pairs = _greedy_prealign(df1, df2)
-    _apply_warm_start(pairs, df1, df2, x_vars, u_vars, v_vars)
+    _apply_warm_start(pairs, x_vars, u_vars, v_vars)
     prob.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     if prob.status != LpStatusOptimal:
         raise RuntimeError("Assignment MILP did not solve to optimality.")

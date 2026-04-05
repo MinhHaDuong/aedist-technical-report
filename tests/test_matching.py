@@ -263,7 +263,7 @@ def test_warm_start_identical_to_cold():
     # Warm solve
     prob_warm, x_warm, u_warm, v_warm = _setup_lp(df1, df2, costs, 10000)
     pairs = _greedy_prealign(df1, df2)
-    _apply_warm_start(pairs, df1, df2, x_warm, u_warm, v_warm)
+    _apply_warm_start(pairs, x_warm, u_warm, v_warm)
     prob_warm.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     assert prob_warm.status == LpStatusOptimal
     warm_results = _extract_results(
