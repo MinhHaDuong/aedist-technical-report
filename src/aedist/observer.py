@@ -9,13 +9,11 @@ Usage:
     python -m aedist.observer --json           # machine-readable output
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import logging
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 log = logging.getLogger(__name__)
@@ -29,21 +27,20 @@ def _parse_expiry(filename: str) -> tuple[str, datetime] | None:
     if not m:
         return None
     job_id = m.group(1)
-    expiry = datetime.strptime(m.group(2), "%Y%m%dT%H%M%SZ").replace(
-        tzinfo=timezone.utc
-    )
+    expiry = datetime.strptime(m.group(2), "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC)
     return job_id, expiry
 
 
 def find_expired(
-    jobs_root: Path, now: datetime | None = None,
+    jobs_root: Path,
+    now: datetime | None = None,
 ) -> list[tuple[str, Path, datetime]]:
     """Find running jobs with expired leases.
 
     Returns list of (job_id, path, expiry) for expired jobs.
     """
     if now is None:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
     expired = []
     running_dir = jobs_root / "running"
     if not running_dir.exists():
@@ -59,7 +56,8 @@ def find_expired(
 
 
 def requeue_expired(
-    jobs_root: Path, now: datetime | None = None,
+    jobs_root: Path,
+    now: datetime | None = None,
 ) -> list[str]:
     """Move expired running jobs back to pending/.
 
@@ -85,7 +83,7 @@ def status_report(jobs_root: Path) -> dict:
         p = jobs_root / d
         counts[d] = len(list(p.glob("*.yaml"))) if p.exists() else 0
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     expired = find_expired(jobs_root, now)
 
     return {
@@ -96,19 +94,22 @@ def status_report(jobs_root: Path) -> dict:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(
-        description="Monitor job board and detect expired leases"
-    )
+    parser = argparse.ArgumentParser(description="Monitor job board and detect expired leases")
     parser.add_argument(
-        "--jobs-root", type=Path, default=Path("jobs"),
+        "--jobs-root",
+        type=Path,
+        default=Path("jobs"),
         help="Root directory for job board (default: jobs/)",
     )
     parser.add_argument(
-        "--requeue", action="store_true",
+        "--requeue",
+        action="store_true",
         help="Move expired running jobs back to pending/",
     )
     parser.add_argument(
-        "--json", action="store_true", dest="json_output",
+        "--json",
+        action="store_true",
+        dest="json_output",
         help="Output status as JSON",
     )
     args = parser.parse_args(argv)
@@ -133,8 +134,7 @@ def main(argv=None):
         log.info("  Done:     %d", c.get("done", 0))
         log.info("  Failed:   %d", c.get("failed", 0))
         if report["expired_leases"]:
-            log.info("  Expired:  %d — %s", report["expired_leases"],
-                     report["expired_jobs"])
+            log.info("  Expired:  %d — %s", report["expired_leases"], report["expired_jobs"])
 
 
 if __name__ == "__main__":

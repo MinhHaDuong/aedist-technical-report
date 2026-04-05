@@ -8,13 +8,11 @@ Subclasses:
     OpenRouterWorker — parallel execution via OpenRouter cloud API
 """
 
-from __future__ import annotations
-
 import logging
 import re
 import signal
 import traceback
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import openai
@@ -32,7 +30,6 @@ from .harness import (
 from .schema import (
     JobSpec,
     LeaseInfo,
-    Method,
     MethodParams,
     ResourceUse,
     RunRecord,
@@ -84,7 +81,7 @@ class Worker:
 
         Uses Path.rename() for POSIX atomicity.
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expiry = now + timedelta(seconds=job.timeout_seconds)
         expiry_str = expiry.strftime("%Y%m%dT%H%M%SZ")
         src = self._find_pending_file(job)
@@ -151,9 +148,7 @@ class Worker:
         self.acquire(job)
 
         def _timeout_handler(signum: int, frame: object) -> None:
-            raise TimeoutError(
-                f"Job {job.job_id} exceeded timeout of {job.timeout_seconds}s"
-            )
+            raise TimeoutError(f"Job {job.job_id} exceeded timeout of {job.timeout_seconds}s")
 
         old_handler = signal.signal(signal.SIGALRM, _timeout_handler)
         try:
@@ -172,9 +167,7 @@ class Worker:
 
     def _find_pending_file(self, job: JobSpec) -> Path:
         """Find the pending file for a given job."""
-        matches = list(
-            self.jobs_root.glob(f"pending/*-{job.job_id}.yaml")
-        )
+        matches = list(self.jobs_root.glob(f"pending/*-{job.job_id}.yaml"))
         if not matches:
             msg = f"No pending file found for job {job.job_id}"
             raise FileNotFoundError(msg)
@@ -182,9 +175,7 @@ class Worker:
 
     def _find_running_file(self, job: JobSpec) -> Path:
         """Find the running file for a given job."""
-        matches = list(
-            self.jobs_root.glob(f"running/{job.job_id}-lease-*.yaml")
-        )
+        matches = list(self.jobs_root.glob(f"running/{job.job_id}-lease-*.yaml"))
         if not matches:
             msg = f"No running file found for job {job.job_id}"
             raise FileNotFoundError(msg)
@@ -242,7 +233,8 @@ class PadmeWorker(Worker):
                 log.info("Querying %s run %d/%d...", model_id, run, job.repeat)
                 try:
                     result = query_single_turn(
-                        client, model_id,
+                        client,
+                        model_id,
                         [{"role": "user", "content": prompt}],
                     )
                 except openai.APIError as e:
@@ -257,18 +249,21 @@ class PadmeWorker(Worker):
                 total_out += usage.get("completion_tokens", 0)
 
                 filepath = output_path(output_dir, model_id, run, "padme")
-                save_json(filepath, {
-                    "model": model_id,
-                    "date": date.today().isoformat(),
-                    "run": run,
-                    "prompt": prompt,
-                    "response": result["content"],
-                    "finish_reason": result["finish_reason"],
-                    "usage": usage,
-                    "wall_seconds": result["wall_seconds"],
-                    "cost_usd": cost,
-                    "model_metadata": model_metadata(model_entry),
-                })
+                save_json(
+                    filepath,
+                    {
+                        "model": model_id,
+                        "date": date.today().isoformat(),
+                        "run": run,
+                        "prompt": prompt,
+                        "response": result["content"],
+                        "finish_reason": result["finish_reason"],
+                        "usage": usage,
+                        "wall_seconds": result["wall_seconds"],
+                        "cost_usd": cost,
+                        "model_metadata": model_metadata(model_entry),
+                    },
+                )
                 result_files.append(str(filepath))
 
                 if total_cost >= job.budget_usd:
@@ -343,7 +338,8 @@ class OpenRouterWorker(Worker):
             log.info("Querying %s run %d/%d...", model_id, run, job.repeat)
             try:
                 result = query_single_turn(
-                    client, model_id,
+                    client,
+                    model_id,
                     [{"role": "user", "content": prompt}],
                 )
             except openai.APIError as e:
@@ -355,18 +351,21 @@ class OpenRouterWorker(Worker):
             budget.add(cost)
 
             filepath = output_path(output_dir, model_id, run)
-            save_json(filepath, {
-                "model": model_id,
-                "date": date.today().isoformat(),
-                "run": run,
-                "prompt": prompt,
-                "response": result["content"],
-                "finish_reason": result["finish_reason"],
-                "usage": usage,
-                "wall_seconds": result["wall_seconds"],
-                "cost_usd": cost,
-                "model_metadata": model_metadata(model_entry),
-            })
+            save_json(
+                filepath,
+                {
+                    "model": model_id,
+                    "date": date.today().isoformat(),
+                    "run": run,
+                    "prompt": prompt,
+                    "response": result["content"],
+                    "finish_reason": result["finish_reason"],
+                    "usage": usage,
+                    "wall_seconds": result["wall_seconds"],
+                    "cost_usd": cost,
+                    "model_metadata": model_metadata(model_entry),
+                },
+            )
             return {
                 "filepath": str(filepath),
                 "wall_seconds": result["wall_seconds"],
@@ -376,10 +375,7 @@ class OpenRouterWorker(Worker):
             }
 
         with ThreadPoolExecutor(max_workers=self.concurrency) as pool:
-            futures = {
-                pool.submit(_run_query, m, r): (m, r)
-                for m, r in work_items
-            }
+            futures = {pool.submit(_run_query, m, r): (m, r) for m, r in work_items}
             for future in as_completed(futures):
                 res = future.result()
                 if res is None:
@@ -402,29 +398,37 @@ class OpenRouterWorker(Worker):
 # CLI entry point
 # ---------------------------------------------------------------------------
 
+
 def main(argv=None):
     """Run a worker from the command line."""
     import argparse
 
     parser = argparse.ArgumentParser(description="Run an AEDIST worker")
     parser.add_argument(
-        "pool", choices=["padme", "openrouter"],
+        "pool",
+        choices=["padme", "openrouter"],
         help="Worker pool to run",
     )
     parser.add_argument(
-        "--jobs-root", type=Path, default=Path("jobs"),
+        "--jobs-root",
+        type=Path,
+        default=Path("jobs"),
         help="Root directory for job board (default: jobs/)",
     )
     parser.add_argument(
-        "--base-url", default=OLLAMA_BASE_URL,
+        "--base-url",
+        default=OLLAMA_BASE_URL,
         help=f"Ollama API base URL (default: {OLLAMA_BASE_URL})",
     )
     parser.add_argument(
-        "--concurrency", type=int, default=DEFAULT_CONCURRENCY,
+        "--concurrency",
+        type=int,
+        default=DEFAULT_CONCURRENCY,
         help=f"Max parallel queries for openrouter (default: {DEFAULT_CONCURRENCY})",
     )
     parser.add_argument(
-        "--loop", action="store_true",
+        "--loop",
+        action="store_true",
         help="Run continuously, polling for jobs",
     )
     args = parser.parse_args(argv)
@@ -432,12 +436,15 @@ def main(argv=None):
 
     workers = {
         "padme": lambda: PadmeWorker(jobs_root=args.jobs_root, base_url=args.base_url),
-        "openrouter": lambda: OpenRouterWorker(jobs_root=args.jobs_root, concurrency=args.concurrency),
+        "openrouter": lambda: OpenRouterWorker(
+            jobs_root=args.jobs_root, concurrency=args.concurrency
+        ),
     }
     worker = workers[args.pool]()
 
     if args.loop:
         import time
+
         while True:
             record = worker.run_one()
             if record is None:
