@@ -3,7 +3,6 @@
   provider: OpenAI
   country: US
   architecture: dense
-  reasoning: instruct
   context_window: 1050000
   price_per_mtok_in: 2.5
   price_per_mtok_out: 15.0
@@ -14,7 +13,6 @@
   provider: Google
   country: US
   architecture: dense
-  reasoning: instruct
   context_window: 1048576
   price_per_mtok_in: 0.1
   price_per_mtok_out: 0.4
@@ -25,7 +23,6 @@
   provider: Mistral
   country: FR
   architecture: dense
-  reasoning: instruct
   context_window: 262144
   price_per_mtok_in: 0.15
   price_per_mtok_out: 0.6
@@ -37,7 +34,6 @@
   provider: Mistral
   country: FR
   architecture: moe
-  reasoning: instruct
   context_window: 262144
   price_per_mtok_in: 0.5
   price_per_mtok_out: 1.5
@@ -49,7 +45,6 @@
   provider: DeepSeek
   country: CN
   architecture: moe
-  reasoning: instruct
   context_window: 163840
   price_per_mtok_in: 0.26
   price_per_mtok_out: 0.38
