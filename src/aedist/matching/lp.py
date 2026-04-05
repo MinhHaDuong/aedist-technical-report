@@ -186,48 +186,24 @@ def _compute_costs(
 
 
 def _greedy_prealign(
-    df1: pd.DataFrame,
-    df2: pd.DataFrame,
+    costs: dict[tuple[int, int], float],
+    mismatch_penalty: float,
 ) -> list[tuple[int, int]]:
-    """Greedy pre-alignment using name similarity + capacity proximity.
+    """Greedy pre-alignment from the cost matrix for CBC warm start.
 
-    For each candidate, compute a composite score (0.7 * name + 0.3 * capacity)
-    against every reference, then greedily assign top-scoring pairs above a
-    threshold.  The result is a feasible (but not necessarily optimal) matching
-    that CBC can use as a warm start.
+    Sorts all (i, j) pairs by ascending cost (same objective the LP optimizes),
+    skips pairs at mismatch_penalty (no useful match), and greedily assigns
+    one-to-one.  The result is a feasible solution that CBC can refine.
     """
-    indices1 = list(df1.index)
-    indices2 = list(df2.index)
-
-    # Build (score, i, j) triples for all pairs
-    triples: list[tuple[float, int, int]] = []
-    for i in indices1:
-        name1 = str(df1.loc[i, "name_clean"])
-        cap1 = df1.loc[i, "capacity_clean"]
-        for j in indices2:
-            name2 = str(df2.loc[j, "name_clean"])
-            cap2 = df2.loc[j, "capacity_clean"]
-
-            name_score = fuzz.token_sort_ratio(name1, name2) / 100.0
-
-            if math.isnan(cap1) or math.isnan(cap2) or max(cap1, cap2) == 0:
-                cap_score = 0.0
-            else:
-                cap_score = 1.0 - abs(cap1 - cap2) / max(cap1, cap2)
-
-            combined = 0.7 * name_score + 0.3 * cap_score
-            triples.append((combined, i, j))
-
-    triples.sort(reverse=True)
+    candidates = sorted(
+        ((cost, i, j) for (i, j), cost in costs.items() if cost < mismatch_penalty),
+    )
 
     matched_i: set[int] = set()
     matched_j: set[int] = set()
     pairs: list[tuple[int, int]] = []
-    threshold = 0.6
 
-    for combined, i, j in triples:
-        if combined < threshold:
-            break
+    for _, i, j in candidates:
         if i in matched_i or j in matched_j:
             continue
         pairs.append((i, j))
@@ -469,7 +445,7 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
     costs = _compute_costs(df1, df2, similarity_threshold, mismatch_penalty, capacity_weight)
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
 
-    pairs = _greedy_prealign(df1, df2)
+    pairs = _greedy_prealign(costs, mismatch_penalty)
     _apply_warm_start(pairs, x_vars, u_vars, v_vars)
     prob.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     if prob.status != LpStatusOptimal:

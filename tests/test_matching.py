@@ -177,7 +177,7 @@ def test_main_example(reconcile):
 
 def test_greedy_prealign_exact_names():
     """Greedy pre-alignment should pair plants with identical names."""
-    from aedist.matching.lp import _greedy_prealign
+    from aedist.matching.lp import _compute_costs, _greedy_prealign
 
     df1 = pd.DataFrame(
         [
@@ -192,7 +192,10 @@ def test_greedy_prealign_exact_names():
         ]
     )
 
-    pairs = _greedy_prealign(df1, df2)
+    costs = _compute_costs(
+        df1, df2, similarity_threshold=90, mismatch_penalty=1000, capacity_weight=0.001
+    )
+    pairs = _greedy_prealign(costs, mismatch_penalty=1000)
     pair_set = set(pairs)
 
     # Plant A (i=0) should match Plant A (j=1), Plant B (i=1) should match Plant B (j=0)
@@ -202,8 +205,8 @@ def test_greedy_prealign_exact_names():
 
 
 def test_greedy_prealign_no_match():
-    """Completely different names should not be paired below threshold."""
-    from aedist.matching.lp import _greedy_prealign
+    """Completely different names should not be paired at mismatch penalty."""
+    from aedist.matching.lp import _compute_costs, _greedy_prealign
 
     df1 = pd.DataFrame(
         [
@@ -216,7 +219,10 @@ def test_greedy_prealign_no_match():
         ]
     )
 
-    pairs = _greedy_prealign(df1, df2)
+    costs = _compute_costs(
+        df1, df2, similarity_threshold=90, mismatch_penalty=1000, capacity_weight=0.001
+    )
+    pairs = _greedy_prealign(costs, mismatch_penalty=1000)
     assert len(pairs) == 0
 
 
@@ -262,7 +268,7 @@ def test_warm_start_identical_to_cold():
 
     # Warm solve
     prob_warm, x_warm, u_warm, v_warm = _setup_lp(df1, df2, costs, 10000)
-    pairs = _greedy_prealign(df1, df2)
+    pairs = _greedy_prealign(costs, mismatch_penalty=1000)
     _apply_warm_start(pairs, x_warm, u_warm, v_warm)
     prob_warm.solve(PULP_CBC_CMD(msg=False, warmStart=True))
     assert prob_warm.status == LpStatusOptimal
