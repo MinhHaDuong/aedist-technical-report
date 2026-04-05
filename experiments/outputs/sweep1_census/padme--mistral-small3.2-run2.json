@@ -1,0 +1,21 @@
+{
+  "model": "mistral-small3.2",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here's a CSV table listing thermal power plants in Vietnam. Please note that the data is based on available information up to my last update in October 2023, and some details may have changed since then.\n\n```csv\nName,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nDuyen Hai 1,Coal,Operational,2012,Vinh Phuc,1240\nDuyen Hai 2,Coal,Operational,2015,Vinh Phuc,1240\nDuyen Hai 3,Coal,Operational,2018,Vinh Phuc,621.5\nDuyen Hai 4,Coal,Operational,2020,Vinh Phuc,621.5\nNghi Son 1,Coal,Operational,2015,Thanh Hóa,1000\nNghi Son 2,Coal,Operational,2019,Thanh Hóa,1000\nMong Duong 1,Coal,Operational,2013,Quảng Ninh,2100\nMong Duong 2,Coal,Operational,2015,Quảng Ninh,2100\nVinhaslam 1,Coal,Preparation,-,Quảng Ninh,2000\nVinhaslam 2,Coal,Preparation,-,Quảng Ninh,2000\nVinhaslam 3,Coal,Preparation,-,Quảng Ninh,2000\nSong May 1,Coal,Operational,2020,Hung Yên,600\nSong May 2,Coal,Operational,2020,Hung Yên,600\nSong Hau 1,Coal,Operational,2020,Sóc Trăng,1200\nSong Hau 2,Coal,Operational,2020,Sóc Trăng,1200\nNha Be,Imported LNG,Operational,2021,Ho Chi Minh City,700\nBiên Hòa,Imported LNG,Operational,2022,Đồng Nai,750\nNghi Son BOT,Imported LNG,Operational,2023,Thanh Hóa,1500\nPhú Mỹ 3,Imported LNG,Operational,2006,Bà Rịa-Vũng Tàu,750\nPhú Mỹ 4,Imported LNG,Operational,2010,Bà Rịa-Vũng Tàu,750\nPhú Mỹ 2,Imported LNG,Operational,2012,Bà Rịa-Vũng Tàu,925\nPhú Mỹ 5,Imported LNG,Operational,2014,Bà Rịa-Vũng Tàu,925\nPhú Mỹ 2.2,Imported LNG,Operational,2017,Bà Rịa-Vũng Tàu,1200\nPhú Mỹ 3.2,Imported LNG,Operational,2018,Bà Rịa-Vũng Tàu,1500\nPhú Mỹ 4.2,Imported LNG,Operational,2019,Bà Rịa-Vũng Tàu,1500\nO Mon I,Local Natural Gas,Operational,2000,Cần Thơ,150\nO Mon II,Local Natural Gas,Operational,2003,Cần Thơ,150\nNam Dinh 1,Local Natural Gas,Operational,2019,Nam Dinh,480\nNam Dinh 2,Local Natural Gas,Operational,2020,Nam Dinh,480\nDien Khanh,Local Natural Gas,Operational,2014,Khanh Hoa,300\nNinh Thuan 1,Coal,Operational,2018, Ninh Thuan,1200\nNinh Thuan 2,Coal,Operational,2019, Ninh Thuan,1200\nCa Mau LNG,Imported LNG,Preparation,2025,Ca Mau,3200\n```\n\nFor the most accurate and up-to-date information, I recommend consulting the latest reports from Vietnam's Ministry of Industry and Trade (MoIT) or other reliable sources.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 563,
+    "completion_tokens": 1001
+  },
+  "wall_seconds": 41.078,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "FR",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

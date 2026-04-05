@@ -1,0 +1,21 @@
+{
+  "model": "gemma4:31b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Because the total number of thermal plants (including small industrial captive plants) is extremely high and evolves with the Power Development Plan 8 (PDP8), the following list focuses on the **major utility-scale thermal power plants** that contribute significantly to the national grid.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,COD,Province,Capacity (MWe)\nPhu My 1-4,Local Natural Gas,Operating,Various,Ba Ria-Vung Tau,3000\nNhon Trach 1,Local Natural Gas,Operating,2005,Dong Nai,750\nNhon Trach 2,Local Natural Gas,Operating,2010,Dong Nai,880\nCa Mau 1 & 2,Local Natural Gas,Operating,2008,Ca Mau,1500\nVung Ang 1,Coal,Operating,2013,Ha Tinh,1200\nNghi Son 2,Coal,Operating,2018,Thanh Hoa,1200\nMong Duong 2,Coal,Operating,2019,Quang Ninh,1200\nDuyen Hai 1,Coal,Operating,2014,Bac Lieu,720\nDuyen Hai 2,Coal,Operating,2017,Bac Lieu,1200\nVinh Nghia,Coal,Operating,2011,Nghe An,600\nTram Hau 1,Local Natural Gas,Operating,2014,Hau Giang,550\nNhon Trach 3 & 4,Imported LNG,Under Construction,2025 (Planned),Dong Nai,2250\nLNG Binh Thuan,Imported LNG,Planned,2030 (Planned),Binh Thuan,2250\nLNG Quang Ninh,Imported LNG,Planned,2030 (Planned),Quang Ninh,1500\nLNG Long An,Imported LNG,Planned,2030 (Planned),Long An,1500\nTuyen Quang,Coal,Planned,2026 (Planned),Tuyen Quang,600\nDong Nai 2,Local Natural Gas,Planned,2027 (Planned),Dong Nai,600\n```\n\n### Data Notes:\n1. **Phu My Complex**: This is a cluster of several plants (Phu My 1, 2, 3, and 4); the capacity is aggregated for the complex.\n2. **Nhon Trach 3 & 4**: These are Vietnam's first major projects specifically designed for **Imported LNG** rather than domestic gas.\n3. **PDP8 Impact**: Under the new Power Development Plan 8, Vietnam is actively moving away from new coal projects. Several planned coal plants listed in previous iterations (PDP7) have been canceled or converted to LNG.\n4. **Capacity**: MWe refers to Megawatts electrical. Dates for \"Planned\" plants are estimates based on project proposals and government approvals.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 1664
+  },
+  "wall_seconds": 184.495,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

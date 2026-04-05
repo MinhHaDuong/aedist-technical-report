@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:9b",
+  "date": "2026-04-05",
+  "run": 2,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date,Province,Generation Capacity (MWe)\nHai Phong 1,Coal,Commissioned,2009,Hai Phong,615\nHai Phong 2,Coal,Commissioned,2011,Hai Phong,615\nHai Phong 3,Coal,Under Construction,2025,Hai Phong,1240\nHai Phong 4,Coal,Planned,2028,Hai Phong,1000\nHai Phong 5C,Coal,Planned,2027,Hai Phong,550\nHai Phong 5D,Coal,Planned,2028,Hai Phong,550\nHoi An 1,Imported LNG,Commissioned,2007,Quang Nam,960\nHoi An 2,Imported LNG,Commissioned,2013,Quang Nam,520\nHoi An 3,Imported LNG,Under Construction,2026,Quang Nam,500\nHoi An 4,Imported LNG,Planned,2028,Quang Nam,480\nNam Long 1,Imported LNG,Commissioned,2009,Bac Lieu,720\nNam Long 2,Imported LNG,Commissioned,2011,Bac Lieu,720\nDung Quat 1,Imported LNG,Commissioned,2010,Quang Ngai,400\nDung Quat 2,Imported LNG,Commissioned,2011,Quang Ngai,600\nDung Quat 3,Coal,Commissioned,2013,Quang Ngai,700\nDung Quat 4,Coal,Under Construction,2025,Quang Ngai,1050\nLong Thanh 1,Coal,Under Construction,2025,Long An,650\nLong Thanh 2,Coal,Planned,2028,Long An,650\nLong Thanh 3,Coal,Planned,2029,Long An,650\nMy Tho 1,Coal,Commissioned,2009,Tien Hoa,600\nMy Tho 2,Coal,Under Construction,2026,Tien Hoa,990\nMy Tho 3,Coal,Planned,2027,Tien Hoa,1050\nMy Tho 4,Coal,Planned,2028,Tien Hoa,600\nDong Nai 1,Coal,Commissioned,2012,Dong Nai,1260\nDong Nai 2,Coal,Commissioned,2016,Dong Nai,1260\nDong Nai 3,Coal,Under Construction,2025,Dong Nai,1200\nDong Nai 4,Coal,Planned,2028,Dong Nai,1080\nSon Tu Hai,Coal,Commissioned,2010,Ninh Thuan,450\nSon Tu Hai 2,Coal,Commissioned,2012,Ninh Thuan,600\nSon Tu Hai 3,Coal,Commissioned,2014,Ninh Thuan,1200\nSon Tu Hai 4,Coal,Under Construction,2025,Ninh Thuan,1200\nLong Son 1,Coal,Planned,2027,Ninh Thuan,900\nLong Son 2,Coal,Planned,2028,Ninh Thuan,900\nPhuc Long A,Coal,Commissioned,2015,Bac Giang,1750\nPhuc Long B,Coal,Commissioned,2014,Bac Giang,1500\nPhuc Long C,Coal,Under Construction,2025,Bac Giang,1500\nPhuc Long D,Coal,Planned,2027,Bac Giang,1500\nPhuc Long E,Coal,Planned,2028,Bac Giang,600\nNghi Son 1,Coal,Commissioned,2013,Thinh Hoa,1000\nNghi Son 2,Coal,Under Construction,2026,Thinh Hoa,2800\nNghi Son 3,Coal,Planned,2027,Thinh Hoa,1800\nQuang Ngai 1,Coal,Commissioned,2012,Quang Ngai,600\nQuang Ngai 2,Coal,Commissioned,2013,Quang Ngai,600\nQuang Ngai 3,Coal,Under Construction,2025,Quang Ngai,520\nQuang Ngai 4,Coal,Planned,2027,Quang Ngai,530\nBac Lieu 1,Coal,Commissioned,2012,Bac Lieu,700\nBac Lieu 2,Coal,Under Construction,2026,Bac Lieu,700\nBac Lieu 3,Coal,Planned,2027,Bac Lieu,700\nLam Dong 1,Coal,Commissioned,2012,Lam Dong,600\nLam Dong 2,Coal,Commissioned,2014,Lam Dong,600\nLam Dong 3,Coal,Planned,2026,Lam Dong,600\nTam Thu 1,Coal,Under Construction,2025,Long An,1240\nTam Thu 2,Coal,Planned,2027,Long An,650\nPhung Hung,Coal,Planned,2028,Bac Lieu,840\nNhi Thanh A,Coal,Commissioned,2010,Thai Nguyen,800\nNhi Thanh B,Coal,Commissioned,2015,Thai Nguyen,800\nNhi Thanh C,Coal,Under Construction,2026,Thai Nguyen,800\nSon Tu Hai 5,Coal,Planned,2028,Ninh Thuan,1200\nPhu Xuyen,Coal,Commissioned,2008,Quang Ngai,400\nPhu Xuyen 2,Coal,Commissioned,2018,Quang Ngai,600\nDai Vuong 1,Coal,Commissioned,2013,Ninh Thuan,600\nDai Vuong 2,Coal,Under Construction,2025,Ninh Thuan,600\nHau,Coal,Commissioned,2013,Quang Nam,360\nNinh Hoa 2,Imported LNG,Commissioned,2012,Khanh Hoa,520\nHuu Lung,Coal,Commissioned,2014,Hoang Lien,600\nPhuc Long A2,Coal,Under Construction,2026,Bac Giang,1300\nHai Phong 6,Coal,Planned,2028,Hai Phong,1000\nQuang Ngai 5,Coal,Planned,2027,Quang Ngai,600\nDung Quat 5,Coal,Planned,2028,Quang Ngai,1000\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 11636
+  },
+  "wall_seconds": 236.473,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:9b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name;Fuel Type;Construction Stage;Connection Date;Province;Generation Capacity (MWe)\nPhả Lại 1;Coal;Completed;2001-05-23;Bắc Ninh;1306\nPhả Lại 2;Coal;Completed;2005-06-29;Bắc Ninh;620\nPhả Lại 3;Coal;Completed;2017-04-15;Bắc Ninh;800\nThái Bình 1;Coal;Completed;2013-05-18;Thái Bình;1700\nQuảng Trị 1;Coal;Completed;2006-12-28;Quảng Trị;240\nQuảng Trị 2;Coal;Completed;2018-10-30;Quảng Trị;600\nThan Uyên 1;Coal;Completed;2011-08-13;Lào Cai;300\nNinh Bình 1;Coal;Completed;2015-10-29;Ninh Bình;1650\nNinh Bình 2;Coal;Completed;2017-11-12;Ninh Bình;880\nNinh Bình 3;Coal;Completed;2020-06-29;Ninh Bình;1060\nNinh Bình 4;Coal;Completed;2020-05-15;Ninh Bình;1380\nNinh Hải 1;Coal;Completed;2024-06-15;Thanh Hóa;1440\nHai Duong 1;Coal;Completed;2006-07-21;Hai Duong;470\nHung Yen 1;Coal;Completed;2011-01-25;Hung Yen;775\nHung Yen 2;Coal;Completed;2020-05-25;Hung Yen;1100\nVung Ang 1;Coal;Completed;2019-04-23;Quảng Nam;500\nVung Ang 2;Coal;Under Construction;Expected 2027;Quảng Nam;765\nNam Long 1;Local Natural Gas;Completed;2014-02-21;Bà Rịa-Vũng Tàu;800\nNam Long 2;Local Natural Gas;Under Construction;Expected 2026;Bà Rịa-Vũng Tàu;800\nLong An 1;Local Natural Gas;Completed;2024;Long An;1200\nLong An 2;Local Natural Gas;Planned;Planned;Long An;800\nLong Sơn 1;Imported LNG;Completed;2024;Long An;1330\nDung Quat 1;Imported LNG;Planned;Planned;Quảng Ngãi;500\nDung Quat 2;Imported LNG;Delayed;Delayed;Quảng Ngãi;1000\nDung Quat 3;Imported LNG;Pending Review;Planned Quoting 2028-2030;Quảng Ngãi;1000\nFong Lai 1;Coal;Completed;2020-05-20;Bà Rịa-Vũng Tàu;633\nLong Thanh 1;Imported LNG;Under Construction;Planned 2026;Long An;785\nLong Thanh 2;Imported LNG;Under Construction;Planned 2028;Long An;600\nPhú Quốc;Imported LNG;Completed;2021-06-01;Kiên Giang;100\nPhú Quốc 2;Imported LNG;Under Construction;Expected 2026;Kiên Giang;350\nTuy Hòa;Imported LNG;Completed;2020-09-28;Phú Yên;500\nTuy Hòa 2;Imported LNG;Planned;Planned;Phú Yên;500\nFormosa 1;Local Gas;Completed;2019-11-23;Bà Rịa-Vũng Tàu;260\nFormosa 2;Local Gas;Under Construction;Planned 2027;Bà Rịa-Vũng Tàu;260\nHai Phong 1;Coal;Completed;2008-06-10;Hai Phong;720\nHai Phong 2;Coal;Completed;2014-11-14; Hai Phong;725\nHaiphong 3;Coal;Completed;2010-12-28;Hai Phong;850\nHưng Yên;Coal;Completed;2020-06-15;Hưng Yên;600\nHưng Yên 2;Coal;Completed;2023-08-10;Hưng Yên;600\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 3887
+  },
+  "wall_seconds": 77.878,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

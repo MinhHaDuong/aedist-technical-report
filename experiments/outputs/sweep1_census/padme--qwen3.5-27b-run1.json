@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:27b",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Please note the following limitations regarding this data:\n1. **Scope:** \"All\" thermal power plants is technically unfeasible as it includes hundreds of small-scale industrial facilities. The list below covers **major utility-scale thermal power plants** (typically >50 MWe) connected to the national grid or significant independent power producers (IPPs).\n2. **Data Currency:** Vietnam's Power Development Plan PDP8 (approved 2023) has shifted several projects from \"Approved\" to \"Suspended\" or \"Planned,\" and CODs (Commercial Operation Dates) for large projects (especially Uông Bí and Ca Mau) have shifted frequently due to financing and coal import regulations.\n3. **Fuel Types:** Some plants burn mixed fuel (e.g., Gas/Coals) but are categorized by their primary fuel source for grid stability.\n\n```csv\nPlant_Name,Fuel_Type,Construction_Stage,Connection_Date_COD,Province,Capacity_MWe\nNam Dinh 1 Thermal Complex,Coal,Commercial,2005,Ninh Binh,840\nNam Dinh 2 Thermal Power Plant,Coal,Commercial,2013,Ninh Binh,2560\nNhon My I Thermal Power Plant,Coal,Commercial,2011,Binh Thuan,2640\nNhon My II Thermal Power Plant,Coal,Commercial,2018,Binh Thuan,2200\nPham Cong Tac Power Plant,Coal,Commercial,2004,Tien Giang,120\nUong Bi Thermal Power Plant,Coal,Under Construction,Planned-2025,Hai Duong,1400\nCau Bo Thermal Power Plant,Coal,Commercial,2012,Quang Ninh,600\nVung Dang 1 & 2 Thermal Power Plant,Coal,Under Construction,Planned-2026,Quang Nam,2640\nCa Mau 1 Thermal Power Plant,Local Natural Gas,Commercial,2012,Ca Mau,230\nCa Mau 2 Thermal Power Plant,Coal,Commercial,2017,Ca Mau,800\nCu Long I-II-III Power Plant,Local Natural Gas,Commercial,1992,Soc Trang,234\nPhu My Power Plant (Units 1-3),Imported LNG/Local Gas,Commercial,1999,Ba Ria - Vung Tau,830\nPhu My Power Plant (Units 4),Imported LNG,Commercial,2008,Ba Ria - Vung Tau,600\nPhu My Power Plant (Units 5),Imported LNG,Commercial,2012,Ba Ria - Vung Tau,600\nPhu My Power Plant (Units 6),Imported LNG,Commercial,2013,Ba Ria - Vung Tau,600\nPhu My Power Plant (Units 7-8),Imported LNG,Commercial,2019,Ba Ria - Vung Tau,1200\nDung Quat 1 (LNG),Imported LNG,Commercial,2007,Quang Ngai,600\nDung Quat II (LNG),Imported LNG,Commercial,2012,Quang Ngai,600\nQuang Nam 1 Thermal Power Plant,Coal,Commercial,1987,Quang Nam,150\nQuang Nam 2 Thermal Power Plant,Coal,Commercial,1988,Quang Nam,150\nLong Son Thermal Power Plant (Bac Son),Local Natural Gas,Commercial,2020,Thua Thien - Hue,160\nMy Dinh 1 Power Plant,Coal,Commercial,1996,Hanoi,140\nMy Dinh 2 Power Plant,Local Natural Gas,Commercial,1996,Hanoi,180\nMy Dinh 3 Power Plant,Coal,Commercial,2010,Hanoi,820\nNong Co Thermal Power Plant,Coal,Under Construction,Suspended/Halted,Nam Dinh,500\nHiep Phuoc Power Plant,Local Natural Gas,Commercial,2014,Can Tho,153\nPhu An Power Plant,Coal,Commercial,2015,Nghe An,660\nThai Ngan 1 Power Plant,Coal,Commercial,2020,Thai Binh,660\nThai Ngan 2 Power Plant,Coal,Planned,Planned-2027,Thai Binh,660\nNinh Thuan Power Plant,Coal,Under Construction,Planned-2026,Ninh Thuan,150\nQuang Nang Thermal Power Plant,Coal,Commercial,2021,Quang Nam,220\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 3080
+  },
+  "wall_seconds": 197.957,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "model": "glm-4.7-flash",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is a CSV table listing the **major** thermal power plants in Vietnam (Capacity > 300 MWe). Due to the large number of smaller-scale power installations across the country, this list focuses on the significant active plants and major new projects currently in development.\n\nNote: \"Observation\" represents plants currently in operation (COD), \"Under Construction\" represents plants currently being built, and \"Planned\" represents projects in the pipeline.\n\n```csv\nPlant Name,Province,Fuel Type,Construction Stage,Connection Date (COD),Generation Capacity (MWe)\nPha Lai 2,Hung Yen,Coal,Observe,2016,1,200\nDuyen Hai 4,Tra Vinh,Coal,Observe,2021,1,200\nSon Da 3,Lai Chau,Coal,Under Construction,2024-2026,1,200\nHai Vang,Hai Phong,Coal,Observe,2019,1,200\nNinh Thuan 1,Ninh Thuan,Coal,Observe,2012,1,000\nNinh Thuan 2,Ninh Thuan,Coal,Observe,2010,1,000\nMo Rai,Quang Nam,Coal,Observe,2014,1,200\nSong Hinh,Quang Ngai,Coal,Observe,2016,1,200\nDuyen Hai 2,Tra Vinh,Coal,Observe,2014,1,200\nDuyen Hai 1,Tra Vinh,Coal,Observe,2020,1,200\nDuyen Hai 3,Tra Vinh,Coal,Observe,2019,1,200\nNhon Trach 4,Dong Nai,Coal,Observe,2020,1,200\nNinh Thuan 3,Ninh Thuan,Coal,Under Construction,2026,2,000\nVinh Tan 3,Binh Dinh,Coal,Observe,2020,1,200\nSon Da 4,Lai Chau,Coal,Planned,2029+,1,200\nLong Phu 1,Soc Trang,Coal,Planned,2028+,1,200\nLong Phu 2,Soc Trang,Coal,Planned,2030+,1,200\nDung Quat 2,Quang Ngai,LNG,Observe,2021,1,200\nDung Quat 1,Quang Ngai,LNG,Observe,2019,1,000\nDung Quat 4,Quang Ngai,LNG,Planned,2030,1,200\nDung Quat 3,Quang Ngai,LNG,Planned,2030,1,200\nHon Ong 1,Ca Mau,LNG,Under Construction,2026+,1,500\nHon Ong 2,Ca Mau,LNG,Under Construction,2028+,1,500\nNha Be,Ho Chi Minh City,LNG,Observe,2020,580\nPha Rang,Binh Thuan,LNG,Observe,2014,320\nNghi Son,Thanh Hoa,LNG,Observe,2006,1,072\nSong Hinh 2,Quang Ngai,Coal,Planned,2026+,1,200\nVung Ang 1,Ha Tinh,Coal,Under Construction,2024+,1,200\nVinh Tan 4,Binh Dinh,Coal,Under Construction,2026,1,200\nDong Nai 1,Dong Nai,Coal,Under Construction,2026,3,200\nPha Lai 1,Hung Yen,Coal,Observe,2017,300\nThang Long,Hung Yen,Coal,Observe,2016,350\nLong An 1,Long An,Local Gas,Observe,2003,750\nTinh Bien,An Giang,Local Gas,Observe,2018,500\nTra Vinh 1,Tra Vinh,Local Gas,Observe,2020,700\nPhu My 1,Ba Ria-Vung Tau,Local Gas,Observe,2001,750\nPhu My 2,Ba Ria-Vung Tau,Local Gas,Observe,2009,1,300\nPhu My 3,Ba Ria-Vung Tau,Local Gas,Observe,2010,1,300\nPhu My 4,Ba Ria-Vung Tau,Local Gas,Observe,2017,800\nLong An 2,Long An,Local Gas,Observe,2024,720\nPhu Quoc,Kien Giang,LNG,Planned,2030+,1,050\nSong Binh,Thua Thien Hue,LNG,Planned,2026+,1,200\nVoithai,Ha Tinh,Coal,Observe,2011,300\nVinh Tan 4B,Binh Dinh,Coal,Planned,2029+,1,200\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 58,
+    "completion_tokens": 3725
+  },
+  "wall_seconds": 67.523,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

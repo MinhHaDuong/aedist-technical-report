@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:27b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\n\"Plant Name\",\"Fuel Type\",\"Construction Stage\",\"Connection Date (COD)\",\"Province\",\"Generation Capacity (MWe)\"\n\"# Note: Data reflects major thermal projects as of Q1 2024. Statuses reflect PDP8 (Power Development Plan VIII) impact (Dec 2023).\",\"Note\",\"Note\",\"Note\",\"Note\",\"Note\"\n\"# Many planned coal projects were removed/suspended under PDP8. Only operational and active construction projects are highlighted.\",\"Note\",\"Note\",\"Note\",\"Note\",\"Note\"\n\"Uong Bi 1A\",\"Coal\",\"Commercial Operation\",\"1997-06-15\",\"Quang Ninh\",240\n\"Uong Bi 1B\",\"Coal\",\"Commercial Operation\",\"2000-05-20\",\"Quang Ninh\",500\n\"Uong Bi 2\",\"Coal\",\"Deferred (PDP8)\",\"2025-12-31\",\"Quang Ninh\",1000\n\"Ca Bang 1\",\"Coal\",\"Commercial Operation\",\"2019-03-20\",\"Quang Ninh\",600\n\"Ca Bang 2\",\"Coal\",\"Commercial Operation\",\"2021-06-30\",\"Quang Ninh\",600\n\"Ninh Binh 1\",\"Coal\",\"Commercial Operation\",\"2012-05-24\",\"Ninh Binh\",500\n\"Ninh Binh 2\",\"Coal\",\"Commercial Operation\",\"2017-09-15\",\"Ninh Binh\",500\n\"Nam Dinh\",\"Coal\",\"Commercial Operation\",\"2017-04-30\",\"Nam Dinh\",1200\n\"Vung Tao 1\",\"Coal\",\"Commercial Operation\",\"1982-12-20\",\"Ba Ria-Vung Tau\",360\n\"Vung Tao 2\",\"Coal\",\"Commercial Operation\",\"2001-06-10\",\"Ba Ria-Vung Tau\",630\n\"Ninh Thuan 1\",\"Coal\",\"Deferred (PDP8)\",\"2026-12-31\",\"Ninh Thuan\",1260\n\"Thai Binh Coal\",\"Coal\",\"Deferred (PDP8)\",\"2025-12-31\",\"Thai Binh\",1000\n\"Ca Mau 2\",\"Coal\",\"Deferred (PDP8)\",\"2024-12-31\",\"Ca Mau\",1260\n\"Phu My 2.0\",\"Local Natural Gas\",\"Commercial Operation\",\"1988-07-15\",\"Ba Ria-Vung Tau\",1000\n\"Phu My 2.3\",\"Local Natural Gas\",\"Commercial Operation\",\"2005-06-10\",\"Ba Ria-Vung Tau\",1200\n\"Phu My 4\",\"Local Natural Gas\",\"Commercial Operation\",\"2018-04-20\",\"Ba Ria-Vung Tau\",1250\n\"Phu My 5\",\"Imported LNG\",\"Commercial Operation\",\"2021-03-15\",\"Ba Ria-Vung Tau\",2450\n\"Phu My 6\",\"Local Natural Gas\",\"Planning\",\"2028-12-31\",\"Ba Ria-Vung Tau\",250\n\"Soc Trang 1\",\"Local Natural Gas\",\"Commercial Operation\",\"1994-09-01\",\"Soc Trang\",420\n\"Soc Trang 2\",\"Local Natural Gas\",\"Commercial Operation\",\"2003-05-15\",\"Soc Trang\",1100\n\"Soc Trang 3\",\"Local Natural Gas\",\"Commercial Operation\",\"2006-06-10\",\"Soc Trang\",495\n\"Soc Trang 4\",\"Local Natural Gas\",\"Commercial Operation\",\"2017-03-20\",\"Soc Trang\",950\n\"Bac Lieu\",\"Local Natural Gas\",\"Commercial Operation\",\"1996-11-10\",\"Bac Lieu\",400\n\"Giang Dien\",\"Local Natural Gas\",\"Commercial Operation\",\"2004-05-01\",\"Binh Thuan\",840\n\"Nam My\",\"Local Natural Gas\",\"Commercial Operation\",\"2009-06-15\",\"Ca Mau\",800\n\"Khanh Hoa\",\"Local Natural Gas\",\"Commercial Operation\",\"2007-09-30\",\"Khanh Hoa\",700\n\"Thang Lo 1\",\"Imported LNG\",\"Commercial Operation\",\"2021-05-12\",\"Quang Ninh\",650\n\"Thang Lo 2\",\"Imported LNG\",\"Under Construction\",\"2024-12-31\",\"Quang Ninh\",1050\n\"Thai Binh LNG\",\"Imported LNG\",\"Planning\",\"2027-06-30\",\"Thai Binh\",2400\n\"Quang Nam LNG\",\"Imported LNG\",\"Planning\",\"2028-12-31\",\"Quang Nam\",1400\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 5491
+  },
+  "wall_seconds": 323.503,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
