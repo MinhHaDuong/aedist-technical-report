@@ -33,8 +33,7 @@ htmlcov/
 *.ind
 *.pdf
 
-# Generated LaTeX fragments and slide data
-report/inputs/generated/*
+# Generated slide data (report inputs are tracked)
 slides/inputs/generated/
 
 # Experiment working files (large intermediates, not needed for analysis)
