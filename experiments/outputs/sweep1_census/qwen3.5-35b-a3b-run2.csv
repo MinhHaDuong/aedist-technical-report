@@ -1,0 +1,34 @@
+name,fuel,status,cod,province,capacity_mwe
+Ca Mau 1 Power Plant,Local Natural Gas,Operational,1999,Ca Mau,591
+Ca Mau 2 Power Plant,Local Natural Gas,Operational,2010,Ca Mau,620
+Nam Can Power Plant,Local Natural Gas,Operational,2011,Bac Lieu,640
+Tra Vinh 1 Power Plant,Coal,Operational,2014,Tra Vinh,1200
+Thai Binh 1 Power Plant,Coal,Operational,2012,Thai Binh,1200
+Thai Binh 2 Power Plant,Coal,Operational,2014,Thai Binh,1200
+Uong Bi Power Plant,Coal,Operational,2005,Quang Ninh,1400
+Uong Bi 2 Power Plant,Coal,Operational,2010,Quang Ninh,490
+Nui Be Power Plant 1,Coal,Operational,2011,Ha Tinh,1200
+Nui Be Power Plant 2,Coal,Operational,2012,Ha Tinh,1200
+Ngoc Hoi Power Plant,Coal,Operational,2013,Kien Giang,660
+Can Tho Power Plant,Local Natural Gas,Operational,2004,Kien Giang,1140
+Thai Nguyen Power Plant,Coal,Operational,2009,Thai Nguyen,1200
+Nam Dinh Power Plant,Coal,Operational,2015,Nam Dinh,1200
+Soc Trang Power Plant,Local Natural Gas,Operational,2010,Soc Trang,1150
+Bac Lieu 1 Power Plant,Local Natural Gas,Operational,2016,Bac Lieu,1260
+Bac Lieu 2 Power Plant,Coal,Under Construction,Planned 2026,Bac Lieu,1260
+Long Xuyen Power Plant,Local Natural Gas,Operational,2017,Kien Giang,1000
+Dai Phuoc Power Plant,Local Natural Gas,Delayed,Canceled,Dong Nai,1500
+Vung Ang Power Plant,Coal,Operational,2013,Quang Binh,1200
+Ngoc Hoi 2 Power Plant,Coal,Under Construction,Planned 2024,Kien Giang,1200
+Ca Mau 3 (LNG),Imported LNG,Planned,Planned 2028,Ca Mau,634
+Can Tho LNG Power Plant,Imported LNG,Under Construction,Planned 2025,Can Tho,1100
+Cai Mep Thi Vai LNG Power Plant,Imported LNG,Planned,Planned 2026,Ba Ria-Vung Tau,1500
+Tra Vinh 2 Power Plant,Coal,Under Construction,Planned 2025,Tra Vinh,1200
+Nam Can 1 & 2,Local Natural Gas,Operational,2011,Bac Lieu,1200
+Cao Ngai Power Plant,Coal,Operational,2011,Hung Yen,1060
+Pha Lai Power Plant,Coal,Operational,2015,Hung Yen,960
+**Important Notes on Data:**,,,,,0
+"1. **""All"" Scope:** This list covers major utility-scale thermal power plants (Coal and Gas). It does not include small diesel or biomass generators or cancelled projects (e.g.",some coal projects under PDP7 were cancelled during PDP8 revision).,,,,0
+"2. **Connection Dates:** ""Planned"" dates refer to Current Project Development Plans (PDP8). Actual dates are subject to regulatory changes.",,,,,0
+3. **LNG Status:** As of early 2024,there are no *operational* large-scale plants running purely on Imported LNG; existing gas plants primarily use Domestic Natural Gas (Lan Tay,Nam Con Son fields).,,,0
+4. **Capacity:** Capacity figures are approximate net electrical output (MWe) and may vary by source (EVN,Ministry of Industry and Trade).,,,,0

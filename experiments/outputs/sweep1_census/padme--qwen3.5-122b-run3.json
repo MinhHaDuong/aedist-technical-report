@@ -1,0 +1,17 @@
+{
+  "model": "padme/qwen3.5:122b",
+  "date": "2026-04-02",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": null,
+  "finish_reason": "error",
+  "error": "Connection error.",
+  "usage": null,
+  "wall_seconds": 0.0,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "local",
+    "country": "local",
+    "provider": "Ollama/Padme"
+  }
+}

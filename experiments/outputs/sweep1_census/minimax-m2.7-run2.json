@@ -3,14 +3,14 @@
   "date": "2026-04-05",
   "run": 2,
   "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
-  "response": null,
-  "finish_reason": "length",
+  "response": "# Thermal power plants in Vietnam – publicly known projects (as of 2025)  \n# Sources: Ministry of Industry & Trade, Electricity & Renewable Energy Authority, EVN project lists, media reports.  \n# Values are indicative; capacities are total plant capacity (MWe).  \n\nPlant Name,Fuel Type,Construction Stage,COD (Year),Province,Capacity (MWe)  \nPhả Lại I,Coal,Operational,2009/2010,Hải Dương,600  \nPhả Lại II,Coal,Operational,2020/2021,Hải Dương,600  \nThái Bình,Coal,Operational,2020,Thái Bình,600  \nNghi Sơn 1,Coal,Operational,2020/2021,Thanh Hóa,1200  \nNghi Sơn 2,Coal,Operational,2022,Thanh Hóa,600  \nVũng Áng 1,Coal,Operational,2020/2021,Hà Tĩnh,1200  \nVũng Áng 2,Coal,Operational,2021,Hà Tĩnh,600  \nDuyên Hải 1,Coal,Operational,2022,Nam Định,600  \nQuảng Trạch 1,Coal,Under Construction,2025,Quảng Bình,1200  \nQuảng Trạch 2,Coal,Under Construction,2026,Quảng Bình,1200  \nLong Phú 1,Coal,Under Construction,2025,Sóc Trăng,1200  \nDuyên Hải 2,Coal,Under Construction,2024,Nam Định,1200  \nPhú Mỹ,Local Natural Gas,Operational,1994-2005,Bà Rịa – Vũng Tàu,1200  \nNhơn Trạch (1 & 2),Local Natural Gas,Operational,2009-2010,Đồng Nai,800  \nCần Thơ,Local Natural Gas,Operational,2010,Cần Thơ,400  \nKình Gia,Local Natural Gas,Operational,2011,Hải Phòng,450  \nCà Mau,Local Natural Gas,Operational,2012,Cà Mau,400  \nHải Phòng LNG,Imported LNG,Under Construction,2024/2025,Hải Phòng,600  \nThị Vải LNG,Imported LNG,Under Construction,2025,Bà Rịa – Vũng Tàu,600  \nNhơn Trạch 3 LNG,Imported LNG,Planned,2026,Đồng Nai,600  \nNhơn Trạch 4 LNG,Imported LNG,Planned,2027,Đồng Nai,600  \nSơn Mỹ LNG,Imported LNG,Planned,2026/2027,Bình Thuận,1200  \nBình Thuận LNG (Phase 1),Imported LNG,Planned,2028,Bình Thuận,1200",
+  "finish_reason": "stop",
   "usage": {
     "prompt_tokens": 93,
-    "completion_tokens": 65536
+    "completion_tokens": 10073
   },
-  "wall_seconds": 607.544,
-  "cost_usd": 0.0786711,
+  "wall_seconds": 158.964,
+  "cost_usd": 0.0121155,
   "model_metadata": {
     "size_class": "large",
     "country": "CN",
