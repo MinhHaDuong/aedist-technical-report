@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-122b-a10b",
+  "date": "2026-04-05",
+  "run": 3,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Note: The energy sector in Vietnam is dynamic, with project statuses (construction stages and COD dates) frequently changing due to the Power Development Plan VIII (PDP8), fuel supply issues, and financing conditions. This CSV includes the major grid-connected thermal power plants. Smaller industrial cogeneration units and cancelled projects are excluded for clarity.\n\n```csv\n\"Plant Name\",\"Fuel Type\",\"Construction Stage\",\"Connection Date (COD)\",\"Province\",\"Capacity (MWe)\"\n\"Uong Bi\",\"Coal\",\"Operational\",\"2000\",\"Quang Ninh\",\"1100\"\n\"Ninh Binh 1\",\"Coal\",\"Operational\",\"2002\",\"Ninh Binh\",\"600\"\n\"Hai Phong 1\",\"Coal\",\"Operational\",\"2004\",\"Hai Phong\",\"600\"\n\"Quang Ninh\",\"Coal\",\"Operational\",\"2010\",\"Quang Ninh\",\"1100\"\n\"Mong Duong 1\",\"Coal\",\"Operational\",\"2013\",\"Quang Ninh\",\"1200\"\n\"Thai Binh 1\",\"Coal\",\"Operational\",\"2012\",\"Thai Binh\",\"600\"\n\"Hiep Phuoc\",\"Coal\",\"Operational\",\"2015\",\"Ho Chi Minh City\",\"600\"\n\"Vinh Tan 1\",\"Coal\",\"Operational\",\"2015\",\"Binh Thuan\",\"1200\"\n\"Vinh Tan 2\",\"Coal\",\"Operational\",\"2017\",\"Binh Thuan\",\"1200\"\n\"Hai Duong 1\",\"Coal\",\"Operational\",\"2018\",\"Hai Duong\",\"1200\"\n\"Duyen Hai 1\",\"Coal\",\"Operational\",\"2018\",\"Ca Mau\",\"1200\"\n\"Thai Binh 2\",\"Coal\",\"Operational\",\"2019\",\"Thai Binh\",\"1200\"\n\"Vung Ang 1\",\"Coal\",\"Operational\",\"2019\",\"Ha Tinh\",\"1200\"\n\"Duyen Hai 3\",\"Coal\",\"Operational\",\"2022\",\"Ca Mau\",\"1200\"\n\"Nam Dinh 1\",\"Coal\",\"Operational\",\"2021\",\"Nam Dinh\",\"1200\"\n\"Khe Chua\",\"Imported LNG\",\"Operational\",\"2022\",\"Dong Nai\",\"400\"\n\"Phu My 1\",\"Local Natural Gas\",\"Operational\",\"1996\",\"Ba Ria-Vung Tau\",\"1300\"\n\"Phu My 2.2\",\"Local Natural Gas\",\"Operational\",\"2003\",\"Ba Ria-Vung Tau\",\"1500\"\n\"Phu My 3\",\"Local Natural Gas\",\"Operational\",\"2003\",\"Ba Ria-Vung Tau\",\"1100\"\n\"Ba Ria\",\"Local Natural Gas\",\"Operational\",\"2000\",\"Ba Ria-Vung Tau\",\"750\"\n\"My Phuoc\",\"Local Natural Gas\",\"Operational\",\"2009\",\"Binh Duong\",\"500\"\n\"Duyen Hai 3 Extension\",\"Coal\",\"Under Construction\",\"2024\",\"Ca Mau\",\"600\"\n\"Hai Duong 2\",\"Coal\",\"Under Construction\",\"2024\",\"Hai Duong\",\"1200\"\n\"Thi Vai\",\"Imported LNG\",\"Under Construction\",\"2025\",\"Ba Ria-Vung Tau\",\"1400\"\n\"Mong Duong 2\",\"Coal\",\"Planned\",\"2026\",\"Quang Ninh\",\"1200\"\n\"Vung Ang 2\",\"Coal\",\"Planned\",\"2026\",\"Ha Tinh\",\"1200\"\n\"Can Gio\",\"Imported LNG\",\"Planned\",\"2027\",\"Ho Chi Minh City\",\"1400\"\n\"Long Phuoc\",\"Coal\",\"Planned\",\"2028\",\"Dong Nai\",\"1200\"\n\"Vinh Tan 4\",\"Coal\",\"Planned\",\"2028\",\"Binh Thuan\",\"1200\"\n\"Nam Dinh 2\",\"Coal\",\"Planned\",\"2028\",\"Nam Dinh\",\"1200\"\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 3763
+  },
+  "wall_seconds": 26.942,
+  "cost_usd": 0.00784342,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

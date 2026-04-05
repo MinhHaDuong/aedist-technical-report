@@ -1,0 +1,21 @@
+{
+  "model": "qwen/qwen3.5-122b-a10b",
+  "date": "2026-04-05",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nUong Bi 3,Coal,Operating,2015,Quang Ninh,1200\nMong Duong 1,Coal,Operating,2015,Quang Ninh,1200\nMong Duong 2,Coal,Under Construction,2025 (Planned),Quang Ninh,1200\nThai Binh 1,Coal,Operating,2018,Thai Binh,1200\nThai Binh 2,Coal,Operating,2019,Thai Binh,1200\nHai Duong,Coal,Operating,2017,Hai Duong,1200\nVinh Tan 1,Coal,Operating,2015,Binh Thuan,1200\nVinh Tan 2,Coal,Operating,2016,Binh Thuan,1200\nVinh Tan 4,Coal,Cancelled,N/A,Binh Thuan,1200\nQuang Ninh,Coal,Operating,2016,Quang Ninh,1200\nCam Pha,Coal,Operating,2012,Quang Ninh,360\nNinh Binh,Coal,Operating,1999,Ninh Binh,600\nPhu My 1,Local Natural Gas,Operating,2001,Ba Ria - Vung Tau,422\nPhu My 2,Local Natural Gas,Operating,2001,Ba Ria - Vung Tau,730\nPhu My 2.1,Local Natural Gas,Operating,2003,Ba Ria - Vung Tau,730\nPhu My 3,Local Natural Gas,Operating,2004,Ba Ria - Vung Tau,730\nPhu My 4,Local Natural Gas,Operating,2004,Ba Ria - Vung Tau,730\nPhu My 5,Local Natural Gas,Operating,2007,Ba Ria - Vung Tau,730\nPhu My 6,Local Natural Gas,Operating,2008,Ba Ria - Vung Tau,730\nPhu My 7,Local Natural Gas,Operating,2008,Ba Ria - Vung Tau,730\nPhu My 8,Local Natural Gas,Operating,2010,Ba Ria - Vung Tau,730\nPhu My 9,Local Natural Gas,Operating,2011,Ba Ria - Vung Tau,730\nPhu My 10,Local Natural Gas,Operating,2012,Ba Ria - Vung Tau,730\nPhu My 11,Local Natural Gas,Operating,2013,Ba Ria - Vung Tau,730\nPhu My 12,Local Natural Gas,Operating,2014,Ba Ria - Vung Tau,730\nPhu My 13,Local Natural Gas,Operating,2015,Ba Ria - Vung Tau,730\nPhu My 14,Local Natural Gas,Operating,2016,Ba Ria - Vung Tau,730\nPhu My 15,Local Natural Gas,Operating,2017,Ba Ria - Vung Tau,730\nPhu My 16,Local Natural Gas,Operating,2018,Ba Ria - Vung Tau,730\nPhu My 17,Local Natural Gas,Operating,2019,Ba Ria - Vung Tau,730\nPhu My 18,Local Natural Gas,Operating,2020,Ba Ria - Vung Tau,730\nPhu My 19,Local Natural Gas,Operating,2021,Ba Ria - Vung Tau,730\nDa Nang,Local Natural Gas,Operating,2012,Da Nang,750\nTra Noc 1,Local Natural Gas,Operating,2013,Can Tho,1000\nThu Duc,Local Natural Gas,Operating,1996,Ho Chi Minh City,100\nNam Dinh Vu,Local Natural Gas,Operating,2018,Hai Phong,1200\nHiep Phuoc,Local Natural Gas,Operating,2019,Ho Chi Minh City,1200\nMy Phuoc,Local Natural Gas,Operating,2010,Binh Duong,1000\nMy Phuoc 2,Local Natural Gas,Operating,2013,Binh Duong,1000\nLong Dien A,Local Natural Gas,Operating,2012,Ba Ria - Vung Tau,1000\nLong Dien B,Local Natural Gas,Operating,2012,Ba Ria - Vung Tau,1000\nDinh Co,Local Natural Gas,Operating,2007,Ba Ria - Vung Tau,1500\nThi Vai,Imported LNG,Planned,2027 (Est.),Ba Ria - Vung Tau,1000\nTien Giang,Imported LNG,Planned,2027 (Est.),Tien Giang,1000\nTra Noc 2,Imported LNG,Planned,2027 (Est.),Can Tho,1000\nLong Dien C,Imported LNG,Planned,2027 (Est.),Ba Ria - Vung Tau,1000\nCai Mep,Imported LNG,Planned,2027 (Est.),Ba Ria - Vung Tau,1000\nCan Gio,Imported LNG,Planned,2027 (Est.),Ho Chi Minh City,1000\nNha Trang,Imported LNG,Planned,2027 (Est.),Khanh Hoa,1000\nVung Ang,Coal,Under Construction,2024 (Est.),Ha Tinh,1200\nHai Phong,Coal,Operating,1998,Hai Phong,240\nBac Ninh,Coal,Operating,2003,Bac Ninh,110\nBinh Thuan,Coal,Operating,2004,Binh Thuan,150\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 4080
+  },
+  "wall_seconds": 35.059,
+  "cost_usd": 0.008502779999999998,
+  "model_metadata": {
+    "size_class": "large",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}
