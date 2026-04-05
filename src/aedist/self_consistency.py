@@ -250,6 +250,7 @@ def run_analysis(
         results.append(
             {
                 "model": model,
+                "n_reference": len(reference),
                 "n_runs": len(run_paths),
                 "n_valid_runs": len(valid_metrics),
                 "run_f1_scores": f1_scores,

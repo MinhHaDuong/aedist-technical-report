@@ -1,6 +1,7 @@
 [
   {
     "model": "deepseek-v3.2",
+    "n_reference": 163,
     "n_runs": 3,
     "n_valid_runs": 3,
     "run_f1_scores": [
@@ -37,6 +38,7 @@
   },
   {
     "model": "gemini-2.5-flash-lite",
+    "n_reference": 163,
     "n_runs": 3,
     "n_valid_runs": 3,
     "run_f1_scores": [
@@ -73,6 +75,7 @@
   },
   {
     "model": "gpt-5.4",
+    "n_reference": 163,
     "n_runs": 3,
     "n_valid_runs": 3,
     "run_f1_scores": [
@@ -109,6 +112,7 @@
   },
   {
     "model": "mistral-large-2512",
+    "n_reference": 163,
     "n_runs": 3,
     "n_valid_runs": 3,
     "run_f1_scores": [
@@ -145,6 +149,7 @@
   },
   {
     "model": "mistral-small-2603",
+    "n_reference": 163,
     "n_runs": 3,
     "n_valid_runs": 3,
     "run_f1_scores": [

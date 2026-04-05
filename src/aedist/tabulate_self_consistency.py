@@ -19,6 +19,9 @@ from .tabulate_utils import format_model_name
 
 log = logging.getLogger(__name__)
 
+# Threshold for classifying failure regime: ≥95% means "near-perfect"
+_REGIME_THRESHOLD = 0.95
+
 
 def _regime(r: dict) -> str:
     """Classify a model as truncation-limited or overgeneration-limited.
@@ -26,9 +29,9 @@ def _regime(r: dict) -> str:
     Truncation: median precision ~100%, low recall.
     Overgeneration: median recall ~100%, low precision.
     """
-    if r["median_precision"] >= 0.95:
+    if r["median_precision"] >= _REGIME_THRESHOLD:
         return "truncation"
-    if r["median_coverage"] >= 0.95:
+    if r["median_coverage"] >= _REGIME_THRESHOLD:
         return "overgeneration"
     return "mixed"
 
@@ -58,20 +61,16 @@ def generate_self_consistency_table(results: list[dict]) -> str:
 
         regime = _regime(r)
 
-        # Best strategy depends on regime
         if regime == "overgeneration":
             best_delta = maj_f1 - med_f1
-            best_label = "majority"
         else:
             best_delta = union_f1 - med_f1
-            best_label = "union"
 
         delta_str = f"{best_delta:+.1f}\\%"
-        regime_str = regime
 
         lines.append(
             f"{name} & {med_f1:.1f}\\% & {maj_f1:.1f}\\% & {union_f1:.1f}\\%"
-            f" & {delta_str} & {regime_str} \\\\"
+            f" & {delta_str} & {regime} \\\\"
         )
 
     lines.extend(
@@ -108,12 +107,12 @@ def generate_per_run_table(results: list[dict]) -> str:
 
     for r in sorted(results, key=lambda r: r["median_f1"], reverse=True):
         name = format_model_name(r["model"])
+        n_ref = r.get("n_reference", 163)
         n_runs = r["n_valid_runs"]
         for i in range(n_runs):
             f1 = r["run_f1_scores"][i] * 100
             matched = r["run_n_matched"][i]
             n_sys = r["run_n_system"][i]
-            n_ref = 163  # known reference size
             missed = n_ref - matched
             halluc = n_sys - matched
             recall = matched / n_ref * 100 if n_ref > 0 else 0
