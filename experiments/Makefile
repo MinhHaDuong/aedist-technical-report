@@ -140,6 +140,26 @@ sweep2-web:
 	    --output $(S2W_OUTPUT) --repeat $(S2W_REPEAT) \
 	    --budget-usd $(S2W_BUDGET)
 
+# --- Analysis: self-consistency -----------------------------------------------
+
+SC_INPUT  := outputs/sweep2_rag
+SC_OUTPUT := outputs/sweep2_rag_consistency
+SC_JSON   := $(SC_OUTPUT)/self_consistency_summary.json
+SC_TEX    := ../report/inputs/generated/tab_self_consistency.tex
+SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
+
+.PHONY: self-consistency
+
+$(SC_JSON): $(wildcard $(SC_INPUT)/*.json) ../src/aedist/self_consistency.py
+	uv run --project .. python -m aedist.self_consistency \
+	    --input $(SC_INPUT) --output $(SC_OUTPUT)
+
+$(SC_TEX) $(SC_PERRUN) &: $(SC_JSON) ../src/aedist/tabulate_self_consistency.py
+	uv run --project .. python -m aedist.tabulate_self_consistency \
+	    --input $(SC_JSON) --output $(SC_TEX) --per-run-output $(SC_PERRUN)
+
+self-consistency: $(SC_TEX) $(SC_PERRUN)
+
 # --- Utility -----------------------------------------------------------------
 
 # Convert a PDF to Markdown for the RAG corpus.
@@ -234,6 +254,7 @@ help:
 	@echo "  make sweep1-padme         Padme local models (always sequential)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               All information regimes"
+	@echo "  make self-consistency     Majority/union vote analysis + LaTeX tables"
 	@echo ""
 	@echo "Tools:"
 	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"

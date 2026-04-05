@@ -265,6 +265,26 @@ Claude + RAG + Relance & 61 & 12 & 9 & 72 \\
 
 Les deux techniques (relance et RAG) sont complémentaires. Il manque encore beaucoup de lignes par rapport à notre référence, mais les centrales les plus importantes sont probablement incluses. Cette approche ne permet toutefois pas de remonter le pedigree complet des résultats.
 
+\section{Expérience 3~: RAG wholesale à l'échelle (sweep~2)}\label{sec:sweep2-rag}
+
+On étend l'évaluation RAG à 5 modèles (DeepSeek~V3.2, Gemini~2.5~Flash~Lite, GPT-5.4, Mistral~Large~2512, Mistral~Small~2603), chacun interrogé 3 fois dans les mêmes conditions~: corpus RAG wholesale de 18 documents (37\,283 tokens), même prompt, pas de relance. L'inventaire de référence compte 163 centrales thermiques.
+
+\InputIfFileExists{inputs/generated/tab_per_run}{}{}
+
+Les résultats révèlent deux régimes d'erreur distincts. Quatre modèles (DeepSeek, GPT, Mistral~Large, Mistral~Small) sont \emph{limités par la troncature}~: chaque centrale retournée est correcte (précision 100\,\%, zéro hallucination), mais la réponse est coupée avant d'être complète. Le nombre de centrales varie fortement entre les runs (de 33 à 144), ce qui indique une instabilité dans la longueur de sortie plutôt qu'un manque de connaissance. Le meilleur résultat individuel est GPT-5.4 (144 centrales, F1 = 93,8\,\%).
+
+Gemini~2.5~Flash~Lite présente le régime inverse~: 100\,\% de rappel dans les 3 runs (163/163 centrales thermiques trouvées), mais il ajoute un nombre variable de centrales non thermiques (hydroélectriques, éoliennes, nucléaires)~--- de 11 dans le meilleur cas à 480 dans le pire.
+
+\subsection{Agrégation multi-runs (self-consistency)}
+
+Puisque chaque modèle est interrogé 3 fois, on peut agréger les résultats par vote majoritaire (plante retenue si présente dans 2+ runs) ou par union (plante retenue si présente dans au moins 1 run).
+
+\InputIfFileExists{inputs/generated/tab_self_consistency}{}{}
+
+Le vote majoritaire est inadapté aux modèles limités par la troncature~: il prend l'intersection de sous-ensembles déjà incomplets, réduisant davantage le rappel. En revanche, il profite à Gemini (+23\,\% de F1), car les 163 centrales thermiques sont présentes dans chaque run et l'intersection filtre les hallucinations non thermiques.
+
+Le vote par union bénéficie aux modèles tronqués~: les 3 runs de DeepSeek couvrent collectivement 149 centrales uniques sur 163 (F1 = 95,5\,\%), contre un maximum de 85 sur un seul run. Le choix de la stratégie d'agrégation dépend donc du mode de défaillance du modèle~: union pour la troncature, majorité pour la surgénération.
+
 \section{Discussion}
 
 Les progrès dans la technologie RAG sont rapides \citep{UEIVYTV4,SQX6VZRP}. L'écosystème comprend des solutions RAG-as-a-Service (GraphLit, SciPhi/R2R) et de nombreuses piles libres (Kotaemon, RagFlow, Verba, Khoj, AnythingLLM). Le système Deep Research d'OpenAI \citep{Y6A39QJJ} est capable de trouver et analyser des sources en ligne pour produire un rapport structuré. L'analyse de documents joints est devenue une fonctionnalité standard des interfaces de chat.

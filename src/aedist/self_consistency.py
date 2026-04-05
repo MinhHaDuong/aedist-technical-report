@@ -186,8 +186,9 @@ def run_analysis(
             log.warning("No valid runs for %s — skipping", model)
             continue
 
+        # Sort metrics by F1 so per-run arrays are aligned with sorted f1_scores
+        valid_metrics.sort(key=lambda m: m.f1)
         f1_scores = [m.f1 for m in valid_metrics]
-        f1_scores.sort()
         median_f1 = f1_scores[len(f1_scores) // 2]
 
         log.info(
@@ -249,6 +250,7 @@ def run_analysis(
         results.append(
             {
                 "model": model,
+                "n_reference": len(reference),
                 "n_runs": len(run_paths),
                 "n_valid_runs": len(valid_metrics),
                 "run_f1_scores": f1_scores,
