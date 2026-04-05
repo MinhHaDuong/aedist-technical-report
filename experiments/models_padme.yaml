@@ -89,3 +89,25 @@
   price_per_mtok_out: 0.0
   size_class: small
   license: open-apache
+
+- id: gemma4:26b
+  name: Gemma 4 26B (local)
+  provider: Ollama/Padme
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
+
+- id: gemma4:31b
+  name: Gemma 4 31B (local)
+  provider: Ollama/Padme
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
