@@ -19,6 +19,10 @@ class TestHeaderMapping:
     def test_plant_name(self):
         assert map_header_to_canonical(norm_header("Plant Name")) == "name"
 
+    def test_power_plant_no_name_suffix(self):
+        """Gemini-2.5-flash-lite run3 used quoted 'Power Plant' header."""
+        assert map_header_to_canonical(norm_header("Power Plant")) == "name"
+
     def test_generation_capacity(self):
         assert map_header_to_canonical(norm_header("Generation Capacity (MWe)")) == "capacity_mwe"
 

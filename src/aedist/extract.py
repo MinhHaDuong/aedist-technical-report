@@ -65,7 +65,17 @@ def _score_csv_like_block(block: str) -> float:
 
     header = lines[0].lower()
     header_bonus = 0.0
-    for token in ["name", "plant", "fuel", "status", "stage", "cod", "connection", "province", "capacity"]:
+    for token in [
+        "name",
+        "plant",
+        "fuel",
+        "status",
+        "stage",
+        "cod",
+        "connection",
+        "province",
+        "capacity",
+    ]:
         if token in header:
             header_bonus += HEADER_KEYWORD_BONUS
 
@@ -174,7 +184,7 @@ _CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
 
 
 def map_header_to_canonical(norm: str) -> str | None:
-    if norm in {"name", "plant", "plant_name", "plantname", "power_plant_name"}:
+    if norm in {"name", "plant", "plant_name", "plantname", "power_plant", "power_plant_name"}:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype"}:
         return "fuel"
@@ -184,7 +194,14 @@ def map_header_to_canonical(norm: str) -> str | None:
         return "cod"
     if norm in {"province", "location"}:
         return "province"
-    if norm in {"capacity_mwe", "capacity", "generation_capacity", "capacity_mw", "capacity_mwe_", "capacity_mwe__"}:
+    if norm in {
+        "capacity_mwe",
+        "capacity",
+        "generation_capacity",
+        "capacity_mw",
+        "capacity_mwe_",
+        "capacity_mwe__",
+    }:
         return "capacity_mwe"
     # Common variants that still normalize with parentheses removed
     if norm.startswith("capacity"):
