@@ -6,7 +6,9 @@
       "Bash(cp -r __TRACKED_VAR__/diagrams report/)",
       "Bash(mkdir -p tools/pdfOCR2md)",
       "Bash(cp __TRACKED_VAR__/pdfOCR2md/Makefile __TRACKED_VAR__/pdfOCR2md/pdfOCR2md.py tools/pdfOCR2md/)",
-      "Bash(mkdir -p publications/journal-article)"
+      "Bash(mkdir -p publications/journal-article)",
+      "Bash(mv src/aedist/select_top.py src/aedist/select_sweep2.py)",
+      "Bash(mv tests/test_select_top.py tests/test_select_sweep2.py)"
     ]
   }
 }
