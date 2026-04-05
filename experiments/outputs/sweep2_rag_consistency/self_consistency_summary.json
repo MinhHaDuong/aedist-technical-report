@@ -38,35 +38,38 @@
   {
     "model": "gemini-2.5-flash-lite",
     "n_runs": 3,
-    "n_valid_runs": 2,
+    "n_valid_runs": 3,
     "run_f1_scores": [
+      0.4045,
       0.5801,
       0.9674
     ],
     "run_n_matched": [
       163,
+      163,
       163
     ],
     "run_n_system": [
       399,
-      174
+      174,
+      643
     ],
-    "median_f1": 0.9674,
+    "median_f1": 0.5801,
     "median_coverage": 1.0,
-    "median_precision": 0.9368,
-    "majority_f1": 0.6128,
-    "majority_coverage": 0.4417,
+    "median_precision": 0.4085,
+    "majority_f1": 0.8102,
+    "majority_coverage": 0.681,
     "majority_precision": 1.0,
-    "majority_n_matched": 72,
-    "majority_n_system": 72,
+    "majority_n_matched": 111,
+    "majority_n_system": 111,
     "majority_n_hallucinated": 0,
-    "n_majority_plants": 72,
-    "union_f1": 0.5183,
+    "n_majority_plants": 111,
+    "union_f1": 0.3241,
     "union_coverage": 1.0,
-    "union_precision": 0.3498,
+    "union_precision": 0.1934,
     "union_n_matched": 163,
-    "union_n_system": 466,
-    "union_n_hallucinated": 303
+    "union_n_system": 843,
+    "union_n_hallucinated": 680
   },
   {
     "model": "gpt-5.4",
