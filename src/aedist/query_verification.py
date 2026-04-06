@@ -61,11 +61,29 @@ def _output_stem(model: str, mode: str, run: int) -> str:
     return f"{short}-{mode}-run{run}"
 
 
+_EMPTY_METRICS = {
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "f1": 0.0,
+    "precision": 0.0,
+    "coverage": 0.0,
+    "fuel_accuracy": None,
+    "status_accuracy": None,
+    "province_accuracy": None,
+}
+
+
 def _evaluate_plants(system_plants: list, reference_path: Path, ref_plants_cache: dict) -> dict:
     """Evaluate system plants against reference, return metrics dict.
 
     Uses ref_plants_cache to avoid re-loading the reference CSV.
+    Returns zeroed metrics for empty system output (e.g. no plants pass filter).
     """
+    if not system_plants:
+        return dict(_EMPTY_METRICS)
+
     ref_key = str(reference_path)
     if ref_key not in ref_plants_cache:
         ref_plants_cache[ref_key] = load_plants_csv(reference_path)
