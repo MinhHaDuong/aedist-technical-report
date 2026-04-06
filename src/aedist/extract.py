@@ -116,8 +116,9 @@ def fallback_extract_inline_csv(text: str) -> str | None:
         stripped = ln.strip()
         if not stripped:
             continue
-        if ("," in stripped or ";" in stripped or "\t" in stripped) and (
-            "name" in stripped.lower() or "plant" in stripped.lower()
+        low = stripped.lower()
+        if ("," in stripped or ";" in stripped or "\t" in stripped) and any(
+            kw in low for kw in ("name", "plant", "project", "fuel", "capacity", "province")
         ):
             header_idx = i
             break
@@ -184,7 +185,15 @@ _CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
 
 
 def map_header_to_canonical(norm: str) -> str | None:
-    if norm in {"name", "plant", "plant_name", "plantname", "power_plant", "power_plant_name"}:
+    if norm in {
+        "name",
+        "plant",
+        "plant_name",
+        "plantname",
+        "power_plant",
+        "power_plant_name",
+        "project",
+    }:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype"}:
         return "fuel"
