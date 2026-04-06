@@ -28,6 +28,22 @@ log = logging.getLogger(__name__)
 
 # Bonus per recognized header keyword in CSV scoring
 HEADER_KEYWORD_BONUS = 0.2
+
+# Keywords that signal a CSV header row about power plants.
+# Shared between score_csv_block() and fallback_extract_inline_csv()
+# to prevent the two lists from drifting apart.
+_HEADER_KEYWORDS = (
+    "name",
+    "plant",
+    "project",
+    "fuel",
+    "status",
+    "stage",
+    "cod",
+    "connection",
+    "province",
+    "capacity",
+)
 # Cap for length bonus normalization (number of lines)
 LENGTH_BONUS_CAP_LINES = 50.0
 
@@ -65,17 +81,7 @@ def score_csv_like_block(block: str) -> float:
 
     header = lines[0].lower()
     header_bonus = 0.0
-    for token in [
-        "name",
-        "plant",
-        "fuel",
-        "status",
-        "stage",
-        "cod",
-        "connection",
-        "province",
-        "capacity",
-    ]:
+    for token in _HEADER_KEYWORDS:
         if token in header:
             header_bonus += HEADER_KEYWORD_BONUS
 
@@ -118,7 +124,7 @@ def fallback_extract_inline_csv(text: str) -> str | None:
             continue
         low = stripped.lower()
         if ("," in stripped or ";" in stripped or "\t" in stripped) and any(
-            kw in low for kw in ("name", "plant", "project", "fuel", "capacity", "province")
+            kw in low for kw in _HEADER_KEYWORDS
         ):
             header_idx = i
             break
