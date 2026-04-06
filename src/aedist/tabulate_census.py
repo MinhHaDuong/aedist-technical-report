@@ -1,8 +1,8 @@
-"""Generate census results LaTeX table from all_metrics.json.
+"""Generate census results LaTeX table from measurements.jsonl.
 
 Usage:
     python -m aedist.tabulate_census \\
-        --input results/summary/all_metrics.json \\
+        --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_census.tex
 
 Reads per-run metrics, groups by model (stripping -runN suffix),
@@ -11,7 +11,6 @@ Local (Padme) models are marked with (L).
 """
 
 import argparse
-import json
 import logging
 from pathlib import Path
 
@@ -70,9 +69,7 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate census results LaTeX table",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument(
         "--output",
         required=True,
@@ -82,13 +79,9 @@ def main(argv: list[str] | None = None):
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     latex = generate_census_table(metrics)
 

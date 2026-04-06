@@ -1,12 +1,12 @@
 """Select top models from census metrics with diversity constraints.
 
-Reads evaluation metrics (all_metrics.json), groups by model slug,
+Reads evaluation metrics (measurements.jsonl), groups by model slug,
 ranks by median F1, and selects top N ensuring diversity across
 geography, provider type, and price tier.
 
 Usage:
     uv run python -m aedist.select_sweep2 \
-        --input results/summary/all_metrics.json \
+        --measurements measurements.jsonl \
         --registry experiments/models.yaml \
         --padme experiments/models_padme.yaml \
         --output experiments/models_sweep2.yaml \
@@ -14,7 +14,6 @@ Usage:
 """
 
 import argparse
-import json
 import logging
 import re
 import statistics
@@ -216,14 +215,9 @@ def main() -> None:
         prog="aedist.select_sweep2",
         description="Select top models from census evaluation metrics",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument(
-        "--input",
-        type=Path,
-        help="Path to all_metrics.json (legacy)",
-    )
-    source.add_argument(
+    parser.add_argument(
         "--measurements",
+        required=True,
         type=Path,
         help="Path to measurements.jsonl",
     )
@@ -268,15 +262,10 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load metrics
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-        log.info("Loaded %d metric entries from %s", len(metrics), args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
-        log.info("Loaded %d metric entries from %s", len(metrics), args.input)
+    metrics = load_metrics_from_measurements(args.measurements)
+    log.info("Loaded %d metric entries from %s", len(metrics), args.measurements)
 
     # Load registries
     with open(args.registry) as f:

@@ -1,4 +1,4 @@
-"""Generate LaTeX \\newcommand macros from all_metrics.json.
+"""Generate LaTeX \\newcommand macros from measurements.jsonl.
 
 Reads per-run metrics, groups by model slug (stripping -runN suffix
 and directory prefix), computes median F1, and emits macros for
@@ -6,12 +6,11 @@ the report preamble.
 
 Usage:
     uv run python -m aedist.tabulate_macros \\
-        --input results/summary/all_metrics.json \\
+        --measurements measurements.jsonl \\
         --output report/inputs/generated/macros.tex
 """
 
 import argparse
-import json
 import logging
 import statistics
 from pathlib import Path
@@ -79,21 +78,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate LaTeX macros from metrics JSON",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write macros.tex")
     args = parser.parse_args()
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     summary = load_and_summarize(metrics)
     tex = generate_macros(summary)

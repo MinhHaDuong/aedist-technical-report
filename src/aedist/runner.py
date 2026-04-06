@@ -196,10 +196,11 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     result_dir = Path(args.output) if args.output else Path("results/summary")
     result_dir.mkdir(parents=True, exist_ok=True)
 
-    measurements_path = Path(args.measurements_output) if args.measurements_output else None
+    measurements_path = (
+        Path(args.measurements_output) if args.measurements_output else result_dir / "measurements.jsonl"
+    )
 
     reference = load_plants_csv(ref_path)
-    new_metrics = []
     new_records: list = []
 
     for csv_file in sorted(outputs_dir.rglob("*.csv")):
@@ -209,7 +210,6 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         entries = reconcile(reference, system)
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
-        new_metrics.append({"label": label, **_metrics_to_dict(metrics)})
         new_records.append(_metrics_to_runrecord(metrics, label, csv_file))
         log.info(
             "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
@@ -221,27 +221,8 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
             metrics.n_reference,
         )
 
-    # Merge with existing metrics (preserve data from other sweeps)
-    summary_path = result_dir / "all_metrics.json"
-    existing: list[dict] = []
-    if summary_path.exists():
-        try:
-            existing = json.loads(summary_path.read_text())
-        except (json.JSONDecodeError, OSError):
-            log.warning("Could not read existing %s, starting fresh", summary_path)
-
-    # Build set of new labels for replacement
-    new_labels = {m["label"] for m in new_metrics}
-    # Keep existing entries whose labels are not being replaced
-    merged = [m for m in existing if m["label"] not in new_labels]
-    merged.extend(new_metrics)
-
-    with open(summary_path, "w") as f:
-        json.dump(merged, f, indent=2)
-    log.info("Summary: %s (%d entries, %d new)", summary_path, len(merged), len(new_metrics))
-
-    # Write measurements.jsonl if requested
-    if measurements_path and new_records:
+    # Write measurements.jsonl
+    if new_records:
         from .schema import RunRecord
 
         existing_records = []

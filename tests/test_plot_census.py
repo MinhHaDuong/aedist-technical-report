@@ -43,10 +43,17 @@ def test_output_is_sorted_descending():
     assert f1_values == sorted(f1_values, reverse=True)
 
 
+def _write_measurements(path, metrics):
+    from aedist.measurements_adapter import metrics_to_records
+    from aedist.schema import RunRecord
+
+    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+
+
 def test_main_writes_csv(tmp_path):
     """CLI writes well-formed CSV with header."""
-    input_path = tmp_path / "all_metrics.json"
-    input_path.write_text(json.dumps(SAMPLE_METRICS))
+    input_path = tmp_path / "measurements.jsonl"
+    _write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "census_bars.csv"
 
     from aedist.plot_census import main
@@ -54,7 +61,7 @@ def test_main_writes_csv(tmp_path):
 
     sys.argv = [
         "plot_census",
-        "--input", str(input_path),
+        "--measurements", str(input_path),
         "--output", str(output_path),
     ]
     main()

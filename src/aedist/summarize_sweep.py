@@ -1,20 +1,17 @@
 """Summarize sweep results: aggregate 3 runs per model into median metrics.
 
-Reads the per-run metrics from evaluate-all output and the JSON query records
-to compute cost/latency, then produces a summary CSV.
+Reads the per-run metrics from measurements.jsonl, computes cost/latency,
+and produces a summary CSV.
 
 Usage:
     uv run python -m aedist.summarize_sweep \
-        --metrics results/sweep1_census/all_metrics.json \
-        --queries outputs/sweep1_census/ \
-        --output results/sweep1_census/summary.csv
+        --measurements measurements.jsonl \
+        --output results/summary/sweep1_summary.csv
 """
 
 import argparse
 import csv
-import json
 import logging
-import re
 from pathlib import Path
 from statistics import median
 
@@ -25,49 +22,29 @@ log = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize sweep metrics")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--metrics", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
-    parser.add_argument("--queries", help="Query output dir (for cost/latency, with --metrics)")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Output summary CSV path")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        all_metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.metrics) as f:
-            all_metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     # Group by model
     by_model: dict[str, list[dict]] = {}
-    for entry in all_metrics:
+    for entry in metrics:
         model_short = slug_from_label(entry["label"])
         by_model.setdefault(model_short, []).append(entry)
 
-    # Load cost/latency: from measurements dicts or query JSON files
+    # Cost/latency from adapter output
     cost_latency: dict[str, list[tuple[float, float]]] = {}
-    if args.measurements:
-        # Cost/latency is already in the adapter output
-        for entry in all_metrics:
-            model_short = slug_from_label(entry["label"])
-            cost = entry.get("cost_usd", 0.0) or 0.0
-            wall = entry.get("wall_seconds", 0.0) or 0.0
-            cost_latency.setdefault(model_short, []).append((cost, wall))
-    elif args.queries:
-        query_dir = Path(args.queries)
-        for jf in sorted(query_dir.rglob("*.json")):
-            try:
-                record = json.loads(jf.read_text())
-            except Exception:
-                continue
-            base_short = re.sub(r"-run\d+$", "", jf.stem)
-            cost = record.get("cost_usd", 0.0) or 0.0
-            wall = record.get("wall_seconds", 0.0) or 0.0
-            cost_latency.setdefault(base_short, []).append((cost, wall))
+    for entry in metrics:
+        model_short = slug_from_label(entry["label"])
+        cost = entry.get("cost_usd", 0.0) or 0.0
+        wall = entry.get("wall_seconds", 0.0) or 0.0
+        cost_latency.setdefault(model_short, []).append((cost, wall))
 
     # Write summary
     out_path = Path(args.output)

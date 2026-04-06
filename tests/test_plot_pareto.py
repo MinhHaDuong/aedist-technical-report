@@ -55,10 +55,17 @@ def test_local_flag():
     assert by_model["padme-qwen3.5-27b"]["local"] == 1
 
 
+def _write_measurements(path, metrics):
+    from aedist.measurements_adapter import metrics_to_records
+    from aedist.schema import RunRecord
+
+    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+
+
 def test_main_writes_csv(tmp_path):
     """CLI writes well-formed CSV with cost data."""
-    input_path = tmp_path / "all_metrics.json"
-    input_path.write_text(json.dumps(SAMPLE_METRICS))
+    input_path = tmp_path / "measurements.jsonl"
+    _write_measurements(input_path, SAMPLE_METRICS)
     costs_path = tmp_path / "summary.csv"
     costs_path.write_text(SUMMARY_CSV)
     output_path = tmp_path / "pareto.csv"
@@ -68,7 +75,7 @@ def test_main_writes_csv(tmp_path):
 
     sys.argv = [
         "plot_pareto",
-        "--input", str(input_path),
+        "--measurements", str(input_path),
         "--costs", str(costs_path),
         "--output", str(output_path),
     ]
@@ -84,9 +91,9 @@ def test_main_writes_csv(tmp_path):
 
 
 def test_main_without_costs(tmp_path):
-    """CLI works without --costs (backward compatible)."""
-    input_path = tmp_path / "all_metrics.json"
-    input_path.write_text(json.dumps(SAMPLE_METRICS))
+    """CLI works without --costs."""
+    input_path = tmp_path / "measurements.jsonl"
+    _write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "pareto.csv"
 
     from aedist.plot_pareto import main
@@ -94,7 +101,7 @@ def test_main_without_costs(tmp_path):
 
     sys.argv = [
         "plot_pareto",
-        "--input", str(input_path),
+        "--measurements", str(input_path),
         "--output", str(output_path),
     ]
     main()

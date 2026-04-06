@@ -1,8 +1,8 @@
-"""Generate RAG comparison LaTeX table from all_metrics.json.
+"""Generate RAG comparison LaTeX table from measurements.jsonl.
 
 Usage:
     python -m aedist.tabulate_comparaison \\
-        --input results/summary/all_metrics.json \\
+        --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_comparaison.tex
 
 Reads per-run metrics, finds models present in both census (sweep1) and RAG
@@ -11,7 +11,6 @@ RAG affects F1 for each model.
 """
 
 import argparse
-import json
 import logging
 import statistics
 from pathlib import Path
@@ -118,21 +117,15 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate RAG comparison LaTeX table",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write tab_comparaison.tex")
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     latex, n_compared = generate_comparaison_table(metrics)
 

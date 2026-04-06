@@ -1,4 +1,4 @@
-"""Generate census bar-chart CSV from all_metrics.json.
+"""Generate census bar-chart CSV from measurements.jsonl.
 
 Writes a CSV with columns: model, f1, local
 sorted by f1 descending. F1 is median across runs, as a decimal 0-1.
@@ -6,13 +6,12 @@ Local is 1 for Padme models, 0 otherwise.
 
 Usage:
     uv run python -m aedist.plot_census \\
-        --input results/summary/all_metrics.json \\
+        --measurements measurements.jsonl \\
         --output slides/inputs/generated/census_bars.csv
 """
 
 import argparse
 import csv
-import json
 import logging
 from pathlib import Path
 
@@ -45,21 +44,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate census bar-chart CSV from metrics JSON",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write census_bars.csv")
     args = parser.parse_args()
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     rows = build_census_rows(metrics)
 

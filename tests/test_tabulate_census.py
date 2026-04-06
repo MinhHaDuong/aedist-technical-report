@@ -206,15 +206,22 @@ def test_generate_census_table_matched_over_total():
 # --- CLI integration via file ---
 
 
+def _write_measurements(path, metrics):
+    from aedist.measurements_adapter import metrics_to_records
+    from aedist.schema import RunRecord
+
+    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+
+
 def test_main_writes_output(tmp_path):
-    """main() reads input JSON and writes LaTeX output."""
+    """main() reads measurements.jsonl and writes LaTeX output."""
     from aedist.tabulate_census import main
 
-    input_file = tmp_path / "metrics.json"
-    input_file.write_text(json.dumps(SAMPLE_METRICS))
+    input_file = tmp_path / "measurements.jsonl"
+    _write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "tab_census.tex"
 
-    main(["--input", str(input_file), "--output", str(output_file)])
+    main(["--measurements", str(input_file), "--output", str(output_file)])
 
     content = output_file.read_text()
     assert "\\begin{longtable}" in content
@@ -225,10 +232,10 @@ def test_main_creates_parent_dirs(tmp_path):
     """main() creates parent directories if they don't exist."""
     from aedist.tabulate_census import main
 
-    input_file = tmp_path / "metrics.json"
-    input_file.write_text(json.dumps(SAMPLE_METRICS))
+    input_file = tmp_path / "measurements.jsonl"
+    _write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "sub" / "dir" / "tab_census.tex"
 
-    main(["--input", str(input_file), "--output", str(output_file)])
+    main(["--measurements", str(input_file), "--output", str(output_file)])
 
     assert output_file.exists()

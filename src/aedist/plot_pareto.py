@@ -1,18 +1,16 @@
-"""Generate Pareto-front CSV from all_metrics.json.
+"""Generate Pareto-front CSV from measurements.jsonl.
 
 Writes a CSV with columns: model, f1, cost_usd, local
 sorted by f1 descending.
 
 Usage:
     uv run python -m aedist.plot_pareto \\
-        --input results/summary/all_metrics.json \\
-        --costs results/summary/sweep1_summary.csv \\
+        --measurements measurements.jsonl \\
         --output slides/inputs/generated/pareto.csv
 """
 
 import argparse
 import csv
-import json
 import logging
 from pathlib import Path
 
@@ -65,24 +63,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate Pareto-front CSV from metrics JSON",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--costs", default=None, help="Path to sweep summary CSV with cost data")
     parser.add_argument("--output", required=True, help="Path to write pareto.csv")
     args = parser.parse_args()
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
+    from .measurements_adapter import load_metrics_from_measurements
 
-        metrics = load_metrics_from_measurements(args.measurements)
-        # When loading from measurements, cost is already in the records
-        # so --costs CSV is not needed (but still supported for override)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     costs = None
     if args.costs:
