@@ -225,6 +225,33 @@ Cost: \textbf{\$0.73}
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Multi-turn: token budget analysis}
+\textbf{Context grows linearly} with each turn (full history resent)
+
+\medskip
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Sweep 2 data} (4 turns, 7 models):
+\begin{itemize}
+  \item Most models: 1--7\% of context used
+  \item DeepSeek V3.2 run1: \textbf{53\%} of 164K
+  \item Extrapolation to 15 turns: \textbf{overflow}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Safety measures:}
+\begin{itemize}
+  \item Context guard at 80\% of window
+  \item Stateless mode: each followup sent independently (constant token budget)
+  \item Trade-off: no iterative refinement
+\end{itemize}
+\end{columns}
+
+\medskip
+\textbf{Conclusion:} scaling to 10+ turns is safe for 1M-context models (Claude, GPT, Gemini). Small-context models (DeepSeek 164K, Mistral 262K) need stateless batching for long conversations.
+\end{frame}
+
 % ===================================================================
 \section{RAG: old vs new documents}
 
@@ -442,7 +469,7 @@ Hybrid approach -- RAG + knowledge graphs + specialized agents -- is \textbf{nec
 % -------------------------------------------------------------------
 \begin{frame}{Next steps}
 \begin{enumerate}
-  \item Complete multi-turn sweep (in progress)
+  \item Multi-turn token budget analysis (\checkmark done)
   \item Cost--quality Pareto analysis across regimes
   \item PDF converter intercomparison (GROBID vs vision models)
   \item Local vs cloud model comparison on Padme
