@@ -287,6 +287,34 @@ Le vote majoritaire est inadapté aux modèles limités par la troncature~: il p
 
 Le vote par union bénéficie aux modèles tronqués~: les 3 runs de DeepSeek couvrent collectivement 149 centrales uniques sur 163 (F1 = 95,5\,\%), contre un maximum de 85 sur un seul run. Le choix de la stratégie d'agrégation dépend donc du mode de défaillance du modèle~: union pour la troncature, majorité pour la surgénération.
 
+\subsection{Décomposition par type de combustible}\label{sec:decomposition}
+
+La troncature étant le principal facteur limitant, on teste une stratégie de décomposition~: au lieu d'une seule requête demandant toutes les centrales thermiques, on envoie 3 sous-requêtes par type de combustible (charbon, gaz/GNL, pétrole/autres), chacune avec le même corpus RAG. Les 3 réponses CSV sont extraites puis fusionnées avec dédoublonnage par nom.
+
+\begin{table}[htbp]
+\centering
+\caption{Effet de la décomposition par combustible~: F1 médian et meilleur run (3 runs par modèle).}\label{tab:decomposition}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Modèle & \multicolumn{2}{c}{Requête unique} & \multicolumn{2}{c}{Décomposé} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & Méd. F1 & Meilleur & Méd. F1 & Meilleur \\
+\midrule
+Mistral Small 4     & 86,4\,\% & 87,2\,\% & 83,2\,\% & 89,6\,\% \\
+GPT-5.4             & 77,0\,\% & 93,8\,\% & 70,7\,\% & 74,8\,\% \\
+Mistral Large 3     & 72,2\,\% & 88,4\,\% & \textbf{94,8\,\%} & \textbf{95,6\,\%} \\
+DeepSeek V3.2       & 60,1\,\% & 68,5\,\% & \textbf{93,7\,\%} & \textbf{98,8\,\%} \\
+Gemini 2.5 Flash Lite & 58,0\,\% & 96,7\,\% & 75,1\,\% & 97,5\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La décomposition élimine la troncature~: 12 des 14 runs complétés atteignent 100\,\% de rappel (163/163 centrales), contre un maximum de 144 en requête unique. L'effet net sur le F1 dépend du modèle~: fortement positif pour les modèles qui étaient limités par la troncature (DeepSeek~: +33,6 points, Mistral~Large~: +22,6 points), mais négatif pour GPT-5.4 qui était déjà performant en requête unique.
+
+Le meilleur résultat absolu est DeepSeek~V3.2 décomposé~: 163 centrales trouvées sur 163, seulement 4 hallucinations, F1 = 98,8\,\%, pour un coût de 0,06~\$. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok grâce à la décomposition.
+
+Le principal inconvénient est l'introduction d'hallucinations non thermiques dans les sous-requêtes~: les modèles ajoutent des centrales hydroélectriques ou éoliennes dans la catégorie <<~autres combustibles~>>. Ce problème pourrait être atténué par un filtrage post-traitement ou une contrainte explicite dans le prompt.
+
 \section{Discussion}
 
 Les progrès dans la technologie RAG sont rapides \citep{UEIVYTV4,SQX6VZRP}. L'écosystème comprend des solutions RAG-as-a-Service (GraphLit, SciPhi/R2R) et de nombreuses piles libres (Kotaemon, RagFlow, Verba, Khoj, AnythingLLM). Le système Deep Research d'OpenAI \citep{Y6A39QJJ} est capable de trouver et analyser des sources en ligne pour produire un rapport structuré. L'analyse de documents joints est devenue une fonctionnalité standard des interfaces de chat.
