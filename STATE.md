@@ -2,7 +2,7 @@ Last updated: 2026-04-06
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census done (33 models, F1 2–66%, $0.73). 336 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Multi-turn token budget analyzed: most models safe at 10+ turns, DeepSeek V3.2 overflows at 15 turns — context guard and stateless mode added (#113, #148). Self-consistency analysis merged (#96). Worker infrastructure operational. Gold truth corpus: 18 manually verified tables (155 KB).
+Pipeline end-to-end via Makefile. Census done (35 models, F1 2–66%, $0.82). 336 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Sweep 2 web complete ($0.13, #95 closed). CSV extraction tolerant of unfenced output and "Project" headers (#152). Self-consistency analysis merged (#96). Worker infrastructure operational. Gold truth corpus: 18 manually verified tables (155 KB).
 
 ## Blockers
 
@@ -10,8 +10,8 @@ Pipeline end-to-end via Makefile. Census done (33 models, F1 2–66%, $0.73). 33
 
 ## Next actions
 
-1. Build RAG corpus with vision converter once Gemma 4 pulled (#10)
-2. Run Sweep 2 RAG + web after corpus ready (#10)
+1. Re-extract sweep2-web with tolerant extractor (GPT-5.4 now works)
+2. Build RAG corpus with vision converter once Gemma 4 pulled (#10)
 3. Reframe slides: methods not models, 11 condition axes (#93)
 4. Add layout-aware PDF converters: Marker + MinerU (#81, #83, #84)
 5. Table conversion benchmark across backends (#85)
