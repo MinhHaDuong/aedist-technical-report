@@ -25,6 +25,7 @@ from .reconcile import reconcile
 from .runner import load_plants_csv
 from .schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from .verify import (
+    _DEFAULT_REF,
     extract_csv_rows,
     extract_response_text,
     filter_by_score,
@@ -38,14 +39,14 @@ from .verify import (
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_REF = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
-
-# Deterministic modes: run once regardless of repeat setting
 # Web mode shares a Tavily cache across runs, so repeated runs produce
 # identical results.  All three are deterministic: run once per config.
 _DETERMINISTIC_MODES = {"unverified", "tool", "web"}
+
+# Cost estimation constants (per million tokens, frontier model rates)
+_COST_PER_MTOK_IN = 3.0
+_COST_PER_MTOK_OUT = 15.0
+_TAVILY_COST_PER_SEARCH = 0.005
 
 
 def load_config(path: str | Path) -> dict:
@@ -60,10 +61,16 @@ def _output_stem(model: str, mode: str, run: int) -> str:
     return f"{short}-{mode}-run{run}"
 
 
-def _evaluate_csv(csv_path: Path, reference_path: Path) -> dict:
-    """Evaluate a CSV against reference, return metrics dict."""
-    system_plants = load_plants_csv(csv_path)
-    ref_plants = load_plants_csv(reference_path)
+def _evaluate_plants(system_plants: list, reference_path: Path, ref_plants_cache: dict) -> dict:
+    """Evaluate system plants against reference, return metrics dict.
+
+    Uses ref_plants_cache to avoid re-loading the reference CSV.
+    """
+    ref_key = str(reference_path)
+    if ref_key not in ref_plants_cache:
+        ref_plants_cache[ref_key] = load_plants_csv(reference_path)
+    ref_plants = ref_plants_cache[ref_key]
+
     entries = reconcile(ref_plants, system_plants)
     metrics = compute_metrics(entries)
     return {
@@ -90,7 +97,6 @@ def _write_filtered_csv(annotated: list[dict], path: Path, min_score: int = 3) -
     """Write only plants with evidence_score >= min_score to CSV."""
     filtered = filter_by_score(annotated, min_score)
     if not filtered:
-        # Write empty CSV with headers
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", newline="") as f:
             if annotated:
@@ -102,15 +108,20 @@ def _write_filtered_csv(annotated: list[dict], path: Path, min_score: int = 3) -
 
 
 def run_condition(
+    rows: list[dict],
     base_config: dict,
     mode: str,
     run: int,
     output_dir: Path,
     reference_path: Path,
+    ref_plants_cache: dict,
     cross_verifier: str | None = None,
     tavily_key: str | None = None,
 ) -> RunRecord | None:
-    """Run one verification condition and return a RunRecord."""
+    """Run one verification condition and return a RunRecord.
+
+    Takes pre-extracted rows to avoid re-reading the base output file.
+    """
     model = base_config["model"]
     method = base_config["method"]
     result_file = base_config["result_file"]
@@ -119,25 +130,8 @@ def run_condition(
     csv_path = output_dir / f"{stem}.csv"
     filtered_path = output_dir / f"{stem}_filtered.csv"
 
-    # Skip if already done
     if csv_path.exists():
         log.info("Skip %s (cached)", stem)
-        return None
-
-    # Load base output
-    result_path = Path(result_file)
-    if not result_path.is_absolute():
-        # Resolve relative to experiments/ directory
-        result_path = Path(__file__).parent.parent.parent / "experiments" / result_path
-    record = json.loads(result_path.read_text())
-    response_text = extract_response_text(record)
-    if not response_text:
-        log.warning("No response text in %s", result_file)
-        return None
-
-    rows = extract_csv_rows(response_text)
-    if not rows:
-        log.warning("No CSV data in %s", result_file)
         return None
 
     log.info("Running %s (mode=%s, run=%d, %d plants)...", stem, mode, run, len(rows))
@@ -163,7 +157,7 @@ def run_condition(
             return None
         cache_path = output_dir / "tavily_cache.json"
         annotated, summary = verify_web(rows, tavily_key, cache_path)
-        verification_cost = summary.get("searches_performed", 0) * 0.005
+        verification_cost = summary.get("searches_performed", 0) * _TAVILY_COST_PER_SEARCH
     else:
         log.error("Unknown mode: %s", mode)
         return None
@@ -174,11 +168,13 @@ def run_condition(
     # Write filtered CSV (evidence_score >= 3)
     _write_filtered_csv(annotated, filtered_path)
 
-    # Evaluate both full and filtered outputs
-    full_metrics = _evaluate_csv(csv_path, reference_path)
-    filtered_metrics = _evaluate_csv(filtered_path, reference_path)
+    # Evaluate in-memory via written CSVs (load_plants_csv needs a file)
+    full_metrics = _evaluate_plants(load_plants_csv(csv_path), reference_path, ref_plants_cache)
+    filtered_metrics = _evaluate_plants(
+        load_plants_csv(filtered_path), reference_path, ref_plants_cache
+    )
 
-    # Build RunRecord
+    repo_root = Path(__file__).parent.parent.parent
     return RunRecord(
         method=Method(method),
         method_params=MethodParams(
@@ -191,7 +187,7 @@ def run_condition(
             },
         ),
         resource_use=ResourceUse(cost_usd=verification_cost),
-        result_file=str(csv_path.relative_to(Path(__file__).parent.parent.parent)),
+        result_file=str(csv_path.relative_to(repo_root)),
         result_summary=ResultSummary(
             status="ok",
             n_plants=full_metrics["n_plants"],
@@ -216,10 +212,9 @@ def run_condition(
 def _estimate_llm_cost(summary: dict) -> float:
     """Estimate LLM verification cost from usage data."""
     usage = summary.get("usage", {})
-    # Rough estimate: $3/Mtok in, $15/Mtok out (frontier model rates)
     prompt_tokens = usage.get("prompt_tokens", 0) or 0
     completion_tokens = usage.get("completion_tokens", 0) or 0
-    return (prompt_tokens * 3 + completion_tokens * 15) / 1_000_000
+    return (prompt_tokens * _COST_PER_MTOK_IN + completion_tokens * _COST_PER_MTOK_OUT) / 1_000_000
 
 
 def main():
@@ -271,40 +266,66 @@ def main():
         )
         return
 
+    # Pre-load base outputs (avoid re-reading per condition)
+    base_rows: dict[str, list[dict]] = {}
+    for base in base_configs:
+        result_file = base["result_file"]
+        result_path = Path(result_file)
+        if not result_path.is_absolute():
+            result_path = Path(__file__).parent.parent.parent / "experiments" / result_path
+        record = json.loads(result_path.read_text())
+        response_text = extract_response_text(record)
+        if not response_text:
+            log.warning("No response text in %s, skipping", result_file)
+            continue
+        rows = extract_csv_rows(response_text)
+        if not rows:
+            log.warning("No CSV data in %s, skipping", result_file)
+            continue
+        base_rows[result_file] = rows
+        log.info("Loaded %d plants from %s", len(rows), result_file)
+
     # Run conditions
     budget = BudgetTracker(budget_usd)
     measurements_path = Path(__file__).parent.parent.parent / "measurements.jsonl"
     records: list[RunRecord] = []
+    ref_plants_cache: dict = {}
 
-    for base, mode, run in conditions:
-        if not budget.check_or_warn():
-            break
+    with open(measurements_path, "a") as mf:
+        for base, mode, run in conditions:
+            if not budget.check_or_warn():
+                break
 
-        run_record = run_condition(
-            base_config=base,
-            mode=mode,
-            run=run,
-            output_dir=output_dir,
-            reference_path=reference_path,
-            cross_verifier=cross_verifier,
-            tavily_key=tavily_key,
-        )
-        if run_record:
-            records.append(run_record)
-            cost = run_record.resource_use.cost_usd or 0
-            budget.add(cost)
+            rows = base_rows.get(base["result_file"])
+            if not rows:
+                continue
 
-            # Append to measurements.jsonl
-            with open(measurements_path, "a") as f:
-                f.write(run_record.to_jsonl_line() + "\n")
-
-            jscore = run_record.justification or {}
-            log.info(
-                "  Done: F1=%.4f, mean_evidence=%.2f, cost=$%.4f",
-                run_record.result_summary.f1 or 0,
-                jscore.get("mean_evidence_score", 0),
-                cost,
+            run_record = run_condition(
+                rows=rows,
+                base_config=base,
+                mode=mode,
+                run=run,
+                output_dir=output_dir,
+                reference_path=reference_path,
+                ref_plants_cache=ref_plants_cache,
+                cross_verifier=cross_verifier,
+                tavily_key=tavily_key,
             )
+            if run_record:
+                records.append(run_record)
+                cost = run_record.resource_use.cost_usd or 0
+                budget.add(cost)
+
+                mf.write(run_record.to_jsonl_line() + "\n")
+                mf.flush()
+
+                jscore = run_record.justification or {}
+                log.info(
+                    "  Done: F1=%.4f, mean_evidence=%.2f, cost=$%.4f",
+                    run_record.result_summary.f1 or 0,
+                    jscore.get("mean_evidence_score", 0),
+                    cost,
+                )
 
     log.info(
         "Sweep 4 complete. %d records. Total cost: $%.4f",

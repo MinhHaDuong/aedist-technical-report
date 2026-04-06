@@ -19,7 +19,9 @@ import csv
 import io
 import json
 import logging
+import os
 import re
+from collections import Counter
 from pathlib import Path
 
 from rapidfuzz import fuzz
@@ -31,7 +33,8 @@ from .extract import (
     norm_header,
     sniff_dialect,
 )
-from .harness import make_client, query_single_turn
+from .harness import make_client, query_single_turn, save_json
+from .schema import SourceType
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +47,9 @@ DEFAULT_VERIFICATION_SUBJECT = "thermal power plants in Vietnam"
 
 # Similarity threshold (0-100) for fuzzy name matching against reference database
 SIMILARITY_THRESHOLD = 70.0
+
+# Valid source type strings for LLM response validation
+_VALID_SOURCE_TYPES = {SourceType.PRIMARY, SourceType.SECONDARY, SourceType.NONE}
 
 # ---------------------------------------------------------------------------
 # Source classification and evidence scoring
@@ -84,14 +90,18 @@ _PRIMARY_PATTERNS = [
 
 
 def classify_source_by_url(url: str) -> str:
-    """Classify a source URL as primary, secondary, or unknown."""
+    """Classify a source URL as primary, secondary, or unknown.
+
+    Returns a SourceType value for known domains, or "unknown" for
+    unrecognized domains (treated as non-evidence by score_evidence).
+    """
     url_lower = url.lower()
     for domain in _PRIMARY_DOMAINS:
         if domain in url_lower:
-            return "primary"
+            return SourceType.PRIMARY
     for domain in _SECONDARY_DOMAINS:
         if domain in url_lower:
-            return "secondary"
+            return SourceType.SECONDARY
     return "unknown"
 
 
@@ -102,16 +112,16 @@ def classify_source_by_text(citation: str) -> str:
     prefer the model's own classification; this is a fallback/cross-check.
     """
     if not citation or citation.strip().lower() == "none":
-        return "none"
+        return SourceType.NONE
     for pattern in _PRIMARY_PATTERNS:
         if re.search(pattern, citation):
-            return "primary"
+            return SourceType.PRIMARY
     # If it has a URL, classify by domain
     url_match = re.search(r"https?://[^\s]+", citation)
     if url_match:
         return classify_source_by_url(url_match.group())
     # Has text but no primary indicators
-    return "secondary"
+    return SourceType.SECONDARY
 
 
 def score_evidence(sources: list[dict]) -> int:
@@ -129,15 +139,15 @@ def score_evidence(sources: list[dict]) -> int:
     if not sources:
         return 1
 
-    types = [s.get("type", "none") for s in sources if s.get("text", "").strip()]
+    types = [s.get("type", SourceType.NONE) for s in sources if s.get("text", "").strip()]
     if not types:
         return 1
 
-    if "hallucinated" in types:
+    if SourceType.HALLUCINATED in types:
         return 0
 
-    primary_count = types.count("primary")
-    secondary_count = types.count("secondary")
+    primary_count = types.count(SourceType.PRIMARY)
+    secondary_count = types.count(SourceType.SECONDARY)
 
     if primary_count >= 2:
         return 4
@@ -151,6 +161,35 @@ def score_evidence(sources: list[dict]) -> int:
 def filter_by_score(annotated_rows: list[dict], min_score: int = 3) -> list[dict]:
     """Return only rows with evidence_score >= min_score."""
     return [r for r in annotated_rows if int(r.get("evidence_score", 0)) >= min_score]
+
+
+def _build_summary(mode: str, annotated: list[dict], **extra) -> dict:
+    """Build the standard verification summary dict from annotated rows."""
+    total = len(annotated) or 1
+    scores = [int(r["evidence_score"]) for r in annotated]
+    counts = Counter(scores)
+    summary = {
+        "mode": mode,
+        "total_plants": len(annotated),
+        "mean_evidence_score": round(sum(scores) / total, 2),
+        "score_distribution": {str(i): counts.get(i, 0) for i in range(5)},
+    }
+    summary.update(extra)
+    return summary
+
+
+def _annotate_sources(entry: dict, sources: list[dict]) -> None:
+    """Set source_1/2, evidence_score, and verified fields on an entry dict."""
+    for i in (1, 2):
+        if i <= len(sources):
+            entry[f"source_{i}"] = sources[i - 1].get("text", "")
+            entry[f"source_{i}_type"] = sources[i - 1].get("type", SourceType.NONE)
+        else:
+            entry[f"source_{i}"] = ""
+            entry[f"source_{i}_type"] = SourceType.NONE
+    score = score_evidence(sources)
+    entry["evidence_score"] = str(score)
+    entry["verified"] = "True" if score >= 3 else "False"
 
 
 # ---------------------------------------------------------------------------
@@ -266,36 +305,26 @@ def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dic
         entry = dict(row)
         if match:
             source_text = f"ref: {match['name']}"
-            entry["verified"] = "True"
             entry["verification_source"] = source_text
             entry["confidence"] = str(
                 round(fuzz.token_sort_ratio(name.lower(), match["name_lower"]) / 100, 2)
             )
-            entry["source_1"] = source_text
-            entry["source_1_type"] = "primary"
-            entry["evidence_score"] = "3"
+            _annotate_sources(entry, [{"text": source_text, "type": SourceType.PRIMARY}])
         else:
-            entry["verified"] = "False"
             entry["verification_source"] = "Not found in reference"
             entry["confidence"] = "0.0"
-            entry["source_1"] = ""
-            entry["source_1_type"] = "none"
-            entry["evidence_score"] = "1"
+            _annotate_sources(entry, [])
 
         annotated.append(entry)
 
-    total = len(rows) or 1
     scores = [int(r["evidence_score"]) for r in annotated]
-    summary = {
-        "mode": "tool",
-        "total_plants": len(rows),
-        "verified_count": sum(1 for s in scores if s >= 3),
-        "fabricated_count": 0,
-        "uncertain_count": sum(1 for s in scores if s == 1),
-        "mean_evidence_score": round(sum(scores) / total, 2),
-        "score_distribution": {str(i): scores.count(i) for i in range(5)},
-    }
-    return annotated, summary
+    return annotated, _build_summary(
+        "tool",
+        annotated,
+        verified_count=sum(1 for s in scores if s >= 3),
+        fabricated_count=0,
+        uncertain_count=sum(1 for s in scores if s == 1),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -382,7 +411,6 @@ def _parse_verification_json(response_text: str, rows: list[dict]) -> list[dict]
         # Find matching verdict (exact or fuzzy)
         verdict = verdict_by_name.get(name_lower)
         if not verdict:
-            # Try fuzzy match against verdict names
             best_score = 0.0
             for vname, v in verdict_by_name.items():
                 score = fuzz.token_sort_ratio(name_lower, vname)
@@ -391,37 +419,18 @@ def _parse_verification_json(response_text: str, rows: list[dict]) -> list[dict]
                     verdict = v
 
         if verdict:
-            s1 = verdict.get("source_1", "").strip()
-            s1t = verdict.get("source_1_type", "none").strip().lower()
-            s2 = verdict.get("source_2", "").strip()
-            s2t = verdict.get("source_2_type", "none").strip().lower()
-
-            # Cross-check LLM-declared types with our heuristic
-            if s1 and s1t not in ("primary", "secondary", "none"):
-                s1t = classify_source_by_text(s1)
-            if s2 and s2t not in ("primary", "secondary", "none"):
-                s2t = classify_source_by_text(s2)
-
-            entry["source_1"] = s1
-            entry["source_1_type"] = s1t if s1 else "none"
-            entry["source_2"] = s2
-            entry["source_2_type"] = s2t if s2 else "none"
-
             sources = []
-            if s1:
-                sources.append({"text": s1, "type": entry["source_1_type"]})
-            if s2:
-                sources.append({"text": s2, "type": entry["source_2_type"]})
-            entry["evidence_score"] = str(score_evidence(sources))
+            for key in ("source_1", "source_2"):
+                text = verdict.get(key, "").strip()
+                stype = verdict.get(f"{key}_type", SourceType.NONE).strip().lower()
+                if text and stype not in _VALID_SOURCE_TYPES:
+                    stype = classify_source_by_text(text)
+                if text:
+                    sources.append({"text": text, "type": stype})
+            _annotate_sources(entry, sources)
         else:
-            # No verdict found for this plant
-            entry["source_1"] = ""
-            entry["source_1_type"] = "none"
-            entry["source_2"] = ""
-            entry["source_2_type"] = "none"
-            entry["evidence_score"] = "1"
+            _annotate_sources(entry, [])
 
-        entry["verified"] = "True" if int(entry["evidence_score"]) >= 3 else "False"
         annotated.append(entry)
 
     return annotated
@@ -448,18 +457,13 @@ def verify_llm(
 
     annotated = _parse_verification_json(response_text, rows)
 
-    total = len(rows) or 1
-    scores = [int(r["evidence_score"]) for r in annotated]
-    summary = {
-        "mode": "llm",
-        "verifier_model": model_id,
-        "total_plants": len(rows),
-        "mean_evidence_score": round(sum(scores) / total, 2),
-        "score_distribution": {str(i): scores.count(i) for i in range(5)},
-        "usage": usage,
-        "wall_seconds": result.get("wall_seconds", 0),
-    }
-    return annotated, summary
+    return annotated, _build_summary(
+        "llm",
+        annotated,
+        verifier_model=model_id,
+        usage=usage,
+        wall_seconds=result.get("wall_seconds", 0),
+    )
 
 
 def verify_self(
@@ -496,13 +500,6 @@ def _load_tavily_cache(cache_path: Path) -> dict[str, list[dict]]:
     return {}
 
 
-def _save_tavily_cache(cache_path: Path, cache: dict[str, list[dict]]) -> None:
-    """Save Tavily cache to JSON file."""
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(cache_path, "w") as f:
-        json.dump(cache, f, indent=2, ensure_ascii=False)
-
-
 def verify_web(
     rows: list[dict],
     tavily_key: str,
@@ -527,14 +524,7 @@ def verify_web(
         name = row.get("name", "").strip()
         if not name:
             entry = dict(row)
-            entry.update(
-                source_1="",
-                source_1_type="none",
-                source_2="",
-                source_2_type="none",
-                evidence_score="1",
-                verified="False",
-            )
+            _annotate_sources(entry, [])
             annotated.append(entry)
             continue
 
@@ -552,13 +542,12 @@ def verify_web(
 
         # Classify search results and find best sources
         sources: list[dict] = []
+        name_lower = name.lower()
         for r in results:
             url = r.get("url", "")
             content = r.get("content", "")
             title = r.get("title", "")
 
-            # Check if this result actually mentions the plant
-            name_lower = name.lower()
             relevance = max(
                 fuzz.partial_ratio(name_lower, content.lower()),
                 fuzz.partial_ratio(name_lower, title.lower()),
@@ -566,54 +555,30 @@ def verify_web(
             if relevance < 50:
                 continue
 
-            source_type = classify_source_by_url(url)
             sources.append(
                 {
                     "text": f"{title} ({url})",
-                    "type": source_type,
-                    "url": url,
+                    "type": classify_source_by_url(url),
                     "relevance": relevance,
                 }
             )
 
         # Sort by: primary first, then by relevance
-        type_order = {"primary": 0, "secondary": 1, "unknown": 2}
+        type_order = {SourceType.PRIMARY: 0, SourceType.SECONDARY: 1, "unknown": 2}
         sources.sort(key=lambda s: (type_order.get(s["type"], 9), -s["relevance"]))
 
         entry = dict(row)
-        if len(sources) >= 1:
-            entry["source_1"] = sources[0]["text"]
-            entry["source_1_type"] = sources[0]["type"]
-        else:
-            entry["source_1"] = ""
-            entry["source_1_type"] = "none"
-
-        if len(sources) >= 2:
-            entry["source_2"] = sources[1]["text"]
-            entry["source_2_type"] = sources[1]["type"]
-        else:
-            entry["source_2"] = ""
-            entry["source_2_type"] = "none"
-
-        score_sources = [{"text": s["text"], "type": s["type"]} for s in sources[:2] if s["text"]]
-        entry["evidence_score"] = str(score_evidence(score_sources))
-        entry["verified"] = "True" if int(entry["evidence_score"]) >= 3 else "False"
+        _annotate_sources(entry, sources[:2])
         annotated.append(entry)
 
-    # Save cache after all searches
     if cache_path:
-        _save_tavily_cache(cache_path, cache)
+        save_json(cache_path, cache)
 
-    total = len(rows) or 1
-    scores = [int(r["evidence_score"]) for r in annotated]
-    summary = {
-        "mode": "web",
-        "total_plants": len(rows),
-        "searches_performed": searches_performed,
-        "mean_evidence_score": round(sum(scores) / total, 2),
-        "score_distribution": {str(i): scores.count(i) for i in range(5)},
-    }
-    return annotated, summary
+    return annotated, _build_summary(
+        "web",
+        annotated,
+        searches_performed=searches_performed,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -630,35 +595,15 @@ def verify_unverified(rows: list[dict]) -> tuple[list[dict], dict]:
     annotated = []
     for row in rows:
         entry = dict(row)
-        # Check if the row already has source_ref from extraction
         source_ref = row.get("source_ref", "").strip()
         if source_ref:
             stype = classify_source_by_text(source_ref)
-            entry["source_1"] = source_ref
-            entry["source_1_type"] = stype
-            entry["source_2"] = ""
-            entry["source_2_type"] = "none"
-            sources = [{"text": source_ref, "type": stype}]
-            entry["evidence_score"] = str(score_evidence(sources))
+            _annotate_sources(entry, [{"text": source_ref, "type": stype}])
         else:
-            entry["source_1"] = ""
-            entry["source_1_type"] = "none"
-            entry["source_2"] = ""
-            entry["source_2_type"] = "none"
-            entry["evidence_score"] = "1"
-
-        entry["verified"] = "True" if int(entry["evidence_score"]) >= 3 else "False"
+            _annotate_sources(entry, [])
         annotated.append(entry)
 
-    total = len(rows) or 1
-    scores = [int(r["evidence_score"]) for r in annotated]
-    summary = {
-        "mode": "unverified",
-        "total_plants": len(rows),
-        "mean_evidence_score": round(sum(scores) / total, 2),
-        "score_distribution": {str(i): scores.count(i) for i in range(5)},
-    }
-    return annotated, summary
+    return annotated, _build_summary("unverified", annotated)
 
 
 # ---------------------------------------------------------------------------
@@ -760,8 +705,6 @@ def main():
             raise SystemExit("--verifier-model required for --mode cross")
         annotated, summary = verify_cross(rows, verifier, subject=args.subject)
     elif args.mode == "web":
-        import os
-
         tavily_key = os.environ.get("TAVILY_API_KEY")
         if not tavily_key:
             raise SystemExit("TAVILY_API_KEY not set")
