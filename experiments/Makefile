@@ -140,6 +140,23 @@ sweep2-web:
 	    --output $(S2W_OUTPUT) --repeat $(S2W_REPEAT) \
 	    --budget-usd $(S2W_BUDGET)
 
+# --- Sweep 3: Task decomposition by fuel type ---------------------------------
+
+S3D_PROMPT  := $(call cfg,sweep3_decomposed,prompt)
+S3D_CORPUS  := $(call cfg,sweep3_decomposed,corpus)
+S3D_MODELS  := $(call cfg,sweep3_decomposed,models)
+S3D_REPEAT  := $(call cfg,sweep3_decomposed,repeat)
+S3D_BUDGET  := $(call cfg,sweep3_decomposed,budget_usd)
+S3D_OUTPUT  := $(call cfg,sweep3_decomposed,output)
+
+.PHONY: sweep3-decomposed
+
+sweep3-decomposed:
+	uv run --project .. python -m aedist.query_decomposed \
+	    --prompt $(S3D_PROMPT) --corpus $(S3D_CORPUS) \
+	    --models $(S3D_MODELS) --output $(S3D_OUTPUT) \
+	    --repeat $(S3D_REPEAT) --budget-usd $(S3D_BUDGET)
+
 # --- Analysis: self-consistency -----------------------------------------------
 
 SC_INPUT  := outputs/sweep2_rag
