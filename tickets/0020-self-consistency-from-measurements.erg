@@ -1,0 +1,35 @@
+%erg v1
+Title: Compute self-consistency from measurements instead of summary JSON
+Status: open
+Created: 2026-04-06
+Author: claude
+Blocked-by: 0004
+
+--- log ---
+2026-04-06T12:00Z claude created
+
+--- body ---
+## Context
+tabulate_self_consistency.py reads a pre-computed self_consistency_summary.json
+with aggregate stats (majority_f1, union_f1, vote counts). This is a derived
+analysis that should be computed on the fly from the individual RunRecords in
+measurements.jsonl — group by model, merge the 3 runs, calculate votes at
+render time. This eliminates the intermediate JSON file and brings the script
+in line with the other reporting scripts.
+
+## Actions
+1. Add vote computation logic (majority/union) to tabulate_self_consistency.py.
+2. Rewrite to read measurements.jsonl via shared loader.
+3. Delete self_consistency_summary.json generation path.
+4. Verify LaTeX output unchanged.
+
+## Test
+Generate table from measurements.jsonl and diff against current output from
+self_consistency_summary.json — must be identical.
+
+## Exit criteria
+- tabulate_self_consistency.py reads measurements.jsonl, not summary JSON
+- Vote computation (majority, union) done at render time
+- self_consistency_summary.json no longer generated or required
+- LaTeX output unchanged
+- All tests pass

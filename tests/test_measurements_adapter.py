@@ -165,28 +165,6 @@ class TestRoundTrip:
         assert recovered[0]["wall_seconds"] == 24.5
 
 
-class TestRoundTripRealData:
-    """Round-trip with real all_metrics.json data."""
-
-    @pytest.fixture
-    def real_metrics(self):
-        path = Path("results/summary/all_metrics.json")
-        if not path.exists():
-            pytest.skip("Real metrics file not available")
-        with open(path) as f:
-            return json.load(f)
-
-    def test_real_data_roundtrip(self, real_metrics):
-        records = metrics_to_records(real_metrics)
-        recovered = records_to_metrics(records)
-        assert len(recovered) == len(real_metrics)
-        for orig, rec in zip(real_metrics, recovered):
-            for field in _CONSUMED_FIELDS:
-                assert orig.get(field) == rec.get(field), (
-                    f"Field {field!r}: {orig.get(field)} != {rec.get(field)} for {orig['label']}"
-                )
-
-
 # ---------------------------------------------------------------------------
 # Layer B: Output equivalence — pure functions produce same output
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-"""Adapter between RunRecord (measurements.jsonl) and all_metrics.json dict format.
+"""Adapter between RunRecord (measurements.jsonl) and reporting dict format.
 
 Reporting scripts consume list[dict] with keys like label, f1, coverage, etc.
 RunRecord stores the same data in a structured schema. This module bridges
@@ -18,7 +18,7 @@ from .tabulate_utils import strip_label
 
 
 def records_to_metrics(records: list[RunRecord]) -> list[dict]:
-    """Convert RunRecord rows to all_metrics.json dict format.
+    """Convert RunRecord rows to reporting dict format.
 
     Produces dicts with the keys that reporting scripts consume:
     label, f1, coverage, precision, n_reference, n_system,
@@ -74,7 +74,7 @@ def metrics_to_records(
     metrics: list[dict],
     method: Method = Method.SINGLE,
 ) -> list[RunRecord]:
-    """Convert all_metrics.json dicts to RunRecord rows.
+    """Convert reporting dicts to RunRecord rows.
 
     This is the inverse of records_to_metrics, used for migration
     and round-trip testing. Fields not present in the metrics dict
@@ -131,6 +131,6 @@ def metrics_to_records(
 
 
 def load_metrics_from_measurements(path: str | Path) -> list[dict]:
-    """Load measurements.jsonl and convert to all_metrics.json format."""
+    """Load measurements.jsonl and convert to reporting dict format."""
     records = RunRecord.load_jsonl(path)
     return records_to_metrics(records)

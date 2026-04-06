@@ -54,7 +54,12 @@
 - **Cost**: ~$0.35 (173 pages at $2/1000)
 - **Verdict**: Matches Marker on table count with richer HTML structure (rowspan/colspan)
 
-### MinerU (not tested — container image not yet pulled)
+### MinerU (localhost:8010, jianjungki/mineru-api:gpu, GPU)
+- **Output**: 695 lines, 50K chars, **0 markdown tables**
+- **Text extraction**: Good — Vietnamese diacritics preserved, document structure detected
+- **Table extraction**: Poor — tables not converted to markdown format
+- **Speed**: Fast (single API call)
+- **Verdict**: Good for text, fails on tables for this document type
 
 ## Benchmark Summary (2026-04-06)
 
@@ -77,6 +82,7 @@ Marker uses markdown tables; other backends use HTML tables.
 - Marker: 170 markdown tables, 1.6 MB — local, free, GPU-accelerated
 - Mistral OCR (direct): 169 HTML tables, 548 KB — cloud API, $0.35, richer structure (rowspan/colspan)
 - The OpenRouter file-parser plugin approach (mistral-ocr via LLM) only captured 15 tables — the LLM output window is the bottleneck, not OCR quality
+- MinerU: good text extraction but 0 tables on this document type
 - GROBID extracts the most raw text (4961 lines) but flattens table structure
 
 Recommended pipeline: **Marker (local, free) or Mistral OCR direct (cloud, $0.35)** for table-heavy scanned PDFs. Both deliver ~170 tables from 173 pages. Choose based on whether local GPU or cloud API is preferred.
