@@ -21,8 +21,14 @@ from .tabulate_macros import load_and_summarize
 log = logging.getLogger(__name__)
 
 
+_SYNTHETIC_SUFFIXES = ("-union", "-consolidated")
+
+
 def build_census_rows(metrics: list[dict]) -> list[dict]:
-    """Build sorted rows for the census bar chart.
+    """Build sorted rows for the census bar chart (base models only).
+
+    Filters out synthetic entries (union-vote, consolidated) so the chart
+    shows single-shot baseline performance only.
 
     Returns list of dicts with keys: model, f1, local.
     Sorted by f1 descending.
@@ -35,6 +41,7 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
             "local": 1 if info["is_local"] else 0,
         }
         for slug, info in summary.items()
+        if not any(slug.endswith(s) for s in _SYNTHETIC_SUFFIXES)
     ]
     rows.sort(key=lambda r: r["f1"], reverse=True)
     return rows
