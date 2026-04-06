@@ -35,7 +35,7 @@ def marker_convert(pdf_path: Path, marker_url: str = DEFAULT_MARKER_URL) -> str:
     body = (
         (
             f"--{boundary}\r\n"
-            f'Content-Disposition: form-data; name="file"; filename="{pdf_path.name}"\r\n'
+            f'Content-Disposition: form-data; name="pdf_file"; filename="{pdf_path.name}"\r\n'
             f"Content-Type: application/pdf\r\n\r\n"
         ).encode()
         + pdf_bytes
@@ -56,6 +56,9 @@ def marker_convert(pdf_path: Path, marker_url: str = DEFAULT_MARKER_URL) -> str:
     with urllib.request.urlopen(req, timeout=600) as resp:
         result = json.loads(resp.read().decode("utf-8"))
 
+    # Marker returns a list of documents; take the first
+    if isinstance(result, list):
+        result = result[0] if result else {}
     return result.get("markdown", result.get("text", ""))
 
 
