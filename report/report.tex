@@ -423,16 +423,18 @@ L'interface au chercheur s'intègre aux outils existants (navigateur web, Zotero
 Ce rapport évalue les capacités de l'IA à produire des statistiques énergétiques, en utilisant l'inventaire des centrales thermiques du Vietnam comme benchmark.
 
 \begin{description}
-\item[LLM seuls] Les modèles flagship (400B+) retournent 30--40 centrales en requête directe, contre plus de 110 dans l'inventaire de référence. Une approche conversationnelle avec relances permet d'atteindre 80--90 centrales, confirmant que les modèles ne révèlent qu'un tiers de leur connaissance à la première réponse.
-\item[RAG] L'intégration de documents sources améliore significativement les résultats. Avec Claude~3.5~Sonnet, RAG et relances, on atteint 61 correspondances exactes et 12 approximatives. Les deux techniques (relance et RAG) sont complémentaires.
+\item[LLM seuls] Les modèles flagship (400B+) retournent 30--40 centrales en requête directe, contre 163 dans l'inventaire de référence. Une approche conversationnelle avec relances permet d'atteindre 80--90 centrales, confirmant que les modèles ne révèlent qu'un tiers de leur connaissance à la première réponse.
+\item[RAG wholesale] L'intégration d'un corpus de 18 documents sources (37\,283 tokens) améliore significativement les résultats. Sur 5 modèles évalués 3 fois chacun, le meilleur run individuel atteint 144 centrales (GPT-5.4, F1 = 93,8\,\%). La troncature des sorties, et non le manque de connaissance, est le principal facteur limitant.
+\item[Agrégation multi-runs] Le vote par union sur 3 runs compense la troncature~: DeepSeek passe de 85 à 149 centrales (F1 = 95,5\,\%). Le vote majoritaire profite aux modèles sujets aux hallucinations (Gemini~: +23\,\% de F1).
+\item[Décomposition] La décomposition par type de combustible (3 sous-requêtes au lieu d'une) élimine la troncature~: DeepSeek~V3.2 atteint 163/163 centrales avec F1 = 98,8\,\% pour 0,06~\$. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok.
 \item[Graphes de connaissances] Les graphes globaux (OSM, Wikidata, Diffbot, DBpedia) retournent entre 20 et 54 centrales chacun, avec des couvertures complémentaires. Les outils de construction automatique de graphes (R2R, TrustGraph) restent immatures pour notre cas d'usage.
 \end{description}
 
 \section{Évaluation technologique}
 
-\textbf{Ce qui fonctionne}~: L'approche RAG avec relances conversationnelles produit déjà des résultats utiles. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
+\textbf{Ce qui fonctionne}~: L'approche RAG avec décomposition des requêtes récupère 99\,\% d'un inventaire expert pour 0,06~\$. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
 
-\textbf{Ce qui est nécessaire}~: Un graphe de connaissances local aligné sur une ontologie (OEO) pour assurer la traçabilité. Des agents spécialisés (curateur, analyste, rédacteur) pour décomposer et automatiser le processus. Une architecture en quatre niveaux (document store, base validée, couche vectorielle, graphe structuré) pour combiner rigueur et flexibilité.
+\textbf{Ce qui reste à résoudre}~: La décomposition introduit des hallucinations non thermiques dans les sous-requêtes, nécessitant un filtrage post-traitement. Un graphe de connaissances local aligné sur une ontologie (OEO) assurerait la traçabilité. L'empilement des stratégies (décomposition + union + filtre de précision) reste à évaluer.
 
 \textbf{Ce qui est faisable maintenant}~: Les briques technologiques existent~: RAG mature, frameworks agentiques en expansion rapide, bases de graphes opérationnelles (Neo4j). L'intégration reste un défi d'ingénierie plutôt qu'un verrou scientifique.
 
@@ -451,7 +453,7 @@ Notre approche se distingue des assistants de recherche existants par~:
 
 \section{Perspectives}
 
-Les résultats de ce rapport montrent que l'automatisation complète de la production statistique n'est pas encore à portée, mais qu'une approche hybride -- combinant RAG, graphes de connaissances et agents spécialisés, avec supervision humaine -- est réaliste. Le cas du Vietnam constitue un premier benchmark~; les méthodes proposées sont transposables à d'autres pays et à d'autres secteurs nécessitant un suivi rigoureux des transformations socio-techniques.
+Les résultats de ce rapport montrent qu'un pipeline RAG avec décomposition des requêtes récupère déjà 99\,\% d'un inventaire expert, pour un coût marginal. Le 1\,\% restant -- filtrage des hallucinations, résolution d'entités, traçabilité des sources -- relève de l'ingénierie de la connaissance plutôt que d'un verrou scientifique. Le cas du Vietnam constitue un premier benchmark~; les méthodes proposées sont transposables à d'autres pays et à d'autres secteurs nécessitant un suivi rigoureux des transformations socio-techniques.
 
 Le développement rapide des modèles de langage et des frameworks agentiques (de nouveaux outils apparaissent chaque mois) laisse prévoir que les lacunes identifiées -- en particulier l'intégration RAG-graphe et la construction automatique d'ontologies -- seront progressivement comblées. L'enjeu est de constituer dès maintenant les bases documentaires et les référentiels de qualité qui permettront d'exploiter pleinement ces avancées.
 
