@@ -17,7 +17,7 @@ None
 
 ## North star
 
-Benchmark *methods* — not just models — for producing statistical infrastructure tables from open sources. Present findings at Econom'IA 2026. See MASTERPLAN.md for the long-term vision.
+Build a primary-sourced, auditable statistical table of Vietnam's thermal plants — using the pipeline as both product and benchmark subject. See MASTERPLAN.md for the long-term vision.
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
@@ -32,7 +32,7 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 
 ## Next milestone
 
-Submit to journal (TBD — after conference feedback).
+Primary-source pipeline (#98): apply benchmarked methods to PDP8 annexes and EVN reports.
 
 ## Backlog
 
@@ -43,3 +43,4 @@ Submit to journal (TBD — after conference feedback).
 - Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
 - Retire Makefile sweep dispatch in favor of Workers (ticket 0011)
+- Journal submission (after pipeline produces first auditable table)
