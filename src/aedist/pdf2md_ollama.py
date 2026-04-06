@@ -33,17 +33,21 @@ DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_DPI = 200  # lower than cloud (300) — local bandwidth is free, GPU is the bottleneck
 
 
-def _ollama_chat_vision(model: str, messages: list[dict],
-                        ollama_url: str = DEFAULT_OLLAMA_URL) -> str:
+def _ollama_chat_vision(
+    model: str, messages: list[dict], ollama_url: str = DEFAULT_OLLAMA_URL
+) -> str:
     """Call Ollama chat API with image content, return text response."""
     url = f"{ollama_url}/api/chat"
-    payload = json.dumps({
-        "model": model,
-        "messages": messages,
-        "stream": False,
-    }).encode()
+    payload = json.dumps(
+        {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+        }
+    ).encode()
     req = urllib.request.Request(
-        url, data=payload,
+        url,
+        data=payload,
         headers={"Content-Type": "application/json"},
         method="POST",
     )
@@ -56,8 +60,9 @@ def _ollama_chat_vision(model: str, messages: list[dict],
     return content
 
 
-def pdf_to_markdown(pdf_path, *, model=DEFAULT_MODEL, dpi=DEFAULT_DPI,
-                    ollama_url=DEFAULT_OLLAMA_URL):
+def pdf_to_markdown(
+    pdf_path, *, model=DEFAULT_MODEL, dpi=DEFAULT_DPI, ollama_url=DEFAULT_OLLAMA_URL
+):
     """Convert a PDF to Markdown by sending each page image to a local vision LLM."""
     from pdf2image import convert_from_path  # heavy dep, import lazily
 
@@ -76,9 +81,7 @@ def pdf_to_markdown(pdf_path, *, model=DEFAULT_MODEL, dpi=DEFAULT_DPI,
             tmp.seek(0)
             encoded_image = base64.b64encode(tmp.read()).decode("utf-8")
 
-        user_text = USER_PROMPT.replace(
-            PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1
-        )
+        user_text = USER_PROMPT.replace(PREV_PAGE_PLACEHOLDER, previous_page_markdown, 1)
 
         # Ollama multimodal format: images as base64 in the message
         messages = [
@@ -106,14 +109,27 @@ def main(argv=None):
         description="Convert PDF to Markdown via local vision LLM (Ollama)"
     )
     parser.add_argument("pdf", type=Path, help="Input PDF file")
-    parser.add_argument("--output", "-o", type=Path, default=None,
-                        help="Output .md path (default: same name as PDF)")
-    parser.add_argument("--model", default=DEFAULT_MODEL,
-                        help=f"Ollama vision model (default: {DEFAULT_MODEL})")
-    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI,
-                        help=f"DPI for PDF rasterisation (default: {DEFAULT_DPI})")
-    parser.add_argument("--ollama-url", default=DEFAULT_OLLAMA_URL,
-                        help=f"Ollama service URL (default: {DEFAULT_OLLAMA_URL})")
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=None,
+        help="Output .md path (default: same name as PDF)",
+    )
+    parser.add_argument(
+        "--model", default=DEFAULT_MODEL, help=f"Ollama vision model (default: {DEFAULT_MODEL})"
+    )
+    parser.add_argument(
+        "--dpi",
+        type=int,
+        default=DEFAULT_DPI,
+        help=f"DPI for PDF rasterisation (default: {DEFAULT_DPI})",
+    )
+    parser.add_argument(
+        "--ollama-url",
+        default=DEFAULT_OLLAMA_URL,
+        help=f"Ollama service URL (default: {DEFAULT_OLLAMA_URL})",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -123,14 +139,12 @@ def main(argv=None):
     if args.pdf.suffix.lower() != ".pdf":
         parser.error(f"Not a PDF: {args.pdf}")
 
-    result = pdf_to_markdown(args.pdf, model=args.model, dpi=args.dpi,
-                             ollama_url=args.ollama_url)
+    result = pdf_to_markdown(args.pdf, model=args.model, dpi=args.dpi, ollama_url=args.ollama_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_ollama"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
-        result + metadata_comment(args.pdf, backend="Ollama", model=args.model,
-                                  argv=actual_argv),
+        result + metadata_comment(args.pdf, backend="Ollama", model=args.model, argv=actual_argv),
         encoding="utf-8",
     )
     log.info("Wrote %s", output)

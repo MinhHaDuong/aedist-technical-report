@@ -125,7 +125,7 @@ def main(argv=None):
     result = pdf_to_markdown(args.pdf, mineru_url=args.mineru_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_mineru"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
         result + metadata_comment(args.pdf, backend="MinerU", model="n/a", argv=actual_argv),
         encoding="utf-8",

@@ -34,15 +34,19 @@ def grobid_process(pdf_path: Path, grobid_url: str = DEFAULT_GROBID_URL) -> str:
     pdf_bytes = pdf_path.read_bytes()
 
     body = (
-        f"--{boundary}\r\n"
-        f'Content-Disposition: form-data; name="input"; filename="{pdf_path.name}"\r\n'
-        f"Content-Type: application/pdf\r\n\r\n"
-    ).encode() + pdf_bytes + (
-        f"\r\n--{boundary}\r\n"
-        f'Content-Disposition: form-data; name="consolidateHeader"\r\n\r\n'
-        f"0\r\n"
-        f"--{boundary}--\r\n"
-    ).encode()
+        (
+            f"--{boundary}\r\n"
+            f'Content-Disposition: form-data; name="input"; filename="{pdf_path.name}"\r\n'
+            f"Content-Type: application/pdf\r\n\r\n"
+        ).encode()
+        + pdf_bytes
+        + (
+            f"\r\n--{boundary}\r\n"
+            f'Content-Disposition: form-data; name="consolidateHeader"\r\n\r\n'
+            f"0\r\n"
+            f"--{boundary}--\r\n"
+        ).encode()
+    )
 
     req = urllib.request.Request(
         url,
@@ -168,8 +172,7 @@ def _emit_table(fig, doc_title: str, section: str, parts: list[str]):
     parts.append(f"\n{html}\n")
 
 
-def pdf_to_markdown(pdf_path: Path, *,
-                    grobid_url: str = DEFAULT_GROBID_URL) -> str:
+def pdf_to_markdown(pdf_path: Path, *, grobid_url: str = DEFAULT_GROBID_URL) -> str:
     """Convert a PDF to Markdown using local GROBID."""
     log.info("Sending %s to GROBID...", pdf_path.name)
     tei_xml = grobid_process(pdf_path, grobid_url)
@@ -178,14 +181,20 @@ def pdf_to_markdown(pdf_path: Path, *,
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(
-        description="Convert PDF to Markdown via local GROBID"
-    )
+    parser = argparse.ArgumentParser(description="Convert PDF to Markdown via local GROBID")
     parser.add_argument("pdf", type=Path, help="Input PDF file")
-    parser.add_argument("--output", "-o", type=Path, default=None,
-                        help="Output .md path (default: same name as PDF)")
-    parser.add_argument("--grobid-url", default=DEFAULT_GROBID_URL,
-                        help=f"GROBID service URL (default: {DEFAULT_GROBID_URL})")
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=None,
+        help="Output .md path (default: same name as PDF)",
+    )
+    parser.add_argument(
+        "--grobid-url",
+        default=DEFAULT_GROBID_URL,
+        help=f"GROBID service URL (default: {DEFAULT_GROBID_URL})",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -198,10 +207,9 @@ def main(argv=None):
     result = pdf_to_markdown(args.pdf, grobid_url=args.grobid_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_grobid"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
-        result + metadata_comment(args.pdf, backend="GROBID", model="n/a",
-                                  argv=actual_argv),
+        result + metadata_comment(args.pdf, backend="GROBID", model="n/a", argv=actual_argv),
         encoding="utf-8",
     )
     log.info("Wrote %s", output)

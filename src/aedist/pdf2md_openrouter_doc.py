@@ -157,9 +157,7 @@ def main(argv=None):
     )
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = (
-        sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_openrouter_doc"] + argv
-    )
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
         result
         + metadata_comment(

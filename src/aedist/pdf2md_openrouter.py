@@ -81,9 +81,7 @@ def pdf_to_markdown(pdf_path, *, model="gpt-4o", dpi=DEFAULT_DPI, max_tokens=409
                     },
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{encoded_image}"
-                        },
+                        "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"},
                     },
                 ],
             },
@@ -107,14 +105,23 @@ def main(argv=None):
         description="Convert PDF to Markdown via OpenRouter vision LLM"
     )
     parser.add_argument("pdf", type=Path, help="Input PDF file")
-    parser.add_argument("--output", "-o", type=Path, default=None,
-                        help="Output .md path (default: same name as PDF)")
-    parser.add_argument("--model", default="gpt-4o",
-                        help="Vision model to use (default: gpt-4o)")
-    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI,
-                        help=f"DPI for PDF rasterisation (default: {DEFAULT_DPI})")
-    parser.add_argument("--max-tokens", type=int, default=4096,
-                        help="Max output tokens per page (default: 4096)")
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=None,
+        help="Output .md path (default: same name as PDF)",
+    )
+    parser.add_argument("--model", default="gpt-4o", help="Vision model to use (default: gpt-4o)")
+    parser.add_argument(
+        "--dpi",
+        type=int,
+        default=DEFAULT_DPI,
+        help=f"DPI for PDF rasterisation (default: {DEFAULT_DPI})",
+    )
+    parser.add_argument(
+        "--max-tokens", type=int, default=4096, help="Max output tokens per page (default: 4096)"
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -124,14 +131,13 @@ def main(argv=None):
     if args.pdf.suffix.lower() != ".pdf":
         parser.error(f"Not a PDF: {args.pdf}")
 
-    result = pdf_to_markdown(args.pdf, model=args.model, dpi=args.dpi,
-                             max_tokens=args.max_tokens)
+    result = pdf_to_markdown(args.pdf, model=args.model, dpi=args.dpi, max_tokens=args.max_tokens)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_openrouter"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
-        result + metadata_comment(args.pdf, backend="OpenRouter", model=args.model,
-                                  argv=actual_argv),
+        result
+        + metadata_comment(args.pdf, backend="OpenRouter", model=args.model, argv=actual_argv),
         encoding="utf-8",
     )
     log.info("Wrote %s", output)
