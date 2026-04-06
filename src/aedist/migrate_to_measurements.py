@@ -83,8 +83,8 @@ def migrate_query_json(
             extra=record.get("model_metadata"),
         ),
         resource_use=ResourceUse(
-            wall_s=record.get("wall_seconds") or record.get("total_wall_seconds"),
-            cost_usd=record.get("cost_usd") or record.get("total_cost_usd"),
+            wall_s=record["wall_seconds"] if "wall_seconds" in record else record.get("total_wall_seconds"),
+            cost_usd=record["cost_usd"] if "cost_usd" in record else record.get("total_cost_usd"),
             tokens_in=usage.get("prompt_tokens"),
             tokens_out=usage.get("completion_tokens"),
         ),

@@ -27,6 +27,7 @@ def strip_label(label: str) -> str:
     """
     slug = label.rsplit("/", 1)[-1]
     slug = _RUN_SUFFIX.sub("", slug)
+    slug = slug.replace("--", "-")
     return slug
 
 
