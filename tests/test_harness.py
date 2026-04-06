@@ -1,6 +1,5 @@
 """Tests for aedist.harness — shared query utilities."""
 
-
 from aedist.harness import (
     BudgetTracker,
     compute_cost,
@@ -99,10 +98,37 @@ def test_compute_cost_missing_pricing():
 def test_make_client_custom_base_url():
     """make_client with base_url doesn't require OPENROUTER_API_KEY."""
     from unittest.mock import patch
+
     with patch("aedist.harness.OpenAI") as mock_cls:
         from aedist.harness import make_client
+
         make_client(base_url="http://localhost:11434/v1")
         mock_cls.assert_called_once_with(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
         )
+
+
+def test_estimate_tokens():
+    from aedist.harness import estimate_tokens
+
+    # 20 chars / 4 chars_per_token = 5
+    assert estimate_tokens("a" * 20) == 5
+    assert estimate_tokens("") == 0
+
+
+def test_estimate_messages_tokens():
+    from aedist.harness import estimate_messages_tokens
+
+    messages = [
+        {"role": "user", "content": "a" * 40},  # 10 tokens
+        {"role": "assistant", "content": "b" * 80},  # 20 tokens
+    ]
+    assert estimate_messages_tokens(messages) == 30
+
+
+def test_estimate_messages_tokens_missing_content():
+    from aedist.harness import estimate_messages_tokens
+
+    messages = [{"role": "user"}]
+    assert estimate_messages_tokens(messages) == 0

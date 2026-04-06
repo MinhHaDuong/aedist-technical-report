@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 # Model loading
 # ---------------------------------------------------------------------------
 
+
 def load_models(path: str) -> list[dict]:
     """Load model registry from YAML file."""
     with open(path) as f:
@@ -57,6 +58,7 @@ def compute_cost(usage: dict, model: dict) -> float:
 # Budget tracking
 # ---------------------------------------------------------------------------
 
+
 class BudgetTracker:
     """Track cumulative spend and stop when budget exceeded."""
 
@@ -78,15 +80,38 @@ class BudgetTracker:
         if self.exceeded:
             log.warning(
                 "Budget exceeded (%.4f >= %.4f USD). Stopping.",
-                self.total_cost, self.budget_usd,
+                self.total_cost,
+                self.budget_usd,
             )
             return False
         return True
 
 
 # ---------------------------------------------------------------------------
+# Token estimation
+# ---------------------------------------------------------------------------
+
+# Approximate characters per token for English text (actual varies 3-5)
+CHARS_PER_TOKEN = 4
+
+# Fraction of model context window to use (safety margin)
+CONTEXT_WINDOW_SAFETY_MARGIN = 0.8
+
+
+def estimate_tokens(text: str) -> int:
+    """Rough token estimate based on character count."""
+    return len(text) // CHARS_PER_TOKEN
+
+
+def estimate_messages_tokens(messages: list[dict]) -> int:
+    """Estimate total tokens across a message list."""
+    return sum(estimate_tokens(m.get("content", "")) for m in messages)
+
+
+# ---------------------------------------------------------------------------
 # OpenAI client
 # ---------------------------------------------------------------------------
+
 
 def make_client(base_url: str | None = None) -> OpenAI:
     """Create an OpenAI-compatible client.
@@ -109,6 +134,7 @@ def make_client(base_url: str | None = None) -> OpenAI:
 # ---------------------------------------------------------------------------
 # File naming and skip logic
 # ---------------------------------------------------------------------------
+
 
 def output_filename(model_id: str, run: int, prefix: str = "") -> str:
     """Generate output filename: {prefix}{short_name}-run{n}.json."""
@@ -133,6 +159,7 @@ def should_skip(output_dir: Path, model_id: str, run: int, prefix: str = "") -> 
 # Save helpers
 # ---------------------------------------------------------------------------
 
+
 def save_json(filepath: Path, record: dict) -> None:
     """Write a JSON record to file."""
     filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -144,6 +171,7 @@ def save_json(filepath: Path, record: dict) -> None:
 # ---------------------------------------------------------------------------
 # Single-turn query helper
 # ---------------------------------------------------------------------------
+
 
 def query_single_turn(
     client: OpenAI,
