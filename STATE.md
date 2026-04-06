@@ -17,7 +17,7 @@ None
 
 ## North star
 
-Build a primary-sourced, auditable statistical table of Vietnam's thermal plants — using the pipeline as both product and benchmark subject. See MASTERPLAN.md for the long-term vision.
+Build a generic pipeline that produces primary-sourced, auditable statistical tables from open sources — for any country and energy subsector. First application: Vietnam thermal plants. See MASTERPLAN.md for the long-term vision.
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
@@ -32,7 +32,7 @@ Build a primary-sourced, auditable statistical table of Vietnam's thermal plants
 
 ## Next milestone
 
-Primary-source pipeline (#98): apply benchmarked methods to PDP8 annexes and EVN reports.
+Primary-source pipeline (#98): generic extraction from government documents, first application on Vietnam thermal.
 
 ## Backlog
 

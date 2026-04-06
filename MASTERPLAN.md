@@ -140,48 +140,52 @@ All report tables derived from it. `all_metrics.json` retired.
 
 ### Phase 3: Primary-source pipeline (#98)
 
-Apply the best benchmarked method (RAG-wholesale + query decomposition,
-F1=99%, $0.06) to primary Vietnamese government documents. The benchmark
-and pipeline are mutually reinforcing: the pipeline produces a better gold
-standard, the benchmark evaluates pipeline quality.
+Build a generic pipeline that extracts auditable statistical tables from
+primary government documents. The system is parameterized by country and
+energy subsector — the benchmark infrastructure (PDF converters, RAG,
+multi-turn, reconciliation) provides the building blocks.
 
-**5-step prompt chain:**
+The benchmark and pipeline are mutually reinforcing: the pipeline produces
+a better gold standard, the benchmark evaluates pipeline quality.
 
-1. **PDP8 annexes** — Retrieve Decision 1509/QĐ-BCT annexes: thermal
-   project tables (coal pipeline, LNG 2025–2030/2031–2035, domestic gas).
-   Extract: name, province, capacity MW, timeline, investor, status.
-2. **Operational stock** — Reconstruct the fleet in operation from EVN
-   annual report and ERAV data. Columns: plant name (Vietnamese + English),
-   province, fuel, capacity, units, COD, owner, PDP reference.
-3. **Decisional chronology** — For each plant (batched by 10–15), trace
-   the administrative history from primary sources: PDP inscription,
-   modifications across successive PDPs, investment certificate,
-   environmental licence, construction start, COD (planned vs actual),
-   cancellation if applicable. Rule: if no primary source, write
-   "[source primaire non localisée]" — never substitute with GEM or
-   Wikipedia.
-4. **Historico-prospective analysis** — Periodization by PDP (PDP6 pre-2006,
-   PDP7 2006–2016, PDP7R→PDP8 2016–2023, PDP8→PDP8 revised 2023–2025,
-   post-2030 exit scenarios). Realization rates per PDP, cancellation
-   dynamics, GNL pivot, nuclear return.
+**Generic 5-step extraction chain:**
+
+1. **Regulatory corpus** — Retrieve official planning documents and their
+   annexes (facility lists with capacity, timeline, investor, status).
+   Convert PDF→MD using benchmarked converters.
+2. **Operational stock** — Reconstruct the current fleet from utility
+   annual reports and regulator data: facility name, location, fuel,
+   capacity, units, commissioning date, owner.
+3. **Decisional chronology** — For each facility (batched), trace the
+   administrative history from primary sources: first inscription in a
+   national plan, modifications across successive plans, permits,
+   construction, commissioning (planned vs actual), cancellation.
+   Rule: if no primary source is found, flag the gap — never substitute
+   with secondary compilations.
+4. **Analytical synthesis** — Periodization by planning cycles,
+   realization rates (planned vs built MW), cancellation dynamics,
+   technology transitions, prospective scenarios.
 5. **Assembly** — Citable report with provenance chain. Each datum traces
    to an identified primary document; gaps are flagged honestly.
 
-**Practical constraints:**
-- PDP annexes are in Vietnamese, published on thuvienphapluat.vn or
-  government portal — some are scanned PDF images, not text
-- EVN annual reports not always freely accessible in full
-- Per-project decisions (investment certificates, ĐTM) are dispersed
-- Token budget: 10+ batches of 15 plants may overflow multi-turn context
+**First application: Vietnam thermal plants.**
+Regulatory corpus = PDP7/7A/8/8 revised (Decisions 428, 500, 768, 1509).
+Utility = EVN annual reports, ERAV dispatch data. ~163 facilities.
+Practical constraints: Vietnamese-language PDFs (some scanned), dispersed
+per-project decisions, EVN reports not always freely accessible.
 
-**Infrastructure from benchmark that serves this phase:**
+**Infrastructure from benchmark:**
 
-| Pipeline step | Benchmark infrastructure | Status |
+| Pipeline step | Benchmark component | Status |
 |---|---|---|
-| Step 1 (PDP annexes) | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
-| Step 2 (EVN stock) | Web-augmented queries | sweep2-web done |
-| Step 3 (chronologies) | Multi-turn conversations | sweep2-multiturn done |
-| Step 5 (assembly) | Reconciliation LP + evaluation | Done, 423 tests |
+| Regulatory corpus | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
+| Operational stock | Web-augmented queries | sweep2-web done |
+| Chronologies | Multi-turn conversations | sweep2-multiturn done |
+| Assembly | Reconciliation LP + evaluation | Done, 423 tests |
+
+**Generalization path:** once the chain works for Vietnam thermal, test
+on a second case (different country or subsector) to validate that the
+pipeline logic is truly country-agnostic and only the corpus changes.
 
 ### Phase 4: Job board (post-conference)
 
