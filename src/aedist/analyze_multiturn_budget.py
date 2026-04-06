@@ -69,7 +69,9 @@ def extrapolate_to_n_turns(
     avg_growth = sum(deltas) / len(deltas)
     last_prompt = per_turn[-1]["prompt_tokens"]
     last_turn = per_turn[-1]["turn"]
-    remaining = n_turns - 1 - last_turn  # turns beyond what we observed
+    # Turns are 0-indexed: turn 0 is the initial prompt, turn 1 is first relance, etc.
+    # So n_turns=10 means turns 0..9, and remaining = 9 - last_observed_turn.
+    remaining = n_turns - 1 - last_turn
     projected = last_prompt + max(0, remaining) * avg_growth
 
     limit = int(context_window * CONTEXT_WINDOW_SAFETY_MARGIN)

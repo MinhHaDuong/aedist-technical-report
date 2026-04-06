@@ -20,8 +20,10 @@ from pathlib import Path
 import openai
 
 from .harness import (
+    CONTEXT_WINDOW_SAFETY_MARGIN,
     BudgetTracker,
     compute_cost,
+    estimate_messages_tokens,
     load_models,
     make_client,
     model_metadata,
@@ -36,7 +38,6 @@ log = logging.getLogger(__name__)
 
 def _check_context(messages: list[dict], model: dict, turn: int) -> bool:
     """Return True if estimated tokens fit within model context window."""
-    from .harness import CONTEXT_WINDOW_SAFETY_MARGIN, estimate_messages_tokens
 
     ctx_window = model.get("context_window", 0)
     if not ctx_window:
