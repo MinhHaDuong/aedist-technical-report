@@ -1,0 +1,15 @@
+# Sweep 5: Sourced extraction — ask for citations upfront
+#
+# Same RAG setup as Sweep 2, but prompt includes source_1, source_2, note
+# columns. Paired comparison: does requiring provenance change extraction?
+#
+# Story arc: Sweep 2 (list plants) → Sweep 5 (list plants with sources)
+# → if models cite real documents, source-first RAG is feasible.
+mode: rag
+prompt: prompts/prompt_structured_sourced.txt
+corpus: data/rag_corpus
+strategy: wholesale
+models: models_sweep5.yaml
+repeat: 3
+budget_usd: 10
+output: outputs/sweep5_sourced

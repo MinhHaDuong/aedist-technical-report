@@ -29,7 +29,7 @@ endif
 export TAVILY_API_KEY
 
 # Guard: only require OPENROUTER_API_KEY for targets that actually need it
-_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web
+_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web sweep5-sourced
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
   $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
 endif
@@ -176,6 +176,25 @@ sweep3-decomposed:
 sweep4-verification:
 	uv run --project .. python -m aedist.query_verification \
 	    --config sweeps/sweep4_verification.yaml
+
+# --- Sweep 5: Sourced extraction (citations upfront) -------------------------
+
+S5_PROMPT  := $(call cfg,sweep5_sourced,prompt)
+S5_CORPUS  := $(call cfg,sweep5_sourced,corpus)
+S5_STRAT   := $(call cfg,sweep5_sourced,strategy)
+S5_MODELS  := $(call cfg,sweep5_sourced,models)
+S5_REPEAT  := $(call cfg,sweep5_sourced,repeat)
+S5_BUDGET  := $(call cfg,sweep5_sourced,budget_usd)
+S5_OUTPUT  := $(call cfg,sweep5_sourced,output)
+
+.PHONY: sweep5-sourced
+
+sweep5-sourced:
+	uv run --project .. python -m aedist.query_rag \
+	    --prompt $(S5_PROMPT) --corpus $(S5_CORPUS) \
+	    --strategy $(S5_STRAT) --models $(S5_MODELS) \
+	    --output $(S5_OUTPUT) --repeat $(S5_REPEAT) \
+	    --budget-usd $(S5_BUDGET)
 
 # --- Analysis: self-consistency -----------------------------------------------
 
