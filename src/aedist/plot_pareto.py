@@ -16,7 +16,7 @@ import json
 import logging
 from pathlib import Path
 
-from .tabulate_macros import load_and_summarize
+from .tabulate_macros import load_and_summarize, slug_from_label
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +35,21 @@ def load_costs(csv_path: Path) -> dict[str, float]:
     return costs
 
 
+def _extract_costs_from_metrics(metrics: list[dict]) -> dict[str, float]:
+    """Extract per-run cost from metrics dicts (adapter output includes cost_usd).
+
+    Returns {model_slug: cost_per_run} as median across runs.
+    """
+    from statistics import median
+
+    by_model: dict[str, list[float]] = {}
+    for entry in metrics:
+        slug = slug_from_label(entry["label"])
+        cost = entry.get("cost_usd", 0.0) or 0.0
+        by_model.setdefault(slug, []).append(cost)
+    return {slug: round(median(costs), 6) for slug, costs in by_model.items()}
+
+
 def build_pareto_rows(
     metrics: list[dict],
     costs: dict[str, float] | None = None,
@@ -43,9 +58,12 @@ def build_pareto_rows(
 
     Returns list of dicts with keys: model, f1, cost_usd, local.
     Sorted by f1 descending.
+
+    When costs is None, tries to extract per-run cost from metrics dicts
+    (present when loaded via measurements adapter).
     """
     if costs is None:
-        costs = {}
+        costs = _extract_costs_from_metrics(metrics)
     summary = load_and_summarize(metrics)
     rows = [
         {

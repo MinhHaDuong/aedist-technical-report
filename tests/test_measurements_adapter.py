@@ -250,6 +250,78 @@ class TestOutputEquivalence:
         assert direct == via_adapter
         assert n1 == n2
 
+    def test_relances_equivalence(self):
+        """Multiturn table via both paths."""
+        from aedist.tabulate_relances import generate_relances_table
+
+        multiturn = [
+            {
+                "label": "sweep2_multiturn/gpt-5.4-run1",
+                "coverage": 0.4908,
+                "precision": 1.0,
+                "f1": 0.658,
+                "n_reference": 163,
+                "n_system": 80,
+                "n_matched": 80,
+                "n_missed": 83,
+                "n_hallucinated": 0,
+            },
+            {
+                "label": "sweep2_multiturn/gpt-5.4-run2",
+                "coverage": 0.5031,
+                "precision": 0.9762,
+                "f1": 0.66,
+                "n_reference": 163,
+                "n_system": 84,
+                "n_matched": 82,
+                "n_missed": 81,
+                "n_hallucinated": 2,
+            },
+            {
+                "label": "sweep2_multiturn/gpt-5.4-run3",
+                "coverage": 0.4908,
+                "precision": 1.0,
+                "f1": 0.658,
+                "n_reference": 163,
+                "n_system": 80,
+                "n_matched": 80,
+                "n_missed": 83,
+                "n_hallucinated": 0,
+            },
+        ]
+        direct = generate_relances_table(multiturn)
+        records = metrics_to_records(multiturn)
+        via_adapter = generate_relances_table(records_to_metrics(records))
+        assert direct == via_adapter
+
+
+class TestEdgeCases:
+    """Edge cases for the adapter functions."""
+
+    def test_empty_list(self):
+        assert records_to_metrics([]) == []
+        assert metrics_to_records([]) == []
+
+    def test_none_f1(self):
+        metrics = [
+            {
+                "label": "sweep1_census/model-run1",
+                "f1": None,
+                "n_matched": 0,
+                "n_missed": 0,
+                "n_hallucinated": 0,
+            }
+        ]
+        records = metrics_to_records(metrics)
+        recovered = records_to_metrics(records)
+        assert recovered[0]["f1"] == 0.0  # None → 0.0
+
+    def test_bare_label_no_slash(self):
+        metrics = [{"label": "model-run1", "f1": 0.5}]
+        records = metrics_to_records(metrics)
+        recovered = records_to_metrics(records)
+        assert recovered[0]["label"] == "model-run1"
+
 
 # ---------------------------------------------------------------------------
 # JSONL file round-trip
