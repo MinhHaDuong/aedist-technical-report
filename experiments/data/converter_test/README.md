@@ -28,12 +28,25 @@
 - **Speed**: ~60s per page (173 pages ≈ 3 hours)
 - **Verdict**: Good table quality, but too slow for full documents
 
-### MinerU (not tested — container image not yet pulled)
+### MinerU (localhost:8010, jianjungki/mineru-api:gpu, GPU)
+- **Output**: 695 lines, 50K chars, **0 markdown tables**
+- **Text extraction**: Good — Vietnamese diacritics preserved, document structure detected
+- **Table extraction**: Poor — tables not converted to markdown format
+- **Speed**: Fast (single API call)
+- **Verdict**: Good for text, fails on tables for this document type
 
 ## Conclusion
 
 **Marker is the clear winner** for this document type:
-- 170 extracted tables vs 0 (GROBID) — the only converter that preserves table structure at scale
+
+| Backend | Tables | Table rows | Lines | Size |
+|---------|--------|-----------|-------|------|
+| **Marker** | **170** | **4038** | 4745 | 1.6 MB |
+| GROBID | 0 | 0 | 4961 | 388 KB |
+| MinerU | 0 | 0 | 695 | 58 KB |
+| Gemma 4 vision | good/page | — | — | ~60s/page |
+
+- Marker is the only converter that preserves table structure at scale
 - Full document in one call vs page-by-page (vision)
 - Minor OCR errors on Vietnamese diacritics (fixable in post-processing)
 
