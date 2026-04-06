@@ -45,15 +45,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate census bar-chart CSV from metrics JSON",
     )
-    parser.add_argument("--input", required=True, help="Path to all_metrics.json")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
+    source.add_argument("--measurements", help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write census_bars.csv")
     args = parser.parse_args()
 
-    input_path = Path(args.input)
     output_path = Path(args.output)
 
-    with open(input_path) as f:
-        metrics = json.load(f)
+    if args.measurements:
+        from .measurements_adapter import load_metrics_from_measurements
+
+        metrics = load_metrics_from_measurements(args.measurements)
+    else:
+        with open(args.input) as f:
+            metrics = json.load(f)
 
     rows = build_census_rows(metrics)
 

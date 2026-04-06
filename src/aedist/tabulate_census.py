@@ -15,7 +15,7 @@ import json
 import logging
 from pathlib import Path
 
-from .tabulate_utils import format_model_name, group_and_summarize, strip_label
+from .tabulate_utils import format_model_name, group_and_summarize
 
 log = logging.getLogger(__name__)
 
@@ -39,8 +39,7 @@ def generate_census_table(metrics: list[dict]) -> str:
     lines = [
         "% Auto-generated — do not edit",
         "\\begin{longtable}[]{@{}lrrrr@{}}",
-        "\\caption{Model census: single-shot F1 scores"
-        " (median of 3 runs)}\\label{tab:census}\\\\",
+        "\\caption{Model census: single-shot F1 scores (median of 3 runs)}\\label{tab:census}\\\\",
         "\\toprule",
         "Model & F1 & Precision & Recall & Matched \\\\",
         "\\midrule",
@@ -51,10 +50,10 @@ def generate_census_table(metrics: list[dict]) -> str:
 
     for row in rows:
         name = format_model_name(row["slug"])
-        f1 = f'{row["f1"] * 100:.1f}\\%'
-        prec = f'{row["precision"] * 100:.1f}\\%'
-        recall = f'{row["coverage"] * 100:.1f}\\%'
-        matched = f'{row["n_matched"]}/{row["n_reference"]}'
+        f1 = f"{row['f1'] * 100:.1f}\\%"
+        prec = f"{row['precision'] * 100:.1f}\\%"
+        recall = f"{row['coverage'] * 100:.1f}\\%"
+        matched = f"{row['n_matched']}/{row['n_reference']}"
         lines.append(f"{name} & {f1} & {prec} & {recall} & {matched} \\\\")
 
     lines.append("\\end{longtable}")
@@ -71,11 +70,9 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate census results LaTeX table",
     )
-    parser.add_argument(
-        "--input",
-        required=True,
-        help="Path to all_metrics.json",
-    )
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
+    source.add_argument("--measurements", help="Path to measurements.jsonl")
     parser.add_argument(
         "--output",
         required=True,
@@ -83,11 +80,15 @@ def main(argv: list[str] | None = None):
     )
     args = parser.parse_args(argv)
 
-    input_path = Path(args.input)
     output_path = Path(args.output)
 
-    with open(input_path) as f:
-        metrics = json.load(f)
+    if args.measurements:
+        from .measurements_adapter import load_metrics_from_measurements
+
+        metrics = load_metrics_from_measurements(args.measurements)
+    else:
+        with open(args.input) as f:
+            metrics = json.load(f)
 
     latex = generate_census_table(metrics)
 

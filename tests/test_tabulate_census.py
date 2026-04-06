@@ -2,12 +2,8 @@
 
 import json
 
-from aedist.tabulate_census import (
-    format_model_name,
-    generate_census_table,
-    group_and_summarize,
-    strip_label,
-)
+from aedist.tabulate_census import generate_census_table
+from aedist.tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 # --- Fixtures ---
 

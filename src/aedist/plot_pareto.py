@@ -65,21 +65,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate Pareto-front CSV from metrics JSON",
     )
-    parser.add_argument("--input", required=True, help="Path to all_metrics.json")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
+    source.add_argument("--measurements", help="Path to measurements.jsonl")
     parser.add_argument("--costs", default=None, help="Path to sweep summary CSV with cost data")
     parser.add_argument("--output", required=True, help="Path to write pareto.csv")
     args = parser.parse_args()
 
-    input_path = Path(args.input)
     output_path = Path(args.output)
+
+    if args.measurements:
+        from .measurements_adapter import load_metrics_from_measurements
+
+        metrics = load_metrics_from_measurements(args.measurements)
+        # When loading from measurements, cost is already in the records
+        # so --costs CSV is not needed (but still supported for override)
+    else:
+        with open(args.input) as f:
+            metrics = json.load(f)
 
     costs = None
     if args.costs:
         costs = load_costs(Path(args.costs))
         log.info("Loaded costs for %d models from %s", len(costs), args.costs)
-
-    with open(input_path) as f:
-        metrics = json.load(f)
 
     rows = build_pareto_rows(metrics, costs)
 

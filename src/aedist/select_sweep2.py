@@ -216,11 +216,16 @@ def main() -> None:
         prog="aedist.select_sweep2",
         description="Select top models from census evaluation metrics",
     )
-    parser.add_argument(
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument(
         "--input",
-        required=True,
         type=Path,
-        help="Path to all_metrics.json",
+        help="Path to all_metrics.json (legacy)",
+    )
+    source.add_argument(
+        "--measurements",
+        type=Path,
+        help="Path to measurements.jsonl",
     )
     parser.add_argument(
         "--registry",
@@ -263,9 +268,15 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load metrics
-    with open(args.input) as f:
-        metrics = json.load(f)
-    log.info("Loaded %d metric entries from %s", len(metrics), args.input)
+    if args.measurements:
+        from .measurements_adapter import load_metrics_from_measurements
+
+        metrics = load_metrics_from_measurements(args.measurements)
+        log.info("Loaded %d metric entries from %s", len(metrics), args.measurements)
+    else:
+        with open(args.input) as f:
+            metrics = json.load(f)
+        log.info("Loaded %d metric entries from %s", len(metrics), args.input)
 
     # Load registries
     with open(args.registry) as f:
