@@ -48,7 +48,7 @@ def pdf_to_markdown(
     *,
     engine: str = DEFAULT_ENGINE,
     model: str = DEFAULT_MODEL,
-    max_tokens: int = 16384,
+    max_tokens: int = 65536,
 ) -> str:
     """Send entire PDF to OpenRouter file-parser plugin, return markdown."""
     api_key = os.environ.get("OPENROUTER_API_KEY")
@@ -137,8 +137,8 @@ def main(argv=None):
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=16384,
-        help="Max output tokens (default: 16384)",
+        default=65536,
+        help="Max output tokens (default: 65536)",
     )
     args = parser.parse_args(argv)
 

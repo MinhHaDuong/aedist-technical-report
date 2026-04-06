@@ -116,7 +116,15 @@ def test_user_prompt_handles_braces():
 
 class TestConverterRegistry:
     def test_all_backends_registered(self):
-        assert set(CONVERTERS) == {"grobid", "vision", "cloud", "cloud-doc", "marker", "mineru"}
+        assert set(CONVERTERS) == {
+            "grobid",
+            "vision",
+            "cloud",
+            "cloud-doc",
+            "mistral-ocr",
+            "marker",
+            "mineru",
+        }
 
     def test_registered_backends_satisfy_protocol(self):
         for name, conv in CONVERTERS.items():
