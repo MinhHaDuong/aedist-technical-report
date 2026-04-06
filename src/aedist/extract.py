@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 HEADER_KEYWORD_BONUS = 0.2
 
 # Keywords that signal a CSV header row about power plants.
-# Shared between score_csv_block() and fallback_extract_inline_csv()
+# Shared between score_csv_like_block() and fallback_extract_inline_csv()
 # to prevent the two lists from drifting apart.
 _HEADER_KEYWORDS = (
     "name",
