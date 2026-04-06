@@ -5,7 +5,6 @@ RunRecords and back via the adapter must reproduce the original dicts exactly
 (for the fields the reporting scripts consume).
 """
 
-import json
 from pathlib import Path
 
 import pytest
@@ -163,6 +162,29 @@ class TestRoundTrip:
         recovered = records_to_metrics(records)
         assert recovered[0]["cost_usd"] == 0.015
         assert recovered[0]["wall_seconds"] == 24.5
+
+
+class TestRoundTripRealData:
+    """Round-trip with real measurements.jsonl data."""
+
+    @pytest.fixture
+    def real_records(self):
+        path = Path("measurements.jsonl")
+        if not path.exists():
+            pytest.skip("Real measurements.jsonl not available")
+        return RunRecord.load_jsonl(path)
+
+    @pytest.mark.slow
+    def test_real_data_roundtrip(self, real_records):
+        metrics = records_to_metrics(real_records)
+        recovered = metrics_to_records(metrics)
+        roundtripped = records_to_metrics(recovered)
+        assert len(roundtripped) == len(metrics)
+        for orig, rec in zip(metrics, roundtripped):
+            for field in _CONSUMED_FIELDS:
+                assert orig.get(field) == rec.get(field), (
+                    f"Field {field!r}: {orig.get(field)} != {rec.get(field)} for {orig['label']}"
+                )
 
 
 # ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 """Tests for aedist.tabulate_census — generate census results LaTeX table."""
 
-import json
+from conftest import write_measurements
 
 from aedist.tabulate_census import generate_census_table
 from aedist.tabulate_utils import format_model_name, group_and_summarize, strip_label
@@ -204,9 +204,6 @@ def test_generate_census_table_matched_over_total():
 
 
 # --- CLI integration via file ---
-
-
-from conftest import write_measurements
 
 
 def test_main_writes_output(tmp_path):
