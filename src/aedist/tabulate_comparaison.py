@@ -68,14 +68,16 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         cov_base = statistics.median(e["coverage"] for e in census[slug])
         cov_rag = statistics.median(e["coverage"] for e in rag[slug])
         delta = f1_rag - f1_base
-        rows.append({
-            "slug": slug,
-            "f1_base": f1_base,
-            "f1_rag": f1_rag,
-            "cov_base": cov_base,
-            "cov_rag": cov_rag,
-            "delta": delta,
-        })
+        rows.append(
+            {
+                "slug": slug,
+                "f1_base": f1_base,
+                "f1_rag": f1_rag,
+                "cov_base": cov_base,
+                "cov_rag": cov_rag,
+                "delta": delta,
+            }
+        )
 
     rows.sort(key=lambda r: r["f1_rag"], reverse=True)
 
@@ -94,12 +96,12 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
 
     for row in rows:
         name = format_model_name(row["slug"])
-        f1b = f'{row["f1_base"] * 100:.1f}\\%'
-        f1r = f'{row["f1_rag"] * 100:.1f}\\%'
-        cb = f'{row["cov_base"] * 100:.1f}\\%'
-        cr = f'{row["cov_rag"] * 100:.1f}\\%'
+        f1b = f"{row['f1_base'] * 100:.1f}\\%"
+        f1r = f"{row['f1_rag'] * 100:.1f}\\%"
+        cb = f"{row['cov_base'] * 100:.1f}\\%"
+        cr = f"{row['cov_rag'] * 100:.1f}\\%"
         sign = "+" if row["delta"] >= 0 else ""
-        delta = f'{sign}{row["delta"] * 100:.1f}\\%'
+        delta = f"{sign}{row['delta'] * 100:.1f}\\%"
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     lines.append("\\end{longtable}")
@@ -116,15 +118,21 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate RAG comparison LaTeX table",
     )
-    parser.add_argument("--input", required=True, help="Path to all_metrics.json")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
+    source.add_argument("--measurements", help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write tab_comparaison.tex")
     args = parser.parse_args(argv)
 
-    input_path = Path(args.input)
     output_path = Path(args.output)
 
-    with open(input_path) as f:
-        metrics = json.load(f)
+    if args.measurements:
+        from .measurements_adapter import load_metrics_from_measurements
+
+        metrics = load_metrics_from_measurements(args.measurements)
+    else:
+        with open(args.input) as f:
+            metrics = json.load(f)
 
     latex, n_compared = generate_comparaison_table(metrics)
 

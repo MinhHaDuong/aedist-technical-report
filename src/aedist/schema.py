@@ -10,7 +10,7 @@ forming the measurements table (the single source of truth for all results).
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 from pathlib import Path
 from typing import Any
@@ -111,12 +111,8 @@ class MethodParams(BaseModel):
     model: str = Field(..., description="Model identifier (e.g. openai/gpt-4o).")
     temperature: float | None = None
     max_tokens: int | None = None
-    prompt_version: str | None = Field(
-        default=None, description="Prompt template identifier."
-    )
-    extra: dict | None = Field(
-        default=None, description="Arbitrary method-specific parameters."
-    )
+    prompt_version: str | None = Field(default=None, description="Prompt template identifier.")
+    extra: dict | None = Field(default=None, description="Arbitrary method-specific parameters.")
 
 
 class ResourceUse(BaseModel):
@@ -131,14 +127,15 @@ class ResourceUse(BaseModel):
 class ResultSummary(BaseModel):
     """Compact evaluation result for one run."""
 
-    status: str = Field(
-        default="ok", description="Run outcome: ok, error, empty, etc."
-    )
+    status: str = Field(default="ok", description="Run outcome: ok, error, empty, etc.")
     n_plants: int | None = Field(default=None, ge=0)
     tp: int | None = Field(default=None, ge=0, description="True positives (matched).")
     fp: int | None = Field(default=None, ge=0, description="False positives (hallucinated).")
     fn: int | None = Field(default=None, ge=0, description="False negatives (missed).")
     f1: float | None = Field(default=None, ge=0.0, le=1.0)
+    fuel_accuracy: float | None = Field(default=None, ge=0.0, le=1.0)
+    status_accuracy: float | None = Field(default=None, ge=0.0, le=1.0)
+    province_accuracy: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class RunRecord(BaseModel):
@@ -151,7 +148,7 @@ class RunRecord(BaseModel):
 
     run_id: str = Field(default_factory=lambda: uuid4().hex[:12])
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="UTC time the run completed.",
     )
     method: Method
@@ -277,7 +274,7 @@ class LeaseInfo(BaseModel):
     job_id: str
     worker_id: str
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
     )
     expiry_time: datetime = Field(
         ..., description="UTC time after which the lease expires and the job can be reclaimed."

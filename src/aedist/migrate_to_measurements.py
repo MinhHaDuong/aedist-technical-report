@@ -4,11 +4,17 @@ Reads per-run query JSON files and optional all_metrics.json to produce
 a canonical measurements.jsonl file using the RunRecord schema.
 
 Usage:
+    # From query JSONs (sweep2):
     uv run python -m aedist.migrate_to_measurements \
-        --queries outputs/sweep1_census/ \
-        --mode single --sweep-name sweep1_census \
-        --metrics results/sweep1_census/all_metrics.json \
+        --queries outputs/sweep2_rag/ \
+        --mode rag --sweep-name sweep2_rag \
+        --metrics results/summary/all_metrics.json \
         --output measurements.jsonl
+
+    # From metrics only (sweep1 — no query JSONs available):
+    uv run python -m aedist.migrate_to_measurements \
+        --metrics-only results/summary/census/all_metrics.json \
+        --output measurements.jsonl --append
 
 Can be invoked multiple times with --append to accumulate runs from
 different sweeps into a single measurements file.
@@ -17,9 +23,10 @@ different sweeps into a single measurements file.
 import argparse
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+from .measurements_adapter import metrics_to_records
 from .schema import (
     Method,
     MethodParams,
@@ -63,9 +70,9 @@ def migrate_query_json(
 
     date_str = record.get("date", "")
     try:
-        ts = datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc)
+        ts = datetime.fromisoformat(date_str).replace(tzinfo=UTC)
     except (ValueError, TypeError):
-        ts = datetime.now(timezone.utc)
+        ts = datetime.now(UTC)
 
     return RunRecord(
         timestamp=ts,
@@ -89,6 +96,9 @@ def migrate_query_json(
             fp=metrics["n_hallucinated"] if metrics else None,
             fn=metrics["n_missed"] if metrics else None,
             f1=metrics["f1"] if metrics else None,
+            fuel_accuracy=metrics.get("fuel_accuracy") if metrics else None,
+            status_accuracy=metrics.get("status_accuracy") if metrics else None,
+            province_accuracy=metrics.get("province_accuracy") if metrics else None,
         ),
     )
 
@@ -115,38 +125,57 @@ def migrate_sweep(
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(
-        description="Migrate sweep results to measurements.jsonl"
-    )
-    parser.add_argument(
-        "--queries", required=True, type=Path,
+    parser = argparse.ArgumentParser(description="Migrate sweep results to measurements.jsonl")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument(
+        "--queries",
+        type=Path,
         help="Directory containing query output JSON files",
     )
-    parser.add_argument(
-        "--mode", required=True, choices=[m.value for m in Method],
-        help="Sweep method (single, multiturn, rag, web)",
+    source.add_argument(
+        "--metrics-only",
+        type=Path,
+        help="Path to all_metrics.json (metrics-only mode, no query JSONs needed)",
     )
     parser.add_argument(
-        "--sweep-name", required=True,
-        help="Sweep identifier (e.g. sweep1_census)",
+        "--mode",
+        choices=[m.value for m in Method],
+        help="Sweep method (required with --queries)",
     )
     parser.add_argument(
-        "--metrics", type=Path, default=None,
-        help="Path to all_metrics.json (optional, for evaluation results)",
+        "--sweep-name",
+        help="Sweep identifier (required with --queries, e.g. sweep1_census)",
     )
     parser.add_argument(
-        "--output", required=True, type=Path,
+        "--metrics",
+        type=Path,
+        default=None,
+        help="Path to all_metrics.json (optional with --queries, for evaluation results)",
+    )
+    parser.add_argument(
+        "--output",
+        required=True,
+        type=Path,
         help="Output measurements.jsonl path",
     )
     parser.add_argument(
-        "--append", action="store_true",
+        "--append",
+        action="store_true",
         help="Append to existing file instead of overwriting",
     )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    method = Method(args.mode)
-    records = migrate_sweep(args.queries, method, args.sweep_name, args.metrics)
+    if args.metrics_only:
+        with open(args.metrics_only) as f:
+            metrics = json.load(f)
+        records = metrics_to_records(metrics)
+        log.info("Converted %d metrics entries to RunRecords", len(records))
+    else:
+        if not args.mode or not args.sweep_name:
+            parser.error("--mode and --sweep-name are required with --queries")
+        method = Method(args.mode)
+        records = migrate_sweep(args.queries, method, args.sweep_name, args.metrics)
 
     if not records:
         log.warning("No records migrated.")

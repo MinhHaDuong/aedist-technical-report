@@ -14,7 +14,11 @@ from pathlib import Path
 
 from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
-from .schema import FuelType, Plant, PlantStatus
+from .schema import (
+    FuelType,
+    Plant,
+    PlantStatus,
+)
 
 log = logging.getLogger(__name__)
 
@@ -76,8 +80,16 @@ def load_plants_csv(path: Path) -> list[Plant]:
             province = _get(row, col_map, ["province", "location"])
             cap_raw = _get(row, col_map, ["capacity_mwe", "capacity", "generation_capacity"])
 
-            fuel = _FUEL_MAP.get(fuel_raw.strip().lower(), FuelType.UNKNOWN) if fuel_raw else FuelType.UNKNOWN
-            status = _STATUS_MAP.get(status_raw.strip().lower(), PlantStatus.UNKNOWN) if status_raw else PlantStatus.UNKNOWN
+            fuel = (
+                _FUEL_MAP.get(fuel_raw.strip().lower(), FuelType.UNKNOWN)
+                if fuel_raw
+                else FuelType.UNKNOWN
+            )
+            status = (
+                _STATUS_MAP.get(status_raw.strip().lower(), PlantStatus.UNKNOWN)
+                if status_raw
+                else PlantStatus.UNKNOWN
+            )
 
             cap = None
             if cap_raw:
@@ -88,15 +100,17 @@ def load_plants_csv(path: Path) -> list[Plant]:
 
             source_ref = _get(row, col_map, ["source_ref"])
 
-            plants.append(Plant(
-                name=name.strip(),
-                fuel=fuel,
-                status=status,
-                cod=cod.strip() if cod else None,
-                province=province.strip() if province else None,
-                capacity_mwe=cap,
-                source_ref=source_ref.strip() if source_ref else None,
-            ))
+            plants.append(
+                Plant(
+                    name=name.strip(),
+                    fuel=fuel,
+                    status=status,
+                    cod=cod.strip() if cod else None,
+                    province=province.strip() if province else None,
+                    capacity_mwe=cap,
+                    source_ref=source_ref.strip() if source_ref else None,
+                )
+            )
     return plants
 
 
@@ -104,12 +118,15 @@ def load_plants_csv(path: Path) -> list[Plant]:
 # Default reference path
 # ---------------------------------------------------------------------------
 
-_DEFAULT_REF = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+_DEFAULT_REF = (
+    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+)
 
 
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def cmd_evaluate(args: argparse.Namespace) -> None:
     """Evaluate a single system output against the reference."""
@@ -135,6 +152,43 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
         log.info("Saved: %s, %s", recon_path, metrics_path)
 
 
+def _metrics_to_runrecord(
+    metrics: BenchmarkMetrics,
+    label: str,
+    csv_file: Path,
+) -> "RunRecord":
+    """Build a RunRecord from evaluation metrics."""
+    from .schema import Method, MethodParams, ResultSummary, RunRecord
+
+    sweep_name = csv_file.parent.name
+    method = Method.SINGLE
+    if "multiturn" in sweep_name:
+        method = Method.MULTITURN
+    elif "rag" in sweep_name:
+        method = Method.RAG
+    elif "web" in sweep_name:
+        method = Method.WEB
+
+    return RunRecord(
+        method=method,
+        method_params=MethodParams(
+            model=label.rsplit("/", 1)[-1],
+            prompt_version=sweep_name,
+        ),
+        result_file=str(csv_file),
+        result_summary=ResultSummary(
+            n_plants=metrics.n_system,
+            tp=metrics.n_matched,
+            fp=metrics.n_hallucinated,
+            fn=metrics.n_missed,
+            f1=metrics.f1,
+            fuel_accuracy=metrics.fuel_accuracy,
+            status_accuracy=metrics.status_accuracy,
+            province_accuracy=metrics.province_accuracy,
+        ),
+    )
+
+
 def cmd_evaluate_all(args: argparse.Namespace) -> None:
     """Evaluate all CSV files in the outputs directory."""
     outputs_dir = Path(args.outputs_dir) if args.outputs_dir else Path("outputs")
@@ -142,8 +196,11 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     result_dir = Path(args.output) if args.output else Path("results/summary")
     result_dir.mkdir(parents=True, exist_ok=True)
 
+    measurements_path = Path(args.measurements_output) if args.measurements_output else None
+
     reference = load_plants_csv(ref_path)
     new_metrics = []
+    new_records: list = []
 
     for csv_file in sorted(outputs_dir.rglob("*.csv")):
         system = load_plants_csv(csv_file)
@@ -153,9 +210,16 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
         new_metrics.append({"label": label, **_metrics_to_dict(metrics)})
-        log.info("%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
-                 label.ljust(50), metrics.coverage * 100, metrics.precision * 100,
-                 metrics.f1 * 100, metrics.n_matched, metrics.n_reference)
+        new_records.append(_metrics_to_runrecord(metrics, label, csv_file))
+        log.info(
+            "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
+            label.ljust(50),
+            metrics.coverage * 100,
+            metrics.precision * 100,
+            metrics.f1 * 100,
+            metrics.n_matched,
+            metrics.n_reference,
+        )
 
     # Merge with existing metrics (preserve data from other sweeps)
     summary_path = result_dir / "all_metrics.json"
@@ -176,37 +240,92 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         json.dump(merged, f, indent=2)
     log.info("Summary: %s (%d entries, %d new)", summary_path, len(merged), len(new_metrics))
 
+    # Write measurements.jsonl if requested
+    if measurements_path and new_records:
+        from .schema import RunRecord
+
+        existing_records = []
+        if measurements_path.exists():
+            existing_records = RunRecord.load_jsonl(measurements_path)
+        # Replace records with matching labels
+        existing_labels = {
+            f"{r.method_params.prompt_version}/{Path(r.result_file).stem}" for r in new_records
+        }
+        kept = [
+            r
+            for r in existing_records
+            if f"{r.method_params.prompt_version}/{Path(r.result_file).stem}"
+            not in existing_labels
+        ]
+        kept.extend(new_records)
+        RunRecord.save_jsonl(kept, measurements_path)
+        log.info(
+            "Measurements: %s (%d entries, %d new)",
+            measurements_path,
+            len(kept),
+            len(new_records),
+        )
+
 
 def _save_reconciliation_csv(entries: list, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow([
-            "match_type", "reference_name", "system_name",
-            "reference_province", "system_province",
-            "reference_fuel", "system_fuel",
-            "reference_capacity_mwe", "system_capacity_mwe",
-            "capacity_diff_pct", "fuel_match", "status_match", "province_match",
-            "reference_source_ref", "system_source_ref",
-        ])
+        w.writerow(
+            [
+                "match_type",
+                "reference_name",
+                "system_name",
+                "reference_province",
+                "system_province",
+                "reference_fuel",
+                "system_fuel",
+                "reference_capacity_mwe",
+                "system_capacity_mwe",
+                "capacity_diff_pct",
+                "fuel_match",
+                "status_match",
+                "province_match",
+                "reference_source_ref",
+                "system_source_ref",
+            ]
+        )
         for e in entries:
-            w.writerow([
-                e.match_type.value, e.reference_name, e.system_name,
-                e.reference_province, e.system_province,
-                e.reference_fuel, e.system_fuel,
-                e.reference_capacity_mwe, e.system_capacity_mwe,
-                e.capacity_diff_pct, e.fuel_match, e.status_match, e.province_match,
-                e.reference_source_ref, e.system_source_ref,
-            ])
+            w.writerow(
+                [
+                    e.match_type.value,
+                    e.reference_name,
+                    e.system_name,
+                    e.reference_province,
+                    e.system_province,
+                    e.reference_fuel,
+                    e.system_fuel,
+                    e.reference_capacity_mwe,
+                    e.system_capacity_mwe,
+                    e.capacity_diff_pct,
+                    e.fuel_match,
+                    e.status_match,
+                    e.province_match,
+                    e.reference_source_ref,
+                    e.system_source_ref,
+                ]
+            )
 
 
 def _metrics_to_dict(m: BenchmarkMetrics) -> dict:
     return {
-        "coverage": m.coverage, "precision": m.precision, "f1": m.f1,
-        "n_reference": m.n_reference, "n_system": m.n_system,
-        "n_matched": m.n_matched, "n_exact": m.n_exact, "n_fuzzy": m.n_fuzzy,
-        "n_missed": m.n_missed, "n_hallucinated": m.n_hallucinated,
-        "fuel_accuracy": m.fuel_accuracy, "status_accuracy": m.status_accuracy,
+        "coverage": m.coverage,
+        "precision": m.precision,
+        "f1": m.f1,
+        "n_reference": m.n_reference,
+        "n_system": m.n_system,
+        "n_matched": m.n_matched,
+        "n_exact": m.n_exact,
+        "n_fuzzy": m.n_fuzzy,
+        "n_missed": m.n_missed,
+        "n_hallucinated": m.n_hallucinated,
+        "fuel_accuracy": m.fuel_accuracy,
+        "status_accuracy": m.status_accuracy,
         "province_accuracy": m.province_accuracy,
         "errors": m.errors,
     }
@@ -232,6 +351,9 @@ def main() -> None:
     p_all.add_argument("--outputs-dir", help="Directory containing system outputs")
     p_all.add_argument("--reference", help="Path to reference CSV")
     p_all.add_argument("--output", help="Directory for summary output")
+    p_all.add_argument(
+        "--measurements-output", help="Path to measurements.jsonl (also writes RunRecords)"
+    )
 
     args = parser.parse_args()
     if args.command == "evaluate":
