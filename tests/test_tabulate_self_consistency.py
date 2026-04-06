@@ -1,7 +1,5 @@
 """Tests for aedist.tabulate_self_consistency — self-consistency LaTeX tables."""
 
-import json
-
 from aedist.tabulate_self_consistency import (
     generate_per_run_table,
     generate_self_consistency_table,
@@ -156,19 +154,201 @@ def test_per_run_table_truncation_zero_hallucinations():
 # --- CLI integration ---
 
 
+def test_assemble_from_measurements():
+    """assemble_from_measurements groups per-run and vote records correctly."""
+    from aedist.tabulate_self_consistency import assemble_from_measurements
+
+    # Build adapter-style dicts matching SAMPLE_RESULTS data
+    metrics = [
+        # deepseek per-run (3 runs, sorted by f1 ascending)
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run1",
+            "f1": 0.3367,
+            "coverage": 0.2025,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 33,
+            "n_matched": 33,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run2",
+            "f1": 0.6009,
+            "coverage": 0.4294,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 70,
+            "n_matched": 70,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run3",
+            "f1": 0.6855,
+            "coverage": 0.5215,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 85,
+            "n_matched": 85,
+            "n_hallucinated": 0,
+        },
+        # deepseek vote results
+        {
+            "label": "sweep2_rag_consistency/deepseek-v3.2-consolidated",
+            "f1": 0.386,
+            "coverage": 0.239,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 39,
+            "n_matched": 39,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag_consistency/deepseek-v3.2-union",
+            "f1": 0.955,
+            "coverage": 0.914,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 149,
+            "n_matched": 149,
+            "n_hallucinated": 0,
+        },
+        # gemini per-run (overgeneration regime)
+        {
+            "label": "sweep2_rag/gemini-2.5-flash-lite-run1",
+            "f1": 0.4045,
+            "coverage": 1.0,
+            "precision": 0.2535,
+            "n_reference": 163,
+            "n_system": 643,
+            "n_matched": 163,
+            "n_hallucinated": 480,
+        },
+        {
+            "label": "sweep2_rag/gemini-2.5-flash-lite-run2",
+            "f1": 0.5801,
+            "coverage": 1.0,
+            "precision": 0.4085,
+            "n_reference": 163,
+            "n_system": 399,
+            "n_matched": 163,
+            "n_hallucinated": 236,
+        },
+        {
+            "label": "sweep2_rag/gemini-2.5-flash-lite-run3",
+            "f1": 0.9674,
+            "coverage": 1.0,
+            "precision": 0.9368,
+            "n_reference": 163,
+            "n_system": 174,
+            "n_matched": 163,
+            "n_hallucinated": 11,
+        },
+        {
+            "label": "sweep2_rag_consistency/gemini-2.5-flash-lite-consolidated",
+            "f1": 0.81,
+            "coverage": 0.681,
+            "precision": 1.0,
+            "n_reference": 163,
+            "n_system": 111,
+            "n_matched": 111,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag_consistency/gemini-2.5-flash-lite-union",
+            "f1": 0.324,
+            "coverage": 1.0,
+            "precision": 0.194,
+            "n_reference": 163,
+            "n_system": 843,
+            "n_matched": 163,
+            "n_hallucinated": 680,
+        },
+    ]
+
+    results = assemble_from_measurements(metrics)
+    assert len(results) == 2
+
+    ds = next(r for r in results if r["model"] == "deepseek-v3.2")
+    assert ds["n_valid_runs"] == 3
+    assert ds["run_f1_scores"] == [0.3367, 0.6009, 0.6855]
+    assert ds["median_f1"] == 0.6009
+    assert ds["median_precision"] == 1.0
+    assert ds["majority_f1"] == 0.386
+    assert ds["union_f1"] == 0.955
+
+    gm = next(r for r in results if r["model"] == "gemini-2.5-flash-lite")
+    assert gm["median_coverage"] == 1.0
+    assert gm["majority_f1"] == 0.81
+    assert gm["union_n_hallucinated"] == 680
+
+    # Tables should render identically to SAMPLE_RESULTS
+    ref_table = generate_self_consistency_table(SAMPLE_RESULTS)
+    new_table = generate_self_consistency_table(results)
+    assert ref_table == new_table
+
+
 def test_main_writes_outputs(tmp_path):
-    """main() reads input JSON and writes both LaTeX outputs."""
+    """main() reads measurements.jsonl and writes both LaTeX outputs."""
+    from aedist.measurements_adapter import metrics_to_records
+    from aedist.schema import RunRecord
     from aedist.tabulate_self_consistency import main
 
-    input_file = tmp_path / "summary.json"
-    input_file.write_text(json.dumps(SAMPLE_RESULTS))
+    # Build adapter-style metrics, convert to RunRecords, write measurements.jsonl
+    metrics = [
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run1",
+            "f1": 0.3367,
+            "n_matched": 33,
+            "n_system": 33,
+            "n_reference": 163,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run2",
+            "f1": 0.6009,
+            "n_matched": 70,
+            "n_system": 70,
+            "n_reference": 163,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag/deepseek-v3.2-run3",
+            "f1": 0.6855,
+            "n_matched": 85,
+            "n_system": 85,
+            "n_reference": 163,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag_consistency/deepseek-v3.2-consolidated",
+            "f1": 0.386,
+            "n_matched": 39,
+            "n_system": 39,
+            "n_reference": 163,
+            "n_hallucinated": 0,
+        },
+        {
+            "label": "sweep2_rag_consistency/deepseek-v3.2-union",
+            "f1": 0.955,
+            "n_matched": 149,
+            "n_system": 149,
+            "n_reference": 163,
+            "n_hallucinated": 0,
+        },
+    ]
+    from aedist.schema import Method
+
+    records = metrics_to_records(metrics, method=Method.RAG)
+    meas_path = tmp_path / "measurements.jsonl"
+    RunRecord.save_jsonl(records, meas_path)
+
     output_file = tmp_path / "tab_sc.tex"
     per_run_file = tmp_path / "tab_pr.tex"
 
     main(
         [
-            "--input",
-            str(input_file),
+            "--measurements",
+            str(meas_path),
             "--output",
             str(output_file),
             "--per-run-output",

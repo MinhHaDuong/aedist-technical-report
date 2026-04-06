@@ -24,7 +24,15 @@ from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
 from .runner import _DEFAULT_REF, load_plants_csv
-from .schema import FuelType, Plant, PlantStatus
+from .schema import (
+    FuelType,
+    Method,
+    MethodParams,
+    Plant,
+    PlantStatus,
+    ResultSummary,
+    RunRecord,
+)
 
 log = logging.getLogger(__name__)
 
@@ -164,8 +172,14 @@ def run_analysis(
     input_dir: Path,
     output_dir: Path,
     reference_path: Path,
-) -> list[dict]:
-    """Run self-consistency analysis. Returns list of per-model result dicts."""
+) -> tuple[list[dict], dict[str, list[BenchmarkMetrics]], dict[str, list[Path]]]:
+    """Run self-consistency analysis.
+
+    Returns (results, run_metrics_by_model, run_paths_by_model):
+    - results: list of per-model summary dicts
+    - run_metrics_by_model: per-model list of BenchmarkMetrics (sorted by F1)
+    - run_paths_by_model: per-model list of JSON source paths
+    """
     reference = load_plants_csv(reference_path)
     log.info("Reference: %d plants", len(reference))
 
@@ -174,6 +188,8 @@ def run_analysis(
 
     work_dir = output_dir / "_extracted"
     results = []
+    run_metrics_by_model: dict[str, list[BenchmarkMetrics]] = {}
+    run_paths_by_model: dict[str, list[Path]] = {}
 
     for model, run_paths in sorted(groups.items()):
         log.info("\n=== %s ===", model)
@@ -188,6 +204,8 @@ def run_analysis(
 
         # Sort metrics by F1 so per-run arrays are aligned with sorted f1_scores
         valid_metrics.sort(key=lambda m: m.f1)
+        run_metrics_by_model[model] = valid_metrics
+        run_paths_by_model[model] = run_paths
         f1_scores = [m.f1 for m in valid_metrics]
         median_f1 = f1_scores[len(f1_scores) // 2]
 
@@ -287,7 +305,115 @@ def run_analysis(
             }
         )
 
-    return results
+    return results, run_metrics_by_model, run_paths_by_model
+
+
+def _metrics_to_result_summary(m: BenchmarkMetrics) -> ResultSummary:
+    """Convert BenchmarkMetrics to a ResultSummary."""
+    return ResultSummary(
+        status="ok",
+        n_plants=m.n_system,
+        tp=m.n_matched,
+        fp=m.n_hallucinated,
+        fn=m.n_missed,
+        f1=round(m.f1, 4),
+        fuel_accuracy=round(m.fuel_accuracy, 4) if m.fuel_accuracy else None,
+        status_accuracy=round(m.status_accuracy, 4) if m.status_accuracy else None,
+        province_accuracy=round(m.province_accuracy, 4) if m.province_accuracy else None,
+    )
+
+
+def _results_to_records(
+    results: list[dict],
+    run_metrics_by_model: dict[str, list[BenchmarkMetrics]],
+    run_paths_by_model: dict[str, list[Path]],
+    output_dir: Path,
+) -> list[RunRecord]:
+    """Convert analysis results to RunRecords for measurements.jsonl."""
+    records: list[RunRecord] = []
+
+    for r in results:
+        model = r["model"]
+        metrics_list = run_metrics_by_model.get(model, [])
+        paths = run_paths_by_model.get(model, [])
+
+        # Per-run records (sweep2_rag)
+        for i, m in enumerate(metrics_list):
+            run_num = i + 1
+            # Find the original JSON path for this run
+            result_file = str(paths[i]) if i < len(paths) else None
+            records.append(
+                RunRecord(
+                    method=Method.RAG,
+                    method_params=MethodParams(
+                        model=model,
+                        prompt_version="sweep2_rag",
+                    ),
+                    result_file=result_file,
+                    result_summary=_metrics_to_result_summary(m),
+                )
+            )
+
+        # Majority-vote record (sweep2_rag_consistency)
+        if r.get("majority_f1") is not None:
+            records.append(
+                RunRecord(
+                    method=Method.RAG,
+                    method_params=MethodParams(
+                        model=f"{model}-consolidated",
+                        prompt_version="sweep2_rag_consistency",
+                    ),
+                    result_file=str(output_dir / f"{model}-consolidated.csv"),
+                    result_summary=ResultSummary(
+                        status="ok",
+                        n_plants=r["majority_n_system"],
+                        tp=r["majority_n_matched"],
+                        fp=r.get("majority_n_hallucinated", 0),
+                        fn=r["n_reference"] - (r["majority_n_matched"] or 0),
+                        f1=r["majority_f1"],
+                    ),
+                )
+            )
+
+        # Union-vote record (sweep2_rag_consistency)
+        if r.get("union_f1") is not None:
+            records.append(
+                RunRecord(
+                    method=Method.RAG,
+                    method_params=MethodParams(
+                        model=f"{model}-union",
+                        prompt_version="sweep2_rag_consistency",
+                    ),
+                    result_file=str(output_dir / f"{model}-union.csv"),
+                    result_summary=ResultSummary(
+                        status="ok",
+                        n_plants=r["union_n_system"],
+                        tp=r["union_n_matched"],
+                        fp=r.get("union_n_hallucinated", 0),
+                        fn=r["n_reference"] - (r["union_n_matched"] or 0),
+                        f1=r["union_f1"],
+                    ),
+                )
+            )
+
+    return records
+
+
+def write_measurements(records: list[RunRecord], measurements_path: Path) -> None:
+    """Merge records into measurements.jsonl, replacing existing sweep2_rag* entries."""
+    existing: list[RunRecord] = []
+    if measurements_path.exists():
+        existing = RunRecord.load_jsonl(measurements_path)
+
+    # Remove old sweep2_rag and sweep2_rag_consistency records
+    kept = [
+        r
+        for r in existing
+        if r.method_params.prompt_version not in ("sweep2_rag", "sweep2_rag_consistency")
+    ]
+    kept.extend(records)
+    RunRecord.save_jsonl(kept, measurements_path)
+    log.info("Measurements: %s (%d total, %d new)", measurements_path, len(kept), len(records))
 
 
 def _print_comparison_table(results: list[dict]) -> None:
@@ -325,6 +451,9 @@ def main() -> None:
     p.add_argument(
         "--reference", default=None, help="Path to reference CSV (default: vietnam_thermal_v1.csv)"
     )
+    p.add_argument(
+        "--measurements", default=None, help="Path to measurements.jsonl (updates per-run records)"
+    )
     args = p.parse_args()
 
     input_dir = Path(args.input)
@@ -336,7 +465,9 @@ def main() -> None:
     if not ref_path.exists():
         raise SystemExit(f"Reference not found: {ref_path}")
 
-    results = run_analysis(input_dir, output_dir, ref_path)
+    results, run_metrics_by_model, run_paths_by_model = run_analysis(
+        input_dir, output_dir, ref_path
+    )
 
     if not results:
         raise SystemExit("No results produced.")
@@ -350,6 +481,13 @@ def main() -> None:
     with open(summary_path, "w") as f:
         json.dump(results, f, indent=2)
     log.info("\nSaved: %s", summary_path)
+
+    # Write RunRecords to measurements.jsonl
+    if args.measurements:
+        records = _results_to_records(
+            results, run_metrics_by_model, run_paths_by_model, output_dir
+        )
+        write_measurements(records, Path(args.measurements))
 
     # Print key findings
     maj_gains = [(r["model"], (r.get("majority_f1") or 0) - r["median_f1"]) for r in results]
