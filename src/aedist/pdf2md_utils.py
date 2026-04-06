@@ -47,6 +47,7 @@ CONVERTERS: dict[str, Converter] = {
     "grobid": _ModuleConverter("aedist.pdf2md_grobid"),
     "vision": _ModuleConverter("aedist.pdf2md_ollama"),
     "cloud": _ModuleConverter("aedist.pdf2md_openrouter"),
+    "cloud-doc": _ModuleConverter("aedist.pdf2md_openrouter_doc"),
     "marker": _ModuleConverter("aedist.pdf2md_marker"),
     "mineru": _ModuleConverter("aedist.pdf2md_mineru"),
 }
