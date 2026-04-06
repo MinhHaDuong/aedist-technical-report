@@ -1,11 +1,12 @@
 %erg v1
 Title: Prune ~50 stale remote branches
-Status: open
+Status: closed
 Created: 2026-04-06
 Author: claude
 
 --- log ---
 2026-04-06T14:00Z claude created
+2026-04-06T20:15Z claude status closed — all stale branches pruned, only fix/mineru-api-endpoint (open PR #166) remains
 
 --- body ---
 ## Context
