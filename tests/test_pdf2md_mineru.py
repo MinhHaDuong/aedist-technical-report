@@ -1,7 +1,5 @@
 """Tests for aedist.pdf2md_mineru — MinerU API container backend."""
 
-import io
-import zipfile
 from pathlib import Path
 
 
@@ -34,17 +32,24 @@ def test_default_url():
     assert "8010" in DEFAULT_MINERU_URL
 
 
-def test_extract_md_from_zip():
-    from aedist.pdf2md_mineru import _extract_md_from_zip
+def test_endpoint_is_file_parse():
+    source = Path("src/aedist/pdf2md_mineru.py").read_text()
+    assert "file_parse" in source
 
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w") as zf:
-        zf.writestr("output/result.md", "# Hello\n\nTable content here.")
-    zip_bytes = buf.getvalue()
 
-    md = _extract_md_from_zip(zip_bytes)
-    assert "# Hello" in md
-    assert "Table content" in md
+def test_sends_table_enable():
+    source = Path("src/aedist/pdf2md_mineru.py").read_text()
+    assert "table_enable" in source
+
+
+def test_uses_pipeline_backend():
+    source = Path("src/aedist/pdf2md_mineru.py").read_text()
+    assert '"pipeline"' in source
+
+
+def test_uses_latin_lang():
+    source = Path("src/aedist/pdf2md_mineru.py").read_text()
+    assert '"latin"' in source
 
 
 def test_uses_metadata_comment():

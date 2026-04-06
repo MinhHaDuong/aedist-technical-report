@@ -1,23 +1,22 @@
-"""Convert PDF to Markdown using MinerU API container.
+"""Convert PDF to Markdown using MinerU v3.x API container.
 
-Uses the mineru-api container for layout-aware PDF conversion with
-cross-page table merging. No Python deps beyond stdlib.
+Uses the official MinerU container (opendatalab/MinerU) for layout-aware
+PDF conversion with GPU-accelerated table recognition. No Python deps
+beyond stdlib.
 
 Usage:
     python -m aedist.pdf2md_mineru input.pdf
     python -m aedist.pdf2md_mineru input.pdf --output output.md --mineru-url http://localhost:8010
 
-Requires: mineru-api container running locally.
-    podman run -d --name mineru-api --gpus all -p 8010:8000 jianjungki/mineru-api
+Requires: MinerU v3.x container running locally.
+    podman run -d --name mineru-api --gpus all -p 8010:8000 mineru:latest mineru-api --host 0.0.0.0 --port 8000
 """
 
 import argparse
-import io
 import json
 import logging
 import sys
 import urllib.request
-import zipfile
 from pathlib import Path
 
 from .pdf2md_utils import get_output_path, metadata_comment
@@ -28,68 +27,54 @@ DEFAULT_MINERU_URL = "http://localhost:8010"
 
 
 def mineru_convert(pdf_path: Path, mineru_url: str = DEFAULT_MINERU_URL) -> str:
-    """Send PDF to MinerU API, return markdown string.
-
-    MinerU returns a ZIP containing markdown and images.
-    We extract just the markdown content.
-    """
-    url = f"{mineru_url}/api/parse"
+    """Send PDF to MinerU v3.x API (POST /file_parse), return markdown."""
+    url = f"{mineru_url}/file_parse"
 
     boundary = "----MinerUBoundary"
     pdf_bytes = pdf_path.read_bytes()
 
-    body = (
+    chunks = [
         (
             f"--{boundary}\r\n"
-            f'Content-Disposition: form-data; name="file"; filename="{pdf_path.name}"\r\n'
+            f'Content-Disposition: form-data; name="files"; filename="{pdf_path.name}"\r\n'
             f"Content-Type: application/pdf\r\n\r\n"
-        ).encode()
-        + pdf_bytes
-        + (
+        ).encode(),
+        pdf_bytes,
+    ]
+    for name, value in [
+        ("backend", "pipeline"),
+        ("lang_list", "latin"),
+        ("table_enable", "true"),
+        ("return_md", "true"),
+    ]:
+        chunks.append(
             f"\r\n--{boundary}\r\n"
-            f'Content-Disposition: form-data; name="return_md"\r\n\r\n'
-            f"true\r\n"
-            f"--{boundary}\r\n"
-            f'Content-Disposition: form-data; name="table_enable"\r\n\r\n'
-            f"true\r\n"
-            f"--{boundary}--\r\n"
-        ).encode()
-    )
+            f'Content-Disposition: form-data; name="{name}"\r\n\r\n'
+            f"{value}".encode()
+        )
+    chunks.append(f"\r\n--{boundary}--\r\n".encode())
 
     req = urllib.request.Request(
         url,
-        data=body,
+        data=b"".join(chunks),
         headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=600) as resp:
-        content_type = resp.headers.get("Content-Type", "")
-        raw = resp.read()
+    with urllib.request.urlopen(req, timeout=1800) as resp:
+        result = json.load(resp)
 
-    # MinerU may return ZIP or JSON depending on version
-    if "zip" in content_type or raw[:4] == b"PK\x03\x04":
-        return _extract_md_from_zip(raw)
+    if "created_at" in result and "completed_at" in result:
+        from datetime import datetime
 
-    # JSON response
-    result = json.loads(raw.decode("utf-8"))
-    if "content" in result:
-        return result["content"]
-    if "markdown" in result:
-        return result["markdown"]
-    if "md_content" in result:
-        return result["md_content"]
-    # Return whatever text we got
-    return json.dumps(result, indent=2, ensure_ascii=False)
+        t0 = datetime.fromisoformat(result["created_at"])
+        t1 = datetime.fromisoformat(result["completed_at"])
+        log.info("MinerU %s: %.1fs", result.get("backend", "?"), (t1 - t0).total_seconds())
 
-
-def _extract_md_from_zip(zip_bytes: bytes) -> str:
-    """Extract markdown content from MinerU ZIP response."""
-    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
-        md_files = [n for n in zf.namelist() if n.endswith(".md")]
-        if not md_files:
-            raise ValueError(f"No .md files in ZIP (contents: {zf.namelist()[:10]})")
-        # Take the first (usually only) markdown file
-        return zf.read(md_files[0]).decode("utf-8")
+    # v3.x: {"results": {"<filename>": {"md_content": "..."}}}
+    if "results" in result:
+        file_result = next(iter(result["results"].values()))
+        return file_result["md_content"]
+    raise ValueError(f"Unexpected MinerU response keys: {list(result.keys())}")
 
 
 def pdf_to_markdown(pdf_path: Path, *, mineru_url: str = DEFAULT_MINERU_URL) -> str:
