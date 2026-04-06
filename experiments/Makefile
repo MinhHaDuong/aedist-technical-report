@@ -19,11 +19,24 @@ ifeq ($(OPENROUTER_API_KEY),)
 endif
 export OPENROUTER_API_KEY
 
+# Load Tavily API key from .env or ~/.claude/.env
+ifeq ($(TAVILY_API_KEY),)
+  TAVILY_API_KEY := $(shell grep '^TAVILY_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
+endif
+ifeq ($(TAVILY_API_KEY),)
+  TAVILY_API_KEY := $(shell grep '^TAVILY_API_KEY=' ~/.claude/.env 2>/dev/null | cut -d= -f2-)
+endif
+export TAVILY_API_KEY
 
 # Guard: only require OPENROUTER_API_KEY for targets that actually need it
 _NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
   $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
+endif
+
+_NEEDS_TAVILY := sweep2-web
+ifneq ($(filter $(_NEEDS_TAVILY),$(MAKECMDGOALS)),)
+  $(if $(TAVILY_API_KEY),,$(error TAVILY_API_KEY not set — export it or add to .env))
 endif
 
 # --- Read sweep configs ------------------------------------------------------
@@ -202,7 +215,7 @@ ifndef QUERY
 	$(error Specify ITEMS=key1,key2 or QUERY="search terms")
 endif
 endif
-	uv run --project .. python -m aedist.build_corpus \
+	uv run --project .. --extra pdf python -m aedist.build_corpus \
 	    $(if $(ITEMS),--items $(ITEMS),--query "$(QUERY)") \
 	    --reference $(CORPUS_REF) \
 	    --output $(CORPUS_OUTPUT) --work-dir $(CORPUS_WORKDIR) \
