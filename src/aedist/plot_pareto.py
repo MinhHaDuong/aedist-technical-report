@@ -62,7 +62,7 @@ def build_pareto_rows(
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
-        description="Generate Pareto-front CSV from metrics JSON",
+        description="Generate Pareto-front CSV from measurements.jsonl",
     )
     parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--costs", default=None, help="Path to sweep summary CSV with cost data")

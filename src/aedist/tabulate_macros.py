@@ -77,7 +77,7 @@ def generate_macros(summary: dict[str, dict]) -> str:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
-        description="Generate LaTeX macros from metrics JSON",
+        description="Generate LaTeX macros from measurements.jsonl",
     )
     parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write macros.tex")

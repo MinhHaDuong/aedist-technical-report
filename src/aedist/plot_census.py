@@ -43,7 +43,7 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
-        description="Generate census bar-chart CSV from metrics JSON",
+        description="Generate census bar-chart CSV from measurements.jsonl",
     )
     parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write census_bars.csv")
