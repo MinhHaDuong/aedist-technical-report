@@ -77,15 +77,23 @@ def test_classify_source_by_text_primary():
 
 
 def test_classify_source_by_text_secondary():
-    """Citation without primary indicators → secondary."""
-    assert classify_source_by_text("Various online sources") == "secondary"
+    """Substantive citation without primary indicators → secondary."""
+    # Has a digit (year) — qualifies as secondary
+    assert classify_source_by_text("Reuters article on Vietnam energy, 2024") == "secondary"
+    # Long enough (>30 chars) even without digit — counts as secondary
+    assert (
+        classify_source_by_text("Global Energy Monitor Tracker for Southeast Asia") == "secondary"
+    )
 
 
 def test_classify_source_by_text_none():
-    """Empty or 'none' → none."""
+    """Empty, 'none', or garbled short text → none."""
     assert classify_source_by_text("") == "none"
     assert classify_source_by_text("none") == "none"
     assert classify_source_by_text("None") == "none"
+    # Short text without digits — too vague to count as a source
+    assert classify_source_by_text("Various online sources") == "none"
+    assert classify_source_by_text("TBD") == "none"
 
 
 # ---------------------------------------------------------------------------
@@ -102,6 +110,21 @@ def test_score_evidence_hallucinated():
     """Any hallucinated source → score 0."""
     sources = [{"text": "Decision 9999/QD-BCT", "type": "hallucinated"}]
     assert score_evidence(sources) == 0
+
+
+def test_score_evidence_unknown_type():
+    """Sources with type='unknown' (unrecognized URLs) → score 1 (not evidence)."""
+    sources = [{"text": "Random blog post", "type": "unknown"}]
+    assert score_evidence(sources) == 1
+
+
+def test_score_evidence_unknown_plus_primary():
+    """Unknown source alongside a primary → score 3 (unknown ignored)."""
+    sources = [
+        {"text": "Random blog", "type": "unknown"},
+        {"text": "Decision 1509/QD-BCT", "type": "primary"},
+    ]
+    assert score_evidence(sources) == 3
 
 
 def test_score_evidence_one_secondary():

@@ -110,18 +110,24 @@ def classify_source_by_text(citation: str) -> str:
 
     Uses pattern matching on the citation text. For LLM-declared types,
     prefer the model's own classification; this is a fallback/cross-check.
+    Requires a substantive citation (>10 chars with a digit or known keyword)
+    to avoid promoting garbled text or placeholders to secondary.
     """
-    if not citation or citation.strip().lower() == "none":
+    stripped = citation.strip() if citation else ""
+    if not stripped or stripped.lower() == "none":
         return SourceType.NONE
     for pattern in _PRIMARY_PATTERNS:
-        if re.search(pattern, citation):
+        if re.search(pattern, stripped):
             return SourceType.PRIMARY
     # If it has a URL, classify by domain
-    url_match = re.search(r"https?://[^\s]+", citation)
+    url_match = re.search(r"https?://[^\s]+", stripped)
     if url_match:
         return classify_source_by_url(url_match.group())
-    # Has text but no primary indicators
-    return SourceType.SECONDARY
+    # Require a substantive citation for secondary: must have a digit
+    # (year, page number, article number) or be long enough to be a real title
+    if re.search(r"\d", stripped) or len(stripped) > 30:
+        return SourceType.SECONDARY
+    return SourceType.NONE
 
 
 def score_evidence(sources: list[dict]) -> int:
@@ -375,22 +381,24 @@ def _parse_verification_json(response_text: str, rows: list[dict]) -> list[dict]
     via regex. Returns annotated rows with source_1, source_1_type,
     source_2, source_2_type, and evidence_score fields.
     """
-    # Try to parse the full JSON array
+    # Try to parse the full JSON array.  We search for all [...] candidates
+    # (non-greedy) and take the first that parses as a JSON array of dicts.
     verdicts: list[dict] = []
-    try:
-        # Find the JSON array in the response (may have surrounding text)
-        match = re.search(r"\[.*\]", response_text, re.DOTALL)
-        if match:
-            verdicts = json.loads(match.group())
-    except (json.JSONDecodeError, TypeError):
-        pass
+    for match in re.finditer(r"\[.*?\]", response_text, re.DOTALL):
+        try:
+            parsed = json.loads(match.group())
+            if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
+                verdicts = parsed
+                break
+        except (json.JSONDecodeError, TypeError):
+            continue
 
-    # Fallback: extract individual JSON objects
+    # Fallback: extract individual JSON objects (handles one level of nesting)
     if not verdicts:
-        for m in re.finditer(r"\{[^}]+\}", response_text):
+        for m in re.finditer(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", response_text):
             try:
                 obj = json.loads(m.group())
-                if "name" in obj:
+                if isinstance(obj, dict) and "name" in obj:
                     verdicts.append(obj)
             except json.JSONDecodeError:
                 continue
