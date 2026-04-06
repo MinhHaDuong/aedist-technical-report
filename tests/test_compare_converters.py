@@ -130,6 +130,24 @@ def test_format_latex():
     assert r"\bottomrule" in tex
 
 
+def test_format_latex_merges_md_and_html_tables():
+    """LaTeX table column merges markdown + HTML table counts (PR #167 review)."""
+    results = {
+        "mistral-ocr": {
+            "lines": 100,
+            "md_tables": 0,
+            "md_table_rows": 0,
+            "html_tables": 15,
+            "vietnamese_score": 5,
+            "vietnamese_max": 5,
+            "size_kb": 67,
+        },
+    }
+    tex = format_latex(results, "test-doc")
+    # Should show 15 (0 md + 15 html), not 0
+    assert "& 15 &" in tex
+
+
 def test_module_has_argparse():
     source = Path("src/aedist/compare_converters.py").read_text()
     assert "ArgumentParser" in source

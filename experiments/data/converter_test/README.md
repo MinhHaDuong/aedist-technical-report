@@ -28,6 +28,32 @@
 - **Speed**: ~60s per page (173 pages ≈ 3 hours)
 - **Verdict**: Good table quality, but too slow for full documents
 
+### OpenRouter / Mistral OCR ($2/1000 pages via file-parser plugin)
+- **Output**: 1954 lines, 67 KB, **15 HTML tables**
+- **Text extraction**: Good — Vietnamese diacritics preserved
+- **Table extraction**: Moderate — proper HTML table structure with `<th>`/`<td>`, but only 15 tables (vs Marker's 170)
+- **Limitation**: Output capped by LLM token limit (65K) — the parsed document is too large for the model to reproduce fully
+- **Speed**: ~10 minutes for 173 pages (OCR + LLM generation)
+- **Cost**: ~$0.35 (OCR) + LLM tokens
+- **Verdict**: Good table quality per table, but incomplete coverage due to output length constraints
+
+### OpenRouter / Cloudflare AI (free, text-only via file-parser plugin)
+- **Output**: 1609 lines, 57 KB, **14 HTML tables**
+- **Text extraction**: Moderate — extracted text despite being a scanned document (likely has a hidden text layer)
+- **Table extraction**: Similar to Mistral OCR (14 vs 15 HTML tables)
+- **Speed**: ~8 minutes for 173 pages
+- **Cost**: Free (Cloudflare) + LLM tokens
+- **Verdict**: Surprisingly comparable to Mistral OCR on this document; same output length constraint
+
+### Mistral OCR direct (/v1/ocr API, $2/1000 pages, no LLM)
+- **Output**: 1307 lines, 548 KB, **169 HTML tables**
+- **Text extraction**: Good — Vietnamese diacritics preserved
+- **Table extraction**: Excellent — proper HTML tables with `rowspan`, `colspan`, `<th>`, matching Marker's 170 tables
+- **Key advantage**: Direct OCR endpoint, no LLM bottleneck — returns ALL pages and ALL tables
+- **Speed**: ~30 seconds for 173 pages (pure OCR, no generation)
+- **Cost**: ~$0.35 (173 pages at $2/1000)
+- **Verdict**: Matches Marker on table count with richer HTML structure (rowspan/colspan)
+
 ### MinerU (localhost:8010, jianjungki/mineru-api:gpu, GPU)
 - **Output**: 695 lines, 50K chars, **0 markdown tables**
 - **Text extraction**: Good — Vietnamese diacritics preserved, document structure detected
@@ -35,19 +61,28 @@
 - **Speed**: Fast (single API call)
 - **Verdict**: Good for text, fails on tables for this document type
 
+## Benchmark Summary (2026-04-06)
+
+```
+Backend              Lines  Tables  Rows  HTML  Viet  Size KB
+--------------------------------------------------------------
+cloudflare-ai         1609       0     0    14 5/  5      57
+grobid                4961       0     0    45 5/  5     388
+marker                4745     170  4038     0 5/  5    1630
+mistral-ocr (plugin)  1954       0     0    15 5/  5      67
+mistral-ocr (direct)  1307       0     0   169 5/  5     547
+```
+
+Note: "Tables" counts markdown `|---|` tables, "HTML" counts `<table>` blocks.
+Marker uses markdown tables; other backends use HTML tables.
+
 ## Conclusion
 
-**Marker is the clear winner** for this document type:
+**Marker and Mistral OCR (direct) are the top two converters**:
+- Marker: 170 markdown tables, 1.6 MB — local, free, GPU-accelerated
+- Mistral OCR (direct): 169 HTML tables, 548 KB — cloud API, $0.35, richer structure (rowspan/colspan)
+- The OpenRouter file-parser plugin approach (mistral-ocr via LLM) only captured 15 tables — the LLM output window is the bottleneck, not OCR quality
+- MinerU: good text extraction but 0 tables on this document type
+- GROBID extracts the most raw text (4961 lines) but flattens table structure
 
-| Backend | Tables | Table rows | Lines | Size |
-|---------|--------|-----------|-------|------|
-| **Marker** | **170** | **4038** | 4745 | 1.6 MB |
-| GROBID | 0 | 0 | 4961 | 388 KB |
-| MinerU | 0 | 0 | 695 | 58 KB |
-| Gemma 4 vision | good/page | — | — | ~60s/page |
-
-- Marker is the only converter that preserves table structure at scale
-- Full document in one call vs page-by-page (vision)
-- Minor OCR errors on Vietnamese diacritics (fixable in post-processing)
-
-Recommended pipeline: **Marker for table-heavy scanned PDFs**, GROBID as fallback for text-only documents.
+Recommended pipeline: **Marker (local, free) or Mistral OCR direct (cloud, $0.35)** for table-heavy scanned PDFs. Both deliver ~170 tables from 173 pages. Choose based on whether local GPU or cloud API is preferred.

@@ -82,7 +82,12 @@ def format_summary(results: dict[str, dict], document: str) -> str:
 
 
 def format_latex(results: dict[str, dict], document: str) -> str:
-    """Format comparison as a LaTeX table."""
+    """Format comparison as a LaTeX table.
+
+    The "Tables" column merges markdown and HTML table counts so that
+    backends using HTML tables (GROBID, OpenRouter) are not misleadingly
+    reported as zero.
+    """
     lines = [
         r"\begin{tabular}{lrrrrr}",
         r"\toprule",
@@ -91,8 +96,9 @@ def format_latex(results: dict[str, dict], document: str) -> str:
     ]
     for backend, r in sorted(results.items()):
         viet = f"{r['vietnamese_score']}/{r['vietnamese_max']}"
+        total_tables = r["md_tables"] + r["html_tables"]
         lines.append(
-            f"{backend} & {r['lines']} & {r['md_tables']} & "
+            f"{backend} & {r['lines']} & {total_tables} & "
             f"{r['md_table_rows']} & {viet} & {r['size_kb']:.0f} \\\\"
         )
     lines.append(r"\bottomrule")

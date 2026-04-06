@@ -97,7 +97,7 @@ def main(argv=None):
     result = pdf_to_markdown(args.pdf, marker_url=args.marker_url)
 
     output = get_output_path(args.pdf, args.output)
-    actual_argv = sys.argv if argv is None else ["python", "-m", "aedist.pdf2md_marker"] + argv
+    actual_argv = sys.argv if argv is None else ["python", "-m", __spec__.name] + argv
     output.write_text(
         result + metadata_comment(args.pdf, backend="Marker", model="n/a", argv=actual_argv),
         encoding="utf-8",
