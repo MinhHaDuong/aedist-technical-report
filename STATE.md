@@ -1,8 +1,8 @@
-Last updated: 2026-04-05
+Last updated: 2026-04-06
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census done (33 models, F1 2–66%, $0.73). 315 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Self-consistency analysis merged (#96). Worker infrastructure operational: PadmeWorker (GPU), OpenRouterWorker (cloud), Observer for lease monitoring (#126–#131). Gold truth corpus: 18 manually verified tables (155 KB). Reasoning field removed from model registry — reasoning is an experimental condition, not a model property (#134).
+Pipeline end-to-end via Makefile. Census done (33 models, F1 2–66%, $0.73). 336 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Multi-turn token budget analyzed: most models safe at 10+ turns, DeepSeek V3.2 overflows at 15 turns — context guard and stateless mode added (#113, #148). Self-consistency analysis merged (#96). Worker infrastructure operational. Gold truth corpus: 18 manually verified tables (155 KB).
 
 ## Blockers
 
