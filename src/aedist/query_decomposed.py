@@ -74,7 +74,7 @@ _FUEL_PROMPTS = {
 }
 
 
-def _extract_csv_text(response: str) -> str | None:
+def extract_csv_text(response: str) -> str | None:
     """Extract and canonicalize CSV from a model response."""
     blocks = extract_fenced_blocks(response)
     if not blocks:
@@ -92,7 +92,7 @@ def _extract_csv_text(response: str) -> str | None:
         return None
 
 
-def _merge_csvs(csv_texts: list[str]) -> str:
+def merge_csvs(csv_texts: list[str]) -> str:
     """Merge multiple canonical CSVs, deduplicating by name."""
     seen_names: set[str] = set()
     merged_rows: list[list[str]] = []
@@ -173,7 +173,7 @@ def query_decomposed(
     # Merge CSV outputs
     csv_texts = []
     for fuel in _FUEL_PROMPTS:
-        csv_text = _extract_csv_text(sub_results[fuel]["response"])
+        csv_text = extract_csv_text(sub_results[fuel]["response"])
         if csv_text:
             csv_texts.append(csv_text)
             lines = csv_text.strip().split("\n")
@@ -181,7 +181,7 @@ def query_decomposed(
         else:
             log.warning("    %s: no CSV extracted", fuel)
 
-    merged_csv = _merge_csvs(csv_texts) if csv_texts else ""
+    merged_csv = merge_csvs(csv_texts) if csv_texts else ""
     merged_lines = merged_csv.strip().split("\n") if merged_csv else []
     n_merged = len(merged_lines) - 1 if len(merged_lines) > 1 else 0
     log.info("  Merged: %d unique plants from %d sub-queries", n_merged, len(csv_texts))
