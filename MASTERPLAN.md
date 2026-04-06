@@ -133,16 +133,57 @@ Present "methods benchmark" with data from sweeps 1–2.
 **Deferred:** pipeline UX (#22), reasoning sweep (#11), verification
 sweep (#12), sensitivity (#13), code quality (#30, #35, #36)
 
-### Phase 2: Measurements table (post-conference)
+### Phase 2: Measurements table ✓
 
-Replace `all_metrics.json` with a proper schema.
+Completed (#157). `measurements.jsonl` is the single data source.
+All report tables derived from it. `all_metrics.json` retired.
 
-- Pydantic model for run records
-- Migration: existing sweep 1 + sweep 2 JSONs → measurements table
-- All report tables derived from measurements (single source of truth)
-- Retire the patchwork of `all_metrics.json` + per-sweep summaries
+### Phase 3: Primary-source pipeline (#98)
 
-### Phase 3: Job board (post-conference)
+Apply the best benchmarked method (RAG-wholesale + query decomposition,
+F1=99%, $0.06) to primary Vietnamese government documents. The benchmark
+and pipeline are mutually reinforcing: the pipeline produces a better gold
+standard, the benchmark evaluates pipeline quality.
+
+**5-step prompt chain:**
+
+1. **PDP8 annexes** — Retrieve Decision 1509/QĐ-BCT annexes: thermal
+   project tables (coal pipeline, LNG 2025–2030/2031–2035, domestic gas).
+   Extract: name, province, capacity MW, timeline, investor, status.
+2. **Operational stock** — Reconstruct the fleet in operation from EVN
+   annual report and ERAV data. Columns: plant name (Vietnamese + English),
+   province, fuel, capacity, units, COD, owner, PDP reference.
+3. **Decisional chronology** — For each plant (batched by 10–15), trace
+   the administrative history from primary sources: PDP inscription,
+   modifications across successive PDPs, investment certificate,
+   environmental licence, construction start, COD (planned vs actual),
+   cancellation if applicable. Rule: if no primary source, write
+   "[source primaire non localisée]" — never substitute with GEM or
+   Wikipedia.
+4. **Historico-prospective analysis** — Periodization by PDP (PDP6 pre-2006,
+   PDP7 2006–2016, PDP7R→PDP8 2016–2023, PDP8→PDP8 revised 2023–2025,
+   post-2030 exit scenarios). Realization rates per PDP, cancellation
+   dynamics, GNL pivot, nuclear return.
+5. **Assembly** — Citable report with provenance chain. Each datum traces
+   to an identified primary document; gaps are flagged honestly.
+
+**Practical constraints:**
+- PDP annexes are in Vietnamese, published on thuvienphapluat.vn or
+  government portal — some are scanned PDF images, not text
+- EVN annual reports not always freely accessible in full
+- Per-project decisions (investment certificates, ĐTM) are dispersed
+- Token budget: 10+ batches of 15 plants may overflow multi-turn context
+
+**Infrastructure from benchmark that serves this phase:**
+
+| Pipeline step | Benchmark infrastructure | Status |
+|---|---|---|
+| Step 1 (PDP annexes) | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
+| Step 2 (EVN stock) | Web-augmented queries | sweep2-web done |
+| Step 3 (chronologies) | Multi-turn conversations | sweep2-multiturn done |
+| Step 5 (assembly) | Reconciliation LP + evaluation | Done, 423 tests |
+
+### Phase 4: Job board (post-conference)
 
 Replace Makefile sweeps with file-based job execution.
 
@@ -153,9 +194,9 @@ Replace Makefile sweeps with file-based job execution.
 - Resume = re-scan pending + check lease expiry on running
 - Run sweeps 3–5 (#11, #12, #13) on the new infrastructure
 
-### Phase 4: Output provenance (depends on phase 2)
+### Phase 5: Output provenance (depends on phases 2, 3)
 
-Level 3 evaluation. Can start alongside phase 3.
+Level 3 evaluation. Can start alongside phase 4.
 
 - Extend query methods to request source attribution
 - Parse and validate source citations
@@ -163,9 +204,9 @@ Level 3 evaluation. Can start alongside phase 3.
 - Confidence interval estimation on aggregates
 - Verification sweep (#12) produces the first provenance data
 
-### Phase 5: Usability evaluation (depends on phase 3)
+### Phase 6: Usability evaluation (depends on phase 4)
 
-Level 4 evaluation. Can start alongside phase 4.
+Level 4 evaluation. Can start alongside phase 5.
 
 - Test with second country (scale)
 - Test with updated reference data (temporal stability)
@@ -173,11 +214,12 @@ Level 4 evaluation. Can start alongside phase 4.
 - Incoherence detection and escalation protocol
 - Source prioritization when references conflict
 
-### Phase 6: Journal submission (depends on phases 4 + 5)
+### Phase 7: Journal submission (depends on phases 5 + 6)
 
-Package phases 1–5 into a paper.
+Package phases 1–6 into a paper.
 
 - Methods benchmark results (sweeps 1–5)
+- Primary-source pipeline: first application and lessons learned
 - Multi-level evaluation framework with data at all levels
 - Architecture: from benchmark toward production pipeline
 - Reproducibility: the code *is* the evidence
