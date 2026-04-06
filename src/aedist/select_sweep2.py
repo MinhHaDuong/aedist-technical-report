@@ -21,6 +21,8 @@ from pathlib import Path
 
 import yaml
 
+from .measurements_adapter import load_metrics_from_measurements
+
 log = logging.getLogger(__name__)
 
 
@@ -262,8 +264,6 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load metrics
-    from .measurements_adapter import load_metrics_from_measurements
-
     metrics = load_metrics_from_measurements(args.measurements)
     log.info("Loaded %d metric entries from %s", len(metrics), args.measurements)
 

@@ -206,11 +206,7 @@ def test_generate_census_table_matched_over_total():
 # --- CLI integration via file ---
 
 
-def _write_measurements(path, metrics):
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
-
-    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+from conftest import write_measurements
 
 
 def test_main_writes_output(tmp_path):
@@ -218,7 +214,7 @@ def test_main_writes_output(tmp_path):
     from aedist.tabulate_census import main
 
     input_file = tmp_path / "measurements.jsonl"
-    _write_measurements(input_file, SAMPLE_METRICS)
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "tab_census.tex"
 
     main(["--measurements", str(input_file), "--output", str(output_file)])
@@ -233,7 +229,7 @@ def test_main_creates_parent_dirs(tmp_path):
     from aedist.tabulate_census import main
 
     input_file = tmp_path / "measurements.jsonl"
-    _write_measurements(input_file, SAMPLE_METRICS)
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "sub" / "dir" / "tab_census.tex"
 
     main(["--measurements", str(input_file), "--output", str(output_file)])

@@ -19,6 +19,7 @@ import logging
 import statistics
 from pathlib import Path
 
+from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
@@ -184,8 +185,6 @@ def main(argv: list[str] | None = None):
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
-
-    from .measurements_adapter import load_metrics_from_measurements
 
     metrics = load_metrics_from_measurements(args.measurements)
 

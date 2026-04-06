@@ -15,6 +15,7 @@ import logging
 from pathlib import Path
 from statistics import median
 
+from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_macros import slug_from_label
 
 log = logging.getLogger(__name__)
@@ -28,20 +29,14 @@ def main():
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    from .measurements_adapter import load_metrics_from_measurements
-
     metrics = load_metrics_from_measurements(args.measurements)
 
-    # Group by model
+    # Group by model and collect cost/latency in a single pass
     by_model: dict[str, list[dict]] = {}
-    for entry in metrics:
-        model_short = slug_from_label(entry["label"])
-        by_model.setdefault(model_short, []).append(entry)
-
-    # Cost/latency from adapter output
     cost_latency: dict[str, list[tuple[float, float]]] = {}
     for entry in metrics:
         model_short = slug_from_label(entry["label"])
+        by_model.setdefault(model_short, []).append(entry)
         cost = entry.get("cost_usd", 0.0) or 0.0
         wall = entry.get("wall_seconds", 0.0) or 0.0
         cost_latency.setdefault(model_short, []).append((cost, wall))

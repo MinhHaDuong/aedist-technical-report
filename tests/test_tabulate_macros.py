@@ -63,18 +63,13 @@ def test_slug_strips_run_and_dir():
     assert len(summary) == 1
 
 
-def _write_measurements(path, metrics):
-    """Convert metrics dicts to measurements.jsonl for CLI tests."""
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
-
-    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+from conftest import write_measurements
 
 
 def test_main_writes_file(tmp_path):
     """CLI writes macros.tex from a measurements.jsonl file."""
     input_path = tmp_path / "measurements.jsonl"
-    _write_measurements(input_path, SAMPLE_METRICS)
+    write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "macros.tex"
 
     from aedist.tabulate_macros import main

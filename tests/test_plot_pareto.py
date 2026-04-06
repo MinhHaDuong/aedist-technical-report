@@ -55,17 +55,13 @@ def test_local_flag():
     assert by_model["padme-qwen3.5-27b"]["local"] == 1
 
 
-def _write_measurements(path, metrics):
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
-
-    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+from conftest import write_measurements
 
 
 def test_main_writes_csv(tmp_path):
     """CLI writes well-formed CSV with cost data."""
     input_path = tmp_path / "measurements.jsonl"
-    _write_measurements(input_path, SAMPLE_METRICS)
+    write_measurements(input_path, SAMPLE_METRICS)
     costs_path = tmp_path / "summary.csv"
     costs_path.write_text(SUMMARY_CSV)
     output_path = tmp_path / "pareto.csv"
@@ -93,7 +89,7 @@ def test_main_writes_csv(tmp_path):
 def test_main_without_costs(tmp_path):
     """CLI works without --costs."""
     input_path = tmp_path / "measurements.jsonl"
-    _write_measurements(input_path, SAMPLE_METRICS)
+    write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "pareto.csv"
 
     from aedist.plot_pareto import main

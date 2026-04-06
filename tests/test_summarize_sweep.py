@@ -6,18 +6,13 @@ from pathlib import Path
 from aedist.summarize_sweep import main
 
 
-def _write_measurements(path: Path, entries: list[dict]) -> None:
-    """Convert metrics dicts to measurements.jsonl."""
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
-
-    RunRecord.save_jsonl(metrics_to_records(entries), path)
+from conftest import write_measurements
 
 
 def test_summarize_two_models(tmp_path, monkeypatch):
     """Two models, 2 runs each → sorted by median F1 descending."""
     meas = tmp_path / "measurements.jsonl"
-    _write_measurements(meas, [
+    write_measurements(meas, [
         {"label": "sweep1/alpha-run1", "f1": 0.6, "coverage": 0.7, "precision": 0.5, "fuel_accuracy": 0.8, "n_system": 10, "cost_usd": 0.01, "wall_seconds": 5.0},
         {"label": "sweep1/alpha-run2", "f1": 0.8, "coverage": 0.9, "precision": 0.7, "fuel_accuracy": 0.9, "n_system": 12, "cost_usd": 0.02, "wall_seconds": 6.0},
         {"label": "sweep1/beta-run1", "f1": 0.9, "coverage": 0.95, "precision": 0.85, "fuel_accuracy": 0.95, "n_system": 15, "cost_usd": 0.03, "wall_seconds": 3.0},
@@ -43,7 +38,7 @@ def test_summarize_two_models(tmp_path, monkeypatch):
 def test_summarize_empty_metrics(tmp_path, monkeypatch):
     """Empty metrics → empty CSV (header only)."""
     meas = tmp_path / "measurements.jsonl"
-    _write_measurements(meas, [])
+    write_measurements(meas, [])
     out = tmp_path / "summary.csv"
     monkeypatch.setattr("sys.argv", [
         "summarize_sweep",

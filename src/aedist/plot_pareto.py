@@ -14,6 +14,7 @@ import csv
 import logging
 from pathlib import Path
 
+from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_macros import load_and_summarize
 
 log = logging.getLogger(__name__)
@@ -69,8 +70,6 @@ def main() -> None:
     args = parser.parse_args()
 
     output_path = Path(args.output)
-
-    from .measurements_adapter import load_metrics_from_measurements
 
     metrics = load_metrics_from_measurements(args.measurements)
 

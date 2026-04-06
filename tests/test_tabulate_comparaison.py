@@ -239,17 +239,13 @@ def test_empty_intersection_no_data_rows():
 # --- CLI integration ---
 
 
-def _write_measurements(path, metrics):
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
-
-    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+from conftest import write_measurements
 
 
 def test_main_writes_output(tmp_path):
     """main() reads measurements.jsonl and writes LaTeX output."""
     input_file = tmp_path / "measurements.jsonl"
-    _write_measurements(input_file, SAMPLE_METRICS)
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "tab_comparaison.tex"
 
     main(["--measurements", str(input_file), "--output", str(output_file)])
@@ -262,7 +258,7 @@ def test_main_writes_output(tmp_path):
 def test_main_creates_parent_dirs(tmp_path):
     """main() creates parent directories if they don't exist."""
     input_file = tmp_path / "measurements.jsonl"
-    _write_measurements(input_file, SAMPLE_METRICS)
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "sub" / "dir" / "tab_comparaison.tex"
 
     main(["--measurements", str(input_file), "--output", str(output_file)])
