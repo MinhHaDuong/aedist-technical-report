@@ -2,7 +2,7 @@ Last updated: 2026-04-06
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census done (35 models, F1 2–66%, $0.82). 336 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Sweep 2 web complete ($0.13, #95 closed). CSV extraction tolerant of unfenced output and "Project" headers (#152). Self-consistency analysis merged (#96). Worker infrastructure operational. Gold truth corpus: 18 manually verified tables (155 KB).
+Pipeline end-to-end via Makefile. Census done (35 models, F1 2–66%, $0.82). 336 tests pass. Sweep 2 RAG + multiturn complete ($2.81). Sweep 2 web complete ($0.13, #95 closed). CSV extraction tolerant of unfenced output and "Project" headers (#152). Self-consistency analysis merged (#96). Decomposition experiment: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Report + slides updated with decomposition findings (#151 merged). Abstract and conclusion chapters current.
 
 ## Blockers
 
@@ -28,6 +28,8 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 - [x] Self-consistency analysis: majority/union vote pipeline (#96)
 - [x] Worker infrastructure: PadmeWorker + OpenRouterWorker + Observer
 - [x] Unified PDF converter interface with Protocol registry
+- [x] Decomposition experiment: 99% F1 at $0.06 (#151)
+- [x] Report + slides: decomposition findings, updated conclusion + abstract
 - [ ] Layout-aware converters: Marker + MinerU (#81)
 - [ ] Build RAG corpus and run Sweep 2 (#10)
 - [ ] Reframe slides for methods-not-models (#93)
@@ -38,6 +40,7 @@ Submit to journal (TBD — after conference feedback).
 
 ## Backlog
 
+- Stack decomposition + union vote + precision filter
 - Chunked RAG strategy (currently only wholesale)
 - Reasoning effort sweep (#11) — needs reasoning models on Padme
 - Verification sweep (#12)
