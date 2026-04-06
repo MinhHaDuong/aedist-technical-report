@@ -1,11 +1,8 @@
 """Tests for aedist.tabulate_macros — LaTeX macro generation from metrics JSON."""
 
-import json
-import textwrap
-from pathlib import Path
+from conftest import write_measurements
 
 from aedist.tabulate_macros import generate_macros, load_and_summarize
-
 
 SAMPLE_METRICS = [
     {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.70, "coverage": 0.8, "precision": 0.62},
@@ -14,12 +11,42 @@ SAMPLE_METRICS = [
     {"label": "sweep1_census/claude-4-run1", "f1": 0.65, "coverage": 0.75, "precision": 0.58},
     {"label": "sweep1_census/claude-4-run2", "f1": 0.63, "coverage": 0.73, "precision": 0.56},
     {"label": "sweep1_census/claude-4-run3", "f1": 0.67, "coverage": 0.77, "precision": 0.60},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run1", "f1": 0.50, "coverage": 0.60, "precision": 0.43},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run2", "f1": 0.52, "coverage": 0.62, "precision": 0.45},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run3", "f1": 0.48, "coverage": 0.58, "precision": 0.41},
-    {"label": "sweep1_census/padme-mistral-small3.2-run1", "f1": 0.40, "coverage": 0.50, "precision": 0.33},
-    {"label": "sweep1_census/padme-mistral-small3.2-run2", "f1": 0.42, "coverage": 0.52, "precision": 0.35},
-    {"label": "sweep1_census/padme-mistral-small3.2-run3", "f1": 0.38, "coverage": 0.48, "precision": 0.31},
+    {
+        "label": "sweep1_census/padme-qwen3.5-27b-run1",
+        "f1": 0.50,
+        "coverage": 0.60,
+        "precision": 0.43,
+    },
+    {
+        "label": "sweep1_census/padme-qwen3.5-27b-run2",
+        "f1": 0.52,
+        "coverage": 0.62,
+        "precision": 0.45,
+    },
+    {
+        "label": "sweep1_census/padme-qwen3.5-27b-run3",
+        "f1": 0.48,
+        "coverage": 0.58,
+        "precision": 0.41,
+    },
+    {
+        "label": "sweep1_census/padme-mistral-small3.2-run1",
+        "f1": 0.40,
+        "coverage": 0.50,
+        "precision": 0.33,
+    },
+    {
+        "label": "sweep1_census/padme-mistral-small3.2-run2",
+        "f1": 0.42,
+        "coverage": 0.52,
+        "precision": 0.35,
+    },
+    {
+        "label": "sweep1_census/padme-mistral-small3.2-run3",
+        "f1": 0.38,
+        "coverage": 0.48,
+        "precision": 0.31,
+    },
 ]
 
 
@@ -63,22 +90,22 @@ def test_slug_strips_run_and_dir():
     assert len(summary) == 1
 
 
-from conftest import write_measurements
-
-
 def test_main_writes_file(tmp_path):
     """CLI writes macros.tex from a measurements.jsonl file."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "macros.tex"
 
-    from aedist.tabulate_macros import main
     import sys
+
+    from aedist.tabulate_macros import main
 
     sys.argv = [
         "tabulate_macros",
-        "--measurements", str(input_path),
-        "--output", str(output_path),
+        "--measurements",
+        str(input_path),
+        "--output",
+        str(output_path),
     ]
     main()
     content = output_path.read_text()

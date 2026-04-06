@@ -1,6 +1,6 @@
 %erg v1
 Title: Retire all_metrics.json and per-sweep summary paths
-Status: pending
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0003
@@ -12,6 +12,7 @@ Blocked-by: 0003
 2026-04-06T17:36Z claude status doing
 2026-04-06T17:50Z claude status closed — all_metrics.json retired, 8 scripts on measurements.jsonl only, 392 tests pass
 2026-04-06T17:52Z claude status pending — awaiting PR review, simplify, re-review, merge
+2026-04-06T22:00Z claude status closed — PR #165 merged, review nits fixed in fix/pr165-nits
 
 --- body ---
 ## Context

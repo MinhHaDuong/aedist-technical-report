@@ -1,11 +1,10 @@
 """Tests for aedist.plot_census — CSV bar-chart data from metrics JSON."""
 
 import csv
-import json
-from pathlib import Path
+
+from conftest import write_measurements
 
 from aedist.plot_census import build_census_rows
-
 
 SAMPLE_METRICS = [
     {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.70},
@@ -43,22 +42,22 @@ def test_output_is_sorted_descending():
     assert f1_values == sorted(f1_values, reverse=True)
 
 
-from conftest import write_measurements
-
-
 def test_main_writes_csv(tmp_path):
     """CLI writes well-formed CSV with header."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "census_bars.csv"
 
-    from aedist.plot_census import main
     import sys
+
+    from aedist.plot_census import main
 
     sys.argv = [
         "plot_census",
-        "--measurements", str(input_path),
-        "--output", str(output_path),
+        "--measurements",
+        str(input_path),
+        "--output",
+        str(output_path),
     ]
     main()
 

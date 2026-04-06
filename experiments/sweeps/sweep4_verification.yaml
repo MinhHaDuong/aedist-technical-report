@@ -1,0 +1,33 @@
+# Sweep 4: Verification regimes on top 3 Sweep 2 configs
+#
+# Question: What is the marginal cost of going from "AI says 120 plants"
+# to "120 plants with traceable provenance"?
+#
+# Evidence rubric (per plant):
+#   0 = hallucinated source, 1 = no sources, 2 = 1 secondary,
+#   3 = 1 primary, 4 = 2+ independent primary
+
+base_configs:
+  - method: multiturn
+    model: claude-opus-4.6
+    result_file: outputs/sweep2_multiturn/claude-opus-4.6-run3.json
+  - method: rag
+    model: google/gemini-2.5-flash-lite
+    result_file: outputs/sweep2_rag/gemini-2.5-flash-lite-run2.json
+  - method: rag
+    model: openai/gpt-5.4
+    result_file: outputs/sweep2_rag/gpt-5.4-run1.json
+
+verification_modes:
+  - unverified
+  - tool
+  - self
+  - cross
+  - web
+
+# Cross-verifier: different provider to reduce correlated errors
+cross_verifier: anthropic/claude-sonnet-4.6
+
+repeat: 3
+budget_usd: 25
+output: outputs/sweep4_verification

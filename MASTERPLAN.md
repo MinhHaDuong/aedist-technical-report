@@ -133,16 +133,61 @@ Present "methods benchmark" with data from sweeps 1–2.
 **Deferred:** pipeline UX (#22), reasoning sweep (#11), verification
 sweep (#12), sensitivity (#13), code quality (#30, #35, #36)
 
-### Phase 2: Measurements table (post-conference)
+### Phase 2: Measurements table ✓
 
-Replace `all_metrics.json` with a proper schema.
+Completed (#157). `measurements.jsonl` is the single data source.
+All report tables derived from it. `all_metrics.json` retired.
 
-- Pydantic model for run records
-- Migration: existing sweep 1 + sweep 2 JSONs → measurements table
-- All report tables derived from measurements (single source of truth)
-- Retire the patchwork of `all_metrics.json` + per-sweep summaries
+### Phase 3: Primary-source pipeline (#98)
 
-### Phase 3: Job board (post-conference)
+Build a generic pipeline that extracts auditable statistical tables from
+primary government documents. The system is parameterized by country and
+energy subsector — the benchmark infrastructure (PDF converters, RAG,
+multi-turn, reconciliation) provides the building blocks.
+
+The benchmark and pipeline are mutually reinforcing: the pipeline produces
+a better gold standard, the benchmark evaluates pipeline quality.
+
+**Generic 5-step extraction chain:**
+
+1. **Regulatory corpus** — Retrieve official planning documents and their
+   annexes (facility lists with capacity, timeline, investor, status).
+   Convert PDF→MD using benchmarked converters.
+2. **Operational stock** — Reconstruct the current fleet from utility
+   annual reports and regulator data: facility name, location, fuel,
+   capacity, units, commissioning date, owner.
+3. **Decisional chronology** — For each facility (batched), trace the
+   administrative history from primary sources: first inscription in a
+   national plan, modifications across successive plans, permits,
+   construction, commissioning (planned vs actual), cancellation.
+   Rule: if no primary source is found, flag the gap — never substitute
+   with secondary compilations.
+4. **Analytical synthesis** — Periodization by planning cycles,
+   realization rates (planned vs built MW), cancellation dynamics,
+   technology transitions, prospective scenarios.
+5. **Assembly** — Citable report with provenance chain. Each datum traces
+   to an identified primary document; gaps are flagged honestly.
+
+**First application: Vietnam thermal plants.**
+Regulatory corpus = PDP7/7A/8/8 revised (Decisions 428, 500, 768, 1509).
+Utility = EVN annual reports, ERAV dispatch data. ~163 facilities.
+Practical constraints: Vietnamese-language PDFs (some scanned), dispersed
+per-project decisions, EVN reports not always freely accessible.
+
+**Infrastructure from benchmark:**
+
+| Pipeline step | Benchmark component | Status |
+|---|---|---|
+| Regulatory corpus | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
+| Operational stock | Web-augmented queries | sweep2-web done |
+| Chronologies | Multi-turn conversations | sweep2-multiturn done |
+| Assembly | Reconciliation LP + evaluation | Done, 423 tests |
+
+**Generalization path:** once the chain works for Vietnam thermal, test
+on a second case (different country or subsector) to validate that the
+pipeline logic is truly country-agnostic and only the corpus changes.
+
+### Phase 4: Job board (post-conference)
 
 Replace Makefile sweeps with file-based job execution.
 
@@ -153,9 +198,9 @@ Replace Makefile sweeps with file-based job execution.
 - Resume = re-scan pending + check lease expiry on running
 - Run sweeps 3–5 (#11, #12, #13) on the new infrastructure
 
-### Phase 4: Output provenance (depends on phase 2)
+### Phase 5: Output provenance (depends on phases 2, 3)
 
-Level 3 evaluation. Can start alongside phase 3.
+Level 3 evaluation. Can start alongside phase 4.
 
 - Extend query methods to request source attribution
 - Parse and validate source citations
@@ -163,9 +208,9 @@ Level 3 evaluation. Can start alongside phase 3.
 - Confidence interval estimation on aggregates
 - Verification sweep (#12) produces the first provenance data
 
-### Phase 5: Usability evaluation (depends on phase 3)
+### Phase 6: Usability evaluation (depends on phase 4)
 
-Level 4 evaluation. Can start alongside phase 4.
+Level 4 evaluation. Can start alongside phase 5.
 
 - Test with second country (scale)
 - Test with updated reference data (temporal stability)
@@ -173,11 +218,12 @@ Level 4 evaluation. Can start alongside phase 4.
 - Incoherence detection and escalation protocol
 - Source prioritization when references conflict
 
-### Phase 6: Journal submission (depends on phases 4 + 5)
+### Phase 7: Journal submission (depends on phases 5 + 6)
 
-Package phases 1–5 into a paper.
+Package phases 1–6 into a paper.
 
 - Methods benchmark results (sweeps 1–5)
+- Primary-source pipeline: first application and lessons learned
 - Multi-level evaluation framework with data at all levels
 - Architecture: from benchmark toward production pipeline
 - Reproducibility: the code *is* the evidence

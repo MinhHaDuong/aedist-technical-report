@@ -56,11 +56,28 @@ class Plant(BaseModel):
     )
 
 
+class SourceType(StrEnum):
+    PRIMARY = "primary"
+    SECONDARY = "secondary"
+    HALLUCINATED = "hallucinated"
+    NONE = "none"
+
+
 class SourcedPlant(Plant):
     """Plant entry with provenance information, for system outputs."""
 
     sources: list[str] = Field(default_factory=list)
+    source_types: list[SourceType] = Field(default_factory=list)
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    evidence_score: int = Field(
+        default=0,
+        ge=0,
+        le=4,
+        description=(
+            "Evidence quality rubric: 0=hallucinated sources, 1=no sources, "
+            "2=one secondary, 3=one primary, 4=two+ independent primary."
+        ),
+    )
 
 
 class MatchType(StrEnum):
