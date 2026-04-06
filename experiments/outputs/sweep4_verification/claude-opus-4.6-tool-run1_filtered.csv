@@ -1,0 +1,54 @@
+name,fuel,status,cod,province,capacity_mwe,plan_origin,notes,verification_source,confidence,source_1,source_1_type,source_2,source_2_type,evidence_score,verified
+Pha Lai 1,Coal,Operating,1983-1986,Hai Duong,440,Pre-PDP7,Soviet-built; ageing fleet,ref: Phả Lại 1,0.78,ref: Phả Lại 1,primary,,none,3,True
+Pha Lai 2,Coal,Operating,2001-2002,Hai Duong,600,Pre-PDP7,Japanese ODA financed,ref: Phả Lại 2,0.78,ref: Phả Lại 2,primary,,none,3,True
+Na Duong 1,Coal,Operating,2004,Lang Son,110,Pre-PDP7,Uses local lignite,ref: Mong Duong 1,0.82,ref: Mong Duong 1,primary,,none,3,True
+Cao Ngan,Coal,Operating,2008,Thai Nguyen,100,Pre-PDP7,,ref: Cao Ngạn,0.88,ref: Cao Ngạn,primary,,none,3,True
+An Khanh 1,Coal,Operating,~2015,Thai Nguyen,110,PDP7,,ref: An Khánh 1,0.9,ref: An Khánh 1,primary,,none,3,True
+Son Dong,Coal,Operating,~2014,Bac Giang,220,PDP7,,ref: Son Dong,1.0,ref: Son Dong,primary,,none,3,True
+Cam Pha 1,Coal,Operating,2010,Quang Ninh,300,PDP7,,ref: Cam Pha 3,0.89,ref: Cam Pha 3,primary,,none,3,True
+Cam Pha 2,Coal,Operating,2012,Quang Ninh,370,PDP7,,ref: Cam Pha 3,0.89,ref: Cam Pha 3,primary,,none,3,True
+Mong Duong 1,Coal,Operating,2015,Quang Ninh,1080,PDP7,EVN,ref: Mong Duong 1,1.0,ref: Mong Duong 1,primary,,none,3,True
+Mong Duong 2 (BOT),Coal,Operating,2015,Quang Ninh,1200,PDP7,AES BOT,ref: Mong Duong 2,0.8,ref: Mong Duong 2,primary,,none,3,True
+Quang Ninh 1,Coal,Operating,2010,Quang Ninh,600,PDP7,,ref: Quang Ninh 1,1.0,ref: Quang Ninh 1,primary,,none,3,True
+Quang Ninh 2,Coal,Operating,2014,Quang Ninh,600,PDP7,,ref: Quang Ninh 2,1.0,ref: Quang Ninh 2,primary,,none,3,True
+Hai Phong 1,Coal,Operating,2010-2011,Hai Phong,600,PDP7,,ref: Hai Phong 1,1.0,ref: Hai Phong 1,primary,,none,3,True
+Hai Phong 2,Coal,Operating,2013-2014,Hai Phong,600,PDP7,,ref: Hai Phong 2,1.0,ref: Hai Phong 2,primary,,none,3,True
+Thai Binh 1,Coal,Operating,2018,Thai Binh,600,PDP7,,ref: Thái Bình 1,0.82,ref: Thái Bình 1,primary,,none,3,True
+Thai Binh 2,Coal,Operating,2022,Thai Binh,600,PDP7,PVN project; long delayed,ref: Thái Bình 2,0.82,ref: Thái Bình 2,primary,,none,3,True
+Mao Khe,Coal,Operating,2015,Quang Ninh,440,PDP7,,ref: Mao Khe,1.0,ref: Mao Khe,primary,,none,3,True
+Nghi Son 1,Coal,Operating,2013-2014,Thanh Hoa,600,PDP7,,ref: Nghi Son 1,1.0,ref: Nghi Son 1,primary,,none,3,True
+Nghi Son 2 (BOT),Coal,Operating,2022-2023,Thanh Hoa,1200,PDP7 revised,Japanese-led BOT (Marubeni/KEPCO),ref: Nghi Son 2,0.77,ref: Nghi Son 2,primary,,none,3,True
+Vung Ang 1,Coal,Operating,2014-2015,Ha Tinh,1200,PDP7,,ref: Vung Ang 1,1.0,ref: Vung Ang 1,primary,,none,3,True
+Formosa Ha Tinh Steel (captive),Coal,Operating,2017,Ha Tinh,650,Industrial captive,Taiwanese steel complex,ref: Ha Tinh Formosa Plastics Steel Complex,0.72,ref: Ha Tinh Formosa Plastics Steel Complex,primary,,none,3,True
+Vinh Tan 1 (BOT),Coal,Operating,2018,Binh Thuan,1200,PDP7,Chinese BOT,ref: Vinh Tan 1,0.77,ref: Vinh Tan 1,primary,,none,3,True
+Vinh Tan 2,Coal,Operating,2014-2015,Binh Thuan,1244,PDP7,EVN,ref: Vinh Tan 2,1.0,ref: Vinh Tan 2,primary,,none,3,True
+Vinh Tan 4,Coal,Operating,2017-2019,Binh Thuan,1200,PDP7,,ref: Vinh Tan 4,1.0,ref: Vinh Tan 4,primary,,none,3,True
+Vinh Tan 4 Extension,Coal,Operating,2020,Binh Thuan,600,PDP7 revised,,ref: Vinh Tan 4 extension,1.0,ref: Vinh Tan 4 extension,primary,,none,3,True
+Duyen Hai 1,Coal,Operating,2015-2016,Tra Vinh,1245,PDP7,,ref: Duyen Hai 1,1.0,ref: Duyen Hai 1,primary,,none,3,True
+Duyen Hai 2 (BOT),Coal,Operating,2021,Tra Vinh,1200,PDP7 revised,Malaysian BOT (Janakuasa),ref: Duyen Hai 2,0.79,ref: Duyen Hai 2,primary,,none,3,True
+Duyen Hai 3,Coal,Operating,2017,Tra Vinh,1245,PDP7,,ref: Duyen Hai 3,1.0,ref: Duyen Hai 3,primary,,none,3,True
+Duyen Hai 3 Extension,Coal,Operating,2019,Tra Vinh,688,PDP7 revised,,ref: Duyen Hai 3 Extension,1.0,ref: Duyen Hai 3 Extension,primary,,none,3,True
+Song Hau 1,Coal,Operating,2022,Hau Giang,1200,PDP7,Long delayed; Lilama EPC,ref: Sông Hậu 1,0.8,ref: Sông Hậu 1,primary,,none,3,True
+Vung Ang 2 (BOT),Coal,Under Construction,~2026-2027,Ha Tinh,1200,PDP7 revised / carried to PDP8,Mitsubishi-led BOT,ref: Vung Ang 2,0.77,ref: Vung Ang 2,primary,,none,3,True
+Quang Trach 1,Coal,Under Construction,~2025-2026,Quang Binh,1200,PDP7 revised / carried to PDP8,EVN project,ref: Quảng Trạch 1,0.85,ref: Quảng Trạch 1,primary,,none,3,True
+Van Phong 1 (BOT),Coal,Under Construction,~2027,Khanh Hoa,1320,PDP7 revised / carried to PDP8,Sumitomo-led BOT,ref: Vân Phong 1,0.71,ref: Vân Phong 1,primary,,none,3,True
+Long Phu 1,Coal,Under Construction (stalled),Delayed/Uncertain,Soc Trang,1200,PDP7 revised / carried to PDP8,Toshiba withdrew; sanctions issues,ref: Long Phú 1,0.9,ref: Long Phú 1,primary,,none,3,True
+Nam Dinh 1,Coal,Planned/Pre-construction,~2026-2028,Nam Dinh,1200,PDP7 revised / PDP8,BOT; developer selection unclear,ref: Nam Dinh 1,1.0,ref: Nam Dinh 1,primary,,none,3,True
+Na Duong 2,Coal,Planned,~2027-2030,Lang Son,110,PDP7 revised / PDP8,Local lignite,ref: Mong Duong 2,0.82,ref: Mong Duong 2,primary,,none,3,True
+An Khanh 2,Coal,Planned/Uncertain,Uncertain,Thai Nguyen,110,PDP7 revised,Status unclear in PDP8,ref: An Khánh 1,0.8,ref: An Khánh 1,primary,,none,3,True
+Vinh Tan 3,Coal,Cancelled (converted to LNG study),Cancelled as coal,Binh Thuan,1980,PDP7 revised,Removed from PDP8 as coal plant,ref: Vinh Tan 3,1.0,ref: Vinh Tan 3,primary,,none,3,True
+Long Phu 2,Coal,Cancelled/Removed,Cancelled,Soc Trang,1200,PDP7 revised,Removed from PDP8,ref: Long Phú 2,0.9,ref: Long Phú 2,primary,,none,3,True
+Long Phu 3,Coal,Cancelled/Removed,Cancelled,Soc Trang,1800,PDP7 revised,Removed from PDP8,ref: Long Phú 3,0.9,ref: Long Phú 3,primary,,none,3,True
+Song Hau 2,Coal,Cancelled/Removed,Cancelled,Hau Giang,2000,PDP7 revised,Toyo Ink/Removed from PDP8,ref: Sông Hậu 2,0.8,ref: Sông Hậu 2,primary,,none,3,True
+Quang Ninh 3,Coal,Cancelled/Removed,Cancelled,Quang Ninh,1200,PDP7 revised,Removed from PDP8,ref: Quang Ninh 3,1.0,ref: Quang Ninh 3,primary,,none,3,True
+Hai Phong 3,Coal,Cancelled/Removed,Cancelled,Hai Phong,2400,PDP7 revised,Removed from PDP8,ref: Hai Phong 3,1.0,ref: Hai Phong 3,primary,,none,3,True
+Mong Duong 3,Coal,Cancelled/Removed,Cancelled,Quang Ninh,1000,PDP7 revised,Removed from PDP8,ref: Mong Duong 1,0.92,ref: Mong Duong 1,primary,,none,3,True
+Vung Ang 3,Coal,Cancelled/Removed,Cancelled,Ha Tinh,1200,PDP7 revised,Removed from PDP8,ref: Vung Ang 3,1.0,ref: Vung Ang 3,primary,,none,3,True
+Nghi Son 3,Coal,Cancelled/Removed,Cancelled,Thanh Hoa,1200,PDP7 revised,Removed from PDP8,ref: Nghi Son 1,0.9,ref: Nghi Son 1,primary,,none,3,True
+Song Hau 3,Coal,Cancelled/Removed,Cancelled,Hau Giang,1200,PDP7 revised,Removed from PDP8,ref: Hai Phong 3,0.76,ref: Hai Phong 3,primary,,none,3,True
+Phu My 1,Local Natural Gas,Operating,2002,Ba Ria-Vung Tau,1090,Pre-PDP7,CCGT,ref: Cẩm Phả 1,0.71,ref: Cẩm Phả 1,primary,,none,3,True
+Ca Mau 1,Local Natural Gas,Operating,2008,Ca Mau,750,PDP7,PV Power,ref: LNG Cà Mau 1,0.7,ref: LNG Cà Mau 1,primary,,none,3,True
+O Mon 1,Local Natural Gas,Operating,2009,Can Tho,660,PDP7,Uses PM3-CAA gas,ref: Nong Son 1,0.71,ref: Nong Son 1,primary,,none,3,True
+Son My 1 LNG,Imported LNG,Planned/Under development,~2027-2028,Binh Thuan,2250,PDP8,Consortium; linked to Son My LNG terminal,ref: LNG Sơn Mỹ I,0.75,ref: LNG Sơn Mỹ I,primary,,none,3,True
+Quang Trach 2 LNG,Imported LNG,Planned,~2027-2028,Quang Binh,750,PDP8,Adjacent to Quang Trach 1 coal,ref: LNG Quảng Trạch 2,0.88,ref: LNG Quảng Trạch 2,primary,,none,3,True
+Long An LNG Power,Imported LNG,Planned,~2028-2030,Long An,1500,PDP8,,ref: LNG Long An I phase 2,0.74,ref: LNG Long An I phase 2,primary,,none,3,True
