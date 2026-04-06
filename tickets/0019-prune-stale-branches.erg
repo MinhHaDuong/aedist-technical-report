@@ -1,0 +1,30 @@
+%erg v1
+Title: Prune ~50 stale remote branches
+Status: open
+Created: 2026-04-06
+Author: claude
+
+--- log ---
+2026-04-06T14:00Z claude created
+
+--- body ---
+## Context
+
+Over months of worktree-based development, ~50 remote branches have accumulated
+on origin. Most are from merged PRs, closed experiments, or abandoned explorations.
+They add noise to `git branch -a` and slow tab-completion.
+
+## Actions
+
+1. List all remote branches, cross-reference with merged PRs and closed tickets.
+2. Delete branches whose PR is merged or whose work is abandoned.
+3. Keep branches with open PRs or active worktrees.
+4. Consider adding a post-merge hook or CI job to auto-delete branches after PR merge.
+
+## Test
+
+`git branch -r | wc -l` should drop from ~55 to <10.
+
+## Exit criteria
+
+Remote branches correspond only to open PRs or active work. No stale references.
