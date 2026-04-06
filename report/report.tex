@@ -43,9 +43,9 @@
 \begin{abstract}
 Nous évaluons la capacité de l'IA à produire des statistiques énergétiques, en utilisant l'inventaire des centrales thermiques du Vietnam comme benchmark. Seize grands modèles de langage sont testés en requête directe puis en approche conversationnelle avec relances~; les résultats sont ensuite améliorés par Retrieval Augmented Generation (RAG) à partir de documents sources, et comparés aux données disponibles dans les graphes de connaissances globaux (OpenStreetMap, Wikidata, Diffbot, DBpedia).
 
-Les LLM seuls retournent 30 à 40 centrales sur plus de 110 recensées~; l'approche RAG avec relances atteint 73 correspondances (exactes et approximatives) sur l'inventaire de référence. Les graphes globaux apportent des données complémentaires mais aucun n'est suffisant seul. Les outils intégrés (R2R, TrustGraph) combinant agents, RAG et graphes de connaissances restent immatures.
+Les LLM seuls retournent 30 à 40 centrales sur 163 recensées~; l'approche RAG wholesale porte le meilleur résultat à 144 centrales (F1 = 93,8\,\%). La décomposition par type de combustible élimine la troncature des sorties et atteint 163/163 centrales (F1 = 98,8\,\%) pour 0,06~\$, avec un modèle open-weight. Les graphes globaux apportent des données complémentaires mais aucun n'est suffisant seul.
 
-Ces résultats montrent qu'une approche hybride -- combinant RAG, graphes de connaissances alignés sur une ontologie du domaine, et agents spécialisés -- est nécessaire et faisable pour produire des statistiques énergétiques traçables à partir de sources hétérogènes et multilingues.
+Ces résultats montrent qu'un pipeline RAG avec décomposition des requêtes récupère 99\,\% d'un inventaire expert pour un coût marginal. Le 1\,\% restant relève de l'ingénierie de la connaissance~: filtrage des hallucinations, résolution d'entités et traçabilité des sources.
 \end{abstract}
 
 \chapter{Introduction}
