@@ -80,7 +80,7 @@ _SECONDARY_DOMAINS = {
 
 # Patterns in citation text that indicate primary sources
 _PRIMARY_PATTERNS = [
-    r"(?i)decision\s+\d+/(?:QD|QĐ)",  # Vietnamese government decisions
+    r"(?i)decision\s+(?:No\.?\s*)?\d+/(?:QD|QĐ)",  # Vietnamese government decisions
     r"(?i)(?:PDP|quy\s+hoạch)\s*[78]",  # Power Development Plans
     r"(?i)EVN\s+(?:annual|báo\s+cáo)",  # EVN reports
     r"(?i)(?:annual\s+report|prospectus|10-K|10-Q)",  # Company filings
