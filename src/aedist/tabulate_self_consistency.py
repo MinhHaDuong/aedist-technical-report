@@ -1,18 +1,19 @@
-"""Generate self-consistency LaTeX table from self_consistency_summary.json.
+"""Generate self-consistency LaTeX table from measurements.jsonl.
 
 Usage:
     python -m aedist.tabulate_self_consistency \\
-        --input experiments/outputs/sweep2_rag_consistency/self_consistency_summary.json \\
+        --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_self_consistency.tex
 
-Reads per-model self-consistency results and emits a LaTeX table showing
-single-run medians vs majority/union vote F1, with the two failure regimes
-(truncation vs overgeneration) highlighted.
+Reads per-run metrics from sweep2_rag and vote results from
+sweep2_rag_consistency, groups by model, computes medians at render time,
+and emits a LaTeX table showing single-run medians vs majority/union vote F1.
 """
 
 import argparse
-import json
 import logging
+import re
+import statistics
 from pathlib import Path
 
 from .tabulate_utils import format_model_name
@@ -129,16 +130,95 @@ def generate_per_run_table(results: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _strip_run_suffix(label: str) -> str:
+    """Strip -runN suffix and directory prefix to get model slug."""
+
+    stem = label.rsplit("/", 1)[-1]
+    return re.sub(r"-run\d+$", "", stem)
+
+
+def _strip_vote_suffix(label: str) -> str:
+    """Strip -consolidated or -union suffix from a label stem."""
+    stem = label.rsplit("/", 1)[-1]
+    for suffix in ("-consolidated", "-union"):
+        if stem.endswith(suffix):
+            return stem[: -len(suffix)]
+    return stem
+
+
+def assemble_from_measurements(metrics: list[dict]) -> list[dict]:
+    """Build self-consistency result dicts from measurements.jsonl records.
+
+    Expects dicts from the adapter with labels like:
+    - sweep2_rag/deepseek-v3.2-run1  (per-run)
+    - sweep2_rag_consistency/deepseek-v3.2-consolidated  (majority vote)
+    - sweep2_rag_consistency/deepseek-v3.2-union  (union vote)
+    """
+
+    # Separate per-run and vote records
+    per_run: dict[str, list[dict]] = {}
+    consolidated: dict[str, dict] = {}
+    union: dict[str, dict] = {}
+
+    for m in metrics:
+        label = m.get("label", "")
+        if label.startswith("sweep2_rag_consistency/"):
+            model = _strip_vote_suffix(label)
+            if label.endswith("-consolidated"):
+                consolidated[model] = m
+            elif label.endswith("-union"):
+                union[model] = m
+        elif label.startswith("sweep2_rag/"):
+            model = _strip_run_suffix(label)
+            per_run.setdefault(model, []).append(m)
+
+    results = []
+    for model in sorted(per_run):
+        runs = sorted(per_run[model], key=lambda r: r.get("f1", 0))
+        f1_scores = [r["f1"] for r in runs]
+        coverages = [r.get("coverage", 0) for r in runs]
+        precisions = [r.get("precision", 0) for r in runs]
+
+        cons = consolidated.get(model, {})
+        uni = union.get(model, {})
+
+        results.append(
+            {
+                "model": model,
+                "n_reference": runs[0].get("n_reference", 163) if runs else 163,
+                "n_runs": len(runs),
+                "n_valid_runs": len(runs),
+                "run_f1_scores": f1_scores,
+                "run_n_matched": [r.get("n_matched", 0) for r in runs],
+                "run_n_system": [r.get("n_system", 0) for r in runs],
+                "median_f1": round(statistics.median(f1_scores), 4),
+                "median_coverage": round(statistics.median(coverages), 4),
+                "median_precision": round(statistics.median(precisions), 4),
+                "majority_f1": cons.get("f1"),
+                "majority_coverage": cons.get("coverage"),
+                "majority_precision": cons.get("precision"),
+                "majority_n_matched": cons.get("n_matched"),
+                "majority_n_system": cons.get("n_system"),
+                "majority_n_hallucinated": cons.get("n_hallucinated"),
+                "n_majority_plants": cons.get("n_system", 0),
+                "union_f1": uni.get("f1"),
+                "union_coverage": uni.get("coverage"),
+                "union_precision": uni.get("precision"),
+                "union_n_matched": uni.get("n_matched"),
+                "union_n_system": uni.get("n_system"),
+                "union_n_hallucinated": uni.get("n_hallucinated"),
+            }
+        )
+
+    return results
+
+
 def main(argv: list[str] | None = None):
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
         description="Generate self-consistency LaTeX tables",
     )
-    parser.add_argument(
-        "--input",
-        required=True,
-        help="Path to self_consistency_summary.json",
-    )
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument(
         "--output",
         required=True,
@@ -151,11 +231,12 @@ def main(argv: list[str] | None = None):
     )
     args = parser.parse_args(argv)
 
-    input_path = Path(args.input)
+    from .measurements_adapter import load_metrics_from_measurements
+
     output_path = Path(args.output)
 
-    with open(input_path) as f:
-        results = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
+    results = assemble_from_measurements(metrics)
 
     latex = generate_self_consistency_table(results)
     output_path.parent.mkdir(parents=True, exist_ok=True)

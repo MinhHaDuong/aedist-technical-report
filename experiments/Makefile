@@ -208,11 +208,11 @@ SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
 
 $(SC_JSON): $(wildcard $(SC_INPUT)/*.json) ../src/aedist/self_consistency.py
 	uv run --project .. python -m aedist.self_consistency \
-	    --input $(SC_INPUT) --output $(SC_OUTPUT)
+	    --input $(SC_INPUT) --output $(SC_OUTPUT) --measurements ../measurements.jsonl
 
-$(SC_TEX) $(SC_PERRUN) &: $(SC_JSON) ../src/aedist/tabulate_self_consistency.py
+$(SC_TEX) $(SC_PERRUN) &: ../measurements.jsonl ../src/aedist/tabulate_self_consistency.py
 	uv run --project .. python -m aedist.tabulate_self_consistency \
-	    --input $(SC_JSON) --output $(SC_TEX) --per-run-output $(SC_PERRUN)
+	    --measurements ../measurements.jsonl --output $(SC_TEX) --per-run-output $(SC_PERRUN)
 
 self-consistency: $(SC_TEX) $(SC_PERRUN)
 
