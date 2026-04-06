@@ -50,7 +50,7 @@
 \medskip
 \textbf{Case study:} Vietnam thermal power plants
 \begin{itemize}
-  \item 164 plants in reference inventory
+  \item 163 plants in reference inventory
   \item Coal, gas, LNG -- operational to proposed
   \item Expert-maintained dataset
 \end{itemize}
@@ -120,7 +120,7 @@ Documentation & none / wholesale RAG \\
 Conversation  & single-shot / multi-turn \\
 Decomposition & monolithic / by fuel type \\
 Aggregation   & single run / union vote \\
-Model         & 35 models (25 cloud + 10 local) \\
+Model         & 35 models (26 cloud + 9 local) \\
 \bottomrule
 \end{tabular}
 
@@ -238,36 +238,6 @@ Range: 10--107 plants. \textbf{Model choice alone does not solve the problem.}}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Conversation regime and its limits}
-\textbf{Context grows linearly} with each turn (full history resent)
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Sweep 2 data} (4 turns, 7 models):
-\begin{itemize}
-  \item Most models: 1--7\% of context used
-  \item DeepSeek V3.2 run1: \textbf{53\%} of 164K
-  \item Extrapolation to 15 turns: \textbf{overflow}
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Safety measures:}
-\begin{itemize}
-  \item Context guard at 80\% of window
-  \item Stateless mode: each followup sent independently (constant token budget)
-  \item Trade-off: no iterative refinement
-\end{itemize}
-\end{columns}
-
-\medskip
-\textbf{Conclusion:} scaling to 10+ turns is safe for 1M-context models (Claude, GPT, Gemini). Small-context models (DeepSeek 164K, Mistral 262K) need stateless batching for long conversations.
-\end{frame}
-
-% ===================================================================
-\section{Conversation and aggregation}
-
-% -------------------------------------------------------------------
 \begin{frame}{Documentation: cost-performance inversion}
 \textbf{Corpus:} 18 manually verified Markdown tables (155 kB) from official sources
 
@@ -304,6 +274,36 @@ With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) 
 \end{columns}
 \end{frame}
 
+% ===================================================================
+\section{Conversation and aggregation}
+
+% -------------------------------------------------------------------
+\begin{frame}{Conversation regime and its limits}
+\textbf{Context grows linearly} with each turn (full history resent)
+
+\medskip
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Sweep 2 data} (4 turns, 7 models):
+\begin{itemize}
+  \item Most models: 1--7\% of context used
+  \item DeepSeek V3.2 run1: \textbf{53\%} of 164K
+  \item Extrapolation to 15 turns: \textbf{overflow}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Safety measures:}
+\begin{itemize}
+  \item Context guard at 80\% of window
+  \item Stateless mode: each followup sent independently (constant token budget)
+  \item Trade-off: no iterative refinement
+\end{itemize}
+\end{columns}
+
+\medskip
+\textbf{Conclusion:} scaling to 10+ turns is safe for 1M-context models (Claude, GPT, Gemini). Small-context models (DeepSeek 164K, Mistral 262K) need stateless batching for long conversations.
+\end{frame}
+
 % -------------------------------------------------------------------
 \begin{frame}{Task decomposition: solving the truncation bottleneck}
 \textbf{Problem:} Models truncate output before listing all plants.\\
@@ -336,18 +336,19 @@ GPT-5.4             & 77\% & 94\% & $\rightarrow$ & 71\% & 75\% \\
 \medskip
 \begin{tabular}{@{}lrrrrl@{}}
 \toprule
-Model & Med.~F1 & Maj.~F1 & Union F1 & $\Delta$ & Failure mode \\
+Model & Med.~F1 & Maj.~F1 & Union F1 & Best $\Delta$ & Failure mode \\
 \midrule
 Mistral Small 4     & 86.4\% & 36.2\% & 72.4\% & $-$14.0\% & truncation \\
 GPT-5.4             & 77.0\% & 63.0\% & 78.5\% & $+$1.6\%  & truncation \\
 Mistral Large 3     & 72.2\% & 52.5\% & 81.5\% & $+$9.3\%  & truncation \\
 DeepSeek V3.2       & 60.1\% & 38.6\% & \textbf{95.5\%} & $+$35.4\% & truncation \\
-Gemini Flash Lite   & 58.0\% & 81.0\% & 32.4\% & $+$23.0\% & overgeneration \\
+Gemini Flash Lite   & 58.0\% & \textbf{81.0\%} & 32.4\% & $+$23.0\%$^\dagger$ & overgeneration \\
 \bottomrule
 \end{tabular}
 
 \medskip
-\textbf{Union vote} (take all plants mentioned in any run) beats majority when the failure mode is \textbf{truncation} (plants missed by output length, not hallucinated).
+\textbf{Union vote} (take all plants mentioned in any run) beats majority when the failure mode is \textbf{truncation} (plants missed by output length, not hallucinated).\\
+{\scriptsize $^\dagger$Gemini: majority wins because failure mode is overgeneration (union amplifies hallucinations).}
 
 \medskip
 {\small DeepSeek: 60\% $\to$ 95.5\% at \textbf{zero extra cost}. Aggregation strategy matters more than model choice.}
@@ -398,7 +399,7 @@ The main problem is \textbf{coverage}, not accuracy.
     height=6cm,
     xlabel={Cost per query (USD)},
     ylabel={F1 score},
-    xmin=-0.002, xmax=0.07,
+    xmin=-0.005, xmax=0.30,
     ymin=0, ymax=1.0,
     grid=major,
     legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},

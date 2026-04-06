@@ -42,10 +42,24 @@ def build_pareto_rows(
 
     Returns list of dicts with keys: model, f1, cost_usd, local.
     Sorted by f1 descending.
+
+    Cost is extracted from the metrics dicts (cost_usd key, set by
+    measurements_adapter) unless an explicit costs dict is provided.
     """
-    if costs is None:
-        costs = {}
     summary = load_and_summarize(metrics)
+
+    # Compute per-model mean cost from metrics if not provided externally
+    if costs is None:
+        from .tabulate_utils import strip_label as slug_from_label
+
+        cost_lists: dict[str, list[float]] = {}
+        for entry in metrics:
+            c = entry.get("cost_usd")
+            if c is not None and c > 0:
+                slug = slug_from_label(entry["label"])
+                cost_lists.setdefault(slug, []).append(c)
+        costs = {slug: sum(vals) / len(vals) for slug, vals in cost_lists.items()}
+
     rows = [
         {
             "model": slug,
