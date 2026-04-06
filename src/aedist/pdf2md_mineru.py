@@ -33,7 +33,7 @@ def mineru_convert(pdf_path: Path, mineru_url: str = DEFAULT_MINERU_URL) -> str:
     MinerU returns a ZIP containing markdown and images.
     We extract just the markdown content.
     """
-    url = f"{mineru_url}/file_parse"
+    url = f"{mineru_url}/api/parse"
 
     boundary = "----MinerUBoundary"
     pdf_bytes = pdf_path.read_bytes()
@@ -72,6 +72,8 @@ def mineru_convert(pdf_path: Path, mineru_url: str = DEFAULT_MINERU_URL) -> str:
 
     # JSON response
     result = json.loads(raw.decode("utf-8"))
+    if "content" in result:
+        return result["content"]
     if "markdown" in result:
         return result["markdown"]
     if "md_content" in result:
