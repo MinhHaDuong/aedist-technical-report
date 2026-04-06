@@ -193,6 +193,10 @@ def run_condition(
     )
 
     repo_root = Path(__file__).parent.parent.parent
+    try:
+        result_file_path = str(csv_path.resolve().relative_to(repo_root.resolve()))
+    except ValueError:
+        result_file_path = str(csv_path)
     return RunRecord(
         method=Method(method),
         method_params=MethodParams(
@@ -205,7 +209,7 @@ def run_condition(
             },
         ),
         resource_use=ResourceUse(cost_usd=verification_cost),
-        result_file=str(csv_path.relative_to(repo_root)),
+        result_file=result_file_path,
         result_summary=ResultSummary(
             status="ok",
             n_plants=full_metrics["n_plants"],
