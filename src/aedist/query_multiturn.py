@@ -34,6 +34,27 @@ from .harness import (
 log = logging.getLogger(__name__)
 
 
+def _check_context(messages: list[dict], model: dict, turn: int) -> bool:
+    """Return True if estimated tokens fit within model context window."""
+    from .harness import CONTEXT_WINDOW_SAFETY_MARGIN, estimate_messages_tokens
+
+    ctx_window = model.get("context_window", 0)
+    if not ctx_window:
+        return True
+    est = estimate_messages_tokens(messages)
+    limit = int(ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN)
+    if est > limit:
+        log.warning(
+            "Context overflow: ~%d tokens > %d (80%% of %d). Stopping at turn %d.",
+            est,
+            limit,
+            ctx_window,
+            turn,
+        )
+        return False
+    return True
+
+
 def run_conversation(
     client,
     model_id: str,
@@ -41,12 +62,14 @@ def run_conversation(
     followups: list[str],
     model: dict,
     budget: BudgetTracker,
+    stateless: bool = False,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
     messages: list[dict] = []
     turns: list[dict] = []
     total_cost = 0.0
     total_wall = 0.0
+    context_overflow = False
 
     # Initial prompt
     messages.append({"role": "user", "content": prompt})
@@ -54,6 +77,14 @@ def run_conversation(
 
     if not budget.check_or_warn():
         return None
+
+    if not _check_context(messages, model, 0):
+        return {
+            "turns": turns,
+            "total_cost_usd": 0.0,
+            "total_wall_seconds": 0.0,
+            "context_overflow": True,
+        }
 
     result = query_single_turn(client, model_id, messages)
     usage = result.get("usage") or {}
@@ -63,22 +94,32 @@ def run_conversation(
     total_wall += result["wall_seconds"]
 
     messages.append({"role": "assistant", "content": result["content"]})
-    turns.append({
-        "role": "assistant",
-        "content": result["content"],
-        "turn": 0,
-        "wall_seconds": result["wall_seconds"],
-        "usage": usage,
-        "cost_usd": cost,
-    })
+    turns.append(
+        {
+            "role": "assistant",
+            "content": result["content"],
+            "turn": 0,
+            "wall_seconds": result["wall_seconds"],
+            "usage": usage,
+            "cost_usd": cost,
+        }
+    )
 
     # Followups
     for i, followup in enumerate(followups, start=1):
         if not budget.check_or_warn():
             break
 
-        messages.append({"role": "user", "content": followup})
+        if stateless:
+            messages = [{"role": "user", "content": prompt + "\n\n" + followup}]
+        else:
+            messages.append({"role": "user", "content": followup})
+
         turns.append({"role": "user", "content": followup, "turn": i})
+
+        if not _check_context(messages, model, i):
+            context_overflow = True
+            break
 
         result = query_single_turn(client, model_id, messages)
         usage = result.get("usage") or {}
@@ -88,19 +129,22 @@ def run_conversation(
         total_wall += result["wall_seconds"]
 
         messages.append({"role": "assistant", "content": result["content"]})
-        turns.append({
-            "role": "assistant",
-            "content": result["content"],
-            "turn": i,
-            "wall_seconds": result["wall_seconds"],
-            "usage": usage,
-            "cost_usd": cost,
-        })
+        turns.append(
+            {
+                "role": "assistant",
+                "content": result["content"],
+                "turn": i,
+                "wall_seconds": result["wall_seconds"],
+                "usage": usage,
+                "cost_usd": cost,
+            }
+        )
 
     return {
         "turns": turns,
         "total_cost_usd": total_cost,
         "total_wall_seconds": total_wall,
+        "context_overflow": context_overflow,
     }
 
 
@@ -112,17 +156,24 @@ def main():
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
-    parser.add_argument("--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget")
-    parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
+    parser.add_argument(
+        "--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget"
+    )
+    parser.add_argument(
+        "--stateless",
+        action="store_true",
+        help="Stateless batch mode: each followup sent independently (no accumulated history)",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="List what would be queried, don't call API"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     prompt = Path(args.prompt).read_text().strip()
     followups = [
-        line.strip()
-        for line in Path(args.followups).read_text().splitlines()
-        if line.strip()
+        line.strip() for line in Path(args.followups).read_text().splitlines() if line.strip()
     ]
     models = load_models(args.models)
     output_dir = Path(args.output)
@@ -153,11 +204,24 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
-            log.info("Querying %s run %d/%d (multiturn, %d followups)...",
-                     label, run, args.repeat, len(followups))
+            log.info(
+                "Querying %s run %d/%d (multiturn, %d followups)...",
+                label,
+                run,
+                args.repeat,
+                len(followups),
+            )
 
             try:
-                conv = run_conversation(client, model_id, prompt, followups, model, budget)
+                conv = run_conversation(
+                    client,
+                    model_id,
+                    prompt,
+                    followups,
+                    model,
+                    budget,
+                    stateless=args.stateless,
+                )
                 if conv is None:
                     return
 
@@ -172,8 +236,9 @@ def main():
                     **conv,
                 }
                 save_json(filepath, record)
-                log.info("  Done. cost=%.6f total=%.6f USD",
-                         conv["total_cost_usd"], budget.total_cost)
+                log.info(
+                    "  Done. cost=%.6f total=%.6f USD", conv["total_cost_usd"], budget.total_cost
+                )
             except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 

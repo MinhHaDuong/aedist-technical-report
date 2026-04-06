@@ -22,8 +22,10 @@ from pathlib import Path
 import openai
 
 from .harness import (
+    CONTEXT_WINDOW_SAFETY_MARGIN,
     BudgetTracker,
     compute_cost,
+    estimate_tokens,
     load_models,
     make_client,
     model_metadata,
@@ -34,12 +36,6 @@ from .harness import (
 )
 
 log = logging.getLogger(__name__)
-
-# Approximate characters per token for English text (actual varies 3-5)
-CHARS_PER_TOKEN = 4
-
-# Fraction of model context window to use (safety margin)
-CONTEXT_WINDOW_SAFETY_MARGIN = 0.8
 
 
 def load_corpus(corpus_dir: Path) -> tuple[str, list[str]]:
@@ -57,23 +53,26 @@ def load_corpus(corpus_dir: Path) -> tuple[str, list[str]]:
     return "\n---\n".join(parts), names
 
 
-def estimate_tokens(text: str) -> int:
-    """Rough token estimate based on CHARS_PER_TOKEN ratio for English text."""
-    return len(text) // CHARS_PER_TOKEN
-
-
 def main():
     parser = argparse.ArgumentParser(description="RAG queries via OpenRouter")
     parser.add_argument("--prompt", required=True, help="Path to prompt text file")
     parser.add_argument("--corpus", required=True, help="Directory containing .md corpus files")
-    parser.add_argument("--strategy", default="wholesale", choices=["wholesale"],
-                        help="RAG strategy (currently only 'wholesale')")
+    parser.add_argument(
+        "--strategy",
+        default="wholesale",
+        choices=["wholesale"],
+        help="RAG strategy (currently only 'wholesale')",
+    )
     parser.add_argument("--models", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
-    parser.add_argument("--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget")
-    parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
+    parser.add_argument(
+        "--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="List what would be queried, don't call API"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -94,7 +93,9 @@ def main():
     if args.dry_run:
         for model in models:
             ctx = model.get("context_window", 0)
-            fits = "OK" if corpus_tokens < ctx * CONTEXT_WINDOW_SAFETY_MARGIN else "SKIP (too large)"
+            fits = (
+                "OK" if corpus_tokens < ctx * CONTEXT_WINDOW_SAFETY_MARGIN else "SKIP (too large)"
+            )
             for run in range(1, args.repeat + 1):
                 log.info("Would query %s run %d [%s]", model["id"], run, fits)
         return
@@ -111,7 +112,9 @@ def main():
         if corpus_tokens > ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN:
             log.warning(
                 "Skip %s: corpus ~%d tokens exceeds 80%% of context window (%d)",
-                label, corpus_tokens, ctx_window,
+                label,
+                corpus_tokens,
+                ctx_window,
             )
             continue
 
@@ -123,8 +126,7 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
-            log.info("Querying %s run %d/%d (RAG %s)...",
-                     label, run, args.repeat, args.strategy)
+            log.info("Querying %s run %d/%d (RAG %s)...", label, run, args.repeat, args.strategy)
 
             try:
                 messages = [
