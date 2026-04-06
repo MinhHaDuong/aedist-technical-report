@@ -170,6 +170,14 @@ sweep3-decomposed:
 	    --models $(S3D_MODELS) --output $(S3D_OUTPUT) \
 	    --repeat $(S3D_REPEAT) --budget-usd $(S3D_BUDGET)
 
+# --- Sweep 4: Verification regimes -------------------------------------------
+
+.PHONY: sweep4-verification
+
+sweep4-verification:
+	uv run --project .. python -m aedist.query_verification \
+	    --config sweeps/sweep4_verification.yaml
+
 # --- Analysis: self-consistency -----------------------------------------------
 
 SC_INPUT  := outputs/sweep2_rag
