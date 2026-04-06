@@ -2,12 +2,13 @@
 #
 # Complete DAG: `make report` or `make slides` pulls all dependencies.
 #
-#   report.pdf ← tab_census.tex, macros.tex ← metrics.json ← sweep1-summary
-#   slides.pdf ← census_bars.csv, pareto.csv ← metrics.json ← sweep1-summary
+#   report.pdf ← tab_census.tex, macros.tex ← measurements.jsonl
+#   slides.pdf ← census_bars.csv, pareto.csv ← measurements.jsonl
 
-METRICS   := results/summary/all_metrics.json
-GEN       := report/inputs/generated
-SLIDE_GEN := slides/inputs/generated
+MEASUREMENTS := measurements.jsonl
+METRICS      := results/summary/all_metrics.json
+GEN          := report/inputs/generated
+SLIDE_GEN    := slides/inputs/generated
 
 .PHONY: test check-fast check sweep1 sweep1-summary
 
@@ -27,41 +28,39 @@ $(METRICS):
 
 # --- Model selection ----------------------------------------------------------
 
-experiments/models_sweep2.yaml: $(METRICS) experiments/models.yaml experiments/models_padme.yaml
+experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml experiments/models_padme.yaml
 	uv run python -m aedist.select_sweep2 \
-	    --input $< --registry experiments/models.yaml \
+	    --measurements $< --registry experiments/models.yaml \
 	    --padme experiments/models_padme.yaml \
 	    --output $@ --n 1
 
 # --- Tables for report --------------------------------------------------------
 
-$(GEN)/tab_census.tex: $(METRICS)
+$(GEN)/tab_census.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_census --input $< --output $@
+	uv run python -m aedist.tabulate_census --measurements $< --output $@
 
-$(GEN)/macros.tex: $(METRICS)
+$(GEN)/macros.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_macros --input $< --output $@
+	uv run python -m aedist.tabulate_macros --measurements $< --output $@
 
-$(GEN)/tab_relances.tex: $(METRICS)
+$(GEN)/tab_relances.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_relances --input $< --output $@
+	uv run python -m aedist.tabulate_relances --measurements $< --output $@
 
-$(GEN)/tab_comparaison.tex: $(METRICS)
+$(GEN)/tab_comparaison.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_comparaison --input $< --output $@
+	uv run python -m aedist.tabulate_comparaison --measurements $< --output $@
 
 # --- Chart data for slides ---------------------------------------------------
 
-$(SLIDE_GEN)/census_bars.csv: $(METRICS)
+$(SLIDE_GEN)/census_bars.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_census --input $< --output $@
+	uv run python -m aedist.plot_census --measurements $< --output $@
 
-SWEEP1_SUMMARY := results/summary/sweep1_summary.csv
-
-$(SLIDE_GEN)/pareto.csv: $(METRICS) $(SWEEP1_SUMMARY)
+$(SLIDE_GEN)/pareto.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_pareto --input $< --costs $(SWEEP1_SUMMARY) --output $@
+	uv run python -m aedist.plot_pareto --measurements $< --output $@
 
 # --- Publications -------------------------------------------------------------
 
