@@ -27,7 +27,12 @@ from pathlib import Path
 
 import openai
 
-from .extract import _parse_and_canonicalize, extract_fenced_blocks, fallback_extract_inline_csv
+from .extract import (
+    extract_fenced_blocks,
+    fallback_extract_inline_csv,
+    parse_and_canonicalize,
+    score_csv_like_block,
+)
 from .harness import (
     BudgetTracker,
     compute_cost,
@@ -79,10 +84,9 @@ def _extract_csv_text(response: str) -> str | None:
     if not blocks:
         return None
 
-    # Pick the longest block (most data)
-    best = max(blocks, key=lambda b: b.count("\n"))
+    best = max(blocks, key=score_csv_like_block)
     try:
-        return _parse_and_canonicalize(best)
+        return parse_and_canonicalize(best)
     except Exception as e:
         log.warning("CSV parse failed: %s", e)
         return None
@@ -124,7 +128,6 @@ def query_decomposed(
     client,
     model_id: str,
     corpus_text: str,
-    base_prompt: str,
     budget: BudgetTracker,
     model: dict,
 ) -> dict | None:
@@ -253,7 +256,6 @@ def main():
                 client,
                 model_id,
                 corpus_text,
-                base_prompt,
                 budget,
                 model,
             )

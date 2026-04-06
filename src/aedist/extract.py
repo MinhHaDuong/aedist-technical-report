@@ -49,7 +49,7 @@ def extract_fenced_blocks(text: str) -> list[str]:
     return blocks
 
 
-def _score_csv_like_block(block: str) -> float:
+def score_csv_like_block(block: str) -> float:
     lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
     if not lines:
         return -1.0
@@ -216,7 +216,7 @@ class ExtractResult:
     message: str
 
 
-def _parse_and_canonicalize(csv_text: str) -> str:
+def parse_and_canonicalize(csv_text: str) -> str:
     csv_text = csv_text.strip()
     if csv_text.lower().startswith("sep="):
         csv_text = "\n".join(csv_text.splitlines()[1:]).lstrip()
@@ -295,9 +295,9 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     if not candidates:
         return ExtractResult(False, None, f"{json_path.name}: no CSV found")
 
-    best = max(candidates, key=_score_csv_like_block)
+    best = max(candidates, key=score_csv_like_block)
     try:
-        canonical_csv = _parse_and_canonicalize(best)
+        canonical_csv = parse_and_canonicalize(best)
     except Exception as e:
         return ExtractResult(False, None, f"{json_path.name}: CSV parse failed ({e})")
 
