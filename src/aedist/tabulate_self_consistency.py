@@ -12,6 +12,8 @@ and emits a LaTeX table showing single-run medians vs majority/union vote F1.
 
 import argparse
 import logging
+import re
+import statistics
 from pathlib import Path
 
 from .tabulate_utils import format_model_name
@@ -130,7 +132,6 @@ def generate_per_run_table(results: list[dict]) -> str:
 
 def _strip_run_suffix(label: str) -> str:
     """Strip -runN suffix and directory prefix to get model slug."""
-    import re
 
     stem = label.rsplit("/", 1)[-1]
     return re.sub(r"-run\d+$", "", stem)
@@ -153,7 +154,6 @@ def assemble_from_measurements(metrics: list[dict]) -> list[dict]:
     - sweep2_rag_consistency/deepseek-v3.2-consolidated  (majority vote)
     - sweep2_rag_consistency/deepseek-v3.2-union  (union vote)
     """
-    import statistics
 
     # Separate per-run and vote records
     per_run: dict[str, list[dict]] = {}

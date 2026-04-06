@@ -196,16 +196,18 @@ def run_analysis(
 
         # Evaluate individual runs
         run_metrics, csv_paths = evaluate_single_runs(run_paths, work_dir, reference)
-        valid_metrics = [m for m in run_metrics if m is not None]
 
-        if not valid_metrics:
+        # Pair metrics with source paths, drop failed runs, sort by F1
+        paired = [(m, p) for m, p in zip(run_metrics, run_paths) if m is not None]
+        if not paired:
             log.warning("No valid runs for %s — skipping", model)
             continue
+        paired.sort(key=lambda mp: mp[0].f1)
+        valid_metrics = [m for m, _ in paired]
+        valid_paths = [p for _, p in paired]
 
-        # Sort metrics by F1 so per-run arrays are aligned with sorted f1_scores
-        valid_metrics.sort(key=lambda m: m.f1)
         run_metrics_by_model[model] = valid_metrics
-        run_paths_by_model[model] = run_paths
+        run_paths_by_model[model] = valid_paths
         f1_scores = [m.f1 for m in valid_metrics]
         median_f1 = f1_scores[len(f1_scores) // 2]
 
