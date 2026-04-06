@@ -21,7 +21,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{AI for Energy Statistics}
-\subtitle{Benchmarking LLMs on Vietnam Thermal Power Plant Census}
+\subtitle{Benchmarking Methods for AI-Assisted Energy Statistics}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{Econom'IA 2026}
 \date{April 11, 2026}
@@ -89,10 +89,10 @@ Expert-validated from PDP7, PDP8, EVN reports
 \column{0.45\textwidth}
 \textbf{Experimental design:}
 \begin{description}
-  \item[Purpose] Measure LLM recall of structured energy data
+  \item[Key idea] A \textbf{method} = model + prompt + information regime + aggregation. The model is one parameter.
   \item[Apparatus] OpenRouter API + local Ollama
-  \item[N] 28 cloud + 8 local models $\times$ 3 runs = 108
-  \item[Cost] \$0.73 total
+  \item[N] 35 models $\times$ up to 5 conditions $\times$ 3 runs
+  \item[Cost] \$0.82 total
   \item[Evaluation] Exact + fuzzy name matching, then per-field accuracy
 \end{description}
 
@@ -103,44 +103,52 @@ Expert-validated from PDP7, PDP8, EVN reports
 \end{frame}
 
 % ===================================================================
-\section{Model census}
+\section{Experimental design}
 
 % -------------------------------------------------------------------
-\begin{frame}{Sweep 1: 32 models, 3 runs each}
-\textbf{Single-shot prompt} -- ``List all thermal power plants in Vietnam\ldots\ Format CSV.''
-
-\medskip
+\begin{frame}{Five condition axes}
 \begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Frontier models} (via OpenRouter)
+\column{0.55\textwidth}
+\textbf{Explored in this study:}
+
+\medskip
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Axis} & \textbf{Levels tested} \\
+\midrule
+Documentation & none / wholesale RAG \\
+Conversation  & single-shot / multi-turn \\
+Decomposition & monolithic / by fuel type \\
+Aggregation   & single run / union vote \\
+Model         & 35 models (25 cloud + 10 local) \\
+\bottomrule
+\end{tabular}
+
+\medskip
+35 models $\times$ up to 5 conditions $\times$ 3 runs\\
+Total cost: \textbf{\$0.82}
+
+\column{0.42\textwidth}
+\textbf{Not yet explored:}
 \begin{itemize}
-  \item Claude Opus/Sonnet 4.6, GPT-5.4
-  \item Gemini 3 Flash, Grok 4.20
-  \item DeepSeek V3.2
+  \item Reasoning effort (low/high)
+  \item Prompt language (EN/VI)
+  \item Output format (CSV/JSON)
+  \item Few-shot examples
+  \item Self-optimized prompts
+  \item Verification pass
 \end{itemize}
 
 \medskip
-\textbf{Large/Medium} -- Qwen 3.5, Kimi K2.5, Llama 4 Maverick, MiniMax M2.7, GLM-5
-
-\column{0.48\textwidth}
-\textbf{Small/Edge} -- Mistral Small 4, GPT-5 Mini/Nano, Gemini 2.5 Flash Lite
-
-\medskip
-\textbf{Local} (Ollama on Padme)
-\begin{itemize}
-  \item Qwen 3.5: 122B, 35B, 27B, 9B
-  \item Mistral Small 3.2, GLM 4.7 Flash
-  \item Nemotron 3 Nano, Devstral Small 2
-\end{itemize}
-
-\medskip
-Total: \textbf{32 models $\times$ 3 runs = 96 queries}\\
-Cost: \textbf{\$0.73}
+{\small Each axis is an independent condition. The design is factorial: any combination can be tested.}
 \end{columns}
+
+\bigskip
+\centering\textbf{The model is one parameter among many.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Sweep 1: single-shot census --- plants found out of 163}
+\begin{frame}{Baseline: how much does model choice matter?}
 
 \begin{center}
 \pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
@@ -171,23 +179,27 @@ Cost: \textbf{\$0.73}
 \end{axis}
 \end{tikzpicture}
 \end{center}
+
+\smallskip
+{\small Condition: single-shot, no documentation, no decomposition.
+Range: 10--107 plants. \textbf{Model choice alone does not solve the problem.}}
 \end{frame}
 
 % ===================================================================
-\section{Information regimes}
+\section{Documentation regime}
 
 % -------------------------------------------------------------------
-\begin{frame}{Sweep 2: How information access changes performance}
-\textbf{5 models} $\times$ 3 information regimes $\times$ 3 runs \hfill Total cost: \$0.89
+\begin{frame}{Documentation regime: RAG lifts the floor}
+\textbf{Same 5 models} tested under 3 method conditions $\times$ 3 runs \hfill Total cost: \$0.89
 
 \medskip
 \begin{columns}[T]
 \column{0.42\textwidth}
-\textbf{Conditions:}
+\textbf{Documentation levels:}
 \begin{enumerate}
-  \item \textbf{Direct} -- single-shot, no docs
-  \item \textbf{Multi-turn} -- 3 follow-up prompts
-  \item \textbf{RAG} -- 18 curated source tables (155 kB) as system context
+  \item \textbf{None} -- single-shot, parametric knowledge only
+  \item \textbf{Multi-turn} -- 3 conversational follow-ups
+  \item \textbf{RAG wholesale} -- 18 curated source tables (155 kB) as system context
 \end{enumerate}
 
 \medskip
@@ -226,7 +238,7 @@ Cost: \textbf{\$0.73}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Multi-turn: token budget analysis}
+\begin{frame}{Conversation regime and its limits}
 \textbf{Context grows linearly} with each turn (full history resent)
 
 \medskip
@@ -253,10 +265,10 @@ Cost: \textbf{\$0.73}
 \end{frame}
 
 % ===================================================================
-\section{RAG: old vs new documents}
+\section{Conversation and aggregation}
 
 % -------------------------------------------------------------------
-\begin{frame}{RAG: wholesale strategy}
+\begin{frame}{Documentation: cost-performance inversion}
 \textbf{Corpus:} 18 manually verified Markdown tables (155 kB) from official sources
 
 \medskip
@@ -288,7 +300,7 @@ DeepSeek V3.2 (\$0.26/M)    &  63 & \textbf{98} \\
 
 \medskip
 \textbf{Key finding:}\\
-Mistral Small 4 at \$0.15/M beats GPT-5.4 at \$2.50/M with RAG context.
+With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) dominates model choice.
 \end{columns}
 \end{frame}
 
@@ -314,7 +326,31 @@ GPT-5.4             & 77\% & 94\% & $\rightarrow$ & 71\% & 75\% \\
 
 \medskip
 \textbf{Best result:} DeepSeek V3.2 --- 163/163 plants, F1 = 98.8\%, \textbf{\$0.06}\\
-\small Open-weight model at \$0.26/M beats GPT-5.4 at \$2.50/M with decomposition.
+\small Decomposition is a \textbf{method condition}, not a model property. Same model: 60\% $\to$ 99\%.
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Aggregation: union vote as a free win}
+\textbf{Three runs already exist} (3 repeats per condition). How to combine them?
+
+\medskip
+\begin{tabular}{@{}lrrrrl@{}}
+\toprule
+Model & Med.~F1 & Maj.~F1 & Union F1 & $\Delta$ & Failure mode \\
+\midrule
+Mistral Small 4     & 86.4\% & 36.2\% & 72.4\% & $-$14.0\% & truncation \\
+GPT-5.4             & 77.0\% & 63.0\% & 78.5\% & $+$1.6\%  & truncation \\
+Mistral Large 3     & 72.2\% & 52.5\% & 81.5\% & $+$9.3\%  & truncation \\
+DeepSeek V3.2       & 60.1\% & 38.6\% & \textbf{95.5\%} & $+$35.4\% & truncation \\
+Gemini Flash Lite   & 58.0\% & 81.0\% & 32.4\% & $+$23.0\% & overgeneration \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textbf{Union vote} (take all plants mentioned in any run) beats majority when the failure mode is \textbf{truncation} (plants missed by output length, not hallucinated).
+
+\medskip
+{\small DeepSeek: 60\% $\to$ 95.5\% at \textbf{zero extra cost}. Aggregation strategy matters more than model choice.}
 \end{frame}
 
 % ===================================================================
@@ -353,73 +389,37 @@ The main problem is \textbf{coverage}, not accuracy.
 \section{Cost--quality trade-off}
 
 % -------------------------------------------------------------------
-\begin{frame}{Plants found vs.\ cost per query}
+\begin{frame}{Cost--quality Pareto: methods, not models}
 \begin{center}
-\pgfplotstableread[col sep=comma]{inputs/generated/plants_vs_cost.csv}\costdata
+\pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
 \begin{tikzpicture}
 \begin{axis}[
     width=0.85\textwidth,
     height=6cm,
     xlabel={Cost per query (USD)},
-    ylabel={\# plants matched (out of 163)},
+    ylabel={F1 score},
     xmin=-0.002, xmax=0.07,
-    ymin=0, ymax=163,
+    ymin=0, ymax=1.0,
     grid=major,
     legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
 ]
-% Cloud models — direct
+% Cloud models
 \addplot[only marks, mark=*, mark size=3pt, color=matched]
-    table [x=cost_query, y=plants_direct,
-           restrict expr to domain={\thisrow{local}}{0:0}] {\costdata};
-\addlegendentry{Cloud (direct)}
+    table [x=cost_usd, y=f1,
+           restrict expr to domain={\thisrow{local}}{0:0}] {\paretodata};
+\addlegendentry{Cloud models}
 % Local models — zero cost
 \addplot[only marks, mark=triangle*, mark size=4pt, color=matched!50!black]
-    table [x=cost_query, y=plants_direct,
-           restrict expr to domain={\thisrow{local}}{1:1}] {\costdata};
-\addlegendentry{Local (direct)}
-% RAG results
-\addplot[only marks, mark=square*, mark size=3pt, color=goodf1]
-    table [x=cost_rag, y=plants_rag,
-           restrict expr to domain={\thisrow{plants_rag}}{1:999}] {\costdata};
-\addlegendentry{Cloud + RAG}
+    table [x=cost_usd, y=f1,
+           restrict expr to domain={\thisrow{local}}{1:1}] {\paretodata};
+\addlegendentry{Local models}
 \end{axis}
 \end{tikzpicture}
 \end{center}
-\end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}{Plants found vs.\ response time}
-\begin{center}
-\pgfplotstableread[col sep=comma]{inputs/generated/plants_vs_cost.csv}\timedata
-\begin{tikzpicture}
-\begin{axis}[
-    width=0.85\textwidth,
-    height=6cm,
-    xlabel={Response time (seconds)},
-    ylabel={\# plants matched (out of 163)},
-    xmin=0, xmax=350,
-    ymin=0, ymax=163,
-    grid=major,
-    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
-]
-% Cloud models — direct
-\addplot[only marks, mark=*, mark size=3pt, color=matched]
-    table [x=time_s, y=plants_direct,
-           restrict expr to domain={\thisrow{local}}{0:0}] {\timedata};
-\addlegendentry{Cloud (direct)}
-% Local models
-\addplot[only marks, mark=triangle*, mark size=4pt, color=matched!50!black]
-    table [x=time_s, y=plants_direct,
-           restrict expr to domain={\thisrow{local}}{1:1}] {\timedata};
-\addlegendentry{Local (direct)}
-% RAG results
-\addplot[only marks, mark=square*, mark size=3pt, color=goodf1]
-    table [x=time_rag, y=plants_rag,
-           restrict expr to domain={\thisrow{plants_rag}}{1:999}] {\timedata};
-\addlegendentry{Cloud + RAG}
-\end{axis}
-\end{tikzpicture}
-\end{center}
+\smallskip
+{\small Includes baseline, RAG, and union-vote results. Top-left cluster: local models at zero cost.\\
+Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cost.}
 \end{frame}
 
 % ===================================================================
@@ -457,48 +457,45 @@ Human validates before ingestion.
 \section{Takeaway}
 
 % -------------------------------------------------------------------
-\begin{frame}{Summary of findings}
+\begin{frame}{What we learned about methods}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{What works:}
-\begin{itemize}
-  \item RAG + conversational follow-ups
-  \item PDF $\to$ Markdown conversion
-  \item OpenStreetMap as complementary source
-  \item Automated evaluation pipeline
-\end{itemize}
+\textbf{Method conditions, ranked by impact:}
+\begin{enumerate}
+  \item \textbf{Documentation} (RAG): +18 to +43\,pp
+  \item \textbf{Decomposition}: 60\% $\to$ 99\%
+  \item \textbf{Aggregation} (union vote): +35\,pp at zero cost
+  \item \textbf{Conversation} (multi-turn): up to 155/163
+  \item Model choice alone: 10--107 plants
+\end{enumerate}
 
 \medskip
-\textbf{What's needed:}
-\begin{itemize}
-  \item Local knowledge graph (OEO-aligned)
-  \item Specialized agents (curator, analyst)
-  \item Four-layer architecture
-\end{itemize}
+\textbf{Insight:}\\
+Method design explains more variance than model selection.
 
 \column{0.48\textwidth}
 \textbf{Key numbers:}
 \begin{itemize}
-  \item 28 cloud + 8 local models, \$0.73 census
-  \item Direct: best 107/163 plants (GPT-5.4)
-  \item RAG: best 141/163 plants (Mistral Small 4)
-  \item \textbf{Decomposed: 163/163 plants, F1=99\%, \$0.06}
+  \item 35 models, 5 condition axes, \$0.82
+  \item Best baseline: 107/163 (model only)
+  \item Best RAG: 141/163 (cheap model + docs)
+  \item \textbf{Best overall: 163/163, F1=99\%, \$0.06}
 \end{itemize}
 
 \medskip
 \textbf{Bottom line:}\\
-An off-the-shelf pipeline recovers \textbf{99\% of an expert inventory for \$0.06}. The remaining 1\% requires knowledge engineering or agentic systems.
+An off-the-shelf pipeline with the right \textbf{method conditions} recovers 99\% of an expert inventory for \$0.06.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Next steps}
+\begin{frame}{From benchmark to pipeline}
 \begin{enumerate}
-  \item Stack decomposition + union vote + precision filter $\to$ 99\%+?
-  \item Cost--quality Pareto analysis across all regimes
-  \item PDF converter intercomparison (GROBID vs vision models)
-  \item Extend benchmark to other countries / sectors
-  \item Prototype knowledge graph with OEO alignment
+  \item \textbf{Stack conditions:} decomposition + union vote + RAG --- does the combination reach 100\%?
+  \item \textbf{Unexplored axes:} reasoning effort, Vietnamese prompts, few-shot, verification pass
+  \item \textbf{Document pipeline:} Marker + Mistral OCR for automated source ingestion (6 converters benchmarked)
+  \item \textbf{Scale test:} second country / second sector to validate method generality
+  \item \textbf{Production:} AEDIST pipeline where benchmark measurements become the quality audit log
 \end{enumerate}
 
 \bigskip

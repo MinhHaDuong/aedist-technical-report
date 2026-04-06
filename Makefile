@@ -56,12 +56,16 @@ $(SLIDE_GEN)/pareto.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_pareto --measurements $< --output $@
 
+$(SLIDE_GEN)/sweep2_regimes.csv: $(GEN)/sweep2_regimes.csv
+	@mkdir -p $(dir $@)
+	cp $< $@
+
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib $(GEN)/tab_census.tex $(GEN)/macros.tex
 	$(MAKE) -C report
 
-slides/slides.pdf: slides/slides.tex $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
+slides/slides.pdf: slides/slides.tex $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/sweep2_regimes.csv
 	$(MAKE) -C slides
 
 # --- Convenience aliases ------------------------------------------------------
