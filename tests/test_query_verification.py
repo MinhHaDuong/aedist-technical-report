@@ -28,16 +28,16 @@ def test_output_stem():
 
 
 def test_deterministic_modes():
-    """Unverified and tool are deterministic (run once)."""
+    """Unverified, tool, and web are deterministic (run once)."""
     assert "unverified" in _DETERMINISTIC_MODES
     assert "tool" in _DETERMINISTIC_MODES
+    assert "web" in _DETERMINISTIC_MODES
     assert "self" not in _DETERMINISTIC_MODES
     assert "cross" not in _DETERMINISTIC_MODES
-    assert "web" not in _DETERMINISTIC_MODES
 
 
 def test_condition_count():
-    """3 configs x (2 deterministic x 1 + 3 stochastic x 3) = 33 conditions."""
+    """3 configs x (3 deterministic x 1 + 2 stochastic x 3) = 27 conditions."""
     config_path = (
         Path(__file__).parent.parent / "experiments" / "sweeps" / "sweep4_verification.yaml"
     )
@@ -50,7 +50,7 @@ def test_condition_count():
             runs = 1 if mode in _DETERMINISTIC_MODES else repeat
             count += runs
 
-    assert count == 33
+    assert count == 27
 
 
 def test_unverified_baseline(tmp_path):

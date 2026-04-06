@@ -43,7 +43,9 @@ _DEFAULT_REF = (
 )
 
 # Deterministic modes: run once regardless of repeat setting
-_DETERMINISTIC_MODES = {"unverified", "tool"}
+# Web mode shares a Tavily cache across runs, so repeated runs produce
+# identical results.  All three are deterministic: run once per config.
+_DETERMINISTIC_MODES = {"unverified", "tool", "web"}
 
 
 def load_config(path: str | Path) -> dict:

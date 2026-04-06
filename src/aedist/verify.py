@@ -307,8 +307,10 @@ You previously generated a list of {subject}. For each plant below, \
 cite up to 2 sources that confirm it exists with the stated attributes.
 
 Requirements:
-- Primary sources ONLY: government decisions, company reports, regulatory \
-filings, satellite imagery databases. NOT Wikipedia or news articles.
+- Prefer primary sources: government decisions, company reports, regulatory \
+filings, satellite imagery databases.
+- Secondary sources (Wikipedia, news articles) are acceptable if no primary \
+source is available, but label them honestly.
 - Be specific: document name, date, section/page when available.
 - For each source, classify as "primary" or "secondary".
 - If you cannot find a reliable source, write "none" for source and type.
@@ -480,17 +482,6 @@ def verify_cross(
     annotated, summary = verify_llm(rows, verifier_model, subject)
     summary["mode"] = "cross"
     return annotated, summary
-
-
-def _rows_to_csv_text(rows: list[dict]) -> str:
-    """Convert list of dicts to CSV string."""
-    if not rows:
-        return ""
-    buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=list(rows[0].keys()))
-    writer.writeheader()
-    writer.writerows(rows)
-    return buf.getvalue()
 
 
 # ---------------------------------------------------------------------------
