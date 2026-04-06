@@ -2,7 +2,7 @@ Last updated: 2026-04-06
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census: 35 models (25 cloud + 10 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 423 tests pass. Sweep 2 complete: RAG ($2.81), multiturn, web ($0.13). Decomposition experiment: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends tested on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169 tables) are the top two (#85, #167). MinerU tested: good text, 0 tables. Reporting refactored to measurements.jsonl (#157).
+Pipeline end-to-end via Makefile. Census: 35 models (26 cloud + 9 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 449 tests pass. Sweep 2 complete: RAG ($2.81), multiturn, web ($0.13). Decomposition experiment: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169 tables) top two (#167). Slides reframed for methods-not-models (#93, #171). Reasoning effort deferred to journal (#11 closed).
 
 ## Blockers
 
@@ -10,10 +10,10 @@ None
 
 ## Next actions
 
-1. Reframe slides: methods not models, 11 condition axes (#93)
+1. Visual review: `make slides` and check PDF renders correctly
 2. Add Perspectives section to report (#116)
-3. Stack decomposition + union vote + precision filter
-4. Update report with converter benchmark findings (6 backends)
+3. Reframe slides "Next steps" as benchmark→pipeline arc (#115)
+4. Extend RAG to local models (#10, in progress)
 
 ## North star
 
@@ -21,14 +21,12 @@ Build a generic pipeline that produces primary-sourced, auditable statistical ta
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Census: 35 models, best F1 98.4%
-- [x] Sweep 2: RAG + multiturn + web complete
-- [x] Decomposition experiment: 99% F1 at $0.06
-- [x] Self-consistency: union > majority (recall-bottlenecked)
-- [x] Converter benchmark: Marker + Mistral OCR direct >> GROBID, MinerU, OpenRouter plugin (#85, #167)
-- [x] Web portal test: gov data in PDFs, not HTML (#114)
-- [x] Report + slides updated with all findings
-- [ ] Reframe slides for methods-not-models (#93)
+- [x] Slides reframed: 5 condition axes, self-consistency, methods > models (#93, #171)
+- [x] Converter benchmark: 6 backends, Marker + Mistral OCR direct (#85, #167)
+- [x] Data fixes: pareto costs, census filtering, multiturn populated (#171 review)
+- [ ] Visual PDF review of slides (no LaTeX on Padme)
+- [ ] Reframe slides "Next steps" (#115)
+- [ ] Perspectives section in report (#116)
 
 ## Next milestone
 
@@ -38,7 +36,6 @@ Primary-source pipeline (#98): generic extraction from government documents, fir
 
 - Stack decomposition + union vote + precision filter
 - Chunked RAG strategy (currently only wholesale)
-- Reasoning effort sweep (#11)
 - Verification sweep (#12)
 - Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
