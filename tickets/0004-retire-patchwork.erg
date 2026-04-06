@@ -1,6 +1,6 @@
 %erg v1
 Title: Retire all_metrics.json and per-sweep summary paths
-Status: doing
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0003
@@ -10,6 +10,7 @@ Blocked-by: 0003
 2026-04-04T12:50Z claude note Phase 2 gate — all reporting on measurements table
 2026-04-06T17:36Z claude claimed
 2026-04-06T17:36Z claude status doing
+2026-04-06T17:50Z claude status closed — all_metrics.json retired, 8 scripts on measurements.jsonl only, 392 tests pass
 
 --- body ---
 ## Context
