@@ -1,25 +1,25 @@
-"""Generate multi-turn relances LaTeX table from all_metrics.json.
+"""Generate multi-turn relances LaTeX table from measurements.jsonl.
 
 Usage:
     python -m aedist.tabulate_relances \\
-        --input results/summary/all_metrics.json \\
+        --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_relances.tex
 
 Reads per-run metrics from sweep2_multiturn, groups by model (stripping
 -runN suffix), computes medians, and emits a longtable showing how F1
 progresses across turns for each model.
 
-If per-turn metrics are not available in all_metrics.json (i.e. no
+If per-turn metrics are not available in measurements.jsonl (i.e. no
 ``turn`` field), falls back to a single-column summary table showing
 final multiturn F1 per model.
 """
 
 import argparse
-import json
 import logging
 import statistics
 from pathlib import Path
 
+from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
@@ -180,21 +180,13 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate multi-turn relances LaTeX table",
     )
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--input", help="Path to all_metrics.json (legacy)")
-    source.add_argument("--measurements", help="Path to measurements.jsonl")
+    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write tab_relances.tex")
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
 
-    if args.measurements:
-        from .measurements_adapter import load_metrics_from_measurements
-
-        metrics = load_metrics_from_measurements(args.measurements)
-    else:
-        with open(args.input) as f:
-            metrics = json.load(f)
+    metrics = load_metrics_from_measurements(args.measurements)
 
     latex = generate_relances_table(metrics)
 

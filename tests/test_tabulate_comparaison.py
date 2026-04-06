@@ -239,13 +239,16 @@ def test_empty_intersection_no_data_rows():
 # --- CLI integration ---
 
 
+from conftest import write_measurements
+
+
 def test_main_writes_output(tmp_path):
-    """main() reads input JSON and writes LaTeX output."""
-    input_file = tmp_path / "metrics.json"
-    input_file.write_text(json.dumps(SAMPLE_METRICS))
+    """main() reads measurements.jsonl and writes LaTeX output."""
+    input_file = tmp_path / "measurements.jsonl"
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "tab_comparaison.tex"
 
-    main(["--input", str(input_file), "--output", str(output_file)])
+    main(["--measurements", str(input_file), "--output", str(output_file)])
 
     content = output_file.read_text()
     assert "\\begin{longtable}" in content
@@ -254,10 +257,10 @@ def test_main_writes_output(tmp_path):
 
 def test_main_creates_parent_dirs(tmp_path):
     """main() creates parent directories if they don't exist."""
-    input_file = tmp_path / "metrics.json"
-    input_file.write_text(json.dumps(SAMPLE_METRICS))
+    input_file = tmp_path / "measurements.jsonl"
+    write_measurements(input_file, SAMPLE_METRICS)
     output_file = tmp_path / "sub" / "dir" / "tab_comparaison.tex"
 
-    main(["--input", str(input_file), "--output", str(output_file)])
+    main(["--measurements", str(input_file), "--output", str(output_file)])
 
     assert output_file.exists()

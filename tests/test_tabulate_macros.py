@@ -63,10 +63,13 @@ def test_slug_strips_run_and_dir():
     assert len(summary) == 1
 
 
+from conftest import write_measurements
+
+
 def test_main_writes_file(tmp_path):
-    """CLI writes macros.tex from a metrics JSON file."""
-    input_path = tmp_path / "all_metrics.json"
-    input_path.write_text(json.dumps(SAMPLE_METRICS))
+    """CLI writes macros.tex from a measurements.jsonl file."""
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, SAMPLE_METRICS)
     output_path = tmp_path / "macros.tex"
 
     from aedist.tabulate_macros import main
@@ -74,7 +77,7 @@ def test_main_writes_file(tmp_path):
 
     sys.argv = [
         "tabulate_macros",
-        "--input", str(input_path),
+        "--measurements", str(input_path),
         "--output", str(output_path),
     ]
     main()

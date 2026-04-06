@@ -6,7 +6,6 @@
 #   slides.pdf ← census_bars.csv, pareto.csv ← measurements.jsonl
 
 MEASUREMENTS := measurements.jsonl
-METRICS      := results/summary/all_metrics.json
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
@@ -20,11 +19,6 @@ test:
 check-fast: test
 
 check: test
-
-# --- Metrics (root of the DAG) -----------------------------------------------
-
-$(METRICS):
-	$(MAKE) -C experiments sweep1-summary
 
 # --- Model selection ----------------------------------------------------------
 
