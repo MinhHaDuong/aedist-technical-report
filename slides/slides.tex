@@ -292,6 +292,31 @@ Mistral Small 4 at \$0.15/M beats GPT-5.4 at \$2.50/M with RAG context.
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Task decomposition: solving the truncation bottleneck}
+\textbf{Problem:} Models truncate output before listing all plants.\\
+\textbf{Solution:} Split into 3 sub-queries by fuel (coal / gas+LNG / other), merge.
+
+\medskip
+\begin{tabular}{lrrcrr}
+\toprule
+\textbf{Model} & \multicolumn{2}{c}{\textbf{Single query}} & & \multicolumn{2}{c}{\textbf{Decomposed}} \\
+\cmidrule{2-3}\cmidrule{5-6}
+ & Med.\ F1 & Best & & Med.\ F1 & Best \\
+\midrule
+DeepSeek V3.2       & 60\% & 69\% & $\rightarrow$ & \textbf{94\%} & \textbf{99\%} \\
+Mistral Large 3     & 72\% & 88\% & $\rightarrow$ & \textbf{95\%} & \textbf{96\%} \\
+Gemini Flash Lite   & 58\% & 97\% & $\rightarrow$ & 75\% & 98\% \\
+Mistral Small 4     & 86\% & 87\% & $\rightarrow$ & 83\% & 90\% \\
+GPT-5.4             & 77\% & 94\% & $\rightarrow$ & 71\% & 75\% \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textbf{Best result:} DeepSeek V3.2 --- 163/163 plants, F1 = 98.8\%, \textbf{\$0.06}\\
+\small Open-weight model at \$0.26/M beats GPT-5.4 at \$2.50/M with decomposition.
+\end{frame}
+
 % ===================================================================
 \section{Verification}
 
@@ -457,22 +482,22 @@ Human validates before ingestion.
   \item 28 cloud + 8 local models, \$0.73 census
   \item Direct: best 107/163 plants (GPT-5.4)
   \item RAG: best 141/163 plants (Mistral Small 4)
-  \item Attribute accuracy $>$90\% on matches
+  \item \textbf{Decomposed: 163/163 plants, F1=99\%, \$0.06}
 \end{itemize}
 
 \medskip
 \textbf{Bottom line:}\\
-Hybrid approach -- RAG + knowledge graphs + specialized agents -- is \textbf{necessary and feasible} for traceable energy statistics from heterogeneous, multilingual sources.
+An off-the-shelf pipeline recovers \textbf{99\% of an expert inventory for \$0.06}. The remaining 1\% requires knowledge engineering or agentic systems.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{Next steps}
 \begin{enumerate}
-  \item Multi-turn token budget analysis (\checkmark done)
-  \item Cost--quality Pareto analysis across regimes
+  \item Stack decomposition + union vote + precision filter $\to$ 99\%+?
+  \item Cost--quality Pareto analysis across all regimes
   \item PDF converter intercomparison (GROBID vs vision models)
-  \item Local vs cloud model comparison on Padme
+  \item Extend benchmark to other countries / sectors
   \item Prototype knowledge graph with OEO alignment
 \end{enumerate}
 
