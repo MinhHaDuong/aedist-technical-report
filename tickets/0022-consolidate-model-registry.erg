@@ -1,0 +1,31 @@
+%erg v1
+Title: Consolidate model registry, configure sweeps separately
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:00Z claude created
+
+--- body ---
+## Context
+After PR #179 (frontier bench), the repo has 8 model YAML files with
+duplicated entries across them. The same model (prices, context window,
+params, reasoning flag) is copy-pasted into multiple files. When a field
+changes, subsets drift out of sync — the missing `reasoning: true` on
+DeepSeek R1 0528 in `models_frontier_10labs.yaml` was a concrete example.
+
+## Actions
+1. Merge all model definitions into a single `experiments/models.yaml`
+   registry with tags/labels (e.g. `country`, `size_class`, `sweep` list).
+2. Have sweep scripts select models by filter rather than by separate YAML
+   files (e.g. `--filter country=CN` or a sweep config that references
+   model IDs).
+3. Remove the per-sweep/per-geography YAML files.
+
+## Test
+- All existing sweeps produce identical model lists from filtered registry.
+- `pytest` passes with no regressions.
+
+## Exit criteria
+Single source of truth for model metadata. No duplicated model entries.
