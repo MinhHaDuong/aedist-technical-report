@@ -1,7 +1,8 @@
 # Sweep 1 local: Padme models via Ollama
 mode: single
 prompt: prompts/prompt_structured.txt
-models: models_padme.yaml
+models: models.yaml
+model_set: census_local
 repeat: 3
 budget_usd: 0
 output: outputs/sweep1_census

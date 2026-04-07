@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import time
+import tomllib
 from pathlib import Path
 
 import yaml
@@ -123,8 +124,14 @@ def estimate_messages_tokens(messages: list[dict]) -> int:
 # ---------------------------------------------------------------------------
 
 
+def load_experiments(path: str) -> dict:
+    """Load experiments.toml configuration."""
+    with open(path, "rb") as f:
+        return tomllib.load(f)
+
+
 def make_client(base_url: str | None = None) -> OpenAI:
-    """Create an OpenAI-compatible client.
+    """Create an OpenAI-compatible client (legacy interface).
 
     When *base_url* is provided (e.g. Ollama), use it directly with a
     dummy API key.  Otherwise default to OpenRouter.
@@ -139,6 +146,24 @@ def make_client(base_url: str | None = None) -> OpenAI:
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
     )
+
+
+def make_client_for_router(router: str, routers_config: dict) -> OpenAI:
+    """Create an OpenAI-compatible client from router config.
+
+    Resolves base_url and API key from the router definition in
+    experiments.toml's [routers] section.
+    """
+    cfg = routers_config[router]
+    base_url = cfg["base_url"]
+    env_key = cfg.get("env_key")
+    if env_key:
+        api_key = os.environ.get(env_key)
+        if not api_key:
+            raise SystemExit(f"Set {env_key} environment variable")
+    else:
+        api_key = "ollama"
+    return OpenAI(base_url=base_url, api_key=api_key)
 
 
 # ---------------------------------------------------------------------------

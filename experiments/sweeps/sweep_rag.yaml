@@ -3,7 +3,8 @@ mode: rag
 prompt: prompts/prompt_structured.txt
 corpus: data/rag_corpus
 strategy: wholesale
-models: models_sweep_rag.yaml
+models: models.yaml
+model_set: sweep_rag
 repeat: 3
 budget_usd: 10
 output: outputs/sweep_rag

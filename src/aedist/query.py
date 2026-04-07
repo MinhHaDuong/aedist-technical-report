@@ -28,12 +28,15 @@ import openai
 from .harness import (
     BudgetTracker,
     compute_cost,
+    load_experiments,
     load_models,
     make_client,
+    make_client_for_router,
     model_metadata,
     output_path,
     query_single_turn,
     save_json,
+    select_models,
     should_skip,
 )
 
@@ -51,6 +54,8 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
     parser.add_argument("--base-url", default=None, help="Override API base URL (e.g. http://localhost:11434/v1 for Ollama)")
     parser.add_argument("--output-prefix", default="", help="Prefix for output filenames (e.g. 'padme')")
+    parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
+    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -58,6 +63,12 @@ def main():
     prompt = Path(args.prompt).read_text().strip()
     models = load_models(args.models)
     output_dir = Path(args.output)
+
+    # Filter by model set from experiments.toml
+    if args.model_set:
+        experiments = load_experiments(args.experiments)
+        set_ids = experiments["sets"][args.model_set]["model_ids"]
+        models = select_models(models, set_ids)
 
     # Filter to single model if requested
     if args.model:
@@ -71,13 +82,27 @@ def main():
                 log.info("Would query %s run %d", model["id"], run)
         return
 
-    client = make_client(args.base_url)
+    # Build client(s): per-router when using experiments.toml, else single legacy client
+    if args.model_set:
+        routers_config = experiments.get("routers", {})
+        clients: dict[str, object] = {}
+    else:
+        legacy_client = make_client(args.base_url)
     budget = BudgetTracker(args.budget_usd)
     prefix = args.output_prefix
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
+
+        # Resolve client
+        router = model.get("router")
+        if args.model_set and router:
+            if router not in clients:
+                clients[router] = make_client_for_router(router, routers_config)
+            client = clients[router]
+        else:
+            client = legacy_client
 
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():

@@ -24,8 +24,10 @@ from .harness import (
     BudgetTracker,
     compute_cost,
     estimate_messages_tokens,
+    load_experiments,
     load_models,
     make_client,
+    select_models,
     model_metadata,
     output_path,
     query_single_turn,
@@ -168,6 +170,8 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
+    parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
+    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -178,6 +182,11 @@ def main():
     ]
     models = load_models(args.models)
     output_dir = Path(args.output)
+
+    if args.model_set:
+        experiments = load_experiments(args.experiments)
+        set_ids = experiments["sets"][args.model_set]["model_ids"]
+        models = select_models(models, set_ids)
 
     if args.model:
         models = [m for m in models if m["id"] == args.model]
