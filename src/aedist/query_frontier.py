@@ -140,9 +140,10 @@ def main():
                 api_kwargs = {"max_tokens": args.max_tokens}
                 if not model.get("reasoning", False):
                     api_kwargs["temperature"] = args.temperature
+                api_model_id = model.get("router_model", model_id)
                 result = query_single_turn(
                     client,
-                    model_id,
+                    api_model_id,
                     [{"role": "user", "content": prompt}],
                     **api_kwargs,
                 )

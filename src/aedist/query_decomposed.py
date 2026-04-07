@@ -261,9 +261,10 @@ def main():
 
             log.info("Querying %s run %d/%d (decomposed RAG)...", label, run, args.repeat)
 
+            api_model_id = model.get("router_model", model_id)
             decomposed = query_decomposed(
                 client,
-                model_id,
+                api_model_id,
                 corpus_text,
                 budget,
                 model,

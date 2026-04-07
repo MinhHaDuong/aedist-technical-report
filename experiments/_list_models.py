@@ -45,6 +45,10 @@ def main():
 
     set_ids = set(model_set["model_ids"])
     selected = [m for m in models if m["id"] in set_ids]
+    missing = set_ids - {m["id"] for m in selected}
+    if missing:
+        print(f"Error: IDs not found in registry: {sorted(missing)}", file=sys.stderr)
+        sys.exit(1)
 
     if args.format == "full":
         names = [m["id"] for m in selected]

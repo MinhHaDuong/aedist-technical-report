@@ -223,9 +223,10 @@ def main():
             )
 
             try:
+                api_model_id = model.get("router_model", model_id)
                 conv = run_conversation(
                     client,
-                    model_id,
+                    api_model_id,
                     prompt,
                     followups,
                     model,

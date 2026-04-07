@@ -130,44 +130,6 @@ def test_experiments_routers(experiments):
 
 
 # ---------------------------------------------------------------------------
-# Equivalence gate: old YAML files produce identical ID sets from registry
-# ---------------------------------------------------------------------------
-
-OLD_FILES_TO_SETS = {
-    "models_padme.yaml": "census_local",
-    "models_frontier.yaml": "frontier",
-    "models_frontier_10labs.yaml": "frontier_10labs",
-    "models_frontier_3best.yaml": "frontier_3best",
-    "models_frontier_cn.yaml": "frontier_cn",
-    "models_sweep_rag.yaml": "sweep_rag",
-    "models_sweep5.yaml": "sweep5",
-}
-
-
-@pytest.mark.parametrize("old_file,set_name", OLD_FILES_TO_SETS.items())
-def test_equivalence_with_old_files(models, experiments, old_file, set_name):
-    """Selecting from consolidated registry matches the old per-sweep YAML file."""
-    old_path = EXPERIMENTS_DIR / old_file
-    if not old_path.exists():
-        pytest.skip(f"{old_file} already deleted")
-    with open(old_path) as f:
-        old_ids = {m["id"] for m in yaml.safe_load(f)}
-
-    set_ids = set(experiments["sets"][set_name]["model_ids"])
-    assert set_ids == old_ids, (
-        f"{set_name} vs {old_file}: "
-        f"missing={old_ids - set_ids}, extra={set_ids - old_ids}"
-    )
-
-    # Also verify select_models returns them all
-    selected = select_models(models, list(set_ids))
-    selected_ids = {m["id"] for m in selected}
-    assert selected_ids == old_ids, (
-        f"select_models mismatch for {set_name}"
-    )
-
-
-# ---------------------------------------------------------------------------
 # _list_models.py helper
 # ---------------------------------------------------------------------------
 

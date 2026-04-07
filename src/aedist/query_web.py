@@ -174,7 +174,8 @@ def main():
                     )},
                     {"role": "user", "content": prompt},
                 ]
-                result = query_single_turn(client, model_id, messages)
+                api_model_id = model.get("router_model", model_id)
+                result = query_single_turn(client, api_model_id, messages)
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
                 budget.add(cost)

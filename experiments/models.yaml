@@ -403,9 +403,9 @@
   size_class: medium
   license: open-other
 
-- id: glm-4.7-flash
+- id: "glm-4.7-flash"
   router: ollama
-  router_model: glm-4.7-flash
+  router_model: "glm-4.7-flash"
   name: "GLM 4.7 Flash (local)"
   provider: "Ollama/Padme"
   country: CN
@@ -416,9 +416,9 @@
   size_class: medium
   license: open-apache
 
-- id: nemotron-3-nano
+- id: "nemotron-3-nano"
   router: ollama
-  router_model: nemotron-3-nano
+  router_model: "nemotron-3-nano"
   name: "Nemotron 3 Nano (local)"
   provider: "Ollama/Padme"
   country: US
@@ -485,9 +485,9 @@
   size_class: small
   license: open-apache
 
-- id: devstral-small-2
+- id: "devstral-small-2"
   router: ollama
-  router_model: devstral-small-2
+  router_model: "devstral-small-2"
   name: "Devstral Small 2 (local)"
   provider: "Ollama/Padme"
   country: FR
@@ -511,9 +511,9 @@
   size_class: small
   license: open-apache
 
-- id: mistral-small3.2
+- id: "mistral-small3.2"
   router: ollama
-  router_model: mistral-small3.2
+  router_model: "mistral-small3.2"
   name: "Mistral Small 3.2 (local)"
   provider: "Ollama/Padme"
   country: FR
