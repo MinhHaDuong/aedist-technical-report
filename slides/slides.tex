@@ -1,5 +1,4 @@
 \documentclass[aspectratio=169]{beamer}
-\usepackage{unicode-math}
 \usepackage{booktabs}
 \usepackage{colortbl}
 \usepackage{xcolor}
@@ -8,8 +7,10 @@
 \pgfplotsset{compat=1.18}
 \usepackage{pgfplotstable}
 
-\usepackage[no-math]{fontspec}
-\usetheme[numbering=fraction]{metropolis}
+\useinnertheme{metropolis}
+\useoutertheme{metropolis}
+\usecolortheme{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
 
 \InputIfFileExists{inputs/generated/macros}{}{}
 
@@ -91,7 +92,7 @@ Expert-validated from PDP7, PDP8, EVN reports
 \begin{description}
   \item[Key idea] A \textbf{method} = model + prompt + information regime + aggregation. The model is one parameter.
   \item[Apparatus] OpenRouter API + local Ollama
-  \item[N] 35 models $\times$ up to 5 conditions $\times$ 3 runs
+  \item[N] 37 models $\times$ up to 6 conditions $\times$ 3 runs
   \item[Cost] \$0.82 total
   \item[Evaluation] Exact + fuzzy name matching, then per-field accuracy
 \end{description}
@@ -106,7 +107,7 @@ Expert-validated from PDP7, PDP8, EVN reports
 \section{Experimental design}
 
 % -------------------------------------------------------------------
-\begin{frame}{Five condition axes}
+\begin{frame}{Six condition axes}
 \begin{columns}[T]
 \column{0.55\textwidth}
 \textbf{Explored in this study:}
@@ -120,12 +121,13 @@ Documentation & none / wholesale RAG \\
 Conversation  & single-shot / multi-turn \\
 Decomposition & monolithic / by fuel type \\
 Aggregation   & single run / union vote \\
-Model         & 35 models (26 cloud + 9 local) \\
+Prompt structure & plain / sourced extraction \\
+Model         & 37 models (28 cloud + 9 local) \\
 \bottomrule
 \end{tabular}
 
 \medskip
-35 models $\times$ up to 5 conditions $\times$ 3 runs\\
+37 models $\times$ up to 6 conditions $\times$ 3 runs\\
 Total cost: \textbf{\$0.82}
 
 \column{0.42\textwidth}
@@ -182,7 +184,7 @@ Total cost: \textbf{\$0.82}
 
 \smallskip
 {\small Condition: single-shot, no documentation, no decomposition.
-Range: 10--107 plants. \textbf{Model choice alone does not solve the problem.}}
+Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
 \end{frame}
 
 % ===================================================================
@@ -467,7 +469,7 @@ Human validates before ingestion.
   \item \textbf{Decomposition}: 60\% $\to$ 99\%
   \item \textbf{Aggregation} (union vote): +35\,pp at zero cost
   \item \textbf{Conversation} (multi-turn): up to 155/163
-  \item Model choice alone: 10--107 plants
+  \item Model choice alone: \MinBaselinePlants--\MaxBaselinePlants{} plants
 \end{enumerate}
 
 \medskip
@@ -477,8 +479,8 @@ Method design explains more variance than model selection.
 \column{0.48\textwidth}
 \textbf{Key numbers:}
 \begin{itemize}
-  \item 35 models, 5 condition axes, \$0.82
-  \item Best baseline: 107/163 (model only)
+  \item \NumModelsTested{} models, 6 condition axes, \$0.82
+  \item Best baseline: 125/163 (model only)
   \item Best RAG: 141/163 (cheap model + docs)
   \item \textbf{Best overall: 163/163, F1=99\%, \$0.06}
 \end{itemize}

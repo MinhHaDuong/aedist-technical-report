@@ -90,12 +90,20 @@ $(SLIDE_GEN)/sweep2_regimes.csv: $(GEN)/sweep2_regimes.csv
 	@mkdir -p $(dir $@)
 	cp $< $@
 
+$(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
+	uv run python -m aedist.tabulate_macros \
+	    --measurements $(MEASUREMENTS) --census-csv $< --output $@
+
 # --- Publications -------------------------------------------------------------
 
-report/report.pdf: report/report.tex report/refs.bib $(GEN)/tab_census.tex $(GEN)/macros.tex
+report/report.pdf: report/report.tex report/refs.bib \
+    $(GEN)/tab_census.tex $(GEN)/macros.tex \
+    $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex
 	$(MAKE) -C report
 
-slides/slides.pdf: slides/slides.tex $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/sweep2_regimes.csv
+slides/slides.pdf: slides/slides.tex \
+    $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv \
+    $(SLIDE_GEN)/sweep2_regimes.csv $(SLIDE_GEN)/macros.tex
 	$(MAKE) -C slides
 
 # --- Convenience aliases ------------------------------------------------------
