@@ -263,6 +263,17 @@
   size_class: small
   license: commercial
 
+- id: stepfun/step-3.5-flash
+  name: Step 3.5 Flash
+  provider: StepFun
+  country: CN
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.10
+  price_per_mtok_out: 0.30
+  size_class: small
+  license: commercial
+
 - id: xiaomi/mimo-v2-flash
   name: MiMo V2 Flash
   provider: Xiaomi
