@@ -61,7 +61,7 @@
   name: Qwen 3.5 2B (local)
   provider: Ollama/Padme
   country: CN
-  architecture: moe
+  architecture: dense
   context_window: 131072
   price_per_mtok_in: 0.0
   price_per_mtok_out: 0.0
