@@ -107,7 +107,7 @@ Expert-validated from PDP7, PDP8, EVN reports
 \section{Experimental design}
 
 % -------------------------------------------------------------------
-\begin{frame}{Five condition axes}
+\begin{frame}{Six condition axes}
 \begin{columns}[T]
 \column{0.55\textwidth}
 \textbf{Explored in this study:}
@@ -469,7 +469,7 @@ Human validates before ingestion.
   \item \textbf{Decomposition}: 60\% $\to$ 99\%
   \item \textbf{Aggregation} (union vote): +35\,pp at zero cost
   \item \textbf{Conversation} (multi-turn): up to 155/163
-  \item Model choice alone: 4--125 plants
+  \item Model choice alone: \MinBaselinePlants--\MaxBaselinePlants{} plants
 \end{enumerate}
 
 \medskip
@@ -479,7 +479,7 @@ Method design explains more variance than model selection.
 \column{0.48\textwidth}
 \textbf{Key numbers:}
 \begin{itemize}
-  \item 37 models, 6 condition axes, \$0.82
+  \item \NumModelsTested{} models, 6 condition axes, \$0.82
   \item Best baseline: 125/163 (model only)
   \item Best RAG: 141/163 (cheap model + docs)
   \item \textbf{Best overall: 163/163, F1=99\%, \$0.06}
