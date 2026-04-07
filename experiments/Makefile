@@ -56,8 +56,8 @@ S1P_MODELS := $(call cfg,sweep1_padme,models)
 S1P_SET    := $(call cfg,sweep1_padme,model_set)
 
 # Model short names → output file targets (via _list_models.py helper)
-S1_OR_SHORTS  = $(shell python3 _list_models.py $(S1_MODELS) --set $(S1_SET) --experiments experiments.toml)
-S1_PAD_SHORTS = $(shell python3 _list_models.py $(S1P_MODELS) --set $(S1P_SET) --experiments experiments.toml --format padme-short)
+S1_OR_SHORTS  = $(shell uv run --project .. python3 _list_models.py $(S1_MODELS) --set $(S1_SET) --experiments experiments.toml)
+S1_PAD_SHORTS = $(shell uv run --project .. python3 _list_models.py $(S1P_MODELS) --set $(S1P_SET) --experiments experiments.toml --format padme-short)
 
 # Target: {output}/{model}-run{n}.json — one file per model per run
 S1_OR_JSONS  = $(foreach m,$(S1_OR_SHORTS),$(foreach r,1 2 3,$(S1_OUTPUT)/$(m)-run$(r).json))
@@ -86,7 +86,7 @@ sweep1-summary:
 # Grouped target (GNU Make 4.3+): one recipe produces all 3 files.
 define or_rule
 $(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_census.yaml
-	$$(eval FULL_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); hits=[m['id'] for m in ms if m['id'].split('/')[-1].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
+	$$(eval FULL_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); hits=[m['id'] for m in ms if '/' in m['id'] and m['id'].split('/')[-1].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(FULL_ID)" ]; then echo "SKIP $(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
 	    --prompt $(S1_PROMPT) --models $(S1_MODELS) \
@@ -100,7 +100,7 @@ $(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
 # Padme: aedist.query with --base-url for Ollama, --output-prefix padme.
 define padme_rule
 $(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_padme.yaml
-	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
+	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if '/' not in m['id'] and m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
 	    --prompt $(S1_PROMPT) --models $(S1P_MODELS) \
