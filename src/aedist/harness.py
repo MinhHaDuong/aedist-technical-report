@@ -177,12 +177,14 @@ def query_single_turn(
     client: OpenAI,
     model_id: str,
     messages: list[dict],
+    **kwargs,
 ) -> dict:
     """Send messages to a model, return response dict with timing."""
     t0 = time.monotonic()
     response = client.chat.completions.create(
         model=model_id,
         messages=messages,
+        **kwargs,
     )
     wall_seconds = round(time.monotonic() - t0, 3)
     choice = response.choices[0]

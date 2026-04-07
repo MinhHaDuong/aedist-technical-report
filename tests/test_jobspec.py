@@ -109,16 +109,16 @@ class TestFromSweepYaml:
         assert j.models_file == "models.yaml"
         assert j.output_dir == "outputs/sweep1_census"
 
-    def test_sweep2_rag(self, tmp_path: Path):
+    def test_sweep_rag(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: rag\n"
             "prompt: prompts/prompt_structured.txt\n"
             "corpus: data/rag_corpus\n"
             "strategy: wholesale\n"
-            "models: models_sweep2.yaml\n"
+            "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/sweep2_rag\n"
+            "output: outputs/sweep_rag\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.RAG
@@ -130,7 +130,7 @@ class TestFromSweepYaml:
             "mode: multiturn\n"
             "prompt: prompts/prompt_structured.txt\n"
             "followups: prompts/followups.txt\n"
-            "models: models_sweep2.yaml\n"
+            "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
             "output: outputs/sweep2_multiturn\n"

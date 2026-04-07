@@ -22,7 +22,7 @@ Makefile's foreach macro expansion with a standalone script.
    `{priority:03d}-{job_id}.yaml`
 4. Idempotent: skip if job file already exists in pending/, running/,
    done/, or failed/
-5. CLI: `python -m aedist.manager generate sweeps/sweep2_rag.yaml`
+5. CLI: `python -m aedist.manager generate sweeps/sweep_rag.yaml`
 6. Unit tests: correct fan-out count, idempotency, filename format
 
 ## Exit criteria

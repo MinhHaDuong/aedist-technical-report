@@ -29,7 +29,7 @@ endif
 export TAVILY_API_KEY
 
 # Guard: only require OPENROUTER_API_KEY for targets that actually need it
-_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-rag sweep2-web sweep5-sourced
+_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-web sweep5-sourced
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
   $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
 endif
@@ -117,13 +117,13 @@ S2MT_REPEAT := $(call cfg,sweep2_multiturn,repeat)
 S2MT_BUDGET := $(call cfg,sweep2_multiturn,budget_usd)
 S2MT_OUTPUT := $(call cfg,sweep2_multiturn,output)
 
-S2R_PROMPT  := $(call cfg,sweep2_rag,prompt)
-S2R_CORPUS  := $(call cfg,sweep2_rag,corpus)
-S2R_STRAT   := $(call cfg,sweep2_rag,strategy)
-S2R_MODELS  := $(call cfg,sweep2_rag,models)
-S2R_REPEAT  := $(call cfg,sweep2_rag,repeat)
-S2R_BUDGET  := $(call cfg,sweep2_rag,budget_usd)
-S2R_OUTPUT  := $(call cfg,sweep2_rag,output)
+SR_PROMPT  := $(call cfg,sweep_rag,prompt)
+SR_CORPUS  := $(call cfg,sweep_rag,corpus)
+SR_STRAT   := $(call cfg,sweep_rag,strategy)
+SR_MODELS  := $(call cfg,sweep_rag,models)
+SR_REPEAT  := $(call cfg,sweep_rag,repeat)
+SR_BUDGET  := $(call cfg,sweep_rag,budget_usd)
+SR_OUTPUT  := $(call cfg,sweep_rag,output)
 
 S2W_PROMPT  := $(call cfg,sweep2_web,prompt)
 S2W_MODELS  := $(call cfg,sweep2_web,models)
@@ -131,9 +131,9 @@ S2W_REPEAT  := $(call cfg,sweep2_web,repeat)
 S2W_BUDGET  := $(call cfg,sweep2_web,budget_usd)
 S2W_OUTPUT  := $(call cfg,sweep2_web,output)
 
-.PHONY: sweep2 sweep2-multiturn sweep2-rag sweep2-web
+.PHONY: sweep2 sweep2-multiturn sweep-rag sweep2-web
 
-sweep2: sweep2-multiturn sweep2-rag sweep2-web
+sweep2: sweep2-multiturn sweep-rag sweep2-web
 
 sweep2-multiturn:
 	uv run --project .. python -m aedist.query_multiturn \
@@ -141,12 +141,12 @@ sweep2-multiturn:
 	    --models $(S2MT_MODELS) --output $(S2MT_OUTPUT) \
 	    --repeat $(S2MT_REPEAT) --budget-usd $(S2MT_BUDGET)
 
-sweep2-rag:
+sweep-rag:
 	uv run --project .. python -m aedist.query_rag \
-	    --prompt $(S2R_PROMPT) --corpus $(S2R_CORPUS) \
-	    --strategy $(S2R_STRAT) --models $(S2R_MODELS) \
-	    --output $(S2R_OUTPUT) --repeat $(S2R_REPEAT) \
-	    --budget-usd $(S2R_BUDGET)
+	    --prompt $(SR_PROMPT) --corpus $(SR_CORPUS) \
+	    --strategy $(SR_STRAT) --models $(SR_MODELS) \
+	    --output $(SR_OUTPUT) --repeat $(SR_REPEAT) \
+	    --budget-usd $(SR_BUDGET)
 
 sweep2-web:
 	uv run --project .. python -m aedist.query_web \
@@ -200,8 +200,8 @@ sweep5-sourced:
 
 # --- Analysis: self-consistency -----------------------------------------------
 
-SC_INPUT  := outputs/sweep2_rag
-SC_OUTPUT := outputs/sweep2_rag_consistency
+SC_INPUT  := outputs/sweep_rag
+SC_OUTPUT := outputs/sweep_rag_consistency
 SC_JSON   := $(SC_OUTPUT)/self_consistency_summary.json
 SC_TEX    := ../report/inputs/generated/tab_self_consistency.tex
 SC_PERRUN := ../report/inputs/generated/tab_per_run.tex

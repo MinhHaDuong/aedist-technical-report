@@ -1,0 +1,154 @@
+- id: openai/gpt-5.4
+  name: GPT-5.4
+  provider: OpenAI
+  country: US
+  architecture: dense
+  context_window: 1050000
+  price_per_mtok_in: 2.5
+  price_per_mtok_out: 15.0
+  size_class: frontier
+  license: commercial
+- id: google/gemini-2.5-flash-lite
+  name: Gemini 2.5 Flash Lite
+  provider: Google
+  country: US
+  architecture: dense
+  context_window: 1048576
+  price_per_mtok_in: 0.1
+  price_per_mtok_out: 0.4
+  size_class: edge
+  license: commercial
+- id: mistralai/mistral-small-2603
+  name: Mistral Small 4
+  provider: Mistral
+  country: FR
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.15
+  price_per_mtok_out: 0.6
+  params: 24B
+  size_class: small
+  license: open-apache
+- id: mistralai/mistral-large-2512
+  name: Mistral Large 3
+  provider: Mistral
+  country: FR
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.5
+  price_per_mtok_out: 1.5
+  params: 675B MoE (41B active)
+  size_class: frontier
+  license: open-apache
+- id: deepseek/deepseek-v3.2
+  name: DeepSeek V3.2
+  provider: DeepSeek
+  country: CN
+  architecture: moe
+  context_window: 163840
+  price_per_mtok_in: 0.26
+  price_per_mtok_out: 0.38
+  params: 671B MoE
+  size_class: frontier
+  license: open-MIT
+# Local models on Padme (Ollama) — small/medium tier
+- id: cogito:8b
+  name: Cogito 8B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+- id: granite3.3:8b
+  name: Granite 3.3 8B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+- id: qwen3.5:9b
+  name: Qwen 3.5 9B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+- id: qwen3.5:35b
+  name: Qwen 3.5 35B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+- id: gemma4:26b
+  name: Gemma 4 26B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
+# Local edge models on Padme (Ollama)
+- id: qwen3.5:4b
+  name: Qwen 3.5 4B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+- id: qwen3.5:2b
+  name: Qwen 3.5 2B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+- id: gemma4:e4b
+  name: Gemma 4 E4B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-other
+- id: gemma4:e2b
+  name: Gemma 4 E2B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-other

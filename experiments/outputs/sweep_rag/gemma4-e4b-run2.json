@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:e4b",
+  "run": 2,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "I have compiled a table synthesizing the data from the provided documents, categorizing the power plants by fuel source.\n\nHere is the data structured for your convenience:\n\n| Plant Name/Region | Fuel Source | Status/Notes |\n| :--- | :--- | :--- |\n| **Coal/Other** | | |\n| (No specific details provided) | Coal | (N/A) |\n| **Gas/Other** | | |\n| (No specific details provided) | Gas | (N/A) |\n\n***\n\n**Crucial Observation:**\n\nThe provided context snippets are **too fragmentary** to generate a comprehensive or accurate table of power plants. They are technical or administrative fragments without enough specific data points (like plant name, capacity, etc.) to build a reliable dataset.\n\nIf you can provide a more complete report or a specific section detailing the power plants (e.g., \"The following gas-fired plant...\"), I would be happy to create the detailed table you require.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 32768,
+    "completion_tokens": 210
+  },
+  "wall_seconds": 23.425,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

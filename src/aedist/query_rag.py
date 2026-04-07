@@ -10,7 +10,7 @@ Usage:
         --corpus data/rag_corpus/ \
         --strategy wholesale \
         --models models.yaml \
-        --output outputs/sweep2_rag/ \
+        --output outputs/sweep_rag/ \
         --repeat 3
 """
 
@@ -100,12 +100,15 @@ def main():
                 log.info("Would query %s run %d [%s]", model["id"], run, fits)
         return
 
-    client = make_client()
     budget = BudgetTracker(args.budget_usd)
+    client = None
+    current_base_url = object()  # sentinel — forces first client creation
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
+        base_url = model.get("base_url")
+
         ctx_window = model.get("context_window", 0)
 
         # Context window guard
@@ -126,6 +129,11 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
+            # Create/switch client when base_url changes
+            if base_url != current_base_url:
+                client = make_client(base_url)
+                current_base_url = base_url
+
             log.info("Querying %s run %d/%d (RAG %s)...", label, run, args.repeat, args.strategy)
 
             try:
@@ -133,8 +141,23 @@ def main():
                     {"role": "system", "content": corpus_text},
                     {"role": "user", "content": prompt},
                 ]
-                result = query_single_turn(client, model_id, messages)
+                # Set num_ctx for Ollama to avoid silent truncation
+                extra = {}
+                if base_url:
+                    extra["extra_body"] = {"options": {"num_ctx": ctx_window}}
+
+                result = query_single_turn(client, model_id, messages, **extra)
                 usage = result.get("usage") or {}
+
+                # Truncation guard: prompt should not fill entire context
+                prompt_tokens = usage.get("prompt_tokens", 0)
+                if prompt_tokens and prompt_tokens >= ctx_window:
+                    log.error(
+                        "TRUNCATED: %s run %d prompt_tokens=%d >= ctx_window=%d",
+                        label, run, prompt_tokens, ctx_window,
+                    )
+                    continue
+
                 cost = compute_cost(usage, model)
                 budget.add(cost)
 
