@@ -21,7 +21,6 @@ Usage:
 
 import argparse
 import logging
-import time
 from datetime import date
 from pathlib import Path
 
@@ -34,6 +33,7 @@ from .harness import (
     make_client,
     model_metadata,
     output_path,
+    query_single_turn,
     save_json,
     should_skip,
 )
@@ -43,51 +43,6 @@ log = logging.getLogger(__name__)
 # Frontier defaults: maximize quality and output length
 DEFAULT_MAX_TOKENS = 32768
 DEFAULT_TEMPERATURE = 0.0
-
-
-REASONING_MODELS = {
-    "openai/o3",
-    "openai/o3-pro",
-    "openai/o3-deep-research",
-    "openai/o3-mini",
-    "openai/o3-mini-high",
-    "openai/o4-mini",
-    "openai/o4-mini-high",
-    "openai/o4-mini-deep-research",
-}
-
-
-def query_frontier(
-    client: openai.OpenAI,
-    model_id: str,
-    messages: list[dict],
-    *,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
-    temperature: float = DEFAULT_TEMPERATURE,
-) -> dict:
-    """Send messages with frontier-optimized parameters.
-
-    Higher max_tokens than standard queries to allow comprehensive
-    multi-section reports.  Temperature 0 for deterministic output.
-    Reasoning models (o3/o4 family) don't accept temperature.
-    """
-    kwargs: dict = {"model": model_id, "messages": messages, "max_tokens": max_tokens}
-    if model_id not in REASONING_MODELS:
-        kwargs["temperature"] = temperature
-    t0 = time.monotonic()
-    response = client.chat.completions.create(**kwargs)
-    wall_seconds = round(time.monotonic() - t0, 3)
-    choice = response.choices[0]
-    usage = {
-        "prompt_tokens": response.usage.prompt_tokens,
-        "completion_tokens": response.usage.completion_tokens,
-    }
-    return {
-        "content": choice.message.content,
-        "finish_reason": choice.finish_reason,
-        "usage": usage,
-        "wall_seconds": wall_seconds,
-    }
 
 
 def main():
@@ -118,6 +73,9 @@ def main():
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     prompt = Path(args.prompt).read_text().strip()
+    sweep = Path(args.prompt).stem
+    if sweep.startswith("prompt_"):
+        sweep = sweep[len("prompt_"):]
     models = load_models(args.models)
     output_dir = Path(args.output)
 
@@ -170,12 +128,14 @@ def main():
             )
 
             try:
-                result = query_frontier(
+                api_kwargs = {"max_tokens": args.max_tokens}
+                if not model.get("reasoning", False):
+                    api_kwargs["temperature"] = args.temperature
+                result = query_single_turn(
                     client,
                     model_id,
                     [{"role": "user", "content": prompt}],
-                    max_tokens=args.max_tokens,
-                    temperature=args.temperature,
+                    **api_kwargs,
                 )
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
@@ -186,7 +146,7 @@ def main():
                     "model": model_id,
                     "date": date.today().isoformat(),
                     "run": run,
-                    "sweep": "frontier",
+                    "sweep": sweep,
                     "prompt": prompt,
                     "response": result["content"],
                     "finish_reason": result["finish_reason"],

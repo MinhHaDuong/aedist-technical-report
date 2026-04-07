@@ -14,6 +14,7 @@
   price_per_mtok_out: 40.0
   size_class: frontier
   license: commercial
+  reasoning: true
 
 - id: perplexity/sonar-deep-research
   name: Sonar Deep Research
@@ -50,6 +51,7 @@
   price_per_mtok_out: 8.0
   size_class: frontier
   license: commercial
+  reasoning: true
 
 - id: deepseek/deepseek-r1-0528
   name: DeepSeek R1 0528

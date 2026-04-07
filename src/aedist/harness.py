@@ -1,6 +1,6 @@
 """Shared utilities for the AEDIST query harness.
 
-All query scripts (query, query_multiturn, query_rag, query_web) import
+All query scripts (query, query_frontier, query_multiturn, query_rag, query_web) import
 from here to avoid duplicating client setup, budget tracking, model loading,
 save/skip logic, and cost computation.
 """
