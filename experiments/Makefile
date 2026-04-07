@@ -131,7 +131,9 @@ S2W_REPEAT  := $(call cfg,sweep2_web,repeat)
 S2W_BUDGET  := $(call cfg,sweep2_web,budget_usd)
 S2W_OUTPUT  := $(call cfg,sweep2_web,output)
 
+.PHONY: sweep2 sweep2-multiturn sweep-rag sweep2-web
 
+sweep2: sweep2-multiturn sweep-rag sweep2-web
 
 sweep2-multiturn:
 	uv run --project .. python -m aedist.query_multiturn \
@@ -139,6 +141,7 @@ sweep2-multiturn:
 	    --models $(S2MT_MODELS) --output $(S2MT_OUTPUT) \
 	    --repeat $(S2MT_REPEAT) --budget-usd $(S2MT_BUDGET)
 
+sweep-rag:
 	uv run --project .. python -m aedist.query_rag \
 	    --prompt $(SR_PROMPT) --corpus $(SR_CORPUS) \
 	    --strategy $(SR_STRAT) --models $(SR_MODELS) \
