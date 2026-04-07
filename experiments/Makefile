@@ -50,11 +50,14 @@ S1_REPEAT  := $(call cfg,sweep1_census,repeat)
 S1_BUDGET  := $(call cfg,sweep1_census,budget_usd)
 S1_OUTPUT  := $(call cfg,sweep1_census,output)
 
-S1P_MODELS := $(call cfg,sweep1_padme,models)
+S1_SET     := $(call cfg,sweep1_census,model_set)
 
-# Model short names → output file targets
-S1_OR_SHORTS  = $(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); print(' '.join(m['id'].split('/')[-1].replace(':','-') for m in ms))")
-S1_PAD_SHORTS = $(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); print(' '.join(m['id'].replace(':','-') for m in ms))")
+S1P_MODELS := $(call cfg,sweep1_padme,models)
+S1P_SET    := $(call cfg,sweep1_padme,model_set)
+
+# Model short names → output file targets (via _list_models.py helper)
+S1_OR_SHORTS  = $(shell python3 _list_models.py $(S1_MODELS) --set $(S1_SET) --experiments experiments.toml)
+S1_PAD_SHORTS = $(shell python3 _list_models.py $(S1P_MODELS) --set $(S1P_SET) --experiments experiments.toml --format padme-short)
 
 # Target: {output}/{model}-run{n}.json — one file per model per run
 S1_OR_JSONS  = $(foreach m,$(S1_OR_SHORTS),$(foreach r,1 2 3,$(S1_OUTPUT)/$(m)-run$(r).json))
@@ -87,6 +90,7 @@ $(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.j
 	@if [ -z "$$(FULL_ID)" ]; then echo "SKIP $(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
 	    --prompt $(S1_PROMPT) --models $(S1_MODELS) \
+	    --model-set $(S1_SET) --experiments experiments.toml \
 	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
 	    --budget-usd $(S1_BUDGET) --model $$(FULL_ID)
 endef
@@ -100,6 +104,7 @@ $(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
 	    --prompt $(S1_PROMPT) --models $(S1P_MODELS) \
+	    --model-set $(S1P_SET) --experiments experiments.toml \
 	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
 	    --model $$(OLLAMA_ID) \
 	    --base-url http://localhost:11434/v1 \
