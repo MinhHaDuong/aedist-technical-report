@@ -24,8 +24,11 @@ from .harness import (
     BudgetTracker,
     compute_cost,
     estimate_messages_tokens,
+    load_experiments,
     load_models,
     make_client,
+    make_client_for_router,
+    select_models,
     model_metadata,
     output_path,
     query_single_turn,
@@ -168,6 +171,8 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
+    parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
+    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -178,6 +183,11 @@ def main():
     ]
     models = load_models(args.models)
     output_dir = Path(args.output)
+
+    if args.model_set:
+        experiments = load_experiments(args.experiments)
+        set_ids = experiments["sets"][args.model_set]["model_ids"]
+        models = select_models(models, set_ids)
 
     if args.model:
         models = [m for m in models if m["id"] == args.model]
@@ -190,12 +200,27 @@ def main():
                 log.info("Would query %s run %d (%d turns)", model["id"], run, 1 + len(followups))
         return
 
-    client = make_client()
+    legacy_client = None
+    if args.model_set:
+        routers_config = experiments.get("routers", {})
+        clients: dict = {}
+    else:
+        legacy_client = make_client()
     budget = BudgetTracker(args.budget_usd)
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
+
+        router = model.get("router")
+        if args.model_set and router:
+            if router not in clients:
+                clients[router] = make_client_for_router(router, routers_config)
+            client = clients[router]
+        else:
+            if legacy_client is None:
+                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
+            client = legacy_client
 
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
@@ -214,9 +239,10 @@ def main():
             )
 
             try:
+                api_model_id = model.get("router_model", model_id)
                 conv = run_conversation(
                     client,
-                    model_id,
+                    api_model_id,
                     prompt,
                     followups,
                     model,

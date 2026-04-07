@@ -43,10 +43,9 @@ measurements: $(MEASUREMENTS)
 
 # --- Model selection ----------------------------------------------------------
 
-experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml experiments/models_padme.yaml
+experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml
 	uv run python -m aedist.select_sweep2 \
 	    --measurements $< --registry experiments/models.yaml \
-	    --padme experiments/models_padme.yaml \
 	    --output $@ --n 1
 
 # --- Tables for report --------------------------------------------------------

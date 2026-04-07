@@ -26,13 +26,16 @@ from .harness import (
     BudgetTracker,
     compute_cost,
     estimate_tokens,
+    load_experiments,
     load_models,
     make_client,
+    make_client_for_router,
     model_metadata,
     output_path,
     query_ollama_native,
     query_single_turn,
     save_json,
+    select_models,
     should_skip,
 )
 
@@ -74,6 +77,8 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
+    parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
+    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -83,6 +88,13 @@ def main():
     corpus_tokens = estimate_tokens(corpus_text)
     models = load_models(args.models)
     output_dir = Path(args.output)
+
+    # Filter by model set from experiments.toml
+    experiments = None
+    if args.model_set:
+        experiments = load_experiments(args.experiments)
+        set_ids = experiments["sets"][args.model_set]["model_ids"]
+        models = select_models(models, set_ids)
 
     log.info("Corpus: %d files, ~%d tokens", len(corpus_files), corpus_tokens)
 
@@ -102,13 +114,17 @@ def main():
         return
 
     budget = BudgetTracker(args.budget_usd)
-    client = None
-    current_base_url = object()  # sentinel — forces first client creation
+    routers_config = experiments.get("routers", {}) if experiments else {}
+    clients: dict[str, object] = {}
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
-        base_url = model.get("base_url")
+        # Consolidated registry entries always have "router". Legacy per-sweep
+        # YAML files (without "router") fall through to the base_url path.
+        router = model.get("router")
+        base_url = model.get("base_url")  # legacy path only
+        is_ollama = router == "ollama" if router else bool(base_url)
 
         ctx_window = model.get("context_window", 0)
 
@@ -130,10 +146,19 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
-            # Create/switch client when base_url changes
-            if base_url != current_base_url:
-                client = make_client(base_url)
-                current_base_url = base_url
+            # Create/switch client per router
+            if router and routers_config:
+                if router not in clients:
+                    clients[router] = make_client_for_router(router, routers_config)
+                client = clients[router]
+            elif base_url:
+                if base_url not in clients:
+                    clients[base_url] = make_client(base_url)
+                client = clients[base_url]
+            else:
+                if "_openrouter" not in clients:
+                    clients["_openrouter"] = make_client()
+                client = clients["_openrouter"]
 
             log.info("Querying %s run %d/%d (RAG %s)...", label, run, args.repeat, args.strategy)
 
@@ -144,11 +169,21 @@ def main():
                 ]
                 # Use native Ollama API to set num_ctx (OpenAI /v1/ ignores it)
                 # Size to actual need, not model max — saves KV cache VRAM
-                if base_url:
+                # router_model is the ID the router expects (future-proof for Phase B)
+                api_model_id = model.get("router_model", model_id)
+                if is_ollama:
+                    ollama_cfg = routers_config.get("ollama", {})
+                    ollama_url = (
+                        ollama_cfg.get("base_url")
+                        or base_url
+                        or "http://localhost:11434/v1"
+                    )
                     num_ctx = min(ctx_window, 81920)
-                    result = query_ollama_native(base_url, model_id, messages, num_ctx)
+                    result = query_ollama_native(
+                        ollama_url, api_model_id, messages, num_ctx,
+                    )
                 else:
-                    result = query_single_turn(client, model_id, messages)
+                    result = query_single_turn(client, api_model_id, messages)
                 usage = result.get("usage") or {}
 
                 # Truncation guard: prompt should not fill entire context

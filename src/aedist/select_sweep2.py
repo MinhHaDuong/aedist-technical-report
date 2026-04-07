@@ -231,9 +231,10 @@ def main() -> None:
     )
     parser.add_argument(
         "--padme",
-        required=True,
+        required=False,
         type=Path,
-        help="Path to models_padme.yaml (local registry)",
+        default=None,
+        help="Path to models_padme.yaml (deprecated — local models detected by router field)",
     )
     parser.add_argument(
         "--output",
@@ -269,9 +270,18 @@ def main() -> None:
 
     # Load registries
     with open(args.registry) as f:
-        cloud_models = yaml.safe_load(f)
-    with open(args.padme) as f:
-        padme_models = yaml.safe_load(f)
+        all_models = yaml.safe_load(f)
+
+    if args.padme:
+        # Legacy: separate padme file
+        log.warning("--padme is deprecated; local models are detected by router field")
+        with open(args.padme) as f:
+            padme_models = yaml.safe_load(f)
+        cloud_models = all_models
+    else:
+        # New: single registry, split by router field
+        cloud_models = [m for m in all_models if m.get("router") != "ollama"]
+        padme_models = [m for m in all_models if m.get("router") == "ollama"]
 
     cloud_reg = load_registry(cloud_models, is_padme=False)
     padme_reg = load_registry(padme_models, is_padme=True)

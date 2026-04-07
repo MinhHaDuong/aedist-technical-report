@@ -1,13 +1,28 @@
 # AEDIST Benchmark — Model Registry
-# 27 models, updated 2026-04-07
-# Panachage: US/CN/FR/Other × Frontier→Edge × Open/Commercial
-# Validated against OpenRouter API. Prices in USD per million tokens.
-# OpenRouter IDs — use with: uv run python -m aedist.query
+# 52 model instances, updated 2026-04-07
+# Single source of truth. Experiment config in experiments.toml.
+# Sorted by size class, then provider.
 
 # --- Frontier ---
 
-- id: anthropic/claude-opus-4.6
-  name: Claude Opus 4.6
+- id: "qwen/qwen3-max-thinking"
+  router: openrouter
+  router_model: "qwen/qwen3-max-thinking"
+  name: "Qwen3 Max Thinking"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.78
+  price_per_mtok_out: 3.9
+  size_class: frontier
+  license: commercial
+  reasoning: true
+
+- id: "anthropic/claude-opus-4.6"
+  router: openrouter
+  router_model: "anthropic/claude-opus-4.6"
+  name: "Claude Opus 4.6"
   provider: Anthropic
   country: US
   architecture: dense
@@ -17,8 +32,10 @@
   size_class: frontier
   license: commercial
 
-- id: anthropic/claude-sonnet-4.6
-  name: Claude Sonnet 4.6
+- id: "anthropic/claude-sonnet-4.6"
+  router: openrouter
+  router_model: "anthropic/claude-sonnet-4.6"
+  name: "Claude Sonnet 4.6"
   provider: Anthropic
   country: US
   architecture: dense
@@ -28,41 +45,10 @@
   size_class: frontier
   license: commercial
 
-- id: openai/gpt-5.4
-  name: GPT-5.4
-  provider: OpenAI
-  country: US
-  architecture: dense
-  context_window: 1050000
-  price_per_mtok_in: 2.5
-  price_per_mtok_out: 15.0
-  size_class: frontier
-  license: commercial
-
-- id: google/gemini-3-flash-preview
-  name: Gemini 3 Flash
-  provider: Google
-  country: US
-  architecture: dense
-  context_window: 1048576
-  price_per_mtok_in: 0.5
-  price_per_mtok_out: 3.0
-  size_class: frontier
-  license: commercial
-
-- id: x-ai/grok-4.20
-  name: Grok 4.20
-  provider: xAI
-  country: US
-  architecture: dense
-  context_window: 2000000
-  price_per_mtok_in: 2.0
-  price_per_mtok_out: 6.0
-  size_class: frontier
-  license: commercial
-
-- id: deepseek/deepseek-v3.2
-  name: DeepSeek V3.2
+- id: "deepseek/deepseek-v3.2"
+  router: openrouter
+  router_model: "deepseek/deepseek-v3.2"
+  name: "DeepSeek V3.2"
   provider: DeepSeek
   country: CN
   architecture: moe
@@ -73,8 +59,23 @@
   size_class: frontier
   license: open-MIT
 
-- id: mistralai/mistral-large-2512
-  name: Mistral Large 3
+- id: "google/gemini-3-flash-preview"
+  router: openrouter
+  router_model: "google/gemini-3-flash-preview"
+  name: "Gemini 3 Flash"
+  provider: Google
+  country: US
+  architecture: dense
+  context_window: 1048576
+  price_per_mtok_in: 0.5
+  price_per_mtok_out: 3.0
+  size_class: frontier
+  license: commercial
+
+- id: "mistralai/mistral-large-2512"
+  router: openrouter
+  router_model: "mistralai/mistral-large-2512"
+  name: "Mistral Large 3"
   provider: Mistral
   country: FR
   architecture: moe
@@ -85,115 +86,94 @@
   size_class: frontier
   license: open-apache
 
-# --- Large ---
-
-- id: qwen/qwen3.5-397b-a17b
-  name: Qwen 3.5 397B
-  provider: Alibaba
+- id: "moonshotai/kimi-k2-thinking"
+  router: openrouter
+  router_model: "moonshotai/kimi-k2-thinking"
+  name: "Kimi K2 Thinking"
+  provider: "Moonshot AI"
   country: CN
   architecture: moe
-  context_window: 262144
-  price_per_mtok_in: 0.39
-  price_per_mtok_out: 2.34
-  params: "397B MoE (17B active)"
-  size_class: large
-  license: open-apache
-
-- id: qwen/qwen3.5-plus-02-15
-  name: Qwen 3.5 Plus
-  provider: Alibaba
-  country: CN
-  architecture: moe
-  context_window: 1000000
-  price_per_mtok_in: 0.26
-  price_per_mtok_out: 1.56
-  size_class: large
+  context_window: 131072
+  price_per_mtok_in: 0.47
+  price_per_mtok_out: 2.0
+  size_class: frontier
   license: commercial
+  reasoning: true
 
-- id: moonshotai/kimi-k2.5
-  name: Kimi K2.5
-  provider: Moonshot AI
-  country: CN
-  architecture: moe
-  context_window: 262144
-  price_per_mtok_in: 0.4
-  price_per_mtok_out: 1.99
-  size_class: large
-  license: commercial
-
-- id: meta-llama/llama-4-maverick
-  name: Llama 4 Maverick
-  provider: Meta
+- id: "openai/gpt-5.4"
+  router: openrouter
+  router_model: "openai/gpt-5.4"
+  name: GPT-5.4
+  provider: OpenAI
   country: US
-  architecture: moe
-  context_window: 1048576
-  price_per_mtok_in: 0.15
-  price_per_mtok_out: 0.6
-  params: "400B MoE"
-  size_class: large
-  license: open-llama
-
-- id: minimax/minimax-m2.7
-  name: MiniMax M2.7
-  provider: MiniMax
-  country: CN
   architecture: dense
-  context_window: 204800
-  price_per_mtok_in: 0.3
-  price_per_mtok_out: 1.2
-  size_class: large
+  context_window: 1050000
+  price_per_mtok_in: 2.5
+  price_per_mtok_out: 15.0
+  size_class: frontier
   license: commercial
 
-- id: z-ai/glm-5-turbo
-  name: GLM-5 Turbo
-  provider: Zhipu AI
-  country: CN
+- id: "perplexity/sonar-deep-research"
+  router: openrouter
+  router_model: "perplexity/sonar-deep-research"
+  name: "Sonar Deep Research"
+  provider: Perplexity
+  country: US
   architecture: dense
+  context_window: 128000
+  price_per_mtok_in: 2.0
+  price_per_mtok_out: 8.0
+  size_class: frontier
+  license: commercial
+
+- id: "x-ai/grok-4.20"
+  router: openrouter
+  router_model: "x-ai/grok-4.20"
+  name: "Grok 4.20"
+  provider: xAI
+  country: US
+  architecture: dense
+  context_window: 2000000
+  price_per_mtok_in: 2.0
+  price_per_mtok_out: 6.0
+  size_class: frontier
+  license: commercial
+
+- id: "z-ai/glm-5"
+  router: openrouter
+  router_model: "z-ai/glm-5"
+  name: GLM-5
+  provider: "Zhipu AI"
+  country: CN
+  architecture: moe
+  context_window: 80000
+  price_per_mtok_in: 0.72
+  price_per_mtok_out: 2.3
+  params: "745B MoE (44B active)"
+  size_class: frontier
+  license: open-other
+
+- id: "z-ai/glm-5-turbo"
+  router: openrouter
+  router_model: "z-ai/glm-5-turbo"
+  name: "GLM-5 Turbo"
+  provider: "Zhipu AI"
+  country: CN
+  architecture: moe
   context_window: 202752
   price_per_mtok_in: 1.2
   price_per_mtok_out: 4.0
-  size_class: large
-  license: commercial
+  params: "745B MoE (44B active)"
+  size_class: frontier
+  license: open-other
 
-- id: xiaomi/mimo-v2-pro
-  name: MiMo V2 Pro
-  provider: Xiaomi
-  country: CN
-  architecture: dense
-  context_window: 1048576
-  price_per_mtok_in: 1.0
-  price_per_mtok_out: 3.0
-  size_class: large
-  license: open-apache
 
-# --- Medium ---
+# --- Large ---
 
-- id: qwen/qwen3.5-27b
-  name: Qwen 3.5 27B
-  provider: Alibaba
-  country: CN
-  architecture: dense
-  context_window: 262144
-  price_per_mtok_in: 0.2
-  price_per_mtok_out: 1.56
-  params: "27B"
-  size_class: medium
-  license: open-apache
-
-- id: qwen/qwen3.5-35b-a3b
-  name: Qwen 3.5 35B
-  provider: Alibaba
-  country: CN
-  architecture: moe
-  context_window: 262144
-  price_per_mtok_in: 0.16
-  price_per_mtok_out: 1.3
-  params: "35B MoE (3B active)"
-  size_class: medium
-  license: open-apache
-
-- id: qwen/qwen3.5-122b-a10b
-  name: Qwen 3.5 122B
+- id: "qwen/qwen3.5-122b-a10b"
+  router: openrouter
+  router_model: "qwen/qwen3.5-122b-a10b"
+  name: "Qwen 3.5 122B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -204,8 +184,189 @@
   size_class: large
   license: open-apache
 
-- id: nvidia/nemotron-3-nano-30b-a3b
-  name: Nemotron 3 Nano 30B
+- id: "qwen/qwen3.5-397b-a17b"
+  router: openrouter
+  router_model: "qwen/qwen3.5-397b-a17b"
+  name: "Qwen 3.5 397B"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.39
+  price_per_mtok_out: 2.34
+  params: "397B MoE (17B active)"
+  size_class: large
+  license: open-apache
+
+- id: "qwen/qwen3.5-plus-02-15"
+  router: openrouter
+  router_model: "qwen/qwen3.5-plus-02-15"
+  name: "Qwen 3.5 Plus"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 1000000
+  price_per_mtok_in: 0.26
+  price_per_mtok_out: 1.56
+  size_class: large
+  license: commercial
+
+- id: "alibaba/tongyi-deepresearch-30b-a3b"
+  router: openrouter
+  router_model: "alibaba/tongyi-deepresearch-30b-a3b"
+  name: "Tongyi DeepResearch 30B"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.09
+  price_per_mtok_out: 0.45
+  params: "30B MoE (3B active)"
+  size_class: large
+  license: commercial
+
+- id: "baidu/ernie-4.5-21b-a3b-thinking"
+  router: openrouter
+  router_model: "baidu/ernie-4.5-21b-a3b-thinking"
+  name: "ERNIE 4.5 Thinking"
+  provider: Baidu
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.07
+  price_per_mtok_out: 0.28
+  params: "21B MoE (3B active)"
+  size_class: large
+  license: commercial
+  reasoning: true
+
+- id: "meta-llama/llama-4-maverick"
+  router: openrouter
+  router_model: "meta-llama/llama-4-maverick"
+  name: "Llama 4 Maverick"
+  provider: Meta
+  country: US
+  architecture: moe
+  context_window: 1048576
+  price_per_mtok_in: 0.15
+  price_per_mtok_out: 0.6
+  params: "400B MoE"
+  size_class: large
+  license: open-llama
+
+- id: "minimax/minimax-m2.7"
+  router: openrouter
+  router_model: "minimax/minimax-m2.7"
+  name: "MiniMax M2.7"
+  provider: MiniMax
+  country: CN
+  architecture: dense
+  context_window: 204800
+  price_per_mtok_in: 0.3
+  price_per_mtok_out: 1.2
+  size_class: large
+  license: commercial
+
+- id: "moonshotai/kimi-k2.5"
+  router: openrouter
+  router_model: "moonshotai/kimi-k2.5"
+  name: "Kimi K2.5"
+  provider: "Moonshot AI"
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.4
+  price_per_mtok_out: 1.99
+  size_class: large
+  license: commercial
+
+- id: "qwen3.5:122b"
+  router: ollama
+  router_model: "qwen3.5:122b"
+  name: "Qwen 3.5 122B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: large
+  license: open-apache
+
+- id: "xiaomi/mimo-v2-pro"
+  router: openrouter
+  router_model: "xiaomi/mimo-v2-pro"
+  name: "MiMo V2 Pro"
+  provider: Xiaomi
+  country: CN
+  architecture: dense
+  context_window: 1048576
+  price_per_mtok_in: 1.0
+  price_per_mtok_out: 3.0
+  size_class: large
+  license: open-apache
+
+
+# --- Medium ---
+
+- id: "qwen/qwen3.5-27b"
+  router: openrouter
+  router_model: "qwen/qwen3.5-27b"
+  name: "Qwen 3.5 27B"
+  provider: Alibaba
+  country: CN
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.2
+  price_per_mtok_out: 1.56
+  params: 27B
+  size_class: medium
+  license: open-apache
+
+- id: "qwen/qwen3.5-35b-a3b"
+  router: openrouter
+  router_model: "qwen/qwen3.5-35b-a3b"
+  name: "Qwen 3.5 35B"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.16
+  price_per_mtok_out: 1.3
+  params: "35B MoE (3B active)"
+  size_class: medium
+  license: open-apache
+
+- id: "bytedance-seed/seed-2.0-lite"
+  router: openrouter
+  router_model: "bytedance-seed/seed-2.0-lite"
+  name: "Seed 2.0 Lite"
+  provider: ByteDance
+  country: CN
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.25
+  price_per_mtok_out: 2.0
+  size_class: medium
+  license: commercial
+
+- id: "inception/mercury-2"
+  router: openrouter
+  router_model: "inception/mercury-2"
+  name: "Mercury 2"
+  provider: Inception
+  country: Other
+  architecture: dense
+  context_window: 128000
+  price_per_mtok_in: 0.25
+  price_per_mtok_out: 0.75
+  size_class: medium
+  license: commercial
+
+- id: "nvidia/nemotron-3-nano-30b-a3b"
+  router: openrouter
+  router_model: "nvidia/nemotron-3-nano-30b-a3b"
+  name: "Nemotron 3 Nano 30B"
   provider: NVIDIA
   country: US
   architecture: moe
@@ -216,44 +377,170 @@
   size_class: medium
   license: open-other
 
-- id: inception/mercury-2
-  name: Mercury 2
-  provider: Inception
-  country: Other
-  architecture: dense
-  context_window: 128000
-  price_per_mtok_in: 0.25
-  price_per_mtok_out: 0.75
+- id: "gemma4:26b"
+  router: ollama
+  router_model: "gemma4:26b"
+  name: "Gemma 4 26B (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
   size_class: medium
-  license: commercial
+  license: open-other
 
-- id: bytedance-seed/seed-2.0-lite
-  name: Seed 2.0 Lite
-  provider: ByteDance
+- id: "gemma4:31b"
+  router: ollama
+  router_model: "gemma4:31b"
+  name: "Gemma 4 31B (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
+
+- id: "glm-4.7-flash"
+  router: ollama
+  router_model: "glm-4.7-flash"
+  name: "GLM 4.7 Flash (local)"
+  provider: "Ollama/Padme"
   country: CN
   architecture: dense
-  context_window: 262144
-  price_per_mtok_in: 0.25
-  price_per_mtok_out: 2.0
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
   size_class: medium
-  license: commercial
+  license: open-apache
+
+- id: "nemotron-3-nano"
+  router: ollama
+  router_model: "nemotron-3-nano"
+  name: "Nemotron 3 Nano (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-other
+
+- id: "qwen3.5:27b"
+  router: ollama
+  router_model: "qwen3.5:27b"
+  name: "Qwen 3.5 27B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
+- id: "qwen3.5:35b"
+  router: ollama
+  router_model: "qwen3.5:35b"
+  name: "Qwen 3.5 35B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
 
 # --- Small ---
 
-- id: mistralai/mistral-small-2603
-  name: Mistral Small 4
+- id: "mistralai/mistral-small-2603"
+  router: openrouter
+  router_model: "mistralai/mistral-small-2603"
+  name: "Mistral Small 4"
   provider: Mistral
   country: FR
   architecture: dense
   context_window: 262144
   price_per_mtok_in: 0.15
   price_per_mtok_out: 0.6
-  params: "24B"
+  params: 24B
   size_class: small
   license: open-apache
 
-- id: openai/gpt-5-mini
-  name: GPT-5 Mini
+- id: "cogito:8b"
+  router: ollama
+  router_model: "cogito:8b"
+  name: "Cogito 8B (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: "devstral-small-2"
+  router: ollama
+  router_model: "devstral-small-2"
+  name: "Devstral Small 2 (local)"
+  provider: "Ollama/Padme"
+  country: FR
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: "granite3.3:8b"
+  router: ollama
+  router_model: "granite3.3:8b"
+  name: "Granite 3.3 8B (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: "mistral-small3.2"
+  router: ollama
+  router_model: "mistral-small3.2"
+  name: "Mistral Small 3.2 (local)"
+  provider: "Ollama/Padme"
+  country: FR
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: "qwen3.5:9b"
+  router: ollama
+  router_model: "qwen3.5:9b"
+  name: "Qwen 3.5 9B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: "openai/gpt-5-mini"
+  router: openrouter
+  router_model: "openai/gpt-5-mini"
+  name: "GPT-5 Mini"
   provider: OpenAI
   country: US
   architecture: dense
@@ -263,19 +550,23 @@
   size_class: small
   license: commercial
 
-- id: stepfun/step-3.5-flash
-  name: Step 3.5 Flash
+- id: "stepfun/step-3.5-flash"
+  router: openrouter
+  router_model: "stepfun/step-3.5-flash"
+  name: "Step 3.5 Flash"
   provider: StepFun
   country: CN
   architecture: dense
   context_window: 262144
-  price_per_mtok_in: 0.10
-  price_per_mtok_out: 0.30
+  price_per_mtok_in: 0.1
+  price_per_mtok_out: 0.3
   size_class: small
   license: commercial
 
-- id: xiaomi/mimo-v2-flash
-  name: MiMo V2 Flash
+- id: "xiaomi/mimo-v2-flash"
+  router: openrouter
+  router_model: "xiaomi/mimo-v2-flash"
+  name: "MiMo V2 Flash"
   provider: Xiaomi
   country: CN
   architecture: dense
@@ -285,21 +576,26 @@
   size_class: small
   license: open-apache
 
+
 # --- Edge ---
 
-- id: openai/gpt-5-nano
-  name: GPT-5 Nano
-  provider: OpenAI
-  country: US
+- id: "qwen/qwen3.6-plus-preview:free"
+  router: openrouter
+  router_model: "qwen/qwen3.6-plus-preview:free"
+  name: "Qwen 3.6 Plus Preview"
+  provider: Alibaba
+  country: CN
   architecture: dense
-  context_window: 400000
-  price_per_mtok_in: 0.05
-  price_per_mtok_out: 0.4
+  context_window: 1000000
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
   size_class: edge
   license: commercial
 
-- id: google/gemini-2.5-flash-lite
-  name: Gemini 2.5 Flash Lite
+- id: "google/gemini-2.5-flash-lite"
+  router: openrouter
+  router_model: "google/gemini-2.5-flash-lite"
+  name: "Gemini 2.5 Flash Lite"
   provider: Google
   country: US
   architecture: dense
@@ -309,13 +605,114 @@
   size_class: edge
   license: commercial
 
-- id: qwen/qwen3.6-plus-preview:free
-  name: Qwen 3.6 Plus Preview
-  provider: Alibaba
-  country: CN
+- id: "gemma4:e2b"
+  router: ollama
+  router_model: "gemma4:e2b"
+  name: "Gemma 4 E2B (local)"
+  provider: "Ollama/Padme"
+  country: US
   architecture: dense
-  context_window: 1000000
+  context_window: 131072
   price_per_mtok_in: 0.0
   price_per_mtok_out: 0.0
   size_class: edge
+  license: open-other
+
+- id: "gemma4:e4b"
+  router: ollama
+  router_model: "gemma4:e4b"
+  name: "Gemma 4 E4B (local)"
+  provider: "Ollama/Padme"
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-other
+
+- id: "qwen3.5:2b"
+  router: ollama
+  router_model: "qwen3.5:2b"
+  name: "Qwen 3.5 2B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+
+- id: "qwen3.5:4b"
+  router: ollama
+  router_model: "qwen3.5:4b"
+  name: "Qwen 3.5 4B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+
+- id: "openai/gpt-5-nano"
+  router: openrouter
+  router_model: "openai/gpt-5-nano"
+  name: "GPT-5 Nano"
+  provider: OpenAI
+  country: US
+  architecture: dense
+  context_window: 400000
+  price_per_mtok_in: 0.05
+  price_per_mtok_out: 0.4
+  size_class: edge
   license: commercial
+
+
+# --- Reasoning / Deep Research ---
+
+- id: "deepseek/deepseek-r1-0528"
+  router: openrouter
+  router_model: "deepseek/deepseek-r1-0528"
+  name: "DeepSeek R1 0528"
+  provider: DeepSeek
+  country: CN
+  architecture: moe
+  context_window: 163840
+  price_per_mtok_in: 0.45
+  price_per_mtok_out: 2.15
+  params: "671B MoE"
+  size_class: frontier
+  license: open-MIT
+  reasoning: true
+
+- id: "openai/o3"
+  router: openrouter
+  router_model: "openai/o3"
+  name: o3
+  provider: OpenAI
+  country: US
+  architecture: dense
+  context_window: 200000
+  price_per_mtok_in: 2.0
+  price_per_mtok_out: 8.0
+  size_class: frontier
+  license: commercial
+  reasoning: true
+
+- id: "openai/o3-deep-research"
+  router: openrouter
+  router_model: "openai/o3-deep-research"
+  name: "o3 Deep Research"
+  provider: OpenAI
+  country: US
+  architecture: dense
+  context_window: 200000
+  price_per_mtok_in: 10.0
+  price_per_mtok_out: 40.0
+  size_class: frontier
+  license: commercial
+  reasoning: true
+
