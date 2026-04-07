@@ -1,0 +1,43 @@
+{
+  "model": "qwen3.5:2b",
+  "run": 2,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nplant_name,fuel_type,construction_stage,connection_date,province,generation_capacity\nND An Khánh - Bắc Giang,Coal,Fully Constructed,2025-2026,Quảng Ninh,650\nND Na Dương II,Coal,Planned COD,2025-2026,Quảng Ninh,110\nND Phả Lại 3,Cong,Coal,2025-2026,Bắc Bộ,660\nND Thái Bình II,Coal,Fully Constructed,2026-2028,Bắc Bộ,1200\nND than Bảo Đại,Coal,Planned COD,2025-2026,Bắc Bộ,600\nQuảng Ninh,Imported LNG,Under Construction,2028,Quảng Ninh,1500\nQuảng Ninh 2,Imported LNG,To be built,2029,Quảng Ninh,1500\nHải Lăng,Local Natural Gas,Construction started,2023-2024,1500\nTrung Trung Bộ,Hải Lăng,Construction started,2023-2024,1500\nTrung Trung Bộ,Import LNG,Under construction,2023,1500\nBắc Trung Bộ,Local Natural Gas,To be constructed,2024,650\nTây Nam Bộ,LNG,Under Construction,2027-2026,Hậu Giang,1200\nNam Bộ,Import LNG,Construction started,2021,1320\nNam Bộ,Import LNG,Construction Started,2021,1320\nNam Bộ,Import LNG,To be built,2026,15760\nNam Trung Bộ,Than,To be constructed,2021-2022,1320\nNam Trung Bộ,Than,Planned COD,2021-2022,1320\nNam Trung Bộ,Than,To be built,2021-2022,1980\nNam Bộ,Than,To be built,2021-2022,600\nNam Bộ,Than,To be built,2021-2022,1200\nNam Bộ,Than,To be built,2021-2022,2120\nNam Bộ,Than,To be built,2021-2022,2120\nNam Bộ,Than,Under Construction,2025-2026,1800\nNam Bộ,Than,To be built,2025-2026,600\nNam Bộ,Than,To be built,2025-2026,1320\nNam Bộ,Than,To be built,2021-2026,1200\nNam Bộ,Than,To be built,2023-2024,1200\nNam Bộ,Than,To be built,2023-2024,2120\nNam Bộ,Than,To be built,2025-2026,1200\nNam Bộ,Than,To be built,2023-2024,1200\nNam Bộ,Than,To be built,2023-2024,2120\nNam Bộ,Than,To be built,2023-2024,1320\nNam Bộ,Than,To be built,2023-2024,600\nNam Bộ,Than,To be built,2023-2024,8960\nNam Bộ,Than,To be built,2023-2024,1500\nQuảng Ninh,Imported LNG,To be built,2023-2024,1500\nQuảng Ninh,Imported LNG,To be built,2023-2024,1500\nSơn Mỹ I,LNG,Planned COD,2023-2024,Sơn Mỹ,1500\nSơn Mỹ II,LNG,Planned COD,2023-2024,Sơn Mỹ,1500\nSơn Mỹ II,Cong,Planned COD,2023-2024,Sơn Mỹ,1500\nSơn Mỹ I,LNG,Planned COD,2023-2024,Sơn Mỹ,1500\nQuảng Ninh,Imported LNG,To be built,2023-2024,1500\nLNG Cần Na I,Local Natural Gas,Planned COD,2022-2025,Quảng Ninh,1500\nLNG Cần Na II,Local Natural Gas,Planned COD,2022-2025,Quảng Ninh,1500\nLNG Cà Mau 1,3000+1500MW (LNG,Coal),Quảng Ninh,2023-2024\nLNG Cà Mau 2,2000+1500MW (LNG,Coal),Quảng Ninh\nLNG Tân Thuận,3200MW (LNG,Coal),Quảng Ninh,2022-2023\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x600MW (Coal),Hậu Giang,2021\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nSông Hậu,2x1000MW (Coal),Hậu Giang,2021-2022\nLNG Long Sơn I,750MW (LNG),Hậu Giang,2025-2026,Quảng Ninh\nLNG Long Sơn II,3200MW (LNG),Hậu Giang,2027-2028,Bắc Trung Bộ\nLNG Long Sơn IV,3600MW (LNG),Hậu Giang,2027-2028,Bắc Trung Bộ\nLNG Cái Mép H,6000MW (LNG),Hậu Giang,2022-2023,Quảng Ninh\nLNG Long An I,750MW (LNG),Hậu Giang,2024-2025,Long An\nLNG Long An II,800MW (LNG),Hậu Giang,2027-2028,Long An\nLNG Tân Phúc,4500MW (LNG),Hậu Giang,2024-2025\nLNG Cà Mau 3,3000+1500MW (LNG,Coal),Quảng Ninh\nLNG Sơn Mỹ II,2250MW (LNG),Hậu Giang,2023-2024\nLNG Sơn Mỹ I,2250MW (LNG),Hậu Giang,2023-2024\nLNG Kê Gà,1500MW (LNG),Hậu Giang,2023-2024\nLNG Long An I,3200MW (LNG),Hậu Giang,2023-2024\nLNG Long An II,3200MW (LNG),Hậu Giang,2023-2024\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 32768,
+    "completion_tokens": 5374
+  },
+  "wall_seconds": 69.045,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

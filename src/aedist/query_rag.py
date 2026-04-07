@@ -10,7 +10,7 @@ Usage:
         --corpus data/rag_corpus/ \
         --strategy wholesale \
         --models models.yaml \
-        --output outputs/sweep2_rag/ \
+        --output outputs/sweep_rag/ \
         --repeat 3
 """
 
@@ -100,12 +100,15 @@ def main():
                 log.info("Would query %s run %d [%s]", model["id"], run, fits)
         return
 
-    client = make_client()
     budget = BudgetTracker(args.budget_usd)
+    client = None
+    current_base_url = object()  # sentinel — forces first client creation
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
+        base_url = model.get("base_url")
+
         ctx_window = model.get("context_window", 0)
 
         # Context window guard
@@ -125,6 +128,11 @@ def main():
             if should_skip(output_dir, model_id, run):
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
+
+            # Create/switch client when base_url changes
+            if base_url != current_base_url:
+                client = make_client(base_url)
+                current_base_url = base_url
 
             log.info("Querying %s run %d/%d (RAG %s)...", label, run, args.repeat, args.strategy)
 

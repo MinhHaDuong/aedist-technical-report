@@ -5,8 +5,8 @@ Usage:
         --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_self_consistency.tex
 
-Reads per-run metrics from sweep2_rag and vote results from
-sweep2_rag_consistency, groups by model, computes medians at render time,
+Reads per-run metrics from sweep_rag and vote results from
+sweep_rag_consistency, groups by model, computes medians at render time,
 and emits a LaTeX table showing single-run medians vs majority/union vote F1.
 """
 
@@ -150,9 +150,9 @@ def assemble_from_measurements(metrics: list[dict]) -> list[dict]:
     """Build self-consistency result dicts from measurements.jsonl records.
 
     Expects dicts from the adapter with labels like:
-    - sweep2_rag/deepseek-v3.2-run1  (per-run)
-    - sweep2_rag_consistency/deepseek-v3.2-consolidated  (majority vote)
-    - sweep2_rag_consistency/deepseek-v3.2-union  (union vote)
+    - sweep_rag/deepseek-v3.2-run1  (per-run)
+    - sweep_rag_consistency/deepseek-v3.2-consolidated  (majority vote)
+    - sweep_rag_consistency/deepseek-v3.2-union  (union vote)
     """
 
     # Separate per-run and vote records
@@ -162,13 +162,13 @@ def assemble_from_measurements(metrics: list[dict]) -> list[dict]:
 
     for m in metrics:
         label = m.get("label", "")
-        if label.startswith("sweep2_rag_consistency/"):
+        if label.startswith("sweep_rag_consistency/"):
             model = _strip_vote_suffix(label)
             if label.endswith("-consolidated"):
                 consolidated[model] = m
             elif label.endswith("-union"):
                 union[model] = m
-        elif label.startswith("sweep2_rag/"):
+        elif label.startswith("sweep_rag/"):
             model = _strip_run_suffix(label)
             per_run.setdefault(model, []).append(m)
 

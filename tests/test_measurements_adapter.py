@@ -129,7 +129,7 @@ class TestRoundTrip:
         metrics = [
             {"label": "sweep1_census/model-run1", "f1": 0.5},
             {"label": "sweep2_multiturn/model-run1", "f1": 0.6},
-            {"label": "sweep2_rag/model-run1", "f1": 0.7},
+            {"label": "sweep_rag/model-run1", "f1": 0.7},
             {"label": "sweep2_web/model-run1", "f1": 0.4},
         ]
         records = metrics_to_records(metrics)
@@ -233,7 +233,7 @@ class TestOutputEquivalence:
 
         mixed = CENSUS_METRICS + [
             {
-                "label": "sweep2_rag/gpt-5.4-run1",
+                "label": "sweep_rag/gpt-5.4-run1",
                 "coverage": 0.6012,  # 98/163
                 "precision": 0.98,  # 98/100
                 "f1": 0.72,

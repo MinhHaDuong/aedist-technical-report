@@ -6,7 +6,7 @@ Usage:
         --output report/inputs/generated/tab_comparaison.tex
 
 Reads per-run metrics, finds models present in both census (sweep1) and RAG
-(sweep2_rag) sweeps, and emits a side-by-side comparison table showing how
+(sweep_rag) sweeps, and emits a side-by-side comparison table showing how
 RAG affects F1 for each model.
 """
 
@@ -21,7 +21,7 @@ from .tabulate_utils import format_model_name, strip_label
 log = logging.getLogger(__name__)
 
 _CENSUS_PREFIX = "sweep1_census/"
-_RAG_PREFIX = "sweep2_rag/"
+_RAG_PREFIX = "sweep_rag/"
 
 
 # ---------------------------------------------------------------------------

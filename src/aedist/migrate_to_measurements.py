@@ -6,8 +6,8 @@ a canonical measurements.jsonl file using the RunRecord schema.
 Usage:
     # From query JSONs (sweep2):
     uv run python -m aedist.migrate_to_measurements \
-        --queries outputs/sweep2_rag/ \
-        --mode rag --sweep-name sweep2_rag \
+        --queries outputs/sweep_rag/ \
+        --mode rag --sweep-name sweep_rag \
         --metrics results/summary/all_metrics.json \
         --output measurements.jsonl
 

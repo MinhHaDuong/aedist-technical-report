@@ -51,3 +51,48 @@
   params: 671B MoE
   size_class: frontier
   license: open-MIT
+# Local edge models on Padme (Ollama)
+- id: qwen3.5:4b
+  name: Qwen 3.5 4B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+- id: qwen3.5:2b
+  name: Qwen 3.5 2B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-apache
+- id: gemma4:e4b
+  name: Gemma 4 E4B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-other
+- id: gemma4:e2b
+  name: Gemma 4 E2B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: edge
+  license: open-other

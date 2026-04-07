@@ -31,17 +31,17 @@ SAMPLE_METRICS = [
     },
     # RAG runs for gpt-5.4
     {
-        "label": "sweep2_rag/gpt-5.4-run1",
+        "label": "sweep_rag/gpt-5.4-run1",
         "coverage": 0.550,
         "f1": 0.720,
     },
     {
-        "label": "sweep2_rag/gpt-5.4-run2",
+        "label": "sweep_rag/gpt-5.4-run2",
         "coverage": 0.560,
         "f1": 0.730,
     },
     {
-        "label": "sweep2_rag/gpt-5.4-run3",
+        "label": "sweep_rag/gpt-5.4-run3",
         "coverage": 0.540,
         "f1": 0.710,
     },
@@ -63,17 +63,17 @@ SAMPLE_METRICS = [
     },
     # RAG runs for padme-qwen3.5-122b
     {
-        "label": "sweep2_rag/padme-qwen3.5-122b-run1",
+        "label": "sweep_rag/padme-qwen3.5-122b-run1",
         "coverage": 0.280,
         "f1": 0.410,
     },
     {
-        "label": "sweep2_rag/padme-qwen3.5-122b-run2",
+        "label": "sweep_rag/padme-qwen3.5-122b-run2",
         "coverage": 0.290,
         "f1": 0.420,
     },
     {
-        "label": "sweep2_rag/padme-qwen3.5-122b-run3",
+        "label": "sweep_rag/padme-qwen3.5-122b-run3",
         "coverage": 0.270,
         "f1": 0.400,
     },
@@ -183,7 +183,7 @@ def test_only_one_sweep_excluded():
         # census only
         {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
         # rag only
-        {"label": "sweep2_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
+        {"label": "sweep_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
     ]
     latex, n = generate_comparaison_table(metrics)
     assert n == 0
@@ -214,7 +214,7 @@ def test_delta_zero_gets_plus_sign():
     """Zero delta should get '+' prefix (delta >= 0 path)."""
     metrics = [
         {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
-        {"label": "sweep2_rag/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
+        {"label": "sweep_rag/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
     ]
     latex, _ = generate_comparaison_table(metrics)
     assert "+0.0" in latex
@@ -227,7 +227,7 @@ def test_empty_intersection_warning(caplog):
     """No common models should log a warning."""
     metrics = [
         {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
-        {"label": "sweep2_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
+        {"label": "sweep_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
     ]
     with caplog.at_level(logging.WARNING):
         latex, n = generate_comparaison_table(metrics)

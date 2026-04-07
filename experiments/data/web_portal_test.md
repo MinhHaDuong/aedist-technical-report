@@ -38,4 +38,4 @@
 
 Pipeline implication: Web-augmented queries give context (policy decisions, dates, summaries) but not the structured data needed for the benchmark. The **RAG pipeline with PDF conversion** (GROBID/Marker) remains essential for table extraction.
 
-This explains why sweep2-web scored lower than sweep2-rag: web search adds policy context but not the specific plant-level data the task requires.
+This explains why sweep2-web scored lower than sweep-rag: web search adds policy context but not the specific plant-level data the task requires.
