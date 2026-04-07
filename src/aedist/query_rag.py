@@ -30,6 +30,7 @@ from .harness import (
     make_client,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     should_skip,
@@ -141,12 +142,11 @@ def main():
                     {"role": "system", "content": corpus_text},
                     {"role": "user", "content": prompt},
                 ]
-                # Set num_ctx for Ollama to avoid silent truncation
-                extra = {}
+                # Use native Ollama API to set num_ctx (OpenAI /v1/ ignores it)
                 if base_url:
-                    extra["extra_body"] = {"num_ctx": ctx_window}
-
-                result = query_single_turn(client, model_id, messages, **extra)
+                    result = query_ollama_native(base_url, model_id, messages, ctx_window)
+                else:
+                    result = query_single_turn(client, model_id, messages)
                 usage = result.get("usage") or {}
 
                 # Truncation guard: prompt should not fill entire context

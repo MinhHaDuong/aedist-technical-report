@@ -169,6 +169,47 @@ def save_json(filepath: Path, record: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Ollama native API (needed because /v1/ ignores num_ctx)
+# ---------------------------------------------------------------------------
+
+
+def query_ollama_native(
+    base_url: str,
+    model_id: str,
+    messages: list[dict],
+    num_ctx: int,
+) -> dict:
+    """Query Ollama via native /api/chat with explicit num_ctx."""
+    import httpx
+
+    # base_url is like http://localhost:11434/v1 — strip /v1
+    api_url = base_url.rstrip("/").removesuffix("/v1") + "/api/chat"
+    t0 = time.monotonic()
+    resp = httpx.post(
+        api_url,
+        json={
+            "model": model_id,
+            "messages": messages,
+            "options": {"num_ctx": num_ctx},
+            "stream": False,
+        },
+        timeout=600.0,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    wall_seconds = round(time.monotonic() - t0, 3)
+    return {
+        "content": data.get("message", {}).get("content", ""),
+        "finish_reason": data.get("done_reason", "stop"),
+        "usage": {
+            "prompt_tokens": data.get("prompt_eval_count", 0),
+            "completion_tokens": data.get("eval_count", 0),
+        },
+        "wall_seconds": wall_seconds,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Single-turn query helper
 # ---------------------------------------------------------------------------
 
