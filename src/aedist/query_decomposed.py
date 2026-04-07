@@ -259,6 +259,8 @@ def main():
                 clients[router] = make_client_for_router(router, routers_config)
             client = clients[router]
         else:
+            if legacy_client is None:
+                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
             client = legacy_client
 
         if corpus_tokens > ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN:
