@@ -20,6 +20,27 @@ check-fast: test
 
 check: test
 
+# --- Measurements (single source of truth) ------------------------------------
+#
+# measurements.jsonl is the canonical store of all experiment results.
+# Each sweep appends/replaces its own entries (merge by label).
+#
+# Update flow:
+#   Sweep 1 (census):     make measurements   (calls experiments/sweep1-summary)
+#   Sweep 2+ (regimes):   migrate_to_measurements.py --append (from query JSONs)
+#   Sweep 4 (verify):     query_verification.py (appends directly)
+#   Analysis:             self_consistency.py (replaces analysis entries)
+#
+# Worker architecture (future):
+#   Workers produce RunRecords in memory → write to measurements.jsonl
+#   via runner evaluate-all or direct append.
+
+$(MEASUREMENTS): $(wildcard experiments/outputs/sweep1_census/*.csv)
+	$(MAKE) -C experiments sweep1-summary
+
+.PHONY: measurements
+measurements: $(MEASUREMENTS)
+
 # --- Model selection ----------------------------------------------------------
 
 experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml experiments/models_padme.yaml

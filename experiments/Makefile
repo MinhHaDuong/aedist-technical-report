@@ -72,9 +72,11 @@ sweep1-padme:
 
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
-	uv run --project .. python -m aedist.runner evaluate-all --outputs-dir $(S1_OUTPUT) --output ../results/summary
+	uv run --project .. python -m aedist.runner evaluate-all \
+	    --outputs-dir $(S1_OUTPUT) --output ../results/summary \
+	    --measurements-output ../measurements.jsonl
 	uv run --project .. python -m aedist.summarize_sweep \
-	    --measurements ../results/summary/measurements.jsonl \
+	    --measurements ../measurements.jsonl \
 	    --output ../results/summary/sweep1_summary.csv
 
 # OpenRouter: query.py --repeat 3 produces all 3 run files in one call.
