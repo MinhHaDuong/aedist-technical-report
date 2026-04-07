@@ -1,0 +1,21 @@
+{
+  "model": "qwen3.5:4b",
+  "date": "2026-04-07",
+  "run": 1,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "**Disclaimer:** *This list is a representative sample of major thermal power plants in Vietnam. Power project timelines (especially Construction Stage and Commercial Operation Date - COD) are dynamic and subject to the Ministry of Industrial Trade (MOIT) and the Ministry of Energy and Climate Change. \"Local Natural Gas\" generation in Vietnam is limited compared to imported LNG or Coal. Data is based on public information available up to 2024. For investment or bidding decisions, please consult the official VNOJ (Vietnam Gas and Electricity) or MOIT websites.*\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nDung Quat 1,LNG/Coal,Operational,2018-2019,Quang Nam,500\nPhu My 1,Imported LNG,Operational,2020-2021,Binh Thuan,400\nNinh Thuan 1,Coal,Operational,2012-2013,Ninh Thuan,315\nHien Thuan 1,Coal,Operational,2013-2014,Hoai Duong/Que Nam,876\nTam Son 2,Coal,Planned,2026+,Que Nam,1200\nBinh Thuan 1,Coal,Operational,2011-2012,Binh Thuan,620\nPhat Yen 1,Coal,Operational,2011-2012,Ninh Thuan/Que Nam,1365\nNinh Thuan 2,Coal,Under Construction,2024-2025,Ninh Thuan,670\nTay Son 2,Coal,Planned,2025+,Que Nam,1500\nPhu My 2,Imported LNG,Under Construction,2025+,Binh Thuan,440\nDung Quat 2,Imported LNG,Under Construction,2025+,Quan Ngai/Binh Thuan,440\nHoang Hoa 2,Coal,Operational,2008-2012,Hoai Duc/Tay Bep,600\n```\n\n**Notes on Data:**\n1.  **Fuel Types:** Most \"Natural Gas\" generation relies on Imported LNG due to Vietnam's limited domestic gas reserves for power generation (though local wells exist in the Mekong Delta). Coal remains the dominant thermal fuel.\n2.  **Connection Date:** Dates marked as \"Planned\" or \"Under Construction\" are based on Ministry of Power and Energy approvals but are subject to delays. Dates marked with \"Operational\" are Commercial Operation Dates (COD).\n3.  **Capacity:** Listed capacity varies by unit configuration (e.g., 1 unit vs. 2 units). Total installed capacity is often higher.\n4.  **Provinces:** Plants are often located in coastal regions for transmission reasons, even if the province name varies in official documents.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 4351
+  },
+  "wall_seconds": 77.764,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
