@@ -143,8 +143,10 @@ def main():
                     {"role": "user", "content": prompt},
                 ]
                 # Use native Ollama API to set num_ctx (OpenAI /v1/ ignores it)
+                # Size to actual need, not model max — saves KV cache VRAM
                 if base_url:
-                    result = query_ollama_native(base_url, model_id, messages, ctx_window)
+                    num_ctx = min(ctx_window, 81920)
+                    result = query_ollama_native(base_url, model_id, messages, num_ctx)
                 else:
                     result = query_single_turn(client, model_id, messages)
                 usage = result.get("usage") or {}
