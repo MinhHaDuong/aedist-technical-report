@@ -1,12 +1,12 @@
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrl}
 \toprule
-Backend & Lines & Tables & Table rows & Vietnamese & Size (KB) \\
+Backend & Tables & Rows & Size (KB) & Time & Diacritics \\
 \midrule
-cloudflare-ai & 1609 & 14 & 0 & 5/5 & 57 \\
-grobid & 4961 & 45 & 0 & 5/5 & 388 \\
-marker & 4745 & 170 & 4038 & 5/5 & 1630 \\
-mineru & 695 & 0 & 0 & 5/5 & 58 \\
-mistral-ocr & 1954 & 15 & 0 & 5/5 & 67 \\
-mistral-ocr-direct & 1307 & 169 & 0 & 5/5 & 547 \\
+Marker (local, GPU) & 170 & 4\,038 & 1\,630 & 45\,s & full \\
+Mistral OCR (direct) & 169 & 3\,011 & 547 & 30\,s & full \\
+MinerU (local, GPU) & 62 & 2\,994 & 791 & 5\,m\,45\,s & body only \\
+GROBID (local) & 45 & 0 & 388 & 20\,s & full \\
+Mistral OCR (plugin) & 15 & 0 & 67 & 10\,min & full \\
+Cloudflare AI & 14 & 0 & 57 & 8\,min & full \\
 \bottomrule
 \end{tabular}

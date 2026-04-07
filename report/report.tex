@@ -220,6 +220,14 @@ Les documents sont indexés dans Zotero \citep{9666795Z}, avec attention aux con
 
 La conversion des documents en Markdown améliore le traitement ultérieur par les LLM. Nous avons développé \emph{pdfOCR2md.py}, un script qui délègue l'OCR à un LLM et retourne du Markdown structuré. Selon les comparatifs \citep{ULQGRISS,RM4KCTEG}, faire reconnaître un PDF par un LLM généraliste est la solution la plus qualitative mais aussi la plus lente et onéreuse. Des solutions comme Docling, Marker, ou Mistral OCR offrent des compromis intéressants.
 
+Nous avons comparé six backends de conversion sur un document de référence~: la Décision~1509/QĐ-BCT (173~pages, vietnamien scanné, tableaux complexes). Le tableau~\ref{tab:converter-benchmark} résume les résultats. Marker et Mistral~OCR~direct extraient chacun environ 170~tableaux avec les diacritiques vietnamiens préservés. MinerU~v3, avec accélération~GPU et le backend \emph{pipeline}, extrait 62~tableaux mais perd les diacritiques dans les cellules de tableaux (le texte courant est correct). GROBID extrait du texte de qualité mais aplatit la structure tabulaire. Les approches passant par un LLM intermédiaire (plugin Mistral~OCR, Cloudflare~AI) sont limitées par la fenêtre de sortie du modèle.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparaison de six backends de conversion PDF$\to$Markdown sur la Décision~1509 (173~pages). Les colonnes~: nombre de tableaux détectés, lignes de données, taille du Markdown produit, temps de traitement, et qualité des diacritiques vietnamiens.}\label{tab:converter-benchmark}
+\InputIfFileExists{inputs/generated/tab_converter_benchmark}{}{\textbf{[Table not generated]}}
+\end{table}
+
 \section{Stratégie RAG}
 
 On procède en deux temps~: d'abord construire une table historique en utilisant les documents officiels, puis la mettre à jour. Le retrieval opère en deux étages~: trouver les documents pertinents parmi une base de milliers, puis extraire les passages intéressants (tables) parmi ces documents.
