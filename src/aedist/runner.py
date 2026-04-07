@@ -9,6 +9,7 @@ import argparse
 import csv
 import json
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -152,15 +153,24 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
         log.info("Saved: %s, %s", recon_path, metrics_path)
 
 
+def _strip_run_suffix(name: str) -> str:
+    """Remove -runN suffix from a model label: 'claude-opus-4.6-run1' → 'claude-opus-4.6'."""
+    return re.sub(r"-run\d+$", "", name)
+
+
 def _metrics_to_runrecord(
     metrics: BenchmarkMetrics,
     label: str,
-    csv_file: Path,
+    result_file: str,
 ) -> "RunRecord":
-    """Build a RunRecord from evaluation metrics."""
+    """Build a RunRecord from evaluation metrics.
+
+    *result_file* should be a relative path (e.g. experiments/outputs/...).
+    """
     from .schema import Method, MethodParams, ResultSummary, RunRecord
 
-    sweep_name = csv_file.parent.name
+    sweep_name = label.split("/")[0] if "/" in label else ""
+    stem = label.rsplit("/", 1)[-1]
     method = Method.SINGLE
     if "multiturn" in sweep_name:
         method = Method.MULTITURN
@@ -172,10 +182,10 @@ def _metrics_to_runrecord(
     return RunRecord(
         method=method,
         method_params=MethodParams(
-            model=label.rsplit("/", 1)[-1],
+            model=_strip_run_suffix(stem),
             prompt_version=sweep_name,
         ),
-        result_file=str(csv_file),
+        result_file=result_file,
         result_summary=ResultSummary(
             n_plants=metrics.n_system,
             tp=metrics.n_matched,
@@ -200,6 +210,14 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         Path(args.measurements_output) if args.measurements_output else result_dir / "measurements.jsonl"
     )
 
+    # Compute project root for relative paths in RunRecords.
+    # Walk up from measurements_path to find the repo root (contains pyproject.toml).
+    project_root = measurements_path.resolve().parent
+    for _ in range(10):
+        if (project_root / "pyproject.toml").exists():
+            break
+        project_root = project_root.parent
+
     reference = load_plants_csv(ref_path)
     new_records: list = []
 
@@ -210,7 +228,12 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         entries = reconcile(reference, system)
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
-        new_records.append(_metrics_to_runrecord(metrics, label, csv_file))
+        # Store relative path from project root
+        try:
+            rel_path = str(csv_file.resolve().relative_to(project_root))
+        except ValueError:
+            rel_path = str(csv_file)
+        new_records.append(_metrics_to_runrecord(metrics, label, rel_path))
         log.info(
             "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
             label.ljust(50),
