@@ -23,6 +23,7 @@ per-plant sourced discussion, statistical tables, annotated bibliography.
 | ERNIE 4.5 Thinking | Baidu | 6,185 | 65s | $0.002 | 17,267 | 30 | 0 | OK |
 | GPT-5.4 | OpenAI | 626 | 12s | $0.012 | 2,946 | 0 | 0 | REFUSED |
 | Grok 4.20 | xAI | 502 | 3s | $0.005 | 2,579 | 0 | 0 | REFUSED |
+| o3 Deep Research | OpenAI | 30,099 | 517s | $1.958 | 0 | 0 | 0 | OPAQUE |
 
 ## Key findings
 
@@ -35,7 +36,7 @@ per-plant sourced discussion, statistical tables, annotated bibliography.
 - **Tier 1 — Opus-class**: Only Opus delivers all sections with deep Vietnamese expertise (25 Vietnamese-language citations), per-plant narratives, and zero fabricated URLs
 - **Tier 2 — Comprehensive**: MiniMax, Sonar, Kimi, GLM-5 Turbo deliver all 5 sections with moderate source coverage
 - **Tier 3 — Adequate**: DeepSeek, Qwen, GLM-5, o3 deliver structured reports but thinner on per-plant detail
-- **Tier 4 — Refused**: GPT-5.4 (accuracy concern) and Grok (safety refusal)
+- **Tier 4 — Refused/Opaque**: GPT-5.4 (accuracy concern), Grok (safety refusal), o3 Deep Research (opaque — spent $1.96 on web research but returned nothing through OpenRouter's chat completions API; requires OpenAI native Responses API)
 
 ### 3. Refusal behavior reveals model personality
 - **GPT-5.4**: Honest epistemological refusal — "I can't verify from memory"
