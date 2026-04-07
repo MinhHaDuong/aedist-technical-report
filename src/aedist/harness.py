@@ -28,6 +28,16 @@ def load_models(path: str) -> list[dict]:
         return yaml.safe_load(f)
 
 
+def select_models(models: list[dict], ids: list[str]) -> list[dict]:
+    """Filter models by ID list. Warns on IDs not found in registry."""
+    id_set = set(ids)
+    result = [m for m in models if m["id"] in id_set]
+    missing = id_set - {m["id"] for m in result}
+    if missing:
+        log.warning("Model IDs not found in registry: %s", sorted(missing))
+    return result
+
+
 def model_metadata(model: dict) -> dict:
     """Extract metadata fields from model registry entry."""
     return {

@@ -1,0 +1,125 @@
+# AEDIST Benchmark — Experiment Configuration
+# Model sets and router definitions. Registry in models.yaml.
+
+[routers.openrouter]
+base_url = "https://openrouter.ai/api/v1"
+env_key = "OPENROUTER_API_KEY"
+
+[routers.ollama]
+base_url = "http://localhost:11434/v1"
+
+# ---------------------------------------------------------------------------
+# Model sets — explicit ID lists referencing models.yaml entries
+# ---------------------------------------------------------------------------
+
+[sets.census_cloud]
+model_ids = [
+    "anthropic/claude-opus-4.6",
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.4",
+    "google/gemini-3-flash-preview",
+    "x-ai/grok-4.20",
+    "deepseek/deepseek-v3.2",
+    "mistralai/mistral-large-2512",
+    "qwen/qwen3.5-397b-a17b",
+    "qwen/qwen3.5-plus-02-15",
+    "moonshotai/kimi-k2.5",
+    "meta-llama/llama-4-maverick",
+    "minimax/minimax-m2.7",
+    "z-ai/glm-5-turbo",
+    "xiaomi/mimo-v2-pro",
+    "qwen/qwen3.5-27b",
+    "qwen/qwen3.5-35b-a3b",
+    "qwen/qwen3.5-122b-a10b",
+    "nvidia/nemotron-3-nano-30b-a3b",
+    "inception/mercury-2",
+    "bytedance-seed/seed-2.0-lite",
+    "mistralai/mistral-small-2603",
+    "openai/gpt-5-mini",
+    "stepfun/step-3.5-flash",
+    "xiaomi/mimo-v2-flash",
+    "openai/gpt-5-nano",
+    "google/gemini-2.5-flash-lite",
+    "qwen/qwen3.6-plus-preview:free",
+]
+
+[sets.census_local]
+model_ids = [
+    "qwen3.5:122b",
+    "qwen3.5:35b",
+    "qwen3.5:27b",
+    "qwen3.5:9b",
+    "qwen3.5:4b",
+    "qwen3.5:2b",
+    "mistral-small3.2",
+    "glm-4.7-flash",
+    "nemotron-3-nano",
+    "devstral-small-2",
+    "gemma4:26b",
+    "gemma4:31b",
+    "gemma4:e4b",
+    "gemma4:e2b",
+    "cogito:8b",
+    "granite3.3:8b",
+]
+
+[sets.frontier]
+model_ids = [
+    "anthropic/claude-opus-4.6",
+    "openai/gpt-5.4",
+    "x-ai/grok-4.20",
+]
+
+[sets.frontier_10labs]
+model_ids = [
+    "openai/o3-deep-research",
+    "perplexity/sonar-deep-research",
+    "alibaba/tongyi-deepresearch-30b-a3b",
+    "openai/o3",
+    "deepseek/deepseek-r1-0528",
+    "moonshotai/kimi-k2-thinking",
+    "baidu/ernie-4.5-21b-a3b-thinking",
+]
+
+[sets.frontier_3best]
+model_ids = [
+    "anthropic/claude-opus-4.6",
+    "alibaba/tongyi-deepresearch-30b-a3b",
+    "openai/o3",
+]
+
+[sets.frontier_cn]
+model_ids = [
+    "z-ai/glm-5-turbo",
+    "z-ai/glm-5",
+    "deepseek/deepseek-v3.2",
+    "qwen/qwen3-max-thinking",
+    "minimax/minimax-m2.7",
+]
+
+[sets.sweep_rag]
+model_ids = [
+    "openai/gpt-5.4",
+    "google/gemini-2.5-flash-lite",
+    "mistralai/mistral-small-2603",
+    "mistralai/mistral-large-2512",
+    "deepseek/deepseek-v3.2",
+    "cogito:8b",
+    "granite3.3:8b",
+    "qwen3.5:9b",
+    "qwen3.5:35b",
+    "gemma4:26b",
+    "qwen3.5:4b",
+    "qwen3.5:2b",
+    "gemma4:e4b",
+    "gemma4:e2b",
+]
+
+[sets.sweep5]
+model_ids = [
+    "anthropic/claude-opus-4.6",
+    "google/gemini-2.5-flash-lite",
+    "openai/gpt-5.4",
+    "mistralai/mistral-small-2603",
+    "deepseek/deepseek-v3.2",
+]
