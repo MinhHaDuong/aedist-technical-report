@@ -1,6 +1,6 @@
 {
-  "model": "gemma4:e4b",
-  "run": 2,
+  "model": "granite3.3:8b",
+  "run": 1,
   "date": "2026-04-07",
   "strategy": "wholesale",
   "corpus_files": [
@@ -25,16 +25,16 @@
   ],
   "corpus_tokens": 37283,
   "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
-  "response": "I have compiled a table synthesizing the data from the provided documents, categorizing the power plants by fuel source.\n\nHere is the data structured for your convenience:\n\n| Plant Name/Region | Fuel Source | Status/Notes |\n| :--- | :--- | :--- |\n| **Coal/Other** | | |\n| (No specific details provided) | Coal | (N/A) |\n| **Gas/Other** | | |\n| (No specific details provided) | Gas | (N/A) |\n\n***\n\n**Crucial Observation:**\n\nThe provided context snippets are **too fragmentary** to generate a comprehensive or accurate table of power plants. They are technical or administrative fragments without enough specific data points (like plant name, capacity, etc.) to build a reliable dataset.\n\nIf you can provide a more complete report or a specific section detailing the power plants (e.g., \"The following gas-fired plant...\"), I would be happy to create the detailed table you require.",
+  "response": "Here is a table listing all thermal power plants in Vietnam with details including their fuel type (coal/local natural gas/imported LNG), construction stage, connection date (observed/planned COD), province, and generation capacity:\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Observed/Planned COD,Province,Capacity (MWe)\nHai Phong 1,CCGT,Complete,2016-2017,Quang Ninh,1500\nHai Phong 2,CCGT,Complete,2025-2026,Quang Ninh,1400\nLai Chau #1,#1,CCGT,Partial,2016-2017,Quang Binh,400\nLai Chau #2,#1,CCGT,Partial,2016-2017,Quang Binh,400\nLai Chau #2,#</td>\nTrung Sơn II,CCGT,Planned,2023-2025,Thanh",
   "finish_reason": "stop",
   "usage": {
-    "prompt_tokens": 32768,
-    "completion_tokens": 210
+    "prompt_tokens": 80220,
+    "completion_tokens": 248
   },
-  "wall_seconds": 23.425,
+  "wall_seconds": 389.81,
   "cost_usd": 0.0,
   "model_metadata": {
-    "size_class": "edge",
+    "size_class": "small",
     "country": "US",
     "architecture": "dense",
     "provider": "Ollama/Padme",

@@ -1,0 +1,43 @@
+{
+  "model": "cogito:8b",
+  "run": 3,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is a comprehensive list of thermal power plants in Vietnam, formatted as CSV:\n\n```csv\nName,Province,Fuel Type,Capacity,MW,Construction Stage,Connection Date (planned/observed)\nVung Tau 1, Ba Ria-Vung Tau, Coal,1200,Under Construction,\nVung Tau 2, Ba Ria-Vung Tau, Coal,900,Under Construction,\nThi Vai 1, Ba Ria-Vung Tau, Coal,600,Under Construction,\nLong Son, Ba Ria-Vung Tau, LNG,1350,Operational (2023),\nPhu My 1, Ba Ria-Vung Tau, Coal,1050,Under Construction,\nPhu My 2.1, Ba Ria-Vung Tau, Gas Turbine,900,Under Construction,\nBac Lieu Thermal Power Plant, Bac Lieu, Coal,3200,Under Construction (2025),\nLong An I, Long An, LNG,1500,Under Construction (2024),\nVinh Tan IV, Binh Thuan, Coal,1980,Operational (2021),\nPhung Dan, Hau Giang, Coal,4000,Under Construction,\nDuyen Hai 3 & 4, Ca Mau, Coal,1245,Operational (2017-2018),\nNghi Son I, Thanh Hoa, LNG,300,Operational (2020),\nNa Duong, Hai Phong, Coal,115,Operational (2022),\nCam Pha, Quang Ninh, Coal,600,Under Construction,\nMong Duong 1 & 2, Quang Ninh, Coal,1080,Operational (2016),\nSon Dong, Nghe An, Coal,220,Under Construction,\nVung Ang II, Ha Tinh, LNG,1330,Operational (2020),\nThan Phu Yen, Phu Yen, Coal,4000,Under Construction,\nDuyen Hai 1 & 2, Ca Mau, Coal,1245,Operational (2016-2017),\nLong An II, Long An, LNG,1500,Planned COD (2030),\nThan Binh Dinh I & II, Binh Dinh, Coal,300,Under Construction,\nTan Phuoc I, Ben Tre, Coal,4500,Under Construction,\nVung Ang 3, Ha Tinh, LNG,600,Under Construction,\nLong An III, Long An, LNG,1500,Planned COD (2035),\nThan Binh Dinh III & IV, Binh Dinh, Coal,300,Under Construction,\nLong Son II & III, Ba Ria-Vung Tau, LNG,300,Operational (2023),\nTan Phuoc II, Ben Tre, Coal,4500,Under Construction,\nLong An I, Long An, LNG,1500,Planned COD (2035),\nThan Binh Dinh V, Binh Dinh, Coal,300,Under Construction,\nTan Phuoc III, Ben Tre, Coal,4500,Under Construction,\nThan Binh Dinh VI, Binh Dinh, Coal,300,Under Construction,\n```\n\nThis list includes major thermal power plants across Vietnam, with their current status and planned timelines. The data is based on the latest available information as of 2023.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 67588,
+    "completion_tokens": 691
+  },
+  "wall_seconds": 30.294,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

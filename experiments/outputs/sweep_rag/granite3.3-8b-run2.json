@@ -1,5 +1,5 @@
 {
-  "model": "gemma4:e2b",
+  "model": "granite3.3:8b",
   "run": 2,
   "date": "2026-04-07",
   "strategy": "wholesale",
@@ -25,16 +25,16 @@
   ],
   "corpus_tokens": 37283,
   "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
-  "response": "| Tên Nhà máy | Công suất (MW) |\n|---|---|\n| Lò hơi | |\n| Lò hơi | |",
+  "response": "```csv\nThermal Power Plants inVietnam,Fuel Type,Construction Stage,Connection Date (Obs/Planned COD),Province,Capacity(MWe)\r\n\"TĐ Trung Sơn\",Coal,Under Construction,2016-2017,Thanhóa,4x65\r\n\"NĐ Duyên Hải MR\",Gas,Under Construction,2018,Cát Hai,300\r\n\"NĐ Thái Bình I\",Coal,Construction,2017,Quảng Bình,2x300\r\n\"NĐ Vĩnh Tân IV\",Coal,Construction,2019,Bình Dương,2x600\r\n\"TBKHH Đông Trung I\",Gas,Under Construction,2024,Quảng Trung,750\r\n\"TBKHH Đông Trung II\",Gas,Under Construction,2024,Quảng Trung,750\r\n\"TBKHH Đông Trung III\",Gas,Under Construction,2024,Quảng Trung,750\r\n\"NĐ Duyên Hải MR\",Gas,Construction,2019,Hải Phan,80\r\n\"Thủy điện Đa Nhim MR\",Gas,Construction,2021,Trà Vĩnh,2x240\r\n\"ND Thành Lăng I\",Coal,Under Construction,2021-2022,Nhân Trái,2x</td>\r\n\"NĐ Long Phú II\",Coal,Planned COD,2027-2028,Lâm Tinh,2x600\r\n\"TBKHH Hòa Môn III\",Gas,Construction,2025-2026,Bắc Bộ,1",
   "finish_reason": "stop",
   "usage": {
-    "prompt_tokens": 32768,
-    "completion_tokens": 31
+    "prompt_tokens": 80220,
+    "completion_tokens": 441
   },
-  "wall_seconds": 10.027,
+  "wall_seconds": 406.887,
   "cost_usd": 0.0,
   "model_metadata": {
-    "size_class": "edge",
+    "size_class": "small",
     "country": "US",
     "architecture": "dense",
     "provider": "Ollama/Padme",

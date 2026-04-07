@@ -1,0 +1,43 @@
+{
+  "model": "cogito:8b",
+  "run": 1,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nplant_name,fuel_type,construction_stage,connection_date,province,capacity_mw\nNhiệt điện Uông Bí,Than,Operational,2007,Vĩnh Phúc,1350\nNhiệt điện Quảng Ninh,Than,Operational,2012,Quảng Ninh,3300\nNhiệt điện Vũng Áng I,Than,Operational,2015,Hà Tĩnh,1800\nNhiệt điện Cẩm Phả II,Than,Operational,2018,Khánh Hòa,1300\nNhiệt điện Vân Phong I,LNG,Operational,2021,Khánh Hòa,660\nNhiệt điện Duyên Hải III,LNG,Under Construction,,An Giang,3300\nNhiệt điện Nam Định I,LNG,Under Construction,,Nam Định,3000\nNhiệt điện Thái Bình I,LNG,Under Construction,,Thái Bình,1500\nNhiệt điện Quảng Trạch II,LNG,Under Construction,,Quảng Bình,600\nNhiệt điện Hải Dương III,LNG,Planned COD 2026,Hải Dương,3300\nNhiệt điện Nghi Sơn II,LNG,Operational,2022,Thái Bình,660\nNhiệt điện Sông Hậu I,LNG,Under Construction,,Hậu Giang,3300\nNhiệt điện Kiên Giang I,LNG,Under Construction,,Kiên Giang,1500\n```\n\nThe information above is based on the latest available data up to 2023. Some plants are in planning stages or have uncertain timelines for completion and COD.\n\nNote: The table includes both operational thermal power plants and those under construction or planned. For the most accurate and up-to-date information, please refer to official sources like EVN's annual reports or government announcements.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 67588,
+    "completion_tokens": 396
+  },
+  "wall_seconds": 96.643,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

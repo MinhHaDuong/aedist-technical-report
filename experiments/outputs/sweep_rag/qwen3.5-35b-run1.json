@@ -1,0 +1,43 @@
+{
+  "model": "qwen3.5:35b",
+  "run": 1,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nUông Bí,Closed Cycle Steam,Commissioned,1990,Quảng Ninh,105\nUông Bí Extension,Closed Cycle Steam,Commissioned,1997,Quảng Ninh,330\nPhả Lại I & II,Coal-fired Steam,Commissioned,1990,Hải Dương,440\nPhả Lại 3,Coal-fired Steam,Commissioned,2022,Hải Dương,660\nNinh Bình (GENCO 3),Coal-fired Steam,Commissioned,2010,Ninh Bình,100\nThái Bình I,Coal-fired Steam,Commissioned,2017,Thái Bình,600\nDuyên Hải I & II,Coal-fired Steam,Commissioned,2011-2012,Trà Vinh,1200\nDuyên Hải III,Coal-fired Steam,Commissioned,2017,Trà Vinh,1800\nHải Dương,Coal-fired Steam,Commissioned,2020,Hải Dương,1200\nMông Dương I,Coal-fired Steam,Commissioned,2017,Quảng Ninh,1000\nMông Dương II,Coal-fired Steam,Under Construction,2024,Quảng Ninh,1000\nCẩm Phả III,Coal-fired Steam,Commissioned,2022,Quảng Ninh,440\nHải Phòng III,Coal-fired Steam,Planned,2025-2026,Hải Phòng,1200\nVĩnh Tân II,Coal-fired Steam,Commissioned,2013,Bình Thuận,1200\nVĩnh Tân III,Coal-fired Steam,Under Construction,2024,Bình Thuận,1980\nVĩnh Tân IV,Coal-fired Steam,Commissioned,2018,Bình Thuận,1200\nVũng Tàu II,Coal-fired Steam,Under Construction,2024,Bà Rịa-Vũng Tàu,1200\nVũng Áng I,Coal-fired Steam,Commissioned,2016,Hà Tĩnh,1200\nVũng Áng II,Coal-fired Steam,Under Construction,2022,Hà Tĩnh,1200\nVũng Áng III,Coal-fired Steam,Delayed,2025,Hà Tĩnh,1200\nVân Phong I,Coal-fired Steam,Under Construction,2023-2024,Khánh Hòa,1320\nLong Phú I,Coal-fired Steam,Under Construction,2023,Sóc Trăng,1200\nLong Phú II,Coal-fired Steam,Under Construction,2025,Sóc Trăng,1320\nLong Phú III,Coal-fired Steam,Planned,2026,Sóc Trăng,1800\nSông Hậu I,Coal-fired Steam,Commissioned,2021,Hậu Giang,1200\nSông Hậu II,Coal-fired Steam,Under Construction,2024,Hậu Giang,2120\nNghi Sơn I,Coal-fired Steam,Commissioned,2015,Thanh Hóa,600\nNghi Sơn II,Coal-fired Steam,Commissioned,2022,Thanh Hóa,1200\nHải Hà 1,Combined Heat & Power,Commissioned,2019,Quảng Ninh,300\nHải Hà 2,Combined Heat & Power,Commissioned,2024,Quảng Ninh,600\nHải Hà 3,Combined Heat & Power,Under Construction,2024,Quảng Ninh,600\nHải Hà 4,Combined Heat & Power,Planned,2024,Quảng Ninh,600\nQuảng Trị,Coal-fired Steam,Under Construction,2026,Quảng Trị,600\nNam Định I,Coal-fired Steam,Under Construction,2024-2025,Nam Định,1200\nNam Định II,Coal-fired Steam,Planned,2025,Nam Định,2000\nCông Thanh,Coal-fired Steam,Under Construction,2026,Thanh Hóa,600\nQuảng Trạch I,Coal-fired Steam,Commissioned,2024,Quảng Bình,600\nQuảng Trạch II,Coal-fired Steam,Planned,2025,Quảng Bình,600\nPhú Thọ,Coal-fired Steam,Planned,2025,Phú Thọ,600\nAn Khánh,Coal-fired Steam,Under Construction,2023,Bắc Giang,650\nKim Sơn,Coal-fired Steam,Planned,2026,Ninh Bình,3000\nLong Sơn,LNG,Under Construction,2024,Bà Rịa-Vũng Tàu,1200\nCà Ná,LNG,Commissioned,2025,Ninh Thuận,1500\nBạc Liêu,LNG,Planned,2025-2026,Bạc Liêu,3200\nSơn Mỹ II,LNG,Commissioned,2023,Bà Rịa-Vũng Tàu,2250\nSơn Mỹ I,LNG,Commissioned,2026,Bà Rịa-Vũng Tàu,2250\nThái Bình LNG,LNG,Planned,2025,Thái Bình,4500\nHải Phòng LNG,LNG,Planned,2026,Hải Phòng,13500\nQuảng Ninh LNG,LNG,Planned,2025-2030,Quảng Ninh,15000\nHải Lăng (Quảng Trị),Local Gas,LNG,Planned,2026,Quảng Trị,3000\nĐầm Dơi,LNG,Planned,2026,Cà Mau,3200\nCái Mép,LNG,Planned,2025,Bà Rịa-Vũng Tàu,6000\nHồng Sơn,Ice,Commissioned,2011,Hà Nam,810\nBà Rịa,Gas-fired Steam,Commissioned,2000,Bà Rịa-Vũng Tàu,389\nPhú Mỹ I,Gas-fired Steam,Commissioned,1993,Bà Rịa-Vũng Tàu,1090\nPhú Mỹ II.1,Gas-fired Steam,Commissioned,2015,Bà Rịa-Vũng Tàu,810\nPhú Mỹ II.2,Gas-fired Steam,Commissioned,2014,Bà Rịa-Vũng Tàu,810\nPhú Mỹ III,Gas-fired Steam,Commissioned,2015,Bà Rịa-Vũng Tàu,810\nPhú Mỹ IV,Gas-fired Steam,Commissioned,2015,Bà Rịa-Vũng Tàu,810\nÔ Môn I (Local Gas),Gas-fired Steam,Commissioned,2008,Cần Thơ,660\nÔ Môn II (Local Gas),Gas-fired Steam,Commissioned,2014,Cần Thơ,1050\nÔ Môn III (Lot B Gas),Gas-fired Steam,Commissioned,2025,Cần Thơ,1050\nÔ Môn IV (Lot B Gas),Gas-fired Steam,Commissioned,2027,Cần Thơ,1050\nCà Mau I,Gas-fired Steam,Commissioned,2004,Cà Mau,750\nCà Mau II,Gas-fired Steam,Commissioned,2006,Cà Mau,750\nDung Quất I,Gas-fired Steam,Commissioned,2023,Quảng Ngãi,750\nDung Quất II,Gas-fired Steam,Commissioned,2026,Quảng Ngãi,750\nDung Quất III,Gas-fired Steam,Planned,2025,Quảng Ngãi,750\nMiền Trung I,Gas-fired Steam,Commissioned,2024,Quảng Ngãi,750\nMiền Trung II,Gas-fired Steam,Planned,2024,Quảng Ngãi,750\nĐồng phát Đức Giang,Combined Heat & Power,Commissioned,2018,Hà Nội,100\nFormosa Hà Tĩnh 2,Combined Heat & Power,Commissioned,2020,Hà Tĩnh,650\nGiang Duyên,Combined Heat & Power,Commissioned,2020,Hải Dương,100\nHải Phòng 1 & 2,LNG,Under Construction,2023,Hải Phòng,6000\nHải Phòng 3,LNG,Planned,2023,Hải Phòng,4500\nTân Phú,LNG,Planned,2025,Hà Nội,4500\nHiệp Phước,LNG,Commissioned,2022,Hà Nội,1200\nLong An I,LNG,Planned,2025-2026,Long An,1500\nLong An II,LNG,Planned,2030,Long An,1500\nTân Phước I,LNG,Planned,2029-2030,Tiền Giang,1200\nTân Phước II,LNG,Planned,2028-2029,Tiền Giang,1200\nLong Sơn II,LNG,Planned,2025-2026,Bà Rịa-Vũng Tàu,1500\nLong Sơn III,LNG,Planned,2026-2027,Bà Rịa-Vũng Tàu,1500\nCà Mau 1,2,3,LNG,Planned,2025,Cà Mau,3000\nBến Tre,LNG,Planned,2025,Bến Tre,3000\nNam Định (Cọc) ,LNG,Planned,2027,Nam Định,4000\nThái Bình (Cọc),LNG,Planned,2027,Thái Bình,4000\nSơn Tây,Gas-fired Steam,Planned,2020,Bắc Ninh,300\nVũng Tàu 3,Gas-fired Steam,Planned,2027,Bà Rịa-Vũng Tàu,1200\nHải Phòng (Cọc),LNG,Planned,2023,Hải Phòng,4500\nLNG Vũng Áng,LNG,Planned,2023,Hà Tĩnh,1500\nLNG Quảng Ninh 2,LNG,Planned,2025,Quảng Ninh,1500\nLNG Hà Tĩnh,LNG,Planned,2023,Hà Tĩnh,6000\nLNG Quảng Bình,LNG,Planned,2023,Quảng Bình,3000\nHải Lăng (Quảng Trị) II,LNG,Planned,2026,Quảng Trị,3000\nChân Mây,LNG,Planned,2023,Thừa Thiên-Huế,4000\nPhong Điền,LNG,Planned,2023,Thừa Thiên-Huế,3000\nQuảng Nam,LNG,Planned,2023,Quảng Nam,4000\nBình Định,LNG,Planned,2023,Bình Định,5000\nVân Phong (LNG),LNG,Planned,2025,Khánh Hòa,3000\nMỹ Giang,LNG,Planned,2025,Khánh Hòa,6000\nCà Ná II+III,LNG,Planned,2025,Ninh Thuận,4500\nMũi Kê Gà,LNG,Planned,2025,Ninh Thuận,3600\nTân Phước III,LNG,Planned,2030,Tiền Giang,1200\nLong An III,LNG,Planned,2030,Long An,1200\nLNG Hải Phòng 3,LNG,Planned,2027,Hải Phòng,4500\nLNG Hải Phòng 4,LNG,Planned,2027,Hải Phòng,4500\nLNG Long An I,LNG,Planned,2025-2026,Long An,1500\nLNG Long An II,LNG,Planned,2035,Long An,1500\nLNG Cà Nam I,LNG,Planned,2025,Cà Mau,1500\nLNG Cà Nam II+III,LNG,Planned,2026,Cà Mau,4500",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 78652,
+    "completion_tokens": 7067
+  },
+  "wall_seconds": 268.09,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

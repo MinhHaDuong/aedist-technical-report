@@ -1,0 +1,43 @@
+{
+  "model": "cogito:8b",
+  "run": 2,
+  "date": "2026-04-07",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here's a comprehensive list of thermal power plants in Vietnam formatted as CSV:\n\n```csv\nName,Fuel Type,Construction Stage,COD Date,Province,Capacity (MWe)\nSơn La,Local Natural Gas,A,C,6/2021,Lai Châu,1600\nHòa Bình,Local Natural Gas,D,B,7/2015,Hòa Bình,1920\nTuyên Quang,Local Natural Gas,D,C,8/2014,Tuyên Quang,342\nQuảng Trị,Imported LNG,C,P,12/2022,Quảng Trị,64\nSơn La 3,Coal,A,R,11/2019,Lai Châu,260\nSe San 4,Local Natural Gas,B,C,10/2021,Dak Nong,360\nBac Hai 2,Imported LNG,E,P,3/2023,Hai Phong,330\nUong Bi MR,Local Natural Gas,D,R,12/2019,Hà Tĩnh,105\nCam Pha 5,Coal,A,R,10/2021,Quảng Ninh,600\nSon Dong,Imported LNG,C,R,2/2022,Bac Giang,220\nHai Phong 2,Imported LNG,E,P,6/2023,Hai Phong,600\nLong Son 1,Imported LNG,D,R,5/2021,Tan Thanh,750\nLong Son 2,Imported LNG,E,R,8/2021,Tan Thanh,900\nPhu My 4.5,Coal,A,R,10/2020,Vung Tau,450\nBac Lieu 1,Imported LNG,C,P,6/2023,Ba Ria Vung Tau,600\nSong Hau 2,Imported LNG,D,R,12/2021,Soc Trang,1000\nVinh Tan IV,Local Natural Gas,E,P,3/2023,Binh Thuan,660\nNghi Son II,Coal,A,R,11/2019,Nghệ An,600\nThan Bình Định I,Coal,A,R,8/2020,Binh Dinh,300\nLong An III,Imported LNG,C,P,6/2024,Long An,800\nTan Phuoc,Local Natural Gas,D,R,12/2021,Tien Giang,450\nSơn Mỹ II,Coal,B,R,11/2019,Ba Ria Vung Tau,2,250\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 67588,
+    "completion_tokens": 514
+  },
+  "wall_seconds": 22.639,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
