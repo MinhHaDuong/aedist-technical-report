@@ -144,7 +144,7 @@ def main():
                 # Set num_ctx for Ollama to avoid silent truncation
                 extra = {}
                 if base_url:
-                    extra["extra_body"] = {"options": {"num_ctx": ctx_window}}
+                    extra["extra_body"] = {"num_ctx": ctx_window}
 
                 result = query_single_turn(client, model_id, messages, **extra)
                 usage = result.get("usage") or {}
