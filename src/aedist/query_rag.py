@@ -120,8 +120,10 @@ def main():
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
+        # Consolidated registry entries always have "router". Legacy per-sweep
+        # YAML files (without "router") fall through to the base_url path.
         router = model.get("router")
-        base_url = model.get("base_url")  # legacy path
+        base_url = model.get("base_url")  # legacy path only
         is_ollama = router == "ollama" if router else bool(base_url)
 
         ctx_window = model.get("context_window", 0)

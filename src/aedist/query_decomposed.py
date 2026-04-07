@@ -39,6 +39,7 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
+    make_client_for_router,
     select_models,
     model_metadata,
     output_path,
@@ -239,13 +240,26 @@ def main():
                 log.info("Would query %s run %d (3 sub-queries)", model["id"], run)
         return
 
-    client = make_client()
+    legacy_client = None
+    if args.model_set:
+        routers_config = experiments.get("routers", {})
+        clients: dict = {}
+    else:
+        legacy_client = make_client()
     budget = BudgetTracker(args.budget_usd)
 
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
         ctx_window = model.get("context_window", 0)
+
+        router = model.get("router")
+        if args.model_set and router:
+            if router not in clients:
+                clients[router] = make_client_for_router(router, routers_config)
+            client = clients[router]
+        else:
+            client = legacy_client
 
         if corpus_tokens > ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN:
             log.warning("Skip %s: corpus too large for context window", label)

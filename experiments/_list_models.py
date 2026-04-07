@@ -32,11 +32,19 @@ def main():
     )
     args = parser.parse_args()
 
-    with open(args.models) as f:
-        models = yaml.safe_load(f)
+    try:
+        with open(args.models) as f:
+            models = yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: registry not found: {args.models}", file=sys.stderr)
+        sys.exit(1)
 
-    with open(args.experiments, "rb") as f:
-        experiments = tomllib.load(f)
+    try:
+        with open(args.experiments, "rb") as f:
+            experiments = tomllib.load(f)
+    except FileNotFoundError:
+        print(f"Error: experiments config not found: {args.experiments}", file=sys.stderr)
+        sys.exit(1)
 
     model_set = experiments.get("sets", {}).get(args.model_set)
     if not model_set:
