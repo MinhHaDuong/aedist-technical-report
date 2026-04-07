@@ -1,14 +1,14 @@
 # aedist/Makefile — Reproducible experiment pipeline
 #
 # Sweep configs live in [sweeps.*] sections of experiments.toml.
-# Output files are Make targets: prompt or model list change → re-query.
+# Job dispatch is handled by the manager + worker pipeline:
+#   1. `make sweep1-generate`  — fan out sweep config into per-model jobs
+#   2. `make sweep1-run`       — start workers to execute the jobs
+#   3. `make sweep1-summary`   — extract → evaluate → summarize
 #
-# Usage:
-#   make -j8 sweep1          # All models, 3 runs each (OpenRouter parallel, Padme sequential)
-#   make sweep1-padme        # Padme local models only (always sequential)
-#   make sweep1-summary      # Extract → evaluate → summarize
+# Or simply: `make sweep1` to generate + run in one step.
 #
-# Adding a model to models.yaml → `make sweep1` queries only the new model.
+# Adding a model to models.yaml → re-run generate (idempotent) + run.
 
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
@@ -28,50 +28,41 @@ ifeq ($(TAVILY_API_KEY),)
 endif
 export TAVILY_API_KEY
 
-# Guard: only require OPENROUTER_API_KEY for targets that actually need it
-_NEEDS_OPENROUTER := sweep1 sweep1-openrouter sweep1-padme sweep1-summary sweep2 sweep2-multiturn sweep2-web sweep5-sourced
+# Guard: only require OPENROUTER_API_KEY for targets that actually need it.
+# Workers inherit keys from the environment; the guard catches missing keys early.
+_NEEDS_OPENROUTER := sweep1 sweep1-run sweep1-summary sweep2 sweep2-run sweep5-sourced sweep5-run
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
   $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
 endif
 
-_NEEDS_TAVILY := sweep2-web
+_NEEDS_TAVILY := sweep2-run
 ifneq ($(filter $(_NEEDS_TAVILY),$(MAKECMDGOALS)),)
   $(if $(TAVILY_API_KEY),,$(error TAVILY_API_KEY not set — export it or add to .env))
 endif
 
-# --- Read sweep configs ------------------------------------------------------
+# --- Common -------------------------------------------------------------------
+MANAGER := uv run --project .. python -m aedist.manager generate
+WORKER  := uv run --project .. python -m aedist.worker
+
+# Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
 
 # --- Sweep 1: Model census ---------------------------------------------------
 
-S1_PROMPT  := $(call cfg,sweep1_census,prompt)
-S1_MODELS  := $(call cfg,sweep1_census,models)
-S1_REPEAT  := $(call cfg,sweep1_census,repeat)
-S1_BUDGET  := $(call cfg,sweep1_census,budget_usd)
 S1_OUTPUT  := $(call cfg,sweep1_census,output)
 
-S1_SET     := $(call cfg,sweep1_census,model_set)
+.PHONY: sweep1 sweep1-generate sweep1-run sweep1-summary
 
-S1P_MODELS := $(call cfg,sweep1_padme,models)
-S1P_SET    := $(call cfg,sweep1_padme,model_set)
+sweep1: sweep1-generate sweep1-run
 
-# Model short names → output file targets (via _list_models.py helper)
-S1_OR_SHORTS  = $(shell uv run --project .. python3 _list_models.py $(S1_MODELS) --set $(S1_SET) --experiments experiments.toml)
-S1_PAD_SHORTS = $(shell uv run --project .. python3 _list_models.py $(S1P_MODELS) --set $(S1P_SET) --experiments experiments.toml --format padme-short)
+sweep1-generate:
+	$(MANAGER) --sweep sweep1_census --experiments experiments.toml
+	$(MANAGER) --sweep sweep1_padme --experiments experiments.toml
 
-# Target: {output}/{model}-run{n}.json — one file per model per run
-S1_OR_JSONS  = $(foreach m,$(S1_OR_SHORTS),$(foreach r,1 2 3,$(S1_OUTPUT)/$(m)-run$(r).json))
-S1_PAD_JSONS = $(foreach m,$(S1_PAD_SHORTS),$(foreach r,1 2 3,$(S1_OUTPUT)/padme-$(m)-run$(r).json))
-
-.PHONY: sweep1 sweep1-openrouter sweep1-padme sweep1-summary
-
-sweep1: sweep1-openrouter sweep1-padme
-
-sweep1-openrouter: $(S1_OR_JSONS)
-
-# Padme: sequential — Ollama serves one model at a time
-sweep1-padme:
-	$(MAKE) -j1 $(S1_PAD_JSONS)
+sweep1-run:
+	$(WORKER) openrouter --loop &
+	$(WORKER) padme --loop &
+	wait
 
 sweep1-summary:
 	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
@@ -82,126 +73,59 @@ sweep1-summary:
 	    --measurements ../measurements.jsonl \
 	    --output ../results/summary/sweep1_summary.csv
 
-# OpenRouter: query.py --repeat 3 produces all 3 run files in one call.
-# Grouped target (GNU Make 4.3+): one recipe produces all 3 files.
-define or_rule
-$(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) experiments.toml
-	$$(eval FULL_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); hits=[m['id'] for m in ms if '/' in m['id'] and m['id'].split('/')[-1].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
-	@if [ -z "$$(FULL_ID)" ]; then echo "SKIP $(1)"; exit 0; fi
-	uv run --project .. python -m aedist.query \
-	    --prompt $(S1_PROMPT) --models $(S1_MODELS) \
-	    --model-set $(S1_SET) --experiments experiments.toml \
-	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
-	    --budget-usd $(S1_BUDGET) --model $$(FULL_ID)
-endef
-
-$(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
-
-# Padme: aedist.query with --base-url for Ollama, --output-prefix padme.
-define padme_rule
-$(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) experiments.toml
-	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if '/' not in m['id'] and m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
-	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
-	uv run --project .. python -m aedist.query \
-	    --prompt $(S1_PROMPT) --models $(S1P_MODELS) \
-	    --model-set $(S1P_SET) --experiments experiments.toml \
-	    --output $(S1_OUTPUT) --repeat $(S1_REPEAT) \
-	    --model $$(OLLAMA_ID) \
-	    --base-url http://localhost:11434/v1 \
-	    --output-prefix padme
-endef
-
-$(foreach m,$(S1_PAD_SHORTS),$(eval $(call padme_rule,$(m))))
-
 # --- Sweep 2: Information regimes ---------------------------------------------
 
-S2MT_PROMPT := $(call cfg,sweep2_multiturn,prompt)
-S2MT_FOLLOW := $(call cfg,sweep2_multiturn,followups)
-S2MT_MODELS := $(call cfg,sweep2_multiturn,models)
-S2MT_REPEAT := $(call cfg,sweep2_multiturn,repeat)
-S2MT_BUDGET := $(call cfg,sweep2_multiturn,budget_usd)
-S2MT_OUTPUT := $(call cfg,sweep2_multiturn,output)
+.PHONY: sweep2 sweep2-generate sweep2-run
 
-SR_PROMPT  := $(call cfg,sweep_rag,prompt)
-SR_CORPUS  := $(call cfg,sweep_rag,corpus)
-SR_STRAT   := $(call cfg,sweep_rag,strategy)
-SR_MODELS  := $(call cfg,sweep_rag,models)
-SR_REPEAT  := $(call cfg,sweep_rag,repeat)
-SR_BUDGET  := $(call cfg,sweep_rag,budget_usd)
-SR_OUTPUT  := $(call cfg,sweep_rag,output)
+sweep2: sweep2-generate sweep2-run
 
-S2W_PROMPT  := $(call cfg,sweep2_web,prompt)
-S2W_MODELS  := $(call cfg,sweep2_web,models)
-S2W_REPEAT  := $(call cfg,sweep2_web,repeat)
-S2W_BUDGET  := $(call cfg,sweep2_web,budget_usd)
-S2W_OUTPUT  := $(call cfg,sweep2_web,output)
+sweep2-generate:
+	$(MANAGER) --sweep sweep2_multiturn --experiments experiments.toml
+	$(MANAGER) --sweep sweep_rag --experiments experiments.toml
+	$(MANAGER) --sweep sweep2_web --experiments experiments.toml
 
-.PHONY: sweep2 sweep2-multiturn sweep-rag sweep2-web
-
-sweep2: sweep2-multiturn sweep-rag sweep2-web
-
-sweep2-multiturn:
-	uv run --project .. python -m aedist.query_multiturn \
-	    --prompt $(S2MT_PROMPT) --followups $(S2MT_FOLLOW) \
-	    --models $(S2MT_MODELS) --output $(S2MT_OUTPUT) \
-	    --repeat $(S2MT_REPEAT) --budget-usd $(S2MT_BUDGET)
-
-sweep-rag:
-	uv run --project .. python -m aedist.query_rag \
-	    --prompt $(SR_PROMPT) --corpus $(SR_CORPUS) \
-	    --strategy $(SR_STRAT) --models $(SR_MODELS) \
-	    --output $(SR_OUTPUT) --repeat $(SR_REPEAT) \
-	    --budget-usd $(SR_BUDGET)
-
-sweep2-web:
-	uv run --project .. python -m aedist.query_web \
-	    --prompt $(S2W_PROMPT) --models $(S2W_MODELS) \
-	    --output $(S2W_OUTPUT) --repeat $(S2W_REPEAT) \
-	    --budget-usd $(S2W_BUDGET)
+sweep2-run:
+	$(WORKER) openrouter --loop &
+	wait
 
 # --- Sweep 3: Task decomposition by fuel type ---------------------------------
 
-S3D_PROMPT  := $(call cfg,sweep3_decomposed,prompt)
-S3D_CORPUS  := $(call cfg,sweep3_decomposed,corpus)
-S3D_MODELS  := $(call cfg,sweep3_decomposed,models)
-S3D_REPEAT  := $(call cfg,sweep3_decomposed,repeat)
-S3D_BUDGET  := $(call cfg,sweep3_decomposed,budget_usd)
-S3D_OUTPUT  := $(call cfg,sweep3_decomposed,output)
+.PHONY: sweep3-decomposed sweep3-generate sweep3-run
 
-.PHONY: sweep3-decomposed
+sweep3-decomposed: sweep3-generate sweep3-run
 
-sweep3-decomposed:
-	uv run --project .. python -m aedist.query_decomposed \
-	    --prompt $(S3D_PROMPT) --corpus $(S3D_CORPUS) \
-	    --models $(S3D_MODELS) --output $(S3D_OUTPUT) \
-	    --repeat $(S3D_REPEAT) --budget-usd $(S3D_BUDGET)
+sweep3-generate:
+	$(MANAGER) --sweep sweep3_decomposed --experiments experiments.toml
+
+sweep3-run:
+	$(WORKER) openrouter --loop &
+	wait
 
 # --- Sweep 4: Verification regimes -------------------------------------------
 
-.PHONY: sweep4-verification
+.PHONY: sweep4-verification sweep4-generate sweep4-run
 
-sweep4-verification:
-	uv run --project .. python -m aedist.query_verification \
-	    --sweep sweep4_verification --experiments experiments.toml
+sweep4-verification: sweep4-generate sweep4-run
+
+sweep4-generate:
+	$(MANAGER) --sweep sweep4_verification --experiments experiments.toml
+
+sweep4-run:
+	$(WORKER) openrouter --loop &
+	wait
 
 # --- Sweep 5: Sourced extraction (citations upfront) -------------------------
 
-S5_PROMPT  := $(call cfg,sweep5_sourced,prompt)
-S5_CORPUS  := $(call cfg,sweep5_sourced,corpus)
-S5_STRAT   := $(call cfg,sweep5_sourced,strategy)
-S5_MODELS  := $(call cfg,sweep5_sourced,models)
-S5_REPEAT  := $(call cfg,sweep5_sourced,repeat)
-S5_BUDGET  := $(call cfg,sweep5_sourced,budget_usd)
-S5_OUTPUT  := $(call cfg,sweep5_sourced,output)
+.PHONY: sweep5-sourced sweep5-generate sweep5-run
 
-.PHONY: sweep5-sourced
+sweep5-sourced: sweep5-generate sweep5-run
 
-sweep5-sourced:
-	uv run --project .. python -m aedist.query_rag \
-	    --prompt $(S5_PROMPT) --corpus $(S5_CORPUS) \
-	    --strategy $(S5_STRAT) --models $(S5_MODELS) \
-	    --output $(S5_OUTPUT) --repeat $(S5_REPEAT) \
-	    --budget-usd $(S5_BUDGET)
+sweep5-generate:
+	$(MANAGER) --sweep sweep5_sourced --experiments experiments.toml
+
+sweep5-run:
+	$(WORKER) openrouter --loop &
+	wait
 
 # --- Analysis: self-consistency -----------------------------------------------
 
@@ -312,11 +236,15 @@ preflight:
 	fi
 
 help:
-	@echo "Sweeps:"
-	@echo "  make -j8 sweep1           Census (OpenRouter parallel, Padme sequential)"
-	@echo "  make sweep1-padme         Padme local models (always sequential)"
+	@echo "Sweeps (manager + worker pipeline):"
+	@echo "  make sweep1               Generate jobs + run workers (census)"
+	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
+	@echo "  make sweep1-run           Start OpenRouter + Padme workers"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
-	@echo "  make sweep2               All information regimes"
+	@echo "  make sweep2               Generate + run all information regimes"
+	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
+	@echo "  make sweep4-verification  Generate + run verification sweep"
+	@echo "  make sweep5-sourced       Generate + run sourced extraction sweep"
 	@echo "  make self-consistency     Majority/union vote analysis + LaTeX tables"
 	@echo ""
 	@echo "Tools:"
@@ -327,3 +255,4 @@ help:
 	@echo "  make preflight             Check env vars and services before long jobs"
 	@echo ""
 	@echo "Config in experiments.toml [sweeps.*] sections"
+	@echo "Job board in jobs/{pending,running,done,failed}/"

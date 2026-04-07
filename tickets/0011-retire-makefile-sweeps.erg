@@ -1,6 +1,6 @@
 %erg v1
 Title: Retire Makefile sweep dispatch in favor of Workers
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0008
@@ -9,6 +9,9 @@ Blocked-by: 0009
 --- log ---
 2026-04-04T12:51Z claude created
 2026-04-04T12:51Z claude note Phase 3 gate — Workers fully operational
+2026-04-07T12:00Z claude claimed
+2026-04-07T12:00Z claude status doing
+2026-04-07T12:10Z claude status closed — foreach macros replaced with manager+worker pipeline, help updated, 469 tests pass
 
 --- body ---
 ## Context

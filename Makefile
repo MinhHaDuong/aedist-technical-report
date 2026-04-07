@@ -31,9 +31,10 @@ check: test
 #   Sweep 4 (verify):     query_verification.py (appends directly)
 #   Analysis:             self_consistency.py (replaces analysis entries)
 #
-# Worker architecture (future):
-#   Workers produce RunRecords in memory → write to measurements.jsonl
-#   via runner evaluate-all or direct append.
+# Worker architecture:
+#   Manager fans out sweep YAML into per-model jobs (jobs/pending/).
+#   Workers poll the job board, execute queries, produce RunRecords.
+#   Summary step reads outputs and writes to measurements.jsonl.
 
 $(MEASUREMENTS): $(wildcard experiments/outputs/sweep1_census/*.csv)
 	$(MAKE) -C experiments sweep1-summary
