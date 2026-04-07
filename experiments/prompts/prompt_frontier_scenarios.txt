@@ -1,0 +1,78 @@
+You are an energy systems modeler preparing a reproducible scenario study of Vietnam's thermal power sector evolution to 2050. Design and describe three contrasting scenarios using state-of-the-art open-source energy modeling tools and fresh open primary data.
+
+## Deliverables
+
+### A. Scenario Definitions
+
+Define three internally-consistent scenarios for Vietnam's thermal power fleet:
+
+1. **Reference / PDP8 Baseline**: Implements PDP8 (Decision 500/QĐ-TTg, 2023) as-is — coal retained at authorized levels, LNG buildout per plan, gas fields developed on schedule
+2. **Accelerated Transition**: Aggressive coal phase-down aligned with Vietnam's JETP commitments ($15.5B pledge), faster LNG ramp, early coal retirements, higher renewable penetration
+3. **Gas Bridge**: Maximizes domestic gas (Block B, Cá Voi Xanh) and LNG imports as transitional fuel, moderate coal retirement, gas replaces coal baseload before renewables scale
+
+For each scenario, specify:
+- Thermal capacity additions and retirements by fuel type, by 5-year period (2025–2050)
+- Fuel supply assumptions: domestic coal/gas production curves, LNG import prices, carbon price trajectory
+- Demand growth assumptions: GDP elasticity, industrial load growth, EV penetration
+- Policy levers: carbon tax/ETS, coal moratorium dates, renewable targets, gas price regulation
+- Key uncertainties and sensitivity parameters
+
+### B. Modeling Framework
+
+Recommend and justify a specific open-source energy model for this study. Evaluate:
+
+| Model | License | Granularity | Vietnam support | Active community |
+|-------|---------|-------------|-----------------|-----------------|
+| PyPSA | MIT | Hourly dispatch, network | Configurable | Yes |
+| OSeMOSYS | Apache-2.0 | Long-term capacity expansion | ASEAN precedents | Yes |
+| Calliope | Apache-2.0 | Multi-carrier, spatial | Configurable | Moderate |
+| TEMOA | AGPL | Technology-rich, LP | Academic use | Moderate |
+| Switch | Apache-2.0 | Investment + dispatch | US-focused but adaptable | Moderate |
+
+For the recommended model:
+- Justify why it fits Vietnam's thermal sector analysis
+- Specify model version and dependencies
+- Describe the temporal and spatial resolution needed
+- Identify which model features matter (unit commitment, fuel supply constraints, transmission)
+
+### C. Data Requirements and Sources
+
+For each data input, specify:
+- Parameter name and units
+- Recommended open primary data source (with URL if available, "URL not verified" if unsure)
+- Vintage (most recent available year)
+- Fallback source if primary is unavailable
+- Any preprocessing or harmonization needed
+
+Key data categories:
+1. **Existing fleet**: Plant-level capacity, heat rate, age, remaining life (source: EVN, Global Energy Monitor)
+2. **Fuel costs**: Coal (domestic TKV, imported FOB Newcastle), gas (PVN wellhead, LNG spot/contract), carbon prices
+3. **Demand projections**: MOIT load forecasts, GDP scenarios from World Bank/IMF
+4. **Technology costs**: CAPEX/OPEX for new gas CCGT, coal USC, solar, wind, battery (IRENA, IEA WEO, NREL ATB)
+5. **Policy parameters**: JETP milestones, PDP8 targets, national climate commitments (NDC)
+6. **Renewable profiles**: Hourly solar/wind capacity factors by province (renewables.ninja, Global Solar Atlas)
+
+### D. Reproducibility Package
+
+Describe the complete reproducibility package:
+- Repository structure (model, data, scripts, results)
+- Environment specification (conda/pip requirements)
+- Run instructions (single command to reproduce all three scenarios)
+- Output format: capacity mix, generation mix, emissions, system cost, fuel consumption — all as CSV time series
+- Validation: how to cross-check results against EVN historical data
+
+### E. Expected Results Discussion
+
+For each scenario, provide expected qualitative outcomes:
+- Total thermal capacity in 2030 and 2050
+- Coal share of generation in 2030 and 2050
+- Cumulative CO2 emissions 2025–2050
+- System cost implications
+- Key risks and tipping points
+
+## Quality instructions
+- All data sources must be open and accessible (no paywalled databases)
+- Prefer government/multilateral primary sources over news articles
+- Distinguish between model inputs (data) and model outputs (projections)
+- Be specific about parameter values, not just "use IEA data" — specify which IEA publication, table, and year
+- The goal is that a graduate student could reproduce this study from your description alone
