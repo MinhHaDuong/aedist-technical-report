@@ -54,41 +54,42 @@
 - **Cost**: ~$0.35 (173 pages at $2/1000)
 - **Verdict**: Matches Marker on table count with richer HTML structure (rowspan/colspan)
 
-### MinerU v3.0.8 (localhost:8010, pipeline backend, lang=latin, GPU)
-- **Output**: 564 lines, 812 KB, **62 HTML tables**
-- **Text extraction**: Moderate — body text extracted but diacritics inconsistent (~60% correct)
-- **Table extraction**: Partial — 62 HTML tables with rowspan/colspan (vs Marker's 170)
-- **Vietnamese OCR**: Mixed — "Dự án" sometimes correct, sometimes "D án" or "Đ án"
-- **Speed**: ~20s for 173 pages (8.3 pages/s) — fastest converter tested
+### MinerU v3.0.8 (localhost:8010, opendatalab official image, GPU)
+- **Container**: `podman run --device nvidia.com/gpu=all` (not `--gpus all` — CDI syntax required for podman)
+- **Pipeline backend** (`parse_method=auto`, `lang_list=latin`):
+  - **Output**: 556 lines, 791 KB, **62 HTML tables**, 2994 rows
+  - **Body text**: Vietnamese diacritics fully preserved
+  - **Table cells**: Diacritics stripped ("Quảng Ninh" → "Qung Ninh", "Dự án" → "D án")
+  - **Speed**: 5m45s for 173 pages
+- **Hybrid-auto-engine** (VLM + pipeline, `MinerU2.5-2509-1.2B` Qwen2-VL):
+  - Works on small files (30 tables from PDP8 in 1m35s)
+  - OOM on 173-page Decision 1509 (pipeline model ~8.6GB + vLLM needs 50% GPU = exceeds 16GB A4000)
+  - Chinese characters leak into Vietnamese tables (VLM is CN/EN trained)
+- **`parse_method=txt`**: Identical output to `auto` — MinerU detects text layer automatically
 - **Cost**: $0 (local, GPU)
-- **Verdict**: Very fast, free, but misses 64% of tables and has unreliable diacritics
+- **Verdict**: 62 tables (vs Marker's 170), good body text, but table cells lose diacritics
 
-## Benchmark Summary (2026-04-06)
+## Benchmark Summary (2026-04-07, updated)
 
-```
-Backend              Lines  Tables  Rows  HTML  Viet  Size KB
---------------------------------------------------------------
-Backend              Lines  Tables  Rows  HTML  Viet  Size KB  Speed
---------------------------------------------------------------  --------
-cloudflare-ai         1609       0     0    14 5/  5      57   ~8 min
-grobid                4961       0     0    45 5/  5     388   fast
-marker                4745     170  4038     0 5/  5    1630   ~min
-mineru v3 (pipeline)   564       0     0    62 3/  5     812   ~20s
-mistral-ocr (plugin)  1954       0     0    15 5/  5      67   ~10 min
-mistral-ocr (direct)  1307       0     0   169 5/  5     547   ~30s
-```
+| Backend | Tables | Rows | Size KB | Speed | Diacritics |
+|---------|--------|------|---------|-------|------------|
+| Marker (local, GPU) | 170 | 4038 | 1630 | 45s | full |
+| Mistral OCR (direct) | 169 | 3011 | 547 | 30s | full |
+| MinerU v3 (pipeline) | 62 | 2994 | 791 | 5m45s | body only |
+| GROBID (local) | 45 | 0 | 388 | 20s | full |
+| Mistral OCR (plugin) | 15 | 0 | 67 | ~10 min | full |
+| Cloudflare AI | 14 | 0 | 57 | ~8 min | full |
 
-Note: "Tables" counts markdown `|---|` tables, "HTML" counts `<table>` blocks.
-Marker uses markdown tables; other backends use HTML tables.
-MinerU Viet 3/5: diacritics present but inconsistent (~60% correct).
+Note: "Tables" counts all detected tables (markdown `|---|` for Marker, HTML `<table>` for others).
+"Diacritics": full = Vietnamese diacritics preserved everywhere; body only = body text OK but table cells stripped.
 
 ## Conclusion
 
 **Marker and Mistral OCR (direct) are the top two converters**:
-- Marker: 170 markdown tables, 1.6 MB — local, free, GPU-accelerated
-- Mistral OCR (direct): 169 HTML tables, 548 KB — cloud API, $0.35, richer structure (rowspan/colspan)
-- The OpenRouter file-parser plugin approach (mistral-ocr via LLM) only captured 15 tables — the LLM output window is the bottleneck, not OCR quality
-- MinerU v3.x: fastest (20s) and free, but only 62/170 tables and inconsistent diacritics
-- GROBID extracts the most raw text (4961 lines) but flattens table structure
+- Marker: 170 markdown tables, 4038 rows, 1.6 MB — local, free, GPU-accelerated, full diacritics
+- Mistral OCR (direct): 169 HTML tables, 3011 rows, 548 KB — cloud API, $0.35, richer structure (rowspan/colspan)
+- MinerU v3.0.8: 62 tables, 2994 rows — free, GPU-accelerated, but table cells lose Vietnamese diacritics. Hybrid-auto-engine (VLM) crashes on large documents due to GPU memory competition
+- GROBID: good body text (full diacritics) but flattens table structure
+- LLM-bottlenecked approaches (Mistral OCR plugin, Cloudflare AI): limited to 14-15 tables by output window
 
-Recommended pipeline: **Marker (local, free) or Mistral OCR direct (cloud, $0.35)** for table-heavy scanned PDFs. Both deliver ~170 tables from 173 pages. Choose based on whether local GPU or cloud API is preferred.
+Recommended pipeline: **Marker (local, free) or Mistral OCR direct (cloud, $0.35)** for table-heavy scanned Vietnamese PDFs. Both deliver ~170 tables from 173 pages with preserved diacritics. Choose based on whether local GPU or cloud API is preferred.
