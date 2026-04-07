@@ -46,6 +46,15 @@ $(GEN)/tab_comparaison.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_comparaison --measurements $< --output $@
 
+CONVERTER_TEST := experiments/data/converter_test
+CONVERTER_META := $(CONVERTER_TEST)/benchmark_meta.yaml
+CONVERTER_DOCS := $(wildcard $(CONVERTER_TEST)/*/Decision-1509.md)
+
+$(GEN)/tab_converter_benchmark.tex: $(CONVERTER_META) $(CONVERTER_DOCS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.compare_converters \
+	    --input $(CONVERTER_TEST) --meta $(CONVERTER_META) --output $@
+
 # --- Chart data for slides ---------------------------------------------------
 
 $(SLIDE_GEN)/census_bars.csv: $(MEASUREMENTS)
@@ -74,7 +83,7 @@ slides/slides.pdf: slides/slides.tex $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/p
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
 select: experiments/models_sweep2.yaml
 sweep1:

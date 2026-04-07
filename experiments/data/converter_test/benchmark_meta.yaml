@@ -1,0 +1,35 @@
+# Converter benchmark metadata — observational fields not derivable from output files.
+# Updated: 2026-04-07 (Decision-1509 benchmark run)
+
+marker:
+  display_name: "Marker (local, GPU)"
+  timing_s: 45
+  diacritics: "complets"
+
+mistral-ocr-direct:
+  display_name: "Mistral OCR (direct)"
+  timing_s: 30
+  diacritics: "complets"
+
+mineru:
+  display_name: "MinerU (local, GPU)"
+  timing_s: 345
+  diacritics: "corps seulement"
+
+grobid:
+  display_name: "GROBID (local)"
+  timing_s: 20
+  diacritics: "complets"
+  rows_na: true
+
+mistral-ocr:
+  display_name: "Mistral OCR (plugin)"
+  timing_s: 600
+  diacritics: "complets"
+  rows_na: true
+
+cloudflare-ai:
+  display_name: "Cloudflare AI"
+  timing_s: 480
+  diacritics: "complets"
+  rows_na: true

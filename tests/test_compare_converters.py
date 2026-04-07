@@ -4,6 +4,7 @@ from pathlib import Path
 
 from aedist.compare_converters import (
     analyze_backend,
+    count_html_table_rows,
     count_html_tables,
     count_table_rows,
     count_tables,
@@ -39,6 +40,11 @@ SAMPLE_HTML = """\
 </table>
 """
 
+SAMPLE_HTML_INLINE = (
+    '<table><tr><td>A</td></tr><tr><td>B</td></tr>'
+    '<tr><td>C</td></tr></table>'
+)
+
 
 def test_count_tables():
     assert count_tables(SAMPLE_MD) == 2
@@ -62,6 +68,15 @@ def test_count_html_tables_none():
     assert count_html_tables(SAMPLE_MD) == 0
 
 
+def test_count_html_table_rows():
+    assert count_html_table_rows(SAMPLE_HTML) == 3
+
+
+def test_count_html_table_rows_inline():
+    """Inline HTML (MinerU-style) where multiple <tr> tags share one line."""
+    assert count_html_table_rows(SAMPLE_HTML_INLINE) == 3
+
+
 def test_vietnamese_check_all_present():
     text = "Quyết định về điện lực, công suất nhà máy tỉnh Hà Nội"
     result = vietnamese_sample_check(text)
@@ -81,26 +96,36 @@ def test_analyze_backend(tmp_path):
     result = analyze_backend(md_file)
     assert result["md_tables"] == 2
     assert result["md_table_rows"] >= 6
+    assert result["total_tables"] == 2
+    assert result["total_rows"] >= 6
+    assert result["html_tables"] == 0
+    assert result["html_table_rows"] == 0
     assert result["lines"] > 0
     assert result["size_kb"] > 0
+
+
+def test_analyze_backend_html(tmp_path):
+    md_file = tmp_path / "test.md"
+    md_file.write_text(SAMPLE_HTML, encoding="utf-8")
+    result = analyze_backend(md_file)
+    assert result["html_tables"] == 2
+    assert result["html_table_rows"] == 3
+    assert result["total_tables"] == 2
+    assert result["total_rows"] == 3
 
 
 def test_format_summary():
     results = {
         "grobid": {
-            "lines": 100,
-            "md_tables": 0,
-            "md_table_rows": 0,
-            "html_tables": 5,
+            "total_tables": 5,
+            "total_rows": 0,
             "vietnamese_score": 4,
             "vietnamese_max": 5,
             "size_kb": 50,
         },
         "marker": {
-            "lines": 200,
-            "md_tables": 10,
-            "md_table_rows": 100,
-            "html_tables": 0,
+            "total_tables": 10,
+            "total_rows": 100,
             "vietnamese_score": 5,
             "vietnamese_max": 5,
             "size_kb": 150,
@@ -112,40 +137,83 @@ def test_format_summary():
     assert "test-doc" in text
 
 
-def test_format_latex():
+def test_format_latex_without_meta():
     results = {
         "marker": {
-            "lines": 200,
-            "md_tables": 10,
-            "md_table_rows": 100,
-            "html_tables": 0,
+            "total_tables": 170,
+            "total_rows": 4038,
             "vietnamese_score": 5,
             "vietnamese_max": 5,
-            "size_kb": 150,
+            "size_kb": 1630,
         },
     }
-    tex = format_latex(results, "test-doc")
+    tex = format_latex(results)
     assert r"\begin{tabular}" in tex
     assert "marker" in tex
     assert r"\bottomrule" in tex
+    assert "Tableaux" in tex  # French headers
 
 
-def test_format_latex_merges_md_and_html_tables():
-    """LaTeX table column merges markdown + HTML table counts (PR #167 review)."""
+def test_format_latex_with_meta():
     results = {
-        "mistral-ocr": {
-            "lines": 100,
-            "md_tables": 0,
-            "md_table_rows": 0,
-            "html_tables": 15,
+        "marker": {
+            "total_tables": 170,
+            "total_rows": 4038,
             "vietnamese_score": 5,
             "vietnamese_max": 5,
-            "size_kb": 67,
+            "size_kb": 1630,
         },
     }
-    tex = format_latex(results, "test-doc")
-    # Should show 15 (0 md + 15 html), not 0
-    assert "& 15 &" in tex
+    meta = {
+        "marker": {
+            "display_name": "Marker (local, GPU)",
+            "timing_s": 45,
+            "diacritics": "complets",
+        },
+    }
+    tex = format_latex(results, meta)
+    assert "Marker (local, GPU)" in tex
+    assert "45" in tex
+    assert "complets" in tex
+
+
+def test_format_latex_rows_na():
+    """Backends with rows_na=true show '--' instead of row count."""
+    results = {
+        "grobid": {
+            "total_tables": 45,
+            "total_rows": 0,
+            "vietnamese_score": 5,
+            "vietnamese_max": 5,
+            "size_kb": 388,
+        },
+    }
+    meta = {
+        "grobid": {
+            "display_name": "GROBID (local)",
+            "timing_s": 20,
+            "diacritics": "complets",
+            "rows_na": True,
+        },
+    }
+    tex = format_latex(results, meta)
+    assert "-- &" in tex
+
+
+def test_format_latex_thousands_separator():
+    """Large numbers get LaTeX thin-space separators."""
+    results = {
+        "marker": {
+            "total_tables": 170,
+            "total_rows": 4038,
+            "vietnamese_score": 5,
+            "vietnamese_max": 5,
+            "size_kb": 1630,
+        },
+    }
+    tex = format_latex(results)
+    assert r"4\,038" in tex
+    assert r"1\,630" in tex
 
 
 def test_module_has_argparse():
