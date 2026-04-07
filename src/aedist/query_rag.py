@@ -167,12 +167,21 @@ def main():
                 ]
                 # Use native Ollama API to set num_ctx (OpenAI /v1/ ignores it)
                 # Size to actual need, not model max — saves KV cache VRAM
+                # router_model is the ID the router expects (future-proof for Phase B)
+                api_model_id = model.get("router_model", model_id)
                 if is_ollama:
-                    ollama_url = routers_config.get("ollama", {}).get("base_url") or base_url or "http://localhost:11434/v1"
+                    ollama_cfg = routers_config.get("ollama", {})
+                    ollama_url = (
+                        ollama_cfg.get("base_url")
+                        or base_url
+                        or "http://localhost:11434/v1"
+                    )
                     num_ctx = min(ctx_window, 81920)
-                    result = query_ollama_native(ollama_url, model_id, messages, num_ctx)
+                    result = query_ollama_native(
+                        ollama_url, api_model_id, messages, num_ctx,
+                    )
                 else:
-                    result = query_single_turn(client, model_id, messages)
+                    result = query_single_turn(client, api_model_id, messages)
                 usage = result.get("usage") or {}
 
                 # Truncation guard: prompt should not fill entire context

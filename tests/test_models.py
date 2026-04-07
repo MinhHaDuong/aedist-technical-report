@@ -165,3 +165,27 @@ def test_equivalence_with_old_files(models, experiments, old_file, set_name):
     assert selected_ids == old_ids, (
         f"select_models mismatch for {set_name}"
     )
+
+
+# ---------------------------------------------------------------------------
+# _list_models.py helper
+# ---------------------------------------------------------------------------
+
+
+def test_list_models_helper(experiments):
+    """_list_models.py produces correct short names for census_cloud."""
+    import subprocess
+
+    result = subprocess.run(
+        [
+            "python3", str(EXPERIMENTS_DIR / "_list_models.py"),
+            str(MODELS_PATH),
+            "--set", "census_cloud",
+            "--experiments", str(EXPERIMENTS_PATH),
+        ],
+        capture_output=True, text=True, check=True,
+    )
+    shorts = set(result.stdout.strip().split())
+    cloud_ids = experiments["sets"]["census_cloud"]["model_ids"]
+    expected = {mid.split("/")[-1].replace(":", "-") for mid in cloud_ids}
+    assert shorts == expected, f"Mismatch: extra={shorts - expected}, missing={expected - shorts}"

@@ -83,6 +83,7 @@ def main():
         return
 
     # Build client(s): per-router when using experiments.toml, else single legacy client
+    legacy_client = None
     if args.model_set:
         routers_config = experiments.get("routers", {})
         clients: dict[str, object] = {}
@@ -114,8 +115,9 @@ def main():
 
             log.info("Querying %s run %d/%d...", label, run, args.repeat)
             try:
+                api_model_id = model.get("router_model", model_id)
                 result = query_single_turn(
-                    client, model_id,
+                    client, api_model_id,
                     [{"role": "user", "content": prompt}],
                 )
                 usage = result.get("usage") or {}
