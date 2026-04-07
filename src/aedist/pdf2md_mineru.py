@@ -9,7 +9,7 @@ Usage:
     python -m aedist.pdf2md_mineru input.pdf --output output.md --mineru-url http://localhost:8010
 
 Requires: MinerU v3.x container running locally.
-    podman run -d --name mineru-api --gpus all -p 8010:8000 mineru:latest mineru-api --host 0.0.0.0 --port 8000
+    podman run -d --name mineru-api --device nvidia.com/gpu=all --ipc=host -p 8010:8000 mineru:latest mineru-api --host 0.0.0.0 --port 8000
 """
 
 import argparse

@@ -8,7 +8,7 @@ Usage:
     python -m aedist.pdf2md_marker input.pdf --output output.md --marker-url http://localhost:8001
 
 Requires: marker-api container running locally.
-    podman run -d --name marker-api --gpus all -p 8001:8000 savatar101/marker-api
+    podman run -d --name marker-api --device nvidia.com/gpu=all -p 8001:8000 savatar101/marker-api
 """
 
 import argparse
