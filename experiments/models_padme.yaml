@@ -127,7 +127,7 @@
   provider: Ollama/Padme
   base_url: http://localhost:11434/v1
   country: US
-  architecture: dense
+  architecture: moe
   context_window: 131072
   price_per_mtok_in: 0.0
   price_per_mtok_out: 0.0
@@ -169,3 +169,27 @@
   price_per_mtok_out: 0.0
   size_class: edge
   license: open-other
+
+- id: cogito:8b
+  name: Cogito 8B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
+
+- id: granite3.3:8b
+  name: Granite 3.3 8B (local)
+  provider: Ollama/Padme
+  base_url: http://localhost:11434/v1
+  country: US
+  architecture: dense
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: open-apache
