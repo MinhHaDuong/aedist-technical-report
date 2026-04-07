@@ -141,8 +141,23 @@ def main():
                     {"role": "system", "content": corpus_text},
                     {"role": "user", "content": prompt},
                 ]
-                result = query_single_turn(client, model_id, messages)
+                # Set num_ctx for Ollama to avoid silent truncation
+                extra = {}
+                if base_url:
+                    extra["extra_body"] = {"options": {"num_ctx": ctx_window}}
+
+                result = query_single_turn(client, model_id, messages, **extra)
                 usage = result.get("usage") or {}
+
+                # Truncation guard: prompt should not fill entire context
+                prompt_tokens = usage.get("prompt_tokens", 0)
+                if prompt_tokens and prompt_tokens >= ctx_window:
+                    log.error(
+                        "TRUNCATED: %s run %d prompt_tokens=%d >= ctx_window=%d",
+                        label, run, prompt_tokens, ctx_window,
+                    )
+                    continue
+
                 cost = compute_cost(usage, model)
                 budget.add(cost)
 
