@@ -2,7 +2,7 @@ Last updated: 2026-04-07
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census: 35 models (26 cloud + 9 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 453 tests pass. Sweep 2 complete: RAG ($2.81), multiturn, web ($0.13). Decomposition: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169) top two; MinerU GPU fixed, 62 tables but diacritics stripped in table cells (#178). Benchmark table added to report section 3.3. RAG local sweep in progress. Slides reframed (#93, #171). All reporting reads from measurements.jsonl.
+Pipeline end-to-end via Makefile. Census: 37 models (28 cloud + 9 local), best F1 98.2% (Claude Opus 4.6). 458 tests pass. Slides use generated macros from census CSV — model counts, plant ranges auto-update. Metropolis sub-themes eliminate 1164 font-scan warnings (#185). Sweep 2 complete: RAG, multiturn, web. Decomposition: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509. Sweep 5 (sourced extraction) added. All reporting reads from measurements.jsonl. Zotero library deduplicated: 358 items trashed (tiers 1–3), Decision 1509 cataloguing aligned.
 
 ## Blockers
 
@@ -10,10 +10,10 @@ None
 
 ## Next actions
 
-1. Visual review: `make slides` and check PDF renders correctly
-2. Add Perspectives section to report (#116)
-3. Reframe slides "Next steps" as benchmark→pipeline arc (#115)
-4. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
+1. Add Perspectives section to report (#116)
+2. Reframe slides "Next steps" as benchmark→pipeline arc (#115)
+3. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
+4. Drop unicode-math from report.tex (#186)
 
 ## North star
 
@@ -22,7 +22,7 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 ## Current milestone: Econom'IA 2026 (April 11)
 
 - [x] Converter benchmark table added to report (#85, #178)
-- [ ] Visual PDF review of slides (no LaTeX on Padme)
+- [x] Slides macros pipeline + font warning fix (#185)
 - [ ] Reframe slides "Next steps" (#115)
 - [ ] Perspectives section in report (#116)
 - [ ] RAG local sweep: 2B/4B/9B scaling curve (branch t21-rag-local-models)
@@ -39,3 +39,4 @@ Submit to journal (TBD — after conference feedback).
 - Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
 - Retire Makefile sweep dispatch in favor of Workers (ticket 0011)
+- Drop unicode-math from report.tex (#186)
