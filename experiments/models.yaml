@@ -1,5 +1,5 @@
 # AEDIST Benchmark — Model Registry
-# 25 models, updated 2026-04-02
+# 27 models, updated 2026-04-07
 # Panachage: US/CN/FR/Other × Frontier→Edge × Open/Commercial
 # Validated against OpenRouter API. Prices in USD per million tokens.
 # OpenRouter IDs — use with: uv run python -m aedist.query

@@ -76,11 +76,12 @@
 | Marker (local, GPU) | 170 | 4038 | 1630 | 45s | full |
 | Mistral OCR (direct) | 169 | 3011 | 547 | 30s | full |
 | MinerU v3 (pipeline) | 62 | 2994 | 791 | 5m45s | body only |
-| GROBID (local) | 45 | 0 | 388 | 20s | full |
-| Mistral OCR (plugin) | 15 | 0 | 67 | ~10 min | full |
-| Cloudflare AI | 14 | 0 | 57 | ~8 min | full |
+| GROBID (local) | 45 | -- | 388 | 20s | full |
+| Mistral OCR (plugin) | 15 | -- | 67 | ~10 min | full |
+| Cloudflare AI | 14 | -- | 57 | ~8 min | full |
 
 Note: "Tables" counts all detected tables (markdown `|---|` for Marker, HTML `<table>` for others).
+"Rows" = total table rows; `--` = backend does not produce structured table rows.
 "Diacritics": full = Vietnamese diacritics preserved everywhere; body only = body text OK but table cells stripped.
 
 ## Conclusion
