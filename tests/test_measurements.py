@@ -178,6 +178,65 @@ class TestOutputEquivalence:
         assert direct == via_records
 
 
+class TestInferMethod:
+    """_infer_method maps subdirectory names to Method enum values."""
+
+    def test_census(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep1_census") == "single"
+
+    def test_multiturn(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep2_multiturn") == "multiturn"
+
+    def test_rag(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep_rag") == "rag"
+
+    def test_rag_consistency_is_rag(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep_rag_consistency") == "rag"
+
+    def test_web(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep2_web") == "web"
+
+    def test_decomposed(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep3_decomposed") == "decomposed"
+
+    def test_sourced(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep5_sourced") == "sourced"
+
+    def test_frontier(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("frontier") == "frontier"
+
+    def test_frontier_scenarios(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("frontier_scenarios") == "frontier"
+
+    def test_verification(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("sweep4_verification") == "verification"
+
+    def test_unknown_defaults_to_single(self):
+        from aedist.runner import _infer_method
+
+        assert _infer_method("some_new_sweep") == "single"
+
+
 class TestJsonlRoundTrip:
     def test_file_roundtrip(self, tmp_path):
         records = [

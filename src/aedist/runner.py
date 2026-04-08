@@ -257,41 +257,46 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     # Track which JSONs have a companion CSV (evaluated with metrics)
     evaluated_jsons: set[Path] = set()
 
-    for csv_file in sorted(outputs_dir.rglob("*.csv")):
-        system = load_plants_csv(csv_file)
-        if not system:
-            continue
-        entries = reconcile(reference, system)
-        metrics = compute_metrics(entries)
-        label = f"{csv_file.parent.name}/{csv_file.stem}"
-        try:
-            rel_path = str(csv_file.resolve().relative_to(project_root))
-        except ValueError:
-            rel_path = str(csv_file)
-        record = _metrics_to_runrecord(metrics, label, rel_path)
-        # Backfill resource_use from companion JSON
-        json_companion = csv_file.with_suffix(".json")
-        if json_companion.exists():
-            _backfill_resource_use(record, json_companion)
-            evaluated_jsons.add(json_companion.resolve())
-        new_records.append(record)
-        log.info(
-            "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)  $%.4f",
-            label.ljust(50),
-            metrics.coverage * 100,
-            metrics.precision * 100,
-            metrics.f1 * 100,
-            metrics.n_matched,
-            metrics.n_reference,
-            record.resource_use.cost_usd or 0,
-        )
+    # Walk only immediate subdirs of outputs_dir — no recursion into
+    # _extracted/ or legacy dirs (llm_direct, rag_curated, etc.)
+    subdirs = sorted(p for p in outputs_dir.iterdir() if p.is_dir() and not p.name.startswith("_"))
+    for subdir in subdirs:
+        for csv_file in sorted(subdir.glob("*.csv")):
+            system = load_plants_csv(csv_file)
+            if not system:
+                continue
+            entries = reconcile(reference, system)
+            metrics = compute_metrics(entries)
+            label = f"{csv_file.parent.name}/{csv_file.stem}"
+            try:
+                rel_path = str(csv_file.resolve().relative_to(project_root))
+            except ValueError:
+                rel_path = str(csv_file)
+            record = _metrics_to_runrecord(metrics, label, rel_path)
+            # Backfill resource_use from companion JSON
+            json_companion = csv_file.with_suffix(".json")
+            if json_companion.exists():
+                _backfill_resource_use(record, json_companion)
+                evaluated_jsons.add(json_companion.resolve())
+            new_records.append(record)
+            log.info(
+                "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)  $%.4f",
+                label.ljust(50),
+                metrics.coverage * 100,
+                metrics.precision * 100,
+                metrics.f1 * 100,
+                metrics.n_matched,
+                metrics.n_reference,
+                record.resource_use.cost_usd or 0,
+            )
 
     # Second pass: qualitative results (JSONs with no companion CSV)
     from .schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
-    for json_file in sorted(outputs_dir.rglob("*-run*.json")):
-        if json_file.resolve() in evaluated_jsons:
-            continue
+    for subdir in subdirs:
+        for json_file in sorted(subdir.glob("*-run*.json")):
+            if json_file.resolve() in evaluated_jsons:
+                continue
         try:
             raw = json.loads(json_file.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
