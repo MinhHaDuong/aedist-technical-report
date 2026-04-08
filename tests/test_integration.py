@@ -1,4 +1,4 @@
-"""Integration test: full pipeline on real data (Claude concise output vs HDM reference)."""
+"""Integration test: full pipeline on real data (Claude census output vs HDM reference)."""
 
 from pathlib import Path
 
@@ -13,10 +13,10 @@ DATA_DIR = Path(__file__).parent.parent / "data" / "reference"
 OUTPUTS_DIR = Path(__file__).parent.parent / "experiments" / "outputs"
 
 _REF_PATH = DATA_DIR / "vietnam_thermal_v1.csv"
-_CONCISE_PATH = OUTPUTS_DIR / "llm_direct" / "claude_sonnet_concise.csv"
+_CENSUS_PATH = OUTPUTS_DIR / "census" / "claude-sonnet-4.6-run1.csv"
 
 _SKIP_REF = pytest.mark.skipif(not _REF_PATH.exists(), reason=f"Missing {_REF_PATH}")
-_SKIP_CONCISE = pytest.mark.skipif(not _CONCISE_PATH.exists(), reason=f"Missing {_CONCISE_PATH}")
+_SKIP_CENSUS = pytest.mark.skipif(not _CENSUS_PATH.exists(), reason=f"Missing {_CENSUS_PATH}")
 
 
 @pytest.fixture
@@ -25,8 +25,8 @@ def reference():
 
 
 @pytest.fixture
-def claude_concise():
-    return load_plants_csv(_CONCISE_PATH)
+def claude_census():
+    return load_plants_csv(_CENSUS_PATH)
 
 
 class TestLoadData:
@@ -34,27 +34,27 @@ class TestLoadData:
     def test_reference_count(self, reference):
         assert len(reference) == 163
 
-    @_SKIP_CONCISE
-    def test_claude_concise_count(self, claude_concise):
-        assert len(claude_concise) == 30  # 31 lines - 1 header
+    @_SKIP_CENSUS
+    def test_claude_census_count(self, claude_census):
+        assert len(claude_census) == 53  # 54 lines - 1 header
 
 
 @_SKIP_REF
-@_SKIP_CONCISE
+@_SKIP_CENSUS
 class TestReconciliation:
-    def test_reconcile_produces_entries(self, reference, claude_concise):
-        entries = reconcile(reference, claude_concise)
+    def test_reconcile_produces_entries(self, reference, claude_census):
+        entries = reconcile(reference, claude_census)
         assert len(entries) > 0
         # Every reference plant must appear (matched or missed)
         ref_entries = [e for e in entries if e.match_type != MatchType.SYSTEM_ONLY]
         [e for e in entries if e.match_type != MatchType.REFERENCE_ONLY]
         assert len(ref_entries) >= len(reference)
 
-    def test_metrics_are_plausible(self, reference, claude_concise):
-        entries = reconcile(reference, claude_concise)
+    def test_metrics_are_plausible(self, reference, claude_census):
+        entries = reconcile(reference, claude_census)
         m = compute_metrics(entries)
-        # Claude concise with 30 plants vs 163 reference: coverage should be low
-        assert 0.05 < m.coverage < 0.5
+        # Census run with 53 plants vs 163 reference: moderate coverage
+        assert 0.1 < m.coverage < 0.7
         # Precision should be reasonable (Claude doesn't hallucinate much)
         assert m.precision > 0.3
         # Sanity: n_reference = 163
@@ -63,10 +63,10 @@ class TestReconciliation:
 
 
 @_SKIP_REF
-@_SKIP_CONCISE
+@_SKIP_CENSUS
 class TestMetricsAttributes:
-    def test_error_taxonomy_keys(self, reference, claude_concise):
-        entries = reconcile(reference, claude_concise)
+    def test_error_taxonomy_keys(self, reference, claude_census):
+        entries = reconcile(reference, claude_census)
         m = compute_metrics(entries)
         expected_keys = {
             "hallucinated_plant", "missed_plant", "wrong_fuel",
