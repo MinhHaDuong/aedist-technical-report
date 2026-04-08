@@ -4,7 +4,9 @@
 
 Local ticket system for agent coordination across worktrees on one machine.
 Not a replacement for GitHub Issues — those handle inter-agent and human coordination.
-Tickets are committed to git and travel with the repo.
+Tickets are committed to git and travel with the repo. **Commit and push
+immediately after creation**, on whatever branch you are on — an unpushed
+ticket is invisible to other agents and risks ID collisions.
 
 ## File format
 
