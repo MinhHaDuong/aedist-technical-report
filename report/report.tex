@@ -474,7 +474,27 @@ L'expérience frontier (14 modèles, 10 laboratoires, 1,23\,\$) montre qu'un mod
 % --- Para 4: the proposed pipeline ---
 Le pipeline proposé combine les forces des deux approches. L'étape initiale demande au modèle le rapport complet — cadrage historico-prospectif, inventaire par actif, bibliographie annotée — non pas comme donnée finale mais comme \emph{hypothèse de périmètre}. Un opérateur humain filtre les références citées~: le document existe-t-il~? Est-il accessible~? C'est l'intervention humaine la moins coûteuse avec le rendement épistémique le plus élevé. Les sources validées sont ensuite téléchargées, converties en Markdown, indexées et archivées. L'extraction RAG opère sur ce corpus vérifié, actif par actif, complétée par une recherche d'actualités pour capter les changements de statut postérieurs aux documents de planification. La liste initiale du modèle sert de critère d'arrêt~: quand l'extraction RAG converge avec la liste générée, le corpus est probablement complet. Le résultat est un jeu de données dont chaque cellule est traçable jusqu'à un document source — non pas des données correctes, mais des données \emph{corrigeables}~: quand un relecteur trouve une erreur, le pipeline indique quelle source était erronée et quoi corriger.
 
-% --- Para 5: from thermal to full power system (Level 4 — scope) ---
+% --- Para 5: epistemic accountability ---
+L'enjeu dépasse la méthodologie~: c'est une question de responsabilité épistémique. Quand un modélisateur intègre 1\,200\,MW pour Vĩnh Tân~4 dans un scénario PyPSA, il doit pouvoir répondre à la question «~d'où vient ce chiffre~?~». La réponse ne peut pas être «~Claude l'a dit~». Elle doit être «~Décision~500/QĐ-TTg, annexe~3, ligne~17~». La sortie du modèle de langage est une \emph{hypothèse} sur ce qui existe~; le corpus validé est la \emph{preuve}. Le pipeline transforme l'une en l'autre. Cette distinction sépare cinq propriétés~:
+
+\begin{center}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Propriété} & \textbf{Rapport LLM} & \textbf{Pipeline proposé} \\
+\midrule
+Provenance     & «~Claude l'a dit~» & Cellule $\to$ document $\to$ page \\
+Mise à jour    & Tout régénérer      & Ajouter une source, ré-extraire \\
+Auditabilité   & Opaque              & Corpus archivé, extraction reproductible \\
+Falsifiabilité & Impossible de prouver qu'un chiffre est faux & Vérifier la source contre l'affirmation \\
+Incrémentalité & Monolithique        & Actif par actif, source par source \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Le corpus constitué est lui-même un actif durable~: une fois les PDP, rapports EVN et décisions provinciales indexés et convertis, ils répondent à des questions que le prompt initial n'avait pas anticipées. La donnée de qualité recherche n'est pas celle qui est exacte~: c'est celle dont les erreurs sont \emph{localisables}.
+
+% --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.
 
 % --- Para 4: geographic scaling — ASEAN ---

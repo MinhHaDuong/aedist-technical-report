@@ -223,25 +223,31 @@ For 60 campaigns, build the pipeline.
 \end{enumerate}
 
 \column{0.42\textwidth}
-\textbf{Why this order:}
+\textbf{Epistemic accountability:}
 
 \medskip
-The LLM is a \textbf{compressed index}
-of the world's documents.
-Use it for \emph{scope discovery},
+{\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & \textbf{LLM} & \textbf{Pipeline} \\
+\midrule
+Provenance     & opaque  & cell $\to$ doc \\
+Update         & redo all & add source \\
+Audit          & no       & yes \\
+Falsifiable    & no       & yes \\
+Incremental    & no       & yes \\
+\bottomrule
+\end{tabular}
+}
+
+\medskip
+The LLM is a \textbf{compressed index}.\\
+Use it for \emph{scope discovery},\\
 not as ground truth.
 
 \medskip
-The corpus is the lasting asset ---
-it answers questions beyond
-the original table.
-
-\medskip
-Research-quality data isn't data
-that's correct. It's data that's
-\textbf{correctable}: when a reviewer
-finds an error, the pipeline tells
-you which source was wrong.
+Research-quality data isn't correct data.\\
+It's data whose errors are \textbf{locatable}.
 \end{columns}
 \end{frame}
 
