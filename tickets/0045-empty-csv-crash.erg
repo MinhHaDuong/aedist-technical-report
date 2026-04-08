@@ -1,0 +1,33 @@
+%erg v1
+Title: Handle empty CSVs gracefully in evaluate pipeline
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T22:00Z claude created
+2026-04-08T22:00Z claude note found during ticket 0036 rebuild
+
+--- body ---
+## Context
+Some extracted CSVs contain only a header row and no data (e.g.,
+census/gpt-5-mini-run{1,2,3}, census/gpt-5-nano-run{1,2,3},
+census/grok-4.20-run3). When the evaluate pipeline processes these,
+cleaner.py:75 raises ValueError("The input DataFrame is empty."),
+crashing the parallel make and blocking measurement assembly.
+
+Currently worked around with `-k` flag in Makefile (ticket 0036),
+but the proper fix is to return a ResultSummary(status="error")
+for empty CSVs instead of crashing.
+
+## Actions
+1. In evaluate.py, catch the empty DataFrame error from cleaner
+2. Return ResultSummary(status="error") with a descriptive message
+3. Remove the `-k` workaround from Makefile once the crash is fixed
+
+## Test
+Write a test with a header-only CSV → expect status="error" record.
+
+## Exit criteria
+- `make -C experiments rebuild-measurements` completes without `-k`
+- Empty CSVs produce error records instead of crashes
