@@ -158,6 +158,43 @@ def _strip_run_suffix(name: str) -> str:
     return re.sub(r"-run\d+$", "", name)
 
 
+def _infer_method(dir_name: str) -> "Method":
+    """Infer Method enum from output subdirectory name."""
+    from .schema import Method
+
+    if "multiturn" in dir_name:
+        return Method.MULTITURN
+    if "rag" in dir_name and "sourced" not in dir_name:
+        return Method.RAG
+    if "web" in dir_name:
+        return Method.WEB
+    if "decomposed" in dir_name:
+        return Method.DECOMPOSED
+    if "sourced" in dir_name:
+        return Method.SOURCED
+    if "frontier" in dir_name:
+        return Method.FRONTIER
+    if "verification" in dir_name:
+        return Method.VERIFICATION
+    return Method.SINGLE
+
+
+def _backfill_resource_use(record: "RunRecord", json_path: Path) -> None:
+    """Populate resource_use and model metadata from a companion JSON file."""
+    from .schema import ResourceUse
+
+    raw = json.loads(json_path.read_text(encoding="utf-8"))
+    usage = raw.get("usage") or {}
+    record.resource_use = ResourceUse(
+        wall_s=raw.get("wall_seconds") or raw.get("total_wall_seconds"),
+        cost_usd=raw.get("cost_usd") or raw.get("total_cost_usd"),
+        tokens_in=usage.get("prompt_tokens"),
+        tokens_out=usage.get("completion_tokens"),
+    )
+    record.method_params.model = raw.get("model", record.method_params.model)
+    record.method_params.extra = raw.get("model_metadata")
+
+
 def _metrics_to_runrecord(
     metrics: BenchmarkMetrics,
     label: str,
@@ -167,19 +204,11 @@ def _metrics_to_runrecord(
 
     *result_file* should be a relative path (e.g. experiments/outputs/...).
     """
-    from .schema import Method, MethodParams, ResultSummary, RunRecord
+    from .schema import MethodParams, ResultSummary, RunRecord
 
     sweep_name = label.split("/")[0] if "/" in label else ""
     stem = label.rsplit("/", 1)[-1]
-    method = Method.SINGLE
-    if "multiturn" in sweep_name:
-        method = Method.MULTITURN
-    elif "decomposed" in sweep_name:
-        method = Method.DECOMPOSED
-    elif "rag" in sweep_name:
-        method = Method.RAG
-    elif "web" in sweep_name:
-        method = Method.WEB
+    method = _infer_method(sweep_name)
 
     return RunRecord(
         method=method,
@@ -209,7 +238,9 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     result_dir.mkdir(parents=True, exist_ok=True)
 
     measurements_path = (
-        Path(args.measurements_output) if args.measurements_output else result_dir / "measurements.jsonl"
+        Path(args.measurements_output)
+        if args.measurements_output
+        else result_dir / "measurements.jsonl"
     )
 
     # Compute project root for relative paths in RunRecords.
@@ -223,6 +254,9 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     reference = load_plants_csv(ref_path)
     new_records: list = []
 
+    # Track which JSONs have a companion CSV (evaluated with metrics)
+    evaluated_jsons: set[Path] = set()
+
     for csv_file in sorted(outputs_dir.rglob("*.csv")):
         system = load_plants_csv(csv_file)
         if not system:
@@ -230,45 +264,77 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         entries = reconcile(reference, system)
         metrics = compute_metrics(entries)
         label = f"{csv_file.parent.name}/{csv_file.stem}"
-        # Store relative path from project root
         try:
             rel_path = str(csv_file.resolve().relative_to(project_root))
         except ValueError:
             rel_path = str(csv_file)
-        new_records.append(_metrics_to_runrecord(metrics, label, rel_path))
+        record = _metrics_to_runrecord(metrics, label, rel_path)
+        # Backfill resource_use from companion JSON
+        json_companion = csv_file.with_suffix(".json")
+        if json_companion.exists():
+            _backfill_resource_use(record, json_companion)
+            evaluated_jsons.add(json_companion.resolve())
+        new_records.append(record)
         log.info(
-            "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)",
+            "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)  $%.4f",
             label.ljust(50),
             metrics.coverage * 100,
             metrics.precision * 100,
             metrics.f1 * 100,
             metrics.n_matched,
             metrics.n_reference,
+            record.resource_use.cost_usd or 0,
         )
 
-    # Write measurements.jsonl
-    if new_records:
-        from .schema import RunRecord
+    # Second pass: qualitative results (JSONs with no companion CSV)
+    from .schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
-        existing_records = []
-        if measurements_path.exists():
-            existing_records = RunRecord.load_jsonl(measurements_path)
-        # Replace records with matching labels
-        existing_labels = {
-            f"{r.method_params.prompt_version}/{Path(r.result_file).stem}" for r in new_records
-        }
-        kept = [
-            r
-            for r in existing_records
-            if f"{r.method_params.prompt_version}/{Path(r.result_file).stem}"
-            not in existing_labels
-        ]
-        kept.extend(new_records)
-        RunRecord.save_jsonl(kept, measurements_path)
+    for json_file in sorted(outputs_dir.rglob("*-run*.json")):
+        if json_file.resolve() in evaluated_jsons:
+            continue
+        try:
+            raw = json.loads(json_file.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            log.warning("Skipping unreadable JSON: %s", json_file)
+            continue
+        if "model" not in raw:
+            continue
+        usage = raw.get("usage") or {}
+        dir_name = json_file.parent.name
+        try:
+            rel_path = str(json_file.resolve().relative_to(project_root))
+        except ValueError:
+            rel_path = str(json_file)
+        record = RunRecord(
+            method=_infer_method(dir_name),
+            method_params=MethodParams(
+                model=raw["model"],
+                prompt_version=dir_name,
+                extra=raw.get("model_metadata"),
+            ),
+            resource_use=ResourceUse(
+                wall_s=raw.get("wall_seconds") or raw.get("total_wall_seconds"),
+                cost_usd=raw.get("cost_usd") or raw.get("total_cost_usd"),
+                tokens_in=usage.get("prompt_tokens"),
+                tokens_out=usage.get("completion_tokens"),
+            ),
+            result_file=rel_path,
+            result_summary=ResultSummary(status="qualitative"),
+        )
+        new_records.append(record)
         log.info(
-            "Measurements: %s (%d entries, %d new)",
+            "%s/%s  qualitative  $%.4f",
+            dir_name,
+            json_file.stem,
+            record.resource_use.cost_usd or 0,
+        )
+
+    # Write measurements.jsonl (full rebuild — no merge with existing)
+    if new_records:
+        RunRecord.save_jsonl(new_records, measurements_path)
+        log.info(
+            "Measurements: %s (%d entries)",
             measurements_path,
-            len(kept),
             len(new_records),
         )
 

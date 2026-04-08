@@ -287,13 +287,12 @@ def test_assemble_from_measurements():
     assert ref_table == new_table
 
 
-def test_main_writes_outputs(tmp_path):
-    """main() reads measurements.jsonl and writes both LaTeX outputs."""
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
+def test_main_writes_outputs(tmp_path, monkeypatch):
+    """main() reads measurements and writes both LaTeX outputs."""
+    from conftest import write_measurements
+
     from aedist.tabulate_self_consistency import main
 
-    # Build adapter-style metrics, convert to RunRecords, write measurements.jsonl
     metrics = [
         {
             "label": "sweep_rag/deepseek-v3.2-run1",
@@ -302,6 +301,7 @@ def test_main_writes_outputs(tmp_path):
             "n_system": 33,
             "n_reference": 163,
             "n_hallucinated": 0,
+            "n_missed": 130,
         },
         {
             "label": "sweep_rag/deepseek-v3.2-run2",
@@ -310,6 +310,7 @@ def test_main_writes_outputs(tmp_path):
             "n_system": 70,
             "n_reference": 163,
             "n_hallucinated": 0,
+            "n_missed": 93,
         },
         {
             "label": "sweep_rag/deepseek-v3.2-run3",
@@ -318,6 +319,7 @@ def test_main_writes_outputs(tmp_path):
             "n_system": 85,
             "n_reference": 163,
             "n_hallucinated": 0,
+            "n_missed": 78,
         },
         {
             "label": "sweep_rag_consistency/deepseek-v3.2-consolidated",
@@ -326,6 +328,7 @@ def test_main_writes_outputs(tmp_path):
             "n_system": 39,
             "n_reference": 163,
             "n_hallucinated": 0,
+            "n_missed": 124,
         },
         {
             "label": "sweep_rag_consistency/deepseek-v3.2-union",
@@ -334,21 +337,23 @@ def test_main_writes_outputs(tmp_path):
             "n_system": 149,
             "n_reference": 163,
             "n_hallucinated": 0,
+            "n_missed": 14,
         },
     ]
-    from aedist.schema import Method
 
-    records = metrics_to_records(metrics, method=Method.RAG)
     meas_path = tmp_path / "measurements.jsonl"
-    RunRecord.save_jsonl(records, meas_path)
+    write_measurements(meas_path, metrics)
+
+    # Point the loader at our tmp measurements file
+    from conftest import patch_measurements_loader
+
+    patch_measurements_loader(monkeypatch, meas_path)
 
     output_file = tmp_path / "tab_sc.tex"
     per_run_file = tmp_path / "tab_pr.tex"
 
     main(
         [
-            "--measurements",
-            str(meas_path),
             "--output",
             str(output_file),
             "--per-run-output",

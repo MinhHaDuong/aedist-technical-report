@@ -16,7 +16,6 @@ import logging
 import statistics
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import strip_label as slug_from_label
 
 log = logging.getLogger(__name__)
@@ -105,7 +104,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate LaTeX macros from measurements.jsonl",
     )
-    parser.add_argument("--measurements", help="Path to measurements.jsonl (required unless --census-csv)")
     parser.add_argument("--census-csv", help="Census CSV for baseline model counts (slides)")
     parser.add_argument("--output", required=True, help="Path to write macros.tex")
     args = parser.parse_args()
@@ -114,11 +112,10 @@ def main() -> None:
 
     if args.census_csv:
         summary = load_census(args.census_csv)
-    elif args.measurements:
-        metrics = load_metrics_from_measurements(args.measurements)
-        summary = load_and_summarize(metrics)
     else:
-        parser.error("--measurements or --census-csv is required")
+        from .measurements import load_metrics
+
+        summary = load_and_summarize(load_metrics())
     tex = generate_macros(summary)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,9 +1,4 @@
-"""Generate census results LaTeX table from measurements.jsonl.
-
-Usage:
-    python -m aedist.tabulate_census \\
-        --measurements measurements.jsonl \\
-        --output report/inputs/generated/tab_census.tex
+"""Generate census results LaTeX table from measurements.
 
 Reads per-run metrics, groups by model (stripping -runN suffix),
 computes medians, and emits a longtable sorted by F1 descending.
@@ -14,7 +9,6 @@ import argparse
 import logging
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import format_model_name, group_and_summarize
 
 log = logging.getLogger(__name__)
@@ -70,7 +64,6 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate census results LaTeX table",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument(
         "--output",
         required=True,
@@ -80,7 +73,9 @@ def main(argv: list[str] | None = None):
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     latex = generate_census_table(metrics)
 

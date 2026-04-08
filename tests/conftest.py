@@ -25,7 +25,55 @@ def experiments():
 
 def write_measurements(path: Path, metrics: list[dict]) -> None:
     """Convert metrics dicts to measurements.jsonl for CLI tests."""
-    from aedist.measurements_adapter import metrics_to_records
-    from aedist.schema import RunRecord
+    from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 
-    RunRecord.save_jsonl(metrics_to_records(metrics), path)
+    records = []
+    for entry in metrics:
+        label = entry["label"]
+        prompt_version, stem = label.rsplit("/", 1) if "/" in label else ("", label)
+
+        method = Method.SINGLE
+        if "multiturn" in prompt_version:
+            method = Method.MULTITURN
+        elif "rag" in prompt_version:
+            method = Method.RAG
+        elif "web" in prompt_version:
+            method = Method.WEB
+
+        tp = entry.get("n_matched", 0)
+        fn = entry.get("n_missed", 0)
+        fp = entry.get("n_hallucinated", 0)
+
+        records.append(
+            RunRecord(
+                method=method,
+                method_params=MethodParams(
+                    model=stem,
+                    prompt_version=prompt_version or None,
+                ),
+                resource_use=ResourceUse(
+                    cost_usd=entry.get("cost_usd"),
+                    wall_s=entry.get("wall_seconds"),
+                ),
+                result_file=f"{label}.csv",
+                result_summary=ResultSummary(
+                    n_plants=entry.get("n_system", tp + fp),
+                    tp=tp,
+                    fp=fp,
+                    fn=fn,
+                    f1=entry.get("f1"),
+                    fuel_accuracy=entry.get("fuel_accuracy"),
+                    status_accuracy=entry.get("status_accuracy"),
+                    province_accuracy=entry.get("province_accuracy"),
+                ),
+            )
+        )
+    RunRecord.save_jsonl(records, path)
+
+
+def patch_measurements_loader(monkeypatch, meas_path: Path) -> None:
+    """Point aedist.measurements.load at a test measurements file."""
+    import aedist.measurements as mmod
+
+    monkeypatch.setattr(mmod, "_load_paths", lambda: {"measurements": str(meas_path)})
+    monkeypatch.setattr(mmod, "_resolve", lambda p: Path(p))

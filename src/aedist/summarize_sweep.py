@@ -15,7 +15,6 @@ import logging
 from pathlib import Path
 from statistics import median
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_macros import slug_from_label
 
 log = logging.getLogger(__name__)
@@ -23,13 +22,14 @@ log = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize sweep metrics")
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Output summary CSV path")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     # Group by model and collect cost/latency in a single pass
     by_model: dict[str, list[dict]] = {}

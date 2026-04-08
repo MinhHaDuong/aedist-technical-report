@@ -14,7 +14,6 @@ import csv
 import logging
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_macros import load_and_summarize
 
 log = logging.getLogger(__name__)
@@ -43,8 +42,8 @@ def build_pareto_rows(
     Returns list of dicts with keys: model, f1, cost_usd, local.
     Sorted by f1 descending.
 
-    Cost is extracted from the metrics dicts (cost_usd key, set by
-    measurements_adapter) unless an explicit costs dict is provided.
+    Cost is extracted from the metrics dicts (cost_usd key) unless an
+    explicit costs dict is provided.
     """
     summary = load_and_summarize(metrics)
 
@@ -78,14 +77,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate Pareto-front CSV from measurements.jsonl",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--costs", default=None, help="Path to sweep summary CSV with cost data")
     parser.add_argument("--output", required=True, help="Path to write pareto.csv")
     args = parser.parse_args()
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     costs = None
     if args.costs:

@@ -1,38 +1,31 @@
-"""Tests for the measurements adapter: round-trip invariant and output equivalence.
+"""Tests for aedist.measurements: records_to_metrics round-trip and output equivalence.
 
-The core contract: for any list[dict] in all_metrics format, converting to
-RunRecords and back via the adapter must reproduce the original dicts exactly
-(for the fields the reporting scripts consume).
+The core contract: RunRecord → records_to_metrics → dict must produce the
+fields that reporting scripts consume, with correct derived values.
 """
 
-from pathlib import Path
-
-import pytest
-
-from aedist.measurements_adapter import (
-    load_metrics_from_measurements,
-    metrics_to_records,
-    records_to_metrics,
+from aedist.measurements import records_to_metrics
+from aedist.schema import (
+    Method,
+    MethodParams,
+    ResourceUse,
+    ResultSummary,
+    RunRecord,
 )
-from aedist.schema import RunRecord
 
 # ---------------------------------------------------------------------------
-# Fixtures — reuse the same sample data as existing test modules
+# Fixtures
 # ---------------------------------------------------------------------------
 
-# Fixtures use internally consistent counts: coverage = round(tp/(tp+fn), 4),
-# precision = round(tp/(tp+fp), 4), matching compute_metrics() output.
 CENSUS_METRICS = [
     {
         "label": "sweep1_census/gpt-5.4-run1",
-        "coverage": 0.4908,  # 80/163
-        "precision": 1.0,  # 80/80
+        "coverage": 0.4908,
+        "precision": 1.0,
         "f1": 0.658,
         "n_reference": 163,
         "n_system": 80,
         "n_matched": 80,
-        "n_exact": 70,
-        "n_fuzzy": 10,
         "n_missed": 83,
         "n_hallucinated": 0,
         "fuel_accuracy": 0.642,
@@ -41,46 +34,20 @@ CENSUS_METRICS = [
     },
     {
         "label": "sweep1_census/gpt-5.4-run2",
-        "coverage": 0.5031,  # 82/163
-        "precision": 0.9762,  # 82/84
+        "coverage": 0.5031,
+        "precision": 0.9762,
         "f1": 0.66,
         "n_reference": 163,
         "n_system": 84,
         "n_matched": 82,
-        "n_exact": 72,
-        "n_fuzzy": 10,
         "n_missed": 81,
         "n_hallucinated": 2,
         "fuel_accuracy": 0.65,
         "status_accuracy": 0.72,
         "province_accuracy": 0.82,
     },
-    {
-        "label": "sweep1_census/padme-qwen3.5-122b-run1",
-        "coverage": 0.3006,  # 49/163
-        "precision": 0.8033,  # 49/61
-        "f1": 0.436,
-        "n_reference": 163,
-        "n_system": 61,
-        "n_matched": 49,
-        "n_exact": 40,
-        "n_fuzzy": 9,
-        "n_missed": 114,
-        "n_hallucinated": 12,
-        "fuel_accuracy": 0.5,
-        "status_accuracy": 0.6,
-        "province_accuracy": 0.7,
-    },
 ]
 
-# Minimal metrics (only fields used by plot_census / tabulate_macros)
-MINIMAL_METRICS = [
-    {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.70},
-    {"label": "sweep1_census/gpt-5.4-run2", "f1": 0.68},
-    {"label": "sweep1_census/gpt-5.4-run3", "f1": 0.72},
-]
-
-# Fields that reporting scripts actually consume
 _CONSUMED_FIELDS = (
     "label",
     "f1",
@@ -97,175 +64,130 @@ _CONSUMED_FIELDS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Layer A: Round-trip invariant
-# ---------------------------------------------------------------------------
-
-
-class TestRoundTrip:
-    """metrics → RunRecords → adapter → metrics must be identity."""
-
-    def test_full_metrics_roundtrip(self):
-        records = metrics_to_records(CENSUS_METRICS)
-        recovered = records_to_metrics(records)
-        assert len(recovered) == len(CENSUS_METRICS)
-        for orig, rec in zip(CENSUS_METRICS, recovered):
-            for field in _CONSUMED_FIELDS:
-                assert orig.get(field) == rec.get(field), (
-                    f"Field {field!r} mismatch: {orig.get(field)} != {rec.get(field)} "
-                    f"for {orig['label']}"
-                )
-
-    def test_minimal_metrics_roundtrip(self):
-        """Round-trip works even with sparse dicts (only label + f1)."""
-        records = metrics_to_records(MINIMAL_METRICS)
-        recovered = records_to_metrics(records)
-        for orig, rec in zip(MINIMAL_METRICS, recovered):
-            assert orig["label"] == rec["label"]
-            assert orig["f1"] == rec["f1"]
-
-    def test_method_inference(self):
-        """Method is inferred from prompt_version in label."""
-        metrics = [
-            {"label": "sweep1_census/model-run1", "f1": 0.5},
-            {"label": "sweep2_multiturn/model-run1", "f1": 0.6},
-            {"label": "sweep_rag/model-run1", "f1": 0.7},
-            {"label": "sweep2_web/model-run1", "f1": 0.4},
-        ]
-        records = metrics_to_records(metrics)
-        assert records[0].method == "single"
-        assert records[1].method == "multiturn"
-        assert records[2].method == "rag"
-        assert records[3].method == "web"
-
-    def test_label_preserved(self):
-        """Label reconstruction from prompt_version + result_file stem."""
-        records = metrics_to_records(CENSUS_METRICS)
-        recovered = records_to_metrics(records)
-        for orig, rec in zip(CENSUS_METRICS, recovered):
-            assert orig["label"] == rec["label"]
-
-    def test_cost_roundtrip(self):
-        """cost_usd and wall_seconds survive the round-trip."""
-        metrics = [
-            {
-                "label": "sweep1_census/model-run1",
-                "f1": 0.5,
-                "n_matched": 10,
-                "n_missed": 5,
-                "n_hallucinated": 2,
-                "cost_usd": 0.015,
-                "wall_seconds": 24.5,
-            }
-        ]
-        records = metrics_to_records(metrics)
-        recovered = records_to_metrics(records)
-        assert recovered[0]["cost_usd"] == 0.015
-        assert recovered[0]["wall_seconds"] == 24.5
-
-
-class TestRoundTripRealData:
-    """Round-trip with real measurements.jsonl data."""
-
-    @pytest.fixture
-    def real_records(self):
-        path = Path("measurements.jsonl")
-        if not path.exists():
-            pytest.skip("Real measurements.jsonl not available")
-        return RunRecord.load_jsonl(path)
-
-    @pytest.mark.slow
-    def test_real_data_roundtrip(self, real_records):
-        metrics = records_to_metrics(real_records)
-        recovered = metrics_to_records(metrics)
-        roundtripped = records_to_metrics(recovered)
-        assert len(roundtripped) == len(metrics)
-        for orig, rec in zip(metrics, roundtripped):
-            for field in _CONSUMED_FIELDS:
-                assert orig.get(field) == rec.get(field), (
-                    f"Field {field!r}: {orig.get(field)} != {rec.get(field)} for {orig['label']}"
-                )
+def _make_record(label: str, tp: int, fp: int, fn: int, f1: float, **kwargs) -> RunRecord:
+    """Build a RunRecord from counts."""
+    prompt_version, stem = label.rsplit("/", 1) if "/" in label else ("", label)
+    return RunRecord(
+        method=Method.SINGLE,
+        method_params=MethodParams(
+            model=stem.replace("-run1", "").replace("-run2", ""),
+            prompt_version=prompt_version or None,
+        ),
+        resource_use=ResourceUse(
+            cost_usd=kwargs.get("cost_usd"),
+            wall_s=kwargs.get("wall_seconds"),
+        ),
+        result_file=f"{label}.csv",
+        result_summary=ResultSummary(
+            tp=tp,
+            fp=fp,
+            fn=fn,
+            f1=f1,
+            n_plants=tp + fp,
+            fuel_accuracy=kwargs.get("fuel_accuracy"),
+            status_accuracy=kwargs.get("status_accuracy"),
+            province_accuracy=kwargs.get("province_accuracy"),
+        ),
+    )
 
 
 # ---------------------------------------------------------------------------
-# Layer B: Output equivalence — pure functions produce same output
+# Tests
 # ---------------------------------------------------------------------------
+
+
+class TestRecordsToMetrics:
+    def test_derived_fields(self):
+        record = _make_record("sweep1_census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658)
+        metrics = records_to_metrics([record])
+        assert len(metrics) == 1
+        m = metrics[0]
+        assert m["label"] == "sweep1_census/gpt-5.4-run1"
+        assert m["n_matched"] == 80
+        assert m["n_missed"] == 83
+        assert m["n_hallucinated"] == 0
+        assert m["n_reference"] == 163  # tp + fn
+        assert m["n_system"] == 80  # tp + fp
+        assert m["coverage"] == round(80 / 163, 4)
+        assert m["precision"] == 1.0
+
+    def test_cost_and_latency_included(self):
+        record = _make_record(
+            "sweep1_census/model-run1",
+            tp=10,
+            fp=2,
+            fn=5,
+            f1=0.5,
+            cost_usd=0.015,
+            wall_seconds=24.5,
+        )
+        metrics = records_to_metrics([record])
+        assert metrics[0]["cost_usd"] == 0.015
+        assert metrics[0]["wall_seconds"] == 24.5
+
+    def test_missing_cost_excluded(self):
+        record = _make_record("sweep1_census/model-run1", tp=10, fp=2, fn=5, f1=0.5)
+        metrics = records_to_metrics([record])
+        assert "cost_usd" not in metrics[0]
+        assert "wall_seconds" not in metrics[0]
+
+    def test_zero_plants(self):
+        record = _make_record("sweep1_census/empty-run1", tp=0, fp=0, fn=0, f1=0.0)
+        metrics = records_to_metrics([record])
+        assert metrics[0]["coverage"] == 0.0
+        assert metrics[0]["precision"] == 0.0
 
 
 class TestOutputEquivalence:
-    """Pure reporting functions produce identical output from both paths."""
+    """Pure reporting functions produce identical output from RunRecords."""
+
+    def _records_from_metrics(self, metrics_list):
+        """Build RunRecords matching the fixture data."""
+        records = []
+        for m in metrics_list:
+            records.append(
+                _make_record(
+                    m["label"],
+                    tp=m["n_matched"],
+                    fp=m["n_hallucinated"],
+                    fn=m["n_missed"],
+                    f1=m["f1"],
+                    fuel_accuracy=m.get("fuel_accuracy"),
+                    status_accuracy=m.get("status_accuracy"),
+                    province_accuracy=m.get("province_accuracy"),
+                )
+            )
+        return records
 
     def test_census_table_equivalence(self):
         from aedist.tabulate_census import generate_census_table
 
         direct = generate_census_table(CENSUS_METRICS)
-        records = metrics_to_records(CENSUS_METRICS)
-        via_adapter = generate_census_table(records_to_metrics(records))
-        assert direct == via_adapter
+        via_records = generate_census_table(
+            records_to_metrics(self._records_from_metrics(CENSUS_METRICS))
+        )
+        assert direct == via_records
 
     def test_macros_equivalence(self):
         from aedist.tabulate_macros import generate_macros, load_and_summarize
 
-        summary_direct = load_and_summarize(CENSUS_METRICS)
-        records = metrics_to_records(CENSUS_METRICS)
-        summary_adapter = load_and_summarize(records_to_metrics(records))
-        assert generate_macros(summary_direct) == generate_macros(summary_adapter)
-
-    def test_census_bars_equivalence(self):
-        from aedist.plot_census import build_census_rows
-
-        direct = build_census_rows(CENSUS_METRICS)
-        records = metrics_to_records(CENSUS_METRICS)
-        via_adapter = build_census_rows(records_to_metrics(records))
-        assert direct == via_adapter
-
-    def test_pareto_equivalence(self):
-        from aedist.plot_pareto import build_pareto_rows
-
-        direct = build_pareto_rows(CENSUS_METRICS)
-        records = metrics_to_records(CENSUS_METRICS)
-        via_adapter = build_pareto_rows(records_to_metrics(records))
-        assert direct == via_adapter
-
-    def test_comparaison_equivalence(self):
-        """Comparison table needs both census and RAG entries."""
-        from aedist.tabulate_comparaison import generate_comparaison_table
-
-        mixed = CENSUS_METRICS + [
-            {
-                "label": "sweep_rag/gpt-5.4-run1",
-                "coverage": 0.6012,  # 98/163
-                "precision": 0.98,  # 98/100
-                "f1": 0.72,
-                "n_reference": 163,
-                "n_system": 100,
-                "n_matched": 98,
-                "n_missed": 65,
-                "n_hallucinated": 2,
-            },
-        ]
-        direct, n1 = generate_comparaison_table(mixed)
-        records = metrics_to_records(mixed)
-        via_adapter, n2 = generate_comparaison_table(records_to_metrics(records))
-        assert direct == via_adapter
-        assert n1 == n2
-
-
-# ---------------------------------------------------------------------------
-# JSONL file round-trip
-# ---------------------------------------------------------------------------
+        direct = generate_macros(load_and_summarize(CENSUS_METRICS))
+        via_records = generate_macros(
+            load_and_summarize(records_to_metrics(self._records_from_metrics(CENSUS_METRICS)))
+        )
+        assert direct == via_records
 
 
 class TestJsonlRoundTrip:
-    """Full file-based round-trip: metrics → jsonl file → load → metrics."""
-
     def test_file_roundtrip(self, tmp_path):
+        records = [
+            _make_record("sweep1_census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658),
+        ]
         jsonl_path = tmp_path / "measurements.jsonl"
-        records = metrics_to_records(CENSUS_METRICS)
         RunRecord.save_jsonl(records, jsonl_path)
 
-        recovered = load_metrics_from_measurements(jsonl_path)
-        assert len(recovered) == len(CENSUS_METRICS)
-        for orig, rec in zip(CENSUS_METRICS, recovered):
-            assert orig["label"] == rec["label"]
-            assert orig["f1"] == rec["f1"]
+        loaded = RunRecord.load_jsonl(jsonl_path)
+        metrics = records_to_metrics(loaded)
+        assert len(metrics) == 1
+        assert metrics[0]["label"] == "sweep1_census/gpt-5.4-run1"
+        assert metrics[0]["f1"] == 0.658

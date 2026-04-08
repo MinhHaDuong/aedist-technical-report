@@ -1,6 +1,6 @@
 """Tests for aedist.tabulate_macros — LaTeX macro generation from metrics JSON."""
 
-from conftest import write_measurements
+from conftest import patch_measurements_loader, write_measurements
 
 from aedist.tabulate_macros import generate_macros, load_and_summarize
 
@@ -90,10 +90,11 @@ def test_slug_strips_run_and_dir():
     assert len(summary) == 1
 
 
-def test_main_writes_file(tmp_path):
-    """CLI writes macros.tex from a measurements.jsonl file."""
+def test_main_writes_file(tmp_path, monkeypatch):
+    """CLI writes macros.tex from measurements."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "macros.tex"
 
     import sys
@@ -102,8 +103,6 @@ def test_main_writes_file(tmp_path):
 
     sys.argv = [
         "tabulate_macros",
-        "--measurements",
-        str(input_path),
         "--output",
         str(output_path),
     ]

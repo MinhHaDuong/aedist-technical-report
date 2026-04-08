@@ -15,7 +15,6 @@ import logging
 import statistics
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import format_model_name, strip_label
 
 log = logging.getLogger(__name__)
@@ -118,13 +117,14 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate RAG comparison LaTeX table",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write tab_comparaison.tex")
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     latex, n_compared = generate_comparaison_table(metrics)
 

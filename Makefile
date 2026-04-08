@@ -20,24 +20,15 @@ check-fast: test
 
 check: test
 
-# --- Measurements (single source of truth) ------------------------------------
+# --- Measurements (materialized view of all outputs) -------------------------
 #
-# measurements.jsonl is the canonical store of all experiment results.
-# Each sweep appends/replaces its own entries (merge by label).
-#
-# Update flow:
-#   Sweep 1 (census):     make measurements   (calls experiments/sweep1-summary)
-#   Sweep 2+ (regimes):   migrate_to_measurements.py --append (from query JSONs)
-#   Sweep 4 (verify):     query_verification.py (appends directly)
-#   Analysis:             self_consistency.py (replaces analysis entries)
-#
-# Worker architecture:
-#   Manager fans out sweep YAML into per-model jobs (jobs/pending/).
-#   Workers poll the job board, execute queries, produce RunRecords.
-#   Summary step reads outputs and writes to measurements.jsonl.
+# measurements.jsonl is rebuilt from all experiments/outputs/*/ by:
+#   1. Extracting CSVs from structured conditions (extract.py)
+#   2. Evaluating CSVs against reference (runner.py evaluate-all)
+#   3. Ingesting qualitative results (frontier etc.) as resource_use only
 
-$(MEASUREMENTS): $(wildcard experiments/outputs/sweep1_census/*.csv)
-	$(MAKE) -C experiments sweep1-summary
+$(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json)
+	$(MAKE) -C experiments rebuild-measurements
 
 .PHONY: measurements
 measurements: $(MEASUREMENTS)
@@ -46,26 +37,26 @@ measurements: $(MEASUREMENTS)
 
 experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml
 	uv run python -m aedist.select_sweep2 \
-	    --measurements $< --registry experiments/models.yaml \
+	    --registry experiments/models.yaml \
 	    --output $@ --n 1
 
 # --- Tables for report --------------------------------------------------------
 
 $(GEN)/tab_census.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_census --measurements $< --output $@
+	uv run python -m aedist.tabulate_census --output $@
 
 $(GEN)/macros.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_macros --measurements $< --output $@
+	uv run python -m aedist.tabulate_macros --output $@
 
 $(GEN)/tab_relances.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_relances --measurements $< --output $@
+	uv run python -m aedist.tabulate_relances --output $@
 
 $(GEN)/tab_comparaison.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_comparaison --measurements $< --output $@
+	uv run python -m aedist.tabulate_comparaison --output $@
 
 CONVERTER_TEST := experiments/data/converter_test
 CONVERTER_META := $(CONVERTER_TEST)/benchmark_meta.yaml
@@ -80,19 +71,18 @@ $(GEN)/tab_converter_benchmark.tex: $(CONVERTER_META) $(CONVERTER_DOCS)
 
 $(SLIDE_GEN)/census_bars.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_census --measurements $< --output $@
+	uv run python -m aedist.plot_census --output $@
 
 $(SLIDE_GEN)/pareto.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_pareto --measurements $< --output $@
+	uv run python -m aedist.plot_pareto --output $@
 
 $(SLIDE_GEN)/sweep2_regimes.csv: $(GEN)/sweep2_regimes.csv
 	@mkdir -p $(dir $@)
 	cp $< $@
 
 $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
-	uv run python -m aedist.tabulate_macros \
-	    --measurements $(MEASUREMENTS) --census-csv $< --output $@
+	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 
 # --- Publications -------------------------------------------------------------
 
