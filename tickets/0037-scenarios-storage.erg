@@ -1,32 +1,40 @@
 %erg v1
-Title: Design storage and extraction for scenario experiments
-Status: open
+Title: Reorganize experiments/ into outputs, derived, and qualitative
+Status: closed
 Created: 2026-04-08
 Author: claude
 
 --- log ---
 2026-04-08T14:00Z claude created
+2026-04-08T15:00Z claude claimed
+2026-04-08T15:30Z claude note design refined after brainstorming session
+2026-04-08T16:30Z claude status closed — three-way split implemented
 
 --- body ---
 ## Context
-frontier_scenarios/ contains experiments that ask models for scenario analysis,
-not a power plant table. Two of three responses (claude-opus-4.6, tongyi) happen
-to include CSV tables as part of their scenario output, but o3 produced pure
-prose. Forcing standard table extraction on scenario experiments is wrong — if
-the experiment doesn't ask for a table, we should not try to find one.
+experiments/outputs/ mixed primary table experiments, derived analyses, and
+non-table experiments. This made extraction/evaluation brittle (must exclude
+dirs) and unclear (is a missing CSV a bug or by design?).
 
-Current files:
-- frontier_scenarios/claude-opus-4.6-run1.json (has CSV blocks inside scenario text)
-- frontier_scenarios/o3-run1.json (scenario prose, no table)
-- frontier_scenarios/tongyi-deepresearch-30b-a3b-run1.json (has CSV blocks)
+## Design (chosen: three-way split)
 
-## Actions
-Explore 3 solutions:
-1. Sibling directory to outputs/ (e.g., experiments/analyses/) with its own schema
-2. Keep in outputs/ but add experiment metadata that flags "no extraction needed"
-3. Different extraction logic per experiment type (scenarios get a different parser)
+```
+experiments/
+  outputs/              table experiments only
+    census/  decomposed/  frontier/  multiturn/  rag/  sourced/  web/
+
+  derived/              cross-run analyses, computed from outputs/
+    rag_consistency/      consolidated/union CSVs, summary JSON
+    verification/         tool-verified & filtered CSVs
+
+  qualitative/          non-table experiments (raw replies, no extraction)
+    scenarios/            .json  .md
+    skill_plans/          .json  .md
+```
 
 ## Exit criteria
-- Design decision documented
-- frontier_scenarios outputs stored and processed according to the chosen design
-- Pipeline does not attempt standard table extraction on scenario experiments
+- outputs/ contains only table experiments with uniform .json/.csv/.eval.json
+- derived/ and qualitative/ populated with moved content
+- _extracted/ removed (was duplicate of rag/ CSVs)
+- Makefile extract/evaluate targets work without exclude lists
+- READMEs document each directory's purpose and provenance

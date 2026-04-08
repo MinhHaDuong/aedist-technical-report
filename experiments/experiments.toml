@@ -200,7 +200,7 @@ output = "outputs/decomposed"
 [sweeps.verification]
 repeat = 3
 budget_usd = 25
-output = "outputs/verification"
+output = "derived/verification"
 cross_verifier = "anthropic/claude-sonnet-4.6"
 verification_modes = ["unverified", "tool", "self", "cross", "web"]
 
@@ -255,7 +255,7 @@ models = "models.yaml"
 model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
-output = "outputs/frontier_scenarios"
+output = "qualitative/scenarios"
 
 [sweeps.frontier_skill]
 mode = "single"
@@ -264,4 +264,4 @@ models = "models.yaml"
 model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
-output = "outputs/frontier_skill"
+output = "qualitative/skill_plans"

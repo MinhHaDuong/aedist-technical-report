@@ -148,7 +148,8 @@ REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 STRUCTURED_DIRS := census multiturn web rag \
                    decomposed sourced
 
-OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json)) $(wildcard outputs/*/*.csv)
+OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
+                $(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv)
 
 # Extract structured outputs from LLM JSON responses into CSVs.
 .PHONY: extract
@@ -158,8 +159,10 @@ extract:
 	        --input outputs/$$dir --output outputs/$$dir; \
 	done
 
-.PRECIOUS: outputs/%.record.json
+.PRECIOUS: outputs/%.record.json derived/%.record.json
 outputs/%.record.json: outputs/%.csv $(REFERENCE)
+	@$(EVAL) evaluate $< --reference $(REFERENCE) --output $(dir $<)
+derived/%.record.json: derived/%.csv $(REFERENCE)
 	@$(EVAL) evaluate $< --reference $(REFERENCE) --output $(dir $<)
 
 # Recursive Make: extract may create CSVs, so the second invocation must
@@ -167,14 +170,14 @@ outputs/%.record.json: outputs/%.csv $(REFERENCE)
 ../measurements.jsonl: $(OUTPUT_FILES)
 	@$(MAKE) --no-print-directory extract
 	@$(MAKE) --no-print-directory evaluate-all-records
-	@$(EVAL) assemble $$(find outputs -name '*.record.json' | sort) --output $@
+	@$(EVAL) assemble $$(find outputs derived -name '*.record.json' | sort) --output $@
 
 .PHONY: evaluate-all-records
 evaluate-all-records:
 	@$(MAKE) --no-print-directory -j$$(nproc) \
-	    $$(find outputs -name '*.csv' | sed 's/\.csv$$/.record.json/')
+	    $$(find outputs derived -name '*.csv' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
-	for f in outputs/*/*-run*.json; do \
+	for f in outputs/*/*-run*.json derived/*/*-run*.json; do \
 	    [ -f "$${f%.json}.csv" ] && continue; \
 	    rec="$${f%.json}.record.json"; \
 	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \
@@ -183,13 +186,13 @@ evaluate-all-records:
 
 .PHONY: rebuild-measurements
 rebuild-measurements:
-	find outputs -name '*.record.json' -delete
+	find outputs derived -name '*.record.json' -delete
 	$(MAKE) --no-print-directory ../measurements.jsonl
 
 # --- Analysis: self-consistency -----------------------------------------------
 
 SC_INPUT  := outputs/rag
-SC_OUTPUT := outputs/rag_consistency
+SC_OUTPUT := derived/rag_consistency
 SC_JSON   := $(SC_OUTPUT)/self_consistency_summary.json
 SC_TEX    := ../report/inputs/generated/tab_self_consistency.tex
 SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
