@@ -284,6 +284,20 @@ class JobSpec(BaseModel):
             data["output_dir"] = data.pop("output")
         return cls.model_validate(data)
 
+    @classmethod
+    def from_toml_section(cls, section: dict[str, Any]) -> JobSpec:
+        """Load a JobSpec from a [sweeps.*] section of experiments.toml.
+
+        Maps sweep config fields (models, output) to JobSpec fields
+        (models_file, output_dir).
+        """
+        data = dict(section)
+        if "models" in data and "models_file" not in data:
+            data["models_file"] = data.pop("models")
+        if "output" in data and "output_dir" not in data:
+            data["output_dir"] = data.pop("output")
+        return cls.model_validate(data)
+
 
 class LeaseInfo(BaseModel):
     """Tracks an exclusive claim on a job by a worker."""

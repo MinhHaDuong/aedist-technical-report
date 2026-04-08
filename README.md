@@ -17,10 +17,10 @@ Minh Ha-Duong, CIRED – CNRS
 ```
 ├── src/aedist/              # Python benchmark package
 ├── tests/                   # 61 tests
-├── experiments/             # Sweep configs, Makefile, model registries
-│   ├── sweeps/*.yaml        # Experiment definitions
-│   ├── models.yaml          # 24 OpenRouter models
-│   └── models_padme.yaml   # 8 local Ollama models
+├── experiments/             # Experiment pipeline
+│   ├── experiments.toml     # Routers, model sets, and sweep configs
+│   ├── models.yaml          # 52-model registry (single source of truth)
+│   └── Makefile             # Sweep orchestration
 ├── data/reference/          # Ground truth CSVs
 ├── report/                  # LaTeX technical report
 ├── slides/                  # Beamer slides (Econom'IA 2026)

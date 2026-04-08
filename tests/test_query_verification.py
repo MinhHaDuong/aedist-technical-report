@@ -1,16 +1,22 @@
 """Tests for aedist.query_verification — sweep 4 runner."""
 
+import tomllib
 from pathlib import Path
 
-from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem, load_config
+from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem
+
+
+def _load_sweep4_config() -> dict:
+    """Load sweep4 config from experiments.toml."""
+    toml_path = Path(__file__).parent.parent / "experiments" / "experiments.toml"
+    with open(toml_path, "rb") as f:
+        config = tomllib.load(f)
+    return config["sweeps"]["sweep4_verification"]
 
 
 def test_load_config():
-    """Config YAML loads with expected fields."""
-    config_path = (
-        Path(__file__).parent.parent / "experiments" / "sweeps" / "sweep4_verification.yaml"
-    )
-    config = load_config(config_path)
+    """Config loads from TOML with expected fields."""
+    config = _load_sweep4_config()
     assert len(config["base_configs"]) == 3
     assert "unverified" in config["verification_modes"]
     assert "web" in config["verification_modes"]
@@ -38,10 +44,7 @@ def test_deterministic_modes():
 
 def test_condition_count():
     """3 configs x (3 deterministic x 1 + 2 stochastic x 3) = 27 conditions."""
-    config_path = (
-        Path(__file__).parent.parent / "experiments" / "sweeps" / "sweep4_verification.yaml"
-    )
-    config = load_config(config_path)
+    config = _load_sweep4_config()
     repeat = config.get("repeat", 3)
 
     count = 0

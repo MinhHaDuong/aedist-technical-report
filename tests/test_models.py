@@ -134,6 +134,121 @@ def test_experiments_routers(experiments):
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Sweep configuration validation
+# ---------------------------------------------------------------------------
+
+VALID_MODES = {"single", "multiturn", "rag", "web", "decomposed"}
+SWEEP_REQUIRED_FIELDS = {"mode", "prompt", "models", "repeat", "budget_usd", "output"}
+# sweep4_verification is special — no mode/prompt/models at top level
+SWEEP4_REQUIRED_FIELDS = {"repeat", "budget_usd", "output", "verification_modes", "base_configs"}
+
+
+def test_sweeps_section_exists(experiments):
+    """experiments.toml has a [sweeps] section with at least one entry."""
+    assert "sweeps" in experiments, "experiments.toml missing [sweeps] section"
+    assert len(experiments["sweeps"]) >= 1
+
+
+def test_sweep_count(experiments):
+    """All 8 sweeps are present."""
+    expected = {
+        "sweep1_census", "sweep1_padme",
+        "sweep2_multiturn", "sweep2_web",
+        "sweep_rag", "sweep3_decomposed",
+        "sweep4_verification", "sweep5_sourced",
+    }
+    assert set(experiments["sweeps"].keys()) == expected
+
+
+def test_standard_sweep_fields(experiments):
+    """Each standard sweep has required fields with valid types."""
+    for name, sweep in experiments["sweeps"].items():
+        if name == "sweep4_verification":
+            continue
+        missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
+        assert not missing, f"sweeps.{name} missing fields: {missing}"
+        assert sweep["mode"] in VALID_MODES, (
+            f"sweeps.{name}: invalid mode '{sweep['mode']}'"
+        )
+        assert isinstance(sweep["repeat"], int) and sweep["repeat"] >= 1, (
+            f"sweeps.{name}: repeat must be int >= 1"
+        )
+        assert isinstance(sweep["budget_usd"], (int, float)), (
+            f"sweeps.{name}: budget_usd must be numeric"
+        )
+
+
+def test_sweep4_verification_structure(experiments):
+    """sweep4_verification has its special structure (base_configs, modes)."""
+    s4 = experiments["sweeps"]["sweep4_verification"]
+    missing = SWEEP4_REQUIRED_FIELDS - set(s4.keys())
+    assert not missing, f"sweep4_verification missing fields: {missing}"
+    assert isinstance(s4["base_configs"], list) and len(s4["base_configs"]) >= 1
+    for i, bc in enumerate(s4["base_configs"]):
+        assert "method" in bc, f"base_configs[{i}] missing 'method'"
+        assert "model" in bc, f"base_configs[{i}] missing 'model'"
+        assert "result_file" in bc, f"base_configs[{i}] missing 'result_file'"
+    assert isinstance(s4["verification_modes"], list) and len(s4["verification_modes"]) >= 1
+
+
+def test_sweep_model_sets_exist(experiments):
+    """Every model_set referenced by a sweep exists in [sets]."""
+    defined_sets = set(experiments.get("sets", {}).keys())
+    for name, sweep in experiments["sweeps"].items():
+        if "model_set" in sweep:
+            assert sweep["model_set"] in defined_sets, (
+                f"sweeps.{name}: model_set '{sweep['model_set']}' not in [sets]"
+            )
+
+
+def test_sweep_model_set_ids_in_registry(models, experiments):
+    """model_ids in sets referenced by sweeps all exist in the registry."""
+    registry_ids = {m["id"] for m in models}
+    for name, sweep in experiments["sweeps"].items():
+        set_name = sweep.get("model_set")
+        if set_name is None:
+            continue
+        model_set = experiments["sets"][set_name]
+        for mid in model_set["model_ids"]:
+            assert mid in registry_ids, (
+                f"sweeps.{name} → sets.{set_name}: '{mid}' not in registry"
+            )
+
+
+def test_sweep_prompts_exist(experiments):
+    """Prompt files referenced by sweeps exist on disk."""
+    for name, sweep in experiments["sweeps"].items():
+        if "prompt" not in sweep:
+            continue
+        prompt_path = EXPERIMENTS_DIR / sweep["prompt"]
+        assert prompt_path.exists(), (
+            f"sweeps.{name}: prompt file missing: {prompt_path}"
+        )
+
+
+def test_sweep_output_dirs_unique(experiments):
+    """Each sweep writes to a distinct output directory (no overwrites)."""
+    outputs = {}
+    for name, sweep in experiments["sweeps"].items():
+        out = sweep.get("output")
+        if out is None:
+            continue
+        if out in outputs:
+            # sweep1_census and sweep1_padme share output dir by design
+            pair = {name, outputs[out]}
+            if pair != {"sweep1_census", "sweep1_padme"}:
+                pytest.fail(
+                    f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'"
+                )
+        outputs[out] = name
+
+
+# ---------------------------------------------------------------------------
+# _list_models.py helper
+# ---------------------------------------------------------------------------
+
+
 def test_list_models_helper(experiments):
     """_list_models.py produces correct short names for census_cloud."""
     import subprocess
