@@ -1,0 +1,28 @@
+%erg v1
+Title: Standardize 99% → 98.8% in slides takeaway and limitations
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T23:00Z claude created from celebrate sweep
+
+--- body ---
+## Context
+
+PR #193 fixed the "Best overall" line to 98.8%, but three other
+occurrences in the slides still say "99%":
+- Line ~672: "recovers 99% of an expert inventory for $0.06"
+- Line ~684: "Off-the-shelf pipeline recovers 99%"
+- Line ~744: "The right methods recover 99%"
+
+Note: lines referring to decomposed best-run (60% → 99%) are correct —
+that's the single best run, not mean F1. And "precision >99%" is a
+different metric. Only the three above need fixing.
+
+## Actions
+1. Replace "99%" with "98.8%" on the three identified lines
+
+## Exit criteria
+- All F1 references in slides are either 98.8% (mean) or clearly
+  labeled as best-run values

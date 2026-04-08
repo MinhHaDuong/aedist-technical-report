@@ -2,7 +2,7 @@ Last updated: 2026-04-08
 
 ## Status
 
-Pipeline end-to-end via manager+worker dispatch. Census: 35 models (25 cloud + 10 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 574 tests pass. RAG ($2.81), multiturn, web ($0.13) complete. Decomposition: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169) top two. Frontier bench merged (#179): 14 models × 3 prompts, $2.34 total. RAG local sweep in progress. All reporting reads from measurements.jsonl via `aedist.measurements` module. Config consolidated: single experiments.toml (model registry + conditions + paths). Registry swept (#199): 6 broken/obsolete models removed (52→46), data purged. Experiments reorganized (#198): outputs/ (table experiments only), derived/ (rag_consistency, verification), qualitative/ (scenarios, skill_plans). Extract pipeline hardened: .eval.json filter, multiturn joins all assistant turns, pipe tables split per-table, project_name/plant_name_project mapped. 16 missing CSVs recovered (9 frontier, 3 multiturn, 4 web); 11 orphans classified: 8 refusal, 3 error (#203). Evaluation refactored (#196): Make pattern rules (evaluate + assemble), parallelism via `make -j`. Orphan JSON status split (#203): refusal/error/empty replace catch-all "qualitative". Report LaTeX cleaned: unicode-math dropped, replaced with explicit fontspec+amsmath (#197). Perspectives section and slides updated (#202).
+Pipeline end-to-end via manager+worker dispatch. Census: 35 models (25 cloud + 10 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 574 tests pass. Frontier bench: 14 models × 3 prompts, $2.34 total. Slides reframed as pilot study: obvious-approach motivation, 4-level evaluation framework, limitations-as-specs, verification-vs-pipeline argument, epistemic accountability. Report Perspectives expanded to ~1 page: pilot accuracy, trust gate, power system scope, ASEAN scaling, pipeline rationale. Tickets 0026/0027 closed, 0034/0035 created (statistical hygiene). Orphan JSON status split (#203): refusal/error/empty replace catch-all "qualitative".
 
 ## Blockers
 
@@ -11,30 +11,37 @@ None
 ## Next actions
 
 1. Visual review: `make slides` and check PDF renders correctly
-2. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
-3. Handle empty CSVs gracefully (ticket 0045)
+2. Fix remaining 99% → 98.8% inconsistencies in slides (ticket 0036)
+3. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
+4. Bootstrap CIs and paired significance tests (ticket 0034)
+5. Matching sensitivity sweep (ticket 0035, blocked by 0034)
 
 ## North star
 
-Benchmark *methods* — not just models — for producing statistical infrastructure tables from open sources. Present findings at Econom'IA 2026. See MASTERPLAN.md for the long-term vision.
+Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. Not which model is best, but which **method** produces a trustworthy statistical table. Present pilot findings at Econom'IA 2026. See MASTERPLAN.md for the long-term vision.
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [ ] Visual PDF review of slides (no LaTeX on Padme)
+- [x] Reframe slides as pilot study (#115, #193)
+- [x] Perspectives section in report (#116)
+- [ ] Visual PDF review of slides
 - [ ] RAG local sweep: 2B/4B/9B scaling curve (branch t21-rag-local-models)
 
 ## Next milestone
 
-Submit to journal (TBD — after conference feedback).
+Statistical hygiene (tickets 0034, 0035) → journal submission (TBD — after conference feedback).
 
 ## Backlog
 
+- Standardize 99% → 98.8% in slides (ticket 0036)
+- Bootstrap CIs and significance tests (ticket 0034)
+- Matching sensitivity sweep (ticket 0035)
+- Rewrite MASTERPLAN phases (phases 2, 4 done; need statistical validation phase)
+- Handle empty CSVs gracefully in evaluate (ticket 0045)
 - Reflexive self-prompting experiment (ticket 0038)
 - Audit JSON globs for .eval.json filtering (ticket 0044)
-- Handle empty CSVs gracefully in evaluate (ticket 0045)
 - Smart worker dispatch: self-select by capability (ticket 0023)
 - Stack decomposition + union vote + precision filter
 - Chunked RAG strategy (currently only wholesale)
 - Verification sweep (#12)
-- Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
