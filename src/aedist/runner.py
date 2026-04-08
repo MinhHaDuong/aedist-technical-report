@@ -174,6 +174,8 @@ def _metrics_to_runrecord(
     method = Method.SINGLE
     if "multiturn" in sweep_name:
         method = Method.MULTITURN
+    elif "decomposed" in sweep_name:
+        method = Method.DECOMPOSED
     elif "rag" in sweep_name:
         method = Method.RAG
     elif "web" in sweep_name:

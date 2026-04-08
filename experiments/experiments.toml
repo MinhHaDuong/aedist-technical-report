@@ -123,3 +123,111 @@ model_ids = [
     "mistralai/mistral-small-2603",
     "deepseek/deepseek-v3.2",
 ]
+
+# ---------------------------------------------------------------------------
+# Sweep configurations — previously in sweeps/*.yaml
+# ---------------------------------------------------------------------------
+
+[sweeps.sweep1_census]
+mode = "single"
+prompt = "prompts/prompt_structured.txt"
+models = "models.yaml"
+model_set = "census_cloud"
+repeat = 3
+budget_usd = 10
+output = "outputs/sweep1_census"
+
+[sweeps.sweep1_padme]
+mode = "single"
+prompt = "prompts/prompt_structured.txt"
+models = "models.yaml"
+model_set = "census_local"
+repeat = 3
+budget_usd = 0
+output = "outputs/sweep1_census"
+ollama_url = "http://localhost:11434/v1"
+
+[sweeps.sweep2_multiturn]
+mode = "multiturn"
+prompt = "prompts/prompt_structured.txt"
+followups = "prompts/followups.txt"
+models = "models_sweep2.yaml"
+repeat = 3
+budget_usd = 10
+output = "outputs/sweep2_multiturn"
+
+[sweeps.sweep2_web]
+mode = "web"
+prompt = "prompts/prompt_structured.txt"
+models = "models_sweep2.yaml"
+repeat = 3
+budget_usd = 10
+output = "outputs/sweep2_web"
+
+[sweeps.sweep_rag]
+mode = "rag"
+prompt = "prompts/prompt_structured.txt"
+corpus = "data/rag_corpus"
+strategy = "wholesale"
+models = "models.yaml"
+model_set = "sweep_rag"
+repeat = 3
+budget_usd = 10
+output = "outputs/sweep_rag"
+
+[sweeps.sweep3_decomposed]
+mode = "decomposed"
+prompt = "prompts/prompt_structured.txt"
+corpus = "../data/rag_corpus"
+models = "models_sweep2.yaml"
+repeat = 3
+budget_usd = 2
+output = "outputs/sweep3_decomposed"
+
+# Sweep 4: Verification regimes on top 3 Sweep 2 configs
+#
+# Question: What is the marginal cost of going from "AI says 120 plants"
+# to "120 plants with traceable provenance"?
+#
+# Evidence rubric (per plant):
+#   0 = hallucinated source, 1 = no sources, 2 = 1 secondary,
+#   3 = 1 primary, 4 = 2+ independent primary
+[sweeps.sweep4_verification]
+repeat = 3
+budget_usd = 25
+output = "outputs/sweep4_verification"
+cross_verifier = "anthropic/claude-sonnet-4.6"
+verification_modes = ["unverified", "tool", "self", "cross", "web"]
+
+[[sweeps.sweep4_verification.base_configs]]
+method = "multiturn"
+model = "claude-opus-4.6"
+result_file = "outputs/sweep2_multiturn/claude-opus-4.6-run3.json"
+
+[[sweeps.sweep4_verification.base_configs]]
+method = "rag"
+model = "google/gemini-2.5-flash-lite"
+result_file = "outputs/sweep_rag/gemini-2.5-flash-lite-run2.json"
+
+[[sweeps.sweep4_verification.base_configs]]
+method = "rag"
+model = "openai/gpt-5.4"
+result_file = "outputs/sweep_rag/gpt-5.4-run1.json"
+
+# Sweep 5: Sourced extraction — ask for citations upfront
+#
+# Same RAG setup as Sweep 2, but prompt includes source_1, source_2, note
+# columns. Paired comparison: does requiring provenance change extraction?
+#
+# Story arc: Sweep 2 (list plants) → Sweep 5 (list plants with sources)
+# → if models cite real documents, source-first RAG is feasible.
+[sweeps.sweep5_sourced]
+mode = "rag"
+prompt = "prompts/prompt_structured_sourced.txt"
+corpus = "data/rag_corpus"
+strategy = "wholesale"
+models = "models.yaml"
+model_set = "sweep5"
+repeat = 3
+budget_usd = 10
+output = "outputs/sweep5_sourced"

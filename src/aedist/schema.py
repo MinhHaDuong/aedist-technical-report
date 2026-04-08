@@ -120,6 +120,7 @@ class Method(StrEnum):
     MULTITURN = "multiturn"
     RAG = "rag"
     WEB = "web"
+    DECOMPOSED = "decomposed"
 
 
 class MethodParams(BaseModel):
@@ -268,21 +269,26 @@ class JobSpec(BaseModel):
         data: dict[str, Any] = yaml.safe_load(text)
         return cls.model_validate(data)
 
-    @classmethod
-    def from_sweep_yaml(cls, path: str | Path) -> JobSpec:
-        """Load a JobSpec from an existing sweep config YAML.
-
-        Maps sweep config fields (models, output) to JobSpec fields
-        (models_file, output_dir).
-        """
-        with open(path) as f:
-            data: dict[str, Any] = yaml.safe_load(f)
-        # Remap sweep-config field names to JobSpec field names
+    @staticmethod
+    def _remap_sweep_fields(data: dict[str, Any]) -> dict[str, Any]:
+        """Remap sweep-config field names to JobSpec field names."""
         if "models" in data and "models_file" not in data:
             data["models_file"] = data.pop("models")
         if "output" in data and "output_dir" not in data:
             data["output_dir"] = data.pop("output")
-        return cls.model_validate(data)
+        return data
+
+    @classmethod
+    def from_sweep_yaml(cls, path: str | Path) -> JobSpec:
+        """Load a JobSpec from an existing sweep config YAML."""
+        with open(path) as f:
+            data: dict[str, Any] = yaml.safe_load(f)
+        return cls.model_validate(cls._remap_sweep_fields(data))
+
+    @classmethod
+    def from_toml_section(cls, section: dict[str, Any]) -> JobSpec:
+        """Load a JobSpec from a [sweeps.*] section of experiments.toml."""
+        return cls.model_validate(cls._remap_sweep_fields(dict(section)))
 
 
 class LeaseInfo(BaseModel):

@@ -1,7 +1,8 @@
-"""Experiment manager: fan out sweep YAML into per-model job files.
+"""Experiment manager: fan out sweep config into per-model job files.
 
-Reads a sweep YAML config, loads the model registry, and creates one
-JobSpec file per (model, run) combination in ``jobs/pending/``.
+Reads a sweep config (from experiments.toml or a YAML file), loads the
+model registry, and creates one JobSpec file per (model, run) combination
+in ``jobs/pending/``.
 """
 
 import argparse
@@ -46,13 +47,28 @@ def _ensure_dirs(jobs_root: Path) -> None:
         (jobs_root / subdir).mkdir(parents=True, exist_ok=True)
 
 
-def generate(sweep_path: str, jobs_root: Path | None = None) -> tuple[int, int]:
+def generate(
+    sweep_path: str | None = None,
+    jobs_root: Path | None = None,
+    *,
+    sweep_config: dict | None = None,
+    sweep_name: str | None = None,
+) -> tuple[int, int]:
     """Fan out a sweep config into individual job files.
 
+    Provide either *sweep_path* (YAML file) or *sweep_config* (dict from TOML).
+    When using *sweep_config*, pass *sweep_name* for deterministic job IDs.
     Returns (generated_count, skipped_count).
     """
-    sweep = Path(sweep_path)
-    parent_spec = JobSpec.from_sweep_yaml(sweep)
+    if sweep_config is not None:
+        parent_spec = JobSpec.from_toml_section(sweep_config)
+        sweep_key = sweep_name or "toml"
+    elif sweep_path is not None:
+        sweep = Path(sweep_path)
+        parent_spec = JobSpec.from_sweep_yaml(sweep)
+        sweep_key = str(sweep)
+    else:
+        raise ValueError("Provide sweep_path or sweep_config")
 
     models = load_models(parent_spec.models_file)
 
@@ -61,7 +77,6 @@ def generate(sweep_path: str, jobs_root: Path | None = None) -> tuple[int, int]:
     _ensure_dirs(jobs_root)
 
     existing = _existing_job_ids(jobs_root)
-    sweep_key = str(sweep)
 
     generated = 0
     skipped = 0
@@ -107,8 +122,13 @@ def main() -> None:
     )
     sub = parser.add_subparsers(dest="command")
 
-    gen = sub.add_parser("generate", help="Generate job files from a sweep YAML.")
-    gen.add_argument("sweep_yaml", help="Path to sweep YAML config.")
+    gen = sub.add_parser("generate", help="Generate job files from a sweep config.")
+    gen.add_argument("sweep_yaml", nargs="?", help="Path to sweep YAML config (legacy).")
+    gen.add_argument("--sweep", help="Sweep name from experiments.toml.")
+    gen.add_argument(
+        "--experiments", default="experiments.toml",
+        help="Path to experiments.toml (default: experiments.toml).",
+    )
     gen.add_argument(
         "--jobs-dir",
         default="jobs",
@@ -117,7 +137,21 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command == "generate":
-        generated, skipped = generate(args.sweep_yaml, Path(args.jobs_dir))
+        if args.sweep:
+            from .harness import load_experiments
+
+            config = load_experiments(args.experiments)
+            section = config["sweeps"][args.sweep]
+            generated, skipped = generate(
+                jobs_root=Path(args.jobs_dir),
+                sweep_config=section,
+                sweep_name=args.sweep,
+            )
+        elif args.sweep_yaml:
+            generated, skipped = generate(args.sweep_yaml, Path(args.jobs_dir))
+        else:
+            parser.error("Provide sweep_yaml or --sweep NAME")
+            return
         print(f"Generated {generated} jobs, skipped {skipped} existing")
     else:
         parser.print_help()

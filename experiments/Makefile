@@ -1,6 +1,6 @@
 # aedist/Makefile — Reproducible experiment pipeline
 #
-# Each sweep is defined by a YAML config in sweeps/.
+# Sweep configs live in [sweeps.*] sections of experiments.toml.
 # Output files are Make targets: prompt or model list change → re-query.
 #
 # Usage:
@@ -40,7 +40,7 @@ ifneq ($(filter $(_NEEDS_TAVILY),$(MAKECMDGOALS)),)
 endif
 
 # --- Read sweep configs ------------------------------------------------------
-cfg = $(shell python3 -c "import yaml; c=yaml.safe_load(open('sweeps/$(1).yaml')); print(c.get('$(2)',''))")
+cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
 
 # --- Sweep 1: Model census ---------------------------------------------------
 
@@ -85,7 +85,7 @@ sweep1-summary:
 # OpenRouter: query.py --repeat 3 produces all 3 run files in one call.
 # Grouped target (GNU Make 4.3+): one recipe produces all 3 files.
 define or_rule
-$(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_census.yaml
+$(S1_OUTPUT)/$(1)-run1.json $(S1_OUTPUT)/$(1)-run2.json $(S1_OUTPUT)/$(1)-run3.json &: $(S1_PROMPT) experiments.toml
 	$$(eval FULL_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1_MODELS)')); hits=[m['id'] for m in ms if '/' in m['id'] and m['id'].split('/')[-1].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(FULL_ID)" ]; then echo "SKIP $(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
@@ -99,7 +99,7 @@ $(foreach m,$(S1_OR_SHORTS),$(eval $(call or_rule,$(m))))
 
 # Padme: aedist.query with --base-url for Ollama, --output-prefix padme.
 define padme_rule
-$(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) sweeps/sweep1_padme.yaml
+$(S1_OUTPUT)/padme-$(1)-run1.json $(S1_OUTPUT)/padme-$(1)-run2.json $(S1_OUTPUT)/padme-$(1)-run3.json &: $(S1_PROMPT) experiments.toml
 	$$(eval OLLAMA_ID := $$(shell python3 -c "import yaml; ms=yaml.safe_load(open('$(S1P_MODELS)')); hits=[m['id'] for m in ms if '/' not in m['id'] and m['id'].replace(':','-')=='$(1)']; print(hits[0] if hits else '')"))
 	@if [ -z "$$(OLLAMA_ID)" ]; then echo "SKIP padme/$(1)"; exit 0; fi
 	uv run --project .. python -m aedist.query \
@@ -182,7 +182,7 @@ sweep3-decomposed:
 
 sweep4-verification:
 	uv run --project .. python -m aedist.query_verification \
-	    --config sweeps/sweep4_verification.yaml
+	    --sweep sweep4_verification --experiments experiments.toml
 
 # --- Sweep 5: Sourced extraction (citations upfront) -------------------------
 
@@ -326,4 +326,4 @@ help:
 	@echo ""
 	@echo "  make preflight             Check env vars and services before long jobs"
 	@echo ""
-	@echo "Config files in sweeps/*.yaml"
+	@echo "Config in experiments.toml [sweeps.*] sections"

@@ -6,7 +6,7 @@ precision-recall trade-off when filtering to verified-only plants.
 
 Usage:
     python -m aedist.query_verification \
-        --config experiments/sweeps/sweep4_verification.yaml \
+        --sweep sweep4_verification --experiments experiments.toml \
         [--dry-run]
 """
 
@@ -243,13 +243,26 @@ def main():
     parser = argparse.ArgumentParser(
         description="Sweep 4: Verification regimes on top Sweep 2 configs"
     )
-    parser.add_argument("--config", required=True, help="Path to sweep4 YAML config")
+    parser.add_argument("--config", help="Path to sweep4 YAML config (legacy)")
+    parser.add_argument("--sweep", help="Sweep name from experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml",
+        help="Path to experiments.toml",
+    )
     parser.add_argument("--dry-run", action="store_true", help="List conditions without running")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    config = load_config(args.config)
+    if args.sweep:
+        from .harness import load_experiments
+
+        exp = load_experiments(args.experiments)
+        config = dict(exp["sweeps"][args.sweep])
+    elif args.config:
+        config = load_config(args.config)
+    else:
+        parser.error("Provide --config or --sweep")
     base_configs = config["base_configs"]
     modes = config["verification_modes"]
     repeat = config.get("repeat", 3)
