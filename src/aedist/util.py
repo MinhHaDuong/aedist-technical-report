@@ -1,5 +1,20 @@
 """Shared utilities for the aedist package."""
 
+import unicodedata
+
+
+def strip_diacritics(s: str) -> str:
+    """Remove diacritics, keeping base letters.
+
+    Uses NFKD decomposition to split combined characters, then drops
+    combining marks.  Also handles Vietnamese Đ/đ (a distinct letter,
+    not a diacritic composition).
+
+    Examples: ``"Công suất"`` → ``"Cong suat"``, ``"Điện"`` → ``"Dien"``.
+    """
+    s = s.replace("\u0110", "D").replace("\u0111", "d")  # Vietnamese Đ/đ
+    return "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+
 
 def parse_number(s: str, *, integer_expected: bool = False) -> float | None:
     """Parse a numeric string with cultural thousands separators.

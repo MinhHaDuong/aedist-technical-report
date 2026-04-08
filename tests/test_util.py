@@ -1,8 +1,8 @@
-"""Tests for aedist.util.parse_number."""
+"""Tests for aedist.util — shared utilities."""
 
 import pytest
 
-from aedist.util import parse_number
+from aedist.util import parse_number, strip_diacritics
 
 
 @pytest.mark.parametrize(
@@ -88,3 +88,66 @@ def test_parse_number(s: str, integer_expected: bool, expected: float | None) ->
         assert result is None, f"Expected None for {s!r}, got {result}"
     else:
         assert result == pytest.approx(expected), f"Expected {expected} for {s!r}, got {result}"
+
+
+# ---------------------------------------------------------------------------
+# strip_diacritics
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "s, expected",
+    [
+        # ASCII passthrough
+        ("Power Plant", "Power Plant"),
+        ("hello", "hello"),
+        ("", ""),
+        # Accented Latin
+        ("Plántà", "Planta"),
+        ("café", "cafe"),
+        ("naïve", "naive"),
+        ("über", "uber"),
+        ("résumé", "resume"),
+        # Vietnamese vowels
+        ("Công suất", "Cong suat"),
+        ("Năng lượng", "Nang luong"),
+        ("Tỉnh", "Tinh"),
+        ("Trạng thái", "Trang thai"),
+        # Vietnamese Đ/đ (distinct letter, not a composition)
+        ("Điện", "Dien"),
+        ("điện", "dien"),
+        ("Đồng Nai", "Dong Nai"),
+        # Mixed
+        ("Hà Tĩnh", "Ha Tinh"),
+        ("Quảng Ninh", "Quang Ninh"),
+        ("Sơn La", "Son La"),
+        # Numbers and punctuation preserved
+        ("600 MWe", "600 MWe"),
+        ("(2026-04-08)", "(2026-04-08)"),
+        # Other scripts — non-Latin characters are kept (no transliteration)
+        ("日本語", "日本語"),
+    ],
+    ids=[
+        "ascii-phrase",
+        "ascii-word",
+        "empty",
+        "latin-accent",
+        "cafe",
+        "naive-diaeresis",
+        "uber-umlaut",
+        "resume-acute",
+        "vn-cong-suat",
+        "vn-nang-luong",
+        "vn-tinh",
+        "vn-trang-thai",
+        "vn-dien-upper",
+        "vn-dien-lower",
+        "vn-dong-nai",
+        "vn-ha-tinh",
+        "vn-quang-ninh",
+        "vn-son-la",
+        "numbers-preserved",
+        "punctuation-preserved",
+        "non-latin-kept",
+    ],
+)
+def test_strip_diacritics(s: str, expected: str) -> None:
+    assert strip_diacritics(s) == expected

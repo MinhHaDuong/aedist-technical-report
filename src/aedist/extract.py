@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
-from aedist.util import parse_number
+from aedist.util import parse_number, strip_diacritics
 
 log = logging.getLogger(__name__)
 
@@ -183,7 +183,7 @@ def sniff_dialect(sample: str) -> csv.Dialect:
 
 
 def norm_header(h: str) -> str:
-    h = h.strip().lower()
+    h = strip_diacritics(h.strip()).lower()
     h = re.sub(r"\([^)]*\)", "", h)  # drop parenthesized units
     h = re.sub(r"[^a-z0-9]+", "_", h)
     return h.strip("_")
