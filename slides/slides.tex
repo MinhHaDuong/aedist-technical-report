@@ -22,7 +22,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{AI for Energy Statistics}
-\subtitle{Benchmarking Methods for AI-Assisted Energy Statistics}
+\subtitle{Can AI methods produce research-quality energy data?}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{Econom'IA 2026}
 \date{April 11, 2026}
@@ -35,76 +35,85 @@
 \end{frame}
 
 % ===================================================================
-\begin{frame}{Outline}
-\tableofcontents
-\end{frame}
-
-% ===================================================================
 \section{Problem}
 
 % -------------------------------------------------------------------
-\begin{frame}{Energy statistics where offices are weak}
+\begin{frame}{The gap}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Challenge:} Track energy transition in countries lacking strong statistical offices
+\textbf{Energy transition models need plant-level data.}
 
 \medskip
-\textbf{Case study:} Vietnam thermal power plants
-\begin{itemize}
-  \item 163 plants in reference inventory
-  \item Coal, gas, LNG -- operational to proposed
-  \item Expert-maintained dataset
-\end{itemize}
+Capacity expansion models, grid simulations, emissions inventories
+--- all require structured tables of power plants with fuel, status,
+capacity, and location.
 
 \medskip
-\textbf{Question:} Can AI automate this?
+In countries with weak statistical offices, these datasets are
+compiled manually by expert teams. This is slow, expensive, and
+doesn't scale.
+
+\medskip
+\textbf{Can AI produce research-quality datasets?}
+
+\medskip
+We pilot this question on one task --- Vietnamese thermal plants ---
+to find out which \emph{methods} work, before scaling to more
+countries and sectors.
 
 \column{0.42\textwidth}
-\textbf{Why it's hard:}
+\textbf{Why it's a hard extraction task:}
 \begin{itemize}
-  \item \textbf{Multilingual} -- Vietnamese diacritics, transliterations
-  \item \textbf{Temporal} -- plans change, plants retire
-  \item \textbf{Technical} -- kW vs kWh, MWth vs MWe
-  \item \textbf{Granularity} -- complex vs plant vs unit vs turbine
+  \item \textbf{Multilingual} --- Vietnamese diacritics,
+        multiple transliterations per plant
+  \item \textbf{Temporal} --- plans change yearly,
+        plants retire or get cancelled
+  \item \textbf{Technical} --- MW\textsubscript{e} vs MW\textsubscript{th},
+        plant vs unit vs turbine
+  \item \textbf{Scattered} --- data lives across
+        PDPs, EVN reports, government decrees
 \end{itemize}
+
+\medskip
+{\small We use Vietnam thermal power (163~plants) as the pilot task.}
 \end{columns}
 \end{frame}
 
 % ===================================================================
-\section{Benchmark design}
+\section{Pilot design}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{The Vietnam thermal plant benchmark}
+\begin{frame}[fragile]{Pilot: Vietnam thermal plant extraction}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Prompt} (verbatim):
+\textbf{Task} (one prompt, verbatim):
 \begin{quote}\small\itshape
 Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.
 \end{quote}
 
 \medskip
 \textbf{Reference:} 163 thermal power plants\\
-6 columns: name, fuel, status, COD, province, capacity\\
-Expert-validated from PDP7, PDP8, EVN reports
+Expert-validated from PDP7, PDP8, EVN reports\\
+6 fields: name, fuel, status, COD, province, capacity
 
 \column{0.45\textwidth}
-\textbf{Experimental design:}
+\textbf{Design:}
 \begin{description}
-  \item[Key idea] A \textbf{method} = model + prompt + information regime + aggregation. The model is one parameter.
-  \item[Apparatus] OpenRouter API + local Ollama
-  \item[N] 37 models $\times$ up to 6 conditions $\times$ 3 runs
+  \item[Hypothesis] A \textbf{method} = model + prompt +
+        information regime + aggregation.
+        The model is one factor among many.
+  \item[Scale] 37 models, 6 condition axes, 3 runs
   \item[Cost] \$0.82 total
-  \item[Evaluation] Exact + fuzzy name matching, then per-field accuracy
+  \item[Evaluation] Fuzzy name matching $\to$
+        per-field accuracy
 \end{description}
 
 \medskip
-\textbf{Metric:} plants matched out of 163\\
-{\small (precision $>$99\% across all models --- the main\\problem is \textbf{coverage}, not hallucination)}
+\textbf{Key metric:} plants matched out of 163\\
+{\small (precision $>$99\% across all models --- the problem\\
+is \textbf{coverage}, not hallucination)}
 \end{columns}
 \end{frame}
-
-% ===================================================================
-\section{Experimental design}
 
 % -------------------------------------------------------------------
 \begin{frame}{Six condition axes}
@@ -482,7 +491,7 @@ Method design explains more variance than model selection.
   \item \NumModelsTested{} models, 6 condition axes, \$0.82
   \item Best baseline: 125/163 (model only)
   \item Best RAG: 141/163 (cheap model + docs)
-  \item \textbf{Best overall: 163/163, F1=99\%, \$0.06}
+  \item \textbf{Best overall: 163/163, F1=98.8\%, \$0.06}
 \end{itemize}
 
 \medskip
@@ -492,16 +501,90 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 99\
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{From benchmark to pipeline}
+\begin{frame}{What this pilot measured --- and what it didn't}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{What the pilot establishes:}
+\begin{itemize}
+  \item Method conditions (RAG, decomposition, aggregation)
+        dominate model choice
+  \item Off-the-shelf pipeline recovers 99\% of an expert
+        inventory for \$0.06
+  \item Feasibility of automated evaluation via
+        fuzzy reconciliation
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{What it cannot distinguish:}
+\begin{itemize}
+  \item \textbf{Extraction vs.\ recall} --- models trained on
+        PDP7/PDP8 may be reciting, not extracting
+  \item \textbf{Task-specific vs.\ general} --- one reference
+        (N=163), one country, one sector
+  \item \textbf{Signal vs.\ noise} --- 3 runs, point F1,
+        no confidence intervals
+  \item \textbf{Method interactions} --- axes tested
+        separately, never composed
+\end{itemize}
+\end{columns}
+
+\medskip
+\centering\small
+These are not flaws --- they are \textbf{design requirements} for a production data pipeline.
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{From pilot to production pipeline}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Four-level evaluation framework:}
+
+\medskip
+\begin{tabular}{@{}clp{3.6cm}@{}}
+\toprule
+ & \textbf{Level} & \textbf{Status} \\
+\midrule
+\checkmark & \textbf{1. Resources} &
+  Cost, latency, tokens ---
+  measured for all runs \\[3pt]
+\checkmark & \textbf{2. Document quality} &
+  Coverage, precision, F1 ---
+  this pilot \\[3pt]
+ & \textbf{3. Provenance} &
+  Source attribution,
+  ``I don't know'' detection,
+  confidence intervals \\[3pt]
+ & \textbf{4. System usability} &
+  Scale to other countries,
+  temporal updates,
+  gap detection \\
+\bottomrule
+\end{tabular}
+
+\medskip
+{\small The pilot covers levels 1--2.
+Levels 3--4 define the path to research-quality data.}
+
+\column{0.42\textwidth}
+\textbf{What the pilot de-risks:}
 \begin{enumerate}
-  \item \textbf{Stack conditions:} decomposition + union vote + RAG --- does the combination reach 100\%?
-  \item \textbf{Unexplored axes:} reasoning effort, Vietnamese prompts, few-shot, verification pass
-  \item \textbf{Document pipeline:} Marker + Mistral OCR for automated source ingestion (6 converters benchmarked)
-  \item \textbf{Scale test:} second country / second sector to validate method generality
-  \item \textbf{Production:} AEDIST pipeline where benchmark measurements become the quality audit log
+  \item The right methods recover 99\% of an expert
+        inventory --- data quality is within reach
+  \item Automated evaluation (fuzzy reconciliation)
+        works at scale
+  \item Cost is negligible: \$0.06 per dataset,
+        \$0.82 for the full sweep
+  \item The pipeline is reproducible and resume-safe
 \end{enumerate}
 
-\bigskip
+\medskip
+\textbf{Goal:} AI-produced datasets that energy
+transition modelers can use directly.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{}
 \begin{center}
 \large\textbf{Thank you!}
 
