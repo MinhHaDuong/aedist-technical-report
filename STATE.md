@@ -11,8 +11,8 @@ None
 ## Next actions
 
 1. Visual review: `make slides` and check PDF renders correctly
-2. Add Perspectives section to report (#116)
-3. Reframe slides "Next steps" as benchmark→pipeline arc (#115)
+2. ~~Add Perspectives section to report (#116)~~ ✓ expanded to ~1 page: accuracy→trust→scale→PyPSA-ASEAN
+3. ~~Reframe slides "Next steps" as benchmark→pipeline arc (#115)~~ ✓ 3-step arc: benchmark→provenance→PyPSA-ASEAN
 4. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
 
 ## North star
@@ -23,8 +23,8 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 
 - [x] Glossary added to report (#190)
 - [ ] Visual PDF review of slides (no LaTeX on Padme)
-- [ ] Reframe slides "Next steps" (#115)
-- [ ] Perspectives section in report (#116)
+- [x] Reframe slides "Next steps" (#115)
+- [x] Perspectives section in report (#116)
 - [ ] RAG local sweep: 2B/4B/9B scaling curve (branch t21-rag-local-models)
 
 ## Next milestone

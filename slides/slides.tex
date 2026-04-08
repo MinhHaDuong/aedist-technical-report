@@ -462,6 +462,10 @@ Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cos
 \textbf{Key principle:}\\
 Accumulation over time, not instant search.\\
 Human validates before ingestion.
+
+\medskip
+\textbf{First application:}\\
+Vietnam thermal fleet $\to$ PyPSA input data.
 \end{columns}
 \end{frame}
 
@@ -537,49 +541,49 @@ These are not flaws --- they are \textbf{design requirements} for a production d
 \begin{frame}{From pilot to production pipeline}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Four-level evaluation framework:}
+\textbf{Three steps:}
 
 \medskip
-\begin{tabular}{@{}clp{3.6cm}@{}}
+\textbf{1.\ This benchmark} --- accuracy proved\\[2pt]
+{\small Vietnam thermal: 163 plants, 35 models $\times$ 6 methods.\\
+RAG + decomposition: 99\% recovery, \$0.06.\\
+Method validated on \emph{one} component class.}
+
+\medskip
+\textbf{2.\ Trustworthy output} --- provenance next\\[2pt]
+{\small Every datum traceable to a source PDF.\\
+Confidence intervals. ``I don't know'' when uncertain.\\
+The gate to usability by modelers.}
+
+\medskip
+\textbf{3.\ Complete PyPSA-ASEAN input} --- then scale\\[2pt]
+{\small All components: thermal, RE, storage, transmission.\\
+10 ASEAN countries, same method, different corpus.\\
+${\sim}\$4$ for a complete regional power system database.}
+
+\column{0.42\textwidth}
+\textbf{Four-level evaluation:}
+
+\medskip
+\begin{tabular}{@{}clp{2.8cm}@{}}
 \toprule
- & \textbf{Level} & \textbf{Status} \\
+ & \textbf{Level} & \textbf{Maps to} \\
 \midrule
-\checkmark & \textbf{1. Resources} &
-  Cost, latency, tokens ---
-  measured for all runs \\[3pt]
-\checkmark & \textbf{2. Document quality} &
-  Coverage, precision, F1 ---
-  this pilot \\[3pt]
- & \textbf{3. Provenance} &
-  Source attribution,
-  ``I don't know'' detection,
-  confidence intervals \\[3pt]
- & \textbf{4. System usability} &
-  Scale to other countries,
-  temporal updates,
-  gap detection \\
+\checkmark & \textbf{1.} Resources &
+  Measured \\[3pt]
+\checkmark & \textbf{2.} Quality &
+  This pilot \\[3pt]
+ & \textbf{3.} Provenance &
+  Trustworthy output \\[3pt]
+ & \textbf{4.} Usability &
+  ASEAN, all components \\
 \bottomrule
 \end{tabular}
 
 \medskip
-{\small The pilot covers levels 1--2.
-Levels 3--4 define the path to research-quality data.}
-
-\column{0.42\textwidth}
-\textbf{What the pilot de-risks:}
-\begin{enumerate}
-  \item The right methods recover 99\% of an expert
-        inventory --- data quality is within reach
-  \item Automated evaluation (fuzzy reconciliation)
-        works at scale
-  \item Cost is negligible: \$0.06 per dataset,
-        \$0.82 for the full sweep
-  \item The pipeline is reproducible and resume-safe
-\end{enumerate}
-
-\medskip
-\textbf{Goal:} AI-produced datasets that energy
-transition modelers can use directly.
+{\small Accuracy is proved.\\
+Trust is next.\\
+Scale follows.}
 \end{columns}
 \end{frame}
 
