@@ -1,9 +1,0 @@
-{
-  "model": "mistralai/ministral-3-8b-2512",
-  "date": "2026-02-16",
-  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their\nfuel type (coal / local natural gas / imported LNG), construction stage,\nconnection date (observed or planned COD), province, and generation capacity\n(in MWe). Format the response in CSV.",
-  "response": null,
-  "finish_reason": "error",
-  "error": "Error code: 400 - {'error': {'message': 'mistralai/ministral-3-8b-2512 is not a valid model ID', 'code': 400}, 'user_id': 'user_39X0hU0aeYlV8HZy8dtB7eqYLey'}",
-  "usage": null
-}

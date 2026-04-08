@@ -17,10 +17,7 @@ response for one run. Files are named `{model}[-runN].json`.
 | `frontier/` | frontier | Deep-research prompt, reasoning models |
 | `frontier_scenarios/` | frontier | Scenario-based prompt variant |
 | `frontier_skill/` | frontier | Skill-assessment prompt variant |
-| `llm_direct/` | — | Legacy: early direct queries |
-| `llm_multiturn/` | — | Legacy: early multi-turn queries |
 | `rag_consistency/` | — | Self-consistency analysis outputs |
-| `rag_curated/` | — | Curated corpus variant |
 
 Results are evaluated by `make rebuild-measurements`, which extracts CSVs
 from the JSON and scores them against `data/reference/vietnam_thermal_v1.csv`.
