@@ -1,0 +1,90 @@
+% Glossaire — termes techniques utilisés dans le rapport
+% Classé par domaine, alphabétique au sein de chaque domaine.
+
+\chapter*{Glossaire}
+\addcontentsline{toc}{chapter}{Glossaire}
+
+\section*{Métriques d'évaluation}
+
+\begin{description}
+\item[Couverture] (\emph{recall, coverage}) Proportion des centrales de référence retrouvées par le système~: $\text{couverture} = \text{VP} / n_{\text{référence}}$. Mesure l'exhaustivité.
+\item[F1 (score)] Moyenne harmonique de la précision et du rappel~: $\text{F1} = 2 \times \text{précision} \times \text{rappel} / (\text{précision} + \text{rappel})$. Métrique principale du benchmark, entre 0 et 1.
+\item[Faux négatif (FN)] (\emph{false negative}) Centrale présente dans la référence mais absente de la sortie du système. Aussi appelée centrale \emph{manquante}.
+\item[Faux positif (FP)] (\emph{false positive}) Centrale produite par le système mais absente de la référence. Voir \emph{hallucination}.
+\item[Hallucination] Sortie du modèle ne correspondant à aucune entrée de la référence. Inclut les centrales inventées et les centrales non thermiques ajoutées à tort.
+\item[Précision] (\emph{precision}) Proportion des centrales produites par le système qui sont correctes~: $\text{précision} = \text{VP} / n_{\text{système}}$.
+\item[Vrai positif (VP)] (\emph{true positive}) Centrale correctement identifiée et appariée à la référence.
+\end{description}
+
+\section*{Méthodes et stratégies}
+
+\begin{description}
+\item[Agrégation multi-runs] (\emph{self-consistency}) Combinaison des résultats de plusieurs exécutions d'un même modèle pour réduire la variance. Le \emph{vote majoritaire} retient une centrale si elle apparaît dans 2+ runs sur 3~; l'\emph{union} retient une centrale si elle apparaît dans au moins 1 run.
+\item[Chain of Thought] Technique de prompt incitant le modèle à détailler son raisonnement étape par étape avant de répondre.
+\item[Décomposition] (\emph{decomposition}) Stratégie divisant une requête en sous-requêtes par type de combustible (charbon, gaz/GNL, pétrole/autres), puis fusionnant les résultats. Élimine la troncature.
+\item[Few-shot learning] Technique de prompt fournissant quelques exemples de la réponse attendue pour guider le modèle.
+\item[RAG (Retrieval Augmented Generation)] Enrichissement du contexte du modèle par injection de documents sources pertinents avant la requête.
+\item[RAG wholesale] Variante injectant la totalité du corpus dans le message système, sans sélection de passages ni chunking.
+\item[Réconciliation] (\emph{reconciliation}) Appariement des centrales produites par le système avec celles de la référence, par correspondance exacte et \emph{fuzzy matching}.
+\item[Relance] (\emph{multi-turn, follow-up}) Approche conversationnelle avec messages de suivi pour inciter le modèle à compléter sa réponse.
+\item[Requête directe] (\emph{single-shot}) Envoi d'un seul prompt au modèle, sans relance ni contexte additionnel. Méthode de référence.
+\item[Self-consistency] Voir \emph{Agrégation multi-runs}.
+\item[Sweep] (\emph{balayage}) Expérimentation à grande échelle paramétrant modèle $\times$ méthode $\times$ répétition.
+\item[Vérification] (\emph{verification}) Post-traitement renvoyant la sortie au modèle (ou à un vérificateur indépendant) pour détecter les hallucinations.
+\end{description}
+
+\section*{Intelligence artificielle et infrastructure}
+
+\begin{description}
+\item[Deep Research] Mode d'interrogation des modèles de raisonnement (o3, DeepSeek~R1) avec budget de tokens élevé et recherche web intégrée.
+\item[Embedding] (\emph{plongement}) Représentation vectorielle dense d'un texte, utilisée pour la recherche par similarité sémantique.
+\item[Fenêtre de contexte] (\emph{context window}) Nombre maximal de tokens (entrée + sortie) qu'un modèle peut traiter en une requête.
+\item[Fuzzy matching] (\emph{appariement flou}) Appariement approximatif de chaînes de caractères, tolérant les variations d'orthographe, d'accents et d'abréviations.
+\item[LLM (Large Language Model)] Grand modèle de langage, réseau de neurones pré-entraîné sur de vastes corpus textuels.
+\item[Modèle de raisonnement] (\emph{reasoning model}) LLM allouant une partie de son budget de tokens à un raisonnement explicite étape par étape (o3, o3-mini, DeepSeek~R1, QwQ).
+\item[OCR (Optical Character Recognition)] Reconnaissance optique de caractères, conversion d'images ou de PDF scannés en texte.
+\item[Open-weight] Modèle dont les poids sont publiés, permettant une exécution locale sans dépendance à un fournisseur cloud.
+\item[Prompt] (\emph{invite}) Instruction textuelle envoyée au modèle. Versionnée et standardisée dans ce benchmark.
+\item[Surgénération] (\emph{over-generation}) Régime d'erreur où le modèle produit plus de résultats que demandé, incluant des entrées hors du domaine (centrales non thermiques).
+\item[Température] (\emph{temperature}) Paramètre de contrôle de l'aléa dans la génération~: 0 (déterministe) à 1 (forte variance). Fixée à 0 dans ce benchmark.
+\item[Token] Unité d'encodage textuel utilisée par les LLM. Les tokens d'entrée (prompt) et de sortie (complétion) sont facturés séparément.
+\item[Troncature] (\emph{truncation}) Coupure de la sortie du modèle avant complétion, due au dépassement de la limite de tokens. Principal facteur limitant en RAG wholesale.
+\end{description}
+
+\section*{Graphes de connaissances}
+
+\begin{description}
+\item[DBpedia] Base RDF extraite automatiquement de Wikipedia. Couverture variable, disponibilité intermittente.
+\item[Graphe de connaissances] (\emph{knowledge graph}) Base de données structurée en triplets (sujet, prédicat, objet) reliant des entités et leurs propriétés.
+\item[OEO (Open Energy Ontology)] Ontologie sémantique ouverte pour le domaine de l'énergie, définissant 15 types de centrales électriques.
+\item[Ontologie] (\emph{ontology}) Modèle formel décrivant les concepts d'un domaine et leurs relations, servant de schéma au graphe de connaissances.
+\item[OpenStreetMap (OSM)] Base de données géospatiale collaborative. Interrogée via l'API Overpass, elle retourne des centrales existantes avec coordonnées et périmètres.
+\item[RDF (Resource Description Framework)] Standard W3C de représentation de la connaissance en triplets.
+\item[Résolution d'entités] (\emph{entity resolution}) Processus associant les différentes mentions d'une même centrale (variantes de nom, translittérations) à une entité canonique.
+\item[SPARQL] Langage de requête pour les bases de données RDF (Wikidata, DBpedia).
+\item[Wikidata] Base de connaissances collaborative structurée, interrogeable via SPARQL.
+\end{description}
+
+\section*{Conversion de documents}
+
+\begin{description}
+\item[GROBID] Outil d'extraction de texte à partir de PDF, performant pour le texte courant mais aplatissant la structure tabulaire.
+\item[Marker] Convertisseur PDF open-source. Meilleur résultat au benchmark~: 170 tableaux extraits avec diacritiques préservés.
+\item[MinerU] Convertisseur PDF avec accélération GPU. Rapide (62 tableaux en 20~s) mais perd les diacritiques dans les cellules de tableaux.
+\item[Mistral OCR] Backend OCR de Mistral, en accès direct via API. Extrait 169 tableaux sur le document de référence.
+\end{description}
+
+\section*{Domaine de l'énergie}
+
+\begin{description}
+\item[BOT (Build-Operate-Transfer)] Contrat de concession~: un investisseur construit et exploite une installation pendant une durée fixe, puis la transfère à l'État.
+\item[CCGT (Combined Cycle Gas Turbine)] Centrale à gaz à cycle combiné, utilisant une turbine à gaz puis une turbine à vapeur pour un rendement d'environ 60\,\%.
+\item[Centrale thermique] (\emph{thermal power plant}) Installation de production d'électricité par combustion (charbon, gaz, GNL, pétrole). Exclut l'hydraulique, l'éolien et le solaire.
+\item[COD (Commercial Operation Date)] Date de mise en service commerciale d'une centrale, observée ou planifiée.
+\item[Deep web] Partie du web non indexée par les moteurs de recherche~: documents administratifs, rapports institutionnels, bases de données non publiques.
+\item[EVN (Vietnam Electricity Group)] Groupe national d'électricité du Vietnam (\emph{Tập đoàn Điện lực Việt Nam}).
+\item[GNL (Gaz Naturel Liquéfié)] (\emph{LNG, Liquefied Natural Gas}) Gaz importé sous forme liquéfiée, par opposition au gaz naturel local.
+\item[GW, MW, MWe] Unités de puissance électrique~: gigawatt ($10^3$~MW), mégawatt ($10^3$~kW), mégawatt électrique (distingue la puissance électrique de la puissance thermique MWth).
+\item[PDP (Power Development Plan)] Plan de développement du secteur électrique du Vietnam. Versions~: PDP7 (2011), PDP7A, PDP8 (2021).
+\item[SPV (Special Purpose Vehicle)] Entité juridique dédiée à la propriété ou l'exploitation d'une installation. Souvent un consortium multinational.
+\end{description}
