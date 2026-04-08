@@ -1,0 +1,54 @@
+%erg v1
+Title: Integrate frontier deep-research benchmark into experiment pipeline
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T09:00Z claude created
+
+--- body ---
+## Context
+
+The frontier deep-research benchmark (`query_frontier`) ran 14 models × 3 prompts
+(inventory, scenarios, skill) ad hoc.  Results live in `experiments/outputs/frontier/`,
+`frontier_scenarios/`, and `frontier_skill/` with a hand-written SUMMARY.md.
+
+Two gaps:
+
+1. **No Make target.** `query_frontier` is the only query module with no Makefile
+   integration — it was invoked manually.
+2. **No measurements.** Results are not fed into `measurements.jsonl`, so they
+   are invisible to the reporting pipeline (tables, self-consistency, etc.).
+
+## Desired behavior
+
+- The frontier deep-research condition is declared in `experiments.toml` alongside
+  the other conditions (census, rag, multiturn, web, decomposed, sourced).
+- Config specifies: prompt(s), model set, repeat count, budget, max_tokens,
+  temperature, and output directory — same fields the other conditions use, plus
+  the frontier-specific parameters (high max_tokens, temperature 0).
+- `make frontier` (or the condition name chosen under ticket 0024) runs the
+  benchmark reproducibly.
+- Results are extracted into `measurements.jsonl` by `sweep-summary` or
+  equivalent, so they appear in report tables.
+- Existing cached outputs in `outputs/frontier*` are recognized and skipped
+  (the skip-if-cached logic in `query_frontier` already works; the pipeline
+  just needs to invoke it).
+
+## What this ticket is NOT
+
+- Not about changing `query_frontier.py` internals.
+- Not about the Worker migration (ticket 0011).
+- Not about renaming sweeps (ticket 0024) — use whatever naming that ticket lands on.
+
+## Test
+
+`make frontier` succeeds with cached outputs (no API calls), and at least one
+frontier result row appears in `measurements.jsonl`.
+
+## Exit criteria
+
+- Frontier condition declared in `experiments.toml`
+- Make target exists and is documented in `make help`
+- Frontier results flow into `measurements.jsonl`

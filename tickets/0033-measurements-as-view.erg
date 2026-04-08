@@ -1,0 +1,95 @@
+%erg v1
+Title: Rebuild measurements.jsonl as a materialized view of all outputs
+Status: closed
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T09:30Z claude created
+2026-04-08T09:45Z claude note Redesigned: loader module reads config from experiments.toml, no --measurements CLI arg
+2026-04-08T10:00Z claude status closed Implemented in PR #191 (squash-merged)
+
+--- body ---
+## Context
+
+`measurements.jsonl` is the single source for all reporting (tables, plots,
+macros).  Today it is assembled piecemeal:
+
+- Census (sweep1): `make measurements` → calls `sweep1-summary`
+- Other sweeps: manual `migrate_to_measurements.py --append` per directory
+- Some conditions (web, decomposed, sourced, frontier) have never been
+  migrated — 50+ JSON result files sit in `outputs/` with no measurement rows
+
+Every consumer takes `--measurements path` as a CLI arg, but it is always
+the same file.  The flag is pointless indirection.
+
+## Desired behavior
+
+A **loader module** (`aedist.measurements`) is the sole interface for
+reading measurements.  Consumers import it — they never open a file or
+accept a `--measurements` CLI argument.
+
+```python
+from aedist.measurements import load
+records = load()                  # all records
+records = load(method="rag")      # filtered
+```
+
+The loader:
+
+1. Reads `experiments.toml` for paths: output directories and cache location.
+   (New `[paths]` section, e.g. `outputs = "experiments/outputs"`,
+   `measurements = "measurements.jsonl"`.)
+2. Scans every `outputs/*/` subdirectory for `*-run*.json` files.
+3. Rebuilds the cache if any output JSON is newer than the cache file
+   (mtime check).  Rebuild is idempotent — same inputs, same output.
+4. Returns `list[RunRecord]`, optionally filtered.
+
+The cache backend (JSONL, TOML, SQLite) is the loader's internal concern.
+No other code touches the file directly.
+
+### What changes for consumers
+
+- `--measurements` CLI arg removed from all reporting scripts.
+- They import `aedist.measurements.load` instead.
+- `make measurements` becomes a convenience target that just calls the
+  loader to force a cache refresh.
+
+### How new conditions are discovered
+
+Adding a new condition = dropping JSON results into a new `outputs/` subdir.
+The loader discovers them automatically on next call.  The method field
+(single, rag, multiturn, web, decomposed, frontier) is inferred from the
+`sweep` field inside each JSON.
+
+### Evaluation during rebuild
+
+Conditions with extractable plant data get F1/precision/recall computed.
+Conditions that produce free-form reports (frontier) get `status: ok`
+with null metric fields.
+
+## What this replaces
+
+- The per-sweep `--append` invocations of `migrate_to_measurements.py`
+- The `sweep1-summary` special case in the top-level Makefile
+- The `--measurements` argument on every reporting script
+- The comment block in the Makefile listing update flow per sweep
+
+## What this does NOT change
+
+- The RunRecord schema
+- The query modules or their JSON output format
+- What reporting scripts compute — only how they get their input
+
+## Test
+
+Delete the cache file, call `load()`, verify row count covers all output
+dirs (currently ~190 census + ~50 other conditions).
+
+## Exit criteria
+
+- `experiments.toml` declares paths (outputs dir, cache location)
+- `aedist.measurements.load()` is the sole read interface
+- No `--measurements` CLI arg remains in any reporting script
+- Cache rebuilds automatically when outputs change
+- Row count matches total `*-run*.json` files across all output dirs
