@@ -22,7 +22,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{AI for Energy Statistics}
-\subtitle{Benchmarking Methods for AI-Assisted Energy Statistics}
+\subtitle{Methods matter more than models --- a pilot benchmark}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{Econom'IA 2026}
 \date{April 11, 2026}
@@ -35,71 +35,79 @@
 \end{frame}
 
 % ===================================================================
-\begin{frame}{Outline}
-\tableofcontents
-\end{frame}
-
-% ===================================================================
 \section{Problem}
 
 % -------------------------------------------------------------------
-\begin{frame}{Energy statistics where offices are weak}
+\begin{frame}{The gap}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Challenge:} Track energy transition in countries lacking strong statistical offices
+\textbf{Energy transition tracking requires plant-level data.}
 
 \medskip
-\textbf{Case study:} Vietnam thermal power plants
-\begin{itemize}
-  \item 163 plants in reference inventory
-  \item Coal, gas, LNG -- operational to proposed
-  \item Expert-maintained dataset
-\end{itemize}
+In countries with weak statistical offices, expert teams manually compile power plant inventories from government plans, utility reports, and industry databases.
 
 \medskip
-\textbf{Question:} Can AI automate this?
+This is slow, expensive, and doesn't scale.
+
+\medskip
+\textbf{Can AI produce these tables automatically?}
+
+\medskip
+The obvious approach: ask a large language model.
+But \emph{which model}? And does the model even matter,
+compared to \emph{how} you ask?
 
 \column{0.42\textwidth}
-\textbf{Why it's hard:}
+\textbf{Why it's a hard extraction task:}
 \begin{itemize}
-  \item \textbf{Multilingual} -- Vietnamese diacritics, transliterations
-  \item \textbf{Temporal} -- plans change, plants retire
-  \item \textbf{Technical} -- kW vs kWh, MWth vs MWe
-  \item \textbf{Granularity} -- complex vs plant vs unit vs turbine
+  \item \textbf{Multilingual} --- Vietnamese diacritics,
+        multiple transliterations per plant
+  \item \textbf{Temporal} --- plans change yearly,
+        plants retire or get cancelled
+  \item \textbf{Technical} --- MW\textsubscript{e} vs MW\textsubscript{th},
+        plant vs unit vs turbine
+  \item \textbf{Scattered} --- data lives across
+        PDPs, EVN reports, government decrees
 \end{itemize}
+
+\medskip
+{\small We use Vietnam thermal power (163~plants) as the pilot task.}
 \end{columns}
 \end{frame}
 
 % ===================================================================
-\section{Benchmark design}
+\section{Pilot design}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{The Vietnam thermal plant benchmark}
+\begin{frame}[fragile]{Pilot: Vietnam thermal plant extraction}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Prompt} (verbatim):
+\textbf{Task} (one prompt, verbatim):
 \begin{quote}\small\itshape
 Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.
 \end{quote}
 
 \medskip
 \textbf{Reference:} 163 thermal power plants\\
-6 columns: name, fuel, status, COD, province, capacity\\
-Expert-validated from PDP7, PDP8, EVN reports
+Expert-validated from PDP7, PDP8, EVN reports\\
+6 fields: name, fuel, status, COD, province, capacity
 
 \column{0.45\textwidth}
-\textbf{Experimental design:}
+\textbf{Design:}
 \begin{description}
-  \item[Key idea] A \textbf{method} = model + prompt + information regime + aggregation. The model is one parameter.
-  \item[Apparatus] OpenRouter API + local Ollama
-  \item[N] 37 models $\times$ up to 6 conditions $\times$ 3 runs
+  \item[Hypothesis] A \textbf{method} = model + prompt +
+        information regime + aggregation.
+        The model is one factor among many.
+  \item[Scale] 37 models, 6 condition axes, 3 runs
   \item[Cost] \$0.82 total
-  \item[Evaluation] Exact + fuzzy name matching, then per-field accuracy
+  \item[Evaluation] Fuzzy name matching $\to$
+        per-field accuracy
 \end{description}
 
 \medskip
-\textbf{Metric:} plants matched out of 163\\
-{\small (precision $>$99\% across all models --- the main\\problem is \textbf{coverage}, not hallucination)}
+\textbf{Key metric:} plants matched out of 163\\
+{\small (precision $>$99\% across all models --- the problem\\
+is \textbf{coverage}, not hallucination)}
 \end{columns}
 \end{frame}
 
