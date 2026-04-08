@@ -22,7 +22,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{AI for Energy Statistics}
-\subtitle{A pilot study to de-risk an extraction benchmark}
+\subtitle{Can AI methods produce research-quality energy data?}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{Econom'IA 2026}
 \date{April 11, 2026}
@@ -41,25 +41,25 @@
 \begin{frame}{The gap}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Energy transition tracking requires plant-level data.}
+\textbf{Energy transition models need plant-level data.}
 
 \medskip
-In countries with weak statistical offices, expert teams manually compile power plant inventories from government plans, utility reports, and industry databases.
+Capacity expansion models, grid simulations, emissions inventories
+--- all require structured tables of power plants with fuel, status,
+capacity, and location.
 
 \medskip
-This is slow, expensive, and doesn't scale.
+In countries with weak statistical offices, these datasets are
+compiled manually by expert teams. This is slow, expensive, and
+doesn't scale.
 
 \medskip
-\textbf{Can AI produce these tables automatically?}
+\textbf{Can AI produce research-quality datasets?}
 
 \medskip
-The obvious approach: ask a large language model.
-But \emph{which model}? And does the model even matter,
-compared to \emph{how} you ask?
-
-\medskip
-{\small This talk presents a \textbf{pilot study} on one task
-to validate the design of a reusable benchmark instrument.}
+We pilot this question on one task --- Vietnamese thermal plants ---
+to find out which \emph{methods} work, before scaling to more
+countries and sectors.
 
 \column{0.42\textwidth}
 \textbf{Why it's a hard extraction task:}
@@ -533,27 +533,27 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 99\
 
 \medskip
 \centering\small
-These are not flaws --- they are \textbf{design requirements} for the full instrument.
+These are not flaws --- they are \textbf{design requirements} for a production data pipeline.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{From pilot to instrument}
+\begin{frame}{From pilot to production pipeline}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Requirements derived from the pilot:}
+\textbf{Before we can trust AI-produced datasets:}
 
 \medskip
 \begin{tabular}{@{}lp{4.2cm}@{}}
 \toprule
-\textbf{Pilot gap} & \textbf{Instrument spec} \\
+\textbf{Pilot gap} & \textbf{What's needed} \\
 \midrule
-1 task, 1 country     & Task battery: 4+ countries
+1 task, 1 country     & Validate on 4+ countries
                         and sectors \\[3pt]
-Memorization risk     & Synthetic reference
-                        (adversarial control) \\[3pt]
-Flat method enum      & Composable pipeline:
-                        knowledge $\times$ conversation
-                        $\times$ decomposition
+Memorization risk     & Adversarial controls ---
+                        synthetic references unseen
+                        in training \\[3pt]
+Axes tested separately & Compose: knowledge $\times$
+                        conversation $\times$ decomposition
                         $\times$ verification \\[3pt]
 No uncertainty        & Bootstrap CIs,
                         paired significance tests \\[3pt]
@@ -563,20 +563,20 @@ Matching confound     & Sensitivity sweep
 \end{tabular}
 
 \column{0.42\textwidth}
-\textbf{What the pilot validated:}
+\textbf{What the pilot de-risks:}
 \begin{enumerate}
-  \item Schema works (Plant, RunRecord, reconciliation)
-  \item Evaluation pipeline is reproducible and
-        resume-safe
-  \item Manager/worker dispatch scales to 37 models
-  \item Cost tracking is precise (\$0.82 auditable)
-  \item measurements.jsonl as single source of truth
+  \item The right methods recover 99\% of an expert
+        inventory --- data quality is within reach
+  \item Automated evaluation (fuzzy reconciliation)
+        works at scale
+  \item Cost is negligible: \$0.06 per dataset,
+        \$0.82 for the full 37-model sweep
+  \item The pipeline is reproducible and resume-safe
 \end{enumerate}
 
 \medskip
-\textbf{The pilot de-risks the instrument.}\\
-{\small The pipeline exists. The question is whether the
-findings generalize.}
+\textbf{Goal:} AI-produced datasets that energy
+transition modelers can use directly.
 \end{columns}
 \end{frame}
 
