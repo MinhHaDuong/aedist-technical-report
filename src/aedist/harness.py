@@ -228,7 +228,7 @@ def query_ollama_native(
             "options": {"num_ctx": num_ctx},
             "stream": False,
         },
-        timeout=1800.0,
+        timeout=3600.0,
     )
     resp.raise_for_status()
     data = resp.json()
