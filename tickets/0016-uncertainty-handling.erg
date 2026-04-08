@@ -1,12 +1,13 @@
 %erg v1
 Title: Implement uncertainty detection and confidence intervals
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 Blocked-by: 0015
 
 --- log ---
 2026-04-04T12:52Z claude created
+2026-04-08T12:00Z claude status closed — substantially done by 0036 (refusal detection) and 0042 (bootstrap CIs)
 
 --- body ---
 ## Context
