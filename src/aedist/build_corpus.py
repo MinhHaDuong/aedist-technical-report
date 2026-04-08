@@ -15,7 +15,7 @@ Usage (GROBID — default, best for academic papers):
 
 Usage (local vision — best for scanned/government docs):
     python -m aedist.build_corpus --query "thermal power vietnam" \\
-        --converter vision --local-vision-model gemma4:26b \\
+        --converter vision --local-vision-model gemma4:31b \\
         --output experiments/data/rag_corpus
 
 Usage (cloud vision fallback):
@@ -375,8 +375,8 @@ def main(argv=None):
                         help="GROBID service URL (default: http://localhost:8070)")
     parser.add_argument("--vision-model", default="gpt-4o",
                         help="Vision model for cloud conversion (default: gpt-4o)")
-    parser.add_argument("--local-vision-model", default="gemma4:26b",
-                        help="Ollama vision model for local conversion (default: gemma4:26b)")
+    parser.add_argument("--local-vision-model", default="gemma4:31b",
+                        help="Ollama vision model for local conversion (default: gemma4:31b)")
     parser.add_argument("--dpi", type=int, default=200,
                         help="DPI for cloud PDF rasterisation (default: 200)")
 

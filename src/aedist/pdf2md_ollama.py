@@ -5,7 +5,7 @@ returns structured Markdown. No cloud API required.
 
 Usage:
     python -m aedist.pdf2md_ollama input.pdf
-    python -m aedist.pdf2md_ollama input.pdf --output out.md --model gemma4:26b --dpi 200
+    python -m aedist.pdf2md_ollama input.pdf --output out.md --model gemma4:31b --dpi 200
 """
 
 import argparse
@@ -28,7 +28,7 @@ from .pdf2md_utils import (
 
 log = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemma4:26b"
+DEFAULT_MODEL = "gemma4:31b"
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_DPI = 200  # lower than cloud (300) — local bandwidth is free, GPU is the bottleneck
 

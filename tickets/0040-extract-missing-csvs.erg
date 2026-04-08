@@ -6,6 +6,7 @@ Author: claude
 
 --- log ---
 2026-04-08T14:00Z claude created
+2026-04-08T18:30Z claude note updated: 3 files removed (glm-5, sonar-deep-research, gemma4-26b) per ticket 0039, 25→22 files
 
 --- body ---
 ## Context
@@ -13,19 +14,18 @@ Author: claude
 Root cause: some dirs (frontier/) were never wired into the Makefile extract
 target; others are recent additions not re-extracted.
 
-### frontier/ (12 files, all pipe tables)
+### frontier/ (10 files, all pipe tables — 2 removed: glm-5, sonar-deep-research)
 claude-opus-4.6-run1, deepseek-r1-0528-run1, deepseek-v3.2-run1,
-ernie-4.5-21b-a3b-thinking-run1, glm-5-run1, glm-5-turbo-run1,
+ernie-4.5-21b-a3b-thinking-run1, glm-5-turbo-run1,
 kimi-k2-thinking-run1, minimax-m2.7-run1, o3-run1,
-qwen3-max-thinking-run1, sonar-deep-research-run1,
-tongyi-deepresearch-30b-a3b-run1
+qwen3-max-thinking-run1, tongyi-deepresearch-30b-a3b-run1
 
 ### multiturn/ (3 files, csv blocks, sibling runs have CSVs)
 claude-opus-4.6-run1, claude-sonnet-4.6-run1, deepseek-v3.2-run1
 
 ### rag/ (4 files)
-gemma4-26b-run3 (pipe table, ~4 rows)
 granite3.3-8b-run{1,2,3} (csv blocks, zero sibling CSVs — never extracted)
+(gemma4-26b-run3 removed — model retired in ticket 0039)
 
 ### web/ (4 files, csv blocks, sibling run2 has CSV)
 deepseek-v3.2-run{1,3}, gemini-2.5-flash-lite-run{1,3}
@@ -34,7 +34,7 @@ deepseek-v3.2-run{1,3}, gemini-2.5-flash-lite-run{1,3}
 padme-qwen3.5-2b-run3, padme-qwen3.5-4b-run3
 
 ## Actions
-1. Run extractor on all 25 files
+1. Run extractor on all 22 remaining files (3 removed: glm-5, sonar-deep-research, gemma4-26b)
 2. Wire frontier/ into the Makefile extract target
 3. Diagnose any extraction failures (frontier pipe tables may need attention)
 4. Spot-check extracted CSVs against sibling runs for consistency
