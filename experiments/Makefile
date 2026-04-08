@@ -229,7 +229,7 @@ export ZOTERO_API_KEY
 CORPUS_OUTPUT  ?= data/rag_corpus
 CORPUS_WORKDIR ?= data/rag_work
 CORPUS_CONVERT ?= grobid
-CORPUS_VISION  ?= gemma4:26b
+CORPUS_VISION  ?= gemma4:31b
 CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
