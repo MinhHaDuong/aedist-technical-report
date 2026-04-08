@@ -52,15 +52,17 @@ def generate(
     jobs_root: Path | None = None,
     *,
     sweep_config: dict | None = None,
+    sweep_name: str | None = None,
 ) -> tuple[int, int]:
     """Fan out a sweep config into individual job files.
 
     Provide either *sweep_path* (YAML file) or *sweep_config* (dict from TOML).
+    When using *sweep_config*, pass *sweep_name* for deterministic job IDs.
     Returns (generated_count, skipped_count).
     """
     if sweep_config is not None:
         parent_spec = JobSpec.from_toml_section(sweep_config)
-        sweep_key = sweep_config.get("_name", "toml")
+        sweep_key = sweep_name or "toml"
     elif sweep_path is not None:
         sweep = Path(sweep_path)
         parent_spec = JobSpec.from_sweep_yaml(sweep)
@@ -139,10 +141,11 @@ def main() -> None:
             from .harness import load_experiments
 
             config = load_experiments(args.experiments)
-            section = dict(config["sweeps"][args.sweep])
-            section["_name"] = args.sweep
+            section = config["sweeps"][args.sweep]
             generated, skipped = generate(
-                jobs_root=Path(args.jobs_dir), sweep_config=section
+                jobs_root=Path(args.jobs_dir),
+                sweep_config=section,
+                sweep_name=args.sweep,
             )
         elif args.sweep_yaml:
             generated, skipped = generate(args.sweep_yaml, Path(args.jobs_dir))

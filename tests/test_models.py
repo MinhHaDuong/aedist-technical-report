@@ -1,12 +1,11 @@
 """Tests for models.yaml schema, coverage, and experiments.toml consistency."""
 
-import tomllib
 from pathlib import Path
 
 import pytest
-import yaml
 
 from aedist.harness import select_models
+from aedist.schema import Method
 
 EXPERIMENTS_DIR = Path(__file__).parent.parent / "experiments"
 MODELS_PATH = EXPERIMENTS_DIR / "models.yaml"
@@ -32,18 +31,6 @@ VALID_ARCHITECTURES = {"dense", "moe"}
 VALID_SIZE_CLASSES = {"frontier", "large", "medium", "small", "edge"}
 VALID_LICENSES = {"commercial", "open-apache", "open-MIT", "open-llama", "open", "open-other"}
 VALID_ROUTERS = {"openrouter", "ollama"}
-
-
-@pytest.fixture
-def models():
-    with open(MODELS_PATH) as f:
-        return yaml.safe_load(f)
-
-
-@pytest.fixture
-def experiments():
-    with open(EXPERIMENTS_PATH, "rb") as f:
-        return tomllib.load(f)
 
 
 def test_schema_validation(models):
@@ -138,7 +125,7 @@ def test_experiments_routers(experiments):
 # Sweep configuration validation
 # ---------------------------------------------------------------------------
 
-VALID_MODES = {"single", "multiturn", "rag", "web", "decomposed"}
+VALID_MODES = set(Method)
 SWEEP_REQUIRED_FIELDS = {"mode", "prompt", "models", "repeat", "budget_usd", "output"}
 # sweep4_verification is special — no mode/prompt/models at top level
 SWEEP4_REQUIRED_FIELDS = {"repeat", "budget_usd", "output", "verification_modes", "base_configs"}
