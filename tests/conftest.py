@@ -25,28 +25,20 @@ def experiments():
 
 def write_measurements(path: Path, metrics: list[dict]) -> None:
     """Convert metrics dicts to measurements.jsonl for CLI tests."""
-    from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
+    from aedist.runner import _infer_method
+    from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
     records = []
     for entry in metrics:
         label = entry["label"]
         prompt_version, stem = label.rsplit("/", 1) if "/" in label else ("", label)
-
-        method = Method.SINGLE
-        if "multiturn" in prompt_version:
-            method = Method.MULTITURN
-        elif "rag" in prompt_version:
-            method = Method.RAG
-        elif "web" in prompt_version:
-            method = Method.WEB
-
         tp = entry.get("n_matched", 0)
         fn = entry.get("n_missed", 0)
         fp = entry.get("n_hallucinated", 0)
 
         records.append(
             RunRecord(
-                method=method,
+                method=_infer_method(prompt_version),
                 method_params=MethodParams(
                     model=stem,
                     prompt_version=prompt_version or None,

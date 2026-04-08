@@ -17,8 +17,8 @@ from pathlib import Path
 
 from .schema import Method, RunRecord
 
-# experiments.toml lives at the repo root under experiments/.
-_EXPERIMENTS_TOML = Path(__file__).parent.parent.parent / "experiments" / "experiments.toml"
+_REPO_ROOT = Path(__file__).parent.parent.parent
+_EXPERIMENTS_TOML = _REPO_ROOT / "experiments" / "experiments.toml"
 
 
 def _load_paths() -> dict[str, str]:
@@ -30,11 +30,10 @@ def _load_paths() -> dict[str, str]:
 
 def _resolve(rel_path: str) -> Path:
     """Resolve a path relative to the repo root."""
-    repo_root = Path(__file__).parent.parent.parent
-    return repo_root / rel_path
+    return _REPO_ROOT / rel_path
 
 
-def load(method: str | None = None) -> list[RunRecord]:
+def load(method: Method | str | None = None) -> list[RunRecord]:
     """Load measurements, optionally filtered by method.
 
     Reads the cache file declared in ``experiments.toml [paths].measurements``.
@@ -105,7 +104,7 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
     return result
 
 
-def load_metrics(method: str | None = None) -> list[dict]:
+def load_metrics(method: Method | str | None = None) -> list[dict]:
     """Load measurements and convert to reporting dict format.
 
     Convenience wrapper: ``load()`` + ``records_to_metrics()``.

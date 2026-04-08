@@ -254,7 +254,6 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
     reference = load_plants_csv(ref_path)
     new_records: list = []
 
-    # Track which JSONs have a companion CSV (evaluated with metrics)
     evaluated_jsons: set[Path] = set()
 
     # Walk only immediate subdirs of outputs_dir — no recursion into
@@ -291,48 +290,41 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
             )
 
     # Second pass: qualitative results (JSONs with no companion CSV)
-    from .schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+    from .schema import MethodParams, ResultSummary, RunRecord
 
     for subdir in subdirs:
         for json_file in sorted(subdir.glob("*-run*.json")):
             if json_file.resolve() in evaluated_jsons:
                 continue
-        try:
-            raw = json.loads(json_file.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            log.warning("Skipping unreadable JSON: %s", json_file)
-            continue
-        if "model" not in raw:
-            continue
-        usage = raw.get("usage") or {}
-        dir_name = json_file.parent.name
-        try:
-            rel_path = str(json_file.resolve().relative_to(project_root))
-        except ValueError:
-            rel_path = str(json_file)
-        record = RunRecord(
-            method=_infer_method(dir_name),
-            method_params=MethodParams(
-                model=raw["model"],
-                prompt_version=dir_name,
-                extra=raw.get("model_metadata"),
-            ),
-            resource_use=ResourceUse(
-                wall_s=raw.get("wall_seconds") or raw.get("total_wall_seconds"),
-                cost_usd=raw.get("cost_usd") or raw.get("total_cost_usd"),
-                tokens_in=usage.get("prompt_tokens"),
-                tokens_out=usage.get("completion_tokens"),
-            ),
-            result_file=rel_path,
-            result_summary=ResultSummary(status="qualitative"),
-        )
-        new_records.append(record)
-        log.info(
-            "%s/%s  qualitative  $%.4f",
-            dir_name,
-            json_file.stem,
-            record.resource_use.cost_usd or 0,
-        )
+            try:
+                raw = json.loads(json_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                log.warning("Skipping unreadable JSON: %s", json_file)
+                continue
+            if "model" not in raw:
+                continue
+            dir_name = json_file.parent.name
+            try:
+                rel_path = str(json_file.resolve().relative_to(project_root))
+            except ValueError:
+                rel_path = str(json_file)
+            record = RunRecord(
+                method=_infer_method(dir_name),
+                method_params=MethodParams(
+                    model=raw["model"],
+                    prompt_version=dir_name,
+                ),
+                result_file=rel_path,
+                result_summary=ResultSummary(status="qualitative"),
+            )
+            _backfill_resource_use(record, json_file)
+            new_records.append(record)
+            log.info(
+                "%s/%s  qualitative  $%.4f",
+                dir_name,
+                json_file.stem,
+                record.resource_use.cost_usd or 0,
+            )
 
     # Write measurements.jsonl (full rebuild — no merge with existing)
     if new_records:
