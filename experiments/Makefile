@@ -43,7 +43,11 @@ endif
 # --- Common -------------------------------------------------------------------
 MANAGER := uv run --project .. python -m aedist.manager generate
 WORKER  := uv run --project .. python -m aedist.worker
-OR_JOBS = $(words $(wildcard jobs/pending/*.yaml))
+# Cap concurrent OpenRouter workers at API rate limit (default 8).
+# Override: make sweep1-run OR_MAX=16
+OR_MAX  ?= 8
+OR_PENDING = $(words $(wildcard jobs/pending/*.yaml))
+OR_JOBS = $(shell python3 -c "print(min($(OR_PENDING), $(OR_MAX)))")
 
 # Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
