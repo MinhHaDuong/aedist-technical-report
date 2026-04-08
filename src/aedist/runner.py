@@ -13,6 +13,8 @@ import re
 import sys
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
 from .schema import (
@@ -101,17 +103,20 @@ def load_plants_csv(path: Path) -> list[Plant]:
 
             source_ref = _get(row, col_map, ["source_ref"])
 
-            plants.append(
-                Plant(
-                    name=name.strip(),
-                    fuel=fuel,
-                    status=status,
-                    cod=cod.strip() if cod else None,
-                    province=province.strip() if province else None,
-                    capacity_mwe=cap,
-                    source_ref=source_ref.strip() if source_ref else None,
+            try:
+                plants.append(
+                    Plant(
+                        name=name.strip(),
+                        fuel=fuel,
+                        status=status,
+                        cod=cod.strip() if cod else None,
+                        province=province.strip() if province else None,
+                        capacity_mwe=cap,
+                        source_ref=source_ref.strip() if source_ref else None,
+                    )
                 )
-            )
+            except (ValueError, ValidationError):
+                continue
     return plants
 
 
