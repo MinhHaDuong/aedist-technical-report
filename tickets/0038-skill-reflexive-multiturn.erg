@@ -1,0 +1,33 @@
+%erg v1
+Title: Implement reflexive multi-turn extraction for skill experiments
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T14:00Z claude created
+
+--- body ---
+## Context
+frontier_skill/ experiments ask models to describe their methodology for
+building a power plant inventory — a reflexive/meta prompt. The current outputs
+are methodology descriptions, not actual plant tables. The next step is feeding
+the model's own plan back and asking it to execute, producing the real table.
+
+This is a kind of reflexive multi-turn: prompt -> plan -> execute plan -> table.
+
+Current files (all have CSV/table content but it's the plan, not the result):
+- frontier_skill/claude-opus-4.6-run1.json
+- frontier_skill/o3-run1.json
+- frontier_skill/tongyi-deepresearch-30b-a3b-run1.json
+
+## Actions
+1. Design the reflexive multi-turn protocol (prompt -> plan -> execute)
+2. Implement the execution step (feed plan back as context, ask for table)
+3. Store both turns: the plan and the executed result
+4. Extract CSV only from the execution turn, not the planning turn
+
+## Exit criteria
+- Reflexive multi-turn sweep runs for all 3 models
+- Execution results stored with clear provenance linking to the plan
+- CSVs extracted from execution turns only

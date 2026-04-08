@@ -1,0 +1,32 @@
+%erg v1
+Title: Design storage and extraction for scenario experiments
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T14:00Z claude created
+
+--- body ---
+## Context
+frontier_scenarios/ contains experiments that ask models for scenario analysis,
+not a power plant table. Two of three responses (claude-opus-4.6, tongyi) happen
+to include CSV tables as part of their scenario output, but o3 produced pure
+prose. Forcing standard table extraction on scenario experiments is wrong — if
+the experiment doesn't ask for a table, we should not try to find one.
+
+Current files:
+- frontier_scenarios/claude-opus-4.6-run1.json (has CSV blocks inside scenario text)
+- frontier_scenarios/o3-run1.json (scenario prose, no table)
+- frontier_scenarios/tongyi-deepresearch-30b-a3b-run1.json (has CSV blocks)
+
+## Actions
+Explore 3 solutions:
+1. Sibling directory to outputs/ (e.g., experiments/analyses/) with its own schema
+2. Keep in outputs/ but add experiment metadata that flags "no extraction needed"
+3. Different extraction logic per experiment type (scenarios get a different parser)
+
+## Exit criteria
+- Design decision documented
+- frontier_scenarios outputs stored and processed according to the chosen design
+- Pipeline does not attempt standard table extraction on scenario experiments

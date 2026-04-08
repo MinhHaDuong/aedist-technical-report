@@ -1,0 +1,33 @@
+%erg v1
+Title: Verify proper handling of refusals in the processing pipeline
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T14:00Z claude created
+
+--- body ---
+## Context
+8 JSON files in experiments/outputs/ contain model refusals or empty responses
+with no corresponding CSV. The pipeline should handle these gracefully rather
+than silently skipping them.
+
+Known refusals/empties:
+- census/padme-gemma4-e2b-run{1,2,3} — model refused (prose only)
+- frontier/gpt-5.4-run1 — model declined ("I can't reliably produce...")
+- frontier/grok-4.20-run1 — model declined ("I must decline...")
+- frontier/o3-deep-research-run1 — empty response (see ticket 0039)
+- rag/gemma4-26b-run1 — empty response with 20k tokens (see ticket 0041)
+- frontier_scenarios/o3-run1 — scenario prose, no plant table (not a refusal per se)
+
+## Actions
+1. Audit extract.py: what happens when no table is found? Silent skip or logged?
+2. Decide on output convention: empty CSV with header only? A .refusal marker file?
+3. Ensure evaluate/scoring handles the chosen convention without crashing
+4. A refusal is a data point — the measurement pipeline should record it
+
+## Exit criteria
+- Clear convention for how refusals appear in the output directory
+- All 8 known cases handled consistently
+- No silent failures in extract or evaluate

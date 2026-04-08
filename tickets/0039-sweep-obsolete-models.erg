@@ -1,0 +1,31 @@
+%erg v1
+Title: Sweep obsolete models from the registry
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T14:00Z claude created
+
+--- body ---
+## Context
+o3-deep-research (openai/o3-deep-research) cost $1.96 for a single query,
+ran 516 seconds, hit the output token limit (finish_reason=length, 30k tokens),
+and returned an empty response. This model is a black hole — expensive and
+unusable for our task.
+
+Other models may also be obsolete, superseded, or broken.
+
+## Actions
+1. Audit experiments/models.yaml for models that should be retired:
+   - o3-deep-research: $1.96 for empty response, comment out with warning
+   - Check for other models with consistently empty/refused responses
+   - Check for models superseded by newer versions
+2. Comment out obsolete entries with a dated warning, do not delete
+   (preserve history of what was tried)
+3. Verify no active experiment config references commented-out models
+
+## Exit criteria
+- o3-deep-research commented out with warning in models.yaml
+- Any other broken/obsolete models identified and flagged
+- No experiment config references dead models

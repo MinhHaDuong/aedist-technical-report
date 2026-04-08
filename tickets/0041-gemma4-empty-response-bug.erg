@@ -1,0 +1,37 @@
+%erg v1
+Title: Investigate rag/gemma4-26b-run1 empty response with 20k tokens
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T14:00Z claude created
+
+--- body ---
+## Context
+rag/gemma4-26b-run1.json has finish_reason=stop, 20258 completion_tokens,
+1355 seconds wall time, but response is an empty string. The model generated
+20k tokens that vanished. This is likely a bug in the query code — the response
+may have been in a different field, dropped during serialization, or lost due
+to a streaming/timeout issue.
+
+Key facts:
+- model: gemma4:26b (local Ollama)
+- wall_seconds: 1355.743 (~22 minutes)
+- usage.completion_tokens: 20258
+- response: '' (empty string)
+- finish_reason: stop
+- Sibling run2 has a CSV; run3 has a response (867 chars, short pipe table)
+
+## Actions
+1. Check query.py for how Ollama responses are captured — is there a streaming
+   path that could lose data?
+2. Check if Ollama's /api/chat vs /v1/ endpoint difference matters here
+   (known issue: /v1/ ignores num_ctx)
+3. Look for error logs from that run date (2026-04-07)
+4. Determine if this is a one-off or affects other local model runs
+
+## Exit criteria
+- Root cause identified
+- Fix applied if it's a code bug
+- Decision on whether to re-run gemma4-26b-run1
