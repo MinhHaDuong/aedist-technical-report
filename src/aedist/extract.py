@@ -1,15 +1,11 @@
 """Extract CSV tables from LLM JSON responses.
 
-The `aedist.query` command stores one JSON per model per day in:
-  outputs/llm_direct/YYYY-MM-DD/<model>.json
-
-Those JSON files contain the raw assistant text, which usually embeds a CSV
-inside Markdown code fences. This script extracts that CSV and writes a clean,
-comma-delimited CSV into the parent output directory so it can be evaluated.
+Each JSON file contains raw assistant text which usually embeds a CSV inside
+Markdown code fences.  This script extracts that CSV, canonicalizes the
+columns, and writes a clean comma-delimited CSV so it can be evaluated.
 
 Usage:
-  python -m aedist.extract --input outputs/llm_direct --output outputs/llm_direct
-  python -m aedist.extract --input outputs/llm_direct/2026-02-16 --output outputs/llm_direct
+  python -m aedist.extract --input outputs/census --output outputs/census
 """
 
 import argparse
@@ -22,6 +18,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
+
+from aedist.util import parse_number
 
 log = logging.getLogger(__name__)
 
@@ -46,15 +44,6 @@ _HEADER_KEYWORDS = (
 )
 # Cap for length bonus normalization (number of lines)
 LENGTH_BONUS_CAP_LINES = 50.0
-
-_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-
-
-def _pick_latest_date_dir(base: Path) -> Path | None:
-    if not base.exists() or not base.is_dir():
-        return None
-    candidates = [p for p in base.iterdir() if p.is_dir() and _DATE_DIR_RE.match(p.name)]
-    return max(candidates, key=lambda p: p.name) if candidates else None
 
 
 def extract_fenced_blocks(text: str) -> list[str]:
@@ -263,15 +252,8 @@ def parse_and_canonicalize(csv_text: str) -> str:
             val = row[idx] if (idx is not None and idx < len(row)) else ""
             cell = (val or "").strip()
             if canon == "capacity_mwe":
-                # Ensure a numeric string to avoid NaNs later in the LP matcher.
-                # Accept "1,200" and similar formatting; default invalid/missing to 0.
-                if not cell:
-                    cell = "0"
-                else:
-                    try:
-                        float(cell.replace(",", ""))
-                    except ValueError:
-                        cell = "0"
+                n = parse_number(cell, integer_expected=True)
+                cell = str(n) if n is not None else "0"
             out_row.append(cell)
         # Skip completely empty lines (shouldn't happen, but safe)
         if not out_row[0]:
@@ -281,6 +263,10 @@ def parse_and_canonicalize(csv_text: str) -> str:
 
 
 def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractResult:
+    out_path = output_dir / f"{json_path.stem}.csv"
+    if out_path.exists() and not overwrite:
+        return ExtractResult(False, out_path, f"{json_path.name}: skip (exists)")
+
     try:
         record = json.loads(json_path.read_text(encoding="utf-8"))
     except Exception as e:
@@ -317,10 +303,6 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(False, None, f"{json_path.name}: CSV parse failed ({e})")
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    out_path = output_dir / f"{json_path.stem}.csv"
-    if out_path.exists() and not overwrite:
-        return ExtractResult(False, out_path, f"{json_path.name}: skip (exists)")
-
     out_path.write_text(canonical_csv, encoding="utf-8")
     return ExtractResult(True, out_path, f"{json_path.name}: wrote {out_path.name}")
 
@@ -331,7 +313,7 @@ def main() -> None:
     p.add_argument(
         "--input",
         required=True,
-        help="Directory containing JSON outputs (either a date dir or its parent)",
+        help="Directory containing JSON outputs",
     )
     p.add_argument(
         "--output",
@@ -344,18 +326,12 @@ def main() -> None:
     input_dir = Path(args.input)
     output_dir = Path(args.output)
 
-    json_dir = input_dir
-    if input_dir.is_dir() and not any(input_dir.glob("*.json")):
-        latest = _pick_latest_date_dir(input_dir)
-        if latest:
-            json_dir = latest
+    if not input_dir.exists() or not input_dir.is_dir():
+        raise SystemExit(f"Input dir not found: {input_dir}")
 
-    if not json_dir.exists() or not json_dir.is_dir():
-        raise SystemExit(f"Input dir not found: {json_dir}")
-
-    json_files = sorted(json_dir.glob("*.json"))
+    json_files = sorted(input_dir.glob("*.json"))
     if not json_files:
-        raise SystemExit(f"No JSON files in: {json_dir}")
+        raise SystemExit(f"No JSON files in: {input_dir}")
 
     wrote = 0
     failed = 0
@@ -370,7 +346,7 @@ def main() -> None:
         else:
             failed += 1
 
-    log.info("Done. wrote=%d skipped=%d failed=%d (from %s)", wrote, skipped, failed, json_dir)
+    log.info("Done. wrote=%d skipped=%d failed=%d (from %s)", wrote, skipped, failed, input_dir)
     if wrote == 0 and failed > 0:
         sys.exit(2)
 
