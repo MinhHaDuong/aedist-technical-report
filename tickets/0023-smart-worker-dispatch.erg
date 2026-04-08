@@ -22,9 +22,9 @@ jobs should describe what they need, workers should self-select.
   - **Endpoint:** model ID with `/` needs OpenRouter, without needs Ollama.
   - **Mode:** which query functions the worker supports.
 - `poll()` scans the queue, skips jobs the worker can't handle.
-- Padme worker self-excludes: on startup check a lockfile (like ticket
-  `.wip` pattern). If another Padme is running, exit immediately (GPU
-  is single-tenant).
+- Padme worker probes GPU capacity directly: query Ollama API
+  (`/api/tags` or `/api/ps`) to check availability and loaded models.
+  If GPU is busy or unreachable, skip local-model jobs.
 - Mode dispatch in `execute()`: map `job.mode` to the correct query
   function (query_single_turn, query_multiturn, query_rag, etc.).
 
@@ -34,7 +34,7 @@ jobs should describe what they need, workers should self-select.
 3. Merge PadmeWorker/OpenRouterWorker into capability-based subclasses
    or a single configurable Worker
 4. Add mode dispatch in `execute()` (single/multiturn/rag/web/decomposed)
-5. Add Padme singleton lockfile check on startup
+5. Probe Ollama `/api/tags` or `/api/ps` for GPU availability
 6. Remove `WorkerPool` enum and `worker_pool` from JobSpec/sweep YAMLs
 7. Update Makefile: just spawn N workers + 1 padme worker
 
@@ -42,5 +42,5 @@ jobs should describe what they need, workers should self-select.
 - Workers self-select jobs by inspecting model ID and mode
 - No pool metadata on jobs
 - All 5 modes dispatched correctly
-- Padme enforces single-instance via lockfile
+- Padme checks GPU availability via Ollama API
 - All tests pass
