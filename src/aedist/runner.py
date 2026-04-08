@@ -235,8 +235,38 @@ def _metrics_to_runrecord(
     )
 
 
+def _evaluate_csv(csv_file: Path, reference: list, project_root: Path) -> tuple:
+    """Evaluate one CSV against reference. Returns (record, json_companion_resolved).
+
+    Designed to be called from ProcessPoolExecutor.
+    """
+    system = load_plants_csv(csv_file)
+    if not system:
+        return None, None
+    entries = reconcile(reference, system)
+    metrics = compute_metrics(entries)
+    label = f"{csv_file.parent.name}/{csv_file.stem}"
+    try:
+        rel_path = str(csv_file.resolve().relative_to(project_root))
+    except ValueError:
+        rel_path = str(csv_file)
+    record = _metrics_to_runrecord(metrics, label, rel_path)
+    json_companion = csv_file.with_suffix(".json")
+    json_resolved = None
+    if json_companion.exists():
+        _backfill_resource_use(record, json_companion)
+        json_resolved = json_companion.resolve()
+    return record, json_resolved
+
+
 def cmd_evaluate_all(args: argparse.Namespace) -> None:
-    """Evaluate all CSV files in the outputs directory."""
+    """Evaluate all CSV/JSON files in the outputs directory.
+
+    Incremental by default: skips files older than measurements.jsonl.
+    Use --full to force a complete rebuild.
+    """
+    from concurrent.futures import ProcessPoolExecutor
+
     outputs_dir = Path(args.outputs_dir) if args.outputs_dir else Path("outputs")
     ref_path = Path(args.reference) if args.reference else _DEFAULT_REF
     result_dir = Path(args.output) if args.output else Path("results/summary")
@@ -248,59 +278,93 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
         else result_dir / "measurements.jsonl"
     )
 
+    full_rebuild = getattr(args, "full", False)
+
     # Compute project root for relative paths in RunRecords.
-    # Walk up from measurements_path to find the repo root (contains pyproject.toml).
     project_root = measurements_path.resolve().parent
     for _ in range(10):
         if (project_root / "pyproject.toml").exists():
             break
         project_root = project_root.parent
 
+    # Incremental: load existing records and note mtime cutoff
+    from .schema import MethodParams, ResultSummary, RunRecord
+
+    existing_records: list[RunRecord] = []
+    existing_keys: set[str] = set()
+    mtime_cutoff = 0.0
+
+    if not full_rebuild and measurements_path.exists():
+        existing_records = RunRecord.load_jsonl(measurements_path)
+        existing_keys = {r.result_file for r in existing_records}
+        mtime_cutoff = measurements_path.stat().st_mtime
+
     reference = load_plants_csv(ref_path)
     new_records: list = []
+    skipped = 0
 
     evaluated_jsons: set[Path] = set()
 
-    # Walk only immediate subdirs of outputs_dir — no recursion into
-    # _extracted/ or legacy dirs (llm_direct, rag_curated, etc.)
+    # Walk only immediate subdirs of outputs_dir
     subdirs = sorted(p for p in outputs_dir.iterdir() if p.is_dir() and not p.name.startswith("_"))
+
+    # Collect CSV files, filtering stale ones for incremental mode
+    csv_files = []
     for subdir in subdirs:
         for csv_file in sorted(subdir.glob("*.csv")):
-            system = load_plants_csv(csv_file)
-            if not system:
-                continue
-            entries = reconcile(reference, system)
-            metrics = compute_metrics(entries)
-            label = f"{csv_file.parent.name}/{csv_file.stem}"
             try:
                 rel_path = str(csv_file.resolve().relative_to(project_root))
             except ValueError:
                 rel_path = str(csv_file)
-            record = _metrics_to_runrecord(metrics, label, rel_path)
-            # Backfill resource_use from companion JSON
-            json_companion = csv_file.with_suffix(".json")
-            if json_companion.exists():
-                _backfill_resource_use(record, json_companion)
-                evaluated_jsons.add(json_companion.resolve())
-            new_records.append(record)
-            log.info(
-                "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)  $%.4f",
-                label.ljust(50),
-                metrics.coverage * 100,
-                metrics.precision * 100,
-                metrics.f1 * 100,
-                metrics.n_matched,
-                metrics.n_reference,
-                record.resource_use.cost_usd or 0,
-            )
+            if not full_rebuild and rel_path in existing_keys:
+                if csv_file.stat().st_mtime < mtime_cutoff:
+                    skipped += 1
+                    # Still track companion JSON as evaluated
+                    jc = csv_file.with_suffix(".json")
+                    if jc.exists():
+                        evaluated_jsons.add(jc.resolve())
+                    continue
+            csv_files.append(csv_file)
+
+    # Evaluate CSVs in parallel
+    if csv_files:
+        with ProcessPoolExecutor() as pool:
+            futures = [
+                pool.submit(_evaluate_csv, f, reference, project_root)
+                for f in csv_files
+            ]
+            for future in futures:
+                record, json_resolved = future.result()
+                if record is None:
+                    continue
+                if json_resolved:
+                    evaluated_jsons.add(json_resolved)
+                new_records.append(record)
+                s = record.result_summary
+                log.info(
+                    "%s  cov=%.1f%%  prec=%.1f%%  F1=%.1f%%  (%d/%d)  $%.4f",
+                    record.result_file.ljust(50) if record.result_file else "?",
+                    (s.tp / max(s.tp + s.fn, 1)) * 100,
+                    (s.tp / max(s.tp + s.fp, 1)) * 100,
+                    (s.f1 or 0) * 100,
+                    s.tp or 0,
+                    (s.tp or 0) + (s.fn or 0),
+                    record.resource_use.cost_usd or 0,
+                )
 
     # Second pass: qualitative results (JSONs with no companion CSV)
-    from .schema import MethodParams, ResultSummary, RunRecord
-
     for subdir in subdirs:
         for json_file in sorted(subdir.glob("*-run*.json")):
             if json_file.resolve() in evaluated_jsons:
                 continue
+            try:
+                rel_path = str(json_file.resolve().relative_to(project_root))
+            except ValueError:
+                rel_path = str(json_file)
+            if not full_rebuild and rel_path in existing_keys:
+                if json_file.stat().st_mtime < mtime_cutoff:
+                    skipped += 1
+                    continue
             try:
                 raw = json.loads(json_file.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
@@ -309,10 +373,6 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
             if "model" not in raw:
                 continue
             dir_name = json_file.parent.name
-            try:
-                rel_path = str(json_file.resolve().relative_to(project_root))
-            except ValueError:
-                rel_path = str(json_file)
             record = RunRecord(
                 method=_infer_method(dir_name),
                 method_params=MethodParams(
@@ -331,13 +391,22 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
                 record.resource_use.cost_usd or 0,
             )
 
-    # Write measurements.jsonl (full rebuild — no merge with existing)
-    if new_records:
-        RunRecord.save_jsonl(new_records, measurements_path)
+    # Merge: keep existing records for files we skipped, add new/updated ones
+    if full_rebuild:
+        merged = new_records
+    else:
+        new_keys = {r.result_file for r in new_records}
+        kept = [r for r in existing_records if r.result_file not in new_keys]
+        merged = kept + new_records
+
+    if merged:
+        RunRecord.save_jsonl(merged, measurements_path)
         log.info(
-            "Measurements: %s (%d entries)",
+            "Measurements: %s (%d entries, %d new, %d unchanged)",
             measurements_path,
+            len(merged),
             len(new_records),
+            skipped,
         )
 
 
@@ -427,6 +496,10 @@ def main() -> None:
     p_all.add_argument("--output", help="Directory for summary output")
     p_all.add_argument(
         "--measurements-output", help="Path to measurements.jsonl (also writes RunRecords)"
+    )
+    p_all.add_argument(
+        "--full", action="store_true",
+        help="Full rebuild (default: incremental, skip files older than measurements.jsonl)",
     )
 
     args = parser.parse_args()
