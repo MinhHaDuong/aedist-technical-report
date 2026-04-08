@@ -1,0 +1,22 @@
+{
+  "run_id": "11a7c4f7b406",
+  "timestamp": "2026-04-08T19:52:18.055225Z",
+  "method": "rag",
+  "method_params": {
+    "model": "qwen3.5-9b-consolidated",
+    "prompt_version": "rag_consistency"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/qwen3.5-9b-consolidated.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 23,
+    "tp": 23,
+    "fp": 0,
+    "fn": 140,
+    "f1": 0.2473,
+    "fuel_accuracy": 0.6087,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.0
+  }
+}

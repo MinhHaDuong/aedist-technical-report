@@ -1,0 +1,33 @@
+{
+  "run_id": "ece74a27e5cc",
+  "timestamp": "2026-04-08T19:49:56.663598Z",
+  "method": "single",
+  "method_params": {
+    "model": "qwen/qwen3.6-plus-preview:free",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Alibaba",
+      "context_window": 1000000
+    }
+  },
+  "resource_use": {
+    "wall_s": 223.802,
+    "tokens_in": 63,
+    "tokens_out": 6384
+  },
+  "result_file": "experiments/outputs/census/qwen3.6-plus-preview-free-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 26,
+    "tp": 26,
+    "fp": 0,
+    "fn": 137,
+    "f1": 0.2751,
+    "fuel_accuracy": 0.4615,
+    "status_accuracy": 0.0385,
+    "province_accuracy": 0.7692
+  }
+}

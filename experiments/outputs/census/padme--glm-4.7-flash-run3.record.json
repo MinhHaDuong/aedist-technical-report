@@ -1,0 +1,33 @@
+{
+  "run_id": "0d069412fd30",
+  "timestamp": "2026-04-08T19:49:39.536397Z",
+  "method": "single",
+  "method_params": {
+    "model": "glm-4.7-flash",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 76.962,
+    "tokens_in": 58,
+    "tokens_out": 4740
+  },
+  "result_file": "experiments/outputs/census/padme--glm-4.7-flash-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 44,
+    "tp": 44,
+    "fp": 0,
+    "fn": 119,
+    "f1": 0.4251,
+    "fuel_accuracy": 0.5909,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.6136
+  }
+}

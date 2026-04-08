@@ -1,0 +1,33 @@
+{
+  "run_id": "d2f47d19514a",
+  "timestamp": "2026-04-08T19:50:58.166382Z",
+  "method": "rag",
+  "method_params": {
+    "model": "cogito:8b",
+    "prompt_version": "rag",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 22.639,
+    "tokens_in": 67588,
+    "tokens_out": 514
+  },
+  "result_file": "experiments/outputs/rag/cogito-8b-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 22,
+    "tp": 22,
+    "fp": 0,
+    "fn": 141,
+    "f1": 0.2378,
+    "fuel_accuracy": 0.2727,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.0
+  }
+}

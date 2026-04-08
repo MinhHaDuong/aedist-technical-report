@@ -1,0 +1,22 @@
+{
+  "run_id": "7d12a9426e0c",
+  "timestamp": "2026-04-08T19:52:24.750934Z",
+  "method": "single",
+  "method_params": {
+    "model": "cogito-8b",
+    "prompt_version": "_extracted"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/_extracted/cogito-8b-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 31,
+    "tp": 31,
+    "fp": 0,
+    "fn": 132,
+    "f1": 0.3196,
+    "fuel_accuracy": 0.3226,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.5161
+  }
+}

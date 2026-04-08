@@ -1,0 +1,71 @@
+name,fuel,status,cod,province,capacity_mwe
+Uông Bí,coal,Operating,Pre-2011,Quảng Ninh,105.0
+Uông Bí mở rộng II,coal,Operating,2011,Quảng Ninh,330.0
+Phả Lai I,coal,Operating,Pre-2011,Bắc Giang,440.0
+Phả Lai II,coal,Operating,Pre-2011,Bắc Giang,600.0
+Ninh Bình,coal,Operating,Pre-2011,Ninh Bình,100.0
+Hải Phòng I,coal,Operating,Pre-2011,Hải Phòng,300.0
+Quảng Ninh I,coal,Operating,Pre-2011,Quảng Ninh,300.0
+Na Dương,coal,Operating,Pre-2011,Lạng Sơn,111.0
+Cao Nhan,coal,Operating,Pre-2011,NA,115.0
+Cẩm Phả,coal,Operating,Pre-2011,Quảng Ninh,600.0
+Sơn Đồng,coal,Operating,Pre-2011,Bắc Giang,220.0
+Formosa (Hà Tĩnh),coal,Operating,Pre-2011,Hà Tĩnh,150.0
+Thủ Đức,oil,Operating,Pre-2011,TP HCM,165.0
+Cần Thơ,oil,Operating,Pre-2011,Cần Thơ,33.0
+Ô Môn I,oil,Operating,Pre-2011,Cần Thơ,330.0
+Hiệp Phước,oil,Operating,Pre-2011,TP HCM,375.0
+Bourbon,oil,Operating,Pre-2011,NA,24.0
+Phú Mỹ I,local_natural_gas,Operating,Pre-2011,Bà Rịa - Vũng Tàu,1090.0
+Phú Mỹ II.1,local_natural_gas,Operating,Pre-2011,Bà Rịa - Vũng Tàu,900.0
+Phú Mỹ IV,local_natural_gas,Operating,Pre-2011,Bà Rịa - Vũng Tàu,450.0
+Thu Duc,local_natural_gas,Operating,Pre-2011,TP HCM,128.0
+Can Tho,local_natural_gas,Operating,Pre-2011,Cần Thơ,150.0
+Bà Rịa,local_natural_gas,Operating,Pre -2011,Bà Rịa - Vũng Tàu,389.0
+Nhơn Trạch I,local_natural_gas,Operating,Pre-2011,Đồng Nai,465.0
+Nhơn Trạch II,local_natural_gas,Operating,2011,Đồng Nai,750.0
+Cà Mau I,local_natural_gas,Operating,Pre-2011,Cà Mau,750.0
+Cà Mau II,local_natural_gas,Operating,Pre-2011,Cà Mau,750.0
+Phú Mỹ II.2 BOT,local_natural_gas,Operating,Pre-2011,Bà Rịa - Vũng Tàu,740.0
+Phú Mỹ III BOT,local_natural_gas,Operating,Pre-2011,Bà Rịa - Vũng Tàu,740.0
+Vê Dan,local_natural_gas,Operating,Pre-2011,NA,72.0
+Duyên Hải 1,coal,Operating,2017,Trà Vinh,1244.0
+Duyên Hải 3,coal,Operating,2017,Trà Vinh,1245.0
+Nghi Sơn 1,coal,Operating,2017,Thanh Hóa,600.0
+Vĩnh Tân 2,coal,Operating,2017,Bình Thuận,1244.0
+Móng Dương 1,coal,Operating,2017,Quảng Ninh,1080.0
+Thái Bình,coal,Under Construction,2018 (Planned),Thái Bình,600.0
+Vĩnh Tân 4,coal,Under Construction,2018 (Planned),Bình Thuận,1200.0
+Nghi Sơn II,coal,Under Construction,2022-2023 (Planned),Thanh Hóa,1200.0
+Vũng Áng II,coal,Under Construction,2021-2022 (Planned),Hà Tĩnh,1200.0
+Hải Dương,coal,Under Construction,2021-2022 (Planned),Hải Dương,1200.0
+Nam Định I,coal,Under Construction,2021-2022 (Planned),Nam Định,1200.0
+Quảng Trạch I,coal,Under Construction,2021-2022 (Planned),Quảng Bình,1200.0
+Long Phú II,coal,Under Construction,2021-2022 (Planned),Sóc Trăng,1320.0
+Vân Phong I,coal,Under Construction,2022-2023 (Planned),Khánh Hòa,1320.0
+Vĩnh Tân III,coal,Under Construction,2022-2023 (Planned),Bình Thuận,1980.0
+Sông Hậu II,coal,Under Construction,2021-2022 (Planned),Hậu Giang,2000.0
+Long Phú III,coal,Under Construction,2021-2022 (Planned),Sóc Trăng,1800.0
+Quảng Trị,coal,Under Construction,2023-2024 (Planned),Quảng Trị,1200.0
+LNG Quảng Ninh,imported_lng,Planned,2021-2030 (Planned),Quảng Ninh,1500.0
+LNG Thái Bình,imported_lng,Planned,2021-2030 (Planned),Thái Bình,1500.0
+LNG Nghi Sơn,imported_lng,Planned,2021-2030 (Planned),Thanh Hóa,1500.0
+LNG Quảng Trạch II,imported_lng,Planned,2021-2030 (Planned),Quảng Bình,1500.0
+LNG Hải Lăng,imported_lng,Planned,2021-2030 (Planned),Quảng Trị,1500.0
+LNG Cà Ná,imported_lng,Planned,2021-2030 (Planned),Ninh Thuận,1500.0
+Sơn Mỹ II,imported_lng,Planned,2021-2030 (Planned),Bình Thuận,2250.0
+Sơn Mỹ I,imported_lng,Planned,2021-2030 (Planned),Bình Thuận,2250.0
+LNG Long Sơn,imported_lng,Planned,2031-2035 (Planned),Bà Rịa - Vũng Tàu,1500.0
+Nhơn Trạch 3 & 4,imported_lng,Planned,2021-2030 (Planned),Đồng Nai,1624.0
+LNG Hiệp Phước,imported_lng,Planned,2021-2030 (Planned),TP HCM,1200.0
+LNG Long An I,imported_lng,Planned,2021-2030 (Planned),Long An,1500.0
+LNG Long An II,imported_lng,Planned,2031-2035 (Planned),Long An,1500.0
+LNG Bạc Liêu,imported_lng,Planned,2021 -2030 (Planned),Bạc Liêu,3200.0
+TBKHH Ô Môn III,local_natural_gas,Under Construction,2025 (Planned),Cần Thơ,750.0
+TBKHH Ô Môn IV,local_natural_gas,Under Construction,2023 (Planned),Cần Thơ,750.0
+TBKHH Kiên Giang I,local_natural_gas,Planned,2021 (Planned),Kiên Giang,750.0
+TBKHH Kiên Giang II,local_natural_gas,Planned,2022 (Planned),Kiên Giang,750.0
+TBKHH Miền Trung I,local_natural_gas,Planned,2023 (Planned),Quảng Trị/Quảng Ngãi,750.0
+TBKHH Dung Quất I,local_natural_gas,Planned,2024 (Planned),Quảng Ngãi,750.0
+TBKHH Dung Quất II,local_natural_gas,Planned,2024 (Planned),Quảng Ngãi,750.0
+TBKHH Sơn Mỹ II,local_natural_gas,Planned,2023-2025 (Planned),Bình Thuận,2250.0

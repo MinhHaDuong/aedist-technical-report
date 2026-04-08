@@ -1,0 +1,25 @@
+{
+  "run_id": "2bc20e45e783",
+  "timestamp": "2026-04-08T19:54:23.357427Z",
+  "method": "single",
+  "method_params": {
+    "model": "qwen3.5:2b",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 43.625,
+    "tokens_in": 63,
+    "tokens_out": 4462
+  },
+  "result_file": "experiments/outputs/census/padme-qwen3.5-2b-run3.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "run_id": "e3d48cf89a8c",
+  "timestamp": "2026-04-08T19:49:36.429947Z",
+  "method": "single",
+  "method_params": {
+    "model": "devstral-small-2",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 51.744,
+    "tokens_in": 611,
+    "tokens_out": 1256
+  },
+  "result_file": "experiments/outputs/census/padme--devstral-small-2-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 37,
+    "tp": 37,
+    "fp": 0,
+    "fn": 126,
+    "f1": 0.37,
+    "fuel_accuracy": 0.5946,
+    "status_accuracy": 0.5135,
+    "province_accuracy": 0.4643
+  }
+}

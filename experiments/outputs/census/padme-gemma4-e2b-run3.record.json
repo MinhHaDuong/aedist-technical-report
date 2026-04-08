@@ -1,0 +1,25 @@
+{
+  "run_id": "6733027e079f",
+  "timestamp": "2026-04-08T19:54:13.686622Z",
+  "method": "single",
+  "method_params": {
+    "model": "gemma4:e2b",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 4.991,
+    "tokens_in": 67,
+    "tokens_out": 610
+  },
+  "result_file": "experiments/outputs/census/padme-gemma4-e2b-run3.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}
