@@ -15,6 +15,7 @@ import logging
 import statistics
 from pathlib import Path
 
+from .stats import paired_bootstrap_test
 from .tabulate_utils import format_model_name, strip_label
 
 log = logging.getLogger(__name__)
@@ -62,11 +63,20 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
 
     rows = []
     for slug in common_slugs:
-        f1_base = statistics.median(e["f1"] for e in census[slug])
-        f1_rag = statistics.median(e["f1"] for e in rag[slug])
+        f1_base_vals = [e["f1"] for e in census[slug]]
+        f1_rag_vals = [e["f1"] for e in rag[slug]]
+        f1_base = statistics.median(f1_base_vals)
+        f1_rag = statistics.median(f1_rag_vals)
         cov_base = statistics.median(e["coverage"] for e in census[slug])
         cov_rag = statistics.median(e["coverage"] for e in rag[slug])
         delta = f1_rag - f1_base
+
+        # Paired significance test (requires equal-length samples)
+        if len(f1_base_vals) == len(f1_rag_vals) and len(f1_base_vals) > 1:
+            p_value = paired_bootstrap_test(f1_rag_vals, f1_base_vals, seed=42)
+        else:
+            p_value = None
+
         rows.append(
             {
                 "slug": slug,
@@ -75,6 +85,7 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
                 "cov_base": cov_base,
                 "cov_rag": cov_rag,
                 "delta": delta,
+                "p_value": p_value,
             }
         )
 
@@ -101,6 +112,14 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         cr = f"{row['cov_rag'] * 100:.1f}\\%"
         sign = "+" if row["delta"] >= 0 else ""
         delta = f"{sign}{row['delta'] * 100:.1f}\\%"
+
+        # Significance markers
+        p = row.get("p_value")
+        if p is not None and p < 0.01:
+            delta += "**"
+        elif p is not None and p < 0.05:
+            delta += "*"
+
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     lines.append("\\end{longtable}")

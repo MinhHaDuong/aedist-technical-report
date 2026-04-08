@@ -9,7 +9,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from .tabulate_utils import format_model_name, group_and_summarize
+from .tabulate_utils import format_model_name, group_and_summarize_with_stats
 
 log = logging.getLogger(__name__)
 
@@ -26,14 +26,24 @@ def _is_census(entry: dict) -> bool:
     return entry.get("label", "").startswith(_CENSUS_PREFIX)
 
 
+def _format_f1(row: dict) -> str:
+    """Format F1 as 'mean ± std' when multiple runs exist, else plain value."""
+    f1_pct = row["f1"] * 100
+    if row["n_runs"] > 1:
+        std_pct = row["f1_std"] * 100
+        return f"{f1_pct:.1f} $\\pm$ {std_pct:.1f}\\%"
+    return f"{f1_pct:.1f}\\%"
+
+
 def generate_census_table(metrics: list[dict]) -> str:
     """Generate a LaTeX longtable from per-run metrics."""
-    rows = group_and_summarize(metrics, filter_fn=_is_census)
+    rows = group_and_summarize_with_stats(metrics, filter_fn=_is_census)
 
     lines = [
         "% Auto-generated — do not edit",
         "\\begin{longtable}[]{@{}lrrrr@{}}",
-        "\\caption{Model census: single-shot F1 scores (median of 3 runs)}\\label{tab:census}\\\\",
+        "\\caption{Model census: single-shot F1 scores"
+        " (mean $\\pm$ std, 3 runs)}\\label{tab:census}\\\\",
         "\\toprule",
         "Model & F1 & Precision & Recall & Matched \\\\",
         "\\midrule",
@@ -44,7 +54,7 @@ def generate_census_table(metrics: list[dict]) -> str:
 
     for row in rows:
         name = format_model_name(row["slug"])
-        f1 = f"{row['f1'] * 100:.1f}\\%"
+        f1 = _format_f1(row)
         prec = f"{row['precision'] * 100:.1f}\\%"
         recall = f"{row['coverage'] * 100:.1f}\\%"
         matched = f"{row['n_matched']}/{row['n_reference']}"
