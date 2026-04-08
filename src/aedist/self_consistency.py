@@ -23,7 +23,7 @@ from pathlib import Path
 from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
-from .runner import _DEFAULT_REF, load_plants_csv
+from .evaluate import _DEFAULT_REF, load_plants_csv
 from .schema import (
     FuelType,
     Method,

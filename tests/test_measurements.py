@@ -182,57 +182,57 @@ class TestInferMethod:
     """_infer_method maps subdirectory names to Method enum values."""
 
     def test_census(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("census") == "single"
 
     def test_multiturn(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("multiturn") == "multiturn"
 
     def test_rag(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("rag") == "rag"
 
     def test_rag_consistency_is_rag(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("rag_consistency") == "rag"
 
     def test_web(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("web") == "web"
 
     def test_decomposed(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("decomposed") == "decomposed"
 
     def test_sourced(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("sourced") == "sourced"
 
     def test_frontier(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("frontier") == "frontier"
 
     def test_frontier_scenarios(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("frontier_scenarios") == "frontier"
 
     def test_verification(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("verification") == "verification"
 
     def test_unknown_defaults_to_single(self):
-        from aedist.runner import _infer_method
+        from aedist.evaluate import _infer_method
 
         assert _infer_method("some_new_sweep") == "single"
 

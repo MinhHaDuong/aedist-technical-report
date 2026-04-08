@@ -24,8 +24,8 @@ check: test
 #
 # measurements.jsonl is rebuilt from all experiments/outputs/*/ by:
 #   1. Extracting CSVs from structured conditions (extract.py)
-#   2. Evaluating CSVs against reference (runner.py evaluate-all)
-#   3. Ingesting qualitative results (frontier etc.) as resource_use only
+#   2. Evaluating each CSV against reference (evaluate.py evaluate)
+#   3. Assembling record JSONs into measurements.jsonl (evaluate.py assemble)
 
 $(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json) $(wildcard experiments/outputs/*/*.csv)
 	$(MAKE) -C experiments ../measurements.jsonl
