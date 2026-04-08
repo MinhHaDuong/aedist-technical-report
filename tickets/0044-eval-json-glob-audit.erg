@@ -1,0 +1,28 @@
+%erg v1
+Title: Audit all JSON globs for .eval.json filtering
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T19:30Z claude created from anti-pattern sweep after ticket 0043
+
+--- body ---
+## Context
+Ticket 0043 fixed extract.py's glob to skip .eval.json files. The same
+anti-pattern exists in other modules that glob *.json in output directories.
+
+## Instances found
+- analyze_multiturn_budget.py:25 — `output_dir.glob("*.json")` unfiltered,
+  will load .eval.json files if present
+- self_consistency.py:144 — safe (regex filters to -runN.json pattern)
+- verify.py:632 — uses assistant_turns[-1] only; may be intentional for
+  per-turn verification but should be reviewed
+
+## Actions
+1. Add .eval.json filter to analyze_multiturn_budget.py
+2. Review verify.py last-turn-only logic — is it intentional?
+3. Grep for any other *.json globs added after this sweep
+
+## Exit criteria
+- No module loads .eval.json by accident
