@@ -492,16 +492,84 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 99\
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{From benchmark to pipeline}
+\begin{frame}{What this pilot measured --- and what it didn't}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{What the pilot establishes:}
+\begin{itemize}
+  \item Method conditions (RAG, decomposition, aggregation)
+        dominate model choice
+  \item Off-the-shelf pipeline recovers 99\% of an expert
+        inventory for \$0.06
+  \item Feasibility of automated evaluation via
+        fuzzy reconciliation
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{What it cannot distinguish:}
+\begin{itemize}
+  \item \textbf{Extraction vs.\ recall} --- models trained on
+        PDP7/PDP8 may be reciting, not extracting
+  \item \textbf{Task-specific vs.\ general} --- one reference
+        (N=163), one country, one sector
+  \item \textbf{Signal vs.\ noise} --- 3 runs, point F1,
+        no confidence intervals
+  \item \textbf{Method interactions} --- axes tested
+        separately, never composed
+\end{itemize}
+\end{columns}
+
+\medskip
+\centering\small
+These are not flaws --- they are \textbf{design requirements} for the full instrument.
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{From pilot to instrument}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Requirements derived from the pilot:}
+
+\medskip
+\begin{tabular}{@{}lp{4.2cm}@{}}
+\toprule
+\textbf{Pilot gap} & \textbf{Instrument spec} \\
+\midrule
+1 task, 1 country     & Task battery: 4+ countries
+                        and sectors \\[3pt]
+Memorization risk     & Synthetic reference
+                        (adversarial control) \\[3pt]
+Flat method enum      & Composable pipeline:
+                        knowledge $\times$ conversation
+                        $\times$ decomposition
+                        $\times$ verification \\[3pt]
+No uncertainty        & Bootstrap CIs,
+                        paired significance tests \\[3pt]
+Matching confound     & Sensitivity sweep
+                        on fuzzy threshold \\
+\bottomrule
+\end{tabular}
+
+\column{0.42\textwidth}
+\textbf{What the pilot validated:}
 \begin{enumerate}
-  \item \textbf{Stack conditions:} decomposition + union vote + RAG --- does the combination reach 100\%?
-  \item \textbf{Unexplored axes:} reasoning effort, Vietnamese prompts, few-shot, verification pass
-  \item \textbf{Document pipeline:} Marker + Mistral OCR for automated source ingestion (6 converters benchmarked)
-  \item \textbf{Scale test:} second country / second sector to validate method generality
-  \item \textbf{Production:} AEDIST pipeline where benchmark measurements become the quality audit log
+  \item Schema works (Plant, RunRecord, reconciliation)
+  \item Evaluation pipeline is reproducible and
+        resume-safe
+  \item Manager/worker dispatch scales to 37 models
+  \item Cost tracking is precise (\$0.82 auditable)
+  \item measurements.jsonl as single source of truth
 \end{enumerate}
 
-\bigskip
+\medskip
+\textbf{The pilot de-risks the instrument.}\\
+{\small The pipeline exists. The question is whether the
+findings generalize.}
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{}
 \begin{center}
 \large\textbf{Thank you!}
 
