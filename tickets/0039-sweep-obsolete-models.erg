@@ -1,11 +1,12 @@
 %erg v1
 Title: Sweep obsolete models from the registry
-Status: open
+Status: closed
 Created: 2026-04-08
 Author: claude
 
 --- log ---
 2026-04-08T14:00Z claude created
+2026-04-08T18:00Z claude status closed — removed 5 models: o3-deep-research (broken), qwen3.5-27b (token overflow), gemma4:26b (unreliable), sonar-deep-research (overpriced), glm-5 (superseded by glm-5-turbo)
 
 --- body ---
 ## Context

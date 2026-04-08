@@ -33,7 +33,6 @@ model_ids = [
     "minimax/minimax-m2.7",
     "z-ai/glm-5-turbo",
     "xiaomi/mimo-v2-pro",
-    "qwen/qwen3.5-27b",
     "qwen/qwen3.5-35b-a3b",
     "qwen/qwen3.5-122b-a10b",
     "nvidia/nemotron-3-nano-30b-a3b",
@@ -52,7 +51,6 @@ model_ids = [
 model_ids = [
     "qwen3.5:122b",
     "qwen3.5:35b",
-    "qwen3.5:27b",
     "qwen3.5:9b",
     "qwen3.5:4b",
     "qwen3.5:2b",
@@ -60,7 +58,6 @@ model_ids = [
     "glm-4.7-flash",
     "nemotron-3-nano",
     "devstral-small-2",
-    "gemma4:26b",
     "gemma4:31b",
     "gemma4:e4b",
     "gemma4:e2b",
@@ -77,8 +74,6 @@ model_ids = [
 
 [sets.frontier_10labs]
 model_ids = [
-    "openai/o3-deep-research",
-    "perplexity/sonar-deep-research",
     "alibaba/tongyi-deepresearch-30b-a3b",
     "openai/o3",
     "deepseek/deepseek-r1-0528",
@@ -96,7 +91,6 @@ model_ids = [
 [sets.frontier_cn]
 model_ids = [
     "z-ai/glm-5-turbo",
-    "z-ai/glm-5",
     "deepseek/deepseek-v3.2",
     "qwen/qwen3-max-thinking",
     "minimax/minimax-m2.7",
@@ -113,7 +107,6 @@ model_ids = [
     "granite3.3:8b",
     "qwen3.5:9b",
     "qwen3.5:35b",
-    "gemma4:26b",
     "qwen3.5:4b",
     "qwen3.5:2b",
     "gemma4:e4b",

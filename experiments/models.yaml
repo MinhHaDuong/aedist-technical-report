@@ -1,7 +1,15 @@
 # AEDIST Benchmark — Model Registry
-# 52 model instances, updated 2026-04-07
+# 46 model instances, updated 2026-04-08
 # Single source of truth. Experiment config in experiments.toml.
 # Sorted by size class, then provider.
+#
+# Removed 2026-04-08:
+#   openai/o3-deep-research    — broken: $1.96 empty response, finish_reason=length
+#   perplexity/sonar-deep-research — overpriced: 9x costlier than DeepSeek R1
+#   z-ai/glm-5                 — superseded by GLM-5 Turbo
+#   qwen/qwen3.5-27b           — broken: token overflow, 15x cost spike on run 3
+#   qwen3.5:27b                 — broken: same model as above, local variant
+#   gemma4:26b                  — unreliable: empty response in RAG run 1
 
 # --- Frontier ---
 
@@ -113,19 +121,6 @@
   size_class: frontier
   license: commercial
 
-- id: "perplexity/sonar-deep-research"
-  router: openrouter
-  router_model: "perplexity/sonar-deep-research"
-  name: "Sonar Deep Research"
-  provider: Perplexity
-  country: US
-  architecture: dense
-  context_window: 128000
-  price_per_mtok_in: 2.0
-  price_per_mtok_out: 8.0
-  size_class: frontier
-  license: commercial
-
 - id: "x-ai/grok-4.20"
   router: openrouter
   router_model: "x-ai/grok-4.20"
@@ -138,20 +133,6 @@
   price_per_mtok_out: 6.0
   size_class: frontier
   license: commercial
-
-- id: "z-ai/glm-5"
-  router: openrouter
-  router_model: "z-ai/glm-5"
-  name: GLM-5
-  provider: "Zhipu AI"
-  country: CN
-  architecture: moe
-  context_window: 80000
-  price_per_mtok_in: 0.72
-  price_per_mtok_out: 2.3
-  params: "745B MoE (44B active)"
-  size_class: frontier
-  license: open-other
 
 - id: "z-ai/glm-5-turbo"
   router: openrouter
@@ -309,20 +290,6 @@
 
 # --- Medium ---
 
-- id: "qwen/qwen3.5-27b"
-  router: openrouter
-  router_model: "qwen/qwen3.5-27b"
-  name: "Qwen 3.5 27B"
-  provider: Alibaba
-  country: CN
-  architecture: dense
-  context_window: 262144
-  price_per_mtok_in: 0.2
-  price_per_mtok_out: 1.56
-  params: 27B
-  size_class: medium
-  license: open-apache
-
 - id: "qwen/qwen3.5-35b-a3b"
   router: openrouter
   router_model: "qwen/qwen3.5-35b-a3b"
@@ -377,19 +344,6 @@
   size_class: medium
   license: open-other
 
-- id: "gemma4:26b"
-  router: ollama
-  router_model: "gemma4:26b"
-  name: "Gemma 4 26B (local)"
-  provider: "Ollama/Padme"
-  country: US
-  architecture: moe
-  context_window: 131072
-  price_per_mtok_in: 0.0
-  price_per_mtok_out: 0.0
-  size_class: medium
-  license: open-other
-
 - id: "gemma4:31b"
   router: ollama
   router_model: "gemma4:31b"
@@ -428,19 +382,6 @@
   price_per_mtok_out: 0.0
   size_class: medium
   license: open-other
-
-- id: "qwen3.5:27b"
-  router: ollama
-  router_model: "qwen3.5:27b"
-  name: "Qwen 3.5 27B (local)"
-  provider: "Ollama/Padme"
-  country: CN
-  architecture: dense
-  context_window: 131072
-  price_per_mtok_in: 0.0
-  price_per_mtok_out: 0.0
-  size_class: medium
-  license: open-apache
 
 - id: "qwen3.5:35b"
   router: ollama
@@ -702,17 +643,4 @@
   license: commercial
   reasoning: true
 
-- id: "openai/o3-deep-research"
-  router: openrouter
-  router_model: "openai/o3-deep-research"
-  name: "o3 Deep Research"
-  provider: OpenAI
-  country: US
-  architecture: dense
-  context_window: 200000
-  price_per_mtok_in: 10.0
-  price_per_mtok_out: 40.0
-  size_class: frontier
-  license: commercial
-  reasoning: true
 
