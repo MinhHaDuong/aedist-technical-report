@@ -80,23 +80,24 @@ countries and sectors.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The obvious approach (1/2): the table}
+\begin{frame}{The obvious approach (1/2): ask for a table}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Ask Claude:}
+\textbf{One prompt, one model, 30 seconds:}
 \begin{quote}\small\itshape
 List all thermal power plants in Vietnam with their fuel type,
 status, province, and capacity in MWe. Format as CSV.
 \end{quote}
 
 \medskip
-\textbf{You get:} a CSV table of 77 plants in 30 seconds, for \$0.02.
-Names, fuels, capacities, provinces --- zero fabrication,
-but only \textbf{47\%} of the 163 reference plants.
+\textbf{Claude Opus result:}\\
+77 plants, zero fabrication, \$0.02.\\
+That's \textbf{47\%} of the 163 reference plants.
 
 \medskip
-With the right method (RAG + decomposition), a cheap model
-recovers \textbf{163/163} plants. F1 = 98.8\%. Cost: \$0.06.
+With the right method (RAG + decomposition),
+a cheap model recovers \textbf{163/163} plants.\\
+F1 = 98.8\%. Cost: \$0.06.
 
 \column{0.45\textwidth}
 \textbf{So are we done?}
@@ -112,49 +113,51 @@ recovers \textbf{163/163} plants. F1 = 98.8\%. Cost: \$0.06.
 \end{itemize}
 
 \medskip
-The naive approach gives a plausible table.\\
-The question is whether we can \textbf{trust} it ---\\
-without cognitive surrender.
+A plausible table in seconds.\\
+But can we \textbf{trust} it ---\\
+without cognitive surrender?
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The obvious approach (2/2): the report}
+\begin{frame}{The obvious approach (2/2): ask for the full report}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Ask Claude for the full deliverable:}
+\textbf{Reasoning + deep research + subagent flock:}
 \begin{quote}\small\itshape
-Write a technical report on Vietnam's thermal power fleet:
-historico-prospective framing from PDP7 to PDP8,
-asset-by-asset discussion of status and capacity,
-annotated bibliography of primary sources,
-and a synthetic table of all plants.
+Comprehensive inventory: historico-prospective framing
+(PDP7 to PDP8), asset-by-asset sourced discussion,
+statistical summary tables, annotated bibliography
+of primary sources.
 \end{quote}
 
 \medskip
-\textbf{You get:} 15 pages, coherent structure,
-plausible chronology, real document names cited.
-Delivered in 2 minutes for \$0.10.
+\textbf{Claude Opus:} 77k chars, 162 table rows,
+46 source refs, 25 in Vietnamese. \$0.79, 8 min.
+
+\medskip
+\textbf{DeepSeek V3.2:} 85 rows, 32 refs. \$0.004.
+
+\medskip
+{\small 14 models tested across 10 labs, total \$1.23.}
 
 \column{0.45\textwidth}
-\textbf{What's wrong with it?}
+\textbf{Impressive --- and unverifiable:}
 
 \medskip
 \begin{itemize}
-  \item Citations look real but aren't verified
-  \item Plant list is incomplete (same ${\sim}$77, nicely narrated)
-  \item Capacity figures are approximate
-  \item No way to distinguish fact from fabrication
-  \item Updating it means regenerating everything
+  \item 162 rows, but which match reality?
+  \item 46 source refs --- none machine-checked
+  \item Capacity figures: approximate
+  \item 2 models refuse (GPT-5.4, Grok)
+  \item No way to update incrementally
+  \item Would you stake a policy recommendation on it?
 \end{itemize}
 
 \medskip
-The report \emph{reads} like research.\\
-But it isn't --- it's a plausible remix of training data.
-
-\medskip
-\textbf{Our approach:} benchmark the \emph{methods},\\
-build trust from the ground up.
+The output \emph{reads} like an expert report.\\
+The question is how to \textbf{verify} it ---\\
+not whether to accept it on faith.
 \end{columns}
 \end{frame}
 
