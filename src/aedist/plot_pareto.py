@@ -19,45 +19,25 @@ from .tabulate_macros import load_and_summarize
 log = logging.getLogger(__name__)
 
 
-def load_costs(csv_path: Path) -> dict[str, float]:
-    """Load per-run cost from sweep summary CSV.
-
-    Returns {model_slug: cost_per_run} where cost_per_run = total_cost / n_runs.
-    """
-    costs: dict[str, float] = {}
-    with open(csv_path, newline="") as f:
-        for row in csv.DictReader(f):
-            n_runs = int(row["n_runs"])
-            total = float(row["total_cost_usd"])
-            costs[row["model"]] = total / n_runs if n_runs > 0 else 0.0
-    return costs
-
-
-def build_pareto_rows(
-    metrics: list[dict],
-    costs: dict[str, float] | None = None,
-) -> list[dict]:
+def build_pareto_rows(metrics: list[dict]) -> list[dict]:
     """Build rows for the Pareto chart.
 
     Returns list of dicts with keys: model, f1, cost_usd, local.
     Sorted by f1 descending.
 
-    Cost is extracted from the metrics dicts (cost_usd key) unless an
-    explicit costs dict is provided.
+    Cost is computed as per-model mean from metrics cost_usd fields.
     """
     summary = load_and_summarize(metrics)
 
-    # Compute per-model mean cost from metrics if not provided externally
-    if costs is None:
-        from .tabulate_utils import strip_label as slug_from_label
+    from .tabulate_utils import strip_label as slug_from_label
 
-        cost_lists: dict[str, list[float]] = {}
-        for entry in metrics:
-            c = entry.get("cost_usd")
-            if c is not None and c > 0:
-                slug = slug_from_label(entry["label"])
-                cost_lists.setdefault(slug, []).append(c)
-        costs = {slug: sum(vals) / len(vals) for slug, vals in cost_lists.items()}
+    cost_lists: dict[str, list[float]] = {}
+    for entry in metrics:
+        c = entry.get("cost_usd")
+        if c is not None and c > 0:
+            slug = slug_from_label(entry["label"])
+            cost_lists.setdefault(slug, []).append(c)
+    costs = {slug: sum(vals) / len(vals) for slug, vals in cost_lists.items()}
 
     rows = [
         {
@@ -77,7 +57,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate Pareto-front CSV from measurements.jsonl",
     )
-    parser.add_argument("--costs", default=None, help="Path to sweep summary CSV with cost data")
     parser.add_argument("--output", required=True, help="Path to write pareto.csv")
     args = parser.parse_args()
 
@@ -87,12 +66,7 @@ def main() -> None:
 
     metrics = load_metrics()
 
-    costs = None
-    if args.costs:
-        costs = load_costs(Path(args.costs))
-        log.info("Loaded costs for %d models from %s", len(costs), args.costs)
-
-    rows = build_pareto_rows(metrics, costs)
+    rows = build_pareto_rows(metrics)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", newline="") as f:

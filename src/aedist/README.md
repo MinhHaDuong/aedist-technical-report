@@ -81,7 +81,6 @@ Generate LaTeX tables and plot CSVs from `measurements.jsonl`.
 | `compare_converters.py` | Benchmark PDF converters side-by-side |
 | `convert.py` | Legacy results → LaTeX conversion |
 | `select_models.py` | Select top models with diversity constraints |
-| `summarize_sweep.py` | Aggregate 3 runs per model into median metrics |
 | `analyze_multiturn_budget.py` | Detect context window overflow in multi-turn outputs |
 | `util.py` | Shared utilities (strip_diacritics, parse_number) |
 

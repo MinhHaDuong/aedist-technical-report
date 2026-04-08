@@ -269,7 +269,7 @@ def cmd_evaluate_all(args: argparse.Namespace) -> None:
 
     outputs_dir = Path(args.outputs_dir) if args.outputs_dir else Path("outputs")
     ref_path = Path(args.reference) if args.reference else _DEFAULT_REF
-    result_dir = Path(args.output) if args.output else Path("results/summary")
+    result_dir = Path(args.output) if args.output else Path(".")
     result_dir.mkdir(parents=True, exist_ok=True)
 
     measurements_path = (
