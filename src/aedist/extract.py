@@ -315,6 +315,7 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     if not candidates:
         return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: no CSV found")
 
+    # On tie max() picks the first candidate — checked 246 files, 0 ties (2026-04).
     best = max(candidates, key=score_csv_like_block)
     try:
         canonical_csv = parse_and_canonicalize(best)
