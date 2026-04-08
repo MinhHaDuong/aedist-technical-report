@@ -19,7 +19,7 @@
 \section*{Méthodes et stratégies}
 
 \begin{description}
-\item[Agrégation multi-runs] (\emph{self-consistency}) Combinaison des résultats de plusieurs exécutions d'un même modèle, par \emph{vote majoritaire} ou par \emph{union}.
+\item[Agrégation multi-runs] (\emph{self-consistency}) Combinaison des résultats de plusieurs exécutions d'un même modèle pour réduire la variance. Le \emph{vote majoritaire} retient une centrale si elle apparaît dans 2+ runs sur 3~; l'\emph{union} retient une centrale si elle apparaît dans au moins 1 run.
 \item[Chain of Thought] Technique de prompt incitant le modèle à détailler son raisonnement étape par étape avant de répondre.
 \item[Décomposition] (\emph{decomposition}) Stratégie divisant une requête en sous-requêtes par type de combustible (charbon, gaz/GNL, pétrole/autres), puis fusionnant les résultats. Élimine la troncature.
 \item[Few-shot learning] Technique de prompt fournissant quelques exemples de la réponse attendue pour guider le modèle.
@@ -28,7 +28,7 @@
 \item[Réconciliation] (\emph{reconciliation}) Appariement des centrales produites par le système avec celles de la référence, par correspondance exacte et \emph{fuzzy matching}.
 \item[Relance] (\emph{multi-turn, follow-up}) Approche conversationnelle avec messages de suivi pour inciter le modèle à compléter sa réponse.
 \item[Requête directe] (\emph{single-shot}) Envoi d'un seul prompt au modèle, sans relance ni contexte additionnel. Méthode de référence.
-\item[Self-consistency] Agrégation de plusieurs runs pour réduire la variance. Le \emph{vote majoritaire} retient une centrale si elle apparaît dans 2+ runs sur 3~; l'\emph{union} retient une centrale si elle apparaît dans au moins 1 run.
+\item[Self-consistency] Voir \emph{Agrégation multi-runs}.
 \item[Sweep] (\emph{balayage}) Expérimentation à grande échelle paramétrant modèle $\times$ méthode $\times$ répétition.
 \item[Vérification] (\emph{verification}) Post-traitement renvoyant la sortie au modèle (ou à un vérificateur indépendant) pour détecter les hallucinations.
 \end{description}
