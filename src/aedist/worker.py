@@ -143,7 +143,11 @@ class Worker:
         job = self.poll()
         if job is None:
             return None
-        self.acquire(job)
+        try:
+            self.acquire(job)
+        except FileNotFoundError:
+            # Lost race: another worker grabbed this job first. Retry.
+            return self.run_one()
 
         def _timeout_handler(signum: int, frame: object) -> None:
             raise TimeoutError(f"Job {job.job_id} exceeded timeout of {job.timeout_seconds}s")
@@ -220,12 +224,14 @@ class PadmeWorker(Worker):
         model_entry = models[0]
         model_id = model_entry["id"]
 
-        if should_skip(output_dir, model_id, 1, "padme"):
-            log.info("Skip %s (cached)", model_id)
+        run = job.run_number
+
+        if should_skip(output_dir, model_id, run, "padme"):
+            log.info("Skip %s run %d (cached)", model_id, run)
             return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
                     "tokens_out": 0, "result_file": None}
 
-        log.info("Querying %s ...", model_id)
+        log.info("Querying %s run %d ...", model_id, run)
         result = query_single_turn(
             client, model_id, [{"role": "user", "content": prompt}],
         )
@@ -233,13 +239,13 @@ class PadmeWorker(Worker):
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model_entry)
 
-        filepath = output_path(output_dir, model_id, 1, "padme")
+        filepath = output_path(output_dir, model_id, run, "padme")
         save_json(
             filepath,
             {
                 "model": model_id,
                 "date": date.today().isoformat(),
-                "run": 1,
+                "run": run,
                 "prompt": prompt,
                 "response": result["content"],
                 "finish_reason": result["finish_reason"],
@@ -289,12 +295,14 @@ class OpenRouterWorker(Worker):
         model_entry = models[0]
         model_id = model_entry["id"]
 
-        if should_skip(output_dir, model_id, 1):
-            log.info("Skip %s (cached)", model_id)
+        run = job.run_number
+
+        if should_skip(output_dir, model_id, run):
+            log.info("Skip %s run %d (cached)", model_id, run)
             return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
                     "tokens_out": 0, "result_file": None}
 
-        log.info("Querying %s ...", model_id)
+        log.info("Querying %s run %d ...", model_id, run)
         result = query_single_turn(
             client, model_id, [{"role": "user", "content": prompt}],
         )
@@ -302,13 +310,13 @@ class OpenRouterWorker(Worker):
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model_entry)
 
-        filepath = output_path(output_dir, model_id, 1)
+        filepath = output_path(output_dir, model_id, run)
         save_json(
             filepath,
             {
                 "model": model_id,
                 "date": date.today().isoformat(),
-                "run": 1,
+                "run": run,
                 "prompt": prompt,
                 "response": result["content"],
                 "finish_reason": result["finish_reason"],
@@ -354,12 +362,13 @@ def main(argv=None):
         default=OLLAMA_BASE_URL,
         help=f"Ollama API base URL (default: {OLLAMA_BASE_URL})",
     )
-    parser.add_argument(
+    run_mode = parser.add_mutually_exclusive_group()
+    run_mode.add_argument(
         "--loop",
         action="store_true",
         help="Run continuously, polling for jobs (never exits)",
     )
-    parser.add_argument(
+    run_mode.add_argument(
         "--drain",
         action="store_true",
         help="Process all pending jobs then exit when queue is empty",

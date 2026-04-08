@@ -245,6 +245,7 @@ class JobSpec(BaseModel):
         default=None, description="RAG retrieval strategy (e.g. wholesale)."
     )
     repeat: int = Field(default=3, ge=1)
+    run_number: int = Field(default=1, ge=1, description="Which run this job represents (1-indexed).")
     budget_usd: float = Field(default=10.0, ge=0)
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)
