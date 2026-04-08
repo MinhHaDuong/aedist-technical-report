@@ -80,7 +80,7 @@ countries and sectors.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The obvious approach works}
+\begin{frame}{The obvious approach (1/2): the table}
 \begin{columns}[T]
 \column{0.52\textwidth}
 \textbf{Ask Claude:}
@@ -90,19 +90,20 @@ status, province, and capacity in MWe. Format as CSV.
 \end{quote}
 
 \medskip
-\textbf{You get:} a CSV table of ${\sim}$120 plants in 30 seconds, for \$0.02.
-Names, fuels, capacities, provinces --- mostly correct.
+\textbf{You get:} a CSV table of 77 plants in 30 seconds, for \$0.02.
+Names, fuels, capacities, provinces --- zero fabrication,
+but only \textbf{47\%} of the 163 reference plants.
 
 \medskip
-A frontier model with documents (RAG) recovers \textbf{161 out of 163}
-plants. F1 = 98.8\%. Cost: \$0.06.
+With the right method (RAG + decomposition), a cheap model
+recovers \textbf{163/163} plants. F1 = 98.8\%. Cost: \$0.06.
 
 \column{0.45\textwidth}
 \textbf{So are we done?}
 
 \medskip
 \begin{itemize}
-  \item Which 2 plants are missing?
+  \item Which plants are missing and why?
   \item Are any plants fabricated?
   \item Are the capacities right?
   \item Would GPT-5 give the same list?
@@ -114,6 +115,46 @@ plants. F1 = 98.8\%. Cost: \$0.06.
 The naive approach gives a plausible table.\\
 The question is whether we can \textbf{trust} it ---\\
 without cognitive surrender.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{The obvious approach (2/2): the report}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Ask Claude for the full deliverable:}
+\begin{quote}\small\itshape
+Write a technical report on Vietnam's thermal power fleet:
+historico-prospective framing from PDP7 to PDP8,
+asset-by-asset discussion of status and capacity,
+annotated bibliography of primary sources,
+and a synthetic table of all plants.
+\end{quote}
+
+\medskip
+\textbf{You get:} 15 pages, coherent structure,
+plausible chronology, real document names cited.
+Delivered in 2 minutes for \$0.10.
+
+\column{0.45\textwidth}
+\textbf{What's wrong with it?}
+
+\medskip
+\begin{itemize}
+  \item Citations look real but aren't verified
+  \item Plant list is incomplete (same ${\sim}$77, nicely narrated)
+  \item Capacity figures are approximate
+  \item No way to distinguish fact from fabrication
+  \item Updating it means regenerating everything
+\end{itemize}
+
+\medskip
+The report \emph{reads} like research.\\
+But it isn't --- it's a plausible remix of training data.
+
+\medskip
+\textbf{Our approach:} benchmark the \emph{methods},\\
+build trust from the ground up.
 \end{columns}
 \end{frame}
 
