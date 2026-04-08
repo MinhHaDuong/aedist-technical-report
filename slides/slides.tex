@@ -79,6 +79,44 @@ countries and sectors.
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{The obvious approach works}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Ask Claude:}
+\begin{quote}\small\itshape
+List all thermal power plants in Vietnam with their fuel type,
+status, province, and capacity in MWe. Format as CSV.
+\end{quote}
+
+\medskip
+\textbf{You get:} a CSV table of ${\sim}$120 plants in 30 seconds, for \$0.02.
+Names, fuels, capacities, provinces --- mostly correct.
+
+\medskip
+A frontier model with documents (RAG) recovers \textbf{161 out of 163}
+plants. F1 = 98.8\%. Cost: \$0.06.
+
+\column{0.45\textwidth}
+\textbf{So are we done?}
+
+\medskip
+\begin{itemize}
+  \item Which 2 plants are missing?
+  \item Are any plants fabricated?
+  \item Are the capacities right?
+  \item Would GPT-5 give the same list?
+  \item Would it work for Indonesia?
+  \item Can we cite it in a model?
+\end{itemize}
+
+\medskip
+The naive approach gives a plausible table.\\
+The question is whether we can \textbf{trust} it ---\\
+without cognitive surrender.
+\end{columns}
+\end{frame}
+
 % ===================================================================
 \section{Pilot design}
 
