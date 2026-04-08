@@ -50,7 +50,7 @@ class Worker:
     # -- polling ---------------------------------------------------------------
 
     def poll(self) -> JobSpec | None:
-        """Scan pending/ for the highest-priority job.
+        """Scan pending/ for the highest-priority job matching this worker's pool.
 
         Returns the highest-priority JobSpec, or None if the queue is empty.
         Priority is sorted descending (higher number first); ties broken
@@ -68,9 +68,12 @@ class Worker:
             return None
         # Sort: highest priority first, then job_id ascending (FIFO)
         candidates.sort(key=lambda t: (-t[0], t[1]))
-        best = candidates[0]
-        text = best[2].read_text()
-        return JobSpec.from_yaml(text)
+        for _, _, path in candidates:
+            text = path.read_text()
+            job = JobSpec.from_yaml(text)
+            if job.worker_pool.value == self.worker_id:
+                return job
+        return None
 
     # -- lease acquisition -----------------------------------------------------
 

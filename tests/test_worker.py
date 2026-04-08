@@ -3,7 +3,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from aedist.schema import JobSpec, Method
+from aedist.schema import JobSpec, Method, WorkerPool
 from aedist.worker import OpenRouterWorker, PadmeWorker, Worker
 
 
@@ -61,10 +61,23 @@ def test_poll_empty(tmp_path: Path) -> None:
     assert worker.poll() is None
 
 
+def test_poll_filters_by_pool(tmp_path: Path) -> None:
+    """poll() only returns jobs matching the worker's pool."""
+    jobs_root = tmp_path / "jobs"
+    padme_worker = Worker("padme", jobs_root=jobs_root)
+    or_worker = Worker("openrouter", jobs_root=jobs_root)
+
+    or_job = _make_job(job_id="or-job")  # default pool = openrouter
+    _write_pending(jobs_root, or_job)
+
+    assert padme_worker.poll() is None
+    assert or_worker.poll() is not None
+
+
 def test_poll_priority_order(tmp_path: Path) -> None:
     """poll() returns the highest-priority job first."""
     jobs_root = tmp_path / "jobs"
-    worker = Worker("w1", jobs_root=jobs_root)
+    worker = Worker("openrouter", jobs_root=jobs_root)
 
     low = _make_job(job_id="job-low", priority=10)
     mid = _make_job(job_id="job-mid", priority=50)
@@ -190,7 +203,7 @@ def test_fail_writes_error_log(tmp_path: Path) -> None:
 def test_full_lifecycle(tmp_path: Path) -> None:
     """Full lifecycle: poll -> acquire -> execute -> complete."""
     jobs_root = tmp_path / "jobs"
-    worker = _ConcreteWorker("w1", jobs_root=jobs_root)
+    worker = _ConcreteWorker("openrouter", jobs_root=jobs_root)
 
     job = _make_job(job_id="lifecycle", priority=75)
     _write_pending(jobs_root, job)
@@ -220,7 +233,7 @@ def test_full_lifecycle(tmp_path: Path) -> None:
 def test_run_one_success(tmp_path: Path) -> None:
     """run_one() completes the full lifecycle and returns a RunRecord."""
     jobs_root = tmp_path / "jobs"
-    worker = _ConcreteWorker("w1", jobs_root=jobs_root)
+    worker = _ConcreteWorker("openrouter", jobs_root=jobs_root)
 
     job = _make_job(job_id="runone-ok", priority=50)
     _write_pending(jobs_root, job)
@@ -250,7 +263,7 @@ class _FailingWorker(Worker):
 def test_run_one_failure(tmp_path: Path) -> None:
     """run_one() catches execute errors, moves job to failed/, returns None."""
     jobs_root = tmp_path / "jobs"
-    worker = _FailingWorker("w1", jobs_root=jobs_root)
+    worker = _FailingWorker("openrouter", jobs_root=jobs_root)
 
     job = _make_job(job_id="runone-fail")
     _write_pending(jobs_root, job)
@@ -353,6 +366,7 @@ def test_padme_full_lifecycle(tmp_path: Path) -> None:
         output_dir=str(tmp_path / "out"),
         repeat=1,
         budget_usd=1.0,
+        worker_pool=WorkerPool.PADME,
     )
     _write_pending(jobs_root, job)
 
