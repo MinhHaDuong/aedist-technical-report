@@ -1,0 +1,22 @@
+{
+  "run_id": "cd39720f449c",
+  "timestamp": "2026-04-08T19:52:49.580577Z",
+  "method": "single",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "prompt_version": "_extracted"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/_extracted/mistral-large-2512-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 92,
+    "tp": 92,
+    "fp": 0,
+    "fn": 71,
+    "f1": 0.7216,
+    "fuel_accuracy": 0.5978,
+    "status_accuracy": 0.587,
+    "province_accuracy": 0.8587
+  }
+}

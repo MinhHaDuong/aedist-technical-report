@@ -1,0 +1,33 @@
+{
+  "run_id": "14f64fe4ed99",
+  "timestamp": "2026-04-08T19:49:35.363722Z",
+  "method": "single",
+  "method_params": {
+    "model": "gemma4:31b",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 246.094,
+    "tokens_in": 67,
+    "tokens_out": 2077
+  },
+  "result_file": "experiments/outputs/census/padme--gemma4-31b-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 25,
+    "tp": 25,
+    "fp": 0,
+    "fn": 138,
+    "f1": 0.266,
+    "fuel_accuracy": 0.76,
+    "status_accuracy": 0.72,
+    "province_accuracy": 0.4
+  }
+}

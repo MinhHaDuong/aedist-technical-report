@@ -1,0 +1,34 @@
+{
+  "run_id": "cd45477a4cea",
+  "timestamp": "2026-04-08T19:50:00.118531Z",
+  "method": "single",
+  "method_params": {
+    "model": "stepfun/step-3.5-flash",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "small",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "StepFun",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 127.066,
+    "cost_usd": 0.0039654,
+    "tokens_in": 63,
+    "tokens_out": 13197
+  },
+  "result_file": "experiments/outputs/census/step-3.5-flash-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 21,
+    "tp": 21,
+    "fp": 0,
+    "fn": 142,
+    "f1": 0.2283,
+    "fuel_accuracy": 0.9048,
+    "status_accuracy": 0.8571,
+    "province_accuracy": 0.8095
+  }
+}

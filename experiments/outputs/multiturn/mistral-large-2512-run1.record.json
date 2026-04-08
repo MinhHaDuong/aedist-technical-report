@@ -1,0 +1,32 @@
+{
+  "run_id": "4e1ebeb4facc",
+  "timestamp": "2026-04-08T19:50:51.891868Z",
+  "method": "multiturn",
+  "method_params": {
+    "model": "mistralai/mistral-large-2512",
+    "prompt_version": "multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "FR",
+      "architecture": "moe",
+      "provider": "Mistral",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 174.26,
+    "cost_usd": 0.0198905
+  },
+  "result_file": "experiments/outputs/multiturn/mistral-large-2512-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 65,
+    "tp": 65,
+    "fp": 0,
+    "fn": 98,
+    "f1": 0.5702,
+    "fuel_accuracy": 0.6923,
+    "status_accuracy": 0.5538,
+    "province_accuracy": 0.8
+  }
+}

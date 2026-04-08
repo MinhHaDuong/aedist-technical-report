@@ -111,37 +111,6 @@
     "union_n_hallucinated": 680
   },
   {
-    "model": "gemma4-26b",
-    "n_reference": 163,
-    "n_runs": 3,
-    "n_valid_runs": 1,
-    "run_f1_scores": [
-      0.1371
-    ],
-    "run_n_matched": [
-      12
-    ],
-    "run_n_system": [
-      12
-    ],
-    "median_f1": 0.1371,
-    "median_coverage": 0.0736,
-    "median_precision": 1.0,
-    "majority_f1": 0.1371,
-    "majority_coverage": 0.0736,
-    "majority_precision": 1.0,
-    "majority_n_matched": 12,
-    "majority_n_system": 12,
-    "majority_n_hallucinated": 0,
-    "n_majority_plants": 12,
-    "union_f1": 0.1371,
-    "union_coverage": 0.0736,
-    "union_precision": 1.0,
-    "union_n_matched": 12,
-    "union_n_system": 12,
-    "union_n_hallucinated": 0
-  },
-  {
     "model": "gpt-5.4",
     "n_reference": 163,
     "n_runs": 3,

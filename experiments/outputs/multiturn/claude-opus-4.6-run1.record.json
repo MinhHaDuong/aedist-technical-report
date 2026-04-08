@@ -1,0 +1,32 @@
+{
+  "run_id": "15f8e58fa34e",
+  "timestamp": "2026-04-08T19:50:58.821243Z",
+  "method": "multiturn",
+  "method_params": {
+    "model": "anthropic/claude-opus-4.6",
+    "prompt_version": "multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Anthropic",
+      "context_window": 1000000
+    }
+  },
+  "resource_use": {
+    "wall_s": 205.193,
+    "cost_usd": 0.361065
+  },
+  "result_file": "experiments/outputs/multiturn/claude-opus-4.6-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 74,
+    "tp": 74,
+    "fp": 0,
+    "fn": 89,
+    "f1": 0.6245,
+    "fuel_accuracy": 0.7162,
+    "status_accuracy": 0.6351,
+    "province_accuracy": 0.9054
+  }
+}

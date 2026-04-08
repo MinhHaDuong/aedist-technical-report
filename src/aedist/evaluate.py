@@ -288,8 +288,35 @@ def _evaluate_csv_file(
         log.info("Saved: %s, %s", out / f"reconciliation_{system_path.stem}.csv", record_path)
 
 
+def _classify_orphan(raw: dict) -> str:
+    """Classify a JSON-only result (no CSV companion) into a status string.
+
+    Returns one of: "empty", "refusal", "error".
+    """
+    from .extract import _extract_pipe_tables, extract_fenced_blocks
+
+    # Extract response text (same logic as extract.py extract_one)
+    response = raw.get("response")
+    if (not response or not isinstance(response, str)) and "turns" in raw:
+        turns = raw["turns"]
+        assistant_turns = [t for t in turns if t.get("role") == "assistant"]
+        if assistant_turns:
+            response = "\n".join(t.get("content", "") for t in assistant_turns)
+
+    if not isinstance(response, str) or not response.strip():
+        return "empty"
+
+    # Only use strong table signals (fenced blocks, pipe tables).
+    # The inline CSV fallback is too aggressive for classification —
+    # comma-separated phrases in refusal prose trigger false positives.
+    candidates = extract_fenced_blocks(response)
+    candidates.extend(_extract_pipe_tables(response))
+
+    return "error" if candidates else "refusal"
+
+
 def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
-    """Create a qualitative RunRecord from a JSON-only result (no CSV)."""
+    """Create a RunRecord from a JSON-only result (no CSV companion)."""
     from .schema import MethodParams, ResultSummary, RunRecord
 
     try:
@@ -302,6 +329,7 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
         log.warning("Skipping JSON without model field: %s", json_path)
         return
 
+    status = _classify_orphan(raw)
     dir_name = json_path.parent.name
     record = RunRecord(
         method=_infer_method(dir_name),
@@ -310,7 +338,7 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
             prompt_version=dir_name,
         ),
         result_file=_rel_path(json_path),
-        result_summary=ResultSummary(status="qualitative"),
+        result_summary=ResultSummary(status=status),
     )
     _backfill_resource_use(record, json_path)
 
@@ -318,9 +346,10 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
         out = Path(args.output)
         record_path = _write_record(record, out, json_path.stem)
         log.info(
-            "%s/%s  qualitative  $%.4f",
+            "%s/%s  %s  $%.4f",
             dir_name,
             json_path.stem,
+            status,
             record.resource_use.cost_usd or 0,
         )
 

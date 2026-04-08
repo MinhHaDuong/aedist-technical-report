@@ -148,7 +148,7 @@ class ResourceUse(BaseModel):
 class ResultSummary(BaseModel):
     """Compact evaluation result for one run."""
 
-    status: str = Field(default="ok", description="Run outcome: ok, error, empty, etc.")
+    status: str = Field(default="ok", description="Run outcome: ok | refusal | error | empty | qualitative")
     n_plants: int | None = Field(default=None, ge=0)
     tp: int | None = Field(default=None, ge=0, description="True positives (matched).")
     fp: int | None = Field(default=None, ge=0, description="False positives (hallucinated).")

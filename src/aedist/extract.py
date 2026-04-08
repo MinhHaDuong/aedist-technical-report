@@ -378,7 +378,7 @@ def main() -> None:
             failed += 1
 
     log.info("Done. wrote=%d skipped=%d failed=%d (from %s)", wrote, skipped, failed, input_dir)
-    if wrote == 0 and failed > 0:
+    if wrote == 0 and skipped == 0 and failed > 0:
         sys.exit(2)
 
 

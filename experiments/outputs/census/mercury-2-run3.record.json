@@ -1,0 +1,34 @@
+{
+  "run_id": "ab6293610283",
+  "timestamp": "2026-04-08T19:49:25.304208Z",
+  "method": "single",
+  "method_params": {
+    "model": "inception/mercury-2",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "medium",
+      "country": "Other",
+      "architecture": "dense",
+      "provider": "Inception",
+      "context_window": 128000
+    }
+  },
+  "resource_use": {
+    "wall_s": 7.044,
+    "cost_usd": 0.004475,
+    "tokens_in": 53,
+    "tokens_out": 5949
+  },
+  "result_file": "experiments/outputs/census/mercury-2-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 33,
+    "tp": 33,
+    "fp": 0,
+    "fn": 130,
+    "f1": 0.3367,
+    "fuel_accuracy": 0.4848,
+    "status_accuracy": 0.3939,
+    "province_accuracy": 0.4545
+  }
+}

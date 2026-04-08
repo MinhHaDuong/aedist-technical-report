@@ -1,0 +1,22 @@
+{
+  "run_id": "2b2b6494664b",
+  "timestamp": "2026-04-08T19:52:11.904274Z",
+  "method": "rag",
+  "method_params": {
+    "model": "gemini-2.5-flash-lite-consolidated",
+    "prompt_version": "rag_consistency"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/gemini-2.5-flash-lite-consolidated.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 111,
+    "tp": 111,
+    "fp": 0,
+    "fn": 52,
+    "f1": 0.8102,
+    "fuel_accuracy": 0.1892,
+    "status_accuracy": 0.4775,
+    "province_accuracy": 0.3784
+  }
+}

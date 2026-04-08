@@ -1,0 +1,32 @@
+{
+  "run_id": "a398f68f72cf",
+  "timestamp": "2026-04-08T19:50:44.688987Z",
+  "method": "multiturn",
+  "method_params": {
+    "model": "google/gemini-2.5-flash-lite",
+    "prompt_version": "multiturn",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576
+    }
+  },
+  "resource_use": {
+    "wall_s": 25.179000000000002,
+    "cost_usd": 0.0042263000000000005
+  },
+  "result_file": "experiments/outputs/multiturn/gemini-2.5-flash-lite-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 71,
+    "tp": 71,
+    "fp": 0,
+    "fn": 92,
+    "f1": 0.6068,
+    "fuel_accuracy": 0.4507,
+    "status_accuracy": 0.493,
+    "province_accuracy": 0.5915
+  }
+}

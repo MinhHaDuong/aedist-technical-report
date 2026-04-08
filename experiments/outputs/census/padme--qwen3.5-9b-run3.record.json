@@ -1,0 +1,33 @@
+{
+  "run_id": "220517796fb6",
+  "timestamp": "2026-04-08T19:49:44.316482Z",
+  "method": "single",
+  "method_params": {
+    "model": "qwen3.5:9b",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "small",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 77.878,
+    "tokens_in": 63,
+    "tokens_out": 3887
+  },
+  "result_file": "experiments/outputs/census/padme--qwen3.5-9b-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 39,
+    "tp": 39,
+    "fp": 0,
+    "fn": 124,
+    "f1": 0.3861,
+    "fuel_accuracy": 0.641,
+    "status_accuracy": 0.1026,
+    "province_accuracy": 0.3077
+  }
+}

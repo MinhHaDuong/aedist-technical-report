@@ -1,0 +1,34 @@
+{
+  "run_id": "fdb87491399a",
+  "timestamp": "2026-04-08T19:49:31.932501Z",
+  "method": "single",
+  "method_params": {
+    "model": "mistralai/mistral-large-2512",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "frontier",
+      "country": "FR",
+      "architecture": "moe",
+      "provider": "Mistral",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 31.171,
+    "cost_usd": 0.002017,
+    "tokens_in": 59,
+    "tokens_out": 1325
+  },
+  "result_file": "experiments/outputs/census/mistral-large-2512-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 41,
+    "tp": 41,
+    "fp": 0,
+    "fn": 122,
+    "f1": 0.402,
+    "fuel_accuracy": 0.7805,
+    "status_accuracy": 0.5854,
+    "province_accuracy": 0.8049
+  }
+}
