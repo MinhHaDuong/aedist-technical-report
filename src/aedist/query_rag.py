@@ -10,7 +10,7 @@ Usage:
         --corpus data/rag_corpus/ \
         --strategy wholesale \
         --models models.yaml \
-        --output outputs/sweep_rag/ \
+        --output outputs/rag/ \
         --repeat 3
 """
 
@@ -120,7 +120,7 @@ def main():
     for model in models:
         model_id = model["id"]
         label = model.get("name", model_id)
-        # Consolidated registry entries always have "router". Legacy per-sweep
+        # Consolidated registry entries always have "router". Legacy per-experiment
         # YAML files (without "router") fall through to the base_url path.
         router = model.get("router")
         base_url = model.get("base_url")  # legacy path only

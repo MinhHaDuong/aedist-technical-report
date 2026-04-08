@@ -7,7 +7,7 @@ Usage:
     python -m aedist.query_web \
         --prompt prompts/prompt_structured.txt \
         --models models.yaml \
-        --output outputs/sweep2_web/ \
+        --output outputs/web/ \
         --repeat 3
 """
 

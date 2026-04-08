@@ -5,8 +5,8 @@ Usage:
         --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_comparaison.tex
 
-Reads per-run metrics, finds models present in both census (sweep1) and RAG
-(sweep_rag) sweeps, and emits a side-by-side comparison table showing how
+Reads per-run metrics, finds models present in both census and RAG
+conditions, and emits a side-by-side comparison table showing how
 RAG affects F1 for each model.
 """
 
@@ -19,8 +19,8 @@ from .tabulate_utils import format_model_name, strip_label
 
 log = logging.getLogger(__name__)
 
-_CENSUS_PREFIX = "sweep1_census/"
-_RAG_PREFIX = "sweep_rag/"
+_CENSUS_PREFIX = "census/"
+_RAG_PREFIX = "rag/"
 
 
 # ---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ _RAG_PREFIX = "sweep_rag/"
 
 
 def group_by_sweep(metrics: list[dict]) -> tuple[dict[str, list[dict]], dict[str, list[dict]]]:
-    """Split metrics into census and RAG groups, keyed by model slug."""
+    """Split metrics into census and RAG conditions, keyed by model slug."""
     census: dict[str, list[dict]] = {}
     rag: dict[str, list[dict]] = {}
     for entry in metrics:
@@ -54,11 +54,11 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
     """
     census, rag = group_by_sweep(metrics)
 
-    # Only include models present in both sweeps
+    # Only include models present in both conditions
     common_slugs = sorted(set(census) & set(rag))
 
     if not common_slugs:
-        log.warning("No models found in both census and RAG sweeps — table will be empty.")
+        log.warning("No models found in both census and RAG conditions — table will be empty.")
 
     rows = []
     for slug in common_slugs:

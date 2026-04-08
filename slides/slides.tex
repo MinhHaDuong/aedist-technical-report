@@ -217,7 +217,7 @@ Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
 {\small RAG corpus: manually verified tables from PDP7, PDP7A, PDP8, EVN reports, Study E542}
 
 \column{0.56\textwidth}
-\pgfplotstableread[col sep=comma]{inputs/generated/sweep2_regimes.csv}\regimedata
+\pgfplotstableread[col sep=comma]{inputs/generated/regimes.csv}\regimedata
 \pgfplotstablegetrowsof{\regimedata}
 \pgfmathtruncatemacro{\regimerows}{\pgfplotsretval-1}
 \begin{tikzpicture}

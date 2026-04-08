@@ -206,15 +206,15 @@ def _metrics_to_runrecord(
     """
     from .schema import MethodParams, ResultSummary, RunRecord
 
-    sweep_name = label.split("/")[0] if "/" in label else ""
+    condition = label.split("/")[0] if "/" in label else ""
     stem = label.rsplit("/", 1)[-1]
-    method = _infer_method(sweep_name)
+    method = _infer_method(condition)
 
     return RunRecord(
         method=method,
         method_params=MethodParams(
             model=_strip_run_suffix(stem),
-            prompt_version=sweep_name,
+            prompt_version=condition,
         ),
         result_file=result_file,
         result_summary=ResultSummary(

@@ -5,7 +5,7 @@ from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem
 
 def test_load_config(experiments):
     """Config loads from TOML with expected fields."""
-    config = experiments["sweeps"]["sweep4_verification"]
+    config = experiments["sweeps"]["verification"]
     assert len(config["base_configs"]) == 3
     assert "unverified" in config["verification_modes"]
     assert "web" in config["verification_modes"]
@@ -33,7 +33,7 @@ def test_deterministic_modes():
 
 def test_condition_count(experiments):
     """3 configs x (3 deterministic x 1 + 2 stochastic x 3) = 27 conditions."""
-    config = experiments["sweeps"]["sweep4_verification"]
+    config = experiments["sweeps"]["verification"]
     repeat = config.get("repeat", 3)
 
     count = 0

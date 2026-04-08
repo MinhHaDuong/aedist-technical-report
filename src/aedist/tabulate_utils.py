@@ -22,8 +22,8 @@ KNOWN_CAPS: dict[str, str] = {
 def strip_label(label: str) -> str:
     """Extract model slug from a metrics label.
 
-    'sweep1_census/gpt-5.4-run1' -> 'gpt-5.4'
-    'sweep1_census/padme-qwen3.5-122b-run3' -> 'padme-qwen3.5-122b'
+    'census/gpt-5.4-run1' -> 'gpt-5.4'
+    'census/padme-qwen3.5-122b-run3' -> 'padme-qwen3.5-122b'
     """
     slug = label.rsplit("/", 1)[-1]
     slug = _RUN_SUFFIX.sub("", slug)

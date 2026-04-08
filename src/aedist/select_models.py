@@ -5,11 +5,11 @@ ranks by median F1, and selects top N ensuring diversity across
 geography, provider type, and price tier.
 
 Usage:
-    uv run python -m aedist.select_sweep2 \
+    uv run python -m aedist.select_models \
         --measurements measurements.jsonl \
         --registry experiments/models.yaml \
         --padme experiments/models_padme.yaml \
-        --output experiments/models_sweep2.yaml \
+        --output experiments/models_selected.yaml \
         --n 8
 """
 
@@ -32,7 +32,7 @@ log = logging.getLogger(__name__)
 def extract_slug(label: str) -> str:
     """Extract model slug from a metrics label.
 
-    Labels look like 'sweep1_census/gpt-5.4-run1'.
+    Labels look like 'census/gpt-5.4-run1'.
     Strip the directory prefix and the '-runN' suffix to get 'gpt-5.4'.
     """
     # Strip directory prefix (everything up to and including last '/')
@@ -89,7 +89,7 @@ def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, di
 # ---------------------------------------------------------------------------
 
 
-def select_sweep2(
+def select_models(
     rankings: dict[str, float],
     cloud_registry: dict[str, dict],
     local_registry: dict[str, dict],
@@ -212,7 +212,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     parser = argparse.ArgumentParser(
-        prog="aedist.select_sweep2",
+        prog="aedist.select_models",
         description="Select top models from census evaluation metrics",
     )
     parser.add_argument(
@@ -290,7 +290,7 @@ def main() -> None:
         log.info("  %s  %.1f%%%s", slug.ljust(35), f1 * 100, marker)
 
     # Select
-    selected = select_sweep2(
+    selected = select_models(
         rankings,
         cloud_reg,
         padme_reg,

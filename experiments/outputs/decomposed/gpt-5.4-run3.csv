@@ -1,0 +1,344 @@
+name,fuel,status,cod,province,capacity_mwe
+Uong Bi,coal,operational,pre-2011,Quang Ninh,105
+Uong Bi Extension 1,coal,operational,2017,Quang Ninh,300
+Uong Bi Extension 2,coal,operational,2011,Quang Ninh,330
+Pha Lai 1,coal,operational,pre-2011,Hai Duong,440
+Pha Lai 2,coal,operational,pre-2011,Hai Duong,600
+Ninh Binh,coal,operational,pre-2011,Ninh Binh,100
+Hai Phong 1,coal,operational,2014,Hai Phong,600
+Hai Phong 2,coal,operational,2014,Hai Phong,600
+Quang Ninh 1,coal,operational,2017,Quang Ninh,600
+Quang Ninh 2,coal,operational,2015,Quang Ninh,600
+Na Duong,coal,operational,pre-2011,Lang Son,111
+Cao Ngan,coal,operational,pre-2011,Thai Nguyen,115
+Cam Pha,coal,operational,pre-2011,Quang Ninh,600
+Son Dong,coal,operational,pre-2011,Bac Giang,220
+Formosa Ha Tinh 1,coal,operational,pre-2011,Ha Tinh,150
+Thai Binh 1,coal,operational,2017,Thai Binh,600
+Vinh Tan 2,coal,operational,2018,Binh Thuan,1244
+Mong Duong 1,coal,operational,2018,Quang Ninh,1080
+Duyen Hai 1,coal,operational,2017,Tra Vinh,1245
+Duyen Hai 3,coal,operational,2017,Tra Vinh,1245
+Nghi Son 1,coal,operational,2017,Thanh Hoa,600
+Mao Khe,coal,operational,2013,Quang Ninh,440
+Nong Son,coal,operational,2013,Quang Nam,30
+An Khanh 1 Unit 1,coal,operational,2012,Thai Nguyen,50
+An Khanh 1 Unit 2,coal,operational,2013,Thai Nguyen,50
+Vung Ang 1 Unit 1,coal,operational,2012,Ha Tinh,600
+Vung Ang 1 Unit 2,coal,operational,2013,Ha Tinh,600
+Formosa Unit 2,coal,operational,2012,Ha Tinh,150
+Quang Ninh 2 Unit 1,coal,operational,2014,Quang Ninh,300
+Quang Ninh 2 Unit 2,coal,operational,2015,Quang Ninh,300
+O Mon 1 Unit 2,coal_or_oil_unclear,operational,2014,Can Tho,330
+Duyen Hai 1 Unit 1,coal,operational,2014,Tra Vinh,600
+Duyen Hai 1 Unit 2,coal,operational,2015,Tra Vinh,600
+Mong Duong 2,coal,operational,2015,Quang Ninh,1200
+Long Phu 1 Unit 1,coal,under_construction,2018-2019,Soc Trang,600
+Cong Thanh Units 1-2,coal,cancelled_or_stalled,2015,Thanh Hoa,600
+Mong Duong 1 Unit 1,coal,operational,2016,Quang Ninh,500
+Thai Binh 1 Unit 1,coal,operational,2016,Thai Binh,300
+Hai Duong Unit 1,coal,operational,2020,Hai Duong,600
+An Khanh 2 Unit 1,coal,planned,2016,Thai Nguyen,150
+Vinh Tan 1,coal,operational,2019,Binh Thuan,1200
+Duyen Hai 3 Unit 2,coal,operational,2017,Tra Vinh,600
+Lai Chau is hydro,coal,not_applicable,,,0
+Thang Long Unit 1,coal,operational,2018,Quang Ninh,300
+Thai Binh 1 Unit 2,coal,operational,2017,Thai Binh,300
+Hai Duong Unit 2,coal,operational,2021,Hai Duong,600
+Nghi Son 2,coal,operational,2022,Thanh Hoa,1200
+An Khanh 2 Unit 2,coal,cancelled_or_stalled,2017,Thai Nguyen,150
+Van Phong 1 Unit 1,coal,under_construction,2023-2024,Khanh Hoa,660
+Vinh Tan 6 Unit 1,coal,cancelled,2017,Binh Thuan,600
+Vinh Tan 3 Unit 1,coal,planned,2017,Binh Thuan,660
+Song Hau 1 Unit 1,coal,operational,2021,Hau Giang,600
+Na Duong 1 Units 1-2,coal,operational,pre-2011,Lang Son,100
+Vung Ang 2 Unit 1,coal,under_construction,2021-2030,Ha Tinh,665
+Quang Trach 1,coal,under_construction,2021-2030,Quang Binh,1403
+Nam Dinh 1,coal,planned_or_stalled,2021-2030,Nam Dinh,1200
+Quang Tri,coal,planned_or_stalled,2021-2030,Quang Tri,1320
+Vinh Tan 3,coal,planned_or_stalled,2021-2030,Binh Thuan,1980
+Song Hau 2,coal,planned_or_stalled,2021-2030,Hau Giang,2120
+Na Duong 2,coal,under_construction,2021-2030,Lang Son,110
+An Khanh - Bac Giang,coal,under_construction,2021-2030,Bac Giang,650
+Van Phong 1,coal,under_construction,2021-2030,Khanh Hoa,1432
+Long Phu 1,coal,under_construction,2021-2030,Soc Trang,1200
+Formosa Ha Tinh 2,coal_or_blast_furnace_gas,planned,2021-2030,Ha Tinh,650
+Hai Ha 1,coal_or_cogeneration,planned,2021-2030,Quang Ninh,300
+Hai Ha 2,coal_or_cogeneration,planned,2031-2035,Quang Ninh,600
+Hai Ha 3,coal_or_cogeneration,planned,2031-2035,Quang Ninh,600
+Hai Ha 4,coal_or_cogeneration,planned,2031-2035,Quang Ninh,600
+Duc Giang Cogeneration,coal_or_byproduct_gas,planned,2021-2030,Hai Phong_or_Hanoi_unknown,100
+Hoa Phat II Off-gas Power,coal_or_byproduct_gas,planned,2021-2030,Unknown,300
+Formosa Ha Tinh Unit 2,coal,operational,2016,Ha Tinh,150
+Formosa Ha Tinh Units 3-4,blast_furnace_gas,operational,2016,Ha Tinh,200
+Formosa Ha Tinh Unit 5,coal,operational,2016,Ha Tinh,150
+Vedan Coal,coal,operational,2016,Dong Nai,60
+Duyen Hai 3 Unit 1,coal,operational,2016,Tra Vinh,600
+Thai Binh 1 Units 1-2,coal,operational,2017,Thai Binh,600
+Thai Binh 2 Unit 1,coal,under_construction,2017,Thai Binh,600
+Thai Binh 2 Unit 2,coal,under_construction,2018,Thai Binh,600
+Vinh Tan 4 Units 1-2,coal,operational,2018,Binh Thuan,1200
+Long Phu 2 Unit 2,coal,cancelled_or_not_advanced,2019,Soc Trang,600
+Song Hau 1 Units 1-2,coal,operational,2019,Hau Giang,1200
+Duyen Hai 3 Expansion,coal,operational,2019,Tra Vinh,660
+Vinh Tan 1 Units 1-2,coal,operational,2019,Binh Thuan,1200
+Vinh Tan 4 Expansion,coal,operational,2019,Binh Thuan,600
+Cam Pha 3 Units 1-2,coal,planned_or_stalled,2020,Quang Ninh,440
+Cong Thanh,coal,cancelled_or_stalled,2020,Thanh Hoa,600
+Nghi Son 2 Unit 1,coal,operational,2022,Thanh Hoa,600
+Nghi Son 2 Unit 2,coal,operational,2022,Thanh Hoa,600
+Vung Ang 2 Unit 2,coal,under_construction,2022,Ha Tinh,665
+Nam Dinh 1 Unit 1,coal,planned_or_stalled,2021,Nam Dinh,600
+Quang Trach 1 Unit 1,coal,under_construction,2021,Quang Binh,600
+Duyen Hai 2 Units 1-2,coal,cancelled_or_replaced,2021,Tra Vinh,1200
+Song Hau 2 Unit 1,coal,planned_or_stalled,2021,Hau Giang,1000
+Long Phu 2 Unit 1,coal,cancelled_or_stalled,2021,Soc Trang,660
+Long Phu 3 Unit 1,coal,cancelled_or_stalled,2021,Soc Trang,600
+Quynh Lap 1 Unit 1,coal,planned_or_stalled,2022,Nghe An,600
+Hai Ha Cogeneration 2,coal_or_cogeneration,planned,2022,Quang Ninh,750
+Luc Nam Unit 1,coal,planned_or_stalled,2022,Bac Giang,50
+Nam Dinh 1 Unit 2,coal,planned_or_stalled,2022,Nam Dinh,600
+Quang Trach 1 Unit 2,coal,under_construction,2022,Quang Binh,600
+Song Hau 2 Unit 2,coal,planned_or_stalled,2022,Hau Giang,1000
+Long Phu 3 Units 2-3,coal,cancelled_or_stalled,2022,Soc Trang,1200
+Quynh Lap 1 Unit 2,coal,planned_or_stalled,2023,Nghe An,600
+Luc Nam Unit 2,coal,planned_or_stalled,2023,Bac Giang,50
+Quang Tri Unit 1,coal,planned_or_stalled,2023,Quang Tri,600
+Vinh Tan 3 Units 2-3,coal,planned_or_stalled,2023,Binh Thuan,1320
+Van Phong 1 Unit 2,coal,under_construction,2023,Khanh Hoa,660
+Vung Ang 3 Unit 1,coal,cancelled_or_stalled,2024,Ha Tinh,600
+Quang Tri Unit 2,coal,planned_or_stalled,2024,Quang Tri,600
+Long An 1 Unit 1,coal,cancelled_or_replaced_by_lng,2024,Long An,600
+Hai Phong 3 Unit 1,coal,planned_or_stalled,2025,Hai Phong,600
+Hai Ha Cogeneration 3,coal_or_cogeneration,planned,2025,Quang Ninh,600
+Rang Dong Cogeneration,coal_or_cogeneration,planned,2025,Nam Dinh,100
+Vung Ang 3 Unit 2,coal,cancelled_or_stalled,2025,Ha Tinh,600
+Long An 1 Unit 2,coal,cancelled_or_replaced_by_lng,2025,Long An,600
+Hai Phong 3 Unit 2,coal,planned_or_stalled,2026,Hai Phong,600
+Quynh Lap 2 Unit 1,coal,cancelled_or_stalled,2026,Nghe An,600
+Long An 2 Unit 1,coal,cancelled_or_replaced_by_lng,2026,Long An,800
+Quynh Lap 2 Unit 2,coal,cancelled_or_stalled,2027,Nghe An,600
+Long An 2 Unit 2,coal,cancelled_or_replaced_by_lng,2027,Long An,800
+Tan Phuoc 1 Unit 1,coal,cancelled_or_replaced_by_lng,2027,Tien Giang,600
+Hai Ha Cogeneration 4,coal_or_cogeneration,planned,2028,Quang Ninh,600
+Quang Trach 2 Unit 1,coal,planned,2028,Quang Binh,600
+Tan Phuoc 1 Unit 2,coal,cancelled_or_replaced_by_lng,2028,Tien Giang,600
+Tan Phuoc 2 Unit 1,coal,cancelled_or_replaced_by_lng,2028,Tien Giang,600
+Quang Ninh 3 Unit 1,coal,proposed,2029,Quang Ninh,600
+Vung Ang 3 Unit 3,coal,proposed_reserve,2029,Ha Tinh,600
+Quang Trach 2 Unit 2,coal,planned,2029,Quang Binh,600
+Tan Phuoc 2 Unit 2,coal,proposed_reserve,2029,Tien Giang,600
+Bac Lieu 1 Unit 1,coal,proposed_reserve,2029,Bac Lieu,600
+Quang Ninh 3 Unit 2,coal,proposed,2030,Quang Ninh,600
+Vung Ang 3 Unit 4,coal,proposed_reserve,2030,Ha Tinh,600
+Bac Lieu 1 Unit 2,coal,proposed_reserve,2030,Bac Lieu,600
+Hai Phong 3 Units 1-2,coal,planned_or_stalled,2025-2026,Hai Phong,1200
+Van Phong 2 Unit 1,coal,proposed,2021,Khanh Hoa,660
+Kien Luong 2 Unit 1,coal,cancelled,2023,Kien Giang,600
+Phu Tho Unit 1,coal,proposed,2024,Phu Tho,300
+Long An 1,coal,cancelled_or_replaced_by_lng,2024,Long An,1200
+Kien Luong 2 Unit 2,coal,cancelled,2024,Kien Giang,600
+Hai Phong 3 Units 3-4,coal,proposed,2025,Hai Phong,1200
+Nam Dinh 2 Unit 1,coal,proposed,2025,Nam Dinh,600
+Phu Tho Unit 2,coal,proposed,2025,Phu Tho,300
+Nam Dinh 2 Unit 2,coal,proposed,2026,Nam Dinh,600
+Bac Giang Unit 1,coal,proposed,2026,Bac Giang,300
+Binh Dinh 1 Unit 1,coal,proposed,2026,Binh Dinh,600
+Long Phu 3 Unit 2,coal,cancelled_or_stalled,2026,Soc Trang,1000
+Vung Ang 3 Units 2-3,coal,proposed,2027,Ha Tinh,1200
+Bac Giang Unit 2,coal,proposed,2027,Bac Giang,300
+Kien Luong 3 Unit 1,coal,cancelled,2027,Kien Giang,1000
+Binh Dinh 1 Unit 2,coal,proposed,2027,Binh Dinh,600
+Quynh Lap 2 Units 1-2,coal,proposed,2028,Nghe An,1200
+Kien Luong 3 Unit 2,coal,cancelled,2028,Kien Giang,1000
+Bac Lieu Coal Units 1-2,coal,proposed_reserve,2028,Bac Lieu,1200
+Yen Hung Units 1-2,coal,proposed,2029,Quang Ninh,1200
+Uong Bi 3 Units 1-2,coal,proposed,2029,Quang Ninh,1200
+Song Hau 3 Units 1-2,coal,proposed,2029,Hau Giang,2000
+Binh Dinh 2 Units 1-2,coal,proposed,2029,Binh Dinh,2000
+An Giang Coal Units 1-2,coal,proposed,2029,An Giang,2000
+Northern Coal 1000 MW Units 1-2,coal,proposed,2030,Unknown_North,2000
+Southern Coal 1000 MW Units 1-5,coal,proposed,2030,Unknown_South,5000
+LNG/coal conversions and ambiguous industrial byproduct units,,not_included_as_pure_coal,,,0
+Phu My 1,Local natural gas,Operational,2004,Ba Ria-Vung Tau,1090
+Phu My 2.1,Local natural gas,Operational,2005,Ba Ria-Vung Tau,900
+Phu My 2.2 BOT,Local natural gas,Operational,2005,Ba Ria-Vung Tau,740
+Phu My 3 BOT,Local natural gas,Operational,2004,Ba Ria-Vung Tau,740
+Phu My 4,Local natural gas,Operational,2005,Ba Ria-Vung Tau,450
+Ba Ria,Local natural gas,Operational,2000,Ba Ria-Vung Tau,389
+Nhon Trach 1,Local natural gas,Operational,2009,Dong Nai,465
+Nhon Trach 2,Local natural gas,Operational,2011,Dong Nai,750
+Ca Mau 1,Local natural gas,Operational,2007,Ca Mau,750
+Ca Mau 2,Local natural gas,Operational,2008,Ca Mau,750
+Thu Duc GT,Local natural gas,Operational,pre-2010,Ho Chi Minh City,128
+Can Tho GT,Local natural gas,Operational,pre-2010,Can Tho,150
+Vedan cogeneration,Local natural gas,Operational,pre-2010,Dong Nai,72
+Dam Phu My cogeneration,Local natural gas,Operational,pre-2010,Ba Ria-Vung Tau,21
+O Mon 1,Local natural gas,Operational,2015,Can Tho,660
+O Mon 2,Local natural gas,Planned,NA,Can Tho,1050
+O Mon 3,Local natural gas,Under construction / planned,NA,Can Tho,1050
+O Mon 4,Local natural gas,Planned,NA,Can Tho,1050
+Dung Quat 1,Local natural gas,Planned,NA,Quang Ngai,750
+Dung Quat 2,Local natural gas,Planned,NA,Quang Ngai,750
+Dung Quat 3,Local natural gas,Planned,NA,Quang Ngai,750
+Mien Trung 1,Local natural gas,Planned,NA,Quang Ngai,750
+Mien Trung 2,Local natural gas,Planned,NA,Quang Ngai,750
+Quang Tri CCGT (Bao Vang gas),Local natural gas,Planned,NA,Quang Tri,340
+Kien Giang 1,Local natural gas,Cancelled / superseded,NA,Kien Giang,750
+Kien Giang 2,Local natural gas,Cancelled / superseded,NA,Kien Giang,750
+Hiep Phuoc,Imported LNG,Operational / conversion candidate,pre-2010,Ho Chi Minh City,375
+Nhon Trach 3,Imported LNG,Under construction,NA,Dong Nai,812
+Nhon Trach 4,Imported LNG,Under construction,NA,Dong Nai,812
+Quang Ninh LNG,Imported LNG,Planned,NA,Quang Ninh,1500
+Thai Binh LNG,Imported LNG,Planned,NA,Thai Binh,1500
+Nghi Son LNG,Imported LNG,Planned / proposed,NA,Thanh Hoa,1500
+Quang Trach II LNG,Imported LNG,Planned / converted from coal,NA,Quang Binh,1500
+Quynh Lap / Nghi Son LNG,Imported LNG,Proposed,NA,Nghe An / Thanh Hoa,1500
+Hai Lang LNG phase 1,Imported LNG,Planned / proposed,NA,Quang Tri,1500
+Ca Na LNG,Imported LNG,Planned,NA,Ninh Thuan,1500
+Son My II LNG,Imported LNG,Planned / priority,NA,Binh Thuan,2250
+Son My I LNG BOT,Imported LNG,Planned / priority,NA,Binh Thuan,2250
+Long Son LNG,Imported LNG,Planned / deferred,NA,Ba Ria-Vung Tau,1500
+Hiep Phuoc LNG phase I,Imported LNG,Planned,NA,Ho Chi Minh City,1200
+Long An I LNG,Imported LNG,Planned,NA,Long An,1500
+Long An II LNG,Imported LNG,Planned / deferred,NA,Long An,1500
+Bac Lieu LNG,Imported LNG,Planned,NA,Bac Lieu,3200
+Hai Phong LNG 1 (Tien Lang),Imported LNG,Proposed,NA,Hai Phong,4500
+Hai Phong LNG 2 (Cat Hai),Imported LNG,Proposed,NA,Hai Phong,1600
+Hai Phong LNG 3 (Cat Hai),Imported LNG,Proposed,NA,Hai Phong,4500
+Hai Phong LNG 4 (Dong Son),Imported LNG,Proposed,NA,Hai Phong,4500
+Quang Ninh LNG 2,Imported LNG,Proposed,NA,Quang Ninh,1500
+Quang Ninh LNG 3 (Quang Yen),Imported LNG,Proposed,NA,Quang Ninh,4500
+Quang Ninh LNG 4 (Hai Ha),Imported LNG,Proposed,NA,Quang Ninh,3000
+Thai Binh LNG expansion concept,Imported LNG,Proposed,NA,Thai Binh,4500
+Ha Tinh LNG,Imported LNG,Proposed,NA,Ha Tinh,6000
+Quang Binh LNG,Imported LNG,Proposed,NA,Quang Binh,3000
+Hai Lang LNG total site,Imported LNG,Proposed,NA,Quang Tri,4500
+Chan May LNG,Imported LNG,Proposed,NA,Thua Thien Hue,4000
+Phong Dien LNG,Imported LNG,Proposed / conversion candidate,NA,Thua Thien Hue,3000
+Quang Nam LNG,Imported LNG,Proposed,NA,Quang Nam,4000
+Binh Dinh LNG,Imported LNG,Proposed,NA,Binh Dinh,5000
+Van Phong LNG,Imported LNG,Proposed,NA,Khanh Hoa,3000
+My Giang LNG,Imported LNG,Proposed,NA,Khanh Hoa,6000
+Ca Na LNG II,Imported LNG,Proposed,NA,Ninh Thuan,2250
+Ca Na LNG III,Imported LNG,Proposed,NA,Ninh Thuan,2250
+Mui Ke Ga LNG,Imported LNG,Proposed,NA,Binh Thuan,3600
+Kien Giang LNG,Imported LNG,Proposed / transformed from domestic gas concept,NA,Kien Giang,1500
+Hiep Phuoc LNG I,Imported LNG,Proposed,NA,Ho Chi Minh City,2700
+Hiep Phuoc LNG II,Imported LNG,Proposed,NA,Ho Chi Minh City,2700
+Phu My 3.1 LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,850
+Ba Ria 2 LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,1200
+Long Son I LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,1200
+Long Son II LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,1600
+Long Son III LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,1600
+Long Son IV LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,3600
+Cai Mep H LNG,Imported LNG,Proposed,NA,Ba Ria-Vung Tau,6000
+Long An LNG total expansion,Imported LNG,Proposed,NA,Long An,6000
+Tan Phuoc LNG,Imported LNG,Proposed,NA,Tien Giang,4500
+Ca Mau LNG 1,Imported LNG,Proposed,NA,Ca Mau,1000
+Ca Mau LNG 2,Imported LNG,Proposed,NA,Ca Mau,1000
+Ca Mau LNG 3,Imported LNG,Proposed,NA,Ca Mau,1000
+Ca Mau LNG 4,Imported LNG,Proposed,NA,Ca Mau,1500
+Tan Thuan - Dam Doi LNG,Imported LNG,Proposed,NA,Ca Mau,3200
+Song Doc LNG,Imported LNG,Proposed,NA,Ca Mau,3000
+Ben Tre LNG,Imported LNG,Proposed,NA,Ben Tre,3000
+Long Son petrochemical cogeneration,Imported LNG,Cancelled / superseded,2017,Ba Ria-Vung Tau,75
+Long Son petrochemical cogeneration 2,Imported LNG,Cancelled / superseded,2018,Ba Ria-Vung Tau,75
+Long Son petrochemical cogeneration 3,Imported LNG,Cancelled / superseded,2018,Ba Ria-Vung Tau,75
+Thu Duc,Oil,Operating,,Ho Chi Minh City,165
+Can Tho,Oil,Operating,,Can Tho,33
+O Mon I,Oil,Operating,,Can Tho,330
+Bourbon,Oil,Operating,,Tay Ninh,24
+Can Tho (S4),Oil,Operating,,Can Tho,33
+EVN's Power Corporations,Diesel,Operating,,Multiple provinces / islands,285
+Amata,Diesel,Operating,,Dong Nai,14
+Nho Que 2,Hydro-based renewable (excluded from thermal scope),N/A,,Ha Giang,48
+Nho Que 1,Hydro-based renewable (excluded from thermal scope),N/A,,Ha Giang,32
+Nam Na 3,Hydro-based renewable (excluded from thermal scope),N/A,,Lai Chau,84
+Nam Tong,Hydro-based renewable (excluded from thermal scope),N/A,,Unknown,34
+Bac Me,Hydro-based renewable (excluded from thermal scope),N/A,,Ha Giang,45
+Ba Thuoc 1,Hydro-based renewable (excluded from thermal scope),N/A,,Thanh Hoa,60
+Song Tranh 3,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,62
+Huoi Quang #2,Hydro-based renewable (excluded from thermal scope),N/A,,Lai Chau,260
+"Lai Chau #2,3",Hydro-based renewable (excluded from thermal scope),N/A,,Lai Chau,800
+"Trung Son #1,2",Hydro-based renewable (excluded from thermal scope),N/A,,Thanh Hoa,130
+Nhan Hac,Hydro-based renewable (excluded from thermal scope),N/A,,Nghe An,59
+Song Bung 2,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,100
+Sekaman 1 (Laos import project),Hydro import (excluded),N/A,,Import/Laos,290
+Song Tranh 4,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,48
+Dak Mi 2,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,98
+Formosa Ha Tinh #2,Coal,Operating/Planned in source,,Ha Tinh,150
+"Formosa Ha Tinh #3,4",Blast furnace gas,Planned,,Ha Tinh,200
+Formosa Ha Tinh #5,Coal,Planned,,Ha Tinh,150
+Dak Mi 3,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,45
+Formosa Dong Nai #3,Industrial thermal,Planned,,Dong Nai,150
+Vedan coal power,Coal,Planned,,Dong Nai,60
+Duyen Hai III #1,Coal,Planned/Operating later,,Tra Vinh,600
+KCP Biomass #1,Biomass,Planned,,Phu Yen,30
+Renewables aggregate (small hydro/wind/solar/biomass etc.),Mixed renewables,Planned,,Multiple,260
+Chi Khe,Hydro-based renewable (excluded from thermal scope),N/A,,Nghe An,41
+Long Tao,Hydro-based renewable (excluded from thermal scope),N/A,,Unknown,42
+"Trung Son #3,4",Hydro-based renewable (excluded from thermal scope),N/A,,Thanh Hoa,130
+Yen Son,Hydro-based renewable (excluded from thermal scope),N/A,,Tuyen Quang/Ha Giang unclear,70
+Tra Khuc 1,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Ngai,36
+Sekaman Xanxay (Laos import project),Hydro import (excluded),N/A,,Import/Laos,32
+Thac Mo expansion,Hydro-based renewable (excluded from thermal scope),N/A,,Binh Phuoc,75
+"Thai Binh I #1,2",Coal,Planned/Operating later,,Thai Binh,600
+Thai Binh II #1,Coal,Planned/Delayed,,Thai Binh,600
+Duyen Hai III #2,Coal,Planned/Operating later,,Tra Vinh,600
+Long Son Petrochemical #1,Industrial thermal,Planned,,Ba Ria-Vung Tau,75
+An Khe Biomass #1,Biomass,Planned,,Gia Lai,55
+Song Lo 6,Hydro-based renewable (excluded from thermal scope),N/A,,Ha Giang,44
+Hoi Xuan,Hydro-based renewable (excluded from thermal scope),N/A,,Thanh Hoa,102
+Song Mien 4,Hydro-based renewable (excluded from thermal scope),N/A,,Ha Giang,38
+La Ngau,Hydro-based renewable (excluded from thermal scope),N/A,,Binh Thuan,36
+Dak Mi 1,Hydro-based renewable (excluded from thermal scope),N/A,,Quang Nam,54
+Da Nhim expansion,Hydro-based renewable (excluded from thermal scope),N/A,,Lam Dong,100
+Sekaman 4 (Laos import project),Hydro import (excluded),N/A,,Import/Laos,80
+A Lin,Hydro-based renewable (excluded from thermal scope),N/A,,Thua Thien Hue,62
+Thang Long #1,Coal,Planned/Delayed,,Quang Ninh,300
+Thai Binh II #2,Coal,Planned/Delayed,,Thai Binh,600
+"Vinh Tan IV #1,2",Coal,Operating later,,Binh Thuan,1200
+Long Phu I #1,Coal,Planned/Delayed,,Soc Trang,600
+"Long Son Petrochemical #2,3",Industrial thermal,Planned,,Ba Ria-Vung Tau,150
+KCP Biomass #2,Biomass,Planned,,Phu Yen,30
+An Khe Biomass #2,Biomass,Planned,,Gia Lai,55
+Lee&Man Biomass,Biomass,Planned,,Hau Giang,125
+Bao Lam 3,Hydro-based renewable (excluded from thermal scope),N/A,,Lam Dong/Cao Bang unclear,46
+Pac Ma,Hydro-based renewable (excluded from thermal scope),N/A,,Lai Chau,140
+"Thuong Kon Tum #1,2",Hydro-based renewable (excluded from thermal scope),N/A,,Kon Tum,220
+Thang Long #2,Coal,Planned/Delayed,,Quang Ninh,300
+Hai Ha Co-generation 1,Coal/industrial thermal,Planned,,Quang Ninh,150
+Na Duong II,Coal,Planned,,Lang Son,110
+Long Phu II #2,Coal,Planned/Delayed,,Soc Trang,600
+"Song Hau I #1,2",Coal,Under construction/delayed,,Hau Giang,1200
+Duyen Hai III expansion,Coal,Operating later,,Tra Vinh,660
+"Vinh Tan I #1,2",Coal,Operating later,,Binh Thuan,1200
+Trung-Nam Wind,Wind,Planned,,Ninh Thuan,90
+Soc Trang Wind,Wind,Planned,,Soc Trang,99
+Thien Tan 1 Solar,Solar,Planned,,Ninh Thuan,300
+Nam Pan 5,Hydro-based renewable (excluded from thermal scope),N/A,,Son La,35
+Nam Mo (Vietnam),Hydro-based renewable (excluded from thermal scope),N/A,,Nghe An,95
+IaLy expansion,Hydro-based renewable (excluded from thermal scope),N/A,,Gia Lai/Kon Tum,360
+"Formosa Ha Tinh #6,7",Coal,Planned,,Ha Tinh,300
+"Formosa Ha Tinh #8,9",Blast furnace gas,Planned,,Ha Tinh,200
+Formosa Ha Tinh #10,Coal,Planned,,Ha Tinh,150
+Hai Duong #1,Coal,Under construction/delayed,,Hai Duong,600
+"Cam Pha III #1,2",Coal,Planned,,Quang Ninh,440
+"Nam Cum small hydro cluster 2,3,6",Hydro-based renewable (excluded from thermal scope),N/A,,Dien Bien/Lai Chau unclear,54
+Hanbaram Wind,Wind,Planned,,Unknown,117
+Thien Tan 2 Solar,Solar,Planned,,Ninh Thuan,400
+Hai Ha Co-generation 2,Industrial thermal,Planned,,Quang Ninh,750
+Luc Nam #1,Industrial thermal,Planned,,Bac Giang,50
+Luc Nam #2,Industrial thermal,Planned,,Bac Giang,50
+Long Son Petrochemical (aggregate listed projects #1-3),Industrial thermal,Planned,,Ba Ria-Vung Tau,225
+Hai Ha Co-generation 3,Industrial thermal,Planned,,Quang Ninh,600
+Rang Dong Co-generation,Industrial thermal,Planned,,Nam Dinh,100
+Hai Ha Co-generation 4,Industrial thermal,Planned,,Quang Ninh,600
+Formosa HT2,Industrial thermal,Priority project,,Ha Tinh,650
+Duc Giang Co-generation,Industrial thermal,Priority project,,Hanoi,100
+Hoa Phat II excess-gas power,Industrial thermal,Priority project,,Unknown,300
+O Mon I*,Domestic gas,Priority project,,Can Tho,660
+Nhon Trach 3 and Nhon Trach 4,LNG,Under construction / planned,,Dong Nai,1624
+Son My II,LNG,Priority project,,Binh Thuan,2250
+Son My I BOT,LNG,Priority project,,Binh Thuan,2250

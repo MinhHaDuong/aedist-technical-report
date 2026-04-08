@@ -15,65 +15,65 @@ from aedist.tabulate_comparaison import (
 SAMPLE_METRICS = [
     # Census runs for gpt-5.4
     {
-        "label": "sweep1_census/gpt-5.4-run1",
+        "label": "census/gpt-5.4-run1",
         "coverage": 0.491,
         "f1": 0.658,
     },
     {
-        "label": "sweep1_census/gpt-5.4-run2",
+        "label": "census/gpt-5.4-run2",
         "coverage": 0.500,
         "f1": 0.660,
     },
     {
-        "label": "sweep1_census/gpt-5.4-run3",
+        "label": "census/gpt-5.4-run3",
         "coverage": 0.470,
         "f1": 0.640,
     },
     # RAG runs for gpt-5.4
     {
-        "label": "sweep_rag/gpt-5.4-run1",
+        "label": "rag/gpt-5.4-run1",
         "coverage": 0.550,
         "f1": 0.720,
     },
     {
-        "label": "sweep_rag/gpt-5.4-run2",
+        "label": "rag/gpt-5.4-run2",
         "coverage": 0.560,
         "f1": 0.730,
     },
     {
-        "label": "sweep_rag/gpt-5.4-run3",
+        "label": "rag/gpt-5.4-run3",
         "coverage": 0.540,
         "f1": 0.710,
     },
     # Census runs for padme-qwen3.5-122b
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run1",
+        "label": "census/padme-qwen3.5-122b-run1",
         "coverage": 0.300,
         "f1": 0.436,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run2",
+        "label": "census/padme-qwen3.5-122b-run2",
         "coverage": 0.320,
         "f1": 0.465,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run3",
+        "label": "census/padme-qwen3.5-122b-run3",
         "coverage": 0.310,
         "f1": 0.450,
     },
     # RAG runs for padme-qwen3.5-122b
     {
-        "label": "sweep_rag/padme-qwen3.5-122b-run1",
+        "label": "rag/padme-qwen3.5-122b-run1",
         "coverage": 0.280,
         "f1": 0.410,
     },
     {
-        "label": "sweep_rag/padme-qwen3.5-122b-run2",
+        "label": "rag/padme-qwen3.5-122b-run2",
         "coverage": 0.290,
         "f1": 0.420,
     },
     {
-        "label": "sweep_rag/padme-qwen3.5-122b-run3",
+        "label": "rag/padme-qwen3.5-122b-run3",
         "coverage": 0.270,
         "f1": 0.400,
     },
@@ -104,7 +104,7 @@ def test_group_by_sweep_rag_count():
 
 
 def test_group_by_sweep_ignores_unknown_prefix():
-    metrics = [{"label": "sweep3_other/gpt-5.4-run1", "coverage": 0.5, "f1": 0.6}]
+    metrics = [{"label": "other/gpt-5.4-run1", "coverage": 0.5, "f1": 0.6}]
     census, rag = group_by_sweep(metrics)
     assert len(census) == 0
     assert len(rag) == 0
@@ -181,9 +181,9 @@ def test_only_one_sweep_excluded():
     """Models appearing in only one sweep should not appear in the table."""
     metrics = [
         # census only
-        {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
+        {"label": "census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
         # rag only
-        {"label": "sweep_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
+        {"label": "rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
     ]
     latex, n = generate_comparaison_table(metrics)
     assert n == 0
@@ -213,8 +213,8 @@ def test_delta_negative_no_plus_sign():
 def test_delta_zero_gets_plus_sign():
     """Zero delta should get '+' prefix (delta >= 0 path)."""
     metrics = [
-        {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
-        {"label": "sweep_rag/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
+        {"label": "census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
+        {"label": "rag/gpt-5.4-run1", "coverage": 0.5, "f1": 0.500},
     ]
     latex, _ = generate_comparaison_table(metrics)
     assert "+0.0" in latex
@@ -226,8 +226,8 @@ def test_delta_zero_gets_plus_sign():
 def test_empty_intersection_warning(caplog):
     """No common models should log a warning."""
     metrics = [
-        {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
-        {"label": "sweep_rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
+        {"label": "census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
+        {"label": "rag/deepseek-v3.2-run1", "coverage": 0.4, "f1": 0.55},
     ]
     with caplog.at_level(logging.WARNING):
         latex, n = generate_comparaison_table(metrics)
@@ -238,7 +238,7 @@ def test_empty_intersection_warning(caplog):
 def test_empty_intersection_no_data_rows():
     """Empty intersection should produce a table with no data rows."""
     metrics = [
-        {"label": "sweep1_census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
+        {"label": "census/gpt-5.4-run1", "coverage": 0.5, "f1": 0.65},
     ]
     latex, n = generate_comparaison_table(metrics)
     assert n == 0

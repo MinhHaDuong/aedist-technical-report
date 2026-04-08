@@ -9,7 +9,7 @@ from aedist.tabulate_utils import format_model_name, group_and_summarize, strip_
 
 SAMPLE_METRICS = [
     {
-        "label": "sweep1_census/gpt-5.4-run1",
+        "label": "census/gpt-5.4-run1",
         "coverage": 0.491,
         "precision": 1.0,
         "f1": 0.658,
@@ -17,7 +17,7 @@ SAMPLE_METRICS = [
         "n_matched": 80,
     },
     {
-        "label": "sweep1_census/gpt-5.4-run2",
+        "label": "census/gpt-5.4-run2",
         "coverage": 0.500,
         "precision": 0.980,
         "f1": 0.660,
@@ -25,7 +25,7 @@ SAMPLE_METRICS = [
         "n_matched": 82,
     },
     {
-        "label": "sweep1_census/gpt-5.4-run3",
+        "label": "census/gpt-5.4-run3",
         "coverage": 0.470,
         "precision": 0.990,
         "f1": 0.640,
@@ -33,7 +33,7 @@ SAMPLE_METRICS = [
         "n_matched": 77,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run1",
+        "label": "census/padme-qwen3.5-122b-run1",
         "coverage": 0.300,
         "precision": 0.800,
         "f1": 0.436,
@@ -41,7 +41,7 @@ SAMPLE_METRICS = [
         "n_matched": 49,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run2",
+        "label": "census/padme-qwen3.5-122b-run2",
         "coverage": 0.320,
         "precision": 0.850,
         "f1": 0.465,
@@ -49,7 +49,7 @@ SAMPLE_METRICS = [
         "n_matched": 52,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-122b-run3",
+        "label": "census/padme-qwen3.5-122b-run3",
         "coverage": 0.310,
         "precision": 0.820,
         "f1": 0.450,
@@ -63,15 +63,15 @@ SAMPLE_METRICS = [
 
 
 def test_strip_label_basic():
-    assert strip_label("sweep1_census/gpt-5.4-run1") == "gpt-5.4"
+    assert strip_label("census/gpt-5.4-run1") == "gpt-5.4"
 
 
 def test_strip_label_padme():
-    assert strip_label("sweep1_census/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
+    assert strip_label("census/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
 
 
 def test_strip_label_multi_digit_run():
-    assert strip_label("sweep1_census/claude-opus-4.6-run12") == "claude-opus-4.6"
+    assert strip_label("census/claude-opus-4.6-run12") == "claude-opus-4.6"
 
 
 def test_strip_label_no_dir():

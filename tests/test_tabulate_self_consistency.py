@@ -162,7 +162,7 @@ def test_assemble_from_measurements():
     metrics = [
         # deepseek per-run (3 runs, sorted by f1 ascending)
         {
-            "label": "sweep_rag/deepseek-v3.2-run1",
+            "label": "rag/deepseek-v3.2-run1",
             "f1": 0.3367,
             "coverage": 0.2025,
             "precision": 1.0,
@@ -172,7 +172,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 0,
         },
         {
-            "label": "sweep_rag/deepseek-v3.2-run2",
+            "label": "rag/deepseek-v3.2-run2",
             "f1": 0.6009,
             "coverage": 0.4294,
             "precision": 1.0,
@@ -182,7 +182,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 0,
         },
         {
-            "label": "sweep_rag/deepseek-v3.2-run3",
+            "label": "rag/deepseek-v3.2-run3",
             "f1": 0.6855,
             "coverage": 0.5215,
             "precision": 1.0,
@@ -193,7 +193,7 @@ def test_assemble_from_measurements():
         },
         # deepseek vote results
         {
-            "label": "sweep_rag_consistency/deepseek-v3.2-consolidated",
+            "label": "rag_consistency/deepseek-v3.2-consolidated",
             "f1": 0.386,
             "coverage": 0.239,
             "precision": 1.0,
@@ -203,7 +203,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 0,
         },
         {
-            "label": "sweep_rag_consistency/deepseek-v3.2-union",
+            "label": "rag_consistency/deepseek-v3.2-union",
             "f1": 0.955,
             "coverage": 0.914,
             "precision": 1.0,
@@ -214,7 +214,7 @@ def test_assemble_from_measurements():
         },
         # gemini per-run (overgeneration regime)
         {
-            "label": "sweep_rag/gemini-2.5-flash-lite-run1",
+            "label": "rag/gemini-2.5-flash-lite-run1",
             "f1": 0.4045,
             "coverage": 1.0,
             "precision": 0.2535,
@@ -224,7 +224,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 480,
         },
         {
-            "label": "sweep_rag/gemini-2.5-flash-lite-run2",
+            "label": "rag/gemini-2.5-flash-lite-run2",
             "f1": 0.5801,
             "coverage": 1.0,
             "precision": 0.4085,
@@ -234,7 +234,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 236,
         },
         {
-            "label": "sweep_rag/gemini-2.5-flash-lite-run3",
+            "label": "rag/gemini-2.5-flash-lite-run3",
             "f1": 0.9674,
             "coverage": 1.0,
             "precision": 0.9368,
@@ -244,7 +244,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 11,
         },
         {
-            "label": "sweep_rag_consistency/gemini-2.5-flash-lite-consolidated",
+            "label": "rag_consistency/gemini-2.5-flash-lite-consolidated",
             "f1": 0.81,
             "coverage": 0.681,
             "precision": 1.0,
@@ -254,7 +254,7 @@ def test_assemble_from_measurements():
             "n_hallucinated": 0,
         },
         {
-            "label": "sweep_rag_consistency/gemini-2.5-flash-lite-union",
+            "label": "rag_consistency/gemini-2.5-flash-lite-union",
             "f1": 0.324,
             "coverage": 1.0,
             "precision": 0.194,
@@ -295,7 +295,7 @@ def test_main_writes_outputs(tmp_path, monkeypatch):
 
     metrics = [
         {
-            "label": "sweep_rag/deepseek-v3.2-run1",
+            "label": "rag/deepseek-v3.2-run1",
             "f1": 0.3367,
             "n_matched": 33,
             "n_system": 33,
@@ -304,7 +304,7 @@ def test_main_writes_outputs(tmp_path, monkeypatch):
             "n_missed": 130,
         },
         {
-            "label": "sweep_rag/deepseek-v3.2-run2",
+            "label": "rag/deepseek-v3.2-run2",
             "f1": 0.6009,
             "n_matched": 70,
             "n_system": 70,
@@ -313,7 +313,7 @@ def test_main_writes_outputs(tmp_path, monkeypatch):
             "n_missed": 93,
         },
         {
-            "label": "sweep_rag/deepseek-v3.2-run3",
+            "label": "rag/deepseek-v3.2-run3",
             "f1": 0.6855,
             "n_matched": 85,
             "n_system": 85,
@@ -322,7 +322,7 @@ def test_main_writes_outputs(tmp_path, monkeypatch):
             "n_missed": 78,
         },
         {
-            "label": "sweep_rag_consistency/deepseek-v3.2-consolidated",
+            "label": "rag_consistency/deepseek-v3.2-consolidated",
             "f1": 0.386,
             "n_matched": 39,
             "n_system": 39,
@@ -331,7 +331,7 @@ def test_main_writes_outputs(tmp_path, monkeypatch):
             "n_missed": 124,
         },
         {
-            "label": "sweep_rag_consistency/deepseek-v3.2-union",
+            "label": "rag_consistency/deepseek-v3.2-union",
             "f1": 0.955,
             "n_matched": 149,
             "n_system": 149,

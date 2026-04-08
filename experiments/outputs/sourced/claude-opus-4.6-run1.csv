@@ -1,0 +1,121 @@
+name,fuel,status,cod,province,capacity_mwe
+Uong Bi,coal_domestic,operating,1964,Quang Ninh,105
+Uong Bi Extension 1,coal_domestic,operating,2005,Quang Ninh,300
+Uong Bi Extension 2,coal_domestic,operating,2011,Quang Ninh,330
+Pha Lai 1,coal_domestic,operating,1983,Hai Duong,440
+Pha Lai 2,coal_imported,operating,2002,Hai Duong,600
+Ninh Binh,coal_domestic,operating,1974,Ninh Binh,100
+Na Duong,coal_domestic,operating,2004,Lang Son,111
+Cao Ngan,coal_domestic,operating,2006,Thai Nguyen,115
+Cam Pha 1+2,coal_domestic,operating,2010,Quang Ninh,600
+Son Dong,coal_domestic,operating,2010,Quang Ninh,220
+Formosa Ha Tinh 1,coal_imported,operating,2015,Ha Tinh,150
+Hai Phong 1,coal_imported,operating,2010,Hai Phong,600
+Hai Phong 2,coal_imported,operating,2014,Hai Phong,600
+Quang Ninh 1,coal_imported,operating,2010,Quang Ninh,600
+Quang Ninh 2,coal_imported,operating,2014,Quang Ninh,600
+Nghi Son 1,coal_imported,operating,2013,Thanh Hoa,600
+Duyen Hai 1,coal_imported,operating,2015,Tra Vinh,1245
+Duyen Hai 3,coal_imported,operating,2017,Tra Vinh,1245
+Vinh Tan 2,coal_imported,operating,2014,Binh Thuan,1244
+Mong Duong 1,coal_imported,operating,2015,Quang Ninh,1080
+Mong Duong 2,coal_imported,operating,2015,Quang Ninh,1200
+Thai Binh 1,coal_domestic,operating,2017,Thai Binh,600
+Vinh Tan 4,coal_imported,operating,2018,Binh Thuan,1200
+Mao Khe,coal_domestic,operating,2013,Quang Ninh,440
+An Khanh 1,coal_domestic,operating,2012,Thai Nguyen,100
+Vung Ang 1,coal_imported,operating,2014,Ha Tinh,1200
+Nong Son,coal_domestic,operating,2013,Quang Nam,30
+Vinh Tan 1,coal_imported,operating,2018,Binh Thuan,1200
+Duyen Hai 3 Extension,coal_imported,operating,2019,Tra Vinh,660
+Vinh Tan 4 Extension,coal_imported,operating,2019,Binh Thuan,600
+Thai Binh 2,coal_domestic,operating,2022,Thai Binh,1200
+Song Hau 1,coal_imported,operating,2022,Hau Giang,1200
+Nghi Son 2,coal_imported,operating,2022,Thanh Hoa,1200
+Hai Duong (BOT),coal_imported,operating,2021,Hai Duong,1200
+Vinh Tan 1 (already listed above),,,,,0
+Thang Long,coal_imported,operating,2018,Thanh Hoa,600
+Duyen Hai 2,coal_imported,operating,2022,Tra Vinh,1200
+Na Duong 2,coal_domestic,under_construction,2024,Lang Son,110
+Quang Trach 1,coal_imported,under_construction,2025,Quang Binh,1403
+Vung Ang 2,coal_imported,under_construction,2026,Ha Tinh,1330
+Van Phong 1,coal_imported,under_construction,2024,Khanh Hoa,1432
+Long Phu 1,coal_imported,under_construction,2026,Soc Trang,1200
+An Khanh - Bac Giang,coal_domestic,under_construction,2025,Bac Giang,650
+Cong Thanh,coal_imported,delayed,2026,Thanh Hoa,600
+Nam Dinh 1,coal_imported,delayed,unknown,Nam Dinh,1200
+Quang Tri (coal),coal_imported,delayed,unknown,Quang Tri,1320
+Vinh Tan 3,coal_imported,delayed,unknown,Binh Thuan,1980
+Song Hau 2,coal_imported,delayed,unknown,Hau Giang,2120
+Cam Thanh,coal_imported,delayed,unknown,Thanh Hoa,600
+Long Phu 2,coal_imported,delayed,unknown,Soc Trang,1320
+Long Phu 3,coal_imported,cancelled_or_stalled,unknown,Soc Trang,1800
+Formosa Ha Tinh 2,coal_imported,planned,unknown,Ha Tinh,650
+Formosa Dong Nai,coal_imported,operating,2016,Dong Nai,150
+Hai Ha 1 (cogeneration),coal_imported,planned,unknown,Quang Ninh,300
+Hai Ha 2 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
+Hai Ha 3 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
+Hai Ha 4 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
+Duc Giang (cogeneration),coal_domestic,planned,unknown,Ha Noi,100
+Hoa Phat II (blast furnace gas),coal_byproduct,planned,unknown,Quang Ngai,300
+Quang Trach 2 (LNG conversion),lng,planned,2026,Quang Binh,1500
+Quynh Lap 1,coal_imported,delayed,unknown,Nghe An,1200
+Hai Phong 3,coal_imported,cancelled_or_stalled,unknown,Hai Phong,1200
+Cam Pha 3,coal_domestic,cancelled_or_stalled,unknown,Quang Ninh,440
+Quynh Lap 2,coal_imported,cancelled_or_stalled,unknown,Nghe An,1200
+Vung Ang 3,coal_imported,cancelled_or_stalled,unknown,Ha Tinh,1200
+Quang Ninh 3,coal_imported,cancelled_or_stalled,unknown,Quang Ninh,1200
+Long An 1 (coal),coal_imported,cancelled,unknown,Long An,1200
+Long An 2 (coal),coal_imported,cancelled,unknown,Long An,1600
+Tan Phuoc 1,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200
+Tan Phuoc 2,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200
+Bac Lieu (coal),coal_imported,cancelled,unknown,Bac Lieu,1200
+Pha Lai 3,coal_domestic,planned,unknown,Hai Duong,660
+Bao Dai,coal_domestic,planned,unknown,unknown,600
+Thu Duc (oil),oil,operating,1965,Ho Chi Minh City,165
+Can Tho (oil),oil,operating,1978,Can Tho,33
+O Mon 1,gas_domestic,operating,2009,Can Tho,660
+Hiep Phuoc,oil,operating,1997,Ho Chi Minh City,375
+Phu My 1,gas_domestic,operating,1999,Ba Ria-Vung Tau,1108
+Phu My 2.1,gas_domestic,operating,2001,Ba Ria-Vung Tau,945
+Phu My 4,gas_domestic,operating,2004,Ba Ria-Vung Tau,477
+Phu My 2.2,gas_domestic,operating,2005,Ba Ria-Vung Tau,740
+Phu My 3,gas_domestic,operating,2004,Ba Ria-Vung Tau,740
+Ba Ria,gas_domestic,operating,1995,Ba Ria-Vung Tau,389
+Thu Duc (gas turbine),gas_domestic,operating,1999,Ho Chi Minh City,128
+Can Tho (gas turbine),gas_domestic,operating,2002,Can Tho,155
+Ca Mau 1,gas_domestic,operating,2007,Ca Mau,750
+Ca Mau 2,gas_domestic,operating,2008,Ca Mau,750
+Nhon Trach 1,gas_domestic,operating,2009,Dong Nai,465
+Nhon Trach 2,gas_domestic,operating,2011,Dong Nai,750
+Nhon Trach 3,lng,under_construction,2025,Dong Nai,750
+Nhon Trach 4,lng,under_construction,2025,Dong Nai,874
+O Mon 3,gas_domestic,planned,2025,Can Tho,750
+O Mon 4,gas_domestic,planned,2023,Can Tho,750
+O Mon 2,gas_domestic,planned,unknown,Can Tho,1050
+Dung Quat 1,gas_domestic,planned,2024,Quang Ngai,750
+Dung Quat 2,gas_domestic,planned,unknown,Quang Ngai,750
+Dung Quat 3,gas_domestic,planned,unknown,Quang Ngai,750
+Mien Trung 1,gas_domestic,planned,2025,Quang Tri,750
+Mien Trung 2,gas_domestic,planned,2025,Quang Tri,750
+Quang Tri (gas),gas_domestic,planned,unknown,Quang Tri,340
+Son My 2,lng,planned,2027,Binh Thuan,2250
+Son My 1,lng,planned,2028,Binh Thuan,2250
+LNG Quang Ninh,lng,planned,unknown,Quang Ninh,1500
+LNG Thai Binh,lng,planned,unknown,Thai Binh,1500
+LNG Nghi Son,lng,planned,unknown,Thanh Hoa,1500
+LNG Quynh Lap / Nghi Son,lng,planned,unknown,Nghe An,1500
+LNG Hai Lang 1,lng,planned,unknown,Quang Tri,1500
+LNG Ca Na,lng,planned,unknown,Ninh Thuan,1500
+LNG Hiep Phuoc 1,lng,planned,unknown,Ho Chi Minh City,1200
+LNG Long An 1,lng,planned,unknown,Long An,1500
+LNG Long An 2,lng,planned,unknown,Long An,1500
+LNG Bac Lieu,lng,planned,unknown,Bac Lieu,3200
+LNG Long Son,lng,planned,unknown,Ba Ria-Vung Tau,1500
+Kien Giang 1,gas_domestic,delayed,unknown,Kien Giang,750
+Kien Giang 2,gas_domestic,delayed,unknown,Kien Giang,750
+Ve Dan,gas_domestic,operating,2002,Dong Nai,72
+Dam Phu My,gas_domestic,operating,2004,Ba Ria-Vung Tau,21
+Bourbon,oil,operating,unknown,unknown,24
+Amata,diesel,operating,unknown,Dong Nai,14
+Diesel plants (EVN Power Corporations),diesel,operating,various,various,285

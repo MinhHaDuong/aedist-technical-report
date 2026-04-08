@@ -16,7 +16,7 @@ from aedist.tabulate_relances import (
 SAMPLE_PER_TURN_METRICS = [
     # gpt-5.4 run1
     {
-        "label": "sweep2_multiturn/gpt-5.4-run1",
+        "label": "multiturn/gpt-5.4-run1",
         "turn": 0,
         "f1": 0.40,
         "precision": 0.90,
@@ -25,7 +25,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 49,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run1",
+        "label": "multiturn/gpt-5.4-run1",
         "turn": 1,
         "f1": 0.55,
         "precision": 0.92,
@@ -34,7 +34,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 73,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run1",
+        "label": "multiturn/gpt-5.4-run1",
         "turn": 2,
         "f1": 0.65,
         "precision": 0.95,
@@ -44,7 +44,7 @@ SAMPLE_PER_TURN_METRICS = [
     },
     # gpt-5.4 run2
     {
-        "label": "sweep2_multiturn/gpt-5.4-run2",
+        "label": "multiturn/gpt-5.4-run2",
         "turn": 0,
         "f1": 0.42,
         "precision": 0.91,
@@ -53,7 +53,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 52,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run2",
+        "label": "multiturn/gpt-5.4-run2",
         "turn": 1,
         "f1": 0.57,
         "precision": 0.93,
@@ -62,7 +62,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 77,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run2",
+        "label": "multiturn/gpt-5.4-run2",
         "turn": 2,
         "f1": 0.67,
         "precision": 0.96,
@@ -72,7 +72,7 @@ SAMPLE_PER_TURN_METRICS = [
     },
     # gpt-5.4 run3
     {
-        "label": "sweep2_multiturn/gpt-5.4-run3",
+        "label": "multiturn/gpt-5.4-run3",
         "turn": 0,
         "f1": 0.38,
         "precision": 0.89,
@@ -81,7 +81,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 46,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run3",
+        "label": "multiturn/gpt-5.4-run3",
         "turn": 1,
         "f1": 0.53,
         "precision": 0.91,
@@ -90,7 +90,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 70,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run3",
+        "label": "multiturn/gpt-5.4-run3",
         "turn": 2,
         "f1": 0.63,
         "precision": 0.94,
@@ -100,7 +100,7 @@ SAMPLE_PER_TURN_METRICS = [
     },
     # padme-qwen3.5-122b run1
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run1",
+        "label": "multiturn/padme-qwen3.5-122b-run1",
         "turn": 0,
         "f1": 0.20,
         "precision": 0.80,
@@ -109,7 +109,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 24,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run1",
+        "label": "multiturn/padme-qwen3.5-122b-run1",
         "turn": 1,
         "f1": 0.30,
         "precision": 0.82,
@@ -118,7 +118,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 36,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run1",
+        "label": "multiturn/padme-qwen3.5-122b-run1",
         "turn": 2,
         "f1": 0.38,
         "precision": 0.85,
@@ -128,7 +128,7 @@ SAMPLE_PER_TURN_METRICS = [
     },
     # padme-qwen3.5-122b run2
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run2",
+        "label": "multiturn/padme-qwen3.5-122b-run2",
         "turn": 0,
         "f1": 0.22,
         "precision": 0.81,
@@ -137,7 +137,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 28,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run2",
+        "label": "multiturn/padme-qwen3.5-122b-run2",
         "turn": 1,
         "f1": 0.32,
         "precision": 0.83,
@@ -146,7 +146,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 39,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run2",
+        "label": "multiturn/padme-qwen3.5-122b-run2",
         "turn": 2,
         "f1": 0.40,
         "precision": 0.86,
@@ -156,7 +156,7 @@ SAMPLE_PER_TURN_METRICS = [
     },
     # padme-qwen3.5-122b run3
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run3",
+        "label": "multiturn/padme-qwen3.5-122b-run3",
         "turn": 0,
         "f1": 0.18,
         "precision": 0.79,
@@ -165,7 +165,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 21,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run3",
+        "label": "multiturn/padme-qwen3.5-122b-run3",
         "turn": 1,
         "f1": 0.28,
         "precision": 0.81,
@@ -174,7 +174,7 @@ SAMPLE_PER_TURN_METRICS = [
         "n_matched": 33,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run3",
+        "label": "multiturn/padme-qwen3.5-122b-run3",
         "turn": 2,
         "f1": 0.36,
         "precision": 0.84,
@@ -187,7 +187,7 @@ SAMPLE_PER_TURN_METRICS = [
 # Summary entries (no "turn" field) for fallback table.
 SAMPLE_SUMMARY_METRICS = [
     {
-        "label": "sweep2_multiturn/gpt-5.4-run1",
+        "label": "multiturn/gpt-5.4-run1",
         "f1": 0.658,
         "precision": 1.0,
         "coverage": 0.491,
@@ -195,7 +195,7 @@ SAMPLE_SUMMARY_METRICS = [
         "n_matched": 80,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run2",
+        "label": "multiturn/gpt-5.4-run2",
         "f1": 0.660,
         "precision": 0.980,
         "coverage": 0.500,
@@ -203,7 +203,7 @@ SAMPLE_SUMMARY_METRICS = [
         "n_matched": 82,
     },
     {
-        "label": "sweep2_multiturn/gpt-5.4-run3",
+        "label": "multiturn/gpt-5.4-run3",
         "f1": 0.640,
         "precision": 0.990,
         "coverage": 0.470,
@@ -211,7 +211,7 @@ SAMPLE_SUMMARY_METRICS = [
         "n_matched": 77,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run1",
+        "label": "multiturn/padme-qwen3.5-122b-run1",
         "f1": 0.436,
         "precision": 0.800,
         "coverage": 0.300,
@@ -219,7 +219,7 @@ SAMPLE_SUMMARY_METRICS = [
         "n_matched": 49,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run2",
+        "label": "multiturn/padme-qwen3.5-122b-run2",
         "f1": 0.465,
         "precision": 0.850,
         "coverage": 0.320,
@@ -227,7 +227,7 @@ SAMPLE_SUMMARY_METRICS = [
         "n_matched": 52,
     },
     {
-        "label": "sweep2_multiturn/padme-qwen3.5-122b-run3",
+        "label": "multiturn/padme-qwen3.5-122b-run3",
         "f1": 0.450,
         "precision": 0.820,
         "coverage": 0.310,
@@ -241,10 +241,10 @@ SAMPLE_SUMMARY_METRICS = [
 
 
 def test_generate_relances_table_no_multiturn_entries():
-    """When no sweep2_multiturn entries exist, returns empty summary table."""
+    """When no multiturn entries exist, returns empty summary table."""
     non_mt = [
         {
-            "label": "sweep1_census/gpt-5.4-run1",
+            "label": "census/gpt-5.4-run1",
             "f1": 0.65,
             "precision": 1.0,
             "coverage": 0.49,
@@ -384,13 +384,13 @@ def test_generate_summary_table_used_when_no_turn_field():
 def test_group_by_model_and_turn_skips_entries_without_turn():
     mixed = [
         {
-            "label": "sweep2_multiturn/gpt-5.4-run1",
+            "label": "multiturn/gpt-5.4-run1",
             "f1": 0.65,
             "n_reference": 163,
             "n_matched": 80,
         },
         {
-            "label": "sweep2_multiturn/gpt-5.4-run1",
+            "label": "multiturn/gpt-5.4-run1",
             "turn": 0,
             "f1": 0.40,
             "n_reference": 163,
@@ -413,13 +413,13 @@ def test_group_by_model_and_turn_empty_input():
 def test_group_by_model_and_turn_all_without_turn():
     entries = [
         {
-            "label": "sweep2_multiturn/gpt-5.4-run1",
+            "label": "multiturn/gpt-5.4-run1",
             "f1": 0.65,
             "n_reference": 163,
             "n_matched": 80,
         },
         {
-            "label": "sweep2_multiturn/gpt-5.4-run2",
+            "label": "multiturn/gpt-5.4-run2",
             "f1": 0.66,
             "n_reference": 163,
             "n_matched": 82,
@@ -445,7 +445,7 @@ def test_group_by_model_and_turn_groups_correctly():
 def test_single_run_per_turn_table():
     """Model with only one run should still produce valid per-turn output."""
     single_run = [
-        e for e in SAMPLE_PER_TURN_METRICS if e["label"] == "sweep2_multiturn/gpt-5.4-run1"
+        e for e in SAMPLE_PER_TURN_METRICS if e["label"] == "multiturn/gpt-5.4-run1"
     ]
     latex = _generate_per_turn_table(single_run)
     assert "\\begin{longtable}" in latex

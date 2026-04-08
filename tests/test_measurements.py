@@ -19,7 +19,7 @@ from aedist.schema import (
 
 CENSUS_METRICS = [
     {
-        "label": "sweep1_census/gpt-5.4-run1",
+        "label": "census/gpt-5.4-run1",
         "coverage": 0.4908,
         "precision": 1.0,
         "f1": 0.658,
@@ -33,7 +33,7 @@ CENSUS_METRICS = [
         "province_accuracy": 0.818,
     },
     {
-        "label": "sweep1_census/gpt-5.4-run2",
+        "label": "census/gpt-5.4-run2",
         "coverage": 0.5031,
         "precision": 0.9762,
         "f1": 0.66,
@@ -98,11 +98,11 @@ def _make_record(label: str, tp: int, fp: int, fn: int, f1: float, **kwargs) -> 
 
 class TestRecordsToMetrics:
     def test_derived_fields(self):
-        record = _make_record("sweep1_census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658)
+        record = _make_record("census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658)
         metrics = records_to_metrics([record])
         assert len(metrics) == 1
         m = metrics[0]
-        assert m["label"] == "sweep1_census/gpt-5.4-run1"
+        assert m["label"] == "census/gpt-5.4-run1"
         assert m["n_matched"] == 80
         assert m["n_missed"] == 83
         assert m["n_hallucinated"] == 0
@@ -113,7 +113,7 @@ class TestRecordsToMetrics:
 
     def test_cost_and_latency_included(self):
         record = _make_record(
-            "sweep1_census/model-run1",
+            "census/model-run1",
             tp=10,
             fp=2,
             fn=5,
@@ -126,13 +126,13 @@ class TestRecordsToMetrics:
         assert metrics[0]["wall_seconds"] == 24.5
 
     def test_missing_cost_excluded(self):
-        record = _make_record("sweep1_census/model-run1", tp=10, fp=2, fn=5, f1=0.5)
+        record = _make_record("census/model-run1", tp=10, fp=2, fn=5, f1=0.5)
         metrics = records_to_metrics([record])
         assert "cost_usd" not in metrics[0]
         assert "wall_seconds" not in metrics[0]
 
     def test_zero_plants(self):
-        record = _make_record("sweep1_census/empty-run1", tp=0, fp=0, fn=0, f1=0.0)
+        record = _make_record("census/empty-run1", tp=0, fp=0, fn=0, f1=0.0)
         metrics = records_to_metrics([record])
         assert metrics[0]["coverage"] == 0.0
         assert metrics[0]["precision"] == 0.0
@@ -184,37 +184,37 @@ class TestInferMethod:
     def test_census(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep1_census") == "single"
+        assert _infer_method("census") == "single"
 
     def test_multiturn(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep2_multiturn") == "multiturn"
+        assert _infer_method("multiturn") == "multiturn"
 
     def test_rag(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep_rag") == "rag"
+        assert _infer_method("rag") == "rag"
 
     def test_rag_consistency_is_rag(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep_rag_consistency") == "rag"
+        assert _infer_method("rag_consistency") == "rag"
 
     def test_web(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep2_web") == "web"
+        assert _infer_method("web") == "web"
 
     def test_decomposed(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep3_decomposed") == "decomposed"
+        assert _infer_method("decomposed") == "decomposed"
 
     def test_sourced(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep5_sourced") == "sourced"
+        assert _infer_method("sourced") == "sourced"
 
     def test_frontier(self):
         from aedist.runner import _infer_method
@@ -229,7 +229,7 @@ class TestInferMethod:
     def test_verification(self):
         from aedist.runner import _infer_method
 
-        assert _infer_method("sweep4_verification") == "verification"
+        assert _infer_method("verification") == "verification"
 
     def test_unknown_defaults_to_single(self):
         from aedist.runner import _infer_method
@@ -240,7 +240,7 @@ class TestInferMethod:
 class TestJsonlRoundTrip:
     def test_file_roundtrip(self, tmp_path):
         records = [
-            _make_record("sweep1_census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658),
+            _make_record("census/gpt-5.4-run1", tp=80, fp=0, fn=83, f1=0.658),
         ]
         jsonl_path = tmp_path / "measurements.jsonl"
         RunRecord.save_jsonl(records, jsonl_path)
@@ -248,5 +248,5 @@ class TestJsonlRoundTrip:
         loaded = RunRecord.load_jsonl(jsonl_path)
         metrics = records_to_metrics(loaded)
         assert len(metrics) == 1
-        assert metrics[0]["label"] == "sweep1_census/gpt-5.4-run1"
+        assert metrics[0]["label"] == "census/gpt-5.4-run1"
         assert metrics[0]["f1"] == 0.658

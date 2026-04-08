@@ -1,12 +1,12 @@
-"""Tests for select_sweep2 — model selection from census metrics."""
+"""Tests for select_models — model selection from census metrics."""
 
 import pytest
 
-from aedist.select_sweep2 import (
+from aedist.select_models import (
     extract_slug,
     group_median_f1,
     load_registry,
-    select_sweep2,
+    select_models,
 )
 
 # ---------------------------------------------------------------------------
@@ -14,19 +14,19 @@ from aedist.select_sweep2 import (
 # ---------------------------------------------------------------------------
 
 SAMPLE_METRICS = [
-    {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.65},
-    {"label": "sweep1_census/gpt-5.4-run2", "f1": 0.67},
-    {"label": "sweep1_census/gpt-5.4-run3", "f1": 0.63},
-    {"label": "sweep1_census/deepseek-v3.2-run1", "f1": 0.55},
-    {"label": "sweep1_census/deepseek-v3.2-run2", "f1": 0.57},
-    {"label": "sweep1_census/claude-opus-4.6-run1", "f1": 0.60},
-    {"label": "sweep1_census/gemini-2.5-flash-lite-run1", "f1": 0.40},
-    {"label": "sweep1_census/padme-qwen3.5-122b-run1", "f1": 0.50},
-    {"label": "sweep1_census/padme-qwen3.5-122b-run2", "f1": 0.48},
-    {"label": "sweep1_census/padme-glm-4.7-flash-run1", "f1": 0.45},
-    {"label": "sweep1_census/padme-nemotron-3-nano-run1", "f1": 0.20},
-    {"label": "sweep1_census/mistral-large-2512-run1", "f1": 0.52},
-    {"label": "sweep1_census/mistral-large-2512-run2", "f1": 0.54},
+    {"label": "census/gpt-5.4-run1", "f1": 0.65},
+    {"label": "census/gpt-5.4-run2", "f1": 0.67},
+    {"label": "census/gpt-5.4-run3", "f1": 0.63},
+    {"label": "census/deepseek-v3.2-run1", "f1": 0.55},
+    {"label": "census/deepseek-v3.2-run2", "f1": 0.57},
+    {"label": "census/claude-opus-4.6-run1", "f1": 0.60},
+    {"label": "census/gemini-2.5-flash-lite-run1", "f1": 0.40},
+    {"label": "census/padme-qwen3.5-122b-run1", "f1": 0.50},
+    {"label": "census/padme-qwen3.5-122b-run2", "f1": 0.48},
+    {"label": "census/padme-glm-4.7-flash-run1", "f1": 0.45},
+    {"label": "census/padme-nemotron-3-nano-run1", "f1": 0.20},
+    {"label": "census/mistral-large-2512-run1", "f1": 0.52},
+    {"label": "census/mistral-large-2512-run2", "f1": 0.54},
 ]
 
 SAMPLE_CLOUD = [
@@ -101,10 +101,10 @@ SAMPLE_PADME = [
 
 class TestExtractSlug:
     def test_cloud_model(self):
-        assert extract_slug("sweep1_census/gpt-5.4-run1") == "gpt-5.4"
+        assert extract_slug("census/gpt-5.4-run1") == "gpt-5.4"
 
     def test_padme_model(self):
-        assert extract_slug("sweep1_census/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
+        assert extract_slug("census/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
 
     def test_no_directory(self):
         assert extract_slug("gpt-5.4-run1") == "gpt-5.4"
@@ -130,16 +130,16 @@ class TestGroupMedianF1:
 
 
 # ---------------------------------------------------------------------------
-# select_sweep2 — N cloud + N local
+# select_models — N cloud + N local
 # ---------------------------------------------------------------------------
 
 
-class TestSelectSweep2:
+class TestSelectModels:
     def _select(self, n=1):
         rankings = group_median_f1(SAMPLE_METRICS)
         cloud = load_registry(SAMPLE_CLOUD, is_padme=False)
         local = load_registry(SAMPLE_PADME, is_padme=True)
-        return select_sweep2(rankings, cloud, local, n=n)
+        return select_models(rankings, cloud, local, n=n)
 
     def test_n1_gives_two_models(self):
         """--n 1 → 1 cloud + 1 local = 2 total."""
@@ -185,7 +185,7 @@ class TestSelectSweep2:
 
 
 # ---------------------------------------------------------------------------
-# select_sweep2 — diversity-aware path
+# select_models — diversity-aware path
 # ---------------------------------------------------------------------------
 
 
@@ -196,7 +196,7 @@ class TestDiverseSelection:
         rankings = group_median_f1(SAMPLE_METRICS)
         cloud = load_registry(SAMPLE_CLOUD, is_padme=False)
         local = load_registry(SAMPLE_PADME, is_padme=True)
-        return select_sweep2(
+        return select_models(
             rankings,
             cloud,
             local,

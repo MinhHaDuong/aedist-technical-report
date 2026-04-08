@@ -21,7 +21,7 @@ def _make_jobspec(**overrides) -> JobSpec:
         models_file="models.yaml",
         repeat=3,
         budget_usd=10.0,
-        output_dir="outputs/sweep1_census",
+        output_dir="outputs/census",
     )
     defaults.update(overrides)
     return JobSpec(**defaults)
@@ -95,21 +95,21 @@ class TestJobSpecYamlRoundTrip:
 
 
 class TestFromSweepYaml:
-    def test_sweep1_census(self, tmp_path: Path):
+    def test_census(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: single\n"
             "prompt: prompts/prompt_structured.txt\n"
             "models: models.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/sweep1_census\n"
+            "output: outputs/census\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.SINGLE
         assert j.models_file == "models.yaml"
-        assert j.output_dir == "outputs/sweep1_census"
+        assert j.output_dir == "outputs/census"
 
-    def test_sweep_rag(self, tmp_path: Path):
+    def test_rag(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: rag\n"
             "prompt: prompts/prompt_structured.txt\n"
@@ -118,14 +118,14 @@ class TestFromSweepYaml:
             "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/sweep_rag\n"
+            "output: outputs/rag\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.RAG
         assert j.corpus == "data/rag_corpus"
         assert j.strategy == "wholesale"
 
-    def test_sweep2_multiturn(self, tmp_path: Path):
+    def test_multiturn(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: multiturn\n"
             "prompt: prompts/prompt_structured.txt\n"
@@ -133,7 +133,7 @@ class TestFromSweepYaml:
             "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/sweep2_multiturn\n"
+            "output: outputs/multiturn\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.MULTITURN

@@ -13,8 +13,8 @@ Usage:
     python -m aedist.query_decomposed \
         --prompt prompts/prompt_structured.txt \
         --corpus data/rag_corpus/ \
-        --models models_sweep2.yaml \
-        --output outputs/sweep3_decomposed/ \
+        --models models_selected.yaml \
+        --output outputs/decomposed/ \
         --repeat 3 --budget-usd 2
 """
 

@@ -2,11 +2,11 @@
 #
 # Sweep configs live in [sweeps.*] sections of experiments.toml.
 # Job dispatch is handled by the manager + worker pipeline:
-#   1. `make sweep1-generate`  — fan out sweep config into per-model jobs
-#   2. `make sweep1-run`       — start workers to execute the jobs
-#   3. `make sweep1-summary`   — extract → evaluate → summarize
+#   1. `make census-generate`  — fan out sweep config into per-model jobs
+#   2. `make census-run`       — start workers to execute the jobs
+#   3. `make census-summary`   — extract → evaluate → summarize
 #
-# Or simply: `make sweep1` to generate + run in one step.
+# Or simply: `make census` to generate + run in one step.
 #
 # Adding a model to models.yaml → re-run generate (idempotent) + run.
 
@@ -30,12 +30,12 @@ export TAVILY_API_KEY
 
 # Guard: only require OPENROUTER_API_KEY for targets that actually need it.
 # Workers inherit keys from the environment; the guard catches missing keys early.
-_NEEDS_OPENROUTER := sweep1 sweep1-run sweep1-summary sweep2 sweep2-run sweep5-sourced sweep5-run
+_NEEDS_OPENROUTER := census census-run census-summary regimes regimes-run sourced sourced-run frontier frontier-run
 ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
   $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
 endif
 
-_NEEDS_TAVILY := sweep2-run
+_NEEDS_TAVILY := regimes-run
 ifneq ($(filter $(_NEEDS_TAVILY),$(MAKECMDGOALS)),)
   $(if $(TAVILY_API_KEY),,$(error TAVILY_API_KEY not set — export it or add to .env))
 endif
@@ -44,7 +44,7 @@ endif
 MANAGER := uv run --project .. python -m aedist.manager generate
 WORKER  := uv run --project .. python -m aedist.worker
 # Cap concurrent OpenRouter workers at API rate limit (default 8).
-# Override: make sweep1-run OR_MAX=16
+# Override: make census-run OR_MAX=16
 OR_MAX  ?= 8
 OR_PENDING = $(words $(wildcard jobs/pending/*.yaml))
 OR_JOBS = $(shell python3 -c "print(min($(OR_PENDING), $(OR_MAX)))")
@@ -52,83 +52,98 @@ OR_JOBS = $(shell python3 -c "print(min($(OR_PENDING), $(OR_MAX)))")
 # Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
 
-# --- Sweep 1: Model census ---------------------------------------------------
+# --- Census: model census -----------------------------------------------------
 
-S1_OUTPUT  := $(call cfg,sweep1_census,output)
+S1_OUTPUT  := $(call cfg,census,output)
 
-.PHONY: sweep1 sweep1-generate sweep1-run sweep1-summary
+.PHONY: census census-generate census-run census-summary
 
-sweep1: sweep1-generate sweep1-run
+census: census-generate census-run
 
-sweep1-generate:
-	$(MANAGER) --sweep sweep1_census --experiments experiments.toml
-	$(MANAGER) --sweep sweep1_padme --experiments experiments.toml
+census-generate:
+	$(MANAGER) --sweep census --experiments experiments.toml
+	$(MANAGER) --sweep census_local --experiments experiments.toml
 
-sweep1-run:
+census-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	$(WORKER) padme --drain & \
 	wait
 
-sweep1-summary: rebuild-measurements
+census-summary: rebuild-measurements
 
-# --- Sweep 2: Information regimes ---------------------------------------------
+# --- Regimes: information regimes ---------------------------------------------
 
-.PHONY: sweep2 sweep2-generate sweep2-run
+.PHONY: regimes regimes-generate regimes-run
 
-sweep2: sweep2-generate sweep2-run
+regimes: regimes-generate regimes-run
 
-sweep2-generate:
-	$(MANAGER) --sweep sweep2_multiturn --experiments experiments.toml
-	$(MANAGER) --sweep sweep_rag --experiments experiments.toml
-	$(MANAGER) --sweep sweep2_web --experiments experiments.toml
+regimes-generate:
+	$(MANAGER) --sweep multiturn --experiments experiments.toml
+	$(MANAGER) --sweep rag --experiments experiments.toml
+	$(MANAGER) --sweep web --experiments experiments.toml
 
-sweep2-run:
+regimes-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
-# --- Sweep 3: Task decomposition by fuel type ---------------------------------
+# --- Decomposed: task decomposition by fuel type -----------------------------
 
-.PHONY: sweep3-decomposed sweep3-generate sweep3-run
+.PHONY: decomposed decomposed-generate decomposed-run
 
-sweep3-decomposed: sweep3-generate sweep3-run
+decomposed: decomposed-generate decomposed-run
 
-sweep3-generate:
-	$(MANAGER) --sweep sweep3_decomposed --experiments experiments.toml
+decomposed-generate:
+	$(MANAGER) --sweep decomposed --experiments experiments.toml
 
-sweep3-run:
+decomposed-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
-# --- Sweep 4: Verification regimes -------------------------------------------
+# --- Verification: verification regimes --------------------------------------
 
-.PHONY: sweep4-verification sweep4-generate sweep4-run
+.PHONY: verification verification-generate verification-run
 
-sweep4-verification: sweep4-generate sweep4-run
+verification: verification-generate verification-run
 
-sweep4-generate:
-	$(MANAGER) --sweep sweep4_verification --experiments experiments.toml
+verification-generate:
+	$(MANAGER) --sweep verification --experiments experiments.toml
 
-sweep4-run:
+verification-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
-# --- Sweep 5: Sourced extraction (citations upfront) -------------------------
+# --- Sourced: sourced extraction (citations upfront) -------------------------
 
-.PHONY: sweep5-sourced sweep5-generate sweep5-run
+.PHONY: sourced sourced-generate sourced-run
 
-sweep5-sourced: sweep5-generate sweep5-run
+sourced: sourced-generate sourced-run
 
-sweep5-generate:
-	$(MANAGER) --sweep sweep5_sourced --experiments experiments.toml
+sourced-generate:
+	$(MANAGER) --sweep sourced --experiments experiments.toml
 
-sweep5-run:
+sourced-run:
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
+	wait
+
+# --- Frontier: deep-research models ------------------------------------------
+
+.PHONY: frontier frontier-generate frontier-run
+
+frontier: frontier-generate frontier-run
+
+frontier-generate:
+	$(MANAGER) --sweep frontier --experiments experiments.toml
+	$(MANAGER) --sweep frontier_scenarios --experiments experiments.toml
+	$(MANAGER) --sweep frontier_skill --experiments experiments.toml
+
+frontier-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
 # --- Rebuild measurements (materialized view of all outputs) -----------------
 
-STRUCTURED_DIRS := sweep1_census sweep2_multiturn sweep2_web sweep_rag \
-                   sweep3_decomposed sweep5_sourced
+STRUCTURED_DIRS := census multiturn web rag \
+                   decomposed sourced
 
 .PHONY: rebuild-measurements
 
@@ -142,8 +157,8 @@ rebuild-measurements:
 
 # --- Analysis: self-consistency -----------------------------------------------
 
-SC_INPUT  := outputs/sweep_rag
-SC_OUTPUT := outputs/sweep_rag_consistency
+SC_INPUT  := outputs/rag
+SC_OUTPUT := outputs/rag_consistency
 SC_JSON   := $(SC_OUTPUT)/self_consistency_summary.json
 SC_TEX    := ../report/inputs/generated/tab_self_consistency.tex
 SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
@@ -225,7 +240,7 @@ preflight:
 	if [ -n "$(TAVILY_API_KEY)" ]; then \
 	    printf "  ✓ TAVILY_API_KEY is set\n"; \
 	else \
-	    printf "  ✗ TAVILY_API_KEY not set (needed for sweep2-web)\n"; \
+	    printf "  ✗ TAVILY_API_KEY not set (needed for web)\n"; \
 	fi; \
 	if command -v uv >/dev/null 2>&1; then \
 	    printf "  ✓ uv found: $$(uv --version)\n"; \
@@ -250,13 +265,14 @@ preflight:
 
 help:
 	@echo "Sweeps (manager + worker pipeline):"
-	@echo "  make sweep1               Generate jobs + run workers (census)"
-	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
-	@echo "  make sweep1-run           Drain queue (1 worker per pending job + 1 Padme)"
-	@echo "  make sweep2               Generate + run all information regimes"
-	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
-	@echo "  make sweep4-verification  Generate + run verification sweep"
-	@echo "  make sweep5-sourced       Generate + run sourced extraction sweep"
+	@echo "  make census               Generate jobs + run workers (model census)"
+	@echo "  make census-generate      Fan out sweep config into per-model jobs"
+	@echo "  make census-run           Drain queue (1 worker per pending job + 1 Padme)"
+	@echo "  make regimes              Generate + run all information regimes"
+	@echo "  make decomposed           Generate + run decomposition sweep"
+	@echo "  make verification         Generate + run verification sweep"
+	@echo "  make sourced              Generate + run sourced extraction sweep"
+	@echo "  make frontier             Generate + run frontier deep-research (3 prompts)"
 	@echo "  make rebuild-measurements Extract + evaluate all outputs → measurements.jsonl"
 	@echo "  make self-consistency     Majority/union vote analysis + LaTeX tables"
 	@echo ""

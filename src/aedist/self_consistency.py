@@ -1,4 +1,4 @@
-"""Self-consistency evaluation for sweep_rag outputs.
+"""Self-consistency evaluation for rag outputs.
 
 For each model with 3 runs, merge them by majority vote (plant kept if it
 appears in 2+ of 3 runs), evaluate the consolidated result, and compare
@@ -6,8 +6,8 @@ against the single-run median F1.
 
 Usage:
     python -m aedist.self_consistency \
-        --input experiments/outputs/sweep_rag \
-        --output experiments/outputs/sweep_rag_consistency
+        --input experiments/outputs/rag \
+        --output experiments/outputs/rag_consistency
 """
 
 import argparse
@@ -339,7 +339,7 @@ def _results_to_records(
         metrics_list = run_metrics_by_model.get(model, [])
         paths = run_paths_by_model.get(model, [])
 
-        # Per-run records (sweep_rag)
+        # Per-run records (rag)
         for i, m in enumerate(metrics_list):
             run_num = i + 1
             # Find the original JSON path for this run
@@ -349,21 +349,21 @@ def _results_to_records(
                     method=Method.RAG,
                     method_params=MethodParams(
                         model=model,
-                        prompt_version="sweep_rag",
+                        prompt_version="rag",
                     ),
                     result_file=result_file,
                     result_summary=_metrics_to_result_summary(m),
                 )
             )
 
-        # Majority-vote record (sweep_rag_consistency)
+        # Majority-vote record (rag_consistency)
         if r.get("majority_f1") is not None:
             records.append(
                 RunRecord(
                     method=Method.RAG,
                     method_params=MethodParams(
                         model=f"{model}-consolidated",
-                        prompt_version="sweep_rag_consistency",
+                        prompt_version="rag_consistency",
                     ),
                     result_file=str(output_dir / f"{model}-consolidated.csv"),
                     result_summary=ResultSummary(
@@ -377,14 +377,14 @@ def _results_to_records(
                 )
             )
 
-        # Union-vote record (sweep_rag_consistency)
+        # Union-vote record (rag_consistency)
         if r.get("union_f1") is not None:
             records.append(
                 RunRecord(
                     method=Method.RAG,
                     method_params=MethodParams(
                         model=f"{model}-union",
-                        prompt_version="sweep_rag_consistency",
+                        prompt_version="rag_consistency",
                     ),
                     result_file=str(output_dir / f"{model}-union.csv"),
                     result_summary=ResultSummary(
@@ -402,16 +402,16 @@ def _results_to_records(
 
 
 def write_measurements(records: list[RunRecord], measurements_path: Path) -> None:
-    """Merge records into measurements.jsonl, replacing existing sweep_rag* entries."""
+    """Merge records into measurements.jsonl, replacing existing rag* entries."""
     existing: list[RunRecord] = []
     if measurements_path.exists():
         existing = RunRecord.load_jsonl(measurements_path)
 
-    # Remove old sweep_rag and sweep_rag_consistency records
+    # Remove old rag and rag_consistency records
     kept = [
         r
         for r in existing
-        if r.method_params.prompt_version not in ("sweep_rag", "sweep_rag_consistency")
+        if r.method_params.prompt_version not in ("rag", "rag_consistency")
     ]
     kept.extend(records)
     RunRecord.save_jsonl(kept, measurements_path)
@@ -445,8 +445,8 @@ def _print_comparison_table(results: list[dict]) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    p = argparse.ArgumentParser(description="Self-consistency analysis for sweep_rag runs")
-    p.add_argument("--input", required=True, help="Directory with sweep_rag JSON outputs")
+    p = argparse.ArgumentParser(description="Self-consistency analysis for rag runs")
+    p.add_argument("--input", required=True, help="Directory with rag JSON outputs")
     p.add_argument(
         "--output", required=True, help="Output directory for consolidated CSVs and results"
     )

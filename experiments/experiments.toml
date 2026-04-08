@@ -102,7 +102,7 @@ model_ids = [
     "minimax/minimax-m2.7",
 ]
 
-[sets.sweep_rag]
+[sets.rag]
 model_ids = [
     "openai/gpt-5.4",
     "google/gemini-2.5-flash-lite",
@@ -120,7 +120,7 @@ model_ids = [
     "gemma4:e2b",
 ]
 
-[sets.sweep5]
+[sets.sourced]
 model_ids = [
     "anthropic/claude-opus-4.6",
     "google/gemini-2.5-flash-lite",
@@ -130,66 +130,66 @@ model_ids = [
 ]
 
 # ---------------------------------------------------------------------------
-# Sweep configurations — previously in sweeps/*.yaml
+# Sweep configurations — experimental conditions
 # ---------------------------------------------------------------------------
 
-[sweeps.sweep1_census]
+[sweeps.census]
 mode = "single"
 prompt = "prompts/prompt_structured.txt"
 models = "models.yaml"
 model_set = "census_cloud"
 repeat = 3
 budget_usd = 10
-output = "outputs/sweep1_census"
+output = "outputs/census"
 
-[sweeps.sweep1_padme]
+[sweeps.census_local]
 mode = "single"
 prompt = "prompts/prompt_structured.txt"
 models = "models.yaml"
 model_set = "census_local"
 repeat = 3
 budget_usd = 0
-output = "outputs/sweep1_census"
+output = "outputs/census"
 ollama_url = "http://localhost:11434/v1"
 
-[sweeps.sweep2_multiturn]
+[sweeps.multiturn]
 mode = "multiturn"
 prompt = "prompts/prompt_structured.txt"
 followups = "prompts/followups.txt"
-models = "models_sweep2.yaml"
+models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
-output = "outputs/sweep2_multiturn"
+output = "outputs/multiturn"
 
-[sweeps.sweep2_web]
+[sweeps.web]
 mode = "web"
 prompt = "prompts/prompt_structured.txt"
-models = "models_sweep2.yaml"
+models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
-output = "outputs/sweep2_web"
+output = "outputs/web"
 
-[sweeps.sweep_rag]
+[sweeps.rag]
 mode = "rag"
 prompt = "prompts/prompt_structured.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
-model_set = "sweep_rag"
+model_set = "rag"
 repeat = 3
 budget_usd = 10
-output = "outputs/sweep_rag"
+output = "outputs/rag"
 
-[sweeps.sweep3_decomposed]
+[sweeps.decomposed]
 mode = "decomposed"
 prompt = "prompts/prompt_structured.txt"
 corpus = "../data/rag_corpus"
-models = "models_sweep2.yaml"
+models = "models_selected.yaml"
 repeat = 3
 budget_usd = 2
-output = "outputs/sweep3_decomposed"
+output = "outputs/decomposed"
 
-# Sweep 4: Verification regimes on top 3 Sweep 2 configs
+# Verification regimes on top 3 configs
 #
 # Question: What is the marginal cost of going from "AI says 120 plants"
 # to "120 plants with traceable provenance"?
@@ -197,42 +197,71 @@ output = "outputs/sweep3_decomposed"
 # Evidence rubric (per plant):
 #   0 = hallucinated source, 1 = no sources, 2 = 1 secondary,
 #   3 = 1 primary, 4 = 2+ independent primary
-[sweeps.sweep4_verification]
+[sweeps.verification]
 repeat = 3
 budget_usd = 25
-output = "outputs/sweep4_verification"
+output = "outputs/verification"
 cross_verifier = "anthropic/claude-sonnet-4.6"
 verification_modes = ["unverified", "tool", "self", "cross", "web"]
 
-[[sweeps.sweep4_verification.base_configs]]
+[[sweeps.verification.base_configs]]
 method = "multiturn"
 model = "claude-opus-4.6"
-result_file = "outputs/sweep2_multiturn/claude-opus-4.6-run3.json"
+result_file = "outputs/multiturn/claude-opus-4.6-run3.json"
 
-[[sweeps.sweep4_verification.base_configs]]
+[[sweeps.verification.base_configs]]
 method = "rag"
 model = "google/gemini-2.5-flash-lite"
-result_file = "outputs/sweep_rag/gemini-2.5-flash-lite-run2.json"
+result_file = "outputs/rag/gemini-2.5-flash-lite-run2.json"
 
-[[sweeps.sweep4_verification.base_configs]]
+[[sweeps.verification.base_configs]]
 method = "rag"
 model = "openai/gpt-5.4"
-result_file = "outputs/sweep_rag/gpt-5.4-run1.json"
+result_file = "outputs/rag/gpt-5.4-run1.json"
 
-# Sweep 5: Sourced extraction — ask for citations upfront
+# Sourced extraction — ask for citations upfront
 #
-# Same RAG setup as Sweep 2, but prompt includes source_1, source_2, note
-# columns. Paired comparison: does requiring provenance change extraction?
+# Same RAG setup, but prompt includes source_1, source_2, note columns.
+# Paired comparison: does requiring provenance change extraction?
 #
-# Story arc: Sweep 2 (list plants) → Sweep 5 (list plants with sources)
+# Story arc: census (list plants) → sourced (list plants with sources)
 # → if models cite real documents, source-first RAG is feasible.
-[sweeps.sweep5_sourced]
+[sweeps.sourced]
 mode = "rag"
 prompt = "prompts/prompt_structured_sourced.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
-model_set = "sweep5"
+model_set = "sourced"
 repeat = 3
 budget_usd = 10
-output = "outputs/sweep5_sourced"
+output = "outputs/sourced"
+
+# Frontier deep-research: reasoning/deep-research models, 3 prompts
+# (inventory, scenarios, skill), 1 run each, high max_tokens
+[sweeps.frontier]
+mode = "single"
+prompt = "prompts/prompt_frontier.txt"
+models = "models.yaml"
+model_set = "frontier_10labs"
+repeat = 1
+budget_usd = 20
+output = "outputs/frontier"
+
+[sweeps.frontier_scenarios]
+mode = "single"
+prompt = "prompts/prompt_frontier_scenarios.txt"
+models = "models.yaml"
+model_set = "frontier_3best"
+repeat = 1
+budget_usd = 20
+output = "outputs/frontier_scenarios"
+
+[sweeps.frontier_skill]
+mode = "single"
+prompt = "prompts/prompt_frontier_skill.txt"
+models = "models.yaml"
+model_set = "frontier_3best"
+repeat = 1
+budget_usd = 20
+output = "outputs/frontier_skill"

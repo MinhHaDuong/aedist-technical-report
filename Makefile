@@ -9,7 +9,7 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test check-fast check sweep1 sweep1-summary
+.PHONY: test check-fast check census census-summary
 
 # --- Tests --------------------------------------------------------------------
 
@@ -35,8 +35,8 @@ measurements: $(MEASUREMENTS)
 
 # --- Model selection ----------------------------------------------------------
 
-experiments/models_sweep2.yaml: $(MEASUREMENTS) experiments/models.yaml
-	uv run python -m aedist.select_sweep2 \
+experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
+	uv run python -m aedist.select_models \
 	    --registry experiments/models.yaml \
 	    --output $@ --n 1
 
@@ -77,7 +77,7 @@ $(SLIDE_GEN)/pareto.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_pareto --output $@
 
-$(SLIDE_GEN)/sweep2_regimes.csv: $(GEN)/sweep2_regimes.csv
+$(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
 	@mkdir -p $(dir $@)
 	cp $< $@
 
@@ -93,7 +93,7 @@ report/report.pdf: report/report.tex report/refs.bib \
 
 slides/slides.pdf: slides/slides.tex \
     $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv \
-    $(SLIDE_GEN)/sweep2_regimes.csv $(SLIDE_GEN)/macros.tex
+    $(SLIDE_GEN)/regimes.csv $(SLIDE_GEN)/macros.tex
 	$(MAKE) -C slides
 
 # --- Convenience aliases ------------------------------------------------------
@@ -104,6 +104,6 @@ report: report/report.pdf
 slides: slides/slides.pdf
 tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
-select: experiments/models_sweep2.yaml
-sweep1:
-	$(MAKE) -C experiments sweep1
+select: experiments/models_selected.yaml
+census:
+	$(MAKE) -C experiments census

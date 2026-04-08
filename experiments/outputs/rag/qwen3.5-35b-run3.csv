@@ -1,0 +1,123 @@
+name,fuel,status,cod,province,capacity_mwe
+Uong Bi 1,Coal (Local),Operational,,Quang Ninh,105
+Uong Bi Extension 1,Coal (Local),Operational,,Quang Ninh,300
+Uong Bi Extension 2,Coal (Local),Operational,,Quang Ninh,330
+Pha Lai 1,Coal (Local),Operational,,Quang Ninh,440
+Pha Lai 2,Coal (Local),Operational,,Quang Ninh,600
+Hai Phong 1,Coal (Local),Operational,,Hai Phong,600
+Hai Phong 2,Coal (Local),Operational,,Hai Phong,600
+Quang Ninh 1,Coal (Local),Operational,,Quang Ninh,600
+Quang Ninh 2,Coal (Local),Operational,,Quang Ninh,600
+Ninh Binh,Coal (Local),Operational,,Ninh Binh,100
+Thai Binh,Coal (Local),Operational,,Thai Binh,600
+Thai Binh II,Coal (Local),Operational,,Thai Binh,1200
+Duyen Hai 1,Coal (Imported),Operational,,Tra Vinh,1200
+Duyen Hai 2,Coal (Imported),Operational,,Tra Vinh,1200
+Duyen Hai 3,Coal (Imported),Operational,,Tra Vinh,2064
+Mong Duong 1,Coal (Imported),Operational,,Hung Yen,1080
+Nghi Son 1,Coal (Imported),Operational,,Thanh Hoa,600
+Vinh Tan II,Coal (Imported),Operational,,Binh Thuan,1200
+Vinh Tan III,Coal (Imported),Under Construction,,Binh Thuan,1980
+Vinh Tan IV,Coal (Imported),Operational,,Binh Thuan,1200
+Na Duong II,Coal (Local),Under Construction,,Hai Duong,110
+Cam Pha 3,Coal (Imported),Cancelled/N/A,,Quang Ninh,440
+Quang Ninh III,Coal (Imported),Planning,,Quang Ninh,1200
+Hai Phong III,Coal (Imported),Planning,,Hai Phong,2400
+Nam Dinh I,Coal (Imported),Under Construction,,Nam Dinh,1200
+Nam Dinh II,Coal (Imported),Planning,,Nam Dinh,1200
+Long An I,Coal (Imported),Cancelled (Converting to LNG),,Long An,1200
+Long An II,Coal (Imported),Cancelled (Converting to LNG),,Long An,1600
+Vung Ang II,Coal (Imported),Under Construction,,Ha Tinh,1200
+Vung Ang III,Coal (Imported),Planning,,Ha Tinh,1200
+Quoc Trach I,Coal (Imported),Under Construction,,Quang Binh,1200
+Quoc Trach II,Coal (Imported),Planning,,Quang Binh,1200
+Quoc Trach I/II Extension,Coal (Imported),Planning,,Quang Binh,600
+Vung Tay II,Coal (Imported),Cancelled,,Ha Tinh,1200
+Quynh Lap I,Coal (Imported),Under Construction,,Thanh Hoa,1200
+Quynh Lap II,Coal (Imported),Cancelled,,Thanh Hoa,1200
+Vung Tau II,Coal (Imported),Cancelled,,Hung Yen,1200
+Hiep Phuo 1,Coal (Local),Operational,,Ba Ria-Vung Tau,375
+Hiep Phuo 2,Cancelled,2028,,Ba Ria-Vung Tau,0
+Dac My 2,Coal (Imported),Cancelled,,Phu Yen,600
+Ngoc Kien,Coal (Imported),Cancelled,,Hung Yen,1200
+Cong Thanh,Coal (Imported),Cancelled,,Hai Duong,600
+An Khanh,Coal (Imported),Under Construction,,Bac Giang,650
+Kim Son,Coal (Imported),Cancelled,,Ninh Binh,3000
+Quang Ninh III,Coal (Imported),Cancelled,,Quang Ninh,600
+Long Phu I,Coal (Imported),Suspended,,Soc Trang,1200
+Long Phu II,Coal (Imported),Under Construction,,Soc Trang,1320
+Long Phu III,Coal (Imported),Under Construction,,Soc Trang,1800
+Song Hau I,Coal (Imported),Under Construction,,Hau Giang,1200
+Song Hau II,Coal (Imported),Under Construction,,Hau Giang,2000
+Song Hau III,Coal (Imported),Planning,,Hau Giang,2000
+Tien Phong,Coal (Imported),Cancelled,,Tien Giang,1200
+Phu My 1,Gas (Imported LNG),Operational,,Ba Ria-Vung Tau,1108
+Phu My 2.1,Gas (Imported LNG),Operational,,Ba Ria-Vung Tau,896
+Phu My 2.2,Gas (Imported LNG),Operational,,Ba Ria-Vung Tau,740
+Phu My 3,Gas (Imported LNG),Operational,,Ba Ria-Vung Tau,740
+Phu My 4,Gas (Imported LNG),Operational,,Ba Ria-Vung Tau,458
+Nhon Trach 1,Gas (Imported LNG),Operational,,Dong Nai,930
+Nhon Trach 2,Gas (Imported LNG),Operational,,Dong Nai,750
+Nhon Trach 3&4,LNG,Planning,,Dong Nai,1500
+Nhon Trach 5,LNG,Planning,,Dong Nai,750
+Binh Duong,LNG,Cancelled,,Dong Nai,1500
+Bac Lieu,LNG,Planning,,Bac Lieu,3200
+Hai Lang,Gas (Local/LNG),Planning,,Quang Tri,1500
+Hanoi,LNG,Planning,,Hanoi,1500
+Thai Binh,LNG,Planning,,Thai Binh,1500
+Nghe An,LNG,Cancelled,,Thanh Hoa,1500
+Nam Dinh,LNG,Cancelled,,Nam Dinh,1500
+Hai Phong,LNG,Planning,,Hai Phong,10500
+Quang Ninh,LNG,Planning,,Quang Ninh,10500
+Cua Ong,LNG,Cancelled,,Quang Ninh,6000
+Thuan An,LNG,Cancelled,,Binh Phuoc,3000
+Can Tho,LNG,Cancelled,,Cao Thien,3000
+Bac Lieu,LNG,Cancelled,,Bac Lieu,3000
+O Mon 1,Gas (Local),Operational,,Can Tho,660
+O Mon 2,Gas (Local),Under Construction,,Can Tho,1050
+O Mon 3,Gas (Local),Under Construction,,Can Tho,1050
+O Mon 4,Gas (Local),Under Construction,,Can Tho,1050
+Dung Quat,Gas (Local),Under Construction,,Dau Giang,750
+Dung Quat II,Gas (Local),Cancelled,,Dau Giang,750
+Dung Quat III,Gas (Local),Under Construction,,Dau Giang,750
+Dung Quat IV,Gas (Local),Cancelled,,Dau Giang,750
+Mien Trung I,Gas (Local),Under Construction,,Dau Giang,750
+Mien Trung II,Gas (Local),Cancelled,,Dau Giang,750
+Mien Nam I,Gas (Local),Cancelled,,Ba Ria-Vung Tau,1500
+Mien Nam II,Coal (Imported),Cancelled,,Hong Bang,1500
+Sơn Mỹ I,Gas (Imported LNG),Under Construction,,Ba Ria-Vung Tau,2250
+Sơn Mỹ II,Gas (Imported LNG),Under Construction,,Ba Ria-Vung Tau,2250
+Tân Phước I,Gas (Imported LNG),Cancelled,,Tien Giang,1200
+Tân Phước II,Gas (Imported LNG),Cancelled,,Tien Giang,1200
+Tân Phước III,Gas (Imported LNG),Cancelled,,Tien Giang,1200
+Long Son,Gas (Imported LNG),Planning,,Ba Ria-Vung Tau,1500
+Long Son II,Gas (Imported LNG),Planning,,Ba Ria-Vung Tau,3200
+Long Son III,Gas (Imported LNG),Planning,,Ba Ria-Vung Tau,3600
+Mũi Cá Mè,Gas (Imported LNG),Planning,,Ba Ria-Vung Tau,3600
+Hải Hà 1,Cogeneration,Under Construction,,Quang Ninh,300
+Hải Hà 2,Cogeneration,Cancelled,,Quang Ninh,600
+Hải Hà 3,Cogeneration,Cancelled,,Quang Ninh,600
+Hải Hà 4,Cogeneration,Cancelled,,Quang Ninh,600
+Duc Giang,Cogeneration,Under Construction,,Hai Duong,100
+Formosa HT2,Cogeneration,Under Construction,,Hà Tĩnh,650
+Hòa Phát II,Cogeneration,Under Construction,,Hải Dương,300
+Vân Phong,Coal (Imported),Under Construction,,Khánh Hòa,1432
+Cà Ná I,LNG,Planning,,Ninh Thuận,1500
+Cà Ná II+III,LNG,Planning,,Ninh Thuận,4500
+Bình Định,LNG,Planning,,Bình Định,5000
+Phú Mỹ 3.1,LNG,Planning,,Ba Ria-Vung Tau,850
+Bà Rịa 2,LNG,Cancelled,,Ba Ria-Vung Tau,1200
+Long An,LNG,Cancelled,,Là Long An,3000
+Cà Mau 1,3,LNG,,2,0
+Tân Thuận,Cà Mau,3200,,Đầm Dơi,0
+Sông Đốc,LNG,Planning,,Cà Mau,3000
+Bến Tre,LNG,Planning,,Bến Tre,3000
+Thạch Thép,Coal (Local),Cancelled,,Nam Định,1000
+Vũng Áng III,Coal (Imported),Cancelled,,Hà Tĩnh,1200
+Chân Mây,LNG,Cancelled,,Huế,4000
+Phong Điền,Coal (Imported),Cancelled,,Huế,2000
+Quy Nhơn,Coal (Imported),Cancelled,,Bình Định,4000
+Ninh Bình,Coal (Imported),Cancelled,,Ninh Bình,2000
+Nam Định II,Coal (Imported),Cancelled,,Nam Định,2000
+Phú Thọ,Coal (Imported),Cancelled,,Phú Thọ,600
+Thái Bình III,Coal (Imported),Cancelled,,Thái Bình,4000

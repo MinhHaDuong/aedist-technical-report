@@ -5,44 +5,44 @@ from conftest import patch_measurements_loader, write_measurements
 from aedist.tabulate_macros import generate_macros, load_and_summarize
 
 SAMPLE_METRICS = [
-    {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.70, "coverage": 0.8, "precision": 0.62},
-    {"label": "sweep1_census/gpt-5.4-run2", "f1": 0.68, "coverage": 0.78, "precision": 0.60},
-    {"label": "sweep1_census/gpt-5.4-run3", "f1": 0.72, "coverage": 0.82, "precision": 0.64},
-    {"label": "sweep1_census/claude-4-run1", "f1": 0.65, "coverage": 0.75, "precision": 0.58},
-    {"label": "sweep1_census/claude-4-run2", "f1": 0.63, "coverage": 0.73, "precision": 0.56},
-    {"label": "sweep1_census/claude-4-run3", "f1": 0.67, "coverage": 0.77, "precision": 0.60},
+    {"label": "census/gpt-5.4-run1", "f1": 0.70, "coverage": 0.8, "precision": 0.62},
+    {"label": "census/gpt-5.4-run2", "f1": 0.68, "coverage": 0.78, "precision": 0.60},
+    {"label": "census/gpt-5.4-run3", "f1": 0.72, "coverage": 0.82, "precision": 0.64},
+    {"label": "census/claude-4-run1", "f1": 0.65, "coverage": 0.75, "precision": 0.58},
+    {"label": "census/claude-4-run2", "f1": 0.63, "coverage": 0.73, "precision": 0.56},
+    {"label": "census/claude-4-run3", "f1": 0.67, "coverage": 0.77, "precision": 0.60},
     {
-        "label": "sweep1_census/padme-qwen3.5-27b-run1",
+        "label": "census/padme-qwen3.5-27b-run1",
         "f1": 0.50,
         "coverage": 0.60,
         "precision": 0.43,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-27b-run2",
+        "label": "census/padme-qwen3.5-27b-run2",
         "f1": 0.52,
         "coverage": 0.62,
         "precision": 0.45,
     },
     {
-        "label": "sweep1_census/padme-qwen3.5-27b-run3",
+        "label": "census/padme-qwen3.5-27b-run3",
         "f1": 0.48,
         "coverage": 0.58,
         "precision": 0.41,
     },
     {
-        "label": "sweep1_census/padme-mistral-small3.2-run1",
+        "label": "census/padme-mistral-small3.2-run1",
         "f1": 0.40,
         "coverage": 0.50,
         "precision": 0.33,
     },
     {
-        "label": "sweep1_census/padme-mistral-small3.2-run2",
+        "label": "census/padme-mistral-small3.2-run2",
         "f1": 0.42,
         "coverage": 0.52,
         "precision": 0.35,
     },
     {
-        "label": "sweep1_census/padme-mistral-small3.2-run3",
+        "label": "census/padme-mistral-small3.2-run3",
         "f1": 0.38,
         "coverage": 0.48,
         "precision": 0.31,
@@ -82,8 +82,8 @@ def test_generate_macros():
 def test_slug_strips_run_and_dir():
     """Labels with directory prefix and -runN suffix produce clean slugs."""
     metrics = [
-        {"label": "sweep1_census/my-model-run1", "f1": 0.5},
-        {"label": "sweep1_census/my-model-run2", "f1": 0.6},
+        {"label": "census/my-model-run1", "f1": 0.5},
+        {"label": "census/my-model-run2", "f1": 0.6},
     ]
     summary = load_and_summarize(metrics)
     assert "my-model" in summary

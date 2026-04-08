@@ -7,12 +7,12 @@ from conftest import patch_measurements_loader, write_measurements
 from aedist.plot_pareto import build_pareto_rows, load_costs
 
 SAMPLE_METRICS = [
-    {"label": "sweep1_census/gpt-5.4-run1", "f1": 0.70},
-    {"label": "sweep1_census/gpt-5.4-run2", "f1": 0.68},
-    {"label": "sweep1_census/gpt-5.4-run3", "f1": 0.72},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run1", "f1": 0.50},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run2", "f1": 0.52},
-    {"label": "sweep1_census/padme-qwen3.5-27b-run3", "f1": 0.48},
+    {"label": "census/gpt-5.4-run1", "f1": 0.70},
+    {"label": "census/gpt-5.4-run2", "f1": 0.68},
+    {"label": "census/gpt-5.4-run3", "f1": 0.72},
+    {"label": "census/padme-qwen3.5-27b-run1", "f1": 0.50},
+    {"label": "census/padme-qwen3.5-27b-run2", "f1": 0.52},
+    {"label": "census/padme-qwen3.5-27b-run3", "f1": 0.48},
 ]
 
 SUMMARY_CSV = """\

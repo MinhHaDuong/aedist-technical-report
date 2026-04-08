@@ -127,7 +127,7 @@ def test_experiments_routers(experiments):
 
 VALID_MODES = set(Method)
 SWEEP_REQUIRED_FIELDS = {"mode", "prompt", "models", "repeat", "budget_usd", "output"}
-# sweep4_verification is special — no mode/prompt/models at top level
+# verification is special — no mode/prompt/models at top level
 SWEEP4_REQUIRED_FIELDS = {"repeat", "budget_usd", "output", "verification_modes", "base_configs"}
 
 
@@ -138,12 +138,13 @@ def test_sweeps_section_exists(experiments):
 
 
 def test_sweep_count(experiments):
-    """All 8 sweeps are present."""
+    """All 11 sweeps are present."""
     expected = {
-        "sweep1_census", "sweep1_padme",
-        "sweep2_multiturn", "sweep2_web",
-        "sweep_rag", "sweep3_decomposed",
-        "sweep4_verification", "sweep5_sourced",
+        "census", "census_local",
+        "multiturn", "web",
+        "rag", "decomposed",
+        "verification", "sourced",
+        "frontier", "frontier_scenarios", "frontier_skill",
     }
     assert set(experiments["sweeps"].keys()) == expected
 
@@ -151,7 +152,7 @@ def test_sweep_count(experiments):
 def test_standard_sweep_fields(experiments):
     """Each standard sweep has required fields with valid types."""
     for name, sweep in experiments["sweeps"].items():
-        if name == "sweep4_verification":
+        if name == "verification":
             continue
         missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fields: {missing}"
@@ -166,11 +167,11 @@ def test_standard_sweep_fields(experiments):
         )
 
 
-def test_sweep4_verification_structure(experiments):
-    """sweep4_verification has its special structure (base_configs, modes)."""
-    s4 = experiments["sweeps"]["sweep4_verification"]
+def test_verification_structure(experiments):
+    """verification has its special structure (base_configs, modes)."""
+    s4 = experiments["sweeps"]["verification"]
     missing = SWEEP4_REQUIRED_FIELDS - set(s4.keys())
-    assert not missing, f"sweep4_verification missing fields: {missing}"
+    assert not missing, f"verification missing fields: {missing}"
     assert isinstance(s4["base_configs"], list) and len(s4["base_configs"]) >= 1
     for i, bc in enumerate(s4["base_configs"]):
         assert "method" in bc, f"base_configs[{i}] missing 'method'"
@@ -222,9 +223,9 @@ def test_sweep_output_dirs_unique(experiments):
         if out is None:
             continue
         if out in outputs:
-            # sweep1_census and sweep1_padme share output dir by design
+            # census and census_local share output dir by design
             pair = {name, outputs[out]}
-            if pair != {"sweep1_census", "sweep1_padme"}:
+            if pair != {"census", "census_local"}:
                 pytest.fail(
                     f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'"
                 )

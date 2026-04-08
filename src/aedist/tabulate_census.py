@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-_CENSUS_PREFIX = "sweep1_census/"
+_CENSUS_PREFIX = "census/"
 
 
 def _is_census(entry: dict) -> bool:

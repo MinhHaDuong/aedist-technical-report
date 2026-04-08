@@ -5,7 +5,7 @@ Usage:
         --measurements measurements.jsonl \\
         --output report/inputs/generated/tab_relances.tex
 
-Reads per-run metrics from sweep2_multiturn, groups by model (stripping
+Reads per-run metrics from multiturn condition, groups by model (stripping
 -runN suffix), computes medians, and emits a longtable showing how F1
 progresses across turns for each model.
 
@@ -23,11 +23,11 @@ from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
 
-_MULTITURN_PREFIX = "sweep2_multiturn/"
+_MULTITURN_PREFIX = "multiturn/"
 
 
 def is_multiturn(entry: dict) -> bool:
-    """True if metrics entry comes from a multiturn sweep."""
+    """True if metrics entry comes from the multiturn condition."""
     return entry.get("label", "").startswith(_MULTITURN_PREFIX)
 
 
@@ -161,7 +161,7 @@ def generate_relances_table(metrics: list[dict]) -> str:
     """
     mt_entries = [e for e in metrics if is_multiturn(e)]
     if not mt_entries:
-        log.warning("No sweep2_multiturn entries found in metrics.")
+        log.warning("No multiturn entries found in metrics.")
         return _generate_summary_table([])
 
     if _has_turn_data(mt_entries):

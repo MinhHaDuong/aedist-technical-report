@@ -1,4 +1,4 @@
-"""Summarize sweep results: aggregate 3 runs per model into median metrics.
+"""Summarize experiment results: aggregate 3 runs per model into median metrics.
 
 Reads the per-run metrics from measurements.jsonl, computes cost/latency,
 and produces a summary CSV.
@@ -6,7 +6,7 @@ and produces a summary CSV.
 Usage:
     uv run python -m aedist.summarize_sweep \
         --measurements measurements.jsonl \
-        --output results/summary/sweep1_summary.csv
+        --output results/summary/census_summary.csv
 """
 
 import argparse
@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Summarize sweep metrics")
+    parser = argparse.ArgumentParser(description="Summarize experiment metrics")
     parser.add_argument("--output", required=True, help="Output summary CSV path")
     args = parser.parse_args()
 

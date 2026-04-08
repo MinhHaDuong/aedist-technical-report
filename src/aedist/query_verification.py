@@ -1,12 +1,12 @@
-"""Sweep 4: Verification regimes on top Sweep 2 configurations.
+"""Verification regimes on top configurations.
 
 Applies 5 verification modes (unverified, tool, self, cross, web) to the
-best Sweep 2 outputs. Measures the evidence quality rubric (0-4) and the
+best outputs. Measures the evidence quality rubric (0-4) and the
 precision-recall trade-off when filtering to verified-only plants.
 
 Usage:
     python -m aedist.query_verification \
-        --sweep sweep4_verification --experiments experiments.toml \
+        --sweep verification --experiments experiments.toml \
         [--dry-run]
 """
 
@@ -50,7 +50,7 @@ _TAVILY_COST_PER_SEARCH = 0.005
 
 
 def load_config(path: str | Path) -> dict:
-    """Load sweep 4 YAML configuration."""
+    """Load verification YAML configuration."""
     with open(path) as f:
         return yaml.safe_load(f)
 
@@ -201,7 +201,7 @@ def run_condition(
         method=Method(method),
         method_params=MethodParams(
             model=model,
-            prompt_version="sweep4_verification",
+            prompt_version="verification",
             extra={
                 "verification_mode": mode,
                 "base_result_file": result_file,
@@ -241,9 +241,9 @@ def _estimate_llm_cost(summary: dict) -> float:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Sweep 4: Verification regimes on top Sweep 2 configs"
+        description="Verification regimes on top configurations"
     )
-    parser.add_argument("--config", help="Path to sweep4 YAML config (legacy)")
+    parser.add_argument("--config", help="Path to verification YAML config (legacy)")
     parser.add_argument("--sweep", help="Sweep name from experiments.toml")
     parser.add_argument(
         "--experiments", default="experiments.toml",
@@ -267,7 +267,7 @@ def main():
     modes = config["verification_modes"]
     repeat = config.get("repeat", 3)
     budget_usd = config.get("budget_usd")
-    output_dir = Path(config.get("output", "outputs/sweep4_verification"))
+    output_dir = Path(config.get("output", "outputs/verification"))
     cross_verifier = config.get("cross_verifier")
     ref_path_str = config.get("reference")
     reference_path = Path(ref_path_str) if ref_path_str else _DEFAULT_REF
@@ -283,7 +283,7 @@ def main():
                 conditions.append((base, mode, run))
 
     if args.dry_run:
-        log.info("Sweep 4: %d conditions", len(conditions))
+        log.info("Verification: %d conditions", len(conditions))
         for base, mode, run in conditions:
             log.info(
                 "  %s + %s + %s run %d",
@@ -363,7 +363,7 @@ def main():
                 )
 
     log.info(
-        "Sweep 4 complete. %d records. Total cost: $%.4f",
+        "Verification complete. %d records. Total cost: $%.4f",
         len(records),
         budget.total_cost,
     )

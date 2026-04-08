@@ -1,11 +1,11 @@
-"""Analyze multi-turn token budget from existing sweep outputs.
+"""Analyze multi-turn token budget from existing experiment outputs.
 
-Reads JSON results from sweep2_multiturn and extrapolates token growth
+Reads JSON results from multiturn outputs and extrapolates token growth
 to N turns, reporting which models would overflow their context window.
 
 Usage:
     python -m aedist.analyze_multiturn_budget \
-        --input experiments/outputs/sweep2_multiturn \
+        --input experiments/outputs/multiturn \
         --turns 10
 """
 
@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 
 def load_multiturn_results(output_dir: Path) -> list[dict]:
-    """Load all JSON results from a sweep directory."""
+    """Load all JSON results from an experiment output directory."""
     results = []
     for f in sorted(output_dir.glob("*.json")):
         with open(f) as fh:

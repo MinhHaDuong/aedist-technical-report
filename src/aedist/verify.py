@@ -8,10 +8,10 @@ Modes:
 
 Usage:
     python -m aedist.verify \
-        --input outputs/sweep_rag/2026-04-02/claude-sonnet-4.6-run1.json \
+        --input outputs/rag/2026-04-02/claude-sonnet-4.6-run1.json \
         --mode tool \
         --reference data/reference/vietnam_thermal_v1.csv \
-        --output outputs/sweep4_verification/
+        --output outputs/verification/
 """
 
 import argparse

@@ -14,7 +14,7 @@ def test_summarize_two_models(tmp_path, monkeypatch):
         meas,
         [
             {
-                "label": "sweep1/alpha-run1",
+                "label": "census/alpha-run1",
                 "f1": 0.6,
                 "coverage": 0.7,
                 "precision": 0.5,
@@ -27,7 +27,7 @@ def test_summarize_two_models(tmp_path, monkeypatch):
                 "wall_seconds": 5.0,
             },
             {
-                "label": "sweep1/alpha-run2",
+                "label": "census/alpha-run2",
                 "f1": 0.8,
                 "coverage": 0.9,
                 "precision": 0.7,
@@ -40,7 +40,7 @@ def test_summarize_two_models(tmp_path, monkeypatch):
                 "wall_seconds": 6.0,
             },
             {
-                "label": "sweep1/beta-run1",
+                "label": "census/beta-run1",
                 "f1": 0.9,
                 "coverage": 0.95,
                 "precision": 0.85,
@@ -53,7 +53,7 @@ def test_summarize_two_models(tmp_path, monkeypatch):
                 "wall_seconds": 3.0,
             },
             {
-                "label": "sweep1/beta-run2",
+                "label": "census/beta-run2",
                 "f1": 0.85,
                 "coverage": 0.9,
                 "precision": 0.8,
