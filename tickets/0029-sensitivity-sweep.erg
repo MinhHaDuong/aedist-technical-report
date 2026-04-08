@@ -1,0 +1,21 @@
+%erg v1
+Title: Run sensitivity analysis sweep
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#13
+
+--- body ---
+## Context
+Single best model, vary: temperature (0.0/0.7), prompt language (EN/FR),
+output format (text/CSV/JSON), few-shot (0/3). ~24 runs. Budget ~$5-10.
+
+## Key question
+How much do secondary variables matter compared to model choice and
+information regime?
+
+## Exit criteria
+- 24 runs completed and scored
+- Comparison table showing effect sizes of each variable

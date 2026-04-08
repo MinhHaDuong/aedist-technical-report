@@ -1,0 +1,25 @@
+%erg v1
+Title: Table conversion benchmark comparing all PDF backends
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#85
+
+--- body ---
+## Context
+Comparison script that runs all PDF converter backends on the same test
+documents and produces a side-by-side quality report focused on table extraction.
+
+## Actions
+1. Select 3 test PDFs from experiments/data/rag_work/pdfs/ (easy, hard, hardest)
+2. Script: experiments/compare_converters.py runs each backend, extracts tables
+3. Metrics: tables detected, row/column accuracy, cross-page continuity,
+   Vietnamese diacritics, wall-clock time
+4. Save per-backend markdown outputs for manual inspection
+
+## Exit criteria
+- Script runs on at least 3 backends (grobid + 2 new)
+- Produces comparison summary to stdout
+- Results inform default CORPUS_CONVERT choice in Makefile

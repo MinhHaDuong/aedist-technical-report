@@ -1,0 +1,25 @@
+%erg v1
+Title: Slides: reframe Next steps as benchmark-to-pipeline arc
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#115
+
+--- body ---
+## Context
+Current Next steps slide lists generic items. Should end with narrative:
+we measured which methods work, now we apply the best to produce a
+primary-sourced inventory.
+
+## Actions
+1. Replace bullet list with 3-step arc: benchmark results, best method
+   selection, primary-source pipeline application
+2. Add one line to Architecture frame: first application is Vietnam thermal
+   inventory from PDP8 annexes
+3. Keep changes minimal — for April 11 conference
+
+## Exit criteria
+- Next steps slide tells benchmark-to-pipeline story
+- Builds cleanly with tectonic

@@ -1,0 +1,23 @@
+%erg v1
+Title: Rename sweeps from sequence numbers to condition names
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:00Z claude created imported from gh#176
+
+--- body ---
+## Context
+Sweep 1–5 numbering implies sequential pipeline but these are parallel
+experimental conditions. Names should reflect what they test: model_census,
+rag, multiturn, web, decomposed, verification, sourced_rag.
+
+## Actions
+1. Rename config files, Makefile targets, output directories
+2. Update measurements.jsonl prompt_version fields
+3. Update tests and report references
+
+## Exit criteria
+- No sweep-N references remain in configs, code, or report
+- All tests pass with new naming

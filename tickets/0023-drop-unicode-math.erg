@@ -1,0 +1,22 @@
+%erg v1
+Title: Drop unicode-math from report.tex
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:00Z claude created imported from gh#186
+
+--- body ---
+## Context
+report.tex line 4 loads `\usepackage{unicode-math}` but uses no unicode math
+features. Same situation as slides before gh#185. Removing it eliminates
+font-scan warnings from tectonic builds.
+
+## Actions
+1. Remove `\usepackage{unicode-math}` from report.tex
+2. Verify `tectonic report.tex` builds cleanly with fewer warnings
+
+## Exit criteria
+- report.pdf builds without unicode-math font warnings
+- No math rendering regressions

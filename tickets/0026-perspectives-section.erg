@@ -1,0 +1,24 @@
+%erg v1
+Title: Add Perspectives section linking benchmark to primary-source pipeline
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#116
+
+--- body ---
+## Context
+Report currently ends at feasibility conclusions. A short Perspectives section
+bridges to the next step: apply benchmarked methods to primary-sourced inventory.
+
+## Actions
+1. Add ~1 page Perspectives section before conclusion
+2. Content: RAG-wholesale + cheap model is best method; next step is primary
+   government documents (PDP annexes, EVN reports)
+3. Reference the 5-step pipeline
+4. Note shift from secondary sources (compilations) to primary sources
+
+## Exit criteria
+- Perspectives section present in report.pdf
+- References pipeline and primary-source direction

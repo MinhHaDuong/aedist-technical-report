@@ -1,0 +1,21 @@
+%erg v1
+Title: Run verification regimes sweep
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#12
+
+--- body ---
+## Context
+Take top 3 configurations from Sweep 2. Apply 5 verification modes:
+unverified, self, cross, web, tool. 3 runs each. ~45 calls. Budget ~$10-25.
+
+## Key question
+What is the marginal cost of going from "AI says 120 plants" to
+"120 plants with traceable provenance"?
+
+## Exit criteria
+- 45 runs completed and scored
+- Cost-accuracy tradeoff table for verification modes

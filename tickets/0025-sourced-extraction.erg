@@ -1,0 +1,28 @@
+%erg v1
+Title: Sourced extraction with citation quality scoring
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:00Z claude created imported from gh#173
+
+--- body ---
+## Context
+Test whether models can cite primary sources during extraction. Feasibility
+gate for source-first RAG. Uses prompt_structured_sourced.txt with source_1,
+source_2, note columns.
+
+## Citation quality ladder (per plant)
+1. Non-empty source field
+2. Source exists (Tavily search)
+3. Primary or secondary classification
+4. Source-to-claim grounding
+
+## Condition matrix
+3 models × 4 regimes (parametric, web, RAG, decomposed) × 3 runs = 36 calls.
+
+## Exit criteria
+- Score distribution across 4-level ladder per regime
+- Answer: which regime produces most verifiable citations
+- Signal: which documents are cited most (corpus selection for targeted RAG)

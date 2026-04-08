@@ -1,0 +1,24 @@
+%erg v1
+Title: Complete Sweep 2 information regimes across all models
+Status: open
+Created: 2026-04-07
+Author: claude
+
+--- log ---
+2026-04-07T12:10Z claude created imported from gh#10
+
+--- body ---
+## Context
+Test top models across information regimes: blind, conversational,
+RAG-wholesale, RAG+relance, web-augmented, web+docs. 3 runs each.
+
+## Status
+- Cloud models: RAG, multiturn, web — complete
+- Local models: RAG-wholesale via Ollama/Padme — in progress
+
+## Key output
+Comparison table: models x conditions -> median F1. Main result of the paper.
+
+## Exit criteria
+- All model x condition cells filled with 3 runs
+- Summary table generated in report
