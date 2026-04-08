@@ -161,6 +161,90 @@ not whether to accept it on faith.
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Why not just verify the output?}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Three options:}
+
+\medskip
+\begin{description}
+  \item[Trust] Accept the table.\\
+        {\small (Cognitive surrender.)}
+  \item[Verify] Check each row against cited sources.
+        Fix errors. Keep the table.\\
+        {\small (Fast: ${\sim}$3h for 162 rows.)}
+  \item[Re-extract] Build validated corpus,
+        extract independently, use LLM list
+        for coverage only.\\
+        {\small (Slower, but reusable.)}
+\end{description}
+
+\column{0.48\textwidth}
+\textbf{Verification is sufficient for one table.}
+
+\medskip
+But it has a ceiling:
+\begin{itemize}
+  \item Can only check what the LLM listed ---
+        cannot find the \textbf{86 missing plants}
+  \item Cannot update when PDP8 is revised
+  \item Does not transfer to the next country
+  \item Produces a verified table,
+        not a reusable process
+\end{itemize}
+
+\medskip
+For one dataset, verify.\\
+For 60 campaigns, build the pipeline.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{The proposed pipeline}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{LLM-seeded, human-filtered, RAG-extracted:}
+
+\medskip
+\begin{enumerate}
+  \item \textbf{Ask} for the full report\\
+        {\small (framing, asset list, bibliography)}
+  \item \textbf{Filter} references --- human validates\\
+        which sources are real and accessible
+  \item \textbf{Crawl} validated sources, get PDFs,\\
+        convert to Markdown, index, archive
+  \item \textbf{RAG} for the asset list from corpus\\
+        {\small (LLM list = stopping criterion)}
+  \item \textbf{RAG per asset} + news search to fill\\
+        gaps and update status
+  \item \textbf{Final table} --- every cell traceable\\
+        to a source document
+\end{enumerate}
+
+\column{0.42\textwidth}
+\textbf{Why this order:}
+
+\medskip
+The LLM is a \textbf{compressed index}
+of the world's documents.
+Use it for \emph{scope discovery},
+not as ground truth.
+
+\medskip
+The corpus is the lasting asset ---
+it answers questions beyond
+the original table.
+
+\medskip
+Research-quality data isn't data
+that's correct. It's data that's
+\textbf{correctable}: when a reviewer
+finds an error, the pipeline tells
+you which source was wrong.
+\end{columns}
+\end{frame}
+
 % ===================================================================
 \section{Pilot design}
 
