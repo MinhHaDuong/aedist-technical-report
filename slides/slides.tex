@@ -540,27 +540,33 @@ These are not flaws --- they are \textbf{design requirements} for a production d
 \begin{frame}{From pilot to production pipeline}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Before we can trust AI-produced datasets:}
+\textbf{Four-level evaluation framework:}
 
 \medskip
-\begin{tabular}{@{}lp{4.2cm}@{}}
+\begin{tabular}{@{}clp{3.6cm}@{}}
 \toprule
-\textbf{Pilot gap} & \textbf{What's needed} \\
+ & \textbf{Level} & \textbf{Status} \\
 \midrule
-1 task, 1 country     & Validate on 4+ countries
-                        and sectors \\[3pt]
-Memorization risk     & Adversarial controls ---
-                        synthetic references unseen
-                        in training \\[3pt]
-Axes tested separately & Compose: knowledge $\times$
-                        conversation $\times$ decomposition
-                        $\times$ verification \\[3pt]
-No uncertainty        & Bootstrap CIs,
-                        paired significance tests \\[3pt]
-Matching confound     & Sensitivity sweep
-                        on fuzzy threshold \\
+\checkmark & \textbf{1. Resources} &
+  Cost, latency, tokens ---
+  measured for all runs \\[3pt]
+\checkmark & \textbf{2. Document quality} &
+  Coverage, precision, F1 ---
+  this pilot \\[3pt]
+ & \textbf{3. Provenance} &
+  Source attribution,
+  ``I don't know'' detection,
+  confidence intervals \\[3pt]
+ & \textbf{4. System usability} &
+  Scale to other countries,
+  temporal updates,
+  gap detection \\
 \bottomrule
 \end{tabular}
+
+\medskip
+{\small The pilot covers levels 1--2.
+Levels 3--4 define the path to research-quality data.}
 
 \column{0.42\textwidth}
 \textbf{What the pilot de-risks:}
@@ -570,7 +576,7 @@ Matching confound     & Sensitivity sweep
   \item Automated evaluation (fuzzy reconciliation)
         works at scale
   \item Cost is negligible: \$0.06 per dataset,
-        \$0.82 for the full 37-model sweep
+        \$0.82 for the full sweep
   \item The pipeline is reproducible and resume-safe
 \end{enumerate}
 
