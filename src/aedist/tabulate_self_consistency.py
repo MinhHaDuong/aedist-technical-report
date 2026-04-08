@@ -218,7 +218,6 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate self-consistency LaTeX tables",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument(
         "--output",
         required=True,
@@ -231,11 +230,11 @@ def main(argv: list[str] | None = None):
     )
     args = parser.parse_args(argv)
 
-    from .measurements_adapter import load_metrics_from_measurements
+    from .measurements import load_metrics
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    metrics = load_metrics()
     results = assemble_from_measurements(metrics)
 
     latex = generate_self_consistency_table(results)

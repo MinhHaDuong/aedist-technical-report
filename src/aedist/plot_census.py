@@ -15,7 +15,6 @@ import csv
 import logging
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_macros import load_and_summarize
 
 log = logging.getLogger(__name__)
@@ -52,13 +51,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate census bar-chart CSV from measurements.jsonl",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write census_bars.csv")
     args = parser.parse_args()
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     rows = build_census_rows(metrics)
 

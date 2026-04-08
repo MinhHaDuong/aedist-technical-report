@@ -2,7 +2,7 @@
 
 import csv
 
-from conftest import write_measurements
+from conftest import patch_measurements_loader, write_measurements
 
 from aedist.plot_pareto import build_pareto_rows, load_costs
 
@@ -55,10 +55,11 @@ def test_local_flag():
     assert by_model["padme-qwen3.5-27b"]["local"] == 1
 
 
-def test_main_writes_csv(tmp_path):
+def test_main_writes_csv(tmp_path, monkeypatch):
     """CLI writes well-formed CSV with cost data."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
     costs_path = tmp_path / "summary.csv"
     costs_path.write_text(SUMMARY_CSV)
     output_path = tmp_path / "pareto.csv"
@@ -69,8 +70,6 @@ def test_main_writes_csv(tmp_path):
 
     sys.argv = [
         "plot_pareto",
-        "--measurements",
-        str(input_path),
         "--costs",
         str(costs_path),
         "--output",
@@ -87,10 +86,11 @@ def test_main_writes_csv(tmp_path):
     assert float(by_model["gpt-5.4"]["cost_usd"]) == 0.015
 
 
-def test_main_without_costs(tmp_path):
+def test_main_without_costs(tmp_path, monkeypatch):
     """CLI works without --costs."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "pareto.csv"
 
     import sys
@@ -99,8 +99,6 @@ def test_main_without_costs(tmp_path):
 
     sys.argv = [
         "plot_pareto",
-        "--measurements",
-        str(input_path),
         "--output",
         str(output_path),
     ]

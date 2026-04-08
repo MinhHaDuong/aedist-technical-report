@@ -69,14 +69,7 @@ sweep1-run:
 	$(WORKER) padme --drain & \
 	wait
 
-sweep1-summary:
-	uv run --project .. python -m aedist.extract --input $(S1_OUTPUT) --output $(S1_OUTPUT)
-	uv run --project .. python -m aedist.runner evaluate-all \
-	    --outputs-dir $(S1_OUTPUT) --output ../results/summary \
-	    --measurements-output ../measurements.jsonl
-	uv run --project .. python -m aedist.summarize_sweep \
-	    --measurements ../measurements.jsonl \
-	    --output ../results/summary/sweep1_summary.csv
+sweep1-summary: rebuild-measurements
 
 # --- Sweep 2: Information regimes ---------------------------------------------
 
@@ -132,6 +125,21 @@ sweep5-run:
 	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
+# --- Rebuild measurements (materialized view of all outputs) -----------------
+
+STRUCTURED_DIRS := sweep1_census sweep2_multiturn sweep2_web sweep_rag \
+                   sweep3_decomposed sweep5_sourced
+
+.PHONY: rebuild-measurements
+
+rebuild-measurements:
+	@for dir in $(STRUCTURED_DIRS); do \
+	    uv run --project .. python -m aedist.extract \
+	        --input outputs/$$dir --output outputs/$$dir; \
+	done
+	uv run --project .. python -m aedist.runner evaluate-all \
+	    --outputs-dir outputs --measurements-output ../measurements.jsonl
+
 # --- Analysis: self-consistency -----------------------------------------------
 
 SC_INPUT  := outputs/sweep_rag
@@ -148,7 +156,7 @@ $(SC_JSON): $(wildcard $(SC_INPUT)/*.json) ../src/aedist/self_consistency.py
 
 $(SC_TEX) $(SC_PERRUN) &: ../measurements.jsonl ../src/aedist/tabulate_self_consistency.py
 	uv run --project .. python -m aedist.tabulate_self_consistency \
-	    --measurements ../measurements.jsonl --output $(SC_TEX) --per-run-output $(SC_PERRUN)
+	    --output $(SC_TEX) --per-run-output $(SC_PERRUN)
 
 self-consistency: $(SC_TEX) $(SC_PERRUN)
 
@@ -245,11 +253,11 @@ help:
 	@echo "  make sweep1               Generate jobs + run workers (census)"
 	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
 	@echo "  make sweep1-run           Drain queue (1 worker per pending job + 1 Padme)"
-	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               Generate + run all information regimes"
 	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
 	@echo "  make sweep4-verification  Generate + run verification sweep"
 	@echo "  make sweep5-sourced       Generate + run sourced extraction sweep"
+	@echo "  make rebuild-measurements Extract + evaluate all outputs → measurements.jsonl"
 	@echo "  make self-consistency     Majority/union vote analysis + LaTeX tables"
 	@echo ""
 	@echo "Tools:"

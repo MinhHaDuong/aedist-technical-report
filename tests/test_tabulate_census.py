@@ -1,6 +1,6 @@
 """Tests for aedist.tabulate_census — generate census results LaTeX table."""
 
-from conftest import write_measurements
+from conftest import patch_measurements_loader, write_measurements
 
 from aedist.tabulate_census import generate_census_table
 from aedist.tabulate_utils import format_model_name, group_and_summarize, strip_label
@@ -206,29 +206,31 @@ def test_generate_census_table_matched_over_total():
 # --- CLI integration via file ---
 
 
-def test_main_writes_output(tmp_path):
-    """main() reads measurements.jsonl and writes LaTeX output."""
+def test_main_writes_output(tmp_path, monkeypatch):
+    """main() reads measurements and writes LaTeX output."""
     from aedist.tabulate_census import main
 
     input_file = tmp_path / "measurements.jsonl"
     write_measurements(input_file, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_file)
     output_file = tmp_path / "tab_census.tex"
 
-    main(["--measurements", str(input_file), "--output", str(output_file)])
+    main(["--output", str(output_file)])
 
     content = output_file.read_text()
     assert "\\begin{longtable}" in content
     assert "\\label{tab:census}" in content
 
 
-def test_main_creates_parent_dirs(tmp_path):
+def test_main_creates_parent_dirs(tmp_path, monkeypatch):
     """main() creates parent directories if they don't exist."""
     from aedist.tabulate_census import main
 
     input_file = tmp_path / "measurements.jsonl"
     write_measurements(input_file, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_file)
     output_file = tmp_path / "sub" / "dir" / "tab_census.tex"
 
-    main(["--measurements", str(input_file), "--output", str(output_file)])
+    main(["--output", str(output_file)])
 
     assert output_file.exists()

@@ -19,7 +19,6 @@ import logging
 import statistics
 from pathlib import Path
 
-from .measurements_adapter import load_metrics_from_measurements
 from .tabulate_utils import format_model_name, group_and_summarize, strip_label
 
 log = logging.getLogger(__name__)
@@ -180,13 +179,14 @@ def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Generate multi-turn relances LaTeX table",
     )
-    parser.add_argument("--measurements", required=True, help="Path to measurements.jsonl")
     parser.add_argument("--output", required=True, help="Path to write tab_relances.tex")
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
 
-    metrics = load_metrics_from_measurements(args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
 
     latex = generate_relances_table(metrics)
 

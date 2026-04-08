@@ -2,7 +2,7 @@
 
 import csv
 
-from conftest import write_measurements
+from conftest import patch_measurements_loader, write_measurements
 
 from aedist.plot_census import build_census_rows
 
@@ -42,10 +42,11 @@ def test_output_is_sorted_descending():
     assert f1_values == sorted(f1_values, reverse=True)
 
 
-def test_main_writes_csv(tmp_path):
+def test_main_writes_csv(tmp_path, monkeypatch):
     """CLI writes well-formed CSV with header."""
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "census_bars.csv"
 
     import sys
@@ -54,8 +55,6 @@ def test_main_writes_csv(tmp_path):
 
     sys.argv = [
         "plot_census",
-        "--measurements",
-        str(input_path),
         "--output",
         str(output_path),
     ]

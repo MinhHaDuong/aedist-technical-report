@@ -121,6 +121,9 @@ class Method(StrEnum):
     RAG = "rag"
     WEB = "web"
     DECOMPOSED = "decomposed"
+    SOURCED = "sourced"
+    FRONTIER = "frontier"
+    VERIFICATION = "verification"
 
 
 class MethodParams(BaseModel):

@@ -21,8 +21,6 @@ from pathlib import Path
 
 import yaml
 
-from .measurements_adapter import load_metrics_from_measurements
-
 log = logging.getLogger(__name__)
 
 
@@ -218,12 +216,6 @@ def main() -> None:
         description="Select top models from census evaluation metrics",
     )
     parser.add_argument(
-        "--measurements",
-        required=True,
-        type=Path,
-        help="Path to measurements.jsonl",
-    )
-    parser.add_argument(
         "--registry",
         required=True,
         type=Path,
@@ -265,8 +257,10 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load metrics
-    metrics = load_metrics_from_measurements(args.measurements)
-    log.info("Loaded %d metric entries from %s", len(metrics), args.measurements)
+    from .measurements import load_metrics
+
+    metrics = load_metrics()
+    log.info("Loaded %d metric entries", len(metrics))
 
     # Load registries
     with open(args.registry) as f:
