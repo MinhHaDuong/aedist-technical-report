@@ -1,8 +1,8 @@
-Last updated: 2026-04-08
+Last updated: 2026-04-08 (evening)
 
 ## Status
 
-Pipeline end-to-end via manager+worker dispatch. Census: 35 models (25 cloud + 10 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 574 tests pass. Frontier bench: 14 models × 3 prompts, $2.34 total. Slides reframed as pilot study: obvious-approach motivation, 4-level evaluation framework, limitations-as-specs, verification-vs-pipeline argument, epistemic accountability. Report Perspectives expanded to ~1 page: pilot accuracy, trust gate, power system scope, ASEAN scaling, pipeline rationale. Tickets 0026/0027 closed, 0034/0035 created (statistical hygiene). Orphan JSON status split (#203): refusal/error/empty replace catch-all "qualitative".
+Pipeline end-to-end via manager+worker dispatch. Census: 35 models (25 cloud + 10 local), best F1 98.8% (DeepSeek V3.2 with RAG). 574 tests pass. Frontier bench: 14 models × 3 prompts. Slides reframed as pilot study with 98.8% consistency throughout. Report Perspectives ~1 page. Orphan JSON status split (PR #203): refusal/error/empty. Bootstrap CIs and paired significance tests in reporting (ticket 0042). Ticket stock cleaned: 37 closed, 9 open.
 
 ## Blockers
 
@@ -11,10 +11,10 @@ None
 ## Next actions
 
 1. Visual review: `make slides` and check PDF renders correctly
-2. Fix remaining 99% → 98.8% inconsistencies in slides (ticket 0036)
-3. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
-4. Bootstrap CIs and paired significance tests (ticket 0034)
-5. Matching sensitivity sweep (ticket 0035, blocked by 0034)
+2. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
+3. Matching sensitivity sweep (ticket 0035)
+4. Fix empty CSV crash in evaluate (ticket 0045)
+5. Audit JSON globs for .eval.json filtering (ticket 0044)
 
 ## North star
 
@@ -24,24 +24,22 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 - [x] Reframe slides as pilot study (#115, #193)
 - [x] Perspectives section in report (#116)
+- [x] Fix 99% → 98.8% consistency (ticket 0046)
 - [ ] Visual PDF review of slides
 - [ ] RAG local sweep: 2B/4B/9B scaling curve (branch t21-rag-local-models)
 
 ## Next milestone
 
-Statistical hygiene (tickets 0034, 0035) → journal submission (TBD — after conference feedback).
+Statistical hygiene (ticket 0035) → journal submission (TBD — after conference feedback).
 
-## Backlog
+## Open tickets (9)
 
-- Standardize 99% → 98.8% in slides (ticket 0036)
-- Bootstrap CIs and significance tests (ticket 0034)
-- Matching sensitivity sweep (ticket 0035)
-- Rewrite MASTERPLAN phases (phases 2, 4 done; need statistical validation phase)
-- Handle empty CSVs gracefully in evaluate (ticket 0045)
-- Reflexive self-prompting experiment (ticket 0038)
-- Audit JSON globs for .eval.json filtering (ticket 0044)
-- Smart worker dispatch: self-select by capability (ticket 0023)
-- Stack decomposition + union vote + precision filter
-- Chunked RAG strategy (currently only wholesale)
-- Verification sweep (#12)
-- Extend benchmark to other countries / sectors
+- 0023 Smart worker dispatch (infra)
+- 0025 Sourced extraction with citation scoring
+- 0029 Sensitivity analysis sweep
+- 0030 Verification regimes sweep
+- 0031 Information regimes sweep (complete)
+- 0035 Matching sensitivity sweep
+- 0038 Reflexive self-prompting experiment
+- 0044 Audit JSON globs for .eval.json filtering
+- 0045 Empty CSV crash in evaluate
