@@ -375,22 +375,10 @@ def test_openrouter_worker_id(tmp_path: Path) -> None:
     assert worker.worker_id == "openrouter"
 
 
-def test_openrouter_worker_concurrency(tmp_path: Path) -> None:
-    """OpenRouterWorker uses default concurrency of 8."""
-    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
-    assert worker.concurrency == 8
-
-
-def test_openrouter_worker_custom_concurrency(tmp_path: Path) -> None:
-    """OpenRouterWorker accepts custom concurrency."""
-    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs", concurrency=4)
-    assert worker.concurrency == 4
-
-
 def test_openrouter_worker_execute(tmp_path: Path) -> None:
-    """OpenRouterWorker.execute() processes models in parallel."""
+    """OpenRouterWorker.execute() runs a single query."""
     jobs_root = tmp_path / "jobs"
-    worker = OpenRouterWorker(jobs_root=jobs_root, concurrency=2)
+    worker = OpenRouterWorker(jobs_root=jobs_root)
 
     prompt_file = tmp_path / "prompt.txt"
     prompt_file.write_text("List thermal plants")
@@ -403,23 +391,23 @@ def test_openrouter_worker_execute(tmp_path: Path) -> None:
         models_file="models.yaml",
         model_filter="qwen3:8b",
         output_dir=str(tmp_path / "out"),
-        repeat=2,
+        repeat=1,
         budget_usd=10.0,
     )
 
     with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
         result = worker.execute(job)
 
-    # 1 model x 2 runs = 2 queries, each 3.5s wall
-    assert result["wall_seconds"] == 7.0
-    assert result["tokens_in"] == 100
-    assert result["tokens_out"] == 200
+    # 1 model x 1 run = 1 query
+    assert result["wall_seconds"] == 3.5
+    assert result["tokens_in"] == 50
+    assert result["tokens_out"] == 100
 
 
 def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
     """OpenRouterWorker full lifecycle: poll -> run_one with mocked harness."""
     jobs_root = tmp_path / "jobs"
-    worker = OpenRouterWorker(jobs_root=jobs_root, concurrency=2)
+    worker = OpenRouterWorker(jobs_root=jobs_root)
 
     prompt_file = tmp_path / "prompt.txt"
     prompt_file.write_text("List thermal plants")

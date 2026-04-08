@@ -4,8 +4,8 @@ Workers poll for pending jobs, acquire exclusive leases via atomic file
 renames, execute the query pipeline, and write results to done/ or failed/.
 
 Subclasses:
-    PadmeWorker  — sequential execution via local Ollama (GPU)
-    OpenRouterWorker — parallel execution via OpenRouter cloud API
+    PadmeWorker  — local Ollama (GPU)
+    OpenRouterWorker — OpenRouter cloud API
 """
 
 import logging
@@ -14,8 +14,6 @@ import signal
 import traceback
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
-
-import openai
 
 from .harness import (
     compute_cost,
@@ -145,7 +143,11 @@ class Worker:
         job = self.poll()
         if job is None:
             return None
-        self.acquire(job)
+        try:
+            self.acquire(job)
+        except FileNotFoundError:
+            # Lost race: another worker grabbed this job first. Retry.
+            return self.run_one()
 
         def _timeout_handler(signum: int, frame: object) -> None:
             raise TimeoutError(f"Job {job.job_id} exceeded timeout of {job.timeout_seconds}s")
@@ -205,7 +207,11 @@ class PadmeWorker(Worker):
         self.base_url = base_url
 
     def execute(self, job: JobSpec) -> dict:
-        """Run a single-turn query against Ollama for each model in the job."""
+        """Run a single query against Ollama.
+
+        Each job targets exactly one model (via model_filter) and one run
+        (repeat=1).  The manager handles fan-out.
+        """
         client = make_client(self.base_url)
         prompt = Path(job.prompt).read_text().strip()
         models = load_models(job.models_file)
@@ -213,70 +219,49 @@ class PadmeWorker(Worker):
 
         if job.model_filter:
             models = [m for m in models if job.model_filter in m["id"]]
+        if not models:
+            raise ValueError(f"No model matched filter {job.model_filter!r}")
+        model_entry = models[0]
+        model_id = model_entry["id"]
 
-        total_cost = 0.0
-        total_wall = 0.0
-        total_in = 0
-        total_out = 0
-        result_files: list[str] = []
-        budget_hit = False
+        run = job.run_number
 
-        for model_entry in models:
-            if budget_hit:
-                break
-            model_id = model_entry["id"]
-            for run in range(1, job.repeat + 1):
-                if should_skip(output_dir, model_id, run, "padme"):
-                    log.info("Skip %s run %d (cached)", model_id, run)
-                    continue
+        if should_skip(output_dir, model_id, run, "padme"):
+            log.info("Skip %s run %d (cached)", model_id, run)
+            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
+                    "tokens_out": 0, "result_file": None}
 
-                log.info("Querying %s run %d/%d...", model_id, run, job.repeat)
-                try:
-                    result = query_single_turn(
-                        client,
-                        model_id,
-                        [{"role": "user", "content": prompt}],
-                    )
-                except openai.APIError as e:
-                    log.error("Error querying %s run %d: %s", model_id, run, e)
-                    continue
+        log.info("Querying %s run %d ...", model_id, run)
+        result = query_single_turn(
+            client, model_id, [{"role": "user", "content": prompt}],
+        )
 
-                usage = result.get("usage") or {}
-                cost = compute_cost(usage, model_entry)
-                total_cost += cost
-                total_wall += result["wall_seconds"]
-                total_in += usage.get("prompt_tokens", 0)
-                total_out += usage.get("completion_tokens", 0)
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
 
-                filepath = output_path(output_dir, model_id, run, "padme")
-                save_json(
-                    filepath,
-                    {
-                        "model": model_id,
-                        "date": date.today().isoformat(),
-                        "run": run,
-                        "prompt": prompt,
-                        "response": result["content"],
-                        "finish_reason": result["finish_reason"],
-                        "usage": usage,
-                        "wall_seconds": result["wall_seconds"],
-                        "cost_usd": cost,
-                        "model_metadata": model_metadata(model_entry),
-                    },
-                )
-                result_files.append(str(filepath))
-
-                if total_cost >= job.budget_usd:
-                    log.warning("Budget exhausted (%.4f USD)", total_cost)
-                    budget_hit = True
-                    break
+        filepath = output_path(output_dir, model_id, run, "padme")
+        save_json(
+            filepath,
+            {
+                "model": model_id,
+                "date": date.today().isoformat(),
+                "run": run,
+                "prompt": prompt,
+                "response": result["content"],
+                "finish_reason": result["finish_reason"],
+                "usage": usage,
+                "wall_seconds": result["wall_seconds"],
+                "cost_usd": cost,
+                "model_metadata": model_metadata(model_entry),
+            },
+        )
 
         return {
-            "wall_seconds": total_wall,
-            "cost_usd": total_cost,
-            "tokens_in": total_in,
-            "tokens_out": total_out,
-            "result_file": result_files[0] if result_files else None,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "result_file": str(filepath),
         }
 
 
@@ -285,30 +270,19 @@ class PadmeWorker(Worker):
 # ---------------------------------------------------------------------------
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-DEFAULT_CONCURRENCY = 8
 
 
 class OpenRouterWorker(Worker):
-    """Worker for parallel execution via OpenRouter cloud API.
+    """Worker for execution via OpenRouter cloud API.
 
-    Processes multiple model/run combinations concurrently using a
-    thread pool, with rate limiting and budget controls.
+    Each job is a single (model, run) pair — the manager handles fan-out.
     """
 
-    def __init__(
-        self,
-        jobs_root: Path = Path("jobs"),
-        concurrency: int = DEFAULT_CONCURRENCY,
-    ) -> None:
+    def __init__(self, jobs_root: Path = Path("jobs")) -> None:
         super().__init__(worker_id="openrouter", jobs_root=jobs_root)
-        self.concurrency = concurrency
 
     def execute(self, job: JobSpec) -> dict:
-        """Run queries in parallel via OpenRouter."""
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
-        from .harness import BudgetTracker
-
+        """Run a single query via OpenRouter."""
         client = make_client()
         prompt = Path(job.prompt).read_text().strip()
         models = load_models(job.models_file)
@@ -316,81 +290,49 @@ class OpenRouterWorker(Worker):
 
         if job.model_filter:
             models = [m for m in models if job.model_filter in m["id"]]
+        if not models:
+            raise ValueError(f"No model matched filter {job.model_filter!r}")
+        model_entry = models[0]
+        model_id = model_entry["id"]
 
-        budget = BudgetTracker(job.budget_usd)
-        total_wall = 0.0
-        total_in = 0
-        total_out = 0
-        result_files: list[str] = []
+        run = job.run_number
 
-        # Build work items: (model_entry, run_number)
-        work_items = [
-            (model_entry, run)
-            for model_entry in models
-            for run in range(1, job.repeat + 1)
-            if not should_skip(output_dir, model_entry["id"], run)
-        ]
+        if should_skip(output_dir, model_id, run):
+            log.info("Skip %s run %d (cached)", model_id, run)
+            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
+                    "tokens_out": 0, "result_file": None}
 
-        def _run_query(model_entry: dict, run: int) -> dict | None:
-            if budget.exceeded:
-                return None
-            model_id = model_entry["id"]
-            log.info("Querying %s run %d/%d...", model_id, run, job.repeat)
-            try:
-                result = query_single_turn(
-                    client,
-                    model_id,
-                    [{"role": "user", "content": prompt}],
-                )
-            except openai.APIError as e:
-                log.error("Error querying %s run %d: %s", model_id, run, e)
-                return None
+        log.info("Querying %s run %d ...", model_id, run)
+        result = query_single_turn(
+            client, model_id, [{"role": "user", "content": prompt}],
+        )
 
-            usage = result.get("usage") or {}
-            cost = compute_cost(usage, model_entry)
-            budget.add(cost)
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
 
-            filepath = output_path(output_dir, model_id, run)
-            save_json(
-                filepath,
-                {
-                    "model": model_id,
-                    "date": date.today().isoformat(),
-                    "run": run,
-                    "prompt": prompt,
-                    "response": result["content"],
-                    "finish_reason": result["finish_reason"],
-                    "usage": usage,
-                    "wall_seconds": result["wall_seconds"],
-                    "cost_usd": cost,
-                    "model_metadata": model_metadata(model_entry),
-                },
-            )
-            return {
-                "filepath": str(filepath),
+        filepath = output_path(output_dir, model_id, run)
+        save_json(
+            filepath,
+            {
+                "model": model_id,
+                "date": date.today().isoformat(),
+                "run": run,
+                "prompt": prompt,
+                "response": result["content"],
+                "finish_reason": result["finish_reason"],
+                "usage": usage,
                 "wall_seconds": result["wall_seconds"],
                 "cost_usd": cost,
-                "tokens_in": usage.get("prompt_tokens", 0),
-                "tokens_out": usage.get("completion_tokens", 0),
-            }
-
-        with ThreadPoolExecutor(max_workers=self.concurrency) as pool:
-            futures = {pool.submit(_run_query, m, r): (m, r) for m, r in work_items}
-            for future in as_completed(futures):
-                res = future.result()
-                if res is None:
-                    continue
-                total_wall += res["wall_seconds"]
-                total_in += res["tokens_in"]
-                total_out += res["tokens_out"]
-                result_files.append(res["filepath"])
+                "model_metadata": model_metadata(model_entry),
+            },
+        )
 
         return {
-            "wall_seconds": total_wall,
-            "cost_usd": budget.total_cost,
-            "tokens_in": total_in,
-            "tokens_out": total_out,
-            "result_file": result_files[0] if result_files else None,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "result_file": str(filepath),
         }
 
 
@@ -420,25 +362,23 @@ def main(argv=None):
         default=OLLAMA_BASE_URL,
         help=f"Ollama API base URL (default: {OLLAMA_BASE_URL})",
     )
-    parser.add_argument(
-        "--concurrency",
-        type=int,
-        default=DEFAULT_CONCURRENCY,
-        help=f"Max parallel queries for openrouter (default: {DEFAULT_CONCURRENCY})",
-    )
-    parser.add_argument(
+    run_mode = parser.add_mutually_exclusive_group()
+    run_mode.add_argument(
         "--loop",
         action="store_true",
-        help="Run continuously, polling for jobs",
+        help="Run continuously, polling for jobs (never exits)",
+    )
+    run_mode.add_argument(
+        "--drain",
+        action="store_true",
+        help="Process all pending jobs then exit when queue is empty",
     )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     workers = {
         "padme": lambda: PadmeWorker(jobs_root=args.jobs_root, base_url=args.base_url),
-        "openrouter": lambda: OpenRouterWorker(
-            jobs_root=args.jobs_root, concurrency=args.concurrency
-        ),
+        "openrouter": lambda: OpenRouterWorker(jobs_root=args.jobs_root),
     }
     worker = workers[args.pool]()
 
@@ -449,6 +389,13 @@ def main(argv=None):
             record = worker.run_one()
             if record is None:
                 time.sleep(5)
+    elif args.drain:
+        while True:
+            record = worker.run_one()
+            if record is None:
+                log.info("Queue drained, exiting.")
+                break
+            log.info("Completed job, method=%s", record.method)
     else:
         record = worker.run_one()
         if record is None:

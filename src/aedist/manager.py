@@ -101,6 +101,7 @@ def generate(
                 followups=parent_spec.followups,
                 strategy=parent_spec.strategy,
                 repeat=1,
+                run_number=run,
                 budget_usd=parent_spec.budget_usd,
                 output_dir=parent_spec.output_dir,
                 timeout_seconds=parent_spec.timeout_seconds,
