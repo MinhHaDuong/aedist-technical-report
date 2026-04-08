@@ -27,8 +27,8 @@ check: test
 #   2. Evaluating CSVs against reference (runner.py evaluate-all)
 #   3. Ingesting qualitative results (frontier etc.) as resource_use only
 
-$(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json)
-	$(MAKE) -C experiments rebuild-measurements
+$(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json) $(wildcard experiments/outputs/*/*.csv)
+	$(MAKE) -C experiments ../measurements.jsonl
 
 .PHONY: measurements
 measurements: $(MEASUREMENTS)

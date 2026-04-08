@@ -145,9 +145,21 @@ frontier-run:
 STRUCTURED_DIRS := census multiturn web rag \
                    decomposed sourced
 
+OUTPUT_FILES := $(wildcard outputs/*/*.json) $(wildcard outputs/*/*.csv)
+
 .PHONY: rebuild-measurements
 
+# Force target: extract + full rebuild (ignores mtime)
 rebuild-measurements:
+	@for dir in $(STRUCTURED_DIRS); do \
+	    uv run --project .. python -m aedist.extract \
+	        --input outputs/$$dir --output outputs/$$dir; \
+	done
+	uv run --project .. python -m aedist.runner evaluate-all \
+	    --outputs-dir outputs --measurements-output ../measurements.jsonl --full
+
+# File target: incremental — Make skips when measurements.jsonl is newer than all outputs
+../measurements.jsonl: $(OUTPUT_FILES)
 	@for dir in $(STRUCTURED_DIRS); do \
 	    uv run --project .. python -m aedist.extract \
 	        --input outputs/$$dir --output outputs/$$dir; \
