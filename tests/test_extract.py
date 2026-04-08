@@ -9,6 +9,7 @@ from aedist.extract import (
     _extract_pipe_table,
     extract_fenced_blocks,
     extract_one,
+    main,
     map_header_to_canonical,
     norm_header,
     parse_and_canonicalize,
@@ -344,3 +345,25 @@ class TestExtractOne:
         out.mkdir()
         res = extract_one(jf, out, overwrite=False)
         assert res.status is ExtractStatus.FAILED
+
+
+class TestMainSkipsEvalJson:
+    def test_eval_json_ignored(self, tmp_path, monkeypatch):
+        """main() must not attempt to extract .eval.json files."""
+        inp = tmp_path / "inp"
+        inp.mkdir()
+        out = tmp_path / "out"
+        out.mkdir()
+        # Real model reply
+        (inp / "model-run1.json").write_text(
+            json.dumps({"response": "```csv\nName,Fuel\nPha Lai,Coal\n```"})
+        )
+        # Eval file that should be skipped
+        (inp / "model-run1.eval.json").write_text(
+            json.dumps({"f1": 0.5, "precision": 0.6})
+        )
+        monkeypatch.setattr("sys.argv", ["extract", "--input", str(inp), "--output", str(out)])
+        main()
+        # Only the model reply should produce a CSV
+        assert (out / "model-run1.csv").exists()
+        assert not (out / "model-run1.eval.csv").exists()

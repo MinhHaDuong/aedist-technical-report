@@ -1,0 +1,28 @@
+%erg v1
+Title: Extractor must skip .eval.json files
+Status: closed
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T17:00Z claude created
+2026-04-08T17:30Z claude status closed — filter added, test passes
+
+--- body ---
+## Context
+extract.py line 352 globs *.json with no filter. Once evaluation produces
+.eval.json files alongside model reply .json files, the extractor will try
+to parse them as model replies — crash or garbage output.
+
+This is a latent bug that becomes live as soon as ticket 0036 or 0040
+introduces .eval.json files into output directories.
+
+## Actions
+1. In extract.py, exclude *.eval.json from the glob:
+   `[f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")]`
+2. Add a test case: place a dummy .eval.json in a temp dir, verify extractor
+   ignores it
+
+## Exit criteria
+- Extractor skips .eval.json files
+- Test passes
