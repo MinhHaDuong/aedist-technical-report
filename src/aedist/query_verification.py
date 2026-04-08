@@ -267,7 +267,7 @@ def main():
     modes = config["verification_modes"]
     repeat = config.get("repeat", 3)
     budget_usd = config.get("budget_usd")
-    output_dir = Path(config.get("output", "outputs/verification"))
+    output_dir = Path(config.get("output", "derived/verification"))
     cross_verifier = config.get("cross_verifier")
     ref_path_str = config.get("reference")
     reference_path = Path(ref_path_str) if ref_path_str else _DEFAULT_REF

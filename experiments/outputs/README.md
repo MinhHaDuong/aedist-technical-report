@@ -1,7 +1,7 @@
-# Experiment outputs
+# Experiment outputs — table experiments
 
-JSON result files organized by sweep type. Each file contains one model's
-response for one run. Files are named `{model}[-runN].json`.
+Primary LLM outputs: each file is one model's response for one run.
+Files are named `{model}[-runN].json` with extracted `.csv` and `.eval.json`.
 
 ## Directories
 
@@ -13,11 +13,9 @@ response for one run. Files are named `{model}[-runN].json`.
 | `web/` | web | Web-search augmented (Tavily) |
 | `decomposed/` | decomposed | Split by fuel type, merged |
 | `sourced/` | sourced | RAG with citation extraction |
-| `verification/` | verification | 5 provenance-checking modes |
 | `frontier/` | frontier | Deep-research prompt, reasoning models |
-| `frontier_scenarios/` | frontier | Scenario-based prompt variant |
-| `frontier_skill/` | frontier | Skill-assessment prompt variant |
-| `rag_consistency/` | — | Self-consistency analysis outputs |
+
+Derived analyses live in `../derived/`, qualitative experiments in `../qualitative/`.
 
 Results are evaluated by `make rebuild-measurements`, which extracts CSVs
 from the JSON and scores them against `data/reference/vietnam_thermal_v1.csv`.
