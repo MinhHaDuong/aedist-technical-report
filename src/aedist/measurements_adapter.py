@@ -93,6 +93,8 @@ def metrics_to_records(
         m = method
         if "multiturn" in prompt_version:
             m = Method.MULTITURN
+        elif "decomposed" in prompt_version:
+            m = Method.DECOMPOSED
         elif "rag" in prompt_version:
             m = Method.RAG
         elif "web" in prompt_version:
