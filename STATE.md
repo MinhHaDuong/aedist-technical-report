@@ -2,7 +2,7 @@ Last updated: 2026-04-08
 
 ## Status
 
-Pipeline end-to-end via Makefile. Census: 37 models (26 cloud + 11 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 469 tests pass. Sweep 2 complete: RAG ($2.81), multiturn, web ($0.13). Decomposition: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169) top two; MinerU GPU fixed, 62 tables but diacritics stripped in table cells (#178). Benchmark table added to report section 3.3. Frontier bench merged (#179): 14 models × 3 prompts, $2.34 total. RAG local sweep in progress. Slides reframed (#93, #171). All reporting reads from measurements.jsonl. Model registry consolidated: single models.yaml (52 instances) + experiments.toml (#187). Glossary added to report (#190).
+Pipeline end-to-end via manager+worker dispatch. Census: 37 models (26 cloud + 11 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 472 tests pass. Sweep 2 complete: RAG ($2.81), multiturn, web ($0.13). Decomposition: DeepSeek V3.2 163/163 plants, F1=98.8%, $0.06. Converter benchmark: 6 backends on Decision 1509 — Marker (170 tables) and Mistral OCR direct (169) top two. Frontier bench merged (#179): 14 models × 3 prompts, $2.34 total. RAG local sweep in progress. All reporting reads from measurements.jsonl via `aedist.measurements` module. Config consolidated: single experiments.toml (model registry + sweeps + paths).
 
 ## Blockers
 
@@ -21,8 +21,6 @@ Benchmark *methods* — not just models — for producing statistical infrastruc
 
 ## Current milestone: Econom'IA 2026 (April 11)
 
-- [x] Converter benchmark table added to report (#85, #178)
-- [x] Model registry consolidated (#187, ticket 0022)
 - [x] Glossary added to report (#190)
 - [ ] Visual PDF review of slides (no LaTeX on Padme)
 - [ ] Reframe slides "Next steps" (#115)
@@ -35,9 +33,9 @@ Submit to journal (TBD — after conference feedback).
 
 ## Backlog
 
+- Smart worker dispatch: self-select by capability (ticket 0023)
 - Stack decomposition + union vote + precision filter
 - Chunked RAG strategy (currently only wholesale)
 - Verification sweep (#12)
 - Sensitivity analysis (#13)
 - Extend benchmark to other countries / sectors
-- Retire Makefile sweep dispatch in favor of Workers (ticket 0011)
