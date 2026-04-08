@@ -1,0 +1,91 @@
+%erg v1
+Title: Add bootstrap CIs and paired significance tests to reporting
+Status: open
+Created: 2026-04-08
+Author: claude
+
+--- log ---
+2026-04-08T10:15Z claude created from radical-improvements assessment
+
+--- body ---
+## Context
+
+All metrics are reported as point estimates (single F1, coverage, precision).
+With 3 runs per model×method, we have variance data but don't use it.
+When we claim "Qwen 3.5 9B (F1=98.4%) beats GPT-4o (F1=93.2%)", a reviewer
+can't tell if that's significant or noise from 3 samples.
+
+This is table stakes for any ML benchmark paper.
+
+## Actions
+
+### 1. Add `src/aedist/stats.py` module (~100 LOC)
+
+```python
+def bootstrap_ci(values: list[float], confidence: float = 0.95,
+                 n_bootstrap: int = 10000) -> tuple[float, float, float]:
+    """Return (mean, ci_low, ci_high) via percentile bootstrap."""
+
+def paired_bootstrap_test(a: list[float], b: list[float],
+                          n_bootstrap: int = 10000) -> float:
+    """Return p-value for H0: mean(a) == mean(b)."""
+```
+
+No external deps — use `random.choices` from stdlib. With n=3 runs,
+bootstrap gives rough CIs; honest about limited power.
+
+### 2. Add `measurements.grouped_stats()` function
+
+Group measurements.jsonl by (model, method), compute per-group:
+- mean, std, bootstrap 95% CI for F1, coverage, precision
+- n_runs
+
+Returns list[dict] suitable for tabulation.
+
+### 3. Update `tabulate_census.py`
+
+Replace single F1 column with "F1 (mean ± std)" or "F1 [CI_low, CI_high]".
+Keep the table readable — don't show CIs for every metric, just F1.
+
+### 4. Update `tabulate_comparaison.py`
+
+Add significance markers (* p<0.05, ** p<0.01) for method comparisons.
+Use paired bootstrap between method conditions on the same model.
+
+### 5. Update slides macros
+
+`tabulate_macros.py` should emit e.g. `\bestF1CI{98.8 [96.2, 100.0]}`
+alongside the existing point-estimate macros.
+
+## Test
+
+```python
+# test_stats.py
+def test_bootstrap_ci_known_distribution():
+    """100 draws from N(0.5, 0.1) — CI should contain 0.5."""
+    values = [random.gauss(0.5, 0.1) for _ in range(100)]
+    mean, lo, hi = bootstrap_ci(values)
+    assert lo < 0.5 < hi
+
+def test_bootstrap_ci_three_samples():
+    """With n=3, CI is wide but still computable."""
+    mean, lo, hi = bootstrap_ci([0.90, 0.93, 0.91])
+    assert lo < mean < hi
+    assert hi - lo > 0.01  # CI is non-trivial with n=3
+
+def test_paired_test_identical():
+    """Identical samples → p > 0.05."""
+    p = paired_bootstrap_test([0.9, 0.9, 0.9], [0.9, 0.9, 0.9])
+    assert p > 0.5
+
+def test_paired_test_different():
+    """Well-separated samples → p < 0.05."""
+    p = paired_bootstrap_test([0.9, 0.91, 0.92], [0.5, 0.51, 0.52])
+    assert p < 0.05
+```
+
+## Exit criteria
+- `stats.py` with bootstrap CI and paired test, tested
+- `tabulate_census.py` shows mean ± std for F1
+- `tabulate_comparaison.py` shows significance markers
+- `make check-fast` passes

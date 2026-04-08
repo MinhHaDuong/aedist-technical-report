@@ -1,0 +1,104 @@
+%erg v1
+Title: Matching sensitivity sweep across fuzzy thresholds
+Status: open
+Created: 2026-04-08
+Author: claude
+Blocked-by: 0034
+
+--- log ---
+2026-04-08T10:15Z claude created from radical-improvements assessment
+
+--- body ---
+## Context
+
+The fuzzy matching threshold (default 90) is a judgment call in the
+measurement apparatus. A model that outputs "Vung Ang I Thermal" against
+reference "Vũng Áng 1" may or may not match depending on whether
+RapidFuzz partial_ratio crosses 90. This flips TP/FP/FN and cascades
+through F1.
+
+Reported model differences are often 2–5 pp. If rankings change when the
+threshold moves from 85 to 95, those differences are artifacts of the
+measurement, not properties of the models.
+
+This ticket answers: **which model rankings are robust to threshold choice?**
+
+Blocked by 0034 because findings should be reported with CIs (a ranking
+that flips AND has overlapping CIs is doubly unreliable).
+
+## Actions
+
+### 1. Add `scripts/sweep_matching_threshold.py`
+
+For each threshold in [70, 75, 80, 85, 88, 90, 92, 95]:
+  - Re-run `reconcile()` on all existing extracted CSVs against reference
+  - Compute metrics per (model, method, run, threshold)
+  - Output: `matching_sensitivity.csv` with columns:
+    model, method, run, threshold, f1, coverage, precision, n_matched
+
+No new API calls needed. This re-evaluates existing outputs with
+different thresholds. The `reconcile()` function already accepts
+`similarity_threshold` as a kwarg.
+
+Key implementation detail: the extracted CSVs are already on disk in
+`experiments/outputs/*/`. Load them via `runner.load_plants_csv()`,
+call `reconcile(reference, system, similarity_threshold=t)` for each t,
+then `compute_metrics()`.
+
+### 2. Add `scripts/analyze_matching_sensitivity.py`
+
+From `matching_sensitivity.csv`, compute:
+- **Rank stability**: for each pair of models at each threshold,
+  record which has higher mean F1. Flag pairs where ranking flips
+  across any threshold in [80, 95].
+- **Threshold sensitivity per model**: slope of F1 vs threshold.
+  Models with steep slopes are sensitive to the matching layer.
+- **Stable core**: models whose top-10 ranking is unchanged across
+  all thresholds. These are trustworthy comparisons.
+
+Output: `matching_sensitivity_report.txt` (human-readable summary)
+and `threshold_vs_f1.csv` (for plotting).
+
+### 3. Add plot to report
+
+`plot_matching_sensitivity.py` generates a line chart:
+X = threshold, Y = F1, one line per model (top 10 only).
+Lines that cross = unreliable ranking. Parallel lines = robust.
+
+### 4. Add one paragraph to report
+
+In the evaluation methodology section, acknowledge the matching
+confound and cite the sensitivity analysis as evidence that
+reported rankings are (or aren't) robust.
+
+## Test
+
+```python
+# test_sweep_matching_threshold.py
+def test_threshold_affects_metrics():
+    """Same data, different thresholds → different F1."""
+    ref = [Plant(name="Vũng Áng 1", ...)]
+    sys = [Plant(name="Vung Ang I", ...)]
+    entries_90 = reconcile(ref, sys, similarity_threshold=90)
+    entries_70 = reconcile(ref, sys, similarity_threshold=70)
+    m90 = compute_metrics(entries_90)
+    m70 = compute_metrics(entries_70)
+    # At threshold 70, this likely matches; at 90, it might not
+    assert m70.f1 >= m90.f1
+
+def test_perfect_match_threshold_invariant():
+    """Exact name matches are unaffected by threshold."""
+    ref = [Plant(name="Vũng Áng 1", ...)]
+    sys = [Plant(name="Vũng Áng 1", ...)]
+    for t in [70, 80, 90, 95]:
+        entries = reconcile(ref, sys, similarity_threshold=t)
+        assert compute_metrics(entries).f1 == 1.0
+```
+
+## Exit criteria
+- `matching_sensitivity.csv` generated for thresholds 70–95
+- Report identifies which top-10 rankings are stable vs. fragile
+- Plot showing F1 vs threshold for top models
+- If rankings are unstable: flag in report with recommended threshold range
+- If rankings are stable: report this as evidence of robustness
+- `make check-fast` passes
