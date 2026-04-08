@@ -1,11 +1,13 @@
 %erg v1
 Title: Drop unicode-math from report.tex
-Status: open
+Status: closed
 Created: 2026-04-07
 Author: claude
 
 --- log ---
 2026-04-07T12:00Z claude created imported from gh#186
+2026-04-08T18:00Z claude claimed
+2026-04-08T18:05Z claude status closed — replaced unicode-math with fontspec+amsmath, build verified
 
 --- body ---
 ## Context
