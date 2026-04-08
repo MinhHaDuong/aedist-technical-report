@@ -142,30 +142,49 @@ frontier-run:
 
 # --- Rebuild measurements (materialized view of all outputs) -----------------
 
+EVAL      := uv run --project .. python -m aedist.evaluate
+REFERENCE := ../data/reference/vietnam_thermal_v1.csv
+
 STRUCTURED_DIRS := census multiturn web rag \
                    decomposed sourced
 
-OUTPUT_FILES := $(wildcard outputs/*/*.json) $(wildcard outputs/*/*.csv)
+OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json)) $(wildcard outputs/*/*.csv)
+
+# Extract structured outputs from LLM JSON responses into CSVs.
+.PHONY: extract
+extract:
+	@for dir in $(STRUCTURED_DIRS); do \
+	    uv run --project .. python -m aedist.extract \
+	        --input outputs/$$dir --output outputs/$$dir; \
+	done
+
+.PRECIOUS: outputs/%.record.json
+outputs/%.record.json: outputs/%.csv $(REFERENCE)
+	@$(EVAL) evaluate $< --reference $(REFERENCE) --output $(dir $<)
+
+# Recursive Make: extract may create CSVs, so the second invocation must
+# re-scan to find them.  Orphan JSONs (qualitative, no CSV) need nullglob.
+../measurements.jsonl: $(OUTPUT_FILES)
+	@$(MAKE) --no-print-directory extract
+	@$(MAKE) --no-print-directory evaluate-all-records
+	@$(EVAL) assemble $$(find outputs -name '*.record.json' | sort) --output $@
+
+.PHONY: evaluate-all-records
+evaluate-all-records:
+	@$(MAKE) --no-print-directory -j$$(nproc) \
+	    $$(find outputs -name '*.csv' | sed 's/\.csv$$/.record.json/')
+	@shopt -s nullglob; \
+	for f in outputs/*/*-run*.json; do \
+	    [ -f "$${f%.json}.csv" ] && continue; \
+	    rec="$${f%.json}.record.json"; \
+	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \
+	    $(EVAL) evaluate "$$f" --output "$$(dirname $$f)"; \
+	done
 
 .PHONY: rebuild-measurements
-
-# Force target: extract + full rebuild (ignores mtime)
 rebuild-measurements:
-	@for dir in $(STRUCTURED_DIRS); do \
-	    uv run --project .. python -m aedist.extract \
-	        --input outputs/$$dir --output outputs/$$dir; \
-	done
-	uv run --project .. python -m aedist.runner evaluate-all \
-	    --outputs-dir outputs --measurements-output ../measurements.jsonl --full
-
-# File target: incremental — Make skips when measurements.jsonl is newer than all outputs
-../measurements.jsonl: $(OUTPUT_FILES)
-	@for dir in $(STRUCTURED_DIRS); do \
-	    uv run --project .. python -m aedist.extract \
-	        --input outputs/$$dir --output outputs/$$dir; \
-	done
-	uv run --project .. python -m aedist.runner evaluate-all \
-	    --outputs-dir outputs --measurements-output ../measurements.jsonl
+	find outputs -name '*.record.json' -delete
+	$(MAKE) --no-print-directory ../measurements.jsonl
 
 # --- Analysis: self-consistency -----------------------------------------------
 

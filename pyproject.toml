@@ -23,7 +23,7 @@ pdf = ["pypdf", "pdf2image", "tiktoken"]
 dev = ["pytest>=8.0", "ruff>=0.4", "pylint", "mypy", "types-PyYAML"]
 
 [project.scripts]
-aedist = "aedist.runner:main"
+aedist = "aedist.evaluate:main"
 
 [build-system]
 requires = ["hatchling"]

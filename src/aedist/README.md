@@ -25,7 +25,7 @@ utilities and save JSON results to `experiments/outputs/`.
 | Module | Purpose |
 |--------|---------|
 | `harness.py` | Shared query utilities: client setup, budget tracking, save/skip logic |
-| `runner.py` | CLI entry point (`evaluate`, `evaluate-all`) |
+| `evaluate.py` | CLI entry point (`evaluate`, `assemble`) |
 | `manager.py` | Fan out sweep config into per-model job files |
 | `worker.py` | Job execution with lease semantics (PadmeWorker, OpenRouterWorker) |
 | `observer.py` | Monitor job board, detect stale leases, requeue expired jobs |

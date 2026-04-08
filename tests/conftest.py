@@ -25,7 +25,7 @@ def experiments():
 
 def write_measurements(path: Path, metrics: list[dict]) -> None:
     """Convert metrics dicts to measurements.jsonl for CLI tests."""
-    from aedist.runner import _infer_method
+    from aedist.evaluate import _infer_method
     from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
     records = []

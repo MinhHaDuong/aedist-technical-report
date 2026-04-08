@@ -22,7 +22,7 @@ import yaml
 from .harness import BudgetTracker
 from .metrics import compute_metrics
 from .reconcile import reconcile
-from .runner import load_plants_csv
+from .evaluate import load_plants_csv
 from .schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from .verify import (
     _DEFAULT_REF,
