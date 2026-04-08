@@ -1,6 +1,6 @@
 %erg v1
 Title: Implement source attribution in query pipeline
-Status: open
+Status: closed
 Created: 2026-04-04
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-04T12:52Z claude created
 2026-04-04T12:52Z claude note Phase 5 — Level 3 evaluation (provenance)
 2026-04-08T12:00Z claude note Removed stale Blocked-by: 0004 (closed)
+2026-04-08T12:00Z claude status closed — superseded by 0025 (sourced extraction); evidence scoring already in schema.py and verify.py
 
 --- body ---
 ## Context
