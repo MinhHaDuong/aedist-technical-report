@@ -84,33 +84,41 @@ def score_csv_like_block(block: str) -> float:
     return (delimiter_hits / max(len(lines), 1)) + header_bonus + length_bonus
 
 
-def _extract_pipe_table(text: str) -> str | None:
-    """Convert a Markdown pipe table to CSV.
+def _extract_pipe_tables(text: str) -> list[str]:
+    """Extract all Markdown pipe tables from *text* as CSV strings.
 
-    Finds lines with ≥3 pipe characters, strips the separator row (---),
-    and converts to comma-delimited CSV.  Rows whose column count differs
-    from the header are dropped to avoid malformed output.
+    Splits on non-pipe gaps so that multiple tables in one response are
+    returned as separate candidates, each scored independently.
     """
     lines = text.splitlines()
-    table_lines: list[str] = []
+    tables: list[str] = []
+    current: list[str] = []
     ncols: int | None = None
+
+    def _flush() -> None:
+        if len(current) >= 2:
+            tables.append("\n".join(current))
+        current.clear()
+
     for ln in lines:
         stripped = ln.strip()
         if "|" in stripped and stripped.count("|") >= 3:
-            # Skip separator rows like |---|---|---|
             if re.match(r"^\|?[\s\-:|]+\|?$", stripped):
-                continue
-            # Strip leading/trailing pipes, split on |
+                continue  # skip separator rows
             cells = [c.strip() for c in stripped.strip("|").split("|")]
-            if ncols is None:
-                ncols = len(cells)  # set from header row
+            if ncols is None or not current:
+                ncols = len(cells)
+                current.clear()
             elif len(cells) != ncols:
                 continue  # skip mismatched rows
-            table_lines.append(",".join(f'"{c}"' for c in cells))
+            current.append(",".join(f'"{c}"' for c in cells))
+        else:
+            if current:
+                _flush()
+                ncols = None
 
-    if len(table_lines) < 2:
-        return None
-    return "\n".join(table_lines)
+    _flush()
+    return tables
 
 
 def fallback_extract_inline_csv(text: str) -> str | None:
@@ -201,6 +209,8 @@ def map_header_to_canonical(norm: str) -> str | None:
         "power_plant",
         "power_plant_name",
         "project",
+        "project_name",
+        "plant_name_project",
     }:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype"}:
@@ -292,20 +302,19 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: invalid JSON ({e})")
 
     response = record.get("response")
-    # Handle multiturn JSON format: extract from turns[-1]["content"]
+    # Handle multiturn JSON format: join all assistant turns so we score
+    # every table across the conversation, not just the last turn.
     if (not response or not isinstance(response, str)) and "turns" in record:
         turns = record["turns"]
         assistant_turns = [t for t in turns if t.get("role") == "assistant"]
         if assistant_turns:
-            response = assistant_turns[-1].get("content", "")
+            response = "\n".join(t.get("content", "") for t in assistant_turns)
     if not isinstance(response, str) or not response.strip():
         return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: no response text")
 
     blocks = extract_fenced_blocks(response)
     candidates = blocks[:]
-    pipe_csv = _extract_pipe_table(response)
-    if pipe_csv:
-        candidates.append(pipe_csv)
+    candidates.extend(_extract_pipe_tables(response))
     # Only try inline fallback when no fenced blocks or pipe tables found
     if not candidates:
         inline = fallback_extract_inline_csv(response)

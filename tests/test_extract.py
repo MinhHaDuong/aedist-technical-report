@@ -6,7 +6,7 @@ import pytest
 
 from aedist.extract import (
     ExtractStatus,
-    _extract_pipe_table,
+    _extract_pipe_tables,
     extract_fenced_blocks,
     extract_one,
     main,
@@ -54,20 +54,31 @@ class TestPipeTable:
             "| Pha Lai | Coal | Hai Duong |\n"
             "| Uong Bi | Coal | Quang Ninh |\n"
         )
-        result = _extract_pipe_table(text)
-        assert result is not None
-        lines = result.strip().splitlines()
+        results = _extract_pipe_tables(text)
+        assert len(results) == 1
+        lines = results[0].strip().splitlines()
         assert len(lines) == 3  # header + 2 data rows
         assert '"Name"' in lines[0]
 
     def test_no_pipe_table(self):
-        assert _extract_pipe_table("Just some text without tables.") is None
+        assert _extract_pipe_tables("Just some text without tables.") == []
 
     def test_separator_row_excluded(self):
         text = "| A | B |\n| --- | --- |\n| 1 | 2 |\n"
-        result = _extract_pipe_table(text)
-        lines = result.strip().splitlines()
+        results = _extract_pipe_tables(text)
+        lines = results[0].strip().splitlines()
         assert not any("---" in ln for ln in lines)
+
+    def test_multiple_pipe_tables_split(self):
+        text = (
+            "| Fuel | GW |\n| --- | --- |\n| Coal | 24 |\n| Gas | 7 |\n\n"
+            "Some prose in between.\n\n"
+            "| Name | Fuel | Province |\n| --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong |\n| Uong Bi | Coal | Quang Ninh |\n"
+        )
+        results = _extract_pipe_tables(text)
+        assert len(results) == 2
+        assert '"Name"' in results[1]
 
 
 class TestFallbackInlineCSV:

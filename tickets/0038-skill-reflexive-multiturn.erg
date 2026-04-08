@@ -1,33 +1,70 @@
 %erg v1
-Title: Implement reflexive multi-turn extraction for skill experiments
+Title: Reflexive self-prompting experiment for frontier models
 Status: open
 Created: 2026-04-08
 Author: claude
 
 --- log ---
 2026-04-08T14:00Z claude created
+2026-04-08T16:30Z claude note rewritten after reviewing actual frontier_skill outputs and prompts
 
 --- body ---
 ## Context
-frontier_skill/ experiments ask models to describe their methodology for
-building a power plant inventory — a reflexive/meta prompt. The current outputs
-are methodology descriptions, not actual plant tables. The next step is feeding
-the model's own plan back and asking it to execute, producing the real table.
+frontier_skill/ took a wrong turn: it asked models to write a Claude Code
+slash command, not to produce a power plant inventory. The outputs are code
+artifacts, not energy data. Repurpose this ticket for the experiment we
+actually want: reflexive self-prompting.
 
-This is a kind of reflexive multi-turn: prompt -> plan -> execute plan -> table.
+Hypothesis: a model that first articulates its strategy, then executes it,
+produces a more complete and better-sourced inventory than a single-shot query.
 
-Current files (all have CSV/table content but it's the plan, not the result):
-- frontier_skill/claude-opus-4.6-run1.json
-- frontier_skill/o3-run1.json
-- frontier_skill/tongyi-deepresearch-30b-a3b-run1.json
+## Design
+
+Two-turn protocol:
+  Turn 1 (plan): "You are a senior energy analyst. Describe in detail your
+    strategy for building a comprehensive, research-quality inventory of
+    Vietnam's thermal power plants. What primary sources would you consult?
+    How would you verify each entry? How would you handle uncertainty?"
+  Turn 2 (execute): Feed back the model's own plan verbatim, then:
+    "Now execute this strategy. Produce the inventory as a table..."
+    (with the same quality instructions as prompt_frontier.txt:
+     primary sources, confidence levels, observed vs projected,
+     exhaustive coverage, consistent MWe units.)
+
+## Model selection
+Apply to models that demonstrated strong census/frontier performance AND
+have reasoning or deep-research capability:
+- anthropic/claude-opus-4.6 (top census scorer, strong sourcing)
+- openai/o3 (reasoning, good frontier result)
+- deepseek/deepseek-r1-0528 (reasoning, good frontier result)
+- alibaba/tongyi-deepresearch-30b-a3b (deep research, good frontier)
+- moonshotai/kimi-k2-thinking (reasoning, good frontier)
+
+Skip models that refused the frontier prompt (gpt-5.4, grok-4.20) and
+the $1.96 black hole (o3-deep-research, see ticket 0039).
+
+## Storage
+Per ticket 0037 design:
+- qualitative/reflexive/{model}-run1.json — both turns stored together
+- qualitative/reflexive/{model}-run1.md — plan turn extracted as markdown
+- outputs/reflexive/{model}-run1.csv — table extracted from turn 2
+- outputs/reflexive/{model}-run1.eval.json — evaluation against reference
+
+## Evaluation
+Compare reflexive results against same model's census and frontier scores:
+- Does F1 improve vs single-shot census?
+- Does coverage improve vs frontier (which already asks for exhaustiveness)?
+- Does source quality improve? (Evidence rubric: 0-4 scale from sweeps.verification)
+- Cost: sum of both turns vs single frontier query
 
 ## Actions
-1. Design the reflexive multi-turn protocol (prompt -> plan -> execute)
-2. Implement the execution step (feed plan back as context, ask for table)
-3. Store both turns: the plan and the executed result
-4. Extract CSV only from the execution turn, not the planning turn
+1. Write prompt_reflexive_plan.txt (turn 1) and prompt_reflexive_execute.txt (turn 2 template)
+2. Add [sweeps.reflexive] to experiments.toml with mode "multiturn" (2 turns)
+3. Add [sets.reflexive] model set
+4. Run sweep (1 run per model, 5 models, budget ~$5)
+5. Extract and evaluate
 
 ## Exit criteria
-- Reflexive multi-turn sweep runs for all 3 models
-- Execution results stored with clear provenance linking to the plan
-- CSVs extracted from execution turns only
+- 5 models complete both turns
+- CSVs extracted from turn 2 and evaluated against reference
+- Comparison table: reflexive vs census vs frontier F1/coverage/cost
