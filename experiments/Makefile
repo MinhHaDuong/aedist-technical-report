@@ -43,7 +43,7 @@ endif
 # --- Common -------------------------------------------------------------------
 MANAGER := uv run --project .. python -m aedist.manager generate
 WORKER  := uv run --project .. python -m aedist.worker
-OR_JOBS ?= 8
+OR_JOBS = $(words $(wildcard jobs/pending/*.yaml))
 
 # Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
@@ -240,7 +240,7 @@ help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make sweep1               Generate jobs + run workers (census)"
 	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
-	@echo "  make sweep1-run           Drain queue (OR_JOBS=8 OpenRouter + 1 Padme)"
+	@echo "  make sweep1-run           Drain queue (1 worker per pending job + 1 Padme)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               Generate + run all information regimes"
 	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
