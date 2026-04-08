@@ -83,13 +83,15 @@ def group_and_summarize(
 
     rows = []
     for slug, entries in groups.items():
+        f1_values = [e["f1"] for e in entries]
         rows.append({
             "slug": slug,
-            "f1": statistics.median(e["f1"] for e in entries),
+            "f1": statistics.median(f1_values),
             "precision": statistics.median(e["precision"] for e in entries),
             "coverage": statistics.median(e["coverage"] for e in entries),
             "n_matched": int(statistics.median(e["n_matched"] for e in entries)),
             "n_reference": entries[0]["n_reference"],
+            "_f1_values": f1_values,
         })
 
     rows.sort(key=lambda r: r["f1"], reverse=True)
@@ -102,30 +104,13 @@ def group_and_summarize_with_stats(
 ) -> list[dict]:
     """Group metrics by model slug and compute medians plus spread.
 
-    Like :func:`group_and_summarize` but adds ``f1_values``, ``f1_std``,
-    and ``n_runs`` to each row for statistical reporting.
+    Delegates to :func:`group_and_summarize` and enriches each row with
+    ``f1_values``, ``f1_std``, and ``n_runs`` for statistical reporting.
     """
-    groups: dict[str, list[dict]] = {}
-    for entry in metrics:
-        if filter_fn and not filter_fn(entry):
-            continue
-        slug = strip_label(entry["label"])
-        groups.setdefault(slug, []).append(entry)
-
-    rows = []
-    for slug, entries in groups.items():
-        f1_values = [e["f1"] for e in entries]
-        rows.append({
-            "slug": slug,
-            "f1": statistics.median(f1_values),
-            "f1_values": f1_values,
-            "f1_std": statistics.stdev(f1_values) if len(f1_values) > 1 else 0.0,
-            "n_runs": len(f1_values),
-            "precision": statistics.median(e["precision"] for e in entries),
-            "coverage": statistics.median(e["coverage"] for e in entries),
-            "n_matched": int(statistics.median(e["n_matched"] for e in entries)),
-            "n_reference": entries[0]["n_reference"],
-        })
-
-    rows.sort(key=lambda r: r["f1"], reverse=True)
+    rows = group_and_summarize(metrics, filter_fn)
+    for row in rows:
+        f1_values = row.pop("_f1_values")
+        row["f1_values"] = f1_values
+        row["f1_std"] = statistics.stdev(f1_values) if len(f1_values) > 1 else 0.0
+        row["n_runs"] = len(f1_values)
     return rows

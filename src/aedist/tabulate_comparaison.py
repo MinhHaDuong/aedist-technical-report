@@ -113,12 +113,12 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         sign = "+" if row["delta"] >= 0 else ""
         delta = f"{sign}{row['delta'] * 100:.1f}\\%"
 
-        # Significance markers
+        # Significance markers (LaTeX superscript)
         p = row.get("p_value")
         if p is not None and p < 0.01:
-            delta += "**"
+            delta += "$^{**}$"
         elif p is not None and p < 0.05:
-            delta += "*"
+            delta += "$^{*}$"
 
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 

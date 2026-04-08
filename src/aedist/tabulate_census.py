@@ -27,7 +27,7 @@ def _is_census(entry: dict) -> bool:
 
 
 def _format_f1(row: dict) -> str:
-    """Format F1 as 'mean ± std' when multiple runs exist, else plain value."""
+    """Format F1 as 'median ± std' when multiple runs exist, else plain value."""
     f1_pct = row["f1"] * 100
     if row["n_runs"] > 1:
         std_pct = row["f1_std"] * 100
@@ -43,7 +43,7 @@ def generate_census_table(metrics: list[dict]) -> str:
         "% Auto-generated — do not edit",
         "\\begin{longtable}[]{@{}lrrrr@{}}",
         "\\caption{Model census: single-shot F1 scores"
-        " (mean $\\pm$ std, 3 runs)}\\label{tab:census}\\\\",
+        " (median $\\pm$ std, 3 runs)}\\label{tab:census}\\\\",
         "\\toprule",
         "Model & F1 & Precision & Recall & Matched \\\\",
         "\\midrule",
