@@ -210,9 +210,10 @@ For 60 campaigns, build the pipeline.
 \begin{enumerate}
   \item \textbf{Ask} for the full report\\
         {\small (framing, asset list, bibliography)}
-  \item \textbf{Filter} references --- human validates\\
-        which sources are real and accessible
-  \item \textbf{Crawl} validated sources, get PDFs,\\
+  \item \textbf{Filter} by publisher type --- government\\
+        decisions, utility reports = primary;\\
+        {\small newsletters, compilations = discard}
+  \item \textbf{Crawl} primary sources, get PDFs,\\
         convert to Markdown, index, archive
   \item \textbf{RAG} for the asset list from corpus\\
         {\small (LLM list = stopping criterion)}
