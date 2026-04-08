@@ -179,8 +179,8 @@ per-project decisions, EVN reports not always freely accessible.
 | Pipeline step | Benchmark component | Status |
 |---|---|---|
 | Regulatory corpus | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
-| Operational stock | Web-augmented queries | sweep2-web done |
-| Chronologies | Multi-turn conversations | sweep2-multiturn done |
+| Operational stock | Web-augmented queries | web done |
+| Chronologies | Multi-turn conversations | multiturn done |
 | Assembly | Reconciliation LP + evaluation | Done, 423 tests |
 
 **Generalization path:** once the chain works for Vietnam thermal, test
