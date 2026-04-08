@@ -10,6 +10,7 @@ Usage:
 
 import argparse
 import csv
+import enum
 import io
 import json
 import logging
@@ -48,9 +49,13 @@ LENGTH_BONUS_CAP_LINES = 50.0
 
 def extract_fenced_blocks(text: str) -> list[str]:
     # Capture content in ```csv ...``` or ``` ... ```
+    # Use \r?\n to handle both LF and CRLF line endings.
     blocks: list[str] = []
-    for m in re.finditer(r"```(?:csv)?\s*\n(.*?)\n```", text, flags=re.IGNORECASE | re.DOTALL):
-        blocks.append(m.group(1))
+    for m in re.finditer(
+        r"```(?:csv)?\s*\r?\n(.*?)\r?\n```", text, flags=re.IGNORECASE | re.DOTALL
+    ):
+        # Strip any remaining \r from captured content (CRLF inside block)
+        blocks.append(m.group(1).replace("\r", ""))
     return blocks
 
 
@@ -83,10 +88,12 @@ def _extract_pipe_table(text: str) -> str | None:
     """Convert a Markdown pipe table to CSV.
 
     Finds lines with ≥3 pipe characters, strips the separator row (---),
-    and converts to comma-delimited CSV.
+    and converts to comma-delimited CSV.  Rows whose column count differs
+    from the header are dropped to avoid malformed output.
     """
     lines = text.splitlines()
     table_lines: list[str] = []
+    ncols: int | None = None
     for ln in lines:
         stripped = ln.strip()
         if "|" in stripped and stripped.count("|") >= 3:
@@ -95,6 +102,10 @@ def _extract_pipe_table(text: str) -> str | None:
                 continue
             # Strip leading/trailing pipes, split on |
             cells = [c.strip() for c in stripped.strip("|").split("|")]
+            if ncols is None:
+                ncols = len(cells)  # set from header row
+            elif len(cells) != ncols:
+                continue  # skip mismatched rows
             table_lines.append(",".join(f'"{c}"' for c in cells))
 
     if len(table_lines) < 2:
@@ -105,16 +116,18 @@ def _extract_pipe_table(text: str) -> str | None:
 def fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
-    # Find likely header
+    # Find likely header: require ≥2 delimiters AND a header keyword
+    # to avoid matching prose sentences like "tracks fuel, capacity, status".
     header_idx = None
     for i, ln in enumerate(lines):
         stripped = ln.strip()
         if not stripped:
             continue
         low = stripped.lower()
-        if ("," in stripped or ";" in stripped or "\t" in stripped) and any(
-            kw in low for kw in _HEADER_KEYWORDS
-        ):
+        has_delimiters = (
+            stripped.count(",") >= 2 or stripped.count(";") >= 2 or stripped.count("\t") >= 2
+        )
+        if has_delimiters and any(kw in low for kw in _HEADER_KEYWORDS):
             header_idx = i
             break
     if header_idx is None:
@@ -213,9 +226,15 @@ def map_header_to_canonical(norm: str) -> str | None:
     return None
 
 
+class ExtractStatus(enum.Enum):
+    WROTE = "wrote"
+    SKIPPED = "skipped"
+    FAILED = "failed"
+
+
 @dataclass
 class ExtractResult:
-    wrote: bool
+    status: ExtractStatus
     output_path: Path | None
     message: str
 
@@ -265,12 +284,12 @@ def parse_and_canonicalize(csv_text: str) -> str:
 def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractResult:
     out_path = output_dir / f"{json_path.stem}.csv"
     if out_path.exists() and not overwrite:
-        return ExtractResult(False, out_path, f"{json_path.name}: skip (exists)")
+        return ExtractResult(ExtractStatus.SKIPPED, out_path, f"{json_path.name}: skip (exists)")
 
     try:
         record = json.loads(json_path.read_text(encoding="utf-8"))
     except Exception as e:
-        return ExtractResult(False, None, f"{json_path.name}: invalid JSON ({e})")
+        return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: invalid JSON ({e})")
 
     response = record.get("response")
     # Handle multiturn JSON format: extract from turns[-1]["content"]
@@ -280,7 +299,7 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         if assistant_turns:
             response = assistant_turns[-1].get("content", "")
     if not isinstance(response, str) or not response.strip():
-        return ExtractResult(False, None, f"{json_path.name}: no response text")
+        return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: no response text")
 
     blocks = extract_fenced_blocks(response)
     candidates = blocks[:]
@@ -294,17 +313,17 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
             candidates.append(inline)
 
     if not candidates:
-        return ExtractResult(False, None, f"{json_path.name}: no CSV found")
+        return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: no CSV found")
 
     best = max(candidates, key=score_csv_like_block)
     try:
         canonical_csv = parse_and_canonicalize(best)
     except Exception as e:
-        return ExtractResult(False, None, f"{json_path.name}: CSV parse failed ({e})")
+        return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: CSV parse failed ({e})")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path.write_text(canonical_csv, encoding="utf-8")
-    return ExtractResult(True, out_path, f"{json_path.name}: wrote {out_path.name}")
+    return ExtractResult(ExtractStatus.WROTE, out_path, f"{json_path.name}: wrote {out_path.name}")
 
 
 def main() -> None:
@@ -339,9 +358,9 @@ def main() -> None:
     for jf in json_files:
         res = extract_one(jf, output_dir, overwrite=args.overwrite)
         log.info(res.message)
-        if "wrote" in res.message:
+        if res.status is ExtractStatus.WROTE:
             wrote += 1
-        elif "skip" in res.message:
+        elif res.status is ExtractStatus.SKIPPED:
             skipped += 1
         else:
             failed += 1

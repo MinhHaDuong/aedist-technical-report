@@ -97,7 +97,7 @@ class TestFallbackInlineCSV:
         """CSV region ends at two consecutive blank lines."""
         from aedist.extract import fallback_extract_inline_csv
 
-        text = "Name,Fuel\nPha Lai,Coal\n\n\nUnrelated text here"
+        text = "Name,Fuel,Status\nPha Lai,Coal,Operating\n\n\nUnrelated text here"
         result = fallback_extract_inline_csv(text)
         assert result is not None
         assert "Unrelated" not in result
