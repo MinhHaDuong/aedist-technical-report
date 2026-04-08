@@ -429,7 +429,12 @@ def main(argv=None):
     parser.add_argument(
         "--loop",
         action="store_true",
-        help="Run continuously, polling for jobs",
+        help="Run continuously, polling for jobs (never exits)",
+    )
+    parser.add_argument(
+        "--drain",
+        action="store_true",
+        help="Process all pending jobs then exit when queue is empty",
     )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -449,6 +454,13 @@ def main(argv=None):
             record = worker.run_one()
             if record is None:
                 time.sleep(5)
+    elif args.drain:
+        while True:
+            record = worker.run_one()
+            if record is None:
+                log.info("Queue drained, exiting.")
+                break
+            log.info("Completed job, method=%s", record.method)
     else:
         record = worker.run_one()
         if record is None:

@@ -60,8 +60,8 @@ sweep1-generate:
 	$(MANAGER) --sweep sweep1_padme --experiments experiments.toml
 
 sweep1-run:
-	$(WORKER) openrouter --loop &
-	$(WORKER) padme --loop &
+	$(WORKER) openrouter --drain &
+	$(WORKER) padme --drain &
 	wait
 
 sweep1-summary:
@@ -85,7 +85,7 @@ sweep2-generate:
 	$(MANAGER) --sweep sweep2_web --experiments experiments.toml
 
 sweep2-run:
-	$(WORKER) openrouter --loop &
+	$(WORKER) openrouter --drain &
 	wait
 
 # --- Sweep 3: Task decomposition by fuel type ---------------------------------
@@ -98,7 +98,7 @@ sweep3-generate:
 	$(MANAGER) --sweep sweep3_decomposed --experiments experiments.toml
 
 sweep3-run:
-	$(WORKER) openrouter --loop &
+	$(WORKER) openrouter --drain &
 	wait
 
 # --- Sweep 4: Verification regimes -------------------------------------------
@@ -111,7 +111,7 @@ sweep4-generate:
 	$(MANAGER) --sweep sweep4_verification --experiments experiments.toml
 
 sweep4-run:
-	$(WORKER) openrouter --loop &
+	$(WORKER) openrouter --drain &
 	wait
 
 # --- Sweep 5: Sourced extraction (citations upfront) -------------------------
@@ -124,7 +124,7 @@ sweep5-generate:
 	$(MANAGER) --sweep sweep5_sourced --experiments experiments.toml
 
 sweep5-run:
-	$(WORKER) openrouter --loop &
+	$(WORKER) openrouter --drain &
 	wait
 
 # --- Analysis: self-consistency -----------------------------------------------
@@ -239,7 +239,7 @@ help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make sweep1               Generate jobs + run workers (census)"
 	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
-	@echo "  make sweep1-run           Start OpenRouter + Padme workers"
+	@echo "  make sweep1-run           Drain job queue with OpenRouter + Padme workers"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               Generate + run all information regimes"
 	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
