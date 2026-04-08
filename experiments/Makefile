@@ -43,6 +43,7 @@ endif
 # --- Common -------------------------------------------------------------------
 MANAGER := uv run --project .. python -m aedist.manager generate
 WORKER  := uv run --project .. python -m aedist.worker
+OR_JOBS ?= 8
 
 # Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
@@ -60,8 +61,8 @@ sweep1-generate:
 	$(MANAGER) --sweep sweep1_padme --experiments experiments.toml
 
 sweep1-run:
-	$(WORKER) openrouter --drain &
-	$(WORKER) padme --drain &
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
+	$(WORKER) padme --drain & \
 	wait
 
 sweep1-summary:
@@ -85,7 +86,7 @@ sweep2-generate:
 	$(MANAGER) --sweep sweep2_web --experiments experiments.toml
 
 sweep2-run:
-	$(WORKER) openrouter --drain &
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
 # --- Sweep 3: Task decomposition by fuel type ---------------------------------
@@ -98,7 +99,7 @@ sweep3-generate:
 	$(MANAGER) --sweep sweep3_decomposed --experiments experiments.toml
 
 sweep3-run:
-	$(WORKER) openrouter --drain &
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
 # --- Sweep 4: Verification regimes -------------------------------------------
@@ -111,7 +112,7 @@ sweep4-generate:
 	$(MANAGER) --sweep sweep4_verification --experiments experiments.toml
 
 sweep4-run:
-	$(WORKER) openrouter --drain &
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
 # --- Sweep 5: Sourced extraction (citations upfront) -------------------------
@@ -124,7 +125,7 @@ sweep5-generate:
 	$(MANAGER) --sweep sweep5_sourced --experiments experiments.toml
 
 sweep5-run:
-	$(WORKER) openrouter --drain &
+	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
 	wait
 
 # --- Analysis: self-consistency -----------------------------------------------
@@ -239,7 +240,7 @@ help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make sweep1               Generate jobs + run workers (census)"
 	@echo "  make sweep1-generate      Fan out sweep config into per-model jobs"
-	@echo "  make sweep1-run           Drain job queue with OpenRouter + Padme workers"
+	@echo "  make sweep1-run           Drain queue (OR_JOBS=8 OpenRouter + 1 Padme)"
 	@echo "  make sweep1-summary       Extract + evaluate + summarize"
 	@echo "  make sweep2               Generate + run all information regimes"
 	@echo "  make sweep3-decomposed    Generate + run decomposition sweep"
