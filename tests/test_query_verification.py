@@ -1,4 +1,4 @@
-"""Tests for aedist.query_verification — sweep 4 runner."""
+"""Tests for aedist.query_verification — verification runner."""
 
 from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem
 
