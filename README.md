@@ -41,7 +41,7 @@ make tables            # Generate LaTeX tables from experiment results
 # Experiments (from experiments/ directory):
 cd experiments
 make -j8 sweep1        # Census: all models × 3 runs (parallel)
-make sweep1-summary    # Extract → evaluate → summarize
+make rebuild-measurements  # Extract → evaluate all outputs → measurements.jsonl
 ```
 
 ## License
