@@ -15,8 +15,12 @@ the optimal one-to-one assignment.
 ### `phased.py` — Phased matcher
 
 Two-pass approach: exact name matches first, then fuzzy matching on
-remaining unmatched plants. Provides `build_reconciled_row` for
-merging matched pairs into a unified record.
+remaining unmatched plants.
+
+### `_common.py` — Shared helpers
+
+Provides `build_result_row` for assembling a reconciliation dict from
+a pair of matched/unmatched plant rows. Used by both matchers.
 
 ## Usage
 

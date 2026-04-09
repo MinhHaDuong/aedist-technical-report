@@ -10,62 +10,7 @@ from typing import Any
 import pandas as pd
 from rapidfuzz import fuzz, process
 
-
-def build_reconciled_row(
-    row1: pd.Series | None, row2: pd.Series | None, status: str,
-    similarity_score: float | None = None,
-) -> dict[str, Any]:
-    """
-    Build a reconciliation dictionary (row) from given rows and a match status.
-
-    Args:
-        row1 (pd.Series | None): A row from file1 (or None).
-        row2 (pd.Series | None): A row from file2 (or None).
-        status (str): The reconciliation status (e.g., "Matched", "Only in file1").
-        similarity_score (float | None): Fuzzy similarity score (0-100), 100 for exact,
-            None for unmatched entries.
-
-    Returns:
-        dict[str, Any]: Dictionary with keys:
-            - name_file1, name_clean_file1, capacity_file1
-            - name_file2, name_clean_file2, capacity_file2
-            - capacity_difference (if applicable)
-            - status
-            - similarity_score
-    """
-    if row1 is not None:
-        name_file1 = row1.get("name")
-        name_clean_file1 = row1.get("name_clean")
-        capacity_file1 = row1.get("capacity_clean")
-    else:
-        name_file1, name_clean_file1, capacity_file1 = None, None, None
-
-    if row2 is not None:
-        name_file2 = row2.get("name")
-        name_clean_file2 = row2.get("name_clean")
-        capacity_file2 = row2.get("capacity_clean")
-    else:
-        name_file2, name_clean_file2, capacity_file2 = None, None, None
-
-    if row1 is not None and row2 is not None:
-        try:
-            capacity_difference = capacity_file1 - capacity_file2
-        except Exception:
-            capacity_difference = None
-    else:
-        capacity_difference = None
-
-    return {
-        "name_file1": name_file1,
-        "name_clean_file1": name_clean_file1,
-        "name_file2": name_file2,
-        "name_clean_file2": name_clean_file2,
-        "capacity_file1": capacity_file1,
-        "capacity_file2": capacity_file2,
-        "capacity_difference": capacity_difference,
-        "status": status,
-        "similarity_score": similarity_score,
-    }
+from aedist.matching._common import build_result_row
 
 
 def find_exact_match(
@@ -179,7 +124,7 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     for idx1, row1 in unmatched_group1.iterrows():
         row2, match_idx2 = find_exact_match(row1, unmatched_group2)
         if row2 is not None:
-            reconciled_rows.append(build_reconciled_row(row1, row2, "Matched", similarity_score=100))
+            reconciled_rows.append(build_result_row(row1, row2, "Matched", similarity_score=100))
             group1_drop_indexes.append(idx1)
             # Drop the matching row from unmatched_group2 so it won't be used again.
             unmatched_group2.drop(index=match_idx2, inplace=True)
@@ -202,11 +147,11 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
                 status = "Matched (Fuzzy) (Diff)"
             else:
                 status = "Matched (Fuzzy)"
-            reconciled_rows.append(build_reconciled_row(row1, row2, status, similarity_score=fuzzy_score))
+            reconciled_rows.append(build_result_row(row1, row2, status, similarity_score=fuzzy_score))
             group1_drop_indexes.append(idx1)
             unmatched_group2.drop(index=match_idx2, inplace=True)
         else:
-            reconciled_rows.append(build_reconciled_row(row1, None, "Only in file1", similarity_score=None))
+            reconciled_rows.append(build_result_row(row1, None, "Only in file1", similarity_score=None))
 
     unmatched_group1.drop(index=group1_drop_indexes, inplace=True)
     unmatched_group1.reset_index(drop=True, inplace=True)
@@ -216,6 +161,6 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     # Phase 3: Rows remaining in group2 (Only in file2)
     # ----------------------------------------------------------------------
     for _, row2 in unmatched_group2.iterrows():
-        reconciled_rows.append(build_reconciled_row(None, row2, "Only in file2", similarity_score=None))
+        reconciled_rows.append(build_result_row(None, row2, "Only in file2", similarity_score=None))
 
     return pd.DataFrame(reconciled_rows)

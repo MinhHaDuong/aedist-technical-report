@@ -57,6 +57,8 @@ from pulp import (
 )
 from rapidfuzz import fuzz
 
+from aedist.matching._common import build_result_row
+
 # ---------------------------------------------------------------------------
 # Default MILP parameters for record reconciliation
 # ---------------------------------------------------------------------------
@@ -71,59 +73,6 @@ DEFAULT_CAPACITY_TOLERANCE: float = 0
 DEFAULT_DUMMY_COST: float = 10000
 # Weight for capacity difference term in cost calculation
 DEFAULT_CAPACITY_WEIGHT: float = 0.001
-
-
-def _safe_get(row: pd.Series | None, key: str) -> object | None:
-    """
-    Safely retrieve the value for a key from a pandas Series.
-
-    Args:
-        row (pd.Series | None): A row from a DataFrame or None.
-        key (str): The key (column name) to retrieve.
-
-    Returns:
-        The value corresponding to the given key if row exists; otherwise, None.
-    """
-    if row is None:
-        return None
-    return row[key]
-
-
-def _build_result_row(
-    df1_row: pd.Series | None,
-    df2_row: pd.Series | None,
-    capacity_diff: float | None,
-    status: str,
-    similarity_score: float | None = None,
-) -> dict[str, object | None]:
-    """
-    Construct and return a result dictionary summarizing a match or an unmatched record.
-
-    Args:
-        df1_row (pd.Series | None): Row from df1, or None if unmatched.
-        df2_row (pd.Series | None): Row from df2, or None if unmatched.
-        capacity_diff (float | None): Difference in capacity (df1 minus df2) if available.
-        status (str): Description of the matching status.
-        similarity_score (float | None): Fuzzy similarity score (0-100), 100 for exact,
-            None for unmatched entries.
-
-    Returns:
-        dict[str, object | None]: A dictionary with details on the match and associated metadata.
-
-    Note:
-        The keys in the returned dictionary still use the "file1"/"file2" naming to maintain test compatibility.
-    """
-    return {
-        "name_file1": _safe_get(df1_row, "name"),
-        "name_clean_file1": _safe_get(df1_row, "name_clean"),
-        "capacity_file1": _safe_get(df1_row, "capacity_clean"),
-        "name_file2": _safe_get(df2_row, "name"),
-        "name_clean_file2": _safe_get(df2_row, "name_clean"),
-        "capacity_file2": _safe_get(df2_row, "capacity_clean"),
-        "capacity_difference": capacity_diff,
-        "status": status,
-        "similarity_score": similarity_score,
-    }
 
 
 def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
@@ -145,11 +94,11 @@ def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
         return pd.DataFrame(results)
     if df1.empty:
         for _, row in df2.iterrows():
-            results.append(_build_result_row(None, row, None, "Only in file2"))
+            results.append(build_result_row(None, row, "Only in file2"))
         return pd.DataFrame(results)
     if df2.empty:
         for _, row in df1.iterrows():
-            results.append(_build_result_row(row, None, None, "Only in file1"))
+            results.append(build_result_row(row, None, "Only in file1"))
         return pd.DataFrame(results)
     return None
 
@@ -341,13 +290,13 @@ def _extract_results(
                 status = "Matched (Fuzzy)" if abs(diff) <= cap_tol else "Matched (Fuzzy) (Diff)"
             else:
                 status = "Mismatched"
-        results.append(_build_result_row(df1.loc[i], df2.loc[j], diff, status, similarity_score=score))
+        results.append(build_result_row(df1.loc[i], df2.loc[j], status, similarity_score=score))
 
     for i in unmatched_df1:
-        results.append(_build_result_row(df1.loc[i], None, None, "Only in file1", similarity_score=None))
+        results.append(build_result_row(df1.loc[i], None, "Only in file1"))
 
     for j in unmatched_df2:
-        results.append(_build_result_row(None, df2.loc[j], None, "Only in file2", similarity_score=None))
+        results.append(build_result_row(None, df2.loc[j], "Only in file2"))
 
     return results
 
