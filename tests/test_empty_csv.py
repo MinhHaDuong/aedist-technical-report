@@ -5,9 +5,10 @@ import json
 from pathlib import Path
 
 import pytest
+
 from aedist.evaluate import load_plants_csv
 from aedist.reconcile import plants_to_dataframe, reconcile
-from aedist.schema import MatchType, Plant, FuelType
+from aedist.schema import FuelType, MatchType, Plant
 
 
 class TestPlantsToDataframeEmpty:
@@ -70,6 +71,7 @@ class TestEvaluateEmptyCsv:
             pytest.skip("Reference CSV not available")
 
         import argparse
+
         from aedist.evaluate import _evaluate_csv_file
         args = argparse.Namespace(output=str(tmp_path / "out"), reference=None)
         _evaluate_csv_file(csv_path, ref_path, args)
