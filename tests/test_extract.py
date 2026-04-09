@@ -247,7 +247,7 @@ class TestParseAndCanonicalize:
         csv_text = "Name,Fuel\nPha Lai,Coal\n"
         result = parse_and_canonicalize(csv_text)
         lines = result.strip().splitlines()
-        assert lines[0] == "name,fuel,status,cod,province,capacity_mwe"
+        assert lines[0] == "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note"
         row = lines[1].split(",")
         assert row[0] == "Pha Lai"
         assert row[2] == ""  # status missing
@@ -280,6 +280,51 @@ class TestParseAndCanonicalize:
         result = parse_and_canonicalize(csv_text)
         lines = result.strip().splitlines()
         assert len(lines) == 2  # header + 1 data row
+
+    def test_provenance_columns_preserved(self):
+        """parse_and_canonicalize keeps source_1, source_2, note from sourced runs."""
+        csv_text = (
+            "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
+            'Pha Lai,coal,operational,1983,Hai Duong,440,'
+            '"Decision 1195/QD-TTg","EVN Annual Report 2017 p14","4x110MW Soviet-built"\n'
+        )
+        result = parse_and_canonicalize(csv_text)
+        header = result.splitlines()[0]
+        assert "source_1" in header, f"source_1 missing from header: {header}"
+        assert "source_2" in header, f"source_2 missing from header: {header}"
+        assert "note" in header, f"note missing from header: {header}"
+        row = result.splitlines()[1]
+        assert "Decision 1195/QD-TTg" in row
+        assert "EVN Annual Report 2017 p14" in row
+        assert "4x110MW Soviet-built" in row
+
+    def test_provenance_columns_empty_when_absent(self):
+        """CSVs without provenance columns get empty source_1/source_2/note."""
+        csv_text = "Name,Fuel\nPha Lai,Coal\n"
+        result = parse_and_canonicalize(csv_text)
+        header = result.splitlines()[0]
+        assert "source_1" in header
+        row = result.splitlines()[1]
+        fields = row.split(",")
+        # source_1, source_2, note should be empty (last 3 fields)
+        assert fields[-3] == ""  # source_1
+        assert fields[-2] == ""  # source_2
+        assert fields[-1].strip() == ""  # note
+
+
+class TestHeaderVariantsProvenance:
+    """Header variant mappings for provenance columns."""
+
+    def test_header_variant_source_maps_to_source_1(self):
+        """'source' and 'reference' headers map to source_1."""
+        assert map_header_to_canonical(norm_header("Source")) == "source_1"
+        assert map_header_to_canonical(norm_header("Reference")) == "source_1"
+        assert map_header_to_canonical(norm_header("Citation")) == "source_1"
+
+    def test_header_variant_notes_maps_to_note(self):
+        """'notes' and 'comment' headers map to note."""
+        assert map_header_to_canonical(norm_header("Notes")) == "note"
+        assert map_header_to_canonical(norm_header("Comment")) == "note"
 
 
 # ---------------------------------------------------------------------------
@@ -372,8 +417,7 @@ class TestMainSkipsDerivedJson:
         (inp / "model-run1.eval.json").write_text(
             json.dumps({"f1": 0.5, "precision": 0.6})
         )
-        monkeypatch.setattr("sys.argv", ["extract", "--input", str(inp), "--output", str(out)])
-        main()
+        main(["--input", str(inp), "--output", str(out)])
         # Only the model reply should produce a CSV
         assert (out / "model-run1.csv").exists()
         assert not (out / "model-run1.eval.csv").exists()
