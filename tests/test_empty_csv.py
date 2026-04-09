@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
+from aedist.evaluate import load_plants_csv
 from aedist.reconcile import plants_to_dataframe, reconcile
 from aedist.schema import MatchType, Plant, FuelType
 
@@ -77,9 +78,13 @@ class TestEvaluateEmptyCsv:
         assert record_path.exists()
 
         record = json.loads(record_path.read_text())
+        # Derive expected false-negative count from the actual reference file
+        # so the test adapts if the reference dataset changes.
+        n_reference = len(load_plants_csv(ref_path))
+        assert n_reference > 0, "Reference CSV yielded no plants — check data/reference/"
         assert record["result_summary"]["status"] == "empty"
         assert record["result_summary"]["f1"] == 0.0
-        assert record["result_summary"]["fn"] == 163  # N_reference
+        assert record["result_summary"]["fn"] == n_reference
         assert record["result_summary"]["tp"] == 0
         assert record["result_summary"]["fp"] == 0
         assert record["result_summary"]["n_plants"] == 0
