@@ -1,6 +1,7 @@
 # AI Agent Guidelines
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
+> Imperial Dragon Harness: <https://github.com/MinhHaDuong/ImperialDragonHarness>
 
 ## Configuration
 
