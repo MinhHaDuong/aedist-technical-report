@@ -95,11 +95,6 @@ class TestDefaultDpi:
 
 
 class TestPdfToMarkdown:
-    def _fake_response(self, content):
-        message = SimpleNamespace(content=content)
-        choice = SimpleNamespace(message=message)
-        return SimpleNamespace(choices=[choice])
-
     def _install_pdf2image_mock(self, monkeypatch, images):
         """Inject a fake pdf2image module into sys.modules so the lazy import works."""
         import sys
@@ -119,8 +114,8 @@ class TestPdfToMarkdown:
         fake_pdf = tmp_path / "test.pdf"
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
-        resp1 = self._fake_response("# Page 1")
-        resp2 = self._fake_response("# Page 2")
+        resp1 = _fake_response("# Page 1")
+        resp2 = _fake_response("# Page 2")
 
         mock_client = MagicMock()
         mock_client.chat.completions.create = MagicMock(side_effect=[resp1, resp2])
@@ -142,7 +137,7 @@ class TestPdfToMarkdown:
         fake_pdf = tmp_path / "single.pdf"
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
-        resp = self._fake_response("Only content")
+        resp = _fake_response("Only content")
         mock_client = MagicMock()
         mock_client.chat.completions.create = MagicMock(return_value=resp)
 
@@ -161,7 +156,7 @@ class TestPdfToMarkdown:
         fake_pdf = tmp_path / "test.pdf"
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
-        resp = self._fake_response("ok")
+        resp = _fake_response("ok")
         mock_client = MagicMock()
         mock_client.chat.completions.create = MagicMock(return_value=resp)
 

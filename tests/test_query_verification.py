@@ -237,11 +237,9 @@ def test_evaluate_plants_no_reference_match(tmp_path):
     result = _evaluate_plants(system_plants, ref_path, cache)
 
     assert result["n_plants"] == 1
-    # The plant has no clear match in reference, so precision should be below 1
-    # (it's either FP or gets spuriously matched with low quality)
-    assert isinstance(result["precision"], float)
-    assert isinstance(result["f1"], float)
-    assert result["fn"] >= 0
+    # Only 1 system plant vs 3 reference → most reference plants are missed
+    assert result["fn"] >= 2
+    assert result["f1"] < 1.0
 
 
 # ---------------------------------------------------------------------------

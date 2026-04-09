@@ -4,11 +4,8 @@ import csv
 import io
 import json
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 from aedist.metrics import BenchmarkMetrics
 from aedist.schema import (
@@ -17,7 +14,6 @@ from aedist.schema import (
     MethodParams,
     Plant,
     PlantStatus,
-    ResourceUse,
     ResultSummary,
     RunRecord,
 )
@@ -122,8 +118,7 @@ class TestNormalizeName:
         # NFC normalization: decomposed e-acute -> composed e-acute
         name_nfd = "caf\u0065\u0301"  # e + combining acute
         result = _normalize_name(name_nfd)
-        # NFC composes e + combining acute into a single char
-        assert result == _normalize_name("caf\u00e9")
+        assert result == "caf\u00e9"
 
     def test_empty_string(self):
         assert _normalize_name("") == ""
@@ -250,6 +245,19 @@ class TestMajorityVote:
         result = majority_vote([run1, run2, run3])
         names = [_normalize_name(p.name) for p in result]
         assert names == sorted(names)
+
+    def test_four_runs_requires_three(self):
+        """With 4 runs, majority threshold = 4//2+1 = 3."""
+        run1 = [_plant("Alpha"), _plant("Beta")]
+        run2 = [_plant("Alpha"), _plant("Beta")]
+        run3 = [_plant("Alpha")]
+        run4 = [_plant("Alpha")]
+        result = majority_vote([run1, run2, run3, run4])
+        names = {_normalize_name(p.name) for p in result}
+        # Alpha appears in 4/4 → included
+        assert "alpha" in names
+        # Beta appears in 2/4, below threshold of 3 → excluded
+        assert "beta" not in names
 
 
 # ---------------------------------------------------------------------------
@@ -379,6 +387,24 @@ class TestPlantsToCsvText:
         row = next(reader)
         assert row[2] == "retired"
 
+    def test_name_with_comma(self):
+        """CSV writer properly quotes names containing commas."""
+        p = _plant("Mong Duong 1, Unit 2")
+        text = plants_to_csv_text([p])
+        reader = csv.reader(io.StringIO(text))
+        next(reader)
+        row = next(reader)
+        assert row[0] == "Mong Duong 1, Unit 2"
+
+    def test_name_with_quotes(self):
+        """CSV writer properly escapes names containing double quotes."""
+        p = _plant('Vinh Tan "Phase 2"')
+        text = plants_to_csv_text([p])
+        reader = csv.reader(io.StringIO(text))
+        next(reader)
+        row = next(reader)
+        assert row[0] == 'Vinh Tan "Phase 2"'
+
 
 # ---------------------------------------------------------------------------
 # _group_runs
@@ -421,7 +447,7 @@ class TestGroupRuns:
         groups = _group_runs(tmp_path)
         assert groups == {}
 
-    def test_model_name_with_slashes_in_path(self, tmp_path):
+    def test_model_name_with_hyphens_and_numbers(self, tmp_path):
         """Model names with hyphens and numbers."""
         (tmp_path / "openai-gpt-4o-mini-run1.json").write_text("{}")
         (tmp_path / "openai-gpt-4o-mini-run2.json").write_text("{}")
@@ -462,7 +488,8 @@ class TestMetricsToResultSummary:
         assert rs.province_accuracy is None
 
     def test_zero_accuracy_treated_as_falsy(self):
-        """fuel_accuracy=0.0 is falsy, so _metrics_to_result_summary returns None for it."""
+        """Known quirk: fuel_accuracy=0.0 is falsy → mapped to None.
+        Source uses `if m.fuel_accuracy` instead of `is not None`."""
         m = _make_metrics(fuel_accuracy=0.0)
         rs = _metrics_to_result_summary(m)
         # 0.0 is falsy in Python, so `if m.fuel_accuracy` is False
@@ -733,6 +760,28 @@ class TestWriteMeasurements:
         write_measurements(records, path)
         loaded = RunRecord.load_jsonl(path)
         assert len(loaded) == 1
+
+    def test_empty_new_records_preserves_non_rag(self, tmp_path):
+        """Empty new records list still strips old rag entries, keeps others."""
+        path = tmp_path / "measurements.jsonl"
+        existing = [
+            RunRecord(
+                method=Method.SINGLE,
+                method_params=MethodParams(model="census-model", prompt_version="census_v1"),
+                result_summary=ResultSummary(status="ok", f1=0.7),
+            ),
+            RunRecord(
+                method=Method.RAG,
+                method_params=MethodParams(model="old-rag", prompt_version="rag"),
+                result_summary=ResultSummary(status="ok", f1=0.6),
+            ),
+        ]
+        RunRecord.save_jsonl(existing, path)
+
+        write_measurements([], path)
+        loaded = RunRecord.load_jsonl(path)
+        assert len(loaded) == 1
+        assert loaded[0].method_params.model == "census-model"
 
 
 # ---------------------------------------------------------------------------

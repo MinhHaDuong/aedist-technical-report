@@ -34,8 +34,8 @@ class TestScoreSourcedRun:
         assert "primary_frac" in result
         assert "secondary_frac" in result
         assert "none_frac" in result
-        # Pha Lai has primary sources, Uong Bi has none
-        assert result["mean_evidence_score"] > 1.0
+        # Pha Lai has two primary sources (score 4), Uong Bi has none (score 1)
+        assert result["mean_evidence_score"] == 2.5
 
     def test_empty_sources_score_1(self, tmp_path):
         csv_text = (
