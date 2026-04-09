@@ -9,6 +9,7 @@ Subclasses:
 """
 
 import logging
+import os
 import re
 import signal
 import traceback
@@ -162,29 +163,10 @@ class Worker:
 
     # -- per-mode handlers -----------------------------------------------------
 
-    def _execute_single(self, client, model_id, model_entry, prompt,
-                        output_dir, run, pool_label):
-        """Execute a single-turn query."""
-        log.info("Querying %s run %d ...", model_id, run)
-        result = query_single_turn(
-            client, model_id, [{"role": "user", "content": prompt}],
-        )
+    @staticmethod
+    def _build_result(result: dict, cost: float, filepath: Path) -> dict:
+        """Build the standard return dict from a query_single_turn result."""
         usage = result.get("usage") or {}
-        cost = compute_cost(usage, model_entry)
-
-        filepath = output_path(output_dir, model_id, run, pool_label)
-        save_json(filepath, {
-            "model": model_id,
-            "date": date.today().isoformat(),
-            "run": run,
-            "prompt": prompt,
-            "response": result["content"],
-            "finish_reason": result["finish_reason"],
-            "usage": usage,
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "model_metadata": model_metadata(model_entry),
-        })
         return {
             "wall_seconds": result["wall_seconds"],
             "cost_usd": cost,
@@ -192,6 +174,45 @@ class Worker:
             "tokens_out": usage.get("completion_tokens", 0),
             "result_file": str(filepath),
         }
+
+    def _query_and_save(self, client, model_id, model_entry, messages,
+                        output_dir, run, pool_label, extra_fields=None):
+        """Run query_single_turn, save JSON, return standard result dict.
+
+        Common path for single, RAG, and web modes that all use
+        query_single_turn with different message lists.
+        """
+        result = query_single_turn(client, model_id, messages)
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        record = {
+            "model": model_id,
+            "date": date.today().isoformat(),
+            "run": run,
+            "response": result["content"],
+            "finish_reason": result["finish_reason"],
+            "usage": usage,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "model_metadata": model_metadata(model_entry),
+        }
+        if extra_fields:
+            record.update(extra_fields)
+        save_json(filepath, record)
+        return self._build_result(result, cost, filepath)
+
+    def _execute_single(self, client, model_id, model_entry, prompt,
+                        output_dir, run, pool_label):
+        """Execute a single-turn query."""
+        log.info("Querying %s run %d ...", model_id, run)
+        messages = [{"role": "user", "content": prompt}]
+        return self._query_and_save(
+            client, model_id, model_entry, messages,
+            output_dir, run, pool_label,
+            extra_fields={"prompt": prompt},
+        )
 
     def _execute_rag(self, client, model_id, model_entry, prompt,
                      output_dir, run, pool_label, job):
@@ -207,32 +228,15 @@ class Worker:
         ]
 
         log.info("Querying %s run %d (RAG %s)...", model_id, run, job.strategy or "wholesale")
-        result = query_single_turn(client, model_id, messages)
-        usage = result.get("usage") or {}
-        cost = compute_cost(usage, model_entry)
-
-        filepath = output_path(output_dir, model_id, run, pool_label)
-        save_json(filepath, {
-            "model": model_id,
-            "run": run,
-            "date": date.today().isoformat(),
-            "strategy": job.strategy or "wholesale",
-            "corpus_files": corpus_files,
-            "prompt": prompt,
-            "response": result["content"],
-            "finish_reason": result["finish_reason"],
-            "usage": usage,
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "model_metadata": model_metadata(model_entry),
-        })
-        return {
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "tokens_in": usage.get("prompt_tokens", 0),
-            "tokens_out": usage.get("completion_tokens", 0),
-            "result_file": str(filepath),
-        }
+        return self._query_and_save(
+            client, model_id, model_entry, messages,
+            output_dir, run, pool_label,
+            extra_fields={
+                "prompt": prompt,
+                "strategy": job.strategy or "wholesale",
+                "corpus_files": corpus_files,
+            },
+        )
 
     def _execute_multiturn(self, client, model_id, model_entry, prompt,
                            output_dir, run, pool_label, job):
@@ -270,7 +274,6 @@ class Worker:
     def _execute_web(self, client, model_id, model_entry, prompt,
                      output_dir, run, pool_label):
         """Execute a web-augmented query."""
-        import os
         tavily_key = os.environ.get("TAVILY_API_KEY", "")
         web_context, search_log = run_web_searches(tavily_key) if tavily_key else ("", [])
 
@@ -283,31 +286,11 @@ class Worker:
         ]
 
         log.info("Querying %s run %d (web-augmented)...", model_id, run)
-        result = query_single_turn(client, model_id, messages)
-        usage = result.get("usage") or {}
-        cost = compute_cost(usage, model_entry)
-
-        filepath = output_path(output_dir, model_id, run, pool_label)
-        save_json(filepath, {
-            "model": model_id,
-            "run": run,
-            "date": date.today().isoformat(),
-            "prompt": prompt,
-            "response": result["content"],
-            "finish_reason": result["finish_reason"],
-            "usage": usage,
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "web_searches": search_log,
-            "model_metadata": model_metadata(model_entry),
-        })
-        return {
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "tokens_in": usage.get("prompt_tokens", 0),
-            "tokens_out": usage.get("completion_tokens", 0),
-            "result_file": str(filepath),
-        }
+        return self._query_and_save(
+            client, model_id, model_entry, messages,
+            output_dir, run, pool_label,
+            extra_fields={"prompt": prompt, "web_searches": search_log},
+        )
 
     def _execute_decomposed(self, client, model_id, model_entry, prompt,
                             output_dir, run, pool_label, job):
