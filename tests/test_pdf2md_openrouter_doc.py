@@ -94,3 +94,198 @@ def test_uses_file_content_type():
     text = SRC.read_text()
     assert '"type": "file"' in text or "'type': 'file'" in text
     assert "file_data" in text
+
+
+# ---------------------------------------------------------------------------
+# Functional tests (mock OpenAI client)
+# ---------------------------------------------------------------------------
+
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from aedist.pdf2md_openrouter_doc import (
+    DEFAULT_MODEL,
+    main,
+    pdf_to_markdown,
+)
+
+
+def _fake_response(content):
+    message = SimpleNamespace(content=content)
+    choice = SimpleNamespace(message=message)
+    return SimpleNamespace(choices=[choice])
+
+
+# ---------------------------------------------------------------------------
+# pdf_to_markdown
+# ---------------------------------------------------------------------------
+
+
+class TestPdfToMarkdown:
+    def test_returns_content(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test-key")
+
+        resp = _fake_response("# Document content\n\nParagraph.")
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = MagicMock(return_value=resp)
+
+        with patch("aedist.pdf2md_openrouter_doc.OpenAI", return_value=mock_client):
+            result = pdf_to_markdown(fake_pdf)
+
+        assert "# Document content" in result
+        assert "Paragraph." in result
+
+    def test_raises_without_api_key(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+        with pytest.raises(SystemExit, match="OPENROUTER_API_KEY"):
+            pdf_to_markdown(fake_pdf)
+
+    def test_empty_choices_raises(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test")
+
+        resp = SimpleNamespace(choices=[])
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = MagicMock(return_value=resp)
+
+        with patch("aedist.pdf2md_openrouter_doc.OpenAI", return_value=mock_client):
+            with pytest.raises(ValueError, match="empty choices"):
+                pdf_to_markdown(fake_pdf)
+
+    def test_empty_content_raises(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test")
+
+        resp = _fake_response("")
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = MagicMock(return_value=resp)
+
+        with patch("aedist.pdf2md_openrouter_doc.OpenAI", return_value=mock_client):
+            with pytest.raises(ValueError, match="empty content"):
+                pdf_to_markdown(fake_pdf)
+
+    def test_passes_engine_and_model(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test")
+
+        resp = _fake_response("ok")
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = MagicMock(return_value=resp)
+
+        with patch("aedist.pdf2md_openrouter_doc.OpenAI", return_value=mock_client):
+            pdf_to_markdown(
+                fake_pdf,
+                engine="cloudflare-ai",
+                model="openai/gpt-4o",
+                max_tokens=1024,
+            )
+
+        call_kwargs = mock_client.chat.completions.create.call_args[1]
+        assert call_kwargs["model"] == "openai/gpt-4o"
+        assert call_kwargs["max_tokens"] == 1024
+        extra = call_kwargs["extra_body"]
+        assert extra["plugins"][0]["pdf"]["engine"] == "cloudflare-ai"
+
+    def test_creates_client_with_openrouter_base_url(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-my-key")
+
+        resp = _fake_response("ok")
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = MagicMock(return_value=resp)
+
+        with patch("aedist.pdf2md_openrouter_doc.OpenAI", return_value=mock_client) as mock_cls:
+            pdf_to_markdown(fake_pdf)
+
+        call_kwargs = mock_cls.call_args[1]
+        assert "openrouter.ai" in call_kwargs["base_url"]
+        assert call_kwargs["api_key"] == "sk-my-key"
+
+
+# ---------------------------------------------------------------------------
+# main (CLI)
+# ---------------------------------------------------------------------------
+
+
+class TestMain:
+    def test_writes_output_file(self, tmp_path, monkeypatch):
+        fake_pdf = tmp_path / "input.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+        out = tmp_path / "output.md"
+
+        with patch("aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="# Doc"):
+            main([str(fake_pdf), "--output", str(out)])
+
+        assert out.exists()
+        text = out.read_text()
+        assert "# Doc" in text
+        assert "Converted from PDF" in text
+
+    def test_default_output_path(self, tmp_path):
+        fake_pdf = tmp_path / "report.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+
+        with patch("aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="md"):
+            main([str(fake_pdf)])
+
+        assert (tmp_path / "report.md").exists()
+
+    def test_file_not_found(self, tmp_path):
+        with pytest.raises(SystemExit):
+            main([str(tmp_path / "nonexistent.pdf")])
+
+    def test_not_a_pdf(self, tmp_path):
+        txt = tmp_path / "file.txt"
+        txt.write_text("hello")
+        with pytest.raises(SystemExit):
+            main([str(txt)])
+
+    def test_custom_args_forwarded(self, tmp_path):
+        fake_pdf = tmp_path / "test.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+        out = tmp_path / "out.md"
+
+        with patch(
+            "aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="ok"
+        ) as mock:
+            main([
+                str(fake_pdf), "--output", str(out),
+                "--engine", "cloudflare-ai",
+                "--model", "openai/gpt-4o",
+                "--max-tokens", "2048",
+            ])
+
+        mock.assert_called_once_with(
+            fake_pdf,
+            engine="cloudflare-ai",
+            model="openai/gpt-4o",
+            max_tokens=2048,
+        )
+
+    def test_metadata_mentions_engine(self, tmp_path):
+        fake_pdf = tmp_path / "m.pdf"
+        fake_pdf.write_bytes(b"%PDF-1.4 fake")
+        out = tmp_path / "m.md"
+
+        with patch("aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="c"):
+            main([str(fake_pdf), "--output", str(out), "--engine", "mistral-ocr"])
+
+        text = out.read_text()
+        assert "OpenRouter/mistral-ocr" in text
