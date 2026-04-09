@@ -1,6 +1,6 @@
 %erg v1
 Title: Workers self-select jobs by capability, not pool field
-Status: open
+Status: doing
 Created: 2026-04-08
 Author: claude
 
@@ -10,6 +10,8 @@ Author: claude
 2026-04-08T13:00Z claude note unblocked — 0011 merged (PR #188)
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
 2026-04-09T16:00Z claude status executed by IDD phase 3
+2026-04-09T18:00Z claude status doing — review fixes in progress
+2026-04-09T18:00Z claude note scope expanded from 3 modes (single/rag/multiturn) to 7 modes (single/frontier/sourced/rag/multiturn/web/decomposed)
 
 --- body ---
 ## Context

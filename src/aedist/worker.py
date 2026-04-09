@@ -1,11 +1,9 @@
 """Worker classes with lease semantics for the job board.
 
-Workers poll for pending jobs, acquire exclusive leases via atomic file
-renames, execute the query pipeline, and write results to done/ or failed/.
-
-Subclasses:
-    PadmeWorker  — local Ollama (GPU)
-    OpenRouterWorker — OpenRouter cloud API
+Worker.execute() dispatches on job.mode, routing each job to the correct
+query pipeline (single-turn, RAG, multiturn, web, decomposed).  Subclasses
+override only make_client() to target different endpoints (Ollama vs
+OpenRouter).  All dispatch logic lives in the base class.
 """
 
 import logging
@@ -221,7 +219,12 @@ class Worker:
         if not corpus_dir or not corpus_dir.exists():
             raise ValueError(f"RAG mode requires a valid corpus directory, got {job.corpus!r}")
 
-        corpus_text, corpus_files = load_corpus(corpus_dir)
+        try:
+            corpus_text, corpus_files = load_corpus(corpus_dir)
+        except SystemExit as exc:
+            raise RuntimeError(
+                f"RAG corpus load failed for {corpus_dir}: {exc}"
+            ) from exc
         messages = [
             {"role": "system", "content": corpus_text},
             {"role": "user", "content": prompt},
@@ -276,8 +279,11 @@ class Worker:
         """Execute a web-augmented query."""
         tavily_key = os.environ.get("TAVILY_API_KEY", "")
         if not tavily_key:
-            log.warning("TAVILY_API_KEY not set — web mode will run without search context")
-        web_context, search_log = run_web_searches(tavily_key) if tavily_key else ("", [])
+            raise RuntimeError(
+                "TAVILY_API_KEY is not set — web mode cannot produce valid results "
+                "without search context"
+            )
+        web_context, search_log = run_web_searches(tavily_key)
 
         messages = [
             {"role": "system", "content": (
@@ -301,7 +307,12 @@ class Worker:
         if not corpus_dir or not corpus_dir.exists():
             raise ValueError(f"Decomposed mode requires a valid corpus directory, got {job.corpus!r}")
 
-        corpus_text, corpus_files = load_corpus(corpus_dir)
+        try:
+            corpus_text, corpus_files = load_corpus(corpus_dir)
+        except SystemExit as exc:
+            raise RuntimeError(
+                f"Decomposed corpus load failed for {corpus_dir}: {exc}"
+            ) from exc
         budget = BudgetTracker(job.budget_usd)
 
         log.info("Querying %s run %d (decomposed RAG)...", model_id, run)
@@ -461,7 +472,7 @@ class OpenRouterWorker(Worker):
     """
 
     def __init__(self, jobs_root: Path = Path("jobs")) -> None:
-        super().__init__(worker_id="openrouter", jobs_root=jobs_root)
+        super().__init__(worker_id="", jobs_root=jobs_root)
 
 
 # ---------------------------------------------------------------------------
