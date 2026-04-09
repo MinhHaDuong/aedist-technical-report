@@ -24,7 +24,6 @@ from itertools import combinations
 from .schema import RunRecord
 from .stats import bootstrap_ci
 
-
 # ---------------------------------------------------------------------------
 # F-distribution p-value (stdlib only, regularised incomplete beta)
 # ---------------------------------------------------------------------------
@@ -118,7 +117,7 @@ def two_way_anova(
         msg = f"Unbalanced design: cell sizes = {cell_sizes}"
         raise ValueError(msg)
 
-    N = a_count * b_count * n
+    n_total = a_count * b_count * n
     all_values = [y for ys in data.values() for y in ys]
     grand_mean = _mean(all_values)
 
@@ -150,8 +149,8 @@ def two_way_anova(
     df_a = a_count - 1
     df_b = b_count - 1
     df_ab = df_a * df_b
-    df_resid = N - a_count * b_count
-    df_total = N - 1
+    df_resid = n_total - a_count * b_count
+    df_total = n_total - 1
 
     eta_sq_a = ss_a / ss_total if ss_total > 0 else 0.0
     eta_sq_b = ss_b / ss_total if ss_total > 0 else 0.0

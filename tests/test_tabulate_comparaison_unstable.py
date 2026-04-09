@@ -2,7 +2,6 @@
 
 from aedist.tabulate_comparaison import generate_comparaison_table
 
-
 # Two models with nearly identical F1 — should be flagged as "not robust"
 CLOSE_PAIR_METRICS = [
     # Census runs for model-A (F1 ~0.65)

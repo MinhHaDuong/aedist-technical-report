@@ -2,7 +2,6 @@
 
 from aedist.tabulate_variance import generate_variance_table
 
-
 SAMPLE_ANOVA = {
     "eta_sq_model": 0.45,
     "eta_sq_method": 0.38,
