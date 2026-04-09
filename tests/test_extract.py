@@ -16,7 +16,6 @@ from aedist.extract import (
     score_csv_like_block,
     sniff_dialect,
 )
-from aedist.util import strip_diacritics
 
 
 class TestHeaderMapping:
@@ -404,7 +403,7 @@ class TestExtractOne:
 
 
 class TestMainSkipsEvalJson:
-    def test_eval_json_ignored(self, tmp_path, monkeypatch):
+    def test_eval_json_ignored(self, tmp_path):
         """main() must not attempt to extract .eval.json files."""
         inp = tmp_path / "inp"
         inp.mkdir()
@@ -418,8 +417,7 @@ class TestMainSkipsEvalJson:
         (inp / "model-run1.eval.json").write_text(
             json.dumps({"f1": 0.5, "precision": 0.6})
         )
-        monkeypatch.setattr("sys.argv", ["extract", "--input", str(inp), "--output", str(out)])
-        main()
+        main(["--input", str(inp), "--output", str(out)])
         # Only the model reply should produce a CSV
         assert (out / "model-run1.csv").exists()
         assert not (out / "model-run1.eval.csv").exists()

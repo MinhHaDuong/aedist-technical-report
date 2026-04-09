@@ -1,9 +1,5 @@
 """Tests for provenance scoring (score_provenance.py)."""
 
-from pathlib import Path
-
-import pytest
-
 from aedist.score_provenance import score_honesty, score_sourced_run
 
 
