@@ -15,7 +15,7 @@ import logging
 import statistics
 from pathlib import Path
 
-from .stats import bootstrap_ci, paired_bootstrap_test
+from .stats import paired_bootstrap_test
 from .tabulate_utils import format_model_name, strip_label
 
 log = logging.getLogger(__name__)
@@ -77,37 +77,19 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         else:
             p_value = None
 
-        # Bootstrap CI for RAG F1 (used for unstable pair detection)
-        _, ci_lo, ci_hi = bootstrap_ci(f1_rag_vals, seed=42)
-
         rows.append(
             {
                 "slug": slug,
                 "f1_base": f1_base,
                 "f1_rag": f1_rag,
-                "f1_rag_ci_lo": ci_lo,
-                "f1_rag_ci_hi": ci_hi,
                 "cov_base": cov_base,
                 "cov_rag": cov_rag,
                 "delta": delta,
                 "p_value": p_value,
-                "not_robust": False,
             }
         )
 
     rows.sort(key=lambda r: r["f1_rag"], reverse=True)
-
-    # Flag unstable pairs: RAG F1 differs by <5pp and CIs overlap
-    for i, row_a in enumerate(rows):
-        for row_b in rows[i + 1 :]:
-            f1_diff = abs(row_a["f1_rag"] - row_b["f1_rag"])
-            ci_overlap = (
-                row_a["f1_rag_ci_lo"] <= row_b["f1_rag_ci_hi"]
-                and row_b["f1_rag_ci_lo"] <= row_a["f1_rag_ci_hi"]
-            )
-            if f1_diff < 0.05 and ci_overlap:
-                row_a["not_robust"] = True
-                row_b["not_robust"] = True
 
     lines = [
         "% Auto-generated — do not edit",
@@ -138,22 +120,9 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         elif p is not None and p < 0.05:
             delta += "$^{*}$"
 
-        # Unstable ranking flag
-        if row.get("not_robust"):
-            delta += " \\textsuperscript{\\textdagger}"
-
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     lines.append("\\end{longtable}")
-
-    # Add footnote if any rows are flagged as not robust
-    has_unstable = any(r.get("not_robust") for r in rows)
-    if has_unstable:
-        lines.append(
-            "\\noindent{\\footnotesize \\textsuperscript{\\textdagger}"
-            "Not robust: RAG F1 difference $<$5~pp with overlapping bootstrap CIs.}"
-        )
-
     return "\n".join(lines) + "\n", len(common_slugs)
 
 
