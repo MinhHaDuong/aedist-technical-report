@@ -58,6 +58,14 @@ $(GEN)/tab_comparaison.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_comparaison --output $@
 
+derived/variance_decomposition.json: $(MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.variance_decomposition --output $@
+
+$(GEN)/tab_variance.tex: derived/variance_decomposition.json
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_variance --input $< --output $@
+
 CONVERTER_TEST := experiments/data/converter_test
 CONVERTER_META := $(CONVERTER_TEST)/benchmark_meta.yaml
 CONVERTER_DOCS := $(wildcard $(CONVERTER_TEST)/*/Decision-1509.md)
@@ -88,7 +96,8 @@ $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 
 report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
-    $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex
+    $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex \
+    $(GEN)/tab_variance.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -102,7 +111,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
 select: experiments/models_selected.yaml
 census:
