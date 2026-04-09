@@ -78,6 +78,10 @@ def test_coverage(models):
     size_classes = {m["size_class"] for m in models}
 
     assert len(models) >= 45, f"Expected >= 45 models, got {len(models)}"
+    # Spot-check that every model has required pricing fields
+    for m in models:
+        assert m.get("price_per_mtok_in") is not None, f"{m['id']}: missing price_per_mtok_in"
+        assert m.get("price_per_mtok_out") is not None, f"{m['id']}: missing price_per_mtok_out"
     assert "US" in countries
     assert "CN" in countries
     assert {"frontier", "large", "medium", "small", "edge"} <= size_classes, (

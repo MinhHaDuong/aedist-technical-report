@@ -44,6 +44,8 @@ def test_variance_decomposition_perfect_separation():
         make_record(model="B", method="rag", f1=0.51),
     ]
     result = variance_decomposition(records)
+    # Model effect should dominate — A≈0.90, B≈0.50 are far apart
+    assert result["eta_sq_model"] > 0.90
     assert result["eta_sq_residual"] < 0.05
 
 
@@ -201,8 +203,9 @@ def test_large_f_gives_small_p():
         ("B", "y"): [1.0, 2.0],
     }
     result = two_way_anova(data)
-    assert result["f_a"] > 10
-    assert result["p_a"] < 0.05
+    # A vs B means differ by ~99, residual variance ~0.5 → F >> 100
+    assert result["f_a"] > 100
+    assert result["p_a"] < 0.01
 
 
 def test_subdesign_composition_in_output():

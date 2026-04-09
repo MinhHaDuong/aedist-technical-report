@@ -17,10 +17,15 @@ SAMPLE_METRICS = [
 
 
 def test_build_pareto_rows():
-    """Rows have model, f1, cost_usd, local columns."""
+    """Rows have correct models with median f1 and local flag."""
     rows = build_pareto_rows(SAMPLE_METRICS)
     assert len(rows) == 2
     assert all(set(r.keys()) == {"model", "f1", "cost_usd", "local"} for r in rows)
+    by_model = {r["model"]: r for r in rows}
+    assert by_model["gpt-5.4"]["f1"] == 0.70  # median of [0.68, 0.70, 0.72]
+    assert by_model["gpt-5.4"]["local"] == 0
+    assert by_model["padme-qwen3.5-27b"]["f1"] == 0.50  # median of [0.48, 0.50, 0.52]
+    assert by_model["padme-qwen3.5-27b"]["local"] == 1
 
 
 def test_cost_without_explicit_data():
