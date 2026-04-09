@@ -3,9 +3,10 @@
 Computes eta-squared for model, method, interaction, and residual
 effects on F1 variance.  Uses only stdlib — no scipy, no numpy.
 
-The balanced design requires equal cell sizes.  For the main analysis
-this is 5 models x 4 methods x 3 replicates = 60 records (the
-``decomposed`` method is excluded because deepseek lacks it).
+The balanced design requires equal cell sizes.  The code automatically
+finds the largest balanced sub-design from the available data by
+searching over method subsets (tractable because the number of methods
+is small).
 
 Usage::
 
@@ -15,9 +16,8 @@ Usage::
 
 from __future__ import annotations
 
-import json
 from collections import defaultdict
-from pathlib import Path
+from itertools import combinations
 
 from .schema import RunRecord
 from .stats import bootstrap_ci
@@ -249,34 +249,47 @@ def variance_decomposition(
         k: v[:min_reps] for k, v in cells.items()
     }
 
-    # Find models and methods that form a complete cross
+    # Find the largest complete cross (balanced sub-design).
+    # For each subset of methods, count how many models have all those
+    # methods.  Pick the subset that maximises models * methods.
+    # With <= ~10 method levels the 2^k search is instant.
     models_in_cells: dict[str, set[str]] = defaultdict(set)
-    methods_in_cells: dict[str, set[str]] = defaultdict(set)
     for m, method in balanced:
         models_in_cells[m].add(method)
-        methods_in_cells[method].add(m)
 
-    # Keep only models that appear in all methods and methods that appear in all models
-    # Iteratively prune until stable
-    all_methods = set(methods_in_cells.keys())
-    all_models = set(models_in_cells.keys())
+    unique_methods = sorted({method for _, method in balanced})
 
-    changed = True
-    while changed:
-        changed = False
-        new_models = {m for m in all_models if models_in_cells[m] >= all_methods}
-        new_methods = {method for method in all_methods if methods_in_cells[method] >= all_models}
-        if new_models != all_models or new_methods != all_methods:
-            all_models = new_models
-            all_methods = new_methods
-            changed = True
-            # Rebuild membership
-            models_in_cells = defaultdict(set)
-            methods_in_cells = defaultdict(set)
-            for (m, method), v in balanced.items():
-                if m in all_models and method in all_methods:
-                    models_in_cells[m].add(method)
-                    methods_in_cells[method].add(m)
+    best_score = 0
+    all_models: set[str] = set()
+    all_methods: set[str] = set()
+
+    for size in range(len(unique_methods), 1, -1):
+        for method_combo in combinations(unique_methods, size):
+            method_set = set(method_combo)
+            eligible = {m for m, ms in models_in_cells.items() if ms >= method_set}
+            score = len(eligible) * len(method_set)
+            if len(eligible) >= 2 and score > best_score:
+                best_score = score
+                all_models = eligible
+                all_methods = method_set
+        # Early exit: no larger subset of methods can beat the current best
+        # once we have checked all subsets of the current size, because
+        # smaller method subsets can at most have (size-1)*total_models cells.
+        if best_score > 0 and (size - 1) * len(models_in_cells) <= best_score:
+            break
+
+    # Fallback: if the biclique search found nothing (e.g. only 1 method),
+    # try a one-way design.  Also include single-method subsets with >= 2
+    # models — these were excluded from the combinatorial search above.
+    if best_score == 0:
+        for method in unique_methods:
+            eligible = {m for m, ms in models_in_cells.items() if method in ms}
+            if len(eligible) >= 2:
+                score = len(eligible)
+                if score > best_score:
+                    best_score = score
+                    all_models = eligible
+                    all_methods = {method}
 
     # Build the balanced data for ANOVA
     anova_data: dict[tuple[str, str], list[float]] = {}
@@ -286,7 +299,7 @@ def variance_decomposition(
 
     n_groups = len(anova_data)
 
-    if len(all_models) < 2 and len(all_methods) < 2:
+    if len(all_models) < 2:
         # Not enough factors for any ANOVA
         return {
             "n_records": len(ok_records),
@@ -375,7 +388,9 @@ def variance_decomposition(
 def main(argv: list[str] | None = None) -> None:
     """Run variance decomposition on measurements.jsonl and write output."""
     import argparse
+    import json
     import logging
+    from pathlib import Path
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     log = logging.getLogger(__name__)

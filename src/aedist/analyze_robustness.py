@@ -11,9 +11,6 @@ Usage::
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 
 def analyze_robustness(
     decomposition: dict,
@@ -114,7 +111,9 @@ def analyze_robustness(
 def main(argv: list[str] | None = None) -> None:
     """Generate robustness summary from variance decomposition output."""
     import argparse
+    import json
     import logging
+    from pathlib import Path
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     log = logging.getLogger(__name__)

@@ -65,3 +65,89 @@ def test_unstable_pair_detection():
     records = make_close_pair_records(f1_a=0.92, f1_b=0.915, spread=0.04)
     result = variance_decomposition(records)
     assert len(result["unstable_pairs"]) > 0
+
+
+def test_empty_records():
+    """Empty input returns zero-filled result."""
+    from aedist.variance_decomposition import variance_decomposition
+
+    result = variance_decomposition([])
+    assert result["n_records"] == 0
+    assert result["n_groups"] == 0
+    assert result["eta_sq_model"] == 0.0
+
+
+def test_filtered_out_records():
+    """Records with error status or None F1 are excluded."""
+    from aedist.variance_decomposition import variance_decomposition
+
+    records = [
+        RunRecord(
+            method="rag",
+            method_params=MethodParams(model="A", prompt_version="test"),
+            resource_use=ResourceUse(),
+            result_file="test.csv",
+            result_summary=ResultSummary(status="error", f1=0.9, n_plants=10, tp=5, fp=0, fn=5),
+        ),
+        RunRecord(
+            method="rag",
+            method_params=MethodParams(model="B", prompt_version="test"),
+            resource_use=ResourceUse(),
+            result_file="test.csv",
+            result_summary=ResultSummary(status="ok", f1=None),
+        ),
+    ]
+    result = variance_decomposition(records)
+    assert result["n_records"] == 0
+
+
+def test_balanced_subdesign_selection():
+    """The largest balanced sub-design is found even with sparse cells.
+
+    With 3 models x 2 methods fully crossed, plus a 4th model in only 1 method,
+    the ANOVA should use the 3x2 cross (not collapse to nothing).
+    """
+    from aedist.variance_decomposition import variance_decomposition
+
+    records = []
+    # 3 models x 2 methods, 2 replicates each
+    for model in ["A", "B", "C"]:
+        for method in ["rag", "single"]:
+            for f1 in [0.70, 0.80]:
+                records.append(make_record(model, method, f1))
+    # 4th model in only 1 method — should be excluded from the cross
+    records.append(make_record("D", "rag", 0.60))
+    records.append(make_record("D", "rag", 0.65))
+
+    result = variance_decomposition(records)
+    assert result["n_groups"] == 6  # 3 models x 2 methods
+
+
+def test_one_way_model_fallback():
+    """Single-method data falls back to one-way ANOVA on model."""
+    from aedist.variance_decomposition import variance_decomposition
+
+    records = [
+        make_record("A", "rag", 0.90),
+        make_record("A", "rag", 0.85),
+        make_record("B", "rag", 0.50),
+        make_record("B", "rag", 0.55),
+    ]
+    result = variance_decomposition(records)
+    assert result["eta_sq_model"] > 0.90
+    assert result["eta_sq_method"] == 0.0
+
+
+def test_ss_partition():
+    """SS components sum to SS total in the ANOVA output."""
+    from aedist.variance_decomposition import two_way_anova
+
+    data = {
+        ("A", "x"): [10.0, 12.0],
+        ("A", "y"): [8.0, 6.0],
+        ("B", "x"): [2.0, 4.0],
+        ("B", "y"): [3.0, 5.0],
+    }
+    result = two_way_anova(data)
+    ss_sum = result["ss_a"] + result["ss_b"] + result["ss_ab"] + result["ss_resid"]
+    assert abs(ss_sum - result["ss_total"]) < 1e-10

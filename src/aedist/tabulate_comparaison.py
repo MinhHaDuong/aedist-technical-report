@@ -139,10 +139,8 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
             delta += "$^{*}$"
 
         # Unstable ranking flag
-        robust_note = ""
         if row.get("not_robust"):
-            robust_note = " \\textsuperscript{\\textdagger}"
-            delta += robust_note
+            delta += " \\textsuperscript{\\textdagger}"
 
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 

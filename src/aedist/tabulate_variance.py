@@ -12,9 +12,6 @@ Usage::
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 
 def generate_variance_table(decomposition: dict) -> str:
     """Generate a LaTeX longtable from variance decomposition results.
@@ -84,7 +81,9 @@ def generate_variance_table(decomposition: dict) -> str:
 def main(argv: list[str] | None = None) -> None:
     """Read variance decomposition JSON and write LaTeX table."""
     import argparse
+    import json
     import logging
+    from pathlib import Path
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     log = logging.getLogger(__name__)
