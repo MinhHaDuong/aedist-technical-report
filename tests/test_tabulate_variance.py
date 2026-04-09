@@ -44,13 +44,38 @@ def test_table_has_label():
     assert "\\label{tab:variance}" in latex
 
 
+def _variance_data_rows(latex):
+    """Extract data rows from the variance longtable."""
+    rows = []
+    in_data = False
+    for line in latex.splitlines():
+        stripped = line.strip()
+        if r"\endhead" in stripped:
+            in_data = True
+            continue
+        if r"\midrule" in stripped and in_data:
+            continue
+        if r"\end{longtable}" in stripped:
+            break
+        if in_data and "&" in stripped:
+            cells = [c.strip().rstrip("\\").strip() for c in stripped.split("&")]
+            rows.append(cells)
+    return rows
+
+
 def test_table_has_all_sources():
-    """All four variance sources appear in the table."""
+    """All four variance sources appear as rows with correct values."""
     latex = generate_variance_table(SAMPLE_ANOVA)
-    assert "Model" in latex
-    assert "Method" in latex
-    assert "Interaction" in latex or "Model $\\times$ Method" in latex
-    assert "Residual" in latex
+    rows = _variance_data_rows(latex)
+    sources = [r[0] for r in rows]
+    assert "Model" in sources
+    assert "Method" in sources
+    assert "Residual" in sources
+    # Verify Model row has correct SS and F values
+    model_row = rows[sources.index("Model")]
+    assert model_row[1] == "1.2340"  # SS
+    assert model_row[2] == "4"  # df
+    assert model_row[3] == "10.05"  # F
 
 
 def test_table_has_eta_squared():
@@ -76,9 +101,14 @@ def test_table_has_f_statistics():
 
 
 def test_table_has_p_values():
-    """p-values appear in the table."""
+    """p-values in correct cells for each source row."""
     latex = generate_variance_table(SAMPLE_ANOVA)
-    assert "$<$0.001" in latex or "0.001" in latex
+    rows = _variance_data_rows(latex)
+    sources = [r[0] for r in rows]
+    model_row = rows[sources.index("Model")]
+    method_row = rows[sources.index("Method")]
+    assert model_row[4] == "0.001"  # p_a
+    assert method_row[4] == "0.003"  # p_b
 
 
 def test_table_has_omega_squared():

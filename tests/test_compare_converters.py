@@ -137,6 +137,23 @@ def test_format_summary():
     assert "test-doc" in text
 
 
+def _data_rows(tex):
+    """Extract data rows (between midrule and bottomrule) from a tabular."""
+    rows = []
+    in_data = False
+    for line in tex.splitlines():
+        stripped = line.strip()
+        if r"\midrule" in stripped:
+            in_data = True
+            continue
+        if r"\bottomrule" in stripped:
+            break
+        if in_data and "&" in stripped:
+            cells = [c.strip().rstrip("\\").strip() for c in stripped.split("&")]
+            rows.append(cells)
+    return rows
+
+
 def test_format_latex_without_meta():
     results = {
         "marker": {
@@ -148,10 +165,14 @@ def test_format_latex_without_meta():
         },
     }
     tex = format_latex(results)
-    assert r"\begin{tabular}" in tex
-    assert "marker" in tex
-    assert r"\bottomrule" in tex
-    assert "Tableaux" in tex  # French headers
+    rows = _data_rows(tex)
+    assert len(rows) == 1
+    # Columns: Backend, Tableaux, Lignes, Taille, Temps, Diacritiques
+    assert rows[0][0] == "marker"
+    assert rows[0][1] == "170"
+    assert "4" in rows[0][2] and "038" in rows[0][2]  # 4\,038
+    assert rows[0][4] == "--"  # no timing without meta
+    assert rows[0][5] == "5/5"
 
 
 def test_format_latex_with_meta():
@@ -172,9 +193,12 @@ def test_format_latex_with_meta():
         },
     }
     tex = format_latex(results, meta)
-    assert "Marker (local, GPU)" in tex
-    assert "45" in tex
-    assert "complets" in tex
+    rows = _data_rows(tex)
+    assert len(rows) == 1
+    assert rows[0][0] == "Marker (local, GPU)"
+    assert rows[0][1] == "170"
+    assert rows[0][4] == "45"
+    assert rows[0][5] == "complets"
 
 
 def test_format_latex_rows_na():
@@ -197,7 +221,12 @@ def test_format_latex_rows_na():
         },
     }
     tex = format_latex(results, meta)
-    assert "-- &" in tex
+    rows = _data_rows(tex)
+    assert len(rows) == 1
+    assert rows[0][0] == "GROBID (local)"
+    assert rows[0][1] == "45"
+    assert rows[0][2] == "--"  # rows_na suppresses row count
+    assert rows[0][4] == "20"
 
 
 def test_format_latex_thousands_separator():
