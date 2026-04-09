@@ -108,6 +108,9 @@ def _extract_entries(
             if ref_prov and sys_prov:
                 province_match = ref_prov == sys_prov
 
+        # Propagate similarity score from LP result row
+        sim_score = _safe_float(row, "similarity_score")
+
         entries.append(ReconciliationEntry(
             reference_name=ref_name,
             system_name=sys_name,
@@ -124,6 +127,7 @@ def _extract_entries(
             province_match=province_match,
             reference_source_ref=ref_src,
             system_source_ref=sys_src,
+            similarity_score=sim_score,
         ))
     return entries
 

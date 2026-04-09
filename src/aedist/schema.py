@@ -107,6 +107,7 @@ class ReconciliationEntry(BaseModel):
     province_match: bool | None = None
     reference_source_ref: str | None = None
     system_source_ref: str | None = None
+    similarity_score: float | None = None
     notes: str = ""
 
 

@@ -404,6 +404,7 @@ def _save_reconciliation_csv(entries: list, path: Path) -> None:
                 "province_match",
                 "reference_source_ref",
                 "system_source_ref",
+                "similarity_score",
             ]
         )
         for e in entries:
@@ -424,6 +425,7 @@ def _save_reconciliation_csv(entries: list, path: Path) -> None:
                     e.province_match,
                     e.reference_source_ref,
                     e.system_source_ref,
+                    e.similarity_score,
                 ]
             )
 
