@@ -365,9 +365,9 @@ def main() -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
-    from aedist.harness import iter_model_replies
-
-    json_files = list(iter_model_replies(input_dir))
+    json_files = sorted(
+        f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")
+    )
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
 

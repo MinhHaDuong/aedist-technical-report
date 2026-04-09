@@ -58,6 +58,10 @@ def score_sourced_run(csv_path: Path) -> dict:
             "primary_frac": 0.0,
             "secondary_frac": 0.0,
             "none_frac": 0.0,
+            "primary_count": 0,
+            "secondary_count": 0,
+            "none_count": 0,
+            "total_sources": 0,
         }
 
     scores = []
@@ -87,13 +91,22 @@ def score_sourced_run(csv_path: Path) -> dict:
     total_sources = sum(type_counts.values())
     score_dist = Counter(scores)
 
+    primary_count = type_counts.get("primary", 0)
+    secondary_count = type_counts.get("secondary", 0)
+    none_count = type_counts.get("none", 0)
+
     return {
         "n_plants": n_plants,
         "mean_evidence_score": round(sum(scores) / n_plants, 2),
         "score_distribution": {i: score_dist.get(i, 0) for i in range(5)},
-        "primary_frac": round(type_counts.get("primary", 0) / max(total_sources, 1), 3),
-        "secondary_frac": round(type_counts.get("secondary", 0) / max(total_sources, 1), 3),
-        "none_frac": round(type_counts.get("none", 0) / max(total_sources, 1), 3),
+        "primary_frac": round(primary_count / max(total_sources, 1), 3),
+        "secondary_frac": round(secondary_count / max(total_sources, 1), 3),
+        "none_frac": round(none_count / max(total_sources, 1), 3),
+        # Raw counts for precise cross-run aggregation
+        "primary_count": primary_count,
+        "secondary_count": secondary_count,
+        "none_count": none_count,
+        "total_sources": total_sources,
     }
 
 
@@ -173,16 +186,10 @@ def score_directory(input_dir: Path) -> dict:
         all_plants += n
         all_scores.extend([evidence["mean_evidence_score"]] * n)
 
-        # Reconstruct raw source counts from fracs
-        total_src = round(
-            evidence["primary_frac"] + evidence["secondary_frac"] + evidence["none_frac"], 3
-        )
-        if total_src > 0:
-            scale = n  # approximate: at least 1 source classification per plant
-            all_primary += round(evidence["primary_frac"] * scale)
-            all_secondary += round(evidence["secondary_frac"] * scale)
-            all_none += round(evidence["none_frac"] * scale)
-            all_total_sources += scale
+        all_primary += evidence["primary_count"]
+        all_secondary += evidence["secondary_count"]
+        all_none += evidence["none_count"]
+        all_total_sources += evidence["total_sources"]
 
         all_honesty_markers += honesty["n_with_epistemic_marker"]
 

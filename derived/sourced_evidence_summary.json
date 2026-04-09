@@ -13,6 +13,10 @@
       "primary_frac": 0.726,
       "secondary_frac": 0.269,
       "none_frac": 0.005,
+      "primary_count": 154,
+      "secondary_count": 57,
+      "none_count": 1,
+      "total_sources": 212,
       "n_with_note": 120,
       "n_with_epistemic_marker": 6,
       "honesty_rate": 0.05
@@ -30,6 +34,10 @@
       "primary_frac": 0.739,
       "secondary_frac": 0.261,
       "none_frac": 0.0,
+      "primary_count": 153,
+      "secondary_count": 54,
+      "none_count": 0,
+      "total_sources": 207,
       "n_with_note": 115,
       "n_with_epistemic_marker": 3,
       "honesty_rate": 0.0261
@@ -47,6 +55,10 @@
       "primary_frac": 0.874,
       "secondary_frac": 0.126,
       "none_frac": 0.0,
+      "primary_count": 159,
+      "secondary_count": 23,
+      "none_count": 0,
+      "total_sources": 182,
       "n_with_note": 101,
       "n_with_epistemic_marker": 5,
       "honesty_rate": 0.049
@@ -54,7 +66,7 @@
   },
   "aggregate": {
     "mean_evidence_score": 3.38,
-    "primary_frac": 0.774,
+    "primary_frac": 0.775,
     "honesty_rate": 0.0415
   }
 }
