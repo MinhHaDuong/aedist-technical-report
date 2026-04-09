@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 from aedist.reconcile import plants_to_dataframe, reconcile
-from aedist.schema import MatchType, Plant, FuelType, PlantStatus
+from aedist.schema import MatchType, Plant, FuelType
 
 
 class TestPlantsToDataframeEmpty:
