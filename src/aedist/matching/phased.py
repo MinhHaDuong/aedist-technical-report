@@ -12,7 +12,8 @@ from rapidfuzz import fuzz, process
 
 
 def build_reconciled_row(
-    row1: pd.Series | None, row2: pd.Series | None, status: str
+    row1: pd.Series | None, row2: pd.Series | None, status: str,
+    similarity_score: float | None = None,
 ) -> dict[str, Any]:
     """
     Build a reconciliation dictionary (row) from given rows and a match status.
@@ -21,6 +22,8 @@ def build_reconciled_row(
         row1 (pd.Series | None): A row from file1 (or None).
         row2 (pd.Series | None): A row from file2 (or None).
         status (str): The reconciliation status (e.g., "Matched", "Only in file1").
+        similarity_score (float | None): Fuzzy similarity score (0-100), 100 for exact,
+            None for unmatched entries.
 
     Returns:
         dict[str, Any]: Dictionary with keys:
@@ -28,6 +31,7 @@ def build_reconciled_row(
             - name_file2, name_clean_file2, capacity_file2
             - capacity_difference (if applicable)
             - status
+            - similarity_score
     """
     if row1 is not None:
         name_file1 = row1.get("name")
@@ -60,6 +64,7 @@ def build_reconciled_row(
         "capacity_file2": capacity_file2,
         "capacity_difference": capacity_difference,
         "status": status,
+        "similarity_score": similarity_score,
     }
 
 
@@ -100,11 +105,11 @@ def find_exact_match(
 
 def find_fuzzy_match(
     row1: pd.Series, unmatched_group2: pd.DataFrame, similarity_threshold: int = 90
-) -> tuple[pd.Series | None, int | None]:
+) -> tuple[pd.Series | None, int | None, float | None]:
     """
     Find the best fuzzy match for `row1` in `unmatched_group2` based on "name_clean"
     similarity. If the highest similarity score is below `similarity_threshold`,
-    return (None, None).
+    return (None, None, None).
 
     Args:
         row1 (pd.Series): A row from group1 (file1).
@@ -112,10 +117,11 @@ def find_fuzzy_match(
         similarity_threshold (int): The minimum acceptable similarity score (default 90).
 
     Returns:
-        tuple[pd.Series | None, int | None]:
+        tuple[pd.Series | None, int | None, float | None]:
             - matched_row (pd.Series): The best fuzzy match from unmatched_group2.
             - matched_index (int): The index of that row.
-            Returns (None, None) if no match meets the threshold.
+            - best_score (float): The fuzzy similarity score (0-100).
+            Returns (None, None, None) if no match meets the threshold.
     """
     if "name_clean" not in row1:
         raise ValueError("row1 is missing required column 'name_clean'.")
@@ -132,9 +138,9 @@ def find_fuzzy_match(
         _, best_score, best_index = best_match  # Discard the matched name.
         if best_score >= similarity_threshold:
             matched_row = unmatched_group2.loc[best_index]
-            return matched_row, best_index
+            return matched_row, best_index, best_score
 
-    return None, None
+    return None, None, None
 
 
 def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -173,7 +179,7 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     for idx1, row1 in unmatched_group1.iterrows():
         row2, match_idx2 = find_exact_match(row1, unmatched_group2)
         if row2 is not None:
-            reconciled_rows.append(build_reconciled_row(row1, row2, "Matched"))
+            reconciled_rows.append(build_reconciled_row(row1, row2, "Matched", similarity_score=100))
             group1_drop_indexes.append(idx1)
             # Drop the matching row from unmatched_group2 so it won't be used again.
             unmatched_group2.drop(index=match_idx2, inplace=True)
@@ -187,7 +193,7 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     # ----------------------------------------------------------------------
     group1_drop_indexes = []
     for idx1, row1 in unmatched_group1.iterrows():
-        row2, match_idx2 = find_fuzzy_match(
+        row2, match_idx2, fuzzy_score = find_fuzzy_match(
             row1, unmatched_group2, similarity_threshold
         )
         if row2 is not None:
@@ -196,11 +202,11 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
                 status = "Matched (Fuzzy) (Diff)"
             else:
                 status = "Matched (Fuzzy)"
-            reconciled_rows.append(build_reconciled_row(row1, row2, status))
+            reconciled_rows.append(build_reconciled_row(row1, row2, status, similarity_score=fuzzy_score))
             group1_drop_indexes.append(idx1)
             unmatched_group2.drop(index=match_idx2, inplace=True)
         else:
-            reconciled_rows.append(build_reconciled_row(row1, None, "Only in file1"))
+            reconciled_rows.append(build_reconciled_row(row1, None, "Only in file1", similarity_score=None))
 
     unmatched_group1.drop(index=group1_drop_indexes, inplace=True)
     unmatched_group1.reset_index(drop=True, inplace=True)
@@ -210,6 +216,6 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     # Phase 3: Rows remaining in group2 (Only in file2)
     # ----------------------------------------------------------------------
     for _, row2 in unmatched_group2.iterrows():
-        reconciled_rows.append(build_reconciled_row(None, row2, "Only in file2"))
+        reconciled_rows.append(build_reconciled_row(None, row2, "Only in file2", similarity_score=None))
 
     return pd.DataFrame(reconciled_rows)

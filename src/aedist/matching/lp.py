@@ -94,6 +94,7 @@ def _build_result_row(
     df2_row: pd.Series | None,
     capacity_diff: float | None,
     status: str,
+    similarity_score: float | None = None,
 ) -> dict[str, object | None]:
     """
     Construct and return a result dictionary summarizing a match or an unmatched record.
@@ -103,6 +104,8 @@ def _build_result_row(
         df2_row (pd.Series | None): Row from df2, or None if unmatched.
         capacity_diff (float | None): Difference in capacity (df1 minus df2) if available.
         status (str): Description of the matching status.
+        similarity_score (float | None): Fuzzy similarity score (0-100), 100 for exact,
+            None for unmatched entries.
 
     Returns:
         dict[str, object | None]: A dictionary with details on the match and associated metadata.
@@ -119,6 +122,7 @@ def _build_result_row(
         "capacity_file2": _safe_get(df2_row, "capacity_clean"),
         "capacity_difference": capacity_diff,
         "status": status,
+        "similarity_score": similarity_score,
     }
 
 
@@ -329,19 +333,21 @@ def _extract_results(
         name2 = str(df2.loc[j, "name_clean"])
         if name1 == name2:
             status = "Matched"
+            score: float = 100
         else:
             similarity = fuzz.partial_ratio(name1, name2)
+            score = similarity
             if similarity >= sim_thresh:
                 status = "Matched (Fuzzy)" if abs(diff) <= cap_tol else "Matched (Fuzzy) (Diff)"
             else:
                 status = "Mismatched"
-        results.append(_build_result_row(df1.loc[i], df2.loc[j], diff, status))
+        results.append(_build_result_row(df1.loc[i], df2.loc[j], diff, status, similarity_score=score))
 
     for i in unmatched_df1:
-        results.append(_build_result_row(df1.loc[i], None, None, "Only in file1"))
+        results.append(_build_result_row(df1.loc[i], None, None, "Only in file1", similarity_score=None))
 
     for j in unmatched_df2:
-        results.append(_build_result_row(None, df2.loc[j], None, "Only in file2"))
+        results.append(_build_result_row(None, df2.loc[j], None, "Only in file2", similarity_score=None))
 
     return results
 
