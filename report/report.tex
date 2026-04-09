@@ -259,6 +259,8 @@ Certaines centrales manquent systématiquement~: les anciennes retirées du serv
 
 On compare les résultats avec l'inventaire exhaustif compilé par nos soins à l'aide de \emph{reconcile.py}, un script de réconciliation par correspondance exacte et fuzzy matching.
 
+Le seuil de similarité pour le fuzzy matching (par défaut~90 sur une échelle de 0 à~100) est un degré de liberté caché~: les modèles prolifiques (Gemini~Flash~Lite, Qwen~9B) dépendent davantage du matching flou que les modèles conservateurs (DeepSeek~V3.2). Pour vérifier que les classements ne sont pas un artefact du seuil choisi, nous effectuons un balayage post-hoc~: chaque paire matchée conserve son score de similarité brut, puis nous recalculons F1 pour des seuils allant de~75 à~95 sans relancer l'optimisation MILP. Sur l'ensemble du recensement, aucune inversion de classement entre modèles n'est observée dans cet intervalle, ce qui confirme la robustesse des comparaisons rapportées.
+
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Performances de Claude selon différentes configurations~: nombre de centrales correctes, incorrectes et manquantes}\label{tab:performances}\\
 \toprule
