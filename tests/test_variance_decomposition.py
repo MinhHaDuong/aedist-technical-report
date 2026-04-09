@@ -15,9 +15,13 @@ def make_record(model: str, method: str, f1: float) -> RunRecord:
 
 
 def make_close_pair_records(
-    f1_a: float = 0.92, f1_b: float = 0.91, spread: float = 0.03
+    f1_a: float = 0.92, f1_b: float = 0.915, spread: float = 0.04
 ) -> list[RunRecord]:
-    """Create records for two models with overlapping F1 distributions."""
+    """Create records for two models with overlapping F1 distributions.
+
+    Defaults chosen so that with 12 samples per model the bootstrap CIs
+    overlap and the mean difference is < 5 pp.
+    """
     import random
 
     rng = random.Random(42)
@@ -58,6 +62,6 @@ def test_unstable_pair_detection():
     """Pairs with overlapping CIs flagged as unstable."""
     from aedist.variance_decomposition import variance_decomposition
 
-    records = make_close_pair_records(f1_a=0.92, f1_b=0.91, spread=0.03)
+    records = make_close_pair_records(f1_a=0.92, f1_b=0.915, spread=0.04)
     result = variance_decomposition(records)
     assert len(result["unstable_pairs"]) > 0
