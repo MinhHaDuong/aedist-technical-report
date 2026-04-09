@@ -23,3 +23,30 @@ class TestPlantsToDataframeEmpty:
         assert "province_clean" in df.columns
         assert "fuel_clean" in df.columns
         assert "status_clean" in df.columns
+
+
+class TestReconcileEmptySystem:
+    """reconcile(reference, []) produces all-REFERENCE_ONLY entries."""
+
+    @pytest.fixture
+    def three_reference_plants(self):
+        return [
+            Plant(name="Pha Lai", fuel=FuelType.COAL, capacity_mwe=600),
+            Plant(name="Uong Bi", fuel=FuelType.COAL, capacity_mwe=300),
+            Plant(name="Ninh Binh", fuel=FuelType.COAL, capacity_mwe=100),
+        ]
+
+    def test_all_entries_are_reference_only(self, three_reference_plants):
+        entries = reconcile(three_reference_plants, [])
+        assert len(entries) == 3
+        for e in entries:
+            assert e.match_type == MatchType.REFERENCE_ONLY
+
+    def test_empty_system_metrics_are_zero(self, three_reference_plants):
+        from aedist.metrics import compute_metrics
+        entries = reconcile(three_reference_plants, [])
+        m = compute_metrics(entries)
+        assert m.f1 == 0.0
+        assert m.n_matched == 0
+        assert m.n_missed == 3
+        assert m.n_hallucinated == 0
