@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
+from .harness import iter_model_replies
 from .util import parse_number, strip_diacritics
 
 log = logging.getLogger(__name__)
@@ -365,13 +366,7 @@ def main(argv: list[str] | None = None) -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
-    # Positive regex matching model-reply filenames (e.g. "gpt-5.4-run1.json").
-    # Self-contained so this branch has no dependency on iter_model_replies()
-    # from ticket 0044; once that merges the duplicate can be collapsed.
-    _model_reply_re = re.compile(r"^.+-run\d+\.json$")
-    json_files = sorted(
-        f for f in input_dir.iterdir() if _model_reply_re.match(f.name)
-    )
+    json_files = list(iter_model_replies(input_dir))
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
 
