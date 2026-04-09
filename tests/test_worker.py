@@ -13,6 +13,9 @@ def _make_job(
     mode: str = "single",
     timeout_seconds: int = 600,
     model_filter: str | None = "openai/gpt-4o",
+    corpus: str | None = None,
+    followups: str | None = None,
+    strategy: str | None = None,
 ) -> JobSpec:
     """Create a minimal JobSpec for testing."""
     return JobSpec(
@@ -24,6 +27,9 @@ def _make_job(
         model_filter=model_filter,
         output_dir="outputs/test",
         timeout_seconds=timeout_seconds,
+        corpus=corpus,
+        followups=followups,
+        strategy=strategy,
     )
 
 
@@ -431,3 +437,234 @@ def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
     assert record is not None
     assert record.method == Method.SINGLE
     assert (jobs_root / "done" / "or-lc.yaml").exists()
+
+
+# ---------------------------------------------------------------------------
+# Mode dispatch tests (Ticket 0023)
+# ---------------------------------------------------------------------------
+
+
+def _canned_single_result():
+    """Canned result dict from query_single_turn."""
+    return {
+        "content": "Plant A,coal,operational",
+        "finish_reason": "stop",
+        "usage": {"prompt_tokens": 50, "completion_tokens": 100},
+        "wall_seconds": 3.5,
+    }
+
+
+def _dispatch_patches(tmp_path):
+    """Patches for dispatch tests — mocks make_client and all harness fns."""
+    return {
+        "make_client": MagicMock(return_value=MagicMock()),
+        "load_models": MagicMock(return_value=[{"id": "qwen3:8b"}]),
+        "compute_cost": MagicMock(return_value=0.0),
+        "model_metadata": MagicMock(return_value={}),
+        "save_json": MagicMock(),
+        "should_skip": MagicMock(return_value=False),
+        "output_path": MagicMock(return_value=tmp_path / "out" / "r.json"),
+        "query_single_turn": MagicMock(return_value=_canned_single_result()),
+    }
+
+
+def test_rag_job_dispatches_to_rag_pipeline(tmp_path: Path) -> None:
+    """A job with mode=rag must call RAG query functions, not single-turn."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+    corpus_dir = tmp_path / "corpus"
+    corpus_dir.mkdir()
+    (corpus_dir / "doc1.md").write_text("Some corpus content")
+
+    job = _make_job(
+        mode="rag",
+        corpus=str(corpus_dir),
+        strategy="wholesale",
+        model_filter="qwen3:8b",
+    )
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    # RAG path should build system+user messages with corpus, not just user message
+    call_args = patches["query_single_turn"].call_args
+    messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
+    assert len(messages) == 2  # system (corpus) + user (prompt)
+    assert messages[0]["role"] == "system"
+    assert "corpus" in messages[0]["content"].lower() or "Some corpus content" in messages[0]["content"]
+    assert result["wall_seconds"] == 3.5
+
+
+def test_multiturn_job_dispatches_to_multiturn(tmp_path: Path) -> None:
+    """A job with mode=multiturn must run a multi-turn conversation."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+    followups_file = tmp_path / "followups.txt"
+    followups_file.write_text("What about gas plants?\nAny LNG?")
+
+    job = _make_job(mode="multiturn", followups=str(followups_file), model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    # Multiturn should call query_single_turn multiple times (initial + followups)
+    assert patches["query_single_turn"].call_count >= 2  # initial + at least 1 followup
+    assert "wall_seconds" in result
+
+
+def test_web_job_dispatches_to_web(tmp_path: Path) -> None:
+    """A job with mode=web must run web-augmented queries."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(mode="web", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch("aedist.worker.run_web_searches", return_value=("web context", [])):
+        with patch.multiple("aedist.worker", **patches):
+            result = worker.execute(job)
+
+    # Web path builds system message with web search context
+    call_args = patches["query_single_turn"].call_args
+    messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
+    assert messages[0]["role"] == "system"
+    assert result["wall_seconds"] == 3.5
+
+
+def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
+    """A job with mode=decomposed must run decomposed sub-queries."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+    corpus_dir = tmp_path / "corpus"
+    corpus_dir.mkdir()
+    (corpus_dir / "doc1.md").write_text("Some corpus content")
+
+    job = _make_job(mode="decomposed", corpus=str(corpus_dir), model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    # Decomposed runs 3 sub-queries (coal, gas, other)
+    assert patches["query_single_turn"].call_count == 3
+    assert "wall_seconds" in result
+
+
+def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
+    """A job with mode=single still calls query_single_turn."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(mode="single", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    patches["query_single_turn"].assert_called_once()
+    assert result["wall_seconds"] == 3.5
+
+
+def test_unknown_mode_raises(tmp_path: Path) -> None:
+    """An unrecognized mode must raise, not silently fall back to single-turn."""
+    import pytest
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    # We can't construct a JobSpec with an invalid enum, so test via internal dispatch
+    job = _make_job(mode="single", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    # Monkey-patch mode to an unknown value to test the dispatch guard
+    object.__setattr__(job, "mode", "nonexistent_mode")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        with pytest.raises(ValueError, match="Unsupported mode"):
+            worker.execute(job)
+
+
+def test_dispatch_shared_between_padme_and_openrouter(tmp_path: Path) -> None:
+    """PadmeWorker and OpenRouterWorker share the same dispatch logic."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+    corpus_dir = tmp_path / "corpus"
+    corpus_dir.mkdir()
+    (corpus_dir / "doc1.md").write_text("Some corpus content")
+
+    job = _make_job(mode="rag", corpus=str(corpus_dir), strategy="wholesale", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+
+    for WorkerCls in [PadmeWorker, OpenRouterWorker]:
+        worker = WorkerCls(jobs_root=tmp_path / f"jobs-{WorkerCls.__name__}")
+        patches = _dispatch_patches(tmp_path)
+        with patch.multiple("aedist.worker", **patches):
+            result = worker.execute(job)
+        # Both workers should dispatch RAG the same way
+        call_args = patches["query_single_turn"].call_args
+        messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
+        assert len(messages) == 2
+        assert messages[0]["role"] == "system"
+
+
+def test_verification_job_raises_not_implemented(tmp_path: Path) -> None:
+    """Verification mode requires special handling not available in worker dispatch."""
+    import pytest
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(mode="verification", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        with pytest.raises(NotImplementedError, match="verification"):
+            worker.execute(job)
+
+
+def test_frontier_job_dispatches_like_single(tmp_path: Path) -> None:
+    """Frontier mode dispatches through query_single_turn like single mode."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(mode="frontier", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    patches["query_single_turn"].assert_called_once()
+    assert result["wall_seconds"] == 3.5
+
+
+def test_sourced_job_dispatches_like_single(tmp_path: Path) -> None:
+    """Sourced mode dispatches through query_single_turn (same as single)."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(mode="sourced", model_filter="qwen3:8b")
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _dispatch_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        result = worker.execute(job)
+
+    patches["query_single_turn"].assert_called_once()
+    assert result["wall_seconds"] == 3.5
