@@ -6,16 +6,129 @@ Author: claude
 
 --- log ---
 2026-04-07T12:10Z claude created imported from gh#13
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-Single best model, vary: temperature (0.0/0.7), prompt language (EN/FR),
-output format (text/CSV/JSON), few-shot (0/3). ~24 runs. Budget ~$5-10.
 
-## Key question
-How much do secondary variables matter compared to model choice and
-information regime?
+The original ticket proposed 24 new API runs ($5-10) varying temperature,
+prompt language, output format, and few-shot count on a single model. This
+is the wrong move two days before the conference. We already have 238
+measurements across 70 model variants and 8 methods -- the signal is in
+the data, not in 24 more calls.
+
+The paper's core claim is "method matters more than model." The threat to
+that claim is not "what if we used French?" but "what fraction of our
+measured F1 differences is noise?" That question is answerable from
+existing data at zero cost, and it produces a stronger result than a
+half-finished parameter sweep.
+
+This ticket becomes a **variance decomposition** on existing measurements:
+compute how much of the F1 variance comes from model choice, method choice,
+and residual noise. Pair with ticket 0035 (matching threshold sensitivity)
+to produce a single "measurement robustness" subsection.
+
+## Actions
+
+### 1. Add `scripts/variance_decomposition.py`
+
+Load `measurements.jsonl`. Filter to runs with `status == "ok"` and
+non-null F1. Group by (model, method). For groups with 3+ runs:
+
+- Compute **within-group variance** (run-to-run noise for same
+  model x method).
+- Compute **between-group variance** decomposed into:
+  - Model effect (eta-squared for model, averaging over methods)
+  - Method effect (eta-squared for method, averaging over models)
+  - Interaction (model x method)
+  - Residual (within-group noise)
+
+Use `stats.bootstrap_ci` (from ticket 0042, already shipped) for
+confidence intervals on the variance components.
+
+Output: `derived/variance_decomposition.json` with:
+```json
+{
+  "n_records": 238,
+  "n_groups": 42,
+  "eta_sq_model": 0.45,
+  "eta_sq_method": 0.38,
+  "eta_sq_interaction": 0.12,
+  "eta_sq_residual": 0.05,
+  "unstable_pairs": [
+    {"model_a": "...", "model_b": "...", "method": "rag",
+     "f1_diff": 0.02, "ci_overlap": true}
+  ]
+}
+```
+
+### 2. Add `scripts/analyze_robustness.py`
+
+Combine variance decomposition output with matching sensitivity output
+(from ticket 0035) into a single robustness summary:
+
+- If eta_sq_residual < 0.10: "Run-to-run variance explains <10% of
+  F1 differences -- rankings are stable across repetitions."
+- If any model pair has overlapping CIs AND flips rank under threshold
+  change (from 0035): flag as "measurement-dependent ranking."
+- Emit a LaTeX-ready one-paragraph summary for the methodology section.
+
+### 3. Add variance decomposition table to report
+
+`tabulate_variance.py` generates a LaTeX table:
+| Source        | SS   | df  | eta^2  |
+|---------------|------|-----|--------|
+| Model         |  ... | ... | 0.45   |
+| Method        |  ... | ... | 0.38   |
+| Model x Method|  ... | ... | 0.12   |
+| Residual      |  ... | ... | 0.05   |
+
+This goes in the evaluation methodology section, alongside the matching
+sensitivity plot from 0035.
+
+### 4. Flag unstable rankings
+
+For every pair of models where mean F1 differs by <5 pp and bootstrap CIs
+overlap: emit a note in the comparison table (from `tabulate_comparaison.py`)
+marking the difference as "not robust." This is the honest version of
+the original ticket's question "how much do secondary variables matter?"
+
+## Test
+
+```python
+def test_variance_decomposition_perfect_separation():
+    """When groups are perfectly separated, eta_sq_between ~ 1.0."""
+    records = [
+        make_record(model="A", method="rag", f1=0.90),
+        make_record(model="A", method="rag", f1=0.91),
+        make_record(model="B", method="rag", f1=0.50),
+        make_record(model="B", method="rag", f1=0.51),
+    ]
+    result = variance_decomposition(records)
+    assert result["eta_sq_residual"] < 0.05
+
+def test_variance_decomposition_pure_noise():
+    """When all groups have same mean, eta_sq_between ~ 0.0."""
+    records = [
+        make_record(model="A", method="rag", f1=v)
+        for v in [0.70, 0.90, 0.80]
+    ] + [
+        make_record(model="B", method="rag", f1=v)
+        for v in [0.72, 0.88, 0.82]
+    ]
+    result = variance_decomposition(records)
+    assert result["eta_sq_model"] < 0.10
+
+def test_unstable_pair_detection():
+    """Pairs with overlapping CIs flagged as unstable."""
+    records = make_close_pair_records(f1_a=0.92, f1_b=0.91, spread=0.03)
+    result = variance_decomposition(records)
+    assert len(result["unstable_pairs"]) > 0
+```
 
 ## Exit criteria
-- 24 runs completed and scored
-- Comparison table showing effect sizes of each variable
+- Variance decomposition computed on measurements.jsonl (zero new API calls)
+- eta-squared table generated for report
+- Unstable model pairs flagged in comparison table
+- Joint robustness summary paragraph generated (pairs with 0035 output)
+- `make check-fast` passes

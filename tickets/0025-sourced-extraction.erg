@@ -6,23 +6,106 @@ Author: claude
 
 --- log ---
 2026-04-07T12:00Z claude created imported from gh#173
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-Test whether models can cite primary sources during extraction. Feasibility
-gate for source-first RAG. Uses prompt_structured_sourced.txt with source_1,
-source_2, note columns.
 
-## Citation quality ladder (per plant)
-1. Non-empty source field
-2. Source exists (Tavily search)
-3. Primary or secondary classification
-4. Source-to-claim grounding
+The pipeline silently destroys provenance data. `extract.py` line 200
+hard-codes `_CANON = ["name", "fuel", "status", "cod", "province",
+"capacity_mwe"]` and drops `source_1`, `source_2`, `note` during
+canonicalization. Three Claude Opus sourced runs already exist
+(`experiments/outputs/sourced/`) with rich inline citations in the raw
+JSON — "Decision 1509/QD-BCT", "EVN Annual Report 2017 p14" — but
+the extracted CSVs have zero provenance columns.
 
-## Condition matrix
-3 models × 4 regimes (parametric, web, RAG, decomposed) × 3 runs = 36 calls.
+The original ticket proposed 36 new API calls across a condition
+matrix. That is a Phase 5 experiment on a Phase 1 deadline. The real
+leverage is not more calls but making existing data visible.
+
+The deeper question is not "can models cite" (they can, we have 3 runs
+proving it) but "what is the cheapest path from raw extraction to
+auditable output" — upfront citations vs post-hoc verification vs
+nothing. That is a paired comparison against ticket 0030's verification
+sweep, not a standalone 36-cell matrix.
+
+## Actions
+
+### 1. Make the extraction pipeline provenance-aware
+
+Extend `_CANON` in `extract.py` to include `source_1`, `source_2`,
+`note`. Add corresponding entries in `map_header_to_canonical()` for
+variants (`source`, `reference`, `citation`, `notes`). These columns
+are optional: if a response lacks them, they are empty strings. The
+evaluation pipeline (`evaluate.py`, `reconcile.py`) ignores them —
+they are carried through for provenance scoring only.
+
+Update `SourcedPlant` in `schema.py` to accept `note` field alongside
+existing `sources` and `source_types`.
+
+### 2. Re-extract the 3 existing sourced runs
+
+Run `python -m aedist.extract --input experiments/outputs/sourced
+--output experiments/outputs/sourced` to regenerate CSVs with
+provenance columns. No API calls. Verify the extracted CSVs now
+contain `source_1`, `source_2`, `note`.
+
+### 3. Score citation quality on existing data
+
+Apply `verify.classify_source_by_text()` to every `source_1` and
+`source_2` cell across the 3 runs. Compute per-plant `evidence_score`
+using the existing 0-4 rubric. Produce a score distribution: how many
+plants at each level?
+
+Score the `note` column for epistemic signals: count occurrences of
+uncertainty markers ("uncertain", "conflicting", "no data", "unclear",
+"estimated", "approximate", "planned but"). Report an "honesty rate"
+= fraction of plants where the model flags genuine uncertainty.
+
+### 4. Produce comparison-ready summary
+
+Write summary as a JSON in `derived/sourced_evidence_summary.json`:
+per-run evidence score distribution, mean evidence score, honesty
+rate, plus the headline: what fraction of cited sources classify as
+primary vs secondary vs none.
+
+When ticket 0030 (verification sweep) completes, this summary enables
+a paired comparison: upfront citation cost (zero marginal — same
+prompt) vs post-hoc verification cost (LLM calls + Tavily) for the
+same evidence quality level.
+
+### 5. Run remaining 4 sourced models (optional, post-conference)
+
+The `[sets.sourced]` config lists 5 models; only Claude Opus has run.
+After the conference, run the remaining 4 models to populate the
+condition matrix. This step is explicitly deferred — the 3 existing
+runs answer the feasibility question.
+
+## Test
+
+```python
+def test_extract_preserves_source_columns():
+    """Sourced CSV should have source_1, source_2, note after extraction."""
+    csv_text = "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
+    csv_text += 'Pha Lai,coal,operational,1983,Hai Duong,440,"Decision 1195",,""\n'
+    result = parse_and_canonicalize(csv_text)
+    assert "source_1" in result.splitlines()[0]
+    assert "Decision 1195" in result
+
+def test_classify_inline_citations():
+    """Primary source patterns in sourced output get classified correctly."""
+    from aedist.verify import classify_source_by_text
+    assert classify_source_by_text("Decision 1509/QD-BCT, Annexe II.1") == "primary"
+    assert classify_source_by_text("EVN Annual Report 2017 p14") == "primary"
+    assert classify_source_by_text("Wikipedia: List of power stations") == "secondary"
+    assert classify_source_by_text("") == "none"
+```
 
 ## Exit criteria
-- Score distribution across 4-level ladder per regime
-- Answer: which regime produces most verifiable citations
-- Signal: which documents are cited most (corpus selection for targeted RAG)
+- `extract.py` preserves source_1, source_2, note columns (not just _CANON 6)
+- 3 existing sourced CSVs re-extracted with provenance columns present
+- Evidence score distribution computed from inline citations (no new API calls)
+- Honesty rate computed from note column
+- Summary JSON written to derived/
+- `make check-fast` passes
+- Remaining 4 models explicitly deferred to post-conference
