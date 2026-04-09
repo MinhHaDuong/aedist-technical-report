@@ -1,0 +1,64 @@
+%erg v1
+Title: Fix 34 insincere tests across 5 anti-pattern tiers
+Status: open
+Created: 2026-04-09
+Author: claude
+
+--- log ---
+2026-04-09T20:00Z claude created from test sincerity audit
+
+--- body ---
+## Context
+
+Audit of 635 tests found ~34 insincere tests (5.4%) that provide false
+confidence.  The suite is 94.6% sincere but the bad tests cluster in
+test_worker.py (11 circular mocks sharing one fixture).
+
+## Actions
+
+### Tier 1 — Circular mocks in test_worker.py (11 tests, HIGH)
+
+All 11 dispatch/lifecycle tests assert `result["wall_seconds"] == 3.5`
+which is the mock's hardcoded return value, not a computed result.
+`_harness_patches()` centralizes the problem.
+
+1. Replace passthrough value assertions with argument-structure assertions:
+   verify the *messages* passed to `query_single_turn` (system/user roles,
+   corpus content for RAG, followup count for multiturn).
+2. For dispatch tests, verify `call_args[0][1]` (model_id) matches the
+   job's `model_filter`.
+3. Drop the `assert result["wall_seconds"] == 3.5` lines — they test
+   Python dict access.
+
+### Tier 2 — Tautological tests (4 tests, MEDIUM)
+
+- `test_build_census_rows`: assert sort order, not fixture labels.
+- `test_load_and_summarize`: use inputs where mean != median to
+  distinguish correct from broken implementation.
+- `test_group_and_summarize_median_*`: add even-length lists and ties.
+- `test_bootstrap_ci_single_value`: assert `lo == mean == hi == value`.
+
+### Tier 3 — String-contains-only (8 tests, MEDIUM)
+
+LaTeX tests in test_compare_converters.py, test_tabulate_variance.py:
+parse output into rows/columns, assert specific cell values.
+
+### Tier 4 — Shape-only / loose bounds (8 tests, LOW)
+
+Tighten: assert field types, value ranges, exact counts where known.
+
+### Tier 5 — assert_called_once() without args (3 tests, LOW)
+
+Add `call_args` assertions for message content and model ID.
+
+## Test
+
+Red step: mutate `_build_result` in worker.py to return `wall_seconds * 0`
+— currently 11 tests still pass.  After fix, they fail.
+
+## Exit criteria
+
+- `ruff check .` clean
+- All tests pass
+- Mutation `wall_seconds * 0` in worker._build_result causes ≥5 test failures
+- No test asserts a mock's hardcoded return value without transformation
