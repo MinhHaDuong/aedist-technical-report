@@ -20,8 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
-from aedist.harness import iter_model_replies
-from aedist.util import parse_number, strip_diacritics
+from .harness import iter_model_replies
+from .util import parse_number, strip_diacritics
 
 log = logging.getLogger(__name__)
 
