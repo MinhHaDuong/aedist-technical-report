@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+import warnings
 from itertools import combinations
 from pathlib import Path
 
@@ -86,6 +87,13 @@ def _compute_metrics_at_threshold(
     for row in rows:
         mt = row.get("match_type", "")
         score = _parse_float(row.get("similarity_score", ""))
+
+        if mt in FUZZY_TYPES and score is None:
+            warnings.warn(
+                f"Fuzzy row missing similarity_score: {row.get('reference_name', '?')} "
+                f"-- threshold sweep will treat it as above every threshold (flat F1)",
+                stacklevel=2,
+            )
 
         if mt in FUZZY_TYPES and score is not None and score < threshold:
             # Demote: this fuzzy match is below the threshold
@@ -167,7 +175,7 @@ def sweep_thresholds(
 
 
 def _print_rank_stability(results: list[dict]) -> None:
-    """Analyze whether model rankings flip across thresholds [80, 95]."""
+    """Analyze whether model rankings flip across thresholds [75, 95]."""
     # Group by (method, model) -> {threshold: [f1 values across runs]}
     from collections import defaultdict
 
@@ -177,7 +185,7 @@ def _print_rank_stability(results: list[dict]) -> None:
 
     for r in results:
         t = int(r["threshold"])
-        if 80 <= t <= 95:
+        if 75 <= t <= 95:
             method_model_f1[r["method"]][r["model"]][t].append(float(r["f1"]))
 
     # For each method, check model pairs for rank flips
@@ -209,7 +217,7 @@ def _print_rank_stability(results: list[dict]) -> None:
         for method, m1, m2 in flips[:10]:
             print(f"  {method}: {m1} vs {m2}")
     else:
-        print("\nNo rank flips detected across thresholds [80, 95].")
+        print("\nNo rank flips detected across thresholds [75, 95].")
 
 
 def main() -> None:

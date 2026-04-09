@@ -1,13 +1,6 @@
 """Tests for scripts/sweep_matching_threshold.py."""
 
 import csv
-import sys
-from pathlib import Path
-
-# Ensure the project root is on sys.path so `scripts` package is importable
-_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
 
 
 def test_sweep_produces_sensitivity_csv(tmp_path):
