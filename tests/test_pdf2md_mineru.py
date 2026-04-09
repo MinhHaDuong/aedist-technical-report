@@ -66,27 +66,18 @@ def test_uses_get_output_path():
 # Functional tests (mock HTTP)
 # ---------------------------------------------------------------------------
 
-import io
-import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+import aedist.pdf2md_mineru as _mineru_mod
 from aedist.pdf2md_mineru import (
     DEFAULT_MINERU_URL,
     main,
     mineru_convert,
     pdf_to_markdown,
 )
-
-
-def _mock_urlopen(response_body):
-    """Return a context-manager mock for urllib.request.urlopen."""
-    resp_bytes = json.dumps(response_body).encode("utf-8")
-    cm = MagicMock()
-    cm.__enter__ = MagicMock(return_value=io.BytesIO(resp_bytes))
-    cm.__exit__ = MagicMock(return_value=False)
-    return cm
+from conftest import mock_urlopen
 
 
 # ---------------------------------------------------------------------------
@@ -100,8 +91,8 @@ class TestMineruConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"results": {"test.pdf": {"md_content": "# MinerU output"}}}
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_mineru_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = mineru_convert(fake_pdf)
         assert result == "# MinerU output"
@@ -111,8 +102,8 @@ class TestMineruConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"status": "error", "message": "fail"}
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_mineru_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         with pytest.raises(ValueError, match="Unexpected MinerU response"):
             mineru_convert(fake_pdf)
@@ -122,12 +113,12 @@ class TestMineruConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"results": {"test.pdf": {"md_content": "ok"}}}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_mineru_mod.urllib.request, "urlopen", urlopen_mock)
 
         mineru_convert(fake_pdf, "http://myhost:7777")
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         assert req.full_url == "http://myhost:7777/file_parse"
 
     def test_sends_multipart_with_pdf_bytes(self, tmp_path, monkeypatch):
@@ -135,17 +126,19 @@ class TestMineruConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 real content here")
 
         body = {"results": {"data.pdf": {"md_content": "ok"}}}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_mineru_mod.urllib.request, "urlopen", urlopen_mock)
 
         mineru_convert(fake_pdf)
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         assert b"data.pdf" in req.data
         assert b"%PDF-1.4 real content here" in req.data
         assert "multipart/form-data" in req.get_header("Content-type")
 
-    def test_logs_timing_when_timestamps_present(self, tmp_path, monkeypatch):
+    def test_logs_timing_when_timestamps_present(self, tmp_path, monkeypatch, caplog):
+        import logging
+
         fake_pdf = tmp_path / "test.pdf"
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
@@ -155,12 +148,15 @@ class TestMineruConvert:
             "completed_at": "2026-01-01T00:00:05",
             "backend": "pipeline",
         }
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_mineru_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
-        # Should not raise even with timing info
-        result = mineru_convert(fake_pdf)
+        with caplog.at_level(logging.INFO, logger="aedist.pdf2md_mineru"):
+            result = mineru_convert(fake_pdf)
+
         assert result == "ok"
+        assert "5.0s" in caplog.text
+        assert "pipeline" in caplog.text
 
 
 # ---------------------------------------------------------------------------

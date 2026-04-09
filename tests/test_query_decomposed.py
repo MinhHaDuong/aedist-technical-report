@@ -271,8 +271,10 @@ import pytest
 class TestQueryDecomposedMain:
     """Tests for main() CLI entry point."""
 
-    def test_dry_run(self, monkeypatch, tmp_path, capsys):
+    def test_dry_run(self, monkeypatch, tmp_path, caplog):
         """--dry-run shows what would run without querying."""
+        import logging
+
         from aedist import query_decomposed as qd_mod
 
         # Create minimal corpus dir
@@ -309,10 +311,19 @@ class TestQueryDecomposedMain:
             ],
         )
 
-        qd_mod.main()
+        with caplog.at_level(logging.INFO):
+            qd_mod.main()
 
-    def test_single_model_filter(self, monkeypatch, tmp_path):
+        # Verify dry-run logged the model and run info
+        assert "test-model" in caplog.text
+        assert "run" in caplog.text.lower()
+        # No output files should have been created
+        assert not output_dir.exists()
+
+    def test_single_model_filter(self, monkeypatch, tmp_path, caplog):
         """--model filters to a single model."""
+        import logging
+
         from aedist import query_decomposed as qd_mod
 
         corpus_dir = tmp_path / "corpus"
@@ -351,7 +362,12 @@ class TestQueryDecomposedMain:
             ],
         )
 
-        qd_mod.main()
+        with caplog.at_level(logging.INFO):
+            qd_mod.main()
+
+        # Only model-a should appear, not model-b
+        assert "model-a" in caplog.text
+        assert "model-b" not in caplog.text
 
     def test_model_not_found_exits(self, monkeypatch, tmp_path):
         """--model with nonexistent model raises SystemExit."""

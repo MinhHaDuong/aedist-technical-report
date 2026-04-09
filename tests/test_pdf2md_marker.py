@@ -46,27 +46,18 @@ def test_uses_get_output_path():
 # Functional tests (mock HTTP)
 # ---------------------------------------------------------------------------
 
-import io
-import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+import aedist.pdf2md_marker as _marker_mod
 from aedist.pdf2md_marker import (
     DEFAULT_MARKER_URL,
     main,
     marker_convert,
     pdf_to_markdown,
 )
-
-
-def _mock_urlopen(response_body):
-    """Return a context-manager mock for urllib.request.urlopen."""
-    resp_bytes = json.dumps(response_body).encode("utf-8")
-    cm = MagicMock()
-    cm.__enter__ = MagicMock(return_value=io.BytesIO(resp_bytes))
-    cm.__exit__ = MagicMock(return_value=False)
-    return cm
+from conftest import mock_urlopen
 
 
 # ---------------------------------------------------------------------------
@@ -80,8 +71,8 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake content")
 
         body = {"markdown": "# Converted Document\n\nParagraph."}
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = marker_convert(fake_pdf)
         assert result == "# Converted Document\n\nParagraph."
@@ -91,8 +82,8 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = [{"markdown": "# From list"}]
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = marker_convert(fake_pdf)
         assert result == "# From list"
@@ -102,8 +93,8 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = []
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = marker_convert(fake_pdf)
         assert result == ""
@@ -113,8 +104,8 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"text": "fallback text"}
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = marker_convert(fake_pdf)
         assert result == "fallback text"
@@ -124,12 +115,12 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"markdown": "ok"}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", urlopen_mock)
 
         marker_convert(fake_pdf, "http://custom:9999")
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         assert req.full_url == "http://custom:9999/convert"
 
     def test_sends_multipart_with_pdf_filename(self, tmp_path, monkeypatch):
@@ -137,12 +128,12 @@ class TestMarkerConvert:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
 
         body = {"markdown": "ok"}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_marker_mod.urllib.request, "urlopen", urlopen_mock)
 
         marker_convert(fake_pdf)
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         assert b"myfile.pdf" in req.data
         assert "multipart/form-data" in req.get_header("Content-type")
 

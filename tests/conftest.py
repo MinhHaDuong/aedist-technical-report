@@ -69,3 +69,20 @@ def patch_measurements_loader(monkeypatch, meas_path: Path) -> None:
 
     monkeypatch.setattr(mmod, "_load_paths", lambda: {"measurements": str(meas_path)})
     monkeypatch.setattr(mmod, "_resolve", lambda p: Path(p))
+
+
+def mock_urlopen(response_body):
+    """Return a context-manager mock for urllib.request.urlopen.
+
+    Shared helper for pdf2md tests that mock HTTP calls via stdlib.
+    Usage: monkeypatch.setattr(aedist.pdf2md_<backend>, "urlopen", mock)
+    """
+    import io
+    import json
+    from unittest.mock import MagicMock
+
+    resp_bytes = json.dumps(response_body).encode("utf-8")
+    cm = MagicMock()
+    cm.__enter__ = MagicMock(return_value=io.BytesIO(resp_bytes))
+    cm.__exit__ = MagicMock(return_value=False)
+    return cm

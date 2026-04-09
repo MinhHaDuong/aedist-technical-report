@@ -72,13 +72,13 @@ def test_raises_on_empty_response():
 # Functional tests (mock HTTP / external deps)
 # ---------------------------------------------------------------------------
 
-import io
 import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+import aedist.pdf2md_ollama as _ollama_mod
 from aedist.pdf2md_ollama import (
     DEFAULT_DPI,
     DEFAULT_MODEL,
@@ -87,6 +87,7 @@ from aedist.pdf2md_ollama import (
     main,
     pdf_to_markdown,
 )
+from conftest import mock_urlopen
 
 
 class TestConstants:
@@ -106,56 +107,48 @@ class TestConstants:
 
 
 class TestOllamaChatVision:
-    def _mock_urlopen(self, response_body):
-        """Return a context-manager mock for urllib.request.urlopen."""
-        resp_bytes = json.dumps(response_body).encode()
-        cm = MagicMock()
-        cm.__enter__ = MagicMock(return_value=io.BytesIO(resp_bytes))
-        cm.__exit__ = MagicMock(return_value=False)
-        return cm
-
     def test_returns_content(self, monkeypatch):
         body = {"message": {"content": "# Hello"}}
-        cm = self._mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_ollama_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = _ollama_chat_vision("gemma4:31b", [{"role": "user", "content": "hi"}])
         assert result == "# Hello"
 
     def test_raises_on_empty_content(self, monkeypatch):
         body = {"message": {"content": ""}}
-        cm = self._mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_ollama_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         with pytest.raises(ValueError, match="empty response"):
             _ollama_chat_vision("gemma4:31b", [{"role": "user", "content": "hi"}])
 
     def test_raises_on_missing_message(self, monkeypatch):
         body = {}
-        cm = self._mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_ollama_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         with pytest.raises(ValueError, match="empty response"):
             _ollama_chat_vision("gemma4:31b", [{"role": "user", "content": "hi"}])
 
     def test_sends_to_correct_url(self, monkeypatch):
         body = {"message": {"content": "ok"}}
-        cm = self._mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        mock_fn = MagicMock(return_value=cm)
+        monkeypatch.setattr(_ollama_mod.urllib.request, "urlopen", mock_fn)
 
         _ollama_chat_vision("model", [{"role": "user", "content": "x"}], "http://myhost:1234")
-        req = mock_urlopen.call_args[0][0]
+        req = mock_fn.call_args[0][0]
         assert req.full_url == "http://myhost:1234/api/chat"
 
     def test_sends_model_in_payload(self, monkeypatch):
         body = {"message": {"content": "ok"}}
-        cm = self._mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        mock_fn = MagicMock(return_value=cm)
+        monkeypatch.setattr(_ollama_mod.urllib.request, "urlopen", mock_fn)
 
         _ollama_chat_vision("mymodel", [{"role": "user", "content": "x"}])
-        req = mock_urlopen.call_args[0][0]
+        req = mock_fn.call_args[0][0]
         payload = json.loads(req.data)
         assert payload["model"] == "mymodel"
         assert payload["stream"] is False

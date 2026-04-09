@@ -129,27 +129,19 @@ def test_calls_mistral_ocr_endpoint():
 # Functional tests (mock HTTP)
 # ---------------------------------------------------------------------------
 
-import io
 import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+import aedist.pdf2md_mistral_ocr as _mistral_mod
 from aedist.pdf2md_mistral_ocr import (
     MISTRAL_OCR_URL,
     _ocr_request,
     main,
     pdf_to_markdown,
 )
-
-
-def _mock_urlopen(response_body):
-    """Return a context-manager mock for urllib.request.urlopen."""
-    resp_bytes = json.dumps(response_body).encode("utf-8")
-    cm = MagicMock()
-    cm.__enter__ = MagicMock(return_value=io.BytesIO(resp_bytes))
-    cm.__exit__ = MagicMock(return_value=False)
-    return cm
+from conftest import mock_urlopen
 
 
 # ---------------------------------------------------------------------------
@@ -253,8 +245,8 @@ class TestOcrRequest:
         monkeypatch.setenv("MISTRAL_API_KEY", "test-key-123")
 
         body = {"pages": [{"index": 0, "markdown": "content", "tables": []}]}
-        cm = _mock_urlopen(body)
-        monkeypatch.setattr("urllib.request.urlopen", MagicMock(return_value=cm))
+        cm = mock_urlopen(body)
+        monkeypatch.setattr(_mistral_mod.urllib.request, "urlopen", MagicMock(return_value=cm))
 
         result = _ocr_request(fake_pdf, model="mistral-ocr-latest", table_format="html")
         assert result["pages"][0]["markdown"] == "content"
@@ -275,13 +267,13 @@ class TestOcrRequest:
         monkeypatch.setenv("MISTRAL_API_KEY", "sk-my-key")
 
         body = {"pages": []}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_mistral_mod.urllib.request, "urlopen", urlopen_mock)
 
         _ocr_request(fake_pdf, model="mistral-ocr-latest", table_format="html")
 
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         assert req.full_url == MISTRAL_OCR_URL
         assert req.get_header("Authorization") == "Bearer sk-my-key"
         assert req.get_header("Content-type") == "application/json"
@@ -293,13 +285,13 @@ class TestOcrRequest:
         monkeypatch.setenv("MISTRAL_API_KEY", "sk-key")
 
         body = {"pages": []}
-        cm = _mock_urlopen(body)
-        mock_urlopen = MagicMock(return_value=cm)
-        monkeypatch.setattr("urllib.request.urlopen", mock_urlopen)
+        cm = mock_urlopen(body)
+        urlopen_mock = MagicMock(return_value=cm)
+        monkeypatch.setattr(_mistral_mod.urllib.request, "urlopen", urlopen_mock)
 
         _ocr_request(fake_pdf, model="my-model", table_format="markdown")
 
-        req = mock_urlopen.call_args[0][0]
+        req = urlopen_mock.call_args[0][0]
         payload = json.loads(req.data)
         assert payload["model"] == "my-model"
         assert payload["table_format"] == "markdown"
