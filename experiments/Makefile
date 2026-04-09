@@ -174,7 +174,7 @@ derived/%.record.json: derived/%.csv $(REFERENCE)
 
 .PHONY: evaluate-all-records
 evaluate-all-records:
-	-@$(MAKE) --no-print-directory -k -j$$(nproc) \
+	@$(MAKE) --no-print-directory -j$$(nproc) \
 	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
 	for f in outputs/*/*-run*.json derived/*/*-run*.json; do \

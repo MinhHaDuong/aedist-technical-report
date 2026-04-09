@@ -1,0 +1,92 @@
+# tests/test_empty_csv.py
+"""Tests for empty CSV / empty plant list handling in the reconciliation pipeline."""
+
+import json
+from pathlib import Path
+
+import pytest
+
+from aedist.evaluate import load_plants_csv
+from aedist.reconcile import plants_to_dataframe, reconcile
+from aedist.schema import FuelType, MatchType, Plant
+
+
+class TestPlantsToDataframeEmpty:
+    """plants_to_dataframe must return a valid cleaned DataFrame for empty input."""
+
+    def test_empty_list_returns_dataframe_with_cleaned_columns(self):
+        """plants_to_dataframe([]) returns a zero-row DataFrame with the
+        columns that the LP matcher requires (name, name_clean, capacity_clean)
+        plus the auxiliary cleaned columns. No exception raised."""
+        df = plants_to_dataframe([])
+        assert len(df) == 0
+        # LP matcher requires these three columns
+        assert "name" in df.columns
+        assert "name_clean" in df.columns
+        assert "capacity_clean" in df.columns
+        # Auxiliary columns from cleaner
+        assert "province_clean" in df.columns
+        assert "fuel_clean" in df.columns
+        assert "status_clean" in df.columns
+
+
+class TestReconcileEmptySystem:
+    """reconcile(reference, []) produces all-REFERENCE_ONLY entries."""
+
+    @pytest.fixture
+    def three_reference_plants(self):
+        return [
+            Plant(name="Pha Lai", fuel=FuelType.COAL, capacity_mwe=600),
+            Plant(name="Uong Bi", fuel=FuelType.COAL, capacity_mwe=300),
+            Plant(name="Ninh Binh", fuel=FuelType.COAL, capacity_mwe=100),
+        ]
+
+    def test_all_entries_are_reference_only(self, three_reference_plants):
+        entries = reconcile(three_reference_plants, [])
+        assert len(entries) == 3
+        for e in entries:
+            assert e.match_type == MatchType.REFERENCE_ONLY
+
+    def test_empty_system_metrics_are_zero(self, three_reference_plants):
+        from aedist.metrics import compute_metrics
+        entries = reconcile(three_reference_plants, [])
+        m = compute_metrics(entries)
+        assert m.f1 == 0.0
+        assert m.n_matched == 0
+        assert m.n_missed == 3
+        assert m.n_hallucinated == 0
+
+
+class TestEvaluateEmptyCsv:
+    """_evaluate_csv_file on a header-only CSV produces status='empty' record."""
+
+    def test_header_only_csv_produces_empty_record(self, tmp_path):
+        # Create a header-only CSV (valid headers, zero data rows)
+        csv_path = tmp_path / "census" / "empty-model-run1.csv"
+        csv_path.parent.mkdir(parents=True)
+        csv_path.write_text("name,fuel,status,capacity\n", encoding="utf-8")
+
+        ref_path = Path(__file__).parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+        if not ref_path.exists():
+            pytest.skip("Reference CSV not available")
+
+        import argparse
+
+        from aedist.evaluate import _evaluate_csv_file
+        args = argparse.Namespace(output=str(tmp_path / "out"), reference=None)
+        _evaluate_csv_file(csv_path, ref_path, args)
+
+        record_path = tmp_path / "out" / "empty-model-run1.record.json"
+        assert record_path.exists()
+
+        record = json.loads(record_path.read_text())
+        # Derive expected false-negative count from the actual reference file
+        # so the test adapts if the reference dataset changes.
+        n_reference = len(load_plants_csv(ref_path))
+        assert n_reference > 0, "Reference CSV yielded no plants — check data/reference/"
+        assert record["result_summary"]["status"] == "empty"
+        assert record["result_summary"]["f1"] == 0.0
+        assert record["result_summary"]["fn"] == n_reference
+        assert record["result_summary"]["tp"] == 0
+        assert record["result_summary"]["fp"] == 0
+        assert record["result_summary"]["n_plants"] == 0

@@ -279,6 +279,11 @@ def _evaluate_csv_file(
         label = f"{system_path.parent.name}/{system_path.stem}"
         record = _metrics_to_runrecord(metrics, label, _rel_path(system_path))
 
+        # Mark empty system CSVs so they appear as status="empty" in the
+        # measurements table rather than the default "ok".
+        if len(system) == 0:
+            record.result_summary.status = "empty"
+
         json_companion = system_path.with_suffix(".json")
         if json_companion.exists():
             _backfill_resource_use(record, json_companion)

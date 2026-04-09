@@ -45,7 +45,17 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
         })
     df = pd.DataFrame(rows)
     if df.empty:
-        df = pd.DataFrame(columns=["name", "province", "fuel", "capacity", "status", "source_ref"])
+        # Return a zero-row DataFrame with all raw + cleaned columns so
+        # downstream consumers (LP matcher, metrics) see the schema they
+        # expect.  Bypass the cleaner — its validate_dataframe raises on
+        # empty input, and there is nothing to clean anyway.
+        return pd.DataFrame(
+            columns=[
+                "name", "province", "fuel", "capacity", "status", "source_ref",
+                "name_clean", "province_clean", "fuel_clean", "capacity_clean",
+                "status_clean",
+            ]
+        )
 
     # Use the existing cleaner for normalization
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
