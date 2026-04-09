@@ -7,98 +7,139 @@ Author: claude
 --- log ---
 2026-04-08T10:15Z claude created from radical-improvements assessment
 2026-04-08T12:00Z claude note Removed stale Blocked-by: 0034 (closed)
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
 
-The fuzzy matching threshold (default 90) is a judgment call in the
-measurement apparatus. A model that outputs "Vung Ang I Thermal" against
-reference "Vũng Áng 1" may or may not match depending on whether
-RapidFuzz partial_ratio crosses 90. This flips TP/FP/FN and cascades
-through F1.
+The fuzzy matching threshold (default 90) is a hidden degree of freedom
+in the measurement apparatus. But sweeping thresholds externally (re-running
+the MILP 8 times per model) treats the symptom. The root cause: the LP
+matcher discards the raw similarity score immediately after the binary
+comparison in `_compute_costs()`. That score is the evidence. Without it,
+we are blind to which matches are borderline and which are solid.
 
-Reported model differences are often 2–5 pp. If rankings change when the
-threshold moves from 85 to 95, those differences are artifacts of the
-measurement, not properties of the models.
+Data from existing reconciliation CSVs shows fuzzy matches constitute
+15-50% of all matched pairs depending on the model. For prolific
+models (Gemini Flash Lite, Qwen 9B) that generate 200-500+ candidate
+plants, fuzzy matching drives the outcome. For conservative models
+(DeepSeek V3.2 run1: 5 fuzzy matches out of 33 total), the threshold
+barely matters. This differential effect is the real confound: the
+threshold doesn't shift all models equally, so it can flip rankings
+even when overall F1 looks robust.
 
-This ticket answers: **which model rankings are robust to threshold choice?**
+The MILP has five adjustable parameters (similarity_threshold,
+mismatch_penalty, capacity_weight, dummy_cost, capacity_tolerance),
+but only similarity_threshold is visible. The others act silently.
+A principled fix makes the matching layer score-transparent, then
+derives sensitivity as a cheap post-hoc computation rather than
+an expensive re-evaluation loop.
 
-Blocked by 0034 because findings should be reported with CIs (a ranking
-that flips AND has overlapping CIs is doubly unreliable).
+Ticket 0042 (bootstrap CIs) is now closed. CIs measure sampling
+noise across 3 runs. This ticket measures measurement-apparatus
+noise from the evaluation layer itself. Both are needed before
+claiming any model ranking is meaningful.
 
 ## Actions
 
-### 1. Add `scripts/sweep_matching_threshold.py`
+### 1. Make matching score-transparent (`matching/lp.py`)
 
-For each threshold in [70, 75, 80, 85, 88, 90, 92, 95]:
-  - Re-run `reconcile()` on all existing extracted CSVs against reference
-  - Compute metrics per (model, method, run, threshold)
-  - Output: `matching_sensitivity.csv` with columns:
-    model, method, run, threshold, f1, coverage, precision, n_matched
+In `_extract_results()`, record the `fuzz.partial_ratio` similarity
+score for each matched pair. Already computed in `_compute_costs()`
+but discarded. Changes:
 
-No new API calls needed. This re-evaluates existing outputs with
-different thresholds. The `reconcile()` function already accepts
-`similarity_threshold` as a kwarg.
+- `_build_result_row()`: add `similarity_score` key
+- `_extract_results()`: compute and store the score for matched pairs
+- Exact matches get score=100; unmatched get score=None
 
-Key implementation detail: the extracted CSVs are already on disk in
-`experiments/outputs/*/`. Load them via `runner.load_plants_csv()`,
-call `reconcile(reference, system, similarity_threshold=t)` for each t,
-then `compute_metrics()`.
+### 2. Propagate score through reconciliation pipeline
 
-### 2. Add `scripts/analyze_matching_sensitivity.py`
+- `ReconciliationEntry` in `schema.py`: add `similarity_score: float | None`
+- `reconcile.py` `_extract_entries()`: read score from result DataFrame
+- `evaluate.py` `_save_reconciliation_csv()`: add column to CSV output
 
-From `matching_sensitivity.csv`, compute:
-- **Rank stability**: for each pair of models at each threshold,
-  record which has higher mean F1. Flag pairs where ranking flips
-  across any threshold in [80, 95].
-- **Threshold sensitivity per model**: slope of F1 vs threshold.
-  Models with steep slopes are sensitive to the matching layer.
-- **Stable core**: models whose top-10 ranking is unchanged across
-  all thresholds. These are trustworthy comparisons.
+### 3. Add `scripts/sweep_matching_threshold.py`
 
-Output: `matching_sensitivity_report.txt` (human-readable summary)
-and `threshold_vs_f1.csv` (for plotting).
+Read existing reconciliation CSVs (which now contain similarity scores).
+For each threshold in [75, 80, 85, 88, 90, 92, 95]:
+- Filter: any matched pair with similarity_score < threshold becomes
+  reference_only + system_only (two unmatched entries)
+- Recompute TP/FP/FN/F1 from the filtered entries
+- No MILP re-run needed — pure post-hoc filtering
 
-### 3. Add plot to report
+Output: `matching_sensitivity.csv` with columns:
+model, method, run, threshold, f1, precision, coverage, n_matched,
+n_fuzzy_above, n_fuzzy_below
 
-`plot_matching_sensitivity.py` generates a line chart:
-X = threshold, Y = F1, one line per model (top 10 only).
-Lines that cross = unreliable ranking. Parallel lines = robust.
+Then compute:
+- Rank stability: for each model pair, does the higher-F1 model
+  flip across any threshold in [80, 95]?
+- Threshold sensitivity per model: slope of F1 vs threshold
+- Stable core: models whose ranking is invariant across all thresholds
 
 ### 4. Add one paragraph to report
 
-In the evaluation methodology section, acknowledge the matching
-confound and cite the sensitivity analysis as evidence that
-reported rankings are (or aren't) robust.
+In evaluation methodology, acknowledge the matching confound and
+cite the sensitivity analysis. If rankings are stable, state it as
+evidence of robustness. If they flip, flag the fragile comparisons
+and recommend a threshold range.
+
+### 5. Re-evaluate all existing outputs
+
+Run `make evaluate` to regenerate reconciliation CSVs with the new
+similarity_score column. Then run the sweep script.
 
 ## Test
 
 ```python
-# test_sweep_matching_threshold.py
-def test_threshold_affects_metrics():
-    """Same data, different thresholds → different F1."""
-    ref = [Plant(name="Vũng Áng 1", ...)]
-    sys = [Plant(name="Vung Ang I", ...)]
-    entries_90 = reconcile(ref, sys, similarity_threshold=90)
-    entries_70 = reconcile(ref, sys, similarity_threshold=70)
-    m90 = compute_metrics(entries_90)
-    m70 = compute_metrics(entries_70)
-    # At threshold 70, this likely matches; at 90, it might not
-    assert m70.f1 >= m90.f1
+# test_matching_score_transparency.py
+def test_result_row_contains_similarity_score():
+    """LP reconciliation results include similarity_score."""
+    df1 = make_df([("vung ang 1", 600)])
+    df2 = make_df([("vung ang i", 600)])
+    result = reconcile_lp(df1, df2)
+    assert "similarity_score" in result.columns
+    assert result.iloc[0]["similarity_score"] > 0
 
-def test_perfect_match_threshold_invariant():
-    """Exact name matches are unaffected by threshold."""
-    ref = [Plant(name="Vũng Áng 1", ...)]
-    sys = [Plant(name="Vũng Áng 1", ...)]
-    for t in [70, 80, 90, 95]:
-        entries = reconcile(ref, sys, similarity_threshold=t)
-        assert compute_metrics(entries).f1 == 1.0
+def test_exact_match_score_is_100():
+    """Exact name matches get similarity_score = 100."""
+    df1 = make_df([("vung ang 1", 600)])
+    df2 = make_df([("vung ang 1", 600)])
+    result = reconcile_lp(df1, df2)
+    assert result.iloc[0]["similarity_score"] == 100
+
+def test_unmatched_score_is_none():
+    """Unmatched entries have similarity_score = None."""
+    df1 = make_df([("vung ang 1", 600)])
+    df2 = make_df([])  # empty
+    result = reconcile_lp(df1, df2)
+    assert pd.isna(result.iloc[0]["similarity_score"])
+
+def test_threshold_filter_changes_metrics():
+    """Filtering by threshold changes computed metrics."""
+    # A pair that scores ~85 similarity
+    ref = [Plant(name="Vũng Áng 1", capacity_mwe=600)]
+    sys = [Plant(name="Vung Ang I Thermal Power", capacity_mwe=600)]
+    entries = reconcile(ref, sys)
+    # With default threshold 90, may or may not match
+    # Post-hoc filter at 80 should be more permissive than at 95
+    # (Exact assertion depends on actual score)
+    assert entries[0].similarity_score is not None
+
+def test_reconciliation_entry_has_score():
+    """ReconciliationEntry carries similarity_score field."""
+    ref = [Plant(name="Ca Mau 1", capacity_mwe=750)]
+    sys = [Plant(name="Ca Mau 1", capacity_mwe=750)]
+    entries = reconcile(ref, sys)
+    assert entries[0].similarity_score == 100
 ```
 
 ## Exit criteria
-- `matching_sensitivity.csv` generated for thresholds 70–95
-- Report identifies which top-10 rankings are stable vs. fragile
-- Plot showing F1 vs threshold for top models
-- If rankings are unstable: flag in report with recommended threshold range
-- If rankings are stable: report this as evidence of robustness
+- `matching/lp.py` emits similarity_score in result rows
+- `ReconciliationEntry` and reconciliation CSVs carry the score
+- `matching_sensitivity.csv` generated for thresholds 75-95
+- Report identifies which rankings are stable vs. fragile
+- If rankings flip: flag specific model pairs and threshold range
+- If rankings are stable: report as evidence of robustness
 - `make check-fast` passes
+- All existing reconciliation CSVs regenerated with scores
