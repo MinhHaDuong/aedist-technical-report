@@ -157,19 +157,19 @@ def test_generate_table_sorted_by_f1_rag_desc():
     # GPT-5.4 RAG F1=0.720 > padme RAG F1=0.410, so GPT row comes first
     lines = latex.splitlines()
     data_lines = [
-        l
-        for l in lines
-        if "\\\\" in l
-        and "toprule" not in l
-        and "midrule" not in l
-        and "endhead" not in l
-        and "bottomrule" not in l
-        and "endlastfoot" not in l
-        and "caption" not in l
-        and "Model &" not in l
+        line
+        for line in lines
+        if "\\\\" in line
+        and "toprule" not in line
+        and "midrule" not in line
+        and "endhead" not in line
+        and "bottomrule" not in line
+        and "endlastfoot" not in line
+        and "caption" not in line
+        and "Model &" not in line
     ]
-    gpt_line = next((i for i, l in enumerate(data_lines) if "GPT-5.4" in l), None)
-    padme_line = next((i for i, l in enumerate(data_lines) if "(L)" in l), None)
+    gpt_line = next((i for i, line in enumerate(data_lines) if "GPT-5.4" in line), None)
+    padme_line = next((i for i, line in enumerate(data_lines) if "(L)" in line), None)
     assert gpt_line is not None and padme_line is not None
     assert gpt_line < padme_line
 

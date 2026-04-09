@@ -1,6 +1,6 @@
 """Tests for RunRecord schema and JSONL round-trip."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -18,7 +18,7 @@ def _make_record(**overrides) -> RunRecord:
     """Build a RunRecord with sensible defaults, overridden by kwargs."""
     defaults = dict(
         run_id="abc123def456",
-        timestamp=datetime(2026, 4, 4, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 4, 4, 12, 0, 0, tzinfo=UTC),
         method=Method.SINGLE,
         method_params=MethodParams(
             model="openai/gpt-4o",

@@ -20,10 +20,10 @@ import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
+from .evaluate import _DEFAULT_REF, load_plants_csv
 from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
-from .evaluate import _DEFAULT_REF, load_plants_csv
 from .schema import (
     FuelType,
     Method,
@@ -346,7 +346,6 @@ def _results_to_records(
 
         # Per-run records (rag)
         for i, m in enumerate(metrics_list):
-            run_num = i + 1
             # Find the original JSON path for this run
             result_file = str(paths[i]) if i < len(paths) else None
             records.append(

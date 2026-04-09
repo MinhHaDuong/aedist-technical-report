@@ -7,8 +7,6 @@ from types import SimpleNamespace
 import pytest
 
 from aedist.pdf2md_openrouter import process_model_response
-from aedist.pdf2md_utils import clean_markdown
-
 
 # ---------------------------------------------------------------------------
 # process_model_response

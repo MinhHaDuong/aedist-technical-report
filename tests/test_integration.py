@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
+from aedist.evaluate import load_plants_csv
 from aedist.metrics import compute_metrics, format_metrics
 from aedist.reconcile import reconcile
-from aedist.evaluate import load_plants_csv
 from aedist.schema import MatchType
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "reference"

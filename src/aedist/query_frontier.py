@@ -33,11 +33,11 @@ from .harness import (
     load_models,
     make_client,
     make_client_for_router,
-    select_models,
     model_metadata,
     output_path,
     query_single_turn,
     save_json,
+    select_models,
     should_skip,
 )
 
