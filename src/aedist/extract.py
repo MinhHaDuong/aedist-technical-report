@@ -51,13 +51,12 @@ LENGTH_BONUS_CAP_LINES = 50.0
 def extract_fenced_blocks(text: str) -> list[str]:
     # Capture content in ```csv ...``` or ``` ... ```
     # Use \r?\n to handle both LF and CRLF line endings.
-    blocks: list[str] = []
-    for m in re.finditer(
-        r"```(?:csv)?\s*\r?\n(.*?)\r?\n```", text, flags=re.IGNORECASE | re.DOTALL
-    ):
-        # Strip any remaining \r from captured content (CRLF inside block)
-        blocks.append(m.group(1).replace("\r", ""))
-    return blocks
+    return [
+        m.group(1).replace("\r", "")
+        for m in re.finditer(
+            r"```(?:csv)?\s*\r?\n(.*?)\r?\n```", text, flags=re.IGNORECASE | re.DOTALL
+        )
+    ]
 
 
 def score_csv_like_block(block: str) -> float:

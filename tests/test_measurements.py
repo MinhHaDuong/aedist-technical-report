@@ -143,21 +143,19 @@ class TestOutputEquivalence:
 
     def _records_from_metrics(self, metrics_list):
         """Build RunRecords matching the fixture data."""
-        records = []
-        for m in metrics_list:
-            records.append(
-                _make_record(
-                    m["label"],
-                    tp=m["n_matched"],
-                    fp=m["n_hallucinated"],
-                    fn=m["n_missed"],
-                    f1=m["f1"],
-                    fuel_accuracy=m.get("fuel_accuracy"),
-                    status_accuracy=m.get("status_accuracy"),
-                    province_accuracy=m.get("province_accuracy"),
-                )
+        return [
+            _make_record(
+                m["label"],
+                tp=m["n_matched"],
+                fp=m["n_hallucinated"],
+                fn=m["n_missed"],
+                f1=m["f1"],
+                fuel_accuracy=m.get("fuel_accuracy"),
+                status_accuracy=m.get("status_accuracy"),
+                province_accuracy=m.get("province_accuracy"),
             )
-        return records
+            for m in metrics_list
+        ]
 
     def test_census_table_equivalence(self):
         from aedist.tabulate_census import generate_census_table

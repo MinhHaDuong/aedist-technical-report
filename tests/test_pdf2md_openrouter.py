@@ -68,7 +68,7 @@ def test_no_print_calls():
     lines = text.splitlines()
     for i, line in enumerate(lines, 1):
         stripped = line.lstrip()
-        if stripped.startswith("#") or stripped.startswith('"'):
+        if stripped.startswith(("#", '"')):
             continue
         assert not re.match(r".*\bprint\s*\(", stripped), (
             f"Found print() call at line {i}: {line.strip()}"

@@ -88,8 +88,7 @@ def run_web_searches(
         try:
             results = tavily_search(query, api_key)
             search_log.append({"query": query, "results": results})
-            for r in results:
-                context_parts.append(f"## {r['title']}\n{r['content']}")
+            context_parts.extend(f"## {r['title']}\n{r['content']}" for r in results)
         except httpx.HTTPError as e:
             log.error("Search failed for '%s': %s", query, e)
             search_log.append({"query": query, "error": str(e), "results": []})

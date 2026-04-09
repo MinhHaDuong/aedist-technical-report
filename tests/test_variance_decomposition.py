@@ -109,12 +109,13 @@ def test_balanced_subdesign_selection():
     """
     from aedist.variance_decomposition import variance_decomposition
 
-    records = []
     # 3 models x 2 methods, 2 replicates each
-    for model in ["A", "B", "C"]:
-        for method in ["rag", "single"]:
-            for f1 in [0.70, 0.80]:
-                records.append(make_record(model, method, f1))
+    records = [
+        make_record(model, method, f1)
+        for model in ["A", "B", "C"]
+        for method in ["rag", "single"]
+        for f1 in [0.70, 0.80]
+    ]
     # 4th model in only 1 method — should be excluded from the cross
     records.append(make_record("D", "rag", 0.60))
     records.append(make_record("D", "rag", 0.65))
@@ -208,11 +209,12 @@ def test_subdesign_composition_in_output():
     """Variance decomposition output includes sub-design composition."""
     from aedist.variance_decomposition import variance_decomposition
 
-    records = []
-    for model in ["A", "B"]:
-        for method in ["rag", "single"]:
-            for f1 in [0.70, 0.80]:
-                records.append(make_record(model, method, f1))
+    records = [
+        make_record(model, method, f1)
+        for model in ["A", "B"]
+        for method in ["rag", "single"]
+        for f1 in [0.70, 0.80]
+    ]
     result = variance_decomposition(records)
     assert "models_included" in result
     assert "methods_included" in result
@@ -225,11 +227,12 @@ def test_omega_squared_in_decomposition():
     """Variance decomposition output includes omega-squared."""
     from aedist.variance_decomposition import variance_decomposition
 
-    records = []
-    for model in ["A", "B"]:
-        for method in ["rag", "single"]:
-            for f1 in [0.70, 0.80]:
-                records.append(make_record(model, method, f1))
+    records = [
+        make_record(model, method, f1)
+        for model in ["A", "B"]
+        for method in ["rag", "single"]
+        for f1 in [0.70, 0.80]
+    ]
     result = variance_decomposition(records)
     assert "omega_sq_model" in result
     assert "omega_sq_method" in result

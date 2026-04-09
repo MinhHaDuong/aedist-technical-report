@@ -33,16 +33,17 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
     The LP matcher expects columns: name, name_clean, capacity_clean.
     We also preserve province, fuel, status for attribute-level metrics.
     """
-    rows = []
-    for p in plants:
-        rows.append({
+    rows = [
+        {
             "name": p.name,
             "province": p.province or "",
             "fuel": p.fuel.value if p.fuel else "",
             "capacity": str(p.capacity_mwe) if p.capacity_mwe is not None else "",
             "status": p.status.value if p.status else "",
             "source_ref": p.source_ref or "",
-        })
+        }
+        for p in plants
+    ]
     df = pd.DataFrame(rows)
     if df.empty:
         # Return a zero-row DataFrame with all raw + cleaned columns so

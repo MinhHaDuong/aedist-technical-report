@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from aedist.schema import (
     JobSpec,
@@ -64,7 +65,7 @@ class TestJobSpecConstruction:
         assert j.followups == "prompts/followups.txt"
 
     def test_invalid_mode_rejected(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             _make_jobspec(mode="bogus")
 
 
@@ -161,5 +162,5 @@ class TestLeaseInfo:
         assert lease.start_time.tzinfo is not None
 
     def test_expiry_required(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             LeaseInfo(job_id="job_003", worker_id="w1")

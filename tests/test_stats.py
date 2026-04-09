@@ -2,6 +2,8 @@
 
 import random
 
+import pytest
+
 from aedist.stats import bootstrap_ci, paired_bootstrap_test
 
 # --- bootstrap_ci ---
@@ -76,11 +78,8 @@ def test_paired_test_empty():
 
 def test_paired_test_length_mismatch():
     """Mismatched lengths → ValueError."""
-    try:
+    with pytest.raises(ValueError, match="equal-length"):
         paired_bootstrap_test([0.9, 0.91], [0.5])
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        pass
 
 
 def test_paired_test_deterministic_with_seed():

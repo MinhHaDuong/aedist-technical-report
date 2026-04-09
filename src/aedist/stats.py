@@ -65,7 +65,7 @@ def paired_bootstrap_test(
         return 1.0
 
     rng = random.Random(seed)
-    diffs = [ai - bi for ai, bi in zip(a, b)]
+    diffs = [ai - bi for ai, bi in zip(a, b, strict=True)]
     observed = abs(sum(diffs) / len(diffs))
 
     # Resample under H0 by randomly flipping signs of differences

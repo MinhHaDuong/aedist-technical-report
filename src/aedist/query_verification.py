@@ -275,12 +275,12 @@ def main():
     tavily_key = os.environ.get("TAVILY_API_KEY")
 
     # Enumerate conditions
-    conditions = []
-    for base in base_configs:
-        for mode in modes:
-            runs = 1 if mode in _DETERMINISTIC_MODES else repeat
-            for run in range(1, runs + 1):
-                conditions.append((base, mode, run))
+    conditions = [
+        (base, mode, run)
+        for base in base_configs
+        for mode in modes
+        for run in range(1, (1 if mode in _DETERMINISTIC_MODES else repeat) + 1)
+    ]
 
     if args.dry_run:
         log.info("Verification: %d conditions", len(conditions))
