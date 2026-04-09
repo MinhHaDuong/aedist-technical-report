@@ -1,5 +1,5 @@
 %erg v1
-Title: Reflexive self-prompting experiment for frontier models
+Title: Prompt ablation and self-repair: isolate what helps extraction
 Status: open
 Created: 2026-04-08
 Author: claude
@@ -7,64 +7,87 @@ Author: claude
 --- log ---
 2026-04-08T14:00Z claude created
 2026-04-08T16:30Z claude note rewritten after reviewing actual frontier_skill outputs and prompts
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-frontier_skill/ took a wrong turn: it asked models to write a Claude Code
-slash command, not to produce a power plant inventory. The outputs are code
-artifacts, not energy data. Repurpose this ticket for the experiment we
-actually want: reflexive self-prompting.
+The original ticket proposed "reflexive self-prompting" — a plan-then-execute
+two-turn protocol to improve inventory completeness. That hypothesis is
+backwards. The frontier data already refutes it: Opus census (40-word prompt)
+scores F1=0.64 while Opus frontier (1200-word prompt with sourcing, narratives,
+and bibliography) drops to F1=0.54. More metacognition in the prompt
+*degraded* extraction. Adding a planning turn on top of that is compounding
+the mistake.
 
-Hypothesis: a model that first articulates its strategy, then executes it,
-produces a more complete and better-sourced inventory than a single-shot query.
+Two sharper questions replace the original:
 
-## Design
+1. **Prompt ablation**: Which components of the frontier prompt cause the F1
+   drop? Is it the bibliography request? The per-plant narratives? The sector
+   overview? Isolating the damage tells us what NOT to include in production
+   prompts — a direct input to Phase 3 pipeline design.
 
-Two-turn protocol:
-  Turn 1 (plan): "You are a senior energy analyst. Describe in detail your
-    strategy for building a comprehensive, research-quality inventory of
-    Vietnam's thermal power plants. What primary sources would you consult?
-    How would you verify each entry? How would you handle uncertainty?"
-  Turn 2 (execute): Feed back the model's own plan verbatim, then:
-    "Now execute this strategy. Produce the inventory as a table..."
-    (with the same quality instructions as prompt_frontier.txt:
-     primary sources, confidence levels, observed vs projected,
-     exhaustive coverage, consistent MWe units.)
+2. **Self-repair**: Can a model improve its own CSV by reviewing it against
+   an expected plant count? This is the production-relevant capability: not
+   "think before you act" but "critique and fix what you produced." Human
+   analysts do exactly this iterative loop.
 
-## Model selection
-Apply to models that demonstrated strong census/frontier performance AND
-have reasoning or deep-research capability:
-- anthropic/claude-opus-4.6 (top census scorer, strong sourcing)
-- openai/o3 (reasoning, good frontier result)
-- deepseek/deepseek-r1-0528 (reasoning, good frontier result)
-- alibaba/tongyi-deepresearch-30b-a3b (deep research, good frontier)
-- moonshotai/kimi-k2-thinking (reasoning, good frontier)
+Both use existing infrastructure. No new query modules. No new storage
+conventions. Just new prompt files and sweep configs for `query_frontier`
+and `query_multiturn`.
 
-Skip models that refused the frontier prompt (gpt-5.4, grok-4.20) and
-the $1.96 black hole (o3-deep-research, see ticket 0039).
+## Phase A — Prompt ablation (pre-conference, ~1h, ~$2)
 
-## Storage
-Per ticket 0037 design:
-- qualitative/reflexive/{model}-run1.json — both turns stored together
-- qualitative/reflexive/{model}-run1.md — plan turn extracted as markdown
-- outputs/reflexive/{model}-run1.csv — table extracted from turn 2
-- outputs/reflexive/{model}-run1.eval.json — evaluation against reference
+Single model (Opus), 5 single-shot runs via `query_frontier.py`:
 
-## Evaluation
-Compare reflexive results against same model's census and frontier scores:
-- Does F1 improve vs single-shot census?
-- Does coverage improve vs frontier (which already asks for exhaustiveness)?
-- Does source quality improve? (Evidence rubric: 0-4 scale from sweeps.verification)
-- Cost: sum of both turns vs single frontier query
+| Run | Prompt variant | What's removed |
+|-----|---------------|----------------|
+| 1 | census (baseline) | Everything — just "list all plants as CSV" |
+| 2 | frontier minus bibliography | No §4 (annotated bibliography) |
+| 3 | frontier minus narratives | No per-plant discussion paragraphs |
+| 4 | frontier minus overview | No §1 (sector overview) |
+| 5 | frontier full (control) | Nothing — the 1200-word prompt as-is |
+
+Output: one comparison row in a table. Slide-ready finding for the methods
+framing: "elaborate prompts degrade structured extraction by X% — here's
+which component is responsible."
+
+Storage: `outputs/ablation/` — standard .json/.csv/.eval.json per run.
+
+## Phase B — Self-repair protocol (post-conference, ~$5)
+
+5 models, using `query_multiturn.py` with 1 followup:
+
+Turn 1: Standard census prompt (prompt_structured.txt).
+Turn 2 (followup): "You produced {N} plants. Vietnam has approximately 163
+  thermal power plants across 50+ complexes. Review your table: identify
+  plants you likely missed (check LNG terminals, plants under PDP7/PDP8,
+  cancelled projects). Produce a corrected and complete CSV table."
+
+The followup is templated — {N} is extracted from turn 1's CSV row count
+at runtime. This requires a minor extension to `run_conversation`: allow
+a followup to reference turn-1 output. If that's too invasive, hardcode
+the followup without {N} and just say "review your table for gaps."
+
+Models: Opus, o3, DeepSeek R1, Tongyi DeepResearch, Kimi K2 Thinking
+(same 5 from original ticket — they have frontier baselines).
+
+Evaluation: extract CSV from turn-2 response, standard evaluate against
+reference. Comparison: single-shot F1 vs self-repair F1 vs cost delta.
+
+Storage: `outputs/self_repair/` — standard multiturn JSON with both turns.
 
 ## Actions
-1. Write prompt_reflexive_plan.txt (turn 1) and prompt_reflexive_execute.txt (turn 2 template)
-2. Add [sweeps.reflexive] to experiments.toml with mode "multiturn" (2 turns)
-3. Add [sets.reflexive] model set
-4. Run sweep (1 run per model, 5 models, budget ~$5)
-5. Extract and evaluate
+1. Write 4 ablated prompt variants in experiments/prompts/
+2. Add [sweeps.ablation] to experiments.toml — mode "single", model Opus, 5 prompts
+3. Run Phase A ablation sweep and evaluate (pre-conference if time permits)
+4. Write prompt_self_repair_followup.txt for Phase B
+5. Add [sweeps.self_repair] to experiments.toml — mode "multiturn", 1 followup
+6. Run Phase B after conference, evaluate, produce comparison table
+
+## Test
+Phase A first test: `python -m aedist.query_frontier --prompt prompts/prompt_frontier_no_bibliography.txt --model anthropic/claude-opus-4.6 --output outputs/ablation/ --dry-run` succeeds.
 
 ## Exit criteria
-- 5 models complete both turns
-- CSVs extracted from turn 2 and evaluated against reference
-- Comparison table: reflexive vs census vs frontier F1/coverage/cost
+- Phase A: 5 ablation runs evaluated, table showing F1 delta per removed component
+- Phase B: 5 models × 1 self-repair run, comparison table: census F1 vs repair F1 vs cost
+- Finding stated: which prompt components help/hurt extraction, and whether self-repair closes the recall gap
