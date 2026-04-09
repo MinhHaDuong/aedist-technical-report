@@ -20,7 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
-from aedist.util import parse_number, strip_diacritics
+from .harness import iter_model_replies
+from .util import parse_number, strip_diacritics
 
 log = logging.getLogger(__name__)
 
@@ -197,7 +198,7 @@ def norm_header(h: str) -> str:
     return h.strip("_")
 
 
-_CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
+_CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe", "source_1", "source_2", "note"]
 
 
 def map_header_to_canonical(norm: str) -> str | None:
@@ -233,6 +234,13 @@ def map_header_to_canonical(norm: str) -> str | None:
     # Common variants that still normalize with parentheses removed
     if norm.startswith("capacity"):
         return "capacity_mwe"
+    # Provenance columns
+    if norm in {"source_1", "source", "reference", "citation"}:
+        return "source_1"
+    if norm in {"source_2", "reference_2", "citation_2"}:
+        return "source_2"
+    if norm in {"note", "notes", "comment", "comments"}:
+        return "note"
     return None
 
 
@@ -336,21 +344,21 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     return ExtractResult(ExtractStatus.WROTE, out_path, f"{json_path.name}: wrote {out_path.name}")
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    p = argparse.ArgumentParser(description="Extract CSV from LLM JSON outputs")
-    p.add_argument(
+    parser = argparse.ArgumentParser(description="Extract CSV from LLM JSON outputs")
+    parser.add_argument(
         "--input",
         required=True,
         help="Directory containing JSON outputs",
     )
-    p.add_argument(
+    parser.add_argument(
         "--output",
         required=True,
         help="Directory to write extracted CSV files into",
     )
-    p.add_argument("--overwrite", action="store_true", help="Overwrite existing CSV files")
-    args = p.parse_args()
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing CSV files")
+    args = parser.parse_args(argv)
 
     input_dir = Path(args.input)
     output_dir = Path(args.output)
@@ -358,9 +366,7 @@ def main() -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
-    json_files = sorted(
-        f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")
-    )
+    json_files = list(iter_model_replies(input_dir))
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
 

@@ -8,8 +8,10 @@ save/skip logic, and cost computation.
 import json
 import logging
 import os
+import re
 import time
 import tomllib
+from collections.abc import Iterator
 from pathlib import Path
 
 import yaml
@@ -188,6 +190,22 @@ def output_path(output_dir: Path, model_id: str, run: int, prefix: str = "") -> 
 def should_skip(output_dir: Path, model_id: str, run: int, prefix: str = "") -> bool:
     """Return True if the output file already exists."""
     return output_path(output_dir, model_id, run, prefix).exists()
+
+
+_MODEL_REPLY_RE = re.compile(r"^.+-run\d+\.json$")
+
+
+def iter_model_replies(directory: Path) -> Iterator[Path]:
+    """Yield model-reply JSON files from *directory*, sorted by name.
+
+    Matches the canonical naming convention from output_filename():
+    {slug}-run{N}.json or {prefix}-{slug}-run{N}.json.
+    Excludes all derived files (.record.json, _summary.json,
+    tavily_cache.json, etc.) by whitelist, not blacklist.
+    """
+    for f in sorted(directory.glob("*.json")):
+        if _MODEL_REPLY_RE.match(f.name):
+            yield f
 
 
 # ---------------------------------------------------------------------------

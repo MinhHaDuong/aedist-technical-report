@@ -1,6 +1,12 @@
 """Tests for aedist.analyze_multiturn_budget — token budget extrapolation."""
 
-from aedist.analyze_multiturn_budget import extrapolate_to_n_turns, per_turn_token_usage
+import json
+
+from aedist.analyze_multiturn_budget import (
+    extrapolate_to_n_turns,
+    load_multiturn_results,
+    per_turn_token_usage,
+)
 
 
 def test_per_turn_token_usage_extracts_assistant_turns():
@@ -95,3 +101,18 @@ def test_extrapolate_zero_context_window():
     proj = extrapolate_to_n_turns(per_turn, n_turns=10, context_window=0)
     assert proj["overflow"] is False
     assert proj["projected_pct"] == 0
+
+
+def test_load_multiturn_results_skips_derived_files(tmp_path):
+    """load_multiturn_results only loads model-reply files, not derived files."""
+    record = {"turns": [{"role": "assistant", "content": "x", "turn": 0}]}
+    # Model reply (should be loaded)
+    (tmp_path / "model-run1.json").write_text(json.dumps(record))
+    # Derived files (should be skipped)
+    (tmp_path / "tavily_cache.json").write_text(json.dumps({"query": "test"}))
+    (tmp_path / "self_consistency_summary.json").write_text(json.dumps({"kappa": 0.8}))
+    (tmp_path / "model-run1.record.json").write_text(json.dumps({"f1": 0.5}))
+
+    results = load_multiturn_results(tmp_path)
+    assert len(results) == 1
+    assert results[0] == record

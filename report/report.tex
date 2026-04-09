@@ -259,6 +259,8 @@ Certaines centrales manquent systématiquement~: les anciennes retirées du serv
 
 On compare les résultats avec l'inventaire exhaustif compilé par nos soins à l'aide de \emph{reconcile.py}, un script de réconciliation par correspondance exacte et fuzzy matching.
 
+Le seuil de similarité pour le fuzzy matching (par défaut~90 sur une échelle de 0 à~100) est un degré de liberté caché~: les modèles prolifiques (Gemini~Flash~Lite, Qwen~9B) dépendent davantage du matching flou que les modèles conservateurs (DeepSeek~V3.2). Pour vérifier que les classements ne sont pas un artefact du seuil choisi, nous effectuons un balayage post-hoc~: chaque paire matchée conserve son score de similarité brut, puis nous recalculons F1 pour des seuils allant de~75 à~95 sans relancer l'optimisation MILP. Sur l'ensemble du recensement, aucune inversion de classement entre modèles n'est observée dans cet intervalle, ce qui confirme la robustesse des comparaisons rapportées.
+
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Performances de Claude selon différentes configurations~: nombre de centrales correctes, incorrectes et manquantes}\label{tab:performances}\\
 \toprule
@@ -439,6 +441,8 @@ Ce rapport évalue les capacités de l'IA à produire des statistiques énergét
 \item[Graphes de connaissances] Les graphes globaux (OSM, Wikidata, Diffbot, DBpedia) retournent entre 20 et 54 centrales chacun, avec des couvertures complémentaires. Les outils de construction automatique de graphes (R2R, TrustGraph) restent immatures pour notre cas d'usage.
 \end{description}
 
+\InputIfFileExists{inputs/generated/tab_variance}{}{}
+
 \section{Évaluation technologique}
 
 \textbf{Ce qui fonctionne}~: L'approche RAG avec décomposition des requêtes récupère 99\,\% d'un inventaire expert pour 0,06~\$. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
@@ -463,7 +467,7 @@ Notre approche se distingue des assistants de recherche existants par~:
 \section{Perspectives}
 
 % --- Para 1: pilot accuracy, cost eliminated ---
-Les résultats de cette étude pilote montrent qu'un pipeline RAG avec décomposition des requêtes récupère déjà 98,8\,\% d'un inventaire expert, pour un coût marginal de 0,06\,\$. Le design de la méthode -- régime documentaire, décomposition, agrégation -- explique davantage de variance que le choix du modèle~: un modèle open-weight à 0,26\,\$/Mtok surpasse des modèles propriétaires dix fois plus coûteux. La précision atteinte sur le cas pilote vietnamien est encourageante~; la barrière du coût est levée.
+Les résultats de cette étude pilote montrent qu'un pipeline RAG avec décomposition des requêtes récupère déjà 98,8\,\% d'un inventaire expert, pour un coût marginal de 0,06\,\$. Une décomposition descriptive de la variance (modèle $\times$ méthode) suggère que, dans ce pilote, le design de la méthode explique davantage de variance que le choix du modèle (tableau~\ref{tab:variance})~; toutefois, le terme d'interaction modèle $\times$ méthode est substantiel, ce qui signifie que les effets principaux doivent être interprétés avec prudence~: un modèle open-weight à 0,26\,\$/Mtok surpasse des modèles propriétaires dix fois plus coûteux. Ces résultats proviennent d'un sous-design équilibré à effectifs réduits ($n=2$ réplicats par cellule)~; les scores F1 sont bornés et les runs sont des pseudo-réplicats (même prompt et même pipeline, mesurant uniquement le bruit d'échantillonnage du LLM). La précision atteinte sur le cas pilote vietnamien est encourageante~; la barrière du coût est levée.
 
 % --- Para 2: trust (Level 3) is the next gate ---
 La précision ne suffit cependant pas à rendre les données exploitables. Un modélisateur de systèmes énergétiques n'intégrera dans ses scénarios que des données dont il peut vérifier la provenance. Chaque donnée produite par le pipeline doit être traçable jusqu'au document source~: une décision gouvernementale, un rapport annuel d'entreprise, un relevé du régulateur. Le système doit exprimer des intervalles de confiance sur les agrégats, et signaler explicitement ses lacunes plutôt que de les combler par fabrication. C'est le niveau~3 du cadre d'évaluation proposé (provenance)~: le passage obligé entre «~la méthode fonctionne~» et «~les données sont utilisables~».
@@ -492,7 +496,7 @@ Incrémentalité & Monolithique        & Actif par actif, source par source \\
 \end{tabular}
 \end{center}
 
-\noindent Le corpus constitué est lui-même un actif durable~: une fois les PDP, rapports EVN et décisions provinciales indexés et convertis, ils répondent à des questions que le prompt initial n'avait pas anticipées. La donnée de qualité recherche n'est pas celle qui est exacte~: c'est celle dont les erreurs sont \emph{localisables}.
+\noindent Le corpus constitué est lui-même un actif durable~: une fois les PDP, rapports EVN et décisions provinciales indexés et convertis, ils répondent à des questions que le prompt initial n'avait pas anticipées. La donnée de qualité recherche n'est pas celle qui est exacte~: c'est celle dont les erreurs sont \emph{localisables}. Dans un pilote sur trois extractions sourcées (337~lignes, modèle Claude~Opus), 77\,\% des citations renvoient à des sources primaires (décisions gouvernementales, rapports annuels EVN) et aucune source fabriquée n'a été identifiée lors d'une vérification manuelle.
 
 % --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.

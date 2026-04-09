@@ -45,7 +45,17 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
         })
     df = pd.DataFrame(rows)
     if df.empty:
-        df = pd.DataFrame(columns=["name", "province", "fuel", "capacity", "status", "source_ref"])
+        # Return a zero-row DataFrame with all raw + cleaned columns so
+        # downstream consumers (LP matcher, metrics) see the schema they
+        # expect.  Bypass the cleaner — its validate_dataframe raises on
+        # empty input, and there is nothing to clean anyway.
+        return pd.DataFrame(
+            columns=[
+                "name", "province", "fuel", "capacity", "status", "source_ref",
+                "name_clean", "province_clean", "fuel_clean", "capacity_clean",
+                "status_clean",
+            ]
+        )
 
     # Use the existing cleaner for normalization
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
@@ -108,6 +118,9 @@ def _extract_entries(
             if ref_prov and sys_prov:
                 province_match = ref_prov == sys_prov
 
+        # Propagate similarity score from LP result row
+        sim_score = _safe_float(row, "similarity_score")
+
         entries.append(ReconciliationEntry(
             reference_name=ref_name,
             system_name=sys_name,
@@ -124,6 +137,7 @@ def _extract_entries(
             province_match=province_match,
             reference_source_ref=ref_src,
             system_source_ref=sys_src,
+            similarity_score=sim_score,
         ))
     return entries
 
