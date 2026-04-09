@@ -21,9 +21,11 @@ def test_split_by_page_markers():
         "Content of section A.\n"
     )
     sections = split_into_sections(md)
-    assert len(sections) >= 2
-    assert any(s["page"] == 1 for s in sections)
-    assert any(s["page"] == 2 for s in sections)
+    assert len(sections) == 2
+    assert sections[0]["page"] == 1
+    assert "Document Title" in sections[0]["text"]
+    assert sections[1]["page"] == 2
+    assert "Section A" in sections[1]["text"]
 
 
 def test_split_preserves_table_content():

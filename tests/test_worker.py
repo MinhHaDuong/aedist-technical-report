@@ -341,12 +341,20 @@ def test_padme_worker_execute(tmp_path: Path) -> None:
         budget_usd=1.0,
     )
 
-    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
-        result = worker.execute(job)
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
 
-    assert result["wall_seconds"] == 3.5
-    assert result["tokens_in"] == 50
-    assert result["tokens_out"] == 100
+    # Verify model ID and message structure passed to query_single_turn
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen3:8b"  # model_id
+    messages = call_args[2]
+    assert len(messages) == 1
+    assert messages[0] == {"role": "user", "content": "List thermal plants"}
+    # Verify save_json was called with the model reply record
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["model"] == "qwen3:8b"
+    assert saved["response"] == "Plant A,coal,operational"
 
 
 def test_padme_full_lifecycle(tmp_path: Path) -> None:
@@ -376,6 +384,11 @@ def test_padme_full_lifecycle(tmp_path: Path) -> None:
     assert record is not None
     assert record.method == Method.SINGLE
     assert (jobs_root / "done" / "padme-lc.yaml").exists()
+    # Verify resource_use captured from execute() return value
+    assert record.resource_use.wall_s == 3.5
+    assert record.resource_use.tokens_in == 50
+    assert record.resource_use.tokens_out == 100
+    assert record.resource_use.cost_usd == 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -409,13 +422,20 @@ def test_openrouter_worker_execute(tmp_path: Path) -> None:
         budget_usd=10.0,
     )
 
-    with patch.multiple("aedist.worker", **_harness_patches(tmp_path)):
-        result = worker.execute(job)
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
 
-    # 1 model x 1 run = 1 query
-    assert result["wall_seconds"] == 3.5
-    assert result["tokens_in"] == 50
-    assert result["tokens_out"] == 100
+    # Verify model ID and message structure passed to query_single_turn
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen3:8b"
+    messages = call_args[2]
+    assert len(messages) == 1
+    assert messages[0] == {"role": "user", "content": "List thermal plants"}
+    # Verify save_json was called with the model reply record
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["model"] == "qwen3:8b"
+    assert saved["response"] == "Plant A,coal,operational"
 
 
 def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
@@ -445,6 +465,10 @@ def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
     assert record is not None
     assert record.method == Method.SINGLE
     assert (jobs_root / "done" / "or-lc.yaml").exists()
+    # Verify resource_use captured from execute() return value
+    assert record.resource_use.wall_s == 3.5
+    assert record.resource_use.tokens_in == 50
+    assert record.resource_use.tokens_out == 100
 
 
 # ---------------------------------------------------------------------------
@@ -471,15 +495,18 @@ def test_rag_job_dispatches_to_rag_pipeline(tmp_path: Path) -> None:
 
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        worker.execute(job)
 
     # RAG path should build system+user messages with corpus, not just user message
     call_args = patches["query_single_turn"].call_args
     messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
     assert len(messages) == 2  # system (corpus) + user (prompt)
     assert messages[0]["role"] == "system"
-    assert "corpus" in messages[0]["content"].lower() or "Some corpus content" in messages[0]["content"]
-    assert result["wall_seconds"] == 3.5
+    assert "Some corpus content" in messages[0]["content"]
+    assert messages[1] == {"role": "user", "content": "List thermal plants"}
+    # Verify saved record includes RAG-specific fields
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["strategy"] == "wholesale"
 
 
 def test_multiturn_job_dispatches_to_multiturn(tmp_path: Path) -> None:
@@ -502,10 +529,14 @@ def test_multiturn_job_dispatches_to_multiturn(tmp_path: Path) -> None:
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
         with patch("aedist.worker.run_conversation", return_value=mock_conv_result) as mock_run:
-            result = worker.execute(job)
+            worker.execute(job)
 
     mock_run.assert_called_once()
-    assert result["wall_seconds"] == 5.0
+    # Verify run_conversation received the correct arguments
+    args = mock_run.call_args
+    assert args[0][1] == "qwen3:8b"  # model_id
+    assert args[0][2] == "List thermal plants"  # prompt
+    assert args[0][3] == ["What about gas plants?", "Any LNG?"]  # followups
 
 
 def test_web_job_dispatches_to_web(tmp_path: Path, monkeypatch) -> None:
@@ -522,13 +553,14 @@ def test_web_job_dispatches_to_web(tmp_path: Path, monkeypatch) -> None:
     patches = _harness_patches(tmp_path)
     with patch("aedist.worker.run_web_searches", return_value=("web context", [])):
         with patch.multiple("aedist.worker", **patches):
-            result = worker.execute(job)
+            worker.execute(job)
 
     # Web path builds system message with web search context
     call_args = patches["query_single_turn"].call_args
     messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
     assert messages[0]["role"] == "system"
-    assert result["wall_seconds"] == 3.5
+    assert "web context" in messages[0]["content"]
+    assert messages[1] == {"role": "user", "content": "List thermal plants"}
 
 
 def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
@@ -555,11 +587,17 @@ def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
         with patch("aedist.worker.query_decomposed", return_value=mock_decomposed_result) as mock_dec:
-            result = worker.execute(job)
+            worker.execute(job)
 
     mock_dec.assert_called_once()
-    assert result["wall_seconds"] == 10.0
-    assert result["tokens_in"] == 150
+    # Verify query_decomposed received corpus text and model ID
+    dec_args = mock_dec.call_args[0]
+    assert dec_args[1] == "qwen3:8b"  # model_id
+    assert "Some corpus content" in dec_args[2]  # corpus_text
+    # Verify saved record includes decomposed-specific fields
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["strategy"] == "decomposed"
+    assert saved["n_merged_plants"] == 1
 
 
 def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
@@ -573,10 +611,12 @@ def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
 
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        worker.execute(job)
 
     patches["query_single_turn"].assert_called_once()
-    assert result["wall_seconds"] == 3.5
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen3:8b"
+    assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
 
 def test_unknown_mode_raises(tmp_path: Path) -> None:
@@ -647,10 +687,12 @@ def test_frontier_job_dispatches_like_single(tmp_path: Path) -> None:
 
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        worker.execute(job)
 
     patches["query_single_turn"].assert_called_once()
-    assert result["wall_seconds"] == 3.5
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen3:8b"
+    assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
 
 def test_sourced_job_dispatches_like_single(tmp_path: Path) -> None:
@@ -664,10 +706,12 @@ def test_sourced_job_dispatches_like_single(tmp_path: Path) -> None:
 
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        worker.execute(job)
 
     patches["query_single_turn"].assert_called_once()
-    assert result["wall_seconds"] == 3.5
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen3:8b"
+    assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
 
 # ---------------------------------------------------------------------------

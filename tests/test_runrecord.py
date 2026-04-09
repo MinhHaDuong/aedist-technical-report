@@ -63,6 +63,7 @@ class TestRunRecordConstruction:
             method_params=MethodParams(model="anthropic/claude-sonnet-4-20250514"),
         )
         assert len(r.run_id) == 12
+        assert r.run_id.isalnum()  # hex chars only, not arbitrary
         assert r.resource_use.wall_s is None
         assert r.result_summary.status == "ok"
         assert r.justification is None

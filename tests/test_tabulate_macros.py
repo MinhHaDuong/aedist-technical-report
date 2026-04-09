@@ -6,7 +6,7 @@ from aedist.tabulate_macros import generate_macros, load_and_summarize
 
 SAMPLE_METRICS = [
     {"label": "census/gpt-5.4-run1", "f1": 0.70, "coverage": 0.8, "precision": 0.62},
-    {"label": "census/gpt-5.4-run2", "f1": 0.68, "coverage": 0.78, "precision": 0.60},
+    {"label": "census/gpt-5.4-run2", "f1": 0.60, "coverage": 0.78, "precision": 0.60},
     {"label": "census/gpt-5.4-run3", "f1": 0.72, "coverage": 0.82, "precision": 0.64},
     {"label": "census/claude-4-run1", "f1": 0.65, "coverage": 0.75, "precision": 0.58},
     {"label": "census/claude-4-run2", "f1": 0.63, "coverage": 0.73, "precision": 0.56},
@@ -54,7 +54,7 @@ def test_load_and_summarize():
     """Model slugs are extracted and median F1 computed per model."""
     summary = load_and_summarize(SAMPLE_METRICS)
     assert len(summary) == 4
-    # gpt-5.4 median of [0.68, 0.70, 0.72] = 0.70
+    # gpt-5.4 median of [0.60, 0.70, 0.72] = 0.70 (mean would be ~0.673)
     assert summary["gpt-5.4"]["median_f1"] == 0.70
     # claude-4 median of [0.63, 0.65, 0.67] = 0.65
     assert summary["claude-4"]["median_f1"] == 0.65

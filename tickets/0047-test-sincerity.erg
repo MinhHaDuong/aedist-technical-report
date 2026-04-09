@@ -1,11 +1,13 @@
 %erg v1
 Title: Fix 34 insincere tests across 5 anti-pattern tiers
-Status: open
+Status: doing
 Created: 2026-04-09
 Author: claude
 
 --- log ---
 2026-04-09T20:00Z claude created from test sincerity audit
+2026-04-09T21:00Z claude claimed
+2026-04-09T21:30Z claude note tier 1 (11 circular mocks) + tier 2 (asymmetric fixtures) done
 
 --- body ---
 ## Context

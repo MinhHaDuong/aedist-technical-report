@@ -20,14 +20,12 @@ class TestPlantsToDataframeEmpty:
         plus the auxiliary cleaned columns. No exception raised."""
         df = plants_to_dataframe([])
         assert len(df) == 0
-        # LP matcher requires these three columns
-        assert "name" in df.columns
-        assert "name_clean" in df.columns
-        assert "capacity_clean" in df.columns
-        # Auxiliary columns from cleaner
-        assert "province_clean" in df.columns
-        assert "fuel_clean" in df.columns
-        assert "status_clean" in df.columns
+        expected_columns = {
+            "name", "province", "fuel", "capacity", "status", "source_ref",
+            "name_clean", "province_clean", "fuel_clean", "capacity_clean",
+            "status_clean",
+        }
+        assert set(df.columns) == expected_columns
 
 
 class TestReconcileEmptySystem:

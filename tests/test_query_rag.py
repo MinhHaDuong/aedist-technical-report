@@ -134,7 +134,6 @@ def test_rag_output_metadata(mock_openai_cls, tmp_path):
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
     assert record["strategy"] == "wholesale"
-    assert "corpus_files" in record
-    assert len(record["corpus_files"]) == 2
-    assert "corpus_tokens" in record
-    assert record["corpus_tokens"] > 0
+    assert sorted(record["corpus_files"]) == ["doc1.md", "doc2.md"]
+    assert isinstance(record["corpus_tokens"], int)
+    assert record["corpus_tokens"] > 10  # both docs have real content
