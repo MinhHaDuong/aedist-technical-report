@@ -16,6 +16,7 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from .harness import (
+    BudgetTracker,
     compute_cost,
     load_models,
     make_client,
@@ -25,9 +26,14 @@ from .harness import (
     save_json,
     should_skip,
 )
+from .query_decomposed import query_decomposed
+from .query_multiturn import run_conversation
+from .query_rag import load_corpus
+from .query_web import run_web_searches
 from .schema import (
     JobSpec,
     LeaseInfo,
+    Method,
     MethodParams,
     ResourceUse,
     RunRecord,
@@ -92,11 +98,255 @@ class Worker:
             expiry_time=expiry,
         )
 
-    # -- execution (abstract) --------------------------------------------------
+    # -- client factory (override in subclasses) --------------------------------
+
+    def make_client(self):
+        """Create an OpenAI-compatible client. Subclasses override for their endpoint."""
+        return make_client()
+
+    # -- mode dispatch ----------------------------------------------------------
 
     def execute(self, job: JobSpec) -> dict:
-        """Subclasses override to call appropriate query pipeline based on job.mode."""
-        raise NotImplementedError
+        """Dispatch to the correct query pipeline based on job.mode.
+
+        Raises ValueError for unrecognized modes. Raises NotImplementedError
+        for modes that require external orchestration (verification).
+        """
+        client = self.make_client()
+        prompt = Path(job.prompt).read_text().strip()
+        models = load_models(job.models_file)
+        output_dir = Path(job.output_dir)
+
+        if job.model_filter:
+            models = [m for m in models if job.model_filter in m["id"]]
+        if not models:
+            raise ValueError(f"No model matched filter {job.model_filter!r}")
+        model_entry = models[0]
+        model_id = model_entry["id"]
+        run = job.run_number
+
+        pool_label = self.worker_id
+        if should_skip(output_dir, model_id, run, pool_label):
+            log.info("Skip %s run %d (cached)", model_id, run)
+            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
+                    "tokens_out": 0, "result_file": None}
+
+        mode = job.mode
+        if mode in (Method.SINGLE, Method.FRONTIER, Method.SOURCED):
+            return self._execute_single(
+                client, model_id, model_entry, prompt, output_dir, run, pool_label,
+            )
+        elif mode == Method.RAG:
+            return self._execute_rag(
+                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+            )
+        elif mode == Method.MULTITURN:
+            return self._execute_multiturn(
+                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+            )
+        elif mode == Method.WEB:
+            return self._execute_web(
+                client, model_id, model_entry, prompt, output_dir, run, pool_label,
+            )
+        elif mode == Method.DECOMPOSED:
+            return self._execute_decomposed(
+                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+            )
+        elif mode == Method.VERIFICATION:
+            raise NotImplementedError(
+                f"verification mode requires external orchestration "
+                f"(use query_verification.py directly)"
+            )
+        else:
+            raise ValueError(f"Unsupported mode: {mode!r}")
+
+    # -- per-mode handlers -----------------------------------------------------
+
+    def _execute_single(self, client, model_id, model_entry, prompt,
+                        output_dir, run, pool_label):
+        """Execute a single-turn query."""
+        log.info("Querying %s run %d ...", model_id, run)
+        result = query_single_turn(
+            client, model_id, [{"role": "user", "content": prompt}],
+        )
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        save_json(filepath, {
+            "model": model_id,
+            "date": date.today().isoformat(),
+            "run": run,
+            "prompt": prompt,
+            "response": result["content"],
+            "finish_reason": result["finish_reason"],
+            "usage": usage,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "model_metadata": model_metadata(model_entry),
+        })
+        return {
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "result_file": str(filepath),
+        }
+
+    def _execute_rag(self, client, model_id, model_entry, prompt,
+                     output_dir, run, pool_label, job):
+        """Execute a RAG query: corpus as system context + prompt as user."""
+        corpus_dir = Path(job.corpus) if job.corpus else None
+        if not corpus_dir or not corpus_dir.exists():
+            raise ValueError(f"RAG mode requires a valid corpus directory, got {job.corpus!r}")
+
+        corpus_text, corpus_files = load_corpus(corpus_dir)
+        messages = [
+            {"role": "system", "content": corpus_text},
+            {"role": "user", "content": prompt},
+        ]
+
+        log.info("Querying %s run %d (RAG %s)...", model_id, run, job.strategy or "wholesale")
+        result = query_single_turn(client, model_id, messages)
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        save_json(filepath, {
+            "model": model_id,
+            "run": run,
+            "date": date.today().isoformat(),
+            "strategy": job.strategy or "wholesale",
+            "corpus_files": corpus_files,
+            "prompt": prompt,
+            "response": result["content"],
+            "finish_reason": result["finish_reason"],
+            "usage": usage,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "model_metadata": model_metadata(model_entry),
+        })
+        return {
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "result_file": str(filepath),
+        }
+
+    def _execute_multiturn(self, client, model_id, model_entry, prompt,
+                           output_dir, run, pool_label, job):
+        """Execute a multi-turn conversation."""
+        followups_path = Path(job.followups) if job.followups else None
+        if not followups_path or not followups_path.exists():
+            raise ValueError(f"Multiturn mode requires a valid followups file, got {job.followups!r}")
+
+        followups = [
+            line.strip() for line in followups_path.read_text().splitlines() if line.strip()
+        ]
+        budget = BudgetTracker(job.budget_usd)
+
+        log.info("Querying %s run %d (multiturn, %d followups)...", model_id, run, len(followups))
+        conv = run_conversation(client, model_id, prompt, followups, model_entry, budget)
+        if conv is None:
+            raise RuntimeError(f"Multiturn conversation failed for {model_id} run {run}")
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        save_json(filepath, {
+            "model": model_id,
+            "run": run,
+            "date": date.today().isoformat(),
+            "model_metadata": model_metadata(model_entry),
+            **conv,
+        })
+        return {
+            "wall_seconds": conv.get("total_wall_seconds", 0),
+            "cost_usd": conv.get("total_cost_usd", 0),
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "result_file": str(filepath),
+        }
+
+    def _execute_web(self, client, model_id, model_entry, prompt,
+                     output_dir, run, pool_label):
+        """Execute a web-augmented query."""
+        import os
+        tavily_key = os.environ.get("TAVILY_API_KEY", "")
+        web_context, search_log = run_web_searches(tavily_key) if tavily_key else ("", [])
+
+        messages = [
+            {"role": "system", "content": (
+                "Use the following web search results as context "
+                "to answer the user's question.\n\n" + web_context
+            )},
+            {"role": "user", "content": prompt},
+        ]
+
+        log.info("Querying %s run %d (web-augmented)...", model_id, run)
+        result = query_single_turn(client, model_id, messages)
+        usage = result.get("usage") or {}
+        cost = compute_cost(usage, model_entry)
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        save_json(filepath, {
+            "model": model_id,
+            "run": run,
+            "date": date.today().isoformat(),
+            "prompt": prompt,
+            "response": result["content"],
+            "finish_reason": result["finish_reason"],
+            "usage": usage,
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "web_searches": search_log,
+            "model_metadata": model_metadata(model_entry),
+        })
+        return {
+            "wall_seconds": result["wall_seconds"],
+            "cost_usd": cost,
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "result_file": str(filepath),
+        }
+
+    def _execute_decomposed(self, client, model_id, model_entry, prompt,
+                            output_dir, run, pool_label, job):
+        """Execute decomposed sub-queries by fuel type."""
+        corpus_dir = Path(job.corpus) if job.corpus else None
+        if not corpus_dir or not corpus_dir.exists():
+            raise ValueError(f"Decomposed mode requires a valid corpus directory, got {job.corpus!r}")
+
+        corpus_text, corpus_files = load_corpus(corpus_dir)
+        budget = BudgetTracker(job.budget_usd)
+
+        log.info("Querying %s run %d (decomposed RAG)...", model_id, run)
+        decomposed = query_decomposed(client, model_id, corpus_text, budget, model_entry)
+        if decomposed is None:
+            raise RuntimeError(f"Decomposed query failed for {model_id} run {run}")
+
+        filepath = output_path(output_dir, model_id, run, pool_label)
+        save_json(filepath, {
+            "model": model_id,
+            "run": run,
+            "date": date.today().isoformat(),
+            "strategy": "decomposed",
+            "corpus_files": corpus_files,
+            "prompt": prompt,
+            "response": decomposed.get("merged_csv", ""),
+            "finish_reason": "merged",
+            "usage": decomposed.get("total_usage", {}),
+            "wall_seconds": decomposed.get("total_wall_seconds", 0),
+            "cost_usd": decomposed.get("total_cost_usd", 0),
+            "model_metadata": model_metadata(model_entry),
+            "n_merged_plants": decomposed.get("n_merged_plants", 0),
+        })
+        return {
+            "wall_seconds": decomposed.get("total_wall_seconds", 0),
+            "cost_usd": decomposed.get("total_cost_usd", 0),
+            "tokens_in": decomposed.get("total_usage", {}).get("prompt_tokens", 0),
+            "tokens_out": decomposed.get("total_usage", {}).get("completion_tokens", 0),
+            "result_file": str(filepath),
+        }
 
     # -- completion ------------------------------------------------------------
 
@@ -195,7 +445,7 @@ class PadmeWorker(Worker):
     """Worker for local GPU execution via Ollama.
 
     Executes jobs sequentially (one model at a time) using the local
-    Ollama endpoint.
+    Ollama endpoint.  Dispatch logic is inherited from Worker.execute().
     """
 
     def __init__(
@@ -206,63 +456,9 @@ class PadmeWorker(Worker):
         super().__init__(worker_id="padme", jobs_root=jobs_root)
         self.base_url = base_url
 
-    def execute(self, job: JobSpec) -> dict:
-        """Run a single query against Ollama.
-
-        Each job targets exactly one model (via model_filter) and one run
-        (repeat=1).  The manager handles fan-out.
-        """
-        client = make_client(self.base_url)
-        prompt = Path(job.prompt).read_text().strip()
-        models = load_models(job.models_file)
-        output_dir = Path(job.output_dir)
-
-        if job.model_filter:
-            models = [m for m in models if job.model_filter in m["id"]]
-        if not models:
-            raise ValueError(f"No model matched filter {job.model_filter!r}")
-        model_entry = models[0]
-        model_id = model_entry["id"]
-
-        run = job.run_number
-
-        if should_skip(output_dir, model_id, run, "padme"):
-            log.info("Skip %s run %d (cached)", model_id, run)
-            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
-                    "tokens_out": 0, "result_file": None}
-
-        log.info("Querying %s run %d ...", model_id, run)
-        result = query_single_turn(
-            client, model_id, [{"role": "user", "content": prompt}],
-        )
-
-        usage = result.get("usage") or {}
-        cost = compute_cost(usage, model_entry)
-
-        filepath = output_path(output_dir, model_id, run, "padme")
-        save_json(
-            filepath,
-            {
-                "model": model_id,
-                "date": date.today().isoformat(),
-                "run": run,
-                "prompt": prompt,
-                "response": result["content"],
-                "finish_reason": result["finish_reason"],
-                "usage": usage,
-                "wall_seconds": result["wall_seconds"],
-                "cost_usd": cost,
-                "model_metadata": model_metadata(model_entry),
-            },
-        )
-
-        return {
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "tokens_in": usage.get("prompt_tokens", 0),
-            "tokens_out": usage.get("completion_tokens", 0),
-            "result_file": str(filepath),
-        }
+    def make_client(self):
+        """Create an OpenAI-compatible client for Ollama."""
+        return make_client(self.base_url)
 
 
 # ---------------------------------------------------------------------------
@@ -276,64 +472,11 @@ class OpenRouterWorker(Worker):
     """Worker for execution via OpenRouter cloud API.
 
     Each job is a single (model, run) pair — the manager handles fan-out.
+    Dispatch logic is inherited from Worker.execute().
     """
 
     def __init__(self, jobs_root: Path = Path("jobs")) -> None:
         super().__init__(worker_id="openrouter", jobs_root=jobs_root)
-
-    def execute(self, job: JobSpec) -> dict:
-        """Run a single query via OpenRouter."""
-        client = make_client()
-        prompt = Path(job.prompt).read_text().strip()
-        models = load_models(job.models_file)
-        output_dir = Path(job.output_dir)
-
-        if job.model_filter:
-            models = [m for m in models if job.model_filter in m["id"]]
-        if not models:
-            raise ValueError(f"No model matched filter {job.model_filter!r}")
-        model_entry = models[0]
-        model_id = model_entry["id"]
-
-        run = job.run_number
-
-        if should_skip(output_dir, model_id, run):
-            log.info("Skip %s run %d (cached)", model_id, run)
-            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
-                    "tokens_out": 0, "result_file": None}
-
-        log.info("Querying %s run %d ...", model_id, run)
-        result = query_single_turn(
-            client, model_id, [{"role": "user", "content": prompt}],
-        )
-
-        usage = result.get("usage") or {}
-        cost = compute_cost(usage, model_entry)
-
-        filepath = output_path(output_dir, model_id, run)
-        save_json(
-            filepath,
-            {
-                "model": model_id,
-                "date": date.today().isoformat(),
-                "run": run,
-                "prompt": prompt,
-                "response": result["content"],
-                "finish_reason": result["finish_reason"],
-                "usage": usage,
-                "wall_seconds": result["wall_seconds"],
-                "cost_usd": cost,
-                "model_metadata": model_metadata(model_entry),
-            },
-        )
-
-        return {
-            "wall_seconds": result["wall_seconds"],
-            "cost_usd": cost,
-            "tokens_in": usage.get("prompt_tokens", 0),
-            "tokens_out": usage.get("completion_tokens", 0),
-            "result_file": str(filepath),
-        }
 
 
 # ---------------------------------------------------------------------------

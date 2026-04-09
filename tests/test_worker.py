@@ -509,13 +509,19 @@ def test_multiturn_job_dispatches_to_multiturn(tmp_path: Path) -> None:
     job = job.model_copy(update={"prompt": str(prompt_file)})
     worker = PadmeWorker(jobs_root=tmp_path / "jobs")
 
+    mock_conv_result = {
+        "turns": [{"role": "user", "content": "List thermal plants", "turn": 0}],
+        "total_cost_usd": 0.01,
+        "total_wall_seconds": 5.0,
+        "context_overflow": False,
+    }
     patches = _dispatch_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        with patch("aedist.worker.run_conversation", return_value=mock_conv_result) as mock_run:
+            result = worker.execute(job)
 
-    # Multiturn should call query_single_turn multiple times (initial + followups)
-    assert patches["query_single_turn"].call_count >= 2  # initial + at least 1 followup
-    assert "wall_seconds" in result
+    mock_run.assert_called_once()
+    assert result["wall_seconds"] == 5.0
 
 
 def test_web_job_dispatches_to_web(tmp_path: Path) -> None:
@@ -551,13 +557,23 @@ def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
     job = job.model_copy(update={"prompt": str(prompt_file)})
     worker = PadmeWorker(jobs_root=tmp_path / "jobs")
 
+    mock_decomposed_result = {
+        "strategy": "decomposed",
+        "sub_queries": {},
+        "merged_csv": "name,fuel\nPlant A,coal",
+        "n_merged_plants": 1,
+        "total_cost_usd": 0.03,
+        "total_wall_seconds": 10.0,
+        "total_usage": {"prompt_tokens": 150, "completion_tokens": 300},
+    }
     patches = _dispatch_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        result = worker.execute(job)
+        with patch("aedist.worker.query_decomposed", return_value=mock_decomposed_result) as mock_dec:
+            result = worker.execute(job)
 
-    # Decomposed runs 3 sub-queries (coal, gas, other)
-    assert patches["query_single_turn"].call_count == 3
-    assert "wall_seconds" in result
+    mock_dec.assert_called_once()
+    assert result["wall_seconds"] == 10.0
+    assert result["tokens_in"] == 150
 
 
 def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
