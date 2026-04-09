@@ -609,11 +609,11 @@ def test_dispatch_shared_between_padme_and_openrouter(tmp_path: Path) -> None:
     job = _make_job(mode="rag", corpus=str(corpus_dir), strategy="wholesale", model_filter="qwen3:8b")
     job = job.model_copy(update={"prompt": str(prompt_file)})
 
-    for WorkerCls in [PadmeWorker, OpenRouterWorker]:
-        worker = WorkerCls(jobs_root=tmp_path / f"jobs-{WorkerCls.__name__}")
+    for worker_cls in [PadmeWorker, OpenRouterWorker]:
+        worker = worker_cls(jobs_root=tmp_path / f"jobs-{worker_cls.__name__}")
         patches = _harness_patches(tmp_path)
         with patch.multiple("aedist.worker", **patches):
-            result = worker.execute(job)
+            worker.execute(job)
         # Both workers should dispatch RAG the same way
         call_args = patches["query_single_turn"].call_args
         messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
