@@ -134,11 +134,24 @@ def score_honesty(csv_path: Path) -> dict:
     }
 
 
+def _has_provenance_columns(csv_path: Path) -> bool:
+    """Check if a CSV has the source_1 column in its header."""
+    with open(csv_path, encoding="utf-8", newline="") as f:
+        reader = csv.reader(f)
+        header = next(reader, [])
+    return "source_1" in header
+
+
 def score_directory(input_dir: Path) -> dict:
-    """Score all CSVs in a directory and produce aggregate summary."""
-    csv_files = sorted(input_dir.glob("*.csv"))
+    """Score all CSVs in a directory and produce aggregate summary.
+
+    Skips CSVs that lack provenance columns (e.g. reconciliation files).
+    """
+    csv_files = sorted(
+        f for f in input_dir.glob("*.csv") if _has_provenance_columns(f)
+    )
     if not csv_files:
-        raise SystemExit(f"No CSV files in: {input_dir}")
+        raise SystemExit(f"No sourced CSV files (with source_1 column) in: {input_dir}")
 
     runs = {}
     all_scores = []
