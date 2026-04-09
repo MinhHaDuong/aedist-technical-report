@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
+from aedist.score_provenance import score_honesty, score_sourced_run
+
 
 class TestScoreSourcedRun:
     """score_sourced_run computes evidence quality from citation columns."""
 
     def test_basic_scoring(self, tmp_path):
-        from aedist.score_provenance import score_sourced_run
-
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
             'Pha Lai,coal,operating,1983,Hai Duong,440,'
@@ -32,8 +32,6 @@ class TestScoreSourcedRun:
         assert result["mean_evidence_score"] > 1.0
 
     def test_empty_sources_score_1(self, tmp_path):
-        from aedist.score_provenance import score_sourced_run
-
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
             "Pha Lai,coal,operating,1983,Hai Duong,440,,,\n"
@@ -47,8 +45,6 @@ class TestScoreSourcedRun:
         assert result["score_distribution"][1] == 1
 
     def test_two_primary_sources_score_4(self, tmp_path):
-        from aedist.score_provenance import score_sourced_run
-
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
             'Plant A,coal,operating,2000,Ha Noi,600,'
@@ -67,8 +63,6 @@ class TestScoreHonesty:
     """score_honesty counts epistemic markers in note column."""
 
     def test_basic_honesty(self, tmp_path):
-        from aedist.score_provenance import score_honesty
-
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
             'Plant A,coal,operating,2000,Ha Noi,600,"","","uncertain about COD"\n'
@@ -85,8 +79,6 @@ class TestScoreHonesty:
         assert abs(result["honesty_rate"] - 2.0 / 3) < 0.01
 
     def test_no_notes(self, tmp_path):
-        from aedist.score_provenance import score_honesty
-
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
             "Plant A,coal,operating,2000,Ha Noi,600,,,\n"

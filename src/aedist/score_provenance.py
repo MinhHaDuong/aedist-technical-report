@@ -18,7 +18,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from aedist.verify import classify_source_by_text, score_evidence
+from .verify import classify_source_by_text, score_evidence
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +62,7 @@ def score_sourced_run(csv_path: Path) -> dict:
             "secondary_count": 0,
             "none_count": 0,
             "total_sources": 0,
+            "sum_evidence_scores": 0,
         }
 
     scores = []
@@ -94,10 +95,11 @@ def score_sourced_run(csv_path: Path) -> dict:
     primary_count = type_counts.get("primary", 0)
     secondary_count = type_counts.get("secondary", 0)
     none_count = type_counts.get("none", 0)
+    raw_score_sum = sum(scores)
 
     return {
         "n_plants": n_plants,
-        "mean_evidence_score": round(sum(scores) / n_plants, 2),
+        "mean_evidence_score": round(raw_score_sum / n_plants, 2),
         "score_distribution": {i: score_dist.get(i, 0) for i in range(5)},
         "primary_frac": round(primary_count / max(total_sources, 1), 3),
         "secondary_frac": round(secondary_count / max(total_sources, 1), 3),
@@ -107,6 +109,7 @@ def score_sourced_run(csv_path: Path) -> dict:
         "secondary_count": secondary_count,
         "none_count": none_count,
         "total_sources": total_sources,
+        "sum_evidence_scores": raw_score_sum,
     }
 
 
@@ -167,7 +170,7 @@ def score_directory(input_dir: Path) -> dict:
         raise SystemExit(f"No sourced CSV files (with source_1 column) in: {input_dir}")
 
     runs = {}
-    all_scores = []
+    all_score_sum = 0
     all_primary = 0
     all_secondary = 0
     all_none = 0
@@ -182,9 +185,8 @@ def score_directory(input_dir: Path) -> dict:
 
         runs[run_name] = {**evidence, **honesty}
 
-        n = evidence["n_plants"]
-        all_plants += n
-        all_scores.extend([evidence["mean_evidence_score"]] * n)
+        all_plants += evidence["n_plants"]
+        all_score_sum += evidence["sum_evidence_scores"]
 
         all_primary += evidence["primary_count"]
         all_secondary += evidence["secondary_count"]
@@ -193,7 +195,7 @@ def score_directory(input_dir: Path) -> dict:
 
         all_honesty_markers += honesty["n_with_epistemic_marker"]
 
-    aggregate_mean = round(sum(all_scores) / max(len(all_scores), 1), 2)
+    aggregate_mean = round(all_score_sum / max(all_plants, 1), 2)
     aggregate_primary_frac = round(all_primary / max(all_total_sources, 1), 3)
     aggregate_honesty = round(all_honesty_markers / max(all_plants, 1), 4)
 
@@ -207,20 +209,20 @@ def score_directory(input_dir: Path) -> dict:
     }
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    p = argparse.ArgumentParser(description="Score provenance quality from sourced runs")
-    p.add_argument(
+    parser = argparse.ArgumentParser(description="Score provenance quality from sourced runs")
+    parser.add_argument(
         "--input",
         required=True,
         help="Directory containing extracted CSVs with provenance columns",
     )
-    p.add_argument(
+    parser.add_argument(
         "--output",
         required=True,
         help="Path to write summary JSON",
     )
-    args = p.parse_args()
+    args = parser.parse_args(argv)
 
     input_dir = Path(args.input)
     output_path = Path(args.output)
