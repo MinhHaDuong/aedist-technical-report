@@ -14,7 +14,7 @@ None
 2. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
 3. Matching sensitivity sweep (ticket 0035)
 4. Fix empty CSV crash in evaluate (ticket 0045)
-5. Audit JSON globs for .eval.json filtering (ticket 0044)
+5. Whitelist model-reply glob via shared loader (ticket 0044 — doing)
 
 ## North star
 
@@ -41,5 +41,5 @@ Statistical hygiene (ticket 0035) → journal submission (TBD — after conferen
 - 0031 Information regimes sweep (complete)
 - 0035 Matching sensitivity sweep
 - 0038 Reflexive self-prompting experiment
-- 0044 Audit JSON globs for .eval.json filtering
+- 0044 Whitelist model-reply glob via shared loader (doing)
 - 0045 Empty CSV crash in evaluate

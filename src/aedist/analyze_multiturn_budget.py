@@ -14,7 +14,7 @@ import json
 import logging
 from pathlib import Path
 
-from .harness import CONTEXT_WINDOW_SAFETY_MARGIN
+from .harness import CONTEXT_WINDOW_SAFETY_MARGIN, iter_model_replies
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 def load_multiturn_results(output_dir: Path) -> list[dict]:
     """Load all JSON results from an experiment output directory."""
     results = []
-    for f in sorted(output_dir.glob("*.json")):
+    for f in iter_model_replies(output_dir):
         with open(f) as fh:
             results.append(json.load(fh))
     return results

@@ -132,3 +132,27 @@ def test_estimate_messages_tokens_missing_content():
 
     messages = [{"role": "user"}]
     assert estimate_messages_tokens(messages) == 0
+
+
+def test_iter_model_replies_filters_derived_files(tmp_path):
+    """iter_model_replies returns only canonical model-reply files."""
+    from aedist.harness import iter_model_replies
+
+    # Model replies (should be returned)
+    (tmp_path / "deepseek-v3.2-run1.json").write_text("{}")
+    (tmp_path / "deepseek-v3.2-run2.json").write_text("{}")
+    (tmp_path / "padme-qwen3.5-122b-run1.json").write_text("{}")
+
+    # Derived files (should be excluded)
+    (tmp_path / "deepseek-v3.2-run1.record.json").write_text("{}")
+    (tmp_path / "deepseek-v3.2-run1.eval.json").write_text("{}")
+    (tmp_path / "tavily_cache.json").write_text("{}")
+    (tmp_path / "self_consistency_summary.json").write_text("{}")
+    (tmp_path / "deepseek-v3.2-run1_summary.json").write_text("{}")
+
+    result = [f.name for f in iter_model_replies(tmp_path)]
+    assert result == [
+        "deepseek-v3.2-run1.json",
+        "deepseek-v3.2-run2.json",
+        "padme-qwen3.5-122b-run1.json",
+    ]

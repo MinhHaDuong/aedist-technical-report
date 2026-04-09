@@ -1,12 +1,15 @@
 %erg v1
 Title: Whitelist model-reply glob via shared loader
-Status: open
+Status: doing
 Created: 2026-04-08
 Author: claude
 
 --- log ---
 2026-04-08T19:30Z claude created from anti-pattern sweep after ticket 0043
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
+2026-04-09T13:00Z claude status planned by IDD phase 2
+2026-04-09T14:00Z claude note verified feasible — all paths, globs, test logic confirmed exact, no API keys needed
+2026-04-09T15:00Z claude status executed by IDD phase 3
 
 --- body ---
 ## Context

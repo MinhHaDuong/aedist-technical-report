@@ -20,7 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
-from aedist.util import parse_number, strip_diacritics
+from .harness import iter_model_replies
+from .util import parse_number, strip_diacritics
 
 log = logging.getLogger(__name__)
 
@@ -358,9 +359,7 @@ def main() -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
-    json_files = sorted(
-        f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")
-    )
+    json_files = list(iter_model_replies(input_dir))
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
 

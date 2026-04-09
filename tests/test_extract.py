@@ -16,7 +16,6 @@ from aedist.extract import (
     score_csv_like_block,
     sniff_dialect,
 )
-from aedist.util import strip_diacritics
 
 
 class TestHeaderMapping:
@@ -358,7 +357,7 @@ class TestExtractOne:
         assert res.status is ExtractStatus.FAILED
 
 
-class TestMainSkipsEvalJson:
+class TestMainSkipsDerivedJson:
     def test_eval_json_ignored(self, tmp_path, monkeypatch):
         """main() must not attempt to extract .eval.json files."""
         inp = tmp_path / "inp"
@@ -378,3 +377,24 @@ class TestMainSkipsEvalJson:
         # Only the model reply should produce a CSV
         assert (out / "model-run1.csv").exists()
         assert not (out / "model-run1.eval.csv").exists()
+
+    def test_record_and_summary_json_ignored(self, tmp_path, monkeypatch):
+        """main() skips .record.json, _summary.json, and other non-reply files."""
+        inp = tmp_path / "inp"
+        inp.mkdir()
+        out = tmp_path / "out"
+        out.mkdir()
+        # Real model reply
+        (inp / "model-run1.json").write_text(
+            json.dumps({"response": "```csv\nName,Fuel\nPha Lai,Coal\n```"})
+        )
+        # Derived files that should be skipped (whitelist excludes these)
+        (inp / "model-run1.record.json").write_text(json.dumps({"f1": 0.5}))
+        (inp / "tavily_cache.json").write_text(json.dumps({}))
+        (inp / "self_consistency_summary.json").write_text(json.dumps({}))
+        monkeypatch.setattr("sys.argv", ["extract", "--input", str(inp), "--output", str(out)])
+        main()
+        assert (out / "model-run1.csv").exists()
+        # None of the derived files should produce CSVs
+        csv_files = list(out.glob("*.csv"))
+        assert len(csv_files) == 1, f"Expected 1 CSV, got {[f.name for f in csv_files]}"
