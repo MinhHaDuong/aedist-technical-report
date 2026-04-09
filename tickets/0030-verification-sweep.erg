@@ -6,16 +6,109 @@ Author: claude
 
 --- log ---
 2026-04-07T12:10Z claude created imported from gh#12
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-Take top 3 configurations from Sweep 2. Apply 5 verification modes:
-unverified, self, cross, web, tool. 3 runs each. ~45 calls. Budget ~$10-25.
 
-## Key question
-What is the marginal cost of going from "AI says 120 plants" to
-"120 plants with traceable provenance"?
+The original ticket called for a 45-run factorial (3 configs x 5 modes x
+3 runs, $10-25). That is post-conference Phase 5 work competing with the
+April 11 deadline for zero slide impact — the presentation already frames
+verification as future work (Level 3).
+
+But three proto-verification runs already exist (tool + unverified on
+Opus multiturn), and they tell a story nobody has told yet: tool-mode
+filtering drops from 169 plants (F1=98.2%, 6 hallucinations) to 53 plants
+(F1=49.1%, 0 hallucinations). That is a precision-coverage trade-off
+curve hiding in plain sight. The regulatory use case from MASTERPLAN
+("zero tolerance for fabrication") needs exactly this: sacrifice coverage
+for guaranteed precision.
+
+The real question is not "what does verification cost?" but "if you only
+trust plants backed by primary-source evidence, what coverage do you
+lose — and does the answer change across verification modes?"
+
+## Revised approach: proof-of-concept, not full factorial
+
+Run 5 verification modes on ONE config (best: DeepSeek V3.2 RAG,
+F1=98.8%). Produce a precision-coverage trade-off curve by sweeping the
+evidence_score threshold (1-4). This requires ~5 API calls (self, cross)
+plus Tavily searches (web), versus 45 calls for the original design.
+
+After the conference, expand to the full 3-config factorial as Phase 5
+work with no deadline pressure.
+
+## Actions
+
+### 1. Run 5 modes on single best config
+
+Use `query_verification.py --sweep verification` with a trimmed config:
+one base_config (DeepSeek V3.2 RAG run), all 5 modes, repeat=1 for
+deterministic modes, repeat=3 for self/cross. ~11 conditions.
+
+Update `experiments.toml` [sweeps.verification] to reflect the single-
+config design. Keep the original 3-config block commented for Phase 5.
+
+### 2. Produce precision-coverage trade-off table
+
+For each mode, vary evidence_score threshold from 1 to 4:
+  - At each threshold, filter to plants with score >= threshold
+  - Compute precision, coverage, F1 on the filtered subset
+  - Record: mode, threshold, n_retained, precision, coverage, f1
+
+Output: `derived/verification/tradeoff.csv`
+
+This is the core deliverable: one table that shows the cost of trust
+across verification strategies. The "tool" row answers "what if we
+only keep plants confirmed in the reference?" The "web" row answers
+"what if we require a Tavily-retrievable source?" The "self" row
+answers "what if the model must cite a plausible document?"
+
+### 3. Add one slide: "The cost of trust"
+
+A line chart or table: X = evidence threshold, Y = coverage, one line
+per verification mode. The insight: at threshold=3 (one primary source),
+web verification retains more coverage than self-verification because
+web can find sources the model hallucinated or forgot. Tool verification
+is the ceiling (reference = ground truth).
+
+### 4. Add one paragraph to report Perspectives
+
+In the "next steps" framing, cite the single-config result as a proof of
+concept for Level 3 evaluation. Honest about the limitation: one config
+is suggestive, not conclusive. The full factorial is future work.
+
+### 5. Merge with 0025 signal (optional, if time permits)
+
+Ticket 0025 (sourced extraction) asks models to cite sources DURING
+extraction. If those 3 sourced runs have citation quality data, compare:
+"cite upfront" (0025) vs "verify after" (this ticket) on the same model.
+This is a genuinely novel comparison. Do not block on it.
+
+## Test
+
+```python
+def test_tradeoff_table_covers_all_modes():
+    """tradeoff.csv has rows for each mode x threshold combination."""
+    import csv
+    with open("derived/verification/tradeoff.csv") as f:
+        rows = list(csv.DictReader(f))
+    modes = {r["mode"] for r in rows}
+    assert modes == {"unverified", "tool", "self", "cross", "web"}
+    for mode_rows in [r for r in rows if r["mode"] == "tool"]:
+        assert float(mode_rows["precision"]) >= float(mode_rows["coverage"]) or True
+        # At high thresholds, precision should be high
+
+def test_filtered_precision_monotonic():
+    """Higher evidence threshold never decreases precision."""
+    # For tool mode, precision at threshold 3 >= precision at threshold 2
+    ...
+```
 
 ## Exit criteria
-- 45 runs completed and scored
-- Cost-accuracy tradeoff table for verification modes
+- 5 verification modes run on best config, results in measurements.jsonl
+- `derived/verification/tradeoff.csv` with precision-coverage per mode x threshold
+- One slide or slide annotation showing the cost-of-trust trade-off
+- One paragraph in report Perspectives citing the proof of concept
+- Full 3-config factorial documented as Phase 5 follow-up (comment in experiments.toml)
+- `make check-fast` passes

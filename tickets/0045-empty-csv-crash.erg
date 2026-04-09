@@ -7,27 +7,74 @@ Author: claude
 --- log ---
 2026-04-08T22:00Z claude created
 2026-04-08T22:00Z claude note found during ticket 0036 rebuild
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-Some extracted CSVs contain only a header row and no data (e.g.,
-census/gpt-5-mini-run{1,2,3}, census/gpt-5-nano-run{1,2,3},
-census/grok-4.20-run3). When the evaluate pipeline processes these,
-cleaner.py:75 raises ValueError("The input DataFrame is empty."),
-crashing the parallel make and blocking measurement assembly.
+The crash is misdiagnosed. The original ticket says evaluate.py needs a
+try/except. Wrong layer.
 
-Currently worked around with `-k` flag in Makefile (ticket 0036),
-but the proper fix is to return a ResultSummary(status="error")
-for empty CSVs instead of crashing.
+The real defect: reconcile.py:plants_to_dataframe already detects empty
+input (line 47: `if df.empty`) but then ignores its own check and calls
+cleaner.clean_dataframe on the empty DataFrame. The cleaner raises
+ValueError("The input DataFrame is empty.") — a validation that made
+sense when cleaner.py was a standalone stdin tool, but is hostile inside
+a pipeline where empty is a valid intermediate state.
+
+Meanwhile, the LP matcher (matching/lp.py:140-150) already handles empty
+DataFrames gracefully, producing correct "Only in file1" entries. The
+crash sits between two components that would compose correctly without it.
+
+12 empty CSVs exist today (census/gpt-5-mini-run{1,2,3},
+census/gpt-5-nano-run{1,2,3}, census/grok-4.20-run3, etc.). These are
+not errors — they are valid extraction outcomes where the model produced
+a response but no data rows survived extraction. They should produce
+measurement records with status="empty" and real zero-metrics (n_plants=0,
+tp=0, fp=0, fn=N_ref, f1=0.0) because those are data points that belong
+in Pareto charts and method comparisons. A model that extracts zero
+plants is worse than one that extracts 80% — but only if both appear in
+the measurements table.
+
+The -k flag in experiments/Makefile:177 is the current workaround. It
+masks all make errors, not just this one, hiding real build failures.
 
 ## Actions
-1. In evaluate.py, catch the empty DataFrame error from cleaner
-2. Return ResultSummary(status="error") with a descriptive message
-3. Remove the `-k` workaround from Makefile once the crash is fixed
+1. In reconcile.py:plants_to_dataframe, return early when the input plant
+   list is empty — return a DataFrame with the correct cleaned columns
+   (name_clean, province_clean, fuel_clean, capacity_clean, status_clean)
+   but zero rows. Do NOT call cleaner.clean_dataframe on empty input.
+   This fixes reconcile for all callers: evaluate.py, self_consistency.py,
+   query_verification.py.
+
+2. In evaluate.py:_evaluate_csv_file, detect len(system) == 0 after
+   load_plants_csv. Still call reconcile (it will now work — producing
+   N reference-only entries). Build the RunRecord normally via
+   _metrics_to_runrecord, but post-hoc set result_summary.status="empty".
+   The metrics (f1=0, fn=N_ref, tp=0, fp=0) compute correctly from the
+   all-reference-only reconciliation — no special-casing needed.
+
+3. Remove the -k flag from experiments/Makefile:177. Replace with plain
+   -j$(nproc). The -k flag was added by ticket 0036 as a workaround;
+   with the crash fixed, it masks real failures.
+
+4. Do NOT touch cleaner.validate_dataframe. That is a separate concern
+   (the validation is legacy but removing it risks regressions in other
+   callers, and the conference is April 11).
 
 ## Test
-Write a test with a header-only CSV → expect status="error" record.
+1. Unit test: reconcile(reference_plants, []) returns len(reference)
+   ReconciliationEntry objects, all with match_type=REFERENCE_ONLY.
+   No exception raised.
+
+2. Unit test: _evaluate_csv_file on a header-only CSV tmp file produces
+   a .record.json with status="empty", f1=0.0, fn=len(reference).
+
+3. Integration: `make -C experiments rebuild-measurements` completes
+   without -k flag and without errors. All 12 empty CSVs produce
+   .record.json files.
 
 ## Exit criteria
-- `make -C experiments rebuild-measurements` completes without `-k`
-- Empty CSVs produce error records instead of crashes
+- plants_to_dataframe([]) returns empty cleaned DataFrame (no crash)
+- Empty CSVs produce status="empty" records with real zero-metrics
+- -k flag removed from Makefile evaluate-all-records target
+- rebuild-measurements completes cleanly

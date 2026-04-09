@@ -1,28 +1,65 @@
 %erg v1
-Title: Audit all JSON globs for .eval.json filtering
+Title: Whitelist model-reply glob via shared loader
 Status: open
 Created: 2026-04-08
 Author: claude
 
 --- log ---
 2026-04-08T19:30Z claude created from anti-pattern sweep after ticket 0043
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 
 --- body ---
 ## Context
-Ticket 0043 fixed extract.py's glob to skip .eval.json files. The same
-anti-pattern exists in other modules that glob *.json in output directories.
+Output directories are an ad-hoc soup of file types: model replies
+(`{slug}-run{N}.json`), extracted CSVs, `.record.json` eval records,
+`_summary.json` files, `tavily_cache.json`, `self_consistency_summary.json`.
+Every consumer re-invents its own filter:
 
-## Instances found
-- analyze_multiturn_budget.py:25 — `output_dir.glob("*.json")` unfiltered,
-  will load .eval.json files if present
-- self_consistency.py:144 — safe (regex filters to -runN.json pattern)
-- verify.py:632 — uses assistant_turns[-1] only; may be intentional for
-  per-turn verification but should be reviewed
+- extract.py:362 — blacklists `.eval.json` (ticket 0043)
+- self_consistency.py:144 — regex whitelist for `-runN.json` (already safe)
+- analyze_multiturn_budget.py:25 — no filter at all (latent bug)
+- Makefile:151 — `filter-out %.record.json` (yet another ad-hoc exclusion)
+
+Ticket 0043 patched one suffix. The next derived file type (`.record.json`
+already exists, `_summary.json` is coming from verify.py) will break another
+consumer. Blacklisting suffixes is whack-a-mole. The harness already defines
+the canonical output naming convention in `harness.output_filename`:
+`{slug}-run{N}.json`. That is the whitelist.
+
+The bug is latent today — no `.eval.json` files currently exist in output
+directories. This is post-conference work (April 11 deadline), but the fix
+is small and eliminates the entire class of file-confusion bugs.
 
 ## Actions
-1. Add .eval.json filter to analyze_multiturn_budget.py
-2. Review verify.py last-turn-only logic — is it intentional?
-3. Grep for any other *.json globs added after this sweep
+1. Add `iter_model_replies(dir: Path) -> Iterator[Path]` to `harness.py`.
+   Implementation: `dir.glob("*.json")` filtered by
+   `re.match(r"^.+-run\d+\.json$", f.name)`. This is the single source of
+   truth for "what is a model reply file."
+2. Replace `extract.py:362` glob+blacklist with `iter_model_replies()`.
+   Delete the `.eval.json` special-case — whitelist subsumes it.
+3. Replace `analyze_multiturn_budget.py:25` raw glob with
+   `iter_model_replies()`. This closes the latent bug.
+4. `self_consistency.py:144` already uses an equivalent regex — optionally
+   refactor to use the shared function, or leave it (it is already safe).
+5. Add a test: place `model-run1.json`, `model-run1.record.json`,
+   `model-run1.eval.json`, `tavily_cache.json`, and `summary.json` in a
+   temp dir. Assert `iter_model_replies()` returns only `model-run1.json`.
+
+## Test
+```python
+def test_iter_model_replies_filters_derived_files(tmp_path):
+    (tmp_path / "deepseek-v3.2-run1.json").write_text("{}")
+    (tmp_path / "deepseek-v3.2-run1.record.json").write_text("{}")
+    (tmp_path / "deepseek-v3.2-run1.eval.json").write_text("{}")
+    (tmp_path / "tavily_cache.json").write_text("{}")
+    (tmp_path / "self_consistency_summary.json").write_text("{}")
+    result = list(iter_model_replies(tmp_path))
+    assert [f.name for f in result] == ["deepseek-v3.2-run1.json"]
+```
 
 ## Exit criteria
-- No module loads .eval.json by accident
+- Single `iter_model_replies()` function in harness.py
+- extract.py and analyze_multiturn_budget.py use it (no ad-hoc globs)
+- Test proves derived file types are excluded by default
+- No module loads non-reply JSON by accident, now or when new derived
+  file types are added in the future

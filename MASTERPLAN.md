@@ -4,18 +4,17 @@
 > milestone's operational checkboxes. When they overlap, STATE.md governs
 > what to do this week; MASTERPLAN governs why.
 
-## Vision
+## North star
 
-Demonstrate — with reproducible quantitative evidence — what AI methods can
-and cannot do for statistical production. Not which model is best, but which
-**method** produces a trustworthy statistical table from open sources.
+**Auto-PyPSA ASEAN** — a complete, auditable, reproducible database of
+power system components across 10 ASEAN countries, built by AI extraction
+from primary government documents and ready for direct use in PyPSA-Earth
+models. 10 countries x 6 component classes = 60 extraction campaigns.
+At ~$0.06 per campaign, a regional power system database for less than
+one frontier model call.
 
-A method is the whole pipeline: prompt design, information regime, extraction
-logic, reconciliation strategy, verification pass. A model is one parameter.
-
-The benchmark converges toward the production pipeline. Its measurements
-table becomes the audit log. Its evaluation metrics become quality monitoring.
-Design decisions are made with this convergence in mind.
+Research-quality data isn't correct data. It's data whose errors are
+**locatable**.
 
 ## Why this matters
 
@@ -27,6 +26,10 @@ languages, formats, and jurisdictions.
 The question is not "can GPT-5 list power plants?" but "what method
 reliably produces a publishable statistical table, at what cost, with
 what justification?"
+
+A method is the whole pipeline: prompt design, information regime,
+extraction logic, reconciliation strategy, verification pass. A model
+is one parameter.
 
 ### Use cases that drive different quality requirements
 
@@ -42,191 +45,175 @@ One pipeline, different quality bars. The benchmark measures all levels.
 
 ## Multi-level evaluation framework
 
-### Level 1 — Resources (measured now)
+### Level 1 — Resources (measured)
 Wall time, API cost, token counts.
-CO₂ estimate aspirational (requires CodeCarbon or provider-reported data).
+CO2 estimate aspirational (requires CodeCarbon or provider-reported data).
 Every run has a price tag.
 
-### Level 2 — Document quality (measured now)
+### Level 2 — Document quality (measured)
 Benchmark against gold standard: coverage, precision, F1, attribute
 accuracy, capacity error, hallucination rate.
 The table either matches reality or it doesn't.
 
-### Level 3 — Output provenance (to build)
+### Level 3 — Output provenance (milestone: Provenance)
 The table comes with sources and notes. Claims are attributed.
 The method says "I don't know" when uncertain.
 Confidence intervals on counts and capacities.
 Statistical quality, not just accuracy.
 
-### Level 4 — System usability (to build)
+### Level 4 — System usability (milestone: Scale)
 Can the method scale to other countries? Update when plants change status?
 Fill gaps from totals? Resolve incoherences or escalate them?
 Prioritize sources when they conflict?
 
-## Final desired state
+## Milestone DAG
 
-### The measurements table
-
-One table of truth. One row per run.
-
-```
-run_id
-timestamp
-method                    -- single-shot, multiturn, rag-wholesale, web, ...
-method_params             -- JSON: model, endpoint, prompt hash, regime, ...
-resource_use              -- JSON: wall_s, cost_usd, tokens_in, tokens_out
-result_file               -- path to raw output
-result_summary            -- JSON: status, n_plants, TP, FP, FN, F1, ...
-justification             -- JSON: sources_provided, sources_verified, ...
-```
-
-Methods and models have their own description tables (static metadata).
-Each repeat is a row. Tables for the report are views.
-
-### The job board
-
-Workers on a shared filesystem, not microservices. One node.
+Milestones are not sequential phases. They form a dependency graph.
+Work on independent milestones proceeds in parallel. Publications
+crystallize whenever milestones converge — they are side effects,
+not gates.
 
 ```
-jobs/
-  pending/    ← experiment manager writes job specs (priority-prefixed)
-  running/    ← worker takes a lease (rename, expiry timestamp)
-  done/       ← completed job + result row for measurements table
-  failed/     ← with error log, eligible for retry
+  Conference ─────→ Hygiene ───────────────┐
+  (60%)               ↓                     ↓
+  Measurements ───→ Pipeline ──→ Provenance ──→ Auto-PyPSA ASEAN
+  (done)              ↓              ↓
+                    Scale ───────────┘
 ```
 
-Experiment manager: reads YAML experiment spec, writes job files.
-Workers (technicians): examine job, estimate duration, run with timeout
-guard. The running slot is a lease with an expiration date — if the
-worker dies, the lease expires and the job returns to pending.
+### Conference (active, 60%)
 
-Padme worker: sequential (one GPU). Remote worker: parallel (rate-limited).
-Each worker logs independently. Observer is external.
-
-### The pipeline
-
-The benchmark pipeline *is* the production pipeline with a test harness
-bolted on. In production:
-- Input: "produce table of thermal plants in Vietnam"
-- Method: best method from benchmark (e.g. RAG-wholesale + verification)
-- Output: statistical table + quality report + audit trail
-- Monitoring: new rows in measurements table, anomaly detection on metrics
-
-## How we get there
-
-### Phase 1: Econom'IA presentation (April 3–10, 2026)
-
-Present "methods benchmark" with data from sweeps 1–2.
-
-**Work remaining:**
-- Run sweep 2 (#10): 5 models × 3 information regimes (multi-turn,
-  RAG-wholesale, web-augmented) × 3 runs = 45 calls
-- Merge cost/latency into metrics (#59)
-- Tabulate relances (#47) and comparison (#48)
-- Reframe slides: methods not models, multi-level evaluation vision
+Present the methods benchmark pilot at Econom'IA 2026 (April 11).
 
 **What we show:**
 - Level 1 (resources): Pareto chart, cost table
-- Level 2 (quality): census results, method comparison
-- Levels 3–4: vision slide, not data yet
+- Level 2 (quality): census results (37 models), method comparison
+  (6 conditions), best F1 98.8% (DeepSeek V3.2 + RAG)
+- Levels 3-4: vision slide — the pipeline, not data yet
 
-**Deferred:** pipeline UX (#22), reasoning sweep (#11), verification
-sweep (#12), sensitivity (#13), code quality (#30, #35, #36)
+**What remains:**
+- Visual PDF review of slides
+- RAG local sweep: 2B/4B/9B scaling curve
 
-### Phase 2: Measurements table ✓
+**Data:** 238 measurement rows, 574 tests passing, $0.82 total cost.
 
-Completed (#157). `measurements.jsonl` is the single data source.
-All report tables derived from it. `all_metrics.json` retired.
+### Measurements (done)
 
-### Phase 3: Primary-source pipeline (#98)
+`measurements.jsonl` is the single data source. All report tables are
+views derived from it. `all_metrics.json` retired. Completed via #157.
 
-Build a generic pipeline that extracts auditable statistical tables from
-primary government documents. The system is parameterized by country and
-energy subsector — the benchmark infrastructure (PDF converters, RAG,
-multi-turn, reconciliation) provides the building blocks.
+### Hygiene (ready — depends on: Conference, Measurements)
 
-The benchmark and pipeline are mutually reinforcing: the pipeline produces
-a better gold standard, the benchmark evaluates pipeline quality.
+Statistical rigor on existing data. Zero new API calls needed — mine
+the 238 existing measurements for honest uncertainty quantification.
 
-**Generic 5-step extraction chain:**
+- **Variance decomposition** (ticket 0029): two-way ANOVA on F1 by
+  model x method. Report eta-squared. Are reported differences signal
+  or noise?
+- **Method-vs-model proof** (ticket 0031): prove the "method dominates
+  model" claim with statistics, not assertion. Cost-F1 scatter by regime.
+  Investigate Gemini Flash Lite RAG degradation anomaly.
+- **Matching sensitivity** (ticket 0035): store similarity scores in
+  ReconciliationEntry. Post-hoc threshold sweep without MILP re-runs.
+- **Prompt ablation** (ticket 0038): isolate which prompt components
+  help vs hurt structured extraction. Existing data shows elaborate
+  prompts *degrade* F1 (Opus: 0.64 single-shot vs 0.54 frontier).
 
-1. **Regulatory corpus** — Retrieve official planning documents and their
-   annexes (facility lists with capacity, timeline, investor, status).
-   Convert PDF→MD using benchmarked converters.
-2. **Operational stock** — Reconstruct the current fleet from utility
-   annual reports and regulator data: facility name, location, fuel,
-   capacity, units, commissioning date, owner.
-3. **Decisional chronology** — For each facility (batched), trace the
-   administrative history from primary sources: first inscription in a
-   national plan, modifications across successive plans, permits,
-   construction, commissioning (planned vs actual), cancellation.
-   Rule: if no primary source is found, flag the gap — never substitute
-   with secondary compilations.
-4. **Analytical synthesis** — Periodization by planning cycles,
-   realization rates (planned vs built MW), cancellation dynamics,
-   technology transitions, prospective scenarios.
+**Publication:** Conference proceedings paper — pilot results + Hygiene
+= the first publishable article.
+
+### Pipeline (ready — depends on: Measurements)
+
+The 5-step extraction chain that produces PyPSA-Earth-ready datasets
+from primary government documents. Includes worker infrastructure
+(absorbed from former "Job board" milestone).
+
+**The extraction chain:**
+
+1. **Regulatory corpus** — Retrieve official planning documents and
+   annexes. Convert PDF to MD using benchmarked converters.
+2. **Operational stock** — Reconstruct current fleet from utility annual
+   reports and regulator data.
+3. **Decisional chronology** — Per facility, trace administrative
+   history from primary sources. Rule: no primary source = flag the gap.
+4. **Analytical synthesis** — Periodization, realization rates, technology
+   transitions.
 5. **Assembly** — Citable report with provenance chain. Each datum traces
-   to an identified primary document; gaps are flagged honestly.
+   to an identified document; gaps are flagged honestly.
 
 **First application: Vietnam thermal plants.**
 Regulatory corpus = PDP7/7A/8/8 revised (Decisions 428, 500, 768, 1509).
 Utility = EVN annual reports, ERAV dispatch data. ~163 facilities.
-Practical constraints: Vietnamese-language PDFs (some scanned), dispersed
-per-project decisions, EVN reports not always freely accessible.
+
+**Worker infrastructure** (tickets 0023, 0044, 0045):
+- Fix mode dispatch bug (workers currently ignore `job.mode`)
+- Shared `iter_model_replies()` whitelist for file discovery
+- Handle empty CSVs as data (F1=0), not crashes
+- File-based job execution with lease semantics
 
 **Infrastructure from benchmark:**
 
 | Pipeline step | Benchmark component | Status |
 |---|---|---|
-| Regulatory corpus | PDF→MD converters + RAG wholesale | Converters benchmarked (#85, #167) |
-| Operational stock | Web-augmented queries | web done |
-| Chronologies | Multi-turn conversations | multiturn done |
-| Assembly | Reconciliation LP + evaluation | Done, 423 tests |
+| Regulatory corpus | PDF to MD converters + RAG wholesale | Converters benchmarked |
+| Operational stock | Web-augmented queries | Done |
+| Chronologies | Multi-turn conversations | Done |
+| Assembly | Reconciliation LP + evaluation | Done, 574 tests |
 
-**Generalization path:** once the chain works for Vietnam thermal, test
-on a second case (different country or subsector) to validate that the
-pipeline logic is truly country-agnostic and only the corpus changes.
+**Deliverable:** one PyPSA-Earth-ready Vietnam thermal dataset with
+full provenance chain.
 
-### Phase 4: Job board (post-conference)
+### Provenance (depends on: Pipeline)
 
-Replace Makefile sweeps with file-based job execution.
+Level 3 evaluation. The table comes with receipts.
 
-- Job spec format (YAML)
-- Experiment manager script
-- Timeout-guarded worker with lease semantics
-- Padme worker (sequential) and OpenRouter worker (parallel)
-- Resume = re-scan pending + check lease expiry on running
-- Run sweeps 3–5 (#11, #12, #13) on the new infrastructure
-
-### Phase 5: Output provenance (depends on phases 2, 3)
-
-Level 3 evaluation. Can start alongside phase 4.
-
-- Extend query methods to request source attribution
-- Parse and validate source citations
+- **Sourced extraction** (ticket 0025): fix `extract.py` to preserve
+  provenance columns (`source_1`, `source_2`, `note`) that already
+  exist in 3 Claude Opus runs but are silently destroyed during CSV
+  canonicalization.
+- **Verification** (ticket 0030): "cost of trust" — precision-coverage
+  trade-off across verification modes. Compare upfront citation
+  (sourced extraction) vs post-hoc verification (LLM + web checks).
 - "I don't know" detection and scoring
 - Confidence interval estimation on aggregates
-- Verification sweep (#12) produces the first provenance data
 
-### Phase 6: Usability evaluation (depends on phase 4)
+**Publication:** Methods paper — Hygiene (statistical rigor) +
+Provenance (epistemic accountability) = journal article on the
+benchmark methodology.
 
-Level 4 evaluation. Can start alongside phase 5.
+### Scale (depends on: Pipeline)
 
-- Test with second country (scale)
+Level 4 evaluation. Can proceed in parallel with Provenance.
+
+- Test with second country (e.g., Indonesia coal) or second component
+  class (e.g., Vietnam renewables from PDP8 annexes)
+- Validate that the pipeline is parameterized by corpus, not hardcoded
+  for Vietnam thermal
 - Test with updated reference data (temporal stability)
 - Gap-filling from aggregate constraints
 - Incoherence detection and escalation protocol
-- Source prioritization when references conflict
 
-### Phase 7: Journal submission (depends on phases 5 + 6)
+### Auto-PyPSA ASEAN (north star — depends on: Provenance, Scale)
 
-Package phases 1–6 into a paper.
+10 ASEAN countries x 6 component classes (thermal, renewables, hydro,
+storage, transmission, interconnections). Same method, different corpus.
+Each country publishes power development plans in its own language and
+regulatory framework.
 
-- Methods benchmark results (sweeps 1–5)
-- Primary-source pipeline: first application and lessons learned
-- Multi-level evaluation framework with data at all levels
-- Architecture: from benchmark toward production pipeline
-- Reproducibility: the code *is* the evidence
+The pipeline is parameterized by country and component class.
+The benchmark's evaluation metrics become the quality monitoring layer.
+The measurements table becomes the audit log.
+
+**Component classes:**
+- Thermal generators (validated by benchmark)
+- Renewables (solar, wind — present in PDP8 annexes)
+- Hydroelectricity
+- Storage (batteries, pumped hydro — emerging in PDP8 revised)
+- Transmission network (lines, substations, from EVN expansion plans)
+- Interconnections (ASEAN Power Grid links)
+
+**Publication:** Data paper + full journal article describing the
+complete framework from benchmark to production database.
 
 ## Non-goals
 

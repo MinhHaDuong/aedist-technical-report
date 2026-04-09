@@ -5,42 +5,98 @@ Created: 2026-04-08
 Author: claude
 
 --- log ---
+2026-04-09T12:00Z claude status reimagined by IDD phase 1
 2026-04-08T13:00Z claude note unblocked — 0011 merged (PR #188)
 2026-04-08T06:16Z claude created
 2026-04-08T06:16Z claude note Design from review of ticket 0011
 
 --- body ---
 ## Context
-Workers currently hardcode `query_single_turn` and ignore `job.mode`.
-The `WorkerPool` field routes jobs to workers, but this is backwards:
-jobs should describe what they need, workers should self-select.
 
-## Design
-- Jobs are pure descriptions: model ID + mode (single/multiturn/rag/web/decomposed).
-- No `worker_pool` field on JobSpec. Remove `WorkerPool` enum.
-- Each worker knows its capabilities:
-  - **Endpoint:** model ID with `/` needs OpenRouter, without needs Ollama.
-  - **Mode:** which query functions the worker supports.
-- `poll()` scans the queue, skips jobs the worker can't handle.
-- Padme worker probes GPU capacity directly: query Ollama API
-  (`/api/tags` or `/api/ps`) to check availability and loaded models.
-  If GPU is busy or unreachable, skip local-model jobs.
-- Mode dispatch in `execute()`: map `job.mode` to the correct query
-  function (query_single_turn, query_multiturn, query_rag, etc.).
+The worker system has a silent correctness bug: both PadmeWorker and
+OpenRouterWorker hardcode `query_single_turn` in their `execute()` methods,
+ignoring `job.mode` entirely. A RAG or multiturn job dispatched through the
+worker pipeline would silently run as single-turn and produce wrong results
+with no error. This is not a future risk — the manager already writes jobs
+with `mode=rag`, `mode=multiturn`, etc. from experiments.toml.
+
+Meanwhile, all non-single sweeps (RAG, multiturn, web, decomposed) are
+actually run via standalone `query_*.py` scripts that duplicate the
+model iteration, budget tracking, skip logic, and output serialization
+that the worker system already provides. The worker system handles only
+`mode=single` in practice, and the scripts handle everything else —
+two parallel execution paths for the same pipeline.
+
+The original ticket proposed removing `WorkerPool` and adding
+`can_handle()` with Ollama GPU probing. That design conflates three
+concerns: (1) fixing the mode dispatch bug, (2) eliminating the pool
+routing field, (3) adding runtime hardware probing. Concern 1 is a
+correctness fix that unblocks real work. Concerns 2 and 3 are Phase 4
+architecture that cannot land before the April 11 conference and whose
+design depends on how sweeps 3-5 actually stress the system.
+
+The real leverage is: make `execute()` dispatch on `job.mode` so the
+worker system can run ALL sweep types, then delete the standalone
+scripts. One execution path, not two. GPU probing and pool removal
+are post-conference.
 
 ## Actions
-1. Add `can_handle(job) -> bool` to Worker base class
-2. `poll()` calls `can_handle()` to filter candidates
-3. Merge PadmeWorker/OpenRouterWorker into capability-based subclasses
-   or a single configurable Worker
-4. Add mode dispatch in `execute()` (single/multiturn/rag/web/decomposed)
-5. Probe Ollama `/api/tags` or `/api/ps` for GPU availability
-6. Remove `WorkerPool` enum and `worker_pool` from JobSpec/sweep YAMLs
-7. Update Makefile: just spawn N workers + 1 padme worker
+
+1. Add mode dispatch to `Worker.execute()` as a base-class method:
+   map `job.mode` to the correct query function
+   (`query_single_turn`, `query_multiturn`, `query_rag`, `query_web`,
+   `query_decomposed`). Each mode extracts the parameters it needs
+   from `JobSpec` fields (`corpus`, `followups`, `strategy`).
+
+2. Push `execute()` implementation UP from subclasses into `Worker`.
+   PadmeWorker and OpenRouterWorker differ only in how they create
+   their client (`make_client(self.base_url)` vs `make_client()`).
+   Override `make_client()` in each subclass, keep `execute()` shared.
+
+3. Add a `query_verification` dispatch path (the Method enum already
+   has `VERIFICATION` but no worker support).
+
+4. Write tests: a job with `mode=rag` actually calls `query_rag`
+   pipeline functions, not `query_single_turn`. A job with
+   `mode=multiturn` calls multiturn. Test the dispatch table
+   exhaustively for all Method enum values.
+
+5. Run an existing sweep config (e.g. `sweeps.rag` from
+   experiments.toml) through manager generate + worker drain and
+   verify outputs match the standalone `query_rag.py` path.
+
+## What this does NOT do (deferred to post-conference)
+
+- Remove `WorkerPool` enum or `worker_pool` from JobSpec. Harmless
+  metadata; removing it touches sweep YAMLs and manager for no
+  correctness gain.
+- Add `can_handle()` / self-selection in `poll()`. Requires design
+  work on how mixed-pool queues interact with priority ordering.
+- Probe Ollama `/api/tags` or `/api/ps` for GPU availability. Useful
+  only when multiple GPU workers compete; we have one Padme today.
+- Delete standalone `query_*.py` scripts. Once workers dispatch all
+  modes correctly, the scripts become redundant, but removal is a
+  separate cleanup ticket to avoid scope creep.
+
+## Test
+
+```python
+def test_rag_job_dispatches_to_rag_pipeline(tmp_path):
+    """A job with mode=rag must call RAG query functions, not single-turn."""
+    job = _make_job(mode="rag", corpus="data/rag_corpus", strategy="wholesale")
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    with patch("aedist.worker.query_rag_wholesale") as mock_rag:
+        mock_rag.return_value = _canned_result()
+        result = worker.execute(job)
+    mock_rag.assert_called_once()
+```
 
 ## Exit criteria
-- Workers self-select jobs by inspecting model ID and mode
-- No pool metadata on jobs
-- All 5 modes dispatched correctly
-- Padme checks GPU availability via Ollama API
-- All tests pass
+
+- `Worker.execute()` dispatches on all 7 Method enum values
+  (single, multiturn, rag, web, decomposed, sourced, verification)
+- PadmeWorker and OpenRouterWorker share the dispatch logic
+- A `mode=rag` job through the worker produces the same output
+  structure as `query_rag.py`
+- No silent fallback to `query_single_turn` for unknown modes (raise)
+- All existing tests pass; new dispatch tests cover each mode
