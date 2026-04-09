@@ -138,7 +138,12 @@ def plants_to_csv_text(plants: list) -> str:
 
 
 def _group_runs(input_dir: Path) -> dict[str, list[Path]]:
-    """Group JSON files by model name. Returns {model: [run1, run2, run3]}."""
+    """Group JSON files by model name. Returns {model: [run1, run2, run3]}.
+
+    The regex is intentionally equivalent to harness._MODEL_REPLY_RE but
+    uses capture groups to extract the model name and run number for
+    grouping.  See ticket 0044 for the shared whitelist rationale.
+    """
     pattern = re.compile(r"^(.+)-run(\d+)\.json$")
     groups: dict[str, list[tuple[int, Path]]] = defaultdict(list)
     for jf in sorted(input_dir.glob("*.json")):
