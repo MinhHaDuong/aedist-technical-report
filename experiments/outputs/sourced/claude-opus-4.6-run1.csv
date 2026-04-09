@@ -1,121 +1,121 @@
-name,fuel,status,cod,province,capacity_mwe
-Uong Bi,coal_domestic,operating,1964,Quang Ninh,105
-Uong Bi Extension 1,coal_domestic,operating,2005,Quang Ninh,300
-Uong Bi Extension 2,coal_domestic,operating,2011,Quang Ninh,330
-Pha Lai 1,coal_domestic,operating,1983,Hai Duong,440
-Pha Lai 2,coal_imported,operating,2002,Hai Duong,600
-Ninh Binh,coal_domestic,operating,1974,Ninh Binh,100
-Na Duong,coal_domestic,operating,2004,Lang Son,111
-Cao Ngan,coal_domestic,operating,2006,Thai Nguyen,115
-Cam Pha 1+2,coal_domestic,operating,2010,Quang Ninh,600
-Son Dong,coal_domestic,operating,2010,Quang Ninh,220
-Formosa Ha Tinh 1,coal_imported,operating,2015,Ha Tinh,150
-Hai Phong 1,coal_imported,operating,2010,Hai Phong,600
-Hai Phong 2,coal_imported,operating,2014,Hai Phong,600
-Quang Ninh 1,coal_imported,operating,2010,Quang Ninh,600
-Quang Ninh 2,coal_imported,operating,2014,Quang Ninh,600
-Nghi Son 1,coal_imported,operating,2013,Thanh Hoa,600
-Duyen Hai 1,coal_imported,operating,2015,Tra Vinh,1245
-Duyen Hai 3,coal_imported,operating,2017,Tra Vinh,1245
-Vinh Tan 2,coal_imported,operating,2014,Binh Thuan,1244
-Mong Duong 1,coal_imported,operating,2015,Quang Ninh,1080
-Mong Duong 2,coal_imported,operating,2015,Quang Ninh,1200
-Thai Binh 1,coal_domestic,operating,2017,Thai Binh,600
-Vinh Tan 4,coal_imported,operating,2018,Binh Thuan,1200
-Mao Khe,coal_domestic,operating,2013,Quang Ninh,440
-An Khanh 1,coal_domestic,operating,2012,Thai Nguyen,100
-Vung Ang 1,coal_imported,operating,2014,Ha Tinh,1200
-Nong Son,coal_domestic,operating,2013,Quang Nam,30
-Vinh Tan 1,coal_imported,operating,2018,Binh Thuan,1200
-Duyen Hai 3 Extension,coal_imported,operating,2019,Tra Vinh,660
-Vinh Tan 4 Extension,coal_imported,operating,2019,Binh Thuan,600
-Thai Binh 2,coal_domestic,operating,2022,Thai Binh,1200
-Song Hau 1,coal_imported,operating,2022,Hau Giang,1200
-Nghi Son 2,coal_imported,operating,2022,Thanh Hoa,1200
-Hai Duong (BOT),coal_imported,operating,2021,Hai Duong,1200
-Vinh Tan 1 (already listed above),,,,,0
-Thang Long,coal_imported,operating,2018,Thanh Hoa,600
-Duyen Hai 2,coal_imported,operating,2022,Tra Vinh,1200
-Na Duong 2,coal_domestic,under_construction,2024,Lang Son,110
-Quang Trach 1,coal_imported,under_construction,2025,Quang Binh,1403
-Vung Ang 2,coal_imported,under_construction,2026,Ha Tinh,1330
-Van Phong 1,coal_imported,under_construction,2024,Khanh Hoa,1432
-Long Phu 1,coal_imported,under_construction,2026,Soc Trang,1200
-An Khanh - Bac Giang,coal_domestic,under_construction,2025,Bac Giang,650
-Cong Thanh,coal_imported,delayed,2026,Thanh Hoa,600
-Nam Dinh 1,coal_imported,delayed,unknown,Nam Dinh,1200
-Quang Tri (coal),coal_imported,delayed,unknown,Quang Tri,1320
-Vinh Tan 3,coal_imported,delayed,unknown,Binh Thuan,1980
-Song Hau 2,coal_imported,delayed,unknown,Hau Giang,2120
-Cam Thanh,coal_imported,delayed,unknown,Thanh Hoa,600
-Long Phu 2,coal_imported,delayed,unknown,Soc Trang,1320
-Long Phu 3,coal_imported,cancelled_or_stalled,unknown,Soc Trang,1800
-Formosa Ha Tinh 2,coal_imported,planned,unknown,Ha Tinh,650
-Formosa Dong Nai,coal_imported,operating,2016,Dong Nai,150
-Hai Ha 1 (cogeneration),coal_imported,planned,unknown,Quang Ninh,300
-Hai Ha 2 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
-Hai Ha 3 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
-Hai Ha 4 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600
-Duc Giang (cogeneration),coal_domestic,planned,unknown,Ha Noi,100
-Hoa Phat II (blast furnace gas),coal_byproduct,planned,unknown,Quang Ngai,300
-Quang Trach 2 (LNG conversion),lng,planned,2026,Quang Binh,1500
-Quynh Lap 1,coal_imported,delayed,unknown,Nghe An,1200
-Hai Phong 3,coal_imported,cancelled_or_stalled,unknown,Hai Phong,1200
-Cam Pha 3,coal_domestic,cancelled_or_stalled,unknown,Quang Ninh,440
-Quynh Lap 2,coal_imported,cancelled_or_stalled,unknown,Nghe An,1200
-Vung Ang 3,coal_imported,cancelled_or_stalled,unknown,Ha Tinh,1200
-Quang Ninh 3,coal_imported,cancelled_or_stalled,unknown,Quang Ninh,1200
-Long An 1 (coal),coal_imported,cancelled,unknown,Long An,1200
-Long An 2 (coal),coal_imported,cancelled,unknown,Long An,1600
-Tan Phuoc 1,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200
-Tan Phuoc 2,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200
-Bac Lieu (coal),coal_imported,cancelled,unknown,Bac Lieu,1200
-Pha Lai 3,coal_domestic,planned,unknown,Hai Duong,660
-Bao Dai,coal_domestic,planned,unknown,unknown,600
-Thu Duc (oil),oil,operating,1965,Ho Chi Minh City,165
-Can Tho (oil),oil,operating,1978,Can Tho,33
-O Mon 1,gas_domestic,operating,2009,Can Tho,660
-Hiep Phuoc,oil,operating,1997,Ho Chi Minh City,375
-Phu My 1,gas_domestic,operating,1999,Ba Ria-Vung Tau,1108
-Phu My 2.1,gas_domestic,operating,2001,Ba Ria-Vung Tau,945
-Phu My 4,gas_domestic,operating,2004,Ba Ria-Vung Tau,477
-Phu My 2.2,gas_domestic,operating,2005,Ba Ria-Vung Tau,740
-Phu My 3,gas_domestic,operating,2004,Ba Ria-Vung Tau,740
-Ba Ria,gas_domestic,operating,1995,Ba Ria-Vung Tau,389
-Thu Duc (gas turbine),gas_domestic,operating,1999,Ho Chi Minh City,128
-Can Tho (gas turbine),gas_domestic,operating,2002,Can Tho,155
-Ca Mau 1,gas_domestic,operating,2007,Ca Mau,750
-Ca Mau 2,gas_domestic,operating,2008,Ca Mau,750
-Nhon Trach 1,gas_domestic,operating,2009,Dong Nai,465
-Nhon Trach 2,gas_domestic,operating,2011,Dong Nai,750
-Nhon Trach 3,lng,under_construction,2025,Dong Nai,750
-Nhon Trach 4,lng,under_construction,2025,Dong Nai,874
-O Mon 3,gas_domestic,planned,2025,Can Tho,750
-O Mon 4,gas_domestic,planned,2023,Can Tho,750
-O Mon 2,gas_domestic,planned,unknown,Can Tho,1050
-Dung Quat 1,gas_domestic,planned,2024,Quang Ngai,750
-Dung Quat 2,gas_domestic,planned,unknown,Quang Ngai,750
-Dung Quat 3,gas_domestic,planned,unknown,Quang Ngai,750
-Mien Trung 1,gas_domestic,planned,2025,Quang Tri,750
-Mien Trung 2,gas_domestic,planned,2025,Quang Tri,750
-Quang Tri (gas),gas_domestic,planned,unknown,Quang Tri,340
-Son My 2,lng,planned,2027,Binh Thuan,2250
-Son My 1,lng,planned,2028,Binh Thuan,2250
-LNG Quang Ninh,lng,planned,unknown,Quang Ninh,1500
-LNG Thai Binh,lng,planned,unknown,Thai Binh,1500
-LNG Nghi Son,lng,planned,unknown,Thanh Hoa,1500
-LNG Quynh Lap / Nghi Son,lng,planned,unknown,Nghe An,1500
-LNG Hai Lang 1,lng,planned,unknown,Quang Tri,1500
-LNG Ca Na,lng,planned,unknown,Ninh Thuan,1500
-LNG Hiep Phuoc 1,lng,planned,unknown,Ho Chi Minh City,1200
-LNG Long An 1,lng,planned,unknown,Long An,1500
-LNG Long An 2,lng,planned,unknown,Long An,1500
-LNG Bac Lieu,lng,planned,unknown,Bac Lieu,3200
-LNG Long Son,lng,planned,unknown,Ba Ria-Vung Tau,1500
-Kien Giang 1,gas_domestic,delayed,unknown,Kien Giang,750
-Kien Giang 2,gas_domestic,delayed,unknown,Kien Giang,750
-Ve Dan,gas_domestic,operating,2002,Dong Nai,72
-Dam Phu My,gas_domestic,operating,2004,Ba Ria-Vung Tau,21
-Bourbon,oil,operating,unknown,unknown,24
-Amata,diesel,operating,unknown,Dong Nai,14
-Diesel plants (EVN Power Corporations),diesel,operating,various,various,285
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Uong Bi,coal_domestic,operating,1964,Quang Ninh,105.0,EVN Annual Report 2010-2011 p13,EVN Annual Report 2017 p14 (GENCO1 list shows Uong Bi 105MW),Original 4x25MW+1x5MW plant; PDP7A listed for retirement in 2021; EVN 2018 report no longer lists it under GENCO1 suggesting decommissioned or transferred
+Uong Bi Extension 1,coal_domestic,operating,2005,Quang Ninh,300.0,EVN Annual Report 2017 p14 (GENCO1),EVN Annual Report 2018 pp34-35 (GENCO1),"1x300MW unit; listed as ""Uong Bi extension 1"" in EVN 2017 and 2018 reports"
+Uong Bi Extension 2,coal_domestic,operating,2011,Quang Ninh,330.0,EVN Annual Report 2010-2011 p13 (listed as Uong Bi MR II 330MW),PDP7 Annex 1 (NĐ Uông Bí MR #2 300MW commissioned 2011),EVN 2010-11 shows 330MW; PDP7 lists 300MW for the 2011 unit; EVN 2017/2018 show 330MW under GENCO1; slight discrepancy likely rounding vs nameplate
+Pha Lai 1,coal_domestic,operating,1983,Hai Duong,440.0,EVN Annual Report 2010-2011 p13 (PhaLai I 440MW EVN JSC),EVN Annual Report 2018 pp34-35 (GENCO2 Pha Lai 1 440MW),4x110MW Soviet-built units using domestic coal
+Pha Lai 2,coal_imported,operating,2002,Hai Duong,600.0,EVN Annual Report 2010-2011 p13 (Phả Lại II 600MW),EVN Annual Report 2018 pp34-35 (GENCO2 Pha Lai 2 600MW),2x300MW Japanese-technology units using imported coal
+Ninh Binh,coal_domestic,operating,1974,Ninh Binh,100.0,EVN Annual Report 2010-2011 p13 (Ninh Bình 100MW EVN JSC),EVN Annual Report 2018 pp34-35 (GENCO3 Ninh Binh 100MW),4x25MW; PDP7 Annex 2 listed retirement in 2021; still operating per EVN 2018 report
+Na Duong,coal_domestic,operating,2004,Lang Son,111.0,EVN Annual Report 2010-2011 p13 (Na Duong 111MW Vinacomin),Report 58 Appendix (NĐ Na Dương 2 listed separately as TKV project),Uses local lignite from Na Duong mine; 2x55MW; owned by Vinacomin/TKV
+Cao Ngan,coal_domestic,operating,2006,Thai Nguyen,115.0,EVN Annual Report 2010-2011 p13 (Cao Nhan 115MW Vinacomin),,2x57.5MW; owned by Vinacomin; uses domestic coal
+Cam Pha 1+2,coal_domestic,operating,2010,Quang Ninh,600.0,EVN Annual Report 2010-2011 p13 (Cam Pha 600MW Vinacomin),PDP7 Annex 1 (ND Cẩm Phả II 300MW commissioned 2011),EVN 2010-11 shows 600MW total for Cam Pha under Vinacomin; PDP7 lists Cam Pha II 300MW in 2011 as separate addition; likely 2x300MW phases
+Son Dong,coal_domestic,operating,2010,Quang Ninh,220.0,EVN Annual Report 2010-2011 p13 (Son Dong 220MW Vinacomin),,2x110MW; Vinacomin-owned; uses domestic coal
+Formosa Ha Tinh 1,coal_imported,operating,2015,Ha Tinh,150.0,EVN Annual Report 2010-2011 p13 (Formosa 150MW Local IPP),PDP7 Annex 1 (NĐ Formosa #2 150MW commissioned 2012),Steel mill captive power; first unit ~150MW; expanded subsequently
+Hai Phong 1,coal_imported,operating,2010,Hai Phong,600.0,EVN Annual Report 2017 p14 (GENCO2 Hai Phong 1 600MW),EVN Annual Report 2018 pp34-35 (GENCO2 Hai Phong 1 600MW),2x300MW; was listed as 300MW in EVN 2010-11 report (only 1 unit at that time); full 600MW by 2017
+Hai Phong 2,coal_imported,operating,2014,Hai Phong,600.0,EVN Annual Report 2017 p14 (GENCO2 Hai Phong 2 600MW),EVN Annual Report 2018 pp34-35 (GENCO2 Hai Phong 2 600MW),2x300MW; PDP7 listed units in 2013-2014
+Quang Ninh 1,coal_imported,operating,2010,Quang Ninh,600.0,EVN Annual Report 2010-2011 p13 (Quang Ninh I 300MW EVN JSC),EVN Annual Report 2018 pp34-35 (GENCO1 Quang Ninh 1 600MW),EVN 2010-11 showed 300MW (1 unit); by 2017/2018 reports show 600MW (2x300MW)
+Quang Ninh 2,coal_imported,operating,2014,Quang Ninh,600.0,EVN Annual Report 2017 p14 (GENCO1 Quang Ninh 2 600MW),EVN Annual Report 2018 pp34-35 (GENCO1 Quang Ninh 2 600MW),2x300MW; PDP7 listed units in 2014-2015
+Nghi Son 1,coal_imported,operating,2013,Thanh Hoa,600.0,EVN Annual Report 2017 p14 (GENCO1 Nghi Son 1 600MW),EVN Annual Report 2018 pp34-35 (GENCO1 Nghi Son 1 600MW),2x300MW; PDP7 listed units in 2013-2014
+Duyen Hai 1,coal_imported,operating,2015,Tra Vinh,1245.0,EVN Annual Report 2017 p14 (GENCO1 Duyen Hai 1 1244MW),EVN Annual Report 2018 pp34-35 (GENCO1 Duyen Hai 1 1245MW),2x622.5MW; slight variation 1244-1245MW across reports
+Duyen Hai 3,coal_imported,operating,2017,Tra Vinh,1245.0,EVN Annual Report 2017 p14 (GENCO1 Duyen Hai 3 1245MW),Report 32 Appendix 1 (NĐ Duyên Hải III 2x622MW vận hành sớm 6 tháng 2016),PDP7A listed 2016-2017; Report 32 confirms early commissioning in 2016; 2x622MW
+Vinh Tan 2,coal_imported,operating,2014,Binh Thuan,1244.0,EVN Annual Report 2017 p14 (GENCO3 Vinh Tan 2 1244MW),EVN Annual Report 2018 pp34-35 (GENCO3 Vinh Tan 2 1244MW),2x622MW; PDP7 listed 2014 COD as Vĩnh Tân II
+Mong Duong 1,coal_imported,operating,2015,Quang Ninh,1080.0,EVN Annual Report 2017 p14 (GENCO3 Mong Duong 1 1080MW),EVN Annual Report 2018 pp34-35 (GENCO3 Mong Duong 1 1080MW),2x540MW; EVN/GENCO3 owned
+Mong Duong 2,coal_imported,operating,2015,Quang Ninh,1200.0,PDP7 Annex 1 (NĐ Mông Dương II #1-2 1200MW listed for 2015),,BOT project by AES; 2x600MW; not in EVN fleet lists as it is BOT-owned
+Thai Binh 1,coal_domestic,operating,2017,Thai Binh,600.0,EVN Annual Report 2018 pp34-35 (EVN Thai Binh 600MW),Report 32 Appendix 1 (NĐ Thái Bình I 2x300MW đã vận hành đúng tiến độ 2017),2x300MW; EVN-owned; uses domestic coal
+Vinh Tan 4,coal_imported,operating,2018,Binh Thuan,1200.0,EVN Annual Report 2018 pp34-35 (EVN Vinh Tan 4 1200MW),Report 32 Appendix 1 (NĐ Vĩnh Tân IV 2x600MW vận hành sớm 3 tháng 2017-2018),2x600MW; EVN-owned
+Mao Khe,coal_domestic,operating,2013,Quang Ninh,440.0,PDP7 Annex 1 (NĐ Mạo Khê #1-2 440MW commissioned 2013),,2x220MW; TKV-owned; uses domestic coal
+An Khanh 1,coal_domestic,operating,2012,Thai Nguyen,100.0,PDP7 Annex 1 (NĐ An Khánh I #1 50MW 2012 and #2 50MW 2013),,2x50MW; IPP; uses domestic coal
+Vung Ang 1,coal_imported,operating,2014,Ha Tinh,1200.0,PDP7 Annex 1 (NĐ Vũng Áng I #1 600MW 2012 and #2 600MW 2013),,2x600MW; PVN-owned; uses imported coal
+Nong Son,coal_domestic,operating,2013,Quang Nam,30.0,PDP7 Annex 1 (NĐ Nông Sơn 30MW commissioned 2013),,Small TKV plant using local coal; 1x30MW
+Vinh Tan 1,coal_imported,operating,2018,Binh Thuan,1200.0,PDP7A Table 1 (NĐ Vĩnh Tân I #1-2 2x600MW listed 2019),Report 32 Appendix 1 (NĐ Vĩnh Tân I 2x600MW sớm tiến độ trước 7 tháng),BOT by CSG-CPIH-Vinacomin; 2x600MW; commissioned 2018-2019 ahead of schedule per Report 32
+Duyen Hai 3 Extension,coal_imported,operating,2019,Tra Vinh,660.0,PDP7A Table 1 (NĐ Duyên Hải III mở rộng 660MW listed 2019),Report 32 Appendix 1 (NĐ Duyên Hải III Mở rộng 660MW đáp ứng tiến độ 2019),1x660MW extension; EVN-owned
+Vinh Tan 4 Extension,coal_imported,operating,2019,Binh Thuan,600.0,PDP7A Table 1 (NĐ Vĩnh Tân IV mở rộng 600MW listed 2019),Report 32 Appendix 1 (NĐ Vĩnh Tân 4 Mở rộng 600MW đúng tiến độ 2019),1x600MW; EVN-owned
+Thai Binh 2,coal_domestic,operating,2022,Thai Binh,1200.0,PDP7A Table 1 (NĐ Thái Bình II #1 600MW listed 2017 and #2 600MW listed 2018),Report 32 Appendix 1 (NĐ Thái Bình II 2x600MW chậm tiến độ 3 năm),2x600MW; PVN-owned; suffered major delays; Report 32 noted 3-year delay from 2017-2018 target; widely reported as commissioned 2022-2023
+Song Hau 1,coal_imported,operating,2022,Hau Giang,1200.0,PDP7A Table 1 (NĐ Sông Hậu I #1-2 2x600MW listed 2019),Report 32 Appendix 1 (NĐ Sông Hậu I 2x600MW chậm tiến độ 2 năm),2x600MW; PVN-owned; Report 32/58 noted ~2-year delay from 2019 target; commissioned ~2021-2022
+Nghi Son 2,coal_imported,operating,2022,Thanh Hoa,1200.0,PDP7A Table 2 (NĐ Nghi Sơn II #1 600MW 2021 and #2 600MW 2022),Report 58 Appendix (NĐ Nghi Sơn 2 2x600MW chậm ~1 năm 2022),BOT by Marubeni-Kepco; 2x600MW; Report 58 noted ~1-year delay; Study E-542 PL9.2 noted T6/2022+T12/2022
+Hai Duong (BOT),coal_imported,operating,2021,Hai Duong,1200.0,PDP7A Table 1 (NĐ Hải Dương #1 600MW 2020 and #2 600MW 2021),Report 58 Appendix (NĐ Hải Dương 2x600MW chậm 1 năm),BOT by Jaks Resources; 2x600MW; Report 58 noted 1-year delay
+Vinh Tan 1 (already listed above),,,,,0,,,"Duplicate check: already listed as ""Vinh Tan 1"" above"
+Thang Long,coal_imported,operating,2018,Thanh Hoa,600.0,PDP7A Table 1 (NĐ Thăng Long #1 300MW 2018 and #2 300MW 2019),Report 58 Appendix (NĐ Thăng Long 2x300MW đáp ứng 2017-2018),2x300MW; IPP owned by Cty CP Nhiệt điện Thăng Long; Report 58 confirms on-schedule
+Duyen Hai 2,coal_imported,operating,2022,Tra Vinh,1200.0,PDP7A Table 2 (NĐ Duyên Hải II 1-2 2x600MW listed 2021),Report 58 Appendix (NĐ Duyên Hải 2 2x600MW chậm 1 năm),BOT by Janakuasa; 2x600MW; Study E-542 PL9.2 confirms under construction with COD 2021-2022
+Na Duong 2,coal_domestic,under_construction,2024,Lang Son,110.0,PDP7A Table 1 (NĐ Na Dương II 110MW listed 2019),PDP8 Annex II Table 2 (NMNĐ Na Dương II 110MW giai đoạn 2021-2030),1x110MW; TKV-owned; Report 32 noted ~4-year delay from 2019 target; PDP8 confirms in construction
+Quang Trach 1,coal_imported,under_construction,2025,Quang Binh,1403.0,PDP8 Annex II Table 2 (NMNĐ Quảng Trạch I 1403MW giai đoạn 2021-2030),Report 32 Appendix 1 (NĐ Quảng Trạch I 2x600MW chậm 2.5 năm target 2024),Originally PVN then transferred to EVN; 2x~700MW; PDP7A listed 2021-2022; Report 32 noted 2.5-year delay; PDP8 confirms under construction
+Vung Ang 2,coal_imported,under_construction,2026,Ha Tinh,1330.0,PDP8 Annex II Table 2 (NMNĐ Vũng Áng II 1330MW giai đoạn 2021-2030),Report 58 Appendix (NĐ Vũng Áng 2 2x600MW chậm ~2 năm),BOT by VAPCO (Mitsubishi-CLP); 2x665MW; multiple delays noted; PDP8 confirms under construction
+Van Phong 1,coal_imported,under_construction,2024,Khanh Hoa,1432.0,PDP8 Annex II Table 2 (NMNĐ Vân Phong I 1432MW giai đoạn 2021-2030),Report 58 Appendix (NĐ Vân Phong I 2x660MW chậm 1 năm target 2023-2024),BOT by Sumitomo; 2x716MW; Study E-542 PL9.2 noted PPA signed with COD T6/2023+T1/2024
+Long Phu 1,coal_imported,under_construction,2026,Soc Trang,1200.0,PDP8 Annex II Table 2 (NMNĐ Long Phú I 1200MW giai đoạn 2021-2030),Report 58 Appendix (NĐ Long Phú I 2x600MW chậm tiến độ có khả năng đến 48 tháng),2x600MW; PVN-owned; severely delayed due to US sanctions on Russian contractor; 78% complete then suspended per Study E-542; PDP8 still lists as under construction
+An Khanh - Bac Giang,coal_domestic,under_construction,2025,Bac Giang,650.0,PDP8 Annex II Table 2 (NMNĐ An Khánh - Bắc Giang 650MW giai đoạn 2021-2030),Report 58 Appendix (NĐ An Khánh Bắc Giang 1x650MW chậm 1 năm target 2023),IPP; Study E-542 PL9.5A lists as 650MW domestic coal; PDP8 confirms under construction
+Cong Thanh,coal_imported,delayed,2026,Thanh Hoa,600.0,PDP7A Table 1 (NĐ Công Thanh 600MW listed 2020),Report 58 Appendix (NĐ Công Thanh 1x600MW chậm 4 năm target 2024),IPP by Cty CP Nhiệt điện Công Thanh; Study E-542 noted difficulties with financing and land clearance; PDP8 Table 3 did not list it (suggesting possible cancellation risk)
+Nam Dinh 1,coal_imported,delayed,unknown,Nam Dinh,1200.0,PDP7A Table 2 (NĐ Nam Định I #1 600MW 2021 and #2 600MW 2022),PDP8 Annex II Table 3 (NMNĐ Nam Định I 1200MW chậm tiến độ gặp khó khăn),BOT originally by Taekwang-ACWA; Report 58 noted 3-year delay; PDP8 lists among troubled projects; 2x600MW; future uncertain
+Quang Tri (coal),coal_imported,delayed,unknown,Quang Tri,1320.0,PDP7A Table 2 (NĐ Quảng Trị #1 600MW 2023 and #2 600MW 2024),PDP8 Annex II Table 3 (NMNĐ Quảng Trị 1320MW chậm tiến độ gặp khó khăn),BOT originally by EGATi; Report 58 noted 3-year delay to 2026-2027; PDP8 lists among troubled projects; 2x660MW; may be cancelled or converted
+Vinh Tan 3,coal_imported,delayed,unknown,Binh Thuan,1980.0,PDP7A Table 2 (NĐ Vĩnh Tân III #1 660MW 2022 and #2-3 2x660MW 2023),PDP8 Annex II Table 3 (NMNĐ Vĩnh Tân III 1980MW chậm tiến độ gặp khó khăn),BOT by VTEC; 3x660MW; Report 58 noted 2-year delay; PDP8 lists among troubled projects
+Song Hau 2,coal_imported,delayed,unknown,Hau Giang,2120.0,PDP7A Table 2 (NĐ Sông Hậu II #1-2 2x1000MW listed 2021-2022),PDP8 Annex II Table 3 (NMNĐ Sông Hậu II 2120MW chậm tiến độ gặp khó khăn),BOT by Toyo Ink; 2x1060MW; Report 58 noted ~3-year delay; PDP8 lists among troubled projects; PDP8 Table 3 deadline June 2024 or terminate
+Cam Thanh,coal_imported,delayed,unknown,Thanh Hoa,600.0,PDP8 Annex II Table 3 (NĐ Cẩm Thanh 600MW chậm tiến độ gặp khó khăn),,Only appears in PDP8 troubled list; 1x600MW; deadline to demonstrate progress by June 2024 or face termination
+Long Phu 2,coal_imported,delayed,unknown,Soc Trang,1320.0,PDP7A Table 2 (NĐ Long Phú II #1 660MW 2021 and #2 660MW 2022),Report 58 Appendix (NĐ Long Phú II 2x660MW chưa xác định khả năng chậm 8 năm),BOT originally by TATA Power; 2x660MW; Report 58 noted potential 8-year delay; not in PDP8 troubled list but also not in construction list; highly uncertain
+Long Phu 3,coal_imported,cancelled_or_stalled,unknown,Soc Trang,1800.0,PDP7A Table 2 (NĐ Long Phú III #1 600MW 2021 and #2-3 2x600MW 2022),Report 58 Appendix (NĐ Long Phú 3 3x600MW PVN đã kiến nghị giao Chủ đầu tư khác),3x600MW; originally PVN then proposed transfer to Banpu (Thailand); Study E-542 confirms transfer; not in PDP8 lists; likely stalled or cancelled
+Formosa Ha Tinh 2,coal_imported,planned,unknown,Ha Tinh,650.0,PDP8 Annex II Table 4 (Formosa HT2 650MW giai đoạn 2021-2030),PDP7A Table 1 (Formosa Hà Tĩnh expansions listed 2016-2020),Steel mill captive/cogeneration expansion; PDP8 Table 4 lists as cogeneration 650MW; Study E-542 PL9.5A also lists 650MW
+Formosa Dong Nai,coal_imported,operating,2016,Dong Nai,150.0,PDP7A Table 1 (NĐ Formosa Đồng Nai #3 150MW listed 2016),,Steel mill captive power; listed in PDP7A 2016 commissioning year
+Hai Ha 1 (cogeneration),coal_imported,planned,unknown,Quang Ninh,300.0,PDP8 Annex II Table 4 (NĐ đồng phát Hải Hà 1 300MW giai đoạn 2021-2030),PDP7A Table 1 (NĐ đồng phát Hải Hà 1 3x50MW listed 2019),Industrial zone cogeneration; PDP7A listed 3x50MW for 2019; PDP8 lists 300MW; capacity grew in successive plans
+Hai Ha 2 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600.0,PDP8 Annex II Table 4 (NĐ đồng phát Hải Hà 2 600MW giai đoạn 2031-2035),PDP7A Table 2 (NĐ đồng phát Hải Hà 2 5x150MW listed 2022),Delayed from 2022 to post-2031 per PDP8
+Hai Ha 3 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600.0,PDP8 Annex II Table 4 (NĐ đồng phát Hải Hà 3 600MW giai đoạn 2031-2035),PDP7A Table 2 (NĐ đồng phát Hải Hà 3 2x300MW listed 2025),Delayed to post-2031 per PDP8
+Hai Ha 4 (cogeneration),coal_imported,planned,unknown,Quang Ninh,600.0,PDP8 Annex II Table 4 (NĐ đồng phát Hải Hà 4 600MW giai đoạn 2031-2035),PDP7A Table 3 (NĐ đồng phát Hải Hà 4 2x300MW listed 2028),Delayed to post-2031 per PDP8
+Duc Giang (cogeneration),coal_domestic,planned,unknown,Ha Noi,100.0,PDP8 Annex II Table 4 (NĐ đồng phát Đức Giang 100MW giai đoạn 2021-2030),,Industrial cogeneration plant
+Hoa Phat II (blast furnace gas),coal_byproduct,planned,unknown,Quang Ngai,300.0,PDP8 Annex II Table 4 (NĐ khí dư Hòa Phát II 300MW giai đoạn 2021-2030),,Uses blast furnace gas from Hoa Phat Dung Quat steel complex; classified as cogeneration/byproduct
+Quang Trach 2 (LNG conversion),lng,planned,2026,Quang Binh,1500.0,PDP8 Annex II Table 1 (LNG Quảng Trạch II 1500MW giai đoạn 2021-2030),Report 32 Appendix 1 (NĐ Quảng Trạch II 2x600MW EVN đề nghị triển khai sớm 2025),Originally coal in PDP7A; approved for LNG conversion per PDP8 Table 1 note citing Thông báo 54/TB-VPCP; EVN-owned
+Quynh Lap 1,coal_imported,delayed,unknown,Nghe An,1200.0,PDP7A Table 2 (NĐ Quỳnh Lập I #1 600MW 2022 and #2 600MW 2023),Report 58 Appendix (NĐ Quỳnh Lập 1 2x600MW chậm ~4 năm target 2026),TKV/Vinacomin-owned; 2x600MW; Report 58 noted ~4-year delay; not in PDP8 construction list; PDP8 Table 1 mentions Quỳnh Lập/Nghi Sơn as potential LNG site
+Hai Phong 3,coal_imported,cancelled_or_stalled,unknown,Hai Phong,1200.0,PDP7A Table 2 (NĐ Hải Phòng III #1 600MW 2025 and #2 600MW 2026),Report 58 Appendix (NĐ Hải Phòng III 2x600MW chậm ~3 năm target 2028-2029),TKV-owned; 2x600MW; Study E-542 PL9.2 noted province opposed coal; likely will not proceed as coal plant; not in PDP8 construction lists
+Cam Pha 3,coal_domestic,cancelled_or_stalled,unknown,Quang Ninh,440.0,PDP7A Table 1 (NĐ Cẩm Phả III #1-2 2x220MW listed 2020),Report 58 Appendix (NĐ Cẩm Phả 3 2x220MW chưa xác định tiến độ chưa có địa điểm),TKV-owned; 2x220MW; no site identified; likely cancelled
+Quynh Lap 2,coal_imported,cancelled_or_stalled,unknown,Nghe An,1200.0,PDP7A Table 3 (NĐ Quỳnh Lập II #1 600MW 2026 and #2 600MW 2027),Report 58 Appendix (NĐ Quỳnh Lập II 2x600MW chưa xác định Khó đáp ứng),BOT; 2x600MW; Report 58 noted unlikely to meet schedule; not in PDP8 lists
+Vung Ang 3,coal_imported,cancelled_or_stalled,unknown,Ha Tinh,1200.0,PDP7A Table 2 (NĐ Vũng Áng III #1 600MW 2024 and #2 600MW 2025),Report 58 Appendix (NĐ Vũng Áng III 2x600MW Sau năm 2030 Khó đáp ứng),BOT originally by Samsung C&T; 2x600MW; Study E-542 noted investor withdrew; PDP7A also had #3-4 units for 2029-2030; all likely cancelled
+Quang Ninh 3,coal_imported,cancelled_or_stalled,unknown,Quang Ninh,1200.0,PDP7A Table 3 (NĐ Quảng Ninh III #1 600MW 2029 and #2 600MW 2030),Report 58 Appendix (NĐ Quảng Ninh III 2x600MW chưa rõ),2x600MW; no investor; not in PDP8 lists; likely cancelled
+Long An 1 (coal),coal_imported,cancelled,unknown,Long An,1200.0,PDP7A Table 2 (NĐ Long An I #1 600MW 2024 and #2 600MW 2025),Study E-542 PL9.2 (Long An I 2x600MW TTg đã đồng ý cho chuyển sang dùng LNG),Originally coal 2x600MW; approved for conversion to LNG; see LNG Long An 1 below
+Long An 2 (coal),coal_imported,cancelled,unknown,Long An,1600.0,PDP7A Table 3 (NĐ Long An II #1 800MW 2026 and #2 800MW 2027),Study E-542 PL9.2 (Long An II 2x800MW TTg đã đồng ý cho chuyển sang dùng LNG),Originally coal 2x800MW; approved for LNG conversion
+Tan Phuoc 1,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200.0,PDP7A Table 3 (NĐ Tân Phước I #1 600MW 2027 and #2 600MW 2028),Report 32 Appendix 1 (NĐ Tân Phước I 2x600MW Đang lập QH địa điểm),EVN-owned; 2x600MW; no site approval; not in PDP8 lists; likely cancelled
+Tan Phuoc 2,coal_imported,cancelled_or_stalled,unknown,Tien Giang,1200.0,PDP7A Table 3 (NĐ Tân Phước II #1 600MW 2028 and #2 600MW 2029),Report 32 Appendix 1 (NĐ Tân Phước II 2x600MW Đang lập QH địa điểm),EVN-owned; PDP7A backup plant; not in PDP8 lists; likely cancelled
+Bac Lieu (coal),coal_imported,cancelled,unknown,Bac Lieu,1200.0,PDP7A Table 3 (NĐ Bạc Liêu I #1 600MW 2029 and #2 600MW 2030),,PDP7A backup plants; not in PDP8 coal lists; site now proposed for LNG
+Pha Lai 3,coal_domestic,planned,unknown,Hai Duong,660.0,Study E-542 PL9.5A (ND Phả Lại 3 660MW than nội địa),,Listed only in Study E-542 potential list; not in PDP8 final lists; uncertain
+Bao Dai,coal_domestic,planned,unknown,unknown,600.0,Study E-542 PL9.5A (ND than Bảo Đại 600MW than nội địa),,Listed only in Study E-542 potential list; not in PDP8 final lists; uncertain; location not specified
+Thu Duc (oil),oil,operating,1965,Ho Chi Minh City,165.0,EVN Annual Report 2010-2011 p13 (Thủ Đức 165MW EVN),EVN Annual Report 2018 pp34-35 (GENCO3 Thu Duc oil fired 165MW),Old oil-fired steam plant; PDP7 listed for retirement by 2020; EVN 2018 still listed under GENCO3
+Can Tho (oil),oil,operating,1978,Can Tho,33.0,EVN Annual Report 2010-2011 p13 (Cần Thơ 33MW EVN JSC),EVN Annual Report 2018 pp34-35 (GENCO2 Can Tho S4 33MW oil fired FO),Small oil-fired unit; PDP7 listed for retirement by 2021
+O Mon 1,gas_domestic,operating,2009,Can Tho,660.0,EVN Annual Report 2010-2011 p13 (Ô Môn I 330MW EVN),EVN Annual Report 2018 pp34-35 (GENCO2 O Mon I 660MW oil fired FO),Originally 1x330MW open-cycle gas turbine in 2009; expanded to 660MW combined cycle; currently runs on oil/gas; PDP8 Table 5 plans conversion to Lo B gas; EVN 2018 lists under GENCO2 as 660MW oil-fired
+Hiep Phuoc,oil,operating,1997,Ho Chi Minh City,375.0,EVN Annual Report 2010-2011 p13 (Hiệp Phước 375MW Foreign IPP),,BOT by foreign IPP; 375MW oil-fired; PDP7 listed retirement 2019; may have been converted or retired
+Phu My 1,gas_domestic,operating,1999,Ba Ria-Vung Tau,1108.0,EVN Annual Report 2018 pp34-35 (GENCO3 Phu My 1 1118MW),EVN Annual Report 2010-2011 p13 (Phú Mỹ I 1090MW EVN),Combined cycle gas turbine using domestic gas from Nam Con Son basin; capacity varies 1090-1118MW across reports; GENCO3
+Phu My 2.1,gas_domestic,operating,2001,Ba Ria-Vung Tau,945.0,EVN Annual Report 2018 pp34-35 (GENCO3 Phu My 2.1 945MW),EVN Annual Report 2010-2011 p13 (Phú Mỹ II.1 900MW EVN),CCGT domestic gas; capacity varies 900-945MW; GENCO3
+Phu My 4,gas_domestic,operating,2004,Ba Ria-Vung Tau,477.0,EVN Annual Report 2018 pp34-35 (GENCO3 Phu My 4 477MW),EVN Annual Report 2010-2011 p13 (Phú Mỹ IV 450MW EVN),CCGT domestic gas; capacity varies 450-477MW; GENCO3
+Phu My 2.2,gas_domestic,operating,2005,Ba Ria-Vung Tau,740.0,EVN Annual Report 2010-2011 p13 (Phú Mỹ II.2 BOT 740MW Foreign IPP),,BOT by EdF/Sumitomo/TEPCO; CCGT 740MW; domestic gas
+Phu My 3,gas_domestic,operating,2004,Ba Ria-Vung Tau,740.0,EVN Annual Report 2010-2011 p13 (Phú Mỹ III BOT 740MW Foreign IPP),,BOT by BP/Kyushu; CCGT 740MW; domestic gas
+Ba Ria,gas_domestic,operating,1995,Ba Ria-Vung Tau,389.0,EVN Annual Report 2010-2011 p13 (Bà Ria 389MW EVN JSC),EVN Annual Report 2018 pp34-35 (GENCO3 Ba Ria 389MW),Open cycle gas turbine; domestic gas; GENCO3
+Thu Duc (gas turbine),gas_domestic,operating,1999,Ho Chi Minh City,128.0,EVN Annual Report 2010-2011 p13 (Thu Duc 128MW EVN gas turbine),EVN Annual Report 2018 pp34-35 (GENCO3 Thu Duc gas turbine oil 113MW),Open cycle gas turbine/oil; capacity 113-128MW across reports; separate from Thu Duc oil-fired steam unit
+Can Tho (gas turbine),gas_domestic,operating,2002,Can Tho,155.0,EVN Annual Report 2010-2011 p13 (Can Tho 150MW EVN gas turbine),EVN Annual Report 2018 pp34-35 (GENCO2 Can Tho gas turbine oil 155MW),Open cycle gas turbine using oil/gas; 150-155MW across reports
+Ca Mau 1,gas_domestic,operating,2007,Ca Mau,750.0,EVN Annual Report 2010-2011 p13 (Cà Mau I 750MW Petro Vietnam),,CCGT using domestic gas from PM3-CAA/block 46 offshore; PVN/PV Power
+Ca Mau 2,gas_domestic,operating,2008,Ca Mau,750.0,EVN Annual Report 2010-2011 p13 (Cà Mau II 750MW Petro Vietnam),,CCGT domestic gas; PVN/PV Power
+Nhon Trach 1,gas_domestic,operating,2009,Dong Nai,465.0,EVN Annual Report 2010-2011 p13 (Nhơn Trạch I 465MW Petro Vietnam),,CCGT domestic gas from Nam Con Son; PVN/PV Power
+Nhon Trach 2,gas_domestic,operating,2011,Dong Nai,750.0,EVN Annual Report 2010-2011 p13 (Nhơn Trạch II 750MW Petro Vietnam),PDP7 Annex 1 (TBKHH Nhơn Trạch 2 750MW commissioned 2011),CCGT domestic gas; PVN/PV Power
+Nhon Trach 3,lng,under_construction,2025,Dong Nai,750.0,PDP8 Annex II Table 1 (NMĐ Nhơn Trạch 3 và Nhơn Trạch 4 1624MW giai đoạn 2021-2030),Report 32 Appendix 1 (TBKHH Nhơn Trạch 3&4 2x750MW chậm 3 năm target 2023-2024),PVN/PV Power; originally gas then switched to LNG; Report 32 noted 3-year delay; PDP8 lists combined 1624MW for both units; ~812MW each or split differently; listed as 750MW per original PDP7A specs
+Nhon Trach 4,lng,under_construction,2025,Dong Nai,874.0,PDP8 Annex II Table 1 (combined with Nhon Trach 3 total 1624MW),Report 58 Appendix (TBKHH Nhơn Trạch 3&4 2x750MW chậm 3 năm),PDP8 total 1624MW minus Nhon Trach 3 ~750MW gives ~874MW; capacity split uncertain
+O Mon 3,gas_domestic,planned,2025,Can Tho,750.0,PDP8 Annex II Table 5 (NMNĐ Ô Môn III 1050MW giai đoạn 2021-2030),Report 32 Appendix 1 (TBKHH Ô Môn III 1x750MW chậm 5 năm target 2025),EVN-owned; ODA-funded; uses gas from Lo B field; PDP7A listed 750MW; PDP8 lists 1050MW suggesting possible uprating; Report 32/58 noted synchronized with Lo B gas schedule; original PDP7A target 2020
+O Mon 4,gas_domestic,planned,2023,Can Tho,750.0,PDP8 Annex II Table 5 (NMNĐ Ô Môn IV 1050MW giai đoạn 2021-2030),Report 32 Appendix 1 (TBKHH Ô Môn IV 1x750MW chậm 3 năm target 2023),EVN-owned; uses Lo B gas; PDP7A listed 750MW; PDP8 lists 1050MW; Report 32/58 noted delay synchronized with Lo B
+O Mon 2,gas_domestic,planned,unknown,Can Tho,1050.0,PDP8 Annex II Table 5 (NMNĐ Ô Môn II 1050MW giai đoạn 2021-2030),Report 58 Appendix (TBKHH Ô Môn II 750MW chưa rõ),Uses Lo B gas; originally BOT in PDP7A at 750MW; PDP8 lists 1050MW; awarded to Marubeni-VN JV per Report 58 note
+Dung Quat 1,gas_domestic,planned,2024,Quang Ngai,750.0,PDP8 Annex II Table 5 (TBKHH Dung Quất I 750MW giai đoạn 2021-2030),Report 32 Appendix 1 (TBKHH Dung Quất I 750MW đồng bộ khí CVX target 2024),EVN-owned; uses gas from Ca Voi Xanh (Blue Whale) field; synchronized with gas field development
+Dung Quat 2,gas_domestic,planned,unknown,Quang Ngai,750.0,PDP8 Annex II Table 5 (TBKHH Dung Quất II 750MW giai đoạn 2021-2030),Report 58 Appendix (TBKHH Dung Quất II 750MW BOT chưa xác định Khó đáp ứng),BOT; uses Ca Voi Xanh gas; PDP7A listed 2024; Report 58 noted likely delayed
+Dung Quat 3,gas_domestic,planned,unknown,Quang Ngai,750.0,PDP8 Annex II Table 5 (TBKHH Dung Quất III 750MW giai đoạn 2021-2030),Report 32 Appendix 1 (TBKHH Dung Quất III 750MW Đồng bộ khí CVX target 2024),EVN-owned; uses Ca Voi Xanh gas
+Mien Trung 1,gas_domestic,planned,2025,Quang Tri,750.0,PDP8 Annex II Table 5 (TBKHH Miền Trung I 750MW giai đoạn 2021-2030),Report 58 Appendix (TBKHH miền Trung 1 2 2x750MW chậm 1 năm target 2024-2025),Uses Ca Voi Xanh gas; PVN; location in Quang Tri or Quang Ngai per PDP7
+Mien Trung 2,gas_domestic,planned,2025,Quang Tri,750.0,PDP8 Annex II Table 5 (TBKHH Miền Trung II 750MW giai đoạn 2021-2030),Report 58 Appendix (same as above),PVN; uses Ca Voi Xanh gas
+Quang Tri (gas),gas_domestic,planned,unknown,Quang Tri,340.0,PDP8 Annex II Table 5 (TBKHH Quảng Trị 340MW giai đoạn 2021-2030),Study E-542 PL9.5A (TBKHH Quang Trị khí Báo Vàng 340MW),Uses gas from Bao Vang (Gold Leopard) field
+Son My 2,lng,planned,2027,Binh Thuan,2250.0,PDP8 Annex II Table 1 (NMNĐ Sơn Mỹ II 2250MW giai đoạn 2021-2030),Report 58 Appendix (TBKHH Sơn Mỹ II 3x750MW chậm 3 năm target 2026-2028),Originally PVN then assigned to AES (USA) as BOT; LNG; 3x750MW; PDP7A listed 2023-2025
+Son My 1,lng,planned,2028,Binh Thuan,2250.0,PDP8 Annex II Table 1 (NMNĐ BOT Sơn Mỹ I 2250MW giai đoạn 2021-2030),PDP7A Table 3 (TBKHH Sơn Mỹ I #1-3 3x750MW 2026-2028),BOT by GDF Suez/Sojitz-Pacific (now ENGIE); LNG; 3x750MW
+LNG Quang Ninh,lng,planned,unknown,Quang Ninh,1500.0,PDP8 Annex II Table 1 (LNG Quảng Ninh 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Quảng Ninh 1 Cẩm Phả 1500MW),New LNG plant added in PDP7A revision
+LNG Thai Binh,lng,planned,unknown,Thai Binh,1500.0,PDP8 Annex II Table 1 (LNG Thái Bình 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Thái Bình 4500MW tiềm năng),PDP8 lists 1500MW; Study E-542 noted up to 4500MW potential
+LNG Nghi Son,lng,planned,unknown,Thanh Hoa,1500.0,PDP8 Annex II Table 1 (LNG Nghi Sơn 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Nghi Sơn 5000MW tiềm năng),PDP8 lists 1500MW
+LNG Quynh Lap / Nghi Son,lng,planned,unknown,Nghe An,1500.0,PDP8 Annex II Table 1 (LNG Quỳnh Lập/Nghi Sơn 1500MW giai đoạn 2021-2030),,New site; potential locations at Quynh Lap (Nghe An) or Nghi Son (Thanh Hoa) per PDP8 note
+LNG Hai Lang 1,lng,planned,unknown,Quang Tri,1500.0,PDP8 Annex II Table 1 (LNG Hải Lăng giai đoạn 1 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Hải Lăng Quảng Trị 4500MW tiềm năng GĐ1 1500MW),Already in PDP7A revision; Study E-542 noted total potential 4500MW
+LNG Ca Na,lng,planned,unknown,Ninh Thuan,1500.0,PDP8 Annex II Table 1 (LNG Cà Ná 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Cà Ná I 1500MW đang là preFS),Already in PDP7A revision; pre-feasibility study underway
+LNG Hiep Phuoc 1,lng,planned,unknown,Ho Chi Minh City,1200.0,PDP8 Annex II Table 1 (LNG Hiệp Phước giai đoạn I 1200MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Hiệp Phước I+II 2700MW),Already in PDP7A revision; includes conversion of old Hiep Phuoc oil plant site
+LNG Long An 1,lng,planned,unknown,Long An,1500.0,PDP8 Annex II Table 1 (LNG Long An I 1500MW giai đoạn 2021-2030),Study E-542 PL9.1 (LNG Long An 3000+3000MW tiềm năng),Converted from coal Long An I; already in PDP7A revision
+LNG Long An 2,lng,planned,unknown,Long An,1500.0,PDP8 Annex II Table 1 (LNG Long An II 1500MW giai đoạn 2031-2035),,Post-2030 timeline per PDP8
+LNG Bac Lieu,lng,planned,unknown,Bac Lieu,3200.0,PDP8 Annex II Table 1 (LNG Bạc Liêu 3200MW giai đoạn 2021-2030),Study E-542 PL9.1 (TBKHH Bạc Liêu 3200MW đang là preFS),Already in PDP7A revision; pre-feasibility stage; investor consortium led by Delta Offshore Energy
+LNG Long Son,lng,planned,unknown,Ba Ria-Vung Tau,1500.0,PDP8 Annex II Table 1 (LNG Long Sơn 1500MW giai đoạn 2031-2035),Study E-542 PL9.1 (LNG Long Sơn I 1200MW),Originally PDP7A revision; PDP8 delays to post-2030; capacity 1200-1500MW across sources
+Kien Giang 1,gas_domestic,delayed,unknown,Kien Giang,750.0,PDP7A Table 2 (TBKHH Kiên Giang I 750MW listed 2021),Report 58 Appendix (TBKHH Kiên Giang 1&2 2x750MW Sau 2030 Khó đáp ứng do vấn đề nhiên liệu),PVN; originally to use Lo B gas; Report 58 noted pushed beyond 2030 due to fuel issues; not in PDP8 final lists; may be repurposed as LNG per Study E-542
+Kien Giang 2,gas_domestic,delayed,unknown,Kien Giang,750.0,PDP7A Table 2 (TBKHH Kiên Giang II 750MW listed 2022),Report 58 Appendix (same as Kien Giang 1),Same issues as Kien Giang 1; not in PDP8 lists
+Ve Dan,gas_domestic,operating,2002,Dong Nai,72.0,EVN Annual Report 2010-2011 p13 (Vê Dan 72MW Foreign IPP),,Industrial cogeneration; Taiwanese-owned Ve Dan food company; small gas turbine
+Dam Phu My,gas_domestic,operating,2004,Ba Ria-Vung Tau,21.0,EVN Annual Report 2010-2011 p13 (Dam Phú Mỹ 21MW Foreign IPP),,Small industrial gas turbine at Phu My fertilizer plant
+Bourbon,oil,operating,unknown,unknown,24.0,EVN Annual Report 2010-2011 p13 (Bourbon 24MW Foreign IPP),,Small foreign IPP oil-fired plant; limited information; listed in 2010-2011 only
+Amata,diesel,operating,unknown,Dong Nai,14.0,EVN Annual Report 2010-2011 p13 (Amata 14MW Foreign IPP diesel),,Small diesel backup in Amata industrial park
+Diesel plants (EVN Power Corporations),diesel,operating,various,various,285.0,EVN Annual Report 2010-2011 p13 (EVN's PowerCorporations diesel 285MW),,Distributed small diesel generators at regional power companies; aggregate 285MW as of 2011; many on islands and remote areas
