@@ -42,7 +42,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from .pdf2md_utils import CONVERTERS, get_converter, metadata_comment as _meta_comment
+from .pdf2md_utils import CONVERTERS, get_converter
+from .pdf2md_utils import metadata_comment as _meta_comment
 
 log = logging.getLogger(__name__)
 

@@ -16,7 +16,6 @@ from aedist.extract import (
     score_csv_like_block,
     sniff_dialect,
 )
-from aedist.util import strip_diacritics
 
 
 class TestHeaderMapping:

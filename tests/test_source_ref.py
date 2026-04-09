@@ -3,12 +3,9 @@
 import csv
 from pathlib import Path
 
-import pytest
-
-from aedist.schema import FuelType, MatchType, Plant, PlantStatus, ReconciliationEntry
+from aedist.evaluate import _save_reconciliation_csv, load_plants_csv
 from aedist.reconcile import plants_to_dataframe, reconcile
-from aedist.evaluate import load_plants_csv, _save_reconciliation_csv
-
+from aedist.schema import FuelType, MatchType, Plant, ReconciliationEntry
 
 # ---------------------------------------------------------------------------
 # 1. load_plants_csv reads source_ref from CSV

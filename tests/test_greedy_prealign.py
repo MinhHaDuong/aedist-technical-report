@@ -1,7 +1,6 @@
 """Tests for _greedy_prealign warm-start logic in the LP matching module."""
 
 import pandas as pd
-import pytest
 
 from aedist.matching.lp import _compute_costs, _greedy_prealign, reconcile
 
@@ -174,12 +173,13 @@ class TestWarmVsCold:
     def _reconcile_cold(df1, df2, **kwargs):
         """Run reconcile without warm start by passing dummy_cost so high
         that _greedy_prealign assigns nothing, effectively a cold start."""
+        from pulp import PULP_CBC_CMD, LpStatusOptimal
+
         from aedist.matching.lp import (
             _compute_costs,
             _extract_results,
             _setup_lp,
         )
-        from pulp import PULP_CBC_CMD, LpStatusOptimal
 
         mismatch_penalty = kwargs.get("mismatch_penalty", 1000)
         similarity_threshold = kwargs.get("similarity_threshold", 90)

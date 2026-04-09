@@ -27,8 +27,13 @@ from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
 from .schema import (
     FuelType,
+    Method,
+    MethodParams,
     Plant,
     PlantStatus,
+    ResourceUse,
+    ResultSummary,
+    RunRecord,
 )
 
 log = logging.getLogger(__name__)
@@ -149,9 +154,8 @@ def _strip_run_suffix(name: str) -> str:
     return re.sub(r"-run\d+$", "", name)
 
 
-def _infer_method(dir_name: str) -> "Method":
+def _infer_method(dir_name: str) -> Method:
     """Infer Method enum from output subdirectory name."""
-    from .schema import Method
 
     if "multiturn" in dir_name:
         return Method.MULTITURN
@@ -170,9 +174,8 @@ def _infer_method(dir_name: str) -> "Method":
     return Method.SINGLE
 
 
-def _backfill_resource_use(record: "RunRecord", json_path: Path) -> None:
+def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
     """Populate resource_use and model metadata from a companion JSON file."""
-    from .schema import ResourceUse
 
     raw = json.loads(json_path.read_text(encoding="utf-8"))
     usage = raw.get("usage") or {}
@@ -194,7 +197,7 @@ def _rel_path(path: Path) -> str:
         return str(path)
 
 
-def _write_record(record: "RunRecord", out: Path, stem: str) -> Path:
+def _write_record(record: RunRecord, out: Path, stem: str) -> Path:
     """Write a RunRecord to {out}/{stem}.record.json, return the path."""
     record_path = out / f"{stem}.record.json"
     record_path.parent.mkdir(parents=True, exist_ok=True)
@@ -208,13 +211,11 @@ def _metrics_to_runrecord(
     metrics: BenchmarkMetrics,
     label: str,
     result_file: str,
-) -> "RunRecord":
+) -> RunRecord:
     """Build a RunRecord from evaluation metrics.
 
     *result_file* should be a relative path (e.g. experiments/outputs/...).
     """
-    from .schema import MethodParams, ResultSummary, RunRecord
-
     condition = label.split("/")[0] if "/" in label else ""
     stem = label.rsplit("/", 1)[-1]
     method = _infer_method(condition)
@@ -317,8 +318,6 @@ def _classify_orphan(raw: dict) -> str:
 
 def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
     """Create a RunRecord from a JSON-only result (no CSV companion)."""
-    from .schema import MethodParams, ResultSummary, RunRecord
-
     try:
         raw = json.loads(json_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
@@ -344,7 +343,7 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
 
     if args.output:
         out = Path(args.output)
-        record_path = _write_record(record, out, json_path.stem)
+        _write_record(record, out, json_path.stem)
         log.info(
             "%s/%s  %s  $%.4f",
             dir_name,
@@ -361,8 +360,6 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
 
 def cmd_assemble(args: argparse.Namespace) -> None:
     """Assemble record JSONs into measurements.jsonl."""
-    from .schema import RunRecord
-
     records = []
     for path_str in args.record_files:
         p = Path(path_str)

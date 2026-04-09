@@ -1,6 +1,6 @@
 """Tests for JobSpec and LeaseInfo schema and YAML round-trip."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -142,7 +142,7 @@ class TestFromSweepYaml:
 
 class TestLeaseInfo:
     def test_construction(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         lease = LeaseInfo(
             job_id="job_001",
             worker_id="worker-padme-1",
@@ -156,7 +156,7 @@ class TestLeaseInfo:
         lease = LeaseInfo(
             job_id="job_002",
             worker_id="worker-or-1",
-            expiry_time=datetime(2026, 12, 31, tzinfo=timezone.utc),
+            expiry_time=datetime(2026, 12, 31, tzinfo=UTC),
         )
         assert lease.start_time.tzinfo is not None
 

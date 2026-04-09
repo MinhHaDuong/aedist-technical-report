@@ -88,7 +88,7 @@ def test_self_consistency_table_regime_detection():
 def test_self_consistency_table_sorted_by_median_f1():
     latex = generate_self_consistency_table(SAMPLE_RESULTS)
     lines = latex.splitlines()
-    data_lines = [l for l in lines if "DeepSeek" in l or "Gemini" in l]
+    data_lines = [line for line in lines if "DeepSeek" in line or "Gemini" in line]
     # deepseek (60.1%) > gemini (58.0%) when sorted descending
     assert "DeepSeek" in data_lines[0]
     assert "Gemini" in data_lines[1]
@@ -103,8 +103,8 @@ def test_self_consistency_table_best_delta_strategy():
     """Truncation models use union delta; overgeneration uses majority."""
     latex = generate_self_consistency_table(SAMPLE_RESULTS)
     lines = latex.splitlines()
-    deepseek_line = [l for l in lines if "DeepSeek" in l][0]
-    gemini_line = [l for l in lines if "Gemini" in l][0]
+    deepseek_line = [line for line in lines if "DeepSeek" in line][0]
+    gemini_line = [line for line in lines if "Gemini" in line][0]
     # deepseek: union gain = 95.5 - 60.1 = +35.4%
     assert "+35.4" in deepseek_line
     # gemini: majority gain = 81.0 - 58.0 = +23.0%
@@ -125,7 +125,7 @@ def test_per_run_table_shows_all_runs():
     latex = generate_per_run_table(SAMPLE_RESULTS)
     lines = latex.splitlines()
     # Each model has 3 data rows
-    deepseek_rows = [l for l in lines if "33.7" in l or "60.1" in l or "68.5" in l]
+    deepseek_rows = [line for line in lines if "33.7" in line or "60.1" in line or "68.5" in line]
     assert len(deepseek_rows) == 3
 
 
@@ -133,16 +133,16 @@ def test_per_run_table_gemini_hallucinations():
     """Gemini rows should show non-zero hallucination counts."""
     latex = generate_per_run_table(SAMPLE_RESULTS)
     lines = latex.splitlines()
-    gemini_lines = [l for l in lines if "Gemini" in l or "100.0" in l]
+    gemini_lines = [line for line in lines if "Gemini" in line or "100.0" in line]
     # At least one line should mention 480 hallucinated (643 - 163)
-    assert any("480" in l for l in gemini_lines)
+    assert any("480" in line for line in gemini_lines)
 
 
 def test_per_run_table_truncation_zero_hallucinations():
     """Truncation-limited models have Plants == Matched (0 hallucinations)."""
     latex = generate_per_run_table(SAMPLE_RESULTS)
     lines = latex.splitlines()
-    deepseek_rows = [l for l in lines if "33.7" in l or "60.1" in l or "68.5" in l]
+    deepseek_rows = [line for line in lines if "33.7" in line or "60.1" in line or "68.5" in line]
     # Each row has "& 0 &" for hallucinations
     for row in deepseek_rows:
         parts = row.split("&")

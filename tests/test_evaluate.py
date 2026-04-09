@@ -1,6 +1,5 @@
 """Tests for _classify_orphan in aedist.evaluate."""
 
-import pytest
 
 from aedist.evaluate import _classify_orphan
 

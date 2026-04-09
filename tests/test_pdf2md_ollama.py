@@ -3,9 +3,6 @@
 import re
 from pathlib import Path
 
-import pytest
-
-
 # ---------------------------------------------------------------------------
 # Module structure (source inspection — no Ollama required)
 # ---------------------------------------------------------------------------
