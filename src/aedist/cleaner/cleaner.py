@@ -5,6 +5,7 @@ import sys
 import traceback
 import unicodedata
 from pathlib import Path
+from typing import ClassVar
 
 import pandas as pd
 
@@ -19,7 +20,7 @@ class PowerPlantDataframeCleaner:
     columns 'name', 'province', 'fuel', 'capacity', and 'status'.
     """
 
-    REQUIRED_COLUMNS: set[str] = {"name", "province", "fuel", "capacity", "status"}
+    REQUIRED_COLUMNS: ClassVar[set[str]] = {"name", "province", "fuel", "capacity", "status"}
 
     def __init__(self, config_path: str | None = None) -> None:
         """

@@ -140,15 +140,11 @@ def parse_reference_titles(readme_path: Path) -> list[str]:
     from the report/inputs/README.md format.
     """
     text = readme_path.read_text(encoding="utf-8")
-    titles = []
-
     # Match \emph{...} titles (government documents)
-    for m in re.finditer(r"\\emph\{([^}]+)\}", text):
-        titles.append(m.group(1).strip())
+    titles = [m.group(1).strip() for m in re.finditer(r"\\emph\{([^}]+)\}", text)]
 
     # Match backtick-quoted titles (articles)
-    for m in re.finditer(r"`([^']+)'", text):
-        titles.append(m.group(1).strip())
+    titles.extend(m.group(1).strip() for m in re.finditer(r"`([^']+)'", text))
 
     return titles
 

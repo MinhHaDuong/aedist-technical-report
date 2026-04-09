@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from aedist.schema import (
     Method,
@@ -75,7 +76,7 @@ class TestRunRecordConstruction:
             assert r.method == m
 
     def test_invalid_method_rejected(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             RunRecord(
                 method="invalid",
                 method_params=MethodParams(model="test/model"),

@@ -203,7 +203,7 @@ def run_analysis(
         run_metrics, csv_paths = evaluate_single_runs(run_paths, work_dir, reference)
 
         # Pair metrics with source paths, drop failed runs, sort by F1
-        paired = [(m, p) for m, p in zip(run_metrics, run_paths) if m is not None]
+        paired = [(m, p) for m, p in zip(run_metrics, run_paths, strict=True) if m is not None]
         if not paired:
             log.warning("No valid runs for %s — skipping", model)
             continue

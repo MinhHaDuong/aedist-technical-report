@@ -260,17 +260,18 @@ def _extract_results(
     x_vars = context["x_vars"]  # type: dict[tuple[int, int], LpVariable]
     u_vars = context["u_vars"]  # type: dict[int, LpVariable]
     v_vars = context["v_vars"]  # type: dict[int, LpVariable]
-    sim_thresh: int = config["similarity_threshold"]  # type: ignore
+    sim_thresh: int = config["similarity_threshold"]  # type: ignore[assignment]
     cap_tol: float = float(config["capacity_tolerance"])
 
     results: list[dict[str, object]] = []
     indices1: list[int] = list(df1.index)
     indices2: list[int] = list(df2.index)
-    matched_pairs: list[tuple[int, int]] = []
-    for i in indices1:
-        for j in indices2:
-            if x_vars[(i, j)].varValue >= 0.5:
-                matched_pairs.append((i, j))
+    matched_pairs: list[tuple[int, int]] = [
+        (i, j)
+        for i in indices1
+        for j in indices2
+        if x_vars[(i, j)].varValue >= 0.5
+    ]
     unmatched_df1: list[int] = [i for i in indices1 if u_vars[i].varValue >= 0.5]
     unmatched_df2: list[int] = [j for j in indices2 if v_vars[j].varValue >= 0.5]
 
@@ -292,11 +293,8 @@ def _extract_results(
                 status = "Mismatched"
         results.append(build_result_row(df1.loc[i], df2.loc[j], status, similarity_score=score))
 
-    for i in unmatched_df1:
-        results.append(build_result_row(df1.loc[i], None, "Only in file1"))
-
-    for j in unmatched_df2:
-        results.append(build_result_row(None, df2.loc[j], "Only in file2"))
+    results.extend(build_result_row(df1.loc[i], None, "Only in file1") for i in unmatched_df1)
+    results.extend(build_result_row(None, df2.loc[j], "Only in file2") for j in unmatched_df2)
 
     return results
 
