@@ -1,6 +1,9 @@
 # tests/test_empty_csv.py
 """Tests for empty CSV / empty plant list handling in the reconciliation pipeline."""
 
+import json
+from pathlib import Path
+
 import pytest
 from aedist.reconcile import plants_to_dataframe, reconcile
 from aedist.schema import MatchType, Plant, FuelType, PlantStatus
@@ -50,3 +53,33 @@ class TestReconcileEmptySystem:
         assert m.n_matched == 0
         assert m.n_missed == 3
         assert m.n_hallucinated == 0
+
+
+class TestEvaluateEmptyCsv:
+    """_evaluate_csv_file on a header-only CSV produces status='empty' record."""
+
+    def test_header_only_csv_produces_empty_record(self, tmp_path):
+        # Create a header-only CSV (valid headers, zero data rows)
+        csv_path = tmp_path / "census" / "empty-model-run1.csv"
+        csv_path.parent.mkdir(parents=True)
+        csv_path.write_text("name,fuel,status,capacity\n", encoding="utf-8")
+
+        ref_path = Path(__file__).parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+        if not ref_path.exists():
+            pytest.skip("Reference CSV not available")
+
+        import argparse
+        from aedist.evaluate import _evaluate_csv_file
+        args = argparse.Namespace(output=str(tmp_path / "out"), reference=None)
+        _evaluate_csv_file(csv_path, ref_path, args)
+
+        record_path = tmp_path / "out" / "empty-model-run1.record.json"
+        assert record_path.exists()
+
+        record = json.loads(record_path.read_text())
+        assert record["result_summary"]["status"] == "empty"
+        assert record["result_summary"]["f1"] == 0.0
+        assert record["result_summary"]["fn"] == 163  # N_reference
+        assert record["result_summary"]["tp"] == 0
+        assert record["result_summary"]["fp"] == 0
+        assert record["result_summary"]["n_plants"] == 0
