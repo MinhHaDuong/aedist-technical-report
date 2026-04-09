@@ -197,7 +197,7 @@ def norm_header(h: str) -> str:
     return h.strip("_")
 
 
-_CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
+_CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe", "source_1", "source_2", "note"]
 
 
 def map_header_to_canonical(norm: str) -> str | None:
@@ -233,6 +233,13 @@ def map_header_to_canonical(norm: str) -> str | None:
     # Common variants that still normalize with parentheses removed
     if norm.startswith("capacity"):
         return "capacity_mwe"
+    # Provenance columns
+    if norm in {"source_1", "source", "reference", "citation"}:
+        return "source_1"
+    if norm in {"source_2", "reference_2", "citation_2"}:
+        return "source_2"
+    if norm in {"note", "notes", "comment", "comments"}:
+        return "note"
     return None
 
 
@@ -358,9 +365,9 @@ def main() -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
-    json_files = sorted(
-        f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")
-    )
+    from aedist.harness import iter_model_replies
+
+    json_files = list(iter_model_replies(input_dir))
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
 

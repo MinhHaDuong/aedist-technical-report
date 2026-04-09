@@ -248,7 +248,7 @@ class TestParseAndCanonicalize:
         csv_text = "Name,Fuel\nPha Lai,Coal\n"
         result = parse_and_canonicalize(csv_text)
         lines = result.strip().splitlines()
-        assert lines[0] == "name,fuel,status,cod,province,capacity_mwe"
+        assert lines[0] == "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note"
         row = lines[1].split(",")
         assert row[0] == "Pha Lai"
         assert row[2] == ""  # status missing
