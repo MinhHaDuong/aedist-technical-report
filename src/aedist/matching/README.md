@@ -17,7 +17,7 @@ the optimal one-to-one assignment.
 Two-pass approach: exact name matches first, then fuzzy matching on
 remaining unmatched plants.
 
-### `common.py` — Shared helpers
+### `result_row.py` — Result row builder
 
 Provides `build_result_row` for assembling a reconciliation dict from
 a pair of matched/unmatched plant rows. Used by both matchers.

@@ -10,7 +10,7 @@ from typing import Any
 import pandas as pd
 from rapidfuzz import fuzz, process
 
-from aedist.matching.common import build_result_row
+from aedist.matching.result_row import build_result_row
 
 
 def find_exact_match(

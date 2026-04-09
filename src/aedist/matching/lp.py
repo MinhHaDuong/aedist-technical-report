@@ -57,7 +57,7 @@ from pulp import (
 )
 from rapidfuzz import fuzz
 
-from aedist.matching.common import build_result_row
+from aedist.matching.result_row import build_result_row
 
 # ---------------------------------------------------------------------------
 # Default MILP parameters for record reconciliation

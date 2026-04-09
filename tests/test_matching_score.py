@@ -70,7 +70,6 @@ def test_reconciliation_entry_has_similarity_score():
 def test_save_reconciliation_csv_includes_similarity_score(tmp_path):
     """_save_reconciliation_csv writes similarity_score column."""
     import csv
-    from pathlib import Path
 
     from aedist.evaluate import _save_reconciliation_csv
     from aedist.schema import MatchType, ReconciliationEntry
