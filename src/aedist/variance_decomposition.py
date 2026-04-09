@@ -285,7 +285,6 @@ def variance_decomposition(
             anova_data[(m, method)] = v
 
     n_groups = len(anova_data)
-    n_records_balanced = sum(len(v) for v in anova_data.values())
 
     if len(all_models) < 2 and len(all_methods) < 2:
         # Not enough factors for any ANOVA
