@@ -155,8 +155,8 @@ class Worker:
             )
         elif mode == Method.VERIFICATION:
             raise NotImplementedError(
-                f"verification mode requires external orchestration "
-                f"(use query_verification.py directly)"
+                "verification mode requires external orchestration "
+                "(use query_verification.py directly)"
             )
         else:
             raise ValueError(f"Unsupported mode: {mode!r}")
@@ -275,6 +275,8 @@ class Worker:
                      output_dir, run, pool_label):
         """Execute a web-augmented query."""
         tavily_key = os.environ.get("TAVILY_API_KEY", "")
+        if not tavily_key:
+            log.warning("TAVILY_API_KEY not set — web mode will run without search context")
         web_context, search_log = run_web_searches(tavily_key) if tavily_key else ("", [])
 
         messages = [
