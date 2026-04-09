@@ -365,8 +365,12 @@ def main() -> None:
     if not input_dir.exists() or not input_dir.is_dir():
         raise SystemExit(f"Input dir not found: {input_dir}")
 
+    # Positive regex matching model-reply filenames (e.g. "gpt-5.4-run1.json").
+    # Self-contained so this branch has no dependency on iter_model_replies()
+    # from ticket 0044; once that merges the duplicate can be collapsed.
+    _model_reply_re = re.compile(r"^.+-run\d+\.json$")
     json_files = sorted(
-        f for f in input_dir.glob("*.json") if not f.name.endswith(".eval.json")
+        f for f in input_dir.iterdir() if _model_reply_re.match(f.name)
     )
     if not json_files:
         raise SystemExit(f"No JSON files in: {input_dir}")
