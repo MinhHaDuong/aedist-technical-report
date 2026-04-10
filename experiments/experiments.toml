@@ -227,6 +227,23 @@ result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
 # model = "openai/gpt-5.4"
 # result_file = "outputs/rag/gpt-5.4-run1.json"
 
+# Verification proof-of-concept: 1 config, 2 deterministic modes
+#
+# Stage B of ticket 0030. Minimal design: unverified vs tool on the
+# best decomposed RAG config. Zero API cost (both modes are local).
+# Validates the precision-coverage tradeoff before committing to the
+# full factorial in [sweeps.verification] (Stage D).
+[sweeps.verification_poc]
+repeat = 1
+budget_usd = 0
+output = "derived/verification_poc"
+verification_modes = ["unverified", "tool"]
+
+[[sweeps.verification_poc.base_configs]]
+method = "decomposed"
+model = "deepseek/deepseek-chat"
+result_file = "outputs/decomposed/deepseek-v3.2-run1.json"
+
 # Sourced extraction — ask for citations upfront
 #
 # Same RAG setup, but prompt includes source_1, source_2, note columns.
