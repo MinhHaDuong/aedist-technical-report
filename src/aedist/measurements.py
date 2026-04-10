@@ -17,6 +17,10 @@ from pathlib import Path
 
 from .schema import Method, RunRecord
 
+# Model slug suffixes that are post-hoc aggregations, not individual runs.
+# Shared by all reporting modules that filter measurements.
+SYNTHETIC_SUFFIXES = ("-union", "-consolidated", "-filtered", "_filtered", "-unverified")
+
 _REPO_ROOT = Path(__file__).parent.parent.parent
 _EXPERIMENTS_TOML = _REPO_ROOT / "experiments" / "experiments.toml"
 

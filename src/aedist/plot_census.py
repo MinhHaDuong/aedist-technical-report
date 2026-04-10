@@ -15,12 +15,10 @@ import csv
 import logging
 from pathlib import Path
 
+from .measurements import SYNTHETIC_SUFFIXES
 from .tabulate_macros import load_and_summarize
 
 log = logging.getLogger(__name__)
-
-
-_SYNTHETIC_SUFFIXES = ("-union", "-consolidated")
 
 
 def build_census_rows(metrics: list[dict]) -> list[dict]:
@@ -40,7 +38,7 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
             "local": 1 if info["is_local"] else 0,
         }
         for slug, info in summary.items()
-        if not any(slug.endswith(s) for s in _SYNTHETIC_SUFFIXES)
+        if not any(slug.endswith(s) for s in SYNTHETIC_SUFFIXES)
     ]
     rows.sort(key=lambda r: r["f1"], reverse=True)
     return rows

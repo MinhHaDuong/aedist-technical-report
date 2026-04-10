@@ -377,6 +377,25 @@ Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
 \section{Documentation regime}
 
 % -------------------------------------------------------------------
+\begin{frame}{Method convergence: do all models reach the inventory?}
+\vspace{-0.3em}
+{\small \textbf{5 models} tested under \textbf{5 methods}, up to 3 runs each.
+Each dot = 1 plant.
+\textcolor{matched}{Blue} = correctly identified.
+\textcolor{halluc}{Orange} = hallucinated.}
+
+\vspace{-0.3em}
+\begin{center}
+\includegraphics[width=\textwidth, trim=0 0 0 0, clip]{inputs/generated/fig_method_convergence.pdf}
+\end{center}
+
+\vspace{-1em}
+{\small \textbf{Decomposed} finds all 163 but hallucinates.
+\textbf{Web} never hallucinates but caps at $\sim$50.
+No method yet converges all models to 163 with zero errors.}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{Documentation regime: RAG lifts the floor}
 \textbf{Same 5 models} tested under 3 method conditions $\times$ 3 runs \hfill Total cost: \$0.89
 

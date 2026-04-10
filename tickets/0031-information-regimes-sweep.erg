@@ -1,10 +1,13 @@
 %erg v1
-Title: Complete Sweep 2 information regimes across all models
-Status: open
+Title: Method convergence plot — do all models meet at F1=100%?
+Status: doing
 Created: 2026-04-07
 Author: claude
 
 --- log ---
+2026-04-10T10:30Z claude claimed
+2026-04-10T10:30Z claude status doing
+2026-04-10T10:00Z claude status reframed: strip plot showing method convergence, not ANOVA
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
 2026-04-08T12:00Z claude note cloud sweeps (RAG, multiturn, web) complete; local RAG scaling WIP on branch t21-rag-local-models
 2026-04-07T12:10Z claude created imported from gh#10
@@ -12,143 +15,102 @@ Author: claude
 --- body ---
 ## Context
 
-The original scope -- "fill every cell in a 35-model x 6-condition matrix" --
-is dead. The conference is April 11. We have 238 measurement records: 124
-single-shot, 43 RAG, 24 multiturn, 15 web. Five cloud models span all three
-enriched regimes (RAG, multiturn, web) with 3 runs each. The slides already
-show the regime comparison chart and the key finding: method dominates model.
+We aim for a method that is model-independent: a good method makes model
+choice irrelevant by driving all models toward the complete inventory
+(F1 ≈ 100%). The visualization should make this claim self-evident.
 
-But the finding is asserted, not proved. We report median F1 and draw bar
-charts. We have bootstrap CIs (ticket 0042) but do not use them to test the
-regime claim. A reviewer can look at Gemini Flash Lite (F1 drops from 95.3%
-to 58.0% with RAG) and ask: "Does RAG help, or does it help some models and
-hurt others?" We have no answer because we have no variance decomposition,
-no paired tests across regimes, no effect-size table.
+We have 238 measurement records across 7 methods and ~40 models. Current
+slides show a bar chart comparing 5 models across 3 regimes, but the framing
+is wrong — it asks "which regime lifts F1?" when it should ask "which method
+makes models converge?"
 
-The leverage is not more data. It is extracting the statistical argument from
-the data we already have.
+## The graph
 
-Second axis: the 5-model regime comparison is a thin sample. We do not need
-all 35 models, but adding 3-4 top performers from the census (Claude Opus,
-Qwen 3.5 397B, Kimi K2.5 -- all F1 > 90% in single-shot) to the RAG
-condition would make the regime finding robust against the objection "you
-only tested mid-tier models."
+**Strip plot (beeswarm):**
+- Y axis: method (categorical rows — single, RAG, multiturn, web,
+  decomposed, and any other method with enough data)
+- X axis: F1 (0–100%)
+- Each dot: one run. Model identity as color/label, but secondary.
+- Within each row: the spread tells the story. Tight cluster near 100%
+  = the method works regardless of model. Wide scatter = model-dependent.
 
-## IDD Phase 1 — Five radicals considered
+The ideal method has all dots pinned to the right wall. The plot IS the
+argument — no ANOVA needed.
 
-1. **Kill the ticket.** The data is sufficient. Just present the 5-model
-   chart and move on. Risk: the regime claim is the paper's central finding
-   and rests on 5 cherry-picked models with no statistical backing.
+Threshold note: F1 ≥ 0.98 counts as "converged" rather than literal 1.0,
+because the gold standard has obscure edge cases (mothballed plants with
+ambiguous status, small generators below reporting thresholds).
 
-2. **Variance decomposition only.** No new API calls. Run a two-way ANOVA
-   (method x model) on the existing 45 regime data points + 15 single-shot
-   counterparts. Decompose total F1 variance into method effect, model
-   effect, and interaction. If method explains >50% of variance, the claim
-   is proved. Cost: zero dollars, ~50 LOC. Risk: n=3 runs per cell is
-   borderline for ANOVA assumptions.
+## Data quality issues to fix
 
-3. **Flip the table: cost-normalized regime analysis.** Instead of "which
-   regime gives the best F1?", ask "which regime gives the best F1 per
-   dollar?" The RAG corpus is free (already curated), but the prompt is 155K
-   tokens, so cheap models become expensive. The web regime costs Tavily API
-   calls. Multiturn costs N turns. Plot cost vs. F1 per regime, annotated
-   with model identity. This reframes the finding from "RAG is better" to
-   "RAG is cheaper AND better, except when context overflow forces expensive
-   models." Uncomfortable because it requires exposing cost data per regime
-   that we may not have cleanly tracked.
+1. **Model naming:** 5 models appear both with and without provider prefix
+   (e.g., `deepseek-v3.2` and `deepseek/deepseek-v3.2`). Normalize to
+   provider/slug for the plot.
+2. **Aggregation artifacts:** RAG method contains union/consolidated entries
+   that are post-hoc aggregations, not individual model runs. Exclude from
+   the strip plot (they would overcount).
+3. **Frontier method:** Only 1 run per model (no repeats). Include but note
+   visually — cannot assess within-model variance.
 
-4. **Regime x model interaction: the anti-RAG story.** Focus the analysis on
-   Gemini Flash Lite, where RAG *destroyed* performance (95.3% -> 58.0%).
-   Investigate why: context overflow? Instruction-following collapse under
-   long system prompts? This failure is more interesting than the 5 successes
-   because it reveals the mechanism. Could yield a paragraph worth more than
-   10 more cells. Uncomfortable because it undercuts the clean "RAG wins"
-   narrative.
+## Current state of the data (2026-04-10)
 
-5. **Merge with ticket 0029 (sensitivity sweep) and 0035 (matching
-   sensitivity).** The real question is: are reported regime differences
-   larger than the measurement noise from fuzzy matching thresholds, prompt
-   language, and temperature? If a regime lifts F1 by 20pp but changing the
-   matching threshold from 85 to 95 swings it by 15pp, the regime effect
-   is confounded. Ship one unified robustness section instead of three
-   separate sweeps. Uncomfortable because it means admitting our F1 numbers
-   are approximate.
+After normalization and excluding artifacts:
 
-## Hybrid vision
+| Method     | Models | Runs | Runs ≥ 0.98 | Best median |
+|------------|--------|------|-------------|-------------|
+| single     | 37     | 119  | 1/119       | 0.864       |
+| rag        | 8      | 24   | 0/24        | 0.864       |
+| multiturn  | 8      | 24   | 1/24        | 0.948       |
+| decomposed | 5      | 14   | 1/14        | 0.988       |
+| web        | 5      | 15   | 0/15        | 0.448       |
+| frontier   | 9      | 9    | 0/9         | 0.557       |
 
-Combine radicals 2, 3, and 4. No new API calls except a targeted 3-model
-RAG extension (Claude Opus, Qwen 3.5 397B, Kimi K2.5 -- all have >1M
-context windows, so RAG corpus fits easily). Total: 9 new API calls. The
-deliverable is a single "Method matters more than model" section with three
-components:
+No method achieves convergence yet. Decomposed has the highest ceiling
+(0.988) but wild variance (0.531–0.988). The honest finding: we can see
+which methods push rightward, but none has eliminated model dependence.
 
-A) **Variance decomposition table** -- two-way analysis on existing data
-   showing method explains majority of F1 variance.
-B) **Cost-performance scatter** -- F1 vs. cost_usd per run, colored by
-   regime, showing RAG frontier dominates single-shot frontier.
-C) **Failure analysis paragraph** -- why RAG hurts Gemini Flash Lite (the
-   model outputs 163/163 at 100% recall in single-shot; RAG context
-   degrades its precision catastrophically, suggesting it copies corpus
-   noise rather than filtering).
+## Trust graph (out of scope)
+
+A second graph — for methods whose models converge, how well-justified
+are the extracted lines? (unsourced / single-sourced / double-sourced) —
+belongs in ticket 0025 (sourced extraction) or a new ticket. Not here.
 
 ## Actions
 
-1. Add `src/aedist/analyze_regimes.py` (~120 LOC):
-   - Load measurements for methods {single, rag, multiturn, web}
-   - Compute two-way ANOVA (method x model) on F1 using scipy or manual SS
-   - Output: eta-squared for method, model, interaction, residual
-   - Paired bootstrap tests (already in stats.py) for each model's
-     single vs RAG, single vs multiturn, single vs web
-   - Generate LaTeX table: model | F1_single | F1_rag | F1_mt | F1_web | delta_rag (sig)
+1. Add `src/aedist/plot_method_convergence.py` (~80 LOC):
+   - Load measurements via `aedist.measurements`
+   - Normalize model names (strip provider prefix → use slug for display,
+     but keep provider/slug as canonical ID for dedup)
+   - Exclude aggregation artifacts (union, consolidated, filtered)
+   - Produce strip/beeswarm plot: Y = method, X = F1, dots = runs
+   - Color by model family (optional) or uniform with jitter
+   - Vertical dashed line at X = 0.98 ("convergence zone")
+   - Output: `report/inputs/generated/fig_method_convergence.pdf`
 
-2. Add regime cost scatter to `plot_pareto.py` or new `plot_regime_cost.py`:
-   - X = cost_usd, Y = F1, color = method, marker = model
-   - Annotate Pareto frontier per regime
-   - Output: `report/inputs/generated/fig_regime_cost.pdf`
+2. Wire into Makefile so `make report` regenerates the figure.
 
-3. Run RAG sweep for 3 additional top-census models (9 API calls, ~$3):
-   ```
-   python -m aedist.query_rag --prompt experiments/prompts/prompt_structured.txt \
-     --corpus experiments/data/rag_corpus/ --models experiments/models.yaml \
-     --output experiments/outputs/rag/ --repeat 3 \
-     --model anthropic/claude-opus-4.6
-   ```
-   (repeat for qwen/qwen3.5-397b-a17b, moonshotai/kimi-k2.5)
-   Then extract and evaluate.
+3. Add one slide or update existing regime slide to use the new plot.
 
-4. Investigate Gemini Flash Lite RAG failure:
-   - Read the 3 RAG output JSONs, check token usage vs context window
-   - Check if model outputs the corpus verbatim vs. synthesizing
-   - Write 1 paragraph for report methodology section
-
-5. Regenerate `regimes.csv` to include the 3 new models and web column.
-
-6. Update slides regime chart if time allows (not blocking).
+4. If time: annotate outliers (e.g., Gemini Flash Lite RAG collapse,
+   qwen3.5:9b single-shot fluke at 0.984).
 
 ## Test
 
 ```python
-def test_regime_anova_runs():
-    """Variance decomposition produces valid eta-squared values."""
-    from aedist.analyze_regimes import regime_anova
-    result = regime_anova()
-    assert 0 <= result['eta_sq_method'] <= 1
-    assert 0 <= result['eta_sq_model'] <= 1
-    assert abs(sum(result.values()) - 1.0) < 0.01  # partitions sum to 1
-
-def test_regime_paired_tests():
-    """Paired tests between single and RAG produce p-values."""
-    from aedist.analyze_regimes import regime_paired_tests
-    tests = regime_paired_tests()
-    for t in tests:
-        assert 0 <= t['p_value'] <= 1
-        assert t['method_a'] == 'single'
+def test_plot_method_convergence_runs():
+    """Script produces PDF output without error."""
+    import subprocess
+    result = subprocess.run(
+        ["uv", "run", "python", "src/aedist/plot_method_convergence.py",
+         "--output", "/tmp/test_convergence.pdf"],
+        capture_output=True, text=True
+    )
+    assert result.returncode == 0
+    assert Path("/tmp/test_convergence.pdf").exists()
 ```
 
 ## Exit criteria
-- Variance decomposition table showing method vs model effect sizes
-- Paired significance tests for regime comparisons (using stats.py bootstrap)
-- Cost-F1 scatter plot colored by regime
-- 3 new top-census models evaluated under RAG (9 runs)
-- Gemini Flash Lite RAG failure explained in 1 paragraph
+- Strip plot PDF showing all methods, all runs, convergence zone marked
+- Data cleaned (no naming dupes, no aggregation artifacts in plot)
+- Wired into Makefile
 - `make check-fast` passes
