@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 
 def _make_mock_response(content="name,fuel\nPlant A,coal", prompt_tokens=100, completion_tokens=200):
     resp = MagicMock()
@@ -137,3 +139,153 @@ def test_rag_output_metadata(mock_openai_cls, tmp_path):
     assert sorted(record["corpus_files"]) == ["doc1.md", "doc2.md"]
     assert isinstance(record["corpus_tokens"], int)
     assert record["corpus_tokens"] > 10  # both docs have real content
+
+
+def _setup_modules(tmp_path: Path) -> Path:
+    """Create a modules directory with base + persona + overview."""
+    modules_dir = tmp_path / "modules"
+    modules_dir.mkdir()
+    (modules_dir / "base.txt").write_text("Base prompt text.")
+    (modules_dir / "persona.txt").write_text("You are an expert.")
+    (modules_dir / "overview.txt").write_text("Provide an overview.")
+    return modules_dir
+
+
+@patch("aedist.harness.OpenAI")
+def test_rag_with_prompt_modules(mock_openai_cls, tmp_path):
+    """query_rag accepts --prompt-modules and assembles prompt."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    _, corpus, models, output = _setup_files(tmp_path)
+    modules_dir = _setup_modules(tmp_path)
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_rag",
+            "--prompt-modules", "persona", "overview",
+            "--modules-dir", str(modules_dir),
+            "--corpus", str(corpus),
+            "--strategy", "wholesale",
+            "--models", str(models),
+            "--output", str(output),
+        ]):
+            from aedist.query_rag import main
+            main()
+
+    # Verify: system message is corpus, user message is assembled prompt
+    call_args = mock_client.chat.completions.create.call_args
+    messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
+    assert messages[0]["role"] == "system"
+    assert "Pha Lai" in messages[0]["content"]  # corpus in system
+    user_content = messages[1]["content"]
+    # persona prepended before base, overview appended after base
+    assert "You are an expert." in user_content
+    assert "Base prompt text." in user_content
+    assert "Provide an overview." in user_content
+    assert user_content.index("You are an expert.") < user_content.index("Base prompt text.")
+
+
+@patch("aedist.harness.OpenAI")
+def test_rag_prompt_modules_metadata(mock_openai_cls, tmp_path):
+    """Output JSON records assembled prompt when --prompt-modules used."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    _, corpus, models, output = _setup_files(tmp_path)
+    modules_dir = _setup_modules(tmp_path)
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_rag",
+            "--prompt-modules", "persona", "overview",
+            "--modules-dir", str(modules_dir),
+            "--corpus", str(corpus),
+            "--models", str(models),
+            "--output", str(output),
+        ]):
+            from aedist.query_rag import main
+            main()
+
+    json_files = list(output.rglob("*.json"))
+    assert len(json_files) == 1
+    record = json.loads(json_files[0].read_text())
+    assert "You are an expert." in record["prompt"]
+    assert "Base prompt text." in record["prompt"]
+    assert record["sweep"] == "modules_persona_overview"
+
+
+@patch("aedist.harness.OpenAI")
+def test_rag_prompt_modules_dry_run(mock_openai_cls, tmp_path):
+    """Dry run with --prompt-modules assembles prompt but makes no API calls."""
+    mock_client = MagicMock()
+    mock_openai_cls.return_value = mock_client
+
+    _, corpus, models, output = _setup_files(tmp_path)
+    modules_dir = _setup_modules(tmp_path)
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_rag",
+            "--prompt-modules", "persona",
+            "--modules-dir", str(modules_dir),
+            "--corpus", str(corpus),
+            "--models", str(models),
+            "--output", str(output),
+            "--dry-run",
+        ]):
+            from aedist.query_rag import main
+            main()
+
+    mock_client.chat.completions.create.assert_not_called()
+
+
+@patch("aedist.harness.OpenAI")
+def test_rag_backwards_compat(mock_openai_cls, tmp_path):
+    """Existing --prompt flag still works unchanged after adding --prompt-modules."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    prompt, corpus, models, output = _setup_files(tmp_path)
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_rag",
+            "--prompt", str(prompt),
+            "--corpus", str(corpus),
+            "--models", str(models),
+            "--output", str(output),
+        ]):
+            from aedist.query_rag import main
+            main()
+
+    call_args = mock_client.chat.completions.create.call_args
+    messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
+    assert messages[1]["content"] == "List power plants."
+
+    json_files = list(output.rglob("*.json"))
+    record = json.loads(json_files[0].read_text())
+    assert record["prompt"] == "List power plants."
+
+
+@patch("aedist.harness.OpenAI")
+def test_rag_prompt_and_prompt_modules_mutually_exclusive(mock_openai_cls, tmp_path):
+    """--prompt and --prompt-modules cannot be used together."""
+    _, corpus, models, output = _setup_files(tmp_path)
+    prompt = tmp_path / "prompt.txt"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_rag",
+            "--prompt", str(prompt),
+            "--prompt-modules", "persona",
+            "--corpus", str(corpus),
+            "--models", str(models),
+            "--output", str(output),
+        ]):
+            with pytest.raises(SystemExit):
+                from aedist.query_rag import main
+                main()

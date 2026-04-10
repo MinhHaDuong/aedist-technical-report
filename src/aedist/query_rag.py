@@ -24,6 +24,7 @@ import openai
 from .harness import (
     CONTEXT_WINDOW_SAFETY_MARGIN,
     BudgetTracker,
+    assemble_prompt,
     compute_cost,
     estimate_tokens,
     load_experiments,
@@ -59,7 +60,19 @@ def load_corpus(corpus_dir: Path) -> tuple[str, list[str]]:
 
 def main():
     parser = argparse.ArgumentParser(description="RAG queries via OpenRouter")
-    parser.add_argument("--prompt", required=True, help="Path to prompt text file")
+    prompt_group = parser.add_mutually_exclusive_group(required=True)
+    prompt_group.add_argument("--prompt", help="Path to prompt text file")
+    prompt_group.add_argument(
+        "--prompt-modules",
+        nargs="*",
+        default=None,
+        help="Module names for assemble_prompt() (e.g. persona overview)",
+    )
+    parser.add_argument(
+        "--modules-dir",
+        default="experiments/prompts/modules",
+        help="Directory containing prompt module text files",
+    )
     parser.add_argument("--corpus", required=True, help="Directory containing .md corpus files")
     parser.add_argument(
         "--strategy",
@@ -83,7 +96,17 @@ def main():
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    prompt = Path(args.prompt).read_text().strip()
+    if args.prompt_modules is not None:
+        modules_dir = Path(args.modules_dir)
+        prompt = assemble_prompt(modules_dir, args.prompt_modules)
+        if args.prompt_modules:
+            sweep = "modules_" + "_".join(args.prompt_modules)
+        else:
+            sweep = "modules_base"
+    else:
+        prompt = Path(args.prompt).read_text().strip()
+        sweep = None
+
     corpus_text, corpus_files = load_corpus(Path(args.corpus))
     corpus_tokens = estimate_tokens(corpus_text)
     models = load_models(args.models)
@@ -204,6 +227,7 @@ def main():
                     "run": run,
                     "date": date.today().isoformat(),
                     "strategy": args.strategy,
+                    **({"sweep": sweep} if sweep else {}),
                     "corpus_files": corpus_files,
                     "corpus_tokens": corpus_tokens,
                     "prompt": prompt,
