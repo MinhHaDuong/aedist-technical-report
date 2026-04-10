@@ -89,6 +89,10 @@ $(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
 	@mkdir -p $(dir $@)
 	cp $< $@
 
+$(SLIDE_GEN)/method_convergence.csv: $(MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_method_convergence --output $@
+
 $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 
@@ -102,7 +106,8 @@ report/report.pdf: report/report.tex report/refs.bib \
 
 slides/slides.pdf: slides/slides.tex \
     $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv \
-    $(SLIDE_GEN)/regimes.csv $(SLIDE_GEN)/macros.tex
+    $(SLIDE_GEN)/regimes.csv $(SLIDE_GEN)/method_convergence.csv \
+    $(SLIDE_GEN)/macros.tex
 	$(MAKE) -C slides
 
 # --- Convenience aliases ------------------------------------------------------
