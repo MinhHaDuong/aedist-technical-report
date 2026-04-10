@@ -1,5 +1,5 @@
 %erg v1
-Title: Enable deep research capabilities for ablation experiment
+Title: Two-regime ablation: RAG corpus vs web search with prompt modules
 Status: open
 Created: 2026-04-10
 Author: haduong
@@ -12,85 +12,126 @@ Author: haduong
 ## Context
 
 Ablation Phase 1 (ticket 0058) ran 26 census_cloud models via basic
-`chat.completions.create()` — no reasoning, no web search. Results show
-that cheap models respond in 3s with ~300 tokens (parametric memory),
-while frontier models take 2-3 min generating 7K-15K tokens. The fast
-models aren't extracting — they're reciting.
+`chat.completions.create()` — no reasoning, no web search. Results
+invalid: cheap models responded in 3s with ~300 tokens (parametric
+memory), not extraction. The fast models aren't extracting, they're
+reciting.
 
-The ablation experiment tests whether prompt modules improve extraction
-quality. This requires models that actually attempt deep extraction:
-reasoning through the prompt and searching the web for data. Basic chat
-completions measure prompt effects on memory recall, not on extraction.
+The ablation should test prompt module effects across THREE information
+regimes — the full gradient from nothing to everything:
+
+| Regime | Source | What model has | Expected F1 |
+|--------|--------|----------------|-------------|
+| **Parametric** | Nothing | Training data only | Low, variable |
+| **RAG** | 37K-token corpus | All documents | ~95-100% |
+| **Web search** | Internet access | Whatever it finds | Mid, variable |
+
+The interactions are the key results:
+- **Bibliography** module: useless with RAG (docs already there), critical
+  with web search (tells model where to look), unknown parametric
+- **Narratives** module: may hurt RAG (output budget competition), may help
+  web search (search context), may help parametric (primes recall)
+- **Sourcing** module: forces per-row citations — easy with RAG (cite the
+  doc), hard parametric (must fabricate or refuse), interesting web search
+
+This 3x16 factorial cleanly decomposes:
+- Module effects within each regime (the ablation)
+- Regime effects for same prompt (information regime comparison)
+- Module x regime interaction (does a module help more/less depending
+  on available information?)
 
 ## Actions
 
-### 1. Add `web_search` flag to `experiments/models.yaml`
+### 1. Infrastructure: capability flags and activation
 
-For each model, determine if web search is available:
-- OpenRouter plugin: `plugins: [{id: "web"}]` (available for most models)
-- Native search: Perplexity Sonar models (built-in)
-- Provider-specific: check OpenRouter docs for per-model support
+#### 1a. Add `web_search` flag to `experiments/models.yaml`
+- OpenRouter plugin: `plugins: [{id: "web"}]` (check per-model support)
+- Native search: add Perplexity Sonar models to registry if absent
+- Flag existing models that support web search
 
-### 2. Update capability activation in `src/aedist/harness.py`
+#### 1b. Update `reasoning` flags
+- Claude Opus/Sonnet: add `reasoning: true` (extended thinking)
+- Gemini Flash: add `reasoning: true` if thinking mode available
+- Verify existing reasoning models (o3, R1, Qwen3 Max, Kimi K2)
 
-When calling models with capabilities, pass the right parameters:
-- **Reasoning models** (reasoning=true):
-  - OpenAI o3: already skips temperature (correct)
-  - Claude: pass `extra_body: {"thinking": {"type": "enabled", "budget_tokens": N}}`
-  - DeepSeek R1: already works via OpenRouter
-  - Gemini thinking: check provider-specific params
-- **Web search** (web_search=true):
-  - OpenRouter: `extra_body: {"plugins": [{"id": "web"}]}`
-  - Or model-specific activation
+#### 1c. Update `harness.py` capability activation
+Read flags from model entry, pass provider-specific parameters:
+- **Reasoning**: skip temperature (already done), add thinking params
+  where supported (Claude: `thinking.budget_tokens`, etc.)
+- **Web search**: `extra_body: {"plugins": [{"id": "web"}]}`
+  for OpenRouter, native for Perplexity
 
-### 3. Create `sets.ablation_deep` in `experiments.toml`
+### 2. Experiment design: three regimes
 
-Model selection criteria:
-- Must have reasoning OR web_search capability (ideally both)
-- Must be available on OpenRouter with current credits
-- Diverse: at least 3 providers, 2 architectures
+#### 2a. Parametric regime (existing `query_frontier.py`)
+- No context, no search — model relies on training data only
+- Same 16 prompt variants
+- Model set: frontier models with reasoning enabled (o3, R1, Claude,
+  GPT-5.4, DeepSeek V3.2) — reasoning helps compensate for missing info
+- The invalid Phase 1 runs ARE this regime for basic-chat models.
+  Re-run with reasoning activated for a fair comparison.
+- `--prompt-modules` already wired (ticket 0055)
 
-Candidates:
-- openai/o3 (reasoning, $2+$8/Mtok)
-- deepseek/deepseek-r1-0528 (reasoning, $0.45+$2.15/Mtok)
-- qwen/qwen3-max-thinking (reasoning, $0.78+$3.9/Mtok)
-- moonshotai/kimi-k2-thinking (reasoning, $0.47+$2/Mtok)
-- anthropic/claude-opus-4.6 + thinking enabled
-- google/gemini-3-flash-preview + thinking enabled
-- Any Perplexity Sonar model with built-in search
+#### 2b. RAG regime (extend `query_rag.py`)
+- Use RAG wholesale pipeline (18-doc corpus, 37K tokens)
+- Same 16 prompt variants (base, composite, 6 additions, 6 removals,
+  base-vs-census, frontier)
+- Model set: top 5 from census RAG results (DeepSeek V3.2, GPT-5.4,
+  Mistral Large, Gemini Flash, Claude Opus)
+- Expected: high F1 baseline, modules show marginal effects
+- Need: wire `--prompt-modules` into `query_rag.py` (currently
+  `query_rag.py` takes `--prompt` only)
 
-### 4. Update `query_frontier.py` to activate capabilities
+#### 2b. Web search regime (extend `query_frontier.py`)
+- Enable web search plugin for all models that support it
+- Same 16 prompt variants
+- Model set: models with `web_search: true` AND `reasoning: true`
+- Expected: lower baseline, modules may have larger effect
+- Need: wire web search activation, verify it works
 
-Read model flags from registry and pass appropriate extra_body params.
-The model entry should drive the API call shape — no hardcoding.
+#### 2d. Create model sets in `experiments.toml`
+- `sets.ablation_parametric`: frontier reasoning models
+- `sets.ablation_rag`: top 5 RAG performers
+- `sets.ablation_websearch`: models with web_search + reasoning
+- `sets.ablation_core`: intersection tested in all 3 regimes (enables
+  clean 3-way comparison)
 
-### 5. Invalidate and rerun Phase 1
+### 3. Phase 1 selection (per regime)
+
+For each of the 3 regimes, run base + composite on all models (2 reps):
+- Identify models where |ΔF1| > 0.05 (responsive to prompt changes)
+- Present HUMAN GATE: cost, time, quality, output tokens per model
+  per regime — let human decide which models x regimes to expand
+
+### 4. Invalidate previous runs
 
 - Delete all `outputs/ablation/p1_base/*.json` and `p1_composite/*.json`
-- Rerun with `sets.ablation_deep` instead of `census_cloud`
-- Parallel execution (max 8 concurrent)
-
-### 6. Top up OpenRouter credits
-
-Previous runs consumed ~$5. Deep research models are more expensive.
-Budget estimate: 7 models x 2 prompts x 2 reps x ~$1/call = ~$28.
+  from worktree and any branch
+- These were basic chat completions, not deep research
 
 ## Test
 
 ```python
-def test_reasoning_models_skip_temperature():
-    """Reasoning models must not receive temperature parameter."""
+def test_reasoning_models_get_thinking_params():
+    """Reasoning models receive provider-specific thinking parameters."""
 
 def test_web_search_plugin_added():
     """Models with web_search=true get plugins in extra_body."""
 
-def test_ablation_deep_set_has_capabilities():
-    """All models in sets.ablation_deep have reasoning or web_search."""
+def test_parametric_regime_no_context():
+    """Parametric regime sends only the prompt, no corpus or search."""
+
+def test_rag_ablation_uses_corpus():
+    """RAG regime injects the 37K-token corpus into context."""
+
+def test_websearch_ablation_activates_search():
+    """Web search regime activates search plugin."""
 ```
 
 ## Exit criteria
-- `web_search` flag added to models.yaml where applicable
-- `query_frontier.py` activates reasoning and web search per model flags
-- `sets.ablation_deep` created with capability-verified models
-- Phase 1 rerun with correct capabilities
+- `web_search` flag in models.yaml, activation in harness.py
+- `query_rag.py` accepts `--prompt-modules` (like query_frontier.py)
+- Three regime sweeps defined in experiments.toml
+- Phase 1 selection run for all 3 regimes
+- HUMAN GATE: tabulated cost/time/quality/tokens per model per regime
 - Previous invalid outputs deleted
