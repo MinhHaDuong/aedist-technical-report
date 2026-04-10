@@ -186,7 +186,7 @@ def test_web_search_model_gets_plugin():
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
     assert kwargs["temperature"] == 0.7
     assert kwargs["tools"][0]["type"] == "openrouter:web_search"
-    assert kwargs["tools"][0]["parameters"]["max_total_results"] == 25
+    assert kwargs["tools"][0]["parameters"]["max_total_results"] == 37
 
 
 def test_both_capabilities():
@@ -196,7 +196,7 @@ def test_both_capabilities():
     assert "temperature" not in kwargs
     assert kwargs["max_tokens"] == 4096
     assert kwargs["tools"][0]["type"] == "openrouter:web_search"
-    assert kwargs["tools"][0]["parameters"]["max_total_results"] == 25
+    assert kwargs["tools"][0]["parameters"]["max_total_results"] == 37
 
 
 def test_web_search_false_no_plugin():

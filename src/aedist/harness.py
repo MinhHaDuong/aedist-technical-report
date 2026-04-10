@@ -329,7 +329,7 @@ def build_api_kwargs(
         kwargs["tools"] = [{
             "type": "openrouter:web_search",
             "parameters": {
-                "max_total_results": 25,  # 5 searches x 5 results ≈ $0.10
+                "max_total_results": 37,  # ~$0.15 cap ($4/1000 results)
             },
         }]
 
