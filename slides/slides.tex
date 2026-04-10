@@ -377,6 +377,59 @@ Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
 \section{Documentation regime}
 
 % -------------------------------------------------------------------
+\begin{frame}{Method convergence: do all models reach the inventory?}
+\textbf{5 models} $\times$ \textbf{5 methods} $\times$ 3 runs each.
+Each dot = 1 power plant.
+\textcolor{matched}{Blue} = correctly identified.
+\textcolor{halluc}{Orange} = hallucinated.
+
+\smallskip
+\begin{center}
+\begin{tikzpicture}
+\pgfplotstableread[col sep=comma]{inputs/generated/method_convergence.csv}\convdata
+\pgfplotstablegetrowsof{\convdata}
+\pgfmathtruncatemacro{\lastrow}{\pgfplotsretval-1}
+%
+% Method band layout: each method gets a Y band.
+% Runs sorted by TP descending within each band.
+% Blue circles for TP (x=1..tp), orange for FP (x=-1..-fp, clipped to 50).
+%
+\begin{axis}[
+    width=0.92\textwidth,
+    height=6.5cm,
+    xlabel={\# power plants},
+    xmin=-55, xmax=175,
+    ymin=-1, ymax=32,
+    ytick={2.45, 9.10, 15.85, 22.55, 29.30},
+    yticklabels={Single, Multi-turn, Web, RAG, Decomposed},
+    y tick label style={font=\small},
+    extra x ticks={163},
+    extra x tick labels={163},
+    extra x tick style={grid=major, grid style={dashed, green!60!black}},
+    scatter, only marks,
+    scatter src=explicit,
+    scatter/classes={
+        tp={mark=*, mark size=0.3pt, matched},
+        fp={mark=*, mark size=0.3pt, halluc}
+    },
+    clip=false,
+]
+\addplot[scatter] table [x=x, y=y, meta=type, col sep=comma]
+    {inputs/generated/method_dots.csv};
+% Zero line
+\draw[black!30, thin] (axis cs:0,\pgfkeysvalueof{/pgfplots/ymin})
+    -- (axis cs:0,\pgfkeysvalueof{/pgfplots/ymax});
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\smallskip
+{\small \textbf{Decomposed} finds all 163 plants but hallucinates.
+\textbf{Web} never hallucinates but caps at $\sim$50.
+No method yet converges all models to 163 with zero errors.}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{Documentation regime: RAG lifts the floor}
 \textbf{Same 5 models} tested under 3 method conditions $\times$ 3 runs \hfill Total cost: \$0.89
 

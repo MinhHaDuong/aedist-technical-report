@@ -89,9 +89,11 @@ $(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
 	@mkdir -p $(dir $@)
 	cp $< $@
 
-$(SLIDE_GEN)/method_convergence.csv: $(MEASUREMENTS)
+$(SLIDE_GEN)/method_convergence.csv $(SLIDE_GEN)/method_dots.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_method_convergence --output $@
+	uv run python -m aedist.plot_method_convergence \
+	    --output $(SLIDE_GEN)/method_convergence.csv \
+	    --dots $(SLIDE_GEN)/method_dots.csv --core-only
 
 $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
