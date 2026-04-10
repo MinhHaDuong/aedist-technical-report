@@ -1,8 +1,8 @@
-Last updated: 2026-04-10 (late night)
+Last updated: 2026-04-11 (post-conference day)
 
 ## Status
 
-Pipeline end-to-end via manager+worker dispatch. Census: 37 models (26 cloud + 11 local), best F1 98.8% (DeepSeek V3.2 decomposed). 901 tests pass. Orchestrator batch completed: 10 tickets processed (8 closed, 1 pending data, 1 running API calls). Variance decomposition confirms method dominates model (eta_sq method=0.50 vs model=0.07). Matching sensitivity reveals 35 rank flips, 17-model stable core. Ablation hypotheses preregistered, prompt_modules wired in runner.
+Pipeline end-to-end. Census: 37 models, best F1 98.8%. Three-regime ablation Phase 1 complete (parametric, RAG, web search) with 3 dev models (Mistral Small 24B, DeepSeek V3.2 671B, Kimi K2). Key finding: composite prompt helps only in RAG regime (+25.8pp for Kimi K2), hurts everywhere else (-7pp to -27pp). HUMAN GATE delivered: Phase 2 recommended for RAG-only. 14 PRs merged this session (#225-237). Web search infrastructure operational (OpenRouter server tool, $0.15 cap).
 
 ## Blockers
 
@@ -10,60 +10,38 @@ None
 
 ## Next actions
 
-1. Visual review: `make slides` — check all pages render correctly
-2. Ablation Phase 1 API calls running (ticket 0058) — human gate after results
-3. Analyze base vs census prompt gap (ticket 0057) — after 0058 Phase 1
-4. RAG local models: 2B/4B runs executing on Padme (ticket 0021)
-5. Multi-agent verification Phase B implementation (ticket 0059, blocked by 0058)
+1. Phase 2 decision: run RAG-only ablation (16 prompts, Kimi K2 + DeepSeek V3.2, ~$5-10)
+2. Visual review: `make slides` — conference was April 11
+3. Analyze base vs census prompt gap (ticket 0057) — uses Phase 1 data
+4. RAG local models: 2B/4B runs may still be on Padme (ticket 0021)
 
 ## North star
 
-Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. Not which model is best, but which **method** produces a trustworthy statistical table. Present pilot findings at Econom'IA 2026. See MASTERPLAN.md for the long-term vision.
+Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. Not which model is best, but which **method** produces a trustworthy statistical table. See MASTERPLAN.md for the long-term vision.
 
-## Current milestone: Econom'IA 2026 (April 11)
+## Current milestone: Journal submission (post-conference)
 
-- [x] Reframe slides as pilot study (#115, #193)
-- [x] Perspectives section in report (#116)
-- [x] Fix 99% → 98.8% consistency (ticket 0046)
-- [x] Method convergence strip plot (ticket 0031, PR #219)
-- [x] Prompt ablation experiment design (ticket 0038, PR #220)
-- [x] Verification proof-of-concept (ticket 0030, PR #218)
-- [x] Scaling curve figure + slides frame (ticket 0021, PR #227)
-- [ ] Visual PDF review of slides
-- [ ] RAG local sweep: 2B/4B data running on Padme
-
-## Next milestone
-
-Statistical hygiene → journal submission (TBD — after conference feedback).
-- [x] Variance decomposition (ticket 0029, PR #228)
-- [x] Matching sensitivity phases 4-5 (ticket 0035, PR #231)
-- [x] Preregistered ablation hypotheses (ticket 0056, PR #230)
-- [ ] Ablation Phase 1 selection (ticket 0058, running)
+- [x] Variance decomposition: method dominates model, eta_sq=0.50 vs 0.07 (PR #228)
+- [x] Matching sensitivity: 35 rank flips, 17-model stable core (PR #231)
+- [x] Ablation hypotheses preregistered (PR #230)
+- [x] Capability flags + web search in harness (PR #234)
+- [x] prompt_modules wired in query_frontier + query_rag (PRs #229, #235)
+- [x] Three-regime ablation model sets: dev + journal tiers (PR #236)
+- [x] Phase 1 selection: 3 regimes x 3 models, HUMAN GATE delivered (PR #237)
+- [x] Regime linkage documented in report (PR #233)
+- [x] Multi-agent verification protocol designed (PR #232)
+- [ ] Phase 2 ablation: 16 prompts on RAG regime (awaiting human decision)
 - [ ] Base vs census gap analysis (ticket 0057)
 - [ ] Multi-agent verification Phase B (ticket 0059)
 - [ ] Full verification factorial (ticket 0060)
-
-## Closed this session (orchestrator batch)
-
-| Ticket | PR | Description |
-|--------|----|-------------|
-| 0038 | #220 | Prompt ablation design (was stale doing) |
-| 0044 | #205 | Whitelist model-reply glob (was stale doing) |
-| 0045 | #206 | Empty CSV crash fix (was stale open) |
-| 0048 | #225 | RAG/_extracted measurement duplication |
-| 0029 | #228 | Variance decomposition + unstable pairs |
-| 0030 | #226 | Verification methods section (Stage A) |
-| 0035 | #231 | Matching sensitivity rank stability |
-| 0054 | #232 | Multi-agent verification protocol design |
-| 0055 | #229 | Wire prompt_modules in runner |
-| 0056 | #230 | Preregister ablation hypotheses |
+- [ ] Ablation results visualization (ticket 0067)
 
 ## Open tickets (7)
 
-- 0021 RAG local models (pending — code merged, data runs on Padme)
+- 0021 RAG local models (pending — code merged PR #227, data runs on Padme)
 - 0023 Smart worker dispatch (infra, deferred)
 - 0025 Sourced extraction with citation scoring (doing)
-- 0057 Base-vs-census gap analysis (ready, after 0058 Phase 1)
-- 0058 Run ablation sweeps (doing — Phase 1 API calls running)
-- 0059 Run multi-agent verification (blocked by 0054, 0058)
+- 0057 Base-vs-census gap analysis (ready)
+- 0059 Multi-agent verification Phase B (ready)
 - 0060 Full verification factorial (ready, post-conference)
+- 0067 Ablation results visualization (blocked by Phase 2)
