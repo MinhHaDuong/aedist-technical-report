@@ -1,0 +1,85 @@
+%erg v1
+Title: Investigate and fix RAG vs _extracted measurement duplication
+Status: open
+Created: 2026-04-10
+Author: claude
+
+--- log ---
+2026-04-10T11:00Z claude created discovered during ticket 0031 investigation
+
+--- body ---
+## Context
+
+While building the method convergence plot (ticket 0031), we found that
+measurements.jsonl contains duplicate data for the 5 core models tested
+under RAG:
+
+- `method="single", prompt_version="_extracted"` entries come from
+  `experiments/derived/rag_consistency/_extracted/*.csv`
+- `method="rag"` entries come from `experiments/outputs/rag/*.csv`
+- For all 5 core models (deepseek-v3.2, gemini-2.5-flash-lite, gpt-5.4,
+  mistral-large-2512, mistral-small-2603), the TP/FP values are **identical**
+  between the two sets.
+
+This means the same extraction results are counted twice in measurements:
+once as single-shot and once as RAG. The `_extracted` CSVs appear to be
+re-extractions from RAG experiment JSON outputs, evaluated against reference
+as if they were single-shot runs.
+
+Ticket 0031 works around this by excluding `prompt_version="_extracted"`
+from the convergence plot, but the root cause is in the measurement
+assembly pipeline.
+
+## Evidence
+
+```
+gpt-5.4:
+  single/_extracted:  TP=[102, 102, 144]  files: derived/rag_consistency/_extracted/gpt-5.4-run*.csv
+  rag:                TP=[102, 102, 144]  files: outputs/rag/gpt-5.4-run*.csv
+
+deepseek-v3.2:
+  single/_extracted:  TP=[33, 70, 85]
+  rag:                TP=[33, 70, 85]
+```
+
+All 5 core models show exact match. This is not coincidence — the CSVs
+are the same data filed under two different methods.
+
+## Questions to answer
+
+1. Are the `_extracted` CSVs literally copies of the RAG CSVs, or were
+   they independently re-extracted from the RAG JSON outputs?
+2. If independently extracted, why are results identical? (Deterministic
+   extraction from same JSON?)
+3. Should `_extracted` entries exist in measurements.jsonl at all? They
+   seem to be an intermediate artifact from the rag_consistency experiment,
+   not a distinct measurement.
+4. Are there other prompt_version values that create similar duplication?
+
+## Actions
+
+1. Diff the actual CSV files: `experiments/derived/rag_consistency/_extracted/gpt-5.4-run1.csv`
+   vs `experiments/outputs/rag/gpt-5.4-run1.csv` — are they byte-identical?
+2. Trace the assembly pipeline (`experiments/Makefile`, `aedist.evaluate`)
+   to understand how `_extracted` entries get into measurements.jsonl.
+3. Decide: either exclude `_extracted` from assembly, or deduplicate at
+   assembly time, or remove the derived files.
+4. Verify fix doesn't break other consumers of measurements.jsonl.
+
+## Test
+
+```python
+def test_no_duplicate_measurements():
+    """Each (model, method, run) tuple appears at most once."""
+    from aedist.measurements import load
+    seen = set()
+    for r in load():
+        key = (r.method_params.model, r.method.value, r.result_file)
+        assert key not in seen, f"Duplicate: {key}"
+        seen.add(key)
+```
+
+## Exit criteria
+- Root cause identified and documented
+- Duplication removed from measurements.jsonl assembly
+- No downstream breakage (make check passes)
