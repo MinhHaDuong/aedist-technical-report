@@ -1,6 +1,6 @@
 %erg v1
 Title: Verification proof-of-concept: tool + unverified tradeoff table
-Status: doing
+Status: closed
 Created: 2026-04-07
 Author: claude
 
@@ -10,6 +10,7 @@ Author: claude
 2026-04-10T08:04Z claude claimed
 2026-04-10T08:04Z claude status doing
 2026-04-10T12:00Z claude note rescoped to PR #218 deliverables; LLM/web modes split to 0048
+2026-04-10T13:30Z claude status closed — PR #218, all exit criteria met, 868 tests pass
 
 --- body ---
 ## Context
