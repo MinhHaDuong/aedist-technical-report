@@ -87,6 +87,8 @@ def load_plants_csv(path: Path) -> list[Plant]:
             return plants
         col_map = {c.strip().lower().replace(" ", "_"): c for c in reader.fieldnames}
         for row in reader:
+            # Preference order: name > name_vi > name_en.  Vietnamese names
+            # match the reference dataset better (diacritics aid fuzzy matching).
             name = _get(row, col_map, ["name", "name_vi", "name_en", "plant_name", "plant"])
             if not name:
                 continue

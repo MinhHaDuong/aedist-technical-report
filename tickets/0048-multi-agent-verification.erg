@@ -49,19 +49,32 @@ sourcing module as the verification substrate.
 - The existing `extract_csv_rows()` utility handles CSV extraction from
   responses.
 
-## Actions
-1. Design verification protocol (choose among candidates above)
-2. Implement multi-agent verification mode in query_verification.py
-3. Run verification on best ablation prompt outputs (ticket 0038 results)
-4. Evaluate: verified F1 vs unverified F1 vs cost delta
-5. Write results section in report
+## Actions — Phase A: design (this ticket)
+1. Review candidate protocols against infrastructure constraints
+2. Choose one protocol and specify: which models, how many agents,
+   what constitutes agreement/disagreement, how to handle ties
+3. Write experimental plan section for report (like plan_ablation.tex)
+
+## Actions — Phase B: execution (separate ticket, blocked by this one)
+4. Implement chosen protocol in query_verification.py
+5. Run verification on best ablation prompt outputs (ticket 0038 results)
+6. Evaluate: verified F1 vs unverified F1 vs cost delta
+7. Write results section in report
 
 ## Test
-First test: run cross-model verification on one Opus extraction output
-with DeepSeek as verifier. Compare verified vs unverified F1.
+Phase A deliverable: a written protocol spec with concrete parameters
+(model pairs, decision rule, cost estimate), reviewed by author.
 
-## Exit criteria
-- At least one multi-agent verification protocol implemented and evaluated
+Phase B first test: run chosen protocol on one Opus extraction output.
+Compare verified vs unverified F1.
+
+## Exit criteria (Phase A)
+- Protocol chosen and specified with concrete parameters
+- Experimental plan section drafted for report
+- Phase B ticket created with clear actions
+
+## Exit criteria (Phase B — separate ticket)
+- Protocol implemented and evaluated on k models
 - Comparison table: unverified F1 vs verified F1 vs cost
 - Finding stated: does independent verification improve extraction, and at
   what cost?

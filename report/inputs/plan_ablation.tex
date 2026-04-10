@@ -6,9 +6,11 @@
 L'expérience~1 utilise un prompt minimaliste de 40~mots~; l'expérience frontier
 un prompt de 1\,200~mots intégrant cadrage sectoriel, narratifs par centrale,
 statistiques croisées et bibliographie annotée. Or Opus obtient F1\,=\,0,64
-avec le prompt court et F1\,=\,0,54 avec le prompt long~: la métacognition
-supplémentaire \emph{dégrade} l'extraction structurée. Quel composant est
-responsable~?
+avec le prompt court et F1\,=\,0,54 avec le prompt long~: davantage
+d'instructions \emph{dégrade} l'extraction structurée. Plutôt que de
+diagnostiquer ce prompt existant, nous concevons une famille de prompts
+modulaires pour déterminer quels composants améliorent ou dégradent
+l'extraction~:
 
 Deux approches symétriques isolent les effets~:
 
@@ -191,11 +193,13 @@ Le design expérimental comporte deux bras symétriques et trois points d'ancrag
 \subsection{Protocole}\label{sec:protocole-ablation}
 
 \paragraph{Phase de sélection} Les prompts~1 (base) et~8 (complet) sont
-exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 1~run
-chacun. On retient les $k$~modèles qui montrent une différence significative
-entre les deux conditions (test de permutation sur le F1). Ce sont les modèles
-\emph{sensibles au prompt}~: les seuls pour lesquels l'ablation peut révéler
-quelque chose.
+exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 3~runs
+chacun. On retient les $k$~modèles dont le $|\Delta\text{F1}|$ moyen entre
+les deux conditions dépasse 0,05 (5~points). Ce seuil élimine les modèles
+insensibles au prompt, pour lesquels l'ablation ne peut rien révéler.
+Trois répétitions suffisent à distinguer un effet réel de la variance
+stochastique du LLM (écart-type typique de 2--3 points F1 d'après les
+mesures de l'expérience~1).
 
 \paragraph{Phase de mesure} Les 16~prompts sont exécutés sur les $k$~modèles
 retenus, avec 5~répétitions chacun ($16 \times k \times 5$ runs). Température
@@ -216,10 +220,24 @@ fixée à 0. Chaque run produit un CSV évalué contre l'inventaire de référen
   $\Delta$F1 mesure le prix, en points d'extraction, de la traçabilité.
 \end{itemize}
 
-\paragraph{Budget prévisionnel} Avec $k=5$ modèles~: $16 \times 5 \times 5
-= 400$~runs + 50~runs de sélection $= 450$~runs. Au coût moyen de
-0,02--0,05\,\$ par run (Opus)~: 10--25\,\$. Les modèles open-weight réduisent
-ce budget d'un facteur~10.
+\paragraph{Budget prévisionnel} Sélection~: $2 \times 25 \times 3 = 150$~runs.
+Mesure avec $k=5$ modèles~: $16 \times 5 \times 5 = 400$~runs.
+Total~: 550~runs. Au coût moyen de 0,02--0,05\,\$ par run~: 10--30\,\$.
+Les modèles open-weight réduisent ce budget d'un facteur~10.
+
+\paragraph{Limites du design}
+\begin{itemize}
+\item \textbf{Requête directe uniquement.} L'expérience teste les prompts
+  en requête single-shot, sans RAG ni décomposition. L'interaction entre
+  le design du prompt et le contexte RAG constitue une expérience séparée~:
+  un module qui nuit en single-shot (cadrage sectoriel gaspillant des tokens)
+  pourrait aider en RAG (amorçage de la récupération documentaire).
+\item \textbf{Plan fractionnaire (résolution~III).} Le design teste les
+  effets principaux de 6~modules (16~prompts) mais pas les $\binom{6}{2}=15$
+  interactions par paires (qui nécessiteraient un plan factoriel $2^6=64$
+  prompts). L'asymétrie composition/ablation détecte la \emph{présence}
+  d'interactions mais ne les attribue pas à un couple spécifique.
+\end{itemize}
 
 \subsection{Lien avec la vérification multi-agents}\label{sec:lien-verification}
 

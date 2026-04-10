@@ -65,11 +65,8 @@ on delta-F1 per module.
 4. [x] Add name_vi/name_en aliases to extract.py and evaluate.py
 5. [x] Write experimental plan in report (plan_ablation.tex)
 6. [x] Integrate plan into report.tex
-7. [ ] Wire prompt_modules in runner: query_frontier.py must read
-       prompt_modules from sweep config, call assemble_prompt(), use
-       assembled text instead of --prompt file. Fallback to --prompt
-       when prompt_modules is absent (existing sweeps unchanged).
-8. [ ] Run Phase 1 selection sweeps
+7. [ ] Wire prompt_modules in runner (ticket 0049)
+8. [ ] Run Phase 1 selection sweeps (3 reps, blocked by 0049)
 9. [ ] Analyze selection results, populate ablation model set
 10. [ ] Run Phase 2 measurement sweeps
 11. [ ] Evaluate, produce comparison tables, write results section

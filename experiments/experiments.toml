@@ -271,7 +271,7 @@ output = "qualitative/skill_plans"
 # "modules" key lists which modules to include; base.txt is always included.
 # Module ordering is handled by assemble_prompt() in harness.py.
 #
-# Phase 1: selection — base vs composite on all census models (1 rep)
+# Phase 1: selection — base vs composite on all census models (3 reps)
 # Phase 2: full matrix on selected models (5 reps)
 #
 # All modules: persona, overview, sourcing, narratives, bibliography, statistics
@@ -281,8 +281,8 @@ mode = "single"
 prompt_modules = []
 models = "models.yaml"
 model_set = "census_cloud"
-repeat = 1
-budget_usd = 15
+repeat = 3
+budget_usd = 30
 output = "outputs/ablation/select_base"
 
 [sweeps.ablation_select_composite]
@@ -290,8 +290,8 @@ mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "census_cloud"
-repeat = 1
-budget_usd = 15
+repeat = 3
+budget_usd = 30
 output = "outputs/ablation/select_composite"
 
 # Phase 2 — Composition arm: base + one module

@@ -1,0 +1,41 @@
+%erg v1
+Title: Wire prompt_modules in query runner
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0038
+
+--- log ---
+2026-04-10T20:00Z claude created — split from ticket 0038 action 7
+
+--- body ---
+## Context
+Ticket 0038 added `prompt_modules` as a sweep config key and
+`assemble_prompt()` in harness.py. But `query_frontier.py` only reads
+`--prompt` as a file path. The runner must bridge this gap before any
+ablation sweep can execute.
+
+## Actions
+1. Add `--prompt-modules` flag to `query_frontier.py` as alternative
+   to `--prompt`. When present, call `assemble_prompt()` with the
+   modules directory and the given module list.
+2. Update the manager/dispatcher to read `prompt_modules` from sweep
+   config and pass it to the query script (either via `--prompt-modules`
+   or by assembling the text and writing a temp file).
+3. Fallback: when `prompt_modules` is absent, use `--prompt` as before.
+   Existing sweeps unchanged.
+
+## Test
+```
+python -m aedist.query_frontier \
+  --prompt-modules persona overview \
+  --models models.yaml --model anthropic/claude-opus-4.6 \
+  --output /tmp/test --dry-run
+```
+Succeeds and shows the assembled prompt (persona prepended, overview appended).
+
+## Exit criteria
+- `query_frontier.py` accepts `--prompt-modules` and calls `assemble_prompt()`
+- Manager reads `prompt_modules` from experiments.toml sweep config
+- Existing sweeps with `prompt` key work unchanged
+- `ablation_select_base` sweep runs end-to-end in dry-run mode
