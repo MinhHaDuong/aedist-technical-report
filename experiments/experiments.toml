@@ -135,6 +135,8 @@ model_ids = [
     "baidu/ernie-4.5-21b-a3b-thinking",
     "qwen/qwen3-max-thinking",
     "moonshotai/kimi-k2-thinking",
+    "z-ai/glm-5.1",
+    "mistralai/mistral-small-2603",
 ]
 
 # Journal tier — adds expensive frontier (gated by human approval)

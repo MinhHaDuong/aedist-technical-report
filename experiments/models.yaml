@@ -159,6 +159,21 @@
   license: open-other
   web_search: true
 
+- id: "z-ai/glm-5.1"
+  router: openrouter
+  router_model: "z-ai/glm-5.1"
+  name: "GLM-5.1"
+  provider: "Zhipu AI"
+  country: CN
+  architecture: moe
+  context_window: 202752
+  price_per_mtok_in: 1.26
+  price_per_mtok_out: 3.96
+  size_class: frontier
+  license: open-other
+  reasoning: true
+  web_search: true
+
 
 # --- Large ---
 
