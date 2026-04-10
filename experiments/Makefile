@@ -170,12 +170,12 @@ derived/%.record.json: derived/%.csv $(REFERENCE)
 ../measurements.jsonl: $(OUTPUT_FILES)
 	@$(MAKE) --no-print-directory extract
 	@$(MAKE) --no-print-directory evaluate-all-records
-	@$(EVAL) assemble $$(find outputs derived -name '*.record.json' | sort) --output $@
+	@$(EVAL) assemble $$(find outputs derived -name '*.record.json' ! -path '*/_extracted/*' | sort) --output $@
 
 .PHONY: evaluate-all-records
 evaluate-all-records:
 	@$(MAKE) --no-print-directory -j$$(nproc) \
-	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' | sed 's/\.csv$$/.record.json/')
+	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
 	for f in outputs/*/*-run*.json derived/*/*-run*.json; do \
 	    [ -f "$${f%.json}.csv" ] && continue; \

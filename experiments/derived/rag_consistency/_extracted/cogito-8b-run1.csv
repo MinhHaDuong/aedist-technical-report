@@ -1,14 +1,14 @@
-name,fuel,status,cod,province,capacity_mwe
-Nhiệt điện Uông Bí,Than,Operational,2007,Vĩnh Phúc,1350.0
-Nhiệt điện Quảng Ninh,Than,Operational,2012,Quảng Ninh,3300.0
-Nhiệt điện Vũng Áng I,Than,Operational,2015,Hà Tĩnh,1800.0
-Nhiệt điện Cẩm Phả II,Than,Operational,2018,Khánh Hòa,1300.0
-Nhiệt điện Vân Phong I,LNG,Operational,2021,Khánh Hòa,660.0
-Nhiệt điện Duyên Hải III,LNG,Under Construction,,An Giang,3300.0
-Nhiệt điện Nam Định I,LNG,Under Construction,,Nam Định,3000.0
-Nhiệt điện Thái Bình I,LNG,Under Construction,,Thái Bình,1500.0
-Nhiệt điện Quảng Trạch II,LNG,Under Construction,,Quảng Bình,600.0
-Nhiệt điện Hải Dương III,LNG,Planned COD 2026,Hải Dương,3300,0
-Nhiệt điện Nghi Sơn II,LNG,Operational,2022,Thái Bình,660.0
-Nhiệt điện Sông Hậu I,LNG,Under Construction,,Hậu Giang,3300.0
-Nhiệt điện Kiên Giang I,LNG,Under Construction,,Kiên Giang,1500.0
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Nhiệt điện Uông Bí,Than,Operational,2007,Vĩnh Phúc,1350.0,,,
+Nhiệt điện Quảng Ninh,Than,Operational,2012,Quảng Ninh,3300.0,,,
+Nhiệt điện Vũng Áng I,Than,Operational,2015,Hà Tĩnh,1800.0,,,
+Nhiệt điện Cẩm Phả II,Than,Operational,2018,Khánh Hòa,1300.0,,,
+Nhiệt điện Vân Phong I,LNG,Operational,2021,Khánh Hòa,660.0,,,
+Nhiệt điện Duyên Hải III,LNG,Under Construction,,An Giang,3300.0,,,
+Nhiệt điện Nam Định I,LNG,Under Construction,,Nam Định,3000.0,,,
+Nhiệt điện Thái Bình I,LNG,Under Construction,,Thái Bình,1500.0,,,
+Nhiệt điện Quảng Trạch II,LNG,Under Construction,,Quảng Bình,600.0,,,
+Nhiệt điện Hải Dương III,LNG,Planned COD 2026,Hải Dương,3300,0,,,
+Nhiệt điện Nghi Sơn II,LNG,Operational,2022,Thái Bình,660.0,,,
+Nhiệt điện Sông Hậu I,LNG,Under Construction,,Hậu Giang,3300.0,,,
+Nhiệt điện Kiên Giang I,LNG,Under Construction,,Kiên Giang,1500.0,,,
