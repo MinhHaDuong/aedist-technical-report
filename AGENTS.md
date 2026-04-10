@@ -18,7 +18,7 @@
 
 Every task passes through five phases.
 Maintain awareness of the conversation's current phase to behave accordingly.
-Infer the initial phase and announces it (e.g., `[→ Imagine]`) at conversation start, then announce transitions inline: `[Phase → Phase] reason`.
+Infer the initial phase and announce it (e.g., `[→ Imagine]`) at conversation start, then announce transitions inline: `[Phase → Phase] reason`.
 
 ### Imagine
 Engage with the user to form a vision.
@@ -37,7 +37,7 @@ Scope: Focus on one issue. Scope-creep guard: Create new tickets if investigatio
 
 Deliverable: a ticket ready to execute. No production code commit, change only ticket(s). The ticket includes the first test in the ticket body, specifies the definition of done literally, provides guidance and hands-off helpful context.
 
-Explore alternatives design strategies and prototype approaches using throwaway code, worktree isolated.
+Explore alternatives, design strategies, and prototype approaches using throwaway code, worktree isolated.
 
 Consider interaction with other tickets and PR.
 
@@ -101,9 +101,9 @@ Team Verification: independently review the plans and annotate for prerequisites
 Team Execute delivers the PR.
 Team Verify fixes them.
 Team Audit assumes non-compliance and lint, reverify, inspect scope creep and fix again.
-The orchestrator receives the clean PRs, reviews each against its ticket, and performs the merge in order. It then loop to the first step.
+The orchestrator receives the clean PRs, reviews each against its ticket, and performs the merge in order. It then loops to the first step.
 
-In autonomous mode, orchestrator never defers for human input. In face of hard issues, it resorts first to a diverse team of agent experts. It then escalate to deep research. Thirdly, it works around the issue.
+In autonomous mode, orchestrator never defers for human input. In the face of hard issues, it resorts first to a diverse team of agent experts. It then escalates to deep research. Thirdly, it works around the issue.
 
 ## Two ticket systems
 
