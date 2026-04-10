@@ -88,7 +88,7 @@ def _extract_entries(
         elif status == "Only in file2":
             mt = MatchType.SYSTEM_ONLY
         else:
-            # "Matched (Fuzzy) (Diff)", "Mismatched", etc.
+            # "Matched (Fuzzy) (Diff)", "Matched (Diff)", etc.
             mt = MatchType.FUZZY_CAPACITY_DIFF if "Fuzzy" in str(status) else MatchType.EXACT_CAPACITY_DIFF
 
         ref_name = _safe(row, "name_file1")

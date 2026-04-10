@@ -500,6 +500,16 @@ Incrémentalité & Monolithique        & Actif par actif, source par source \\
 
 \noindent Le corpus constitué est lui-même un actif durable~: une fois les PDP, rapports EVN et décisions provinciales indexés et convertis, ils répondent à des questions que le prompt initial n'avait pas anticipées. La donnée de qualité recherche n'est pas celle qui est exacte~: c'est celle dont les erreurs sont \emph{localisables}. Dans un pilote sur trois extractions sourcées (337~lignes, modèle Claude~Opus), 77\,\% des citations renvoient à des sources primaires (décisions gouvernementales, rapports annuels EVN) et aucune source fabriquée n'a été identifiée lors d'une vérification manuelle.
 
+% --- Para 5b: empirical cost-of-trust (verification tradeoff) ---
+Une expérience de vérification automatisée quantifie ce compromis~: sur la meilleure extraction (DeepSeek~V3.2, décomposition, F1\,=\,98,8\,\%, 167~lignes), la confrontation de chaque ligne avec la base de référence par appariement LP global (le même algorithme que le benchmark) identifie 163~centrales confirmées et 4~fabrications. Au seuil d'évidence~$\geq 3$ (au moins une source primaire), la précision et la couverture atteignent toutes deux 100\,\% (F1\,=\,100\,\%)~: les 4~hallucinations sont éliminées et les 163~centrales réelles sont toutes retrouvées dans la base de référence. Ce résultat montre que la vérification outil, lorsqu'elle utilise un appariement structurel (nom, capacité, province, combustible) plutôt qu'une simple similarité textuelle, sépare parfaitement les données vérifiables des fabrications. Le tableau~\ref{tab:verification} détaille ce compromis par seuil d'évidence.
+
+\begin{table}[htbp]
+\centering
+\caption{Compromis précision-couverture par seuil d'évidence. Vérification par appariement LP global contre la base de référence, sur l'extraction DeepSeek~V3.2 décomposée (167~lignes).}
+\label{tab:verification}
+\InputIfFileExists{inputs/generated/tab_verification}{}{}
+\end{table}
+
 % --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.
 
