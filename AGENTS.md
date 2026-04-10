@@ -2,10 +2,6 @@
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
-## Dependencies
-
-**[Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness)** — workflow skills (`/review-pr`, `/celebrate`, `/end-session`, `/memory`, etc.). Installed at user level. If unavailable, follow the phase descriptions below — the skills automate the workflow, they don't define it.
-
 ## Configuration
 
 | Location | Purpose |
@@ -86,7 +82,7 @@ The agent must always know and declare its current phase.
 | `/ticket-close NNNN` | Completing work | Set `Status: closed`, release `.wip`, commit |
 | `/ticket-release NNNN` | Abandoning work | Restore `Status: open`, release `.wip`, commit |
 
-### Imperial Dragon Harness (user-level — may not be available)
+### [Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness) (user-level — may not be available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
