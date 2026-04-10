@@ -13,8 +13,10 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 import warnings
+from collections import defaultdict
 from itertools import combinations
 from pathlib import Path
 
@@ -130,12 +132,19 @@ def _compute_metrics_at_threshold(
 def sweep_thresholds(
     recon_root: Path,
     output_path: Path,
-) -> None:
+) -> dict:
     """Run the threshold sweep over all reconciliation CSVs under recon_root.
+
+    Writes two files:
+    - output_path: matching_sensitivity.csv (per-model, per-threshold metrics)
+    - output_path.parent / matching_stability.json (rank flips, slopes, stable core)
 
     Args:
         recon_root: Root directory containing reconciliation CSVs (searched recursively).
         output_path: Path to write matching_sensitivity.csv.
+
+    Returns:
+        Stability analysis dict with keys: rank_flips, slopes, stable_core.
     """
     # Find all reconciliation CSVs
     recon_files = sorted(recon_root.rglob("reconciliation_*.csv"))
@@ -170,15 +179,29 @@ def sweep_thresholds(
         writer.writeheader()
         writer.writerows(results)
 
-    # Rank stability analysis
-    _print_rank_stability(results)
+    # Stability analysis
+    stability = _compute_stability(results)
+
+    # Write stability JSON
+    stability_path = output_path.parent / "matching_stability.json"
+    with open(stability_path, "w", encoding="utf-8") as f:
+        json.dump(stability, f, indent=2)
+
+    # Print summary
+    _print_stability_summary(stability)
+
+    return stability
 
 
-def _print_rank_stability(results: list[dict]) -> None:
-    """Analyze whether model rankings flip across thresholds [75, 95]."""
+def _compute_stability(results: list[dict]) -> dict:
+    """Compute rank stability, per-model F1 slopes, and stable core.
+
+    Returns dict with:
+    - rank_flips: list of {method, model_1, model_2} where rankings invert
+    - slopes: list of {method, model, f1_slope} (F1 change per threshold unit)
+    - stable_core: list of models whose rankings never flip
+    """
     # Group by (method, model) -> {threshold: [f1 values across runs]}
-    from collections import defaultdict
-
     method_model_f1: dict[str, dict[str, dict[int, list[float]]]] = defaultdict(
         lambda: defaultdict(lambda: defaultdict(list))
     )
@@ -188,16 +211,14 @@ def _print_rank_stability(results: list[dict]) -> None:
         if 75 <= t <= 95:
             method_model_f1[r["method"]][r["model"]][t].append(float(r["f1"]))
 
-    # For each method, check model pairs for rank flips
-    flips = []
+    # Rank flips
+    flips: list[dict[str, str]] = []
     for method, models in method_model_f1.items():
         model_names = sorted(models.keys())
         for m1, m2 in combinations(model_names, 2):
-            # Compute mean F1 at each threshold
             m1_means = {t: sum(vs) / len(vs) for t, vs in models[m1].items()}
             m2_means = {t: sum(vs) / len(vs) for t, vs in models[m2].items()}
 
-            # Check if relative ranking changes
             common_thresholds = sorted(set(m1_means) & set(m2_means))
             if len(common_thresholds) < 2:
                 continue
@@ -207,17 +228,80 @@ def _print_rank_stability(results: list[dict]) -> None:
                 diff = m1_means[t] - m2_means[t]
                 signs.append(1 if diff > 0 else (-1 if diff < 0 else 0))
 
-            # A flip occurs if sign changes (ignoring ties)
             nonzero = [s for s in signs if s != 0]
             if len(set(nonzero)) > 1:
-                flips.append((method, m1, m2))
+                flips.append({"method": method, "model_1": m1, "model_2": m2})
+
+    # Per-model slopes (linear regression of mean F1 vs threshold)
+    slopes: list[dict] = []
+    for method, models in method_model_f1.items():
+        for model, threshold_f1s in models.items():
+            mean_f1s = {t: sum(vs) / len(vs) for t, vs in threshold_f1s.items()}
+            thresholds = sorted(mean_f1s.keys())
+            if len(thresholds) < 2:
+                slopes.append({
+                    "method": method,
+                    "model": model,
+                    "f1_slope": 0.0,
+                })
+                continue
+
+            # Simple linear regression: slope = cov(x,y) / var(x)
+            xs = [float(t) for t in thresholds]
+            ys = [mean_f1s[t] for t in thresholds]
+            x_mean = sum(xs) / len(xs)
+            y_mean = sum(ys) / len(ys)
+            cov_xy = sum((x - x_mean) * (y - y_mean) for x, y in zip(xs, ys, strict=True))
+            var_x = sum((x - x_mean) ** 2 for x in xs)
+            slope = round(cov_xy / var_x, 6) if var_x > 0 else 0.0
+            slopes.append({
+                "method": method,
+                "model": model,
+                "f1_slope": slope,
+            })
+
+    # Stable core: models not involved in any rank flip
+    all_models = set()
+    for models in method_model_f1.values():
+        all_models.update(models.keys())
+
+    flipping_models = set()
+    for f in flips:
+        flipping_models.add(f["model_1"])
+        flipping_models.add(f["model_2"])
+
+    stable_core = sorted(all_models - flipping_models)
+
+    return {
+        "rank_flips": flips,
+        "slopes": slopes,
+        "stable_core": stable_core,
+    }
+
+
+def _print_stability_summary(stability: dict) -> None:
+    """Print a human-readable summary of stability analysis."""
+    flips = stability["rank_flips"]
+    slopes = stability["slopes"]
+    stable_core = stability["stable_core"]
 
     if flips:
         print(f"\nRank flips detected ({len(flips)} model pairs):")
-        for method, m1, m2 in flips[:10]:
-            print(f"  {method}: {m1} vs {m2}")
+        for f in flips[:10]:
+            print(f"  {f['method']}: {f['model_1']} vs {f['model_2']}")
     else:
         print("\nNo rank flips detected across thresholds [75, 95].")
+
+    if slopes:
+        print("\nF1 sensitivity (slope per threshold unit):")
+        sorted_slopes = sorted(slopes, key=lambda s: abs(s["f1_slope"]), reverse=True)
+        for s in sorted_slopes[:10]:
+            print(f"  {s['method']}/{s['model']}: {s['f1_slope']:+.6f}")
+
+    if stable_core:
+        print(f"\nStable core ({len(stable_core)} models): {', '.join(stable_core)}")
+    else:
+        print("\nNo models in stable core (all involved in rank flips).")
 
 
 def main() -> None:

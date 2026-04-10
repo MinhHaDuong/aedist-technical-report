@@ -1,230 +1,230 @@
-match_type,reference_name,system_name,reference_province,system_province,reference_fuel,system_fuel,reference_capacity_mwe,system_capacity_mwe,capacity_diff_pct,fuel_match,status_match,province_match,reference_source_ref,system_source_ref
-fuzzy,An Khánh - Bac Giang,An Khánh (Bắc Giang),bac giang,bac giang (phu tho),coal,unknown,650.0,650.0,0.0,False,False,False,,
-exact_capacity_diff,An Khánh 1,Đà Nẵng,thai nguyen,nhon trach /vinh tan,coal,unknown,116.0,110.0,5.2,False,False,False,,
-exact_capacity_diff,Bà Rịa GT,Điện sinh khối An Khê #2,ba ria - vung tau,quang ngai,gas,unknown,46.0,55.0,19.6,False,True,False,,
-fuzzy,Bạc Liêu 1,Bạc Liêu 3,bac lieu,(bac lieu),coal,unknown,1200.0,1200.0,0.0,False,False,False,,
-exact,Cam Pha 3,Cẩm Phả 3,quang ninh,cam pha (quang ninh),coal,unknown,440.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,Cao Ngạn,Cao Ngạn 2,thai nguyen,thai nguyen,coal,unknown,114.0,115.0,0.9,False,True,True,,
-fuzzy,Cong Thanh,Công Thanh 1,thanh hoa,thanh hoa,coal,unknown,600.0,600.0,0.0,False,False,True,,
-exact,Cà Mau I,Cà Mau 1,ca mau,(ca mau),gas,unknown,771.0,750.0,2.7,False,True,False,,
-exact,Cà Mau II,Cà Mau 2,ca mau,(ca mau),gas,unknown,771.0,750.0,2.7,False,True,False,,
-exact,Cẩm Phả 1,Cẩm Phả 1,quang ninh,cam pha (quang ninh),coal,unknown,340.0,660.0,94.1,False,True,False,,
-exact,Cẩm Phả 2,Cẩm Phả 2,quang ninh,cam pha (quang ninh),coal,unknown,340.0,660.0,94.1,False,True,False,,
-exact_capacity_diff,Dong Nai Formosa,Trung Sơn 1,đong nai,trung son (thanh hoa),coal,unknown,150.0,127.5,15.0,False,False,False,,
-exact_capacity_diff,Dong Nai Formosa,Trung Sơn 2,đong nai,trung son (thanh hoa),coal,unknown,300.0,127.5,57.5,False,False,False,,
-exact_capacity_diff,Duc Giang - Lao Cai Chemical,Ninh Bình Extension,lao cai,(ninh binh),coal,unknown,100.0,100.0,0.0,False,False,False,,
-exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase I,Hòa Bình 1,quang ngai,khoai chau (hung yen),coal,unknown,2400.0,1680.0,30.0,False,False,False,,
-exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase II,Vĩnh Tân V (Units 9-10),quang ngai,bac binh (binh thuan),coal,unknown,2000.0,1800.0,10.0,False,False,False,,
-exact,Duyen Hai 1,Duyên Hải 1,tra vinh,duyen hai (tra vinh),coal,unknown,1244.0,1244.0,0.0,False,True,False,,
-exact_capacity_diff,Duyen Hai 2,Sơn Hà 2,tra vinh,(quang ngai),coal,unknown,600.0,600.0,0.0,False,False,False,,
-exact,Duyen Hai 3,Duyên Hải 3,tra vinh,duyen hai (tra vinh),coal,unknown,1244.0,1244.0,0.0,False,True,False,,
-exact_capacity_diff,Duyen Hai 3 Extension,Phú Thọ 1,tra vinh,phu tho,coal,unknown,660.0,600.0,9.1,False,False,False,,
-exact_capacity_diff,Duyên Hải 2,Yên Sơn 1,tra vinh,chiem hoa (tuyen quang),coal,unknown,1200.0,600.0,50.0,False,False,False,,
-exact,Formosa HT2,Formosa HT2,ha tinh,ha tinh,coal,unknown,650.0,650.0,0.0,False,False,True,,
-fuzzy_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Hà Tĩnh 2,ha tinh,(ha tinh),coal,unknown,450.0,1200.0,166.7,False,False,False,,
-fuzzy_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Hà Tĩnh 1,ha tinh,(ha tinh),coal,unknown,450.0,1200.0,166.7,False,False,False,,
-fuzzy_capacity_diff,Hai Duong,Hải Dương 2,hai duong,hai duong,coal,unknown,1200.0,600.0,50.0,False,False,True,,
-exact_capacity_diff,Hai Ha CHP Phase 1,Than Hải Hà 2,quang ninh,hai ha (quang ninh),coal,unknown,150.0,150.0,0.0,False,False,False,,
-exact_capacity_diff,Hai Ha CHP Phase 2,Formosa Hà Tĩnh Block 2,quang ninh,(ha tinh),coal,unknown,750.0,650.0,13.3,False,False,False,,
-exact_capacity_diff,Hai Ha CHP Phase 3,Bến Tre 1,quang ninh,(ben tre),coal,imported gas,600.0,600.0,0.0,False,False,False,,
-exact_capacity_diff,Hai Ha CHP Phase 4,NĐ đồng phát Hải Hà 2,quang ninh,quang ninh,coal,unknown,600.0,600.0,0.0,False,False,True,,
-exact,Hai Phong 1,Hải Phòng 1,hai phong,hai an (hai phong),coal,unknown,600.0,600.0,0.0,False,True,False,,
-exact,Hai Phong 2,Hải Phòng 2,hai phong,hai an (hai phong),coal,unknown,600.0,600.0,0.0,False,True,False,,
-exact,Hai Phong 3,LNG Hải Phòng 3,hai phong,hai phong,coal,imported gas,1200.0,0.0,100.0,False,False,True,,
-fuzzy_capacity_diff,Hải Phòng,Hải Phòng 4 (Block 3,hai phong,—,gas,unknown,500.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,LNG Bà Rịa 2,Bà Rịa,ba ria - vung tau,long hai (ba ria),gas,unknown,1200.0,720.0,40.0,False,False,False,,
-fuzzy_capacity_diff,LNG Bình Định,Bình Định III,binh đinh,(binh đinh),gas,unknown,5000.0,2000.0,60.0,False,False,False,,
-exact,LNG Bạc Liêu,Bạc Liêu,bac lieu,bac lieu,gas,imported gas,3200.0,1200.0,62.5,False,True,True,,
-fuzzy_capacity_diff,LNG Bến Tre,Bến Tre 2,ben tre,(ben tre),gas,imported gas,3000.0,600.0,80.0,False,True,False,,
-exact_capacity_diff,LNG Chân Mây,Hòa Bình 2,hue,(hung yen),gas,unknown,4000.0,1920.0,52.0,False,False,False,,
-fuzzy_capacity_diff,LNG Cà Mau 1,Cà Mau 4 (Proposed),ca mau,(ca mau),gas,imported gas,1500.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,"LNG Cà Mau 2,3",Cà Mau 3,ca mau,(ca mau),gas,unknown,3000.0,0.0,100.0,False,False,False,,
-fuzzy,LNG Cà Ná,Cà Nã 3,ninh thuan,(kien giang/ca mau),gas,imported gas,1500.0,1500.0,0.0,False,True,False,,
-fuzzy_capacity_diff,LNG Cà Ná II+III,Cà Nã 2,ninh thuan,(kien giang/ca mau),gas,imported gas,4500.0,1500.0,66.7,False,False,False,,
-fuzzy_capacity_diff,LNG Cái Mép Hạ,LNG Cái Mép,ba ria - vung tau,ba ria - vung tau,gas,imported gas,6000.0,0.0,100.0,False,False,True,,
-exact,LNG Hiệp Phước (phase I),Hiệp Phước (Block 1),tp ho chi minh,phu my (ho chi minh),gas,unknown,1200.0,750.0,37.5,False,False,False,,
-fuzzy_capacity_diff,LNG Hiệp Phước (phase II),LNG Hiệp Phước 1+2,tp ho chi minh,ho chi minh,gas,imported gas,1500.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,LNG Hà Tĩnh,NĐ Formosa Hà Tĩnh #5,ha tinh,ha tinh,gas,unknown,6000.0,150.0,97.5,False,False,True,,
-exact_capacity_diff,LNG Hải Lăng,Phú Lương 2,quang tri,phu luong (thai nguyen),gas,unknown,1500.0,660.0,56.0,False,False,False,,
-exact_capacity_diff,LNG Hải Lăng (2 and 3),Thái Nguyên 2,quang tri,(thai nguyen),gas,unknown,4500.0,600.0,86.7,False,False,False,,
-exact,LNG Hải Phòng 1 (Tiên Lãng),LNG Hải Phòng 1,hai phong,hai an (hai phong),coal,unknown,4500.0,0.0,100.0,False,True,False,,
-exact,LNG Hải Phòng 2 (Cát Hải),LNG Hải Phòng 2,hai phong,hai an (hai phong),coal,unknown,1600.0,0.0,100.0,False,True,False,,
-fuzzy_capacity_diff,LNG Hải Phòng 3 (Cát Hải),Hải Phòng 3 (Block 1,hai phong,—,coal,unknown,4500.0,0.0,100.0,False,False,False,,
-exact,LNG Hải Phòng 4 (Đồ Sơn),LNG Hải Phòng 4,hai phong,hai phong,gas,imported gas,4500.0,0.0,100.0,False,False,True,,
-exact,LNG Long An I,LNG Long An I,long an,(long an),gas,imported gas,1500.0,0.0,100.0,False,True,False,,
-exact_capacity_diff,LNG Long An I phase 2,NĐ Formosa Hà Tĩnh #2,long an,ha tinh,gas,unknown,1500.0,150.0,90.0,False,False,False,,
-exact,LNG Long An II,LNG Long An II,long an,(long an),gas,imported gas,1500.0,0.0,100.0,False,True,False,,
-fuzzy_capacity_diff,LNG Long An II phase 2,Long An 3,long an,(long an),gas,imported gas,1500.0,1200.0,20.0,False,True,False,,
-exact_capacity_diff,LNG Long Sơn,NĐ đồng phát Hải Hà 4,ba ria - vung tau,quang ninh,gas,unknown,1200.0,600.0,50.0,False,False,False,,
-exact_capacity_diff,LNG Long Sơn II+III,NĐ khí dư Hòa Phát II,ba ria - vung tau,ha noi,gas,unknown,3200.0,300.0,90.6,False,False,False,,
-exact_capacity_diff,LNG Long Sơn IV (địa điểm Tây),NĐ đồng phát Hải Hà 1,ba ria - vung tau,quang ninh,gas,unknown,3600.0,300.0,91.7,False,False,False,,
-exact,LNG Mũi Kê Gà 1,LNG Mũi Kê Gà 1,binh thuan,phu yen,gas,unknown,1200.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,"LNG Mũi Kê Gà 2,3",LNG Mũi Kê Gà 2,binh thuan,phu yen,gas,unknown,2400.0,0.0,100.0,False,False,False,,
-exact_capacity_diff,LNG Mỹ Giang,Buôn Kuop,khanh hoa,đak nong,gas,unknown,6000.0,280.0,95.3,False,False,False,,
-fuzzy_capacity_diff,LNG Nghi Sơn (Thanh Hóa),Nghi Sơn III (Planned),thanh hoa,(thanh hoa),gas,unknown,5000.0,600.0,88.0,False,True,False,,
-exact_capacity_diff,LNG Nhơn Trạch 3,NĐ đồng phát Hải Hà 3,đong nai,quang ninh,gas,unknown,750.0,600.0,20.0,False,False,False,,
-exact_capacity_diff,LNG Nhơn Trạch 4,Than Hải Hà 1,đong nai,hai ha (quang ninh),gas,unknown,750.0,150.0,80.0,False,False,False,,
-exact_capacity_diff,LNG Núi Thành (Quảng Nam),Trung Sơn 4,quang nam,trung son (thanh hoa),gas,unknown,3200.0,127.5,96.0,False,True,False,,
-exact_capacity_diff,LNG Phong Điền – Huế,Cà Nã 1,hue,kien giang/ ca mau border,gas,imported gas,3000.0,1500.0,50.0,False,False,False,,
-exact,LNG Phú Mỹ 3.1,Phú Mỹ 3.1 (First 600MW CC),ba ria - vung tau,phu my (ba ria - vung tau),gas,gas,850.0,850.0,0.0,True,False,False,,
-fuzzy_capacity_diff,LNG Quảng Bình,Quang Ninh Coal Mid-Term Plan,quang binh,(quang ninh),gas,unknown,3000.0,0.0,100.0,False,False,False,,
-exact_capacity_diff,LNG Quảng Nam,Sơn La 1,quang nam,(son la),gas,unknown,4000.0,1600.0,60.0,False,False,False,,
-exact,LNG Quảng Ninh 1 (Cẩm Phả),Quảng Ninh 1,quang ninh,cam pha (quang ninh),gas,unknown,1500.0,540.0,64.0,False,False,False,,
-exact,LNG Quảng Ninh 2 (Cẩm Phả),Quảng Ninh 2,quang ninh,cam pha (quang ninh),gas,unknown,1500.0,540.0,64.0,False,False,False,,
-fuzzy_capacity_diff,LNG Quảng Ninh 3 (Quảng Yên),Quảng Ninh Coal Extension,quang ninh,(quang ninh),gas,unknown,4500.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,LNG Quảng Ninh 4 (Hải Hà),Quảng Ninh 4 expansion,quang ninh,(quang ninh),gas,unknown,3000.0,0.0,100.0,False,True,False,,
-exact_capacity_diff,LNG Quảng Trạch 2,Nghệ An 2,quang binh,(nghe an),gas,unknown,1500.0,600.0,60.0,False,True,False,,
-fuzzy_capacity_diff,LNG Quỳnh Lập,Quỳnh Lập I 1-2,nghe an,quynh luu (nghe an),gas,unknown,1500.0,1200.0,20.0,False,False,False,,
-fuzzy_capacity_diff,LNG Sông Đốc (Cà Mau),LNG Sông Đốc 1,ca mau,ca mau,gas,imported gas,3000.0,0.0,100.0,False,False,True,,
-fuzzy_capacity_diff,LNG Sơn Mỹ I,TBKK Sơn Mỹ I 1-5,binh thuan,phu my,gas,unknown,2250.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,LNG Sơn Mỹ II,TBKK Sơn Mỹ II 1-5,binh thuan,phu my,gas,unknown,2250.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,LNG Thái Bình,Thái Bình II 1-2,thai binh,thai binh,gas,unknown,4500.0,1200.0,73.3,False,False,True,,
-fuzzy_capacity_diff,LNG Tân Phước,Tân Phước 3,tien giang,(tien giang),gas,unknown,4500.0,1200.0,73.3,False,False,False,,
-fuzzy_capacity_diff,"LNG Tân Thuận – Đầm Dơi, Cà Mau",LNG Tân Thuận - Đầm Dơi,ca mau,ca mau,gas,imported gas,3200.0,0.0,100.0,False,False,True,,
-exact_capacity_diff,LNG Vân Phong (J-Power),Uông Bí Mở rộng 1,khanh hoa,uong bi (quang ninh),gas,unknown,3000.0,330.0,89.0,False,False,False,,
-exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 1,Phú Thọ 2,khanh hoa,(phu tho),gas,unknown,3000.0,600.0,80.0,False,False,False,,
-exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 2,Núi Béo,khanh hoa,hoanh bo (quang ninh),gas,unknown,3000.0,620.0,79.3,False,False,False,,
-exact_capacity_diff,LNG miền Nam,Uông Bí Mở rộng 2,"hiep phuoc 2, ben tre, mui ke ga, ca mau,",uong bi (quang ninh),gas,unknown,1500.0,300.0,80.0,False,False,False,,
-exact_capacity_diff,Lee & Man,Thác Bà,hau giang,yen bai,coal,unknown,125.0,120.0,4.0,False,True,False,,
-exact,Long An 2,Long An 2,long an,(long an),gas,imported gas,1600.0,1200.0,25.0,False,True,False,,
-exact,Long An 1,Long An 1,long an,(long an),gas,imported gas,1200.0,1200.0,0.0,False,True,False,,
-exact,Long Phú 1,Long Phú I,soc trang,long phu (soc trang),coal,unknown,1200.0,1200.0,0.0,False,False,False,,
-exact,Long Phú 2,Long Phú II,soc trang,long phu (soc trang),coal,unknown,1320.0,792.0,40.0,False,False,False,,
-exact,Long Phú 3,Long Phú III,soc trang,long phu (soc trang),coal,unknown,1800.0,1800.0,0.0,False,False,False,,
-fuzzy_capacity_diff,Mao Khe,Mạo Khê 1,quang ninh,duong huyen (quang ninh),coal,unknown,440.0,300.0,31.8,False,True,False,,
-exact,Mong Duong 1,Mông Dương 1,quang ninh,cho moi (bac giang),coal,unknown,1080.0,500.0,53.7,False,True,False,,
-exact,Mong Duong 2,Mông Dương 2,quang ninh,(bac giang),coal,unknown,1240.0,660.0,46.8,False,False,False,,
-fuzzy_capacity_diff,Na Dương 1,Hải Dương 1,lang son,hai duong,coal,unknown,110.0,600.0,445.5,False,False,False,,
-exact,Na Dương 2,Na Dương II,lang son,lang son,coal,unknown,110.0,110.0,0.0,False,True,True,,
-fuzzy,Nam Dinh 1,Nam Định 1,nam dinh,kim son (nam đinh),coal,unknown,1200.0,1200.0,0.0,False,False,False,,
-exact,Nghi Son 1,Nghi Sơn I (Block 1),thanh hoa,nghi son (thanh hoa),coal,unknown,600.0,600.0,0.0,False,True,False,,
-fuzzy_capacity_diff,Nghi Son 2,LNG Nghi Sơn 1-3,thanh hoa,thanh hoa,coal,imported gas,1200.0,0.0,100.0,False,False,True,,
-exact,Ninh Binh,Ninh Bình,ninh binh,nho quan (ninh binh),coal,unknown,100.0,100.0,0.0,False,False,False,,
-exact_capacity_diff,Ninh Thuan Novatek project,Kinh Môn 1,ninh thuan,nghia ha (hai duong),gas,unknown,4500.0,150.0,96.7,False,False,False,,
-fuzzy_capacity_diff,Nong Son 1,LNG Long Sơn 1 - 4,quang nam,ba ria - vung tau,coal,imported gas,30.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,NĐ Cần Thơ,Cần Thơ (Can Tho),can tho,can tho,unknown,unknown,165.0,35.0,78.8,True,True,True,,
-fuzzy_capacity_diff,NĐ Hiệp Phước,Hiệp Phước,tp ho chi minh,phu my (ho chi minh),unknown,unknown,310.0,375.0,21.0,True,True,False,,
-exact_capacity_diff,NĐ LNG miền Bắc,Than Cẩm Phả Mở rộng,"thai binh, nam đinh, nghi son, thanh hoa",(quang ninh),gas,unknown,0.0,0.0,,False,False,False,,
-fuzzy_capacity_diff,NĐ Thủ Đức,Thủ Đức (Ho Chi Minh City),tp ho chi minh,thu đuc (ho chi minh),gas,unknown,290.0,165.0,43.1,False,True,False,,
-fuzzy_capacity_diff,NĐ Ô Môn I,Nhà máy điện Ô Môn I,can tho,can tho,unknown,gas,660.0,0.0,100.0,False,False,True,,
-exact,Phả Lại 1,Phả Lại 1,hai duong,đong trieu (quang ninh),coal,unknown,440.0,440.0,0.0,False,True,False,,
-exact,Phả Lại 2,Phả Lại 2 (PL2),hai duong,chi linh (hai duong),coal,unknown,600.0,1200.0,100.0,False,True,False,,
-exact_capacity_diff,Phả Lại 3,Kiên Lương 1,hai duong,(kien giang),coal,unknown,660.0,600.0,9.1,False,False,False,,
-exact,Quang Ninh 1,LNG Quảng Ninh 1,quang ninh,cam pha (quang ninh),gas,unknown,600.0,0.0,100.0,False,False,False,,
-exact,Quang Ninh 2,LNG Quảng Ninh 2,quang ninh,cam pha (quang ninh),gas,unknown,600.0,0.0,100.0,False,False,False,,
-exact,Quang Ninh 3,Quảng Ninh 3,quang ninh,(quang ninh),gas,unknown,1200.0,0.0,100.0,False,False,False,,
-exact_capacity_diff,Quảng Trạch 1,Nam Định 2,quang binh,kim son (nam đinh),coal,unknown,1400.0,1200.0,14.3,False,False,False,,
-exact_capacity_diff,Quảng Trạch 2,Yên Hưng Coal,quang binh,(hai duong),gas,unknown,1200.0,1200.0,0.0,False,True,False,,
-exact,Quảng Trị 1,Quảng Trị 1,quang tri,quang tri,coal,unknown,1320.0,1320.0,0.0,False,False,True,,
-exact,Quảng Trị 2,Quảng Trị 2,quang tri,quang tri,coal,unknown,1200.0,1320.0,10.0,False,False,True,,
-exact_capacity_diff,Quảng Trị – Huế area,Mông Dương 3,quang tri,(bac giang),gas,unknown,4000.0,660.0,83.5,False,False,False,,
-fuzzy,Quỳnh Lập 1,Quỳnh Lập II 1-2,nghe an,quynh luu (nghe an),coal,unknown,1200.0,1200.0,0.0,False,False,False,,
-exact,Quỳnh Lập 2,Quỳnh Lập 2,nghe an,(quynh lap,coal,unknown,1200.0,0.0,100.0,False,False,False,,
-exact_capacity_diff,Son Dong,Sêrêpốk 3,bac giang,buon đon (đak lak),coal,unknown,220.0,220.0,0.0,False,True,False,,
-exact,Sông Hậu 1,Sông Hậu I,hau giang,song hau (hau giang),coal,unknown,1200.0,1200.0,0.0,False,True,False,,
-exact,Sông Hậu 2,Sông Hậu II,hau giang,song hau (hau giang),coal,unknown,2000.0,2000.0,0.0,False,False,False,,
-exact_capacity_diff,TBKHH Bà Rịa 1,Trung Sơn 3,ba ria - vung tau,trung son (thanh hoa),gas,unknown,169.0,127.5,24.6,False,False,False,,
-exact_capacity_diff,TBKHH Bà Rịa 2,Thủ Đức (Existing),ba ria - vung tau,thu đuc (ho chi minh),gas,unknown,175.0,160.0,8.6,False,False,False,,
-fuzzy_capacity_diff,TBKHH Dung Quất I,TBKK Dung Quất III,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,
-fuzzy_capacity_diff,TBKHH Dung Quất II,TBKK Dung Quất II,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,
-fuzzy_capacity_diff,TBKHH Dung Quất III,TBKK Dung Quất I,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,
-exact_capacity_diff,"TBKHH Kiên Giang I, II",Trị An Lower,kien giang,tri an (đong nai),gas,unknown,1500.0,200.0,86.7,False,False,False,,
-fuzzy_capacity_diff,TBKHH Nhơn Trạch I,LNG Nhơn Trạch 3&4,đong nai,đong nai,gas,imported gas,465.0,0.0,100.0,False,False,True,,
-exact_capacity_diff,TBKHH Nhơn Trạch II,Mạo Khê 2,đong nai,duong huyen (quang ninh),gas,unknown,750.0,340.0,54.7,False,True,False,,
-exact,TBKHH Phú Mỹ 1,Phú Mỹ 1 (Units 1-2),ba ria - vung tau,(ba ria - vung tau),gas,unknown,1140.0,0.0,100.0,False,True,False,,
-fuzzy_capacity_diff,TBKHH Phú Mỹ 2.1,Phú Mỹ 2 (Units 4-5),ba ria - vung tau,—,gas,gas,499.0,0.0,100.0,True,False,False,,
-fuzzy,TBKHH Phú Mỹ 2.1 MR,Phú Mỹ 1.1 (Unit 3) (450MW GT),ba ria - vung tau,(ba ria - vung tau),gas,unknown,450.0,450.0,0.0,False,True,False,,
-exact,TBKHH Phú Mỹ 2.2,Phú Mỹ 2.2 (PP2),ba ria - vung tau,(ba ria-v. tau),gas,unknown,740.0,0.0,100.0,False,True,False,,
-fuzzy_capacity_diff,TBKHH Phú Mỹ 3,TBKK Phú Mỹ 3.1,ba ria - vung tau,phu my,gas,unknown,740.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,TBKHH Phú Mỹ 4,TBKK Phú Mỹ 4,ba ria - vung tau,phu my,gas,unknown,468.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,TBKHH Quảng Trị (khí Báo Vàng),TBKK Quảng Trị,quang tri,quang tri,gas,gas,340.0,0.0,100.0,True,False,True,,
-fuzzy_capacity_diff,TBKHH miền Trung I,TBKK Miền Trung II,quang nam,quang tri,gas,gas,750.0,0.0,100.0,True,False,False,,
-fuzzy_capacity_diff,TBKHH miền Trung II,TBKK Miền Trung I,quang nam,quang tri,gas,gas,750.0,0.0,100.0,True,False,False,,
-exact,TBKHH Ô Môn I,Ô Môn I (Om Mon 1),can tho,hau giang,gas,unknown,660.0,660.0,0.0,False,False,False,,
-fuzzy_capacity_diff,TBKHH Ô Môn II,Nhà máy điện Ô Môn II,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,
-fuzzy_capacity_diff,TBKHH Ô Môn III,Nhà máy điện Ô Môn III,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,
-fuzzy_capacity_diff,TBKHH Ô Môn IV,Nhà máy điện Ô Môn IV,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,
-exact_capacity_diff,Thang Long,Thanh Hóa 3,quang ninh,(thanh hoa),coal,unknown,600.0,600.0,0.0,False,False,False,,
-fuzzy,Thái Bình 1,Thái Bình I 1-2,thai binh,thai binh,coal,unknown,600.0,600.0,0.0,False,True,True,,
-fuzzy,Thái Bình 2,Thái Bình IV,thai binh,(thai binh),coal,unknown,1200.0,1200.0,0.0,False,False,False,,
-exact,Tân Phước 1,Tân Phước 1,tien giang,tien giang,gas,coal,1200.0,1200.0,0.0,False,False,True,,
-exact,Tân Phước 2,Tân Phước 2,tien giang,tien giang,gas,coal,1200.0,1200.0,0.0,False,False,True,,
-fuzzy_capacity_diff,Uong Bi I,Uông Bí Mở rộng 3,quang ninh,(uong bi),coal,unknown,105.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,Uong Bi I extension,Uông Bí 2,quang ninh,(quang ninh),coal,unknown,300.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,Uong Bi II extension,Uông Bí 3,quang ninh,uong bi (quang ninh),coal,unknown,330.0,0.0,100.0,False,False,False,,
-exact_capacity_diff,Vedan Vietnam Cogeneration power station,Điện sinh khối An Khê #1,đong nai,quang ngai,coal,unknown,60.0,55.0,8.3,False,True,False,,
-exact,Vinh Tan 1,Vĩnh Tân I (Units 1-2) (BOT),binh thuan,bac binh (binh thuan),coal,unknown,1200.0,1200.0,0.0,False,True,False,,
-exact,Vinh Tan 2,Vĩnh Tân II (Units 3-4),binh thuan,(binh thuan),coal,coal,1244.0,0.0,100.0,True,False,False,,
-exact,Vinh Tan 3,Vĩnh Tân III (Units 5-7) (BOT),binh thuan,bac binh (binh thuan),coal,unknown,1980.0,1980.0,0.0,False,False,False,,
-exact,Vinh Tan 4,Vĩnh Tân IV,binh thuan,bac binh (binh thuan),coal,unknown,1200.0,1200.0,0.0,False,True,False,,
-fuzzy,Vinh Tan 4 extension,Vĩnh Tân VI (Units 11-12),binh thuan,bac binh (binh thuan),coal,unknown,600.0,600.0,0.0,False,True,False,,
-fuzzy_capacity_diff,Vung Ang 1,Vũng Áng I (Block 1,ha tinh,2015,coal,unknown,1200.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,Vung Ang 2,Vũng Áng II (Block 1,ha tinh,2024,coal,unknown,1330.0,0.0,100.0,False,False,False,,
-fuzzy_capacity_diff,Vung Ang 3,LNG Vũng Áng 1+2,ha tinh,ha tinh,coal,imported gas,2400.0,0.0,100.0,False,False,True,,
-exact_capacity_diff,Vân Phong 1,Bình Định I,khanh hoa,binh đinh,coal,unknown,1432.0,1200.0,16.2,False,False,False,,
-system_only,,Than Sạch Hạ Long,,(quang ninh),,unknown,,0.0,,,,,,
-system_only,,Cẩm Phả 4/Q6,,—,,unknown,,0.0,,,,,,
-system_only,,Núi Hồng,,(quang ninh),,unknown,,0.0,,,,,,
-system_only,,Quang Ninh 1 Expansion,,(quang ninh),,unknown,,0.0,,,,,,
-system_only,,Than Hạ Long 2,,(quang ninh),,unknown,,0.0,,,,,,
-system_only,,Thanh Hóa 1,,(thanh hoa),,unknown,,0.0,,,,,,
-system_only,,Thanh Hóa 2,,(thanh hoa),,unknown,,0.0,,,,,,
-system_only,,Nghi Sơn II (Block 1,,2024,,unknown,,0.0,,,,,,
-system_only,,Vũng Áng III (Block 1,,2025,,unknown,,0.0,,,,,,
-system_only,,Vũng Áng III (Block 3,,2028-2029,,unknown,,0.0,,,,,,
-system_only,,Phú Lương 1,,2017,,unknown,,0.0,,,,,,
-system_only,,Sơn Động 1,,(bac giang),,unknown,,0.0,,,,,,
-system_only,,Long Phú 3 (Alternative),,long phu (soc trang),,unknown,,0.0,,,,,,
-system_only,,Vĩnh Tân VI (Unit 12),,bac binh (binh thuan),,unknown,,0.0,,,,,,
-system_only,,Sơn Mỹ 2 /Nhà Bè CCGT Expansion,,(ba ria - vung tau),,unknown,,0.0,,,,,,
-system_only,,Quỳnh Lập 3 (Proposed),,(quynh luu,,unknown,,0.0,,,,,,
-system_only,,Formosa Hà Tĩnh Block 3,,(ha tinh),,unknown,,0.0,,,,,,
-system_only,,An Khê-Kanakh,,lenh khanh (gia lai),,unknown,,0.0,,,,,,
-system_only,,Buôn Tua Srah,,đak nong,,unknown,,86.0,,,,,,
-system_only,,Trị An Upper,,(đong nai),,unknown,,0.0,,,,,,
-system_only,,Dầu Tiếng Lower,,(tay ninh),,unknown,,0.0,,,,,,
-system_only,,Thác Mơ Extension,,(binh phuoc),,unknown,,75.0,,,,,,
-system_only,,Thác Mơ Lower,,(binh phuoc),,unknown,,0.0,,,,,,
-system_only,,Thác Mơ Upper,,(binh phuoc),,unknown,,0.0,,,,,,
-system_only,,Hòa Bình 3,,(hung yen),,unknown,,0.0,,,,,,
-system_only,,Lai Châu 1-3,,lai chau,,unknown,,0.0,,,,,,
-system_only,,Cao Ngạn 3 extension,,(thai nguyen),,unknown,,0.0,,,,,,
-system_only,,Công Thanh 2,,(thai nguyen),,unknown,,0.0,,,,,,
-system_only,,Bình Định II,,(binh đinh),,unknown,,0.0,,,,,,
-system_only,,Phú Yên Expansion (Phú Yên 1,,2027,,unknown,,0.0,,,,,,
-system_only,,Núi Béo Extension,,(quang ninh),,unknown,,0.0,,,,,,
-system_only,,Ngọc Lâu 1,,(ha giang),,unknown,,0.0,,,,,,
-system_only,,Hà Giang Coal Project,,(ha giang),,unknown,,0.0,,,,,,
-system_only,,Thái Bình 3,,(thai binh),,unknown,,0.0,,,,,,
-system_only,,Rạng Đông Coal Project 1,,(nam đinh),,unknown,,0.0,,,,,,
-system_only,,Rạng Đông Coal Project 2,,(nam đinh),,unknown,,0.0,,,,,,
-system_only,,Nam Định 3 (Proposed),,(nam đinh),,unknown,,0.0,,,,,,
-system_only,,Cần Thơ 1 extension,,—,,unknown,,0.0,,,,,,
-system_only,,Cần Thơ 2 extension,,(can tho),,unknown,,0.0,,,,,,
-system_only,,Hậu Giang 1,,—,,unknown,,0.0,,,,,,
-system_only,,Hậu Giang 2,,—,,unknown,,0.0,,,,,,
-system_only,,Bạc Liêu 2,,(bac lieu),,unknown,,0.0,,,,,,
-system_only,,Bạc Liêu 4,,(bac lieu),,unknown,,0.0,,,,,,
-system_only,,Sông Đuống 1,,(ha noi),,coal,,0.0,,,,,,
-system_only,,Haiphong Port Coal Plant,,(hai phong),,coal,,0.0,,,,,,
-system_only,,Cà Mau Solid Waste Power,,(ca mau),,unknown,,0.0,,,,,,
-system_only,,Bắc Giang CONCEPT,,(bac giang),,unknown,,0.0,,,,,,
-system_only,,Thái Bình CONCEPT 2,,(thai binh),,coal,,0.0,,,,,,
-system_only,,TBKK Bạc Liêu,,bac lieu,,gas,,0.0,,,,,,
-system_only,,TBKK Cà Mau 1-2,,ca mau,,gas,,0.0,,,,,,
-system_only,,TBKK Kiên Giang,,kien giang,,gas,,0.0,,,,,,
-system_only,,TBKK Phú Mỹ 1-2,,phu my,,unknown,,0.0,,,,,,
-system_only,,Nhà máy điện Cà Mau 1-2,,ca mau,,gas,,0.0,,,,,,
-system_only,,Nhà máy điện Hải Phòng I,,hai phong,,gas,,0.0,,,,,,
-system_only,,Nhà máy điện Hải Phòng II,,hai phong,,gas,,0.0,,,,,,
-system_only,,LNG Thái Bình 1-3,,thai binh,,imported gas,,0.0,,,,,,
-system_only,,LNG Vĩnh Tân 1,,bac binh (binh thuan),,unknown,,0.0,,,,,,
-system_only,,LNG Cà Ná 1,,kien giang/ ca mau border,,imported gas,,0.0,,,,,,
-system_only,,LNG Cà Ná 2,,(kien giang/ca mau),,imported gas,,0.0,,,,,,
-system_only,,LNG Kê Gà 1,,binh thuan,,imported gas,,0.0,,,,,,
-system_only,,LNG Kê Gà 2,,binh thuan,,imported gas,,0.0,,,,,,
-system_only,,LNG Bến Tre 1,,(ben tre),,imported gas,,0.0,,,,,,
-system_only,,LNG Cà Mau 3,,(ca mau),,unknown,,0.0,,,,,,
-system_only,,Bourbon,,tp ho chi minh,,unknown,,24.0,,,,,,
-system_only,,NMĐ sinh khối KCP #1 (Phú Yên),,phu yen,,unknown,,30.0,,,,,,
-system_only,,NMĐ sinh khối KCP #2 (Phú Yên),,phu yen,,unknown,,30.0,,,,,,
+match_type,reference_name,system_name,reference_province,system_province,reference_fuel,system_fuel,reference_capacity_mwe,system_capacity_mwe,capacity_diff_pct,fuel_match,status_match,province_match,reference_source_ref,system_source_ref,similarity_score
+fuzzy,An Khánh - Bac Giang,An Khánh (Bắc Giang),bac giang,bac giang (phu tho),coal,unknown,650.0,650.0,0.0,False,False,False,,,100.0
+exact_capacity_diff,An Khánh 1,Đà Nẵng,thai nguyen,nhon trach /vinh tan,coal,unknown,116.0,110.0,5.2,False,False,False,,,57.14285714285714
+exact_capacity_diff,Bà Rịa GT,Điện sinh khối An Khê #2,ba ria - vung tau,quang ngai,gas,unknown,46.0,55.0,19.6,False,True,False,,,44.44444444444444
+fuzzy,Bạc Liêu 1,Bạc Liêu 3,bac lieu,(bac lieu),coal,unknown,1200.0,1200.0,0.0,False,False,False,,,94.73684210526316
+exact,Cam Pha 3,Cẩm Phả 3,quang ninh,cam pha (quang ninh),coal,unknown,440.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,Cao Ngạn,Cao Ngạn 2,thai nguyen,thai nguyen,coal,unknown,114.0,115.0,0.9,False,True,True,,,100.0
+fuzzy,Cong Thanh,Công Thanh 1,thanh hoa,thanh hoa,coal,unknown,600.0,600.0,0.0,False,False,True,,,100.0
+exact,Cà Mau I,Cà Mau 1,ca mau,(ca mau),gas,unknown,771.0,750.0,2.7,False,True,False,,,100.0
+exact,Cà Mau II,Cà Mau 2,ca mau,(ca mau),gas,unknown,771.0,750.0,2.7,False,True,False,,,100.0
+exact,Cẩm Phả 1,Cẩm Phả 1,quang ninh,cam pha (quang ninh),coal,unknown,340.0,660.0,94.1,False,True,False,,,100.0
+exact,Cẩm Phả 2,Cẩm Phả 2,quang ninh,cam pha (quang ninh),coal,unknown,340.0,660.0,94.1,False,True,False,,,100.0
+exact_capacity_diff,Dong Nai Formosa,Trung Sơn 1,đong nai,trung son (thanh hoa),coal,unknown,150.0,127.5,15.0,False,False,False,,,50.0
+exact_capacity_diff,Dong Nai Formosa,Trung Sơn 2,đong nai,trung son (thanh hoa),coal,unknown,300.0,127.5,57.5,False,False,False,,,50.0
+exact_capacity_diff,Duc Giang - Lao Cai Chemical,Ninh Bình Extension,lao cai,(ninh binh),coal,unknown,100.0,100.0,0.0,False,False,False,,,34.48275862068966
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase I,Hòa Bình 1,quang ngai,khoai chau (hung yen),coal,unknown,2400.0,1680.0,30.0,False,False,False,,,50.0
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase II,Vĩnh Tân V (Units 9-10),quang ngai,bac binh (binh thuan),coal,unknown,2000.0,1800.0,10.0,False,False,False,,,40.0
+exact,Duyen Hai 1,Duyên Hải 1,tra vinh,duyen hai (tra vinh),coal,unknown,1244.0,1244.0,0.0,False,True,False,,,100.0
+exact_capacity_diff,Duyen Hai 2,Sơn Hà 2,tra vinh,(quang ngai),coal,unknown,600.0,600.0,0.0,False,False,False,,,80.0
+exact,Duyen Hai 3,Duyên Hải 3,tra vinh,duyen hai (tra vinh),coal,unknown,1244.0,1244.0,0.0,False,True,False,,,100.0
+exact_capacity_diff,Duyen Hai 3 Extension,Phú Thọ 1,tra vinh,phu tho,coal,unknown,660.0,600.0,9.1,False,False,False,,,44.44444444444444
+exact_capacity_diff,Duyên Hải 2,Yên Sơn 1,tra vinh,chiem hoa (tuyen quang),coal,unknown,1200.0,600.0,50.0,False,False,False,,,55.55555555555556
+exact,Formosa HT2,Formosa HT2,ha tinh,ha tinh,coal,unknown,650.0,650.0,0.0,False,False,True,,,100.0
+fuzzy_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Hà Tĩnh 2,ha tinh,(ha tinh),coal,unknown,450.0,1200.0,166.7,False,False,False,,,94.11764705882352
+fuzzy_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Hà Tĩnh 1,ha tinh,(ha tinh),coal,unknown,450.0,1200.0,166.7,False,False,False,,,94.11764705882352
+fuzzy_capacity_diff,Hai Duong,Hải Dương 2,hai duong,hai duong,coal,unknown,1200.0,600.0,50.0,False,False,True,,,100.0
+exact_capacity_diff,Hai Ha CHP Phase 1,Than Hải Hà 2,quang ninh,hai ha (quang ninh),coal,unknown,150.0,150.0,0.0,False,False,False,,,70.0
+exact_capacity_diff,Hai Ha CHP Phase 2,Formosa Hà Tĩnh Block 2,quang ninh,(ha tinh),coal,unknown,750.0,650.0,13.3,False,False,False,,,51.42857142857142
+exact_capacity_diff,Hai Ha CHP Phase 3,Bến Tre 1,quang ninh,(ben tre),coal,imported gas,600.0,600.0,0.0,False,False,False,,,35.29411764705882
+exact_capacity_diff,Hai Ha CHP Phase 4,NĐ đồng phát Hải Hà 2,quang ninh,quang ninh,coal,unknown,600.0,600.0,0.0,False,False,True,,,60.0
+exact,Hai Phong 1,Hải Phòng 1,hai phong,hai an (hai phong),coal,unknown,600.0,600.0,0.0,False,True,False,,,100.0
+exact,Hai Phong 2,Hải Phòng 2,hai phong,hai an (hai phong),coal,unknown,600.0,600.0,0.0,False,True,False,,,100.0
+exact,Hai Phong 3,LNG Hải Phòng 3,hai phong,hai phong,coal,imported gas,1200.0,0.0,100.0,False,False,True,,,100.0
+fuzzy_capacity_diff,Hải Phòng,Hải Phòng 4 (Block 3,hai phong,—,gas,unknown,500.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Bà Rịa 2,Bà Rịa,ba ria - vung tau,long hai (ba ria),gas,unknown,1200.0,720.0,40.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Bình Định,Bình Định III,binh đinh,(binh đinh),gas,unknown,5000.0,2000.0,60.0,False,False,False,,,100.0
+exact,LNG Bạc Liêu,Bạc Liêu,bac lieu,bac lieu,gas,imported gas,3200.0,1200.0,62.5,False,True,True,,,100.0
+fuzzy_capacity_diff,LNG Bến Tre,Bến Tre 2,ben tre,(ben tre),gas,imported gas,3000.0,600.0,80.0,False,True,False,,,100.0
+exact_capacity_diff,LNG Chân Mây,Hòa Bình 2,hue,(hung yen),gas,unknown,4000.0,1920.0,52.0,False,False,False,,,50.0
+fuzzy_capacity_diff,LNG Cà Mau 1,Cà Mau 4 (Proposed),ca mau,(ca mau),gas,imported gas,1500.0,0.0,100.0,False,False,False,,,93.33333333333333
+fuzzy_capacity_diff,"LNG Cà Mau 2,3",Cà Mau 3,ca mau,(ca mau),gas,unknown,3000.0,0.0,100.0,False,False,False,,,93.33333333333333
+fuzzy,LNG Cà Ná,Cà Nã 3,ninh thuan,(kien giang/ca mau),gas,imported gas,1500.0,1500.0,0.0,False,True,False,,,100.0
+fuzzy_capacity_diff,LNG Cà Ná II+III,Cà Nã 2,ninh thuan,(kien giang/ca mau),gas,imported gas,4500.0,1500.0,66.7,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Cái Mép Hạ,LNG Cái Mép,ba ria - vung tau,ba ria - vung tau,gas,imported gas,6000.0,0.0,100.0,False,False,True,,,100.0
+exact,LNG Hiệp Phước (phase I),Hiệp Phước (Block 1),tp ho chi minh,phu my (ho chi minh),gas,unknown,1200.0,750.0,37.5,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Hiệp Phước (phase II),LNG Hiệp Phước 1+2,tp ho chi minh,ho chi minh,gas,imported gas,1500.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Hà Tĩnh,NĐ Formosa Hà Tĩnh #5,ha tinh,ha tinh,gas,unknown,6000.0,150.0,97.5,False,False,True,,,100.0
+exact_capacity_diff,LNG Hải Lăng,Phú Lương 2,quang tri,phu luong (thai nguyen),gas,unknown,1500.0,660.0,56.0,False,False,False,,,62.5
+exact_capacity_diff,LNG Hải Lăng (2 and 3),Thái Nguyên 2,quang tri,(thai nguyen),gas,unknown,4500.0,600.0,86.7,False,False,False,,,80.0
+exact,LNG Hải Phòng 1 (Tiên Lãng),LNG Hải Phòng 1,hai phong,hai an (hai phong),coal,unknown,4500.0,0.0,100.0,False,True,False,,,100.0
+exact,LNG Hải Phòng 2 (Cát Hải),LNG Hải Phòng 2,hai phong,hai an (hai phong),coal,unknown,1600.0,0.0,100.0,False,True,False,,,100.0
+fuzzy_capacity_diff,LNG Hải Phòng 3 (Cát Hải),Hải Phòng 3 (Block 1,hai phong,—,coal,unknown,4500.0,0.0,100.0,False,False,False,,,100.0
+exact,LNG Hải Phòng 4 (Đồ Sơn),LNG Hải Phòng 4,hai phong,hai phong,gas,imported gas,4500.0,0.0,100.0,False,False,True,,,100.0
+exact,LNG Long An I,LNG Long An I,long an,(long an),gas,imported gas,1500.0,0.0,100.0,False,True,False,,,100.0
+exact_capacity_diff,LNG Long An I phase 2,NĐ Formosa Hà Tĩnh #2,long an,ha tinh,gas,unknown,1500.0,150.0,90.0,False,False,False,,,45.16129032258065
+exact,LNG Long An II,LNG Long An II,long an,(long an),gas,imported gas,1500.0,0.0,100.0,False,True,False,,,100.0
+fuzzy_capacity_diff,LNG Long An II phase 2,Long An 3,long an,(long an),gas,imported gas,1500.0,1200.0,20.0,False,True,False,,,94.11764705882352
+exact_capacity_diff,LNG Long Sơn,NĐ đồng phát Hải Hà 4,ba ria - vung tau,quang ninh,gas,unknown,1200.0,600.0,50.0,False,False,False,,,57.14285714285714
+exact_capacity_diff,LNG Long Sơn II+III,NĐ khí dư Hòa Phát II,ba ria - vung tau,ha noi,gas,unknown,3200.0,300.0,90.6,False,False,False,,,38.095238095238095
+exact_capacity_diff,LNG Long Sơn IV (địa điểm Tây),NĐ đồng phát Hải Hà 1,ba ria - vung tau,quang ninh,gas,unknown,3600.0,300.0,91.7,False,False,False,,,55.55555555555556
+exact,LNG Mũi Kê Gà 1,LNG Mũi Kê Gà 1,binh thuan,phu yen,gas,unknown,1200.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,"LNG Mũi Kê Gà 2,3",LNG Mũi Kê Gà 2,binh thuan,phu yen,gas,unknown,2400.0,0.0,100.0,False,False,False,,,100.0
+exact_capacity_diff,LNG Mỹ Giang,Buôn Kuop,khanh hoa,đak nong,gas,unknown,6000.0,280.0,95.3,False,False,False,,,16.666666666666664
+fuzzy_capacity_diff,LNG Nghi Sơn (Thanh Hóa),Nghi Sơn III (Planned),thanh hoa,(thanh hoa),gas,unknown,5000.0,600.0,88.0,False,True,False,,,100.0
+exact_capacity_diff,LNG Nhơn Trạch 3,NĐ đồng phát Hải Hà 3,đong nai,quang ninh,gas,unknown,750.0,600.0,20.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Nhơn Trạch 4,Than Hải Hà 1,đong nai,hai ha (quang ninh),gas,unknown,750.0,150.0,80.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Núi Thành (Quảng Nam),Trung Sơn 4,quang nam,trung son (thanh hoa),gas,unknown,3200.0,127.5,96.0,False,True,False,,,35.29411764705882
+exact_capacity_diff,LNG Phong Điền – Huế,Cà Nã 1,hue,kien giang/ ca mau border,gas,imported gas,3000.0,1500.0,50.0,False,False,False,,,42.85714285714286
+exact,LNG Phú Mỹ 3.1,Phú Mỹ 3.1 (First 600MW CC),ba ria - vung tau,phu my (ba ria - vung tau),gas,gas,850.0,850.0,0.0,True,False,False,,,100.0
+fuzzy_capacity_diff,LNG Quảng Bình,Quang Ninh Coal Mid-Term Plan,quang binh,(quang ninh),gas,unknown,3000.0,0.0,100.0,False,False,False,,,90.0
+exact_capacity_diff,LNG Quảng Nam,Sơn La 1,quang nam,(son la),gas,unknown,4000.0,1600.0,60.0,False,False,False,,,42.85714285714286
+exact,LNG Quảng Ninh 1 (Cẩm Phả),Quảng Ninh 1,quang ninh,cam pha (quang ninh),gas,unknown,1500.0,540.0,64.0,False,False,False,,,100.0
+exact,LNG Quảng Ninh 2 (Cẩm Phả),Quảng Ninh 2,quang ninh,cam pha (quang ninh),gas,unknown,1500.0,540.0,64.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Quảng Ninh 3 (Quảng Yên),Quảng Ninh Coal Extension,quang ninh,(quang ninh),gas,unknown,4500.0,0.0,100.0,False,False,False,,,95.65217391304348
+fuzzy_capacity_diff,LNG Quảng Ninh 4 (Hải Hà),Quảng Ninh 4 expansion,quang ninh,(quang ninh),gas,unknown,3000.0,0.0,100.0,False,True,False,,,100.0
+exact_capacity_diff,LNG Quảng Trạch 2,Nghệ An 2,quang binh,(nghe an),gas,unknown,1500.0,600.0,60.0,False,True,False,,,55.55555555555556
+fuzzy_capacity_diff,LNG Quỳnh Lập,Quỳnh Lập I 1-2,nghe an,quynh luu (nghe an),gas,unknown,1500.0,1200.0,20.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Sông Đốc (Cà Mau),LNG Sông Đốc 1,ca mau,ca mau,gas,imported gas,3000.0,0.0,100.0,False,False,True,,,100.0
+fuzzy_capacity_diff,LNG Sơn Mỹ I,TBKK Sơn Mỹ I 1-5,binh thuan,phu my,gas,unknown,2250.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Sơn Mỹ II,TBKK Sơn Mỹ II 1-5,binh thuan,phu my,gas,unknown,2250.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Thái Bình,Thái Bình II 1-2,thai binh,thai binh,gas,unknown,4500.0,1200.0,73.3,False,False,True,,,100.0
+fuzzy_capacity_diff,LNG Tân Phước,Tân Phước 3,tien giang,(tien giang),gas,unknown,4500.0,1200.0,73.3,False,False,False,,,100.0
+fuzzy_capacity_diff,"LNG Tân Thuận – Đầm Dơi, Cà Mau",LNG Tân Thuận - Đầm Dơi,ca mau,ca mau,gas,imported gas,3200.0,0.0,100.0,False,False,True,,,94.73684210526316
+exact_capacity_diff,LNG Vân Phong (J-Power),Uông Bí Mở rộng 1,khanh hoa,uong bi (quang ninh),gas,unknown,3000.0,330.0,89.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 1,Phú Thọ 2,khanh hoa,(phu tho),gas,unknown,3000.0,600.0,80.0,False,False,False,,,44.44444444444444
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 2,Núi Béo,khanh hoa,hoanh bo (quang ninh),gas,unknown,3000.0,620.0,79.3,False,False,False,,,42.85714285714286
+exact_capacity_diff,LNG miền Nam,Uông Bí Mở rộng 2,"hiep phuoc 2, ben tre, mui ke ga, ca mau,",uong bi (quang ninh),gas,unknown,1500.0,300.0,80.0,False,False,False,,,37.5
+exact_capacity_diff,Lee & Man,Thác Bà,hau giang,yen bai,coal,unknown,125.0,120.0,4.0,False,True,False,,,36.36363636363637
+exact,Long An 2,Long An 2,long an,(long an),gas,imported gas,1600.0,1200.0,25.0,False,True,False,,,100.0
+exact,Long An 1,Long An 1,long an,(long an),gas,imported gas,1200.0,1200.0,0.0,False,True,False,,,100.0
+exact,Long Phú 1,Long Phú I,soc trang,long phu (soc trang),coal,unknown,1200.0,1200.0,0.0,False,False,False,,,100.0
+exact,Long Phú 2,Long Phú II,soc trang,long phu (soc trang),coal,unknown,1320.0,792.0,40.0,False,False,False,,,100.0
+exact,Long Phú 3,Long Phú III,soc trang,long phu (soc trang),coal,unknown,1800.0,1800.0,0.0,False,False,False,,,100.0
+fuzzy_capacity_diff,Mao Khe,Mạo Khê 1,quang ninh,duong huyen (quang ninh),coal,unknown,440.0,300.0,31.8,False,True,False,,,100.0
+exact,Mong Duong 1,Mông Dương 1,quang ninh,cho moi (bac giang),coal,unknown,1080.0,500.0,53.7,False,True,False,,,100.0
+exact,Mong Duong 2,Mông Dương 2,quang ninh,(bac giang),coal,unknown,1240.0,660.0,46.8,False,False,False,,,100.0
+fuzzy_capacity_diff,Na Dương 1,Hải Dương 1,lang son,hai duong,coal,unknown,110.0,600.0,445.5,False,False,False,,,90.0
+exact,Na Dương 2,Na Dương II,lang son,lang son,coal,unknown,110.0,110.0,0.0,False,True,True,,,100.0
+fuzzy,Nam Dinh 1,Nam Định 1,nam dinh,kim son (nam đinh),coal,unknown,1200.0,1200.0,0.0,False,False,False,,,90.0
+exact,Nghi Son 1,Nghi Sơn I (Block 1),thanh hoa,nghi son (thanh hoa),coal,unknown,600.0,600.0,0.0,False,True,False,,,100.0
+fuzzy_capacity_diff,Nghi Son 2,LNG Nghi Sơn 1-3,thanh hoa,thanh hoa,coal,imported gas,1200.0,0.0,100.0,False,False,True,,,94.73684210526316
+exact,Ninh Binh,Ninh Bình,ninh binh,nho quan (ninh binh),coal,unknown,100.0,100.0,0.0,False,False,False,,,100.0
+exact_capacity_diff,Ninh Thuan Novatek project,Kinh Môn 1,ninh thuan,nghia ha (hai duong),gas,unknown,4500.0,150.0,96.7,False,False,False,,,60.0
+fuzzy_capacity_diff,Nong Son 1,LNG Long Sơn 1 - 4,quang nam,ba ria - vung tau,coal,imported gas,30.0,0.0,100.0,False,False,False,,,90.0
+fuzzy_capacity_diff,NĐ Cần Thơ,Cần Thơ (Can Tho),can tho,can tho,unknown,unknown,165.0,35.0,78.8,True,True,True,,,100.0
+fuzzy_capacity_diff,NĐ Hiệp Phước,Hiệp Phước,tp ho chi minh,phu my (ho chi minh),unknown,unknown,310.0,375.0,21.0,True,True,False,,,100.0
+exact_capacity_diff,NĐ LNG miền Bắc,Than Cẩm Phả Mở rộng,"thai binh, nam đinh, nghi son, thanh hoa",(quang ninh),gas,unknown,0.0,0.0,,False,False,False,,,37.03703703703704
+fuzzy_capacity_diff,NĐ Thủ Đức,Thủ Đức (Ho Chi Minh City),tp ho chi minh,thu đuc (ho chi minh),gas,unknown,290.0,165.0,43.1,False,True,False,,,100.0
+fuzzy_capacity_diff,NĐ Ô Môn I,Nhà máy điện Ô Môn I,can tho,can tho,unknown,gas,660.0,0.0,100.0,False,False,True,,,94.73684210526316
+exact,Phả Lại 1,Phả Lại 1,hai duong,đong trieu (quang ninh),coal,unknown,440.0,440.0,0.0,False,True,False,,,100.0
+exact,Phả Lại 2,Phả Lại 2 (PL2),hai duong,chi linh (hai duong),coal,unknown,600.0,1200.0,100.0,False,True,False,,,100.0
+exact_capacity_diff,Phả Lại 3,Kiên Lương 1,hai duong,(kien giang),coal,unknown,660.0,600.0,9.1,False,False,False,,,35.29411764705882
+exact,Quang Ninh 1,LNG Quảng Ninh 1,quang ninh,cam pha (quang ninh),gas,unknown,600.0,0.0,100.0,False,False,False,,,100.0
+exact,Quang Ninh 2,LNG Quảng Ninh 2,quang ninh,cam pha (quang ninh),gas,unknown,600.0,0.0,100.0,False,False,False,,,100.0
+exact,Quang Ninh 3,Quảng Ninh 3,quang ninh,(quang ninh),gas,unknown,1200.0,0.0,100.0,False,False,False,,,100.0
+exact_capacity_diff,Quảng Trạch 1,Nam Định 2,quang binh,kim son (nam đinh),coal,unknown,1400.0,1200.0,14.3,False,False,False,,,40.0
+exact_capacity_diff,Quảng Trạch 2,Yên Hưng Coal,quang binh,(hai duong),gas,unknown,1200.0,1200.0,0.0,False,True,False,,,47.61904761904761
+exact,Quảng Trị 1,Quảng Trị 1,quang tri,quang tri,coal,unknown,1320.0,1320.0,0.0,False,False,True,,,100.0
+exact,Quảng Trị 2,Quảng Trị 2,quang tri,quang tri,coal,unknown,1200.0,1320.0,10.0,False,False,True,,,100.0
+exact_capacity_diff,Quảng Trị – Huế area,Mông Dương 3,quang tri,(bac giang),gas,unknown,4000.0,660.0,83.5,False,False,False,,,44.44444444444444
+fuzzy,Quỳnh Lập 1,Quỳnh Lập II 1-2,nghe an,quynh luu (nghe an),coal,unknown,1200.0,1200.0,0.0,False,False,False,,,95.23809523809523
+exact,Quỳnh Lập 2,Quỳnh Lập 2,nghe an,(quynh lap,coal,unknown,1200.0,0.0,100.0,False,False,False,,,100.0
+exact_capacity_diff,Son Dong,Sêrêpốk 3,bac giang,buon đon (đak lak),coal,unknown,220.0,220.0,0.0,False,True,False,,,37.5
+exact,Sông Hậu 1,Sông Hậu I,hau giang,song hau (hau giang),coal,unknown,1200.0,1200.0,0.0,False,True,False,,,100.0
+exact,Sông Hậu 2,Sông Hậu II,hau giang,song hau (hau giang),coal,unknown,2000.0,2000.0,0.0,False,False,False,,,100.0
+exact_capacity_diff,TBKHH Bà Rịa 1,Trung Sơn 3,ba ria - vung tau,trung son (thanh hoa),gas,unknown,169.0,127.5,24.6,False,False,False,,,28.57142857142857
+exact_capacity_diff,TBKHH Bà Rịa 2,Thủ Đức (Existing),ba ria - vung tau,thu đuc (ho chi minh),gas,unknown,175.0,160.0,8.6,False,False,False,,,22.22222222222222
+fuzzy_capacity_diff,TBKHH Dung Quất I,TBKK Dung Quất III,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,,90.9090909090909
+fuzzy_capacity_diff,TBKHH Dung Quất II,TBKK Dung Quất II,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH Dung Quất III,TBKK Dung Quất I,quang ngai,quang ngai,gas,gas,750.0,0.0,100.0,True,False,True,,,90.9090909090909
+exact_capacity_diff,"TBKHH Kiên Giang I, II",Trị An Lower,kien giang,tri an (đong nai),gas,unknown,1500.0,200.0,86.7,False,False,False,,,43.47826086956522
+fuzzy_capacity_diff,TBKHH Nhơn Trạch I,LNG Nhơn Trạch 3&4,đong nai,đong nai,gas,imported gas,465.0,0.0,100.0,False,False,True,,,95.65217391304348
+exact_capacity_diff,TBKHH Nhơn Trạch II,Mạo Khê 2,đong nai,duong huyen (quang ninh),gas,unknown,750.0,340.0,54.7,False,True,False,,,57.14285714285714
+exact,TBKHH Phú Mỹ 1,Phú Mỹ 1 (Units 1-2),ba ria - vung tau,(ba ria - vung tau),gas,unknown,1140.0,0.0,100.0,False,True,False,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 2.1,Phú Mỹ 2 (Units 4-5),ba ria - vung tau,—,gas,gas,499.0,0.0,100.0,True,False,False,,,100.0
+fuzzy,TBKHH Phú Mỹ 2.1 MR,Phú Mỹ 1.1 (Unit 3) (450MW GT),ba ria - vung tau,(ba ria - vung tau),gas,unknown,450.0,450.0,0.0,False,True,False,,,90.0
+exact,TBKHH Phú Mỹ 2.2,Phú Mỹ 2.2 (PP2),ba ria - vung tau,(ba ria-v. tau),gas,unknown,740.0,0.0,100.0,False,True,False,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 3,TBKK Phú Mỹ 3.1,ba ria - vung tau,phu my,gas,unknown,740.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 4,TBKK Phú Mỹ 4,ba ria - vung tau,phu my,gas,unknown,468.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,TBKHH Quảng Trị (khí Báo Vàng),TBKK Quảng Trị,quang tri,quang tri,gas,gas,340.0,0.0,100.0,True,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH miền Trung I,TBKK Miền Trung II,quang nam,quang tri,gas,gas,750.0,0.0,100.0,True,False,False,,,91.66666666666666
+fuzzy_capacity_diff,TBKHH miền Trung II,TBKK Miền Trung I,quang nam,quang tri,gas,gas,750.0,0.0,100.0,True,False,False,,,91.66666666666666
+exact,TBKHH Ô Môn I,Ô Môn I (Om Mon 1),can tho,hau giang,gas,unknown,660.0,660.0,0.0,False,False,False,,,100.0
+fuzzy_capacity_diff,TBKHH Ô Môn II,Nhà máy điện Ô Môn II,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH Ô Môn III,Nhà máy điện Ô Môn III,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH Ô Môn IV,Nhà máy điện Ô Môn IV,can tho,can tho,gas,gas,1050.0,0.0,100.0,True,False,True,,,100.0
+exact_capacity_diff,Thang Long,Thanh Hóa 3,quang ninh,(thanh hoa),coal,unknown,600.0,600.0,0.0,False,False,False,,,66.66666666666667
+fuzzy,Thái Bình 1,Thái Bình I 1-2,thai binh,thai binh,coal,unknown,600.0,600.0,0.0,False,True,True,,,100.0
+fuzzy,Thái Bình 2,Thái Bình IV,thai binh,(thai binh),coal,unknown,1200.0,1200.0,0.0,False,False,False,,,95.23809523809523
+exact,Tân Phước 1,Tân Phước 1,tien giang,tien giang,gas,coal,1200.0,1200.0,0.0,False,False,True,,,100.0
+exact,Tân Phước 2,Tân Phước 2,tien giang,tien giang,gas,coal,1200.0,1200.0,0.0,False,False,True,,,100.0
+fuzzy_capacity_diff,Uong Bi I,Uông Bí Mở rộng 3,quang ninh,(uong bi),coal,unknown,105.0,0.0,100.0,False,False,False,,,94.11764705882352
+fuzzy_capacity_diff,Uong Bi I extension,Uông Bí 2,quang ninh,(quang ninh),coal,unknown,300.0,0.0,100.0,False,False,False,,,94.11764705882352
+fuzzy_capacity_diff,Uong Bi II extension,Uông Bí 3,quang ninh,uong bi (quang ninh),coal,unknown,330.0,0.0,100.0,False,False,False,,,94.11764705882352
+exact_capacity_diff,Vedan Vietnam Cogeneration power station,Điện sinh khối An Khê #1,đong nai,quang ngai,coal,unknown,60.0,55.0,8.3,False,True,False,,,40.90909090909091
+exact,Vinh Tan 1,Vĩnh Tân I (Units 1-2) (BOT),binh thuan,bac binh (binh thuan),coal,unknown,1200.0,1200.0,0.0,False,True,False,,,100.0
+exact,Vinh Tan 2,Vĩnh Tân II (Units 3-4),binh thuan,(binh thuan),coal,coal,1244.0,0.0,100.0,True,False,False,,,100.0
+exact,Vinh Tan 3,Vĩnh Tân III (Units 5-7) (BOT),binh thuan,bac binh (binh thuan),coal,unknown,1980.0,1980.0,0.0,False,False,False,,,100.0
+exact,Vinh Tan 4,Vĩnh Tân IV,binh thuan,bac binh (binh thuan),coal,unknown,1200.0,1200.0,0.0,False,True,False,,,100.0
+fuzzy,Vinh Tan 4 extension,Vĩnh Tân VI (Units 11-12),binh thuan,bac binh (binh thuan),coal,unknown,600.0,600.0,0.0,False,True,False,,,90.0
+fuzzy_capacity_diff,Vung Ang 1,Vũng Áng I (Block 1,ha tinh,2015,coal,unknown,1200.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,Vung Ang 2,Vũng Áng II (Block 1,ha tinh,2024,coal,unknown,1330.0,0.0,100.0,False,False,False,,,100.0
+fuzzy_capacity_diff,Vung Ang 3,LNG Vũng Áng 1+2,ha tinh,ha tinh,coal,imported gas,2400.0,0.0,100.0,False,False,True,,,94.73684210526316
+exact_capacity_diff,Vân Phong 1,Bình Định I,khanh hoa,binh đinh,coal,unknown,1432.0,1200.0,16.2,False,False,False,,,53.333333333333336
+system_only,,Than Sạch Hạ Long,,(quang ninh),,unknown,,0.0,,,,,,,
+system_only,,Cẩm Phả 4/Q6,,—,,unknown,,0.0,,,,,,,
+system_only,,Núi Hồng,,(quang ninh),,unknown,,0.0,,,,,,,
+system_only,,Quang Ninh 1 Expansion,,(quang ninh),,unknown,,0.0,,,,,,,
+system_only,,Than Hạ Long 2,,(quang ninh),,unknown,,0.0,,,,,,,
+system_only,,Thanh Hóa 1,,(thanh hoa),,unknown,,0.0,,,,,,,
+system_only,,Thanh Hóa 2,,(thanh hoa),,unknown,,0.0,,,,,,,
+system_only,,Nghi Sơn II (Block 1,,2024,,unknown,,0.0,,,,,,,
+system_only,,Vũng Áng III (Block 1,,2025,,unknown,,0.0,,,,,,,
+system_only,,Vũng Áng III (Block 3,,2028-2029,,unknown,,0.0,,,,,,,
+system_only,,Phú Lương 1,,2017,,unknown,,0.0,,,,,,,
+system_only,,Sơn Động 1,,(bac giang),,unknown,,0.0,,,,,,,
+system_only,,Long Phú 3 (Alternative),,long phu (soc trang),,unknown,,0.0,,,,,,,
+system_only,,Vĩnh Tân VI (Unit 12),,bac binh (binh thuan),,unknown,,0.0,,,,,,,
+system_only,,Sơn Mỹ 2 /Nhà Bè CCGT Expansion,,(ba ria - vung tau),,unknown,,0.0,,,,,,,
+system_only,,Quỳnh Lập 3 (Proposed),,(quynh luu,,unknown,,0.0,,,,,,,
+system_only,,Formosa Hà Tĩnh Block 3,,(ha tinh),,unknown,,0.0,,,,,,,
+system_only,,An Khê-Kanakh,,lenh khanh (gia lai),,unknown,,0.0,,,,,,,
+system_only,,Buôn Tua Srah,,đak nong,,unknown,,86.0,,,,,,,
+system_only,,Trị An Upper,,(đong nai),,unknown,,0.0,,,,,,,
+system_only,,Dầu Tiếng Lower,,(tay ninh),,unknown,,0.0,,,,,,,
+system_only,,Thác Mơ Extension,,(binh phuoc),,unknown,,75.0,,,,,,,
+system_only,,Thác Mơ Lower,,(binh phuoc),,unknown,,0.0,,,,,,,
+system_only,,Thác Mơ Upper,,(binh phuoc),,unknown,,0.0,,,,,,,
+system_only,,Hòa Bình 3,,(hung yen),,unknown,,0.0,,,,,,,
+system_only,,Lai Châu 1-3,,lai chau,,unknown,,0.0,,,,,,,
+system_only,,Cao Ngạn 3 extension,,(thai nguyen),,unknown,,0.0,,,,,,,
+system_only,,Công Thanh 2,,(thai nguyen),,unknown,,0.0,,,,,,,
+system_only,,Bình Định II,,(binh đinh),,unknown,,0.0,,,,,,,
+system_only,,Phú Yên Expansion (Phú Yên 1,,2027,,unknown,,0.0,,,,,,,
+system_only,,Núi Béo Extension,,(quang ninh),,unknown,,0.0,,,,,,,
+system_only,,Ngọc Lâu 1,,(ha giang),,unknown,,0.0,,,,,,,
+system_only,,Hà Giang Coal Project,,(ha giang),,unknown,,0.0,,,,,,,
+system_only,,Thái Bình 3,,(thai binh),,unknown,,0.0,,,,,,,
+system_only,,Rạng Đông Coal Project 1,,(nam đinh),,unknown,,0.0,,,,,,,
+system_only,,Rạng Đông Coal Project 2,,(nam đinh),,unknown,,0.0,,,,,,,
+system_only,,Nam Định 3 (Proposed),,(nam đinh),,unknown,,0.0,,,,,,,
+system_only,,Cần Thơ 1 extension,,—,,unknown,,0.0,,,,,,,
+system_only,,Cần Thơ 2 extension,,(can tho),,unknown,,0.0,,,,,,,
+system_only,,Hậu Giang 1,,—,,unknown,,0.0,,,,,,,
+system_only,,Hậu Giang 2,,—,,unknown,,0.0,,,,,,,
+system_only,,Bạc Liêu 2,,(bac lieu),,unknown,,0.0,,,,,,,
+system_only,,Bạc Liêu 4,,(bac lieu),,unknown,,0.0,,,,,,,
+system_only,,Sông Đuống 1,,(ha noi),,coal,,0.0,,,,,,,
+system_only,,Haiphong Port Coal Plant,,(hai phong),,coal,,0.0,,,,,,,
+system_only,,Cà Mau Solid Waste Power,,(ca mau),,unknown,,0.0,,,,,,,
+system_only,,Bắc Giang CONCEPT,,(bac giang),,unknown,,0.0,,,,,,,
+system_only,,Thái Bình CONCEPT 2,,(thai binh),,coal,,0.0,,,,,,,
+system_only,,TBKK Bạc Liêu,,bac lieu,,gas,,0.0,,,,,,,
+system_only,,TBKK Cà Mau 1-2,,ca mau,,gas,,0.0,,,,,,,
+system_only,,TBKK Kiên Giang,,kien giang,,gas,,0.0,,,,,,,
+system_only,,TBKK Phú Mỹ 1-2,,phu my,,unknown,,0.0,,,,,,,
+system_only,,Nhà máy điện Cà Mau 1-2,,ca mau,,gas,,0.0,,,,,,,
+system_only,,Nhà máy điện Hải Phòng I,,hai phong,,gas,,0.0,,,,,,,
+system_only,,Nhà máy điện Hải Phòng II,,hai phong,,gas,,0.0,,,,,,,
+system_only,,LNG Thái Bình 1-3,,thai binh,,imported gas,,0.0,,,,,,,
+system_only,,LNG Vĩnh Tân 1,,bac binh (binh thuan),,unknown,,0.0,,,,,,,
+system_only,,LNG Cà Ná 1,,kien giang/ ca mau border,,imported gas,,0.0,,,,,,,
+system_only,,LNG Cà Ná 2,,(kien giang/ca mau),,imported gas,,0.0,,,,,,,
+system_only,,LNG Kê Gà 1,,binh thuan,,imported gas,,0.0,,,,,,,
+system_only,,LNG Kê Gà 2,,binh thuan,,imported gas,,0.0,,,,,,,
+system_only,,LNG Bến Tre 1,,(ben tre),,imported gas,,0.0,,,,,,,
+system_only,,LNG Cà Mau 3,,(ca mau),,unknown,,0.0,,,,,,,
+system_only,,Bourbon,,tp ho chi minh,,unknown,,24.0,,,,,,,
+system_only,,NMĐ sinh khối KCP #1 (Phú Yên),,phu yen,,unknown,,30.0,,,,,,,
+system_only,,NMĐ sinh khối KCP #2 (Phú Yên),,phu yen,,unknown,,30.0,,,,,,,
