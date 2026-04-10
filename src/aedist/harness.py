@@ -316,19 +316,17 @@ def build_api_kwargs(
     constructs the appropriate kwargs for ``chat.completions.create()``:
 
     - ``reasoning: true`` → omit ``temperature`` (required by o3, R1, etc.)
-    - ``web_search: true`` → add ``extra_body: {plugins: [{id: "web"}]}``
-      (OpenRouter web search plugin)
+    - ``web_search: true`` → add OpenRouter server tool
+      ``tools: [{"type": "openrouter:web_search"}]``
+      (model decides when to search; ~$0.02 per search call via Exa)
     """
     kwargs: dict = {"max_tokens": max_tokens}
 
     if not model.get("reasoning", False):
         kwargs["temperature"] = temperature
 
-    extra_body: dict = {}
     if model.get("web_search", False):
-        extra_body["plugins"] = [{"id": "web"}]
-    if extra_body:
-        kwargs["extra_body"] = extra_body
+        kwargs["tools"] = [{"type": "openrouter:web_search"}]
 
     return kwargs
 

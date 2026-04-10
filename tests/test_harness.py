@@ -169,7 +169,7 @@ def test_no_capabilities_unchanged():
     model = {"id": "test/plain", "name": "Plain"}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
     assert kwargs == {"max_tokens": 4096, "temperature": 0.7}
-    assert "extra_body" not in kwargs
+    assert "tools" not in kwargs
 
 
 def test_reasoning_model_skips_temperature():
@@ -185,7 +185,7 @@ def test_web_search_model_gets_plugin():
     model = {"id": "test/web", "web_search": True}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
     assert kwargs["temperature"] == 0.7
-    assert kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
+    assert kwargs["tools"] == [{"type": "openrouter:web_search"}]
 
 
 def test_both_capabilities():
@@ -194,14 +194,14 @@ def test_both_capabilities():
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.0)
     assert "temperature" not in kwargs
     assert kwargs["max_tokens"] == 4096
-    assert kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
+    assert kwargs["tools"] == [{"type": "openrouter:web_search"}]
 
 
 def test_web_search_false_no_plugin():
     """Explicit web_search=false produces no extra_body."""
     model = {"id": "test/no-web", "web_search": False}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.5)
-    assert "extra_body" not in kwargs
+    assert "tools" not in kwargs
 
 
 def test_reasoning_false_keeps_temperature():
