@@ -6,9 +6,6 @@
 
 | Location | Purpose |
 |----------|---------|
-| `~/.claude/rules/` | Generic rules (git, workflow, coding, state-roadmap) |
-| `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
-| `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
 | `.claude/rules/` | Project-specific rules (incl. `tickets.md` spec) |
 | `.claude/skills/` | Project-specific skills (incl. `ticket-*` skills) |
 | `.claude/hooks/` | Project-specific hooks |
@@ -85,7 +82,7 @@ The agent must always know and declare its current phase.
 | `/ticket-close NNNN` | Completing work | Set `Status: closed`, release `.wip`, commit |
 | `/ticket-release NNNN` | Abandoning work | Restore `Status: open`, release `.wip`, commit |
 
-### GitHub and workflow
+### [Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness) (user-level — may not be available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
