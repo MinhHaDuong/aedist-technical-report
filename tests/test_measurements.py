@@ -235,6 +235,27 @@ class TestInferMethod:
         assert _infer_method("some_new_sweep") == "single"
 
 
+class TestNoExtractedInMeasurements:
+    """Regression test: _extracted prompt_version must never appear in measurements.jsonl."""
+
+    def test_no_extracted_in_measurements(self):
+        """The _extracted prompt_version must never appear in measurements.jsonl.
+
+        These CSVs are intermediate artifacts of self_consistency.py, not
+        independent measurements. Their presence indicates the Makefile assembly
+        is picking up derived/rag_consistency/_extracted/*.record.json files.
+        """
+        from aedist.measurements import load
+
+        records = list(load())
+        assert len(records) > 0, "measurements.jsonl is empty — test is vacuous"
+        for r in records:
+            assert r.method_params.prompt_version != "_extracted", (
+                f"Found _extracted record in measurements.jsonl: "
+                f"{r.method_params.model} {r.result_file}"
+            )
+
+
 class TestJsonlRoundTrip:
     def test_file_roundtrip(self, tmp_path):
         records = [

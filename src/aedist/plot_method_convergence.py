@@ -26,10 +26,6 @@ log = logging.getLogger(__name__)
 _MATCHED = "#2E86AB"
 _HALLUC = "#F5A623"
 
-# Prompt versions that are duplicates of another method's data
-# Prompt versions that duplicate another method's data (see ticket 0048)
-_EXCLUDE_PROMPT_VERSIONS = ("_extracted",)
-
 # Methods to include and display order (bottom to top in plot)
 _METHOD_ORDER = ["single", "multiturn", "web", "rag", "decomposed"]
 
@@ -60,9 +56,6 @@ def load_convergence_data() -> list[dict]:
             continue
         model = _normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
-            continue
-        pv = record.method_params.prompt_version or ""
-        if pv in _EXCLUDE_PROMPT_VERSIONS:
             continue
         s = record.result_summary
         if s.tp is None:

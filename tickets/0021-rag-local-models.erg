@@ -1,0 +1,155 @@
+%erg v1
+Title: Test local models with RAG wholesale on Padme
+Status: open
+Created: 2026-04-06
+Author: claude
+
+--- log ---
+2026-04-06T18:30Z claude created
+2026-04-10T18:00Z claude status reimagined by IDD imagine
+2026-04-10T18:30Z claude status planned by IDD plan
+
+--- body ---
+## Context
+
+Conference deliverable (Econom'IA 2026, April 11): a Qwen 3.5 scaling
+curve showing F1 vs model size under RAG wholesale, compared to cloud
+API baselines. This supports the methods-not-models argument: RAG
+wholesale lifts all model sizes, and local 35B approaches cloud
+performance at $0 marginal cost.
+
+**Existing RAG data (confirmed in measurements.jsonl lines 227-232):**
+- qwen3.5:9b  — 3 runs, F1 = 0.4075, 0.7494, 0.5388 (high variance, lots of FPs)
+- qwen3.5:35b — 3 runs, F1 = 0.8102, 0.8357, 0.8561 (stable)
+- Cloud best: DeepSeek V3.2 union F1=0.955, GPT-5.4 F1=0.938
+
+**Missing:** qwen3.5:2b and qwen3.5:4b under RAG wholesale.
+These are the bottom of the scaling curve.
+
+**Single-shot baselines (confirmed in measurements.jsonl lines 123-131):**
+- qwen3.5:2b  — F1 = 0.1371, 0.1990, None (run3 error)
+- qwen3.5:4b  — F1 = 0.1371, 0.2842, None (run3 error)
+- qwen3.5:9b  — F1 in census data (lines 132-134)
+- qwen3.5:35b — F1 = 0.4098, 0.3861, 0.3452
+
+**Model registry:** Both qwen3.5:2b and qwen3.5:4b are already in
+`experiments/models.yaml` (lines 575-599) with router=ollama,
+context_window=131072, and in `experiments.toml` sets.rag (line 110-113).
+
+## Actions
+
+### Step 1 — Pull models on Padme
+
+```bash
+ollama pull qwen3.5:2b && ollama pull qwen3.5:4b
+```
+
+Verify Ollama is running: `curl -sf http://localhost:11434/api/tags`
+
+### Step 2 — Run RAG wholesale (6 runs)
+
+The existing 9b/35b RAG runs were executed via `query_rag.py` directly
+(not the manager/worker pipeline), using the Ollama native API with
+explicit `num_ctx`. The standalone script handles `num_ctx` correctly
+(see `src/aedist/query_rag.py` line 181: `num_ctx = min(ctx_window, 81920)`).
+
+**Important:** Do NOT use the worker pipeline for this. The worker's
+`_query_and_save` calls `query_single_turn` (OpenAI /v1/ compat) which
+ignores `num_ctx`. Use the standalone `query_rag.py` which calls
+`query_ollama_native` with proper context sizing.
+
+Corpus is ~37K tokens (158KB across 14+ .md files in
+`experiments/data/rag_corpus/`). Models have 131072 context window.
+80% safety margin = 104K tokens. Corpus fits comfortably.
+
+Run from `experiments/` directory:
+
+```bash
+cd experiments
+
+# qwen3.5:2b — 3 runs
+uv run --project .. python -m aedist.query_rag \
+    --prompt prompts/prompt_structured.txt \
+    --corpus data/rag_corpus \
+    --strategy wholesale \
+    --models models.yaml \
+    --model "qwen3.5:2b" \
+    --output outputs/rag \
+    --repeat 3 \
+    --model-set rag \
+    --experiments experiments.toml
+
+# qwen3.5:4b — 3 runs
+uv run --project .. python -m aedist.query_rag \
+    --prompt prompts/prompt_structured.txt \
+    --corpus data/rag_corpus \
+    --strategy wholesale \
+    --models models.yaml \
+    --model "qwen3.5:4b" \
+    --output outputs/rag \
+    --repeat 3 \
+    --model-set rag \
+    --experiments experiments.toml
+```
+
+Output files: `experiments/outputs/rag/qwen3.5-{2b,4b}-run{1,2,3}.json`
+
+Expected wall time: 2b ~60-400s/run, 4b ~80-470s/run (based on census
+run timings from measurements.jsonl).
+
+### Step 3 — Rebuild measurements.jsonl
+
+```bash
+cd experiments && make rebuild-measurements
+```
+
+This runs: extract CSVs -> evaluate against reference
+(`data/reference/vietnam_thermal_v1.csv`, 163 plants) -> assemble
+into `measurements.jsonl` with method=rag.
+
+### Step 4 — Create scaling curve figure
+
+Create `src/aedist/plot_scaling_curve.py` following the conventions of:
+- `src/aedist/plot_method_convergence.py` — matplotlib PDF generation
+- `src/aedist/plot_pareto.py` — measurements.jsonl loading
+
+The script should:
+- Load measurements.jsonl, filter for qwen3.5 family models
+- Separate method=single (census) vs method=rag entries
+- X-axis: model parameter count (2, 4, 9, 35 in billions, log scale)
+- Y-axis: F1 score (0-1)
+- Plot individual run dots + median line for both single-shot and RAG
+- Horizontal reference lines for DeepSeek V3.2 (0.955) and GPT-5.4 (0.938)
+- Output: `slides/inputs/generated/fig_scaling_curve.pdf`
+
+Add to Makefile:
+```makefile
+$(SLIDE_GEN)/fig_scaling_curve.pdf: $(MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_scaling_curve \
+	    --output $@
+```
+
+Add to slides dep list and `figures` target.
+
+### Step 5 — Integrate into slides
+
+Add to `slides/slides.tex`:
+```latex
+\includegraphics[width=\textwidth]{inputs/generated/fig_scaling_curve.pdf}
+```
+
+## Test
+
+```bash
+make check-fast                    # existing tests pass
+make slides/inputs/generated/fig_scaling_curve.pdf  # figure builds
+```
+
+## Exit criteria
+
+- qwen3.5:2b and qwen3.5:4b RAG results in measurements.jsonl (3 runs each)
+- 4-point scaling curve figure (PDF) showing single-shot vs RAG wholesale
+  for Qwen 3.5 family, with cloud reference lines
+- Figure integrated into slides via \includegraphics
+- All existing tests pass (`make check-fast`)

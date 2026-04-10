@@ -1,54 +1,198 @@
 %erg v1
-Title: Verification proof-of-concept: tool + unverified tradeoff table
-Status: closed
+Title: Run verification regimes sweep
+Status: open
 Created: 2026-04-07
 Author: claude
 
 --- log ---
 2026-04-07T12:10Z claude created imported from gh#12
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
-2026-04-10T08:04Z claude claimed
-2026-04-10T08:04Z claude status doing
-2026-04-10T12:00Z claude note rescoped to PR #218 deliverables; LLM/web modes split to 0048
-2026-04-10T13:30Z claude status closed — PR #218, all exit criteria met, 868 tests pass
+2026-04-10T18:00Z claude status reimagined by IDD imagine (pass 2)
+2026-04-10T18:30Z claude status planned by IDD plan
 
 --- body ---
 ## Context
 
-The original ticket called for a 45-run factorial. Rescoped to a
-proof-of-concept: tool + unverified modes on the best extraction
-(DeepSeek V3.2 decomposed, F1=98.8%, 167 plants).
+Post-conference Provenance milestone work. The conference (Econom'IA
+2026, April 11) slides frame verification as future work. The journal
+paper is the real target. MASTERPLAN Level 3 (output provenance) gates
+the Pipeline-to-Provenance transition.
 
-During implementation, fixed verify_tool to use the LP reconciler
-(was using a naive threshold-70 fuzzy matcher that produced 12 false
-matches). Also fixed reconcile.py _extract_entries misclassifying
-"Mismatched" LP status as EXACT_CAPACITY_DIFF.
+Core question: "If you only trust plants backed by primary-source
+evidence, what coverage do you lose — and does the answer change across
+verification modes?"
 
-LLM modes (self, cross) and web mode deferred to ticket 0048 —
-OpenRouter too slow for 167-plant JSON verification prompts.
+### What already exists (verified by plan phase)
 
-## Deliverables (PR #218)
+**Code — mature and tested:**
+- `src/aedist/verify.py` — all 5 modes implemented (unverified, tool,
+  self, cross, web). Evidence rubric 0-4 with `score_evidence()`.
+  Source classification by URL domain and citation text patterns.
+- `src/aedist/query_verification.py` — sweep runner, reads
+  `[sweeps.verification]` from `experiments/experiments.toml`, handles
+  budget tracking, deterministic mode dedup (unverified/tool/web run
+  once, self/cross repeat N times).
+- `tests/test_query_verification.py` — 22 tests covering all modes
+  (mocked for self/cross/web), cost estimation, caching, dry-run.
 
-1. `tabulate_verification.py` — sweeps evidence_score thresholds 1-4,
-   evaluates each filtered subset via LP reconciler, outputs CSV + LaTeX
-2. `derived/verification/tradeoff.csv` — precision/coverage/F1 per threshold
-3. `report/inputs/generated/tab_verification.tex` — LaTeX table
-4. Report Perspectives paragraph: empirical cost-of-trust result
-5. Slides: "Cost of trust" frame in Verification section
-6. Makefile targets for reproducible generation
-7. `verify_tool` rewritten to use LP reconciler
+**Experiment config — already defined:**
+- `experiments/experiments.toml` has `[sweeps.verification]` with 3
+  base_configs (Opus multiturn, Gemini Flash Lite RAG, GPT-5.4 RAG),
+  all 5 modes, repeat=3, budget=$25, cross_verifier=claude-sonnet-4.6.
+- All 3 base result files exist on disk.
 
-## Key result
+**Proto-verification data — Opus multiturn only (tool + unverified):**
+- `experiments/derived/verification/` has 12 files: annotated CSVs,
+  filtered CSVs, reconciliation CSVs, record JSONs for
+  claude-opus-4.6-{tool,unverified}-run1.
+- Unverified: 169 plants, all score=1 (no source_ref in multiturn
+  output). Tool: fuzzy-matched against reference, scores 1 or 3.
 
-At threshold >= 3 (require one primary source):
-- 163 plants retained (97.6%), 4 hallucinations rejected
-- Precision = Coverage = F1 = 100%
+**Worktree t30 (branch t30-verification-sweep) — closed:**
+- `tabulate_verification.py` (259 lines) generates tradeoff.csv and
+  tab_verification.tex. NOT merged to main yet (PR #218 scope).
+- Ticket was rescoped to tool+unverified PoC only, LLM/web modes
+  deferred to ticket 0048 (renumbered to 0054).
+
+**Related tickets:**
+- 0054 (multi-agent verification) — blocked by 0038, different scope
+  (multi-agent protocols vs single-mode sweep).
+- 0025 (sourced extraction) — paired comparison substrate.
+
+**Report structure:**
+- Perspectives section (report.tex line ~469) already has verification
+  narrative (paras 2-5: trust, "why not verify?", pipeline proposal,
+  epistemic accountability). No quantitative verification results yet.
+- Convention: generated tables in `report/inputs/generated/tab_*.tex`,
+  authored content in `report/inputs/*.tex`.
+
+### API dependencies
+
+- **Tool mode:** no API needed (fuzzy match against reference CSV).
+- **Unverified mode:** no API needed (heuristic scoring of existing citations).
+- **Self mode:** needs OpenRouter (LLM call to same model).
+- **Cross mode:** needs OpenRouter (LLM call to claude-sonnet-4.6).
+- **Web mode:** needs TAVILY_API_KEY — **not currently in environment**.
+  `verify_web` uses Tavily search with per-query caching.
+
+## Staged approach
+
+### Stage A: Methods section and preregistration (zero cost)
+
+Write `report/inputs/verification_methods.tex` defining:
+- The 5 verification modes and their implementation
+- The evidence_score rubric (0-4 scale, see `score_evidence()` in verify.py)
+- The precision-coverage analysis: at each threshold t in {1,2,3,4},
+  filter to plants with score >= t, evaluate via LP reconciler
+- Preregistered hypotheses:
+  1. Tool mode achieves highest precision (reference = ground truth)
+  2. Web mode retains more coverage than self at threshold >= 3
+  3. Cross-verification outperforms self on hallucination detection
+
+Also: merge `tabulate_verification.py` from t30 branch to main (or
+cherry-pick). It generates tradeoff.csv + LaTeX table.
+
+### Stage B: Extend deterministic modes to all 3 configs (zero API cost)
+
+Run `unverified` + `tool` on all 3 base_configs (currently only Opus
+multiturn has results). Command:
+```
+python -m aedist.query_verification \
+    --sweep verification --experiments experiments/experiments.toml \
+    --dry-run
+```
+Then remove --dry-run. Produces 6 conditions (3 configs x 2 modes).
+Validate with `tabulate_verification.py`.
+
+Note: the existing `[sweeps.verification]` config already covers this.
+No config changes needed — just run the existing sweep and the runner
+skips cached Opus results.
+
+### Stage C: LLM + web modes on 1 config (~$0.50)
+
+Add self + cross + web modes to DeepSeek V3.2 RAG. Requires:
+- OpenRouter API key (for self/cross)
+- TAVILY_API_KEY (for web mode)
+Produces the 5-mode tradeoff curve. 11 conditions total (5 modes x 1
+config, self/cross repeat=3).
+
+### Stage D: Full factorial for journal paper (~$15-25)
+
+3 configs x 5 modes x 3 repeats = 27 conditions (3 deterministic run
+once + 2 stochastic run 3x, per config). Already configured in
+`[sweeps.verification]`. Run the sweep, generate CIs.
+
+## Actions
+
+1. **Draft methods section** — write `report/inputs/verification_methods.tex`.
+   Source: verify.py rubric + query_verification.py architecture.
+
+2. **Merge tabulate_verification.py** — cherry-pick from t30 branch or
+   rewrite for main. Needed for tradeoff.csv generation.
+
+3. **Run Stage B** — `python -m aedist.query_verification --sweep verification`.
+   Skips cached Opus results, adds Gemini + GPT-5.4 tool+unverified.
+
+4. **Run Stage C** — ensure TAVILY_API_KEY is set, then re-run sweep.
+   Self/cross/web modes fill in for first config.
+
+5. **Write journal paper section** — precision-coverage trade-off from
+   tradeoff.csv. Paired with 0025 sourced extraction if available.
+
+6. **Run Stage D** — full sweep re-run fills remaining conditions.
+
+## Test
+
+```python
+def test_tradeoff_table_covers_all_modes():
+    """tradeoff.csv has rows for each mode x threshold combination."""
+    import csv
+    with open("derived/verification/tradeoff.csv") as f:
+        rows = list(csv.DictReader(f))
+    modes = {r["mode"] for r in rows}
+    assert modes == {"unverified", "tool", "self", "cross", "web"}
+
+def test_filtered_precision_monotonic():
+    """Higher evidence threshold never decreases precision."""
+    import csv
+    with open("derived/verification/tradeoff.csv") as f:
+        rows = list(csv.DictReader(f))
+    tool_rows = sorted(
+        [r for r in rows if r["mode"] == "tool"],
+        key=lambda r: int(r["threshold"]),
+    )
+    for a, b in zip(tool_rows, tool_rows[1:]):
+        assert float(b["precision"]) >= float(a["precision"])
+
+def test_methods_section_has_hypotheses():
+    """Methods tex file states preregistered hypotheses."""
+    with open("report/inputs/verification_methods.tex") as f:
+        text = f.read()
+    assert "hypothesis" in text.lower() or "hypothes" in text.lower()
+```
 
 ## Exit criteria
-- [x] Tool + unverified modes run, results in measurements.jsonl
-- [x] `derived/verification/tradeoff.csv` with precision-coverage per threshold
-- [x] One slide showing the cost-of-trust trade-off
-- [x] One paragraph in report Perspectives
-- [x] Full factorial commented in experiments.toml, split to ticket 0048
-- [x] verify_tool uses LP reconciler (not naive fuzzy)
-- [x] `make check-fast` passes (868 tests, 1 xfail)
+- Methods section drafted with preregistered hypotheses
+- tabulate_verification.py available on main
+- Stage B complete: tool + unverified on all 3 configs, tradeoff.csv exists
+- Stage C complete: all 5 modes on 1 config
+- Stage D complete: full 3-config factorial with CIs
+- Journal paper section written reporting precision-coverage trade-off
+- `make check-fast` passes at each stage
+
+## Feasibility assessment (plan phase)
+
+**Immediate (Stage A):** Fully feasible. All source material exists in
+verify.py and query_verification.py. Methods section is pure writing.
+
+**Stage B:** Fully feasible. Zero API cost, code exists and is tested.
+The only gap is tabulate_verification.py not on main (on t30 branch).
+
+**Stage C:** Feasible but requires TAVILY_API_KEY for web mode. Self
+and cross modes work via OpenRouter. Cost ~$0.50.
+
+**Stage D:** Feasible, $15-25 budget. Config already in experiments.toml.
+
+**Realistic first deliverable:** Stage A (methods section) + merge
+tabulate_verification.py. Then Stage B as immediate follow-up (no cost,
+no API keys needed).
