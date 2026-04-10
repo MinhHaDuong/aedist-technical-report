@@ -228,7 +228,7 @@ référence (163~centrales, matching par nom exact et approximatif).
 Total~: 260~runs $\approx$ 5--15\,\$. Les modèles open-weight réduisent ce
 budget d'un facteur~10. Pour une publication, augmenter à 5~répétitions,
 élargir le panel de modèles, et pré-enregistrer les hypothèses directionnelles
-par module (voir section~\ref{sec:lien-verification}).
+par module (section~\ref{sec:hypotheses-ablation}).
 
 \paragraph{Limites du design}
 \begin{itemize}
@@ -243,6 +243,115 @@ par module (voir section~\ref{sec:lien-verification}).
   prompts). L'asymétrie composition/ablation détecte la \emph{présence}
   d'interactions mais ne les attribue pas à un couple spécifique.
 \end{itemize}
+
+\subsection{Hypothèses pré-enregistrées}\label{sec:hypotheses-ablation}
+
+Les hypothèses ci-dessous sont formulées \emph{avant} l'analyse des données
+d'ablation. Elles s'appuient sur trois mécanismes théoriques issus de la
+littérature sur l'extraction structurée par LLM~:
+
+\begin{enumerate}
+\item \textbf{Compétition de budget de sortie.} Tout module demandant du texte
+  non tabulaire (narratifs, bibliographie, cadrage) consomme des tokens qui
+  auraient pu produire des lignes CSV. Ce mécanisme dégrade le rappel sans
+  affecter directement la précision.
+\item \textbf{Amorçage par contexte (\emph{priming}).} Un module qui active
+  des connaissances pertinentes (noms de centrales, vocabulaire sectoriel) peut
+  améliorer le rappel en rendant ces entrées plus saillantes dans la génération.
+\item \textbf{Surcharge d'instructions (\emph{instruction overload}).} Un
+  prompt trop long dilue les consignes d'extraction structurée, ce qui peut
+  dégrader la précision (erreurs de format, colonnes manquantes).
+\end{enumerate}
+
+\paragraph{Hypothèses par module}
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Module} & \textbf{Rappel} & \textbf{Précision} & \textbf{Mécanisme attendu} \\
+\midrule
+Persona       & neutre  & neutre
+  & Un rôle générique (\emph{senior energy analyst}) n'ajoute ni \\
+  &         &
+  & connaissances ni contraintes. La littérature sur le \emph{role} \\
+  &         &
+  & \emph{prompting} montre un effet nul ou négatif sur l'extraction \\
+  &         &
+  & structurée \citep[cf.][]{zheng2024prompt}. \\
+\addlinespace
+Cadrage       & $+$     & neutre
+  & Le résumé sectoriel amorce le vocabulaire du domaine (noms de \\
+  &         &
+  & centrales, provinces, acteurs) et rend des entrées marginales \\
+  &         &
+  & plus saillantes. Coût de budget modéré ($\sim$200~tokens). \\
+\addlinespace
+Narratifs     & $-$     & neutre
+  & Demander un paragraphe par complexe industriel consomme \\
+  &         &
+  & $>$2\,000~tokens de sortie. Mécanisme dominant~: compétition \\
+  &         &
+  & de budget. Effet de rappel négatif attendu le plus fort. \\
+\addlinespace
+Bibliographie & $-$     & neutre
+  & La liste de sources annotées consomme $\sim$1\,000~tokens de \\
+  &         &
+  & sortie. Même mécanisme de compétition de budget que les \\
+  &         &
+  & narratifs, mais moindre car le texte est plus compact. \\
+\addlinespace
+Statistiques  & $-$     & neutre
+  & Les tableaux croisés consomment $\sim$500~tokens de sortie. \\
+  &         &
+  & Compétition de budget modérée. Effet attendu faible. \\
+\addlinespace
+Sourçage      & $-$     & $+$
+  & Ajouter Source\_1 et Source\_2 par ligne force le modèle à \\
+  &         &
+  & justifier chaque entrée, ce qui filtre les hallucinations \\
+  &         &
+  & (précision $+$). En contrepartie, le format élargi (12~colonnes \\
+  &         &
+  & au lieu de 10) réduit le nombre de lignes produites (rappel $-$). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Hypothèses composites}
+
+\begin{enumerate}
+\item \textbf{Base \emph{vs} Census.} Le prompt de base est attendu supérieur
+  au census (prompt~1 de 40~mots) en rappel et en précision. Le prompt de base
+  spécifie le format CSV, les colonnes exactes, le seuil de 30~MWe et les
+  critères d'inclusion/exclusion~; le census ne fournit qu'une consigne
+  minimale. $H_1 : \text{F1}_{\text{base}} > \text{F1}_{\text{census}}$.
+
+\item \textbf{Complet \emph{vs} Base.} Le prompt complet (6~modules) est
+  attendu inférieur au prompt de base en rappel, en raison de la compétition
+  de budget cumulée (narratifs + bibliographie + statistiques + sourçage).
+  L'effet d'amorçage du cadrage ne compense pas le coût combiné.
+  $H_2 : \text{Rappel}_{\text{complet}} < \text{Rappel}_{\text{base}}$.
+
+\item \textbf{Complet \emph{vs} Frontier.} Le prompt complet et le prompt
+  frontier sont de longueur comparable ($\sim$1\,200~mots). Le prompt complet
+  est attendu supérieur car sa base a été optimisée pour l'extraction CSV
+  structurée, alors que le frontier mêle instructions et contenu éditorial.
+  $H_3 : \text{F1}_{\text{complet}} > \text{F1}_{\text{frontier}}$.
+
+\item \textbf{Module à effet individuel le plus fort.} Les narratifs sont
+  attendus comme le module ayant le plus grand $|\Delta\text{F1}|$ individuel,
+  car ils imposent la plus forte compétition de budget de sortie
+  ($>$2\,000~tokens de texte libre demandé). Le sourçage est le second
+  candidat, car il modifie à la fois le format de sortie et le processus de
+  génération.
+\end{enumerate}
+
+\paragraph{Seuils de falsification} Une hypothèse directionnelle est réfutée
+si l'intervalle de confiance bootstrap à 95\,\% sur $\Delta$F1 exclut zéro
+dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est
+réfutée si $|\Delta\text{F1}| > 0{,}03$ (3~points) avec un IC à 95\,\%
+excluant zéro.
 
 \subsection{Lien avec la vérification multi-agents}\label{sec:lien-verification}
 
