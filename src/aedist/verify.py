@@ -33,8 +33,15 @@ from .extract import (
     norm_header,
     sniff_dialect,
 )
+from .evaluate import load_plants_csv, plants_from_dicts
 from .harness import make_client, query_single_turn, save_json
-from .schema import SourceType
+from .reconcile import reconcile
+from .schema import MatchType, SourceType
+
+_MATCHED_TYPES = frozenset({
+    MatchType.EXACT, MatchType.EXACT_CAPACITY_DIFF,
+    MatchType.FUZZY, MatchType.FUZZY_CAPACITY_DIFF,
+})
 
 log = logging.getLogger(__name__)
 
@@ -304,37 +311,15 @@ def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dic
       - 3 (one primary) if LP-matched to a reference plant
       - 1 (no sources) if unmatched (system_only)
     """
-    from .evaluate import load_plants_csv
-    from .reconcile import reconcile
-    from .schema import MatchType
-
     ref_plants = load_plants_csv(reference_path)
     log.info("Loaded %d plants from reference: %s", len(ref_plants), reference_path.name)
 
-    # Convert system rows to Plant objects via temp CSV
-    import tempfile
-
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".csv", delete=False, newline=""
-    ) as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        writer.writeheader()
-        writer.writerows(rows)
-        tmp_path = Path(f.name)
-    try:
-        sys_plants = load_plants_csv(tmp_path)
-    finally:
-        tmp_path.unlink(missing_ok=True)
-
-    # Run LP reconciliation
+    sys_plants = plants_from_dicts(rows)
     entries = reconcile(ref_plants, sys_plants)
 
-    # Build lookup: system plant name -> reconciliation entry
-    matched_types = {MatchType.EXACT, MatchType.EXACT_CAPACITY_DIFF,
-                     MatchType.FUZZY, MatchType.FUZZY_CAPACITY_DIFF}
-    matched_sys_names: dict[str, str] = {}  # sys_name -> ref_name
+    matched_sys_names: dict[str, str] = {}
     for e in entries:
-        if e.match_type in matched_types and e.system_name:
+        if e.match_type in _MATCHED_TYPES and e.system_name:
             matched_sys_names[e.system_name] = e.reference_name or ""
 
     annotated = []

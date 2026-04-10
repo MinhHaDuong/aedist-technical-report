@@ -20,7 +20,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from .evaluate import load_plants_csv
+from .evaluate import load_plants_csv, plants_from_dicts
 from .metrics import compute_metrics
 from .reconcile import reconcile
 
@@ -62,25 +62,6 @@ def _load_annotated_csvs(verification_dir: Path) -> dict[str, list[list[dict]]]:
     return dict(by_mode)
 
 
-def _dicts_to_plants(rows: list[dict]) -> list:
-    """Convert CSV row dicts to Plant objects via a temp file.
-
-    Uses load_plants_csv which handles header normalization and
-    parsing into Plant objects — same path as the evaluate pipeline.
-    """
-    import tempfile
-
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        writer.writeheader()
-        writer.writerows(rows)
-        tmp = Path(f.name)
-    try:
-        return load_plants_csv(tmp)
-    finally:
-        tmp.unlink(missing_ok=True)
-
-
 def _evaluate_subset(rows: list[dict], ref_plants: list) -> dict:
     """Evaluate a subset of plants against the reference.
 
@@ -89,7 +70,7 @@ def _evaluate_subset(rows: list[dict], ref_plants: list) -> dict:
     if not rows:
         return {"precision": 0.0, "coverage": 0.0, "f1": 0.0, "tp": 0, "fp": 0, "fn": 0}
 
-    system_plants = _dicts_to_plants(rows)
+    system_plants = plants_from_dicts(rows)
     entries = reconcile(ref_plants, system_plants)
     m = compute_metrics(entries)
     return {
@@ -134,7 +115,6 @@ def compute_tradeoff(verification_dir: Path, reference: Path | None = None) -> l
                 n_retained_sum += n_retained
                 n_total_sum += n_total
 
-                # Write filtered rows to temp CSV for evaluation
                 metrics = _evaluate_subset(filtered, ref_plants)
                 precision_sum += metrics["precision"]
                 coverage_sum += metrics["coverage"]
@@ -145,19 +125,17 @@ def compute_tradeoff(verification_dir: Path, reference: Path | None = None) -> l
             avg_total = n_total_sum / n_runs
             retention = (avg_retained / avg_total * 100) if avg_total > 0 else 0.0
 
-            results.append(
-                {
-                    "mode": mode,
-                    "threshold": str(threshold),
-                    "n_retained": str(round(avg_retained)),
-                    "n_total": str(round(avg_total)),
-                    "retention_pct": f"{retention:.1f}",
-                    "precision": f"{precision_sum / n_runs:.4f}",
-                    "coverage": f"{coverage_sum / n_runs:.4f}",
-                    "f1": f"{f1_sum / n_runs:.4f}",
-                    "n_runs": str(n_runs),
-                }
-            )
+            results.append({
+                "mode": mode,
+                "threshold": threshold,
+                "n_retained": round(avg_retained),
+                "n_total": round(avg_total),
+                "retention_pct": round(retention, 1),
+                "precision": round(precision_sum / n_runs, 4),
+                "coverage": round(coverage_sum / n_runs, 4),
+                "f1": round(f1_sum / n_runs, 4),
+                "n_runs": n_runs,
+            })
 
     return results
 
@@ -175,15 +153,8 @@ _TRADEOFF_FIELDS = [
 ]
 
 
-def generate_tradeoff_csv(
-    verification_dir: Path, output: Path, reference: Path | None = None
-) -> None:
-    """Write tradeoff table as CSV."""
-    rows = compute_tradeoff(verification_dir, reference)
-    if not rows:
-        log.warning("No verification data found in %s", verification_dir)
-        return
-
+def write_tradeoff_csv(rows: list[dict], output: Path) -> None:
+    """Write tradeoff rows as CSV."""
     output.parent.mkdir(parents=True, exist_ok=True)
     with open(output, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=_TRADEOFF_FIELDS)
@@ -192,13 +163,11 @@ def generate_tradeoff_csv(
     log.info("Wrote %s (%d rows)", output, len(rows))
 
 
-def generate_tradeoff_latex(verification_dir: Path, reference: Path | None = None) -> str:
-    """Generate a LaTeX tabular from the tradeoff data.
+def format_tradeoff_latex(rows: list[dict]) -> str:
+    """Format tradeoff rows as a LaTeX tabular.
 
-    Columns: Mode, Threshold, Retained, Precision (%), Coverage (%), F1 (%).
     Modes are grouped with midrules between them.
     """
-    rows = compute_tradeoff(verification_dir, reference)
     if not rows:
         return ""
 
@@ -214,9 +183,9 @@ def generate_tradeoff_latex(verification_dir: Path, reference: Path | None = Non
         if prev_mode and r["mode"] != prev_mode:
             lines.append(r"\midrule")
         mode_label = r["mode"].capitalize()
-        prec_pct = f"{float(r['precision']) * 100:.1f}"
-        cov_pct = f"{float(r['coverage']) * 100:.1f}"
-        f1_pct = f"{float(r['f1']) * 100:.1f}"
+        prec_pct = f"{r['precision'] * 100:.1f}"
+        cov_pct = f"{r['coverage'] * 100:.1f}"
+        f1_pct = f"{r['f1'] * 100:.1f}"
         lines.append(
             f"{mode_label} & {r['threshold']} & {r['n_retained']} & "
             f"{prec_pct} & {cov_pct} & {f1_pct} \\\\"
@@ -246,10 +215,15 @@ def main():
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     vdir = Path(args.input)
-    generate_tradeoff_csv(vdir, Path(args.output))
+    rows = compute_tradeoff(vdir)
+    if not rows:
+        log.warning("No verification data found in %s", vdir)
+        return
+
+    write_tradeoff_csv(rows, Path(args.output))
 
     if args.latex:
-        tex = generate_tradeoff_latex(vdir)
+        tex = format_tradeoff_latex(rows)
         Path(args.latex).parent.mkdir(parents=True, exist_ok=True)
         Path(args.latex).write_text(tex)
         log.info("Wrote %s", args.latex)

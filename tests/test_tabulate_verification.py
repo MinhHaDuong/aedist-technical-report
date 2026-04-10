@@ -7,8 +7,8 @@ import pytest
 
 from aedist.tabulate_verification import (
     compute_tradeoff,
-    generate_tradeoff_csv,
-    generate_tradeoff_latex,
+    format_tradeoff_latex,
+    write_tradeoff_csv,
 )
 
 # Minimal reference CSV for testing — plant names match _sample_rows()
@@ -142,36 +142,35 @@ def test_compute_tradeoff_thresholds(verification_dir, test_reference):
     rows = compute_tradeoff(verification_dir, test_reference)
     for mode in ("tool", "unverified", "self"):
         mode_rows = [r for r in rows if r["mode"] == mode]
-        thresholds = {int(r["threshold"]) for r in mode_rows}
+        thresholds = {r["threshold"] for r in mode_rows}
         assert thresholds == {1, 2, 3, 4}, f"{mode} missing thresholds: {thresholds}"
 
 
 def test_tool_precision_at_high_threshold(verification_dir, test_reference):
     """Tool mode at threshold=3: 5 verified plants retained, all match reference."""
     rows = compute_tradeoff(verification_dir, test_reference)
-    tool_t3 = [r for r in rows if r["mode"] == "tool" and int(r["threshold"]) == 3]
+    tool_t3 = [r for r in rows if r["mode"] == "tool" and r["threshold"] == 3]
     assert len(tool_t3) == 1
-    assert int(tool_t3[0]["n_retained"]) == 5
-    # All 5 retained plants (Plant V0-V4) are in the reference
-    assert float(tool_t3[0]["precision"]) == 1.0
+    assert tool_t3[0]["n_retained"] == 5
+    assert tool_t3[0]["precision"] == 1.0
 
 
 def test_unverified_loses_all_at_threshold_2(verification_dir, test_reference):
     """Unverified mode: all plants have score=1, so threshold>=2 retains 0."""
     rows = compute_tradeoff(verification_dir, test_reference)
-    unv_t2 = [r for r in rows if r["mode"] == "unverified" and int(r["threshold"]) == 2]
+    unv_t2 = [r for r in rows if r["mode"] == "unverified" and r["threshold"] == 2]
     assert len(unv_t2) == 1
-    assert int(unv_t2[0]["n_retained"]) == 0
-    assert float(unv_t2[0]["f1"]) == 0.0
+    assert unv_t2[0]["n_retained"] == 0
+    assert unv_t2[0]["f1"] == 0.0
 
 
 def test_self_averages_across_runs(verification_dir, test_reference):
     """Self mode with 3 runs should report averaged metrics."""
     rows = compute_tradeoff(verification_dir, test_reference)
-    self_t1 = [r for r in rows if r["mode"] == "self" and int(r["threshold"]) == 1]
+    self_t1 = [r for r in rows if r["mode"] == "self" and r["threshold"] == 1]
     assert len(self_t1) == 1
     # At threshold=1, all 10 plants retained (3+5+1+1)
-    assert int(self_t1[0]["n_retained"]) == 10
+    assert self_t1[0]["n_retained"] == 10
 
 
 def test_tradeoff_has_metrics_columns(verification_dir, test_reference):
@@ -187,33 +186,27 @@ def test_tradeoff_has_metrics_columns(verification_dir, test_reference):
         float(r["f1"])
 
 
-def test_generate_tradeoff_csv(verification_dir, test_reference, tmp_path):
-    """generate_tradeoff_csv writes valid CSV with expected columns."""
+def test_write_tradeoff_csv(verification_dir, test_reference, tmp_path):
+    """write_tradeoff_csv writes valid CSV with expected columns."""
+    rows = compute_tradeoff(verification_dir, test_reference)
     out = tmp_path / "tradeoff.csv"
-    generate_tradeoff_csv(verification_dir, out, test_reference)
+    write_tradeoff_csv(rows, out)
     assert out.exists()
 
     with open(out) as f:
         reader = csv.DictReader(f)
-        rows = list(reader)
+        csv_rows = list(reader)
 
-    assert len(rows) > 0
-    required_cols = {
-        "mode",
-        "threshold",
-        "n_retained",
-        "n_total",
-        "retention_pct",
-        "precision",
-        "coverage",
-        "f1",
-    }
-    assert required_cols.issubset(set(rows[0].keys()))
+    assert len(csv_rows) > 0
+    required_cols = {"mode", "threshold", "n_retained", "n_total",
+                     "retention_pct", "precision", "coverage", "f1"}
+    assert required_cols.issubset(set(csv_rows[0].keys()))
 
 
-def test_generate_tradeoff_latex(verification_dir, test_reference):
-    """generate_tradeoff_latex returns a non-empty LaTeX string with metrics."""
-    tex = generate_tradeoff_latex(verification_dir, test_reference)
+def test_format_tradeoff_latex(verification_dir, test_reference):
+    """format_tradeoff_latex returns a non-empty LaTeX string with metrics."""
+    rows = compute_tradeoff(verification_dir, test_reference)
+    tex = format_tradeoff_latex(rows)
     assert "\\begin{tabular}" in tex
     assert "Tool" in tex
     assert "Precision" in tex

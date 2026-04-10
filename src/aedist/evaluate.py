@@ -135,6 +135,24 @@ def load_plants_csv(path: Path) -> list[Plant]:
     return plants
 
 
+def plants_from_dicts(rows: list[dict]) -> list[Plant]:
+    """Convert CSV row dicts to Plant objects via a temp file.
+
+    Reuses load_plants_csv for header normalization and enum parsing.
+    """
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+        tmp = Path(f.name)
+    try:
+        return load_plants_csv(tmp)
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
 # ---------------------------------------------------------------------------
 # Default reference path and project root
 # ---------------------------------------------------------------------------
