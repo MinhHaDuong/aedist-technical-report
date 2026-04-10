@@ -1,0 +1,32 @@
+%erg v1
+Title: Define ablation model sets per regime
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0063
+
+--- log ---
+2026-04-10T23:45Z claude created — split from 0061 action 2d
+
+--- body ---
+## Context
+
+Child of epic 0061. Each regime needs a model set with appropriate
+capabilities. After 0063 adds the flags, this ticket creates the
+sets in experiments.toml.
+
+## Actions
+
+1. `sets.ablation_parametric`: frontier models with reasoning
+   (o3, R1, Claude Opus, GPT-5.4, DeepSeek V3.2, Qwen3 Max)
+2. `sets.ablation_rag`: top 5 RAG performers from existing data
+   (DeepSeek V3.2, GPT-5.4, Mistral Large, Gemini Flash, Claude Opus)
+3. `sets.ablation_websearch`: models with web_search + reasoning
+4. `sets.ablation_core`: intersection present in all 3 regimes
+   (enables clean 3-way regime comparison)
+5. Update ablation sweep configs to reference new sets
+
+## Exit criteria
+- 4 model sets defined in experiments.toml
+- ablation_core has >= 3 models testable in all 3 regimes
+- Sweep configs updated for 3 regimes x 16 prompts

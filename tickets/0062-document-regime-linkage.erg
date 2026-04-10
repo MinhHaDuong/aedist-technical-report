@@ -1,0 +1,55 @@
+%erg v1
+Title: Document ablation-regime linkage in technical report
+Status: open
+Created: 2026-04-10
+Author: haduong
+
+--- log ---
+2026-04-10T23:45Z haduong created
+
+--- body ---
+## Context
+
+The slides present 5 methods (direct, multi-turn, RAG, decomposed, web)
+on 5 models. The ablation experiment (ticket 0061) tests 16 prompt
+variants across 3 information regimes (parametric, RAG, web search).
+The linkage between these two framings is not documented in the report.
+
+The three ablation regimes map cleanly to three of the five slide methods:
+- Parametric = Direct (no docs, no search)
+- RAG = RAG wholesale (18-doc corpus)
+- Web search = Web (internet search via Tavily/plugin)
+
+The remaining two slide methods are handled elsewhere:
+- Multi-turn → subsumed by verification experiments (tickets 0030, 0054)
+- Decomposed → parked (hallucination-prone, not an information regime)
+
+This mapping, and the rationale for dropping multi-turn and decomposed
+from the ablation, must be written into the report so the reader can
+follow the experimental design lineage.
+
+## Actions
+
+1. Add a subsection to `report/inputs/plan_ablation.tex` (or a new
+   `report/inputs/regime_linkage.tex`) that:
+   - States the 5 methods from the benchmark
+   - Maps 3 to the ablation regimes with justification
+   - Explains why multi-turn is subsumed by verification (better-motivated
+     follow-ups with specific purpose)
+   - Explains why decomposed is excluded (hallucination-prone, orthogonal
+     decomposition axis not an information regime)
+   - References the 6 condition axes (slide frame) and shows which the
+     ablation covers vs which are handled by other experiments
+
+2. Update `report/report.tex` to include the new section if needed
+
+## Test
+
+Deliverable is prose. Review gate: author confirms the narrative is
+coherent and the experimental design lineage is traceable.
+
+## Exit criteria
+- Report section documenting the 5-method → 3-regime mapping
+- Rationale for multi-turn → verification and decomposed → parked
+- Cross-references to ablation design (plan_ablation.tex) and
+  verification design (verification_methods.tex, plan_verification_multi.tex)

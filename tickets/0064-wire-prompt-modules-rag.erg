@@ -1,0 +1,31 @@
+%erg v1
+Title: Wire prompt_modules into query_rag.py
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0061
+
+--- log ---
+2026-04-10T23:45Z claude created — split from 0061 action 2b
+
+--- body ---
+## Context
+
+Child of epic 0061. `query_frontier.py` accepts `--prompt-modules`
+(ticket 0055). `query_rag.py` does not — it takes `--prompt` only.
+The RAG ablation regime needs the same 16 prompt variants injected
+alongside the corpus.
+
+## Actions
+
+1. Add `--prompt-modules` / `--modules-dir` to `query_rag.py`
+   (same pattern as query_frontier.py)
+2. When prompt_modules present, call `assemble_prompt()` and prepend
+   the assembled text before the RAG corpus context
+3. Fallback: existing `--prompt` still works unchanged
+4. Test: dry-run RAG with `--prompt-modules persona overview`
+
+## Exit criteria
+- `query_rag.py` accepts `--prompt-modules`
+- Assembled prompt + RAG corpus combined correctly
+- Existing RAG sweeps unchanged

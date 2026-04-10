@@ -1,0 +1,37 @@
+%erg v1
+Title: Run ablation Phase 1 selection across 3 regimes
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0063
+Blocked-by: 0064
+Blocked-by: 0065
+
+--- log ---
+2026-04-10T23:45Z claude created — split from 0061 action 3
+
+--- body ---
+## Context
+
+Child of epic 0061. After infrastructure (0063, 0064, 0065) is in
+place, run Phase 1 selection: base + composite prompt on all models
+per regime, 2 reps each. Present HUMAN GATE.
+
+## Actions
+
+1. Delete invalid outputs from previous Phase 1 attempt
+2. Run parametric regime: base + composite x ablation_parametric x 2 reps
+3. Run RAG regime: base + composite x ablation_rag x 2 reps
+4. Run web search regime: base + composite x ablation_websearch x 2 reps
+5. Evaluate all outputs against 163-plant reference
+6. Tabulate HUMAN GATE report:
+   - Per model per regime: F1(base), F1(composite), ΔF1, cost, time,
+     output tokens, finish reason
+   - Flag models with |ΔF1| > 0.05 as "responsive"
+   - Total Phase 2 cost estimate at various model counts
+7. Present to user for decision
+
+## Exit criteria
+- All 3 regimes Phase 1 complete
+- HUMAN GATE table presented
+- User decides which models x regimes proceed to Phase 2

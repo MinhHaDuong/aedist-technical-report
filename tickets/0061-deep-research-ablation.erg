@@ -7,6 +7,8 @@ Author: haduong
 --- log ---
 2026-04-10T23:30Z haduong created — ablation Phase 1 ran with basic chat models, results invalid
 2026-04-10T23:30Z claude note Previous p1_base/p1_composite outputs invalidated (wrong model set, no reasoning/search activation)
+2026-04-10T23:45Z claude note Upgraded to 3-regime design (parametric, RAG, web search)
+2026-04-10T23:45Z claude note Epic — children: 0062 (report linkage), 0063 (capability flags), 0064 (RAG prompt_modules), 0065 (model sets), 0066 (Phase 1 rerun)
 
 --- body ---
 ## Context

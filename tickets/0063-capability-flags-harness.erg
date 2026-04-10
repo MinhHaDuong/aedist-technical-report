@@ -1,0 +1,39 @@
+%erg v1
+Title: Add web_search and reasoning activation to harness
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0061
+
+--- log ---
+2026-04-10T23:45Z claude created — split from 0061 action 1
+
+--- body ---
+## Context
+
+Child of epic 0061. The harness (`harness.py`) calls all models with
+bare `chat.completions.create()`. Models with reasoning or web search
+capabilities are not activated. This ticket adds:
+
+1. `web_search` flag to `experiments/models.yaml` for applicable models
+2. Update `reasoning` flags (Claude, Gemini currently unmarked)
+3. Capability-driven activation in `harness.py` / `query_frontier.py`:
+   - Reasoning: provider-specific thinking params
+   - Web search: OpenRouter `plugins: [{id: "web"}]`
+
+## Actions
+
+1. Research OpenRouter docs: which models support web search plugin,
+   which need provider-specific reasoning params
+2. Add `web_search: true` to applicable model entries in models.yaml
+3. Fix `reasoning: true` for Claude Opus/Sonnet, Gemini Flash if applicable
+4. In `query_frontier.py` or `harness.py`, read model flags and build
+   `extra_body` accordingly
+5. Test: dry-run with a reasoning model, verify thinking params sent
+6. Test: dry-run with a web search model, verify plugin in request
+
+## Exit criteria
+- `web_search` flag in models.yaml
+- `reasoning` flags corrected
+- Harness passes correct extra_body per model capabilities
+- Tests covering both capability activations
