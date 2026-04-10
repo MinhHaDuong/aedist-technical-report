@@ -1,8 +1,8 @@
-Last updated: 2026-04-08 (evening)
+Last updated: 2026-04-10
 
 ## Status
 
-Pipeline end-to-end via manager+worker dispatch. Census: 35 models (25 cloud + 10 local), best F1 98.8% (DeepSeek V3.2 with RAG). 574 tests pass. Frontier bench: 14 models × 3 prompts. Slides reframed as pilot study with 98.8% consistency throughout. Report Perspectives ~1 page. Orphan JSON status split (PR #203): refusal/error/empty. Bootstrap CIs and paired significance tests in reporting (ticket 0042). Ticket stock cleaned: 37 closed, 9 open.
+Pipeline end-to-end via manager+worker dispatch. Census: 37 models (26 cloud + 11 local), best F1 98.4% (Qwen 3.5 9B local), $0.82 total. 861 tests pass. Method convergence strip plot added (PR #219): 1 dot = 1 plant, matplotlib PDF. Data dedup fix: `_extracted` prompt_version was duplicating RAG data in measurements. matplotlib added as main dependency.
 
 ## Blockers
 
@@ -10,11 +10,11 @@ None
 
 ## Next actions
 
-1. Visual review: `make slides` and check PDF renders correctly
+1. Visual review: `make slides` — check all pages render correctly
 2. Complete RAG local sweep: 2B/4B scaling curve (branch t21-rag-local-models)
 3. Matching sensitivity sweep (ticket 0035)
 4. Fix empty CSV crash in evaluate (ticket 0045)
-5. Whitelist model-reply glob via shared loader (ticket 0044 — doing)
+5. Investigate RAG/_extracted measurement duplication (ticket 0048)
 
 ## North star
 
@@ -25,6 +25,7 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 - [x] Reframe slides as pilot study (#115, #193)
 - [x] Perspectives section in report (#116)
 - [x] Fix 99% → 98.8% consistency (ticket 0046)
+- [x] Method convergence strip plot (ticket 0031, PR #219)
 - [ ] Visual PDF review of slides
 - [ ] RAG local sweep: 2B/4B/9B scaling curve (branch t21-rag-local-models)
 
@@ -34,12 +35,12 @@ Statistical hygiene (ticket 0035) → journal submission (TBD — after conferen
 
 ## Open tickets (9)
 
+- 0021 Test local models with RAG wholesale on Padme
 - 0023 Smart worker dispatch (infra)
 - 0025 Sourced extraction with citation scoring
 - 0029 Sensitivity analysis sweep
 - 0030 Verification regimes sweep
-- 0031 Information regimes sweep (complete)
-- 0035 Matching sensitivity sweep
+- 0035 Matching sensitivity sweep (doing)
 - 0038 Reflexive self-prompting experiment
-- 0044 Whitelist model-reply glob via shared loader (doing)
 - 0045 Empty CSV crash in evaluate
+- 0048 RAG/_extracted measurement duplication (new)
