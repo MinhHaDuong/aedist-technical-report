@@ -1,0 +1,34 @@
+Produce a comprehensive CSV table listing ALL thermal power plants in
+Vietnam with capacity of 30 MWe or above, at every stage from early
+proposal through decommissioning. Include grid-connected utility plants,
+captive (self-generation) plants, and industrial cogeneration facilities.
+
+Columns:
+- Name_VI: plant name in Vietnamese
+- Name_EN: plant name in English
+- Fuel: the primary fuel — e.g. Coal, Domestic gas, Imported LNG, Oil.
+  Exclude biomass and waste-to-energy plants (tracked separately).
+- Technology: Subcritical / Supercritical / USC / CCGT / OCGT / CFB
+- Status: current stage of the project, e.g. Operational, Under construction,
+  Proposed, Permitted, Financed, Suspended, Cancelled, Decommissioned.
+  Use the most specific term that applies. Projects may have been proposed
+  by investors, provincial authorities, international partners, or national
+  planners — capture all regardless of which authority originated them.
+- COD: actual or expected commercial operation date
+- Province: location
+- Capacity_MWe: current or as-built net generation capacity in MWe.
+  If the plant was proposed at a different capacity, note the difference.
+- Owner: key investors or controlling entities — e.g. "EVN/GENCO 1",
+  "Marubeni + KEPCO (BOT)", "Formosa Plastics". Skip single-purpose
+  project vehicles.
+- Note: additional context — e.g. original proposed capacity if different
+  from as-built, unit breakdowns, phase information, ownership changes.
+
+Be exhaustive. Cover every thermal power plant you know of, whether it
+appeared in a national power development plan, regulatory filing,
+investment proposal, international agreement, news report, or any other
+source. Include cancelled projects, suspended proposals, and plants that
+were planned but never built. Missing plants reduces the value of this
+inventory.
+
+Format the response as CSV with a header row.

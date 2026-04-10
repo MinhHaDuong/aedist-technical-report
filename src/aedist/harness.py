@@ -132,6 +132,37 @@ def load_experiments(path: str) -> dict:
         return tomllib.load(f)
 
 
+# ---------------------------------------------------------------------------
+# Prompt assembly
+# ---------------------------------------------------------------------------
+
+# Module ordering: persona is prepended, all others appended in this order.
+_MODULE_ORDER = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+
+
+def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
+    """Assemble a prompt from base + named modules.
+
+    *modules_dir* contains ``base.txt`` and one file per module
+    (e.g. ``persona.txt``, ``overview.txt``).  The *module_names* list
+    selects which modules to include.  ``persona`` is prepended before
+    the base; all others are appended in a fixed order.
+    """
+    base = (modules_dir / "base.txt").read_text().strip()
+    parts_before: list[str] = []
+    parts_after: list[str] = []
+    # Sort requested modules into fixed order for reproducibility.
+    ordered = [m for m in ["persona"] + _MODULE_ORDER if m in module_names]
+    for name in ordered:
+        text = (modules_dir / f"{name}.txt").read_text().strip()
+        if name == "persona":
+            parts_before.append(text)
+        else:
+            parts_after.append(text)
+    sections = parts_before + [base] + parts_after
+    return "\n\n".join(sections)
+
+
 def make_client(base_url: str | None = None) -> OpenAI:
     """Create an OpenAI-compatible client (legacy interface).
 

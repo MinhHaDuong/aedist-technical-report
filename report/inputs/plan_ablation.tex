@@ -1,0 +1,234 @@
+% Experimental plan: prompt composition and ablation
+% Included from report.tex, Chapter 2
+
+\section{Expérience~3~: composition et ablation de prompts}\label{sec:exp3}
+
+L'expérience~1 utilise un prompt minimaliste de 40~mots~; l'expérience frontier
+un prompt de 1\,200~mots intégrant cadrage sectoriel, narratifs par centrale,
+statistiques croisées et bibliographie annotée. Or Opus obtient F1\,=\,0,64
+avec le prompt court et F1\,=\,0,54 avec le prompt long~: la métacognition
+supplémentaire \emph{dégrade} l'extraction structurée. Quel composant est
+responsable~?
+
+Deux approches symétriques isolent les effets~:
+
+\begin{description}
+\item[Composition] Partir d'un prompt de base optimisé pour l'extraction CSV,
+  puis ajouter un module à la fois. Mesure~: quel ajout améliore ou dégrade le
+  score~?
+\item[Ablation] Partir du prompt complet (base + tous les modules), puis
+  retirer un module à la fois. Mesure~: quel retrait améliore ou dégrade le
+  score~?
+\end{description}
+
+\noindent La comparaison des deux bras révèle les \emph{effets d'interaction}~:
+un module peut aider seul mais nuire en combinaison, ou inversement.
+
+\subsection{Prompt de base}\label{sec:prompt-base}
+
+Le prompt de base a été conçu par itérations successives avec les critères
+suivants~: (a)~demander un CSV structuré avec colonnes nommées correspondant
+au parseur d'évaluation, (b)~spécifier un seuil d'inclusion (30~MWe),
+(c)~couvrir tout le cycle de vie des projets (proposition à démantèlement),
+(d)~inclure les centrales captives et de cogénération industrielle,
+(e)~exclure explicitement la biomasse et les déchets (suivis séparément),
+(f)~utiliser un vocabulaire de statut ouvert reflétant la multiplicité des
+autorités décisionnaires (investisseurs, provinces, ministère, accords
+internationaux), (g)~ne pas inclure de persona (la littérature sur le
+\emph{role prompting} suggère un effet négatif sur l'extraction structurée),
+(h)~ne pas révéler le nombre attendu de résultats.
+
+\medskip
+\noindent La terminologie est alignée sur l'Open Energy Ontology (OEO)
+avec trois divergences délibérées~: inclusion des centrales hors réseau
+(l'OEO exige la connexion au réseau), distinction gaz domestique / GNL
+importé (l'OEO ne distingue pas la provenance), et regroupement «~thermique~»
+par usage commun plutôt que par classe OEO formelle.
+
+\begin{Prompt}\label{prompt:base}
+Produce a comprehensive CSV table listing ALL thermal power plants in
+Vietnam with capacity of 30 MWe or above, at every stage from early
+proposal through decommissioning. Include grid-connected utility plants,
+captive (self-generation) plants, and industrial cogeneration facilities.
+
+Columns:
+- Name_VI: plant name in Vietnamese
+- Name_EN: plant name in English
+- Fuel: the primary fuel — e.g. Coal, Domestic gas, Imported LNG, Oil.
+  Exclude biomass and waste-to-energy plants (tracked separately).
+- Technology: Subcritical / Supercritical / USC / CCGT / OCGT / CFB
+- Status: current stage of the project, e.g. Operational, Under
+  construction, Proposed, Permitted, Financed, Suspended, Cancelled,
+  Decommissioned. Use the most specific term that applies. Projects may
+  have been proposed by investors, provincial authorities, international
+  partners, or national planners — capture all regardless of which
+  authority originated them.
+- COD: actual or expected commercial operation date
+- Province: location
+- Capacity_MWe: current or as-built net generation capacity in MWe.
+  If the plant was proposed at a different capacity, note the difference.
+- Owner: key investors or controlling entities — e.g. "EVN/GENCO 1",
+  "Marubeni + KEPCO (BOT)", "Formosa Plastics". Skip single-purpose
+  project vehicles.
+- Note: additional context — e.g. original proposed capacity if different
+  from as-built, unit breakdowns, phase information, ownership changes.
+
+Be exhaustive. Cover every thermal power plant you know of, whether it
+appeared in a national power development plan, regulatory filing,
+investment proposal, international agreement, news report, or any other
+source. Include cancelled projects, suspended proposals, and plants that
+were planned but never built. Missing plants reduces the value of this
+inventory.
+
+Format the response as CSV with a header row.
+\end{Prompt}
+
+\subsection{Modules}\label{sec:modules}
+
+Six modules sont testés. Chacun est un paragraphe ajouté à la fin du prompt
+de base.
+
+\paragraph{Persona} Ajoute une consigne de rôle en tête du prompt.
+\begin{Prompt}\label{prompt:mod-persona}
+You are a senior energy analyst.
+\end{Prompt}
+
+\paragraph{Cadrage sectoriel} Demande un paragraphe introductif avant le CSV.
+\begin{Prompt}\label{prompt:mod-overview}
+Before the CSV table, provide a sector overview covering: Vietnam's
+electricity generation mix (installed capacity, generation shares by
+fuel), key policy documents and their thermal targets, fuel supply
+landscape (domestic coal, domestic gas, LNG import projects), and key
+institutional actors (state utilities, gas companies, BOT investors,
+provincial authorities).
+\end{Prompt}
+
+\paragraph{Narratifs par centrale} Demande un commentaire sourcé après le CSV.
+\begin{Prompt}\label{prompt:mod-narratives}
+After the CSV table, provide a sourced paragraph for each plant complex
+covering: development history and timeline, notable issues (delays,
+financing changes, ownership transfers, technology changes), and status
+confidence (HIGH = government decision or company report, MEDIUM =
+multiple news sources, LOW = older plans only, status uncertain).
+\end{Prompt}
+
+\paragraph{Bibliographie} Demande une liste annotée de sources.
+\begin{Prompt}\label{prompt:mod-bibliography}
+After completing the inventory, list every source you relied on as an
+annotated bibliography organized by category (government decisions,
+power development plans, utility reports, company filings, news). For
+each source: full citation, URL if known ("URL not verified" if
+unsure), and one sentence on what information was drawn from it.
+\end{Prompt}
+
+\paragraph{Tableaux statistiques} Demande des tableaux croisés récapitulatifs.
+\begin{Prompt}\label{prompt:mod-statistics}
+After the inventory, produce cross-tabulation summary tables:
+a) Capacity by fuel x status (total MWe per cell, with row and column
+   totals)
+b) Top 15 provinces by total thermal capacity, broken down by fuel
+c) Timeline of capacity additions by period and fuel type
+\end{Prompt}
+
+\paragraph{Sourçage} Demande des colonnes de citation par ligne et une liste
+de références.
+\begin{Prompt}\label{prompt:mod-sourcing}
+For each row, include Source_1 and Source_2 columns citing the primary
+source for that plant's data. After the table, list all cited sources
+with full citations. Do not fabricate URLs — write "URL not verified"
+if unsure of the exact address.
+\end{Prompt}
+
+\subsection{Plan de mesures}\label{sec:plan-mesures}
+
+Le design expérimental comporte deux bras symétriques et trois points d'ancrage.
+
+\paragraph{Points d'ancrage}
+
+\begin{description}
+\item[Census] Le Prompt~1 original (40~mots), point de référence bas.
+\item[Base] Le prompt de base (section~\ref{sec:prompt-base}), point de
+  référence intermédiaire.
+\item[Complet] Le prompt de base + les 6 modules, point de référence haut.
+\item[Frontier] Le prompt frontier existant (1\,200~mots), contrôle externe.
+\end{description}
+
+\paragraph{Bras composition} À partir du prompt de base, ajouter un seul module
+à la fois (6~variantes).
+
+\paragraph{Bras ablation} À partir du prompt complet, retirer un seul module
+à la fois (6~variantes).
+
+\medskip
+\noindent Soit 16~prompts au total~:
+
+\begin{center}
+\small
+\begin{tabular}{rllc}
+\toprule
+\textbf{\#} & \textbf{Prompt} & \textbf{Bras} & \textbf{Modules} \\
+\midrule
+ 0 & Census (Prompt~1 existant) & Ancrage  & -- \\
+ 1 & Base                       & Ancrage  & $\emptyset$ \\
+ 2 & Base + persona             & Composition & \{P\} \\
+ 3 & Base + cadrage             & Composition & \{O\} \\
+ 4 & Base + narratifs           & Composition & \{N\} \\
+ 5 & Base + bibliographie       & Composition & \{B\} \\
+ 6 & Base + statistiques        & Composition & \{T\} \\
+ 7 & Base + sourçage            & Composition & \{S\} \\
+ 8 & Complet                    & Ancrage  & \{P,O,N,B,T,S\} \\
+ 9 & Complet $-$ persona        & Ablation & \{O,N,B,T,S\} \\
+10 & Complet $-$ cadrage        & Ablation & \{P,N,B,T,S\} \\
+11 & Complet $-$ narratifs      & Ablation & \{P,O,B,T,S\} \\
+12 & Complet $-$ bibliographie  & Ablation & \{P,O,N,T,S\} \\
+13 & Complet $-$ statistiques   & Ablation & \{P,O,N,B,S\} \\
+14 & Complet $-$ sourçage       & Ablation & \{P,O,N,B,T\} \\
+15 & Frontier (existant)        & Contrôle & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Protocole}\label{sec:protocole-ablation}
+
+\paragraph{Phase de sélection} Les prompts~1 (base) et~8 (complet) sont
+exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 1~run
+chacun. On retient les $k$~modèles qui montrent une différence significative
+entre les deux conditions (test de permutation sur le F1). Ce sont les modèles
+\emph{sensibles au prompt}~: les seuls pour lesquels l'ablation peut révéler
+quelque chose.
+
+\paragraph{Phase de mesure} Les 16~prompts sont exécutés sur les $k$~modèles
+retenus, avec 5~répétitions chacun ($16 \times k \times 5$ runs). Température
+fixée à 0. Chaque run produit un CSV évalué contre l'inventaire de référence
+(163~centrales, matching par nom exact et approximatif).
+
+\paragraph{Analyse}
+\begin{itemize}
+\item \textbf{Effets principaux}~: pour chaque module $m$, comparer
+  F1(base) \emph{vs} F1(base+$m$) (composition) et F1(complet) \emph{vs}
+  F1(complet$-m$) (ablation). Les intervalles de confiance bootstrap à 95\,\%
+  sur le $\Delta$F1 déterminent la significativité.
+\item \textbf{Effets d'interaction}~: si un module aide en composition mais
+  nuit en ablation (ou inversement), il interagit avec les autres modules.
+  L'asymétrie composition/ablation quantifie cet effet.
+\item \textbf{Coût de la confiance}~: le module sourçage est non négociable
+  pour le pipeline de production (section~\ref{chap:conclusion}). Son
+  $\Delta$F1 mesure le prix, en points d'extraction, de la traçabilité.
+\end{itemize}
+
+\paragraph{Budget prévisionnel} Avec $k=5$ modèles~: $16 \times 5 \times 5
+= 400$~runs + 50~runs de sélection $= 450$~runs. Au coût moyen de
+0,02--0,05\,\$ par run (Opus)~: 10--25\,\$. Les modèles open-weight réduisent
+ce budget d'un facteur~10.
+
+\subsection{Lien avec la vérification multi-agents}\label{sec:lien-verification}
+
+Cette expérience mesure l'effet du prompt sur l'extraction en un seul tour. La
+vérification --- un agent indépendant contrôle la sortie d'un autre ---
+constitue une expérience séparée. La littérature sur la self-consistency
+et les protocoles de débat montre que la vérification par
+agents multiples et indépendants est plus efficace que l'auto-révision par le
+même modèle. Le module sourçage (colonnes Source\_1, Source\_2) est conçu pour
+alimenter cette phase~: chaque ligne du CSV porte ses propres références,
+permettant à un agent vérificateur de contrôler la provenance sans accéder au
+prompt original.
