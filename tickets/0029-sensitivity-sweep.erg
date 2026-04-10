@@ -9,128 +9,133 @@ Author: claude
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
 2026-04-09T16:00Z claude status executed by IDD phase 3
 2026-04-09T18:00Z claude note review fix: removed analyze_robustness.py (anticipates ticket 0035, out of scope); should become its own ticket
+2026-04-10T18:00Z claude status reimagined by IDD imagine (pass 2)
 
 --- body ---
 ## Context
 
-The original ticket proposed 24 new API runs ($5-10) varying temperature,
-prompt language, output format, and few-shot count on a single model. This
-is the wrong move two days before the conference. We already have 238
-measurements across 70 model variants and 8 methods -- the signal is in
-the data, not in 24 more calls.
+This ticket decomposes F1 variance into model, method, interaction, and
+residual components via two-way ANOVA. It answers the paper's central
+question — "method matters more than model" — with a quantitative effect
+size (eta-squared, omega-squared) rather than hand-waving over a leaderboard.
 
-The paper's core claim is "method matters more than model." The threat to
-that claim is not "what if we used French?" but "what fraction of our
-measured F1 differences is noise?" That question is answerable from
-existing data at zero cost, and it produces a stronger result than a
-half-finished parameter sweep.
+### What is already done (IDD pass 1 execution)
 
-This ticket becomes a **variance decomposition** on existing measurements:
-compute how much of the F1 variance comes from model choice, method choice,
-and residual noise. Pair with ticket 0035 (matching threshold sensitivity)
-to produce a single "measurement robustness" subsection.
+1. `src/aedist/variance_decomposition.py` — full two-way ANOVA with balanced
+   sub-design search, F-statistics, p-values, omega-squared, unstable pair
+   detection. 13 unit tests pass.
+2. `src/aedist/tabulate_variance.py` — LaTeX longtable generator with SS, df,
+   F, p, eta-squared, omega-squared columns. 11 unit tests pass.
+3. `report/inputs/generated/tab_variance.tex` — generated from current data.
+   Current results: eta_sq method=0.50, model=0.07, interaction=0.20,
+   residual=0.23. Method effect is dominant, supporting the core claim.
+4. Makefile targets `derived/variance_decomposition.json` and
+   `$(GEN)/tab_variance.tex` wired and functional.
+
+### What remains
+
+Two issues from the original ticket are unfinished:
+
+**A. Duplication confound (ticket 0048).** `measurements.jsonl` contains
+duplicate data: `_extracted` prompt_version entries duplicate RAG results
+for 5 core models. The variance decomposition currently runs on unfiltered
+data. This inflates n_records and may bias the balanced sub-design selection
+(the same F1 values appear under two method labels). The fix is a filter
+in the CLI's `main()` that excludes `prompt_version="_extracted"` records
+before calling `variance_decomposition()`. This is a local workaround
+pending the root fix in 0048.
+
+**B. Unstable pair flagging (Action 4).** `_find_unstable_pairs()` computes
+the pairs, and `variance_decomposition.json` emits them, but nothing
+consumes `unstable_pairs` in the reporting pipeline. The comparison table
+(`tabulate_comparaison.py`) does not yet mark <5pp/overlapping-CI
+differences. This was deferred — it is the remaining deliverable.
+
+### Five radicals considered
+
+1. **Minimal: just print eta-squared.** Run the existing code, copy the
+   numbers into the paper text. No table, no unstable flagging. Done in
+   5 minutes. Too informal for a journal submission — reviewers expect
+   an ANOVA table.
+
+2. **Current implementation: two-way fixed-effects ANOVA.** Balanced
+   sub-design, eta-squared + omega-squared, F-tests, LaTeX table. Already
+   built. Honest about limitations (fixed effects, balanced subset only).
+   Appropriate for a methods paper with ~50 cells.
+
+3. **Type-III SS with unbalanced design.** Drop the balanced sub-design
+   search, use Type-III sums of squares (or weighted least squares) to
+   handle the sparse cross. More inclusive (uses all data, not just the
+   balanced subset). Requires careful implementation — Type-III with
+   stdlib only is tricky. Marginal gain: current sub-design already
+   includes 5 models x 5 methods = 25 cells covering the core.
+
+4. **Mixed-effects model with random slopes.** Treat model as random
+   effect (we sampled from a population of LLMs). This is the "correct"
+   frequentist model for generalization claims. Requires `statsmodels` or
+   `lme4`-equivalent. Overkill: our 37 models are not a random sample —
+   they are the census.
+
+5. **Bayesian variance components.** Stan/PyMC posterior on variance
+   fractions. Gold standard for uncertainty on effect sizes. Completely
+   disproportionate to the paper's scope and timeline.
+
+### Hybrid decision
+
+**Stay with approach 2** (current implementation). It is already built,
+tested, and generating correct output. The only work left is:
+- Add the `_extracted` dedup filter (approach does not change, input does).
+- Wire unstable pairs into the comparison table.
+- Regenerate outputs after the filter.
+
+Approach 3 (Type-III) would be a worthwhile upgrade for the journal version,
+but only after 0048 is resolved and the measurement set is stable. Not now.
 
 ## Actions
 
-### 1. Add `scripts/variance_decomposition.py`
+### 1. Add `_extracted` dedup filter to variance decomposition CLI
 
-Load `measurements.jsonl`. Filter to runs with `status == "ok"` and
-non-null F1. Group by (model, method). For groups with 3+ runs:
-
-- Compute **within-group variance** (run-to-run noise for same
-  model x method).
-- Compute **between-group variance** decomposed into:
-  - Model effect (eta-squared for model, averaging over methods)
-  - Method effect (eta-squared for method, averaging over models)
-  - Interaction (model x method)
-  - Residual (within-group noise)
-
-Use `stats.bootstrap_ci` (from ticket 0042, already shipped) for
-confidence intervals on the variance components.
-
-Output: `derived/variance_decomposition.json` with:
-```json
-{
-  "n_records": 238,
-  "n_groups": 42,
-  "eta_sq_model": 0.45,
-  "eta_sq_method": 0.38,
-  "eta_sq_interaction": 0.12,
-  "eta_sq_residual": 0.05,
-  "unstable_pairs": [
-    {"model_a": "...", "model_b": "...", "method": "rag",
-     "f1_diff": 0.02, "ci_overlap": true}
-  ]
-}
+In `variance_decomposition.py` `main()`, after `records = load()`, add:
+```python
+records = [r for r in records
+           if r.method_params.prompt_version != "_extracted"]
 ```
+This removes the duplicate RAG measurements pending 0048's root fix.
+Log the count of excluded records for transparency.
 
-### 2. Add `scripts/analyze_robustness.py`
+### 2. Flag unstable rankings in comparison table
 
-Combine variance decomposition output with matching sensitivity output
-(from ticket 0035) into a single robustness summary:
+In `tabulate_comparaison.py`, load `derived/variance_decomposition.json`,
+read the `unstable_pairs` list. For any model pair in the table whose
+(model_a, model_b) appears in unstable_pairs, append a superscript
+dagger ($\dagger$) to the F1 difference cell and add a table footnote:
+"$\dagger$ Difference < 5 pp with overlapping bootstrap 95% CIs."
 
-- If eta_sq_residual < 0.10: "Run-to-run variance explains <10% of
-  F1 differences -- rankings are stable across repetitions."
-- If any model pair has overlapping CIs AND flips rank under threshold
-  change (from 0035): flag as "measurement-dependent ranking."
-- Emit a LaTeX-ready one-paragraph summary for the methodology section.
+### 3. Regenerate outputs
 
-### 3. Add variance decomposition table to report
-
-`tabulate_variance.py` generates a LaTeX table:
-| Source        | SS   | df  | eta^2  |
-|---------------|------|-----|--------|
-| Model         |  ... | ... | 0.45   |
-| Method        |  ... | ... | 0.38   |
-| Model x Method|  ... | ... | 0.12   |
-| Residual      |  ... | ... | 0.05   |
-
-This goes in the evaluation methodology section, alongside the matching
-sensitivity plot from 0035.
-
-### 4. Flag unstable rankings
-
-For every pair of models where mean F1 differs by <5 pp and bootstrap CIs
-overlap: emit a note in the comparison table (from `tabulate_comparaison.py`)
-marking the difference as "not robust." This is the honest version of
-the original ticket's question "how much do secondary variables matter?"
+Run `make derived/variance_decomposition.json` and
+`make report/inputs/generated/tab_variance.tex` to get clean numbers
+without the `_extracted` duplication.
 
 ## Test
 
+Existing tests (13 + 11 = 24) cover the core ANOVA and table generation.
+New tests needed:
+
 ```python
-def test_variance_decomposition_perfect_separation():
-    """When groups are perfectly separated, eta_sq_between ~ 1.0."""
-    records = [
-        make_record(model="A", method="rag", f1=0.90),
-        make_record(model="A", method="rag", f1=0.91),
-        make_record(model="B", method="rag", f1=0.50),
-        make_record(model="B", method="rag", f1=0.51),
-    ]
-    result = variance_decomposition(records)
-    assert result["eta_sq_residual"] < 0.05
+def test_extracted_records_excluded():
+    """CLI filters out prompt_version='_extracted' before decomposition."""
+    # Integration test: write a measurements.jsonl with _extracted records,
+    # run main(), verify output n_records excludes them.
 
-def test_variance_decomposition_pure_noise():
-    """When all groups have same mean, eta_sq_between ~ 0.0."""
-    records = [
-        make_record(model="A", method="rag", f1=v)
-        for v in [0.70, 0.90, 0.80]
-    ] + [
-        make_record(model="B", method="rag", f1=v)
-        for v in [0.72, 0.88, 0.82]
-    ]
-    result = variance_decomposition(records)
-    assert result["eta_sq_model"] < 0.10
-
-def test_unstable_pair_detection():
-    """Pairs with overlapping CIs flagged as unstable."""
-    records = make_close_pair_records(f1_a=0.92, f1_b=0.91, spread=0.03)
-    result = variance_decomposition(records)
-    assert len(result["unstable_pairs"]) > 0
+def test_unstable_pair_footnote_in_comparison():
+    """Comparison table marks unstable pairs with dagger."""
+    # Unit test: generate comparison table with known unstable_pairs JSON,
+    # verify $\dagger$ appears in the correct cell.
 ```
 
 ## Exit criteria
-- Variance decomposition computed on measurements.jsonl (zero new API calls)
-- eta-squared table generated for report
-- Unstable model pairs flagged in comparison table
-- Joint robustness summary paragraph generated (pairs with 0035 output)
+- Variance decomposition excludes `_extracted` duplicates
+- Regenerated table reflects clean data
+- Comparison table flags unstable model pairs with footnote
 - `make check-fast` passes

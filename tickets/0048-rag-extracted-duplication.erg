@@ -6,80 +6,81 @@ Author: claude
 
 --- log ---
 2026-04-10T11:00Z claude created discovered during ticket 0031 investigation
+2026-04-10T18:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-While building the method convergence plot (ticket 0031), we found that
-measurements.jsonl contains duplicate data for the 5 core models tested
-under RAG:
+`measurements.jsonl` contains 24 phantom records with `prompt_version="_extracted"`
+that duplicate the 24 authoritative `prompt_version="rag"` records (8 models x 3 runs,
+though currently only 5 core models have data). Same TP/FP/FN values -- same data
+counted twice under different labels.
 
-- `method="single", prompt_version="_extracted"` entries come from
-  `experiments/derived/rag_consistency/_extracted/*.csv`
-- `method="rag"` entries come from `experiments/outputs/rag/*.csv`
-- For all 5 core models (deepseek-v3.2, gemini-2.5-flash-lite, gpt-5.4,
-  mistral-large-2512, mistral-small-2603), the TP/FP values are **identical**
-  between the two sets.
+**Root cause** (confirmed by code trace):
+`self_consistency.py:194` extracts CSVs from `outputs/rag/*.json` into
+`derived/rag_consistency/_extracted/`. The Makefile's generic assembly pipeline
+(`experiments/Makefile:173,178`) then discovers these CSVs via
+`find outputs derived -name '*.record.json'`, evaluates them, and assembles them
+into `measurements.jsonl` alongside the authoritative RAG records that
+`self_consistency.py:write_measurements()` already wrote.
 
-This means the same extraction results are counted twice in measurements:
-once as single-shot and once as RAG. The `_extracted` CSVs appear to be
-re-extractions from RAG experiment JSON outputs, evaluated against reference
-as if they were single-shot runs.
+The `_extracted/` CSVs are intermediate artifacts of the self-consistency pipeline,
+not independent measurements. They should never enter `measurements.jsonl`.
 
-Ticket 0031 works around this by excluding `prompt_version="_extracted"`
-from the convergence plot, but the root cause is in the measurement
-assembly pipeline.
-
-## Evidence
-
-```
-gpt-5.4:
-  single/_extracted:  TP=[102, 102, 144]  files: derived/rag_consistency/_extracted/gpt-5.4-run*.csv
-  rag:                TP=[102, 102, 144]  files: outputs/rag/gpt-5.4-run*.csv
-
-deepseek-v3.2:
-  single/_extracted:  TP=[33, 70, 85]
-  rag:                TP=[33, 70, 85]
-```
-
-All 5 core models show exact match. This is not coincidence — the CSVs
-are the same data filed under two different methods.
-
-## Questions to answer
-
-1. Are the `_extracted` CSVs literally copies of the RAG CSVs, or were
-   they independently re-extracted from the RAG JSON outputs?
-2. If independently extracted, why are results identical? (Deterministic
-   extraction from same JSON?)
-3. Should `_extracted` entries exist in measurements.jsonl at all? They
-   seem to be an intermediate artifact from the rag_consistency experiment,
-   not a distinct measurement.
-4. Are there other prompt_version values that create similar duplication?
+Ticket 0031 added a workaround (`_EXCLUDE_PROMPT_VERSIONS = ("_extracted",)` in
+`src/aedist/plot_method_convergence.py:31`) that masks the symptom for one consumer.
+That workaround should be removed once the root cause is fixed.
 
 ## Actions
 
-1. Diff the actual CSV files: `experiments/derived/rag_consistency/_extracted/gpt-5.4-run1.csv`
-   vs `experiments/outputs/rag/gpt-5.4-run1.csv` — are they byte-identical?
-2. Trace the assembly pipeline (`experiments/Makefile`, `aedist.evaluate`)
-   to understand how `_extracted` entries get into measurements.jsonl.
-3. Decide: either exclude `_extracted` from assembly, or deduplicate at
-   assembly time, or remove the derived files.
-4. Verify fix doesn't break other consumers of measurements.jsonl.
+1. **Exclude `_extracted` from Makefile assembly** --
+   `experiments/Makefile:173`: add `! -path '*/_extracted/*'` to both `find`
+   commands (lines 173 and 178) so `_extracted/*.record.json` files are never
+   assembled into `measurements.jsonl`.
+
+2. **Delete stale `.record.json` files** --
+   Remove `experiments/derived/rag_consistency/_extracted/*.record.json` from the
+   repo. The CSVs stay (needed by `self_consistency.py`), but their record files
+   are build artifacts that should not be committed.
+
+3. **Rebuild `measurements.jsonl`** --
+   `make -C experiments rebuild-measurements` to regenerate without the 24
+   phantom records. Verify count drops from ~250 to ~226.
+
+4. **Remove the workaround in `plot_method_convergence.py`** --
+   Delete `_EXCLUDE_PROMPT_VERSIONS` and the filter that uses it
+   (`src/aedist/plot_method_convergence.py:31` and its usage). The root cause
+   is fixed; the consumer-side filter is dead code.
+
+5. **Verify no downstream breakage** --
+   Run `make check` (863 tests). Specifically verify:
+   - `test_plot_method_convergence.py` -- no crash or missing data
+   - `test_tabulate_self_consistency.py` -- self-consistency tables unchanged
+   - `test_self_consistency.py` -- RAG records still present
+   - `test_measurements.py` -- round-trip and equivalence still pass
 
 ## Test
 
 ```python
-def test_no_duplicate_measurements():
-    """Each (model, method, run) tuple appears at most once."""
+def test_no_extracted_in_measurements():
+    """The _extracted prompt_version must never appear in measurements.jsonl.
+
+    These CSVs are intermediate artifacts of self_consistency.py, not
+    independent measurements. Their presence indicates the Makefile assembly
+    is picking up derived/rag_consistency/_extracted/*.record.json files.
+    """
     from aedist.measurements import load
-    seen = set()
+
     for r in load():
-        key = (r.method_params.model, r.method.value, r.result_file)
-        assert key not in seen, f"Duplicate: {key}"
-        seen.add(key)
+        assert r.method_params.prompt_version != "_extracted", (
+            f"Found _extracted record in measurements.jsonl: "
+            f"{r.method_params.model} {r.result_file}"
+        )
 ```
 
 ## Exit criteria
-- Root cause identified and documented
-- Duplication removed from measurements.jsonl assembly
-- No downstream breakage (make check passes)
+- `_extracted/*.record.json` excluded from assembly (Makefile fix)
+- `measurements.jsonl` rebuilt without 24 phantom records
+- `_EXCLUDE_PROMPT_VERSIONS` workaround removed from `plot_method_convergence.py`
+- `test_no_extracted_in_measurements` passes
+- `make check` passes (863+ tests, no regressions)

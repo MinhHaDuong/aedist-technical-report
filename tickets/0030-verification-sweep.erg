@@ -1,54 +1,143 @@
 %erg v1
-Title: Verification proof-of-concept: tool + unverified tradeoff table
-Status: closed
+Title: Run verification regimes sweep
+Status: open
 Created: 2026-04-07
 Author: claude
 
 --- log ---
 2026-04-07T12:10Z claude created imported from gh#12
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
-2026-04-10T08:04Z claude claimed
-2026-04-10T08:04Z claude status doing
-2026-04-10T12:00Z claude note rescoped to PR #218 deliverables; LLM/web modes split to 0048
-2026-04-10T13:30Z claude status closed — PR #218, all exit criteria met, 868 tests pass
+2026-04-10T18:00Z claude status reimagined by IDD imagine (pass 2)
 
 --- body ---
 ## Context
 
-The original ticket called for a 45-run factorial. Rescoped to a
-proof-of-concept: tool + unverified modes on the best extraction
-(DeepSeek V3.2 decomposed, F1=98.8%, 167 plants).
+This is post-conference Provenance milestone work. The conference
+(Econom'IA 2026, April 11) slides already frame verification as future
+work with a coherent narrative: "Impressive and unverifiable" → "Why not
+just verify?" → "Build the pipeline." That framing is complete. Inserting
+half-baked verification numbers overnight would weaken, not strengthen,
+the talk.
 
-During implementation, fixed verify_tool to use the LP reconciler
-(was using a naive threshold-70 fuzzy matcher that produced 12 false
-matches). Also fixed reconcile.py _extract_entries misclassifying
-"Mismatched" LP status as EXACT_CAPACITY_DIFF.
+The real motivation is the journal paper. MASTERPLAN defines Level 3
+(output provenance) as the gate between Pipeline and Provenance
+milestones. This ticket answers the core Level 3 question: "if you only
+trust plants backed by primary-source evidence, what coverage do you
+lose — and does the answer change across verification modes?"
 
-LLM modes (self, cross) and web mode deferred to ticket 0048 —
-OpenRouter too slow for 167-plant JSON verification prompts.
+Three proto-verification runs already exist (tool + unverified on Opus
+multiturn): tool-mode filtering drops from 169 plants (F1=98.2%, 6
+hallucinations) to 53 plants (F1=49.1%, 0 hallucinations). A precision-
+coverage trade-off curve is hiding in that data.
 
-## Deliverables (PR #218)
+Ticket 0025 (sourced extraction) is already executing and will provide
+the paired comparison: "cite upfront" (zero marginal cost) vs "verify
+after" (LLM + web calls). Sequencing matters: 0025 output feeds this
+ticket's analysis.
 
-1. `tabulate_verification.py` — sweeps evidence_score thresholds 1-4,
-   evaluates each filtered subset via LP reconciler, outputs CSV + LaTeX
-2. `derived/verification/tradeoff.csv` — precision/coverage/F1 per threshold
-3. `report/inputs/generated/tab_verification.tex` — LaTeX table
-4. Report Perspectives paragraph: empirical cost-of-trust result
-5. Slides: "Cost of trust" frame in Verification section
-6. Makefile targets for reproducible generation
-7. `verify_tool` rewritten to use LP reconciler
+## Staged approach
 
-## Key result
+Four stages, each validating the next. No stage depends on conference
+timing.
 
-At threshold >= 3 (require one primary source):
-- 163 plants retained (97.6%), 4 hallucinations rejected
-- Precision = Coverage = F1 = 100%
+### Stage A: Methods section and preregistration (zero cost)
+
+Write the verification methodology for the journal paper before running
+experiments. Define:
+- The 5 verification modes (unverified, tool, self, cross, web)
+- The evidence_score rubric (0-4 scale)
+- The precision-coverage analysis: at each threshold, filter to plants
+  with score >= threshold, compute precision, coverage, F1
+- Preregistered hypotheses:
+  1. Tool mode achieves highest precision (reference = ground truth)
+  2. Web mode retains more coverage than self-verification at threshold
+     >= 3 (web finds sources the model forgot)
+  3. Cross-verification (different model checks) outperforms self-
+     verification on hallucination detection
+
+Deliverable: LaTeX section draft for report + experiment spec in
+`experiments.toml`.
+
+### Stage B: Dry run on deterministic modes (zero API cost)
+
+Run only `unverified` + `tool` modes on DeepSeek V3.2 RAG (best config,
+F1=98.8%). These require no LLM calls and no Tavily. Produces a 2-point
+precision-coverage comparison: baseline vs reference-checked.
+
+Purpose: validate the analysis pipeline code before spending on API
+calls. Confirm the tradeoff table format works.
+
+### Stage C: Full 1-config proof-of-concept (~$0.50)
+
+Run all 5 modes on DeepSeek V3.2 RAG. Produces the complete trade-off
+curve. Combined with 0025 sourced extraction data, enables the paired
+"upfront vs post-hoc" comparison — a genuinely novel result.
+
+Repeat=1 for deterministic modes, repeat=3 for self/cross (stochastic).
+~11 conditions total.
+
+### Stage D: Full factorial for journal paper (~$15-25)
+
+3 configs x 5 modes x 3 repeats = 45 conditions. Confidence intervals.
+Publishable statistical power. This is the experiment the journal paper
+reports. No time pressure — schedule after conference feedback.
+
+## Actions
+
+1. **Draft methods section** — write `report/inputs/verification_methods.tex`
+   defining modes, rubric, analysis plan. Include preregistered hypotheses.
+
+2. **Update experiment spec** — add `[sweeps.verification_poc]` to
+   `experiments.toml` for Stage B (1 config, 2 deterministic modes).
+   Keep `[sweeps.verification_full]` commented for Stage D.
+
+3. **Run Stage B** — `unverified` + `tool` on DeepSeek V3.2 RAG.
+   Produce `derived/verification/tradeoff.csv`.
+
+4. **Run Stage C** — all 5 modes on same config. Extend tradeoff table.
+   Pair with 0025 evidence scores when available.
+
+5. **Write journal paper section** — report the precision-coverage
+   trade-off. Honest about limitation: 1 config is a proof of concept.
+   Stage D provides the definitive result.
+
+6. **Run Stage D** — full factorial. Update journal section with
+   confidence intervals and multi-config results.
+
+## Test
+
+```python
+def test_tradeoff_table_covers_all_modes():
+    """tradeoff.csv has rows for each mode x threshold combination."""
+    import csv
+    with open("derived/verification/tradeoff.csv") as f:
+        rows = list(csv.DictReader(f))
+    modes = {r["mode"] for r in rows}
+    assert modes == {"unverified", "tool", "self", "cross", "web"}
+
+def test_filtered_precision_monotonic():
+    """Higher evidence threshold never decreases precision."""
+    import csv
+    with open("derived/verification/tradeoff.csv") as f:
+        rows = list(csv.DictReader(f))
+    tool_rows = sorted(
+        [r for r in rows if r["mode"] == "tool"],
+        key=lambda r: int(r["threshold"]),
+    )
+    for a, b in zip(tool_rows, tool_rows[1:]):
+        assert float(b["precision"]) >= float(a["precision"])
+
+def test_methods_section_has_hypotheses():
+    """Methods tex file states preregistered hypotheses."""
+    with open("report/inputs/verification_methods.tex") as f:
+        text = f.read()
+    assert "hypothesis" in text.lower() or "hypothes" in text.lower()
+```
 
 ## Exit criteria
-- [x] Tool + unverified modes run, results in measurements.jsonl
-- [x] `derived/verification/tradeoff.csv` with precision-coverage per threshold
-- [x] One slide showing the cost-of-trust trade-off
-- [x] One paragraph in report Perspectives
-- [x] Full factorial commented in experiments.toml, split to ticket 0048
-- [x] verify_tool uses LP reconciler (not naive fuzzy)
-- [x] `make check-fast` passes (868 tests, 1 xfail)
+- Methods section drafted with preregistered hypotheses
+- Stage B complete: unverified + tool modes, tradeoff.csv exists
+- Stage C complete: all 5 modes on 1 config, paired with 0025 if available
+- Stage D complete: full 3-config factorial with CIs
+- Journal paper section written reporting the precision-coverage trade-off
+- `make check-fast` passes at each stage
