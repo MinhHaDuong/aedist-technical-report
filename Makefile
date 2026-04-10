@@ -81,6 +81,15 @@ CONVERTER_TEST := experiments/data/converter_test
 CONVERTER_META := $(CONVERTER_TEST)/benchmark_meta.yaml
 CONVERTER_DOCS := $(wildcard $(CONVERTER_TEST)/*/Decision-1509.md)
 
+derived/verification/tradeoff.csv: $(wildcard derived/verification/*-run*.csv)
+	uv run python -m aedist.tabulate_verification \
+	    --input derived/verification --output $@
+
+$(GEN)/tab_verification.tex: derived/verification/tradeoff.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_verification \
+	    --input derived/verification --latex $@
+
 $(GEN)/tab_converter_benchmark.tex: $(CONVERTER_META) $(CONVERTER_DOCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.compare_converters \
@@ -113,7 +122,7 @@ $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
     $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex \
-    $(GEN)/tab_variance.tex
+    $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -128,7 +137,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf
 select: experiments/models_selected.yaml
 census:
