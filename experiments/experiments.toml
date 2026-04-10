@@ -122,11 +122,56 @@ model_ids = [
     "deepseek/deepseek-v3.2",
 ]
 
-# Ablation experiment — model set TBD after selection phase
-# Populated with prompt-sensitive models from ablation_select runs
+# ── Ablation model sets ──────────────────────────────────────────
+# Two tiers: ablation_dev (cheap, use now) and ablation_journal
+# (expensive, gated for final production runs).
+# Switch model_set in sweep configs from ablation_dev → ablation_journal
+# when pipeline is validated and human approves the cost.
+
+# Dev tier — cheap reasoning models for pipeline validation
+[sets.ablation_dev]
+model_ids = [
+    "deepseek/deepseek-r1-0528",
+    "baidu/ernie-4.5-21b-a3b-thinking",
+    "qwen/qwen3-max-thinking",
+    "moonshotai/kimi-k2-thinking",
+]
+
+# Journal tier — adds expensive frontier (gated by human approval)
+[sets.ablation_journal]
+model_ids = [
+    "deepseek/deepseek-r1-0528",
+    "baidu/ernie-4.5-21b-a3b-thinking",
+    "qwen/qwen3-max-thinking",
+    "moonshotai/kimi-k2-thinking",
+    "openai/o3",
+    "anthropic/claude-opus-4.6",
+    "openai/gpt-5.4",
+    "anthropic/claude-sonnet-4.6",
+]
+
+# RAG regime — top performers from existing RAG data
+[sets.ablation_rag]
+model_ids = [
+    "deepseek/deepseek-v3.2",
+    "openai/gpt-5.4",
+    "mistralai/mistral-large-2512",
+    "google/gemini-3-flash-preview",
+    "anthropic/claude-opus-4.6",
+]
+
+# Core — models testable in all 3 regimes (for clean 3-way comparison)
+# Populated after Phase 1 identifies which models work in all regimes
+[sets.ablation_core]
+model_ids = []
+
+# Legacy alias — kept for Phase 2 single-module sweeps until migration
 [sets.ablation]
 model_ids = [
-    "anthropic/claude-opus-4.6",
+    "deepseek/deepseek-r1-0528",
+    "baidu/ernie-4.5-21b-a3b-thinking",
+    "qwen/qwen3-max-thinking",
+    "moonshotai/kimi-k2-thinking",
 ]
 
 # ---------------------------------------------------------------------------
@@ -302,25 +347,68 @@ output = "qualitative/skill_plans"
 #
 # All modules: persona, overview, sourcing, narratives, bibliography, statistics
 
-# Phase 1 — Selection: base vs composite on all census models
+# Phase 1 — Selection: base vs composite across 3 regimes
+# Uses ablation_dev (cheap reasoning models) for pipeline validation.
+# Upgrade to ablation_journal for final production runs.
 
-[sweeps.ablation_p1_base]
+# Parametric regime (no docs, no search)
+[sweeps.ablation_p1_parametric_base]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "census_cloud"
+model_set = "ablation_dev"
 repeat = 2
-budget_usd = 20
-output = "outputs/ablation/p1_base"
+budget_usd = 10
+output = "outputs/ablation/parametric/p1_base"
 
-[sweeps.ablation_p1_composite]
+[sweeps.ablation_p1_parametric_composite]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "census_cloud"
+model_set = "ablation_dev"
 repeat = 2
-budget_usd = 20
-output = "outputs/ablation/p1_composite"
+budget_usd = 10
+output = "outputs/ablation/parametric/p1_composite"
+
+# RAG regime (corpus injected)
+[sweeps.ablation_p1_rag_base]
+mode = "rag"
+prompt_modules = []
+models = "models.yaml"
+model_set = "ablation_dev"
+repeat = 2
+budget_usd = 10
+output = "outputs/ablation/rag/p1_base"
+
+[sweeps.ablation_p1_rag_composite]
+mode = "rag"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation_dev"
+repeat = 2
+budget_usd = 10
+output = "outputs/ablation/rag/p1_composite"
+
+# Web search regime (search plugin)
+[sweeps.ablation_p1_websearch_base]
+mode = "single"
+web_search = true
+prompt_modules = []
+models = "models.yaml"
+model_set = "ablation_dev"
+repeat = 2
+budget_usd = 10
+output = "outputs/ablation/websearch/p1_base"
+
+[sweeps.ablation_p1_websearch_composite]
+mode = "single"
+web_search = true
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation_dev"
+repeat = 2
+budget_usd = 10
+output = "outputs/ablation/websearch/p1_composite"
 
 # Phase 2 — Composition arm: base + one module
 
