@@ -100,6 +100,8 @@ def generate(
                 corpus=parent_spec.corpus,
                 followups=parent_spec.followups,
                 strategy=parent_spec.strategy,
+                prompt_modules=parent_spec.prompt_modules,
+                modules_dir=parent_spec.modules_dir,
                 repeat=1,
                 run_number=run,
                 budget_usd=parent_spec.budget_usd,

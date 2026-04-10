@@ -27,6 +27,7 @@ import openai
 
 from .harness import (
     BudgetTracker,
+    assemble_prompt,
     compute_cost,
     load_experiments,
     load_models,
@@ -45,7 +46,19 @@ log = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser(description="Query LLMs via OpenRouter or compatible endpoint")
-    parser.add_argument("--prompt", required=True, help="Path to prompt text file")
+    prompt_group = parser.add_mutually_exclusive_group(required=True)
+    prompt_group.add_argument("--prompt", help="Path to prompt text file")
+    prompt_group.add_argument(
+        "--prompt-modules",
+        nargs="*",
+        default=None,
+        help="Module names for assemble_prompt() (e.g. persona overview)",
+    )
+    parser.add_argument(
+        "--modules-dir",
+        default="experiments/prompts/modules",
+        help="Directory containing prompt module text files",
+    )
     parser.add_argument("--models", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (full ID from YAML)")
@@ -60,7 +73,10 @@ def main():
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    prompt = Path(args.prompt).read_text().strip()
+    if args.prompt_modules is not None:
+        prompt = assemble_prompt(Path(args.modules_dir), args.prompt_modules)
+    else:
+        prompt = Path(args.prompt).read_text().strip()
     models = load_models(args.models)
     output_dir = Path(args.output)
 

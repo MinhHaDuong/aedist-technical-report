@@ -141,6 +141,54 @@ class TestFromSweepYaml:
         assert j.followups == "prompts/followups.txt"
 
 
+class TestJobSpecPromptModules:
+    def test_prompt_modules_field(self):
+        j = _make_jobspec(prompt_modules=["persona", "overview"])
+        assert j.prompt_modules == ["persona", "overview"]
+
+    def test_prompt_modules_default_none(self):
+        j = _make_jobspec()
+        assert j.prompt_modules is None
+
+    def test_prompt_modules_empty_list(self):
+        j = _make_jobspec(prompt_modules=[])
+        assert j.prompt_modules == []
+
+    def test_prompt_modules_roundtrip_yaml(self):
+        original = _make_jobspec(prompt_modules=["persona", "overview", "sourcing"])
+        restored = JobSpec.from_yaml(original.to_yaml())
+        assert restored.prompt_modules == ["persona", "overview", "sourcing"]
+
+    def test_prompt_modules_none_excluded_from_yaml(self):
+        j = _make_jobspec()
+        yaml_str = j.to_yaml()
+        assert "prompt_modules" not in yaml_str
+
+    def test_prompt_modules_from_toml_section(self):
+        section = {
+            "mode": "single",
+            "prompt_modules": ["persona", "overview"],
+            "models": "models.yaml",
+            "repeat": 2,
+            "budget_usd": 5,
+            "output": "outputs/ablation/test",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.prompt_modules == ["persona", "overview"]
+
+    def test_prompt_modules_empty_from_toml_section(self):
+        section = {
+            "mode": "single",
+            "prompt_modules": [],
+            "models": "models.yaml",
+            "repeat": 2,
+            "budget_usd": 5,
+            "output": "outputs/ablation/test",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.prompt_modules == []
+
+
 class TestLeaseInfo:
     def test_construction(self):
         now = datetime.now(UTC)

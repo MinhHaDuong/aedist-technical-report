@@ -16,6 +16,7 @@ from pathlib import Path
 
 from .harness import (
     BudgetTracker,
+    assemble_prompt,
     compute_cost,
     load_models,
     make_client,
@@ -112,7 +113,11 @@ class Worker:
         for modes that require external orchestration (verification).
         """
         client = self.make_client()
-        prompt = Path(job.prompt).read_text().strip()
+        if job.prompt_modules is not None:
+            modules_dir = Path(job.modules_dir) if job.modules_dir else Path("experiments/prompts/modules")
+            prompt = assemble_prompt(modules_dir, job.prompt_modules)
+        else:
+            prompt = Path(job.prompt).read_text().strip()
         models = load_models(job.models_file)
         output_dir = Path(job.output_dir)
 

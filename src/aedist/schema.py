@@ -17,7 +17,7 @@ from typing import Any
 from uuid import uuid4
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class FuelType(StrEnum):
@@ -234,7 +234,7 @@ class JobSpec(BaseModel):
     job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
     priority: int = Field(default=0, description="Higher value = higher priority.")
     mode: Method
-    prompt: str = Field(..., description="Path to prompt file.")
+    prompt: str = Field(default="", description="Path to prompt file (unused when prompt_modules is set).")
     models_file: str = Field(..., description="Path to models YAML file.")
     model_filter: str | None = Field(
         default=None, description="Glob or regex to select a subset of models."
@@ -248,6 +248,14 @@ class JobSpec(BaseModel):
     strategy: str | None = Field(
         default=None, description="RAG retrieval strategy (e.g. wholesale)."
     )
+    prompt_modules: list[str] | None = Field(
+        default=None,
+        description="Module names for assemble_prompt(). Mutually exclusive with prompt file.",
+    )
+    modules_dir: str | None = Field(
+        default=None,
+        description="Directory containing prompt module text files (default: experiments/prompts/modules/).",
+    )
     repeat: int = Field(default=3, ge=1)
     run_number: int = Field(default=1, ge=1, description="Which run this job represents (1-indexed).")
     budget_usd: float = Field(default=10.0, ge=0)
@@ -257,6 +265,13 @@ class JobSpec(BaseModel):
         default=None, ge=0, description="Estimated wall-clock seconds."
     )
     worker_pool: WorkerPool = WorkerPool.OPENROUTER
+
+    @model_validator(mode="after")
+    def _require_prompt_or_modules(self) -> JobSpec:
+        """Ensure at least one of prompt (non-empty) or prompt_modules is set."""
+        if not self.prompt and self.prompt_modules is None:
+            raise ValueError("Either 'prompt' or 'prompt_modules' must be provided.")
+        return self
 
     # -- YAML serialization ---------------------------------------------------
 

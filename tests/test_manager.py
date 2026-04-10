@@ -100,6 +100,60 @@ def test_dirs_created(tmp_path: Path):
         assert (jobs_root / subdir).is_dir()
 
 
+def test_prompt_modules_propagated_to_jobs(tmp_path: Path):
+    """Sweep with prompt_modules propagates to each generated job."""
+    models = [{"id": "provider/model-a", "name": "Model A"}]
+    models_path = tmp_path / "models.yaml"
+    models_path.write_text(yaml.dump(models))
+
+    sweep_config = {
+        "mode": "single",
+        "prompt_modules": ["persona", "overview"],
+        "models": str(models_path),
+        "repeat": 1,
+        "budget_usd": 5,
+        "output": "outputs/ablation/test",
+    }
+    jobs_root = tmp_path / "jobs"
+    generated, _ = generate(
+        jobs_root=jobs_root,
+        sweep_config=sweep_config,
+        sweep_name="ablation_test",
+    )
+    assert generated == 1
+
+    job_file = next((jobs_root / "pending").iterdir())
+    spec = JobSpec.from_yaml(job_file.read_text())
+    assert spec.prompt_modules == ["persona", "overview"]
+
+
+def test_prompt_modules_empty_list_propagated(tmp_path: Path):
+    """Sweep with empty prompt_modules list propagates correctly."""
+    models = [{"id": "provider/model-a", "name": "Model A"}]
+    models_path = tmp_path / "models.yaml"
+    models_path.write_text(yaml.dump(models))
+
+    sweep_config = {
+        "mode": "single",
+        "prompt_modules": [],
+        "models": str(models_path),
+        "repeat": 1,
+        "budget_usd": 5,
+        "output": "outputs/ablation/test",
+    }
+    jobs_root = tmp_path / "jobs"
+    generated, _ = generate(
+        jobs_root=jobs_root,
+        sweep_config=sweep_config,
+        sweep_name="ablation_base",
+    )
+    assert generated == 1
+
+    job_file = next((jobs_root / "pending").iterdir())
+    spec = JobSpec.from_yaml(job_file.read_text())
+    assert spec.prompt_modules == []
+
+
 def test_idempotency_across_dirs(tmp_path: Path):
     """Jobs already in running/done/failed are skipped."""
     sweep_path = _write_sweep(tmp_path, repeat=1)
