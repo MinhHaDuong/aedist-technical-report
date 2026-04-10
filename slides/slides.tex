@@ -481,6 +481,19 @@ With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) 
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Local model scaling: RAG lifts all sizes}
+\textbf{Qwen 3.5 family} (2B--35B) tested single-shot vs RAG wholesale, 3 runs each
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{inputs/generated/fig_scaling_curve.pdf}
+\end{center}
+
+\vspace{-0.8em}
+{\footnotesize RAG wholesale shifts the entire scaling curve upward.
+Local 35B with RAG approaches cloud API performance at \$0 marginal cost.}
+\end{frame}
+
 % ===================================================================
 \section{Conversation and aggregation}
 
