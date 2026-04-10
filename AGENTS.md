@@ -2,10 +2,6 @@
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
-## Dependencies
-
-**[git-erg](https://github.com/MinhHaDuong/git-erg)** — local ticket system. Installed into the project (`.claude/skills/ticket-*`, `.claude/rules/tickets.md`, `tickets/`). Travels with the repo so it works in isolated and web environments.
-
 ## Configuration
 
 | Location | Purpose |
@@ -76,7 +72,7 @@ The agent must always know and declare its current phase.
 
 ## Skills (slash commands)
 
-### git-erg (travels with repo — always available)
+### [git-erg](https://github.com/MinhHaDuong/git-erg) (travels with repo — always available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
