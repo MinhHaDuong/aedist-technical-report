@@ -10,7 +10,8 @@ from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem
 def test_load_config(experiments):
     """Config loads from TOML with expected fields."""
     config = experiments["sweeps"]["verification"]
-    assert len(config["base_configs"]) == 3
+    # Proof-of-concept: single best config (DeepSeek V3.2 decomposed)
+    assert len(config["base_configs"]) == 1
     assert "unverified" in config["verification_modes"]
     assert "web" in config["verification_modes"]
     assert config["repeat"] == 3
@@ -36,7 +37,7 @@ def test_deterministic_modes():
 
 
 def test_condition_count(experiments):
-    """3 configs x (3 deterministic x 1 + 2 stochastic x 3) = 27 conditions."""
+    """1 config x (3 deterministic x 1 + 2 stochastic x 3) = 9 conditions."""
     config = experiments["sweeps"]["verification"]
     repeat = config.get("repeat", 3)
 
@@ -46,7 +47,7 @@ def test_condition_count(experiments):
             runs = 1 if mode in _DETERMINISTIC_MODES else repeat
             count += runs
 
-    assert count == 27
+    assert count == 9
 
 
 def test_unverified_baseline(tmp_path):
@@ -337,11 +338,19 @@ def test_run_condition_unverified_mode(tmp_path):
     output_dir.mkdir()
 
     rows = [
-        {"name": "Pha Lai", "fuel": "coal", "capacity_mwe": "600",
-         "source_ref": "Decision 1509/QD-BCT Annex II"},
+        {
+            "name": "Pha Lai",
+            "fuel": "coal",
+            "capacity_mwe": "600",
+            "source_ref": "Decision 1509/QD-BCT Annex II",
+        },
         {"name": "Ca Mau I", "fuel": "gas", "capacity_mwe": "771", "source_ref": ""},
-        {"name": "Vinh Tan 2", "fuel": "coal", "capacity_mwe": "1244",
-         "source_ref": "EVN Annual Report 2020"},
+        {
+            "name": "Vinh Tan 2",
+            "fuel": "coal",
+            "capacity_mwe": "1244",
+            "source_ref": "EVN Annual Report 2020",
+        },
     ]
 
     base_config = {
@@ -382,8 +391,12 @@ def test_run_condition_unverified_justification(tmp_path):
     output_dir.mkdir()
 
     rows = [
-        {"name": "Pha Lai", "fuel": "coal", "capacity_mwe": "600",
-         "source_ref": "Decision 1509/QD-BCT"},
+        {
+            "name": "Pha Lai",
+            "fuel": "coal",
+            "capacity_mwe": "600",
+            "source_ref": "Decision 1509/QD-BCT",
+        },
     ]
     base_config = {
         "model": "test-model",
@@ -517,10 +530,17 @@ def test_run_condition_self_mode(tmp_path):
     }
 
     fake_annotated = [
-        {"name": "Pha Lai", "fuel": "coal", "capacity_mwe": "600",
-         "evidence_score": "3", "verified": "True",
-         "source_1": "Decision 1509", "source_1_type": "primary",
-         "source_2": "", "source_2_type": "none"},
+        {
+            "name": "Pha Lai",
+            "fuel": "coal",
+            "capacity_mwe": "600",
+            "evidence_score": "3",
+            "verified": "True",
+            "source_1": "Decision 1509",
+            "source_1_type": "primary",
+            "source_2": "",
+            "source_2_type": "none",
+        },
     ]
     fake_summary = {
         "mode": "self",
@@ -530,7 +550,9 @@ def test_run_condition_self_mode(tmp_path):
         "usage": {"prompt_tokens": 1000, "completion_tokens": 200},
     }
 
-    with patch("aedist.query_verification.verify_self", return_value=(fake_annotated, fake_summary)):
+    with patch(
+        "aedist.query_verification.verify_self", return_value=(fake_annotated, fake_summary)
+    ):
         record = run_condition(
             rows=rows,
             base_config=base_config,
@@ -568,10 +590,17 @@ def test_run_condition_cross_mode(tmp_path):
     }
 
     fake_annotated = [
-        {"name": "Pha Lai", "fuel": "coal", "capacity_mwe": "600",
-         "evidence_score": "3", "verified": "True",
-         "source_1": "PDP8", "source_1_type": "primary",
-         "source_2": "", "source_2_type": "none"},
+        {
+            "name": "Pha Lai",
+            "fuel": "coal",
+            "capacity_mwe": "600",
+            "evidence_score": "3",
+            "verified": "True",
+            "source_1": "PDP8",
+            "source_1_type": "primary",
+            "source_2": "",
+            "source_2_type": "none",
+        },
     ]
     fake_summary = {
         "mode": "cross",
@@ -581,7 +610,9 @@ def test_run_condition_cross_mode(tmp_path):
         "usage": {"prompt_tokens": 2000, "completion_tokens": 500},
     }
 
-    with patch("aedist.query_verification.verify_cross", return_value=(fake_annotated, fake_summary)):
+    with patch(
+        "aedist.query_verification.verify_cross", return_value=(fake_annotated, fake_summary)
+    ):
         record = run_condition(
             rows=rows,
             base_config=base_config,
@@ -620,10 +651,17 @@ def test_run_condition_web_mode(tmp_path):
     }
 
     fake_annotated = [
-        {"name": "Pha Lai", "fuel": "coal", "capacity_mwe": "600",
-         "evidence_score": "3", "verified": "True",
-         "source_1": "GEM (gem.wiki)", "source_1_type": "primary",
-         "source_2": "", "source_2_type": "none"},
+        {
+            "name": "Pha Lai",
+            "fuel": "coal",
+            "capacity_mwe": "600",
+            "evidence_score": "3",
+            "verified": "True",
+            "source_1": "GEM (gem.wiki)",
+            "source_1_type": "primary",
+            "source_2": "",
+            "source_2_type": "none",
+        },
     ]
     fake_summary = {
         "mode": "web",
@@ -633,7 +671,9 @@ def test_run_condition_web_mode(tmp_path):
         "searches_performed": 5,
     }
 
-    with patch("aedist.query_verification.verify_web", return_value=(fake_annotated, fake_summary)):
+    with patch(
+        "aedist.query_verification.verify_web", return_value=(fake_annotated, fake_summary)
+    ):
         record = run_condition(
             rows=rows,
             base_config=base_config,
@@ -719,7 +759,8 @@ def test_main_dry_run_with_config(tmp_path, monkeypatch):
     yaml_path.write_text(yaml.dump(cfg))
 
     monkeypatch.setattr(
-        sys, "argv",
+        sys,
+        "argv",
         ["query_verification", "--config", str(yaml_path), "--dry-run"],
     )
 
@@ -733,14 +774,19 @@ def test_main_dry_run_with_sweep(monkeypatch):
 
     from aedist.query_verification import main
 
-    experiments_toml = str(
-        Path(__file__).parent.parent / "experiments" / "experiments.toml"
-    )
+    experiments_toml = str(Path(__file__).parent.parent / "experiments" / "experiments.toml")
 
     monkeypatch.setattr(
-        sys, "argv",
-        ["query_verification", "--sweep", "verification",
-         "--experiments", experiments_toml, "--dry-run"],
+        sys,
+        "argv",
+        [
+            "query_verification",
+            "--sweep",
+            "verification",
+            "--experiments",
+            experiments_toml,
+            "--dry-run",
+        ],
     )
 
     main()

@@ -593,6 +593,33 @@ The main problem is \textbf{coverage}, not accuracy.
 \end{columns}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{The cost of trust}
+\textbf{Setup:} Best extraction (DeepSeek V3.2, decomposed, 167 plants, F1=98.8\%).\\
+Verify each plant against reference database. Filter by evidence score threshold.
+
+\medskip
+\begin{center}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Threshold} & \textbf{Retained} & \textbf{Precision} & \textbf{Coverage} & \textbf{F1} \\
+\midrule
+$\geq 1$ (trust all)      & 167 & 97.6\% & 100\% & 98.8\% \\
+$\geq 3$ (one primary source) & 102 & \textbf{100\%} & 62.6\% & 77.0\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{Insight:} Requiring one primary source eliminates \textbf{all 4 hallucinations}\\
+but drops 65 real plants --- the \emph{reference} is incomplete, not the extraction.
+
+\medskip
+\textbf{Implication:} The pipeline finds more plants than the reference can confirm.\\
+Verification measures reference completeness as much as extraction quality.
+\end{frame}
+
 % ===================================================================
 \section{Cost--quality trade-off}
 
