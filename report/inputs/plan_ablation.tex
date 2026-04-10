@@ -340,6 +340,67 @@ dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est
 réfutée si $|\Delta\text{F1}| > 0{,}03$ (3~points) avec un IC à 95\,\%
 excluant zéro.
 
+\subsection{Régimes d'information et méthodes du benchmark}\label{sec:regime-linkage}
+
+Le benchmark présenté aux chapitres~\ref{chap:evaluation} et~\ref{chap:rag}
+évalue cinq méthodes d'extraction sur un panel de modèles~:
+
+\begin{enumerate}
+\item \textbf{Requête directe} (section~\ref{sec:exp1})~: un seul prompt,
+  sans document externe ni recherche.
+\item \textbf{Multi-tour} (section~\ref{sec:exp2})~: conversation avec
+  relances successives.
+\item \textbf{RAG wholesale} (section~\ref{sec:rag})~: injection de
+  l'intégralité d'un corpus de 18~documents dans le contexte.
+\item \textbf{Décomposition} (section~\ref{sec:decomposition})~: découpage
+  de la requête par type de combustible, puis fusion.
+\item \textbf{Recherche web}~: le modèle accède à Internet via un outil
+  de recherche (Tavily ou plugin natif).
+\end{enumerate}
+
+L'expérience d'ablation (section~\ref{sec:plan-mesures}) croise 16~variantes
+de prompt avec trois \emph{régimes d'information}, c'est-à-dire trois modes
+d'accès aux connaissances~:
+
+\begin{description}
+\item[Paramétrique] Le modèle répond uniquement à partir de ses poids
+  pré-entraînés. Ce régime correspond à la \textbf{requête directe}.
+\item[RAG] Le modèle reçoit le corpus de 18~documents en contexte.
+  Ce régime correspond au \textbf{RAG wholesale}.
+\item[Recherche web] Le modèle dispose d'un outil de recherche Internet.
+  Ce régime correspond à la \textbf{recherche web}.
+\end{description}
+
+\noindent Les deux méthodes restantes ne constituent pas des régimes
+d'information et sont traitées par des expériences dédiées~:
+
+\paragraph{Multi-tour $\to$ vérification.}
+L'approche conversationnelle du benchmark utilise des relances génériques
+(«~Avez-vous oublié des centrales~?~»). Or l'expérience de vérification
+multi-agents (section~\ref{sec:exp5}) subsume cette approche en remplaçant
+les relances aveugles par des vérifications ciblées --- chaque tour a un
+objectif spécifique (contrôler la provenance, détecter les hallucinations,
+croiser avec le référentiel). Le multi-tour générique est donc un cas
+particulier, moins motivé, du protocole de vérification.
+
+\paragraph{Décomposition $\to$ exclue (axe orthogonal).}
+La décomposition par combustible (section~\ref{sec:decomposition}) modifie
+la \emph{granularité de la requête}, non le régime d'information~: on peut
+décomposer en paramétrique, en RAG ou en recherche web. C'est un axe
+orthogonal. De plus, la décomposition introduit des hallucinations non
+thermiques (centrales hydroélectriques ou éoliennes ajoutées dans la
+catégorie «~autres combustibles~»), ce qui en fait un facteur confondant
+plutôt qu'un régime à tester. L'interaction
+décomposition~$\times$~régime constitue un travail futur.
+
+\medskip
+\noindent En résumé, l'ablation couvre trois des cinq méthodes du benchmark
+en les reformulant comme des régimes d'information. Cette reformulation
+permet de mesurer l'effet du prompt \emph{à régime fixe}~: un module qui
+aide en paramétrique pourrait nuire en RAG (où le contexte documentaire
+rend le cadrage sectoriel redondant), et inversement. Le croisement
+prompt~$\times$~régime est le design central de cette expérience.
+
 \subsection{Lien avec la vérification multi-agents}\label{sec:lien-verification}
 
 Cette expérience mesure l'effet du prompt sur l'extraction en un seul tour. La
