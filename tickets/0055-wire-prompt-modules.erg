@@ -1,11 +1,12 @@
 %erg v1
 Title: Wire prompt_modules in query runner
-Status: doing
+Status: closed
 Created: 2026-04-10
 Author: claude
 Blocked-by: 0038
 
 --- log ---
+2026-04-10T23:00Z claude status closed merged PR #229
 2026-04-10T20:00Z claude created — split from ticket 0038 action 7
 2026-04-10T21:00Z claude claimed
 2026-04-10T21:00Z claude status doing — implementing --prompt-modules flag
