@@ -197,27 +197,35 @@ output = "outputs/decomposed"
 # Evidence rubric (per plant):
 #   0 = hallucinated source, 1 = no sources, 2 = 1 secondary,
 #   3 = 1 primary, 4 = 2+ independent primary
+# Proof-of-concept: single best config (DeepSeek V3.2 decomposed, F1=98.8%)
+# Full 3-config factorial is Phase 5 post-conference work.
 [sweeps.verification]
 repeat = 3
-budget_usd = 25
+budget_usd = 5
 output = "derived/verification"
 cross_verifier = "anthropic/claude-sonnet-4.6"
 verification_modes = ["unverified", "tool", "self", "cross", "web"]
 
 [[sweeps.verification.base_configs]]
-method = "multiturn"
-model = "claude-opus-4.6"
-result_file = "outputs/multiturn/claude-opus-4.6-run3.json"
+method = "decomposed"
+model = "deepseek/deepseek-v3.2"
+result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
 
-[[sweeps.verification.base_configs]]
-method = "rag"
-model = "google/gemini-2.5-flash-lite"
-result_file = "outputs/rag/gemini-2.5-flash-lite-run2.json"
-
-[[sweeps.verification.base_configs]]
-method = "rag"
-model = "openai/gpt-5.4"
-result_file = "outputs/rag/gpt-5.4-run1.json"
+# Phase 5: expand to 3-config factorial after conference
+# [[sweeps.verification.base_configs]]
+# method = "multiturn"
+# model = "claude-opus-4.6"
+# result_file = "outputs/multiturn/claude-opus-4.6-run3.json"
+#
+# [[sweeps.verification.base_configs]]
+# method = "rag"
+# model = "google/gemini-2.5-flash-lite"
+# result_file = "outputs/rag/gemini-2.5-flash-lite-run2.json"
+#
+# [[sweeps.verification.base_configs]]
+# method = "rag"
+# model = "openai/gpt-5.4"
+# result_file = "outputs/rag/gpt-5.4-run1.json"
 
 # Sourced extraction — ask for citations upfront
 #
