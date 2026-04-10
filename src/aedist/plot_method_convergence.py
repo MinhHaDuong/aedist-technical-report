@@ -197,7 +197,7 @@ def write_pdf(
         Line2D([0], [0], color=_MATCHED, linewidth=3, label="Correctly identified"),
         Line2D([0], [0], color=_HALLUC, linewidth=3, label="Hallucinated"),
     ]
-    ax.legend(handles=legend_handles, loc="upper right", fontsize=9, framealpha=0.9)
+    ax.legend(handles=legend_handles, loc="center right", fontsize=9, framealpha=0.9)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
