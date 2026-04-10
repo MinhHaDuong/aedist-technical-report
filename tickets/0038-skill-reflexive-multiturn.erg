@@ -58,25 +58,25 @@ Retain models showing significant base-vs-composite difference.
 Phase 2 (measurement): 16 prompts × k models × 5 repeats. Bootstrap CIs
 on delta-F1 per module.
 
-## Actions
+## Actions (all complete — this is a design ticket)
 1. [x] Design base prompt (HITL review)
 2. [x] Write 7 module files + assembler (DRY, no repeated base text)
 3. [x] Add 18 sweep configs to experiments.toml (prompt_modules key)
 4. [x] Add name_vi/name_en aliases to extract.py and evaluate.py
 5. [x] Write experimental plan in report (plan_ablation.tex)
 6. [x] Integrate plan into report.tex
-7. [ ] Wire prompt_modules in runner (ticket 0049)
-8. [ ] Run Phase 1 selection sweeps (3 reps, blocked by 0049)
-9. [ ] Analyze selection results, populate ablation model set
-10. [ ] Run Phase 2 measurement sweeps
-11. [ ] Evaluate, produce comparison tables, write results section
+
+## Downstream tickets
+- 0049: Wire prompt_modules in runner (infra)
+- 0050: Preregister directional hypotheses (blocks paper-grade runs)
+- 0051: Analyze base-vs-census gap (analysis, no extra API calls)
+- 0052: Run ablation sweeps + analyze (execution, blocked by 0049+0044)
+- 0053: Run multi-agent verification (execution, blocked by 0048+0052)
 
 ## Test
-All 856 tests pass with new sweep configs and evaluator aliases.
+862 tests pass with sweep configs, assembler guard, and evaluator aliases.
 
 ## Exit criteria
-- 16 prompt variants evaluated on k models with 5 repeats each
-- Table showing delta-F1 per module (composition and ablation arms)
-- Interaction effects quantified (composition vs ablation asymmetry)
-- Cost of sourcing stated (delta-F1 for the traceability module)
-- Finding integrated into report
+- Experimental plan reviewed and integrated into report ✓
+- Prompt modules, assembler, sweep configs, evaluator aliases merged ✓
+- Downstream tickets created for execution, preregistration, analysis ✓

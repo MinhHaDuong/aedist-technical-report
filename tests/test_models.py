@@ -153,8 +153,8 @@ def test_sweep_count(experiments):
         "frontier_skill",
     }
     ablation = {
-        "ablation_select_base",
-        "ablation_select_composite",
+        "ablation_p1_base",
+        "ablation_p1_composite",
         "ablation_base",
         "ablation_persona",
         "ablation_overview",
@@ -264,6 +264,15 @@ def test_assemble_prompt():
     # With overview (appended)
     with_overview = assemble_prompt(modules_dir, ["overview"])
     assert with_overview.index("sector overview") > with_overview.index("CSV table")
+
+
+def test_assemble_prompt_unknown_module_raises():
+    """assemble_prompt raises ValueError on unknown module names."""
+    from aedist.harness import assemble_prompt
+
+    modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
+    with pytest.raises(ValueError, match="Unknown prompt modules"):
+        assemble_prompt(modules_dir, ["personaa"])  # typo
 
 
 def test_sweep_output_dirs_unique(experiments):

@@ -138,6 +138,7 @@ def load_experiments(path: str) -> dict:
 
 # Module ordering: persona is prepended, all others appended in this order.
 _MODULE_ORDER = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+KNOWN_MODULES = frozenset(["persona"] + _MODULE_ORDER)
 
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
@@ -147,7 +148,12 @@ def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     (e.g. ``persona.txt``, ``overview.txt``).  The *module_names* list
     selects which modules to include.  ``persona`` is prepended before
     the base; all others are appended in a fixed order.
+
+    Raises ``ValueError`` if *module_names* contains unknown names.
     """
+    unknown = set(module_names) - KNOWN_MODULES
+    if unknown:
+        raise ValueError(f"Unknown prompt modules: {sorted(unknown)}. Known: {sorted(KNOWN_MODULES)}")
     base = (modules_dir / "base.txt").read_text().strip()
     parts_before: list[str] = []
     parts_after: list[str] = []

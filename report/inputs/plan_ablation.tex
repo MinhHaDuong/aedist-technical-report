@@ -193,18 +193,21 @@ Le design expérimental comporte deux bras symétriques et trois points d'ancrag
 \subsection{Protocole}\label{sec:protocole-ablation}
 
 \paragraph{Phase de sélection} Les prompts~1 (base) et~8 (complet) sont
-exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 3~runs
+exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 2~runs
 chacun. On retient les $k$~modèles dont le $|\Delta\text{F1}|$ moyen entre
 les deux conditions dépasse 0,05 (5~points). Ce seuil élimine les modèles
 insensibles au prompt, pour lesquels l'ablation ne peut rien révéler.
-Trois répétitions suffisent à distinguer un effet réel de la variance
-stochastique du LLM (écart-type typique de 2--3 points F1 d'après les
-mesures de l'expérience~1).
 
 \paragraph{Phase de mesure} Les 16~prompts sont exécutés sur les $k$~modèles
-retenus, avec 5~répétitions chacun ($16 \times k \times 5$ runs). Température
-fixée à 0. Chaque run produit un CSV évalué contre l'inventaire de référence
-(163~centrales, matching par nom exact et approximatif).
+retenus, avec 2~répétitions chacun ($16 \times k \times 2$ runs). Température
+réglée selon les recommandations du fournisseur pour l'extraction structurée
+(0,0--0,3 selon les modèles~; pour DeepSeek, la température API 1,0
+correspond à une température interne de 0,3 via un mécanisme de mapping
+documenté). Le nombre total de tokens générés est mesuré par condition pour
+contrôler l'effet de budget de sortie (un prompt demandant des narratifs
+produit mécaniquement plus de tokens, ce qui peut réduire la place disponible
+pour l'inventaire). Chaque run produit un CSV évalué contre l'inventaire de
+référence (163~centrales, matching par nom exact et approximatif).
 
 \paragraph{Analyse}
 \begin{itemize}
@@ -220,10 +223,12 @@ fixée à 0. Chaque run produit un CSV évalué contre l'inventaire de référen
   $\Delta$F1 mesure le prix, en points d'extraction, de la traçabilité.
 \end{itemize}
 
-\paragraph{Budget prévisionnel} Sélection~: $2 \times 25 \times 3 = 150$~runs.
-Mesure avec $k=5$ modèles~: $16 \times 5 \times 5 = 400$~runs.
-Total~: 550~runs. Au coût moyen de 0,02--0,05\,\$ par run~: 10--30\,\$.
-Les modèles open-weight réduisent ce budget d'un facteur~10.
+\paragraph{Budget prévisionnel (pilote)} Sélection~: $2 \times 25 \times 2
+= 100$~runs. Mesure avec $k=5$ modèles~: $16 \times 5 \times 2 = 160$~runs.
+Total~: 260~runs $\approx$ 5--15\,\$. Les modèles open-weight réduisent ce
+budget d'un facteur~10. Pour une publication, augmenter à 5~répétitions,
+élargir le panel de modèles, et pré-enregistrer les hypothèses directionnelles
+par module (voir section~\ref{sec:lien-verification}).
 
 \paragraph{Limites du design}
 \begin{itemize}
