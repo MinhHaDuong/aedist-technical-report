@@ -280,12 +280,11 @@ def test_main_creates_parent_dirs(tmp_path, monkeypatch):
 # --- Unstable pair flagging ---
 
 
-def test_unstable_pair_footnote_in_comparison(tmp_path):
-    """Comparison table marks unstable pairs with dagger."""
+def test_unstable_pair_all_flagged_uses_table_note(tmp_path):
+    """When all models are flagged unstable, use table-level note without daggers."""
     import json
 
-    # Create a variance decomposition JSON with unstable pairs
-    # Note: unstable_pairs uses full model IDs (with provider prefix)
+    # Both models in SAMPLE_METRICS are in the unstable pair → all flagged
     variance_data = {
         "unstable_pairs": [
             {
@@ -302,7 +301,35 @@ def test_unstable_pair_footnote_in_comparison(tmp_path):
     latex, n = generate_comparaison_table(
         SAMPLE_METRICS, variance_path=variance_json
     )
-    # Both models from the unstable pair should have a dagger on their F1 RAG cell
+    # No per-row daggers when all rows are flagged
+    assert "$\\dagger$" not in latex
+    # Table-level note about all differences being small
+    assert "All inter-model differences" in latex
+    assert "overlapping bootstrap 95" in latex
+
+
+def test_unstable_pair_partial_flagging_uses_daggers(tmp_path):
+    """When only some models are flagged, per-row daggers are shown."""
+    import json
+
+    # Only flag gpt-5.4 against a model NOT in SAMPLE_METRICS
+    variance_data = {
+        "unstable_pairs": [
+            {
+                "model_a": "openai/gpt-5.4",
+                "model_b": "mistral/mistral-small-2603",
+                "f1_diff": 0.02,
+                "ci_overlap": True,
+            }
+        ]
+    }
+    variance_json = tmp_path / "variance_decomposition.json"
+    variance_json.write_text(json.dumps(variance_data))
+
+    latex, n = generate_comparaison_table(
+        SAMPLE_METRICS, variance_path=variance_json
+    )
+    # Only gpt-5.4 is flagged (1 of 2 models) → per-row dagger
     assert "$\\dagger$" in latex
-    # Footnote explaining the dagger
-    assert "5\\,pp" in latex or "5 pp" in latex or "overlapping" in latex.lower()
+    # Footnote with improved wording
+    assert "Unstable ranking" in latex

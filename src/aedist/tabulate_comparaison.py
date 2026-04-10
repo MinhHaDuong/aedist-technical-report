@@ -128,7 +128,10 @@ def generate_comparaison_table(
         "\\endlastfoot",
     ]
 
-    has_dagger = False
+    # Determine which rows get daggers, then check discriminating power
+    dagger_slugs = {row["slug"] for row in rows if row["slug"] in unstable_slugs}
+    all_flagged = len(dagger_slugs) == len(rows) and len(rows) > 0
+
     for row in rows:
         name = format_model_name(row["slug"])
         f1b = f"{row['f1_base'] * 100:.1f}\\%"
@@ -145,19 +148,31 @@ def generate_comparaison_table(
         elif p is not None and p < 0.05:
             delta += "$^{*}$"
 
-        # Unstable pair marker
-        if row["slug"] in unstable_slugs:
+        # Unstable pair marker — only when some rows are NOT flagged
+        if not all_flagged and row["slug"] in dagger_slugs:
             f1r += "$\\dagger$"
-            has_dagger = True
 
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
-    if has_dagger:
+    dagger_note = (
+        "Unstable ranking: $<$5\\,pp from nearest neighbour"
+        " with overlapping bootstrap 95\\% CIs."
+    )
+    if dagger_slugs:
         lines.append("\\midrule")
-        lines.append(
-            "\\multicolumn{6}{l}{\\footnotesize $\\dagger$ Difference $<$5\\,pp"
-            " with overlapping bootstrap 95\\% CIs.} \\\\"
-        )
+        if all_flagged:
+            # All rows flagged — table-level note without per-row daggers
+            lines.append(
+                "\\multicolumn{6}{l}{\\footnotesize "
+                "All inter-model differences are $<$5\\,pp"
+                " with overlapping bootstrap 95\\% CIs.} \\\\"
+            )
+        else:
+            lines.append(
+                "\\multicolumn{6}{l}{\\footnotesize $\\dagger$ "
+                + dagger_note
+                + "} \\\\"
+            )
     lines.append("\\end{longtable}")
     return "\n".join(lines) + "\n", len(common_slugs)
 
