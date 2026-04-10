@@ -294,27 +294,59 @@ def fuzzy_match_reference(plant_name: str, ref_plants: list[dict]) -> dict | Non
 
 
 def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dict]:
-    """Verify plants against reference database with evidence scoring.
+    """Verify plants against reference database via LP reconciler.
+
+    Uses the same global LP matching as the evaluate pipeline (ADR-2),
+    which considers name similarity, capacity, province, and fuel —
+    not just name-only fuzzy matching.
 
     Returns (annotated_rows, summary). Each row gets evidence_score:
-      - 3 (one primary) if found in reference
-      - 1 (no sources) if not found
+      - 3 (one primary) if LP-matched to a reference plant
+      - 1 (no sources) if unmatched (system_only)
     """
-    ref_plants = load_reference(reference_path)
+    from .evaluate import load_plants_csv
+    from .reconcile import reconcile
+    from .schema import MatchType
+
+    ref_plants = load_plants_csv(reference_path)
     log.info("Loaded %d plants from reference: %s", len(ref_plants), reference_path.name)
+
+    # Convert system rows to Plant objects via temp CSV
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".csv", delete=False, newline=""
+    ) as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+        tmp_path = Path(f.name)
+    try:
+        sys_plants = load_plants_csv(tmp_path)
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+    # Run LP reconciliation
+    entries = reconcile(ref_plants, sys_plants)
+
+    # Build lookup: system plant name -> reconciliation entry
+    matched_types = {MatchType.EXACT, MatchType.EXACT_CAPACITY_DIFF,
+                     MatchType.FUZZY, MatchType.FUZZY_CAPACITY_DIFF}
+    matched_sys_names: dict[str, str] = {}  # sys_name -> ref_name
+    for e in entries:
+        if e.match_type in matched_types and e.system_name:
+            matched_sys_names[e.system_name] = e.reference_name or ""
 
     annotated = []
     for row in rows:
-        name = row.get("name", "")
-        match = fuzzy_match_reference(name, ref_plants)
-
+        name = row.get("name", "").strip()
         entry = dict(row)
-        if match:
-            source_text = f"ref: {match['name']}"
+
+        ref_name = matched_sys_names.get(name)
+        if ref_name is not None:
+            source_text = f"ref: {ref_name}"
             entry["verification_source"] = source_text
-            entry["confidence"] = str(
-                round(fuzz.token_sort_ratio(name.lower(), match["name_lower"]) / 100, 2)
-            )
+            entry["confidence"] = "1.0"
             _annotate_sources(entry, [{"text": source_text, "type": SourceType.PRIMARY}])
         else:
             entry["verification_source"] = "Not found in reference"

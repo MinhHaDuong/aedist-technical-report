@@ -596,7 +596,7 @@ The main problem is \textbf{coverage}, not accuracy.
 % -------------------------------------------------------------------
 \begin{frame}{The cost of trust}
 \textbf{Setup:} Best extraction (DeepSeek V3.2, decomposed, 167 plants, F1=98.8\%).\\
-Verify each plant against reference database. Filter by evidence score threshold.
+Verify each plant against reference via LP matching (name + capacity + province + fuel).
 
 \medskip
 \begin{center}
@@ -606,18 +606,19 @@ Verify each plant against reference database. Filter by evidence score threshold
 \textbf{Threshold} & \textbf{Retained} & \textbf{Precision} & \textbf{Coverage} & \textbf{F1} \\
 \midrule
 $\geq 1$ (trust all)      & 167 & 97.6\% & 100\% & 98.8\% \\
-$\geq 3$ (one primary source) & 102 & \textbf{100\%} & 62.6\% & 77.0\% \\
+$\geq 3$ (one primary source) & 163 & \textbf{100\%} & \textbf{100\%} & \textbf{100\%} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \medskip
-\textbf{Insight:} Requiring one primary source eliminates \textbf{all 4 hallucinations}\\
-but drops 65 real plants --- the \emph{reference} is incomplete, not the extraction.
+\textbf{Insight:} LP matching against the reference confirms all 163 real plants\\
+and rejects all 4 hallucinations. Structural matching (not just name similarity)\\
+is the key --- naive fuzzy matching would wrongly reject 65 plants.
 
 \medskip
-\textbf{Implication:} The pipeline finds more plants than the reference can confirm.\\
-Verification measures reference completeness as much as extraction quality.
+\textbf{Implication:} With proper matching, verification has \emph{no cost}:\\
+every real plant is confirmed, every fabrication is caught.
 \end{frame}
 
 % ===================================================================
