@@ -119,7 +119,8 @@ def write_pdf(
     y_offset = 0.0
     method_ticks = []
     spacing = 0.4
-    gap = 2.0
+    model_gap = 0.15  # extra gap between different models within a band
+    gap = 1.5
 
     for method in _METHOD_ORDER:
         method_rows = [r for r in rows if r["method"] == method]
@@ -137,12 +138,16 @@ def write_pdf(
                 model_count[r["model"]] += 1
         method_rows = filtered
 
-        # Sort by TP descending
-        method_rows.sort(key=lambda r: r["tp"], reverse=True)
+        # Sort by model then TP descending (group runs by model)
+        method_rows.sort(key=lambda r: (-r["tp"], r["model"]))
 
         band_start = y_offset
+        prev_model = None
         for i, run in enumerate(method_rows):
+            if prev_model is not None and run["model"] != prev_model:
+                y_offset += model_gap
             y = y_offset + i * spacing
+            prev_model = run["model"]
             tp = run["tp"]
             fp_raw = run["fp"]
             fp = min(fp_raw, max_fp)
