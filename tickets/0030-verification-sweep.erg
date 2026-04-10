@@ -8,101 +8,138 @@ Author: claude
 2026-04-07T12:10Z claude created imported from gh#12
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
 2026-04-10T18:00Z claude status reimagined by IDD imagine (pass 2)
+2026-04-10T18:30Z claude status planned by IDD plan
 
 --- body ---
 ## Context
 
-This is post-conference Provenance milestone work. The conference
-(Econom'IA 2026, April 11) slides already frame verification as future
-work with a coherent narrative: "Impressive and unverifiable" → "Why not
-just verify?" → "Build the pipeline." That framing is complete. Inserting
-half-baked verification numbers overnight would weaken, not strengthen,
-the talk.
+Post-conference Provenance milestone work. The conference (Econom'IA
+2026, April 11) slides frame verification as future work. The journal
+paper is the real target. MASTERPLAN Level 3 (output provenance) gates
+the Pipeline-to-Provenance transition.
 
-The real motivation is the journal paper. MASTERPLAN defines Level 3
-(output provenance) as the gate between Pipeline and Provenance
-milestones. This ticket answers the core Level 3 question: "if you only
-trust plants backed by primary-source evidence, what coverage do you
-lose — and does the answer change across verification modes?"
+Core question: "If you only trust plants backed by primary-source
+evidence, what coverage do you lose — and does the answer change across
+verification modes?"
 
-Three proto-verification runs already exist (tool + unverified on Opus
-multiturn): tool-mode filtering drops from 169 plants (F1=98.2%, 6
-hallucinations) to 53 plants (F1=49.1%, 0 hallucinations). A precision-
-coverage trade-off curve is hiding in that data.
+### What already exists (verified by plan phase)
 
-Ticket 0025 (sourced extraction) is already executing and will provide
-the paired comparison: "cite upfront" (zero marginal cost) vs "verify
-after" (LLM + web calls). Sequencing matters: 0025 output feeds this
-ticket's analysis.
+**Code — mature and tested:**
+- `src/aedist/verify.py` — all 5 modes implemented (unverified, tool,
+  self, cross, web). Evidence rubric 0-4 with `score_evidence()`.
+  Source classification by URL domain and citation text patterns.
+- `src/aedist/query_verification.py` — sweep runner, reads
+  `[sweeps.verification]` from `experiments/experiments.toml`, handles
+  budget tracking, deterministic mode dedup (unverified/tool/web run
+  once, self/cross repeat N times).
+- `tests/test_query_verification.py` — 22 tests covering all modes
+  (mocked for self/cross/web), cost estimation, caching, dry-run.
+
+**Experiment config — already defined:**
+- `experiments/experiments.toml` has `[sweeps.verification]` with 3
+  base_configs (Opus multiturn, Gemini Flash Lite RAG, GPT-5.4 RAG),
+  all 5 modes, repeat=3, budget=$25, cross_verifier=claude-sonnet-4.6.
+- All 3 base result files exist on disk.
+
+**Proto-verification data — Opus multiturn only (tool + unverified):**
+- `experiments/derived/verification/` has 12 files: annotated CSVs,
+  filtered CSVs, reconciliation CSVs, record JSONs for
+  claude-opus-4.6-{tool,unverified}-run1.
+- Unverified: 169 plants, all score=1 (no source_ref in multiturn
+  output). Tool: fuzzy-matched against reference, scores 1 or 3.
+
+**Worktree t30 (branch t30-verification-sweep) — closed:**
+- `tabulate_verification.py` (259 lines) generates tradeoff.csv and
+  tab_verification.tex. NOT merged to main yet (PR #218 scope).
+- Ticket was rescoped to tool+unverified PoC only, LLM/web modes
+  deferred to ticket 0048 (renumbered to 0054).
+
+**Related tickets:**
+- 0054 (multi-agent verification) — blocked by 0038, different scope
+  (multi-agent protocols vs single-mode sweep).
+- 0025 (sourced extraction) — paired comparison substrate.
+
+**Report structure:**
+- Perspectives section (report.tex line ~469) already has verification
+  narrative (paras 2-5: trust, "why not verify?", pipeline proposal,
+  epistemic accountability). No quantitative verification results yet.
+- Convention: generated tables in `report/inputs/generated/tab_*.tex`,
+  authored content in `report/inputs/*.tex`.
+
+### API dependencies
+
+- **Tool mode:** no API needed (fuzzy match against reference CSV).
+- **Unverified mode:** no API needed (heuristic scoring of existing citations).
+- **Self mode:** needs OpenRouter (LLM call to same model).
+- **Cross mode:** needs OpenRouter (LLM call to claude-sonnet-4.6).
+- **Web mode:** needs TAVILY_API_KEY — **not currently in environment**.
+  `verify_web` uses Tavily search with per-query caching.
 
 ## Staged approach
 
-Four stages, each validating the next. No stage depends on conference
-timing.
-
 ### Stage A: Methods section and preregistration (zero cost)
 
-Write the verification methodology for the journal paper before running
-experiments. Define:
-- The 5 verification modes (unverified, tool, self, cross, web)
-- The evidence_score rubric (0-4 scale)
-- The precision-coverage analysis: at each threshold, filter to plants
-  with score >= threshold, compute precision, coverage, F1
+Write `report/inputs/verification_methods.tex` defining:
+- The 5 verification modes and their implementation
+- The evidence_score rubric (0-4 scale, see `score_evidence()` in verify.py)
+- The precision-coverage analysis: at each threshold t in {1,2,3,4},
+  filter to plants with score >= t, evaluate via LP reconciler
 - Preregistered hypotheses:
   1. Tool mode achieves highest precision (reference = ground truth)
-  2. Web mode retains more coverage than self-verification at threshold
-     >= 3 (web finds sources the model forgot)
-  3. Cross-verification (different model checks) outperforms self-
-     verification on hallucination detection
+  2. Web mode retains more coverage than self at threshold >= 3
+  3. Cross-verification outperforms self on hallucination detection
 
-Deliverable: LaTeX section draft for report + experiment spec in
-`experiments.toml`.
+Also: merge `tabulate_verification.py` from t30 branch to main (or
+cherry-pick). It generates tradeoff.csv + LaTeX table.
 
-### Stage B: Dry run on deterministic modes (zero API cost)
+### Stage B: Extend deterministic modes to all 3 configs (zero API cost)
 
-Run only `unverified` + `tool` modes on DeepSeek V3.2 RAG (best config,
-F1=98.8%). These require no LLM calls and no Tavily. Produces a 2-point
-precision-coverage comparison: baseline vs reference-checked.
+Run `unverified` + `tool` on all 3 base_configs (currently only Opus
+multiturn has results). Command:
+```
+python -m aedist.query_verification \
+    --sweep verification --experiments experiments/experiments.toml \
+    --dry-run
+```
+Then remove --dry-run. Produces 6 conditions (3 configs x 2 modes).
+Validate with `tabulate_verification.py`.
 
-Purpose: validate the analysis pipeline code before spending on API
-calls. Confirm the tradeoff table format works.
+Note: the existing `[sweeps.verification]` config already covers this.
+No config changes needed — just run the existing sweep and the runner
+skips cached Opus results.
 
-### Stage C: Full 1-config proof-of-concept (~$0.50)
+### Stage C: LLM + web modes on 1 config (~$0.50)
 
-Run all 5 modes on DeepSeek V3.2 RAG. Produces the complete trade-off
-curve. Combined with 0025 sourced extraction data, enables the paired
-"upfront vs post-hoc" comparison — a genuinely novel result.
-
-Repeat=1 for deterministic modes, repeat=3 for self/cross (stochastic).
-~11 conditions total.
+Add self + cross + web modes to DeepSeek V3.2 RAG. Requires:
+- OpenRouter API key (for self/cross)
+- TAVILY_API_KEY (for web mode)
+Produces the 5-mode tradeoff curve. 11 conditions total (5 modes x 1
+config, self/cross repeat=3).
 
 ### Stage D: Full factorial for journal paper (~$15-25)
 
-3 configs x 5 modes x 3 repeats = 45 conditions. Confidence intervals.
-Publishable statistical power. This is the experiment the journal paper
-reports. No time pressure — schedule after conference feedback.
+3 configs x 5 modes x 3 repeats = 27 conditions (3 deterministic run
+once + 2 stochastic run 3x, per config). Already configured in
+`[sweeps.verification]`. Run the sweep, generate CIs.
 
 ## Actions
 
-1. **Draft methods section** — write `report/inputs/verification_methods.tex`
-   defining modes, rubric, analysis plan. Include preregistered hypotheses.
+1. **Draft methods section** — write `report/inputs/verification_methods.tex`.
+   Source: verify.py rubric + query_verification.py architecture.
 
-2. **Update experiment spec** — add `[sweeps.verification_poc]` to
-   `experiments.toml` for Stage B (1 config, 2 deterministic modes).
-   Keep `[sweeps.verification_full]` commented for Stage D.
+2. **Merge tabulate_verification.py** — cherry-pick from t30 branch or
+   rewrite for main. Needed for tradeoff.csv generation.
 
-3. **Run Stage B** — `unverified` + `tool` on DeepSeek V3.2 RAG.
-   Produce `derived/verification/tradeoff.csv`.
+3. **Run Stage B** — `python -m aedist.query_verification --sweep verification`.
+   Skips cached Opus results, adds Gemini + GPT-5.4 tool+unverified.
 
-4. **Run Stage C** — all 5 modes on same config. Extend tradeoff table.
-   Pair with 0025 evidence scores when available.
+4. **Run Stage C** — ensure TAVILY_API_KEY is set, then re-run sweep.
+   Self/cross/web modes fill in for first config.
 
-5. **Write journal paper section** — report the precision-coverage
-   trade-off. Honest about limitation: 1 config is a proof of concept.
-   Stage D provides the definitive result.
+5. **Write journal paper section** — precision-coverage trade-off from
+   tradeoff.csv. Paired with 0025 sourced extraction if available.
 
-6. **Run Stage D** — full factorial. Update journal section with
-   confidence intervals and multi-config results.
+6. **Run Stage D** — full sweep re-run fills remaining conditions.
 
 ## Test
 
@@ -136,8 +173,26 @@ def test_methods_section_has_hypotheses():
 
 ## Exit criteria
 - Methods section drafted with preregistered hypotheses
-- Stage B complete: unverified + tool modes, tradeoff.csv exists
-- Stage C complete: all 5 modes on 1 config, paired with 0025 if available
+- tabulate_verification.py available on main
+- Stage B complete: tool + unverified on all 3 configs, tradeoff.csv exists
+- Stage C complete: all 5 modes on 1 config
 - Stage D complete: full 3-config factorial with CIs
-- Journal paper section written reporting the precision-coverage trade-off
+- Journal paper section written reporting precision-coverage trade-off
 - `make check-fast` passes at each stage
+
+## Feasibility assessment (plan phase)
+
+**Immediate (Stage A):** Fully feasible. All source material exists in
+verify.py and query_verification.py. Methods section is pure writing.
+
+**Stage B:** Fully feasible. Zero API cost, code exists and is tested.
+The only gap is tabulate_verification.py not on main (on t30 branch).
+
+**Stage C:** Feasible but requires TAVILY_API_KEY for web mode. Self
+and cross modes work via OpenRouter. Cost ~$0.50.
+
+**Stage D:** Feasible, $15-25 budget. Config already in experiments.toml.
+
+**Realistic first deliverable:** Stage A (methods section) + merge
+tabulate_verification.py. Then Stage B as immediate follow-up (no cost,
+no API keys needed).
