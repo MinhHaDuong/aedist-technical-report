@@ -87,20 +87,6 @@ def _extract_entries(
             mt = MatchType.REFERENCE_ONLY
         elif status == "Only in file2":
             mt = MatchType.SYSTEM_ONLY
-        elif status == "Mismatched":
-            # LP assigned a pair but fuzzy score is below threshold —
-            # emit both as unmatched rather than claiming a false match.
-            ref_n = _safe(row, "name_file1")
-            sys_n = _safe(row, "name_file2")
-            if ref_n:
-                entries.append(ReconciliationEntry(
-                    reference_name=ref_n, match_type=MatchType.REFERENCE_ONLY,
-                ))
-            if sys_n:
-                entries.append(ReconciliationEntry(
-                    system_name=sys_n, match_type=MatchType.SYSTEM_ONLY,
-                ))
-            continue
         else:
             # "Matched (Fuzzy) (Diff)", "Matched (Diff)", etc.
             mt = MatchType.FUZZY_CAPACITY_DIFF if "Fuzzy" in str(status) else MatchType.EXACT_CAPACITY_DIFF
