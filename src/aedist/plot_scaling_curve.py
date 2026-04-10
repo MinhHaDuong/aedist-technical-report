@@ -11,6 +11,7 @@ Usage:
 
 import argparse
 import logging
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -26,11 +27,51 @@ _MODEL_SIZES: dict[str, float] = {
     "qwen3.5:35b": 35,
 }
 
-# Cloud reference lines: best individual-run F1 per model under RAG
-_CLOUD_REFS: dict[str, float] = {
+# Fallback cloud reference F1 values (used only when no data is available).
+# Source: measurements.jsonl best individual RAG runs as of 2026-04-01.
+_CLOUD_REFS_FALLBACK: dict[str, float] = {
     "DeepSeek V3.2 (best run)": 0.6855,
     "GPT-5.4 (best run)": 0.9381,
 }
+
+# Pattern to strip '-runN' suffix from model slug for display grouping
+_RUN_SUFFIX_RE = re.compile(r"-run\d+$")
+
+
+def _compute_cloud_refs() -> dict[str, float]:
+    """Compute cloud reference F1 from measurements at runtime.
+
+    Filters for method=rag, non-local (non-Qwen-local) models, and takes
+    the max F1 per model slug.  Falls back to ``_CLOUD_REFS_FALLBACK`` if
+    no cloud RAG data is found.
+    """
+    cloud_best: dict[str, float] = {}
+    for record in load():
+        if record.method.value != "rag":
+            continue
+        pv = getattr(record.method_params, "prompt_version", None)
+        if pv == "_extracted":
+            continue
+        model = record.method_params.model.split("/")[-1]
+        if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
+            continue
+        # Skip local models (those in _MODEL_SIZES are the Qwen local variants)
+        if model in _MODEL_SIZES:
+            continue
+        f1 = record.result_summary.f1
+        if f1 is None:
+            continue
+        # Normalize slug: strip -runN suffix
+        slug = _RUN_SUFFIX_RE.sub("", model)
+        if slug not in cloud_best or f1 > cloud_best[slug]:
+            cloud_best[slug] = f1
+
+    if not cloud_best:
+        log.warning("No cloud RAG data found; using fallback cloud references")
+        return dict(_CLOUD_REFS_FALLBACK)
+
+    # Format display names: "Model (best run)"
+    return {f"{slug} (best run)": f1 for slug, f1 in sorted(cloud_best.items())}
 
 
 def _normalize_model(raw: str) -> str:
@@ -51,6 +92,9 @@ def collect_data() -> dict[str, dict[float, list[float]]]:
     for record in load():
         method = record.method.value
         if method not in ("single", "rag"):
+            continue
+        pv = getattr(record.method_params, "prompt_version", None)
+        if pv == "_extracted":
             continue
         model = _normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
@@ -74,6 +118,11 @@ def write_pdf(data: dict[str, dict[float, list[float]]], output: Path) -> None:
     fig, ax = plt.subplots(figsize=(7, 4.5))
 
     sizes_all = sorted(set().union(*[d.keys() for d in data.values()]))
+
+    if not sizes_all:
+        log.warning("No data points to plot; skipping PDF generation")
+        plt.close(fig)
+        return
 
     # Color scheme
     colors = {"single": "#888888", "rag": "#2E86AB"}
@@ -106,10 +155,11 @@ def write_pdf(data: dict[str, dict[float, list[float]]], output: Path) -> None:
             label=labels[method], zorder=4,
         )
 
-    # Cloud reference lines
+    # Cloud reference lines (computed from measurements at runtime)
+    cloud_refs = _compute_cloud_refs()
     ref_colors = ["#E74C3C", "#F5A623"]
     ref_styles = ["--", "-."]
-    for i, (name, f1) in enumerate(_CLOUD_REFS.items()):
+    for i, (name, f1) in enumerate(cloud_refs.items()):
         ax.axhline(
             y=f1, color=ref_colors[i % len(ref_colors)],
             linewidth=1.2, linestyle=ref_styles[i % len(ref_styles)],
@@ -164,6 +214,10 @@ def main() -> None:
 
     total_points = sum(len(fs) for d in data.values() for fs in d.values())
     log.info("Collected %d data points across %d methods", total_points, len(data))
+
+    if total_points == 0:
+        log.warning("No data points found; nothing to plot")
+        return
 
     output = Path(args.output)
     write_pdf(data, output)
