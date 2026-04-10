@@ -2,16 +2,18 @@
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
+## Dependencies
+
+**[git-erg](https://github.com/MinhHaDuong/git-erg)** — local ticket system. Installed into the project (`.claude/skills/ticket-*`, `.claude/rules/tickets.md`, `tickets/`). Travels with the repo so it works in isolated and web environments.
+
+**[Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness)** — workflow skills (`/review-pr`, `/celebrate`, `/end-session`, `/memory`, etc.). Installed at user level. If unavailable, follow the phase descriptions below — the skills automate the workflow, they don't define it.
+
 ## Configuration
 
 | Location | Purpose |
 |----------|---------|
-| `~/.claude/rules/` | Generic rules (git, workflow, coding, state-roadmap) |
-| `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
-| `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
-| `.claude/rules/` | Project-specific rules (incl. `tickets.md` spec) |
-| `.claude/skills/` | Project-specific skills (incl. `ticket-*` skills) |
-| `.claude/hooks/` | Project-specific hooks |
+| `.claude/rules/` | Project rules (incl. `tickets.md` from git-erg) |
+| `.claude/skills/` | Project skills (ticket-* from git-erg) |
 | `.claude/settings.json` | Project permissions and hooks |
 | `hooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
 | `tickets/` | Local `.erg` tickets (committed, travel with repo) |
@@ -75,7 +77,7 @@ The agent must always know and declare its current phase.
 
 ## Skills (slash commands)
 
-### Local tickets (`.erg`)
+### git-erg (travels with repo — always available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
@@ -85,7 +87,7 @@ The agent must always know and declare its current phase.
 | `/ticket-close NNNN` | Completing work | Set `Status: closed`, release `.wip`, commit |
 | `/ticket-release NNNN` | Abandoning work | Restore `Status: open`, release `.wip`, commit |
 
-### GitHub and workflow
+### Imperial Dragon Harness (user-level — may not be available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
