@@ -13,6 +13,10 @@ Usage::
 """
 
 import tomllib
+
+# Model slug suffixes that are post-hoc aggregations, not individual runs.
+# Shared by all reporting modules that filter measurements.
+SYNTHETIC_SUFFIXES = ("-union", "-consolidated", "-filtered", "_filtered", "-unverified")
 from pathlib import Path
 
 from .schema import Method, RunRecord

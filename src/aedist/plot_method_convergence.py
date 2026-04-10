@@ -18,16 +18,13 @@ import logging
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .measurements import load
+from .measurements import SYNTHETIC_SUFFIXES, load
 
 log = logging.getLogger(__name__)
 
 # Colors matching slides.tex definitions
 _MATCHED = "#2E86AB"
 _HALLUC = "#F5A623"
-
-# Aggregation artifacts — not individual model runs
-_EXCLUDE_SUFFIXES = ("-union", "-consolidated", "-filtered", "_filtered", "-unverified")
 
 # Prompt versions that are duplicates of another method's data
 _EXCLUDE_PROMPT_VERSIONS = ("_extracted",)
@@ -52,7 +49,7 @@ def load_convergence_data() -> list[dict]:
         if method not in _METHOD_ORDER:
             continue
         model = _normalize_model(record.method_params.model)
-        if any(model.endswith(s) for s in _EXCLUDE_SUFFIXES):
+        if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         pv = record.method_params.prompt_version or ""
         if pv in _EXCLUDE_PROMPT_VERSIONS:
@@ -96,7 +93,7 @@ def write_pdf(
     output: Path,
     models: set[str] | None = None,
     max_runs_per_model: int = 3,
-    max_fp: int = 50,
+    max_fp: int = 80,
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
@@ -137,7 +134,8 @@ def write_pdf(
         for i, run in enumerate(method_rows):
             y = y_offset + i * spacing
             tp = run["tp"]
-            fp = min(run["fp"], max_fp)
+            fp_raw = run["fp"]
+            fp = min(fp_raw, max_fp)
 
             # TP dots (blue, right of 0) — 1 dot = 1 plant
             if tp > 0:
@@ -150,6 +148,9 @@ def write_pdf(
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
                 ax.scatter(xs, ys, s=4, c=_HALLUC, marker="|", linewidths=0.5, zorder=3)
+                if fp_raw > max_fp:
+                    ax.text(-fp - 1, y, f"({fp_raw})", fontsize=5, color=_HALLUC,
+                            va="center", ha="right")
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
         method_ticks.append((band_center, method.replace("_", " ").title()))
@@ -166,7 +167,7 @@ def write_pdf(
     ax.set_yticks([t[0] for t in method_ticks])
     ax.set_yticklabels([t[1] for t in method_ticks], fontsize=11)
     ax.set_xlabel("Number of power plants", fontsize=11)
-    ax.set_xlim(-58, 185)
+    ax.set_xlim(-max_fp - 15, 185)
     ax.invert_yaxis()
     ax.grid(axis="x", linewidth=0.2, alpha=0.3)
     ax.set_axisbelow(True)
@@ -204,7 +205,6 @@ def main() -> None:
         action="store_true",
         help="Only models tested under all 5 methods",
     )
-    parser.add_argument("--max-fp", type=int, default=50, help="Clip FP display (default 50)")
     args = parser.parse_args()
 
     rows = load_convergence_data()
@@ -212,7 +212,7 @@ def main() -> None:
 
     output = Path(args.output)
     if output.suffix == ".pdf":
-        write_pdf(rows, output, models=models, max_fp=args.max_fp)
+        write_pdf(rows, output, models=models)
     else:
         write_csv(rows, output)
 
