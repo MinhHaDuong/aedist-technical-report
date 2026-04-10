@@ -267,53 +267,40 @@ littérature sur l'extraction structurée par LLM~:
 
 \begin{center}
 \small
-\begin{tabular}{llll}
+\begin{tabular}{l c c p{0.52\textwidth}}
 \toprule
 \textbf{Module} & \textbf{Rappel} & \textbf{Précision} & \textbf{Mécanisme attendu} \\
 \midrule
 Persona       & neutre  & neutre
-  & Un rôle générique (\emph{senior energy analyst}) n'ajoute ni \\
-  &         &
-  & connaissances ni contraintes. La littérature sur le \emph{role} \\
-  &         &
-  & \emph{prompting} montre un effet nul ou négatif sur l'extraction \\
-  &         &
-  & structurée \citep[cf.][]{zheng2024prompt}. \\
+  & Un rôle générique (\emph{senior energy analyst}) n'ajoute ni
+    connaissances ni contraintes. La littérature sur le \emph{role
+    prompting} montre un effet nul ou négatif sur l'extraction
+    structurée. \\
 \addlinespace
 Cadrage       & $+$     & neutre
-  & Le résumé sectoriel amorce le vocabulaire du domaine (noms de \\
-  &         &
-  & centrales, provinces, acteurs) et rend des entrées marginales \\
-  &         &
-  & plus saillantes. Coût de budget modéré ($\sim$200~tokens). \\
+  & Le résumé sectoriel amorce le vocabulaire du domaine (noms de
+    centrales, provinces, acteurs) et rend des entrées marginales
+    plus saillantes. Coût de budget modéré ($\sim$200~tokens). \\
 \addlinespace
 Narratifs     & $-$     & neutre
-  & Demander un paragraphe par complexe industriel consomme \\
-  &         &
-  & $>$2\,000~tokens de sortie. Mécanisme dominant~: compétition \\
-  &         &
-  & de budget. Effet de rappel négatif attendu le plus fort. \\
+  & Demander un paragraphe par complexe industriel consomme
+    ${>}\,2\,000$~tokens de sortie. Mécanisme dominant~: compétition
+    de budget. Effet de rappel négatif attendu le plus fort. \\
 \addlinespace
 Bibliographie & $-$     & neutre
-  & La liste de sources annotées consomme $\sim$1\,000~tokens de \\
-  &         &
-  & sortie. Même mécanisme de compétition de budget que les \\
-  &         &
-  & narratifs, mais moindre car le texte est plus compact. \\
+  & La liste de sources annotées consomme ${\sim}\,1\,000$~tokens de
+    sortie. Même mécanisme de compétition de budget que les
+    narratifs, mais moindre car le texte est plus compact. \\
 \addlinespace
 Statistiques  & $-$     & neutre
-  & Les tableaux croisés consomment $\sim$500~tokens de sortie. \\
-  &         &
-  & Compétition de budget modérée. Effet attendu faible. \\
+  & Les tableaux croisés consomment ${\sim}\,500$~tokens de sortie.
+    Compétition de budget modérée. Effet attendu faible. \\
 \addlinespace
 Sourçage      & $-$     & $+$
-  & Ajouter Source\_1 et Source\_2 par ligne force le modèle à \\
-  &         &
-  & justifier chaque entrée, ce qui filtre les hallucinations \\
-  &         &
-  & (précision $+$). En contrepartie, le format élargi (12~colonnes \\
-  &         &
-  & au lieu de 10) réduit le nombre de lignes produites (rappel $-$). \\
+  & Ajouter Source\_1 et Source\_2 par ligne force le modèle à
+    justifier chaque entrée, ce qui filtre les hallucinations
+    (précision~$+$). En contrepartie, le format élargi (12~colonnes
+    au lieu de~10) réduit le nombre de lignes produites (rappel~$-$). \\
 \bottomrule
 \end{tabular}
 \end{center}
