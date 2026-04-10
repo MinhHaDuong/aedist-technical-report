@@ -406,3 +406,57 @@ def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert "temperature" not in call_kwargs
     assert call_kwargs["tools"][0]["type"] == "openrouter:web_search"
+
+
+@patch("aedist.harness.OpenAI")
+def test_no_web_search_flag_disables_plugin(mock_openai_cls, tmp_path):
+    """--no-web-search overrides model web_search=true, omitting the plugin."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path, web_search=True)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_frontier", "--prompt", str(prompt_path),
+            "--models", str(models_path),
+            "--output", str(output_dir),
+            "--no-web-search",
+        ]):
+            from aedist.query_frontier import main
+            main()
+
+    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
+    assert "tools" not in call_kwargs, (
+        "Expected no tools when --no-web-search is passed, "
+        f"but got: {call_kwargs.get('tools')}"
+    )
+    assert call_kwargs["temperature"] == 0.0
+
+
+@patch("aedist.harness.OpenAI")
+def test_no_web_search_flag_noop_without_web_model(mock_openai_cls, tmp_path):
+    """--no-web-search on a model without web_search is a harmless no-op."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path, web_search=False)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_frontier", "--prompt", str(prompt_path),
+            "--models", str(models_path),
+            "--output", str(output_dir),
+            "--no-web-search",
+        ]):
+            from aedist.query_frontier import main
+            main()
+
+    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
+    assert "tools" not in call_kwargs

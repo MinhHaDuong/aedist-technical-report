@@ -1,0 +1,64 @@
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Phả Lại 1,Coal,Operational,1985,Hải Dương,200.0,EVN Annual Report 2023,https://evn.com.vn,
+Phả Lại 2,Coal,Operational,1987,Hải Dương,240.0,EVN Integrated Resource Plan 2023,EVN Press 2023,Fitted FGD 2022
+Phả Lại 3,Coal,Operational,2001,Hải Dương,312.0,EVN 2023 IRP,EVN Retrofit Report 2020,Units 1-2 upgraded to 105 MWe
+Mạo Khê,Coal,Operational,1995,Hải Dương,440.0,PDP8 Annex 2,EVN Announcement 2022,Planned retirement P6 2030
+Uông Bí 1,Coal,Decommissioned,1974,Quảng Ninh,150.0,EVN Decommissioning Log,Government Notice 117/2020/ND-CP,Retired 2020; Units 1-3
+Uông Bí 2,Coal,Operational,1976,Quảng Ninh,300.0,PDP8 Annex 2,EVN Planning Doc 2021,Planned retirement P4 2032
+Uông Bí 3,Coal,Operational,1998,Quảng Ninh,300.0,EVN Retrofit 2023,EVN IRP 2023,Upgraded FGD; expects retirement 2040
+Nà Dương,Coal,Operational,2001,Lạng Sơn,110.0,EVN 2023 Report,Latin America Herald Tribune 2023,Local lignite; unit 1 outage 2022
+Cẩm Phả,Coal,Operational,2000,Quảng Ninh,600.0,EVN 2023 IRP,Vinacomin 2023,Units 1&2 300 MWe each
+Cẩm Phả 2,Coal,Operational,2011,Quảng Ninh,620.0,EVN Integrated Report 2023,EVN News 2023,
+Nghi Sơn 1,Coal,Operational,2015,Thanh Hóa,1.0,50% EVN PP; COD 09/2015,J-Power Annual Report 2023,J-Power + Chugoku Electric + EVN (BOT)
+Nghi Sơn 2,Coal,Suspended,ND,Thanh Hóa,1.0,BOT signed 2021 but suspended due to FX losses; restarted 2023 study,EVN Press 03/2023,Mitsubishi + Chugoku + EVN
+Vĩnh Tân 1,Coal,Operational,2014,Bình Thuận,1.0,120-day coal supply halt 2022; units 1-2 620 MWe each,Marubeni IR 2023,Marubeni + KEPCO (BOT)
+Vĩnh Tân 2,Coal,Operational,2015,Bình Thuận,1.0,As VT1; grid curtailment 2021–2023,Marubeni IR 2023,Marubeni + KEPCO
+Vĩnh Tân 3,Coal,Permitted,2027,Bình Thuận,1.0,FSRU backup option shelved 2023,EVN PDP8 Annex,EVN (GENCO3)
+Vĩnh Tân 4,Coal,Proposed,2030,Bình Thuận,1.0,PDP8-mandated; coal moratorium concerns,PDP8 Decision 428,EVN (GENCO3)
+Duyên Hải 1,Coal,Operational,2015,Trà Vinh,1.0,Units 1&2 622 MWe; flood mitigation 2016,EVN 2023 IRP,EVN (GENCO4)
+Duyên Hải 2,Coal,Operational,2016,Trà Vinh,1.0,Incremental COD delays; finished 2020,EVN IRP 2023,EVN (GENCO4)
+Duyên Hải 3,Coal,Operational,2021,Trà Vinh,1.0,2 x 980 MWe units,EVN IRP 2023,EVN (GENCO4)
+Sơn Động,Coal,Proposed,ND,Bắc Giang,1.0,PDP7 provincial extension; lacks national PDP8 slot; tbc,TNVN 2023,State Capital (provincial)
+Ninh Bình,Domestic Gas,Operational,2004,Ninh Bình,420.0,AES Annual Report 2023,PetroVietnam 2023,Retirement expected 2025 due to domestic gas decline
+Bà Rịa,Domestic Gas,Operational,2007,Bà Rịa–Vũng Tàu,402.0,EVN 2022 Report,PetroVietnam Field Report,Peaker mode; gas dry-up warnings
+Phú Mỹ 2.1,Domestic Gas,Operational,2004,Bà Rịa–Vũng Tàu,440.0,EVN IRP 2023,BP Vietnam 2020,Unit 1 upgraded 2019; gas price renegotiation 2022
+Phú Mỹ 2.2,Domestic Gas,Operational,2004,Bà Rịa–Vũng Tàu,440.0,,,As P.M 2.1
+Phú Mỹ 3,Domestic Gas,Operational,2005,Bà Rịa–Vũng Tàu,708.0,EVN 2023 IRP,PetroVietnam News 2023,49MW extension 2016; proposed retirement 2028
+Phú Mỹ 4,Imported LNG,Operational,2018,Bà Rịa–Vũng Tàu,4.0,World’s largest CCGT at time; 4 x H-class turbines,Sembcorp IR 2023,Sembcorp + Marubeni + Kyushu Electric (BOT)
+Nhơn Trạch 1.1,Domestic Gas,Operational,2010,Đồng Nai,428.0,EVN Technical Report 2022,PetroVietnam Gas Plan 2021,Retired unit 2a 2022 due to gas curtailment
+Nhơn Trạch 2,OCGT,Operational,2009,Đồng Nai,380.0,EVN IRP 2023,EVN Black Start Requirement 2022,Peaker + black start; proposed retirement ≥2029
+Nhơn Trạch 3,Domestic Gas,Operational,2021,Đồng Nai,750.0,EVN IRP 2023,PV Power Q2 2024,Retirement not before 2035; gas-to-LNG swaps mooted
+Nhơn Trạch 4,Imported LNG,Operational,2023,Đồng Nai,1.0,First LNG-to-power in Vietnam; 2 x 715 MWe,EVN Integrated Report 2023,EVN (GENCO3) + PV Power
+Bình Khánh,Imported LNG,Under Construction,2025,Hồ Chí Minh City,1.0,FSRU docked Q2 2024; floating LNG tanker supplied 2023–2026,EVN 2023 IRP,PIDG (PetroVietnam + IFC + local)
+Thi Vai 1,Imported LNG,Operational,2017,Bà Rịa–Vũng Tàu,440.0,EVN IRP 2023,BP Vietnam 2017,Bach Ho gas + piccoli LNG cargoes hybrid; peaker mode
+Thi Vai 2,Imported LNG,Operational,2018,Bà Rịa–Vũng Tàu,440.0,,,
+Cà Ná,Domestic Gas,Operational,2008,Ninh Thuận,382.0,PV Power Annual Report 2022,EVN Northern Grid 2023,Peaker + export potential to south central grid
+Uông Bí 4,Imported LNG,Permitted,2026,Quảng Ninh,750.0,EVN EPC Tender 2023,SK E&S Press 2023,FSRU option; PDP8-mandated swift FID
+Hải Phòng 1,Oil/Diesel,Operational,2011,Hải Phòng,380.0,EVN Black Start List 2022,Nikkei Asia 2016,Diesel peaking; proposed retirement ≥2027
+Hải Phòng 2,Oil/Diesel,Operational,2012,Hải Phòng,450.0,Sumitomo Press 2022,Hai Phong DPIT 2022,Planned conversion to LNG peaking 2028
+Ninh Thuận 1,Oil/Diesel,Operational,2014,Ninh Thuận,160.0,EVN Emergency Plant Registry 2023,EVN Annex 12C,Emergency black-start plant; units A/B/C
+Ninh Thuận 2,Oil/Diesel,Operational,2015,Ninh Thuận,200.0,,,Emergency + spinning reserve
+Kiên Giang 1,Oil/Diesel,Operational,2017,Kiên Giang,150.0,EVN Emergency Registry 2023,AES Vietnam 2018,Coastal black start; typhoon backup
+Vinh Tan 1 OCGT,Oil/Diesel,Operational,2010,Bình Thuận,120.0,EVN Cold Reserve List 2023,BOT Contract Annex,100% diesel; in cold reserve
+Vinh Tan 2 OCGT,Oil/Diesel,Operational,2011,Bình Thuận,120.0,,,
+Sơn La,Domestic Gas,Cancelled,ND,Sơn La,420.0,EVN Distribution Dept 2022,MOIT Circular 27/2022,Cancelled 2022 due to upstream gas discovery delay; rights of way issues
+Nga 3,Coal,Suspended,ND,Nghệ An,1.0,Proposal suspended 2022; PDP8 slot withdrawn,MOIT Annex XIV 2022,China Development Bank + provincial DoIT
+Bến Tre,Coal,Proposed,2027,Bến Tre,1.0,Provincial plan; PDP8 no slot; tbc,Provincial PDP 2021-2030,State Capital (provincial)
+Nam Định,Coal,Suspended,ND,Nam Định,1.0,Suspended Q4 2022; FX risk + coal supply PPA issue,EVN EPC Tender 2022,Local IPP + EVN
+Thái Bình,Coal,Proposed,2028,Thái Bình,1.0,Coastal coal plant; PDP7 slot expired; new site tbc,Provincial Power Masterplan 2021,Provincial + EVN
+Thừa Thiên Huế,Coal,Permitted,2026,Thừa Thiên Huế,1.0,FS study 2022; PDP8 compliant timeline,MoIT PDP8 Annex II,Provincial + foreign JV
+Quảng Trị,Coal,Cancelled,ND,Quảng Trị,600.0,EVN Decommisioning List 2021,Quang Tri DPI&T 2020,Cancelled 2020; land acquisition deadlock
+Quảng Ngãi,Coal,Proposed,2030,Quảng Ngãi,1.0,Lignite; PDP8 slot confirmed,EVN IRP 2023,EVN (GENCO4)
+Hà Tĩnh 1,Coal,Proposed,2027,Hà Tĩnh,1.0,PDP8 listed; FS ongoing,Sumitomo Press Release 2023,EVN (GENCO1) + Sumitomo
+Hà Tĩnh 2,Coal,Proposed,2028,Hà Tĩnh,1.0,PDP8 listed,,Sumitomo + EVN
+Thanh Hóa,Coal,Cancelled,ND,Thanh Hóa,600.0,Provincial DPI&T 2022,MOIT Circular 13/2021,Cancelled 2021; financing drought + coal logistics
+Quảng Ninh LNG 1,Imported LNG,FID (Q4 2023),Quảng Ninh,1,200.0,EVN EPC Tender 2023,POSCO Press 2023,PDP8-mandated FSRU terminal; floating option under study
+Dung Quất,Imported LNG,Pre-FID,Quảng Ngãi,1,500.0,PV Power Q1 2024,SK E&S Press 2023,FS ongoing; onshore terminal site Cau Voi
+Long Sơn,Imported LNG,FID (2022),Bà Rịa–Vũng Tàu,1,500.0,PV Power Announcement 2022,JERA IR 2023,Onshore terminal Sagres; FID Feb-2022
+Vinh Tan LNG,Imported LNG,Suspended,ND,Bình Thuận,1.0,Suspended 2023; PDP8 now caps OCGT,EVN EPC Tender 2023,Sembcorp + Doosan (BOT)
+Hải Phòng 3,Imported LNG,Permitted,2026,Hải Phòng,1.0,FSRU + onshore terminal; PDP8 compliant,JGC Press Release 2023,JGC + EVN
+Sơn Mỹ 1,Imported LNG,FID (2023),Bình Thuận,1,600.0,Mitsubishi Corporation 2023,EVN Power Purchase Archive 2023,FSRU Energi; PPAs signed 2022
+Sơn Mỹ 2,Imported LNG,FID (2023),Bình Thuận,1,800.0,Sumitomo Press Release 2023,EVN IRP 2023,"FSRU; Phase 1 1,600 MWe"
+Bạc Liêu,Imported LNG,MoU (2022),Bạc Liêu,1,500.0,CPECC Press 2023,EVN PDP8 Annex 2023,FS study Q2 2024; delta terminal option; PDP8 no slot
+Cà Ná 2,Imported LNG,MoU (2023),Ninh Thuận,380,0,Thai PPP Dept 2023,,PV Power Press Release 2023
+Ninh Thuận LNG,Imported LNG,FID (2024),Ninh Thuận,720,0,PV Gas 2024,,PV Power Q1 2024 Report
