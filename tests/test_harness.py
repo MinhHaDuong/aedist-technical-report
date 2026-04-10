@@ -2,6 +2,7 @@
 
 from aedist.harness import (
     BudgetTracker,
+    build_api_kwargs,
     compute_cost,
     model_metadata,
     output_filename,
@@ -156,3 +157,55 @@ def test_iter_model_replies_filters_derived_files(tmp_path):
         "deepseek-v3.2-run2.json",
         "padme-qwen3.5-122b-run1.json",
     ]
+
+
+# ---------------------------------------------------------------------------
+# build_api_kwargs — capability-driven API parameter construction
+# ---------------------------------------------------------------------------
+
+
+def test_no_capabilities_unchanged():
+    """Models without flags get standard params (backward compat)."""
+    model = {"id": "test/plain", "name": "Plain"}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
+    assert kwargs == {"max_tokens": 4096, "temperature": 0.7}
+    assert "extra_body" not in kwargs
+
+
+def test_reasoning_model_skips_temperature():
+    """Models with reasoning=true don't get temperature param."""
+    model = {"id": "openai/o3", "reasoning": True}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
+    assert "temperature" not in kwargs
+    assert kwargs["max_tokens"] == 4096
+
+
+def test_web_search_model_gets_plugin():
+    """Models with web_search=true get plugins in extra_body."""
+    model = {"id": "test/web", "web_search": True}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
+    assert kwargs["temperature"] == 0.7
+    assert kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
+
+
+def test_both_capabilities():
+    """Model with both reasoning and web_search gets correct params."""
+    model = {"id": "test/both", "reasoning": True, "web_search": True}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.0)
+    assert "temperature" not in kwargs
+    assert kwargs["max_tokens"] == 4096
+    assert kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
+
+
+def test_web_search_false_no_plugin():
+    """Explicit web_search=false produces no extra_body."""
+    model = {"id": "test/no-web", "web_search": False}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.5)
+    assert "extra_body" not in kwargs
+
+
+def test_reasoning_false_keeps_temperature():
+    """Explicit reasoning=false keeps temperature."""
+    model = {"id": "test/no-reason", "reasoning": False}
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.3)
+    assert kwargs["temperature"] == 0.3
