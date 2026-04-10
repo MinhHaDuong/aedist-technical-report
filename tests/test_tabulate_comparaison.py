@@ -275,3 +275,34 @@ def test_main_creates_parent_dirs(tmp_path, monkeypatch):
     main(["--output", str(output_file)])
 
     assert output_file.exists()
+
+
+# --- Unstable pair flagging ---
+
+
+def test_unstable_pair_footnote_in_comparison(tmp_path):
+    """Comparison table marks unstable pairs with dagger."""
+    import json
+
+    # Create a variance decomposition JSON with unstable pairs
+    # Note: unstable_pairs uses full model IDs (with provider prefix)
+    variance_data = {
+        "unstable_pairs": [
+            {
+                "model_a": "openai/gpt-5.4",
+                "model_b": "padme/padme-qwen3.5-122b",
+                "f1_diff": 0.02,
+                "ci_overlap": True,
+            }
+        ]
+    }
+    variance_json = tmp_path / "variance_decomposition.json"
+    variance_json.write_text(json.dumps(variance_data))
+
+    latex, n = generate_comparaison_table(
+        SAMPLE_METRICS, variance_path=variance_json
+    )
+    # Both models from the unstable pair should have a dagger on their F1 RAG cell
+    assert "$\\dagger$" in latex
+    # Footnote explaining the dagger
+    assert "5\\,pp" in latex or "5 pp" in latex or "overlapping" in latex.lower()

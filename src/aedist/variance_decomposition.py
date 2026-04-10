@@ -391,6 +391,11 @@ def main(argv: list[str] | None = None) -> None:
     from .measurements import load
 
     records = load()
+    n_before = len(records)
+    records = [r for r in records if r.method_params.prompt_version != "_extracted"]
+    n_excluded = n_before - len(records)
+    if n_excluded:
+        log.info("Excluded %d records with prompt_version='_extracted'", n_excluded)
     result = variance_decomposition(records)
 
     output_path = Path(args.output)
