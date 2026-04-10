@@ -65,9 +65,9 @@ $(GEN)/tab_relances.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_relances --output $@
 
-$(GEN)/tab_comparaison.tex: $(MEASUREMENTS)
+$(GEN)/tab_comparaison.tex: $(MEASUREMENTS) derived/variance_decomposition.json
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_comparaison --output $@
+	uv run python -m aedist.tabulate_comparaison --output $@ --variance-json derived/variance_decomposition.json
 
 derived/variance_decomposition.json: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)

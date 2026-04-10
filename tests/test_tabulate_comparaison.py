@@ -275,3 +275,61 @@ def test_main_creates_parent_dirs(tmp_path, monkeypatch):
     main(["--output", str(output_file)])
 
     assert output_file.exists()
+
+
+# --- Unstable pair flagging ---
+
+
+def test_unstable_pair_all_flagged_uses_table_note(tmp_path):
+    """When all models are flagged unstable, use table-level note without daggers."""
+    import json
+
+    # Both models in SAMPLE_METRICS are in the unstable pair → all flagged
+    variance_data = {
+        "unstable_pairs": [
+            {
+                "model_a": "openai/gpt-5.4",
+                "model_b": "padme/padme-qwen3.5-122b",
+                "f1_diff": 0.02,
+                "ci_overlap": True,
+            }
+        ]
+    }
+    variance_json = tmp_path / "variance_decomposition.json"
+    variance_json.write_text(json.dumps(variance_data))
+
+    latex, n = generate_comparaison_table(
+        SAMPLE_METRICS, variance_path=variance_json
+    )
+    # No per-row daggers when all rows are flagged
+    assert "$\\dagger$" not in latex
+    # Table-level note about all differences being small
+    assert "All inter-model differences" in latex
+    assert "overlapping bootstrap 95" in latex
+
+
+def test_unstable_pair_partial_flagging_uses_daggers(tmp_path):
+    """When only some models are flagged, per-row daggers are shown."""
+    import json
+
+    # Only flag gpt-5.4 against a model NOT in SAMPLE_METRICS
+    variance_data = {
+        "unstable_pairs": [
+            {
+                "model_a": "openai/gpt-5.4",
+                "model_b": "mistral/mistral-small-2603",
+                "f1_diff": 0.02,
+                "ci_overlap": True,
+            }
+        ]
+    }
+    variance_json = tmp_path / "variance_decomposition.json"
+    variance_json.write_text(json.dumps(variance_data))
+
+    latex, n = generate_comparaison_table(
+        SAMPLE_METRICS, variance_path=variance_json
+    )
+    # Only gpt-5.4 is flagged (1 of 2 models) → per-row dagger
+    assert "$\\dagger$" in latex
+    # Footnote with improved wording
+    assert "Unstable ranking" in latex

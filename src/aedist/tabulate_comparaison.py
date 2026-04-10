@@ -48,11 +48,35 @@ def group_by_sweep(metrics: list[dict]) -> tuple[dict[str, list[dict]], dict[str
 # ---------------------------------------------------------------------------
 
 
-def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
+def _load_unstable_slugs(variance_path: Path | None) -> set[str]:
+    """Load unstable model slugs from variance decomposition JSON.
+
+    Returns a set of model slugs (provider prefix stripped) that appear
+    in at least one unstable pair.
+    """
+    if variance_path is None or not variance_path.exists():
+        return set()
+    import json
+
+    data = json.loads(variance_path.read_text())
+    slugs: set[str] = set()
+    for pair in data.get("unstable_pairs", []):
+        for key in ("model_a", "model_b"):
+            full_id = pair.get(key, "")
+            # Strip provider prefix: "openai/gpt-5.4" -> "gpt-5.4"
+            slug = full_id.split("/", 1)[-1] if "/" in full_id else full_id
+            slugs.add(slug)
+    return slugs
+
+
+def generate_comparaison_table(
+    metrics: list[dict], *, variance_path: Path | None = None,
+) -> tuple[str, int]:
     """Generate a LaTeX longtable comparing baseline vs. RAG F1.
 
     Returns (latex_string, number_of_models_compared).
     """
+    unstable_slugs = _load_unstable_slugs(variance_path)
     census, rag = group_by_sweep(metrics)
 
     # Only include models present in both conditions
@@ -104,6 +128,10 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         "\\endlastfoot",
     ]
 
+    # Determine which rows get daggers, then check discriminating power
+    dagger_slugs = {row["slug"] for row in rows if row["slug"] in unstable_slugs}
+    all_flagged = len(dagger_slugs) == len(rows) and len(rows) > 0
+
     for row in rows:
         name = format_model_name(row["slug"])
         f1b = f"{row['f1_base'] * 100:.1f}\\%"
@@ -120,8 +148,31 @@ def generate_comparaison_table(metrics: list[dict]) -> tuple[str, int]:
         elif p is not None and p < 0.05:
             delta += "$^{*}$"
 
+        # Unstable pair marker — only when some rows are NOT flagged
+        if not all_flagged and row["slug"] in dagger_slugs:
+            f1r += "$\\dagger$"
+
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
+    dagger_note = (
+        "Unstable ranking: $<$5\\,pp from nearest neighbour"
+        " with overlapping bootstrap 95\\% CIs."
+    )
+    if dagger_slugs:
+        lines.append("\\midrule")
+        if all_flagged:
+            # All rows flagged — table-level note without per-row daggers
+            lines.append(
+                "\\multicolumn{6}{l}{\\footnotesize "
+                "All inter-model differences are $<$5\\,pp"
+                " with overlapping bootstrap 95\\% CIs.} \\\\"
+            )
+        else:
+            lines.append(
+                "\\multicolumn{6}{l}{\\footnotesize $\\dagger$ "
+                + dagger_note
+                + "} \\\\"
+            )
     lines.append("\\end{longtable}")
     return "\n".join(lines) + "\n", len(common_slugs)
 
@@ -137,15 +188,21 @@ def main(argv: list[str] | None = None):
         description="Generate RAG comparison LaTeX table",
     )
     parser.add_argument("--output", required=True, help="Path to write tab_comparaison.tex")
+    parser.add_argument(
+        "--variance-json",
+        default=None,
+        help="Path to variance_decomposition.json for unstable pair flagging",
+    )
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
+    variance_path = Path(args.variance_json) if args.variance_json else None
 
     from .measurements import load_metrics
 
     metrics = load_metrics()
 
-    latex, n_compared = generate_comparaison_table(metrics)
+    latex, n_compared = generate_comparaison_table(metrics, variance_path=variance_path)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(latex)

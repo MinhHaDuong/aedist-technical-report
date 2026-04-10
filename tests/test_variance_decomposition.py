@@ -240,3 +240,49 @@ def test_omega_squared_in_decomposition():
     assert "omega_sq_model" in result
     assert "omega_sq_method" in result
     assert "omega_sq_interaction" in result
+
+
+def test_extracted_records_excluded(tmp_path, monkeypatch):
+    """CLI filters out prompt_version='_extracted' before decomposition."""
+    import json
+
+    from conftest import patch_measurements_loader
+
+    from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+    from aedist.variance_decomposition import main
+
+    # Create records: some normal, some with _extracted prompt_version
+    normal_records = [
+        RunRecord(
+            method="rag",
+            method_params=MethodParams(model=model, prompt_version="rag"),
+            resource_use=ResourceUse(),
+            result_file=f"test/{model}-rag-{i}.csv",
+            result_summary=ResultSummary(status="ok", f1=f1, n_plants=10, tp=5, fp=0, fn=5),
+        )
+        for model in ["A", "B"]
+        for i, f1 in enumerate([0.70, 0.80])
+    ]
+    extracted_records = [
+        RunRecord(
+            method="rag",
+            method_params=MethodParams(model=model, prompt_version="_extracted"),
+            resource_use=ResourceUse(),
+            result_file=f"test/{model}-extracted-{i}.csv",
+            result_summary=ResultSummary(status="ok", f1=f1, n_plants=10, tp=5, fp=0, fn=5),
+        )
+        for model in ["A", "B"]
+        for i, f1 in enumerate([0.70, 0.80])
+    ]
+
+    all_records = normal_records + extracted_records
+    meas_path = tmp_path / "measurements.jsonl"
+    RunRecord.save_jsonl(all_records, meas_path)
+    patch_measurements_loader(monkeypatch, meas_path)
+
+    output = tmp_path / "variance.json"
+    main(["--output", str(output)])
+
+    result = json.loads(output.read_text())
+    # Only normal records (4) should be included, not the 4 _extracted ones
+    assert result["n_records"] == 4
