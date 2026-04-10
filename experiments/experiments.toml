@@ -131,9 +131,9 @@ model_ids = [
 # Dev tier — cheap reasoning models for pipeline validation
 [sets.ablation_dev]
 model_ids = [
-    "baidu/ernie-4.5-21b-a3b-thinking",   # $0.07/$0.28  reasoning
-    "deepseek/deepseek-v3.2",               # $0.13/$0.28  671B MoE, web_search
-    "moonshotai/kimi-k2-thinking",          # $0.47/$2.00  reasoning
+    "mistralai/mistral-small-2603",         # 24B dense, FR, reasoning+web, $0.60
+    "deepseek/deepseek-v3.2",               # 671B MoE, CN, web, $0.38
+    "moonshotai/kimi-k2-thinking",          # frontier MoE, CN, reasoning+web, $2.00
 ]
 
 # Journal tier — adds mid-range and expensive frontier (gated by human approval)
