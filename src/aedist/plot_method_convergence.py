@@ -27,10 +27,20 @@ _MATCHED = "#2E86AB"
 _HALLUC = "#F5A623"
 
 # Prompt versions that are duplicates of another method's data
+# Prompt versions that duplicate another method's data (see ticket 0048)
 _EXCLUDE_PROMPT_VERSIONS = ("_extracted",)
 
 # Methods to include and display order (bottom to top in plot)
 _METHOD_ORDER = ["single", "multiturn", "web", "rag", "decomposed"]
+
+# Display names for Y-axis labels
+_METHOD_LABELS = {
+    "single": "Single",
+    "multiturn": "Multi-turn",
+    "web": "Web",
+    "rag": "RAG",
+    "decomposed": "Decomposed",
+}
 
 
 def _normalize_model(raw: str) -> str:
@@ -153,7 +163,7 @@ def write_pdf(
                             va="center", ha="right")
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
-        method_ticks.append((band_center, method.replace("_", " ").title()))
+        method_ticks.append((band_center, _METHOD_LABELS.get(method, method)))
         y_offset += len(method_rows) * spacing + gap
 
     # Reference line at 163

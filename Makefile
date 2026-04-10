@@ -118,7 +118,7 @@ slides/slides.pdf: slides/slides.tex \
 report: report/report.pdf
 slides: slides/slides.pdf
 tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex
-figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv
+figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census

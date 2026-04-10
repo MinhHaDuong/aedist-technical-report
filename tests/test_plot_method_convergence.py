@@ -4,7 +4,7 @@ import csv
 
 from conftest import patch_measurements_loader, write_measurements
 
-from aedist.plot_method_convergence import load_convergence_data
+from aedist.plot_method_convergence import core_models, load_convergence_data
 
 # Sample data: 2 models × 2 methods × 2 runs each
 SAMPLE_METRICS = [
@@ -98,6 +98,19 @@ def test_load_has_correct_methods(tmp_path, monkeypatch):
     assert methods <= {"single", "rag", "multiturn", "web", "decomposed"}
 
 
+def test_core_models_requires_all_methods(tmp_path, monkeypatch):
+    """core_models returns only models present in every method."""
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    rows = load_convergence_data()
+    core = core_models(rows)
+    # modelA appears in single + rag (2 methods), modelB in single + rag (2 methods)
+    # Neither appears in all 5 methods, so core should be empty
+    assert core == set()
+
+
 def test_main_writes_csv(tmp_path, monkeypatch):
     """CLI writes well-formed CSV with expected columns."""
     input_path = tmp_path / "measurements.jsonl"
@@ -105,11 +118,11 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "method_convergence.csv"
 
-    import sys
-
     from aedist.plot_method_convergence import main
 
-    sys.argv = ["plot_method_convergence", "--output", str(output_path)]
+    monkeypatch.setattr(
+        "sys.argv", ["plot_method_convergence", "--output", str(output_path)]
+    )
     main()
 
     content = output_path.read_text()
