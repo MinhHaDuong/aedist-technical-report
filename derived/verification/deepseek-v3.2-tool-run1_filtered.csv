@@ -1,0 +1,103 @@
+name,fuel,status,cod,province,capacity_mwe,verification_source,confidence,source_1,source_1_type,source_2,source_2_type,evidence_score,verified
+Uông Bí Extension 1,Coal,Operational,,Quảng Ninh,300,ref: Uong Bi I extension,0.79,ref: Uong Bi I extension,primary,,none,3,True
+Uông Bí Extension 2,Coal,Operational,,Quảng Ninh,330,ref: Uong Bi I extension,0.79,ref: Uong Bi I extension,primary,,none,3,True
+Pha Lai 1,Coal,Operational,,Hải Dương,440,ref: Phả Lại 1,0.78,ref: Phả Lại 1,primary,,none,3,True
+Pha Lai 2,Coal,Operational,,Hải Dương,600,ref: Phả Lại 2,0.78,ref: Phả Lại 2,primary,,none,3,True
+Ninh Bình,Coal,Operational,,Ninh Bình,100,ref: Ninh Binh,0.89,ref: Ninh Binh,primary,,none,3,True
+Hải Phòng 1,Coal,Operational,,Hải Phòng,300,ref: Hải Phòng,0.9,ref: Hải Phòng,primary,,none,3,True
+Quang Ninh 1,Coal,Operational,,Quảng Ninh,300,ref: Quang Ninh 1,1.0,ref: Quang Ninh 1,primary,,none,3,True
+Na Duong,Coal,Operational,,Lạng Sơn,111,ref: Hai Duong,0.82,ref: Hai Duong,primary,,none,3,True
+Cao Nhan,Coal,Operational,,Quảng Ninh,115,ref: Cao Ngạn,0.75,ref: Cao Ngạn,primary,,none,3,True
+Cam Pha 1 & 2,Coal,Operational,,Quảng Ninh,600,ref: Cam Pha 3,0.73,ref: Cam Pha 3,primary,,none,3,True
+Son Dong,Coal,Operational,,Quảng Ninh,220,ref: Son Dong,1.0,ref: Son Dong,primary,,none,3,True
+Mông Dương 1,Coal,Operational,,Quảng Ninh,1080,ref: Na Dương 1,0.82,ref: Na Dương 1,primary,,none,3,True
+Mông Dương 2,Coal,Operational,,Quảng Ninh,1200,ref: Na Dương 2,0.82,ref: Na Dương 2,primary,,none,3,True
+Vĩnh Tân 2,Coal,Operational,,Bình Thuận,1244,ref: Vinh Tan 2,0.8,ref: Vinh Tan 2,primary,,none,3,True
+Duyên Hải 1,Coal,Operational,,Trà Vinh,1244,ref: Duyên Hải 2,0.91,ref: Duyên Hải 2,primary,,none,3,True
+Duyên Hải 3,Coal,Operational,,Trà Vinh,1245,ref: Duyên Hải 2,0.91,ref: Duyên Hải 2,primary,,none,3,True
+Nghi Sơn 1,Coal,Operational,,Thanh Hóa,600,ref: Nghi Son 1,0.9,ref: Nghi Son 1,primary,,none,3,True
+Quang Ninh 2,Coal,Operational,,Quảng Ninh,600,ref: Quang Ninh 2,1.0,ref: Quang Ninh 2,primary,,none,3,True
+Hải Phòng 2,Coal,Operational,,Hải Phòng,600,ref: Hải Phòng,0.9,ref: Hải Phòng,primary,,none,3,True
+Thai Bình 1,Coal,Operational,,Thái Bình,600,ref: Thái Bình 1,0.91,ref: Thái Bình 1,primary,,none,3,True
+Vĩnh Tân 4,Coal,Operational,,Bình Thuận,1200,ref: Vinh Tan 4,0.8,ref: Vinh Tan 4,primary,,none,3,True
+Vĩnh Tân 1,Coal,Operational,,Bình Thuận,1200,ref: Vinh Tan 1,0.8,ref: Vinh Tan 1,primary,,none,3,True
+Thăng Long #1,Coal,Operational,,Thanh Hóa,300,ref: Thang Long,0.78,ref: Thang Long,primary,,none,3,True
+Thăng Long #2,Coal,Operational,,Thanh Hóa,300,ref: Thang Long,0.78,ref: Thang Long,primary,,none,3,True
+Nghi Sơn 2,Coal,Under Construction,,Thanh Hóa,1200,ref: Nghi Son 2,0.9,ref: Nghi Son 2,primary,,none,3,True
+Vũng Áng 2,Coal,Under Construction,,Hà Tĩnh,1200,ref: Vung Ang 2,0.7,ref: Vung Ang 2,primary,,none,3,True
+Quảng Trạch 1,Coal,Under Construction,,Quảng Bình,1200,ref: Quảng Trạch 1,1.0,ref: Quảng Trạch 1,primary,,none,3,True
+Vân Phong 1,Coal,Under Construction,,Khánh Hòa,1432,ref: Vân Phong 1,1.0,ref: Vân Phong 1,primary,,none,3,True
+Long Phú 1,Coal,Under Construction,,Sóc Trăng,1200,ref: Long Phú 1,1.0,ref: Long Phú 1,primary,,none,3,True
+Sông Hậu 1,Coal,Under Construction,,Hậu Giang,1200,ref: Sông Hậu 1,1.0,ref: Sông Hậu 1,primary,,none,3,True
+Na Dương 2,Coal,Under Construction,,Lạng Sơn,110,ref: Na Dương 2,1.0,ref: Na Dương 2,primary,,none,3,True
+Cẩm Phả 3,Coal,Planned/Delayed,,Quảng Ninh,440,ref: Cẩm Phả 1,0.89,ref: Cẩm Phả 1,primary,,none,3,True
+Quỳnh Lập 1,Coal,Planned/Delayed,,Nghệ An,1200,ref: Quỳnh Lập 1,1.0,ref: Quỳnh Lập 1,primary,,none,3,True
+Công Thanh,Coal,Planned/Delayed,,Thanh Hóa,600,ref: Cong Thanh,0.9,ref: Cong Thanh,primary,,none,3,True
+An Khánh - Bắc Giang,Coal,Planned/Delayed,,Bắc Giang,650,ref: An Khánh - Bac Giang,0.95,ref: An Khánh - Bac Giang,primary,,none,3,True
+Vĩnh Tân 3,Coal,Planned/Delayed,,Bình Thuận,1980,ref: Vinh Tan 3,0.8,ref: Vinh Tan 3,primary,,none,3,True
+Quảng Trị,Coal,Planned/Delayed,,Quảng Trị,1320,ref: Quảng Trị 1,0.9,ref: Quảng Trị 1,primary,,none,3,True
+Sông Hậu 2,Coal,Planned/Delayed,,Hậu Giang,2120,ref: Sông Hậu 2,1.0,ref: Sông Hậu 2,primary,,none,3,True
+Long Phú 2,Coal,Planned/Delayed,,Sóc Trăng,1320,ref: Long Phú 2,1.0,ref: Long Phú 2,primary,,none,3,True
+Long Phú 3,Coal,Planned/Delayed,,Sóc Trăng,1800,ref: Long Phú 3,1.0,ref: Long Phú 3,primary,,none,3,True
+Long An 1,Coal,Planned/Delayed,,Long An,1200,ref: Long An 2,0.89,ref: Long An 2,primary,,none,3,True
+Long An 2,Coal,Planned/Delayed,,Long An,1600,ref: Long An 2,1.0,ref: Long An 2,primary,,none,3,True
+Vũng Áng 3,Coal,Planned/Delayed,,Hà Tĩnh,1200,ref: Vung Ang 3,0.7,ref: Vung Ang 3,primary,,none,3,True
+Quỳnh Lập 2,Coal,Planned/Delayed,,Nghệ An,1200,ref: Quỳnh Lập 2,1.0,ref: Quỳnh Lập 2,primary,,none,3,True
+Tân Phước 1,Coal,Planned/Delayed,,Tiền Giang,1200,ref: Tân Phước 1,1.0,ref: Tân Phước 1,primary,,none,3,True
+Tân Phước 2,Coal,Planned/Delayed,,Tiền Giang,1200,ref: Tân Phước 2,1.0,ref: Tân Phước 2,primary,,none,3,True
+Hải Phòng 3,Coal,Planned/Delayed,,Hải Phòng,1200,ref: Hải Phòng,0.9,ref: Hải Phòng,primary,,none,3,True
+Quảng Ninh 3,Coal,Planned/Delayed,,Quảng Ninh,1200,ref: Quang Ninh 3,0.92,ref: Quang Ninh 3,primary,,none,3,True
+Bạc Liêu 1,Coal,Planned/Delayed,,Bạc Liêu,1200,ref: Bạc Liêu 1,1.0,ref: Bạc Liêu 1,primary,,none,3,True
+Quảng Trạch 2,Coal,Planned/Delayed,,Quảng Bình,1200,ref: Quảng Trạch 2,1.0,ref: Quảng Trạch 2,primary,,none,3,True
+Bình Định 1,Coal,Planned/Delayed,,Bình Định,1200,ref: LNG Bình Định,0.75,ref: LNG Bình Định,primary,,none,3,True
+Bình Định 2,Coal,Planned/Delayed,,Bình Định,2000,ref: LNG Bình Định,0.75,ref: LNG Bình Định,primary,,none,3,True
+Ô Môn III,Local Natural Gas (Lô B),Under Construction,2024,Can Tho,750,ref: TBKHH Ô Môn III,0.75,ref: TBKHH Ô Môn III,primary,,none,3,True
+Ô Môn IV,Local Natural Gas (Lô B),Planned,2024,Can Tho,750,ref: NĐ Ô Môn I,0.78,ref: NĐ Ô Môn I,primary,,none,3,True
+Kiên Giang I,Local Natural Gas (Lô B),Planned,2021,Kien Giang,750,"ref: TBKHH Kiên Giang I, II",0.71,"ref: TBKHH Kiên Giang I, II",primary,,none,3,True
+Kiên Giang II,Local Natural Gas (Lô B),Planned,2022,Kien Giang,750,"ref: TBKHH Kiên Giang I, II",0.74,"ref: TBKHH Kiên Giang I, II",primary,,none,3,True
+TBKHH Miền Trung I (Cá Voi Xanh),Local Natural Gas (CVX),Planned,2023,(Quảng Trị/Quảng Ngãi),750,ref: TBKHH miền Trung I,0.72,ref: TBKHH miền Trung I,primary,,none,3,True
+TBKHH Miền Trung II (Cá Voi Xanh),Local Natural Gas (CVX),Planned,2024,(Quảng Trị/Quảng Ngãi),750,ref: TBKHH miền Trung II,0.73,ref: TBKHH miền Trung II,primary,,none,3,True
+TBKHH Dung Quất I (Cá Voi Xanh),Local Natural Gas (CVX),Planned,2023,Quảng Ngãi,750,ref: TBKHH Dung Quất I,0.71,ref: TBKHH Dung Quất I,primary,,none,3,True
+TBKHH Dung Quất II (Cá Voi Xanh),Local Natural Gas (CVX),Planned,2024,Quảng Ngãi,750,ref: TBKHH Dung Quất II,0.72,ref: TBKHH Dung Quất II,primary,,none,3,True
+TBKHH Dung Quất III (Cá Voi Xanh),Local Natural Gas (CVX),Planned,2026,Quảng Ngãi,750,ref: TBKHH Dung Quất III,0.73,ref: TBKHH Dung Quất III,primary,,none,3,True
+TBKHH Quảng Trị (Báo Vàng),Local Natural Gas (Báo Vàng),Planned,~2023,Quảng Trị,340,ref: TBKHH Quảng Trị (khí Báo Vàng),0.93,ref: TBKHH Quảng Trị (khí Báo Vàng),primary,,none,3,True
+Phú Mỹ II.1,Local Natural Gas (PM gas),Operational,Operational,Bà Rịa-Vũng Tàu,900,ref: LNG Phú Mỹ 3.1,0.72,ref: LNG Phú Mỹ 3.1,primary,,none,3,True
+Nhơn Trạch I,Local Natural Gas (PM gas),Operational,Operational,Dong Nai,465,ref: TBKHH Nhơn Trạch I,0.8,ref: TBKHH Nhơn Trạch I,primary,,none,3,True
+Nhơn Trạch II,Local Natural Gas (PM gas),Operational,Operational,Dong Nai,750,ref: TBKHH Nhơn Trạch II,0.81,ref: TBKHH Nhơn Trạch II,primary,,none,3,True
+Cà Mau I,Local Natural Gas (PM gas),Operational,Operational,Cà Mau,750,ref: Cà Mau I,1.0,ref: Cà Mau I,primary,,none,3,True
+Cà Mau II,Local Natural Gas (PM gas),Operational,Operational,Cà Mau,750,ref: Cà Mau II,1.0,ref: Cà Mau II,primary,,none,3,True
+LNG Quảng Ninh,Imported LNG (LNG),Planned,2021-2030,Quảng Ninh,1500,ref: LNG Quảng Nam,0.81,ref: LNG Quảng Nam,primary,,none,3,True
+LNG Thái Bình,Imported LNG (LNG),Planned,2021-2030,Thái Bình,1500,ref: LNG Thái Bình,1.0,ref: LNG Thái Bình,primary,,none,3,True
+LNG Nghi Sơn,Imported LNG (LNG),Planned,2021-2030,Thanh Hóa,1500,ref: LNG Long Sơn,0.83,ref: LNG Long Sơn,primary,,none,3,True
+LNG Quỳnh Lập/Nghi Sơn,Imported LNG (LNG),Proposed,2021-2030,Thanh Hóa/Nghệ An,1500,ref: LNG Quỳnh Lập,0.74,ref: LNG Quỳnh Lập,primary,,none,3,True
+LNG Hải Lăng phase 1,Imported LNG (LNG),Planned,2021-2030,Quảng Trị,1500,ref: LNG Long An I phase 2,0.78,ref: LNG Long An I phase 2,primary,,none,3,True
+LNG Cà Ná,Imported LNG (LNG),Planned,2021-2030,Ninh Thuận,1500,ref: LNG Cà Ná,1.0,ref: LNG Cà Ná,primary,,none,3,True
+Sơn Mỹ II,Imported LNG (LNG),Planned,2021-2030,Bình Thuận,2250,ref: LNG Sơn Mỹ II,0.82,ref: LNG Sơn Mỹ II,primary,,none,3,True
+LNG Long Sơn,Imported LNG (LNG),Planned,2031-2035,Bà Rịa-Vũng Tàu,1500,ref: LNG Long Sơn,1.0,ref: LNG Long Sơn,primary,,none,3,True
+LNG Long An I,Imported LNG (LNG),Planned,2021-2030,Long An,1500,ref: LNG Long An I,1.0,ref: LNG Long An I,primary,,none,3,True
+LNG Long An II,Imported LNG (LNG),Planned,2031-2035,Long An,1500,ref: LNG Long An II,1.0,ref: LNG Long An II,primary,,none,3,True
+LNG Bạc Liêu,Imported LNG (LNG),Planned,2021-2030,Bạc Liêu,3200,ref: LNG Bạc Liêu,1.0,ref: LNG Bạc Liêu,primary,,none,3,True
+LNG Quảng Ninh 2 (Cẩm Phả),Imported LNG (LNG),Proposed/Potential Reserve,Quảng Ninh,1500,0,ref: LNG Quảng Ninh 2 (Cẩm Phả),1.0,ref: LNG Quảng Ninh 2 (Cẩm Phả),primary,,none,3,True
+LNG Quảng Ninh 3 (Quảng Yên),Imported LNG (LNG),Proposed/Potential Reserve,Quảng Ninh,4500,0,ref: LNG Quảng Ninh 3 (Quảng Yên),1.0,ref: LNG Quảng Ninh 3 (Quảng Yên),primary,,none,3,True
+LNG Quảng Ninh 4 (Hải Hà),Imported LNG (LNG),Proposed/Potential Reserve,Quảng Ninh,3000,0,ref: LNG Quảng Ninh 4 (Hải Hà),1.0,ref: LNG Quảng Ninh 4 (Hải Hà),primary,,none,3,True
+LNG Nghi Sơn (Thanh Hóa),Imported LNG (LNG),Proposed/Potential Reserve,Thanh Hóa,5000,0,ref: LNG Nghi Sơn (Thanh Hóa),1.0,ref: LNG Nghi Sơn (Thanh Hóa),primary,,none,3,True
+LNG Quảng Bình (Hòn La),Imported LNG (LNG),Proposed/Potential Reserve,Quảng Bình,3000,0,ref: LNG Quảng Bình,0.76,ref: LNG Quảng Bình,primary,,none,3,True
+LNG Chân Mây (Huế),Imported LNG (LNG),Proposed/Potential Reserve,Thừa Thiên-Huế,4000,0,ref: LNG Chân Mây,0.8,ref: LNG Chân Mây,primary,,none,3,True
+LNG Phong Điền (Huế),Imported LNG (LNG),Proposed/Potential Reserve,Thừa Thiên-Huế,3000,0,ref: LNG Phong Điền – Huế,0.9,ref: LNG Phong Điền – Huế,primary,,none,3,True
+LNG Quảng Nam,Imported LNG (LNG),Proposed/Potential Reserve,Quảng Nam,4000,0,ref: LNG Quảng Nam,1.0,ref: LNG Quảng Nam,primary,,none,3,True
+LNG Bình Định,Imported LNG (LNG),Proposed/Potential Reserve,Bình Định,5000,0,ref: LNG Bình Định,1.0,ref: LNG Bình Định,primary,,none,3,True
+LNG Vân Phong (Mũi Giăng),Imported LNG (LNG),Proposed/Potential Reserve,Khánh Hòa,3000,0,ref: LNG Vân Phong (Mỹ Giang) phase 1,0.77,ref: LNG Vân Phong (Mỹ Giang) phase 1,primary,,none,3,True
+LNG Mũi Kê Gà,Imported LNG (LNG),Proposed/Potential Reserve,Bình Thuận,3600,0,ref: LNG Mũi Kê Gà 1,0.93,ref: LNG Mũi Kê Gà 1,primary,,none,3,True
+LNG Bà Rịa 2,Imported LNG (LNG),Proposed/Potential Reserve,Bà Rịa-Vũng Tàu,1200,0,ref: LNG Bà Rịa 2,1.0,ref: LNG Bà Rịa 2,primary,,none,3,True
+LNG Long Sơn I,Imported LNG (LNG),Planned,2025-2026,Bà Rịa-Vũng Tàu,1200,ref: LNG Long Sơn,0.92,ref: LNG Long Sơn,primary,,none,3,True
+LNG Long Sơn II+III,Imported LNG (LNG),Proposed/Potential Reserve,Bà Rịa-Vũng Tàu,3200,0,ref: LNG Long Sơn II+III,1.0,ref: LNG Long Sơn II+III,primary,,none,3,True
+LNG Long Sơn IV,Imported LNG (LNG),Proposed/Potential Reserve,Bà Rịa-Vũng Tàu,3600,0,ref: LNG Long Sơn,0.89,ref: LNG Long Sơn,primary,,none,3,True
+LNG Cái Mép H,Imported LNG (LNG),Proposed/Potential Reserve,Bà Rịa-Vũng Tàu,6000,0,ref: LNG Cái Mép Hạ,0.96,ref: LNG Cái Mép Hạ,primary,,none,3,True
+LNG Tân Phúc,Imported LNG (LNG),Proposed/Potential Reserve,Long An,4500,0,ref: LNG Tân Phước,0.88,ref: LNG Tân Phước,primary,,none,3,True
+LNG Cà Mau 1,2,3,Imported LNG (LNG),Proposed/Potential Reserve,0,ref: LNG Cà Mau 1,1.0,ref: LNG Cà Mau 1,primary,,none,3,True
+LNG Tân Thuận - Đầm Dơi,Imported LNG (LNG),Proposed/Potential Reserve,Cà Mau,3200,0,"ref: LNG Tân Thuận – Đầm Dơi, Cà Mau",0.81,"ref: LNG Tân Thuận – Đầm Dơi, Cà Mau",primary,,none,3,True
+LNG Sông Đốc,Imported LNG (LNG),Proposed/Potential Reserve,Cà Mau,3000,0,ref: LNG Sông Đốc (Cà Mau),0.73,ref: LNG Sông Đốc (Cà Mau),primary,,none,3,True
+Thủ Đức,Oil-fired,Operational,1978-01-01,Ho Chi Minh City,165,ref: NĐ Thủ Đức,0.82,ref: NĐ Thủ Đức,primary,,none,3,True
+Cần Thơ,Oil-fired,Operational,1999-01-01,Can Tho,33,ref: NĐ Cần Thơ,0.82,ref: NĐ Cần Thơ,primary,,none,3,True
+Ô Môn I,Oil-fired,Operational,2008-01-01,Can Tho,330,ref: NĐ Ô Môn I,0.82,ref: NĐ Ô Môn I,primary,,none,3,True
+Hiệp Phước,Oil-fired,Operational,2010-01-01,Ho Chi Minh City,375,ref: NĐ Hiệp Phước,0.87,ref: NĐ Hiệp Phước,primary,,none,3,True
