@@ -378,17 +378,19 @@ Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
 
 % -------------------------------------------------------------------
 \begin{frame}{Method convergence: do all models reach the inventory?}
-\textbf{5 models} $\times$ \textbf{5 methods} $\times$ 3 runs each.
-Each dot = 1 power plant.
+\vspace{-0.3em}
+{\small \textbf{5 models} $\times$ \textbf{5 methods} $\times$ 3 runs.
+Each dot = 1 plant.
 \textcolor{matched}{Blue} = correctly identified.
-\textcolor{halluc}{Orange} = hallucinated.
+\textcolor{halluc}{Orange} = hallucinated.}
 
+\vspace{-0.3em}
 \begin{center}
-\includegraphics[width=\textwidth]{inputs/generated/fig_method_convergence.pdf}
+\includegraphics[width=\textwidth, trim=0 0 0 0, clip]{inputs/generated/fig_method_convergence.pdf}
 \end{center}
 
-\vspace{-0.5em}
-{\small \textbf{Decomposed} finds all 163 plants but hallucinates.
+\vspace{-1em}
+{\small \textbf{Decomposed} finds all 163 but hallucinates.
 \textbf{Web} never hallucinates but caps at $\sim$50.
 No method yet converges all models to 163 with zero errors.}
 \end{frame}

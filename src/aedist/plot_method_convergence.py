@@ -107,12 +107,12 @@ def write_pdf(
     import matplotlib.pyplot as plt
     import numpy as np
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10, 4.2))
 
     y_offset = 0.0
     method_ticks = []
-    spacing = 0.5
-    gap = 1.8
+    spacing = 0.4
+    gap = 1.5
 
     for method in _METHOD_ORDER:
         method_rows = [r for r in rows if r["method"] == method]
@@ -143,38 +143,45 @@ def write_pdf(
             if tp > 0:
                 xs = np.arange(1, tp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=2, c=_MATCHED, marker="|", linewidths=0.4, zorder=3)
+                ax.scatter(xs, ys, s=4, c=_MATCHED, marker="|", linewidths=0.5, zorder=3)
 
             # FP dots (orange, left of 0) — 1 dot = 1 hallucinated plant
             if fp > 0:
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=2, c=_HALLUC, marker="|", linewidths=0.4, zorder=3)
+                ax.scatter(xs, ys, s=4, c=_HALLUC, marker="|", linewidths=0.5, zorder=3)
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
         method_ticks.append((band_center, method.replace("_", " ").title()))
         y_offset += len(method_rows) * spacing + gap
 
     # Reference line at 163
-    ax.axvline(x=163, color="green", linewidth=0.8, linestyle="--", alpha=0.7, zorder=2)
-    ax.text(164, y_offset - gap, "163", color="green", fontsize=7, va="top")
+    ax.axvline(x=163, color="#2ca02c", linewidth=1, linestyle="--", alpha=0.7, zorder=2)
+    ax.text(165, -0.5, "163\nplants", color="#2ca02c", fontsize=8, va="top", ha="left")
 
     # Zero line
-    ax.axvline(x=0, color="black", linewidth=0.3, alpha=0.3, zorder=1)
+    ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
     # Y axis: method labels
     ax.set_yticks([t[0] for t in method_ticks])
-    ax.set_yticklabels([t[1] for t in method_ticks])
-    ax.set_xlabel("Number of power plants")
-    ax.set_xlim(-55, 180)
+    ax.set_yticklabels([t[1] for t in method_ticks], fontsize=11)
+    ax.set_xlabel("Number of power plants", fontsize=11)
+    ax.set_xlim(-58, 185)
     ax.invert_yaxis()
     ax.grid(axis="x", linewidth=0.2, alpha=0.3)
     ax.set_axisbelow(True)
+    ax.tick_params(axis="x", labelsize=9)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
-    # Legend
-    ax.scatter([], [], s=10, c=_MATCHED, label="Correctly identified")
-    ax.scatter([], [], s=10, c=_HALLUC, label="Hallucinated")
-    ax.legend(loc="lower right", fontsize=7, framealpha=0.8)
+    # Legend — upper right, inside the empty space
+    from matplotlib.lines import Line2D
+
+    legend_handles = [
+        Line2D([0], [0], color=_MATCHED, linewidth=3, label="Correctly identified"),
+        Line2D([0], [0], color=_HALLUC, linewidth=3, label="Hallucinated"),
+    ]
+    ax.legend(handles=legend_handles, loc="upper right", fontsize=9, framealpha=0.9)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
