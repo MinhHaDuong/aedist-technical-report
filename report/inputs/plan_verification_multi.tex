@@ -1,0 +1,341 @@
+% Experimental plan: multi-agent verification of extraction outputs
+% Included from report.tex — companion to verification_methods.tex
+% Ticket 0054 Phase A deliverable
+
+\section{Exp\'erience~5~: v\'erification multi-agents}\label{sec:exp5}
+
+La section~\ref{sec:verification} d\'ecrit cinq modes de v\'erification o\`u
+un seul agent (ou outil) annote chaque ligne du CSV avec des citations.
+L'auto-v\'erification (\texttt{self}) souffre d'un biais de confirmation~:
+le m\^eme mod\`ele valide ses propres fabrications. La v\'erification crois\'ee
+(\texttt{cross}) utilise un mod\`ele diff\'erent mais reste un avis unique. Cette
+exp\'erience teste si l'agr\'egation de \emph{plusieurs} agents v\'erificateurs
+ind\'ependants am\'eliore la d\'etection d'hallucinations et la qualit\'e de
+l'\'evidence, au-del\`a de ce qu'un v\'erificateur unique peut atteindre.
+
+\subsection{Motivation}\label{sec:multi-verif-motivation}
+
+Trois r\'esultats du pipeline existant motivent cette exp\'erience~:
+
+\begin{enumerate}
+\item \textbf{L'auto-consistance am\'eliore le rappel, pas la pr\'ecision.}
+  L'analyse de self-consistency (section~\ref{sec:self-consistency}) montre que
+  le vote union sur 3~runs augmente le rappel (plus de centrales d\'ecouvertes)
+  mais n'\'elimine pas les hallucinations~: un nom fabriqu\'e pr\'esent dans 2~runs
+  sur~3 passe le vote majoritaire. La consolidation multi-run est orthogonale \`a
+  la v\'erification de provenance.
+
+\item \textbf{La v\'erification crois\'ee d\'etecte plus d'hallucinations que
+  l'auto-v\'erification.}
+  L'hypoth\`ese~3 de la section~\ref{sec:verif-hypotheses} pr\'edit que le mode
+  \texttt{cross} attribue davantage de scores~0 que le mode \texttt{self}.
+  Si confirm\'ee, agr\'eger plusieurs v\'erificateurs crois\'es devrait amplifier
+  cet avantage.
+
+\item \textbf{Le module sourçage fournit un substrat de v\'erification.}
+  Le module sourçage (ticket~0038) ajoute des colonnes \texttt{Source\_1} et
+  \texttt{Source\_2} par ligne. Un agent v\'erificateur peut cibler chaque
+  citation individuellement sans r\'e-extraire l'inventaire complet.
+\end{enumerate}
+
+\subsection{Choix du protocole}\label{sec:protocol-choice}
+
+Quatre protocoles candidats ont \'et\'e \'evalu\'es contre l'infrastructure
+existante~:
+
+\begin{description}
+\item[Vote majoritaire multi-run] D\'ej\`a impl\'ement\'e dans
+  \texttt{self\_consistency.py}. Agr\`ege $k$~extractions du m\^eme mod\`ele par
+  nom. Limite~: ne v\'erifie pas la \emph{provenance}, seulement la
+  \emph{reproductibilit\'e}. Un nom hallucin\'e de mani\`ere reproductible passe le
+  filtre.
+
+\item[V\'erification crois\'ee multi-agents] Extension directe du mode
+  \texttt{cross}~: $k$~mod\`eles v\'erificateurs ind\'ependants annotent chaque
+  ligne, puis un vote majoritaire sur les scores d'\'evidence d\'etermine le
+  verdict final. Compatible avec l'infrastructure existante~: chaque appel
+  utilise \texttt{verify\_cross()} avec un mod\`ele diff\'erent.
+
+\item[D\'ebat] Deux mod\`eles argumentent pour/contre chaque ligne disput\'ee,
+  un juge tranche. Co\^ut \'elev\'e (3~appels LLM par ligne disput\'ee).
+  N\'ecessite un prompt de d\'ebat sp\'ecifique non encore impl\'ement\'e.
+  Report\'e \`a un travail futur.
+
+\item[Ancrage dans les sources (\emph{source grounding})] Un agent
+  v\'erificateur r\'ecup\`ere le document cit\'e dans \texttt{Source\_1} et v\'erifie
+  que la donn\'ee revendiqu\'ee y figure. N\'ecessite l'acc\`es au corpus RAG
+  complet et un m\'ecanisme de r\'ecup\'eration cibl\'ee. Faisable mais hors
+  p\'erim\`etre de cette exp\'erience (requiert une int\'egration RAG-v\'erification
+  non triviale).
+\end{description}
+
+\paragraph{Protocole retenu~: v\'erification crois\'ee multi-agents avec vote
+majoritaire.}
+Ce protocole maximise la r\'eutilisation de l'infrastructure existante
+(\texttt{verify\_cross} appel\'e $k$~fois avec des mod\`eles diff\'erents) tout en
+apportant la diversit\'e n\'ecessaire pour d\'epasser les angles morts d'un
+v\'erificateur unique. Le vote majoritaire sur les scores d'\'evidence est le
+m\'ecanisme d'agr\'egation le plus simple et le plus interpr\'etable.
+
+\subsection{Sp\'ecification du protocole}\label{sec:multi-verif-spec}
+
+\subsubsection{Panel de v\'erificateurs}\label{sec:verifier-panel}
+
+Trois mod\`eles sont s\'electionn\'es pour maximiser la diversit\'e sur trois
+axes~: fournisseur, architecture et base d'entra\^inement.
+
+\begin{center}
+\small
+\begin{tabular}{llllrr}
+\toprule
+\textbf{Mod\`ele} & \textbf{Fournisseur} & \textbf{Pays} & \textbf{Arch.}
+  & \textbf{In (\$/Mtok)} & \textbf{Out (\$/Mtok)} \\
+\midrule
+Claude Sonnet~4.6  & Anthropic & US & Dense   & 3,00 & 15,00 \\
+GPT-5.4            & OpenAI    & US & Dense   & 2,50 & 10,00 \\
+DeepSeek V3.2      & DeepSeek  & CN & MoE     & 0,26 &  0,38 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Justification du panel~:
+\begin{itemize}
+\item \textbf{Diversit\'e de fournisseur}~: trois laboratoires distincts
+  (Anthropic, OpenAI, DeepSeek) minimisent la corr\'elation des biais
+  d'entra\^inement.
+\item \textbf{Diversit\'e g\'eographique}~: deux mod\`eles US, un mod\`ele chinois.
+  Pour l'extraction de donn\'ees vietnamiennes, les mod\`eles chinois ont
+  montr\'e une meilleure connaissance des noms propres et des documents
+  r\'egionaux (section~\ref{sec:census-results}).
+\item \textbf{Diversit\'e architecturale}~: deux mod\`eles denses, un MoE.
+  Les architectures MoE activent des experts diff\'erents selon le contexte,
+  ce qui peut produire des erreurs d\'ecorr\'el\'ees.
+\item \textbf{Co\^ut}~: DeepSeek V3.2 est ${\sim}40\times$ moins cher que
+  Sonnet~4.6 en tokens de sortie. Le panel couvre un spectre de prix large
+  pour mesurer le rendement marginal de chaque v\'erificateur suppl\'ementaire.
+\end{itemize}
+
+\subsubsection{Entr\'ees}\label{sec:multi-verif-inputs}
+
+Les extractions de base proviennent des meilleures configurations identifi\'ees
+dans les exp\'eriences pr\'ec\'edentes~:
+
+\begin{enumerate}
+\item \textbf{DeepSeek V3.2 d\'ecompos\'e} (F1 $\approx$ 98,8\,\%) --- meilleur
+  score global, d\'ej\`a configur\'e dans \texttt{sweeps.verification}.
+\item \textbf{Opus~4.6 multitour} (F1 $\approx$ 98,2\,\%, 169~centrales) ---
+  mod\`ele frontier de r\'ef\'erence, haut rappel mais 6~hallucinations.
+\item \textbf{GPT-5.4 RAG} --- repr\'esente la m\'ethode RAG wholesale.
+\end{enumerate}
+
+\noindent Pour chaque extraction de base, les colonnes \texttt{Source\_1} et
+\texttt{Source\_2} sont pr\'esentes (issues du module sourçage ou ajout\'ees par
+l'\'etape de v\'erification).
+
+\subsubsection{Proc\'edure}\label{sec:multi-verif-procedure}
+
+Pour chaque extraction de base~:
+
+\begin{enumerate}
+\item \textbf{V\'erification ind\'ependante.} Chaque v\'erificateur $V_i$
+  ($i \in \{1, 2, 3\}$) re\c{c}oit le CSV extrait (noms, attributs, citations)
+  et produit un score d'\'evidence par ligne (rubrique 0--4,
+  section~\ref{sec:evidence-rubric}). Les v\'erificateurs ne voient ni le prompt
+  d'extraction original ni les sorties des autres v\'erificateurs.
+
+\item \textbf{Agr\'egation par vote majoritaire.} Pour chaque ligne, le score
+  d'\'evidence final est la \emph{m\'ediane} des $k=3$ scores individuels. La
+  m\'ediane est pr\'ef\'er\'ee \`a la moyenne car elle est robuste aux valeurs
+  aberrantes (un v\'erificateur trop indulgent ou trop s\'ev\`ere).
+
+\item \textbf{Classification finale.} Une ligne est class\'ee comme~:
+  \begin{description}
+  \item[V\'erifi\'ee] si le score m\'edian $\geq 3$ (au moins une source primaire
+    selon la majorit\'e des v\'erificateurs).
+  \item[Incertaine] si le score m\'edian $\in \{1, 2\}$ (aucune source primaire
+    confirm\'ee par la majorit\'e).
+  \item[Fabriqu\'ee] si le score m\'edian $= 0$ (hallucination d\'etect\'ee par la
+    majorit\'e).
+  \end{description}
+
+\item \textbf{R\`egle de bris d'\'egalit\'e.} Avec $k=3$ v\'erificateurs et des
+  scores entiers 0--4, la m\'ediane est toujours d\'efinie sans ambigu\"it\'e
+  (\'el\'ement central du triplet tri\'e). Si $k$ est pair dans une extension
+  future, prendre $\lfloor \text{m\'ediane} \rfloor$ (arrondir vers le bas =
+  conservateur).
+\end{enumerate}
+
+\subsubsection{Conditions exp\'erimentales}\label{sec:multi-verif-conditions}
+
+Le design factoriel croise 3~extractions de base $\times$ 4~conditions de
+v\'erification~:
+
+\begin{center}
+\small
+\begin{tabular}{clcr}
+\toprule
+\textbf{\#} & \textbf{Condition} & \textbf{$k$ v\'erificateurs} & \textbf{Appels LLM} \\
+\midrule
+C0 & Non v\'erifi\'e (baseline)           & 0 & 0 \\
+C1 & Cross unique (Sonnet~4.6)          & 1 & 1 \\
+C2 & Cross double (Sonnet + DeepSeek)   & 2 & 2 \\
+C3 & Cross triple (Sonnet + DeepSeek + GPT-5.4) & 3 & 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Les conditions C1 et C2 sont des sous-ensembles de C3, permettant de
+mesurer le rendement marginal de chaque v\'erificateur suppl\'ementaire.
+La condition C1 correspond au mode \texttt{cross} existant et sert de
+contr\^ole.
+
+\paragraph{R\'ep\'etitions.} Les modes LLM sont stochastiques. Chaque condition
+$\times$ extraction est r\'ep\'et\'ee $n=3$~fois pour estimer la variance.
+Le mode non v\'erifi\'e (C0) est d\'eterministe (1~run).
+
+\paragraph{Total.} $3 \text{ bases} \times (1 + 3 \times 3) = 30$~conditions,
+soit $3 + 27 = 30$~runs dont 27~appels LLM.
+
+\subsection{Estimation des co\^uts}\label{sec:multi-verif-cost}
+
+Chaque appel de v\'erification traite ${\sim}150$~lignes CSV. Le prompt de
+v\'erification (liste de centrales + consigne de citation) consomme
+${\sim}2\,000$~tokens en entr\'ee et ${\sim}4\,000$~tokens en sortie.
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{V\'erificateur} & \textbf{Co\^ut/appel} & \textbf{Appels (3 bases $\times$ 3 reps)}
+  & \textbf{Total} \\
+\midrule
+Sonnet~4.6   & \$0,066 & 9 & \$0,59 \\
+GPT-5.4      & \$0,045 & 9 & \$0,41 \\
+DeepSeek V3.2 & \$0,002 & 9 & \$0,02 \\
+\midrule
+\textbf{Total} & & 27 & \textbf{\$1,02} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Co\^ut total estim\'e~: ${\sim}1$\,\$ pour 27~appels LLM. Le budget de
+5\,\$ configur\'e dans \texttt{sweeps.verification} est largement suffisant.
+DeepSeek V3.2 repr\'esente $<$2\,\% du co\^ut total malgr\'e un tiers des appels,
+illustrant l'asym\'etrie de prix entre mod\`eles frontier.
+
+\subsection{Analyse pr\'evue}\label{sec:multi-verif-analysis}
+
+\paragraph{M\'etrique principale.} Pour chaque condition, la courbe
+pr\'ecision-couverture (section~\ref{sec:prec-cov}) est calcul\'ee aux seuils
+$t \in \{0, 1, 2, 3, 4\}$. La comparaison porte sur~:
+
+\begin{itemize}
+\item \textbf{Pr\'ecision au seuil $t=3$.} Fraction des centrales retenues qui
+  sont dans le r\'ef\'erentiel, apr\`es filtrage des lignes dont le score m\'edian
+  est $< 3$.
+\item \textbf{Couverture au seuil $t=3$.} Fraction des centrales retenues par
+  rapport au total avant filtrage.
+\item \textbf{D\'etection d'hallucinations.} Nombre de centrales recevant un
+  score m\'edian de~0 (fabriqu\'ees) dans chaque condition.
+\item \textbf{Rendement marginal.} $\Delta$pr\'ecision et $\Delta$d\'etection
+  entre C1, C2 et C3.
+\end{itemize}
+
+\paragraph{M\'etrique secondaire.} Le co\^ut cumul\'e par condition (en \$)
+rapporte au gain de pr\'ecision pour \'evaluer le rapport co\^ut-efficacit\'e.
+
+\subsection{Hypoth\`eses pr\'e-enregistr\'ees}\label{sec:multi-verif-hypotheses}
+
+Les hypoth\`eses sont formul\'ees \emph{avant} l'ex\'ecution de l'exp\'erience.
+
+\begin{enumerate}
+\item \textbf{H1~: la v\'erification multi-agents d\'etecte plus d'hallucinations
+  que la v\'erification crois\'ee unique.}
+  Le nombre de lignes recevant un score m\'edian de~0 dans C3 (3~v\'erificateurs)
+  est sup\'erieur ou \'egal \`a celui dans C1 (1~v\'erificateur). Justification~:
+  chaque mod\`ele a des angles morts diff\'erents~; un mod\`ele peut confirmer par
+  erreur une fabrication qu'un autre d\'etecte.
+
+\item \textbf{H2~: le rendement marginal du troisi\`eme v\'erificateur est
+  d\'ecroissant.}
+  Le gain de pr\'ecision entre C2 et C3 est inf\'erieur au gain entre C1 et C2.
+  Justification~: les deux premiers v\'erificateurs couvrent la majorit\'e des
+  erreurs faciles~; le troisi\`eme n'apporte qu'un gain marginal sur les cas
+  limites.
+
+\item \textbf{H3~: la couverture au seuil $t=3$ diminue avec le nombre de
+  v\'erificateurs.}
+  Plus de v\'erificateurs signifie un filtre plus strict (la m\'ediane de
+  3~scores est plus conservatrice que le score d'un seul v\'erificateur).
+  La couverture de C3 est inf\'erieure \`a celle de C1 au seuil $t=3$.
+
+\item \textbf{H4~: DeepSeek V3.2 est le v\'erificateur le plus co\^ut-efficace.}
+  Le rapport $\Delta$hallucinations d\'etect\'ees / co\^ut est le plus \'elev\'e pour
+  DeepSeek V3.2. Justification~: \`a ${\sim}40\times$ moins cher que Sonnet~4.6,
+  m\^eme une performance de v\'erification mod\'er\'ee produit un meilleur ratio.
+\end{enumerate}
+
+\paragraph{Seuils de falsification.} Une hypoth\`ese directionnelle est
+r\'efut\'ee si l'intervalle de confiance bootstrap \`a 95\,\% sur la diff\'erence
+exclut z\'ero dans la direction oppos\'ee \`a la pr\'ediction. H4 est \'evalu\'ee
+par le ratio co\^ut-efficacit\'e (hallucinations d\'etect\'ees par dollar), sans
+seuil absolu.
+
+\subsection{Impl\'ementation}\label{sec:multi-verif-implementation}
+
+L'impl\'ementation requiert deux modifications de \texttt{query\_verification.py}~:
+
+\begin{enumerate}
+\item \textbf{Mode \texttt{multi\_cross}.} Nouveau mode qui appelle
+  \texttt{verify\_cross()} s\'equentiellement pour chaque mod\`ele du panel, puis
+  agr\`ege les scores par m\'ediane. La sortie est un CSV annot\'e avec les
+  colonnes~: \texttt{evidence\_score\_v1}, \texttt{evidence\_score\_v2},
+  \texttt{evidence\_score\_v3}, \texttt{evidence\_score\_median}.
+
+\item \textbf{Configuration dans \texttt{experiments.toml}.} Un nouveau sweep
+  \texttt{verification\_multi} sp\'ecifie le panel de v\'erificateurs et les
+  extractions de base.
+\end{enumerate}
+
+\noindent Ces modifications constituent le livrable du ticket~0055 (Phase~B,
+bloqu\'e par ce ticket).
+
+\subsection{Limites du design}\label{sec:multi-verif-limits}
+
+\begin{itemize}
+\item \textbf{Taille du panel.} $k=3$ v\'erificateurs est un minimum pour le
+  vote majoritaire. Un panel de 5 ou 7 augmenterait la robustesse mais
+  multiplie le co\^ut proportionnellement.
+
+\item \textbf{M\^eme prompt de v\'erification.} Tous les v\'erificateurs re\c{c}oivent
+  le m\^eme prompt (\texttt{\_VERIFICATION\_PROMPT}). La diversit\'e provient des
+  mod\`eles, pas des prompts. Un design futur pourrait varier aussi les
+  instructions de v\'erification.
+
+\item \textbf{Pas d'acc\`es aux documents sources.} Les v\'erificateurs citent des
+  sources de m\'emoire, sans acc\`es au corpus RAG. Le mode \texttt{web} reste
+  sup\'erieur pour la v\'erification factuelle. Ce protocole mesure la
+  \emph{convergence inter-mod\`eles}, pas la v\'erit\'e terrain documentaire.
+
+\item \textbf{T\^ache unique.} Le design est test\'e sur les centrales thermiques
+  du Vietnam uniquement. La g\'en\'eralisabilit\'e \`a d'autres pays ou classes
+  de composants n'est pas \'etablie.
+\end{itemize}
+
+\subsection{Lien avec les autres exp\'eriences}\label{sec:multi-verif-links}
+
+Cette exp\'erience s'inscrit dans la progression m\'ethodologique du pipeline~:
+
+\begin{enumerate}
+\item \textbf{Exp\'erience~1 (census)}~: extraction brute, pas de v\'erification.
+\item \textbf{Exp\'erience~2 (RAG)}~: extraction avec contexte documentaire.
+\item \textbf{Exp\'erience~3 (ablation)}~: optimisation du prompt, module sourçage.
+\item \textbf{Exp\'erience~4 (v\'erification 5~modes)}~: un v\'erificateur par
+  mode, courbe pr\'ecision-couverture.
+\item \textbf{Exp\'erience~5 (v\'erification multi-agents)}~: panel de
+  v\'erificateurs, rendement marginal de la diversit\'e.
+\end{enumerate}
+
+\noindent L'exp\'erience~5 r\'epond \`a la question~: \emph{au-del\`a d'un seul
+v\'erificateur crois\'e, la diversit\'e inter-mod\`eles am\'eliore-t-elle la
+d\'etection d'hallucinations, et \`a quel co\^ut~?}
