@@ -9,7 +9,7 @@ GENERATED := inputs/generated
 
 all: slides.pdf
 
-slides.pdf: slides.tex $(wildcard $(GENERATED)/*.csv) $(wildcard $(GENERATED)/*.tex)
+slides.pdf: slides.tex $(wildcard $(GENERATED)/*.csv) $(wildcard $(GENERATED)/*.tex) $(wildcard $(GENERATED)/*.pdf)
 	tectonic $<
 
 clean:
