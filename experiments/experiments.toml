@@ -132,7 +132,7 @@ model_ids = [
 [sets.ablation_dev]
 model_ids = [
     "baidu/ernie-4.5-21b-a3b-thinking",   # $0.07/$0.28  reasoning
-    "mistralai/mistral-small-2603",         # $0.15/$0.60  web_search
+    "deepseek/deepseek-v3.2",               # $0.13/$0.28  671B MoE, web_search
     "moonshotai/kimi-k2-thinking",          # $0.47/$2.00  reasoning
 ]
 
