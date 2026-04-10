@@ -55,7 +55,7 @@ Constraint: Maintain the Makefile DAG, prerequisites and targets must match each
 
 Review each PR before merging:
 
-1. **Review**: Route between `/review-pr` or `/review-pr-prose`.
+1. **Review**: Route between `/review` (stock), `/review-pr` or `/review-pr-prose` (IDH).
 2. **Fix**: Fix all issues. Nits: fix them. Push back against "No need to fix now" mindset. Non-fixed open tickets for oversized deferred work.
 3. **Lint**: Consider `/simplify`, advanced linter and codesmells checks.
 4. **Iterate**: Up to three review/fix cycles.
