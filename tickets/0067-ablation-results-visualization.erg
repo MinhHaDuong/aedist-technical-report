@@ -1,0 +1,66 @@
+%erg v1
+Title: Visualize ablation results reusing method convergence strip plot style
+Status: open
+Created: 2026-04-10
+Author: haduong
+Blocked-by: 0066
+
+--- log ---
+2026-04-10T23:50Z haduong created
+
+--- body ---
+## Context
+
+Child of epic 0061. The method convergence strip plot
+(`fig_method_convergence.pdf`) shows 5 models x 5 methods with
+per-plant dots (blue=matched, orange=hallucinated). This visual
+language is established in the slides and report.
+
+The ablation results (3 regimes x 16 prompt variants x N models)
+need a figure that reuses this visual vocabulary so the reader sees
+the ablation as a deeper dive into the same framework, not a
+disconnected experiment.
+
+## Visual ideas
+
+### 1. Strip plot: regime x prompt variant
+Extend the convergence plot:
+- X-axis: 16 prompt variants (grouped by regime)
+- Y-axis: plant count (0-163)
+- Dots: per-plant matched/hallucinated
+- Facets or color: 3 regimes (parametric, RAG, web search)
+- Reader sees: which prompt modules shift the dot cloud, and how
+  the shift differs by regime
+
+### 2. Heatmap: module x regime interaction
+- Rows: 6 modules
+- Columns: 3 regimes
+- Cell: ΔF1 (addition effect) or color-coded direction
+- Compact summary of the 3x6 interaction matrix
+- Preregistered hypotheses (ticket 0056) overlay as arrows
+
+### 3. Paired bar chart: base vs composite per regime
+- Like the existing "Documentation regime" slide (frame 399)
+- 3 groups (parametric, RAG, web search)
+- 2 bars per group (base prompt, composite prompt)
+- Shows the gross effect of adding all modules, per regime
+
+### 4. Cost-quality scatter per regime
+- Extend the Pareto plot style
+- X: cost per run, Y: F1
+- Color/shape: regime
+- Labels: prompt variant
+- Shows whether expensive regimes (web search) buy quality
+
+## Actions
+
+1. After Phase 1 results (ticket 0066), generate prototype figures
+   using matplotlib (consistent with project convention)
+2. Choose 2-3 figures for the report and 1 for slides
+3. Ensure visual continuity with existing convergence plot style
+4. Add Makefile targets for generated figures
+
+## Exit criteria
+- At least 2 figures generated from ablation results
+- Visual language consistent with existing method convergence plot
+- Integrated into slides and report via \includegraphics
