@@ -6,73 +6,67 @@
 
 | Location | Purpose |
 |----------|---------|
-| `.claude/rules/` | Project-specific rules (incl. `tickets.md` spec) |
-| `.claude/skills/` | Project-specific skills (incl. `ticket-*` skills) |
-| `.claude/hooks/` | Project-specific hooks |
-| `.claude/settings.json` | Project permissions and hooks |
 | `hooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
 | `tickets/` | Local `.erg` tickets (committed, travel with repo) |
 | `tickets/tools/go/` | Validator source; build with `go build -o erg .` |
+| `.claude/rules/` | Project rules (incl. `tickets.md` from git-erg) |
+| `.claude/skills/` | Project skills (ticket-* from git-erg) |
+| `.claude/hooks/` | Project-specific hooks |
+| `.claude/settings.json` | Project permissions and hooks |
 
 ## Imperial Dragon workflow
 
-Every task passes through five phases (five claws). Announce transitions inline: `[Phase → Phase] reason`.
+Every task passes through five phases.
+Maintain awareness of the conversation's current phase to behave accordingly.
+Infer the initial phase and announces it (e.g., `[→ Imagine]`) at conversation start, then announce transitions inline: `[Phase → Phase] reason`.
 
 ### Imagine
-Interactive discussion with the user on an `explore-{topic}` branch. Imagine specs, gather information, brainstorm freely. Ask questions, surface motivations, explore what success looks like.
-Generate portfolio of options with their probabilities. Go beyond conventional habits to explore new approaches. Take the high road.
-Act as my high-level advisor. Challenge my thinking, question my assumptions, and expose blind spots. Stop defaulting to agreement. If my reasoning is weak, break it down and show me why.
+Engage with the user to form a vision.
 
-Commits are workspace artifacts unless the conversation produces a small fix. Deliverable: a shared vision, plus one of:
+Context: Worktree isolation, `imagine-` branch.
 
-- **Tickets** — non-trivial work gets one local ticket per action item (`/ticket-new`). Use `Blocked-by:` headers to encode the dependency graph. For cross-agent or public-facing coordination, also open a GitHub issue (`/new-ticket`).
-- **Small fix** — if it fits in one red/green/refactor cycle, do it on the explore branch. TDD still applies.
-- **Nothing actionable** — delete the branch at session end.
+Deliverable: No production code commit, change only the conversation state and possibly tickets.
+
+Agent posture: Act as my high-level advisor. Challenge my thinking, question my assumptions, and expose blind spots. Stop defaulting to agreement. If my reasoning is weak, break it down and show me why.
+
+Conversation guidelines: Imagine specs. Gather information. Brainstorm freely. Ask questions. Surface motivations. Explore what success looks like. Generate portfolio of options with their probabilities. Go beyond conventional habits to explore new approaches. Take the high road. Transform codesmell metrics into design architecture improvements.
 
 ### Plan
-Explore alternatives, design strategies, prototype approaches. Use local `.erg` tickets as the planning artifact — write tickets with full context (`/ticket-new`). **Specify the first test in the ticket body** — the Execute phase enforces TDD. Use `Blocked-by:` to sequence work. Review tickets for intent over metrics. No production commits yet. Deliverable: a ticket with test spec.
 
-For public-facing or cross-agent work, also open a GitHub Issue (`/new-ticket`) and link via `Blocked-by: gh#N`.
+Scope: Focus on one issue. Scope-creep guard: Create new tickets if investigation reveals sub-issues. Divide-and-conquer complexity: Transform a hard ticket into a tracking ticket and create sub-tickets. Use `Blocked-by:` to sequence work.
+
+Deliverable: a ticket ready to execute. No production code commit, change only ticket(s). The ticket includes the first test in the ticket body, specifies the definition of done literally, provides guidance and hands-off helpful context.
+
+Explore alternatives design strategies and prototype approaches using throwaway code, worktree isolated.
+
+Consider interaction with other tickets and PR.
 
 ### Execute
-Runs in a fresh context — the ticket is the only input.
 
-- **Local tickets**: `/ticket-claim NNNN` to claim, then execute.
-- **GitHub issues**: `/start-ticket N` as before.
+Goal: deliver a PR to close one ticket.
 
-Claiming writes a `.wip` file (cross-worktree safe) and sets `Status: doing`.
+Environment: fresh context in a worktree, the ticket is the only input. Worktree mandatory: never touch files on main.
 
-Autonomous execution using test-driven development. The inner cycle is:
+Method: Autonomous execution using test-driven development. Use `make check-fast` during development, `make check` before PR.
 
-1. **Red**: write a failing test that defines the expected behavior. Commit.
-2. **Green**: write the minimum code to make it pass. Commit.
-3. **Refactor**: clean up, then confirm tests still pass. Use `make check-fast` during development. Commit.
-4. **PR**: Pass `make check` gate, then push and open a PR.
-5. **Close**: `/ticket-close NNNN` to mark done and release the claim.
-
-Use `make check-fast` during development, `make check` before opening a PR. Makefile truth: prerequisites and targets must match each script's actual file reads and writes.
+Constraint: Maintain the Makefile DAG, prerequisites and targets must match each script's actual file reads and writes. Doc propagation belongs to the PR.
 
 ### Verify
+
 Review each PR before merging:
 
-1. **Review**: `/review-pr` or `/review-pr-prose`.
-2. **Fix**: Fix all issues. Nits: fix them. Code smells: ultrathink architectural improvements.
-3. **Iterate**: Up to three review/fix cycles.
+1. **Review**: Route between `/review-pr` or `/review-pr-prose`.
+2. **Fix**: Fix all issues. Nits: fix them. Push back against "No need to fix now" mindset. Non-fixed open tickets for oversized deferred work.
+3. **Lint**: Consider `/simplify`, advanced linter and codesmells checks.
+4. **Iterate**: Up to three review/fix cycles.
 
-### Celebrate (autonomous)
-Runs via `/celebrate`. Celebrating is not a formality — it closes the energy cycle. Reflect on what was accomplished and learned, consolidate memory, dream forward.
+### Celebrate
 
-### Phase state
-
-The agent must always know and declare its current phase.
-
-- **At conversation start**: workflow rule infers the initial phase and announces it (e.g., `[→ Imagine]`).
-- **At each transition**: announce explicitly with `[Phase → Phase] reason`.
-- **No implicit transitions**: if no announcement was made, the phase hasn't changed.
+Cleanup worktrees and branches, summarize what was accomplished, reflect on lessons, consolidate memory, dream forward.
 
 ## Skills (slash commands)
 
-### Local tickets (`.erg`)
+### [git-erg](https://github.com/MinhHaDuong/git-erg) (travels with repo — always available)
 
 | Skill | When | Purpose |
 |-------|------|---------|
@@ -98,34 +92,26 @@ The agent must always know and declare its current phase.
 | `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
 | `/update-publist` | Adding/updating a publication | Edit Ha-Duong.bib, deposit on HAL via SWORD |
 
-## Autonomous workflow
+## Autonomous workflow (details in /orchestrator skill)
 
-When exploration leads to multiple action items, create one `.erg` ticket per action item (`/ticket-new`). Use `Blocked-by:` to encode the dependency graph. Then work in waves, learning from each.
+Orchestrator reviews the tickets DAG and organize work in waves. It assembles teams of agents (isolation:worktree) working in imperial dragon order. It provisions the agents with context and brief, and supervises their work to break hangs or loops.
+Team Imagine: each ticket gets reviewed and challenged. Why now, why this scope, should we do something else better...
+Team Planning.
+Team Verification: independently review the plans and annotate for prerequisites, assumptions, feasibility in environment.
+Team Execute delivers the PR.
+Team Verify fixes them.
+Team Audit assumes non-compliance and lint, reverify, inspect scope creep and fix again.
+The orchestrator receives the clean PRs, reviews each against its ticket, and performs the merge in order. It then loop to the first step.
 
-### Wave cycle
-
-1. **Select** — `/ticket-ready` to list ripe tickets (unblocked, unclaimed).
-2. **Launch** — `/ticket-claim NNNN` for each, in its own worktree. Independent tickets in parallel.
-3. **Verify** — review each PR in a fresh-context worktree (`/review-pr`).
-4. **Learn** — for each result:
-   - **Success**: `/ticket-close NNNN`, `/celebrate`, save what worked as feedback memory.
-   - **Failure**: diagnose root cause, `/ticket-release NNNN`, save lesson, re-ticket with diagnosis.
-5. **Adapt** — read feedback memories before planning the next wave.
-6. **Clean up** — worktrees, branches, stale PRs. Then start the next wave.
-
-## Conversation scope
-
-**Imagine conversations**: may produce zero or many tickets, or inline small fixes. The explore branch is the workspace; the `.erg` tickets (or PR) are the deliverables.
-
-**Execute conversations**: one ticket per conversation. `/ticket-claim NNNN` at start, `/ticket-close NNNN` at end. Transition to Celebrate when the PR is merged and ticket closed. If investigation reveals sub-issues, `/ticket-new` for each — don't scope-creep.
+In autonomous mode, orchestrator never defers for human input. In face of hard issues, it resorts first to a diverse team of agent experts. It then escalate to deep research. Thirdly, it works around the issue.
 
 ## Two ticket systems
 
-| Concern | Tool | Commands |
-|---------|------|----------|
-| Local work organization, sequencing | `.erg` files in `tickets/` | `/ticket-new`, `/ticket-ready`, `/ticket-claim`, `/ticket-close` |
-| Cross-worktree deconfliction | `.git/ticket-wip/*.wip` | Automatic via `/ticket-claim` and `/ticket-close` |
-| Cross-agent coordination, public visibility | GitHub Issues | `/new-ticket`, `/start-ticket` |
-| Linking the two | `Blocked-by: gh#N` in `.erg` headers | Reference GitHub issues from local tickets |
+| Concern | Tool | Skills |
+|---------|------|--------|
+| Local work organization, sequencing | `.erg` files in `tickets/` | git-erg: `/ticket-new`, `/ticket-ready`, `/ticket-claim`, `/ticket-close` |
+| Cross-worktree deconfliction | `.git/ticket-wip/*.wip` | git-erg: automatic via `/ticket-claim` and `/ticket-close` |
+| Cross-agent coordination, public visibility | GitHub Issues | IDH: `/new-ticket`, `/start-ticket` |
+| Linking the two | `Blocked-by: gh#N` in `.erg` headers | — |
 
-Local tickets are committed to git and travel with the repo. GitHub issues are for humans and other agents. Use both; they don't overlap.
+Local tickets travel with the repo. GitHub issues are for humans and other agents. Use both; they don't overlap.
