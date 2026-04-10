@@ -1,0 +1,167 @@
+% Verification methods — preregistered protocol for journal paper
+% Included from report.tex, after ablation section
+
+\subsection{Vérification des sources}\label{sec:verification}
+
+Les expériences précédentes mesurent la \emph{couverture} de l'extraction~:
+combien de centrales le modèle trouve-t-il~? Mais pour un modélisateur de
+systèmes énergétiques, la couverture ne suffit pas~: chaque donnée intégrée
+dans un scénario doit être traçable jusqu'à un document source
+(section~\ref{chap:conclusion}). Cette section décrit un protocole de
+vérification systématique qui évalue la \emph{provenance} des résultats
+et mesure le compromis entre précision et couverture.
+
+\subsubsection{Modes de vérification}\label{sec:verif-modes}
+
+Cinq modes de vérification sont définis, par ordre croissant de coût et
+de rigueur~:
+
+\begin{description}
+\item[Non vérifié (\texttt{unverified})]
+  Ligne de base~: les citations éventuellement présentes dans la sortie
+  brute du modèle sont classifiées par heuristique (domaine URL, motifs
+  textuels), mais aucune vérification externe n'est effectuée.
+  Coût additionnel~: nul.
+
+\item[Outil (\texttt{tool})]
+  Chaque centrale est comparée par correspondance floue (seuil de
+  similarité~70/100) à l'inventaire de référence. Une correspondance
+  confère le statut de source primaire (le référentiel fait foi)~;
+  l'absence de correspondance laisse la ligne sans source.
+  Coût additionnel~: nul (pas d'appel API).
+
+\item[Auto-vérification (\texttt{self})]
+  Le CSV extrait est renvoyé au \emph{même} modèle avec une consigne de
+  citation~: pour chaque centrale, le modèle doit fournir un ou deux
+  documents sources (décision gouvernementale, rapport annuel, article de
+  presse). Les citations sont classifiées par domaine et par motif textuel.
+  Coût additionnel~: un appel LLM par run.
+
+\item[Vérification croisée (\texttt{cross})]
+  Identique à l'auto-vérification, mais le vérificateur est un modèle
+  différent (Claude Sonnet~4.6 dans notre configuration). L'indépendance
+  du vérificateur réduit le risque de confirmation circulaire~: un modèle
+  ne valide pas ses propres fabrications.
+  Coût additionnel~: un appel LLM par run (modèle vérificateur).
+
+\item[Vérification web (\texttt{web})]
+  Pour chaque centrale, une recherche web (Tavily) est effectuée. Les
+  résultats sont classifiés par domaine (sources primaires~: sites
+  gouvernementaux, EVN, GEM, IEA~; sources secondaires~: Wikipedia,
+  agences de presse). Le cache par requête garantit l'idempotence entre
+  les runs.
+  Coût additionnel~: une recherche web par centrale.
+\end{description}
+
+\noindent Les modes \texttt{unverified}, \texttt{tool} et \texttt{web} sont
+déterministes (un seul run suffit). Les modes \texttt{self} et \texttt{cross}
+sont stochastiques (répétés $n$ fois pour estimer la variance).
+
+\subsubsection{Rubrique de qualité de l'évidence}\label{sec:evidence-rubric}
+
+Chaque centrale reçoit un \emph{score d'évidence} entier de 0 à~4, défini
+comme suit~:
+
+\begin{center}
+\small
+\begin{tabular}{cl}
+\toprule
+\textbf{Score} & \textbf{Définition} \\
+\midrule
+0 & Source fabriquée (hallucination détectée) \\
+1 & Aucune source fournie \\
+2 & Une source secondaire (presse, Wikipedia) \\
+3 & Une source primaire (décision gouvernementale, rapport d'entreprise, registre) \\
+4 & Deux sources primaires indépendantes ou plus \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent La classification primaire/secondaire repose sur le domaine de
+l'URL (listes prédéfinies de domaines gouvernementaux, institutionnels et
+de presse) et sur des motifs textuels dans la citation (numéros de décision,
+noms de plans de développement, rapports annuels). Les sources dont le
+domaine n'est pas reconnu et dont le texte ne correspond à aucun motif
+reçoivent le score~1 (aucune source exploitable).
+
+\subsubsection{Analyse précision-couverture}\label{sec:prec-cov}
+
+Le protocole d'analyse opère à chaque seuil $t \in \{0, 1, 2, 3, 4\}$~:
+
+\begin{enumerate}
+\item \textbf{Filtrage}~: ne retenir que les centrales dont le score
+  d'évidence est $\geq t$.
+\item \textbf{Réconciliation}~: comparer la liste filtrée à l'inventaire
+  de référence (163 centrales) par correspondance exacte et floue
+  (seuil~90/100), avec résolution optimale par programmation linéaire.
+\item \textbf{Métriques}~: calculer la précision (fraction des centrales
+  retenues qui sont correctes), le rappel (fraction des centrales de
+  référence retrouvées), et le F1.
+\end{enumerate}
+
+\noindent La \emph{couverture} est le nombre de centrales retenues après
+filtrage, rapporté au nombre total avant filtrage. À $t=0$ (aucun filtre),
+la couverture est 100\,\% et la précision est celle du modèle brut. À
+$t=4$, seules les centrales avec deux sources primaires indépendantes
+sont retenues~: la précision est maximale mais la couverture peut être
+faible.
+
+La courbe précision-couverture caractérise le compromis fondamental~:
+combien de données perd-on en exigeant la traçabilité~? Si la courbe est
+plate (haute précision sans perte de couverture), la vérification est
+gratuite. Si elle chute, le praticien doit arbitrer entre exhaustivité et
+fiabilité.
+
+\subsubsection{Hypothèses préenregistrées}\label{sec:verif-hypotheses}
+
+Trois hypothèses directionnelles sont formulées avant l'exécution des
+expériences~:
+
+\begin{enumerate}
+\item \textbf{Précision du mode outil.}
+  Le mode \texttt{tool} atteint la précision la plus élevée parmi les
+  cinq modes, car le référentiel constitue la vérité terrain. À tout
+  seuil $t \geq 1$, la précision du mode \texttt{tool} est supérieure
+  ou égale à celle des autres modes.
+
+\item \textbf{Couverture du mode web \emph{vs} auto-vérification.}
+  Au seuil $t \geq 3$ (exigeant au moins une source primaire), le mode
+  \texttt{web} retient davantage de centrales que le mode \texttt{self}.
+  Justification~: la recherche web accède à des documents que le modèle
+  ne peut citer de mémoire, augmentant la probabilité d'identifier une
+  source primaire pour chaque centrale.
+
+\item \textbf{Détection d'hallucinations par vérification croisée.}
+  Le mode \texttt{cross} attribue davantage de scores~0 (source fabriquée)
+  que le mode \texttt{self} sur les mêmes données d'entrée. Justification~:
+  un modèle indépendant n'a pas de biais de confirmation envers les
+  fabrications du modèle générateur.
+\end{enumerate}
+
+\subsubsection{Design expérimental}\label{sec:verif-design}
+
+\paragraph{Preuve de concept (1 configuration, 2 modes déterministes)}
+Le design minimal compare les modes \texttt{unverified} et \texttt{tool}
+sur une seule configuration de base (DeepSeek~V3.2, RAG wholesale,
+décomposé). Ce pilote mesure l'écart de couverture entre la sortie brute
+(169~centrales, F1\,=\,98,2\,\%, 6~hallucinations) et la sortie filtrée
+par le référentiel (53~centrales, F1\,=\,49,1\,\%, 0~hallucination).
+Les données proto-vérification existantes confirment que l'infrastructure
+est opérationnelle.
+
+\paragraph{Sweep complet (3 configurations $\times$ 5 modes)}
+Le design factoriel croise trois configurations de base (Opus multiturn,
+Gemini~Flash~Lite RAG, GPT-5.4 RAG) avec les cinq modes de vérification.
+Les modes déterministes sont exécutés une fois par configuration~; les
+modes stochastiques (\texttt{self}, \texttt{cross}) sont répétés 3~fois.
+Soit $3 \times (3 + 2 \times 3) = 27$ conditions, pour un budget estimé
+de 15--25\,\$. Le vérificateur croisé est Claude Sonnet~4.6 dans toutes
+les conditions.
+
+\paragraph{Cadre honnête}
+Ce design est un pilote à une seule tâche (centrales thermiques du Vietnam)
+et un seul corpus de référence. Les résultats ne se généralisent pas
+directement à d'autres pays, d'autres classes de composants, ou d'autres
+corpus documentaires. Le sweep complet est une preuve de concept
+(proof-of-concept)~; un design factoriel complet croisant pays, classes
+de composants et modes de vérification constitue un travail futur.
