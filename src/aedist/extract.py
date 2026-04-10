@@ -197,12 +197,24 @@ def norm_header(h: str) -> str:
     return h.strip("_")
 
 
-_CANON = ["name", "fuel", "status", "cod", "province", "capacity_mwe", "source_1", "source_2", "note"]
+_CANON = [
+    "name",
+    "fuel",
+    "status",
+    "cod",
+    "province",
+    "capacity_mwe",
+    "source_1",
+    "source_2",
+    "note",
+]
 
 
 def map_header_to_canonical(norm: str) -> str | None:
     if norm in {
         "name",
+        "name_vi",
+        "name_en",
         "plant",
         "plant_name",
         "plantname",
@@ -336,7 +348,9 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     try:
         canonical_csv = parse_and_canonicalize(best)
     except Exception as e:
-        return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: CSV parse failed ({e})")
+        return ExtractResult(
+            ExtractStatus.FAILED, None, f"{json_path.name}: CSV parse failed ({e})"
+        )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path.write_text(canonical_csv, encoding="utf-8")

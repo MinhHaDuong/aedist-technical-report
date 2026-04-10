@@ -122,6 +122,13 @@ model_ids = [
     "deepseek/deepseek-v3.2",
 ]
 
+# Ablation experiment — model set TBD after selection phase
+# Populated with prompt-sensitive models from ablation_select runs
+[sets.ablation]
+model_ids = [
+    "anthropic/claude-opus-4.6",
+]
+
 # ---------------------------------------------------------------------------
 # Sweep configurations — experimental conditions
 # ---------------------------------------------------------------------------
@@ -258,3 +265,184 @@ model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
 output = "qualitative/skill_plans"
+
+# --- Prompt composition and ablation (ticket 0038) ---
+# Prompts assembled at runtime from modules in prompts/modules/.
+# "modules" key lists which modules to include; base.txt is always included.
+# Module ordering is handled by assemble_prompt() in harness.py.
+#
+# Pilot: 2 reps per condition.  Paper upgrade: 5 reps, more models.
+# Temperature: provider-recommended for structured extraction (0.0–0.3).
+# DeepSeek note: API temp 1.0 maps internally to 0.3 (their recommended).
+#
+# All modules: persona, overview, sourcing, narratives, bibliography, statistics
+
+# Phase 1 — Selection: base vs composite on all census models
+
+[sweeps.ablation_p1_base]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "census_cloud"
+repeat = 2
+budget_usd = 20
+output = "outputs/ablation/p1_base"
+
+[sweeps.ablation_p1_composite]
+mode = "single"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "census_cloud"
+repeat = 2
+budget_usd = 20
+output = "outputs/ablation/p1_composite"
+
+# Phase 2 — Composition arm: base + one module
+
+[sweeps.ablation_base]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/base"
+
+[sweeps.ablation_persona]
+mode = "single"
+prompt_modules = ["persona"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/persona"
+
+[sweeps.ablation_overview]
+mode = "single"
+prompt_modules = ["overview"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/overview"
+
+[sweeps.ablation_narratives]
+mode = "single"
+prompt_modules = ["narratives"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/narratives"
+
+[sweeps.ablation_bibliography]
+mode = "single"
+prompt_modules = ["bibliography"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/bibliography"
+
+[sweeps.ablation_statistics]
+mode = "single"
+prompt_modules = ["statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/statistics"
+
+[sweeps.ablation_sourcing]
+mode = "single"
+prompt_modules = ["sourcing"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/sourcing"
+
+# Anchors
+
+[sweeps.ablation_composite]
+mode = "single"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/composite"
+
+[sweeps.ablation_frontier]
+mode = "single"
+prompt = "prompts/prompt_frontier.txt"
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/frontier"
+
+[sweeps.ablation_census]
+mode = "single"
+prompt = "prompts/prompt_structured.txt"
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/census"
+
+# Ablation arm: composite minus one module
+
+[sweeps.ablation_no_persona]
+mode = "single"
+prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_persona"
+
+[sweeps.ablation_no_overview]
+mode = "single"
+prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_overview"
+
+[sweeps.ablation_no_narratives]
+mode = "single"
+prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_narratives"
+
+[sweeps.ablation_no_bibliography]
+mode = "single"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_bibliography"
+
+[sweeps.ablation_no_statistics]
+mode = "single"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_statistics"
+
+[sweeps.ablation_no_sourcing]
+mode = "single"
+prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "ablation"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/no_sourcing"

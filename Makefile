@@ -9,7 +9,7 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test check-fast check census census-summary
+.PHONY: test check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
 
@@ -19,6 +19,17 @@ test:
 check-fast: test
 
 check: test
+
+# --- Prompt inspection -------------------------------------------------------
+
+show-prompts:
+	@uv run python -c "\
+	from aedist.harness import assemble_prompt; \
+	from pathlib import Path; \
+	d = Path('experiments/prompts/modules'); \
+	ALL = ['persona','overview','sourcing','narratives','bibliography','statistics']; \
+	configs = [('base', []), ('composite', ALL)] + [(m, [m]) for m in ALL]; \
+	[print(f'=== {n} ({len(assemble_prompt(d,ms).split(chr(10)))} lines) ===\n{assemble_prompt(d,ms)}\n') for n,ms in configs]"
 
 # --- Measurements (materialized view of all outputs) -------------------------
 #

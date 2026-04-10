@@ -52,9 +52,7 @@ def test_schema_validation(models):
         assert model["license"] in VALID_LICENSES, (
             f"{model_id}: invalid license {model['license']}"
         )
-        assert model["router"] in VALID_ROUTERS, (
-            f"{model_id}: invalid router {model['router']}"
-        )
+        assert model["router"] in VALID_ROUTERS, f"{model_id}: invalid router {model['router']}"
         assert isinstance(model["context_window"], int), f"{model_id}: context_window must be int"
         assert isinstance(model["price_per_mtok_in"], (int, float)), (
             f"{model_id}: price_per_mtok_in must be numeric"
@@ -67,9 +65,7 @@ def test_schema_validation(models):
 def test_router_model_matches_id(models):
     """In Phase A, router_model == id for every entry (scaffolding for Phase B)."""
     for model in models:
-        assert model["router_model"] == model["id"], (
-            f"{model['id']}: router_model mismatch"
-        )
+        assert model["router_model"] == model["id"], f"{model['id']}: router_model mismatch"
 
 
 def test_coverage(models):
@@ -129,7 +125,8 @@ def test_experiments_routers(experiments):
 # ---------------------------------------------------------------------------
 
 VALID_MODES = set(Method)
-SWEEP_REQUIRED_FIELDS = {"mode", "prompt", "models", "repeat", "budget_usd", "output"}
+SWEEP_REQUIRED_FIELDS = {"mode", "models", "repeat", "budget_usd", "output"}
+# Each sweep needs either "prompt" (file path) or "prompt_modules" (list of module names).
 # verification is special — no mode/prompt/models at top level
 SWEEP4_REQUIRED_FIELDS = {"repeat", "budget_usd", "output", "verification_modes", "base_configs"}
 
@@ -141,14 +138,41 @@ def test_sweeps_section_exists(experiments):
 
 
 def test_sweep_count(experiments):
-    """All 11 sweeps are present."""
-    expected = {
-        "census", "census_local",
-        "multiturn", "web",
-        "rag", "decomposed",
-        "verification", "sourced",
-        "frontier", "frontier_scenarios", "frontier_skill",
+    """All sweeps are present."""
+    required = {
+        "census",
+        "census_local",
+        "multiturn",
+        "web",
+        "rag",
+        "decomposed",
+        "verification",
+        "sourced",
+        "frontier",
+        "frontier_scenarios",
+        "frontier_skill",
     }
+    ablation = {
+        "ablation_p1_base",
+        "ablation_p1_composite",
+        "ablation_base",
+        "ablation_persona",
+        "ablation_overview",
+        "ablation_narratives",
+        "ablation_bibliography",
+        "ablation_statistics",
+        "ablation_sourcing",
+        "ablation_composite",
+        "ablation_frontier",
+        "ablation_census",
+        "ablation_no_persona",
+        "ablation_no_overview",
+        "ablation_no_narratives",
+        "ablation_no_bibliography",
+        "ablation_no_statistics",
+        "ablation_no_sourcing",
+    }
+    expected = required | ablation
     assert set(experiments["sweeps"].keys()) == expected
 
 
@@ -159,9 +183,9 @@ def test_standard_sweep_fields(experiments):
             continue
         missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fields: {missing}"
-        assert sweep["mode"] in VALID_MODES, (
-            f"sweeps.{name}: invalid mode '{sweep['mode']}'"
-        )
+        has_prompt = "prompt" in sweep or "prompt_modules" in sweep
+        assert has_prompt, f"sweeps.{name} needs 'prompt' or 'prompt_modules'"
+        assert sweep["mode"] in VALID_MODES, f"sweeps.{name}: invalid mode '{sweep['mode']}'"
         assert isinstance(sweep["repeat"], int) and sweep["repeat"] >= 1, (
             f"sweeps.{name}: repeat must be int >= 1"
         )
@@ -202,9 +226,7 @@ def test_sweep_model_set_ids_in_registry(models, experiments):
             continue
         model_set = experiments["sets"][set_name]
         for mid in model_set["model_ids"]:
-            assert mid in registry_ids, (
-                f"sweeps.{name} → sets.{set_name}: '{mid}' not in registry"
-            )
+            assert mid in registry_ids, f"sweeps.{name} → sets.{set_name}: '{mid}' not in registry"
 
 
 def test_sweep_prompts_exist(experiments):
@@ -213,9 +235,44 @@ def test_sweep_prompts_exist(experiments):
         if "prompt" not in sweep:
             continue
         prompt_path = EXPERIMENTS_DIR / sweep["prompt"]
-        assert prompt_path.exists(), (
-            f"sweeps.{name}: prompt file missing: {prompt_path}"
-        )
+        assert prompt_path.exists(), f"sweeps.{name}: prompt file missing: {prompt_path}"
+
+
+def test_sweep_prompt_modules_exist(experiments):
+    """Module files referenced by prompt_modules exist on disk."""
+    modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
+    assert (modules_dir / "base.txt").exists(), "modules/base.txt missing"
+    for name, sweep in experiments["sweeps"].items():
+        for mod in sweep.get("prompt_modules", []):
+            mod_path = modules_dir / f"{mod}.txt"
+            assert mod_path.exists(), f"sweeps.{name}: module file missing: {mod_path}"
+
+
+def test_assemble_prompt():
+    """assemble_prompt composes base + modules correctly."""
+    from aedist.harness import assemble_prompt
+
+    modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
+    # Base only
+    base = assemble_prompt(modules_dir, [])
+    assert "Produce a comprehensive CSV table" in base
+    assert "senior energy analyst" not in base
+    # With persona (prepended)
+    with_persona = assemble_prompt(modules_dir, ["persona"])
+    assert with_persona.startswith("You are a senior energy analyst")
+    assert "Produce a comprehensive CSV table" in with_persona
+    # With overview (appended)
+    with_overview = assemble_prompt(modules_dir, ["overview"])
+    assert with_overview.index("sector overview") > with_overview.index("CSV table")
+
+
+def test_assemble_prompt_unknown_module_raises():
+    """assemble_prompt raises ValueError on unknown module names."""
+    from aedist.harness import assemble_prompt
+
+    modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
+    with pytest.raises(ValueError, match="Unknown prompt modules"):
+        assemble_prompt(modules_dir, ["personaa"])  # typo
 
 
 def test_sweep_output_dirs_unique(experiments):
@@ -229,9 +286,7 @@ def test_sweep_output_dirs_unique(experiments):
             # census and census_local share output dir by design
             pair = {name, outputs[out]}
             if pair != {"census", "census_local"}:
-                pytest.fail(
-                    f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'"
-                )
+                pytest.fail(f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'")
         outputs[out] = name
 
 
@@ -246,12 +301,17 @@ def test_list_models_helper(experiments):
 
     result = subprocess.run(
         [
-            "python3", str(EXPERIMENTS_DIR / "_list_models.py"),
+            "python3",
+            str(EXPERIMENTS_DIR / "_list_models.py"),
             str(MODELS_PATH),
-            "--set", "census_cloud",
-            "--experiments", str(EXPERIMENTS_PATH),
+            "--set",
+            "census_cloud",
+            "--experiments",
+            str(EXPERIMENTS_PATH),
         ],
-        capture_output=True, text=True, check=True,
+        capture_output=True,
+        text=True,
+        check=True,
     )
     shorts = set(result.stdout.strip().split())
     cloud_ids = experiments["sets"]["census_cloud"]["model_ids"]

@@ -1,0 +1,41 @@
+%erg v1
+Title: Run ablation sweeps and analyze results
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0049
+Blocked-by: 0044
+
+--- log ---
+2026-04-10T22:00Z claude created — split execution from 0038 design ticket
+2026-04-10T22:00Z claude note Phase 2 (paper-grade) also blocked by 0050 (preregistration)
+
+--- body ---
+## Context
+Ticket 0038 designed the experiment. Ticket 0049 wires the runtime. This
+ticket runs the sweeps and produces results.
+
+## Actions — Pilot (2 reps, for conference presentation)
+1. Run Phase 1 selection: ablation_p1_base + ablation_p1_composite
+2. HUMAN GATE: review Phase 1 results, select k models where
+   |ΔF1| > 0.05 (mean of 2 runs). Populate sets.ablation in
+   experiments.toml with selected model IDs.
+3. Run Phase 2: all 16 ablation sweeps on selected models (2 reps)
+4. Evaluate all outputs, produce comparison table
+5. Write brief results paragraph in report
+
+## Actions — Paper upgrade (5 reps, post-conference)
+6. Blocked by ticket 0050 (preregistration of hypotheses)
+7. Re-run Phase 2 with repeat=5, wider model panel
+8. Full statistical analysis: bootstrap CIs, interaction effects
+9. Write full results section in report
+
+## Test
+Phase 1 dry-run: `query_frontier --prompt-modules --dry-run` lists
+correct models and assembled prompt.
+
+## Exit criteria (pilot)
+- Phase 1 selection complete, k models identified
+- Phase 2 (2 reps) complete, results evaluated
+- Comparison table: ΔF1 per module (composition + ablation arms)
+- Brief finding paragraph in report

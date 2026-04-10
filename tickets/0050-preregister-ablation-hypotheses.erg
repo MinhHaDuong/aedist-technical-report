@@ -1,0 +1,36 @@
+%erg v1
+Title: Preregister directional hypotheses for ablation experiment
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0038
+
+--- log ---
+2026-04-10T22:00Z claude created — from independent vision review
+
+--- body ---
+## Context
+The ablation experiment (ticket 0038) tests 6 prompt modules but states no
+directional hypotheses. Without pre-stated expectations, the analysis risks
+post-hoc rationalization of whatever the data shows. This ticket blocks the
+full (paper-grade, 5 reps) experiment — not the pilot (2 reps).
+
+## Actions
+1. For each of the 6 modules (persona, overview, narratives, bibliography,
+   statistics, sourcing), state:
+   - Expected direction: helps recall / hurts recall / neutral
+   - Proposed mechanism: e.g. "narratives tax output budget, leaving fewer
+     tokens for inventory rows"
+   - Literature support if available
+2. State expected base-vs-census comparison direction
+3. State expected composite-vs-frontier comparison direction
+4. Document in report section (plan_ablation.tex) or appendix
+
+## Test
+Deliverable is a document, not code. Review gate: author confirms
+hypotheses are specific enough to be falsifiable.
+
+## Exit criteria
+- One directional hypothesis per module with mechanism
+- Documented before Phase 2 (5-rep) runs begin
+- Pilot (2-rep) results may inform but not determine hypotheses

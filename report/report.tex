@@ -190,7 +190,7 @@ Les résultats confirment que les modèles ne révèlent qu'un tiers de leur con
 
 L'approche conversationnelle soulève cependant une contrainte technique~: l'accumulation du contexte. À chaque tour, le modèle reçoit l'historique complet de la conversation~; les tokens de prompt croissent linéairement. L'analyse des données de Sweep~2 (4~tours, 7~modèles, 3~runs chacun) montre que la plupart des modèles n'utilisent que 1 à 7\% de leur fenêtre de contexte. L'exception notable est DeepSeek~V3.2~: lors d'un run, ses réponses particulièrement verbeuses ont consommé 53\% de sa fenêtre de 164K tokens en seulement 4~tours. L'extrapolation linéaire prédit un dépassement à 15~tours. Pour les modèles à fenêtre réduite, un mode «~sans état~» --- où chaque relance est envoyée indépendamment, sans historique --- garantit un budget token constant par tour, au prix de la perte de raffinement itératif.
 
-Plusieurs techniques d'amélioration existent~: prompt engineering avancé, Chain of Thought, Few-shot learning, Self-Consistency, ou encore optimisation automatique des prompts via DSPy \citep{ATRGAC9J}. Le Retrieval-Augmented Generation (RAG) \citep{2U9Y8AJK} enrichit les capacités du modèle en intégrant des documents de référence \citep{JNKUDLN8,Y95UBRJ9}.
+Plusieurs techniques d'amélioration existent~: prompt engineering avancé, Chain of Thought, Few-shot learning, Self-Consistency, ou encore optimisation automatique des prompts via DSPy \citep{ATRGAC9J}. Le Retrieval-Augmented Generation (RAG) \citep{2U9Y8AJK} enrichit les capacités du modèle en intégrant des documents de référence \citep{JNKUDLN8,Y95UBRJ9}. L'expérience~3 (section~\ref{sec:exp3}) isole systématiquement l'effet de chaque composant du prompt sur la qualité de l'extraction.
 
 Deux limites fondamentales demeurent~:
 
@@ -200,6 +200,8 @@ Deux limites fondamentales demeurent~:
 \end{itemize}
 
 La technique RAG a le potentiel d'assurer la traçabilité des résultats et de connaître le pedigree des données.
+
+\input{inputs/plan_ablation}
 
 \chapter{Documents sources et RAG}\label{chap:rag}
 

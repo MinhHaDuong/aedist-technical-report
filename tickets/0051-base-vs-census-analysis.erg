@@ -1,0 +1,37 @@
+%erg v1
+Title: Analyze base prompt vs census prompt gap
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0049
+
+--- log ---
+2026-04-10T22:00Z claude created — from independent vision review
+
+--- body ---
+## Context
+The ablation experiment compares module additions/removals relative to the
+base prompt. But the base prompt itself (300 words, structured columns,
+30 MWe threshold, captive/cogen scope) differs from the census prompt
+(40 words, minimal structure) by far more than any single module. The
+jump from census to base embeds many design choices whose individual
+contributions are not measured by the module ablation.
+
+This deserves a dedicated brief analysis: what explains the F1 difference
+between census and base? Is it the column structure? The exhaustiveness
+instruction? The status vocabulary? The 30 MWe threshold?
+
+## Actions
+1. After Phase 1 selection runs (ticket 0038), compare census vs base
+   F1 across all models
+2. Qualitative analysis: inspect a few responses to identify what the
+   base prompt captures that census misses (or vice versa)
+3. Brief paragraph in report discussing the gap
+
+## Test
+Census and base are both run in Phase 1 selection. No additional API
+calls needed — just analysis of existing results.
+
+## Exit criteria
+- Census vs base F1 comparison across models reported
+- Brief discussion paragraph in plan_ablation.tex or results section

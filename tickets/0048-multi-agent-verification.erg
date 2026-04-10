@@ -1,0 +1,80 @@
+%erg v1
+Title: Multi-agent verification of extraction outputs
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0038
+
+--- log ---
+2026-04-10T18:00Z claude created
+2026-04-10T18:00Z claude note split from ticket 0038 Phase B; single-model self-repair deemed too weak
+
+--- body ---
+## Context
+Ticket 0038 originally included a "self-repair" Phase B where a single model
+reviews its own CSV output and produces a corrected version. Investigation
+showed this is the weakest form of verification — the same model has the same
+blind spots. The self-consistency literature (Wang et al. 2023) and debate
+protocols show that verification by multiple independent agents is
+substantially more effective.
+
+This ticket implements multi-agent verification as a separate experiment,
+using the per-row Source_1/Source_2 columns from the ablation prompt's
+sourcing module as the verification substrate.
+
+## Design principles
+1. **Independence**: verifying agents must not see the original prompt or
+   each other's outputs — only the CSV to check.
+2. **Diversity**: use different models, or different decomposition strategies,
+   to maximize coverage of blind spots.
+3. **Per-row granularity**: each row carries its own source citations,
+   enabling targeted verification without full re-extraction.
+
+## Candidate protocols
+- **Cross-model check**: Model A extracts, Model B verifies each row against
+  cited sources. Swap roles and compare.
+- **Majority vote**: k independent extractions, accept rows appearing in
+  ≥ ceil(k/2) outputs. Already implemented for multi-run aggregation
+  (self-consistency sweep).
+- **Debate**: two models argue for/against inclusion of disputed rows, a
+  judge model decides. Higher cost, potentially higher precision.
+- **Source grounding**: a verifier agent fetches the cited source and checks
+  whether the claimed data actually appears there. Requires RAG corpus access.
+
+## Infrastructure
+- `query_verification.py` already supports 5 verification modes (unverified,
+  tool, self, cross, web). Extend with a "multi-agent" mode.
+- Per-row Source_1/Source_2 columns from ticket 0038's sourcing module feed
+  directly into the verification step.
+- The existing `extract_csv_rows()` utility handles CSV extraction from
+  responses.
+
+## Actions — Phase A: design (this ticket)
+1. Review candidate protocols against infrastructure constraints
+2. Choose one protocol and specify: which models, how many agents,
+   what constitutes agreement/disagreement, how to handle ties
+3. Write experimental plan section for report (like plan_ablation.tex)
+
+## Actions — Phase B: execution (separate ticket, blocked by this one)
+4. Implement chosen protocol in query_verification.py
+5. Run verification on best ablation prompt outputs (ticket 0038 results)
+6. Evaluate: verified F1 vs unverified F1 vs cost delta
+7. Write results section in report
+
+## Test
+Phase A deliverable: a written protocol spec with concrete parameters
+(model pairs, decision rule, cost estimate), reviewed by author.
+
+Phase B first test: run chosen protocol on one Opus extraction output.
+Compare verified vs unverified F1.
+
+## Exit criteria (Phase A)
+- Protocol chosen and specified with concrete parameters
+- Experimental plan section drafted for report
+- Phase B ticket created with clear actions
+
+## Exit criteria (Phase B — separate ticket)
+- Protocol implemented and evaluated on k models
+- Comparison table: unverified F1 vs verified F1 vs cost
+- Finding stated: does independent verification improve extraction, and at
+  what cost?

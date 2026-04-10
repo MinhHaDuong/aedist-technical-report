@@ -87,7 +87,9 @@ def load_plants_csv(path: Path) -> list[Plant]:
             return plants
         col_map = {c.strip().lower().replace(" ", "_"): c for c in reader.fieldnames}
         for row in reader:
-            name = _get(row, col_map, ["name", "plant_name", "plant"])
+            # Preference order: name > name_vi > name_en.  Vietnamese names
+            # match the reference dataset better (diacritics aid fuzzy matching).
+            name = _get(row, col_map, ["name", "name_vi", "name_en", "plant_name", "plant"])
             if not name:
                 continue
             fuel_raw = _get(row, col_map, ["fuel", "fuel_type"])
@@ -201,9 +203,7 @@ def _write_record(record: RunRecord, out: Path, stem: str) -> Path:
     """Write a RunRecord to {out}/{stem}.record.json, return the path."""
     record_path = out / f"{stem}.record.json"
     record_path.parent.mkdir(parents=True, exist_ok=True)
-    record_path.write_text(
-        record.model_dump_json(indent=2, exclude_none=True), encoding="utf-8"
-    )
+    record_path.write_text(record.model_dump_json(indent=2, exclude_none=True), encoding="utf-8")
     return record_path
 
 
@@ -261,9 +261,7 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
         _evaluate_csv_file(system_path, ref_path, args)
 
 
-def _evaluate_csv_file(
-    system_path: Path, ref_path: Path, args: argparse.Namespace
-) -> None:
+def _evaluate_csv_file(system_path: Path, ref_path: Path, args: argparse.Namespace) -> None:
     """Evaluate a CSV system output and write record + reconciliation."""
     reference = load_plants_csv(ref_path)
     system = load_plants_csv(system_path)

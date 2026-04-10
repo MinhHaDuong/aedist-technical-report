@@ -312,6 +312,35 @@ class TestParseAndCanonicalize:
         assert fields[-1].strip() == ""  # note
 
 
+class TestAblationPromptColumns:
+    """Columns from the ablation prompt (Name_VI, Name_EN, extra Source columns)."""
+
+    def test_name_vi_maps_to_canonical_name(self):
+        assert map_header_to_canonical(norm_header("Name_VI")) == "name"
+
+    def test_name_en_maps_to_canonical_name(self):
+        assert map_header_to_canonical(norm_header("Name_EN")) == "name"
+
+    def test_name_vi_column_parsed_by_canonicalize(self):
+        csv_text = "Name_VI,Name_EN,Fuel,Status\nPhả Lại,Pha Lai,Coal,Operational\n"
+        result = parse_and_canonicalize(csv_text)
+        assert "Phả Lại" in result
+
+    def test_extra_columns_ignored_by_evaluator(self, tmp_path):
+        """load_plants_csv silently ignores columns it doesn't map."""
+        from aedist.evaluate import load_plants_csv
+
+        csv_text = (
+            "Name_VI,Fuel,Status,Province,Capacity_MWe,Source_1,Source_2\n"
+            "Phả Lại,Coal,Operational,Hải Dương,600,Decision 123,EVN Report\n"
+        )
+        tmp = tmp_path / "ablation_test.csv"
+        tmp.write_text(csv_text, encoding="utf-8")
+        plants = load_plants_csv(tmp)
+        assert len(plants) == 1
+        assert plants[0].name == "Phả Lại"
+
+
 class TestHeaderVariantsProvenance:
     """Header variant mappings for provenance columns."""
 

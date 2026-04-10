@@ -1,0 +1,30 @@
+%erg v1
+Title: Implement and run multi-agent verification protocol
+Status: open
+Created: 2026-04-10
+Author: claude
+Blocked-by: 0048
+Blocked-by: 0052
+
+--- log ---
+2026-04-10T22:00Z claude created — Phase B execution, split from 0048 design
+
+--- body ---
+## Context
+Ticket 0048 chooses the verification protocol. This ticket implements
+it and runs it on ablation experiment outputs (ticket 0052).
+
+## Actions
+1. Implement chosen protocol in query_verification.py
+2. Run verification on best ablation prompt outputs
+3. Evaluate: verified F1 vs unverified F1 vs cost delta
+4. Write results section in report
+
+## Test
+Run chosen protocol on one extraction output. Compare verified vs
+unverified F1.
+
+## Exit criteria
+- Protocol implemented and evaluated on k models
+- Comparison table: unverified F1 vs verified F1 vs cost
+- Finding stated in report

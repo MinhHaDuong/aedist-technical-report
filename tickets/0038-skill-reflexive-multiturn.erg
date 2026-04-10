@@ -1,6 +1,6 @@
 %erg v1
-Title: Prompt ablation and self-repair: isolate what helps extraction
-Status: open
+Title: Prompt composition and ablation: isolate what helps extraction
+Status: doing
 Created: 2026-04-08
 Author: claude
 
@@ -8,86 +8,75 @@ Author: claude
 2026-04-08T14:00Z claude created
 2026-04-08T16:30Z claude note rewritten after reviewing actual frontier_skill outputs and prompts
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
+2026-04-10T18:00Z claude status doing — redesigned as symmetric composition+ablation experiment; Phase B (self-repair) moved to ticket 0048
 
 --- body ---
 ## Context
-The original ticket proposed "reflexive self-prompting" — a plan-then-execute
-two-turn protocol to improve inventory completeness. That hypothesis is
-backwards. The frontier data already refutes it: Opus census (40-word prompt)
-scores F1=0.64 while Opus frontier (1200-word prompt with sourcing, narratives,
-and bibliography) drops to F1=0.54. More metacognition in the prompt
-*degraded* extraction. Adding a planning turn on top of that is compounding
-the mistake.
+The frontier data shows that Opus scores F1=0.64 with a 40-word census
+prompt and F1=0.54 with the 1200-word frontier prompt. More metacognition
+in the prompt *degraded* extraction. Which component is responsible?
 
-Two sharper questions replace the original:
+Two symmetric approaches isolate the effects:
 
-1. **Prompt ablation**: Which components of the frontier prompt cause the F1
-   drop? Is it the bibliography request? The per-plant narratives? The sector
-   overview? Isolating the damage tells us what NOT to include in production
-   prompts — a direct input to Phase 3 pipeline design.
+1. **Composition**: start from an optimized extraction base prompt, add one
+   module at a time. Measures what each addition does to F1.
+2. **Ablation**: start from the full composite (base + all modules), remove
+   one module at a time. Measures what each removal does to F1.
 
-2. **Self-repair**: Can a model improve its own CSV by reviewing it against
-   an expected plant count? This is the production-relevant capability: not
-   "think before you act" but "critique and fix what you produced." Human
-   analysts do exactly this iterative loop.
+Comparing both arms reveals interaction effects: a module may help alone
+but hurt in combination, or vice versa.
 
-Both use existing infrastructure. No new query modules. No new storage
-conventions. Just new prompt files and sweep configs for `query_frontier`
-and `query_multiturn`.
+## Prompt design
 
-## Phase A — Prompt ablation (pre-conference, ~1h, ~$2)
+The base prompt was designed iteratively (HITL) with these criteria:
+- Structured CSV output matching the evaluator's column parser
+- 30 MWe inclusion threshold
+- Full project lifecycle (proposal through decommissioning)
+- Captive and cogeneration plants included
+- Biomass/waste explicitly excluded (tracked separately)
+- Open status vocabulary (multi-authority, not centrally-planned)
+- No persona (literature suggests negative effect on structured extraction)
+- No numeric hints (avoids anchoring)
+- OEO-aligned terminology with three deliberate divergences documented
 
-Single model (Opus), 5 single-shot runs via `query_frontier.py`:
+Six modules tested: persona, sector overview, per-plant narratives,
+annotated bibliography, cross-tabulation statistics, per-row sourcing.
 
-| Run | Prompt variant | What's removed |
-|-----|---------------|----------------|
-| 1 | census (baseline) | Everything — just "list all plants as CSV" |
-| 2 | frontier minus bibliography | No §4 (annotated bibliography) |
-| 3 | frontier minus narratives | No per-plant discussion paragraphs |
-| 4 | frontier minus overview | No §1 (sector overview) |
-| 5 | frontier full (control) | Nothing — the 1200-word prompt as-is |
+Full experimental plan in report: `report/inputs/plan_ablation.tex`
+Module files in: `experiments/prompts/modules/` (base + 6 modules)
+Assembler in: `src/aedist/harness.py` (assemble_prompt)
+Sweep configs in: `experiments/experiments.toml` (sweeps.ablation_*)
 
-Output: one comparison row in a table. Slide-ready finding for the methods
-framing: "elaborate prompts degrade structured extraction by X% — here's
-which component is responsible."
+## Measurement plan
 
-Storage: `outputs/ablation/` — standard .json/.csv/.eval.json per run.
+16 prompts total (census anchor, base, 6 composition, composite anchor,
+6 ablation, frontier control). Two-phase protocol:
 
-## Phase B — Self-repair protocol (post-conference, ~$5)
+Phase 1 (selection): base and composite on all census_cloud models (1 rep).
+Retain models showing significant base-vs-composite difference.
 
-5 models, using `query_multiturn.py` with 1 followup:
+Phase 2 (measurement): 16 prompts × k models × 5 repeats. Bootstrap CIs
+on delta-F1 per module.
 
-Turn 1: Standard census prompt (prompt_structured.txt).
-Turn 2 (followup): "You produced {N} plants. Vietnam has approximately 163
-  thermal power plants across 50+ complexes. Review your table: identify
-  plants you likely missed (check LNG terminals, plants under PDP7/PDP8,
-  cancelled projects). Produce a corrected and complete CSV table."
+## Actions (all complete — this is a design ticket)
+1. [x] Design base prompt (HITL review)
+2. [x] Write 7 module files + assembler (DRY, no repeated base text)
+3. [x] Add 18 sweep configs to experiments.toml (prompt_modules key)
+4. [x] Add name_vi/name_en aliases to extract.py and evaluate.py
+5. [x] Write experimental plan in report (plan_ablation.tex)
+6. [x] Integrate plan into report.tex
 
-The followup is templated — {N} is extracted from turn 1's CSV row count
-at runtime. This requires a minor extension to `run_conversation`: allow
-a followup to reference turn-1 output. If that's too invasive, hardcode
-the followup without {N} and just say "review your table for gaps."
-
-Models: Opus, o3, DeepSeek R1, Tongyi DeepResearch, Kimi K2 Thinking
-(same 5 from original ticket — they have frontier baselines).
-
-Evaluation: extract CSV from turn-2 response, standard evaluate against
-reference. Comparison: single-shot F1 vs self-repair F1 vs cost delta.
-
-Storage: `outputs/self_repair/` — standard multiturn JSON with both turns.
-
-## Actions
-1. Write 4 ablated prompt variants in experiments/prompts/
-2. Add [sweeps.ablation] to experiments.toml — mode "single", model Opus, 5 prompts
-3. Run Phase A ablation sweep and evaluate (pre-conference if time permits)
-4. Write prompt_self_repair_followup.txt for Phase B
-5. Add [sweeps.self_repair] to experiments.toml — mode "multiturn", 1 followup
-6. Run Phase B after conference, evaluate, produce comparison table
+## Downstream tickets
+- 0049: Wire prompt_modules in runner (infra)
+- 0050: Preregister directional hypotheses (blocks paper-grade runs)
+- 0051: Analyze base-vs-census gap (analysis, no extra API calls)
+- 0052: Run ablation sweeps + analyze (execution, blocked by 0049+0044)
+- 0053: Run multi-agent verification (execution, blocked by 0048+0052)
 
 ## Test
-Phase A first test: `python -m aedist.query_frontier --prompt prompts/prompt_frontier_no_bibliography.txt --model anthropic/claude-opus-4.6 --output outputs/ablation/ --dry-run` succeeds.
+862 tests pass with sweep configs, assembler guard, and evaluator aliases.
 
 ## Exit criteria
-- Phase A: 5 ablation runs evaluated, table showing F1 delta per removed component
-- Phase B: 5 models × 1 self-repair run, comparison table: census F1 vs repair F1 vs cost
-- Finding stated: which prompt components help/hurt extraction, and whether self-repair closes the recall gap
+- Experimental plan reviewed and integrated into report ✓
+- Prompt modules, assembler, sweep configs, evaluator aliases merged ✓
+- Downstream tickets created for execution, preregistration, analysis ✓
