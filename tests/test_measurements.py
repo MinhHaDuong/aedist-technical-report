@@ -247,7 +247,9 @@ class TestNoExtractedInMeasurements:
         """
         from aedist.measurements import load
 
-        for r in load():
+        records = list(load())
+        assert len(records) > 0, "measurements.jsonl is empty — test is vacuous"
+        for r in records:
             assert r.method_params.prompt_version != "_extracted", (
                 f"Found _extracted record in measurements.jsonl: "
                 f"{r.method_params.model} {r.result_file}"

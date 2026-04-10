@@ -186,7 +186,7 @@ evaluate-all-records:
 
 .PHONY: rebuild-measurements
 rebuild-measurements:
-	find outputs derived -name '*.record.json' -delete
+	find outputs derived -name '*.record.json' ! -path '*/_extracted/*' -delete
 	$(MAKE) --no-print-directory ../measurements.jsonl
 
 # --- Analysis: self-consistency -----------------------------------------------
