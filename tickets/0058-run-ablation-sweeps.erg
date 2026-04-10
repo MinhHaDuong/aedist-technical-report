@@ -3,16 +3,16 @@ Title: Run ablation sweeps and analyze results
 Status: open
 Created: 2026-04-10
 Author: claude
-Blocked-by: 0049
+Blocked-by: 0055
 Blocked-by: 0044
 
 --- log ---
 2026-04-10T22:00Z claude created — split execution from 0038 design ticket
-2026-04-10T22:00Z claude note Phase 2 (paper-grade) also blocked by 0050 (preregistration)
+2026-04-10T22:00Z claude note Phase 2 (paper-grade) also blocked by 0056 (preregistration)
 
 --- body ---
 ## Context
-Ticket 0038 designed the experiment. Ticket 0049 wires the runtime. This
+Ticket 0038 designed the experiment. Ticket 0055 wires the runtime. This
 ticket runs the sweeps and produces results.
 
 ## Actions — Pilot (2 reps, for conference presentation)
@@ -25,7 +25,7 @@ ticket runs the sweeps and produces results.
 5. Write brief results paragraph in report
 
 ## Actions — Paper upgrade (5 reps, post-conference)
-6. Blocked by ticket 0050 (preregistration of hypotheses)
+6. Blocked by ticket 0056 (preregistration of hypotheses)
 7. Re-run Phase 2 with repeat=5, wider model panel
 8. Full statistical analysis: bootstrap CIs, interaction effects
 9. Write full results section in report

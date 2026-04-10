@@ -8,7 +8,7 @@ Author: claude
 2026-04-08T14:00Z claude created
 2026-04-08T16:30Z claude note rewritten after reviewing actual frontier_skill outputs and prompts
 2026-04-09T12:00Z claude status reimagined by IDD phase 1
-2026-04-10T18:00Z claude status doing — redesigned as symmetric composition+ablation experiment; Phase B (self-repair) moved to ticket 0048
+2026-04-10T18:00Z claude status doing — redesigned as symmetric composition+ablation experiment; Phase B (self-repair) moved to ticket 0054
 
 --- body ---
 ## Context
@@ -67,11 +67,12 @@ on delta-F1 per module.
 6. [x] Integrate plan into report.tex
 
 ## Downstream tickets
-- 0049: Wire prompt_modules in runner (infra)
-- 0050: Preregister directional hypotheses (blocks paper-grade runs)
-- 0051: Analyze base-vs-census gap (analysis, no extra API calls)
-- 0052: Run ablation sweeps + analyze (execution, blocked by 0049+0044)
-- 0053: Run multi-agent verification (execution, blocked by 0048+0052)
+- 0054: Multi-agent verification design (blocked by 0038)
+- 0055: Wire prompt_modules in runner (infra, blocked by 0038)
+- 0056: Preregister directional hypotheses (blocks paper-grade runs)
+- 0057: Analyze base-vs-census gap (analysis, no extra API calls)
+- 0058: Run ablation sweeps + analyze (execution, blocked by 0055+0044)
+- 0059: Run multi-agent verification (execution, blocked by 0054+0058)
 
 ## Test
 862 tests pass with sweep configs, assembler guard, and evaluator aliases.

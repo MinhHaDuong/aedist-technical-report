@@ -3,16 +3,16 @@ Title: Implement and run multi-agent verification protocol
 Status: open
 Created: 2026-04-10
 Author: claude
-Blocked-by: 0048
-Blocked-by: 0052
+Blocked-by: 0054
+Blocked-by: 0058
 
 --- log ---
-2026-04-10T22:00Z claude created — Phase B execution, split from 0048 design
+2026-04-10T22:00Z claude created — Phase B execution, split from 0054 design
 
 --- body ---
 ## Context
-Ticket 0048 chooses the verification protocol. This ticket implements
-it and runs it on ablation experiment outputs (ticket 0052).
+Ticket 0054 chooses the verification protocol. This ticket implements
+it and runs it on ablation experiment outputs (ticket 0058).
 
 ## Actions
 1. Implement chosen protocol in query_verification.py
