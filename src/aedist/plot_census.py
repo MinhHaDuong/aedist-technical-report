@@ -20,7 +20,7 @@ from .tabulate_macros import load_and_summarize
 log = logging.getLogger(__name__)
 
 
-_SYNTHETIC_SUFFIXES = ("-union", "-consolidated")
+_SYNTHETIC_SUFFIXES = ("-union", "-consolidated", "-filtered", "_filtered", "-unverified")
 
 
 def build_census_rows(metrics: list[dict]) -> list[dict]:
