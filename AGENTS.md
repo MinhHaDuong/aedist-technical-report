@@ -121,11 +121,11 @@ When exploration leads to multiple action items, create one `.erg` ticket per ac
 
 ## Two ticket systems
 
-| Concern | Tool | Commands |
-|---------|------|----------|
-| Local work organization, sequencing | `.erg` files in `tickets/` | `/ticket-new`, `/ticket-ready`, `/ticket-claim`, `/ticket-close` |
-| Cross-worktree deconfliction | `.git/ticket-wip/*.wip` | Automatic via `/ticket-claim` and `/ticket-close` |
-| Cross-agent coordination, public visibility | GitHub Issues | `/new-ticket`, `/start-ticket` |
-| Linking the two | `Blocked-by: gh#N` in `.erg` headers | Reference GitHub issues from local tickets |
+| Concern | Tool | Skills |
+|---------|------|--------|
+| Local work organization, sequencing | `.erg` files in `tickets/` | git-erg: `/ticket-new`, `/ticket-ready`, `/ticket-claim`, `/ticket-close` |
+| Cross-worktree deconfliction | `.git/ticket-wip/*.wip` | git-erg: automatic via `/ticket-claim` and `/ticket-close` |
+| Cross-agent coordination, public visibility | GitHub Issues | IDH: `/new-ticket`, `/start-ticket` |
+| Linking the two | `Blocked-by: gh#N` in `.erg` headers | — |
 
-Local tickets are committed to git and travel with the repo. GitHub issues are for humans and other agents. Use both; they don't overlap.
+Local tickets travel with the repo. GitHub issues are for humans and other agents. Use both; they don't overlap.
