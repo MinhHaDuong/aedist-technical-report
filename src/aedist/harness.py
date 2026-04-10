@@ -326,7 +326,12 @@ def build_api_kwargs(
         kwargs["temperature"] = temperature
 
     if model.get("web_search", False):
-        kwargs["tools"] = [{"type": "openrouter:web_search"}]
+        kwargs["tools"] = [{
+            "type": "openrouter:web_search",
+            "parameters": {
+                "max_total_results": 25,  # 5 searches x 5 results ≈ $0.10
+            },
+        }]
 
     return kwargs
 

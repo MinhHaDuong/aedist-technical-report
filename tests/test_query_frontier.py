@@ -379,7 +379,7 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
-    assert call_kwargs["tools"] == [{"type": "openrouter:web_search"}]
+    assert call_kwargs["tools"][0]["type"] == "openrouter:web_search"
     assert call_kwargs["temperature"] == 0.0
 
 
@@ -405,4 +405,4 @@ def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert "temperature" not in call_kwargs
-    assert call_kwargs["tools"] == [{"type": "openrouter:web_search"}]
+    assert call_kwargs["tools"][0]["type"] == "openrouter:web_search"
