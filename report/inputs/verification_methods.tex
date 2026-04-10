@@ -1,5 +1,5 @@
 % Verification methods — preregistered protocol for journal paper
-% Included from report.tex, after ablation section
+% Included from report.tex, inside section "Exp 3: RAG wholesale" after decomposition
 
 \subsection{Vérification des sources}\label{sec:verification}
 
@@ -18,14 +18,16 @@ de rigueur~:
 
 \begin{description}
 \item[Non vérifié (\texttt{unverified})]
-  Ligne de base~: les citations éventuellement présentes dans la sortie
-  brute du modèle sont classifiées par heuristique (domaine URL, motifs
-  textuels), mais aucune vérification externe n'est effectuée.
+  Ligne de base~: lorsque le modèle fournit une citation dans la colonne
+  dédiée (\texttt{source\_ref}), celle-ci est classifiée par heuristique
+  (domaine URL, motifs textuels), mais aucune vérification externe n'est
+  effectuée. Les colonnes sans citation restent non annotées.
   Coût additionnel~: nul.
 
 \item[Outil (\texttt{tool})]
   Chaque centrale est comparée par correspondance floue (seuil de
-  similarité~70/100) à l'inventaire de référence. Une correspondance
+  similarité~70/100, distinct du seuil de réconciliation à~90/100 utilisé
+  pour l'évaluation F1) à l'inventaire de référence. Une correspondance
   confère le statut de source primaire (le référentiel fait foi)~;
   l'absence de correspondance laisse la ligne sans source.
   Coût additionnel~: nul (pas d'appel API).
@@ -142,8 +144,8 @@ expériences~:
 
 \paragraph{Preuve de concept (1 configuration, 2 modes déterministes)}
 Le design minimal compare les modes \texttt{unverified} et \texttt{tool}
-sur une seule configuration de base (DeepSeek~V3.2, RAG wholesale,
-décomposé). Ce pilote mesure l'écart de couverture entre la sortie brute
+sur une seule configuration de base (Opus~4.6 multiturn,
+169~centrales extraites). Ce pilote mesure l'écart de couverture entre la sortie brute
 (169~centrales, F1\,=\,98,2\,\%, 6~hallucinations) et la sortie filtrée
 par le référentiel (53~centrales, F1\,=\,49,1\,\%, 0~hallucination).
 Les données proto-vérification existantes confirment que l'infrastructure
