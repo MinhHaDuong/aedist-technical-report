@@ -17,7 +17,7 @@ from typing import Any
 from uuid import uuid4
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class FuelType(StrEnum):
@@ -265,6 +265,13 @@ class JobSpec(BaseModel):
         default=None, ge=0, description="Estimated wall-clock seconds."
     )
     worker_pool: WorkerPool = WorkerPool.OPENROUTER
+
+    @model_validator(mode="after")
+    def _require_prompt_or_modules(self) -> JobSpec:
+        """Ensure at least one of prompt (non-empty) or prompt_modules is set."""
+        if not self.prompt and self.prompt_modules is None:
+            raise ValueError("Either 'prompt' or 'prompt_modules' must be provided.")
+        return self
 
     # -- YAML serialization ---------------------------------------------------
 
