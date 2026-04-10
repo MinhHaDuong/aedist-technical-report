@@ -1,6 +1,6 @@
 %erg v1
 Title: Two-regime ablation: RAG corpus vs web search with prompt modules
-Status: open
+Status: closed
 Created: 2026-04-10
 Author: haduong
 
@@ -9,6 +9,7 @@ Author: haduong
 2026-04-10T23:30Z claude note Previous p1_base/p1_composite outputs invalidated (wrong model set, no reasoning/search activation)
 2026-04-10T23:45Z claude note Upgraded to 3-regime design (parametric, RAG, web search)
 2026-04-10T23:45Z claude note Epic — children: 0062 (report linkage), 0063 (capability flags), 0064 (RAG prompt_modules), 0065 (model sets), 0066 (Phase 1 rerun)
+2026-04-10T23:50Z claude status closed epic design complete, children unblocked
 
 --- body ---
 ## Context
