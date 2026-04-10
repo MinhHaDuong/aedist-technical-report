@@ -29,6 +29,7 @@ import openai
 from .harness import (
     BudgetTracker,
     assemble_prompt,
+    build_api_kwargs,
     compute_cost,
     load_experiments,
     load_models,
@@ -175,9 +176,11 @@ def main():
             )
 
             try:
-                api_kwargs = {"max_tokens": args.max_tokens}
-                if not model.get("reasoning", False):
-                    api_kwargs["temperature"] = args.temperature
+                api_kwargs = build_api_kwargs(
+                    model,
+                    max_tokens=args.max_tokens,
+                    temperature=args.temperature,
+                )
                 api_model_id = model.get("router_model", model_id)
                 result = query_single_turn(
                     client,

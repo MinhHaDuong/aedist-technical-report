@@ -300,6 +300,40 @@ def query_ollama_native(
 
 
 # ---------------------------------------------------------------------------
+# Capability-driven API kwargs
+# ---------------------------------------------------------------------------
+
+
+def build_api_kwargs(
+    model: dict,
+    *,
+    max_tokens: int,
+    temperature: float,
+) -> dict:
+    """Build API kwargs from model capability flags.
+
+    Reads ``reasoning`` and ``web_search`` flags from the model dict and
+    constructs the appropriate kwargs for ``chat.completions.create()``:
+
+    - ``reasoning: true`` → omit ``temperature`` (required by o3, R1, etc.)
+    - ``web_search: true`` → add ``extra_body: {plugins: [{id: "web"}]}``
+      (OpenRouter web search plugin)
+    """
+    kwargs: dict = {"max_tokens": max_tokens}
+
+    if not model.get("reasoning", False):
+        kwargs["temperature"] = temperature
+
+    extra_body: dict = {}
+    if model.get("web_search", False):
+        extra_body["plugins"] = [{"id": "web"}]
+    if extra_body:
+        kwargs["extra_body"] = extra_body
+
+    return kwargs
+
+
+# ---------------------------------------------------------------------------
 # Single-turn query helper
 # ---------------------------------------------------------------------------
 

@@ -17,7 +17,12 @@ def _make_mock_response(prompt_tokens=100, completion_tokens=200):
     return resp
 
 
-def _minimal_models_yaml(tmp_path: Path, *, reasoning: bool = False) -> Path:
+def _minimal_models_yaml(
+    tmp_path: Path,
+    *,
+    reasoning: bool = False,
+    web_search: bool = False,
+) -> Path:
     p = tmp_path / "models.yaml"
     lines = (
         "- id: test/tiny-model\n"
@@ -31,6 +36,8 @@ def _minimal_models_yaml(tmp_path: Path, *, reasoning: bool = False) -> Path:
     )
     if reasoning:
         lines += "  reasoning: true\n"
+    if web_search:
+        lines += "  web_search: true\n"
     p.write_text(lines)
     return p
 
@@ -349,3 +356,53 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
     assert record["sweep"] == "frontier_scenarios"
+
+
+@patch("aedist.harness.OpenAI")
+def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
+    """Models with web_search: true get OpenRouter web plugin in extra_body."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path, web_search=True)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_frontier", "--prompt", str(prompt_path),
+            "--models", str(models_path),
+            "--output", str(output_dir),
+        ]):
+            from aedist.query_frontier import main
+            main()
+
+    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
+    assert call_kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
+    assert call_kwargs["temperature"] == 0.0
+
+
+@patch("aedist.harness.OpenAI")
+def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
+    """Model with both reasoning and web_search gets correct params."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path, reasoning=True, web_search=True)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(sys, "argv", [
+            "query_frontier", "--prompt", str(prompt_path),
+            "--models", str(models_path),
+            "--output", str(output_dir),
+        ]):
+            from aedist.query_frontier import main
+            main()
+
+    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
+    assert "temperature" not in call_kwargs
+    assert call_kwargs["extra_body"] == {"plugins": [{"id": "web"}]}
