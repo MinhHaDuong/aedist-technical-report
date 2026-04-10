@@ -1,0 +1,77 @@
+%erg v1
+Title: Full verification factorial with LLM and web modes
+Status: open
+Created: 2026-04-10
+Author: claude
+
+--- log ---
+2026-04-10T12:00Z claude created split from 0030 (phases 3-5)
+
+--- body ---
+## Context
+
+Ticket 0030 delivered a proof-of-concept with tool + unverified modes
+on one config. This ticket covers the deferred work: LLM-based (self,
+cross) and web-based verification, plus the full 3-config factorial.
+
+Split because self/cross/web hit a blocker: OpenRouter proxying DeepSeek
+V3.2 for a 167-plant JSON verification prompt never completed (20+ min
+timeout). The prompt sends all plants at once and expects ~30K tokens of
+structured JSON output.
+
+## Actions
+
+### 1. Batch the verification prompt
+
+Split the 167-plant list into batches of 50. Send each batch as a
+separate API call. Merge results. This avoids the OpenRouter timeout
+and makes costs trackable per batch.
+
+Modify `verify_llm()` in verify.py to accept a `batch_size` parameter
+(default 50). Loop over batches, concatenate annotated rows.
+
+### 2. Run self + cross + web on best config
+
+Same DeepSeek V3.2 decomposed run3 as 0030. Conditions:
+- self × 3 runs (DeepSeek V3.2 via OpenRouter, batched)
+- cross × 3 runs (Claude Sonnet 4.6 via Anthropic API)
+- web × 1 run (Tavily, ~163 searches)
+
+Estimated cost: ~$2 (self ~$0.03, cross ~$0.30, web ~$0.80).
+
+### 3. Expand to full 3-config factorial
+
+Uncomment the 3-config block in experiments.toml [sweeps.verification].
+Run all 5 modes × 3 configs × repeat. ~27 conditions, budget $25.
+
+### 4. Regenerate tradeoff table and update report
+
+Run tabulate_verification.py with all 5 modes. Update the report
+paragraph and slide with the full comparison. The key question: does
+web verification retain more coverage than self-verification at
+threshold=3?
+
+### 5. Compare cite-upfront (0025) vs verify-after (this ticket)
+
+Optional. Ticket 0025 sourced extraction has evidence scores (mean 3.38,
+77.5% primary). Compare "ask for sources during extraction" vs "verify
+sources after extraction" on the same model (Claude Opus).
+
+## Test
+
+```python
+def test_batched_verify_llm():
+    """verify_llm with batch_size=50 produces same plant count as unbatched."""
+    ...
+
+def test_tradeoff_table_all_five_modes():
+    """tradeoff.csv has rows for all 5 modes after full run."""
+    ...
+```
+
+## Exit criteria
+- Batched prompt implemented and tested
+- All 5 modes run on at least 1 config
+- Tradeoff table with precision-coverage for 5 modes
+- Report paragraph updated with full comparison
+- Full 3-config factorial documented (run or planned)
