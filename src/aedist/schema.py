@@ -234,7 +234,7 @@ class JobSpec(BaseModel):
     job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
     priority: int = Field(default=0, description="Higher value = higher priority.")
     mode: Method
-    prompt: str = Field(..., description="Path to prompt file.")
+    prompt: str = Field(default="", description="Path to prompt file (unused when prompt_modules is set).")
     models_file: str = Field(..., description="Path to models YAML file.")
     model_filter: str | None = Field(
         default=None, description="Glob or regex to select a subset of models."
@@ -247,6 +247,14 @@ class JobSpec(BaseModel):
     )
     strategy: str | None = Field(
         default=None, description="RAG retrieval strategy (e.g. wholesale)."
+    )
+    prompt_modules: list[str] | None = Field(
+        default=None,
+        description="Module names for assemble_prompt(). Mutually exclusive with prompt file.",
+    )
+    modules_dir: str | None = Field(
+        default=None,
+        description="Directory containing prompt module text files (default: experiments/prompts/modules/).",
     )
     repeat: int = Field(default=3, ge=1)
     run_number: int = Field(default=1, ge=1, description="Which run this job represents (1-indexed).")

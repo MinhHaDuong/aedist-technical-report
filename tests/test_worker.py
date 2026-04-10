@@ -758,6 +758,74 @@ def test_web_mode_raises_without_tavily_key(tmp_path: Path, monkeypatch) -> None
 # ---------------------------------------------------------------------------
 
 
+def test_prompt_modules_assembled_in_execute(tmp_path: Path) -> None:
+    """Worker.execute() uses assemble_prompt when job has prompt_modules."""
+    modules_dir = tmp_path / "modules"
+    modules_dir.mkdir()
+    (modules_dir / "base.txt").write_text("Base prompt text.")
+    (modules_dir / "persona.txt").write_text("You are an expert.")
+    (modules_dir / "overview.txt").write_text("Provide an overview.")
+
+    job = JobSpec(
+        job_id="pm-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt="unused",  # should be ignored when prompt_modules is set
+        prompt_modules=["persona", "overview"],
+        modules_dir=str(modules_dir),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    # Verify the assembled prompt was used (persona before base, overview after)
+    call_args = patches["query_single_turn"].call_args[0]
+    messages = call_args[2]
+    content = messages[0]["content"]
+    assert "You are an expert." in content
+    assert "Base prompt text." in content
+    assert "Provide an overview." in content
+    assert content.index("You are an expert.") < content.index("Base prompt text.")
+    assert content.index("Base prompt text.") < content.index("Provide an overview.")
+
+
+def test_prompt_modules_empty_uses_base_only_in_worker(tmp_path: Path) -> None:
+    """Worker.execute() with empty prompt_modules uses base.txt only."""
+    modules_dir = tmp_path / "modules"
+    modules_dir.mkdir()
+    (modules_dir / "base.txt").write_text("Base prompt only.")
+
+    job = JobSpec(
+        job_id="pm-empty",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt="unused",
+        prompt_modules=[],
+        modules_dir=str(modules_dir),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    call_args = patches["query_single_turn"].call_args[0]
+    messages = call_args[2]
+    assert messages[0]["content"] == "Base prompt only."
+
+
 def test_rag_empty_corpus_raises_runtime_error(tmp_path: Path) -> None:
     """RAG mode converts SystemExit from load_corpus into RuntimeError."""
     prompt_file = tmp_path / "prompt.txt"

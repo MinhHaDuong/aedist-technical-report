@@ -28,6 +28,7 @@ import openai
 
 from .harness import (
     BudgetTracker,
+    assemble_prompt,
     compute_cost,
     load_experiments,
     load_models,
@@ -52,7 +53,19 @@ def main():
     parser = argparse.ArgumentParser(
         description="Frontier deep-research benchmark for comprehensive extraction"
     )
-    parser.add_argument("--prompt", required=True, help="Path to prompt text file")
+    prompt_group = parser.add_mutually_exclusive_group(required=True)
+    prompt_group.add_argument("--prompt", help="Path to prompt text file")
+    prompt_group.add_argument(
+        "--prompt-modules",
+        nargs="*",
+        default=None,
+        help="Module names for assemble_prompt() (e.g. persona overview)",
+    )
+    parser.add_argument(
+        "--modules-dir",
+        default="experiments/prompts/modules",
+        help="Directory containing prompt module text files",
+    )
     parser.add_argument("--models", required=True, help="Path to models YAML")
     parser.add_argument("--output", required=True, help="Output directory")
     parser.add_argument("--model", help="Query only this model (full ID)")
@@ -77,10 +90,18 @@ def main():
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    prompt = Path(args.prompt).read_text().strip()
-    sweep = Path(args.prompt).stem
-    if sweep.startswith("prompt_"):
-        sweep = sweep[len("prompt_"):]
+    if args.prompt_modules is not None:
+        modules_dir = Path(args.modules_dir)
+        prompt = assemble_prompt(modules_dir, args.prompt_modules)
+        if args.prompt_modules:
+            sweep = "modules_" + "_".join(args.prompt_modules)
+        else:
+            sweep = "modules_base"
+    else:
+        prompt = Path(args.prompt).read_text().strip()
+        sweep = Path(args.prompt).stem
+        if sweep.startswith("prompt_"):
+            sweep = sweep[len("prompt_"):]
     models = load_models(args.models)
     output_dir = Path(args.output)
 
