@@ -84,6 +84,7 @@ def main():
         default=DEFAULT_TEMPERATURE,
         help=f"Sampling temperature (default {DEFAULT_TEMPERATURE})",
     )
+    parser.add_argument("--no-web-search", action="store_true", help="Disable web search even if model has web_search=true")
     parser.add_argument("--dry-run", action="store_true", help="List queries without calling API")
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
     parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
@@ -176,8 +177,11 @@ def main():
             )
 
             try:
+                effective_model = model
+                if args.no_web_search:
+                    effective_model = {**model, "web_search": False}
                 api_kwargs = build_api_kwargs(
-                    model,
+                    effective_model,
                     max_tokens=args.max_tokens,
                     temperature=args.temperature,
                 )

@@ -1,0 +1,79 @@
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Nhà máy Nhiệt điện Vĩnh Tân 1,Coal,Operational,2011,Binh Thuan,1.0,1800 MW proposed; 2x120 MW units,[8],EVN GENCO 3
+Nhà máy Nhiệt điện Vĩnh Tân 2,Coal,Operational,2014,Binh Thuan,1.0,1800 MW proposed; 2x600 MW units,[8],EVN GENCO 3
+Nhà máy Nhiệt điện Vĩnh Tân 3,Coal,Operational,2019,Binh Thuan,2.0,Originally 1,980 MW proposed (3x660 MW),"EVN (BOT with Marubeni, Kyushu Electric, KEPCO)"
+Nhà máy Nhiệt điện Vĩnh Tân 4,Coal,Operational,2018,Binh Thuan,1.0,Originally 1,200 MW proposed (2x600 MW),EVN GENCO 3
+Nhà máy Điện than Nghi Sơn 2,Coal,Operational,2021,Thanh Hoa,1.0,Originally 1,200 MW; 2x600 MW units,"Nghi Son Energy (Formosa Plastics, Japan)"
+Nhà máy Nhiệt điện Mông Dương 1,Coal,Operational,2015,Quang Ninh,1.0,2x540 MW units,[8],EVN GENCO 1
+Nhà máy Nhiệt điện Mông Dương 2,Coal,Operational,2019,Quang Ninh,1.0,1,200 MW; 2x600 MW units,EVN (BOT with Samsung C&T)
+Nhà máy Điện than Quảng Ninh,Coal,Operational,1995–2005,Quang Ninh,600.0,[8],[18],2x300 MW units; older units retired
+Nhà máy Nhiệt điện Pha Lai 1,Coal,Operational,1980s,Hai Duong,440.0,[8],[19],Retired units decommissioned; 2x220 MW remaining
+Nhà máy Nhiệt điện Pha Lai 2,Coal,Operational,2018,Hai Duong,620.0,200 MW proposed (2x600 MW); only 1 unit built,[20],1
+Nhà máy Nhiệt điện Duyên Hải 1,Coal,Operational,2015,Tra Vinh,1.0,2x520 MW units,[8],EVN GENCO 3
+Nhà máy Nhiệt điện Duyên Hải 3,Coal,Operational,2022,Tra Vinh,1.0,2x660 MW units (USC),[23],"EVN (BOT with Marubeni, J-Power)"
+Nhà máy Nhiệt điện Duyên Hải 3 (MW),Coal,Operational,2022,Tra Vinh,1.0,Extension of Duyen Hai 3,[25],EVN GENCO 1
+Nhà máy Nhiệt điện Đại Ninh,Hydro,Operational,2008,Binh Thuan,0,[27],[28],Not thermal; excluded per instructions
+Nhà máy Điện khí Cà Mau 1,Domestic Gas,Operational,2012,Ca Mau,750.0,[29],[30],3x250 MW CCGT units
+Nhà máy Điện khí Cà Mau 2,Domestic Gas,Operational,2013,Ca Mau,750.0,[29],[31],3x250 MW CCGT units
+Nhà máy Điện khí Cà Mau 3,Domestic Gas,Operational,2014,Ca Mau,750.0,[29],[32],3x250 MW CCGT units
+Nhà máy Điện khí Ô Môn 1,Domestic Gas,Operational,2023,Can Tho,1.0,3x400 MW CCGT units,[33],PV Gas + Marubeni
+Nhà máy Điện khí Ô Môn 2,Domestic Gas,Planned,2025,Can Tho,1.0,Proposed as O Mon I; scale reduced,[35],PV Gas + Marubeni
+Nhà máy Nhiệt điện Ô Môn 1,Coal,Proposed,-,Can Tho,600.0,[37],[38],Cancelled in favor of gas; see PDP8
+Nhà máy Điện khí Sơn Mỹ 1,Imported LNG,Proposed,2027,Binh Thuan,1.0,Part of Son My LNG complex (3,600 MW total),Binh Thuan Energy (EVN + partners)
+Nhà máy Điện khí Sơn Mỹ 2,Imported LNG,Proposed,2028,Binh Thuan,1.0,3,600 MW total target,Binh Thuan Energy (EVN + partners)
+Nhà máy Điện khí Sơn Mỹ 3,Imported LNG,Proposed,2029,Binh Thuan,1.0,3,600 MW total target,Binh Thuan Energy (EVN + partners)
+Nhà máy Điện khí Sơn Mỹ 4,Imported LNG,Proposed,2030,Binh Thuan,1.0,3,600 MW total target,Binh Thuan Energy (EVN + partners)
+Nhà máy Điện khí Nhơn Trạch 1,Domestic Gas,Operational,2010,Dong Nai,450.0,[41],[42],2x225 MW units
+Nhà máy Điện khí Nhơn Trạch 2,Domestic Gas,Operational,2011,Dong Nai,760.0,[43],[44],2x380 MW units
+Nhà máy Điện khí Nhơn Trạch 2 (Expansion),Domestic Gas,Proposed,-,Dong Nai,450.0,[45],[46],Proposed as LNG-to-power; see PDP8
+Nhà máy Điện khí Hải Phòng 1,Imported LNG,Proposed,2027,Hai Phong,1.0,Part of Quang Ninh LNG cluster,[47],Marubeni + Kansai Electric
+Nhà máy Điện khí Hải Phòng 2,Imported LNG,Proposed,2028,Hai Phong,1.0,Part of Quang Ninh LNG cluster,[47],Marubeni + Kansai Electric
+Nhà máy Nhiệt điện Hải Phòng (GTZ),Oil,Operational,2010,Hai Phong,420.0,[49],[50],Diesel/gas oil peaking plant
+Nhà máy Điện khí Uông Bí mở rộng,Domestic Gas,Proposed,2026,Quang Ninh,275.0,[51],[52],Retrofit of old gas units to CCGT
+Nhà máy Nhiệt điện Phả Lại Mở rộng,Coal,Cancelled,-,Hai Duong,600.0,[53],[54],Cancelled in PDP8 revisions
+Dự án Nhiệt điện Quảng Trị 1,Imported LNG,Proposed,2027,Quang Tri,1.0,First LNG-to-power in central Vietnam,[55],Quang Tri IPP (EVN + partners)
+Nhà máy Nhiệt điện Quảng Trị (Than),Coal,Proposed,2028,Quang Tri,1.0,Cancelled in PDP8; proposed 2x600 MW,[57],EVN / Quang Tri Authorities
+Nhà máy Nhiệt điện Nghi Sơn 1,Oil,Operational,1998,Thanh Hoa,140.0,[59],[60],Retired oil plant; now backup
+"Nhà máy Nhiệt điện Bà Rịa (DPP)""",Diesel,Operational,2004,Ba Ria-Vung Tau,150.0,[61],[62],Gas turbine backup for PV plants
+Nhà máy Nhiệt điện Thủ Đức,Diesel,Operational,1980s,Ho Chi Minh City,340.0,[63],[64],Retired units decommissioned
+Nhà máy Nhiệt điện Bà Rịa Mở rộng,Imported LNG,Proposed,2029,Ho Chi Minh City,1.0,Proposed LNG terminal,[65],Ba Ria Vung Tau Authorities / EVN
+Dự án Nhiệt điện Sông Hậu 1,Coal,Proposed,2027,Hau Giang,1.0,PDP8 candidate; 2x600 MW,[67],EVN GENCO 2 / MOIT
+Dự án Nhiệt điện Sông Hậu 2,Coal,Proposed,2029,Hau Giang,1.0,PDP8 candidate; 2x600 MW,[67],EVN GENCO 2 / MOIT
+Nhà máy Nhiệt điện Long Phú 1,Coal,Operational,2013,Soc Trang,1.0,Originally 2,400 MW (2x600 MW); only 1 unit built,EVN GENCO 1
+Nhà máy Nhiệt điện Long Phú 2,Coal,Suspended,-,Soc Trang,1.0,Suspended due to local opposition,[71],EVN
+Nhà máy Nhiệt điện Vĩnh Tân 1 Mở rộng,Coal,Proposed,2026,Binh Thuan,600.0,[73],[74],2x600 MW proposed to replace older units
+Nhà máy Nhiệt điện Thái Bình 1,Coal,Proposed,2027,Thai Binh,1.0,PDP8 candidate,[75],EVN GENCO 1
+Nhà máy Nhiệt điện Thái Bình 2,Coal,Proposed,2029,Thai Binh,1.0,PDP8 candidate,[75],EVN GENCO 1
+Nhà máy Điện khí Thái Bình,Domestic Gas,Proposed,2028,Thai Binh,1.0,Proposed as LNG-to-power,[77],PV Gas
+Nhà máy Nhiệt điện Quỳnh Lập,Coal,Cancelled,-,Nghe An,1.0,Cancelled due to air quality concerns,[79],EVN
+Nhà máy Nhiệt điện Hải Dương,Coal,Cancelled,-,Hai Duong,1.0,Cancelled in PDP8 revisions,[81],Hai Duong Authorities
+Nhà máy Điện khí Lạch Huyện,Imported LNG,Proposed,2027,Hai Phong,1.0,Part of Quang Ninh LNG cluster,[47],Marubeni + Kansai Electric
+Nhà máy Điện khí Quảng Ninh,Imported LNG,Proposed,2026,Quang Ninh,1.0,First phase of Quang Ninh LNG hub,[84],Quang Ninh Authorities / EVN
+Dự án Nhiệt điện Nam Định 1,Coal,Proposed,2028,Nam Dinh,1.0,PDP8 candidate; 1x1225 MW USC,[86],EVN GENCO 2
+Dự án Nhiệt điện Nam Định 2,Coal,Proposed,2030,Nam Dinh,1.0,PDP8 candidate; 1x1225 MW USC,[86],EVN GENCO 2
+Dự án Nhiệt điện Đông Nam Bộ 1,Coal,Proposed,2030,Ho Chi Minh City/Dong Nai,1.0,PDP8 candidate,[2],EVN
+Dự án Nhiệt điện Đà Nẵng 1,Imported LNG,Proposed,2030,Da Nang,1.0,Part of central Vietnam LNG hub,[89],EVN / Da Nang Authorities
+Nhà máy nhiệt điện Kiên Giang,Imported LNG,Proposed,2029,Kien Giang,1.0,LNG terminal proposed,[91],EVN / Kien Giang Authorities
+Nhà máy nhiệt điện An Khánh,Oil,Operational,1980s,Ho Chi Minh City,320.0,[93],[94],Retired oil plant; backup only
+Nhà máy nhiệt điện Trà Nóc 1,Oil,Operational,1990s,Can Tho,110.0,[95],[96],Converted to gas backup
+Nhà máy nhiệt điện Tây Nguyên (Dak Nong),Coal,Proposed,2029,Dak Nong,600.0,[97],[98],Proposed by provincial authorities
+Nhà máy nhiệt điện Vũng Áng 1,Coal,Operational,2015 Ha Tinh,1,200.0,[99],[100],Captive plant for Formosa Ha Tinh steel complex
+Nhà máy nhiệt điện Vũng Áng 2,Coal,Operational,2020 Ha Tinh,1,240.0,[99],[101],Captive plant for Formosa Ha Tinh steel complex
+Nhà máy nhiệt điện Dung Quất,Oil,Operational,2009,Quang Ngai,70.0,[102],[103],Captive cogeneration for refinery
+Nhà máy nhiệt điện Phú Mỹ 2.1,Domestic Gas,Operational,2002,Ba Ria-Vung Tau,420.0,[104],[105],3x140 MW CCGT units
+Nhà máy nhiệt điện Phú Mỹ 2.2,Oil,Operational,2004,Ba Ria-Vung Tau,715.0,[106],[107],Flexible diesel/gas oil plant
+Nhà máy nhiệt điện Phú Mỹ 3,Domestic Gas,Operational,2004,Ba Ria-Vung Tau,1.0,3x350 MW CCGT units,[108],EVN + Sojitz (Japan)
+Nhà máy nhiệt điện Phú Mỹ 4,Domestic Gas,Operational,2006,Ba Ria-Vung Tau,420.0,[110],[111],3x140 MW CCGT units
+Nhà máy nhiệt điện Ô Môn 3,Coal,Cancelled,-,Can Tho,600.0,[35],[112],Cancelled in PDP8
+Nhà máy nhiệt điện Na Dương,Coal,Operational,2005,Lang Son,110.0,[113],[114],110 MW CFB unit
+Nhà máy nhiệt điện Cao Ngạn,Coal,Operational,2016,Thai Nguyen,1.0,2x525 MW units,[115],EVN GENCO 1
+Nhà máy nhiệt điện An Điềm,Coal,Operational,2011,Quang Nam,120.0,[117],[118],120 MW CFB unit
+Nhà máy nhiệt điện Cẩm Phả,Coal,Operational,2013,Quang Ninh,600.0,[119],[120],3x200 MW units
+"Nhà máy nhiệt điện Sơn ĐộngCancelled ""Son Dong Coal Plant""",Subcritical,-,Bac Giang,600,0,[121],,[2]
+"Nhà máy nhiệt điện Long KhánhCancelled ""Long Khanh Coal Plant""",Supercritical,-,Dong Nai,1,200.0,[2],[122],Cancelled in PDP8
+"Nhà máy nhiệt điện Quỳnh Lập 2Cancelled ""Quynh Lap 2 Coal Plant""",CFB,-,Nghe An,660,0,[123],,[79]
+"Nhà máy nhiệt điện Nghi Sơn 3Cancelled ""Nghi Son 3 Coal Plant""",Supercritical,-,Thanh Hoa,1,200.0,[14],[124],Cancelled in PDP8
+Dự án nhiệt điện Vân Phong 1,Imported LNG,Proposed,2027,Khanh Hoa,1.0,LNG import terminal proposed,[125],EVN / Khanh Hoa Authorities
+"Dự án nhiệt điện Sóc Trăng 1 ""Soc Trang 1 LNG-CCGT""",CCGT,2028,Soc Trang,1,500.0,[127],[128],LNG terminal proposed
+"Nhà máy nhiệt điện Cần Thơ 1Cancelled ""Can Tho 1 CCGT (Gas)""",CCGT,-,Can Tho,450,0,[129],,[33]
+"Dự án nhiệt điện Tây NinhCancelled ""Tay Ninh Coal Plant""",CFB,-,Tay Ninh,120,0,[131],,[130]
