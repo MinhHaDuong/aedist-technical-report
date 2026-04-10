@@ -1,0 +1,96 @@
+%erg v1
+Title: Enable deep research capabilities for ablation experiment
+Status: open
+Created: 2026-04-10
+Author: haduong
+
+--- log ---
+2026-04-10T23:30Z haduong created — ablation Phase 1 ran with basic chat models, results invalid
+2026-04-10T23:30Z claude note Previous p1_base/p1_composite outputs invalidated (wrong model set, no reasoning/search activation)
+
+--- body ---
+## Context
+
+Ablation Phase 1 (ticket 0058) ran 26 census_cloud models via basic
+`chat.completions.create()` — no reasoning, no web search. Results show
+that cheap models respond in 3s with ~300 tokens (parametric memory),
+while frontier models take 2-3 min generating 7K-15K tokens. The fast
+models aren't extracting — they're reciting.
+
+The ablation experiment tests whether prompt modules improve extraction
+quality. This requires models that actually attempt deep extraction:
+reasoning through the prompt and searching the web for data. Basic chat
+completions measure prompt effects on memory recall, not on extraction.
+
+## Actions
+
+### 1. Add `web_search` flag to `experiments/models.yaml`
+
+For each model, determine if web search is available:
+- OpenRouter plugin: `plugins: [{id: "web"}]` (available for most models)
+- Native search: Perplexity Sonar models (built-in)
+- Provider-specific: check OpenRouter docs for per-model support
+
+### 2. Update capability activation in `src/aedist/harness.py`
+
+When calling models with capabilities, pass the right parameters:
+- **Reasoning models** (reasoning=true):
+  - OpenAI o3: already skips temperature (correct)
+  - Claude: pass `extra_body: {"thinking": {"type": "enabled", "budget_tokens": N}}`
+  - DeepSeek R1: already works via OpenRouter
+  - Gemini thinking: check provider-specific params
+- **Web search** (web_search=true):
+  - OpenRouter: `extra_body: {"plugins": [{"id": "web"}]}`
+  - Or model-specific activation
+
+### 3. Create `sets.ablation_deep` in `experiments.toml`
+
+Model selection criteria:
+- Must have reasoning OR web_search capability (ideally both)
+- Must be available on OpenRouter with current credits
+- Diverse: at least 3 providers, 2 architectures
+
+Candidates:
+- openai/o3 (reasoning, $2+$8/Mtok)
+- deepseek/deepseek-r1-0528 (reasoning, $0.45+$2.15/Mtok)
+- qwen/qwen3-max-thinking (reasoning, $0.78+$3.9/Mtok)
+- moonshotai/kimi-k2-thinking (reasoning, $0.47+$2/Mtok)
+- anthropic/claude-opus-4.6 + thinking enabled
+- google/gemini-3-flash-preview + thinking enabled
+- Any Perplexity Sonar model with built-in search
+
+### 4. Update `query_frontier.py` to activate capabilities
+
+Read model flags from registry and pass appropriate extra_body params.
+The model entry should drive the API call shape — no hardcoding.
+
+### 5. Invalidate and rerun Phase 1
+
+- Delete all `outputs/ablation/p1_base/*.json` and `p1_composite/*.json`
+- Rerun with `sets.ablation_deep` instead of `census_cloud`
+- Parallel execution (max 8 concurrent)
+
+### 6. Top up OpenRouter credits
+
+Previous runs consumed ~$5. Deep research models are more expensive.
+Budget estimate: 7 models x 2 prompts x 2 reps x ~$1/call = ~$28.
+
+## Test
+
+```python
+def test_reasoning_models_skip_temperature():
+    """Reasoning models must not receive temperature parameter."""
+
+def test_web_search_plugin_added():
+    """Models with web_search=true get plugins in extra_body."""
+
+def test_ablation_deep_set_has_capabilities():
+    """All models in sets.ablation_deep have reasoning or web_search."""
+```
+
+## Exit criteria
+- `web_search` flag added to models.yaml where applicable
+- `query_frontier.py` activates reasoning and web search per model flags
+- `sets.ablation_deep` created with capability-verified models
+- Phase 1 rerun with correct capabilities
+- Previous invalid outputs deleted
