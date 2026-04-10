@@ -119,7 +119,7 @@ def write_pdf(
     y_offset = 0.0
     method_ticks = []
     spacing = 0.4
-    gap = 1.5
+    gap = 2.0
 
     for method in _METHOD_ORDER:
         method_rows = [r for r in rows if r["method"] == method]
