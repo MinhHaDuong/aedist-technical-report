@@ -334,6 +334,43 @@ Sourçage      & $-$     & $+$
   génération.
 \end{enumerate}
 
+\paragraph{Analyse empirique Base \emph{vs} Census (H$_1$)}
+
+L'intersection des deux bras ne couvre que deux modèles (DeepSeek-V3.2 et
+Mistral-Small-2603), la campagne Phase~1 ayant été conduite sur ces deux
+modèles frontaliers uniquement. L'analyse reste donc illustrative et
+\emph{underpowered} pour une inférence générale, mais elle suffit à
+décomposer qualitativement l'écart.
+
+\input{inputs/generated/tab_base_vs_census.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{inputs/generated/fig_base_vs_census.pdf}
+\caption{F1 par modèle sur le prompt \emph{base} \emph{vs} le prompt
+\emph{census}. La diagonale $y=x$ matérialise l'absence d'effet~; la taille
+des points est proportionnelle à $\log(\Delta\text{tok}_\text{in} + 1)$.}
+\label{fig:base-vs-census}
+\end{figure}
+
+La macro-moyenne mesurée est $\Delta\text{F1} = +16{,}3$~pp avec un
+intervalle de confiance bootstrap 95\,\% de $[+3{,}2\,;\,+29{,}3]$~pp
+(n${=}2$, graine fixée). L'IC exclut zéro dans la direction prédite~:
+\textbf{H$_1$ est corroborée} (avec la réserve statistique ci-dessus). La
+décomposition précision/rappel est éclairante~: sur les deux modèles la
+précision est déjà à 100\,\% sur le bras \emph{census} (aucune
+hallucination) et reste à 100\,\% sur le bras \emph{base}, de sorte que
+l'intégralité du gain en F1 provient d'un meilleur rappel. Le format
+colonné et l'instruction d'exhaustivité agissent donc comme amplificateurs
+de rappel plutôt que comme filtres d'hallucinations, dans ce régime
+paramétrique. L'effet est par ailleurs fortement \emph{model-dependent}~:
+DeepSeek-V3.2 gagne $+29{,}3$~pp tandis que Mistral-Small-2603 ne gagne que
+$+3{,}2$~pp, ce qui suggère une interaction modèle~$\times$~prompt non
+triviale qui mériterait un échantillon plus large. Nous différons à un
+travail ultérieur la vérification de robustesse au seuil 30~MWe (retirer
+explicitement le seuil du prompt \emph{base} et re-tester) qui isolerait la
+contribution spécifique de cette contrainte au sein de l'écart observé.
+
 \paragraph{Seuils de falsification} Une hypothèse directionnelle est réfutée
 si l'intervalle de confiance bootstrap à 95\,\% sur $\Delta$F1 exclut zéro
 dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est

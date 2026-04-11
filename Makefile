@@ -57,6 +57,16 @@ $(GEN)/tab_census.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census --output $@
 
+P1_BASE_RECORDS := $(wildcard experiments/outputs/ablation/parametric/p1_base/*.record.json)
+
+$(GEN)/tab_base_vs_census.tex: $(MEASUREMENTS) $(P1_BASE_RECORDS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_base_vs_census --output $@
+
+$(GEN)/fig_base_vs_census.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_base_vs_census --output $@
+
 $(GEN)/macros.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --output $@
@@ -127,7 +137,8 @@ $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
     $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex \
-    $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex
+    $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
+    $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -143,8 +154,8 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex
-figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex
+figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census
