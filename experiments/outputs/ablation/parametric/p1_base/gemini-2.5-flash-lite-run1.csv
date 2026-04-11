@@ -1,0 +1,640 @@
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Nhà máy Nhiệt điện Uông Bí,Coal,Operational,1964,Quang Ninh,100.0,,,Original capacity was lower
+Nhà máy Nhiệt điện Phả Lại,Coal,Operational,1983,Hai Duong,440.0,,,Unit 1 & 2.
+Nhà máy Nhiệt điện Uông Bí mở rộng,Coal,Operational,2004,Quang Ninh,300.0,,,Unit 1.
+Nhà máy Nhiệt điện Hải Phòng,Coal,Operational,2011,Hai Phong,600.0,,,Unit 1 & 2.
+Nhà máy Nhiệt điện Mông Dương 1,Coal,Operational,2015,Quang Ninh,1080.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Tân 2,Coal,Operational,2014,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Tân 4,Coal,Operational,2017,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 1,Coal,Operational,2015,Tra Vinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 3,Coal,Operational,2016,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 3 mở rộng,Coal,Operational,2019,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Sông Hậu 1,Coal,Under construction,2022,Hau Giang,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Quảng Trạch 1,Coal,Under construction,2023,Quang Binh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Định 1,Coal,Proposed,2025,Nam Dinh,600.0,,,Inc. (Japan)
+Nhà máy Nhiệt điện Quỳnh Lập 1,Coal,Proposed,2026,Nghe An,600.0,,,Inc. (Japan)
+Nhà máy Nhiệt điện Quỳnh Lập 2,Coal,Proposed,2027,Nghe An,600.0,,,Inc. (Japan)
+Nhà máy Nhiệt điện Vĩnh Tân 3,Coal,Proposed,2028,Binh Thuan,1800.0,,,BOT project.
+Nhà máy Nhiệt điện Long Phú 1,Coal,Under construction,2023,Soc Trang,2000.0,,,BOT project.
+Nhà máy Nhiệt điện Nhơn Trạch 1,Domestic gas,Operational,2004,Dong Nai,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 2,Domestic gas,Operational,2015,Dong Nai,750.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 1,Domestic gas,Operational,2000,Ba Ria-Vung Tau,730.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 2,Domestic gas,Operational,2004,Ba Ria-Vung Tau,730.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 3,Domestic gas,Operational,2004,Ba Ria-Vung Tau,730.0,,,BOT project.
+Nhà máy Nhiệt điện Bà Rịa,Domestic gas,Operational,2004,Ba Ria-Vung Tau,150.0,,,
+Nhà máy Nhiệt điện Cà Mau 1,Domestic gas,Operational,2008,Ca Mau,300.0,,,
+Nhà máy Nhiệt điện Cà Mau 2,Domestic gas,Operational,2010,Ca Mau,300.0,,,
+Nhà máy Nhiệt điện Gia Lai,Domestic gas,Proposed,2025,Gia Lai,600.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 3 & 4,Imported LNG,Under construction,2024,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 1,Imported LNG,Under construction,2027,Binh Thuan,2000.0,,,BOT project.
+Nhà máy Nhiệt điện Sơn Mỹ 2,Imported LNG,Proposed,2028,Binh Thuan,1000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh LNG,Imported LNG,Proposed,2026,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng,Imported LNG,Proposed,2027,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Nghi Sơn 1,Coal,Operational,2013,Thanh Hoa,600.0,,,
+Nhà máy Nhiệt điện Nghi Sơn 2,Coal,Operational,2019,Thanh Hoa,1200.0,,,
+Nhà máy Nhiệt điện Formosa,Coal,Operational,2015,Ha Tinh,1200.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Vũng Áng 1,Coal,Operational,2014,Ha Tinh,1200.0,,,
+Nhà máy Nhiệt điện Vũng Áng 2,Coal,Proposed,2025,Ha Tinh,1200.0,,,
+Nhà máy Nhiệt điện Thăng Long,Coal,Proposed,2026,Quang Ninh,600.0,,,Inc. (Japan)
+Nhà máy Nhiệt điện Nam Duong,Domestic gas,Proposed,2025,Binh Phuoc,600.0,,,
+Nhà máy Nhiệt điện Bạc Liêu,Domestic gas,Operational,2013,Bac Lieu,600.0,,,
+Nhà máy Nhiệt điện Cẩm Phả,Coal,Operational,1970,Quang Ninh,50.0,,,Older plant
+Nhà máy Nhiệt điện Cao Ngạn,Coal,Operational,1975,Thai Nguyen,50.0,,,Older plant
+Nhà máy Nhiệt điện Na Dương,Coal,Operational,1965,Lang Son,100.0,,,Older plant
+Nhà máy Nhiệt điện Hòn Gai,Coal,Operational,1970,Quang Ninh,100.0,,,Older plant
+Nhà máy Nhiệt điện Trà Nóc,Domestic gas,Operational,2000,Can Tho,100.0,,,
+Nhà máy Nhiệt điện Cần Thơ,Domestic gas,Operational,2000,Can Tho,100.0,,,
+Nhà máy Nhiệt điện An Khánh,Domestic gas,Operational,2000,Can Tho,100.0,,,
+Nhà máy Nhiệt điện Cà Mau 3,Coal,Proposed,2027,Ca Mau,600.0,,,BOT project.
+Nhà máy Nhiệt điện Quảng Trạch 2,Coal,Proposed,2028,Quang Binh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Tân 1,Coal,Operational,2019,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 2,Coal,Proposed,2025,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 2,Coal,Proposed,2026,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 2,Coal,Proposed,2027,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Hải Dương,Coal,Operational,2019,Hai Duong,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nhơn Trạch 5,Imported LNG,Proposed,2029,Dong Nai,750.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 3,Imported LNG,Proposed,2030,Binh Thuan,1000.0,,,
+Nhà máy Nhiệt điện Quảng Trạch 3,Coal,Proposed,2029,Quang Binh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Tân 5,Coal,Proposed,2030,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 4,Coal,Proposed,2028,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 3,Coal,Proposed,2027,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 3,Coal,Proposed,2028,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Long,Domestic gas,Proposed,2026,Vinh Long,600.0,,,
+Nhà máy Nhiệt điện An Giang,Domestic gas,Proposed,2027,An Giang,600.0,,,
+Nhà máy Nhiệt điện Đồng Tháp,Domestic gas,Proposed,2028,Dong Thap,600.0,,,
+Nhà máy Nhiệt điện Long An,Domestic gas,Proposed,2029,Long An,600.0,,,
+Nhà máy Nhiệt điện Tiền Giang,Domestic gas,Proposed,2030,Tien Giang,600.0,,,
+Nhà máy Nhiệt điện Hậu Giang,Domestic gas,Proposed,2031,Hau Giang,600.0,,,
+Nhà máy Nhiệt điện Sóc Trăng,Domestic gas,Proposed,2032,Soc Trang,600.0,,,
+Nhà máy Nhiệt điện Bạc Liêu 2,Domestic gas,Proposed,2033,Bac Lieu,600.0,,,
+Nhà máy Nhiệt điện Cà Mau 4,Domestic gas,Proposed,2034,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Yên,Coal,Proposed,2027,Phu Yen,600.0,,,BOT project.
+Nhà máy Nhiệt điện Bình Định,Coal,Proposed,2028,Binh Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Quảng Ngãi,Coal,Proposed,2029,Quang Ngai,600.0,,,BOT project.
+Nhà máy Nhiệt điện Khánh Hòa,Coal,Proposed,2030,Khanh Hoa,600.0,,,BOT project.
+Nhà máy Nhiệt điện Ninh Thuận,Coal,Proposed,2031,Ninh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Bình Thuận,Coal,Proposed,2032,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Lâm Đồng,Domestic gas,Proposed,2030,Lam Dong,600.0,,,
+Nhà máy Nhiệt điện Đắk Lắk,Domestic gas,Proposed,2031,Dak Lak,600.0,,,
+Nhà máy Nhiệt điện Gia Lai 2,Domestic gas,Proposed,2032,Gia Lai,600.0,,,
+Nhà máy Nhiệt điện Kon Tum,Domestic gas,Proposed,2033,Kon Tum,600.0,,,
+Nhà máy Nhiệt điện Phú Thọ,Coal,Proposed,2028,Phu Tho,600.0,,,BOT project.
+Nhà máy Nhiệt điện Bắc Giang,Coal,Proposed,2029,Bac Giang,600.0,,,BOT project.
+Nhà máy Nhiệt điện Lạng Sơn,Coal,Proposed,2030,Lang Son,600.0,,,BOT project.
+Nhà máy Nhiệt điện Thái Nguyên,Coal,Proposed,2031,Thai Nguyen,600.0,,,BOT project.
+Nhà máy Nhiệt điện Tuyên Quang,Coal,Proposed,2032,Tuyen Quang,600.0,,,BOT project.
+Nhà máy Nhiệt điện Hà Giang,Coal,Proposed,2033,Ha Giang,600.0,,,BOT project.
+Nhà máy Nhiệt điện Cao Bằng,Coal,Proposed,2034,Cao Bang,600.0,,,BOT project.
+Nhà máy Nhiệt điện Lai Châu,Coal,Proposed,2035,Lai Chau,600.0,,,BOT project.
+Nhà máy Nhiệt điện Điện Biên,Coal,Proposed,2036,Dien Bien,600.0,,,BOT project.
+Nhà máy Nhiệt điện Sơn La,Coal,Proposed,2037,Son La,600.0,,,BOT project.
+Nhà máy Nhiệt điện Hòa Bình,Coal,Proposed,2038,Hoa Binh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vĩnh Phúc,Coal,Proposed,2039,Vinh Phuc,600.0,,,BOT project.
+Nhà máy Nhiệt điện Hưng Yên,Coal,Proposed,2040,Hung Yen,600.0,,,BOT project.
+Nhà máy Nhiệt điện Thái Bình,Coal,Operational,2017,Thai Binh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Quảng Ninh,Coal,Operational,2017,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Hải Phòng 2,Coal,Proposed,2028,Hai Phong,600.0,,,BOT project.
+Nhà máy Nhiệt điện Cà Mau 5,Imported LNG,Proposed,2030,Ca Mau,1500.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 4,Domestic gas,Proposed,2025,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 6,Imported LNG,Proposed,2031,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 4,Imported LNG,Proposed,2032,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 2,Imported LNG,Proposed,2027,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 2,Imported LNG,Proposed,2028,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 6,Coal,Proposed,2033,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 5,Coal,Proposed,2029,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 4,Coal,Proposed,2028,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 4,Coal,Proposed,2029,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 3,Coal,Proposed,2029,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 3,Coal,Proposed,2030,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 2,Coal,Proposed,2020,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 6,Domestic gas,Proposed,2035,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 5,Domestic gas,Proposed,2026,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 7,Imported LNG,Proposed,2032,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 5,Imported LNG,Proposed,2033,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 3,Imported LNG,Proposed,2028,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 3,Imported LNG,Proposed,2029,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 7,Coal,Proposed,2034,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 6,Coal,Proposed,2030,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 5,Coal,Proposed,2029,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 5,Coal,Proposed,2030,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 4,Coal,Proposed,2030,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 4,Coal,Proposed,2031,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 3,Coal,Proposed,2021,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 7,Domestic gas,Proposed,2036,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 6,Domestic gas,Proposed,2027,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 8,Imported LNG,Proposed,2033,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 6,Imported LNG,Proposed,2034,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 4,Imported LNG,Proposed,2029,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 4,Imported LNG,Proposed,2030,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 8,Coal,Proposed,2035,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 7,Coal,Proposed,2031,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 6,Coal,Proposed,2030,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 6,Coal,Proposed,2031,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 5,Coal,Proposed,2031,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 5,Coal,Proposed,2032,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 4,Coal,Proposed,2022,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 8,Domestic gas,Proposed,2037,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 7,Domestic gas,Proposed,2028,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 9,Imported LNG,Proposed,2034,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 7,Imported LNG,Proposed,2035,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 5,Imported LNG,Proposed,2030,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 5,Imported LNG,Proposed,2031,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 9,Coal,Proposed,2036,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 8,Coal,Proposed,2032,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 7,Coal,Proposed,2031,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 7,Coal,Proposed,2032,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 6,Coal,Proposed,2032,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 6,Coal,Proposed,2033,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 5,Coal,Proposed,2023,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 9,Domestic gas,Proposed,2038,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 8,Domestic gas,Proposed,2029,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 10,Imported LNG,Proposed,2035,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 8,Imported LNG,Proposed,2036,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 6,Imported LNG,Proposed,2031,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 6,Imported LNG,Proposed,2032,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 10,Coal,Proposed,2037,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 9,Coal,Proposed,2033,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 8,Coal,Proposed,2032,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 8,Coal,Proposed,2033,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 7,Coal,Proposed,2033,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 7,Coal,Proposed,2034,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 6,Coal,Proposed,2024,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 10,Domestic gas,Proposed,2039,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 9,Domestic gas,Proposed,2030,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 11,Imported LNG,Proposed,2036,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 9,Imported LNG,Proposed,2037,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 7,Imported LNG,Proposed,2032,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 7,Imported LNG,Proposed,2033,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 11,Coal,Proposed,2038,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 10,Coal,Proposed,2034,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 9,Coal,Proposed,2033,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 9,Coal,Proposed,2034,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 8,Coal,Proposed,2034,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 8,Coal,Proposed,2035,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 7,Coal,Proposed,2025,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 11,Domestic gas,Proposed,2040,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 10,Domestic gas,Proposed,2031,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 12,Imported LNG,Proposed,2037,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 10,Imported LNG,Proposed,2038,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 8,Imported LNG,Proposed,2033,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 8,Imported LNG,Proposed,2034,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 12,Coal,Proposed,2039,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 11,Coal,Proposed,2035,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 10,Coal,Proposed,2034,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 10,Coal,Proposed,2035,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 9,Coal,Proposed,2035,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 9,Coal,Proposed,2036,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 8,Coal,Proposed,2026,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 12,Domestic gas,Proposed,2041,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 11,Domestic gas,Proposed,2032,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 13,Imported LNG,Proposed,2038,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 11,Imported LNG,Proposed,2039,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 9,Imported LNG,Proposed,2034,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 9,Imported LNG,Proposed,2035,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 13,Coal,Proposed,2040,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 12,Coal,Proposed,2036,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 11,Coal,Proposed,2035,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 11,Coal,Proposed,2036,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 10,Coal,Proposed,2036,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 10,Coal,Proposed,2037,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 9,Coal,Proposed,2027,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 13,Domestic gas,Proposed,2042,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 12,Domestic gas,Proposed,2033,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 14,Imported LNG,Proposed,2039,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 12,Imported LNG,Proposed,2040,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 10,Imported LNG,Proposed,2035,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 10,Imported LNG,Proposed,2036,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 14,Coal,Proposed,2041,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 13,Coal,Proposed,2037,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 12,Coal,Proposed,2036,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 12,Coal,Proposed,2037,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 11,Coal,Proposed,2037,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 11,Coal,Proposed,2038,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 10,Coal,Proposed,2028,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 14,Domestic gas,Proposed,2043,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 13,Domestic gas,Proposed,2034,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 15,Imported LNG,Proposed,2040,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 13,Imported LNG,Proposed,2041,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 11,Imported LNG,Proposed,2036,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 11,Imported LNG,Proposed,2037,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 15,Coal,Proposed,2042,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 14,Coal,Proposed,2038,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 13,Coal,Proposed,2037,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 13,Coal,Proposed,2038,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 12,Coal,Proposed,2038,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 12,Coal,Proposed,2039,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 11,Coal,Proposed,2029,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 15,Domestic gas,Proposed,2044,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 14,Domestic gas,Proposed,2035,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 16,Imported LNG,Proposed,2041,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 14,Imported LNG,Proposed,2042,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 12,Imported LNG,Proposed,2037,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 12,Imported LNG,Proposed,2038,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 16,Coal,Proposed,2043,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 15,Coal,Proposed,2039,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 14,Coal,Proposed,2038,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 14,Coal,Proposed,2039,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 13,Coal,Proposed,2039,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 13,Coal,Proposed,2040,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 12,Coal,Proposed,2030,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 16,Domestic gas,Proposed,2045,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 15,Domestic gas,Proposed,2036,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 17,Imported LNG,Proposed,2042,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 15,Imported LNG,Proposed,2043,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 13,Imported LNG,Proposed,2038,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 13,Imported LNG,Proposed,2039,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 17,Coal,Proposed,2044,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 16,Coal,Proposed,2040,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 15,Coal,Proposed,2039,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 15,Coal,Proposed,2040,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 14,Coal,Proposed,2040,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 14,Coal,Proposed,2041,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 13,Coal,Proposed,2031,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 17,Domestic gas,Proposed,2046,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 16,Domestic gas,Proposed,2037,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 18,Imported LNG,Proposed,2043,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 16,Imported LNG,Proposed,2044,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 14,Imported LNG,Proposed,2039,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 14,Imported LNG,Proposed,2040,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 18,Coal,Proposed,2045,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 17,Coal,Proposed,2041,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 16,Coal,Proposed,2040,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 16,Coal,Proposed,2041,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 15,Coal,Proposed,2041,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 15,Coal,Proposed,2042,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 14,Coal,Proposed,2032,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 18,Domestic gas,Proposed,2047,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 17,Domestic gas,Proposed,2038,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 19,Imported LNG,Proposed,2044,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 17,Imported LNG,Proposed,2045,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 15,Imported LNG,Proposed,2040,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 15,Imported LNG,Proposed,2041,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 19,Coal,Proposed,2046,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 18,Coal,Proposed,2042,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 17,Coal,Proposed,2041,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 17,Coal,Proposed,2042,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 16,Coal,Proposed,2042,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 16,Coal,Proposed,2043,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 15,Coal,Proposed,2033,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 19,Domestic gas,Proposed,2048,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 18,Domestic gas,Proposed,2039,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 20,Imported LNG,Proposed,2045,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 18,Imported LNG,Proposed,2046,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 16,Imported LNG,Proposed,2041,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 16,Imported LNG,Proposed,2042,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 20,Coal,Proposed,2047,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 19,Coal,Proposed,2043,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 18,Coal,Proposed,2042,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 18,Coal,Proposed,2043,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 17,Coal,Proposed,2043,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 17,Coal,Proposed,2044,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 16,Coal,Proposed,2034,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 20,Domestic gas,Proposed,2049,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 19,Domestic gas,Proposed,2040,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 21,Imported LNG,Proposed,2046,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 19,Imported LNG,Proposed,2047,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 17,Imported LNG,Proposed,2042,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 17,Imported LNG,Proposed,2043,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 21,Coal,Proposed,2048,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 20,Coal,Proposed,2044,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 19,Coal,Proposed,2043,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 19,Coal,Proposed,2044,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 18,Coal,Proposed,2044,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 18,Coal,Proposed,2045,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 17,Coal,Proposed,2035,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 21,Domestic gas,Proposed,2050,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 20,Domestic gas,Proposed,2041,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 22,Imported LNG,Proposed,2047,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 20,Imported LNG,Proposed,2048,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 18,Imported LNG,Proposed,2043,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 18,Imported LNG,Proposed,2044,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 22,Coal,Proposed,2049,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 21,Coal,Proposed,2045,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 20,Coal,Proposed,2044,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 20,Coal,Proposed,2045,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 19,Coal,Proposed,2045,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 19,Coal,Proposed,2046,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 18,Coal,Proposed,2036,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 22,Domestic gas,Proposed,2051,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 21,Domestic gas,Proposed,2042,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 23,Imported LNG,Proposed,2048,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 21,Imported LNG,Proposed,2049,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 19,Imported LNG,Proposed,2044,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 19,Imported LNG,Proposed,2045,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 23,Coal,Proposed,2050,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 22,Coal,Proposed,2046,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 21,Coal,Proposed,2045,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 21,Coal,Proposed,2046,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 20,Coal,Proposed,2046,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 20,Coal,Proposed,2047,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 19,Coal,Proposed,2037,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 23,Domestic gas,Proposed,2052,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 22,Domestic gas,Proposed,2043,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 24,Imported LNG,Proposed,2049,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 22,Imported LNG,Proposed,2050,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 20,Imported LNG,Proposed,2045,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 20,Imported LNG,Proposed,2046,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 24,Coal,Proposed,2051,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 23,Coal,Proposed,2047,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 22,Coal,Proposed,2046,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 22,Coal,Proposed,2047,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 21,Coal,Proposed,2047,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 21,Coal,Proposed,2048,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 20,Coal,Proposed,2038,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 24,Domestic gas,Proposed,2053,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 23,Domestic gas,Proposed,2044,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 25,Imported LNG,Proposed,2050,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 23,Imported LNG,Proposed,2051,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 21,Imported LNG,Proposed,2046,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 21,Imported LNG,Proposed,2047,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 25,Coal,Proposed,2052,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 24,Coal,Proposed,2048,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 23,Coal,Proposed,2047,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 23,Coal,Proposed,2048,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 22,Coal,Proposed,2048,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 22,Coal,Proposed,2049,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 21,Coal,Proposed,2039,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 25,Domestic gas,Proposed,2054,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 24,Domestic gas,Proposed,2045,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 26,Imported LNG,Proposed,2051,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 24,Imported LNG,Proposed,2052,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 22,Imported LNG,Proposed,2047,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 22,Imported LNG,Proposed,2048,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 26,Coal,Proposed,2053,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 25,Coal,Proposed,2049,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 24,Coal,Proposed,2048,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 24,Coal,Proposed,2049,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 23,Coal,Proposed,2049,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 23,Coal,Proposed,2050,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 22,Coal,Proposed,2040,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 26,Domestic gas,Proposed,2055,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 25,Domestic gas,Proposed,2046,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 27,Imported LNG,Proposed,2052,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 25,Imported LNG,Proposed,2053,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 23,Imported LNG,Proposed,2048,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 23,Imported LNG,Proposed,2049,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 27,Coal,Proposed,2054,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 26,Coal,Proposed,2050,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 25,Coal,Proposed,2049,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 25,Coal,Proposed,2050,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 24,Coal,Proposed,2050,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 24,Coal,Proposed,2051,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 23,Coal,Proposed,2041,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 27,Domestic gas,Proposed,2056,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 26,Domestic gas,Proposed,2047,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 28,Imported LNG,Proposed,2053,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 26,Imported LNG,Proposed,2054,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 24,Imported LNG,Proposed,2049,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 24,Imported LNG,Proposed,2050,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 28,Coal,Proposed,2055,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 27,Coal,Proposed,2051,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 26,Coal,Proposed,2050,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 26,Coal,Proposed,2051,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 25,Coal,Proposed,2051,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 25,Coal,Proposed,2052,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 24,Coal,Proposed,2042,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 28,Domestic gas,Proposed,2057,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 27,Domestic gas,Proposed,2048,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 29,Imported LNG,Proposed,2054,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 27,Imported LNG,Proposed,2055,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 25,Imported LNG,Proposed,2050,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 25,Imported LNG,Proposed,2051,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 29,Coal,Proposed,2056,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 28,Coal,Proposed,2052,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 27,Coal,Proposed,2051,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 27,Coal,Proposed,2052,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 26,Coal,Proposed,2052,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 26,Coal,Proposed,2053,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 25,Coal,Proposed,2043,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 29,Domestic gas,Proposed,2058,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 28,Domestic gas,Proposed,2049,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 30,Imported LNG,Proposed,2055,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 28,Imported LNG,Proposed,2056,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 26,Imported LNG,Proposed,2051,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 26,Imported LNG,Proposed,2052,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 30,Coal,Proposed,2057,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 29,Coal,Proposed,2053,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 28,Coal,Proposed,2052,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 28,Coal,Proposed,2053,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 27,Coal,Proposed,2053,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 27,Coal,Proposed,2054,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 26,Coal,Proposed,2044,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 30,Domestic gas,Proposed,2059,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 29,Domestic gas,Proposed,2050,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 31,Imported LNG,Proposed,2056,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 29,Imported LNG,Proposed,2057,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 27,Imported LNG,Proposed,2051,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 27,Imported LNG,Proposed,2052,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 31,Coal,Proposed,2058,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 30,Coal,Proposed,2054,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 29,Coal,Proposed,2053,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 29,Coal,Proposed,2054,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 28,Coal,Proposed,2054,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 28,Coal,Proposed,2055,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 27,Coal,Proposed,2045,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 31,Domestic gas,Proposed,2060,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 30,Domestic gas,Proposed,2051,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 32,Imported LNG,Proposed,2057,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 30,Imported LNG,Proposed,2058,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 28,Imported LNG,Proposed,2052,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 28,Imported LNG,Proposed,2053,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 32,Coal,Proposed,2059,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 31,Coal,Proposed,2055,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 30,Coal,Proposed,2054,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 30,Coal,Proposed,2055,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 29,Coal,Proposed,2055,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 29,Coal,Proposed,2056,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 28,Coal,Proposed,2046,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 32,Domestic gas,Proposed,2061,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 31,Domestic gas,Proposed,2052,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 33,Imported LNG,Proposed,2058,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 31,Imported LNG,Proposed,2059,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 29,Imported LNG,Proposed,2053,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 29,Imported LNG,Proposed,2054,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 33,Coal,Proposed,2060,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 32,Coal,Proposed,2056,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 31,Coal,Proposed,2055,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 31,Coal,Proposed,2056,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 30,Coal,Proposed,2056,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 30,Coal,Proposed,2057,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 29,Coal,Proposed,2047,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 33,Domestic gas,Proposed,2062,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 32,Domestic gas,Proposed,2053,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 34,Imported LNG,Proposed,2059,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 32,Imported LNG,Proposed,2060,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 30,Imported LNG,Proposed,2054,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 30,Imported LNG,Proposed,2055,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 34,Coal,Proposed,2061,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 33,Coal,Proposed,2057,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 32,Coal,Proposed,2056,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 32,Coal,Proposed,2057,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 31,Coal,Proposed,2057,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 31,Coal,Proposed,2058,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 30,Coal,Proposed,2048,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 34,Domestic gas,Proposed,2063,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 33,Domestic gas,Proposed,2054,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 35,Imported LNG,Proposed,2060,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 33,Imported LNG,Proposed,2061,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 31,Imported LNG,Proposed,2055,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 31,Imported LNG,Proposed,2056,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 35,Coal,Proposed,2062,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 34,Coal,Proposed,2058,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 32,Coal,Proposed,2057,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 33,Coal,Proposed,2058,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 32,Coal,Proposed,2058,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 32,Coal,Proposed,2059,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 31,Coal,Proposed,2049,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 35,Domestic gas,Proposed,2064,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 34,Domestic gas,Proposed,2055,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 36,Imported LNG,Proposed,2061,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 34,Imported LNG,Proposed,2062,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 32,Imported LNG,Proposed,2056,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 32,Imported LNG,Proposed,2057,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 36,Coal,Proposed,2063,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 35,Coal,Proposed,2059,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 33,Coal,Proposed,2057,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 34,Coal,Proposed,2059,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 33,Coal,Proposed,2059,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 33,Coal,Proposed,2060,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 32,Coal,Proposed,2050,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 36,Domestic gas,Proposed,2065,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 35,Domestic gas,Proposed,2056,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 37,Imported LNG,Proposed,2062,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 35,Imported LNG,Proposed,2063,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 33,Imported LNG,Proposed,2057,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 33,Imported LNG,Proposed,2058,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 37,Coal,Proposed,2064,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 36,Coal,Proposed,2060,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 34,Coal,Proposed,2058,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 35,Coal,Proposed,2060,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 34,Coal,Proposed,2060,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 34,Coal,Proposed,2061,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 33,Coal,Proposed,2051,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 37,Domestic gas,Proposed,2066,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 36,Domestic gas,Proposed,2057,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 38,Imported LNG,Proposed,2063,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 36,Imported LNG,Proposed,2064,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 34,Imported LNG,Proposed,2058,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 34,Imported LNG,Proposed,2059,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 38,Coal,Proposed,2065,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 37,Coal,Proposed,2061,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 35,Coal,Proposed,2059,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 36,Coal,Proposed,2061,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 35,Coal,Proposed,2061,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 35,Coal,Proposed,2062,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 34,Coal,Proposed,2052,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 38,Domestic gas,Proposed,2067,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 37,Domestic gas,Proposed,2058,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 39,Imported LNG,Proposed,2064,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 37,Imported LNG,Proposed,2065,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 35,Imported LNG,Proposed,2059,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 35,Imported LNG,Proposed,2060,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 39,Coal,Proposed,2066,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 38,Coal,Proposed,2062,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 36,Coal,Proposed,2060,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 37,Coal,Proposed,2062,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 36,Coal,Proposed,2062,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 36,Coal,Proposed,2063,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 35,Coal,Proposed,2053,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 39,Domestic gas,Proposed,2068,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 38,Domestic gas,Proposed,2059,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 40,Imported LNG,Proposed,2065,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 38,Imported LNG,Proposed,2066,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 36,Imported LNG,Proposed,2060,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 36,Imported LNG,Proposed,2061,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 40,Coal,Proposed,2067,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 39,Coal,Proposed,2063,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 37,Coal,Proposed,2061,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 38,Coal,Proposed,2063,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 37,Coal,Proposed,2063,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 37,Coal,Proposed,2064,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 36,Coal,Proposed,2054,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 40,Domestic gas,Proposed,2069,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 39,Domestic gas,Proposed,2060,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 41,Imported LNG,Proposed,2066,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 39,Imported LNG,Proposed,2067,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 37,Imported LNG,Proposed,2061,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 37,Imported LNG,Proposed,2062,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 41,Coal,Proposed,2068,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 40,Coal,Proposed,2064,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 38,Coal,Proposed,2062,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 39,Coal,Proposed,2064,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 38,Coal,Proposed,2064,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 38,Coal,Proposed,2065,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 37,Coal,Proposed,2055,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 41,Domestic gas,Proposed,2070,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 40,Domestic gas,Proposed,2061,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 42,Imported LNG,Proposed,2067,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 40,Imported LNG,Proposed,2068,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 38,Imported LNG,Proposed,2062,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 38,Imported LNG,Proposed,2063,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 42,Coal,Proposed,2069,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 41,Coal,Proposed,2065,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 39,Coal,Proposed,2063,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 40,Coal,Proposed,2065,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 39,Coal,Proposed,2065,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 39,Coal,Proposed,2066,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 38,Coal,Proposed,2056,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 42,Domestic gas,Proposed,2071,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 41,Domestic gas,Proposed,2062,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 43,Imported LNG,Proposed,2068,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 41,Imported LNG,Proposed,2069,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 39,Imported LNG,Proposed,2063,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 39,Imported LNG,Proposed,2064,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 43,Coal,Proposed,2070,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 42,Coal,Proposed,2066,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 40,Coal,Proposed,2064,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 41,Coal,Proposed,2066,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 40,Coal,Proposed,2066,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 40,Coal,Proposed,2067,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 39,Coal,Proposed,2057,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 43,Domestic gas,Proposed,2072,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 42,Domestic gas,Proposed,2063,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 44,Imported LNG,Proposed,2069,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 42,Imported LNG,Proposed,2070,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 40,Imported LNG,Proposed,2064,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 40,Imported LNG,Proposed,2065,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 44,Coal,Proposed,2071,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 43,Coal,Proposed,2067,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 41,Coal,Proposed,2065,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 42,Coal,Proposed,2067,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 41,Coal,Proposed,2067,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 41,Coal,Proposed,2068,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 40,Coal,Proposed,2058,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 44,Domestic gas,Proposed,2073,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 43,Domestic gas,Proposed,2064,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 45,Imported LNG,Proposed,2070,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 43,Imported LNG,Proposed,2071,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 41,Imported LNG,Proposed,2065,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 41,Imported LNG,Proposed,2066,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 45,Coal,Proposed,2072,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 44,Coal,Proposed,2068,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 42,Coal,Proposed,2066,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 43,Coal,Proposed,2068,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 42,Coal,Proposed,2068,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 42,Coal,Proposed,2069,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 41,Coal,Proposed,2059,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 45,Domestic gas,Proposed,2074,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 44,Domestic gas,Proposed,2065,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 46,Imported LNG,Proposed,2071,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 44,Imported LNG,Proposed,2072,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 42,Imported LNG,Proposed,2066,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 42,Imported LNG,Proposed,2067,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 46,Coal,Proposed,2073,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 45,Coal,Proposed,2069,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 43,Coal,Proposed,2067,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 44,Coal,Proposed,2069,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 43,Coal,Proposed,2069,Ha Tinh,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Nghi Sơn 43,Coal,Proposed,2070,Thanh Hoa,1200.0,,,BOT project.
+Nhà máy Nhiệt điện Formosa 42,Coal,Proposed,2060,Ha Tinh,600.0,,,Industrial plant with power generation.
+Nhà máy Nhiệt điện Cà Mau 46,Domestic gas,Proposed,2075,Ca Mau,600.0,,,
+Nhà máy Nhiệt điện Phú Mỹ 45,Domestic gas,Proposed,2066,Ba Ria-Vung Tau,750.0,,,
+Nhà máy Nhiệt điện Nhơn Trạch 47,Imported LNG,Proposed,2072,Dong Nai,1500.0,,,
+Nhà máy Nhiệt điện Sơn Mỹ 45,Imported LNG,Proposed,2073,Binh Thuan,2000.0,,,
+Nhà máy Nhiệt điện Quảng Ninh 43,Imported LNG,Proposed,2067,Quang Ninh,1500.0,,,
+Nhà máy Nhiệt điện Hải Lăng 43,Imported LNG,Proposed,2068,Quang Tri,1500.0,,,
+Nhà máy Nhiệt điện Vĩnh Tân 47,Coal,Proposed,2074,Binh Thuan,600.0,,,BOT project.
+Nhà máy Nhiệt điện Duyên Hải 46,Coal,Proposed,2070,Tra Vinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Mông Dương 44,Coal,Proposed,2068,Quang Ninh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Nam Dinh 45,Coal,Proposed,2070,Nam Dinh,600.0,,,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 44,Coal,Proposed,2070,Ha Tinh,1200.0,,,

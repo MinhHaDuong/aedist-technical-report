@@ -334,6 +334,53 @@ Sourçage      & $-$     & $+$
   génération.
 \end{enumerate}
 
+\paragraph{Analyse empirique Base \emph{vs} Census (H$_1$)}
+
+L'intersection des deux bras couvre désormais neuf modèles (DeepSeek-V3.2,
+Mistral-Small-2603, Gemini-2.5-Flash-Lite, Gemini-3-Flash-Preview,
+Kimi-K2.5, Minimax-M2.7, Qwen3.5-122b-A10b, Qwen3.5-35b-A3b et
+Seed-2.0-Lite), après avoir étendu la campagne Phase~1 à sept modèles
+\emph{cloud} bon marché supplémentaires déjà présents dans le panel
+\emph{census}. L'échantillon reste modeste mais autorise une décomposition
+quantitative.
+
+\input{inputs/generated/tab_base_vs_census.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{inputs/generated/fig_base_vs_census.pdf}
+\caption{F1 par modèle sur le prompt \emph{base} \emph{vs} le prompt
+\emph{census}. La diagonale $y=x$ matérialise l'absence d'effet~; la taille
+des points est proportionnelle à $\log(\Delta\text{tok}_\text{in} + 1)$.}
+\label{fig:base-vs-census}
+\end{figure}
+
+La macro-moyenne mesurée est $\Delta\text{F1} = +17{,}3$~pp avec un
+intervalle de confiance bootstrap 95\,\% de $[+8{,}4\,;\,+25{,}1]$~pp
+(n${=}9$, graine fixée). L'IC exclut zéro dans la direction prédite~:
+\textbf{H$_1$ est corroborée}. Huit modèles sur neuf affichent un gain
+positif (de $+3{,}2$~pp pour Mistral-Small-2603 à $+34{,}3$~pp pour
+Minimax-M2.7)~; le seul cas négatif est Gemini-2.5-Flash-Lite à
+$-10{,}6$~pp, où le bras \emph{base} a saturé la fenêtre de sortie
+(\emph{finish=length}) en générant 476 faux positifs et faisant chuter la
+précision à 35{,}6\,\%. La décomposition précision/rappel est éclairante~:
+pour la majorité des modèles (DeepSeek, Mistral, Gemini-3-Flash, Kimi,
+Qwen3.5-122b, Seed) la précision reste à 100\,\% sur les deux bras et
+\emph{l'intégralité du gain en F1 provient d'un meilleur rappel} — le
+format colonné et l'instruction d'exhaustivité agissent comme
+amplificateurs de rappel plutôt que comme filtres d'hallucinations.
+Cependant, sur deux modèles (Gemini-2.5-Flash-Lite, Qwen3.5-35b-A3b) le
+prompt \emph{base} déclenche une dégradation de la précision~: le modèle
+tente de remplir des colonnes qu'il devine, au lieu d'omettre les valeurs
+manquantes. L'effet est donc fortement \emph{model-dependent} et
+non-monotone~: les modèles déjà calibrés tirent un bénéfice de rappel sans
+coût de précision, tandis que certains petits modèles ou modèles
+expérimentaux peuvent payer un coût de précision en suivant les
+instructions plus prescriptives. Nous différons à un travail ultérieur la
+vérification de robustesse au seuil 30~MWe (retirer explicitement le seuil
+du prompt \emph{base} et re-tester) qui isolerait la contribution
+spécifique de cette contrainte au sein de l'écart observé.
+
 \paragraph{Seuils de falsification} Une hypothèse directionnelle est réfutée
 si l'intervalle de confiance bootstrap à 95\,\% sur $\Delta$F1 exclut zéro
 dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est
