@@ -63,11 +63,13 @@ def synthetic_fixture(tmp_path, monkeypatch):
     """2 models x (2 census runs + 2 p1_base runs) with known tp/fp/fn."""
     meas = tmp_path / "measurements.jsonl"
     # Census: 2 runs per model. Lower F1 than base (for H1 direction).
+    # Bare model names — mirrors real data where method_params.model is the
+    # canonical ID (e.g., "deepseek/deepseek-v3.2"), not a per-run stem.
     census_rows = [
-        {"label": "census/alpha-run1", "n_matched": 40, "n_hallucinated": 10, "n_missed": 50},
-        {"label": "census/alpha-run2", "n_matched": 42, "n_hallucinated": 8, "n_missed": 48},
-        {"label": "census/beta-run1", "n_matched": 30, "n_hallucinated": 20, "n_missed": 60},
-        {"label": "census/beta-run2", "n_matched": 32, "n_hallucinated": 18, "n_missed": 58},
+        {"label": "census/alpha", "n_matched": 40, "n_hallucinated": 10, "n_missed": 50},
+        {"label": "census/alpha", "n_matched": 42, "n_hallucinated": 8, "n_missed": 48},
+        {"label": "census/beta", "n_matched": 30, "n_hallucinated": 20, "n_missed": 60},
+        {"label": "census/beta", "n_matched": 32, "n_hallucinated": 18, "n_missed": 58},
     ]
     write_measurements(meas, census_rows)
     patch_measurements_loader(monkeypatch, meas)
@@ -115,6 +117,23 @@ def test_macro_bootstrap_ci_contains_mean(synthetic_fixture):
     hi = table["delta_f1_ci_high"]
     assert lo <= mean <= hi
 
+    # Analytic macro-average ΔF1 from the synthetic fixture (pen-and-paper).
+    # Per-run F1 → per-model mean F1 → macro mean of (F1_base - F1_census).
+    #   alpha census: mean(F1(40,10,50), F1(42,8,48))  = 0.4030989...
+    #   alpha base  : mean(F1(60,5,30),  F1(58,7,32))  = 0.5786749...
+    #   beta  census: mean(F1(30,20,60), F1(32,18,58)) = 0.2907029...
+    #   beta  base  : mean(F1(50,15,40), F1(52,13,38)) = 0.5059102...
+    # macro mean ΔF1 = ((α_base − α_cens) + (β_base − β_cens)) / 2
+    analytic_macro_mean = 0.19539170506912434
+
+    # CI still contains the principled mean (trivially true at n=2 since
+    # percentile bootstrap of 2 points gives [min(Δ), max(Δ)], but at least
+    # the constant is derived from known inputs rather than from the code
+    # under test).
+    assert lo <= analytic_macro_mean <= hi
+    # This assertion catches arithmetic mistakes the tautological check missed.
+    assert abs(mean - analytic_macro_mean) < 1e-4
+
 
 def test_cli_writes_tex(synthetic_fixture, tmp_path):
     from aedist.tabulate_base_vs_census import main
@@ -140,7 +159,7 @@ def test_exit_on_too_few_models(tmp_path, monkeypatch):
     meas = tmp_path / "measurements.jsonl"
     write_measurements(
         meas,
-        [{"label": "census/alpha-run1", "n_matched": 10, "n_hallucinated": 1, "n_missed": 5}],
+        [{"label": "census/alpha", "n_matched": 10, "n_hallucinated": 1, "n_missed": 5}],
     )
     patch_measurements_loader(monkeypatch, meas)
 

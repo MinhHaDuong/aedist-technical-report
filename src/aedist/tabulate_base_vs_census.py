@@ -5,6 +5,10 @@ Compares the minimal 40-word ``census`` prompt against the structured 300-word
 per-model precision/recall/F1, $\\Delta$F1 = F1$_\\text{base}$ - F1$_\\text{census}$,
 mean input-token delta, and a 95 % bootstrap CI on the macro-average $\\Delta$F1.
 
+Aggregation: per-run precision/recall/F1 are computed first, then averaged
+across runs (arithmetic mean of per-run metrics, not F1 of mean-P / mean-R).
+Applied consistently to both arms.
+
 Inputs
 ------
 Census arm  : ``measurements.jsonl`` rows where ``method == "single"`` and
@@ -22,7 +26,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import re
 import statistics
 import sys
 from pathlib import Path
@@ -31,14 +34,6 @@ from .measurements import load
 from .schema import RunRecord
 from .stats import bootstrap_ci
 from .tabulate_utils import format_model_name
-
-_RUN_SUFFIX = re.compile(r"-run\d+$")
-
-
-def _canon_model(model: str) -> str:
-    """Strip a trailing ``-runN`` suffix, if any (test-fixture tolerance)."""
-    return _RUN_SUFFIX.sub("", model)
-
 
 log = logging.getLogger(__name__)
 
@@ -77,7 +72,7 @@ def _load_census_by_model() -> dict[str, list[RunRecord]]:
     for r in records:
         if r.method_params.prompt_version != "census":
             continue
-        grouped.setdefault(_canon_model(r.method_params.model), []).append(r)
+        grouped.setdefault(r.method_params.model, []).append(r)
     return grouped
 
 
@@ -88,7 +83,7 @@ def _load_base_by_model(p1_base_dir: Path) -> dict[str, list[RunRecord]]:
     for path in sorted(p1_base_dir.glob("*.record.json")):
         data = json.loads(path.read_text())
         record = RunRecord.model_validate(data)
-        grouped.setdefault(_canon_model(record.method_params.model), []).append(record)
+        grouped.setdefault(record.method_params.model, []).append(record)
     return grouped
 
 
