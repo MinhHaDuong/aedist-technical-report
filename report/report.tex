@@ -326,7 +326,27 @@ La décomposition élimine la troncature~: 12 des 14 runs complétés atteignent
 
 Le meilleur résultat absolu est DeepSeek~V3.2 décomposé~: 163 centrales trouvées sur 163, seulement 4 hallucinations, F1 = 98,8\,\%, pour un coût de 0,06~\$. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok grâce à la décomposition.
 
-Le principal inconvénient est l'introduction d'hallucinations non thermiques dans les sous-requêtes~: les modèles ajoutent des centrales hydroélectriques ou éoliennes dans la catégorie <<~autres combustibles~>>. Ce problème pourrait être atténué par un filtrage post-traitement ou une contrainte explicite dans le prompt.
+Le principal inconvénient est massif et dépasse largement la simple fuite inter-catégories~: la décomposition introduit des hallucinations systématiques là où la requête unique n'en produisait aucune. Pour une même base documentaire et un même jeu de référence, le taux de faux positifs (entrées du système absentes de la référence) passe de 0\,\% à 40--52\,\% chez GPT-5.4, et de 0\,\% à 19--29\,\% chez Mistral~Small (tableau~\ref{tab:decomposition-fp}). Les trois modèles stables en RAG de base (GPT-5.4, DeepSeek, Mistral~Large) se comportent tous ainsi~: zéro hallucination en requête unique, plusieurs dizaines en décomposition.
+
+\begin{table}[htbp]
+\centering
+\caption{Taux de faux positifs (lignes système absentes de la référence), RAG de base vs décomposé, 3 runs par modèle.}\label{tab:decomposition-fp}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Modèle & Requête unique & Décomposé \\
+\midrule
+GPT-5.4             & 0 / 0 / 0\,\%   & 45 / 40 / 52\,\% \\
+DeepSeek V3.2       & 0 / 0 / 0\,\%   & 20 / --- / 2\,\% \\
+Mistral Large       & 0 / 0 / 0\,\%   & 7 / 25 / 10\,\% \\
+Mistral Small       & 0 / 0 / 0\,\%   & 29 / 0 / 19\,\% \\
+Gemini 2.5 Flash Lite & 59 / 6 / 75\,\% & 40 / 64 / 0\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+L'inspection des lignes fabriquées révèle trois motifs. D'abord, un \textbf{fractionnement en unités}~: les centrales agrégées sont décomposées en lignes par tranche (\textit{An Khanh 1 Unit 1}, \textit{Unit 2}, 50~MW chacune, au lieu de l'agrégat \textit{An Khánh~1} à 116~MW de la référence), systématique chez GPT-5.4 sur \textit{Vung~Ang~1}, \textit{Duyen~Hai~1}, \textit{Thai~Binh~1}. Ensuite, des \textbf{fuites de combustible}~: \textit{O~Mon~1~Unit~2}, une centrale à gaz, apparaît dans la sortie charbon avec fuel \textit{unknown}. Enfin, un cas extrême de défaillance de sortie structurée~: la ligne 181 de la réconciliation contient un <<~nom de centrale~>> littéralement égal à \texttt{"Lai~Chau~is~hydro"}, capacité 0~MW, fuel \texttt{coal}. Le modèle a écrit de la prose dans le champ nom, et l'extracteur l'a accepté.
+
+L'analyse du code (\texttt{src/aedist/query\_decomposed.py} lignes~55--77) désigne une cause~: les trois sous-prompts exigent explicitement du modèle qu'il dépasse le corpus. La consigne \textit{<<~Be absolutely exhaustive --- include operational, under construction, planned, proposed, and cancelled plants.~>>} est présente dans chaque sous-requête, alors que le prompt de base (\texttt{experiments/prompts/prompt\_structured.txt}) est laconique et ne demande aucune exhaustivité. En requête unique, le modèle reste à l'intérieur du corpus. Pour satisfaire l'injonction <<~soyez exhaustif, incluez les centrales annulées~>>, le modèle n'a qu'une issue~: se replier sur sa mémoire paramétrique, fractionner les agrégats qu'il a mémorisés et fabriquer les noms dont il se souvient vaguement. La \textbf{leçon méthodologique} est générale et mérite d'être isolée~: dans un cadre RAG, toute consigne d'exhaustivité qui excède le périmètre du corpus transforme la mémoire paramétrique en source de secours, et donc l'absence documentaire en hallucination. La réparation — supprimer la consigne d'exhaustivité et ajouter une clause d'ancrage (\textit{<<~based only on the provided documents~>>}) — est testée dans le ticket~0068.
 
 \input{inputs/verification_methods}
 

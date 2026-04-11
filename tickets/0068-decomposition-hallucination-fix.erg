@@ -1,0 +1,115 @@
+%erg v1
+Title: Fix decomposition sub-prompts that invite hallucination
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T12:00Z claude created
+
+--- body ---
+## Context
+
+The fuel-decomposition RAG strategy (`src/aedist/query_decomposed.py`)
+was introduced to fix truncation: instead of one query for all thermal
+plants, three sub-queries by fuel (coal, gas, oil/other) against the
+same corpus. It does eliminate truncation — but it trades truncation
+for massive hallucination.
+
+### Evidence
+
+False-positive rate (system-only rows in reconciliation CSVs), same
+reference set, 3 runs per model:
+
+| Model            | Baseline RAG    | Decomposed       |
+|------------------|-----------------|------------------|
+| gpt-5.4          | 0 / 0 / 0 %     | 45 / 40 / 52 %   |
+| deepseek-v3.2    | 0 / 0 / 0 %     | 20 / — / 2 %     |
+| mistral-large    | 0 / 0 / 0 %     | 7 / 25 / 10 %    |
+| mistral-small    | 0 / 0 / 0 %     | 29 / 0 / 19 %    |
+| gemini-flash-lt  | 59 / 6 / 75 %   | 40 / 64 / 0 %    |
+
+Every model except flash-lite has **zero** false positives in baseline
+RAG. Decomposition breaks this cleanly — gpt-5.4 jumps from 0 % FP to
+40–52 %. Computed with:
+
+```
+for f in experiments/outputs/{rag,decomposed}/reconciliation_*.csv; do
+  total=$(tail -n +2 "$f" | wc -l)
+  fp=$(grep -c '^system_only' "$f")
+  printf "%s %d/%d\n" "$(basename $f)" "$fp" "$total"
+done
+```
+
+### Hallucination patterns
+
+Three patterns in `reconciliation_gpt-5.4-run3.csv` (180 system-only
+rows / 343 total, 52 %):
+
+1. **Unit splitting** (lines 165–220): aggregate plants broken into
+   per-unit rows — `An Khanh 1 Unit 1` + `An Khanh 1 Unit 2` (50 MW each)
+   instead of the reference `An Khánh 1` (116 MW). Systematic across
+   `Vung Ang 1`, `Duyen Hai 1`, `Thai Binh 1`, `Quang Ninh 2`.
+2. **Fuel leakage**: `O Mon 1 Unit 2` (gas, 330 MW) appears in coal
+   output with fuel `unknown`.
+3. **Structured-output failure, line 181**: plant name literally
+   `"Lai Chau is hydro"`, capacity 0 MW, fuel `coal`. The model wrote
+   prose into the name field, and the extractor accepted it.
+
+### Root cause
+
+`src/aedist/query_decomposed.py:147-150` injects the corpus as the
+system message (correct), but the sub-prompts (lines 55–77) explicitly
+instruct the model to go beyond the corpus:
+
+> Be absolutely exhaustive — include operational, under construction,
+> planned, proposed, and cancelled plants.
+
+Compare `experiments/prompts/prompt_structured.txt`, the baseline,
+which is terse and makes no "be exhaustive" demand. The baseline model
+stays inside the corpus. The decomposition prompts push the model to
+fall back on parametric memory to satisfy "exhaustive, including
+cancelled" — so it splits remembered aggregates into fake units and
+fabricates half-remembered names.
+
+Neither prompt has grounding language like "based only on the provided
+documents." The baseline gets away with it; decomposition does not.
+
+### Interaction with project_rag_truncation memory
+
+The `project_rag_truncation.md` memory claims "decomposition is the
+fix." That is wrong. Decomposition fixes truncation by hallucinating
+into the blank space. Memory needs updating after this ticket closes.
+
+## Actions
+
+1. Patch `src/aedist/query_decomposed.py:55-77`:
+   - Remove "Be absolutely exhaustive — include operational, under
+     construction, planned, proposed, and cancelled plants" from all
+     three sub-prompts.
+   - Add grounding language: "Based only on the provided documents,
+     list the COAL-FIRED thermal power plants..."
+   - Keep the per-fuel scoping (that is the point of decomposition).
+2. Re-run one cheap model (DeepSeek V3.2, ~$0.06 per 3-run batch) as a
+   probe. Compare FP rate and recall to the unpatched run.
+3. If FP drops without recall collapsing, re-run the full model set
+   (gpt-5.4, deepseek, mistral-large, mistral-small, gemini-flash-lite),
+   3 runs each. Budget ~$3.
+4. Update `report/report.tex` section 3.11 with before/after numbers
+   if the fix works, or document the failure if it does not.
+5. Update `project_rag_truncation.md` memory to reflect the finding.
+
+## Test
+
+Run DeepSeek V3.2 with patched prompts. Pass: FP rate < 5 % and recall
+≥ the previous decomposed run. Fail: either metric degrades, or the
+model refuses to answer without the "exhaustive" instruction.
+
+## Exit criteria
+
+- Sub-prompts patched and committed.
+- At least one model re-run shows FP drop without recall loss.
+- Report section 3.11 updated with the finding (the prompt lesson is
+  the interesting methodological result, regardless of whether the
+  fix works).
+- `project_rag_truncation.md` memory corrected.

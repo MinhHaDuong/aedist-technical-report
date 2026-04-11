@@ -51,28 +51,32 @@ from .query_rag import CONTEXT_WINDOW_SAFETY_MARGIN, estimate_tokens, load_corpu
 
 log = logging.getLogger(__name__)
 
-# Sub-prompts for each fuel category
+# Sub-prompts for each fuel category.
+# Ticket 0068: removed "be absolutely exhaustive — include ... cancelled plants"
+# instruction, which invited parametric-memory fallback and 40–52% FP rates.
+# Added explicit grounding clause.
 _FUEL_PROMPTS = {
     "coal": (
-        "Provide a table listing all COAL-FIRED thermal power plants in Vietnam, "
-        "including their fuel type (coal), construction stage, connection date "
-        "(observed or planned COD), province, and generation capacity (in MWe). "
-        "Be absolutely exhaustive — include operational, under construction, planned, "
-        "proposed, and cancelled plants. Format the response in CSV."
+        "Based only on the provided documents, list the COAL-FIRED thermal power "
+        "plants in Vietnam, including their fuel type (coal), construction stage, "
+        "connection date (observed or planned COD), province, and generation "
+        "capacity (in MWe). Do not include plants that are not mentioned in the "
+        "documents. Format the response in CSV."
     ),
     "gas": (
-        "Provide a table listing all GAS and LNG thermal power plants in Vietnam, "
-        "including their fuel type (local natural gas / imported LNG), construction "
-        "stage, connection date (observed or planned COD), province, and generation "
-        "capacity (in MWe). Be absolutely exhaustive — include operational, under "
-        "construction, planned, proposed, and cancelled plants. Format the response in CSV."
+        "Based only on the provided documents, list the GAS and LNG thermal power "
+        "plants in Vietnam, including their fuel type (local natural gas / imported "
+        "LNG), construction stage, connection date (observed or planned COD), "
+        "province, and generation capacity (in MWe). Do not include plants that are "
+        "not mentioned in the documents. Format the response in CSV."
     ),
     "other": (
-        "Provide a table listing all OIL-FIRED and OTHER thermal power plants in "
-        "Vietnam (excluding coal, gas, and LNG — include oil, diesel, biomass, "
-        "co-generation), with their fuel type, construction stage, connection date "
-        "(observed or planned COD), province, and generation capacity (in MWe). "
-        "Be absolutely exhaustive. Format the response in CSV."
+        "Based only on the provided documents, list the OIL-FIRED and OTHER thermal "
+        "power plants in Vietnam (excluding coal, gas, and LNG — include oil, diesel, "
+        "biomass, co-generation), with their fuel type, construction stage, connection "
+        "date (observed or planned COD), province, and generation capacity (in MWe). "
+        "Do not include plants that are not mentioned in the documents. Format the "
+        "response in CSV."
     ),
 }
 
@@ -211,7 +215,9 @@ def main():
     parser.add_argument("--budget-usd", type=float, default=None, help="Budget cap in USD")
     parser.add_argument("--dry-run", action="store_true", help="Show what would run")
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -260,7 +266,9 @@ def main():
             client = clients[router]
         else:
             if legacy_client is None:
-                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
+                raise SystemExit(
+                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                )
             client = legacy_client
 
         if corpus_tokens > ctx_window * CONTEXT_WINDOW_SAFETY_MARGIN:
