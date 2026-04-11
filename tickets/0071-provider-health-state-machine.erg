@@ -1,0 +1,86 @@
+%erg v1
+Title: Provider health state machine for credit/cap failures
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T10:00Z claude created
+
+--- body ---
+## Context
+
+Credit-exhausted and daily-cap failures are currently indistinguishable
+from transient network errors in the harness. Both surface as a generic
+`HTTPError` from `resp.raise_for_status()`. Consequences:
+
+- A cap hit mid-sweep leaves a partial method×model matrix (e.g., 1 of
+  3 reps on DeepSeek but 3 of 3 on Kimi). Downstream pooling silently
+  compares methods over unequal sample sizes, biasing the comparison.
+- Retrying a capped provider in-session is wasted API budget and wall
+  time — credit doesn't come back in minutes.
+- A region-locked model (HTTP 403 forever) keeps getting retried on
+  every sweep.
+
+Framing (methods-not-models): a capped provider should *pause* the
+method measurement, not degrade it. Better to delay a row until credit
+returns than ship a method comparison with uneven per-cell sample sizes.
+
+## Actions
+
+1. Add `src/aedist/provider_health.py` with three failure classes:
+   - **hard_stop** — 402, 429+`quota_exceeded`, 429 with `daily` in
+     the error body, OpenRouter `code=402`. Mark provider dead for
+     the remainder of the sweep. Park remaining cells in a
+     `outputs/<sweep>/parked.jsonl` resume file with enough state to
+     pick up later (sweep id, model, rep index, prompt hash).
+   - **soft_retry** — 429 short-window rate limit, 503, connection
+     reset, timeout. Exponential backoff with jitter, N=3 attempts,
+     then promote to hard_stop for that provider for the sweep.
+   - **permanent_skip** — 403 region-locked, 404 model removed. Flag
+     the model as unavailable in a session-local cache, don't retry,
+     record one entry in `parked.jsonl` with reason.
+
+2. Provider-specific detection (error body parsing):
+   - OpenRouter: check `error.code` and `error.metadata.provider_name`
+     so we can park per-upstream-provider rather than per-OR-request
+   - Anthropic/OpenAI: check `error.type` field
+   - Ollama: connection refused → permanent_skip until recheck
+
+3. Sweep runner consults provider health before each dispatch:
+   - If provider is hard_stopped for this sweep, skip and log parked
+   - If model is permanent_skipped this session, skip and log parked
+   - Otherwise dispatch normally
+
+4. Resume path: `uv run python -m aedist.resume_sweep <sweep_id>`
+   reads `parked.jsonl`, re-dispatches only the parked cells, merges
+   outputs into the original sweep directory. Safe to run multiple
+   times. Dry-run flag first.
+
+5. Reporting:
+   - `tab_parked_runs.tex` showing count and reason per sweep. A
+     non-empty parked table in a published result is a blocker — the
+     method comparison is incomplete.
+
+## Test
+
+1. Unit tests with mocked responses:
+   - 402 → hard_stop, provider marked dead
+   - 429+rate_limit → soft_retry succeeds on 2nd attempt
+   - 429+quota_exceeded → hard_stop immediately (no retry)
+   - 403 → permanent_skip, model cached
+2. Integration: replay a synthetic sweep that hits a mid-sweep 402,
+   confirm parked.jsonl contains the right cells and the sweep exits
+   cleanly rather than crashing.
+3. Resume: run `resume_sweep` against the parked file on a mocked
+   recovered provider, confirm cells fill in and parked.jsonl shrinks.
+
+## Exit criteria
+
+- `provider_health.py` implemented with three failure classes
+- Unit tests pass (`make check-fast`)
+- Sweep runner consults health before dispatch and writes `parked.jsonl`
+- `resume_sweep` works end-to-end on a mocked scenario
+- `tab_parked_runs.tex` generated; empty for a clean sweep, populated
+  when cells were parked
+- Document in `docs/` how to resume a capped sweep (one short page)

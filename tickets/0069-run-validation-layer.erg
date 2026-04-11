@@ -1,0 +1,93 @@
+%erg v1
+Title: Run validation layer for measurement hygiene
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T10:00Z claude created
+
+--- body ---
+## Context
+
+Today the harness checks HTTP 200 via `resp.raise_for_status()` and trusts
+whatever body comes back. No check on input-token count vs context window,
+no check on `finish_reason`, no check that `choices[0].message.content` is
+non-empty, no check for provider error bodies on HTTP 200 (OpenRouter
+sometimes returns an `error` object with status 200). Corrupted runs flow
+straight into `measurements.jsonl` and contaminate method F1 estimates.
+
+Framing: this is *not* model QA. The goal is to keep method comparisons
+honest. A truncated or empty run is a corrupted observation of the method
+under test, not evidence that the method (or model) is bad. Letting it
+into the pool biases the method estimate downward (truncation drops true
+positives) or upward (truncation drops hallucinations), unpredictably.
+
+Related history:
+- Ticket 0041: gemma 4B silently returned empty `content` on HTTP 200,
+  went undetected for multiple sweeps
+- RAG voluntary-truncation memory: `finish_reason=stop` but model gave
+  up listing; decomposition fixed the root cause, but we never added
+  a detector
+- Ticket 0045: empty CSV crash — downstream symptom of the same gap
+
+## Actions
+
+1. Add a `validate_run(run_record)` function in `src/aedist/validate.py`
+   that takes a run record (dict loaded from an output JSON file) and
+   returns a `ValidationResult` with:
+   - `ok: bool`
+   - `flags: list[str]` — one per failing check
+   - `category: Literal["ok", "corrupted", "truncated_input", "truncated_output", "empty", "provider_error"]`
+
+2. Checks to implement:
+   - **Input ctx:** sum prompt tokens (system + user + corpus for RAG).
+     Use provider-returned `usage.prompt_tokens` when available, else
+     tiktoken estimate. Fail if `input_tokens > ctx_window * 0.9`.
+     Provider-specific: Ollama native returns `prompt_eval_count`, read it.
+   - **Output ctx / finish_reason:** fail on `finish_reason in {"length",
+     "content_filter", "error"}`. Ollama: check `done_reason`.
+   - **Non-empty content:** `choices[0].message.content` must be a
+     non-empty string after strip. Catches ticket-0041-style failures.
+   - **Provider error on 200:** OpenRouter returns `{"error": {...}}`
+     even with HTTP 200; check for this before parsing choices.
+   - **Soft warning (not fail) — voluntary short stop:** for RAG wholesale,
+     if `finish_reason=stop` but output token count < 500, emit a warning
+     flag but do not mark corrupted. Lets us measure how often models
+     give up without losing data that the decomposition fix is already
+     addressing.
+
+3. Wire into the pipeline:
+   - `measurements_rebuild.py` (or equivalent) filters out runs where
+     `validate_run(...).category != "ok"` and writes a
+     `measurements_rejected.jsonl` alongside the main file with the
+     rejected runs + flags for audit.
+   - Worker pipeline: on validation fail, mark the run as `failed` in
+     the manifest and (optionally, behind a flag) requeue once before
+     giving up.
+
+4. Reporting:
+   - Add a `report/inputs/generated/tab_validation_rejects.tex` table
+     showing reject counts by category × method × model set. Aim for
+     single-digit percent rejection rates; anything higher is a signal
+     that something upstream is broken.
+
+## Test
+
+1. Unit tests in `tests/test_validate.py`:
+   - Synthetic run record with empty content → category=empty
+   - `finish_reason=length` → category=truncated_output
+   - Input tokens > 90% of ctx → category=truncated_input
+   - OpenRouter HTTP 200 + error body → category=provider_error
+   - Clean run → ok
+2. Integration: rebuild measurements from existing outputs, diff the
+   main file before/after and inspect `measurements_rejected.jsonl`.
+
+## Exit criteria
+
+- `validate_run()` implemented with all five checks
+- Unit tests pass (`make check-fast`)
+- Rebuild on current outputs produces a rejected-runs audit file
+- `tab_validation_rejects.tex` table generated and referenced in report
+- No existing sweep re-runs required; this is a post-hoc filter added
+  to the measurements pipeline

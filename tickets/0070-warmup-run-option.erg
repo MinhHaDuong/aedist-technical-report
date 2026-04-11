@@ -1,0 +1,63 @@
+%erg v1
+Title: Optional warmup run for cold-start diagnostics
+Status: open
+Created: 2026-04-11
+Author: claude
+Blocked-by: 0069
+
+--- log ---
+2026-04-11T10:00Z claude created
+
+--- body ---
+## Context
+
+A cold provider (first request after a cache expiry, first Ollama load
+of a model, first OpenRouter route to a new region) can produce an
+anomalous first run — higher latency, occasionally different content
+due to lazy KV-cache initialization, sometimes a partial response
+because the request hit a cold worker. Pooling that first run into
+the method estimate smears a provider-infra artifact into the method's
+F1 variance.
+
+This ticket adds an **optional** warmup run per (sweep, model) cell:
+one extra call at T=0 before the real reps, tagged `role=warmup`,
+excluded from stats by default, but still passed through the
+validation layer (ticket 0069) so we get a free cold-start diagnostic.
+
+Not a statistical trick — we are not using warmup to shrink variance.
+We are using it to isolate infra artifacts from method signal.
+
+## Actions
+
+1. Schema change: add `role: Literal["rep", "warmup"]` to the run
+   record (default `"rep"` for back-compat). Carry it through
+   `measurements.jsonl`.
+2. Sweep runner: add `warmup: bool = false` to the sweep spec in
+   `experiments.toml`. When true, dispatch one warmup call before the
+   real reps, tag with `role=warmup`, write to a sibling
+   `outputs/<sweep>/warmup/` directory.
+3. Measurements rebuild: exclude `role=warmup` from F1 stats by
+   default. Keep them addressable for the diagnostic table.
+4. Diagnostic table `tab_warmup_drift.tex`: for sweeps with
+   warmup=true, report (warmup_latency / rep_latency_median) and
+   (warmup_output_tokens / rep_output_tokens_median) per model. A
+   large ratio signals cold-start drift worth investigating.
+5. Warmup runs go through `validate_run()` exactly like real reps.
+   A failed warmup is logged but does *not* abort the sweep — the
+   real reps still run.
+
+## Test
+
+1. Unit test: sweep runner with `warmup=true` emits 1 warmup + N reps
+   to the right paths; measurements rebuild excludes warmup from F1
+   by default; `--include-warmup` flag pools them back in.
+2. Opt-in smoke test: run an existing small sweep with `warmup=true`
+   and confirm the diagnostic table builds.
+
+## Exit criteria
+
+- `role` field in run record, measurements.jsonl, and schema
+- `warmup` flag in sweep spec; runner honors it
+- Warmup runs excluded from F1 by default, pass through validation
+- `tab_warmup_drift.tex` generated for any sweep with warmup=true
+- No required behavior change for existing sweeps (warmup defaults off)
