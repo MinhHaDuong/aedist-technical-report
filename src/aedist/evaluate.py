@@ -380,7 +380,18 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
 
 
 def cmd_assemble(args: argparse.Namespace) -> None:
-    """Assemble record JSONs into measurements.jsonl."""
+    """Assemble record JSONs into measurements.jsonl.
+
+    At assemble-time this is the read-into-measurements trust boundary
+    (ticket 0072). For each record with a ``result_file`` pointer to a
+    raw provider JSON, run ``validate_run()`` on the raw body and attach
+    the result as ``RunRecord.validation``. Records with missing raw JSON
+    (e.g. historical orphans) are left with ``validation=None`` and flow
+    through unchanged; downstream consumers should treat ``None`` as
+    "unknown, do not filter".
+    """
+    from .validate import validate_run
+
     records = []
     for path_str in args.record_files:
         p = Path(path_str)
@@ -388,12 +399,47 @@ def cmd_assemble(args: argparse.Namespace) -> None:
             log.warning("Skipping missing record file: %s", p)
             continue
         raw = json.loads(p.read_text(encoding="utf-8"))
-        records.append(RunRecord.model_validate(raw))
+        record = RunRecord.model_validate(raw)
+        record.validation = _validate_companion_raw(record, p, validate_run)
+        records.append(record)
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     RunRecord.save_jsonl(records, out)
     log.info("Assembled %d records -> %s", len(records), out)
+
+
+def _validate_companion_raw(record: RunRecord, record_path: Path, validate_run) -> dict | None:
+    """Locate the raw provider JSON for a record and validate it.
+
+    Real CSV-backed records store ``result_file`` as the ``.csv`` companion
+    path (see ``_evaluate_csv_file``). The raw provider JSON lives at the
+    same stem with a ``.json`` suffix. Qualitative/JSON-only records (see
+    ``_evaluate_qualitative``) already point ``result_file`` at a ``.json``
+    file; leave those unchanged.
+
+    The path is stored relative to the repo root, but at test time we may
+    be running in an arbitrary working directory, so also try alongside
+    the record file itself. If no candidate exists, return None (validation
+    unknown — downstream treats this as "do not filter").
+    """
+    if not record.result_file:
+        return None
+    result_path = Path(record.result_file)
+    if result_path.suffix == ".json":
+        raw_name = result_path
+    else:
+        raw_name = result_path.with_suffix(".json")
+    candidates = [raw_name, record_path.parent / raw_name.name]
+    for candidate in candidates:
+        if candidate.suffix != ".json" or not candidate.exists():
+            continue
+        try:
+            raw_body = json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        return validate_run(raw_body).to_dict()
+    return None
 
 
 # ---------------------------------------------------------------------------

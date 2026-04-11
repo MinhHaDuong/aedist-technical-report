@@ -149,7 +149,9 @@ class ResourceUse(BaseModel):
 class ResultSummary(BaseModel):
     """Compact evaluation result for one run."""
 
-    status: str = Field(default="ok", description="Run outcome: ok | refusal | error | empty | qualitative")
+    status: str = Field(
+        default="ok", description="Run outcome: ok | refusal | error | empty | qualitative"
+    )
     n_plants: int | None = Field(default=None, ge=0)
     tp: int | None = Field(default=None, ge=0, description="True positives (matched).")
     fp: int | None = Field(default=None, ge=0, description="False positives (hallucinated).")
@@ -182,6 +184,14 @@ class RunRecord(BaseModel):
     result_summary: ResultSummary = Field(default_factory=ResultSummary)
     justification: dict | None = Field(
         default=None, description="Optional justification metadata."
+    )
+    validation: dict | None = Field(
+        default=None,
+        description=(
+            "Run validation result (ticket 0072). Shape: "
+            "{ok: bool, category: str, flags: list[str]}. Populated at "
+            "assemble-time from validate_run() on the companion raw JSON."
+        ),
     )
 
     # -- serialization helpers ------------------------------------------------
@@ -234,7 +244,9 @@ class JobSpec(BaseModel):
     job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
     priority: int = Field(default=0, description="Higher value = higher priority.")
     mode: Method
-    prompt: str = Field(default="", description="Path to prompt file (unused when prompt_modules is set).")
+    prompt: str = Field(
+        default="", description="Path to prompt file (unused when prompt_modules is set)."
+    )
     models_file: str = Field(..., description="Path to models YAML file.")
     model_filter: str | None = Field(
         default=None, description="Glob or regex to select a subset of models."
@@ -257,7 +269,9 @@ class JobSpec(BaseModel):
         description="Directory containing prompt module text files (default: experiments/prompts/modules/).",
     )
     repeat: int = Field(default=3, ge=1)
-    run_number: int = Field(default=1, ge=1, description="Which run this job represents (1-indexed).")
+    run_number: int = Field(
+        default=1, ge=1, description="Which run this job represents (1-indexed)."
+    )
     budget_usd: float = Field(default=10.0, ge=0)
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)

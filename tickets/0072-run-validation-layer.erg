@@ -1,11 +1,15 @@
 %erg v1
 Title: Run validation layer for measurement hygiene
-Status: open
+Status: doing
 Created: 2026-04-11
 Author: claude
 
 --- log ---
 2026-04-11T10:00Z claude created
+2026-04-11T18:30Z claude claimed worktree agent-a97a2ce7
+2026-04-11T18:35Z claude status doing — starting implementation
+2026-04-11T18:35Z claude note plan: validate_run(raw_dict) in src/aedist/validate.py returning ValidationResult(ok, category, flags, details). Raw dict shape matches experiments/outputs/*/*.json (response/finish_reason/usage/model_metadata.context_window). Ollama native already normalized in harness.py to finish_reason/usage, so no provider branching needed. Hook: evaluate.cmd_assemble validates each record's companion raw JSON and attaches result to RunRecord.validation (new optional field). Unit tests only, no live providers. Skipping tab_validation_rejects.tex report table and worker retry — out of scope per ticket guardrails.
+2026-04-11T19:00Z claude note implemented — 14 unit tests for validate_run + 3 integration tests for cmd_assemble hook. RunRecord.validation is optional dict field (additive, no schema migration). Full test suite 920 passed, 1 xfailed; 4 pre-existing failures in tests/test_models.py are unrelated (ablation sweep config, fail on main). Ruff clean on changed files.
 
 --- body ---
 ## Context
