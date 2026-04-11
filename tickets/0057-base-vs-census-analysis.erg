@@ -10,6 +10,8 @@ Blocked-by: 0055
 2026-04-11T10:00Z claude claimed
 2026-04-11T10:00Z claude status doing — orchestrator wave A
 2026-04-11T10:00Z claude status reimagined by IDD imagine
+2026-04-11T11:30Z claude status planned by IDD plan
+2026-04-11T11:30Z claude note plan verification corrections applied autonomously, see Plan decisions section
 
 --- body ---
 ## Context
@@ -100,10 +102,45 @@ extra row in the table showing F1 after post-hoc threshold filtering of
 census outputs. Radical 3 stays as the framing paragraph in the report
 discussion — we are not killing census, we are naming what it measures.
 
+## Plan decisions (Phase 3 verification, applied autonomously)
+
+Plan agent verification found these corrections; adopted in this revised
+Actions list:
+
+- **Script location:** `src/aedist/tabulate_base_vs_census.py` (matches
+  `tabulate_comparaison.py`, `tabulate_macros.py` convention). The
+  `experiments/analyses/` directory does not exist.
+- **measurements.jsonl path:** repo root `/measurements.jsonl`, not
+  `experiments/measurements.jsonl`.
+- **Gold reference path:** `data/reference/vietnam_thermal_v1.csv`, not
+  `experiments/data/reference/...`.
+- **Bootstrap helper:** reuse `from aedist.stats import bootstrap_ci`
+  (same helper used by ablation code).
+- **p1_base records are NOT in measurements.jsonl** — script reads
+  `experiments/outputs/ablation/parametric/p1_base/*.record.json` directly.
+- **Make wiring:** no `make analyses` target. Wire into root `Makefile`
+  `tables` target and add to `report/report.pdf` prereq list (lines
+  127–146 pattern).
+- **Model intersection is n=2** (`deepseek/deepseek-v3.2`,
+  `mistralai/mistral-small-2603`), not ≥3. The ≥3 guardrail is
+  **dropped**: the script proceeds with n=2 and a footnote in the
+  generated table + a sentence in the discussion paragraph naming the
+  underpower explicitly. Reason: blocker 0058 is closed; reopening to
+  collect more parametric p1_base runs costs $$ and time the journal
+  schedule does not have, and an n=2 with named underpower is more
+  honest than no test at all.
+- **30 MWe robustness check (radical 2)** is non-trivial: requires
+  rematching against a capacity-filtered gold set, not a row-drop on
+  `measurements.jsonl`. **Deferred** to a follow-up ticket; the
+  generated table omits the robustness row and the discussion paragraph
+  notes it as future work. This keeps Phase 5 scope tractable.
+- **`fig_base_vs_census.pdf`** stays in scope (small matplotlib script,
+  data is already in hand).
+
 ## Actions
 
-1. Write `experiments/analyses/base_vs_census.py`. It reads:
-   - `measurements.jsonl` rows with `method == "single"` and
+1. Write `src/aedist/tabulate_base_vs_census.py`. It reads:
+   - `/measurements.jsonl` (repo root) rows with `method == "single"` and
      `method_params.prompt_version == "census"`
    - `experiments/outputs/ablation/parametric/p1_base/*.record.json`
      (base arm, parametric regime — same no-RAG, no-web setup as census)
@@ -116,20 +153,27 @@ discussion — we are not killing census, we are naming what it measures.
      $\overline{\mathrm{R}}_{\text{census}}$, $\overline{\mathrm{F1}}_{\text{census}}$,
      $\overline{\mathrm{P}}_{\text{base}}$, $\overline{\mathrm{R}}_{\text{base}}$,
      $\overline{\mathrm{F1}}_{\text{base}}$, $\Delta$F1, $\Delta$tokens\_in.
-     Bottom row = macro-average with bootstrap 95 % CI on $\Delta$F1
-     (same bootstrap as ablation code).
+     Bottom row = macro-average with bootstrap 95 % CI on $\Delta$F1 via
+     `aedist.stats.bootstrap_ci`. Footnote names the n=2 model count and
+     the consequent low power.
    - `report/inputs/generated/fig_base_vs_census.pdf` (matplotlib):
      scatter with one point per model, x = census F1, y = base F1,
      diagonal y = x, point size ~ $\log(\Delta\text{tokens\_in})$.
-4. Add a robustness note computed in the same script: recompute
-   census F1 after dropping census rows whose capacity the gold set
-   marks below 30 MWe (post-hoc threshold filter). Report as a single
-   paragraph showing how much of $\Delta$F1 collapses. This closes
-   radical 2 without owning the whole analysis.
-5. Patch `report/inputs/plan_ablation.tex` near the H1 paragraph
-   (around line 311) to `\input` the new table and reference the figure,
-   plus a 6–10 line discussion paragraph naming the precision/recall
-   decomposition and the model-interaction finding.
+4. Wire into root `Makefile`: add a rule for
+   `report/inputs/generated/tab_base_vs_census.tex` that depends on
+   `/measurements.jsonl` and `experiments/outputs/ablation/parametric/p1_base/*.record.json`,
+   invoke `uv run python -m aedist.tabulate_base_vs_census --output $@`,
+   add the target to the `tables` phony and to the `report/report.pdf`
+   prereq list (mirror the existing patterns at lines 56–146).
+5. Patch `report/inputs/plan_ablation.tex` after the H1 enumerate
+   (insertion point: after `\end{enumerate}` around line 335, before
+   `\subsection{Régimes d'information...}` at line 343) to `\input` the
+   new table and reference the figure, plus a 6–10 line discussion
+   paragraph that:
+   - Names the precision/recall decomposition (radical 1).
+   - Reports the per-model interaction finding if visible (radical 4).
+   - States the n=2 underpower honestly.
+   - Notes the deferred 30 MWe robustness check as future work.
 
 ## Test
 
@@ -140,26 +184,30 @@ Analysis-only, but the script must be testable:
    base. Assert that the script produces the expected per-model
    precision / recall / F1 / $\Delta$F1 within 1e-4 and that the
    bootstrap CI for $\Delta$F1 contains the analytic mean.
-2. The real run is the end-to-end smoke test: `make analyses` (or a
-   direct `uv run python experiments/analyses/base_vs_census.py`)
-   must regenerate the `.tex` and `.pdf` without error and the
-   existing `make report` must still build.
-3. No new API calls. If fewer than 3 models appear in both arms after
-   Phase 1 ablation data lands, the script exits non-zero with a
-   message naming the missing arm — this is the guardrail against
-   publishing an underpowered comparison.
+2. The real run is the end-to-end smoke test:
+   `uv run python -m aedist.tabulate_base_vs_census --output report/inputs/generated/tab_base_vs_census.tex`
+   must regenerate the `.tex` without error and `make report` must
+   still build.
+3. No new API calls. If **zero or one** models appear in both arms,
+   the script exits non-zero with a message naming the missing arm.
+   With n=2 the script proceeds and emits a footnote naming the
+   underpower (decision documented in Plan decisions section above).
 
 ## Exit criteria
 
-- `experiments/analyses/base_vs_census.py` exists, lints, passes its
+- `src/aedist/tabulate_base_vs_census.py` exists, lints, passes its
   fixture test.
 - `report/inputs/generated/tab_base_vs_census.tex` regenerates
-  deterministically from `measurements.jsonl` + ablation records.
+  deterministically from `/measurements.jsonl` + parametric p1_base
+  ablation records, with an n=2 underpower footnote.
 - `report/inputs/generated/fig_base_vs_census.pdf` regenerates.
 - `plan_ablation.tex` `\input`s the new table, references the figure,
   and includes a discussion paragraph that either confirms or
-  falsifies pre-registered hypothesis H1 with a 95 % bootstrap CI.
-- Robustness row for the 30 MWe post-hoc filter is present in the
-  table.
+  falsifies pre-registered hypothesis H1 with a 95 % bootstrap CI,
+  naming the n=2 underpower.
+- Root `Makefile` wires the new table into `tables` and into the
+  `report/report.pdf` prereqs.
 - No new API calls logged; no new measurement rows written.
 - `make test` green; `make report` green.
+- 30 MWe robustness check is **out of scope** (deferred to a
+  follow-up ticket; named in the discussion paragraph as future work).
