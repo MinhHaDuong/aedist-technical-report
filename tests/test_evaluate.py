@@ -1,5 +1,4 @@
-"""Tests for _classify_orphan in aedist.evaluate."""
-
+"""Tests for _classify_orphan and cmd_assemble in aedist.evaluate."""
 
 from aedist.evaluate import _classify_orphan
 
@@ -79,3 +78,101 @@ class TestClassifyOrphan:
             "response": "Name,Fuel,Status\nPha Lai,Coal,Operating\nUong Bi,Coal,Operating\n",
         }
         assert _classify_orphan(raw) == "refusal"
+
+
+class TestAssembleValidation:
+    """cmd_assemble attaches validate_run() results to each RunRecord."""
+
+    def _write_raw_json(self, path, payload):
+        import json as _json
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(_json.dumps(payload), encoding="utf-8")
+
+    def _write_record(self, path, result_file):
+        from aedist.schema import Method, MethodParams, RunRecord
+
+        rec = RunRecord(
+            method=Method.SINGLE,
+            method_params=MethodParams(model="test/model"),
+            result_file=str(result_file),
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(rec.model_dump_json(indent=2, exclude_none=True), encoding="utf-8")
+
+    def test_assemble_attaches_ok_validation_for_clean_run(self, tmp_path, monkeypatch):
+        import argparse
+
+        from aedist.evaluate import cmd_assemble
+        from aedist.schema import RunRecord
+
+        monkeypatch.chdir(tmp_path)
+        raw_path = tmp_path / "experiments" / "outputs" / "census" / "ok-run1.json"
+        self._write_raw_json(
+            raw_path,
+            {
+                "model": "test/model",
+                "response": "```csv\nName,Fuel\nPha Lai,Coal\n```",
+                "finish_reason": "stop",
+                "usage": {"prompt_tokens": 50, "completion_tokens": 800},
+                "model_metadata": {"context_window": 128000},
+            },
+        )
+        rec_path = tmp_path / "ok-run1.record.json"
+        self._write_record(rec_path, raw_path.relative_to(tmp_path))
+
+        out = tmp_path / "measurements.jsonl"
+        cmd_assemble(argparse.Namespace(record_files=[str(rec_path)], output=str(out)))
+
+        records = RunRecord.load_jsonl(out)
+        assert len(records) == 1
+        assert records[0].validation is not None
+        assert records[0].validation["category"] == "ok"
+        assert records[0].validation["ok"] is True
+
+    def test_assemble_flags_empty_response_run(self, tmp_path, monkeypatch):
+        import argparse
+
+        from aedist.evaluate import cmd_assemble
+        from aedist.schema import RunRecord
+
+        monkeypatch.chdir(tmp_path)
+        raw_path = tmp_path / "experiments" / "outputs" / "rag" / "gemma-run1.json"
+        self._write_raw_json(
+            raw_path,
+            {
+                "model": "ollama/gemma",
+                "response": "",
+                "finish_reason": "stop",
+                "usage": {"prompt_tokens": 100, "completion_tokens": 20000},
+                "model_metadata": {"context_window": 128000},
+            },
+        )
+        rec_path = tmp_path / "gemma-run1.record.json"
+        self._write_record(rec_path, raw_path.relative_to(tmp_path))
+
+        out = tmp_path / "measurements.jsonl"
+        cmd_assemble(argparse.Namespace(record_files=[str(rec_path)], output=str(out)))
+
+        records = RunRecord.load_jsonl(out)
+        assert records[0].validation["category"] == "empty"
+        assert records[0].validation["ok"] is False
+        assert "empty_content" in records[0].validation["flags"]
+
+    def test_assemble_missing_raw_json_leaves_validation_none(self, tmp_path, monkeypatch):
+        """If the companion raw JSON is missing, validation is skipped, not crashed."""
+        import argparse
+        from pathlib import Path
+
+        from aedist.evaluate import cmd_assemble
+        from aedist.schema import RunRecord
+
+        monkeypatch.chdir(tmp_path)
+        rec_path = tmp_path / "orphan.record.json"
+        self._write_record(rec_path, Path("experiments/outputs/gone/missing-run1.json"))
+
+        out = tmp_path / "measurements.jsonl"
+        cmd_assemble(argparse.Namespace(record_files=[str(rec_path)], output=str(out)))
+
+        records = RunRecord.load_jsonl(out)
+        assert records[0].validation is None

@@ -380,7 +380,18 @@ def _evaluate_qualitative(json_path: Path, args: argparse.Namespace) -> None:
 
 
 def cmd_assemble(args: argparse.Namespace) -> None:
-    """Assemble record JSONs into measurements.jsonl."""
+    """Assemble record JSONs into measurements.jsonl.
+
+    At assemble-time this is the read-into-measurements trust boundary
+    (ticket 0072). For each record with a ``result_file`` pointer to a
+    raw provider JSON, run ``validate_run()`` on the raw body and attach
+    the result as ``RunRecord.validation``. Records with missing raw JSON
+    (e.g. historical orphans) are left with ``validation=None`` and flow
+    through unchanged; downstream consumers should treat ``None`` as
+    "unknown, do not filter".
+    """
+    from .validate import validate_run
+
     records = []
     for path_str in args.record_files:
         p = Path(path_str)
@@ -388,12 +399,37 @@ def cmd_assemble(args: argparse.Namespace) -> None:
             log.warning("Skipping missing record file: %s", p)
             continue
         raw = json.loads(p.read_text(encoding="utf-8"))
-        records.append(RunRecord.model_validate(raw))
+        record = RunRecord.model_validate(raw)
+        record.validation = _validate_companion_raw(record, p, validate_run)
+        records.append(record)
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     RunRecord.save_jsonl(records, out)
     log.info("Assembled %d records -> %s", len(records), out)
+
+
+def _validate_companion_raw(record: RunRecord, record_path: Path, validate_run) -> dict | None:
+    """Locate the raw provider JSON for a record and validate it.
+
+    The ``result_file`` field is stored relative to the repo root, but at
+    test time we may be running in an arbitrary working directory. Try
+    both the cwd-relative resolution and an absolute fallback; if neither
+    hits an existing file, return None (validation unknown).
+    """
+    if not record.result_file:
+        return None
+    candidates = [Path(record.result_file)]
+    # Also try alongside the record file itself, for record-dir-local layouts.
+    candidates.append(record_path.parent / Path(record.result_file).name)
+    for candidate in candidates:
+        if candidate.exists():
+            try:
+                raw_body = json.loads(candidate.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                return None
+            return validate_run(raw_body).to_dict()
+    return None
 
 
 # ---------------------------------------------------------------------------
