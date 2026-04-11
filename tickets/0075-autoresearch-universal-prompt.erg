@@ -1,0 +1,60 @@
+%erg v1
+Title: Evaluate Autoresearch for a universal prompt
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T20:00Z claude created — brain dump from operator
+
+--- body ---
+## Context
+
+Brain dump from operator: "autoresearch — universal the prompt".
+
+The project currently carries several bespoke prompts (inventory,
+scenarios, skill, census, rag, decomposed, sourced, multiturn) and
+the ablation machinery under `prompt_modules/` mixes and matches
+persona/overview/method fragments per sweep. Each variant is a
+hand-crafted artifact, tuned by feel, and we have no principled way
+to search the prompt space for a single "universal" prompt that
+performs well across models and conditions.
+
+Autoresearch (https://github.com/autoresearch/autoresearch or similar
+automated prompt-search tooling — identify the exact project) offers
+automated prompt optimization / search. The hypothesis: feed our
+measurements.jsonl back as a signal and let Autoresearch converge on
+one prompt that dominates the current hand-tuned set across models.
+
+This is a research spike, not a committed implementation.
+
+## Actions
+
+1. Identify the specific "Autoresearch" tool the operator means
+   (candidates: the Autoresearch project, DSPy's bootstrap/optimize,
+   promptbreeder, OPRO). Confirm with operator before spending cycles.
+2. Read the tool's docs and one end-to-end example. Note the
+   optimization target format (metric, dataset, eval harness).
+3. Sketch how our `measurements.jsonl` + method-level accuracy scores
+   could serve as the optimization signal. Does the tool need a
+   differentiable metric, a scalar score, or pairwise judgments?
+4. Prototype on one sweep cell (e.g. the inventory prompt on a small
+   model set) and compare the Autoresearch-produced prompt against
+   the current hand-tuned baseline using the existing verification
+   sweep.
+5. Write up: is "one universal prompt" even the right frame, or does
+   the tool just give us better per-condition prompts?
+
+## Test
+
+A notebook or short script that runs the optimizer on one condition,
+reports the optimized prompt, and runs it through the existing
+evaluation to produce a before/after accuracy comparison.
+
+## Exit criteria
+
+- Spike report in `docs/` or as a note on this ticket answering:
+  can Autoresearch produce a prompt that beats our hand-tuned
+  baseline on at least one sweep condition, and at what cost?
+- Decision recorded: adopt, defer, or reject. If adopt, open a
+  follow-up ticket for production integration.
