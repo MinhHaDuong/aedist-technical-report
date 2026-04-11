@@ -1,5 +1,5 @@
 %erg v1
-Title: Evaluate Autoresearch for a universal prompt
+Title: Survey automated prompt-optimization frameworks (DSPy et al.) for a universal prompt
 Status: open
 Created: 2026-04-11
 Author: claude
@@ -7,95 +7,122 @@ Author: claude
 --- log ---
 2026-04-11T20:00Z claude created — brain dump from operator
 2026-04-11T20:15Z claude note operator pointed at https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill — it is a Claude Code / Cursor skill (not a Python lib) that runs an evolutionary prompt-optimization loop against yes/no criteria; rewriting body to match
+2026-04-11T20:30Z claude note operator clarified: the balukosuri repo is only an example — scope is a broader survey of DSPy and peers, not a commitment to that one skill. Retitled ticket and rewrote body as a landscape review.
 
 --- body ---
 ## Context
 
-Brain dump from operator: "autoresearch — universal the prompt".
-Reference: https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill
+Brain dump from operator: "autoresearch — universal the prompt",
+with a pointer to
+https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill
+as an **example**, not a commitment. The real scope is a landscape
+review of automated prompt-optimization frameworks, with DSPy as
+the headline candidate.
 
-The referenced project is a Claude Code / Cursor **skill** (installable
-under `~/.claude/skills/` or project `.claude/skills/`), not a Python
-library. It adapts Karpathy's autoresearch pattern — evolutionary
-optimization of `train.py` against validation loss — to prompts
-evaluated against binary yes/no criteria.
+Why this matters for us: we carry several bespoke prompts (inventory,
+scenarios, skill, census, rag, decomposed, sourced, multiturn) and
+the ablation machinery under `prompt_modules/` that mixes
+persona/overview/method fragments per sweep. Each variant is
+hand-tuned by feel. Our `measurements.jsonl` + per-cell accuracy
+scores already function as an optimization signal — we just never
+close the loop. A principled optimizer could plausibly produce a
+prompt (or module stack) that dominates the current hand-tuned set
+across models and conditions, which is what the operator means by
+"universal the prompt".
 
-Loop shape:
-1. **Planning (human-guided):** agent scans the repo, proposes an
-   optimization target and 4–6 measurable yes/no criteria.
-2. **Baseline:** one evaluation cycle to set a starting score.
-3. **Autonomous loop:** mutate prompt → evaluate against criteria →
-   score → keep or revert → repeat. Uses ~10 mutation operators
-   (add examples, tighten language, restructure, …) with plateau
-   detection.
+This is a research spike, not a committed implementation. The goal
+is to pick *one* framework to prototype against, with reasons.
 
-Artifacts written to `.autoresearch/`:
-- `best_prompt.txt` — current champion
-- `results.jsonl` — full experiment history
-- `state.json` — loop metadata, plateau state
+## Candidate frameworks to survey
 
-Why this matters for us: we already carry several bespoke prompts
-(inventory, scenarios, skill, census, rag, decomposed, sourced,
-multiturn) and the ablation machinery under `prompt_modules/` that
-mixes persona/overview/method fragments per sweep. Each variant is
-hand-tuned. Our `measurements.jsonl` + per-cell accuracy scores are
-almost exactly the signal this loop wants — except ours is a
-continuous score over a large eval set, not binary yes/no on fixed
-validation files.
+Primary:
+- **DSPy** (Stanford) — programmatic prompts with typed signatures
+  and optimizers (BootstrapFewShot, MIPROv2, COPRO, BootstrapFinetune).
+  Most mature, active community, integrates cleanly with arbitrary
+  LMs via its adapter layer. The obvious first stop.
 
-Operator framing — "universal the prompt" — reads as: use the skill
-to search for a single prompt (or module stack) that dominates the
-current hand-tuned set across models and conditions.
+Secondary (include at least to the "read the README + one example"
+depth):
+- **TextGrad** — "textual gradient" backprop through LLM calls.
+  Useful framing for multi-hop pipelines like ours (query →
+  extract → verify).
+- **OPRO** (Google) — LLMs-as-optimizers. Paper + community
+  implementations. Good baseline for evolutionary approaches.
+- **Promptbreeder** (DeepMind) — evolutionary, self-referential
+  mutation. Closest in spirit to Karpathy's autoresearch.
+- **APE** (Automatic Prompt Engineer) — older, simpler, instructive
+  baseline.
+- **AdalFlow / Trace** — newer entrants framing prompt programs as
+  computation graphs. Scan at least the README.
+- **The balukosuri autoresearch skill** — operator's example.
+  Include as a "lightweight Claude Code native" data point, not
+  the default choice.
 
-This is a research spike, not a committed implementation.
+Explicit non-goal: adopting LangChain's prompt tooling. Our
+production pipeline is flat Python + Make; a heavy framework
+dependency is a hard sell (see ticket 0076 for the parallel Deep
+Agents question).
 
 ## Actions
 
-1. Install the skill from the referenced repo into this project's
-   `.claude/skills/` and read its prompt + any supporting files.
-   Understand the exact mutation operators and the criteria format.
-2. Decide the optimization target for the first run. Candidate:
-   the inventory prompt on the small-model ablation set, since
-   that is our cheapest evaluation loop.
-3. Translate our evaluation into the skill's yes/no criteria shape.
-   Options: (a) pick 4–6 binary facet checks (e.g., "emits CSV with
-   required columns", "no hallucinated years", "cites at least one
-   source", "matches census within tolerance"), or (b) wrap our
-   continuous accuracy metric into a pass/fail gate at a threshold.
-   Decide which is honest for a statistical production pipeline.
-4. Run the autonomous loop for N cycles (start small, 10–20) on one
-   fixed validation subset. Compare the `best_prompt.txt` output
-   against our current hand-tuned baseline using the existing
-   verification sweep (ticket 0030) on a held-out model set to
-   check for overfitting to the optimizer's own eval.
-5. Assess whether the result is a "universal" prompt (dominates
-   across models and conditions) or just a per-condition improvement.
-6. Risk check: the skill writes to `.autoresearch/` outside our
-   `outputs/<sweep>/` layout and outside `measurements.jsonl`. For
-   any adopted output we need a path from `.autoresearch/results.jsonl`
-   into the reporting pipeline, or an explicit separation of
-   "prompt engineering artifact" vs "published measurement".
+1. Produce a short comparison table covering each candidate:
+   license, dependency weight, LM-adapter story (OpenAI, Anthropic,
+   OpenRouter, Ollama — we need all four), optimizer algorithms
+   offered, signal format (continuous metric? binary? pairwise?),
+   artifact layout, reproducibility story (seed control, logged
+   traces), and whether it plays nicely with our `measurements.jsonl`
+   as the source of truth.
+2. Recommend **one** framework to prototype against, with a written
+   rationale. Prior is DSPy unless something disqualifies it for
+   our multi-provider, reproducibility-first setting.
+3. Pick the optimization target for the prototype. Candidate: the
+   inventory prompt on the small-model ablation set — cheapest
+   eval loop, existing verification sweep (ticket 0030) as the
+   held-out check.
+4. Define the optimization signal honestly. Our natural metric is
+   continuous per-cell accuracy on a large eval set. Whatever
+   framework we pick must accept that directly; if it insists on
+   binary yes/no per example, wrapping our metric in a pass/fail
+   gate needs an explicit threshold and a note in the report that
+   we optimized against the gate, not the continuous score.
+5. Run the optimizer for a fixed budget (API cost cap — decide up
+   front, include in the spike note). Score the output prompt on
+   the held-out verification sweep to catch overfitting to the
+   optimizer's own training split.
+6. Write the spike note with the comparison table, the rationale,
+   the prototype results, and the decision.
+
+## Measurement hygiene (non-negotiable)
+
+Whatever framework we adopt must not contaminate `measurements.jsonl`.
+Optimizer runs produce a lot of prompts and scores that are *not*
+published measurements; they're engineering artifacts. The ticket
+must land with a clear wall between:
+- engineering artifacts (optimizer traces, intermediate prompts,
+  per-run scores) — stored outside `outputs/<sweep>/`
+- published measurements (the final held-out run of the chosen
+  prompt against the standard eval) — stored in `measurements.jsonl`
+  the normal way
 
 ## Test
 
 A short script or notebook that:
-- installs the skill,
-- runs the loop for a fixed budget on one condition,
-- scores the resulting `best_prompt.txt` on the held-out verification
-  sweep, and
-- produces a before/after table (current baseline vs optimized)
-  with the same metric we report in the paper.
+- runs the chosen optimizer on one condition under the API budget cap,
+- scores the optimized prompt on the held-out verification sweep, and
+- produces a before/after table (current hand-tuned baseline vs
+  optimized) using the same metric we report in the paper.
 
 ## Exit criteria
 
-- Spike note on this ticket answering: can Karpathy-style autoresearch
-  produce a prompt that beats our hand-tuned baseline on at least one
-  sweep condition without overfitting to its own validation set, and
-  at what API cost?
+- Comparison table of the candidate frameworks committed to `docs/`
+  or inlined in the spike note on this ticket.
+- One framework recommended with a written rationale; DSPy is the
+  prior unless ruled out.
+- Prototype run completed on one condition under a fixed API budget,
+  with before/after numbers on the held-out verification sweep.
 - Honest verdict on whether "one universal prompt" survives contact
-  with our multi-model, multi-condition setup or whether the tool is
-  better framed as a per-condition optimizer.
-- Decision recorded: adopt, defer, or reject. If adopt, open a
-  follow-up ticket for integration into the prompt_modules workflow
-  and define how optimized prompts enter the reporting pipeline
-  without contaminating measurement hygiene.
+  with our multi-model, multi-condition setup or whether any of
+  these tools is better framed as a per-condition optimizer.
+- Decision recorded: adopt (which tool, which stages), defer, or
+  reject. If adopt, open a follow-up ticket for integration into
+  the prompt_modules workflow and the measurement-hygiene wall.
