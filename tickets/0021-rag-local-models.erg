@@ -14,6 +14,10 @@ Author: claude
 2026-04-10T19:00Z claude status doing — running RAG wholesale for qwen3.5:2b and 4b
 2026-04-11T10:00Z claude claimed
 2026-04-11T10:00Z claude status doing — orchestrator wave A, on Padme, Ollama confirmed, models pulled
+2026-04-11T11:45Z claude note first attempt killed due to Padme Ollama contention (concurrent decomposition_fix_probe sweep hit GPU at 12:39, serial rule violated)
+2026-04-11T13:35Z claude note second attempt 10-min GPU window — qwen3.5:2b 3/3 scheduled but run2 empty response run3 httpx.ReadTimeout, only run1 parseable
+2026-04-11T13:40Z claude note qwen3.5:2b RAG wholesale run1 F1=0.832 tp=116 fp=0 fn=47 (surprisingly strong, comparable to existing 35b runs 0.81-0.86)
+2026-04-11T13:40Z claude note checkpoint fold for day; qwen3.5:4b never started; plot script and slides integration deferred; ticket stays doing
 
 --- body ---
 ## Context

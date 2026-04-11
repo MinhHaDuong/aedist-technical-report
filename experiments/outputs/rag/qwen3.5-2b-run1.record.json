@@ -1,0 +1,33 @@
+{
+  "run_id": "30ba891b99de",
+  "timestamp": "2026-04-11T12:38:31.145591Z",
+  "method": "rag",
+  "method_params": {
+    "model": "qwen3.5:2b",
+    "prompt_version": "rag",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 164.519,
+    "tokens_in": 78652,
+    "tokens_out": 12562
+  },
+  "result_file": "experiments/outputs/rag/qwen3.5-2b-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 116,
+    "tp": 116,
+    "fp": 0,
+    "fn": 47,
+    "f1": 0.8315,
+    "fuel_accuracy": 0.0259,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.0345
+  }
+}
