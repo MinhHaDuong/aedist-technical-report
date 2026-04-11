@@ -1,11 +1,14 @@
 %erg v1
 Title: Provider health state machine for credit/cap failures
-Status: open
+Status: doing
 Created: 2026-04-11
 Author: claude
 
 --- log ---
 2026-04-11T10:00Z claude created
+2026-04-11T16:30Z claude claimed
+2026-04-11T16:30Z claude status doing
+2026-04-11T16:31Z claude note plan: provider_health.py with classify(exc/resp) -> Disposition enum (HARD_STOP, SOFT_RETRY, PERMANENT_SKIP); ProviderHealth session object tracking hard_stopped providers and permanent_skipped models; park_cell() writer to outputs/<sweep>/parked.jsonl. TDD first with fixtures for OpenRouter 402, Anthropic 429 quota, OpenAI 403, Ollama ConnectionRefusedError. Integration: minimal hook in query.py alongside should_skip(). Out of scope per operator: resume_sweep, tab_parked_runs.tex, docs.
 
 --- body ---
 ## Context
