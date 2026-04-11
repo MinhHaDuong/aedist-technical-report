@@ -1,37 +1,165 @@
 %erg v1
 Title: Analyze base prompt vs census prompt gap
-Status: open
+Status: doing
 Created: 2026-04-10
 Author: claude
 Blocked-by: 0055
 
 --- log ---
 2026-04-10T22:00Z claude created — from independent vision review
+2026-04-11T10:00Z claude claimed
+2026-04-11T10:00Z claude status doing — orchestrator wave A
+2026-04-11T10:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
-The ablation experiment compares module additions/removals relative to the
-base prompt. But the base prompt itself (300 words, structured columns,
-30 MWe threshold, captive/cogen scope) differs from the census prompt
-(40 words, minimal structure) by far more than any single module. The
-jump from census to base embeds many design choices whose individual
-contributions are not measured by the module ablation.
 
-This deserves a dedicated brief analysis: what explains the F1 difference
-between census and base? Is it the column structure? The exhaustiveness
-instruction? The status vocabulary? The 30 MWe threshold?
+Two single-shot prompts already live in the tree and already have data in
+`measurements.jsonl`:
+
+- **census** (`experiments/prompts/prompt_structured.txt`, 1 line, ~40 words,
+  5 columns, no threshold, no scope qualifier). Used by `sweeps.census` and
+  `sweeps.census_local`. Currently 111 rows, `method=single`,
+  `method_params.prompt_version = "census"`.
+- **base** (`experiments/prompts/modules/base.txt`, 34 lines, ~280 words,
+  9 columns, explicit 30 MWe floor, explicit captive / cogen / cancelled
+  inclusion rules, status vocabulary enumerated). Used as the no-module
+  arm of the ablation sweeps (`sweeps.ablation_p1_parametric_base`, etc.).
+  Rows land under `experiments/outputs/ablation/**/p1_base/*.record.json`
+  with `method_params.prompt_version = "p1_base"`.
+
+Both are single-shot, both target the same task, both are scored against
+the same gold set. The only things that change are the instructions.
+Quantifying the gap isolates how much of the benchmark's headline F1
+numbers come from **prompt engineering** versus from **model choice** or
+**information regime**. This is the only place in the measurements where
+we have a clean, within-method, within-model A/B on instruction verbosity.
+
+Ablation hypothesis H1 in `report/inputs/plan_ablation.tex` (line 311) is
+already pre-registered:
+$H_1 : \mathrm{F1}_{\text{base}} > \mathrm{F1}_{\text{census}}$.
+This ticket produces the test of H1.
+
+## Why now, why this scope
+
+The methods-benchmark reframe says "method dominates model"
+(eta_sq 0.50 vs 0.07, PR #228). A method includes its prompt. If the
+census-to-base jump alone moves F1 by more than the spread across
+regimes, the "method" story needs a caveat: the prompt is a lurking
+variable we never isolated, and the regime comparisons assumed a fixed
+instruction set they did not actually share.
+
+Phase 1 ablation results (parametric / RAG / web, 3 dev models, already
+in STATE) showed composite prompts help only in RAG and hurt elsewhere.
+That was base-vs-composite. Base-vs-census is the *other half* of the
+same story: does the base prompt itself do meaningful work, or is
+everything downstream of census just a wash? Without this number, the
+journal submission cannot cleanly claim that the ablation's "base"
+baseline is a reasonable anchor.
+
+Decision this analysis enables: do we present census results at all in
+the methods paper, or do we deprecate census (keep it only as a
+historical starting point) and re-anchor all reported F1 on the base
+prompt?
+
+## Five radicals (bold reframings)
+
+1. **It's not about F1, it's about precision vs recall split.** The base
+   prompt adds a 30 MWe floor and a captive/cogen inclusion rule. These
+   move *what counts as a true plant*, not just how well the model
+   finds them. F1 collapses two things that should be separated.
+   Report $\Delta$precision and $\Delta$recall, not $\Delta$F1.
+2. **The gap is an artefact of the 30 MWe threshold.** Most of the
+   delta might disappear if you filter census outputs to $\geq 30$ MWe
+   post-hoc. If true, base's "prompt engineering" is really just a
+   threshold declaration, and one line of Python in the evaluator
+   reproduces 80 % of its value.
+3. **Census is a better benchmark, base is a better product.** Census
+   measures raw extraction capability with minimal scaffolding — the
+   closest thing to a model IQ test. Base measures usability in a
+   pipeline. These answer different questions; the gap is the *price
+   of productisation*, not noise to eliminate.
+4. **The gap is model-dependent and that is the finding.** Small
+   models need base; frontier models are indifferent; reasoning
+   models may even prefer census (less to misinterpret). A single
+   $\Delta$F1 number hides an interaction effect that is the real
+   story for the methods paper.
+5. **The gap is a cost story.** Base is ~280 words of input tokens on
+   every call, multiplied by every run in every regime. Does base earn
+   its input-token cost? Plot $\Delta$F1 against $\Delta$cost, not
+   $\Delta$F1 alone — some models may give you base-quality recall
+   from census at a fraction of the token bill.
+
+## Hybrid
+
+Combine **1 + 4 + 5**: split F1 into precision and recall (1), report
+per-model with confidence intervals to expose interaction (4), and
+annotate each point with the input-token cost differential (5). Radical 2
+(30 MWe artefact) becomes a robustness check, not the main story: one
+extra row in the table showing F1 after post-hoc threshold filtering of
+census outputs. Radical 3 stays as the framing paragraph in the report
+discussion — we are not killing census, we are naming what it measures.
 
 ## Actions
-1. After Phase 1 selection runs (ticket 0038), compare census vs base
-   F1 across all models
-2. Qualitative analysis: inspect a few responses to identify what the
-   base prompt captures that census misses (or vice versa)
-3. Brief paragraph in report discussing the gap
+
+1. Write `experiments/analyses/base_vs_census.py`. It reads:
+   - `measurements.jsonl` rows with `method == "single"` and
+     `method_params.prompt_version == "census"`
+   - `experiments/outputs/ablation/parametric/p1_base/*.record.json`
+     (base arm, parametric regime — same no-RAG, no-web setup as census)
+2. Group by `method_params.model`. For each model that appears in
+   **both** sets, compute per-run precision, recall, F1 from
+   `result_summary.{tp, fp, fn}`, then average across runs.
+3. Emit two generated artefacts:
+   - `report/inputs/generated/tab_base_vs_census.tex`: one row per model,
+     columns = $\overline{\mathrm{P}}_{\text{census}}$,
+     $\overline{\mathrm{R}}_{\text{census}}$, $\overline{\mathrm{F1}}_{\text{census}}$,
+     $\overline{\mathrm{P}}_{\text{base}}$, $\overline{\mathrm{R}}_{\text{base}}$,
+     $\overline{\mathrm{F1}}_{\text{base}}$, $\Delta$F1, $\Delta$tokens\_in.
+     Bottom row = macro-average with bootstrap 95 % CI on $\Delta$F1
+     (same bootstrap as ablation code).
+   - `report/inputs/generated/fig_base_vs_census.pdf` (matplotlib):
+     scatter with one point per model, x = census F1, y = base F1,
+     diagonal y = x, point size ~ $\log(\Delta\text{tokens\_in})$.
+4. Add a robustness note computed in the same script: recompute
+   census F1 after dropping census rows whose capacity the gold set
+   marks below 30 MWe (post-hoc threshold filter). Report as a single
+   paragraph showing how much of $\Delta$F1 collapses. This closes
+   radical 2 without owning the whole analysis.
+5. Patch `report/inputs/plan_ablation.tex` near the H1 paragraph
+   (around line 311) to `\input` the new table and reference the figure,
+   plus a 6–10 line discussion paragraph naming the precision/recall
+   decomposition and the model-interaction finding.
 
 ## Test
-Census and base are both run in Phase 1 selection. No additional API
-calls needed — just analysis of existing results.
+
+Analysis-only, but the script must be testable:
+
+1. Write `tests/test_base_vs_census.py` with a synthetic fixture:
+   two models, two runs each, known tp/fp/fn under census and under
+   base. Assert that the script produces the expected per-model
+   precision / recall / F1 / $\Delta$F1 within 1e-4 and that the
+   bootstrap CI for $\Delta$F1 contains the analytic mean.
+2. The real run is the end-to-end smoke test: `make analyses` (or a
+   direct `uv run python experiments/analyses/base_vs_census.py`)
+   must regenerate the `.tex` and `.pdf` without error and the
+   existing `make report` must still build.
+3. No new API calls. If fewer than 3 models appear in both arms after
+   Phase 1 ablation data lands, the script exits non-zero with a
+   message naming the missing arm — this is the guardrail against
+   publishing an underpowered comparison.
 
 ## Exit criteria
-- Census vs base F1 comparison across models reported
-- Brief discussion paragraph in plan_ablation.tex or results section
+
+- `experiments/analyses/base_vs_census.py` exists, lints, passes its
+  fixture test.
+- `report/inputs/generated/tab_base_vs_census.tex` regenerates
+  deterministically from `measurements.jsonl` + ablation records.
+- `report/inputs/generated/fig_base_vs_census.pdf` regenerates.
+- `plan_ablation.tex` `\input`s the new table, references the figure,
+  and includes a discussion paragraph that either confirms or
+  falsifies pre-registered hypothesis H1 with a 95 % bootstrap CI.
+- Robustness row for the 30 MWe post-hoc filter is present in the
+  table.
+- No new API calls logged; no new measurement rows written.
+- `make test` green; `make report` green.

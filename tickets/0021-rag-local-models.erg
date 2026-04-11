@@ -1,6 +1,6 @@
 %erg v1
 Title: Test local models with RAG wholesale on Padme
-Status: open
+Status: doing
 Created: 2026-04-06
 Author: claude
 
@@ -12,6 +12,8 @@ Author: claude
 2026-04-10T19:00Z claude claimed
 2026-04-11T02:00Z claude note RAG 2B/4B runs never completed; Ollama+models confirmed on Padme; reopened
 2026-04-10T19:00Z claude status doing — running RAG wholesale for qwen3.5:2b and 4b
+2026-04-11T10:00Z claude claimed
+2026-04-11T10:00Z claude status doing — orchestrator wave A, on Padme, Ollama confirmed, models pulled
 
 --- body ---
 ## Context
