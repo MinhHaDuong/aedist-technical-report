@@ -6,55 +6,96 @@ Author: claude
 
 --- log ---
 2026-04-11T20:00Z claude created — brain dump from operator
+2026-04-11T20:15Z claude note operator pointed at https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill — it is a Claude Code / Cursor skill (not a Python lib) that runs an evolutionary prompt-optimization loop against yes/no criteria; rewriting body to match
 
 --- body ---
 ## Context
 
 Brain dump from operator: "autoresearch — universal the prompt".
+Reference: https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill
 
-The project currently carries several bespoke prompts (inventory,
-scenarios, skill, census, rag, decomposed, sourced, multiturn) and
-the ablation machinery under `prompt_modules/` mixes and matches
-persona/overview/method fragments per sweep. Each variant is a
-hand-crafted artifact, tuned by feel, and we have no principled way
-to search the prompt space for a single "universal" prompt that
-performs well across models and conditions.
+The referenced project is a Claude Code / Cursor **skill** (installable
+under `~/.claude/skills/` or project `.claude/skills/`), not a Python
+library. It adapts Karpathy's autoresearch pattern — evolutionary
+optimization of `train.py` against validation loss — to prompts
+evaluated against binary yes/no criteria.
 
-Autoresearch (https://github.com/autoresearch/autoresearch or similar
-automated prompt-search tooling — identify the exact project) offers
-automated prompt optimization / search. The hypothesis: feed our
-measurements.jsonl back as a signal and let Autoresearch converge on
-one prompt that dominates the current hand-tuned set across models.
+Loop shape:
+1. **Planning (human-guided):** agent scans the repo, proposes an
+   optimization target and 4–6 measurable yes/no criteria.
+2. **Baseline:** one evaluation cycle to set a starting score.
+3. **Autonomous loop:** mutate prompt → evaluate against criteria →
+   score → keep or revert → repeat. Uses ~10 mutation operators
+   (add examples, tighten language, restructure, …) with plateau
+   detection.
+
+Artifacts written to `.autoresearch/`:
+- `best_prompt.txt` — current champion
+- `results.jsonl` — full experiment history
+- `state.json` — loop metadata, plateau state
+
+Why this matters for us: we already carry several bespoke prompts
+(inventory, scenarios, skill, census, rag, decomposed, sourced,
+multiturn) and the ablation machinery under `prompt_modules/` that
+mixes persona/overview/method fragments per sweep. Each variant is
+hand-tuned. Our `measurements.jsonl` + per-cell accuracy scores are
+almost exactly the signal this loop wants — except ours is a
+continuous score over a large eval set, not binary yes/no on fixed
+validation files.
+
+Operator framing — "universal the prompt" — reads as: use the skill
+to search for a single prompt (or module stack) that dominates the
+current hand-tuned set across models and conditions.
 
 This is a research spike, not a committed implementation.
 
 ## Actions
 
-1. Identify the specific "Autoresearch" tool the operator means
-   (candidates: the Autoresearch project, DSPy's bootstrap/optimize,
-   promptbreeder, OPRO). Confirm with operator before spending cycles.
-2. Read the tool's docs and one end-to-end example. Note the
-   optimization target format (metric, dataset, eval harness).
-3. Sketch how our `measurements.jsonl` + method-level accuracy scores
-   could serve as the optimization signal. Does the tool need a
-   differentiable metric, a scalar score, or pairwise judgments?
-4. Prototype on one sweep cell (e.g. the inventory prompt on a small
-   model set) and compare the Autoresearch-produced prompt against
-   the current hand-tuned baseline using the existing verification
-   sweep.
-5. Write up: is "one universal prompt" even the right frame, or does
-   the tool just give us better per-condition prompts?
+1. Install the skill from the referenced repo into this project's
+   `.claude/skills/` and read its prompt + any supporting files.
+   Understand the exact mutation operators and the criteria format.
+2. Decide the optimization target for the first run. Candidate:
+   the inventory prompt on the small-model ablation set, since
+   that is our cheapest evaluation loop.
+3. Translate our evaluation into the skill's yes/no criteria shape.
+   Options: (a) pick 4–6 binary facet checks (e.g., "emits CSV with
+   required columns", "no hallucinated years", "cites at least one
+   source", "matches census within tolerance"), or (b) wrap our
+   continuous accuracy metric into a pass/fail gate at a threshold.
+   Decide which is honest for a statistical production pipeline.
+4. Run the autonomous loop for N cycles (start small, 10–20) on one
+   fixed validation subset. Compare the `best_prompt.txt` output
+   against our current hand-tuned baseline using the existing
+   verification sweep (ticket 0030) on a held-out model set to
+   check for overfitting to the optimizer's own eval.
+5. Assess whether the result is a "universal" prompt (dominates
+   across models and conditions) or just a per-condition improvement.
+6. Risk check: the skill writes to `.autoresearch/` outside our
+   `outputs/<sweep>/` layout and outside `measurements.jsonl`. For
+   any adopted output we need a path from `.autoresearch/results.jsonl`
+   into the reporting pipeline, or an explicit separation of
+   "prompt engineering artifact" vs "published measurement".
 
 ## Test
 
-A notebook or short script that runs the optimizer on one condition,
-reports the optimized prompt, and runs it through the existing
-evaluation to produce a before/after accuracy comparison.
+A short script or notebook that:
+- installs the skill,
+- runs the loop for a fixed budget on one condition,
+- scores the resulting `best_prompt.txt` on the held-out verification
+  sweep, and
+- produces a before/after table (current baseline vs optimized)
+  with the same metric we report in the paper.
 
 ## Exit criteria
 
-- Spike report in `docs/` or as a note on this ticket answering:
-  can Autoresearch produce a prompt that beats our hand-tuned
-  baseline on at least one sweep condition, and at what cost?
+- Spike note on this ticket answering: can Karpathy-style autoresearch
+  produce a prompt that beats our hand-tuned baseline on at least one
+  sweep condition without overfitting to its own validation set, and
+  at what API cost?
+- Honest verdict on whether "one universal prompt" survives contact
+  with our multi-model, multi-condition setup or whether the tool is
+  better framed as a per-condition optimizer.
 - Decision recorded: adopt, defer, or reject. If adopt, open a
-  follow-up ticket for production integration.
+  follow-up ticket for integration into the prompt_modules workflow
+  and define how optimized prompts enter the reporting pipeline
+  without contaminating measurement hygiene.
