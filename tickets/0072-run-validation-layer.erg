@@ -1,6 +1,6 @@
 %erg v1
 Title: Run validation layer for measurement hygiene
-Status: doing
+Status: closed
 Created: 2026-04-11
 Author: claude
 
@@ -10,6 +10,8 @@ Author: claude
 2026-04-11T18:35Z claude status doing — starting implementation
 2026-04-11T18:35Z claude note plan: validate_run(raw_dict) in src/aedist/validate.py returning ValidationResult(ok, category, flags, details). Raw dict shape matches experiments/outputs/*/*.json (response/finish_reason/usage/model_metadata.context_window). Ollama native already normalized in harness.py to finish_reason/usage, so no provider branching needed. Hook: evaluate.cmd_assemble validates each record's companion raw JSON and attaches result to RunRecord.validation (new optional field). Unit tests only, no live providers. Skipping tab_validation_rejects.tex report table and worker retry — out of scope per ticket guardrails.
 2026-04-11T19:00Z claude note implemented — 14 unit tests for validate_run + 3 integration tests for cmd_assemble hook. RunRecord.validation is optional dict field (additive, no schema migration). Full test suite 920 passed, 1 xfailed; 4 pre-existing failures in tests/test_models.py are unrelated (ablation sweep config, fail on main). Ruff clean on changed files.
+2026-04-11T19:30Z claude note review fixes B1/W1/W2: _validate_companion_raw now derives raw JSON path via result_file.with_suffix(".json") — prior version silently no-op'd on CSV-backed corpus; _is_short_stop uses stripped response length (200 chars) not completion_tokens; _is_empty_content + _is_short_stop share _response_content() turns-aware fallback for multiturn records. Real-corpus smoke: 247 ok / 3 truncated_output / 2 empty / 2 truncated_input / 1 voluntary_short_stop (minimax refusal). Regression test uses real rag/deepseek-v3.2-run1 fixture pair. Test count 940 pass.
+2026-04-11T19:45Z claude status closed — merged to main
 
 --- body ---
 ## Context
