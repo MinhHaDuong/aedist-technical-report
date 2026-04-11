@@ -189,11 +189,18 @@ model_ids = []
 # re-run with patched sub-prompts (grounding clause, exhaustiveness removed).
 [sets.decomposition_fix_probe]
 model_ids = [
-    "baidu/ernie-4.5-21b-a3b-thinking",
-    "deepseek/deepseek-r1-0528",
-    "qwen/qwen3-max-thinking",
-    "z-ai/glm-5.1",
-    "openai/gpt-5.4",
+    "bytedance-seed/seed-2.0-lite",
+    "glm-4.7-flash",
+    "google/gemini-2.5-flash-lite",
+    "google/gemini-3-flash-preview",
+    "minimax/minimax-m2.7",
+    "moonshotai/kimi-k2.5",
+    "openai/gpt-5-nano",
+    "openai/gpt-5-mini",
+    "qwen/qwen3.5-35b-a3b",
+    "qwen/qwen3.5-122b-a10b",
+    "deepseek/deepseek-v3.2",
+    "mistralai/mistral-small-2603",
 ]
 
 # Legacy alias — kept for Phase 2 single-module sweeps until migration

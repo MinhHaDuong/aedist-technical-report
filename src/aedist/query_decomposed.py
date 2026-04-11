@@ -81,8 +81,10 @@ _FUEL_PROMPTS = {
 }
 
 
-def extract_csv_text(response: str) -> str | None:
+def extract_csv_text(response: str | None) -> str | None:
     """Extract and canonicalize CSV from a model response."""
+    if not response:
+        return None
     blocks = extract_fenced_blocks(response)
     if not blocks:
         inline = fallback_extract_inline_csv(response)
