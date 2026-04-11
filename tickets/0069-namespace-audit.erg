@@ -1,0 +1,128 @@
+%erg v1
+Title: Project namespace audit — every entity name must be self-explanatory to a fresh reader
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T10:20Z claude created
+2026-04-11T10:30Z claude note rescoped from two-rename to whole-project namespace audit
+
+--- body ---
+## Context
+
+The project's vocabulary has accumulated organically across census
+runs, RAG experiments, the methods reframe, and the ablation phase.
+Names that made sense when introduced now mislead readers who arrive
+fresh to the report, the codebase, or the outputs directory. A reader
+should be able to look at any name in isolation — a sweep id, a
+strategy field, an output directory, a report section heading, a
+ticket title — and understand *what kind of entity it is* and *what
+distinguishes it from neighbours*. Today they often cannot.
+
+Two examples that prompted this ticket (illustrative, not exhaustive):
+
+- **`decomposed`** sounds like a parametric trick. It is in fact a
+  RAG variant (same corpus injection as `query_rag.py`, sub-prompts
+  split by fuel category). When placed in a parametric/RAG/web table
+  the reader cannot tell which column it belongs to without reading
+  `src/aedist/query_decomposed.py`.
+- **`census` vs `base`** prompts: "census" reads as the rigorous,
+  exhaustive variant; "base" reads as the stripped-down baseline.
+  The relation is inverted in practice — the census sweep uses the
+  terse one-liner, the ablation "base" prompt is the enriched
+  starting point. A reader scanning the tables infers more rigour
+  where there is less.
+
+These two are symptoms. The underlying problem is that no single
+pass has audited the vocabulary as a whole.
+
+## Scope of the audit
+
+The audit must cover every name that appears in a reader-facing
+context. At minimum:
+
+- **Strategies and sweeps** — `experiments.toml` `[sets.*]` and
+  `[sweeps.*]` keys, and the `strategy` field written into
+  `measurements.jsonl` and run records.
+- **Output directories** — every subdirectory of
+  `experiments/outputs/`, since these names show up in every file
+  path a reader follows.
+- **Prompt files** — `experiments/prompts/*.txt` and the prompt
+  modules used by the ablation framework. Each name should announce
+  its content (terse vs enriched, with/without web, sourced or not).
+- **Model sets** — `[sets.*]` ids in `experiments.toml`. Names like
+  `frontier`, `frontier_3best`, `frontier_10labs`, `census_cloud`,
+  `ablation_dev`, `ablation_journal`, `ablation_rag`, `ablation_core`
+  exist in parallel and overlap; a reader cannot tell which is the
+  default for which experiment.
+- **Code modules** — `src/aedist/query_*.py` filenames. The split
+  across `query_frontier.py`, `query_rag.py`, `query_decomposed.py`,
+  `query_sourced.py`, etc., should reflect a single classification
+  axis (regime? prompt structure? both?), not historical accretion.
+- **Report sections and table captions** — chapter and section
+  titles in `report/report.tex`, plus generated table labels in
+  `report/inputs/generated/tab_*.tex`. Names there must match the
+  chosen vocabulary exactly.
+- **Tickets** — current ticket titles and `Blocked-by` chains use
+  the old vocabulary; the audit must touch them so future agents
+  do not re-import the confusion.
+- **MEMORY.md and project memories** — any user-visible memory
+  that names the old vocabulary needs an update so future
+  conversations do not perpetuate it.
+
+## Method
+
+1. **Inventory pass** — produce a flat list of every distinct name
+   in the contexts above, with one line of intended meaning per
+   name. This is the diagnostic artefact; the rest of the work
+   depends on it being honest.
+2. **Classify** — for each name, mark it as one of:
+   - **clear** (keep)
+   - **misleading** (suggests the wrong thing — must rename)
+   - **ambiguous** (multiple plausible referents — disambiguate)
+   - **redundant** (duplicates another name — merge or drop)
+   - **historical** (referent no longer exists — delete)
+3. **Propose a coherent vocabulary** — group names by axis
+   (regime, prompt structure, model tier, output type) and pick
+   prefixes so a reader sees the axis first. The point is not the
+   prettiest name but a system a reader can predict from.
+4. **Stage the rename** — one commit per axis, with `git mv` for
+   directories, schema migration for `measurements.jsonl` strategy
+   values, and report regeneration. Do not bundle unrelated renames.
+5. **Update memories last** — once the new vocabulary is in code,
+   sweep MEMORY.md and dependent memory files.
+
+## Test
+
+After the audit, a colleague who has not touched the project for a
+month should be able to:
+
+- Look at any sweep id in `experiments.toml` and predict which
+  prompt, which model set, and which output directory it produces.
+- Look at any output directory and predict which sweep wrote it.
+- Look at any report section heading and place the experiment in
+  the parametric / RAG / web search / hybrid axis without opening
+  the code.
+- Look at any model set id and predict its tier (dev, journal,
+  frontier) and its routing (cloud, local, mixed).
+
+## Exit criteria
+
+- Inventory artefact produced and committed (a markdown table of
+  every name, classification, and proposed replacement).
+- Renames executed in axis-grouped commits, each with a short
+  rationale in the commit message.
+- Report regenerated and visually checked.
+- No remaining references to deprecated names in active tickets,
+  prompts, code, or memory.
+- The two illustrative cases (`decomposed`, `census`/`base`) are
+  resolved as part of the broader pass, not separately.
+
+## Notes
+
+This is a coordination-heavy ticket. Likely worth doing on a
+quiet branch with no parallel sweeps in flight, since it touches
+output directory paths that running experiments write to. Schedule
+after the decomposition fix probe (ticket 0068) lands so the
+before/after data is preserved under stable names from the start.
