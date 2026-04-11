@@ -176,3 +176,58 @@ class TestAssembleValidation:
 
         records = RunRecord.load_jsonl(out)
         assert records[0].validation is None
+
+    def test_assemble_derives_raw_json_from_csv_result_file(self, tmp_path, monkeypatch):
+        """Regression (ticket 0072 B1): real records store ``result_file`` as the
+        CSV companion path, not the raw JSON. The validator must derive the
+        raw JSON path from the CSV stem. Prior to this fix, every CSV-backed
+        record silently got ``validation=None``.
+
+        Uses a real fixture pair from experiments/outputs/rag/ so that any
+        drift between fixture shape and validator expectations is caught.
+        """
+        import argparse
+        import json as _json
+        import shutil
+        from pathlib import Path
+
+        from aedist.evaluate import cmd_assemble
+        from aedist.schema import RunRecord
+
+        repo_root = Path(__file__).resolve().parent.parent
+        src_raw = repo_root / "experiments/outputs/rag/deepseek-v3.2-run1.json"
+        src_rec = repo_root / "experiments/outputs/rag/deepseek-v3.2-run1.record.json"
+        assert src_raw.exists(), f"fixture missing: {src_raw}"
+        assert src_rec.exists(), f"fixture missing: {src_rec}"
+
+        monkeypatch.chdir(tmp_path)
+        dst_dir = tmp_path / "experiments" / "outputs" / "rag"
+        dst_dir.mkdir(parents=True)
+        shutil.copy(src_raw, dst_dir / "deepseek-v3.2-run1.json")
+
+        # Load the real record and keep its CSV result_file as-is: this is
+        # exactly the shape the real corpus has.
+        record_data = _json.loads(src_rec.read_text(encoding="utf-8"))
+        assert record_data["result_file"].endswith(".csv"), (
+            "fixture must have CSV result_file to exercise the regression"
+        )
+        rec_path = tmp_path / "deepseek-v3.2-run1.record.json"
+        rec_path.write_text(_json.dumps(record_data), encoding="utf-8")
+
+        out = tmp_path / "measurements.jsonl"
+        cmd_assemble(argparse.Namespace(record_files=[str(rec_path)], output=str(out)))
+
+        records = RunRecord.load_jsonl(out)
+        assert len(records) == 1
+        # The fix must attach a validation; it must not be None.
+        assert records[0].validation is not None, (
+            "validation should be attached when the raw JSON exists alongside "
+            "the CSV companion (derived from result_file stem)"
+        )
+        assert records[0].validation["category"] in {
+            "ok",
+            "empty",
+            "truncated_output",
+            "truncated_input",
+            "provider_error",
+        }

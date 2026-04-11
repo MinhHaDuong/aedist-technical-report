@@ -412,23 +412,33 @@ def cmd_assemble(args: argparse.Namespace) -> None:
 def _validate_companion_raw(record: RunRecord, record_path: Path, validate_run) -> dict | None:
     """Locate the raw provider JSON for a record and validate it.
 
-    The ``result_file`` field is stored relative to the repo root, but at
-    test time we may be running in an arbitrary working directory. Try
-    both the cwd-relative resolution and an absolute fallback; if neither
-    hits an existing file, return None (validation unknown).
+    Real CSV-backed records store ``result_file`` as the ``.csv`` companion
+    path (see ``_evaluate_csv_file``). The raw provider JSON lives at the
+    same stem with a ``.json`` suffix. Qualitative/JSON-only records (see
+    ``_evaluate_qualitative``) already point ``result_file`` at a ``.json``
+    file; leave those unchanged.
+
+    The path is stored relative to the repo root, but at test time we may
+    be running in an arbitrary working directory, so also try alongside
+    the record file itself. If no candidate exists, return None (validation
+    unknown — downstream treats this as "do not filter").
     """
     if not record.result_file:
         return None
-    candidates = [Path(record.result_file)]
-    # Also try alongside the record file itself, for record-dir-local layouts.
-    candidates.append(record_path.parent / Path(record.result_file).name)
+    result_path = Path(record.result_file)
+    if result_path.suffix == ".json":
+        raw_name = result_path
+    else:
+        raw_name = result_path.with_suffix(".json")
+    candidates = [raw_name, record_path.parent / raw_name.name]
     for candidate in candidates:
-        if candidate.exists():
-            try:
-                raw_body = json.loads(candidate.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                return None
-            return validate_run(raw_body).to_dict()
+        if candidate.suffix != ".json" or not candidate.exists():
+            continue
+        try:
+            raw_body = json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        return validate_run(raw_body).to_dict()
     return None
 
 

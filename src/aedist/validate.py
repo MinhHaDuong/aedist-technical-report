@@ -30,16 +30,17 @@ records short ``stop`` completions without dropping the data.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 Category = Literal[
     "ok",
-    "corrupted",
     "truncated_input",
     "truncated_output",
     "empty",
     "provider_error",
 ]
+
+_VALID_CATEGORIES = frozenset(get_args(Category))
 
 # Finish-reason values that indicate the output was cut off by the
 # provider rather than ending on its own terms.
@@ -49,9 +50,14 @@ _TRUNCATING_FINISH_REASONS = frozenset({"length", "content_filter", "error"})
 # crowded out the output budget.
 _INPUT_CTX_THRESHOLD = 0.9
 
-# Completion-token count below which a ``stop`` finish is flagged as
-# a voluntary short stop. Soft signal only, data is still usable.
-_SHORT_STOP_TOKENS = 500
+# Response-content length (characters, stripped) below which a ``stop``
+# finish is flagged as a voluntary short stop. Soft signal only, data is
+# still usable. Content length is used instead of completion_tokens
+# because some backends (Ollama) count internal/reasoning tokens in
+# completion_tokens — the canonical degenerate RAG run
+# ``experiments/outputs/rag/qwen3.5-2b-run2.json`` reports 17182 tokens
+# for a 94-character response (an empty CSV shell).
+_SHORT_STOP_CHARS = 200
 
 
 @dataclass(frozen=True)
@@ -67,9 +73,15 @@ class ValidationResult:
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> ValidationResult:
+        category = d.get("category", "ok")
+        if category not in _VALID_CATEGORIES:
+            raise ValueError(
+                f"Unknown validation category {category!r}; "
+                f"expected one of {sorted(_VALID_CATEGORIES)}"
+            )
         return cls(
             ok=bool(d.get("ok", False)),
-            category=d.get("category", "ok"),  # type: ignore[arg-type]
+            category=category,  # type: ignore[arg-type]
             flags=list(d.get("flags", [])),
         )
 
@@ -83,14 +95,40 @@ def _has_provider_error(raw: dict) -> bool:
     return bool(err)
 
 
-def _is_empty_content(raw: dict) -> bool:
-    """Non-empty stripped content is required (catches ticket 0041)."""
+def _response_content(raw: dict) -> str | None:
+    """Return the string response body of a run record, or None.
+
+    Single-turn records have a top-level ``response`` field. Multiturn
+    records (see ``aedist.query_multiturn``) store a list of ``turns``
+    with no top-level response; the assistant content is the
+    concatenation of every assistant turn's ``content``. Mirrors the
+    shape handled by ``_classify_orphan`` in ``aedist.evaluate``.
+    """
     response = raw.get("response")
-    if response is None:
+    if isinstance(response, str):
+        return response
+    turns = raw.get("turns")
+    if isinstance(turns, list):
+        assistant_parts = [
+            t.get("content", "")
+            for t in turns
+            if isinstance(t, dict) and t.get("role") == "assistant"
+        ]
+        if assistant_parts:
+            return "\n".join(p for p in assistant_parts if isinstance(p, str))
+    return None
+
+
+def _is_empty_content(raw: dict) -> bool:
+    """Non-empty stripped content is required (catches ticket 0041).
+
+    Handles both single-turn (``response``) and multiturn (``turns``)
+    record shapes via ``_response_content``.
+    """
+    content = _response_content(raw)
+    if content is None:
         return True
-    if not isinstance(response, str):
-        return False
-    return response.strip() == ""
+    return content.strip() == ""
 
 
 def _is_truncated_output(raw: dict) -> bool:
@@ -116,14 +154,21 @@ def _is_truncated_input(raw: dict) -> bool:
 
 
 def _is_short_stop(raw: dict) -> bool:
-    """Voluntary-short-stop: model ended on 'stop' with few tokens generated."""
+    """Voluntary-short-stop: model ended on 'stop' with a tiny response body.
+
+    Uses the stripped character length of the response content rather
+    than completion_tokens, because Ollama and other backends count
+    reasoning/internal tokens in completion_tokens. The flag must catch
+    the 94-char CSV-header-only shell from qwen3.5-2b-run2 even though
+    its completion_tokens is 17182.
+    """
     if raw.get("finish_reason") != "stop":
         return False
-    usage = raw.get("usage") or {}
-    completion = usage.get("completion_tokens")
-    if not isinstance(completion, int):
+    content = _response_content(raw)
+    if content is None:
         return False
-    return 0 < completion < _SHORT_STOP_TOKENS
+    stripped_len = len(content.strip())
+    return 0 < stripped_len < _SHORT_STOP_CHARS
 
 
 def validate_run(raw: dict) -> ValidationResult:
