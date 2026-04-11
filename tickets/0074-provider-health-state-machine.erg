@@ -1,11 +1,15 @@
 %erg v1
 Title: Provider health state machine for credit/cap failures
-Status: open
+Status: doing
 Created: 2026-04-11
 Author: claude
 
 --- log ---
 2026-04-11T10:00Z claude created
+2026-04-11T16:30Z claude claimed
+2026-04-11T16:30Z claude status doing
+2026-04-11T16:31Z claude note plan: provider_health.py with classify(exc/resp) -> Disposition enum (HARD_STOP, SOFT_RETRY, PERMANENT_SKIP); ProviderHealth session object tracking hard_stopped providers and permanent_skipped models; park_cell() writer to outputs/<sweep>/parked.jsonl. TDD first with fixtures for OpenRouter 402, Anthropic 429 quota, OpenAI 403, Ollama ConnectionRefusedError. Integration: minimal hook in query.py alongside should_skip(). Out of scope per operator: resume_sweep, tab_parked_runs.tex, docs.
+2026-04-11T18:00Z claude note review fixes W1-W3: (W1) soft-retry promotion now scopes to (router, model_id) not whole router; HARD_STOP carries scope=router|model; only account-level 402/billing/credit keywords hard-stop whole router, per-model 429/quota/upstream-code=402/daily caps hard-stop just the cell. (W2) classify_exception re-raises unknown exception types instead of returning SOFT_RETRY default; soft-retry default narrowed to httpx.HTTPError, openai.APIConnectionError/APITimeoutError/APIError, ConnectionError, TimeoutError, OSError. (W3) parked.jsonl now stores full 64-char SHA-256 prompt_hash and prompt_path (or null for in-memory prompt-module assembly) for resume drift detection. Tests added: 5 new (W1x2, W2x1, W3x2), 1 replaced. Full suite 945 pass / 4 baseline fail (test_models.py, unchanged) / 1 xfailed.
 
 --- body ---
 ## Context
