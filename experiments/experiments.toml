@@ -136,6 +136,24 @@ model_ids = [
     "moonshotai/kimi-k2-thinking",          # frontier MoE, CN, reasoning+web, $2.00
 ]
 
+# Ticket 0057: extend base-vs-census intersection by running p1_base on
+# cheap cloud models that already have census data. Excludes glm-4.7-flash
+# because it routes to Ollama (local); cloud-only per run constraints.
+# Does not duplicate the two models already in p1_base (deepseek-v3.2,
+# mistral-small-2603).
+[sets.base_vs_census_extended]
+model_ids = [
+    "bytedance-seed/seed-2.0-lite",
+    "google/gemini-2.5-flash-lite",
+    "google/gemini-3-flash-preview",
+    "minimax/minimax-m2.7",
+    "moonshotai/kimi-k2.5",
+    "openai/gpt-5-nano",
+    "openai/gpt-5-mini",
+    "qwen/qwen3.5-35b-a3b",
+    "qwen/qwen3.5-122b-a10b",
+]
+
 # Journal tier — adds mid-range and expensive frontier (gated by human approval)
 [sets.ablation_journal]
 model_ids = [
@@ -360,6 +378,18 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+output = "outputs/ablation/parametric/p1_base"
+
+# Ticket 0057: extended base-vs-census — 9 additional cheap cloud models,
+# reusing the same output directory so .record.json files mix in with the
+# original 2 models. New set base_vs_census_extended.
+[sweeps.ablation_p1_parametric_base_extended]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "base_vs_census_extended"
+repeat = 2
+budget_usd = 5
 output = "outputs/ablation/parametric/p1_base"
 
 [sweeps.ablation_p1_parametric_composite]

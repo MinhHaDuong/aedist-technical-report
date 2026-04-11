@@ -8,11 +8,18 @@
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 Modèle & P & R & F1 & P & R & F1 & $\Delta$F1 (pp) & $\Delta$tok$_\text{in}$ \\
 \midrule
+Seed-2.0-Lite & 100.0\% & 7.8\% & 14.3\% & 100.0\% & 23.9\% & 38.6\% & +24.3 & +379 \\
 DeepSeek-V3.2 & 100.0\% & 17.8\% & 30.1\% & 100.0\% & 42.3\% & 59.4\% & +29.3 & +362 \\
+Gemini-2.5-Flash-Lite & 97.5\% & 53.0\% & 62.3\% & 35.6\% & 100.0\% & 51.7\% & $-$10.6 & +378 \\
+Gemini-3-Flash-Preview & 100.0\% & 33.7\% & 50.4\% & 100.0\% & 49.1\% & 65.8\% & +15.4 & +378 \\
+Minimax-M2.7 & 66.7\% & 17.0\% & 27.0\% & 100.0\% & 45.1\% & 61.2\% & +34.3 & +354 \\
 Mistral-Small-2603 & 100.0\% & 30.3\% & 46.3\% & 100.0\% & 33.7\% & 49.5\% & +3.2 & +365 \\
+Kimi-K2.5 & 100.0\% & 36.8\% & 53.4\% & 100.0\% & 60.7\% & 75.6\% & +22.1 & +357 \\
+Qwen3.5-122b-A10b & 100.0\% & 24.5\% & 39.1\% & 100.0\% & 44.2\% & 61.3\% & +22.2 & +373 \\
+Qwen3.5-35b-A3b & 100.0\% & 20.9\% & 34.3\% & 32.8\% & 100.0\% & 49.4\% & +15.1 & +373 \\
 \midrule
-\multicolumn{7}{r}{\textit{Macro-moyenne $\Delta$F1 (IC 95\,\% bootstrap)}} & +16.3 [+3.2, +29.3] & \\
+\multicolumn{7}{r}{\textit{Macro-moyenne $\Delta$F1 (IC 95\,\% bootstrap)}} & +17.3 [+8.4, +25.1] & \\
 \bottomrule
-\multicolumn{9}{l}{\footnotesize\textit{n{=}2 modèles dans l'intersection des deux bras~; underpowered pour inférence générale, valeur illustrative. Tokens d'entrée = moyenne par run.}} \\
+\multicolumn{9}{l}{\footnotesize\textit{n{=}9 modèles dans l'intersection des deux bras~; underpowered pour inférence générale, valeur illustrative. Tokens d'entrée = moyenne par run.}} \\
 \end{tabular}
 \end{table}

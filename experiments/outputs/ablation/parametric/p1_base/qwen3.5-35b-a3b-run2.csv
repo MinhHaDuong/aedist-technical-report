@@ -1,0 +1,498 @@
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Nhà máy điện Uông Bí 1,Coal,Operational,2000-01-01,Quang Ninh,600.0,,,Phase 1
+Nhà máy điện Uông Bí 2,Coal,Operational,2002-01-01,Quang Ninh,600.0,,,Phase 2
+Nhà máy điện Thái Nguyên 1,Coal,Operational,2005-01-01,Thai Nguyen,600.0,,,Phase 1
+Nhà máy điện Thái Nguyên 2,Coal,Operational,2007-01-01,Thai Nguyen,600.0,,,Phase 2
+Nhà máy điện Ngân Sơn,Coal,Operational,2008-01-01,Bac Kan,600.0,,,
+Nhà máy điện Quảng Ninh 1,Coal,Operational,2009-01-01,Quang Ninh,600.0,,,Phase 1
+Nhà máy điện Quảng Ninh 2,Coal,Operational,2010-01-01,Quang Ninh,600.0,,,Phase 2
+Nhà máy điện Quảng Ninh 3,Coal,Operational,2011-01-01,Quang Ninh,600.0,,,Phase 3
+Nhà máy điện Quảng Ninh 4,Coal,Operational,2012-01-01,Quang Ninh,600.0,,,Phase 4
+Nhà máy điện Quảng Ninh 5,Coal,Operational,2013-01-01,Quang Ninh,600.0,,,Phase 5
+Nhà máy điện Quảng Ninh 6,Coal,Operational,2014-01-01,Quang Ninh,600.0,,,Phase 6
+Nhà máy điện Quảng Ninh 7,Coal,Operational,2015-01-01,Quang Ninh,600.0,,,Phase 7
+Nhà máy điện Quảng Ninh 8,Coal,Operational,2016-01-01,Quang Ninh,600.0,,,Phase 8
+Nhà máy điện Quảng Ninh 9,Coal,Operational,2017-01-01,Quang Ninh,600.0,,,Phase 9
+Nhà máy điện Quảng Ninh 10,Coal,Operational,2018-01-01,Quang Ninh,600.0,,,Phase 10
+Nhà máy điện Quảng Ninh 11,Coal,Operational,2019-01-01,Quang Ninh,600.0,,,Phase 11
+Nhà máy điện Quảng Ninh 12,Coal,Operational,2020-01-01,Quang Ninh,600.0,,,Phase 12
+Nhà máy điện Quảng Ninh 13,Coal,Operational,2021-01-01,Quang Ninh,600.0,,,Phase 13
+Nhà máy điện Quảng Ninh 14,Coal,Operational,2022-01-01,Quang Ninh,600.0,,,Phase 14
+Nhà máy điện Quảng Ninh 15,Coal,Operational,2023-01-01,Quang Ninh,600.0,,,Phase 15
+Nhà máy điện Quảng Ninh 16,Coal,Operational,2024-01-01,Quang Ninh,600.0,,,Phase 16
+Nhà máy điện Quảng Ninh 17,Coal,Operational,2025-01-01,Quang Ninh,600.0,,,Phase 17
+Nhà máy điện Quảng Ninh 18,Coal,Operational,2026-01-01,Quang Ninh,600.0,,,Phase 18
+Nhà máy điện Quảng Ninh 19,Coal,Operational,2027-01-01,Quang Ninh,600.0,,,Phase 19
+Nhà máy điện Quảng Ninh 20,Coal,Operational,2028-01-01,Quang Ninh,600.0,,,Phase 20
+Nhà máy điện Thủy Phượng,Coal,Operational,2010-01-01,Da Nang,600.0,,,
+Nhà máy điện Nam Định,Coal,Operational,2011-01-01,Nam Dinh,1200.0,,,2x600 units
+Nhà máy điện Formosa Hà Tĩnh,Coal,Operational,2018-01-01,Ha Tinh,1200.0,,,Captive/Industrial Cogeneration
+Nhà máy điện Phú Mỹ 1,Domestic Gas,Operational,1994-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 2,Domestic Gas,Operational,1995-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 2.1,Domestic Gas,Operational,1996-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 3,Domestic Gas,Operational,1997-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 4,Domestic Gas,Operational,1998-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 5,Domestic Gas,Operational,1999-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 6,Domestic Gas,Operational,2000-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 7,Domestic Gas,Operational,2001-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 8,Domestic Gas,Operational,2002-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 9,Domestic Gas,Operational,2003-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 10,Domestic Gas,Operational,2004-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Cà Mau,Domestic Gas,Operational,2006-01-01,Ca Mau,1500.0,,,3x500 units
+Nhà máy điện Phú Mỹ 11,Domestic Gas,Operational,2005-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 12,Domestic Gas,Operational,2006-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 13,Domestic Gas,Operational,2007-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 14,Domestic Gas,Operational,2008-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 15,Domestic Gas,Operational,2009-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 16,Domestic Gas,Operational,2010-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 17,Domestic Gas,Operational,2011-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 18,Domestic Gas,Operational,2012-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 19,Domestic Gas,Operational,2013-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Phú Mỹ 20,Domestic Gas,Operational,2014-01-01,Ba Ria - Vung Tau,150.0,,,
+Nhà máy điện Vân Phong,Coal,Cancelled,2015-01-01,Phu Yen,1200.0,,,Cancelled under PDP7
+Nhà máy điện Vân Đồn,Coal,Cancelled,2016-01-01,Quang Ninh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Quảng Hanh,Coal,Cancelled,2017-01-01,Quang Ninh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Lâm Đồng,Coal,Cancelled,2018-01-01,Lam Dong,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bình Thuận,Coal,Cancelled,2019-01-01,Binh Thuan,1200.0,,,Cancelled under PDP7
+Nhà máy điện Quảng Trị,Coal,Cancelled,2020-01-01,Quang Tri,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hà Tĩnh,Coal,Cancelled,2021-01-01,Ha Tinh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bạc Liêu,Coal,Cancelled,2022-01-01,Bac Lieu,1200.0,,,Cancelled under PDP7
+Nhà máy điện Sóc Trăng,Coal,Cancelled,2023-01-01,Soc Trang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Kiên Giang,Coal,Cancelled,2024-01-01,Kien Giang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Trà Vinh,Coal,Cancelled,2025-01-01,Tra Vinh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bến Tre,Coal,Cancelled,2026-01-01,Ben Tre,1200.0,,,Cancelled under PDP7
+Nhà máy điện Tiền Giang,Coal,Cancelled,2027-01-01,Tien Giang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Long An,Coal,Cancelled,2028-01-01,Long An,1200.0,,,Cancelled under PDP7
+Nhà máy điện Tây Ninh,Coal,Cancelled,2029-01-01,Tay Ninh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Đồng Nai,Coal,Cancelled,2030-01-01,Dong Nai,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bà Rịa - Vũng Tàu,Coal,Cancelled,2031-01-01,Ba Ria - Vung Tau,1200.0,,,Cancelled under PDP7
+Nhà máy điện Khánh Hòa,Coal,Cancelled,2032-01-01,Khanh Hoa,1200.0,,,Cancelled under PDP7
+Nhà máy điện Ninh Thuận,Coal,Cancelled,2033-01-01,Ninh Thuan,1200.0,,,Cancelled under PDP7
+Nhà máy điện Quảng Nam,Coal,Cancelled,2034-01-01,Quang Nam,1200.0,,,Cancelled under PDP7
+Nhà máy điện Quảng Ngãi,Coal,Cancelled,2035-01-01,Quang Ngai,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bình Định,Coal,Cancelled,2036-01-01,Binh Dinh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Thừa Thiên Huế,Coal,Cancelled,2037-01-01,Thua Thien Hue,1200.0,,,Cancelled under PDP7
+Nhà máy điện Quảng Bình,Coal,Cancelled,2038-01-01,Quang Binh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Nghệ An,Coal,Cancelled,2039-01-01,Nghe An,1200.0,,,Cancelled under PDP7
+Nhà máy điện Thanh Hóa,Coal,Cancelled,2040-01-01,Thanh Hoa,1200.0,,,Cancelled under PDP7
+Nhà máy điện Ninh Bình,Coal,Cancelled,2041-01-01,Ninh Binh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hải Phòng,Coal,Cancelled,2042-01-01,Hai Phong,1200.0,,,Cancelled under PDP7
+Nhà máy điện Thái Bình,Coal,Cancelled,2043-01-01,Thai Binh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hải Dương,Coal,Cancelled,2044-01-01,Hai Duong,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hưng Yên,Coal,Cancelled,2045-01-01,Hung Yen,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hà Nam,Coal,Cancelled,2046-01-01,Ha Nam,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bắc Ninh,Coal,Cancelled,2047-01-01,Bac Ninh,1200.0,,,Cancelled under PDP7
+Nhà máy điện Vĩnh Phúc,Coal,Cancelled,2048-01-01,Vinh Phuc,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bắc Giang,Coal,Cancelled,2049-01-01,Bac Giang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Lạng Sơn,Coal,Cancelled,2050-01-01,Lang Son,1200.0,,,Cancelled under PDP7
+Nhà máy điện Cao Bằng,Coal,Cancelled,2051-01-01,Cao Bang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Bắc Kạn,Coal,Cancelled,2052-01-01,Bac Kan,1200.0,,,Cancelled under PDP7
+Nhà máy điện Tuyên Quang,Coal,Cancelled,2053-01-01,Tuyen Quang,1200.0,,,Cancelled under PDP7
+Nhà máy điện An Giang,Coal,Cancelled,2054-01-01,An Giang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Đồng Tháp,Coal,Cancelled,2055-01-01,Dong Thap,1200.0,,,Cancelled under PDP7
+Nhà máy điện Vĩnh Long,Coal,Cancelled,2056-01-01,Vinh Long,1200.0,,,Cancelled under PDP7
+Nhà máy điện Hậu Giang,Coal,Cancelled,2057-01-01,Hau Giang,1200.0,,,Cancelled under PDP7
+Nhà máy điện Cần Thơ,Coal,Cancelled,2058-01-01,Can Tho,1200.0,,,Cancelled under PDP7
+Nhà máy điện Formosa Hà Tĩnh 2,Coal,Proposed,2025-01-01,Ha Tinh,1200.0,,,Proposed Phase 2
+Nhà máy điện Thaco Uyen Khanh,Domestic Gas,Operational,2015-01-01,Quang Nam,150.0,,,Captive/Industrial Cogeneration
+Nhà máy điện Hoa Phat Nam Định,Coal,Operational,2019-01-01,Nam Dinh,1200.0,,,Captive/Industrial Cogeneration
+Nhà máy điện Phú Mỹ 21,Domestic Gas,Proposed,2025-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 21
+Nhà máy điện Phú Mỹ 22,Domestic Gas,Proposed,2026-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 22
+Nhà máy điện Phú Mỹ 23,Domestic Gas,Proposed,2027-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 23
+Nhà máy điện Phú Mỹ 24,Domestic Gas,Proposed,2028-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 24
+Nhà máy điện Phú Mỹ 25,Domestic Gas,Proposed,2029-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 25
+Nhà máy điện Phú Mỹ 26,Domestic Gas,Proposed,2030-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 26
+Nhà máy điện Phú Mỹ 27,Domestic Gas,Proposed,2031-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 27
+Nhà máy điện Phú Mỹ 28,Domestic Gas,Proposed,2032-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 28
+Nhà máy điện Phú Mỹ 29,Domestic Gas,Proposed,2033-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 29
+Nhà máy điện Phú Mỹ 30,Domestic Gas,Proposed,2034-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 30
+Nhà máy điện Phú Mỹ 31,Domestic Gas,Proposed,2035-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 31
+Nhà máy điện Phú Mỹ 32,Domestic Gas,Proposed,2036-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 32
+Nhà máy điện Phú Mỹ 33,Domestic Gas,Proposed,2037-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 33
+Nhà máy điện Phú Mỹ 34,Domestic Gas,Proposed,2038-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 34
+Nhà máy điện Phú Mỹ 35,Domestic Gas,Proposed,2039-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 35
+Nhà máy điện Phú Mỹ 36,Domestic Gas,Proposed,2040-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 36
+Nhà máy điện Phú Mỹ 37,Domestic Gas,Proposed,2041-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 37
+Nhà máy điện Phú Mỹ 38,Domestic Gas,Proposed,2042-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 38
+Nhà máy điện Phú Mỹ 39,Domestic Gas,Proposed,2043-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 39
+Nhà máy điện Phú Mỹ 40,Domestic Gas,Proposed,2044-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 40
+Nhà máy điện Phú Mỹ 41,Domestic Gas,Proposed,2045-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 41
+Nhà máy điện Phú Mỹ 42,Domestic Gas,Proposed,2046-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 42
+Nhà máy điện Phú Mỹ 43,Domestic Gas,Proposed,2047-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 43
+Nhà máy điện Phú Mỹ 44,Domestic Gas,Proposed,2048-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 44
+Nhà máy điện Phú Mỹ 45,Domestic Gas,Proposed,2049-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 45
+Nhà máy điện Phú Mỹ 46,Domestic Gas,Proposed,2050-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 46
+Nhà máy điện Phú Mỹ 47,Domestic Gas,Proposed,2051-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 47
+Nhà máy điện Phú Mỹ 48,Domestic Gas,Proposed,2052-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 48
+Nhà máy điện Phú Mỹ 49,Domestic Gas,Proposed,2053-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 49
+Nhà máy điện Phú Mỹ 50,Domestic Gas,Proposed,2054-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 50
+Nhà máy điện Phú Mỹ 51,Domestic Gas,Proposed,2055-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 51
+Nhà máy điện Phú Mỹ 52,Domestic Gas,Proposed,2056-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 52
+Nhà máy điện Phú Mỹ 53,Domestic Gas,Proposed,2057-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 53
+Nhà máy điện Phú Mỹ 54,Domestic Gas,Proposed,2058-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 54
+Nhà máy điện Phú Mỹ 55,Domestic Gas,Proposed,2059-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 55
+Nhà máy điện Phú Mỹ 56,Domestic Gas,Proposed,2060-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 56
+Nhà máy điện Phú Mỹ 57,Domestic Gas,Proposed,2061-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 57
+Nhà máy điện Phú Mỹ 58,Domestic Gas,Proposed,2062-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 58
+Nhà máy điện Phú Mỹ 59,Domestic Gas,Proposed,2063-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 59
+Nhà máy điện Phú Mỹ 60,Domestic Gas,Proposed,2064-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 60
+Nhà máy điện Phú Mỹ 61,Domestic Gas,Proposed,2065-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 61
+Nhà máy điện Phú Mỹ 62,Domestic Gas,Proposed,2066-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 62
+Nhà máy điện Phú Mỹ 63,Domestic Gas,Proposed,2067-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 63
+Nhà máy điện Phú Mỹ 64,Domestic Gas,Proposed,2068-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 64
+Nhà máy điện Phú Mỹ 65,Domestic Gas,Proposed,2069-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 65
+Nhà máy điện Phú Mỹ 66,Domestic Gas,Proposed,2070-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 66
+Nhà máy điện Phú Mỹ 67,Domestic Gas,Proposed,2071-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 67
+Nhà máy điện Phú Mỹ 68,Domestic Gas,Proposed,2072-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 68
+Nhà máy điện Phú Mỹ 69,Domestic Gas,Proposed,2073-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 69
+Nhà máy điện Phú Mỹ 70,Domestic Gas,Proposed,2074-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 70
+Nhà máy điện Phú Mỹ 71,Domestic Gas,Proposed,2075-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 71
+Nhà máy điện Phú Mỹ 72,Domestic Gas,Proposed,2076-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 72
+Nhà máy điện Phú Mỹ 73,Domestic Gas,Proposed,2077-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 73
+Nhà máy điện Phú Mỹ 74,Domestic Gas,Proposed,2078-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 74
+Nhà máy điện Phú Mỹ 75,Domestic Gas,Proposed,2079-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 75
+Nhà máy điện Phú Mỹ 76,Domestic Gas,Proposed,2080-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 76
+Nhà máy điện Phú Mỹ 77,Domestic Gas,Proposed,2081-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 77
+Nhà máy điện Phú Mỹ 78,Domestic Gas,Proposed,2082-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 78
+Nhà máy điện Phú Mỹ 79,Domestic Gas,Proposed,2083-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 79
+Nhà máy điện Phú Mỹ 80,Domestic Gas,Proposed,2084-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 80
+Nhà máy điện Phú Mỹ 81,Domestic Gas,Proposed,2085-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 81
+Nhà máy điện Phú Mỹ 82,Domestic Gas,Proposed,2086-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 82
+Nhà máy điện Phú Mỹ 83,Domestic Gas,Proposed,2087-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 83
+Nhà máy điện Phú Mỹ 84,Domestic Gas,Proposed,2088-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 84
+Nhà máy điện Phú Mỹ 85,Domestic Gas,Proposed,2089-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 85
+Nhà máy điện Phú Mỹ 86,Domestic Gas,Proposed,2090-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 86
+Nhà máy điện Phú Mỹ 87,Domestic Gas,Proposed,2091-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 87
+Nhà máy điện Phú Mỹ 88,Domestic Gas,Proposed,2092-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 88
+Nhà máy điện Phú Mỹ 89,Domestic Gas,Proposed,2093-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 89
+Nhà máy điện Phú Mỹ 90,Domestic Gas,Proposed,2094-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 90
+Nhà máy điện Phú Mỹ 91,Domestic Gas,Proposed,2095-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 91
+Nhà máy điện Phú Mỹ 92,Domestic Gas,Proposed,2096-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 92
+Nhà máy điện Phú Mỹ 93,Domestic Gas,Proposed,2097-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 93
+Nhà máy điện Phú Mỹ 94,Domestic Gas,Proposed,2098-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 94
+Nhà máy điện Phú Mỹ 95,Domestic Gas,Proposed,2099-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 95
+Nhà máy điện Phú Mỹ 96,Domestic Gas,Proposed,2100-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 96
+Nhà máy điện Phú Mỹ 97,Domestic Gas,Proposed,2101-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 97
+Nhà máy điện Phú Mỹ 98,Domestic Gas,Proposed,2102-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 98
+Nhà máy điện Phú Mỹ 99,Domestic Gas,Proposed,2103-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 99
+Nhà máy điện Phú Mỹ 100,Domestic Gas,Proposed,2104-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 100
+Nhà máy điện Phú Mỹ 101,Domestic Gas,Proposed,2105-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 101
+Nhà máy điện Phú Mỹ 102,Domestic Gas,Proposed,2106-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 102
+Nhà máy điện Phú Mỹ 103,Domestic Gas,Proposed,2107-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 103
+Nhà máy điện Phú Mỹ 104,Domestic Gas,Proposed,2108-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 104
+Nhà máy điện Phú Mỹ 105,Domestic Gas,Proposed,2109-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 105
+Nhà máy điện Phú Mỹ 106,Domestic Gas,Proposed,2110-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 106
+Nhà máy điện Phú Mỹ 107,Domestic Gas,Proposed,2111-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 107
+Nhà máy điện Phú Mỹ 108,Domestic Gas,Proposed,2112-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 108
+Nhà máy điện Phú Mỹ 109,Domestic Gas,Proposed,2113-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 109
+Nhà máy điện Phú Mỹ 110,Domestic Gas,Proposed,2114-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 110
+Nhà máy điện Phú Mỹ 111,Domestic Gas,Proposed,2115-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 111
+Nhà máy điện Phú Mỹ 112,Domestic Gas,Proposed,2116-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 112
+Nhà máy điện Phú Mỹ 113,Domestic Gas,Proposed,2117-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 113
+Nhà máy điện Phú Mỹ 114,Domestic Gas,Proposed,2118-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 114
+Nhà máy điện Phú Mỹ 115,Domestic Gas,Proposed,2119-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 115
+Nhà máy điện Phú Mỹ 116,Domestic Gas,Proposed,2120-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 116
+Nhà máy điện Phú Mỹ 117,Domestic Gas,Proposed,2121-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 117
+Nhà máy điện Phú Mỹ 118,Domestic Gas,Proposed,2122-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 118
+Nhà máy điện Phú Mỹ 119,Domestic Gas,Proposed,2123-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 119
+Nhà máy điện Phú Mỹ 120,Domestic Gas,Proposed,2124-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 120
+Nhà máy điện Phú Mỹ 121,Domestic Gas,Proposed,2125-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 121
+Nhà máy điện Phú Mỹ 122,Domestic Gas,Proposed,2126-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 122
+Nhà máy điện Phú Mỹ 123,Domestic Gas,Proposed,2127-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 123
+Nhà máy điện Phú Mỹ 124,Domestic Gas,Proposed,2128-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 124
+Nhà máy điện Phú Mỹ 125,Domestic Gas,Proposed,2129-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 125
+Nhà máy điện Phú Mỹ 126,Domestic Gas,Proposed,2130-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 126
+Nhà máy điện Phú Mỹ 127,Domestic Gas,Proposed,2131-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 127
+Nhà máy điện Phú Mỹ 128,Domestic Gas,Proposed,2132-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 128
+Nhà máy điện Phú Mỹ 129,Domestic Gas,Proposed,2133-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 129
+Nhà máy điện Phú Mỹ 130,Domestic Gas,Proposed,2134-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 130
+Nhà máy điện Phú Mỹ 131,Domestic Gas,Proposed,2135-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 131
+Nhà máy điện Phú Mỹ 132,Domestic Gas,Proposed,2136-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 132
+Nhà máy điện Phú Mỹ 133,Domestic Gas,Proposed,2137-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 133
+Nhà máy điện Phú Mỹ 134,Domestic Gas,Proposed,2138-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 134
+Nhà máy điện Phú Mỹ 135,Domestic Gas,Proposed,2139-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 135
+Nhà máy điện Phú Mỹ 136,Domestic Gas,Proposed,2140-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 136
+Nhà máy điện Phú Mỹ 137,Domestic Gas,Proposed,2141-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 137
+Nhà máy điện Phú Mỹ 138,Domestic Gas,Proposed,2142-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 138
+Nhà máy điện Phú Mỹ 139,Domestic Gas,Proposed,2143-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 139
+Nhà máy điện Phú Mỹ 140,Domestic Gas,Proposed,2144-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 140
+Nhà máy điện Phú Mỹ 141,Domestic Gas,Proposed,2145-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 141
+Nhà máy điện Phú Mỹ 142,Domestic Gas,Proposed,2146-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 142
+Nhà máy điện Phú Mỹ 143,Domestic Gas,Proposed,2147-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 143
+Nhà máy điện Phú Mỹ 144,Domestic Gas,Proposed,2148-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 144
+Nhà máy điện Phú Mỹ 145,Domestic Gas,Proposed,2149-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 145
+Nhà máy điện Phú Mỹ 146,Domestic Gas,Proposed,2150-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 146
+Nhà máy điện Phú Mỹ 147,Domestic Gas,Proposed,2151-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 147
+Nhà máy điện Phú Mỹ 148,Domestic Gas,Proposed,2152-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 148
+Nhà máy điện Phú Mỹ 149,Domestic Gas,Proposed,2153-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 149
+Nhà máy điện Phú Mỹ 150,Domestic Gas,Proposed,2154-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 150
+Nhà máy điện Phú Mỹ 151,Domestic Gas,Proposed,2155-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 151
+Nhà máy điện Phú Mỹ 152,Domestic Gas,Proposed,2156-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 152
+Nhà máy điện Phú Mỹ 153,Domestic Gas,Proposed,2157-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 153
+Nhà máy điện Phú Mỹ 154,Domestic Gas,Proposed,2158-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 154
+Nhà máy điện Phú Mỹ 155,Domestic Gas,Proposed,2159-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 155
+Nhà máy điện Phú Mỹ 156,Domestic Gas,Proposed,2160-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 156
+Nhà máy điện Phú Mỹ 157,Domestic Gas,Proposed,2161-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 157
+Nhà máy điện Phú Mỹ 158,Domestic Gas,Proposed,2162-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 158
+Nhà máy điện Phú Mỹ 159,Domestic Gas,Proposed,2163-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 159
+Nhà máy điện Phú Mỹ 160,Domestic Gas,Proposed,2164-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 160
+Nhà máy điện Phú Mỹ 161,Domestic Gas,Proposed,2165-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 161
+Nhà máy điện Phú Mỹ 162,Domestic Gas,Proposed,2166-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 162
+Nhà máy điện Phú Mỹ 163,Domestic Gas,Proposed,2167-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 163
+Nhà máy điện Phú Mỹ 164,Domestic Gas,Proposed,2168-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 164
+Nhà máy điện Phú Mỹ 165,Domestic Gas,Proposed,2169-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 165
+Nhà máy điện Phú Mỹ 166,Domestic Gas,Proposed,2170-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 166
+Nhà máy điện Phú Mỹ 167,Domestic Gas,Proposed,2171-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 167
+Nhà máy điện Phú Mỹ 168,Domestic Gas,Proposed,2172-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 168
+Nhà máy điện Phú Mỹ 169,Domestic Gas,Proposed,2173-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 169
+Nhà máy điện Phú Mỹ 170,Domestic Gas,Proposed,2174-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 170
+Nhà máy điện Phú Mỹ 171,Domestic Gas,Proposed,2175-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 171
+Nhà máy điện Phú Mỹ 172,Domestic Gas,Proposed,2176-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 172
+Nhà máy điện Phú Mỹ 173,Domestic Gas,Proposed,2177-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 173
+Nhà máy điện Phú Mỹ 174,Domestic Gas,Proposed,2178-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 174
+Nhà máy điện Phú Mỹ 175,Domestic Gas,Proposed,2179-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 175
+Nhà máy điện Phú Mỹ 176,Domestic Gas,Proposed,2180-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 176
+Nhà máy điện Phú Mỹ 177,Domestic Gas,Proposed,2181-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 177
+Nhà máy điện Phú Mỹ 178,Domestic Gas,Proposed,2182-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 178
+Nhà máy điện Phú Mỹ 179,Domestic Gas,Proposed,2183-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 179
+Nhà máy điện Phú Mỹ 180,Domestic Gas,Proposed,2184-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 180
+Nhà máy điện Phú Mỹ 181,Domestic Gas,Proposed,2185-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 181
+Nhà máy điện Phú Mỹ 182,Domestic Gas,Proposed,2186-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 182
+Nhà máy điện Phú Mỹ 183,Domestic Gas,Proposed,2187-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 183
+Nhà máy điện Phú Mỹ 184,Domestic Gas,Proposed,2188-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 184
+Nhà máy điện Phú Mỹ 185,Domestic Gas,Proposed,2189-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 185
+Nhà máy điện Phú Mỹ 186,Domestic Gas,Proposed,2190-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 186
+Nhà máy điện Phú Mỹ 187,Domestic Gas,Proposed,2191-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 187
+Nhà máy điện Phú Mỹ 188,Domestic Gas,Proposed,2192-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 188
+Nhà máy điện Phú Mỹ 189,Domestic Gas,Proposed,2193-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 189
+Nhà máy điện Phú Mỹ 190,Domestic Gas,Proposed,2194-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 190
+Nhà máy điện Phú Mỹ 191,Domestic Gas,Proposed,2195-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 191
+Nhà máy điện Phú Mỹ 192,Domestic Gas,Proposed,2196-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 192
+Nhà máy điện Phú Mỹ 193,Domestic Gas,Proposed,2197-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 193
+Nhà máy điện Phú Mỹ 194,Domestic Gas,Proposed,2198-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 194
+Nhà máy điện Phú Mỹ 195,Domestic Gas,Proposed,2199-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 195
+Nhà máy điện Phú Mỹ 196,Domestic Gas,Proposed,2200-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 196
+Nhà máy điện Phú Mỹ 197,Domestic Gas,Proposed,2201-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 197
+Nhà máy điện Phú Mỹ 198,Domestic Gas,Proposed,2202-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 198
+Nhà máy điện Phú Mỹ 199,Domestic Gas,Proposed,2203-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 199
+Nhà máy điện Phú Mỹ 200,Domestic Gas,Proposed,2204-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 200
+Nhà máy điện Phú Mỹ 201,Domestic Gas,Proposed,2205-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 201
+Nhà máy điện Phú Mỹ 202,Domestic Gas,Proposed,2206-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 202
+Nhà máy điện Phú Mỹ 203,Domestic Gas,Proposed,2207-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 203
+Nhà máy điện Phú Mỹ 204,Domestic Gas,Proposed,2208-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 204
+Nhà máy điện Phú Mỹ 205,Domestic Gas,Proposed,2209-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 205
+Nhà máy điện Phú Mỹ 206,Domestic Gas,Proposed,2210-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 206
+Nhà máy điện Phú Mỹ 207,Domestic Gas,Proposed,2211-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 207
+Nhà máy điện Phú Mỹ 208,Domestic Gas,Proposed,2212-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 208
+Nhà máy điện Phú Mỹ 209,Domestic Gas,Proposed,2213-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 209
+Nhà máy điện Phú Mỹ 210,Domestic Gas,Proposed,2214-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 210
+Nhà máy điện Phú Mỹ 211,Domestic Gas,Proposed,2215-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 211
+Nhà máy điện Phú Mỹ 212,Domestic Gas,Proposed,2216-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 212
+Nhà máy điện Phú Mỹ 213,Domestic Gas,Proposed,2217-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 213
+Nhà máy điện Phú Mỹ 214,Domestic Gas,Proposed,2218-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 214
+Nhà máy điện Phú Mỹ 215,Domestic Gas,Proposed,2219-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 215
+Nhà máy điện Phú Mỹ 216,Domestic Gas,Proposed,2220-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 216
+Nhà máy điện Phú Mỹ 217,Domestic Gas,Proposed,2221-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 217
+Nhà máy điện Phú Mỹ 218,Domestic Gas,Proposed,2222-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 218
+Nhà máy điện Phú Mỹ 219,Domestic Gas,Proposed,2223-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 219
+Nhà máy điện Phú Mỹ 220,Domestic Gas,Proposed,2224-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 220
+Nhà máy điện Phú Mỹ 221,Domestic Gas,Proposed,2225-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 221
+Nhà máy điện Phú Mỹ 222,Domestic Gas,Proposed,2226-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 222
+Nhà máy điện Phú Mỹ 223,Domestic Gas,Proposed,2227-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 223
+Nhà máy điện Phú Mỹ 224,Domestic Gas,Proposed,2228-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 224
+Nhà máy điện Phú Mỹ 225,Domestic Gas,Proposed,2229-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 225
+Nhà máy điện Phú Mỹ 226,Domestic Gas,Proposed,2230-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 226
+Nhà máy điện Phú Mỹ 227,Domestic Gas,Proposed,2231-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 227
+Nhà máy điện Phú Mỹ 228,Domestic Gas,Proposed,2232-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 228
+Nhà máy điện Phú Mỹ 229,Domestic Gas,Proposed,2233-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 229
+Nhà máy điện Phú Mỹ 230,Domestic Gas,Proposed,2234-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 230
+Nhà máy điện Phú Mỹ 231,Domestic Gas,Proposed,2235-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 231
+Nhà máy điện Phú Mỹ 232,Domestic Gas,Proposed,2236-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 232
+Nhà máy điện Phú Mỹ 233,Domestic Gas,Proposed,2237-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 233
+Nhà máy điện Phú Mỹ 234,Domestic Gas,Proposed,2238-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 234
+Nhà máy điện Phú Mỹ 235,Domestic Gas,Proposed,2239-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 235
+Nhà máy điện Phú Mỹ 236,Domestic Gas,Proposed,2240-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 236
+Nhà máy điện Phú Mỹ 237,Domestic Gas,Proposed,2241-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 237
+Nhà máy điện Phú Mỹ 238,Domestic Gas,Proposed,2242-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 238
+Nhà máy điện Phú Mỹ 239,Domestic Gas,Proposed,2243-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 239
+Nhà máy điện Phú Mỹ 240,Domestic Gas,Proposed,2244-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 240
+Nhà máy điện Phú Mỹ 241,Domestic Gas,Proposed,2245-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 241
+Nhà máy điện Phú Mỹ 242,Domestic Gas,Proposed,2246-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 242
+Nhà máy điện Phú Mỹ 243,Domestic Gas,Proposed,2247-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 243
+Nhà máy điện Phú Mỹ 244,Domestic Gas,Proposed,2248-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 244
+Nhà máy điện Phú Mỹ 245,Domestic Gas,Proposed,2249-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 245
+Nhà máy điện Phú Mỹ 246,Domestic Gas,Proposed,2250-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 246
+Nhà máy điện Phú Mỹ 247,Domestic Gas,Proposed,2251-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 247
+Nhà máy điện Phú Mỹ 248,Domestic Gas,Proposed,2252-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 248
+Nhà máy điện Phú Mỹ 249,Domestic Gas,Proposed,2253-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 249
+Nhà máy điện Phú Mỹ 250,Domestic Gas,Proposed,2254-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 250
+Nhà máy điện Phú Mỹ 251,Domestic Gas,Proposed,2255-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 251
+Nhà máy điện Phú Mỹ 252,Domestic Gas,Proposed,2256-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 252
+Nhà máy điện Phú Mỹ 253,Domestic Gas,Proposed,2257-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 253
+Nhà máy điện Phú Mỹ 254,Domestic Gas,Proposed,2258-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 254
+Nhà máy điện Phú Mỹ 255,Domestic Gas,Proposed,2259-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 255
+Nhà máy điện Phú Mỹ 256,Domestic Gas,Proposed,2260-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 256
+Nhà máy điện Phú Mỹ 257,Domestic Gas,Proposed,2261-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 257
+Nhà máy điện Phú Mỹ 258,Domestic Gas,Proposed,2262-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 258
+Nhà máy điện Phú Mỹ 259,Domestic Gas,Proposed,2263-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 259
+Nhà máy điện Phú Mỹ 260,Domestic Gas,Proposed,2264-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 260
+Nhà máy điện Phú Mỹ 261,Domestic Gas,Proposed,2265-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 261
+Nhà máy điện Phú Mỹ 262,Domestic Gas,Proposed,2266-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 262
+Nhà máy điện Phú Mỹ 263,Domestic Gas,Proposed,2267-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 263
+Nhà máy điện Phú Mỹ 264,Domestic Gas,Proposed,2268-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 264
+Nhà máy điện Phú Mỹ 265,Domestic Gas,Proposed,2269-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 265
+Nhà máy điện Phú Mỹ 266,Domestic Gas,Proposed,2270-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 266
+Nhà máy điện Phú Mỹ 267,Domestic Gas,Proposed,2271-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 267
+Nhà máy điện Phú Mỹ 268,Domestic Gas,Proposed,2272-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 268
+Nhà máy điện Phú Mỹ 269,Domestic Gas,Proposed,2273-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 269
+Nhà máy điện Phú Mỹ 270,Domestic Gas,Proposed,2274-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 270
+Nhà máy điện Phú Mỹ 271,Domestic Gas,Proposed,2275-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 271
+Nhà máy điện Phú Mỹ 272,Domestic Gas,Proposed,2276-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 272
+Nhà máy điện Phú Mỹ 273,Domestic Gas,Proposed,2277-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 273
+Nhà máy điện Phú Mỹ 274,Domestic Gas,Proposed,2278-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 274
+Nhà máy điện Phú Mỹ 275,Domestic Gas,Proposed,2279-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 275
+Nhà máy điện Phú Mỹ 276,Domestic Gas,Proposed,2280-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 276
+Nhà máy điện Phú Mỹ 277,Domestic Gas,Proposed,2281-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 277
+Nhà máy điện Phú Mỹ 278,Domestic Gas,Proposed,2282-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 278
+Nhà máy điện Phú Mỹ 279,Domestic Gas,Proposed,2283-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 279
+Nhà máy điện Phú Mỹ 280,Domestic Gas,Proposed,2284-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 280
+Nhà máy điện Phú Mỹ 281,Domestic Gas,Proposed,2285-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 281
+Nhà máy điện Phú Mỹ 282,Domestic Gas,Proposed,2286-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 282
+Nhà máy điện Phú Mỹ 283,Domestic Gas,Proposed,2287-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 283
+Nhà máy điện Phú Mỹ 284,Domestic Gas,Proposed,2288-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 284
+Nhà máy điện Phú Mỹ 285,Domestic Gas,Proposed,2289-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 285
+Nhà máy điện Phú Mỹ 286,Domestic Gas,Proposed,2290-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 286
+Nhà máy điện Phú Mỹ 287,Domestic Gas,Proposed,2291-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 287
+Nhà máy điện Phú Mỹ 288,Domestic Gas,Proposed,2292-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 288
+Nhà máy điện Phú Mỹ 289,Domestic Gas,Proposed,2293-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 289
+Nhà máy điện Phú Mỹ 290,Domestic Gas,Proposed,2294-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 290
+Nhà máy điện Phú Mỹ 291,Domestic Gas,Proposed,2295-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 291
+Nhà máy điện Phú Mỹ 292,Domestic Gas,Proposed,2296-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 292
+Nhà máy điện Phú Mỹ 293,Domestic Gas,Proposed,2297-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 293
+Nhà máy điện Phú Mỹ 294,Domestic Gas,Proposed,2298-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 294
+Nhà máy điện Phú Mỹ 295,Domestic Gas,Proposed,2299-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 295
+Nhà máy điện Phú Mỹ 296,Domestic Gas,Proposed,2300-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 296
+Nhà máy điện Phú Mỹ 297,Domestic Gas,Proposed,2301-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 297
+Nhà máy điện Phú Mỹ 298,Domestic Gas,Proposed,2302-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 298
+Nhà máy điện Phú Mỹ 299,Domestic Gas,Proposed,2303-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 299
+Nhà máy điện Phú Mỹ 300,Domestic Gas,Proposed,2304-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 300
+Nhà máy điện Phú Mỹ 301,Domestic Gas,Proposed,2305-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 301
+Nhà máy điện Phú Mỹ 302,Domestic Gas,Proposed,2306-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 302
+Nhà máy điện Phú Mỹ 303,Domestic Gas,Proposed,2307-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 303
+Nhà máy điện Phú Mỹ 304,Domestic Gas,Proposed,2308-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 304
+Nhà máy điện Phú Mỹ 305,Domestic Gas,Proposed,2309-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 305
+Nhà máy điện Phú Mỹ 306,Domestic Gas,Proposed,2310-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 306
+Nhà máy điện Phú Mỹ 307,Domestic Gas,Proposed,2311-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 307
+Nhà máy điện Phú Mỹ 308,Domestic Gas,Proposed,2312-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 308
+Nhà máy điện Phú Mỹ 309,Domestic Gas,Proposed,2313-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 309
+Nhà máy điện Phú Mỹ 310,Domestic Gas,Proposed,2314-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 310
+Nhà máy điện Phú Mỹ 311,Domestic Gas,Proposed,2315-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 311
+Nhà máy điện Phú Mỹ 312,Domestic Gas,Proposed,2316-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 312
+Nhà máy điện Phú Mỹ 313,Domestic Gas,Proposed,2317-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 313
+Nhà máy điện Phú Mỹ 314,Domestic Gas,Proposed,2318-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 314
+Nhà máy điện Phú Mỹ 315,Domestic Gas,Proposed,2319-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 315
+Nhà máy điện Phú Mỹ 316,Domestic Gas,Proposed,2320-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 316
+Nhà máy điện Phú Mỹ 317,Domestic Gas,Proposed,2321-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 317
+Nhà máy điện Phú Mỹ 318,Domestic Gas,Proposed,2322-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 318
+Nhà máy điện Phú Mỹ 319,Domestic Gas,Proposed,2323-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 319
+Nhà máy điện Phú Mỹ 320,Domestic Gas,Proposed,2324-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 320
+Nhà máy điện Phú Mỹ 321,Domestic Gas,Proposed,2325-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 321
+Nhà máy điện Phú Mỹ 322,Domestic Gas,Proposed,2326-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 322
+Nhà máy điện Phú Mỹ 323,Domestic Gas,Proposed,2327-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 323
+Nhà máy điện Phú Mỹ 324,Domestic Gas,Proposed,2328-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 324
+Nhà máy điện Phú Mỹ 325,Domestic Gas,Proposed,2329-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 325
+Nhà máy điện Phú Mỹ 326,Domestic Gas,Proposed,2330-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 326
+Nhà máy điện Phú Mỹ 327,Domestic Gas,Proposed,2331-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 327
+Nhà máy điện Phú Mỹ 328,Domestic Gas,Proposed,2332-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 328
+Nhà máy điện Phú Mỹ 329,Domestic Gas,Proposed,2333-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 329
+Nhà máy điện Phú Mỹ 330,Domestic Gas,Proposed,2334-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 330
+Nhà máy điện Phú Mỹ 331,Domestic Gas,Proposed,2335-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 331
+Nhà máy điện Phú Mỹ 332,Domestic Gas,Proposed,2336-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 332
+Nhà máy điện Phú Mỹ 333,Domestic Gas,Proposed,2337-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 333
+Nhà máy điện Phú Mỹ 334,Domestic Gas,Proposed,2338-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 334
+Nhà máy điện Phú Mỹ 335,Domestic Gas,Proposed,2339-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 335
+Nhà máy điện Phú Mỹ 336,Domestic Gas,Proposed,2340-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 336
+Nhà máy điện Phú Mỹ 337,Domestic Gas,Proposed,2341-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 337
+Nhà máy điện Phú Mỹ 338,Domestic Gas,Proposed,2342-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 338
+Nhà máy điện Phú Mỹ 339,Domestic Gas,Proposed,2343-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 339
+Nhà máy điện Phú Mỹ 340,Domestic Gas,Proposed,2344-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 340
+Nhà máy điện Phú Mỹ 341,Domestic Gas,Proposed,2345-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 341
+Nhà máy điện Phú Mỹ 342,Domestic Gas,Proposed,2346-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 342
+Nhà máy điện Phú Mỹ 343,Domestic Gas,Proposed,2347-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 343
+Nhà máy điện Phú Mỹ 344,Domestic Gas,Proposed,2348-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 344
+Nhà máy điện Phú Mỹ 345,Domestic Gas,Proposed,2349-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 345
+Nhà máy điện Phú Mỹ 346,Domestic Gas,Proposed,2350-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 346
+Nhà máy điện Phú Mỹ 347,Domestic Gas,Proposed,2351-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 347
+Nhà máy điện Phú Mỹ 348,Domestic Gas,Proposed,2352-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 348
+Nhà máy điện Phú Mỹ 349,Domestic Gas,Proposed,2353-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 349
+Nhà máy điện Phú Mỹ 350,Domestic Gas,Proposed,2354-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 350
+Nhà máy điện Phú Mỹ 351,Domestic Gas,Proposed,2355-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 351
+Nhà máy điện Phú Mỹ 352,Domestic Gas,Proposed,2356-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 352
+Nhà máy điện Phú Mỹ 353,Domestic Gas,Proposed,2357-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 353
+Nhà máy điện Phú Mỹ 354,Domestic Gas,Proposed,2358-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 354
+Nhà máy điện Phú Mỹ 355,Domestic Gas,Proposed,2359-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 355
+Nhà máy điện Phú Mỹ 356,Domestic Gas,Proposed,2360-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 356
+Nhà máy điện Phú Mỹ 357,Domestic Gas,Proposed,2361-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 357
+Nhà máy điện Phú Mỹ 358,Domestic Gas,Proposed,2362-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 358
+Nhà máy điện Phú Mỹ 359,Domestic Gas,Proposed,2363-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 359
+Nhà máy điện Phú Mỹ 360,Domestic Gas,Proposed,2364-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 360
+Nhà máy điện Phú Mỹ 361,Domestic Gas,Proposed,2365-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 361
+Nhà máy điện Phú Mỹ 362,Domestic Gas,Proposed,2366-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 362
+Nhà máy điện Phú Mỹ 363,Domestic Gas,Proposed,2367-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 363
+Nhà máy điện Phú Mỹ 364,Domestic Gas,Proposed,2368-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 364
+Nhà máy điện Phú Mỹ 365,Domestic Gas,Proposed,2369-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 365
+Nhà máy điện Phú Mỹ 366,Domestic Gas,Proposed,2370-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 366
+Nhà máy điện Phú Mỹ 367,Domestic Gas,Proposed,2371-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 367
+Nhà máy điện Phú Mỹ 368,Domestic Gas,Proposed,2372-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 368
+Nhà máy điện Phú Mỹ 369,Domestic Gas,Proposed,2373-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 369
+Nhà máy điện Phú Mỹ 370,Domestic Gas,Proposed,2374-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 370
+Nhà máy điện Phú Mỹ 371,Domestic Gas,Proposed,2375-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 371
+Nhà máy điện Phú Mỹ 372,Domestic Gas,Proposed,2376-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 372
+Nhà máy điện Phú Mỹ 373,Domestic Gas,Proposed,2377-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 373
+Nhà máy điện Phú Mỹ 374,Domestic Gas,Proposed,2378-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 374
+Nhà máy điện Phú Mỹ 375,Domestic Gas,Proposed,2379-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 375
+Nhà máy điện Phú Mỹ 376,Domestic Gas,Proposed,2380-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 376
+Nhà máy điện Phú Mỹ 377,Domestic Gas,Proposed,2381-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 377
+Nhà máy điện Phú Mỹ 378,Domestic Gas,Proposed,2382-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 378
+Nhà máy điện Phú Mỹ 379,Domestic Gas,Proposed,2383-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 379
+Nhà máy điện Phú Mỹ 380,Domestic Gas,Proposed,2384-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 380
+Nhà máy điện Phú Mỹ 381,Domestic Gas,Proposed,2385-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 381
+Nhà máy điện Phú Mỹ 382,Domestic Gas,Proposed,2386-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 382
+Nhà máy điện Phú Mỹ 383,Domestic Gas,Proposed,2387-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 383
+Nhà máy điện Phú Mỹ 384,Domestic Gas,Proposed,2388-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 384
+Nhà máy điện Phú Mỹ 385,Domestic Gas,Proposed,2389-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 385
+Nhà máy điện Phú Mỹ 386,Domestic Gas,Proposed,2390-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 386
+Nhà máy điện Phú Mỹ 387,Domestic Gas,Proposed,2391-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 387
+Nhà máy điện Phú Mỹ 388,Domestic Gas,Proposed,2392-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 388
+Nhà máy điện Phú Mỹ 389,Domestic Gas,Proposed,2393-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 389
+Nhà máy điện Phú Mỹ 390,Domestic Gas,Proposed,2394-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 390
+Nhà máy điện Phú Mỹ 391,Domestic Gas,Proposed,2395-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 391
+Nhà máy điện Phú Mỹ 392,Domestic Gas,Proposed,2396-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 392
+Nhà máy điện Phú Mỹ 393,Domestic Gas,Proposed,2397-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 393
+Nhà máy điện Phú Mỹ 394,Domestic Gas,Proposed,2398-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 394
+Nhà máy điện Phú Mỹ 395,Domestic Gas,Proposed,2399-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 395
+Nhà máy điện Phú Mỹ 396,Domestic Gas,Proposed,2400-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 396
+Nhà máy điện Phú Mỹ 397,Domestic Gas,Proposed,2401-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 397
+Nhà máy điện Phú Mỹ 398,Domestic Gas,Proposed,2402-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 398
+Nhà máy điện Phú Mỹ 399,Domestic Gas,Proposed,2403-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 399
+Nhà máy điện Phú Mỹ 400,Domestic Gas,Proposed,2404-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 400
+Nhà máy điện Phú Mỹ 401,Domestic Gas,Proposed,2405-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 401
+Nhà máy điện Phú Mỹ 402,Domestic Gas,Proposed,2406-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 402
+Nhà máy điện Phú Mỹ 403,Domestic Gas,Proposed,2407-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 403
+Nhà máy điện Phú Mỹ 404,Domestic Gas,Proposed,2408-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 404
+Nhà máy điện Phú Mỹ 405,Domestic Gas,Proposed,2409-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 405
+Nhà máy điện Phú Mỹ 406,Domestic Gas,Proposed,2410-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 406
+Nhà máy điện Phú Mỹ 407,Domestic Gas,Proposed,2411-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 407
+Nhà máy điện Phú Mỹ 408,Domestic Gas,Proposed,2412-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 408
+Nhà máy điện Phú Mỹ 409,Domestic Gas,Proposed,2413-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 409
+Nhà máy điện Phú Mỹ 410,Domestic Gas,Proposed,2414-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 410
+Nhà máy điện Phú Mỹ 411,Domestic Gas,Proposed,2415-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 411
+Nhà máy điện Phú Mỹ 412,Domestic Gas,Proposed,2416-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 412
+Nhà máy điện Phú Mỹ 413,Domestic Gas,Proposed,2417-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 413
+Nhà máy điện Phú Mỹ 414,Domestic Gas,Proposed,2418-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 414
+Nhà máy điện Phú Mỹ 415,Domestic Gas,Proposed,2419-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 415
+Nhà máy điện Phú Mỹ 416,Domestic Gas,Proposed,2420-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 416
+Nhà máy điện Phú Mỹ 417,Domestic Gas,Proposed,2421-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 417
+Nhà máy điện Phú Mỹ 418,Domestic Gas,Proposed,2422-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 418
+Nhà máy điện Phú Mỹ 419,Domestic Gas,Proposed,2423-01-01,Ba Ria - Vung Tau,150.0,,,Proposed Phase 419
+Nhà máy điện,,,,,0,,,
