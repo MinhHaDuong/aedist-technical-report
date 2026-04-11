@@ -1,0 +1,79 @@
+%erg v1
+Title: Rename modalities so decomposed signals RAG and census signals naive prompt
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T10:20Z claude created
+
+--- body ---
+## Context
+
+Two naming choices in the experiment vocabulary mislead readers (and
+agents working on the codebase):
+
+1. **"Decomposed" hides that it's a RAG variant.** The decomposition
+   strategy (`src/aedist/query_decomposed.py`) injects the same RAG
+   corpus as `query_rag.py` into the system message — only the user
+   prompt is split into 3 fuel sub-queries. From the name alone,
+   "decomposed" sounds like a parametric trick. It is not. It is a
+   RAG sub-strategy. Outputs live in `experiments/outputs/decomposed/`,
+   the corresponding sweep is `decomposed`, the report section is
+   "Décomposition par type de combustible" — none of these signal RAG.
+   Consequence: when comparing it against `parametric` / `rag` /
+   `web_search` regimes (ablation Phase 1), the reader has to know
+   the implementation to place it in the right column.
+
+2. **"Census" is a more naive prompt than "base", but the names
+   suggest the opposite.** "Census" reads as the rigorous/exhaustive
+   variant; "base" reads as the stripped-down baseline. In practice
+   the relation is reversed — `prompts/prompt_structured.txt` (used
+   by the census sweep) is the terse one-liner ("Provide a table
+   listing all thermal power plants in Vietnam..."), while the
+   "base" prompt in the ablation framework is the enriched starting
+   point that prompt modules attach to. A reader scanning tables
+   sees "census > base" and infers more rigour where there is less.
+
+## Actions
+
+1. Decide replacement names. Suggestions (not prescriptive):
+   - `decomposed` → `rag_decomposed` or `rag_by_fuel` (signals it
+     is a RAG variant, scoped by fuel category)
+   - `census` (the prompt/sweep) → `naive` or `terse` or
+     `unstructured_prompt`. Or rename `base` to `enriched_base`
+     and leave `census` alone if "census" carries domain meaning
+     elsewhere (the dataset name).
+2. Audit the touch surface before renaming. Grep for the strings:
+   ```
+   experiments/experiments.toml
+   experiments/outputs/{decomposed,census}/
+   src/aedist/query_decomposed.py
+   src/aedist/*.py (any sweep dispatching)
+   report/report.tex (section headings, table captions, prose)
+   measurements.jsonl (strategy field)
+   tickets/*.erg (Blocked-by refs, body text)
+   ```
+3. Renames need a migration commit, not a sed-and-pray:
+   - rename output directories with `git mv`
+   - update `experiments.toml` set/sweep names
+   - update `strategy` field values written by the harness
+   - regenerate or backfill `measurements.jsonl` so historical rows
+     match the new vocabulary (or document the pre/post split)
+   - update report tex and regenerate PDF
+4. Update `MEMORY.md` and any user-visible memories that name the
+   old vocabulary.
+
+## Test
+
+After rename, a fresh reader should be able to look at the report
+table for the three regimes and place each method in the correct
+column without consulting the source.
+
+## Exit criteria
+
+- New names committed across code, config, outputs, and report.
+- Report regenerated and visually checked.
+- No stale references to old names in active tickets or memory.
+- Decision recorded in commit message (which name was picked and
+  why), so the rename does not get re-litigated in three months.
