@@ -91,8 +91,10 @@ def main():
 
     if args.prompt_modules is not None:
         prompt = assemble_prompt(Path(args.modules_dir), args.prompt_modules)
+        prompt_path: str | None = None
     else:
         prompt = Path(args.prompt).read_text().strip()
+        prompt_path = args.prompt
     models = load_models(args.models)
     output_dir = Path(args.output)
 
@@ -129,7 +131,10 @@ def main():
     # method x model matrix.
     health = ProviderHealth()
     sweep_id = output_dir.name or "sweep"
-    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
+    # Full 64-char digest so a resume path can reliably detect prompt
+    # drift; the 16-char prefix previously stored here risked collisions
+    # and gave the resumer no source reference.
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
 
     for model in models:
         model_id = model["id"]
@@ -170,6 +175,7 @@ def main():
                     model_id=model_id,
                     run=run,
                     prompt_hash=prompt_hash,
+                    prompt_path=prompt_path,
                     reason=reason,
                 )
                 continue
@@ -211,6 +217,7 @@ def main():
                     model_id=model_id,
                     run=run,
                     prompt_hash=prompt_hash,
+                    prompt_path=prompt_path,
                     reason=str(verdict),
                 )
 

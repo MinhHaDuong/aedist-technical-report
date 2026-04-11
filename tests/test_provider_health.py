@@ -122,10 +122,23 @@ def test_classify_generic_timeout_is_soft_retry():
     assert classify_exception(exc).disposition is Disposition.SOFT_RETRY
 
 
-def test_classify_unknown_defaults_to_soft_retry():
-    """Unknown errors should be conservatively retried, not hard-stopped."""
-    exc = RuntimeError("who knows")
+def test_classify_httpx_connect_error_is_soft_retry():
+    """Genuine network hiccups from httpx bubble up as soft retries."""
+    import httpx
+
+    exc = httpx.ConnectError("connect failed")
     assert classify_exception(exc).disposition is Disposition.SOFT_RETRY
+
+
+def test_unknown_exception_propagates():
+    """A programming bug (RuntimeError, KeyError, etc.) must NOT be
+    swallowed by the retry loop. Let it propagate so the real bug is
+    visible instead of being masked as 'provider was capped'."""
+    import pytest
+
+    exc = RuntimeError("bug in dispatch code")
+    with pytest.raises(RuntimeError, match="bug in dispatch code"):
+        classify_exception(exc)
 
 
 # ---------------------------------------------------------------------------
@@ -184,12 +197,38 @@ def test_health_soft_retry_does_not_block_immediately():
 
 
 def test_health_soft_retry_promotes_after_n_attempts():
-    """After N=3 soft retries, the provider should be hard-stopped."""
+    """After N=3 soft retries, the failing cell should be blocked."""
     health = ProviderHealth(soft_retry_limit=3)
     exc = _make_api_error(503)
     for _ in range(3):
         health.record_failure("openrouter", "deepseek/deepseek-chat", exc)
     assert health.is_blocked("openrouter", "deepseek/deepseek-chat")
+
+
+def test_soft_retry_promotion_scopes_to_model():
+    """A flaky single model must not take down every other model on the
+    same router. Soft-retry promotion is model-scoped; only genuine
+    router-wide errors (402 credit) hard-stop the whole router."""
+    health = ProviderHealth(soft_retry_limit=3)
+    exc = _make_api_error(503)
+    for _ in range(3):
+        health.record_failure("openrouter", "deepseek/deepseek-chat", exc)
+    # The flaky model is blocked...
+    assert health.is_blocked("openrouter", "deepseek/deepseek-chat")
+    # ...but other models on the same router remain runnable.
+    assert not health.is_blocked("openrouter", "moonshot/kimi-k2")
+    assert not health.is_blocked("openrouter", "anthropic/claude-sonnet")
+
+
+def test_hard_stop_on_account_credit_blocks_whole_router():
+    """A 402 payment-required error is account-wide: the whole router
+    must be blocked, not just the model that happened to trigger it."""
+    health = ProviderHealth()
+    exc = _make_api_error(402, message="Insufficient credits")
+    health.record_failure("openrouter", "deepseek/deepseek-chat", exc)
+    assert health.is_blocked("openrouter", "deepseek/deepseek-chat")
+    assert health.is_blocked("openrouter", "moonshot/kimi-k2")
+    assert health.is_blocked("openrouter", "anthropic/claude-sonnet")
 
 
 def test_health_success_resets_soft_retry_counter():
@@ -225,6 +264,7 @@ def test_park_cell_writes_jsonl_record(tmp_path):
         model_id="deepseek/deepseek-chat",
         run=2,
         prompt_hash="abc123",
+        prompt_path="experiments/prompts/rag_v2.txt",
         reason="hard_stop: 402 insufficient credits",
     )
     parked_file = tmp_path / "parked.jsonl"
@@ -236,8 +276,53 @@ def test_park_cell_writes_jsonl_record(tmp_path):
     assert rec["model_id"] == "deepseek/deepseek-chat"
     assert rec["run"] == 2
     assert rec["prompt_hash"] == "abc123"
+    assert rec["prompt_path"] == "experiments/prompts/rag_v2.txt"
     assert "hard_stop" in rec["reason"]
     assert "parked_at" in rec
+
+
+def test_park_cell_full_sha256_digest_and_path_for_drift_detection(tmp_path):
+    """A parked record must carry the full 64-char SHA-256 of the prompt
+    and the source path that was hashed. The resume path uses the pair
+    to tell 'same prompt, resume safe' from 'prompt edited, stop and
+    ask'. Truncated hashes collide; missing paths leave the resumer
+    with no reference point."""
+    import hashlib
+
+    prompt_text = "Estimate Vietnam 2050 emissions under BAU."
+    full_digest = hashlib.sha256(prompt_text.encode("utf-8")).hexdigest()
+    assert len(full_digest) == 64
+
+    park_cell(
+        tmp_path,
+        sweep_id="s",
+        model_id="m",
+        run=1,
+        prompt_hash=full_digest,
+        prompt_path="prompts/vn_2050.txt",
+        reason="hard_stop",
+    )
+    rec = json.loads((tmp_path / "parked.jsonl").read_text().splitlines()[0])
+    assert rec["prompt_hash"] == full_digest
+    assert len(rec["prompt_hash"]) == 64
+    assert rec["prompt_path"] == "prompts/vn_2050.txt"
+
+
+def test_park_cell_prompt_path_none_for_in_memory_prompts(tmp_path):
+    """When the prompt is assembled from modules in memory there is no
+    single source file. ``prompt_path`` must be stored as JSON null —
+    never a fabricated path."""
+    park_cell(
+        tmp_path,
+        sweep_id="s",
+        model_id="m",
+        run=1,
+        prompt_hash="a" * 64,
+        reason="hard_stop",
+    )
+    rec = json.loads((tmp_path / "parked.jsonl").read_text().splitlines()[0])
+    assert "prompt_path" in rec
+    assert rec["prompt_path"] is None
 
 
 def test_park_cell_appends(tmp_path):

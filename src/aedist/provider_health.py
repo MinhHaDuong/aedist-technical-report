@@ -65,7 +65,26 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import httpx
+import openai
+
 log = logging.getLogger(__name__)
+
+
+# Exception base classes we consider "known network-ish failures" for
+# classify_exception's soft-retry default. Anything outside this tuple
+# is treated as a programming bug and re-raised instead of being
+# silently retried (which would mask the real root cause behind a
+# "provider was capped" message three retries later).
+_KNOWN_NETWORK_EXCEPTIONS: tuple[type[BaseException], ...] = (
+    httpx.HTTPError,
+    openai.APIConnectionError,
+    openai.APITimeoutError,
+    openai.APIError,
+    ConnectionError,
+    TimeoutError,
+    OSError,
+)
 
 
 class Disposition(enum.Enum):
@@ -78,12 +97,26 @@ class Disposition(enum.Enum):
 
 @dataclass
 class Verdict:
-    """Outcome of classifying a single failure."""
+    """Outcome of classifying a single failure.
+
+    ``scope`` narrows the blast radius of a ``HARD_STOP``:
+
+    * ``"router"`` — the whole router is dead (account credit exhausted,
+      top-level payment required). Every model served by that router
+      is blocked for the rest of the session.
+    * ``"model"`` — only this ``(router, model_id)`` pair is dead
+      (per-model daily cap, upstream provider cap behind OpenRouter).
+      Sister models on the same router keep running.
+
+    The field is only meaningful for ``HARD_STOP`` verdicts; other
+    dispositions ignore it.
+    """
 
     disposition: Disposition
     reason: str
     status_code: int | None = None
     upstream_provider: str | None = None
+    scope: str = "router"
 
     def __str__(self) -> str:  # pragma: no cover - trivial
         bits = [self.disposition.value, self.reason]
@@ -99,21 +132,34 @@ class Verdict:
 # ---------------------------------------------------------------------------
 
 # If the body/message contains any of these substrings (case-insensitive),
-# treat as hard stop regardless of the HTTP status code. Daily caps and
-# quota exhaustion are surfaced inconsistently across providers.
-_HARD_STOP_KEYWORDS = (
+# treat as hard stop regardless of the HTTP status code.
+#
+# Split by blast radius:
+#
+# * Router-wide: account-level credit / billing language. Every model on
+#   the router is dead for the session.
+# * Model-wide: per-model daily caps. Sister models on the same router
+#   keep running.
+_HARD_STOP_KEYWORDS_ROUTER = (
     "insufficient credit",
     "insufficient_credits",
     "out of credit",
+    "credit balance",
+    "billing",
+    "payment required",
+)
+
+_HARD_STOP_KEYWORDS_MODEL = (
     "quota_exceeded",
     "quota exceeded",
     "daily quota",
     "daily usage",
     "daily limit",
-    "credit balance",
-    "billing",
-    "payment required",
 )
+
+# Backwards-compatible union for keyword checks that only care whether a
+# message looks like a hard stop at all (e.g. 429 triage below).
+_HARD_STOP_KEYWORDS = _HARD_STOP_KEYWORDS_ROUTER + _HARD_STOP_KEYWORDS_MODEL
 
 # Short-window rate-limit language. Not a cap — back off and retry.
 _SOFT_RETRY_KEYWORDS = (
@@ -178,17 +224,30 @@ def _extract_message(exc: Any, err_obj: dict) -> str:
 
 
 def classify_exception(exc: BaseException) -> Verdict:
-    """Classify a provider failure into a ``Verdict``.
+    """Classify a **known provider failure** into a ``Verdict``.
 
-    The classifier is deliberately conservative:
+    Contract: the caller passes an exception raised by the provider
+    client stack — typically ``openai.APIError`` / ``openai.APIStatusError``
+    / ``openai.APIConnectionError`` / ``openai.APITimeoutError``, or an
+    underlying ``httpx.HTTPError`` / ``ConnectionError`` / ``TimeoutError``
+    / ``OSError``. Those are the only shapes this function understands.
+
+    Classification rules:
 
     * Anything that *looks like* credit/quota exhaustion is a hard stop.
     * 403/404 are permanent skips for the single model.
     * Ollama/local connection-refused is a permanent skip (the daemon is
       down; another sweep may bring it back but this sweep should not
       block waiting).
-    * Timeouts and unknown errors default to soft retry rather than hard
-      stop so a flaky network does not silently pause a sweep.
+    * Known network-ish failures that do not match any of the above
+      (timeouts, transient httpx errors) default to soft retry so a
+      flaky link does not silently pause a sweep.
+
+    **Unknown exception types are re-raised.** A ``RuntimeError`` or
+    ``KeyError`` from a bug in the dispatch code is not a provider
+    failure; swallowing it as SOFT_RETRY would mask the real issue
+    behind a bogus "provider was capped" verdict after three retries.
+    The caller should catch only the exception classes it expects.
     """
 
     # Connection-refused (Ollama daemon down, local infra broken) →
@@ -226,21 +285,38 @@ def classify_exception(exc: BaseException) -> Verdict:
     except (TypeError, ValueError):
         inner_code_int = None
 
-    if inner_code_int == 402 or status == 402:
+    if status == 402:
+        # Outer HTTP 402: the router itself says "account is out of
+        # credit". Router-wide.
         return Verdict(
             disposition=Disposition.HARD_STOP,
             reason="402 payment required",
             status_code=status,
             upstream_provider=upstream,
+            scope="router",
+        )
+
+    if inner_code_int == 402:
+        # OpenRouter wraps an upstream-provider 402 inside its envelope.
+        # The router's own credit is fine; just this upstream (hence this
+        # specific model routing) is capped. Model-scoped.
+        return Verdict(
+            disposition=Disposition.HARD_STOP,
+            reason="402 upstream out of credit",
+            status_code=status,
+            upstream_provider=upstream,
+            scope="model",
         )
 
     err_type = err_obj.get("type")
     if isinstance(err_type, str) and err_type.lower() == "quota_exceeded":
+        # Per-model quota (e.g. daily cap on this model). Model-scoped.
         return Verdict(
             disposition=Disposition.HARD_STOP,
             reason="quota_exceeded",
             status_code=status,
             upstream_provider=upstream,
+            scope="model",
         )
 
     if status == 429:
@@ -249,11 +325,15 @@ def classify_exception(exc: BaseException) -> Verdict:
         # also contains "quota".
         for kw in _HARD_STOP_KEYWORDS:
             if kw in message:
+                # 429 + daily/quota language is a per-model cap. A true
+                # router-wide outage would surface as an outer 402 or a
+                # billing/payment keyword, handled elsewhere.
                 return Verdict(
                     disposition=Disposition.HARD_STOP,
                     reason=f"429 + daily/quota ({kw})",
                     status_code=status,
                     upstream_provider=upstream,
+                    scope="model",
                 )
         return Verdict(
             disposition=Disposition.SOFT_RETRY,
@@ -287,13 +367,23 @@ def classify_exception(exc: BaseException) -> Verdict:
         )
 
     # Body-level hard-stop signals independent of status code.
-    for kw in _HARD_STOP_KEYWORDS:
+    for kw in _HARD_STOP_KEYWORDS_ROUTER:
         if kw in message:
             return Verdict(
                 disposition=Disposition.HARD_STOP,
                 reason=f"body match ({kw})",
                 status_code=status,
                 upstream_provider=upstream,
+                scope="router",
+            )
+    for kw in _HARD_STOP_KEYWORDS_MODEL:
+        if kw in message:
+            return Verdict(
+                disposition=Disposition.HARD_STOP,
+                reason=f"body match ({kw})",
+                status_code=status,
+                upstream_provider=upstream,
+                scope="model",
             )
 
     for kw in _SOFT_RETRY_KEYWORDS:
@@ -305,8 +395,13 @@ def classify_exception(exc: BaseException) -> Verdict:
                 upstream_provider=upstream,
             )
 
-    # Conservative default: retry. A true hard stop will keep failing and
-    # be promoted after `soft_retry_limit` attempts.
+    # Conservative default: retry, but only for *known* network-ish
+    # exception types. Anything else (RuntimeError, KeyError, TypeError,
+    # ...) is almost certainly a bug in the dispatch layer; swallowing
+    # it would mask the real cause behind a fake "provider was capped"
+    # verdict three retries later. Let it propagate.
+    if not isinstance(exc, _KNOWN_NETWORK_EXCEPTIONS):
+        raise exc
     return Verdict(
         disposition=Disposition.SOFT_RETRY,
         reason=f"unclassified ({type(exc).__name__})",
@@ -330,15 +425,22 @@ class ProviderHealth:
 
     Blocked set semantics:
 
-    * A HARD_STOP on any model blocks the entire router. Credit is a
-      router-wide resource.
+    * A router-scoped HARD_STOP (account credit exhausted, outer 402)
+      blocks every model served by that router for the rest of the
+      session.
+    * A model-scoped HARD_STOP (per-model daily cap, upstream cap behind
+      OpenRouter) blocks just the one ``(router, model_id)`` pair.
     * A PERMANENT_SKIP only blocks the single model.
-    * A SOFT_RETRY increments a counter; on the ``soft_retry_limit``-th
-      consecutive failure, it is promoted to a router-wide hard stop.
+    * A SOFT_RETRY increments a per-cell counter; on the
+      ``soft_retry_limit``-th consecutive failure, the cell is promoted
+      to a model-scoped hard stop — *not* a router-wide one. A flaky
+      single model must not lock out every other model on the same
+      router.
     """
 
     soft_retry_limit: int = 3
     _hard_stopped_routers: dict[str, str] = field(default_factory=dict)
+    _hard_stopped_models: dict[tuple[str, str], str] = field(default_factory=dict)
     _permanent_skipped: dict[tuple[str, str], str] = field(default_factory=dict)
     _soft_counters: dict[tuple[str, str], int] = field(default_factory=dict)
 
@@ -354,8 +456,17 @@ class ProviderHealth:
         key = (router, model_id)
 
         if verdict.disposition is Disposition.HARD_STOP:
-            self._hard_stopped_routers[router] = str(verdict)
-            log.warning("provider_health: router %s HARD_STOP (%s)", router, verdict.reason)
+            if verdict.scope == "router":
+                self._hard_stopped_routers[router] = str(verdict)
+                log.warning("provider_health: router %s HARD_STOP (%s)", router, verdict.reason)
+            else:
+                self._hard_stopped_models[key] = str(verdict)
+                log.warning(
+                    "provider_health: model %s/%s HARD_STOP (%s)",
+                    router,
+                    model_id,
+                    verdict.reason,
+                )
         elif verdict.disposition is Disposition.PERMANENT_SKIP:
             self._permanent_skipped[key] = str(verdict)
             log.warning(
@@ -383,11 +494,13 @@ class ProviderHealth:
                     ),
                     status_code=verdict.status_code,
                     upstream_provider=verdict.upstream_provider,
+                    scope="model",
                 )
-                self._hard_stopped_routers[router] = str(promoted)
+                self._hard_stopped_models[key] = str(promoted)
                 log.warning(
-                    "provider_health: router %s promoted to HARD_STOP after %d soft retries",
+                    "provider_health: model %s/%s promoted to HARD_STOP after %d soft retries",
                     router,
+                    model_id,
                     self.soft_retry_limit,
                 )
                 return promoted
@@ -401,6 +514,8 @@ class ProviderHealth:
     def is_blocked(self, router: str, model_id: str) -> bool:
         if router in self._hard_stopped_routers:
             return True
+        if (router, model_id) in self._hard_stopped_models:
+            return True
         if (router, model_id) in self._permanent_skipped:
             return True
         return False
@@ -408,6 +523,8 @@ class ProviderHealth:
     def block_reason(self, router: str, model_id: str) -> str | None:
         if router in self._hard_stopped_routers:
             return self._hard_stopped_routers[router]
+        if (router, model_id) in self._hard_stopped_models:
+            return self._hard_stopped_models[(router, model_id)]
         return self._permanent_skipped.get((router, model_id))
 
     def hard_stopped_routers(self) -> list[str]:
@@ -427,14 +544,24 @@ def park_cell(
     run: int,
     prompt_hash: str,
     reason: str,
+    prompt_path: str | Path | None = None,
     extra: dict | None = None,
 ) -> Path:
     """Append a parked-cell record to ``<output_dir>/parked.jsonl``.
 
     A parked record carries enough state for a future ``resume_sweep`` to
-    re-dispatch the cell: the sweep id, model id, rep index, and a hash
-    of the prompt (so a prompt change is detectable and forces a manual
-    re-park decision).
+    re-dispatch the cell: the sweep id, model id, rep index, the full
+    64-char SHA-256 hex digest of the prompt text (``prompt_hash``), and
+    optionally the filesystem path of the prompt file that was hashed
+    (``prompt_path``). The resumer uses the pair to distinguish a true
+    match from prompt drift: if the file still hashes to the same digest,
+    resume is safe; if the digest has changed, the resume path must stop
+    and ask the operator.
+
+    ``prompt_path`` should be ``None`` when the prompt was assembled in
+    memory (e.g. from prompt modules) and has no single source file.
+    Do not fabricate a path in that case — ``None`` is the honest signal
+    that drift detection is impossible for this record.
 
     Returns the path to the parked.jsonl file.
     """
@@ -448,6 +575,7 @@ def park_cell(
         "model_id": model_id,
         "run": run,
         "prompt_hash": prompt_hash,
+        "prompt_path": str(prompt_path) if prompt_path is not None else None,
         "reason": reason,
         "parked_at": datetime.now(UTC).isoformat(timespec="seconds"),
     }
