@@ -9,6 +9,7 @@ Author: claude
 2026-04-11T20:15Z claude note operator pointed at https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill — it is a Claude Code / Cursor skill (not a Python lib) that runs an evolutionary prompt-optimization loop against yes/no criteria; rewriting body to match
 2026-04-11T20:30Z claude note operator clarified: the balukosuri repo is only an example — scope is a broader survey of DSPy and peers, not a commitment to that one skill. Retitled ticket and rewrote body as a landscape review.
 2026-04-12T08:00Z claude note operator specified concrete optimization criteria (6 goals) and pointed to the evidence quality rubric in report/inputs/verification_methods.tex:62-80 as the 4-level (0–4) framework. Criteria are interdependent; the grail (all 6 simultaneously) is hard to reach.
+2026-04-12T08:30Z claude note operator: "universal" means three axes — cross-model, cross-asset-class (~6: thermal/renewables/hydro/storage/transmission/demand), cross-country (~10 ASEAN). Thermal plants in Vietnam is just the feasibility example. Target consumer is PyPSA-ASEAN. See report.tex:535-539 for the scaling argument (60 campaigns at $0.06 each).
 
 --- body ---
 ## Context
@@ -20,16 +21,44 @@ as an **example**, not a commitment. The real scope is a landscape
 review of automated prompt-optimization frameworks, with DSPy as
 the headline candidate.
 
-Why this matters for us: we carry several bespoke prompts (inventory,
-scenarios, skill, census, rag, decomposed, sourced, multiturn) and
-the ablation machinery under `prompt_modules/` that mixes
-persona/overview/method fragments per sweep. Each variant is
-hand-tuned by feel. Our `measurements.jsonl` + per-cell accuracy
-scores already function as an optimization signal — we just never
-close the loop. A principled optimizer could plausibly produce a
-prompt (or module stack) that dominates the current hand-tuned set
-across models and conditions, which is what the operator means by
-"universal the prompt".
+**"Universal" means three axes of generality, not one:**
+
+1. **Cross-model** — the prompt works on cheap models, not just
+   frontier. Validated here.
+2. **Cross-asset-class** — thermal power plants are one of ~6
+   component classes needed for a full power system model: thermal
+   generators (validated here), renewables (solar, wind — present
+   in PDP8 annexes), hydroelectricity, storage (batteries, pumped
+   hydro), transmission network (lines, substations, interconnections),
+   and possibly demand profiles. The same government documents that
+   contain thermal plant tables contain these other components.
+   (report.tex:535-536)
+3. **Cross-country / statistical zone** — Vietnam is one of 10
+   ASEAN countries with national power development plans. Each
+   publishes in its own language (Thai, Bahasa Indonesia, Filipino,
+   Khmer, …) and regulatory framework. The pipeline is parameterized
+   by country: same method, different corpus. (report.tex:538-539)
+
+**Scale:** ~10 countries × ~6 asset classes ≈ 60 extraction campaigns.
+At $0.06/campaign (report estimate), a complete regional power system
+database costs less than one frontier model call. The target consumer
+is **PyPSA-ASEAN** (via PyPSA-Earth). Thermal plants in Vietnam is
+just the feasibility proof.
+
+Why this matters for prompt optimization: we don't want the best
+prompt for "Vietnamese thermal plants". We want a prompt *template*
+parameterized by `(asset_class, country)` that works across the full
+60-cell matrix. The optimizer must search over prompts that are
+generic enough to survive re-parameterization, not ones that overfit
+to the thermal/Vietnam test case. This is a much harder optimization
+target than single-task prompt tuning, but it's the only one that
+matters for production.
+
+Our current bespoke prompts (inventory, scenarios, skill, census,
+rag, decomposed, sourced, multiturn) and the ablation machinery under
+`prompt_modules/` are all tuned for the Vietnam thermal feasibility
+case. Our `measurements.jsonl` + per-cell accuracy scores already
+function as an optimization signal — we just never close the loop.
 
 This is a research spike, not a committed implementation. The goal
 is to pick *one* framework to prototype against, with reasons.
@@ -44,10 +73,18 @@ is hard because they pull against each other.
 |---|------|--------|-------------|
 | 1 | **Cross-model** | min(benchmark) over 5 cheap models — not mean, not best-of. The prompt must lift the floor. | Non-negotiable. This is what "universal" means. |
 | 2 | **No hallucinations** | Evidence score = 0 count must be zero. (Rubric level 0 = "source fabriquée, hallucination détectée".) | Non-negotiable. A single fabricated source fails the prompt. |
-| 3 | **Complete plant list** | Recall against the 163-plant reference inventory — every plant accounted for. | Hard to negotiate away, but in tension with #4. |
-| 4 | **Two independent primary sources per plant** | Evidence score = 4 for every plant. (Rubric level 4 = "deux sources primaires indépendantes ou plus".) | The grail. Currently the precision-coverage tradeoff (§ prec-cov) shows filtering at t=4 kills recall. |
+| 3 | **Complete asset list** | Recall against reference inventory — every asset accounted for. (163 plants for the Vietnam thermal feasibility case; TBD for other cells.) | Hard to negotiate away, but in tension with #4. |
+| 4 | **Two independent primary sources per asset** | Evidence score = 4 for every asset. (Rubric level 4 = "deux sources primaires indépendantes ou plus".) | The grail. Currently the precision-coverage tradeoff (§ prec-cov) shows filtering at t=4 kills recall. |
 | 5 | **Fast** | Wall-clock time per full eval run. | Negotiable — a 2× slower prompt that nails #1–#4 wins. |
-| 6 | **Cheap** | Total API cost (tokens × price) per full eval run. | Negotiable within reason — but caps the optimizer's own budget too. |
+| 6 | **Cheap** | Total API cost (tokens × price) per full eval run. At scale (60 campaigns), cost per campaign matters. | Negotiable within reason — but caps the optimizer's own budget too. |
+
+**Implicit 7th criterion: genericity.** The optimized prompt must be
+a template parameterized by `(asset_class, country)`, not a prompt
+baked to "Vietnamese thermal power plants". The optimizer must not
+overfit to the feasibility test case. Validation: after optimizing on
+the Vietnam/thermal cell, re-run the winning prompt on at least one
+other cell (e.g., Vietnam/renewables or Thailand/thermal) without
+re-tuning and check that performance doesn't collapse.
 
 ### The evidence quality rubric (existing, 0–4)
 
@@ -86,6 +123,40 @@ The realistic path is probably: nail #2, maximize #3 subject to #1,
 then push #4 as far as the Pareto frontier allows before #3 degrades
 unacceptably. #5/#6 are soft constraints that set the API budget cap
 for both the optimizer runs and the final eval.
+
+### Phasing (realistic bites)
+
+The research can be phased so each step delivers a usable result
+even if we stop:
+
+**Phase 1 — Survey + single-cell prototype (this ticket).**
+Framework comparison table. Pick one tool (DSPy prior). Optimize
+on Vietnam/thermal against 5 cheap models. Deliverable: one prompt
+that beats baseline on the feasibility case, or a justified "no
+tool helps here" result.
+
+**Phase 2 — Cross-asset-class transfer.**
+Take the Phase 1 winner, parameterize by asset class, run on
+Vietnam/renewables and Vietnam/hydro without re-tuning. Measure
+how far performance drops. If it holds: the prompt template is
+asset-generic for Vietnam. If it doesn't: characterize what
+breaks and whether the optimizer can fix it with one round of
+per-class tuning.
+
+**Phase 3 — Cross-country transfer.**
+Take the Phase 2 template, re-parameterize by country, run on
+Thailand/thermal or Indonesia/thermal (whichever has a reference
+inventory or can get one cheaply). Measure transfer. The
+multilingual dimension (Thai, Bahasa) is the real test here.
+
+**Phase 4 — Full-matrix optimization.**
+If Phases 2–3 show the template generalizes, run the optimizer
+over a representative sample of the 60-cell matrix (e.g., 3
+countries × 3 asset classes = 9 cells) using the min-of-cells
+composite objective. This is the expensive phase and only worth
+doing if the earlier phases show positive transfer.
+
+Each phase has a stop/continue gate. No phase requires the next.
 
 ## Candidate frameworks to survey
 
