@@ -11,6 +11,7 @@ Author: claude
 2026-04-12T08:00Z claude note operator specified concrete optimization criteria (6 goals) and pointed to the evidence quality rubric in report/inputs/verification_methods.tex:62-80 as the 4-level (0–4) framework. Criteria are interdependent; the grail (all 6 simultaneously) is hard to reach.
 2026-04-12T08:30Z claude note operator: "universal" means three axes — cross-model, cross-asset-class (~6: thermal/renewables/hydro/storage/transmission/demand), cross-country (~10 ASEAN). Thermal plants in Vietnam is just the feasibility example. Target consumer is PyPSA-ASEAN. See report.tex:535-539 for the scaling argument (60 campaigns at $0.06 each).
 2026-04-12T09:00Z claude note operator: deep review against philosophy of science (what is quality?) and statistician professional conduct codes. Added section grounding criteria in van Fraassen, Popper, measurement theory, UN Fundamental Principles, ISI/ASA ethics, DQAF. Flagged gaps: internal consistency, temporal coherence, ontological drift under optimization.
+2026-04-12T09:30Z claude note operator: quality review must live in docs/ as a standalone document (will inform the article), not just in the ticket. Opened ticket 0077 for academic lit review on the north star question.
 
 --- body ---
 ## Context
@@ -170,10 +171,13 @@ metrics onto them:
   changes what counts as a "plant" to improve F1, that's a
   philosophy-of-science red flag, not a win. Need a guard.
 
-The spike note must include a short section mapping our 6+1
-operational criteria to at least two of these frameworks (one
-philosophical, one professional-conduct) and flagging any
-dimensions we are not yet measuring.
+**Deliverable: `docs/quality-grounding.md`** — a standalone document
+(not just a ticket note) mapping our 6+1 operational criteria to
+these frameworks. This document will inform the journal article's
+framing of what "quality" means for AI-produced statistics. It must
+be citable from the article's methods or discussion section. See
+also ticket 0077 (academic lit review) which covers the broader
+literature landscape.
 
 ### The evidence quality rubric (existing, 0–4)
 
@@ -358,12 +362,12 @@ A short script or notebook that:
   evidence ≥ 4, cost, wall-clock time.
 - Pareto frontier plotted showing the completeness/sourcing tradeoff
   under the cross-model constraint.
-- **Quality grounding section** mapping our 6+1 operational criteria
-  to (a) at least one philosophy-of-science framework (empirical
-  adequacy, falsifiability, reproducibility) and (b) at least one
-  professional-conduct code (UN Fundamental Principles, ISI, ASA,
-  or European CoP / DQAF). Flag dimensions we are not yet measuring
-  (internal consistency, temporal coherence, ontological drift).
+- **`docs/quality-grounding.md` committed** — standalone review
+  mapping our 6+1 operational criteria to (a) philosophy-of-science
+  frameworks (empirical adequacy, falsifiability, reproducibility)
+  and (b) professional-conduct codes (UN Fundamental Principles,
+  ISI, ASA, European CoP / DQAF). Flags dimensions we are not yet
+  measuring. Written to be citable from the journal article.
 - Honest verdict on whether "one universal prompt" survives contact
   with our multi-model, multi-condition setup or whether any of
   these tools is better framed as a per-condition optimizer.
