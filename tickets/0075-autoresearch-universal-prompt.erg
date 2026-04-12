@@ -10,6 +10,7 @@ Author: claude
 2026-04-11T20:30Z claude note operator clarified: the balukosuri repo is only an example — scope is a broader survey of DSPy and peers, not a commitment to that one skill. Retitled ticket and rewrote body as a landscape review.
 2026-04-12T08:00Z claude note operator specified concrete optimization criteria (6 goals) and pointed to the evidence quality rubric in report/inputs/verification_methods.tex:62-80 as the 4-level (0–4) framework. Criteria are interdependent; the grail (all 6 simultaneously) is hard to reach.
 2026-04-12T08:30Z claude note operator: "universal" means three axes — cross-model, cross-asset-class (~6: thermal/renewables/hydro/storage/transmission/demand), cross-country (~10 ASEAN). Thermal plants in Vietnam is just the feasibility example. Target consumer is PyPSA-ASEAN. See report.tex:535-539 for the scaling argument (60 campaigns at $0.06 each).
+2026-04-12T09:00Z claude note operator: deep review against philosophy of science (what is quality?) and statistician professional conduct codes. Added section grounding criteria in van Fraassen, Popper, measurement theory, UN Fundamental Principles, ISI/ASA ethics, DQAF. Flagged gaps: internal consistency, temporal coherence, ontological drift under optimization.
 
 --- body ---
 ## Context
@@ -85,6 +86,94 @@ overfit to the feasibility test case. Validation: after optimizing on
 the Vietnam/thermal cell, re-run the winning prompt on at least one
 other cell (e.g., Vietnam/renewables or Thailand/thermal) without
 re-tuning and check that performance doesn't collapse.
+
+### What is quality? — grounding in philosophy of science and professional codes
+
+Before optimizing, we need to know what we are optimizing *for* in a
+way that is defensible to a statistician and to a philosopher of
+science. Our current metrics (F1, recall, evidence score) are
+operational, but the deeper question is: **what constitutes quality
+for AI-produced economic statistics?**
+
+The journal paper (paper_benchmark_merged.md:27) already names five
+properties: "exhaustiveness, internal consistency, temporal coherence,
+explicit provenance, and updatability." These are not ad hoc — they
+echo established frameworks. The spike must review these and map our
+metrics onto them:
+
+**Philosophy of science angle:**
+- **Empirical adequacy** (van Fraassen) — the extracted data must
+  save the phenomena: match observable reality. Our recall and
+  precision metrics approximate this, but only against a single
+  expert-compiled reference. A prompt optimized to beat one
+  reference can still be empirically inadequate (overfit to the
+  reference's blind spots).
+- **Reproducibility / intersubjective agreement** — the same prompt
+  on different models (cross-model criterion #1) is a form of
+  replication. If only one model produces a result, it is not
+  robust knowledge. The min-of-5 objective formalizes this.
+- **Falsifiability** — every extracted datum should be checkable
+  against a source. Evidence score ≥ 3 means "a primary source
+  exists that could falsify this claim." Score 4 (two independent
+  sources) means "the claim has survived one independent check."
+  This is why #4 is the grail: it's the closest we get to
+  corroboration in Popperian terms.
+- **Theory-ladenness of observation** (Kuhn/Hanson) — the prompt
+  *is* the theory: it defines what counts as a "power plant," which
+  attributes matter, what schema to emit. Optimizing the prompt is
+  optimizing the theoretical lens. The optimizer must not silently
+  drift the ontology to game the metric (e.g., merging units to
+  inflate recall).
+- **Measurement theory** (Tal, Mari) — our metrics are themselves
+  measurements of measurement quality. They need defined
+  measurands, stated uncertainties, and calibration against
+  independent references. The bootstrap CIs from ticket 0042
+  partially address this.
+
+**Statistician professional conduct angle:**
+- **UN Fundamental Principles of Official Statistics** (1994/2014,
+  A/RES/68/261) — Principle 1: relevance, impartiality, equal
+  access. Principle 2: professional standards, scientific methods.
+  Principle 3: accountability and transparency in methods.
+  Principle 5: sources may include statistical and non-statistical
+  data. Our pipeline is literally Principle 5: extracting statistics
+  from non-statistical documents. The quality criteria that apply
+  to official statistics should apply to our output.
+- **ISI Declaration on Professional Ethics** — integrity,
+  transparency of methods, acknowledgment of limitations. An
+  optimized prompt that hides its failure modes (e.g., systematically
+  missing small plants below a capacity threshold) violates this.
+- **ASA Ethical Guidelines for Statistical Practice** — "be
+  transparent about the basis of any inferences," "report findings
+  and interpretations that reflect the data accurately." If the
+  optimizer's best prompt achieves high F1 by ignoring hard cases,
+  we must report that, not just the headline number.
+- **European Statistics Code of Practice** / **IMF DQAF** —
+  quality dimensions: relevance, accuracy, timeliness, coherence,
+  comparability, accessibility. Map to our criteria:
+  - Accuracy → precision, evidence score, no hallucinations (#2)
+  - Completeness → recall (#3)
+  - Coherence → internal consistency (not yet a metric — gap)
+  - Comparability → cross-model (#1), cross-country (Phase 3)
+  - Timeliness → fast (#5), updatability
+  - Accessibility → cheap (#6), open pipeline
+
+**Gaps this review should surface:**
+- **Internal consistency** is not yet an optimization criterion.
+  Do total capacities per fuel type sum to known national totals?
+  The prompt could be scored on consistency with aggregate
+  constraints (cf. closed ticket 0018, pipeline intelligence).
+- **Temporal coherence** is not tested. If the same prompt runs
+  on 2024 and 2025 documents, does the delta make sense? This
+  matters for updatability but is out of scope for Phase 1.
+- **Ontological drift under optimization** — if the optimizer
+  changes what counts as a "plant" to improve F1, that's a
+  philosophy-of-science red flag, not a win. Need a guard.
+
+The spike note must include a short section mapping our 6+1
+operational criteria to at least two of these frameworks (one
+philosophical, one professional-conduct) and flagging any
+dimensions we are not yet measuring.
 
 ### The evidence quality rubric (existing, 0–4)
 
@@ -269,6 +358,12 @@ A short script or notebook that:
   evidence ≥ 4, cost, wall-clock time.
 - Pareto frontier plotted showing the completeness/sourcing tradeoff
   under the cross-model constraint.
+- **Quality grounding section** mapping our 6+1 operational criteria
+  to (a) at least one philosophy-of-science framework (empirical
+  adequacy, falsifiability, reproducibility) and (b) at least one
+  professional-conduct code (UN Fundamental Principles, ISI, ASA,
+  or European CoP / DQAF). Flag dimensions we are not yet measuring
+  (internal consistency, temporal coherence, ontological drift).
 - Honest verdict on whether "one universal prompt" survives contact
   with our multi-model, multi-condition setup or whether any of
   these tools is better framed as a per-condition optimizer.
