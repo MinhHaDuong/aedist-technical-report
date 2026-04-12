@@ -1,0 +1,43 @@
+%erg v1
+Title: Map reference dataset to international energy classifications
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G9 (UN Principle 9)
+
+--- body ---
+## Context
+
+Quality grounding review gap G9: UN Fundamental Principle 9 calls for
+use of international standards and classifications. Our reference CSV
+uses ad-hoc fuel categories ("Coal", "Gas", "Oil", "Imported LNG")
+with no mapping to standard energy commodity codes. For PyPSA-ASEAN
+interoperability, a standard classification matters.
+
+## Actions
+
+1. Map the fuel column to **IRES (International Recommendations for
+   Energy Statistics)** commodity codes. Coal → hard coal / brown
+   coal, Gas → natural gas, Oil → fuel oil / diesel, Imported LNG
+   → LNG. Add an `ires_code` column to the reference CSV.
+2. Map plant types to **ISIC Rev. 4** activity codes (Division 35:
+   Electricity, gas, steam). Add an `isic_code` column.
+3. If PyPSA-Earth has its own carrier/technology taxonomy, add a
+   `pypsa_carrier` column mapping to it (e.g., "coal", "CCGT",
+   "OCGT"). This enables direct data flow into PyPSA.
+4. Document the mappings in a short table in the article or an
+   appendix.
+
+## Test
+
+Reference CSV has new columns. All 164 plants have valid codes.
+Mapping table documented.
+
+## Exit criteria
+
+- `ires_code`, `isic_code`, and `pypsa_carrier` columns added
+- Mapping table in docs or article appendix
+- Article mentions adherence to international classifications

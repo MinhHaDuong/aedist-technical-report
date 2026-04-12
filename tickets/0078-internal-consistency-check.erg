@@ -1,0 +1,45 @@
+%erg v1
+Title: Add internal consistency check against aggregate capacity
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G1 (DQAF coherence)
+
+--- body ---
+## Context
+
+Quality grounding review (`docs/quality-grounding.md`) gap G1: the
+DQAF "coherence" dimension is entirely unmeasured. No check that
+extracted capacities sum to known national totals. PDP8 publishes
+aggregate thermal capacity by fuel type — these are public numbers.
+If a model extracts 163 plants but their total capacity is 20% off
+the PDP8 aggregate, something is wrong even if F1 is high.
+
+## Actions
+
+1. Collect PDP8 aggregate thermal capacity by fuel type (coal, gas,
+   oil) and by status (operational, construction, planned). These
+   are in the PDP8 document already in the RAG corpus.
+2. Add a `check_consistency(extracted_df, aggregates)` function that
+   compares summed capacity by fuel×status against the known totals.
+   Return absolute and percentage differences.
+3. Wire into the evaluation pipeline: report consistency alongside
+   F1/precision/recall in measurements.
+4. Add to the verification reporting: a row showing aggregate
+   deviation per fuel type.
+
+## Test
+
+`check_consistency()` on the reference CSV against PDP8 aggregates
+returns <5% deviation (the reference is hand-compiled from the same
+source). On a known-bad extraction with hallucinated large plants,
+deviation is flagged.
+
+## Exit criteria
+
+- Consistency check function implemented and tested
+- Reported alongside core metrics for at least one sweep
+- Deviation documented in the article's results
