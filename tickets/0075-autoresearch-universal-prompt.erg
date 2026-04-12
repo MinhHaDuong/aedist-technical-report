@@ -8,6 +8,7 @@ Author: claude
 2026-04-11T20:00Z claude created — brain dump from operator
 2026-04-11T20:15Z claude note operator pointed at https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill — it is a Claude Code / Cursor skill (not a Python lib) that runs an evolutionary prompt-optimization loop against yes/no criteria; rewriting body to match
 2026-04-11T20:30Z claude note operator clarified: the balukosuri repo is only an example — scope is a broader survey of DSPy and peers, not a commitment to that one skill. Retitled ticket and rewrote body as a landscape review.
+2026-04-12T08:00Z claude note operator specified concrete optimization criteria (6 goals) and pointed to the evidence quality rubric in report/inputs/verification_methods.tex:62-80 as the 4-level (0–4) framework. Criteria are interdependent; the grail (all 6 simultaneously) is hard to reach.
 
 --- body ---
 ## Context
@@ -32,6 +33,59 @@ across models and conditions, which is what the operator means by
 
 This is a research spike, not a committed implementation. The goal
 is to pick *one* framework to prototype against, with reasons.
+
+## Optimization criteria
+
+Six goals for the "universal" prompt, from the operator. They are
+interdependent — the grail is hitting all six simultaneously, which
+is hard because they pull against each other.
+
+| # | Goal | Metric | Negotiable? |
+|---|------|--------|-------------|
+| 1 | **Cross-model** | min(benchmark) over 5 cheap models — not mean, not best-of. The prompt must lift the floor. | Non-negotiable. This is what "universal" means. |
+| 2 | **No hallucinations** | Evidence score = 0 count must be zero. (Rubric level 0 = "source fabriquée, hallucination détectée".) | Non-negotiable. A single fabricated source fails the prompt. |
+| 3 | **Complete plant list** | Recall against the 163-plant reference inventory — every plant accounted for. | Hard to negotiate away, but in tension with #4. |
+| 4 | **Two independent primary sources per plant** | Evidence score = 4 for every plant. (Rubric level 4 = "deux sources primaires indépendantes ou plus".) | The grail. Currently the precision-coverage tradeoff (§ prec-cov) shows filtering at t=4 kills recall. |
+| 5 | **Fast** | Wall-clock time per full eval run. | Negotiable — a 2× slower prompt that nails #1–#4 wins. |
+| 6 | **Cheap** | Total API cost (tokens × price) per full eval run. | Negotiable within reason — but caps the optimizer's own budget too. |
+
+### The evidence quality rubric (existing, 0–4)
+
+From `report/inputs/verification_methods.tex` §evidence-rubric:
+
+| Score | Definition |
+|-------|------------|
+| 0 | Fabricated source (hallucination detected) |
+| 1 | No source provided |
+| 2 | One secondary source (press, Wikipedia) |
+| 3 | One primary source (government decision, company report, registry) |
+| 4 | Two or more independent primary sources |
+
+### Interdependencies and the Pareto frontier
+
+The criteria form a hierarchy, not a checklist:
+
+- **#2 (no hallucinations) gates everything.** A prompt that hallucinates
+  sources is useless regardless of recall. This is the floor.
+- **#3 (completeness) and #4 (sourcing depth) are in direct tension.**
+  The precision-coverage analysis (§prec-cov) already shows: at t=4,
+  precision is maximal but coverage (recall) drops because few plants
+  get two independent primary sources from a single LLM call. A prompt
+  that pushes models toward more sourcing may sacrifice completeness,
+  and vice versa.
+- **#1 (cross-model) makes the problem much harder.** Optimizing for
+  one strong model is straightforward; requiring that the *worst* of 5
+  cheap models still performs means the prompt cannot rely on any
+  model-specific capability. The optimizer's objective function is
+  min-of-5, not mean-of-5.
+- **#5/#6 (fast/cheap) cap the search budget itself.** The optimizer
+  can't burn unlimited tokens searching for the prompt that minimizes
+  token burn.
+
+The realistic path is probably: nail #2, maximize #3 subject to #1,
+then push #4 as far as the Pareto frontier allows before #3 degrades
+unacceptably. #5/#6 are soft constraints that set the API budget cap
+for both the optimizer runs and the final eval.
 
 ## Candidate frameworks to survey
 
@@ -75,21 +129,34 @@ Agents question).
 2. Recommend **one** framework to prototype against, with a written
    rationale. Prior is DSPy unless something disqualifies it for
    our multi-provider, reproducibility-first setting.
-3. Pick the optimization target for the prototype. Candidate: the
-   inventory prompt on the small-model ablation set — cheapest
-   eval loop, existing verification sweep (ticket 0030) as the
-   held-out check.
-4. Define the optimization signal honestly. Our natural metric is
-   continuous per-cell accuracy on a large eval set. Whatever
-   framework we pick must accept that directly; if it insists on
-   binary yes/no per example, wrapping our metric in a pass/fail
-   gate needs an explicit threshold and a note in the report that
-   we optimized against the gate, not the continuous score.
+3. **Define the composite objective function** from the 6 criteria:
+   - Primary signal: min over 5 cheap models of a per-model score.
+   - Per-model score: weighted composite of (a) hallucination count
+     = 0 (hard gate — any hallucination zeroes the score),
+     (b) recall against 163-plant reference, (c) fraction of plants
+     at evidence score ≥ 4. Weights TBD in prototype, but the
+     hard gate on (a) is non-negotiable.
+   - Secondary: API cost and wall-clock time recorded per run, used
+     as tiebreaker / budget cap, not as optimizer signal.
+   - The framework must support this min-of-N-models shape. If it
+     only optimizes for a single LM, we need a wrapper that fans
+     out to 5 models and returns the min. Check whether DSPy's
+     `Evaluate` supports this natively or needs a custom metric.
+4. Pick the 5 cheap models for the cross-model floor. Candidates:
+   the small-model ablation set already defined in experiments.toml.
+   Confirm they span at least 3 providers (OpenRouter, Ollama,
+   direct API) so the prompt can't rely on provider-specific
+   formatting.
 5. Run the optimizer for a fixed budget (API cost cap — decide up
    front, include in the spike note). Score the output prompt on
-   the held-out verification sweep to catch overfitting to the
-   optimizer's own training split.
-6. Write the spike note with the comparison table, the rationale,
+   the held-out verification sweep (ticket 0030) to catch
+   overfitting to the optimizer's own training split.
+6. **Report the Pareto frontier**, not just the "best" prompt.
+   For each optimizer iteration, plot: recall (#3) vs fraction-at-
+   evidence-4 (#4), colored by the min-of-5-models constraint (#1).
+   This makes the completeness/sourcing tradeoff visible and lets
+   the operator choose where to sit on the curve.
+7. Write the spike note with the comparison table, the rationale,
    the prototype results, and the decision.
 
 ## Measurement hygiene (non-negotiable)
@@ -107,10 +174,16 @@ must land with a clear wall between:
 ## Test
 
 A short script or notebook that:
-- runs the chosen optimizer on one condition under the API budget cap,
-- scores the optimized prompt on the held-out verification sweep, and
-- produces a before/after table (current hand-tuned baseline vs
-  optimized) using the same metric we report in the paper.
+- runs the chosen optimizer on one condition under the API budget cap
+  using the composite objective (min-of-5 × hallucination-gate ×
+  recall × evidence-4-fraction),
+- scores the optimized prompt on the held-out verification sweep
+  (ticket 0030), and
+- produces:
+  (a) a before/after table (current hand-tuned baseline vs optimized)
+  on the same metrics we report in the paper,
+  (b) a Pareto plot of recall vs evidence-4-fraction across optimizer
+  iterations, colored by the min-of-5 floor score.
 
 ## Exit criteria
 
@@ -118,8 +191,13 @@ A short script or notebook that:
   or inlined in the spike note on this ticket.
 - One framework recommended with a written rationale; DSPy is the
   prior unless ruled out.
+- Composite objective function defined and justified (see § criteria).
 - Prototype run completed on one condition under a fixed API budget,
   with before/after numbers on the held-out verification sweep.
+  Report: min-of-5 score, hallucination count, recall, fraction at
+  evidence ≥ 4, cost, wall-clock time.
+- Pareto frontier plotted showing the completeness/sourcing tradeoff
+  under the cross-model constraint.
 - Honest verdict on whether "one universal prompt" survives contact
   with our multi-model, multi-condition setup or whether any of
   these tools is better framed as a per-condition optimizer.
