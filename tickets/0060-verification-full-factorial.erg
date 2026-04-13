@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-10T12:00Z claude created split from 0030 (phases 3-5)
 2026-04-13T21:00Z claude note OpenRouter has no concurrency limit — parallelize all API calls aggressively (bash backgrounding or async). Only Ollama-bound work needs serialization.
+2026-04-13T21:10Z claude note Wire Method.VERIFICATION through worker.py dispatch (currently NotImplementedError). Create per-condition JobSpecs, spawn N workers in parallel. Test with 5, then scale to full factorial.
 
 --- body ---
 ## Context
