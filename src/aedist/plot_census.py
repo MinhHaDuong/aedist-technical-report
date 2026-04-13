@@ -24,12 +24,14 @@ log = logging.getLogger(__name__)
 def build_census_rows(metrics: list[dict]) -> list[dict]:
     """Build sorted rows for the census bar chart (base models only).
 
-    Filters out synthetic entries (union-vote, consolidated) so the chart
-    shows single-shot baseline performance only.
+    Filters out synthetic entries (union-vote, consolidated) and derived
+    measurements (matching_sensitivity, etc.) so the chart shows
+    single-shot baseline performance only.
 
     Returns list of dicts with keys: model, f1, local.
     Sorted by f1 descending.
     """
+    metrics = [m for m in metrics if not m.get("label", "").startswith("derived/")]
     summary = load_and_summarize(metrics)
     rows = [
         {
