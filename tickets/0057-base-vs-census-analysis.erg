@@ -7,9 +7,16 @@ Blocked-by: 0055
 
 --- log ---
 2026-04-10T22:00Z claude created — from independent vision review
+2026-04-11T10:00Z claude claimed
+2026-04-11T10:00Z claude status doing — orchestrator wave A
+2026-04-11T10:00Z claude status reimagined by IDD imagine
 2026-04-11T09:31Z claude status executed by IDD execute
 2026-04-11T09:40Z claude note phase6 review fixes applied (dead helper removed, CI test strengthened, aggregation documented)
+2026-04-11T11:30Z claude status planned by IDD plan
+2026-04-11T11:30Z claude note plan verification corrections applied autonomously
 2026-04-11T11:30Z claude note extended p1_base from n=2 to n=9, new macro DeltaF1=+17.3 [+8.4,+25.1]
+2026-04-11T11:35Z claude status executed by IDD execute branch ticket-0057-base-vs-census head fed5f52 PR #238
+2026-04-11T11:35Z claude status pending PR #238 awaiting human merge approval
 2026-04-13T12:30Z claude status closed — PR #238 merged, table+figure auto-regenerate via Make wildcards
 
 --- body ---

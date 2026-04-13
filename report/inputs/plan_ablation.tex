@@ -381,6 +381,25 @@ vérification de robustesse au seuil 30~MWe (retirer explicitement le seuil
 du prompt \emph{base} et re-tester) qui isolerait la contribution
 spécifique de cette contrainte au sein de l'écart observé.
 
+\paragraph{Prompt census \emph{vs} prompt base~: deux objets différents}
+L'écart mesuré entre census et base ne relève pas du bruit~: il reflète
+une distinction fonctionnelle. Le prompt \emph{census} (40~mots, sans
+seuil, sans vocabulaire de statut) mesure la capacité brute d'extraction
+du modèle — c'est l'analogue d'un test de QI pour l'extraction
+structurée. Le prompt \emph{base} (280~mots, 9~colonnes, seuil 30~MWe,
+règles d'inclusion/exclusion) mesure l'utilisabilité dans un pipeline de
+production. L'écart de F1 entre les deux est donc le \emph{prix de la
+mise en production}~: les tokens d'instruction supplémentaires
+($\Delta\text{tok}_\text{in} \approx +370$ par appel) achètent un
+rappel accru sans dégradation de précision chez la majorité des modèles.
+Ce coût est modeste ($< 0{,}001$~USD par appel aux tarifs actuels), mais
+se multiplie par le nombre de campagnes et de répétitions dans un
+déploiement à l'échelle (60~campagnes $\times$ 3~répétitions = 180
+appels dans le scénario Auto-PyPSA ASEAN). Le prompt \emph{census}
+reste pertinent comme référence de capacité minimale~; le prompt
+\emph{base} est l'ancrage opérationnel pour les comparaisons
+d'ablation.
+
 \paragraph{Seuils de falsification} Une hypothèse directionnelle est réfutée
 si l'intervalle de confiance bootstrap à 95\,\% sur $\Delta$F1 exclut zéro
 dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est
