@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G4 (measurement theory)
 2026-04-13T16:00Z claude status reimagined by IDD imagine
+2026-04-13T16:30Z claude status planned by IDD plan
 
 --- body ---
 ## Context
@@ -26,37 +27,90 @@ published*, not of a tightened-up version.
 
 ## Actions
 
-### Phase 1 — Characterize what we have (~30 min)
+### Phase 1 — Characterize what we have (done by plan)
 
-1. Determine the temperature of the existing headline run from
-   sweep config, API logs, or query_decomposed.py defaults. Record
-   finding in ticket 0084's audit table.
-2. Count replicates across ALL conditions in measurements.jsonl.
-   Produce a histogram: how many conditions have n=1, n=2, n=3?
-   The headline is not the only n=1 — fix the framing from "one
-   missing replicate" to "systematic replication policy."
+Temperature audit (ticket 0084) already confirms: both existing
+decomposed DeepSeek runs have `temperature: null` in their record
+JSONs (`experiments/outputs/decomposed/deepseek-v3.2-run{1,3}.record.json`).
+`query_decomposed.py` (line 159) calls `harness.query_single_turn()`
+without passing temperature kwargs, so provider default (~1.0) was used.
 
-### Phase 2 — Run replicates (~$0.10, ~10 min)
+Current state in `measurements.jsonl`:
+- DeepSeek V3.2 decomposed: n=2 (run1 F1=0.8859, run3 F1=0.9879).
+  Run2 is missing (not cached, never ran or failed).
+- Replicate histogram across all 97 (method, model) conditions:
+  n=1: 32 conditions, n=2: 1 (this one), n=3: 64 conditions.
 
-3. Run 2 additional replicates of DeepSeek V3.2 decomposition using
-   `query_decomposed.py --repeat 2` with temperature matching the
-   original run (or t=0 if original was t=0).
-4. If the original temperature was unspecified, run 2 at t=0 AND
-   note in the article that the original run used provider defaults.
-   This is honest: the replicate variance is a *lower bound* on
-   true method variance.
+### Phase 2 — Run replicates (~$0.12, ~15 min)
 
-### Phase 3 — Report honestly (~20 min)
+1. Run 2 additional replicates to reach n>=3. Use the existing
+   sweep infrastructure:
+   ```
+   cd experiments && uv run python -m aedist.query_decomposed \
+     --prompt prompts/prompt_structured.txt \
+     --corpus ../data/rag_corpus \
+     --models models_selected.yaml \
+     --output outputs/decomposed \
+     --model deepseek/deepseek-v3.2 \
+     --repeat 4 \
+     --budget-usd 0.20
+   ```
+   `--repeat 4` with existing run1 and run3 cached means only
+   run2 and run4 will actually execute (harness `should_skip()` at
+   `harness.py` line ~284 checks `output_path()` for existing files).
+   Temperature will remain provider-default, matching the originals.
 
-5. Compute bootstrap 95% CI on the 3-run F1.
-6. Update abstract: "F1 = X% [CI]" not "F1 = 98.8%".
-7. Add a paragraph in the methods section stating the replication
-   policy: target n>=3 for all conditions, temperature controlled
-   where possible, provider defaults noted as limitation.
-8. If any replicate yields F1 < 98%, update the narrative. The
-   finding becomes "method achieves high F1" not "method achieves
-   98.8%". This is stronger, not weaker — it shows robustness
-   awareness.
+2. After query completes, extract CSVs and evaluate:
+   ```
+   cd experiments && make -C . evaluate-decomposed
+   ```
+   Or manually:
+   ```
+   uv run python -m aedist.extract outputs/decomposed
+   uv run python -m aedist.evaluate evaluate \
+     --system outputs/decomposed/deepseek-v3.2-run2.csv \
+     --reference ../data/reference.csv
+   uv run python -m aedist.evaluate evaluate \
+     --system outputs/decomposed/deepseek-v3.2-run4.csv \
+     --reference ../data/reference.csv
+   ```
+
+3. Reassemble measurements:
+   ```
+   make measurements
+   ```
+   Verify: `measurements.jsonl` now has >=3 rows with
+   `method=decomposed, model=deepseek/deepseek-v3.2`.
+
+### Phase 3 — Compute CI and update reporting (~20 min)
+
+4. The CI computation uses `stats.bootstrap_ci()` (`src/aedist/stats.py`
+   line 20). Collect the F1 values from the 3+ decomposed DeepSeek
+   runs and call:
+   ```python
+   from aedist.stats import bootstrap_ci
+   f1_values = [r.result_summary.f1 for r in records
+                if r.method == Method.DECOMPOSED
+                and 'deepseek-v3.2' in r.method_params.model]
+   mean, lo, hi = bootstrap_ci(f1_values, seed=42)
+   ```
+
+5. Update `report/report.tex` — three locations:
+   a. **Abstract** (line 47): change `F1 = 98,8\,\%` to
+      `F1 = XX,X\,\% [YY,Y--ZZ,Z\,\%]` using actual CI.
+   b. **Results section** (line 327): change point estimate to CI.
+   c. **Decomposition paragraph** (line 464): change point estimate.
+
+6. Update `slides/slides.tex` (line 611): change `F1=98.8\%` to CI.
+
+7. Add replication policy paragraph in methods section of
+   `report/report.tex` near line 464, stating: target n>=3 per
+   condition, temperature uncontrolled (provider default), CI via
+   percentile bootstrap (10k resamples).
+
+8. If mean F1 drops below 0.95, update narrative from "98.8%" to
+   "high F1" framing. The exact threshold is editorial — present
+   the CI honestly regardless.
 
 ## Coordination
 
@@ -69,11 +123,49 @@ published*, not of a tightened-up version.
 
 ## Test
 
-- measurements.jsonl contains >=3 rows for DeepSeek V3.2
-  decomposition condition.
-- Bootstrap CI computed and appears in results table.
-- Abstract contains interval, not point estimate.
-- Replication histogram committed (how many n=1,2,3 per condition).
+First test (TDD red step) — add to `tests/test_measurements.py`:
+
+```python
+class TestHeadlineReplicates:
+    """Ticket 0081: headline result must have n>=3 replicates."""
+
+    def test_decomposed_deepseek_has_3_replicates(self):
+        """The headline condition (decomposed, deepseek-v3.2) needs n>=3."""
+        from aedist.measurements import load
+        records = load(method="decomposed")
+        deepseek_runs = [
+            r for r in records
+            if "deepseek-v3.2" in r.method_params.model
+            and not any(r.result_file.endswith(s) for s in
+                        ("-union.csv", "-consolidated.csv", "_filtered.csv"))
+        ]
+        assert len(deepseek_runs) >= 3, (
+            f"Headline condition has only {len(deepseek_runs)} replicates, need >=3"
+        )
+
+    def test_decomposed_deepseek_has_ci(self):
+        """Bootstrap CI must be computable on headline replicates."""
+        from aedist.measurements import load
+        from aedist.stats import bootstrap_ci
+        records = load(method="decomposed")
+        f1s = [
+            r.result_summary.f1 for r in records
+            if "deepseek-v3.2" in r.method_params.model
+            and r.result_summary.f1 is not None
+            and not any(r.result_file.endswith(s) for s in
+                        ("-union.csv", "-consolidated.csv", "_filtered.csv"))
+        ]
+        assert len(f1s) >= 3
+        mean, lo, hi = bootstrap_ci(f1s, seed=42)
+        assert lo < mean <= hi
+        assert hi - lo > 0  # CI is non-degenerate
+```
+
+This test will FAIL now (n=2, need >=3). It passes after Phase 2.
+
+Additional acceptance checks (manual):
+- Abstract in report/report.tex contains interval, not point estimate.
+- Replication histogram (n=1/2/3 per condition) documented.
 
 ## Exit criteria
 

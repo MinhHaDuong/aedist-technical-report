@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G2 (Popper: falsifiability)
 2026-04-13T16:00Z claude status reimagined by IDD imagine
+2026-04-13T16:30Z claude status planned by IDD plan
 
 --- body ---
 ## Context
@@ -37,41 +38,134 @@ rates). This is a calibration curve for the measurement instrument.
 
 ## Actions
 
-1. **Extract all citations** from the DeepSeek V3.2 decomposition run
-   (headline result). Group by evidence score tier (0-4). Count
-   unique URLs and citation texts per tier.
+### Step 1: Create `scripts/audit_source_urls.py` skeleton
 
-2. **Stratified sample**: select ~10 plants per tier (2, 3, 4) for
-   verification. For tier 1 (no source), sample 5 to check whether
-   the LLM omitted a source that exists.
+New standalone script. No changes to `src/aedist/verify.py` or the
+scoring pipeline.
 
-3. **Three-level verification per sample plant:**
-   a. URL resolution: HTTP HEAD, record status code + final URL.
-   b. Content confirmation: fetch page (or web-search plant name +
-      decision number via Tavily). Record: entity found / not found.
-   c. Fabrication check: for primary-pattern citations (Decision N),
-      search for the exact decision number. Flag citations where the
-      number does not exist in any indexed source.
+Imports to reuse:
+- `src/aedist/verify.py`: `classify_source_by_text()` (line 115),
+  `score_evidence()` (line 140), `classify_source_by_url()` (line 99)
+- `src/aedist/score_provenance.py`: `score_sourced_run()` (line 41)
+  for reference on how to read sourced CSVs
 
-4. **Produce calibration table:**
-   | Score tier | n_sampled | url_resolve_rate | content_confirm_rate | fabrication_rate |
-   Report as a LaTeX table for the article's verification discussion.
+Input data: `experiments/outputs/sourced/claude-opus-4.6-run1.csv`
+(120 plants, columns: name, fuel, status, cod, province, capacity_mwe,
+source_1, source_2, note). This is the only run with populated
+provenance columns. DeepSeek decomposed_v2 has empty source columns.
 
-5. **Cross-reference with ticket 0082**: where GEM data exists for
-   sampled plants, note whether the LLM's cited source agrees with
-   GEM's attribution. This is free triangulation.
+### Step 2: `extract_and_stratify(csv_path) -> dict[int, list[dict]]`
 
-6. **Standalone script** (`scripts/audit_source_urls.py`), not a
-   pipeline integration. Reads verification JSON, outputs a CSV audit
-   log and a summary JSON. No changes to `verify.py` or the scoring
-   pipeline.
+Read the sourced CSV. For each row, compute evidence score using
+`score_evidence()` after classifying source_1/source_2 with
+`classify_source_by_text()`. Group rows by score tier (0-4).
+Return `{tier: [row_dicts]}` with counts per tier.
+
+### Step 3: `select_sample(stratified, n_per_tier=10) -> list[dict]`
+
+Deterministic sample (seed=42). Select min(n_per_tier, len(tier))
+plants from tiers 2, 3, 4. For tier 1, select min(5, len(tier)).
+Tier 0 included if any rows exist. Each sampled dict gets an
+`"evidence_tier"` field.
+
+### Step 4: `verify_url(url: str) -> dict` (HTTP HEAD)
+
+Extract URL from citation text via `re.search(r"https?://[^\s)]+", text)`.
+Most sourced citations are textual references like "EVN Annual Report
+2010-2011 p13" -- they have NO URLs. The function returns
+`{"has_url": bool, "status_code": int|None, "final_url": str|None}`.
+Use `httpx` with 10s timeout, follow redirects.
+
+### Step 5: `verify_content_tavily(plant_name, citation_text, tavily_key) -> dict`
+
+Search Tavily for `"{plant_name} {citation_key_terms}"` where
+citation_key_terms extracts the decision/report identifier from the
+citation (e.g., "Decision 1195/QD-TTg", "EVN Annual Report 2017").
+Return `{"query": str, "n_results": int, "entity_found": bool,
+"top_result_url": str|None, "top_result_snippet": str|None}`.
+Use `src/aedist/query_web.py:tavily_search()` for the API call.
+
+### Step 6: `check_fabrication(citation_text) -> dict`
+
+For citations matching `_PRIMARY_PATTERNS` from `verify.py` (lines
+89-96), extract the specific identifier (decision number, report
+name). Search Tavily for the exact identifier. Flag as
+`"fabrication_suspect": True` if zero results mention the identifier.
+Return `{"is_primary_pattern": bool, "identifier": str|None,
+"fabrication_suspect": bool|None, "search_evidence": str|None}`.
+
+### Step 7: `build_calibration_table(audit_rows) -> dict`
+
+Aggregate per-tier:
+- `n_sampled`: count per tier
+- `url_resolve_rate`: fraction with has_url=True AND status 2xx
+- `content_confirm_rate`: fraction with entity_found=True
+- `fabrication_rate`: fraction of primary-pattern citations flagged
+  as fabrication_suspect
+
+### Step 8: `cross_reference_gem(audit_rows, gem_path) -> list[dict]`
+
+Load `data/reference/gem_thermal.csv`. For each audited plant, fuzzy
+match against GEM (reuse `rapidfuzz.fuzz.token_sort_ratio`, threshold
+70). Add `"gem_match": str|None` and `"gem_agrees": bool|None` to
+each audit row. This is the free triangulation with ticket 0082.
+
+### Step 9: CLI and output
+
+`main()` with argparse:
+- `--input` (default: `experiments/outputs/sourced/claude-opus-4.6-run1.csv`)
+- `--gem` (default: `data/reference/gem_thermal.csv`)
+- `--output-dir` (default: `derived/audit/`)
+- `--tavily-key` from env `TAVILY_API_KEY`
+- `--dry-run` flag: skip Tavily calls, only do extraction + stratification
+
+Outputs:
+- `derived/audit/source_audit.csv` — one row per sampled plant with
+  all verification columns
+- `derived/audit/calibration_table.json` — summary by tier
+- `derived/audit/calibration_table.tex` — LaTeX table for article
 
 ## Test
 
+First test (TDD red step) — `tests/test_audit_source_urls.py`:
+
+```python
+class TestExtractAndStratify:
+    """extract_and_stratify reads sourced CSV and groups by evidence tier."""
+
+    def test_groups_by_score_tier(self, tmp_path):
+        csv_text = (
+            "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
+            'Pha Lai,coal,operating,1983,Hai Duong,440,'
+            '"Decision 1195/QD-TTg","EVN Annual Report 2017 p14",""\n'
+            'Uong Bi,coal,operating,1964,Quang Ninh,105,"","",""\n'
+            'Vinh Tan,coal,operating,2014,Binh Thuan,1200,'
+            '"Wikipedia article","",""\n'
+        )
+        csv_path = tmp_path / "sourced.csv"
+        csv_path.write_text(csv_text)
+
+        from scripts.audit_source_urls import extract_and_stratify
+        result = extract_and_stratify(csv_path)
+
+        # Pha Lai: 2 primary sources -> score 4
+        assert 4 in result
+        assert any(r["name"] == "Pha Lai" for r in result[4])
+
+        # Uong Bi: no sources -> score 1
+        assert 1 in result
+        assert any(r["name"] == "Uong Bi" for r in result[1])
+
+        # Vinh Tan: 1 secondary source -> score 2
+        assert 2 in result
+        assert any(r["name"] == "Vinh Tan" for r in result[2])
+```
+
+Additional assertions (post-implementation):
 - Calibration table shows monotonically increasing verification rates
   across score tiers (score 4 > score 3 > score 2)
 - Fabrication rate for score 3-4 citations is < 20%
-- Script runs end-to-end on headline run without errors
+- Script runs end-to-end with `--dry-run` on headline run without errors
 
 ## Exit criteria
 

@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gaps G10-G13 (fix in words)
 2026-04-13T16:00Z claude status reimagined by IDD imagine
+2026-04-13T16:30Z claude status planned by IDD plan
 
 --- body ---
 ## Context
@@ -63,25 +64,80 @@ paragraph. One paragraph, ~80 words.
 
 ## Actions
 
-1. Audit existing limitation text in `report.tex` (lines 535-542)
-   and `paper_benchmark_merged.md` (section 7.4 comments, line 261+)
-   to identify what is already stated vs. what is missing.
-2. Draft two paragraphs (Threat 1, Threat 2) as described above.
-3. Insert into `paper_benchmark_merged.md` section 7.4, replacing
-   the placeholder comments.
-4. In `report.tex`, ensure the scaling paragraph (line 539) carries
-   the temporal + multilingual caveats inline, not in a separate
-   limitations dump.
+### A1. Write Threat 1 paragraph in paper_benchmark_merged.md (G10 + G13)
+
+File: `publications/journal-article/paper_benchmark_merged.md`
+Insert at: line 263, replacing the six HTML comment placeholders (lines 263-268)
+before the blank line at 269.
+
+Draft ~100 words covering:
+- Single-domain, single-language, single-snapshot limitation (absorb
+  existing placeholder "Single domain" + "No repeated runs").
+- G10 temporal caveat: reference is an undated snapshot; plant statuses
+  evolve; discrepancies may be temporal lag not extraction error;
+  future work = versioned snapshots with explicit dates.
+- G13 multilingual caveat: nine ASEAN languages untested; the $3.60
+  scaling estimate assumes method transfer that is not yet validated.
+- Keep remaining placeholder themes (temperature, reference errors,
+  model vintage, cost) as separate bullets or a second paragraph
+  so existing scope items are not lost.
+
+### A2. Write Threat 2 paragraph in paper_benchmark_merged.md (G11 + G12)
+
+File: `publications/journal-article/paper_benchmark_merged.md`
+Insert at: immediately after the Threat 1 paragraph written in A1,
+still within section 7.4 (before the blank line preceding `# 8`).
+
+Draft ~80 words covering:
+- G11 ontological drift: prompt optimization could silently redefine
+  what counts as a "plant"; mitigation = lock OEO-aligned output
+  schema before optimization (future work).
+- G12 legal status: UN Fundamental Principles Principle 7 requires
+  legal framework; AI-produced tables are decision-support / preliminary
+  data, not official statistics, until validated by statistical authority.
+
+### A3. Add inline caveats to report.tex scaling paragraph
+
+File: `report/report.tex`, line 539 (the ASEAN scaling paragraph).
+
+After the sentence ending "...moins qu'un seul appel à un modèle
+propriétaire haut de gamme." and before the final sentence about
+curation manuelle, insert one sentence (~30 words, in French) noting:
+- This cost estimate assumes multilingual transfer not yet validated
+  and a single temporal snapshot; both require future validation.
+
+This keeps the caveat inline rather than in a separate limitations dump.
+
+### A4. Add temporal caveat to report.tex open-questions paragraph
+
+File: `report/report.tex`, line 542 (open research questions paragraph).
+
+The sentence "L'extraction multilingue constitue la contrainte pratique
+de passage à l'échelle" already partially addresses G13. After the
+sentence about suivi de qualité, add one sentence (~25 words, French)
+noting that the reference dataset is an undated snapshot and that
+longitudinal extraction tracking plant lifecycle is future work (G10).
+
+### A5. Verify no duplication
+
+Review the two files side-by-side after edits. The journal article
+(paper_benchmark_merged.md) carries the full structured limitations;
+report.tex carries inline one-sentence caveats only. No paragraph
+should be duplicated across files.
 
 ## Test
 
-- ctrl-F "temporal" -> finds passage on snapshot dating
-- ctrl-F "multilingual" or "langues" -> finds explicit caveat on
-  the $3.60 estimate
-- ctrl-F "ontolog" -> finds schema-lock requirement
-- ctrl-F "official statistics" or "statistiques officielles" ->
-  finds UN Principle 7 framing
-- No gap from G10-G13 left unaddressed
+1. `make` in `report/` succeeds (LaTeX compiles without errors).
+2. In paper_benchmark_merged.md section 7.4:
+   - grep "temporal" or "snapshot" -> finds G10 passage
+   - grep "multilingual" or "language" -> finds G13 caveat on scaling
+   - grep "ontolog" -> finds G11 schema-lock sentence
+   - grep "official statistics" or "Principle 7" -> finds G12 framing
+3. In report/report.tex:
+   - grep "multilingue" near line 539 -> inline caveat present
+   - grep "temporel" or "instantané" near line 542 -> inline caveat
+4. No HTML placeholder comments remain in section 7.4 (all replaced
+   by prose or removed).
 
 ## Exit criteria
 
