@@ -1,12 +1,13 @@
 %erg v1
 Title: Fix tool verification threshold mismatch (paper 70 vs code 90)
-Status: open
+Status: closed
 Created: 2026-04-12
 Author: claude
 Blocked-by: gh#239
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G3 (scientific integrity)
+2026-04-13T12:00Z claude status closed — fixed code: pass similarity_threshold=70 to reconcile() in verify_tool(); added boundary test
 
 --- body ---
 ## Context
