@@ -22,7 +22,7 @@ from pathlib import Path
 import httpx
 from rapidfuzz import fuzz
 
-from src.aedist.verify import (
+from aedist.verify import (
     _PRIMARY_PATTERNS,
     classify_source_by_text,
     score_evidence,
@@ -178,7 +178,7 @@ def verify_content_tavily(
     Returns dict with query, n_results, entity_found, top_result_url,
     top_result_snippet.
     """
-    from src.aedist.query_web import tavily_search
+    from aedist.query_web import tavily_search
 
     key_terms = _extract_citation_key(citation_text)
     query = f"{plant_name} {key_terms}"
@@ -245,7 +245,7 @@ def check_fabrication(
             "search_evidence": None,
         }
 
-    from src.aedist.query_web import tavily_search
+    from aedist.query_web import tavily_search
 
     try:
         results = tavily_search(identifier, tavily_key)
@@ -550,13 +550,15 @@ def main(argv: list[str] | None = None) -> None:
     for tier in sorted(cal_table.keys()):
         row = cal_table[tier]
         fab = f"{row['fabrication_rate']:.1%}" if row["fabrication_rate"] is not None else "---"
+        line = (
+            f"{tier:<6d} {row['n_sampled']:6d} "
+            f"{row['url_resolve_rate'] * 100:11.1f}% "
+            f"{row['content_confirm_rate'] * 100:15.1f}% "
+            f"{fab:>14s}"
+        )
         log.info(
-            "%-6d %6d %12.1%% %16.1%% %14s",
-            tier,
-            row["n_sampled"],
-            row["url_resolve_rate"] * 100,
-            row["content_confirm_rate"] * 100,
-            fab,
+            "%s",
+            line,
         )
 
 
