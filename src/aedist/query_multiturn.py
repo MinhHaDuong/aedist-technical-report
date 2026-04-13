@@ -22,6 +22,7 @@ import openai
 from .harness import (
     CONTEXT_WINDOW_SAFETY_MARGIN,
     BudgetTracker,
+    build_api_kwargs,
     compute_cost,
     estimate_messages_tokens,
     load_experiments,
@@ -67,6 +68,7 @@ def run_conversation(
     model: dict,
     budget: BudgetTracker,
     stateless: bool = False,
+    **api_kwargs,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
     messages: list[dict] = []
@@ -90,7 +92,7 @@ def run_conversation(
             "context_overflow": True,
         }
 
-    result = query_single_turn(client, model_id, messages)
+    result = query_single_turn(client, model_id, messages, **api_kwargs)
     usage = result.get("usage") or {}
     cost = compute_cost(usage, model)
     budget.add(cost)
@@ -125,7 +127,7 @@ def run_conversation(
             context_overflow = True
             break
 
-        result = query_single_turn(client, model_id, messages)
+        result = query_single_turn(client, model_id, messages, **api_kwargs)
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model)
         budget.add(cost)
@@ -169,10 +171,18 @@ def main():
         help="Stateless batch mode: each followup sent independently (no accumulated history)",
     )
     parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.0,
+        help="Sampling temperature (default 0.0)",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -219,7 +229,9 @@ def main():
             client = clients[router]
         else:
             if legacy_client is None:
-                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
+                raise SystemExit(
+                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                )
             client = legacy_client
 
         for run in range(1, args.repeat + 1):
@@ -240,6 +252,10 @@ def main():
 
             try:
                 api_model_id = model.get("router_model", model_id)
+                mt_api_kwargs = build_api_kwargs(
+                    model,
+                    temperature=args.temperature,
+                )
                 conv = run_conversation(
                     client,
                     api_model_id,
@@ -248,6 +264,7 @@ def main():
                     model,
                     budget,
                     stateless=args.stateless,
+                    **mt_api_kwargs,
                 )
                 if conv is None:
                     return
@@ -259,6 +276,7 @@ def main():
                     "date": date.today().isoformat(),
                     "prompt_file": args.prompt,
                     "followups_file": args.followups,
+                    "temperature": args.temperature,
                     "model_metadata": model_metadata(model),
                     **conv,
                 }

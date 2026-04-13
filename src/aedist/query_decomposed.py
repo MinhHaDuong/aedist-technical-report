@@ -35,6 +35,7 @@ from .extract import (
 )
 from .harness import (
     BudgetTracker,
+    build_api_kwargs,
     compute_cost,
     load_experiments,
     load_models,
@@ -139,6 +140,7 @@ def query_decomposed(
     corpus_text: str,
     budget: BudgetTracker,
     model: dict,
+    **api_kwargs,
 ) -> dict | None:
     """Run 3 sub-queries and merge results. Returns record dict or None."""
     sub_results = {}
@@ -156,7 +158,7 @@ def query_decomposed(
         ]
 
         try:
-            result = query_single_turn(client, model_id, messages)
+            result = query_single_turn(client, model_id, messages, **api_kwargs)
         except openai.APIError as e:
             log.error("  Error on %s sub-query: %s", fuel, e)
             return None
@@ -215,6 +217,12 @@ def main():
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
     parser.add_argument("--budget-usd", type=float, default=None, help="Budget cap in USD")
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.0,
+        help="Sampling temperature (default 0.0)",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Show what would run")
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
     parser.add_argument(
@@ -288,12 +296,17 @@ def main():
             log.info("Querying %s run %d/%d (decomposed RAG)...", label, run, args.repeat)
 
             api_model_id = model.get("router_model", model_id)
+            dec_api_kwargs = build_api_kwargs(
+                model,
+                temperature=args.temperature,
+            )
             decomposed = query_decomposed(
                 client,
                 api_model_id,
                 corpus_text,
                 budget,
                 model,
+                **dec_api_kwargs,
             )
 
             if decomposed is None:
@@ -313,6 +326,7 @@ def main():
                 "usage": decomposed["total_usage"],
                 "wall_seconds": decomposed["total_wall_seconds"],
                 "cost_usd": decomposed["total_cost_usd"],
+                "temperature": args.temperature,
                 "model_metadata": model_metadata(model),
                 "decomposition": {
                     fuel: {

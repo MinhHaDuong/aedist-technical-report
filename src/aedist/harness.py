@@ -153,7 +153,9 @@ def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     """
     unknown = set(module_names) - KNOWN_MODULES
     if unknown:
-        raise ValueError(f"Unknown prompt modules: {sorted(unknown)}. Known: {sorted(KNOWN_MODULES)}")
+        raise ValueError(
+            f"Unknown prompt modules: {sorted(unknown)}. Known: {sorted(KNOWN_MODULES)}"
+        )
     base = (modules_dir / "base.txt").read_text().strip()
     parts_before: list[str] = []
     parts_after: list[str] = []
@@ -307,7 +309,7 @@ def query_ollama_native(
 def build_api_kwargs(
     model: dict,
     *,
-    max_tokens: int,
+    max_tokens: int | None = None,
     temperature: float,
 ) -> dict:
     """Build API kwargs from model capability flags.
@@ -320,18 +322,22 @@ def build_api_kwargs(
       ``tools: [{"type": "openrouter:web_search"}]``
       (model decides when to search; ~$0.02 per search call via Exa)
     """
-    kwargs: dict = {"max_tokens": max_tokens}
+    kwargs: dict = {}
+    if max_tokens is not None:
+        kwargs["max_tokens"] = max_tokens
 
     if not model.get("reasoning", False):
         kwargs["temperature"] = temperature
 
     if model.get("web_search", False):
-        kwargs["tools"] = [{
-            "type": "openrouter:web_search",
-            "parameters": {
-                "max_total_results": 37,  # ~$0.15 cap ($4/1000 results)
-            },
-        }]
+        kwargs["tools"] = [
+            {
+                "type": "openrouter:web_search",
+                "parameters": {
+                    "max_total_results": 37,  # ~$0.15 cap ($4/1000 results)
+                },
+            }
+        ]
 
     return kwargs
 
