@@ -245,7 +245,7 @@ The DQAF defines quality along six dimensions. Mapping to our metrics:
 | **Accuracy** | Precision, evidence score, hallucination count | **Measured.** But source citations are classified, not verified. |
 | **Completeness** | Recall against 164-plant reference | **Measured.** But only for thermal/Vietnam. |
 | **Timeliness** | Wall-clock time (#5) | **Recorded but not optimized.** |
-| **Coherence** | *Internal consistency* | **v1 implemented** (`coherence.py`): row-level (schema/business rules), cross-row (dedup), aggregate (control totals from one document). See §4.1 below. |
+| **Coherence** | *Internal consistency* | **Measured** (`coherence.py` + `tabulate_coherence.py`): row-level (schema/business rules), cross-row (dedup), aggregate (control totals). Coherence rate reported per model in `tab_coherence.tex`. See §4.1 below. |
 | **Comparability** | Cross-model (#1), cross-country (future) | **Partially measured.** Cross-model exists; cross-country is ticket 0075 Phase 3. |
 | **Accessibility** | Cost (#6), open pipeline | **Measured and met.** |
 
@@ -351,7 +351,7 @@ unchanged on a single-year slice of the v2+ master table.
 
 | # | Gap | Framework | Fix | Effort |
 |---|-----|-----------|-----|--------|
-| G1 | **Internal consistency** — v1 checks implemented (`coherence.py`); control totals JSON from PDP8 still needed to populate | DQAF: coherence | Populate ControlTotal instances from PDP8 aggregates; wire into eval pipeline | Small — data entry + plumbing |
+| G1 | **Internal consistency** — **measured** (`coherence.py` + `tabulate_coherence.py`): row-level, cross-row, aggregate checks run on all RAG extractions; coherence rate reported per model in the journal paper (table `tab_coherence.tex`). Control totals from PDP8 still pending for aggregate checks. | DQAF: coherence | Populate ControlTotal instances from PDP8 aggregates | Small — data entry |
 | G2 | **Source citations classified but not verified** — no URL existence check, no content check | Popper: falsifiability | Add HTTP HEAD checks; spot-check content on random sample | Small (HEAD) / Medium (content) |
 | G3 | **Tool verification threshold mismatch** — paper says 70/100, code uses 90/100 | Scientific integrity | Fix the code or fix the paper — they must match | Trivial |
 | G4 | **Headline F1=98.8% based on n=1** | Measurement theory | Run 2 more replicates of DeepSeek V3.2 decomposition | Small — one API call |

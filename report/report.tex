@@ -377,6 +377,12 @@ Les trois runs retournent respectivement 120, 115 et 102~centrales (F1 = 0,85 ; 
 
 Ce résultat montre que le mode RAG wholesale, combiné à un prompt de citation, produit des données traçables sans perte de précision. La limite est le rappel~: même le meilleur run ne retrouve que 74\,\% des 163~centrales de référence, contre 100\,\% pour la décomposition (section~\ref{sec:decomposition}). La combinaison des deux approches --- décomposition pour le rappel, citations pour la traçabilité --- est un axe de travail futur.
 
+\subsection{Cohérence interne}
+
+Au-delà de la comparaison avec la référence, la \textbf{cohérence interne} des extractions est un indicateur de qualité indépendant~: les données extraites sont-elles auto-cohérentes~? Pour chaque extraction, trois niveaux de vérification sont appliqués automatiquement~: (1)~au niveau de la ligne (capacité positive, combustible et statut connus, province reconnue), (2)~entre lignes (détection de doublons), et (3)~au niveau agrégé (totaux de contrôle). Le taux de cohérence est la proportion de lignes sans problème détecté (tableau~\ref{tab:coherence}).
+
+\InputIfFileExists{inputs/generated/tab_coherence}{}{}
+
 \input{inputs/verification_methods}
 
 \section{Discussion}
