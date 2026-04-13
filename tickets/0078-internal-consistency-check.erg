@@ -1,6 +1,6 @@
 %erg v1
 Title: Add coherence and internal consistency as requirements and metrics
-Status: open
+Status: doing
 Created: 2026-04-12
 Author: claude
 Blocked-by: gh#239
@@ -8,6 +8,9 @@ Blocked-by: gh#239
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G1 (DQAF coherence)
 2026-04-13T10:00Z claude note operator: coherence and internal consistency are required, not optional. Must appear in requirements lists (report, slides, paper, quality-grounding.md). The hard part is code. Operator's manual approach: extra columns flagging which source table each row comes from, then sum per table and compare to what the table header says. Avoids knapsack complexity.
+2026-04-13T12:00Z claude claimed
+2026-04-13T12:00Z claude status doing — implementing coherence.py with three-level checks
+2026-04-13T12:30Z claude note implemented src/aedist/coherence.py: row-level (capacity, fuel, status, province enum, retired+future COD), cross-row (dedup by name+province), aggregate (control totals with fuel/status/province filtering and tolerance). 16 tests pass. Entry points: check_row_coherence(), check_cross_row_coherence(), check_aggregate_coherence(), check_coherence() as main dispatcher. Aggregate checks use ControlTotal dataclass — operator called these "control totals" (official statistics term).
 
 --- body ---
 ## Context
