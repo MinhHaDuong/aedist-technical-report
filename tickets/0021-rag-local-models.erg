@@ -18,6 +18,7 @@ Author: claude
 2026-04-11T13:40Z claude note qwen3.5:2b RAG wholesale run1 F1=0.832 tp=116 fp=0 fn=47 (surprisingly strong, comparable to existing 35b runs 0.81-0.86)
 2026-04-11T13:40Z claude note checkpoint fold for day; qwen3.5:4b never started; plot script and slides integration deferred; ticket stays doing
 2026-04-13T13:30Z haduong note reframed: pipeline de-risking, two families, three tiers
+2026-04-13T15:30Z haduong note ATTENTION: qwen3.5:2b (3 runs) and qwen3.5:4b (3 runs) rescued from orphaned branch onto main (e0824d6). Rebase worktree before Padme wave to avoid redoing these runs.
 
 --- body ---
 ## Context
