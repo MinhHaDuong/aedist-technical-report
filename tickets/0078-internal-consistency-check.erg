@@ -1,5 +1,5 @@
 %erg v1
-Title: Add coherence and internal consistency as requirements and metrics
+Title: Report coherence metrics in the journal paper
 Status: doing
 Created: 2026-04-12
 Author: claude
@@ -12,171 +12,76 @@ Author: claude
 2026-04-13T12:30Z claude note implemented src/aedist/coherence.py: row-level (capacity, fuel, status, province enum, retired+future COD), cross-row (dedup by name+province), aggregate (control totals with fuel/status/province filtering and tolerance). 16 tests pass. Entry points: check_row_coherence(), check_cross_row_coherence(), check_aggregate_coherence(), check_coherence() as main dispatcher. Aggregate checks use ControlTotal dataclass — operator called these "control totals" (official statistics term).
 2026-04-13T13:00Z claude note operator: scope v1 coherence to table-based (one doc, one table, one extraction). Cross-document fusion (PDP7 vs PDP8, planned vs as-built, measurand ambiguity, knowledge store) is v2+. Code already conforms — ControlTotal.source is per-table, no cross-document reasoning.
 2026-04-13T13:30Z claude note operator: control totals extracted by LLM, not hand-entered. Two-pass architecture: (1) extract aggregates from table headers/summaries, (2) extract detail rows, (3) coherence check compares them. LLM checks itself at a different granularity.
+2026-04-13T18:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-Quality grounding review gap G1: the DQAF "coherence" dimension is
-entirely unmeasured. The journal paper already names "internal
-consistency" as a requirement for statistical production
-(paper_benchmark_merged.md:27) but we never check it. The slides'
-4-level framework (slides.tex:780-799) doesn't mention it either.
+The paper's introduction names "internal consistency" as a defining
+requirement of statistical production (line 27), then never measures it.
+Section 3.3 lists coverage, precision, justification rate, and an error
+taxonomy — but no coherence metric. A reviewer will ask: you require
+consistency but don't test it.
 
-A model can score F1=98.8% on plant-level matching and still produce
-internally incoherent data — capacity totals that don't sum to known
-aggregates, fuel mix percentages that don't add to 100%, plants
-listed as "operational" whose total capacity exceeds the grid's
-known installed capacity.
+The code is done: `coherence.py` (307 lines, 16 tests) implements
+row-level, cross-row, and aggregate checks. But nothing calls it. No
+results appear in the paper. The remaining work is connecting existing
+code to existing data and reporting the numbers.
 
-### The knapsack trap
+## Completed
 
-Naive approach: "do these 163 extracted capacities sum to the PDP8
-national total?" This is fragile — the national total might not
-equal the sum of the detailed table (rounding, scope differences,
-unit vs. plant aggregation). And if the total doesn't match, you
-can't tell which plants are wrong — that's a subset-sum / knapsack
-problem (NP-hard).
-
-### The provenance-column approach (operator's method)
-
-The operator's hand-rolled spreadsheet solved this with extra columns
-flagging which source table each row comes from:
-
-```
-name, capacity, fuel, status, ..., source_table, source_page
-Pha Lai, 440, coal, operational, ..., PDP8_Annex_III.2, p.47
-```
-
-Then the consistency check is per-table:
-- Plants tagged `source_table = PDP8_Annex_III.2` must sum to
-  what the header of Annex III.2 says (e.g., "Total coal: X MW").
-- Plants tagged `source_table = EVN_AR_2023_Table_5` must sum to
-  what Table 5 says.
-
-This is O(n) — no combinatorics. And when a total doesn't match,
-you know exactly which table is wrong, which narrows the search
-for the error.
-
-### Implication for the extraction pipeline
-
-The extraction prompt must emit provenance columns: `source_doc`,
-`source_table`, `source_page`. This is not a post-hoc check — it's
-a change to the output schema. If the model says where each row
-came from, consistency is checkable. If it doesn't, we're stuck
-with the knapsack.
-
-This connects to the evidence rubric: a plant with evidence
-score ≥ 3 (one primary source) should have a `source_table` value.
-A plant with score 4 (two primary sources) should have two.
+- `src/aedist/coherence.py`: check_row_coherence(), check_cross_row_coherence(),
+  check_aggregate_coherence(), check_coherence() — all working
+- `tests/test_coherence.py`: 16 tests passing
+- `docs/quality-grounding.md` §4.1: coherence dimension documented
+- Schema has provenance columns (SourcedPlant.sources, source_types)
 
 ## Actions
 
-### Part 1: Words (requirements documentation)
+1. **Run coherence on existing extractions (zero API cost).**
+   Write `src/aedist/tabulate_coherence.py`: load every CSV in
+   `experiments/derived/`, parse into Plant objects, run
+   `check_coherence()`, output a summary table:
+   model, method, n_rows, n_row_issues, n_cross_row_issues,
+   coherence_rate (fraction of rows with zero issues).
+   This generates a publishable table from data already on disk.
 
-1. **slides.tex** — Add coherence/consistency to the 4-level
-   framework. Either as a sub-item under Level 2 (document quality)
-   or as a Level 2.5 between document quality and provenance.
-   Something like: "Internal consistency — capacity totals match
-   source documents."
-2. **paper_benchmark_merged.md** — The word "internal consistency"
-   is already in the requirements list (line 27). Add a sentence in
-   the metrics section (§3) acknowledging it as a requirement we
-   name but do not yet measure in this pilot. Honesty > silence.
-3. **report.tex** — Add a brief note in the perspectives section
-   that internal consistency is a required quality dimension not
-   covered by F1/precision/recall, and that provenance-column
-   extraction is the path to checking it.
-4. **docs/quality-grounding.md** — Update the DQAF coherence row
-   from "NOT MEASURED" to "NOT MEASURED — approach designed (see
-   ticket 0078), requires provenance columns in output schema."
-5. **ticket 0075** — Add coherence as a criterion for the universal
-   prompt. The prompt must instruct the model to emit source_table
-   provenance columns. The optimizer must not suppress them.
+2. **Add coherence results to the paper.** Insert a paragraph in
+   §6 Error Analysis (or new §6.5 Internal Coherence) reporting the
+   numbers from step 1. Key finding to test: does coherence
+   discriminate where F1 saturates? Top models cluster near 90% F1 —
+   coherence may break ties.
 
-### Part 2: Code (the hard part)
+3. **One line in slides.tex** Level 2 description: add "internal
+   coherence" alongside coverage/precision/F1 (line ~787-789).
 
-6. **Extract control totals by LLM.** A separate extraction pass on
-   the same source document: "What aggregate capacity totals does
-   this document state?" The model reads table headers, summary
-   paragraphs, and section totals — these are easier to extract
-   correctly than 50 individual rows (one prominent number vs many
-   detail rows). Output as structured JSON:
-   ```json
-   [
-     {"source": "PDP8_Annex_III.2", "fuel": "coal", "status": "operational", "total_mw": 20235},
-     {"source": "PDP8_Annex_III.3", "fuel": "gas", "status": "operational", "total_mw": 8970}
-   ]
-   ```
-   This replaces hand data-entry. The LLM extracts both detail rows
-   and control totals from the same document; the coherence check
-   compares the two. The LLM's own output checks itself at a
-   different granularity.
+4. **Update quality-grounding.md** §5 table: change G1 status from
+   "Populate ControlTotal..." to "Measured — row-level and cross-row
+   checks run on all extractions. Aggregate control totals deferred
+   to v2."
 
-   Two-pass architecture on each document:
-   1. Control totals pass: extract aggregates.
-   2. Detail pass: extract individual plants (seed table).
-   3. Coherence check (code): do detail rows sum to control totals?
+## Explicitly deferred (v2)
 
-   If not: either a row is wrong, or the total is. Either way,
-   something needs attention — route to HITL or a follow-up query.
-
-   **Note:** a document may state the same total in multiple places
-   — e.g., a round number in the text body ("Vietnam has ~20 GW of
-   coal capacity") and a precise number in a table annex (sum of
-   rows = 20,235 MW). The control totals pass should extract all
-   instances with their location (body vs annex, page number). If
-   two instances of the same total disagree, that's an intra-document
-   inconsistency — flag it before comparing against detail rows.
-   The table annex total is usually more authoritative than the
-   body text (rounded vs precise), but both are useful: the body
-   text catches gross errors, the annex total catches row-level
-   errors.
-
-7. **Add provenance columns to the extraction schema.** Update the
-   prompt template to request `source_doc`, `source_table`,
-   `source_page` columns. Update `schema.py` or the CSV spec to
-   accept them. This is a prompt change + schema change, not a
-   pipeline architecture change.
-
-8. **Implement `check_consistency()`.** Given an extracted CSV with
-   provenance columns and an aggregates JSON:
-   - Group extracted rows by `source_table`
-   - Sum capacity per group
-   - Compare to the known total for that table
-   - Return per-table deviation (absolute MW, percentage)
-   - Flag tables with deviation > threshold (e.g., 5%)
-
-9. **Wire into evaluation.** Report consistency metrics alongside
-   F1/precision/recall: n_tables_checked, n_tables_consistent,
-   max_deviation_pct. Include in measurements.jsonl.
-
-10. **Fallback for legacy runs without provenance columns.** For
-    existing extraction runs that don't have source_table, run a
-    coarser check: sum total extracted capacity by fuel type,
-    compare to PDP8 national totals by fuel. This is the "fragile
-    naive approach" but still catches gross errors (hallucinated
-    large plants, missing fuel categories). Flag as "coarse
-    consistency" vs "per-table consistency."
+- Control totals from PDP8 aggregates (needs data entry or LLM
+  extraction of summary tables — useful but not needed for the paper)
+- Provenance columns in extraction prompt (prompt change = new runs)
+- Wiring coherence into the evaluation pipeline as a live gate
+  (currently sufficient to run post-hoc)
+- Two-pass architecture (extract aggregates + details, compare) —
+  describe in Discussion §7.2 as future work, do not implement
 
 ## Test
 
-1. `check_consistency()` on the reference CSV (hand-compiled from
-   PDP8) against PDP8 aggregates: deviation < 5% per table.
-2. On a synthetic bad extraction with one 5000 MW hallucinated coal
-   plant: coal total deviation flagged.
-3. On an extraction missing an entire fuel type: that table's
-   deviation is 100% (zero vs. known total).
+1. `tabulate_coherence.py` produces output for at least 3 model x method
+   combinations without error.
+2. At least one model shows >0 row-level issues (sanity: the check
+   finds real problems, not vacuously clean).
+3. Paper paragraph cites specific numbers from the table.
 
 ## Exit criteria
 
-- Words: coherence/consistency appears in requirements lists in
-  slides, paper, report, and quality-grounding.md
-- Code: `check_consistency()` implemented with per-table and
-  coarse-total modes
-- Aggregate constraints JSON committed for PDP8 thermal tables
-- Provenance columns specified in the extraction prompt template
-  (even if not all models populate them yet)
-- At least one sweep evaluated with coarse consistency check
-- Article acknowledges the dimension honestly: named as requirement,
-  coarse check implemented, per-table check designed but requiring
-  provenance columns that current runs don't yet emit
+- `tabulate_coherence.py` committed and tested
+- Paper §6 contains coherence results with numbers
+- Slides Level 2 mentions coherence
+- quality-grounding.md G1 updated to "measured"
+- No new API calls required
