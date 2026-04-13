@@ -6,45 +6,77 @@ Author: claude
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G2 (Popper: falsifiability)
+2026-04-13T16:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-Quality grounding review gap G2: the evidence rubric (0–4) classifies
-sources by URL domain regex and text patterns (`verify.py:66-96`) but
-never checks that the URL exists or contains the claimed content. A
-model citing "Decision 1509/QD-BCT" gets score 3 (primary source) if
-the format matches, even if the decision number is fabricated. This
-undermines the falsifiability claim anchoring the rubric.
+Quality grounding gap G2: the evidence rubric (0-4) classifies sources
+by URL domain regex and text patterns (`verify.py:66-96`) but never
+checks that a URL exists or that the cited content is real. A model
+citing "Decision 1509/QD-BCT" gets score 3 if the format matches,
+even if the decision number is fabricated. This undermines the
+falsifiability claim anchoring the rubric.
+
+The fix is not a pipeline feature -- it is a one-time audit that
+validates the rubric itself and produces a publishable finding:
+"evidence score N sources verify at X% rate." This calibration table
+measures the rubric's discrimination power.
+
+## Framing: rubric calibration audit, not pipeline integration
+
+HTTP HEAD alone is weak evidence: a Vietnamese government portal
+returning 200 with a generic page proves nothing. Content verification
+(does the page mention this plant?) is the real signal. And the most
+valuable question is not "does the URL work?" but "is this citation
+fabricated?" -- a hallucination forensics lens.
+
+The audit is stratified by evidence score tier to test whether the
+rubric discriminates correctly (higher scores should verify at higher
+rates). This is a calibration curve for the measurement instrument.
 
 ## Actions
 
-1. **URL existence check (HTTP HEAD):** for every source URL in
-   verification output, issue an HTTP HEAD request. Record: status
-   code, final URL after redirects, content-type. Cache aggressively
-   (same URL won't change between runs). Flag 404/DNS-fail as
-   "dead link" — downgrade evidence score to 1 (no usable source).
-2. **Content spot-check:** on a random sample (e.g., 20 plants from
-   the best extraction), fetch the page, search for the plant name
-   or capacity value in the page text. Record: found/not-found.
-   Report the spot-check hit rate as "source content confirmation
-   rate." This quantifies the false positive rate in our source
-   classification.
-3. **Do not block on content verification for all plants.** The
-   spot-check is enough to calibrate trust in the rubric. Full
-   content verification is a separate, larger effort.
+1. **Extract all citations** from the DeepSeek V3.2 decomposition run
+   (headline result). Group by evidence score tier (0-4). Count
+   unique URLs and citation texts per tier.
+
+2. **Stratified sample**: select ~10 plants per tier (2, 3, 4) for
+   verification. For tier 1 (no source), sample 5 to check whether
+   the LLM omitted a source that exists.
+
+3. **Three-level verification per sample plant:**
+   a. URL resolution: HTTP HEAD, record status code + final URL.
+   b. Content confirmation: fetch page (or web-search plant name +
+      decision number via Tavily). Record: entity found / not found.
+   c. Fabrication check: for primary-pattern citations (Decision N),
+      search for the exact decision number. Flag citations where the
+      number does not exist in any indexed source.
+
+4. **Produce calibration table:**
+   | Score tier | n_sampled | url_resolve_rate | content_confirm_rate | fabrication_rate |
+   Report as a LaTeX table for the article's verification discussion.
+
+5. **Cross-reference with ticket 0082**: where GEM data exists for
+   sampled plants, note whether the LLM's cited source agrees with
+   GEM's attribution. This is free triangulation.
+
+6. **Standalone script** (`scripts/audit_source_urls.py`), not a
+   pipeline integration. Reads verification JSON, outputs a CSV audit
+   log and a summary JSON. No changes to `verify.py` or the scoring
+   pipeline.
 
 ## Test
 
-On the DeepSeek V3.2 decomposition run (our headline result):
-- HTTP HEAD succeeds for >80% of cited URLs
-- Spot-check on 20 plants: report confirmation rate
-- Any dead-link downgrades reflected in updated evidence score
-  distribution
+- Calibration table shows monotonically increasing verification rates
+  across score tiers (score 4 > score 3 > score 2)
+- Fabrication rate for score 3-4 citations is < 20%
+- Script runs end-to-end on headline run without errors
 
 ## Exit criteria
 
-- URL HEAD check integrated into verification pipeline
-- Dead links flagged and evidence scores adjusted
-- Spot-check report on 20-plant sample with confirmation rate
-- Results mentioned in the article's verification discussion
+- `scripts/audit_source_urls.py` committed with audit CSV output
+- Calibration table (score tier vs verification rates) committed
+- Fabrication rate quantified for primary-source citations
+- One paragraph in article verification section reporting the finding
+- Relationship to ticket 0082 (GEM cross-reference) documented

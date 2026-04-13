@@ -6,74 +6,86 @@ Author: claude
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gaps G10-G13 (fix in words)
+2026-04-13T16:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-Quality grounding review identified four gaps that are out of scope
-for code/data fixes in the current article but must be acknowledged
-explicitly in the text. These are "fix in words" items: the article
-must state these limitations clearly so a reviewer doesn't discover
-them as blind spots.
+Quality grounding review identified four gaps (G10-G13) that are out
+of scope for code/data fixes but must be acknowledged in the article
+text. A reviewer who discovers these as blind spots will question
+methodological self-awareness -- fatal for a methods paper.
 
-## Gaps to address in prose
+The four gaps cluster into two threats: **validity under scaling**
+(G10 temporal coherence + G13 multilingual transfer) and
+**institutional legitimacy** (G11 ontological drift + G12 legal
+status). Writing them as two structured paragraphs rather than four
+isolated confessions creates a coherent limitations narrative.
 
-**G10 — Temporal coherence.** No versioned reference, no tracking of
-status changes over time. Plant statuses change (planned → construction
-→ operational → retired). The reference is a single temporal snapshot
-with no stated date. If a model extracts "operational" and the
-reference says "construction," is that an error or a temporal lag?
+## Threat 1 — Validity under scaling (G10 + G13)
 
-*Where to say it:* Discussion section, under "Limitations." State that
-temporal coherence requires longitudinal extraction (multi-year), which
-is future work. Mention that the reference snapshot should be dated.
+The benchmark validates one language (Vietnamese), one temporal
+snapshot, one component class. The scaling argument (10 countries x
+6 classes = 60 campaigns at ~$3.60 total) assumes two untested
+transfers:
 
-**G11 — Ontological drift under optimization.** When prompt
-optimization (ticket 0075) runs, the optimizer could change what
-counts as a "plant" to game the metric. This is a theory-ladenness
-concern (Kuhn/Hanson).
+- **Temporal (G10):** The reference is a single undated snapshot.
+  Plant statuses evolve (planned -> construction -> operational ->
+  retired). Discrepancies may reflect temporal lag, not extraction
+  error. Mitigation: versioned reference snapshots with explicit
+  dates; longitudinal extraction is future work.
 
-*Where to say it:* If the article discusses prompt optimization or
-future work on universal prompts, note that the output schema must be
-locked before optimization to prevent ontological drift. Brief —
-one sentence in future work.
+- **Multilingual (G13):** Nine ASEAN languages remain untested.
+  report.tex:542 already notes this partially. The journal version
+  must be equally explicit and the $3.60 cost estimate must carry
+  the caveat that it assumes unvalidated method transfer.
 
-**G12 — Legal status of AI-produced statistics.** UN Principle 7
-requires a legal framework. What is the legal standing of AI-extracted
-statistics vs. official statistics? Can they be cited in policy?
+**Where:** paper_benchmark_merged.md section 7.4 (currently placeholder
+comments). One paragraph, ~100 words, covering both sub-threats.
 
-*Where to say it:* Discussion section, under "Implications." One
-paragraph noting that AI-produced statistics are not official
-statistics and should be framed as decision-support or preliminary
-data pending validation by a statistical authority. Reference the UN
-Fundamental Principles.
+## Threat 2 — Institutional legitimacy (G11 + G12)
 
-**G13 — Cross-country and multilingual transfer.** The method is
-validated for Vietnamese only. Other ASEAN languages (Thai, Bahasa,
-Khmer, Filipino) are untested. The scaling argument (~60 campaigns)
-assumes transfer that has no evidence yet.
+AI-extracted statistics face institutional barriers even when
+technically accurate:
 
-*Where to say it:* Already partially stated in report.tex:542. Ensure
-the journal article version is equally explicit. The scaling cost
-estimate ($0.06 × 60 = $3.60) should carry a caveat that it assumes
-method transfer and multilingual capability not yet validated.
+- **Ontological drift (G11):** Prompt optimization (ticket 0075)
+  could silently redefine what counts as a "plant" to game the
+  metric. Mitigation: lock the output schema (OEO-aligned) before
+  optimization. One sentence in future work.
+
+- **Legal status (G12):** UN Fundamental Principles (Principle 7)
+  require a legal framework for official statistics. AI-produced
+  tables are decision-support or preliminary data, not official
+  statistics, until validated by a statistical authority.
+
+**Where:** paper_benchmark_merged.md section 7.4, after Threat 1
+paragraph. One paragraph, ~80 words.
 
 ## Actions
 
-1. Draft the prose additions for each gap: one paragraph per gap,
-   ready to paste into the article's Discussion/Limitations section.
-2. Review existing limitation statements in `report.tex` and
-   `paper_benchmark_merged.md` to avoid duplication.
-3. Integrate into the article text.
+1. Audit existing limitation text in `report.tex` (lines 535-542)
+   and `paper_benchmark_merged.md` (section 7.4 comments, line 261+)
+   to identify what is already stated vs. what is missing.
+2. Draft two paragraphs (Threat 1, Threat 2) as described above.
+3. Insert into `paper_benchmark_merged.md` section 7.4, replacing
+   the placeholder comments.
+4. In `report.tex`, ensure the scaling paragraph (line 539) carries
+   the temporal + multilingual caveats inline, not in a separate
+   limitations dump.
 
 ## Test
 
-Each of G10–G13 is explicitly addressed in the article text. A
-ctrl-F for "temporal," "ontological," "legal," and "multilingual"
-each finds a relevant passage.
+- ctrl-F "temporal" -> finds passage on snapshot dating
+- ctrl-F "multilingual" or "langues" -> finds explicit caveat on
+  the $3.60 estimate
+- ctrl-F "ontolog" -> finds schema-lock requirement
+- ctrl-F "official statistics" or "statistiques officielles" ->
+  finds UN Principle 7 framing
+- No gap from G10-G13 left unaddressed
 
 ## Exit criteria
 
-- Four limitation/caveat paragraphs added to the article
-- No gap from the quality grounding review left unaddressed
+- Two limitation paragraphs in paper_benchmark_merged.md section 7.4
+- Inline caveats in report.tex scaling paragraph
+- No duplication between the two files
 - Author reviewed and approved wording

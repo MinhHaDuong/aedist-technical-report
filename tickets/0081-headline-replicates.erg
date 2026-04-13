@@ -6,32 +6,78 @@ Author: claude
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G4 (measurement theory)
+2026-04-13T16:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-Quality grounding review gap G4: the headline result (DeepSeek V3.2
-decomposition, F1=98.8%, 163/163 plants) is based on n=1 run. No
-confidence interval, no variance estimate. Other conditions have
-n=2–3 replicates with bootstrap CIs. A reviewer will flag the
-asymmetry: the best result is the one with no error bar.
+The headline claim (DeepSeek V3.2 decomposition, F1=98.8%) rests on
+n=1. Every other condition has n=2-3 with bootstrap CIs. A reviewer
+will notice: the best result is the only one without an error bar.
+This is both a measurement gap (G4) and a credibility gap — the
+asymmetry suggests cherry-picking even if unintentional.
+
+Deeper problem: 211/280 runs used unspecified temperature (ticket
+0084 audit). The headline run's temperature is unknown. Replicating
+at t=0 while the original was at t~1.0 does not produce true
+replicates — it produces a different experimental condition. The
+variance we need to report is the variance *of the method as
+published*, not of a tightened-up version.
 
 ## Actions
 
-1. Run 2 additional replicates of the DeepSeek V3.2 decomposition
-   sweep (same prompt, same parameters, temperature=0 if possible).
-2. Compute bootstrap 95% CI on the 3-run F1.
-3. Update the results table and the abstract claim.
-4. If F1 varies across runs (temperature>0 or non-deterministic
-   sampling), report the range.
+### Phase 1 — Characterize what we have (~30 min)
+
+1. Determine the temperature of the existing headline run from
+   sweep config, API logs, or query_decomposed.py defaults. Record
+   finding in ticket 0084's audit table.
+2. Count replicates across ALL conditions in measurements.jsonl.
+   Produce a histogram: how many conditions have n=1, n=2, n=3?
+   The headline is not the only n=1 — fix the framing from "one
+   missing replicate" to "systematic replication policy."
+
+### Phase 2 — Run replicates (~$0.10, ~10 min)
+
+3. Run 2 additional replicates of DeepSeek V3.2 decomposition using
+   `query_decomposed.py --repeat 2` with temperature matching the
+   original run (or t=0 if original was t=0).
+4. If the original temperature was unspecified, run 2 at t=0 AND
+   note in the article that the original run used provider defaults.
+   This is honest: the replicate variance is a *lower bound* on
+   true method variance.
+
+### Phase 3 — Report honestly (~20 min)
+
+5. Compute bootstrap 95% CI on the 3-run F1.
+6. Update abstract: "F1 = X% [CI]" not "F1 = 98.8%".
+7. Add a paragraph in the methods section stating the replication
+   policy: target n>=3 for all conditions, temperature controlled
+   where possible, provider defaults noted as limitation.
+8. If any replicate yields F1 < 98%, update the narrative. The
+   finding becomes "method achieves high F1" not "method achieves
+   98.8%". This is stronger, not weaker — it shows robustness
+   awareness.
+
+## Coordination
+
+- Depends on ticket 0084 (temperature audit) for Phase 1 step 1.
+  If 0084 is not done, do the single-cell lookup manually.
+- Feeds into ticket 0083 (multiple comparison correction) — the
+  CI from this ticket enters the corrected comparison table.
+- Feeds into ticket 0086 (scope caveats) — replication limits
+  are a scope caveat.
 
 ## Test
 
-Three runs exist for DeepSeek V3.2 decomposition. Bootstrap CI
-computed. Abstract updated with interval.
+- measurements.jsonl contains >=3 rows for DeepSeek V3.2
+  decomposition condition.
+- Bootstrap CI computed and appears in results table.
+- Abstract contains interval, not point estimate.
+- Replication histogram committed (how many n=1,2,3 per condition).
 
 ## Exit criteria
 
-- n≥3 replicates for the headline result
-- CI reported in the abstract and results section
-- If F1 drops on additional runs, the narrative updated honestly
+- n>=3 replicates for headline result with known temperature
+- CI reported in abstract and results section
+- Replication policy stated in methods section
+- If F1 drops, narrative updated honestly — no silent revision
