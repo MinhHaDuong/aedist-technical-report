@@ -58,6 +58,7 @@ Thumbs.db
 # Figures (tracked selectively in report/Pictures/)
 # *.png — removed, let git track what's committed
 .claude/worktrees/
+.claude/projects/
 
 # git-erg compiled binary (rebuild with: cd tickets/tools/go && go build -o erg .)
 tickets/tools/go/erg
