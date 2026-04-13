@@ -1,0 +1,57 @@
+%erg v1
+Title: Run p1_base arm for remaining 28 census models
+Status: open
+Created: 2026-04-13
+Author: haduong
+
+--- log ---
+2026-04-13T12:45Z haduong created — split from 0057 (infra done, runs pending)
+
+--- body ---
+## Context
+
+Ticket 0057 built the base-vs-census comparison pipeline: tabulate and
+plot scripts, Makefile wiring, auto-regeneration from wildcards. PR #238
+merged with n=9 models. The table footnote flags this as underpowered.
+
+The census arm has 37 models. The p1_base arm has 9. Running the
+remaining 28 models under p1_base will produce a properly powered
+comparison.
+
+## Current p1_base models (9)
+
+deepseek-v3.2, gemini-2.5-flash-lite, gemini-3-flash-preview, kimi-k2.5,
+minimax-m2.7, mistral-small-2603, qwen3.5-122b-a10b, qwen3.5-35b-a3b,
+seed-2.0-lite
+
+## Missing (28)
+
+All other census models: claude-opus-4.6, claude-sonnet-4.6, devstral-small-2,
+gemma4:{31b,e2b,e4b}, glm-4.7-flash, glm-5-turbo, gpt-5-mini, gpt-5-nano,
+gpt-5.4, grok-4.20, llama-4-maverick, mercury-2, mistral-large-2512,
+mistral-small3.2, mimo-v2-{flash,pro}, nemotron-3-nano (x2),
+qwen3.5-{2b,4b,9b,35b,397b-a17b,plus-02-15}, qwen3.6-plus-preview,
+step-3.5-flash
+
+## Actions
+
+1. Batch cloud models through the parametric ablation harness with
+   prompt=p1_base, repeat=2-3
+2. Batch local models (qwen3.5:2b/4b/9b/35b) on Padme via query_rag
+   analog or direct parametric call — serial, one Ollama job at a time
+3. `make tables figures` to regenerate tab_base_vs_census.tex and
+   fig_base_vs_census.pdf
+
+## Test
+
+```bash
+make report/inputs/generated/tab_base_vs_census.tex
+# Verify model count increased from 9
+```
+
+## Exit criteria
+
+- p1_base records exist for all 37 census models (or documented reason
+  for exclusion)
+- Table and figure regenerated with full intersection
+- Footnote "underpowered" removed or updated

@@ -1,6 +1,6 @@
 %erg v1
 Title: Analyze base prompt vs census prompt gap
-Status: open
+Status: closed
 Created: 2026-04-10
 Author: claude
 Blocked-by: 0055
@@ -10,6 +10,7 @@ Blocked-by: 0055
 2026-04-11T09:31Z claude status executed by IDD execute
 2026-04-11T09:40Z claude note phase6 review fixes applied (dead helper removed, CI test strengthened, aggregation documented)
 2026-04-11T11:30Z claude note extended p1_base from n=2 to n=9, new macro DeltaF1=+17.3 [+8.4,+25.1]
+2026-04-13T12:30Z claude status closed — PR #238 merged, table+figure auto-regenerate via Make wildcards
 
 --- body ---
 ## Context
