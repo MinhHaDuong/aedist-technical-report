@@ -86,6 +86,92 @@ noms de plans de développement, rapports annuels). Les sources dont le
 domaine n'est pas reconnu et dont le texte ne correspond à aucun motif
 reçoivent le score~1 (aucune source exploitable).
 
+\subsubsection{L'indépendance des sources~: un problème ouvert}\label{sec:source-independence}
+
+Le score~4 (<<~deux sources primaires indépendantes~>>) mérite un examen
+critique. Le score~3 --- au moins une source identifiée comme primaire ---
+est déjà difficile à confirmer automatiquement~: la classification repose
+sur des heuristiques de domaine URL et de motifs textuels, non sur une
+vérification humaine du caractère primaire de la source. Une intervention
+humaine (HITL) serait nécessaire pour valider qu'une source est
+\emph{réellement} primaire. En pratique, un rubrique révisée pourrait
+séparer ces deux niveaux~:
+
+\begin{center}
+\small
+\begin{tabular}{cl}
+\toprule
+\textbf{Score} & \textbf{Définition} \\
+\midrule
+0 & Source fabriquée (hallucination détectée) \\
+1 & Aucune source fournie \\
+2 & Une source secondaire (presse, Wikipedia) \\
+3 & Une source primaire (heuristique~: domaine, motif) \\
+4 & Au moins une source primaire \emph{confirmée} (validation HITL ou croisement factuel) \\
+5 & Deux sources primaires \emph{indépendantes} confirmées \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Le passage du score~4 au score~5 est le plus exigeant, car
+l'\emph{indépendance} des sources est elle-même un problème épistémologique
+difficile. Dans le contexte vietnamien, les chaînes de dépendance
+informationnelle sont enchevêtrées~:
+
+\begin{itemize}
+\item \textbf{Branche exécutive.} Le Ministère de l'Industrie et du
+  Commerce (MOIT) s'appuie sur l'Institut de l'Énergie (\emph{Energy
+  Institute}, IE) pour ses analyses techniques. Les chiffres du PDP8
+  proviennent largement de l'IE~; citer à la fois le PDP8 et un rapport
+  de l'IE ne constitue pas deux sources indépendantes.
+
+\item \textbf{EVN et sociétés de production.} Electricity of Vietnam (EVN),
+  les sociétés de génération (gencos) et l'opérateur de transport
+  (EVNNPT) sont la source originale des données opérationnelles.
+  Tout document citant des capacités installées reprend, directement ou
+  indirectement, les chiffres d'EVN. Les rapports annuels d'EVN et
+  les données PDP8 ne sont donc pas indépendants pour les centrales
+  existantes.
+
+\item \textbf{Littérature académique.} Certains articles scientifiques
+  évalués par les pairs (par exemple, les travaux sur PyPSA-VN) peuvent
+  constituer des sources indépendantes s'ils ont collecté leurs propres
+  données. Mais beaucoup reprennent les chiffres du PDP ou d'EVN.
+
+\item \textbf{Branche législative et Parti.} L'Assemblée nationale et le
+  Parti communiste produisent des résolutions et des rapports qui
+  peuvent contenir des chiffres indépendants, notamment pour les
+  centrales planifiées (décisions d'investissement distinctes des
+  projections MOIT/IE).
+
+\item \textbf{Douanes et Office statistique.} Le General Statistics Office
+  (GSO) et les douanes collectent des données par des voies distinctes
+  (importations de combustible, production déclarée). Ces sources sont
+  potentiellement indépendantes pour les capacités opérationnelles, mais
+  ne couvrent pas les centrales planifiées.
+
+\item \textbf{Sources internationales.} Global Energy Monitor (GEM),
+  l'AIE, et IRENA compilent des données à partir de sources
+  multiples~; leur degré d'indépendance varie. GEM effectue un
+  travail de vérification propre (imagerie satellite, rapports locaux)
+  et peut constituer une source indépendante pour certaines centrales.
+  L'imagerie satellite et les requêtes OpenStreetMap offrent une
+  vérification physique de l'existence d'une centrale, mais pas de sa
+  capacité nominale.
+\end{itemize}
+
+\noindent En résumé, atteindre le score~5 (deux sources primaires
+véritablement indépendantes) pour chaque centrale d'un inventaire national
+est un problème de recherche à part entière, nécessitant~:
+(a)~un graphe de dépendance entre producteurs de données du secteur
+énergétique,
+(b)~une validation HITL au moins par échantillonnage,
+(c)~potentiellement des sources non documentaires (télédétection,
+OpenStreetMap, registres de raccordement réseau).
+Le présent pilote opère au niveau 3--4 de la rubrique~; le niveau~5
+constitue un objectif à long terme pour une base de données de qualité
+statistique officielle.
+
 \subsubsection{Analyse précision-couverture}\label{sec:prec-cov}
 
 Le protocole d'analyse opère à chaque seuil $t \in \{0, 1, 2, 3, 4\}$~:

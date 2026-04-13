@@ -78,18 +78,50 @@ evidence rubric operationalizes this:
 | 0 | Fabricated — the source *was* checked and found false |
 | 1 | Unfalsifiable — no source offered, nothing to check |
 | 2 | Weakly falsifiable — one secondary source (may be derivative) |
-| 3 | Falsifiable — one primary source that could be checked |
-| 4 | Corroborated — two independent primary sources agree |
+| 3 | Falsifiable — one primary source identified by heuristic (domain, text pattern) |
+| 4 | Confirmed — at least one primary source validated (HITL or factual cross-check) |
+| 5 | Corroborated — two *independent* primary sources confirmed |
 
-Score 4 is the closest we get to Popperian corroboration: the claim has
-survived one independent check.
+**Revised rubric (proposed).** The original 0–4 scale conflates two
+distinct steps: identifying a source as "primary" (heuristic,
+automatable) and confirming that two sources are *independent*
+(requires domain knowledge, often HITL). The revised 0–5 scale
+separates them. The pilot operates at levels 3–4; level 5 is a
+long-term research goal. See `verification_methods.tex`
+§source-independence for the full discussion.
+
+**Why independence is hard.** In the Vietnamese energy sector, information
+flows create hidden dependencies between sources:
+
+- **MOIT → Energy Institute → PDP8**: The Ministry commissions the
+  Energy Institute for technical analysis. PDP8 numbers come from IE.
+  Citing both PDP8 and an IE report is *not* two independent sources.
+- **EVN / gencos / EVNNPT**: The original source of operational data.
+  Any document citing installed capacities ultimately traces back to EVN.
+  EVN annual reports and PDP8 are not independent for existing plants.
+- **Academic literature**: Papers on PyPSA-VN may be independent *if*
+  they collected their own data. Many just cite PDP or EVN.
+- **Legislature / Party**: National Assembly resolutions and Party
+  documents may contain independent figures, especially for planned
+  investments (separate decision chains from MOIT/IE).
+- **GSO / Customs**: The General Statistics Office and customs collect
+  data through distinct channels (fuel imports, declared production).
+  Potentially independent for operational capacity but blind to planned.
+- **International (GEM, IEA, IRENA)**: GEM does its own verification
+  (satellite imagery, local reporting). IEA/IRENA may repackage
+  national submissions.
+- **Physical verification**: Satellite imagery and OpenStreetMap can
+  confirm a plant *exists* but not its nominal capacity.
+
+Reaching score 5 for every plant requires a dependency graph of the
+sector's data producers — a research contribution in itself.
 
 **What we do well.** The five-mode verification protocol (unverified →
 tool → self → cross → web) is a systematic escalation of falsification
 effort. The precision-coverage tradeoff at each threshold makes the cost
 of corroboration visible.
 
-**Gap: source citations are classified but not verified.** The pipeline
+**Gap 1: source citations are classified but not verified.** The pipeline
 classifies sources by URL domain regex and text patterns
 (`verify.py:66-96`) but never issues an HTTP request to check that the
 URL exists, returns a 200, or contains the claimed content. A model that
@@ -97,10 +129,21 @@ cites "Decision 1509/QD-BCT" gets credit for a primary source even if
 the decision number is fabricated, as long as the format matches.
 
 *Fixable?* **Partially.** URL existence checks (HTTP HEAD) are trivial
-to add. Content verification — does the page actually say what the model
-claims — is harder and would require a second extraction step, but a
-spot-check on a random sample is feasible and would quantify the false
-positive rate in our source classification.
+to add. Content verification is harder but a spot-check on a random
+sample is feasible (ticket 0079).
+
+**Gap 2: "independent" is undefined.** The original score 4 says "two
+independent primary sources" without defining independence. In practice,
+most Vietnamese energy sources trace back to EVN or IE/MOIT. Automatic
+independence assessment is not feasible without the dependency graph
+described above. HITL validation at least by sampling is required for
+honest score 4+ claims.
+
+*Fixable?* **Partially.** The revised rubric (0–5) makes the gap
+explicit. Score 4 (one confirmed primary) is achievable with HITL
+spot-checks. Score 5 (two independent confirmed) requires the
+dependency graph — out of scope for this pilot but mapped as a
+research direction.
 
 ### 2.3 Reproducibility as intersubjective agreement
 
