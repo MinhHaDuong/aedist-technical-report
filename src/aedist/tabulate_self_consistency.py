@@ -114,8 +114,8 @@ def generate_per_run_table(results: list[dict]) -> str:
             f1 = r["run_f1_scores"][i] * 100
             matched = r["run_n_matched"][i]
             n_sys = r["run_n_system"][i]
-            missed = n_ref - matched
-            halluc = n_sys - matched
+            missed = max(0, n_ref - matched)
+            halluc = max(0, n_sys - matched)
             recall = matched / n_ref * 100 if n_ref > 0 else 0
 
             run_label = name if i == 0 else ""
