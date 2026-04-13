@@ -1,8 +1,8 @@
-Last updated: 2026-04-13 (hygiene session)
+Last updated: 2026-04-13 (ticket 0021 closed)
 
 ## Status
 
-Pipeline end-to-end. Census: 37 models, best F1 98.8%. Three-regime ablation Phase 1 complete. Base-vs-census analysis shipped (PR #238, n=9, ΔF1=+17.3pp [+8.4,+25.1]). PR #239 merged: coherence checks, FDR correction, ANOVA diagnostics, 12 new tickets (0075-0086), quality-grounding doc. Repo hygiene: 15 worktrees removed, 85+ branches pruned, orphaned data rescued (qwen3.5:2b/4b RAG runs). Ticket 0021 reframed as pipeline de-risking (two families × three tiers), cloud runs in progress.
+Pipeline end-to-end. Census: 37 models, best F1 98.8%. Three-regime ablation Phase 1 complete. RAG scaling curve complete (PR #240): 30 runs across Qwen 3.5 + Gemma 4, edge (2B) to cloud (122B MoE). Key finding: Qwen 3.5 2B achieves F1=0.83 with RAG — edge deployment viable. Gemma 4 needs ≥31B. Two-family scaling curve figure generated.
 
 ## Blockers
 
@@ -10,8 +10,7 @@ None
 
 ## Next actions
 
-1. Ticket 0021: RAG scaling curve — cloud runs in progress (worktree), Padme edge runs next
-2. Ticket 0068: decomposition hallucination fix — evaluate 17 existing probe outputs, write dynamic table
+1. Ticket 0068: decomposition hallucination fix — evaluate 17 existing probe outputs, write dynamic table
 3. Phase 2 decision: run RAG-only ablation (16 prompts, Kimi K2 + DeepSeek V3.2, ~$5-10)
 4. Visual review: `make slides` + `make report` — check for build errors
 
@@ -32,16 +31,15 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 - [x] Multi-agent verification protocol designed (PR #232)
 - [x] Base vs census gap analysis (ticket 0057, PR #238)
 - [x] Coherence checks + statistical rigor fixes (PR #239)
-- [ ] RAG scaling curve: two families, edge-to-cloud (ticket 0021, in progress)
+- [x] RAG scaling curve: two families, edge-to-cloud (ticket 0021, PR #240)
 - [ ] Decomposition hallucination fix evaluation (ticket 0068)
 - [ ] Phase 2 ablation: 16 prompts on RAG regime (awaiting human decision)
 - [ ] Multi-agent verification Phase B (ticket 0059)
 - [ ] Full verification factorial (ticket 0060)
 - [ ] Ablation results visualization (ticket 0067)
 
-## Open tickets (19)
+## Open tickets (18)
 
-- 0021 RAG scaling: two families × three tiers (doing — cloud runs in worktree, Padme queued)
 - 0059 Multi-agent verification Phase B (ready)
 - 0060 Full verification factorial (ready)
 - 0067 Ablation results visualization (blocked by Phase 2)
