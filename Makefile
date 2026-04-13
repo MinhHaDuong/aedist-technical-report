@@ -63,6 +63,13 @@ $(GEN)/tab_base_vs_census.tex: $(MEASUREMENTS) $(P1_BASE_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_base_vs_census --output $@
 
+DECOMP_BEFORE := $(wildcard experiments/outputs/decomposed/reconciliation_*.csv)
+DECOMP_AFTER := $(wildcard experiments/outputs/decomposed_v2/reconciliation_*.csv)
+
+$(GEN)/tab_decomposition_fix.tex: $(DECOMP_BEFORE) $(DECOMP_AFTER)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_decomposition_fix --output $@
+
 $(GEN)/fig_base_vs_census.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_base_vs_census --output $@
@@ -138,7 +145,8 @@ report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
     $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
-    $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf
+    $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf \
+    $(GEN)/tab_decomposition_fix.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -154,7 +162,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf
 select: experiments/models_selected.yaml
 census:

@@ -146,7 +146,7 @@ EVAL      := uv run --project .. python -m aedist.evaluate
 REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 
 STRUCTURED_DIRS := census multiturn web rag \
-                   decomposed sourced frontier
+                   decomposed decomposed_v2 sourced frontier
 
 OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
                 $(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv)

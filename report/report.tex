@@ -351,6 +351,10 @@ L'inspection des lignes fabriquées révèle trois motifs. D'abord, un \textbf{f
 
 L'analyse du code (\texttt{src/aedist/query\_decomposed.py} lignes~55--77) désigne une cause~: les trois sous-prompts exigent explicitement du modèle qu'il dépasse le corpus. La consigne \textit{<<~Be absolutely exhaustive --- include operational, under construction, planned, proposed, and cancelled plants.~>>} est présente dans chaque sous-requête, alors que le prompt de base (\texttt{experiments/prompts/prompt\_structured.txt}) est laconique et ne demande aucune exhaustivité. En requête unique, le modèle reste à l'intérieur du corpus. Pour satisfaire l'injonction <<~soyez exhaustif, incluez les centrales annulées~>>, le modèle n'a qu'une issue~: se replier sur sa mémoire paramétrique, fractionner les agrégats qu'il a mémorisés et fabriquer les noms dont il se souvient vaguement. La \textbf{leçon méthodologique} est générale et mérite d'être isolée~: dans un cadre RAG, toute consigne d'exhaustivité qui excède le périmètre du corpus transforme la mémoire paramétrique en source de secours, et donc l'absence documentaire en hallucination. La réparation — supprimer la consigne d'exhaustivité et ajouter une clause d'ancrage (\textit{<<~based only on the provided documents~>>}) — est testée dans le ticket~0068.
 
+La correction est validée sur un second lot de runs (tableau~\ref{tab:decomposition-fix}). Pour DeepSeek~V3.2, seul modèle présent dans les deux bras, le taux de FP moyen passe de 5,7\,\% à 0,8\,\%. Sur les cinq modèles du bras corrigé, trois (Gemini~3~Flash, Minimax~M2.7, DeepSeek~V3.2) atteignent un taux de FP moyen inférieur à 1\,\%. Deux modèles (Qwen3.5-122b et Kimi~K2.5) conservent un taux élevé dans certains runs, ce qui suggère une sensibilité résiduelle au repli paramétrique malgré la clause d'ancrage. La correction ne résout donc pas entièrement le problème mais réduit substantiellement l'hallucination pour la majorité des modèles.
+
+\InputIfFileExists{inputs/generated/tab_decomposition_fix}{}{}
+
 \input{inputs/verification_methods}
 
 \section{Discussion}
