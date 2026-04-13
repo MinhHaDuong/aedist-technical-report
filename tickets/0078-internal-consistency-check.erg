@@ -12,6 +12,7 @@ Blocked-by: gh#239
 2026-04-13T12:00Z claude status doing — implementing coherence.py with three-level checks
 2026-04-13T12:30Z claude note implemented src/aedist/coherence.py: row-level (capacity, fuel, status, province enum, retired+future COD), cross-row (dedup by name+province), aggregate (control totals with fuel/status/province filtering and tolerance). 16 tests pass. Entry points: check_row_coherence(), check_cross_row_coherence(), check_aggregate_coherence(), check_coherence() as main dispatcher. Aggregate checks use ControlTotal dataclass — operator called these "control totals" (official statistics term).
 2026-04-13T13:00Z claude note operator: scope v1 coherence to table-based (one doc, one table, one extraction). Cross-document fusion (PDP7 vs PDP8, planned vs as-built, measurand ambiguity, knowledge store) is v2+. Code already conforms — ControlTotal.source is per-table, no cross-document reasoning.
+2026-04-13T13:30Z claude note operator: control totals extracted by LLM, not hand-entered. Two-pass architecture: (1) extract aggregates from table headers/summaries, (2) extract detail rows, (3) coherence check compares them. LLM checks itself at a different granularity.
 
 --- body ---
 ## Context
@@ -95,16 +96,30 @@ A plant with score 4 (two primary sources) should have two.
 
 ### Part 2: Code (the hard part)
 
-6. **Define aggregate constraints.** Extract from PDP8 the per-table
-   capacity totals. Store as a JSON file:
+6. **Extract control totals by LLM.** A separate extraction pass on
+   the same source document: "What aggregate capacity totals does
+   this document state?" The model reads table headers, summary
+   paragraphs, and section totals — these are easier to extract
+   correctly than 50 individual rows (one prominent number vs many
+   detail rows). Output as structured JSON:
    ```json
-   {
-     "PDP8_Annex_III.2": {"fuel": "coal", "status": "operational", "total_mw": 20235},
-     "PDP8_Annex_III.3": {"fuel": "gas", "status": "operational", "total_mw": 8970},
-     ...
-   }
+   [
+     {"source": "PDP8_Annex_III.2", "fuel": "coal", "status": "operational", "total_mw": 20235},
+     {"source": "PDP8_Annex_III.3", "fuel": "gas", "status": "operational", "total_mw": 8970}
+   ]
    ```
-   This is a one-time manual extraction from the PDP8 PDF.
+   This replaces hand data-entry. The LLM extracts both detail rows
+   and control totals from the same document; the coherence check
+   compares the two. The LLM's own output checks itself at a
+   different granularity.
+
+   Two-pass architecture on each document:
+   1. Control totals pass: extract aggregates.
+   2. Detail pass: extract individual plants (seed table).
+   3. Coherence check (code): do detail rows sum to control totals?
+
+   If not: either a row is wrong, or the total is. Either way,
+   something needs attention — route to HITL or a follow-up query.
 
 7. **Add provenance columns to the extraction schema.** Update the
    prompt template to request `source_doc`, `source_table`,
