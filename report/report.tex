@@ -297,6 +297,16 @@ Claude + RAG + Relance & 61 & 12 & 9 & 72 \\
 
 Les deux techniques (relance et RAG) sont complémentaires. Il manque encore beaucoup de lignes par rapport à notre référence, mais les centrales les plus importantes sont probablement incluses. Cette approche ne permet toutefois pas de remonter le pedigree complet des résultats.
 
+\subsection{Qualité de la référence~: accord inter-annotateur}\label{sec:reconciliation}
+
+L'inventaire de référence (163~centrales) est la compilation d'un seul expert. Pour quantifier sa fiabilité, on le confronte à une seconde source indépendante~: le Global Energy Monitor (GEM, 153~centrales). La réconciliation par programmation linéaire (section~\ref{sec:methode}) produit 153~appariements (le GEM est un sous-ensemble strict de la référence experte, à 10~centrales près).
+
+L'accord sur les attributs est élevé pour le combustible ($\kappa$ de Cohen = 0,41, accord brut 69\,\%), modéré pour la capacité (50\,\%) et faible pour le statut (35\,\%). Les désaccords de statut reflètent des ontologies différentes (GEM distingue \emph{pre-permit}, \emph{announced}, \emph{shelved} là où la référence experte utilise \emph{planned}, \emph{proposed}, \emph{cancelled}). Les désaccords de capacité proviennent d'agrégations différentes~: le GEM sépare parfois les phases d'un même site que la référence experte fusionne.
+
+Pour vérifier que ces différences n'affectent pas le classement des modèles, on réévalue les 385~extractions contre les deux références. Le rang de Spearman entre les F1 médians obtenus avec la référence experte et avec le GEM est $\rho = 0{,}998$ ($p < 0{,}001$, $n = 49$ modèles). Le benchmark est donc robuste au choix de la référence.
+
+\InputIfFileExists{inputs/generated/tab_reconciliation}{}{}
+
 \section{Expérience 3~: RAG wholesale à l'échelle}\label{sec:rag}
 
 On étend l'évaluation RAG à 17 modèles couvrant deux familles (Qwen~3.5, Gemma~4) et trois tiers d'infrastructure (edge 2--4B, station de travail 9--35B, cloud 122B+), chacun interrogé 3 fois dans les mêmes conditions~: corpus RAG wholesale de 18 documents (37\,283 tokens), même prompt, pas de relance. L'inventaire de référence compte 163 centrales thermiques.
