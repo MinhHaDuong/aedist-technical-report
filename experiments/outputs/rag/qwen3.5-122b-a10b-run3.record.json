@@ -1,0 +1,34 @@
+{
+  "run_id": "0371ce025b76",
+  "timestamp": "2026-04-13T17:41:51.711863Z",
+  "method": "rag",
+  "method_params": {
+    "model": "qwen/qwen3.5-122b-a10b",
+    "prompt_version": "rag",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 53.516,
+    "cost_usd": 0.02819752,
+    "tokens_in": 78652,
+    "tokens_out": 3725
+  },
+  "result_file": "experiments/outputs/rag/qwen3.5-122b-a10b-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 101,
+    "tp": 101,
+    "fp": 0,
+    "fn": 62,
+    "f1": 0.7652,
+    "fuel_accuracy": 0.6832,
+    "status_accuracy": 0.495,
+    "province_accuracy": 0.8614
+  }
+}
