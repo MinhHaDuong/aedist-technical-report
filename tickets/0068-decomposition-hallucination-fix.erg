@@ -9,6 +9,7 @@ Author: claude
 2026-04-11T10:07Z claude claimed
 2026-04-11T10:07Z claude status doing
 2026-04-11T10:35Z claude note checkpoint: patch + report edit landed (bf4ee08); probe set expanded to 12 models (decomposition_fix_probe); 14 of 33 cloud runs done in outputs/decomposed_v2/ (b6ba5ee); 3 glm-4.7-flash sentinels written, real Ollama runs deferred (Padme GPU busy); None-guard added to extract_csv_text after MiniMax M2.7 hit token cap with empty content; resume by re-running same command (should_skip handles cached); 19 cloud runs left, $0.69 of $5 spent
+2026-04-13T14:30Z haduong note rewrote actions: 17/18 probe runs done (kimi run3 missing), need evaluation pipeline not more runs; skip glm Ollama (Padme busy with 0021); cloud-only finish is ~30 min work
 
 --- body ---
 ## Context
@@ -84,35 +85,86 @@ The `project_rag_truncation.md` memory claims "decomposition is the
 fix." That is wrong. Decomposition fixes truncation by hallucinating
 into the blank space. Memory needs updating after this ticket closes.
 
-## Actions
+## Done (on main)
 
-1. Patch `src/aedist/query_decomposed.py:55-77`:
-   - Remove "Be absolutely exhaustive — include operational, under
-     construction, planned, proposed, and cancelled plants" from all
-     three sub-prompts.
-   - Add grounding language: "Based only on the provided documents,
-     list the COAL-FIRED thermal power plants..."
-   - Keep the per-fuel scoping (that is the point of decomposition).
-2. Re-run one cheap model (DeepSeek V3.2, ~$0.06 per 3-run batch) as a
-   probe. Compare FP rate and recall to the unpatched run.
-3. If FP drops without recall collapsing, re-run the full model set
-   (gpt-5.4, deepseek, mistral-large, mistral-small, gemini-flash-lite),
-   3 runs each. Budget ~$3.
-4. Update `report/report.tex` section 3.11 with before/after numbers
-   if the fix works, or document the failure if it does not.
-5. Update `project_rag_truncation.md` memory to reflect the finding.
+- [x] Prompt patch: bf4ee08 — grounding language added, "exhaustive"
+  removed from all 3 sub-prompts (query_decomposed.py:55-77)
+- [x] Probe runs: 17 raw JSON outputs in experiments/outputs/decomposed_v2/
+  from 6 cloud models (deepseek-v3.2, gemini-3-flash-preview,
+  glm-4.7-flash, kimi-k2.5, minimax-m2.7, qwen3.5-122b-a10b)
+- [x] None-guard in extract_csv_text after MiniMax M2.7 hit token cap
+- $0.69 of $5 budget spent
+
+## Remaining (cloud only, no Padme needed)
+
+1. Complete kimi-k2.5 run3 (~$0.02, 1 API call)
+2. Extract CSVs from all 17+ raw outputs in decomposed_v2/:
+   ```bash
+   cd experiments
+   for f in outputs/decomposed_v2/*.json; do
+     uv run --project .. python -c "
+   from aedist.query_decomposed import extract_csv_text
+   import json
+   raw = json.load(open('$f'))
+   # extract and write CSV
+   "
+   done
+   ```
+   Check how existing decomposed/ outputs were extracted — may need
+   the full evaluate pipeline rather than manual extraction.
+3. Evaluate against reference (data/reference/vietnam_thermal_v1.csv):
+   run reconciliation to produce reconciliation_*.csv files and
+   .record.json files with tp/fp/fn counts
+4. Compare FP rates before vs after patch. Before (from ticket body):
+   | Model          | Baseline RAG | Decomposed (before) |
+   |----------------|-------------|---------------------|
+   | gpt-5.4        | 0%          | 45/40/52%           |
+   | deepseek-v3.2  | 0%          | 20/—/2%             |
+   | mistral-large  | 0%          | 7/25/10%            |
+   | mistral-small  | 0%          | 29/0/19%            |
+   | gemini-flash-lt| 59/6/75%    | 40/64/0%            |
+   After: compute with same method:
+   ```bash
+   for f in experiments/outputs/decomposed_v2/reconciliation_*.csv; do
+     total=$(tail -n +2 "$f" | wc -l)
+     fp=$(grep -c '^system_only' "$f")
+     printf "%s %d/%d (%.0f%%)\n" "$(basename $f)" "$fp" "$total" \
+       $(echo "scale=0; $fp * 100 / $total" | bc)
+   done
+   ```
+5. Write a tabulate_decomposition_fix.py script (same pattern as
+   tabulate_base_vs_census.py) that reads reconciliation CSVs from
+   both experiments/outputs/decomposed/ (before) and decomposed_v2/
+   (after), computes FP rates per model per run, and emits a LaTeX
+   table. Table must be dynamic — regenerates from all runs available,
+   not hardcoded. Wire into Makefile as a generated table.
+6. Write up in report section 3.11: include the generated table, the
+   prompt lesson (grounding language prevents parametric-memory
+   hallucination)
+6. Update project_rag_truncation.md memory: "decomposition is the fix"
+   is wrong — decomposition trades truncation for hallucination unless
+   grounded
+
+glm-4.7-flash sentinel files exist (3 runs) but need real Ollama runs.
+Skip for now — Padme is doing ticket 0021. 5 cloud models + kimi
+completion = sufficient for the before/after comparison.
+
+## Scientific payoff
+
+A clean prompt-engineering result for the methods paper: adding "be
+absolutely exhaustive" to RAG sub-prompts triggers parametric-memory
+fallback (0% FP → 40-52% FP). Replacing with "based only on the
+provided documents" should restore precision. Small prompt change,
+large quality swing — directly supports "the prompt is part of the
+method" thesis.
 
 ## Test
 
-Run DeepSeek V3.2 with patched prompts. Pass: FP rate < 5 % and recall
-≥ the previous decomposed run. Fail: either metric degrades, or the
-model refuses to answer without the "exhaustive" instruction.
+Evaluate decomposed_v2 outputs. Pass: FP rate < 5% for models that
+had 0% in baseline RAG. Fail: FP stays high despite grounding language.
 
 ## Exit criteria
 
-- Sub-prompts patched and committed.
-- At least one model re-run shows FP drop without recall loss.
-- Report section 3.11 updated with the finding (the prompt lesson is
-  the interesting methodological result, regardless of whether the
-  fix works).
-- `project_rag_truncation.md` memory corrected.
+- Before/after FP table computed from reconciliation CSVs
+- Report section 3.11 updated with the finding
+- project_rag_truncation.md memory corrected
