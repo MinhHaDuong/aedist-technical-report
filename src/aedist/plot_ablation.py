@@ -90,7 +90,7 @@ def load_ablation_data() -> list[dict]:
             continue
         model = (record.method_params.model or "").split("/")[-1]
         s = record.result_summary
-        is_refusal = s.tp is None or (s.tp == 0 and s.fp == 0 and s.fn == 0)
+        is_refusal = s.tp is None and s.fp is None and s.fn is None
         rows.append(
             {
                 "variant": pv,
@@ -224,7 +224,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
 
     # Y axis
     ax.set_yticks([t[0] for t in variant_ticks])
-    ax.set_yticklabels([t[1] for t in variant_ticks], fontsize=9)
+    ax.set_yticklabels([t[1] for t in variant_ticks], fontsize=11)
     ax.set_xlabel("Number of power plants", fontsize=11)
     ax.set_xlim(-max_fp - 15, 185)
     ax.invert_yaxis()
@@ -265,12 +265,17 @@ def write_heatmap_pdf(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
+    # Guard: empty data produces no figure
+    non_refusal = [r for r in rows if not r["is_refusal"]]
+    if not non_refusal:
+        log.warning("No non-refusal ablation data; skipping heatmap")
+        return
+
     # Compute mean F1 per (variant, model) excluding refusals
     mean_f1: dict[tuple[str, str], float] = {}
     groups: dict[tuple[str, str], list[float]] = defaultdict(list)
-    for r in rows:
-        if not r["is_refusal"]:
-            groups[(r["variant"], r["model"])].append(r["f1"])
+    for r in non_refusal:
+        groups[(r["variant"], r["model"])].append(r["f1"])
     for key, values in groups.items():
         mean_f1[key] = sum(values) / len(values)
 
