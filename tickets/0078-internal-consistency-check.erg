@@ -1,5 +1,5 @@
 %erg v1
-Title: Add internal consistency check against aggregate capacity
+Title: Add coherence and internal consistency as requirements and metrics
 Status: open
 Created: 2026-04-12
 Author: claude
@@ -7,39 +7,146 @@ Blocked-by: gh#239
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gap G1 (DQAF coherence)
+2026-04-13T10:00Z claude note operator: coherence and internal consistency are required, not optional. Must appear in requirements lists (report, slides, paper, quality-grounding.md). The hard part is code. Operator's manual approach: extra columns flagging which source table each row comes from, then sum per table and compare to what the table header says. Avoids knapsack complexity.
 
 --- body ---
 ## Context
 
-Quality grounding review (`docs/quality-grounding.md`) gap G1: the
-DQAF "coherence" dimension is entirely unmeasured. No check that
-extracted capacities sum to known national totals. PDP8 publishes
-aggregate thermal capacity by fuel type — these are public numbers.
-If a model extracts 163 plants but their total capacity is 20% off
-the PDP8 aggregate, something is wrong even if F1 is high.
+Quality grounding review gap G1: the DQAF "coherence" dimension is
+entirely unmeasured. The journal paper already names "internal
+consistency" as a requirement for statistical production
+(paper_benchmark_merged.md:27) but we never check it. The slides'
+4-level framework (slides.tex:780-799) doesn't mention it either.
+
+A model can score F1=98.8% on plant-level matching and still produce
+internally incoherent data — capacity totals that don't sum to known
+aggregates, fuel mix percentages that don't add to 100%, plants
+listed as "operational" whose total capacity exceeds the grid's
+known installed capacity.
+
+### The knapsack trap
+
+Naive approach: "do these 163 extracted capacities sum to the PDP8
+national total?" This is fragile — the national total might not
+equal the sum of the detailed table (rounding, scope differences,
+unit vs. plant aggregation). And if the total doesn't match, you
+can't tell which plants are wrong — that's a subset-sum / knapsack
+problem (NP-hard).
+
+### The provenance-column approach (operator's method)
+
+The operator's hand-rolled spreadsheet solved this with extra columns
+flagging which source table each row comes from:
+
+```
+name, capacity, fuel, status, ..., source_table, source_page
+Pha Lai, 440, coal, operational, ..., PDP8_Annex_III.2, p.47
+```
+
+Then the consistency check is per-table:
+- Plants tagged `source_table = PDP8_Annex_III.2` must sum to
+  what the header of Annex III.2 says (e.g., "Total coal: X MW").
+- Plants tagged `source_table = EVN_AR_2023_Table_5` must sum to
+  what Table 5 says.
+
+This is O(n) — no combinatorics. And when a total doesn't match,
+you know exactly which table is wrong, which narrows the search
+for the error.
+
+### Implication for the extraction pipeline
+
+The extraction prompt must emit provenance columns: `source_doc`,
+`source_table`, `source_page`. This is not a post-hoc check — it's
+a change to the output schema. If the model says where each row
+came from, consistency is checkable. If it doesn't, we're stuck
+with the knapsack.
+
+This connects to the evidence rubric: a plant with evidence
+score ≥ 3 (one primary source) should have a `source_table` value.
+A plant with score 4 (two primary sources) should have two.
 
 ## Actions
 
-1. Collect PDP8 aggregate thermal capacity by fuel type (coal, gas,
-   oil) and by status (operational, construction, planned). These
-   are in the PDP8 document already in the RAG corpus.
-2. Add a `check_consistency(extracted_df, aggregates)` function that
-   compares summed capacity by fuel×status against the known totals.
-   Return absolute and percentage differences.
-3. Wire into the evaluation pipeline: report consistency alongside
-   F1/precision/recall in measurements.
-4. Add to the verification reporting: a row showing aggregate
-   deviation per fuel type.
+### Part 1: Words (requirements documentation)
+
+1. **slides.tex** — Add coherence/consistency to the 4-level
+   framework. Either as a sub-item under Level 2 (document quality)
+   or as a Level 2.5 between document quality and provenance.
+   Something like: "Internal consistency — capacity totals match
+   source documents."
+2. **paper_benchmark_merged.md** — The word "internal consistency"
+   is already in the requirements list (line 27). Add a sentence in
+   the metrics section (§3) acknowledging it as a requirement we
+   name but do not yet measure in this pilot. Honesty > silence.
+3. **report.tex** — Add a brief note in the perspectives section
+   that internal consistency is a required quality dimension not
+   covered by F1/precision/recall, and that provenance-column
+   extraction is the path to checking it.
+4. **docs/quality-grounding.md** — Update the DQAF coherence row
+   from "NOT MEASURED" to "NOT MEASURED — approach designed (see
+   ticket 0078), requires provenance columns in output schema."
+5. **ticket 0075** — Add coherence as a criterion for the universal
+   prompt. The prompt must instruct the model to emit source_table
+   provenance columns. The optimizer must not suppress them.
+
+### Part 2: Code (the hard part)
+
+6. **Define aggregate constraints.** Extract from PDP8 the per-table
+   capacity totals. Store as a JSON file:
+   ```json
+   {
+     "PDP8_Annex_III.2": {"fuel": "coal", "status": "operational", "total_mw": 20235},
+     "PDP8_Annex_III.3": {"fuel": "gas", "status": "operational", "total_mw": 8970},
+     ...
+   }
+   ```
+   This is a one-time manual extraction from the PDP8 PDF.
+
+7. **Add provenance columns to the extraction schema.** Update the
+   prompt template to request `source_doc`, `source_table`,
+   `source_page` columns. Update `schema.py` or the CSV spec to
+   accept them. This is a prompt change + schema change, not a
+   pipeline architecture change.
+
+8. **Implement `check_consistency()`.** Given an extracted CSV with
+   provenance columns and an aggregates JSON:
+   - Group extracted rows by `source_table`
+   - Sum capacity per group
+   - Compare to the known total for that table
+   - Return per-table deviation (absolute MW, percentage)
+   - Flag tables with deviation > threshold (e.g., 5%)
+
+9. **Wire into evaluation.** Report consistency metrics alongside
+   F1/precision/recall: n_tables_checked, n_tables_consistent,
+   max_deviation_pct. Include in measurements.jsonl.
+
+10. **Fallback for legacy runs without provenance columns.** For
+    existing extraction runs that don't have source_table, run a
+    coarser check: sum total extracted capacity by fuel type,
+    compare to PDP8 national totals by fuel. This is the "fragile
+    naive approach" but still catches gross errors (hallucinated
+    large plants, missing fuel categories). Flag as "coarse
+    consistency" vs "per-table consistency."
 
 ## Test
 
-`check_consistency()` on the reference CSV against PDP8 aggregates
-returns <5% deviation (the reference is hand-compiled from the same
-source). On a known-bad extraction with hallucinated large plants,
-deviation is flagged.
+1. `check_consistency()` on the reference CSV (hand-compiled from
+   PDP8) against PDP8 aggregates: deviation < 5% per table.
+2. On a synthetic bad extraction with one 5000 MW hallucinated coal
+   plant: coal total deviation flagged.
+3. On an extraction missing an entire fuel type: that table's
+   deviation is 100% (zero vs. known total).
 
 ## Exit criteria
 
-- Consistency check function implemented and tested
-- Reported alongside core metrics for at least one sweep
-- Deviation documented in the article's results
+- Words: coherence/consistency appears in requirements lists in
+  slides, paper, report, and quality-grounding.md
+- Code: `check_consistency()` implemented with per-table and
+  coarse-total modes
+- Aggregate constraints JSON committed for PDP8 thermal tables
+- Provenance columns specified in the extraction prompt template
+  (even if not all models populate them yet)
+- At least one sweep evaluated with coarse consistency check
+- Article acknowledges the dimension honestly: named as requirement,
+  coarse check implemented, per-table check designed but requiring
+  provenance columns that current runs don't yet emit
