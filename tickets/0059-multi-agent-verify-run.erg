@@ -10,23 +10,117 @@ Blocked-by: 0058
 2026-04-10T22:00Z claude created — Phase B execution, split from 0054 design
 2026-04-13T20:48Z claude claimed
 2026-04-13T20:48Z claude status doing — implementing multi-agent verification
+2026-04-13T21:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
-Ticket 0054 chooses the verification protocol. This ticket implements
-it and runs it on ablation experiment outputs (ticket 0058).
+
+Both blockers closed. Ticket 0054 chose the protocol (3-model panel,
+median vote on 0-4 evidence scores, 4 conditions C0-C3). Ticket 0058
+produced base extractions. The report prose is pre-written in
+plan_verification_multi.tex with hypotheses H1-H4, cost tables, and
+methodology — all waiting on measured numbers. Existing data in
+derived/verification/ covers only unverified + tool modes on 1 config.
+
+The code gap is ~40 lines. The experiment costs ~$1. The report
+sections are drafted. This is pure execution debt.
 
 ## Actions
-1. Implement chosen protocol in query_verification.py
-2. Run verification on best ablation prompt outputs
-3. Evaluate: verified F1 vs unverified F1 vs cost delta
-4. Write results section in report
+
+### Phase A: Code (15 min, no API calls)
+
+1. In `src/aedist/query_verification.py`, add function:
+   ```python
+   def verify_multi_cross(
+       rows: list[dict],
+       verifier_panel: list[str],
+       subject: str = DEFAULT_VERIFICATION_SUBJECT,
+   ) -> tuple[list[dict], dict]:
+   ```
+   Loop `verify_cross(rows, model)` for each model in panel.
+   Collect per-row evidence scores. Take `statistics.median()` per row.
+   Write columns: evidence_score_v1, evidence_score_v2, evidence_score_v3,
+   evidence_score_median. Set evidence_score = median for downstream
+   filter_by_score compatibility.
+
+2. In `run_condition()`, add `elif mode == "multi_cross":` case that
+   reads `verifier_panel` from config, calls `verify_multi_cross()`,
+   sums per-verifier costs.
+
+3. In `experiments/experiments.toml`, add:
+   ```toml
+   [sweeps.verification_multi]
+   repeat = 3
+   budget_usd = 5
+   output = "derived/verification_multi"
+   verification_modes = ["unverified", "multi_cross"]
+   verifier_panel = [
+       "anthropic/claude-sonnet-4.6",
+       "deepseek/deepseek-v3.2",
+       "openai/gpt-5.4",
+   ]
+
+   [[sweeps.verification_multi.base_configs]]
+   method = "decomposed"
+   model = "deepseek/deepseek-v3.2"
+   result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
+   ```
+
+4. Verify: `uv run python -m aedist.query_verification --sweep verification_multi --dry-run`
+   should list 4 conditions (1 unverified + 3 multi_cross reps).
+
+### Phase B: Run experiment (~$1, ~5 min wall time)
+
+5. Run: `uv run python -m aedist.query_verification --sweep verification_multi`
+   Produces CSVs in derived/verification_multi/.
+   Checkpoint: inspect one CSV to confirm evidence_score_v1/v2/v3/median columns.
+
+6. Cloud API calls are independent — parallelize with bash backgrounding
+   if run_condition supports it, else sequential is fine at 27 calls.
+
+### Phase C: Analyze (15 min)
+
+7. Compute per-condition metrics: for each of C0/C1/C2/C3, tabulate
+   precision, coverage, F1 at threshold t=3, mean evidence score,
+   hallucinations detected (score=0 count), cost.
+
+8. Test H1-H4:
+   - H1: score-0 count in C3 >= C1
+   - H2: delta-precision(C2-C3) < delta-precision(C1-C2)
+   - H3: coverage(C3) < coverage(C1) at t=3
+   - H4: hallucinations-per-dollar highest for DeepSeek
+
+9. Update derived/verification/tradeoff.csv with multi_cross rows.
+
+### Phase D: Report (15 min)
+
+10. Fill measured values into plan_verification_multi.tex or create
+    results_verification_multi.tex with: comparison table, H1-H4
+    verdicts, cost-effectiveness ratio, one-paragraph finding.
+
+11. If any hypothesis is refuted, state it honestly with measured CIs.
 
 ## Test
-Run chosen protocol on one extraction output. Compare verified vs
-unverified F1.
+
+```python
+def test_verify_multi_cross_returns_median():
+    """Median of [1, 3, 3] is 3; median of [0, 1, 2] is 1."""
+    # Mock verify_cross to return predetermined scores
+    # Assert evidence_score_median matches statistics.median
+
+def test_multi_cross_mode_in_dispatcher():
+    """run_condition(mode='multi_cross') calls verify_multi_cross."""
+
+def test_dry_run_lists_multi_cross_conditions():
+    """--dry-run with verification_multi sweep shows correct condition count."""
+```
 
 ## Exit criteria
-- Protocol implemented and evaluated on k models
-- Comparison table: unverified F1 vs verified F1 vs cost
-- Finding stated in report
+
+- verify_multi_cross() implemented with median aggregation
+- multi_cross mode wired into run_condition() dispatcher
+- verification_multi sweep config in experiments.toml
+- At least 1 base config run through all 4 conditions (C0-C3)
+- Comparison table: precision/coverage/F1/cost per condition
+- H1-H4 verdicts stated in report with measured values
+- Findings honest: if panel adds <1pp, say so
