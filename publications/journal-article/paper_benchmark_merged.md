@@ -260,12 +260,11 @@ $$\text{Precision} = \frac{|\text{Reference} \cap \text{System}|}{|\text{System}
 
 ## 7.4 Limitations of This Study
 
-<!-- Single domain (thermal power plants, Vietnam) — generalisability to be tested -->
-<!-- No repeated runs / variance analysis (feasibility study) -->
-<!-- Temperature not controlled -->
-<!-- Reference dataset itself not error-free -->
-<!-- Models tested in Jan-Feb 2025; rapid progress since then -->
-<!-- Cost and latency not analysed -->
+This study evaluates a single domain (thermal power plants), a single country (Vietnam), and a single temporal snapshot of the reference dataset. No repeated runs or variance analysis were performed — the design is a feasibility study, not a metrological calibration. The reference dataset is itself an undated snapshot: plant statuses evolve through planned, construction, operational, and retired phases, so discrepancies between extraction and reference may reflect temporal lag rather than extraction error. Versioned reference snapshots with explicit publication dates are needed; longitudinal extraction tracking the plant lifecycle is future work. Furthermore, the scaling estimate of ~$3.60 for a regional ASEAN database assumes multilingual method transfer across nine untested languages — a transfer that remains unvalidated.
+
+Beyond scope and scaling, several experimental controls were not varied. Generation temperature was fixed, not explored as a parameter. The models were tested in January–February 2025; given the rapid pace of LLM development, performance profiles may shift substantially within months. Cost and latency were recorded but not analysed as dependent variables.
+
+Institutional barriers also constrain the downstream utility of AI-extracted statistics. Prompt optimization (e.g., via DSPy or similar frameworks) risks silently redefining what counts as a "plant" to improve the metric; locking the output schema to an established ontology (such as the Open Energy Ontology) before optimization is essential future work. More fundamentally, the UN Fundamental Principles of Official Statistics (Principle 7) require a legal framework for data to qualify as official statistics. AI-produced tables are best understood as decision-support or preliminary data until validated and endorsed by a recognised statistical authority.
 
 
 # 8. Conclusion
