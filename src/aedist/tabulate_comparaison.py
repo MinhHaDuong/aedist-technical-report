@@ -15,7 +15,7 @@ import logging
 import statistics
 from pathlib import Path
 
-from .stats import paired_bootstrap_test
+from .stats import correct_pvalues, paired_bootstrap_test
 from .tabulate_utils import format_model_name, strip_label
 
 log = logging.getLogger(__name__)
@@ -112,6 +112,17 @@ def generate_comparaison_table(
                 "p_value": p_value,
             }
         )
+
+    # Apply Benjamini-Hochberg FDR correction across all comparisons (G6)
+    raw_pvals = [r["p_value"] for r in rows]
+    adjusted_pvals = correct_pvalues(raw_pvals, method="fdr_bh")
+    for row, adj_p in zip(rows, adjusted_pvals):
+        row["p_value_raw"] = row["p_value"]
+        row["p_value"] = adj_p  # significance markers now use FDR-adjusted values
+
+    n_corrected = sum(1 for p in raw_pvals if p is not None)
+    if n_corrected > 1:
+        log.info("Applied Benjamini-Hochberg FDR correction to %d p-values.", n_corrected)
 
     rows.sort(key=lambda r: r["f1_rag"], reverse=True)
 
