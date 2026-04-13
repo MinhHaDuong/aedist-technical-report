@@ -269,3 +269,46 @@ class TestJsonlRoundTrip:
         assert len(metrics) == 1
         assert metrics[0]["label"] == "census/gpt-5.4-run1"
         assert metrics[0]["f1"] == 0.658
+
+
+class TestHeadlineReplicates:
+    """Ticket 0081: headline result must have n>=3 replicates."""
+
+    def test_decomposed_deepseek_has_3_replicates(self):
+        """The headline condition (decomposed, deepseek-v3.2) needs n>=3."""
+        from aedist.measurements import load
+
+        records = load(method="decomposed")
+        deepseek_runs = [
+            r
+            for r in records
+            if "deepseek-v3.2" in r.method_params.model
+            and not any(
+                r.result_file.endswith(s)
+                for s in ("-union.csv", "-consolidated.csv", "_filtered.csv")
+            )
+        ]
+        assert len(deepseek_runs) >= 3, (
+            f"Headline condition has only {len(deepseek_runs)} replicates, need >=3"
+        )
+
+    def test_decomposed_deepseek_has_ci(self):
+        """Bootstrap CI must be computable on headline replicates."""
+        from aedist.measurements import load
+        from aedist.stats import bootstrap_ci
+
+        records = load(method="decomposed")
+        f1s = [
+            r.result_summary.f1
+            for r in records
+            if "deepseek-v3.2" in r.method_params.model
+            and r.result_summary.f1 is not None
+            and not any(
+                r.result_file.endswith(s)
+                for s in ("-union.csv", "-consolidated.csv", "_filtered.csv")
+            )
+        ]
+        assert len(f1s) >= 3
+        mean, lo, hi = bootstrap_ci(f1s, seed=42)
+        assert lo < mean <= hi
+        assert hi - lo > 0  # CI is non-degenerate
