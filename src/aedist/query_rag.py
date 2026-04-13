@@ -25,6 +25,7 @@ from .harness import (
     CONTEXT_WINDOW_SAFETY_MARGIN,
     BudgetTracker,
     assemble_prompt,
+    build_api_kwargs,
     compute_cost,
     estimate_tokens,
     load_experiments,
@@ -88,10 +89,18 @@ def main():
         "--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget"
     )
     parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.0,
+        help="Sampling temperature (default 0.0)",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -197,16 +206,21 @@ def main():
                 if is_ollama:
                     ollama_cfg = routers_config.get("ollama", {})
                     ollama_url = (
-                        ollama_cfg.get("base_url")
-                        or base_url
-                        or "http://localhost:11434/v1"
+                        ollama_cfg.get("base_url") or base_url or "http://localhost:11434/v1"
                     )
                     num_ctx = min(ctx_window, 81920)
                     result = query_ollama_native(
-                        ollama_url, api_model_id, messages, num_ctx,
+                        ollama_url,
+                        api_model_id,
+                        messages,
+                        num_ctx,
                     )
                 else:
-                    result = query_single_turn(client, api_model_id, messages)
+                    api_kwargs = build_api_kwargs(
+                        model,
+                        temperature=args.temperature,
+                    )
+                    result = query_single_turn(client, api_model_id, messages, **api_kwargs)
                 usage = result.get("usage") or {}
 
                 # Truncation guard: prompt should not fill entire context
@@ -214,7 +228,10 @@ def main():
                 if prompt_tokens and prompt_tokens >= ctx_window:
                     log.error(
                         "TRUNCATED: %s run %d prompt_tokens=%d >= ctx_window=%d",
-                        label, run, prompt_tokens, ctx_window,
+                        label,
+                        run,
+                        prompt_tokens,
+                        ctx_window,
                     )
                     continue
 
@@ -236,6 +253,7 @@ def main():
                     "usage": usage,
                     "wall_seconds": result["wall_seconds"],
                     "cost_usd": cost,
+                    "temperature": args.temperature,
                     "model_metadata": model_metadata(model),
                 }
                 save_json(filepath, record)

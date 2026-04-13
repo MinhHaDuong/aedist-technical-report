@@ -207,6 +207,8 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
     )
     record.method_params.model = raw.get("model", record.method_params.model)
     record.method_params.extra = raw.get("model_metadata")
+    if "temperature" in raw:
+        record.method_params.temperature = raw["temperature"]
 
 
 def _rel_path(path: Path) -> str:

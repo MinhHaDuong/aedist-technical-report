@@ -22,6 +22,7 @@ import openai
 
 from .harness import (
     BudgetTracker,
+    build_api_kwargs,
     compute_cost,
     load_experiments,
     load_models,
@@ -36,6 +37,8 @@ from .harness import (
 )
 
 log = logging.getLogger(__name__)
+
+DEFAULT_TEMPERATURE = 0.0
 
 # Tavily API timeout in seconds
 TAVILY_TIMEOUT_SECONDS = 30.0
@@ -104,12 +107,28 @@ def main():
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
-    parser.add_argument("--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget")
-    parser.add_argument("--search-queries", nargs="+", default=None,
-                        help="Custom Tavily search queries (default: Vietnam thermal plants)")
-    parser.add_argument("--dry-run", action="store_true", help="List what would be queried, don't call API")
+    parser.add_argument(
+        "--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget"
+    )
+    parser.add_argument(
+        "--search-queries",
+        nargs="+",
+        default=None,
+        help="Custom Tavily search queries (default: Vietnam thermal plants)",
+    )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=DEFAULT_TEMPERATURE,
+        help=f"Sampling temperature (default {DEFAULT_TEMPERATURE})",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="List what would be queried, don't call API"
+    )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -167,7 +186,9 @@ def main():
             client = clients[router]
         else:
             if legacy_client is None:
-                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
+                raise SystemExit(
+                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                )
             client = legacy_client
 
         for run in range(1, args.repeat + 1):
@@ -178,19 +199,25 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
-            log.info("Querying %s run %d/%d (web-augmented)...",
-                     label, run, args.repeat)
+            log.info("Querying %s run %d/%d (web-augmented)...", label, run, args.repeat)
 
             try:
                 messages = [
-                    {"role": "system", "content": (
-                        "Use the following web search results as context "
-                        "to answer the user's question.\n\n" + web_context
-                    )},
+                    {
+                        "role": "system",
+                        "content": (
+                            "Use the following web search results as context "
+                            "to answer the user's question.\n\n" + web_context
+                        ),
+                    },
                     {"role": "user", "content": prompt},
                 ]
                 api_model_id = model.get("router_model", model_id)
-                result = query_single_turn(client, api_model_id, messages)
+                api_kwargs = build_api_kwargs(
+                    model,
+                    temperature=args.temperature,
+                )
+                result = query_single_turn(client, api_model_id, messages, **api_kwargs)
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
                 budget.add(cost)
@@ -206,6 +233,7 @@ def main():
                     "usage": usage,
                     "wall_seconds": result["wall_seconds"],
                     "cost_usd": cost,
+                    "temperature": args.temperature,
                     "web_searches": search_log,
                     "model_metadata": model_metadata(model),
                 }

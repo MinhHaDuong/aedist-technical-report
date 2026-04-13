@@ -29,6 +29,7 @@ import openai
 from .harness import (
     BudgetTracker,
     assemble_prompt,
+    build_api_kwargs,
     compute_cost,
     load_experiments,
     load_models,
@@ -44,6 +45,8 @@ from .harness import (
 from .provider_health import ProviderHealth, park_cell
 
 log = logging.getLogger(__name__)
+
+DEFAULT_TEMPERATURE = 0.0
 
 
 def main():
@@ -69,6 +72,12 @@ def main():
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
     parser.add_argument(
         "--budget-usd", type=float, default=None, help="Stop if cumulative cost exceeds budget"
+    )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=DEFAULT_TEMPERATURE,
+        help=f"Sampling temperature (default {DEFAULT_TEMPERATURE})",
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
@@ -183,10 +192,15 @@ def main():
             log.info("Querying %s run %d/%d...", label, run, args.repeat)
             try:
                 api_model_id = model.get("router_model", model_id)
+                api_kwargs = build_api_kwargs(
+                    model,
+                    temperature=args.temperature,
+                )
                 result = query_single_turn(
                     client,
                     api_model_id,
                     [{"role": "user", "content": prompt}],
+                    **api_kwargs,
                 )
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
@@ -203,6 +217,7 @@ def main():
                     "usage": usage,
                     "wall_seconds": result["wall_seconds"],
                     "cost_usd": cost,
+                    "temperature": args.temperature,
                     "model_metadata": model_metadata(model),
                 }
                 save_json(filepath, record)
