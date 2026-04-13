@@ -76,6 +76,13 @@ $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex &: $(MEASUREMENTS)
 	    --output $(GEN)/tab_self_consistency.tex \
 	    --per-run-output $(GEN)/tab_per_run.tex
 
+RAG_CSVS := $(wildcard experiments/outputs/rag/*.csv)
+
+$(GEN)/tab_coherence.tex: $(RAG_CSVS) src/aedist/tabulate_coherence.py src/aedist/coherence.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_coherence \
+	    --input experiments/outputs/rag --output $@
+
 $(GEN)/fig_base_vs_census.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_base_vs_census --output $@
@@ -153,7 +160,8 @@ report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
     $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf \
     $(GEN)/tab_decomposition_fix.tex \
-    $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex
+    $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex \
+    $(GEN)/tab_coherence.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -169,7 +177,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf
 select: experiments/models_selected.yaml
 census:
