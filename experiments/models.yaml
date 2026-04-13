@@ -396,6 +396,34 @@
   size_class: medium
   license: open-other
 
+- id: "google/gemma-4-26b-a4b-it"
+  router: openrouter
+  router_model: "google/gemma-4-26b-a4b-it"
+  name: "Gemma 4 26B A4B"
+  provider: Google
+  country: US
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.12
+  price_per_mtok_out: 0.4
+  size_class: medium
+  license: open-apache
+  params: "25.2B MoE (3.8B active)"
+
+- id: "google/gemma-4-31b-it"
+  router: openrouter
+  router_model: "google/gemma-4-31b-it"
+  name: "Gemma 4 31B"
+  provider: Google
+  country: US
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.12
+  price_per_mtok_out: 0.4
+  size_class: medium
+  license: open-apache
+  params: "31B dense"
+
 - id: "glm-4.7-flash"
   router: ollama
   router_model: "glm-4.7-flash"
