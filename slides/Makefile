@@ -1,4 +1,4 @@
-# Econom'IA 2026 — Beamer slides
+# Beamer slides
 #
 # Generated data files are produced by `make figures` in the parent directory.
 # slides.tex reads them via \addplot table and \InputIfFileExists.

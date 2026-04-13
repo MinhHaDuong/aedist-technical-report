@@ -31,7 +31,7 @@ the canonical output naming convention in `harness.output_filename`:
 `{slug}-run{N}.json`. That is the whitelist.
 
 The bug is latent today — no `.eval.json` files currently exist in output
-directories. This is post-conference work (April 11 deadline), but the fix
+directories. This is deferred work, but the fix
 is small and eliminates the entire class of file-confusion bugs.
 
 ## Actions

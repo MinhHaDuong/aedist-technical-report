@@ -256,7 +256,7 @@ $$\text{Precision} = \frac{|\text{Reference} \cap \text{System}|}{|\text{System}
 <!-- The benchmark reveals that current AI systems do not behave as statistical instruments -->
 <!-- Prompt engineering cannot overcome structural limits -->
 <!-- Need hybrid architectures: LLM for extraction and drafting, structured pipelines for accumulation and validation -->
-<!-- Pointer to agentic architectures (Ha-Duong, 2026 Econom'IA paper; AIRLET project) -->
+<!-- Pointer to agentic architectures (Ha-Duong, 2026; AIRLET project) -->
 
 ## 7.4 Limitations of This Study
 
@@ -291,7 +291,7 @@ The benchmark is released as open-source code and data to support the evaluation
 <!-- Lewis et al. 2021 — RAG -->
 <!-- Gotzens et al. 2019 — Data quality in power plant databases -->
 <!-- Ha-Duong 2025 — AEDIST technical report (HAL preprint) -->
-<!-- Ha-Duong 2026 — Econom'IA paper (Beyond RAG) -->
+<!-- Ha-Duong 2026 — Beyond RAG working paper -->
 <!-- Ha-Duong 2022 — Wind power dataset Vietnam -->
 <!-- Ha-Duong 2019 — Coal power dataset Vietnam -->
 <!-- Booshehri et al. 2021 — Open Energy Ontology -->

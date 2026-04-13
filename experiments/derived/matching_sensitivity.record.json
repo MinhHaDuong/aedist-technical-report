@@ -1,0 +1,19 @@
+{
+  "run_id": "3866e6049ae7",
+  "timestamp": "2026-04-13T18:56:32.220652Z",
+  "method": "single",
+  "method_params": {
+    "model": "matching_sensitivity",
+    "prompt_version": "derived"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/matching_sensitivity.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 163,
+    "f1": 0.0
+  }
+}

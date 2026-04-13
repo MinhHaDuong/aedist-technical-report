@@ -18,7 +18,7 @@ None
 
 Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. Not which model is best, but which **method** produces a trustworthy statistical table. See MASTERPLAN.md for the long-term vision.
 
-## Current milestone: Journal submission (post-conference)
+## Current milestone: Journal submission
 
 - [x] RAG scaling curve: two families, edge-to-cloud (ticket 0021, PR #240)
 - [x] Coherence checks + statistical rigor fixes (PR #239)

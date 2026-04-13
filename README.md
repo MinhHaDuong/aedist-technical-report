@@ -23,7 +23,7 @@ Minh Ha-Duong, CIRED – CNRS
 │   └── Makefile             # Sweep orchestration
 ├── data/reference/          # Ground truth CSVs
 ├── report/                  # LaTeX technical report
-├── slides/                  # Beamer slides (Econom'IA 2026)
+├── slides/                  # Beamer slides
 ├── Makefile                 # Root dispatcher
 └── pyproject.toml           # Python package config
 ```

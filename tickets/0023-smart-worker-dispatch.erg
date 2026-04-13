@@ -42,7 +42,7 @@ design depends on how sweeps 3-5 actually stress the system.
 The real leverage is: make `execute()` dispatch on `job.mode` so the
 worker system can run ALL sweep types, then delete the standalone
 scripts. One execution path, not two. GPU probing and pool removal
-are post-conference.
+are deferred.
 
 ## Actions
 
@@ -69,7 +69,7 @@ are post-conference.
    experiments.toml) through manager generate + worker drain and
    verify outputs match the standalone `query_rag.py` path.
 
-## What this does NOT do (deferred to post-conference)
+## What this does NOT do (deferred)
 
 - Remove `WorkerPool` enum or `worker_pool` from JobSpec. Harmless
   metadata; removing it touches sweep YAMLs and manager for no

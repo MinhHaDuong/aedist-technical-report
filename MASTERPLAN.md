@@ -74,35 +74,30 @@ crystallize whenever milestones converge — they are side effects,
 not gates.
 
 ```
-  Conference ─────→ Hygiene ───────────────┐
-  (60%)               ↓                     ↓
+  Presentation ────→ Hygiene ───────────────┐
+  (done)               ↓                     ↓
   Measurements ───→ Pipeline ──→ Provenance ──→ Auto-PyPSA ASEAN
   (done)              ↓              ↓
                     Scale ───────────┘
 ```
 
-### Conference (active, 60%)
+### Presentation (done)
 
-Present the methods benchmark pilot at Econom'IA 2026 (April 11).
+Present the methods benchmark pilot.
 
-**What we show:**
+**Delivered:**
 - Level 1 (resources): Pareto chart, cost table
 - Level 2 (quality): census results (37 models), method comparison
   (6 conditions), best F1 98.8% (DeepSeek V3.2 + RAG)
 - Levels 3-4: vision slide — the pipeline, not data yet
-
-**What remains:**
-- Visual PDF review of slides
 - RAG local sweep: 2B/4B/9B scaling curve
-
-**Data:** 238 measurement rows, 574 tests passing, $0.82 total cost.
 
 ### Measurements (done)
 
 `measurements.jsonl` is the single data source. All report tables are
 views derived from it. `all_metrics.json` retired. Completed via #157.
 
-### Hygiene (ready — depends on: Conference, Measurements)
+### Hygiene (ready — depends on: Presentation, Measurements)
 
 Statistical rigor on existing data. Zero new API calls needed — mine
 the 238 existing measurements for honest uncertainty quantification.
@@ -119,8 +114,7 @@ the 238 existing measurements for honest uncertainty quantification.
   help vs hurt structured extraction. Existing data shows elaborate
   prompts *degrade* F1 (Opus: 0.64 single-shot vs 0.54 frontier).
 
-**Publication:** Conference proceedings paper — pilot results + Hygiene
-= the first publishable article.
+**Publication:** Pilot results + Hygiene = the first publishable article.
 
 ### Pipeline (ready — depends on: Measurements)
 

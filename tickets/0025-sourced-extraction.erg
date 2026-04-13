@@ -78,7 +78,7 @@ a paired comparison: upfront citation cost (zero marginal — same
 prompt) vs post-hoc verification cost (LLM calls + Tavily) for the
 same evidence quality level.
 
-### 5. Run remaining 4 sourced models (optional, post-conference)
+### 5. Run remaining 4 sourced models (optional, deferred)
 
 The `[sets.sourced]` config lists 5 models; only Claude Opus has run.
 After the conference, run the remaining 4 models to populate the
@@ -112,4 +112,4 @@ def test_classify_inline_citations():
 - Honesty rate computed from note column
 - Summary JSON written to derived/
 - `make check-fast` passes
-- Remaining 4 models explicitly deferred to post-conference
+- Remaining 4 models explicitly deferred

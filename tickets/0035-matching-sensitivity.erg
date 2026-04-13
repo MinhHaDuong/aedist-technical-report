@@ -11,8 +11,8 @@ Author: claude
 2026-04-09T13:00Z claude status planned by IDD phase 2
 2026-04-09T14:00Z claude note verified feasible — all line numbers, signatures, data confirmed exact, no API keys needed
 2026-04-09T15:00Z claude status executed by IDD phase 3
-2026-04-10T13:00Z claude note Attempted continuous cost function in PR #218. Binary (100-sim)/100 breaks dummy_cost calibration: at 2.0 matches too aggressively (110/167), at 0.1 too conservatively (86/167). The binary cost+threshold=90 produces 163/167 (F1=98.8%) — best result. The threshold is in the cost matrix not the warm start, so the LP IS threshold-dependent by design. Post-hoc sweep on recorded similarity_score (phases 1-3 already done) is the correct approach. Continuous cost is a deeper refactoring that needs dummy_cost/capacity_weight co-calibration — post-conference work.
-2026-04-10T13:00Z claude status open deferred to post-conference; phases 1-3 done, phases 4-5 remain
+2026-04-10T13:00Z claude note Attempted continuous cost function in PR #218. Binary (100-sim)/100 breaks dummy_cost calibration: at 2.0 matches too aggressively (110/167), at 0.1 too conservatively (86/167). The binary cost+threshold=90 produces 163/167 (F1=98.8%) — best result. The threshold is in the cost matrix not the warm start, so the LP IS threshold-dependent by design. Post-hoc sweep on recorded similarity_score (phases 1-3 already done) is the correct approach. Continuous cost is a deeper refactoring that needs dummy_cost/capacity_weight co-calibration — deferred.
+2026-04-10T13:00Z claude status open deferred; phases 1-3 done, phases 4-5 remain
 2026-04-10T14:00Z claude claimed
 2026-04-10T14:00Z claude status doing phases 4-5: sweep script improvements + report paragraph
 
