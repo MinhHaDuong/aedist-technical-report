@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:e2b",
+  "run": 1,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the data extracted from the provided annual reports and planning annexes (which detail specific power projects, especially those related to LNG and coal), here is a summary of the thermal power projects mentioned.\n\n**Note:** The provided text details specific projects under the Power Development Plan (PDP) and associated studies. This list is based on the entities explicitly mentioned in the OCR, not an exhaustive list of every thermal power plant in Vietnam.\n\n```csv\nTên nhà máy,Loại nhiên liệu,Giai đoạn,Công suất (MW),Chủ đầu tư/Tình trạng\nNMNĐ Na Dương II,LNG,2021 - 2030,110,Tập đoàn Sông Đà\nNMNĐ An Khánh - Bắc Giang,Coal,2021 - 2030,650,EVN\nNMNĐ Vũng Áng II,Coal,2021 - 2030,1330,EVN\nNMNĐ Quảng Trạch I,Coal,2021 - 2030,1403,EVN\nNMNĐ Vân Phong I,Coal,2021 - 2030,1432,EVN\nNMNĐ Long Phú I,Coal,2021 - 2030,1200,EVN\nNMNĐ Đăk Mi 2,Coal,2021 - 2030,98,IPP\nNĐ đồng phát Hải Hà 1,LNG,2021 - 2030,300,IPP\nNĐ đồng phát Hải Hà 2,LNG,2031 - 2035,600,IPP\nNĐ đồng phát Hải Hà 3,LNG,2031 - 2035,600,IPP\nNĐ đồng phát Hải Hà 4,LNG,2031 - 2035,600,IPP\nNĐ đồng phát Đức Giang,LNG,2021 - 2030,100,IPP\nNĐ Long Sơn,LNG,2031 - 2035,1500,Đã có trong QHĐVII điều chỉnh\nNĐ Cẩm Thanh,Coal,2021 - 2030,600,Chậm tiến độ (Xem xét chấm dứt)\nTBKHH Ô Môn I,Coal,2021 - 2030,660,EVN\nTBKHH Ô Môn II,Coal,2021 - 2030,1050,EVN\nTBKHH Ô Môn III,Coal,2021 - 2030,1050,EVN\nTBKHH Ô Môn IV,Coal,2021 - 2030,1050,EVN\nTBKHH Dung Quất I,Coal,2021 - 2030,750,EVN\nTBKHH Dung Quất II,Coal,2021 - 2030,750,EVN\nTBKHH Dung Quất III,Coal,2021 - 2030,750,EVN\nNĐ Vĩnh Tân I,Coal,2021 - 2022,1200,BOT\nNĐ Vũng Áng II,Coal,2021 - 2022,1200,BOT\nNghiên cứu thêm cho các dự án khác...\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 1513
+  },
+  "wall_seconds": 133.101,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

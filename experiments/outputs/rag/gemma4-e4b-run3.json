@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:e4b",
+  "run": 3,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "This compilation integrates data from multiple planning documents (covering 2016 through 2030/2035) and standardizes the fuel types to **Coal**, **Local Natural Gas**, or **LNG (Imported Gas)**.\n\nDue to the nature of Vietnamese energy planning, many large plants are listed with a flexible fuel mix (e.g., NG/LNG) and a long development period, so the status reflects the most current planning projections.\n\n```csv\nPlant Name,Fuel Type,Status,Connection Date,Province,Capacity (MWe)\nNghi Sơn I,Coal,Planned,2021-2022,Thanh Hoa,300\nNghi Sơn II,Coal,Planned,2021-2022,Thanh Hoa,1200\nNghi Sơn III,Coal/Gas,Planned,2029-2030,Thanh Hoa,600\nVũng Áng II,Coal/Gas,Planned,2021-2022,Ha Tinh,1330\nVũng Áng III,Coal/Gas,Planned,2024-2025,Ha Tinh,1200\nQuảng Trạch I,Coal/Gas,Planned,2021-2022,Quang Binh,1403\nQuảng Trạch II,Coal/Gas,Planned,2028-2029,Quang Binh,2000\nLong Phú I,Coal/Gas,Planned,2021-2022,Soc Trang,1200\nLong Phú II,Coal/Gas,Planned,2021-2022,Soc Trang,660\nLong Phú III,Coal/Gas,Planned,2021-2022,Soc Trang,300\nÔ Môn I,Local Natural Gas,Planned,2021-2030,Ca Mau,660\nÔ Môn II,Local Natural Gas,Planned,2021-2030,Ca Mau,1050\nÔ Môn III,Local Natural Gas,Planned,2021-2030,Ca Mau,1050\nÔ Môn IV,Local Natural Gas,Planned,2021-2030,Ca Mau,1050\nPhú Mỹ I,Gas/LNG,Planned,2021-2030,Ba Ria,850\nPhú Mỹ II,Gas/LNG,Planned,2021-2030,Ba Ria,1200\nSơn Mỹ II,LNG,Planned,2021-2030,Khanh Hoa,2250\nSơn Mỹ I,LNG,Planned,2021-2030,Khanh Hoa,2250\nTân Phước I,Coal/Gas,Planned,2027-2028,Tien Giang,1200\nTân Phước II,Coal/Gas,Planned,2028-2029,Tien Giang,1200\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,\nN/A,,,",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 1765
+  },
+  "wall_seconds": 115.218,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
