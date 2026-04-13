@@ -245,7 +245,7 @@ The DQAF defines quality along six dimensions. Mapping to our metrics:
 | **Accuracy** | Precision, evidence score, hallucination count | **Measured.** But source citations are classified, not verified. |
 | **Completeness** | Recall against 164-plant reference | **Measured.** But only for thermal/Vietnam. |
 | **Timeliness** | Wall-clock time (#5) | **Recorded but not optimized.** |
-| **Coherence** | *Internal consistency* | **NOT MEASURED.** No check that extracted capacities sum to known national totals. No cross-asset or cross-table consistency checks. |
+| **Coherence** | *Internal consistency* | **v1 implemented** (`coherence.py`): row-level (schema/business rules), cross-row (dedup), aggregate (control totals from one document). See §4.1 below. |
 | **Comparability** | Cross-model (#1), cross-country (future) | **Partially measured.** Cross-model exists; cross-country is ticket 0075 Phase 3. |
 | **Accessibility** | Cost (#6), open pipeline | **Measured and met.** |
 
@@ -284,13 +284,74 @@ vs. GEM) would estimate reference disagreement rate.
 
 ---
 
-## 4. Gaps revealed — summary and fixability
+## 4. Coherence: data model and scope
+
+### 4.1 Pilot data model (v1, this paper)
+
+One row per asset. One snapshot in time. No scenarios, no temporal
+panel. The reference dataset (`vietnam_thermal_v1.csv`) is a single
+PDP8-vintage inventory.
+
+Coherence verification is **per-document**: take one source document,
+check that the extracted rows attributable to that document are
+internally consistent and sum to what the document states. Deviations
+must be explained in notes, not silently absorbed.
+
+Three levels (`src/aedist/coherence.py`):
+
+- **Row-level:** each row passes schema and business rules (capacity
+  > 0, known fuel, known province, no retired plant with future COD).
+- **Cross-row:** no duplicates (same name + same province).
+- **Aggregate:** extracted capacity sums match control totals from
+  the same document, within tolerance. Control totals = known
+  macro-aggregates that micro-data must sum to (official statistics
+  term).
+
+### 4.2 Target data model (v2+, production / PyPSA-ASEAN)
+
+One master table. Each row is one asset × one year × (for future
+years) one scenario. Rows are sourced but not conditioned on source
+— the table is the best-known state of the world, not a mirror of
+one document.
+
+```
+name, year, scenario, capacity_mw, fuel, status, province, source_ref, notes
+Pha Lai, 2023, -, 440, coal, operational, Hai Duong, EVN AR 2023,
+Song Hau 2, 2025, PDP8, 0, -, cancelled, Hau Giang, PDP8, "coal→cancelled in PDP8"
+Song Hau 2, 2025, PDP7A, 2000, coal, constructing, Hau Giang, PDP7A, "still in PDP7A"
+```
+
+Coherence verification is still per-document (filter the master
+table to one document's rows, check sums against that document's
+control totals), but the master table carries the full history.
+
+**Out of scope for v1:**
+- **Cross-document fusion.** PDP7 lists a coal plant at 1200 MW;
+  PDP8 changes it to gas at 900 MW. The master table carries both
+  rows (different year/scenario). The v1 pilot sees only the PDP8
+  snapshot.
+- **Measurand ambiguity.** A plant authorized at 1000 MW may be
+  built at 1100 MW (within administrative tolerance). The
+  `capacity_mw` column in v1 does not distinguish planned vs
+  as-built vs nameplate vs net. This is a metrology problem: the
+  measurand is undefined. The article should state which capacity
+  concept the reference uses.
+- **Temporal reconciliation.** Tracking status changes across
+  document versions (planned → constructing → operational →
+  retired) requires the year dimension in the master table.
+
+The v1 coherence checks (`coherence.py`) are designed to work
+unchanged on a single-year slice of the v2+ master table.
+
+---
+
+## 5. Gaps revealed — summary and fixability
 
 ### Non-negotiable gaps (must fix for the article)
 
 | # | Gap | Framework | Fix | Effort |
 |---|-----|-----------|-----|--------|
-| G1 | **Internal consistency not measured** — no check that capacities sum to known totals | DQAF: coherence | Add aggregate constraint check (PDP8 total thermal capacity is public) | Small — one validation function |
+| G1 | **Internal consistency** — v1 checks implemented (`coherence.py`); control totals JSON from PDP8 still needed to populate | DQAF: coherence | Populate ControlTotal instances from PDP8 aggregates; wire into eval pipeline | Small — data entry + plumbing |
 | G2 | **Source citations classified but not verified** — no URL existence check, no content check | Popper: falsifiability | Add HTTP HEAD checks; spot-check content on random sample | Small (HEAD) / Medium (content) |
 | G3 | **Tool verification threshold mismatch** — paper says 70/100, code uses 90/100 | Scientific integrity | Fix the code or fix the paper — they must match | Trivial |
 | G4 | **Headline F1=98.8% based on n=1** | Measurement theory | Run 2 more replicates of DeepSeek V3.2 decomposition | Small — one API call |
@@ -316,7 +377,7 @@ vs. GEM) would estimate reference disagreement rate.
 
 ---
 
-## 5. Verdict
+## 6. Verdict
 
 Grounding in these frameworks reveals **four gaps that must be fixed**
 (G1–G4) and **five that should be fixed** (G5–G9). None are fatal to the
@@ -352,7 +413,7 @@ satisfied and which are future work.
 
 ---
 
-## References
+## 7. References
 
 - van Fraassen, B.C. (1980). *The Scientific Image*. Oxford.
 - Popper, K. (1959). *The Logic of Scientific Discovery*. Routledge.
