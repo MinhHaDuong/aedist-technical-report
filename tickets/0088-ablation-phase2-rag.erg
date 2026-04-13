@@ -1,0 +1,58 @@
+%erg v1
+Title: Run Phase 2 ablation — RAG regime, 2 models
+Status: closed
+Created: 2026-04-13
+Author: claude
+Blocked-by: 0066
+
+--- log ---
+2026-04-13T12:00Z claude created — Phase 1 selected RAG as only regime with signal
+2026-04-13T22:19Z claude claimed
+2026-04-13T22:33Z claude note smoke test passed (4/4 p2_base outputs)
+2026-04-13T23:19Z claude note 64/64 API calls complete, 0 failed. Total cost $3.77
+2026-04-13T23:19Z claude note 16/64 DeepSeek V3.2 responses = tool_calls (refusal). Kimi K2 all successful
+2026-04-13T23:29Z claude note extract + evaluate complete, measurements.jsonl rebuilt (64 records added)
+2026-04-13T23:30Z claude status doing — awaiting ΔF1 analysis
+2026-04-13T23:40Z claude note ΔF1 computed: Kimi best=sourcing(+3.6pp), worst=statistics(-30.4pp). DeepSeek 16/32 refusals (tool_calls). Best working=no_narratives(+9.3pp), statistics(+8.4pp)
+2026-04-13T23:40Z claude status closed — 64 jobs done, measurements rebuilt, ΔF1 analyzed
+
+--- body ---
+## Context
+
+Phase 1 (ticket 0066) ran base vs composite across 3 regimes with 3 dev
+models. Results: RAG is the only regime with positive signal. Kimi K2
+showed +25.8pp with composite, DeepSeek V3.2 showed -27.4pp — opposite
+directions, making them the most informative pair for single-module
+ablation.
+
+## Actions
+
+1. Create `models_ablation_p2_rag.yaml` with DeepSeek V3.2 + Kimi K2
+2. Add 16 RAG-mode sweep configs to experiments.toml
+3. Smoke test: generate + run `ablation_p2_rag_base`, verify 4 outputs
+4. Generate all 16 sweeps (64 jobs total)
+5. Run OpenRouter workers to drain queue
+6. Evaluate all outputs against 163-plant reference
+7. Compute per-module ΔF1 with bootstrap 95% CIs
+
+## Budget
+
+2 models × 16 variants × 2 reps = 64 calls
+DeepSeek V3.2: ~$0.01/call → ~$0.32
+Kimi K2 Thinking: ~$0.05/call → ~$1.60
+Total: ~$2 (well within $5-10 budget)
+
+## Test
+
+```bash
+cd experiments
+uv run --project .. python -m aedist.manager generate \
+    --sweep ablation_p2_rag_base --experiments experiments.toml
+ls jobs/pending/  # expect 4 files (2 models × 2 reps)
+```
+
+## Exit criteria
+
+- 64 output files in outputs/ablation/rag/p2_*
+- All evaluated against 163-plant reference
+- ΔF1 table: per module, per model, with bootstrap 95% CIs
