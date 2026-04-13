@@ -12,7 +12,8 @@ Author: claude
 2026-04-12T08:30Z claude note operator: "universal" means three axes — cross-model, cross-asset-class (~6: thermal/renewables/hydro/storage/transmission/demand), cross-country (~10 ASEAN). Thermal plants in Vietnam is just the feasibility example. Target consumer is PyPSA-ASEAN. See report.tex:535-539 for the scaling argument (60 campaigns at $0.06 each).
 2026-04-12T09:00Z claude note operator: deep review against philosophy of science (what is quality?) and statistician professional conduct codes. Added section grounding criteria in van Fraassen, Popper, measurement theory, UN Fundamental Principles, ISI/ASA ethics, DQAF. Flagged gaps: internal consistency, temporal coherence, ontological drift under optimization.
 2026-04-12T09:30Z claude note operator: quality review must live in docs/ as a standalone document (will inform the article), not just in the ticket. Opened ticket 0077 for academic lit review on the north star question.
-2026-04-13T10:30Z claude note revised evidence rubric from 0–4 to 0–5: level 4 = one confirmed primary (HITL), level 5 = two independent confirmed. Reordered criteria ascending (cheap→fast→no hallucinations→completeness→cross-model→one confirmed source→two independent). Level 7 (score 5) stays aspirational. Source-independence analysis added to verification_methods.tex.
+2026-04-13T10:30Z claude note revised evidence rubric from 0–4 to 0–5: score 4 = one confirmed primary (HITL), score 5 = two independent confirmed. Level 5 aspirational. Source-independence analysis added to verification_methods.tex. NATO Admiralty System (STANAG 2022) reference added.
+2026-04-13T11:00Z claude note separated result quality (evidence ladder, completeness, coherence) from system requirements (cheap, fast, cross-model, generic). They are orthogonal — a cheap system can produce garbage, a perfect single-model pipeline can produce impeccable data. Criteria section rewritten as two blocks.
 
 --- body ---
 ## Context
@@ -68,70 +69,58 @@ is to pick *one* framework to prototype against, with reasons.
 
 ## Optimization criteria
 
-Seven criteria for the "universal" prompt, ordered as a ladder —
-hardest at the top, cheapest at the bottom. Each level builds on
-the ones below. The prompt must clear the lower rungs before the
-higher ones matter.
+Two distinct dimensions. Don't conflate them.
 
-| Level | Goal | Metric | Gate |
-|-------|------|--------|------|
-| 7 | **Two independent confirmed sources** | Evidence score = 5. Two independent primary sources confirmed. | Aspirational. Requires source-independence graph — a research contribution. See §source-independence. |
-| 6 | **One confirmed primary source per asset** | Evidence score ≥ 4. At least one primary source confirmed by HITL or factual cross-check. | Hard goal for this paper. Precision-coverage tradeoff shows filtering at t=4 kills recall. |
-| 5 | **Cross-model** | min(benchmark) over 5 cheap models — not mean, not best-of. The prompt must lift the floor, not ride one strong model. | Non-negotiable. This is what "universal" means. |
-| 4 | **Complete asset list** | Recall against reference inventory — every asset accounted for. (163 plants for Vietnam thermal; TBD for other cells.) | Hard to waive — but in tension with level 6. |
-| 3 | **No hallucinations** | Evidence score = 0 count must be zero. A single fabricated source fails the prompt. | Hard gate. The floor. |
-| 2 | **Fast** | Wall-clock time per campaign. | Soft — a 2× slower prompt that clears levels 3–6 wins. |
-| 1 | **Cheap** | Total API cost per campaign. $0.06 target. At scale (60 campaigns), cost per campaign matters. | Soft — caps the optimizer's own budget too. |
+### Result quality target
 
-### Relationship to the NATO Admiralty System
+What the output data must look like. Defined by the evidence rubric
+(verification_methods.tex §evidence-rubric, §source-independence)
+and the NATO Admiralty System (STANAG 2022):
 
-The evidence rubric (0–5) echoes the NATO source/information
-evaluation system (STANAG 2022 / AJP-2.1), which rates intelligence
-on two axes:
+| Evidence score | Meaning | Status |
+|----------------|---------|--------|
+| ≥ 0 | No fabricated sources (zero hallucinations) | **Hard gate.** Non-negotiable floor. |
+| ≥ 3 | Every asset has at least one primary source (heuristic) | Automatable. Current pipeline. |
+| ≥ 4 | Every asset has at least one **confirmed** primary source | **Hard goal for this paper.** Requires HITL or factual cross-check. |
+| = 5 | Every asset has two **independent** confirmed sources | **Aspirational.** Requires source-independence graph. |
 
-| NATO axis | Scale | Our analogue |
-|-----------|-------|-------------|
-| **Source reliability** | A (completely reliable) → F (cannot be judged) | Source classification: gov.vn domain (A–B), press (C–D), unknown (F) |
-| **Information credibility** | 1 (confirmed by other independent sources) → 6 (truth cannot be judged) | Evidence score: 5 (confirmed by independent sources) → 1 (no source, cannot be judged) |
+Plus:
+- **Completeness:** recall against reference inventory (163 plants
+  for Vietnam thermal). In tension with sourcing depth — the
+  precision-coverage tradeoff.
+- **Coherence:** extracted capacities consistent with aggregate
+  totals per source table (ticket 0078). Not yet measured.
 
-The key insight NATO codified: **reliability of the source and
-credibility of the information are independent dimensions.** A
-completely reliable source (A) can report unconfirmed information
-(3). An unreliable source (E) can state a confirmed fact (1). Our
-current rubric collapses these into a single score. The NATO
-framing suggests we should track them separately — but the single
-scale is a defensible simplification for the pilot, as long as we
-acknowledge the conflation.
+The evidence quality ladder belongs in the tech report, not here.
+The optimizer targets a *minimum* evidence score across the output.
 
-NATO credibility level 1 ("confirmed by other independent sources")
-maps directly to our evidence score 5. This is the standard used by
-intelligence analysts worldwide for exactly the same epistemological
-problem: when can you trust a reported fact?
+### System requirements
+
+What the pipeline/prompt must achieve as engineering properties.
+These are orthogonal to result quality — a cheap fast system can
+produce garbage, a perfect single-model pipeline can produce
+impeccable data.
+
+| Requirement | Metric | Negotiable? |
+|-------------|--------|-------------|
+| **Cheap** | ≤ $0.06 per campaign. At 60 campaigns, cost matters. | Soft — caps the optimizer's own budget too. |
+| **Fast** | Wall-clock time per campaign. | Soft — a 2× slower prompt that nails result quality wins. |
+| **Cross-model** | min(benchmark) over 5 cheap models, not mean. The prompt must lift the floor. | Non-negotiable. This is what "universal" means. |
+| **Generic** | Template parameterized by `(asset_class, country)`. Must not overfit to Vietnam/thermal. | Non-negotiable. Validation: re-run on another cell without re-tuning. |
 
 ### The optimization path
 
-Read the ladder bottom-up:
-- **Levels 1–2** set the budget/time envelope (soft constraints).
-- **Level 3** is the floor — everything below this is garbage.
-- **Level 4** is the core deliverable (complete inventory).
-- **Level 5** is what makes it "universal" (cross-model).
-- **Level 6** is the hard goal for this paper (confirmed sourcing).
-- **Level 7** is the long-term research target (independence).
+The optimizer maximizes result quality (evidence score floor,
+recall) subject to system requirements (cost cap, cross-model
+min-of-5, genericity).
 
-The realistic path: clear 3, maximize 4 subject to 5, push 6 as
-far as the Pareto frontier allows before 4 degrades. Levels 1–2
-cap the budget. Level 7 stays aspirational — reaching it for every
-plant in a national inventory requires a dependency graph of the
-sector's data producers (see verification_methods.tex
-§source-independence).
-
-**Implicit criterion: genericity.** The optimized prompt must be a
-template parameterized by `(asset_class, country)`, not a prompt
-baked to "Vietnamese thermal power plants". The optimizer must not
-overfit to the feasibility test case. Validation: after optimizing on
-the Vietnam/thermal cell, re-run the winning prompt on at least one
-other cell (e.g., Vietnam/renewables or Thailand/thermal) without
-re-tuning and check that performance doesn't collapse.
+Concretely: clear the hallucination gate (evidence ≥ 1 everywhere),
+maximize recall subject to cross-model constraint, then push the
+evidence floor toward 4 (confirmed primary) as far as the Pareto
+frontier allows before recall degrades. Cost and speed are the
+budget envelope. Evidence 5 (independence) is tracked but not
+optimized — it requires HITL and the dependency graph, not prompt
+changes.
 
 ### What is quality? — grounding in philosophy of science and professional codes
 
@@ -155,7 +144,7 @@ metrics onto them:
   reference can still be empirically inadequate (overfit to the
   reference's blind spots).
 - **Reproducibility / intersubjective agreement** — the same prompt
-  on different models (cross-model criterion, level 5) is a form of
+  on different models (cross-model system requirement) is a form of
   replication. If only one model produces a result, it is not
   robust knowledge. The min-of-5 objective formalizes this.
 - **Falsifiability** — every extracted datum should be checkable
@@ -163,10 +152,11 @@ metrics onto them:
   exists that could falsify this claim." Score 4 (one confirmed
   primary) means "someone checked and the source is real." Score 5
   (two independent confirmed sources) means "the claim has survived
-  one genuinely independent check." This is why level 7 is
-  aspirational and level 6 is the hard goal: independence is an
+  one genuinely independent check." Independence is an
   epistemological problem, not a URL-counting exercise (see
-  §source-independence in verification_methods.tex).
+  §source-independence in verification_methods.tex). The NATO
+  Admiralty System (STANAG 2022) codifies this as credibility
+  level 1: "confirmed by other independent sources."
 - **Theory-ladenness of observation** (Kuhn/Hanson) — the prompt
   *is* the theory: it defines what counts as a "power plant," which
   attributes matter, what schema to emit. Optimizing the prompt is
@@ -200,12 +190,12 @@ metrics onto them:
 - **European Statistics Code of Practice** / **IMF DQAF** —
   quality dimensions: relevance, accuracy, timeliness, coherence,
   comparability, accessibility. Map to our criteria:
-  - Accuracy → precision, evidence score, no hallucinations (level 3)
-  - Completeness → recall (level 4)
-  - Coherence → internal consistency (ticket 0078 — gap being closed)
-  - Comparability → cross-model (level 5), cross-country (Phase 3)
-  - Timeliness → fast (level 2), updatability
-  - Accessibility → cheap (level 1), open pipeline
+  - Accuracy → precision, evidence score, no hallucinations (result quality)
+  - Completeness → recall (result quality)
+  - Coherence → internal consistency (ticket 0078 — result quality gap)
+  - Comparability → cross-model, cross-country (system requirements)
+  - Timeliness → fast, updatability (system requirements)
+  - Accessibility → cheap, open pipeline (system requirements)
 
 **Gaps this review should surface:**
 - **Internal consistency** is not yet an optimization criterion.
@@ -220,11 +210,11 @@ metrics onto them:
   philosophy-of-science red flag, not a win. Need a guard.
 
 **Deliverable: `docs/quality-grounding.md`** — a standalone document
-(not just a ticket note) mapping our 6+1 operational criteria to
-these frameworks. This document will inform the journal article's
-framing of what "quality" means for AI-produced statistics. It must
-be citable from the article's methods or discussion section. See
-also ticket 0077 (academic lit review) which covers the broader
+mapping result quality targets and system requirements to these
+frameworks. This document will inform the journal article's framing
+of what "quality" means for AI-produced statistics. It must be
+citable from the article's methods or discussion section. See also
+ticket 0077 (academic lit review) which covers the broader
 literature landscape.
 
 ### The evidence quality rubric (revised, 0–5)
@@ -343,22 +333,24 @@ Agents question).
 2. Recommend **one** framework to prototype against, with a written
    rationale. Prior is DSPy unless something disqualifies it for
    our multi-provider, reproducibility-first setting.
-3. **Define the composite objective function** from the 7 levels:
-   - Budget envelope: cost ≤ $0.10/campaign, time ≤ threshold (L1–2).
-   - Hard gate: hallucination count = 0 — any fabrication zeroes
-     the score (L3).
-   - Primary signal: min over 5 cheap models of a per-model score.
-   - Per-model score: weighted composite of (a) recall against
-     reference (L4), (b) fraction of plants at evidence score ≥ 4
-     (L6 — one confirmed primary source). Weights TBD in prototype.
-   - L7 (two independent sources) is tracked but not optimized —
-     it requires HITL and the dependency graph, not prompt changes.
-   - Secondary: API cost and wall-clock time recorded per run, used
-     as tiebreaker, not as optimizer signal.
-   - The framework must support this min-of-N-models shape. If it
-     only optimizes for a single LM, we need a wrapper that fans
-     out to 5 models and returns the min. Check whether DSPy's
-     `Evaluate` supports this natively or needs a custom metric.
+3. **Define the composite objective function** separating the two
+   dimensions:
+   - **System constraints** (hard):
+     - Cost ≤ $0.10/campaign (budget envelope).
+     - Cross-model: min over 5 cheap models of per-model score.
+     - The framework must support min-of-N-models. If it only
+       optimizes for a single LM, we need a wrapper. Check DSPy's
+       `Evaluate`.
+   - **Result quality signal** (what the optimizer maximizes):
+     - Hard gate: hallucination count = 0 — any fabrication
+       zeroes the score.
+     - Primary signal: weighted composite of (a) recall against
+       reference, (b) fraction of plants at evidence score ≥ 4
+       (one confirmed primary). Weights TBD in prototype.
+     - Evidence 5 (two independent) tracked but not optimized —
+       requires HITL, not prompt changes.
+   - **Recorded but not optimized:** API cost, wall-clock time,
+     evidence 5 count.
 4. Pick the 5 cheap models for the cross-model floor. Candidates:
    the small-model ablation set already defined in experiments.toml.
    Confirm they span at least 3 providers (OpenRouter, Ollama,
