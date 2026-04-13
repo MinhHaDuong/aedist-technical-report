@@ -11,6 +11,7 @@ Blocked-by: gh#239
 2026-04-13T12:00Z claude claimed
 2026-04-13T12:00Z claude status doing — implementing coherence.py with three-level checks
 2026-04-13T12:30Z claude note implemented src/aedist/coherence.py: row-level (capacity, fuel, status, province enum, retired+future COD), cross-row (dedup by name+province), aggregate (control totals with fuel/status/province filtering and tolerance). 16 tests pass. Entry points: check_row_coherence(), check_cross_row_coherence(), check_aggregate_coherence(), check_coherence() as main dispatcher. Aggregate checks use ControlTotal dataclass — operator called these "control totals" (official statistics term).
+2026-04-13T13:00Z claude note operator: scope v1 coherence to table-based (one doc, one table, one extraction). Cross-document fusion (PDP7 vs PDP8, planned vs as-built, measurand ambiguity, knowledge store) is v2+. Code already conforms — ControlTotal.source is per-table, no cross-document reasoning.
 
 --- body ---
 ## Context

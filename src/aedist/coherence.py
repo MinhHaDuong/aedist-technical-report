@@ -1,10 +1,23 @@
-"""Internal coherence checks for extracted power plant data.
+"""Internal coherence checks for extracted power plant data (v1: table-based).
+
+Scope: one document, one table, one extraction. Does this table add
+up? Are the rows self-consistent? Are there duplicates?
+
+Explicitly OUT of scope for v1:
+- Cross-document fusion (PDP7 vs PDP8, planned vs as-built)
+- Temporal reconciliation across planning document versions
+- Measurand ambiguity (nameplate vs net vs gross capacity)
+- Knowledge graph / document knowledge store
+
+These are v2+ concerns. See docs/quality-grounding.md for the
+discussion of why.
 
 Three levels, each with a clean entry point:
 
 1. **Row-level** — each row is self-consistent (schema, business rules).
 2. **Cross-row** — rows are consistent with each other (dedup).
-3. **Aggregate** — the table is consistent with known control totals.
+3. **Aggregate** — the table is consistent with known control totals
+   from the *same* document.
 
 Each check returns a list of CoherenceIssue objects. The caller
 decides severity — the checks report, they don't filter.
