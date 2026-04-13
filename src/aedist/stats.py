@@ -36,9 +36,7 @@ def bootstrap_ci(
         return (0.0, 0.0, 0.0)
     rng = random.Random(seed)
     n = len(values)
-    means = sorted(
-        sum(rng.choices(values, k=n)) / n for _ in range(n_bootstrap)
-    )
+    means = sorted(sum(rng.choices(values, k=n)) / n for _ in range(n_bootstrap))
     alpha = (1 - confidence) / 2
     lo = means[int(alpha * n_bootstrap)]
     hi = means[int((1 - alpha) * n_bootstrap) - 1]
@@ -118,9 +116,7 @@ def correct_pvalues(
         raise ValueError(msg)
 
     # Separate indices with actual p-values from None entries
-    indexed: list[tuple[int, float]] = [
-        (i, p) for i, p in enumerate(pvals) if p is not None
-    ]
+    indexed: list[tuple[int, float]] = [(i, p) for i, p in enumerate(pvals) if p is not None]
     if not indexed:
         return list(pvals)
 
@@ -157,10 +153,12 @@ def correct_pvalues(
 
 
 def _shapiro_wilk_w(x: list[float]) -> float | None:
-    """Compute the Shapiro-Wilk W statistic (approximate).
+    """Approximate normality W statistic inspired by Shapiro-Wilk.
 
-    Uses the simplified algorithm suitable for small samples (n <= 50).
-    Returns ``None`` if n < 3 (test not applicable).
+    Uses Blom's expected order statistics as coefficients (not the true
+    tabulated Shapiro-Wilk coefficients).  Suitable as a diagnostic flag
+    for small samples (n <= 50) but should not be cited as a formal
+    Shapiro-Wilk test.  Returns ``None`` if n < 3.
     """
     n = len(x)
     if n < 3:
@@ -223,10 +221,7 @@ def _levene_statistic(groups: list[list[float]]) -> float | None:
     # Between-group variability
     ss_between = sum(len(zg) * (zm - z_grand) ** 2 for zg, zm in zip(z_groups, z_means))
     # Within-group variability
-    ss_within = sum(
-        sum((z - zm) ** 2 for z in zg)
-        for zg, zm in zip(z_groups, z_means)
-    )
+    ss_within = sum(sum((z - zm) ** 2 for z in zg) for zg, zm in zip(z_groups, z_means))
 
     df_between = k - 1
     df_within = n_total - k
@@ -285,7 +280,11 @@ def check_anova_assumptions(
             passed = w > 0.9
             note = (
                 f"W={w:.4f}. "
-                + ("W > 0.9 suggests approximate normality. " if passed else "W <= 0.9 suggests non-normality. ")
+                + (
+                    "W > 0.9 suggests approximate normality. "
+                    if passed
+                    else "W <= 0.9 suggests non-normality. "
+                )
                 + f"Caution: with n={n}, Shapiro-Wilk has very low power."
             )
             result["shapiro_wilk"] = {
@@ -301,7 +300,8 @@ def check_anova_assumptions(
             "statistic": None,
             "p_value": None,
             "passed": None,
-            "note": "No group data provided for Levene's test." if groups is None
+            "note": "No group data provided for Levene's test."
+            if groups is None
             else f"Need >= 2 groups for Levene's test (got {len(groups)}).",
         }
     elif any(len(g) < 2 for g in groups):
@@ -330,9 +330,12 @@ def check_anova_assumptions(
             passed = w < 2.0
             note = (
                 f"W={w:.4f} (k={k} groups, N={n_total}). "
-                + ("W < 2.0 suggests acceptable variance homogeneity. " if passed
-                   else "W >= 2.0 suggests possible heteroscedasticity. ")
-                + f"Caution: with small cell sizes, Levene's test has low power."
+                + (
+                    "W < 2.0 suggests acceptable variance homogeneity. "
+                    if passed
+                    else "W >= 2.0 suggests possible heteroscedasticity. "
+                )
+                + "Caution: with small cell sizes, Levene's test has low power."
             )
             result["levene"] = {
                 "statistic": round(w, 4),

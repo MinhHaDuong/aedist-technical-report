@@ -16,6 +16,7 @@ Usage::
 
 from __future__ import annotations
 
+import logging
 import math
 import random as _random
 from collections import defaultdict
@@ -23,6 +24,8 @@ from itertools import combinations
 
 from .schema import RunRecord
 from .stats import bootstrap_ci, check_anova_assumptions
+
+log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # F-distribution p-value (stdlib only, regularised incomplete beta)
@@ -138,12 +141,10 @@ def two_way_anova(
     ss_b = a_count * n * sum((col_means[b] - grand_mean) ** 2 for b in b_levels)
     ss_ab = n * sum(
         (cell_means[(a, b)] - row_means[a] - col_means[b] + grand_mean) ** 2
-        for a in a_levels for b in b_levels
+        for a in a_levels
+        for b in b_levels
     )
-    ss_resid = sum(
-        (y - cell_means[(a, b)]) ** 2
-        for (a, b), ys in data.items() for y in ys
-    )
+    ss_resid = sum((y - cell_means[(a, b)]) ** 2 for (a, b), ys in data.items() for y in ys)
     ss_total = sum((y - grand_mean) ** 2 for y in all_values)
 
     df_a = a_count - 1
@@ -176,16 +177,32 @@ def two_way_anova(
     omega_sq_ab = max(0.0, (ss_ab - df_ab * ms_resid) / denom) if denom > 0 else 0.0
 
     return {
-        "ss_a": ss_a, "ss_b": ss_b, "ss_ab": ss_ab, "ss_resid": ss_resid,
+        "ss_a": ss_a,
+        "ss_b": ss_b,
+        "ss_ab": ss_ab,
+        "ss_resid": ss_resid,
         "ss_total": ss_total,
-        "df_a": df_a, "df_b": df_b, "df_ab": df_ab, "df_resid": df_resid,
+        "df_a": df_a,
+        "df_b": df_b,
+        "df_ab": df_ab,
+        "df_resid": df_resid,
         "df_total": df_total,
-        "eta_sq_a": eta_sq_a, "eta_sq_b": eta_sq_b, "eta_sq_ab": eta_sq_ab,
+        "eta_sq_a": eta_sq_a,
+        "eta_sq_b": eta_sq_b,
+        "eta_sq_ab": eta_sq_ab,
         "eta_sq_resid": eta_sq_resid,
-        "ms_a": ms_a, "ms_b": ms_b, "ms_ab": ms_ab, "ms_resid": ms_resid,
-        "f_a": f_a, "f_b": f_b, "f_ab": f_ab,
-        "p_a": p_a, "p_b": p_b, "p_ab": p_ab,
-        "omega_sq_a": omega_sq_a, "omega_sq_b": omega_sq_b,
+        "ms_a": ms_a,
+        "ms_b": ms_b,
+        "ms_ab": ms_ab,
+        "ms_resid": ms_resid,
+        "f_a": f_a,
+        "f_b": f_b,
+        "f_ab": f_ab,
+        "p_a": p_a,
+        "p_b": p_b,
+        "p_ab": p_ab,
+        "omega_sq_a": omega_sq_a,
+        "omega_sq_b": omega_sq_b,
         "omega_sq_ab": omega_sq_ab,
     }
 
@@ -196,7 +213,9 @@ def two_way_anova(
 
 
 def _find_unstable_pairs(
-    records: list[RunRecord], threshold_pp: float = 5.0, seed: int = 42,
+    records: list[RunRecord],
+    threshold_pp: float = 5.0,
+    seed: int = 42,
 ) -> list[dict]:
     """Find model pairs where mean F1 differs by <threshold_pp and CIs overlap."""
     model_f1s: dict[str, list[float]] = defaultdict(list)
@@ -214,10 +233,14 @@ def _find_unstable_pairs(
             f1_diff = abs(mean_a - mean_b)
             ci_overlap = lo_a <= hi_b and lo_b <= hi_a
             if f1_diff < threshold_pp / 100 and ci_overlap:
-                unstable.append({
-                    "model_a": m_a, "model_b": m_b,
-                    "f1_diff": round(f1_diff, 4), "ci_overlap": True,
-                })
+                unstable.append(
+                    {
+                        "model_a": m_a,
+                        "model_b": m_b,
+                        "f1_diff": round(f1_diff, 4),
+                        "ci_overlap": True,
+                    }
+                )
     return unstable
 
 
@@ -229,8 +252,7 @@ def _find_unstable_pairs(
 def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
     """Run two-way ANOVA (model x method) on F1 scores from RunRecords."""
     ok_records = [
-        r for r in records
-        if r.result_summary.status == "ok" and r.result_summary.f1 is not None
+        r for r in records if r.result_summary.status == "ok" and r.result_summary.f1 is not None
     ]
     n_total_ok = len(ok_records)
 
@@ -240,12 +262,20 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
 
     if not cells:
         return {
-            "n_records": 0, "n_records_excluded": len(records), "n_groups": 0,
-            "models_included": [], "methods_included": [],
-            "eta_sq_model": 0.0, "eta_sq_method": 0.0,
-            "eta_sq_interaction": 0.0, "eta_sq_residual": 0.0,
-            "omega_sq_model": 0.0, "omega_sq_method": 0.0,
-            "omega_sq_interaction": 0.0, "anova": {}, "unstable_pairs": [],
+            "n_records": 0,
+            "n_records_excluded": len(records),
+            "n_groups": 0,
+            "models_included": [],
+            "methods_included": [],
+            "eta_sq_model": 0.0,
+            "eta_sq_method": 0.0,
+            "eta_sq_interaction": 0.0,
+            "eta_sq_residual": 0.0,
+            "omega_sq_model": 0.0,
+            "omega_sq_method": 0.0,
+            "omega_sq_interaction": 0.0,
+            "anova": {},
+            "unstable_pairs": [],
         }
 
     min_reps = min(len(v) for v in cells.values())
@@ -256,19 +286,24 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
     if min_reps < 2:
         return {
             "n_records": n_total_ok,
-            "n_records_excluded": len(records) - n_total_ok, "n_groups": 0,
-            "models_included": [], "methods_included": [],
-            "eta_sq_model": 0.0, "eta_sq_method": 0.0,
-            "eta_sq_interaction": 0.0, "eta_sq_residual": 0.0,
-            "omega_sq_model": 0.0, "omega_sq_method": 0.0,
-            "omega_sq_interaction": 0.0, "anova": {},
+            "n_records_excluded": len(records) - n_total_ok,
+            "n_groups": 0,
+            "models_included": [],
+            "methods_included": [],
+            "eta_sq_model": 0.0,
+            "eta_sq_method": 0.0,
+            "eta_sq_interaction": 0.0,
+            "eta_sq_residual": 0.0,
+            "omega_sq_model": 0.0,
+            "omega_sq_method": 0.0,
+            "omega_sq_interaction": 0.0,
+            "anova": {},
             "unstable_pairs": _find_unstable_pairs(ok_records, seed=seed),
         }
 
     rng = _random.Random(seed)
     balanced: dict[tuple[str, str], list[float]] = {
-        k: (rng.sample(v, min_reps) if len(v) > min_reps else list(v))
-        for k, v in cells.items()
+        k: (rng.sample(v, min_reps) if len(v) > min_reps else list(v)) for k, v in cells.items()
     }
 
     models_in_cells: dict[str, set[str]] = defaultdict(set)
@@ -301,7 +336,8 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
                 all_methods = {method}
 
     anova_data: dict[tuple[str, str], list[float]] = {
-        (m, method): v for (m, method), v in balanced.items()
+        (m, method): v
+        for (m, method), v in balanced.items()
         if m in all_models and method in all_methods
     }
     n_groups = len(anova_data)
@@ -310,15 +346,19 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
 
     if len(all_models) < 2:
         return {
-            "n_records": n_total_ok, "n_records_excluded": n_excluded,
+            "n_records": n_total_ok,
+            "n_records_excluded": n_excluded,
             "n_groups": n_groups,
             "models_included": sorted(all_models),
             "methods_included": sorted(all_methods),
-            "eta_sq_model": 0.0, "eta_sq_method": 0.0,
+            "eta_sq_model": 0.0,
+            "eta_sq_method": 0.0,
             "eta_sq_interaction": 0.0,
             "eta_sq_residual": 1.0 if n_groups > 0 else 0.0,
-            "omega_sq_model": 0.0, "omega_sq_method": 0.0,
-            "omega_sq_interaction": 0.0, "anova": {},
+            "omega_sq_model": 0.0,
+            "omega_sq_method": 0.0,
+            "omega_sq_interaction": 0.0,
+            "anova": {},
             "unstable_pairs": _find_unstable_pairs(ok_records, seed=seed),
         }
 
@@ -329,40 +369,36 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
         for (m, _method), v in anova_data.items():
             model_groups[m].extend(v)
         ss_model = sum(
-            len(vals) * (_mean(vals) - grand_mean) ** 2
-            for vals in model_groups.values()
+            len(vals) * (_mean(vals) - grand_mean) ** 2 for vals in model_groups.values()
         )
         ss_total = sum((y - grand_mean) ** 2 for y in all_values)
         ss_resid = ss_total - ss_model
         eta_model = ss_model / ss_total if ss_total > 0 else 0.0
         eta_resid = ss_resid / ss_total if ss_total > 0 else 0.0
         return {
-            "n_records": n_total_ok, "n_records_excluded": n_excluded,
+            "n_records": n_total_ok,
+            "n_records_excluded": n_excluded,
             "n_groups": n_groups,
             "models_included": sorted(all_models),
             "methods_included": sorted(all_methods),
-            "eta_sq_model": round(eta_model, 4), "eta_sq_method": 0.0,
+            "eta_sq_model": round(eta_model, 4),
+            "eta_sq_method": 0.0,
             "eta_sq_interaction": 0.0,
             "eta_sq_residual": round(eta_resid, 4),
-            "omega_sq_model": 0.0, "omega_sq_method": 0.0,
-            "omega_sq_interaction": 0.0, "anova": {},
+            "omega_sq_model": 0.0,
+            "omega_sq_method": 0.0,
+            "omega_sq_interaction": 0.0,
+            "anova": {},
             "unstable_pairs": _find_unstable_pairs(ok_records, seed=seed),
         }
 
     anova = two_way_anova(anova_data)
 
     # --- ANOVA assumption diagnostics (G7) ---
-    log = __import__("logging").getLogger(__name__)
 
     # Compute residuals: observed - cell_mean
-    cell_means_diag: dict[tuple[str, str], float] = {
-        k: _mean(v) for k, v in anova_data.items()
-    }
-    residuals = [
-        y - cell_means_diag[k]
-        for k, ys in anova_data.items()
-        for y in ys
-    ]
+    cell_means_diag: dict[tuple[str, str], float] = {k: _mean(v) for k, v in anova_data.items()}
+    residuals = [y - cell_means_diag[k] for k, ys in anova_data.items() for y in ys]
     groups_for_levene = list(anova_data.values())
 
     diagnostics = check_anova_assumptions(residuals, groups=groups_for_levene)
@@ -373,13 +409,15 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
         elif not info["passed"]:
             log.warning(
                 "ANOVA assumption may be violated (%s): %s",
-                test_name, info.get("note", ""),
+                test_name,
+                info.get("note", ""),
             )
         else:
             log.info("ANOVA diagnostic (%s): %s", test_name, info.get("note", ""))
 
     return {
-        "n_records": n_total_ok, "n_records_excluded": n_excluded,
+        "n_records": n_total_ok,
+        "n_records_excluded": n_excluded,
         "n_groups": n_groups,
         "models_included": sorted(all_models),
         "methods_included": sorted(all_methods),
@@ -390,9 +428,7 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
         "omega_sq_model": round(anova["omega_sq_a"], 4),
         "omega_sq_method": round(anova["omega_sq_b"], 4),
         "omega_sq_interaction": round(anova["omega_sq_ab"], 4),
-        "anova": {
-            k: round(v, 6) if isinstance(v, float) else v for k, v in anova.items()
-        },
+        "anova": {k: round(v, 6) if isinstance(v, float) else v for k, v in anova.items()},
         "anova_diagnostics": diagnostics,
         "unstable_pairs": _find_unstable_pairs(ok_records, seed=seed),
     }
@@ -407,7 +443,6 @@ def main(argv: list[str] | None = None) -> None:
     """Run variance decomposition on measurements.jsonl and write output."""
     import argparse
     import json
-    import logging
     from pathlib import Path
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -430,7 +465,9 @@ def main(argv: list[str] | None = None) -> None:
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2) + "\n")
-    log.info("Wrote %s (%d records, %d groups)", output_path, result["n_records"], result["n_groups"])
+    log.info(
+        "Wrote %s (%d records, %d groups)", output_path, result["n_records"], result["n_groups"]
+    )
 
 
 if __name__ == "__main__":
