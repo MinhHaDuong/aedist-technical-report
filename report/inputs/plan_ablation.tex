@@ -47,7 +47,8 @@ avec trois divergences délibérées~: inclusion des centrales hors réseau
 importé (l'OEO ne distingue pas la provenance), et regroupement «~thermique~»
 par usage commun plutôt que par classe OEO formelle.
 
-\begin{Prompt}\label{prompt:base}
+\label{prompt:base}%
+\begin{Prompt}
 Produce a comprehensive CSV table listing ALL thermal power plants in
 Vietnam with capacity of 30 MWe or above, at every stage from early
 proposal through decommissioning. Include grid-connected utility plants,
@@ -91,12 +92,14 @@ Six modules sont testés. Chacun est un paragraphe ajouté à la fin du prompt
 de base.
 
 \paragraph{Persona} Ajoute une consigne de rôle en tête du prompt.
-\begin{Prompt}\label{prompt:mod-persona}
+\label{prompt:mod-persona}%
+\begin{Prompt}
 You are a senior energy analyst.
 \end{Prompt}
 
 \paragraph{Cadrage sectoriel} Demande un paragraphe introductif avant le CSV.
-\begin{Prompt}\label{prompt:mod-overview}
+\label{prompt:mod-overview}%
+\begin{Prompt}
 Before the CSV table, provide a sector overview covering: Vietnam's
 electricity generation mix (installed capacity, generation shares by
 fuel), key policy documents and their thermal targets, fuel supply
@@ -106,7 +109,8 @@ provincial authorities).
 \end{Prompt}
 
 \paragraph{Narratifs par centrale} Demande un commentaire sourcé après le CSV.
-\begin{Prompt}\label{prompt:mod-narratives}
+\label{prompt:mod-narratives}%
+\begin{Prompt}
 After the CSV table, provide a sourced paragraph for each plant complex
 covering: development history and timeline, notable issues (delays,
 financing changes, ownership transfers, technology changes), and status
@@ -115,7 +119,8 @@ multiple news sources, LOW = older plans only, status uncertain).
 \end{Prompt}
 
 \paragraph{Bibliographie} Demande une liste annotée de sources.
-\begin{Prompt}\label{prompt:mod-bibliography}
+\label{prompt:mod-bibliography}%
+\begin{Prompt}
 After completing the inventory, list every source you relied on as an
 annotated bibliography organized by category (government decisions,
 power development plans, utility reports, company filings, news). For
@@ -124,7 +129,8 @@ unsure), and one sentence on what information was drawn from it.
 \end{Prompt}
 
 \paragraph{Tableaux statistiques} Demande des tableaux croisés récapitulatifs.
-\begin{Prompt}\label{prompt:mod-statistics}
+\label{prompt:mod-statistics}%
+\begin{Prompt}
 After the inventory, produce cross-tabulation summary tables:
 a) Capacity by fuel x status (total MWe per cell, with row and column
    totals)
@@ -134,7 +140,8 @@ c) Timeline of capacity additions by period and fuel type
 
 \paragraph{Sourçage} Demande des colonnes de citation par ligne et une liste
 de références.
-\begin{Prompt}\label{prompt:mod-sourcing}
+\label{prompt:mod-sourcing}%
+\begin{Prompt}
 For each row, include Source_1 and Source_2 columns citing the primary
 source for that plant's data. After the table, list all cited sources
 with full citations. Do not fabricate URLs — write "URL not verified"
