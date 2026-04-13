@@ -17,6 +17,7 @@ from pathlib import Path
 from .harness import (
     BudgetTracker,
     assemble_prompt,
+    build_api_kwargs,
     compute_cost,
     load_models,
     make_client,
@@ -114,7 +115,9 @@ class Worker:
         """
         client = self.make_client()
         if job.prompt_modules is not None:
-            modules_dir = Path(job.modules_dir) if job.modules_dir else Path("experiments/prompts/modules")
+            modules_dir = (
+                Path(job.modules_dir) if job.modules_dir else Path("experiments/prompts/modules")
+            )
             prompt = assemble_prompt(modules_dir, job.prompt_modules)
         else:
             prompt = Path(job.prompt).read_text().strip()
@@ -128,33 +131,77 @@ class Worker:
         model_entry = models[0]
         model_id = model_entry["id"]
         run = job.run_number
+        api_kwargs = build_api_kwargs(model_entry, temperature=job.temperature)
 
         pool_label = self.worker_id
         if should_skip(output_dir, model_id, run, pool_label):
             log.info("Skip %s run %d (cached)", model_id, run)
-            return {"wall_seconds": 0, "cost_usd": 0, "tokens_in": 0,
-                    "tokens_out": 0, "result_file": None}
+            return {
+                "wall_seconds": 0,
+                "cost_usd": 0,
+                "tokens_in": 0,
+                "tokens_out": 0,
+                "result_file": None,
+            }
 
         mode = job.mode
         if mode in (Method.SINGLE, Method.FRONTIER, Method.SOURCED):
             return self._execute_single(
-                client, model_id, model_entry, prompt, output_dir, run, pool_label,
+                client,
+                model_id,
+                model_entry,
+                prompt,
+                output_dir,
+                run,
+                pool_label,
+                api_kwargs=api_kwargs,
             )
         elif mode == Method.RAG:
             return self._execute_rag(
-                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+                client,
+                model_id,
+                model_entry,
+                prompt,
+                output_dir,
+                run,
+                pool_label,
+                job,
+                api_kwargs=api_kwargs,
             )
         elif mode == Method.MULTITURN:
             return self._execute_multiturn(
-                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+                client,
+                model_id,
+                model_entry,
+                prompt,
+                output_dir,
+                run,
+                pool_label,
+                job,
+                api_kwargs=api_kwargs,
             )
         elif mode == Method.WEB:
             return self._execute_web(
-                client, model_id, model_entry, prompt, output_dir, run, pool_label,
+                client,
+                model_id,
+                model_entry,
+                prompt,
+                output_dir,
+                run,
+                pool_label,
+                api_kwargs=api_kwargs,
             )
         elif mode == Method.DECOMPOSED:
             return self._execute_decomposed(
-                client, model_id, model_entry, prompt, output_dir, run, pool_label, job,
+                client,
+                model_id,
+                model_entry,
+                prompt,
+                output_dir,
+                run,
+                pool_label,
+                job,
+                api_kwargs=api_kwargs,
             )
         elif mode == Method.VERIFICATION:
             raise NotImplementedError(
@@ -178,14 +225,24 @@ class Worker:
             "result_file": str(filepath),
         }
 
-    def _query_and_save(self, client, model_id, model_entry, messages,
-                        output_dir, run, pool_label, extra_fields=None):
+    def _query_and_save(
+        self,
+        client,
+        model_id,
+        model_entry,
+        messages,
+        output_dir,
+        run,
+        pool_label,
+        extra_fields=None,
+        api_kwargs=None,
+    ):
         """Run query_single_turn, save JSON, return standard result dict.
 
         Common path for single, RAG, and web modes that all use
         query_single_turn with different message lists.
         """
-        result = query_single_turn(client, model_id, messages)
+        result = query_single_turn(client, model_id, messages, **(api_kwargs or {}))
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model_entry)
 
@@ -199,6 +256,7 @@ class Worker:
             "usage": usage,
             "wall_seconds": result["wall_seconds"],
             "cost_usd": cost,
+            "temperature": (api_kwargs or {}).get("temperature"),
             "model_metadata": model_metadata(model_entry),
         }
         if extra_fields:
@@ -206,19 +264,36 @@ class Worker:
         save_json(filepath, record)
         return self._build_result(result, cost, filepath)
 
-    def _execute_single(self, client, model_id, model_entry, prompt,
-                        output_dir, run, pool_label):
+    def _execute_single(
+        self, client, model_id, model_entry, prompt, output_dir, run, pool_label, api_kwargs=None
+    ):
         """Execute a single-turn query."""
         log.info("Querying %s run %d ...", model_id, run)
         messages = [{"role": "user", "content": prompt}]
         return self._query_and_save(
-            client, model_id, model_entry, messages,
-            output_dir, run, pool_label,
+            client,
+            model_id,
+            model_entry,
+            messages,
+            output_dir,
+            run,
+            pool_label,
             extra_fields={"prompt": prompt},
+            api_kwargs=api_kwargs,
         )
 
-    def _execute_rag(self, client, model_id, model_entry, prompt,
-                     output_dir, run, pool_label, job):
+    def _execute_rag(
+        self,
+        client,
+        model_id,
+        model_entry,
+        prompt,
+        output_dir,
+        run,
+        pool_label,
+        job,
+        api_kwargs=None,
+    ):
         """Execute a RAG query: corpus as system context + prompt as user."""
         corpus_dir = Path(job.corpus) if job.corpus else None
         if not corpus_dir or not corpus_dir.exists():
@@ -227,9 +302,7 @@ class Worker:
         try:
             corpus_text, corpus_files = load_corpus(corpus_dir)
         except SystemExit as exc:
-            raise RuntimeError(
-                f"RAG corpus load failed for {corpus_dir}: {exc}"
-            ) from exc
+            raise RuntimeError(f"RAG corpus load failed for {corpus_dir}: {exc}") from exc
         messages = [
             {"role": "system", "content": corpus_text},
             {"role": "user", "content": prompt},
@@ -237,21 +310,39 @@ class Worker:
 
         log.info("Querying %s run %d (RAG %s)...", model_id, run, job.strategy or "wholesale")
         return self._query_and_save(
-            client, model_id, model_entry, messages,
-            output_dir, run, pool_label,
+            client,
+            model_id,
+            model_entry,
+            messages,
+            output_dir,
+            run,
+            pool_label,
             extra_fields={
                 "prompt": prompt,
                 "strategy": job.strategy or "wholesale",
                 "corpus_files": corpus_files,
             },
+            api_kwargs=api_kwargs,
         )
 
-    def _execute_multiturn(self, client, model_id, model_entry, prompt,
-                           output_dir, run, pool_label, job):
+    def _execute_multiturn(
+        self,
+        client,
+        model_id,
+        model_entry,
+        prompt,
+        output_dir,
+        run,
+        pool_label,
+        job,
+        api_kwargs=None,
+    ):
         """Execute a multi-turn conversation."""
         followups_path = Path(job.followups) if job.followups else None
         if not followups_path or not followups_path.exists():
-            raise ValueError(f"Multiturn mode requires a valid followups file, got {job.followups!r}")
+            raise ValueError(
+                f"Multiturn mode requires a valid followups file, got {job.followups!r}"
+            )
 
         followups = [
             line.strip() for line in followups_path.read_text().splitlines() if line.strip()
@@ -259,18 +350,30 @@ class Worker:
         budget = BudgetTracker(job.budget_usd)
 
         log.info("Querying %s run %d (multiturn, %d followups)...", model_id, run, len(followups))
-        conv = run_conversation(client, model_id, prompt, followups, model_entry, budget)
+        conv = run_conversation(
+            client,
+            model_id,
+            prompt,
+            followups,
+            model_entry,
+            budget,
+            **(api_kwargs or {}),
+        )
         if conv is None:
             raise RuntimeError(f"Multiturn conversation failed for {model_id} run {run}")
 
         filepath = output_path(output_dir, model_id, run, pool_label)
-        save_json(filepath, {
-            "model": model_id,
-            "run": run,
-            "date": date.today().isoformat(),
-            "model_metadata": model_metadata(model_entry),
-            **conv,
-        })
+        save_json(
+            filepath,
+            {
+                "model": model_id,
+                "run": run,
+                "date": date.today().isoformat(),
+                "temperature": (api_kwargs or {}).get("temperature"),
+                "model_metadata": model_metadata(model_entry),
+                **conv,
+            },
+        )
         return {
             "wall_seconds": conv.get("total_wall_seconds", 0),
             "cost_usd": conv.get("total_cost_usd", 0),
@@ -279,8 +382,17 @@ class Worker:
             "result_file": str(filepath),
         }
 
-    def _execute_web(self, client, model_id, model_entry, prompt,
-                     output_dir, run, pool_label):
+    def _execute_web(
+        self,
+        client,
+        model_id,
+        model_entry,
+        prompt,
+        output_dir,
+        run,
+        pool_label,
+        api_kwargs=None,
+    ):
         """Execute a web-augmented query."""
         tavily_key = os.environ.get("TAVILY_API_KEY", "")
         if not tavily_key:
@@ -291,56 +403,86 @@ class Worker:
         web_context, search_log = run_web_searches(tavily_key)
 
         messages = [
-            {"role": "system", "content": (
-                "Use the following web search results as context "
-                "to answer the user's question.\n\n" + web_context
-            )},
+            {
+                "role": "system",
+                "content": (
+                    "Use the following web search results as context "
+                    "to answer the user's question.\n\n" + web_context
+                ),
+            },
             {"role": "user", "content": prompt},
         ]
 
         log.info("Querying %s run %d (web-augmented)...", model_id, run)
         return self._query_and_save(
-            client, model_id, model_entry, messages,
-            output_dir, run, pool_label,
+            client,
+            model_id,
+            model_entry,
+            messages,
+            output_dir,
+            run,
+            pool_label,
             extra_fields={"prompt": prompt, "web_searches": search_log},
+            api_kwargs=api_kwargs,
         )
 
-    def _execute_decomposed(self, client, model_id, model_entry, prompt,
-                            output_dir, run, pool_label, job):
+    def _execute_decomposed(
+        self,
+        client,
+        model_id,
+        model_entry,
+        prompt,
+        output_dir,
+        run,
+        pool_label,
+        job,
+        api_kwargs=None,
+    ):
         """Execute decomposed sub-queries by fuel type."""
         corpus_dir = Path(job.corpus) if job.corpus else None
         if not corpus_dir or not corpus_dir.exists():
-            raise ValueError(f"Decomposed mode requires a valid corpus directory, got {job.corpus!r}")
+            raise ValueError(
+                f"Decomposed mode requires a valid corpus directory, got {job.corpus!r}"
+            )
 
         try:
             corpus_text, corpus_files = load_corpus(corpus_dir)
         except SystemExit as exc:
-            raise RuntimeError(
-                f"Decomposed corpus load failed for {corpus_dir}: {exc}"
-            ) from exc
+            raise RuntimeError(f"Decomposed corpus load failed for {corpus_dir}: {exc}") from exc
         budget = BudgetTracker(job.budget_usd)
 
         log.info("Querying %s run %d (decomposed RAG)...", model_id, run)
-        decomposed = query_decomposed(client, model_id, corpus_text, budget, model_entry)
+        decomposed = query_decomposed(
+            client,
+            model_id,
+            corpus_text,
+            budget,
+            model_entry,
+            **(api_kwargs or {}),
+        )
         if decomposed is None:
             raise RuntimeError(f"Decomposed query failed for {model_id} run {run}")
 
         filepath = output_path(output_dir, model_id, run, pool_label)
-        save_json(filepath, {
-            "model": model_id,
-            "run": run,
-            "date": date.today().isoformat(),
-            "strategy": "decomposed",
-            "corpus_files": corpus_files,
-            "prompt": prompt,
-            "response": decomposed.get("merged_csv", ""),
-            "finish_reason": "merged",
-            "usage": decomposed.get("total_usage", {}),
-            "wall_seconds": decomposed.get("total_wall_seconds", 0),
-            "cost_usd": decomposed.get("total_cost_usd", 0),
-            "model_metadata": model_metadata(model_entry),
-            "n_merged_plants": decomposed.get("n_merged_plants", 0),
-        })
+        save_json(
+            filepath,
+            {
+                "model": model_id,
+                "run": run,
+                "date": date.today().isoformat(),
+                "strategy": "decomposed",
+                "corpus_files": corpus_files,
+                "prompt": prompt,
+                "response": decomposed.get("merged_csv", ""),
+                "finish_reason": "merged",
+                "usage": decomposed.get("total_usage", {}),
+                "wall_seconds": decomposed.get("total_wall_seconds", 0),
+                "cost_usd": decomposed.get("total_cost_usd", 0),
+                "temperature": (api_kwargs or {}).get("temperature"),
+                "model_metadata": model_metadata(model_entry),
+                "n_merged_plants": decomposed.get("n_merged_plants", 0),
+            },
+        )
         return {
             "wall_seconds": decomposed.get("total_wall_seconds", 0),
             "cost_usd": decomposed.get("total_cost_usd", 0),
