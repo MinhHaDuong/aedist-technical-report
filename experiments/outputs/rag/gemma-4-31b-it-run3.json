@@ -1,0 +1,43 @@
+{
+  "model": "google/gemma-4-31b-it",
+  "run": 3,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Since the provided documents span multiple years (2011–2030) and different planning stages (Annual Reports, PDP7, and PDP8), the following CSV includes current operational plants (observed from reports) and planned projects (from PDP7 and PDP8). \n\n*Note: For plants where the specific province is not listed in the table but is implied by the plant name or general region, I have included it based on the text. \"Stage\" is categorized as \"Operational\" (observed COD), \"Under Construction\", or \"Planned\".*\n\n```csv\nPlant Name,Fuel Type,Construction Stage,COD,Province,Capacity (MWe)\nUong Bi,Coal,Operational,2011,Quang Ninh,105\nPha Lai I,Coal,Operational,2011,Bac Ninh,440\nPha Lai II,Coal,Operational,2011,Bac Ninh,600\nNinh Binh,Coal,Operational,2011,Ninh Binh,100\nHai Phong I,Coal,Operational,2011,Hai Phong,300\nQuang Ninh I,Coal,Operational,2011,Quang Ninh,300\nNa Duong,Coal,Operational,2011,Lang Son,111\nCao Nhan,Coal,Operational,2011,Quang Ninh,115\nCam Pha,Coal,Operational,2011,Quang Ninh,600\nSon Dong,Coal,Operational,2011,Quang Ninh,220\nFormosa Ha Tinh #2,Coal,Operational,2016,Ha Tinh,150\nFormosa Ha Tinh #5,Coal,Operational,2016,Ha Tinh,150\nThu Duc,Oil/Gas,Operational,2011,Ho Chi Minh City,165\nCan Tho,Oil/Gas,Operational,2011,Can Tho,33\nO Mon I,Oil/Gas,Operational,2011,Can Tho,330\nHiep Phuoc,Oil/Gas,Operational,2011,Long An,375\nBourbon,Oil/Gas,Operational,2011,Long An,24\nPhu My I,Natural Gas,Operational,2011,Ba Ria - Vung Tau,1090\nPhu My II.1,Natural Gas,Operational,2011,Ba Ria - Vung Tau,900\nPhu My IV,Natural Gas,Operational,2011,Ba Ria - Vung Tau,450\nBa Ria,Natural Gas,Operational,2011,Ba Ria - Vung Tau,389\nNhon Trach I,Natural Gas,Operational,2011,Dong Nai,465\nNhon Trach II,Natural Gas,Operational,2011,Dong Nai,750\nCa Mau I,Natural Gas,Operational,2011,Ca Mau,750\nCa Mau II,Natural Gas,Operational,2011,Ca Mau,750\nPhu My II.2 BOT,Natural Gas,Operational,2011,Ba Ria - Vung Tau,740\nPhu My III BOT,Natural Gas,Operational,2011,Ba Ria - Vung Tau,740\nVe Dan,Natural Gas,Operational,2011,Long An,72\nDam Phu My,Natural Gas,Operational,2011,Ba Ria - Vung Tau,21\nUong Bi Extension 1,Coal,Operational,2017,Quang Ninh,300\nUong Bi Extension 2,Coal,Operational,2017,Quang Ninh,330\nQuang Ninh 1,Coal,Operational,2017,Quang Ninh,600\nQuang Ninh 2,Coal,Operational,2017,Quang Ninh,600\nDuyen Hai 1,Coal,Operational,2017,Tra Vinh,1244\nDuyen Hai 3,Coal,Operational,2017,Tra Vinh,1245\nNghi Son 1,Coal,Operational,2017,Thanh Hoa,600\nHai Phong 1,Coal,Operational,2017,Hai Phong,600\nHai Phong 2,Coal,Operational,2017,Hai Phong,600\nVinh Tan 2,Coal,Operational,2017,Binh Thuan,1244\nMong Duong 1,Coal,Operational,2017,Quang Ninh,1080\nThai Binh,Coal,Operational,2018,Thai Binh,600\nVinh Tan 4,Coal,Operational,2018,Binh Thuan,1200\nDuyen Hai II,Coal,Operational,2021,Tra Vinh,1200\nSong Hau I,Coal,Operational,2021,Hau Giang,1200\nLong Phu I,Coal,Under Construction,2026,Soc Trang,1200\nNa Duong II,Coal,Under Construction,2023,Lang Son,110\nAn Khanh - Bac Giang,Coal,Under Construction,2023,Bac Giang,650\nVung Ang II,Coal,Under Construction,2026,Ha Tinh,1200\nQuang Trach I,Coal,Under Construction,2024,Quang Binh,1200\nVan Phong I,Coal,Under Construction,2024,Khanh Hoa,1200\nSong Hau II,Coal,Under Construction,2024,Hau Giang,2000\nLong Phu II,Coal,Under Construction,2025,Soc Trang,1200\nVinh Tan III,Coal,Under Construction,2026,Binh Thuan,1980\nLNG Quang Ninh,Imported LNG,Planned,2030,Quang Ninh,1500\nLNG Thai Binh,Imported LNG,Planned,2030,Thai Binh,1500\nLNG Nghi Son,Imported LNG,Planned,2030,Thanh Hoa,1500\nLNG Quang Trach II,Imported LNG,Planned,2030,Quang Binh,1500\nLNG Hai Lang,Imported LNG,Planned,2030,Quang Tri,1500\nLNG Ca Na,Imported LNG,Planned,2030,Ninh Thuan,1500\nSon My II,Imported LNG,Planned,2030,Binh Thuan,2250\nSon My I BOT,Imported LNG,Planned,2030,Binh Thuan,2250\nLNG Long Son,Imported LNG,Planned,2035,Ba Ria - Vung Tau,1500\nNhon Trach 3 & 4,Imported LNG,Planned,2030,Dong Nai,1624\nLNG Hiep Phuoc I,Imported LNG,Planned,2030,Long An,1200\nLNG Long An I,Imported LNG,Planned,2030,Long An,1500\nLNG Long An II,Imported LNG,Planned,2035,Long An,1500\nLNG Bac Lieu,Imported LNG,Planned,2030,Bac Lieu,3200\nO Mon I (Conversion),Local Natural Gas,Planned,2030,Can Tho,660\nO Mon II,Local Natural Gas,Planned,2030,Can Tho,1050\nO Mon III,Local Natural Gas,Planned,2030,Can Tho,1050\nO Mon IV,Local Natural Gas,Planned,2030,Can Tho,1050\nDung Quat I,Local Natural Gas,Planned,2030,Quang Ngai,750\nDung Quat II,Local Natural Gas,Planned,2030,Quang Ngai,750\nDung Quat III,Local Natural Gas,Planned,2030,Quang Ngai,750\nMien Trung I,Local Natural Gas,Planned,2030,Quang Tri/Quang Ngai,750\nMien Trung II,Local Natural Gas,Planned,2030,Quang Tri/Quang Ngai,750\nQuang Tri,Local Natural Gas,Planned,2030,Quang Tri,340\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80864,
+    "completion_tokens": 1959
+  },
+  "wall_seconds": 260.837,
+  "cost_usd": 0.01048728,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Google",
+    "context_window": 262144
+  }
+}

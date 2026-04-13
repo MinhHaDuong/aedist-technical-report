@@ -1,0 +1,43 @@
+{
+  "model": "google/gemma-4-26b-a4b-it",
+  "run": 3,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the provided documents, here is a CSV table listing the thermal power plants in Vietnam.\n\n**Notes on data extraction:**\n*   **Fuel Type:** \"Coal\" refers to coal-fired plants; \"Local Gas\" refers to plants using domestic gas/oil/combined cycle; \"Imported LNG\" refers to planned LNG projects.\n*   **Construction Stage / COD:** Where specific dates were unavailable, \"Planned\" or \"Under Construction\" is used based on the document context.\n*   **Capacity:** Values are listed in MW (as provided in the source text).\n*   **Scope:** This list is compiled strictly from the provided technical annexes and reports.\n\n```csv\nName,Fuel Type,Construction Stage,COD,Province,Capacity (MW)\nUong Bi,Coal,Operational,1990s,Quang Ninh,105\nUong Bi Mo Rong II,Coal,Operational,2010s,Quang Ninh,330\nPha Lai I,Coal,Operational,1990s,Hai Duong,440\nPha Lai II,Coal,Operational,2000s,Hai Duong,600\nNinh Binh,Coal,Operational,2010s,Ninh Binh,100\nHai Phong I,Coal,Operational,2010s,Hai Phong,300\nQuang Ninh I,Coal,Operational,2010s,Quang Ninh,300\nNa Duong,Coal,Operational,2010s,Quang Ninh,111\nCao Nhan,Coal,Operational,2010s,Quang Ninh,115\nCam Pha,Coal,Operational,2010s,Quang Ninh,600\nSon Dong,Coal,Operational,2010s,Quang Ninh,220\nFormosa,Coal,Operational,2016,Ha Tinh,150\nThủ Đức,Oil/Gas,Operational,1990s,Ho Chi Minh City,165\nCần Thơ,Oil/Gas,Operational,2010s,Can Tho,33\nÔ Môn I,Oil/Gas,Operational,2010s,Can Tho,330\nHiệp Phước,Oil/Gas,Operational,2010s,Ho Chi Minh City,375\nBourbon,Oil/Gas,Operational,2010s,Ho Chi Minh City,24\nPhú Mỹ I,Gas,Operational,2000s,Ba Ria - Vung Tau,1090\nPhú Mỹ II.1,Gas,Operational,2000s,Ba Ria - Vung Tau,900\nPhú Mỹ IV,Gas,Operational,2010s,Ba Ria - Vung Tau,450\nThu Duc,Gas,Operational,2010s,Ho Chi Minh City,128\nCan Tho,Gas,Operational,2010s,Can Tho,150\nBà Ria,Gas,Operational,2010s,Ba Ria - Vung Tau,389\nNhơn Trạch I,Gas,Operational,2000s,Dong Nai,465\nNhơn Trạch II,Gas,Operational,2000s,Dong Nai,750\nCà Mau I,Gas,Operational,2010s,Ca Mau,750\nCà Mau II,Gas,Operational,2010s,Ca Mau,750\nPhú Mỹ II.2 BOT,Gas,Operational,2010s,Ba Ria - Vung Tau,740\nPhú Mỹ III BOT,Gas,Operational,2010s,Ba Ria - Vung Tau,740\nVê Dan,Gas,Operational,2010s,Ba Ria - Vung Tau,72\nDam Phú Mỹ,Gas,Operational,2010s,Ba Ria - Vung Tau,21\nThai Binh I,Coal,Operational,2017,Thai Binh,600\nVinh Tan 2,Coal,Operational,2010s,Binh Thuan,1244\nMong Duong 1,Coal,Operational,2010s,Quang Ninh,1080\nUong Bi Extension 1,Coal,Operational,2010s,Quang Ninh,300\nUong Bi Extension 2,Coal,Operational,2010s,Quang Ninh,330\nQuang Ninh 1,Coal,Operational,2010s,Quang Ninh,600\nQuang Ninh 2,Coal,Operational,2010s,Quang Ninh,600\nDuyen Hai 1,Coal,Operational,2010s,Thai Binh,1244\nDuyen Hai 3,Coal,Operational,2010s,Thai Binh,1245\nNghi Son 1,Coal,Operational,2010s,Thanh Hoa,600\nThái Bình,Imported LNG,Planned,2030,Thai Binh,4500\nLNG Quảng Ninh,Imported LNG,Planned,2030,Quang Ninh,1500\nLNG Nghi Sơn,Imported LNG,Planned,2030,Thanh Hoa,1500\nLNG Quảng Trạch II,Imported LNG,Planned,2030,Quang Binh,1500\nLNG Hải Lăng,Imported LNG,Planned,2027,Quang Tri,1500\nLNG Cà Ná,Imported LNG,Planned,2026,Binh Thuan,1500\nLNG Long Sơn,Imported LNG,Planned,2035,Ba Ria - Vung Tau,1500\nLNG Bạc Liêu,Imported LNG,Planned,2030,Bac Lieu,3200\nNMNĐ Na Dương II,Coal,Under Construction,2023,Quang Ninh,110\nNMNĐ An Khánh - Bắc Giang,Coal,Under Construction,2030,Bac Giang,650\nNMNĐ Vũng Áng II,Coal,Under Construction,2026,Ha Tinh,1330\nNMNĐ Quảng Trạch I,Coal,Under Construction,2025,Quang Binh,1403\nNMNĐ Vân Phong I,Coal,Under Construction,2030,Khanh Hoa,1432\nNMNĐ Long Phú I,Coal,Under Construction,2026,Soc Trang,1200\nNMNĐ Công Thanh,Coal,Delayed,2024,Thanh Hoa,600\nNMNĐ Nam Định I,Coal,Delayed,2030,Nam Dinh,1200\nNMNĐ Quảng Trị,Coal,Delayed,2030,Quang Tri,1320\nNMNĐ Vĩnh Tân III,Coal,Delayed,2030,Binh Thuan,1980\nNMNĐ Sông Hậu II,Coal,Delayed,2030,Hau Giang,2120\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80864,
+    "completion_tokens": 1624
+  },
+  "wall_seconds": 155.231,
+  "cost_usd": 0.010353280000000001,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "moe",
+    "provider": "Google",
+    "context_window": 262144
+  }
+}
