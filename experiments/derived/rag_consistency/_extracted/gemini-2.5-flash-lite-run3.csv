@@ -1,644 +1,644 @@
-name,fuel,status,cod,province,capacity_mwe
-Hòa Bình,Hydro,Operational,,Hòa Bình,1920.0
-Sơn La,Hydro,Operational,,Sơn La,2400.0
-Lai Châu,Hydro,Operational,,Lai Châu,1200.0
-Tuyên Quang,Hydro,Operational,,Tuyên Quang,342.0
-Ialy,Hydro,Operational,,Gia Lai,720.0
-Sê San 3,Hydro,Operational,,Gia Lai,260.0
-Pleikrong,Hydro,Operational,,Kon Tum,100.0
-Sê San 4,Hydro,Operational,,Gia Lai,360.0
-Tri An,Hydro,Operational,,Đồng Nai,400.0
-An Khê - Kanak,Hydro,Operational,,Gia Lai,173.0
-Song Tranh 2,Hydro,Operational,,Quảng Nam,190.0
-Da Nhim,Hydro,Operational,,Lâm Đồng,160.0
-Ham Thuan,Hydro,Operational,,Bình Thuận,300.0
-Da Mi,Hydro,Operational,,Bình Thuận,175.0
-Ban Chat,Hydro,Operational,,Sơn La,220.0
-Huoi Quang,Hydro,Operational,,Sơn La,520.0
-Ban Ve,Hydro,Operational,,Nghệ An,320.0
-Dong Nai 3,Hydro,Operational,,Đồng Nai,180.0
-Dong Nai 4,Hydro,Operational,,Đồng Nai,340.0
-Quang Tri,Hydro,Operational,,Quảng Trị,64.0
-Thac Mo,Hydro,Operational,,Bình Phước,150.0
-A Vuong,Hydro,Operational,,Quảng Nam,210.0
-Song Ba Ha,Hydro,Operational,,Phú Yên,220.0
-Thac Ba,Hydro,Operational,,Yên Bái,120.0
-Vinh Son,Hydro,Operational,,Bình Định,66.0
-Song Hinh,Hydro,Operational,,Phú Yên,70.0
-Buon Kuop,Hydro,Operational,,Đắk Lắk,280.0
-Buon Tua Srah,Hydro,Operational,,Lâm Đồng,86.0
-Srepok 3,Hydro,Operational,,Đắk Lắk,220.0
-Uong Bi,Coal,Operational,,Quảng Ninh,105.0
-Uong Bi mo rong II,Coal,Operational,,Quảng Ninh,330.0
-Pha Lai I,Coal,Operational,,Hải Dương,440.0
-Phả Lại II,Coal,Operational,,Hải Dương,600.0
-Ninh Bình,Coal,Operational,,Ninh Bình,100.0
-Hai Phong I,Coal,Operational,,Hải Phòng,300.0
-Quang Ninh I,Coal,Operational,,Quảng Ninh,300.0
-Na Duong,Coal,Operational,,Lạng Sơn,111.0
-Cao Nhan,Coal,Operational,,Lạng Sơn,115.0
-Cam Pha,Coal,Operational,,Quảng Ninh,600.0
-Son Dong,Coal,Operational,,Quảng Ninh,220.0
-Thủ Đức,Oil,Operational,,Hồ Chí Minh,165.0
-Cần Thơ,Oil,Operational,,Cần Thơ,33.0
-Ô Môn I,Gas (LNG),Operational,,Cần Thơ,330.0
-Hiệp Phước,Oil,Operational,,Hồ Chí Minh,375.0
-Bourbon,Oil,Operational,,Hồ Chí Minh,24.0
-Phú Mỹ I,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1090.0
-Phú Mỹ II.1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,900.0
-Phú Mỹ IV,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,450.0
-Thu Duc,Gas (Local),Operational,,Hồ Chí Minh,128.0
-Can Tho,Gas (Local),Operational,,Cần Thơ,150.0
-Bà Ria,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0
-Nhơn Trạch I,Gas (Local),Operational,,Đồng Nai,465.0
-Nhơn Trạch II,Gas (Local),Operational,,Đồng Nai,750.0
-Cà Mau I,Gas (Local),Operational,,Cà Mau,750.0
-Cà Mau II,Gas (Local),Operational,,Cà Mau,750.0
-Phú Mỹ II.2 BOT,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0
-Phú Mỹ III BOT,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0
-Vê Dan,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,72.0
-Dam Phú Mỹ,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,21.0
-EVN's Power Corporations,Diesel,Operational,,Multiple,285.0
-Amata,Diesel,Operational,,Multiple,14.0
-Hoa Binh Hydro extension,Hydro,Planned,2023,Hòa Bình,240.0
-Son La Hydro extension,Hydro,Planned,,Sơn La,400.0
-Lai Chau Hydro additional turbines,Hydro,Planned,,Lai Châu,800.0
-Huoi Quang Hydro #2,Hydro,Operational,2016,Sơn La,260.0
-"Trung Son Hydro #1,2",Hydro,Operational,2016-2017,Thanh Hóa,130.0
-Duyen Hai III #1,Coal,Operational,2016,Trà Vinh,600.0
-Duyen Hai III #2,Coal,Operational,2017,Trà Vinh,600.0
-Thai Binh I #1,Coal,Operational,2017,Thái Bình,300.0
-Thai Binh I #2,Coal,Operational,2017,Thái Bình,300.0
-Vinh Tan IV #1,Coal,Operational,2017,Bình Thuận,600.0
-Vinh Tan IV #2,Coal,Operational,2018,Bình Thuận,600.0
-Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0
-Quang Ninh I,Coal,Under Construction,2021,Quảng Ninh,600.0
-Quang Ninh II,Coal,Under Construction,2021,Quảng Ninh,600.0
-Duyen Hai 1,Coal,Operational,2016,Trà Vinh,1244.0
-Duyen Hai 3,Coal,Operational,2017,Trà Vinh,1245.0
-Nghi Son 1,Coal,Operational,2017,Thanh Hóa,600.0
-Pha Lai 1,Coal,Operational,,Hải Dương,440.0
-Pha Lai 2,Coal,Operational,,Hải Dương,600.0
-Hai Phong 1,Coal,Operational,,Hải Phòng,600.0
-Hai Phong 2,Coal,Operational,,Hải Phòng,600.0
-Can Tho,Oil,Operational,,Cần Thơ,35.0
-O Mon 1,Gas (LNG),Operational,,Cần Thơ,660.0
-O Mon 1 (Gas - oil),Gas (LNG),Operational,,Cần Thơ,150.0
-Mong Duong 1,Coal,Operational,2017,Quảng Ninh,1080.0
-Vinh Tan 2,Coal,Operational,2017,Bình Thuận,1244.0
-Duyen Hai 3 Extension,Coal,Operational,2019,Trà Vinh,660.0
-Ninh Binh,Coal,Operational,,Ninh Bình,100.0
-Mong Duong 1,Coal,Operational,,Quảng Ninh,1080.0
-Phu My 2.1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,896.0
-Phu My 1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1108.0
-Phu My 4,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,458.0
-Ba Ria,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0
-Thu Duc,Gas (Local),Operational,,Hồ Chí Minh,114.0
-Nghi Son 2 #1,Coal,Under Construction,2021,Thanh Hóa,600.0
-Nghi Son 2 #2,Coal,Under Construction,2022,Thanh Hóa,600.0
-Vung Ang 2 #1,Coal,Under Construction,2021,Hà Tĩnh,600.0
-Vung Ang 2 #2,Coal,Under Construction,2022,Hà Tĩnh,600.0
-Thai Binh II #1,Coal,Under Construction,2021,Thái Bình,600.0
-Thai Binh II #2,Coal,Under Construction,2022,Thái Bình,600.0
-Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0
-Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0
-Vinh Tan 3 #1,Coal,Under Construction,2022,Bình Thuận,660.0
-Vinh Tan 3 #2,Coal,Under Construction,2023,Bình Thuận,660.0
-Vinh Tan 3 #3,Coal,Under Construction,2023,Bình Thuận,660.0
-Song Hau II #1,Coal,Under Construction,2022,Hậu Giang,1000.0
-Song Hau II #2,Coal,Under Construction,2022,Hậu Giang,1000.0
-Long Phu II #1,Coal,Under Construction,2022,Sóc Trăng,660.0
-Long Phu II #2,Coal,Under Construction,2022,Sóc Trăng,660.0
-Long Phu III #1,Coal,Under Construction,2023,Sóc Trăng,600.0
-Long Phu III #2,Coal,Under Construction,2023,Sóc Trăng,600.0
-Long Phu III #3,Coal,Under Construction,2023,Sóc Trăng,600.0
-Van Phong I #1,Coal,Under Construction,2022,Khánh Hòa,660.0
-Van Phong I #2,Coal,Under Construction,2022,Khánh Hòa,660.0
-Hai Duong #1,Coal,Under Construction,2021,Hải Dương,600.0
-Hai Duong #2,Coal,Under Construction,2022,Hải Dương,600.0
-Khanh An - Bac Giang,Coal,Planned,2026,Bắc Giang,300.0
-Na Duong II,Coal,Operational,,Lạng Sơn,110.0
-Mong Duong II #1,Coal,Operational,2016,Quảng Ninh,600.0
-Mong Duong II #2,Coal,Operational,2016,Quảng Ninh,600.0
-Duyen Hai III MR,Coal,Planned,2019,Trà Vinh,660.0
-Do Luong,Hydro,Planned,2021,Nghệ An,102.0
-Song Giang,Hydro,Planned,2021,Kon Tum,80.0
-Quang Tri,Hydro,Operational,,Quảng Trị,64.0
-An Khe - Kanak,Hydro,Operational,,Gia Lai,173.0
-"Trung Son #3,4",Hydro,Operational,2017,Thanh Hóa,130.0
-Kanak,Hydro,Operational,,Gia Lai,173.0
-Phu Yen,Hydro,Operational,,Phú Yên,220.0
-Thac Mo MR,Hydro,Operational,2017,Bình Phước,75.0
-Song Bung 2,Hydro,Operational,2018,Quảng Nam,100.0
-Ha Se San 1 (Cambodia),Hydro,Operational,2021,Cambodia,90.0
-Ha Se San 3 (Cambodia),Hydro,Operational,2023,Cambodia,180.0
-Se Kong (Cambodia),Hydro,Operational,2021,Cambodia,150.0
-Se Kong 3A+3B,Hydro,Operational,2017,Laos,205.0
-Ha Se San 2 (Cambodia 50%),Hydro,Operational,2016,Cambodia,200.0
-Se Kaman 1 (Laos),Hydro,Operational,2015,Laos,290.0
-Se Kaman 3 (Laos),Hydro,Operational,2011,Laos,250.0
-Se Kaman 4 (Laos),Hydro,Operational,2016,Laos,64.0
-Nam Theun 1 (Laos),Hydro,Operational,2022,Laos,400.0
-Nam Dok Sake (Laos),Hydro,Planned,,Laos,150.0
-Don Sahong (Laos),Hydro,Planned,,Laos,260.0
-Xayaburi (Laos),Hydro,Operational,,Laos,720.0
-"Nho Que 3 #1,2",Hydro,Operational,2012,Hà Giang,110.0
-Ban Chat,Hydro,Operational,,Sơn La,220.0
-"Huoi Quang #1,2",Hydro,Operational,2015,Sơn La,520.0
-Theun-Hinboun (Laos),Hydro,Operational,,Laos,220.0
-Houay Ho (Laos),Hydro,Operational,,Laos,150.0
-Seshan 3A,Hydro,Operational,,Gia Lai,108.0
-Bac Binh,Hydro,Operational,,Bình Thuận,33.0
-Da Nhim - Song Pha,Hydro,Operational,,Lâm Đồng/Ninh Thuận,167.0
-Da My,Hydro,Operational,,Bình Thuận,175.0
-Cu Dat,Hydro,Operational,,Lâm Đồng,97.0
-Nam Chien 2,Hydro,Operational,,Sơn La,32.0
-Ban Coc,Hydro,Operational,,Hòa Bình,18.0
-Binh Dien,Hydro,Operational,,Quảng Trị,44.0
-Za Hung,Hydro,Operational,,Quảng Nam,30.0
-Huong Dien,Hydro,Operational,,Thừa Thiên Huế,54.0
-Song Con,Hydro,Operational,,Quảng Ngãi,63.0
-Krong Hnang,Hydro,Operational,,Đắk Lắk,64.0
-Srepok 4,Hydro,Operational,,Đắk Lắk,80.0
-Da Dang 2,Hydro,Operational,,Kon Tum,34.0
-Can Don,Hydro,Operational,,Lào Cai,78.0
-Srokphumieng,Hydro,Operational,,Đắk Lắk,51.0
-Huong Son,Hydro,Operational,,Hà Tĩnh,34.0
-Muong Hum,Hydro,Operational,,Lào Cai,30.0
-Dak Rlih,Hydro,Operational,,Đắk Nông,144.0
-Se San 4A,Hydro,Operational,,Gia Lai,63.0
-Small Hydropower (Local IPP),Hydro,Operational,,Multiple,300.0
-Formosa (Coal),Coal,Operational,,Hà Tĩnh,150.0
-Formosa (Gas - blast furnace),Gas (Local),Operational,,Hà Tĩnh,200.0
-Formosa Dong Nai #3,Gas (Local),Operational,,Đồng Nai,150.0
-Ve Dan Thermal (Cogeneration),Coal,Operational,,Multiple,60.0
-KCP Biomass #1,Biomass,Operational,2016,Phú Yên,30.0
-An Khe Biomass #1,Biomass,Operational,2017,Gia Lai,55.0
-KCP Biomass #2,Biomass,Operational,2018,Phú Yên,30.0
-An Khe Biomass #2,Biomass,Operational,2018,Gia Lai,55.0
-Lee & Man Biomass,Biomass,Operational,2018,Multiple,125.0
-Khai Long Wind (Ca Mau),Wind,Operational,2018,Cà Mau,100.0
-Bac Lieu Wind Phase III,Wind,Operational,2018,Bạc Liêu,142.0
-Nho Que 2,Hydro,Operational,2016,Hà Giang,48.0
-Nho Que 1,Hydro,Operational,2016,Hà Giang,32.0
-Nam Na 3,Hydro,Operational,2016,Lai Châu,84.0
-Nam Tong,Hydro,Operational,2016,Hòa Bình,34.0
-Bac Me,Hydro,Operational,2016,Hà Giang,45.0
-Ba Thuoc 1,Hydro,Operational,2016,Thanh Hóa,60.0
-Song Tranh 3,Hydro,Operational,2016,Quảng Nam,62.0
-Nhạn Hạc,Hydro,Operational,2016,Nghệ An,59.0
-Song Tranh 4,Hydro,Operational,2016,Quảng Nam,48.0
-Dak Mi 2,Hydro,Operational,2016,Quảng Nam,98.0
-Dak Mi 3,Hydro,Operational,2016,Quảng Nam,45.0
-Chi Khe,Hydro,Operational,2017,Nghệ An,41.0
-Long Tao,Hydro,Operational,2017,Kon Tum,42.0
-Yen Son,Hydro,Operational,2017,Tuyên Quang,70.0
-Tra Khuc 1,Hydro,Operational,2017,Quảng Ngãi,36.0
-Sekaman Xanxay (Laos),Hydro,Operational,2017,Laos,32.0
-Long Son Petrochemical #1 (Cogeneration),Gas (Local),Operational,2017,Đồng Nai,75.0
-Song Lo 6,Hydro,Operational,2018,Hà Giang,44.0
-Hoi Xuan,Hydro,Operational,2018,Sơn La,102.0
-Song Mien 4,Hydro,Operational,2018,Lào Cai,38.0
-La Ngau,Hydro,Operational,2018,Bình Thuận,36.0
-Dak Mi 1,Hydro,Operational,2018,Quảng Nam,54.0
-Da Nhim Extension,Hydro,Operational,2018,Lâm Đồng,100.0
-Sekaman 4 (Laos),Hydro,Operational,2018,Laos,80.0
-A Lin,Hydro,Operational,2018,Quảng Nam,62.0
-Thang Long #1,Gas (Local),Operational,2018,Hà Nội,300.0
-Thai Binh II #1 (Gas),Gas (Local),Under Construction,2024,Thái Bình,600.0
-"Vinh Tan IV #1,2",Coal,Operational,2017-2018,Bình Thuận,1200.0
-Long Phu I #1,Coal,Under Construction,2018,Sóc Trăng,600.0
-"Long Son Petrochemical #2,3 (Cogeneration)",Gas (Local),Operational,2018,Đồng Nai,150.0
-Lee & Man Biomass,Biomass,Operational,2018,Multiple,125.0
-An Khe Biomass #2,Biomass,Operational,2018,Gia Lai,55.0
-Wind Power Khai Long (Ca Mau),Wind,Operational,2018,Cà Mau,100.0
-Bac Lieu Wind Phase III,Wind,Operational,2018,Bạc Liêu,142.0
-Bao Lam 3,Hydro,Operational,2019,Đắk Lắk,46.0
-Pac Ma,Hydro,Operational,2019,Điện Biên,140.0
-"Thuong Kon Tum #1,2",Hydro,Operational,2019,Kon Tum,220.0
-Thang Long #2,Gas (Local),Planned,2024,Hà Nội,300.0
-Hai Ha Cogeneration 1,Gas (Local),Operational,2019,Quảng Ninh,150.0
-Na Duong II,Coal,Operational,2019,Lạng Sơn,110.0
-Long Phu II #2,Coal,Planned,2022,Sóc Trăng,600.0
-"Song Hau I #1,2",Coal,Operational,2019,Hậu Giang,1200.0
-Duyen Hai III Extension,Coal,Operational,2019,Trà Vinh,660.0
-"Vinh Tan I #1,2",Coal,Operational,2019,Bình Thuận,1200.0
-Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0
-"Nam Cum small hydro cluster 1,4,5",Hydro,Operational,2019,Multiple,65.0
-Wind Power Trung - Nam,Wind,Operational,2019,Ninh Thuận,90.0
-Soc Trang Wind,Wind,Operational,2019,Sóc Trăng,99.0
-Thien Tan 1 Solar,Solar,Operational,2019,Ninh Thuận,300.0
-Nam Pan 5,Hydro,Operational,2020,Lâm Đồng,35.0
-Nam Mo (Vietnam),Hydro,Operational,2020,Nghệ An,95.0
-Ialy Extension,Hydro,Planned,2024,Gia Lai,360.0
-"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0
-"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0
-Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0
-Hai Duong #1,Coal,Under Construction,2020,Hải Dương,600.0
-"Cam Pha III #1,2",Coal,Planned,2020,Quảng Ninh,440.0
-Cong Thanh,Coal,Planned,2020,Thanh Hóa,600.0
-O Mon III,Gas (Local),Planned,2025,Cần Thơ,750.0
-"Nam Cum small hydro cluster 2,3,6",Hydro,Operational,2020,Multiple,54.0
-Hanbaram Wind,Wind,Operational,2020,Multiple,117.0
-Thien Tan 2 Solar,Solar,Operational,2020,Ninh Thuận,400.0
-My Ly,Hydro,Planned,2021,Nghệ An,250.0
-Hoa Binh Extension #1,Hydro,Planned,2021,Hòa Bình,240.0
-Nghi Son II #1,Coal,Under Construction,2021,Thanh Hóa,600.0
-Vung Ang II #1,Coal,Under Construction,2021,Hà Tĩnh,600.0
-Hai Duong #2,Coal,Under Construction,2021,Hải Dương,600.0
-Nam Dinh I #1,Coal,Under Construction,2021,Nam Định,600.0
-Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0
-Kien Giang I,Gas (Local),Planned,2021,Kiên Giang,750.0
-O Mon IV,Gas (Local),Planned,2023,Cần Thơ,750.0
-Duyen Hai II #1,Coal,Under Construction,2021,Trà Vinh,600.0
-Duyen Hai II #2,Coal,Under Construction,2022,Trà Vinh,600.0
-Song Hau II #1,Coal,Under Construction,2022,Hậu Giang,1000.0
-Long Phu II #1,Coal,Under Construction,2021,Sóc Trăng,660.0
-Long Phu III #1,Coal,Planned,2023,Sóc Trăng,600.0
-Uong Bi retirement,Coal,Retired,,Quảng Ninh,105.0
-Thien Tan 3 Solar,Solar,Planned,2021,Ninh Thuận,300.0
-Ban Mong (Song Hieu),Hydro,Operational,2022,Nghệ An,60.0
-Hoa Binh Extension #2,Hydro,Planned,2021,Hòa Bình,240.0
-Dak Re,Hydro,Operational,2022,Kon Tum,60.0
-Hai Ha Cogeneration 2,Gas (Local),Others,2022,Quảng Ninh,750.0
-Luc Nam #1,Hydro,Operational,2022,Bắc Giang,50.0
-Quynh Lap I #1,Coal,Under Construction,2022,Nghệ An,600.0
-Vung Ang II #2,Coal,Under Construction,2022,Hà Tĩnh,600.0
-Nghi Son II #2,Coal,Under Construction,2022,Thanh Hóa,600.0
-Nam Dinh I #2,Coal,Under Construction,2022,Nam Định,600.0
-Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0
-Vinh Tan III #1,Coal,Under Construction,2022,Bình Thuận,660.0
-Long Phu II #2,Coal,Planned,2022,Sóc Trăng,660.0
-"Long Phu III #2,3",Coal,Planned,2023,Sóc Trăng,1200.0
-Van Phong II #2,Coal,Planned,2022,Khánh Hòa,660.0
-Kien Giang II,Gas (Local),Planned,2022,Kiên Giang,750.0
-Low head hydropower Phu Tho,Hydro,Operational,2023,Phú Thọ,105.0
-Quynh Lap I #2,Coal,Under Construction,2023,Nghệ An,600.0
-Luc Nam #2,Hydro,Planned,2023,Bắc Giang,50.0
-Quang Tri #1,Coal,Planned,2023,Quảng Trị,600.0
-Mien Trung I,Gas (Local),Planned,2023,Quảng Ngãi,750.0
-Dung Quat II,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-"Vinh Tan III #2,3",Coal,Under Construction,2023,Bình Thuận,1320.0
-Van Phong II #2,Coal,Planned,2023,Khánh Hòa,660.0
-Son My II #1,Gas (Local),Planned,2023,Quảng Ngãi,750.0
-"Bac Ai pumped storage #1,2",Hydro,Planned,2023,Ninh Thuận,600.0
-Vung Ang III #1,Coal,Planned,2024,Hà Tĩnh,600.0
-Quang Tri #2,Coal,Planned,2024,Quảng Trị,600.0
-Mien Trung II,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-Long An I #1,Coal,Planned,2024,Long An,600.0
-Son My II #2,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-Tri An Extension,Hydro,Planned,2025,Đồng Nai,200.0
-Hai Phong III #1,Coal,Planned,2025,Hải Phòng,600.0
-Hai Ha Cogeneration 3,Gas (Local),Planned,2025,Quảng Ninh,600.0
-Rang Dong Cogeneration,Gas (Local),Planned,2025,Multiple,100.0
-Vung Ang III #2,Coal,Planned,2025,Hà Tĩnh,600.0
-Long An I #2,Coal,Planned,2025,Long An,600.0
-Son My II #3,Gas (Local),Planned,2025,Quảng Ngãi,750.0
-"Bac Ai pumped storage #3,4",Hydro,Planned,2025,Ninh Thuận,600.0
-Nam Mo 1 (Laos),Hydro,Planned,2020,Laos,72.0
-"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0
-"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0
-Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0
-"Nam Cum small hydro cluster 2,3,6",Hydro,Operational,2020,Multiple,54.0
-Hanbaram Wind,Wind,Operational,2020,Multiple,117.0
-Thien Tan 2 Solar,Solar,Operational,2020,Ninh Thuận,400.0
-Nho Que 2,Hydro,Planned,2016,Hà Giang,48.0
-Nho Que 1,Hydro,Planned,2016,Hà Giang,32.0
-Nam Na 3,Hydro,Planned,2016,Lai Châu,84.0
-Nam Tong,Hydro,Planned,2016,Hòa Bình,34.0
-Bac Me,Hydro,Planned,2016,Hà Giang,45.0
-Ba Thuoc 1,Hydro,Planned,2016,Thanh Hóa,60.0
-Song Tranh 3,Hydro,Planned,2016,Quảng Nam,62.0
-Nhan Hac,Hydro,Planned,2016,Nghệ An,59.0
-Song Tranh 4,Hydro,Planned,2016,Quảng Nam,48.0
-Dak Mi 2,Hydro,Planned,2016,Quảng Nam,98.0
-Dak Mi 3,Hydro,Planned,2016,Quảng Nam,45.0
-Chi Khe,Hydro,Planned,2017,Nghệ An,41.0
-Long Tao,Hydro,Planned,2017,Kon Tum,42.0
-Yen Son,Hydro,Planned,2017,Tuyên Quang,70.0
-Tra Khuc 1,Hydro,Planned,2017,Quảng Ngãi,36.0
-Sekaman Xanxay (Laos),Hydro,Planned,2017,Laos,32.0
-Long Son Petrochemical #1 (Cogeneration),Gas (Local),Planned,2017,Đồng Nai,75.0
-Song Lo 6,Hydro,Planned,2018,Hà Giang,44.0
-Hoi Xuan,Hydro,Planned,2018,Sơn La,102.0
-Song Mien 4,Hydro,Planned,2018,Lào Cai,38.0
-La Ngau,Hydro,Planned,2018,Bình Thuận,36.0
-Dak Mi 1,Hydro,Planned,2018,Quảng Nam,54.0
-Da Nhim Extension,Hydro,Planned,2018,Lâm Đồng,100.0
-Sekaman 4 (Laos),Hydro,Planned,2018,Laos,80.0
-A Lin,Hydro,Planned,2018,Quảng Nam,62.0
-Thang Long #1,Gas (Local),Planned,2018,Hà Nội,300.0
-Thai Binh II #1,Coal,Under Construction,2021,Thái Bình,600.0
-"Vinh Tan IV #1,2",Coal,Operational,2017-2018,Bình Thuận,1200.0
-Long Phu I #1,Coal,Under Construction,2018,Sóc Trăng,600.0
-"Long Son Petrochemical #2,3 (Cogeneration)",Gas (Local),Planned,2018,Đồng Nai,150.0
-Lee & Man Biomass,Biomass,Planned,2018,Multiple,125.0
-An Khe Biomass #2,Biomass,Planned,2018,Gia Lai,55.0
-Wind Power Khai Long (Ca Mau),Wind,Planned,2018,Cà Mau,100.0
-Bac Lieu Wind Phase III,Wind,Planned,2018,Bạc Liêu,142.0
-Bao Lam 3,Hydro,Planned,2019,Đắk Lắk,46.0
-Pac Ma,Hydro,Planned,2019,Điện Biên,140.0
-"Thuong Kon Tum #1,2",Hydro,Planned,2019,Kon Tum,220.0
-Thang Long #2,Gas (Local),Planned,2019,Hà Nội,300.0
-Hai Ha Cogeneration 1,Gas (Local),Planned,2019,Quảng Ninh,150.0
-Na Duong II,Coal,Planned,2019,Lạng Sơn,110.0
-Long Phu II #2,Coal,Planned,2019,Sóc Trăng,600.0
-"Song Hau I #1,2",Coal,Operational,2019,Hậu Giang,1200.0
-Duyen Hai III Extension,Coal,Operational,2019,Trà Vinh,660.0
-"Vinh Tan I #1,2",Coal,Operational,2019,Bình Thuận,1200.0
-Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0
-"Nam Cum small hydro cluster 1,4,5",Hydro,Planned,2019,Multiple,65.0
-Wind Power Trung - Nam,Wind,Planned,2019,Ninh Thuận,90.0
-Soc Trang Wind,Wind,Planned,2019,Sóc Trăng,99.0
-Thien Tan 1 Solar,Solar,Planned,2019,Ninh Thuận,300.0
-Nam Pan 5,Hydro,Planned,2020,Lâm Đồng,35.0
-Nam Mo (Vietnam),Hydro,Planned,2020,Nghệ An,95.0
-Ialy Extension,Hydro,Planned,2020,Gia Lai,360.0
-"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0
-"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0
-Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0
-Hai Duong #1,Coal,Under Construction,2020,Hải Dương,600.0
-"Cam Pha III #1,2",Coal,Planned,2020,Quảng Ninh,440.0
-Cong Thanh,Coal,Planned,2020,Thanh Hóa,600.0
-O Mon III,Gas (Local),Planned,2020,Cần Thơ,750.0
-"Nam Cum small hydro cluster 2,3,6",Hydro,Planned,2020,Multiple,54.0
-Hanbaram Wind,Wind,Planned,2020,Multiple,117.0
-Thien Tan 2 Solar,Solar,Planned,2020,Ninh Thuận,400.0
-My Ly,Hydro,Planned,2021,Nghệ An,250.0
-Hoa Binh Extension #1,Hydro,Planned,2021,Hòa Bình,240.0
-Nghi Son II #1,Coal,Under Construction,2021,Thanh Hóa,600.0
-Vung Ang II #1,Coal,Under Construction,2021,Hà Tĩnh,600.0
-Hai Duong #2,Coal,Under Construction,2021,Hải Dương,600.0
-Nam Dinh I #1,Coal,Under Construction,2021,Nam Định,600.0
-Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0
-Kien Giang I,Gas (Local),Planned,2021,Kiên Giang,750.0
-O Mon IV,Gas (Local),Planned,2021,Cần Thơ,750.0
-Duyen Hai II #1,Coal,Under Construction,2021,Trà Vinh,600.0
-Long Phu II #1,Coal,Under Construction,2021,Sóc Trăng,660.0
-Ban Mong (Song Hieu),Hydro,Planned,2021,Nghệ An,60.0
-Hoa Binh Extension #2,Hydro,Planned,2021,Hòa Bình,240.0
-Dak Re,Hydro,Planned,2021,Kon Tum,60.0
-Hai Ha Cogeneration 2,Gas (Local),Planned,2021,Quảng Ninh,750.0
-Luc Nam #1,Hydro,Planned,2021,Bắc Giang,50.0
-Quynh Lap I #1,Coal,Under Construction,2022,Nghệ An,600.0
-Vung Ang II #2,Coal,Under Construction,2022,Hà Tĩnh,600.0
-Nghi Son II #2,Coal,Under Construction,2022,Thanh Hóa,600.0
-Nam Dinh I #2,Coal,Under Construction,2022,Nam Định,600.0
-Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0
-Vinh Tan III #1,Coal,Under Construction,2022,Bình Thuận,660.0
-Long Phu II #2,Coal,Planned,2022,Sóc Trăng,660.0
-"Long Phu III #2,3",Coal,Planned,2022,Sóc Trăng,1200.0
-Van Phong II #2,Coal,Planned,2022,Khánh Hòa,660.0
-Kien Giang II,Gas (Local),Planned,2022,Kiên Giang,750.0
-Low head hydropower Phu Tho,Hydro,Planned,2023,Phú Thọ,105.0
-Quynh Lap I #2,Coal,Under Construction,2023,Nghệ An,600.0
-Luc Nam #2,Hydro,Planned,2023,Bắc Giang,50.0
-Quang Tri #1,Coal,Planned,2023,Quảng Trị,600.0
-Mien Trung I,Gas (Local),Planned,2023,Quảng Ngãi,750.0
-Dung Quat II,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-"Vinh Tan III #2,3",Coal,Under Construction,2023,Bình Thuận,1320.0
-Van Phong II #2,Coal,Planned,2023,Khánh Hòa,660.0
-Son My II #1,Gas (Local),Planned,2023,Quảng Ngãi,750.0
-"Bac Ai pumped storage #1,2",Hydro,Planned,2023,Ninh Thuận,600.0
-Vung Ang III #1,Coal,Planned,2024,Hà Tĩnh,600.0
-Quang Tri #2,Coal,Planned,2024,Quảng Trị,600.0
-Mien Trung II,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-Long An I #1,Coal,Planned,2024,Long An,600.0
-Son My II #2,Gas (Local),Planned,2024,Quảng Ngãi,750.0
-Tri An Extension,Hydro,Planned,2025,Đồng Nai,200.0
-Hai Phong III #1,Coal,Planned,2025,Hải Phòng,600.0
-Hai Ha Cogeneration 3,Gas (Local),Planned,2025,Quảng Ninh,600.0
-Rang Dong Cogeneration,Gas (Local),Planned,2025,Multiple,100.0
-Vung Ang III #2,Coal,Planned,2025,Hà Tĩnh,600.0
-Long An I #2,Coal,Planned,2025,Long An,600.0
-Son My II #3,Gas (Local),Planned,2025,Quảng Ngãi,750.0
-"Bac Ai pumped storage #3,4",Hydro,Planned,2025,Ninh Thuận,600.0
-Quang Ninh 3,Coal,Planned,2025,Quảng Ninh,4500.0
-Nghe An 1,Coal,Planned,2025,Nghệ An,600.0
-Quang Binh 1,Coal,Planned,2026,Quảng Bình,600.0
-Quang Binh 2,Coal,Planned,2026,Quảng Bình,600.0
-Nghi Son 3,Coal,Planned,2026,Thanh Hóa,600.0
-Hong Lam 1,Coal,Planned,2026,Nghệ An,600.0
-Nam Dinh II #1,Coal,Planned,2026,Nam Định,600.0
-Vinh Tan V #1,Coal,Planned,2026,Bình Thuận,600.0
-Phu Tho #1,Coal,Planned,2026,Phú Thọ,300.0
-Kien Luong III #1,Coal,Planned,2026,Kiên Giang,1000.0
-Song Hau II #1,Coal,Planned,2026,Hậu Giang,1000.0
-Binh Dinh I,Coal,Planned,2026,Bình Định,600.0
-Binh Dinh II,Coal,Planned,2026,Bình Định,2000.0
-Vung Ang III #2,Coal,Planned,2026,Hà Tĩnh,600.0
-Quang Ninh IV,Coal,Planned,2026,Quảng Ninh,2000.0
-Hai Phong IV,Coal,Planned,2026,Hải Phòng,600.0
-Thanh Hoa 1,Coal,Planned,2027,Thanh Hóa,600.0
-Thanh Hoa 2,Coal,Planned,2027,Thanh Hóa,600.0
-Quang Binh 3,Coal,Planned,2027,Quảng Bình,600.0
-Vinh Tan V #2,Coal,Planned,2027,Bình Thuận,600.0
-Phu Tho #2,Coal,Planned,2027,Phú Thọ,300.0
-Kien Luong III #2,Coal,Planned,2027,Kiên Giang,1000.0
-Song Hau II #2,Coal,Planned,2027,Hậu Giang,1000.0
-Binh Dinh III,Coal,Planned,2027,Bình Định,2000.0
-Vung Ang III #3,Coal,Planned,2027,Hà Tĩnh,600.0
-Hai Phong V,Coal,Planned,2027,Hải Phòng,600.0
-Quynh Lap II #1,Coal,Planned,2027,Nghệ An,600.0
-Nam Dinh II #2,Coal,Planned,2027,Nam Định,600.0
-"Bac Ai pumped storage #3,4",Hydro,Planned,2027,Ninh Thuận,600.0
-Hanh Phuc (Binh Thuan),Coal,Planned,2028,Bình Thuận,600.0
-Khanh Hoa 1,Coal,Planned,2028,Khánh Hoà,660.0
-Khanh Hoa 2,Coal,Planned,2028,Khánh Hoà,660.0
-Vinh Tan VI #2,Coal,Planned,2028,Bình Thuận,600.0
-Phu Tho #3,Coal,Planned,2028,Phú Thọ,300.0
-Kien Luong IV #1,Coal,Planned,2028,Kiên Giang,1000.0
-Song Hau III #1,Coal,Planned,2028,Hậu Giang,1000.0
-Binh Dinh IV,Coal,Planned,2028,Bình Định,2000.0
-Vung Ang IV #1,Coal,Planned,2028,Hà Tĩnh,600.0
-Hai Phong VI,Coal,Planned,2028,Hải Phòng,600.0
-Quynh Lap II #2,Coal,Planned,2028,Nghệ An,600.0
-Nam Dinh III #1,Coal,Planned,2028,Nam Định,600.0
-Son My I,Gas (Local),Planned,2028,Quảng Ngãi,2250.0
-Son My II,Gas (Local),Planned,2023,Quảng Ngãi,2250.0
-Quang Ngai,Gas (Local),Planned,2025,Quảng Ngãi,750.0
-Thang Long #1,Gas (Local),Planned,2023,Hà Nội,300.0
-Thang Long #2,Gas (Local),Planned,2024,Hà Nội,300.0
-Hanoi Gas Power,Gas (Local),Planned,2024,Hà Nội,1500.0
-Nghi Son Gas Power,Gas (LNG),Planned,2025,Thanh Hóa,1500.0
-Vung Ang Gas Power,Gas (LNG),Planned,2025,Hà Tĩnh,1500.0
-Quang Binh Gas Power,Gas (LNG),Planned,2025,Quảng Bình,1500.0
-Hai Lang Gas Power,Gas (LNG),Planned,2026,Quảng Trị,1500.0
-Ca Na Gas Power I,Gas (LNG),Planned,2026,Ninh Thuận,1500.0
-Ca Na Gas Power II,Gas (LNG),Planned,2027,Ninh Thuận,1500.0
-Ca Na Gas Power III,Gas (LNG),Planned,2027,Ninh Thuận,1500.0
-Mui Ke Ga Gas Power,Gas (LNG),Planned,2027,Bình Thuận,1500.0
-Long Son Gas Power I,Gas (LNG),Planned,2027,Đồng Nai,1200.0
-Long Son Gas Power II,Gas (LNG),Planned,2028,Đồng Nai,1200.0
-Long Son Gas Power III,Gas (LNG),Planned,2028,Đồng Nai,1200.0
-Long Son Gas Power IV,Gas (LNG),Planned,2028,Đồng Nai,3600.0
-Cai Mep H Gas Power,Gas (LNG),Planned,2028,Bà Rịa-Vũng Tàu,6000.0
-Long An Gas Power I,Gas (LNG),Planned,2028,Long An,1500.0
-Long An Gas Power II,Gas (LNG),Planned,2029,Long An,1500.0
-Tan Phuoc Gas Power I,Gas (LNG),Planned,2029,Tiền Giang,1500.0
-Tan Phuoc Gas Power II,Gas (LNG),Planned,2029,Tiền Giang,1500.0
-Ca Mau Gas Power 1,Gas (LNG),Planned,2029,Cà Mau,1500.0
-Ca Mau Gas Power 2,Gas (LNG),Planned,2029,Cà Mau,1500.0
-Ca Mau Gas Power 3,Gas (LNG),Planned,2030,Cà Mau,1500.0
-Tan Thuan Gas Power (Dam Doi),Gas (LNG),Planned,2030,Cà Mau,3200.0
-Song Doc Gas Power,Gas (LNG),Planned,2030,Cà Mau,3000.0
-Ben Tre Gas Power,Gas (LNG),Planned,2030,Bến Tre,3000.0
-Nhon Trach 3,Gas (Local),Under Construction,2024,Đồng Nai,812.0
-Nhon Trach 4,Gas (Local),Under Construction,2024,Đồng Nai,812.0
-Nhon Trach 3&4,Gas (Local),Under Construction,2024,Đồng Nai,1624.0
-Kien Giang I,Gas (Local),Planned,2024,Kiên Giang,750.0
-Kien Giang II,Gas (Local),Planned,2025,Kiên Giang,750.0
-O Mon 1 (Gas - LNG),Gas (LNG),Planned,2025,Cần Thơ,330.0
-O Mon 2,Gas (Local),Planned,2025,Cần Thơ,750.0
-O Mon 3,Gas (Local),Planned,2025,Cần Thơ,750.0
-O Mon 4,Gas (Local),Planned,2025,Cần Thơ,750.0
-O Mon 1-Upgrade to LNG,Gas (LNG),Planned,2025,Cần Thơ,660.0
-"Bac Ai pumped storage #1,2",Hydro,Planned,2026,Ninh Thuận,600.0
-"Bac Ai pumped storage #3,4",Hydro,Planned,2027,Ninh Thuận,600.0
-Son My I CCPP,Gas (Local),Planned,2026,Quảng Ngãi,2250.0
-Son My II CCPP,Gas (Local),Planned,2024,Quảng Ngãi,2250.0
-Luu Xa,Hydro,Planned,2025,Sơn La,32.0
-Nam Sum 3 (Laos),Hydro,Planned,2019,Laos,196.0
-Lam Pao,Hydro,Planned,2024,Gia Lai,60.0
-An Khe,Hydro,Operational,,Gia Lai,173.0
-Song Tranh 2,Hydro,Operational,,Quảng Nam,190.0
-Dak Mi 2,Hydro,Planned,2016,Quảng Nam,98.0
-Son La Hydro Extension,Hydro,Planned,2019,Sơn La,400.0
-Hoa Binh Hydro Extension,Hydro,Planned,2023,Hòa Bình,480.0
-Ialy Hydro Extension,Hydro,Planned,2024,Gia Lai,360.0
-Tri An Hydro Extension,Hydro,Planned,2025,Đồng Nai,200.0
-Vinh Son Extension,Hydro,Planned,2019,Bình Định,80.0
-Quynh Lap II #1,Coal,Planned,2027,Nghệ An,600.0
-Vung Ang III #3,Coal,Planned,2027,Hà Tĩnh,600.0
-Hai Phong V,Coal,Planned,2027,Hải Phòng,600.0
-Quynh Lap II #2,Coal,Planned,2028,Nghệ An,600.0
-Nam Dinh III #1,Coal,Planned,2028,Nam Định,600.0
-Hong Lam II,Coal,Planned,2028,Nghệ An,600.0
-Quang Binh 4,Coal,Planned,2028,Quảng Bình,600.0
-Vinh Tan VI #1,Coal,Planned,2028,Bình Thuận,600.0
-Phu Tho #4,Coal,Planned,2028,Phú Thọ,300.0
-Kien Luong IV #2,Coal,Planned,2028,Kiên Giang,1000.0
-Song Hau III #1,Coal,Planned,2028,Hậu Giang,1000.0
-Binh Dinh V,Coal,Planned,2028,Bình Định,2000.0
-Vung Ang IV #2,Coal,Planned,2028,Hà Tĩnh,600.0
-Hai Phong VII,Coal,Planned,2028,Hải Phòng,600.0
-Quynh Lap III #1,Coal,Planned,2029,Nghệ An,600.0
-Nam Dinh III #2,Coal,Planned,2029,Nam Định,600.0
-Hong Lam III,Coal,Planned,2029,Nghệ An,600.0
-Quang Binh 5,Coal,Planned,2029,Quảng Bình,600.0
-Vinh Tan VI #3,Coal,Planned,2029,Bình Thuận,600.0
-Phu Tho #5,Coal,Planned,2029,Phú Thọ,300.0
-Kien Luong IV #3,Coal,Planned,2029,Kiên Giang,1000.0
-Song Hau III #2,Coal,Planned,2029,Hậu Giang,1000.0
-Binh Dinh VI,Coal,Planned,2029,Bình Định,2000.0
-Vung Ang IV #3,Coal,Planned,2029,Hà Tĩnh,600.0
-Hai Phong VIII,Coal,Planned,2029,Hải Phòng,600.0
-Quynh Lap III #2,Coal,Planned,2030,Nghệ An,600.0
-Nam Dinh IV #1,Coal,Planned,2030,Nam Định,600.0
-Hong Lam IV,Coal,Planned,2030,Nghệ An,600.0
-Quang Binh 6,Coal,Planned,2030,Quảng Bình,600.0
-Vinh Tan VI #4,Coal,Planned,2030,Bình Thuận,600.0
-Phu Tho #6,Coal,Planned,2030,Phú Thọ,300.0
-Kien Luong IV #4,Coal,Planned,2030,Kiên Giang,1000.0
-Song Hau III #3,Coal,Planned,2030,Hậu Giang,1000.0
-Binh Dinh VII,Coal,Planned,2030,Bình Định,2000.0
-Vung Ang IV #4,Coal,Planned,2030,Hà Tĩnh,600.0
-Hai Phong IX,Coal,Planned,2030,Hải Phòng,600.0
-O Mon 1 (Oil),Oil,Operational,,Cần Thơ,35.0
-O Mon 1 (Gas - oil),Gas (Local),Operational,,Cần Thơ,150.0
-O Mon II (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0
-O Mon III (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0
-O Mon IV (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0
-O Mon 1 Upgrade to LNG,Gas (LNG),Planned,2025,Cần Thơ,660.0
-Son My I (Gas - LNG),Gas (LNG),Planned,2026,Quảng Ngãi,2250.0
-Son My II (Gas - LNG),Gas (LNG),Planned,2024,Quảng Ngãi,2250.0
-Long Phu I (Coal),Coal,Under Construction,2026,Sóc Trăng,1200.0
-Song Hau I (Coal),Coal,Under Construction,2026,Hậu Giang,1200.0
-Quang Trach I (Coal),Coal,Under Construction,2025,Quảng Bình,1200.0
-Van Phong I (Coal),Coal,Under Construction,2025,Khánh Hòa,1320.0
-Vinh Tan III (Coal),Coal,Under Construction,2027,Bình Thuận,1980.0
-Hai Duong (Coal),Coal,Under Construction,2026,Hải Dương,1200.0
-Nghi Son 2 (Coal),Coal,Under Construction,2026,Thanh Hóa,1200.0
-Vung Ang II (Coal),Coal,Under Construction,2026,Hà Tĩnh,1200.0
-Duyen Hai II (Coal),Coal,Under Construction,2026,Trà Vinh,1200.0
-Nam Dinh I (Coal),Coal,Under Construction,2026,Nam Định,1200.0
-Quang Ninh II (Coal),Coal,Under Construction,2026,Quảng Ninh,1200.0
-Long Phu II (Coal),Coal,Planned,2027,Sóc Trăng,1320.0
-Long Phu III (Coal),Coal,Planned,2028,Sóc Trăng,1800.0
-Long An I (Coal),Coal,Planned,2026,Long An,1200.0
-Long An II (Coal),Coal,Planned,2027,Long An,1600.0
-Kien Luong III #1 (Coal),Coal,Planned,2027,Kiên Giang,1000.0
-Kien Luong III #2 (Coal),Coal,Planned,2028,Kiên Giang,1000.0
-Song Hau II #1 (Coal),Coal,Planned,2027,Hậu Giang,1000.0
-Song Hau II #2 (Coal),Coal,Planned,2028,Hậu Giang,1000.0
-Binh Dinh I (Coal),Coal,Planned,2026,Bình Định,600.0
-Binh Dinh II (Coal),Coal,Planned,2026,Bình Định,2000.0
-Binh Dinh III (Coal),Coal,Planned,2027,Bình Định,2000.0
-Dung Quat II (Coal),Coal,Planned,2027,Quảng Ngãi,750.0
-Vung Ang III #1 (Coal),Coal,Planned,2027,Hà Tĩnh,600.0
-Vung Ang III #2 (Coal),Coal,Planned,2028,Hà Tĩnh,600.0
-Hai Phong III #1 (Coal),Coal,Planned,2028,Hải Phòng,600.0
-Hai Phong III #2 (Coal),Coal,Planned,2029,Hải Phòng,600.0
-Quynh Lap II #1 (Coal),Coal,Planned,2028,Nghệ An,600.0
-Quynh Lap II #2 (Coal),Coal,Planned,2029,Nghệ An,600.0
-Ninh Binh (Coal),Coal,Operational,,Ninh Bình,100.0
-Na Duong (Coal),Coal,Operational,,Lạng Sơn,111.0
-Cao Nhan (Coal),Coal,Operational,,Lạng Sơn,115.0
-Cam Pha (Coal),Coal,Operational,,Quảng Ninh,600.0
-Son Dong (Coal),Coal,Operational,,Quảng Ninh,220.0
-Formosa (Coal),Coal,Operational,,Hà Tĩnh,150.0
-Uong Bi (Coal),Coal,Operational,,Quảng Ninh,105.0
-Uong Bi mo rong II (Coal),Coal,Operational,,Quảng Ninh,330.0
-Pha Lai 1 (Coal),Coal,Operational,,Hải Dương,440.0
-Pha Lai 2 (Coal),Coal,Operational,,Hải Dương,600.0
-Hai Phong 1 (Coal),Coal,Operational,,Hải Phòng,300.0
-Quang Ninh 1 (Coal),Coal,Operational,,Quảng Ninh,300.0
-Thu Duc (Oil),Oil,Operational,,Hồ Chí Minh,165.0
-Can Tho (Oil),Oil,Operational,,Cần Thơ,33.0
-O Mon 1 (Oil),Oil,Operational,,Cần Thơ,330.0
-Hiep Phuoc (Oil),Oil,Operational,,Hồ Chí Minh,375.0
-Bourbon (Oil),Oil,Operational,,Hồ Chí Minh,24.0
-Phu My I (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1090.0
-Phu My II.1 (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,900.0
-Phu My IV (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,450.0
-Thu Duc (Gas),Gas (Local),Operational,,Hồ Chí Minh,128.0
-Can Tho (Gas),Gas (Local),Operational,,Cần Thơ,150.0
-Ba Ria (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0
-Nhon Trach I (Gas),Gas (Local),Operational,,Đồng Nai,465.0
-Nhon Trach II (Gas),Gas (Local),Operational,,Đồng Nai,750.0
-Ca Mau I (Gas),Gas (Local),Operational,,Cà Mau,750.0
-Ca Mau II (Gas),Gas (Local),Operational,,Cà Mau,750.0
-Phu My II.2 BOT (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0
-Phu My III BOT (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0
-Ve Dan (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,72.0
-Dam Phu My (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,21.0
-EVN's Power Corporations (Diesel),Diesel,Operational,,Multiple,285.0
-Amata (Diesel),Diesel,Operational,,Multiple,14.0
-Thai Binh II (Coal),Coal,Under Construction,2024,Thái Bình,1200.0
-Vung Ang II (Coal),Coal,Under Construction,2025,Hà Tĩnh,1200.0
-Quang Trach I (Coal),Coal,Under Construction,2025,Quảng Bình,1200.0
-Van Phong I (Coal),Coal,Under Construction,2025,Khánh Hòa,1320.0
-Vinh Tan III (Coal),Coal,Under Construction,2027,Bình Thuận,1980.0
-Hai Duong (Coal),Coal,Under Construction,2026,Hải Dương,1200.0
-Nghi Son 2 (Coal),Coal,Under Construction,2026,Thanh Hóa,1200.0
-Duyen Hai II (Coal),Coal,Under Construction,2026,Trà Vinh,1200.0
-Nam Dinh I (Coal),Coal,Under Construction,2026,Nam Định,1200.0
-Quang Ninh II (Coal),Coal,Under Construction,2026,Quảng Ninh,1200.0
-Long Phu II (Coal),Coal,Planned,2027,Sóc Trăng,1320.0
-Long Phu III (Coal),Coal,Planned,2028,Sóc Trăng,1800.0
-Long An I (Coal),Coal,Planned,2026,Long An,1200.0
-Long An II (Coal),Coal,Planned,2027,Long An,1600.0
-Kien Luong III #1 (Coal),Coal,Planned,2027,Kiên Giang,1000.0
-Kien Luong III #2 (Coal),Coal,Planned,2028,Kiên Giang,1000.0
-Song Hau II #1 (Coal),Coal,Planned,2027,Hậu Giang,1000.0
-Song Hau II #2 (Coal),Coal,Planned,2028,Hậu Giang,1000.0
-Binh Dinh I (Coal),Coal,Planned,2026,Bình Định,600.0
-Binh Dinh II (Coal),Coal,Planned,2026,Bình Định,2000.0
-Binh Dinh III (Coal),Coal,Planned,2027,Bình Định,2000.0
-Dung Quat II (Coal),Coal,Planned,2027,Quảng Ngãi,750.0
-Vung Ang III #1 (Coal),Coal,Planned,2027,Hà Tĩnh,600.0
-Vung Ang III #2 (Coal),Coal,Planned,2028,Hà Tĩnh,600.0
-Hai Phong III #1 (Coal),Coal,Planned,2028,Hải Phòng,600.0
-Hai Phong III #2 (Coal),Coal,Planned,2029,Hải Phòng,600.0
-Quynh Lap II #1 (Coal),Coal,Planned,2028,Nghệ An,600.0
-Quynh Lap II #2 (Coal),Coal,Planned,2029,Nghệ An,600.0
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Hòa Bình,Hydro,Operational,,Hòa Bình,1920.0,,,
+Sơn La,Hydro,Operational,,Sơn La,2400.0,,,
+Lai Châu,Hydro,Operational,,Lai Châu,1200.0,,,
+Tuyên Quang,Hydro,Operational,,Tuyên Quang,342.0,,,
+Ialy,Hydro,Operational,,Gia Lai,720.0,,,
+Sê San 3,Hydro,Operational,,Gia Lai,260.0,,,
+Pleikrong,Hydro,Operational,,Kon Tum,100.0,,,
+Sê San 4,Hydro,Operational,,Gia Lai,360.0,,,
+Tri An,Hydro,Operational,,Đồng Nai,400.0,,,
+An Khê - Kanak,Hydro,Operational,,Gia Lai,173.0,,,
+Song Tranh 2,Hydro,Operational,,Quảng Nam,190.0,,,
+Da Nhim,Hydro,Operational,,Lâm Đồng,160.0,,,
+Ham Thuan,Hydro,Operational,,Bình Thuận,300.0,,,
+Da Mi,Hydro,Operational,,Bình Thuận,175.0,,,
+Ban Chat,Hydro,Operational,,Sơn La,220.0,,,
+Huoi Quang,Hydro,Operational,,Sơn La,520.0,,,
+Ban Ve,Hydro,Operational,,Nghệ An,320.0,,,
+Dong Nai 3,Hydro,Operational,,Đồng Nai,180.0,,,
+Dong Nai 4,Hydro,Operational,,Đồng Nai,340.0,,,
+Quang Tri,Hydro,Operational,,Quảng Trị,64.0,,,
+Thac Mo,Hydro,Operational,,Bình Phước,150.0,,,
+A Vuong,Hydro,Operational,,Quảng Nam,210.0,,,
+Song Ba Ha,Hydro,Operational,,Phú Yên,220.0,,,
+Thac Ba,Hydro,Operational,,Yên Bái,120.0,,,
+Vinh Son,Hydro,Operational,,Bình Định,66.0,,,
+Song Hinh,Hydro,Operational,,Phú Yên,70.0,,,
+Buon Kuop,Hydro,Operational,,Đắk Lắk,280.0,,,
+Buon Tua Srah,Hydro,Operational,,Lâm Đồng,86.0,,,
+Srepok 3,Hydro,Operational,,Đắk Lắk,220.0,,,
+Uong Bi,Coal,Operational,,Quảng Ninh,105.0,,,
+Uong Bi mo rong II,Coal,Operational,,Quảng Ninh,330.0,,,
+Pha Lai I,Coal,Operational,,Hải Dương,440.0,,,
+Phả Lại II,Coal,Operational,,Hải Dương,600.0,,,
+Ninh Bình,Coal,Operational,,Ninh Bình,100.0,,,
+Hai Phong I,Coal,Operational,,Hải Phòng,300.0,,,
+Quang Ninh I,Coal,Operational,,Quảng Ninh,300.0,,,
+Na Duong,Coal,Operational,,Lạng Sơn,111.0,,,
+Cao Nhan,Coal,Operational,,Lạng Sơn,115.0,,,
+Cam Pha,Coal,Operational,,Quảng Ninh,600.0,,,
+Son Dong,Coal,Operational,,Quảng Ninh,220.0,,,
+Thủ Đức,Oil,Operational,,Hồ Chí Minh,165.0,,,
+Cần Thơ,Oil,Operational,,Cần Thơ,33.0,,,
+Ô Môn I,Gas (LNG),Operational,,Cần Thơ,330.0,,,
+Hiệp Phước,Oil,Operational,,Hồ Chí Minh,375.0,,,
+Bourbon,Oil,Operational,,Hồ Chí Minh,24.0,,,
+Phú Mỹ I,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1090.0,,,
+Phú Mỹ II.1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,900.0,,,
+Phú Mỹ IV,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,450.0,,,
+Thu Duc,Gas (Local),Operational,,Hồ Chí Minh,128.0,,,
+Can Tho,Gas (Local),Operational,,Cần Thơ,150.0,,,
+Bà Ria,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0,,,
+Nhơn Trạch I,Gas (Local),Operational,,Đồng Nai,465.0,,,
+Nhơn Trạch II,Gas (Local),Operational,,Đồng Nai,750.0,,,
+Cà Mau I,Gas (Local),Operational,,Cà Mau,750.0,,,
+Cà Mau II,Gas (Local),Operational,,Cà Mau,750.0,,,
+Phú Mỹ II.2 BOT,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0,,,
+Phú Mỹ III BOT,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0,,,
+Vê Dan,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,72.0,,,
+Dam Phú Mỹ,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,21.0,,,
+EVN's Power Corporations,Diesel,Operational,,Multiple,285.0,,,
+Amata,Diesel,Operational,,Multiple,14.0,,,
+Hoa Binh Hydro extension,Hydro,Planned,2023,Hòa Bình,240.0,,,
+Son La Hydro extension,Hydro,Planned,,Sơn La,400.0,,,
+Lai Chau Hydro additional turbines,Hydro,Planned,,Lai Châu,800.0,,,
+Huoi Quang Hydro #2,Hydro,Operational,2016,Sơn La,260.0,,,
+"Trung Son Hydro #1,2",Hydro,Operational,2016-2017,Thanh Hóa,130.0,,,
+Duyen Hai III #1,Coal,Operational,2016,Trà Vinh,600.0,,,
+Duyen Hai III #2,Coal,Operational,2017,Trà Vinh,600.0,,,
+Thai Binh I #1,Coal,Operational,2017,Thái Bình,300.0,,,
+Thai Binh I #2,Coal,Operational,2017,Thái Bình,300.0,,,
+Vinh Tan IV #1,Coal,Operational,2017,Bình Thuận,600.0,,,
+Vinh Tan IV #2,Coal,Operational,2018,Bình Thuận,600.0,,,
+Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0,,,
+Quang Ninh I,Coal,Under Construction,2021,Quảng Ninh,600.0,,,
+Quang Ninh II,Coal,Under Construction,2021,Quảng Ninh,600.0,,,
+Duyen Hai 1,Coal,Operational,2016,Trà Vinh,1244.0,,,
+Duyen Hai 3,Coal,Operational,2017,Trà Vinh,1245.0,,,
+Nghi Son 1,Coal,Operational,2017,Thanh Hóa,600.0,,,
+Pha Lai 1,Coal,Operational,,Hải Dương,440.0,,,
+Pha Lai 2,Coal,Operational,,Hải Dương,600.0,,,
+Hai Phong 1,Coal,Operational,,Hải Phòng,600.0,,,
+Hai Phong 2,Coal,Operational,,Hải Phòng,600.0,,,
+Can Tho,Oil,Operational,,Cần Thơ,35.0,,,
+O Mon 1,Gas (LNG),Operational,,Cần Thơ,660.0,,,
+O Mon 1 (Gas - oil),Gas (LNG),Operational,,Cần Thơ,150.0,,,
+Mong Duong 1,Coal,Operational,2017,Quảng Ninh,1080.0,,,
+Vinh Tan 2,Coal,Operational,2017,Bình Thuận,1244.0,,,
+Duyen Hai 3 Extension,Coal,Operational,2019,Trà Vinh,660.0,,,
+Ninh Binh,Coal,Operational,,Ninh Bình,100.0,,,
+Mong Duong 1,Coal,Operational,,Quảng Ninh,1080.0,,,
+Phu My 2.1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,896.0,,,
+Phu My 1,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1108.0,,,
+Phu My 4,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,458.0,,,
+Ba Ria,Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0,,,
+Thu Duc,Gas (Local),Operational,,Hồ Chí Minh,114.0,,,
+Nghi Son 2 #1,Coal,Under Construction,2021,Thanh Hóa,600.0,,,
+Nghi Son 2 #2,Coal,Under Construction,2022,Thanh Hóa,600.0,,,
+Vung Ang 2 #1,Coal,Under Construction,2021,Hà Tĩnh,600.0,,,
+Vung Ang 2 #2,Coal,Under Construction,2022,Hà Tĩnh,600.0,,,
+Thai Binh II #1,Coal,Under Construction,2021,Thái Bình,600.0,,,
+Thai Binh II #2,Coal,Under Construction,2022,Thái Bình,600.0,,,
+Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0,,,
+Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0,,,
+Vinh Tan 3 #1,Coal,Under Construction,2022,Bình Thuận,660.0,,,
+Vinh Tan 3 #2,Coal,Under Construction,2023,Bình Thuận,660.0,,,
+Vinh Tan 3 #3,Coal,Under Construction,2023,Bình Thuận,660.0,,,
+Song Hau II #1,Coal,Under Construction,2022,Hậu Giang,1000.0,,,
+Song Hau II #2,Coal,Under Construction,2022,Hậu Giang,1000.0,,,
+Long Phu II #1,Coal,Under Construction,2022,Sóc Trăng,660.0,,,
+Long Phu II #2,Coal,Under Construction,2022,Sóc Trăng,660.0,,,
+Long Phu III #1,Coal,Under Construction,2023,Sóc Trăng,600.0,,,
+Long Phu III #2,Coal,Under Construction,2023,Sóc Trăng,600.0,,,
+Long Phu III #3,Coal,Under Construction,2023,Sóc Trăng,600.0,,,
+Van Phong I #1,Coal,Under Construction,2022,Khánh Hòa,660.0,,,
+Van Phong I #2,Coal,Under Construction,2022,Khánh Hòa,660.0,,,
+Hai Duong #1,Coal,Under Construction,2021,Hải Dương,600.0,,,
+Hai Duong #2,Coal,Under Construction,2022,Hải Dương,600.0,,,
+Khanh An - Bac Giang,Coal,Planned,2026,Bắc Giang,300.0,,,
+Na Duong II,Coal,Operational,,Lạng Sơn,110.0,,,
+Mong Duong II #1,Coal,Operational,2016,Quảng Ninh,600.0,,,
+Mong Duong II #2,Coal,Operational,2016,Quảng Ninh,600.0,,,
+Duyen Hai III MR,Coal,Planned,2019,Trà Vinh,660.0,,,
+Do Luong,Hydro,Planned,2021,Nghệ An,102.0,,,
+Song Giang,Hydro,Planned,2021,Kon Tum,80.0,,,
+Quang Tri,Hydro,Operational,,Quảng Trị,64.0,,,
+An Khe - Kanak,Hydro,Operational,,Gia Lai,173.0,,,
+"Trung Son #3,4",Hydro,Operational,2017,Thanh Hóa,130.0,,,
+Kanak,Hydro,Operational,,Gia Lai,173.0,,,
+Phu Yen,Hydro,Operational,,Phú Yên,220.0,,,
+Thac Mo MR,Hydro,Operational,2017,Bình Phước,75.0,,,
+Song Bung 2,Hydro,Operational,2018,Quảng Nam,100.0,,,
+Ha Se San 1 (Cambodia),Hydro,Operational,2021,Cambodia,90.0,,,
+Ha Se San 3 (Cambodia),Hydro,Operational,2023,Cambodia,180.0,,,
+Se Kong (Cambodia),Hydro,Operational,2021,Cambodia,150.0,,,
+Se Kong 3A+3B,Hydro,Operational,2017,Laos,205.0,,,
+Ha Se San 2 (Cambodia 50%),Hydro,Operational,2016,Cambodia,200.0,,,
+Se Kaman 1 (Laos),Hydro,Operational,2015,Laos,290.0,,,
+Se Kaman 3 (Laos),Hydro,Operational,2011,Laos,250.0,,,
+Se Kaman 4 (Laos),Hydro,Operational,2016,Laos,64.0,,,
+Nam Theun 1 (Laos),Hydro,Operational,2022,Laos,400.0,,,
+Nam Dok Sake (Laos),Hydro,Planned,,Laos,150.0,,,
+Don Sahong (Laos),Hydro,Planned,,Laos,260.0,,,
+Xayaburi (Laos),Hydro,Operational,,Laos,720.0,,,
+"Nho Que 3 #1,2",Hydro,Operational,2012,Hà Giang,110.0,,,
+Ban Chat,Hydro,Operational,,Sơn La,220.0,,,
+"Huoi Quang #1,2",Hydro,Operational,2015,Sơn La,520.0,,,
+Theun-Hinboun (Laos),Hydro,Operational,,Laos,220.0,,,
+Houay Ho (Laos),Hydro,Operational,,Laos,150.0,,,
+Seshan 3A,Hydro,Operational,,Gia Lai,108.0,,,
+Bac Binh,Hydro,Operational,,Bình Thuận,33.0,,,
+Da Nhim - Song Pha,Hydro,Operational,,Lâm Đồng/Ninh Thuận,167.0,,,
+Da My,Hydro,Operational,,Bình Thuận,175.0,,,
+Cu Dat,Hydro,Operational,,Lâm Đồng,97.0,,,
+Nam Chien 2,Hydro,Operational,,Sơn La,32.0,,,
+Ban Coc,Hydro,Operational,,Hòa Bình,18.0,,,
+Binh Dien,Hydro,Operational,,Quảng Trị,44.0,,,
+Za Hung,Hydro,Operational,,Quảng Nam,30.0,,,
+Huong Dien,Hydro,Operational,,Thừa Thiên Huế,54.0,,,
+Song Con,Hydro,Operational,,Quảng Ngãi,63.0,,,
+Krong Hnang,Hydro,Operational,,Đắk Lắk,64.0,,,
+Srepok 4,Hydro,Operational,,Đắk Lắk,80.0,,,
+Da Dang 2,Hydro,Operational,,Kon Tum,34.0,,,
+Can Don,Hydro,Operational,,Lào Cai,78.0,,,
+Srokphumieng,Hydro,Operational,,Đắk Lắk,51.0,,,
+Huong Son,Hydro,Operational,,Hà Tĩnh,34.0,,,
+Muong Hum,Hydro,Operational,,Lào Cai,30.0,,,
+Dak Rlih,Hydro,Operational,,Đắk Nông,144.0,,,
+Se San 4A,Hydro,Operational,,Gia Lai,63.0,,,
+Small Hydropower (Local IPP),Hydro,Operational,,Multiple,300.0,,,
+Formosa (Coal),Coal,Operational,,Hà Tĩnh,150.0,,,
+Formosa (Gas - blast furnace),Gas (Local),Operational,,Hà Tĩnh,200.0,,,
+Formosa Dong Nai #3,Gas (Local),Operational,,Đồng Nai,150.0,,,
+Ve Dan Thermal (Cogeneration),Coal,Operational,,Multiple,60.0,,,
+KCP Biomass #1,Biomass,Operational,2016,Phú Yên,30.0,,,
+An Khe Biomass #1,Biomass,Operational,2017,Gia Lai,55.0,,,
+KCP Biomass #2,Biomass,Operational,2018,Phú Yên,30.0,,,
+An Khe Biomass #2,Biomass,Operational,2018,Gia Lai,55.0,,,
+Lee & Man Biomass,Biomass,Operational,2018,Multiple,125.0,,,
+Khai Long Wind (Ca Mau),Wind,Operational,2018,Cà Mau,100.0,,,
+Bac Lieu Wind Phase III,Wind,Operational,2018,Bạc Liêu,142.0,,,
+Nho Que 2,Hydro,Operational,2016,Hà Giang,48.0,,,
+Nho Que 1,Hydro,Operational,2016,Hà Giang,32.0,,,
+Nam Na 3,Hydro,Operational,2016,Lai Châu,84.0,,,
+Nam Tong,Hydro,Operational,2016,Hòa Bình,34.0,,,
+Bac Me,Hydro,Operational,2016,Hà Giang,45.0,,,
+Ba Thuoc 1,Hydro,Operational,2016,Thanh Hóa,60.0,,,
+Song Tranh 3,Hydro,Operational,2016,Quảng Nam,62.0,,,
+Nhạn Hạc,Hydro,Operational,2016,Nghệ An,59.0,,,
+Song Tranh 4,Hydro,Operational,2016,Quảng Nam,48.0,,,
+Dak Mi 2,Hydro,Operational,2016,Quảng Nam,98.0,,,
+Dak Mi 3,Hydro,Operational,2016,Quảng Nam,45.0,,,
+Chi Khe,Hydro,Operational,2017,Nghệ An,41.0,,,
+Long Tao,Hydro,Operational,2017,Kon Tum,42.0,,,
+Yen Son,Hydro,Operational,2017,Tuyên Quang,70.0,,,
+Tra Khuc 1,Hydro,Operational,2017,Quảng Ngãi,36.0,,,
+Sekaman Xanxay (Laos),Hydro,Operational,2017,Laos,32.0,,,
+Long Son Petrochemical #1 (Cogeneration),Gas (Local),Operational,2017,Đồng Nai,75.0,,,
+Song Lo 6,Hydro,Operational,2018,Hà Giang,44.0,,,
+Hoi Xuan,Hydro,Operational,2018,Sơn La,102.0,,,
+Song Mien 4,Hydro,Operational,2018,Lào Cai,38.0,,,
+La Ngau,Hydro,Operational,2018,Bình Thuận,36.0,,,
+Dak Mi 1,Hydro,Operational,2018,Quảng Nam,54.0,,,
+Da Nhim Extension,Hydro,Operational,2018,Lâm Đồng,100.0,,,
+Sekaman 4 (Laos),Hydro,Operational,2018,Laos,80.0,,,
+A Lin,Hydro,Operational,2018,Quảng Nam,62.0,,,
+Thang Long #1,Gas (Local),Operational,2018,Hà Nội,300.0,,,
+Thai Binh II #1 (Gas),Gas (Local),Under Construction,2024,Thái Bình,600.0,,,
+"Vinh Tan IV #1,2",Coal,Operational,2017-2018,Bình Thuận,1200.0,,,
+Long Phu I #1,Coal,Under Construction,2018,Sóc Trăng,600.0,,,
+"Long Son Petrochemical #2,3 (Cogeneration)",Gas (Local),Operational,2018,Đồng Nai,150.0,,,
+Lee & Man Biomass,Biomass,Operational,2018,Multiple,125.0,,,
+An Khe Biomass #2,Biomass,Operational,2018,Gia Lai,55.0,,,
+Wind Power Khai Long (Ca Mau),Wind,Operational,2018,Cà Mau,100.0,,,
+Bac Lieu Wind Phase III,Wind,Operational,2018,Bạc Liêu,142.0,,,
+Bao Lam 3,Hydro,Operational,2019,Đắk Lắk,46.0,,,
+Pac Ma,Hydro,Operational,2019,Điện Biên,140.0,,,
+"Thuong Kon Tum #1,2",Hydro,Operational,2019,Kon Tum,220.0,,,
+Thang Long #2,Gas (Local),Planned,2024,Hà Nội,300.0,,,
+Hai Ha Cogeneration 1,Gas (Local),Operational,2019,Quảng Ninh,150.0,,,
+Na Duong II,Coal,Operational,2019,Lạng Sơn,110.0,,,
+Long Phu II #2,Coal,Planned,2022,Sóc Trăng,600.0,,,
+"Song Hau I #1,2",Coal,Operational,2019,Hậu Giang,1200.0,,,
+Duyen Hai III Extension,Coal,Operational,2019,Trà Vinh,660.0,,,
+"Vinh Tan I #1,2",Coal,Operational,2019,Bình Thuận,1200.0,,,
+Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0,,,
+"Nam Cum small hydro cluster 1,4,5",Hydro,Operational,2019,Multiple,65.0,,,
+Wind Power Trung - Nam,Wind,Operational,2019,Ninh Thuận,90.0,,,
+Soc Trang Wind,Wind,Operational,2019,Sóc Trăng,99.0,,,
+Thien Tan 1 Solar,Solar,Operational,2019,Ninh Thuận,300.0,,,
+Nam Pan 5,Hydro,Operational,2020,Lâm Đồng,35.0,,,
+Nam Mo (Vietnam),Hydro,Operational,2020,Nghệ An,95.0,,,
+Ialy Extension,Hydro,Planned,2024,Gia Lai,360.0,,,
+"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0,,,
+"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0,,,
+Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0,,,
+Hai Duong #1,Coal,Under Construction,2020,Hải Dương,600.0,,,
+"Cam Pha III #1,2",Coal,Planned,2020,Quảng Ninh,440.0,,,
+Cong Thanh,Coal,Planned,2020,Thanh Hóa,600.0,,,
+O Mon III,Gas (Local),Planned,2025,Cần Thơ,750.0,,,
+"Nam Cum small hydro cluster 2,3,6",Hydro,Operational,2020,Multiple,54.0,,,
+Hanbaram Wind,Wind,Operational,2020,Multiple,117.0,,,
+Thien Tan 2 Solar,Solar,Operational,2020,Ninh Thuận,400.0,,,
+My Ly,Hydro,Planned,2021,Nghệ An,250.0,,,
+Hoa Binh Extension #1,Hydro,Planned,2021,Hòa Bình,240.0,,,
+Nghi Son II #1,Coal,Under Construction,2021,Thanh Hóa,600.0,,,
+Vung Ang II #1,Coal,Under Construction,2021,Hà Tĩnh,600.0,,,
+Hai Duong #2,Coal,Under Construction,2021,Hải Dương,600.0,,,
+Nam Dinh I #1,Coal,Under Construction,2021,Nam Định,600.0,,,
+Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0,,,
+Kien Giang I,Gas (Local),Planned,2021,Kiên Giang,750.0,,,
+O Mon IV,Gas (Local),Planned,2023,Cần Thơ,750.0,,,
+Duyen Hai II #1,Coal,Under Construction,2021,Trà Vinh,600.0,,,
+Duyen Hai II #2,Coal,Under Construction,2022,Trà Vinh,600.0,,,
+Song Hau II #1,Coal,Under Construction,2022,Hậu Giang,1000.0,,,
+Long Phu II #1,Coal,Under Construction,2021,Sóc Trăng,660.0,,,
+Long Phu III #1,Coal,Planned,2023,Sóc Trăng,600.0,,,
+Uong Bi retirement,Coal,Retired,,Quảng Ninh,105.0,,,
+Thien Tan 3 Solar,Solar,Planned,2021,Ninh Thuận,300.0,,,
+Ban Mong (Song Hieu),Hydro,Operational,2022,Nghệ An,60.0,,,
+Hoa Binh Extension #2,Hydro,Planned,2021,Hòa Bình,240.0,,,
+Dak Re,Hydro,Operational,2022,Kon Tum,60.0,,,
+Hai Ha Cogeneration 2,Gas (Local),Others,2022,Quảng Ninh,750.0,,,
+Luc Nam #1,Hydro,Operational,2022,Bắc Giang,50.0,,,
+Quynh Lap I #1,Coal,Under Construction,2022,Nghệ An,600.0,,,
+Vung Ang II #2,Coal,Under Construction,2022,Hà Tĩnh,600.0,,,
+Nghi Son II #2,Coal,Under Construction,2022,Thanh Hóa,600.0,,,
+Nam Dinh I #2,Coal,Under Construction,2022,Nam Định,600.0,,,
+Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0,,,
+Vinh Tan III #1,Coal,Under Construction,2022,Bình Thuận,660.0,,,
+Long Phu II #2,Coal,Planned,2022,Sóc Trăng,660.0,,,
+"Long Phu III #2,3",Coal,Planned,2023,Sóc Trăng,1200.0,,,
+Van Phong II #2,Coal,Planned,2022,Khánh Hòa,660.0,,,
+Kien Giang II,Gas (Local),Planned,2022,Kiên Giang,750.0,,,
+Low head hydropower Phu Tho,Hydro,Operational,2023,Phú Thọ,105.0,,,
+Quynh Lap I #2,Coal,Under Construction,2023,Nghệ An,600.0,,,
+Luc Nam #2,Hydro,Planned,2023,Bắc Giang,50.0,,,
+Quang Tri #1,Coal,Planned,2023,Quảng Trị,600.0,,,
+Mien Trung I,Gas (Local),Planned,2023,Quảng Ngãi,750.0,,,
+Dung Quat II,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+"Vinh Tan III #2,3",Coal,Under Construction,2023,Bình Thuận,1320.0,,,
+Van Phong II #2,Coal,Planned,2023,Khánh Hòa,660.0,,,
+Son My II #1,Gas (Local),Planned,2023,Quảng Ngãi,750.0,,,
+"Bac Ai pumped storage #1,2",Hydro,Planned,2023,Ninh Thuận,600.0,,,
+Vung Ang III #1,Coal,Planned,2024,Hà Tĩnh,600.0,,,
+Quang Tri #2,Coal,Planned,2024,Quảng Trị,600.0,,,
+Mien Trung II,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+Long An I #1,Coal,Planned,2024,Long An,600.0,,,
+Son My II #2,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+Tri An Extension,Hydro,Planned,2025,Đồng Nai,200.0,,,
+Hai Phong III #1,Coal,Planned,2025,Hải Phòng,600.0,,,
+Hai Ha Cogeneration 3,Gas (Local),Planned,2025,Quảng Ninh,600.0,,,
+Rang Dong Cogeneration,Gas (Local),Planned,2025,Multiple,100.0,,,
+Vung Ang III #2,Coal,Planned,2025,Hà Tĩnh,600.0,,,
+Long An I #2,Coal,Planned,2025,Long An,600.0,,,
+Son My II #3,Gas (Local),Planned,2025,Quảng Ngãi,750.0,,,
+"Bac Ai pumped storage #3,4",Hydro,Planned,2025,Ninh Thuận,600.0,,,
+Nam Mo 1 (Laos),Hydro,Planned,2020,Laos,72.0,,,
+"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0,,,
+"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0,,,
+Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0,,,
+"Nam Cum small hydro cluster 2,3,6",Hydro,Operational,2020,Multiple,54.0,,,
+Hanbaram Wind,Wind,Operational,2020,Multiple,117.0,,,
+Thien Tan 2 Solar,Solar,Operational,2020,Ninh Thuận,400.0,,,
+Nho Que 2,Hydro,Planned,2016,Hà Giang,48.0,,,
+Nho Que 1,Hydro,Planned,2016,Hà Giang,32.0,,,
+Nam Na 3,Hydro,Planned,2016,Lai Châu,84.0,,,
+Nam Tong,Hydro,Planned,2016,Hòa Bình,34.0,,,
+Bac Me,Hydro,Planned,2016,Hà Giang,45.0,,,
+Ba Thuoc 1,Hydro,Planned,2016,Thanh Hóa,60.0,,,
+Song Tranh 3,Hydro,Planned,2016,Quảng Nam,62.0,,,
+Nhan Hac,Hydro,Planned,2016,Nghệ An,59.0,,,
+Song Tranh 4,Hydro,Planned,2016,Quảng Nam,48.0,,,
+Dak Mi 2,Hydro,Planned,2016,Quảng Nam,98.0,,,
+Dak Mi 3,Hydro,Planned,2016,Quảng Nam,45.0,,,
+Chi Khe,Hydro,Planned,2017,Nghệ An,41.0,,,
+Long Tao,Hydro,Planned,2017,Kon Tum,42.0,,,
+Yen Son,Hydro,Planned,2017,Tuyên Quang,70.0,,,
+Tra Khuc 1,Hydro,Planned,2017,Quảng Ngãi,36.0,,,
+Sekaman Xanxay (Laos),Hydro,Planned,2017,Laos,32.0,,,
+Long Son Petrochemical #1 (Cogeneration),Gas (Local),Planned,2017,Đồng Nai,75.0,,,
+Song Lo 6,Hydro,Planned,2018,Hà Giang,44.0,,,
+Hoi Xuan,Hydro,Planned,2018,Sơn La,102.0,,,
+Song Mien 4,Hydro,Planned,2018,Lào Cai,38.0,,,
+La Ngau,Hydro,Planned,2018,Bình Thuận,36.0,,,
+Dak Mi 1,Hydro,Planned,2018,Quảng Nam,54.0,,,
+Da Nhim Extension,Hydro,Planned,2018,Lâm Đồng,100.0,,,
+Sekaman 4 (Laos),Hydro,Planned,2018,Laos,80.0,,,
+A Lin,Hydro,Planned,2018,Quảng Nam,62.0,,,
+Thang Long #1,Gas (Local),Planned,2018,Hà Nội,300.0,,,
+Thai Binh II #1,Coal,Under Construction,2021,Thái Bình,600.0,,,
+"Vinh Tan IV #1,2",Coal,Operational,2017-2018,Bình Thuận,1200.0,,,
+Long Phu I #1,Coal,Under Construction,2018,Sóc Trăng,600.0,,,
+"Long Son Petrochemical #2,3 (Cogeneration)",Gas (Local),Planned,2018,Đồng Nai,150.0,,,
+Lee & Man Biomass,Biomass,Planned,2018,Multiple,125.0,,,
+An Khe Biomass #2,Biomass,Planned,2018,Gia Lai,55.0,,,
+Wind Power Khai Long (Ca Mau),Wind,Planned,2018,Cà Mau,100.0,,,
+Bac Lieu Wind Phase III,Wind,Planned,2018,Bạc Liêu,142.0,,,
+Bao Lam 3,Hydro,Planned,2019,Đắk Lắk,46.0,,,
+Pac Ma,Hydro,Planned,2019,Điện Biên,140.0,,,
+"Thuong Kon Tum #1,2",Hydro,Planned,2019,Kon Tum,220.0,,,
+Thang Long #2,Gas (Local),Planned,2019,Hà Nội,300.0,,,
+Hai Ha Cogeneration 1,Gas (Local),Planned,2019,Quảng Ninh,150.0,,,
+Na Duong II,Coal,Planned,2019,Lạng Sơn,110.0,,,
+Long Phu II #2,Coal,Planned,2019,Sóc Trăng,600.0,,,
+"Song Hau I #1,2",Coal,Operational,2019,Hậu Giang,1200.0,,,
+Duyen Hai III Extension,Coal,Operational,2019,Trà Vinh,660.0,,,
+"Vinh Tan I #1,2",Coal,Operational,2019,Bình Thuận,1200.0,,,
+Vinh Tan IV Extension,Coal,Operational,2019,Bình Thuận,600.0,,,
+"Nam Cum small hydro cluster 1,4,5",Hydro,Planned,2019,Multiple,65.0,,,
+Wind Power Trung - Nam,Wind,Planned,2019,Ninh Thuận,90.0,,,
+Soc Trang Wind,Wind,Planned,2019,Sóc Trăng,99.0,,,
+Thien Tan 1 Solar,Solar,Planned,2019,Ninh Thuận,300.0,,,
+Nam Pan 5,Hydro,Planned,2020,Lâm Đồng,35.0,,,
+Nam Mo (Vietnam),Hydro,Planned,2020,Nghệ An,95.0,,,
+Ialy Extension,Hydro,Planned,2020,Gia Lai,360.0,,,
+"Formosa Ha Tinh #6,7",Coal,Planned,2020,Hà Tĩnh,300.0,,,
+"Formosa Ha Tinh #8,9",Coal,Planned,2020,Hà Tĩnh,200.0,,,
+Formosa Ha Tinh #10,Coal,Planned,2020,Hà Tĩnh,150.0,,,
+Hai Duong #1,Coal,Under Construction,2020,Hải Dương,600.0,,,
+"Cam Pha III #1,2",Coal,Planned,2020,Quảng Ninh,440.0,,,
+Cong Thanh,Coal,Planned,2020,Thanh Hóa,600.0,,,
+O Mon III,Gas (Local),Planned,2020,Cần Thơ,750.0,,,
+"Nam Cum small hydro cluster 2,3,6",Hydro,Planned,2020,Multiple,54.0,,,
+Hanbaram Wind,Wind,Planned,2020,Multiple,117.0,,,
+Thien Tan 2 Solar,Solar,Planned,2020,Ninh Thuận,400.0,,,
+My Ly,Hydro,Planned,2021,Nghệ An,250.0,,,
+Hoa Binh Extension #1,Hydro,Planned,2021,Hòa Bình,240.0,,,
+Nghi Son II #1,Coal,Under Construction,2021,Thanh Hóa,600.0,,,
+Vung Ang II #1,Coal,Under Construction,2021,Hà Tĩnh,600.0,,,
+Hai Duong #2,Coal,Under Construction,2021,Hải Dương,600.0,,,
+Nam Dinh I #1,Coal,Under Construction,2021,Nam Định,600.0,,,
+Quang Trach I #1,Coal,Under Construction,2021,Quảng Bình,600.0,,,
+Kien Giang I,Gas (Local),Planned,2021,Kiên Giang,750.0,,,
+O Mon IV,Gas (Local),Planned,2021,Cần Thơ,750.0,,,
+Duyen Hai II #1,Coal,Under Construction,2021,Trà Vinh,600.0,,,
+Long Phu II #1,Coal,Under Construction,2021,Sóc Trăng,660.0,,,
+Ban Mong (Song Hieu),Hydro,Planned,2021,Nghệ An,60.0,,,
+Hoa Binh Extension #2,Hydro,Planned,2021,Hòa Bình,240.0,,,
+Dak Re,Hydro,Planned,2021,Kon Tum,60.0,,,
+Hai Ha Cogeneration 2,Gas (Local),Planned,2021,Quảng Ninh,750.0,,,
+Luc Nam #1,Hydro,Planned,2021,Bắc Giang,50.0,,,
+Quynh Lap I #1,Coal,Under Construction,2022,Nghệ An,600.0,,,
+Vung Ang II #2,Coal,Under Construction,2022,Hà Tĩnh,600.0,,,
+Nghi Son II #2,Coal,Under Construction,2022,Thanh Hóa,600.0,,,
+Nam Dinh I #2,Coal,Under Construction,2022,Nam Định,600.0,,,
+Quang Trach I #2,Coal,Under Construction,2022,Quảng Bình,600.0,,,
+Vinh Tan III #1,Coal,Under Construction,2022,Bình Thuận,660.0,,,
+Long Phu II #2,Coal,Planned,2022,Sóc Trăng,660.0,,,
+"Long Phu III #2,3",Coal,Planned,2022,Sóc Trăng,1200.0,,,
+Van Phong II #2,Coal,Planned,2022,Khánh Hòa,660.0,,,
+Kien Giang II,Gas (Local),Planned,2022,Kiên Giang,750.0,,,
+Low head hydropower Phu Tho,Hydro,Planned,2023,Phú Thọ,105.0,,,
+Quynh Lap I #2,Coal,Under Construction,2023,Nghệ An,600.0,,,
+Luc Nam #2,Hydro,Planned,2023,Bắc Giang,50.0,,,
+Quang Tri #1,Coal,Planned,2023,Quảng Trị,600.0,,,
+Mien Trung I,Gas (Local),Planned,2023,Quảng Ngãi,750.0,,,
+Dung Quat II,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+"Vinh Tan III #2,3",Coal,Under Construction,2023,Bình Thuận,1320.0,,,
+Van Phong II #2,Coal,Planned,2023,Khánh Hòa,660.0,,,
+Son My II #1,Gas (Local),Planned,2023,Quảng Ngãi,750.0,,,
+"Bac Ai pumped storage #1,2",Hydro,Planned,2023,Ninh Thuận,600.0,,,
+Vung Ang III #1,Coal,Planned,2024,Hà Tĩnh,600.0,,,
+Quang Tri #2,Coal,Planned,2024,Quảng Trị,600.0,,,
+Mien Trung II,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+Long An I #1,Coal,Planned,2024,Long An,600.0,,,
+Son My II #2,Gas (Local),Planned,2024,Quảng Ngãi,750.0,,,
+Tri An Extension,Hydro,Planned,2025,Đồng Nai,200.0,,,
+Hai Phong III #1,Coal,Planned,2025,Hải Phòng,600.0,,,
+Hai Ha Cogeneration 3,Gas (Local),Planned,2025,Quảng Ninh,600.0,,,
+Rang Dong Cogeneration,Gas (Local),Planned,2025,Multiple,100.0,,,
+Vung Ang III #2,Coal,Planned,2025,Hà Tĩnh,600.0,,,
+Long An I #2,Coal,Planned,2025,Long An,600.0,,,
+Son My II #3,Gas (Local),Planned,2025,Quảng Ngãi,750.0,,,
+"Bac Ai pumped storage #3,4",Hydro,Planned,2025,Ninh Thuận,600.0,,,
+Quang Ninh 3,Coal,Planned,2025,Quảng Ninh,4500.0,,,
+Nghe An 1,Coal,Planned,2025,Nghệ An,600.0,,,
+Quang Binh 1,Coal,Planned,2026,Quảng Bình,600.0,,,
+Quang Binh 2,Coal,Planned,2026,Quảng Bình,600.0,,,
+Nghi Son 3,Coal,Planned,2026,Thanh Hóa,600.0,,,
+Hong Lam 1,Coal,Planned,2026,Nghệ An,600.0,,,
+Nam Dinh II #1,Coal,Planned,2026,Nam Định,600.0,,,
+Vinh Tan V #1,Coal,Planned,2026,Bình Thuận,600.0,,,
+Phu Tho #1,Coal,Planned,2026,Phú Thọ,300.0,,,
+Kien Luong III #1,Coal,Planned,2026,Kiên Giang,1000.0,,,
+Song Hau II #1,Coal,Planned,2026,Hậu Giang,1000.0,,,
+Binh Dinh I,Coal,Planned,2026,Bình Định,600.0,,,
+Binh Dinh II,Coal,Planned,2026,Bình Định,2000.0,,,
+Vung Ang III #2,Coal,Planned,2026,Hà Tĩnh,600.0,,,
+Quang Ninh IV,Coal,Planned,2026,Quảng Ninh,2000.0,,,
+Hai Phong IV,Coal,Planned,2026,Hải Phòng,600.0,,,
+Thanh Hoa 1,Coal,Planned,2027,Thanh Hóa,600.0,,,
+Thanh Hoa 2,Coal,Planned,2027,Thanh Hóa,600.0,,,
+Quang Binh 3,Coal,Planned,2027,Quảng Bình,600.0,,,
+Vinh Tan V #2,Coal,Planned,2027,Bình Thuận,600.0,,,
+Phu Tho #2,Coal,Planned,2027,Phú Thọ,300.0,,,
+Kien Luong III #2,Coal,Planned,2027,Kiên Giang,1000.0,,,
+Song Hau II #2,Coal,Planned,2027,Hậu Giang,1000.0,,,
+Binh Dinh III,Coal,Planned,2027,Bình Định,2000.0,,,
+Vung Ang III #3,Coal,Planned,2027,Hà Tĩnh,600.0,,,
+Hai Phong V,Coal,Planned,2027,Hải Phòng,600.0,,,
+Quynh Lap II #1,Coal,Planned,2027,Nghệ An,600.0,,,
+Nam Dinh II #2,Coal,Planned,2027,Nam Định,600.0,,,
+"Bac Ai pumped storage #3,4",Hydro,Planned,2027,Ninh Thuận,600.0,,,
+Hanh Phuc (Binh Thuan),Coal,Planned,2028,Bình Thuận,600.0,,,
+Khanh Hoa 1,Coal,Planned,2028,Khánh Hoà,660.0,,,
+Khanh Hoa 2,Coal,Planned,2028,Khánh Hoà,660.0,,,
+Vinh Tan VI #2,Coal,Planned,2028,Bình Thuận,600.0,,,
+Phu Tho #3,Coal,Planned,2028,Phú Thọ,300.0,,,
+Kien Luong IV #1,Coal,Planned,2028,Kiên Giang,1000.0,,,
+Song Hau III #1,Coal,Planned,2028,Hậu Giang,1000.0,,,
+Binh Dinh IV,Coal,Planned,2028,Bình Định,2000.0,,,
+Vung Ang IV #1,Coal,Planned,2028,Hà Tĩnh,600.0,,,
+Hai Phong VI,Coal,Planned,2028,Hải Phòng,600.0,,,
+Quynh Lap II #2,Coal,Planned,2028,Nghệ An,600.0,,,
+Nam Dinh III #1,Coal,Planned,2028,Nam Định,600.0,,,
+Son My I,Gas (Local),Planned,2028,Quảng Ngãi,2250.0,,,
+Son My II,Gas (Local),Planned,2023,Quảng Ngãi,2250.0,,,
+Quang Ngai,Gas (Local),Planned,2025,Quảng Ngãi,750.0,,,
+Thang Long #1,Gas (Local),Planned,2023,Hà Nội,300.0,,,
+Thang Long #2,Gas (Local),Planned,2024,Hà Nội,300.0,,,
+Hanoi Gas Power,Gas (Local),Planned,2024,Hà Nội,1500.0,,,
+Nghi Son Gas Power,Gas (LNG),Planned,2025,Thanh Hóa,1500.0,,,
+Vung Ang Gas Power,Gas (LNG),Planned,2025,Hà Tĩnh,1500.0,,,
+Quang Binh Gas Power,Gas (LNG),Planned,2025,Quảng Bình,1500.0,,,
+Hai Lang Gas Power,Gas (LNG),Planned,2026,Quảng Trị,1500.0,,,
+Ca Na Gas Power I,Gas (LNG),Planned,2026,Ninh Thuận,1500.0,,,
+Ca Na Gas Power II,Gas (LNG),Planned,2027,Ninh Thuận,1500.0,,,
+Ca Na Gas Power III,Gas (LNG),Planned,2027,Ninh Thuận,1500.0,,,
+Mui Ke Ga Gas Power,Gas (LNG),Planned,2027,Bình Thuận,1500.0,,,
+Long Son Gas Power I,Gas (LNG),Planned,2027,Đồng Nai,1200.0,,,
+Long Son Gas Power II,Gas (LNG),Planned,2028,Đồng Nai,1200.0,,,
+Long Son Gas Power III,Gas (LNG),Planned,2028,Đồng Nai,1200.0,,,
+Long Son Gas Power IV,Gas (LNG),Planned,2028,Đồng Nai,3600.0,,,
+Cai Mep H Gas Power,Gas (LNG),Planned,2028,Bà Rịa-Vũng Tàu,6000.0,,,
+Long An Gas Power I,Gas (LNG),Planned,2028,Long An,1500.0,,,
+Long An Gas Power II,Gas (LNG),Planned,2029,Long An,1500.0,,,
+Tan Phuoc Gas Power I,Gas (LNG),Planned,2029,Tiền Giang,1500.0,,,
+Tan Phuoc Gas Power II,Gas (LNG),Planned,2029,Tiền Giang,1500.0,,,
+Ca Mau Gas Power 1,Gas (LNG),Planned,2029,Cà Mau,1500.0,,,
+Ca Mau Gas Power 2,Gas (LNG),Planned,2029,Cà Mau,1500.0,,,
+Ca Mau Gas Power 3,Gas (LNG),Planned,2030,Cà Mau,1500.0,,,
+Tan Thuan Gas Power (Dam Doi),Gas (LNG),Planned,2030,Cà Mau,3200.0,,,
+Song Doc Gas Power,Gas (LNG),Planned,2030,Cà Mau,3000.0,,,
+Ben Tre Gas Power,Gas (LNG),Planned,2030,Bến Tre,3000.0,,,
+Nhon Trach 3,Gas (Local),Under Construction,2024,Đồng Nai,812.0,,,
+Nhon Trach 4,Gas (Local),Under Construction,2024,Đồng Nai,812.0,,,
+Nhon Trach 3&4,Gas (Local),Under Construction,2024,Đồng Nai,1624.0,,,
+Kien Giang I,Gas (Local),Planned,2024,Kiên Giang,750.0,,,
+Kien Giang II,Gas (Local),Planned,2025,Kiên Giang,750.0,,,
+O Mon 1 (Gas - LNG),Gas (LNG),Planned,2025,Cần Thơ,330.0,,,
+O Mon 2,Gas (Local),Planned,2025,Cần Thơ,750.0,,,
+O Mon 3,Gas (Local),Planned,2025,Cần Thơ,750.0,,,
+O Mon 4,Gas (Local),Planned,2025,Cần Thơ,750.0,,,
+O Mon 1-Upgrade to LNG,Gas (LNG),Planned,2025,Cần Thơ,660.0,,,
+"Bac Ai pumped storage #1,2",Hydro,Planned,2026,Ninh Thuận,600.0,,,
+"Bac Ai pumped storage #3,4",Hydro,Planned,2027,Ninh Thuận,600.0,,,
+Son My I CCPP,Gas (Local),Planned,2026,Quảng Ngãi,2250.0,,,
+Son My II CCPP,Gas (Local),Planned,2024,Quảng Ngãi,2250.0,,,
+Luu Xa,Hydro,Planned,2025,Sơn La,32.0,,,
+Nam Sum 3 (Laos),Hydro,Planned,2019,Laos,196.0,,,
+Lam Pao,Hydro,Planned,2024,Gia Lai,60.0,,,
+An Khe,Hydro,Operational,,Gia Lai,173.0,,,
+Song Tranh 2,Hydro,Operational,,Quảng Nam,190.0,,,
+Dak Mi 2,Hydro,Planned,2016,Quảng Nam,98.0,,,
+Son La Hydro Extension,Hydro,Planned,2019,Sơn La,400.0,,,
+Hoa Binh Hydro Extension,Hydro,Planned,2023,Hòa Bình,480.0,,,
+Ialy Hydro Extension,Hydro,Planned,2024,Gia Lai,360.0,,,
+Tri An Hydro Extension,Hydro,Planned,2025,Đồng Nai,200.0,,,
+Vinh Son Extension,Hydro,Planned,2019,Bình Định,80.0,,,
+Quynh Lap II #1,Coal,Planned,2027,Nghệ An,600.0,,,
+Vung Ang III #3,Coal,Planned,2027,Hà Tĩnh,600.0,,,
+Hai Phong V,Coal,Planned,2027,Hải Phòng,600.0,,,
+Quynh Lap II #2,Coal,Planned,2028,Nghệ An,600.0,,,
+Nam Dinh III #1,Coal,Planned,2028,Nam Định,600.0,,,
+Hong Lam II,Coal,Planned,2028,Nghệ An,600.0,,,
+Quang Binh 4,Coal,Planned,2028,Quảng Bình,600.0,,,
+Vinh Tan VI #1,Coal,Planned,2028,Bình Thuận,600.0,,,
+Phu Tho #4,Coal,Planned,2028,Phú Thọ,300.0,,,
+Kien Luong IV #2,Coal,Planned,2028,Kiên Giang,1000.0,,,
+Song Hau III #1,Coal,Planned,2028,Hậu Giang,1000.0,,,
+Binh Dinh V,Coal,Planned,2028,Bình Định,2000.0,,,
+Vung Ang IV #2,Coal,Planned,2028,Hà Tĩnh,600.0,,,
+Hai Phong VII,Coal,Planned,2028,Hải Phòng,600.0,,,
+Quynh Lap III #1,Coal,Planned,2029,Nghệ An,600.0,,,
+Nam Dinh III #2,Coal,Planned,2029,Nam Định,600.0,,,
+Hong Lam III,Coal,Planned,2029,Nghệ An,600.0,,,
+Quang Binh 5,Coal,Planned,2029,Quảng Bình,600.0,,,
+Vinh Tan VI #3,Coal,Planned,2029,Bình Thuận,600.0,,,
+Phu Tho #5,Coal,Planned,2029,Phú Thọ,300.0,,,
+Kien Luong IV #3,Coal,Planned,2029,Kiên Giang,1000.0,,,
+Song Hau III #2,Coal,Planned,2029,Hậu Giang,1000.0,,,
+Binh Dinh VI,Coal,Planned,2029,Bình Định,2000.0,,,
+Vung Ang IV #3,Coal,Planned,2029,Hà Tĩnh,600.0,,,
+Hai Phong VIII,Coal,Planned,2029,Hải Phòng,600.0,,,
+Quynh Lap III #2,Coal,Planned,2030,Nghệ An,600.0,,,
+Nam Dinh IV #1,Coal,Planned,2030,Nam Định,600.0,,,
+Hong Lam IV,Coal,Planned,2030,Nghệ An,600.0,,,
+Quang Binh 6,Coal,Planned,2030,Quảng Bình,600.0,,,
+Vinh Tan VI #4,Coal,Planned,2030,Bình Thuận,600.0,,,
+Phu Tho #6,Coal,Planned,2030,Phú Thọ,300.0,,,
+Kien Luong IV #4,Coal,Planned,2030,Kiên Giang,1000.0,,,
+Song Hau III #3,Coal,Planned,2030,Hậu Giang,1000.0,,,
+Binh Dinh VII,Coal,Planned,2030,Bình Định,2000.0,,,
+Vung Ang IV #4,Coal,Planned,2030,Hà Tĩnh,600.0,,,
+Hai Phong IX,Coal,Planned,2030,Hải Phòng,600.0,,,
+O Mon 1 (Oil),Oil,Operational,,Cần Thơ,35.0,,,
+O Mon 1 (Gas - oil),Gas (Local),Operational,,Cần Thơ,150.0,,,
+O Mon II (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0,,,
+O Mon III (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0,,,
+O Mon IV (New Gas),Gas (Local),Planned,2025,Cần Thơ,1050.0,,,
+O Mon 1 Upgrade to LNG,Gas (LNG),Planned,2025,Cần Thơ,660.0,,,
+Son My I (Gas - LNG),Gas (LNG),Planned,2026,Quảng Ngãi,2250.0,,,
+Son My II (Gas - LNG),Gas (LNG),Planned,2024,Quảng Ngãi,2250.0,,,
+Long Phu I (Coal),Coal,Under Construction,2026,Sóc Trăng,1200.0,,,
+Song Hau I (Coal),Coal,Under Construction,2026,Hậu Giang,1200.0,,,
+Quang Trach I (Coal),Coal,Under Construction,2025,Quảng Bình,1200.0,,,
+Van Phong I (Coal),Coal,Under Construction,2025,Khánh Hòa,1320.0,,,
+Vinh Tan III (Coal),Coal,Under Construction,2027,Bình Thuận,1980.0,,,
+Hai Duong (Coal),Coal,Under Construction,2026,Hải Dương,1200.0,,,
+Nghi Son 2 (Coal),Coal,Under Construction,2026,Thanh Hóa,1200.0,,,
+Vung Ang II (Coal),Coal,Under Construction,2026,Hà Tĩnh,1200.0,,,
+Duyen Hai II (Coal),Coal,Under Construction,2026,Trà Vinh,1200.0,,,
+Nam Dinh I (Coal),Coal,Under Construction,2026,Nam Định,1200.0,,,
+Quang Ninh II (Coal),Coal,Under Construction,2026,Quảng Ninh,1200.0,,,
+Long Phu II (Coal),Coal,Planned,2027,Sóc Trăng,1320.0,,,
+Long Phu III (Coal),Coal,Planned,2028,Sóc Trăng,1800.0,,,
+Long An I (Coal),Coal,Planned,2026,Long An,1200.0,,,
+Long An II (Coal),Coal,Planned,2027,Long An,1600.0,,,
+Kien Luong III #1 (Coal),Coal,Planned,2027,Kiên Giang,1000.0,,,
+Kien Luong III #2 (Coal),Coal,Planned,2028,Kiên Giang,1000.0,,,
+Song Hau II #1 (Coal),Coal,Planned,2027,Hậu Giang,1000.0,,,
+Song Hau II #2 (Coal),Coal,Planned,2028,Hậu Giang,1000.0,,,
+Binh Dinh I (Coal),Coal,Planned,2026,Bình Định,600.0,,,
+Binh Dinh II (Coal),Coal,Planned,2026,Bình Định,2000.0,,,
+Binh Dinh III (Coal),Coal,Planned,2027,Bình Định,2000.0,,,
+Dung Quat II (Coal),Coal,Planned,2027,Quảng Ngãi,750.0,,,
+Vung Ang III #1 (Coal),Coal,Planned,2027,Hà Tĩnh,600.0,,,
+Vung Ang III #2 (Coal),Coal,Planned,2028,Hà Tĩnh,600.0,,,
+Hai Phong III #1 (Coal),Coal,Planned,2028,Hải Phòng,600.0,,,
+Hai Phong III #2 (Coal),Coal,Planned,2029,Hải Phòng,600.0,,,
+Quynh Lap II #1 (Coal),Coal,Planned,2028,Nghệ An,600.0,,,
+Quynh Lap II #2 (Coal),Coal,Planned,2029,Nghệ An,600.0,,,
+Ninh Binh (Coal),Coal,Operational,,Ninh Bình,100.0,,,
+Na Duong (Coal),Coal,Operational,,Lạng Sơn,111.0,,,
+Cao Nhan (Coal),Coal,Operational,,Lạng Sơn,115.0,,,
+Cam Pha (Coal),Coal,Operational,,Quảng Ninh,600.0,,,
+Son Dong (Coal),Coal,Operational,,Quảng Ninh,220.0,,,
+Formosa (Coal),Coal,Operational,,Hà Tĩnh,150.0,,,
+Uong Bi (Coal),Coal,Operational,,Quảng Ninh,105.0,,,
+Uong Bi mo rong II (Coal),Coal,Operational,,Quảng Ninh,330.0,,,
+Pha Lai 1 (Coal),Coal,Operational,,Hải Dương,440.0,,,
+Pha Lai 2 (Coal),Coal,Operational,,Hải Dương,600.0,,,
+Hai Phong 1 (Coal),Coal,Operational,,Hải Phòng,300.0,,,
+Quang Ninh 1 (Coal),Coal,Operational,,Quảng Ninh,300.0,,,
+Thu Duc (Oil),Oil,Operational,,Hồ Chí Minh,165.0,,,
+Can Tho (Oil),Oil,Operational,,Cần Thơ,33.0,,,
+O Mon 1 (Oil),Oil,Operational,,Cần Thơ,330.0,,,
+Hiep Phuoc (Oil),Oil,Operational,,Hồ Chí Minh,375.0,,,
+Bourbon (Oil),Oil,Operational,,Hồ Chí Minh,24.0,,,
+Phu My I (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,1090.0,,,
+Phu My II.1 (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,900.0,,,
+Phu My IV (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,450.0,,,
+Thu Duc (Gas),Gas (Local),Operational,,Hồ Chí Minh,128.0,,,
+Can Tho (Gas),Gas (Local),Operational,,Cần Thơ,150.0,,,
+Ba Ria (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,389.0,,,
+Nhon Trach I (Gas),Gas (Local),Operational,,Đồng Nai,465.0,,,
+Nhon Trach II (Gas),Gas (Local),Operational,,Đồng Nai,750.0,,,
+Ca Mau I (Gas),Gas (Local),Operational,,Cà Mau,750.0,,,
+Ca Mau II (Gas),Gas (Local),Operational,,Cà Mau,750.0,,,
+Phu My II.2 BOT (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0,,,
+Phu My III BOT (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,740.0,,,
+Ve Dan (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,72.0,,,
+Dam Phu My (Gas),Gas (Local),Operational,,Bà Rịa-Vũng Tàu,21.0,,,
+EVN's Power Corporations (Diesel),Diesel,Operational,,Multiple,285.0,,,
+Amata (Diesel),Diesel,Operational,,Multiple,14.0,,,
+Thai Binh II (Coal),Coal,Under Construction,2024,Thái Bình,1200.0,,,
+Vung Ang II (Coal),Coal,Under Construction,2025,Hà Tĩnh,1200.0,,,
+Quang Trach I (Coal),Coal,Under Construction,2025,Quảng Bình,1200.0,,,
+Van Phong I (Coal),Coal,Under Construction,2025,Khánh Hòa,1320.0,,,
+Vinh Tan III (Coal),Coal,Under Construction,2027,Bình Thuận,1980.0,,,
+Hai Duong (Coal),Coal,Under Construction,2026,Hải Dương,1200.0,,,
+Nghi Son 2 (Coal),Coal,Under Construction,2026,Thanh Hóa,1200.0,,,
+Duyen Hai II (Coal),Coal,Under Construction,2026,Trà Vinh,1200.0,,,
+Nam Dinh I (Coal),Coal,Under Construction,2026,Nam Định,1200.0,,,
+Quang Ninh II (Coal),Coal,Under Construction,2026,Quảng Ninh,1200.0,,,
+Long Phu II (Coal),Coal,Planned,2027,Sóc Trăng,1320.0,,,
+Long Phu III (Coal),Coal,Planned,2028,Sóc Trăng,1800.0,,,
+Long An I (Coal),Coal,Planned,2026,Long An,1200.0,,,
+Long An II (Coal),Coal,Planned,2027,Long An,1600.0,,,
+Kien Luong III #1 (Coal),Coal,Planned,2027,Kiên Giang,1000.0,,,
+Kien Luong III #2 (Coal),Coal,Planned,2028,Kiên Giang,1000.0,,,
+Song Hau II #1 (Coal),Coal,Planned,2027,Hậu Giang,1000.0,,,
+Song Hau II #2 (Coal),Coal,Planned,2028,Hậu Giang,1000.0,,,
+Binh Dinh I (Coal),Coal,Planned,2026,Bình Định,600.0,,,
+Binh Dinh II (Coal),Coal,Planned,2026,Bình Định,2000.0,,,
+Binh Dinh III (Coal),Coal,Planned,2027,Bình Định,2000.0,,,
+Dung Quat II (Coal),Coal,Planned,2027,Quảng Ngãi,750.0,,,
+Vung Ang III #1 (Coal),Coal,Planned,2027,Hà Tĩnh,600.0,,,
+Vung Ang III #2 (Coal),Coal,Planned,2028,Hà Tĩnh,600.0,,,
+Hai Phong III #1 (Coal),Coal,Planned,2028,Hải Phòng,600.0,,,
+Hai Phong III #2 (Coal),Coal,Planned,2029,Hải Phòng,600.0,,,
+Quynh Lap II #1 (Coal),Coal,Planned,2028,Nghệ An,600.0,,,
+Quynh Lap II #2 (Coal),Coal,Planned,2029,Nghệ An,600.0,,,

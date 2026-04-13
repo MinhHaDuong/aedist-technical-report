@@ -1,0 +1,22 @@
+{
+  "run_id": "a3d655fd0149",
+  "timestamp": "2026-04-13T18:56:33.690825Z",
+  "method": "rag",
+  "method_params": {
+    "model": "qwen3.5-122b-a10b-consolidated",
+    "prompt_version": "rag_consistency"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/qwen3.5-122b-a10b-consolidated.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 96,
+    "tp": 96,
+    "fp": 0,
+    "fn": 67,
+    "f1": 0.7413,
+    "fuel_accuracy": 0.7604,
+    "status_accuracy": 0.5521,
+    "province_accuracy": 0.8438
+  }
+}

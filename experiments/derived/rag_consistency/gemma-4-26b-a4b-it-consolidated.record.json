@@ -1,0 +1,22 @@
+{
+  "run_id": "aeff6687a654",
+  "timestamp": "2026-04-13T18:56:32.557671Z",
+  "method": "rag",
+  "method_params": {
+    "model": "gemma-4-26b-a4b-it-consolidated",
+    "prompt_version": "rag_consistency"
+  },
+  "resource_use": {},
+  "result_file": "experiments/derived/rag_consistency/gemma-4-26b-a4b-it-consolidated.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 45,
+    "tp": 45,
+    "fp": 0,
+    "fn": 118,
+    "f1": 0.4327,
+    "fuel_accuracy": 0.6444,
+    "status_accuracy": 0.6889,
+    "province_accuracy": 0.6889
+  }
+}

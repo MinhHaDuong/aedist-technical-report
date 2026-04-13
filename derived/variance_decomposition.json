@@ -1,6 +1,6 @@
 {
-  "n_records": 203,
-  "n_records_excluded": 176,
+  "n_records": 278,
+  "n_records_excluded": 271,
   "n_groups": 25,
   "models_included": [
     "deepseek/deepseek-v3.2",
@@ -16,41 +16,55 @@
     "single",
     "web"
   ],
-  "eta_sq_model": 0.035,
-  "eta_sq_method": 0.6771,
-  "eta_sq_interaction": 0.1892,
-  "eta_sq_residual": 0.0986,
-  "omega_sq_model": 0.0192,
-  "omega_sq_method": 0.6588,
-  "omega_sq_interaction": 0.1256,
+  "eta_sq_model": 0.0233,
+  "eta_sq_method": 0.6043,
+  "eta_sq_interaction": 0.2368,
+  "eta_sq_residual": 0.1356,
+  "omega_sq_model": 0.0016,
+  "omega_sq_method": 0.5794,
+  "omega_sq_interaction": 0.1492,
   "anova": {
-    "ss_a": 0.06574,
-    "ss_b": 1.270662,
-    "ss_ab": 0.355019,
-    "ss_resid": 0.18511,
-    "ss_total": 1.876531,
+    "ss_a": 0.041126,
+    "ss_b": 1.066145,
+    "ss_ab": 0.417821,
+    "ss_resid": 0.239311,
+    "ss_total": 1.764403,
     "df_a": 4,
     "df_b": 4,
     "df_ab": 16,
     "df_resid": 25,
     "df_total": 49,
-    "eta_sq_a": 0.035033,
-    "eta_sq_b": 0.677133,
-    "eta_sq_ab": 0.189189,
-    "eta_sq_resid": 0.098645,
-    "ms_a": 0.016435,
-    "ms_b": 0.317665,
-    "ms_ab": 0.022189,
-    "ms_resid": 0.007404,
-    "f_a": 2.219637,
-    "f_b": 42.902283,
-    "f_ab": 2.996694,
-    "p_a": 0.095767,
+    "eta_sq_a": 0.023309,
+    "eta_sq_b": 0.604253,
+    "eta_sq_ab": 0.236806,
+    "eta_sq_resid": 0.135633,
+    "ms_a": 0.010281,
+    "ms_b": 0.266536,
+    "ms_ab": 0.026114,
+    "ms_resid": 0.009572,
+    "f_a": 1.074066,
+    "f_b": 27.844113,
+    "f_ab": 2.728017,
+    "p_a": 0.390266,
     "p_b": 0.0,
-    "p_ab": 0.006844,
-    "omega_sq_a": 0.019174,
-    "omega_sq_b": 0.658751,
-    "omega_sq_ab": 0.125561
+    "p_ab": 0.011959,
+    "omega_sq_a": 0.001599,
+    "omega_sq_b": 0.579408,
+    "omega_sq_ab": 0.149191
+  },
+  "anova_diagnostics": {
+    "shapiro_wilk": {
+      "statistic": 0.9909,
+      "p_value": null,
+      "passed": true,
+      "note": "W=0.9909. W > 0.9 suggests approximate normality. Caution: with n=50, Shapiro-Wilk has very low power."
+    },
+    "levene": {
+      "statistic": 1.5071408245518505e+30,
+      "p_value": null,
+      "passed": false,
+      "note": "W=1507140824551850465579918950400.0000 (k=25 groups, N=50). W >= 2.0 suggests possible heteroscedasticity. Caution: with small cell sizes, Levene's test has low power."
+    }
   },
   "unstable_pairs": [
     {
@@ -61,32 +75,14 @@
     },
     {
       "model_a": "alibaba/tongyi-deepresearch-30b-a3b",
-      "model_b": "deepseek/deepseek-v3.2",
-      "f1_diff": 0.0375,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "alibaba/tongyi-deepresearch-30b-a3b",
-      "model_b": "google/gemini-3-flash-preview",
-      "f1_diff": 0.0205,
+      "model_b": "google/gemma-4-26b-a4b-it",
+      "f1_diff": 0.0032,
       "ci_overlap": true
     },
     {
       "model_a": "alibaba/tongyi-deepresearch-30b-a3b",
       "model_b": "mistral-large-2512-consolidated",
       "f1_diff": 0.0,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "alibaba/tongyi-deepresearch-30b-a3b",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "alibaba/tongyi-deepresearch-30b-a3b",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0094,
       "ci_overlap": true
     },
     {
@@ -99,6 +95,30 @@
       "model_a": "anthropic/claude-opus-4.6",
       "model_b": "mistral-small-2603-union",
       "f1_diff": 0.0203,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "anthropic/claude-opus-4.6",
+      "model_b": "moonshotai/kimi-k2-thinking",
+      "f1_diff": 0.0133,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "anthropic/claude-opus-4.6",
+      "model_b": "moonshotai/kimi-k2.5",
+      "f1_diff": 0.0395,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "anthropic/claude-opus-4.6",
+      "model_b": "qwen/qwen3.5-122b-a10b",
+      "f1_diff": 0.0411,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "anthropic/claude-opus-4.6",
+      "model_b": "qwen3.5-122b-a10b-consolidated",
+      "f1_diff": 0.0034,
       "ci_overlap": true
     },
     {
@@ -121,32 +141,20 @@
     },
     {
       "model_a": "anthropic/claude-sonnet-4.6",
-      "model_b": "google/gemini-3-flash-preview",
-      "f1_diff": 0.0346,
+      "model_b": "gemma-4-31b-it-consolidated",
+      "f1_diff": 0.0249,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "anthropic/claude-sonnet-4.6",
+      "model_b": "google/gemma-4-26b-a4b-it",
+      "f1_diff": 0.0109,
       "ci_overlap": true
     },
     {
       "model_a": "anthropic/claude-sonnet-4.6",
       "model_b": "mistral-large-2512-consolidated",
       "f1_diff": 0.0141,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "anthropic/claude-sonnet-4.6",
-      "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0469,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "anthropic/claude-sonnet-4.6",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0141,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "anthropic/claude-sonnet-4.6",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0047,
       "ci_overlap": true
     },
     {
@@ -175,20 +183,62 @@
     },
     {
       "model_a": "bytedance-seed/seed-2.0-lite",
-      "model_b": "gemma4:e4b",
-      "f1_diff": 0.0425,
+      "model_b": "cogito:8b",
+      "f1_diff": 0.0054,
       "ci_overlap": true
     },
     {
       "model_a": "bytedance-seed/seed-2.0-lite",
-      "model_b": "qwen3.5:2b",
-      "f1_diff": 0.0247,
+      "model_b": "deepseek/deepseek-r1-0528",
+      "f1_diff": 0.0416,
       "ci_overlap": true
     },
     {
       "model_a": "bytedance-seed/seed-2.0-lite",
-      "model_b": "x-ai/grok-4.20",
-      "f1_diff": 0.0285,
+      "model_b": "inception/mercury-2",
+      "f1_diff": 0.0458,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "meta-llama/llama-4-maverick",
+      "f1_diff": 0.0353,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "mistral-small3.2",
+      "f1_diff": 0.0173,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "nemotron-3-nano",
+      "f1_diff": 0.0449,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "nvidia/nemotron-3-nano-30b-a3b",
+      "f1_diff": 0.0195,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "qwen3.5-4b-consolidated",
+      "f1_diff": 0.0255,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "qwen3.5-9b-consolidated",
+      "f1_diff": 0.0068,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "bytedance-seed/seed-2.0-lite",
+      "model_b": "xiaomi/mimo-v2-pro",
+      "f1_diff": 0.0078,
       "ci_overlap": true
     },
     {
@@ -199,20 +249,8 @@
     },
     {
       "model_a": "claude-opus-4.6-tool-run1_filtered",
-      "model_b": "deepseek/deepseek-v3.2",
-      "f1_diff": 0.0033,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "claude-opus-4.6-tool-run1_filtered",
       "model_b": "glm-4.7-flash",
       "f1_diff": 0.0368,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "claude-opus-4.6-tool-run1_filtered",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0436,
       "ci_overlap": true
     },
     {
@@ -230,13 +268,7 @@
     {
       "model_a": "cogito-8b-union",
       "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0348,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "cogito-8b-union",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0168,
+      "f1_diff": 0.0475,
       "ci_overlap": true
     },
     {
@@ -255,12 +287,6 @@
       "model_a": "cogito:8b",
       "model_b": "deepseek/deepseek-r1-0528",
       "f1_diff": 0.0361,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "cogito:8b",
-      "model_b": "gemma4:31b",
-      "f1_diff": 0.0073,
       "ci_overlap": true
     },
     {
@@ -289,14 +315,14 @@
     },
     {
       "model_a": "cogito:8b",
-      "model_b": "qwen3.5-9b-consolidated",
-      "f1_diff": 0.0123,
+      "model_b": "qwen3.5-4b-consolidated",
+      "f1_diff": 0.031,
       "ci_overlap": true
     },
     {
       "model_a": "cogito:8b",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0244,
+      "model_b": "qwen3.5-9b-consolidated",
+      "f1_diff": 0.0123,
       "ci_overlap": true
     },
     {
@@ -307,20 +333,8 @@
     },
     {
       "model_a": "deepseek-v3.2-consolidated",
-      "model_b": "minimax/minimax-m2.7",
-      "f1_diff": 0.0373,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek-v3.2-consolidated",
-      "model_b": "qwen/qwen3.5-122b-a10b",
-      "f1_diff": 0.0044,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek-v3.2-consolidated",
       "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0435,
+      "f1_diff": 0.0057,
       "ci_overlap": true
     },
     {
@@ -330,9 +344,15 @@
       "ci_overlap": true
     },
     {
-      "model_a": "deepseek/deepseek-r1-0528",
-      "model_b": "gemma4:31b",
-      "f1_diff": 0.0288,
+      "model_a": "deepseek-v3.2-consolidated",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0031,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek-v3.2-consolidated",
+      "model_b": "qwen3.5:4b",
+      "f1_diff": 0.0148,
       "ci_overlap": true
     },
     {
@@ -355,18 +375,6 @@
     },
     {
       "model_a": "deepseek/deepseek-r1-0528",
-      "model_b": "qwen3.5:2b",
-      "f1_diff": 0.0308,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-r1-0528",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0118,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-r1-0528",
       "model_b": "x-ai/grok-4.20",
       "f1_diff": 0.027,
       "ci_overlap": true
@@ -379,44 +387,86 @@
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "glm-4.7-flash",
-      "f1_diff": 0.0335,
+      "model_b": "gemma-4-26b-a4b-it-union",
+      "f1_diff": 0.0069,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "gemma-4-31b-it-consolidated",
+      "f1_diff": 0.042,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "google/gemini-2.5-flash-lite",
+      "f1_diff": 0.004,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "google/gemini-3-flash-preview",
-      "f1_diff": 0.0171,
+      "f1_diff": 0.0219,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "mistral-large-2512-consolidated",
-      "f1_diff": 0.0375,
+      "model_b": "google/gemma-4-31b-it",
+      "f1_diff": 0.0271,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0375,
+      "model_b": "gpt-5.4-consolidated",
+      "f1_diff": 0.0244,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0469,
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0156,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "qwen/qwen3.5-plus-02-15",
-      "f1_diff": 0.0195,
+      "model_b": "mistralai/mistral-large-2512",
+      "f1_diff": 0.0104,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "stepfun/step-3.5-flash",
-      "f1_diff": 0.0357,
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.0074,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "openai/gpt-5.4",
+      "f1_diff": 0.0476,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0012,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0042,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "xiaomi/mimo-v2-flash",
+      "f1_diff": 0.0257,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "deepseek/deepseek-v3.2",
+      "model_b": "z-ai/glm-5-turbo",
+      "f1_diff": 0.0473,
       "ci_overlap": true
     },
     {
@@ -427,26 +477,20 @@
     },
     {
       "model_a": "devstral-small-2",
+      "model_b": "gemma4:31b",
+      "f1_diff": 0.0049,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "devstral-small-2",
       "model_b": "inception/mercury-2",
       "f1_diff": 0.0318,
       "ci_overlap": true
     },
     {
       "model_a": "devstral-small-2",
-      "model_b": "minimax/minimax-m2.7",
-      "f1_diff": 0.0308,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "devstral-small-2",
       "model_b": "mistral-small-2603-consolidated",
       "f1_diff": 0.0438,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "devstral-small-2",
-      "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0246,
       "ci_overlap": true
     },
     {
@@ -463,20 +507,14 @@
     },
     {
       "model_a": "gemini-2.5-flash-lite-union",
+      "model_b": "gemma4:31b",
+      "f1_diff": 0.0012,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemini-2.5-flash-lite-union",
       "model_b": "inception/mercury-2",
       "f1_diff": 0.0379,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "gemini-2.5-flash-lite-union",
-      "model_b": "minimax/minimax-m2.7",
-      "f1_diff": 0.0247,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "gemini-2.5-flash-lite-union",
-      "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0185,
       "ci_overlap": true
     },
     {
@@ -492,45 +530,165 @@
       "ci_overlap": true
     },
     {
-      "model_a": "gemma4:31b",
-      "model_b": "meta-llama/llama-4-maverick",
-      "f1_diff": 0.0226,
+      "model_a": "gemma-4-26b-a4b-it-consolidated",
+      "model_b": "glm-4.7-flash",
+      "f1_diff": 0.0212,
       "ci_overlap": true
     },
     {
-      "model_a": "gemma4:31b",
-      "model_b": "mistral-small3.2",
-      "f1_diff": 0.03,
+      "model_a": "gemma-4-26b-a4b-it-consolidated",
+      "model_b": "qwen/qwen3.5-plus-02-15",
+      "f1_diff": 0.0352,
       "ci_overlap": true
     },
     {
-      "model_a": "gemma4:31b",
-      "model_b": "nemotron-3-nano",
-      "f1_diff": 0.0321,
+      "model_a": "gemma-4-26b-a4b-it-consolidated",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0435,
       "ci_overlap": true
     },
     {
-      "model_a": "gemma4:31b",
-      "model_b": "nvidia/nemotron-3-nano-30b-a3b",
-      "f1_diff": 0.0067,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "gemma4:31b",
-      "model_b": "qwen3.5-9b-consolidated",
-      "f1_diff": 0.0196,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "gemma4:31b",
+      "model_a": "gemma-4-26b-a4b-it-consolidated",
       "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0171,
+      "f1_diff": 0.0318,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-consolidated",
+      "model_b": "stepfun/step-3.5-flash",
+      "f1_diff": 0.0189,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "google/gemini-2.5-flash-lite",
+      "f1_diff": 0.0029,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "google/gemini-3-flash-preview",
+      "f1_diff": 0.0151,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "google/gemma-4-31b-it",
+      "f1_diff": 0.0202,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0088,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "mistralai/mistral-large-2512",
+      "f1_diff": 0.0035,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.0142,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "openai/gpt-5.4",
+      "f1_diff": 0.0407,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0056,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0026,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "xiaomi/mimo-v2-flash",
+      "f1_diff": 0.0326,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-26b-a4b-it-union",
+      "model_b": "z-ai/glm-5-turbo",
+      "f1_diff": 0.0404,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-31b-it-consolidated",
+      "model_b": "google/gemini-2.5-flash-lite",
+      "f1_diff": 0.046,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-31b-it-consolidated",
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.0347,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-31b-it-consolidated",
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0433,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-31b-it-consolidated",
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0463,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma-4-31b-it-consolidated",
+      "model_b": "xiaomi/mimo-v2-flash",
+      "f1_diff": 0.0163,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma4-31b-union",
+      "model_b": "gemma4:e4b",
+      "f1_diff": 0.0293,
       "ci_overlap": true
     },
     {
       "model_a": "gemma4:31b",
-      "model_b": "xiaomi/mimo-v2-pro",
-      "f1_diff": 0.0049,
+      "model_b": "inception/mercury-2",
+      "f1_diff": 0.0367,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma4:31b",
+      "model_b": "mistral-small-2603-consolidated",
+      "f1_diff": 0.0389,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma4:31b",
+      "model_b": "qwen/qwen3.5-397b-a17b",
+      "f1_diff": 0.0407,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma4:31b",
+      "model_b": "qwen/qwen3.6-plus-preview:free",
+      "f1_diff": 0.0038,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemma4:e4b",
+      "model_b": "x-ai/grok-4.20",
+      "f1_diff": 0.049,
       "ci_overlap": true
     },
     {
@@ -547,74 +705,194 @@
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
+      "model_b": "google/gemini-3-flash-preview",
+      "f1_diff": 0.0179,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-2.5-flash-lite",
+      "model_b": "google/gemma-4-31b-it",
+      "f1_diff": 0.0231,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "gpt-5.4-consolidated",
-      "f1_diff": 0.008,
+      "f1_diff": 0.0204,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-2.5-flash-lite",
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0116,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "mistralai/mistral-large-2512",
-      "f1_diff": 0.006,
+      "f1_diff": 0.0064,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0364,
+      "f1_diff": 0.0113,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "openai/gpt-5.4",
-      "f1_diff": 0.0312,
+      "f1_diff": 0.0436,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "qwen3.5:35b",
-      "f1_diff": 0.0151,
+      "f1_diff": 0.0027,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "qwen3.5:9b",
-      "f1_diff": 0.0121,
+      "f1_diff": 0.0002,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "xiaomi/mimo-v2-flash",
-      "f1_diff": 0.0421,
+      "f1_diff": 0.0297,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-2.5-flash-lite",
       "model_b": "z-ai/glm-5-turbo",
-      "f1_diff": 0.031,
+      "f1_diff": 0.0433,
       "ci_overlap": true
     },
     {
       "model_a": "google/gemini-3-flash-preview",
+      "model_b": "google/gemma-4-31b-it",
+      "f1_diff": 0.0052,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "gpt-5.4-consolidated",
+      "f1_diff": 0.0024,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0063,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "mistralai/mistral-large-2512",
+      "f1_diff": 0.0116,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.0293,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "openai/gpt-5.4",
+      "f1_diff": 0.0257,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0207,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0177,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "xiaomi/mimo-v2-flash",
+      "f1_diff": 0.0477,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemini-3-flash-preview",
+      "model_b": "z-ai/glm-5-turbo",
+      "f1_diff": 0.0254,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-26b-a4b-it",
       "model_b": "mistral-large-2512-consolidated",
+      "f1_diff": 0.0032,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-26b-a4b-it",
+      "model_b": "qwen/qwen3-max-thinking",
+      "f1_diff": 0.01,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "gpt-5.4-consolidated",
+      "f1_diff": 0.0027,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0115,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "mistralai/mistral-large-2512",
+      "f1_diff": 0.0167,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.0345,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "openai/gpt-5.4",
       "f1_diff": 0.0205,
       "ci_overlap": true
     },
     {
-      "model_a": "google/gemini-3-flash-preview",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0205,
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0259,
       "ci_overlap": true
     },
     {
-      "model_a": "google/gemini-3-flash-preview",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0298,
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0229,
       "ci_overlap": true
     },
     {
-      "model_a": "google/gemini-3-flash-preview",
-      "model_b": "qwen/qwen3.5-plus-02-15",
-      "f1_diff": 0.0366,
+      "model_a": "google/gemma-4-31b-it",
+      "model_b": "z-ai/glm-5-turbo",
+      "f1_diff": 0.0202,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gpt-5.4-consolidated",
+      "model_b": "minimax/minimax-m2.7",
+      "f1_diff": 0.0087,
       "ci_overlap": true
     },
     {
@@ -626,7 +904,7 @@
     {
       "model_a": "gpt-5.4-consolidated",
       "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0444,
+      "f1_diff": 0.0317,
       "ci_overlap": true
     },
     {
@@ -654,6 +932,12 @@
       "ci_overlap": true
     },
     {
+      "model_a": "gpt-5.4-union",
+      "model_b": "moonshotai/kimi-k2-thinking",
+      "f1_diff": 0.0275,
+      "ci_overlap": true
+    },
+    {
       "model_a": "inception/mercury-2",
       "model_b": "mistral-small3.2",
       "f1_diff": 0.0285,
@@ -663,6 +947,12 @@
       "model_a": "inception/mercury-2",
       "model_b": "qwen/qwen3.6-plus-preview:free",
       "f1_diff": 0.0405,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "inception/mercury-2",
+      "model_b": "qwen3.5-4b-consolidated",
+      "f1_diff": 0.0202,
       "ci_overlap": true
     },
     {
@@ -691,18 +981,6 @@
     },
     {
       "model_a": "meta-llama/llama-4-maverick",
-      "model_b": "qwen3.5:2b",
-      "f1_diff": 0.0371,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "meta-llama/llama-4-maverick",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0055,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "meta-llama/llama-4-maverick",
       "model_b": "x-ai/grok-4.20",
       "f1_diff": 0.0332,
       "ci_overlap": true
@@ -715,56 +993,50 @@
     },
     {
       "model_a": "minimax/minimax-m2.7",
-      "model_b": "mistral-small-2603-consolidated",
-      "f1_diff": 0.013,
+      "model_b": "mistralai/mistral-large-2512",
+      "f1_diff": 0.0053,
       "ci_overlap": true
     },
     {
       "model_a": "minimax/minimax-m2.7",
-      "model_b": "qwen/qwen3.5-122b-a10b",
-      "f1_diff": 0.0418,
+      "model_b": "mistralai/mistral-small-2603",
+      "f1_diff": 0.023,
       "ci_overlap": true
     },
     {
       "model_a": "minimax/minimax-m2.7",
-      "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0062,
+      "model_b": "openai/gpt-5.4",
+      "f1_diff": 0.032,
       "ci_overlap": true
     },
     {
       "model_a": "minimax/minimax-m2.7",
-      "model_b": "qwen/qwen3.5-397b-a17b",
-      "f1_diff": 0.0149,
+      "model_b": "qwen3.5:35b",
+      "f1_diff": 0.0144,
       "ci_overlap": true
     },
     {
       "model_a": "minimax/minimax-m2.7",
-      "model_b": "qwen/qwen3.6-plus-preview:free",
-      "f1_diff": 0.0221,
+      "model_b": "qwen3.5:9b",
+      "f1_diff": 0.0114,
       "ci_overlap": true
     },
     {
-      "model_a": "mistral-large-2512-consolidated",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0,
+      "model_a": "minimax/minimax-m2.7",
+      "model_b": "xiaomi/mimo-v2-flash",
+      "f1_diff": 0.0414,
       "ci_overlap": true
     },
     {
-      "model_a": "mistral-large-2512-consolidated",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0094,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "mistral-small-2603-consolidated",
-      "model_b": "qwen/qwen3.5-122b-a10b",
-      "f1_diff": 0.0287,
+      "model_a": "minimax/minimax-m2.7",
+      "model_b": "z-ai/glm-5-turbo",
+      "f1_diff": 0.0317,
       "ci_overlap": true
     },
     {
       "model_a": "mistral-small-2603-consolidated",
       "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0192,
+      "f1_diff": 0.0186,
       "ci_overlap": true
     },
     {
@@ -780,6 +1052,36 @@
       "ci_overlap": true
     },
     {
+      "model_a": "mistral-small-2603-consolidated",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0274,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "mistral-small-2603-consolidated",
+      "model_b": "qwen3.5:4b",
+      "f1_diff": 0.0391,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "mistral-small-2603-union",
+      "model_b": "moonshotai/kimi-k2-thinking",
+      "f1_diff": 0.0335,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "mistral-small-2603-union",
+      "model_b": "moonshotai/kimi-k2.5",
+      "f1_diff": 0.0192,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "mistral-small-2603-union",
+      "model_b": "qwen/qwen3.5-122b-a10b",
+      "f1_diff": 0.0208,
+      "ci_overlap": true
+    },
+    {
       "model_a": "mistral-small3.2",
       "model_b": "nvidia/nemotron-3-nano-30b-a3b",
       "f1_diff": 0.0367,
@@ -787,14 +1089,14 @@
     },
     {
       "model_a": "mistral-small3.2",
-      "model_b": "qwen3.5-9b-consolidated",
-      "f1_diff": 0.0104,
+      "model_b": "qwen3.5-4b-consolidated",
+      "f1_diff": 0.0083,
       "ci_overlap": true
     },
     {
       "model_a": "mistral-small3.2",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0471,
+      "model_b": "qwen3.5-9b-consolidated",
+      "f1_diff": 0.0104,
       "ci_overlap": true
     },
     {
@@ -806,7 +1108,7 @@
     {
       "model_a": "mistralai/mistral-large-2512",
       "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0304,
+      "f1_diff": 0.0177,
       "ci_overlap": true
     },
     {
@@ -842,85 +1144,61 @@
     {
       "model_a": "mistralai/mistral-small-2603",
       "model_b": "openai/o3",
-      "f1_diff": 0.0348,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "mistralai/mistral-small-2603",
-      "model_b": "qwen/qwen3-max-thinking",
-      "f1_diff": 0.0478,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "mistralai/mistral-small-2603",
-      "model_b": "qwen3.5-35b-consolidated",
-      "f1_diff": 0.0413,
+      "f1_diff": 0.0475,
       "ci_overlap": true
     },
     {
       "model_a": "mistralai/mistral-small-2603",
       "model_b": "qwen3.5:35b",
-      "f1_diff": 0.0213,
+      "f1_diff": 0.0086,
       "ci_overlap": true
     },
     {
       "model_a": "mistralai/mistral-small-2603",
       "model_b": "qwen3.5:9b",
-      "f1_diff": 0.0242,
+      "f1_diff": 0.0116,
       "ci_overlap": true
     },
     {
       "model_a": "mistralai/mistral-small-2603",
       "model_b": "xiaomi/mimo-v2-flash",
-      "f1_diff": 0.0057,
+      "f1_diff": 0.0184,
       "ci_overlap": true
     },
     {
       "model_a": "moonshotai/kimi-k2-thinking",
-      "model_b": "moonshotai/kimi-k2.5",
-      "f1_diff": 0.0094,
+      "model_b": "qwen3.5-122b-a10b-consolidated",
+      "f1_diff": 0.0167,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "moonshotai/kimi-k2-thinking",
+      "model_b": "qwen3.5-122b-a10b-union",
+      "f1_diff": 0.0372,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "moonshotai/kimi-k2-thinking",
+      "model_b": "qwen3.5-35b-union",
+      "f1_diff": 0.0182,
       "ci_overlap": true
     },
     {
       "model_a": "moonshotai/kimi-k2.5",
-      "model_b": "openai/o3",
-      "f1_diff": 0.0168,
+      "model_b": "qwen/qwen3.5-122b-a10b",
+      "f1_diff": 0.0016,
       "ci_overlap": true
     },
     {
       "model_a": "moonshotai/kimi-k2.5",
-      "model_b": "qwen/qwen3-max-thinking",
-      "f1_diff": 0.0038,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "moonshotai/kimi-k2.5",
-      "model_b": "qwen3.5-35b-consolidated",
-      "f1_diff": 0.0103,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "moonshotai/kimi-k2.5",
-      "model_b": "xiaomi/mimo-v2-flash",
-      "f1_diff": 0.0459,
+      "model_b": "qwen3.5-122b-a10b-consolidated",
+      "f1_diff": 0.0361,
       "ci_overlap": true
     },
     {
       "model_a": "nemotron-3-nano",
       "model_b": "nvidia/nemotron-3-nano-30b-a3b",
       "f1_diff": 0.0254,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "nemotron-3-nano",
-      "model_b": "qwen3.5:2b",
-      "f1_diff": 0.0275,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "nemotron-3-nano",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0151,
       "ci_overlap": true
     },
     {
@@ -939,12 +1217,6 @@
       "model_a": "nvidia/nemotron-3-nano-30b-a3b",
       "model_b": "qwen3.5-9b-consolidated",
       "f1_diff": 0.0263,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "nvidia/nemotron-3-nano-30b-a3b",
-      "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0103,
       "ci_overlap": true
     },
     {
@@ -991,38 +1263,62 @@
     },
     {
       "model_a": "qwen/qwen3.5-122b-a10b",
-      "model_b": "qwen/qwen3.5-35b-a3b",
-      "f1_diff": 0.0479,
+      "model_b": "qwen3.5-122b-a10b-consolidated",
+      "f1_diff": 0.0377,
       "ci_overlap": true
     },
     {
-      "model_a": "qwen/qwen3.5-122b-a10b",
+      "model_a": "qwen/qwen3.5-35b-a3b",
       "model_b": "qwen/qwen3.5-397b-a17b",
-      "f1_diff": 0.0269,
+      "f1_diff": 0.0168,
       "ci_overlap": true
     },
     {
-      "model_a": "qwen/qwen3.5-122b-a10b",
+      "model_a": "qwen/qwen3.5-35b-a3b",
+      "model_b": "qwen3.5-4b-union",
+      "f1_diff": 0.0176,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen/qwen3.5-35b-a3b",
       "model_b": "qwen3.5-9b-union",
-      "f1_diff": 0.0264,
+      "f1_diff": 0.0365,
       "ci_overlap": true
     },
     {
       "model_a": "qwen/qwen3.5-35b-a3b",
-      "model_b": "qwen/qwen3.5-397b-a17b",
-      "f1_diff": 0.0211,
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0088,
       "ci_overlap": true
     },
     {
       "model_a": "qwen/qwen3.5-35b-a3b",
-      "model_b": "qwen/qwen3.6-plus-preview:free",
-      "f1_diff": 0.0159,
+      "model_b": "qwen3.5:4b",
+      "f1_diff": 0.0205,
       "ci_overlap": true
     },
     {
       "model_a": "qwen/qwen3.5-397b-a17b",
       "model_b": "qwen/qwen3.6-plus-preview:free",
       "f1_diff": 0.037,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen/qwen3.5-397b-a17b",
+      "model_b": "qwen3.5-4b-union",
+      "f1_diff": 0.0343,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen/qwen3.5-397b-a17b",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0255,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen/qwen3.5-397b-a17b",
+      "model_b": "qwen3.5:4b",
+      "f1_diff": 0.0373,
       "ci_overlap": true
     },
     {
@@ -1038,15 +1334,39 @@
       "ci_overlap": true
     },
     {
-      "model_a": "qwen3.5-9b-consolidated",
+      "model_a": "qwen3.5-4b-consolidated",
+      "model_b": "xiaomi/mimo-v2-pro",
+      "f1_diff": 0.0334,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen3.5-4b-union",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0088,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen3.5-4b-union",
       "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0366,
+      "f1_diff": 0.0029,
       "ci_overlap": true
     },
     {
       "model_a": "qwen3.5-9b-consolidated",
       "model_b": "xiaomi/mimo-v2-pro",
       "f1_diff": 0.0146,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen3.5-9b-union",
+      "model_b": "qwen3.5:2b",
+      "f1_diff": 0.0277,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "qwen3.5-9b-union",
+      "model_b": "qwen3.5:4b",
+      "f1_diff": 0.016,
       "ci_overlap": true
     },
     {
@@ -1058,13 +1378,7 @@
     {
       "model_a": "qwen3.5:2b",
       "model_b": "qwen3.5:4b",
-      "f1_diff": 0.0426,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "qwen3.5:2b",
-      "model_b": "x-ai/grok-4.20",
-      "f1_diff": 0.0038,
+      "f1_diff": 0.0117,
       "ci_overlap": true
     },
     {
@@ -1083,18 +1397,6 @@
       "model_a": "qwen3.5:35b",
       "model_b": "z-ai/glm-5-turbo",
       "f1_diff": 0.0461,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "qwen3.5:4b",
-      "model_b": "x-ai/grok-4.20",
-      "f1_diff": 0.0388,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "qwen3.5:4b",
-      "model_b": "xiaomi/mimo-v2-pro",
-      "f1_diff": 0.022,
       "ci_overlap": true
     },
     {
