@@ -14,6 +14,7 @@ Author: claude
 2026-04-12T09:30Z claude note operator: quality review must live in docs/ as a standalone document (will inform the article), not just in the ticket. Opened ticket 0077 for academic lit review on the north star question.
 2026-04-13T10:30Z claude note revised evidence rubric from 0–4 to 0–5: score 4 = one confirmed primary (HITL), score 5 = two independent confirmed. Level 5 aspirational. Source-independence analysis added to verification_methods.tex. NATO Admiralty System (STANAG 2022) reference added.
 2026-04-13T11:00Z claude note separated result quality (evidence ladder, completeness, coherence) from system requirements (cheap, fast, cross-model, generic). They are orthogonal — a cheap system can produce garbage, a perfect single-model pipeline can produce impeccable data. Criteria section rewritten as two blocks.
+2026-04-13T11:30Z claude note operator confirmed: prompt is only for seed table, verification is on top. Evidence scores are not an optimization signal for the prompt — they're the verification pipeline's job. Objective simplified to min-of-5(recall × hallucination_gate). Three-way separation: (1) what optimizer controls (seed extraction), (2) result quality (evidence ladder, post-verification), (3) system requirements (cost, speed, universality, genericity).
 
 --- body ---
 ## Context
@@ -69,58 +70,67 @@ is to pick *one* framework to prototype against, with reasons.
 
 ## Optimization criteria
 
-Two distinct dimensions. Don't conflate them.
+Three concerns, cleanly separated.
 
-### Result quality target
+### 1. What the prompt optimizer actually controls
 
-What the output data must look like. Defined by the evidence rubric
-(verification_methods.tex §evidence-rubric, §source-independence)
-and the NATO Admiralty System (STANAG 2022):
+The prompt produces the **seed extraction table** — a first-pass
+inventory from documents. That's all. Verification (evidence scores
+3→4→5) is a separate pipeline stage that sits on top. The prompt
+optimizer should not try to optimize verification outcomes; it has
+no lever for that.
 
-| Evidence score | Meaning | Status |
-|----------------|---------|--------|
-| ≥ 0 | No fabricated sources (zero hallucinations) | **Hard gate.** Non-negotiable floor. |
-| ≥ 3 | Every asset has at least one primary source (heuristic) | Automatable. Current pipeline. |
-| ≥ 4 | Every asset has at least one **confirmed** primary source | **Hard goal for this paper.** Requires HITL or factual cross-check. |
-| = 5 | Every asset has two **independent** confirmed sources | **Aspirational.** Requires source-independence graph. |
+The optimizer's objective is therefore:
 
-Plus:
-- **Completeness:** recall against reference inventory (163 plants
-  for Vietnam thermal). In tension with sourcing depth — the
-  precision-coverage tradeoff.
-- **Coherence:** extracted capacities consistent with aggregate
-  totals per source table (ticket 0078). Not yet measured.
+> **Maximize** `min over 5 cheap models of (recall × hallucination_gate)`
+> **subject to** cost ≤ $0.06/campaign, genericity across
+> `(asset_class, country)`.
 
-The evidence quality ladder belongs in the tech report, not here.
-The optimizer targets a *minimum* evidence score across the output.
+Where:
+- **hallucination_gate** = 1 if zero fabricated entries, 0 otherwise.
+  Hard gate. A single hallucination zeroes the score.
+- **recall** = fraction of reference assets found. The core
+  deliverable.
+- **min over 5 models** = the prompt must lift the floor, not ride
+  one strong model. This is what "universal" means.
+- **cost cap** = soft constraint, sets budget envelope.
+- **genericity** = validated by re-running on another cell without
+  re-tuning. Not in the optimizer's loss function but a post-hoc
+  check.
 
-### System requirements
+Evidence score is **tracked as an observed outcome** of the seed
+extraction (does the model happen to cite sources?) but is **not an
+optimization signal**. Pushing evidence from 3 to 4 to 5 is the
+verification pipeline's job, not the prompt's.
 
-What the pipeline/prompt must achieve as engineering properties.
-These are orthogonal to result quality — a cheap fast system can
-produce garbage, a perfect single-model pipeline can produce
-impeccable data.
+### 2. Result quality (the evidence ladder)
+
+What the final output data must look like, after seed extraction
+*and* verification. Defined in verification_methods.tex
+(§evidence-rubric, §source-independence) and grounded in the NATO
+Admiralty System (STANAG 2022):
+
+| Evidence score | Meaning | Responsible stage |
+|----------------|---------|-------------------|
+| ≥ 0 | No fabrications | Seed extraction (prompt) + verification |
+| ≥ 3 | Primary source identified (heuristic) | Verification (unverified/tool mode) |
+| ≥ 4 | Primary source **confirmed** | Verification (HITL or factual cross-check) |
+| = 5 | Two **independent** sources confirmed | Research goal (dependency graph + HITL) |
+
+Plus completeness (recall) and coherence (ticket 0078, aggregate
+consistency). The evidence ladder belongs in the tech report.
+
+### 3. System requirements
+
+Engineering properties of the pipeline. Orthogonal to result
+quality.
 
 | Requirement | Metric | Negotiable? |
 |-------------|--------|-------------|
 | **Cheap** | ≤ $0.06 per campaign. At 60 campaigns, cost matters. | Soft — caps the optimizer's own budget too. |
-| **Fast** | Wall-clock time per campaign. | Soft — a 2× slower prompt that nails result quality wins. |
-| **Cross-model** | min(benchmark) over 5 cheap models, not mean. The prompt must lift the floor. | Non-negotiable. This is what "universal" means. |
-| **Generic** | Template parameterized by `(asset_class, country)`. Must not overfit to Vietnam/thermal. | Non-negotiable. Validation: re-run on another cell without re-tuning. |
-
-### The optimization path
-
-The optimizer maximizes result quality (evidence score floor,
-recall) subject to system requirements (cost cap, cross-model
-min-of-5, genericity).
-
-Concretely: clear the hallucination gate (evidence ≥ 1 everywhere),
-maximize recall subject to cross-model constraint, then push the
-evidence floor toward 4 (confirmed primary) as far as the Pareto
-frontier allows before recall degrades. Cost and speed are the
-budget envelope. Evidence 5 (independence) is tracked but not
-optimized — it requires HITL and the dependency graph, not prompt
-changes.
+| **Fast** | Wall-clock time per campaign. | Soft — a 2× slower prompt that nails recall wins. |
+| **Cross-model** | min(benchmark) over 5 cheap models, not mean. | Non-negotiable. This is "universal." |
+| **Generic** | Template `(asset_class, country)`. Must not overfit to Vietnam/thermal. | Non-negotiable. Validated by transfer test. |
 
 ### What is quality? — grounding in philosophy of science and professional codes
 
@@ -333,24 +343,17 @@ Agents question).
 2. Recommend **one** framework to prototype against, with a written
    rationale. Prior is DSPy unless something disqualifies it for
    our multi-provider, reproducibility-first setting.
-3. **Define the composite objective function** separating the two
-   dimensions:
-   - **System constraints** (hard):
-     - Cost ≤ $0.10/campaign (budget envelope).
-     - Cross-model: min over 5 cheap models of per-model score.
-     - The framework must support min-of-N-models. If it only
-       optimizes for a single LM, we need a wrapper. Check DSPy's
-       `Evaluate`.
-   - **Result quality signal** (what the optimizer maximizes):
-     - Hard gate: hallucination count = 0 — any fabrication
-       zeroes the score.
-     - Primary signal: weighted composite of (a) recall against
-       reference, (b) fraction of plants at evidence score ≥ 4
-       (one confirmed primary). Weights TBD in prototype.
-     - Evidence 5 (two independent) tracked but not optimized —
-       requires HITL, not prompt changes.
-   - **Recorded but not optimized:** API cost, wall-clock time,
-     evidence 5 count.
+3. **Define the composite objective function:**
+   `min over 5 models of (recall × hallucination_gate)`,
+   subject to cost ≤ $0.06/campaign.
+   - hallucination_gate: binary (1 if zero fabrications, else 0).
+   - recall: against reference inventory.
+   - Evidence scores: tracked as observed outcome, not optimized.
+     The prompt produces the seed table; verification lifts
+     evidence scores afterward.
+   - The framework must support min-of-N-models. If it only
+     optimizes for a single LM, we need a wrapper. Check DSPy's
+     `Evaluate`.
 4. Pick the 5 cheap models for the cross-model floor. Candidates:
    the small-model ablation set already defined in experiments.toml.
    Confirm they span at least 3 providers (OpenRouter, Ollama,
@@ -383,16 +386,15 @@ must land with a clear wall between:
 ## Test
 
 A short script or notebook that:
-- runs the chosen optimizer on one condition under the API budget cap
-  using the composite objective (min-of-5 × hallucination-gate ×
-  recall × evidence-4-fraction),
+- runs the chosen optimizer on one condition under the API budget
+  cap using `min_of_5(recall × hallucination_gate)`,
 - scores the optimized prompt on the held-out verification sweep
   (ticket 0030), and
-- produces:
-  (a) a before/after table (current hand-tuned baseline vs optimized)
-  on the same metrics we report in the paper,
-  (b) a Pareto plot of recall vs evidence-4-fraction across optimizer
-  iterations, colored by the min-of-5 floor score.
+- produces a before/after table (current hand-tuned baseline vs
+  optimized) reporting: recall per model, hallucination count,
+  min-of-5 score, cost, wall-clock time.
+  Evidence scores tracked as observed outcome, not as success
+  criterion for the optimizer itself.
 
 ## Exit criteria
 
@@ -400,19 +402,14 @@ A short script or notebook that:
   or inlined in the spike note on this ticket.
 - One framework recommended with a written rationale; DSPy is the
   prior unless ruled out.
-- Composite objective function defined and justified (see § criteria).
+- Composite objective defined: `min_of_5(recall × hallucination_gate)`
+  subject to cost cap.
 - Prototype run completed on one condition under a fixed API budget,
   with before/after numbers on the held-out verification sweep.
-  Report: min-of-5 score, hallucination count, recall, fraction at
-  evidence ≥ 4, cost, wall-clock time.
-- Pareto frontier plotted showing the completeness/sourcing tradeoff
-  under the cross-model constraint.
 - **`docs/quality-grounding.md` committed** — standalone review
-  mapping our 6+1 operational criteria to (a) philosophy-of-science
-  frameworks (empirical adequacy, falsifiability, reproducibility)
-  and (b) professional-conduct codes (UN Fundamental Principles,
-  ISI, ASA, European CoP / DQAF). Flags dimensions we are not yet
-  measuring. Written to be citable from the journal article.
+  mapping result quality targets and system requirements to
+  philosophy-of-science and professional-conduct frameworks. Written
+  to be citable from the journal article. (Done — already committed.)
 - Honest verdict on whether "one universal prompt" survives contact
   with our multi-model, multi-condition setup or whether any of
   these tools is better framed as a per-condition optimizer.
