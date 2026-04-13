@@ -236,3 +236,76 @@ class TestCLIDryRun:
         )
         # Dry-run should create the calibration table (from stratification only)
         assert (output_dir / "calibration_table.json").exists()
+
+
+# ---------------------------------------------------------------------------
+# Disambiguation of ambiguous identifiers (DEC PDP-7 scenario)
+# ---------------------------------------------------------------------------
+
+
+class TestSearchQueryDisambiguation:
+    """Verify that PDP7/PDP8 searches include Vietnam context.
+
+    Without disambiguation, searching for "PDP7" returns results about the
+    DEC PDP-7 minicomputer rather than Vietnam's Power Development Plan 7.
+    """
+
+    def test_extract_citation_key_disambiguates_pdp(self):
+        """_extract_citation_key prepends Vietnam context for PDP identifiers."""
+        from scripts.audit_source_urls import _extract_citation_key
+
+        key = _extract_citation_key("PDP7A capacity list")
+        assert "Vietnam" in key
+        assert "PDP7" in key
+
+    def test_extract_citation_key_disambiguates_qh(self):
+        """_extract_citation_key prepends Vietnam context for QH identifiers."""
+        from scripts.audit_source_urls import _extract_citation_key
+
+        key = _extract_citation_key("QH8 approved plan")
+        assert "Vietnam" in key
+        assert "QH8" in key
+
+    def test_extract_citation_key_no_change_for_decisions(self):
+        """Decision identifiers are already specific enough."""
+        from scripts.audit_source_urls import _extract_citation_key
+
+        key = _extract_citation_key("Decision 1195/QD-TTg")
+        assert key == "Decision 1195/QD-TTg"
+        assert "Vietnam" not in key
+
+    def test_fabrication_check_irrelevant_results(self):
+        """Mocked Tavily returning DEC PDP-7 content flags fabrication suspect.
+
+        Even with disambiguation, if search results contain only irrelevant
+        content (DEC minicomputers), the identifier should not be confirmed.
+        """
+        from scripts.audit_source_urls import check_fabrication
+
+        dec_pdp7_results = [
+            {
+                "title": "PDP-7 - Wikipedia",
+                "url": "https://en.wikipedia.org/wiki/PDP-7",
+                "content": (
+                    "The PDP-7 is a minicomputer produced by Digital Equipment "
+                    "Corporation as part of the PDP series. The first PDP-7 was "
+                    "produced in 1964."
+                ),
+            },
+            {
+                "title": "PDP-7 - Computer History Museum",
+                "url": "https://computerhistory.org/pdp7",
+                "content": (
+                    "The DEC PDP-7 was an 18-bit minicomputer. Ken Thompson "
+                    "wrote the first version of Unix on a PDP-7."
+                ),
+            },
+        ]
+
+        with patch("aedist.query_web.tavily_search", return_value=dec_pdp7_results):
+            result = check_fabrication("PDP7A capacity list", tavily_key="fake-key")
+
+        assert result["is_primary_pattern"] is True
+        assert result["identifier"] is not None
+        # The identifier "PDP7A" should not be found in DEC PDP-7 content
+        assert result["fabrication_suspect"] is True

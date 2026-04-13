@@ -152,7 +152,11 @@ def verify_url(citation_text: str) -> dict:
 
 
 def _extract_citation_key(citation_text: str) -> str:
-    """Extract the key identifier from a citation for search purposes."""
+    """Extract the key identifier from a citation for search purposes.
+
+    Prepends "Vietnam power development plan" to short identifiers like
+    PDP7/PDP8 that are otherwise ambiguous (e.g. DEC minicomputers).
+    """
     # Try to extract decision/report identifiers
     patterns = [
         r"Decision\s+(?:No\.?\s*)?\d+/[^\s,]+",
@@ -163,7 +167,11 @@ def _extract_citation_key(citation_text: str) -> str:
     for pat in patterns:
         m = re.search(pat, citation_text, re.IGNORECASE)
         if m:
-            return m.group()
+            key = m.group()
+            # Disambiguate short identifiers that collide with unrelated terms
+            if re.match(r"(?:PDP|QH)[78]", key, re.IGNORECASE):
+                return f"Vietnam power development plan {key}"
+            return key
     # Fallback: use first 50 chars
     return citation_text[:50].strip()
 
@@ -247,8 +255,13 @@ def check_fabrication(
 
     from aedist.query_web import tavily_search
 
+    # Disambiguate short identifiers (e.g. PDP7 -> DEC minicomputer)
+    search_term = identifier
+    if re.match(r"(?:PDP|QH)[78]", identifier, re.IGNORECASE):
+        search_term = f"Vietnam power development plan {identifier}"
+
     try:
-        results = tavily_search(identifier, tavily_key)
+        results = tavily_search(search_term, tavily_key)
     except Exception as exc:
         log.warning("Fabrication check failed for %r: %s", identifier, exc)
         return {
@@ -473,10 +486,10 @@ def main(argv: list[str] | None = None) -> None:
     log.info("Selected %d plants for audit", len(sample))
 
     # Steps 4-6: Verification (skip in dry-run)
+    # Check both source_1 and source_2 independently; aggregate results.
     for row in sample:
-        s1 = (row.get("source_1") or "").strip()
-        s2 = (row.get("source_2") or "").strip()
-        best_citation = s1 or s2
+        citations = [(row.get(key) or "").strip() for key in ("source_1", "source_2")]
+        citations = [c for c in citations if c]
 
         if args.dry_run:
             # Populate with empty verification fields
@@ -487,9 +500,9 @@ def main(argv: list[str] | None = None) -> None:
                     "final_url": None,
                     "entity_found": False,
                     "is_primary_pattern": any(
-                        re.search(p, best_citation) for p in _PRIMARY_PATTERNS
+                        re.search(p, c) for c in citations for p in _PRIMARY_PATTERNS
                     )
-                    if best_citation
+                    if citations
                     else False,
                     "identifier": None,
                     "fabrication_suspect": None,
@@ -497,39 +510,49 @@ def main(argv: list[str] | None = None) -> None:
                 }
             )
         else:
-            # Step 4: URL check
-            url_result = verify_url(best_citation)
+            # Step 4: URL check — use first citation with a URL, else first
+            url_result = {"has_url": False, "status_code": None, "final_url": None}
+            for cit in citations:
+                url_result = verify_url(cit)
+                if url_result["has_url"]:
+                    break
+
             row.update(url_result)
 
             # Step 5: Content verification via Tavily
-            if tavily_key and best_citation:
-                content_result = verify_content_tavily(
-                    row.get("name", ""), best_citation, tavily_key
-                )
-                row["entity_found"] = content_result["entity_found"]
-            else:
-                row["entity_found"] = False
+            # Check each citation; entity_found if any confirms
+            row["entity_found"] = False
+            if tavily_key:
+                for cit in citations:
+                    content_result = verify_content_tavily(row.get("name", ""), cit, tavily_key)
+                    time.sleep(0.5)
+                    if content_result["entity_found"]:
+                        row["entity_found"] = True
+                        break
 
-            # Step 6: Fabrication check
-            if tavily_key and best_citation:
-                fab_result = check_fabrication(best_citation, tavily_key)
-                row.update(
-                    {
-                        "is_primary_pattern": fab_result["is_primary_pattern"],
-                        "identifier": fab_result["identifier"],
-                        "fabrication_suspect": fab_result["fabrication_suspect"],
-                        "search_evidence": fab_result["search_evidence"],
-                    }
-                )
-            else:
-                row.update(
-                    {
-                        "is_primary_pattern": False,
-                        "identifier": None,
-                        "fabrication_suspect": None,
-                        "search_evidence": None,
-                    }
-                )
+            # Step 6: Fabrication check — check each citation independently
+            row.update(
+                {
+                    "is_primary_pattern": False,
+                    "identifier": None,
+                    "fabrication_suspect": None,
+                    "search_evidence": None,
+                }
+            )
+            if tavily_key:
+                for cit in citations:
+                    fab_result = check_fabrication(cit, tavily_key)
+                    time.sleep(0.5)
+                    if fab_result["is_primary_pattern"]:
+                        row.update(
+                            {
+                                "is_primary_pattern": fab_result["is_primary_pattern"],
+                                "identifier": fab_result["identifier"],
+                                "fabrication_suspect": fab_result["fabrication_suspect"],
+                                "search_evidence": fab_result["search_evidence"],
+                            }
+                        )
+                        break
 
     # Step 8: Cross-reference GEM
     sample = cross_reference_gem(sample, gem_path)
