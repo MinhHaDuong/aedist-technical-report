@@ -1,5 +1,5 @@
 %erg v1
-Title: Document and control LLM temperature across experiments
+Title: Enforce temperature=0.0 across all query scripts and document legacy limitation
 Status: doing
 Created: 2026-04-12
 Author: claude
@@ -8,37 +8,72 @@ Author: claude
 2026-04-12T10:00Z claude created — quality grounding gap G8 (reproducibility)
 2026-04-13T12:00Z claude status doing — audit complete, control policy pending
 2026-04-13T12:00Z claude note audit: 211/280 outputs use unspecified temp (provider default ~1.0); 69/280 use t=0.0 (frontier/ablation parametric+websearch); 0/226 measurements.jsonl records have temperature populated; ablation RAG arm inconsistent (uses query_rag.py with no temp). See docs/temperature-audit.md
+2026-04-13T18:00Z claude status reimagined by IDD imagine
 
 --- body ---
 ## Context
 
-Quality grounding review gap G8: temperature is not controlled across
-all experiments. Some runs use unspecified temperature, making
-"replication" ambiguous. The schema has a `temperature` field
-(`schema.py:134`) but it is not consistently populated. Variance from
-LLM sampling vs. prompt design is confounded.
+The MASTERPLAN states "Temperature 0.0 as default" but only
+`query_frontier.py` enforces it. The other 5 query scripts
+(`query.py`, `query_rag.py`, `query_multiturn.py`, `query_web.py`,
+`query_decomposed.py`) call `query_single_turn()` without temperature,
+letting the provider default (~1.0) apply. Result: 211/280 outputs
+are uncontrolled. The ablation comparison is confounded — RAG arm
+used ~1.0 while parametric/websearch used 0.0.
+
+The audit is done (docs/temperature-audit.md). What remains is:
+(a) code fix so every future run is controlled, (b) backfill
+temperature into measurements.jsonl, (c) honest prose for reviewers.
+
+## Completed
+
+- docs/temperature-audit.md: per-sweep audit table committed
+- Reasoning model handling: build_api_kwargs() omits temperature
+  when model.get("reasoning", False)
 
 ## Actions
 
-1. Audit all existing runs: which temperature was used? Check
-   experiment configs, sweep configs, and query script defaults.
-   Produce a table: sweep × model × temperature.
-2. For runs where temperature is unknown, record "unspecified" and
-   note this as a limitation.
-3. For all future runs: set temperature=0 for deterministic
-   evaluation runs. Document this in the experiment protocol.
-4. If a model does not support temperature=0 (some reasoning models
-   ignore it), note this per model.
-5. Add temperature to the run metadata stored in measurements.jsonl.
+### A. Code — route all scripts through build_api_kwargs
+
+1. Make max_tokens optional in build_api_kwargs() (harness.py line 307).
+   Currently required; the 5 scripts don't use it. Backward-compatible:
+   query_frontier.py already passes max_tokens as keyword.
+
+2. Add --temperature flag (default 0.0) to 5 query scripts:
+   query.py, query_rag.py, query_multiturn.py, query_web.py,
+   query_decomposed.py. Wire through build_api_kwargs ->
+   query_single_turn. Record in output JSON.
+
+3. Add temperature to JobSpec in schema.py. Thread through worker.py.
+
+### B. Data — backfill temperature in measurements.jsonl
+
+4. In evaluate.py _backfill_resource_use(), read "temperature" from
+   companion JSON, set record.method_params.temperature. Legacy
+   records without it stay None (meaning unspecified).
+
+### C. Prose — article methodology and glossary
+
+5. Fix glossaire.tex line 49: replace "Fixee a 0 dans ce benchmark"
+   with honest statement about partial control.
+
+6. Add limitation paragraph in report.tex: 211/280 uncontrolled,
+   ablation RAG arm confound, future enforcement. Bound the bias:
+   structured CSV extraction may be less sensitive to temperature
+   than free-text generation. Re-runs possible if reviewer requires.
 
 ## Test
 
-Audit table produced. Future runs have temperature recorded in
-metadata. Two deterministic runs (t=0) of the same model produce
-identical output.
+- All 5 scripts show --temperature in --help with default 0.0
+- Output JSON from any script contains "temperature": 0.0
+- uv run pytest -x green
+- Glossary no longer claims temperature was uniformly controlled
 
 ## Exit criteria
 
-- Audit table of temperature settings committed
-- Temperature documented per run in measurements
-- Article states temperature policy and limitation
+- All 5 query scripts accept --temperature, default 0.0
+- Output JSON from all scripts records temperature
+- worker.py forwards temperature through build_api_kwargs
+- measurements.jsonl: frontier records show 0.0, legacy show null
+- Glossary entry corrected
+- Methodology limitation paragraph committed
