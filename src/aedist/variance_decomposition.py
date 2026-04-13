@@ -22,7 +22,7 @@ from collections import defaultdict
 from itertools import combinations
 
 from .schema import RunRecord
-from .stats import bootstrap_ci
+from .stats import bootstrap_ci, check_anova_assumptions
 
 # ---------------------------------------------------------------------------
 # F-distribution p-value (stdlib only, regularised incomplete beta)
@@ -350,6 +350,34 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
         }
 
     anova = two_way_anova(anova_data)
+
+    # --- ANOVA assumption diagnostics (G7) ---
+    log = __import__("logging").getLogger(__name__)
+
+    # Compute residuals: observed - cell_mean
+    cell_means_diag: dict[tuple[str, str], float] = {
+        k: _mean(v) for k, v in anova_data.items()
+    }
+    residuals = [
+        y - cell_means_diag[k]
+        for k, ys in anova_data.items()
+        for y in ys
+    ]
+    groups_for_levene = list(anova_data.values())
+
+    diagnostics = check_anova_assumptions(residuals, groups=groups_for_levene)
+
+    for test_name, info in diagnostics.items():
+        if info.get("passed") is None:
+            log.warning("ANOVA diagnostic (%s): %s", test_name, info.get("note", ""))
+        elif not info["passed"]:
+            log.warning(
+                "ANOVA assumption may be violated (%s): %s",
+                test_name, info.get("note", ""),
+            )
+        else:
+            log.info("ANOVA diagnostic (%s): %s", test_name, info.get("note", ""))
+
     return {
         "n_records": n_total_ok, "n_records_excluded": n_excluded,
         "n_groups": n_groups,
@@ -365,6 +393,7 @@ def variance_decomposition(records: list[RunRecord], *, seed: int = 42) -> dict:
         "anova": {
             k: round(v, 6) if isinstance(v, float) else v for k, v in anova.items()
         },
+        "anova_diagnostics": diagnostics,
         "unstable_pairs": _find_unstable_pairs(ok_records, seed=seed),
     }
 

@@ -1,12 +1,16 @@
 %erg v1
 Title: Add multiple comparison correction and ANOVA diagnostics
-Status: open
+Status: doing
 Created: 2026-04-12
 Author: claude
 Blocked-by: gh#239
 
 --- log ---
 2026-04-12T10:00Z claude created — quality grounding gaps G6+G7 (measurement theory)
+2026-04-13T12:00Z claude claimed
+2026-04-13T12:00Z claude status doing — implementing FDR correction and ANOVA diagnostics
+2026-04-13T12:30Z claude note added correct_pvalues(fdr_bh) and check_anova_assumptions to stats.py
+2026-04-13T12:30Z claude note wired FDR into tabulate_comparaison, diagnostics into variance_decomposition+tabulate_variance
 
 --- body ---
 ## Context
