@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:31b",
+  "run": 1,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the provided documents, here is the comprehensive list of power plants, categorized by fuel type and operational status.\n\n### **Coal-Fired Power Plants (Thermal)**\n| Plant Name | Status | Fuel Type | Notes |\n| :--- | :--- | :--- | :--- |\n| Uông Bí | Operational | Coal | Mentioned in project reports |\n| Vũng Áng | Operational | Coal | Mentioned in project reports |\n| Na Ninh | Planned/Under Dev | Coal | Mentioned in project reports |\n\n### **Gas/Oil-Fired Power Plants**\n| Plant Name | Status | Fuel Type | Notes |\n| :--- | :--- | :--- | :--- |\n| Long Phú | Operational | Gas/Oil | Mentioned in project reports |\n| Nhơn Trạch | Operational | Gas/Oil | Mentioned in project reports |\n| Cà Mau | Operational | Gas/Oil | Mentioned in project reports |\n| Phú Mỹ | Operational | Gas/Oil | Mentioned in project reports |\n\n### **Planned or Under Construction (Gas/Oil/Mixed)**\n| Plant Name | Status | Fuel Type | Context/Notes |\n| :--- | :--- | :--- | :--- |\n| Long Phú (Expansion) | Under Construction | Gas/Oil | Phase upgrades |\n| Nhơn Trạch 3 & 4 | Under Construction | Gas/Oil | New capacity additions |\n| Cà Mau (Expansion) | Under Construction | Gas/Oil | Capacity expansion |\n\n### **Summary of Project Status (from Planning Documents)**\n*   **Operational:** The core fleet consists of the major coal plants (Uông Bí, Vũng Áng) and the gas hubs in the south (Phú Mỹ, Nhơn Trạch, Cà Mau).\n*   **Under Construction/Planned:** Focus is on upgrading existing gas hubs (Nhơn Trạch 3&4) and expanding existing sites to meet growing demand.\n*   **Strategic Direction:** The documents indicate a shift toward balancing the energy mix, emphasizing the stability of thermal power while integrating renewables.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 2477
+  },
+  "wall_seconds": 1673.161,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}
