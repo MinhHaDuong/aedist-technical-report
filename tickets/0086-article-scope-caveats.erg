@@ -1,0 +1,80 @@
+%erg v1
+Title: Article prose: scope caveats for out-of-scope quality gaps
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gaps G10-G13 (fix in words)
+
+--- body ---
+## Context
+
+Quality grounding review identified four gaps that are out of scope
+for code/data fixes in the current article but must be acknowledged
+explicitly in the text. These are "fix in words" items: the article
+must state these limitations clearly so a reviewer doesn't discover
+them as blind spots.
+
+## Gaps to address in prose
+
+**G10 — Temporal coherence.** No versioned reference, no tracking of
+status changes over time. Plant statuses change (planned → construction
+→ operational → retired). The reference is a single temporal snapshot
+with no stated date. If a model extracts "operational" and the
+reference says "construction," is that an error or a temporal lag?
+
+*Where to say it:* Discussion section, under "Limitations." State that
+temporal coherence requires longitudinal extraction (multi-year), which
+is future work. Mention that the reference snapshot should be dated.
+
+**G11 — Ontological drift under optimization.** When prompt
+optimization (ticket 0075) runs, the optimizer could change what
+counts as a "plant" to game the metric. This is a theory-ladenness
+concern (Kuhn/Hanson).
+
+*Where to say it:* If the article discusses prompt optimization or
+future work on universal prompts, note that the output schema must be
+locked before optimization to prevent ontological drift. Brief —
+one sentence in future work.
+
+**G12 — Legal status of AI-produced statistics.** UN Principle 7
+requires a legal framework. What is the legal standing of AI-extracted
+statistics vs. official statistics? Can they be cited in policy?
+
+*Where to say it:* Discussion section, under "Implications." One
+paragraph noting that AI-produced statistics are not official
+statistics and should be framed as decision-support or preliminary
+data pending validation by a statistical authority. Reference the UN
+Fundamental Principles.
+
+**G13 — Cross-country and multilingual transfer.** The method is
+validated for Vietnamese only. Other ASEAN languages (Thai, Bahasa,
+Khmer, Filipino) are untested. The scaling argument (~60 campaigns)
+assumes transfer that has no evidence yet.
+
+*Where to say it:* Already partially stated in report.tex:542. Ensure
+the journal article version is equally explicit. The scaling cost
+estimate ($0.06 × 60 = $3.60) should carry a caveat that it assumes
+method transfer and multilingual capability not yet validated.
+
+## Actions
+
+1. Draft the prose additions for each gap: one paragraph per gap,
+   ready to paste into the article's Discussion/Limitations section.
+2. Review existing limitation statements in `report.tex` and
+   `paper_benchmark_merged.md` to avoid duplication.
+3. Integrate into the article text.
+
+## Test
+
+Each of G10–G13 is explicitly addressed in the article text. A
+ctrl-F for "temporal," "ontological," "legal," and "multilingual"
+each finds a relevant passage.
+
+## Exit criteria
+
+- Four limitation/caveat paragraphs added to the article
+- No gap from the quality grounding review left unaddressed
+- Author reviewed and approved wording

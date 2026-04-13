@@ -315,7 +315,7 @@ def verify_tool(rows: list[dict], reference_path: Path) -> tuple[list[dict], dic
     log.info("Loaded %d plants from reference: %s", len(ref_plants), reference_path.name)
 
     sys_plants = plants_from_dicts(rows)
-    entries = reconcile(ref_plants, sys_plants)
+    entries = reconcile(ref_plants, sys_plants, similarity_threshold=70)
 
     matched_sys_names: dict[str, str] = {}
     for e in entries:

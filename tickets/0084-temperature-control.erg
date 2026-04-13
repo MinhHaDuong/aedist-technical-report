@@ -1,0 +1,45 @@
+%erg v1
+Title: Document and control LLM temperature across experiments
+Status: doing
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G8 (reproducibility)
+2026-04-13T12:00Z claude status doing — audit complete, control policy pending
+2026-04-13T12:00Z claude note audit: 211/280 outputs use unspecified temp (provider default ~1.0); 69/280 use t=0.0 (frontier/ablation parametric+websearch); 0/226 measurements.jsonl records have temperature populated; ablation RAG arm inconsistent (uses query_rag.py with no temp). See docs/temperature-audit.md
+
+--- body ---
+## Context
+
+Quality grounding review gap G8: temperature is not controlled across
+all experiments. Some runs use unspecified temperature, making
+"replication" ambiguous. The schema has a `temperature` field
+(`schema.py:134`) but it is not consistently populated. Variance from
+LLM sampling vs. prompt design is confounded.
+
+## Actions
+
+1. Audit all existing runs: which temperature was used? Check
+   experiment configs, sweep configs, and query script defaults.
+   Produce a table: sweep × model × temperature.
+2. For runs where temperature is unknown, record "unspecified" and
+   note this as a limitation.
+3. For all future runs: set temperature=0 for deterministic
+   evaluation runs. Document this in the experiment protocol.
+4. If a model does not support temperature=0 (some reasoning models
+   ignore it), note this per model.
+5. Add temperature to the run metadata stored in measurements.jsonl.
+
+## Test
+
+Audit table produced. Future runs have temperature recorded in
+metadata. Two deterministic runs (t=0) of the same model produce
+identical output.
+
+## Exit criteria
+
+- Audit table of temperature settings committed
+- Temperature documented per run in measurements
+- Article states temperature policy and limitation

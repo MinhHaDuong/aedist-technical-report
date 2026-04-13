@@ -1,0 +1,45 @@
+%erg v1
+Title: Fix tool verification threshold mismatch (paper 70 vs code 90)
+Status: closed
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G3 (scientific integrity)
+2026-04-13T12:00Z claude status closed — fixed code: pass similarity_threshold=70 to reconcile() in verify_tool(); added boundary test
+
+--- body ---
+## Context
+
+Quality grounding review gap G3: `verification_methods.tex` line 28
+describes tool mode using a 70/100 fuzzy similarity threshold, distinct
+from the 90/100 reconciliation threshold. But `verify.py:318` calls
+`reconcile()` with default parameters, which uses 90/100
+(`lp.py:69`). The paper describes something the code does not do.
+
+This is a scientific integrity issue — the described method and the
+implemented method must match.
+
+## Actions
+
+Decide which is correct:
+- **Option A:** fix the code — pass `similarity_threshold=70` to
+  `reconcile()` in `verify_tool()`. This makes tool mode a softer
+  matcher than the evaluation matcher, as intended.
+- **Option B:** fix the paper — change 70 to 90 in the tex file.
+  But this makes tool mode identical to the evaluation matcher,
+  which defeats the purpose of having a separate verification mode.
+
+Recommendation: Option A. The design intent (documented in the
+preregistered verification protocol) was a softer threshold.
+
+## Test
+
+After fix: `verify_tool()` with two plants differing at similarity
+75 matches them (would fail at threshold 90, succeeds at 70).
+
+## Exit criteria
+
+- Code and paper agree on the threshold value
+- Test covers the threshold boundary

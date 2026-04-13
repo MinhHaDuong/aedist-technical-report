@@ -1,0 +1,55 @@
+%erg v1
+Title: Three-way reference reconciliation (expert vs GEM vs system)
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G5 (empirical adequacy)
+
+--- body ---
+## Context
+
+Quality grounding review gap G5: the 164-plant reference is a single
+expert's compilation. No independent verification stated, no audit
+trail from source document to row, no temporal snapshot date. We test
+empirical adequacy against one observer's picture, not against
+reality.
+
+A second independent reference exists: GEM (Global Energy Monitor),
+already in the repo as `data/reference/gem_thermal.csv` (153 plants).
+
+A three-way reconciliation transforms a weakness into a contribution:
+"we quantify inter-annotator agreement for energy infrastructure
+inventories."
+
+## Actions
+
+1. Run the LP reconciler between expert reference and GEM reference.
+   Produce: n_agreed, n_expert_only, n_gem_only, attribute
+   disagreement rates (fuel, status, capacity).
+2. For disagreements: investigate a sample (10 plants) to determine
+   which source is correct. Document the investigation in a CSV
+   with columns: plant, expert_value, gem_value, verdict, evidence.
+3. Compute an "inter-annotator agreement" metric (Cohen's kappa or
+   simple agreement rate) for the reference inventories.
+4. Run the system evaluation against *both* references independently.
+   Report: does ranking of models/methods change depending on which
+   reference is used? If not, the benchmark is robust to reference
+   choice.
+5. Write a short section for the article documenting reference
+   quality and inter-annotator agreement.
+
+## Test
+
+Three-way reconciliation produces a table showing expert-GEM
+agreement rate. System evaluation against both references produces
+consistent model rankings (Spearman ρ > 0.9).
+
+## Exit criteria
+
+- Expert-vs-GEM reconciliation table committed
+- Inter-annotator agreement metric reported
+- System rankings compared across both references
+- Article section on reference quality written

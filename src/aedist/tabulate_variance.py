@@ -75,6 +75,23 @@ def generate_variance_table(decomposition: dict) -> str:
     df_total = anova.get("df_total", 0)
     lines.append("\\midrule")
     lines.append(f"Total & {ss_total:.4f} & {df_total} & --- & --- & 1.00 & --- \\\\")
+
+    # ANOVA diagnostics footnote (G7) — if diagnostics are available
+    diagnostics = decomposition.get("anova_diagnostics")
+    if diagnostics:
+        notes: list[str] = []
+        for test_name, info in diagnostics.items():
+            if info.get("note"):
+                notes.append(info["note"])
+        if notes:
+            combined = " ".join(notes)
+            lines.append("\\midrule")
+            lines.append(
+                "\\multicolumn{7}{l}{\\footnotesize "
+                + combined.replace("&", "\\&")
+                + "} \\\\"
+            )
+
     lines.append("\\end{longtable}")
     return "\n".join(lines) + "\n"
 

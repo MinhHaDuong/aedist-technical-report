@@ -95,6 +95,32 @@ def test_accepts_diacritics_variant(reference_csv):
     assert "Vung Ang" in annotated[0]["verification_source"]
 
 
+def test_tool_threshold_matches_at_70_not_90(reference_csv):
+    """Plants with ~77% name similarity should match at tool threshold (70) but not at 90.
+
+    'An Khanh 1' vs 'An Khe 1' has partial_ratio ~77, which exceeds the
+    tool-mode threshold of 70 (per the verification protocol) but falls
+    below the evaluation reconciliation threshold of 90.  This test
+    verifies that verify_tool() uses the softer threshold.
+    """
+    # Add "An Khe 1" to a fresh reference that includes the confusable name
+    ref = reference_csv.parent / "ref_threshold.csv"
+    ref.write_text(
+        "name,province,fuel,capacity_mwe,status\n"
+        "An Khe 1,Gia Lai,Coal,50,Operational\n"
+    )
+    rows = [
+        {"name": "An Khanh 1", "fuel": "Coal", "province": "Gia Lai",
+         "capacity_mwe": "50"},
+    ]
+    annotated, _ = verify_tool(rows, ref)
+    # At threshold=70, similarity ~77 should produce a match (evidence_score 3)
+    assert annotated[0]["evidence_score"] == "3", (
+        f"Expected match at threshold 70 but got score {annotated[0]['evidence_score']}"
+    )
+    assert "An Khe" in annotated[0]["verification_source"]
+
+
 def test_uses_lp_not_naive_fuzzy(reference_csv):
     """Verify that the function uses reconcile(), not fuzzy_match_reference().
 

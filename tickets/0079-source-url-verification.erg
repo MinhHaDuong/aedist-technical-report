@@ -1,0 +1,51 @@
+%erg v1
+Title: Verify source citations with URL checks and content spot-check
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G2 (Popper: falsifiability)
+
+--- body ---
+## Context
+
+Quality grounding review gap G2: the evidence rubric (0–4) classifies
+sources by URL domain regex and text patterns (`verify.py:66-96`) but
+never checks that the URL exists or contains the claimed content. A
+model citing "Decision 1509/QD-BCT" gets score 3 (primary source) if
+the format matches, even if the decision number is fabricated. This
+undermines the falsifiability claim anchoring the rubric.
+
+## Actions
+
+1. **URL existence check (HTTP HEAD):** for every source URL in
+   verification output, issue an HTTP HEAD request. Record: status
+   code, final URL after redirects, content-type. Cache aggressively
+   (same URL won't change between runs). Flag 404/DNS-fail as
+   "dead link" — downgrade evidence score to 1 (no usable source).
+2. **Content spot-check:** on a random sample (e.g., 20 plants from
+   the best extraction), fetch the page, search for the plant name
+   or capacity value in the page text. Record: found/not-found.
+   Report the spot-check hit rate as "source content confirmation
+   rate." This quantifies the false positive rate in our source
+   classification.
+3. **Do not block on content verification for all plants.** The
+   spot-check is enough to calibrate trust in the rubric. Full
+   content verification is a separate, larger effort.
+
+## Test
+
+On the DeepSeek V3.2 decomposition run (our headline result):
+- HTTP HEAD succeeds for >80% of cited URLs
+- Spot-check on 20 plants: report confirmation rate
+- Any dead-link downgrades reflected in updated evidence score
+  distribution
+
+## Exit criteria
+
+- URL HEAD check integrated into verification pipeline
+- Dead links flagged and evidence scores adjusted
+- Spot-check report on 20-plant sample with confirmation rate
+- Results mentioned in the article's verification discussion

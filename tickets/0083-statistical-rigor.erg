@@ -1,0 +1,59 @@
+%erg v1
+Title: Add multiple comparison correction and ANOVA diagnostics
+Status: doing
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gaps G6+G7 (measurement theory)
+2026-04-13T12:00Z claude claimed
+2026-04-13T12:00Z claude status doing — implementing FDR correction and ANOVA diagnostics
+2026-04-13T12:30Z claude note added correct_pvalues(fdr_bh) and check_anova_assumptions to stats.py
+2026-04-13T12:30Z claude note wired FDR into tabulate_comparaison, diagnostics into variance_decomposition+tabulate_variance
+
+--- body ---
+## Context
+
+Quality grounding review gaps G6 and G7:
+
+**G6:** With ~256 conditions (32 models × 8 methods), paired
+bootstrap tests in `tabulate_comparaison.py` report raw p-values
+with no family-wise error control. No Bonferroni, no FDR.
+
+**G7:** Two-way ANOVA in `tabulate_variance.py` assumes normality
+of residuals and homogeneity of variance. Neither is tested. With
+n=2–3 per cell, tests have very low power. No diagnostic checks.
+
+## Actions
+
+1. **G6 — Multiple comparison correction:**
+   - Add `correct_pvalues(pvals, method='fdr_bh')` to `stats.py`.
+   - Apply Benjamini-Hochberg FDR correction to all pairwise
+     comparisons in comparison tables.
+   - Report both raw and adjusted p-values (transparency).
+   - Use `scipy.stats.false_discovery_control` or manual BH
+     if avoiding new deps.
+
+2. **G7 — ANOVA diagnostics:**
+   - After ANOVA, compute residuals and run Shapiro-Wilk test for
+     normality (or note sample too small for the test to have power).
+   - Compute Levene's test for homogeneity of variance.
+   - If assumptions violated, add a note to the table and/or report
+     a non-parametric alternative (Kruskal-Wallis for one-way,
+     Friedman for repeated measures).
+   - At minimum: state the assumptions explicitly in the article
+     and acknowledge the small-sample limitation.
+
+## Test
+
+- FDR-corrected p-values are ≥ raw p-values (monotonicity check)
+- Diagnostic tests run without error on the current dataset
+- At least one table includes both raw and adjusted p-values
+
+## Exit criteria
+
+- `stats.py` includes FDR correction function
+- Comparison tables show adjusted p-values
+- ANOVA diagnostics reported (even if just "sample too small")
+- Article text states assumptions explicitly

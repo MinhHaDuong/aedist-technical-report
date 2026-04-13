@@ -1,0 +1,71 @@
+%erg v1
+Title: Evaluate LangChain Deep Agents lib for the production pipeline
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T20:00Z claude created — brain dump from operator
+
+--- body ---
+## Context
+
+Brain dump from operator: "langchain Deep Agents lib for the
+production pipeline".
+
+LangChain shipped a `deepagents` library (planning + sub-agents +
+virtual filesystem + long-horizon tool use, loosely modeled on the
+Claude Code / Manus style). The operator wants to assess whether it
+could replace or augment our current production pipeline glue
+(experiment manager, query workers, extractor, verifier, reporting
+hand-off).
+
+Today the pipeline is a set of purpose-built Python modules
+coordinated by a Makefile and a sweep config. That is simple and
+auditable but it means every new capability (multi-agent verify,
+decomposition, sourced extraction) lands as more bespoke orchestration
+code. A deep-agents framework could potentially collapse some of this
+into a single planner-driven loop with typed tools.
+
+Risks to weigh: adding a heavy framework dependency, losing the
+reproducibility we get from flat scripts + measurements.jsonl,
+surrendering prompt control to a library, pulling in LangChain's
+broader dependency tree.
+
+This is a research spike, not a committed rewrite.
+
+## Actions
+
+1. Read the deepagents README, the reference implementation, and
+   at least one production case study. Note: planner loop shape,
+   sub-agent contract, tool schema, state/memory model.
+2. Map our current pipeline stages to deep-agents primitives:
+   - experiment manager → planner?
+   - query workers → tools or sub-agents?
+   - extractor / verifier → sub-agents with typed outputs?
+   - measurements.jsonl → virtual filesystem artifact?
+   Identify where the mapping is clean and where it fights the
+   framework.
+3. Prototype one stage (candidate: the multi-agent verification run,
+   ticket 0059) as a deepagents workflow and compare against the
+   current implementation on: LOC, latency, token cost, output
+   fidelity, debuggability.
+4. Explicitly evaluate reproducibility. Can a deep-agents run be
+   replayed from a fixed seed and produce the same measurements?
+   If not, it's a non-starter for the production pipeline.
+5. Write up trade-offs. Recommend: adopt for one stage, adopt
+   wholesale, or reject.
+
+## Test
+
+A prototype deepagents workflow for one pipeline stage that runs
+end-to-end on a cached fixture, produces a measurements.jsonl
+record indistinguishable from the current pipeline's output for
+the same input, and a side-by-side report of cost/latency/LOC.
+
+## Exit criteria
+
+- Spike report documenting the mapping, the prototype results, and
+  a clear recommendation with a reproducibility verdict.
+- Decision recorded: adopt (which stages), defer, or reject.
+- If adopt: follow-up ticket(s) opened for the concrete migration.

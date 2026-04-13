@@ -1,0 +1,179 @@
+%erg v1
+Title: Academic lit review — automated statistics production for energy system models
+Status: open
+Created: 2026-04-12
+Author: claude
+
+--- log ---
+2026-04-12T09:30Z claude created — operator request for lit review on the north star question
+2026-04-12T09:30Z claude note spawned from ticket 0075 discussion; the quality-grounding review (docs/quality-grounding.md) and this lit review are complementary — one grounds our metrics, this one positions our work in the literature.
+
+--- body ---
+## Context
+
+North star question: **Can AI automatically produce the structured
+energy statistics needed to feed power system models like PyPSA, at
+production quality, across asset classes and countries?**
+
+This report validates the method on one cell (thermal power plants
+in Vietnam). The target is the full matrix (~10 ASEAN countries ×
+~6 asset classes = 60 campaigns) feeding PyPSA-ASEAN. The journal
+article needs a literature review that positions this question in
+existing academic work.
+
+"Auto statistics in my context for PyPSA" — the operator's framing.
+The review must cover the intersection of three fields that rarely
+talk to each other:
+
+1. **AI/NLP for structured information extraction** — what can
+   current systems extract from policy documents?
+2. **Energy data pipelines for power system modeling** — what do
+   PyPSA and peers actually need, and where does data come from
+   today?
+3. **Quality frameworks for official/economic statistics** — what
+   standards must AI-produced data meet to be usable?
+
+This is a literature review, not a prototype. Deliverable is a
+document in `docs/` that the article can cite or absorb.
+
+## Strands to cover
+
+### A. AI for structured data extraction from documents
+
+- **LLM-based information extraction:** structured output from
+  unstructured documents. Survey the progression from NER/RE
+  (spaCy, BERT-based) to LLM-based extraction (GPT-4, Claude,
+  open models). Focus on extraction of tabular/structured data
+  from PDFs and policy documents, not general QA.
+- **RAG for factual extraction:** retrieval-augmented generation
+  applied to fact extraction rather than question answering.
+  How does grounding in retrieved documents affect hallucination
+  rates and completeness?
+- **Automated prompt optimization:** DSPy, TextGrad, OPRO,
+  Promptbreeder — the literature on optimizing prompts for
+  extraction tasks specifically. (Connects to ticket 0075.)
+- **Multi-agent verification:** using multiple LLM calls or
+  models to verify extracted facts. Self-consistency, cross-model
+  agreement, LLM-as-judge. (Connects to tickets 0054, 0059.)
+- **Benchmarks for extraction quality:** existing benchmarks for
+  structured extraction from documents (SciREX, DocRED, SciERC,
+  TABMWP, etc.). How do they differ from our task? What metrics
+  do they use?
+
+### B. Energy data for power system models
+
+- **PyPSA-Earth and data pipelines:** how does PyPSA-Earth
+  currently get its power plant data? (powerplantmatching,
+  Global Energy Monitor, IRENA, national sources.) What are the
+  known gaps, especially for Southeast Asia?
+- **Power plant databases:** Global Power Plant Database (WRI),
+  GEM Global Coal/Gas/Wind/Solar Trackers, IRENA Renewable
+  Capacity Statistics, S&P Global Platts WEPP. Coverage, update
+  frequency, licensing, accuracy for ASEAN.
+- **PyPSA-VN** (Schlott et al. 2020) — the existing Vietnamese
+  instance. What data did it use? What were the gaps?
+- **Data quality in energy models:** Gotzens et al. 2019 (already
+  cited in our paper draft) on data quality in power plant
+  databases. What other work exists on how data quality propagates
+  through energy system models?
+- **National power development plans as data sources:** has anyone
+  else systematically extracted structured data from PDPs, PDAs,
+  RUKNs, or equivalent planning documents? In any country?
+
+### C. Quality frameworks for AI-produced statistics
+
+- **UN Fundamental Principles of Official Statistics** (1994/2014)
+  — especially Principle 5 (non-statistical data sources).
+- **IMF DQAF** (Data Quality Assessment Framework) — quality
+  dimensions and how they map to AI-produced data.
+- **European Statistics Code of Practice** — the 16 principles
+  and whether AI production can satisfy them.
+- **ISI Declaration on Professional Ethics** / **ASA Ethical
+  Guidelines** — transparency, limitations, reproducibility.
+- **Philosophy of measurement** (Tal 2017, Mari et al.) — what
+  does it mean to "measure" extraction quality? Are our metrics
+  (F1, recall, evidence score) well-defined measurands?
+- **Philosophy of science framing:** empirical adequacy (van
+  Fraassen), falsifiability and corroboration (Popper) applied
+  to AI-extracted data. When is an extracted datum "knowledge"
+  vs. "a guess"? The evidence rubric (0–4) as an operationalization
+  of epistemic status.
+- **Fitness for purpose** (Wang & Strong 1996 "Beyond accuracy")
+  — data quality is relative to use. Our use is PyPSA input.
+  What quality dimensions matter most for power system modeling
+  specifically?
+
+### D. The gap — what nobody has done
+
+- No existing work (to our knowledge) attempts to produce
+  *complete, structured, sourced economic statistics* from policy
+  documents using LLMs at production quality. The closest work is
+  either (a) extraction of individual facts (NER/RE scale, not
+  inventory scale), (b) question answering against documents
+  (not structured output), or (c) manual curation of energy
+  databases (not automated).
+- The north star — automated production of PyPSA-compatible
+  datasets from national planning documents across ASEAN — is
+  novel. The lit review must make this gap visible and position
+  our contribution precisely.
+
+## Actions
+
+1. Conduct systematic search across Google Scholar, Semantic
+   Scholar, and arXiv for each strand. Search terms to include:
+   - "power plant" AND ("information extraction" OR "LLM" OR
+     "language model")
+   - "energy statistics" AND ("automated" OR "AI" OR "NLP")
+   - "PyPSA" AND "data" AND ("quality" OR "pipeline" OR "input")
+   - "structured extraction" AND "policy document"
+   - "official statistics" AND ("AI" OR "automation" OR "LLM")
+   - "prompt optimization" AND "extraction"
+   Cover 2020–2026 comprehensively; include key older references
+   (Wang & Strong 1996, UN Fundamental Principles 1994, Popper,
+   van Fraassen) as foundational.
+2. For each strand, produce a narrative paragraph (not just a
+   reference list) summarizing the state of the art, identifying
+   the key papers (≤5 per strand), and noting what is missing.
+3. Write a synthesis section ("the gap") that positions our north
+   star question at the intersection of the three fields.
+4. Collect all references in BibTeX format compatible with
+   `report/refs.bib`.
+5. Commit the review to `docs/lit-review-auto-statistics.md`.
+
+## Deliverable
+
+`docs/lit-review-auto-statistics.md` — a standalone literature
+review document (~2000–3000 words + references) structured by
+the four strands above, with a synthesis section. Written in a
+style that can be absorbed into the journal article's Related
+Work section (paper_benchmark_merged.md §2) with minimal editing.
+
+Accompanying: new BibTeX entries added to `report/refs.bib` for
+any papers not already cited.
+
+## Relationship to other tickets
+
+- **0075** — the prompt optimization survey. This ticket provides
+  the broader academic context; 0075 is the tool-level spike.
+  The quality grounding in `docs/quality-grounding.md` (from 0075)
+  and this lit review are complementary: one grounds our metrics,
+  this one positions our work.
+- **0076** — LangChain Deep Agents. This lit review may surface
+  relevant agentic-pipeline papers.
+- **0054/0059** — multi-agent verification. Strand A covers the
+  verification literature.
+
+## Test
+
+The review cites at least 20 papers, covers all four strands, and
+the synthesis section explicitly states what has not been done
+before and how our work fills that gap.
+
+## Exit criteria
+
+- `docs/lit-review-auto-statistics.md` committed, ≥2000 words.
+- All four strands covered with narrative summaries and key refs.
+- Synthesis section positions the north star question precisely.
+- New BibTeX entries added to `report/refs.bib`.
+- Author (operator) has reviewed and approved for integration
+  into the journal article.

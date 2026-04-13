@@ -1,0 +1,38 @@
+%erg v1
+Title: Run additional replicates for headline F1=98.8% result
+Status: open
+Created: 2026-04-12
+Author: claude
+Blocked-by: gh#239
+
+--- log ---
+2026-04-12T10:00Z claude created — quality grounding gap G4 (measurement theory)
+
+--- body ---
+## Context
+
+Quality grounding review gap G4: the headline result (DeepSeek V3.2
+decomposition, F1=98.8%, 163/163 plants) is based on n=1 run. No
+confidence interval, no variance estimate. Other conditions have
+n=2–3 replicates with bootstrap CIs. A reviewer will flag the
+asymmetry: the best result is the one with no error bar.
+
+## Actions
+
+1. Run 2 additional replicates of the DeepSeek V3.2 decomposition
+   sweep (same prompt, same parameters, temperature=0 if possible).
+2. Compute bootstrap 95% CI on the 3-run F1.
+3. Update the results table and the abstract claim.
+4. If F1 varies across runs (temperature>0 or non-deterministic
+   sampling), report the range.
+
+## Test
+
+Three runs exist for DeepSeek V3.2 decomposition. Bootstrap CI
+computed. Abstract updated with interval.
+
+## Exit criteria
+
+- n≥3 replicates for the headline result
+- CI reported in the abstract and results section
+- If F1 drops on additional runs, the narrative updated honestly

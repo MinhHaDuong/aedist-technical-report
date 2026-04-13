@@ -1,0 +1,418 @@
+%erg v1
+Title: Survey automated prompt-optimization frameworks (DSPy et al.) for a universal prompt
+Status: open
+Created: 2026-04-11
+Author: claude
+
+--- log ---
+2026-04-11T20:00Z claude created — brain dump from operator
+2026-04-11T20:15Z claude note operator pointed at https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill — it is a Claude Code / Cursor skill (not a Python lib) that runs an evolutionary prompt-optimization loop against yes/no criteria; rewriting body to match
+2026-04-11T20:30Z claude note operator clarified: the balukosuri repo is only an example — scope is a broader survey of DSPy and peers, not a commitment to that one skill. Retitled ticket and rewrote body as a landscape review.
+2026-04-12T08:00Z claude note operator specified concrete optimization criteria (6 goals) and pointed to the evidence quality rubric in report/inputs/verification_methods.tex:62-80 as the 4-level (0–4) framework. Criteria are interdependent; the grail (all 6 simultaneously) is hard to reach.
+2026-04-12T08:30Z claude note operator: "universal" means three axes — cross-model, cross-asset-class (~6: thermal/renewables/hydro/storage/transmission/demand), cross-country (~10 ASEAN). Thermal plants in Vietnam is just the feasibility example. Target consumer is PyPSA-ASEAN. See report.tex:535-539 for the scaling argument (60 campaigns at $0.06 each).
+2026-04-12T09:00Z claude note operator: deep review against philosophy of science (what is quality?) and statistician professional conduct codes. Added section grounding criteria in van Fraassen, Popper, measurement theory, UN Fundamental Principles, ISI/ASA ethics, DQAF. Flagged gaps: internal consistency, temporal coherence, ontological drift under optimization.
+2026-04-12T09:30Z claude note operator: quality review must live in docs/ as a standalone document (will inform the article), not just in the ticket. Opened ticket 0077 for academic lit review on the north star question.
+2026-04-13T10:30Z claude note revised evidence rubric from 0–4 to 0–5: score 4 = one confirmed primary (HITL), score 5 = two independent confirmed. Level 5 aspirational. Source-independence analysis added to verification_methods.tex. NATO Admiralty System (STANAG 2022) reference added.
+2026-04-13T11:00Z claude note separated result quality (evidence ladder, completeness, coherence) from system requirements (cheap, fast, cross-model, generic). They are orthogonal — a cheap system can produce garbage, a perfect single-model pipeline can produce impeccable data. Criteria section rewritten as two blocks.
+2026-04-13T11:30Z claude note operator confirmed: prompt is only for seed table, verification is on top. Evidence scores are not an optimization signal for the prompt — they're the verification pipeline's job. Objective simplified to min-of-5(recall × hallucination_gate). Three-way separation: (1) what optimizer controls (seed extraction), (2) result quality (evidence ladder, post-verification), (3) system requirements (cost, speed, universality, genericity).
+
+--- body ---
+## Context
+
+Brain dump from operator: "autoresearch — universal the prompt",
+with a pointer to
+https://github.com/balukosuri/Andrej-Karpathy-s-Autoresearch-As-a-Universal-Skill
+as an **example**, not a commitment. The real scope is a landscape
+review of automated prompt-optimization frameworks, with DSPy as
+the headline candidate.
+
+**"Universal" means three axes of generality, not one:**
+
+1. **Cross-model** — the prompt works on cheap models, not just
+   frontier. Validated here.
+2. **Cross-asset-class** — thermal power plants are one of ~6
+   component classes needed for a full power system model: thermal
+   generators (validated here), renewables (solar, wind — present
+   in PDP8 annexes), hydroelectricity, storage (batteries, pumped
+   hydro), transmission network (lines, substations, interconnections),
+   and possibly demand profiles. The same government documents that
+   contain thermal plant tables contain these other components.
+   (report.tex:535-536)
+3. **Cross-country / statistical zone** — Vietnam is one of 10
+   ASEAN countries with national power development plans. Each
+   publishes in its own language (Thai, Bahasa Indonesia, Filipino,
+   Khmer, …) and regulatory framework. The pipeline is parameterized
+   by country: same method, different corpus. (report.tex:538-539)
+
+**Scale:** ~10 countries × ~6 asset classes ≈ 60 extraction campaigns.
+At $0.06/campaign (report estimate), a complete regional power system
+database costs less than one frontier model call. The target consumer
+is **PyPSA-ASEAN** (via PyPSA-Earth). Thermal plants in Vietnam is
+just the feasibility proof.
+
+Why this matters for prompt optimization: we don't want the best
+prompt for "Vietnamese thermal plants". We want a prompt *template*
+parameterized by `(asset_class, country)` that works across the full
+60-cell matrix. The optimizer must search over prompts that are
+generic enough to survive re-parameterization, not ones that overfit
+to the thermal/Vietnam test case. This is a much harder optimization
+target than single-task prompt tuning, but it's the only one that
+matters for production.
+
+Our current bespoke prompts (inventory, scenarios, skill, census,
+rag, decomposed, sourced, multiturn) and the ablation machinery under
+`prompt_modules/` are all tuned for the Vietnam thermal feasibility
+case. Our `measurements.jsonl` + per-cell accuracy scores already
+function as an optimization signal — we just never close the loop.
+
+This is a research spike, not a committed implementation. The goal
+is to pick *one* framework to prototype against, with reasons.
+
+## Optimization criteria
+
+Three concerns, cleanly separated.
+
+### 1. What the prompt optimizer actually controls
+
+The prompt produces the **seed extraction table** — a first-pass
+inventory from documents. That's all. Verification (evidence scores
+3→4→5) is a separate pipeline stage that sits on top. The prompt
+optimizer should not try to optimize verification outcomes; it has
+no lever for that.
+
+The optimizer's objective is therefore:
+
+> **Maximize** `min over 5 cheap models of (recall × hallucination_gate)`
+> **subject to** cost ≤ $0.06/campaign, genericity across
+> `(asset_class, country)`.
+
+Where:
+- **hallucination_gate** = 1 if zero fabricated entries, 0 otherwise.
+  Hard gate. A single hallucination zeroes the score.
+- **recall** = fraction of reference assets found. The core
+  deliverable.
+- **min over 5 models** = the prompt must lift the floor, not ride
+  one strong model. This is what "universal" means.
+- **cost cap** = soft constraint, sets budget envelope.
+- **genericity** = validated by re-running on another cell without
+  re-tuning. Not in the optimizer's loss function but a post-hoc
+  check.
+
+Evidence score is **tracked as an observed outcome** of the seed
+extraction (does the model happen to cite sources?) but is **not an
+optimization signal**. Pushing evidence from 3 to 4 to 5 is the
+verification pipeline's job, not the prompt's.
+
+### 2. Result quality (the evidence ladder)
+
+What the final output data must look like, after seed extraction
+*and* verification. Defined in verification_methods.tex
+(§evidence-rubric, §source-independence) and grounded in the NATO
+Admiralty System (STANAG 2022):
+
+| Evidence score | Meaning | Responsible stage |
+|----------------|---------|-------------------|
+| ≥ 0 | No fabrications | Seed extraction (prompt) + verification |
+| ≥ 3 | Primary source identified (heuristic) | Verification (unverified/tool mode) |
+| ≥ 4 | Primary source **confirmed** | Verification (HITL or factual cross-check) |
+| = 5 | Two **independent** sources confirmed | Research goal (dependency graph + HITL) |
+
+Plus completeness (recall) and coherence (ticket 0078, aggregate
+consistency). The evidence ladder belongs in the tech report.
+
+### 3. System requirements
+
+Engineering properties of the pipeline. Orthogonal to result
+quality.
+
+| Requirement | Metric | Negotiable? |
+|-------------|--------|-------------|
+| **Cheap** | ≤ $0.06 per campaign. At 60 campaigns, cost matters. | Soft — caps the optimizer's own budget too. |
+| **Fast** | Wall-clock time per campaign. | Soft — a 2× slower prompt that nails recall wins. |
+| **Cross-model** | min(benchmark) over 5 cheap models, not mean. | Non-negotiable. This is "universal." |
+| **Generic** | Template `(asset_class, country)`. Must not overfit to Vietnam/thermal. | Non-negotiable. Validated by transfer test. |
+
+### What is quality? — grounding in philosophy of science and professional codes
+
+Before optimizing, we need to know what we are optimizing *for* in a
+way that is defensible to a statistician and to a philosopher of
+science. Our current metrics (F1, recall, evidence score) are
+operational, but the deeper question is: **what constitutes quality
+for AI-produced economic statistics?**
+
+The journal paper (paper_benchmark_merged.md:27) already names five
+properties: "exhaustiveness, internal consistency, temporal coherence,
+explicit provenance, and updatability." These are not ad hoc — they
+echo established frameworks. The spike must review these and map our
+metrics onto them:
+
+**Philosophy of science angle:**
+- **Empirical adequacy** (van Fraassen) — the extracted data must
+  save the phenomena: match observable reality. Our recall and
+  precision metrics approximate this, but only against a single
+  expert-compiled reference. A prompt optimized to beat one
+  reference can still be empirically inadequate (overfit to the
+  reference's blind spots).
+- **Reproducibility / intersubjective agreement** — the same prompt
+  on different models (cross-model system requirement) is a form of
+  replication. If only one model produces a result, it is not
+  robust knowledge. The min-of-5 objective formalizes this.
+- **Falsifiability** — every extracted datum should be checkable
+  against a source. Evidence score ≥ 3 means "a primary source
+  exists that could falsify this claim." Score 4 (one confirmed
+  primary) means "someone checked and the source is real." Score 5
+  (two independent confirmed sources) means "the claim has survived
+  one genuinely independent check." Independence is an
+  epistemological problem, not a URL-counting exercise (see
+  §source-independence in verification_methods.tex). The NATO
+  Admiralty System (STANAG 2022) codifies this as credibility
+  level 1: "confirmed by other independent sources."
+- **Theory-ladenness of observation** (Kuhn/Hanson) — the prompt
+  *is* the theory: it defines what counts as a "power plant," which
+  attributes matter, what schema to emit. Optimizing the prompt is
+  optimizing the theoretical lens. The optimizer must not silently
+  drift the ontology to game the metric (e.g., merging units to
+  inflate recall).
+- **Measurement theory** (Tal, Mari) — our metrics are themselves
+  measurements of measurement quality. They need defined
+  measurands, stated uncertainties, and calibration against
+  independent references. The bootstrap CIs from ticket 0042
+  partially address this.
+
+**Statistician professional conduct angle:**
+- **UN Fundamental Principles of Official Statistics** (1994/2014,
+  A/RES/68/261) — Principle 1: relevance, impartiality, equal
+  access. Principle 2: professional standards, scientific methods.
+  Principle 3: accountability and transparency in methods.
+  Principle 5: sources may include statistical and non-statistical
+  data. Our pipeline is literally Principle 5: extracting statistics
+  from non-statistical documents. The quality criteria that apply
+  to official statistics should apply to our output.
+- **ISI Declaration on Professional Ethics** — integrity,
+  transparency of methods, acknowledgment of limitations. An
+  optimized prompt that hides its failure modes (e.g., systematically
+  missing small plants below a capacity threshold) violates this.
+- **ASA Ethical Guidelines for Statistical Practice** — "be
+  transparent about the basis of any inferences," "report findings
+  and interpretations that reflect the data accurately." If the
+  optimizer's best prompt achieves high F1 by ignoring hard cases,
+  we must report that, not just the headline number.
+- **European Statistics Code of Practice** / **IMF DQAF** —
+  quality dimensions: relevance, accuracy, timeliness, coherence,
+  comparability, accessibility. Map to our criteria:
+  - Accuracy → precision, evidence score, no hallucinations (result quality)
+  - Completeness → recall (result quality)
+  - Coherence → internal consistency (ticket 0078 — result quality gap)
+  - Comparability → cross-model, cross-country (system requirements)
+  - Timeliness → fast, updatability (system requirements)
+  - Accessibility → cheap, open pipeline (system requirements)
+
+**Gaps this review should surface:**
+- **Internal consistency** is not yet an optimization criterion.
+  Do total capacities per fuel type sum to known national totals?
+  The prompt could be scored on consistency with aggregate
+  constraints (cf. closed ticket 0018, pipeline intelligence).
+- **Temporal coherence** is not tested. If the same prompt runs
+  on 2024 and 2025 documents, does the delta make sense? This
+  matters for updatability but is out of scope for Phase 1.
+- **Ontological drift under optimization** — if the optimizer
+  changes what counts as a "plant" to improve F1, that's a
+  philosophy-of-science red flag, not a win. Need a guard.
+
+**Deliverable: `docs/quality-grounding.md`** — a standalone document
+mapping result quality targets and system requirements to these
+frameworks. This document will inform the journal article's framing
+of what "quality" means for AI-produced statistics. It must be
+citable from the article's methods or discussion section. See also
+ticket 0077 (academic lit review) which covers the broader
+literature landscape.
+
+### The evidence quality rubric (revised, 0–5)
+
+From `report/inputs/verification_methods.tex` §evidence-rubric and
+§source-independence:
+
+| Score | Definition | Automation |
+|-------|------------|------------|
+| 0 | Fabricated source (hallucination detected) | Automated (heuristic) |
+| 1 | No source provided | Automated |
+| 2 | One secondary source (press, Wikipedia) | Automated (domain regex) |
+| 3 | One primary source (heuristic: domain, text pattern) | Automated |
+| 4 | At least one primary source **confirmed** (HITL or factual cross-check) | Semi-automated / HITL |
+| 5 | Two **independent** primary sources confirmed | Requires dependency graph + HITL |
+
+Scores 0–3 are automatable. Score 4 requires at least spot-check
+HITL validation that the cited source is genuinely primary. Score 5
+requires understanding source independence in the energy governance
+of the target country — a research problem (see §source-independence).
+
+### Interdependencies and the Pareto frontier
+
+The criteria form a hierarchy, not a checklist. Read bottom-up:
+
+- **Levels 1–2 (cheap/fast) set the envelope.** The optimizer
+  can't burn unlimited tokens. These are soft constraints.
+- **Level 3 (no hallucinations) is the floor.** Everything below
+  this is garbage. Hard gate.
+- **Level 4 (completeness) and level 6 (sourcing) are in direct
+  tension.** The precision-coverage analysis (§prec-cov) shows:
+  at t=4, precision is maximal but recall drops because few plants
+  get a confirmed primary source from a single LLM call. A prompt
+  that pushes toward sourcing may sacrifice completeness.
+- **Level 5 (cross-model) makes everything harder.** Optimizing for
+  one strong model is straightforward; requiring that the *worst* of
+  5 cheap models performs means the prompt cannot rely on any
+  model-specific capability. The optimizer's objective is min-of-5.
+- **Level 7 (two independent sources) is aspirational.** It requires
+  the source-independence graph. The pilot can't reach it; the
+  article should name it honestly as the long-term target.
+
+### Phasing (realistic bites)
+
+The research can be phased so each step delivers a usable result
+even if we stop:
+
+**Phase 1 — Survey + single-cell prototype (this ticket).**
+Framework comparison table. Pick one tool (DSPy prior). Optimize
+on Vietnam/thermal against 5 cheap models. Deliverable: one prompt
+that beats baseline on the feasibility case, or a justified "no
+tool helps here" result.
+
+**Phase 2 — Cross-asset-class transfer.**
+Take the Phase 1 winner, parameterize by asset class, run on
+Vietnam/renewables and Vietnam/hydro without re-tuning. Measure
+how far performance drops. If it holds: the prompt template is
+asset-generic for Vietnam. If it doesn't: characterize what
+breaks and whether the optimizer can fix it with one round of
+per-class tuning.
+
+**Phase 3 — Cross-country transfer.**
+Take the Phase 2 template, re-parameterize by country, run on
+Thailand/thermal or Indonesia/thermal (whichever has a reference
+inventory or can get one cheaply). Measure transfer. The
+multilingual dimension (Thai, Bahasa) is the real test here.
+
+**Phase 4 — Full-matrix optimization.**
+If Phases 2–3 show the template generalizes, run the optimizer
+over a representative sample of the 60-cell matrix (e.g., 3
+countries × 3 asset classes = 9 cells) using the min-of-cells
+composite objective. This is the expensive phase and only worth
+doing if the earlier phases show positive transfer.
+
+Each phase has a stop/continue gate. No phase requires the next.
+
+## Candidate frameworks to survey
+
+Primary:
+- **DSPy** (Stanford) — programmatic prompts with typed signatures
+  and optimizers (BootstrapFewShot, MIPROv2, COPRO, BootstrapFinetune).
+  Most mature, active community, integrates cleanly with arbitrary
+  LMs via its adapter layer. The obvious first stop.
+
+Secondary (include at least to the "read the README + one example"
+depth):
+- **TextGrad** — "textual gradient" backprop through LLM calls.
+  Useful framing for multi-hop pipelines like ours (query →
+  extract → verify).
+- **OPRO** (Google) — LLMs-as-optimizers. Paper + community
+  implementations. Good baseline for evolutionary approaches.
+- **Promptbreeder** (DeepMind) — evolutionary, self-referential
+  mutation. Closest in spirit to Karpathy's autoresearch.
+- **APE** (Automatic Prompt Engineer) — older, simpler, instructive
+  baseline.
+- **AdalFlow / Trace** — newer entrants framing prompt programs as
+  computation graphs. Scan at least the README.
+- **The balukosuri autoresearch skill** — operator's example.
+  Include as a "lightweight Claude Code native" data point, not
+  the default choice.
+
+Explicit non-goal: adopting LangChain's prompt tooling. Our
+production pipeline is flat Python + Make; a heavy framework
+dependency is a hard sell (see ticket 0076 for the parallel Deep
+Agents question).
+
+## Actions
+
+1. Produce a short comparison table covering each candidate:
+   license, dependency weight, LM-adapter story (OpenAI, Anthropic,
+   OpenRouter, Ollama — we need all four), optimizer algorithms
+   offered, signal format (continuous metric? binary? pairwise?),
+   artifact layout, reproducibility story (seed control, logged
+   traces), and whether it plays nicely with our `measurements.jsonl`
+   as the source of truth.
+2. Recommend **one** framework to prototype against, with a written
+   rationale. Prior is DSPy unless something disqualifies it for
+   our multi-provider, reproducibility-first setting.
+3. **Define the composite objective function:**
+   `min over 5 models of (recall × hallucination_gate)`,
+   subject to cost ≤ $0.06/campaign.
+   - hallucination_gate: binary (1 if zero fabrications, else 0).
+   - recall: against reference inventory.
+   - Evidence scores: tracked as observed outcome, not optimized.
+     The prompt produces the seed table; verification lifts
+     evidence scores afterward.
+   - The framework must support min-of-N-models. If it only
+     optimizes for a single LM, we need a wrapper. Check DSPy's
+     `Evaluate`.
+4. Pick the 5 cheap models for the cross-model floor. Candidates:
+   the small-model ablation set already defined in experiments.toml.
+   Confirm they span at least 3 providers (OpenRouter, Ollama,
+   direct API) so the prompt can't rely on provider-specific
+   formatting.
+5. Run the optimizer for a fixed budget (API cost cap — decide up
+   front, include in the spike note). Score the output prompt on
+   the held-out verification sweep (ticket 0030) to catch
+   overfitting to the optimizer's own training split.
+6. **Report the Pareto frontier**, not just the "best" prompt.
+   For each optimizer iteration, plot: recall (#3) vs fraction-at-
+   evidence-4 (#4), colored by the min-of-5-models constraint (#1).
+   This makes the completeness/sourcing tradeoff visible and lets
+   the operator choose where to sit on the curve.
+7. Write the spike note with the comparison table, the rationale,
+   the prototype results, and the decision.
+
+## Measurement hygiene (non-negotiable)
+
+Whatever framework we adopt must not contaminate `measurements.jsonl`.
+Optimizer runs produce a lot of prompts and scores that are *not*
+published measurements; they're engineering artifacts. The ticket
+must land with a clear wall between:
+- engineering artifacts (optimizer traces, intermediate prompts,
+  per-run scores) — stored outside `outputs/<sweep>/`
+- published measurements (the final held-out run of the chosen
+  prompt against the standard eval) — stored in `measurements.jsonl`
+  the normal way
+
+## Test
+
+A short script or notebook that:
+- runs the chosen optimizer on one condition under the API budget
+  cap using `min_of_5(recall × hallucination_gate)`,
+- scores the optimized prompt on the held-out verification sweep
+  (ticket 0030), and
+- produces a before/after table (current hand-tuned baseline vs
+  optimized) reporting: recall per model, hallucination count,
+  min-of-5 score, cost, wall-clock time.
+  Evidence scores tracked as observed outcome, not as success
+  criterion for the optimizer itself.
+
+## Exit criteria
+
+- Comparison table of the candidate frameworks committed to `docs/`
+  or inlined in the spike note on this ticket.
+- One framework recommended with a written rationale; DSPy is the
+  prior unless ruled out.
+- Composite objective defined: `min_of_5(recall × hallucination_gate)`
+  subject to cost cap.
+- Prototype run completed on one condition under a fixed API budget,
+  with before/after numbers on the held-out verification sweep.
+- **`docs/quality-grounding.md` committed** — standalone review
+  mapping result quality targets and system requirements to
+  philosophy-of-science and professional-conduct frameworks. Written
+  to be citable from the journal article. (Done — already committed.)
+- Honest verdict on whether "one universal prompt" survives contact
+  with our multi-model, multi-condition setup or whether any of
+  these tools is better framed as a per-condition optimizer.
+- Decision recorded: adopt (which tool, which stages), defer, or
+  reject. If adopt, open a follow-up ticket for integration into
+  the prompt_modules workflow and the measurement-hygiene wall.
