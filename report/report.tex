@@ -44,9 +44,9 @@
 \begin{abstract}
 Nous évaluons la capacité de l'IA à produire des statistiques énergétiques, en utilisant l'inventaire des centrales thermiques du Vietnam comme benchmark. Seize grands modèles de langage sont testés en requête directe puis en approche conversationnelle avec relances~; les résultats sont ensuite améliorés par Retrieval Augmented Generation (RAG) à partir de documents sources, et comparés aux données disponibles dans les graphes de connaissances globaux (OpenStreetMap, Wikidata, Diffbot, DBpedia).
 
-Les LLM seuls retournent 30 à 40 centrales sur 163 recensées~; l'approche RAG wholesale porte le meilleur résultat à 144 centrales (F1 = 93,8\,\%). La décomposition par type de combustible élimine la troncature des sorties et atteint 163/163 centrales (F1 = 98,8\,\%) pour 0,06~\$, avec un modèle open-weight. Les graphes globaux apportent des données complémentaires mais aucun n'est suffisant seul.
+Les LLM seuls retournent 30 à 40 centrales sur 163 recensées~; l'approche RAG wholesale porte le meilleur résultat à 144 centrales (F1 = 93,8\,\%). La décomposition par type de combustible élimine la troncature des sorties et atteint un F1 moyen de 89,8\,\% [85,8--95,6\,\%, IC 95\,\%, $n=4$] pour 0,06~\$, avec un modèle open-weight. Les graphes globaux apportent des données complémentaires mais aucun n'est suffisant seul.
 
-Ces résultats montrent qu'un pipeline RAG avec décomposition des requêtes récupère 99\,\% d'un inventaire expert pour un coût marginal. Le 1\,\% restant relève de l'ingénierie de la connaissance~: filtrage des hallucinations, résolution d'entités et traçabilité des sources.
+Ces résultats montrent qu'un pipeline RAG avec décomposition des requêtes récupère la quasi-totalité d'un inventaire expert pour un coût marginal, mais avec une variance inter-runs élevée. Le défi restant relève de l'ingénierie de la connaissance~: filtrage des hallucinations, résolution d'entités et traçabilité des sources.
 \end{abstract}
 
 \chapter{Introduction}
@@ -306,7 +306,7 @@ La troncature étant le principal facteur limitant, on teste une stratégie de d
 
 \begin{table}[htbp]
 \centering
-\caption{Effet de la décomposition par combustible~: F1 médian et meilleur run (3 runs par modèle).}\label{tab:decomposition}
+\caption{Effet de la décomposition par combustible~: F1 médian et meilleur run.\textsuperscript{a}}\label{tab:decomposition}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 Modèle & \multicolumn{2}{c}{Requête unique} & \multicolumn{2}{c}{Décomposé} \\
@@ -316,15 +316,18 @@ Modèle & \multicolumn{2}{c}{Requête unique} & \multicolumn{2}{c}{Décomposé} 
 Mistral Small 4     & 86,4\,\% & 87,2\,\% & 83,2\,\% & 89,6\,\% \\
 GPT-5.4             & 77,0\,\% & 93,8\,\% & 70,7\,\% & 74,8\,\% \\
 Mistral Large 3     & 72,2\,\% & 88,4\,\% & \textbf{94,8\,\%} & \textbf{95,6\,\%} \\
-DeepSeek V3.2       & 60,1\,\% & 68,5\,\% & \textbf{93,7\,\%} & \textbf{98,8\,\%} \\
+DeepSeek V3.2       & 60,1\,\% & 68,5\,\% & \textbf{87,3\,\%} & \textbf{98,8\,\%} \\
 Gemini 2.5 Flash Lite & 58,0\,\% & 96,7\,\% & 75,1\,\% & 97,5\,\% \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+{\footnotesize \textsuperscript{a}Meilleur = meilleur run individuel~; Méd.\ F1 = médiane sur $n$ runs ($n$=3 sauf DeepSeek~V3.2 décomposé, $n$=4). Voir le texte pour l'IC bootstrap du résultat principal.}
 \end{table}
 
 La décomposition élimine la troncature~: 12 des 14 runs complétés atteignent 100\,\% de rappel (163/163 centrales), contre un maximum de 144 en requête unique. L'effet net sur le F1 dépend du modèle~: fortement positif pour les modèles qui étaient limités par la troncature (DeepSeek~: +33,6 points, Mistral~Large~: +22,6 points), mais négatif pour GPT-5.4 qui était déjà performant en requête unique.
 
-Le meilleur résultat absolu est DeepSeek~V3.2 décomposé~: 163 centrales trouvées sur 163, seulement 4 hallucinations, F1 = 98,8\,\%, pour un coût de 0,06~\$. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok grâce à la décomposition.
+Le meilleur résultat absolu est DeepSeek~V3.2 décomposé~: sur $n=4$ réplicats, F1 moyen = 89,8\,\% [85,8--95,6\,\%, IC 95\,\%], meilleur run 98,8\,\%, pour un coût de 0,06~\$ par run. La variance élevée (écart de 13 points entre runs) reflète la sensibilité de la décomposition au bruit d'échantillonnage du LLM. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok grâce à la décomposition.
 
 Le principal inconvénient est massif et dépasse largement la simple fuite inter-catégories~: la décomposition introduit des hallucinations systématiques là où la requête unique n'en produisait aucune. Pour une même base documentaire et un même jeu de référence, le taux de faux positifs (entrées du système absentes de la référence) passe de 0\,\% à 40--52\,\% chez GPT-5.4, et de 0\,\% à 19--29\,\% chez Mistral~Small (tableau~\ref{tab:decomposition-fp}). Les trois modèles stables en RAG de base (GPT-5.4, DeepSeek, Mistral~Large) se comportent tous ainsi~: zéro hallucination en requête unique, plusieurs dizaines en décomposition.
 
@@ -461,7 +464,7 @@ Ce rapport évalue les capacités de l'IA à produire des statistiques énergét
 \item[LLM seuls] Les modèles flagship (400B+) retournent 30--40 centrales en requête directe, contre 163 dans l'inventaire de référence. Une approche conversationnelle avec relances permet d'atteindre 80--90 centrales, confirmant que les modèles ne révèlent qu'un tiers de leur connaissance à la première réponse.
 \item[RAG wholesale] L'intégration d'un corpus de 18 documents sources (37\,283 tokens) améliore significativement les résultats. Sur 5 modèles évalués 3 fois chacun, le meilleur run individuel atteint 144 centrales (GPT-5.4, F1 = 93,8\,\%). La troncature des sorties, et non le manque de connaissance, est le principal facteur limitant.
 \item[Agrégation multi-runs] Le vote par union sur 3 runs compense la troncature~: DeepSeek passe de 85 à 149 centrales (F1 = 95,5\,\%). Le vote majoritaire profite aux modèles sujets aux hallucinations (Gemini~: +23\,\% de F1).
-\item[Décomposition] La décomposition par type de combustible (3 sous-requêtes au lieu d'une) élimine la troncature~: DeepSeek~V3.2 atteint 163/163 centrales avec F1 = 98,8\,\% pour 0,06~\$. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok.
+\item[Décomposition] La décomposition par type de combustible (3 sous-requêtes au lieu d'une) élimine la troncature~: DeepSeek~V3.2 atteint un F1 moyen de 89,8\,\% [85,8--95,6\,\%, IC 95\,\%, $n=4$] pour 0,06~\$ par run. Un modèle open-weight à 0,26~\$/Mtok surpasse GPT-5.4 à 2,50~\$/Mtok.
 \item[Graphes de connaissances] Les graphes globaux (OSM, Wikidata, Diffbot, DBpedia) retournent entre 20 et 54 centrales chacun, avec des couvertures complémentaires. Les outils de construction automatique de graphes (R2R, TrustGraph) restent immatures pour notre cas d'usage.
 \end{description}
 
@@ -469,7 +472,7 @@ Ce rapport évalue les capacités de l'IA à produire des statistiques énergét
 
 \section{Évaluation technologique}
 
-\textbf{Ce qui fonctionne}~: L'approche RAG avec décomposition des requêtes récupère 99\,\% d'un inventaire expert pour 0,06~\$. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
+\textbf{Ce qui fonctionne}~: L'approche RAG avec décomposition des requêtes atteint un F1 moyen de 89,8\,\% [IC 95\,\%~: 85,8--95,6\,\%] pour 0,06~\$ par run. La conversion PDF vers Markdown, bien qu'imparfaite, est opérationnelle. Les graphes globaux comme OpenStreetMap fournissent des données complémentaires de qualité.
 
 \textbf{Ce qui reste à résoudre}~: La décomposition introduit des hallucinations non thermiques dans les sous-requêtes, nécessitant un filtrage post-traitement. Un graphe de connaissances local aligné sur une ontologie (OEO) assurerait la traçabilité. L'empilement des stratégies (décomposition + union + filtre de précision) reste à évaluer.
 
@@ -491,7 +494,7 @@ Notre approche se distingue des assistants de recherche existants par~:
 \section{Perspectives}
 
 % --- Para 1: pilot accuracy, cost eliminated ---
-Les résultats de cette étude pilote montrent qu'un pipeline RAG avec décomposition des requêtes récupère déjà 98,8\,\% d'un inventaire expert, pour un coût marginal de 0,06\,\$. Une décomposition descriptive de la variance (modèle $\times$ méthode) suggère que, dans ce pilote, le design de la méthode explique davantage de variance que le choix du modèle (tableau~\ref{tab:variance})~; toutefois, le terme d'interaction modèle $\times$ méthode est substantiel, ce qui signifie que les effets principaux doivent être interprétés avec prudence~: un modèle open-weight à 0,26\,\$/Mtok surpasse des modèles propriétaires dix fois plus coûteux. Ces résultats proviennent d'un sous-design équilibré à effectifs réduits ($n=2$ réplicats par cellule)~; les scores F1 sont bornés et les runs sont des pseudo-réplicats (même prompt et même pipeline, mesurant uniquement le bruit d'échantillonnage du LLM). La précision atteinte sur le cas pilote vietnamien est encourageante~; la barrière du coût est levée.
+Les résultats de cette étude pilote montrent qu'un pipeline RAG avec décomposition des requêtes récupère en moyenne 89,8\,\% d'un inventaire expert [85,8--95,6\,\%, IC 95\,\%, $n=4$], pour un coût marginal de 0,06\,\$ par run. Une décomposition descriptive de la variance (modèle $\times$ méthode) suggère que, dans ce pilote, le design de la méthode explique davantage de variance que le choix du modèle (tableau~\ref{tab:variance})~; toutefois, le terme d'interaction modèle $\times$ méthode est substantiel, ce qui signifie que les effets principaux doivent être interprétés avec prudence~: un modèle open-weight à 0,26\,\$/Mtok surpasse des modèles propriétaires dix fois plus coûteux. Ces résultats proviennent d'un sous-design équilibré à effectifs réduits ($n=2$ réplicats par cellule)~; les scores F1 sont bornés et les runs sont des pseudo-réplicats (même prompt et même pipeline, mesurant uniquement le bruit d'échantillonnage du LLM). La précision atteinte sur le cas pilote vietnamien est encourageante~; la barrière du coût est levée.
 
 % --- Para 2: trust (Level 3) is the next gate ---
 La précision ne suffit cependant pas à rendre les données exploitables. Un modélisateur de systèmes énergétiques n'intégrera dans ses scénarios que des données dont il peut vérifier la provenance. Chaque donnée produite par le pipeline doit être traçable jusqu'au document source~: une décision gouvernementale, un rapport annuel d'entreprise, un relevé du régulateur. Le système doit exprimer des intervalles de confiance sur les agrégats, et signaler explicitement ses lacunes plutôt que de les combler par fabrication. C'est le niveau~3 du cadre d'évaluation proposé (provenance)~: le passage obligé entre «~la méthode fonctionne~» et «~les données sont utilisables~».
@@ -523,7 +526,7 @@ Incrémentalité & Monolithique        & Actif par actif, source par source \\
 \noindent Le corpus constitué est lui-même un actif durable~: une fois les PDP, rapports EVN et décisions provinciales indexés et convertis, ils répondent à des questions que le prompt initial n'avait pas anticipées. La donnée de qualité recherche n'est pas celle qui est exacte~: c'est celle dont les erreurs sont \emph{localisables}. Dans un pilote sur trois extractions sourcées (337~lignes, modèle Claude~Opus), 77\,\% des citations renvoient à des sources primaires (décisions gouvernementales, rapports annuels EVN) et aucune source fabriquée n'a été identifiée lors d'une vérification manuelle.
 
 % --- Para 5b: empirical cost-of-trust (verification tradeoff) ---
-Une expérience de vérification automatisée quantifie ce compromis~: sur la meilleure extraction (DeepSeek~V3.2, décomposition, F1\,=\,98,8\,\%, 167~lignes), la confrontation de chaque ligne avec la base de référence par appariement LP global (le même algorithme que le benchmark) identifie 163~centrales confirmées et 4~fabrications. Au seuil d'évidence~$\geq 3$ (au moins une source primaire), la précision et la couverture atteignent toutes deux 100\,\% (F1\,=\,100\,\%)~: les 4~hallucinations sont éliminées et les 163~centrales réelles sont toutes retrouvées dans la base de référence. Ce résultat montre que la vérification outil, lorsqu'elle utilise un appariement structurel (nom, capacité, province, combustible) plutôt qu'une simple similarité textuelle, sépare parfaitement les données vérifiables des fabrications. Le tableau~\ref{tab:verification} détaille ce compromis par seuil d'évidence.
+Une expérience de vérification automatisée quantifie ce compromis~: sur la meilleure extraction (DeepSeek~V3.2, décomposition, F1 moyen\,=\,89,8\,\% [85,8--95,6\,\%, IC 95\,\%, $n$=4], meilleur run 98,8\,\%, 167~lignes), la confrontation de chaque ligne avec la base de référence par appariement LP global (le même algorithme que le benchmark) identifie 163~centrales confirmées et 4~fabrications. Au seuil d'évidence~$\geq 3$ (au moins une source primaire), la précision et la couverture atteignent toutes deux 100\,\% (F1\,=\,100\,\%)~: les 4~hallucinations sont éliminées et les 163~centrales réelles sont toutes retrouvées dans la base de référence. Ce résultat montre que la vérification outil, lorsqu'elle utilise un appariement structurel (nom, capacité, province, combustible) plutôt qu'une simple similarité textuelle, sépare parfaitement les données vérifiables des fabrications. Le tableau~\ref{tab:verification} détaille ce compromis par seuil d'évidence.
 
 \begin{table}[htbp]
 \centering
