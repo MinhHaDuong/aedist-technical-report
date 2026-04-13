@@ -312,3 +312,7 @@ class TestHeadlineReplicates:
         mean, lo, hi = bootstrap_ci(f1s, seed=42)
         assert lo < mean <= hi
         assert hi - lo > 0  # CI is non-degenerate
+        # Values must match what is reported in report.tex and slides.tex
+        assert abs(mean - 0.898) < 0.005, f"Mean {mean:.3f} does not match reported 89.8%"
+        assert abs(lo - 0.858) < 0.01, f"CI lower {lo:.3f} does not match reported 85.8%"
+        assert abs(hi - 0.956) < 0.01, f"CI upper {hi:.3f} does not match reported 95.6%"

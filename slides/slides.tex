@@ -97,7 +97,7 @@ That's \textbf{47\%} of the 163 reference plants.
 \medskip
 With the right method (RAG + decomposition),
 a cheap model recovers \textbf{163/163} plants.\\
-F1 = 98.8\%. Cost: \$0.06.
+F1 = 89.8\% [85.8--95.6\%, 95\% CI, $n$=4]. Cost: \$0.06.
 
 \column{0.45\textwidth}
 \textbf{So are we done?}
@@ -545,7 +545,7 @@ GPT-5.4             & 77\% & 94\% & $\rightarrow$ & 71\% & 75\% \\
 \end{tabular}
 
 \medskip
-\textbf{Best result:} DeepSeek V3.2 --- 163/163 plants, F1 = 98.8\%, \textbf{\$0.06}\\
+\textbf{Best result:} DeepSeek V3.2 --- 163/163 plants, mean F1 = 89.8\% [85.8--95.6\%], \textbf{\$0.06}\\
 \small Decomposition is a \textbf{method condition}, not a model property. Same model: 60\% $\to$ 99\%.
 \end{frame}
 
@@ -728,12 +728,12 @@ Which method you use matters more than which model you pick.
   \item \NumModelsTested{} models, 6 condition axes, \$0.82
   \item Best baseline: 125/163 (model only)
   \item Best RAG: 141/163 (cheap model + docs)
-  \item \textbf{Best overall: 163/163, F1=98.8\%, \$0.06}
+  \item \textbf{Best overall: 163/163, mean F1=89.8\% [85.8--95.6\%], \$0.06}
 \end{itemize}
 
 \medskip
 \textbf{Bottom line:}\\
-An off-the-shelf pipeline with the right \textbf{method conditions} recovers 98.8\% of an expert inventory for \$0.06.
+An off-the-shelf pipeline with the right \textbf{method conditions} recovers 89.8\% [85.8--95.6\%] of an expert inventory for \$0.06.
 \end{columns}
 \end{frame}
 
@@ -745,7 +745,7 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 98.
 \begin{itemize}
   \item Method conditions (RAG, decomposition, aggregation)
         matter more than model choice
-  \item Off-the-shelf pipeline recovers 98.8\% of an expert
+  \item Off-the-shelf pipeline recovers 89.8\% [85.8--95.6\%] of an expert
         inventory for \$0.06
   \item Feasibility of automated evaluation via
         fuzzy reconciliation
@@ -805,7 +805,7 @@ Levels 3--4 define the path to research-quality data.}
 \column{0.42\textwidth}
 \textbf{What the pilot de-risks:}
 \begin{enumerate}
-  \item The right methods recover 98.8\% of an expert
+  \item The right methods recover 89.8\% [85.8--95.6\%] of an expert
         inventory --- data quality is within reach
   \item Automated evaluation (fuzzy reconciliation)
         works at scale
