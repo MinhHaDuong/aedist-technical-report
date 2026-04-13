@@ -1,0 +1,43 @@
+{
+  "model": "google/gemma-4-31b-it",
+  "run": 1,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,COD,Province,Capacity (MWe)\nUông Bí,Coal,Operational,2011-12-31,Quảng Ninh,105\nUông Bí extension 1,Coal,Operational,2011-12-31,Quảng Ninh,300\nUông Bí extension 2,Coal,Operational,2011-12-31,Quảng Ninh,330\nPha Lai 1,Coal,Operational,2011-12-31,Hải Dương,440\nPha Lai 2,Coal,Operational,2011-12-31,Hải Dương,600\nNinh Bình,Coal,Operational,2011-12-31,Ninh Bình,100\nHai Phòng 1,Coal,Operational,2011-12-31,Hải Phòng,600\nQuang Ninh 1,Coal,Operational,2011-12-31,Quảng Ninh,600\nNa Dương,Coal,Operational,2011-12-31,Lạng Sơn,111\nCao Nhan,Coal,Operational,2011-12-31,Quảng Ninh,115\nCam Pha,Coal,Operational,2011-12-31,Quảng Ninh,600\nSon Dong,Coal,Operational,2011-12-31,Quảng Ninh,220\nFormosa Hà Tĩnh #2,Coal,Operational,2016,Hà Tĩnh,150\nFormosa Hà Tĩnh #5,Coal,Operational,2016,Hà Tĩnh,150\nThủ Đức (Oil-fired),Oil,Operational,2011-12-31,TP.HCM,165\nCần Thơ (Oil-fired),Oil,Operational,2011-12-31,Cần Thơ,35\nÔ Môn 1 (Oil-fired),Oil,Operational,2011-12-31,Cần Thơ,660\nHiệp Phước,Oil,Operational,2011-12-31,TP.HCM,375\nBourbon,Oil,Operational,2011-12-31,TP.HCM,24\nPhú Mỹ 1,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,1108\nPhú Mỹ 2.1,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,896\nPhú Mỹ 4,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,458\nThu Duc (Gas),Local Natural Gas,Operational,2011-12-31,TP.HCM,114\nCan Tho (Gas),Local Natural Gas,Operational,2011-12-31,Cần Thơ,150\nBà Ria,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,389\nNhơn Trạch 1,Local Natural Gas,Operational,2011-12-31,Đồng Nai,465\nNhơn Trạch 2,Local Natural Gas,Operational,2011-12-31,Đồng Nai,750\nCà Mau 1,Local Natural Gas,Operational,2011-12-31,Cà Mau,750\nCà Mau 2,Local Natural Gas,Operational,2011-12-31,Cà Mau,750\nPhú Mỹ 2.2 BOT,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,740\nPhú Mỹ 3 BOT,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,740\nVê Dan,Local Natural Gas,Operational,2011-12-31,Long An,72\nDam Phú Mỹ,Local Natural Gas,Operational,2011-12-31,Bà Rịa-Vũng Tàu,21\nThai Binh,Coal,Operational,2018,Thái Bình,600\nVinh Tan 4,Coal,Operational,2018,Bình Thuận,1200\nQuang Ninh 2,Coal,Operational,2017,Quảng Ninh,600\nDuyen Hai 1,Coal,Operational,2017,Trà Vinh,1245\nDuyen Hai 3,Coal,Operational,2017,Trà Vinh,1245\nNghi Son 1,Coal,Operational,2017,Thanh Hóa,600\nHai Phong 2,Coal,Operational,2017,Hải Phòng,600\nVinh Tan 2,Coal,Operational,2017,Bình Thuận,1244\nMong Duong 1,Coal,Operational,2017,Quảng Ninh,1080\nThăng Long 1,Coal,Operational,2017,Hải Dương,300\nThăng Long 2,Coal,Operational,2019,Hải Dương,300\nDuyên Hải III,Coal,Operational,2016,Trà Vinh,600\nDuyên Hải III Extension,Coal,Operational,2019,Trà Vinh,660\nVĩnh Tân IV,Coal,Operational,2017,Bình Thuận,1200\nVĩnh Tân IV Extension,Coal,Operational,2019,Bình Thuận,600\nHải Dương 1,Coal,Operational,2016,Hải Dương,600\nHải Dương 2,Coal,Operational,2017,Hải Dương,600\nNghi Son 2,Coal,Operational,2021,Thanh Hóa,1200\nVũng Áng II,Coal,Operational,2022,Hà Tĩnh,1200\nQuảng Trạch I,Coal,Operational,2024,Quảng Bình,1200\nVân Phong I,Coal,Operational,2023,Khánh Hòa,1320\nSông Hậu I,Coal,Operational,2021,Hậu Giang,1200\nSông Hậu II,Coal,Operational,2024,Hậu Giang,2000\nLong Phú I,Coal,Operational,2019,Sóc Trăng,1200\nLong Phú II,Coal,Planned,2025,Sóc Trăng,1320\nLong Phú III,Coal,Planned,2021,Sóc Trăng,1800\nNam Định I,Coal,Operational,2024,Nam Định,1200\nNa Dương II,Coal,Operational,2023,Lạng Sơn,110\nAn Khánh - Bắc Giang,Coal,Operational,2023,Bắc Giang,650\nÔ Môn III,Local Natural Gas,Operational,2020,Cần Thơ,750\nÔ Môn IV,Local Natural Gas,Operational,2023,Cần Thơ,750\nDung Quất I,Local Natural Gas,Operational,2024,Quảng Ngãi,750\nDung Quất II,Local Natural Gas,Operational,2026,Quảng Ngãi,750\nDung Quất III,Local Natural Gas,Planned,2024,Quảng Ngãi,750\nMiền Trung I,Local Natural Gas,Operational,2024,Quảng Trị,750\nMiền Trung II,Local Natural Gas,Operational,2024,Quảng Trị,750\nQuảng Trị I,Local Natural Gas,Planned,2026,Quảng Trị,340\nNhơn Trạch 3 & 4,Imported LNG,Planned,2021-2030,Đồng Nai,1624\nHiệp Phước I,Imported LNG,Planned,2021-2030,TP.HCM,1200\nLong An I,Imported LNG,Planned,2021-2030,Long An,1500\nLong An II,Imported LNG,Planned,2031-2035,Long An,1500\nBạc Liêu,Imported LNG,Planned,2021-2030,Bạc Liêu,3200\nSơn Mỹ I,Imported LNG,Planned,2021-2030,Bình Thuận,2250\nSơn Mỹ II,Imported LNG,Planned,2021-2030,Bình Thuận,2250\nLNG Quảng Ninh,Imported LNG,Planned,2021-2030,Quảng Ninh,1500\nLNG Thái Bình,Imported LNG,Planned,2021-2030,Thái Bình,1500\nLNG Nghi Sơn,Imported LNG,Planned,2021-2030,Thanh Hóa,1500\nLNG Quảng Trạch II,Imported LNG,Planned,2021-2030,Quảng Bình,1500\nLNG Hải Lăng,Imported LNG,Planned,2021-2030,Quảng Trị,1500\nLNG Cà Ná,Imported LNG,Planned,2021-2030,Ninh Thuận,1500\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80864,
+    "completion_tokens": 2310
+  },
+  "wall_seconds": 680.62,
+  "cost_usd": 0.01062768,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Google",
+    "context_window": 262144
+  }
+}

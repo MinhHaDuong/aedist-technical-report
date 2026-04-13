@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:31b",
+  "run": 2,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the provided text, there are no specific names of individual power plants listed (e.g., \"Plant A\" or \"Plant B\"). Instead, the documents discuss plants as **categories** of energy infrastructure. \n\nBelow is a summary of the status and trends of these categories as described in the provided materials:\n\n### Summary of Power Plant Categories\n\n| Plant Category | Status / Trend (Based on PDP 7 & PDP 8) | Fuel Type | Notes |\n| :--- | :--- | :--- | :--- |\n| **LNG Plants** | **Increasing / Prioritized** | Gas (LNG) | PDP 8 emphasizes a shift toward LNG to replace coal and provide a transition to renewable energy. |\n| **Coal Plants** | **Decreasing / Restricted** | Coal | PDP 8 shows a significant reduction in the number of planned coal plants compared to PDP 7, aligning with \"Net Zero\" goals. |\n| **Renewable Energy Plants** | **Expanding** | Wind, Solar, etc. | Integrated as a primary goal for energy transition in the latest planning. |\n\n**Key Insights from the Text:**\n*   **Transition:** There is a clear strategic shift from **Coal $\\rightarrow$ LNG $\\rightarrow$ Renewables**.\n*   **Policy Driver:** This shift is driven by the commitment to reach **Net Zero emissions by 2050**.\n*   **Capacity:** The transition involves reducing the reliance on coal-fired power and increasing the capacity of LNG and renewable sources to ensure energy security while reducing carbon footprints.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 3377
+  },
+  "wall_seconds": 2090.852,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

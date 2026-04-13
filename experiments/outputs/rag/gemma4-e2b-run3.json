@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:e2b",
+  "run": 3,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the data extracted from the provided documents (EVN Annual Report 2010-2011, PDP7/PDP8 annexes), here is a consolidated table listing the thermal power plants in Vietnam.\n\n**Note:** The data is synthesized from various tables and annexes provided in the input. The specific construction stages, connection dates, and fuel types are derived from the context of the source documents.\n\n```csv\nTên nhà máy,Công suất đặt (MW),Chủ sở hữu,Loại nhiên liệu,Giai đoạn/Tình trạng,Ngày vận hành/Dự kiến COD,Tỉnh/Khu vực\nTĐ Sơn La,1600,EVN,Coal fired,Đã vận hành,2010-2011,Sơn La\nTĐ Hòa Bình,1920,EVN,Hydropower,Đã vận hành,2010-2011,Hòa Bình\nTĐ Tuyên Quang,342,EVN,Hydropower,Đã vận hành,2010-2011,Tuyên Quang\nTĐ IaLy,720,EVN,Hydropower,Đã vận hành,2010-2011,IaLy\nTĐ Sê San 3,260,EVN,Hydropower,Đã vận hành,2010-2011,Sê San 3\nTĐ Sê San 4,360,EVN,Hydropower,Đã vận hành,2010-2011,Sê San 4\nTĐ Buôn Kuôp,280,EVN,Hydropower,Đã vận hành,2010-2011,Buôn Kuôp\nTĐ Srêpok 3,220,EVN,Hydropower,Đã vận hành,2010-2011,Srêpok 3\nTĐ Tri An,420,EVN,Hydropower,Đã vận hành,2010-2011,Tri An\nTĐ An Khê,160,EVN,Hydropower,Đã vận hành,2010-2011,An Khê\nThác Bà,120,EVN JSC,Hydropower,Đã vận hành,2010-2011,Thác Bà\nVĩnh Sơn,66,EVN JSC,Hydropower,Đã vận hành,2010-2011,Vĩnh Sơn\nSong Hinh,70,EVN JSC,Hydropower,Đã vận hành,2010-2011,Song Hinh\nThác Mơ,150,EVN JSC,Hydropower,Đã vận hành,2010-2011,Thác Mơ\nA Vương,210,EVN JSC,Hydropower,Đã vận hành,2010-2011,A Vương\nSong Ba Ha,220,EVN JSC,Hydropower,Đã vận hành,2010-2011,Song Ba Ha\nNhiệt điện than - Coal fired,3371,N/A,Coal fired,Đang xây dựng (dự án lớn),N/A,N/A\nTua bin khí, chu trình hỗn hợp - Combined/open cycle gas turbine,7936,N/A,Đang xây dựng (dự án lớn),N/A,N/A\nNhiệt điện dầu - Oil fired,927,N/A,Oil fired,Đang xây dựng (dự án lớn),N/A,N/A\nEVN's PowerCorporations,285,EVN,N/A,Đã vận hành,2010-2011,N/A\nNhiệt điện than (dự án PDP8),600,N/A,Coal fired,Dự án (NMNĐ Cẩm Thanh),2021-2030,N/A\nNMNĐ Na Dương II,110,EVN,Coal fired,Đang xây dựng (dự án PDP8),2021\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 1503
+  },
+  "wall_seconds": 128.168,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

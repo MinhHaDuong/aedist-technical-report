@@ -1,0 +1,25 @@
+{
+  "run_id": "7176d49094cb",
+  "timestamp": "2026-04-13T17:43:45.449405Z",
+  "method": "rag",
+  "method_params": {
+    "model": "gemma4:e2b",
+    "prompt_version": "rag",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 128.168,
+    "tokens_in": 80421,
+    "tokens_out": 1503
+  },
+  "result_file": "experiments/outputs/rag/gemma4-e2b-run3.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

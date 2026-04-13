@@ -1,0 +1,43 @@
+{
+  "model": "gemma4:e2b",
+  "run": 2,
+  "date": "2026-04-13",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Based on the information extracted from the provided PDF segments (EVN Annual Report 2010-2011, PDP7 Annexes, and PDP8 Study E-542), here is a synthesized table listing key thermal power plant information.\n\n**Note:** The data is compiled from various sections of the annual reports and planning documents. Some fields (like construction stage and COD date) are inferred or derived from the provided planning documents (PDP7/PDP8).\n\n```csv\nFuel Type,Construction Stage,COD Date (Planned/Actual),Province,Capacity (MW)\nCoal fired,Operational (as of 2011),2011,Nhiệt điện than - Coal fired,3371\nOil fired,Operational (as of 2011),2011,Nhiệt điện dầu - Oil fired,927\nCombined/open cycle gas turbine,Operational (as of 2011),2011,Tua bin khí, chu trình hỗn hợp,7936\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Na Dương II,110\nCoal fired,Planned/Under Development,2021-2030,NMNĐ An Khánh - Bắc Giang,650\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Vũng Áng II,1330\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Quảng Trạch I,1403\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Vân Phong I,1432\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Long Phú I,1200\nCoal fired,Planned/Under Development,2021-2030,NMNĐ Long An I,2200\nCoal fired,Planned/Under Development,2021-2030,TBKHH Ô Môn I,660\nCoal fired,Planned/Under Development,2021-2030,TBKHH Ô Môn II,1050\nCoal fired,Planned/Under Development,2021-2030,TBKHH Ô Môn III,1050\nCoal fired,Planned/Under Development,2021-2030,TBKHH Ô Môn IV,1050\nLocal Natural Gas,Planned/Under Development,2021-2030,NĐ đồng phát Hải Hà 1,3,4,2,2021-2030,2100\nLocal Natural Gas,Planned/Under Development,2021-2030,NĐ đồng phát Hải Hà 2,2031-2035,600\nLocal Natural Gas,Planned/Under Development,2021-2030,NĐ đồng phát Hải Hà 3,2031-2035,600\nLocal Natural Gas,Planned/Under Development,2021-2030,NĐ đồng phát Hải Hà 4,2031-2035,600\nLocal Natural Gas,Planned/Under Development,2021-2030,NĐ đồng phát Đức Giang,100\nLocal Natural Gas,Planned/Under Development,2021-2030,LNG Quảng Ninh 1 (Cẩm Phả),1500\nLocal Natural Gas,Planned/Under Development,2021-2030,LNG Quảng Ninh 2 (Cẩm Phố)\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 80421,
+    "completion_tokens": 1505
+  },
+  "wall_seconds": 128.219,
+  "cost_usd": 0.0,
+  "model_metadata": {
+    "size_class": "edge",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 131072
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "run_id": "3382ce2a3cae",
+  "timestamp": "2026-04-13T17:43:55.267264Z",
+  "method": "rag",
+  "method_params": {
+    "model": "qwen3.5:2b",
+    "prompt_version": "rag",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 205.872,
+    "tokens_in": 78652,
+    "tokens_out": 17182
+  },
+  "result_file": "experiments/outputs/rag/qwen3.5-2b-run2.json",
+  "result_summary": {
+    "status": "error"
+  }
+}
