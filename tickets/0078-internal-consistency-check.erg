@@ -121,6 +121,18 @@ A plant with score 4 (two primary sources) should have two.
    If not: either a row is wrong, or the total is. Either way,
    something needs attention — route to HITL or a follow-up query.
 
+   **Note:** a document may state the same total in multiple places
+   — e.g., a round number in the text body ("Vietnam has ~20 GW of
+   coal capacity") and a precise number in a table annex (sum of
+   rows = 20,235 MW). The control totals pass should extract all
+   instances with their location (body vs annex, page number). If
+   two instances of the same total disagree, that's an intra-document
+   inconsistency — flag it before comparing against detail rows.
+   The table annex total is usually more authoritative than the
+   body text (rounded vs precise), but both are useful: the body
+   text catches gross errors, the annex total catches row-level
+   errors.
+
 7. **Add provenance columns to the extraction schema.** Update the
    prompt template to request `source_doc`, `source_table`,
    `source_page` columns. Update `schema.py` or the CSV spec to
