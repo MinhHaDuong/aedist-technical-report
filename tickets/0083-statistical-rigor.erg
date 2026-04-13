@@ -1,6 +1,6 @@
 %erg v1
 Title: Add multiple comparison correction and ANOVA diagnostics
-Status: doing
+Status: closed
 Created: 2026-04-12
 Author: claude
 
@@ -11,6 +11,7 @@ Author: claude
 2026-04-13T12:30Z claude note added correct_pvalues(fdr_bh) and check_anova_assumptions to stats.py
 2026-04-13T12:30Z claude note wired FDR into tabulate_comparaison, diagnostics into variance_decomposition+tabulate_variance
 2026-04-13T18:00Z claude status reimagined by IDD imagine
+2026-04-13T20:00Z claude status closed — PR #242 merged, 20 tests passing
 
 --- body ---
 ## Context

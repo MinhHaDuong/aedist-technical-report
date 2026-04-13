@@ -1,6 +1,6 @@
 %erg v1
 Title: Enforce temperature=0.0 across all query scripts and document legacy limitation
-Status: doing
+Status: closed
 Created: 2026-04-12
 Author: claude
 
@@ -9,6 +9,7 @@ Author: claude
 2026-04-13T12:00Z claude status doing — audit complete, control policy pending
 2026-04-13T12:00Z claude note audit: 211/280 outputs use unspecified temp (provider default ~1.0); 69/280 use t=0.0 (frontier/ablation parametric+websearch); 0/226 measurements.jsonl records have temperature populated; ablation RAG arm inconsistent (uses query_rag.py with no temp). See docs/temperature-audit.md
 2026-04-13T18:00Z claude status reimagined by IDD imagine
+2026-04-13T20:00Z claude status closed — PR #244 merged, 5 scripts + worker + prose
 
 --- body ---
 ## Context

@@ -1,6 +1,6 @@
 %erg v1
 Title: Report coherence metrics in the journal paper
-Status: doing
+Status: closed
 Created: 2026-04-12
 Author: claude
 
@@ -13,6 +13,7 @@ Author: claude
 2026-04-13T13:00Z claude note operator: scope v1 coherence to table-based (one doc, one table, one extraction). Cross-document fusion (PDP7 vs PDP8, planned vs as-built, measurand ambiguity, knowledge store) is v2+. Code already conforms — ControlTotal.source is per-table, no cross-document reasoning.
 2026-04-13T13:30Z claude note operator: control totals extracted by LLM, not hand-entered. Two-pass architecture: (1) extract aggregates from table headers/summaries, (2) extract detail rows, (3) coherence check compares them. LLM checks itself at a different granularity.
 2026-04-13T18:00Z claude status reimagined by IDD imagine
+2026-04-13T20:00Z claude status closed — PR #243 merged, coherence table in report
 
 --- body ---
 ## Context
