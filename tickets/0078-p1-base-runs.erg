@@ -1,11 +1,12 @@
 %erg v1
 Title: Run p1_base arm for remaining 28 census models
-Status: open
+Status: closed
 Created: 2026-04-13
 Author: haduong
 
 --- log ---
 2026-04-13T12:45Z haduong created — split from 0057 (infra done, runs pending)
+2026-04-13T13:00Z haduong status closed — won't do; n=9 CI [+8.4,+25.1] already excludes zero, effect size large, base-vs-census is auxiliary (validates ablation baseline), budget better spent on Phase 2 ablation or verification factorial which are actual open questions
 
 --- body ---
 ## Context
