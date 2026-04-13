@@ -1,6 +1,6 @@
 %erg v1
 Title: Fix decomposition sub-prompts that invite hallucination
-Status: doing
+Status: closed
 Created: 2026-04-11
 Author: claude
 
@@ -10,6 +10,7 @@ Author: claude
 2026-04-11T10:07Z claude status doing
 2026-04-11T10:35Z claude note checkpoint: patch + report edit landed (bf4ee08); probe set expanded to 12 models (decomposition_fix_probe); 14 of 33 cloud runs done in outputs/decomposed_v2/ (b6ba5ee); 3 glm-4.7-flash sentinels written, real Ollama runs deferred (Padme GPU busy); None-guard added to extract_csv_text after MiniMax M2.7 hit token cap with empty content; resume by re-running same command (should_skip handles cached); 19 cloud runs left, $0.69 of $5 spent
 2026-04-13T14:30Z haduong note rewrote actions: 17/18 probe runs done (kimi run3 missing), need evaluation pipeline not more runs; skip glm Ollama (Padme busy with 0021); cloud-only finish is ~30 min work
+2026-04-13T18:45Z claude status closed — PR #241 merged; evaluation pipeline run, dynamic table generated, report updated; DeepSeek FP 5.7%→0.8%, 3/5 models <1% FP
 
 --- body ---
 ## Context
