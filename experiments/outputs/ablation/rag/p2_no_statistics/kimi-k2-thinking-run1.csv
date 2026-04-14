@@ -1,0 +1,109 @@
+name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note
+Uông Bí 1,Coal,Decommissioned,1975,Quảng Ninh,105.0,EVN_AR_2010,PDP8_2023,Original 105MW unit retired per PDP8
+Uông Bí 2,Coal,Operational,2010,Quảng Ninh,330.0,EVN_AR_2010,EVN_AR_2017,"Extension unit 2, 330MW"
+Phả Lại 1,Coal,Operational,1986,Hải Dương,440.0,EVN_AR_2010,EVN_AR_2017,Four 110MW subcritical units
+Phả Lại 2,Coal,Operational,2001,Hải Dương,600.0,EVN_AR_2010,EVN_AR_2017,Two 300MW subcritical units
+Hải Phòng 1,Coal,Operational,1985,Hải Phòng,300.0,EVN_AR_2010,EVN_AR_2017,"Original 4x50MW + 2x50MW, now 300MW"
+Hải Phòng 2,Coal,Operational,2014,Hải Phòng,600.0,EVN_AR_2017,EVN_AR_2018,Two 300MW supercritical units
+Hải Phòng 3,Coal,Permitted,2028,Hải Phòng,1200.0,PDP8_2023,Report_58_2020,"2x600MW USC, delayed from 2025-26"
+Quảng Ninh 1,Coal,Operational,2009,Quảng Ninh,600.0,EVN_AR_2010,EVN_AR_2017,Two 300MW supercritical units
+Quảng Ninh 2,Coal,Operational,2014,Quảng Ninh,600.0,EVN_AR_2017,EVN_AR_2018,Two 300MW supercritical units
+Quảng Ninh 3,Coal,Proposed,2030,Quảng Ninh,1200.0,PDP7_2011,PDP8_2023,"2x600MW USC, per PDP7 plan"
+Ninh Bình,Coal,Decommissioned,1975,Ninh Bình,100.0,EVN_AR_2010,PDP8_2023,Retired 100MW unit per PDP8
+Thái Bình 1,Coal,Operational,2018,Thái Bình,600.0,PDP7A_2016,Report_32_2019,"2x300MW supercritical, operational 2018"
+Thái Bình 2,Coal,Under construction,2021,Thái Bình,600.0,PDP7A_2016,Report_58_2020,"2x300MW, delayed from 2017-18"
+Vĩnh Tân 1,Coal,Operational,2019,Bình Thuận,1200.0,PDP7_2011,Report_32_2019,"2x600MW BOT, completed 2019"
+Vĩnh Tân 2,Coal,Operational,2015,Bình Thuận,1244.0,EVN_AR_2017,EVN_AR_2018,"2x622MW, operational"
+Vĩnh Tân 3,Coal,Financed,2025,Bình Thuận,1980.0,PDP7A_2016,PDP8_2023,"3x660MW USC, delayed from 2022-23"
+Vĩnh Tân 4,Coal,Operational,2018,Bình Thuận,1200.0,PDP7A_2016,Report_32_2019,"2x600MW, operational 2018"
+Vĩnh Tân 4MR,Coal,Operational,2020,Bình Thuận,600.0,Report_32_2019,Report_58_2020,"600MW extension, operational 2020"
+Duyên Hải 1,Coal,Operational,2014,Trà Vinh,1244.0,EVN_AR_2017,EVN_AR_2018,"2x622MW, operational"
+Duyên Hải 2,Coal,Under construction,2022,Trà Vinh,1200.0,PDP7A_2016,Report_58_2020,"2x600MW BOT, delayed from 2021"
+Duyên Hải 3,Coal,Operational,2017,Trà Vinh,1244.0,PDP7A_2016,Report_32_2019,"2x622MW, operational 2017"
+Duyên Hải 3MR,Coal,Operational,2019,Trà Vinh,660.0,Report_32_2019,Report_58_2020,"660MW expansion, operational 2019"
+Mông Dương 1,Coal,Operational,2015,Quảng Ninh,1080.0,EVN_AR_2017,EVN_AR_2018,"2x540MW, operational"
+Mông Dương 2,Coal,Operational,2015,Quảng Ninh,1200.0,PDP7_2011,Report_32_2019,"2x600MW BOT, operational 2015"
+Mông Dương 3,Coal,Proposed,2028,Quảng Ninh,1200.0,PDP8_2023,Study_E542_2020,"2x600MW USC, per PDP8"
+Sông Hậu 1,Coal,Under construction,2022,Hậu Giang,1200.0,PDP7A_2016,Report_58_2020,"2x600MW, severely delayed from 2019"
+Sông Hậu 2,Coal,Proposed,2027,Hậu Giang,2000.0,PDP7A_2016,PDP8_2023,"2x1000MW, delayed from 2021-22"
+Sông Hậu 3,Coal,Proposed,2029,Hậu Giang,2000.0,PDP7_2011,Study_E542_2020,"2x1000MW, per PDP7"
+Long Phú 1,Coal,Suspended,2023,Sóc Trăng,1200.0,PDP7A_2016,Report_58_2020,"2x600MW, 78% complete, US sanctions halted progress"
+Long Phú 2,Coal,Cancelled,Sóc Trăng,1320,0,PDP8_2023,,PDP7A_2016
+Long Phú 3,Coal,Proposed,2028,Sóc Trăng,1800.0,PDP7_2011,PDP8_2023,"3x600MW, developer changed to Banpu"
+Vũng Áng 1,Coal,Operational,2013,Hà Tĩnh,1200.0,PDP7_2011,Report_32_2019,"2x600MW, operational 2013"
+Vũng Áng 2,Coal,Under construction,2024,Hà Tĩnh,1200.0,PDP7A_2016,PDP8_2023,"2x600MW USC, delayed from 2021-22"
+Vũng Áng 3,Coal,Suspended,2030,Hà Tĩnh,1200.0,PDP7A_2016,Study_E542_2020,"BOT suspended, may convert to LNG"
+Nghi Sơn 1,Coal,Operational,2018,Thanh Hóa,600.0,PDP7_2011,Report_32_2019,"2x300MW, operational 2018"
+Nghi Sơn 2,Coal,Operational,2022,Thanh Hóa,1200.0,PDP7A_2016,Report_58_2020,"2x600MW BOT, operational 2022"
+Hải Dương,Coal,Operational,2021,Hải Dương,1200.0,PDP7_2011,Report_58_2020,"2x600MW BOT, delayed 1 year"
+Nam Định 1,Coal,Financed,2024,Nam Định,1200.0,PDP7A_2016,PDP8_2023,"BOT financed, delayed 3 years"
+Nam Định 2,Coal,Proposed,2026,Nam Định,2000.0,PDP7_2011,Study_E542_2020,"2x1000MW USC, per PDP7"
+Quảng Trạch 1,Coal,Under construction,2024,Quảng Bình,1200.0,PDP7A_2016,Report_58_2020,"2x600MW, transferred from PVN, delayed 2.5 years"
+Quảng Trạch 2,Coal,Permitted,2026,Quảng Bình,1200.0,PDP7_2011,Report_58_2020,"2x600MW USC, EVN requested early development"
+Công Thanh,Coal,Under construction,2024,Thanh Hóa,600.0,PDP7A_2016,Report_58_2020,"IPP, 4 years delayed due to financing"
+An Khánh Bắc Giang,Coal,Under construction,2023,Bắc Giang,650.0,PDP7A_2016,PDP8_2023,"CFB technology, delayed 1 year"
+Na Dương 2,Coal,Under construction,2022,Lạng Sơn,110.0,PDP8_2023,Report_58_2020,"CFB technology, delayed 3 years"
+Quỳnh Lập 1,Coal,Proposed,2026,Thanh Hóa,1200.0,PDP8_2023,Report_58_2020,"2x600MW, FS in progress"
+Quỳnh Lập 2,Coal,Proposed,2028,Thanh Hóa,1200.0,Study_E542_2020,PDP8_2023,"2x660MW USC, may expand to 2000MW"
+Cẩm Phả 3,Coal,Proposed,2023,Quảng Ninh,440.0,PDP7A_2016,Report_58_2020,"2x220MW CFB, FS delayed"
+Formosa Hà Tĩnh 2,Coal,Operational,2020,Hà Tĩnh,650.0,PDP7A_2016,PDP8_2023,"650MW captive plant, operational"
+Formosa Đồng Nai 3,Coal,Operational,2019,Đồng Nai,150.0,PDP7A_2016,PDP7A_2016,"150MW captive plant, operational"
+Hải Hà 1,Coal,Operational,2019,Quảng Ninh,150.0,PDP7A_2016,Study_E542_2020,"150MW KCN captive, operational"
+Hải Hà 2-4,Coal,Permitted,2027,Quảng Ninh,1350.0,PDP7A_2016,Study_E542_2020,"3x600MW captive for KCN, phases 2-4"
+Phả Lại 3,Coal,Proposed,2025,Hải Dương,660.0,PDP8_2023,Study_E542_2020,660MW proposed in PDP8
+Thái Bình LNG,Imported LNG,Proposed,2028,Thái Bình,1500.0,PDP8_2023,Study_E542_2020,LNG conversion of coal project
+Quảng Ninh LNG,Imported LNG,Proposed,2027,Quảng Ninh,1500.0,PDP8_2023,Study_E542_2020,LNG project per PDP8
+LNG Hải Phòng 1-4,Imported LNG,Proposed,2030,Hải Phòng,16000.0,Study_E542_2020,PDP8_2023,"4x4500MW LNG complex, per study"
+Thái Bình LNG 1-4,Imported LNG,Proposed,2030,Thái Bình,4500.0,Study_E542_2020,PDP8_2023,"Multiple phases, 4500MW total"
+Nghi Sơn LNG,Imported LNG,Proposed,2028,Thanh Hóa,1500.0,PDP8_2023,Study_E542_2020,LNG conversion of coal project
+Hà Tĩnh LNG,Imported LNG,Proposed,2029,Hà Tĩnh,6000.0,Study_E542_2020,PDP8_2023,"LNG for KCN Vũng Áng, 6000MW potential"
+Quảng Bình LNG,Imported LNG,Proposed,2028,Quảng Bình,3000.0,Study_E542_2020,PDP8_2023,"LNG project, 3000MW"
+Hải Lăng LNG,Imported LNG,Permitted,2026,Quảng Trị,1500.0,PDP8_2023,Study_E542_2020,"Phase 1: 1500MW, POSCO pre-FS"
+Chân Mây LNG,Imported LNG,Proposed,2027,Thừa Thiên Huế,4000.0,Study_E542_2020,PDP8_2023,"4000MW potential, per study"
+Phong Điền LNG,Imported LNG,Proposed,2028,Thừa Thiên Huế,3000.0,Study_E542_2020,PDP8_2023,May convert from coal
+Quảng Nam LNG,Imported LNG,Proposed,2028,Quảng Nam,4000.0,Study_E542_2020,PDP8_2023,4000MW potential
+Bình Định LNG,Imported LNG,Proposed,2027,Bình Định,5000.0,Study_E542_2020,PDP8_2023,5000MW potential
+Vân Phong LNG,Imported LNG,Proposed,2026,Khánh Hòa,3000.0,Study_E542_2020,PDP8_2023,Mũi Giăng location
+Mỹ Giang LNG,Imported LNG,Proposed,2027,Khánh Hòa,6000.0,Study_E542_2020,PDP8_2023,"KKT Vân Phong, 6000MW"
+Cà Ná LNG,Imported LNG,Permitted,2025,Ninh Thuận,1500.0,PDP8_2023,Study_E542_2020,"Phase 1: 1500MW, pre-FS approved"
+Cà Ná LNG 2-3,Imported LNG,Proposed,2028,Ninh Thuận,4500.0,Study_E542_2020,PDP8_2023,Phases 2-3: 4500MW
+Mũi Kê Gà LNG,Imported LNG,Proposed,2027,Bình Thuận,3600.0,Study_E542_2020,PDP8_2023,3600MW potential
+Sơn Mỹ 2 LNG,Imported LNG,Under construction,2024,Bình Thuận,2250.0,PDP8_2023,Study_E542_2020,"3x750MW, construction started"
+Sơn Mỹ 1 LNG,Imported LNG,Proposed,2026,Bình Thuận,2250.0,PDP8_2023,Study_E542_2020,"BOT project, 3x750MW"
+Nhơn Trạch 3-4,Imported LNG,Financed,2023,Đồng Nai,1624.0,PDP8_2023,Report_58_2020,"2x750MW + 124MW, financial close 2023"
+Hiệp Phước LNG,Imported LNG,Proposed,2026,TP.HCM,2700.0,PDP8_2023,Study_E542_2020,"Conversion of oil plant, 2700MW"
+Phú Mỹ 3.1 LNG,Imported LNG,Proposed,2025,Bà Rịa-Vũng Tàu,850.0,Study_E542_2020,PDP8_2023,850MW conversion
+Bà Rịa 2 LNG,Imported LNG,Proposed,2027,Bà Rịa-Vũng Tàu,1200.0,Study_E542_2020,PDP8_2023,1200MW new
+Long Sơn LNG 1-4,Imported LNG,Proposed,2030,Bà Rịa-Vũng Tàu,9200.0,PDP8_2023,Study_E542_2020,Phases 1-4: 9200MW total
+Long An LNG 1-2,Imported LNG,Proposed,2027,Long An,3000.0,PDP8_2023,Study_E542_2020,"Conversion failed, now LNG, 3000MW"
+Cái Mép H LNG,Imported LNG,Proposed,2028,Bà Rịa-Vũng Tàu,6000.0,Study_E542_2020,PDP8_2023,6000MW potential
+Tân Phước LNG,Imported LNG,Proposed,2029,Tiền Giang,4500.0,Study_E542_2020,PDP8_2023,4500MW potential
+Cà Mau LNG,Imported LNG,Proposed,2028,Cà Mau,4500.0,Study_E542_2020,PDP8_2023,Phases 1-3: 4500MW
+Bến Tre LNG,Imported LNG,Proposed,2028,Bến Tre,3000.0,Study_E542_2020,PDP8_2023,3000MW potential
+Phú Mỹ 1,Domestic gas,Operational,2004,Bà Rịa-Vũng Tàu,1108.0,EVN_AR_2017,EVN_AR_2018,1x390MW + 1x718MW CCGT blocks
+Phú Mỹ 2.1,Domestic gas,Operational,2005,Bà Rịa-Vũng Tàu,896.0,EVN_AR_2017,EVN_AR_2018,2x448MW CCGT
+Phú Mỹ 4,Domestic gas,Operational,2011,Bà Rịa-Vũng Tàu,458.0,EVN_AR_2017,EVN_AR_2018,1x458MW CCGT
+Bà Rịa,Domestic gas,Operational,1996,Bà Rịa-Vũng Tàu,389.0,EVN_AR_2010,EVN_AR_2017,389MW CCGT
+Nhơn Trạch 1,Domestic gas,Operational,2009,Đồng Nai,465.0,EVN_AR_2010,EVN_AR_2017,465MW CCGT
+Nhơn Trạch 2,Domestic gas,Operational,2011,Đồng Nai,750.0,EVN_AR_2010,EVN_AR_2017,750MW CCGT
+Cà Mau 1,Domestic gas,Operational,2008,Cà Mau,750.0,EVN_AR_2010,EVN_AR_2017,750MW CCGT
+Cà Mau 2,Domestic gas,Operational,2009,Cà Mau,750.0,EVN_AR_2010,EVN_AR_2017,750MW CCGT
+Thu Đức,Oil,Decommissioned,2000,TP.HCM,165.0,EVN_AR_2010,PDP7_2011,"165MW oil-fired OCGT, retired"
+Cần Thơ 1,Oil,Decommissioned,2005,Cần Thơ,33.0,EVN_AR_2010,PDP7_2011,"33MW oil-fired, retired"
+Ô Môn 1,Oil,Operational,2009,Cần Thơ,330.0,EVN_AR_2010,EVN_AR_2017,330MW oil-fired OCGT
+Ô Môn 2,Domestic gas,Proposed,2026,Cần Thơ,1050.0,Study_E542_2020,PDP8_2023,"Lô B gas, conversion planned"
+Ô Môn 3,Domestic gas,Under construction,2025,Cần Thơ,750.0,Report_58_2020,PDP8_2023,"750MW CCGT, Lô B gas, delayed 5 years"
+Ô Môn 4,Domestic gas,Financed,2023,Cần Thơ,750.0,Report_58_2020,PDP8_2023,"750MW CCGT, Lô B gas"
+Hiệp Phước,Oil,Decommissioned,2015,TP.HCM,375.0,EVN_AR_2010,PDP7_2011,"375MW oil CCGT, retired"
+Cần Thơ 2,Domestic gas,Operational,2000,Cần Thơ,150.0,EVN_AR_2010,EVN_AR_2017,"150MW CCGT, gas-fired"
+Dung Quất 1,Domestic gas,Permitted,2024,Quảng Ngãi,750.0,Report_58_2020,PDP8_2023,"CVX gas, delayed from 2023"
+Dung Quất 2,Imported LNG,Proposed,2026,Quảng Ngãi,750.0,Study_E542_2020,PDP8_2023,CVX gas/LNG
+Dung Quất 3,Imported LNG,Proposed,2024,Quảng Ngãi,750.0,Study_E542_2020,PDP8_2023,"CVX gas/LNG, may convert"
+Miền Trung 1,Domestic gas,Proposed,2025,Quảng Trị,750.0,Report_58_2020,PDP8_2023,"Báo Vàng gas, delayed 1 year"
+Miền Trung 2,Imported LNG,Proposed,2025,Quảng Trị,750.0,Study_E542_2020,PDP8_2023,LNG option
+TBKHH Quảng Trị,Domestic gas,Proposed,2025,Quảng Trị,340.0,Study_E542_2020,PDP8_2023,"Báo Vàng gas, 340MW"
+Thủ Đức GT,Oil,Decommissioned,2020,TP.HCM,113.0,EVN_AR_2017,PDP7_2011,113MW OCGT retired
+Cần Thơ GT,Oil,Operational,2000,Cần Thơ,35.0,EVN_AR_2017,EVN_AR_2018,35MW OCGT
+Bourbon,Oil,Operational,2000,Bà Rịa-Vũng Tàu,24.0,EVN_AR_2010,EVN_AR_2017,24MW diesel OCGT
+EVN Diesel,Diesel,Operational,2010,Various,285.0,EVN_AR_2010,EVN_AR_2017,285MW diesel across system
+Amata,Diesel,Operational,2009,Đồng Nai,14.0,EVN_AR_2010,EVN_AR_2017,14MW captive diesel

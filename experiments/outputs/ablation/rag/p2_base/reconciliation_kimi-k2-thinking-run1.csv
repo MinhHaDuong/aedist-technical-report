@@ -1,0 +1,179 @@
+match_type,reference_name,system_name,reference_province,system_province,reference_fuel,system_fuel,reference_capacity_mwe,system_capacity_mwe,capacity_diff_pct,fuel_match,status_match,province_match,reference_source_ref,system_source_ref,similarity_score
+fuzzy,An Khánh - Bac Giang,Nhiệt điện An Khánh - Bắc Giang,bac giang,bac giang,coal,unknown,650.0,650.0,0.0,False,False,True,,,100.0
+fuzzy_capacity_diff,An Khánh 1,Nhiệt điện An Khánh II #1,thai nguyen,bac giang,coal,unknown,116.0,150.0,29.3,False,False,False,,,90.0
+exact_capacity_diff,Bà Rịa GT,Nhiệt điện Lục Nam #1,ba ria - vung tau,bac giang,gas,unknown,46.0,50.0,8.7,False,False,False,,,37.5
+exact_capacity_diff,Bạc Liêu 1,Nhiệt điện Vũng Áng II #2,bac lieu,ha tinh,coal,unknown,1200.0,600.0,50.0,False,False,False,,,40.0
+fuzzy,Cam Pha 3,"Nhiệt điện Cẩm Phả III #1,2",quang ninh,quang ninh,coal,unknown,440.0,440.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Cao Ngạn,Nhiệt điện Thủ Đức (tua bin khí),thai nguyen,đong nai,coal,oil,114.0,128.0,12.3,False,False,False,,,25.0
+fuzzy,Cong Thanh,Nhiệt điện Công Thanh,thanh hoa,thanh hoa,coal,unknown,600.0,600.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Cà Mau I,Nhiệt điện Vĩnh Tân VI #2,ca mau,binh thuan,gas,unknown,771.0,600.0,22.2,False,False,False,,,37.5
+exact_capacity_diff,Cà Mau II,Nhiệt điện Nam Định I #2,ca mau,nam đinh,gas,unknown,771.0,600.0,22.2,False,False,False,,,46.15384615384615
+exact_capacity_diff,Cẩm Phả 1,Nhiệt điện Nghi Sơn I #1,quang ninh,thanh hoa,coal,unknown,340.0,300.0,11.8,False,True,False,,,42.85714285714286
+fuzzy_capacity_diff,Cẩm Phả 2,Nhiệt điện Cẩm Phả II,quang ninh,quang ninh,coal,unknown,340.0,300.0,11.8,False,True,True,,,100.0
+exact_capacity_diff,Dong Nai Formosa,Nhiệt điện Hải Hà II (đồng phát),đong nai,quang ninh,coal,unknown,150.0,150.0,0.0,False,True,False,,,46.15384615384615
+exact_capacity_diff,Dong Nai Formosa,Nhiệt điện Hòa Phát II (khí dư),đong nai,hai duong,coal,unknown,300.0,300.0,0.0,False,True,False,,,40.0
+exact_capacity_diff,Duc Giang - Lao Cai Chemical,Nhiệt điện Đa Nhim (mở rộng),lao cai,lam đong,coal,unknown,100.0,80.0,20.0,False,False,False,,,38.888888888888886
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase I,Trung tâm điện lực Sơn Mỹ II,quang ngai,ba ria - vung tau,coal,imported gas,2400.0,2250.0,6.2,False,True,False,,,48.14814814814815
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase II,"Trung tâm điện lực Sơn Mỹ II #4,5",quang ngai,ba ria - vung tau,coal,imported gas,2000.0,1500.0,25.0,False,True,False,,,44.067796610169495
+fuzzy_capacity_diff,Duyen Hai 1,Nhiệt điện Duyên Hải III #1,tra vinh,tra vinh,coal,unknown,1244.0,622.0,50.0,False,True,True,,,90.9090909090909
+fuzzy,Duyen Hai 2,Nhiệt điện Duyên Hải I #2,tra vinh,tra vinh,coal,unknown,600.0,600.0,0.0,False,True,True,,,90.9090909090909
+fuzzy_capacity_diff,Duyen Hai 3,Nhiệt điện Duyên Hải III #2,tra vinh,tra vinh,coal,unknown,1244.0,622.0,50.0,False,True,True,,,100.0
+exact_capacity_diff,Duyen Hai 3 Extension,Nhiệt điện Sông Hậu I #1,tra vinh,hau giang,coal,unknown,660.0,600.0,9.1,False,True,False,,,57.14285714285714
+fuzzy_capacity_diff,Duyên Hải 2,Nhiệt điện Duyên Hải III MR,tra vinh,tra vinh,coal,unknown,1200.0,660.0,45.0,False,True,True,,,90.9090909090909
+exact_capacity_diff,Formosa HT2,Nhiệt điện Vũng Áng II #1,ha tinh,ha tinh,coal,unknown,650.0,600.0,7.7,False,False,True,,,31.57894736842105
+exact_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Nhiệt điện Thái Bình I #2,ha tinh,thai binh,coal,unknown,450.0,300.0,33.3,False,False,False,,,42.42424242424242
+exact_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Nhiệt điện Uông Bí MR #3,ha tinh,quang ninh,coal,unknown,450.0,330.0,26.7,False,True,False,,,40.0
+fuzzy_capacity_diff,Hai Duong,Nhiệt điện Hải Dương #2,hai duong,hai duong,coal,unknown,1200.0,600.0,50.0,False,True,True,,,100.0
+exact_capacity_diff,Hai Ha CHP Phase 1,Tua bin khí Cần Thơ,quang ninh,can tho,coal,unknown,150.0,150.0,0.0,False,False,False,,,47.05882352941176
+exact_capacity_diff,Hai Ha CHP Phase 2,Nhiệt điện Vũng Áng I #2,quang ninh,ha tinh,coal,unknown,750.0,600.0,20.0,False,False,False,,,37.03703703703704
+exact_capacity_diff,Hai Ha CHP Phase 3,Nhiệt điện Duyên Hải I #1,quang ninh,tra vinh,coal,unknown,600.0,600.0,0.0,False,False,False,,,38.888888888888886
+exact_capacity_diff,Hai Ha CHP Phase 4,Nhiệt điện Vĩnh Tân IV MR,quang ninh,binh thuan,coal,unknown,600.0,600.0,0.0,False,False,False,,,40.0
+fuzzy_capacity_diff,Hai Phong 1,Nhiệt điện Hải Phòng II #1,hai phong,hai phong,coal,unknown,600.0,300.0,50.0,False,True,True,,,90.9090909090909
+exact_capacity_diff,Hai Phong 2,Nhiệt điện Tân Phước III,hai phong,tien giang,coal,unknown,600.0,600.0,0.0,False,False,False,,,57.14285714285714
+fuzzy,Hai Phong 3,"Nhiệt điện Hải Phòng III #3,4",hai phong,hai phong,coal,unknown,1200.0,1200.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,Hải Phòng,Nhiệt điện Hải Phòng II #2,hai phong,hai phong,gas,unknown,500.0,300.0,40.0,False,False,True,,,100.0
+fuzzy,LNG Bà Rịa 2,Nhiệt điện Bà Rịa 2,ba ria - vung tau,ba ria - vung tau,gas,imported gas,1200.0,1200.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,LNG Bình Định,Nhiệt điện Bình Định II,binh đinh,binh đinh,gas,unknown,5000.0,2000.0,60.0,False,True,True,,,100.0
+fuzzy,LNG Bạc Liêu,Nhiệt điện Bạc Liêu (LNG),bac lieu,bac lieu,gas,imported gas,3200.0,3200.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,LNG Bến Tre,Nhiệt điện Cà Mau (LNG),ben tre,ca mau,gas,imported gas,3000.0,3000.0,0.0,False,True,False,,,42.85714285714286
+fuzzy,LNG Chân Mây,Nhiệt điện Chân Mây - Huế,hue,thua thien hue,gas,imported gas,4000.0,4000.0,0.0,False,True,False,,,100.0
+exact_capacity_diff,LNG Cà Mau 1,Nhiệt điện Bình Định I,ca mau,binh đinh,gas,unknown,1500.0,1200.0,20.0,False,False,False,,,40.0
+exact_capacity_diff,"LNG Cà Mau 2,3",Nhiệt điện Nam Định II,ca mau,nam đinh,gas,unknown,3000.0,2000.0,33.3,False,True,False,,,42.10526315789473
+fuzzy,LNG Cà Ná,Nhiệt điện Cà Ná I,ninh thuan,ninh thuan,gas,imported gas,1500.0,1500.0,0.0,False,False,True,,,100.0
+fuzzy,LNG Cà Ná II+III,Nhiệt điện Cà Ná II+III,ninh thuan,ninh thuan,gas,imported gas,4500.0,4500.0,0.0,False,True,True,,,100.0
+fuzzy,LNG Cái Mép Hạ,Nhiệt điện Cái Mép H,ba ria - vung tau,ba ria - vung tau,gas,imported gas,6000.0,6000.0,0.0,False,True,True,,,94.73684210526316
+exact_capacity_diff,LNG Hiệp Phước (phase I),Nhiệt điện Cẩm Thanh,tp ho chi minh,thanh hoa,gas,unknown,1200.0,600.0,50.0,False,False,False,,,50.0
+fuzzy_capacity_diff,LNG Hiệp Phước (phase II),Nhiệt điện Hiệp Phước (LNG) giai đoạn I,tp ho chi minh,tp.hcm,gas,imported gas,1500.0,1200.0,20.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Hà Tĩnh,"Nhiệt điện Formosa Hà Tĩnh #6,7",ha tinh,ha tinh,gas,unknown,6000.0,300.0,95.0,False,True,True,,,100.0
+exact_capacity_diff,LNG Hải Lăng,"Nhiệt điện Vĩnh Tân IV #1,2",quang tri,binh thuan,gas,unknown,1500.0,1200.0,20.0,False,False,False,,,50.0
+fuzzy_capacity_diff,LNG Hải Lăng (2 and 3),Nhiệt điện Hải Lăng giai đoạn 1,quang tri,quang tri,gas,imported gas,4500.0,1500.0,66.7,False,False,True,,,100.0
+exact_capacity_diff,LNG Hải Phòng 1 (Tiên Lãng),Nhiệt điện Mông Dương 2,hai phong,quang ninh,coal,unknown,4500.0,1120.0,75.1,False,True,False,,,54.54545454545454
+exact_capacity_diff,LNG Hải Phòng 2 (Cát Hải),Tua bin khí Phú Mỹ 1 (mở rộng),hai phong,ba ria - vung tau,coal,unknown,1600.0,1108.0,30.8,False,True,False,,,54.54545454545454
+fuzzy_capacity_diff,LNG Hải Phòng 3 (Cát Hải),Nhiệt điện Hải Phòng I,hai phong,hai phong,coal,unknown,4500.0,300.0,93.3,False,False,True,,,90.9090909090909
+fuzzy_capacity_diff,LNG Hải Phòng 4 (Đồ Sơn),"Nhiệt điện Hải Phòng III #1,2",hai phong,hai phong,gas,unknown,4500.0,1200.0,73.3,False,False,True,,,90.9090909090909
+fuzzy,LNG Long An I,Nhiệt điện Long An I (LNG),long an,long an,gas,unknown,1500.0,1500.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,LNG Long An I phase 2,Nhiệt điện Quỳnh Lập I #1,long an,nghe an,gas,unknown,1500.0,600.0,60.0,False,False,False,,,42.85714285714286
+fuzzy,LNG Long An II,Nhiệt điện Long An II (LNG),long an,long an,gas,unknown,1500.0,1500.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,LNG Long An II phase 2,Nhiệt điện Duyên Hải II,long an,tra vinh,gas,unknown,1500.0,1320.0,12.0,False,False,False,,,53.333333333333336
+fuzzy_capacity_diff,LNG Long Sơn,Nhiệt điện Nông Sơn,ba ria - vung tau,quang nam,gas,unknown,1200.0,30.0,97.5,False,False,False,,,93.33333333333333
+fuzzy,LNG Long Sơn II+III,Nhiệt điện Long Sơn II+III,ba ria - vung tau,ba ria - vung tau,gas,imported gas,3200.0,3200.0,0.0,False,True,True,,,100.0
+fuzzy,LNG Long Sơn IV (địa điểm Tây),Nhiệt điện Long Sơn IV,ba ria - vung tau,ba ria - vung tau,gas,imported gas,3600.0,3600.0,0.0,False,True,True,,,100.0
+exact_capacity_diff,LNG Mũi Kê Gà 1,Nhiệt điện Vũng Áng III #4,binh thuan,ha tinh,gas,unknown,1200.0,600.0,50.0,False,True,False,,,45.45454545454546
+exact_capacity_diff,"LNG Mũi Kê Gà 2,3",Nhiệt điện Sông Hậu I #2,binh thuan,hau giang,gas,unknown,2400.0,600.0,75.0,False,False,False,,,46.15384615384615
+fuzzy,LNG Mỹ Giang,Nhiệt điện Mỹ Giang,khanh hoa,khanh hoa,gas,imported gas,6000.0,6000.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,LNG Nghi Sơn (Thanh Hóa),Nhiệt điện Nghi Sơn II #2,thanh hoa,thanh hoa,gas,unknown,5000.0,600.0,88.0,False,False,True,,,100.0
+fuzzy,LNG Nhơn Trạch 3,Nhiệt điện Nhơn Trạch II,đong nai,đong nai,gas,unknown,750.0,750.0,0.0,False,False,True,,,91.66666666666666
+fuzzy_capacity_diff,LNG Nhơn Trạch 4,Nhiệt điện Nhà máy nhiệt điện Nhơn Trạch 3&4,đong nai,đong nai,gas,imported gas,750.0,1624.0,116.5,False,False,True,,,91.66666666666666
+exact_capacity_diff,LNG Núi Thành (Quảng Nam),Nhiệt điện Hải Hà III&IV (đồng phát),quang nam,quang ninh,gas,unknown,3200.0,1200.0,62.5,False,True,False,,,55.55555555555556
+exact_capacity_diff,LNG Phong Điền – Huế,Nhiệt điện Rạng Đông,hue,nam đinh,gas,unknown,3000.0,2400.0,20.0,False,True,False,,,51.85185185185186
+fuzzy,LNG Phú Mỹ 3.1,Nhiệt điện Phú Mỹ 3.1,ba ria - vung tau,ba ria - vung tau,gas,imported gas,850.0,850.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,LNG Quảng Bình,"Nhiệt điện Quảng Ninh III #3,4",quang binh,quang ninh,gas,unknown,3000.0,2000.0,33.3,False,True,False,,,90.0
+exact_capacity_diff,LNG Quảng Nam,Nhiệt điện Sông Hậu II #2,quang nam,hau giang,gas,unknown,4000.0,1000.0,75.0,False,True,False,,,44.44444444444444
+fuzzy_capacity_diff,LNG Quảng Ninh 1 (Cẩm Phả),Nhiệt điện Quảng Ninh II #1,quang ninh,quang ninh,gas,unknown,1500.0,300.0,80.0,False,False,True,,,91.66666666666666
+exact_capacity_diff,LNG Quảng Ninh 2 (Cẩm Phả),Nhiệt điện Hải Dương #1,quang ninh,hai duong,gas,unknown,1500.0,600.0,60.0,False,False,False,,,43.47826086956522
+exact_capacity_diff,LNG Quảng Ninh 3 (Quảng Yên),Nhiệt điện Thái Bình III,quang ninh,thai binh,gas,unknown,4500.0,4000.0,11.1,False,True,False,,,66.66666666666667
+exact_capacity_diff,LNG Quảng Ninh 4 (Hải Hà),Nhiệt điện Vũng Áng I #1,quang ninh,ha tinh,gas,unknown,3000.0,600.0,80.0,False,False,False,,,50.0
+fuzzy_capacity_diff,LNG Quảng Trạch 2,Nhiệt điện Quảng Trạch I #2,quang binh,quang binh,gas,unknown,1500.0,600.0,60.0,False,False,True,,,92.3076923076923
+fuzzy,LNG Quỳnh Lập,Nhiệt điện Quỳnh Lập/Nghi Sơn (LNG),nghe an,thanh hoa,gas,imported gas,1500.0,1500.0,0.0,False,True,False,,,100.0
+fuzzy,LNG Sông Đốc (Cà Mau),Nhiệt điện Sông Đốc (LNG),ca mau,ca mau,gas,imported gas,3000.0,3000.0,0.0,False,True,True,,,100.0
+fuzzy,LNG Sơn Mỹ I,Trung tâm điện lực Sơn Mỹ I,binh thuan,ba ria - vung tau,gas,imported gas,2250.0,2250.0,0.0,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Sơn Mỹ II,Trung tâm điện lực Sơn Mỹ II #3,binh thuan,ba ria - vung tau,gas,imported gas,2250.0,750.0,66.7,False,False,False,,,100.0
+fuzzy_capacity_diff,LNG Thái Bình,Nhiệt điện Thái Bình (LNG),thai binh,thai binh,gas,imported gas,4500.0,1500.0,66.7,False,True,True,,,100.0
+fuzzy,LNG Tân Phước,Nhiệt điện Tân Phúc,tien giang,tien giang,gas,imported gas,4500.0,4500.0,0.0,False,True,True,,,94.11764705882352
+exact_capacity_diff,"LNG Tân Thuận – Đầm Dơi, Cà Mau",Nhiệt điện Phong Điền,ca mau,thua thien hue,gas,unknown,3200.0,2000.0,37.5,False,True,False,,,41.17647058823529
+fuzzy_capacity_diff,LNG Vân Phong (J-Power),Nhiệt điện Vân Phong I #1,khanh hoa,khanh hoa,gas,unknown,3000.0,716.0,76.1,False,False,True,,,100.0
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 1,Nhiệt điện Kim Sơn,khanh hoa,ninh binh,gas,unknown,3000.0,3000.0,0.0,False,True,False,,,35.71428571428571
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 2,Nhiệt điện Bình Định III,khanh hoa,binh đinh,gas,unknown,3000.0,2000.0,33.3,False,True,False,,,40.0
+exact_capacity_diff,LNG miền Nam,Trung tâm điện lực Sơn Mỹ II #2,"hiep phuoc 2, ben tre, mui ke ga, ca mau,",ba ria - vung tau,gas,imported gas,1500.0,750.0,50.0,False,True,False,,,62.5
+exact_capacity_diff,Lee & Man,Nhiệt điện Formosa Hà Tĩnh #2,hau giang,ha tinh,coal,unknown,125.0,150.0,20.0,False,True,False,,,33.333333333333336
+fuzzy,Long An 2,Nhiệt điện Long An II,long an,long an,gas,unknown,1600.0,1600.0,0.0,False,False,True,,,100.0
+fuzzy,Long An 1,Nhiệt điện Long An I,long an,long an,gas,unknown,1200.0,1200.0,0.0,False,False,True,,,100.0
+fuzzy,Long Phú 1,Nhiệt điện Long Phú I,soc trang,soc trang,coal,unknown,1200.0,1200.0,0.0,False,False,True,,,100.0
+fuzzy,Long Phú 2,Nhiệt điện Long Phú II,soc trang,soc trang,coal,unknown,1320.0,1320.0,0.0,False,False,True,,,100.0
+fuzzy,Long Phú 3,Nhiệt điện Long Phú III,soc trang,soc trang,coal,unknown,1800.0,1800.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Mao Khe,Nhiệt điện Thái Bình I #1,quang ninh,thai binh,coal,unknown,440.0,300.0,31.8,False,True,False,,,42.85714285714286
+fuzzy,Mong Duong 1,Nhiệt điện Mông Dương 1,quang ninh,quang ninh,coal,unknown,1080.0,1080.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,Mong Duong 2,Nhiệt điện Mông Dương 3,quang ninh,quang ninh,coal,unknown,1240.0,1200.0,3.2,False,False,True,,,91.66666666666666
+fuzzy,Na Dương 1,Nhiệt điện Na Dương II,lang son,lang son,coal,unknown,110.0,110.0,0.0,False,False,True,,,90.0
+fuzzy_capacity_diff,Na Dương 2,"Nhiệt điện Na Dương I #1,2",lang son,lang son,coal,unknown,110.0,100.0,9.1,False,True,True,,,90.0
+fuzzy_capacity_diff,Nam Dinh 1,Nhiệt điện Nam Định I #1,nam dinh,nam đinh,coal,unknown,1200.0,600.0,50.0,False,False,False,,,90.0
+fuzzy,Nghi Son 1,Nhiệt điện Nghi Sơn II #1,thanh hoa,thanh hoa,coal,unknown,600.0,600.0,0.0,False,False,True,,,90.0
+fuzzy,Nghi Son 2,Nhiệt điện Nhà máy nhiệt điện Nghi Sơn II,thanh hoa,thanh hoa,coal,unknown,1200.0,1200.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Ninh Binh,Nhiệt điện Đức Giang (đồng phát),ninh binh,hai duong,coal,unknown,100.0,100.0,0.0,False,False,False,,,50.0
+exact_capacity_diff,Ninh Thuan Novatek project,Nhiệt điện Kê Gà,ninh thuan,binh thuan,gas,imported gas,4500.0,3600.0,20.0,False,True,False,,,40.0
+fuzzy_capacity_diff,Nong Son 1,Nhiệt điện Long Sơn I,quang nam,ba ria - vung tau,coal,imported gas,30.0,1200.0,3900.0,False,False,False,,,94.73684210526316
+fuzzy_capacity_diff,NĐ Cần Thơ,Nhiệt điện Cần Thơ (dầu),can tho,can tho,unknown,oil,165.0,150.0,9.1,False,False,True,,,94.73684210526316
+fuzzy_capacity_diff,NĐ Hiệp Phước,Nhiệt điện Hiệp Phước (dầu),tp ho chi minh,tp.hcm,unknown,oil,310.0,375.0,21.0,False,False,False,,,96.0
+exact_capacity_diff,NĐ LNG miền Bắc,Tua bin khí Thu Đức,"thai binh, nam đinh, nghi son, thanh hoa",đong nai,gas,unknown,0.0,0.0,,False,False,False,,,37.03703703703704
+fuzzy_capacity_diff,NĐ Thủ Đức,Nhiệt điện Thủ Đức (dầu),tp ho chi minh,đong nai,gas,oil,290.0,165.0,43.1,False,False,False,,,94.73684210526316
+fuzzy_capacity_diff,NĐ Ô Môn I,Tổ máy nhiệt điện Ô Môn I (cũ),can tho,can tho,unknown,oil,660.0,330.0,50.0,False,False,True,,,94.73684210526316
+fuzzy,Phả Lại 1,Nhiệt điện Phả Lại I,hai duong,hai duong,coal,unknown,440.0,440.0,0.0,False,True,True,,,100.0
+fuzzy,Phả Lại 2,Nhiệt điện Phả Lại II,hai duong,hai duong,coal,unknown,600.0,600.0,0.0,False,True,True,,,100.0
+fuzzy,Phả Lại 3,Nhiệt điện Phả Lại 3,hai duong,hai duong,coal,unknown,660.0,660.0,0.0,False,False,True,,,100.0
+fuzzy_capacity_diff,Quang Ninh 1,Nhiệt điện Quảng Ninh II #2,quang ninh,quang ninh,gas,unknown,600.0,300.0,50.0,False,False,True,,,91.66666666666666
+fuzzy_capacity_diff,Quang Ninh 2,Nhiệt điện Quảng Ninh I,quang ninh,quang ninh,gas,unknown,600.0,300.0,50.0,False,False,True,,,91.66666666666666
+fuzzy,Quang Ninh 3,"Nhiệt điện Quảng Ninh III #1,2",quang ninh,quang ninh,gas,unknown,1200.0,1200.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,Quảng Trạch 1,Nhiệt điện Quảng Trạch II #1,quang binh,quang binh,coal,unknown,1400.0,600.0,57.1,False,False,True,,,92.3076923076923
+fuzzy_capacity_diff,Quảng Trạch 2,Nhiệt điện Quảng Trạch II #2,quang binh,quang binh,gas,unknown,1200.0,600.0,50.0,False,True,True,,,100.0
+fuzzy_capacity_diff,Quảng Trị 1,Nhiệt điện Quảng Trị II,quang tri,quang tri,coal,unknown,1320.0,2000.0,51.5,False,False,True,,,90.9090909090909
+fuzzy_capacity_diff,Quảng Trị 2,Nhiệt điện Quảng Trị I,quang tri,quang tri,coal,unknown,1200.0,1320.0,10.0,False,False,True,,,90.9090909090909
+exact_capacity_diff,Quảng Trị – Huế area,Nhiệt điện Tân Thuận - Đầm Dơi (LNG),quang tri,ca mau,gas,imported gas,4000.0,3200.0,20.0,False,True,False,,,42.10526315789473
+fuzzy_capacity_diff,Quỳnh Lập 1,Nhiệt điện Quỳnh Lập I #2,nghe an,nghe an,coal,unknown,1200.0,600.0,50.0,False,False,True,,,100.0
+fuzzy,Quỳnh Lập 2,Nhiệt điện Quỳnh Lập II,nghe an,nghe an,coal,unknown,1200.0,1200.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Son Dong,"Nhiệt điện Formosa Hà Tĩnh #3,4",bac giang,ha tinh,coal,unknown,220.0,200.0,9.1,False,True,False,,,37.5
+fuzzy_capacity_diff,Sông Hậu 1,Nhiệt điện Sông Hậu II #1,hau giang,hau giang,coal,unknown,1200.0,1000.0,16.7,False,False,True,,,90.0
+fuzzy,Sông Hậu 2,Nhiệt điện Sông Hậu III,hau giang,hau giang,coal,unknown,2000.0,2000.0,0.0,False,False,True,,,90.0
+exact_capacity_diff,TBKHH Bà Rịa 1,Nhiệt điện Formosa Hà Tĩnh #5,ba ria - vung tau,ha tinh,gas,unknown,169.0,150.0,11.2,False,True,False,,,50.0
+exact_capacity_diff,TBKHH Bà Rịa 2,"Nhiệt điện Formosa Hà Tĩnh #8,9",ba ria - vung tau,ha tinh,gas,unknown,175.0,200.0,14.3,False,True,False,,,50.0
+exact_capacity_diff,TBKHH Dung Quất I,Nhiệt điện Vĩnh Tân VI #1,quang ngai,binh thuan,gas,unknown,750.0,600.0,20.0,False,False,False,,,44.44444444444444
+exact_capacity_diff,TBKHH Dung Quất II,Nhiệt điện Vân Phong I #2,quang ngai,khanh hoa,gas,unknown,750.0,716.0,4.5,False,False,False,,,55.55555555555556
+exact_capacity_diff,TBKHH Dung Quất III,Nhiệt điện Vân Phong II #1,quang ngai,khanh hoa,gas,unknown,750.0,660.0,12.0,False,False,False,,,44.44444444444444
+exact_capacity_diff,"TBKHH Kiên Giang I, II",Nhiệt điện Cần Thơ (LNG),kien giang,can tho,gas,oil,1500.0,1500.0,0.0,False,False,False,,,53.84615384615385
+exact_capacity_diff,TBKHH Nhơn Trạch I,Nhiệt điện Quảng Trạch I #1,đong nai,quang binh,gas,unknown,465.0,600.0,29.0,False,False,False,,,75.0
+fuzzy,TBKHH Nhơn Trạch II,Nhiệt điện Nhơn Trạch I,đong nai,đong nai,gas,unknown,750.0,750.0,0.0,False,True,True,,,91.66666666666666
+fuzzy_capacity_diff,TBKHH Phú Mỹ 1,Tua bin khí Phú Mỹ I,ba ria - vung tau,ba ria - vung tau,gas,unknown,1140.0,1090.0,4.4,False,True,True,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 2.1,Tua bin khí Phú Mỹ 2.1,ba ria - vung tau,ba ria - vung tau,gas,unknown,499.0,0.0,100.0,False,True,True,,,100.0
+exact_capacity_diff,TBKHH Phú Mỹ 2.1 MR,Tua bin khí Bà Rịa,ba ria - vung tau,ba ria - vung tau,gas,unknown,450.0,389.0,13.6,False,True,True,,,36.36363636363637
+fuzzy,TBKHH Phú Mỹ 2.2,Tua bin khí Phú Mỹ II.2 BOT,ba ria - vung tau,ba ria - vung tau,gas,unknown,740.0,740.0,0.0,False,True,True,,,100.0
+fuzzy,TBKHH Phú Mỹ 3,Tua bin khí Phú Mỹ III BOT,ba ria - vung tau,ba ria - vung tau,gas,unknown,740.0,740.0,0.0,False,True,True,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 4,Tua bin khí Phú Mỹ IV,ba ria - vung tau,ba ria - vung tau,gas,unknown,468.0,0.0,100.0,False,True,True,,,100.0
+exact_capacity_diff,TBKHH Quảng Trị (khí Báo Vàng),Nhiệt điện Uông Bí MR #2,quang tri,quang ninh,gas,unknown,340.0,300.0,11.8,False,False,False,,,55.55555555555556
+exact_capacity_diff,TBKHH miền Trung I,Trung tâm điện lực Sơn Mỹ II #1,quang nam,ba ria - vung tau,gas,imported gas,750.0,750.0,0.0,False,False,False,,,66.66666666666667
+exact_capacity_diff,TBKHH miền Trung II,Nhiệt điện Vĩnh Tân III #2,quang nam,binh thuan,gas,unknown,750.0,660.0,12.0,False,False,False,,,58.33333333333333
+fuzzy,TBKHH Ô Môn I,Nhiệt điện Ô Môn I (chuyển khí Lô B),can tho,can tho,gas,unknown,660.0,660.0,0.0,False,False,True,,,100.0
+fuzzy,TBKHH Ô Môn II,Nhiệt điện Ô Môn II,can tho,can tho,gas,unknown,1050.0,1050.0,0.0,False,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH Ô Môn III,Nhiệt điện Ô Môn III,can tho,can tho,gas,unknown,1050.0,750.0,28.6,False,False,True,,,100.0
+fuzzy_capacity_diff,TBKHH Ô Môn IV,Nhiệt điện Ô Môn IV,can tho,can tho,gas,unknown,1050.0,750.0,28.6,False,False,True,,,100.0
+fuzzy_capacity_diff,Thang Long,Nhiệt điện Thăng Long #1,quang ninh,quang ninh,coal,unknown,600.0,300.0,50.0,False,True,True,,,100.0
+fuzzy,Thái Bình 1,Nhiệt điện Thái Bình II #2,thai binh,thai binh,coal,unknown,600.0,600.0,0.0,False,True,True,,,90.9090909090909
+fuzzy_capacity_diff,Thái Bình 2,Nhiệt điện Thái Bình II #1,thai binh,thai binh,coal,unknown,1200.0,600.0,50.0,False,True,True,,,100.0
+fuzzy,Tân Phước 1,Nhiệt điện Tân Phước II,tien giang,tien giang,gas,unknown,1200.0,1200.0,0.0,False,False,True,,,90.9090909090909
+fuzzy,Tân Phước 2,Nhiệt điện Tân Phước I,tien giang,tien giang,gas,unknown,1200.0,1200.0,0.0,False,False,True,,,90.9090909090909
+fuzzy,Uong Bi I,Nhiệt điện Uông Bí I,quang ninh,quang ninh,coal,unknown,105.0,105.0,0.0,False,False,True,,,100.0
+exact_capacity_diff,Uong Bi I extension,Nhiệt điện Thăng Long #2,quang ninh,quang ninh,coal,unknown,300.0,300.0,0.0,False,False,True,,,41.379310344827594
+exact_capacity_diff,Uong Bi II extension,Tua bin khí Ô Môn I (cũ),quang ninh,can tho,coal,oil,330.0,330.0,0.0,False,False,False,,,44.44444444444444
+exact_capacity_diff,Vedan Vietnam Cogeneration power station,Nhiệt điện Vè Đan,đong nai,ha tinh,coal,unknown,60.0,60.0,0.0,False,True,False,,,47.05882352941176
+fuzzy_capacity_diff,Vinh Tan 1,Nhiệt điện Vĩnh Tân III #1,binh thuan,binh thuan,coal,unknown,1200.0,660.0,45.0,False,False,True,,,90.0
+fuzzy_capacity_diff,Vinh Tan 2,Nhiệt điện Vĩnh Tân III #3,binh thuan,binh thuan,coal,unknown,1244.0,660.0,46.9,False,False,True,,,90.0
+fuzzy_capacity_diff,Vinh Tan 3,"Nhiệt điện Vĩnh Tân II #1,2",binh thuan,binh thuan,coal,unknown,1980.0,1200.0,39.4,False,False,True,,,90.0
+fuzzy,Vinh Tan 4,"Nhiệt điện Vĩnh Tân I #1,2",binh thuan,binh thuan,coal,unknown,1200.0,1200.0,0.0,False,True,True,,,90.0
+exact_capacity_diff,Vinh Tan 4 extension,Nhiệt điện Bảo Đại,binh thuan,quang ninh,coal,unknown,600.0,600.0,0.0,False,False,False,,,41.379310344827594
+fuzzy_capacity_diff,Vung Ang 1,Nhiệt điện Vũng Áng III #3,ha tinh,ha tinh,coal,unknown,1200.0,600.0,50.0,False,False,True,,,90.0
+fuzzy_capacity_diff,Vung Ang 2,Nhiệt điện Vũng Áng III #1,ha tinh,ha tinh,coal,unknown,1330.0,600.0,54.9,False,False,True,,,90.0
+fuzzy_capacity_diff,Vung Ang 3,Nhiệt điện Vũng Áng III #2,ha tinh,ha tinh,coal,unknown,2400.0,600.0,75.0,False,False,True,,,100.0
+fuzzy_capacity_diff,Vân Phong 1,Nhiệt điện Vân Phong II #2,khanh hoa,khanh hoa,coal,unknown,1432.0,660.0,53.9,False,False,True,,,90.9090909090909
+system_only,,Nhiệt điện An Khánh I #1,,bac giang,,unknown,,50.0,,,,,,,
+system_only,,Nhiệt điện An Khánh I #2,,bac giang,,unknown,,50.0,,,,,,,
+system_only,,Nhiệt điện An Khánh II #2,,bac giang,,unknown,,150.0,,,,,,,
+system_only,,Nhiệt điện Đồng Nai #2,,đong nai,,unknown,,70.0,,,,,,,
+system_only,,Nhiệt điện Formosa Hà Tĩnh #10,,ha tinh,,unknown,,150.0,,,,,,,
+system_only,,Nhiệt điện Hải Hà I (đồng phát),,quang ninh,,unknown,,150.0,,,,,,,
+system_only,,Nhiệt điện Hưng Nghiệp Formosa Đồng Nai #3,,đong nai,,unknown,,150.0,,,,,,,
+system_only,,Nhiệt điện Lục Nam #2,,bac giang,,unknown,,50.0,,,,,,,
+system_only,,Nhiệt điện Nghi Sơn I #2,,thanh hoa,,unknown,,300.0,,,,,,,
+system_only,,Nhiệt điện Phú Thọ #1,,phu tho,,unknown,,300.0,,,,,,,
+system_only,,Nhiệt điện Phú Thọ #2,,phu tho,,unknown,,300.0,,,,,,,
+system_only,,Tua bin khí Vê Dan,,ba ria - vung tau,,unknown,,72.0,,,,,,,
+system_only,,Nhà máy Diesel EVN,,multiple,,oil,,285.0,,,,,,,
+system_only,,Nhà máy Diesel Amata,,đong nai,,oil,,14.0,,,,,,,
+system_only,,Nhà máy nhiệt điện Bourbon,,thai binh,,oil,,24.0,,,,,,,

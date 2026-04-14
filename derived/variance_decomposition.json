@@ -1,6 +1,6 @@
 {
-  "n_records": 278,
-  "n_records_excluded": 271,
+  "n_records": 326,
+  "n_records_excluded": 335,
   "n_groups": 25,
   "models_included": [
     "deepseek/deepseek-v3.2",
@@ -16,54 +16,54 @@
     "single",
     "web"
   ],
-  "eta_sq_model": 0.0233,
-  "eta_sq_method": 0.6043,
-  "eta_sq_interaction": 0.2368,
-  "eta_sq_residual": 0.1356,
-  "omega_sq_model": 0.0016,
-  "omega_sq_method": 0.5794,
-  "omega_sq_interaction": 0.1492,
+  "eta_sq_model": 0.0254,
+  "eta_sq_method": 0.5176,
+  "eta_sq_interaction": 0.2041,
+  "eta_sq_residual": 0.253,
+  "omega_sq_model": 0.0,
+  "omega_sq_method": 0.4723,
+  "omega_sq_interaction": 0.0417,
   "anova": {
-    "ss_a": 0.041126,
-    "ss_b": 1.066145,
-    "ss_ab": 0.417821,
-    "ss_resid": 0.239311,
-    "ss_total": 1.764403,
+    "ss_a": 0.053528,
+    "ss_b": 1.091899,
+    "ss_ab": 0.430508,
+    "ss_resid": 0.533683,
+    "ss_total": 2.109619,
     "df_a": 4,
     "df_b": 4,
     "df_ab": 16,
     "df_resid": 25,
     "df_total": 49,
-    "eta_sq_a": 0.023309,
-    "eta_sq_b": 0.604253,
-    "eta_sq_ab": 0.236806,
-    "eta_sq_resid": 0.135633,
-    "ms_a": 0.010281,
-    "ms_b": 0.266536,
-    "ms_ab": 0.026114,
-    "ms_resid": 0.009572,
-    "f_a": 1.074066,
-    "f_b": 27.844113,
-    "f_ab": 2.728017,
-    "p_a": 0.390266,
-    "p_b": 0.0,
-    "p_ab": 0.011959,
-    "omega_sq_a": 0.001599,
-    "omega_sq_b": 0.579408,
-    "omega_sq_ab": 0.149191
+    "eta_sq_a": 0.025374,
+    "eta_sq_b": 0.517581,
+    "eta_sq_ab": 0.204069,
+    "eta_sq_resid": 0.252976,
+    "ms_a": 0.013382,
+    "ms_b": 0.272975,
+    "ms_ab": 0.026907,
+    "ms_resid": 0.021347,
+    "f_a": 0.626876,
+    "f_b": 12.787323,
+    "f_ab": 1.260429,
+    "p_a": 0.647761,
+    "p_b": 8e-06,
+    "p_ab": 0.293919,
+    "omega_sq_a": 0.0,
+    "omega_sq_b": 0.472326,
+    "omega_sq_ab": 0.041742
   },
   "anova_diagnostics": {
     "shapiro_wilk": {
-      "statistic": 0.9909,
+      "statistic": 0.93,
       "p_value": null,
       "passed": true,
-      "note": "W=0.9909. W > 0.9 suggests approximate normality. Caution: with n=50, Shapiro-Wilk has very low power."
+      "note": "W=0.9300. W > 0.9 suggests approximate normality. Caution: with n=50, Shapiro-Wilk has very low power."
     },
     "levene": {
-      "statistic": 1.5071408245518505e+30,
+      "statistic": 4.483728902301178e+30,
       "p_value": null,
       "passed": false,
-      "note": "W=1507140824551850465579918950400.0000 (k=25 groups, N=50). W >= 2.0 suggests possible heteroscedasticity. Caution: with small cell sizes, Levene's test has low power."
+      "note": "W=4483728902301178025506294988800.0000 (k=25 groups, N=50). W >= 2.0 suggests possible heteroscedasticity. Caution: with small cell sizes, Levene's test has low power."
     }
   },
   "unstable_pairs": [
@@ -95,12 +95,6 @@
       "model_a": "anthropic/claude-opus-4.6",
       "model_b": "mistral-small-2603-union",
       "f1_diff": 0.0203,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "anthropic/claude-opus-4.6",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0133,
       "ci_overlap": true
     },
     {
@@ -388,85 +382,61 @@
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "gemma-4-26b-a4b-it-union",
-      "f1_diff": 0.0069,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "gemma-4-31b-it-consolidated",
-      "f1_diff": 0.042,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "google/gemini-2.5-flash-lite",
-      "f1_diff": 0.004,
+      "f1_diff": 0.0483,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "google/gemini-3-flash-preview",
-      "f1_diff": 0.0219,
+      "f1_diff": 0.0333,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "google/gemma-4-31b-it",
-      "f1_diff": 0.0271,
+      "f1_diff": 0.0281,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "gpt-5.4-consolidated",
-      "f1_diff": 0.0244,
+      "f1_diff": 0.0308,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "minimax/minimax-m2.7",
-      "f1_diff": 0.0156,
+      "f1_diff": 0.0396,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "mistralai/mistral-large-2512",
-      "f1_diff": 0.0104,
+      "f1_diff": 0.0448,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "mistralai/mistral-small-2603",
-      "f1_diff": 0.0074,
+      "model_b": "moonshotai/kimi-k2.5",
+      "f1_diff": 0.044,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "openai/gpt-5.4",
-      "f1_diff": 0.0476,
+      "f1_diff": 0.0076,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "qwen3.5:35b",
-      "f1_diff": 0.0012,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "qwen3.5:9b",
-      "f1_diff": 0.0042,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "deepseek/deepseek-v3.2",
-      "model_b": "xiaomi/mimo-v2-flash",
-      "f1_diff": 0.0257,
+      "model_b": "qwen/qwen3.5-122b-a10b",
+      "f1_diff": 0.0424,
       "ci_overlap": true
     },
     {
       "model_a": "deepseek/deepseek-v3.2",
       "model_b": "z-ai/glm-5-turbo",
-      "f1_diff": 0.0473,
+      "f1_diff": 0.0079,
       "ci_overlap": true
     },
     {
@@ -503,6 +473,12 @@
       "model_a": "devstral-small-2",
       "model_b": "qwen/qwen3.6-plus-preview:free",
       "f1_diff": 0.0087,
+      "ci_overlap": true
+    },
+    {
+      "model_a": "gemini-2.5-flash-lite-consolidated",
+      "model_b": "moonshotai/kimi-k2-thinking",
+      "f1_diff": 0.0036,
       "ci_overlap": true
     },
     {
@@ -934,7 +910,7 @@
     {
       "model_a": "gpt-5.4-union",
       "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0275,
+      "f1_diff": 0.0283,
       "ci_overlap": true
     },
     {
@@ -1034,6 +1010,12 @@
       "ci_overlap": true
     },
     {
+      "model_a": "mistral-large-2512-union",
+      "model_b": "moonshotai/kimi-k2-thinking",
+      "f1_diff": 0.0012,
+      "ci_overlap": true
+    },
+    {
       "model_a": "mistral-small-2603-consolidated",
       "model_b": "qwen/qwen3.5-35b-a3b",
       "f1_diff": 0.0186,
@@ -1061,12 +1043,6 @@
       "model_a": "mistral-small-2603-consolidated",
       "model_b": "qwen3.5:4b",
       "f1_diff": 0.0391,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "mistral-small-2603-union",
-      "model_b": "moonshotai/kimi-k2-thinking",
-      "f1_diff": 0.0335,
       "ci_overlap": true
     },
     {
@@ -1167,20 +1143,14 @@
     },
     {
       "model_a": "moonshotai/kimi-k2-thinking",
-      "model_b": "qwen3.5-122b-a10b-consolidated",
-      "f1_diff": 0.0167,
-      "ci_overlap": true
-    },
-    {
-      "model_a": "moonshotai/kimi-k2-thinking",
       "model_b": "qwen3.5-122b-a10b-union",
-      "f1_diff": 0.0372,
+      "f1_diff": 0.0187,
       "ci_overlap": true
     },
     {
       "model_a": "moonshotai/kimi-k2-thinking",
       "model_b": "qwen3.5-35b-union",
-      "f1_diff": 0.0182,
+      "f1_diff": 0.0376,
       "ci_overlap": true
     },
     {
