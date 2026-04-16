@@ -1,0 +1,44 @@
+%erg v1
+Title: Document DeepSeek over-context tool_calls behavior as finding
+Status: open
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T15:30Z claude created — independent finding from PR #250 investigation
+
+--- body ---
+## Context
+
+When DeepSeek V3.2 receives prompts exceeding ~2x its context window
+(163K), it returns tool_calls (web search requests) instead of extracting
+from the provided documents. This happens in 16/20 over-context runs.
+The 4 exceptions (p2_census, p2_no_narratives, p2_statistics×2) succeed
+despite being 1.6-2.3x over context.
+
+Kimi K2 Thinking (131K context window) handles the same over-context
+condition gracefully: 6/6 runs at 160K-282K tokens succeed, including
+one at 2.2x over context (F1=0.84).
+
+This is a publishable finding about model failure modes under context
+pressure — relevant to the article's discussion of model limitations.
+
+## Actions
+
+1. Add a paragraph to report/report.tex in the discussion or limitations
+   section noting the over-context behavior difference.
+2. Include: context window sizes, token counts, refusal rates, and the
+   contrast between DeepSeek (tool_calls escape) and Kimi (graceful
+   degradation).
+3. Optionally add a small table showing the over-context runs.
+
+## Test
+
+`make report` compiles. The over-context finding is mentioned in the
+article text.
+
+## Exit criteria
+
+- Article discusses DeepSeek over-context tool_calls behavior
+- Contrast with Kimi's graceful handling documented
+- LaTeX builds without errors

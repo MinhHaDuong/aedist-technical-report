@@ -1,0 +1,43 @@
+%erg v1
+Title: Re-run Phase 2 ablation with consistent RAG and temperature settings
+Status: open
+Created: 2026-04-16
+Author: claude
+Blocked-by: 0094
+
+--- log ---
+2026-04-16T15:30Z claude created — depends on root cause from 0094
+
+--- body ---
+## Context
+
+Phase 2 ablation (PR #250) has three confounded variables: temperature
+(null vs 0.0), RAG document presence (72K vs 350K tokens), and prompt
+module content. The experiment cannot cleanly attribute ΔF1 to prompt
+modules because replicates are not comparable.
+
+16/32 DeepSeek runs are refusals caused by over-context prompts
+(353K-377K tokens vs 163K context window), not by prompt content.
+
+## Actions
+
+1. After ticket 0094 fixes the injection inconsistency, re-run all 64
+   calls: 16 variants × 2 models × 2 reps.
+2. All runs must use: temperature=0.0, RAG documents included, same
+   corpus (18 docs, ~37K tokens).
+3. If DeepSeek still refuses at 350K+ tokens, consider: (a) truncating
+   the RAG corpus to fit within 163K, or (b) replacing DeepSeek with a
+   model that handles over-context gracefully.
+4. Rebuild measurements.jsonl and verify no token count variance between
+   replicates.
+
+## Test
+
+All 64 records in measurements.jsonl have consistent token counts
+(within 5%) across replicates of the same variant+model.
+
+## Exit criteria
+
+- 64 clean measurements with consistent settings
+- No temperature=null entries in Phase 2 data
+- ΔF1 per module computable without confounds

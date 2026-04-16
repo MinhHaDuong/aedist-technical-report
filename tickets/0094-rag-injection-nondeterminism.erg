@@ -1,0 +1,45 @@
+%erg v1
+Title: Diagnose non-deterministic RAG document injection in worker
+Status: open
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T15:30Z claude created — found during PR #250 temperature investigation
+
+--- body ---
+## Context
+
+PR #250 (Phase 2 ablation) shows that replicates of the same prompt
+variant receive wildly different token counts: ~72K (no RAG documents)
+vs ~350K (RAG documents injected). The two replicates are supposed to
+be identical except for random seed.
+
+Evidence from measurements.jsonl:
+- DeepSeek p2_sourcing run1: 72,516 tokens (t=null, ok)
+- DeepSeek p2_sourcing run2: 353,691 tokens (t=0.0, refusal)
+- Kimi p2_composite run1: 282,248 tokens (over-context, ok)
+- Kimi p2_composite run2: 75,911 tokens (normal)
+
+Temperature also varies across replicates (null vs 0.0), suggesting
+runs straddled the ticket 0084 enforcement boundary.
+
+## Actions
+
+1. Read the worker dispatch code (src/aedist/worker.py, query scripts)
+   to trace how RAG documents are loaded and injected into prompts.
+2. Check whether RAG injection depends on a flag that changed between
+   the two run batches (e.g., a config reload after PR #244 merge).
+3. Determine whether the non-determinism is a race condition, a config
+   boundary, or an intentional fallback when documents are unavailable.
+4. Document the root cause.
+
+## Test
+
+Reproduce: run the same sweep config twice and verify both replicates
+get identical token counts (within tokenizer variance).
+
+## Exit criteria
+
+- Root cause identified and documented in ticket log
+- Fix proposed (may be a separate ticket if non-trivial)
