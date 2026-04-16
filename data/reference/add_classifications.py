@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Add international energy classification columns to reference CSVs.
 
-Adds three columns to gem_thermal.csv and vietnam_thermal_v1.csv:
+Adds four columns to gem_thermal.csv and vietnam_thermal_v1.csv:
   - ires_code:    IRES (International Recommendations for Energy Statistics)
                   commodity code for the primary fuel
+  - ires_label:   Human-readable IRES commodity label
   - isic_code:    ISIC Rev. 4 activity code
   - pypsa_carrier: PyPSA-Earth technology carrier string
 
@@ -62,7 +63,8 @@ def add_columns(input_path: Path, fuel_col: str) -> None:
     """Read CSV, add classification columns, overwrite in place."""
     with open(input_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        assert reader.fieldnames is not None
+        if reader.fieldnames is None:
+            raise ValueError(f"{input_path} has no header row")
         fieldnames = list(reader.fieldnames)
         rows = list(reader)
 
