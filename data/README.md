@@ -38,6 +38,12 @@ classification columns added by `add_classifications.py`:
 | Coal / coal | 0121 | Hard coal | D3510 | coal |
 | gas | 0311 | Natural gas | D3510 | CCGT |
 | gas/oil | 0311 | Natural gas | D3510 | CCGT |
+| oil | 0241 | Fuel oil | D3510 | oil |
+| lng / imported lng | 0320 | Liquefied natural gas | D3510 | CCGT |
+| diesel | 0244 | Gas/diesel oil | D3510 | oil |
+
+Only the first three fuels appear in the current CSVs. The remaining
+mappings (oil, lng, diesel) are defined in the script for future-proofing.
 
 Dual-fuel (gas/oil) plants are classified by primary fuel (natural gas)
 per IRES guidelines for multi-fuel plants. All thermal plants map to ISIC
