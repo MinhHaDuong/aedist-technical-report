@@ -332,6 +332,28 @@ method = "decomposed"
 model = "deepseek/deepseek-chat"
 result_file = "outputs/decomposed/deepseek-v3.2-run1.json"
 
+# Multi-agent verification: panel of 3 diverse verifiers
+#
+# Ticket 0059. Cross-verification with k=3 independent verifiers,
+# median aggregation. Tests whether multi-agent diversity improves
+# hallucination detection beyond single cross-verification.
+# Panel: Anthropic (US, dense), OpenAI (US, dense), DeepSeek (CN, MoE).
+[sweeps.verification_multi]
+repeat = 3
+budget_usd = 5
+output = "derived/verification_multi"
+verification_modes = ["unverified", "multi_cross"]
+verifier_panel = [
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.4",
+    "deepseek/deepseek-v3.2",
+]
+
+[[sweeps.verification_multi.base_configs]]
+method = "decomposed"
+model = "deepseek/deepseek-v3.2"
+result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
+
 # Sourced extraction — ask for citations upfront
 #
 # Same RAG setup, but prompt includes source_1, source_2, note columns.

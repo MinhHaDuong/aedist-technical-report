@@ -125,6 +125,109 @@ def _write_filtered_csv(annotated: list[dict], path: Path, min_score: int = 3) -
     return path
 
 
+def verify_multi_cross(
+    rows: list[dict],
+    verifier_panel: list[str],
+    subject: str | None = None,
+) -> tuple[list[dict], dict]:
+    """Multi-agent cross-verification: k verifiers score each row independently.
+
+    Calls verify_cross() for each model in verifier_panel, collects per-row
+    evidence scores, and computes the median across matched verifiers only.
+    Unmatched plants (where the JSON parser couldn't fuzzy-match the name)
+    are excluded from the median to avoid conflating parse failures with
+    genuine "no sources" verdicts.
+
+    Returns (annotated_rows, summary_dict) where:
+      - Each row has evidence_score_v1..vN, matched_v1..vN, and evidence_score_median
+      - evidence_score is set to the median for downstream filter_by_score compatibility
+      - summary_dict contains per-verifier costs and match rates
+    """
+    import statistics
+    from collections import Counter
+
+    if not verifier_panel:
+        annotated = []
+        for row in rows:
+            entry = dict(row)
+            entry.setdefault("evidence_score", "1")
+            annotated.append(entry)
+        summary = {
+            "mode": "multi_cross",
+            "total_plants": len(annotated),
+            "mean_evidence_score": 1.0 if annotated else 0.0,
+            "score_distribution": {str(i): (len(annotated) if i == 1 else 0) for i in range(5)},
+            "verifier_panel": [],
+            "usage": {},
+        }
+        return annotated, summary
+
+    # Collect per-verifier results, keyed by plant name for robust matching
+    per_verifier_by_name: list[dict[str, dict]] = []
+    total_usage: dict[str, int] = {"prompt_tokens": 0, "completion_tokens": 0}
+    match_counts: list[int] = []
+
+    for verifier_model in verifier_panel:
+        v_annotated, v_summary = verify_cross(rows, verifier_model, subject)
+        # Build name→row lookup from verifier output
+        by_name: dict[str, dict] = {}
+        matched = 0
+        for v_row in v_annotated:
+            name_key = v_row.get("name", "").strip().lower()
+            if name_key:
+                by_name[name_key] = v_row
+            if v_row.get("_matched", True):
+                matched += 1
+        per_verifier_by_name.append(by_name)
+        match_counts.append(matched)
+        v_usage = v_summary.get("usage", {})
+        total_usage["prompt_tokens"] += v_usage.get("prompt_tokens", 0) or 0
+        total_usage["completion_tokens"] += v_usage.get("completion_tokens", 0) or 0
+
+    # Merge: for each input row, look up each verifier by name
+    annotated = []
+    for row in rows:
+        entry = dict(row)
+        name_key = row.get("name", "").strip().lower()
+
+        scores = []
+        matched_scores = []
+        for v_idx, by_name in enumerate(per_verifier_by_name, start=1):
+            v_row = by_name.get(name_key, {})
+            score = int(v_row.get("evidence_score", 1))
+            matched = v_row.get("_matched", False) if v_row else False
+            entry[f"evidence_score_v{v_idx}"] = str(score)
+            entry[f"matched_v{v_idx}"] = str(matched)
+            scores.append(score)
+            if matched:
+                matched_scores.append(score)
+
+        # Use only matched verifiers for median; fall back to all if none matched
+        effective_scores = matched_scores if matched_scores else scores
+        median_score = int(statistics.median(effective_scores))
+        entry["evidence_score_median"] = str(median_score)
+        entry["evidence_score"] = str(median_score)
+        entry["verified"] = "True" if median_score >= 3 else "False"
+        entry["matched_verifiers"] = str(len(matched_scores))
+        entry.pop("_matched", None)
+        annotated.append(entry)
+
+    # Build summary
+    all_scores = [int(r["evidence_score"]) for r in annotated]
+    total = len(annotated) or 1
+    counts = Counter(all_scores)
+    summary = {
+        "mode": "multi_cross",
+        "total_plants": len(annotated),
+        "mean_evidence_score": round(sum(all_scores) / total, 2),
+        "score_distribution": {str(i): counts.get(i, 0) for i in range(5)},
+        "verifier_panel": verifier_panel,
+        "match_rates": [f"{mc}/{len(rows)}" for mc in match_counts],
+        "usage": total_usage,
+    }
+    return annotated, summary
+
+
 def run_condition(
     rows: list[dict],
     base_config: dict,
@@ -135,6 +238,7 @@ def run_condition(
     ref_plants_cache: dict,
     cross_verifier: str | None = None,
     tavily_key: str | None = None,
+    verifier_panel: list[str] | None = None,
 ) -> RunRecord | None:
     """Run one verification condition and return a RunRecord.
 
@@ -168,6 +272,12 @@ def run_condition(
             log.error("No cross_verifier configured")
             return None
         annotated, summary = verify_cross(rows, cross_verifier)
+        verification_cost = _estimate_llm_cost(summary)
+    elif mode == "multi_cross":
+        if not verifier_panel:
+            log.error("No verifier_panel configured for multi_cross mode")
+            return None
+        annotated, summary = verify_multi_cross(rows, verifier_panel)
         verification_cost = _estimate_llm_cost(summary)
     elif mode == "web":
         if not tavily_key:
@@ -206,6 +316,7 @@ def run_condition(
                 "verification_mode": mode,
                 "base_result_file": result_file,
                 "cross_verifier": cross_verifier if mode == "cross" else None,
+                "verifier_panel": verifier_panel if mode == "multi_cross" else None,
             },
         ),
         resource_use=ResourceUse(cost_usd=verification_cost),
@@ -240,13 +351,12 @@ def _estimate_llm_cost(summary: dict) -> float:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Verification regimes on top configurations"
-    )
+    parser = argparse.ArgumentParser(description="Verification regimes on top configurations")
     parser.add_argument("--config", help="Path to verification YAML config (legacy)")
     parser.add_argument("--sweep", help="Sweep name from experiments.toml")
     parser.add_argument(
-        "--experiments", default="experiments.toml",
+        "--experiments",
+        default="experiments.toml",
         help="Path to experiments.toml",
     )
     parser.add_argument("--dry-run", action="store_true", help="List conditions without running")
@@ -269,6 +379,7 @@ def main():
     budget_usd = config.get("budget_usd")
     output_dir = Path(config.get("output", "derived/verification"))
     cross_verifier = config.get("cross_verifier")
+    verifier_panel = config.get("verifier_panel")
     ref_path_str = config.get("reference")
     reference_path = Path(ref_path_str) if ref_path_str else _DEFAULT_REF
 
@@ -292,7 +403,11 @@ def main():
                 mode,
                 run,
             )
-        estimated_llm_calls = sum(1 for _, m, _ in conditions if m in ("self", "cross"))
+        n_panel = len(verifier_panel) if verifier_panel else 0
+        estimated_llm_calls = sum(
+            n_panel if m == "multi_cross" else (1 if m in ("self", "cross") else 0)
+            for _, m, _ in conditions
+        )
         estimated_tavily_searches = sum(150 for _, m, _ in conditions if m == "web")
         log.info(
             "Estimated: %d LLM calls, ~%d Tavily searches",
@@ -345,6 +460,7 @@ def main():
                 ref_plants_cache=ref_plants_cache,
                 cross_verifier=cross_verifier,
                 tavily_key=tavily_key,
+                verifier_panel=verifier_panel,
             )
             if run_record:
                 records.append(run_record)

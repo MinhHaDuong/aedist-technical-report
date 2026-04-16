@@ -494,6 +494,19 @@ With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) 
 Local 35B with RAG approaches cloud API performance at \$0 marginal cost.}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Prompt ablation: which modules help RAG extraction?}
+\textbf{2 models} $\times$ \textbf{16 prompt variants} $\times$ 2 runs (RAG regime only)
+
+\begin{center}
+\includegraphics[width=\textwidth]{inputs/generated/fig_ablation_strip.pdf}
+\end{center}
+
+\vspace{-0.8em}
+{\footnotesize DeepSeek V3.2 refused (tool\_calls) on 16/32 variants.
+Kimi K2: sourcing module helps (+3.6\,pp); statistics module hurts ($-$30.4\,pp).}
+\end{frame}
+
 % ===================================================================
 \section{Conversation and aggregation}
 
