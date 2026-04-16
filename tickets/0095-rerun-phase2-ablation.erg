@@ -1,6 +1,6 @@
 %erg v1
 Title: Document ablation temperature limitation in report
-Status: open
+Status: closed
 Created: 2026-04-16
 Author: claude
 Blocked-by: 0094
@@ -10,6 +10,8 @@ Blocked-by: 0094
 2026-04-16T16:30Z claude note 0094 closed: root cause is web_search tool injection
 2026-04-16T17:00Z claude note reworded: covers both phases, code fix landed in PR #257
 2026-04-16T22:30Z claude note reimagined: skip re-run, document limitation; web_search not in 0088 data, temperature=null adds noise but not bias
+2026-04-17T00:00Z claude claimed
+2026-04-17T00:05Z claude status closed — limitation paragraph added to plan_ablation.tex sec:results-ablation
 
 --- body ---
 ## Context
