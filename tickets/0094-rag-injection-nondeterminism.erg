@@ -1,11 +1,39 @@
 %erg v1
 Title: Diagnose non-deterministic RAG document injection in worker
-Status: open
+Status: closed
 Created: 2026-04-16
 Author: claude
 
 --- log ---
 2026-04-16T15:30Z claude created — found during PR #250 temperature investigation
+2026-04-16T16:00Z claude claimed
+2026-04-16T16:30Z claude status closed — root cause identified
+
+Root cause: experiment straddled ticket 0084 (PR #244) code boundary.
+
+Before 0084, worker.py did NOT call build_api_kwargs — it was not imported.
+Requests went to OpenRouter without temperature or tools kwargs.
+
+After 0084, worker.py calls build_api_kwargs(model_entry, temperature=0.0)
+which adds both temperature=0.0 AND tools=[openrouter:web_search].
+
+The ~300K extra tokens in Batch 2 are web search results injected by
+OpenRouter when the web_search tool is enabled. In 16/20 DeepSeek runs,
+the model requests MORE searches (finish_reason=tool_calls) instead of
+extracting from the RAG corpus. 4 runs succeed despite over-context.
+
+Evidence chain:
+1. git show cba5f19 (PR #244) adds `build_api_kwargs` import to worker.py
+2. Before: query_single_turn(client, model_id, messages) — no kwargs
+3. After: query_single_turn(..., temperature=0.0, tools=[web_search])
+4. Batch 1 (21:20-21:22, no temperature key in output): pre-0084 code
+5. Batch 2 (21:22-21:23, temperature=0.0 in output): post-0084 code
+6. All 64 runs have strategy=wholesale and corpus_files (RAG is present)
+7. Token count diff is from OpenRouter web search injection, not RAG
+
+Fix: ticket 0095 should re-run with web_search disabled for RAG mode,
+or the worker should skip tools when mode=rag (RAG corpus IS the context,
+web search is counterproductive)
 
 --- body ---
 ## Context

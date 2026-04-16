@@ -7,6 +7,7 @@ Blocked-by: 0094
 
 --- log ---
 2026-04-16T15:30Z claude created — depends on root cause from 0094
+2026-04-16T16:30Z claude note 0094 closed: root cause is web_search tool injection, not RAG nondeterminism
 
 --- body ---
 ## Context
@@ -21,15 +22,14 @@ modules because replicates are not comparable.
 
 ## Actions
 
-1. After ticket 0094 fixes the injection inconsistency, re-run all 64
-   calls: 16 variants × 2 models × 2 reps.
-2. All runs must use: temperature=0.0, RAG documents included, same
-   corpus (18 docs, ~37K tokens).
-3. If DeepSeek still refuses at 350K+ tokens, consider: (a) truncating
-   the RAG corpus to fit within 163K, or (b) replacing DeepSeek with a
-   model that handles over-context gracefully.
-4. Rebuild measurements.jsonl and verify no token count variance between
-   replicates.
+1. Disable web_search tools for RAG mode runs. Options:
+   a. Skip tools in build_api_kwargs when caller signals RAG mode
+   b. Override web_search=false in the ablation model YAML
+   c. Add a per-sweep `web_search: false` override in experiments.toml
+2. Re-run all 64 calls: 16 variants × 2 models × 2 reps.
+   All runs: temperature=0.0, RAG corpus included, NO web_search tools.
+3. Expected token count: ~72K (corpus ~37K + prompt ~2K + overhead).
+4. Rebuild measurements.jsonl and verify consistent token counts.
 
 ## Test
 

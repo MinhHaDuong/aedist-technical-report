@@ -311,6 +311,7 @@ def build_api_kwargs(
     *,
     max_tokens: int | None = None,
     temperature: float,
+    enable_web_search: bool = True,
 ) -> dict:
     """Build API kwargs from model capability flags.
 
@@ -321,6 +322,10 @@ def build_api_kwargs(
     - ``web_search: true`` → add OpenRouter server tool
       ``tools: [{"type": "openrouter:web_search"}]``
       (model decides when to search; ~$0.02 per search call via Exa)
+
+    Set *enable_web_search* to ``False`` to suppress web search tools even
+    when the model declares the capability (e.g. RAG mode, where the corpus
+    is the context and web search is counterproductive).
     """
     kwargs: dict = {}
     if max_tokens is not None:
@@ -329,7 +334,7 @@ def build_api_kwargs(
     if not model.get("reasoning", False):
         kwargs["temperature"] = temperature
 
-    if model.get("web_search", False):
+    if enable_web_search and model.get("web_search", False):
         kwargs["tools"] = [
             {
                 "type": "openrouter:web_search",

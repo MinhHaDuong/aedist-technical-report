@@ -131,7 +131,11 @@ class Worker:
         model_entry = models[0]
         model_id = model_entry["id"]
         run = job.run_number
-        api_kwargs = build_api_kwargs(model_entry, temperature=job.temperature)
+        api_kwargs = build_api_kwargs(
+            model_entry,
+            temperature=job.temperature,
+            enable_web_search=job.web_search,
+        )
 
         pool_label = self.worker_id
         if should_skip(output_dir, model_id, run, pool_label):
