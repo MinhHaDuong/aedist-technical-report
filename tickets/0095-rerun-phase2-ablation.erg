@@ -1,5 +1,5 @@
 %erg v1
-Title: Re-run Phase 2 ablation with consistent RAG and temperature settings
+Title: Re-run RAG ablation sweeps with controlled temperature and no web search
 Status: open
 Created: 2026-04-16
 Author: claude
@@ -7,37 +7,37 @@ Blocked-by: 0094
 
 --- log ---
 2026-04-16T15:30Z claude created — depends on root cause from 0094
-2026-04-16T16:30Z claude note 0094 closed: root cause is web_search tool injection, not RAG nondeterminism
+2026-04-16T16:30Z claude note 0094 closed: root cause is web_search tool injection
+2026-04-16T17:00Z claude note reworded: covers both phases, code fix landed in PR #257
 
 --- body ---
 ## Context
 
-Phase 2 ablation (PR #250) has three confounded variables: temperature
-(null vs 0.0), RAG document presence (72K vs 350K tokens), and prompt
-module content. The experiment cannot cleanly attribute ΔF1 to prompt
-modules because replicates are not comparable.
+All existing RAG ablation data (Phase 1: 118 runs, Phase 2: deleted)
+was collected with temperature=null (uncontrolled) and, for some Phase 2
+runs, with OpenRouter web_search injecting ~300K tokens of search results.
 
-16/32 DeepSeek runs are refusals caused by over-context prompts
-(353K-377K tokens vs 163K context window), not by prompt content.
+PR #257 landed the fix: JobSpec.web_search defaults to false, 16 Phase 2
+sweep configs added to experiments.toml. The code path through worker.py
+now respects the sweep config.
 
 ## Actions
 
-1. Disable web_search tools for RAG mode runs. Options:
-   a. Skip tools in build_api_kwargs when caller signals RAG mode
-   b. Override web_search=false in the ablation model YAML
-   c. Add a per-sweep `web_search: false` override in experiments.toml
-2. Re-run all 64 calls: 16 variants × 2 models × 2 reps.
-   All runs: temperature=0.0, RAG corpus included, NO web_search tools.
-3. Expected token count: ~72K (corpus ~37K + prompt ~2K + overhead).
-4. Rebuild measurements.jsonl and verify consistent token counts.
+1. Re-run Phase 2 RAG sweeps (16 configs × 2 models × 2 reps = 64 calls).
+   Use the `ablation_p2_rag_*` sweep configs in experiments.toml.
+2. Assess Phase 1 RAG data (118 runs, all t=null). Decide whether to
+   re-run at t=0 or document the limitation.
+3. Rebuild measurements.jsonl after each batch.
+4. Verify: all new runs have temperature=0.0, token counts ~72K
+   (no 300K+ outliers from web search injection).
 
 ## Test
 
-All 64 records in measurements.jsonl have consistent token counts
-(within 5%) across replicates of the same variant+model.
+`grep -c '"temperature":0.0' measurements.jsonl` matches new run count.
+No `"temperature":null` entries in new ablation data.
 
 ## Exit criteria
 
-- 64 clean measurements with consistent settings
-- No temperature=null entries in Phase 2 data
+- Phase 2: 64 clean measurements from sweep configs, no manual runs
+- Phase 1: re-run or documented limitation
 - ΔF1 per module computable without confounds
