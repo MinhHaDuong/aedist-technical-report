@@ -1,0 +1,34 @@
+{
+  "run_id": "40406275c877",
+  "timestamp": "2026-04-13T21:20:41.159384Z",
+  "method": "single",
+  "method_params": {
+    "model": "moonshotai/kimi-k2-thinking",
+    "prompt_version": "p2_bibliography",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Moonshot AI",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 1332.718,
+    "cost_usd": 0.13062569,
+    "tokens_in": 160327,
+    "tokens_out": 27636
+  },
+  "result_file": "experiments/outputs/ablation/rag/p2_bibliography/kimi-k2-thinking-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 220,
+    "tp": 163,
+    "fp": 57,
+    "fn": 0,
+    "f1": 0.8512,
+    "fuel_accuracy": 0.411,
+    "status_accuracy": 0.4969,
+    "province_accuracy": 0.7531
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "run_id": "03440930e3e2",
+  "timestamp": "2026-04-13T21:21:21.931662Z",
+  "method": "single",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "temperature": 0.0,
+    "prompt_version": "p2_no_narratives",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840
+    }
+  },
+  "resource_use": {
+    "wall_s": 342.046,
+    "cost_usd": 0.09693042,
+    "tokens_in": 355075,
+    "tokens_out": 12134
+  },
+  "result_file": "experiments/outputs/ablation/rag/p2_no_narratives/deepseek-v3.2-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 149,
+    "tp": 149,
+    "fp": 0,
+    "fn": 14,
+    "f1": 0.9551,
+    "fuel_accuracy": 0.4228,
+    "status_accuracy": 0.349,
+    "province_accuracy": 0.6779
+  }
+}
