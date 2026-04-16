@@ -134,10 +134,9 @@ def _is_quantitative(record: RunRecord) -> bool:
     return s.status == "ok" and s.f1 is not None and s.f1 > 0
 
 
-def _is_synthetic(record: RunRecord) -> bool:
-    """Check if a record is a synthetic aggregation."""
-    stem = Path(record.result_file).stem if record.result_file else ""
-    return any(stem.endswith(suffix) for suffix in SYNTHETIC_SUFFIXES)
+def _is_synthetic_slug(slug: str) -> bool:
+    """Check if a model slug corresponds to a synthetic aggregation."""
+    return any(slug.endswith(suffix) for suffix in SYNTHETIC_SUFFIXES)
 
 
 def evaluate_against_gem(gem_path: Path = _GEM_REF) -> dict[str, list[float]]:
@@ -150,9 +149,16 @@ def evaluate_against_gem(gem_path: Path = _GEM_REF) -> dict[str, list[float]]:
 
     gem_f1: dict[str, list[float]] = {}
     for record in records:
-        if not _is_quantitative(record) or _is_synthetic(record):
+        if not _is_quantitative(record):
             continue
         if not record.result_file:
+            continue
+
+        prompt_version = record.method_params.prompt_version or ""
+        stem = Path(record.result_file).stem
+        label = f"{prompt_version}/{stem}" if prompt_version else stem
+        slug = strip_label(label)
+        if _is_synthetic_slug(slug):
             continue
 
         csv_path = _REPO_ROOT / record.result_file
@@ -167,11 +173,6 @@ def evaluate_against_gem(gem_path: Path = _GEM_REF) -> dict[str, list[float]]:
 
         entries = reconcile(gem_plants, system_plants)
         metrics = compute_metrics(entries)
-
-        prompt_version = record.method_params.prompt_version or ""
-        stem = Path(record.result_file).stem if record.result_file else record.run_id
-        label = f"{prompt_version}/{stem}" if prompt_version else stem
-        slug = strip_label(label)
 
         gem_f1.setdefault(slug, []).append(metrics.f1)
 
@@ -192,8 +193,7 @@ def compute_ranking_robustness(
         if entry["f1"] is None or entry["f1"] == 0:
             continue
         slug = strip_label(entry["label"])
-        # Skip synthetic suffixes
-        if any(slug.endswith(s) for s in SYNTHETIC_SUFFIXES):
+        if _is_synthetic_slug(slug):
             continue
         expert_by_slug.setdefault(slug, []).append(entry["f1"])
 
@@ -251,15 +251,7 @@ def generate_latex(ref_agreement: dict, ranking: dict) -> str:
 
     if ranking["spearman_rho"] is not None:
         rho = ranking["spearman_rho"]
-        p = ranking["spearman_p"]
-        sig = ""
-        if p < 0.001:
-            sig = "$^{***}$"
-        elif p < 0.01:
-            sig = "$^{**}$"
-        elif p < 0.05:
-            sig = "$^{*}$"
-        lines.append(f"Model ranking Spearman $\\rho$ & {rho:.3f}{sig} \\\\")
+        lines.append(f"Model ranking Spearman $\\rho$ & {rho:.3f} \\\\")
         lines.append(f"Models compared & {ranking['n_common']} \\\\")
     else:
         lines.append(f"Models compared & {ranking['n_common']} (insufficient) \\\\")
