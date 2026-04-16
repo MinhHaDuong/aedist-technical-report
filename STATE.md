@@ -1,8 +1,8 @@
-Last updated: 2026-04-14 (Phase 2 ablation complete, ticket 0088 closed)
+Last updated: 2026-04-16 (ticket 0059 closed, MASTERPLAN synced to slides)
 
 ## Status
 
-Pipeline end-to-end. Census: 37 models. Headline F1 corrected: DeepSeek V3.2 decomposed mean=89.8% [85.8-95.6%, n=4]. RAG scaling curve complete (PR #240). Decomposition hallucination fix validated (PR #241). Internal coherence measured (PR #243). FDR + ANOVA tested (PR #242). Temperature enforced (PR #244). Phase 2 ablation complete: RAG regime, 2 models, 60 jobs (ticket 0088, PR #250).
+Pipeline end-to-end. Census: 37 models. Headline F1: DeepSeek V3.2 decomposed mean=89.8% [85.8-95.6%, n=4]. All PRs merged, zero open PRs. Phase 2 ablation complete (ticket 0088). Multi-agent verification complete: negative result — 0-10% inter-verifier agreement even after bugfix (ticket 0059, PR #246). Post-hoc LLM verification is a dead end. MASTERPLAN updated: 6-step pipeline with front-loaded source triage replaces post-hoc verification.
 
 ## Blockers
 
@@ -10,11 +10,10 @@ None
 
 ## Next actions
 
-1. HITL PR review: #242 through #250 (merged and open)
-2. `make measurements` — backfill temperature metadata
-3. Visual review: `make slides` + `make report`
-4. Prune 3 stale worktrees (0083, 0078, 0084 — branches already merged)
-5. Wave B candidates: 0059 (verification), 0067 (ablation viz)
+1. Ticket 0097: sourced RAG extraction with deterministic source verification — the provenance metric that replaces LLM panels
+2. Ticket 0095: re-run RAG ablation with controlled temperature and no web search
+3. `make measurements` — backfill temperature metadata
+4. Visual review: `make slides` + `make report`
 
 ## North star
 
@@ -32,19 +31,21 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 - [x] FDR + ANOVA diagnostics tested (ticket 0083, PR #242)
 - [x] Temperature control enforced + limitation documented (ticket 0084, PR #244)
 - [x] Phase 2 ablation: 16 prompts on RAG regime (ticket 0088, PR #250)
-- [ ] Multi-agent verification Phase B (ticket 0059)
-- [ ] Full verification factorial (ticket 0060)
-- [ ] Ablation results visualization (ticket 0067)
+- [x] Multi-agent verification: negative result, dead end (ticket 0059, PR #246)
+- [x] Three-way reference reconciliation (ticket 0082, PR #249)
+- [x] International classifications mapping (ticket 0085, PR #248)
+- [x] Ablation visualization: strip plot + heatmap (ticket 0067, PR #247)
+- [ ] Sourced extraction + deterministic verification (ticket 0097)
+- [ ] Re-run ablation with controlled temperature (ticket 0095)
 
-## Open tickets (11)
+## Open tickets (9)
 
-- 0059 Multi-agent verification Phase B (ready)
-- 0060 Full verification factorial (ready)
-- 0067 Ablation results visualization (blocked by Phase 2)
+- 0060 Full verification factorial (ready — may be superseded by 0097)
 - 0069 Project namespace audit (ready)
 - 0073 Optional warmup run (ready)
 - 0075 Universal prompt optimization survey (ready)
 - 0076 LangChain Deep Agents evaluation (ready)
 - 0077 Lit review: automated statistics for PyPSA (ready)
-- 0082 Three-way reference reconciliation (ready)
-- 0085 International classifications mapping (ready)
+- 0093 Slides temperature caveat (ready)
+- 0095 Re-run RAG ablation with controlled temperature (ready)
+- 0097 Sourced RAG extraction with deterministic source verification (ready)
