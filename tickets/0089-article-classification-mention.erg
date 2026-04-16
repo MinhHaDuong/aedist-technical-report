@@ -1,0 +1,32 @@
+%erg v1
+Title: Mention international classifications in article text
+Status: open
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T10:00Z claude created — follow-up from PR #248 review
+
+--- body ---
+## Context
+
+Ticket 0085 exit criteria included "Article mentions adherence to
+international classifications." The data columns were added (PR #248)
+but no .tex changes were made. This follow-up addresses the article text.
+
+## Actions
+
+1. Add a sentence in the data description section noting that fuel types
+   are mapped to IRES commodity codes (UN, 2011), ISIC Rev. 4 activity
+   codes, and PyPSA-Earth carrier strings.
+2. Optionally add a small mapping table as an appendix or inline table.
+
+## Test
+
+Article compiles. Classification mention is present in the methods or
+data section.
+
+## Exit criteria
+
+- Article .tex file references IRES, ISIC, and PyPSA classifications
+- LaTeX builds without errors
