@@ -1,78 +1,115 @@
 %erg v1
-Title: Measure source grounding rate as provenance metric
+Title: Sourced RAG extraction with deterministic source verification
 Status: open
 Created: 2026-04-16
 Author: claude
 
 --- log ---
 2026-04-16T15:00Z claude created — replaces post-hoc LLM verification (ticket 0059 dead end)
+2026-04-16T16:00Z claude note reimagined: sourced extraction + deterministic verification, not retroactive grounding
 
 --- body ---
 ## Context
 
 Ticket 0059 demonstrated that post-hoc LLM verification doesn't work:
-a 3-model panel (Sonnet 4.6, GPT-5.4, DeepSeek V3.2) achieves 0-10%
-inter-verifier agreement across 3 runs on 167 plants. The 0-4 evidence
-rubric asks models to recall citations from parametric knowledge —
-different training data produces different citations, not reproducible
-provenance.
+a 3-model panel achieves 0-10% inter-verifier agreement. The 0-4
+evidence rubric asks models to recall citations from parametric
+knowledge — different training data produces different answers.
 
-The production pipeline (MASTERPLAN) front-loads justification at source
-triage (step 2), not at output verification. But for the methods paper,
-we still need a provenance metric that measures how traceable each
-extraction method's output is.
+The production pipeline (MASTERPLAN) front-loads justification at
+source triage (step 2). For the methods paper, we need a provenance
+metric that measures whether each row is traceable to the corpus.
 
-Preliminary finding: 79% of 167 extracted plants can be found in the
-RAG corpus (18 files, 8k lines) by string matching alone. The 21% not
-found are parametric-knowledge additions — plants the LLM knows about
-but that aren't in the documents we provided. This is a direct,
-LLM-free hallucination signal for RAG extractions.
+Key insight: the RAG corpus is 18 markdown files, each containing one
+table. No page numbers or sections — just filename + row content.
+The model should cite its source at extraction time, and we verify
+deterministically that the cited source exists in the corpus.
 
-## Actions
+## Design
 
-1. Implement `grounding_rate()` in a new module or in `verify.py`:
-   - Input: extracted CSV rows + corpus directory
-   - For each row, search all corpus files for the plant name
-     (exact substring match, then fuzzy at threshold 70)
-   - Output per row: `grounded` (bool), `corpus_file` (best match),
-     `corpus_line` (line number of match)
-   - Output aggregate: grounding rate = grounded / total
+### Phase A: Sourced extraction prompt
 
-2. Run on all existing extraction outputs (census, RAG, decomposed,
-   multiturn) to compare methods. Hypothesis: RAG methods have higher
-   grounding rate than parametric-only (census) methods, because RAG
-   outputs come from the documents.
+Update the RAG extraction prompt to require structured source columns:
 
-3. Cross-tabulate with F1: plants that are grounded AND in the
-   reference = trustworthy. Plants grounded but NOT in reference =
-   corpus error or reference gap. Plants NOT grounded but in
-   reference = parametric knowledge (correct but uncitable). Plants
-   NOT grounded and NOT in reference = hallucination.
+- `source_1`: corpus filename + row description
+  (e.g., "PDP8_annex2_table1.md, row: Pha Lai 1, 440 MW")
+- `source_2`: second source if available, same format
+- If the plant is not found in the provided documents, leave
+  source columns empty. Do not cite from memory.
 
-4. Report as a 2x2 table in the journal paper, replacing the
-   multi-agent verification results section.
+An empty source is honest. A fabricated source is worse than no source.
+
+Run the sourced sweep (`sweeps.sourced`) with updated prompt.
+
+### Phase B: Deterministic source verification
+
+Implement `verify_source_grounding()`:
+
+- Parse `source_1` to extract the claimed filename and row content
+- Check: does the file exist in `data/rag_corpus/`?
+- Check: does the file contain a row matching the claimed content?
+  (exact substring, then fuzzy at threshold 70)
+- Output per row: `source_verified` (bool), `source_file_found` (bool),
+  `source_row_found` (bool)
+
+No LLM needed. Fully deterministic. Reproducible across runs.
+
+### Phase C: Provenance metrics
+
+Three rates per extraction method:
+
+1. **Source rate**: fraction of rows where source_1 is non-empty
+   (model was willing to cite)
+2. **Grounding rate**: fraction of cited sources that point to a real
+   passage in the corpus (citation is not fabricated)
+3. **Traceability rate**: source_rate x grounding_rate = fraction of
+   rows a modeler can actually check
+
+Cross-tabulate with F1 reference match:
+
+| | In reference | Not in reference |
+|---|---|---|
+| **Traceable** | Citable fact | Reference gap |
+| **Not traceable** | Uncitable fact | Hallucination |
+
+### Phase D: Method comparison
+
+Compare across extraction methods:
+- Census (parametric only): expect source_rate ≈ 0 (no corpus)
+- RAG non-sourced: retroactive grounding by name search (baseline)
+- RAG sourced: model cites inline (this experiment)
+
+Hypothesis: sourced RAG has higher traceability than non-sourced RAG,
+because the model is forced to link each claim to a document passage
+during extraction rather than listing plants from memory.
 
 ## Test
 
 ```python
-def test_grounding_rate_exact_match():
-    """Plant name found verbatim in corpus file → grounded=True."""
+def test_verify_source_file_exists():
+    """source_1 cites a file in corpus → source_file_found=True."""
 
-def test_grounding_rate_fuzzy_match():
-    """Plant name with diacritic variant → grounded=True at threshold 70."""
+def test_verify_source_file_missing():
+    """source_1 cites a nonexistent file → source_file_found=False."""
 
-def test_grounding_rate_not_found():
-    """Plant name absent from all corpus files → grounded=False."""
+def test_verify_source_row_found():
+    """Cited file contains matching row → source_row_found=True."""
 
-def test_grounding_rate_returns_file_and_line():
-    """Grounded plant includes corpus_file and corpus_line."""
+def test_verify_source_row_not_found():
+    """Cited file exists but row content doesn't match → source_row_found=False."""
+
+def test_empty_source_not_verified():
+    """Empty source_1 → source_verified=False, not an error."""
+
+def test_traceability_rate():
+    """Aggregate: traceable = source_rate * grounding_rate."""
 ```
 
 ## Exit criteria
 
-- grounding_rate() implemented with tests
-- Run on at least census + RAG + decomposed extractions
-- 2x2 table (grounded x reference) for each method
-- Grounding rate reported in journal paper as provenance metric
-- Multi-agent verification section updated: negative result stated,
-  grounding rate presented as the replacement
+- Sourced extraction prompt requires filename + row citation
+- verify_source_grounding() implemented with tests
+- Sourced sweep run on at least 2 models
+- 2x2 table (traceable x reference) for sourced vs non-sourced RAG
+- Traceability rate reported in journal paper as provenance metric
+- Ticket 0059 negative result cited as motivation for this approach
