@@ -149,13 +149,13 @@ $(SLIDE_GEN)/fig_scaling_curve.pdf: $(MEASUREMENTS)
 	uv run python -m aedist.plot_scaling_curve \
 	    --output $@
 
-$(SLIDE_GEN)/fig_ablation_strip.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_ablation --strip $@
-
 $(GEN)/fig_ablation_strip.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_ablation --strip $@
+
+$(SLIDE_GEN)/fig_ablation_strip.pdf: $(GEN)/fig_ablation_strip.pdf
+	@mkdir -p $(dir $@)
+	cp $< $@
 
 $(GEN)/fig_ablation_heatmap.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)

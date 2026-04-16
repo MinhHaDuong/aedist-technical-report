@@ -29,13 +29,15 @@ _REFUSAL = "#BBBBBB"
 # The 6 prompt modules in display order
 _MODULES = ["persona", "overview", "narratives", "bibliography", "statistics", "sourcing"]
 
-# Display order for the strip plot: anchors, then single-module, then minus-one
+# Display order for the strip plot: anchors, then single-module, then minus-one.
+# "" entries mark section breaks (visual gaps in the strip plot).
 _VARIANT_ORDER = [
     # Anchors
     "p2_census",
     "p2_base",
     "p2_composite",
     "p2_frontier",
+    "",  # ── section break ──
     # Single-module (base + one module)
     "p2_persona",
     "p2_overview",
@@ -43,6 +45,7 @@ _VARIANT_ORDER = [
     "p2_bibliography",
     "p2_statistics",
     "p2_sourcing",
+    "",  # ── section break ──
     # Minus-one (composite - one module)
     "p2_no_persona",
     "p2_no_overview",
@@ -52,8 +55,10 @@ _VARIANT_ORDER = [
     "p2_no_sourcing",
 ]
 
-# Section boundaries for visual grouping (indices where gaps go)
-_SECTION_BREAKS = {4, 10}  # after anchors, after single-module
+_MODEL_SHORT_NAMES = {
+    "deepseek-v3.2": "DS V3.2",
+    "kimi-k2-thinking": "Kimi K2",
+}
 
 _VARIANT_LABELS = {
     "p2_census": "Census (anchor)",
@@ -90,7 +95,7 @@ def load_ablation_data() -> list[dict]:
             continue
         model = (record.method_params.model or "").split("/")[-1]
         s = record.result_summary
-        is_refusal = s.tp is None and s.fp is None and s.fn is None
+        is_refusal = s.status != "ok"
         rows.append(
             {
                 "variant": pv,
@@ -115,6 +120,11 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
     import numpy as np
     from matplotlib.lines import Line2D
 
+    # Guard: empty data produces no figure
+    if not rows:
+        log.warning("No ablation data; skipping strip plot")
+        return
+
     fig, ax = plt.subplots(figsize=(10, 7.5))
 
     y_offset = 0.0
@@ -124,9 +134,10 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
     section_gap = 1.2
     variant_gap = 0.8
 
-    for idx, variant in enumerate(_VARIANT_ORDER):
-        if idx in _SECTION_BREAKS:
+    for variant in _VARIANT_ORDER:
+        if variant == "":
             y_offset += section_gap
+            continue
 
         variant_rows = [r for r in rows if r["variant"] == variant]
         if not variant_rows:
@@ -287,7 +298,7 @@ def write_heatmap_pdf(rows: list[dict], output: Path) -> None:
     matrix = np.full((n_modules, n_cols), np.nan)
     col_labels = []
     for mi, model in enumerate(models):
-        short = model.replace("deepseek-", "DS ").replace("kimi-k2-thinking", "Kimi K2")
+        short = _MODEL_SHORT_NAMES.get(model, model.split("-", 1)[-1][:10])
         col_labels.extend([f"{short}\n+module", f"{short}\n−module"])
         base_f1 = mean_f1.get(("p2_base", model))
         comp_f1 = mean_f1.get(("p2_composite", model))
