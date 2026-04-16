@@ -1,0 +1,111 @@
+% Results: multi-agent verification (Experiment 5)
+% Generated from ticket 0059 data in derived/verification_multi/
+
+\subsection{R\'esultats}\label{sec:multi-verif-results}
+
+Le protocole est ex\'ecut\'e sur la meilleure extraction (DeepSeek~V3.2
+d\'ecompos\'e, F1$=$98,8\,\%, 167~centrales) avec le panel complet
+(condition~C3, $k=3$ v\'erificateurs, $n=3$~r\'ep\'etitions). Le co\^ut total
+est de 1,21\,\$\ pour 9~appels LLM.
+
+\subsubsection{Comportement des v\'erificateurs}
+
+Les trois v\'erificateurs attribuent des scores syst\'ematiquement diff\'erents~:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{V\'erificateur} & \textbf{Run~1} & \textbf{Run~2} & \textbf{Run~3} \\
+\midrule
+Sonnet~4.6 (score moyen)   & 3,01 & 3,04 & 2,73 \\
+DeepSeek V3.2 (score moyen) & 2,65 & 2,69 & 1,00 \\
+GPT-5.4 (score moyen)      & 3,99 & 3,51 & 3,98 \\
+\midrule
+M\'ediane (score moyen)     & 3,22 & 3,12 & 2,73 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent GPT-5.4 est syst\'ematiquement g\'en\'ereux (score moyen 3,5--4,0),
+attribuant des sources primaires \`a la quasi-totalit\'e des centrales.
+Sonnet~4.6 est mod\'er\'e (2,7--3,0). DeepSeek~V3.2 est \emph{erratique}~:
+score moyen de 2,7 dans les runs~1 et~2, mais 1,0 dans le run~3 (toutes
+les centrales not\'ees <<~aucune source~>>). L'accord inter-v\'erificateurs
+complet (trois scores identiques) varie de 0,6\,\% \`a 41\,\% selon les runs.
+
+\subsubsection{Couverture au seuil $t=3$}
+
+\begin{center}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Condition} & \textbf{Centrales} & \textbf{Retenues ($t \geq 3$)}
+  & \textbf{Couverture} & \textbf{Co\^ut} \\
+\midrule
+C0 (non v\'erifi\'e) & 167 & 167 & 100\,\% & 0\,\$ \\
+C3 run~1             & 167 & 152 & 91\,\% & 0,51\,\$ \\
+C3 run~2             & 167 & 137 & 82\,\% & 0,51\,\$ \\
+C3 run~3             & 167 & 125 & 75\,\% & 0,70\,\$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Le filtrage au seuil~3 \'elimine 9\,\% \`a 25\,\% des centrales, avec
+une variance inter-runs \'elev\'ee (16~points de pourcentage). Le F1 reste
+constant \`a 98,8\,\% avant et apr\`es filtrage~: les centrales \'elimin\'ees sont
+correctes (pr\'esentes dans le r\'ef\'erentiel) mais le panel ne leur attribue
+pas suffisamment de sources primaires.
+
+\subsubsection{Verdicts sur les hypoth\`eses pr\'e-enregistr\'ees}
+
+\begin{description}
+\item[H1 (d\'etection d'hallucinations)~: non testable.]
+  Aucune centrale ne re\c{c}oit un score m\'edian de~0 dans aucun run.
+  L'extraction de base (DeepSeek~V3.2 d\'ecompos\'e post-correction) a un
+  taux de faux positifs inf\'erieur \`a 1\,\%, laissant trop peu
+  d'hallucinations \`a d\'etecter. Un test sur une extraction \`a taux de FP
+  plus \'elev\'e serait n\'ecessaire.
+
+\item[H2 (rendement d\'ecroissant)~: non testable dans ce design.]
+  Seule la condition~C3 (panel complet) a \'et\'e ex\'ecut\'ee. Les conditions
+  C1 et C2 (un ou deux v\'erificateurs) n'ont pas \'et\'e isol\'ees. Le design
+  initial pr\'evoyait de d\'eriver C1 et C2 comme sous-ensembles de C3, mais
+  la forte variance inter-runs rend cette d\'erivation non fiable~: la
+  m\'ediane de 2~scores sur 3 n'est pas \'equivalente \`a deux v\'erificateurs
+  ind\'ependants. Le ticket~0060 (factoriel complet) couvre ce test.
+
+\item[H3 (couverture d\'ecroissante)~: confirm\'ee.]
+  La couverture au seuil $t=3$ diminue de 100\,\% (C0, non v\'erifi\'e) \`a
+  75--91\,\% (C3, panel complet). Le filtre multi-agents est plus strict
+  qu'un v\'erificateur unique.
+
+\item[H4 (DeepSeek co\^ut-efficace)~: r\'efut\'ee.]
+  DeepSeek~V3.2 est le v\'erificateur le moins cher (${\sim}40\times$ moins
+  que Sonnet~4.6) mais aussi le moins fiable~: score moyen variant de 1,0
+  \`a 2,7 selon les runs. Le rapport co\^ut-efficacit\'e est domin\'e par la
+  variance, non par le prix.
+\end{description}
+
+\subsubsection{Le\c{c}on m\'ethodologique}
+
+Le r\'esultat principal n'est pas dans les hypoth\`eses pr\'e-enregistr\'ees
+mais dans l'accord inter-v\'erificateurs~: \textbf{le panel ne converge pas}.
+Avec un accord complet de 0,6\,\% \`a 41\,\% selon les runs, les
+v\'erificateurs LLM \'evaluent des aspects diff\'erents de la provenance ---
+ou attribuent des scores de mani\`ere al\'eatoire. Cela sugg\`ere que la
+rubrique d'\'evidence 0--4, bien que conceptuellement claire, n'est pas
+suffisamment op\'erationnalis\'ee pour produire des scores reproductibles
+entre mod\`eles.
+
+Deux pistes de rem\'ediation~:
+\begin{enumerate}
+\item \textbf{Ancrage dans les sources.} Fournir le corpus RAG au
+  v\'erificateur pour qu'il v\'erifie factuellement chaque citation (mode
+  \texttt{source\_grounding}, ticket~0060), au lieu de juger la plausibilit\'e
+  des citations de m\'emoire.
+\item \textbf{D\'ecomposition de la rubrique.} Remplacer le score unique 0--4
+  par des sous-questions binaires (<<~le nom existe-t-il dans le
+  corpus~?~>>, <<~la capacit\'e est-elle coh\'erente~?~>>) dont les r\'eponses
+  sont plus facilement v\'erifiables et reproductibles.
+\end{enumerate}
