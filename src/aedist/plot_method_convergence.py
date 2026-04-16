@@ -19,12 +19,9 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
+from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, normalize_model
 
 log = logging.getLogger(__name__)
-
-# Colors matching slides.tex definitions
-_MATCHED = "#2E86AB"
-_HALLUC = "#F5A623"
 
 # Methods to include and display order (bottom to top in plot)
 _METHOD_ORDER = ["single", "multiturn", "web", "rag", "decomposed"]
@@ -39,11 +36,6 @@ _METHOD_LABELS = {
 }
 
 
-def _normalize_model(raw: str) -> str:
-    """Normalize model name to slug (strip provider prefix)."""
-    return raw.split("/")[-1]
-
-
 def load_convergence_data() -> list[dict]:
     """Load and clean measurements for the convergence plot.
 
@@ -54,7 +46,7 @@ def load_convergence_data() -> list[dict]:
         method = record.method.value
         if method not in _METHOD_ORDER:
             continue
-        model = _normalize_model(record.method_params.model)
+        model = normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         s = record.result_summary
@@ -149,24 +141,31 @@ def write_pdf(
             if tp > 0:
                 xs = np.arange(1, tp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, c=_MATCHED, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(xs, ys, s=4, c=COLOR_MATCHED, marker="|", linewidths=0.5, zorder=3)
 
             # FP dots (orange, left of 0) — 1 dot = 1 hallucinated plant
             if fp > 0:
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, c=_HALLUC, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(xs, ys, s=4, c=COLOR_HALLUC, marker="|", linewidths=0.5, zorder=3)
                 if fp_raw > max_fp:
-                    ax.text(-fp - 1, y, f"({fp_raw})", fontsize=5, color=_HALLUC,
-                            va="center", ha="right")
+                    ax.text(
+                        -fp - 1,
+                        y,
+                        f"({fp_raw})",
+                        fontsize=5,
+                        color=COLOR_HALLUC,
+                        va="center",
+                        ha="right",
+                    )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
         method_ticks.append((band_center, _METHOD_LABELS.get(method, method)))
         y_offset += len(method_rows) * spacing + gap
 
     # Reference line at 163
-    ax.axvline(x=163, color="#2ca02c", linewidth=1, linestyle="--", alpha=0.7, zorder=2)
-    ax.text(165, -0.5, "163\nplants", color="#2ca02c", fontsize=8, va="top", ha="left")
+    ax.axvline(x=163, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2)
+    ax.text(165, -0.5, "163\nplants", color=COLOR_REFERENCE, fontsize=8, va="top", ha="left")
 
     # Zero line
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
@@ -187,8 +186,8 @@ def write_pdf(
     from matplotlib.lines import Line2D
 
     legend_handles = [
-        Line2D([0], [0], color=_MATCHED, linewidth=3, label="Correctly identified"),
-        Line2D([0], [0], color=_HALLUC, linewidth=3, label="Hallucinated"),
+        Line2D([0], [0], color=COLOR_MATCHED, linewidth=3, label="Correctly identified"),
+        Line2D([0], [0], color=COLOR_HALLUC, linewidth=3, label="Hallucinated"),
     ]
     ax.legend(handles=legend_handles, loc="center right", fontsize=9, framealpha=0.9)
 

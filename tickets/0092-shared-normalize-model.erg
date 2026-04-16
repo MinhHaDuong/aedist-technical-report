@@ -1,11 +1,12 @@
 %erg v1
 Title: Extract shared normalize_model helper to util module
-Status: open
+Status: closed
 Created: 2026-04-16
 Author: claude
 
 --- log ---
 2026-04-16T14:00Z claude created — found during PR 247 /simplify review
+2026-04-16T14:30Z claude status closed — normalize_model moved to util.py, 3 plot modules updated
 
 --- body ---
 ## Context

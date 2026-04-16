@@ -18,13 +18,9 @@ from collections import defaultdict
 from pathlib import Path
 
 from .measurements import load
+from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, COLOR_REFUSAL, normalize_model
 
 log = logging.getLogger(__name__)
-
-# Colors matching slides.tex and plot_method_convergence.py
-_MATCHED = "#2E86AB"
-_HALLUC = "#F5A623"
-_REFUSAL = "#BBBBBB"
 
 # The 6 prompt modules in display order
 _MODULES = ["persona", "overview", "narratives", "bibliography", "statistics", "sourcing"]
@@ -93,7 +89,7 @@ def load_ablation_data() -> list[dict]:
         pv = record.method_params.prompt_version
         if not pv or not pv.startswith("p2_"):
             continue
-        model = (record.method_params.model or "").split("/")[-1]
+        model = normalize_model(record.method_params.model)
         s = record.result_summary
         is_refusal = s.status != "ok"
         rows.append(
@@ -162,7 +158,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
                     [0],
                     [y],
                     s=40,
-                    c=_REFUSAL,
+                    c=COLOR_REFUSAL,
                     marker="x",
                     linewidths=1.5,
                     zorder=3,
@@ -172,7 +168,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
                     y,
                     "refusal",
                     fontsize=5,
-                    color=_REFUSAL,
+                    color=COLOR_REFUSAL,
                     va="center",
                     ha="left",
                     style="italic",
@@ -191,7 +187,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
                     xs,
                     ys,
                     s=4,
-                    c=_MATCHED,
+                    c=COLOR_MATCHED,
                     marker="|",
                     linewidths=0.5,
                     zorder=3,
@@ -205,7 +201,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
                     xs,
                     ys,
                     s=4,
-                    c=_HALLUC,
+                    c=COLOR_HALLUC,
                     marker="|",
                     linewidths=0.5,
                     zorder=3,
@@ -216,7 +212,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
                         y,
                         f"({fp_raw})",
                         fontsize=5,
-                        color=_HALLUC,
+                        color=COLOR_HALLUC,
                         va="center",
                         ha="right",
                     )
@@ -227,8 +223,8 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
         y_offset += n_plotted * run_spacing + variant_gap
 
     # Reference line at 163
-    ax.axvline(x=163, color="#2ca02c", linewidth=1, linestyle="--", alpha=0.7, zorder=2)
-    ax.text(165, -0.5, "163\nplants", color="#2ca02c", fontsize=8, va="top", ha="left")
+    ax.axvline(x=163, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2)
+    ax.text(165, -0.5, "163\nplants", color=COLOR_REFERENCE, fontsize=8, va="top", ha="left")
 
     # Zero line
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
@@ -247,12 +243,12 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
 
     # Legend
     legend_handles = [
-        Line2D([0], [0], color=_MATCHED, linewidth=3, label="Correctly identified"),
-        Line2D([0], [0], color=_HALLUC, linewidth=3, label="Hallucinated"),
+        Line2D([0], [0], color=COLOR_MATCHED, linewidth=3, label="Correctly identified"),
+        Line2D([0], [0], color=COLOR_HALLUC, linewidth=3, label="Hallucinated"),
         Line2D(
             [0],
             [0],
-            color=_REFUSAL,
+            color=COLOR_REFUSAL,
             linewidth=0,
             marker="x",
             markersize=6,
