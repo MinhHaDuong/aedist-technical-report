@@ -485,3 +485,47 @@ même modèle. Le module sourçage (colonnes Source\_1, Source\_2) est conçu po
 alimenter cette phase~: chaque ligne du CSV porte ses propres références,
 permettant à un agent vérificateur de contrôler la provenance sans accéder au
 prompt original.
+
+\subsection{Résultats de l'ablation --- régime RAG}\label{sec:results-ablation}
+
+La Phase~2 teste 16~variantes de prompt sur le régime RAG avec deux modèles
+frontière (DeepSeek~V3.2 et Kimi~K2~Thinking), choisis pour leurs effets
+opposés en Phase~1 ($-27{,}4$\,pp et $+25{,}8$\,pp respectivement avec le
+prompt composite). Chaque variante est répétée deux fois (64~appels au total,
+coût~: 3{,}77\,\$).
+
+La figure~\ref{fig:ablation-strip} montre les résultats par variante sous forme
+de strip~plot~: chaque point bleu est une centrale correctement identifiée,
+chaque point orange une hallucination. DeepSeek~V3.2 refuse (tool\_calls) sur
+16/32~variantes, rendant l'analyse $\Delta$F1 incomplète pour ce modèle.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{inputs/generated/fig_ablation_strip.pdf}
+\caption{Strip plot de l'ablation Phase~2 en régime RAG. Bleu~: centrales
+correctement identifiées (TP). Orange~: hallucinations (FP). Croix grises~:
+refus du modèle. Ligne verte~: inventaire complet (163~centrales).}
+\label{fig:ablation-strip}
+\end{figure}
+
+La figure~\ref{fig:ablation-heatmap} résume les effets par module sous forme de
+matrice. Pour chaque module, deux $\Delta$F1 sont calculés~: l'effet de
+composition (base + module vs base seul) et l'effet d'ablation (composite $-$
+module vs composite complet).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\linewidth]{inputs/generated/fig_ablation_heatmap.pdf}
+\caption{Effet de chaque module sur le F1 en régime RAG. Rouge~: le module
+dégrade les performances. Bleu~: le module les améliore. Tirets~: données
+insuffisantes (refus du modèle).}
+\label{fig:ablation-heatmap}
+\end{figure}
+
+Pour Kimi~K2~Thinking, le module \emph{sourçage} est le seul à améliorer
+le F1 en composition ($+3{,}6$\,pp) et son retrait dégrade le composite
+($-7{,}1$\,pp). Le module \emph{statistiques} a l'effet inverse~:
+$-30{,}4$\,pp en composition, $+11{,}5$\,pp en ablation. L'interprétation
+est que le module statistiques (format tabulaire imposé) interfère avec le
+contexte RAG déjà structuré, tandis que le sourçage (demande de références)
+aide le modèle à ancrer ses réponses dans les documents fournis.
