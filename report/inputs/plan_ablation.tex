@@ -529,3 +529,15 @@ $-30{,}4$\,pp en composition, $+11{,}5$\,pp en ablation. L'interprétation
 est que le module statistiques (format tabulaire imposé) interfère avec le
 contexte RAG déjà structuré, tandis que le sourçage (demande de références)
 aide le modèle à ancrer ses réponses dans les documents fournis.
+
+\paragraph{Limitation~: température non contrôlée}
+Les 64~appels de la Phase~2 ont été exécutés avec la température par défaut du
+fournisseur (\texttt{temperature=null}, typiquement 0{,}7--1{,}0 selon le
+modèle) plutôt qu'à $t=0$. Ce paramétrage introduit un bruit stochastique
+supplémentaire entre les répétitions, mais ne biaise pas la comparaison
+base/composite puisque les deux bras partagent la même configuration de
+température. Les intervalles de confiance rapportés sont donc potentiellement
+plus larges qu'ils ne le seraient à $t=0$, ce qui rend nos tests plus
+conservateurs. Le code a depuis été corrigé pour imposer $t=0{,}0$ par défaut
+(PR\,\#244)~; une reprise ciblée des modules ambigus pourra être effectuée si
+les relecteurs le demandent.
