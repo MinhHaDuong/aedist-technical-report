@@ -122,18 +122,30 @@ The 5-step extraction chain that produces PyPSA-Earth-ready datasets
 from primary government documents. Includes worker infrastructure
 (absorbed from former "Job board" milestone).
 
-**The extraction chain:**
+**The extraction chain (LLM-seeded, human-filtered, RAG-extracted):**
 
-1. **Regulatory corpus** — Retrieve official planning documents and
-   annexes. Convert PDF to MD using benchmarked converters.
-2. **Operational stock** — Reconstruct current fleet from utility annual
-   reports and regulator data.
-3. **Decisional chronology** — Per facility, trace administrative
-   history from primary sources. Rule: no primary source = flag the gap.
-4. **Analytical synthesis** — Periodization, realization rates, technology
-   transitions.
-5. **Assembly** — Citable report with provenance chain. Each datum traces
-   to an identified document; gaps are flagged honestly.
+Justification is front-loaded: validate the *inputs* (which documents
+to trust), not the *outputs* (which rows have citations). Post-hoc LLM
+verification doesn't produce reproducible provenance (ticket 0059:
+multi-agent panel achieves 0-10% inter-verifier agreement even after
+bugfix).
+
+1. **Source survey** — Ask the LLM for a full report: framing, asset
+   list, bibliography. The LLM proposes candidate documents from
+   parametric knowledge.
+2. **Source triage (HITL)** — Filter by publisher authority. Government
+   decisions, utility reports = primary; newsletters, compilations =
+   discard. Human validates the source list before any extraction.
+3. **Corpus construction** — Crawl primary sources, get PDFs, convert
+   to Markdown (benchmarked converters), index, archive.
+4. **RAG extraction** — Extract the asset list from the validated
+   corpus. The LLM's parametric list from step 1 serves as a stopping
+   criterion (coverage check), not as data.
+5. **Per-asset enrichment** — RAG per asset + news search to fill gaps
+   and update status. Each cell traces to a passage in a specific
+   corpus document.
+6. **Assembly** — Final table with provenance chain. Every cell
+   traceable to a source document; gaps flagged honestly.
 
 **First application: Vietnam thermal plants.**
 Regulatory corpus = PDP7/7A/8/8 revised (Decisions 428, 500, 768, 1509).
@@ -149,9 +161,11 @@ Utility = EVN annual reports, ERAV dispatch data. ~163 facilities.
 
 | Pipeline step | Benchmark component | Status |
 |---|---|---|
-| Regulatory corpus | PDF to MD converters + RAG wholesale | Converters benchmarked |
-| Operational stock | Web-augmented queries | Done |
-| Chronologies | Multi-turn conversations | Done |
+| Source survey | Frontier deep-research sweep (15 models) | Done |
+| Source triage | HITL prompt design | Validated |
+| Corpus construction | PDF to MD converters | Benchmarked (6 backends) |
+| RAG extraction | RAG wholesale sweep | Done, F1=89.8% mean |
+| Per-asset enrichment | Web-augmented queries | Done |
 | Assembly | Reconciliation LP + evaluation | Done, 574 tests |
 
 **Deliverable:** one PyPSA-Earth-ready Vietnam thermal dataset with
@@ -165,9 +179,21 @@ Level 3 evaluation. The table comes with receipts.
   provenance columns (`source_1`, `source_2`, `note`) that already
   exist in 3 Claude Opus runs but are silently destroyed during CSV
   canonicalization.
+- **Post-hoc verification: dead end** (ticket 0059, PR #246): multi-agent
+  panel (3 models, 3 runs) achieves 0-10% inter-verifier agreement.
+  Root cause: the 0-4 rubric asks models to recall citations from
+  parametric knowledge, producing opinions not provenance. Conclusion:
+  post-hoc LLM verification does not produce reproducible provenance
+  scores. The production pipeline front-loads justification at source
+  triage (step 2), not at output verification.
+- **Source grounding rate**: measure what fraction of extracted rows
+  can be traced to a specific passage in the RAG corpus by string
+  matching alone (no LLM needed). Preliminary: 79% of 167 plants
+  found in corpus; the 21% not found are parametric-knowledge
+  additions — a direct hallucination signal.
 - **Verification** (ticket 0030): "cost of trust" — precision-coverage
-  trade-off across verification modes. Compare upfront citation
-  (sourced extraction) vs post-hoc verification (LLM + web checks).
+  trade-off. The meaningful comparison is now upfront citation (sourced
+  extraction) vs corpus grounding (string matching), not LLM panels.
 - "I don't know" detection and scoring
 - Confidence interval estimation on aggregates
 

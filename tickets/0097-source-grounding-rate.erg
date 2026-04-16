@@ -1,0 +1,78 @@
+%erg v1
+Title: Measure source grounding rate as provenance metric
+Status: open
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T15:00Z claude created — replaces post-hoc LLM verification (ticket 0059 dead end)
+
+--- body ---
+## Context
+
+Ticket 0059 demonstrated that post-hoc LLM verification doesn't work:
+a 3-model panel (Sonnet 4.6, GPT-5.4, DeepSeek V3.2) achieves 0-10%
+inter-verifier agreement across 3 runs on 167 plants. The 0-4 evidence
+rubric asks models to recall citations from parametric knowledge —
+different training data produces different citations, not reproducible
+provenance.
+
+The production pipeline (MASTERPLAN) front-loads justification at source
+triage (step 2), not at output verification. But for the methods paper,
+we still need a provenance metric that measures how traceable each
+extraction method's output is.
+
+Preliminary finding: 79% of 167 extracted plants can be found in the
+RAG corpus (18 files, 8k lines) by string matching alone. The 21% not
+found are parametric-knowledge additions — plants the LLM knows about
+but that aren't in the documents we provided. This is a direct,
+LLM-free hallucination signal for RAG extractions.
+
+## Actions
+
+1. Implement `grounding_rate()` in a new module or in `verify.py`:
+   - Input: extracted CSV rows + corpus directory
+   - For each row, search all corpus files for the plant name
+     (exact substring match, then fuzzy at threshold 70)
+   - Output per row: `grounded` (bool), `corpus_file` (best match),
+     `corpus_line` (line number of match)
+   - Output aggregate: grounding rate = grounded / total
+
+2. Run on all existing extraction outputs (census, RAG, decomposed,
+   multiturn) to compare methods. Hypothesis: RAG methods have higher
+   grounding rate than parametric-only (census) methods, because RAG
+   outputs come from the documents.
+
+3. Cross-tabulate with F1: plants that are grounded AND in the
+   reference = trustworthy. Plants grounded but NOT in reference =
+   corpus error or reference gap. Plants NOT grounded but in
+   reference = parametric knowledge (correct but uncitable). Plants
+   NOT grounded and NOT in reference = hallucination.
+
+4. Report as a 2x2 table in the journal paper, replacing the
+   multi-agent verification results section.
+
+## Test
+
+```python
+def test_grounding_rate_exact_match():
+    """Plant name found verbatim in corpus file → grounded=True."""
+
+def test_grounding_rate_fuzzy_match():
+    """Plant name with diacritic variant → grounded=True at threshold 70."""
+
+def test_grounding_rate_not_found():
+    """Plant name absent from all corpus files → grounded=False."""
+
+def test_grounding_rate_returns_file_and_line():
+    """Grounded plant includes corpus_file and corpus_line."""
+```
+
+## Exit criteria
+
+- grounding_rate() implemented with tests
+- Run on at least census + RAG + decomposed extractions
+- 2x2 table (grounded x reference) for each method
+- Grounding rate reported in journal paper as provenance metric
+- Multi-agent verification section updated: negative result stated,
+  grounding rate presented as the replacement
