@@ -311,7 +311,7 @@ def build_api_kwargs(
     *,
     max_tokens: int | None = None,
     temperature: float,
-    enable_web_search: bool = True,
+    enable_web_search: bool = False,
 ) -> dict:
     """Build API kwargs from model capability flags.
 

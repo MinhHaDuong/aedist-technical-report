@@ -1,11 +1,12 @@
 %erg v1
 Title: Document DeepSeek over-context tool_calls behavior as finding
-Status: open
+Status: closed
 Created: 2026-04-16
 Author: claude
 
 --- log ---
 2026-04-16T15:30Z claude created — independent finding from PR #250 investigation
+2026-04-16T17:00Z claude status closed — dropped; model-specific finding, project tests methods not models
 
 --- body ---
 ## Context
