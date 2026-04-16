@@ -447,9 +447,10 @@ repeat = 2
 budget_usd = 10
 output = "outputs/ablation/parametric/p1_composite"
 
-# RAG regime (corpus injected)
+# RAG regime (corpus injected, web search disabled — see ticket 0094)
 [sweeps.ablation_p1_rag_base]
 mode = "rag"
+web_search = false
 prompt_modules = []
 models = "models.yaml"
 model_set = "ablation_dev"
@@ -459,6 +460,7 @@ output = "outputs/ablation/rag/p1_base"
 
 [sweeps.ablation_p1_rag_composite]
 mode = "rag"
+web_search = false
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "ablation_dev"

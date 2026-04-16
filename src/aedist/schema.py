@@ -274,6 +274,11 @@ class JobSpec(BaseModel):
     )
     budget_usd: float = Field(default=10.0, ge=0)
     temperature: float = Field(default=0.0, ge=0.0, le=2.0, description="Sampling temperature.")
+    web_search: bool = Field(
+        default=True,
+        description="Enable web search tools. Set false for RAG mode to avoid "
+        "injecting ~300K tokens of search results (see ticket 0094).",
+    )
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)
     estimated_duration: float | None = Field(
