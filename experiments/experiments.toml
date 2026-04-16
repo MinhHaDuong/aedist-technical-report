@@ -447,10 +447,9 @@ repeat = 2
 budget_usd = 10
 output = "outputs/ablation/parametric/p1_composite"
 
-# RAG regime (corpus injected, web search disabled — see ticket 0094)
+# RAG regime (corpus injected)
 [sweeps.ablation_p1_rag_base]
 mode = "rag"
-web_search = false
 prompt_modules = []
 models = "models.yaml"
 model_set = "ablation_dev"
@@ -460,7 +459,6 @@ output = "outputs/ablation/rag/p1_base"
 
 [sweeps.ablation_p1_rag_composite]
 mode = "rag"
-web_search = false
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "ablation_dev"
@@ -638,3 +636,135 @@ model_set = "ablation"
 repeat = 2
 budget_usd = 5
 output = "outputs/ablation/no_sourcing"
+
+# Phase 2 RAG — same 16 prompt variants as Phase 1, but in RAG mode.
+# Models: models_ablation_p2_rag.yaml (DeepSeek V3.2, Kimi K2 Thinking).
+# web_search defaults to false (ticket 0094).
+
+[sweeps.ablation_p2_rag_base]
+mode = "rag"
+prompt_modules = []
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_base"
+
+[sweeps.ablation_p2_rag_composite]
+mode = "rag"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_composite"
+
+[sweeps.ablation_p2_rag_frontier]
+mode = "rag"
+prompt = "prompts/prompt_frontier.txt"
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_frontier"
+
+[sweeps.ablation_p2_rag_census]
+mode = "rag"
+prompt = "prompts/prompt_structured.txt"
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_census"
+
+[sweeps.ablation_p2_rag_persona]
+mode = "rag"
+prompt_modules = ["persona"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_persona"
+
+[sweeps.ablation_p2_rag_overview]
+mode = "rag"
+prompt_modules = ["overview"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_overview"
+
+[sweeps.ablation_p2_rag_narratives]
+mode = "rag"
+prompt_modules = ["narratives"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_narratives"
+
+[sweeps.ablation_p2_rag_bibliography]
+mode = "rag"
+prompt_modules = ["bibliography"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_bibliography"
+
+[sweeps.ablation_p2_rag_statistics]
+mode = "rag"
+prompt_modules = ["statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_statistics"
+
+[sweeps.ablation_p2_rag_sourcing]
+mode = "rag"
+prompt_modules = ["sourcing"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_sourcing"
+
+[sweeps.ablation_p2_rag_no_persona]
+mode = "rag"
+prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_persona"
+
+[sweeps.ablation_p2_rag_no_overview]
+mode = "rag"
+prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_overview"
+
+[sweeps.ablation_p2_rag_no_narratives]
+mode = "rag"
+prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_narratives"
+
+[sweeps.ablation_p2_rag_no_bibliography]
+mode = "rag"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_bibliography"
+
+[sweeps.ablation_p2_rag_no_statistics]
+mode = "rag"
+prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_statistics"
+
+[sweeps.ablation_p2_rag_no_sourcing]
+mode = "rag"
+prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 2
+budget_usd = 5
+output = "outputs/ablation/rag/p2_no_sourcing"
