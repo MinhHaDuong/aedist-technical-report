@@ -128,27 +128,25 @@ def _write_filtered_csv(annotated: list[dict], path: Path, min_score: int = 3) -
 def verify_multi_cross(
     rows: list[dict],
     verifier_panel: list[str],
-    subject: str = "thermal power plants in Vietnam",
+    subject: str | None = None,
 ) -> tuple[list[dict], dict]:
     """Multi-agent cross-verification: k verifiers score each row independently.
 
     Calls verify_cross() for each model in verifier_panel, collects per-row
-    evidence scores, and computes the median across verifiers.
+    evidence scores, and computes the median across matched verifiers only.
+    Unmatched plants (where the JSON parser couldn't fuzzy-match the name)
+    are excluded from the median to avoid conflating parse failures with
+    genuine "no sources" verdicts.
 
     Returns (annotated_rows, summary_dict) where:
-      - Each row has evidence_score_v1..vN and evidence_score_median columns
+      - Each row has evidence_score_v1..vN, matched_v1..vN, and evidence_score_median
       - evidence_score is set to the median for downstream filter_by_score compatibility
-      - summary_dict contains per-verifier costs summed
+      - summary_dict contains per-verifier costs and match rates
     """
-    import statistics as _statistics
-
-    from .verify import DEFAULT_VERIFICATION_SUBJECT as _DVS  # noqa: F811
-
-    if subject == "thermal power plants in Vietnam":
-        subject = _DVS
+    import statistics
+    from collections import Counter
 
     if not verifier_panel:
-        # Empty panel: return rows unchanged with default scores
         annotated = []
         for row in rows:
             entry = dict(row)
@@ -158,54 +156,73 @@ def verify_multi_cross(
             "mode": "multi_cross",
             "total_plants": len(annotated),
             "mean_evidence_score": 1.0 if annotated else 0.0,
-            "score_distribution": {"0": 0, "1": len(annotated), "2": 0, "3": 0, "4": 0},
+            "score_distribution": {str(i): (len(annotated) if i == 1 else 0) for i in range(5)},
             "verifier_panel": [],
             "usage": {},
         }
         return annotated, summary
 
-    # Collect per-verifier annotated results
-    per_verifier_annotated: list[list[dict]] = []
+    # Collect per-verifier results, keyed by plant name for robust matching
+    per_verifier_by_name: list[dict[str, dict]] = []
     total_usage: dict[str, int] = {"prompt_tokens": 0, "completion_tokens": 0}
+    match_counts: list[int] = []
 
     for verifier_model in verifier_panel:
         v_annotated, v_summary = verify_cross(rows, verifier_model, subject)
-        per_verifier_annotated.append(v_annotated)
+        # Build name→row lookup from verifier output
+        by_name: dict[str, dict] = {}
+        matched = 0
+        for v_row in v_annotated:
+            name_key = v_row.get("name", "").strip().lower()
+            if name_key:
+                by_name[name_key] = v_row
+            if v_row.get("_matched", True):
+                matched += 1
+        per_verifier_by_name.append(by_name)
+        match_counts.append(matched)
         v_usage = v_summary.get("usage", {})
         total_usage["prompt_tokens"] += v_usage.get("prompt_tokens", 0) or 0
         total_usage["completion_tokens"] += v_usage.get("completion_tokens", 0) or 0
 
-    # Merge: for each row, collect scores from each verifier, compute median
+    # Merge: for each input row, look up each verifier by name
     annotated = []
-    for row_idx, row in enumerate(rows):
+    for row in rows:
         entry = dict(row)
-        scores = []
-        for v_idx, v_rows in enumerate(per_verifier_annotated, start=1):
-            if row_idx < len(v_rows):
-                score = int(v_rows[row_idx].get("evidence_score", 1))
-            else:
-                score = 1
-            entry[f"evidence_score_v{v_idx}"] = str(score)
-            scores.append(score)
+        name_key = row.get("name", "").strip().lower()
 
-        median_score = int(_statistics.median(scores))
+        scores = []
+        matched_scores = []
+        for v_idx, by_name in enumerate(per_verifier_by_name, start=1):
+            v_row = by_name.get(name_key, {})
+            score = int(v_row.get("evidence_score", 1))
+            matched = v_row.get("_matched", False) if v_row else False
+            entry[f"evidence_score_v{v_idx}"] = str(score)
+            entry[f"matched_v{v_idx}"] = str(matched)
+            scores.append(score)
+            if matched:
+                matched_scores.append(score)
+
+        # Use only matched verifiers for median; fall back to all if none matched
+        effective_scores = matched_scores if matched_scores else scores
+        median_score = int(statistics.median(effective_scores))
         entry["evidence_score_median"] = str(median_score)
         entry["evidence_score"] = str(median_score)
         entry["verified"] = "True" if median_score >= 3 else "False"
+        entry["matched_verifiers"] = str(len(matched_scores))
+        entry.pop("_matched", None)
         annotated.append(entry)
 
     # Build summary
     all_scores = [int(r["evidence_score"]) for r in annotated]
     total = len(annotated) or 1
-    from collections import Counter as _Counter
-
-    counts = _Counter(all_scores)
+    counts = Counter(all_scores)
     summary = {
         "mode": "multi_cross",
         "total_plants": len(annotated),
         "mean_evidence_score": round(sum(all_scores) / total, 2),
         "score_distribution": {str(i): counts.get(i, 0) for i in range(5)},
         "verifier_panel": verifier_panel,
+        "match_rates": [f"{mc}/{len(rows)}" for mc in match_counts],
         "usage": total_usage,
     }
     return annotated, summary
