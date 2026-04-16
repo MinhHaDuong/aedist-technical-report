@@ -21,7 +21,7 @@ import numpy as np
 from scipy import stats as scipy_stats
 
 from .evaluate import load_plants_csv
-from .measurements import SYNTHETIC_SUFFIXES, load
+from .measurements import SYNTHETIC_SUFFIXES, load, load_metrics
 from .metrics import compute_metrics
 from .reconcile import reconcile
 from .schema import MatchType, RunRecord
@@ -46,10 +46,13 @@ _MATCHED_TYPES = {
 # ---------------------------------------------------------------------------
 
 
-def reconcile_references() -> dict:
+def reconcile_references(
+    expert_path: Path = _EXPERT_REF,
+    gem_path: Path = _GEM_REF,
+) -> dict:
     """Reconcile expert and GEM references, return agreement summary."""
-    expert = load_plants_csv(_EXPERT_REF)
-    gem = load_plants_csv(_GEM_REF)
+    expert = load_plants_csv(expert_path)
+    gem = load_plants_csv(gem_path)
 
     entries = reconcile(expert, gem)
 
@@ -122,38 +125,47 @@ def _cohens_kappa_fuel(matched: list) -> float | None:
 
 
 def _is_quantitative(record: RunRecord) -> bool:
-    """Check if a record has quantitative results (not refusal/error/empty)."""
+    """Check if a record has quantitative results (not refusal/error/empty).
+
+    Excludes f1==0 runs (typically empty extractions) since they carry no
+    ranking signal and would inflate the common-model set with noise.
+    """
     s = record.result_summary
     return s.status == "ok" and s.f1 is not None and s.f1 > 0
 
 
-def _is_synthetic(record: RunRecord) -> bool:
-    """Check if a record is a synthetic aggregation."""
-    stem = Path(record.result_file).stem if record.result_file else ""
-    return any(stem.endswith(suffix) for suffix in SYNTHETIC_SUFFIXES)
+def _is_synthetic_slug(slug: str) -> bool:
+    """Check if a model slug corresponds to a synthetic aggregation."""
+    return any(slug.endswith(suffix) for suffix in SYNTHETIC_SUFFIXES)
 
 
-def evaluate_against_gem() -> dict[str, list[float]]:
+def evaluate_against_gem(gem_path: Path = _GEM_REF) -> dict[str, list[float]]:
     """Re-evaluate all system outputs against the GEM reference.
 
     Returns a dict mapping model slug -> list of F1 scores against GEM.
     """
-    gem_plants = load_plants_csv(_GEM_REF)
+    gem_plants = load_plants_csv(gem_path)
     records = load()
 
     gem_f1: dict[str, list[float]] = {}
     for record in records:
-        if not _is_quantitative(record) or _is_synthetic(record):
+        if not _is_quantitative(record):
             continue
         if not record.result_file:
             continue
 
+        prompt_version = record.method_params.prompt_version or ""
+        stem = Path(record.result_file).stem
+        label = f"{prompt_version}/{stem}" if prompt_version else stem
+        slug = strip_label(label)
+        if _is_synthetic_slug(slug):
+            continue
+
         csv_path = _REPO_ROOT / record.result_file
-        if not csv_path.exists() or csv_path.suffix != ".csv":
-            # Try with .csv extension
+        if csv_path.suffix != ".csv":
             csv_path = csv_path.with_suffix(".csv")
-            if not csv_path.exists():
-                continue
+        if not csv_path.exists():
+            continue
 
         system_plants = load_plants_csv(csv_path)
         if not system_plants:
@@ -161,11 +173,6 @@ def evaluate_against_gem() -> dict[str, list[float]]:
 
         entries = reconcile(gem_plants, system_plants)
         metrics = compute_metrics(entries)
-
-        prompt_version = record.method_params.prompt_version or ""
-        stem = Path(record.result_file).stem if record.result_file else record.run_id
-        label = f"{prompt_version}/{stem}" if prompt_version else stem
-        slug = strip_label(label)
 
         gem_f1.setdefault(slug, []).append(metrics.f1)
 
@@ -186,8 +193,7 @@ def compute_ranking_robustness(
         if entry["f1"] is None or entry["f1"] == 0:
             continue
         slug = strip_label(entry["label"])
-        # Skip synthetic suffixes
-        if any(slug.endswith(s) for s in SYNTHETIC_SUFFIXES):
+        if _is_synthetic_slug(slug):
             continue
         expert_by_slug.setdefault(slug, []).append(entry["f1"])
 
@@ -235,7 +241,7 @@ def generate_latex(ref_agreement: dict, ranking: dict) -> str:
         "\\midrule",
         f"Fuel agreement & {ref_agreement['fuel_agreement'] * 100:.1f}\\% \\\\",
         f"Status agreement & {ref_agreement['status_agreement'] * 100:.1f}\\% \\\\",
-        f"Capacity agreement & {ref_agreement['capacity_agreement'] * 100:.1f}\\% \\\\",
+        f"Capacity agreement$^{{a}}$ & {ref_agreement['capacity_agreement'] * 100:.1f}\\% \\\\",
     ]
 
     if ref_agreement["fuel_kappa"] is not None:
@@ -245,15 +251,7 @@ def generate_latex(ref_agreement: dict, ranking: dict) -> str:
 
     if ranking["spearman_rho"] is not None:
         rho = ranking["spearman_rho"]
-        p = ranking["spearman_p"]
-        sig = ""
-        if p < 0.001:
-            sig = "$^{***}$"
-        elif p < 0.01:
-            sig = "$^{**}$"
-        elif p < 0.05:
-            sig = "$^{*}$"
-        lines.append(f"Model ranking Spearman $\\rho$ & {rho:.3f}{sig} \\\\")
+        lines.append(f"Model ranking Spearman $\\rho$ & {rho:.3f} \\\\")
         lines.append(f"Models compared & {ranking['n_common']} \\\\")
     else:
         lines.append(f"Models compared & {ranking['n_common']} (insufficient) \\\\")
@@ -262,6 +260,9 @@ def generate_latex(ref_agreement: dict, ranking: dict) -> str:
         [
             "\\bottomrule",
             "\\end{tabular}",
+            "",
+            "\\smallskip{\\footnotesize $^{a}$Fraction of matched plants with"
+            " identical capacity (within LP matcher tolerance).}",
             "\\end{table}",
         ]
     )
@@ -279,13 +280,25 @@ def main(argv: list[str] | None = None):
         description="Three-way reference reconciliation (expert vs GEM vs system)",
     )
     parser.add_argument("--output", required=True, help="Path to write tab_reconciliation.tex")
+    parser.add_argument(
+        "--expert-ref",
+        type=Path,
+        default=_EXPERT_REF,
+        help="Path to expert reference CSV (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--gem-ref",
+        type=Path,
+        default=_GEM_REF,
+        help="Path to GEM reference CSV (default: %(default)s)",
+    )
     args = parser.parse_args(argv)
 
     output_path = Path(args.output)
 
     # Step 1: Expert vs GEM
     log.info("Reconciling expert vs GEM references...")
-    ref_agreement = reconcile_references()
+    ref_agreement = reconcile_references(args.expert_ref, args.gem_ref)
     log.info(
         "Matched: %d, Expert-only: %d, GEM-only: %d",
         ref_agreement["n_matched"],
@@ -303,12 +316,10 @@ def main(argv: list[str] | None = None):
 
     # Step 2: Re-evaluate system outputs against GEM
     log.info("Re-evaluating system outputs against GEM reference...")
-    gem_f1 = evaluate_against_gem()
+    gem_f1 = evaluate_against_gem(args.gem_ref)
     log.info("Evaluated %d model slugs against GEM", len(gem_f1))
 
     # Step 3: Ranking robustness
-    from .measurements import load_metrics
-
     expert_metrics = load_metrics()
     ranking = compute_ranking_robustness(expert_metrics, gem_f1)
     if ranking["spearman_rho"] is not None:

@@ -104,7 +104,7 @@ GEM_REF    := data/reference/gem_thermal.csv
 
 $(GEN)/tab_reconciliation.tex: $(MEASUREMENTS) $(EXPERT_REF) $(GEM_REF)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_reconciliation --output $@
+	uv run python -m aedist.tabulate_reconciliation --output $@ --expert-ref $(EXPERT_REF) --gem-ref $(GEM_REF)
 
 derived/variance_decomposition.json: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
