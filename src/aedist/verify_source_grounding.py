@@ -130,9 +130,50 @@ def plant_name_in_file(
     return False
 
 
+def _load_reference_names(
+    reference_path: Path,
+    *,
+    name_column: str = "name",
+) -> list[str]:
+    """Load plant names from a reference CSV."""
+    names: list[str] = []
+    with open(reference_path, encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            n = (row.get(name_column) or "").strip()
+            if n:
+                names.append(n)
+    return names
+
+
+def _name_in_reference(
+    plant_name: str,
+    reference_names: list[str],
+    *,
+    threshold: int = FILENAME_MATCH_THRESHOLD,
+) -> bool:
+    """Check whether *plant_name* fuzzy-matches any name in the reference list."""
+    if not plant_name:
+        return False
+    name_lower = plant_name.strip().lower()
+    for ref in reference_names:
+        ref_lower = ref.strip().lower()
+        if name_lower == ref_lower:
+            return True
+        if fuzz.token_sort_ratio(name_lower, ref_lower) >= threshold:
+            return True
+    return False
+
+
+_DEFAULT_REFERENCE_PATH = (
+    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+)
+
+
 def verify_source_grounding(
     rows: list[dict],
     corpus_dir: Path,
+    *,
+    reference_path: Path | None = None,
 ) -> tuple[list[dict], dict]:
     """Verify source grounding for extracted rows with source_1/source_2 columns.
 
@@ -143,6 +184,9 @@ def verify_source_grounding(
         'source_1', 'source_2'.
     corpus_dir : Path
         Directory containing the .md corpus files.
+    reference_path : Path | None
+        Path to the reference CSV with a ``name`` column.  Defaults to
+        ``data/reference/vietnam_thermal_v1.csv`` relative to the project root.
 
     Returns
     -------
@@ -153,6 +197,18 @@ def verify_source_grounding(
         Aggregate metrics: source_rate, grounding_rate, traceability_rate,
         and a 2x2 counts table.
     """
+    if reference_path is None:
+        reference_path = _DEFAULT_REFERENCE_PATH
+
+    # Load reference names
+    if reference_path.is_file():
+        reference_names = _load_reference_names(reference_path)
+    else:
+        log.warning(
+            "Reference file not found: %s — in_reference will be False for all", reference_path
+        )
+        reference_names = []
+
     # Load corpus
     corpus_files = sorted(f.name for f in corpus_dir.glob("*.md"))
     corpus_contents: dict[str, str] = {}
@@ -166,7 +222,7 @@ def verify_source_grounding(
     n_verified = 0
 
     # 2x2 counters: (traceable, in_reference)
-    # "traceable" = source_verified; "in_reference" = plant exists in corpus
+    # "traceable" = source_verified; "in_reference" = plant exists in reference CSV
     counts_2x2 = {"tt": 0, "tf": 0, "ft": 0, "ff": 0}
 
     for row in rows:
@@ -191,7 +247,8 @@ def verify_source_grounding(
                 # Check if plant name appears in the matched file
                 if plant_name_in_file(name, corpus_contents[mf]):
                     content_found = True
-                break  # Use first matching citation
+                    break  # Fully verified — no need to try next citation
+                # File matched but plant not found — continue to next citation
 
         verified = file_found and content_found
 
@@ -210,12 +267,8 @@ def verify_source_grounding(
         if verified:
             n_verified += 1
 
-        # 2x2: traceable (verified) x in_reference (name found in ANY corpus file)
-        in_ref = (
-            any(plant_name_in_file(name, content) for content in corpus_contents.values())
-            if name
-            else False
-        )
+        # 2x2: traceable (verified) x in_reference (name found in reference CSV)
+        in_ref = _name_in_reference(name, reference_names) if name else False
 
         if verified and in_ref:
             counts_2x2["tt"] += 1

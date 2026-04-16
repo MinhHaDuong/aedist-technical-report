@@ -123,14 +123,14 @@ class TestPlantNameInFile:
 
 @pytest.fixture()
 def mini_corpus(tmp_path):
-    """Create a minimal corpus directory with 2 files."""
+    """Create a minimal corpus directory with 2 files and a reference CSV."""
     corpus = tmp_path / "corpus"
     corpus.mkdir()
 
     (corpus / "PDP8_annex2_table1.md").write_text(
         "## Bảng 1: Danh mục các nhà máy nhiệt điện LNG\n"
         "| LNG Quảng Ninh | 1500 MW | 2021-2030 |\n"
-        "| LNG Thái Bình | 1500 MW | 2021-2030 |\n"
+        "| LNG Cà Ná | 1500 MW | 2021-2030 |\n"
         "| NMNĐ Nhơn Trạch 3 | 750 MW | 2021-2030 |\n",
         encoding="utf-8",
     )
@@ -142,10 +142,24 @@ def mini_corpus(tmp_path):
         encoding="utf-8",
     )
 
+    # Reference CSV with known plant names
+    ref = tmp_path / "reference.csv"
+    ref.write_text(
+        "name,capacity_mwe,status\n"
+        "Nhon Trach 3,750,planned\n"
+        "Thai Binh 1,600,operational\n"
+        "Duyen Hai 3,1244,operational\n",
+        encoding="utf-8",
+    )
+
     return corpus
 
 
 class TestVerifySourceGrounding:
+    def _ref(self, mini_corpus):
+        """Return the reference CSV path from the fixture's tmp_path."""
+        return mini_corpus.parent / "reference.csv"
+
     def test_verified_plant(self, mini_corpus):
         """Plant with correct citation and name in file -> all True."""
         rows = [
@@ -155,7 +169,9 @@ class TestVerifySourceGrounding:
                 "source_2": "",
             }
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert annotated[0]["source_file_found"] == "True"
         assert annotated[0]["source_content_found"] == "True"
         assert annotated[0]["source_verified"] == "True"
@@ -170,7 +186,9 @@ class TestVerifySourceGrounding:
                 "source_2": "",
             }
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert annotated[0]["source_file_found"] == "True"
         assert annotated[0]["source_content_found"] == "False"
         assert annotated[0]["source_verified"] == "False"
@@ -184,7 +202,9 @@ class TestVerifySourceGrounding:
                 "source_2": "",
             }
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert annotated[0]["source_file_found"] == "False"
         assert annotated[0]["source_verified"] == "False"
         assert summary["source_rate"] == 0.0
@@ -192,40 +212,44 @@ class TestVerifySourceGrounding:
     def test_no_source_columns(self, mini_corpus):
         """Rows without source_1/source_2 keys -> graceful degradation."""
         rows = [{"name": "Thai Binh 1"}]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert annotated[0]["source_verified"] == "False"
         assert summary["source_rate"] == 0.0
 
     def test_2x2_counts(self, mini_corpus):
-        """Verify the 2x2 table counts are correct."""
+        """Verify the 2x2 table counts are correct against reference CSV."""
         rows = [
-            # Traceable AND in reference
+            # Traceable AND in reference CSV
             {
                 "name": "Nhon Trach 3",
                 "source_1": "PDP8 Annex II Table 1 (NMNĐ Nhơn Trạch 3 750MW)",
                 "source_2": "",
             },
-            # NOT traceable but in reference (file citation wrong)
+            # NOT traceable but in reference CSV (file citation wrong)
             {
                 "name": "Thai Binh 1",
                 "source_1": "World Bank Report 2025",
                 "source_2": "",
             },
-            # NOT traceable and NOT in reference
+            # NOT traceable and NOT in reference CSV
             {
                 "name": "Fictional Plant X",
                 "source_1": "",
                 "source_2": "",
             },
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         c = summary["counts_2x2"]
         assert c["tt"] == 1  # Nhon Trach 3: traceable + in ref
         assert c["ft"] == 1  # Thai Binh 1: not traceable + in ref
         assert c["ff"] == 1  # Fictional: not traceable + not in ref
 
-    def test_source_2_fallback(self, mini_corpus):
-        """If source_1 doesn't match, try source_2."""
+    def test_source_2_fallback_no_file_match(self, mini_corpus):
+        """If source_1 doesn't match any file, try source_2."""
         rows = [
             {
                 "name": "Thai Binh 1",
@@ -233,10 +257,32 @@ class TestVerifySourceGrounding:
                 "source_2": "Report 32 Appendix 1 (NĐ Thái Bình I 2x300MW)",
             }
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert annotated[0]["source_file_found"] == "True"
         assert annotated[0]["source_content_found"] == "True"
         assert annotated[0]["source_verified"] == "True"
+
+    def test_source_2_fallback_plant_missing_in_source_1(self, mini_corpus):
+        """source_1 matches a file but plant not in it; source_2 matches and contains plant."""
+        rows = [
+            {
+                "name": "Thai Binh 1",
+                # source_1 matches PDP8_annex2_table1.md but "Thai Binh 1" is NOT in that file
+                "source_1": "PDP8 Annex II Table 1 (something)",
+                # source_2 matches Report_32_annex1.md which DOES contain "Thái Bình I"
+                "source_2": "Report 32 Appendix 1 (NĐ Thái Bình I 2x300MW)",
+            }
+        ]
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
+        # With the fix, source_2 should be tried after source_1 fails content check
+        assert annotated[0]["source_file_found"] == "True"
+        assert annotated[0]["source_content_found"] == "True"
+        assert annotated[0]["source_verified"] == "True"
+        assert annotated[0]["matched_corpus_file"] == "Report_32_annex1.md"
 
     def test_summary_rates(self, mini_corpus):
         """Check aggregate rate calculations."""
@@ -252,7 +298,9 @@ class TestVerifySourceGrounding:
                 "source_2": "",
             },
         ]
-        annotated, summary = verify_source_grounding(rows, mini_corpus)
+        annotated, summary = verify_source_grounding(
+            rows, mini_corpus, reference_path=self._ref(mini_corpus)
+        )
         assert summary["total_plants"] == 2
         assert summary["source_rate"] == 0.5  # 1/2 has source
         assert summary["grounding_rate"] == 0.5  # 1/2 file found

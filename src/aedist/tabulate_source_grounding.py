@@ -48,7 +48,7 @@ def generate_table() -> str:
     lines.append(r"\centering")
     lines.append(r"\caption{Source grounding verification: sourced extractions vs.\ baseline.}")
     lines.append(r"\label{tab:source-grounding}")
-    lines.append(r"\begin{tabular}{l r r r r r r r r}")
+    lines.append(r"\begin{tabular}{l r r r r r r r r r}")
     lines.append(r"\toprule")
     lines.append(
         r"Method & Run & Plants & Source & Grounding & Traceability "
@@ -97,7 +97,7 @@ def generate_table() -> str:
         r"Source rate = fraction with any citation; "
         r"Grounding rate = citation fuzzy-matches a corpus filename; "
         r"Traceability = grounded \emph{and} plant name found in matched file. "
-        r"T = traceable, R = in reference corpus."
+        r"T = traceable, R = in reference dataset."
     )
     lines.append(r"\end{table}")
 
