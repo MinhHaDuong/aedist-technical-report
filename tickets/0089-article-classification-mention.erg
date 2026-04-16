@@ -1,32 +1,44 @@
 %erg v1
 Title: Mention international classifications in article text
-Status: open
+Status: pending
 Created: 2026-04-16
 Author: claude
 
 --- log ---
 2026-04-16T10:00Z claude created — follow-up from PR #248 review
+2026-04-16T14:00Z claude note reimagined: grounded to specific .tex location and PR #248 data
+2026-04-16T14:10Z claude claimed
+2026-04-16T14:15Z claude status doing — executing edit
+2026-04-16T14:20Z claude status pending — PR #252 open, awaiting merge
 
 --- body ---
 ## Context
 
-Ticket 0085 exit criteria included "Article mentions adherence to
-international classifications." The data columns were added (PR #248)
-but no .tex changes were made. This follow-up addresses the article text.
+PR #248 added four classification columns to the reference datasets
+(vietnam_thermal_v1.csv, gem_thermal.csv): `ires_code`, `ires_label`,
+`isic_code`, `pypsa_carrier`. These map fuel types to:
+- IRES commodity codes (UN, 2011) — e.g. 0121 = Hard coal
+- ISIC Rev. 4 activity codes — e.g. D3510 = Electric power generation
+- PyPSA-Earth carrier strings — for energy system modelling interop
+
+The article text never mentions these classifications. For journal
+submission, reviewers expect the reference data methodology to be
+documented in the article text.
 
 ## Actions
 
-1. Add a sentence in the data description section noting that fuel types
-   are mapped to IRES commodity codes (UN, 2011), ISIC Rev. 4 activity
-   codes, and PyPSA-Earth carrier strings.
-2. Optionally add a small mapping table as an appendix or inline table.
+1. In report/report.tex, after line ~56 (where "tables de référence"
+   is first introduced), add one sentence in French noting that fuel
+   types are mapped to IRES, ISIC Rev. 4, and PyPSA-Earth carriers.
+   Keep it brief — this is the introduction, not the methods section.
+2. Run `make report` to verify LaTeX compiles without errors.
 
 ## Test
 
-Article compiles. Classification mention is present in the methods or
-data section.
+`make report` succeeds. `grep -c IRES report/report.tex` returns >= 1.
 
 ## Exit criteria
 
-- Article .tex file references IRES, ISIC, and PyPSA classifications
+- report/report.tex mentions IRES, ISIC, PyPSA classifications
 - LaTeX builds without errors
+- No new table or appendix needed (one sentence suffices)
