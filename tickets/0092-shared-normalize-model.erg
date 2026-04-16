@@ -1,0 +1,27 @@
+%erg v1
+Title: Extract shared normalize_model helper to util module
+Status: closed
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T14:00Z claude created — found during PR 247 /simplify review
+2026-04-16T14:30Z claude status closed — normalize_model moved to util.py, 3 plot modules updated
+
+--- body ---
+## Context
+
+`raw.split("/")[-1]` to strip provider prefix from model slugs is defined as
+`_normalize_model` in `plot_method_convergence.py` and `plot_scaling_curve.py`,
+and inlined in `plot_ablation.py`. Three copies of the same one-liner.
+
+## Actions
+
+1. Add `normalize_model(raw: str) -> str` to `src/aedist/util.py`
+2. Replace all three call sites with imports
+3. Handle the `or ""` guard from `plot_ablation.py` (model field is Optional)
+
+## Exit criteria
+- No duplicate `split("/")[-1]` model normalization in plot modules
+- `ruff check` passes
+- `make figures` produces identical PDFs

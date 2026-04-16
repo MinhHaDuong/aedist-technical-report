@@ -1,0 +1,27 @@
+%erg v1
+Title: Extract shared plot color constants to util module
+Status: closed
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T14:00Z claude created — found during PR 247 /simplify review
+2026-04-16T14:30Z claude status closed — colors moved to util.py, 3 plot modules updated
+
+--- body ---
+## Context
+
+`_MATCHED = "#2E86AB"` and `_HALLUC = "#F5A623"` are defined independently in
+three plot modules: `plot_ablation.py`, `plot_method_convergence.py`, and
+`plot_scaling_curve.py`. A fourth color `_REFUSAL = "#BBBBBB"` exists only in
+`plot_ablation.py`.
+
+## Actions
+
+1. Add `COLOR_MATCHED`, `COLOR_HALLUC`, `COLOR_REFUSAL` to `src/aedist/util.py`
+2. Replace local definitions in all three plot modules with imports
+
+## Exit criteria
+- No color hex literals in plot modules
+- `ruff check` passes
+- `make figures` produces identical PDFs

@@ -1,0 +1,33 @@
+%erg v1
+Title: Add temperature-limitation caveat to slides
+Status: open
+Created: 2026-04-16
+Author: claude
+
+--- log ---
+2026-04-16T14:35Z claude created — sweep from ticket 0089 celebrate
+
+--- body ---
+## Context
+
+The article (report/report.tex line ~183) documents that 211/280 outputs
+were generated with default temperature (~1.0) rather than temperature=0.
+Ticket 0084 added the limitation paragraph and enforced t=0 going forward.
+
+The slides (slides/slides.tex) present ablation and benchmark results
+without noting this confound. A reviewer seeing only the slides would
+not know about the t≈1 vs t=0 issue.
+
+## Actions
+
+1. Add a bullet or footnote in slides/slides.tex near the results
+   slides noting the temperature limitation for pre-PR#244 runs.
+
+## Test
+
+`make slides` compiles. Temperature caveat is present.
+
+## Exit criteria
+
+- slides/slides.tex mentions temperature limitation
+- LaTeX builds without errors

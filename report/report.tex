@@ -53,7 +53,7 @@ Ces résultats montrent qu'un pipeline RAG avec décomposition des requêtes ré
 
 \section{Problématique}
 
-Est-il possible de suivre la transition énergétique d'un pays qui ne dispose pas d'un office de statistique performant dans ce domaine, sur la base de sources ouvertes? La tâche est faisable par un expert~: pendant plusieurs années, nous avons maintenu des tables de référence des projets de génération électrique au Vietnam, qu'ils soient opérationnels, en construction ou planifiés \citep{NLN8GPNI}.
+Est-il possible de suivre la transition énergétique d'un pays qui ne dispose pas d'un office de statistique performant dans ce domaine, sur la base de sources ouvertes? La tâche est faisable par un expert~: pendant plusieurs années, nous avons maintenu des tables de référence des projets de génération électrique au Vietnam, qu'ils soient opérationnels, en construction ou planifiés \citep{NLN8GPNI}. Les types de combustible y sont classés selon les nomenclatures internationales~: codes IRES (ONU, 2011) pour les produits énergétiques, codes ISIC Rév.~4 pour les activités industrielles, et vecteurs PyPSA-Earth pour la modélisation des systèmes électriques.
 
 Dans quelle mesure peut on automatiser ce processus avec les nouveaux outils de data science?
 Ce rapport examine les conditions de création d'un système qui collectera et analysera les données disponibles sur le deep web en quasi temps-réel, et utilisera des outils AI ouverts, contrôlés et exécutés localement.
@@ -397,6 +397,9 @@ Au-delà de la comparaison avec la référence, la \textbf{cohérence interne} d
 \InputIfFileExists{inputs/generated/tab_coherence}{}{}
 
 \input{inputs/verification_methods}
+
+\input{inputs/plan_verification_multi}
+\input{inputs/results_verification_multi}
 
 \section{Discussion}
 

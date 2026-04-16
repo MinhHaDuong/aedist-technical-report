@@ -17,6 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
+from .util import COLOR_ALERT, COLOR_HALLUC, FAMILY_COLORS, normalize_model
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ def _compute_cloud_refs() -> dict[str, float]:
         pv = getattr(record.method_params, "prompt_version", None)
         if pv == "_extracted":
             continue
-        model = record.method_params.model.split("/")[-1]
+        model = normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         if model in _LOCAL_MODELS:
@@ -87,11 +88,6 @@ def _compute_cloud_refs() -> dict[str, float]:
         return dict(_CLOUD_REFS_FALLBACK)
 
     return {f"{slug} (best run)": f1 for slug, f1 in sorted(cloud_best.items())}
-
-
-def _normalize_model(raw: str) -> str:
-    """Normalize model name: strip provider prefix."""
-    return raw.split("/")[-1]
 
 
 # Per-family, per-method data: family -> method -> active_params -> [f1]
@@ -111,7 +107,7 @@ def collect_data() -> FamilyData:
         pv = getattr(record.method_params, "prompt_version", None)
         if pv == "_extracted":
             continue
-        model = _normalize_model(record.method_params.model)
+        model = normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         if model not in _MODEL_LOOKUP:
@@ -132,16 +128,13 @@ def write_pdf(data: FamilyData, output: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(8, 5))
 
-    # Color scheme: family -> (single_color, rag_color)
-    family_colors = {
-        "Qwen 3.5": {"single": "#AAAAAA", "rag": "#2E86AB"},
-        "Gemma 4": {"single": "#CCAA88", "rag": "#E07B39"},
-    }
+    fc = FAMILY_COLORS
+    family_colors = {"Qwen 3.5": fc["qwen"], "Gemma 4": fc["gemma"]}
     markers = {"single": "s", "rag": "o"}
     all_sizes: set[float] = set()
 
     for family, fam_data in data.items():
-        colors = family_colors.get(family, {"single": "#888888", "rag": "#444444"})
+        colors = family_colors.get(family, fc["fallback"])
 
         for method in ("single", "rag"):
             method_data = fam_data[method]
@@ -183,7 +176,7 @@ def write_pdf(data: FamilyData, output: Path) -> None:
 
     # Cloud reference lines
     cloud_refs = _compute_cloud_refs()
-    ref_colors = ["#E74C3C", "#F5A623"]
+    ref_colors = [COLOR_ALERT, COLOR_HALLUC]
     ref_styles = ["--", "-."]
     max_size = max(all_sizes) if all_sizes else 35
     for i, (name, f1) in enumerate(cloud_refs.items()):

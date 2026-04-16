@@ -1,6 +1,25 @@
 """Shared utilities for the aedist package."""
 
+import tomllib
 import unicodedata
+from pathlib import Path
+
+# ── Plot palette (loaded from palette.toml) ──────────────────────────────────
+
+with open(Path(__file__).parent / "palette.toml", "rb") as _f:
+    _palette = tomllib.load(_f)
+
+COLOR_MATCHED = _palette["semantic"]["matched"]
+COLOR_HALLUC = _palette["semantic"]["halluc"]
+COLOR_REFUSAL = _palette["semantic"]["refusal"]
+COLOR_ALERT = _palette["semantic"]["alert"]
+COLOR_REFERENCE = _palette["semantic"]["reference"]
+FAMILY_COLORS = _palette["families"]
+
+
+def normalize_model(raw: str) -> str:
+    """Strip provider prefix from a model slug: 'openrouter/deepseek-v3' → 'deepseek-v3'."""
+    return (raw or "").split("/")[-1]
 
 
 def strip_diacritics(s: str) -> str:

@@ -1,0 +1,81 @@
+% Results: multi-agent verification (Experiment 5)
+% Generated from ticket 0059 data in derived/verification_multi/
+%
+% NOTE: these results were computed with a bug in verify_multi_cross():
+% the JSON parser's fuzzy name matching failed for 18-100% of plants per
+% verifier per run, and unmatched plants defaulted to score=1. The code
+% conflated parse failures with genuine "no sources" verdicts, inflating
+% inter-verifier disagreement. The fix (name-keyed join + _matched flag
+% to exclude parse failures from median) invalidates the numbers below.
+% Re-run the experiment after merging the fix to produce valid results.
+
+\subsection{R\'esultats pr\'eliminaires}\label{sec:multi-verif-results}
+
+\paragraph{Avertissement.} Les r\'esultats ci-dessous contiennent un artefact
+d\^u \`a un bogue dans l'agr\'egation des scores. Le parseur JSON de
+v\'erification utilise un appariement flou par nom (seuil de similarit\'e
+$\geq 70\,\%$). Lorsqu'un v\'erificateur retourne un nom de centrale que
+le parseur ne peut pas apparier, la centrale re\c{c}oit un score par
+d\'efaut de~1 (<<~aucune source~>>). Ce score~1 \'etait ensuite inclus dans
+le calcul de la m\'ediane, m\'elant \'echecs d'appariement et verdicts
+authentiques de <<~pas de source~>>. Le bogue est corrig\'e dans cette PR~:
+le parseur annote d\'esormais chaque ligne avec un drapeau
+\texttt{\_matched}, et la m\'ediane n'est calcul\'ee que sur les
+v\'erificateurs ayant r\'eussi l'appariement. \textbf{Les donn\'ees doivent
+\^etre reg\'en\'er\'ees} avec le code corrig\'e avant de tirer des conclusions.
+
+\subsubsection{Observations brutes (avant correction)}
+
+Le protocole a \'et\'e ex\'ecut\'e sur la meilleure extraction (DeepSeek~V3.2
+d\'ecompos\'e, F1$=$98,8\,\%, 167~centrales) avec le panel complet
+(condition~C3, $k=3$ v\'erificateurs, $n=3$~r\'ep\'etitions). Le co\^ut total
+est de 1,21\,\$\ pour 9~appels LLM.
+
+Le taux d'appariement varie fortement par v\'erificateur et par run~:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{V\'erificateur} & \textbf{Run~1} & \textbf{Run~2} & \textbf{Run~3} \\
+\midrule
+Sonnet~4.6 (non appari\'es)    & 0   & 29  & 29  \\
+DeepSeek V3.2 (non appari\'es) & 44  & 48  & 167 \\
+GPT-5.4 (non appari\'es)       & 0   & 0   & 1   \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Dans le run~3, DeepSeek~V3.2 n'a appari\'e \emph{aucune} centrale
+(167/167 non appari\'es), produisant un score moyen de 1,0 --- un artefact
+de parsage, pas un verdict de v\'erification. L'accord inter-v\'erificateurs
+rapport\'e (0,6\,\% \`a 41\,\%) est donc un artefact du bogue et ne peut pas
+\^etre interpr\'et\'e comme une mesure de convergence.
+
+\subsubsection{Verdicts sur les hypoth\`eses --- suspendus}
+
+Les quatre hypoth\`eses pr\'e-enregistr\'ees (H1--H4,
+section~\ref{sec:multi-verif-hypotheses}) ne peuvent pas \^etre \'evalu\'ees
+sur ces donn\'ees. Le bogue d'appariement invalide les statistiques
+d'accord, de couverture et de co\^ut-efficacit\'e. Les verdicts seront
+\'etablis apr\`es r\'eg\'en\'eration des donn\'ees avec le code corrig\'e.
+
+\subsubsection{Le\c{c}on m\'ethodologique}
+
+Le bogue r\'ev\`ele une vuln\'erabilit\'e importante du pipeline~: le parseur
+de v\'erification JSON repose sur un appariement flou (token sort ratio
+$\geq 70\,\%$) entre les noms de centrales dans l'entr\'ee et ceux retourn\'es
+par le v\'erificateur LLM. Les mod\`eles retournent les noms avec des
+variantes (diacritiques, abr\'eviations, traductions) que le seuil de
+70\,\% ne capture pas toujours.
+
+Deux pistes de rem\'ediation~:
+\begin{enumerate}
+\item \textbf{Appariement par index.} Demander au v\'erificateur de
+  retourner un identifiant de ligne (index num\'erique) en plus du nom,
+  pour \'eliminer l'ambigu\"it\'e de l'appariement par nom.
+\item \textbf{Ancrage dans les sources.} Fournir le corpus RAG au
+  v\'erificateur pour qu'il v\'erifie factuellement chaque citation (mode
+  \texttt{source\_grounding}, ticket~0060), au lieu de juger la plausibilit\'e
+  des citations de m\'emoire.
+\end{enumerate}

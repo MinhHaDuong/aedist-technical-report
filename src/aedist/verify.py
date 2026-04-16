@@ -26,6 +26,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from .evaluate import load_plants_csv, plants_from_dicts
 from .extract import (
     extract_fenced_blocks,
     fallback_extract_inline_csv,
@@ -33,15 +34,18 @@ from .extract import (
     norm_header,
     sniff_dialect,
 )
-from .evaluate import load_plants_csv, plants_from_dicts
 from .harness import make_client, query_single_turn, save_json
 from .reconcile import reconcile
 from .schema import MatchType, SourceType
 
-_MATCHED_TYPES = frozenset({
-    MatchType.EXACT, MatchType.EXACT_CAPACITY_DIFF,
-    MatchType.FUZZY, MatchType.FUZZY_CAPACITY_DIFF,
-})
+_MATCHED_TYPES = frozenset(
+    {
+        MatchType.EXACT,
+        MatchType.EXACT_CAPACITY_DIFF,
+        MatchType.FUZZY,
+        MatchType.FUZZY_CAPACITY_DIFF,
+    }
+)
 
 log = logging.getLogger(__name__)
 
@@ -453,8 +457,10 @@ def _parse_verification_json(response_text: str, rows: list[dict]) -> list[dict]
                 if text:
                     sources.append({"text": text, "type": stype})
             _annotate_sources(entry, sources)
+            entry["_matched"] = True
         else:
             _annotate_sources(entry, [])
+            entry["_matched"] = False
 
         annotated.append(entry)
 
