@@ -1,6 +1,6 @@
 %erg v1
 Title: Full verification factorial with LLM and web modes
-Status: open
+Status: closed
 Created: 2026-04-10
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-10T12:00Z claude created split from 0030 (phases 3-5)
 2026-04-13T21:00Z claude note OpenRouter has no concurrency limit — parallelize all API calls aggressively (bash backgrounding or async). Only Ollama-bound work needs serialization.
 2026-04-13T21:10Z claude note Wire Method.VERIFICATION through worker.py dispatch (currently NotImplementedError). Create per-condition JobSpecs, spawn N workers in parallel. Test with 5, then scale to full factorial.
+2026-04-16T22:30Z claude status closed — superseded by 0097; ticket 0059 negative result invalidates post-hoc LLM verification factorial
 
 --- body ---
 ## Context
