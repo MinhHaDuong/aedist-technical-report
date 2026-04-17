@@ -1,5 +1,5 @@
 %erg v1
-Title: Optional warmup run for cold-start diagnostics
+Title: Cold-start drift audit and close
 Status: open
 Created: 2026-04-11
 Author: claude
@@ -7,57 +7,77 @@ Author: claude
 
 --- log ---
 2026-04-11T10:00Z claude created
+2026-04-17T09:00Z claude note reimagined — original scope (runtime warmup-run option + tab_warmup_drift.tex) superseded by closed tickets 0072 (validate_run catches corrupted runs), 0084 (T=0 enforced, so N reps already measure reproducibility), and 0094 (replicate variance attributed to web_search injection, not cold start). A 5-minute check on measurements.jsonl shows run-1/rest wall-time ratios from 0.01x to 4.15x with no directional sign — run 1 is often faster, not slower. Revised scope: one-shot inline audit, no persisted script, close on finding.
+2026-04-17T09:30Z claude note folded independent-review asks: per-(method, model) stratification, P90 tail statistic alongside median, quantified sign-test criterion, and premise-framing fix for wall-time (closed tickets cover F1 hygiene; wall-time is what this audit tests).
 
 --- body ---
 ## Context
 
-A cold provider (first request after a cache expiry, first Ollama load
-of a model, first OpenRouter route to a new region) can produce an
-anomalous first run — higher latency, occasionally different content
-due to lazy KV-cache initialization, sometimes a partial response
-because the request hit a cold worker. Pooling that first run into
-the method estimate smears a provider-infra artifact into the method's
-F1 variance.
+The original framing assumed cold-provider first-runs bias method F1
+and proposed a runtime `warmup: bool` option plus a diagnostic table.
+Three closed tickets removed the F1-hygiene premises:
 
-This ticket adds an **optional** warmup run per (sweep, model) cell:
-one extra call at T=0 before the real reps, tagged `role=warmup`,
-excluded from stats by default, but still passed through the
-validation layer (ticket 0069) so we get a free cold-start diagnostic.
+- **0072** added `validate_run()`: empty / truncated / provider-error
+  runs are already filtered from method aggregates regardless of cause.
+- **0084** pinned temperature to 0.0: N reps at T=0 are themselves the
+  reproducibility measurement. An extra T=0 warmup call adds no
+  information that the existing reps do not.
+- **0094** root-caused the one observed replicate-variance incident
+  (72K vs 353K tokens on "identical" ablation reps) to OpenRouter web
+  search injection, not cold start.
 
-Not a statistical trick — we are not using warmup to shrink variance.
-We are using it to isolate infra artifacts from method signal.
+Those tickets cover **F1 hygiene**. They say nothing about wall-time
+bias from cold containers, cold KV-caches, or JIT warmup. If
+cold-start is real at all, this is where it would live. The audit
+below is the test for that residual hypothesis — the closed tickets
+are not a substitute for it.
+
+Spot check on `measurements.jsonl` (all methods, cells with ≥3 reps):
+run-1 wall-time is sometimes 4x the rest and sometimes 0.01x the rest.
+Non-directional scatter on the first look, but pooled across 37
+models a real DeepSeek-specific effect could hide behind Kimi noise,
+and a fat right tail (1-in-N cold containers) can inflate P90 without
+shifting the median. The audit has to stratify and look at the tail.
 
 ## Actions
 
-1. Schema change: add `role: Literal["rep", "warmup"]` to the run
-   record (default `"rep"` for back-compat). Carry it through
-   `measurements.jsonl`.
-2. Sweep runner: add `warmup: bool = false` to the sweep spec in
-   `experiments.toml`. When true, dispatch one warmup call before the
-   real reps, tag with `role=warmup`, write to a sibling
-   `outputs/<sweep>/warmup/` directory.
-3. Measurements rebuild: exclude `role=warmup` from F1 stats by
-   default. Keep them addressable for the diagnostic table.
-4. Diagnostic table `tab_warmup_drift.tex`: for sweeps with
-   warmup=true, report (warmup_latency / rep_latency_median) and
-   (warmup_output_tokens / rep_output_tokens_median) per model. A
-   large ratio signals cold-start drift worth investigating.
-5. Warmup runs go through `validate_run()` exactly like real reps.
-   A failed warmup is logged but does *not* abort the sweep — the
-   real reps still run.
+1. Inline, one-shot (no committed script): load `measurements.jsonl`,
+   group by (method, model), sort by timestamp. For each cell with
+   ≥3 reps, compute `delta = run_1 - median(run_2..N)` for `wall_s`
+   and `result_summary.f1`. Keep the per-cell deltas — do not collapse
+   prematurely.
+2. Two statistics per metric:
+   - **Median** of deltas across cells (central tendency).
+   - **P90** of `|run_1 / median(run_2..N)|` for `wall_s` (tail —
+     cold containers show up as ~1-in-N outliers, not a median shift).
+3. **Sign test** on wall-time deltas: count cells with run_1 slower,
+   cells with run_1 faster, and the two-sided binomial p-value against
+   a 50/50 null. "Consistent sign" = p < 0.05 with ≥60% of cells on
+   one side.
+4. **Per-(method, model) breakdown** reported alongside the pooled
+   numbers, so a per-endpoint effect is visible even if the pool is
+   quiet. Use the pooled numbers for the close decision, the breakdown
+   for the follow-up scoping.
+5. Paste the pooled numbers + the breakdown into the ticket log. No
+   script file, no plot file, no tex table.
+6. Close the ticket. Directional drift = median wall-time delta > 10%
+   of `median(run_2..N)` AND sign-test p < 0.05 AND ≥60% one-sided.
+   If all three hold, open a follow-up scoped to the models
+   contributing most of the effect (from the breakdown). Otherwise
+   close as superseded and note in STATE.md.
 
 ## Test
 
-1. Unit test: sweep runner with `warmup=true` emits 1 warmup + N reps
-   to the right paths; measurements rebuild excludes warmup from F1
-   by default; `--include-warmup` flag pools them back in.
-2. Opt-in smoke test: run an existing small sweep with `warmup=true`
-   and confirm the diagnostic table builds.
+None. This ticket produces a finding, not code. The only artifact is
+the log entry with the numbers and the decision.
 
 ## Exit criteria
 
-- `role` field in run record, measurements.jsonl, and schema
-- `warmup` flag in sweep spec; runner honors it
-- Warmup runs excluded from F1 by default, pass through validation
-- `tab_warmup_drift.tex` generated for any sweep with warmup=true
-- No required behavior change for existing sweeps (warmup defaults off)
+- Ticket log contains a `note` entry with: pooled median wall-time
+  delta, pooled P90 wall-time ratio, sign-test p-value and split,
+  pooled median F1 delta, per-(method, model) breakdown table, and
+  the close reason (superseded / follow-up ID).
+- Ticket status = closed.
+- No new files committed (no script, no plot, no table).
+- STATE.md updated to remove 0073 from open tickets and record the
+  non-finding in one sentence.
