@@ -1,0 +1,29 @@
+%erg v1
+Title: Add missing unittest.mock.patch import to test_audit_source_urls.py
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T12:00Z claude created
+2026-04-17T12:00Z claude claimed
+2026-04-17T12:01Z claude status closed — added `from unittest.mock import patch`, 16/16 tests pass, ruff clean
+
+--- body ---
+## Context
+`tests/test_audit_source_urls.py` uses `patch` (line 305) in
+`test_fabrication_check_irrelevant_results` but never imports it.
+The test raises `NameError: name 'patch' is not defined`.
+
+## Actions
+1. Add `from unittest.mock import patch` after `import pytest`.
+
+## Test
+```
+uv run pytest tests/test_audit_source_urls.py -v
+```
+Previously failing `test_fabrication_check_irrelevant_results` must pass.
+
+## Exit criteria
+- All 16 tests in the file pass.
+- `ruff check` clean.
