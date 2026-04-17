@@ -1,8 +1,8 @@
-Last updated: 2026-04-17 (ticket 0077 plan finalized, PR #262; related-work-note skill installed at user-level via IDH)
+Last updated: 2026-04-17 (ticket 0077 plan finalized PR #262; tickets 0093/0094/0095/0096 closure drift cleaned; related-work-note skill installed at user-level via IDH)
 
 ## Status
 
-Pipeline end-to-end. Census: 37 models. Headline F1: DeepSeek V3.2 decomposed mean=89.8% [85.8-95.6%, n=4]. All PRs merged, zero open PRs. Phase 2 ablation complete (ticket 0088). Multi-agent verification complete: negative result — 0-10% inter-verifier agreement even after bugfix (ticket 0059, PR #246). Post-hoc LLM verification is a dead end. MASTERPLAN updated: 6-step pipeline with front-loaded source triage replaces post-hoc verification.
+Pipeline end-to-end. Census: 37 models. Headline F1: DeepSeek V3.2 decomposed mean=89.8% [85.8-95.6%, n=4]. All PRs merged, zero open PRs. Phase 2 ablation complete (ticket 0088). Multi-agent verification complete: negative result — 0-10% inter-verifier agreement even after bugfix (ticket 0059, PR #246). Post-hoc LLM verification is a dead end. MASTERPLAN updated: 6-step pipeline with front-loaded source triage replaces post-hoc verification. RAG nondeterminism root-caused as web_search tool injection (ticket 0094, PR #257). Ablation temperature limitation documented in lieu of costly re-run (ticket 0095, PR #259). Ticket 0097 reimagined twice — now: deterministic source grounding on existing Opus runs, no new API calls.
 
 ## Blockers
 
@@ -12,9 +12,8 @@ None
 
 1. Slides for Econom'IA 2026 (2026-05-27) — first public milestone; graph-based paradigm narrative
 2. Ticket 0097 Phase 1: verify source-grounding of the master table (tier-1 string match on 3 Opus sourced runs) — ships for Econom'IA. Phases 2+3 (LLM adjudication + audit-verified HITL memory) attach to v0 fusion prototype post-talk.
-3. Ticket 0095: re-run RAG ablation with controlled temperature and no web search
-4. `make measurements` — backfill temperature metadata
-5. Visual review: `make slides` + `make report`
+3. `make measurements` — backfill temperature metadata
+4. Visual review: `make slides` + `make report`
 
 ## North star
 
@@ -43,21 +42,21 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Three-way reference reconciliation (ticket 0082, PR #249)
 - [x] International classifications mapping (ticket 0085, PR #248)
 - [x] Ablation visualization: strip plot + heatmap (ticket 0067, PR #247)
+- [x] RAG nondeterminism root-caused: web_search injection (ticket 0094, PR #257)
+- [x] Slides temperature caveat (ticket 0093, PR #260)
+- [x] Ablation temperature limitation documented, re-run deferred (ticket 0095, PR #259)
+- [x] DeepSeek over-context tool_calls behavior documented (ticket 0096)
 - [ ] Source-grounding verification, 3-tier audit-verified (ticket 0097)
-- [ ] Re-run ablation with controlled temperature (ticket 0095)
 - [ ] Technical report Ch. 6 + Ch. 3 sync to v0 pipeline design (ticket 0098)
 - [ ] `verification_methods.tex` rewrite for 3-tier audit-verified (ticket 0099)
 
-## Open tickets (17)
+## Open tickets (14)
 
-- 0060 Full verification factorial (ready — may be superseded by 0097)
-- 0069 Project namespace audit (ready)
+- 0069 Project namespace audit (pending — awaiting external input)
 - 0073 Optional warmup run (ready)
 - 0075 Universal prompt optimization survey (ready)
 - 0076 LangChain Deep Agents evaluation (ready)
 - 0077 Lit review: §2 four paragraphs via related-work-note skill (ready; plan finalized PR #262)
-- 0093 Slides temperature caveat (ready)
-- 0095 Re-run RAG ablation with controlled temperature (ready)
 - 0097 Verify source-grounding of the master table (3-tier, audit-verified) (ready)
 - 0098 Report Ch. 6 + Ch. 3 sync to v0 pipeline design (blocked by 0097)
 - 0099 Rewrite `verification_methods.tex` for 3-tier audit-verified (blocked by 0097)
