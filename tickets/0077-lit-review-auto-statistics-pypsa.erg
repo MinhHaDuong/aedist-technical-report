@@ -8,173 +8,222 @@ Author: claude
 2026-04-12T09:30Z claude created — operator request for lit review on the north star question
 2026-04-12T09:30Z claude note spawned from ticket 0075 discussion; the quality-grounding review (docs/quality-grounding.md) and this lit review are complementary — one grounds our metrics, this one positions our work in the literature.
 2026-04-16T22:30Z claude note reimagined: scope to 3 paragraphs for Section 2 of journal paper, 15-20 refs, drop standalone doc
+2026-04-17T09:00Z claude note reimagined again (HITL). Operator: no subsection heading above a one-paragraph subsection; §2 becomes three flat paragraphs. But author needs a deeper due-diligence note per paragraph — cited works explained in depth, related-but-not-cited justified, history-of-science context, methods, relevance, formal bibliography with DOIs. Make a reusable skill for producing such notes.
+2026-04-17T06:10Z claude note operator: ticket the skill making separately. Skill work moved to ticket 0098 (related-work-note skill). 0077 now blocked-by 0098 and consumes the skill.
+2026-04-17T06:20Z claude note operator refinements: (a) gap statement is its own 4th paragraph, but no over-selling — we do not claim exhaustive knowledge of prior art; (b) citation budget is strict 15 (not 15–20), weighted across seminal + review + recent works per paragraph; (c) do not cite our own `docs/quality-grounding.md` in §2 — forward references to this paper's later sections ("see §X") are expected and preferred for ideas we develop in-paper; (d) closely-related projects (PyPSA-VN, PyPSA-Earth, powerplantmatching, GEM, GPPDB) must be cited. Also folded in reviewer's deterministic test checks.
+2026-04-17T08:37Z claude note skill 0098 is now user-level (~/.claude/skills/related-work-note/). Patched action 1 wording accordingly. Companion tickets opened: 0099 (DOI-resolution validator) and 0100 (bib-merge skill); neither blocks 0077 but both sharpen the workflow when present.
+2026-04-17T08:45Z claude note harness-tool work moved out of AEDIST: the three skill tickets (0098/0099/0100) belong to ImperialDragonHarness, not to this paper. Removed from AEDIST. Skill build committed to ~/.claude (IDH repo); the not-yet-built validator and bib-merge skills tracked as IDH GitHub issues (see body for URLs). Blocked-by dropped — the skill is already installed on this workstation, so the local block is satisfied de facto.
 
 --- body ---
 ## Context
 
-North star question: **Can AI automatically produce the structured
-energy statistics needed to feed power system models like PyPSA, at
-production quality, across asset classes and countries?**
+The journal article (`publications/journal-article/paper_benchmark_merged.md`)
+asks "can AI produce economic statistics?" and benchmarks it on thermal
+plants in Vietnam. Section 2 (Related Work) is presently skeletal: three
+subsection stubs with HTML-comment content plans, no prose, few citations
+woven in. This ticket fills that section.
 
-This report validates the method on one cell (thermal power plants
-in Vietnam). The target is the full matrix (~10 ASEAN countries ×
-~6 asset classes = 60 campaigns) feeding PyPSA-ASEAN. The journal
-article needs a literature review that positions this question in
-existing academic work.
+The operator's convention: **no heading above a one-paragraph subsection.**
+So Section 2 becomes four flat paragraphs (not §2.1/§2.2/§2.3/§2.4
+headings), covering — in order — LLM evaluation for structured
+generation, RAG for knowledge-intensive tasks, AI for economic/energy
+data, and a closing paragraph that states the gap this benchmark fills.
+The gap paragraph must not over-sell: we do not claim exhaustive
+knowledge of prior art — we state what we could not find and what
+this paper adds.
 
-"Auto statistics in my context for PyPSA" — the operator's framing.
-The review must cover the intersection of three fields that rarely
-talk to each other:
+But the paragraphs alone are not enough for author due diligence. Each
+cited work must be *known*, not merely *listed*. For each of the four
+paragraphs, the operator needs a deeper **due-diligence note** that:
+- explains each cited work with enough detail to confirm intellectual
+  relevance (what the paper actually did, why we cite it, what claim it
+  supports);
+- explains related-but-not-cited works with less detail and justifies
+  their non-selection (superseded, off-topic, redundant, weaker
+  evidence);
+- gives general history-of-science context in that sub-domain so the
+  operator is not blind to lineage;
+- is **deep-researched** — fresh 2024–2026 results incorporated, not
+  just older anchors;
+- carries a **methods** section describing how it was written (searches
+  run, databases, cutoff date, LLM-assist acknowledged);
+- carries a **relevance** section justifying why this note exists for
+  this paragraph of this paper;
+- has a formal header (title, author = "Claude prompted by
+  Ha-Duong Minh", date) and a formal bibliography with DOIs and URLs.
 
-1. **AI/NLP for structured information extraction** — what can
-   current systems extract from policy documents?
-2. **Energy data pipelines for power system modeling** — what do
-   PyPSA and peers actually need, and where does data come from
-   today?
-3. **Quality frameworks for official/economic statistics** — what
-   standards must AI-produced data meet to be usable?
+The note-production workflow is owned by the **ImperialDragonHarness**
+repository (the user's `~/.claude/` harness), not by AEDIST. The
+skill is installed at `~/.claude/skills/related-work-note/SKILL.md`
+(IDH commit 92516a1). This ticket *consumes* the skill; its
+validation and bib-merge companions are tracked as IDH issues:
 
-This is a literature review, not a prototype. Deliverable is a
-document in `docs/` that the article can cite or absorb.
+- Validator skill (re-resolve every DOI/URL after emission):
+  <https://github.com/MinhHaDuong/ImperialDragonHarness/issues/32>
+- bib-merge skill (merge note's Bibliography block into refs.bib
+  with dedupe and conflict detection):
+  <https://github.com/MinhHaDuong/ImperialDragonHarness/issues/33>
 
-## Strands to cover
+This ticket's deliverables:
+1. Four notes produced by the `related-work-note` skill, one per
+   paragraph (three topical + one gap).
+2. Four rewritten paragraphs in `paper_benchmark_merged.md` §2.
+3. Any missing BibTeX entries added to `report/refs.bib`.
 
-### A. AI for structured data extraction from documents
+The skill is already installed on this workstation, so nothing
+inside AEDIST blocks this ticket. The related IDH issues (validator,
+bib-merge) are quality-of-life improvements — not prerequisites.
 
-- **LLM-based information extraction:** structured output from
-  unstructured documents. Survey the progression from NER/RE
-  (spaCy, BERT-based) to LLM-based extraction (GPT-4, Claude,
-  open models). Focus on extraction of tabular/structured data
-  from PDFs and policy documents, not general QA.
-- **RAG for factual extraction:** retrieval-augmented generation
-  applied to fact extraction rather than question answering.
-  How does grounding in retrieved documents affect hallucination
-  rates and completeness?
-- **Automated prompt optimization:** DSPy, TextGrad, OPRO,
-  Promptbreeder — the literature on optimizing prompts for
-  extraction tasks specifically. (Connects to ticket 0075.)
-- **Multi-agent verification:** using multiple LLM calls or
-  models to verify extracted facts. Self-consistency, cross-model
-  agreement, LLM-as-judge. (Connects to tickets 0054, 0059.)
-- **Benchmarks for extraction quality:** existing benchmarks for
-  structured extraction from documents (SciREX, DocRED, SciERC,
-  TABMWP, etc.). How do they differ from our task? What metrics
-  do they use?
+## Scope (what is in / what is out)
 
-### B. Energy data for power system models
+**In scope.**
+- Paragraph 1: LLM evaluation for structured data generation.
+  Anchors: standard QA/reasoning benchmarks (MMLU, HellaSwag,
+  BIG-bench), information-extraction benchmarks (DocRED, SciREX,
+  REBEL), table-understanding (TabFact, WikiTableQuestions,
+  TableBench). Claim: established benchmarks test QA, reasoning,
+  or factual recall, not the production of a *structured
+  statistical table* against a gold reference.
+- Paragraph 2: RAG for knowledge-intensive tasks.
+  Anchors: Lewis et al. 2020 (ULQGRISS); a RAG survey (Gao et
+  al. or similar); self-RAG, corrective RAG; agentic/deep-research
+  systems (2024–2026 wave). Claim: RAG is evaluated for QA and
+  factual grounding, not exhaustive dataset construction.
+- Paragraph 3: AI for economic and energy data.
+  Anchors: Gotzens et al. 2019 (LYGDCQCL); powerplantmatching;
+  Global Power Plant Database (WRI); Global Energy Monitor
+  trackers (LCVI7NAT); PyPSA-Earth; PyPSA-VN (VGASHFPT). These
+  are **closely-related projects and must be cited.** Claim:
+  existing energy databases are hand-curated; we have not found
+  a prior benchmark that evaluates AI-assisted production of
+  such tables.
+- Paragraph 4: the gap, stated without over-selling.
+  What we did not find in the literature, what our benchmark
+  adds, and a forward pointer to §3 (benchmark design) and §7
+  (discussion). No exhaustive-absence claim; the language is
+  "to our knowledge" or "we did not find", not "nobody has done".
 
-- **PyPSA-Earth and data pipelines:** how does PyPSA-Earth
-  currently get its power plant data? (powerplantmatching,
-  Global Energy Monitor, IRENA, national sources.) What are the
-  known gaps, especially for Southeast Asia?
-- **Power plant databases:** Global Power Plant Database (WRI),
-  GEM Global Coal/Gas/Wind/Solar Trackers, IRENA Renewable
-  Capacity Statistics, S&P Global Platts WEPP. Coverage, update
-  frequency, licensing, accuracy for ASEAN.
-- **PyPSA-VN** (Schlott et al. 2020) — the existing Vietnamese
-  instance. What data did it use? What were the gaps?
-- **Data quality in energy models:** Gotzens et al. 2019 (already
-  cited in our paper draft) on data quality in power plant
-  databases. What other work exists on how data quality propagates
-  through energy system models?
-- **National power development plans as data sources:** has anyone
-  else systematically extracted structured data from PDPs, PDAs,
-  RUKNs, or equivalent planning documents? In any country?
+**Citation budget: strict 15 across all four paragraphs.** The
+reader prefers a *focused* selection. Each paragraph mixes
+**seminal** (field-defining), **review/survey** (for the reader
+to drill down), and **recent** (2024–2026 frontier) works. The
+skill's note for each paragraph proposes more; the ticket's job
+is to cut to 15 with reasons. Roughly 4–5 refs per topical
+paragraph, 0–1 in the gap paragraph (gap paragraph mainly
+forward-references this paper's later sections).
 
-### C. Quality frameworks for AI-produced statistics
+**No self-citation of in-repo lit reviews.** Do not cite
+`docs/quality-grounding.md` in §2. The operator's convention:
+quality-framework material is handled *in-paper* by forward
+references — "see §3.3" or "as discussed in §7" — not by
+pointing readers to a working document.
 
-- **UN Fundamental Principles of Official Statistics** (1994/2014)
-  — especially Principle 5 (non-statistical data sources).
-- **IMF DQAF** (Data Quality Assessment Framework) — quality
-  dimensions and how they map to AI-produced data.
-- **European Statistics Code of Practice** — the 16 principles
-  and whether AI production can satisfy them.
-- **ISI Declaration on Professional Ethics** / **ASA Ethical
-  Guidelines** — transparency, limitations, reproducibility.
-- **Philosophy of measurement** (Tal 2017, Mari et al.) — what
-  does it mean to "measure" extraction quality? Are our metrics
-  (F1, recall, evidence score) well-defined measurands?
-- **Philosophy of science framing:** empirical adequacy (van
-  Fraassen), falsifiability and corroboration (Popper) applied
-  to AI-extracted data. When is an extracted datum "knowledge"
-  vs. "a guess"? The evidence rubric (0–4) as an operationalization
-  of epistemic status.
-- **Fitness for purpose** (Wang & Strong 1996 "Beyond accuracy")
-  — data quality is relative to use. Our use is PyPSA input.
-  What quality dimensions matter most for power system modeling
-  specifically?
-
-### D. The gap — what nobody has done
-
-- No existing work (to our knowledge) attempts to produce
-  *complete, structured, sourced economic statistics* from policy
-  documents using LLMs at production quality. The closest work is
-  either (a) extraction of individual facts (NER/RE scale, not
-  inventory scale), (b) question answering against documents
-  (not structured output), or (c) manual curation of energy
-  databases (not automated).
-- The north star — automated production of PyPSA-compatible
-  datasets from national planning documents across ASEAN — is
-  novel. The lit review must make this gap visible and position
-  our contribution precisely.
+**Out of scope.**
+- A standalone `docs/` lit-review document. Dropped in the
+  2026-04-16 rescope; superseded by this plan.
+- The quality-frameworks / philosophy-of-science strand.
+  Material exists in `docs/quality-grounding.md` but is **not**
+  cited from §2. If it surfaces in the paper at all, it is via
+  §3.3 (Metrics) or §7 (Discussion), developed inline.
+- Prompt-optimization frameworks (DSPy, TextGrad, OPRO). Owned
+  by ticket 0075.
+- Agentic-pipeline frameworks (LangGraph, Deep Agents). Owned by
+  ticket 0076. Paragraph 2 may mention "agentic RAG / deep
+  research" as an evaluation-literature trend but does not
+  endorse or adopt any framework.
+- The PyPSA-ASEAN 60-cell scaling argument. Lives in §1 or §7,
+  not §2. §2 serves only the Vietnam-thermal benchmark framing.
 
 ## Actions
 
-1. Conduct systematic search across Google Scholar, Semantic
-   Scholar, and arXiv for each strand. Search terms to include:
-   - "power plant" AND ("information extraction" OR "LLM" OR
-     "language model")
-   - "energy statistics" AND ("automated" OR "AI" OR "NLP")
-   - "PyPSA" AND "data" AND ("quality" OR "pipeline" OR "input")
-   - "structured extraction" AND "policy document"
-   - "official statistics" AND ("AI" OR "automation" OR "LLM")
-   - "prompt optimization" AND "extraction"
-   Cover 2020–2026 comprehensively; include key older references
-   (Wang & Strong 1996, UN Fundamental Principles 1994, Popper,
-   van Fraassen) as foundational.
-2. For each strand, produce a narrative paragraph (not just a
-   reference list) summarizing the state of the art, identifying
-   the key papers (≤5 per strand), and noting what is missing.
-3. Write a synthesis section ("the gap") that positions our north
-   star question at the intersection of the three fields.
-4. Collect all references in BibTeX format compatible with
-   `report/refs.bib`.
-5. Commit the review to `docs/lit-review-auto-statistics.md`.
+1. **Verify the skill is installed.** The skill lives at
+   `~/.claude/skills/related-work-note/SKILL.md` (user-level,
+   owned by the ImperialDragonHarness repo). Confirm the file is
+   present.
+2. **Invoke the skill four times** (freshly each time — no
+   cached reuse; freshness cutoff must reflect the invocation date),
+   once per paragraph. Output lands in
+   `publications/journal-article/notes/02_related_work/`:
+   - `01_llm_benchmarks_structured_extraction.md`
+   - `02_rag_knowledge_intensive.md`
+   - `03_ai_economic_energy_data.md`
+   - `04_gap_and_positioning.md`
+   Each note is self-contained and stands on its own for an author
+   who wants to verify a citation before defending it. Each note
+   must pass the skill's own structural checklist (see the skill file).
+3. **Cut to strict 15 citations across all four paragraphs.** The
+   skill's notes will propose more. Reduce. Record which candidates
+   were dropped and why in each note's "Related but not cited" list
+   (moves up from the skill's proposal to the author's deliberate
+   choice). Mix per topical paragraph: one seminal + one review/
+   survey + two or three recent. Paragraph 4 (gap) carries 0–1
+   citations; the rest is forward references ("see §3", "see §7").
+4. **Write the four paragraphs** into `paper_benchmark_merged.md`
+   §2. Replace the current HTML-comment stubs. **No subsection
+   headings** (operator convention: no heading above a one-paragraph
+   subsection). 200–300 words each. The gap paragraph states what
+   we did not find and what this paper adds — no exhaustive-absence
+   claim.
+5. **Update `report/refs.bib`** with every cited work that is not
+   already present. Prefer existing Zotero-style keys (see
+   `memory/reference_zotero.md`); mint new keys otherwise. Every
+   added entry must have DOI or stable URL.
+6. **Operator review** of all four notes and the four paragraphs.
+   Operator approves before merge.
 
-## Deliverable
+## Test (first thing to do)
 
-`docs/lit-review-auto-statistics.md` — a standalone literature
-review document (~2000–3000 words + references) structured by
-the four strands above, with a synthesis section. Written in a
-style that can be absorbed into the journal article's Related
-Work section (paper_benchmark_merged.md §2) with minimal editing.
+Run the skill on paragraph 1 (LLM benchmarks + structured
+extraction). The note must pass the skill's own structural checklist
+AND — once paragraph 1 is drafted — these deterministic checks hold:
 
-Accompanying: new BibTeX entries added to `report/refs.bib` for
-any papers not already cited.
+- [ ] The set of BibTeX keys cited in paragraph 1 equals the set
+      of keys in the paragraph-1 note's "Cited works" bibliography
+      (exact set equality, not subset).
+- [ ] Every cited key resolves to an entry in `report/refs.bib`
+      that has a DOI or stable URL.
+- [ ] Paragraph 1 uses at most 5 citations.
+- [ ] Paragraph 1's citation mix includes ≥1 seminal, ≥1 review/
+      survey, and ≥1 recent (2024+) — author judgment call;
+      recorded explicitly in the note.
+- [ ] No citation points to `docs/quality-grounding.md` or any
+      in-repo working document.
 
-## Relationship to other tickets
-
-- **0075** — the prompt optimization survey. This ticket provides
-  the broader academic context; 0075 is the tool-level spike.
-  The quality grounding in `docs/quality-grounding.md` (from 0075)
-  and this lit review are complementary: one grounds our metrics,
-  this one positions our work.
-- **0076** — LangChain Deep Agents. This lit review may surface
-  relevant agentic-pipeline papers.
-- **0054/0059** — multi-agent verification. Strand A covers the
-  verification literature.
-
-## Test
-
-The review cites at least 20 papers, covers all four strands, and
-the synthesis section explicitly states what has not been done
-before and how our work fills that gap.
+If paragraph 1 clears these, paragraphs 2, 3, 4 follow.
 
 ## Exit criteria
 
-- `docs/lit-review-auto-statistics.md` committed, ≥2000 words.
-- All four strands covered with narrative summaries and key refs.
-- Synthesis section positions the north star question precisely.
-- New BibTeX entries added to `report/refs.bib`.
-- Author (operator) has reviewed and approved for integration
-  into the journal article.
+- Four notes under
+  `publications/journal-article/notes/02_related_work/` committed,
+  each passing the skill's structural checklist plus the
+  paragraph-fit checks above.
+- Four paragraphs in `paper_benchmark_merged.md` §2 (flat, no
+  subsection headings), 200–300 words each, citing only works
+  that appear in the corresponding note's "Cited works" list.
+- **Exactly 15** unique citation keys across §2.
+- Gap paragraph uses "we did not find / to our knowledge", not
+  "nobody has done".
+- Forward references ("see §3", "see §7") present where in-paper
+  development replaces external citation.
+- Closely-related projects (PyPSA-VN, PyPSA-Earth, powerplantmatching,
+  GEM, GPPDB) are cited in paragraph 3.
+- `report/refs.bib` updated; every new entry has DOI or stable
+  URL; no duplicate keys across the four notes (if two paragraphs
+  need Gotzens, they point to the same key).
+- Operator has reviewed and approved the four notes and the
+  paragraphs.
+
+## Relationship to other tickets
+
+- **0075** — prompt-optimization survey. Also produced
+  `docs/quality-grounding.md`, which §2 does **not** cite
+  (operator rule: no in-repo working documents in the paper's
+  related work). The ideas in that doc may surface in §3.3 or §7
+  via inline development. Non-overlapping scope.
+- **0076** — LangChain Deep Agents. Non-overlapping; any agentic-RAG
+  references in paragraph 2 are evaluation context, not framework
+  adoption.
+- **0054 / 0059** — multi-agent verification. Closed as negative
+  result; not cited in §2 because the benchmark section doesn't
+  discuss verification architectures (that's §6 Error Analysis /
+  §7 Discussion territory).
