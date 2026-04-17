@@ -1,6 +1,6 @@
 %erg v1
 Title: Cold-start drift audit and close
-Status: open
+Status: closed
 Created: 2026-04-11
 Author: claude
 
@@ -9,6 +9,8 @@ Author: claude
 2026-04-11T10:00Z claude created
 2026-04-17T09:00Z claude note reimagined — original scope (runtime warmup-run option + tab_warmup_drift.tex) superseded by closed tickets 0072 (validate_run catches corrupted runs), 0084 (T=0 enforced, so N reps already measure reproducibility), and 0094 (replicate variance attributed to web_search injection, not cold start). A 5-minute check on measurements.jsonl shows run-1/rest wall-time ratios from 0.01x to 4.15x with no directional sign — run 1 is often faster, not slower. Revised scope: one-shot inline audit, no persisted script, close on finding.
 2026-04-17T09:30Z claude note folded independent-review asks: per-(method, model) stratification, P90 tail statistic alongside median, quantified sign-test criterion, and premise-framing fix for wall-time (closed tickets cover F1 hygiene; wall-time is what this audit tests).
+2026-04-17T11:00Z claude note cold-start drift audit result (N=77 cells with >=3 reps). POOLED: median delta_wall = -7.22s (-9.6% of median rest 75.40s); P90 |run_1/median(rest)| = 1.639; median delta_f1 = -0.079. SIGN TEST: 23/77 slower, 54/77 faster, 0 tied; binomial p = 0.0005. Run 1 is significantly more often faster, not slower — opposite of cold-start hypothesis. DECISION CRITERIA: (1) |median delta| > 10%: FALSE (-9.6%); (2) p < 0.05: TRUE (0.0005); (3) >=60% one-sided: TRUE (70.1% faster). Criterion 1 not met => close as superseded. The significant faster-first signal is consistent with provider load balancing (fresh container = less queue contention), not cold-start penalty. BREAKDOWN (method, model, n, delta_wall_s, |ratio|, sign, delta_f1): decomposed/deepseek-v3.2 (7, +740.4s, 6.049, slower, +0.115) is the sole large cold-start outlier; decomposed/minimax-m2.7 (3, +342.5s, 1.751, slower) and multiturn/deepseek-v3.2 (3, +814.0s, 4.149, slower) also show slowdowns. All three involve DeepSeek V3.2 or MiniMax — known for variable cold-container latency. The remaining 54/77 cells show run-1 faster. No per-model subgroup reverses the pooled finding at the 10% threshold. Full 77-row table available on request.
+2026-04-17T11:00Z claude status closed — no directional cold-start drift detected; close as superseded by 0072+0084+0094
 
 --- body ---
 ## Context

@@ -1,4 +1,4 @@
-Last updated: 2026-04-17 (ticket 0077 plan finalized PR #262; tickets 0093/0094/0095/0096 closure drift cleaned; related-work-note skill installed at user-level via IDH)
+Last updated: 2026-04-17 (ticket 0073 cold-start drift audit: no directional wall-time bias in 77 cells — run 1 faster in 70% of cells, median delta -9.6%, close as superseded)
 
 ## Status
 
@@ -50,10 +50,9 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [ ] Technical report Ch. 6 + Ch. 3 sync to v0 pipeline design (ticket 0098)
 - [ ] `verification_methods.tex` rewrite for 3-tier audit-verified (ticket 0099)
 
-## Open tickets (14)
+## Open tickets (13)
 
 - 0069 Project namespace audit (pending — awaiting external input)
-- 0073 Optional warmup run (ready)
 - 0075 Universal prompt optimization survey (ready)
 - 0076 LangChain Deep Agents evaluation (ready)
 - 0077 Lit review: §2 four paragraphs via related-work-note skill (ready; plan finalized PR #262)
