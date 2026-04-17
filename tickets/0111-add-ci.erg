@@ -33,3 +33,11 @@ IDH 0015, climate-finance 0081).
 - Main is green or a documented flake-quarantine list exists.
 - PRs show the check status.
 - /verify's `verify: CI gap` comment no longer fires for this repo.
+
+## Follow-on (after this ticket closes)
+
+1. Quarantine any remaining flaky tests — required-check + flake =
+   trust erosion.
+2. Enable branch protection on `main` requiring `tests`.
+3. /verify starts keying off the CI signal instead of re-running —
+   harness-side change tracked in IDH.

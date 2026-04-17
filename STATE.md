@@ -50,7 +50,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [ ] Technical report Ch. 6 + Ch. 3 sync to v0 pipeline design (ticket 0098)
 - [ ] `verification_methods.tex` rewrite for 3-tier audit-verified (ticket 0099)
 
-## Open tickets (13)
+## Open tickets (14)
 
 - 0069 Project namespace audit (pending — awaiting external input)
 - 0075 Universal prompt optimization survey (ready)
@@ -65,3 +65,4 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - 0103 Verify internal coherence × table (soft-blocked on v0 fusion prototype)
 - 0104 Verify conflict-resolution × method (soft-blocked on v0 fusion prototype)
 - 0105 Regression test for plot_census slug underscore sanitation (ready)
+- 0111 Add CI — lint + tests on PR/push (ready; cross-repo CI batch with IDH 0015, git-erg 0003, Climate-finance 0081)
