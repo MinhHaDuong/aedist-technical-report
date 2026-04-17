@@ -183,7 +183,7 @@ def test_reasoning_model_skips_temperature():
 def test_web_search_model_gets_plugin():
     """Models with web_search=true get plugins in extra_body."""
     model = {"id": "test/web", "web_search": True}
-    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7, enable_web_search=True)
     assert kwargs["temperature"] == 0.7
     assert kwargs["tools"][0]["type"] == "openrouter:web_search"
     assert kwargs["tools"][0]["parameters"]["max_total_results"] == 37
@@ -192,7 +192,7 @@ def test_web_search_model_gets_plugin():
 def test_both_capabilities():
     """Model with both reasoning and web_search gets correct params."""
     model = {"id": "test/both", "reasoning": True, "web_search": True}
-    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.0)
+    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.0, enable_web_search=True)
     assert "temperature" not in kwargs
     assert kwargs["max_tokens"] == 4096
     assert kwargs["tools"][0]["type"] == "openrouter:web_search"
