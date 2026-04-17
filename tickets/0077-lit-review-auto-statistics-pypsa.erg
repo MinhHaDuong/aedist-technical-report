@@ -54,9 +54,15 @@ paragraphs, the operator needs a deeper **due-diligence note** that:
 
 The note-production workflow is owned by the **ImperialDragonHarness**
 repository (the user's `~/.claude/` harness), not by AEDIST. The
-skill is installed at `~/.claude/skills/related-work-note/SKILL.md`.
-This ticket *consumes* the skill; the skill's build, validation, and
-bib-merge companion live as IDH issues (URLs below).
+skill is installed at `~/.claude/skills/related-work-note/SKILL.md`
+(IDH commit 92516a1). This ticket *consumes* the skill; its
+validation and bib-merge companions are tracked as IDH issues:
+
+- Validator skill (re-resolve every DOI/URL after emission):
+  <https://github.com/MinhHaDuong/ImperialDragonHarness/issues/32>
+- bib-merge skill (merge note's Bibliography block into refs.bib
+  with dedupe and conflict detection):
+  <https://github.com/MinhHaDuong/ImperialDragonHarness/issues/33>
 
 This ticket's deliverables:
 1. Four notes produced by the `related-work-note` skill, one per
