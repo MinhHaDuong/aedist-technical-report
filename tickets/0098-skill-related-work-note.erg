@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-17T06:06Z claude created — spawned from ticket 0077 HITL. Operator: ticket the skill making separately. 0077 consumes the skill; 0098 builds it.
 2026-04-17T06:25Z claude note incorporated independent-reviewer feedback: fixed section-count typo (six, not seven); added author-verification checklist distinct from LLM-side Methods disclosure; added preprint-acceptability rule; added paragraph-3-scale rehearsal before 0077 unblock; made explicit that each consumer invocation re-runs the skill (no cached-note reuse) so Methods freshness stays honest.
+2026-04-17T06:45Z claude note post-review-round-2 changes: skill PROMOTED TO USER-LEVEL (~/.claude/skills/related-work-note/SKILL.md) on operator decision — serves any manuscript across any repo, not AEDIST-specific. Project-level copy removed. Also applied research-methodology upgrades: added snowballing + venue-guided browsing, grey-literature policy with versioned-URL preference, DOI/URL resolution step before emission, inclusion/exclusion rule in Methods, strengthened contested-claim handling, richer argument-hint.
 
 --- body ---
 ## Context
@@ -22,15 +23,18 @@ manuscript, every Related Work section, every paragraph with a
 non-trivial citation list — the note-production workflow is captured
 as a reusable **skill**, not as one-off scripts inside 0077.
 
-The skill must be project-level (checked into this repo) so the
-convention travels with any paper drafted here. If it proves useful
-across projects later, it can be promoted to a user-level skill.
+The skill is **user-level** (`~/.claude/skills/related-work-note/SKILL.md`)
+because the need recurs across every manuscript the operator writes,
+not just this repo. User-level placement follows the operator's
+harness rule that generic-purpose tools live outside project
+vendoring. The skill is therefore not committed to this repo;
+ticket 0077 consumes it via the user-level install.
 
 ## Requirements
 
 ### Skill metadata
 
-- Location: `.claude/skills/related-work-note/SKILL.md`
+- Location: `~/.claude/skills/related-work-note/SKILL.md` (user-level, not vendored into the repo)
 - Frontmatter: `name`, `description`, `user-invocable: true`,
   `argument-hint: [paragraph-topic]` (or a small config reference).
 - Invocable via the Skill tool.
