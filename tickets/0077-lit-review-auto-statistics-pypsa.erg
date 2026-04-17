@@ -3,7 +3,6 @@ Title: Academic lit review — automated statistics production for energy system
 Status: open
 Created: 2026-04-12
 Author: claude
-Blocked-by: 0098
 
 --- log ---
 2026-04-12T09:30Z claude created — operator request for lit review on the north star question
@@ -13,6 +12,7 @@ Blocked-by: 0098
 2026-04-17T06:10Z claude note operator: ticket the skill making separately. Skill work moved to ticket 0098 (related-work-note skill). 0077 now blocked-by 0098 and consumes the skill.
 2026-04-17T06:20Z claude note operator refinements: (a) gap statement is its own 4th paragraph, but no over-selling — we do not claim exhaustive knowledge of prior art; (b) citation budget is strict 15 (not 15–20), weighted across seminal + review + recent works per paragraph; (c) do not cite our own `docs/quality-grounding.md` in §2 — forward references to this paper's later sections ("see §X") are expected and preferred for ideas we develop in-paper; (d) closely-related projects (PyPSA-VN, PyPSA-Earth, powerplantmatching, GEM, GPPDB) must be cited. Also folded in reviewer's deterministic test checks.
 2026-04-17T08:37Z claude note skill 0098 is now user-level (~/.claude/skills/related-work-note/). Patched action 1 wording accordingly. Companion tickets opened: 0099 (DOI-resolution validator) and 0100 (bib-merge skill); neither blocks 0077 but both sharpen the workflow when present.
+2026-04-17T08:45Z claude note harness-tool work moved out of AEDIST: the three skill tickets (0098/0099/0100) belong to ImperialDragonHarness, not to this paper. Removed from AEDIST. Skill build committed to ~/.claude (IDH repo); the not-yet-built validator and bib-merge skills tracked as IDH GitHub issues (see body for URLs). Blocked-by dropped — the skill is already installed on this workstation, so the local block is satisfied de facto.
 
 --- body ---
 ## Context
@@ -52,18 +52,21 @@ paragraphs, the operator needs a deeper **due-diligence note** that:
 - has a formal header (title, author = "Claude prompted by
   Ha-Duong Minh", date) and a formal bibliography with DOIs and URLs.
 
-The note-production workflow is owned by **ticket 0098** (a reusable
-skill `.claude/skills/related-work-note/SKILL.md`). This ticket
-*consumes* that skill; it does not build it.
+The note-production workflow is owned by the **ImperialDragonHarness**
+repository (the user's `~/.claude/` harness), not by AEDIST. The
+skill is installed at `~/.claude/skills/related-work-note/SKILL.md`.
+This ticket *consumes* the skill; the skill's build, validation, and
+bib-merge companion live as IDH issues (URLs below).
 
 This ticket's deliverables:
-1. Four notes produced by the 0098 skill, one per paragraph (three
-   topical + one gap).
+1. Four notes produced by the `related-work-note` skill, one per
+   paragraph (three topical + one gap).
 2. Four rewritten paragraphs in `paper_benchmark_merged.md` §2.
 3. Any missing BibTeX entries added to `report/refs.bib`.
 
-This ticket is blocked by 0098 until the skill is committed and
-approved.
+The skill is already installed on this workstation, so nothing
+inside AEDIST blocks this ticket. The related IDH issues (validator,
+bib-merge) are quality-of-life improvements — not prerequisites.
 
 ## Scope (what is in / what is out)
 
@@ -129,9 +132,9 @@ pointing readers to a working document.
 
 1. **Verify the skill is installed.** The skill lives at
    `~/.claude/skills/related-work-note/SKILL.md` (user-level,
-   owned by ticket 0098). Confirm it is present and that ticket
-   0098 is closed.
-2. **Invoke the 0098 skill four times** (freshly each time — no
+   owned by the ImperialDragonHarness repo). Confirm the file is
+   present.
+2. **Invoke the skill four times** (freshly each time — no
    cached reuse; freshness cutoff must reflect the invocation date),
    once per paragraph. Output lands in
    `publications/journal-article/notes/02_related_work/`:
@@ -162,12 +165,11 @@ pointing readers to a working document.
 6. **Operator review** of all four notes and the four paragraphs.
    Operator approves before merge.
 
-## Test (first thing to do once 0098 is merged)
+## Test (first thing to do)
 
 Run the skill on paragraph 1 (LLM benchmarks + structured
-extraction). The note must pass the structural checklist owned by
-0098, AND — once paragraph 1 is drafted — these deterministic
-checks hold:
+extraction). The note must pass the skill's own structural checklist
+AND — once paragraph 1 is drafted — these deterministic checks hold:
 
 - [ ] The set of BibTeX keys cited in paragraph 1 equals the set
       of keys in the paragraph-1 note's "Cited works" bibliography
@@ -187,8 +189,8 @@ If paragraph 1 clears these, paragraphs 2, 3, 4 follow.
 
 - Four notes under
   `publications/journal-article/notes/02_related_work/` committed,
-  each passing 0098's structural checklist plus the paragraph-fit
-  checks above.
+  each passing the skill's structural checklist plus the
+  paragraph-fit checks above.
 - Four paragraphs in `paper_benchmark_merged.md` §2 (flat, no
   subsection headings), 200–300 words each, citing only works
   that appear in the corresponding note's "Cited works" list.
