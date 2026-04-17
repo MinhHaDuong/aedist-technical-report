@@ -1,0 +1,60 @@
+%erg v1
+Title: Verify escalation-rate decay of the system (memory amortization)
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for the escalation-rate decay claim. Blocked on v0 fusion prototype + HITL memory (ticket 0097 Phase 2+3).
+
+--- body ---
+## Context
+
+MASTERPLAN §"Three-tier verification" claims that the HITL-ratified
+memory makes run N+1 cheaper than run N: once a rule is ratified,
+matching situations in later runs are deterministic (tier 1) instead
+of escalating (tier 2+3). This ticket measures whether the claim
+holds empirically.
+
+Trait: escalation-rate decay. Target: system (pipeline + memory
+persistence across runs). ADR-5.
+
+## Scope
+
+Script: `scripts/verify/escalation_decay_system.py`.
+
+Procedure:
+1. Run the fusion pipeline over the Vietnam corpus N times (N=5
+   recommended), each time with a fresh extraction + starting memory
+   from the previous run. HITL ratifications accumulate.
+2. Per run, record `escalation_rate_per_step = tier-2 escalations /
+   changed cells`.
+3. Plot the decay curve; fit to `a·exp(-b·N)` or similar; report
+   half-life in runs.
+
+Report: decay curve PDF; table of per-run escalation + rule-count
+growth; anomalies (does a new source re-spike the rate?).
+
+## Test
+
+```python
+def test_escalation_rate_decreases_monotonically_on_closed_corpus():
+    """Given the same corpus across 3 runs with accumulating memory,
+    escalation_rate_per_step is non-increasing."""
+
+def test_new_source_may_re_spike_rate():
+    """Adding a novel source (e.g. a new PDP revision) is allowed
+    to increase escalation rate — that's a signal, not a bug."""
+```
+
+## Exit criteria
+
+- Script with tests.
+- Decay curve + structured report.
+- Hooked into healthcheck tests-green battery.
+- Milestone attachment: **Scale** (system property across runs).
+
+## Status
+
+**Blocked** on ticket 0097 Phase 2+3 (LLM adjudication + HITL
+memory) to produce the memory substrate this script measures.

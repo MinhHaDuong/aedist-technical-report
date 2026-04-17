@@ -49,9 +49,8 @@ architecture frame — needs translation. The pre-existing frames
 (problem statement, pilot design, RAG results, cost-quality,
 takeaway) also need translation to match.
 
-Pattern: keep source slides.tex in one language end-to-end. Either
-translate in place, or fork to `slides_fr.tex` and maintain both.
-Author preference unknown — ask before choosing.
+Pattern: translate **in place** in `slides/slides.tex` — single source,
+no parallel French/English decks. Author decision (2026-04-17).
 
 ### 3. Tier numbering reconciliation (slides vs MASTERPLAN)
 

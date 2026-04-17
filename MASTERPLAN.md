@@ -153,6 +153,8 @@ A diff audit is applied before tier 1 as a pre-filter: unchanged cells inherit t
 
 **Audit trail per rule** — five fields, committed to git, spot-checkable by a second witness: `{source_llm_suggestion, ratifying_human, timestamp, evidence_cell, witness}`. HITL ratification is mandatory; LLM adjudications never auto-accept.
 
+**Rules are annotated, not mechanical** (ADR-6). Each YAML rule carries `pattern`, `replacement`, plus `rationale`, `edge_cases`, `ratified_by`, and full `evidence` (passage + document + line). A human statistician taking on the job should read the memory as a field notebook and understand *why* each rule exists — not just what substitution it performs. The verification engine reads `pattern`/`replacement`; humans read the rest. This shapes the audit experience and the trust story.
+
 **Metrics** added to `measurements.jsonl`: `escalation_rate_per_step`, `rule_count_growth` (per taxonomy), `ratification_acceptance_rate`.
 
 ## Milestone DAG
@@ -274,6 +276,10 @@ Utility = EVN annual reports, ERAV dispatch data. ~163 facilities.
 **Deliverable:** one PyPSA-Earth-ready Vietnam thermal dataset with
 full provenance chain.
 
+**Trait-verification tickets attached (ADR-5):**
+- 0101 — incrementality × method (k-permutation order-sensitivity probe)
+- 0104 — conflict-resolution × method (chrono + authority policy under conflicting sources)
+
 ### Provenance (depends on: Pipeline)
 
 Level 3 evaluation. The table comes with receipts.
@@ -304,6 +310,10 @@ Level 3 evaluation. The table comes with receipts.
 Provenance (epistemic accountability) = journal article on the
 benchmark methodology.
 
+**Trait-verification tickets attached (ADR-5):**
+- 0097 — source-grounding × table (3-tier, audit-verified; Phase 1 shipped as PR #261)
+- 0103 — internal coherence × table (extends 0078's levels to master + sidecar)
+
 ### Scale (depends on: Pipeline)
 
 Level 4 evaluation. Can proceed in parallel with Provenance.
@@ -315,6 +325,9 @@ Level 4 evaluation. Can proceed in parallel with Provenance.
 - Test with updated reference data (temporal stability)
 - Gap-filling from aggregate constraints
 - Incoherence detection and escalation protocol
+
+**Trait-verification tickets attached (ADR-5):**
+- 0102 — escalation-rate decay × system (HITL memory amortization across runs)
 
 ### Auto-PyPSA ASEAN (north star — depends on: Provenance, Scale)
 

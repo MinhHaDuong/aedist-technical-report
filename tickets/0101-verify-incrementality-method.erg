@@ -1,0 +1,74 @@
+%erg v1
+Title: Verify incrementality of the fusion method (order-sensitivity probe)
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T11:45Z claude created — implements ADR-5 trait × target = script for the incrementality trait (MASTERPLAN §Method traits §Empirical limits). Blocked on the v0 fusion prototype existing end-to-end.
+
+--- body ---
+## Context
+
+MASTERPLAN §"Method traits / Incrementality" commits v0 to a
+chronological + authority fusion order. Commutativity is *not*
+assumed — order-independence is deferred to a formal v3/v4 fusion
+framework. This ticket characterizes **where** LLM fusion diverges
+from the chronological reference, i.e. how order-sensitive the v0
+primitive actually is.
+
+Trait: incrementality. Target: method. ADR-5: one ticket = one
+trait × one target = one script.
+
+## Scope
+
+Script: `scripts/verify/incrementality_method.py` (single script
+per ADR-5).
+
+Procedure:
+1. Take the chronological reference fusion (master + sidecar from
+   PDP7 → 7A → 8 → 8R → EVN → ERAV).
+2. Generate *k* random permutations of the 18 Vietnam thermal
+   tables (recommend k=20, bounded by fusion cost).
+3. Run the fusion primitive under each permutation, producing
+   `master_perm_i.csv` + `master_provenance_perm_i.csv`.
+4. Compute per-permutation metrics against the chronological
+   reference:
+   - F1 on entity set (symmetric difference of rows)
+   - Cell disagreement rate (attribute-level)
+   - Provenance cell disagreement (does the same cell credit the
+     same source?)
+
+Report: distribution of F1 across k permutations (mean, CI, worst
+case); table of cells that flip most often; identification of the
+*attributes* most sensitive to order.
+
+Exit: green when the script runs and writes a structured report.
+The *content* of the report (is variance acceptable?) feeds the
+v0 adequacy question and possibly the v3 design.
+
+## Test
+
+```python
+def test_permutation_runner_produces_k_fusions():
+    """Given a 3-table corpus and k=3, fusion runs 3 times and
+    produces 3 distinct master + sidecar pairs."""
+
+def test_chronological_permutation_matches_reference():
+    """The identity permutation (chronological) must reproduce
+    the reference fusion exactly — otherwise the probe is broken."""
+```
+
+## Exit criteria
+
+- Script `scripts/verify/incrementality_method.py` with tests.
+- Structured report artifact committed (first real run).
+- Hooked into the morning healthcheck tests-green battery
+  (skill-level change; see handoff to user-level promoter).
+- Milestone attachment: **Pipeline** (trait of the fusion primitive).
+
+## Status
+
+**Blocked (soft)** on the v0 fusion prototype existing end-to-end.
+Can ship a dry-run harness before the prototype lands, but real
+results require the prototype.

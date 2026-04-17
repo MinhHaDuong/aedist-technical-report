@@ -1,0 +1,70 @@
+%erg v1
+Title: Verify internal coherence of the master table
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for internal coherence of the v0 master + sidecar. Extends the existing coherence work (ticket 0078, PR #243) from the benchmark output to the v0 fusion output.
+
+--- body ---
+## Context
+
+Ticket 0078 (PR #243) established three levels of internal coherence
+checks for benchmark extractions: line-level (positive capacity,
+known fuel / status / province), inter-line (duplicate detection),
+aggregate (control totals). Those checks ran against raw extraction
+CSVs.
+
+The v0 fusion prototype produces a `master.csv` + `master_provenance.csv`
+sidecar with five invariants (MASTERPLAN §"Data model"). This ticket
+extends coherence verification to that new artifact shape.
+
+Trait: internal coherence. Target: table (master + sidecar pair).
+ADR-5.
+
+## Scope
+
+Script: `scripts/verify/coherence_table.py`.
+
+Checks (incremental on top of 0078's three levels):
+- **Invariant 1 (schema lockstep)**: `schema(master) ≡ schema(sidecar)`.
+- **Invariant 2 (null parity)**: `master[i,j] null ⟺ sidecar[i,j] null`.
+- **Line-level**: positive capacity, known fuel/status/province
+  (reuse from 0078).
+- **Inter-line**: duplicate detection; same-entity different-status
+  escalation.
+- **Aggregate**: control totals per province × fuel; flag if a
+  provenance source claims a total that disagrees with the sum of
+  cells attributed to it.
+
+Report: per-check pass/fail, per-row failure list, any invariant
+breach (which is a validator bug, not data).
+
+## Test
+
+```python
+def test_schema_lockstep_detected():
+    """master.csv with extra column vs sidecar → Invariant 1 fails."""
+
+def test_null_parity_detected():
+    """sidecar cell with source ID for a null master cell → fails."""
+
+def test_aggregate_disagreement_surfaces():
+    """Source X claims 5 plants in Binh Thuan; only 3 cells credit X.
+    Aggregate disagreement flagged for review."""
+```
+
+## Exit criteria
+
+- Script with tests.
+- Runs on v0 fusion prototype output.
+- Hooked into healthcheck tests-green battery.
+- Milestone attachment: **Provenance** (coherence feeds the
+  "errors are locatable" property).
+
+## Status
+
+**Blocked (soft)** on v0 fusion prototype producing a master +
+sidecar. The check logic can be developed against synthetic
+examples before the prototype lands.

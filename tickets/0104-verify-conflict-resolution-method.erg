@@ -1,0 +1,71 @@
+%erg v1
+Title: Verify conflict-resolution behavior of the fusion method
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for conflict-resolution under the chrono + authority policy. Blocked on v0 fusion prototype.
+
+--- body ---
+## Context
+
+MASTERPLAN §"Method traits / Incrementality" commits v0 to
+chronological ordering with authority as tie-breaker. Conflict
+resolution is "the single biggest design choice in the fusion layer"
+(session dialogue 2026-04-17). This ticket verifies the fusion
+primitive actually behaves per policy when sources disagree.
+
+Trait: conflict resolution. Target: method. ADR-5.
+
+## Scope
+
+Script: `scripts/verify/conflict_resolution_method.py`.
+
+Procedure: drive the fusion primitive with synthetic fixtures where
+two sources disagree on a known cell, and assert the resolution
+matches the policy.
+
+Test matrix:
+- Same time-point, different authority ranks → higher authority wins.
+- Different time-points, same authority rank → more recent wins.
+- Same time-point, same authority rank → flagged (no policy covers
+  this; assert that it surfaces in `fusion_log.conflicts_resolved`
+  with a warning, not silently resolved).
+- Cancellation: PDP7 says "under construction", PDP8 says "cancelled"
+  → master shows status=cancelled; provenance = PDP8; fusion_log
+  records the amendment with both sources.
+
+Each fixture is a tiny synthetic CSV pair; expected outputs are
+checked in as golden files.
+
+Report: per-fixture pass/fail with the actual vs expected sidecar
+cell + fusion_log entry.
+
+## Test
+
+```python
+def test_higher_authority_wins_same_time():
+    """Two sources at 2023-01, ranks 1 and 2 → rank 1 wins."""
+
+def test_same_rank_same_time_flagged():
+    """Two sources identical on rank and date → master cell flagged,
+    not silently resolved."""
+
+def test_cancellation_amendment_recorded():
+    """PDP7 'under construction' → PDP8 'cancelled' → master cancelled,
+    fusion_log has both sources with an 'amended' verb."""
+```
+
+## Exit criteria
+
+- Script with tests.
+- Golden fixtures checked in.
+- Hooked into healthcheck tests-green battery.
+- Milestone attachment: **Pipeline** (behavior of the fusion
+  primitive under conflict).
+
+## Status
+
+**Blocked (soft)** on v0 fusion prototype. Fixtures and assertions
+can be written against the spec before the prototype exists.
