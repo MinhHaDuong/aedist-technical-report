@@ -1,4 +1,4 @@
-Last updated: 2026-04-16 (ticket 0059 closed, MASTERPLAN synced to slides)
+Last updated: 2026-04-17 (ticket 0077 plan finalized, PR #262; related-work-note skill installed at user-level via IDH)
 
 ## Status
 
@@ -55,7 +55,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - 0073 Optional warmup run (ready)
 - 0075 Universal prompt optimization survey (ready)
 - 0076 LangChain Deep Agents evaluation (ready)
-- 0077 Lit review: automated statistics for PyPSA (ready)
+- 0077 Lit review: §2 four paragraphs via related-work-note skill (ready; plan finalized PR #262)
 - 0093 Slides temperature caveat (ready)
 - 0095 Re-run RAG ablation with controlled temperature (ready)
 - 0097 Verify source-grounding of the master table (3-tier, audit-verified) (ready)
