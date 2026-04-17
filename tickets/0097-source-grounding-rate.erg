@@ -9,6 +9,7 @@ Author: claude
 2026-04-16T16:00Z claude note reimagined: sourced extraction + deterministic verification, not retroactive grounding
 2026-04-16T22:30Z claude note second reimagining after audit: extraction data already exists (3 Opus runs), skip new API calls
 2026-04-17T09:00Z claude note third reimagining: trait-verification framing — source-grounding of the table across 3 verification tiers, with audit-verified HITL memory. Prior tier-1 scope becomes Phase 1 (ships for Econom'IA 2026). Tiers 2+3 attach to the v0 fusion prototype (MASTERPLAN / Data model).
+2026-04-17T11:00Z claude note Phase 1 work (tier-1 deterministic grounding on 3 Opus sourced runs, 2×2 table, non-sourced baseline) already landed in PR #261 (commit 13d53d5). Ticket remains open only for Phases 2 and 3 (LLM adjudication + HITL-ratified memory on the v0 fusion prototype).
 
 --- body ---
 ## Context
@@ -140,11 +141,11 @@ def test_ratified_rule_enters_memory_with_audit_trail():
 
 ## Exit criteria
 
-### Phase 1 (ships for Econom'IA 2026, 2026-05-27)
-- `verify_source_grounding()` with tests (deterministic, no LLM).
-- 2×2 table (traceable × reference) for 3 Opus sourced runs.
-- Non-sourced RAG baseline 2×2.
-- Results in the Econom'IA slides and journal paper provenance section.
+### Phase 1 — DONE (shipped as PR #261 / commit 13d53d5, 2026-04-16)
+- [x] `verify_source_grounding()` with tests (deterministic, no LLM).
+- [x] 2×2 table (traceable × reference) for 3 Opus sourced runs.
+- [x] Non-sourced RAG baseline 2×2.
+- [ ] Results surfaced in the Econom'IA slides (pending slides polish).
 
 ### Phase 2 (post-talk)
 - LLM adjudication runs on tier-1 misses during v0 fusion.

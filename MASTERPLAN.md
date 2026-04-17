@@ -86,6 +86,18 @@ Beyond the four evaluation levels, certain architectural properties shape whethe
 
 Scope: the table-fusion prototype that answers the v0 question — *does LLM convenience fusion work well enough, or do we need formal knowledge graphs?* Event fusion with defeasible reasoning and closure is the v3/v4 dream. Scalar and multi-scalar fragment fusion are deferred.
 
+### Fragment taxonomy
+
+Three fragment types, distinct extraction and fusion mechanics:
+
+| Type | Where it lives | Fusion mechanic |
+|---|---|---|
+| **Serial** | Tables (PDP annexes, EVN reports) | Schema align + record linkage — defines the skeleton |
+| **Multi-scalar** | Prose lists (*"province has projects A–E"*) | Entity existence check — confirms or adds rows |
+| **Scalar** | Isolated prose facts (*"Vinh Tan 1 commissioned 2018"*) | Attribute update on matched entity |
+
+v0 prototype handles **serial only**. Multi-scalar and scalar are deferred: they need scalar/multi-scalar extraction into the RAG corpus, which doesn't exist yet.
+
 ### Master + provenance sidecar
 
 Two CSVs kept in lockstep:
@@ -114,6 +126,34 @@ Required fields per source:
 - `language`, `format`, `local_path`, original URL
 
 The source registry is the sealed vocabulary of `master_provenance.csv`. This is where the "stateful" architecture begins: the set of trusted sources, grown by HITL, is state that persists across fusion runs.
+
+### Three-tier verification with audit-verified HITL memory
+
+Source-grounding of the master table is verified per cell via a three-tier chain (trait verification, ticket 0097):
+
+```
+changed cell (diff audit filter)
+   → tier 1: string match against source table
+       ├─ match    → verified
+       └─ no match → tier 2: LLM adjudication
+                       ├─ LLM + HITL ratifies → emit typed rule → memory
+                       └─ rejected           → flag: hallucination / fusion error
+```
+
+A diff audit is applied before tier 1 as a pre-filter: unchanged cells inherit their previous verification status and do not re-enter the chain.
+
+**Four rule categories** in the memory (each with a distinct fire point in the chain):
+
+| Category | Encodes | Example | Fires at |
+|---|---|---|---|
+| **Alias** | entity identity | `"VT1" ≡ "Vinh Tan 1"` | after string-match fails |
+| **Unit/format** | value shape | `"1,200 MW" → 1200` | before string match |
+| **Source-local term** | prose vocabulary | `"Nhóm" in PDP8 = "Group"` | inside LLM adjudication |
+| **Attribute synonym** | column → schema | `"Công suất lắp đặt" → capacity_mw` | at table load |
+
+**Audit trail per rule** — five fields, committed to git, spot-checkable by a second witness: `{source_llm_suggestion, ratifying_human, timestamp, evidence_cell, witness}`. HITL ratification is mandatory; LLM adjudications never auto-accept.
+
+**Metrics** added to `measurements.jsonl`: `escalation_rate_per_step`, `rule_count_growth` (per taxonomy), `ratification_acceptance_rate`.
 
 ## Milestone DAG
 
