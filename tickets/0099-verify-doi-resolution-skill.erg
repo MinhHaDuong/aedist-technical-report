@@ -1,0 +1,103 @@
+%erg v1
+Title: Post-hoc validator for related-work-note — re-resolve DOIs and URLs
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T08:37Z claude created — spawned from ticket 0098 review. Skill 0098 specifies a DOI/URL resolution step before emission, but enforcement depends on the invoked model actually doing it. An external validator closes the gap.
+
+--- body ---
+## Context
+
+The `related-work-note` skill (ticket 0098, installed at
+`~/.claude/skills/related-work-note/SKILL.md`) instructs the invoked
+model to `WebFetch` every DOI and URL before emitting the note, and
+to drop or replace unresolved entries. This is a structural guard
+against hallucinated citations, which LLMs are notorious for
+producing in academic prose.
+
+The gap: the skill *specifies* the check, but does not *enforce* it.
+A model under load, or on a budget, or a model that misreads the
+skill instructions, can skip the resolution step and still emit a
+structurally valid note. The author verification checklist catches
+the problem eventually — but only if the author bothers — and by
+then the bad citation may already be in the manuscript draft.
+
+An external validator skill, run after a note is emitted, closes the
+loop.
+
+## Requirements
+
+### What the validator does
+
+1. Read a note file at a caller-specified path.
+2. Parse the Bibliography section.
+3. For each entry: extract DOI and URL; `WebFetch` each; record
+   200 vs failure.
+4. Parse the Methods section for the "Identifier resolution" line
+   that the upstream skill was supposed to write.
+5. Compare the validator's results against what the note claims:
+   - If the note claims "all N resolved" and the validator confirms,
+     write a PASS line to the note's Methods section.
+   - If the note claims all resolved but the validator finds
+     failures, write a FAIL line and list the failing entries.
+   - If the note's resolution line is missing, write a MISSING line
+     (the upstream skill misbehaved).
+
+### Output behaviour
+
+- The validator **does not rewrite the note**. It appends a
+  validator-provenance line to the Methods section in-place, so the
+  author can see both the LLM-side claim and the external check.
+- The validator prints a one-line verdict to the caller: `PASS`,
+  `FAIL: N entries unresolved`, or `MISSING: no resolution line in
+  note`.
+- On FAIL, the caller should re-run the upstream skill (or manually
+  fix the note) before using its output.
+
+## Non-requirements
+
+- No CI/hook integration. The validator is a manual skill the
+  author invokes after each `related-work-note` invocation. Hook
+  integration is a separate, harder question.
+- No editing of cited-work bodies. The validator only touches the
+  Methods section.
+- No Crossref metadata fetch. 200 OK is the bar; deeper validation
+  is the author's job.
+
+## Actions
+
+1. Draft `~/.claude/skills/related-work-note-validate/SKILL.md`
+   (user-level, sibling of the main skill). Accept a note-file path
+   as the sole argument.
+2. Test on the two pilot notes from ticket 0098
+   (`notes/skill-pilot/narrow/` and `notes/skill-pilot/broad/`).
+3. Test on one note where a known-bad DOI is inserted by hand —
+   validator must FAIL and name the bad entry.
+4. Commit the skill. Update the README of the main skill (if any)
+   to point at the validator.
+
+## Test
+
+- [ ] Running the validator on a clean pilot note returns `PASS`.
+- [ ] Running on a note with a deliberately broken DOI returns
+      `FAIL` and names the broken entry.
+- [ ] Running on a note whose Methods section omits the
+      "Identifier resolution" line returns `MISSING`.
+- [ ] The validator never edits cited-work content — only appends
+      to Methods.
+
+## Exit criteria
+
+- `~/.claude/skills/related-work-note-validate/SKILL.md` installed.
+- Three test cases above pass.
+- Operator has reviewed and approved.
+
+## Relationship to other tickets
+
+- **0098** — the main skill. This validator complements it;
+  together they provide specify + enforce.
+- **0077** — consumer. Once this ticket closes, 0077's workflow
+  should invoke the validator after each of its four skill
+  invocations.

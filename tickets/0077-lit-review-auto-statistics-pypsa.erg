@@ -12,6 +12,7 @@ Blocked-by: 0098
 2026-04-17T09:00Z claude note reimagined again (HITL). Operator: no subsection heading above a one-paragraph subsection; §2 becomes three flat paragraphs. But author needs a deeper due-diligence note per paragraph — cited works explained in depth, related-but-not-cited justified, history-of-science context, methods, relevance, formal bibliography with DOIs. Make a reusable skill for producing such notes.
 2026-04-17T06:10Z claude note operator: ticket the skill making separately. Skill work moved to ticket 0098 (related-work-note skill). 0077 now blocked-by 0098 and consumes the skill.
 2026-04-17T06:20Z claude note operator refinements: (a) gap statement is its own 4th paragraph, but no over-selling — we do not claim exhaustive knowledge of prior art; (b) citation budget is strict 15 (not 15–20), weighted across seminal + review + recent works per paragraph; (c) do not cite our own `docs/quality-grounding.md` in §2 — forward references to this paper's later sections ("see §X") are expected and preferred for ideas we develop in-paper; (d) closely-related projects (PyPSA-VN, PyPSA-Earth, powerplantmatching, GEM, GPPDB) must be cited. Also folded in reviewer's deterministic test checks.
+2026-04-17T08:37Z claude note skill 0098 is now user-level (~/.claude/skills/related-work-note/). Patched action 1 wording accordingly. Companion tickets opened: 0099 (DOI-resolution validator) and 0100 (bib-merge skill); neither blocks 0077 but both sharpen the workflow when present.
 
 --- body ---
 ## Context
@@ -126,7 +127,10 @@ pointing readers to a working document.
 
 ## Actions
 
-1. **Verify ticket 0098 is closed** (skill exists and is approved).
+1. **Verify the skill is installed.** The skill lives at
+   `~/.claude/skills/related-work-note/SKILL.md` (user-level,
+   owned by ticket 0098). Confirm it is present and that ticket
+   0098 is closed.
 2. **Invoke the 0098 skill four times** (freshly each time — no
    cached reuse; freshness cutoff must reflect the invocation date),
    once per paragraph. Output lands in
