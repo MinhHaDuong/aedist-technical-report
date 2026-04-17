@@ -1,11 +1,12 @@
 %erg v1
 Title: resolve aedist archived status, then add CI — lint + tests
-Status: open
+Status: closed
 Created: 2026-04-17
 Author: claude
 
 --- log ---
 2026-04-17T15:36Z claude created — filed here because aedist repo has no local ticket system; part of the "CI across active repos" batch
+2026-04-17T15:48Z claude status closed — user: aedist stays archived. Red herring. Drop from CI batch.
 
 --- body ---
 ## Context
