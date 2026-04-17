@@ -1,0 +1,207 @@
+%erg v1
+Title: Build reusable skill — related-work-note (author's due-diligence note per cited paragraph)
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T06:06Z claude created — spawned from ticket 0077 HITL. Operator: ticket the skill making separately. 0077 consumes the skill; 0098 builds it.
+2026-04-17T06:25Z claude note incorporated independent-reviewer feedback: fixed section-count typo (six, not seven); added author-verification checklist distinct from LLM-side Methods disclosure; added preprint-acceptability rule; added paragraph-3-scale rehearsal before 0077 unblock; made explicit that each consumer invocation re-runs the skill (no cached-note reuse) so Methods freshness stays honest.
+
+--- body ---
+## Context
+
+Ticket 0077 (fill Section 2 of the journal article) revealed a
+recurring authoring need: for every paragraph that cites external
+work, the author wants a deeper **due-diligence note** that sits
+alongside the manuscript. The note is what an author reads before
+defending a paragraph under peer review.
+
+Since this need is not specific to 0077 — it applies to every future
+manuscript, every Related Work section, every paragraph with a
+non-trivial citation list — the note-production workflow is captured
+as a reusable **skill**, not as one-off scripts inside 0077.
+
+The skill must be project-level (checked into this repo) so the
+convention travels with any paper drafted here. If it proves useful
+across projects later, it can be promoted to a user-level skill.
+
+## Requirements
+
+### Skill metadata
+
+- Location: `.claude/skills/related-work-note/SKILL.md`
+- Frontmatter: `name`, `description`, `user-invocable: true`,
+  `argument-hint: [paragraph-topic]` (or a small config reference).
+- Invocable via the Skill tool.
+
+### What the skill produces
+
+A single markdown note file per invocation, with this invariant
+structure:
+
+```
+---
+title: {paragraph topic — imperative noun phrase}
+author: Claude prompted by Ha-Duong Minh
+date: {YYYY-MM-DD}
+paper: {path to parent manuscript}
+section: {section number and title, e.g., "§2 Related Work, paragraph N"}
+---
+
+## Relevance
+
+Why this note exists for this paragraph of this paper. What claim
+the paragraph makes and what a referee could legitimately probe.
+One paragraph.
+
+## History of science context
+
+The lineage of the sub-field the paragraph sits in — the problem's
+origin, the main paradigm shifts, the current state of the art.
+200–400 words. Enough for the author to position cited works
+against the field, not the other way around.
+
+## Cited works — detailed
+
+For each citation the paragraph uses:
+- Full reference (author, year, venue).
+- What the work actually did (method, data, main result — 2–4
+  sentences).
+- Why this paragraph's argument needs it (the specific claim it
+  supports).
+- Known limitations or critiques the author should be aware of.
+
+## Related but not cited — justified
+
+Works a reader might expect to see, each with a one- or two-sentence
+justification for non-inclusion (superseded, off-topic, redundant,
+weaker evidence, proprietary/closed, not yet peer-reviewed, …).
+
+## Methods
+
+How this note was written (LLM side):
+- Searches run (query, tool, date).
+- Databases consulted (Google Scholar, Semantic Scholar, arXiv,
+  operator's Zotero library, …).
+- Freshness cutoff (deep research includes results through {date}).
+- Preprint policy: arXiv preprints allowed when no peer-reviewed
+  equivalent exists; flagged as such in the entry. Preferred when
+  covering 2024–2026 frontier.
+- LLM-assist disclosure — drafted by Claude; cited facts must be
+  verified against the primary source before publication.
+
+## Author verification checklist
+
+What the author must still do before the paragraph is defensible
+(separate from the LLM-side disclosure above):
+- [ ] Opened and read each cited primary source (not just its
+      abstract).
+- [ ] Confirmed the claim-to-citation mapping for every sentence.
+- [ ] Checked that preprints flagged in Methods are still the
+      best available citation (peer-reviewed version may now
+      exist).
+- [ ] Agreed with the "Related but not cited" justifications.
+
+## Bibliography
+
+Alphabetical by first author, BibTeX-compatible. Every entry
+carries DOI (when available) and a stable URL.
+```
+
+### What the skill's procedure must do
+
+1. Accept the paragraph's topic/claim and the target manuscript path
+   as inputs. Derive an output filename and title.
+2. Deep-research the topic: run web/scholar searches for anchors in
+   the sub-field, fresh 2024–2026 results, and any known superseded
+   work. Document every search in the Methods section (query,
+   tool, date, result count).
+3. Cross-check the operator's Zotero library for existing matching
+   references (see `memory/reference_zotero.md`) before minting new
+   BibTeX keys. If a ref exists in `report/refs.bib`, use that key.
+4. Draft each cited-work entry with method + main result + specific
+   claim + limitation. Drafts without all four fields are rejected.
+5. Justify every related-but-not-cited entry in one or two
+   sentences. No unjustified stubs.
+6. Populate the Methods section verbatim (queries, cutoff,
+   LLM-assist disclosure).
+7. Write the Bibliography with DOI/URL on every entry. Entries
+   lacking DOI and lacking a stable URL are rejected.
+8. Emit the note file to a caller-specified path (the paper's
+   `notes/` or `due-diligence/` sibling directory).
+
+### Non-requirements (out of scope for this ticket)
+
+- Running the skill on ticket 0077's three paragraphs. That belongs
+  in 0077; this ticket only proves the skill works on a pilot.
+- A GUI or CLI wrapper. Skill invocation via the built-in Skill
+  tool is the only interface.
+- Integration with BibTeX build or citation-insertion tooling.
+  The skill produces a markdown note and bibliography block; human
+  or a downstream skill moves refs into `report/refs.bib`.
+
+## Actions
+
+1. Read existing skill patterns under `.claude/skills/` (e.g.,
+   `ticket-new/SKILL.md`) to match house style.
+2. Draft `.claude/skills/related-work-note/SKILL.md`.
+3. **Narrow pilot.** Run the skill on a small, self-contained
+   paragraph topic (not one of 0077's paragraphs — pick something
+   narrower, e.g., a single sub-claim such as "table-understanding
+   benchmarks for LLMs"). Place the pilot note in
+   `notes/skill-pilot/narrow/`.
+4. **Broad rehearsal.** Run the skill a second time on a
+   paragraph-3-scale topic that spans multiple sub-literatures
+   (e.g., "AI-assisted maintenance of energy infrastructure
+   databases" — wide enough to stress the skill but not identical
+   to 0077's paragraph 3). Place the rehearsal note in
+   `notes/skill-pilot/broad/`. This check catches skills that pass
+   a narrow pilot but choke on real-scope paragraphs.
+5. Verify both notes pass the structural checklist (see Test).
+   Iterate skill instructions until they do.
+6. Commit skill + both pilot notes. Open a PR. Operator reviews
+   and approves.
+7. On approval, ticket 0077 is unblocked and can consume the skill.
+   Each 0077 invocation re-runs the skill freshly — notes are not
+   a reusable cache; Methods freshness reflects invocation date.
+
+## Test (first thing to build)
+
+Both pilot notes (narrow, from step 3; broad, from step 4) must
+pass this checklist:
+
+- [ ] YAML frontmatter has title, author, date, paper, section.
+- [ ] All seven sections present: Relevance, History of science
+      context, Cited works — detailed, Related but not cited —
+      justified, Methods, Author verification checklist,
+      Bibliography.
+- [ ] Each cited work has all four fields (reference,
+      what-it-did, why-we-cite, limitations).
+- [ ] Each non-cited entry has a one- or two-sentence
+      justification.
+- [ ] Methods section names at least one fresh (2024+) search
+      result and states a preprint policy.
+- [ ] Author verification checklist is present and distinct from
+      Methods.
+- [ ] Every bibliography entry has DOI or stable URL.
+
+The broad rehearsal (step 4) is a harder bar than the narrow
+pilot: the skill must produce a coherent note even when the topic
+spans several sub-literatures. If the broad rehearsal fails, 0077
+is not unblocked.
+
+## Exit criteria
+
+- `.claude/skills/related-work-note/SKILL.md` committed and
+  invocable via Skill tool.
+- Two pilot notes (narrow + broad) committed under
+  `notes/skill-pilot/`, both passing the structural checklist.
+- Operator has reviewed and approved skill + both pilots.
+- Ticket 0077 explicitly unblocked (update its `Blocked-by`).
+
+## Relationship to other tickets
+
+- **0077** — consumer of this skill. Blocked by this ticket.
+- **0075** — adjacent authoring doc (`docs/quality-grounding.md`);
+  not a dependency.
