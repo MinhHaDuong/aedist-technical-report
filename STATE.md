@@ -48,7 +48,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [ ] Technical report Ch. 6 + Ch. 3 sync to v0 pipeline design (ticket 0098)
 - [ ] `verification_methods.tex` rewrite for 3-tier audit-verified (ticket 0099)
 
-## Open tickets (16)
+## Open tickets (17)
 
 - 0060 Full verification factorial (ready — may be superseded by 0097)
 - 0069 Project namespace audit (ready)
@@ -66,3 +66,4 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - 0102 Verify escalation-decay × system (blocked by 0097 Phase 2+3)
 - 0103 Verify internal coherence × table (soft-blocked on v0 fusion prototype)
 - 0104 Verify conflict-resolution × method (soft-blocked on v0 fusion prototype)
+- 0105 Regression test for plot_census slug underscore sanitation (ready)

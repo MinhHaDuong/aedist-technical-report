@@ -1,0 +1,40 @@
+%erg v1
+Title: Regression test for plot_census slug underscore sanitation
+Status: open
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T12:00Z claude created — surfaced by self-review of commit 55a8548. The slug replace("_", "-") fix in plot_census.py has no test covering its input. Add one so a future revert cannot silently reintroduce the pgfplots "Missing $ inserted" compile failure.
+
+--- body ---
+## Context
+
+Commit 55a8548 added `.replace("_", "-")` to model slugs in
+`src/aedist/plot_census.py` so that pgfplots xticklabels don't hit
+unescaped underscores in slide and report builds. The existing
+tests in `tests/test_plot_census.py` use sample slugs without
+underscores, so the fix is effectively untested — a revert would
+regress the slides/report compile silently.
+
+## Scope
+
+Add one test to `tests/test_plot_census.py` that passes a slug
+containing `_` to `build_census_rows()` and asserts the output
+`model` column contains `-` (no underscores) for that row.
+
+## Test
+
+```python
+def test_slug_underscores_replaced_with_dashes():
+    metrics = [_synthetic_metric("gpt-5.4_cross", f1=0.8, is_local=False)]
+    rows = build_census_rows(metrics)
+    assert rows[0]["model"] == "gpt-5.4-cross"
+```
+
+## Exit criteria
+
+- New test exists and passes.
+- Reverting the `.replace()` line causes the test to fail.
+- Trait-verification battery (ADR-5) eventually picks this up when
+  green-tests is hooked into the morning healthcheck.

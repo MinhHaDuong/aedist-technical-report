@@ -82,6 +82,10 @@ Beyond the four evaluation levels, certain architectural properties shape whethe
 
 **Empirical limits.** Characterize order-sensitivity experimentally: fuse the same corpus under *k* permutations; report inter-run F1 variance. The probe tells us where LLM fusion diverges from the chronological reference — the boundary beyond which a formal framework becomes necessary.
 
+### Verification matrix as publishable artifact
+
+Trait-verification tickets (ADR-5) accumulate as a matrix of (trait × target) cells, each cell backed by one script and one report. This matrix is not just an internal tracker — it is a compact, auditable summary of what we verified and how, and it becomes a methods-paper deliverable in its own right. Publications that argue "the method is reliable" stand or fall on this matrix being legible.
+
 ## Data model (v0 table fusion)
 
 Scope: the table-fusion prototype that answers the v0 question — *does LLM convenience fusion work well enough, or do we need formal knowledge graphs?* Event fusion with defeasible reasoning and closure is the v3/v4 dream. Scalar and multi-scalar fragment fusion are deferred.
@@ -104,6 +108,8 @@ Two CSVs kept in lockstep:
 
 - `master.csv` — one row per entity, current-state snapshot. Covers operating plants, authorizations, propositions, and scenario-conditional rows.
 - `master_provenance.csv` — same schema, same rows, same primary key. Every cell holds exactly one source ID (the authoritative source for that cell's value).
+
+The master is a *snapshot*. Detailed temporal history — when a plant first appeared in planning, how its capacity evolved across PDP revisions, when status changed — lives in a **per-asset long-form inventory** (future artifact, not part of v0). The fusion step log carries enough provenance to reconstruct history; the long-form inventory is the human-readable presentation.
 
 **Invariants (enforced by validator, not convention):**
 
