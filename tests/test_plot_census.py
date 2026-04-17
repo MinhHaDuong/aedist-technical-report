@@ -35,6 +35,19 @@ def test_build_census_rows():
     assert rows[2]["local"] == 1
 
 
+def test_slug_underscores_replaced_with_dashes():
+    """Underscore in model slug is sanitised to dash (pgfplots safety)."""
+    metrics_with_underscore = [
+        {"label": "census/gpt-5.4_cross-run1", "f1": 0.80},
+        {"label": "census/gpt-5.4_cross-run2", "f1": 0.78},
+        {"label": "census/gpt-5.4_cross-run3", "f1": 0.82},
+    ]
+    rows = build_census_rows(metrics_with_underscore)
+    assert len(rows) == 1
+    assert "_" not in rows[0]["model"], "underscores must be replaced with dashes"
+    assert rows[0]["model"] == "gpt-5.4-cross"
+
+
 def test_output_is_sorted_descending():
     """First row has highest F1."""
     rows = build_census_rows(SAMPLE_METRICS)
