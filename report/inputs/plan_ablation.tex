@@ -501,7 +501,9 @@ chaque point orange une hallucination. DeepSeek~V3.2 refuse (tool\_calls) sur
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{inputs/generated/fig_ablation_strip.pdf}
+\IfFileExists{inputs/generated/fig_ablation_strip.pdf}{%
+  \includegraphics[width=0.85\linewidth]{inputs/generated/fig_ablation_strip.pdf}%
+}{\textit{[fig\_ablation\_strip.pdf not generated --- run \texttt{make measurements}]}}
 \caption{Strip plot de l'ablation Phase~2 en régime RAG. Bleu~: centrales
 correctement identifiées (TP). Orange~: hallucinations (FP). Croix grises~:
 refus du modèle. Ligne verte~: inventaire complet (163~centrales).}
@@ -515,7 +517,9 @@ module vs composite complet).
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\linewidth]{inputs/generated/fig_ablation_heatmap.pdf}
+\IfFileExists{inputs/generated/fig_ablation_heatmap.pdf}{%
+  \includegraphics[width=0.7\linewidth]{inputs/generated/fig_ablation_heatmap.pdf}%
+}{\textit{[fig\_ablation\_heatmap.pdf not generated --- run \texttt{make measurements}]}}
 \caption{Effet de chaque module sur le F1 en régime RAG. Rouge~: le module
 dégrade les performances. Bleu~: le module les améliore. Tirets~: données
 insuffisantes (refus du modèle).}

@@ -35,7 +35,7 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
     summary = load_and_summarize(metrics)
     rows = [
         {
-            "model": slug,
+            "model": slug.replace("_", "-"),
             "f1": info["median_f1"],
             "local": 1 if info["is_local"] else 0,
         }

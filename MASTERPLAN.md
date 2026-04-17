@@ -66,6 +66,55 @@ Can the method scale to other countries? Update when plants change status?
 Fill gaps from totals? Resolve incoherences or escalate them?
 Prioritize sources when they conflict?
 
+## Method traits
+
+Beyond the four evaluation levels, certain architectural properties shape whether a method can scale from one country × one component class to 60 extraction campaigns (Auto-PyPSA ASEAN). These are *traits of the fusion primitive*, not quality scores.
+
+### Incrementality
+
+**Definition.** The fusion primitive operates as `master + fragment → master'`, one source at a time — not `{all_fragments} → master` in a single shot.
+
+**Why it matters.** Vietnam thermal alone has ~18 regulatory and utility tables; ASEAN × 6 components is O(hundreds). A non-incremental method re-runs the whole fusion for every new source — cost scales with N×S, not N. Incremental methods also give auditability: each step has an inspectable diff.
+
+**Fusion order (v0).** Chronological with authority as tie-breaker. PDP7 → 7A → 8 → 8-revised → EVN annual reports → ERAV dispatch. Cancellations and amendments only make sense under chronological sequencing.
+
+**Commutativity.** Not assumed. Order-independence belongs to a formal fusion framework (v3/v4 — defeasible reasoning with closure), not to LLM convenience fusion. The v0 pipeline is explicitly chronological.
+
+**Empirical limits.** Characterize order-sensitivity experimentally: fuse the same corpus under *k* permutations; report inter-run F1 variance. The probe tells us where LLM fusion diverges from the chronological reference — the boundary beyond which a formal framework becomes necessary.
+
+## Data model (v0 table fusion)
+
+Scope: the table-fusion prototype that answers the v0 question — *does LLM convenience fusion work well enough, or do we need formal knowledge graphs?* Event fusion with defeasible reasoning and closure is the v3/v4 dream. Scalar and multi-scalar fragment fusion are deferred.
+
+### Master + provenance sidecar
+
+Two CSVs kept in lockstep:
+
+- `master.csv` — one row per entity, current-state snapshot. Covers operating plants, authorizations, propositions, and scenario-conditional rows.
+- `master_provenance.csv` — same schema, same rows, same primary key. Every cell holds exactly one source ID (the authoritative source for that cell's value).
+
+**Invariants (enforced by validator, not convention):**
+
+1. **Schema lockstep.** `schema(master) ≡ schema(master_provenance)`. Column add/drop/rename is a dual operation.
+2. **Null parity.** `master[i,j]` null ⟺ `provenance[i,j]` null. No cell without attribution; no attribution without a cell.
+3. **Single atomic writer.** Only the fusion primitive mutates the pair, always together. No ad-hoc edits, no one-file updates.
+4. **Canonical source IDs.** Values drawn from the corpus source registry (below). LLM-emitted source names parsed against the registry; unknown IDs rejected.
+5. **Fusion step log.** Every fusion step appends one row to `fusion_log.csv`: `{step_id, timestamp, source_id, rows_added, rows_updated, cells_changed, conflicts_resolved, confirmations}`. This log carries history and concordance — the sidecar itself stays scalar.
+
+**Multi-source rule.** Scalar: one source ID per cell, chosen by authority. Sources that confirm an existing value are recorded in the fusion step log's `confirmations` field, not in the sidecar. This keeps sidecar shape simple and pushes concordance discovery into the audit trail, where history belongs.
+
+### Source registry
+
+The registry lives in corpus metadata, not in a standalone YAML. A document is registered as a source *iff* it passes the Source triage (HITL) step of the pipeline — registration and validation are the same action. The registry grows incrementally, one entry per accepted document.
+
+Required fields per source:
+
+- `source_id` — canonical short ID used in the sidecar (e.g. `PDP8R`, `EVN2024`)
+- `publisher`, `publication_date`, `authority_rank`, `type` (regulatory / utility / dispatch / news / ...)
+- `language`, `format`, `local_path`, original URL
+
+The source registry is the sealed vocabulary of `master_provenance.csv`. This is where the "stateful" architecture begins: the set of trusted sources, grown by HITL, is state that persists across fusion runs.
+
 ## Milestone DAG
 
 Milestones are not sequential phases. They form a dependency graph.
@@ -80,6 +129,20 @@ not gates.
   (done)              ↓              ↓
                     Scale ───────────┘
 ```
+
+### Econom'IA 2026 (in flight — Cergy, 2026-05-27)
+
+Conference talk at Thema/Cergy. Homepage: https://economia.sciencesconf.org/
+Title: *Beyond RAG: Graph-Based Architectures for Reliable Economic Statistics with Agentic Systems*.
+Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`.
+
+Argues that stateless generation, iterative prompting, and RAG fail on exhaustivity, internal coherence, temporal management, and traceability — the benchmark is the evidence. Proposes a paradigm shift to stateful, agentic, graph-based architectures that organize collection, human validation, temporal accumulation, and statistic derivation as a controlled knowledge production process.
+
+Deliverable: slides (French, Beamer) in `slides/`. Consumes current state (census, ablation, hygiene results).
+
+**Sync status (2026-04-17):**
+- Slides synced to the v0 pipeline design (fusion reframe, fragment taxonomy, incrementality, master + sidecar, 3-tier verification, 4-category HITL memory, agents anchored on data-model concerns).
+- Technical report carries warning boxes in Ch. 3 RAG intro, Ch. 6 Architecture proposée, and `inputs/verification_methods.tex`. Full rewrite tracked in tickets 0098 (Ch. 6 + Ch. 3 reframe) and 0099 (verification_methods.tex). Both blocked by 0097 (source-grounding Phase 1 results feed the rewrites).
 
 ### Presentation (done)
 

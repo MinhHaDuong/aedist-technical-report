@@ -1,5 +1,5 @@
 %erg v1
-Title: Sourced RAG extraction with deterministic source verification
+Title: Verify source-grounding of the master table (3-tier, audit-verified)
 Status: open
 Created: 2026-04-16
 Author: claude
@@ -8,57 +8,101 @@ Author: claude
 2026-04-16T15:00Z claude created — replaces post-hoc LLM verification (ticket 0059 dead end)
 2026-04-16T16:00Z claude note reimagined: sourced extraction + deterministic verification, not retroactive grounding
 2026-04-16T22:30Z claude note second reimagining after audit: extraction data already exists (3 Opus runs), skip new API calls
+2026-04-17T09:00Z claude note third reimagining: trait-verification framing — source-grounding of the table across 3 verification tiers, with audit-verified HITL memory. Prior tier-1 scope becomes Phase 1 (ships for Econom'IA 2026). Tiers 2+3 attach to the v0 fusion prototype (MASTERPLAN / Data model).
 
 --- body ---
 ## Context
 
-Ticket 0059 showed post-hoc LLM verification is a dead end (0-10%
-inter-verifier agreement). The journal paper needs a provenance metric
-that works. The answer: deterministic source grounding against the
-18-file RAG corpus.
+Under the v0 table-fusion design (MASTERPLAN §"Data model (v0 table fusion)"),
+the deliverable is a `master.csv` + `master_provenance.csv` sidecar with
+five invariants and a scalar-authoritative multi-source rule. This ticket
+verifies **one trait** of that table — source-grounding: does each cell
+actually trace to its cited source? — via a three-tier mechanism:
 
-**Critical finding:** the sourced extraction already ran. Three
-Opus runs exist in `outputs/sourced/` with source_1, source_2, note
-columns populated. F1: 0.85, 0.83, 0.77 (mean ~0.82). Reconciliation
-CSVs also exist (163 rows each). The measurements.jsonl entries have
-empty metrics dicts but result_summary has tp/fp/fn/f1.
+```
+cell under audit → tier 1: string match against source table
+                    ├─ match    → verified
+                    └─ no match → tier 2: LLM adjudication
+                                    ├─ LLM + HITL ratifies → emit typed rule
+                                    │                      → add to memory (tier 3)
+                                    └─ rejected            → flag: hallucination or fusion error
+```
 
-The citations are free-text ("EVN Annual Report 2017 p14"), not
-corpus filenames. The grounding step must fuzzy-match these against
-the 18 corpus filenames and their row content.
+Tier 3 is audit-verified HITL memory: every rule carries
+`{source_llm_suggestion, ratifying_human, timestamp, evidence_cell, witness}`,
+committed to git, with sample ratifications spot-checked by a second
+witness. This is the "stateful" part of the stateful-agentic architecture
+(Econom'IA 2026 abstract).
 
-## Revised scope — what to do, what to skip
+Rules are typed per four categories (MASTERPLAN §"Data model") —
+alias, unit/format, source-local term, attribute synonym — each with
+a distinct fire point in the verification chain.
 
-**Skip:** new API calls, new model runs, sourced prompt redesign.
-The data exists. Spend $0, not $10.
+Ticketing principle: one ticket = one trait × one target. This ticket
+is source-grounding × table. Incrementality × method, escalation-decay ×
+system, conflict-resolution × method, etc. are separate tickets.
 
-**Phase 1 — Deterministic grounding (the only code to write):**
-Implement `verify_source_grounding()` that takes a source_1 string
-and checks it against `data/rag_corpus/`:
-  1. Extract document reference (fuzzy match against 18 filenames)
-  2. If file found, search for plant name or capacity in file content
-  3. Output: source_file_found (bool), source_content_found (bool)
-Threshold: filename fuzzy >= 70, content substring or fuzzy >= 70.
+## Phase 1 — Deterministic grounding (tier 1) — ships for Econom'IA
 
-**Phase 2 — Build the 2x2 table:**
-For each of the 3 sourced Opus runs (120/115/102 matched plants):
-  - Each row is already reconciled (in reference or not)
-  - Each row has source_1 (traceable or not, per Phase 1)
-  - Cross-tabulate: traceable x in_reference = the 2x2
+Scope: existing data only. No new API calls. $0.
 
-**Phase 3 — Non-sourced baseline for comparison:**
-For non-sourced RAG runs, source_1 is empty by definition, so
-source_rate = 0 and grounding_rate is undefined. The 2x2 collapses
-to a 1x2 (all rows are "not traceable"). This is trivial to compute
-from existing reconciliation CSVs.
+Three Opus sourced runs in `outputs/sourced/` already have
+`source_1`, `source_2`, `note` columns. 18-file RAG corpus in
+`data/rag_corpus/`.
 
-**What the 2x2 says for the paper:**
-- Traceable + in reference = citable fact (best case)
-- Traceable + not in reference = corpus gap discovered
-- Not traceable + in reference = parametric knowledge (uncitable)
-- Not traceable + not in reference = likely hallucination
+Build:
+- `verify_source_grounding()` — fuzzy match `source_1` against the 18
+  corpus filenames (threshold ≥ 70), then substring or fuzzy match
+  plant name or capacity within file content (threshold ≥ 70).
+- 2×2 table (traceable × in-reference) for each of the 3 Opus runs.
+- Non-sourced RAG baseline (source_1 empty → collapses to 1×2).
+
+Report for the talk and journal paper:
+
+| | In reference | Not in reference |
+|---|---|---|
+| **Traceable** | citable fact | corpus gap |
+| **Not traceable** | parametric knowledge (uncitable) | likely hallucination |
+
+## Phase 2 — LLM adjudication tier (post-Econom'IA)
+
+Scope: the v0 fusion prototype. Triggers on tier-1 misses only.
+
+Build:
+- LLM prompt: "Given this passage from {source}, does it support
+  {cell_attribute = cell_value} for {entity_id}? Yes/no + suggest
+  a typed disambiguation rule if yes."
+- Rule candidates emitted as taxonomy-typed YAML (alias / unit-format /
+  source-local-term / attribute-synonym).
+- Queue artifact (append-only) for HITL ratification.
+
+## Phase 3 — HITL-ratified memory + audit trail
+
+Scope: the v0 fusion prototype.
+
+Build per-taxonomy memory files (path TBD at Phase 3 kick-off — proposed
+`data/memory/` parallel to `data/reference/`):
+- `aliases/{country}.yaml` — entity identity
+- `unit_formats.yaml` — universal, per attribute type
+- `source_terms/{source_id}.yaml` — per-document prose vocabulary
+- `attribute_synonyms/{lang}.yaml` — column-to-schema mapping
+
+Build ratification path (simplest CLI prompt at v0; richer UI later).
+
+Build audit trail: `audit.jsonl` (append-only) with five fields per
+rule. Committed to git; diff-reviewable.
+
+Build verified tier: sampled spot-checks by a second witness (human or
+different LLM in committee), logged to `audit_verified.jsonl`.
+
+Add to measurements vocabulary:
+- `escalation_rate_per_step` = tier-2 escalations / changed cells
+- `rule_count_growth` = |memory| over time (per taxonomy)
+- `ratification_acceptance_rate` = ratified rules / LLM suggestions
 
 ## Test
+
+Phase 1:
 
 ```python
 def test_grounding_file_found():
@@ -77,9 +121,38 @@ def test_2x2_table():
     """Given grounding results + reconciliation, produce correct 2x2 counts."""
 ```
 
+Phase 2 first test:
+
+```python
+def test_llm_adjudication_produces_typed_rule():
+    """Given passage + cell value that string-match missed,
+    LLM returns a rule candidate typed as one of
+    {alias, unit-format, source-local-term, attribute-synonym}."""
+```
+
+Phase 3 first test:
+
+```python
+def test_ratified_rule_enters_memory_with_audit_trail():
+    """A ratified rule lands in the correct per-taxonomy memory file
+    AND in audit.jsonl with all five audit fields populated."""
+```
+
 ## Exit criteria
 
-- verify_source_grounding() with tests (deterministic, no LLM)
-- 2x2 table (traceable x reference) for 3 sourced Opus runs
-- Non-sourced RAG baseline 2x2 for comparison
-- Results ready for journal paper provenance section
+### Phase 1 (ships for Econom'IA 2026, 2026-05-27)
+- `verify_source_grounding()` with tests (deterministic, no LLM).
+- 2×2 table (traceable × reference) for 3 Opus sourced runs.
+- Non-sourced RAG baseline 2×2.
+- Results in the Econom'IA slides and journal paper provenance section.
+
+### Phase 2 (post-talk)
+- LLM adjudication runs on tier-1 misses during v0 fusion.
+- Rule candidates typed per the four-category taxonomy.
+- Ratification queue inspectable.
+
+### Phase 3 (post-talk)
+- All four memory files populated from real fusion runs.
+- Audit trail complete for every rule (five fields each).
+- Spot-check cadence running and logged.
+- Three new metrics in measurements.jsonl.

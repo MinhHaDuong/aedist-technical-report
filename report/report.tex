@@ -222,6 +222,15 @@ Les résultats sont décevants~: F1 médian de 0,39 sur les 15~runs, avec un max
 
 \chapter{Documents sources et RAG}\label{chap:rag}
 
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\small
+\textbf{Synchronisation en cours.} L'introduction de ce chapitre décrit le RAG comme point d'arrivée de l'extraction. Le cadrage v0 courant le recadre comme \emph{composant de récupération} à l'intérieur d'un pipeline de fusion incrémentale (voir \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''). Les résultats expérimentaux de ce chapitre (sections RAG wholesale, décomposition, extraction sourcée, cohérence) restent valides et inchangés. Réécriture de l'introduction suivie dans le ticket~0098. (2026-04-17)
+\end{minipage}}
+\end{center}
+
+\medskip
+
 Ce chapitre traite de la découverte et préparation des documents sources, puis de leur utilisation pour améliorer les résultats des LLM via le Retrieval Augmented Generation (RAG).
 
 \section{Découverte et préparation des documents}
@@ -460,6 +469,15 @@ L'écosystème des frameworks agentiques est en pleine expansion~: LangGraph, Ll
 Ces résultats confirment que l'écosystème est encore immature pour notre cas d'usage~: la construction automatique de graphes sans ontologie produit des résultats incomplets, et l'intégration RAG-graphe n'est pas encore opérationnelle dans les outils testés.
 
 \chapter{Architecture proposée}\label{chap:architecture}
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\small
+\textbf{Synchronisation en cours.} Ce chapitre décrit une architecture à quatre couches et quatre agents au niveau vision. Le modèle de données v0 courant (master.csv + master\_provenance.csv en lockstep, cinq invariants validés, registre des sources alimenté au triage HITL, journal de fusion, vérification à trois niveaux, mémoire ratifiée avec piste d'audit) est spécifié dans \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''. Les slides Econom'IA~2026 présentent le cadrage courant. Réécriture complète du chapitre suivie dans le ticket~0098 (bloqué par ticket~0097 pour les résultats de grounding). (2026-04-17)
+\end{minipage}}
+\end{center}
+
+\medskip
 
 \section{Objectifs et principes}
 

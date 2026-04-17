@@ -1,7 +1,24 @@
 % Verification methods — preregistered protocol for journal paper
 % Included from report.tex, inside section "Exp 3: RAG wholesale" after decomposition
+%
+% NOTE: This file describes the 5-mode post-hoc verification protocol
+% (unverified / tool / self / cross / web + 0–4 evidence rubric).
+% Ticket 0059 (PR #246) showed that multi-agent post-hoc LLM verification
+% reaches only 0–10% inter-verifier agreement. Rewrite of this file is
+% tracked in ticket 0099: 3-tier audit-verified verification.
+% Current design in MASTERPLAN.md "Data model (v0 table fusion)".
+% See also slides/slides.tex for the updated framing.
 
 \subsection{Vérification des sources}\label{sec:verification}
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\small
+\textbf{Synchronisation en cours.} Cette section décrit le protocole préenregistré à cinq modes (non vérifié, outil, auto, croisé, web) avec rubrique d'évidence 0--4. Le ticket~0059 (PR~\#246) a établi que la vérification LLM \emph{post-hoc} est une impasse (0--10\,\% d'accord inter-vérificateurs). Le cadrage courant place la justification en amont (triage HITL des sources), avec une chaîne de vérification déterministe à trois niveaux (correspondance de chaîne $\to$ adjudication LLM $\to$ mémoire ratifiée par humain avec piste d'audit). Voir \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''. Réécriture suivie dans le ticket~0099 (bloqué par ticket~0097). (2026-04-17)
+\end{minipage}}
+\end{center}
+
+\medskip
 
 Les expériences précédentes mesurent la \emph{couverture} de l'extraction~:
 combien de centrales le modèle trouve-t-il~? Mais pour un modélisateur de

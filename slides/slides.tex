@@ -195,65 +195,253 @@ But it has a ceiling:
 \end{itemize}
 
 \medskip
-For one dataset, verify.\\
-For 60 campaigns, build the pipeline.
+\textbf{Post-hoc LLM verification fails.}\\
+Multi-agent panel (3 models, 3 runs):\\
+\textbf{0--10\%} inter-verifier agreement.\\
+{\scriptsize The 0--4 rubric asks models to recall citations from parametric knowledge. Opinions, not provenance.}
+
+\medskip
+For one dataset, verify manually.\\
+For 60 campaigns, \textbf{front-load the justification}.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The proposed pipeline}
+\begin{frame}{From extraction to information fusion}
 \begin{columns}[T]
-\column{0.55\textwidth}
-\textbf{LLM-seeded, human-filtered, RAG-extracted:}
+\column{0.52\textwidth}
+\textbf{Reframe the problem.}
 
 \medskip
-\begin{enumerate}
-  \item \textbf{Ask} for the full report\\
-        {\small (framing, asset list, bibliography)}
-  \item \textbf{Filter} by publisher type --- government\\
-        decisions, utility reports = primary;\\
-        {\small newsletters, compilations = discard}
-  \item \textbf{Crawl} primary sources, get PDFs,\\
-        convert to Markdown, index, archive
-  \item \textbf{RAG} for the asset list from corpus\\
-        {\small (LLM list = stopping criterion)}
-  \item \textbf{RAG per asset} + news search to fill\\
-        gaps and update status
-  \item \textbf{Final table} --- every cell traceable\\
-        to a source document
-\end{enumerate}
+RAG treats extraction as\\
+\textit{document $\to$ table} in one shot.
 
-\column{0.42\textwidth}
-\textbf{Epistemic accountability:}
+\medskip
+The real problem is \textbf{fusion}: diverse information fragments,
+accumulated into a statistical table through a controlled,
+inspectable process.
+
+\medskip
+\begin{itemize}
+  \item Extraction produces \emph{fragments}
+  \item Fusion produces the \emph{table}
+  \item Each is its own object of study
+\end{itemize}
+
+\medskip
+Separating them earns us reproducibility:\\
+fusion can be deterministic\\
+even when extraction isn't.
+
+\column{0.44\textwidth}
+\textbf{The fusion primitive:}
+
+\medskip
+\begin{center}
+$\mathrm{master} + \mathrm{fragment} \longrightarrow \mathrm{master}'$
+\end{center}
+
+\medskip
+One source at a time. Never\\
+all fragments in one shot.
+
+\medskip
+\textbf{Consequences:}
+\begin{itemize}
+  \item Every step has an inspectable diff
+  \item Cost scales with $N$, not $N\!\times\!S$
+  \item Auditable by construction
+  \item Failure is localized to one step
+\end{itemize}
+
+\medskip
+This is the \textbf{stateful} in\\
+``stateful-agentic.''
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Fragment taxonomy}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{Three fragment types, distinct extraction\\and fusion mechanics:}
 
 \medskip
 {\small
-\begin{tabular}{@{}lcc@{}}
+\begin{tabular}{@{}lp{3.4cm}@{}}
 \toprule
- & \textbf{LLM} & \textbf{Pipeline} \\
+\textbf{Type} & \textbf{Where it lives} \\
 \midrule
-Provenance     & opaque  & cell $\to$ doc \\
-Update         & redo all & add source \\
-Audit          & no       & yes \\
-Falsifiable    & no       & yes \\
-Incremental    & no       & yes \\
+Serial & Tables\\
+ & {\scriptsize PDP annexes, EVN reports} \\[3pt]
+Multi-scalar & Prose lists\\
+ & {\scriptsize ``Province has projects A--E''} \\[3pt]
+Scalar & Isolated facts\\
+ & {\scriptsize ``Vinh Tan 1 commissioned 2018''} \\
+\bottomrule
+\end{tabular}
+}
+
+\column{0.48\textwidth}
+\textbf{Fusion mechanics differ:}
+
+\medskip
+{\small
+\begin{description}
+  \item[Serial] Schema align + record linkage.\\
+        Defines the skeleton of the master table.
+  \item[Multi-scalar] Entity existence check.\\
+        Confirms or adds rows.
+  \item[Scalar] Attribute update on matched entity.\\
+        Fills cells.
+\end{description}
+}
+
+\medskip
+\textbf{v0 scope:} serial (tables) only.\\
+Multi-scalar and scalar deferred.\\
+{\scriptsize ASEAN thermal: $\sim$18 tables for Vietnam alone.}
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Incrementality as a method trait}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{Fusion order (v0):}\\
+chronological, with authority as tie-breaker.
+
+\medskip
+\begin{center}
+{\small $\mathrm{PDP7} \to \mathrm{7A} \to \mathrm{8} \to \mathrm{8R} \to \mathrm{EVN} \to \mathrm{ERAV}$}
+\end{center}
+
+\medskip
+Cancellations and amendments\\
+only make sense under chronology.\\
+Authority resolves ties at one time-point.
+
+\medskip
+\textbf{Commutativity:} not assumed.\\
+{\small Order-independence belongs to a formal fusion framework (v3/v4 --- defeasible reasoning with closure), not to LLM convenience fusion.}
+
+\column{0.48\textwidth}
+\textbf{Empirical limits} (planned probe):
+
+\medskip
+Fuse the same corpus under $k$\\
+permutations; report inter-run\\
+F1 variance.
+
+\medskip
+The probe tells us \emph{where} LLM\\
+fusion diverges from the\\
+chronological reference ---\\
+the boundary beyond which a\\
+formal framework becomes\\
+necessary.
+
+\medskip
+\textbf{Scale argument:}\\
+ASEAN $\times$ 6 components $\approx$ hundreds of tables.
+Non-incremental methods re-run everything per new source.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{v0 data model: master + provenance sidecar}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Two CSVs, always in lockstep:}
+
+\medskip
+{\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\texttt{master.csv} & values, snapshot \\
+\texttt{master\_provenance.csv} & one source ID per cell \\
 \bottomrule
 \end{tabular}
 }
 
 \medskip
+\textbf{Five invariants} (validator-enforced):
+\begin{enumerate}
+  \item Schema lockstep
+  \item Null parity
+  \item Single atomic writer
+  \item Canonical source IDs
+  \item Append-only fusion step log
+\end{enumerate}
+
+\medskip
+{\small Multi-source rule: scalar authoritative. Confirming sources live in the step log, not the sidecar.}
+
+\column{0.48\textwidth}
+\textbf{Source registry} grows at HITL source triage.
+
+\medskip
+{\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Field} & \textbf{Example} \\
+\midrule
+source\_id & \texttt{PDP8R} \\
+publisher & Gov of Vietnam \\
+type & regulatory \\
+authority\_rank & 1 \\
+date & 2024-03-15 \\
+\bottomrule
+\end{tabular}
+}
+
+\medskip
+Registration = validation:\\
+a document is in the registry\\
+\emph{iff} it passed HITL triage.
+
+\medskip
+Sealed vocabulary for the sidecar.\\
+LLM-emitted source names\\
+parsed against the registry;\\
+unknown IDs rejected.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Epistemic accountability: LLM vs pipeline}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Property} & \textbf{LLM report} & \textbf{Fusion pipeline} \\
+\midrule
+Provenance     & ``Claude said so'' & cell $\to$ source ID $\to$ document \\
+Update         & regenerate all      & append a source \\
+Audit          & opaque              & step log + sidecar + registry \\
+Falsifiable    & no                  & check source against claim \\
+Incremental    & no                  & asset by asset, source by source \\
+Stateful       & no                  & registry + memory persist \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\begin{columns}[T]
+\column{0.48\textwidth}
 The LLM is a \textbf{compressed index}.\\
 Use it for \emph{scope discovery},\\
 not as ground truth.
 
-\medskip
-{\small\textbf{Pilot:} 77\% primary sources,\\
-0\% fabricated on manual check (337 rows, 3 runs).}
+\column{0.48\textwidth}
+\textbf{Pilot, sourced extraction:}\\
+77\% primary sources, 0\% fabricated\\
+on manual check (337 rows, 3 Opus runs).
+\end{columns}
 
 \medskip
+\centering
 Research-quality data isn't correct data.\\
 It's data whose errors are \textbf{locatable}.
-\end{columns}
 \end{frame}
 
 % ===================================================================
@@ -499,7 +687,9 @@ Local 35B with RAG approaches cloud API performance at \$0 marginal cost.}
 \textbf{2 models} $\times$ \textbf{16 prompt variants} $\times$ 2 runs (RAG regime only)
 
 \begin{center}
-\includegraphics[width=\textwidth]{inputs/generated/fig_ablation_strip.pdf}
+\IfFileExists{inputs/generated/fig_ablation_strip.pdf}{%
+  \includegraphics[width=\textwidth]{inputs/generated/fig_ablation_strip.pdf}%
+}{\textit{[fig\_ablation\_strip.pdf not generated --- run \texttt{make measurements} then \texttt{make figures}]}}
 \end{center}
 
 \vspace{-0.8em}
@@ -645,6 +835,88 @@ is the key --- naive fuzzy matching would wrongly reject 65 plants.
 \medskip
 \textbf{Implication:} With proper matching, verification has \emph{no cost}:\\
 every real plant is confirmed, every fabrication is caught.
+
+\medskip
+{\small But this works \emph{once}, against a known reference. For 60 campaigns with no reference, we need the verification mechanism itself to scale.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Verification at scale: three tiers}
+\begin{center}
+\small
+\begin{tabular}{@{}rl@{}}
+\toprule
+\textbf{Tier} & \textbf{Mechanism} \\
+\midrule
+0 & Diff audit: only changed cells need verification \\[2pt]
+1 & String match (deterministic) cell $\leftrightarrow$ source table \\[2pt]
+2 & LLM adjudication on tier-1 misses $\to$ candidate rule \\[2pt]
+3 & HITL ratification $\to$ rule enters memory (audit trail) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{What this buys:}
+\begin{itemize}
+  \item Determinism first; LLM only as fallback
+  \item Human only ratifies \emph{once} per rule
+  \item Memory makes run $N+1$ cheaper than run $N$
+  \item Escalation rate is itself a signal
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Metrics:}
+\begin{itemize}
+  \item Escalation rate per fusion step
+  \item Rule count growth (per taxonomy)
+  \item Ratification acceptance rate
+\end{itemize}
+
+\medskip
+{\small Dead-end avoided: multi-agent panels (ticket 0059). Here the human gates every rule once, not every cell every time.}
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Audit-verified HITL memory: four rule categories}
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Category} & \textbf{Encodes} & \textbf{Example} & \textbf{Fires at} \\
+\midrule
+Alias & entity identity & \texttt{``VT1'' $\equiv$ ``Vinh Tan 1''} & after string-match fail \\[2pt]
+Unit/format & value shape & \texttt{``1,200 MW'' $\to$ 1200} & before string match \\[2pt]
+Source-local term & prose vocab & \texttt{``Nhóm'' (PDP8) = ``Group''} & inside LLM adjudication \\[2pt]
+Attribute synonym & column $\to$ schema & \texttt{``Công suất'' $\to$ capacity\_mw} & at table load \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Every rule carries an audit trail:}
+\begin{itemize}
+  \item LLM suggestion that proposed it
+  \item Ratifying human
+  \item Timestamp
+  \item Evidence cell
+  \item Second-witness check (sampled)
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{This is the ``stateful''\\in stateful-agentic.}
+
+\medskip
+Memory grows monotonically.\\
+Committed to git.\\
+Diff-reviewable.\\
+{\small The system is smarter at run $N+1$ than at run $N$.}
+\end{columns}
 \end{frame}
 
 % ===================================================================
@@ -688,31 +960,38 @@ Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cos
 \section{Architecture}
 
 % -------------------------------------------------------------------
-\begin{frame}{AEDIST: proposed architecture}
+\begin{frame}{AEDIST v0: agents anchored on data-model concerns}
 \begin{columns}[T]
 \column{0.48\textwidth}
 \textbf{Four information layers:}
 \begin{enumerate}
-  \item \textbf{Document store} -- cached web files
-  \item \textbf{Validated base} -- Zotero-indexed, expert-reviewed
-  \item \textbf{Vector layer} -- semantic search for RAG
-  \item \textbf{Knowledge graph} -- Open Energy Ontology, PROV traceability
+  \item \textbf{Document store} --- cached raw files
+  \item \textbf{Validated corpus} --- Zotero-indexed;\\
+        \emph{source registry} lives here
+  \item \textbf{Master + sidecar} --- fusion output\\
+        {\scriptsize master.csv + master\_provenance.csv + fusion\_log.csv}
+  \item \textbf{Memory} --- per-taxonomy rule store\\
+        {\scriptsize aliases / units / source-terms / attribute-synonyms + audit.jsonl}
 \end{enumerate}
 
 \column{0.48\textwidth}
-\textbf{Specialized agents:}
+\textbf{Agents, each owns one concern:}
 \begin{description}
-  \item[Watcher] source monitoring, classification
-  \item[Curator] indexing, metadata normalization
-  \item[Analyst] entity extraction, graph construction
-  \item[Writer] structured reports, data export
+  \item[Watcher] source discovery
+  \item[Curator] HITL source triage\\
+        $\to$ writes registry entries
+  \item[Analyst] runs the fusion primitive\\
+        $\to$ mutates master + sidecar\\
+        $\to$ appends to fusion\_log
+  \item[Auditor] runs 3-tier verification\\
+        $\to$ proposes + ratifies rules
 \end{description}
+\end{columns}
 
 \medskip
-\textbf{Key principle:}\\
-Accumulation over time, not instant search.\\
-Human validates before ingestion.
-\end{columns}
+\centering
+\textbf{State is persistent.} Registry, sidecar, log, memory: all git-tracked.\\
+{\small Next run starts where this one left off. That's the path to 60 campaigns.}
 \end{frame}
 
 % ===================================================================

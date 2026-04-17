@@ -1,0 +1,96 @@
+%erg v1
+Title: Sync technical report to v0 pipeline design (Ch. 6 + Ch. 3 reframe)
+Status: open
+Created: 2026-04-17
+Author: claude
+Blocked-by: 0097
+
+--- log ---
+2026-04-17T10:00Z claude created — first of two report-sync tickets carved out after slides received the full v0 pipeline design. Ch. 6 ("Architecture proposée") still describes a vision-level 4-layer / 4-agent sketch with no formal v0 data model; Ch. 3 still frames RAG as an endpoint rather than as a retrieval component of the fusion pipeline.
+
+--- body ---
+## Context
+
+`slides/slides.tex` has been synced to the full v0 pipeline design
+from MASTERPLAN (fusion framing, information taxonomy, incrementality
+as a named method trait, master + sidecar data model with five invariants,
+source registry at corpus-metadata HITL triage, three-tier verification
+with audit-verified HITL memory, four rule categories).
+
+`report/report.tex` lags. Two chapters need the sync:
+
+- **Ch. 6 "Architecture proposée" (lines 462–503)** — currently sketches
+  a 4-layer / 4-agent vision (document store, validated base, vector
+  layer, KG; Watcher / Curator / Analyst / Writer) with no concrete
+  data model. Must be rewritten to specify the v0 data model
+  (master + master_provenance sidecar, five invariants, source
+  registry lifecycle, fusion step log, incremental fusion order,
+  three-tier verification).
+- **Ch. 3 RAG intro (lines 223–267)** — currently frames RAG as the
+  extraction endpoint. Must be reframed as the retrieval layer inside
+  the incremental fusion pipeline.
+
+Report placeholders and a global warning box are already landed in
+this PR (points the reader to MASTERPLAN for the design during the
+interim).
+
+Blocked-by 0097 because Phase 1 of 0097 produces the source-grounding
+2×2 table that Ch. 6 cites as empirical motivation for the sidecar.
+
+## Scope
+
+### Ch. 6 rewrite
+
+Replace the current §"Architecture informationnelle en quatre niveaux"
++ §"Services et agents" + §"Points d'attention" with:
+
+1. **Pipeline as information fusion** — reframe the architecture around
+   the `master + fragment → master'` primitive. Taxonomy of fragments
+   (serial, multi-scalar, scalar). Link to MASTERPLAN §"Method traits".
+2. **Incrementality** — chronological + authority ordering; commutativity
+   parked for formal v3/v4 framework; empirical order-sensitivity probe
+   named as future work.
+3. **Master + provenance sidecar** — schema, five invariants
+   (schema lockstep, null parity, single atomic writer, canonical source
+   IDs, fusion step log), multi-source rule (scalar authoritative, plus
+   confirmations in log).
+4. **Source registry** — lives in corpus metadata, grown at HITL source
+   triage step, required fields, sealed vocabulary for the sidecar.
+5. **Three-tier verification** — string match → LLM adjudication →
+   HITL-ratified memory. Four rule categories with examples.
+6. **Agents layer** — keep the four-agent structure but anchor each
+   agent on a data-model concern (Curator owns registry; Analyst owns
+   fusion primitive; etc.).
+
+### Ch. 3 reframe
+
+Lines 223–267 ("Documents sources et RAG" intro, "Stratégie RAG",
+"Retrieval par LLM", "Techniques de retrieval", "Extraction des tables
+pertinentes"): reframe from "RAG produces the table" to "RAG retrieves
+fragments; fusion produces the table." The 15 Markdown tables become
+the input to incremental fusion, not the extraction endpoint.
+
+Keep untouched: all experimental results in Ch. 3 (RAG wholesale sweep,
+decomposition, sourced extraction, coherence), the hallucination-trap
+diagnosis (lines 359–379 — this *motivates* the new design).
+
+## Test
+
+Report rebuilds without error: `make report` produces `report.pdf`
+with the new Ch. 6 replacing the old one and Ch. 3 intro reframed.
+
+Content-level checks:
+- Ch. 6 mentions all five invariants explicitly.
+- Ch. 6 mentions all four rule categories by name.
+- Ch. 6 cites 0097 Phase 1 results (source-grounding 2×2) as empirical
+  motivation for the sidecar.
+- Ch. 3 intro reframes RAG as retrieval-inside-fusion, not endpoint.
+- Warning box removed from Ch. 6 and Ch. 3 after rewrite.
+
+## Exit criteria
+
+- Ch. 6 rewrite lands, reviewed, merged.
+- Ch. 3 intro reframe lands, reviewed, merged.
+- `verification_methods.tex` rewrite is a separate ticket (0099).
+- Global "sync in progress" warning box removed from `report.tex`
+  preamble when both 0098 and 0099 are closed.

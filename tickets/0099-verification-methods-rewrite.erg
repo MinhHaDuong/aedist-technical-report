@@ -1,0 +1,84 @@
+%erg v1
+Title: Rewrite inputs/verification_methods.tex for 3-tier audit-verified verification
+Status: open
+Created: 2026-04-17
+Author: claude
+Blocked-by: 0097
+
+--- log ---
+2026-04-17T10:00Z claude created — second of two report-sync tickets. The current verification_methods.tex is a preregistered protocol for 5-mode post-hoc verification (unverified / tool / self / cross / web). Ticket 0059 (multi-agent verification panel) showed post-hoc LLM verification is a dead end (0-10% inter-verifier agreement). The new design front-loads justification at HITL source triage and uses deterministic three-tier verification with audit-verified memory.
+
+--- body ---
+## Context
+
+`report/inputs/verification_methods.tex` defines the five verification
+modes (unverified, tool, self, cross, web) and a 0-4 evidence rubric
+used across the journal paper. This protocol is obsolete post-ticket-0059:
+multi-agent panels achieve 0-10% inter-verifier agreement. The
+production pipeline (MASTERPLAN) replaces post-hoc LLM verification
+with front-loaded HITL source triage plus three-tier deterministic
+verification (string match → LLM adjudication → HITL-ratified memory).
+
+A warning is already in place at the top of the file pointing readers
+to MASTERPLAN for the live design. This ticket replaces the body.
+
+Blocked-by 0097 because Phase 2+3 of 0097 define the LLM adjudication
+tier and the HITL memory artifact, whose design this document should
+describe.
+
+## Scope
+
+Rewrite the entire file. New structure:
+
+1. **Why post-hoc LLM verification is a dead end** (citing ticket 0059,
+   PR #246: 0-10% inter-verifier agreement even after bugfix; root cause:
+   the 0-4 rubric asks models to recall citations from parametric
+   knowledge, producing opinions not provenance).
+
+2. **Front-loaded justification** — verification begins at source
+   triage, not at output checking. Human validates publishers before
+   any extraction runs. This is where epistemic leverage is highest.
+
+3. **Deterministic three-tier verification** — detailed description
+   of the chain:
+   - Tier 1: string match against source table (0097 Phase 1).
+   - Tier 2: LLM adjudication when tier 1 fails (0097 Phase 2).
+   - Tier 3: HITL-ratified memory with audit trail (0097 Phase 3).
+
+4. **Four rule categories** — alias, unit/format, source-local term,
+   attribute synonym. Each with examples from the Vietnam thermal corpus.
+
+5. **Audit trail** — five fields per rule
+   (source_llm_suggestion, ratifying_human, timestamp, evidence_cell,
+   witness), committed to git, spot-checkable by a second witness.
+
+6. **Metrics vocabulary** — escalation_rate_per_step,
+   rule_count_growth, ratification_acceptance_rate.
+
+Keep (migrate to historical appendix or delete as appropriate):
+- The 5-mode taxonomy is a *negative* result. If kept, frame as
+  "what we tried and why it fails." If deleted, cite the decision
+  with a pointer to ticket 0059.
+
+## Test
+
+Report rebuilds: `make report` produces `report.pdf` with the new
+`verification_methods.tex` contents.
+
+Content-level checks:
+- Ticket 0059 cited as the negative result motivating the rewrite.
+- All three tiers described with concrete examples.
+- All four rule categories enumerated with examples.
+- Audit trail's five fields enumerated.
+- Metrics vocabulary listed.
+- Warning box at top of file removed after rewrite.
+
+## Exit criteria
+
+- `verification_methods.tex` rewritten and rebuilds.
+- `plan_verification_multi.tex` and `results_verification_multi.tex`
+  reviewed: either updated to reflect the new verification architecture
+  or explicitly framed as "historical preregistration — superseded by
+  ticket 0097."
+- Global "sync in progress" warning in `report.tex` preamble can be
+  removed when both 0098 and 0099 are closed.
