@@ -5,6 +5,14 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from aedist.harness import build_api_kwargs as _real_build_api_kwargs
+
+
+def _build_api_kwargs_web_enabled(*args, **kwargs):
+    """Wrapper that defaults enable_web_search=True (mirrors production intent)."""
+    kwargs.setdefault("enable_web_search", True)
+    return _real_build_api_kwargs(*args, **kwargs)
+
 
 def _make_mock_response(prompt_tokens=100, completion_tokens=200):
     """Create a mock OpenAI ChatCompletion response."""
@@ -60,19 +68,36 @@ def test_basic_produces_output(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
-    for field in ("model", "sweep", "usage", "wall_seconds", "cost_usd",
-                  "max_tokens", "temperature", "model_metadata"):
+    for field in (
+        "model",
+        "sweep",
+        "usage",
+        "wall_seconds",
+        "cost_usd",
+        "max_tokens",
+        "temperature",
+        "model_metadata",
+    ):
         assert field in record, f"Missing field: {field}"
     assert record["sweep"] == "frontier"
 
@@ -89,12 +114,21 @@ def test_reasoning_model_omits_temperature(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
@@ -114,12 +148,21 @@ def test_non_reasoning_sends_temperature(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
@@ -140,14 +183,25 @@ def test_budget_guard_stops(mock_openai_cls, tmp_path):
 
     # cost = (100 * 1.0 + 200 * 2.0) / 1_000_000 = 0.0005 per call
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--repeat", "5",
-            "--budget-usd", "0.0008",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--repeat",
+                "5",
+                "--budget-usd",
+                "0.0008",
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -166,13 +220,22 @@ def test_dry_run_no_api_calls(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--dry-run",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--dry-run",
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     mock_client.chat.completions.create.assert_not_called()
@@ -198,14 +261,24 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
     (modules_dir / "overview.txt").write_text("Provide an overview.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier",
-            "--prompt-modules", "persona", "overview",
-            "--modules-dir", str(modules_dir),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt-modules",
+                "persona",
+                "overview",
+                "--modules-dir",
+                str(modules_dir),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     # Verify the assembled prompt was sent to the API
@@ -235,14 +308,22 @@ def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
     (modules_dir / "base.txt").write_text("Base prompt only.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier",
-            "--prompt-modules",
-            "--modules-dir", str(modules_dir),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt-modules",
+                "--modules-dir",
+                str(modules_dir),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_args = mock_client.chat.completions.create.call_args
@@ -258,16 +339,26 @@ def test_prompt_and_prompt_modules_mutually_exclusive(mock_openai_cls, tmp_path)
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier",
-            "--prompt", str(prompt_path),
-            "--prompt-modules", "persona",
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--prompt-modules",
+                "persona",
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             import pytest
+
             with pytest.raises(SystemExit):
                 from aedist.query_frontier import main
+
                 main()
 
 
@@ -286,15 +377,24 @@ def test_prompt_modules_dry_run(mock_openai_cls, tmp_path):
     (modules_dir / "persona.txt").write_text("You are an expert.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier",
-            "--prompt-modules", "persona",
-            "--modules-dir", str(modules_dir),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--dry-run",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt-modules",
+                "persona",
+                "--modules-dir",
+                str(modules_dir),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--dry-run",
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     mock_client.chat.completions.create.assert_not_called()
@@ -316,14 +416,23 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
     (modules_dir / "persona.txt").write_text("You are an expert.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier",
-            "--prompt-modules", "persona",
-            "--modules-dir", str(modules_dir),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt-modules",
+                "persona",
+                "--modules-dir",
+                str(modules_dir),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -344,12 +453,21 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -358,6 +476,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     assert record["sweep"] == "frontier_scenarios"
 
 
+@patch("aedist.query_frontier.build_api_kwargs", _build_api_kwargs_web_enabled)
 @patch("aedist.harness.OpenAI")
 def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     """Models with web_search: true get OpenRouter web plugin in extra_body."""
@@ -370,12 +489,21 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
@@ -383,6 +511,7 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     assert call_kwargs["temperature"] == 0.0
 
 
+@patch("aedist.query_frontier.build_api_kwargs", _build_api_kwargs_web_enabled)
 @patch("aedist.harness.OpenAI")
 def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
     """Model with both reasoning and web_search gets correct params."""
@@ -395,12 +524,21 @@ def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
@@ -420,19 +558,27 @@ def test_no_web_search_flag_disables_plugin(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--no-web-search",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--no-web-search",
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert "tools" not in call_kwargs, (
-        "Expected no tools when --no-web-search is passed, "
-        f"but got: {call_kwargs.get('tools')}"
+        f"Expected no tools when --no-web-search is passed, but got: {call_kwargs.get('tools')}"
     )
     assert call_kwargs["temperature"] == 0.0
 
@@ -449,13 +595,22 @@ def test_no_web_search_flag_noop_without_web_model(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query_frontier", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--no-web-search",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_frontier",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--no-web-search",
+            ],
+        ):
             from aedist.query_frontier import main
+
             main()
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs

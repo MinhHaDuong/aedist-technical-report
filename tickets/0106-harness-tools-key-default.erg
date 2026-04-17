@@ -1,0 +1,47 @@
+%erg v1
+Title: Restore web_search tools in build_api_kwargs default (4 tests red)
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T12:30Z claude created — surfaced by morning test-green sweep. Four tests assert `kwargs["tools"][0]["type"] == "openrouter:web_search"` but hit KeyError because `build_api_kwargs(..., enable_web_search=False)` is the default. Tests do not pass the flag.
+2026-04-17T13:00Z claude note reimagine: call-site audit confirms default must stay False. Fix = update 4 tests to pass enable_web_search=True.
+2026-04-17T15:00Z claude status closed — fixed 4 tests: added enable_web_search=True to direct calls in test_harness.py, patched build_api_kwargs in test_query_frontier.py integration tests. All 4 pass, no regressions.
+
+--- body ---
+## Context
+
+Failing tests (all same root cause):
+- `tests/test_harness.py::test_web_search_model_gets_plugin`
+- `tests/test_harness.py::test_both_capabilities`
+- `tests/test_query_frontier.py::test_web_search_model_gets_plugin`
+- `tests/test_query_frontier.py::test_both_reasoning_and_web_search`
+
+`src/aedist/harness.py:314` defines `build_api_kwargs(..., enable_web_search: bool = False)`. When a model has `web_search: true`, the function only injects `kwargs["tools"]` if `enable_web_search=True`. Tests construct a `model` dict with `web_search: True` but call `build_api_kwargs` without the flag → no `tools` key → KeyError.
+
+**Fix: update the 4 tests to pass `enable_web_search=True`.**
+
+Call-site audit (reimagine phase): only `worker.py` passes the flag
+(forwarding `job.web_search`). All other production callers — `query.py`,
+`query_web.py`, `query_rag.py`, `query_multiturn.py`, `query_decomposed.py`,
+`query_frontier.py` — omit it, relying on the `False` default. Flipping
+the default would silently enable web search in all those callers
+(~$0.02/call costs + non-determinism). The tests simply forgot to pass the
+flag they are testing.
+
+## Actions
+
+1. `rg 'build_api_kwargs\(' src/ scripts/ experiments/` — audit call-sites.
+2. Decide default based on majority behavior. Document decision in one-line comment at the signature.
+3. Apply the fix; run the 4 failing tests + the rest of the harness suite.
+
+## Test
+
+Existing 4 tests are the regression test. No new tests needed.
+
+## Exit criteria
+
+- All 4 tests pass.
+- No regressions in `tests/test_harness.py` or `tests/test_query*.py`.
+- Full suite (minus other red clusters tracked by 0107-0110) green.
