@@ -1,0 +1,57 @@
+%erg v1
+Title: make_client must not leak OPENROUTER_API_KEY to local endpoints
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T12:35Z claude created — `make_client("http://localhost:11434/v1")` currently forwards the real OpenRouter key to a local Ollama endpoint. Two tests red; also a real security/correctness concern.
+2026-04-17T13:10Z claude status closed — fixed in make_client: parse base_url hostname, only use OPENROUTER_API_KEY for openrouter.ai hosts, use "ollama" placeholder for all others. Both failing tests green, no regressions.
+
+--- body ---
+## Context
+
+Failing tests:
+- `tests/test_harness.py::test_make_client_custom_base_url`
+- `tests/test_query.py::test_base_url_passed_to_client`
+
+Both assert that when `make_client(base_url="http://localhost:11434/v1")` is called, the `OpenAI` client is constructed with `api_key="ollama"`.
+
+Current `src/aedist/harness.py:174-189`:
+```python
+def make_client(base_url: str | None = None) -> OpenAI:
+    if base_url:
+        api_key = os.environ.get("OPENROUTER_API_KEY", "ollama")
+        return OpenAI(base_url=base_url, api_key=api_key)
+    ...
+```
+
+The `os.environ.get("OPENROUTER_API_KEY", "ollama")` falls through to the real OpenRouter key whenever it is set (which is always, in any dev shell). Consequences:
+1. Tests hit real key, fail on assertion.
+2. The OpenRouter key is transmitted to `localhost:11434` or any passed-in `base_url`. For Ollama this is inert but still a secret-leakage smell. For a typo'd malicious base_url it is worse.
+
+## Fix
+
+Detect "local" base URLs (localhost, 127.0.0.1, any non-openrouter.ai host) and use the `"ollama"` placeholder key unconditionally. Only use `OPENROUTER_API_KEY` when `base_url` is an OpenRouter endpoint (or `None`).
+
+Minimal heuristic:
+```python
+if base_url:
+    from urllib.parse import urlparse
+    host = urlparse(base_url).hostname or ""
+    if host.endswith("openrouter.ai"):
+        api_key = os.environ["OPENROUTER_API_KEY"]
+    else:
+        api_key = "ollama"
+    return OpenAI(base_url=base_url, api_key=api_key)
+```
+
+## Test
+
+The 2 failing tests are already regression tests. Optionally add a third asserting that a non-ollama, non-openrouter URL (e.g. `http://evil.example/v1`) also gets the placeholder key, not the real one — defensive.
+
+## Exit criteria
+
+- Both failing tests green.
+- No regression in harness or query tests.
+- (Optional) one new test covering the defensive behavior for unknown hosts.
