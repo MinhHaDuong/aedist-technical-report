@@ -1,4 +1,4 @@
-# Beyond RAG: Graph-Based Architectures for Reliable Economic Statistics with Agentic Systems
+# Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics
 *Minh Ha-Duong*
 
 Centre International de Recherche sur l'Environnement et le Développement  (CIRED)
@@ -10,4 +10,4 @@ La production de statistiques économiques fiables constitue une infrastructure 
 
 Ce projet examine les limites empiriques des approches actuelles (génération directe, prompting itératif, RAG) appliquées à la construction d'inventaires d'infrastructures énergétiques. Les résultats montrent des échecs récurrents en matière d'exhaustivité, de cohérence interne, de gestion temporelle et de traçabilité, suggérant que ces systèmes ne se comportent pas comme de véritables instruments statistiques.
 
-L'article propose alors un changement de paradigme : passer de systèmes génératifs stateless à des architectures statistiques stateful, agentiques et graph-based. Ces architectures organisent la collecte, la validation humaine, l'accumulation temporelle et la dérivation des statistiques comme un processus contrôlé de production de connaissance. Cette approche ouvre la voie à des bases statistiques continuellement mises à jour, compatibles avec les exigences de la modélisation énergétique reproductible et de l'analyse de politiques publiques en temps quasi réel.
+L'article propose alors un changement de paradigme : passer de systèmes génératifs stateless à des architectures statistiques stateful et agentiques. Ces architectures organisent la collecte, la validation humaine, l'accumulation temporelle et la dérivation des statistiques comme un processus contrôlé de production de connaissance, où chaque cellule du tableau final est traçable jusqu'à sa source documentaire. Cette approche ouvre la voie à des bases statistiques continuellement mises à jour, compatibles avec les exigences de la modélisation énergétique reproductible et de l'analyse de politiques publiques en temps quasi réel.

@@ -22,7 +22,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{Beyond RAG}
-\subtitle{Graph-Based Architectures for Reliable Economic Statistics with Agentic Systems}
+\subtitle{Stateful-Agentic Architectures for Reliable Economic Statistics}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{CIRED -- CNRS}
 \date{Econom'IA 2026 --- Thema, Cergy --- 27 May 2026}
@@ -80,84 +80,37 @@ countries and sectors.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The obvious approach (1/2): ask for a table}
+\begin{frame}{The obvious approach: ask the AI}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{One prompt, one model, 30 seconds:}
-\begin{quote}\small\itshape
-List all thermal power plants in Vietnam with their fuel type,
-status, province, and capacity in MWe. Format as CSV.
-\end{quote}
+\textbf{One prompt:} 77 plants, \$0.02, 30 seconds.\\
+With RAG + decomposition: 163/163, F1=89.8\%, \$0.06.
 
 \medskip
-\textbf{Claude Opus result:}\\
-77 plants, zero fabrication, \$0.02.\\
-That's \textbf{47\%} of the 163 reference plants.
+\textbf{Go further:} reasoning + deep research + subagent flock\\
+$\to$ 77k chars, 162 rows, 46 source refs, \$0.79, 8 min.
 
 \medskip
-With the right method (RAG + decomposition),
-a cheap model recovers \textbf{163/163} plants.\\
-F1 = 89.8\% [85.8--95.6\%, 95\% CI, $n$=4]. Cost: \$0.06.
+14 models across 10 labs: impressive range of outputs,\\
+consistent pattern of uncertainty.
 
 \column{0.45\textwidth}
-\textbf{So are we done?}
+\textbf{Both approaches share the same ceiling:}
 
 \medskip
 \begin{itemize}
   \item Which plants are missing and why?
-  \item Are any plants fabricated?
   \item Are the capacities right?
-  \item Would GPT-5 give the same list?
+  \item 46 source refs --- none machine-checked
+  \item No way to update incrementally
   \item Would it work for Indonesia?
-  \item Can we cite it in a model?
+  \item Would you stake a policy recommendation on it?
 \end{itemize}
 
 \medskip
 A plausible table in seconds.\\
 But can we \textbf{trust} it ---\\
 without cognitive surrender?
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{The obvious approach (2/2): ask for the full report}
-\begin{columns}[T]
-\column{0.52\textwidth}
-\textbf{Reasoning + deep research + subagent flock:}
-\begin{quote}\small\itshape
-Comprehensive inventory: historico-prospective framing
-(PDP7 to PDP8), asset-by-asset sourced discussion,
-statistical summary tables, annotated bibliography
-of primary sources.
-\end{quote}
-
-\medskip
-\textbf{Claude Opus:} 77k chars, 162 table rows,
-46 source refs, 25 in Vietnamese. \$0.79, 8 min.
-
-\medskip
-\textbf{DeepSeek V3.2:} 85 rows, 32 refs. \$0.004.
-
-\medskip
-{\small 14 models tested across 10 labs, total \$1.23.}
-
-\column{0.45\textwidth}
-\textbf{Impressive --- and unverifiable:}
-
-\medskip
-\begin{itemize}
-  \item 162 rows, but which match reality?
-  \item 46 source refs --- none machine-checked
-  \item Capacity figures: approximate
-  \item 2 models refuse (GPT-5.4, Grok)
-  \item No way to update incrementally
-  \item Would you stake a policy recommendation on it?
-\end{itemize}
-
-\medskip
-The output \emph{reads} like an expert report.\\
-The question is how to \textbf{verify} it ---\\
-not whether to accept it on faith.
 \end{columns}
 \end{frame}
 
@@ -556,11 +509,6 @@ $\approx$98\% of citations trace to a corpus file (median 98\%).\\
 \textbf{0\% traceable} --- no citations emitted.\\
 Coverage vs.\ traceability: the open trade-off.}
 \end{columns}
-
-\medskip
-\centering
-Research-quality data isn't correct data.\\
-It's data whose errors are \textbf{locatable}.
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -601,6 +549,9 @@ It's data whose errors are \textbf{locatable}.
 \medskip
 {\small Dead-end avoided: multi-agent panels (ticket 0059). Here the human gates every rule once, not every cell every time.}
 \end{columns}
+
+\medskip
+{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -645,6 +596,9 @@ glorified LLM sed.
 {\small Memory grows monotonically, committed to git, diff-reviewable.\\
 The system is smarter at run $N+1$ than at run $N$.}
 \end{columns}
+
+\medskip
+{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -698,7 +652,7 @@ The system is smarter at run $N+1$ than at run $N$.}
   \item \textbf{Documentation} (RAG): +18 to +43\,pp
   \item \textbf{Decomposition}: 60\% $\to$ 99\%
   \item \textbf{Aggregation} (union vote): +35\,pp at zero cost
-  \item \textbf{Conversation} (multi-turn): up to 155/163
+  \item \textbf{Conversation} (multi-turn): marginal gain over single-shot
   \item Model choice alone: \MinBaselinePlants--\MaxBaselinePlants{} plants
 \end{enumerate}
 
