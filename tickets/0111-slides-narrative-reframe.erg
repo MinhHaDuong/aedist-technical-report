@@ -1,0 +1,73 @@
+%erg v1
+Title: Reframe Econom'IA slides: anchor punchline, cut ~40%, fix graph-vs-relational honesty
+Status: open
+Created: 2026-04-20
+Author: claude
+
+--- log ---
+2026-04-20T20:22Z claude created
+
+--- body ---
+## Context
+
+Advisor review (2026-04-20) identified three structural problems with the slides:
+
+1. **Two competing theses** — title promises paradigm shift ("Beyond RAG, graph-based");
+   empirical arc delivers benchmark finding ("method > model"). The talk reads like a
+   benchmark study with an architecture appendix, not a paradigm-shift talk.
+
+2. **"Graph-based" is a ghost** — in title and abstract, absent from all slide content.
+   v0 is relational (master + sidecar + log + registry), not a KG. Partially fixed by
+   the new "Why would we need a KG?" perspective slide added in the same PR. The title
+   and abstract still need to be reconciled with what is actually shown.
+
+3. **Architecture half is unvalidated** — slides on fusion primitive, 3-tier verification,
+   HITL memory are design proposals. Ticket 0097 provides the first empirical evidence
+   for the stateful claim. Slides should be framed accordingly.
+
+The buried punchline that should anchor everything (currently in the epistemic
+accountability frame):
+
+> "Research-quality data isn't correct data — it's data whose errors are **locatable**."
+
+## Actions
+
+1. **Promote the anchor punchline** — add a standalone "thesis" slide in minute 2,
+   after the two "obvious approach" frames. Verbatim: the locatability sentence.
+
+2. **Cut ~40% of content frames** — candidates for merger or removal:
+   - "Fragment taxonomy" (merge into "From extraction to information fusion")
+   - "Incrementality as a method trait" (keep one paragraph, drop the frame)
+   - "v0 data model" (merge into AEDIST v0 architecture frame)
+   - "Prompt ablation" (demote to appendix or cut — too much detail for the main arc)
+   - "Conversation regime and its limits" (one slide on context safety is enough)
+   - "Six condition axes" (shrink to a table in the Pilot design frame)
+   - "Local model scaling" (keep the figure, cut the frame body — one slide, not two)
+
+3. **Reorder to the four-act arc:**
+   - Act I (hook): $0.06, 163/163, F1=89.8%. Are we done? → anchor punchline.
+   - Act II (why post-hoc fails): 0–10% panel agreement; method > model but
+     neither produces locatable errors.
+   - Act III (the reframe): fusion ≠ extraction; master + sidecar + registry;
+     diff per step; 3-tier verification.
+   - Act IV (conclusion): what locatability buys — updates, audits, 60 campaigns.
+     + KG perspective (already added).
+
+4. **Reconcile title/abstract with content** — three options:
+   a. Retitle to "Stateful-Agentic Architectures for Reliable Economic Statistics"
+      (honest, no graph required).
+   b. Keep "Beyond RAG" subtitle, drop "Graph-Based" until KG is implemented.
+   c. Keep full title and strengthen the KG slide into a roadmap section with
+      concrete design sketch (nodes, edges, identity resolution).
+   Decision: user's call. Default to option (b) unless user prefers (a) or (c).
+
+5. **Frame architecture slides as proposals** — add a single disclaimer line to the
+   AEDIST v0 frame: "Design — v0 implementation in progress (ticket 0097)."
+
+## Exit criteria
+
+- Slide count ≤ 18 main frames (currently ~25+)
+- Anchor punchline appears by slide 4
+- No "graph-based" claim without supporting content
+- Architecture frames carry explicit proposal/design label
+- Abstract updated to match

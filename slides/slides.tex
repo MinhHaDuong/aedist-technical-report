@@ -433,9 +433,15 @@ Use it for \emph{scope discovery},\\
 not as ground truth.
 
 \column{0.48\textwidth}
-\textbf{Pilot, sourced extraction:}\\
-77\% primary sources, 0\% fabricated\\
-on manual check (337 rows, 3 Opus runs).
+\textbf{Sourced extraction (3 Opus runs):}\\
+$\approx$100\% of plants cite a corpus source (median 100\%, min 99\%).\\
+$\approx$98\% of citations trace to a corpus file (median 98\%).\\
+\textbf{$\approx$80\% end-to-end traceable} (citation $\to$ file $\to$ plant name; median 79\%, $n$=3 runs).
+
+\medskip
+{\small Decomposed RAG (best F1=89.8\%):
+\textbf{0\% traceable} --- no citations emitted.\\
+Coverage vs.\ traceability: the open trade-off.}
 \end{columns}
 
 \medskip
@@ -1119,6 +1125,38 @@ Levels 3--4 define the path to research-quality data.}
 \textbf{Goal:} AI-produced datasets that energy
 transition modelers can use directly.
 \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Why a knowledge graph?}
+\textbf{v0 is relational.} Master + sidecar + registry are CSVs. This is sufficient
+for one country, one sector, one source chain.
+
+\medskip
+A \textbf{knowledge graph} becomes necessary at three boundaries:
+
+\medskip
+\begin{description}
+  \item[Entity resolution at scale]
+        ``Vinh Tan 1'', ``VT1'', ``Vĩnh Tân 1'', ``Vinh Tan Unit 1'' are one plant.
+        v0 handles this with an alias rule store.
+        A KG handles it natively as identity edges --- across countries and languages.
+
+  \item[Multi-hop provenance]
+        A capacity figure sourced from PDP7, revised by PDP8, confirmed by EVN
+        is a \emph{path} in a graph. Forcing it into a flat sidecar loses the
+        structure needed for audit and defeasible reasoning.
+
+  \item[Cross-domain fusion]
+        Plants link to companies, permits, grid operators, emissions records.
+        ASEAN $\times$ 6 fuel types $\times$ permit data is a graph problem,
+        not a master-table extension.
+\end{description}
+
+\medskip
+\centering\small
+\textbf{v0 → v1:} relational pipeline as the testbed.
+\textbf{v2+:} KG once entity resolution and cross-domain fusion are the bottleneck.
 \end{frame}
 
 % -------------------------------------------------------------------
