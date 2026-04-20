@@ -433,9 +433,15 @@ Use it for \emph{scope discovery},\\
 not as ground truth.
 
 \column{0.48\textwidth}
-\textbf{Pilot, sourced extraction:}\\
-77\% primary sources, 0\% fabricated\\
-on manual check (337 rows, 3 Opus runs).
+\textbf{Sourced extraction (3 Opus runs):}\\
+99\% of plants cite a corpus source.\\
+98\% of citations trace to a corpus file.\\
+\textbf{80\% end-to-end traceable} (citation $\to$ file $\to$ plant name; median, $n$=3).
+
+\medskip
+{\small Decomposed RAG (best F1=89.8\%):
+\textbf{0\% traceable} --- no citations emitted.\\
+Coverage vs.\ traceability: the open trade-off.}
 \end{columns}
 
 \medskip
