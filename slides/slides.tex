@@ -162,6 +162,25 @@ not whether to accept it on faith.
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}{The central question}
+\begin{center}
+\large
+A plausible table in seconds.\\[1em]
+
+\textbf{But can we trust it --- without cognitive surrender?}
+
+\bigskip\bigskip
+\normalsize
+Research-quality data isn't correct data.\\
+It's data whose errors are \textbf{locatable}.
+
+\bigskip
+\textit{This talk: what breaks, what enables locatability,\\
+and where stateful-agentic architectures lead.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{Why not just verify the output?}
 \begin{columns}[T]
 \column{0.48\textwidth}
@@ -222,16 +241,18 @@ accumulated into a statistical table through a controlled,
 inspectable process.
 
 \medskip
+\textbf{Three fragment types:}
 \begin{itemize}
-  \item Extraction produces \emph{fragments}
-  \item Fusion produces the \emph{table}
-  \item Each is its own object of study
+  \item \textbf{Serial} (tables: PDP annexes, EVN reports) ---
+        schema align + record linkage; defines the skeleton
+  \item \textbf{Multi-scalar} (prose lists) ---
+        entity existence check; confirms or adds rows
+  \item \textbf{Scalar} (isolated facts) ---
+        attribute update on matched entity; fills cells
 \end{itemize}
 
 \medskip
-Separating them earns us reproducibility:\\
-fusion can be deterministic\\
-even when extraction isn't.
+{\small v0 scope: serial (tables) only. $\sim$18 tables for Vietnam alone.}
 
 \column{0.44\textwidth}
 \textbf{The fusion primitive:}
@@ -257,292 +278,53 @@ all fragments in one shot.
 \medskip
 This is the \textbf{stateful} in\\
 ``stateful-agentic.''
+
+\medskip
+Separating extraction from fusion earns reproducibility:\\
+fusion can be deterministic\\
+even when extraction isn't.
 \end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Fragment taxonomy}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\textbf{Three fragment types, distinct extraction\\and fusion mechanics:}
-
-\medskip
-{\small
-\begin{tabular}{@{}lp{3.4cm}@{}}
-\toprule
-\textbf{Type} & \textbf{Where it lives} \\
-\midrule
-Serial & Tables\\
- & {\scriptsize PDP annexes, EVN reports} \\[3pt]
-Multi-scalar & Prose lists\\
- & {\scriptsize ``Province has projects A--E''} \\[3pt]
-Scalar & Isolated facts\\
- & {\scriptsize ``Vinh Tan 1 commissioned 2018''} \\
-\bottomrule
-\end{tabular}
-}
-
-\column{0.48\textwidth}
-\textbf{Fusion mechanics differ:}
-
-\medskip
-{\small
-\begin{description}
-  \item[Serial] Schema align + record linkage.\\
-        Defines the skeleton of the master table.
-  \item[Multi-scalar] Entity existence check.\\
-        Confirms or adds rows.
-  \item[Scalar] Attribute update on matched entity.\\
-        Fills cells.
-\end{description}
-}
-
-\medskip
-\textbf{v0 scope:} serial (tables) only.\\
-Multi-scalar and scalar deferred.\\
-{\scriptsize ASEAN thermal: $\sim$18 tables for Vietnam alone.}
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Incrementality as a method trait}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\textbf{Fusion order (v0):}\\
-chronological, with authority as tie-breaker.
-
-\medskip
-\begin{center}
-{\small $\mathrm{PDP7} \to \mathrm{7A} \to \mathrm{8} \to \mathrm{8R} \to \mathrm{EVN} \to \mathrm{ERAV}$}
-\end{center}
-
-\medskip
-Cancellations and amendments\\
-only make sense under chronology.\\
-Authority resolves ties at one time-point.
-
-\medskip
-\textbf{Commutativity:} not assumed.\\
-{\small Order-independence belongs to a formal fusion framework (v3/v4 --- defeasible reasoning with closure), not to LLM convenience fusion.}
-
-\column{0.48\textwidth}
-\textbf{Empirical limits} (planned probe):
-
-\medskip
-Fuse the same corpus under $k$\\
-permutations; report inter-run\\
-F1 variance.
-
-\medskip
-The probe tells us \emph{where} LLM\\
-fusion diverges from the\\
-chronological reference ---\\
-the boundary beyond which a\\
-formal framework becomes\\
-necessary.
-
-\medskip
-\textbf{Scale argument:}\\
-ASEAN $\times$ 6 components $\approx$ hundreds of tables.
-Non-incremental methods re-run everything per new source.
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{v0 data model: master + provenance sidecar}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Two CSVs, always in lockstep:}
-
-\medskip
-{\small
-\begin{tabular}{@{}ll@{}}
-\toprule
-\texttt{master.csv} & values, snapshot \\
-\texttt{master\_provenance.csv} & one source ID per cell \\
-\bottomrule
-\end{tabular}
-}
-
-\medskip
-\textbf{Five invariants} (validator-enforced):
-\begin{enumerate}
-  \item Schema lockstep
-  \item Null parity
-  \item Single atomic writer
-  \item Canonical source IDs
-  \item Append-only fusion step log
-\end{enumerate}
-
-\medskip
-{\small Multi-source rule: scalar authoritative. Confirming sources live in the step log, not the sidecar.}
-
-\column{0.48\textwidth}
-\textbf{Source registry} grows at HITL source triage.
-
-\medskip
-{\small
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Field} & \textbf{Example} \\
-\midrule
-source\_id & \texttt{PDP8R} \\
-publisher & Gov of Vietnam \\
-type & regulatory \\
-authority\_rank & 1 \\
-date & 2024-03-15 \\
-\bottomrule
-\end{tabular}
-}
-
-\medskip
-Registration = validation:\\
-a document is in the registry\\
-\emph{iff} it passed HITL triage.
-
-\medskip
-Sealed vocabulary for the sidecar.\\
-LLM-emitted source names\\
-parsed against the registry;\\
-unknown IDs rejected.
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Epistemic accountability: LLM vs pipeline}
-\begin{center}
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Property} & \textbf{LLM report} & \textbf{Fusion pipeline} \\
-\midrule
-Provenance     & ``Claude said so'' & cell $\to$ source ID $\to$ document \\
-Update         & regenerate all      & append a source \\
-Audit          & opaque              & step log + sidecar + registry \\
-Falsifiable    & no                  & check source against claim \\
-Incremental    & no                  & asset by asset, source by source \\
-Stateful       & no                  & registry + memory persist \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-The LLM is a \textbf{compressed index}.\\
-Use it for \emph{scope discovery},\\
-not as ground truth.
-
-\column{0.48\textwidth}
-\textbf{Sourced extraction (3 Opus runs):}\\
-$\approx$100\% of plants cite a corpus source (median 100\%, min 99\%).\\
-$\approx$98\% of citations trace to a corpus file (median 98\%).\\
-\textbf{$\approx$80\% end-to-end traceable} (citation $\to$ file $\to$ plant name; median 79\%, $n$=3 runs).
-
-\medskip
-{\small Decomposed RAG (best F1=89.8\%):
-\textbf{0\% traceable} --- no citations emitted.\\
-Coverage vs.\ traceability: the open trade-off.}
-\end{columns}
-
-\medskip
-\centering
-Research-quality data isn't correct data.\\
-It's data whose errors are \textbf{locatable}.
 \end{frame}
 
 % ===================================================================
-\section{Pilot design}
+\section{Results}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{Pilot: Vietnam thermal plant extraction}
+\begin{frame}[fragile]{Pilot design and baseline: model choice alone is insufficient}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Task} (one prompt, verbatim):
-\begin{quote}\small\itshape
-Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.
-\end{quote}
+\textbf{Task:} list all Vietnamese thermal power plants with fuel, status, province, capacity (CSV).
 
 \medskip
-\textbf{Reference:} 163 thermal power plants\\
-Expert-validated from PDP7, PDP8, EVN reports\\
-6 fields: name, fuel, status, COD, province, capacity
+\textbf{Reference:} 163 plants, expert-validated from PDP7, PDP8, EVN reports.
 
-\column{0.45\textwidth}
+\medskip
 \textbf{Design:}
 \begin{description}
   \item[Hypothesis] A \textbf{method} = model + prompt +
         information regime + aggregation.
         The model is one factor among many.
-  \item[Scale] 37 models, 6 condition axes, 3 runs
-  \item[Cost] \$0.82 total
-  \item[Evaluation] Fuzzy name matching $\to$
-        per-field accuracy
+  \item[Scale] 37 models, \$0.82 total
+  \item[Key conditions] Documentation $\times$ Conversation $\times$
+        Decomposition $\times$ Aggregation $\times$ Prompt structure
 \end{description}
 
 \medskip
-\textbf{Key metric:} plants matched out of 163\\
-{\small (precision $>$99\% across all models --- the problem\\
+{\small \textbf{Key metric:} plants matched out of 163\\
+(precision $>$99\% across all models --- the problem\\
 is \textbf{coverage}, not hallucination)}
-\end{columns}
-\end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}{Six condition axes}
-\begin{columns}[T]
-\column{0.55\textwidth}
-\textbf{Explored in this study:}
-
-\medskip
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Axis} & \textbf{Levels tested} \\
-\midrule
-Documentation & none / wholesale RAG \\
-Conversation  & single-shot / multi-turn \\
-Decomposition & monolithic / by fuel type \\
-Aggregation   & single run / union vote \\
-Prompt structure & plain / sourced extraction \\
-Model         & 37 models (28 cloud + 9 local) \\
-\bottomrule
-\end{tabular}
-
-\medskip
-37 models $\times$ up to 6 conditions $\times$ 3 runs\\
-Total cost: \textbf{\$0.82}
-
-\column{0.42\textwidth}
-\textbf{Not yet explored:}
-\begin{itemize}
-  \item Reasoning effort (low/high)
-  \item Prompt language (EN/VI)
-  \item Output format (CSV/JSON)
-  \item Few-shot examples
-  \item Self-optimized prompts
-  \item Verification pass
-\end{itemize}
-
-\medskip
-{\small Each axis is an independent condition. The design is factorial: any combination can be tested.}
-\end{columns}
-
-\bigskip
-\centering\textbf{The model is one parameter among many.}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Baseline: how much does model choice matter?}
-
-\begin{center}
+\column{0.45\textwidth}
 \pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
 \pgfplotstablegetrowsof{\censusdata}
 \pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
 \begin{tikzpicture}
 \begin{axis}[
-    width=0.92\textwidth,
+    width=\textwidth,
     height=6cm,
     ylabel={\# plants (out of 163)},
     ymin=0, ymax=163,
-    bar width=6pt,
+    bar width=5pt,
     xtick={0,...,\censusrows},
     x tick label style={rotate=45, anchor=east, font=\tiny},
     xticklabel={\pgfplotstablegetelem{\tick}{model}\of{\censusdata}\pgfplotsretval},
@@ -550,43 +332,19 @@ Total cost: \textbf{\$0.82}
     ybar stacked,
     legend style={at={(0.98,0.98)}, anchor=north east, font=\scriptsize},
 ]
-% Matched plants (blue)
 \addplot[fill=matched!70]
     table [x expr=\coordindex, y expr=\thisrow{f1}*163] {\censusdata};
 \addlegendentry{Matched}
-% Unmatched plants (red)
 \addplot[fill=missed!50]
     table [x expr=\coordindex, y expr=163-\thisrow{f1}*163] {\censusdata};
 \addlegendentry{Missed}
 \end{axis}
 \end{tikzpicture}
-\end{center}
 
 \smallskip
-{\small Condition: single-shot, no documentation, no decomposition.
-Range: 4--160 plants. \textbf{Model choice alone does not solve the problem.}}
-\end{frame}
-
-% ===================================================================
-\section{Documentation regime}
-
-% -------------------------------------------------------------------
-\begin{frame}{Method convergence: do all models reach the inventory?}
-\vspace{-0.3em}
-{\small \textbf{5 models} tested under \textbf{5 methods}, up to 3 runs each.
-Each dot = 1 plant.
-\textcolor{matched}{Blue} = correctly identified.
-\textcolor{halluc}{Orange} = hallucinated.}
-
-\vspace{-0.5em}
-\begin{center}
-\includegraphics[width=\textwidth]{inputs/generated/fig_method_convergence.pdf}
-\end{center}
-
-\vspace{-1.2em}
-{\footnotesize \textbf{Decomposed} finds all 163 but hallucinates.
-\textbf{Web} never hallucinates but caps at $\sim$50.
-No method yet converges all models to the complete inventory.}
+{\small Single-shot, no documentation. Range: 4--160 plants.\\
+\textbf{Model choice alone does not solve the problem.}}
+\end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -676,67 +434,10 @@ With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) 
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Local model scaling: RAG lifts all sizes}
-\textbf{Qwen 3.5 family} (2B--35B) tested single-shot vs RAG wholesale, 3 runs each
-
-\begin{center}
-\includegraphics[width=0.92\textwidth]{inputs/generated/fig_scaling_curve.pdf}
-\end{center}
-
-\vspace{-0.8em}
-{\footnotesize RAG wholesale shifts the entire scaling curve upward.
-Local 35B with RAG approaches cloud API performance at \$0 marginal cost.}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Prompt ablation: which modules help RAG extraction?}
-\textbf{2 models} $\times$ \textbf{16 prompt variants} $\times$ 2 runs (RAG regime only)
-
-\begin{center}
-\IfFileExists{inputs/generated/fig_ablation_strip.pdf}{%
-  \includegraphics[width=\textwidth]{inputs/generated/fig_ablation_strip.pdf}%
-}{\textit{[fig\_ablation\_strip.pdf not generated --- run \texttt{make measurements} then \texttt{make figures}]}}
-\end{center}
-
-\vspace{-0.8em}
-{\footnotesize DeepSeek V3.2 refused (tool\_calls) on 16/32 variants.
-Kimi K2: sourcing module helps (+3.6\,pp); statistics module hurts ($-$30.4\,pp).}
-\end{frame}
-
-% ===================================================================
-\section{Conversation and aggregation}
-
-% -------------------------------------------------------------------
-\begin{frame}{Conversation regime and its limits}
-\textbf{Context grows linearly} with each turn (full history resent)
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Sweep 2 data} (4 turns, 7 models):
-\begin{itemize}
-  \item Most models: 1--7\% of context used
-  \item DeepSeek V3.2 run1: \textbf{53\%} of 164K
-  \item Extrapolation to 15 turns: \textbf{overflow}
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Safety measures:}
-\begin{itemize}
-  \item Context guard at 80\% of window
-  \item Stateless mode: each followup sent independently (constant token budget)
-  \item Trade-off: no iterative refinement
-\end{itemize}
-\end{columns}
-
-\medskip
-\textbf{Conclusion:} scaling to 10+ turns is safe for 1M-context models (Claude, GPT, Gemini). Small-context models (DeepSeek 164K, Mistral 262K) need stateless batching for long conversations.
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{Task decomposition: solving the truncation bottleneck}
 \textbf{Problem:} Models truncate output before listing all plants.\\
-\textbf{Solution:} Split into 3 sub-queries by fuel (coal / gas+LNG / other), merge.
+\textbf{Solution:} Split into 3 sub-queries by fuel (coal / gas+LNG / other), merge.\\
+{\small Context overflow for small-context models: use stateless batching (each sub-query sent independently; constant token budget).}
 
 \medskip
 \begin{tabular}{lrrcrr}
@@ -783,67 +484,83 @@ Gemini Flash Lite   & 58.0\% & \textbf{81.0\%} & 32.4\% & $+$23.0\%$^\dagger$ & 
 {\small DeepSeek: 60\% $\to$ 95.5\% at \textbf{zero extra cost}. Aggregation strategy matters more than model choice.}
 \end{frame}
 
-% ===================================================================
-\section{Verification}
-
 % -------------------------------------------------------------------
-\begin{frame}{Can we trust AI statistics?}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\textbf{Error taxonomy:}
-\begin{description}
-  \item[Hallucinated] plants that don't exist
-  \item[Missed] real plants not returned
-  \item[Wrong fuel] coal vs gas confusion
-  \item[Wrong status] operational vs planned
-  \item[Wrong province] location errors
-  \item[Capacity mismatch] wrong MW value
-\end{description}
+\begin{frame}{Cost--quality Pareto: methods, not models}
+\begin{center}
+\pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\textwidth,
+    height=6cm,
+    xlabel={Cost per query (USD)},
+    ylabel={F1 score},
+    xmin=-0.005, xmax=0.30,
+    ymin=0, ymax=1.0,
+    grid=major,
+    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
+]
+% Cloud models
+\addplot[only marks, mark=*, mark size=3pt, color=matched]
+    table [x=cost_usd, y=f1,
+           restrict expr to domain={\thisrow{local}}{0:0}] {\paretodata};
+\addlegendentry{Cloud models}
+% Local models --- zero cost
+\addplot[only marks, mark=triangle*, mark size=4pt, color=matched!50!black]
+    table [x=cost_usd, y=f1,
+           restrict expr to domain={\thisrow{local}}{1:1}] {\paretodata};
+\addlegendentry{Local models}
+\end{axis}
+\end{tikzpicture}
+\end{center}
 
-\column{0.48\textwidth}
-\textbf{Reconciliation pipeline:}
-\begin{enumerate}
-  \item Exact name match
-  \item Fuzzy match (diacritics, transliterations)
-  \item Per-field accuracy on matched plants
-\end{enumerate}
-
-\medskip
-\textbf{Key finding:}\\
-Attribute accuracy on matched plants is high ($>$90\% for fuel, province, capacity).\\
-The main problem is \textbf{coverage}, not accuracy.
-\end{columns}
+\smallskip
+{\small Includes baseline, RAG, and union-vote results. Top-left cluster: local models at zero cost.\\
+Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cost.}
 \end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}{The cost of trust}
-\textbf{Setup:} Best extraction (DeepSeek V3.2, decomposed, 167 plants, mean F1=89.8\% [85.8--95.6\%, 95\% CI, $n=4$]).\\
-Verify each plant against reference via LP matching (name + capacity + province + fuel).
+% ===================================================================
+\section{Architecture}
 
-\medskip
+% -------------------------------------------------------------------
+\begin{frame}{Epistemic accountability: LLM vs pipeline}
 \begin{center}
-\small
-\begin{tabular}{lrrrr}
+\begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Threshold} & \textbf{Retained} & \textbf{Precision} & \textbf{Coverage} & \textbf{F1} \\
+\textbf{Property} & \textbf{LLM report} & \textbf{Fusion pipeline} \\
 \midrule
-$\geq 1$ (trust all)      & 167 & 97.6\% & 100\% & 98.8\% \\
-$\geq 3$ (one primary source) & 163 & \textbf{100\%} & \textbf{100\%} & \textbf{100\%} \\
+Provenance     & ``Claude said so'' & cell $\to$ source ID $\to$ document \\
+Update         & regenerate all      & append a source \\
+Audit          & opaque              & step log + sidecar + registry \\
+Falsifiable    & no                  & check source against claim \\
+Incremental    & no                  & asset by asset, source by source \\
+Stateful       & no                  & registry + memory persist \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \medskip
-\textbf{Insight:} LP matching against the reference confirms all 163 real plants\\
-and rejects all 4 hallucinations. Structural matching (not just name similarity)\\
-is the key --- naive fuzzy matching would wrongly reject 65 plants.
+\begin{columns}[T]
+\column{0.48\textwidth}
+The LLM is a \textbf{compressed index}.\\
+Use it for \emph{scope discovery},\\
+not as ground truth.
+
+\column{0.48\textwidth}
+\textbf{Sourced extraction (3 Opus runs):}\\
+$\approx$100\% of plants cite a corpus source (median 100\%, min 99\%).\\
+$\approx$98\% of citations trace to a corpus file (median 98\%).\\
+\textbf{$\approx$80\% end-to-end traceable} (citation $\to$ file $\to$ plant name; median 79\%, $n$=3 runs).
 
 \medskip
-\textbf{Implication:} With proper matching, verification has \emph{no cost}:\\
-every real plant is confirmed, every fabrication is caught.
+{\small Decomposed RAG (best F1=89.8\%):
+\textbf{0\% traceable} --- no citations emitted.\\
+Coverage vs.\ traceability: the open trade-off.}
+\end{columns}
 
 \medskip
-{\small But this works \emph{once}, against a known reference. For 60 campaigns with no reference, we need the verification mechanism itself to scale.}
+\centering
+Research-quality data isn't correct data.\\
+It's data whose errors are \textbf{locatable}.
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -930,46 +647,6 @@ The system is smarter at run $N+1$ than at run $N$.}
 \end{columns}
 \end{frame}
 
-% ===================================================================
-\section{Cost--quality trade-off}
-
-% -------------------------------------------------------------------
-\begin{frame}{Cost--quality Pareto: methods, not models}
-\begin{center}
-\pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
-\begin{tikzpicture}
-\begin{axis}[
-    width=0.85\textwidth,
-    height=6cm,
-    xlabel={Cost per query (USD)},
-    ylabel={F1 score},
-    xmin=-0.005, xmax=0.30,
-    ymin=0, ymax=1.0,
-    grid=major,
-    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
-]
-% Cloud models
-\addplot[only marks, mark=*, mark size=3pt, color=matched]
-    table [x=cost_usd, y=f1,
-           restrict expr to domain={\thisrow{local}}{0:0}] {\paretodata};
-\addlegendentry{Cloud models}
-% Local models — zero cost
-\addplot[only marks, mark=triangle*, mark size=4pt, color=matched!50!black]
-    table [x=cost_usd, y=f1,
-           restrict expr to domain={\thisrow{local}}{1:1}] {\paretodata};
-\addlegendentry{Local models}
-\end{axis}
-\end{tikzpicture}
-\end{center}
-
-\smallskip
-{\small Includes baseline, RAG, and union-vote results. Top-left cluster: local models at zero cost.\\
-Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cost.}
-\end{frame}
-
-% ===================================================================
-\section{Architecture}
-
 % -------------------------------------------------------------------
 \begin{frame}{AEDIST v0: agents anchored on data-model concerns}
 \begin{columns}[T]
@@ -992,6 +669,7 @@ Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cos
   \item[Curator] HITL source triage\\
         $\to$ writes registry entries
   \item[Analyst] runs the fusion primitive\\
+        (chronological order with authority tie-breaker)\\
         $\to$ mutates master + sidecar\\
         $\to$ appends to fusion\_log
   \item[Auditor] runs 3-tier verification\\
@@ -1003,10 +681,13 @@ Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cos
 \centering
 \textbf{State is persistent.} Registry, sidecar, log, memory: all git-tracked.\\
 {\small Next run starts where this one left off. That's the path to 60 campaigns.}
+
+\medskip
+{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
 \end{frame}
 
 % ===================================================================
-\section{Takeaway}
+\section{Perspective}
 
 % -------------------------------------------------------------------
 \begin{frame}{What we learned about methods}
@@ -1074,57 +755,6 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 89.
 \medskip
 \centering\small
 These are not flaws --- they are \textbf{design requirements} for a production data pipeline.
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{From pilot to production pipeline}
-\begin{columns}[T]
-\column{0.55\textwidth}
-\textbf{Four-level evaluation framework:}
-
-\medskip
-\begin{tabular}{@{}clp{3.6cm}@{}}
-\toprule
- & \textbf{Level} & \textbf{Status} \\
-\midrule
-\checkmark & \textbf{1. Resources} &
-  Cost, latency, tokens ---
-  measured for all runs \\[3pt]
-\checkmark & \textbf{2. Document quality} &
-  Coverage, precision, F1,
-  internal coherence ---
-  this pilot \\[3pt]
- & \textbf{3. Provenance} &
-  Source attribution,
-  ``I don't know'' detection,
-  confidence intervals \\[3pt]
- & \textbf{4. System usability} &
-  Scale to other countries,
-  temporal updates,
-  gap detection \\
-\bottomrule
-\end{tabular}
-
-\medskip
-{\small The pilot covers levels 1--2.
-Levels 3--4 define the path to research-quality data.}
-
-\column{0.42\textwidth}
-\textbf{What the pilot de-risks:}
-\begin{enumerate}
-  \item The right methods recover 89.8\% [85.8--95.6\%] of an expert
-        inventory --- data quality is within reach
-  \item Automated evaluation (fuzzy reconciliation)
-        works at scale
-  \item Cost is negligible: \$0.06 per dataset,
-        \$0.82 for the full sweep
-  \item The pipeline is reproducible and resume-safe
-\end{enumerate}
-
-\medskip
-\textbf{Goal:} AI-produced datasets that energy
-transition modelers can use directly.
-\end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
