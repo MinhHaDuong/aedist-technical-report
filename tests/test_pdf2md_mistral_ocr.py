@@ -129,20 +129,19 @@ def test_calls_mistral_ocr_endpoint():
 # Functional tests (mock HTTP)
 # ---------------------------------------------------------------------------
 
-import json
-from unittest.mock import MagicMock, patch
+import json  # noqa: E402
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
+from conftest import mock_urlopen  # noqa: E402
 
-import aedist.pdf2md_mistral_ocr as _mistral_mod
-from aedist.pdf2md_mistral_ocr import (
+import aedist.pdf2md_mistral_ocr as _mistral_mod  # noqa: E402
+from aedist.pdf2md_mistral_ocr import (  # noqa: E402
     MISTRAL_OCR_URL,
     _ocr_request,
     main,
     pdf_to_markdown,
 )
-from conftest import mock_urlopen
-
 
 # ---------------------------------------------------------------------------
 # _stitch_pages (additional edge cases)
@@ -336,14 +335,10 @@ class TestPdfToMarkdownFunctional:
 
         ocr_result = {"pages": [], "usage_info": {"pages_processed": 0}}
 
-        with patch(
-            "aedist.pdf2md_mistral_ocr._ocr_request", return_value=ocr_result
-        ) as mock:
+        with patch("aedist.pdf2md_mistral_ocr._ocr_request", return_value=ocr_result) as mock:
             pdf_to_markdown(fake_pdf, model="custom-model", table_format="markdown")
 
-        mock.assert_called_once_with(
-            fake_pdf, model="custom-model", table_format="markdown"
-        )
+        mock.assert_called_once_with(fake_pdf, model="custom-model", table_format="markdown")
 
 
 # ---------------------------------------------------------------------------
@@ -390,14 +385,18 @@ class TestMain:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
         out = tmp_path / "out.md"
 
-        with patch(
-            "aedist.pdf2md_mistral_ocr.pdf_to_markdown", return_value="ok"
-        ) as mock:
-            main([
-                str(fake_pdf), "--output", str(out),
-                "--model", "custom-ocr",
-                "--table-format", "markdown",
-            ])
+        with patch("aedist.pdf2md_mistral_ocr.pdf_to_markdown", return_value="ok") as mock:
+            main(
+                [
+                    str(fake_pdf),
+                    "--output",
+                    str(out),
+                    "--model",
+                    "custom-ocr",
+                    "--table-format",
+                    "markdown",
+                ]
+            )
 
         mock.assert_called_once_with(
             fake_pdf,

@@ -34,13 +34,19 @@ from aedist.self_consistency import (
     write_measurements,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _plant(name: str, fuel=FuelType.COAL, status=PlantStatus.OPERATIONAL,
-           cod=None, province=None, capacity_mwe=None) -> Plant:
+
+def _plant(
+    name: str,
+    fuel=FuelType.COAL,
+    status=PlantStatus.OPERATIONAL,
+    cod=None,
+    province=None,
+    capacity_mwe=None,
+) -> Plant:
     return Plant(
         name=name,
         fuel=fuel,
@@ -224,8 +230,11 @@ class TestMajorityVote:
         """Plant attributes come from the run with the most plants."""
         run1 = [_plant("Alpha", capacity_mwe=100.0)]  # 1 plant
         run2 = [_plant("Alpha", capacity_mwe=200.0), _plant("Beta", capacity_mwe=50.0)]  # 2 plants
-        run3 = [_plant("Alpha", capacity_mwe=300.0), _plant("Beta", capacity_mwe=60.0),
-                _plant("Gamma", capacity_mwe=70.0)]  # 3 plants
+        run3 = [
+            _plant("Alpha", capacity_mwe=300.0),
+            _plant("Beta", capacity_mwe=60.0),
+            _plant("Gamma", capacity_mwe=70.0),
+        ]  # 3 plants
         result = majority_vote([run1, run2, run3])
         alpha = [p for p in result if _normalize_name(p.name) == "alpha"][0]
         # Should take from run3 (longest)
@@ -317,8 +326,14 @@ class TestPlantsToCsvText:
         assert header == ["name", "fuel", "status", "cod", "province", "capacity_mwe"]
 
     def test_single_plant_all_fields(self):
-        p = _plant("Vinh Tan", fuel=FuelType.COAL, status=PlantStatus.OPERATIONAL,
-                    cod="2018", province="Binh Thuan", capacity_mwe=600.0)
+        p = _plant(
+            "Vinh Tan",
+            fuel=FuelType.COAL,
+            status=PlantStatus.OPERATIONAL,
+            cod="2018",
+            province="Binh Thuan",
+            capacity_mwe=600.0,
+        )
         text = plants_to_csv_text([p])
         reader = csv.reader(io.StringIO(text))
         next(reader)  # skip header
@@ -420,8 +435,12 @@ class TestGroupRuns:
         assert len(groups["gpt-4o"]) == 3
 
     def test_multiple_models(self, tmp_path):
-        for name in ["gpt-4o-run1.json", "gpt-4o-run2.json",
-                      "claude-sonnet-run1.json", "claude-sonnet-run2.json"]:
+        for name in [
+            "gpt-4o-run1.json",
+            "gpt-4o-run2.json",
+            "claude-sonnet-run1.json",
+            "claude-sonnet-run2.json",
+        ]:
             (tmp_path / name).write_text("{}")
         groups = _group_runs(tmp_path)
         assert len(groups) == 2
@@ -473,8 +492,9 @@ class TestMetricsToResultSummary:
         assert rs.f1 == round(m.f1, 4)
 
     def test_accuracy_fields_rounded(self):
-        m = _make_metrics(fuel_accuracy=0.75432, status_accuracy=0.82111,
-                          province_accuracy=0.91999)
+        m = _make_metrics(
+            fuel_accuracy=0.75432, status_accuracy=0.82111, province_accuracy=0.91999
+        )
         rs = _metrics_to_result_summary(m)
         assert rs.fuel_accuracy == round(0.75432, 4)
         assert rs.status_accuracy == round(0.82111, 4)
@@ -513,31 +533,33 @@ class TestResultsToRecords:
         m2 = _make_metrics(f1=0.82, n_system=92, n_matched=82, n_hallucinated=10, n_missed=18)
         m3 = _make_metrics(f1=0.85, n_system=95, n_matched=85, n_hallucinated=10, n_missed=15)
 
-        results = [{
-            "model": "test-model",
-            "n_reference": 100,
-            "n_runs": 3,
-            "n_valid_runs": 3,
-            "run_f1_scores": [0.80, 0.82, 0.85],
-            "run_n_matched": [80, 82, 85],
-            "run_n_system": [90, 92, 95],
-            "median_f1": 0.82,
-            "median_coverage": 0.82,
-            "median_precision": 0.90,
-            "majority_f1": 0.87,
-            "majority_coverage": 0.87,
-            "majority_precision": 0.92,
-            "majority_n_matched": 87,
-            "majority_n_system": 95,
-            "majority_n_hallucinated": 8,
-            "n_majority_plants": 95,
-            "union_f1": 0.89,
-            "union_coverage": 0.89,
-            "union_precision": 0.88,
-            "union_n_matched": 89,
-            "union_n_system": 101,
-            "union_n_hallucinated": 12,
-        }]
+        results = [
+            {
+                "model": "test-model",
+                "n_reference": 100,
+                "n_runs": 3,
+                "n_valid_runs": 3,
+                "run_f1_scores": [0.80, 0.82, 0.85],
+                "run_n_matched": [80, 82, 85],
+                "run_n_system": [90, 92, 95],
+                "median_f1": 0.82,
+                "median_coverage": 0.82,
+                "median_precision": 0.90,
+                "majority_f1": 0.87,
+                "majority_coverage": 0.87,
+                "majority_precision": 0.92,
+                "majority_n_matched": 87,
+                "majority_n_system": 95,
+                "majority_n_hallucinated": 8,
+                "n_majority_plants": 95,
+                "union_f1": 0.89,
+                "union_coverage": 0.89,
+                "union_precision": 0.88,
+                "union_n_matched": 89,
+                "union_n_system": 101,
+                "union_n_hallucinated": 12,
+            }
+        ]
 
         run_metrics = {"test-model": [m1, m2, m3]}
         run_paths = {
@@ -574,7 +596,8 @@ class TestResultsToRecords:
         output_dir = Path("/output")
         records = _results_to_records(results, run_metrics, run_paths, output_dir)
         cons_records = [
-            r for r in records
+            r
+            for r in records
             if r.method_params.prompt_version == "rag_consistency"
             and "consolidated" in r.method_params.model
         ]
@@ -587,7 +610,8 @@ class TestResultsToRecords:
         output_dir = Path("/output")
         records = _results_to_records(results, run_metrics, run_paths, output_dir)
         union_records = [
-            r for r in records
+            r
+            for r in records
             if r.method_params.prompt_version == "rag_consistency"
             and "union" in r.method_params.model
         ]
@@ -602,34 +626,37 @@ class TestResultsToRecords:
         assert len(records) == 5
 
     def test_no_majority_when_none(self):
-        results = [{
-            "model": "sparse-model",
-            "n_reference": 100,
-            "n_runs": 1,
-            "n_valid_runs": 1,
-            "run_f1_scores": [0.5],
-            "run_n_matched": [50],
-            "run_n_system": [60],
-            "median_f1": 0.5,
-            "median_coverage": 0.5,
-            "median_precision": 0.83,
-            "majority_f1": None,
-            "majority_coverage": None,
-            "majority_precision": None,
-            "majority_n_matched": None,
-            "majority_n_system": None,
-            "majority_n_hallucinated": None,
-            "n_majority_plants": 0,
-            "union_f1": None,
-            "union_coverage": None,
-            "union_precision": None,
-            "union_n_matched": None,
-            "union_n_system": None,
-            "union_n_hallucinated": None,
-        }]
+        results = [
+            {
+                "model": "sparse-model",
+                "n_reference": 100,
+                "n_runs": 1,
+                "n_valid_runs": 1,
+                "run_f1_scores": [0.5],
+                "run_n_matched": [50],
+                "run_n_system": [60],
+                "median_f1": 0.5,
+                "median_coverage": 0.5,
+                "median_precision": 0.83,
+                "majority_f1": None,
+                "majority_coverage": None,
+                "majority_precision": None,
+                "majority_n_matched": None,
+                "majority_n_system": None,
+                "majority_n_hallucinated": None,
+                "n_majority_plants": 0,
+                "union_f1": None,
+                "union_coverage": None,
+                "union_precision": None,
+                "union_n_matched": None,
+                "union_n_system": None,
+                "union_n_hallucinated": None,
+            }
+        ]
         m = _make_metrics(f1=0.5)
         records = _results_to_records(
-            results, {"sparse-model": [m]},
+            results,
+            {"sparse-model": [m]},
             {"sparse-model": [Path("/data/sparse-model-run1.json")]},
             Path("/output"),
         )
@@ -835,7 +862,7 @@ class TestExtractToCsv:
             return _FakeExtractResult(output_path=csv_path, message="ok")
 
         with patch("aedist.self_consistency.extract_one", side_effect=fake_extract):
-            result = _extract_to_csv(json_path, work_dir)
+            _extract_to_csv(json_path, work_dir)
         assert work_dir.exists()
 
     def test_output_path_exists_but_missing_file_returns_none(self, tmp_path):
@@ -872,7 +899,9 @@ class TestEvaluateSingleRuns:
         fake_metrics = _make_metrics(f1=0.75)
 
         with (
-            patch("aedist.self_consistency._extract_to_csv", side_effect=lambda jp, wd: next(calls)),
+            patch(
+                "aedist.self_consistency._extract_to_csv", side_effect=lambda jp, wd: next(calls)
+            ),
             patch("aedist.self_consistency.load_plants_csv", return_value=[_plant("A")]),
             patch("aedist.self_consistency.reconcile", return_value=[]),
             patch("aedist.self_consistency.compute_metrics", return_value=fake_metrics),
@@ -914,7 +943,10 @@ class TestEvaluateSingleRuns:
         extract_results = iter([csv1, None])
 
         with (
-            patch("aedist.self_consistency._extract_to_csv", side_effect=lambda jp, wd: next(extract_results)),
+            patch(
+                "aedist.self_consistency._extract_to_csv",
+                side_effect=lambda jp, wd: next(extract_results),
+            ),
             patch("aedist.self_consistency.load_plants_csv", return_value=[_plant("A")]),
             patch("aedist.self_consistency.reconcile", return_value=[]),
             patch("aedist.self_consistency.compute_metrics", return_value=fake_metrics),
@@ -1069,13 +1101,28 @@ class TestRunAnalysis:
         results, _, _ = run_analysis(input_dir, output_dir, ref_path)
         r = results[0]
         expected_keys = {
-            "model", "n_reference", "n_runs", "n_valid_runs",
-            "run_f1_scores", "run_n_matched", "run_n_system",
-            "median_f1", "median_coverage", "median_precision",
-            "majority_f1", "majority_coverage", "majority_precision",
-            "majority_n_matched", "majority_n_system", "majority_n_hallucinated",
+            "model",
+            "n_reference",
+            "n_runs",
+            "n_valid_runs",
+            "run_f1_scores",
+            "run_n_matched",
+            "run_n_system",
+            "median_f1",
+            "median_coverage",
+            "median_precision",
+            "majority_f1",
+            "majority_coverage",
+            "majority_precision",
+            "majority_n_matched",
+            "majority_n_system",
+            "majority_n_hallucinated",
             "n_majority_plants",
-            "union_f1", "union_coverage", "union_precision",
-            "union_n_matched", "union_n_system", "union_n_hallucinated",
+            "union_f1",
+            "union_coverage",
+            "union_precision",
+            "union_n_matched",
+            "union_n_system",
+            "union_n_hallucinated",
         }
         assert expected_keys.issubset(set(r.keys()))

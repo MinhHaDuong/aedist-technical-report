@@ -70,7 +70,9 @@ def _load_unstable_slugs(variance_path: Path | None) -> set[str]:
 
 
 def generate_comparaison_table(
-    metrics: list[dict], *, variance_path: Path | None = None,
+    metrics: list[dict],
+    *,
+    variance_path: Path | None = None,
 ) -> tuple[str, int]:
     """Generate a LaTeX longtable comparing baseline vs. RAG F1.
 
@@ -116,7 +118,7 @@ def generate_comparaison_table(
     # Apply Benjamini-Hochberg FDR correction across all comparisons (G6)
     raw_pvals = [r["p_value"] for r in rows]
     adjusted_pvals = correct_pvalues(raw_pvals, method="fdr_bh")
-    for row, adj_p in zip(rows, adjusted_pvals):
+    for row, adj_p in zip(rows, adjusted_pvals, strict=True):
         row["p_value_raw"] = row["p_value"]
         row["p_value"] = adj_p  # significance markers now use FDR-adjusted values
 
@@ -166,8 +168,7 @@ def generate_comparaison_table(
         lines.append(f"{name} & {f1b} & {f1r} & {cb} & {cr} & {delta} \\\\")
 
     dagger_note = (
-        "Unstable ranking: $<$5\\,pp from nearest neighbour"
-        " with overlapping bootstrap 95\\% CIs."
+        "Unstable ranking: $<$5\\,pp from nearest neighbour with overlapping bootstrap 95\\% CIs."
     )
     if dagger_slugs:
         lines.append("\\midrule")
@@ -179,11 +180,7 @@ def generate_comparaison_table(
                 " with overlapping bootstrap 95\\% CIs.} \\\\"
             )
         else:
-            lines.append(
-                "\\multicolumn{6}{l}{\\footnotesize $\\dagger$ "
-                + dagger_note
-                + "} \\\\"
-            )
+            lines.append("\\multicolumn{6}{l}{\\footnotesize $\\dagger$ " + dagger_note + "} \\\\")
     lines.append("\\end{longtable}")
     return "\n".join(lines) + "\n", len(common_slugs)
 

@@ -37,17 +37,42 @@ def generate_variance_table(decomposition: dict) -> str:
     anova = decomposition.get("anova", {})
 
     rows = [
-        ("Model", anova.get("ss_a", 0), anova.get("df_a", 0),
-         anova.get("f_a"), anova.get("p_a"),
-         decomposition.get("eta_sq_model", 0), decomposition.get("omega_sq_model", 0)),
-        ("Method", anova.get("ss_b", 0), anova.get("df_b", 0),
-         anova.get("f_b"), anova.get("p_b"),
-         decomposition.get("eta_sq_method", 0), decomposition.get("omega_sq_method", 0)),
-        ("Model $\\times$ Method", anova.get("ss_ab", 0), anova.get("df_ab", 0),
-         anova.get("f_ab"), anova.get("p_ab"),
-         decomposition.get("eta_sq_interaction", 0), decomposition.get("omega_sq_interaction", 0)),
-        ("Residual", anova.get("ss_resid", 0), anova.get("df_resid", 0),
-         None, None, decomposition.get("eta_sq_residual", 0), None),
+        (
+            "Model",
+            anova.get("ss_a", 0),
+            anova.get("df_a", 0),
+            anova.get("f_a"),
+            anova.get("p_a"),
+            decomposition.get("eta_sq_model", 0),
+            decomposition.get("omega_sq_model", 0),
+        ),
+        (
+            "Method",
+            anova.get("ss_b", 0),
+            anova.get("df_b", 0),
+            anova.get("f_b"),
+            anova.get("p_b"),
+            decomposition.get("eta_sq_method", 0),
+            decomposition.get("omega_sq_method", 0),
+        ),
+        (
+            "Model $\\times$ Method",
+            anova.get("ss_ab", 0),
+            anova.get("df_ab", 0),
+            anova.get("f_ab"),
+            anova.get("p_ab"),
+            decomposition.get("eta_sq_interaction", 0),
+            decomposition.get("omega_sq_interaction", 0),
+        ),
+        (
+            "Residual",
+            anova.get("ss_resid", 0),
+            anova.get("df_resid", 0),
+            None,
+            None,
+            decomposition.get("eta_sq_residual", 0),
+            None,
+        ),
     ]
 
     lines = [
@@ -79,17 +104,12 @@ def generate_variance_table(decomposition: dict) -> str:
     # ANOVA diagnostics footnote (G7) — if diagnostics are available
     diagnostics = decomposition.get("anova_diagnostics")
     if diagnostics:
-        notes: list[str] = []
-        for test_name, info in diagnostics.items():
-            if info.get("note"):
-                notes.append(info["note"])
+        notes = [info["note"] for info in diagnostics.values() if info.get("note")]
         if notes:
             combined = " ".join(notes)
             lines.append("\\midrule")
             lines.append(
-                "\\multicolumn{7}{l}{\\footnotesize "
-                + combined.replace("&", "\\&")
-                + "} \\\\"
+                "\\multicolumn{7}{l}{\\footnotesize " + combined.replace("&", "\\&") + "} \\\\"
             )
 
     lines.append("\\end{longtable}")
