@@ -93,7 +93,7 @@ Several 2024–2026 technical reports and blog posts describe using GPT-4 or Cla
 5. Query: "benchmark LLM energy statistics power plant economic data automated production recall completeness 2024 2025 2026" — returned LLM energy-consumption benchmarks (power draw of LLM inference); no benchmark on AI production of energy sector data with recall measurement.
 6. Query: "population recall entity coverage LLM benchmark structured table generation evaluation 2024 2025 2026" — returned StructEval (format adherence), structured output frameworks; no benchmark on open-class entity population recall.
 
-**Stop condition.** Stopped after six targeted searches returned no direct precedents. The LM-KBC challenge was identified as the most likely candidate and examined at primary-source level (challenge website, CEUR-WS Vol-3254 proceedings); it is cited with a one-sentence distinction.
+**Stop condition.** Stopped after six targeted searches returned no direct precedents. The LM-KBC challenge was identified as the most likely candidate and examined at primary-source level (challenge website, CEUR-WS Vol-3254 proceedings PDF); it is cited with a one-sentence distinction.
 
 **Databases checked.** arXiv cs.CL, cs.AI, cs.IR (via web search with Tavily); ACL Anthology (via P1–P3 searches); ISWC/Semantic Web proceedings (via lm-kbc.github.io and CEUR-WS); Semantic Scholar (via web search). Primary-source fetch: lm-kbc.github.io/challenge2024, lm-kbc.github.io/challenge2025, ceur-ws.org/Vol-3254/ (LM-KBC 2022 proceedings).
 
@@ -110,12 +110,12 @@ Several 2024–2026 technical reports and blog posts describe using GPT-4 or Cla
 
 ## Author verification checklist
 
-- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3254/) and confirmed the closed-domain distinction — subject-relation pairs from Wikidata, not open-class enumeration; one-sentence distinction present in cited-works entry
+- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3254/) and confirmed the closed-domain distinction — subject-relation pairs from Wikidata, not open-class enumeration; one-sentence distinction present in the cited-works entry
 - [ ] Agreed with "Related but not cited" justifications: OAEI-LLM (ontology alignment), GDPval (occupational tasks), StructEval (format adherence), energy grey literature (no benchmark)
 - [ ] Confirmed "to our knowledge" / "we did not find" language will be used in the paragraph (not "no prior work" or "nobody has")
 - [ ] Confirmed forward references to §3 (coverage operationalisation) and §7 (limitations) are present in the paragraph draft
 - [ ] No in-repo docs cited in place of primary sources
-- [ ] Confirmed 1-citation decision: LM-KBC cited for structural similarity and defensive positioning; distinction stated in one sentence; other candidates (OAEI-LLM, GDPval, StructEval) remain in "Related but not cited"
+- [ ] Confirmed 1-citation decision: LM-KBC cited for structural similarity and defensive positioning; distinction stated in one sentence
 
 
 ## Bibliography
