@@ -133,6 +133,36 @@ def test_main_writes_file(tmp_path, monkeypatch):
     assert r"\newcommand" in content
 
 
+def test_main_census_csv_headline_macros_nonzero(tmp_path, monkeypatch):
+    """CLI with --census-csv still emits non-zero \\Headline* macros from measurements."""
+    # Write census CSV (summary source)
+    csv_path = tmp_path / "census_bars.csv"
+    csv_path.write_text("model,f1,local\ngpt-5.4,0.70,0\npadme-qwen,0.50,1\n")
+
+    # Write measurements JSONL with headline-eligible rows
+    meas_path = tmp_path / "measurements.jsonl"
+    write_measurements(meas_path, HEADLINE_METRICS)
+    patch_measurements_loader(monkeypatch, meas_path)
+
+    output_path = tmp_path / "macros_slides.tex"
+
+    from aedist.tabulate_macros import main
+
+    sys.argv = [
+        "tabulate_macros",
+        "--census-csv",
+        str(csv_path),
+        "--output",
+        str(output_path),
+    ]
+    main()
+    content = output_path.read_text()
+    # HeadlineMeanFOne must not be 0.0 — should be ~89.8 from the 4 decomposed runs
+    assert r"\newcommand{\HeadlineMeanFOne}{0.0}" not in content
+    assert r"\newcommand{\HeadlineNRuns}{0}" not in content
+    assert r"\newcommand{\HeadlineMeanFOne}{89.8}" in content
+
+
 # ---------------------------------------------------------------------------
 # Headline-pinned macro tests (Option A)
 # ---------------------------------------------------------------------------

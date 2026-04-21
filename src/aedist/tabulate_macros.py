@@ -195,12 +195,13 @@ def main() -> None:
 
     output_path = Path(args.output)
 
+    from .measurements import load_metrics
+
     if args.census_csv:
         summary = load_census(args.census_csv)
-        headline_metrics = None
+        # Always load run data for headline macros, even when summary comes from CSV
+        headline_metrics = load_metrics()
     else:
-        from .measurements import load_metrics
-
         all_metrics = load_metrics()
         summary = load_and_summarize(all_metrics)
         headline_metrics = all_metrics
