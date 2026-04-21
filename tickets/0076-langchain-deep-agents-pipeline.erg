@@ -1,6 +1,6 @@
 %erg v1
 Title: Evaluate LangChain Deep Agents lib for the production pipeline
-Status: doing
+Status: closed
 Created: 2026-04-11
 Author: claude
 
@@ -72,3 +72,4 @@ the same input, and a side-by-side report of cost/latency/LOC.
   a clear recommendation with a reproducibility verdict.
 - Decision recorded: adopt (which stages), defer, or reject.
 - If adopt: follow-up ticket(s) opened for the concrete migration.
+2026-04-21T07:50Z claude status closed — verdict: deepagents reject (shape mismatch), LangGraph defer to ticket 0059. Memo: docs/langchain-deep-agents-eval.md (PR #275)
