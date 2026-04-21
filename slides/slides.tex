@@ -142,7 +142,7 @@ and where stateful-agentic architectures lead.}
 \medskip
 \begin{description}
   \item[Trust] Accept the table.\\
-        {\small (Cognitive surrender.)}
+        {\small (No provenance check.)}
   \item[Verify] Check each row against cited sources.
         Fix errors. Keep the table.\\
         {\small (Fast: ${\sim}$3h for 162 rows.)}
@@ -231,12 +231,12 @@ all fragments in one shot.
 \medskip
 This is the \textbf{stateful} in\\
 ``stateful-agentic.''
+\end{columns}
 
 \medskip
-Separating extraction from fusion earns reproducibility:\\
-fusion can be deterministic\\
-even when extraction isn't.
-\end{columns}
+\centering\small
+Separating extraction from fusion earns reproducibility:
+fusion can be deterministic even when extraction isn't.
 \end{frame}
 
 % ===================================================================
@@ -259,7 +259,7 @@ even when extraction isn't.
         The model is one factor among many.
   \item[Scale] 37 models, \$0.82 total
   \item[Key conditions] Documentation $\times$ Conversation $\times$
-        Decomposition $\times$ Aggregation $\times$ Prompt structure
+        Decomposition $\times$ Aggregation $\times$ Model (37)
 \end{description}
 
 \medskip
@@ -703,6 +703,9 @@ An off-the-shelf pipeline with the right \textbf{method conditions} recovers 89.
   \item \textbf{Temperature} --- 211/280 runs used provider
         defaults ($t{\approx}1$); $t{=}0$ enforced only for
         later sweeps (PR\,\#244)
+  \item \textbf{Prompt structure} --- sourcing module results
+        were model-specific and mixed (+3.6\,pp / $-$30.4\,pp);
+        full ablation deferred
 \end{itemize}
 \end{columns}
 
