@@ -46,26 +46,13 @@ We answer empirically, using a demanding test case: inventorying all thermal pow
 
 # 2. Related Work
 
-<!-- ~1 page -->
+Established LLM benchmarks test factual recall, reasoning, and question answering. MMLU [@Hendrycks-Dan2021:mmlu] evaluates models across 57 academic domains using multiple-choice questions; the dominant metric is accuracy on a closed candidate set—measuring what a model knows, not whether it can enumerate what exists. Table-understanding benchmarks follow the same logic: TabFact [@Chen-Wenhu2020:tabfact] evaluates fact verification against given Wikipedia tables, and TableBench [@Wu-Xianjie2025:tablebench] tests question answering over existing structured tables across 18 task categories. Structured-output benchmarks address a closer task—LLMStructBench [@Tenckhoff-Sonke2026:llmstructbench] evaluates JSON extraction from a given source document, measuring format correctness and schema adherence—but the source document is provided; the system does not discover entities. A survey of 283 LLM benchmarks [@Ni-Shiwen2025:llm-benchmark-survey] confirms that structured-output evaluation remains dominated by format-adherence and schema-correctness metrics. What none of these benchmarks asks is: *given an open domain, enumerate all real instances of an entity class from parametric knowledge and web retrieval, and measure recall against an expert-compiled gold standard.*
 
-## 2.1 LLM Evaluation
+Retrieval-Augmented Generation [@ULQGRISS] augments a language model with a non-parametric retriever, achieving state of the art on open-domain QA benchmarks (Natural Questions, TriviaQA, WebQuestions). Variants address faithfulness—Self-RAG [@Asai-Akari2024:self-rag] trains a model to decide when to retrieve and critique its outputs—and multi-step reasoning. A survey of over 100 RAG variants [@Gao-Yunfan2024:rag-survey] organises the field into naive, advanced, and modular RAG, but the evaluation canon is uniform: accuracy on posed questions or faithfulness of generated answers. Agentic deep-research systems extend retrieval to multi-step web browsing; GAIA [@Mialon-Gregoire2024:gaia] benchmarks this frontier with 466 real-world questions requiring tool use and multi-modality. The metric remains answer correctness. Across the RAG and agentic-retrieval literature, no benchmark evaluates whether a retrieval system has found *all* instances of an entity class—only whether it found the *right answer* to a posed question. In our benchmark, RAG is a retrieval substrate and one axis of the experimental design; the evaluation target is population recall, not QA accuracy.
 
-<!-- Standard benchmarks (MMLU, HellaSwag, etc.) focus on QA, reasoning, factual recall -->
-<!-- Gap: no benchmark targets the generation of structured statistical tables against a gold standard -->
-<!-- Mention data extraction benchmarks (e.g., information extraction, table understanding) as adjacent but distinct -->
+Energy system models require plant-level inventories for dispatch, capacity expansion, and emissions analysis. The authoritative open databases—the Global Power Plant Database [@Byers-Logan2018:wri-gppd] covering approximately 30,000 plants across 164 countries, and the Global Integrated Power Tracker maintained by the Global Energy Monitor [@LCVI7NAT]—were compiled by expert teams using primary government sources, utility filings, and satellite imagery cross-checks. Gotzens et al. [@LYGDCQCL] developed powerplantmatching, which merges five open databases through fuzzy name matching and capacity-based deduplication; this is algorithmic merging of hand-curated inputs, not generation of new plant records. PyPSA-Earth [@Parzen-Maximilian2023:pypsa-earth], a global open energy system model, automates scripted retrieval from these databases but does not automate their production. PyPSA-VN [@VGASHFPT] applies a similar approach to Vietnam, building on a thermal plant inventory manually compiled from government planning documents—the same domain as our benchmark. None of these projects benchmarks AI systems as agents that discover and tabulate plant records; the human-curation step is assumed. We evaluate whether an LLM can replicate the output of that curation, measuring recall against a gold reference derived from GEM and WRI GPPD (see §3).
 
-## 2.2 RAG for Knowledge-Intensive Tasks
-
-<!-- Lewis et al. 2021: RAG improves factual grounding -->
-<!-- RAG optimised for answering questions, not constructing exhaustive datasets -->
-<!-- Recent progress: agentic RAG, deep research systems -->
-
-## 2.3 AI for Economic and Energy Data
-
-<!-- In economics, evaluation typically concerns forecasting or numerical reasoning, not data compilation -->
-<!-- Energy data quality: Gotzens et al. 2019 -->
-<!-- Global Energy Monitor, WRI, S&P Platts — existing databases and their limitations -->
-<!-- No prior benchmark for AI-assisted statistical table production -->
+The three research threads above converge on a shared gap: to our knowledge, no published benchmark evaluates AI-assisted production of a complete, exhaustive structured table against an expert-compiled gold standard, where population recall is the primary metric and the entity class is open-domain. The closest published benchmark is LM-KBC [@Singhania-Sneha2022:lm-kbc], which evaluates recall of Wikidata relation objects given a subject-relation pair; our task specifies only the entity class—no predicate and no seed entity—requiring the system to enumerate all instances from open-domain sources. The benchmark we introduce is therefore not a variant of QA evaluation or knowledge-base completion, but a measure of whether AI can replicate the recall-oriented discipline of expert data curation, applied to a concrete policy-relevant domain. We did not find a prior benchmark of this type in the NLP benchmarking, RAG evaluation, or energy informatics literatures. The task design, gold-reference construction, and coverage metrics are described in §3; scope limitations are discussed in §7.
 
 
 # 3. Benchmark Design
