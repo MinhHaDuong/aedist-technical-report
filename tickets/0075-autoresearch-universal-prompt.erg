@@ -15,6 +15,7 @@ Author: claude
 2026-04-13T10:30Z claude note revised evidence rubric from 0–4 to 0–5: score 4 = one confirmed primary (HITL), score 5 = two independent confirmed. Level 5 aspirational. Source-independence analysis added to verification_methods.tex. NATO Admiralty System (STANAG 2022) reference added.
 2026-04-13T11:00Z claude note separated result quality (evidence ladder, completeness, coherence) from system requirements (cheap, fast, cross-model, generic). They are orthogonal — a cheap system can produce garbage, a perfect single-model pipeline can produce impeccable data. Criteria section rewritten as two blocks.
 2026-04-13T11:30Z claude note operator confirmed: prompt is only for seed table, verification is on top. Evidence scores are not an optimization signal for the prompt — they're the verification pipeline's job. Objective simplified to min-of-5(recall × hallucination_gate). Three-way separation: (1) what optimizer controls (seed extraction), (2) result quality (evidence ladder, post-verification), (3) system requirements (cost, speed, universality, genericity).
+2026-04-21T00:00Z claude note produced docs/prompt-optimizer-survey.md — decision memo covering DSPy MIPROv2, TextGrad, OPRO, Promptbreeder, APE, AdalFlow, balukosuri autoresearch skill. Recommendation: adopt DSPy MIPROv2 (black-box metric API, LiteLLM multi-provider, seed+trace logging). Defer: OPRO, TextGrad, AdalFlow. Reject: Promptbreeder, APE, balukosuri as standalone optimizer. Prototype (Phase 1 actions 3–7) deferred to follow-up ticket.
 
 --- body ---
 ## Context
