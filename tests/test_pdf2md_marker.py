@@ -26,7 +26,6 @@ def test_conforms_to_converter_protocol():
 
 
 def test_default_url():
-    from aedist.pdf2md_marker import DEFAULT_MARKER_URL
 
     assert "localhost" in DEFAULT_MARKER_URL
     assert "8001" in DEFAULT_MARKER_URL
@@ -46,19 +45,18 @@ def test_uses_get_output_path():
 # Functional tests (mock HTTP)
 # ---------------------------------------------------------------------------
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
+from conftest import mock_urlopen  # noqa: E402
 
-import aedist.pdf2md_marker as _marker_mod
-from aedist.pdf2md_marker import (
+import aedist.pdf2md_marker as _marker_mod  # noqa: E402
+from aedist.pdf2md_marker import (  # noqa: E402
     DEFAULT_MARKER_URL,
     main,
     marker_convert,
     pdf_to_markdown,
 )
-from conftest import mock_urlopen
-
 
 # ---------------------------------------------------------------------------
 # marker_convert
@@ -199,9 +197,7 @@ class TestMain:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
         out = tmp_path / "out.md"
 
-        with patch(
-            "aedist.pdf2md_marker.pdf_to_markdown", return_value="ok"
-        ) as mock:
+        with patch("aedist.pdf2md_marker.pdf_to_markdown", return_value="ok") as mock:
             main([str(fake_pdf), "--output", str(out), "--marker-url", "http://other:5000"])
 
         mock.assert_called_once_with(fake_pdf, marker_url="http://other:5000")

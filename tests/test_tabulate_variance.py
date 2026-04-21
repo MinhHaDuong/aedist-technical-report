@@ -2,8 +2,6 @@
 
 import json
 
-import pytest
-
 from aedist.tabulate_variance import _fmt_p, generate_variance_table, main
 
 SAMPLE_ANOVA = {

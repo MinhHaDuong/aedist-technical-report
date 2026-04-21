@@ -127,7 +127,7 @@ def correct_pvalues(
     # Benjamini-Hochberg: adjusted_i = p_i * m / rank_i
     # Then enforce monotonicity from largest rank downward
     adjusted = [0.0] * m
-    for rank_0based, (orig_idx, p) in enumerate(indexed):
+    for rank_0based, (_orig_idx, p) in enumerate(indexed):
         rank = rank_0based + 1  # 1-based rank
         adjusted[rank_0based] = p * m / rank
 
@@ -190,7 +190,7 @@ def _shapiro_wilk_w(x: list[float]) -> float | None:
         return None
 
     # W = (sum(a_i * x_(i)))^2 / (sum(a_i^2) * SS)
-    numerator = sum(ai * xi for ai, xi in zip(a, xs)) ** 2
+    numerator = sum(ai * xi for ai, xi in zip(a, xs, strict=True)) ** 2
     w = numerator / (a_ss * ss)
     return min(w, 1.0)
 
@@ -219,9 +219,13 @@ def _levene_statistic(groups: list[list[float]]) -> float | None:
     z_means = [sum(zg) / len(zg) for zg in z_groups]
 
     # Between-group variability
-    ss_between = sum(len(zg) * (zm - z_grand) ** 2 for zg, zm in zip(z_groups, z_means))
+    ss_between = sum(
+        len(zg) * (zm - z_grand) ** 2 for zg, zm in zip(z_groups, z_means, strict=True)
+    )
     # Within-group variability
-    ss_within = sum(sum((z - zm) ** 2 for z in zg) for zg, zm in zip(z_groups, z_means))
+    ss_within = sum(
+        sum((z - zm) ** 2 for z in zg) for zg, zm in zip(z_groups, z_means, strict=True)
+    )
 
     df_between = k - 1
     df_within = n_total - k

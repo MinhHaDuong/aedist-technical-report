@@ -100,13 +100,12 @@ def test_uses_file_content_type():
 # Functional tests (mock OpenAI client)
 # ---------------------------------------------------------------------------
 
-from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from types import SimpleNamespace  # noqa: E402
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
 
-from aedist.pdf2md_openrouter_doc import (
-    DEFAULT_MODEL,
+from aedist.pdf2md_openrouter_doc import (  # noqa: E402
     main,
     pdf_to_markdown,
 )
@@ -262,15 +261,20 @@ class TestMain:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
         out = tmp_path / "out.md"
 
-        with patch(
-            "aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="ok"
-        ) as mock:
-            main([
-                str(fake_pdf), "--output", str(out),
-                "--engine", "cloudflare-ai",
-                "--model", "openai/gpt-4o",
-                "--max-tokens", "2048",
-            ])
+        with patch("aedist.pdf2md_openrouter_doc.pdf_to_markdown", return_value="ok") as mock:
+            main(
+                [
+                    str(fake_pdf),
+                    "--output",
+                    str(out),
+                    "--engine",
+                    "cloudflare-ai",
+                    "--model",
+                    "openai/gpt-4o",
+                    "--max-tokens",
+                    "2048",
+                ]
+            )
 
         mock.assert_called_once_with(
             fake_pdf,

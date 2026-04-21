@@ -6,10 +6,10 @@ import pytest
 
 from aedist.score_provenance import (
     _has_provenance_columns,
+    main,
     score_directory,
     score_honesty,
     score_sourced_run,
-    main,
 )
 
 

@@ -7,6 +7,7 @@ from pathlib import Path
 # Module structure (source inspection — no Ollama required)
 # ---------------------------------------------------------------------------
 
+
 def _source():
     return (Path(__file__).parent.parent / "src" / "aedist" / "pdf2md_ollama.py").read_text()
 
@@ -65,21 +66,21 @@ def test_cli_has_ollama_url_flag():
 def test_raises_on_empty_response():
     """_ollama_chat_vision raises ValueError on empty response, not silent."""
     text = _source()
-    assert 'raise ValueError' in text
+    assert "raise ValueError" in text
 
 
 # ---------------------------------------------------------------------------
 # Functional tests (mock HTTP / external deps)
 # ---------------------------------------------------------------------------
 
-import json
-from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+import json  # noqa: E402
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
+from conftest import mock_urlopen  # noqa: E402
 
-import aedist.pdf2md_ollama as _ollama_mod
-from aedist.pdf2md_ollama import (
+import aedist.pdf2md_ollama as _ollama_mod  # noqa: E402
+from aedist.pdf2md_ollama import (  # noqa: E402
     DEFAULT_DPI,
     DEFAULT_MODEL,
     DEFAULT_OLLAMA_URL,
@@ -87,7 +88,6 @@ from aedist.pdf2md_ollama import (
     main,
     pdf_to_markdown,
 )
-from conftest import mock_urlopen
 
 
 class TestConstants:
@@ -266,12 +266,19 @@ class TestMain:
             "aedist.pdf2md_ollama.pdf_to_markdown",
             return_value="ok",
         ) as mock_p2m:
-            main([
-                str(fake_pdf), "--output", str(out),
-                "--model", "llava:13b",
-                "--dpi", "150",
-                "--ollama-url", "http://other:9999",
-            ])
+            main(
+                [
+                    str(fake_pdf),
+                    "--output",
+                    str(out),
+                    "--model",
+                    "llava:13b",
+                    "--dpi",
+                    "150",
+                    "--ollama-url",
+                    "http://other:9999",
+                ]
+            )
 
         mock_p2m.assert_called_once_with(
             fake_pdf,
