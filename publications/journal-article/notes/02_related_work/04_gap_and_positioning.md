@@ -4,7 +4,7 @@ author: Claude prompted by Ha-Duong Minh
 date: 2026-04-21
 paper: publications/journal-article/paper_benchmark_merged.md
 section: §2 Related Work, paragraph 4 (gap and positioning)
-citation-budget: 0 used of 1 allowed (slot left empty — no direct precedent found; see Related but not cited)
+citation-budget: 1 used of 1 allowed
 ---
 
 ## Relevance
@@ -37,20 +37,20 @@ The notion of measuring completeness — whether a system has found *all* releva
 
 ## Cited works — detailed
 
-None — slot deliberately left empty. The 1-citation budget was held for a direct precedent: a benchmark that evaluates AI-assisted production of a complete statistical table (or entity registry) against a gold reference, with recall as the primary metric, in an economic or energy domain. After targeted searches (see Methods), no such precedent was found. The closest candidates are discussed in "Related but not cited." Adding a citation to a work that only partially overlaps would misrepresent the gap and could trigger a referee objection more problematic than leaving the slot empty.
+### Singhania et al. 2022 — LM-KBC Challenge (ISWC 2022; annual 2022–2025)
+
+**Full citation.** Singhania et al. 2022, CEUR-WS Vol-3254; annual challenge at lm-kbc.github.io.
+
+**What it did.** Given subject-relation pairs from Wikidata, predict all correct object-entities. Uses precision, recall, and macro-averaged F1 as evaluation metrics. The challenge runs annually (2022–2025), with growing participation each year.
+
+**Why cited.** LM-KBC is the most structurally similar published benchmark: recall is a first-class metric, and the task involves enumerating all correct completions for a given query. Citing it with one sentence of distinction preempts the likeliest referee objection — that recall of entities from language models has already been benchmarked — before it can be raised.
+
+**The distinction.** "Unlike LM-KBC, where subject and relation are given, our task specifies only the entity class — no predicate and no seed entity — requiring the system to enumerate all instances from open-domain parametric knowledge and web retrieval."
+
+**Role.** Recent + most-similar-benchmark; essential for defensive positioning.
 
 
 ## Related but not cited — justified
-
-### LM-KBC Challenge (Singhania et al. 2022; ISWC 2022–2025) — entity enumeration with precision/recall, but closed-domain
-
-The LM-KBC (Language Models for Knowledge Base Construction) challenge, running annually at ISWC since 2022, is the closest related benchmark series. The task is: given a subject entity and a relation (both from Wikidata), predict all correct object-entities. Evaluation uses precision and recall (macro-averaged F1 as the primary score). This is structurally the most similar published benchmark to our work: it enumerates all objects for a given subject-relation pair, and recall is a first-class metric.
-
-**Why not cited.** The structural difference is decisive. In LM-KBC, the subject and relation are given (e.g., "predict all countries sharing a land border with Germany"); the task is closed-domain completion of a *given* Wikidata relation. In our benchmark, no subject or relation is given: we ask the system to enumerate *all instances of an entity class* (all thermal power plants in Vietnam) from open-domain parametric knowledge and web retrieval. LM-KBC also prohibits external retrieval in the 2025 edition (pure parametric knowledge only), whereas our benchmark's design includes RAG as one of several retrieval regimes. The domains are Wikidata-generic (countries, awards, TV series), not economic/energy statistics. Citing LM-KBC as a "partial precedent" would require two paragraphs of distinctions that the gap paragraph cannot accommodate. The paragraph can instead acknowledge it orally if a referee raises it; this note provides the prepared response.
-
-**Primary reference for further reading.** Singhania, S., Gashteovski, K., Szarvas, G., and Lawrence, C. (2022). LM-KBC: Knowledge Base Construction from Pre-Trained Language Models. In *CEUR Workshop Proceedings of ISWC 2022*, Vol. 3254. URL: https://lm-kbc.github.io/ (annual challenge; no single stable DOI for the series; proceedings at ceur-ws.org/Vol-3254 for 2022 and ceur-ws.org/Vol-3577 for 2023).
-
----
 
 ### Ni et al. 2025 — LLM Benchmark Survey (already cited in P1)
 
@@ -111,8 +111,8 @@ Several 2024–2026 technical reports and blog posts describe using GPT-4 or Cla
 ## Author verification checklist
 
 - [ ] Confirmed no primary source is cited (slot deliberately empty; bibliography is blank)
-- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3274/paper1.pdf) and confirmed the closed-domain distinction — subject-relation pairs from Wikidata, not open-class enumeration
-- [ ] Agreed with "Related but not cited" justifications: LM-KBC (closed-domain), OAEI-LLM (ontology alignment), GDPval (occupational tasks), StructEval (format adherence), energy grey literature (no benchmark)
+- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3254/); cited with one-sentence distinction in P4 paragraph
+- [ ] Agreed with "Related but not cited" justifications: OAEI-LLM (ontology alignment), GDPval (occupational tasks), StructEval (format adherence), energy grey literature (no benchmark)
 - [ ] Confirmed "to our knowledge" / "we did not find" language will be used in the paragraph (not "no prior work" or "nobody has")
 - [ ] Confirmed forward references to §3 (coverage operationalisation) and §7 (limitations) are present in the paragraph draft
 - [ ] No in-repo docs cited in place of primary sources
@@ -122,8 +122,14 @@ Several 2024–2026 technical reports and blog posts describe using GPT-4 or Cla
 ## Bibliography
 
 ```bibtex
-% No entries — citation slot deliberately left empty.
-% See "Related but not cited" section for borderline candidates
-% and justifications. If a new direct precedent is found before
-% submission, add it here and update the paragraph accordingly.
+@inproceedings{Singhania-Sneha2022:lm-kbc,
+  author       = {Singhania, Sneha and Gashteovski, Kiril and Szarvas, György and Lawrence, Carolin},
+  title        = {{LM-KBC: Knowledge Base Construction from Pre-Trained Language Models}},
+  booktitle    = {Proceedings of the ISWC 2022 Posters, Demos and Industry Tracks},
+  series       = {CEUR Workshop Proceedings},
+  volume       = {3254},
+  year         = {2022},
+  url          = {https://ceur-ws.org/Vol-3254/},
+  note         = {Annual challenge; challenge home at \url{https://lm-kbc.github.io/}},
+}
 ```
