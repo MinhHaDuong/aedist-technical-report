@@ -85,6 +85,7 @@ The five mandatory citations (all ticket-specified) span the relevant literature
 *(Sharpest alternative: AI-assisted asset detection from imagery)*
 
 - **Why not cited.** Kruitwagen et al. (2021, *Nature*, DOI:10.1038/s41586-021-03957-7) use convolutional neural networks trained on satellite imagery to detect and map 68,661 solar photovoltaic installations globally. This is a genuine AI-assisted power infrastructure data production approach — the kind of work most proximate to our claim that AI generation of energy databases is novel. However, it addresses renewable generation (visual objects in satellite images), not thermal plant attributes (fuel type, commissioning year, ownership) from heterogeneous document sources. The detection task — is there a solar panel in this pixel? — is fundamentally different from the tabulation task — does this document mention a plant, and what are its attributes? Our benchmark is about attribute extraction and recall from text, not spatial object detection. A referee raising this paper would receive this distinction.
+- **Author note (2026-04-21).** Remote sensing is acknowledged as important and a future direction (v3: satellite + text fusion). The §7 Discussion should frame it as complementary, not as prior art we missed.
 
 ### Open Power System Data (OPSD)
 *(The other major European open database; superseded by GEM and WRI GPPD for global scope)*
