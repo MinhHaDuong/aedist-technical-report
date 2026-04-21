@@ -1,8 +1,10 @@
 """Tests for aedist.tabulate_macros — LaTeX macro generation from metrics JSON."""
 
+import sys
+
 from conftest import patch_measurements_loader, write_measurements
 
-from aedist.tabulate_macros import generate_macros, load_and_summarize
+from aedist.tabulate_macros import generate_macros, load_and_summarize, load_headline_result
 
 SAMPLE_METRICS = [
     {"label": "census/gpt-5.4-run1", "f1": 0.70, "coverage": 0.8, "precision": 0.62},
@@ -46,6 +48,28 @@ SAMPLE_METRICS = [
         "f1": 0.38,
         "coverage": 0.48,
         "precision": 0.31,
+    },
+]
+
+# Synthetic decomposed runs for headline macro tests — mirrors the actual
+# decomposed/deepseek-v3.2 measurements (4 runs, exact values).
+HEADLINE_METRICS = [
+    {"label": "decomposed/deepseek-v3.2-run1", "f1": 0.8859, "coverage": 0.9, "precision": 0.99},
+    {"label": "decomposed/deepseek-v3.2-run2", "f1": 0.8561, "coverage": 0.88, "precision": 0.99},
+    {"label": "decomposed/deepseek-v3.2-run3", "f1": 0.9879, "coverage": 1.0, "precision": 0.99},
+    {"label": "decomposed/deepseek-v3.2-run4", "f1": 0.8601, "coverage": 0.88, "precision": 0.99},
+    # decomposed_v2 entries must NOT be included when method="decomposed"
+    {
+        "label": "decomposed_v2/deepseek-v3.2-run1",
+        "f1": 0.9879,
+        "coverage": 1.0,
+        "precision": 0.99,
+    },
+    {
+        "label": "decomposed_v2/deepseek-v3.2-run2",
+        "f1": 0.8315,
+        "coverage": 0.85,
+        "precision": 0.99,
     },
 ]
 
@@ -97,8 +121,6 @@ def test_main_writes_file(tmp_path, monkeypatch):
     patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "macros.tex"
 
-    import sys
-
     from aedist.tabulate_macros import main
 
     sys.argv = [
@@ -109,3 +131,80 @@ def test_main_writes_file(tmp_path, monkeypatch):
     main()
     content = output_path.read_text()
     assert r"\newcommand" in content
+
+
+# ---------------------------------------------------------------------------
+# Headline-pinned macro tests (Option A)
+# ---------------------------------------------------------------------------
+
+
+def test_load_headline_result_selects_correct_rows():
+    """Only 'decomposed/' rows for deepseek-v3.2 are matched; decomposed_v2 excluded."""
+    result = load_headline_result(HEADLINE_METRICS)
+    assert result["n_runs"] == 4
+    assert set(result["f1_values"]) == {0.8859, 0.8561, 0.9879, 0.8601}
+
+
+def test_load_headline_result_ci_bounds():
+    """Bootstrap CI is non-degenerate and mean is inside [lo, hi]."""
+    result = load_headline_result(HEADLINE_METRICS)
+    assert result["ci_lo"] < result["mean"] <= result["ci_hi"]
+    assert result["ci_hi"] - result["ci_lo"] > 0
+
+
+def test_load_headline_result_empty_on_no_match():
+    """Returns zero-filled dict when no rows match."""
+    result = load_headline_result(HEADLINE_METRICS, model_slug="nonexistent-model")
+    assert result["n_runs"] == 0
+    assert result["mean"] == 0.0
+
+
+def test_generate_macros_headline_keys():
+    """generate_macros emits all four \\Headline* commands."""
+    summary = load_and_summarize(SAMPLE_METRICS)
+    tex = generate_macros(summary, headline_metrics=HEADLINE_METRICS)
+    assert r"\newcommand{\HeadlineModelName}" in tex
+    assert r"\newcommand{\HeadlineMeanFOne}" in tex
+    assert r"\newcommand{\HeadlineCILo}" in tex
+    assert r"\newcommand{\HeadlineCIHi}" in tex
+    assert r"\newcommand{\HeadlineNRuns}" in tex
+
+
+def test_generate_macros_headline_model_name():
+    """\\HeadlineModelName uses brand-aware capitalization."""
+    summary = load_and_summarize(SAMPLE_METRICS)
+    tex = generate_macros(summary, headline_metrics=HEADLINE_METRICS)
+    assert r"\newcommand{\HeadlineModelName}{DeepSeek V3.2}" in tex
+
+
+def test_generate_macros_headline_values():
+    """\\HeadlineMeanFOne, \\HeadlineCILo, \\HeadlineCIHi match expected numbers."""
+    summary = load_and_summarize(SAMPLE_METRICS)
+    tex = generate_macros(summary, headline_metrics=HEADLINE_METRICS)
+    # Mean of [0.8859, 0.8561, 0.9879, 0.8601] = 0.8975 -> 89.8%
+    assert r"\newcommand{\HeadlineMeanFOne}{89.8}" in tex
+    # Bootstrap CI (seed=42): lo=85.8%, hi=95.6%
+    assert r"\newcommand{\HeadlineCILo}{85.8}" in tex
+    assert r"\newcommand{\HeadlineCIHi}{95.6}" in tex
+    assert r"\newcommand{\HeadlineNRuns}{4}" in tex
+
+
+# quarantine: test_decomposed_deepseek_has_ci — passes once headline macros computed
+def test_decomposed_deepseek_has_ci():
+    """Bootstrap CI must be computable from the headline condition (actual measurements).
+
+    This test validates that load_headline_result produces values matching the
+    numbers reported in slides.tex. It is marked quarantine because it reads
+    the live measurements.jsonl, which must be present.
+    """
+    from aedist.measurements import load_metrics
+
+    metrics = load_metrics()
+    result = load_headline_result(metrics)
+    assert result["n_runs"] >= 3
+    assert result["ci_lo"] < result["mean"] <= result["ci_hi"]
+    assert result["ci_hi"] - result["ci_lo"] > 0
+    # Values must match what is reported in slides.tex
+    assert abs(result["mean"] - 0.898) < 0.005, f"Mean {result['mean']:.3f} != 89.8%"
+    assert abs(result["ci_lo"] - 0.858) < 0.01, f"CI lower {result['ci_lo']:.3f} != 85.8%"
+    assert abs(result["ci_hi"] - 0.956) < 0.01, f"CI upper {result['ci_hi']:.3f} != 95.6%"
