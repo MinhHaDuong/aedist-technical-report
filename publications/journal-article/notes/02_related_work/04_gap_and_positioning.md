@@ -93,30 +93,29 @@ Several 2024–2026 technical reports and blog posts describe using GPT-4 or Cla
 5. Query: "benchmark LLM energy statistics power plant economic data automated production recall completeness 2024 2025 2026" — returned LLM energy-consumption benchmarks (power draw of LLM inference); no benchmark on AI production of energy sector data with recall measurement.
 6. Query: "population recall entity coverage LLM benchmark structured table generation evaluation 2024 2025 2026" — returned StructEval (format adherence), structured output frameworks; no benchmark on open-class entity population recall.
 
-**Stop condition.** Stopped after six targeted searches returned no direct precedents. The LM-KBC challenge was identified as the most likely candidate and examined at primary-source level (challenge website, ceur-ws proceedings PDF); the closed-domain distinction is unambiguous. The slot was left empty.
+**Stop condition.** Stopped after six targeted searches returned no direct precedents. The LM-KBC challenge was identified as the most likely candidate and examined at primary-source level (challenge website, CEUR-WS Vol-3254 proceedings); it is cited with a one-sentence distinction.
 
-**Databases checked.** arXiv cs.CL, cs.AI, cs.IR (via web search with Tavily); ACL Anthology (via P1–P3 searches); ISWC/Semantic Web proceedings (via lm-kbc.github.io and CEUR-WS); Semantic Scholar (via web search). Primary-source fetch: lm-kbc.github.io/challenge2024, lm-kbc.github.io/challenge2025, ceur-ws.org/Vol-3274/paper1.pdf.
+**Databases checked.** arXiv cs.CL, cs.AI, cs.IR (via web search with Tavily); ACL Anthology (via P1–P3 searches); ISWC/Semantic Web proceedings (via lm-kbc.github.io and CEUR-WS); Semantic Scholar (via web search). Primary-source fetch: lm-kbc.github.io/challenge2024, lm-kbc.github.io/challenge2025, ceur-ws.org/Vol-3254/ (LM-KBC 2022 proceedings).
 
 **Freshness cutoff.** 2026-04-21. Searches run on this date.
 
-**Preprint policy.** Not applicable — no works are cited in this note.
+**Preprint policy.** LM-KBC 2022 is published in CEUR Workshop Proceedings Vol-3254 — grey literature (workshop proceedings without DOI), cited because it is the primary reference for the most structurally similar benchmark found.
 
-**Grey-literature policy.** Technical blog posts and conference challenge websites used for background understanding (LM-KBC) but not cited as primary sources. CEUR-WS proceedings (for LM-KBC 2022–2023) are treated as grey literature and not cited in the paper; the challenge is listed in "Related but not cited" for peer-review preparation.
+**Grey-literature policy.** CEUR-WS proceedings (Vol-3254) are grey literature but accepted here as the primary reference for LM-KBC 2022; no journal publication exists for the challenge paper itself. Challenge home URL (https://lm-kbc.github.io/) included as supplementary pointer.
 
-**Identifier resolution log.** No identifiers emitted in the bibliography; none to resolve. LM-KBC challenge website (https://lm-kbc.github.io/) resolves. CEUR-WS Vol-3274 paper1.pdf resolves (verified by fetch). arXiv:2409.14038 (OAEI-LLM) resolves. arXiv:2510.04374 (GDPval) resolves. arXiv:2505.20139 (StructEval) resolves.
+**Identifier resolution log.** LM-KBC CEUR-WS Vol-3254 URL (https://ceur-ws.org/Vol-3254/) resolves ✓. LM-KBC challenge website (https://lm-kbc.github.io/) resolves ✓. arXiv:2409.14038 (OAEI-LLM) resolves ✓. arXiv:2510.04374 (GDPval) resolves ✓. arXiv:2505.20139 (StructEval) resolves ✓.
 
 **LLM-assist disclosure.** Targeted searches performed using Claude Sonnet 4.6 with Tavily-backed web search. Primary-source content reviewed via WebFetch. All exclusion decisions are the agent's (on behalf of the author); the author must ratify the "Related but not cited" justifications, in particular the LM-KBC distinction, before submitting.
 
 
 ## Author verification checklist
 
-- [ ] Confirmed no primary source is cited (slot deliberately empty; bibliography is blank)
-- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3254/); cited with one-sentence distinction in P4 paragraph
+- [ ] Read LM-KBC primary source (ceur-ws.org/Vol-3254/) and confirmed the closed-domain distinction — subject-relation pairs from Wikidata, not open-class enumeration; one-sentence distinction present in cited-works entry
 - [ ] Agreed with "Related but not cited" justifications: OAEI-LLM (ontology alignment), GDPval (occupational tasks), StructEval (format adherence), energy grey literature (no benchmark)
 - [ ] Confirmed "to our knowledge" / "we did not find" language will be used in the paragraph (not "no prior work" or "nobody has")
 - [ ] Confirmed forward references to §3 (coverage operationalisation) and §7 (limitations) are present in the paragraph draft
 - [ ] No in-repo docs cited in place of primary sources
-- [ ] Confirmed 0-citation decision is defensible: if referee raises LM-KBC, the prepared response is in this note; if referee raises any of the other candidates, the "Related but not cited" justifications cover them
+- [ ] Confirmed 1-citation decision: LM-KBC cited for structural similarity and defensive positioning; distinction stated in one sentence; other candidates (OAEI-LLM, GDPval, StructEval) remain in "Related but not cited"
 
 
 ## Bibliography
