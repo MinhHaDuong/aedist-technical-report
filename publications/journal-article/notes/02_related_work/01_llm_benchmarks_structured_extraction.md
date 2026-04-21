@@ -131,6 +131,8 @@ The stakes are concrete: a referee familiar with TableBench or Struc-Bench could
 - [ ] Read each cited primary source (not just abstract)
 - [ ] Confirmed claim-to-citation mapping: each citation supports the contrast between its benchmark paradigm and population-recall evaluation
 - [ ] Checked preprints for peer-reviewed updates (LLMStructBench arXiv:2602.14743; Ni et al. arXiv:2508.15361)
+- [ ] Independently resolved DOI for LLMStructBench (arXiv:2602.14743 → https://doi.org/10.48550/arXiv.2602.14743) — confirm it resolves to the correct paper
+- [ ] Confirmed that the "283 LLM benchmarks" count in the §2 paragraph is drawn from Ni et al. arXiv:2508.15361 (check §2 or the abstract of the preprint for this figure)
 - [ ] Agreed with "related but not cited" justifications (especially DocRED and BIG-bench exclusions)
 - [ ] No in-repo docs cited in place of primary sources
 - [ ] Confirmed TabFact OpenReview URL resolves (no DOI available for ICLR 2020 papers via this route)
