@@ -1,0 +1,7 @@
+Synthesize the following {n} source documents into a single deduplicated JSON array of thermal power plants in Vietnam (coal, gas, lng, oil only). For each plant, use the most authoritative and recent value available. Do NOT include provenance — just the best-known values.
+
+Each object: "name", "fuel", "capacity_mwe", "status", "province", "cod" (same schema as above; null if unknown).
+
+{sources}
+
+JSON array:

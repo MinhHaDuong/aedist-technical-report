@@ -228,6 +228,7 @@ models = "models.yaml"
 model_set = "census_cloud"
 repeat = 3
 budget_usd = 10
+seed = 42
 output = "outputs/census"
 
 [sweeps.census_local]
@@ -237,6 +238,7 @@ models = "models.yaml"
 model_set = "census_local"
 repeat = 3
 budget_usd = 0
+seed = 42
 output = "outputs/census"
 ollama_url = "http://localhost:11434/v1"
 
@@ -247,6 +249,7 @@ followups = "prompts/followups.txt"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
+seed = 42
 output = "outputs/multiturn"
 
 [sweeps.web]
@@ -255,6 +258,7 @@ prompt = "prompts/prompt_structured.txt"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
+seed = 42
 output = "outputs/web"
 
 [sweeps.rag]
@@ -266,6 +270,7 @@ models = "models.yaml"
 model_set = "rag"
 repeat = 3
 budget_usd = 10
+seed = 42
 output = "outputs/rag"
 
 [sweeps.decomposed]
@@ -275,6 +280,7 @@ corpus = "../data/rag_corpus"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 2
+seed = 42
 output = "outputs/decomposed"
 
 # Verification regimes on top 3 configs
@@ -290,6 +296,7 @@ output = "outputs/decomposed"
 [sweeps.verification]
 repeat = 3
 budget_usd = 5
+seed = 42
 output = "derived/verification"
 cross_verifier = "anthropic/claude-sonnet-4.6"
 verification_modes = ["unverified", "tool", "self", "cross", "web"]
@@ -324,6 +331,7 @@ result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
 [sweeps.verification_poc]
 repeat = 1
 budget_usd = 0
+seed = 42
 output = "derived/verification_poc"
 verification_modes = ["unverified", "tool"]
 
@@ -341,6 +349,7 @@ result_file = "outputs/decomposed/deepseek-v3.2-run1.json"
 [sweeps.verification_multi]
 repeat = 3
 budget_usd = 5
+seed = 42
 output = "derived/verification_multi"
 verification_modes = ["unverified", "multi_cross"]
 verifier_panel = [
@@ -370,6 +379,7 @@ models = "models.yaml"
 model_set = "sourced"
 repeat = 3
 budget_usd = 10
+seed = 42
 output = "outputs/sourced"
 
 # Frontier deep-research: reasoning/deep-research models, 3 prompts
@@ -381,6 +391,7 @@ models = "models.yaml"
 model_set = "frontier_10labs"
 repeat = 1
 budget_usd = 20
+seed = 42
 output = "outputs/frontier"
 
 [sweeps.frontier_scenarios]
@@ -390,6 +401,7 @@ models = "models.yaml"
 model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
+seed = 42
 output = "qualitative/scenarios"
 
 [sweeps.frontier_skill]
@@ -399,6 +411,7 @@ models = "models.yaml"
 model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
+seed = 42
 output = "qualitative/skill_plans"
 
 # --- Prompt composition and ablation (ticket 0038) ---
@@ -424,6 +437,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/parametric/p1_base"
 
 # Ticket 0057: extended base-vs-census — 9 additional cheap cloud models,
@@ -436,6 +450,7 @@ models = "models.yaml"
 model_set = "base_vs_census_extended"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/parametric/p1_base"
 
 [sweeps.ablation_p1_parametric_composite]
@@ -445,6 +460,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/parametric/p1_composite"
 
 # RAG regime (corpus injected)
@@ -455,6 +471,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/rag/p1_base"
 
 [sweeps.ablation_p1_rag_composite]
@@ -464,6 +481,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/rag/p1_composite"
 
 # Web search regime (search plugin)
@@ -475,6 +493,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/websearch/p1_base"
 
 [sweeps.ablation_p1_websearch_composite]
@@ -485,6 +504,7 @@ models = "models.yaml"
 model_set = "ablation_dev"
 repeat = 2
 budget_usd = 10
+seed = 42
 output = "outputs/ablation/websearch/p1_composite"
 
 # Phase 2 — Composition arm: base + one module
@@ -496,6 +516,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/base"
 
 [sweeps.ablation_persona]
@@ -505,6 +526,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/persona"
 
 [sweeps.ablation_overview]
@@ -514,6 +536,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/overview"
 
 [sweeps.ablation_narratives]
@@ -523,6 +546,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/narratives"
 
 [sweeps.ablation_bibliography]
@@ -532,6 +556,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/bibliography"
 
 [sweeps.ablation_statistics]
@@ -541,6 +566,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/statistics"
 
 [sweeps.ablation_sourcing]
@@ -550,6 +576,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/sourcing"
 
 # Anchors
@@ -561,6 +588,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/composite"
 
 [sweeps.ablation_frontier]
@@ -570,6 +598,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/frontier"
 
 [sweeps.ablation_census]
@@ -579,6 +608,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/census"
 
 # Ablation arm: composite minus one module
@@ -590,6 +620,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_persona"
 
 [sweeps.ablation_no_overview]
@@ -599,6 +630,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_overview"
 
 [sweeps.ablation_no_narratives]
@@ -608,6 +640,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_narratives"
 
 [sweeps.ablation_no_bibliography]
@@ -617,6 +650,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_bibliography"
 
 [sweeps.ablation_no_statistics]
@@ -626,6 +660,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_statistics"
 
 [sweeps.ablation_no_sourcing]
@@ -635,6 +670,7 @@ models = "models.yaml"
 model_set = "ablation"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/no_sourcing"
 
 # Phase 2 RAG — same 16 prompt variants as Phase 1, but in RAG mode.
@@ -647,6 +683,7 @@ prompt_modules = []
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_base"
 
 [sweeps.ablation_p2_rag_composite]
@@ -655,6 +692,7 @@ prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_composite"
 
 [sweeps.ablation_p2_rag_frontier]
@@ -663,6 +701,7 @@ prompt = "prompts/prompt_frontier.txt"
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_frontier"
 
 [sweeps.ablation_p2_rag_census]
@@ -671,6 +710,7 @@ prompt = "prompts/prompt_structured.txt"
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_census"
 
 [sweeps.ablation_p2_rag_persona]
@@ -679,6 +719,7 @@ prompt_modules = ["persona"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_persona"
 
 [sweeps.ablation_p2_rag_overview]
@@ -687,6 +728,7 @@ prompt_modules = ["overview"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_overview"
 
 [sweeps.ablation_p2_rag_narratives]
@@ -695,6 +737,7 @@ prompt_modules = ["narratives"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_narratives"
 
 [sweeps.ablation_p2_rag_bibliography]
@@ -703,6 +746,7 @@ prompt_modules = ["bibliography"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_bibliography"
 
 [sweeps.ablation_p2_rag_statistics]
@@ -711,6 +755,7 @@ prompt_modules = ["statistics"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_statistics"
 
 [sweeps.ablation_p2_rag_sourcing]
@@ -719,6 +764,7 @@ prompt_modules = ["sourcing"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_sourcing"
 
 [sweeps.ablation_p2_rag_no_persona]
@@ -727,6 +773,7 @@ prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statist
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_no_persona"
 
 [sweeps.ablation_p2_rag_no_overview]
@@ -735,6 +782,7 @@ prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statisti
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_no_overview"
 
 [sweeps.ablation_p2_rag_no_narratives]
@@ -743,6 +791,7 @@ prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_no_narratives"
 
 [sweeps.ablation_p2_rag_no_bibliography]
@@ -751,6 +800,7 @@ prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_no_bibliography"
 
 [sweeps.ablation_p2_rag_no_statistics]
@@ -759,6 +809,7 @@ prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
+seed = 42
 output = "outputs/ablation/rag/p2_no_statistics"
 
 [sweeps.ablation_p2_rag_no_sourcing]
@@ -768,3 +819,29 @@ models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
 output = "outputs/ablation/rag/p2_no_sourcing"
+
+# ---------------------------------------------------------------------------
+# Fusion prototype sweeps (prototype_v1_fusion.py)
+# ---------------------------------------------------------------------------
+# provider pins to a single backend so seed is honoured and
+# cross-provider floating-point variance is eliminated.
+# Alibaba supports seed on deepseek-v3.2; DeepSeek native does not.
+
+[sweeps.fusion]
+mode = "compare"
+format = "both"
+model = "deepseek/deepseek-v3.2"
+corpus = "data/rag_corpus"
+reference = "data/reference/vietnam_thermal_v1.csv"
+output = "derived/fusion_proto"
+seed = 42
+provider = "Alibaba"
+
+[sweeps.fusion_dev]
+mode = "compare"
+format = "md"
+model = "openai/gpt-4o-mini"
+corpus = "data/rag_corpus"
+reference = "data/reference/vietnam_thermal_v1.csv"
+output = "derived/fusion_proto_dev"
+seed = 42

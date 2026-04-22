@@ -151,10 +151,14 @@ def test_sweep_count(experiments):
         "rag",
         "decomposed",
         "verification",
+        "verification_multi",
+        "verification_poc",
         "sourced",
         "frontier",
         "frontier_scenarios",
         "frontier_skill",
+        "fusion",
+        "fusion_dev",
     }
     actual = set(experiments["sweeps"].keys())
     missing = core - actual
@@ -165,8 +169,9 @@ def test_sweep_count(experiments):
 
 def test_standard_sweep_fields(experiments):
     """Each standard sweep has required fields with valid types."""
+    fusion_sweeps = {n for n in experiments["sweeps"] if n.startswith("fusion")}
     for name, sweep in experiments["sweeps"].items():
-        if name.startswith("verification"):
+        if name.startswith("verification") or name in fusion_sweeps:
             continue
         missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fields: {missing}"

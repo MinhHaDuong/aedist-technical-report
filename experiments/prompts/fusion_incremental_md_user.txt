@@ -1,0 +1,14 @@
+Current inventory ({n_master} plants):
+{master_csv}
+
+New source document ({source_id}, authority tier {tier}, year {year}):
+{fragment_text}
+
+Instructions:
+- Add plants present in the new document but missing from the inventory.
+- Update existing records only if the new source has higher authority (tier) or is more recent within the same tier.
+- Do NOT remove plants from the inventory.
+- Return the complete updated CSV, same columns: name,fuel,capacity_mwe,status,province,cod
+- Format your response as a single CSV code block (```csv ... ```).
+
+Updated CSV:

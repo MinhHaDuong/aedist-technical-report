@@ -95,6 +95,19 @@ def main():
         help="Sampling temperature (default 0.0)",
     )
     parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        metavar="N",
+        help="RNG seed for reproducibility (passed to API; best-effort on most models)",
+    )
+    parser.add_argument(
+        "--provider",
+        default=None,
+        metavar="NAME",
+        help="Pin OpenRouter provider, e.g. 'DeepSeek'. Eliminates cross-provider variance.",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
@@ -219,6 +232,8 @@ def main():
                     api_kwargs = build_api_kwargs(
                         model,
                         temperature=args.temperature,
+                        seed=args.seed,
+                        provider_order=[args.provider] if args.provider else None,
                     )
                     result = query_single_turn(client, api_model_id, messages, **api_kwargs)
                 usage = result.get("usage") or {}

@@ -1,0 +1,13 @@
+Provide a consolidated table of all thermal power plants in Vietnam (one row per plant, deduplicated). Use the most recent and authoritative value when sources disagree.
+
+Return a single CSV code block with exactly these columns:
+  name,fuel,capacity_mwe,status,province,cod
+
+Column values:
+- fuel: coal | gas | imported_lng | oil | unknown
+- status: operational | constructing | planned | proposed | retired | cancelled | unknown
+- capacity_mwe: numeric MWe, no unit; blank if unknown
+- cod: year or YYYY-MM-DD; blank if unknown
+- province: Vietnamese province; blank if unknown
+
+CSV:
