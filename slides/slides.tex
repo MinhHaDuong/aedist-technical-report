@@ -22,10 +22,10 @@
 \definecolor{lowf1}{HTML}{E8505B}
 
 \title{Beyond RAG}
-\subtitle{Stateful-Agentic Architectures for Reliable Economic Statistics}
+\subtitle{Architectures à états agentiques pour des statistiques économiques fiables}
 \author{Minh Ha-Duong\\CIRED -- CNRS}
 \institute{CIRED -- CNRS}
-\date{Econom'IA 2026 --- Thema, Cergy --- 27 May 2026}
+\date{Econom'IA 2026 --- Thema, Cergy --- 27 mai 2026}
 
 \begin{document}
 
@@ -35,109 +35,107 @@
 \end{frame}
 
 % ===================================================================
-\section{Problem}
+\section{Problème}
 
 % -------------------------------------------------------------------
-\begin{frame}{The gap}
+\begin{frame}{Le fossé}
 \begin{columns}[T]
 \column{0.55\textwidth}
-\textbf{Energy transition models need plant-level data.}
+\textbf{Les modèles de transition énergétique ont besoin de données par centrale.}
 
-\medskip
-Capacity expansion models, grid simulations, emissions inventories
---- all require structured tables of power plants with fuel, status,
-capacity, and location.
+\smallskip
+Modèles d'expansion, simulations de réseau, inventaires d'émissions
+--- tous nécessitent des tableaux de centrales électriques avec
+combustible, statut, capacité, localisation.
 
-\medskip
-In countries with weak statistical offices, these datasets are
-compiled manually by expert teams. This is slow, expensive, and
-doesn't scale.
+\smallskip
+Dans les pays à offices statistiques faibles, ces données sont
+compilées manuellement par des experts. Lent, coûteux, pas scalable.
 
-\medskip
-\textbf{Can AI produce research-quality datasets?}
+\smallskip
+\textbf{L'IA peut-elle produire des données de qualité recherche~?}
 
-\medskip
-We pilot this question on one task --- Vietnamese thermal plants ---
-to find out which \emph{methods} work, before scaling to more
-countries and sectors.
+\smallskip
+Nous pilotons cette question sur une tâche --- centrales thermiques vietnamiennes ---
+pour identifier quelles \emph{méthodes} fonctionnent, avant de passer à d'autres
+pays et secteurs.
 
 \column{0.42\textwidth}
-\textbf{Why it's a hard extraction task:}
-\begin{itemize}
-  \item \textbf{Multilingual} --- Vietnamese diacritics,
-        multiple transliterations per plant
-  \item \textbf{Temporal} --- plans change yearly,
-        plants retire or get cancelled
-  \item \textbf{Technical} --- MW\textsubscript{e} vs MW\textsubscript{th},
-        plant vs unit vs turbine
-  \item \textbf{Scattered} --- data lives across
-        PDPs, EVN reports, government decrees
+\textbf{Pourquoi c'est difficile~:}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item \textbf{Multilingue} --- diacritiques vietnamiens,
+        translittérations multiples
+  \item \textbf{Temporel} --- plans annuels,
+        centrales déclassées ou annulées
+  \item \textbf{Technique} --- MW\textsubscript{e} vs MW\textsubscript{th},
+        centrale vs unité vs turbine
+  \item \textbf{Dispersé} --- PDPs, rapports EVN,
+        décrets gouvernementaux
 \end{itemize}
 
-\medskip
-{\small We use Vietnam thermal power (163~plants) as the pilot task.}
+{\small Vietnam thermique (163~centrales) est la tâche pilote.}
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The obvious approach: ask the AI}
+\begin{frame}{L'approche évidente~: interroger l'IA}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{One prompt:} 77 plants, \$0.02, 30 seconds.\\
-With RAG + decomposition: 163/163, F1=89.8\%, \$0.06.
+\textbf{Un prompt~:} 77 centrales, \$0.02, 30 secondes.\\
+Avec RAG + décomposition~: 163/163, F1=89,8\%, \$0.06.
 
-\medskip
-\textbf{Go further:} reasoning + deep research + subagent flock\\
-$\to$ 77k chars, 162 rows, 46 source refs, \$0.79, 8 min.
+\smallskip
+\textbf{Aller plus loin~:} raisonnement + sous-agents\\
+$\to$ 77k car., 162 lignes, 46 réf., \$0.79, 8 min.
 
-\medskip
-14 models across 10 labs: impressive range of outputs,\\
-consistent pattern of uncertainty.
+\smallskip
+14 modèles, 10 laboratoires~: gamme impressionnante,\\
+schéma d'incertitude cohérent.
 
 \column{0.45\textwidth}
-\textbf{Both approaches share the same ceiling:}
+\textbf{Les deux approches partagent le même plafond~:}
 
-\medskip
-\begin{itemize}
-  \item Which plants are missing and why?
-  \item Are the capacities right?
-  \item 46 source refs --- none machine-checked
-  \item No way to update incrementally
-  \item Would it work for Indonesia?
-  \item Would you stake a policy recommendation on it?
+\smallskip
+\begin{itemize}\setlength\itemsep{1pt}
+  \item Quelles centrales manquent et pourquoi~?
+  \item Les capacités sont-elles exactes~?
+  \item 46 réf. --- aucune vérifiée par machine
+  \item Pas de mise à jour incrémentale
+  \item Fonctionnerait-ce pour l'Indonésie~?
+  \item Parieriez-vous une politique dessus~?
 \end{itemize}
 
-\medskip
-A plausible table in seconds.\\
-But can we \textbf{trust} it ---\\
-without cognitive surrender?
+\smallskip
+Un tableau plausible en quelques secondes.\\
+Mais peut-on lui \textbf{faire confiance} ---\\
+sans reddition cognitive~?
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The central question}
+\begin{frame}{La question centrale}
 \begin{center}
 \large
-A plausible table in seconds.\\[1em]
+Un tableau plausible en quelques secondes.\\[1em]
 
-\textbf{But can we trust it --- without cognitive surrender?}
+\textbf{Mais peut-on lui faire confiance --- sans reddition cognitive~?}
 
 \bigskip\bigskip
 \normalsize
-Research-quality data isn't correct data.\\
-It's data whose errors are \textbf{locatable}.
+Les données de qualité recherche ne sont pas des données correctes.\\
+Ce sont des données dont les erreurs sont \textbf{localisables}.
 
 \bigskip
-\textit{This talk: what breaks, what enables locatability,\\
-and where stateful-agentic architectures lead.}
+\textit{Cet exposé~: ce qui accroche, ce qui permet la localisabilité,\\
+et où mènent les architectures à états agentiques.}
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{What makes statistics research-quality?}
+\begin{frame}{Qu'est-ce qui rend des statistiques de qualité recherche~?}
 \begin{center}
-\textit{«~Research-quality data isn't correct data.\\
-It's data whose errors are \textbf{locatable}.~»}
+\textit{«~Les données de qualité recherche ne sont pas des données correctes.\\
+Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 \end{center}
 
 \bigskip
@@ -145,155 +143,139 @@ It's data whose errors are \textbf{locatable}.~»}
 \small
 \begin{tabular}{@{}llll@{}}
 \toprule
-\textbf{Criterion} & \textbf{Failure without it} & \textbf{Mechanism} & \textbf{Grounding} \\
+\textbf{Critère} & \textbf{Échec sans lui} & \textbf{Mécanisme} & \textbf{Réf.} \\
 \midrule
-\textbf{Grounding}    & Numbers float free of sources     & RAG wholesale          & van Fraassen \\
-\textbf{Auditability} & Claims untraceable to documents   & Source citations per cell & Popper \\
-\textbf{Freshness}    & Snapshot frozen at training cutoff & Incremental fusion    & — \\
-\textbf{Confidence}   & No way to flag uncertain cells    & 3-tier verification    & Intersubjectivity \\
+\textbf{Ancrage}       & Chiffres sans sources  & RAG massif              & van Fraassen \\
+\textbf{Auditabilité}  & Affirmations non traçables & Citations par cellule & Popper \\
+\textbf{Fraîcheur}     & Instantané figé à la coupure & Fusion incrémentale   & — \\
+\textbf{Fiabilité}     & Cellules incertaines non signalées & Vérif.\ 3 niveaux & Intersubjectivité \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \bigskip
 \begin{center}
-\small\textit{Each results slide shows one criterion lifted by one architectural choice.}
+\small\textit{Chaque diapositive de résultats montre un critère amélioré par un choix architectural.}
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Why not just verify the output?}
+\begin{frame}{Pourquoi ne pas simplement vérifier la sortie~?}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{Three options:}
+\textbf{Trois options~:}
 
-\medskip
+\smallskip
 \begin{description}
-  \item[Trust] Accept the table.\\
-        {\small (No provenance check.)}
-  \item[Verify] Check each row against cited sources.
-        Fix errors. Keep the table.\\
-        {\small (Fast: ${\sim}$3h for 162 rows.)}
-  \item[Re-extract] Build validated corpus,
-        extract independently, use LLM list
-        for coverage only.\\
-        {\small (Slower, but reusable.)}
+  \item[Confiance] Accepter le tableau.
+        {\small (Pas de vérification de provenance.)}
+  \item[Vérifier] Contrôler chaque ligne sur les sources.
+        Corriger. Conserver.
+        {\small (Rapide~: ${\sim}$3h pour 162 lignes.)}
+  \item[Re-extraire] Corpus validé, extraction indépendante,
+        LLM pour la couverture uniquement.
+        {\small (Plus lent, mais réutilisable.)}
 \end{description}
 
 \column{0.48\textwidth}
-\textbf{Verification is sufficient for one table.}
+\textbf{La vérification suffit pour un tableau.}
 
-\medskip
-But it has a ceiling:
-\begin{itemize}
-  \item Can only check what the LLM listed ---
-        cannot find the \textbf{86 missing plants}
-  \item Cannot update when PDP8 is revised
-  \item Does not transfer to the next country
-  \item Produces a verified table,
-        not a reusable process
+\smallskip
+Plafond~:
+\begin{itemize}\setlength\itemsep{1pt}
+  \item Ne peut trouver les \textbf{86 centrales manquantes}
+  \item Pas de mise à jour si PDP8 est révisé
+  \item Ne se transfère pas au pays suivant
+  \item Tableau vérifié, pas un processus réutilisable
 \end{itemize}
 
-\medskip
-\textbf{Post-hoc LLM verification fails.}\\
-Multi-agent panel (3 models, 3 runs):\\
-\textbf{0--10\%} inter-verifier agreement.\\
-{\scriptsize The 0--4 rubric asks models to recall citations from parametric knowledge. Opinions, not provenance.}
+\smallskip
+\textbf{Vérification LLM post-hoc~: 0--10\%} d'accord.\\
+{\scriptsize (Barème 0--4~: les modèles rappellent des citations depuis leur connaissance paramétrique. Des opinions, pas de la provenance.)}
 
-\medskip
-For one dataset, verify manually.\\
-For 60 campaigns, \textbf{front-load the justification}.
+\smallskip
+Pour 60 campagnes~: \textbf{justifier en amont}.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{From extraction to information fusion}
+\begin{frame}{De l'extraction à la fusion d'information}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Reframe the problem.}
+RAG traite l'extraction comme \textit{document $\to$ tableau} en une passe.
 
-\medskip
-RAG treats extraction as\\
-\textit{document $\to$ table} in one shot.
+\smallskip
+Le vrai problème est la \textbf{fusion}~: fragments divers accumulés dans un tableau
+via un processus contrôlé, inspectable.
 
-\medskip
-The real problem is \textbf{fusion}: diverse information fragments,
-accumulated into a statistical table through a controlled,
-inspectable process.
-
-\medskip
-\textbf{Three fragment types:}
-\begin{itemize}
-  \item \textbf{Serial} (tables: PDP annexes, EVN reports) ---
-        schema align + record linkage; defines the skeleton
-  \item \textbf{Multi-scalar} (prose lists) ---
-        entity existence check; confirms or adds rows
-  \item \textbf{Scalar} (isolated facts) ---
-        attribute update on matched entity; fills cells
+\smallskip
+\textbf{Trois types de fragments~:}
+\begin{itemize}\setlength\itemsep{0pt}
+  \item \textbf{Sériels} (tableaux~: annexes PDP, EVN) ---
+        alignement de schéma + liaison d'enregistrements
+  \item \textbf{Multi-scalaires} (listes prose) ---
+        vérification d'existence~; confirme/ajoute des lignes
+  \item \textbf{Scalaires} (faits isolés) ---
+        mise à jour d'attribut~; remplit les cellules
 \end{itemize}
 
-\medskip
-{\small v0 scope: serial (tables) only. $\sim$18 tables for Vietnam alone.}
+{\small Périmètre v0~: sériels uniquement. $\sim$18 tableaux pour le Vietnam.}
 
 \column{0.44\textwidth}
-\textbf{The fusion primitive:}
+\textbf{La primitive de fusion~:}
 
-\medskip
+\smallskip
 \begin{center}
 $\mathrm{master} + \mathrm{fragment} \longrightarrow \mathrm{master}'$
 \end{center}
 
-\medskip
-One source at a time. Never\\
-all fragments in one shot.
+Une source à la fois. Jamais tous les fragments en une passe.
 
-\medskip
-\textbf{Consequences:}
-\begin{itemize}
-  \item Every step has an inspectable diff
-  \item Cost scales with $N$, not $N\!\times\!S$
-  \item Auditable by construction
-  \item Failure is localized to one step
+\smallskip
+\textbf{Conséquences~:}
+\begin{itemize}\setlength\itemsep{0pt}
+  \item Chaque étape a un diff inspectable
+  \item Coût en $N$, pas en $N\!\times\!S$
+  \item Auditable par construction
+  \item L'échec est localisé à une étape
 \end{itemize}
 
-\medskip
-This is the \textbf{stateful} in\\
-``stateful-agentic.''
+C'est le \textbf{à états} dans «~à états agentiques.~»
 \end{columns}
 
-\medskip
+\smallskip
 \centering\small
-Separating extraction from fusion earns reproducibility:
-fusion can be deterministic even when extraction isn't.
+Séparer l'extraction de la fusion garantit la reproductibilité~:
+la fusion peut être déterministe même quand l'extraction ne l'est pas.
 \end{frame}
 
 % ===================================================================
-\section{Grounding}
+\section{Ancrage documentaire}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{Pilot design and baseline: model choice alone is insufficient}
+\begin{frame}[fragile]{Conception du pilote et ligne de base~: le choix du modèle seul est insuffisant}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Task:} list all Vietnamese thermal power plants with fuel, status, province, capacity (CSV).
+\textbf{Tâche~:} lister toutes les centrales thermiques vietnamiennes avec combustible, statut, province, capacité (CSV).
 
 \medskip
-\textbf{Reference:} 163 plants, expert-validated from PDP7, PDP8, EVN reports.
+\textbf{Référence~:} 163 centrales, validées par des experts depuis PDP7, PDP8, rapports EVN.
 
 \medskip
-\textbf{Design:}
+\textbf{Conception~:}
 \begin{description}
-  \item[Hypothesis] A \textbf{method} = model + prompt +
-        information regime + aggregation.
-        The model is one factor among many.
-  \item[Scale] 37 models, \$0.82 total
-  \item[Key conditions] Documentation $\times$ Conversation $\times$
-        Decomposition $\times$ Aggregation $\times$ Model (37)
+  \item[Hypothèse] Une \textbf{méthode} = modèle + prompt +
+        régime d'information + agrégation.
+        Le modèle est un facteur parmi d'autres.
+  \item[Échelle] 37 modèles, \$0.82 au total
+  \item[Conditions clés] Documentation $\times$ Conversation $\times$
+        Décomposition $\times$ Agrégation $\times$ Modèle (37)
 \end{description}
 
 \medskip
-{\small \textbf{Key metric:} plants matched out of 163\\
-(precision $>$99\% across all models --- the problem\\
-is \textbf{coverage}, not hallucination)}
+{\small \textbf{Métrique clé~:} centrales trouvées sur 163\\
+(précision $>$99\% sur tous les modèles --- le problème\\
+est la \textbf{couverture}, pas l'hallucination)}
 
 \column{0.45\textwidth}
 \pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
@@ -315,38 +297,38 @@ is \textbf{coverage}, not hallucination)}
 ]
 \addplot[fill=matched!70]
     table [x expr=\coordindex, y expr=\thisrow{f1}*163] {\censusdata};
-\addlegendentry{Matched}
+\addlegendentry{Trouvées}
 \addplot[fill=missed!50]
     table [x expr=\coordindex, y expr=163-\thisrow{f1}*163] {\censusdata};
-\addlegendentry{Missed}
+\addlegendentry{Manquantes}
 \end{axis}
 \end{tikzpicture}
 
 \smallskip
-{\small Single-shot, no documentation. Range: 4--160 plants.\\
-\textbf{Model choice alone does not solve the problem.}}
+{\small Passe unique, sans documentation. Plage~: 4--160 centrales.\\
+\textbf{Le choix du modèle seul ne résout pas le problème.}}
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Documentation regime: RAG lifts the floor}
-\textbf{Same 5 models} tested under 3 method conditions $\times$ 3 runs \hfill Total cost: \$0.89
+\begin{frame}{Régime de documentation~: le RAG élève le plancher}
+\textbf{Mêmes 5 modèles} testés dans 3 conditions méthodologiques $\times$ 3 runs \hfill Coût total~: \$0.89
 
 \medskip
 \begin{columns}[T]
 \column{0.42\textwidth}
-\textbf{Documentation levels:}
+\textbf{Niveaux de documentation~:}
 \begin{enumerate}
-  \item \textbf{None} -- single-shot, parametric knowledge only
-  \item \textbf{Multi-turn} -- 3 conversational follow-ups
-  \item \textbf{RAG wholesale} -- 18 curated source tables (155 kB) as system context
+  \item \textbf{Aucun} -- passe unique, connaissance paramétrique uniquement
+  \item \textbf{Multi-tours} -- 3 relances conversationnelles
+  \item \textbf{RAG massif} -- 18 tableaux sources sélectionnés (155 ko) comme contexte système
 \end{enumerate}
 
 \medskip
-{\small RAG corpus: manually verified tables from PDP7, PDP7A, PDP8, EVN reports, Study E542}
+{\small Corpus RAG~: tableaux vérifiés manuellement depuis PDP7, PDP7A, PDP8, rapports EVN, étude E542}
 
 \medskip
-{\scriptsize \textit{Context-window limit: sub-querying by fuel type and merging resolves output truncation ($+$15--35~pp for truncation-prone models).}}
+{\scriptsize \textit{Limite de fenêtre de contexte~: la sous-interrogation par type de combustible et la fusion résolvent la troncature ($+$15--35~pp pour les modèles sujets à la troncature).}}
 
 \column{0.56\textwidth}
 \pgfplotstableread[col sep=comma]{inputs/generated/regimes.csv}\regimedata
@@ -371,7 +353,7 @@ is \textbf{coverage}, not hallucination)}
 \addlegendentry{Direct}
 \addplot[fill=halluc!70]
     table [x expr=\coordindex, y expr=\thisrow{multiturn}*163] {\regimedata};
-\addlegendentry{Multi-turn}
+\addlegendentry{Multi-tours}
 \addplot[fill=goodf1!90]
     table [x expr=\coordindex, y expr=\thisrow{rag}*163] {\regimedata};
 \addlegendentry{RAG}
@@ -381,15 +363,15 @@ is \textbf{coverage}, not hallucination)}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Documentation: cost-performance inversion}
-\textbf{Corpus:} 18 manually verified Markdown tables (155 kB) from official sources
+\begin{frame}{Documentation~: inversion coût-performance}
+\textbf{Corpus~:} 18 tableaux Markdown vérifiés manuellement (155 ko) depuis des sources officielles
 
 \medskip
 \begin{columns}[T]
 \column{0.55\textwidth}
 \begin{tabular}{lrr}
 \toprule
-\textbf{Model} & \textbf{Direct} & \textbf{+ RAG} \\
+\textbf{Modèle} & \textbf{Direct} & \textbf{+ RAG} \\
 \midrule
 Mistral Small 4 (\$0.15/M)  &  83 & \textbf{141} \\
 GPT-5.4 (\$2.50/M)          & 107 & \textbf{126} \\
@@ -400,73 +382,73 @@ DeepSeek V3.2 (\$0.26/M)    &  63 & \textbf{98} \\
 \end{tabular}
 
 \medskip
-\small Median plants matched (out of 163), 3 runs each
+\small Médiane des centrales trouvées (sur 163), 3 runs chacun
 
 \column{0.42\textwidth}
-\textbf{Corpus documents:}
+\textbf{Documents du corpus~:}
 \begin{itemize}
-  \item PDP7, PDP7A, PDP8 annexes
-  \item EVN Annual Reports 2010--2018
-  \item Study E542 tables
-  \item Reports 32 and 58
+  \item Annexes PDP7, PDP7A, PDP8
+  \item Rapports annuels EVN 2010--2018
+  \item Tableaux de l'étude E542
+  \item Rapports 32 et 58
 \end{itemize}
 
 \medskip
-\textbf{Key finding:}\\
-With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) dominates model choice.
+\textbf{Résultat clé~:}\\
+Avec des documents, un modèle bon marché surpasse un modèle coûteux. La \textbf{méthode} (RAG) domine le choix du modèle.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Cost--quality Pareto: methods, not models}
+\begin{frame}{Pareto coût-qualité~: les méthodes, pas les modèles}
 \begin{center}
 \pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
 \begin{tikzpicture}
 \begin{axis}[
     width=0.85\textwidth,
     height=6cm,
-    xlabel={Cost per query (USD)},
-    ylabel={F1 score},
+    xlabel={Coût par requête (USD)},
+    ylabel={Score F1},
     xmin=-0.005, xmax=0.30,
     ymin=0, ymax=1.0,
     grid=major,
     legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
 ]
-% Cloud models
+% Modèles cloud
 \addplot[only marks, mark=*, mark size=3pt, color=matched]
     table [x=cost_usd, y=f1,
            restrict expr to domain={\thisrow{local}}{0:0}] {\paretodata};
-\addlegendentry{Cloud models}
-% Local models --- zero cost
+\addlegendentry{Modèles cloud}
+% Modèles locaux --- coût nul
 \addplot[only marks, mark=triangle*, mark size=4pt, color=matched!50!black]
     table [x=cost_usd, y=f1,
            restrict expr to domain={\thisrow{local}}{1:1}] {\paretodata};
-\addlegendentry{Local models}
+\addlegendentry{Modèles locaux}
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
 \smallskip
-{\small Best Pareto point: DeepSeek V3.2 decomposed+RAG --- mean F1=89.8\% [85.8--95.6\%] at \$0.06.\\
-{\scriptsize \textit{Pitfall: union-of-runs exploits variance to inflate recall --- irreproducible at $t{=}0$, not a valid method.}}}
+{\small Meilleur point Pareto~: DeepSeek V3.2 décomposé+RAG --- F1 moyen=89,8\% [85,8--95,6\%] à \$0.06.\\
+{\scriptsize \textit{Piège~: l'union de runs exploite la variance pour gonfler le rappel --- irréproductible à $t{=}0$, méthode non valide.}}}
 \end{frame}
 
 % ===================================================================
-\section{Auditability}
+\section{Auditabilité}
 
 % -------------------------------------------------------------------
-\begin{frame}{Epistemic accountability: LLM vs pipeline}
+\begin{frame}{Responsabilité épistémique~: LLM vs pipeline}
 \begin{center}
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Property} & \textbf{LLM report} & \textbf{Fusion pipeline} \\
+\textbf{Propriété} & \textbf{Rapport LLM} & \textbf{Pipeline de fusion} \\
 \midrule
-Provenance     & ``Claude said so'' & cell $\to$ source ID $\to$ document \\
-Update         & regenerate all      & append a source \\
-Audit          & opaque              & step log + sidecar + registry \\
-Falsifiable    & no                  & check source against claim \\
-Incremental    & no                  & asset by asset, source by source \\
-Stateful       & no                  & registry + memory persist \\
+Provenance     & «~Claude l'a dit~» & cellule $\to$ ID source $\to$ document \\
+Mise à jour    & régénérer tout      & ajouter une source \\
+Audit          & opaque              & journal d'étapes + sidecar + registre \\
+Falsifiable    & non                 & vérifier la source contre l'affirmation \\
+Incrémental    & non                 & actif par actif, source par source \\
+À états        & non                 & registre + mémoire persistants \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -474,63 +456,68 @@ Stateful       & no                  & registry + memory persist \\
 \medskip
 \begin{columns}[T]
 \column{0.48\textwidth}
-The LLM is a \textbf{compressed index}.\\
-Use it for \emph{scope discovery},\\
-not as ground truth.
+Le LLM est un \textbf{index compressé}.\\
+Utiliser pour la \emph{découverte de périmètre},\\
+pas comme vérité terrain.
 
 \column{0.48\textwidth}
-\textbf{Sourced extraction (3 Opus runs):}\\
-$\approx$100\% of plants cite a corpus source (median 100\%, min 99\%).\\
-$\approx$98\% of citations trace to a corpus file (median 98\%).\\
-\textbf{$\approx$80\% end-to-end traceable} (citation $\to$ file $\to$ plant name; median 79\%, $n$=3 runs).
+\textbf{Extraction sourcée (3 runs Opus)~:}\\
+$\approx$100\% des centrales citent une source corpus (médiane 100\%, min 99\%).\\
+$\approx$98\% des citations tracent vers un fichier corpus (médiane 98\%).\\
+\textbf{$\approx$80\% traçables de bout en bout} (citation $\to$ fichier $\to$ nom de centrale~; médiane 79\%, $n$=3 runs).
 
 \medskip
-{\small Decomposed RAG (best F1=89.8\%):
-\textbf{0\% traceable} --- no citations emitted.\\
-Coverage vs.\ traceability: the open trade-off.}
+{\small RAG décomposé (meilleur F1=89,8\%)~:
+\textbf{0\% traçable} --- aucune citation émise.\\
+Couverture vs.\ traçabilité~: le compromis ouvert.}
 \end{columns}
 \end{frame}
 
 % ===================================================================
-\section{Freshness}
+\section{Fraîcheur}
 
 % -------------------------------------------------------------------
-\begin{frame}{Incremental fusion: update without regenerating}
-\begin{center}
-\large\textit{[Résultats prototype\_v1 — à compléter après campagne de runs]}
-\end{center}
-
-\bigskip
-\textbf{Primitive:} $\mathrm{master} + \mathrm{doc}_i \longrightarrow \mathrm{master}'$, 18 iterations (chronological order).
+\begin{frame}{Fusion incrémentale~: mise à jour sans régénération}
+\textbf{Primitive~:} $\mathrm{master} + \mathrm{doc}_i \longrightarrow \mathrm{master}'$, 18 itérations (ordre chronologique).
 
 \medskip
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Ce que cela apporte~:}
 \begin{itemize}
-  \item Each document added incrementally --- no full rerun
-  \item Every update is a diff: locatable, reversible
-  \item Cost scales with $N$ sources, not $N \times S$
+  \item Chaque document ajouté de façon incrémentale --- pas de re-exécution complète
+  \item Chaque mise à jour est un diff~: localisable, réversible
+  \item Le coût croît en $N$ sources, pas en $N \times S$
 \end{itemize}
 
-\medskip
+\column{0.44\textwidth}
 \begin{center}
-{\small\textit{[Figure: F1 vs.\ documents added --- monotone non-regression verified]}}
+\vspace{1em}
+{\large\textit{Résultats en cours}}\\[0.5em]
+{\small (campagne de runs ticket~0101)}\\[1em]
+{\small Figure~: F1 en fonction du nombre de documents ajoutés --- non-régression monotone attendue}
 \end{center}
+\end{columns}
+
+\medskip
+{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
 % ===================================================================
-\section{Confidence}
+\section{Fiabilité}
 
 % -------------------------------------------------------------------
-\begin{frame}{Verification at scale: three tiers}
+\begin{frame}{Vérification à l'échelle~: trois niveaux}
 \begin{center}
 \small
 \begin{tabular}{@{}rl@{}}
 \toprule
-\textbf{Tier} & \textbf{Mechanism} \\
+\textbf{Niveau} & \textbf{Mécanisme} \\
 \midrule
-0 & Diff audit: only changed cells need verification \\[2pt]
-1 & String match (deterministic) cell $\leftrightarrow$ source table \\[2pt]
-2 & LLM adjudication on tier-1 misses $\to$ candidate rule \\[2pt]
-3 & HITL ratification $\to$ rule enters memory (audit trail) \\
+Pré-filtre & Audit des diffs~: seules les cellules modifiées sont vérifiées \\[2pt]
+1 & Correspondance exacte (déterministe) cellule $\leftrightarrow$ table source \\[2pt]
+2 & Arbitrage LLM sur les échecs du niveau~1 $\to$ règle candidate \\[2pt]
+3 & Ratification HITL $\to$ règle en mémoire (piste d'audit) \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -538,42 +525,42 @@ Coverage vs.\ traceability: the open trade-off.}
 \medskip
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{What this buys:}
+\textbf{Ce que cela apporte~:}
 \begin{itemize}
-  \item Determinism first; LLM only as fallback
-  \item Human only ratifies \emph{once} per rule
-  \item Memory makes run $N+1$ cheaper than run $N$
-  \item Escalation rate is itself a signal
+  \item Déterminisme en premier~; LLM uniquement en recours
+  \item L'humain ne ratifie qu'\emph{une fois} par règle
+  \item La mémoire rend le run $N+1$ moins coûteux que le run $N$
+  \item Le taux d'escalade est lui-même un signal
 \end{itemize}
 
 \column{0.48\textwidth}
-\textbf{Metrics:}
+\textbf{Métriques~:}
 \begin{itemize}
-  \item Escalation rate per fusion step
-  \item Rule count growth (per taxonomy)
-  \item Ratification acceptance rate
+  \item Taux d'escalade par étape de fusion
+  \item Croissance du nombre de règles (par taxonomie)
+  \item Taux d'acceptation des ratifications
 \end{itemize}
 
 \medskip
-{\small Dead-end avoided: multi-agent panels (ticket 0059). Here the human gates every rule once, not every cell every time.}
+{\small Impasse évitée~: jurys multi-agents (ticket 0059). Ici l'humain valide chaque règle une fois, pas chaque cellule à chaque fois.}
 \end{columns}
 
 \medskip
-{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
+{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Audit-verified HITL memory: four rule categories}
+\begin{frame}{Mémoire HITL auditée~: quatre catégories de règles}
 \begin{center}
 \small
 \begin{tabular}{@{}llll@{}}
 \toprule
-\textbf{Category} & \textbf{Encodes} & \textbf{Example} & \textbf{Fires at} \\
+\textbf{Catégorie} & \textbf{Encode} & \textbf{Exemple} & \textbf{Déclenché} \\
 \midrule
-Alias & entity identity & \texttt{``VT1'' $\equiv$ ``Vinh Tan 1''} & after string-match fail \\[2pt]
-Unit/format & value shape & \texttt{``1,200 MW'' $\to$ 1200} & before string match \\[2pt]
-Source-local term & prose vocab & \texttt{``Nhóm'' (PDP8) = ``Group''} & inside LLM adjudication \\[2pt]
-Attribute synonym & column $\to$ schema & \texttt{``Công suất'' $\to$ capacity\_mw} & at table load \\
+Alias & identité d'entité & \texttt{«~VT1~» $\equiv$ «~Vinh Tan 1~»} & après échec correspondance \\[2pt]
+Unité/format & forme de valeur & \texttt{«~1~200 MW~» $\to$ 1200} & avant correspondance \\[2pt]
+Terme source-local & vocab. prose & \texttt{«~Nhóm~» (PDP8) = «~Group~»} & dans l'arbitrage LLM \\[2pt]
+Synonyme d'attribut & colonne $\to$ schéma & \texttt{«~Công suất~» $\to$ capacity\_mw} & au chargement du tableau \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -581,187 +568,187 @@ Attribute synonym & column $\to$ schema & \texttt{``Công suất'' $\to$ capacit
 \medskip
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{Every rule carries an audit trail:}
+\textbf{Chaque règle porte une piste d'audit~:}
 \begin{itemize}
-  \item LLM suggestion that proposed it
-  \item Ratifying human
-  \item Timestamp
-  \item Evidence cell
-  \item Second-witness check (sampled)
+  \item Suggestion LLM qui l'a proposée
+  \item Humain ratificateur
+  \item Horodatage
+  \item Cellule d'évidence
+  \item Vérification second témoin (échantillon)
 \end{itemize}
 
 \column{0.48\textwidth}
-\textbf{Rules are annotations,\\not mechanical substitutions.}
+\textbf{Les règles sont des annotations,\\pas des substitutions mécaniques.}
 
 \medskip
-Each rule carries rationale,\\
-edge cases, and evidence ---\\
-a field notebook for the\\
-next statistician, not a\\
-glorified LLM sed.
+Chaque règle porte un raisonnement,\\
+des cas limites et des preuves ---\\
+un carnet de terrain pour le\\
+prochain statisticien, pas un\\
+sed LLM glorifié.
 
 \medskip
-{\small Memory grows monotonically, committed to git, diff-reviewable.\\
-The system is smarter at run $N+1$ than at run $N$.}
+{\small La mémoire croît de façon monotone, committée sous git, révisable via diff.\\
+Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \end{columns}
 
 \medskip
-{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
+{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{AEDIST v0: agents anchored on data-model concerns}
+\begin{frame}{AEDIST v0~: agents ancrés sur les préoccupations du modèle de données}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{Four information layers:}
+\textbf{Quatre couches d'information~:}
 \begin{enumerate}
-  \item \textbf{Document store} --- cached raw files
-  \item \textbf{Validated corpus} --- Zotero-indexed;\\
-        \emph{source registry} lives here
-  \item \textbf{Master + sidecar} --- fusion output\\
+  \item \textbf{Dépôt de documents} --- fichiers bruts en cache
+  \item \textbf{Corpus validé} --- indexé Zotero~;\\
+        \emph{registre des sources} réside ici
+  \item \textbf{Master + sidecar} --- sortie de fusion\\
         {\scriptsize master.csv + master\_provenance.csv + fusion\_log.csv}
-  \item \textbf{Memory} --- per-taxonomy rule store\\
+  \item \textbf{Mémoire} --- dépôt de règles par taxonomie\\
         {\scriptsize aliases / units / source-terms / attribute-synonyms + audit.jsonl}
 \end{enumerate}
 
 \column{0.48\textwidth}
-\textbf{Agents, each owns one concern:}
+\textbf{Agents, chacun responsable d'une préoccupation~:}
 \begin{description}
-  \item[Watcher] source discovery
-  \item[Curator] HITL source triage\\
-        $\to$ writes registry entries
-  \item[Analyst] runs the fusion primitive\\
-        (chronological order with authority tie-breaker)\\
-        $\to$ mutates master + sidecar\\
-        $\to$ appends to fusion\_log
-  \item[Auditor] runs 3-tier verification\\
-        $\to$ proposes + ratifies rules
+  \item[Watcher] découverte de sources
+  \item[Curator] triage de sources HITL\\
+        $\to$ écrit les entrées du registre
+  \item[Analyst] exécute la primitive de fusion\\
+        (ordre chronologique avec arbitrage d'autorité)\\
+        $\to$ mute master + sidecar\\
+        $\to$ ajoute à fusion\_log
+  \item[Auditor] exécute la vérification 3 niveaux\\
+        $\to$ propose + ratifie des règles
 \end{description}
 \end{columns}
 
 \medskip
 \centering
-\textbf{State is persistent.} Registry, sidecar, log, memory: all git-tracked.\\
-{\small Next run starts where this one left off. That's the path to 60 campaigns.}
+\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous trackés sous git.\\
+{\small Le run suivant reprend là où celui-ci s'est arrêté. C'est le chemin vers 60 campagnes.}
 
 \medskip
-{\small\textit{Design --- v0 implementation in progress; empirical results in Phases 2+3 (post-talk).}}
+{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
 % ===================================================================
-\section{Perspective}
+\section{Perspectives}
 
 % -------------------------------------------------------------------
-\begin{frame}{What we learned about methods}
+\begin{frame}{Ce que nous avons appris sur les méthodes}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{Method conditions, ranked by impact:}
+\textbf{Conditions méthodologiques, classées par impact~:}
 \begin{enumerate}
-  \item \textbf{Documentation} (RAG): +18 to +43\,pp
-  \item \textbf{Decomposition}: 60\% $\to$ 99\%
-  \item \textbf{Aggregation} (union vote): +35\,pp at zero cost
-  \item \textbf{Conversation} (multi-turn): marginal gain over single-shot
-  \item Model choice alone: \MinBaselinePlants--\MaxBaselinePlants{} plants
+  \item \textbf{Documentation} (RAG)~: +18 à +43\,pp
+  \item \textbf{Décomposition}~: 60\% $\to$ 99\%
+  \item \textbf{Agrégation} (vote union)~: +35\,pp à coût nul
+  \item \textbf{Conversation} (multi-tours)~: gain marginal vs.\ passe unique
+  \item Choix du modèle seul~: \MinBaselinePlants--\MaxBaselinePlants{} centrales
 \end{enumerate}
 
 \medskip
-\textbf{Insight:}\\
-Which method you use matters more than which model you pick.
+\textbf{Leçon~:}\\
+La méthode utilisée importe plus que le modèle choisi.
 
 \column{0.48\textwidth}
-\textbf{Key numbers:}
+\textbf{Chiffres clés~:}
 \begin{itemize}
-  \item \NumModelsTested{} models, 6 condition axes, \$0.82
-  \item Best baseline: 125/163 (model only)
-  \item Best RAG: 141/163 (cheap model + docs)
-  \item \textbf{Best overall: 163/163, mean F1=89.8\% [85.8--95.6\%], \$0.06}
+  \item \NumModelsTested{} modèles, 6 axes de conditions, \$0.82
+  \item Meilleure ligne de base~: 125/163 (modèle seul)
+  \item Meilleur RAG~: 141/163 (modèle bon marché + docs)
+  \item \textbf{Meilleur global~: 163/163, F1 moyen=89,8\% [85,8--95,6\%], \$0.06}
 \end{itemize}
 
 \medskip
-\textbf{Bottom line:}\\
-An off-the-shelf pipeline with the right \textbf{method conditions} recovers 89.8\% [85.8--95.6\%] of an expert inventory for \$0.06.
+\textbf{Conclusion~:}\\
+Un pipeline standard avec les bonnes \textbf{conditions méthodologiques} retrouve 89,8\% [85,8--95,6\%] d'un inventaire expert pour \$0.06.
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{What this pilot measured --- and what it didn't}
+\begin{frame}{Ce que ce pilote a mesuré --- et ce qu'il n'a pas mesuré}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{What the pilot establishes:}
+\textbf{Ce que le pilote établit~:}
 \begin{itemize}
-  \item Method conditions (RAG, decomposition, aggregation)
-        matter more than model choice
-  \item Off-the-shelf pipeline recovers 89.8\% [85.8--95.6\%] of an expert
-        inventory for \$0.06
-  \item Feasibility of automated evaluation via
-        fuzzy reconciliation
+  \item Les conditions méthodologiques (RAG, décomposition, agrégation)
+        importent plus que le choix du modèle
+  \item Un pipeline standard retrouve 89,8\% [85,8--95,6\%] d'un inventaire
+        expert pour \$0.06
+  \item Faisabilité de l'évaluation automatisée via
+        la réconciliation floue
 \end{itemize}
 
 \column{0.48\textwidth}
-\textbf{What it cannot distinguish:}
+\textbf{Ce qu'il ne peut pas distinguer~:}
 \begin{itemize}
-  \item \textbf{Extraction vs.\ recall} --- models trained on
-        PDP7/PDP8 may be reciting, not extracting
-  \item \textbf{Task-specific vs.\ general} --- one reference
-        (N=163), one country, one sector
-  \item \textbf{Signal vs.\ noise} --- 3 runs, point F1,
-        no confidence intervals
-  \item \textbf{Method interactions} --- axes tested
-        separately, never composed
-  \item \textbf{Temperature} --- 211/280 runs used provider
-        defaults ($t{\approx}1$); $t{=}0$ enforced only for
-        later sweeps (PR\,\#244)
-  \item \textbf{Prompt structure} --- sourcing module results
-        were model-specific and mixed (+3.6\,pp / $-$30.4\,pp);
-        full ablation deferred
+  \item \textbf{Extraction vs.\ rappel} --- les modèles entraînés sur
+        PDP7/PDP8 peuvent réciter, pas extraire
+  \item \textbf{Spécifique vs.\ général} --- une référence
+        (N=163), un pays, un secteur
+  \item \textbf{Signal vs.\ bruit} --- 3 runs, F1 ponctuel,
+        pas d'intervalles de confiance
+  \item \textbf{Interactions de méthodes} --- axes testés
+        séparément, jamais composés
+  \item \textbf{Température} --- 211/280 runs ont utilisé les
+        défauts fournisseur ($t{\approx}1$)~; $t{=}0$ imposé
+        seulement pour les campagnes ultérieures (PR\,\#244)
+  \item \textbf{Structure du prompt} --- les résultats du module de sourçage
+        étaient spécifiques au modèle et mixtes (+3,6\,pp / $-$30,4\,pp)~;
+        ablation complète différée
 \end{itemize}
 \end{columns}
 
 \medskip
 \centering\small
-These are not flaws --- they are \textbf{design requirements} for a production data pipeline.
+Ce ne sont pas des défauts --- ce sont des \textbf{exigences de conception} pour un pipeline de données en production.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Why a knowledge graph?}
-\textbf{v0 is relational.} Master + sidecar + registry are CSVs. This is sufficient
-for one country, one sector, one source chain.
+\begin{frame}{Pourquoi un graphe de connaissances~?}
+\textbf{v0 est relationnel.} Master + sidecar + registre sont des CSV. Cela suffit
+pour un pays, un secteur, une chaîne de sources.
 
 \medskip
-A \textbf{knowledge graph} becomes necessary at three boundaries:
+Un \textbf{graphe de connaissances} devient nécessaire à trois frontières~:
 
 \medskip
 \begin{description}
-  \item[Entity resolution at scale]
-        ``Vinh Tan 1'', ``VT1'', ``Vĩnh Tân 1'', ``Vinh Tan Unit 1'' are one plant.
-        v0 handles this with an alias rule store.
-        A KG handles it natively as identity edges --- across countries and languages.
+  \item[Résolution d'entités à l'échelle]
+        «~Vinh Tan 1~», «~VT1~», «~Vĩnh Tân 1~», «~Vinh Tan Unit 1~» sont une seule centrale.
+        v0 gère cela avec un dépôt de règles d'alias.
+        Un KG le gère nativement comme arêtes d'identité --- entre pays et langues.
 
-  \item[Multi-hop provenance]
-        A capacity figure sourced from PDP7, revised by PDP8, confirmed by EVN
-        is a \emph{path} in a graph. Forcing it into a flat sidecar loses the
-        structure needed for audit and defeasible reasoning.
+  \item[Provenance multi-sauts]
+        Un chiffre de capacité sourcé depuis PDP7, révisé par PDP8, confirmé par EVN
+        est un \emph{chemin} dans un graphe. Forcer cela dans un sidecar plat perd la
+        structure nécessaire à l'audit et au raisonnement défaisable.
 
-  \item[Cross-domain fusion]
-        Plants link to companies, permits, grid operators, emissions records.
-        ASEAN $\times$ 6 fuel types $\times$ permit data is a graph problem,
-        not a master-table extension.
+  \item[Fusion inter-domaines]
+        Les centrales sont liées aux entreprises, permis, opérateurs de réseau, bilans d'émissions.
+        ASEAN $\times$ 6 types de combustibles $\times$ données de permis est un problème de graphe,
+        pas une extension de master-table.
 \end{description}
 
 \medskip
 \centering\small
-\textbf{v0 → v1:} relational pipeline as the testbed.
-\textbf{v2+:} KG once entity resolution and cross-domain fusion are the bottleneck.
+\textbf{v0 → v1~:} pipeline relationnel comme banc d'essai.
+\textbf{v2+~:} KG une fois que la résolution d'entités et la fusion inter-domaines sont le goulot.
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{}
 \begin{center}
-\large\textbf{Thank you!}
+\large\textbf{Merci~!}
 
 \medskip
 \normalsize
-Code \& data: \texttt{github.com/minhhaduong/aedist-technical-report}
+Code \& données~: \texttt{github.com/minhhaduong/aedist-technical-report}
 \end{center}
 \end{frame}
 
