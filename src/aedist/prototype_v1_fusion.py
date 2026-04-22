@@ -367,11 +367,6 @@ def run_global(
 
 
 def _parse_csv_from_response(raw: str) -> list[Plant]:
-    """Extract a CSV from an LLM response and parse it into Plant objects.
-
-    Uses parse_and_canonicalize to normalize arbitrary header names
-    (e.g. "Generation Capacity (MWe)" → "capacity_mwe") before loading.
-    """
     import tempfile
 
     blocks = extract_fenced_blocks(raw)
@@ -514,8 +509,8 @@ def dicts_to_plants(dicts: list[dict]) -> list[Plant]:
     return plants
 
 
-def score_against_reference(plants: list[Plant], ref_path: Path) -> dict:
-    reference = load_plants_csv(ref_path)
+def score_against_reference(plants: list[Plant], ref_path: Path | list[Plant]) -> dict:
+    reference = ref_path if isinstance(ref_path, list) else load_plants_csv(ref_path)
     entries = reconcile(reference, plants)
     m = compute_metrics(entries)
     return {
@@ -780,13 +775,15 @@ def main(argv: list[str] | None = None) -> None:
     run_inc_md_cell = fmt in ("md", "both") and args.mode in ("incremental", "compare")
     run_inc_json_cell = fmt in ("json", "both") and args.mode in ("incremental", "compare")
 
+    ref_plants = load_plants_csv(args.reference) if args.reference else []
+
     if run_global_md_cell:
         label = "global×md  (≈ RAG oneshot)"
         print(f"\n[{label}]")
         plants = run_global_md(
             args.corpus, sequence, client, args.model, global_md_prompt, **api_kw
         )
-        scores = score_against_reference(plants, args.reference)
+        scores = score_against_reference(plants, ref_plants)
         cells["global×md"] = scores
         print(
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
@@ -804,7 +801,7 @@ def main(argv: list[str] | None = None) -> None:
             args.corpus, sequence, client, args.model, global_json_prompt, **api_kw
         )
         plants = dicts_to_plants(plants_raw)
-        scores = score_against_reference(plants, args.reference)
+        scores = score_against_reference(plants, ref_plants)
         cells["global×json"] = scores
         print(
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
@@ -819,7 +816,7 @@ def main(argv: list[str] | None = None) -> None:
         plants, diffs = run_incremental_direct(
             args.corpus, sequence, client, args.model, fuse_prompt, **api_kw
         )
-        scores = score_against_reference(plants, args.reference)
+        scores = score_against_reference(plants, ref_plants)
         cells["incremental×md"] = scores
         print(
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
@@ -837,7 +834,7 @@ def main(argv: list[str] | None = None) -> None:
             args.corpus, sequence, client, args.model, extract_prompt, **api_kw
         )
         plants = master_to_plants(master)
-        scores = score_against_reference(plants, args.reference)
+        scores = score_against_reference(plants, ref_plants)
         cells["incremental×json"] = scores
         print(
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
