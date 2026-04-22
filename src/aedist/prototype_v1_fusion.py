@@ -159,8 +159,8 @@ class MasterRecord:
             cap = None
         return Plant(
             name=self.name,
-            fuel=fuel,
-            status=status,
+            fuel=fuel if fuel is not None else FuelType.UNKNOWN,
+            status=status if status is not None else PlantStatus.UNKNOWN,
             capacity_mwe=cap,
             province=self.province.value if self.province else None,
         )

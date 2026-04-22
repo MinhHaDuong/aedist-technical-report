@@ -113,19 +113,14 @@ def test_sidecar_null_parity_violation():
 
 
 def test_existing_checks_delegated():
-    """Adapter + check_coherence catches unknown_fuel on master data.
+    """master_to_plants + check_coherence catches unknown_fuel on master data."""
+    spec = _spec_stub("SRC")
+    rec = MasterRecord(name="Mystery Plant")
+    rec.update_field("capacity_mwe", 500.0, spec)
+    # fuel deliberately left unset → master_to_plants produces FuelType.UNKNOWN
 
-    We build a Plant with FuelType.UNKNOWN directly (the same value
-    master_to_plants produces for unresolvable fuel strings), then verify
-    that check_coherence() fires the expected issue. The test confirms
-    that the script's delegation path works end-to-end without needing
-    a full adapter round-trip.
-    """
-    # Build a Plant with UNKNOWN fuel directly — this is what master_to_plants
-    # produces when a MasterRecord has no resolvable fuel.
-    plants = [Plant(name="Mystery Plant", fuel=FuelType.UNKNOWN, capacity_mwe=500.0)]
-
-    assert plants[0].fuel == FuelType.UNKNOWN, "precondition: fuel should be UNKNOWN"
+    plants = master_to_plants([rec])
+    assert plants[0].fuel == FuelType.UNKNOWN
 
     issues = check_coherence(plants)
     checks_fired = {i.check for i in issues}
