@@ -637,7 +637,17 @@ def _save_global_csv(plants_raw: list[dict], path: Path) -> None:
 
 
 _SWEEP_TOML_KEYS = frozenset(
-    {"model", "seed", "provider", "corpus", "reference", "output", "mode", "format", "fragments"}
+    {
+        "model",
+        "seed",
+        "provider",
+        "corpus",
+        "reference",
+        "output",
+        "fusion_mode",
+        "format",
+        "fragments",
+    }
 )
 
 
@@ -657,7 +667,13 @@ def main(argv: list[str] | None = None) -> None:
         metavar="NAME",
         help="Load parameters from [sweeps.NAME] in experiments.toml. CLI flags override.",
     )
-    p.add_argument("--mode", choices=["incremental", "global", "compare"], default="compare")
+    p.add_argument(
+        "--fusion-mode",
+        dest="fusion_mode",
+        choices=["incremental", "global", "compare"],
+        default="compare",
+        help="Pipeline scope: run incremental only, global only, or compare all cells",
+    )
     p.add_argument(
         "--format",
         choices=["json", "md", "both"],
@@ -747,7 +763,7 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     fmt = args.format
-    if fmt == "both" and args.mode != "compare":
+    if fmt == "both" and args.fusion_mode != "compare":
         p.error("--format both is only valid with --mode compare")
 
     sequence = _build_sequence(args)
@@ -769,7 +785,7 @@ def main(argv: list[str] | None = None) -> None:
     fuse_prompt = _load_prompt(args.fuse_prompt, _FUSE_PROMPT)
 
     print(
-        f"\nFusion prototype — mode={args.mode}, format={fmt}, "
+        f"\nFusion prototype — mode={args.fusion_mode}, format={fmt}, "
         f"fragments={len(sequence)}, model={args.model}"
         + (f", seed={args.seed}" if args.seed is not None else "")
         + (f", provider={args.provider}" if args.provider else "")
@@ -781,10 +797,10 @@ def main(argv: list[str] | None = None) -> None:
     # -----------------------------------------------------------------------
     cells: dict[str, dict] = {}  # key = "global×md" etc.
 
-    run_global_md_cell = fmt in ("md", "both") and args.mode in ("global", "compare")
-    run_global_json_cell = fmt in ("json", "both") and args.mode in ("global", "compare")
-    run_inc_md_cell = fmt in ("md", "both") and args.mode in ("incremental", "compare")
-    run_inc_json_cell = fmt in ("json", "both") and args.mode in ("incremental", "compare")
+    run_global_md_cell = fmt in ("md", "both") and args.fusion_mode in ("global", "compare")
+    run_global_json_cell = fmt in ("json", "both") and args.fusion_mode in ("global", "compare")
+    run_inc_md_cell = fmt in ("md", "both") and args.fusion_mode in ("incremental", "compare")
+    run_inc_json_cell = fmt in ("json", "both") and args.fusion_mode in ("incremental", "compare")
 
     ref_plants = load_plants_csv(args.reference) if args.reference else []
 
@@ -800,7 +816,7 @@ def main(argv: list[str] | None = None) -> None:
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
             f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
         )
-        if args.mode == "global":
+        if args.fusion_mode == "global":
             out = args.output / "global_md"
             out.mkdir(parents=True, exist_ok=True)
             _save_plants_csv(plants, out / "master.csv")
@@ -818,7 +834,7 @@ def main(argv: list[str] | None = None) -> None:
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
             f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
         )
-        if args.mode == "global":
+        if args.fusion_mode == "global":
             _save_global_csv(plants_raw, args.output / "global_json" / "master.csv")
 
     if run_inc_md_cell:
@@ -833,7 +849,7 @@ def main(argv: list[str] | None = None) -> None:
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
             f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
         )
-        if args.mode == "incremental":
+        if args.fusion_mode == "incremental":
             out = args.output / "incremental_md"
             out.mkdir(parents=True, exist_ok=True)
             _save_plants_csv(plants, out / "master.csv")
@@ -851,12 +867,12 @@ def main(argv: list[str] | None = None) -> None:
             f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
             f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
         )
-        if args.mode == "incremental":
+        if args.fusion_mode == "incremental":
             out = args.output / "incremental_json"
             save_master_csv(master, out / "master.csv")
             save_provenance(master, out / "master_provenance.json")
 
-    if args.mode == "compare" and len(cells) >= 2:
+    if args.fusion_mode == "compare" and len(cells) >= 2:
         print("\n" + "=" * 70)
         print("COMPARISON")
         print("=" * 70)

@@ -828,7 +828,8 @@ output = "outputs/ablation/rag/p2_no_sourcing"
 # Alibaba supports seed on deepseek-v3.2; DeepSeek native does not.
 
 [sweeps.fusion]
-mode = "compare"
+# fusion_mode: pipeline scope — incremental | global | compare (all cells)
+fusion_mode = "compare"
 format = "both"
 model = "deepseek/deepseek-v3.2"
 corpus = "data/rag_corpus"
@@ -838,7 +839,7 @@ seed = 42
 provider = "Alibaba"
 
 [sweeps.fusion_dev]
-mode = "compare"
+fusion_mode = "compare"
 format = "md"
 model = "openai/gpt-4o-mini"
 corpus = "data/rag_corpus"
