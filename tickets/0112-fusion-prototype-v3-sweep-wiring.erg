@@ -1,0 +1,51 @@
+%erg v1
+Title: Fusion prototype v3: sweep wiring, query_model dispatcher, determinism
+Status: closed
+Created: 2026-04-22
+Author: claude
+
+--- log ---
+2026-04-22T00:00Z claude created — retroactive ticket for PR #278
+2026-04-22T00:01Z claude status closed PR #278 merged
+
+--- body ---
+## Context
+
+PR #278 (branch worktree-reactive-prancing-shell) delivers the v3 iteration
+of the incremental-vs-global fusion prototype (`src/aedist/prototype_v1_fusion.py`).
+
+Earlier commits referenced ticket 0076 (LangChain Deep Agents spike) by mistake;
+this ticket retroactively owns the fusion v3 work.
+
+## Work delivered (PR #278)
+
+- **`--sweep` wiring**: two-pass argparse loads `seed`, `provider`, `model`,
+  `corpus`, `reference`, `output`, `mode`, `format`, `fragments` from
+  `experiments.toml` sweep configs via `p.set_defaults`.
+- **Determinism**: `seed = 42` + `provider` pinning propagated to all 4 cells
+  ({global, incremental} × {json, md}) via `api_kw` dict.
+- **`query_model` dispatcher** added to `harness.py`: routes to
+  `query_ollama_native` (sets `num_ctx`) for local models (no "/" in ID),
+  `query_single_turn` for cloud models.
+- **Prompt externalization**: 7 prompt files moved to
+  `experiments/prompts/fusion_*.txt`.
+- **Reference caching**: `load_plants_csv` called once before cell loop.
+- **`experiments.toml`**: `seed = 42` added to all 53 sweeps; `[sweeps.fusion]`
+  and `[sweeps.fusion_dev]` added.
+- **Test suite**: `test_sweep_count` synced to full current sweep inventory;
+  fusion and verification-variant sweeps exempted from standard-field check.
+
+## Variance finding
+
+DeepSeek V3.2 (671B MoE) remains non-deterministic even with seed=42 +
+provider pinning (Alibaba). prompt_tokens are identical; completion_tokens
+vary wildly (2308/3237/5443). Root cause: MoE tensor parallelism, not code.
+`repeat = 3` remains necessary for cloud MoE models.
+
+## Exit criteria (met)
+
+- All 4 cells receive `**api_kw` (seed + provider). ✓
+- `--sweep` loads from TOML. ✓
+- `query_model` dispatcher in harness.py, no duplicate Ollama handling. ✓
+- 26 unit tests pass. ✓
+- `test_sweep_count` passes. ✓
