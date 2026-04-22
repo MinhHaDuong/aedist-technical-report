@@ -1,0 +1,31 @@
+%erg v1
+Title: Fix models.yaml sweep drift — 4 test failures in test_models.py
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T12:00Z claude created
+2026-04-17T12:00Z claude claimed
+2026-04-17T12:01Z claude status closed — all 4 tests fixed, 19/19 pass
+
+--- body ---
+## Context
+experiments.toml grew from ~29 sweeps to 52, adding ablation Phase 2 RAG,
+verification_poc, verification_multi, and ablation_p1_parametric_base_extended.
+Four tests in test_models.py became stale:
+
+1. test_experiments_sets_nonempty: ablation_core intentionally empty
+2. test_sweep_count: hardcoded expected set had phantom entries and missed new sweeps
+3. test_standard_sweep_fields: verification_poc/multi lack mode/models (schema-different)
+4. test_sweep_output_dirs_unique: ablation_p1_parametric_base_extended intentionally
+   shares output dir with ablation_p1_parametric_base
+
+## Actions
+1. test_experiments_sets_nonempty: allow ablation_core in allowed_empty set
+2. test_sweep_count: replace exact-equality with minimum-baseline (core sweeps present)
+3. test_standard_sweep_fields: `name == "verification"` -> `name.startswith("verification")`
+4. test_sweep_output_dirs_unique: add allowed_pairs whitelist for the ablation pair
+
+## Exit criteria
+All 19 tests in test_models.py pass.

@@ -12,6 +12,7 @@ from aedist.pdf2md_openrouter import process_model_response
 # process_model_response
 # ---------------------------------------------------------------------------
 
+
 class TestProcessModelResponse:
     def test_returns_cleaned_content_with_page_comment(self):
         resp = _fake_response("```markdown\n# Title\n```")
@@ -55,6 +56,7 @@ def _fake_response(content):
 # Argparse and code quality (source inspection)
 # ---------------------------------------------------------------------------
 
+
 def test_main_uses_argparse():
     source = Path(__file__).resolve().parent.parent / "src" / "aedist" / "pdf2md_openrouter.py"
     text = source.read_text()
@@ -79,9 +81,9 @@ def test_no_print_calls():
 # Functional tests (mock OpenAI client & pdf2image)
 # ---------------------------------------------------------------------------
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-from aedist.pdf2md_openrouter import DEFAULT_DPI, main, pdf_to_markdown
+from aedist.pdf2md_openrouter import DEFAULT_DPI, main, pdf_to_markdown  # noqa: E402
 
 
 class TestDefaultDpi:
@@ -212,15 +214,20 @@ class TestMain:
         fake_pdf.write_bytes(b"%PDF-1.4 fake")
         out = tmp_path / "out.md"
 
-        with patch(
-            "aedist.pdf2md_openrouter.pdf_to_markdown", return_value="ok"
-        ) as mock:
-            main([
-                str(fake_pdf), "--output", str(out),
-                "--model", "gpt-4-turbo",
-                "--dpi", "150",
-                "--max-tokens", "2048",
-            ])
+        with patch("aedist.pdf2md_openrouter.pdf_to_markdown", return_value="ok") as mock:
+            main(
+                [
+                    str(fake_pdf),
+                    "--output",
+                    str(out),
+                    "--model",
+                    "gpt-4-turbo",
+                    "--dpi",
+                    "150",
+                    "--max-tokens",
+                    "2048",
+                ]
+            )
 
         mock.assert_called_once_with(
             fake_pdf,

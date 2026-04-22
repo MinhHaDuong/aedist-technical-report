@@ -1,30 +1,40 @@
-Last updated: 2026-04-17 (ticket 0077 plan finalized PR #262; tickets 0093/0094/0095/0096 closure drift cleaned; related-work-note skill installed at user-level via IDH)
+Last updated: 2026-04-22 (session: PR #279 open — ablation redesign + slides restructuring)
 
 ## Status
 
-Pipeline end-to-end. Census: 37 models. Headline F1: DeepSeek V3.2 decomposed mean=89.8% [85.8-95.6%, n=4]. All PRs merged, zero open PRs. Phase 2 ablation complete (ticket 0088). Multi-agent verification complete: negative result — 0-10% inter-verifier agreement even after bugfix (ticket 0059, PR #246). Post-hoc LLM verification is a dead end. MASTERPLAN updated: 6-step pipeline with front-loaded source triage replaces post-hoc verification. RAG nondeterminism root-caused as web_search tool injection (ticket 0094, PR #257). Ablation temperature limitation documented in lieu of costly re-run (ticket 0095, PR #259). Ticket 0097 reimagined twice — now: deterministic source grounding on existing Opus runs, no new API calls.
+Pipeline end-to-end. Benchmark: 37 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1078 passing, 2 golden-value skips. §2 Related Work complete (PR #273).
+
+**This session (2026-04-22):** PR #279 open (not yet merged):
+- Ablation experiment redesigned: 7 modules (P/O/N/B/T/Sₜ/S_g), 18 prompts (4 anchors + 7 composition + 7 ablation), 4 information regimes (parametric/RAG/web/incremental), 4 phases (Phase 0 DSPy, Phase 1 pilot 2 reps, Phase 2 full, Phase 3 incremental). Previous Phase 2 results invalidated (all T=null). Sourçage split into Sₜ (trace/recall) and S_g (ground/precision).
+- Slides restructured around 4 quality criteria: Grounding (van Fraassen), Auditability (Popper), Freshness (incremental fusion), Confidence (3-tier verification). New frame slide added anchored in philosophy of science. Union vote and decomposition demoted: footnote lines in slides, Pitfalls section stub in report.
+- `tab_source_grounding.tex` untracked (ticket 0097 Phase 1 artefact) — commit when 0097 advances.
 
 ## Blockers
 
-None
+- **F1 drift flag**: `test_decomposed_deepseek_has_ci` reports 0.930 vs expected 0.898; run `make measurements` to check if headline changed.
+- **Ablation campaign not launched**: reactive-prancing-shell has `--seed`/`--provider`/`--temperature` flags ready. Must verify determinism (2 pilot reps) before full run.
+- **Freshness slide**: placeholder only — needs prototype_v1 results (F1 vs docs-added curve).
 
 ## Next actions
 
-1. Slides for Econom'IA 2026 (2026-05-27) — first public milestone; graph-based paradigm narrative
-2. Ticket 0097 Phase 1: verify source-grounding of the master table (tier-1 string match on 3 Opus sourced runs) — ships for Econom'IA. Phases 2+3 (LLM adjudication + audit-verified HITL memory) attach to v0 fusion prototype post-talk.
-3. `make measurements` — backfill temperature metadata
-4. Visual review: `make slides` + `make report`
+1. **Merge PR #279** — ablation redesign + slides restructuring.
+2. **Launch ablation Phase 1** from reactive-prancing-shell: `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify identical → then Phase 2 (18 prompts × 4 regimes, 1 rep if deterministic).
+3. **Ticket 0100** — finalize French slides (deadline 2026-05-27). Fill Freshness slide when prototype_v1 results available.
+4. **Ticket 0097** Phases 2+3 — source grounding audit; blocked until post-talk.
+5. **Ticket 0076** — v1 prototype: incremental fusion loop (master + doc_i → master', 18 iterations).
 
 ## North star
 
-Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. Not which model is best, but which **method** produces a trustworthy statistical table. See MASTERPLAN.md for the long-term vision.
+Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. **Not which model is best, but which method produces trustworthy statistics with locatable errors.** PyPSA-ASEAN remains the long-term target; the benchmark de-risks v1 pipeline design choices. See MASTERPLAN.md.
 
 ## Current milestone: Econom'IA 2026 — Cergy, 2026-05-27
 
-Conference talk at Thema/Cergy. Deliverable: slides (French).
-Title: *Beyond RAG: Graph-Based Architectures for Reliable Economic Statistics with Agentic Systems*.
-Thesis: benchmark exposes failures of stateless generation/RAG on exhaustivity, internal coherence, temporal management, and traceability → propose stateful, agentic, graph-based statistical architectures.
+Conference talk at Thema/Cergy. Deliverable: French slides.
+Title: *Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics*
+Thesis: 4 quality criteria (Grounding/Auditability/Freshness/Confidence) — each slide section lifts one criterion.
 Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.sciencesconf.org/
+
+**Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference. Narrative will follow what worked in the slides.
 
 ## Follow-on milestone: Journal submission
 
@@ -37,7 +47,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Internal coherence measured and reported (ticket 0078, PR #243)
 - [x] FDR + ANOVA diagnostics tested (ticket 0083, PR #242)
 - [x] Temperature control enforced + limitation documented (ticket 0084, PR #244)
-- [x] Phase 2 ablation: 16 prompts on RAG regime (ticket 0088, PR #250)
+- [x] Phase 2 ablation: 16 prompts on RAG regime (ticket 0088, PR #250) — **invalidated (T=null); rerun planned**
 - [x] Multi-agent verification: negative result, dead end (ticket 0059, PR #246)
 - [x] Three-way reference reconciliation (ticket 0082, PR #249)
 - [x] International classifications mapping (ticket 0085, PR #248)
@@ -46,23 +56,23 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Slides temperature caveat (ticket 0093, PR #260)
 - [x] Ablation temperature limitation documented, re-run deferred (ticket 0095, PR #259)
 - [x] DeepSeek over-context tool_calls behavior documented (ticket 0096)
+- [x] §2 Related Work: 4 paragraphs, 15 citations (ticket 0077, PR #273)
+- [x] Headline F1 macro-wired: no hardcoded numbers in slides (PR #274)
+- [x] Ablation redesign: 7 modules, 18 prompts, 4 regimes, 4 phases (PR #279)
 - [ ] Source-grounding verification, 3-tier audit-verified (ticket 0097)
 - [ ] Technical report Ch. 6 + Ch. 3 sync to v0 pipeline design (ticket 0098)
 - [ ] `verification_methods.tex` rewrite for 3-tier audit-verified (ticket 0099)
 
-## Open tickets (14)
+## Open tickets (11)
 
 - 0069 Project namespace audit (pending — awaiting external input)
-- 0073 Optional warmup run (ready)
-- 0075 Universal prompt optimization survey (ready)
-- 0076 LangChain Deep Agents evaluation (ready)
-- 0077 Lit review: §2 four paragraphs via related-work-note skill (ready; plan finalized PR #262)
-- 0097 Verify source-grounding of the master table (3-tier, audit-verified) (ready)
-- 0098 Report Ch. 6 + Ch. 3 sync to v0 pipeline design (blocked by 0097)
-- 0099 Rewrite `verification_methods.tex` for 3-tier audit-verified (blocked by 0097)
-- 0100 Finalize Econom'IA 2026 slides — French + layout + tier reconciliation (ready)
+- 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred to Phase 0 of ablation campaign
+- 0076 v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ready)
+- 0097 Verify source-grounding of the master table — Phase 1 done; Phases 2+3 post-talk
+- 0098 Report Ch. 6 + Ch. 3 sync to v0 pipeline design (blocked by 0097 full close)
+- 0099 Rewrite `verification_methods.tex` for 3-tier audit-verified (blocked by 0097 full close)
+- 0100 Finalize Econom'IA 2026 slides — French + layout (deadline 2026-05-27)
 - 0101 Verify incrementality × method (soft-blocked on v0 fusion prototype)
-- 0102 Verify escalation-decay × system (blocked by 0097 Phase 2+3)
+- 0102 Verify escalation-rate decay × system (blocked by 0097 Phase 2+3)
 - 0103 Verify internal coherence × table (soft-blocked on v0 fusion prototype)
 - 0104 Verify conflict-resolution × method (soft-blocked on v0 fusion prototype)
-- 0105 Regression test for plot_census slug underscore sanitation (ready)

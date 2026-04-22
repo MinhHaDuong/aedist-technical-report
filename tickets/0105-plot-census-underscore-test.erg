@@ -1,11 +1,12 @@
 %erg v1
 Title: Regression test for plot_census slug underscore sanitation
-Status: open
+Status: closed
 Created: 2026-04-17
 Author: claude
 
 --- log ---
 2026-04-17T12:00Z claude created — surfaced by self-review of commit 55a8548. The slug replace("_", "-") fix in plot_census.py has no test covering its input. Add one so a future revert cannot silently reintroduce the pgfplots "Missing $ inserted" compile failure.
+2026-04-17T14:00Z claude status closed — test added, passes green, confirmed regression on revert
 
 --- body ---
 ## Context

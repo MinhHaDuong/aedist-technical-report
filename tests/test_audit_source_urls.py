@@ -1,5 +1,7 @@
 """Tests for source URL verification audit (scripts/audit_source_urls.py)."""
 
+from unittest.mock import patch
+
 import pytest
 
 # ---------------------------------------------------------------------------

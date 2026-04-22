@@ -108,8 +108,8 @@ class TestQueryDecomposed:
 
     def test_basic_merge(self, monkeypatch):
         """3 sub-queries produce a merged CSV with all plants."""
-        from aedist.harness import BudgetTracker
         from aedist import query_decomposed as qd_mod
+        from aedist.harness import BudgetTracker
 
         call_count = 0
 
@@ -151,8 +151,8 @@ class TestQueryDecomposed:
 
     def test_budget_exceeded_returns_none(self, monkeypatch):
         """Returns None when budget is already exceeded."""
-        from aedist.harness import BudgetTracker
         from aedist import query_decomposed as qd_mod
+        from aedist.harness import BudgetTracker
 
         budget = BudgetTracker(budget_usd=0.001)
         budget.add(0.002)  # exceed the budget
@@ -170,8 +170,9 @@ class TestQueryDecomposed:
     def test_api_error_returns_none(self, monkeypatch):
         """Returns None when an API error occurs on a sub-query."""
         import openai
-        from aedist.harness import BudgetTracker
+
         from aedist import query_decomposed as qd_mod
+        from aedist.harness import BudgetTracker
 
         def fake_query_error(client, model_id, messages, **kwargs):
             raise openai.APIError(
@@ -195,8 +196,8 @@ class TestQueryDecomposed:
 
     def test_no_csv_in_response(self, monkeypatch):
         """Handles sub-queries that return no extractable CSV gracefully."""
-        from aedist.harness import BudgetTracker
         from aedist import query_decomposed as qd_mod
+        from aedist.harness import BudgetTracker
 
         def fake_query_no_csv(client, model_id, messages, **kwargs):
             return {
@@ -224,8 +225,8 @@ class TestQueryDecomposed:
 
     def test_dedup_across_subqueries(self, monkeypatch):
         """Plants appearing in multiple sub-queries are deduplicated."""
-        from aedist.harness import BudgetTracker
         from aedist import query_decomposed as qd_mod
+        from aedist.harness import BudgetTracker
 
         call_count = 0
 
@@ -238,10 +239,13 @@ class TestQueryDecomposed:
                 resp = _make_fake_response("gas", GAS_PLANTS)
             else:
                 # Duplicate Pha Lai in "other"
-                resp = _make_fake_response("other", [
-                    ("Pha Lai", "coal", "operational", "1983", "Hai Duong", "600"),
-                    ("Can Tho", "oil", "operational", "2000", "Can Tho", "100"),
-                ])
+                resp = _make_fake_response(
+                    "other",
+                    [
+                        ("Pha Lai", "coal", "operational", "1983", "Hai Duong", "600"),
+                        ("Can Tho", "oil", "operational", "2000", "Can Tho", "100"),
+                    ],
+                )
             call_count += 1
             return resp
 
@@ -265,7 +269,7 @@ class TestQueryDecomposed:
 # --- main (CLI integration) ---
 
 
-import pytest
+import pytest  # noqa: E402
 
 
 class TestQueryDecomposedMain:
@@ -302,11 +306,16 @@ class TestQueryDecomposedMain:
             "sys.argv",
             [
                 "query_decomposed",
-                "--prompt", str(prompt_file),
-                "--corpus", str(corpus_dir),
-                "--models", str(models_file),
-                "--output", str(output_dir),
-                "--repeat", "2",
+                "--prompt",
+                str(prompt_file),
+                "--corpus",
+                str(corpus_dir),
+                "--models",
+                str(models_file),
+                "--output",
+                str(output_dir),
+                "--repeat",
+                "2",
                 "--dry-run",
             ],
         )
@@ -353,11 +362,16 @@ class TestQueryDecomposedMain:
             "sys.argv",
             [
                 "query_decomposed",
-                "--prompt", str(prompt_file),
-                "--corpus", str(corpus_dir),
-                "--models", str(models_file),
-                "--output", str(output_dir),
-                "--model", "model-a",
+                "--prompt",
+                str(prompt_file),
+                "--corpus",
+                str(corpus_dir),
+                "--models",
+                str(models_file),
+                "--output",
+                str(output_dir),
+                "--model",
+                "model-a",
                 "--dry-run",
             ],
         )
@@ -381,11 +395,7 @@ class TestQueryDecomposedMain:
         prompt_file.write_text("prompt text")
 
         models_file = tmp_path / "models.yaml"
-        models_file.write_text(
-            "- id: model-a\n"
-            "  name: A\n"
-            "  context_window: 100000\n"
-        )
+        models_file.write_text("- id: model-a\n  name: A\n  context_window: 100000\n")
 
         output_dir = tmp_path / "output"
 
@@ -393,11 +403,16 @@ class TestQueryDecomposedMain:
             "sys.argv",
             [
                 "query_decomposed",
-                "--prompt", str(prompt_file),
-                "--corpus", str(corpus_dir),
-                "--models", str(models_file),
-                "--output", str(output_dir),
-                "--model", "nonexistent-model",
+                "--prompt",
+                str(prompt_file),
+                "--corpus",
+                str(corpus_dir),
+                "--models",
+                str(models_file),
+                "--output",
+                str(output_dir),
+                "--model",
+                "nonexistent-model",
             ],
         )
 

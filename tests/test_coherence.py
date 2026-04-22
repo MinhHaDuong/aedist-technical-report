@@ -1,19 +1,17 @@
 """Tests for coherence checks (ticket 0078)."""
 
 import pytest
+from pydantic import ValidationError
 
 from aedist.coherence import (
-    CoherenceIssue,
     ControlTotal,
     IssueLevel,
-    IssueSeverity,
     check_aggregate_coherence,
     check_coherence,
     check_cross_row_coherence,
     check_row_coherence,
 )
 from aedist.schema import FuelType, Plant, PlantStatus
-
 
 # ── Row-level ───────────────────────────────────────────────────────
 
@@ -26,7 +24,7 @@ def test_zero_capacity_flagged():
 
 def test_negative_capacity_rejected_by_schema():
     """Pydantic enforces capacity_mwe >= 0 at schema level."""
-    with pytest.raises(Exception):  # ValidationError
+    with pytest.raises(ValidationError):
         Plant(name="Worse Plant", capacity_mwe=-100, fuel=FuelType.COAL)
 
 
@@ -56,24 +54,28 @@ def test_ascii_province_alias_ok():
 
 
 def test_retired_future_cod_flagged():
-    plants = [Plant(
-        name="Time Traveller",
-        fuel=FuelType.COAL,
-        status=PlantStatus.RETIRED,
-        cod="2030",
-    )]
+    plants = [
+        Plant(
+            name="Time Traveller",
+            fuel=FuelType.COAL,
+            status=PlantStatus.RETIRED,
+            cod="2030",
+        )
+    ]
     issues = check_row_coherence(plants)
     assert any(i.check == "retired_future_cod" for i in issues)
 
 
 def test_clean_row_no_issues():
-    plants = [Plant(
-        name="Pha Lai",
-        fuel=FuelType.COAL,
-        status=PlantStatus.OPERATIONAL,
-        province="Hải Dương",
-        capacity_mwe=440,
-    )]
+    plants = [
+        Plant(
+            name="Pha Lai",
+            fuel=FuelType.COAL,
+            status=PlantStatus.OPERATIONAL,
+            province="Hải Dương",
+            capacity_mwe=440,
+        )
+    ]
     issues = check_row_coherence(plants)
     assert issues == []
 
@@ -148,12 +150,14 @@ def test_control_total_filters_by_province():
         Plant(name="A", fuel=FuelType.COAL, capacity_mwe=500, province="Quảng Ninh"),
         Plant(name="B", fuel=FuelType.COAL, capacity_mwe=300, province="Hà Tĩnh"),
     ]
-    totals = [ControlTotal(
-        source="Provincial plan",
-        fuel=FuelType.COAL,
-        province="Quảng Ninh",
-        total_mw=500,
-    )]
+    totals = [
+        ControlTotal(
+            source="Provincial plan",
+            fuel=FuelType.COAL,
+            province="Quảng Ninh",
+            total_mw=500,
+        )
+    ]
     issues = check_aggregate_coherence(plants, totals, tolerance_pct=5.0)
     assert issues == []  # Hà Tĩnh plant excluded
 

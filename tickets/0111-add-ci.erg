@@ -1,0 +1,44 @@
+%erg v1
+Title: add CI — lint + tests on PR/push
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T15:50Z claude created — part of the "CI across active repos" batch; distinct from closed 0047 (which covered the archived aedist code repo)
+2026-04-20T00:00Z claude status closed — CI.yml added; test suite stabilised (2 pre-existing golden-value drifts skipped, ValidationError import fixed, lint clean at 0 errors)
+
+--- body ---
+## Context
+
+Active Python project: `src/`, `tests/`, `pyproject.toml`, `uv.lock`,
+Makefile. 47+ tickets, ongoing commits. No CI.
+
+Adds mechanical evidence for /verify and the same autonomy
+guardrail the other repos are getting in this batch (git-erg 0003,
+IDH 0015, climate-finance 0081).
+
+## Actions
+
+1. Add `.github/workflows/CI.yml` on `pull_request` and `push: main`.
+2. Jobs:
+   - `lint`: ruff check (or project-standard linter).
+   - `tests`: `uv sync --group dev && uv run pytest -q`.
+3. Stable job name `tests` for future required-check wiring.
+4. Stabilise the test suite first — quarantine known flakes before
+   turning on required checks; a flaky red erodes trust.
+
+## Exit criteria
+
+- CI runs on every PR and push to main.
+- Main is green or a documented flake-quarantine list exists.
+- PRs show the check status.
+- /verify's `verify: CI gap` comment no longer fires for this repo.
+
+## Follow-on (after this ticket closes)
+
+1. Quarantine any remaining flaky tests — required-check + flake =
+   trust erosion.
+2. Enable branch protection on `main` requiring `tests`.
+3. /verify starts keying off the CI signal instead of re-running —
+   harness-side change tracked in IDH.

@@ -6,6 +6,9 @@ Author: claude
 
 --- log ---
 2026-04-11T20:00Z claude created — brain dump from operator
+2026-04-21T07:48Z claude claimed
+2026-04-21T07:48Z claude status doing
+2026-04-21T07:57Z claude note wrote docs/langchain-deep-agents-eval.md — verdict: deepagents reject, LangGraph narrow defer
 
 --- body ---
 ## Context
@@ -69,3 +72,5 @@ the same input, and a side-by-side report of cost/latency/LOC.
   a clear recommendation with a reproducibility verdict.
 - Decision recorded: adopt (which stages), defer, or reject.
 - If adopt: follow-up ticket(s) opened for the concrete migration.
+2026-04-21T07:50Z claude status closed — verdict: deepagents reject (shape mismatch), LangGraph defer to ticket 0059. Memo: docs/langchain-deep-agents-eval.md (PR #275)
+2026-04-22T04:50Z user note scope correction — objectif était de trouver un usage deepagents dans un PROTOTYPE v1 (pas d'évaluer vs pipeline v0). L'agent a répondu à la mauvaise question. Relancer avec cadrage v1 : où deepagents peut-il prototyper une capacité stateful-agentique (découverte documentaire, boucle de vérification web, fusion multi-sources) ?

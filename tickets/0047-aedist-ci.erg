@@ -1,0 +1,45 @@
+%erg v1
+Title: resolve aedist archived status, then add CI — lint + tests
+Status: closed
+Created: 2026-04-17
+Author: claude
+
+--- log ---
+2026-04-17T15:36Z claude created — filed here because aedist repo has no local ticket system; part of the "CI across active repos" batch
+2026-04-17T15:48Z claude status closed — user: aedist stays archived. Red herring. Drop from CI batch.
+
+--- body ---
+## Context
+
+The aedist code repo (`~/CNRS/code/aedist`, remote
+`https://github.com/MinhHaDuong/aedist`) is archived on GitHub —
+issues and PRs are read-only. Yet there's a local commit from
+2026-04-02, so development is still happening somewhere.
+
+Before CI can be added, the archived state must be resolved:
+
+- **Un-archive** if aedist is still active.
+- **Fork** to a fresh repo if the old one is frozen for history.
+- **Sunset** and absorb the code into AEDIST-technical-report if
+  the boundary no longer makes sense.
+
+Once that decision is made, a standard lint+tests CI gives /verify
+the mechanical evidence it needs to delegate review.
+
+## Actions
+
+1. Decide: un-archive vs. fork vs. sunset. Record the decision in
+   this ticket's log.
+2. If un-archived or forked, add `.github/workflows/CI.yml` on
+   `pull_request` and `push: main`:
+   - `lint`: ruff check.
+   - `tests`: `uv sync --group dev && uv run pytest -q`.
+3. Stable job name `tests` for future required-check wiring.
+
+## Exit criteria
+
+- Archived status resolved (decision logged).
+- If aedist continues as its own repo: CI runs on every PR and push
+  to main; main is green.
+- If absorbed: this ticket is closed with a pointer to the new home
+  for the code.

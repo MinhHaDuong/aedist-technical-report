@@ -40,33 +40,32 @@ def _sample_rows(n_verified=5, n_unverified=3, mode="tool"):
     Returns n_verified plants with score=3 (one primary) and
     n_unverified plants with score=1 (no sources).
     """
-    rows = []
-    for i in range(n_verified):
-        rows.append(
-            {
-                "name": f"Plant V{i}",
-                "fuel": "Coal",
-                "province": "Hanoi",
-                "capacity_mwe": "100",
-                "evidence_score": "3",
-                "verified": "True",
-                "source_1": f"ref: Plant V{i}",
-                "source_1_type": "primary",
-            }
-        )
-    for i in range(n_unverified):
-        rows.append(
-            {
-                "name": f"Plant U{i}",
-                "fuel": "Gas",
-                "province": "HCMC",
-                "capacity_mwe": "200",
-                "evidence_score": "1",
-                "verified": "False",
-                "source_1": "",
-                "source_1_type": "none",
-            }
-        )
+    rows = [
+        {
+            "name": f"Plant V{i}",
+            "fuel": "Coal",
+            "province": "Hanoi",
+            "capacity_mwe": "100",
+            "evidence_score": "3",
+            "verified": "True",
+            "source_1": f"ref: Plant V{i}",
+            "source_1_type": "primary",
+        }
+        for i in range(n_verified)
+    ]
+    rows.extend(
+        {
+            "name": f"Plant U{i}",
+            "fuel": "Gas",
+            "province": "HCMC",
+            "capacity_mwe": "200",
+            "evidence_score": "1",
+            "verified": "False",
+            "source_1": "",
+            "source_1_type": "none",
+        }
+        for i in range(n_unverified)
+    )
     return rows
 
 
@@ -198,8 +197,16 @@ def test_write_tradeoff_csv(verification_dir, test_reference, tmp_path):
         csv_rows = list(reader)
 
     assert len(csv_rows) > 0
-    required_cols = {"mode", "threshold", "n_retained", "n_total",
-                     "retention_pct", "precision", "coverage", "f1"}
+    required_cols = {
+        "mode",
+        "threshold",
+        "n_retained",
+        "n_total",
+        "retention_pct",
+        "precision",
+        "coverage",
+        "f1",
+    }
     assert required_cols.issubset(set(csv_rows[0].keys()))
 
 
