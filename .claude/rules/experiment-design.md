@@ -9,3 +9,9 @@ Lead with the generic abstraction; isolate the first application as a parameteri
 When N reps are already pinned to the same value of a parameter (e.g. temperature=0.0), those reps **are** the reproducibility measurement for that parameter. Do not add a separate control or warmup call at the same value — it adds no information the existing reps are not already providing.
 
 **Why:** Ticket 0073 proposed a warmup T=0 call before N T=0 reps. The user corrected in one sentence: the N reps' variance is the chain-reproducibility measurement.
+
+## MoE models require repeat=3
+
+MoE models (DeepSeek V3.2, deepseek-v3, any 671B MoE) are non-deterministic even with `seed=42` and provider pinning. Completion token counts vary wildly across identical calls (e.g. 2308/3237/5443). Root cause: MoE tensor parallelism. `repeat=3` is mandatory for all cloud MoE sweeps. Do not reduce to `repeat=1` based on seed+provider pinning alone.
+
+**Why:** Confirmed during PR #278 (2026-04-22): 3 identical calls same prompt/model/seed/provider all produced different output lengths. Seed+provider pinning controls OpenRouter routing but not MoE kernel non-determinism.
