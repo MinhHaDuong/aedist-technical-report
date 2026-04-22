@@ -16,7 +16,6 @@ Pipeline end-to-end. Benchmark: 37 models, headline F1 macro-wired (`\HeadlineMe
 
 ## Blockers
 
-- **F1 drift flag**: `test_decomposed_deepseek_has_ci` reports 0.930 vs expected 0.898; run `make measurements` to check if headline changed. (Pre-existing; not resolved this session.)
 - **Slides not yet rendered for review**: PDF was regenerated; visual review deferred to next session. Talk deadline: 2026-05-27.
 
 ## Next actions
