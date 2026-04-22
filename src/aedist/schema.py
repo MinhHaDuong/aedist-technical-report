@@ -125,6 +125,7 @@ class Method(StrEnum):
     SOURCED = "sourced"
     FRONTIER = "frontier"
     VERIFICATION = "verification"
+    FUSION = "fusion"
 
 
 class MethodParams(BaseModel):
@@ -289,7 +290,13 @@ class JobSpec(BaseModel):
 
     @model_validator(mode="after")
     def _require_prompt_or_modules(self) -> JobSpec:
-        """Ensure at least one of prompt (non-empty) or prompt_modules is set."""
+        """Ensure at least one of prompt (non-empty) or prompt_modules is set.
+
+        Fusion mode is exempt: it reads prompts directly from
+        experiments/prompts/fusion_*.txt and never needs a top-level prompt.
+        """
+        if self.mode == Method.FUSION:
+            return self
         if not self.prompt and self.prompt_modules is None:
             raise ValueError("Either 'prompt' or 'prompt_modules' must be provided.")
         return self

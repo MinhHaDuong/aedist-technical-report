@@ -28,6 +28,7 @@ from .harness import (
     should_skip,
 )
 from .query_decomposed import query_decomposed
+from .query_fusion import run_fusion
 from .query_multiturn import run_conversation
 from .query_rag import load_corpus
 from .query_web import run_web_searches
@@ -207,6 +208,8 @@ class Worker:
                 job,
                 api_kwargs=api_kwargs,
             )
+        elif mode == Method.FUSION:
+            return self._execute_fusion(job)
         elif mode == Method.VERIFICATION:
             raise NotImplementedError(
                 "verification mode requires external orchestration "
@@ -493,6 +496,53 @@ class Worker:
             "tokens_in": decomposed.get("total_usage", {}).get("prompt_tokens", 0),
             "tokens_out": decomposed.get("total_usage", {}).get("completion_tokens", 0),
             "result_file": str(filepath),
+        }
+
+    @staticmethod
+    def _execute_fusion(job: JobSpec) -> dict:
+        """Execute the fusion pipeline for one sweep configuration.
+
+        Fusion is dispatch-different from other modes: it takes a single model
+        string (not a models.yaml file) and does not iterate over a model
+        registry.  Results are written to derived/fusion_proto/ by
+        run_fusion(), not to the standard outputs/ tree.
+        """
+        corpus_dir = Path(job.corpus) if job.corpus else None
+        if not corpus_dir or not corpus_dir.exists():
+            raise ValueError(f"Fusion mode requires a valid corpus directory, got {job.corpus!r}")
+
+        model = job.model_filter or "openai/gpt-4o-mini"
+        output_dir = Path(job.output_dir)
+
+        # Fusion-specific params live in job.extra (populated from sweep config
+        # fields that JobSpec doesn't have dedicated slots for).
+        extra = job.method_params.extra or {} if hasattr(job, "method_params") else {}
+        fusion_mode = extra.get("fusion_mode", "compare")
+        fmt = extra.get("format", "md")
+        fragments = extra.get("fragments")
+        seed = extra.get("seed")
+        provider = extra.get("provider")
+
+        log.info(
+            "Executing fusion sweep model=%s fusion_mode=%s format=%s", model, fusion_mode, fmt
+        )
+        summary = run_fusion(
+            model=model,
+            corpus_dir=corpus_dir,
+            output_dir=output_dir,
+            fusion_mode=fusion_mode,
+            fmt=fmt,
+            fragments=fragments,
+            seed=seed,
+            provider=provider,
+        )
+
+        return {
+            "wall_seconds": summary.get("wall_seconds", 0),
+            "cost_usd": 0,  # fusion uses make_client() directly; cost not tracked here
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "result_file": str(output_dir / "fusion_summary.json"),
         }
 
     # -- completion ------------------------------------------------------------

@@ -186,6 +186,27 @@ def test_standard_sweep_fields(experiments):
         )
 
 
+def test_fusion_sweep_fields(experiments):
+    """Fusion sweeps have their own required schema (different from standard sweeps)."""
+    fusion_required = {"fusion_mode", "format", "model", "corpus", "reference", "output"}
+    valid_fusion_modes = {"incremental", "global", "compare"}
+    valid_formats = {"json", "md", "both"}
+    for name, sweep in experiments["sweeps"].items():
+        if not name.startswith("fusion"):
+            continue
+        missing = fusion_required - set(sweep.keys())
+        assert not missing, f"sweeps.{name} missing fusion fields: {missing}"
+        assert sweep["fusion_mode"] in valid_fusion_modes, (
+            f"sweeps.{name}: invalid fusion_mode '{sweep['fusion_mode']}'"
+        )
+        assert sweep["format"] in valid_formats, (
+            f"sweeps.{name}: invalid format '{sweep['format']}'"
+        )
+        assert isinstance(sweep["model"], str) and sweep["model"], (
+            f"sweeps.{name}: model must be a non-empty string"
+        )
+
+
 def test_verification_structure(experiments):
     """verification has its special structure (base_configs, modes)."""
     s4 = experiments["sweeps"]["verification"]

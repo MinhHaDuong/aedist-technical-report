@@ -386,8 +386,8 @@ def test_score_against_reference_empty_system(tmp_path):
 
 
 def test_main_format_both_requires_compare(tmp_path):
-    """--format both is only valid with --mode compare."""
+    """--format both is only valid with --fusion-mode compare."""
     from aedist.prototype_v1_fusion import main
 
     with pytest.raises(SystemExit):
-        main(["--mode", "incremental", "--format", "both"])
+        main(["--fusion-mode", "incremental", "--format", "both"])

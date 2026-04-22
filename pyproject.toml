@@ -28,6 +28,7 @@ dev = ["pytest>=8.0", "ruff>=0.4", "pylint", "mypy", "types-PyYAML"]
 
 [project.scripts]
 aedist = "aedist.evaluate:main"
+query-fusion = "aedist.query_fusion:main"
 
 [build-system]
 requires = ["hatchling"]
