@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for internal coherence of the v0 master + sidecar. Extends the existing coherence work (ticket 0078, PR #243) from the benchmark output to the v0 fusion output.
 2026-04-22T12:00Z claude note reimagined body: corrected sidecar format (.json not .csv), mapped reuse from coherence.py, reduced new-code surface to adapter + 2 sidecar invariants. Soft-block lifted (prototype exists).
+2026-04-22T13:30Z claude note planned: scripts/verify/coherence_table.py; reuse check_coherence:292, check_row:119, check_cross_row:192, check_aggregate:235 from coherence.py; master_to_plants:487 from prototype_v1_fusion (already exists, no new adapter); sidecar provenance.json structure confirmed
 
 --- body ---
 ## Context
