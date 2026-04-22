@@ -1,0 +1,20 @@
+\begin{table}[ht]
+\centering
+\caption{Source grounding verification: sourced extractions vs.\ baseline.}
+\label{tab:source-grounding}
+\begin{tabular}{l r r r r r r r r r}
+\toprule
+Method & Run & Plants & Source & Grounding & Traceability & \multicolumn{4}{c}{2$\times$2 counts} \\
+ & & & rate & rate & rate & T/R & T/$\neg$R & $\neg$T/R & $\neg$T/$\neg$R \\
+\midrule
+  Sourced RAG & 1 & 120 & 99.2\% & 97.5\% & 87.5\% & 70 & 35 & 6 & 9 \\
+   & 2 & 115 & 100.0\% & 98.3\% & 75.6\% & 61 & 26 & 10 & 18 \\
+   & 3 & 102 & 100.0\% & 99.0\% & 79.4\% & 52 & 29 & 10 & 11 \\
+\midrule
+  Decomposed RAG & 1 & 205 & 0.0\% & 0.0\% & 0.0\% & 0 & 0 & 97 & 108 \\
+   & 2 & 122 & 0.0\% & 0.0\% & 0.0\% & 0 & 0 & 83 & 39 \\
+   & 3 & 167 & 0.0\% & 0.0\% & 0.0\% & 0 & 0 & 102 & 65 \\
+\bottomrule
+\end{tabular}
+\par\smallskip\footnotesize Source rate = fraction with any citation; Grounding rate = citation fuzzy-matches a corpus filename; Traceability = grounded \emph{and} plant name found in matched file. T = traceable, R = in reference dataset.
+\end{table}
