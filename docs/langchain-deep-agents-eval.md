@@ -222,8 +222,12 @@ this adaptive behaviour is the value proposition.
 design (different runs may choose different follow-up queries). This is
 acceptable in v1 because verification is an evidence-accumulation step, not a
 measurement sweep: the final evidence score is what matters, not the exact
-query path. In practice, confidence scores were stable across repeated informal
-runs (same ± 0.1).
+query path. Three repeated runs on Pha Lai produced identical structured output
+(confidence 0.90, 1 search query, same fuel/capacity/status) — a well-specified
+plant name fully constrains the agent's search strategy. Variance for ambiguous
+plants (Bạc Liêu 1) was not measured; query count and confidence are expected
+to fluctuate across runs because the agent's follow-up strategy depends on
+which snippets Tavily returns first.
 
 **Dependency cost:** deepagents v0.5.3 pulls `langgraph`, `langchain-core`,
 `langchain-anthropic`, and transitive deps (~+15 packages). The prototype is
