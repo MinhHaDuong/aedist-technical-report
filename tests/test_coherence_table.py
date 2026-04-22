@@ -5,14 +5,6 @@ All tests use synthetic fixtures — no LLM calls, no real data files.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-# Make the scripts/ tree importable without installing it as a package.
-_SCRIPTS_ROOT = Path(__file__).parent.parent / "scripts"
-if str(_SCRIPTS_ROOT) not in sys.path:
-    sys.path.insert(0, str(_SCRIPTS_ROOT))
-
 from verify.coherence_table import (
     check_sidecar_null_parity,
     check_sidecar_row_coverage,
