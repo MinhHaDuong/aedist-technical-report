@@ -134,6 +134,34 @@ and where stateful-agentic architectures lead.}
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}{What makes statistics research-quality?}
+\begin{center}
+\textit{«~Research-quality data isn't correct data.\\
+It's data whose errors are \textbf{locatable}.~»}
+\end{center}
+
+\bigskip
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Criterion} & \textbf{Failure without it} & \textbf{Mechanism} & \textbf{Grounding} \\
+\midrule
+\textbf{Grounding}    & Numbers float free of sources     & RAG wholesale          & van Fraassen \\
+\textbf{Auditability} & Claims untraceable to documents   & Source citations per cell & Popper \\
+\textbf{Freshness}    & Snapshot frozen at training cutoff & Incremental fusion    & — \\
+\textbf{Confidence}   & No way to flag uncertain cells    & 3-tier verification    & Intersubjectivity \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\begin{center}
+\small\textit{Each results slide shows one criterion lifted by one architectural choice.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{Why not just verify the output?}
 \begin{columns}[T]
 \column{0.48\textwidth}
@@ -240,7 +268,7 @@ fusion can be deterministic even when extraction isn't.
 \end{frame}
 
 % ===================================================================
-\section{Results}
+\section{Grounding}
 
 % -------------------------------------------------------------------
 \begin{frame}[fragile]{Pilot design and baseline: model choice alone is insufficient}
@@ -317,6 +345,9 @@ is \textbf{coverage}, not hallucination)}
 \medskip
 {\small RAG corpus: manually verified tables from PDP7, PDP7A, PDP8, EVN reports, Study E542}
 
+\medskip
+{\scriptsize \textit{Context-window limit: sub-querying by fuel type and merging resolves output truncation ($+$15--35~pp for truncation-prone models).}}
+
 \column{0.56\textwidth}
 \pgfplotstableread[col sep=comma]{inputs/generated/regimes.csv}\regimedata
 \pgfplotstablegetrowsof{\regimedata}
@@ -387,57 +418,6 @@ With documents, a cheap model beats an expensive one. The \textbf{method} (RAG) 
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Task decomposition: solving the truncation bottleneck}
-\textbf{Problem:} Models truncate output before listing all plants.\\
-\textbf{Solution:} Split into 3 sub-queries by fuel (coal / gas+LNG / other), merge.\\
-{\small Context overflow for small-context models: use stateless batching (each sub-query sent independently; constant token budget).}
-
-\medskip
-\begin{tabular}{lrrcrr}
-\toprule
-\textbf{Model} & \multicolumn{2}{c}{\textbf{Single query}} & & \multicolumn{2}{c}{\textbf{Decomposed}} \\
-\cmidrule{2-3}\cmidrule{5-6}
- & Med.\ F1 & Best & & Med.\ F1 & Best \\
-\midrule
-DeepSeek V3.2       & 60\% & 69\% & $\rightarrow$ & \textbf{94\%} & \textbf{99\%} \\
-Mistral Large 3     & 72\% & 88\% & $\rightarrow$ & \textbf{95\%} & \textbf{96\%} \\
-Gemini Flash Lite   & 58\% & 97\% & $\rightarrow$ & 75\% & 98\% \\
-Mistral Small 4     & 86\% & 87\% & $\rightarrow$ & 83\% & 90\% \\
-GPT-5.4             & 77\% & 94\% & $\rightarrow$ & 71\% & 75\% \\
-\bottomrule
-\end{tabular}
-
-\medskip
-\textbf{Best result:} DeepSeek V3.2 --- 163/163 plants, mean F1 = 89.8\% [85.8--95.6\%], \textbf{\$0.06}\\
-\small Decomposition is a \textbf{method condition}, not a model property. Same model: 60\% $\to$ 99\%.
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Aggregation: union vote as a free win}
-\textbf{Three runs already exist} (3 repeats per condition). How to combine them?
-
-\medskip
-\begin{tabular}{@{}lrrrrl@{}}
-\toprule
-Model & Med.~F1 & Maj.~F1 & Union F1 & Best $\Delta$ & Failure mode \\
-\midrule
-Mistral Small 4     & 86.4\% & 36.2\% & 72.4\% & $-$14.0\% & truncation \\
-GPT-5.4             & 77.0\% & 63.0\% & 78.5\% & $+$1.6\%  & truncation \\
-Mistral Large 3     & 72.2\% & 52.5\% & 81.5\% & $+$9.3\%  & truncation \\
-DeepSeek V3.2       & 60.1\% & 38.6\% & \textbf{95.5\%} & $+$35.4\% & truncation \\
-Gemini Flash Lite   & 58.0\% & \textbf{81.0\%} & 32.4\% & $+$23.0\%$^\dagger$ & overgeneration \\
-\bottomrule
-\end{tabular}
-
-\medskip
-\textbf{Union vote} (take all plants mentioned in any run) beats majority when the failure mode is \textbf{truncation} (plants missed by output length, not hallucinated).\\
-{\scriptsize $^\dagger$Gemini: majority wins because failure mode is overgeneration (union amplifies hallucinations).}
-
-\medskip
-{\small DeepSeek: 60\% $\to$ 95.5\% at \textbf{zero extra cost}. Aggregation strategy matters more than model choice.}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{Cost--quality Pareto: methods, not models}
 \begin{center}
 \pgfplotstableread[col sep=comma]{inputs/generated/pareto.csv}\paretodata
@@ -467,12 +447,12 @@ Gemini Flash Lite   & 58.0\% & \textbf{81.0\%} & 32.4\% & $+$23.0\%$^\dagger$ & 
 \end{center}
 
 \smallskip
-{\small Includes baseline, RAG, and union-vote results. Top-left cluster: local models at zero cost.\\
-Best Pareto point: DeepSeek V3.2 union vote --- F1=95.5\% at \$0.00 marginal cost.}
+{\small Best Pareto point: DeepSeek V3.2 decomposed+RAG --- mean F1=89.8\% [85.8--95.6\%] at \$0.06.\\
+{\scriptsize \textit{Pitfall: union-of-runs exploits variance to inflate recall --- irreproducible at $t{=}0$, not a valid method.}}}
 \end{frame}
 
 % ===================================================================
-\section{Architecture}
+\section{Auditability}
 
 % -------------------------------------------------------------------
 \begin{frame}{Epistemic accountability: LLM vs pipeline}
@@ -510,6 +490,34 @@ $\approx$98\% of citations trace to a corpus file (median 98\%).\\
 Coverage vs.\ traceability: the open trade-off.}
 \end{columns}
 \end{frame}
+
+% ===================================================================
+\section{Freshness}
+
+% -------------------------------------------------------------------
+\begin{frame}{Incremental fusion: update without regenerating}
+\begin{center}
+\large\textit{[Résultats prototype\_v1 — à compléter après campagne de runs]}
+\end{center}
+
+\bigskip
+\textbf{Primitive:} $\mathrm{master} + \mathrm{doc}_i \longrightarrow \mathrm{master}'$, 18 iterations (chronological order).
+
+\medskip
+\begin{itemize}
+  \item Each document added incrementally --- no full rerun
+  \item Every update is a diff: locatable, reversible
+  \item Cost scales with $N$ sources, not $N \times S$
+\end{itemize}
+
+\medskip
+\begin{center}
+{\small\textit{[Figure: F1 vs.\ documents added --- monotone non-regression verified]}}
+\end{center}
+\end{frame}
+
+% ===================================================================
+\section{Confidence}
 
 % -------------------------------------------------------------------
 \begin{frame}{Verification at scale: three tiers}

@@ -138,9 +138,9 @@ b) Top 15 provinces by total thermal capacity, broken down by fuel
 c) Timeline of capacity additions by period and fuel type
 \end{Prompt}
 
-\paragraph{Sourçage} Demande des colonnes de citation par ligne et une liste
-de références.
-\label{prompt:mod-sourcing}%
+\paragraph{Sourçage-trace ($S_t$)} Ajoute des colonnes de citation par ligne,
+sans demander de justification.
+\label{prompt:mod-sourcing-trace}%
 \begin{Prompt}
 For each row, include Source_1 and Source_2 columns citing the primary
 source for that plant's data. After the table, list all cited sources
@@ -148,28 +148,40 @@ with full citations. Do not fabricate URLs — write "URL not verified"
 if unsure of the exact address.
 \end{Prompt}
 
+\paragraph{Sourçage-ground ($S_g$)} Demande une justification de confiance par
+entrée, sans colonnes de citation.
+\label{prompt:mod-sourcing-ground}%
+\begin{Prompt}
+For each plant, state your confidence level (HIGH / MEDIUM / LOW) and the
+primary evidence you relied on (one sentence). Do not fabricate
+sources — write "evidence uncertain" if unsure.
+\end{Prompt}
+
 \subsection{Plan de mesures}\label{sec:plan-mesures}
 
-Le design expérimental comporte deux bras symétriques et trois points d'ancrage.
+Le design expérimental croise deux axes~: la \textbf{composition du prompt}
+(7~modules, 2~bras) et le \textbf{régime d'information} (4~modes d'accès
+aux connaissances). Chaque cellule du tableau prompt~$\times$~régime est
+un point de mesure indépendant.
 
 \paragraph{Points d'ancrage}
 
 \begin{description}
 \item[Census] Le Prompt~1 original (40~mots), point de référence bas.
-\item[Base] Le prompt de base (section~\ref{sec:prompt-base}), point de
-  référence intermédiaire.
-\item[Complet] Le prompt de base + les 6 modules, point de référence haut.
+\item[Base] Le prompt de base DSPy (section~\ref{sec:prompt-base},
+  optimisé par MIPROv2, voir Phase~0), point de référence intermédiaire.
+\item[Complet] Le prompt de base + les 7~modules, point de référence haut.
 \item[Frontier] Le prompt frontier existant (1\,200~mots), contrôle externe.
 \end{description}
 
 \paragraph{Bras composition} À partir du prompt de base, ajouter un seul module
-à la fois (6~variantes).
+à la fois (7~variantes).
 
 \paragraph{Bras ablation} À partir du prompt complet, retirer un seul module
-à la fois (6~variantes).
+à la fois (7~variantes).
 
 \medskip
-\noindent Soit 16~prompts au total~:
+\noindent Soit 18~prompts au total~:
 
 \begin{center}
 \small
@@ -177,78 +189,144 @@ Le design expérimental comporte deux bras symétriques et trois points d'ancrag
 \toprule
 \textbf{\#} & \textbf{Prompt} & \textbf{Bras} & \textbf{Modules} \\
 \midrule
- 0 & Census (Prompt~1 existant) & Ancrage  & -- \\
- 1 & Base                       & Ancrage  & $\emptyset$ \\
- 2 & Base + persona             & Composition & \{P\} \\
- 3 & Base + cadrage             & Composition & \{O\} \\
- 4 & Base + narratifs           & Composition & \{N\} \\
- 5 & Base + bibliographie       & Composition & \{B\} \\
- 6 & Base + statistiques        & Composition & \{T\} \\
- 7 & Base + sourçage            & Composition & \{S\} \\
- 8 & Complet                    & Ancrage  & \{P,O,N,B,T,S\} \\
- 9 & Complet $-$ persona        & Ablation & \{O,N,B,T,S\} \\
-10 & Complet $-$ cadrage        & Ablation & \{P,N,B,T,S\} \\
-11 & Complet $-$ narratifs      & Ablation & \{P,O,B,T,S\} \\
-12 & Complet $-$ bibliographie  & Ablation & \{P,O,N,T,S\} \\
-13 & Complet $-$ statistiques   & Ablation & \{P,O,N,B,S\} \\
-14 & Complet $-$ sourçage       & Ablation & \{P,O,N,B,T\} \\
-15 & Frontier (existant)        & Contrôle & -- \\
+ 0 & Census (Prompt~1 existant)   & Ancrage     & -- \\
+ 1 & Base                         & Ancrage     & $\emptyset$ \\
+ 2 & Base + persona               & Composition & \{P\} \\
+ 3 & Base + cadrage               & Composition & \{O\} \\
+ 4 & Base + narratifs             & Composition & \{N\} \\
+ 5 & Base + bibliographie         & Composition & \{B\} \\
+ 6 & Base + statistiques          & Composition & \{T\} \\
+ 7 & Base + sourçage-trace        & Composition & \{$S_t$\} \\
+ 8 & Base + sourçage-ground       & Composition & \{$S_g$\} \\
+ 9 & Complet                      & Ancrage     & \{P,O,N,B,T,$S_t$,$S_g$\} \\
+10 & Complet $-$ persona          & Ablation    & \{O,N,B,T,$S_t$,$S_g$\} \\
+11 & Complet $-$ cadrage          & Ablation    & \{P,N,B,T,$S_t$,$S_g$\} \\
+12 & Complet $-$ narratifs        & Ablation    & \{P,O,B,T,$S_t$,$S_g$\} \\
+13 & Complet $-$ bibliographie    & Ablation    & \{P,O,N,T,$S_t$,$S_g$\} \\
+14 & Complet $-$ statistiques     & Ablation    & \{P,O,N,B,$S_t$,$S_g$\} \\
+15 & Complet $-$ sourçage-trace   & Ablation    & \{P,O,N,B,T,$S_g$\} \\
+16 & Complet $-$ sourçage-ground  & Ablation    & \{P,O,N,B,T,$S_t$\} \\
+17 & Frontier (existant)          & Contrôle    & -- \\
 \bottomrule
 \end{tabular}
 \end{center}
 
+\paragraph{Régimes d'information}
+
+Quatre régimes d'accès aux connaissances sont testés en croisant les 18~prompts~:
+
+\begin{description}
+\item[Paramétrique] Le modèle répond uniquement à partir de ses poids
+  pré-entraînés (requête directe, un seul tour).
+\item[RAG wholesale] Le corpus de 18~documents est injecté intégralement
+  dans le contexte avant la requête.
+\item[Recherche web] Le modèle dispose d'un outil de recherche Internet
+  (Tavily ou plugin natif).
+\item[Incrémental] Le modèle part de sa sortie paramétrique (table initiale),
+  puis reçoit les 18~documents un par un~: chaque tour fournit un document
+  et demande de mettre à jour la table. Le régime mesure la valeur marginale
+  de chaque document ajouté et la capacité du modèle à réviser sans régresser.
+  Coût~: $18\times$ plus de tours que les autres régimes~; exécuté sur un
+  sous-panel de modèles (Phase~3).
+\end{description}
+
 \subsection{Protocole}\label{sec:protocole-ablation}
 
-\paragraph{Phase de sélection} Les prompts~1 (base) et~8 (complet) sont
-exécutés sur l'ensemble des modèles du census (25+ modèles cloud) avec 2~runs
-chacun. On retient les $k$~modèles dont le $|\Delta\text{F1}|$ moyen entre
-les deux conditions dépasse 0,05 (5~points). Ce seuil élimine les modèles
-insensibles au prompt, pour lesquels l'ablation ne peut rien révéler.
+\paragraph{Phase~0 — Optimisation DSPy du prompt base}
 
-\paragraph{Phase de mesure} Les 16~prompts sont exécutés sur les $k$~modèles
-retenus, avec 2~répétitions chacun ($16 \times k \times 2$ runs). Température
-réglée selon les recommandations du fournisseur pour l'extraction structurée
-(0,0--0,3 selon les modèles~; pour DeepSeek, la température API 1,0
-correspond à une température interne de 0,3 via un mécanisme de mapping
-documenté). Le nombre total de tokens générés est mesuré par condition pour
-contrôler l'effet de budget de sortie (un prompt demandant des narratifs
-produit mécaniquement plus de tokens, ce qui peut réduire la place disponible
-pour l'inventaire). Chaque run produit un CSV évalué contre l'inventaire de
-référence (163~centrales, matching par nom exact et approximatif).
+Le prompt base manuel (section~\ref{sec:prompt-base}) est optimisé par
+MIPROv2 sur un ensemble d'entraînement disjoint de l'ensemble d'évaluation
+(répartition 60/40 de l'inventaire de référence). Le prompt résultant~---
+\emph{prompt base DSPy}~--- remplace le prompt base manuel pour toutes les
+phases ultérieures. Les résultats H$_1$ (section suivante) restent valides
+comme référence sur le prompt base manuel~; ils mesurent le gain dû à
+l'ingénierie de prompt humaine, indépendamment de l'optimisation automatique.
+
+\paragraph{Contrôle de la variance}
+
+Tous les appels sont effectués avec $t{=}0{,}0$, graine fixée (\texttt{seed=42})
+et fournisseur épinglé via OpenRouter (\texttt{provider\_order}). Ces trois
+verrous éliminent la variance stochastique~: deux runs identiques devraient
+produire des sorties bit-à-bit identiques. \textbf{Vérification préalable
+obligatoire~:} avant chaque phase, deux répétitions sont lancées sur un modèle
+pilote~; si les sorties sont identiques, une seule répétition suffit pour le
+reste de la campagne. Si le fournisseur n'honore pas le seed (divergence
+observée), on revient à 3~répétitions pour ce modèle ou on l'exclut du panel.
+Cette preuve de déterminisme est reportée en annexe et constitue une garantie
+de reproductibilité pour les relecteurs.
+
+\paragraph{Phase~1 — Sélection des modèles}
+
+Les prompts~1 (base DSPy) et~9 (complet) sont exécutés sur l'ensemble des
+modèles du census (25+~modèles cloud), \textbf{2~répétitions pilotes} à
+$t{=}0{,}0$ sur les régimes paramétrique et RAG. Si le déterminisme est
+confirmé, une seule répétition est retenue par condition. On retient les
+$k$~modèles dont le $|\Delta\text{F1}|$ moyen dépasse 0,05 (5~points) sur
+au moins un régime.
+
+\paragraph{Phase~2 — Mesure complète (régimes paramétrique, RAG, web)}
+
+Les 18~prompts sont exécutés sur les $k$~modèles retenus à $t{=}0{,}0$,
+\textbf{1~répétition} si le déterminisme est confirmé en Phase~1, sinon~3
+($18 \times k \times 1$ à $18 \times k \times 3$~runs par régime). Chaque
+run produit un CSV évalué contre l'inventaire de référence (163~centrales,
+matching par nom exact et approximatif). Le nombre total de tokens générés
+est mesuré par condition pour contrôler l'effet de budget de sortie.
+
+\paragraph{Phase~3 — Régime incrémental}
+
+Sur un sous-panel de $k'{\leq}k$~modèles~: les 4~prompts d'ancrage (Census,
+Base DSPy, Complet, Frontier) sont exécutés en régime incrémental
+(18~tours par run, \textbf{1~répétition} si déterminisme confirmé). Les
+14~variantes de composition/ablation ne sont pas répétées en régime
+incrémental sauf si Phase~2 révèle des effets d'interaction forts.
 
 \paragraph{Analyse}
 \begin{itemize}
 \item \textbf{Effets principaux}~: pour chaque module $m$, comparer
   F1(base) \emph{vs} F1(base+$m$) (composition) et F1(complet) \emph{vs}
-  F1(complet$-m$) (ablation). Les intervalles de confiance bootstrap à 95\,\%
-  sur le $\Delta$F1 déterminent la significativité.
-\item \textbf{Effets d'interaction}~: si un module aide en composition mais
-  nuit en ablation (ou inversement), il interagit avec les autres modules.
-  L'asymétrie composition/ablation quantifie cet effet.
-\item \textbf{Coût de la confiance}~: le module sourçage est non négociable
-  pour le pipeline de production (section~\ref{chap:conclusion}). Son
-  $\Delta$F1 mesure le prix, en points d'extraction, de la traçabilité.
+  F1(complet$-m$) (ablation). Les intervalles de confiance bootstrap à
+  95\,\% sur le $\Delta$F1 déterminent la significativité.
+\item \textbf{Effets d'interaction prompt~$\times$~régime}~: un module peut
+  aider en paramétrique (amorçage de connaissances) et nuire en RAG
+  (redondance avec le contexte documentaire). L'asymétrie des effets entre
+  régimes est le signal principal de cette expérience.
+\item \textbf{Coût de la traçabilité}~: $S_t$ et $S_g$ sont séparés pour
+  distinguer le coût de format (colonnes supplémentaires, $S_t$) du coût de
+  raisonnement (justification explicite, $S_g$). Les deux sont non négociables
+  pour le pipeline de production~; leur $\Delta$F1 mesure le prix, en points
+  d'extraction, de la traçabilité et du grounding.
 \end{itemize}
 
-\paragraph{Budget prévisionnel (pilote)} Sélection~: $2 \times 25 \times 2
-= 100$~runs. Mesure avec $k=5$ modèles~: $16 \times 5 \times 2 = 160$~runs.
-Total~: 260~runs $\approx$ 5--15\,\$. Les modèles open-weight réduisent ce
-budget d'un facteur~10. Pour une publication, augmenter à 5~répétitions,
-élargir le panel de modèles, et pré-enregistrer les hypothèses directionnelles
-par module (section~\ref{sec:hypotheses-ablation}).
+\paragraph{Budget prévisionnel}
+
+Phase~0 (DSPy)~: inclus dans le budget MIPROv2 (ticket~0075).
+Phase~1 (sélection)~: $2 \times 25 \times 2 \times 2 = 200$~runs pilotes,
+${\approx}\,3$~\$.
+Phase~2 (mesure, $k{=}5$, déterminisme confirmé)~: $18 \times 5 \times 1 \times 3 = 270$~runs,
+${\approx}\,5$--15~\$.
+Phase~3 (incrémental, $k'{=}3$, déterminisme confirmé)~: $4 \times 3 \times 1 \times 18 = 216$~tours,
+${\approx}\,2$--5~\$.
+Total (cas favorable)~: ${\approx}\,10$--23~\$~; cas défavorable (déterminisme non confirmé)~:
+${\approx}\,25$--70~\$. Les modèles open-weight réduisent ce budget d'un facteur~5--10.
 
 \paragraph{Limites du design}
+
 \begin{itemize}
-\item \textbf{Requête directe uniquement.} L'expérience teste les prompts
-  en requête single-shot, sans RAG ni décomposition. L'interaction entre
-  le design du prompt et le contexte RAG constitue une expérience séparée~:
-  un module qui nuit en single-shot (cadrage sectoriel gaspillant des tokens)
-  pourrait aider en RAG (amorçage de la récupération documentaire).
 \item \textbf{Plan fractionnaire (résolution~III).} Le design teste les
-  effets principaux de 6~modules (16~prompts) mais pas les $\binom{6}{2}=15$
-  interactions par paires (qui nécessiteraient un plan factoriel $2^6=64$
-  prompts). L'asymétrie composition/ablation détecte la \emph{présence}
-  d'interactions mais ne les attribue pas à un couple spécifique.
+  effets principaux de 7~modules (18~prompts) mais pas les
+  $\binom{7}{2}=21$~interactions par paires (qui nécessiteraient un plan
+  factoriel $2^7=128$~prompts). L'asymétrie composition/ablation détecte la
+  \emph{présence} d'interactions mais ne les attribue pas à un couple
+  spécifique.
+\item \textbf{Régime incrémental limité.} Pour des raisons de coût, le régime
+  incrémental n'est appliqué qu'aux prompts d'ancrage en Phase~3. Les effets
+  d'interaction module~$\times$~incrémental ne sont pas mesurés sauf si
+  Phase~2 les suggère.
+\item \textbf{Dépendance à DSPy.} Si MIPROv2 absorbe l'effet d'un module en
+  l'intégrant au prompt base optimisé, son $\Delta$F1 en ablation sera proche
+  de zéro. Cet effet est attendu pour les modules à fort signal de rappel
+  (cadrage, sourçage-ground).
 \end{itemize}
 
 \subsection{Hypothèses pré-enregistrées}\label{sec:hypotheses-ablation}
@@ -303,11 +381,16 @@ Statistiques  & $-$     & neutre
   & Les tableaux croisés consomment ${\sim}\,500$~tokens de sortie.
     Compétition de budget modérée. Effet attendu faible. \\
 \addlinespace
-Sourçage      & $-$     & $+$
-  & Ajouter Source\_1 et Source\_2 par ligne force le modèle à
-    justifier chaque entrée, ce qui filtre les hallucinations
-    (précision~$+$). En contrepartie, le format élargi (12~colonnes
-    au lieu de~10) réduit le nombre de lignes produites (rappel~$-$). \\
+$S_t$ (trace) & $-$     & neutre
+  & Ajouter Source\_1 et Source\_2 élargit le format (12~colonnes au lieu
+    de~10), réduisant le nombre de lignes produites par contrainte de budget
+    de sortie (rappel~$-$). Aucun mécanisme de filtrage d'hallucinations
+    attendu~: le modèle indique une source sans vérifier l'entrée. \\
+\addlinespace
+$S_g$ (ground)& $-$     & $+$
+  & Demander une justification explicite force le modèle à évaluer chaque
+    entrée, ce qui filtre les hallucinations (précision~$+$). Le coût de
+    raisonnement supplémentaire réduit le nombre de lignes (rappel~$-$). \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -321,9 +404,9 @@ Sourçage      & $-$     & $+$
   critères d'inclusion/exclusion~; le census ne fournit qu'une consigne
   minimale. $H_1 : \text{F1}_{\text{base}} > \text{F1}_{\text{census}}$.
 
-\item \textbf{Complet \emph{vs} Base.} Le prompt complet (6~modules) est
+\item \textbf{Complet \emph{vs} Base.} Le prompt complet (7~modules) est
   attendu inférieur au prompt de base en rappel, en raison de la compétition
-  de budget cumulée (narratifs + bibliographie + statistiques + sourçage).
+  de budget cumulée (narratifs + bibliographie + statistiques + $S_t$ + $S_g$).
   L'effet d'amorçage du cadrage ne compense pas le coût combiné.
   $H_2 : \text{Rappel}_{\text{complet}} < \text{Rappel}_{\text{base}}$.
 
@@ -336,9 +419,9 @@ Sourçage      & $-$     & $+$
 \item \textbf{Module à effet individuel le plus fort.} Les narratifs sont
   attendus comme le module ayant le plus grand $|\Delta\text{F1}|$ individuel,
   car ils imposent la plus forte compétition de budget de sortie
-  ($>$2\,000~tokens de texte libre demandé). Le sourçage est le second
-  candidat, car il modifie à la fois le format de sortie et le processus de
-  génération.
+  ($>$2\,000~tokens de texte libre demandé). $S_g$ (sourçage-ground) est le
+  second candidat, car la justification explicite modifie à la fois le
+  processus de génération et filtre les hallucinations.
 \end{enumerate}
 
 \paragraph{Analyse empirique Base \emph{vs} Census (H$_1$)}
@@ -486,62 +569,39 @@ alimenter cette phase~: chaque ligne du CSV porte ses propres références,
 permettant à un agent vérificateur de contrôler la provenance sans accéder au
 prompt original.
 
-\subsection{Résultats de l'ablation --- régime RAG}\label{sec:results-ablation}
+\subsection{Résultats pilotes (design initial, invalidés)}\label{sec:results-ablation}
 
-La Phase~2 teste 16~variantes de prompt sur le régime RAG avec deux modèles
-frontière (DeepSeek~V3.2 et Kimi~K2~Thinking), choisis pour leurs effets
-opposés en Phase~1 ($-27{,}4$\,pp et $+25{,}8$\,pp respectivement avec le
-prompt composite). Chaque variante est répétée deux fois (64~appels au total,
-coût~: 3{,}77\,\$).
-
-La figure~\ref{fig:ablation-strip} montre les résultats par variante sous forme
-de strip~plot~: chaque point bleu est une centrale correctement identifiée,
-chaque point orange une hallucination. DeepSeek~V3.2 refuse (tool\_calls) sur
-16/32~variantes, rendant l'analyse $\Delta$F1 incomplète pour ce modèle.
+\textit{Note~: les résultats ci-dessous sont issus d'un pilote de 64~appels
+(16~prompts $\times$ 2~modèles $\times$ 2~répétitions, régime RAG uniquement)
+exécuté sous le design initial. Ils sont invalidés pour deux raisons~:
+(a)~\texttt{temperature=null} au moment des runs (PR\,\#244 a corrigé ce
+point a posteriori)~; (b)~le design a été révisé (7~modules, prompt base DSPy,
+4~régimes d'information). Les figures seront régénérées après la Phase~2
+révisée. Les résultats pilotes sont conservés ici à titre d'orientation
+qualitative seulement.}
 
 \begin{figure}[htbp]
 \centering
 \IfFileExists{inputs/generated/fig_ablation_strip.pdf}{%
   \includegraphics[width=0.85\linewidth]{inputs/generated/fig_ablation_strip.pdf}%
 }{\textit{[fig\_ablation\_strip.pdf not generated --- run \texttt{make measurements}]}}
-\caption{Strip plot de l'ablation Phase~2 en régime RAG. Bleu~: centrales
-correctement identifiées (TP). Orange~: hallucinations (FP). Croix grises~:
-refus du modèle. Ligne verte~: inventaire complet (163~centrales).}
+\caption{Strip plot pilote~: ablation, régime RAG, design initial (invalidé).
+Bleu~: TP. Orange~: FP. Croix grises~: refus du modèle.}
 \label{fig:ablation-strip}
 \end{figure}
-
-La figure~\ref{fig:ablation-heatmap} résume les effets par module sous forme de
-matrice. Pour chaque module, deux $\Delta$F1 sont calculés~: l'effet de
-composition (base + module vs base seul) et l'effet d'ablation (composite $-$
-module vs composite complet).
 
 \begin{figure}[htbp]
 \centering
 \IfFileExists{inputs/generated/fig_ablation_heatmap.pdf}{%
   \includegraphics[width=0.7\linewidth]{inputs/generated/fig_ablation_heatmap.pdf}%
 }{\textit{[fig\_ablation\_heatmap.pdf not generated --- run \texttt{make measurements}]}}
-\caption{Effet de chaque module sur le F1 en régime RAG. Rouge~: le module
-dégrade les performances. Bleu~: le module les améliore. Tirets~: données
-insuffisantes (refus du modèle).}
+\caption{Heatmap pilote~: effets par module, régime RAG, design initial
+(invalidé). Les données DeepSeek sont incomplètes (refus sur 16/32~variantes).}
 \label{fig:ablation-heatmap}
 \end{figure}
 
-Pour Kimi~K2~Thinking, le module \emph{sourçage} est le seul à améliorer
-le F1 en composition ($+3{,}6$\,pp) et son retrait dégrade le composite
-($-7{,}1$\,pp). Le module \emph{statistiques} a l'effet inverse~:
-$-30{,}4$\,pp en composition, $+11{,}5$\,pp en ablation. L'interprétation
-est que le module statistiques (format tabulaire imposé) interfère avec le
-contexte RAG déjà structuré, tandis que le sourçage (demande de références)
-aide le modèle à ancrer ses réponses dans les documents fournis.
-
-\paragraph{Limitation~: température non contrôlée}
-Les 64~appels de la Phase~2 ont été exécutés avec la température par défaut du
-fournisseur (\texttt{temperature=null}, typiquement 0{,}7--1{,}0 selon le
-modèle) plutôt qu'à $t=0$. Ce paramétrage introduit un bruit stochastique
-supplémentaire entre les répétitions, mais ne biaise pas la comparaison
-base/composite puisque les deux bras partagent la même configuration de
-température. Les intervalles de confiance rapportés sont donc potentiellement
-plus larges qu'ils ne le seraient à $t=0$, ce qui rend nos tests plus
-conservateurs. Le code a depuis été corrigé pour imposer $t=0{,}0$ par défaut
-(PR\,\#244)~; une reprise ciblée des modules ambigus pourra être effectuée si
-les relecteurs le demandent.
+Le signal qualitatif le plus robuste de ce pilote~: pour Kimi~K2~Thinking,
+le module \emph{statistiques} nuit fortement en composition ($-30{,}4$\,pp)
+et son retrait améliore le composite ($+11{,}5$\,pp), suggérant une
+interférence avec le contexte RAG structuré. Ce signal sera prioritaire
+à confirmer en Phase~2 révisée.

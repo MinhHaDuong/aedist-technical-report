@@ -410,6 +410,24 @@ Au-delà de la comparaison avec la référence, la \textbf{cohérence interne} d
 \input{inputs/plan_verification_multi}
 \input{inputs/results_verification_multi}
 
+\section{Pièges méthodologiques}\label{sec:pitfalls}
+
+% TODO: deux paragraphes + deux figures (à rédiger après les slides)
+%
+% \subsection{Décomposition par combustible}
+% Paragraphe : la décomposition résout la troncature mais introduit des
+% artefacts (centrales hydroélectriques dans la catégorie "autres combustibles",
+% double-comptage aux frontières des catégories). Figure : taux de faux positifs
+% par catégorie avant/après déduplication.
+%
+% \subsection{Union de runs}
+% Paragraphe : l'union-of-runs exploite la variance stochastique pour gonfler
+% le rappel — les runs non-déterministes produisent des listes différentes,
+% et leur union dépasse ce qu'un run unique contrôlé peut atteindre. À T=0
+% les runs sont identiques et l'union n'apporte rien. Présenter ce chiffre comme
+% résultat revient à optimiser sur le bruit. Figure : F1 union vs F1 médian par
+% modèle, montrant que l'écart disparaît à T=0.
+
 \section{Discussion}
 
 Les progrès dans la technologie RAG sont rapides \citep{UEIVYTV4,SQX6VZRP}. L'écosystème comprend des solutions RAG-as-a-Service (GraphLit, SciPhi/R2R) et de nombreuses piles libres (Kotaemon, RagFlow, Verba, Khoj, AnythingLLM). Le système Deep Research d'OpenAI \citep{Y6A39QJJ} est capable de trouver et analyser des sources en ligne pour produire un rapport structuré. L'analyse de documents joints est devenue une fonctionnalité standard des interfaces de chat.
