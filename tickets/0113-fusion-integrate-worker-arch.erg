@@ -1,0 +1,51 @@
+%erg v1
+Title: Integrate fusion prototype into experiments framework and worker arch
+Status: open
+Created: 2026-04-22
+Author: claude
+Blocked-by: gh#278
+
+--- log ---
+2026-04-22T00:00Z claude created — gap identified during PR #278 review
+
+--- body ---
+## Context
+
+PR #278 landed `prototype_v1_fusion.py` as a standalone research script.
+It uses `harness.query_model` and `harness.build_api_kwargs` correctly but
+is not wired into the worker/sweep infrastructure that all other methods use.
+
+Currently missing:
+- No `Method.FUSION` in `schema.py`
+- No `query_fusion.py` worker dispatched by `worker.py`
+- `[sweeps.fusion]` / `[sweeps.fusion_dev]` in experiments.toml have a
+  different schema (no `mode`, `models`, `repeat`, `budget_usd`, `prompt`)
+  and are loaded only by the prototype's own argparse, not the worker loop
+
+## Actions
+
+1. Add `FUSION = "fusion"` to `Method` enum in `schema.py`.
+2. Create `src/aedist/query_fusion.py` wrapping the prototype's `main()`
+   as a standard worker entry point (reads sweep config, runs cells, saves
+   results to `output/` dir in measurements-compatible format).
+3. Wire `Method.FUSION` into `worker.py` dispatch (alongside `Method.RAG`,
+   `Method.DECOMPOSED`, etc.).
+4. Align `[sweeps.fusion*]` schema with standard sweep fields
+   (`mode`, `models`, `repeat`, `budget_usd`, `prompt` or equivalent),
+   or document why fusion sweeps have a different schema and add a
+   dedicated validator path in `test_models.py`.
+5. Register `query-fusion` in `pyproject.toml` `[project.scripts]`.
+6. Update `test_sweep_count` and `test_standard_sweep_fields` exemption
+   if schema alignment is not done.
+
+## Test
+
+`uv run query-fusion --sweep fusion_dev` produces output files in
+`derived/fusion_proto_dev/` without error, and `make check` still passes.
+
+## Exit criteria
+
+- `Method.FUSION` exists in enum and is handled by `worker.py`.
+- Fusion sweeps can be launched via the same mechanism as `rag` sweeps.
+- `test_models.py` has no special-case exemptions for fusion sweeps
+  (or the exemptions are documented and intentional).
