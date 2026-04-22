@@ -1,6 +1,6 @@
 %erg v1
 Title: Run growth curve probe and wire Freshness slide numbers
-Status: open
+Status: closed
 Created: 2026-04-22
 Author: claude
 
@@ -42,3 +42,4 @@ the execution and the two downstream artifacts.
 - `derived/fusion_proto/growth_curve.pdf` committed (two-line F1 curve).
 - Freshness slide shows real F1@18 numbers (not stub).
 - `make check` green.
+2026-04-22T15:45Z claude status closed — 36-call run done; incremental F1@18=88.0%, global=46.2%; Freshness slide filled
