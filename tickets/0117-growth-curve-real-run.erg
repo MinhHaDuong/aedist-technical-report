@@ -1,0 +1,44 @@
+%erg v1
+Title: Run growth curve probe and wire Freshness slide numbers
+Status: open
+Created: 2026-04-22
+Author: claude
+
+--- log ---
+2026-04-22T14:00Z claude created — follow-up to ticket 0101 (PR #280): script exists, real 36-call run deferred
+
+--- body ---
+## Context
+
+`scripts/verify/incrementality_method.py` was delivered in PR #280 with
+mocked tests. The real 36-call LLM run was deferred. This ticket owns
+the execution and the two downstream artifacts.
+
+## Actions
+
+1. **Run the probe** (36 API calls via OpenRouter):
+   ```
+   uv run python scripts/verify/incrementality_method.py
+   ```
+   Produces `derived/fusion_proto/growth_curve.csv` and
+   `derived/fusion_proto/growth_curve.pdf`.
+
+2. **Extract headline numbers** — incremental F1@18 and global F1@18
+   from `growth_curve.csv`.
+
+3. **Write LaTeX macros** — following the repo pattern
+   (`report/inputs/generated/`), write a `growth_curve_macros.tex` with
+   `\newcommand` macros for the two headline numbers.
+
+4. **Fill Freshness slide** — replace the "Résultats en cours" stub
+   in `slides/slides.tex` (current placeholder from PR #281) with the
+   actual figure and two numbers.
+
+5. **Commit** CSV, PDF, macros file, updated slides.tex + slides.pdf.
+
+## Exit criteria
+
+- `derived/fusion_proto/growth_curve.csv` committed (18 × 2 rows).
+- `derived/fusion_proto/growth_curve.pdf` committed (two-line F1 curve).
+- Freshness slide shows real F1@18 numbers (not stub).
+- `make check` green.
