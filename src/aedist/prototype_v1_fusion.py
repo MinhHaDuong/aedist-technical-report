@@ -89,7 +89,7 @@ DEFAULT_SEQUENCE: list[FragmentSpec] = [
     FragmentSpec("EVN_Annual_Report_2018_CapacitiesTable.md", "EVN-2018", 2, 2018),
 ]
 
-FIELDS = ("fuel", "capacity_mw", "status", "province", "cod")
+FIELDS = ("fuel", "capacity_mwe", "status", "province", "cod")
 
 # ---------------------------------------------------------------------------
 # Data model
@@ -108,7 +108,7 @@ class SourcedField:
 class MasterRecord:
     name: str
     fuel: SourcedField | None = None
-    capacity_mw: SourcedField | None = None
+    capacity_mwe: SourcedField | None = None
     status: SourcedField | None = None
     province: SourcedField | None = None
     cod: SourcedField | None = None
@@ -146,7 +146,7 @@ class MasterRecord:
                 status = PlantStatus(sv)
             except ValueError:
                 status = None
-        cap = self.capacity_mw.value if self.capacity_mw else None
+        cap = self.capacity_mwe.value if self.capacity_mwe else None
         try:
             cap = float(cap) if cap is not None else None
         except (TypeError, ValueError):
@@ -184,7 +184,7 @@ Skip hydro, solar, wind, biomass, nuclear.
 Return a JSON array. Each object must have these keys (use null if unknown):
   "name"        - plant name (keep Vietnamese diacritics)
   "fuel"        - one of: coal, gas, lng, oil  (null if unclear)
-  "capacity_mw" - number in MW  (null if unclear)
+  "capacity_mwe" - number in MWe  (null if unclear)
   "status"      - one of: operational, planned, cancelled, proposed, under_construction  (null if unclear)
   "province"    - Vietnamese province name  (null if unclear)
   "cod"         - year as 4-digit string e.g. "2025"  (null if unclear)
@@ -205,7 +205,7 @@ of thermal power plants in Vietnam (coal, gas, lng, oil only). \
 For each plant, use the most authoritative and recent value available. \
 Do NOT include provenance — just the best-known values.
 
-Each object: "name", "fuel", "capacity_mw", "status", "province", "cod" \
+Each object: "name", "fuel", "capacity_mwe", "status", "province", "cod" \
 (same schema as above; null if unknown).
 
 {sources}
@@ -218,23 +218,31 @@ JSON array:"""
 # ---------------------------------------------------------------------------
 
 
-def _llm_extract(text: str, client, model: str) -> list[dict]:
+def _llm_extract(
+    text: str, client, model: str, extract_prompt: str = _EXTRACT_PROMPT
+) -> list[dict]:
     messages = [
         {"role": "system", "content": _EXTRACT_SYSTEM},
-        {"role": "user", "content": _EXTRACT_PROMPT.format(text=text[:10000])},
+        {"role": "user", "content": extract_prompt.format(text=text[:10000])},
     ]
     result = query_single_turn(client, model, messages, max_tokens=3000, temperature=0)
     raw = result["content"] or ""
     return _parse_json_array(raw)
 
 
-def _llm_global(texts: list[str], source_ids: list[str], client, model: str) -> list[dict]:
+def _llm_global(
+    texts: list[str],
+    source_ids: list[str],
+    client,
+    model: str,
+    global_prompt: str = _GLOBAL_PROMPT,
+) -> list[dict]:
     sources = "\n\n".join(
         f"=== {sid} ===\n{t[:4000]}" for sid, t in zip(source_ids, texts, strict=False)
     )
     messages = [
         {"role": "system", "content": _GLOBAL_SYSTEM},
-        {"role": "user", "content": _GLOBAL_PROMPT.format(n=len(texts), sources=sources)},
+        {"role": "user", "content": global_prompt.format(n=len(texts), sources=sources)},
     ]
     result = query_single_turn(client, model, messages, max_tokens=6000, temperature=0)
     raw = result["content"] or ""
@@ -328,6 +336,7 @@ def run_incremental(
     sequence: list[FragmentSpec],
     client,
     model: str,
+    extract_prompt: str = _EXTRACT_PROMPT,
 ) -> tuple[list[MasterRecord], list[FusionDiff]]:
     master: list[MasterRecord] = []
     diffs: list[FusionDiff] = []
@@ -338,7 +347,7 @@ def run_incremental(
             continue
         text = fragment_path.read_text(encoding="utf-8")
         log.info("Extracting from %s ...", spec.source_id)
-        plants = _llm_extract(text, client, model)
+        plants = _llm_extract(text, client, model, extract_prompt)
         log.info("  → %d plants extracted", len(plants))
         diff = fuse_fragment(master, plants, spec)
         diffs.append(diff)
@@ -361,6 +370,7 @@ def run_global(
     sequence: list[FragmentSpec],
     client,
     model: str,
+    global_prompt: str = _GLOBAL_PROMPT,
 ) -> list[dict]:
     texts, source_ids = [], []
     for spec in sequence:
@@ -370,7 +380,7 @@ def run_global(
         texts.append(fragment_path.read_text(encoding="utf-8"))
         source_ids.append(spec.source_id)
     log.info("Global fusion: %d fragments → single LLM call", len(texts))
-    plants = _llm_global(texts, source_ids, client, model)
+    plants = _llm_global(texts, source_ids, client, model, global_prompt)
     log.info("  → %d plants synthesized", len(plants))
     return plants
 
@@ -405,7 +415,7 @@ def dicts_to_plants(dicts: list[dict]) -> list[Plant]:
                 pass
         cap = None
         try:
-            cap = float(p["capacity_mw"]) if p.get("capacity_mw") is not None else None
+            cap = float(p["capacity_mwe"]) if p.get("capacity_mwe") is not None else None
         except (TypeError, ValueError):
             pass
         plants.append(
@@ -442,12 +452,12 @@ def save_master_csv(master: list[MasterRecord], path: Path) -> None:
             [
                 "name",
                 "fuel",
-                "capacity_mw",
+                "capacity_mwe",
                 "status",
                 "province",
                 "cod",
                 "fuel_source",
-                "capacity_mw_source",
+                "capacity_mwe_source",
                 "status_source",
                 "province_source",
                 "cod_source",
@@ -458,12 +468,12 @@ def save_master_csv(master: list[MasterRecord], path: Path) -> None:
                 [
                     rec.name,
                     rec.fuel.value if rec.fuel else "",
-                    rec.capacity_mw.value if rec.capacity_mw else "",
+                    rec.capacity_mwe.value if rec.capacity_mwe else "",
                     rec.status.value if rec.status else "",
                     rec.province.value if rec.province else "",
                     rec.cod.value if rec.cod else "",
                     rec.fuel.source_id if rec.fuel else "",
-                    rec.capacity_mw.source_id if rec.capacity_mw else "",
+                    rec.capacity_mwe.source_id if rec.capacity_mwe else "",
                     rec.status.source_id if rec.status else "",
                     rec.province.source_id if rec.province else "",
                     rec.cod.source_id if rec.cod else "",
@@ -507,6 +517,31 @@ def _build_sequence(args: argparse.Namespace) -> list[FragmentSpec]:
     return seq
 
 
+def _load_prompt(path_or_none: Path | None, default: str) -> str:
+    if path_or_none is None:
+        return default
+    return path_or_none.read_text(encoding="utf-8")
+
+
+def _save_global_csv(plants_raw: list[dict], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["name", "fuel", "capacity_mwe", "status", "province", "cod"])
+        for p in plants_raw:
+            w.writerow(
+                [
+                    p.get("name", ""),
+                    p.get("fuel", ""),
+                    p.get("capacity_mwe", ""),
+                    p.get("status", ""),
+                    p.get("province", ""),
+                    p.get("cod", ""),
+                ]
+            )
+    log.info("Saved global CSV: %s (%d plants)", path, len(plants_raw))
+
+
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -529,6 +564,22 @@ def main(argv: list[str] | None = None) -> None:
         default="openai/gpt-4o-mini",
         help="LLM model via OpenRouter (default: openai/gpt-4o-mini)",
     )
+    p.add_argument(
+        "--extract-prompt",
+        type=Path,
+        default=None,
+        metavar="FILE",
+        help="Prompt file for per-fragment extraction (default: built-in). "
+        "Must contain a {text} placeholder.",
+    )
+    p.add_argument(
+        "--global-prompt",
+        type=Path,
+        default=None,
+        metavar="FILE",
+        help="Prompt file for global synthesis (default: built-in). "
+        "Must contain {n} and {sources} placeholders.",
+    )
     p.add_argument("--corpus", type=Path, default=_DEFAULT_CORPUS)
     p.add_argument("--reference", type=Path, default=_DEFAULT_REF)
     p.add_argument("--output", type=Path, default=_DEFAULT_OUTPUT)
@@ -542,13 +593,19 @@ def main(argv: list[str] | None = None) -> None:
 
     sequence = _build_sequence(args)
     client = make_client()
+    extract_prompt = _load_prompt(args.extract_prompt, _EXTRACT_PROMPT)
+    global_prompt = _load_prompt(args.global_prompt, _GLOBAL_PROMPT)
 
     print(f"\nFusion prototype — mode={args.mode}, fragments={len(sequence)}, model={args.model}")
+    if args.extract_prompt:
+        print(f"  extract-prompt: {args.extract_prompt}")
+    if args.global_prompt:
+        print(f"  global-prompt:  {args.global_prompt}")
     print("=" * 70)
 
     if args.mode in ("incremental", "compare"):
         print("\n[Incremental fusion]")
-        master, diffs = run_incremental(args.corpus, sequence, client, args.model)
+        master, diffs = run_incremental(args.corpus, sequence, client, args.model, extract_prompt)
         inc_plants = master_to_plants(master)
         inc_scores = score_against_reference(inc_plants, args.reference)
         print(f"\n  Final master: {len(master)} plants")
@@ -563,7 +620,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.mode in ("global", "compare"):
         print("\n[Global fusion]")
-        global_plants_raw = run_global(args.corpus, sequence, client, args.model)
+        global_plants_raw = run_global(args.corpus, sequence, client, args.model, global_prompt)
         global_plants = dicts_to_plants(global_plants_raw)
         global_scores = score_against_reference(global_plants, args.reference)
         print(f"\n  Synthesized: {len(global_plants)} plants")
@@ -572,23 +629,7 @@ def main(argv: list[str] | None = None) -> None:
         print(f"  F1:                {global_scores['f1']:.1%}")
 
         if args.mode == "global":
-            out = args.output / "global"
-            out.mkdir(parents=True, exist_ok=True)
-            with (out / "master.csv").open("w", newline="", encoding="utf-8") as f:
-                w = csv.writer(f)
-                w.writerow(["name", "fuel", "capacity_mw", "status", "province", "cod"])
-                for p in global_plants_raw:
-                    w.writerow(
-                        [
-                            p.get("name", ""),
-                            p.get("fuel", ""),
-                            p.get("capacity_mw", ""),
-                            p.get("status", ""),
-                            p.get("province", ""),
-                            p.get("cod", ""),
-                        ]
-                    )
-            log.info("Saved global master CSV: %s", out / "master.csv")
+            _save_global_csv(global_plants_raw, args.output / "global" / "master.csv")
 
     if args.mode == "compare":
         print("\n[Comparison]")
@@ -605,21 +646,7 @@ def main(argv: list[str] | None = None) -> None:
         out = args.output / "compare"
         save_master_csv(master, out / "incremental_master.csv")
         save_provenance(master, out / "incremental_provenance.json")
-        out.mkdir(parents=True, exist_ok=True)
-        with (out / "global_master.csv").open("w", newline="", encoding="utf-8") as f:
-            w = csv.writer(f)
-            w.writerow(["name", "fuel", "capacity_mw", "status", "province", "cod"])
-            for p in global_plants_raw:
-                w.writerow(
-                    [
-                        p.get("name", ""),
-                        p.get("fuel", ""),
-                        p.get("capacity_mw", ""),
-                        p.get("status", ""),
-                        p.get("province", ""),
-                        p.get("cod", ""),
-                    ]
-                )
+        _save_global_csv(global_plants_raw, out / "global_master.csv")
 
 
 if __name__ == "__main__":
