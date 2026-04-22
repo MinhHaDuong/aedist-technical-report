@@ -312,6 +312,8 @@ def build_api_kwargs(
     max_tokens: int | None = None,
     temperature: float,
     enable_web_search: bool = False,
+    seed: int | None = None,
+    provider_order: list[str] | None = None,
 ) -> dict:
     """Build API kwargs from model capability flags.
 
@@ -326,6 +328,11 @@ def build_api_kwargs(
     Set *enable_web_search* to ``False`` to suppress web search tools even
     when the model declares the capability (e.g. RAG mode, where the corpus
     is the context and web search is counterproductive).
+
+    *seed* pins the RNG for reproducibility (OpenRouter: "best effort").
+    *provider_order* restricts routing to a specific backend list, e.g.
+    ``["DeepSeek"]``, eliminating cross-provider floating-point variance.
+    Both are required to approach determinism on MoE models like DeepSeek V3.
     """
     kwargs: dict = {}
     if max_tokens is not None:
@@ -333,6 +340,9 @@ def build_api_kwargs(
 
     if not model.get("reasoning", False):
         kwargs["temperature"] = temperature
+
+    if seed is not None:
+        kwargs["seed"] = seed
 
     if enable_web_search and model.get("web_search", False):
         kwargs["tools"] = [
@@ -344,12 +354,38 @@ def build_api_kwargs(
             }
         ]
 
+    # OpenRouter provider pinning goes in extra_body, not top-level kwargs.
+    extra: dict = {}
+    if provider_order:
+        extra["provider"] = {"order": provider_order, "allow_fallbacks": False}
+    if extra:
+        kwargs["extra_body"] = extra
+
     return kwargs
 
 
 # ---------------------------------------------------------------------------
 # Single-turn query helper
 # ---------------------------------------------------------------------------
+
+
+def query_model(
+    client: OpenAI,
+    model_id: str,
+    messages: list[dict],
+    *,
+    num_ctx: int = 32768,
+    ollama_base_url: str = "http://localhost:11434/v1",
+    **kwargs,
+) -> dict:
+    """Dispatch to Ollama native or OpenAI-compatible API.
+
+    Models without '/' in their ID are assumed to be Ollama (e.g. 'qwen3.5:2b').
+    Ollama native API is used so num_ctx is honoured (the /v1/ shim ignores it).
+    """
+    if "/" not in model_id:
+        return query_ollama_native(ollama_base_url, model_id, messages, num_ctx)
+    return query_single_turn(client, model_id, messages, **kwargs)
 
 
 def query_single_turn(

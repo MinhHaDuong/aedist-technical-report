@@ -273,7 +273,7 @@ def _extract_results(
     for i, j in matched_pairs:
         cap1: float = df1.loc[i, "capacity_clean"]
         cap2: float = df2.loc[j, "capacity_clean"]
-        diff: float = cap1 - cap2
+        diff: float = (cap1 - cap2) if (cap1 is not None and cap2 is not None) else 0.0
         name1 = str(df1.loc[i, "name_clean"])
         name2 = str(df2.loc[j, "name_clean"])
         if name1 == name2:

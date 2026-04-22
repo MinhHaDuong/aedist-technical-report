@@ -37,7 +37,8 @@ from typing import Any
 from rapidfuzz import fuzz
 
 from .evaluate import load_plants_csv
-from .harness import make_client, query_single_turn
+from .extract import extract_fenced_blocks, fallback_extract_inline_csv, parse_and_canonicalize
+from .harness import load_experiments, make_client, query_model
 from .metrics import compute_metrics
 from .reconcile import reconcile
 from .schema import FuelType, Plant, PlantStatus
@@ -45,11 +46,16 @@ from .util import strip_diacritics
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_CORPUS = Path(__file__).parent.parent.parent / "data" / "rag_corpus"
-_DEFAULT_REF = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
-_DEFAULT_OUTPUT = Path(__file__).parent.parent.parent / "derived" / "fusion_proto"
+_PROJECT_ROOT = Path(__file__).parent.parent.parent
+_DEFAULT_CORPUS = _PROJECT_ROOT / "data" / "rag_corpus"
+_DEFAULT_REF = _PROJECT_ROOT / "data" / "reference" / "vietnam_thermal_v1.csv"
+_DEFAULT_OUTPUT = _PROJECT_ROOT / "derived" / "fusion_proto"
+_PROMPT_DIR = _PROJECT_ROOT / "experiments" / "prompts"
+
+
+def _read_prompt(name: str) -> str:
+    return (_PROMPT_DIR / name).read_text(encoding="utf-8")
+
 
 ENTITY_THRESHOLD = 72  # rapidfuzz score to consider a name match
 
@@ -169,49 +175,16 @@ class FusionDiff:
 
 
 # ---------------------------------------------------------------------------
-# LLM extraction prompts
+# Prompts — loaded from experiments/prompts/ at import time
 # ---------------------------------------------------------------------------
 
-_EXTRACT_SYSTEM = (
-    "You extract thermal power plant records from Vietnamese government documents. "
-    "Return ONLY a valid JSON array, no prose, no markdown fences."
-)
-
-_EXTRACT_PROMPT = """\
-Extract all thermal power plants (coal, gas, lng, oil) from this document.
-Skip hydro, solar, wind, biomass, nuclear.
-
-Return a JSON array. Each object must have these keys (use null if unknown):
-  "name"        - plant name (keep Vietnamese diacritics)
-  "fuel"        - one of: coal, gas, lng, oil  (null if unclear)
-  "capacity_mwe" - number in MWe  (null if unclear)
-  "status"      - one of: operational, planned, cancelled, proposed, under_construction  (null if unclear)
-  "province"    - Vietnamese province name  (null if unclear)
-  "cod"         - year as 4-digit string e.g. "2025"  (null if unclear)
-
-Document:
-{text}
-
-JSON array:"""
-
-_GLOBAL_SYSTEM = (
-    "You synthesize thermal power plant inventories from multiple Vietnamese government sources. "
-    "Return ONLY a valid JSON array, no prose, no markdown fences."
-)
-
-_GLOBAL_PROMPT = """\
-Synthesize the following {n} source documents into a single deduplicated JSON array \
-of thermal power plants in Vietnam (coal, gas, lng, oil only). \
-For each plant, use the most authoritative and recent value available. \
-Do NOT include provenance — just the best-known values.
-
-Each object: "name", "fuel", "capacity_mwe", "status", "province", "cod" \
-(same schema as above; null if unknown).
-
-{sources}
-
-JSON array:"""
-
+_EXTRACT_SYSTEM = _read_prompt("fusion_extract_system.txt")
+_EXTRACT_PROMPT = _read_prompt("fusion_extract_user.txt")
+_GLOBAL_SYSTEM = _read_prompt("fusion_global_json_system.txt")
+_GLOBAL_PROMPT = _read_prompt("fusion_global_json_user.txt")
+_FUSE_SYSTEM = _read_prompt("fusion_incremental_md_system.txt")
+_FUSE_PROMPT = _read_prompt("fusion_incremental_md_user.txt")
+_GLOBAL_MD_PROMPT = _read_prompt("fusion_global_md_user.txt")
 
 # ---------------------------------------------------------------------------
 # LLM call helpers
@@ -219,13 +192,13 @@ JSON array:"""
 
 
 def _llm_extract(
-    text: str, client, model: str, extract_prompt: str = _EXTRACT_PROMPT
+    text: str, client, model: str, extract_prompt: str = _EXTRACT_PROMPT, **api_kw
 ) -> list[dict]:
     messages = [
         {"role": "system", "content": _EXTRACT_SYSTEM},
         {"role": "user", "content": extract_prompt.format(text=text[:10000])},
     ]
-    result = query_single_turn(client, model, messages, max_tokens=3000, temperature=0)
+    result = query_model(client, model, messages, max_tokens=3000, temperature=0, **api_kw)
     raw = result["content"] or ""
     return _parse_json_array(raw)
 
@@ -236,6 +209,7 @@ def _llm_global(
     client,
     model: str,
     global_prompt: str = _GLOBAL_PROMPT,
+    **api_kw,
 ) -> list[dict]:
     sources = "\n\n".join(
         f"=== {sid} ===\n{t[:4000]}" for sid, t in zip(source_ids, texts, strict=False)
@@ -244,7 +218,7 @@ def _llm_global(
         {"role": "system", "content": _GLOBAL_SYSTEM},
         {"role": "user", "content": global_prompt.format(n=len(texts), sources=sources)},
     ]
-    result = query_single_turn(client, model, messages, max_tokens=16000, temperature=0)
+    result = query_model(client, model, messages, max_tokens=16000, temperature=0, **api_kw)
     raw = result["content"] or ""
     return _parse_json_array(raw)
 
@@ -337,6 +311,7 @@ def run_incremental(
     client,
     model: str,
     extract_prompt: str = _EXTRACT_PROMPT,
+    **api_kw,
 ) -> tuple[list[MasterRecord], list[FusionDiff]]:
     master: list[MasterRecord] = []
     diffs: list[FusionDiff] = []
@@ -347,7 +322,7 @@ def run_incremental(
             continue
         text = fragment_path.read_text(encoding="utf-8")
         log.info("Extracting from %s ...", spec.source_id)
-        plants = _llm_extract(text, client, model, extract_prompt)
+        plants = _llm_extract(text, client, model, extract_prompt, **api_kw)
         log.info("  → %d plants extracted", len(plants))
         diff = fuse_fragment(master, plants, spec)
         diffs.append(diff)
@@ -371,6 +346,7 @@ def run_global(
     client,
     model: str,
     global_prompt: str = _GLOBAL_PROMPT,
+    **api_kw,
 ) -> list[dict]:
     texts, source_ids = [], []
     for spec in sequence:
@@ -380,9 +356,121 @@ def run_global(
         texts.append(fragment_path.read_text(encoding="utf-8"))
         source_ids.append(spec.source_id)
     log.info("Global fusion: %d fragments → single LLM call", len(texts))
-    plants = _llm_global(texts, source_ids, client, model, global_prompt)
+    plants = _llm_global(texts, source_ids, client, model, global_prompt, **api_kw)
     log.info("  → %d plants synthesized", len(plants))
     return plants
+
+
+# ---------------------------------------------------------------------------
+# Markdown-direct modes (no JSON extraction step)
+# ---------------------------------------------------------------------------
+
+
+def _parse_csv_from_response(raw: str) -> list[Plant]:
+    """Extract a CSV from an LLM response and parse it into Plant objects.
+
+    Uses parse_and_canonicalize to normalize arbitrary header names
+    (e.g. "Generation Capacity (MWe)" → "capacity_mwe") before loading.
+    """
+    import tempfile
+
+    blocks = extract_fenced_blocks(raw)
+    csv_text = blocks[0] if blocks else (fallback_extract_inline_csv(raw) or "")
+    if not csv_text.strip():
+        log.warning("No CSV found in LLM response")
+        return []
+    try:
+        canonical = parse_and_canonicalize(csv_text)
+    except ValueError as e:
+        log.warning("CSV canonicalization failed: %s", e)
+        canonical = csv_text
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", encoding="utf-8", delete=False) as f:
+        f.write(canonical)
+        tmp = f.name
+    return load_plants_csv(Path(tmp))
+
+
+def _llm_fuse_direct(
+    master_csv: str,
+    fragment_text: str,
+    spec: FragmentSpec,
+    client,
+    model: str,
+    fuse_prompt: str = _FUSE_PROMPT,
+    **api_kw,
+) -> str:
+    """One incremental fusion step: master_csv + fragment_md → updated master_csv."""
+    n_master = master_csv.count("\n") if master_csv.strip() else 0
+    user = fuse_prompt.format(
+        n_master=n_master,
+        master_csv=master_csv or "(empty — first source)",
+        source_id=spec.source_id,
+        tier=spec.tier,
+        year=spec.year,
+        fragment_text=fragment_text[:8000],
+    )
+    messages = [{"role": "system", "content": _FUSE_SYSTEM}, {"role": "user", "content": user}]
+    result = query_model(client, model, messages, max_tokens=8000, temperature=0, **api_kw)
+    raw = result["content"] or ""
+    blocks = extract_fenced_blocks(raw)
+    return blocks[0] if blocks else (fallback_extract_inline_csv(raw) or master_csv)
+
+
+def run_global_md(
+    corpus_dir: Path,
+    sequence: list[FragmentSpec],
+    client,
+    model: str,
+    prompt: str,
+    **api_kw,
+) -> list[Plant]:
+    """global × md: all fragments as system context, prompt as user → CSV.
+
+    This replicates the RAG oneshot pipeline exactly.
+    """
+    texts = []
+    for spec in sequence:
+        p = corpus_dir / spec.filename
+        if p.exists():
+            texts.append(p.read_text(encoding="utf-8"))
+    corpus_text = "\n---\n".join(texts)
+    log.info("Global md: %d fragments, %d chars → single LLM call", len(texts), len(corpus_text))
+    messages = [
+        {"role": "system", "content": corpus_text},
+        {"role": "user", "content": prompt},
+    ]
+    result = query_model(client, model, messages, temperature=0, **api_kw)
+    raw = result["content"] or ""
+    log.info("  response: %d chars, finish=%s", len(raw), result["finish_reason"])
+    return _parse_csv_from_response(raw)
+
+
+def run_incremental_direct(
+    corpus_dir: Path,
+    sequence: list[FragmentSpec],
+    client,
+    model: str,
+    fuse_prompt: str = _FUSE_PROMPT,
+    **api_kw,
+) -> tuple[list[Plant], list[FusionDiff]]:
+    """incremental × md: master_csv + fragment_md → master_csv', no JSON step."""
+    master_csv = ""
+    diffs: list[FusionDiff] = []
+    for spec in sequence:
+        fragment_path = corpus_dir / spec.filename
+        if not fragment_path.exists():
+            log.warning("Fragment not found: %s", spec.filename)
+            continue
+        text = fragment_path.read_text(encoding="utf-8")
+        prev_lines = master_csv.count("\n")
+        log.info("Fusing %s ...", spec.source_id)
+        master_csv = _llm_fuse_direct(master_csv, text, spec, client, model, fuse_prompt, **api_kw)
+        new_lines = master_csv.count("\n")
+        diff = FusionDiff(source_id=spec.source_id, added=max(0, new_lines - prev_lines))
+        diffs.append(diff)
+        print(f"  {spec.source_id:<14}  +{diff.added:>3} rows  [total lines: {new_lines}]")
+    plants = _parse_csv_from_response("```csv\n" + master_csv + "\n```")
+    return plants, diffs
 
 
 # ---------------------------------------------------------------------------
@@ -542,11 +630,37 @@ def _save_global_csv(plants_raw: list[dict], path: Path) -> None:
     log.info("Saved global CSV: %s (%d plants)", path, len(plants_raw))
 
 
+_SWEEP_TOML_KEYS = frozenset(
+    {"model", "seed", "provider", "corpus", "reference", "output", "mode", "format", "fragments"}
+)
+
+
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    p.add_argument(
+        "--experiments",
+        default="experiments/experiments.toml",
+        metavar="FILE",
+        help="Path to experiments.toml (default: experiments/experiments.toml)",
+    )
+    p.add_argument(
+        "--sweep",
+        default=None,
+        metavar="NAME",
+        help="Load parameters from [sweeps.NAME] in experiments.toml. CLI flags override.",
+    )
     p.add_argument("--mode", choices=["incremental", "global", "compare"], default="compare")
+    p.add_argument(
+        "--format",
+        choices=["json", "md", "both"],
+        default="md",
+        help=(
+            "Intermediate representation: 'md' = direct CSV from markdown (no JSON step); "
+            "'json' = extract→synthesize JSON; 'both' = run all 4 cells (compare mode only)"
+        ),
+    )
     p.add_argument(
         "--fragments",
         type=int,
@@ -569,21 +683,56 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         default=None,
         metavar="FILE",
-        help="Prompt file for per-fragment extraction (default: built-in). "
-        "Must contain a {text} placeholder.",
+        help="[json] Prompt for per-fragment extraction. Must contain {text} placeholder.",
     )
     p.add_argument(
         "--global-prompt",
         type=Path,
         default=None,
         metavar="FILE",
-        help="Prompt file for global synthesis (default: built-in). "
-        "Must contain {n} and {sources} placeholders.",
+        help="[json] Prompt for global JSON synthesis. Must contain {n} and {sources}.",
+    )
+    p.add_argument(
+        "--global-md-prompt",
+        type=Path,
+        default=None,
+        metavar="FILE",
+        help="[md] Prompt for global md mode (≈ RAG oneshot). Default: prompt_structured.txt.",
+    )
+    p.add_argument(
+        "--fuse-prompt",
+        type=Path,
+        default=None,
+        metavar="FILE",
+        help="[md] Prompt for each incremental md fusion step. Default: built-in.",
     )
     p.add_argument("--corpus", type=Path, default=_DEFAULT_CORPUS)
     p.add_argument("--reference", type=Path, default=_DEFAULT_REF)
     p.add_argument("--output", type=Path, default=_DEFAULT_OUTPUT)
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        metavar="N",
+        help="RNG seed for reproducibility (passed to API; best-effort on most models)",
+    )
+    p.add_argument(
+        "--provider",
+        default=None,
+        metavar="NAME",
+        help="Pin OpenRouter provider, e.g. 'DeepSeek'. Eliminates cross-provider variance.",
+    )
     p.add_argument("--verbose", action="store_true")
+
+    # Two-pass: load TOML sweep defaults before final parse so CLI flags override.
+    pre, _ = p.parse_known_args(argv)
+    if pre.sweep:
+        exps = load_experiments(pre.experiments)
+        sweep_cfg = exps.get("sweeps", {}).get(pre.sweep)
+        if sweep_cfg is None:
+            p.error(f"Sweep '{pre.sweep}' not found in {pre.experiments}")
+        p.set_defaults(**{k: v for k, v in sweep_cfg.items() if k in _SWEEP_TOML_KEYS})
+
     args = p.parse_args(argv)
 
     logging.basicConfig(
@@ -591,62 +740,157 @@ def main(argv: list[str] | None = None) -> None:
         format="%(levelname)s %(message)s",
     )
 
+    fmt = args.format
+    if fmt == "both" and args.mode != "compare":
+        p.error("--format both is only valid with --mode compare")
+
     sequence = _build_sequence(args)
     client = make_client()
-    extract_prompt = _load_prompt(args.extract_prompt, _EXTRACT_PROMPT)
-    global_prompt = _load_prompt(args.global_prompt, _GLOBAL_PROMPT)
 
-    print(f"\nFusion prototype — mode={args.mode}, fragments={len(sequence)}, model={args.model}")
-    if args.extract_prompt:
-        print(f"  extract-prompt: {args.extract_prompt}")
-    if args.global_prompt:
-        print(f"  global-prompt:  {args.global_prompt}")
+    # Reproducibility kwargs forwarded to every LLM call
+    api_kw: dict = {}
+    if args.seed is not None:
+        api_kw["seed"] = args.seed
+    if args.provider:
+        api_kw["extra_body"] = {"provider": {"order": [args.provider], "allow_fallbacks": False}}
+
+    # JSON-mode prompts
+    extract_prompt = _load_prompt(args.extract_prompt, _EXTRACT_PROMPT)
+    global_json_prompt = _load_prompt(args.global_prompt, _GLOBAL_PROMPT)
+
+    # Md-mode prompts
+    global_md_prompt = _load_prompt(args.global_md_prompt, _GLOBAL_MD_PROMPT)
+    fuse_prompt = _load_prompt(args.fuse_prompt, _FUSE_PROMPT)
+
+    print(
+        f"\nFusion prototype — mode={args.mode}, format={fmt}, "
+        f"fragments={len(sequence)}, model={args.model}"
+        + (f", seed={args.seed}" if args.seed is not None else "")
+        + (f", provider={args.provider}" if args.provider else "")
+    )
     print("=" * 70)
 
-    if args.mode in ("incremental", "compare"):
-        print("\n[Incremental fusion]")
-        master, diffs = run_incremental(args.corpus, sequence, client, args.model, extract_prompt)
-        inc_plants = master_to_plants(master)
-        inc_scores = score_against_reference(inc_plants, args.reference)
-        print(f"\n  Final master: {len(master)} plants")
-        print(f"  Coverage (recall): {inc_scores['coverage']:.1%}")
-        print(f"  Precision:         {inc_scores['precision']:.1%}")
-        print(f"  F1:                {inc_scores['f1']:.1%}")
+    # -----------------------------------------------------------------------
+    # Collect results per cell: scores[(scope, rep)] = score_dict
+    # -----------------------------------------------------------------------
+    cells: dict[str, dict] = {}  # key = "global×md" etc.
 
+    run_global_md_cell = fmt in ("md", "both") and args.mode in ("global", "compare")
+    run_global_json_cell = fmt in ("json", "both") and args.mode in ("global", "compare")
+    run_inc_md_cell = fmt in ("md", "both") and args.mode in ("incremental", "compare")
+    run_inc_json_cell = fmt in ("json", "both") and args.mode in ("incremental", "compare")
+
+    if run_global_md_cell:
+        label = "global×md  (≈ RAG oneshot)"
+        print(f"\n[{label}]")
+        plants = run_global_md(
+            args.corpus, sequence, client, args.model, global_md_prompt, **api_kw
+        )
+        scores = score_against_reference(plants, args.reference)
+        cells["global×md"] = scores
+        print(
+            f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
+            f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
+        )
+        if args.mode == "global":
+            out = args.output / "global_md"
+            out.mkdir(parents=True, exist_ok=True)
+            _save_plants_csv(plants, out / "master.csv")
+
+    if run_global_json_cell:
+        label = "global×json"
+        print(f"\n[{label}]")
+        plants_raw = run_global(
+            args.corpus, sequence, client, args.model, global_json_prompt, **api_kw
+        )
+        plants = dicts_to_plants(plants_raw)
+        scores = score_against_reference(plants, args.reference)
+        cells["global×json"] = scores
+        print(
+            f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
+            f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
+        )
+        if args.mode == "global":
+            _save_global_csv(plants_raw, args.output / "global_json" / "master.csv")
+
+    if run_inc_md_cell:
+        label = "incremental×md"
+        print(f"\n[{label}]")
+        plants, diffs = run_incremental_direct(
+            args.corpus, sequence, client, args.model, fuse_prompt, **api_kw
+        )
+        scores = score_against_reference(plants, args.reference)
+        cells["incremental×md"] = scores
+        print(
+            f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
+            f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
+        )
         if args.mode == "incremental":
-            out = args.output / "incremental"
+            out = args.output / "incremental_md"
+            out.mkdir(parents=True, exist_ok=True)
+            _save_plants_csv(plants, out / "master.csv")
+
+    if run_inc_json_cell:
+        label = "incremental×json"
+        print(f"\n[{label}]")
+        master, diffs = run_incremental(
+            args.corpus, sequence, client, args.model, extract_prompt, **api_kw
+        )
+        plants = master_to_plants(master)
+        scores = score_against_reference(plants, args.reference)
+        cells["incremental×json"] = scores
+        print(
+            f"  plants={scores['system_count']}  coverage={scores['coverage']:.1%}  "
+            f"precision={scores['precision']:.1%}  F1={scores['f1']:.1%}"
+        )
+        if args.mode == "incremental":
+            out = args.output / "incremental_json"
             save_master_csv(master, out / "master.csv")
             save_provenance(master, out / "master_provenance.json")
 
-    if args.mode in ("global", "compare"):
-        print("\n[Global fusion]")
-        global_plants_raw = run_global(args.corpus, sequence, client, args.model, global_prompt)
-        global_plants = dicts_to_plants(global_plants_raw)
-        global_scores = score_against_reference(global_plants, args.reference)
-        print(f"\n  Synthesized: {len(global_plants)} plants")
-        print(f"  Coverage (recall): {global_scores['coverage']:.1%}")
-        print(f"  Precision:         {global_scores['precision']:.1%}")
-        print(f"  F1:                {global_scores['f1']:.1%}")
+    if args.mode == "compare" and len(cells) >= 2:
+        print("\n" + "=" * 70)
+        print("COMPARISON")
+        print("=" * 70)
+        hdr = f"  {'Cell':<22} {'n':>5} {'coverage':>9} {'precision':>10} {'F1':>7}"
+        print(hdr)
+        print("  " + "-" * (len(hdr) - 2))
+        for cell_name, sc in cells.items():
+            print(
+                f"  {cell_name:<22} {sc['system_count']:>5} "
+                f"{sc['coverage']:>9.1%} {sc['precision']:>10.1%} {sc['f1']:>7.1%}"
+            )
+        if "global×md" in cells and "incremental×md" in cells:
+            gmd = cells["global×md"]
+            imd = cells["incremental×md"]
+            delta_f1 = imd["f1"] - gmd["f1"]
+            sign = "+" if delta_f1 >= 0 else ""
+            print(f"\n  Δ F1 (incremental×md − global×md): {sign}{delta_f1:.1%}")
+        if "global×md" in cells and "global×json" in cells:
+            gmd = cells["global×md"]
+            gjson = cells["global×json"]
+            delta_f1 = gjson["f1"] - gmd["f1"]
+            sign = "+" if delta_f1 >= 0 else ""
+            print(f"  Δ F1 (global×json − global×md):    {sign}{delta_f1:.1%}")
 
-        if args.mode == "global":
-            _save_global_csv(global_plants_raw, args.output / "global" / "master.csv")
 
-    if args.mode == "compare":
-        print("\n[Comparison]")
-        print(f"  {'Metric':<20} {'Incremental':>12} {'Global':>12} {'Delta':>10}")
-        print(f"  {'-' * 56}")
-        for key in ("coverage", "precision", "f1"):
-            inc_v = inc_scores[key]
-            gl_v = global_scores[key]
-            delta = inc_v - gl_v
-            sign = "+" if delta >= 0 else ""
-            print(f"  {key:<20} {inc_v:>11.1%} {gl_v:>11.1%} {sign}{delta:>8.1%}")
-        print("\n  Provenance: incremental tracks source per cell; global has none.")
-
-        out = args.output / "compare"
-        save_master_csv(master, out / "incremental_master.csv")
-        save_provenance(master, out / "incremental_provenance.json")
-        _save_global_csv(global_plants_raw, out / "global_master.csv")
+def _save_plants_csv(plants: list[Plant], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["name", "fuel", "capacity_mwe", "status", "province", "cod"])
+        for pl in plants:
+            w.writerow(
+                [
+                    pl.name,
+                    pl.fuel.value if pl.fuel else "",
+                    pl.capacity_mwe if pl.capacity_mwe is not None else "",
+                    pl.status.value if pl.status else "",
+                    pl.province or "",
+                    pl.cod or "",
+                ]
+            )
+    log.info("Saved %d plants → %s", len(plants), path)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,15 @@
+Extract all thermal power plants (coal, gas, lng, oil) from this document.
+Skip hydro, solar, wind, biomass, nuclear.
+
+Return a JSON array. Each object must have these keys (use null if unknown):
+  "name"         - plant name (keep Vietnamese diacritics)
+  "fuel"         - one of: coal, gas, lng, oil  (null if unclear)
+  "capacity_mwe" - number in MWe  (null if unclear)
+  "status"       - one of: operational, planned, cancelled, proposed, under_construction  (null if unclear)
+  "province"     - Vietnamese province name  (null if unclear)
+  "cod"          - year as 4-digit string e.g. "2025"  (null if unclear)
+
+Document:
+{text}
+
+JSON array:
