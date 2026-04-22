@@ -244,7 +244,7 @@ def _llm_global(
         {"role": "system", "content": _GLOBAL_SYSTEM},
         {"role": "user", "content": global_prompt.format(n=len(texts), sources=sources)},
     ]
-    result = query_single_turn(client, model, messages, max_tokens=6000, temperature=0)
+    result = query_single_turn(client, model, messages, max_tokens=16000, temperature=0)
     raw = result["content"] or ""
     return _parse_json_array(raw)
 
@@ -400,13 +400,13 @@ def dicts_to_plants(dicts: list[dict]) -> list[Plant]:
         name = (p.get("name") or "").strip()
         if not name:
             continue
-        fuel = None
+        fuel = FuelType.UNKNOWN
         if p.get("fuel"):
             try:
                 fuel = FuelType(p["fuel"].lower())
             except ValueError:
                 pass
-        status = None
+        status = PlantStatus.UNKNOWN
         if p.get("status"):
             sv = p["status"].lower().replace(" ", "_")
             try:
