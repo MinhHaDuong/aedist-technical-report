@@ -492,15 +492,21 @@ Couverture vs.\ traçabilité~: le compromis ouvert.}
 
 \column{0.44\textwidth}
 \begin{center}
-\vspace{1em}
-{\large\textit{Résultats en cours}}\\[0.5em]
-{\small (campagne de runs ticket~0101)}\\[1em]
-{\small Figure~: F1 en fonction du nombre de documents ajoutés --- non-régression monotone attendue}
+\vspace{0.5em}
+\begin{tabular}{lc}
+\hline
+Mode & F1 à $N{=}18$ \\
+\hline
+Incrémental & \textbf{88,0\,\%} \\
+Global      & 46,2\,\% \\
+\hline
+\end{tabular}\\[0.8em]
+{\small Précision~: 100\,\% (aucun faux positif)\\
+Couverture incrémentale~: 78,5\,\%}\\[0.5em]
+{\footnotesize F1 incrémental croît monotonement~; F1 global\\
+s'effondre à $N{=}18$ (instabilité de contexte).}
 \end{center}
 \end{columns}
-
-\medskip
-{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
 % ===================================================================
