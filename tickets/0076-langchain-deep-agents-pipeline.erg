@@ -1,6 +1,6 @@
 %erg v1
 Title: Evaluate LangChain Deep Agents lib for the production pipeline
-Status: closed
+Status: open
 Created: 2026-04-11
 Author: claude
 
@@ -73,3 +73,4 @@ the same input, and a side-by-side report of cost/latency/LOC.
 - Decision recorded: adopt (which stages), defer, or reject.
 - If adopt: follow-up ticket(s) opened for the concrete migration.
 2026-04-21T07:50Z claude status closed — verdict: deepagents reject (shape mismatch), LangGraph defer to ticket 0059. Memo: docs/langchain-deep-agents-eval.md (PR #275)
+2026-04-22T04:50Z user note scope correction — objectif était de trouver un usage deepagents dans un PROTOTYPE v1 (pas d'évaluer vs pipeline v0). L'agent a répondu à la mauvaise question. Relancer avec cadrage v1 : où deepagents peut-il prototyper une capacité stateful-agentique (découverte documentaire, boucle de vérification web, fusion multi-sources) ?
