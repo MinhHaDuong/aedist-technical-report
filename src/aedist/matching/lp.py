@@ -140,7 +140,7 @@ def _compute_costs(
             name2 = str(df2.loc[j, "name_clean"])
             cap1 = df1.loc[i, "capacity_clean"]
             cap2 = df2.loc[j, "capacity_clean"]
-            if math.isnan(cap1) or math.isnan(cap2):
+            if cap1 is None or cap2 is None or math.isnan(cap1) or math.isnan(cap2):
                 costs[(i, j)] = mismatch_penalty
                 continue
             diff = abs(cap1 - cap2)
@@ -202,18 +202,16 @@ def _setup_lp(
     indices1: list[int] = list(df1.index)
     indices2: list[int] = list(df2.index)
     x_vars: dict[tuple[int, int], LpVariable] = {
-        (i, j): LpVariable(f"x_{i}_{j}", cat="Binary")
-        for i in indices1 for j in indices2
+        (i, j): LpVariable(f"x_{i}_{j}", cat="Binary") for i in indices1 for j in indices2
     }
     u_vars: dict[int, LpVariable] = {i: LpVariable(f"u_{i}", cat="Binary") for i in indices1}
     v_vars: dict[int, LpVariable] = {j: LpVariable(f"v_{j}", cat="Binary") for j in indices2}
 
     # Objective:
     #   minimize ∑₍ᵢ,j₎ [cost(i, j) * x_vars[(i, j)]] + dummy_cost * (∑ᵢ u_vars[i] + ∑ⱼ v_vars[j])
-    prob += (
-        lpSum(costs[(i, j)] * x_vars[(i, j)] for i in indices1 for j in indices2)
-        + dummy_cost * (lpSum(u_vars[i] for i in indices1) + lpSum(v_vars[j] for j in indices2))
-    )
+    prob += lpSum(
+        costs[(i, j)] * x_vars[(i, j)] for i in indices1 for j in indices2
+    ) + dummy_cost * (lpSum(u_vars[i] for i in indices1) + lpSum(v_vars[j] for j in indices2))
 
     # Assignment constraints:
     # Each record from df1 must be either matched (across all j) or marked as unmatched.
@@ -267,10 +265,7 @@ def _extract_results(
     indices1: list[int] = list(df1.index)
     indices2: list[int] = list(df2.index)
     matched_pairs: list[tuple[int, int]] = [
-        (i, j)
-        for i in indices1
-        for j in indices2
-        if x_vars[(i, j)].varValue >= 0.5
+        (i, j) for i in indices1 for j in indices2 if x_vars[(i, j)].varValue >= 0.5
     ]
     unmatched_df1: list[int] = [i for i in indices1 if u_vars[i].varValue >= 0.5]
     unmatched_df2: list[int] = [j for j in indices2 if v_vars[j].varValue >= 0.5]
@@ -432,6 +427,9 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
         "u_vars": u_vars,
         "v_vars": v_vars,
     }
-    config: dict[str, int | float] = {"similarity_threshold": similarity_threshold, "capacity_tolerance": capacity_tolerance}
+    config: dict[str, int | float] = {
+        "similarity_threshold": similarity_threshold,
+        "capacity_tolerance": capacity_tolerance,
+    }
     results = _extract_results(context, config)
     return pd.DataFrame(results)
