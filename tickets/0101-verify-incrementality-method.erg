@@ -1,6 +1,6 @@
 %erg v1
 Title: Verify incrementality of the fusion method (order-sensitivity probe)
-Status: open
+Status: closed
 Created: 2026-04-17
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-17T11:45Z claude created — implements ADR-5 trait × target = script for the incrementality trait (MASTERPLAN §Method traits §Empirical limits). Blocked on the v0 fusion prototype existing end-to-end.
 2026-04-22T09:00Z claude note unblocked by PR #278 (prototype_v1_fusion landed). Scope reimagined: growth curve for Freshness slide, order-sensitivity demoted to optional sanity check.
 2026-04-22T13:30Z claude note planned: scripts/verify/incrementality_method.py; imports run_incremental:308, run_global:343, master_to_plants:487, dicts_to_plants:491, score_against_reference:523, DEFAULT_SEQUENCE:77 from prototype_v1_fusion; corpus confirmed 18 files in data/rag_corpus/; reference at data/reference/vietnam_thermal_v1.csv
+2026-04-22T15:00Z claude status closed — script delivered in PR #280 (merged); real run tracked in ticket 0117
 
 --- body ---
 ## Context
