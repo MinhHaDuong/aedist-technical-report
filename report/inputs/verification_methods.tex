@@ -1,282 +1,153 @@
-% Verification methods — preregistered protocol for journal paper
+% Verification methods — redesigned for 3-tier audit-verified verification
 % Included from report.tex, inside section "Exp 3: RAG wholesale" after decomposition
 %
-% NOTE: This file describes the 5-mode post-hoc verification protocol
-% (unverified / tool / self / cross / web + 0–4 evidence rubric).
-% Ticket 0059 (PR #246) showed that multi-agent post-hoc LLM verification
-% reaches only 0–10% inter-verifier agreement. Rewrite of this file is
-% tracked in ticket 0099: 3-tier audit-verified verification.
-% Current design in MASTERPLAN.md "Data model (v0 table fusion)".
-% See also slides/slides.tex for the updated framing.
+% Replaces the 5-mode post-hoc protocol (unverified / tool / self / cross / web
+% + rubric 0-4). The negative result motivating the replacement is ticket interne
+% 0059 (PR #246): 0–10% inter-verifier agreement even after bugfix.
+% Current design: front-loaded HITL source triage + 3-tier deterministic chain.
+% See also slides/slides.tex §"Fiabilité" for the full framing.
 
 \subsection{Vérification des sources}\label{sec:verification}
-
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\small
-\textbf{Synchronisation en cours.} Cette section décrit le protocole préenregistré à cinq modes (non vérifié, outil, auto, croisé, web) avec rubrique d'évidence 0--4. Le ticket~0059 (PR~\#246) a établi que la vérification LLM \emph{post-hoc} est une impasse (0--10\,\% d'accord inter-vérificateurs). Le cadrage courant place la justification en amont (triage HITL des sources), avec une chaîne de vérification déterministe à trois niveaux (correspondance de chaîne $\to$ adjudication LLM $\to$ mémoire ratifiée par humain avec piste d'audit). Voir \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''. Réécriture suivie dans le ticket~0099 (bloqué par ticket~0097). (2026-04-17)
-\end{minipage}}
-\end{center}
-
-\medskip
 
 Les expériences précédentes mesurent la \emph{couverture} de l'extraction~:
 combien de centrales le modèle trouve-t-il~? Mais pour un modélisateur de
 systèmes énergétiques, la couverture ne suffit pas~: chaque donnée intégrée
 dans un scénario doit être traçable jusqu'à un document source
-(section~\ref{chap:conclusion}). Cette section décrit un protocole de
-vérification systématique qui évalue la \emph{provenance} des résultats
-et mesure le compromis entre précision et couverture.
+(section~\ref{chap:conclusion}).
 
-\subsubsection{Modes de vérification}\label{sec:verif-modes}
+\subsubsection{Pourquoi la vérification LLM \emph{post-hoc} échoue}\label{sec:verif-postHoc}
 
-Cinq modes de vérification sont définis, par ordre croissant de coût et
-de rigueur~:
+Une première approche préenregistrée demandait à des panels de modèles de
+vérifier chaque ligne extraite en citant les sources qui l'étayent, puis
+d'agréger les scores par vote majoritaire. Le ticket interne~0059 (PR~\#246)
+établit que ce protocole est une impasse~: l'accord inter-vérificateurs
+atteint 0~à~10\,\%, même après correction d'un bogue d'appariement. La
+cause profonde est structurelle~: la rubrique 0--4 demande aux modèles de
+rappeler des citations depuis leur mémoire paramétrique, produisant des
+opinions et non de la provenance. Un modèle peut confirmer avec confiance une
+fabrication qu'il a lui-même produite. L'indépendance statistique entre
+vérificateurs, supposée par l'architecture multi-agents, est minée par les
+biais d'entraînement communs. La vérification \emph{post-hoc} par LLM ne
+s'améliore pas avec davantage de vérificateurs~: elle converge vers du bruit
+inter-modèles.
+
+\subsubsection{Justification du \emph{front-loading}}\label{sec:verif-frontload}
+
+Le rendement épistémique de la vérification est inversement proportionnel au
+moment où elle intervient. Une intervention humaine en amont --- le triage
+des sources avant toute extraction --- est l'acte de contrôle qualité le plus
+levier avec le coût le plus bas. L'opérateur valide les éditeurs, pas les
+cellules~: les décisions gouvernementales (\emph{Quyết định}), les rapports
+annuels d'EVN et les données du régulateur sont classées sources primaires~;
+les newsletters économiques et les compilations secondaires sont écartées.
+Ce filtre éditorial élimine une large fraction des fabrications potentielles
+avant même le premier appel LLM. Les sources validées sont ensuite
+téléchargées, converties en Markdown, indexées et archivées. L'extraction RAG
+opère sur ce corpus vérifié, actif par actif. Le résultat est un jeu de
+données dont chaque cellule est traçable jusqu'à un document source~--- non
+pas des données correctes, mais des données \emph{corrigeables}~: quand un
+relecteur trouve une erreur, le pipeline indique quelle source était erronée
+et quoi corriger.
+
+\subsubsection{Vérification déterministe à trois niveaux}\label{sec:verif-tiers}
+
+La vérification automatisée suit une chaîne à trois niveaux, par ordre
+croissant de coût et de subjectivité~:
 
 \begin{description}
-\item[Non vérifié (\texttt{unverified})]
-  Ligne de base~: lorsque le modèle fournit une citation dans la colonne
-  dédiée (\texttt{source\_ref}), celle-ci est classifiée par heuristique
-  (domaine URL, motifs textuels), mais aucune vérification externe n'est
-  effectuée. Les colonnes sans citation restent non annotées.
-  Coût additionnel~: nul.
+\item[Niveau~1 --- correspondance de chaînes.]
+  Chaque cellule extraite est confrontée déterministiquement à la table
+  source~: appariement flou du nom de fichier et du nom de la centrale, puis
+  recherche de la valeur numérique dans le document correspondant. Le résultat
+  est binaire~: \emph{ancré} (la valeur est retrouvée dans la source citée)
+  ou \emph{échec}. Sur le corpus thermique vietnamien avec extraction sourcée
+  (3~runs Opus), le taux d'ancrage médian est de~98\,\%~; la traçabilité
+  complète (valeur retrouvée et centrale identifiée dans le document) atteint
+  80\,\% en médiane. La baseline sans sources affiche~0\,\% dans les deux
+  métriques (tableau~\ref{tab:source-grounding}).
 
-\item[Outil (\texttt{tool})]
-  Chaque centrale est comparée par correspondance floue (seuil de
-  similarité~70/100, distinct du seuil de réconciliation à~90/100 utilisé
-  pour l'évaluation F1) à l'inventaire de référence. Une correspondance
-  confère le statut de source primaire (le référentiel fait foi)~;
-  l'absence de correspondance laisse la ligne sans source.
-  Coût additionnel~: nul (pas d'appel API).
+\item[Niveau~2 --- adjudication LLM.]
+  Quand le niveau~1 échoue, un LLM reçoit la cellule, la source citée, et la
+  question~: \emph{la valeur est-elle compatible avec ce document~?} Sa
+  réponse est une règle candidate (alias, unité, terme local ou synonyme
+  d'attribut) qui explique l'écart. Cette règle n'est pas appliquée
+  automatiquement~; elle est transmise au niveau~3 pour ratification.
 
-\item[Auto-vérification (\texttt{self})]
-  Le CSV extrait est renvoyé au \emph{même} modèle avec une consigne de
-  citation~: pour chaque centrale, le modèle doit fournir un ou deux
-  documents sources (décision gouvernementale, rapport annuel, article de
-  presse). Les citations sont classifiées par domaine et par motif textuel.
-  Coût additionnel~: un appel LLM par run.
-
-\item[Vérification croisée (\texttt{cross})]
-  Identique à l'auto-vérification, mais le vérificateur est un modèle
-  différent (Claude Sonnet~4.6 dans notre configuration). L'indépendance
-  du vérificateur réduit le risque de confirmation circulaire~: un modèle
-  ne valide pas ses propres fabrications.
-  Coût additionnel~: un appel LLM par run (modèle vérificateur).
-
-\item[Vérification web (\texttt{web})]
-  Pour chaque centrale, une recherche web (Tavily) est effectuée. Les
-  résultats sont classifiés par domaine (sources primaires~: sites
-  gouvernementaux, EVN, GEM, IEA~; sources secondaires~: Wikipedia,
-  agences de presse). Le cache par requête garantit l'idempotence entre
-  les runs.
-  Coût additionnel~: une recherche web par centrale.
+\item[Niveau~3 --- mémoire ratifiée par HITL.]
+  Un opérateur humain examine la règle candidate, sa justification et la
+  cellule d'évidence. S'il ratifie, la règle est écrite dans la mémoire du
+  système (un fichier \texttt{audit.jsonl} versionné sous git). Les runs
+  ultérieurs l'appliquent au niveau~1, réduisant le taux d'escalade au
+  niveau~2 à chaque itération.
 \end{description}
 
-\noindent Les modes \texttt{unverified}, \texttt{tool} et \texttt{web} sont
-déterministes (un seul run suffit). Les modes \texttt{self} et \texttt{cross}
-sont stochastiques (répétés $n$ fois pour estimer la variance).
+\noindent Ce design place le déterminisme en premier et n'engage le LLM qu'en
+recours. L'humain ratifie chaque règle une fois, pas chaque cellule à chaque
+fois~: le coût de supervision décroît à mesure que la mémoire s'enrichit.
 
-\subsubsection{Rubrique de qualité de l'évidence}\label{sec:evidence-rubric}
+\subsubsection{Quatre catégories de règles}\label{sec:verif-rules}
 
-Chaque centrale reçoit un \emph{score d'évidence} entier de 0 à~4, défini
-comme suit~:
+Les règles en mémoire appartiennent à quatre catégories, chacune encodant un
+type distinct de divergence entre la valeur extraite et la valeur dans la
+source~:
 
-\begin{center}
-\small
-\begin{tabular}{cl}
-\toprule
-\textbf{Score} & \textbf{Définition} \\
-\midrule
-0 & Source fabriquée (hallucination détectée) \\
-1 & Aucune source fournie \\
-2 & Une source secondaire (presse, Wikipedia) \\
-3 & Une source primaire (décision gouvernementale, rapport d'entreprise, registre) \\
-4 & Deux sources primaires indépendantes ou plus \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{description}
+\item[Alias.]
+  Identité d'entité~: deux noms désignent la même centrale.
+  Exemple~: \texttt{«~VT1~»} $\equiv$ \texttt{«~Vinh Tan~1~»} dans le
+  corpus PDP8. Une règle d'alias permet à l'appariement du niveau~1
+  de résoudre la correspondance sans escalade.
 
-\noindent La classification primaire/secondaire repose sur le domaine de
-l'URL (listes prédéfinies de domaines gouvernementaux, institutionnels et
-de presse) et sur des motifs textuels dans la citation (numéros de décision,
-noms de plans de développement, rapports annuels). Les sources dont le
-domaine n'est pas reconnu et dont le texte ne correspond à aucun motif
-reçoivent le score~1 (aucune source exploitable).
+\item[Unité/format.]
+  Forme de valeur~: la cellule extraite et la source expriment la même
+  quantité dans des formats différents.
+  Exemple~: \texttt{«~1~200~MW~»} $\to$ \texttt{1200.0~MWe} (espace de
+  millier, suffixe d'unité, virgule décimale). La règle normalise avant
+  comparaison.
 
-\subsubsection{L'indépendance des sources~: un problème ouvert}\label{sec:source-independence}
+\item[Terme source-local.]
+  Vocabulaire spécifique au corpus~: un terme ou une abréviation propre à un
+  document source particulier.
+  Exemple~: \texttt{«~Nhóm~»} dans le PDP8 désigne un groupement de
+  tranches (\emph{Group}) que le modèle peut retranscrire autrement.
 
-Le score~4 (<<~deux sources primaires indépendantes~>>) mérite un examen
-critique. Le score~3 --- au moins une source identifiée comme primaire ---
-est déjà difficile à confirmer automatiquement~: la classification repose
-sur des heuristiques de domaine URL et de motifs textuels, non sur une
-vérification humaine du caractère primaire de la source. Une intervention
-humaine (HITL) serait nécessaire pour valider qu'une source est
-\emph{réellement} primaire. En pratique, un rubrique révisée pourrait
-séparer ces deux niveaux~:
+\item[Synonyme d'attribut.]
+  Correspondance colonne--schéma~: le modèle utilise une désignation
+  d'attribut différente de celle du schéma cible.
+  Exemple~: \texttt{«~en construction~»} $\to$ statut \texttt{constructing}
+  dans la table de référence.
+\end{description}
 
-\begin{center}
-\small
-\begin{tabular}{cl}
-\toprule
-\textbf{Score} & \textbf{Définition} \\
-\midrule
-0 & Source fabriquée (hallucination détectée) \\
-1 & Aucune source fournie \\
-2 & Une source secondaire (presse, Wikipedia) \\
-3 & Une source primaire (heuristique~: domaine, motif) \\
-4 & Au moins une source primaire \emph{confirmée} (validation HITL ou croisement factuel) \\
-5 & Deux sources primaires \emph{indépendantes} confirmées \\
-\bottomrule
-\end{tabular}
-\end{center}
+La mémoire croît de façon monotone, commitée dans git et révisable via diff.
+Chaque règle porte un raisonnement, des cas limites et des preuves~: un
+carnet de terrain pour le prochain statisticien, et non un script de
+substitution mécanique.
 
-\noindent Cette échelle rappelle le système d'évaluation du renseignement
-de l'OTAN \citep{STANAG2022}, qui sépare la \emph{fiabilité de la
-source} (A~=~totalement fiable à F~=~impossible à évaluer) de la
-\emph{crédibilité de l'information} (1~=~confirmée par des sources
-indépendantes à 6~=~véracité impossible à évaluer). Le niveau de
-crédibilité~1 de l'OTAN (<<~confirmée par d'autres sources
-indépendantes~>>) correspond directement à notre score~5. Notre rubrique
-condense ces deux axes en un seul score~; la distinction source/information
-constitue un raffinement possible pour un futur protocole.
+\subsubsection{Piste d'audit}\label{sec:verif-audit}
 
-Le passage du score~4 au score~5 est le plus exigeant, car
-l'\emph{indépendance} des sources est elle-même un problème épistémologique
-difficile. Dans le contexte vietnamien, les chaînes de dépendance
-informationnelle sont enchevêtrées~:
-
-\begin{itemize}
-\item \textbf{Branche exécutive.} Le Ministère de l'Industrie et du
-  Commerce (MOIT) s'appuie sur l'Institut de l'Énergie (\emph{Energy
-  Institute}, IE) pour ses analyses techniques. Les chiffres du PDP8
-  proviennent largement de l'IE~; citer à la fois le PDP8 et un rapport
-  de l'IE ne constitue pas deux sources indépendantes.
-
-\item \textbf{EVN et sociétés de production.} Electricity of Vietnam (EVN),
-  les sociétés de génération (gencos) et l'opérateur de transport
-  (EVNNPT) sont la source originale des données opérationnelles.
-  Tout document citant des capacités installées reprend, directement ou
-  indirectement, les chiffres d'EVN. Les rapports annuels d'EVN et
-  les données PDP8 ne sont donc pas indépendants pour les centrales
-  existantes.
-
-\item \textbf{Littérature académique.} Certains articles scientifiques
-  évalués par les pairs (par exemple, les travaux sur PyPSA-VN) peuvent
-  constituer des sources indépendantes s'ils ont collecté leurs propres
-  données. Mais beaucoup reprennent les chiffres du PDP ou d'EVN.
-
-\item \textbf{Branche législative et Parti.} L'Assemblée nationale et le
-  Parti communiste produisent des résolutions et des rapports qui
-  peuvent contenir des chiffres indépendants, notamment pour les
-  centrales planifiées (décisions d'investissement distinctes des
-  projections MOIT/IE).
-
-\item \textbf{Douanes et Office statistique.} Le General Statistics Office
-  (GSO) et les douanes collectent des données par des voies distinctes
-  (importations de combustible, production déclarée). Ces sources sont
-  potentiellement indépendantes pour les capacités opérationnelles, mais
-  ne couvrent pas les centrales planifiées.
-
-\item \textbf{Sources internationales.} Global Energy Monitor (GEM),
-  l'AIE, et IRENA compilent des données à partir de sources
-  multiples~; leur degré d'indépendance varie. GEM effectue un
-  travail de vérification propre (imagerie satellite, rapports locaux)
-  et peut constituer une source indépendante pour certaines centrales.
-  L'imagerie satellite et les requêtes OpenStreetMap offrent une
-  vérification physique de l'existence d'une centrale, mais pas de sa
-  capacité nominale.
-\end{itemize}
-
-\noindent En résumé, atteindre le score~5 (deux sources primaires
-véritablement indépendantes) pour chaque centrale d'un inventaire national
-est un problème de recherche à part entière, nécessitant~:
-(a)~un graphe de dépendance entre producteurs de données du secteur
-énergétique,
-(b)~une validation HITL au moins par échantillonnage,
-(c)~potentiellement des sources non documentaires (télédétection,
-OpenStreetMap, registres de raccordement réseau).
-Le présent pilote opère au niveau 3--4 de la rubrique~; le niveau~5
-constitue un objectif à long terme pour une base de données de qualité
-statistique officielle.
-
-\subsubsection{Analyse précision-couverture}\label{sec:prec-cov}
-
-Le protocole d'analyse opère à chaque seuil $t \in \{0, 1, 2, 3, 4\}$~:
+Chaque règle en mémoire est accompagnée de cinq champs d'audit, qui
+permettent à un second témoin de retracer et de contester n'importe quelle
+décision~:
 
 \begin{enumerate}
-\item \textbf{Filtrage}~: ne retenir que les centrales dont le score
-  d'évidence est $\geq t$.
-\item \textbf{Réconciliation}~: comparer la liste filtrée à l'inventaire
-  de référence (163 centrales) par correspondance exacte et floue
-  (seuil~90/100), avec résolution optimale par programmation linéaire.
-\item \textbf{Métriques}~: calculer la précision (fraction des centrales
-  retenues qui sont correctes), le rappel (fraction des centrales de
-  référence retrouvées), et le F1.
+\item \texttt{source\_llm\_suggestion} --- le modèle et le prompt qui ont
+  proposé la règle candidate (niveau~2) ;
+\item \texttt{ratifying\_human} --- l'identifiant de l'opérateur qui a
+  ratifié (niveau~3) ;
+\item \texttt{timestamp} --- horodatage UTC de la ratification ;
+\item \texttt{evidence\_cell} --- la cellule et le document source qui ont
+  déclenché l'escalade au niveau~2 ;
+\item \texttt{witness} --- résultat de la vérification par un second
+  opérateur (échantillonnage).
 \end{enumerate}
 
-\noindent La \emph{couverture} est le nombre de centrales retenues après
-filtrage, rapporté au nombre total avant filtrage. À $t=0$ (aucun filtre),
-la couverture est 100\,\% et la précision est celle du modèle brut. À
-$t=4$, seules les centrales avec deux sources primaires indépendantes
-sont retenues~: la précision est maximale mais la couverture peut être
-faible.
+\noindent L'ensemble est committé dans git~; toute modification future est
+visible dans l'historique de diff.
 
-La courbe précision-couverture caractérise le compromis fondamental~:
-combien de données perd-on en exigeant la traçabilité~? Si la courbe est
-plate (haute précision sans perte de couverture), la vérification est
-gratuite. Si elle chute, le praticien doit arbitrer entre exhaustivité et
-fiabilité.
-
-\subsubsection{Hypothèses préenregistrées}\label{sec:verif-hypotheses}
-
-Trois hypothèses directionnelles sont formulées avant l'exécution des
-expériences~:
-
-\begin{enumerate}
-\item \textbf{Précision du mode outil.}
-  Le mode \texttt{tool} atteint la précision la plus élevée parmi les
-  cinq modes, car le référentiel constitue la vérité terrain. À tout
-  seuil $t \geq 1$, la précision du mode \texttt{tool} est supérieure
-  ou égale à celle des autres modes.
-
-\item \textbf{Couverture du mode web \emph{vs} auto-vérification.}
-  Au seuil $t \geq 3$ (exigeant au moins une source primaire), le mode
-  \texttt{web} retient davantage de centrales que le mode \texttt{self}.
-  Justification~: la recherche web accède à des documents que le modèle
-  ne peut citer de mémoire, augmentant la probabilité d'identifier une
-  source primaire pour chaque centrale.
-
-\item \textbf{Détection d'hallucinations par vérification croisée.}
-  Le mode \texttt{cross} attribue davantage de scores~0 (source fabriquée)
-  que le mode \texttt{self} sur les mêmes données d'entrée. Justification~:
-  un modèle indépendant n'a pas de biais de confirmation envers les
-  fabrications du modèle générateur.
-\end{enumerate}
-
-\subsubsection{Design expérimental}\label{sec:verif-design}
-
-\paragraph{Preuve de concept (1 configuration, 2 modes déterministes)}
-Le design minimal compare les modes \texttt{unverified} et \texttt{tool}
-sur une seule configuration de base (Opus~4.6 multiturn,
-169~centrales extraites). Ce pilote mesure l'écart de couverture entre la sortie brute
-(169~centrales, F1\,=\,98,2\,\%, 6~hallucinations) et la sortie filtrée
-par le référentiel (53~centrales, F1\,=\,49,1\,\%, 0~hallucination).
-Les données proto-vérification existantes confirment que l'infrastructure
-est opérationnelle.
-
-\paragraph{Sweep complet (3 configurations $\times$ 5 modes)}
-Le design factoriel croise trois configurations de base (Opus multiturn,
-Gemini~Flash~Lite RAG, GPT-5.4 RAG) avec les cinq modes de vérification.
-Les modes déterministes sont exécutés une fois par configuration~; les
-modes stochastiques (\texttt{self}, \texttt{cross}) sont répétés 3~fois.
-Soit $3 \times (3 + 2 \times 3) = 27$ conditions, pour un budget estimé
-de 15--25\,\$. Le vérificateur croisé est Claude Sonnet~4.6 dans toutes
-les conditions.
-
-\paragraph{Cadre honnête}
-Ce design est un pilote à une seule tâche (centrales thermiques du Vietnam)
-et un seul corpus de référence. Les résultats ne se généralisent pas
-directement à d'autres pays, d'autres classes de composants, ou d'autres
-corpus documentaires. Le sweep complet est une preuve de concept
-(proof-of-concept)~; un design factoriel complet croisant pays, classes
-de composants et modes de vérification constitue un travail futur.
+Les métriques de suivi de la mémoire sont~: le \emph{taux d'escalade par
+étape de fusion} (\texttt{escalation\_rate\_per\_step}), la \emph{croissance
+du nombre de règles} par catégorie (\texttt{rule\_count\_growth}), et le
+\emph{taux d'acceptation des ratifications}
+(\texttt{ratification\_acceptance\_rate}). Un taux d'escalade décroissant
+confirme que la mémoire apprend~; un taux d'acceptation faible signale une
+dérive du niveau~2 ou une frontière de catégorie mal calibrée.

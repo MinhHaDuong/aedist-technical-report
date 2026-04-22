@@ -1,12 +1,15 @@
 %erg v1
 Title: Rewrite inputs/verification_methods.tex for 3-tier audit-verified verification
-Status: open
+Status: closed
 Created: 2026-04-17
 Author: claude
 Blocked-by: 0097
 
 --- log ---
 2026-04-17T10:00Z claude created — second of two report-sync tickets. The current verification_methods.tex is a preregistered protocol for 5-mode post-hoc verification (unverified / tool / self / cross / web). Ticket 0059 (multi-agent verification panel) showed post-hoc LLM verification is a dead end (0-10% inter-verifier agreement). The new design front-loads justification at HITL source triage and uses deterministic three-tier verification with audit-verified memory.
+2026-04-22T14:30Z claude claimed worktree agent-a8c7006d
+2026-04-22T14:30Z claude status doing — rewriting verification_methods.tex in worktree agent-a8c7006d
+2026-04-22T14:45Z claude status closed — rewrite complete, tectonic exits 0, PR #284 created
 
 --- body ---
 ## Context
