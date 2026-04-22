@@ -178,8 +178,7 @@ def make_client(base_url: str | None = None) -> OpenAI:
     dummy API key.  Otherwise default to OpenRouter.
     """
     if base_url:
-        api_key = os.environ.get("OPENROUTER_API_KEY", "ollama")
-        return OpenAI(base_url=base_url, api_key=api_key)
+        return OpenAI(base_url=base_url, api_key="ollama")
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise SystemExit("Set OPENROUTER_API_KEY environment variable")

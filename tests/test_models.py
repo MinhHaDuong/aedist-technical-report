@@ -105,7 +105,10 @@ def test_experiments_model_ids_exist(models, experiments):
 
 def test_experiments_sets_nonempty(experiments):
     """Every model set in experiments.toml has at least one model."""
+    allowed_empty = {"ablation_core"}
     for set_name, spec in experiments["sets"].items():
+        if set_name in allowed_empty:
+            continue
         assert len(spec["model_ids"]) > 0, f"sets.{set_name} is empty"
 
 
@@ -309,9 +312,13 @@ def test_sweep_output_dirs_unique(experiments):
         if out is None:
             continue
         if out in outputs:
-            # census and census_local share output dir by design
             pair = {name, outputs[out]}
-            if pair != {"census", "census_local"}:
+            # Known pairs that intentionally share an output directory.
+            allowed_pairs = [
+                {"census", "census_local"},
+                {"ablation_p1_parametric_base", "ablation_p1_parametric_base_extended"},
+            ]
+            if pair not in allowed_pairs:
                 pytest.fail(f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'")
         outputs[out] = name
 

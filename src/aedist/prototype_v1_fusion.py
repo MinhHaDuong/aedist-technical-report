@@ -367,6 +367,7 @@ def run_global(
 
 
 def _parse_csv_from_response(raw: str) -> list[Plant]:
+    import os
     import tempfile
 
     blocks = extract_fenced_blocks(raw)
@@ -382,7 +383,10 @@ def _parse_csv_from_response(raw: str) -> list[Plant]:
     with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", encoding="utf-8", delete=False) as f:
         f.write(canonical)
         tmp = f.name
-    return load_plants_csv(Path(tmp))
+    try:
+        return load_plants_csv(Path(tmp))
+    finally:
+        os.unlink(tmp)
 
 
 def _llm_fuse_direct(
@@ -449,6 +453,11 @@ def run_incremental_direct(
     **api_kw,
 ) -> tuple[list[Plant], list[FusionDiff]]:
     """incremental × md: master_csv + fragment_md → master_csv', no JSON step."""
+
+    def _data_rows(csv: str) -> int:
+        n = csv.count("\n")
+        return max(0, n - 1) if csv.strip() else 0
+
     master_csv = ""
     diffs: list[FusionDiff] = []
     for spec in sequence:
@@ -457,11 +466,13 @@ def run_incremental_direct(
             log.warning("Fragment not found: %s", spec.filename)
             continue
         text = fragment_path.read_text(encoding="utf-8")
-        prev_lines = master_csv.count("\n")
+        prev_data = _data_rows(master_csv)
         log.info("Fusing %s ...", spec.source_id)
         master_csv = _llm_fuse_direct(master_csv, text, spec, client, model, fuse_prompt, **api_kw)
         new_lines = master_csv.count("\n")
-        diff = FusionDiff(source_id=spec.source_id, added=max(0, new_lines - prev_lines))
+        diff = FusionDiff(
+            source_id=spec.source_id, added=max(0, _data_rows(master_csv) - prev_data)
+        )
         diffs.append(diff)
         print(f"  {spec.source_id:<14}  +{diff.added:>3} rows  [total lines: {new_lines}]")
     plants = _parse_csv_from_response("```csv\n" + master_csv + "\n```")
