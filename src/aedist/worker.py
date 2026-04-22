@@ -516,7 +516,7 @@ class Worker:
 
         # Fusion-specific params live in job.extra (populated from sweep config
         # fields that JobSpec doesn't have dedicated slots for).
-        extra = job.method_params.extra or {} if hasattr(job, "method_params") else {}
+        extra = job.method_params.extra or {}
         fusion_mode = extra.get("fusion_mode", "compare")
         fmt = extra.get("format", "md")
         fragments = extra.get("fragments")
