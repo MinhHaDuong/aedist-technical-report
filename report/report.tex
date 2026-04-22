@@ -222,16 +222,7 @@ Les résultats sont décevants~: F1 médian de 0,39 sur les 15~runs, avec un max
 
 \chapter{Documents sources et RAG}\label{chap:rag}
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\small
-\textbf{Synchronisation en cours.} L'introduction de ce chapitre décrit le RAG comme point d'arrivée de l'extraction. Le cadrage v0 courant le recadre comme \emph{composant de récupération} à l'intérieur d'un pipeline de fusion incrémentale (voir \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''). Les résultats expérimentaux de ce chapitre (sections RAG wholesale, décomposition, extraction sourcée, cohérence) restent valides et inchangés. Réécriture de l'introduction suivie dans le ticket~0098. (2026-04-17)
-\end{minipage}}
-\end{center}
-
-\medskip
-
-Ce chapitre traite de la découverte et préparation des documents sources, puis de leur utilisation pour améliorer les résultats des LLM via le Retrieval Augmented Generation (RAG).
+Ce chapitre traite de la découverte et préparation des documents sources, puis de leur rôle dans le pipeline de fusion incrémentale. Le Retrieval Augmented Generation (RAG) est ici un \emph{composant de récupération}~: il extrait des fragments depuis le corpus documentaire, fragments qui deviennent les entrées d'une fusion contrôlée produisant la table maître. Séparer l'extraction (RAG) de la fusion (pipeline) garantit la reproductibilité~: la fusion peut être déterministe même quand l'extraction ne l'est pas.
 
 \section{Découverte et préparation des documents}
 
@@ -259,7 +250,7 @@ Nous avons comparé six backends de conversion sur un document de référence~: 
 
 \section{Stratégie RAG}
 
-On procède en deux temps~: d'abord construire une table historique en utilisant les documents officiels, puis la mettre à jour. Le retrieval opère en deux étages~: trouver les documents pertinents parmi une base de milliers, puis extraire les passages intéressants (tables) parmi ces documents.
+Le RAG joue le rôle de couche de récupération dans le pipeline de fusion~: il sélectionne les documents pertinents et en extrait les fragments tabulaires (les 15~tables Markdown du corpus, voir section~\ref{sec:pdf-to-md}) qui alimentent ensuite la fusion incrémentale. Le retrieval opère en deux étages~: trouver les documents pertinents parmi une base de milliers, puis extraire les passages intéressants (tables) parmi ces documents.
 
 \subsection{Retrieval par LLM}
 
@@ -271,7 +262,7 @@ Les systèmes efficaces sont souvent hybrides~: scoring par LLM, recherche vecto
 
 \subsection{Extraction des tables pertinentes}
 
-Les pages d'annexes sont extraites des PDF et converties en Markdown (section~\ref{sec:pdf-to-md}), avec retouches manuelles. Au total, 15 fichiers Markdown contenant chacun une table, pour 138,6~kB soit 63~545 tokens.
+Les pages d'annexes sont extraites des PDF et converties en Markdown (section~\ref{sec:pdf-to-md}), avec retouches manuelles. Au total, 15~fichiers Markdown contenant chacun une table, pour 138,6~kB soit 63~545 tokens~--- ces 15~fragments sériels constituent le corpus d'entrée de la fusion incrémentale (voir chapitre~\ref{chap:architecture}).
 
 \section{Résultats du RAG}
 
@@ -407,8 +398,10 @@ Au-delà de la comparaison avec la référence, la \textbf{cohérence interne} d
 
 \input{inputs/verification_methods}
 
-\input{inputs/plan_verification_multi}
-\input{inputs/results_verification_multi}
+% plan_verification_multi and results_verification_multi were the
+% preregistered 5-mode post-hoc LLM protocol (ticket 0054 / 0059).
+% Superseded by the 3-tier deterministic design (tickets 0097 / 0099).
+% Files kept as historical artifacts; no longer rendered in this report.
 
 \section{Pièges méthodologiques}\label{sec:pitfalls}
 
@@ -488,57 +481,75 @@ Ces résultats confirment que l'écosystème est encore immature pour notre cas 
 
 \chapter{Architecture proposée}\label{chap:architecture}
 
+\section{Pipeline comme fusion d'information}
+
+L'architecture AEDIST v0 est organisée autour d'une primitive unique~:
+
 \begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\small
-\textbf{Synchronisation en cours.} Ce chapitre décrit une architecture à quatre couches et quatre agents au niveau vision. Le modèle de données v0 courant (master.csv + master\_provenance.csv en lockstep, cinq invariants validés, registre des sources alimenté au triage HITL, journal de fusion, vérification à trois niveaux, mémoire ratifiée avec piste d'audit) est spécifié dans \texttt{MASTERPLAN.md} §``Data model (v0 table fusion)''. Les slides Econom'IA~2026 présentent le cadrage courant. Réécriture complète du chapitre suivie dans le ticket~0098 (bloqué par ticket~0097 pour les résultats de grounding). (2026-04-17)
-\end{minipage}}
+$\mathrm{master} + \mathrm{fragment} \longrightarrow \mathrm{master}'$
 \end{center}
 
-\medskip
+Un fragment est une pièce d'information extraite d'un document source. Trois types se distinguent par leur mécanique d'extraction et de fusion. Les \textbf{fragments sériels} sont des tables complètes (annexes des PDP, rapports EVN)~; leur intégration requiert un alignement de schéma et une liaison d'enregistrements~--- ils définissent le squelette de la table maître. Les \textbf{fragments multi-scalaires} sont des listes en prose (<<~la province X comprend les projets A, B, C~>>)~; leur fusion vérifie l'existence d'entités et confirme ou ajoute des lignes. Les \textbf{fragments scalaires} sont des faits isolés (<<~Vinh Tan~1 mise en service 2018~>>)~; leur fusion met à jour un attribut d'une entité déjà connue. Le prototype v0 traite les fragments sériels~: les 15~tables Markdown du corpus (section~\ref{sec:pdf-to-md}), chacune issue d'un document officiel vietnamien. Les types multi-scalaires et scalaires sont différés.
+
+Séparer l'extraction (RAG, chapitre~\ref{chap:rag}) de la fusion garantit la reproductibilité~: la fusion peut être déterministe même quand l'extraction ne l'est pas. Chaque étape produit un diff inspectable. Le coût croît en $N$~sources, pas en $N \times S$ (fragments $\times$ sources). L'échec est localisé à une étape.
+
+\section{Incrémentalité}
+
+La fusion est incrémentale~: les sources sont intégrées une à une, dans l'ordre chronologique. En cas de conflit entre deux sources portant sur la même cellule, l'autorité l'emporte sur l'ancienneté~: la source de rang d'autorité supérieur est choisie~; à rang égal, la plus récente prévaut. Ce choix rend le résultat final sensible à l'ordre d'intégration~--- une propriété empiriquement souhaitable dans un contexte réglementaire où les décisions récentes remplacent les anciennes. La commutativité formelle de la fusion (résultat indépendant de l'ordre) est un objectif de recherche pour les versions v3/v4, impliquant un raisonnement défaisable explicite. Une sonde d'ordre-sensibilité (comparer les tables maîtres produites avec différentes permutations des 15~sources) est identifiée comme travail futur.
+
+\section{Master et sidecar de provenance}
+
+Le modèle de données repose sur deux fichiers CSV maintenus en parallèle strict. \texttt{master.csv} est un instantané courant~: une ligne par centrale, les colonnes couvrant le nom, le combustible, la capacité (\texttt{capacity\_mwe}), le statut, la province, et la date de mise en service (\texttt{cod}). \texttt{master\_provenance.csv} est le sidecar~: même schéma, mêmes lignes, même clé primaire~--- mais chaque cellule contient l'identifiant canonique de la source qui fait autorité pour cette valeur.
+
+Cinq invariants sont appliqués par le validateur, pas par convention~:
+
+\begin{enumerate}
+\item \textbf{Lockstep schéma.} $\mathrm{schéma}(\texttt{master}) \equiv \mathrm{schéma}(\texttt{master\_provenance})$. Tout ajout, suppression ou renommage de colonne est une opération duale.
+\item \textbf{Parité null.} \texttt{master[i,j]} est nul si et seulement si \texttt{provenance[i,j]} est nul. Aucune cellule sans attribution~; aucune attribution sans cellule.
+\item \textbf{Écrivain atomique unique.} Seule la primitive de fusion modifie la paire, toujours ensemble. Aucune édition ad hoc, aucune mise à jour d'un seul fichier.
+\item \textbf{IDs source canoniques.} Les valeurs du sidecar sont tirées du registre des sources (section~\ref{sec:registre}). Les identifiants émis par le LLM sont parsés contre le registre~; les identifiants inconnus sont rejetés.
+\item \textbf{Journal de fusion.} Chaque étape de fusion ajoute une ligne à \texttt{fusion\_log.csv}~: \texttt{\{step\_id, timestamp, source\_id, rows\_added, rows\_updated, cells\_changed, conflicts\_resolved, confirmations\}}. Le journal porte l'historique et la concordance~--- le sidecar reste scalaire.
+\end{enumerate}
+
+La règle multi-sources est la suivante~: un seul identifiant source par cellule, choisi par autorité. Les sources qui confirment une valeur existante sont enregistrées dans le champ \texttt{confirmations} du journal, pas dans le sidecar~--- ce qui maintient la forme du sidecar simple et pousse la découverte de concordance dans la piste d'audit.
+
+\section{Registre des sources}\label{sec:registre}
+
+Le registre des sources vit dans les métadonnées du corpus, pas dans un fichier indépendant. Un document est enregistré comme source si et seulement s'il franchit l'étape de triage HITL du pipeline~--- enregistrement et validation sont la même action. Le registre s'accroît de manière incrémentale, une entrée par document accepté. Chaque entrée comporte les champs obligatoires suivants~: \texttt{source\_id} (identifiant court canonique utilisé dans le sidecar, par exemple \texttt{PDP8R} ou \texttt{EVN2024}), \texttt{publisher}, \texttt{publication\_date}, \texttt{authority\_rank}, \texttt{type} (réglementaire, opérateur, dispatch, actualités, etc.), \texttt{language}, \texttt{format}, \texttt{local\_path}. Le registre est le vocabulaire scellé de \texttt{master\_provenance.csv}~--- c'est là que commence l'architecture à états~: l'ensemble des sources de confiance, constitué par l'humain, persiste entre les runs de fusion.
+
+\section{Vérification à trois niveaux}
+
+L'ancrage documentaire de la table maître est vérifié cellule par cellule via une chaîne à trois niveaux. La motivation empirique vient de l'extraction sourcée (tableau~\ref{tab:source-grounding})~: $\approx$98\,\% des citations tracent vers un fichier du corpus~; $\approx$80\,\% sont traçables de bout en bout (citation $\to$ fichier $\to$ nom de centrale). Ces résultats montrent que la traçabilité automatique est faisable mais imparfaite~: les 20\,\% non traçables nécessitent un arbitrage.
+
+Un filtre d'audit des diffs s'applique en amont du niveau~1~: les cellules inchangées héritent de leur statut de vérification précédent et ne réintègrent pas la chaîne.
+
+Le niveau~1 est une \textbf{correspondance exacte} déterministe~: la valeur de la cellule est cherchée dans le tableau source identifié par le sidecar~; si trouvée, la cellule est vérifiée. En cas d'échec, le niveau~2 déclenche un \textbf{arbitrage LLM}~: le modèle analyse l'écart et propose une règle typée. La règle candidate est soumise à ratification HITL, qui l'inscrit en mémoire (niveau~3) avec une piste d'audit complète. Les règles ratifiées s'appliquent automatiquement aux runs suivants~: le système devient plus précis à chaque itération.
+
+La mémoire organise les règles en quatre catégories, chacune avec un point de déclenchement distinct~:
+
+\begin{description}
+\item[Alias] Encode l'identité d'entité (\texttt{«~VT1~» $\equiv$ «~Vinh Tan 1~»}). Se déclenche après échec du niveau~1.
+\item[Unité/format] Encode la forme de la valeur (\texttt{«~1\,200 MW~» $\to$ 1200}). Se déclenche avant le niveau~1.
+\item[Terme source-local] Encode le vocabulaire de prose propre à une source (\texttt{«~Nhóm~» dans PDP8 $=$ «~Group~»}). Se déclenche à l'intérieur de l'arbitrage LLM.
+\item[Synonyme d'attribut] Encode la correspondance colonne $\to$ schéma (\texttt{«~Công suất~» $\to$ \texttt{capacity\_mw}}). Se déclenche au chargement du tableau source.
+\end{description}
+
+Chaque règle porte une piste d'audit en cinq champs, committée sous git et vérifiable par un second témoin~: suggestion du LLM, humain ratificateur, horodatage, cellule d'évidence, vérification second témoin. La ratification HITL est obligatoire~; les arbitrages LLM ne sont jamais auto-acceptés.
+
+\section{Couche agents}
+
+Les agents sont ancrés sur les préoccupations du modèle de données.
+
+\begin{description}
+\item[Agent Veilleur] Découverte de nouvelles sources~: suivi des flux documentaires, classification thématique, signalement au Curateur.
+\item[Agent Curateur] Triage des sources HITL~: valide chaque document entrant, écrit les entrées du registre, maintient le vocabulaire scellé. C'est l'agent gardien de l'intégrité du registre.
+\item[Agent Analyste] Exécute la primitive de fusion (ordre chronologique avec arbitrage d'autorité)~: mute \texttt{master} et \texttt{sidecar} ensemble, ajoute une ligne au \texttt{fusion\_log}. C'est l'unique écrivain atomique.
+\item[Agent Auditeur] Exécute la vérification à trois niveaux~: propose des règles candidates au niveau~2, soumet à ratification HITL au niveau~3, maintient la mémoire des règles. Le taux d'escalade par étape de fusion est la métrique principale de cet agent.
+\end{description}
+
+L'état est persistant. Le registre, le sidecar, le journal de fusion et la mémoire des règles sont tous suivis sous git. Le run suivant reprend là où le précédent s'est arrêté~--- c'est la propriété \emph{à états} du pipeline agentique.
 
 \input{inputs/generated/tab_source_grounding}
-
-\section{Objectifs et principes}
-
-Le système AEDIST doit intégrer des données statistiques sur les infrastructures énergétiques provenant de sources hétérogènes et multilingues, avec traçabilité complète jusqu'aux sources primaires. Les cas d'usage principaux sont la production de tables statistiques, l'interrogation flexible, la production de rapports de synthèse, et la génération de datasets pour les modèles de transition énergétique.
-
-L'architecture en microservices permet la spécialisation des composants, l'évolution technologique graduelle, la résilience, et l'équilibrage des ressources entre tâches intensives (traitement de PDF) et légères (interrogation du graphe).
-
-\includegraphics[width=170mm,height=162.28mm]{Pictures/figure1.png}
-
-\section{Architecture informationnelle en quatre niveaux}
-
-\begin{description}
-\item[1. Document store] Cache web versionné des fichiers bruts dans leurs formats natifs.
-\item[2. Base documentaire validée] \textbf{Zotero} comme gestionnaire de références et point d'entrée utilisateur, avec métadonnées complètes et support multilingue.
-\item[3. Couche vectorielle sémantique] Base de vecteurs pour la recherche par similarité conceptuelle, avec embeddings multilingues et indexation optimisée pour le RAG.
-\item[4. Couche de connaissance structurée] \textbf{Graphe de connaissances} basé sur l'Open Energy Ontology, avec traçabilité intégrale des assertions jusqu'aux sources documentaires et lien bidirectionnel avec la couche sémantique.
-\end{description}
-
-Cette architecture hybride combine la traçabilité et la rigueur du graphe de connaissances, la performance de la recherche sémantique, et la richesse documentaire de la base de références.
-
-\section{Services et agents}
-
-Les microservices sont organisés en groupes fonctionnels, chacun orchestré par un agent spécialisé~:
-
-\begin{description}
-\item[Agent Curateur] Indexation intelligente, normalisation des métadonnées, gestion des relations entre documents, résumés multilingues.
-\item[Agent Analyste] Extraction et résolution d'entités, validation factuelle, intégration au graphe de connaissances.
-\item[Agent Veilleur] Surveillance des sources, classification thématique, génération de digests, analyse statistique.
-\item[Agent Rédacteur] Requêtes structurées sur le graphe, recherche sémantique via RAG, génération de rapports, export de données.
-\end{description}
-
-L'interface au chercheur s'intègre aux outils existants (navigateur web, Zotero) et communique avec les microservices via un bus événementiel, permettant une accumulation progressive de connaissances.
-
-\section{Points d'attention}
-
-\begin{description}
-\item[Échelle] Architecture optimisée pour l'usage personnel~: millions d'entités dans le graphe, milliers de documents dans Zotero. Évolution possible vers un système pair à pair.
-\item[Qualité des données] Validation avant ingestion, contrôle ontologique, vérification par LLM spécialisé, traçabilité complète de chaque assertion.
-\item[Pérennité] Formats ouverts et standards, modules indépendants facilitant l'évolution technologique.
-\item[Intégration] Interface via des outils familiers, automatisation progressive, contrôle utilisateur sur les processus critiques.
-\end{description}
 
 \chapter{Conclusion}\label{chap:conclusion}
 
