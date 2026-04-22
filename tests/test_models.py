@@ -147,14 +147,16 @@ def test_sweep_count(experiments):
         "rag",
         "decomposed",
         "verification",
+        "verification_multi",
+        "verification_poc",
         "sourced",
         "frontier",
         "frontier_scenarios",
         "frontier_skill",
+        "fusion",
+        "fusion_dev",
     }
     ablation = {
-        "ablation_p1_base",
-        "ablation_p1_composite",
         "ablation_base",
         "ablation_persona",
         "ablation_overview",
@@ -171,6 +173,29 @@ def test_sweep_count(experiments):
         "ablation_no_bibliography",
         "ablation_no_statistics",
         "ablation_no_sourcing",
+        "ablation_p1_rag_base",
+        "ablation_p1_rag_composite",
+        "ablation_p1_parametric_base",
+        "ablation_p1_parametric_base_extended",
+        "ablation_p1_parametric_composite",
+        "ablation_p1_websearch_base",
+        "ablation_p1_websearch_composite",
+        "ablation_p2_rag_base",
+        "ablation_p2_rag_persona",
+        "ablation_p2_rag_overview",
+        "ablation_p2_rag_narratives",
+        "ablation_p2_rag_bibliography",
+        "ablation_p2_rag_statistics",
+        "ablation_p2_rag_sourcing",
+        "ablation_p2_rag_composite",
+        "ablation_p2_rag_frontier",
+        "ablation_p2_rag_census",
+        "ablation_p2_rag_no_persona",
+        "ablation_p2_rag_no_overview",
+        "ablation_p2_rag_no_narratives",
+        "ablation_p2_rag_no_bibliography",
+        "ablation_p2_rag_no_statistics",
+        "ablation_p2_rag_no_sourcing",
     }
     expected = required | ablation
     assert set(experiments["sweeps"].keys()) == expected
@@ -178,8 +203,9 @@ def test_sweep_count(experiments):
 
 def test_standard_sweep_fields(experiments):
     """Each standard sweep has required fields with valid types."""
+    fusion_sweeps = {n for n in experiments["sweeps"] if n.startswith("fusion")}
     for name, sweep in experiments["sweeps"].items():
-        if name == "verification":
+        if name in {"verification", "verification_multi", "verification_poc"} | fusion_sweeps:
             continue
         missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fields: {missing}"
