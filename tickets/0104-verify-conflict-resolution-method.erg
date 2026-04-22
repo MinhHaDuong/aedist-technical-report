@@ -1,11 +1,13 @@
 %erg v1
 Title: Verify conflict-resolution behavior of the fusion method
-Status: open
+Status: closed
 Created: 2026-04-17
 Author: claude
 
 --- log ---
 2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for conflict-resolution under the chrono + authority policy. Blocked on v0 fusion prototype.
+2026-04-22T10:00Z claude claimed
+2026-04-22T10:30Z claude status closed — scripts/verify/conflict_resolution_method.py + tests/test_conflict_resolution_method.py written; 8 pytest pass, ruff clean; PR #282
 
 --- body ---
 ## Context
