@@ -1,30 +1,32 @@
-Last updated: 2026-04-22 (session: orchestrator batch 0097/0100/0101/0103 + follow-ons 0098/0099/0117)
+Last updated: 2026-04-22 (session: housekeeping — F1-drift investigation, stale test removal)
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 37 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 2 skipped, 1 xfailed.
+Pipeline end-to-end. Benchmark: 37 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
 
-**This session (2026-04-22):** 8 tickets closed, 6 PRs merged (#279–#284):
-- **Slides** (0100, PR #281): all 18 frames translated to French; Freshness slide filled with real empirical data — incremental F1@18 = 88.0%, global = 46.2% (growth curve committed in `derived/fusion_proto/`).
+**Previous session (2026-04-22, orchestrator batch):** 8 tickets closed, 6 PRs merged (#279–#284):
+- **Slides** (0100, PR #281): all 18 frames translated to French; Freshness slide filled with real empirical data — incremental F1@18 = 88.0%, global = 46.2%.
 - **Fusion prototype** (0101, PR #280): growth curve script (`scripts/verify/incrementality_method.py`), 36-call real run done, CSV+PDF committed.
 - **Fusion worker integration** (0115, PR #283): `Method.FUSION` added to enum, `query_fusion.py` CLI, `worker.py` dispatch wired.
-- **Coherence verification** (0103, PR #282 — partially): `scripts/verify/coherence_table.py` delivered; `to_plant()` Pydantic bug fixed (fuel/status default to UNKNOWN).
-- **Conflict resolution verification** (0104, PR #282): 6 synthetic fixtures, 8 tests passing.
-- **Ch.3/Ch.6 sync** (0098, merged direct to main): chapters rewritten to v0 pipeline design (fusion primitive, master+sidecar, 3-tier verification, source registry, agents layer).
-- **verification_methods.tex** (0099, PR #284): rewritten in French for 3-tier design, 4 rule categories, audit trail 5 fields.
-- **Source-grounding table** (0097, wired): `tab_source_grounding.tex` committed and wired into report.
+- **Coherence + conflict-resolution verification** (0103/0104, PR #282): scripts delivered, 8 tests passing.
+- **Ch.3/Ch.6 sync** (0098): chapters rewritten to v0 pipeline design.
+- **verification_methods.tex** (0099, PR #284): rewritten in French for 3-tier design.
+- **Source-grounding table** (0097): wired into report.
+
+**This session (2026-04-22, housekeeping):**
+- Investigated F1 "drift" (0.930 vs 0.898): false alarm — `load(method='decomposed')` substring-matched `decomposed_v2` and `verification_multi` runs (n=4→10). Canonical headline is still 89.8% via `load_headline_result()`, confirmed by passing test in `test_tabulate_macros.py`.
+- Removed stale skipped test from `test_measurements.py`; cleared blocker from STATE.
+- Pruned 4 stale local branches (all squash-merged PRs).
 
 ## Blockers
 
-- **Slides not yet rendered for review**: PDF was regenerated; visual review deferred to next session. Talk deadline: 2026-05-27.
+- **Slides not yet rendered for review**: PDF was regenerated; visual review deferred. Talk deadline: 2026-05-27.
 
 ## Next actions
 
 1. **Slides polish pass** — visual review of French slides PDF; check layout, spacing, French typography.
 2. **Launch ablation Phase 1** from reactive-prancing-shell: `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify determinism.
-3. **Ticket 0075** — DSPy/MIPROv2 survey; prototype deferred to ablation Phase 0.
-4. **Ticket 0076** — v1 prototype (open, no current blockers).
-5. **Ticket 0102** — escalation-rate decay verification (post-talk).
+3. **Ticket 0102** — escalation-rate decay verification (post-talk).
 
 ## North star
 
@@ -70,13 +72,13 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Conflict-resolution policy: 6 fixtures, 8 tests (ticket 0104, PR #282)
 - [x] Coherence verification script (ticket 0103, PR #282)
 - [x] Fusion worker integration: Method.FUSION, query_fusion CLI (ticket 0115, PR #283)
+- [x] v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ticket 0076, PR #278)
 - [ ] Source-grounding verification Phases 2+3 — full audit (ticket 0097, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
 
-## Open tickets (4)
+## Open tickets (3)
 
 - 0069 Project namespace audit (pending — awaiting external input)
 - 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred to Phase 0 of ablation campaign
-- 0076 v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ready)
 - 0102 Verify escalation-rate decay × system (blocked by 0097 Phases 2+3, post-talk)
