@@ -6,65 +6,85 @@ Author: claude
 
 --- log ---
 2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for internal coherence of the v0 master + sidecar. Extends the existing coherence work (ticket 0078, PR #243) from the benchmark output to the v0 fusion output.
+2026-04-22T12:00Z claude note reimagined body: corrected sidecar format (.json not .csv), mapped reuse from coherence.py, reduced new-code surface to adapter + 2 sidecar invariants. Soft-block lifted (prototype exists).
 
 --- body ---
 ## Context
 
-Ticket 0078 (PR #243) established three levels of internal coherence
-checks for benchmark extractions: line-level (positive capacity,
-known fuel / status / province), inter-line (duplicate detection),
-aggregate (control totals). Those checks ran against raw extraction
-CSVs.
+Ticket 0078 (PR #243) built `coherence.py` with three check levels
+(row, cross-row, aggregate) operating on `list[Plant]`. Those checks
+already pass CI and cover benchmark extraction CSVs.
 
-The v0 fusion prototype produces a `master.csv` + `master_provenance.csv`
-sidecar with five invariants (MASTERPLAN §"Data model"). This ticket
-extends coherence verification to that new artifact shape.
+The v1 fusion prototype (`prototype_v1_fusion.py`) now produces
+`master.csv` + `master_provenance.json` (not `.csv` -- the original
+ticket text was stale; `save_provenance()` serialises a JSON array
+where each element is `{"name": str, "fields": {field: {value, source,
+tier, year}}}`). The soft-block is lifted: the prototype exists and runs.
 
 Trait: internal coherence. Target: table (master + sidecar pair).
 ADR-5.
 
-## Scope
+## Why now, why this scope
+
+The verification matrix (tickets 0101-0104) needs one concrete green
+cell before the Econom'IA slides. Coherence is the cheapest because
+90% of the logic already exists. New work is only the two sidecar-
+pairing invariants; everything else delegates to `check_coherence()`.
+
+## Reuse map
+
+| Check | Source | New code? |
+|-------|--------|-----------|
+| Row-level (capacity, fuel, status, province) | `coherence.check_row_coherence` | No |
+| Cross-row (duplicates) | `coherence.check_cross_row_coherence` | No |
+| Aggregate (control totals) | `coherence.check_aggregate_coherence` | No |
+| Sidecar row coverage | NEW | Yes |
+| Sidecar null parity | NEW | Yes |
+
+## Actions
 
 Script: `scripts/verify/coherence_table.py`.
 
-Checks (incremental on top of 0078's three levels):
-- **Invariant 1 (schema lockstep)**: `schema(master) ≡ schema(sidecar)`.
-- **Invariant 2 (null parity)**: `master[i,j] null ⟺ sidecar[i,j] null`.
-- **Line-level**: positive capacity, known fuel/status/province
-  (reuse from 0078).
-- **Inter-line**: duplicate detection; same-entity different-status
-  escalation.
-- **Aggregate**: control totals per province × fuel; flag if a
-  provenance source claims a total that disagrees with the sum of
-  cells attributed to it.
-
-Report: per-check pass/fail, per-row failure list, any invariant
-breach (which is a validator bug, not data).
+1. **Adapter**: `master_to_plants(records: list[MasterRecord]) -> list[Plant]`
+   -- strips `SourcedField` wrappers, returns scalar `Plant` list suitable
+   for `check_coherence()`.
+2. **Sidecar row coverage**: provenance array length == master row
+   count; `provenance[i].name == master[i].name` for all i (positional
+   alignment). Flag orphans or mismatches.
+3. **Sidecar null parity**: for each field in a master row, if the
+   value is non-null the corresponding `provenance[i].fields[field]`
+   must exist with a `source` key; if null, no provenance entry
+   expected for that field.
+4. **Delegate**: call `check_coherence(plants)` for the three
+   existing levels.
+5. **Report**: per-check pass/fail, per-row failure list.
 
 ## Test
 
 ```python
-def test_schema_lockstep_detected():
-    """master.csv with extra column vs sidecar → Invariant 1 fails."""
+def test_adapter_strips_sourced_fields():
+    """MasterRecord with SourcedField.value=100 → Plant.capacity_mwe=100."""
 
-def test_null_parity_detected():
-    """sidecar cell with source ID for a null master cell → fails."""
+def test_sidecar_row_coverage_mismatch():
+    """Provenance array has 12 entries but master has 10 rows → flagged."""
 
-def test_aggregate_disagreement_surfaces():
-    """Source X claims 5 plants in Binh Thuan; only 3 cells credit X.
-    Aggregate disagreement flagged for review."""
+def test_sidecar_null_parity_violation():
+    """Master row has capacity=None but provenance has source_id for it → fails."""
+
+def test_existing_checks_delegated():
+    """Adapter + check_coherence catches unknown_fuel on master data."""
 ```
 
 ## Exit criteria
 
-- Script with tests.
-- Runs on v0 fusion prototype output.
+- Script with 4+ passing tests.
+- Runs on v1 fusion prototype output (`incremental_json/`).
 - Hooked into healthcheck tests-green battery.
-- Milestone attachment: **Provenance** (coherence feeds the
-  "errors are locatable" property).
+- Verification matrix cell [coherence x table] goes green.
 
-## Status
+## Note
 
-**Blocked (soft)** on v0 fusion prototype producing a master +
-sidecar. The check logic can be developed against synthetic
-examples before the prototype lands.
+Original ticket referenced `master_provenance.csv`. Actual prototype
+output is `.json` -- a flat array of `{name, fields: {field: {value,
+source, tier, year}}}` (see `save_provenance()` in
+`prototype_v1_fusion.py`). Invariants reimagined accordingly.

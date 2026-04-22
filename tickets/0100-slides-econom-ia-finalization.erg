@@ -6,86 +6,63 @@ Author: claude
 
 --- log ---
 2026-04-17T11:15Z claude created — captures the three deferred items from the self-review of commits 55a8548 + f37be87 (Econom'IA 2026 slide sync). All three must land before the 2026-05-27 talk.
+2026-04-22T12:00Z claude note reimagined body — layout overflow resolved (0 warnings after PRs #274/#278/#279); remaining scope: French translation, tier label fix, Freshness placeholder
 
 --- body ---
 ## Context
 
-Commits 55a8548 and f37be87 landed the v0 pipeline design into
-`slides/slides.tex` (fusion reframe, fragment taxonomy, incrementality,
-sidecar + invariants, 3-tier verification with HITL memory, agents
-anchored on data-model concerns). The content is correct; the
-finalization gaps are cosmetic and linguistic.
+PRs #274, #278, #279 restructured the deck around 4 quality criteria
+(Grounding / Auditability / Freshness / Confidence), wired headline
+macros from generated data, and redesigned the ablation framing.
+The slides are now 770 lines, zero overfull/underfull vbox warnings,
+and the 4-section narrative is stable.
 
-## Scope
+Two items from the original ticket are done:
+- Layout overflow: resolved (0 warnings, down from +61).
+- Tier reconciliation: partially done — frame title says "three tiers"
+  but table still has rows 0–3 (line 530). Needs one label change.
 
-### 1. Layout — overfull vbox warnings
+Two items remain open:
+- French translation (all content still English).
+- Freshness slide is a placeholder (line 500: "[Résultats
+  prototype_v1 — à compléter après campagne de runs]").
 
-Clean build against parent commit `13d53d5`: 19 overfull/underfull
-warnings. After the sync: 80 warnings (+61). Offending frames
-(height overflow, in points past boundary):
+Deadline: 2026-05-27 (35 days). The deck is presentable in English
+today; the two remaining items are the only blockers for the French talk.
 
-| Line | Frame | Overflow |
-|---|---|---|
-| 207 | Why not just verify the output? | 118 pt |
-| 683 | Local model scaling: RAG lifts all sizes | 94 pt |
-| 1117 | From pilot to production pipeline | 87 pt |
-| 841 | The cost of trust | 72 pt |
-| 481 | Pilot: Vietnam thermal plant extraction | 71 pt |
-| 562, 409, 349, 305 | Baseline / Epistemic / Incrementality / Fragment taxonomy | 24–64 pt |
+## Actions
 
-Four of these are new frames introduced by the v0 sync (fragment
-taxonomy, incrementality, v0 data model, epistemic accountability).
-Each needs density reduction: split the frame, shrink font, prune
-bullets, or reduce column widths. Overfull vbox = content clips off
-the projected slide, not just a warning.
+1. **Tier label fix** — rename row 0 in the verification table
+   (line 530) to "Pre-filter" or move it above the numbered rows,
+   matching MASTERPLAN's three-tier framing. ~5 min edit.
 
-### 2. French translation
+2. **French translation** — translate all frame content in place.
+   Single-source deck (no parallel English version). Vietnamese
+   examples (plant names, column headers) stay unchanged.
+   Translate section by section: Problem, Grounding, Auditability,
+   Freshness, Confidence, Perspective. ~2–3 hours.
 
-The talk is in French (Econom'IA, Thema / Cergy). The deck is
-currently in English. All new slide content — the five fusion /
-taxonomy / incrementality / sidecar / epistemic-accountability
-frames plus the two verification-tier frames plus the rewritten
-architecture frame — needs translation. The pre-existing frames
-(problem statement, pilot design, RAG results, cost-quality,
-takeaway) also need translation to match.
+3. **Freshness slide** — fill placeholder when prototype_v1 results
+   land (ticket 0076). If 0076 is not closed by May 20, replace
+   with a design-only slide (no empirical curve) and note "résultats
+   en cours" — the talk can proceed without this one figure.
 
-Pattern: translate **in place** in `slides/slides.tex` — single source,
-no parallel French/English decks. Author decision (2026-04-17).
-
-### 3. Tier numbering reconciliation (slides vs MASTERPLAN)
-
-Slides frame 844 ("Verification at scale: three tiers") shows **four**
-rows labeled 0–3, where tier 0 is "diff audit: only changed cells
-need verification." MASTERPLAN §"Three-tier verification with
-audit-verified HITL memory" describes **three** tiers and frames the
-diff audit as a pre-filter applied *before* tier 1.
-
-Both framings are defensible; pick one and make both artifacts agree.
-Recommendation: keep MASTERPLAN's three-tier framing (the name is in
-the title of ticket 0097), rename slides row "0" to "Pre-filter" or
-move it into a separate preamble line above the three-row table. No
-content change — only the numbering label.
+4. **Final build** — `tectonic slides/slides.tex` clean, commit PDF.
 
 ## Test
 
-Build check:
-- `make slides` produces `slides.pdf`.
-- Overfull vbox warnings on the target frames ≤ 0 pt
-  (the other overfull warnings are pre-existing, not in scope).
-- All slide content is in French; no English bold tokens in new frames.
-- No row labeled "0" in the verification-tier table; the diff audit is
-  described as a pre-filter matching MASTERPLAN.
-
-Content-level checks (visual review):
-- Rehearse the talk from the PDF: all text legible, nothing clipped.
-- Quoted examples (Vietnamese, e.g. "Công suất lắp đặt", "Nhóm")
-  render correctly.
+- `tectonic slides/slides.tex` exits 0, zero overfull vbox warnings.
+- `grep -cP '[A-Z][a-z]{3,}' slides/slides.tex` on frame content
+  shows only proper nouns, Vietnamese, and LaTeX commands — no
+  English prose in body text.
+- Verification table has no row labeled "0"; diff audit appears as
+  pre-filter above the 3 numbered tiers.
+- Vietnamese examples render correctly in PDF.
 
 ## Exit criteria
 
-- Zero new overfull vbox warnings on the 9 offending frames (other
-  warnings may remain if pre-existing).
-- Slides fully in French.
-- Tier numbering consistent between slides and MASTERPLAN.
-- `slides.pdf` committed; `make slides` green.
-- Visual walk-through with the author signed off.
+- All slide prose in French (proper nouns and Vietnamese excerpts exempt).
+- Freshness slide filled or gracefully stubbed (design-only + "en cours").
+- Tier numbering matches MASTERPLAN (3 tiers, diff audit = pre-filter).
+- `slides.pdf` committed; build green.
+- Author visual walk-through signed off.

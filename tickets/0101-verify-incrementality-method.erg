@@ -6,69 +6,67 @@ Author: claude
 
 --- log ---
 2026-04-17T11:45Z claude created — implements ADR-5 trait × target = script for the incrementality trait (MASTERPLAN §Method traits §Empirical limits). Blocked on the v0 fusion prototype existing end-to-end.
+2026-04-22T09:00Z claude note unblocked by PR #278 (prototype_v1_fusion landed). Scope reimagined: growth curve for Freshness slide, order-sensitivity demoted to optional sanity check.
 
 --- body ---
 ## Context
 
-MASTERPLAN §"Method traits / Incrementality" commits v0 to a
-chronological + authority fusion order. Commutativity is *not*
-assumed — order-independence is deferred to a formal v3/v4 fusion
-framework. This ticket characterizes **where** LLM fusion diverges
-from the chronological reference, i.e. how order-sensitive the v0
-primitive actually is.
+The Freshness slide (Econom'IA 2026) is a placeholder. STATE.md says
+it needs "F1 vs docs-added curve" from prototype_v1 results. PR #278
+landed the fusion prototype with `run_incremental`, `run_global`,
+`--fragments N`, and `--mode compare` already wired. This ticket is
+no longer blocked.
+
+**Primary goal**: produce the growth curve figure and the two numbers
+the slide needs (F1 at N=18 for incremental vs global).
 
 Trait: incrementality. Target: method. ADR-5: one ticket = one
-trait × one target = one script.
+trait x one target = one script.
 
 ## Scope
 
 Script: `scripts/verify/incrementality_method.py` (single script
 per ADR-5).
 
-Procedure:
-1. Take the chronological reference fusion (master + sidecar from
-   PDP7 → 7A → 8 → 8R → EVN → ERAV).
-2. Generate *k* random permutations of the 18 Vietnam thermal
-   tables (recommend k=20, bounded by fusion cost).
-3. Run the fusion primitive under each permutation, producing
-   `master_perm_i.csv` + `master_provenance_perm_i.csv`.
-4. Compute per-permutation metrics against the chronological
-   reference:
-   - F1 on entity set (symmetric difference of rows)
-   - Cell disagreement rate (attribute-level)
-   - Provenance cell disagreement (does the same cell credit the
-     same source?)
+### Phase 1 — Growth curve (do today)
 
-Report: distribution of F1 across k permutations (mean, CI, worst
-case); table of cells that flip most often; identification of the
-*attributes* most sensitive to order.
+For N in 1..18, call `run_incremental` and `run_global` (import
+from `aedist.prototype_v1_fusion`, not subprocess), record F1
+against `vietnam_thermal_v1.csv`. ~36 LLM calls total, default
+chronological order, no new fusion code needed.
 
-Exit: green when the script runs and writes a structured report.
-The *content* of the report (is variance acceptable?) feeds the
-v0 adequacy question and possibly the v3 design.
+Outputs:
+- `derived/fusion_proto/growth_curve.csv` — columns: N, mode,
+  entity_f1, cell_disagreement
+- `derived/fusion_proto/growth_curve.pdf` — matplotlib figure
+  (two lines: incremental vs global F1 by fragment count)
+- Two headline numbers for the slide: incremental F1@18,
+  global F1@18
+
+### Phase 2 — Order-sensitivity sanity check (optional, post-talk)
+
+k=2-3 random permutations at N=18. Does shuffling change F1 by
+more than 1pp? If yes, escalate to a full permutation study.
+Otherwise note "order-insensitive within 1pp" and close.
 
 ## Test
 
 ```python
-def test_permutation_runner_produces_k_fusions():
-    """Given a 3-table corpus and k=3, fusion runs 3 times and
-    produces 3 distinct master + sidecar pairs."""
+def test_growth_curve_produces_csv():
+    """N=2 fragments, both modes: growth_curve.csv has 4 rows
+    and all F1 values are non-null."""
 
-def test_chronological_permutation_matches_reference():
-    """The identity permutation (chronological) must reproduce
-    the reference fusion exactly — otherwise the probe is broken."""
+def test_single_fragment_produces_nonempty_master():
+    """N=1 incremental run produces a master.csv with at least
+    one plant row — smoke test the pipeline is wired."""
 ```
 
 ## Exit criteria
 
-- Script `scripts/verify/incrementality_method.py` with tests.
-- Structured report artifact committed (first real run).
-- Hooked into the morning healthcheck tests-green battery
-  (skill-level change; see handoff to user-level promoter).
+- Script `scripts/verify/incrementality_method.py` runs end-to-end.
+- `growth_curve.csv` and `growth_curve.pdf` committed under
+  `derived/fusion_proto/`.
+- Two headline numbers (incremental F1@18, global F1@18) extracted
+  and available for the Freshness slide (ticket 0100).
+- Tests pass in CI.
 - Milestone attachment: **Pipeline** (trait of the fusion primitive).
-
-## Status
-
-**Blocked (soft)** on the v0 fusion prototype existing end-to-end.
-Can ship a dry-run harness before the prototype lands, but real
-results require the prototype.
