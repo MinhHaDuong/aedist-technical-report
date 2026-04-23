@@ -22,6 +22,7 @@
 \definecolor{lowf1}{HTML}{E8505B}
 % Quality ladder colors (one dot = one power plant)
 \definecolor{qualred}{HTML}{E74C3C}
+\definecolor{qualgray}{HTML}{BBBBBB}
 \definecolor{qualyellow}{HTML}{F1C40F}
 \definecolor{qualorange}{HTML}{E67E22}
 \definecolor{qualgreen}{HTML}{27AE60}
@@ -119,7 +120,7 @@ sans reddition cognitive~?
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{37 modèles, 163 centrales~: le modèle seul ne suffit pas}
+\begin{frame}[fragile]{\NumModelsTested{} modèles, 163 centrales~: le modèle seul ne suffit pas}
 \pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
 \pgfplotstablegetrowsof{\censusdata}
 \pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
@@ -345,14 +346,15 @@ la fusion peut être déterministe même quand l'extraction ne l'est pas.
   \item[Hypothèse] Une \textbf{méthode} = modèle + prompt +
         régime d'information + agrégation.
         Le modèle est un facteur parmi d'autres.
-  \item[Échelle] 37 modèles, \$0.82 au total
+  \item[Échelle] \NumModelsTested{} modèles, \$0.82 au total
   \item[Conditions clés] Documentation $\times$ Conversation $\times$
-        Décomposition $\times$ Agrégation $\times$ Modèle (37)
+        Décomposition $\times$ Agrégation $\times$ Modèle (\NumModelsTested{})
 \end{description}
 
 \medskip
-{\small \textbf{Métrique clé~:} centrales trouvées sur 163\\
-(précision $>$99\% sur tous les modèles --- le problème est la \textbf{couverture}, pas l'hallucination)}
+{\small \textbf{Métrique clé~:} centrales trouvées sur 163.\\
+La couverture varie de 4 à 163~; la précision varie de~27\% à~100\%.\\
+Le problème est d'abord la \textbf{couverture}, mais les hallucinations existent (points rouges).}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -704,7 +706,7 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
 3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
 2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
+1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
 0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
 \bottomrule
 \end{tabular}
