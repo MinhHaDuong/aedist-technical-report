@@ -1,30 +1,26 @@
-Last updated: 2026-04-22 (session: housekeeping — F1-drift investigation, stale test removal)
+Last updated: 2026-04-23 (session: slides restructure — PR #285)
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 37 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
 
-**Previous session (2026-04-22, orchestrator batch):** 8 tickets closed, 6 PRs merged (#279–#284):
-- **Slides** (0100, PR #281): all 18 frames translated to French; Freshness slide filled with real empirical data — incremental F1@18 = 88.0%, global = 46.2%.
-- **Fusion prototype** (0101, PR #280): growth curve script (`scripts/verify/incrementality_method.py`), 36-call real run done, CSV+PDF committed.
-- **Fusion worker integration** (0115, PR #283): `Method.FUSION` added to enum, `query_fusion.py` CLI, `worker.py` dispatch wired.
-- **Coherence + conflict-resolution verification** (0103/0104, PR #282): scripts delivered, 8 tests passing.
-- **Ch.3/Ch.6 sync** (0098): chapters rewritten to v0 pipeline design.
-- **verification_methods.tex** (0099, PR #284): rewritten in French for 3-tier design.
-- **Source-grounding table** (0097): wired into report.
+**This session (2026-04-23, slides restructure — PR #285):**
+- **Task 1**: Census chart moved to §Problème (frame 3); stripped from pilot-design frame (no duplicate).
+- **Task 2**: AEDIST v1 architecture overview slide added after criteria table; "today = de-risking" framing.
+- **Task 3**: Both N-plants charts redesigned as horizontal scatter (one dot = one plant). `plot_census.py` extended with `n_tp`/`n_fp` + scatter CSV generation. Quality color palette added to `palette.toml`.
+- **Task 4**: Réf. column removed from criteria table; van Fraassen/Popper/Intersubjectivité as footnotes.
+- **Task 5**: Three quality ladder slides (result / method / model) inserted before §Perspectives.
+- Six `% REVIEW MINOR:` comments added for deferred editorial decisions (loanwords, STANAG header, Watcher mapping, footnote attributions).
 
-**This session (2026-04-22, housekeeping):**
-- Investigated F1 "drift" (0.930 vs 0.898): false alarm — `load(method='decomposed')` substring-matched `decomposed_v2` and `verification_multi` runs (n=4→10). Canonical headline is still 89.8% via `load_headline_result()`, confirmed by passing test in `test_tabulate_macros.py`.
-- Removed stale skipped test from `test_measurements.py`; cleared blocker from STATE.
-- Pruned 4 stale local branches (all squash-merged PRs).
+**Previous session (2026-04-22, housekeeping):** F1-drift investigated (false alarm), stale test removed, 4 stale branches pruned.
 
 ## Blockers
 
-- **Slides not yet rendered for review**: PDF was regenerated; visual review deferred. Talk deadline: 2026-05-27.
+None.
 
 ## Next actions
 
-1. **Slides polish pass** — visual review of French slides PDF; check layout, spacing, French typography.
+1. **Slides direct editing** — user will edit slides.tex directly (loanwords, STANAG, Watcher mapping, footnote attributions per REVIEW MINOR comments).
 2. **Launch ablation Phase 1** from reactive-prancing-shell: `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify determinism.
 3. **Ticket 0102** — escalation-rate decay verification (post-talk).
 
