@@ -197,6 +197,10 @@ Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 \textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées & Vérif.\ 3 niveaux \\
 \bottomrule
 \end{tabular}
+% REVIEW MINOR: van Fraassen / Popper attributions are rhetorical stretches.
+% A referee will note that van Fraassen's empirical adequacy ≠ RAG citation,
+% and Popper's falsifiability ≠ per-cell citations. Consider weakening to
+% "inspiré de" or dropping the footnotes and keeping only the criteria names.
 \footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
 \footnotetext[2]{Popper, \textit{The Logic of Scientific Discovery}, 1959.}
 \footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants comme critère de validité.}
@@ -226,6 +230,9 @@ Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 \textbf{Quatre agents, chacun ancré sur un critère~:}
 \begin{description}\setlength\itemsep{2pt}
   \item[\textbf{Watcher}] découverte → \textit{Fraîcheur}
+% REVIEW MINOR: Watcher → Fraîcheur is debatable; discovery enables freshness
+% only when paired with the Analyst's incremental fusion. Could map Watcher
+% to Ancrage (finds new sources) and Analyst to Fraîcheur (does the update).
   \item[\textbf{Curator}] triage HITL → \textit{Ancrage}
   \item[\textbf{Analyst}] fusion chronologique → \textit{Fraîcheur}
   \item[\textbf{Auditor}] vérification 3 niveaux → \textit{Fiabilité}
@@ -234,6 +241,12 @@ Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 
 \bigskip
 \begin{center}
+% REVIEW MINOR: "trackés" and "de-risque" are English loanwords likely to draw
+% comment at a French-language venue. Alternatives: "suivis" (trackés),
+% "réduit les risques de" or "valide" (de-risque). Also "benchmark" below.
+% REVIEW MINOR: No explicit bridge from this v1 vision to the running v0
+% prototype. Consider adding: "v0 est le prototype en cours ; ce benchmark
+% en valide les choix de conception."
 \textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous trackés sous git.\\[0.4em]
 {\small C'est un travail en cours vers cette vision.\\
 \textbf{Aujourd'hui~: le benchmark qui de-risque les choix de conception du cœur.}}
@@ -700,6 +713,9 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \begin{center}
 \begin{tabular}{@{}c l p{8.5cm}@{}}
 \toprule
+% REVIEW MINOR: STANAG 2022 reference in this header is unexplained and
+% not developed elsewhere on the slide. Either add a footnote defining the
+% NATO credibility scale (A–F × 1–6) or drop the parenthetical entirely.
 \textbf{Score} & & \textbf{Statut épistémique (Popper + OTAN STANAG~2022)} \\
 \midrule
 5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
@@ -724,6 +740,7 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
 \midrule
 4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+% REVIEW MINOR: "trackable" is an English loanword. Alternative: "versionnable".
 3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant trackable sous git \\
 2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
 1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
@@ -732,6 +749,8 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \end{tabular}
 \end{center}
 \smallskip
+% REVIEW MINOR: "benchmark" used as a French verb. Alternative: "mesure" or
+% "évalue". Second "benchmark" (as noun) is acceptable but could be "évaluation".
 {\small Ce pilote benchmark les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
 \end{frame}
 
