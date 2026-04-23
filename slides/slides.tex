@@ -692,6 +692,67 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 {\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Score} & & \textbf{Statut épistémique (Popper + OTAN STANAG~2022)} \\
+\midrule
+5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
+4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
+3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
+2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité de la méthode~: les conditions actives}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant trackable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote benchmark les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité du modèle~: le modèle comme instrument de mesure}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Propriété garantie} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: accord entre modèles indépendants (intersubjectivité) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Calibré}~: prompt validé par ablation sur la tâche cible \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Reproductible}~: seed + provider fixés~; repeat~$\geq$~3 pour les MoE \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Déterministe}~: température~=~0 \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Non contrôlé}~: modèle choisi sans protocole de mesure \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote atteint le niveau~2 (température~+~seed). L'ablation (Phase~0) vise le niveau~3. La corroboration inter-modèles (niveau~4) est mesurée par l'accord min-de-5.}
+\end{frame}
+
 % ===================================================================
 \section{Perspectives}
 
