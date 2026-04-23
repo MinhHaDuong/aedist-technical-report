@@ -7,15 +7,15 @@ from conftest import patch_measurements_loader, write_measurements
 from aedist.plot_census import build_census_rows
 
 SAMPLE_METRICS = [
-    {"label": "census/gpt-5.4-run1", "f1": 0.70},
-    {"label": "census/gpt-5.4-run2", "f1": 0.68},
-    {"label": "census/gpt-5.4-run3", "f1": 0.72},
-    {"label": "census/padme-qwen3.5-27b-run1", "f1": 0.50},
-    {"label": "census/padme-qwen3.5-27b-run2", "f1": 0.52},
-    {"label": "census/padme-qwen3.5-27b-run3", "f1": 0.48},
-    {"label": "census/claude-4-run1", "f1": 0.65},
-    {"label": "census/claude-4-run2", "f1": 0.63},
-    {"label": "census/claude-4-run3", "f1": 0.67},
+    {"label": "census/gpt-5.4-run1", "f1": 0.70, "n_matched": 114, "n_hallucinated": 2},
+    {"label": "census/gpt-5.4-run2", "f1": 0.68, "n_matched": 111, "n_hallucinated": 3},
+    {"label": "census/gpt-5.4-run3", "f1": 0.72, "n_matched": 117, "n_hallucinated": 1},
+    {"label": "census/padme-qwen3.5-27b-run1", "f1": 0.50, "n_matched": 81, "n_hallucinated": 0},
+    {"label": "census/padme-qwen3.5-27b-run2", "f1": 0.52, "n_matched": 85, "n_hallucinated": 1},
+    {"label": "census/padme-qwen3.5-27b-run3", "f1": 0.48, "n_matched": 78, "n_hallucinated": 0},
+    {"label": "census/claude-4-run1", "f1": 0.65, "n_matched": 106, "n_hallucinated": 4},
+    {"label": "census/claude-4-run2", "f1": 0.63, "n_matched": 103, "n_hallucinated": 2},
+    {"label": "census/claude-4-run3", "f1": 0.67, "n_matched": 109, "n_hallucinated": 3},
 ]
 
 
@@ -77,4 +77,4 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     reader = csv.DictReader(content.splitlines())
     rows = list(reader)
     assert len(rows) == 3
-    assert set(reader.fieldnames) == {"model", "f1", "local"}
+    assert set(reader.fieldnames) == {"model", "f1", "n_tp", "n_fp", "local"}

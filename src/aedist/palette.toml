@@ -21,3 +21,11 @@ rag    = "#E07B39"
 [families.fallback]
 single = "#888888"
 rag    = "#444444"
+
+[quality]
+# One dot = one power plant; color encodes evidence level
+hallucinated = "#E74C3C"  # red   — FP: plant not in reference
+identified   = "#F1C40F"  # yellow — TP: matched by name
+chars_ok     = "#E67E22"  # orange — TP + correct fuel/status/province
+sourced      = "#27AE60"  # green  — TP + primary source citation
+verified     = "#2E86AB"  # blue   — TP + independently verified

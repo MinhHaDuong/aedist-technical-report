@@ -20,6 +20,13 @@
 \definecolor{goodf1}{HTML}{2E86AB}
 \definecolor{medf1}{HTML}{F5A623}
 \definecolor{lowf1}{HTML}{E8505B}
+% Quality ladder colors (one dot = one power plant)
+\definecolor{qualred}{HTML}{E74C3C}
+\definecolor{qualgray}{HTML}{BBBBBB}
+\definecolor{qualyellow}{HTML}{F1C40F}
+\definecolor{qualorange}{HTML}{E67E22}
+\definecolor{qualgreen}{HTML}{27AE60}
+\definecolor{qualblue}{HTML}{2E86AB}
 
 \title{Beyond RAG}
 \subtitle{Architectures à états agentiques pour des statistiques économiques fiables}
@@ -113,6 +120,45 @@ sans reddition cognitive~?
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}[fragile]{\NumModelsTested{} modèles, 163 centrales~: le modèle seul ne suffit pas}
+\pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
+\pgfplotstablegetrowsof{\censusdata}
+\pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.96\textwidth,
+    height=6.0cm,
+    xlabel={Centrales (un point = une centrale)},
+    xmin=-30, xmax=170,
+    ytick={0,...,\censusrows},
+    y tick label style={font=\tiny, anchor=east},
+    yticklabel={\pgfplotstablegetelem{\tick}{model}\of{\censusdata}\pgfplotsretval},
+    y dir=reverse,
+    enlarge y limits=0.02,
+    axis x line=center,
+    axis y line=left,
+    xticklabel style={font=\tiny},
+    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
+    clip=false,
+]
+% Hallucinated plants — negative territory, red dots
+\addplot[only marks, mark=*, mark size=1pt, color=qualred, opacity=0.8]
+    table[x=x, y=y, col sep=comma] {inputs/generated/census_scatter_fp.csv};
+\addlegendentry{Hallucinée}
+% Found plants — positive territory, yellow dots
+\addplot[only marks, mark=*, mark size=1pt, color=qualyellow, opacity=0.8]
+    table[x=x, y=y, col sep=comma] {inputs/generated/census_scatter_tp.csv};
+\addlegendentry{Identifiée}
+% Reference line at 163
+\addplot[dashed, thick, color=qualgreen, forget plot] coordinates {(163, -0.5) (163, \censusrows+0.5)};
+\end{axis}
+\end{tikzpicture}
+
+\smallskip
+{\small Passe unique, sans documentation. Ligne verte~: référence (163 centrales). \textbf{Le choix du modèle ne résout pas le problème.}}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{La question centrale}
 \begin{center}
 \large
@@ -141,21 +187,69 @@ Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 \bigskip
 \begin{center}
 \small
-\begin{tabular}{@{}llll@{}}
+\begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Critère} & \textbf{Échec sans lui} & \textbf{Mécanisme} & \textbf{Réf.} \\
+\textbf{Critère} & \textbf{Échec sans lui} & \textbf{Mécanisme} \\
 \midrule
-\textbf{Ancrage}       & Chiffres sans sources  & RAG massif              & van Fraassen \\
-\textbf{Auditabilité}  & Affirmations non traçables & Citations par cellule & Popper \\
-\textbf{Fraîcheur}     & Instantané figé à la coupure & Fusion incrémentale   & — \\
-\textbf{Fiabilité}     & Cellules incertaines non signalées & Vérif.\ 3 niveaux & Intersubjectivité \\
+\textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources  & RAG massif              \\
+\textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables & Citations par cellule \\
+\textbf{Fraîcheur}                     & Instantané figé à la coupure & Fusion incrémentale   \\
+\textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées & Vérif.\ 3 niveaux \\
 \bottomrule
 \end{tabular}
+% REVIEW MINOR: van Fraassen / Popper attributions are rhetorical stretches.
+% A referee will note that van Fraassen's empirical adequacy ≠ RAG citation,
+% and Popper's falsifiability ≠ per-cell citations. Consider weakening to
+% "inspiré de" or dropping the footnotes and keeping only the criteria names.
+\footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
+\footnotetext[2]{Popper, \textit{The Logic of Scientific Discovery}, 1959.}
+\footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants comme critère de validité.}
 \end{center}
 
 \bigskip
 \begin{center}
 \small\textit{Chaque diapositive de résultats montre un critère amélioré par un choix architectural.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{AEDIST v1~: l'architecture cible}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Quatre couches de données~:}
+\begin{enumerate}\setlength\itemsep{2pt}
+  \item \textbf{Dépôt de documents} — sources brutes en cache
+  \item \textbf{Corpus validé} — indexé, registre des sources
+  \item \textbf{Master + sidecar} — fusion incrémentale,\\
+        {\scriptsize master.csv + provenance + fusion\_log}
+  \item \textbf{Mémoire} — règles auditées par taxonomie\\
+        {\scriptsize aliases / unités / termes-sources + audit.jsonl}
+\end{enumerate}
+
+\column{0.48\textwidth}
+\textbf{Quatre agents, chacun ancré sur un critère~:}
+\begin{description}\setlength\itemsep{2pt}
+  \item[\textbf{Watcher}] découverte → \textit{Fraîcheur}
+% REVIEW MINOR: Watcher → Fraîcheur is debatable; discovery enables freshness
+% only when paired with the Analyst's incremental fusion. Could map Watcher
+% to Ancrage (finds new sources) and Analyst to Fraîcheur (does the update).
+  \item[\textbf{Curator}] triage HITL → \textit{Ancrage}
+  \item[\textbf{Analyst}] fusion chronologique → \textit{Fraîcheur}
+  \item[\textbf{Auditor}] vérification 3 niveaux → \textit{Fiabilité}
+\end{description}
+\end{columns}
+
+\bigskip
+\begin{center}
+% REVIEW MINOR: "trackés" and "de-risque" are English loanwords likely to draw
+% comment at a French-language venue. Alternatives: "suivis" (trackés),
+% "réduit les risques de" or "valide" (de-risque). Also "benchmark" below.
+% REVIEW MINOR: No explicit bridge from this v1 vision to the running v0
+% prototype. Consider adding: "v0 est le prototype en cours ; ce benchmark
+% en valide les choix de conception."
+\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous trackés sous git.\\[0.4em]
+{\small C'est un travail en cours vers cette vision.\\
+\textbf{Aujourd'hui~: le benchmark qui de-risque les choix de conception du cœur.}}
 \end{center}
 \end{frame}
 
@@ -253,9 +347,7 @@ la fusion peut être déterministe même quand l'extraction ne l'est pas.
 \section{Ancrage documentaire}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{Conception du pilote et ligne de base~: le choix du modèle seul est insuffisant}
-\begin{columns}[T]
-\column{0.52\textwidth}
+\begin{frame}{Conception du pilote}
 \textbf{Tâche~:} lister toutes les centrales thermiques vietnamiennes avec combustible, statut, province, capacité (CSV).
 
 \medskip
@@ -267,47 +359,15 @@ la fusion peut être déterministe même quand l'extraction ne l'est pas.
   \item[Hypothèse] Une \textbf{méthode} = modèle + prompt +
         régime d'information + agrégation.
         Le modèle est un facteur parmi d'autres.
-  \item[Échelle] 37 modèles, \$0.82 au total
+  \item[Échelle] \NumModelsTested{} modèles, \$0.82 au total
   \item[Conditions clés] Documentation $\times$ Conversation $\times$
-        Décomposition $\times$ Agrégation $\times$ Modèle (37)
+        Décomposition $\times$ Agrégation $\times$ Modèle (\NumModelsTested{})
 \end{description}
 
 \medskip
-{\small \textbf{Métrique clé~:} centrales trouvées sur 163\\
-(précision $>$99\% sur tous les modèles --- le problème\\
-est la \textbf{couverture}, pas l'hallucination)}
-
-\column{0.45\textwidth}
-\pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
-\pgfplotstablegetrowsof{\censusdata}
-\pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
-\begin{tikzpicture}
-\begin{axis}[
-    width=\textwidth,
-    height=6cm,
-    ylabel={\# plants (out of 163)},
-    ymin=0, ymax=163,
-    bar width=5pt,
-    xtick={0,...,\censusrows},
-    x tick label style={rotate=45, anchor=east, font=\tiny},
-    xticklabel={\pgfplotstablegetelem{\tick}{model}\of{\censusdata}\pgfplotsretval},
-    enlarge x limits=0.05,
-    ybar stacked,
-    legend style={at={(0.98,0.98)}, anchor=north east, font=\scriptsize},
-]
-\addplot[fill=matched!70]
-    table [x expr=\coordindex, y expr=\thisrow{f1}*163] {\censusdata};
-\addlegendentry{Trouvées}
-\addplot[fill=missed!50]
-    table [x expr=\coordindex, y expr=163-\thisrow{f1}*163] {\censusdata};
-\addlegendentry{Manquantes}
-\end{axis}
-\end{tikzpicture}
-
-\smallskip
-{\small Passe unique, sans documentation. Plage~: 4--160 centrales.\\
-\textbf{Le choix du modèle seul ne résout pas le problème.}}
-\end{columns}
+{\small \textbf{Métrique clé~:} centrales trouvées sur 163.\\
+La couverture varie de 4 à 163~; la précision varie de~27\% à~100\%.\\
+Le problème est d'abord la \textbf{couverture}, mais les hallucinations existent (points rouges).}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -331,32 +391,38 @@ est la \textbf{couverture}, pas l'hallucination)}
 {\scriptsize \textit{Limite de fenêtre de contexte~: la sous-interrogation par type de combustible et la fusion résolvent la troncature ($+$15--35~pp pour les modèles sujets à la troncature).}}
 
 \column{0.56\textwidth}
-\pgfplotstableread[col sep=comma]{inputs/generated/regimes.csv}\regimedata
-\pgfplotstablegetrowsof{\regimedata}
-\pgfmathtruncatemacro{\regimerows}{\pgfplotsretval-1}
 \begin{tikzpicture}
 \begin{axis}[
     width=\textwidth,
-    height=5.5cm,
-    ylabel={\# plants (out of 163)},
-    ymin=0, ymax=163,
-    bar width=5pt,
-    xtick={0,...,\regimerows},
-    x tick label style={rotate=30, anchor=east, font=\small},
-    xticklabel={\pgfplotstablegetelem{\tick}{model}\of{\regimedata}\pgfplotsretval},
-    enlarge x limits=0.15,
-    ybar,
-    legend style={at={(0.02,0.98)}, anchor=north west, font=\scriptsize},
+    height=5.8cm,
+    xlabel={Centrales identifiées (un point = une centrale)},
+    xmin=0, xmax=170,
+    ytick={0,1,2,4,5,6,8,9,10,12,13,14,16,17,18},
+    yticklabels={Direct,Multi-tours,RAG,%
+                 Direct,Multi-tours,RAG,%
+                 Direct,Multi-tours,RAG,%
+                 Direct,Multi-tours,RAG,%
+                 Direct,Multi-tours,RAG},
+    y tick label style={font=\tiny, anchor=east},
+    ymin=-0.5, ymax=19,
+    y dir=reverse,
+    axis x line=bottom,
+    axis y line=left,
+    xticklabel style={font=\tiny},
+    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
+    clip=false,
 ]
-\addplot[fill=matched!50]
-    table [x expr=\coordindex, y expr=\thisrow{direct}*163] {\regimedata};
-\addlegendentry{Direct}
-\addplot[fill=halluc!70]
-    table [x expr=\coordindex, y expr=\thisrow{multiturn}*163] {\regimedata};
-\addlegendentry{Multi-tours}
-\addplot[fill=goodf1!90]
-    table [x expr=\coordindex, y expr=\thisrow{rag}*163] {\regimedata};
-\addlegendentry{RAG}
+\addplot[only marks, mark=*, mark size=1pt, color=qualyellow, opacity=0.8]
+    table[x=x, y=y, col sep=comma] {inputs/generated/regimes_scatter.csv};
+\addlegendentry{Identifiée}
+% Reference line at 163
+\addplot[dashed, thick, color=qualgreen, forget plot] coordinates {(163, -0.5) (163, 19)};
+% Model group labels
+\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,1)   {GPT-5.4};
+\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,5)   {Gemini FL};
+\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,9)   {Mistral S4};
+\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,13)  {Mistral L3};
+\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,17)  {DeepSeek};
 \end{axis}
 \end{tikzpicture}
 \end{columns}
@@ -639,6 +705,73 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 
 \medskip
 {\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+% REVIEW MINOR: STANAG 2022 reference in this header is unexplained and
+% not developed elsewhere on the slide. Either add a footnote defining the
+% NATO credibility scale (A–F × 1–6) or drop the parenthetical entirely.
+\textbf{Score} & & \textbf{Statut épistémique (Popper + OTAN STANAG~2022)} \\
+\midrule
+5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
+4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
+3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
+2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
+1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité de la méthode~: les conditions actives}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+% REVIEW MINOR: "trackable" is an English loanword. Alternative: "versionnable".
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant trackable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+% REVIEW MINOR: "benchmark" used as a French verb. Alternative: "mesure" or
+% "évalue". Second "benchmark" (as noun) is acceptable but could be "évaluation".
+{\small Ce pilote benchmark les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité du modèle~: le modèle comme instrument de mesure}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Propriété garantie} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: accord entre modèles indépendants (intersubjectivité) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Calibré}~: prompt validé par ablation sur la tâche cible \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Reproductible}~: seed + provider fixés~; repeat~$\geq$~3 pour les MoE \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Déterministe}~: température~=~0 \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Non contrôlé}~: modèle choisi sans protocole de mesure \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote atteint le niveau~2 (température~+~seed). L'ablation (Phase~0) vise le niveau~3. La corroboration inter-modèles (niveau~4) est mesurée par l'accord min-de-5.}
 \end{frame}
 
 % ===================================================================
