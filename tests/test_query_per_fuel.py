@@ -1,6 +1,6 @@
-"""Tests for aedist.query_decomposed — CSV merging and extraction."""
+"""Tests for aedist.query_per_fuel — CSV merging and extraction."""
 
-from aedist.query_decomposed import extract_csv_text, merge_csvs
+from aedist.query_per_fuel import extract_csv_text, merge_csvs
 
 # --- merge_csvs ---
 
@@ -108,7 +108,7 @@ class TestQueryDecomposed:
 
     def test_basic_merge(self, monkeypatch):
         """3 sub-queries produce a merged CSV with all plants."""
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
         from aedist.harness import BudgetTracker
 
         call_count = 0
@@ -151,7 +151,7 @@ class TestQueryDecomposed:
 
     def test_budget_exceeded_returns_none(self, monkeypatch):
         """Returns None when budget is already exceeded."""
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
         from aedist.harness import BudgetTracker
 
         budget = BudgetTracker(budget_usd=0.001)
@@ -171,7 +171,7 @@ class TestQueryDecomposed:
         """Returns None when an API error occurs on a sub-query."""
         import openai
 
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
         from aedist.harness import BudgetTracker
 
         def fake_query_error(client, model_id, messages, **kwargs):
@@ -196,7 +196,7 @@ class TestQueryDecomposed:
 
     def test_no_csv_in_response(self, monkeypatch):
         """Handles sub-queries that return no extractable CSV gracefully."""
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
         from aedist.harness import BudgetTracker
 
         def fake_query_no_csv(client, model_id, messages, **kwargs):
@@ -225,7 +225,7 @@ class TestQueryDecomposed:
 
     def test_dedup_across_subqueries(self, monkeypatch):
         """Plants appearing in multiple sub-queries are deduplicated."""
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
         from aedist.harness import BudgetTracker
 
         call_count = 0
@@ -279,7 +279,7 @@ class TestQueryDecomposedMain:
         """--dry-run shows what would run without querying."""
         import logging
 
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
 
         # Create minimal corpus dir
         corpus_dir = tmp_path / "corpus"
@@ -305,7 +305,7 @@ class TestQueryDecomposedMain:
         monkeypatch.setattr(
             "sys.argv",
             [
-                "query_decomposed",
+                "query_per_fuel",
                 "--prompt",
                 str(prompt_file),
                 "--corpus",
@@ -333,7 +333,7 @@ class TestQueryDecomposedMain:
         """--model filters to a single model."""
         import logging
 
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
 
         corpus_dir = tmp_path / "corpus"
         corpus_dir.mkdir()
@@ -361,7 +361,7 @@ class TestQueryDecomposedMain:
         monkeypatch.setattr(
             "sys.argv",
             [
-                "query_decomposed",
+                "query_per_fuel",
                 "--prompt",
                 str(prompt_file),
                 "--corpus",
@@ -385,7 +385,7 @@ class TestQueryDecomposedMain:
 
     def test_model_not_found_exits(self, monkeypatch, tmp_path):
         """--model with nonexistent model raises SystemExit."""
-        from aedist import query_decomposed as qd_mod
+        from aedist import query_per_fuel as qd_mod
 
         corpus_dir = tmp_path / "corpus"
         corpus_dir.mkdir()
@@ -402,7 +402,7 @@ class TestQueryDecomposedMain:
         monkeypatch.setattr(
             "sys.argv",
             [
-                "query_decomposed",
+                "query_per_fuel",
                 "--prompt",
                 str(prompt_file),
                 "--corpus",

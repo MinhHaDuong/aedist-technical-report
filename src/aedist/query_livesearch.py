@@ -1,10 +1,10 @@
-"""Web-augmented queries against LLMs.
+"""Live Tavily web search injection as context: web-augmented queries against LLMs.
 
 Runs predefined web searches via Tavily API, injects results as context,
 then sends the prompt to LLMs. Requires TAVILY_API_KEY environment variable.
 
 Usage:
-    python -m aedist.query_web \
+    python -m aedist.query_livesearch \
         --prompt prompts/prompt_extract.txt \
         --models models.yaml \
         --output outputs/web/ \

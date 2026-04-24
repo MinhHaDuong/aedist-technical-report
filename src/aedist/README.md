@@ -15,9 +15,9 @@ utilities and save JSON results to `experiments/outputs/`.
 | `query.py` | single | Direct structured query via OpenAI-compatible API |
 | `query_rag.py` | rag | RAG: corpus injected as system context |
 | `query_multiturn.py` | multiturn | Initial prompt + follow-up questions |
-| `query_web.py` | web | Web-search augmented (Tavily API) |
-| `query_decomposed.py` | decomposed | Split by fuel type, merge results |
-| `query_frontier.py` | frontier | Deep-research prompt for reasoning models |
+| `query_livesearch.py` | web | Web-search augmented (Tavily API) |
+| `query_per_fuel.py` | decomposed | Split by fuel type, merge results |
+| `query_direct.py` | frontier | Deep-research prompt for reasoning models |
 | `query_verification.py` | verification | 5 provenance-checking modes |
 
 ### Core pipeline

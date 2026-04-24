@@ -455,7 +455,7 @@ def test_verify_web_with_cache(tmp_path):
 
     cache_path = tmp_path / "cache.json"
 
-    with patch("aedist.query_web.tavily_search", side_effect=mock_tavily):
+    with patch("aedist.query_livesearch.tavily_search", side_effect=mock_tavily):
         annotated, summary = verify_web(rows, "fake-key", cache_path)
 
     assert len(annotated) == 2
@@ -493,7 +493,7 @@ def test_verify_web_cache_reuse(tmp_path):
     }
     cache_path.write_text(json.dumps(cache_data))
 
-    with patch("aedist.query_web.tavily_search") as mock_search:
+    with patch("aedist.query_livesearch.tavily_search") as mock_search:
         annotated, summary = verify_web(rows, "fake-key", cache_path)
 
     # Should not call Tavily — result was cached
