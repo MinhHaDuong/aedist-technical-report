@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — schema: method + prompt_version vocabulary
-Status: open
+Status: doing
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0123
@@ -13,6 +13,8 @@ Blocked-by: 0123
 2026-04-24T00:00Z claude note +verification and +multiturn are composable process modifiers
 2026-04-24T00:00Z claude note ablation prompt_version uses sign notation: base, composite, +aspect, -aspect
 2026-04-24T00:00Z claude note DSPy: prompt_version="dspy", compiled output stored as prompt_dspy.txt
+2026-04-24T10:58Z claude claimed
+2026-04-24T10:58Z claude status doing
 
 --- body ---
 ## Design

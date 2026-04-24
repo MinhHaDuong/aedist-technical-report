@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — prompts: rename files and define prompt_version values
-Status: open
+Status: doing
 Created: 2026-04-24
 Author: claude
 
@@ -9,6 +9,8 @@ Author: claude
 2026-04-24T00:00Z claude note co-dependent with 0120 (schema); must be worked together on same branch; 0120 now has Blocked-by 0123
 2026-04-24T00:00Z claude note sourced→cited; ablation prompt_version uses sign notation
 2026-04-24T00:00Z claude note DSPy: compiled output frozen as prompt_dspy.txt; program in scripts/dspy/
+2026-04-24T10:58Z claude claimed
+2026-04-24T10:58Z claude status doing
 
 --- body ---
 ## Context
