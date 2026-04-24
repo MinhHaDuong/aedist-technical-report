@@ -411,7 +411,7 @@ model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
-output = "outputs/ablation/parametric/p1_base"
+output = "outputs/ablation/direct/p1_base"
 
 # Ticket 0057: extended base-vs-census — 9 additional cheap cloud models,
 # reusing the same output directory so .record.json files mix in with the
@@ -424,7 +424,7 @@ model_set = "modelset_census_extended"
 repeat = 2
 budget_usd = 5
 seed = 42
-output = "outputs/ablation/parametric/p1_base"
+output = "outputs/ablation/direct/p1_base"
 
 [sweeps.sweep_ablation_p1_direct_composite]
 mode = "single"
@@ -434,7 +434,7 @@ model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
-output = "outputs/ablation/parametric/p1_composite"
+output = "outputs/ablation/direct/p1_composite"
 
 # RAG regime (corpus injected)
 [sweeps.sweep_ablation_p1_rag_base]
@@ -467,7 +467,7 @@ model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
-output = "outputs/ablation/websearch/p1_base"
+output = "outputs/ablation/livesearch/p1_base"
 
 [sweeps.sweep_ablation_p1_livesearch_composite]
 mode = "single"
@@ -478,7 +478,7 @@ model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
-output = "outputs/ablation/websearch/p1_composite"
+output = "outputs/ablation/livesearch/p1_composite"
 
 # Phase 2 — Composition arm: base + one module
 
