@@ -29,6 +29,13 @@ without a consistent naming axis. Problems:
 - `[sets.frontier_10labs]`, `[sets.frontier_3best]`, `[sets.frontier_cn]`
   — overlapping names without clear tier/scope hierarchy.
 
+## Constraints
+
+**TOML bare-key constraint:** TOML table headers cannot start with `-` or `+`.
+Ablation sweep IDs must use underscores (e.g. `ablation_minus_persona`,
+`ablation_plus_persona`) while the emitted `prompt_version` value uses
+sign notation (`"-persona"`, `"+persona"`). The harness must translate.
+
 ## Actions
 
 1. Audit every `[sweeps.*]` and `[sets.*]` key; classify each as

@@ -10,57 +10,82 @@ Blocked-by: 0123
 2026-04-24T00:00Z claude note co-dependent with 0123 (prompts); must be worked together on same branch
 2026-04-24T00:00Z claude note vocabulary finalised in session; see body for full mapping
 2026-04-24T00:00Z claude note sourced→cited (sourced implied input direction; cited names output direction)
-2026-04-24T00:00Z claude note +verification and +multiturn are composable process modifiers; schema closed
+2026-04-24T00:00Z claude note +verification and +multiturn are composable process modifiers
+2026-04-24T00:00Z claude note ablation prompt_version uses sign notation: base, composite, +aspect, -aspect
+2026-04-24T00:00Z claude note DSPy: prompt_version="dspy", compiled output stored as prompt_dspy.txt
 
 --- body ---
 ## Design
 
-The `method` field in `measurements.jsonl` encodes two things via
-a compositional convention:
+The `method` field encodes two things via a compositional convention:
 
   method = <base>[+<modifier>...]
 
-**Base** — information access mode (where does knowledge come from?):
-  `direct`          model weights only, no external source
+**Base** — information access mode:
+  `direct`          model weights only
   `rag`             curated corpus (Zotero-sourced PDFs)
   `rag_livesearch`  dynamic corpus (live Tavily search at query time)
 
-**Modifiers** (process layers, composable with `+`):
-  `+multiturn`      conversational — history accumulated across turns
+**Modifiers** (composable process layers):
+  `+multiturn`      history accumulated across turns
   `+verification`   post-processing verification layer applied
 
 `prompt_version` (in `method_params`) — which prompt was used.
-Filenames follow `prompt_{version}.txt` so any version is locatable
-by inspection.
+Convention: `prompt_{version}.txt` for static prompts; `prompt_{version}.py`
+for programmatic prompts (DSPy). Either is findable by inspection.
 
-Known simplification: full composability (e.g. `rag+multiturn`) is
-structurally supported but no such experiment exists yet. Future
-combos slot in without schema changes.
+Known simplification: `+multiturn` and `+verification` are process-level,
+not information-source-level — a noted category mix. Full composability
+(e.g. `rag+multiturn`) is structurally supported; no such experiment exists yet.
 
 ## Migration table (current → new)
 
-| Current method   | New method          | prompt_version   |
-|------------------|---------------------|------------------|
-| single           | direct              | extract          |
-| frontier         | direct              | complete         |
-| frontier_scenarios | direct            | scenarios        |
-| web              | rag_livesearch      | extract          |
-| rag              | rag                 | extract          |
-| decomposed       | rag                 | per_fuel         |
-| sourced          | rag                 | cited            |
-| multiturn        | direct+multiturn    | followups        |
-| verification     | rag+verification    | per_fuel         |
-| frontier_skill   | DELETE              | DELETE           |
+| Current method     | New method          | prompt_version   |
+|--------------------|---------------------|------------------|
+| single             | direct              | extract          |
+| frontier           | direct              | complete         |
+| frontier_scenarios | direct              | scenarios        |
+| web                | rag_livesearch      | extract          |
+| rag                | rag                 | extract          |
+| decomposed         | rag                 | per_fuel         |
+| sourced            | rag                 | cited            |
+| multiturn          | direct+multiturn    | followups        |
+| verification       | rag+verification    | per_fuel         |
+| frontier_skill     | DELETE              | DELETE           |
 
-Ablation runs currently write `prompt_version: "derived"`. Encoding:
-mirror the sweep condition label — `"ablation_base"`,
-`"ablation_composite"`, `"ablation_persona"`, `"ablation_no_persona"`,
-etc. The harness derives this from the sweep name or module list.
+## Ablation prompt_version convention
+
+Sign notation — the sign encodes ablation direction:
+
+  `base`        no modules (zero point)
+  `composite`   all 6 modules
+  `+persona`    base + persona only      (add-one arm)
+  `+overview`   base + overview only
+  … (one per module)
+  `-persona`    composite − persona      (remove-one arm)
+  `-overview`   composite − overview
+  … (one per module)
+
+The harness derives the label from the sweep name or active module list.
+Migration script back-fills existing records (currently `"derived"`).
+
+## DSPy prompt convention
+
+`prompt_version: "dspy"` — machine-optimized prompt produced by DSPy/MIPROv2.
+Stored as `prompt_dspy.txt` (compiled output frozen after tuning).
+The DSPy program that produced it lives in `scripts/dspy/optimize.py`.
+Contrast in analyses: `complete` (human-elaborated) vs `dspy` (machine-optimized).
 
 ## Actions
 
-1. Count occurrences by current method in `measurements.jsonl` to
-   surface migration surface area before writing any code.
+1. Locate all method assignment sites before writing any migration:
+   - `evaluate.py:357` calls `_infer_method(dir_name)` — method is **path-derived**
+     from the output directory name, not written by query runners. 0120 cannot
+     fully execute before 0122 output-directory renames are finalised.
+   - Grep for `_infer_method` and any direct `method=` writes in `harness.py`
+     and `query_*.py` to confirm no other assignment sites exist.
+1a. Count occurrences by current method in `measurements.jsonl` to surface
+   migration surface area before writing any code.
 2. Delete `frontier_skill` data:
    - Remove `[sweeps.frontier_skill]` from `experiments.toml`.
    - `git rm -r experiments/qualitative/skill_plans/` (if it exists).
@@ -71,10 +96,9 @@ etc. The harness derives this from the sweep name or module list.
    adding `prompt_version` to `method_params` where missing.
 4. Update `harness.py` (and all `query_*.py` writers) to emit the new
    `method` and `prompt_version` values for future runs.
-5. Update all readers: `evaluate.py`, `measurements.py`,
-   `plot_*.py`, `tabulate_*.py` — any code that matches on method
-   strings. Compound filters (`method == "rag"`, `"+verification" in
-   method`) replace bare `method == "verification"` guards.
+5. Update all readers: `evaluate.py`, `measurements.py`, `plot_*.py`,
+   `tabulate_*.py`. Compound filters (`method == "rag"`,
+   `"+verification" in method`) replace bare method-string guards.
 6. Run `make test` green.
 7. Two commits: (a) migration script + data, (b) code changes.
 
@@ -83,7 +107,7 @@ etc. The harness derives this from the sweep name or module list.
 - `measurements.jsonl` contains no old method values.
 - `harness.py` and all query runners emit new method + prompt_version.
 - All readers updated; `make test` green.
-- Design note (base + modifier convention) committed as comment in
-  `harness.py`.
+- Design note (base+modifier convention + prompt_version vocabulary)
+  committed as comment in `harness.py`.
 - `frontier_skill` fully purged.
 - Unblocks 0121, 0124.
