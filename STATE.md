@@ -1,16 +1,14 @@
-Last updated: 2026-04-24 (session: namespace audit coordination — 0126)
+Last updated: 2026-04-24 (session: namespace audit + tooling hygiene)
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed. `make lint` now includes ruff + ticket structure check.
 
-**This session (2026-04-24, namespace audit coordination — 0126):** No active tickets contained deprecated vocabulary (all grep hits were closed tickets or 0069's historical body). No memory files required updates. Epic 0069 closed: full namespace audit complete across 7 domain tickets (0120-0126).
+**This session (2026-04-24):** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated, tickets/memory audited. Also: ticket log-placement validator added (`scripts/check_ticket_structure.py`, PR #292), 10 historical tickets fixed.
 
-**Previous session (2026-04-24, healthcheck nits):** Orphaned worktree agent-afb64d7d removed (locked by dead PID 13232, missed in morning pass). Local branch ticket-0075-prompt-optimizer-survey deleted (remote was gone but local survived morning session).
+**Previous session (2026-04-24, morning):** Orphaned worktrees/branches cleaned, stale .wip files cleared, diverged main reconciled.
 
-**Previous session (2026-04-24, morning housekeeping):** Orphaned worktree dir removed (agent-a2597ed5). Remote branches deleted (lit-review-0077-notes, ticket-0075-prompt-optimizer-survey). Stale .wip claim files cleared (0067, 0076, 0085 — all closed). Diverged main reconciled: STATE.md refresh rebased onto origin/main.
-
-**2026-04-23 (slides restructure — PR #285):** Census chart moved; v1 architecture slide added; N-plants charts redesigned as horizontal scatter; quality ladder slides inserted; six REVIEW MINOR comments added.
+**2026-04-23:** Census chart moved; v1 architecture slide added; N-plants charts redesigned as horizontal scatter; quality ladder slides inserted (PR #285).
 
 ## Blockers
 
@@ -19,7 +17,7 @@ None.
 ## Next actions
 
 1. **Slides direct editing** — user will edit slides.tex directly (loanwords, STANAG, Watcher mapping, footnote attributions per REVIEW MINOR comments).
-2. **Launch ablation Phase 1** from reactive-prancing-shell: `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify determinism.
+2. **Launch ablation Phase 1** — `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify determinism.
 3. **Ticket 0102** — escalation-rate decay verification (post-talk).
 
 ## North star
@@ -33,7 +31,7 @@ Title: *Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statist
 Thesis: 4 quality criteria (Grounding/Auditability/Freshness/Confidence) — each slide section lifts one criterion.
 Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.sciencesconf.org/
 
-**Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference. Narrative will follow what worked in the slides.
+**Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference.
 
 ## Follow-on milestone: Journal submission
 
@@ -67,12 +65,15 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Coherence verification script (ticket 0103, PR #282)
 - [x] Fusion worker integration: Method.FUSION, query_fusion CLI (ticket 0115, PR #283)
 - [x] v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ticket 0076, PR #278)
-- [x] Full namespace audit: method values, sweep names, prompts, query modules, output dirs, report labels (tickets 0120-0126, epic 0069)
-- [ ] Source-grounding verification Phases 2+3 — full audit (ticket 0097, post-talk)
+- [x] Full namespace audit: method values, sweep names, prompts, query modules, output dirs, report labels (tickets 0120-0126, epic 0069, PRs #286-#291)
+- [x] Ticket log-placement validator + 10-ticket batch fix (ticket 0127, PR #292)
+- [ ] Source-grounding verification Phases 2+3 — full audit (tickets 0118-0119, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
 
-## Non-closed tickets (2)
+## Non-closed tickets (4)
 
-- 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred to Phase 0 of ablation campaign
-- 0102 Verify escalation-rate decay × system (blocked by 0097 Phases 2+3, post-talk)
+- 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred post-talk
+- 0102 Verify escalation-rate decay × system (post-talk, blocked by 0097 Phases 2+3)
+- 0118 Source-grounding Phase 2 — LLM adjudication (post-talk)
+- 0119 Source-grounding Phase 3 — HITL memory (post-talk, blocked by 0118)
