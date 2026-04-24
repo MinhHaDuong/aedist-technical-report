@@ -1,6 +1,6 @@
 %erg v1
 Title: Project namespace audit — every entity name must be self-explanatory to a fresh reader
-Status: doing
+Status: closed
 Created: 2026-04-11
 Author: claude
 
@@ -10,6 +10,7 @@ Author: claude
 2026-04-16T22:30Z claude status pending — deferred to pre-publication cleanup; too disruptive mid-development
 2026-04-24T00:00Z claude status doing — decomposed into 7 domain tickets: 0120 schema, 0121 config, 0122 filesystem, 0123 prompts, 0124 code, 0125 report, 0126 coordination
 2026-04-24T00:00Z claude note PRECONDITION: pause all running sweeps before 0120/0122 execution; do not launch new sweeps until 0125 lands. A sweep writing output mid-rename lands in a renamed dir with stale method values.
+2026-04-24T13:15Z claude status closed — full namespace audit complete; PRs #286-#290 merged; method vocabulary (direct/rag/rag_livesearch/+multiturn/+verification), prompt_version (extract/complete/cited/per_fuel/followups/dspy), sweep_ prefix, modelset_ prefix, query call-pattern names, output dir renames, report labels all applied; make test + lint green
 
 --- body ---
 ## Context
