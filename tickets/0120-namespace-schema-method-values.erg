@@ -1,49 +1,77 @@
 %erg v1
-Title: Namespace audit — schema: rename method values in measurements.jsonl
+Title: Namespace audit — schema: method + prompt_version vocabulary
 Status: open
 Created: 2026-04-24
 Author: claude
+Blocked-by: 0123
 
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; vocabulary spine, do first
+2026-04-24T00:00Z claude note co-dependent with 0123 (prompts); must be worked together on same branch
+2026-04-24T00:00Z claude note vocabulary finalised in session; see body for full mapping
 
 --- body ---
 ## Context
 
 The `method` field in `measurements.jsonl` is the most load-bearing
 name in the project — every downstream plot, table, and report section
-reads it. Two values are misleading:
+reads it. Design decision (2026-04-24): clean separation of two axes:
 
-- `single` — sounds like "one call", actually means "parametric":
-  no documents, no web search, just the model's training knowledge.
-- `decomposed` — sounds like a decomposition of results, actually
-  means "RAG with per-fuel subprompts" (same corpus injection as
-  `rag`, but prompt split by fuel category).
+- `method` — information access mode (where does the model's knowledge
+  come from?). Model-agnostic. No prompt content encoded here.
+- `prompt_version` (in `method_params`) — which prompt was used.
+  Already present in the schema; currently underused (`"derived"`).
 
-All other values (`rag`, `sourced`, `web`, `multiturn`, `frontier`,
-`verification`) are clear.
+`rag` and `rag_livesearch` are both retrieval-augmented; the axis is
+how the corpus was assembled: curated (Zotero PDFs) vs dynamic (live
+Tavily search). `rag_livesearch` names the mechanism, not just the
+source.
+
+## Confirmed vocabulary
+
+| Current method | New method     | prompt_version |
+|----------------|----------------|----------------|
+| single         | direct         | extract        |
+| frontier       | direct         | complete       |
+| frontier_scenarios | direct     | scenarios      |
+| web            | rag_livesearch | extract        |
+| rag            | rag            | extract        |
+| decomposed     | rag            | per_fuel       |
+| sourced        | rag            | sourced        |
+| multiturn      | multiturn      | extract        |
+| verification   | verification   | —              |
+| frontier_skill | DELETE         | DELETE         |
+
+Ablation runs currently write `prompt_version: "derived"`. The encoding
+for ablation (active module list) is a decision for the 0120+0123 joint
+work.
 
 ## Actions
 
-1. Count occurrences by method in `measurements.jsonl` to surface the
-   migration surface area.
-2. Decide the replacement name for `decomposed` (candidate:
-   `rag_categorical`; confirm with user before migrating).
-3. Write a migration script: `scripts/migrate_method_values.py`.
-   Rewrites `measurements.jsonl` in place: `single`→`parametric`,
-   `decomposed`→chosen name. Idempotent (safe to re-run).
-4. Update `harness.py` (writer) to emit the new values for future runs.
+1. Count occurrences by current method in `measurements.jsonl` to
+   surface migration surface area before writing any code.
+2. Delete `frontier_skill` data:
+   - Remove `[sweeps.frontier_skill]` from `experiments.toml`.
+   - `git rm -r experiments/qualitative/skill_plans/` (if it exists).
+   - Purge `measurements.jsonl` entries whose `result_file` points to
+     `qualitative/skill_plans/`.
+3. Write `scripts/migrate_method_values.py` — idempotent migration:
+   rewrites `measurements.jsonl` in place applying the table above,
+   adding `prompt_version` to `method_params` where missing.
+4. Update `harness.py` (and all `query_*.py` writers) to emit the new
+   `method` and `prompt_version` values for future runs.
 5. Update all readers: `evaluate.py`, `measurements.py`,
    `plot_*.py`, `tabulate_*.py` — any code that matches on method
-   strings.
-6. Run `make test` — ensure all tests pass.
-7. Commit: one commit for the migration script + data, one for the
-   code changes.
+   strings. Compound filters (`method == "rag" AND prompt_version ==
+   "per_fuel"`) replace bare `method == "decomposed"` guards.
+6. Run `make test` green.
+7. Two commits: (a) migration script + data, (b) code changes.
 
 ## Exit criteria
 
-- `measurements.jsonl` contains no `single` or `decomposed` values.
-- `harness.py` emits new method names.
+- `measurements.jsonl` contains no old method values.
+- `harness.py` and all query runners emit new method + prompt_version.
 - All readers updated; `make test` green.
-- New vocabulary documented in a short comment in `harness.py`.
+- Vocabulary table committed as a comment in `harness.py`.
+- `frontier_skill` fully purged.
 - Unblocks 0121, 0124.
