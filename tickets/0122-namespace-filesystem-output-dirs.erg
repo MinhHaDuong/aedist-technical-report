@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — file system: rename experiments/outputs/ directories
-Status: open
+Status: doing
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0121
@@ -70,3 +70,6 @@ No `frontier_scenarios/` or `verification/` top-level directory exists on disk y
 - `experiments.toml` `output =` values match directory names.
 - Harness `plus`/`minus` → sign-notation translation in place (transferred from 0121).
 - `make test` green.
+
+2026-04-24T12:11Z claude claimed
+2026-04-24T12:11Z claude status doing
