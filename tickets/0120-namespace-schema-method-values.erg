@@ -78,29 +78,50 @@ Contrast in analyses: `complete` (human-elaborated) vs `dspy` (machine-optimized
 
 ## Actions
 
-1. Locate all method assignment sites before writing any migration:
+1. Confirm migration surface area — run before writing any code:
+   ```
+   jq -r '.method // "MISSING"' measurements.jsonl | sort | uniq -c
+   ```
+   Verified values (2026-04-24): `single` 153, `rag` 77, `decomposed` 36,
+   `multiturn` 24, `web` 15, `frontier` 12, `verification` 4, `sourced` 3.
+   Rerun to confirm before executing migration — new sweeps may have landed.
+
+2. Locate all method assignment sites:
    - `evaluate.py:357` calls `_infer_method(dir_name)` — method is **path-derived**
-     from the output directory name, not written by query runners. 0120 cannot
-     fully execute before 0122 output-directory renames are finalised.
+     from the output directory name, not written by query runners.
    - Grep for `_infer_method` and any direct `method=` writes in `harness.py`
      and `query_*.py` to confirm no other assignment sites exist.
-1a. Count occurrences by current method in `measurements.jsonl` to surface
-   migration surface area before writing any code.
-2. Delete `frontier_skill` data:
+
+3. Delete `frontier_skill` data:
    - Remove `[sweeps.frontier_skill]` from `experiments.toml`.
    - `git rm -r experiments/qualitative/skill_plans/` (if it exists).
    - Purge `measurements.jsonl` entries whose `result_file` points to
      `qualitative/skill_plans/`.
-3. Write `scripts/migrate_method_values.py` — idempotent migration:
+
+4. Write `scripts/migrate_method_values.py` — idempotent migration:
    rewrites `measurements.jsonl` in place applying the table above,
    adding `prompt_version` to `method_params` where missing.
-4. Update `harness.py` (and all `query_*.py` writers) to emit the new
+   Script **must** support `--dry-run` (print diff, no writes) and
+   `--backup` (writes `measurements.jsonl.bak-$timestamp` before in-place
+   rewrite). Run with `--dry-run` first; inspect diff; then `--backup`.
+
+5. **Atomic commit requirement**: the migration script, the `_infer_method`
+   directory-name mapping update, and the `harness.py` writer update must
+   ship in a single commit. `_infer_method` must recognise both old and new
+   directory names during the transition window (before 0122 renames dirs).
+   Splitting these across commits leaves a window where evaluate.py
+   re-derives stale method values and overwrites migrated records.
+
+6. Update `harness.py` (and all `query_*.py` writers) to emit the new
    `method` and `prompt_version` values for future runs.
-5. Update all readers: `evaluate.py`, `measurements.py`, `plot_*.py`,
+
+7. Update all readers: `evaluate.py`, `measurements.py`, `plot_*.py`,
    `tabulate_*.py`. Compound filters (`method == "rag"`,
    `"+verification" in method`) replace bare method-string guards.
-6. Run `make test` green.
-7. Two commits: (a) migration script + data, (b) code changes.
+
+8. Run `make test` green.
+
+9. Two commits: (a) migration script + data, (b) code changes (steps 6–7).
 
 ## Exit criteria
 

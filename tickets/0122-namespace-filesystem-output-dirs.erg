@@ -17,8 +17,8 @@ Output directories under `experiments/outputs/` use the descriptive sweep name
 namespace; a second prefix would be redundant and clutter file paths.
 
 Convention: `experiments/outputs/{method}_{prompt_version}/` for non-ablation outputs;
-`experiments/outputs/ablation/` stays as a category directory (ablation sweeps
-write subdirectories within it).
+`experiments/outputs/ablation/` stays as a category directory. Its subdirectories
+must also be renamed to match the new method vocabulary.
 
 ## Directory rename table
 
@@ -34,8 +34,19 @@ write subdirectories within it).
 | `multiturn/`       | `direct_multiturn/`  |                              |
 | `ablation/`        | `ablation/`          | category dir — no rename     |
 
-No `frontier_scenarios/` directory exists on disk (sweep produced no outputs yet).
-No `verification/` directory exists on disk either; add to this table if one appears.
+**Ablation subdirectories** (under `experiments/outputs/ablation/`) also require renaming
+to match the method vocabulary — confirmed on disk 2026-04-24:
+
+| Current                       | New                         |
+|-------------------------------|-----------------------------|
+| `ablation/parametric/`        | `ablation/direct/`          |
+| `ablation/rag/`               | `ablation/rag/`             | (stays)
+| `ablation/websearch/`         | `ablation/livesearch/`      |
+
+Each subdirectory contains `p1_base/` and `p1_composite/` children — no further renaming
+needed within them.
+
+No `frontier_scenarios/` or `verification/` top-level directory exists on disk yet.
 
 ## Actions
 

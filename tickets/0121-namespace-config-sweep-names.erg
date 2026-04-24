@@ -18,6 +18,11 @@ Blocked-by: 0120
 
 Sweep ID convention: `sweep_{method}_{prompt_version}` for non-ablation sweeps.
 Ablation sweeps: `sweep_ablation_{plus|minus}_{aspect}` or `sweep_ablation_{base|composite}`.
+Two named exceptions to the convention:
+- **Fusion** sweeps use `sweep_fusion*` — separate pipeline architecture, not a
+  `{method}_{prompt_version}` combination.
+- **Ablation reference** sweeps (`sweep_ablation_complete`, `sweep_ablation_extract`) run
+  a specific prompt on the ablation model set as comparison anchors; not module ablations.
 TOML bare-key constraint: signs (`+`/`-`) forbidden in table headers — use `plus`/`minus` in
 the sweep ID; the harness translates to sign-notation `prompt_version` (e.g. `"+persona"`).
 
@@ -62,8 +67,8 @@ the sweep ID; the harness translates to sign-notation `prompt_version` (e.g. `"+
 | `ablation_no_statistics`         | `sweep_ablation_minus_statistics` |         |
 | `ablation_sourcing`              | `sweep_ablation_plus_sourcing`    |         |
 | `ablation_no_sourcing`           | `sweep_ablation_minus_sourcing`   |         |
-| `ablation_frontier`              | `sweep_ablation_frontier`         |         |
-| `ablation_census`                | `sweep_ablation_census`           |         |
+| `ablation_frontier`              | `sweep_ablation_complete`         | ref run: complete prompt on ablation models |
+| `ablation_census`                | `sweep_ablation_extract`          | ref run: extract prompt on ablation models  |
 | `ablation_p2_rag_base`           | `sweep_ablation_p2_rag_base`      |         |
 | `ablation_p2_rag_composite`      | `sweep_ablation_p2_rag_composite` |         |
 | `ablation_p2_rag_frontier`       | `sweep_ablation_p2_rag_frontier`  |         |

@@ -9,6 +9,7 @@ Author: claude
 2026-04-11T10:30Z claude note rescoped from two-rename to whole-project namespace audit
 2026-04-16T22:30Z claude status pending — deferred to pre-publication cleanup; too disruptive mid-development
 2026-04-24T00:00Z claude status doing — decomposed into 7 domain tickets: 0120 schema, 0121 config, 0122 filesystem, 0123 prompts, 0124 code, 0125 report, 0126 coordination
+2026-04-24T00:00Z claude note PRECONDITION: pause all running sweeps before 0120/0122 execution; do not launch new sweeps until 0125 lands. A sweep writing output mid-rename lands in a renamed dir with stale method values.
 
 --- body ---
 ## Context
