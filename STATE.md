@@ -1,10 +1,12 @@
-Last updated: 2026-04-24 (session: healthcheck nits)
+Last updated: 2026-04-24 (session: namespace audit coordination — 0126)
 
 ## Status
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
 
-**This session (2026-04-24, healthcheck nits):** Orphaned worktree agent-afb64d7d removed (locked by dead PID 13232, missed in morning pass). Local branch ticket-0075-prompt-optimizer-survey deleted (remote was gone but local survived morning session).
+**This session (2026-04-24, namespace audit coordination — 0126):** No active tickets contained deprecated vocabulary (all grep hits were closed tickets or 0069's historical body). No memory files required updates. Epic 0069 closed: full namespace audit complete across 7 domain tickets (0120-0126).
+
+**Previous session (2026-04-24, healthcheck nits):** Orphaned worktree agent-afb64d7d removed (locked by dead PID 13232, missed in morning pass). Local branch ticket-0075-prompt-optimizer-survey deleted (remote was gone but local survived morning session).
 
 **Previous session (2026-04-24, morning housekeeping):** Orphaned worktree dir removed (agent-a2597ed5). Remote branches deleted (lit-review-0077-notes, ticket-0075-prompt-optimizer-survey). Stale .wip claim files cleared (0067, 0076, 0085 — all closed). Diverged main reconciled: STATE.md refresh rebased onto origin/main.
 
@@ -65,12 +67,12 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Coherence verification script (ticket 0103, PR #282)
 - [x] Fusion worker integration: Method.FUSION, query_fusion CLI (ticket 0115, PR #283)
 - [x] v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ticket 0076, PR #278)
+- [x] Full namespace audit: method values, sweep names, prompts, query modules, output dirs, report labels (tickets 0120-0126, epic 0069)
 - [ ] Source-grounding verification Phases 2+3 — full audit (ticket 0097, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
 
-## Non-closed tickets (3)
+## Non-closed tickets (2)
 
-- 0069 Project namespace audit (pending — awaiting external input)
 - 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred to Phase 0 of ablation campaign
 - 0102 Verify escalation-rate decay × system (blocked by 0097 Phases 2+3, post-talk)
