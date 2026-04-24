@@ -1,0 +1,39 @@
+%erg v1
+Title: Source-grounding Phase 2 — LLM adjudication of citation matches
+Status: open
+Created: 2026-04-24
+Author: claude
+
+--- log ---
+2026-04-24T00:00Z claude created — post-conference gate; blocked until after 2026-05-27 talk
+
+--- body ---
+## Context
+
+Ticket 0097 Phase 1 completed URL-level audit: every cited URL is
+reachable and the domain is plausible. Phase 2 asks a harder question:
+does the *content* at the URL actually support the extracted value?
+This requires LLM adjudication, not just URL resolution.
+
+Post-conference work. Do not start before 2026-05-27.
+
+## Actions
+
+1. For each (cell, citation) pair in the master table, fetch the
+   cited URL, extract the relevant passage, and prompt an LLM to
+   rate support: supports / partially supports / contradicts /
+   irrelevant.
+2. Aggregate per-model, per-regime support rates. Compare to Phase 1
+   reachability rates — a reachable URL that contradicts the value
+   is worse than a broken URL.
+3. Record adjudication verdicts alongside cell provenance in a
+   `grounding_phase2.jsonl` (or extend measurements schema).
+4. Produce a calibration table: grounding rate by regime ×
+   adjudication tier. Wire into the source-grounding slide/table.
+
+## Exit criteria
+
+- Script with tests.
+- `grounding_phase2.jsonl` (or equivalent) committed.
+- Calibration table wired into reporting.
+- 0102 blocker satisfied: HITL memory substrate ready for Phase 3.

@@ -1,0 +1,39 @@
+%erg v1
+Title: Source-grounding Phase 3 — HITL memory accumulation across runs
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0118
+
+--- log ---
+2026-04-24T00:00Z claude created — post-conference gate; blocked by 0118 (Phase 2) and until after 2026-05-27 talk
+
+--- body ---
+## Context
+
+Phase 3 is the HITL memory substrate that ticket 0102
+(escalation-rate decay) depends on. Once an operator ratifies an
+adjudication verdict (from Phase 2), that ruling is stored in
+persistent memory so future runs on matching situations are
+deterministic (tier-1) rather than escalating (tier-2/3).
+
+Post-conference work. Do not start before 0118 is closed.
+
+## Actions
+
+1. Design the memory schema: keyed by (cell-type, source-domain,
+   value-range) or similar; stores ratification verdict + timestamp
+   + operator ID.
+2. Wire into the fusion pipeline: before escalating a cell, check
+   memory; if a match exists, apply the ratified verdict directly.
+3. Provide a HITL ratification CLI: `scripts/verify/ratify.py`
+   presents unratified Phase-2 verdicts for operator confirmation.
+4. Run the fusion pipeline 3+ times over the Vietnam corpus with
+   accumulating memory. Record escalation rates per run (feeds 0102).
+
+## Exit criteria
+
+- Memory schema + ratification CLI with tests.
+- Pipeline reads memory before escalating.
+- At least 3 accumulated runs logged (needed by 0102 for decay curve).
+- 0102 unblocked.
