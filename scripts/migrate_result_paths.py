@@ -1,4 +1,5 @@
-"""Migrate result_file paths in measurements.jsonl to match renamed output directories (ticket 0122).
+"""Migrate result_file paths in measurements.jsonl and *.record.json files to match
+renamed output directories (ticket 0122).
 
 Migration table (path segment → new path segment):
     outputs/census/             -> outputs/direct_extract/
@@ -19,6 +20,8 @@ Usage:
     python scripts/migrate_result_paths.py --dry-run
     python scripts/migrate_result_paths.py --backup
     python scripts/migrate_result_paths.py   # in-place rewrite (no backup)
+    python scripts/migrate_result_paths.py --record-files --dry-run
+    python scripts/migrate_result_paths.py --record-files   # also rewrite *.record.json
 """
 
 import argparse
@@ -28,6 +31,7 @@ from datetime import datetime
 from pathlib import Path
 
 MEASUREMENTS_FILE = Path("measurements.jsonl")
+OUTPUTS_DIR = Path("experiments/outputs")
 
 # Order matters: longer/more-specific patterns must precede shorter ones that
 # could be a prefix of them (e.g. decomposed_v2 before decomposed, rag_* new
@@ -76,7 +80,8 @@ def migrate_record(record: dict) -> tuple[dict, bool]:
     return new_record, True
 
 
-def run(dry_run: bool, backup: bool) -> int:
+def migrate_jsonl(dry_run: bool, backup: bool) -> int:
+    """Migrate result_file paths in measurements.jsonl."""
     if not MEASUREMENTS_FILE.exists():
         print(f"ERROR: {MEASUREMENTS_FILE} not found. Run from the repo root.", file=sys.stderr)
         return 1
@@ -110,7 +115,7 @@ def run(dry_run: bool, backup: bool) -> int:
         else:
             new_lines.append(raw)
 
-    print(f"Records changed: {changed_count} / {len(lines)}")
+    print(f"measurements.jsonl: {changed_count} records changed / {len(lines)} total")
     if error_count:
         print(f"Parse errors (lines left unchanged): {error_count}", file=sys.stderr)
 
@@ -129,6 +134,53 @@ def run(dry_run: bool, backup: bool) -> int:
     return 0
 
 
+def migrate_record_files(dry_run: bool) -> int:
+    """Migrate result_file paths in all experiments/outputs/**/*.record.json files."""
+    if not OUTPUTS_DIR.exists():
+        print(f"ERROR: {OUTPUTS_DIR} not found. Run from the repo root.", file=sys.stderr)
+        return 1
+
+    record_files = sorted(OUTPUTS_DIR.rglob("*.record.json"))
+    changed_count = 0
+    error_count = 0
+
+    for path in record_files:
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(f"  WARNING: {path}: JSON parse error: {exc}", file=sys.stderr)
+            error_count += 1
+            continue
+
+        new_record, changed = migrate_record(record)
+        if changed:
+            changed_count += 1
+            old_rf = record.get("result_file", "")
+            new_rf = new_record.get("result_file", "")
+            if dry_run:
+                print(f"  [DRY RUN] {path}: {old_rf!r} -> {new_rf!r}")
+            else:
+                path.write_text(
+                    json.dumps(new_record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+                )
+
+    print(f"record.json files: {changed_count} changed / {len(record_files)} total")
+    if error_count:
+        print(f"Parse errors: {error_count}", file=sys.stderr)
+    if dry_run:
+        print("[DRY RUN] No files written.")
+
+    return 0
+
+
+def run(dry_run: bool, backup: bool, record_files: bool) -> int:
+    rc = migrate_jsonl(dry_run=dry_run, backup=backup)
+    if record_files:
+        rc2 = migrate_record_files(dry_run=dry_run)
+        rc = rc or rc2
+    return rc
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -137,9 +189,14 @@ def main() -> None:
     parser.add_argument(
         "--backup", action="store_true", help="Write timestamped backup before rewriting"
     )
+    parser.add_argument(
+        "--record-files",
+        action="store_true",
+        help="Also migrate experiments/outputs/**/*.record.json files",
+    )
     args = parser.parse_args()
 
-    sys.exit(run(dry_run=args.dry_run, backup=args.backup))
+    sys.exit(run(dry_run=args.dry_run, backup=args.backup, record_files=args.record_files))
 
 
 if __name__ == "__main__":
