@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — schema: method + prompt_version vocabulary
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0123
@@ -134,3 +134,5 @@ Contrast in analyses: `complete` (human-elaborated) vs `dspy` (machine-optimized
   committed as comment in `harness.py`.
 - `frontier_skill` fully purged.
 - Unblocks 0121, 0124.
+
+2026-04-24T11:35Z claude status closed — PR #286 merged; 324 records migrated, readers updated, frontier_scenarios edge case noted

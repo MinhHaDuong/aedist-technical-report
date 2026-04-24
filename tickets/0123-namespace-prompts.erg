@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — prompts: rename files and define prompt_version values
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 
@@ -70,3 +70,5 @@ This ticket renames existing files to match and defines the full vocabulary.
 - Unblocks 0120.
 
 2026-04-24T11:29Z claude bump circuit-breaker — agent timeout (wave 1: 0123+0120 completed ~31min, branch pushed, PR #286 open; exceeded 10min but delivered; no kill needed)
+
+2026-04-24T11:35Z claude status closed — PR #286 merged; all prompt files renamed, frontier_skill deleted
