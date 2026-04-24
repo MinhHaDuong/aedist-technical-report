@@ -30,19 +30,16 @@ def fix_erg_file(path: Path) -> bool:
     """
     content = path.read_text(encoding="utf-8")
 
-    # Split into pre-body and body sections
     split_marker = "--- body ---"
     if split_marker not in content:
         return False  # No body section; skip
 
     pre_body, body = content.split(split_marker, 1)
 
-    # Find misplaced log entries in body
-    body_lines = body.split("\n")
     misplaced = []
     remaining_body_lines = []
 
-    for line in body_lines:
+    for line in body.splitlines():
         stripped = line.strip()
         if stripped and LOG_ENTRY_PATTERN.match(stripped):
             misplaced.append(stripped)
@@ -52,14 +49,9 @@ def fix_erg_file(path: Path) -> bool:
     if not misplaced:
         return False  # Nothing to fix
 
-    # Remove trailing blank lines from pre_body, then add misplaced entries,
-    # then restore the blank line before --- body --- (standard format).
-    pre_body_stripped = pre_body.rstrip("\n")
-    # Append misplaced log entries to the log section
+    # rstrip then re-add ensures exactly one blank line before --- body ---
     extra_log = "\n".join(misplaced)
-    new_pre_body = pre_body_stripped + "\n" + extra_log + "\n\n"
-
-    # Rebuild body — drop leading blank line that often follows the marker
+    new_pre_body = pre_body.rstrip("\n") + "\n" + extra_log + "\n\n"
     new_body = "\n".join(remaining_body_lines)
 
     new_content = new_pre_body + split_marker + new_body
