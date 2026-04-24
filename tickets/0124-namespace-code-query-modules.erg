@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — code: rename query_*.py to match call-pattern axis
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0120
@@ -53,3 +53,5 @@ with `prompt_cited.txt`. No rename needed.
 
 2026-04-24T11:35Z claude claimed
 2026-04-24T11:35Z claude status doing
+
+2026-04-24T12:09Z claude status closed — PR #287 merged; query_frontier/decomposed/web renamed to call-pattern names
