@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — config: rename sweeps and model sets in experiments.toml
-Status: open
+Status: doing
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0120
@@ -129,3 +129,6 @@ Ablation sweep IDs use `plus`/`minus` words; the harness translates to sign-nota
 - Harness `plus`/`minus` → sign-notation translation in place.
 - `make test` green.
 - Unblocks 0122.
+
+2026-04-24T11:35Z claude claimed
+2026-04-24T11:35Z claude status doing

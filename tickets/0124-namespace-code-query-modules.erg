@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — code: rename query_*.py to match call-pattern axis
-Status: open
+Status: doing
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0120
@@ -50,3 +50,6 @@ with `prompt_cited.txt`. No rename needed.
 - All imports updated; `make test` green.
 - Each `query_*.py` has a one-line docstring stating its call pattern.
 - Unblocks 0125.
+
+2026-04-24T11:35Z claude claimed
+2026-04-24T11:35Z claude status doing
