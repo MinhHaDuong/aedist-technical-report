@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — report: update LaTeX section labels and table captions
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0120
@@ -57,3 +57,4 @@ be updated to use consistent terms. Key locations:
 
 2026-04-24T12:42Z claude claimed
 2026-04-24T12:42Z claude status doing
+2026-04-24T13:15Z claude status closed — PR #290 merged; labels/captions updated, tabulate scripts fixed, generated files regenerated

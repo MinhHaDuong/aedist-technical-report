@@ -3,7 +3,7 @@
 
 \section{Expérience~3~: composition et ablation de prompts}\label{sec:exp3}
 
-L'expérience~1 utilise un prompt minimaliste de 40~mots~; l'expérience frontier
+L'expérience~1 utilise un prompt minimaliste de 40~mots~; l'expérience direct\_complete
 un prompt de 1\,200~mots intégrant cadrage sectoriel, narratifs par centrale,
 statistiques croisées et bibliographie annotée. Or Opus obtient F1\,=\,0,64
 avec le prompt court et F1\,=\,0,54 avec le prompt long~: davantage
@@ -171,7 +171,7 @@ un point de mesure indépendant.
 \item[Base] Le prompt de base DSPy (section~\ref{sec:prompt-base},
   optimisé par MIPROv2, voir Phase~0), point de référence intermédiaire.
 \item[Complet] Le prompt de base + les 7~modules, point de référence haut.
-\item[Frontier] Le prompt frontier existant (1\,200~mots), contrôle externe.
+\item[Direct complet] Le prompt direct\_complete existant (1\,200~mots), contrôle externe.
 \end{description}
 
 \paragraph{Bras composition} À partir du prompt de base, ajouter un seul module
@@ -264,7 +264,7 @@ confirmé, une seule répétition est retenue par condition. On retient les
 $k$~modèles dont le $|\Delta\text{F1}|$ moyen dépasse 0,05 (5~points) sur
 au moins un régime.
 
-\paragraph{Phase~2 — Mesure complète (régimes paramétrique, RAG, web)}
+\paragraph{Phase~2 — Mesure complète (régimes paramétrique, RAG, livesearch)}
 
 Les 18~prompts sont exécutés sur les $k$~modèles retenus à $t{=}0{,}0$,
 \textbf{1~répétition} si le déterminisme est confirmé en Phase~1, sinon~3
@@ -410,11 +410,11 @@ $S_g$ (ground)& $-$     & $+$
   L'effet d'amorçage du cadrage ne compense pas le coût combiné.
   $H_2 : \text{Rappel}_{\text{complet}} < \text{Rappel}_{\text{base}}$.
 
-\item \textbf{Complet \emph{vs} Frontier.} Le prompt complet et le prompt
-  frontier sont de longueur comparable ($\sim$1\,200~mots). Le prompt complet
+\item \textbf{Complet \emph{vs} Direct complet.} Le prompt complet et le prompt
+  direct\_complete sont de longueur comparable ($\sim$1\,200~mots). Le prompt complet
   est attendu supérieur car sa base a été optimisée pour l'extraction CSV
-  structurée, alors que le frontier mêle instructions et contenu éditorial.
-  $H_3 : \text{F1}_{\text{complet}} > \text{F1}_{\text{frontier}}$.
+  structurée, alors que le direct\_complete mêle instructions et contenu éditorial.
+  $H_3 : \text{F1}_{\text{complet}} > \text{F1}_{\text{direct\_complete}}$.
 
 \item \textbf{Module à effet individuel le plus fort.} Les narratifs sont
   attendus comme le module ayant le plus grand $|\Delta\text{F1}|$ individuel,
@@ -508,7 +508,7 @@ Le benchmark présenté aux chapitres~\ref{chap:evaluation} et~\ref{chap:rag}
   relances successives.
 \item \textbf{RAG wholesale} (section~\ref{sec:rag})~: injection de
   l'intégralité d'un corpus de 18~documents dans le contexte.
-\item \textbf{Décomposition} (section~\ref{sec:decomposition})~: découpage
+\item \textbf{Décomposition} (section~\ref{sec:rag_per_fuel})~: découpage
   de la requête par type de combustible, puis fusion.
 \item \textbf{Recherche web}~: le modèle accède à Internet via un outil
   de recherche (Tavily ou plugin natif).
@@ -540,7 +540,7 @@ croiser avec le référentiel). Le multi-tour générique est donc un cas
 particulier, moins motivé, du protocole de vérification.
 
 \paragraph{Décomposition $\to$ exclue (axe orthogonal).}
-La décomposition par combustible (section~\ref{sec:decomposition}) modifie
+La décomposition par combustible (section~\ref{sec:rag_per_fuel}) modifie
 la \emph{granularité de la requête}, non le régime d'information~: on peut
 décomposer en paramétrique, en RAG ou en recherche web. C'est un axe
 orthogonal. De plus, la décomposition introduit des hallucinations non

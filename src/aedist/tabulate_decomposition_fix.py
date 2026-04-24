@@ -1,7 +1,7 @@
 """Generate LaTeX table comparing FP rates before/after decomposition prompt fix.
 
-Reads reconciliation CSVs directly from decomposed/ (before) and
-decomposed_v2/ (after) directories. Computes per-run false-positive rates
+Reads reconciliation CSVs directly from rag_per_fuel/ (before) and
+rag_per_fuel_v2/ (after) directories. Computes per-run false-positive rates
 and mean FP rate per model, organized in two panels.
 
 FP rate = count(match_type == "system_only") / count(match_type != "reference_only")
@@ -152,7 +152,7 @@ def render_latex(table: dict) -> str:
     # Panel A: before
     lines.append(
         "\\multicolumn{" + str(max_runs + 2) + "}{l}"
-        "{\\textit{Panel A~: avant correction (decomposed/)}} \\\\"
+        "{\\textit{Panel A~: avant correction (rag\\_per\\_fuel/)}} \\\\"
     )
     lines.append("\\addlinespace")
 
@@ -174,7 +174,7 @@ def render_latex(table: dict) -> str:
     # Panel B: after
     lines.append(
         "\\multicolumn{" + str(max_runs + 2) + "}{l}"
-        "{\\textit{Panel B~: après correction (decomposed\\_v2/)}} \\\\"
+        "{\\textit{Panel B~: après correction (rag\\_per\\_fuel\\_v2/)}} \\\\"
     )
     lines.append("\\addlinespace")
 
