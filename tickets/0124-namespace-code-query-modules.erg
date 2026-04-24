@@ -8,6 +8,9 @@ Blocked-by: 0120
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (method name decided first)
 2026-04-24T00:00Z claude note naming axis: call pattern (not method value); query_sourced.py absent from disk
+2026-04-24T11:35Z claude claimed
+2026-04-24T11:35Z claude status doing
+2026-04-24T12:09Z claude status closed — PR #287 merged; query_frontier/decomposed/web renamed to call-pattern names
 
 --- body ---
 ## Design
@@ -51,7 +54,4 @@ with `prompt_cited.txt`. No rename needed.
 - Each `query_*.py` has a one-line docstring stating its call pattern.
 - Unblocks 0125.
 
-2026-04-24T11:35Z claude claimed
-2026-04-24T11:35Z claude status doing
 
-2026-04-24T12:09Z claude status closed — PR #287 merged; query_frontier/decomposed/web renamed to call-pattern names

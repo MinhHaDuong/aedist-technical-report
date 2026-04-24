@@ -1,6 +1,6 @@
 %erg v1
 Title: Ticket hygiene — fix misplaced log entries and add validator rule
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-24T13:20Z claude created — celebrate sweep: 15+ tickets have log entries in body section
 2026-04-24T13:22Z claude claimed
 2026-04-24T13:22Z claude status doing
+2026-04-24T14:00Z claude status closed — batch fix (10 tickets) + scripts/check_ticket_structure.py + make lint wired
 
 --- body ---
 ## Context

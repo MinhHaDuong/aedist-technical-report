@@ -11,6 +11,8 @@ Author: claude
 2026-04-24T00:00Z claude note DSPy: compiled output frozen as prompt_dspy.txt; program in scripts/dspy/
 2026-04-24T10:58Z claude claimed
 2026-04-24T10:58Z claude status doing
+2026-04-24T11:29Z claude bump circuit-breaker — agent timeout (wave 1: 0123+0120 completed ~31min, branch pushed, PR #286 open; exceeded 10min but delivered; no kill needed)
+2026-04-24T11:35Z claude status closed — PR #286 merged; all prompt files renamed, frontier_skill deleted
 
 --- body ---
 ## Context
@@ -69,6 +71,4 @@ This ticket renames existing files to match and defines the full vocabulary.
 - `make test` green.
 - Unblocks 0120.
 
-2026-04-24T11:29Z claude bump circuit-breaker — agent timeout (wave 1: 0123+0120 completed ~31min, branch pushed, PR #286 open; exceeded 10min but delivered; no kill needed)
 
-2026-04-24T11:35Z claude status closed — PR #286 merged; all prompt files renamed, frontier_skill deleted
