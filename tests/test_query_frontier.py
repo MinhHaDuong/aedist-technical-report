@@ -50,7 +50,7 @@ def _minimal_models_yaml(
     return p
 
 
-def _prompt_file(tmp_path: Path, name: str = "prompt_frontier.txt") -> Path:
+def _prompt_file(tmp_path: Path, name: str = "prompt_complete.txt") -> Path:
     p = tmp_path / name
     p.write_text("List power plants.")
     return p
@@ -99,7 +99,7 @@ def test_basic_produces_output(mock_openai_cls, tmp_path):
         "model_metadata",
     ):
         assert field in record, f"Missing field: {field}"
-    assert record["sweep"] == "frontier"
+    assert record["sweep"] == "complete"
 
 
 @patch("aedist.harness.OpenAI")
@@ -449,7 +449,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     mock_openai_cls.return_value = mock_client
 
     models_path = _minimal_models_yaml(tmp_path)
-    prompt_path = _prompt_file(tmp_path, name="prompt_frontier_scenarios.txt")
+    prompt_path = _prompt_file(tmp_path, name="prompt_scenarios.txt")
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
@@ -473,7 +473,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     json_files = list(output_dir.rglob("*.json"))
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
-    assert record["sweep"] == "frontier_scenarios"
+    assert record["sweep"] == "scenarios"
 
 
 @patch("aedist.query_frontier.build_api_kwargs", _build_api_kwargs_web_enabled)

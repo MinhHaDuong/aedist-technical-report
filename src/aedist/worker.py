@@ -45,6 +45,24 @@ log = logging.getLogger(__name__)
 
 _PENDING_RE = re.compile(r"^(\d{3})-(.+)\.yaml$")
 
+# Translate legacy dispatch modes to emitted method vocabulary (ticket 0120).
+# method = <base>[+<modifier>...]
+# base: direct | rag | rag_livesearch
+# modifiers: +multiturn | +verification
+# prompt_version in method_params: extract | complete | scenarios | cited |
+#   followups | per_fuel | base | composite | +aspect | -aspect | dspy
+_MODE_TO_METHOD: dict[Method, Method] = {
+    Method.SINGLE: Method.DIRECT,
+    Method.FRONTIER: Method.DIRECT,
+    Method.SOURCED: Method.RAG,
+    Method.RAG: Method.RAG,
+    Method.DECOMPOSED: Method.RAG,
+    Method.WEB: Method.RAG_LIVESEARCH,
+    Method.MULTITURN: Method.DIRECT_MULTITURN,
+    Method.VERIFICATION: Method.RAG_VERIFICATION,
+    Method.FUSION: Method.FUSION,
+}
+
 
 class Worker:
     """Base worker that implements the poll-acquire-execute-complete lifecycle."""
@@ -553,8 +571,10 @@ class Worker:
         dst = self.jobs_root / "done" / f"{job.job_id}.yaml"
         src.rename(dst)
 
+        # Translate dispatch mode to emitted method vocabulary.
+        emitted_method = _MODE_TO_METHOD.get(job.mode, job.mode)
         record = RunRecord(
-            method=job.mode,
+            method=emitted_method,
             method_params=MethodParams(model=job.model_filter or "unknown"),
             resource_use=ResourceUse(
                 wall_s=result.get("wall_seconds"),

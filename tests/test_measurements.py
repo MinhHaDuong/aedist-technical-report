@@ -177,17 +177,17 @@ class TestOutputEquivalence:
 
 
 class TestInferMethod:
-    """_infer_method maps subdirectory names to Method enum values."""
+    """_infer_method maps subdirectory names to new-vocabulary Method values (ticket 0120)."""
 
     def test_census(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("census") == "single"
+        assert _infer_method("census") == "direct"
 
     def test_multiturn(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("multiturn") == "multiturn"
+        assert _infer_method("multiturn") == "direct+multiturn"
 
     def test_rag(self):
         from aedist.evaluate import _infer_method
@@ -202,37 +202,37 @@ class TestInferMethod:
     def test_web(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("web") == "web"
+        assert _infer_method("web") == "rag_livesearch"
 
     def test_decomposed(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("decomposed") == "decomposed"
+        assert _infer_method("decomposed") == "rag"
 
     def test_sourced(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("sourced") == "sourced"
+        assert _infer_method("sourced") == "rag"
 
     def test_frontier(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("frontier") == "frontier"
+        assert _infer_method("frontier") == "direct"
 
     def test_frontier_scenarios(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("frontier_scenarios") == "frontier"
+        assert _infer_method("frontier_scenarios") == "direct"
 
     def test_verification(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("verification") == "verification"
+        assert _infer_method("verification") == "rag+verification"
 
-    def test_unknown_defaults_to_single(self):
+    def test_unknown_defaults_to_direct(self):
         from aedist.evaluate import _infer_method
 
-        assert _infer_method("some_new_sweep") == "single"
+        assert _infer_method("some_new_sweep") == "direct"
 
 
 class TestNoExtractedInMeasurements:
@@ -275,14 +275,19 @@ class TestHeadlineReplicates:
     """Ticket 0081: headline result must have n>=3 replicates."""
 
     def test_decomposed_deepseek_has_3_replicates(self):
-        """The headline condition (decomposed, deepseek-v3.2) needs n>=3."""
+        """The headline condition (rag/per_fuel, deepseek-v3.2) needs n>=3.
+
+        Post-0120 migration: formerly method=decomposed, now method=rag with
+        prompt_version=per_fuel. Filter by both to identify the headline condition.
+        """
         from aedist.measurements import load
 
-        records = load(method="decomposed")
+        records = load(method="rag")
         deepseek_runs = [
             r
             for r in records
             if "deepseek-v3.2" in r.method_params.model
+            and r.method_params.prompt_version == "per_fuel"
             and not any(
                 r.result_file.endswith(s)
                 for s in ("-union.csv", "-consolidated.csv", "_filtered.csv")

@@ -156,7 +156,6 @@ def test_sweep_count(experiments):
         "sourced",
         "frontier",
         "frontier_scenarios",
-        "frontier_skill",
         "fusion",
         "fusion_dev",
     }
