@@ -176,7 +176,7 @@ def main():
                 continue
 
             log.info(
-                "Querying %s run %d/%d (frontier, max_tokens=%d, temp=%.1f)...",
+                "Querying %s run %d/%d (direct, max_tokens=%d, temp=%.1f)...",
                 label,
                 run,
                 args.repeat,
@@ -239,7 +239,7 @@ def main():
             except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 
-    log.info("Frontier benchmark complete. Total cost: $%.4f", budget.total_cost)
+    log.info("Direct benchmark complete. Total cost: $%.4f", budget.total_cost)
 
 
 if __name__ == "__main__":
