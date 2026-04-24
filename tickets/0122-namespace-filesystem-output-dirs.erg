@@ -1,0 +1,40 @@
+%erg v1
+Title: Namespace audit — file system: rename experiments/outputs/ directories
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0121
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0121 (sweep names decided first)
+
+--- body ---
+## Context
+
+Output directories under `experiments/outputs/` mirror the old sweep
+names. After 0121 renames the sweeps, these directories need to
+follow. Directories are referenced in `experiments.toml` `output =`
+fields, in hardcoded paths in plot/tabulate scripts, and in existing
+result JSON file paths stored in `measurements.jsonl`.
+
+Current directories:
+  `census/`, `decomposed/`, `decomposed_v2/`, `frontier/`,
+  `multiturn/`, `rag/`, `sourced/`, `web/`, `ablation/`
+
+## Actions
+
+1. For each renamed sweep from 0121, `git mv` the corresponding
+   output directory to the new name.
+2. Update `experiments.toml` `output =` values.
+3. Update `result_file` paths in `measurements.jsonl` (migration
+   script, idempotent).
+4. Update any hardcoded output dir strings in `src/` and `scripts/`
+   (grep before editing).
+5. Verify `make test` green — tests that load result files by path
+   must still pass.
+
+## Exit criteria
+
+- No output directory uses a deprecated sweep name.
+- `measurements.jsonl` `result_file` paths resolve.
+- `make test` green.

@@ -1,0 +1,51 @@
+%erg v1
+Title: Namespace audit — code: rename query_decomposed.py and align query_*.py axis
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0120
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (method name decided first)
+
+--- body ---
+## Context
+
+`src/aedist/query_decomposed.py` implements RAG with per-fuel
+subprompts. The name "decomposed" implies a decomposition of output,
+not a RAG variant. After 0120 decides the new method name (e.g.
+`rag_categorical`), this file must be renamed to match.
+
+The `query_*.py` family should follow a single naming axis. Current
+files and their actual regime:
+
+  `query_frontier.py`   — parametric, enriched prompt, reasoning models
+  `query_rag.py`        — RAG wholesale
+  `query_decomposed.py` — RAG per-fuel (MISLEADING)
+  `query_sourced.py`    — RAG + source columns
+  `query_web.py`        — web-search augmented
+  `query_multiturn.py`  — conversational
+  `query_verification.py` — verification overlay
+  `query_fusion.py`     — fusion pipeline
+
+`query_frontier.py` is also slightly off-axis: it is parametric +
+enriched prompt, not a "frontier" model (model selection is separate).
+Evaluate whether renaming it to `query_enriched.py` or similar fits.
+
+## Actions
+
+1. After 0120 lands, rename `query_decomposed.py` to the name
+   matching the new method value.
+2. Update all imports: `harness.py`, `manager.py`, `__init__.py`,
+   and any script that imports from this module.
+3. Evaluate `query_frontier.py` naming; rename if clearly misleading.
+4. Add a one-line docstring to each `query_*.py` stating its regime
+   in plain language (no jargon).
+5. Run `make test` green.
+
+## Exit criteria
+
+- No file named `query_decomposed.py` in `src/aedist/`.
+- All imports updated; `make test` green.
+- Each `query_*.py` has a one-line regime description.
+- Unblocks 0125.

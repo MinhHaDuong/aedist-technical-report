@@ -1,0 +1,43 @@
+%erg v1
+Title: Namespace audit — prompts: rename prompt files and audit module names
+Status: open
+Created: 2026-04-24
+Author: claude
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; independent of schema (0120)
+
+--- body ---
+## Context
+
+`experiments/prompts/prompt_structured.txt` is the main extraction
+prompt (terse one-liner requesting a CSV table of thermal plants).
+"structured" refers to the CSV output format, not the prompt's
+structure — a fresh reader cannot predict what makes it "structured"
+vs any other prompt. It should be named after its content or role.
+
+Module files in `prompts/modules/` (`persona.txt`, `overview.txt`,
+`sourcing.txt`, `narratives.txt`, `bibliography.txt`, `statistics.txt`,
+`base.txt`) are mostly self-descriptive. `base.txt` is the implicit
+foundation and is always included — its role is not signaled by the
+filename.
+
+## Actions
+
+1. Propose a new name for `prompt_structured.txt` that signals
+   "terse parametric extraction" (candidate: `prompt_extract.txt`
+   or `prompt_parametric.txt`). Confirm with user.
+2. Rename the file; update all references in `experiments.toml`,
+   harness code, and any script that loads the prompt by path.
+3. Audit `modules/` names: confirm each is self-descriptive to a
+   reader who has not seen the paper. Flag any that need renaming.
+4. Consider whether `base.txt` should be renamed to `extract.txt`
+   or similar to make its "always-included foundation" role explicit.
+5. Run `make test` green.
+
+## Exit criteria
+
+- `prompt_structured.txt` renamed and all references updated.
+- Module names audited; any renames applied.
+- `make test` green.
+- Unblocks 0125 (report must use the new prompt names in captions).

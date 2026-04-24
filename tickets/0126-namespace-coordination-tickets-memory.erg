@@ -1,0 +1,35 @@
+%erg v1
+Title: Namespace audit — coordination: update ticket bodies and MEMORY.md
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0125
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; last step, blocked by 0125
+
+--- body ---
+## Context
+
+Once the vocabulary renames are applied in code, data, config,
+prompts, and report, the remaining references in tickets and memory
+files should be updated so future agents do not re-import the old
+names.
+
+## Actions
+
+1. Grep all `tickets/*.erg` and `tickets/archive/*.erg` bodies for
+   deprecated names (old method values, old sweep IDs, old filenames).
+   Append a `note` log entry to each affected ticket describing the
+   rename (do not edit history).
+2. Grep `~/.claude/projects/.../memory/*.md` for deprecated names;
+   update affected memory files to use the new vocabulary.
+3. Update `MEMORY.md` index if any memory file titles change.
+4. Update `STATE.md` if it references deprecated names.
+5. Close epic 0069 with a log entry summarising the full audit.
+
+## Exit criteria
+
+- No live ticket body contains deprecated method/sweep names.
+- No memory file contains deprecated names.
+- Epic 0069 closed.

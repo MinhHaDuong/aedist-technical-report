@@ -1,0 +1,49 @@
+%erg v1
+Title: Namespace audit — schema: rename method values in measurements.jsonl
+Status: open
+Created: 2026-04-24
+Author: claude
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; vocabulary spine, do first
+
+--- body ---
+## Context
+
+The `method` field in `measurements.jsonl` is the most load-bearing
+name in the project — every downstream plot, table, and report section
+reads it. Two values are misleading:
+
+- `single` — sounds like "one call", actually means "parametric":
+  no documents, no web search, just the model's training knowledge.
+- `decomposed` — sounds like a decomposition of results, actually
+  means "RAG with per-fuel subprompts" (same corpus injection as
+  `rag`, but prompt split by fuel category).
+
+All other values (`rag`, `sourced`, `web`, `multiturn`, `frontier`,
+`verification`) are clear.
+
+## Actions
+
+1. Count occurrences by method in `measurements.jsonl` to surface the
+   migration surface area.
+2. Decide the replacement name for `decomposed` (candidate:
+   `rag_categorical`; confirm with user before migrating).
+3. Write a migration script: `scripts/migrate_method_values.py`.
+   Rewrites `measurements.jsonl` in place: `single`→`parametric`,
+   `decomposed`→chosen name. Idempotent (safe to re-run).
+4. Update `harness.py` (writer) to emit the new values for future runs.
+5. Update all readers: `evaluate.py`, `measurements.py`,
+   `plot_*.py`, `tabulate_*.py` — any code that matches on method
+   strings.
+6. Run `make test` — ensure all tests pass.
+7. Commit: one commit for the migration script + data, one for the
+   code changes.
+
+## Exit criteria
+
+- `measurements.jsonl` contains no `single` or `decomposed` values.
+- `harness.py` emits new method names.
+- All readers updated; `make test` green.
+- New vocabulary documented in a short comment in `harness.py`.
+- Unblocks 0121, 0124.

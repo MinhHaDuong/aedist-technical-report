@@ -1,0 +1,48 @@
+%erg v1
+Title: Namespace audit — report: update LaTeX section labels and table captions
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0120
+Blocked-by: 0121
+Blocked-by: 0123
+Blocked-by: 0124
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 0121 0123 0124
+
+--- body ---
+## Context
+
+The technical report (`report/report.tex`) uses vocabulary inherited
+from the old sweep names. After upstream renames land, the report must
+be updated to use consistent terms. Key locations:
+
+- `\subsection{Décomposition par type de combustible}\label{sec:decomposition}`
+  — "Décomposition" in French still implies result decomposition, not
+  the RAG + per-fuel method. Needs to reflect the new name.
+- Generated table labels in `report/inputs/generated/tab_*.tex` that
+  use column headers derived from method strings.
+- Any caption or body text that names sweeps or methods by their old
+  identifier.
+
+## Actions
+
+1. Grep `report/` for all old method/sweep names (census, decomposed,
+   single, etc.) from the vocabulary in 0120 and 0121.
+2. Update section headings, labels, and captions to use the new
+   vocabulary. Keep French text in French; translate the concept, not
+   the identifier.
+3. Regenerate any derived `.tex` files that embed method strings
+   (run the relevant `tabulate_*.py` scripts).
+4. Build the report (`make report` or equivalent) and visually verify
+   the changed sections.
+5. Run `make test` green.
+
+## Exit criteria
+
+- No deprecated method/sweep name appears in `report/*.tex` or
+  `report/inputs/generated/`.
+- Report builds without errors.
+- Visual spot-check: changed sections read naturally in French.
+- Unblocks 0126.

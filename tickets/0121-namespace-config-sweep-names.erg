@@ -1,0 +1,49 @@
+%erg v1
+Title: Namespace audit — config: rename sweeps and model sets in experiments.toml
+Status: open
+Created: 2026-04-24
+Author: claude
+Blocked-by: 0120
+
+--- log ---
+2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (vocabulary spine)
+
+--- body ---
+## Context
+
+Sweep IDs and model-set IDs in `experiments.toml` have accumulated
+without a consistent naming axis. Problems:
+
+- `[sweeps.census]` — name suggests statistical census; it is the
+  main single-turn parametric sweep (terse one-liner prompt, no docs).
+  Should align with the `parametric` method name from 0120.
+- `[sweeps.decomposed]` — same misleading name as the method value;
+  rename to match the chosen name from 0120 (e.g. `rag_categorical`).
+- `[sets.rag]`, `[sets.sourced]` — model sets named after the sweep
+  regime, not the model tier. Ambiguous as standalone identifiers.
+- `[sets.ablation]` — marked "legacy alias" in a comment; remove.
+- `[sets.decomposition_fix_probe]` — historical (ticket 0068 closed);
+  remove or archive the set definition.
+- `[sets.base_vs_census_extended]` — verbose; evaluate whether it can
+  be collapsed into a named tier.
+- `[sets.frontier_10labs]`, `[sets.frontier_3best]`, `[sets.frontier_cn]`
+  — overlapping names without clear tier/scope hierarchy.
+
+## Actions
+
+1. Audit every `[sweeps.*]` and `[sets.*]` key; classify each as
+   clear / misleading / redundant / historical.
+2. Propose renames aligned with the vocabulary from 0120.
+3. Remove `[sets.ablation]` (legacy) and `[sets.decomposition_fix_probe]`
+   (historical) after confirming no live sweep references them.
+4. Apply renames in `experiments.toml`. Update any script that
+   references sweep IDs by string (grep for sweep names in `src/`
+   and `scripts/`).
+5. Run `make test` green.
+
+## Exit criteria
+
+- No `[sweeps.census]` or `[sweeps.decomposed]` in `experiments.toml`.
+- No legacy or historical set definitions remain.
+- `make test` green.
+- Unblocks 0122.

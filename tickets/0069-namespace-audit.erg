@@ -1,6 +1,6 @@
 %erg v1
 Title: Project namespace audit — every entity name must be self-explanatory to a fresh reader
-Status: pending
+Status: doing
 Created: 2026-04-11
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-11T10:20Z claude created
 2026-04-11T10:30Z claude note rescoped from two-rename to whole-project namespace audit
 2026-04-16T22:30Z claude status pending — deferred to pre-publication cleanup; too disruptive mid-development
+2026-04-24T00:00Z claude status doing — decomposed into 7 domain tickets: 0120 schema, 0121 config, 0122 filesystem, 0123 prompts, 0124 code, 0125 report, 0126 coordination
 
 --- body ---
 ## Context
