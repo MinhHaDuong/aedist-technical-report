@@ -5,7 +5,7 @@ then sends the prompt to LLMs. Requires TAVILY_API_KEY environment variable.
 
 Usage:
     python -m aedist.query_web \
-        --prompt prompts/prompt_structured.txt \
+        --prompt prompts/prompt_extract.txt \
         --models models.yaml \
         --output outputs/web/ \
         --repeat 3

@@ -97,12 +97,12 @@ FamilyData = dict[str, dict[str, dict[float, list[float]]]]
 def collect_data() -> FamilyData:
     """Collect F1 scores grouped by family, method, and active param count."""
     data: FamilyData = {
-        fam: {"single": defaultdict(list), "rag": defaultdict(list)} for fam in _FAMILIES
+        fam: {"direct": defaultdict(list), "rag": defaultdict(list)} for fam in _FAMILIES
     }
 
     for record in load():
         method = record.method.value
-        if method not in ("single", "rag"):
+        if method not in ("direct", "rag"):
             continue
         pv = getattr(record.method_params, "prompt_version", None)
         if pv == "_extracted":
@@ -130,13 +130,13 @@ def write_pdf(data: FamilyData, output: Path) -> None:
 
     fc = FAMILY_COLORS
     family_colors = {"Qwen 3.5": fc["qwen"], "Gemma 4": fc["gemma"]}
-    markers = {"single": "s", "rag": "o"}
+    markers = {"direct": "s", "rag": "o"}
     all_sizes: set[float] = set()
 
     for family, fam_data in data.items():
         colors = family_colors.get(family, fc["fallback"])
 
-        for method in ("single", "rag"):
+        for method in ("direct", "rag"):
             method_data = fam_data[method]
             if not method_data:
                 continue
@@ -159,7 +159,7 @@ def write_pdf(data: FamilyData, output: Path) -> None:
                         zorder=3,
                     )
 
-            method_label = "single-shot" if method == "single" else "RAG wholesale"
+            method_label = "single-shot" if method == "direct" else "RAG wholesale"
             ax.errorbar(
                 sizes,
                 means,

@@ -23,16 +23,18 @@ from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, normalize_model
 
 log = logging.getLogger(__name__)
 
-# Methods to include and display order (bottom to top in plot)
-_METHOD_ORDER = ["single", "multiturn", "web", "rag", "decomposed"]
+# Methods to include and display order (bottom to top in plot).
+# New vocabulary (ticket 0120): direct, direct+multiturn, rag_livesearch, rag.
+# "rag" covers both pure-RAG and decomposed (per_fuel) runs; filter by
+# prompt_version if you need to distinguish them.
+_METHOD_ORDER = ["direct", "direct+multiturn", "rag_livesearch", "rag"]
 
 # Display names for Y-axis labels
 _METHOD_LABELS = {
-    "single": "Single",
-    "multiturn": "Multi-turn",
-    "web": "Web",
+    "direct": "Single",
+    "direct+multiturn": "Multi-turn",
+    "rag_livesearch": "Web",
     "rag": "RAG",
-    "decomposed": "Decomposed",
 }
 
 

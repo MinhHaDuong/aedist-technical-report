@@ -5,8 +5,8 @@ conversation, collecting the full exchange for evaluation.
 
 Usage:
     python -m aedist.query_multiturn \
-        --prompt prompts/prompt_structured.txt \
-        --followups prompts/followups.txt \
+        --prompt prompts/prompt_extract.txt \
+        --followups prompts/prompt_followups.txt \
         --models models.yaml \
         --output outputs/multiturn/ \
         --repeat 3 --budget-usd 5

@@ -11,7 +11,7 @@ Applied consistently to both arms.
 
 Inputs
 ------
-Census arm  : ``measurements.jsonl`` rows where ``method == "single"`` and
+Census arm  : ``measurements.jsonl`` rows where ``method == "direct"`` and
               ``method_params.prompt_version == "census"``.
 Base arm    : ``experiments/outputs/ablation/parametric/p1_base/*.record.json``.
 
@@ -67,7 +67,7 @@ def _record_metrics(record: RunRecord) -> tuple[float, float, float, int]:
 
 
 def _load_census_by_model() -> dict[str, list[RunRecord]]:
-    records = load(method="single")
+    records = load(method="direct")
     grouped: dict[str, list[RunRecord]] = {}
     for r in records:
         if r.method_params.prompt_version != "census":

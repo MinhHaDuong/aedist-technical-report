@@ -94,8 +94,8 @@ def test_load_has_correct_methods(tmp_path, monkeypatch):
 
     rows = load_convergence_data()
     methods = {r["method"] for r in rows}
-    # census maps to "single", rag stays "rag"
-    assert methods <= {"single", "rag", "multiturn", "web", "decomposed"}
+    # census maps to "direct" (new vocabulary, ticket 0120), rag stays "rag"
+    assert methods <= {"direct", "rag", "direct+multiturn", "rag_livesearch"}
 
 
 def test_core_models_requires_all_methods(tmp_path, monkeypatch):
@@ -106,8 +106,8 @@ def test_core_models_requires_all_methods(tmp_path, monkeypatch):
 
     rows = load_convergence_data()
     core = core_models(rows)
-    # modelA appears in single + rag (2 methods), modelB in single + rag (2 methods)
-    # Neither appears in all 5 methods, so core should be empty
+    # modelA appears in direct + rag (2 methods), modelB in direct + rag (2 methods)
+    # Neither appears in all 4 methods, so core should be empty
     assert core == set()
 
 
@@ -120,9 +120,7 @@ def test_main_writes_csv(tmp_path, monkeypatch):
 
     from aedist.plot_method_convergence import main
 
-    monkeypatch.setattr(
-        "sys.argv", ["plot_method_convergence", "--output", str(output_path)]
-    )
+    monkeypatch.setattr("sys.argv", ["plot_method_convergence", "--output", str(output_path)])
     main()
 
     content = output_path.read_text()

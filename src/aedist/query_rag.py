@@ -6,7 +6,7 @@ context window before querying.
 
 Usage:
     python -m aedist.query_rag \
-        --prompt prompts/prompt_structured.txt \
+        --prompt prompts/prompt_extract.txt \
         --corpus data/rag_corpus/ \
         --strategy wholesale \
         --models models.yaml \
