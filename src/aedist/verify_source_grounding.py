@@ -14,7 +14,7 @@ verifier agreement).  No API calls required -- everything is local.
 
 Usage:
     python -m aedist.verify_source_grounding \
-        --input experiments/outputs/sourced \
+        --input experiments/outputs/rag_cited \
         --corpus data/rag_corpus \
         --output derived/source_grounding_summary.json
 """

@@ -6,7 +6,7 @@ against the single-run median F1.
 
 Usage:
     python -m aedist.self_consistency \
-        --input experiments/outputs/rag \
+        --input experiments/outputs/rag_extract \
         --output experiments/derived/rag_consistency
 """
 
@@ -413,9 +413,7 @@ def write_measurements(records: list[RunRecord], measurements_path: Path) -> Non
 
     # Remove old rag and rag_consistency records
     kept = [
-        r
-        for r in existing
-        if r.method_params.prompt_version not in ("rag", "rag_consistency")
+        r for r in existing if r.method_params.prompt_version not in ("rag", "rag_consistency")
     ]
     kept.extend(records)
     RunRecord.save_jsonl(kept, measurements_path)

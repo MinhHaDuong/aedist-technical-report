@@ -8,7 +8,7 @@ Usage:
         --prompt prompts/prompt_extract.txt \
         --followups prompts/prompt_followups.txt \
         --models models.yaml \
-        --output outputs/multiturn/ \
+        --output outputs/direct_multiturn/ \
         --repeat 3 --budget-usd 5
 """
 

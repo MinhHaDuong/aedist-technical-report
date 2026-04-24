@@ -33,7 +33,7 @@ def _make_record(**overrides) -> RunRecord:
             tokens_in=1500,
             tokens_out=3200,
         ),
-        result_file="experiments/outputs/census/gpt-4o-run1.json",
+        result_file="experiments/outputs/direct_extract/gpt-4o-run1.json",
         result_summary=ResultSummary(
             status="ok",
             n_plants=120,

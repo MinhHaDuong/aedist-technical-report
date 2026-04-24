@@ -6,7 +6,7 @@ verification rubric from verify.py.
 
 Usage:
     python -m aedist.score_provenance \
-        --input experiments/outputs/sourced \
+        --input experiments/outputs/rag_cited \
         --output derived/sourced_evidence_summary.json
 """
 
@@ -163,9 +163,7 @@ def score_directory(input_dir: Path) -> dict:
 
     Skips CSVs that lack provenance columns (e.g. reconciliation files).
     """
-    csv_files = sorted(
-        f for f in input_dir.glob("*.csv") if _has_provenance_columns(f)
-    )
+    csv_files = sorted(f for f in input_dir.glob("*.csv") if _has_provenance_columns(f))
     if not csv_files:
         raise SystemExit(f"No sourced CSV files (with source_1 column) in: {input_dir}")
 

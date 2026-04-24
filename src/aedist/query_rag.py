@@ -10,7 +10,7 @@ Usage:
         --corpus data/rag_corpus/ \
         --strategy wholesale \
         --models models.yaml \
-        --output outputs/rag/ \
+        --output outputs/rag_extract/ \
         --repeat 3
 """
 

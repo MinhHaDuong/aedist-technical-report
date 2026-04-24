@@ -32,9 +32,9 @@ from aedist.verify import (
 log = logging.getLogger(__name__)
 
 _DEFAULT_INPUTS = [
-    Path("experiments/outputs/sourced/claude-opus-4.6-run1.csv"),
-    Path("experiments/outputs/sourced/claude-opus-4.6-run2.csv"),
-    Path("experiments/outputs/sourced/claude-opus-4.6-run3.csv"),
+    Path("experiments/outputs/rag_cited/claude-opus-4.6-run1.csv"),
+    Path("experiments/outputs/rag_cited/claude-opus-4.6-run2.csv"),
+    Path("experiments/outputs/rag_cited/claude-opus-4.6-run3.csv"),
 ]
 _DEFAULT_GEM = Path("data/reference/gem_thermal.csv")
 _DEFAULT_OUTPUT_DIR = Path("derived/audit/")

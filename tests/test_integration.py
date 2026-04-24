@@ -13,7 +13,7 @@ DATA_DIR = Path(__file__).parent.parent / "data" / "reference"
 OUTPUTS_DIR = Path(__file__).parent.parent / "experiments" / "outputs"
 
 _REF_PATH = DATA_DIR / "vietnam_thermal_v1.csv"
-_CENSUS_PATH = OUTPUTS_DIR / "census" / "claude-sonnet-4.6-run1.csv"
+_CENSUS_PATH = OUTPUTS_DIR / "direct_extract" / "claude-sonnet-4.6-run1.csv"
 
 _SKIP_REF = pytest.mark.skipif(not _REF_PATH.exists(), reason=f"Missing {_REF_PATH}")
 _SKIP_CENSUS = pytest.mark.skipif(not _CENSUS_PATH.exists(), reason=f"Missing {_CENSUS_PATH}")
@@ -69,7 +69,11 @@ class TestMetricsAttributes:
         entries = reconcile(reference, claude_census)
         m = compute_metrics(entries)
         expected_keys = {
-            "hallucinated_plant", "missed_plant", "wrong_fuel",
-            "wrong_status", "wrong_province", "capacity_mismatch",
+            "hallucinated_plant",
+            "missed_plant",
+            "wrong_fuel",
+            "wrong_status",
+            "wrong_province",
+            "capacity_mismatch",
         }
         assert set(m.errors.keys()) == expected_keys

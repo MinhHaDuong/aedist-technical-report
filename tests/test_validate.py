@@ -165,7 +165,7 @@ class TestSoftWarnings:
     def test_short_stop_real_fixture(self):
         """Regression fixture: a real RAG-style degenerate run.
 
-        Shaped to mirror ``experiments/outputs/rag/qwen3.5-2b-run2.json``:
+        Shaped to mirror ``experiments/outputs/rag_extract/qwen3.5-2b-run2.json``:
         ``stop`` finish, 17k Ollama completion_tokens, 94-char CSV shell.
         The synthetic shape stands in for the real file, which is not in
         the current corpus snapshot but is the exact scenario this branch

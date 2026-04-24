@@ -183,7 +183,7 @@ class TestAssembleValidation:
         raw JSON path from the CSV stem. Prior to this fix, every CSV-backed
         record silently got ``validation=None``.
 
-        Uses a real fixture pair from experiments/outputs/rag/ so that any
+        Uses a real fixture pair from experiments/outputs/rag_extract/ so that any
         drift between fixture shape and validator expectations is caught.
         """
         import argparse
@@ -195,21 +195,24 @@ class TestAssembleValidation:
         from aedist.schema import RunRecord
 
         repo_root = Path(__file__).resolve().parent.parent
-        src_raw = repo_root / "experiments/outputs/rag/deepseek-v3.2-run1.json"
-        src_rec = repo_root / "experiments/outputs/rag/deepseek-v3.2-run1.record.json"
+        src_raw = repo_root / "experiments/outputs/rag_extract/deepseek-v3.2-run1.json"
+        src_rec = repo_root / "experiments/outputs/rag_extract/deepseek-v3.2-run1.record.json"
         assert src_raw.exists(), f"fixture missing: {src_raw}"
         assert src_rec.exists(), f"fixture missing: {src_rec}"
 
         monkeypatch.chdir(tmp_path)
-        dst_dir = tmp_path / "experiments" / "outputs" / "rag"
+        dst_dir = tmp_path / "experiments" / "outputs" / "rag_extract"
         dst_dir.mkdir(parents=True)
         shutil.copy(src_raw, dst_dir / "deepseek-v3.2-run1.json")
 
-        # Load the real record and keep its CSV result_file as-is: this is
-        # exactly the shape the real corpus has.
+        # Load the real record; normalise result_file to the current directory
+        # name (rag_extract) so the companion-JSON lookup resolves in tmp_path.
         record_data = _json.loads(src_rec.read_text(encoding="utf-8"))
         assert record_data["result_file"].endswith(".csv"), (
             "fixture must have CSV result_file to exercise the regression"
+        )
+        record_data["result_file"] = record_data["result_file"].replace(
+            "outputs/rag/", "outputs/rag_extract/"
         )
         rec_path = tmp_path / "deepseek-v3.2-run1.record.json"
         rec_path.write_text(_json.dumps(record_data), encoding="utf-8")

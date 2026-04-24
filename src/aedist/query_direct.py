@@ -8,14 +8,14 @@ Usage:
     uv run python -m aedist.query_direct \
         --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
-        --output outputs/frontier/ \
+        --output outputs/direct_complete/ \
         --budget-usd 20
 
     # Single model:
     uv run python -m aedist.query_direct \
         --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
-        --output outputs/frontier/ \
+        --output outputs/direct_complete/ \
         --model anthropic/claude-opus-4.6
 """
 

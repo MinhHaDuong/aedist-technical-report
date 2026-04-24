@@ -7,7 +7,7 @@ Usage:
     python -m aedist.query_livesearch \
         --prompt prompts/prompt_extract.txt \
         --models models.yaml \
-        --output outputs/web/ \
+        --output outputs/rag_livesearch/ \
         --repeat 3
 """
 
