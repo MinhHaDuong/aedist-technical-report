@@ -8,6 +8,7 @@ Blocked-by: 0121
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0121 (sweep names decided first)
 2026-04-24T00:00Z claude note no prefix on directory names — identified by parent path experiments/outputs/
+2026-04-24T11:57Z claude note ticket 0121 deferred harness plus/minus→sign-notation translation to this ticket (action 6); must be done after ablation subdir renames so prompt_version values are consistent
 
 --- body ---
 ## Design
@@ -56,10 +57,16 @@ No `frontier_scenarios/` or `verification/` top-level directory exists on disk y
    (idempotent; same script as 0120 method migration or a companion).
 4. Grep `src/` and `scripts/` for hardcoded output-dir strings; update.
 5. Verify `make test` green — tests that load result files by path must pass.
+6. (Transferred from ticket 0121 Action 4) Add harness translation:
+   sweep ID `sweep_ablation_plus_*` / `sweep_ablation_minus_*` → emits
+   `prompt_version: "+*"` / `"-*"`. Must be implemented after ablation
+   subdirectory renames (action 1) so that `evaluate.py`'s dir-name inference
+   and the translation emit consistent `prompt_version` values.
 
 ## Exit criteria
 
 - No directory under `experiments/outputs/` uses a deprecated name.
 - `measurements.jsonl` `result_file` paths resolve under new names.
 - `experiments.toml` `output =` values match directory names.
+- Harness `plus`/`minus` → sign-notation translation in place (transferred from 0121).
 - `make test` green.

@@ -119,16 +119,22 @@ Ablation sweep IDs use `plus`/`minus` words; the harness translates to sign-nota
    confirming no live sweep references them.
 3. Update any script that references sweep IDs or set IDs by string
    (grep `src/` and `scripts/` before editing).
-4. Add harness translation: sweep ID `sweep_ablation_plus_*` / `sweep_ablation_minus_*`
-   → emits `prompt_version: "+*"` / `"-*"`.
+4. ~~Add harness translation: sweep ID `sweep_ablation_plus_*` / `sweep_ablation_minus_*`
+   → emits `prompt_version: "+*"` / `"-*"`.~~ **Deferred to ticket 0122.**
+   Rationale: `prompt_version` is inferred from output directory names in `evaluate.py`,
+   not from sweep IDs. Implementing the translation before 0122 renames the output
+   directories would split `prompt_version` values across old/new runs. The translation
+   will fall out naturally when 0122 renames `ablation/persona/` → `ablation/plus_persona/`
+   etc. Action 4 is added to ticket 0122 scope.
 5. Run `make test` green.
 
 ## Exit criteria
 
 - No old sweep or set name remains in `experiments.toml`.
-- Harness `plus`/`minus` → sign-notation translation in place.
+- ~~Harness `plus`/`minus` → sign-notation translation in place.~~ **Deferred to 0122.**
 - `make test` green.
 - Unblocks 0122.
 
 2026-04-24T11:35Z claude claimed
 2026-04-24T11:35Z claude status doing
+2026-04-24T11:57Z claude note verify-gate REROLL: exit criterion 2 (harness translation) deferred to 0122 — prompt_version comes from output dir names, not sweep IDs; translation must wait for 0122 dir renames to avoid split prompt_version values across old/new runs

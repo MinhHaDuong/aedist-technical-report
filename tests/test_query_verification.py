@@ -9,7 +9,7 @@ from aedist.query_verification import _DETERMINISTIC_MODES, _output_stem
 
 def test_load_config(experiments):
     """Config loads from TOML with expected fields."""
-    config = experiments["sweeps"]["verification"]
+    config = experiments["sweeps"]["sweep_rag_verification"]
     # Proof-of-concept: single best config (DeepSeek V3.2 decomposed)
     assert len(config["base_configs"]) == 1
     assert "unverified" in config["verification_modes"]
@@ -38,7 +38,7 @@ def test_deterministic_modes():
 
 def test_condition_count(experiments):
     """1 config x (3 deterministic x 1 + 2 stochastic x 3) = 9 conditions."""
-    config = experiments["sweeps"]["verification"]
+    config = experiments["sweeps"]["sweep_rag_verification"]
     repeat = config.get("repeat", 3)
 
     count = 0
@@ -782,7 +782,7 @@ def test_main_dry_run_with_sweep(monkeypatch):
         [
             "query_verification",
             "--sweep",
-            "verification",
+            "sweep_rag_verification",
             "--experiments",
             experiments_toml,
             "--dry-run",

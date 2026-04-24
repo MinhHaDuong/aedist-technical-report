@@ -17,7 +17,7 @@ base_url = "http://localhost:11434/v1"
 # Model sets — explicit ID lists referencing models.yaml entries
 # ---------------------------------------------------------------------------
 
-[sets.census_cloud]
+[sets.modelset_census_cloud]
 model_ids = [
     "anthropic/claude-opus-4.6",
     "anthropic/claude-sonnet-4.6",
@@ -47,7 +47,7 @@ model_ids = [
     "qwen/qwen3.6-plus-preview:free",
 ]
 
-[sets.census_local]
+[sets.modelset_census_local]
 model_ids = [
     "qwen3.5:122b",
     "qwen3.5:35b",
@@ -65,14 +65,14 @@ model_ids = [
     "granite3.3:8b",
 ]
 
-[sets.frontier]
+[sets.modelset_frontier]
 model_ids = [
     "anthropic/claude-opus-4.6",
     "openai/gpt-5.4",
     "x-ai/grok-4.20",
 ]
 
-[sets.frontier_10labs]
+[sets.modelset_frontier_10labs]
 model_ids = [
     "alibaba/tongyi-deepresearch-30b-a3b",
     "openai/o3",
@@ -81,14 +81,14 @@ model_ids = [
     "baidu/ernie-4.5-21b-a3b-thinking",
 ]
 
-[sets.frontier_3best]
+[sets.modelset_frontier_3best]
 model_ids = [
     "anthropic/claude-opus-4.6",
     "alibaba/tongyi-deepresearch-30b-a3b",
     "openai/o3",
 ]
 
-[sets.frontier_cn]
+[sets.modelset_frontier_cn]
 model_ids = [
     "z-ai/glm-5-turbo",
     "deepseek/deepseek-v3.2",
@@ -96,7 +96,7 @@ model_ids = [
     "minimax/minimax-m2.7",
 ]
 
-[sets.rag]
+[sets.modelset_rag_extract]
 model_ids = [
     "openai/gpt-5.4",
     "google/gemini-2.5-flash-lite",
@@ -118,7 +118,7 @@ model_ids = [
     "gemma4:31b",
 ]
 
-[sets.sourced]
+[sets.modelset_rag_cited]
 model_ids = [
     "anthropic/claude-opus-4.6",
     "google/gemini-2.5-flash-lite",
@@ -128,13 +128,13 @@ model_ids = [
 ]
 
 # ── Ablation model sets ──────────────────────────────────────────
-# Two tiers: ablation_dev (cheap, use now) and ablation_journal
+# Two tiers: modelset_ablation_dev (cheap, use now) and modelset_ablation_journal
 # (expensive, gated for final production runs).
-# Switch model_set in sweep configs from ablation_dev → ablation_journal
+# Switch model_set in sweep configs from modelset_ablation_dev → modelset_ablation_journal
 # when pipeline is validated and human approves the cost.
 
 # Dev tier — cheap reasoning models for pipeline validation
-[sets.ablation_dev]
+[sets.modelset_ablation_dev]
 model_ids = [
     "mistralai/mistral-small-2603",         # 24B dense, FR, reasoning+web, $0.60
     "deepseek/deepseek-v3.2",               # 671B MoE, CN, web, $0.38
@@ -146,7 +146,7 @@ model_ids = [
 # because it routes to Ollama (local); cloud-only per run constraints.
 # Does not duplicate the two models already in p1_base (deepseek-v3.2,
 # mistral-small-2603).
-[sets.base_vs_census_extended]
+[sets.modelset_census_extended]
 model_ids = [
     "bytedance-seed/seed-2.0-lite",
     "google/gemini-2.5-flash-lite",
@@ -160,7 +160,7 @@ model_ids = [
 ]
 
 # Journal tier — adds mid-range and expensive frontier (gated by human approval)
-[sets.ablation_journal]
+[sets.modelset_ablation_journal]
 model_ids = [
     "baidu/ernie-4.5-21b-a3b-thinking",   # $0.07/$0.28
     "mistralai/mistral-small-2603",         # $0.15/$0.60
@@ -175,7 +175,7 @@ model_ids = [
 ]
 
 # RAG regime — top performers from existing RAG data
-[sets.ablation_rag]
+[sets.modelset_ablation_rag]
 model_ids = [
     "deepseek/deepseek-v3.2",
     "openai/gpt-5.4",
@@ -186,30 +186,13 @@ model_ids = [
 
 # Core — models testable in all 3 regimes (for clean 3-way comparison)
 # Populated after Phase 1 identifies which models work in all regimes
-[sets.ablation_core]
+[sets.modelset_ablation_core]
 model_ids = []
 
-# Ticket 0068: probe for decomposition prompt-grounding fix.
-# Baseline decomposed runs showed 40–52% FP for gpt-5.4. These 5 models
-# re-run with patched sub-prompts (grounding clause, exhaustiveness removed).
-[sets.decomposition_fix_probe]
-model_ids = [
-    "bytedance-seed/seed-2.0-lite",
-    "glm-4.7-flash",
-    "google/gemini-2.5-flash-lite",
-    "google/gemini-3-flash-preview",
-    "minimax/minimax-m2.7",
-    "moonshotai/kimi-k2.5",
-    "openai/gpt-5-nano",
-    "openai/gpt-5-mini",
-    "qwen/qwen3.5-35b-a3b",
-    "qwen/qwen3.5-122b-a10b",
-    "deepseek/deepseek-v3.2",
-    "mistralai/mistral-small-2603",
-]
-
-# Legacy alias — kept for Phase 2 single-module sweeps until migration
-[sets.ablation]
+# Phase 2 single-module sweeps — 4 reasoning models used for composition analysis.
+# Note: these are a subset of modelset_ablation_journal (same 4 models that were
+# previously in the legacy [sets.ablation] alias).
+[sets.modelset_ablation_phase2]
 model_ids = [
     "deepseek/deepseek-r1-0528",
     "baidu/ernie-4.5-21b-a3b-thinking",
@@ -221,28 +204,28 @@ model_ids = [
 # Sweep configurations — experimental conditions
 # ---------------------------------------------------------------------------
 
-[sweeps.census]
+[sweeps.sweep_direct_extract]
 mode = "single"
 prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
-model_set = "census_cloud"
+model_set = "modelset_census_cloud"
 repeat = 3
 budget_usd = 10
 seed = 42
-output = "outputs/census"
+output = "outputs/direct_extract"
 
-[sweeps.census_local]
+[sweeps.sweep_direct_extract_local]
 mode = "single"
 prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
-model_set = "census_local"
+model_set = "modelset_census_local"
 repeat = 3
 budget_usd = 0
 seed = 42
-output = "outputs/census"
+output = "outputs/direct_extract"
 ollama_url = "http://localhost:11434/v1"
 
-[sweeps.multiturn]
+[sweeps.sweep_direct_multiturn]
 mode = "multiturn"
 prompt = "prompts/prompt_extract.txt"
 followups = "prompts/prompt_followups.txt"
@@ -250,30 +233,30 @@ models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
 seed = 42
-output = "outputs/multiturn"
+output = "outputs/direct_multiturn"
 
-[sweeps.web]
+[sweeps.sweep_rag_livesearch]
 mode = "web"
 prompt = "prompts/prompt_extract.txt"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
 seed = 42
-output = "outputs/web"
+output = "outputs/rag_livesearch"
 
-[sweeps.rag]
+[sweeps.sweep_rag_extract]
 mode = "rag"
 prompt = "prompts/prompt_extract.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
-model_set = "rag"
+model_set = "modelset_rag_extract"
 repeat = 3
 budget_usd = 10
 seed = 42
-output = "outputs/rag"
+output = "outputs/rag_extract"
 
-[sweeps.decomposed]
+[sweeps.sweep_rag_per_fuel]
 mode = "decomposed"
 prompt = "prompts/prompt_extract.txt"
 corpus = "../data/rag_corpus"
@@ -281,7 +264,7 @@ models = "models_selected.yaml"
 repeat = 3
 budget_usd = 2
 seed = 42
-output = "outputs/decomposed"
+output = "outputs/rag_per_fuel"
 
 # Verification regimes on top 3 configs
 #
@@ -293,7 +276,7 @@ output = "outputs/decomposed"
 #   3 = 1 primary, 4 = 2+ independent primary
 # Proof-of-concept: single best config (DeepSeek V3.2 decomposed, F1=98.8%)
 # Full 3-config factorial is Phase 5 work.
-[sweeps.verification]
+[sweeps.sweep_rag_verification]
 repeat = 3
 budget_usd = 5
 seed = 42
@@ -301,44 +284,44 @@ output = "derived/verification"
 cross_verifier = "anthropic/claude-sonnet-4.6"
 verification_modes = ["unverified", "tool", "self", "cross", "web"]
 
-[[sweeps.verification.base_configs]]
+[[sweeps.sweep_rag_verification.base_configs]]
 method = "decomposed"
 model = "deepseek/deepseek-v3.2"
-result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
+result_file = "outputs/rag_per_fuel/deepseek-v3.2-run3.json"
 
 # Phase 5: expand to 3-config factorial after conference
-# [[sweeps.verification.base_configs]]
+# [[sweeps.sweep_rag_verification.base_configs]]
 # method = "multiturn"
 # model = "claude-opus-4.6"
-# result_file = "outputs/multiturn/claude-opus-4.6-run3.json"
+# result_file = "outputs/direct_multiturn/claude-opus-4.6-run3.json"
 #
-# [[sweeps.verification.base_configs]]
+# [[sweeps.sweep_rag_verification.base_configs]]
 # method = "rag"
 # model = "google/gemini-2.5-flash-lite"
-# result_file = "outputs/rag/gemini-2.5-flash-lite-run2.json"
+# result_file = "outputs/rag_extract/gemini-2.5-flash-lite-run2.json"
 #
-# [[sweeps.verification.base_configs]]
+# [[sweeps.sweep_rag_verification.base_configs]]
 # method = "rag"
 # model = "openai/gpt-5.4"
-# result_file = "outputs/rag/gpt-5.4-run1.json"
+# result_file = "outputs/rag_extract/gpt-5.4-run1.json"
 
 # Verification proof-of-concept: 1 config, 2 deterministic modes
 #
 # Stage B of ticket 0030. Minimal design: unverified vs tool on the
 # best decomposed RAG config. Zero API cost (both modes are local).
 # Validates the precision-coverage tradeoff before committing to the
-# full factorial in [sweeps.verification] (Stage D).
-[sweeps.verification_poc]
+# full factorial in [sweeps.sweep_rag_verification] (Stage D).
+[sweeps.sweep_rag_verification_poc]
 repeat = 1
 budget_usd = 0
 seed = 42
 output = "derived/verification_poc"
 verification_modes = ["unverified", "tool"]
 
-[[sweeps.verification_poc.base_configs]]
+[[sweeps.sweep_rag_verification_poc.base_configs]]
 method = "decomposed"
 model = "deepseek/deepseek-chat"
-result_file = "outputs/decomposed/deepseek-v3.2-run1.json"
+result_file = "outputs/rag_per_fuel/deepseek-v3.2-run1.json"
 
 # Multi-agent verification: panel of 3 diverse verifiers
 #
@@ -346,7 +329,7 @@ result_file = "outputs/decomposed/deepseek-v3.2-run1.json"
 # median aggregation. Tests whether multi-agent diversity improves
 # hallucination detection beyond single cross-verification.
 # Panel: Anthropic (US, dense), OpenAI (US, dense), DeepSeek (CN, MoE).
-[sweeps.verification_multi]
+[sweeps.sweep_rag_verification_multi]
 repeat = 3
 budget_usd = 5
 seed = 42
@@ -358,10 +341,10 @@ verifier_panel = [
     "deepseek/deepseek-v3.2",
 ]
 
-[[sweeps.verification_multi.base_configs]]
+[[sweeps.sweep_rag_verification_multi.base_configs]]
 method = "decomposed"
 model = "deepseek/deepseek-v3.2"
-result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
+result_file = "outputs/rag_per_fuel/deepseek-v3.2-run3.json"
 
 # Sourced extraction — ask for citations upfront
 #
@@ -370,35 +353,35 @@ result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
 #
 # Story arc: census (list plants) → sourced (list plants with sources)
 # → if models cite real documents, source-first RAG is feasible.
-[sweeps.sourced]
+[sweeps.sweep_rag_cited]
 mode = "rag"
 prompt = "prompts/prompt_cited.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
-model_set = "sourced"
+model_set = "modelset_rag_cited"
 repeat = 3
 budget_usd = 10
 seed = 42
-output = "outputs/sourced"
+output = "outputs/rag_cited"
 
 # Frontier deep-research: reasoning/deep-research models, 3 prompts
 # (inventory, scenarios, skill), 1 run each, high max_tokens
-[sweeps.frontier]
+[sweeps.sweep_direct_complete]
 mode = "single"
 prompt = "prompts/prompt_complete.txt"
 models = "models.yaml"
-model_set = "frontier_10labs"
+model_set = "modelset_frontier_10labs"
 repeat = 1
 budget_usd = 20
 seed = 42
-output = "outputs/frontier"
+output = "outputs/direct_complete"
 
-[sweeps.frontier_scenarios]
+[sweeps.sweep_direct_scenarios]
 mode = "single"
 prompt = "prompts/prompt_scenarios.txt"
 models = "models.yaml"
-model_set = "frontier_3best"
+model_set = "modelset_frontier_3best"
 repeat = 1
 budget_usd = 20
 seed = 42
@@ -416,15 +399,15 @@ output = "qualitative/scenarios"
 # All modules: persona, overview, sourcing, narratives, bibliography, statistics
 
 # Phase 1 — Selection: base vs composite across 3 regimes
-# Uses ablation_dev (cheap reasoning models) for pipeline validation.
-# Upgrade to ablation_journal for final production runs.
+# Uses modelset_ablation_dev (cheap reasoning models) for pipeline validation.
+# Upgrade to modelset_ablation_journal for final production runs.
 
 # Parametric regime (no docs, no search)
-[sweeps.ablation_p1_parametric_base]
+[sweeps.sweep_ablation_p1_direct_base]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
@@ -432,66 +415,66 @@ output = "outputs/ablation/parametric/p1_base"
 
 # Ticket 0057: extended base-vs-census — 9 additional cheap cloud models,
 # reusing the same output directory so .record.json files mix in with the
-# original 2 models. New set base_vs_census_extended.
-[sweeps.ablation_p1_parametric_base_extended]
+# original 2 models. New set modelset_census_extended.
+[sweeps.sweep_ablation_p1_direct_base_extended]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "base_vs_census_extended"
+model_set = "modelset_census_extended"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/parametric/p1_base"
 
-[sweeps.ablation_p1_parametric_composite]
+[sweeps.sweep_ablation_p1_direct_composite]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
 output = "outputs/ablation/parametric/p1_composite"
 
 # RAG regime (corpus injected)
-[sweeps.ablation_p1_rag_base]
+[sweeps.sweep_ablation_p1_rag_base]
 mode = "rag"
 prompt_modules = []
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
 output = "outputs/ablation/rag/p1_base"
 
-[sweeps.ablation_p1_rag_composite]
+[sweeps.sweep_ablation_p1_rag_composite]
 mode = "rag"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
 output = "outputs/ablation/rag/p1_composite"
 
 # Web search regime (search plugin)
-[sweeps.ablation_p1_websearch_base]
+[sweeps.sweep_ablation_p1_livesearch_base]
 mode = "single"
 web_search = true
 prompt_modules = []
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
 output = "outputs/ablation/websearch/p1_base"
 
-[sweeps.ablation_p1_websearch_composite]
+[sweeps.sweep_ablation_p1_livesearch_composite]
 mode = "single"
 web_search = true
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation_dev"
+model_set = "modelset_ablation_dev"
 repeat = 2
 budget_usd = 10
 seed = 42
@@ -499,71 +482,71 @@ output = "outputs/ablation/websearch/p1_composite"
 
 # Phase 2 — Composition arm: base + one module
 
-[sweeps.ablation_base]
+[sweeps.sweep_ablation_base]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/base"
 
-[sweeps.ablation_persona]
+[sweeps.sweep_ablation_plus_persona]
 mode = "single"
 prompt_modules = ["persona"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/persona"
 
-[sweeps.ablation_overview]
+[sweeps.sweep_ablation_plus_overview]
 mode = "single"
 prompt_modules = ["overview"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/overview"
 
-[sweeps.ablation_narratives]
+[sweeps.sweep_ablation_plus_narratives]
 mode = "single"
 prompt_modules = ["narratives"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/narratives"
 
-[sweeps.ablation_bibliography]
+[sweeps.sweep_ablation_plus_bibliography]
 mode = "single"
 prompt_modules = ["bibliography"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/bibliography"
 
-[sweeps.ablation_statistics]
+[sweeps.sweep_ablation_plus_statistics]
 mode = "single"
 prompt_modules = ["statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/statistics"
 
-[sweeps.ablation_sourcing]
+[sweeps.sweep_ablation_plus_sourcing]
 mode = "single"
 prompt_modules = ["sourcing"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
@@ -571,31 +554,31 @@ output = "outputs/ablation/sourcing"
 
 # Anchors
 
-[sweeps.ablation_composite]
+[sweeps.sweep_ablation_composite]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/composite"
 
-[sweeps.ablation_frontier]
+[sweeps.sweep_ablation_complete]
 mode = "single"
 prompt = "prompts/prompt_complete.txt"
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/frontier"
 
-[sweeps.ablation_census]
+[sweeps.sweep_ablation_extract]
 mode = "single"
 prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
@@ -603,61 +586,61 @@ output = "outputs/ablation/census"
 
 # Ablation arm: composite minus one module
 
-[sweeps.ablation_no_persona]
+[sweeps.sweep_ablation_minus_persona]
 mode = "single"
 prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_persona"
 
-[sweeps.ablation_no_overview]
+[sweeps.sweep_ablation_minus_overview]
 mode = "single"
 prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_overview"
 
-[sweeps.ablation_no_narratives]
+[sweeps.sweep_ablation_minus_narratives]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_narratives"
 
-[sweeps.ablation_no_bibliography]
+[sweeps.sweep_ablation_minus_bibliography]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_bibliography"
 
-[sweeps.ablation_no_statistics]
+[sweeps.sweep_ablation_minus_statistics]
 mode = "single"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_statistics"
 
-[sweeps.ablation_no_sourcing]
+[sweeps.sweep_ablation_minus_sourcing]
 mode = "single"
 prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
-model_set = "ablation"
+model_set = "modelset_ablation_phase2"
 repeat = 2
 budget_usd = 5
 seed = 42
@@ -667,7 +650,7 @@ output = "outputs/ablation/no_sourcing"
 # Models: models_ablation_p2_rag.yaml (DeepSeek V3.2, Kimi K2 Thinking).
 # web_search defaults to false (ticket 0094).
 
-[sweeps.ablation_p2_rag_base]
+[sweeps.sweep_ablation_p2_rag_base]
 mode = "rag"
 prompt_modules = []
 models = "models_ablation_p2_rag.yaml"
@@ -676,7 +659,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_base"
 
-[sweeps.ablation_p2_rag_composite]
+[sweeps.sweep_ablation_p2_rag_composite]
 mode = "rag"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -685,7 +668,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_composite"
 
-[sweeps.ablation_p2_rag_frontier]
+[sweeps.sweep_ablation_p2_rag_frontier]
 mode = "rag"
 prompt = "prompts/prompt_complete.txt"
 models = "models_ablation_p2_rag.yaml"
@@ -694,7 +677,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_frontier"
 
-[sweeps.ablation_p2_rag_census]
+[sweeps.sweep_ablation_p2_rag_census]
 mode = "rag"
 prompt = "prompts/prompt_extract.txt"
 models = "models_ablation_p2_rag.yaml"
@@ -703,7 +686,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_census"
 
-[sweeps.ablation_p2_rag_persona]
+[sweeps.sweep_ablation_p2_rag_plus_persona]
 mode = "rag"
 prompt_modules = ["persona"]
 models = "models_ablation_p2_rag.yaml"
@@ -712,7 +695,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_persona"
 
-[sweeps.ablation_p2_rag_overview]
+[sweeps.sweep_ablation_p2_rag_plus_overview]
 mode = "rag"
 prompt_modules = ["overview"]
 models = "models_ablation_p2_rag.yaml"
@@ -721,7 +704,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_overview"
 
-[sweeps.ablation_p2_rag_narratives]
+[sweeps.sweep_ablation_p2_rag_plus_narratives]
 mode = "rag"
 prompt_modules = ["narratives"]
 models = "models_ablation_p2_rag.yaml"
@@ -730,7 +713,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_narratives"
 
-[sweeps.ablation_p2_rag_bibliography]
+[sweeps.sweep_ablation_p2_rag_plus_bibliography]
 mode = "rag"
 prompt_modules = ["bibliography"]
 models = "models_ablation_p2_rag.yaml"
@@ -739,7 +722,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_bibliography"
 
-[sweeps.ablation_p2_rag_statistics]
+[sweeps.sweep_ablation_p2_rag_plus_statistics]
 mode = "rag"
 prompt_modules = ["statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -748,7 +731,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_statistics"
 
-[sweeps.ablation_p2_rag_sourcing]
+[sweeps.sweep_ablation_p2_rag_plus_sourcing]
 mode = "rag"
 prompt_modules = ["sourcing"]
 models = "models_ablation_p2_rag.yaml"
@@ -757,7 +740,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_sourcing"
 
-[sweeps.ablation_p2_rag_no_persona]
+[sweeps.sweep_ablation_p2_rag_minus_persona]
 mode = "rag"
 prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -766,7 +749,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_persona"
 
-[sweeps.ablation_p2_rag_no_overview]
+[sweeps.sweep_ablation_p2_rag_minus_overview]
 mode = "rag"
 prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -775,7 +758,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_overview"
 
-[sweeps.ablation_p2_rag_no_narratives]
+[sweeps.sweep_ablation_p2_rag_minus_narratives]
 mode = "rag"
 prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -784,7 +767,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_narratives"
 
-[sweeps.ablation_p2_rag_no_bibliography]
+[sweeps.sweep_ablation_p2_rag_minus_bibliography]
 mode = "rag"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -793,7 +776,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_bibliography"
 
-[sweeps.ablation_p2_rag_no_statistics]
+[sweeps.sweep_ablation_p2_rag_minus_statistics]
 mode = "rag"
 prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
 models = "models_ablation_p2_rag.yaml"
@@ -802,7 +785,7 @@ budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_statistics"
 
-[sweeps.ablation_p2_rag_no_sourcing]
+[sweeps.sweep_ablation_p2_rag_minus_sourcing]
 mode = "rag"
 prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
@@ -817,7 +800,7 @@ output = "outputs/ablation/rag/p2_no_sourcing"
 # cross-provider floating-point variance is eliminated.
 # Alibaba supports seed on deepseek-v3.2; DeepSeek native does not.
 
-[sweeps.fusion]
+[sweeps.sweep_fusion]
 # fusion_mode: pipeline scope — incremental | global | compare (all cells)
 fusion_mode = "compare"
 format = "both"
@@ -828,7 +811,7 @@ output = "derived/fusion_proto"
 seed = 42
 provider = "Alibaba"
 
-[sweeps.fusion_dev]
+[sweeps.sweep_fusion_dev]
 fusion_mode = "compare"
 format = "md"
 model = "openai/gpt-4o-mini"

@@ -105,8 +105,8 @@ def test_experiments_model_ids_exist(models, experiments):
 
 def test_experiments_sets_nonempty(experiments):
     """Every model set in experiments.toml has at least one model (unless intentionally empty)."""
-    # ablation_core is intentionally empty until Phase 1 identifies cross-regime models
-    allowed_empty = {"ablation_core"}
+    # modelset_ablation_core is intentionally empty until Phase 1 identifies cross-regime models
+    allowed_empty = {"modelset_ablation_core"}
     for set_name, spec in experiments["sets"].items():
         if set_name in allowed_empty:
             continue
@@ -144,20 +144,20 @@ def test_sweeps_section_exists(experiments):
 def test_sweep_count(experiments):
     """Core sweeps are present (minimum-baseline check, not exact-equality)."""
     core = {
-        "census",
-        "census_local",
-        "multiturn",
-        "web",
-        "rag",
-        "decomposed",
-        "verification",
-        "verification_multi",
-        "verification_poc",
-        "sourced",
-        "frontier",
-        "frontier_scenarios",
-        "fusion",
-        "fusion_dev",
+        "sweep_direct_extract",
+        "sweep_direct_extract_local",
+        "sweep_direct_multiturn",
+        "sweep_rag_livesearch",
+        "sweep_rag_extract",
+        "sweep_rag_per_fuel",
+        "sweep_rag_verification",
+        "sweep_rag_verification_multi",
+        "sweep_rag_verification_poc",
+        "sweep_rag_cited",
+        "sweep_direct_complete",
+        "sweep_direct_scenarios",
+        "sweep_fusion",
+        "sweep_fusion_dev",
     }
     actual = set(experiments["sweeps"].keys())
     missing = core - actual
@@ -168,9 +168,9 @@ def test_sweep_count(experiments):
 
 def test_standard_sweep_fields(experiments):
     """Each standard sweep has required fields with valid types."""
-    fusion_sweeps = {n for n in experiments["sweeps"] if n.startswith("fusion")}
+    fusion_sweeps = {n for n in experiments["sweeps"] if n.startswith("sweep_fusion")}
     for name, sweep in experiments["sweeps"].items():
-        if name.startswith("verification") or name in fusion_sweeps:
+        if name.startswith("sweep_rag_verification") or name in fusion_sweeps:
             continue
         missing = SWEEP_REQUIRED_FIELDS - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fields: {missing}"
@@ -191,7 +191,7 @@ def test_fusion_sweep_fields(experiments):
     valid_fusion_modes = {"incremental", "global", "compare"}
     valid_formats = {"json", "md", "both"}
     for name, sweep in experiments["sweeps"].items():
-        if not name.startswith("fusion"):
+        if not name.startswith("sweep_fusion"):
             continue
         missing = fusion_required - set(sweep.keys())
         assert not missing, f"sweeps.{name} missing fusion fields: {missing}"
@@ -208,7 +208,7 @@ def test_fusion_sweep_fields(experiments):
 
 def test_verification_structure(experiments):
     """verification has its special structure (base_configs, modes)."""
-    s4 = experiments["sweeps"]["verification"]
+    s4 = experiments["sweeps"]["sweep_rag_verification"]
     missing = SWEEP4_REQUIRED_FIELDS - set(s4.keys())
     assert not missing, f"verification missing fields: {missing}"
     assert isinstance(s4["base_configs"], list) and len(s4["base_configs"]) >= 1
@@ -300,8 +300,8 @@ def test_sweep_output_dirs_unique(experiments):
             # - ablation_p1_parametric_base/_extended: extended set mixes into base dir
             pair = {name, outputs[out]}
             allowed_pairs = [
-                {"census", "census_local"},
-                {"ablation_p1_parametric_base", "ablation_p1_parametric_base_extended"},
+                {"sweep_direct_extract", "sweep_direct_extract_local"},
+                {"sweep_ablation_p1_direct_base", "sweep_ablation_p1_direct_base_extended"},
             ]
             if pair not in allowed_pairs:
                 pytest.fail(f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'")
@@ -314,7 +314,7 @@ def test_sweep_output_dirs_unique(experiments):
 
 
 def test_list_models_helper(experiments):
-    """_list_models.py produces correct short names for census_cloud."""
+    """_list_models.py produces correct short names for modelset_census_cloud."""
     import subprocess
 
     result = subprocess.run(
@@ -323,7 +323,7 @@ def test_list_models_helper(experiments):
             str(EXPERIMENTS_DIR / "_list_models.py"),
             str(MODELS_PATH),
             "--set",
-            "census_cloud",
+            "modelset_census_cloud",
             "--experiments",
             str(EXPERIMENTS_PATH),
         ],
@@ -332,6 +332,6 @@ def test_list_models_helper(experiments):
         check=True,
     )
     shorts = set(result.stdout.strip().split())
-    cloud_ids = experiments["sets"]["census_cloud"]["model_ids"]
+    cloud_ids = experiments["sets"]["modelset_census_cloud"]["model_ids"]
     expected = {mid.split("/")[-1].replace(":", "-") for mid in cloud_ids}
     assert shorts == expected, f"Mismatch: extra={shorts - expected}, missing={expected - shorts}"
