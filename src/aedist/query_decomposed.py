@@ -11,7 +11,7 @@ and merged into a single consolidated CSV.
 
 Usage:
     python -m aedist.query_decomposed \
-        --prompt prompts/prompt_structured.txt \
+        --prompt prompts/prompt_extract.txt \
         --corpus data/rag_corpus/ \
         --models models_selected.yaml \
         --output outputs/decomposed/ \

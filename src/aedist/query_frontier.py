@@ -6,14 +6,14 @@ and temperature=0 for deterministic, exhaustive output.
 
 Usage:
     uv run python -m aedist.query_frontier \
-        --prompt prompts/prompt_frontier.txt \
+        --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
         --output outputs/frontier/ \
         --budget-usd 20
 
     # Single model:
     uv run python -m aedist.query_frontier \
-        --prompt prompts/prompt_frontier.txt \
+        --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
         --output outputs/frontier/ \
         --model anthropic/claude-opus-4.6
@@ -84,10 +84,16 @@ def main():
         default=DEFAULT_TEMPERATURE,
         help=f"Sampling temperature (default {DEFAULT_TEMPERATURE})",
     )
-    parser.add_argument("--no-web-search", action="store_true", help="Disable web search even if model has web_search=true")
+    parser.add_argument(
+        "--no-web-search",
+        action="store_true",
+        help="Disable web search even if model has web_search=true",
+    )
     parser.add_argument("--dry-run", action="store_true", help="List queries without calling API")
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -103,7 +109,7 @@ def main():
         prompt = Path(args.prompt).read_text().strip()
         sweep = Path(args.prompt).stem
         if sweep.startswith("prompt_"):
-            sweep = sweep[len("prompt_"):]
+            sweep = sweep[len("prompt_") :]
     models = load_models(args.models)
     output_dir = Path(args.output)
 
@@ -156,7 +162,9 @@ def main():
             client = clients[router]
         else:
             if legacy_client is None:
-                raise SystemExit(f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)")
+                raise SystemExit(
+                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                )
             client = legacy_client
 
         for run in range(1, args.repeat + 1):

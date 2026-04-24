@@ -223,7 +223,7 @@ model_ids = [
 
 [sweeps.census]
 mode = "single"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
 model_set = "census_cloud"
 repeat = 3
@@ -233,7 +233,7 @@ output = "outputs/census"
 
 [sweeps.census_local]
 mode = "single"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
 model_set = "census_local"
 repeat = 3
@@ -244,8 +244,8 @@ ollama_url = "http://localhost:11434/v1"
 
 [sweeps.multiturn]
 mode = "multiturn"
-prompt = "prompts/prompt_structured.txt"
-followups = "prompts/followups.txt"
+prompt = "prompts/prompt_extract.txt"
+followups = "prompts/prompt_followups.txt"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
@@ -254,7 +254,7 @@ output = "outputs/multiturn"
 
 [sweeps.web]
 mode = "web"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 models = "models_selected.yaml"
 repeat = 3
 budget_usd = 10
@@ -263,7 +263,7 @@ output = "outputs/web"
 
 [sweeps.rag]
 mode = "rag"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
@@ -275,7 +275,7 @@ output = "outputs/rag"
 
 [sweeps.decomposed]
 mode = "decomposed"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 corpus = "../data/rag_corpus"
 models = "models_selected.yaml"
 repeat = 3
@@ -372,7 +372,7 @@ result_file = "outputs/decomposed/deepseek-v3.2-run3.json"
 # → if models cite real documents, source-first RAG is feasible.
 [sweeps.sourced]
 mode = "rag"
-prompt = "prompts/prompt_structured_sourced.txt"
+prompt = "prompts/prompt_cited.txt"
 corpus = "data/rag_corpus"
 strategy = "wholesale"
 models = "models.yaml"
@@ -386,7 +386,7 @@ output = "outputs/sourced"
 # (inventory, scenarios, skill), 1 run each, high max_tokens
 [sweeps.frontier]
 mode = "single"
-prompt = "prompts/prompt_frontier.txt"
+prompt = "prompts/prompt_complete.txt"
 models = "models.yaml"
 model_set = "frontier_10labs"
 repeat = 1
@@ -396,23 +396,13 @@ output = "outputs/frontier"
 
 [sweeps.frontier_scenarios]
 mode = "single"
-prompt = "prompts/prompt_frontier_scenarios.txt"
+prompt = "prompts/prompt_scenarios.txt"
 models = "models.yaml"
 model_set = "frontier_3best"
 repeat = 1
 budget_usd = 20
 seed = 42
 output = "qualitative/scenarios"
-
-[sweeps.frontier_skill]
-mode = "single"
-prompt = "prompts/prompt_frontier_skill.txt"
-models = "models.yaml"
-model_set = "frontier_3best"
-repeat = 1
-budget_usd = 20
-seed = 42
-output = "qualitative/skill_plans"
 
 # --- Prompt composition and ablation (ticket 0038) ---
 # Prompts assembled at runtime from modules in prompts/modules/.
@@ -593,7 +583,7 @@ output = "outputs/ablation/composite"
 
 [sweeps.ablation_frontier]
 mode = "single"
-prompt = "prompts/prompt_frontier.txt"
+prompt = "prompts/prompt_complete.txt"
 models = "models.yaml"
 model_set = "ablation"
 repeat = 2
@@ -603,7 +593,7 @@ output = "outputs/ablation/frontier"
 
 [sweeps.ablation_census]
 mode = "single"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
 model_set = "ablation"
 repeat = 2
@@ -697,7 +687,7 @@ output = "outputs/ablation/rag/p2_composite"
 
 [sweeps.ablation_p2_rag_frontier]
 mode = "rag"
-prompt = "prompts/prompt_frontier.txt"
+prompt = "prompts/prompt_complete.txt"
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5
@@ -706,7 +696,7 @@ output = "outputs/ablation/rag/p2_frontier"
 
 [sweeps.ablation_p2_rag_census]
 mode = "rag"
-prompt = "prompts/prompt_structured.txt"
+prompt = "prompts/prompt_extract.txt"
 models = "models_ablation_p2_rag.yaml"
 repeat = 2
 budget_usd = 5

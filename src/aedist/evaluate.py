@@ -175,23 +175,36 @@ def _strip_run_suffix(name: str) -> str:
 
 
 def _infer_method(dir_name: str) -> Method:
-    """Infer Method enum from output subdirectory name."""
+    """Infer Method enum from output subdirectory name.
 
+    Recognises both pre-0122 (legacy) directory names and new directory names.
+    Always emits new-vocabulary Method values (ticket 0120).
+
+    Legacy directory → new method:
+        census / (default)       → direct
+        frontier / frontier_*    → direct
+        multiturn                → direct+multiturn
+        rag / rag_*              → rag
+        web                      → rag_livesearch
+        decomposed / decomposed_*→ rag
+        sourced                  → rag
+        verification / *verify*  → rag+verification
+    """
     if "multiturn" in dir_name:
-        return Method.MULTITURN
+        return Method.DIRECT_MULTITURN
+    if "verification" in dir_name:
+        return Method.RAG_VERIFICATION
+    if "web" in dir_name:
+        return Method.RAG_LIVESEARCH
     if "rag" in dir_name and "sourced" not in dir_name:
         return Method.RAG
-    if "web" in dir_name:
-        return Method.WEB
     if "decomposed" in dir_name:
-        return Method.DECOMPOSED
+        return Method.RAG
     if "sourced" in dir_name:
-        return Method.SOURCED
+        return Method.RAG
     if "frontier" in dir_name:
-        return Method.FRONTIER
-    if "verification" in dir_name:
-        return Method.VERIFICATION
-    return Method.SINGLE
+        return Method.DIRECT
+    return Method.DIRECT
 
 
 def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:

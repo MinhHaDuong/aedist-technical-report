@@ -18,7 +18,7 @@ def _make_jobspec(**overrides) -> JobSpec:
     defaults = dict(
         job_id="job_aaa111",
         mode=Method.SINGLE,
-        prompt="prompts/prompt_structured.txt",
+        prompt="prompts/prompt_extract.txt",
         models_file="models.yaml",
         repeat=3,
         budget_usd=10.0,
@@ -60,9 +60,9 @@ class TestJobSpecConstruction:
     def test_multiturn_fields(self):
         j = _make_jobspec(
             mode=Method.MULTITURN,
-            followups="prompts/followups.txt",
+            followups="prompts/prompt_followups.txt",
         )
-        assert j.followups == "prompts/followups.txt"
+        assert j.followups == "prompts/prompt_followups.txt"
 
     def test_invalid_mode_rejected(self):
         with pytest.raises(ValidationError):
@@ -99,7 +99,7 @@ class TestFromSweepYaml:
     def test_census(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: single\n"
-            "prompt: prompts/prompt_structured.txt\n"
+            "prompt: prompts/prompt_extract.txt\n"
             "models: models.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
@@ -113,7 +113,7 @@ class TestFromSweepYaml:
     def test_rag(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: rag\n"
-            "prompt: prompts/prompt_structured.txt\n"
+            "prompt: prompts/prompt_extract.txt\n"
             "corpus: data/rag_corpus\n"
             "strategy: wholesale\n"
             "models: models_sweep_rag.yaml\n"
@@ -129,8 +129,8 @@ class TestFromSweepYaml:
     def test_multiturn(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
             "mode: multiturn\n"
-            "prompt: prompts/prompt_structured.txt\n"
-            "followups: prompts/followups.txt\n"
+            "prompt: prompts/prompt_extract.txt\n"
+            "followups: prompts/prompt_followups.txt\n"
             "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
@@ -138,7 +138,7 @@ class TestFromSweepYaml:
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.MULTITURN
-        assert j.followups == "prompts/followups.txt"
+        assert j.followups == "prompts/prompt_followups.txt"
 
 
 class TestJobSpecPromptModules:

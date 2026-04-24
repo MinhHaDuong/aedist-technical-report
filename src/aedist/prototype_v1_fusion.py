@@ -719,7 +719,7 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         default=None,
         metavar="FILE",
-        help="[md] Prompt for global md mode (≈ RAG oneshot). Default: prompt_structured.txt.",
+        help="[md] Prompt for global md mode (≈ RAG oneshot). Default: prompt_extract.txt.",
     )
     p.add_argument(
         "--fuse-prompt",

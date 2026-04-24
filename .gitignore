@@ -47,6 +47,9 @@ report/inputs/feeds/*
 # Attic (old manual experiments, legacy results)
 attic/
 
+# Migration backups
+*.jsonl.bak-*
+
 # Editor / IDE / OS
 *~
 *.swp

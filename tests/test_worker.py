@@ -154,7 +154,7 @@ def test_complete_returns_runrecord(tmp_path: Path) -> None:
     }
     record = worker.complete(job, result)
 
-    assert record.method == Method.SINGLE
+    assert record.method == Method.DIRECT
     assert record.method_params.model == "openai/gpt-4o"
     assert record.resource_use.wall_s == 10.0
     assert record.resource_use.cost_usd == 0.05
@@ -220,7 +220,7 @@ def test_full_lifecycle(tmp_path: Path) -> None:
 
     assert (jobs_root / "done" / "lifecycle.yaml").exists()
     assert not list((jobs_root / "running").glob("lifecycle-lease-*.yaml"))
-    assert record.method == Method.SINGLE
+    assert record.method == Method.DIRECT
     assert record.method_params.model == "openai/gpt-4o"
     assert record.resource_use.wall_s == 12.5
 
@@ -236,7 +236,7 @@ def test_run_one_success(tmp_path: Path) -> None:
     record = worker.run_one()
 
     assert record is not None
-    assert record.method == Method.SINGLE
+    assert record.method == Method.DIRECT
     assert record.resource_use.wall_s == 12.5
     assert (jobs_root / "done" / "runone-ok.yaml").exists()
     assert not list((jobs_root / "pending").iterdir())
@@ -382,7 +382,7 @@ def test_padme_full_lifecycle(tmp_path: Path) -> None:
         record = worker.run_one()
 
     assert record is not None
-    assert record.method == Method.SINGLE
+    assert record.method == Method.DIRECT
     assert (jobs_root / "done" / "padme-lc.yaml").exists()
     # Verify resource_use captured from execute() return value
     assert record.resource_use.wall_s == 3.5
@@ -463,7 +463,7 @@ def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
         record = worker.run_one()
 
     assert record is not None
-    assert record.method == Method.SINGLE
+    assert record.method == Method.DIRECT
     assert (jobs_root / "done" / "or-lc.yaml").exists()
     # Verify resource_use captured from execute() return value
     assert record.resource_use.wall_s == 3.5
@@ -586,7 +586,9 @@ def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
     }
     patches = _harness_patches(tmp_path)
     with patch.multiple("aedist.worker", **patches):
-        with patch("aedist.worker.query_decomposed", return_value=mock_decomposed_result) as mock_dec:
+        with patch(
+            "aedist.worker.query_decomposed", return_value=mock_decomposed_result
+        ) as mock_dec:
             worker.execute(job)
 
     mock_dec.assert_called_once()
@@ -646,7 +648,9 @@ def test_dispatch_shared_between_padme_and_openrouter(tmp_path: Path) -> None:
     corpus_dir.mkdir()
     (corpus_dir / "doc1.md").write_text("Some corpus content")
 
-    job = _make_job(mode="rag", corpus=str(corpus_dir), strategy="wholesale", model_filter="qwen3:8b")
+    job = _make_job(
+        mode="rag", corpus=str(corpus_dir), strategy="wholesale", model_filter="qwen3:8b"
+    )
     job = job.model_copy(update={"prompt": str(prompt_file)})
 
     for worker_cls in [PadmeWorker, OpenRouterWorker]:

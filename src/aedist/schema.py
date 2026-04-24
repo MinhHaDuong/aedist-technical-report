@@ -117,15 +117,29 @@ class ReconciliationEntry(BaseModel):
 
 
 class Method(StrEnum):
+    # New vocabulary (ticket 0120): method = <base>[+<modifier>...]
+    # base: direct | rag | rag_livesearch
+    # modifiers: +multiturn | +verification
+    # prompt_version in method_params: extract | complete | scenarios | cited |
+    #   followups | per_fuel | base | composite | +aspect | -aspect | dspy
+    DIRECT = "direct"
+    RAG = "rag"
+    RAG_LIVESEARCH = "rag_livesearch"
+    DIRECT_MULTITURN = "direct+multiturn"
+    RAG_VERIFICATION = "rag+verification"
+    FUSION = "fusion"
+
+    # Legacy dispatch modes — kept for backward compatibility.
+    # These drive worker.py execution paths and experiments.toml mode= values.
+    # New runs emit new-vocabulary method values; these remain valid for
+    # loading pre-migration records and for JobSpec.mode parsing.
     SINGLE = "single"
     MULTITURN = "multiturn"
-    RAG = "rag"
     WEB = "web"
     DECOMPOSED = "decomposed"
     SOURCED = "sourced"
     FRONTIER = "frontier"
     VERIFICATION = "verification"
-    FUSION = "fusion"
 
 
 class MethodParams(BaseModel):

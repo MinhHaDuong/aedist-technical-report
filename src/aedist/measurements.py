@@ -7,9 +7,10 @@ Usage::
 
     from aedist.measurements import load
 
-    records = load()                    # all records
-    records = load(method="rag")        # filtered by method
-    records = load(method="frontier")   # qualitative results
+    records = load()                        # all records
+    records = load(method="rag")            # filtered by method
+    records = load(method="direct")         # single-turn results
+    records = load(method="rag_livesearch") # web-augmented results
 """
 
 import tomllib
