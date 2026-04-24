@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; independent of schema (0120)
 2026-04-24T00:00Z claude note co-dependent with 0120 (schema); must be worked together on same branch; 0120 now has Blocked-by 0123
+2026-04-24T00:00Z claude note sourced→cited; ablation prompt_version mirrors sweep condition label
 
 --- body ---
 ## Context
@@ -28,13 +29,14 @@ Two coupled decisions made in session (2026-04-24):
 | complete       | prompt_complete.txt           | Full sourced inventory + bibliography   |
 | scenarios      | prompt_scenarios.txt          | 3-scenario modelling study to 2050      |
 | per_fuel       | (assembled by query_rag_per_fuel.py) | Per-fuel subprompts              |
-| sourced        | prompt_sourced.txt            | Terse extraction + citation columns     |
+| cited          | prompt_cited.txt              | Terse extraction + citation columns     |
+| ablation_*     | (assembled from modules/)     | Sweep condition label as prompt_version |
 
 Current filenames to rename:
 - `prompt_structured.txt`        → `prompt_extract.txt`
 - `prompt_frontier.txt`          → `prompt_complete.txt`
 - `prompt_frontier_scenarios.txt` → `prompt_scenarios.txt`
-- `prompt_structured_sourced.txt` → `prompt_sourced.txt`
+- `prompt_structured_sourced.txt` → `prompt_cited.txt`
 - `prompt_frontier_skill.txt`    → DELETE (ticket 0120 purge)
 
 ## Actions
@@ -46,10 +48,11 @@ Current filenames to rename:
 3. Audit `modules/` names: confirm each is self-descriptive.
    `base.txt` is the always-included foundation — evaluate renaming
    to `extract.txt` to match the `extract` prompt_version.
-4. Define the `prompt_version` encoding for ablation runs: active
-   module list expressed as a stable string (e.g. `"ablation_base"`,
-   `"ablation_composite"`, `"ablation_persona"`, etc.) rather than
-   `"derived"`. Coordinate with 0120 so the harness emits this.
+4. Define the `prompt_version` encoding for ablation runs: mirror the
+   sweep condition label (`"ablation_base"`, `"ablation_composite"`,
+   `"ablation_persona"`, `"ablation_no_persona"`, etc.) rather than
+   `"derived"`. The harness derives this from the sweep name. Coordinate
+   with 0120 so the migration script back-fills existing records.
 5. Run `make test` green.
 
 ## Exit criteria

@@ -9,6 +9,7 @@ Blocked-by: 0123
 2026-04-24T00:00Z claude created — child of epic 0069; vocabulary spine, do first
 2026-04-24T00:00Z claude note co-dependent with 0123 (prompts); must be worked together on same branch
 2026-04-24T00:00Z claude note vocabulary finalised in session; see body for full mapping
+2026-04-24T00:00Z claude note sourced→cited (sourced implied input direction; cited names output direction)
 
 --- body ---
 ## Context
@@ -37,14 +38,16 @@ source.
 | web            | rag_livesearch | extract        |
 | rag            | rag            | extract        |
 | decomposed     | rag            | per_fuel       |
-| sourced        | rag            | sourced        |
+| sourced        | rag            | cited          |
 | multiturn      | multiturn      | extract        |
 | verification   | verification   | —              |
 | frontier_skill | DELETE         | DELETE         |
 
-Ablation runs currently write `prompt_version: "derived"`. The encoding
-for ablation (active module list) is a decision for the 0120+0123 joint
-work.
+Ablation runs currently write `prompt_version: "derived"`. Encoding:
+mirror the sweep condition label directly — `"ablation_base"`,
+`"ablation_composite"`, `"ablation_persona"`, `"ablation_no_persona"`,
+etc. The harness derives this from the sweep name or module list.
+No new vocabulary needed; the sweep IDs are already systematic.
 
 ## Actions
 
