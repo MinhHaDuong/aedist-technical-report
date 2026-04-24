@@ -304,7 +304,7 @@ class TestSearchQueryDisambiguation:
             },
         ]
 
-        with patch("aedist.query_web.tavily_search", return_value=dec_pdp7_results):
+        with patch("aedist.query_livesearch.tavily_search", return_value=dec_pdp7_results):
             result = check_fabrication("PDP7A capacity list", tavily_key="fake-key")
 
         assert result["is_primary_pattern"] is True

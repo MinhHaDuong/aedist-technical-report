@@ -1,4 +1,4 @@
-"""Tests for aedist.query_web — web-augmented queries."""
+"""Tests for aedist.query_livesearch — web-augmented queries."""
 
 import json
 import sys
@@ -36,7 +36,7 @@ def _setup_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     return prompt, models, output
 
 
-@patch("aedist.query_web.tavily_search")
+@patch("aedist.query_livesearch.tavily_search")
 @patch("aedist.harness.OpenAI")
 def test_web_query_with_tavily(mock_openai_cls, mock_tavily, tmp_path):
     """When Tavily is available, search results are injected as context."""
@@ -55,12 +55,12 @@ def test_web_query_with_tavily(mock_openai_cls, mock_tavily, tmp_path):
         "TAVILY_API_KEY": "fake-tavily",
     }):
         with patch.object(sys, "argv", [
-            "query_web",
+            "query_livesearch",
             "--prompt", str(prompt),
             "--models", str(models),
             "--output", str(output),
         ]):
-            from aedist.query_web import main
+            from aedist.query_livesearch import main
             main()
 
     json_files = list(output.rglob("*.json"))
@@ -82,19 +82,19 @@ def test_web_query_skips_without_tavily_key(mock_openai_cls, tmp_path):
     # Ensure TAVILY_API_KEY is NOT set
     with patch.dict("os.environ", env, clear=True):
         with patch.object(sys, "argv", [
-            "query_web",
+            "query_livesearch",
             "--prompt", str(prompt),
             "--models", str(models),
             "--output", str(output),
         ]):
-            from aedist.query_web import main
+            from aedist.query_livesearch import main
             main()
 
     # No API calls — models skipped due to missing Tavily
     mock_client.chat.completions.create.assert_not_called()
 
 
-@patch("aedist.query_web.tavily_search")
+@patch("aedist.query_livesearch.tavily_search")
 @patch("aedist.harness.OpenAI")
 def test_web_query_output_metadata(mock_openai_cls, mock_tavily, tmp_path):
     """Output includes web_searches with query and results."""
@@ -113,12 +113,12 @@ def test_web_query_output_metadata(mock_openai_cls, mock_tavily, tmp_path):
         "TAVILY_API_KEY": "fake-tavily",
     }):
         with patch.object(sys, "argv", [
-            "query_web",
+            "query_livesearch",
             "--prompt", str(prompt),
             "--models", str(models),
             "--output", str(output),
         ]):
-            from aedist.query_web import main
+            from aedist.query_livesearch import main
             main()
 
     json_files = list(output.rglob("*.json"))

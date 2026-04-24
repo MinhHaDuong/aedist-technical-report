@@ -1,4 +1,4 @@
-"""Tests for aedist.query_frontier — reasoning flag, sweep derivation, budget, dry-run."""
+"""Tests for aedist.query_direct — reasoning flag, sweep derivation, budget, dry-run."""
 
 import json
 import sys
@@ -72,7 +72,7 @@ def test_basic_produces_output(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -81,7 +81,7 @@ def test_basic_produces_output(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -118,7 +118,7 @@ def test_reasoning_model_omits_temperature(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -127,7 +127,7 @@ def test_reasoning_model_omits_temperature(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -152,7 +152,7 @@ def test_non_reasoning_sends_temperature(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -161,7 +161,7 @@ def test_non_reasoning_sends_temperature(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -187,7 +187,7 @@ def test_budget_guard_stops(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -200,7 +200,7 @@ def test_budget_guard_stops(mock_openai_cls, tmp_path):
                 "0.0008",
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -224,7 +224,7 @@ def test_dry_run_no_api_calls(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -234,7 +234,7 @@ def test_dry_run_no_api_calls(mock_openai_cls, tmp_path):
                 "--dry-run",
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -265,7 +265,7 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt-modules",
                 "persona",
                 "overview",
@@ -277,7 +277,7 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -312,7 +312,7 @@ def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt-modules",
                 "--modules-dir",
                 str(modules_dir),
@@ -322,7 +322,7 @@ def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -343,7 +343,7 @@ def test_prompt_and_prompt_modules_mutually_exclusive(mock_openai_cls, tmp_path)
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--prompt-modules",
@@ -357,7 +357,7 @@ def test_prompt_and_prompt_modules_mutually_exclusive(mock_openai_cls, tmp_path)
             import pytest
 
             with pytest.raises(SystemExit):
-                from aedist.query_frontier import main
+                from aedist.query_direct import main
 
                 main()
 
@@ -381,7 +381,7 @@ def test_prompt_modules_dry_run(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt-modules",
                 "persona",
                 "--modules-dir",
@@ -393,7 +393,7 @@ def test_prompt_modules_dry_run(mock_openai_cls, tmp_path):
                 "--dry-run",
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -420,7 +420,7 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt-modules",
                 "persona",
                 "--modules-dir",
@@ -431,7 +431,7 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -457,7 +457,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -466,7 +466,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -476,7 +476,7 @@ def test_sweep_derived_from_prompt_filename(mock_openai_cls, tmp_path):
     assert record["sweep"] == "scenarios"
 
 
-@patch("aedist.query_frontier.build_api_kwargs", _build_api_kwargs_web_enabled)
+@patch("aedist.query_direct.build_api_kwargs", _build_api_kwargs_web_enabled)
 @patch("aedist.harness.OpenAI")
 def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     """Models with web_search: true get OpenRouter web plugin in extra_body."""
@@ -493,7 +493,7 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -502,7 +502,7 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -511,7 +511,7 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     assert call_kwargs["temperature"] == 0.0
 
 
-@patch("aedist.query_frontier.build_api_kwargs", _build_api_kwargs_web_enabled)
+@patch("aedist.query_direct.build_api_kwargs", _build_api_kwargs_web_enabled)
 @patch("aedist.harness.OpenAI")
 def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
     """Model with both reasoning and web_search gets correct params."""
@@ -528,7 +528,7 @@ def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -537,7 +537,7 @@ def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
                 str(output_dir),
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -562,7 +562,7 @@ def test_no_web_search_flag_disables_plugin(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -572,7 +572,7 @@ def test_no_web_search_flag_disables_plugin(mock_openai_cls, tmp_path):
                 "--no-web-search",
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 
@@ -599,7 +599,7 @@ def test_no_web_search_flag_noop_without_web_model(mock_openai_cls, tmp_path):
             sys,
             "argv",
             [
-                "query_frontier",
+                "query_direct",
                 "--prompt",
                 str(prompt_path),
                 "--models",
@@ -609,7 +609,7 @@ def test_no_web_search_flag_noop_without_web_model(mock_openai_cls, tmp_path):
                 "--no-web-search",
             ],
         ):
-            from aedist.query_frontier import main
+            from aedist.query_direct import main
 
             main()
 

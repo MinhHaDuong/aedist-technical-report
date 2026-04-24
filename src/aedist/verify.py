@@ -542,7 +542,7 @@ def verify_web(
     Returns (annotated_rows, summary). Caches search results to avoid
     redundant API calls across runs.
     """
-    from .query_web import tavily_search
+    from .query_livesearch import tavily_search
 
     cache: dict[str, list[dict]] = {}
     if cache_path:

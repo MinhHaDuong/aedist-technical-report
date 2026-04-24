@@ -186,7 +186,7 @@ def verify_content_tavily(
     Returns dict with query, n_results, entity_found, top_result_url,
     top_result_snippet.
     """
-    from aedist.query_web import tavily_search
+    from aedist.query_livesearch import tavily_search
 
     key_terms = _extract_citation_key(citation_text)
     query = f"{plant_name} {key_terms}"
@@ -253,7 +253,7 @@ def check_fabrication(
             "search_evidence": None,
         }
 
-    from aedist.query_web import tavily_search
+    from aedist.query_livesearch import tavily_search
 
     # Disambiguate short identifiers (e.g. PDP7 -> DEC minicomputer)
     search_term = identifier

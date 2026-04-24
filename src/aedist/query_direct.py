@@ -1,18 +1,18 @@
-"""Frontier deep-research benchmark: comprehensive Vietnam thermal sector report.
+"""Single direct LLM call, no retrieval context: comprehensive Vietnam thermal sector report.
 
 Sends a maximally-optimized comprehensive prompt to frontier reasoning models
 and captures full responses for qualitative evaluation.  Uses high max_tokens
 and temperature=0 for deterministic, exhaustive output.
 
 Usage:
-    uv run python -m aedist.query_frontier \
+    uv run python -m aedist.query_direct \
         --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
         --output outputs/frontier/ \
         --budget-usd 20
 
     # Single model:
-    uv run python -m aedist.query_frontier \
+    uv run python -m aedist.query_direct \
         --prompt prompts/prompt_complete.txt \
         --models models_frontier.yaml \
         --output outputs/frontier/ \
@@ -176,7 +176,7 @@ def main():
                 continue
 
             log.info(
-                "Querying %s run %d/%d (frontier, max_tokens=%d, temp=%.1f)...",
+                "Querying %s run %d/%d (direct, max_tokens=%d, temp=%.1f)...",
                 label,
                 run,
                 args.repeat,
@@ -239,7 +239,7 @@ def main():
             except openai.APIError as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 
-    log.info("Frontier benchmark complete. Total cost: $%.4f", budget.total_cost)
+    log.info("Direct benchmark complete. Total cost: $%.4f", budget.total_cost)
 
 
 if __name__ == "__main__":

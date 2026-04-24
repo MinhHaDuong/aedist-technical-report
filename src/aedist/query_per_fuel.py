@@ -1,4 +1,4 @@
-"""Task decomposition queries: split by fuel type, merge results.
+"""3 sub-calls split by fuel type, results merged: task decomposition query pipeline.
 
 Instead of asking for all thermal power plants in one query (which causes
 truncation), split into 3 sub-queries by fuel type:
@@ -10,7 +10,7 @@ Each sub-query gets the same RAG corpus. The 3 CSV responses are extracted
 and merged into a single consolidated CSV.
 
 Usage:
-    python -m aedist.query_decomposed \
+    python -m aedist.query_per_fuel \
         --prompt prompts/prompt_extract.txt \
         --corpus data/rag_corpus/ \
         --models models_selected.yaml \

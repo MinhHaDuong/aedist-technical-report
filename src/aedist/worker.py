@@ -27,11 +27,11 @@ from .harness import (
     save_json,
     should_skip,
 )
-from .query_decomposed import query_decomposed
 from .query_fusion import run_fusion
+from .query_livesearch import run_web_searches
 from .query_multiturn import run_conversation
+from .query_per_fuel import query_decomposed
 from .query_rag import load_corpus
-from .query_web import run_web_searches
 from .schema import (
     JobSpec,
     LeaseInfo,
