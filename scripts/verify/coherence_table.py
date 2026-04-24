@@ -71,7 +71,7 @@ def check_sidecar_row_coverage(
         )
         return failures  # alignment check meaningless without equal lengths
 
-    for i, (plant, prov) in enumerate(zip(plants, provenance)):
+    for i, (plant, prov) in enumerate(zip(plants, provenance, strict=True)):
         if plant.name != prov.get("name"):
             failures.append(
                 f"name mismatch at row {i}: master={plant.name!r}, provenance={prov.get('name')!r}"
@@ -91,7 +91,7 @@ def check_sidecar_null_parity(
     """
     failures: list[str] = []
 
-    for i, (plant, prov) in enumerate(zip(plants, provenance)):
+    for i, (plant, prov) in enumerate(zip(plants, provenance, strict=True)):
         prov_fields: dict = prov.get("fields", {})
         for field in _FIELDS:
             plant_value = getattr(plant, field, None)
@@ -143,8 +143,7 @@ def run_verification(
     if coverage_failures:
         all_passed = False
         lines.append("FAIL  sidecar_row_coverage")
-        for msg in coverage_failures:
-            lines.append(f"      {msg}")
+        lines.extend(f"      {msg}" for msg in coverage_failures)
     else:
         lines.append("PASS  sidecar_row_coverage")
 
@@ -154,8 +153,7 @@ def run_verification(
         if parity_failures:
             all_passed = False
             lines.append("FAIL  sidecar_null_parity")
-            for msg in parity_failures:
-                lines.append(f"      {msg}")
+            lines.extend(f"      {msg}" for msg in parity_failures)
         else:
             lines.append("PASS  sidecar_null_parity")
     else:
@@ -169,14 +167,11 @@ def run_verification(
     if errors:
         all_passed = False
         lines.append(f"FAIL  check_coherence  ({len(errors)} errors, {len(warnings)} warnings)")
-        for issue in errors:
-            lines.append(f"      [ERROR] {issue.check}: {issue.message}")
-        for issue in warnings:
-            lines.append(f"      [WARN]  {issue.check}: {issue.message}")
+        lines.extend(f"      [ERROR] {issue.check}: {issue.message}" for issue in errors)
+        lines.extend(f"      [WARN]  {issue.check}: {issue.message}" for issue in warnings)
     elif warnings:
         lines.append(f"WARN  check_coherence  (0 errors, {len(warnings)} warnings)")
-        for issue in warnings:
-            lines.append(f"      [WARN]  {issue.check}: {issue.message}")
+        lines.extend(f"      [WARN]  {issue.check}: {issue.message}" for issue in warnings)
     else:
         lines.append("PASS  check_coherence")
 

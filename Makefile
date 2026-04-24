@@ -9,16 +9,19 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test check-fast check census census-summary show-prompts
+.PHONY: test lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
 
 test:
 	uv run pytest
 
-check-fast: test
+lint:
+	uv run ruff check src/ tests/ scripts/
 
-check: test
+check-fast: test lint
+
+check: test lint
 
 # --- Prompt inspection -------------------------------------------------------
 

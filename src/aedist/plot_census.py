@@ -90,10 +90,8 @@ def build_scatter_rows(census_rows: list[dict]) -> tuple[list[dict], list[dict]]
     fp_rows: list[dict] = []
     for model_idx, row in enumerate(census_rows):
         y = model_idx
-        for pi in range(1, int(row["n_tp"]) + 1):
-            tp_rows.append({"x": pi, "y": y})
-        for pi in range(1, int(row["n_fp"]) + 1):
-            fp_rows.append({"x": -pi, "y": y})
+        tp_rows.extend({"x": pi, "y": y} for pi in range(1, int(row["n_tp"]) + 1))
+        fp_rows.extend({"x": -pi, "y": y} for pi in range(1, int(row["n_fp"]) + 1))
     return tp_rows, fp_rows
 
 
