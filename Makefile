@@ -60,14 +60,14 @@ $(GEN)/tab_census.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census --output $@
 
-P1_BASE_RECORDS := $(wildcard experiments/outputs/ablation/parametric/p1_base/*.record.json)
+P1_BASE_RECORDS := $(wildcard experiments/outputs/ablation/direct/p1_base/*.record.json)
 
 $(GEN)/tab_base_vs_census.tex: $(MEASUREMENTS) $(P1_BASE_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_base_vs_census --output $@
 
-DECOMP_BEFORE := $(wildcard experiments/outputs/decomposed/reconciliation_*.csv)
-DECOMP_AFTER := $(wildcard experiments/outputs/decomposed_v2/reconciliation_*.csv)
+DECOMP_BEFORE := $(wildcard experiments/outputs/rag_per_fuel/reconciliation_*.csv)
+DECOMP_AFTER := $(wildcard experiments/outputs/rag_per_fuel_v2/reconciliation_*.csv)
 
 $(GEN)/tab_decomposition_fix.tex: $(DECOMP_BEFORE) $(DECOMP_AFTER)
 	@mkdir -p $(dir $@)
@@ -79,12 +79,12 @@ $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex &: $(MEASUREMENTS)
 	    --output $(GEN)/tab_self_consistency.tex \
 	    --per-run-output $(GEN)/tab_per_run.tex
 
-RAG_CSVS := $(wildcard experiments/outputs/rag/*.csv)
+RAG_CSVS := $(wildcard experiments/outputs/rag_extract/*.csv)
 
 $(GEN)/tab_coherence.tex: $(RAG_CSVS) src/aedist/tabulate_coherence.py src/aedist/coherence.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_coherence \
-	    --input experiments/outputs/rag --output $@
+	    --input experiments/outputs/rag_extract --output $@
 
 $(GEN)/fig_base_vs_census.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
 	@mkdir -p $(dir $@)

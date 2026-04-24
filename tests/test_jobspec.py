@@ -22,7 +22,7 @@ def _make_jobspec(**overrides) -> JobSpec:
         models_file="models.yaml",
         repeat=3,
         budget_usd=10.0,
-        output_dir="outputs/census",
+        output_dir="outputs/direct_extract",
     )
     defaults.update(overrides)
     return JobSpec(**defaults)
@@ -103,12 +103,12 @@ class TestFromSweepYaml:
             "models: models.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/census\n"
+            "output: outputs/direct_extract\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.SINGLE
         assert j.models_file == "models.yaml"
-        assert j.output_dir == "outputs/census"
+        assert j.output_dir == "outputs/direct_extract"
 
     def test_rag(self, tmp_path: Path):
         (tmp_path / "sweep.yaml").write_text(
@@ -119,7 +119,7 @@ class TestFromSweepYaml:
             "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/rag\n"
+            "output: outputs/rag_extract\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.RAG
@@ -134,7 +134,7 @@ class TestFromSweepYaml:
             "models: models_sweep_rag.yaml\n"
             "repeat: 3\n"
             "budget_usd: 10\n"
-            "output: outputs/multiturn\n"
+            "output: outputs/direct_multiturn\n"
         )
         j = JobSpec.from_sweep_yaml(tmp_path / "sweep.yaml")
         assert j.mode == Method.MULTITURN

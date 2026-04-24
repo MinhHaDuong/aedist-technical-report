@@ -5,7 +5,7 @@ to N turns, reporting which models would overflow their context window.
 
 Usage:
     python -m aedist.analyze_multiturn_budget \
-        --input experiments/outputs/multiturn \
+        --input experiments/outputs/direct_multiturn \
         --turns 10
 """
 

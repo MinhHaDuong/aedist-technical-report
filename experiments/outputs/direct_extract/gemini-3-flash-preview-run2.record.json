@@ -1,0 +1,34 @@
+{
+  "run_id": "7fa9a3513397",
+  "timestamp": "2026-04-10T15:44:55.802289Z",
+  "method": "single",
+  "method_params": {
+    "model": "google/gemini-3-flash-preview",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576
+    }
+  },
+  "resource_use": {
+    "wall_s": 9.319,
+    "cost_usd": 0.005147,
+    "tokens_in": 52,
+    "tokens_out": 1707
+  },
+  "result_file": "experiments/outputs/direct_extract/gemini-3-flash-preview-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 54,
+    "tp": 54,
+    "fp": 0,
+    "fn": 109,
+    "f1": 0.4977,
+    "fuel_accuracy": 0.8148,
+    "status_accuracy": 0.7407,
+    "province_accuracy": 0.9259
+  }
+}

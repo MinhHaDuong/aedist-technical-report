@@ -14,7 +14,7 @@ Usage:
         --prompt prompts/prompt_extract.txt \
         --corpus data/rag_corpus/ \
         --models models_selected.yaml \
-        --output outputs/decomposed/ \
+        --output outputs/rag_per_fuel/ \
         --repeat 3 --budget-usd 2
 """
 

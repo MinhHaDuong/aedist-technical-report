@@ -438,7 +438,7 @@ def test_run_condition_tool_mode(tmp_path):
     base_config = {
         "model": "test/model-v1",
         "method": "rag",
-        "result_file": "outputs/rag/model-v1-run1.json",
+        "result_file": "outputs/rag_extract/model-v1-run1.json",
     }
 
     record = run_condition(

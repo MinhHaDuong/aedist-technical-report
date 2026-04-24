@@ -5,7 +5,7 @@ Markdown code fences.  This script extracts that CSV, canonicalizes the
 columns, and writes a clean comma-delimited CSV so it can be evaluated.
 
 Usage:
-  python -m aedist.extract --input outputs/census --output outputs/census
+  python -m aedist.extract --input outputs/direct_extract --output outputs/direct_extract
 """
 
 import argparse

@@ -1,0 +1,26 @@
+{
+  "run_id": "b5701d928716",
+  "timestamp": "2026-04-10T17:50:22.820648Z",
+  "method": "single",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "prompt_version": "p1_base",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840
+    }
+  },
+  "resource_use": {
+    "wall_s": 22.798,
+    "cost_usd": 0.01776244,
+    "tokens_in": 67826,
+    "tokens_out": 336
+  },
+  "result_file": "experiments/outputs/ablation/livesearch/p1_base/deepseek-v3.2-run2.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}

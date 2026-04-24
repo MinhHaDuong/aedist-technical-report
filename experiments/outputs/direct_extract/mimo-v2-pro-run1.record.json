@@ -1,0 +1,34 @@
+{
+  "run_id": "ab272a8c3f55",
+  "timestamp": "2026-04-10T15:44:57.457658Z",
+  "method": "single",
+  "method_params": {
+    "model": "xiaomi/mimo-v2-pro",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Xiaomi",
+      "context_window": 1048576
+    }
+  },
+  "resource_use": {
+    "wall_s": 15.76,
+    "cost_usd": 0.003014,
+    "tokens_in": 302,
+    "tokens_out": 904
+  },
+  "result_file": "experiments/outputs/direct_extract/mimo-v2-pro-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 12,
+    "tp": 12,
+    "fp": 0,
+    "fn": 151,
+    "f1": 0.1371,
+    "fuel_accuracy": 0.75,
+    "status_accuracy": 0.8333,
+    "province_accuracy": 0.5833
+  }
+}

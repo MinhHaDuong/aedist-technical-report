@@ -2,7 +2,7 @@
 
 Usage:
     python -m aedist.tabulate_coherence \\
-        --input experiments/outputs/rag \\
+        --input experiments/outputs/rag_extract \\
         --output report/inputs/generated/tab_coherence.tex
 
 Loads every model-run CSV, runs ``coherence.check_coherence()`` on

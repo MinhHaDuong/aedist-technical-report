@@ -55,7 +55,7 @@ _INPUT_CTX_THRESHOLD = 0.9
 # still usable. Content length is used instead of completion_tokens
 # because some backends (Ollama) count internal/reasoning tokens in
 # completion_tokens — the canonical degenerate RAG run
-# ``experiments/outputs/rag/qwen3.5-2b-run2.json`` reports 17182 tokens
+# ``experiments/outputs/rag_extract/qwen3.5-2b-run2.json`` reports 17182 tokens
 # for a 94-character response (an empty CSV shell).
 _SHORT_STOP_CHARS = 200
 

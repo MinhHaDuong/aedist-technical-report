@@ -38,7 +38,7 @@ def _write_p1_base_record(
             "tokens_in": tokens_in,
             "tokens_out": 1000,
         },
-        "result_file": f"experiments/outputs/ablation/parametric/p1_base/{stem}.csv",
+        "result_file": f"experiments/outputs/ablation/direct/p1_base/{stem}.csv",
         "result_summary": {
             "status": "ok",
             "n_plants": n_plants,

@@ -1,0 +1,26 @@
+{
+  "run_id": "533c424bd65f",
+  "timestamp": "2026-04-10T17:50:24.881029Z",
+  "method": "single",
+  "method_params": {
+    "model": "moonshotai/kimi-k2-thinking",
+    "prompt_version": "p1_composite",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Moonshot AI",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 25.855,
+    "cost_usd": 0.03578315,
+    "tokens_in": 71645,
+    "tokens_out": 1055
+  },
+  "result_file": "experiments/outputs/ablation/livesearch/p1_composite/kimi-k2-thinking-run1.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}

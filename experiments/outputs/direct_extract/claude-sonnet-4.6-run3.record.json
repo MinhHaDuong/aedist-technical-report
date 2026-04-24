@@ -1,0 +1,34 @@
+{
+  "run_id": "59a9d25d8f49",
+  "timestamp": "2026-04-10T15:44:55.870244Z",
+  "method": "single",
+  "method_params": {
+    "model": "anthropic/claude-sonnet-4.6",
+    "prompt_version": "census",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Anthropic",
+      "context_window": 1000000
+    }
+  },
+  "resource_use": {
+    "wall_s": 37.479,
+    "cost_usd": 0.035229,
+    "tokens_in": 63,
+    "tokens_out": 2336
+  },
+  "result_file": "experiments/outputs/direct_extract/claude-sonnet-4.6-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 59,
+    "tp": 59,
+    "fp": 0,
+    "fn": 104,
+    "f1": 0.5315,
+    "fuel_accuracy": 0.5932,
+    "status_accuracy": 0.6949,
+    "province_accuracy": 0.8814
+  }
+}

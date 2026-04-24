@@ -17,7 +17,7 @@ from .tabulate_utils import format_model_name
 log = logging.getLogger(__name__)
 
 _DEFAULT_OUTPUT = Path("report/inputs/generated/fig_base_vs_census.pdf")
-_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/parametric/p1_base")
+_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base")
 
 
 def _make_figure(table: dict, output: Path) -> None:

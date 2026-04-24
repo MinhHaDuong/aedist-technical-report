@@ -3,17 +3,17 @@
 Usage:
     python -m aedist.query --prompt prompts/prompt1.txt \
                            --models models.yaml \
-                           --output outputs/census/
+                           --output outputs/direct_extract/
     python -m aedist.query --prompt prompts/prompt1.txt \
                            --models models.yaml \
-                           --output outputs/census/ \
+                           --output outputs/direct_extract/ \
                            --model deepseek/deepseek-r1 \
                            --repeat 3 --budget-usd 5
 
     # Local Ollama backend:
     python -m aedist.query --prompt prompts/prompt1.txt \
                            --models models_padme.yaml \
-                           --output outputs/census/ \
+                           --output outputs/direct_extract/ \
                            --base-url http://localhost:11434/v1 \
                            --output-prefix padme
 """

@@ -1,0 +1,14 @@
+{
+  "run_id": "b74a4f87a21b",
+  "timestamp": "2026-04-13T18:17:23.131209Z",
+  "method": "decomposed",
+  "method_params": {
+    "model": "glm-4.7-flash",
+    "prompt_version": "decomposed_v2"
+  },
+  "resource_use": {},
+  "result_file": "experiments/outputs/rag_per_fuel_v2/glm-4.7-flash-run3.json",
+  "result_summary": {
+    "status": "empty"
+  }
+}

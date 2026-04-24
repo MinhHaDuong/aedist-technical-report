@@ -63,6 +63,37 @@ _MODE_TO_METHOD: dict[Method, Method] = {
     Method.FUSION: Method.FUSION,
 }
 
+# Prompt modules whose directory presence signals sign-notation (ticket 0121).
+# When output_dir ends with /ablation/{aspect}, emit "+{aspect}".
+# When output_dir ends with /ablation/no_{aspect}, emit "-{aspect}".
+_ABLATION_MODULES = frozenset(
+    ["persona", "overview", "narratives", "bibliography", "statistics", "sourcing"]
+)
+
+
+def _derive_ablation_prompt_version(output_dir: Path) -> str | None:
+    """Return sign-notation prompt_version for ablation/plus/minus sweeps.
+
+    Maps output directory names under outputs/ablation/ to prompt_version:
+      ablation/base          -> None  (no special version; caller uses dir name)
+      ablation/{aspect}      -> "+{aspect}"  (sweep_ablation_plus_*)
+      ablation/no_{aspect}   -> "-{aspect}"  (sweep_ablation_minus_*)
+
+    Returns None if the directory is not an ablation plus/minus dir.
+    """
+    parts = output_dir.parts
+    # Look for .../ablation/{leaf} pattern
+    if len(parts) < 2 or parts[-2] != "ablation":
+        return None
+    leaf = parts[-1]
+    if leaf.startswith("no_"):
+        aspect = leaf[3:]
+        if aspect in _ABLATION_MODULES:
+            return f"-{aspect}"
+    elif leaf in _ABLATION_MODULES:
+        return f"+{leaf}"
+    return None
+
 
 class Worker:
     """Base worker that implements the poll-acquire-execute-complete lifecycle."""
@@ -573,9 +604,16 @@ class Worker:
 
         # Translate dispatch mode to emitted method vocabulary.
         emitted_method = _MODE_TO_METHOD.get(job.mode, job.mode)
+        # Derive sign-notation prompt_version for ablation plus/minus sweeps
+        # (ticket 0121/0122): sweep_ablation_plus_* → "+{aspect}",
+        # sweep_ablation_minus_* → "-{aspect}".
+        ablation_pv = _derive_ablation_prompt_version(Path(job.output_dir))
+        method_params = MethodParams(model=job.model_filter or "unknown")
+        if ablation_pv is not None:
+            method_params.prompt_version = ablation_pv
         record = RunRecord(
             method=emitted_method,
-            method_params=MethodParams(model=job.model_filter or "unknown"),
+            method_params=method_params,
             resource_use=ResourceUse(
                 wall_s=result.get("wall_seconds"),
                 cost_usd=result.get("cost_usd"),

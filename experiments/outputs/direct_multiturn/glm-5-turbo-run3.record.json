@@ -1,0 +1,32 @@
+{
+  "run_id": "17b41b13b3d5",
+  "timestamp": "2026-04-10T15:45:12.829582Z",
+  "method": "multiturn",
+  "method_params": {
+    "model": "z-ai/glm-5-turbo",
+    "prompt_version": "multiturn",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Zhipu AI",
+      "context_window": 202752
+    }
+  },
+  "resource_use": {
+    "wall_s": 435.811,
+    "cost_usd": 0.1140412
+  },
+  "result_file": "experiments/outputs/direct_multiturn/glm-5-turbo-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 66,
+    "tp": 66,
+    "fp": 0,
+    "fn": 97,
+    "f1": 0.5764,
+    "fuel_accuracy": 0.6515,
+    "status_accuracy": 0.6212,
+    "province_accuracy": 0.8182
+  }
+}

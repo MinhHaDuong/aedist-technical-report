@@ -13,7 +13,7 @@ Inputs
 ------
 Census arm  : ``measurements.jsonl`` rows where ``method == "direct"`` and
               ``method_params.prompt_version == "census"``.
-Base arm    : ``experiments/outputs/ablation/parametric/p1_base/*.record.json``.
+Base arm    : ``experiments/outputs/ablation/direct/p1_base/*.record.json``.
 
 The intersection of models present in both arms is used.  If fewer than two
 models intersect, the script exits non-zero with a clear message.
@@ -37,7 +37,7 @@ from .tabulate_utils import format_model_name
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/parametric/p1_base")
+_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base")
 _DEFAULT_OUTPUT = Path("report/inputs/generated/tab_base_vs_census.tex")
 _BOOTSTRAP_SEED = 20260411
 
