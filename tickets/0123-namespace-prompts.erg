@@ -68,3 +68,5 @@ This ticket renames existing files to match and defines the full vocabulary.
 - Ablation labels documented in `prompts/README.md`.
 - `make test` green.
 - Unblocks 0120.
+
+2026-04-24T11:29Z claude bump circuit-breaker — agent timeout (wave 1: 0123+0120 completed ~31min, branch pushed, PR #286 open; exceeded 10min but delivered; no kill needed)
