@@ -1,0 +1,38 @@
+%erg v1
+Title: Ticket hygiene — fix misplaced log entries and add validator rule
+Status: open
+Created: 2026-04-24
+Author: claude
+
+--- log ---
+2026-04-24T13:20Z claude created — celebrate sweep: 15+ tickets have log entries in body section
+
+--- body ---
+## Context
+
+Agents systematically append log entries at end-of-file, which lands in the body section
+(after `--- body ---`) instead of the log section (between `--- log ---` and `--- body ---`).
+Found during celebrate sweep after namespace audit session. The pre-commit validator does not
+currently enforce log-entry placement.
+
+Affected closed tickets (all need cleanup): 0075 (pending, live), 0076, 0077, 0117, 0120,
+0121, 0122, 0123, 0124, 0125.
+
+## Actions
+
+1. **Batch fix**: For each affected ticket, move log entries from body section to log section.
+   Script: iterate `tickets/*.erg`, split on `--- body ---`, extract timestamp lines from body,
+   insert them before `--- body ---`, remove from body. Commit in one pass.
+
+2. **Validator rule**: Add check to the pre-commit validator (or a new `check_ticket_structure.py`
+   script):
+   - Parse each `.erg` file into log_section and body_section
+   - Any line in body_section matching `\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z \w+ (created|status|claimed|released|note|bump)` → fail
+
+3. **Wire into `make lint`**: add the structural check alongside `ruff check`.
+
+## Exit criteria
+
+- No log entries appear in any ticket's body section.
+- Validator catches the pattern and blocks commit.
+- `make lint` includes the ticket structure check.
