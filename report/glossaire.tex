@@ -46,7 +46,7 @@
 \item[Open-weight] Modèle dont les poids sont publiés, permettant une exécution locale sans dépendance à un fournisseur cloud.
 \item[Prompt] (\emph{invite}) Instruction textuelle envoyée au modèle. Versionnée et standardisée dans ce benchmark.
 \item[Surgénération] (\emph{over-generation}) Régime d'erreur où le modèle produit plus de résultats que demandé, incluant des entrées hors du domaine (centrales non thermiques).
-\item[Température] (\emph{temperature}) Paramètre de contrôle de l'aléa dans la génération~: 0 (déterministe) à 2 (forte variance). Fixée à 0 pour les expériences frontier et ablation (paramétrique, websearch)~; non contrôlée (défaut fournisseur, typiquement~1,0) pour les sweeps census, RAG, multiturn, web et décomposé. Voir section~\ref{sec:temperature-limitation}.
+\item[Température] (\emph{temperature}) Paramètre de contrôle de l'aléa dans la génération~: 0 (déterministe) à 2 (forte variance). Fixée à 0 pour les sweeps direct\_complete et les bras paramétrique et livesearch de l'ablation~; non contrôlée (défaut fournisseur, typiquement~1,0) pour les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel. Voir section~\ref{sec:temperature-limitation}.
 \item[Token] Unité d'encodage textuel utilisée par les LLM. Les tokens d'entrée (prompt) et de sortie (complétion) sont facturés séparément.
 \item[Troncature] (\emph{truncation}) Coupure de la sortie du modèle avant complétion, due au dépassement de la limite de tokens. Principal facteur limitant en RAG wholesale.
 \end{description}

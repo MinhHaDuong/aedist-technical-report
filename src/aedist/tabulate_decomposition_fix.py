@@ -1,7 +1,7 @@
 """Generate LaTeX table comparing FP rates before/after decomposition prompt fix.
 
-Reads reconciliation CSVs directly from decomposed/ (before) and
-decomposed_v2/ (after) directories. Computes per-run false-positive rates
+Reads reconciliation CSVs directly from rag_per_fuel/ (before) and
+rag_per_fuel_v2/ (after) directories. Computes per-run false-positive rates
 and mean FP rate per model, organized in two panels.
 
 FP rate = count(match_type == "system_only") / count(match_type != "reference_only")
