@@ -18,6 +18,7 @@ test:
 
 lint:
 	uv run ruff check src/ tests/ scripts/
+	uv run python scripts/check_ticket_structure.py
 
 check-fast: test lint
 

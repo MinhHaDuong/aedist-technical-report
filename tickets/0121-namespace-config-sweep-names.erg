@@ -8,6 +8,11 @@ Blocked-by: 0120
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (vocabulary spine)
 2026-04-24T00:00Z claude note vocabulary finalised; sweep_ prefix (Hungarian), modelset_ prefix for sets
+2026-04-24T11:35Z claude claimed
+2026-04-24T11:35Z claude status doing
+2026-04-24T11:57Z claude note verify-gate REROLL: exit criterion 2 (harness translation) deferred to 0122 — prompt_version comes from output dir names, not sweep IDs; translation must wait for 0122 dir renames to avoid split prompt_version values across old/new runs
+2026-04-24T12:00Z claude bump verify-reroll — round 1: harness plus/minus sign-notation translation not implemented (exit criterion 2 MISSING)
+2026-04-24T12:09Z claude status closed — PR #288 merged; 53 sweeps + 14 modelsets renamed; ablation[sets] kept as modelset_ablation_phase2
 
 --- body ---
 ## Design
@@ -135,9 +140,4 @@ Ablation sweep IDs use `plus`/`minus` words; the harness translates to sign-nota
 - `make test` green.
 - Unblocks 0122.
 
-2026-04-24T11:35Z claude claimed
-2026-04-24T11:35Z claude status doing
-2026-04-24T11:57Z claude note verify-gate REROLL: exit criterion 2 (harness translation) deferred to 0122 — prompt_version comes from output dir names, not sweep IDs; translation must wait for 0122 dir renames to avoid split prompt_version values across old/new runs
-2026-04-24T12:00Z claude bump verify-reroll — round 1: harness plus/minus sign-notation translation not implemented (exit criterion 2 MISSING)
 
-2026-04-24T12:09Z claude status closed — PR #288 merged; 53 sweeps + 14 modelsets renamed; ablation[sets] kept as modelset_ablation_phase2

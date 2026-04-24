@@ -10,6 +10,9 @@ Blocked-by: 0124
 
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 0121 0123 0124
+2026-04-24T12:42Z claude claimed
+2026-04-24T12:42Z claude status doing
+2026-04-24T13:15Z claude status closed — PR #290 merged; labels/captions updated, tabulate scripts fixed, generated files regenerated
 
 --- body ---
 ## Note on dependencies
@@ -55,6 +58,3 @@ be updated to use consistent terms. Key locations:
 - Visual spot-check: changed sections read naturally in French.
 - Unblocks 0126.
 
-2026-04-24T12:42Z claude claimed
-2026-04-24T12:42Z claude status doing
-2026-04-24T13:15Z claude status closed — PR #290 merged; labels/captions updated, tabulate scripts fixed, generated files regenerated

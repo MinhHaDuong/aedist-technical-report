@@ -6,6 +6,7 @@ Author: claude
 
 --- log ---
 2026-04-22T14:00Z claude created — follow-up to ticket 0101 (PR #280): script exists, real 36-call run deferred
+2026-04-22T15:45Z claude status closed — 36-call run done; incremental F1@18=88.0%, global=46.2%; Freshness slide filled
 
 --- body ---
 ## Context
@@ -42,4 +43,3 @@ the execution and the two downstream artifacts.
 - `derived/fusion_proto/growth_curve.pdf` committed (two-line F1 curve).
 - Freshness slide shows real F1@18 numbers (not stub).
 - `make check` green.
-2026-04-22T15:45Z claude status closed — 36-call run done; incremental F1@18=88.0%, global=46.2%; Freshness slide filled

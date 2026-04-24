@@ -9,6 +9,11 @@ Author: claude
 2026-04-21T07:48Z claude claimed
 2026-04-21T07:48Z claude status doing
 2026-04-21T07:57Z claude note wrote docs/langchain-deep-agents-eval.md — verdict: deepagents reject, LangGraph narrow defer
+2026-04-21T07:50Z claude status closed — verdict: deepagents reject (shape mismatch), LangGraph defer to ticket 0059. Memo: docs/langchain-deep-agents-eval.md (PR #275)
+2026-04-22T04:50Z user note scope correction — objectif était de trouver un usage deepagents dans un PROTOTYPE v1 (pas d'évaluer vs pipeline v0). L'agent a répondu à la mauvaise question. Relancer avec cadrage v1 : où deepagents peut-il prototyper une capacité stateful-agentique (découverte documentaire, boucle de vérification web, fusion multi-sources) ?
+2026-04-21T08:30Z claude status doing — v1 re-scope: building iterative web-verification prototype
+2026-04-21T09:00Z claude note built src/aedist/prototype_v1_verify_agent.py; ran on 3 plants (Pha Lai 1 search, Song Hau 1 3 searches, Bạc Liêu 1 7 searches); key finding: search depth adapts to name ambiguity — this is the v1 value-add
+2026-04-21T09:00Z claude status closed — v1 prototype complete; addendum added to docs/langchain-deep-agents-eval.md; recommendation: adopt deepagents planner loop for per-entity web-verification in v1 pipeline
 
 --- body ---
 ## Context
@@ -72,8 +77,3 @@ the same input, and a side-by-side report of cost/latency/LOC.
   a clear recommendation with a reproducibility verdict.
 - Decision recorded: adopt (which stages), defer, or reject.
 - If adopt: follow-up ticket(s) opened for the concrete migration.
-2026-04-21T07:50Z claude status closed — verdict: deepagents reject (shape mismatch), LangGraph defer to ticket 0059. Memo: docs/langchain-deep-agents-eval.md (PR #275)
-2026-04-22T04:50Z user note scope correction — objectif était de trouver un usage deepagents dans un PROTOTYPE v1 (pas d'évaluer vs pipeline v0). L'agent a répondu à la mauvaise question. Relancer avec cadrage v1 : où deepagents peut-il prototyper une capacité stateful-agentique (découverte documentaire, boucle de vérification web, fusion multi-sources) ?
-2026-04-21T08:30Z claude status doing — v1 re-scope: building iterative web-verification prototype
-2026-04-21T09:00Z claude note built src/aedist/prototype_v1_verify_agent.py; ran on 3 plants (Pha Lai 1 search, Song Hau 1 3 searches, Bạc Liêu 1 7 searches); key finding: search depth adapts to name ambiguity — this is the v1 value-add
-2026-04-21T09:00Z claude status closed — v1 prototype complete; addendum added to docs/langchain-deep-agents-eval.md; recommendation: adopt deepagents planner loop for per-entity web-verification in v1 pipeline
