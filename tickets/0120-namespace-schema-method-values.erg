@@ -10,44 +10,52 @@ Blocked-by: 0123
 2026-04-24T00:00Z claude note co-dependent with 0123 (prompts); must be worked together on same branch
 2026-04-24T00:00Z claude note vocabulary finalised in session; see body for full mapping
 2026-04-24T00:00Z claude note sourced→cited (sourced implied input direction; cited names output direction)
+2026-04-24T00:00Z claude note +verification and +multiturn are composable process modifiers; schema closed
 
 --- body ---
-## Context
+## Design
 
-The `method` field in `measurements.jsonl` is the most load-bearing
-name in the project — every downstream plot, table, and report section
-reads it. Design decision (2026-04-24): clean separation of two axes:
+The `method` field in `measurements.jsonl` encodes two things via
+a compositional convention:
 
-- `method` — information access mode (where does the model's knowledge
-  come from?). Model-agnostic. No prompt content encoded here.
-- `prompt_version` (in `method_params`) — which prompt was used.
-  Already present in the schema; currently underused (`"derived"`).
+  method = <base>[+<modifier>...]
 
-`rag` and `rag_livesearch` are both retrieval-augmented; the axis is
-how the corpus was assembled: curated (Zotero PDFs) vs dynamic (live
-Tavily search). `rag_livesearch` names the mechanism, not just the
-source.
+**Base** — information access mode (where does knowledge come from?):
+  `direct`          model weights only, no external source
+  `rag`             curated corpus (Zotero-sourced PDFs)
+  `rag_livesearch`  dynamic corpus (live Tavily search at query time)
 
-## Confirmed vocabulary
+**Modifiers** (process layers, composable with `+`):
+  `+multiturn`      conversational — history accumulated across turns
+  `+verification`   post-processing verification layer applied
 
-| Current method | New method     | prompt_version |
-|----------------|----------------|----------------|
-| single         | direct         | extract        |
-| frontier       | direct         | complete       |
-| frontier_scenarios | direct     | scenarios      |
-| web            | rag_livesearch | extract        |
-| rag            | rag            | extract        |
-| decomposed     | rag            | per_fuel       |
-| sourced        | rag            | cited          |
-| multiturn      | multiturn      | extract        |
-| verification   | verification   | —              |
-| frontier_skill | DELETE         | DELETE         |
+`prompt_version` (in `method_params`) — which prompt was used.
+Filenames follow `prompt_{version}.txt` so any version is locatable
+by inspection.
+
+Known simplification: full composability (e.g. `rag+multiturn`) is
+structurally supported but no such experiment exists yet. Future
+combos slot in without schema changes.
+
+## Migration table (current → new)
+
+| Current method   | New method          | prompt_version   |
+|------------------|---------------------|------------------|
+| single           | direct              | extract          |
+| frontier         | direct              | complete         |
+| frontier_scenarios | direct            | scenarios        |
+| web              | rag_livesearch      | extract          |
+| rag              | rag                 | extract          |
+| decomposed       | rag                 | per_fuel         |
+| sourced          | rag                 | cited            |
+| multiturn        | direct+multiturn    | followups        |
+| verification     | rag+verification    | per_fuel         |
+| frontier_skill   | DELETE              | DELETE           |
 
 Ablation runs currently write `prompt_version: "derived"`. Encoding:
-mirror the sweep condition label directly — `"ablation_base"`,
+mirror the sweep condition label — `"ablation_base"`,
 `"ablation_composite"`, `"ablation_persona"`, `"ablation_no_persona"`,
 etc. The harness derives this from the sweep name or module list.
-No new vocabulary needed; the sweep IDs are already systematic.
 
 ## Actions
 
@@ -65,8 +73,8 @@ No new vocabulary needed; the sweep IDs are already systematic.
    `method` and `prompt_version` values for future runs.
 5. Update all readers: `evaluate.py`, `measurements.py`,
    `plot_*.py`, `tabulate_*.py` — any code that matches on method
-   strings. Compound filters (`method == "rag" AND prompt_version ==
-   "per_fuel"`) replace bare `method == "decomposed"` guards.
+   strings. Compound filters (`method == "rag"`, `"+verification" in
+   method`) replace bare `method == "verification"` guards.
 6. Run `make test` green.
 7. Two commits: (a) migration script + data, (b) code changes.
 
@@ -75,6 +83,7 @@ No new vocabulary needed; the sweep IDs are already systematic.
 - `measurements.jsonl` contains no old method values.
 - `harness.py` and all query runners emit new method + prompt_version.
 - All readers updated; `make test` green.
-- Vocabulary table committed as a comment in `harness.py`.
+- Design note (base + modifier convention) committed as comment in
+  `harness.py`.
 - `frontier_skill` fully purged.
 - Unblocks 0121, 0124.
