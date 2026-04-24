@@ -7,50 +7,120 @@ Blocked-by: 0120
 
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (vocabulary spine)
+2026-04-24T00:00Z claude note vocabulary finalised; sweep_ prefix (Hungarian), modelset_ prefix for sets
 
 --- body ---
-## Context
+## Design
 
-Sweep IDs and model-set IDs in `experiments.toml` have accumulated
-without a consistent naming axis. Problems:
+**Hungarian notation** — two prefixes disambiguate bare-string IDs:
+- Sweep IDs: `sweep_` prefix (e.g. `sweep_direct_extract`)
+- Model-set IDs: `modelset_` prefix (e.g. `modelset_census_cloud`)
 
-- `[sweeps.census]` — name suggests statistical census; it is the
-  main single-turn parametric sweep (terse one-liner prompt, no docs).
-  Should align with the `parametric` method name from 0120.
-- `[sweeps.decomposed]` — same misleading name as the method value;
-  rename to match the chosen name from 0120 (e.g. `rag_categorical`).
-- `[sets.rag]`, `[sets.sourced]` — model sets named after the sweep
-  regime, not the model tier. Ambiguous as standalone identifiers.
-- `[sets.ablation]` — marked "legacy alias" in a comment; remove.
-- `[sets.decomposition_fix_probe]` — historical (ticket 0068 closed);
-  remove or archive the set definition.
-- `[sets.base_vs_census_extended]` — verbose; evaluate whether it can
-  be collapsed into a named tier.
-- `[sets.frontier_10labs]`, `[sets.frontier_3best]`, `[sets.frontier_cn]`
-  — overlapping names without clear tier/scope hierarchy.
+Sweep ID convention: `sweep_{method}_{prompt_version}` for non-ablation sweeps.
+Ablation sweeps: `sweep_ablation_{plus|minus}_{aspect}` or `sweep_ablation_{base|composite}`.
+TOML bare-key constraint: signs (`+`/`-`) forbidden in table headers — use `plus`/`minus` in
+the sweep ID; the harness translates to sign-notation `prompt_version` (e.g. `"+persona"`).
+
+## Sweep rename table
+
+| Current                          | New                               | DELETE? |
+|----------------------------------|-----------------------------------|---------|
+| `census`                         | `sweep_direct_extract`            |         |
+| `census_local`                   | `sweep_direct_extract_local`      |         |
+| `frontier`                       | `sweep_direct_complete`           |         |
+| `frontier_scenarios`             | `sweep_direct_scenarios`          |         |
+| `web`                            | `sweep_rag_livesearch`            |         |
+| `rag`                            | `sweep_rag_extract`               |         |
+| `decomposed`                     | `sweep_rag_per_fuel`              |         |
+| `decomposed_v2`                  | `sweep_rag_per_fuel_v2`           |         |
+| `sourced`                        | `sweep_rag_cited`                 |         |
+| `multiturn`                      | `sweep_direct_multiturn`          |         |
+| `verification`                   | `sweep_rag_verification`          |         |
+| `verification_poc`               | `sweep_rag_verification_poc`      |         |
+| `verification_multi`             | `sweep_rag_verification_multi`    |         |
+| `fusion`                         | `sweep_fusion`                    |         |
+| `fusion_dev`                     | `sweep_fusion_dev`                |         |
+| `frontier_skill`                 | —                                 | DELETE  |
+| `ablation_p1_parametric_base`    | `sweep_ablation_p1_direct_base`   |         |
+| `ablation_p1_parametric_base_extended` | `sweep_ablation_p1_direct_base_extended` | |
+| `ablation_p1_parametric_composite` | `sweep_ablation_p1_direct_composite` |    |
+| `ablation_p1_rag_base`           | `sweep_ablation_p1_rag_base`      |         |
+| `ablation_p1_rag_composite`      | `sweep_ablation_p1_rag_composite` |         |
+| `ablation_p1_websearch_base`     | `sweep_ablation_p1_livesearch_base` |       |
+| `ablation_p1_websearch_composite`| `sweep_ablation_p1_livesearch_composite` |  |
+| `ablation_base`                  | `sweep_ablation_base`             |         |
+| `ablation_composite`             | `sweep_ablation_composite`        |         |
+| `ablation_persona`               | `sweep_ablation_plus_persona`     |         |
+| `ablation_no_persona`            | `sweep_ablation_minus_persona`    |         |
+| `ablation_overview`              | `sweep_ablation_plus_overview`    |         |
+| `ablation_no_overview`           | `sweep_ablation_minus_overview`   |         |
+| `ablation_narratives`            | `sweep_ablation_plus_narratives`  |         |
+| `ablation_no_narratives`         | `sweep_ablation_minus_narratives` |         |
+| `ablation_bibliography`          | `sweep_ablation_plus_bibliography`|         |
+| `ablation_no_bibliography`       | `sweep_ablation_minus_bibliography`|        |
+| `ablation_statistics`            | `sweep_ablation_plus_statistics`  |         |
+| `ablation_no_statistics`         | `sweep_ablation_minus_statistics` |         |
+| `ablation_sourcing`              | `sweep_ablation_plus_sourcing`    |         |
+| `ablation_no_sourcing`           | `sweep_ablation_minus_sourcing`   |         |
+| `ablation_frontier`              | `sweep_ablation_frontier`         |         |
+| `ablation_census`                | `sweep_ablation_census`           |         |
+| `ablation_p2_rag_base`           | `sweep_ablation_p2_rag_base`      |         |
+| `ablation_p2_rag_composite`      | `sweep_ablation_p2_rag_composite` |         |
+| `ablation_p2_rag_frontier`       | `sweep_ablation_p2_rag_frontier`  |         |
+| `ablation_p2_rag_census`         | `sweep_ablation_p2_rag_census`    |         |
+| `ablation_p2_rag_persona`        | `sweep_ablation_p2_rag_plus_persona` |      |
+| `ablation_p2_rag_no_persona`     | `sweep_ablation_p2_rag_minus_persona` |     |
+| `ablation_p2_rag_overview`       | `sweep_ablation_p2_rag_plus_overview` |     |
+| `ablation_p2_rag_no_overview`    | `sweep_ablation_p2_rag_minus_overview` |    |
+| `ablation_p2_rag_narratives`     | `sweep_ablation_p2_rag_plus_narratives` |   |
+| `ablation_p2_rag_no_narratives`  | `sweep_ablation_p2_rag_minus_narratives` |  |
+| `ablation_p2_rag_bibliography`   | `sweep_ablation_p2_rag_plus_bibliography` | |
+| `ablation_p2_rag_no_bibliography`| `sweep_ablation_p2_rag_minus_bibliography`| |
+| `ablation_p2_rag_statistics`     | `sweep_ablation_p2_rag_plus_statistics` |   |
+| `ablation_p2_rag_no_statistics`  | `sweep_ablation_p2_rag_minus_statistics` |  |
+| `ablation_p2_rag_sourcing`       | `sweep_ablation_p2_rag_plus_sourcing` |     |
+| `ablation_p2_rag_no_sourcing`    | `sweep_ablation_p2_rag_minus_sourcing` |    |
+
+## Model-set rename table
+
+| Current                  | New                          | DELETE? |
+|--------------------------|------------------------------|---------|
+| `census_cloud`           | `modelset_census_cloud`      |         |
+| `census_local`           | `modelset_census_local`      |         |
+| `frontier`               | `modelset_frontier`          |         |
+| `frontier_10labs`        | `modelset_frontier_10labs`   |         |
+| `frontier_3best`         | `modelset_frontier_3best`    |         |
+| `frontier_cn`            | `modelset_frontier_cn`       |         |
+| `rag`                    | `modelset_rag_extract`       |         |
+| `sourced`                | `modelset_rag_cited`         |         |
+| `ablation_dev`           | `modelset_ablation_dev`      |         |
+| `ablation_journal`       | `modelset_ablation_journal`  |         |
+| `ablation_rag`           | `modelset_ablation_rag`      |         |
+| `ablation_core`          | `modelset_ablation_core`     |         |
+| `base_vs_census_extended`| `modelset_census_extended`   |         |
+| `ablation`               | —                            | DELETE (legacy alias) |
+| `decomposition_fix_probe`| —                            | DELETE (ticket 0068 closed) |
 
 ## Constraints
 
 **TOML bare-key constraint:** TOML table headers cannot start with `-` or `+`.
-Ablation sweep IDs must use underscores (e.g. `ablation_minus_persona`,
-`ablation_plus_persona`) while the emitted `prompt_version` value uses
-sign notation (`"-persona"`, `"+persona"`). The harness must translate.
+Ablation sweep IDs use `plus`/`minus` words; the harness translates to sign-notation
+`prompt_version` values (`"+persona"`, `"-persona"`).
 
 ## Actions
 
-1. Audit every `[sweeps.*]` and `[sets.*]` key; classify each as
-   clear / misleading / redundant / historical.
-2. Propose renames aligned with the vocabulary from 0120.
-3. Remove `[sets.ablation]` (legacy) and `[sets.decomposition_fix_probe]`
-   (historical) after confirming no live sweep references them.
-4. Apply renames in `experiments.toml`. Update any script that
-   references sweep IDs by string (grep for sweep names in `src/`
-   and `scripts/`).
+1. Apply the sweep rename table to `experiments.toml`.
+2. Apply the model-set rename table; delete legacy/historical sets after
+   confirming no live sweep references them.
+3. Update any script that references sweep IDs or set IDs by string
+   (grep `src/` and `scripts/` before editing).
+4. Add harness translation: sweep ID `sweep_ablation_plus_*` / `sweep_ablation_minus_*`
+   → emits `prompt_version: "+*"` / `"-*"`.
 5. Run `make test` green.
 
 ## Exit criteria
 
-- No `[sweeps.census]` or `[sweeps.decomposed]` in `experiments.toml`.
-- No legacy or historical set definitions remain.
+- No old sweep or set name remains in `experiments.toml`.
+- Harness `plus`/`minus` → sign-notation translation in place.
 - `make test` green.
 - Unblocks 0122.

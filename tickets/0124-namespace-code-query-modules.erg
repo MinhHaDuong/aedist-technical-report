@@ -1,5 +1,5 @@
 %erg v1
-Title: Namespace audit — code: rename query_decomposed.py and align query_*.py axis
+Title: Namespace audit — code: rename query_*.py to match call-pattern axis
 Status: open
 Created: 2026-04-24
 Author: claude
@@ -7,45 +7,46 @@ Blocked-by: 0120
 
 --- log ---
 2026-04-24T00:00Z claude created — child of epic 0069; blocked by 0120 (method name decided first)
+2026-04-24T00:00Z claude note naming axis: call pattern (not method value); query_sourced.py absent from disk
 
 --- body ---
-## Context
+## Design
 
-`src/aedist/query_decomposed.py` implements RAG with per-fuel
-subprompts. The name "decomposed" implies a decomposition of output,
-not a RAG variant. After 0120 decides the new method name (e.g.
-`rag_categorical`), this file must be renamed to match.
+`query_*.py` files are named by **call pattern** — what the module does at the
+API call level — not by method value. This is the right axis because
+`query_rag.py` and `query_per_fuel.py` share the same method (`rag`) but
+implement distinct call patterns (single bulk call vs 3 sub-calls by fuel type).
 
-The `query_*.py` family should follow a single naming axis. Current
-files and their actual regime:
+## File rename table
 
-  `query_frontier.py`   — parametric, enriched prompt, reasoning models
-  `query_rag.py`        — RAG wholesale
-  `query_decomposed.py` — RAG per-fuel (MISLEADING)
-  `query_sourced.py`    — RAG + source columns
-  `query_web.py`        — web-search augmented
-  `query_multiturn.py`  — conversational
-  `query_verification.py` — verification overlay
-  `query_fusion.py`     — fusion pipeline
+| Current                | New                      | Call pattern                          |
+|------------------------|--------------------------|---------------------------------------|
+| `query_frontier.py`    | `query_direct.py`        | Single call, no retrieval context     |
+| `query_rag.py`         | `query_rag.py`           | Bulk curated corpus injection (stays) |
+| `query_decomposed.py`  | `query_per_fuel.py`      | 3 sub-calls split by fuel type        |
+| `query_web.py`         | `query_livesearch.py`    | Live Tavily search injection          |
+| `query_multiturn.py`   | `query_multiturn.py`     | Multi-turn with accumulated history   |
+| `query_verification.py`| `query_verification.py`  | 5-mode verification overlay           |
+| `query_fusion.py`      | `query_fusion.py`        | Fusion pipeline (separate arch)       |
 
-`query_frontier.py` is also slightly off-axis: it is parametric +
-enriched prompt, not a "frontier" model (model selection is separate).
-Evaluate whether renaming it to `query_enriched.py` or similar fits.
+`query_sourced.py` does not exist on disk — the `sourced` sweep used `query_rag.py`
+with `prompt_cited.txt`. No rename needed.
 
 ## Actions
 
-1. After 0120 lands, rename `query_decomposed.py` to the name
-   matching the new method value.
-2. Update all imports: `harness.py`, `manager.py`, `__init__.py`,
-   and any script that imports from this module.
-3. Evaluate `query_frontier.py` naming; rename if clearly misleading.
-4. Add a one-line docstring to each `query_*.py` stating its regime
-   in plain language (no jargon).
-5. Run `make test` green.
+1. `git mv query_frontier.py query_direct.py`
+2. `git mv query_decomposed.py query_per_fuel.py`
+3. `git mv query_web.py query_livesearch.py`
+4. Update all import sites: `harness.py`, `manager.py`, `__init__.py`,
+   and any script that imports from these modules (grep before editing).
+5. Update the one-line module docstring in each renamed file to state
+   its call pattern in plain language.
+6. Run `make test` green.
 
 ## Exit criteria
 
-- No file named `query_decomposed.py` in `src/aedist/`.
+- No file named `query_frontier.py`, `query_decomposed.py`, or `query_web.py`
+  in `src/aedist/`.
 - All imports updated; `make test` green.
-- Each `query_*.py` has a one-line regime description.
+- Each `query_*.py` has a one-line docstring stating its call pattern.
 - Unblocks 0125.
