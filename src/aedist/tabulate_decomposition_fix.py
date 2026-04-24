@@ -152,7 +152,7 @@ def render_latex(table: dict) -> str:
     # Panel A: before
     lines.append(
         "\\multicolumn{" + str(max_runs + 2) + "}{l}"
-        "{\\textit{Panel A~: avant correction (decomposed/)}} \\\\"
+        "{\\textit{Panel A~: avant correction (rag\\_per\\_fuel/)}} \\\\"
     )
     lines.append("\\addlinespace")
 
@@ -174,7 +174,7 @@ def render_latex(table: dict) -> str:
     # Panel B: after
     lines.append(
         "\\multicolumn{" + str(max_runs + 2) + "}{l}"
-        "{\\textit{Panel B~: après correction (decomposed\\_v2/)}} \\\\"
+        "{\\textit{Panel B~: après correction (rag\\_per\\_fuel\\_v2/)}} \\\\"
     )
     lines.append("\\addlinespace")
 

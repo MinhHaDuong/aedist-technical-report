@@ -21,8 +21,8 @@ log = logging.getLogger(__name__)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _CORPUS_DIR = _PROJECT_ROOT / "data" / "rag_corpus"
-_SOURCED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "sourced"
-_DECOMPOSED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "decomposed"
+_SOURCED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "rag_cited"
+_DECOMPOSED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "rag_per_fuel"
 _OUTPUT_PATH = _PROJECT_ROOT / "report" / "inputs" / "generated" / "tab_source_grounding.tex"
 
 
@@ -46,7 +46,9 @@ def generate_table() -> str:
     lines = []
     lines.append(r"\begin{table}[ht]")
     lines.append(r"\centering")
-    lines.append(r"\caption{Source grounding verification: sourced extractions vs.\ baseline.}")
+    lines.append(
+        r"\caption{Source grounding verification: RAG cité vs.\ baseline (RAG par combustible).}"
+    )
     lines.append(r"\label{tab:source-grounding}")
     lines.append(r"\begin{tabular}{l r r r r r r r r r}")
     lines.append(r"\toprule")
@@ -66,7 +68,7 @@ def generate_table() -> str:
         rows = _load_sourced_csv(csv_path)
         _, s = verify_source_grounding(rows, _CORPUS_DIR)
         c = s["counts_2x2"]
-        label = "Sourced RAG" if run == 1 else ""
+        label = "RAG cité" if run == 1 else ""
         lines.append(
             f"  {label} & {run} & {s['total_plants']} "
             f"& {_fmt_pct(s['source_rate'])} & {_fmt_pct(s['grounding_rate'])} "
@@ -82,7 +84,7 @@ def generate_table() -> str:
         rows = _load_json_response_rows(json_path)
         _, s = verify_source_grounding(rows, _CORPUS_DIR)
         c = s["counts_2x2"]
-        label = "Decomposed RAG" if run == 1 else ""
+        label = "RAG par combustible" if run == 1 else ""
         lines.append(
             f"  {label} & {run} & {s['total_plants']} "
             f"& {_fmt_pct(s['source_rate'])} & {_fmt_pct(s['grounding_rate'])} "
