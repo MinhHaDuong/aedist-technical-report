@@ -1,18 +1,12 @@
-Last updated: 2026-04-23 (session: slides restructure — PR #285)
+Last updated: 2026-04-24 (session: morning housekeeping)
 
 ## Status
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/decomposed, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed.
 
-**This session (2026-04-23, slides restructure — PR #285):**
-- **Task 1**: Census chart moved to §Problème (frame 3); stripped from pilot-design frame (no duplicate).
-- **Task 2**: AEDIST v1 architecture overview slide added after criteria table; "today = de-risking" framing.
-- **Task 3**: Both N-plants charts redesigned as horizontal scatter (one dot = one plant). `plot_census.py` extended with `n_tp`/`n_fp` + scatter CSV generation. Quality color palette added to `palette.toml`.
-- **Task 4**: Réf. column removed from criteria table; van Fraassen/Popper/Intersubjectivité as footnotes.
-- **Task 5**: Three quality ladder slides (result / method / model) inserted before §Perspectives.
-- Six `% REVIEW MINOR:` comments added for deferred editorial decisions (loanwords, STANAG header, Watcher mapping, footnote attributions).
+**This session (2026-04-24, morning housekeeping):** Orphaned worktree dir removed (agent-a2597ed5). Merged remote branches deleted (lit-review-0077-notes, ticket-0075-prompt-optimizer-survey). Stale .wip claim files cleared (0067, 0076, 0085 — all closed). Diverged main reconciled: STATE.md refresh rebased onto origin/main.
 
-**Previous session (2026-04-22, housekeeping):** F1-drift investigated (false alarm), stale test removed, 4 stale branches pruned.
+**Previous session (2026-04-23, slides restructure — PR #285):** Census chart moved; v1 architecture slide added; N-plants charts redesigned as horizontal scatter; quality ladder slides inserted; six REVIEW MINOR comments added.
 
 ## Blockers
 
