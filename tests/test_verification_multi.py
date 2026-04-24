@@ -338,7 +338,7 @@ class TestSweepConfig:
 
     def test_verification_multi_config_exists(self, experiments):
         """verification_multi sweep is in experiments.toml."""
-        config = experiments["sweeps"]["verification_multi"]
+        config = experiments["sweeps"]["sweep_rag_verification_multi"]
         assert config["repeat"] == 3
         assert config["budget_usd"] == 5
         assert "multi_cross" in config["verification_modes"]
@@ -348,7 +348,7 @@ class TestSweepConfig:
 
     def test_verifier_panel_diversity(self, experiments):
         """Panel has 3 distinct providers."""
-        config = experiments["sweeps"]["verification_multi"]
+        config = experiments["sweeps"]["sweep_rag_verification_multi"]
         panel = config["verifier_panel"]
         providers = {m.split("/")[0] for m in panel}
         assert len(providers) == 3  # anthropic, openai, deepseek
