@@ -1,6 +1,6 @@
 %erg v1
 Title: Namespace audit — file system: rename experiments/outputs/ directories
-Status: doing
+Status: closed
 Created: 2026-04-24
 Author: claude
 Blocked-by: 0121
@@ -73,3 +73,5 @@ No `frontier_scenarios/` or `verification/` top-level directory exists on disk y
 
 2026-04-24T12:11Z claude claimed
 2026-04-24T12:11Z claude status doing
+
+2026-04-24T12:42Z claude status closed — PR #289 merged; 8 dirs renamed, 280 record.json + measurements.jsonl migrated, ablation subdir renames done
