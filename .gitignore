@@ -64,5 +64,3 @@ Thumbs.db
 .claude/worktrees/
 .claude/projects/
 
-# git-erg compiled binary (rebuild with: cd tickets/tools/go && go build -o erg .)
-tickets/tools/go/erg
