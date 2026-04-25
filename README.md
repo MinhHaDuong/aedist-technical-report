@@ -6,7 +6,7 @@ Technical feasibility report for the **AEDIST** project (AI-driven Energy Data I
 
 This report (in French) evaluates AI technologies for tracking energy transitions in countries lacking robust statistical offices. It uses Vietnam's thermal power plant inventory (164 plants) as a benchmark case study.
 
-The benchmark tests 32 AI models across multiple configurations: single-shot, multi-turn, RAG, web-augmented, and verified — measuring recall, precision, F1, cost, and latency.
+The benchmark tests 49 AI models across multiple configurations: single-shot, multi-turn, RAG, web-augmented, and verified — measuring recall, precision, F1, cost, and latency.
 
 ## Author
 
@@ -16,10 +16,10 @@ Minh Ha-Duong, CIRED – CNRS
 
 ```
 ├── src/aedist/              # Python benchmark package
-├── tests/                   # 61 tests
+├── tests/                   # 68 tests
 ├── experiments/             # Experiment pipeline
 │   ├── experiments.toml     # Routers, model sets, and sweep configs
-│   ├── models.yaml          # 52-model registry (single source of truth)
+│   ├── models.yaml          # 49-model registry (single source of truth)
 │   └── Makefile             # Sweep orchestration
 ├── data/reference/          # Ground truth CSVs
 ├── report/                  # LaTeX technical report
@@ -33,7 +33,7 @@ Minh Ha-Duong, CIRED – CNRS
 Requires [Tectonic](https://tectonic-typesetting.github.io/) and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-make test              # Run all 61 Python tests
+make test              # Run all 68 Python tests
 make report            # Build report/report.pdf
 make slides            # Build slides/slides.pdf
 make tables            # Generate LaTeX tables from experiment results

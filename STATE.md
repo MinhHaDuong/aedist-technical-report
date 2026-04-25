@@ -1,10 +1,12 @@
-Last updated: 2026-04-24 (session: namespace audit + tooling hygiene)
+Last updated: 2026-04-25T00:00Z (housekeeping: stale branch + README/models.yaml count fixes)
 
 ## Status
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed. `make lint` now includes ruff + ticket structure check.
 
-**This session (2026-04-24):** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated, tickets/memory audited. Also: ticket log-placement validator added (`scripts/check_ticket_structure.py`, PR #292), 10 historical tickets fixed.
+**2026-04-25 housekeeping:** Deleted stale branch `worktree-healthcheck`; updated README.md (32→49 models, 52→49 registry, 61→68 tests); updated models.yaml header (46→49 instances).
+
+**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated, tickets/memory audited. Also: ticket log-placement validator added (`scripts/check_ticket_structure.py`, PR #292), 10 historical tickets fixed.
 
 **Previous session (2026-04-24, morning):** Orphaned worktrees/branches cleaned, stale .wip files cleared, diverged main reconciled.
 
