@@ -17,6 +17,7 @@ Author: claude
 2026-04-13T11:30Z claude note operator confirmed: prompt is only for seed table, verification is on top. Evidence scores are not an optimization signal for the prompt — they're the verification pipeline's job. Objective simplified to min-of-5(recall × hallucination_gate). Three-way separation: (1) what optimizer controls (seed extraction), (2) result quality (evidence ladder, post-verification), (3) system requirements (cost, speed, universality, genericity).
 2026-04-21T00:00Z claude note produced docs/prompt-optimizer-survey.md — decision memo covering DSPy MIPROv2, TextGrad, OPRO, Promptbreeder, APE, AdalFlow, balukosuri autoresearch skill. Recommendation: adopt DSPy MIPROv2 (black-box metric API, LiteLLM multi-provider, seed+trace logging). Defer: OPRO, TextGrad, AdalFlow. Reject: Promptbreeder, APE, balukosuri as standalone optimizer. Prototype (Phase 1 actions 3–7) deferred to follow-up ticket.
 2026-04-21T07:50Z claude note survey complete — DSPy MIPROv2 adopt, TextGrad/AdalFlow defer, Promptbreeder/APE/balukosuri reject. Memo: docs/prompt-optimizer-survey.md (PR #276). Prototype phase (actions 3-7) deferred to follow-up ticket.
+2026-04-26T10:00Z claude note orchestrator reimagined+planned: survey done, prototype remains. Wrote concrete 7-step execution plan with integration points, model selection, cost estimate, and file layout. Feasibility verified against codebase.
 
 --- body ---
 ## Context
@@ -418,3 +419,129 @@ A short script or notebook that:
 - Decision recorded: adopt (which tool, which stages), defer, or
   reject. If adopt, open a follow-up ticket for integration into
   the prompt_modules workflow and the measurement-hygiene wall.
+
+## Prototype execution plan (2026-04-26, orchestrator Phase 3)
+
+### Status of exit criteria
+
+| Criterion | Status |
+|-----------|--------|
+| Comparison table | Done — `docs/prompt-optimizer-survey.md` (PR #276) |
+| Framework recommendation | Done — DSPy MIPROv2 adopted |
+| Composite objective defined | Done — `min_of_5(recall × hallucination_gate)` |
+| `docs/quality-grounding.md` | Done — already committed |
+| Prototype run + before/after | **Remaining** — actions below |
+| Universal-prompt verdict | **Remaining** — requires prototype results |
+| Decision recorded | **Remaining** — requires prototype results |
+
+### 5-model floor set (`modelset_dspy_floor5`)
+
+| # | Model | Provider route | Cost/Mcall | Notes |
+|---|-------|---------------|------------|-------|
+| 1 | `deepseek/deepseek-v3.2` | OpenRouter→DeepSeek | $0.38 | MoE, **repeat=3 mandatory** |
+| 2 | `mistralai/mistral-small-2603` | OpenRouter→Mistral | $0.60 | 24B dense |
+| 3 | `google/gemini-2.5-flash-lite` | OpenRouter→Google | ~$0.10 | Cheap flash tier |
+| 4 | `openai/gpt-5-nano` | OpenRouter→OpenAI | ~$0.15 | Smallest OpenAI |
+| 5 | `qwen3.5:9b` | Ollama (local) | $0.00 | Local, tests Ollama path |
+
+Spans 5 model families, 2 routes (OpenRouter + Ollama), ≥3 providers. ✓
+
+### File layout
+
+```
+experiments/dspy_prototype/
+├── __init__.py
+├── extraction_program.py   # DSPy Signature + Module
+├── metric.py               # min_of_5(recall × hallucination_gate) callable
+├── run_optimize.py         # MIPROv2 runner with budget cap
+├── run_evaluate.py         # Held-out eval → measurements.jsonl
+└── README.md               # Usage + cost notes
+experiments/optimizer_runs/  # Trace artifacts (.gitignore'd)
+```
+
+### Concrete steps
+
+**Step 1 — Dependencies.**
+Add `dspy-ai>=2.6` to `pyproject.toml` under `[project.optional-dependencies]`
+as a new group `dspy-prototype`. Verify LiteLLM ships with it (it does).
+
+**Step 2 — Model set.**
+Add `[sets.modelset_dspy_floor5]` to `experiments/experiments.toml` with the
+5 models above. Add corresponding sweep config `[sweeps.sweep_dspy_prototype]`.
+
+**Step 3 — DSPy Signature + Module** (`extraction_program.py`).
+- `DocumentExtraction(dspy.Signature)`: input `document: str`, output
+  `csv_table: str` (the plant inventory as CSV text).
+- `ExtractModule(dspy.Module)`: wraps `dspy.Predict(DocumentExtraction)`.
+  The base instruction is the current `base.txt` prompt. DSPy will optimize
+  this instruction text and select few-shot demonstrations.
+- Schema validation gate inside the module: parse the CSV output, reject if
+  columns don't match `Plant` schema (`name,fuel,status,capacity_mwe,...`).
+  This prevents ontological drift (see quality-grounding.md §2.4).
+
+**Step 4 — Metric callable** (`metric.py`).
+```python
+def min_of_5_metric(example, prediction, trace=None):
+    scores = []
+    for model_id in FLOOR5_MODELS:
+        # Re-run extraction with this model using the optimized prompt
+        csv_text = run_extraction(model_id, prediction.csv_table)
+        entries = reconcile(reference_df, parse_csv(csv_text))
+        metrics = compute_metrics(entries)
+        gate = 1.0 if metrics.n_hallucinated == 0 else 0.0
+        scores.append(metrics.coverage * gate)
+    return min(scores)
+```
+Uses existing `reconcile()` (`src/aedist/reconcile.py:187`) and
+`compute_metrics()` (`src/aedist/metrics.py:51`). No new evaluation code.
+
+**Step 5 — Optimizer runner** (`run_optimize.py`).
+- Teacher LM: `anthropic/claude-sonnet-4.6` (mid-tier, good at meta-reasoning).
+- MIPROv2 config: `num_trials=10`, `max_bootstrapped_demos=3`,
+  `max_labeled_demos=3`, `seed=42`, `log_dir=experiments/optimizer_runs/`.
+- Budget guard: abort if cumulative cost exceeds $3.00.
+- Dev set: full Vietnam/thermal reference (163 plants), single PDP8 document.
+- Output: best prompt saved to `experiments/dspy_prototype/optimized_prompt.json`.
+
+**Step 6 — Held-out evaluation** (`run_evaluate.py`).
+- Run the optimized prompt on each of the 5 floor models.
+- Compare against the hand-tuned `base.txt` baseline (same 5 models).
+- Produce before/after table: recall, hallucination count, min-of-5 score,
+  cost, wall-clock time per model.
+- Write final held-out results to `measurements.jsonl` with
+  `prompt_version: "dspy"` (schema.py already anticipates this value).
+
+**Step 7 — Spike note** (`docs/dspy-prototype-spike.md`).
+- Before/after table from Step 6.
+- Pareto frontier plot if MIPROv2 logged per-trial scores.
+- Verdict: does "one universal prompt" hold, or does MIPROv2 overfit to
+  one model? Is the min-of-5 floor higher than baseline?
+- Decision: adopt for production integration, defer to Phase 2
+  (cross-asset-class), or reject.
+
+### Cost estimate (external API, not session budget)
+
+| Component | Calls | Est. cost |
+|-----------|-------|-----------|
+| MIPROv2 teacher (sonnet-4.6, 10 proposals) | ~10 | ~$0.50 |
+| Evaluated models (10 trials × 5 models) | 50 | ~$0.50 |
+| DeepSeek repeat=3 overhead (10 trials × 2 extra) | 20 | ~$0.15 |
+| Held-out eval (5 models × 2 prompts) | 10 | ~$0.10 |
+| **Total** | ~90 | **~$1.25** |
+
+Well within the $3.00 budget guard. Conservative — real cost may be lower
+if cheap models are very cheap.
+
+### Risks and mitigations
+
+1. **DSPy table output**: DSPy was designed for QA, not structured table
+   extraction. Mitigation: schema validation gate in the metric rejects
+   malformed CSV. If MIPROv2 can't produce valid tables, that's a negative
+   result worth reporting.
+2. **Ollama single-job**: Padme runs one Ollama job at a time. Mitigation:
+   metric callable runs models sequentially, not in parallel.
+3. **MoE nondeterminism**: DeepSeek V3.2 repeat=3 mandatory. Mitigation:
+   metric averages 3 reps for DeepSeek, takes single rep for dense models.
+4. **Measurement contamination**: Optimizer traces must not enter
+   `measurements.jsonl`. Mitigation: only `run_evaluate.py` writes to
+   measurements; optimizer artifacts go to `experiments/optimizer_runs/`.
