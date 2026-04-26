@@ -1,6 +1,6 @@
 %erg v1
 Title: Survey automated prompt-optimization frameworks (DSPy et al.) for a universal prompt
-Status: open
+Status: pending
 Created: 2026-04-11
 Author: claude
 
@@ -18,6 +18,7 @@ Author: claude
 2026-04-21T00:00Z claude note produced docs/prompt-optimizer-survey.md — decision memo covering DSPy MIPROv2, TextGrad, OPRO, Promptbreeder, APE, AdalFlow, balukosuri autoresearch skill. Recommendation: adopt DSPy MIPROv2 (black-box metric API, LiteLLM multi-provider, seed+trace logging). Defer: OPRO, TextGrad, AdalFlow. Reject: Promptbreeder, APE, balukosuri as standalone optimizer. Prototype (Phase 1 actions 3–7) deferred to follow-up ticket.
 2026-04-21T07:50Z claude note survey complete — DSPy MIPROv2 adopt, TextGrad/AdalFlow defer, Promptbreeder/APE/balukosuri reject. Memo: docs/prompt-optimizer-survey.md (PR #276). Prototype phase (actions 3-7) deferred to follow-up ticket.
 2026-04-26T10:00Z claude note orchestrator reimagined+planned: survey done, prototype remains. Wrote concrete 7-step execution plan with integration points, model selection, cost estimate, and file layout. Feasibility verified against codebase.
+2026-04-26T15:10Z haduong deferred — Phase 5 (Execute) blocked until after Econom'IA talk 2026-05-27. Do not pick this ticket autonomously before that date. When picked post-talk, proceed directly to Execute (Phase 5) — no need to ask for direction.
 
 --- body ---
 ## Context
