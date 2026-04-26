@@ -50,6 +50,9 @@ attic/
 # Migration backups
 *.jsonl.bak-*
 
+# Beat cycle runtime log
+beat-log.jsonl
+
 # Editor / IDE / OS
 *~
 *.swp

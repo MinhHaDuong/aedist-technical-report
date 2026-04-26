@@ -1,4 +1,4 @@
-Last updated: 2026-04-25T00:00Z (housekeeping: stale branch + README/models.yaml count fixes)
+Last updated: 2026-04-26T00:00Z (housekeeping: gitignore beat-log.jsonl)
 
 ## Status
 
