@@ -8,7 +8,8 @@
       "Bash(cp __TRACKED_VAR__/pdfOCR2md/Makefile __TRACKED_VAR__/pdfOCR2md/pdfOCR2md.py tools/pdfOCR2md/)",
       "Bash(mkdir -p publications/journal-article)",
       "Bash(mv src/aedist/select_top.py src/aedist/select_models.py)",
-      "Bash(mv tests/test_select_top.py tests/test_select_models.py)"
+      "Bash(mv tests/test_select_top.py tests/test_select_models.py)",
+      "Edit(*/.git/hooks/*)"
     ]
   }
 }
