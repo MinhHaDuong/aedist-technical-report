@@ -8,11 +8,11 @@ Author: claude
 2026-04-24T00:00Z claude created — post-conference gate; blocked until after 2026-05-27 talk
 2026-04-26T16:06Z claude note sweep-skip: status-post-conference hash:cfe911bd32bf
 
+2026-04-27T22:04Z claude note sweep-skip: status-post-conference hash:a138d4fefb68
 --- body ---
-## Context
-
-Ticket 0097 Phase 1 completed URL-level audit: every cited URL is
-reachable and the domain is plausible. Phase 2 asks a harder question:
+:04Z claude note sweep-skip: status-post-conference hash:a138d4fefb68
+--- body ---
+able and the domain is plausible. Phase 2 asks a harder question:
 does the *content* at the URL actually support the extracted value?
 This requires LLM adjudication, not just URL resolution.
 
