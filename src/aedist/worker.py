@@ -208,7 +208,7 @@ class Worker:
                 api_kwargs=api_kwargs,
             )
         elif mode == Method.VERIFICATION:
-            raise NotImplementedError(
+            raise NotImplementedError(  # noqa: hygiene — documented design choice
                 "verification mode requires external orchestration "
                 "(use query_verification.py directly)"
             )
