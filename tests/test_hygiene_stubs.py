@@ -18,6 +18,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.adherence
+
 SRC = Path(__file__).resolve().parents[1] / "src" / "aedist"
 
 PATTERNS = [
