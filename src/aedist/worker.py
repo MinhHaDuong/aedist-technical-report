@@ -260,7 +260,7 @@ class Worker:
         elif mode == Method.FUSION:
             return self._execute_fusion(job)
         elif mode == Method.VERIFICATION:
-            raise NotImplementedError(
+            raise NotImplementedError(  # noqa: hygiene — documented design choice
                 "verification mode requires external orchestration "
                 "(use query_verification.py directly)"
             )
