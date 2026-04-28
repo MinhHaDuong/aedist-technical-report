@@ -1,4 +1,4 @@
-Last updated: 2026-04-28T00:00Z (housekeeping: committed dirty files, 3 commits ahead of origin)
+Last updated: 2026-04-29T00:00Z (housekeeping: rebased onto origin/main after PRs #293/#294, now 6 ahead)
 
 ## Status
 
