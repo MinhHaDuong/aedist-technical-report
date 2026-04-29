@@ -396,7 +396,7 @@ output = "qualitative/scenarios"
 # Temperature: provider-recommended for structured extraction (0.0–0.3).
 # DeepSeek note: API temp 1.0 maps internally to 0.3 (their recommended).
 #
-# All modules: persona, overview, sourcing, narratives, bibliography, statistics
+# All modules: persona, overview, citation_columns, sourcing_ground, narratives, bibliography, statistics
 
 # Phase 1 — Selection: base vs composite across 3 regimes
 # Uses modelset_ablation_dev (cheap reasoning models) for pipeline validation.
@@ -428,7 +428,7 @@ output = "outputs/ablation/direct/p1_base"
 
 [sweeps.sweep_ablation_p1_direct_composite]
 mode = "single"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_dev"
 repeat = 2
@@ -449,7 +449,7 @@ output = "outputs/ablation/rag/p1_base"
 
 [sweeps.sweep_ablation_p1_rag_composite]
 mode = "rag"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_dev"
 repeat = 2
@@ -472,7 +472,7 @@ output = "outputs/ablation/livesearch/p1_base"
 [sweeps.sweep_ablation_p1_livesearch_composite]
 mode = "single"
 web_search = true
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_dev"
 repeat = 2
@@ -487,7 +487,7 @@ mode = "single"
 prompt_modules = []
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/base"
@@ -497,7 +497,7 @@ mode = "single"
 prompt_modules = ["persona"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/persona"
@@ -507,7 +507,7 @@ mode = "single"
 prompt_modules = ["overview"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/overview"
@@ -517,7 +517,7 @@ mode = "single"
 prompt_modules = ["narratives"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/narratives"
@@ -527,7 +527,7 @@ mode = "single"
 prompt_modules = ["bibliography"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/bibliography"
@@ -537,29 +537,39 @@ mode = "single"
 prompt_modules = ["statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/statistics"
 
-[sweeps.sweep_ablation_plus_sourcing]
+[sweeps.sweep_ablation_plus_citation_columns]
 mode = "single"
-prompt_modules = ["sourcing"]
+prompt_modules = ["citation_columns"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
-output = "outputs/ablation/sourcing"
+output = "outputs/ablation/citation_columns"
+
+[sweeps.sweep_ablation_plus_sourcing_ground]
+mode = "single"
+prompt_modules = ["sourcing_ground"]
+models = "models.yaml"
+model_set = "modelset_ablation_phase2"
+repeat = 3
+budget_usd = 5
+seed = 42
+output = "outputs/ablation/sourcing_ground"
 
 # Anchors
 
 [sweeps.sweep_ablation_composite]
 mode = "single"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/composite"
@@ -569,7 +579,7 @@ mode = "single"
 prompt = "prompts/prompt_complete.txt"
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/frontier"
@@ -579,7 +589,7 @@ mode = "single"
 prompt = "prompts/prompt_extract.txt"
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/census"
@@ -588,65 +598,75 @@ output = "outputs/ablation/census"
 
 [sweeps.sweep_ablation_minus_persona]
 mode = "single"
-prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_persona"
 
 [sweeps.sweep_ablation_minus_overview]
 mode = "single"
-prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_overview"
 
 [sweeps.sweep_ablation_minus_narratives]
 mode = "single"
-prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_narratives"
 
 [sweeps.sweep_ablation_minus_bibliography]
 mode = "single"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_bibliography"
 
 [sweeps.sweep_ablation_minus_statistics]
 mode = "single"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/no_statistics"
 
-[sweeps.sweep_ablation_minus_sourcing]
+[sweeps.sweep_ablation_minus_citation_columns]
 mode = "single"
-prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models.yaml"
 model_set = "modelset_ablation_phase2"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
-output = "outputs/ablation/no_sourcing"
+output = "outputs/ablation/no_citation_columns"
 
-# Phase 2 RAG — same 16 prompt variants as Phase 1, but in RAG mode.
+[sweeps.sweep_ablation_minus_sourcing_ground]
+mode = "single"
+prompt_modules = ["persona", "overview", "citation_columns", "narratives", "bibliography", "statistics"]
+models = "models.yaml"
+model_set = "modelset_ablation_phase2"
+repeat = 3
+budget_usd = 5
+seed = 42
+output = "outputs/ablation/no_sourcing_ground"
+
+# Phase 2 RAG — same 18 prompt variants as Phase 2 direct, but in RAG mode.
 # Models: models_ablation_p2_rag.yaml (DeepSeek V3.2, Kimi K2 Thinking).
 # web_search defaults to false (ticket 0094).
 
@@ -654,16 +674,16 @@ output = "outputs/ablation/no_sourcing"
 mode = "rag"
 prompt_modules = []
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_base"
 
 [sweeps.sweep_ablation_p2_rag_composite]
 mode = "rag"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_composite"
@@ -672,7 +692,7 @@ output = "outputs/ablation/rag/p2_composite"
 mode = "rag"
 prompt = "prompts/prompt_complete.txt"
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_frontier"
@@ -681,7 +701,7 @@ output = "outputs/ablation/rag/p2_frontier"
 mode = "rag"
 prompt = "prompts/prompt_extract.txt"
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_census"
@@ -690,7 +710,7 @@ output = "outputs/ablation/rag/p2_census"
 mode = "rag"
 prompt_modules = ["persona"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_persona"
@@ -699,7 +719,7 @@ output = "outputs/ablation/rag/p2_persona"
 mode = "rag"
 prompt_modules = ["overview"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_overview"
@@ -708,7 +728,7 @@ output = "outputs/ablation/rag/p2_overview"
 mode = "rag"
 prompt_modules = ["narratives"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_narratives"
@@ -717,7 +737,7 @@ output = "outputs/ablation/rag/p2_narratives"
 mode = "rag"
 prompt_modules = ["bibliography"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_bibliography"
@@ -726,72 +746,91 @@ output = "outputs/ablation/rag/p2_bibliography"
 mode = "rag"
 prompt_modules = ["statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_statistics"
 
-[sweeps.sweep_ablation_p2_rag_plus_sourcing]
+[sweeps.sweep_ablation_p2_rag_plus_citation_columns]
 mode = "rag"
-prompt_modules = ["sourcing"]
+prompt_modules = ["citation_columns"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
-output = "outputs/ablation/rag/p2_sourcing"
+output = "outputs/ablation/rag/p2_citation_columns"
+
+[sweeps.sweep_ablation_p2_rag_plus_sourcing_ground]
+mode = "rag"
+prompt_modules = ["sourcing_ground"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 3
+budget_usd = 5
+seed = 42
+output = "outputs/ablation/rag/p2_sourcing_ground"
 
 [sweeps.sweep_ablation_p2_rag_minus_persona]
 mode = "rag"
-prompt_modules = ["overview", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["overview", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_persona"
 
 [sweeps.sweep_ablation_p2_rag_minus_overview]
 mode = "rag"
-prompt_modules = ["persona", "sourcing", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "citation_columns", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_overview"
 
 [sweeps.sweep_ablation_p2_rag_minus_narratives]
 mode = "rag"
-prompt_modules = ["persona", "overview", "sourcing", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_narratives"
 
 [sweeps.sweep_ablation_p2_rag_minus_bibliography]
 mode = "rag"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "statistics"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_bibliography"
 
 [sweeps.sweep_ablation_p2_rag_minus_statistics]
 mode = "rag"
-prompt_modules = ["persona", "overview", "sourcing", "narratives", "bibliography"]
+prompt_modules = ["persona", "overview", "citation_columns", "sourcing_ground", "narratives", "bibliography"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
 seed = 42
 output = "outputs/ablation/rag/p2_no_statistics"
 
-[sweeps.sweep_ablation_p2_rag_minus_sourcing]
+[sweeps.sweep_ablation_p2_rag_minus_citation_columns]
 mode = "rag"
-prompt_modules = ["persona", "overview", "narratives", "bibliography", "statistics"]
+prompt_modules = ["persona", "overview", "sourcing_ground", "narratives", "bibliography", "statistics"]
 models = "models_ablation_p2_rag.yaml"
-repeat = 2
+repeat = 3
 budget_usd = 5
-output = "outputs/ablation/rag/p2_no_sourcing"
+seed = 42
+output = "outputs/ablation/rag/p2_no_citation_columns"
+
+[sweeps.sweep_ablation_p2_rag_minus_sourcing_ground]
+mode = "rag"
+prompt_modules = ["persona", "overview", "citation_columns", "narratives", "bibliography", "statistics"]
+models = "models_ablation_p2_rag.yaml"
+repeat = 3
+budget_usd = 5
+seed = 42
+output = "outputs/ablation/rag/p2_no_sourcing_ground"
 
 # ---------------------------------------------------------------------------
 # Fusion prototype sweeps (prototype_v1_fusion.py)

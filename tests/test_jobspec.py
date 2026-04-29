@@ -155,9 +155,9 @@ class TestJobSpecPromptModules:
         assert j.prompt_modules == []
 
     def test_prompt_modules_roundtrip_yaml(self):
-        original = _make_jobspec(prompt_modules=["persona", "overview", "sourcing"])
+        original = _make_jobspec(prompt_modules=["persona", "overview", "citation_columns"])
         restored = JobSpec.from_yaml(original.to_yaml())
-        assert restored.prompt_modules == ["persona", "overview", "sourcing"]
+        assert restored.prompt_modules == ["persona", "overview", "citation_columns"]
 
     def test_prompt_modules_none_excluded_from_yaml(self):
         j = _make_jobspec()
