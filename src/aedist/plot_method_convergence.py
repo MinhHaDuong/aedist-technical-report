@@ -159,7 +159,6 @@ def write_pdf(
 
     order = method_order or _METHOD_ORDER
     spacing = 0.08
-    model_gap = 0.02
     gap = 0.5
 
     # Auto-size height based on actual row count
@@ -284,8 +283,6 @@ def write_pdf(
     ax.text(
         -75, y_top, "Hallucinations", color=COLOR_HALLUC, fontsize=16, va="bottom", ha="center"
     )
-    ax.grid(axis="x", linewidth=0.2, alpha=0.3)
-    ax.set_axisbelow(True)
     ax.tick_params(axis="x", labelsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
