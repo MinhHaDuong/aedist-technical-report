@@ -1,0 +1,33 @@
+%erg v1
+Title: Remplacer le pgfplots census scatter par une figure Python PDF
+Status: closed
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T18:00Z claude created
+2026-04-29T20:00Z claude status closed — implemented via plot_method_convergence.py --methods direct --prompt-version census; wired in Makefile, slides, report
+
+--- body ---
+## Context
+
+`slides/slides.tex:128` contient un `\begin{axis}` inline qui dessine le
+scatter TP/FP (57 modèles × 163 centrales) en consommant
+`census_scatter_tp.csv` et `census_scatter_fp.csv` via pgfplots.
+
+Règle repo : les figures sont générées par Python et incluses comme PDF
+(`\includegraphics`). Test d'enforcement : `tests/test_no_inline_plots.py`
+(ticket 0130).
+
+## Actions
+
+1. Écrire un script Python qui génère `fig_census_scatter.pdf` (matplotlib).
+2. Remplacer le bloc `\begin{axis}...\end{axis}` par `\includegraphics`.
+3. Vérifier que `tectonic slides.tex` compile sans erreur.
+4. Supprimer le xfail de `test_no_begin_axis` si c'est la dernière violation.
+
+## Exit criteria
+
+- `slides/slides.tex` ne contient plus de `\begin{axis}` pour le census scatter
+- `fig_census_scatter.pdf` généré par un script Python commité
+- `tectonic slides.tex` sans erreur

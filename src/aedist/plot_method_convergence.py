@@ -13,13 +13,58 @@ Usage:
 """
 
 import argparse
+import colorsys
 import csv
+import hashlib
 import logging
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, normalize_model
+from .util import COLOR_HALLUC, COLOR_REFERENCE, normalize_model
+
+
+def _model_color(model: str) -> tuple[float, float, float]:
+    h = int(hashlib.md5(model.encode()).hexdigest()[:6], 16) / 0xFFFFFF
+    return colorsys.hsv_to_rgb(h, 0.75, 0.82)
+
+
+_SIZE_CLASS_B = {"edge": 4, "small": 9, "medium": 30, "large": 100, "frontier": 300}
+
+# Confirmed total parameter counts (B) from official sources / tech reports.
+# MoE: total params (not active). Undisclosed models fall back to _SIZE_CLASS_B.
+_KNOWN_SIZE_B: dict[str, float] = {
+    "deepseek-v3.2": 671,  # 671B MoE, 37B active
+    "devstral-small-2": 24,  # dense
+    "glm-4.7-flash": 30,  # 30B MoE, 3B active
+    "glm-5-turbo": 745,  # 745B MoE, 44B active
+    "kimi-k2.5": 1000,  # 1T MoE, 32B active
+    "llama-4-maverick": 400,  # 400B MoE, 17B active
+    "mimo-v2-flash": 309,  # 309B MoE, 15B active
+    "mimo-v2-pro": 1000,  # ~1T MoE, 42B active
+    "minimax-m2.7": 230,  # 230B MoE, 10B active
+    "mistral-large-2512": 675,  # 675B MoE, 41B active (Mistral Large 3)
+    "mistral-small-2603": 119,  # 119B MoE, 6.5B active (Mistral Small 4 — NOT 24B dense)
+    "mistral-small3.2": 24,  # dense
+    "nemotron-3-nano": 30,  # 30B MoE, 3B active
+    "qwen3.5-plus-02-15": 397,  # 397B MoE, 17B active
+    "step-3.5-flash": 196,  # 196B MoE, 11B active
+}
+
+
+def _model_size_b(model: str, size_class: str | None = None) -> float:
+    """Effective parameter count in billions for sorting (nano → hexascale).
+
+    Priority: confirmed registry → regex on name → size_class fallback.
+    """
+    if model in _KNOWN_SIZE_B:
+        return _KNOWN_SIZE_B[model]
+    matches = re.findall(r"(\d+(?:\.\d+)?)b", model.lower())
+    if matches:
+        return max(float(m) for m in matches)
+    return float(_SIZE_CLASS_B.get(size_class or "", 500))
+
 
 log = logging.getLogger(__name__)
 
@@ -38,22 +83,28 @@ _METHOD_LABELS = {
 }
 
 
-def load_convergence_data() -> list[dict]:
+def load_convergence_data(prompt_version: str | None = None) -> list[dict]:
     """Load and clean measurements for the convergence plot.
 
     Returns list of dicts with keys: method, model, tp, fp, fn.
+    prompt_version: if set, only records with that prompt_version are included.
     """
     rows = []
     for record in load():
         method = record.method.value
         if method not in _METHOD_ORDER:
             continue
+        if prompt_version is not None:
+            pv = getattr(record.method_params, "prompt_version", None)
+            if pv != prompt_version:
+                continue
         model = normalize_model(record.method_params.model)
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         s = record.result_summary
         if s.tp is None:
             continue
+        ex = record.method_params.extra or {}
         rows.append(
             {
                 "method": method,
@@ -61,6 +112,8 @@ def load_convergence_data() -> list[dict]:
                 "tp": s.tp or 0,
                 "fp": s.fp or 0,
                 "fn": s.fn or 0,
+                "local": ex.get("provider") == "Ollama/Padme",
+                "size_class": ex.get("size_class", ""),
             }
         )
     return rows
@@ -91,6 +144,7 @@ def write_pdf(
     models: set[str] | None = None,
     max_runs_per_model: int = 3,
     max_fp: int = 80,
+    method_order: list[str] | None = None,
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
@@ -101,15 +155,31 @@ def write_pdf(
     import matplotlib.pyplot as plt
     import numpy as np
 
-    fig, ax = plt.subplots(figsize=(10, 4.2))
+    order = method_order or _METHOD_ORDER
+    spacing = 0.08
+    model_gap = 0.02
+    gap = 0.5
+
+    # Auto-size height based on actual row count
+    total_runs = 0
+    for method in order:
+        method_rows = [r for r in rows if r["method"] == method]
+        if models:
+            method_rows = [r for r in method_rows if r["model"] in models]
+        model_count: Counter[str] = Counter()
+        for r in method_rows:
+            if model_count[r["model"]] < max_runs_per_model:
+                model_count[r["model"]] += 1
+        total_runs += sum(model_count.values())
+    fig_height = max(4.2, 0.08 * total_runs + 0.5 * len(order))
+
+    fig, ax = plt.subplots(figsize=(10, fig_height))
 
     y_offset = 0.0
+    y_last = 0.0
     method_ticks = []
-    spacing = 0.4
-    model_gap = 0.15  # extra gap between different models within a band
-    gap = 1.5
 
-    for method in _METHOD_ORDER:
+    for method in order:
         method_rows = [r for r in rows if r["method"] == method]
         if models:
             method_rows = [r for r in method_rows if r["model"] in models]
@@ -117,7 +187,7 @@ def write_pdf(
             continue
 
         # Limit runs per model
-        model_count: Counter[str] = Counter()
+        model_count = Counter()
         filtered = []
         for r in method_rows:
             if model_count[r["model"]] < max_runs_per_model:
@@ -125,41 +195,60 @@ def write_pdf(
                 model_count[r["model"]] += 1
         method_rows = filtered
 
-        # Sort by model then TP descending (group runs by model)
-        method_rows.sort(key=lambda r: (-r["tp"], r["model"]))
+        # Sort nano → hexascale using explicit B count or size_class fallback
+        method_rows.sort(
+            key=lambda r: (_model_size_b(r["model"], r.get("size_class")), r["model"], -r["tp"])
+        )
 
         band_start = y_offset
-        prev_model = None
+        model_ys: dict[str, list[float]] = {}
+        model_local: dict[str, bool] = {}
         for i, run in enumerate(method_rows):
-            if prev_model is not None and run["model"] != prev_model:
-                y_offset += model_gap
             y = y_offset + i * spacing
-            prev_model = run["model"]
+            y_last = y
+            model_ys.setdefault(run["model"], []).append(y)
+            model_local[run["model"]] = run.get("local", False)
             tp = run["tp"]
             fp_raw = run["fp"]
             fp = min(fp_raw, max_fp)
 
-            # TP dots (blue, right of 0) — 1 dot = 1 plant
+            color = _model_color(run["model"])
+
+            # TP dots (right of 0) — 1 dot = 1 plant
             if tp > 0:
                 xs = np.arange(1, tp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, c=COLOR_MATCHED, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(xs, ys, s=4, color=color, marker="|", linewidths=0.5, zorder=3)
 
-            # FP dots (orange, left of 0) — 1 dot = 1 hallucinated plant
+            # FP dots (left of 0) — 1 dot = 1 hallucinated plant
             if fp > 0:
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, c=COLOR_HALLUC, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(xs, ys, s=4, color=color, marker="|", linewidths=0.5, zorder=3)
                 if fp_raw > max_fp:
                     ax.text(
                         -fp - 1,
                         y,
                         f"({fp_raw})",
                         fontsize=5,
-                        color=COLOR_HALLUC,
+                        color=color,
                         va="center",
                         ha="right",
                     )
+
+        # Model name labels at x=-5, right-aligned, centered on each model's runs
+        for model, ys in model_ys.items():
+            y_mid = sum(ys) / len(ys)
+            label = f"{model} (local)" if model_local.get(model) else model
+            ax.text(
+                -5,
+                y_mid,
+                label,
+                ha="right",
+                va="center",
+                fontsize=13.5,
+                color=_model_color(model),
+            )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
         method_ticks.append((band_center, _METHOD_LABELS.get(method, method)))
@@ -167,31 +256,37 @@ def write_pdf(
 
     # Reference line at 163
     ax.axvline(x=163, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2)
-    ax.text(165, -0.5, "163\nplants", color=COLOR_REFERENCE, fontsize=8, va="top", ha="left")
 
     # Zero line
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
-    # Y axis: method labels
-    ax.set_yticks([t[0] for t in method_ticks])
-    ax.set_yticklabels([t[1] for t in method_ticks], fontsize=11)
+    ax.set_yticks([])
     ax.set_xlabel("Number of power plants", fontsize=11)
     ax.set_xlim(-max_fp - 15, 185)
-    ax.invert_yaxis()
+    # Invert via ylim order (no invert_yaxis) so set_ylim stays predictable
+    ax.set_ylim(y_last + spacing, -spacing)
+    ax.grid(axis="x", linewidth=0.2, alpha=0.3)
+    ax.set_axisbelow(True)
+
+    # Labels at graph level (data coordinates)
+    y_top = -spacing * 0.5
+    ax.text(
+        163,
+        y_top,
+        "163\nreal plants",
+        color=COLOR_REFERENCE,
+        fontsize=16,
+        va="bottom",
+        ha="center",
+    )
+    ax.text(
+        -75, y_top, "Hallucinations", color=COLOR_HALLUC, fontsize=16, va="bottom", ha="center"
+    )
     ax.grid(axis="x", linewidth=0.2, alpha=0.3)
     ax.set_axisbelow(True)
     ax.tick_params(axis="x", labelsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-
-    # Legend — upper right, inside the empty space
-    from matplotlib.lines import Line2D
-
-    legend_handles = [
-        Line2D([0], [0], color=COLOR_MATCHED, linewidth=3, label="Correctly identified"),
-        Line2D([0], [0], color=COLOR_HALLUC, linewidth=3, label="Hallucinated"),
-    ]
-    ax.legend(handles=legend_handles, loc="center right", fontsize=9, framealpha=0.9)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -212,21 +307,49 @@ def main() -> None:
     parser.add_argument(
         "--core-only",
         action="store_true",
-        help="Only models tested under all 5 methods",
+        help="Only models tested under all methods",
+    )
+    parser.add_argument(
+        "--methods",
+        default=None,
+        help="Comma-separated list of methods to include (default: all)",
+    )
+    parser.add_argument(
+        "--prompt-version",
+        default=None,
+        help="Filter to a single prompt_version (e.g. census, p1_base)",
+    )
+    parser.add_argument(
+        "--output-macros",
+        default=None,
+        help="Write \\NumCensusModels macro to this .tex file",
     )
     args = parser.parse_args()
 
-    rows = load_convergence_data()
+    rows = load_convergence_data(prompt_version=args.prompt_version)
     models = core_models(rows) if args.core_only else None
+
+    if args.methods:
+        requested = [m.strip() for m in args.methods.split(",")]
+        method_order = [m for m in _METHOD_ORDER if m in requested]
+    else:
+        method_order = None
 
     output = Path(args.output)
     if output.suffix == ".pdf":
-        write_pdf(rows, output, models=models)
+        write_pdf(rows, output, models=models, method_order=method_order)
     else:
         write_csv(rows, output)
 
     if args.csv:
         write_csv(rows, Path(args.csv))
+
+    if args.output_macros:
+        n_models = len({r["model"] for r in rows})
+        macros_path = Path(args.output_macros)
+        macros_path.parent.mkdir(parents=True, exist_ok=True)
+        macros_path.write_text(f"\\newcommand{{\\NumCensusModels}}{{{n_models}}}\n")
+        log.info("Wrote %s (NumCensusModels=%d)", macros_path, n_models)
 
 
 if __name__ == "__main__":

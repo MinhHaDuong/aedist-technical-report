@@ -132,6 +132,13 @@ La limite de taille des réponses (4K--8K tokens) joue un rôle critique~: l'inf
 
 \input{inputs/generated/tab_census}
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\linewidth]{inputs/generated/fig_census_direct.pdf}
+\caption{Résultats des \NumModelsTested{} modèles sur le prompt census (passe unique, sans documentation). Chaque barre~: un run, une couleur par modèle. Ligne verte~: référence (163 centrales).}
+\label{fig:census-direct}
+\end{figure}
+
 \section{Expérience 2~: approche conversationnelle avec relances}\label{sec:exp2}
 
 Les modèles de chat tendent à fournir des réponses courtes. Une approche conversationnelle permet-elle de découvrir toute l'étendue de leurs connaissances~? Pour vérifier cette hypothèse, on utilise le \emph{Prompt~2}\label{sec:methode}, plus détaillé, suivi de trois relances~:

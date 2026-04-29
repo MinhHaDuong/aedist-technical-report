@@ -5,9 +5,6 @@ sorted by f1 descending. f1 is median across runs as a decimal 0-1.
 n_tp and n_fp are median matched/hallucinated plant counts (integers).
 local is 1 for Padme models, 0 otherwise.
 
-Also writes census_scatter_tp.csv and census_scatter_fp.csv alongside
-census_bars.csv — one row per plant, used by the dot-per-plant slide chart.
-
 Usage:
     uv run python -m aedist.plot_census \\
         --measurements measurements.jsonl \\
@@ -117,16 +114,6 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
     log.info("Wrote %d rows to %s", len(rows), output_path)
-
-    tp_rows, fp_rows = build_scatter_rows(rows)
-    tp_path = output_path.parent / "census_scatter_tp.csv"
-    fp_path = output_path.parent / "census_scatter_fp.csv"
-    for path, data in [(tp_path, tp_rows), (fp_path, fp_rows)]:
-        with open(path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=["x", "y"])
-            writer.writeheader()
-            writer.writerows(data)
-        log.info("Wrote %d rows to %s", len(data), path)
 
 
 if __name__ == "__main__":

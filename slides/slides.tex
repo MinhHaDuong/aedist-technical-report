@@ -13,6 +13,7 @@
 \setbeamertemplate{frame numbering}[fraction]
 
 \InputIfFileExists{inputs/generated/macros}{}{}
+\InputIfFileExists{inputs/generated/macros_census}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
 \definecolor{missed}{HTML}{E8505B}
@@ -120,42 +121,11 @@ sans reddition cognitive~?
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{\NumModelsTested{} modèles, 163 centrales~: le modèle seul ne suffit pas}
-\pgfplotstableread[col sep=comma]{inputs/generated/census_bars.csv}\censusdata
-\pgfplotstablegetrowsof{\censusdata}
-\pgfmathtruncatemacro{\censusrows}{\pgfplotsretval-1}
-\begin{tikzpicture}
-\begin{axis}[
-    width=0.96\textwidth,
-    height=6.0cm,
-    xlabel={Centrales (un point = une centrale)},
-    xmin=-30, xmax=170,
-    ytick={0,...,\censusrows},
-    y tick label style={font=\tiny, anchor=east},
-    yticklabel={\pgfplotstablegetelem{\tick}{model}\of{\censusdata}\pgfplotsretval},
-    y dir=reverse,
-    enlarge y limits=0.02,
-    axis x line=center,
-    axis y line=left,
-    xticklabel style={font=\tiny},
-    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
-    clip=false,
-]
-% Hallucinated plants — negative territory, red dots
-\addplot[only marks, mark=*, mark size=1pt, color=qualred, opacity=0.8]
-    table[x=x, y=y, col sep=comma] {inputs/generated/census_scatter_fp.csv};
-\addlegendentry{Hallucinée}
-% Found plants — positive territory, yellow dots
-\addplot[only marks, mark=*, mark size=1pt, color=qualyellow, opacity=0.8]
-    table[x=x, y=y, col sep=comma] {inputs/generated/census_scatter_tp.csv};
-\addlegendentry{Identifiée}
-% Reference line at 163
-\addplot[dashed, thick, color=qualgreen, forget plot] coordinates {(163, -0.5) (163, \censusrows+0.5)};
-\end{axis}
-\end{tikzpicture}
-
-\smallskip
-{\small Passe unique, sans documentation. Ligne verte~: référence (163 centrales). \textbf{Le choix du modèle ne résout pas le problème.}}
+\begin{frame}{\NumCensusModels{} modèles, 163 centrales~: le modèle seul ne suffit pas}
+\begin{center}
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
+\end{center}
+{\small Passe unique, sans documentation. \textbf{Le choix du modèle ne résout pas le problème.}}
 \end{frame}
 
 % -------------------------------------------------------------------
