@@ -19,3 +19,9 @@
 **Cite closely-related projects unconditionally.** Work a reader of this paper would obviously know (e.g., PyPSA-VN, powerplantmatching for an AEDIST-style paper) must be cited even if not strictly required by the argument.
 
 **No in-repo documents in the bibliography.** `docs/*.md`, internal planning notes, and uncommitted artefacts never appear in the paper's references.
+
+## LaTeX macro includes (tectonic)
+
+For ≤3 new macro values, write inline in the slide or append to the existing `macros.tex` — do **not** create a new `\InputIfFileExists{inputs/generated/new_file}{}{}` include. Tectonic resolves filenames against its online bundle first and can silently load the wrong file, causing cryptic "Missing \begin{document}" errors.
+
+**Why:** Agent 0117 burned 20 min on this. Fix was 2 lines inline. Only create a new include file if a script regenerates it on every build run.

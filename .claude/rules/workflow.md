@@ -23,3 +23,9 @@ In an `EnterWorktree` session, `Edit`/`Write`/`Read` tools accept any absolute p
 ## Closing issues and PRs
 
 Never close GitHub issues or PRs without explicit user confirmation, even when acceptance criteria appear met. Recommend closures but always ask first, especially never close PRs belonging to other sessions or worktrees.
+
+## Ruff post-edit hook strips unused imports
+
+Always group import + usage in the **same Edit** call. Never add an import in one edit and its usage in another — ruff deletes the import between edits. When renaming a symbol: `replace_all` old→new FIRST, then add the new import line.
+
+**Why:** The ruff hook runs after every Edit. Import-then-usage round-trips are the #1 cause of wasted edits in this repo.
