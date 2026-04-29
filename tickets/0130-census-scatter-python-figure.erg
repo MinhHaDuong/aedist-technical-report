@@ -22,6 +22,7 @@ visible ; la règle doit être enforced sur tous les .tex présents et futurs.
 
 1. Écrire `tests/test_no_inline_plots.py` : cherche `\begin{axis}` dans
    tous les `**/*.tex` du repo, échoue si un match est trouvé.
+   Marqué `@pytest.mark.adherence`.
 2. Constater les violations (liste dans le log du ticket).
 3. Ouvrir un ticket de remédiation par violation.
 
