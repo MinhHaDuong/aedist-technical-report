@@ -137,7 +137,14 @@ def load_experiments(path: str) -> dict:
 # ---------------------------------------------------------------------------
 
 # Module ordering: persona is prepended, all others appended in this order.
-_MODULE_ORDER = ["overview", "citation_columns", "narratives", "bibliography", "statistics"]
+_MODULE_ORDER = [
+    "overview",
+    "citation_columns",
+    "sourcing_ground",
+    "narratives",
+    "bibliography",
+    "statistics",
+]
 KNOWN_MODULES = frozenset(["persona"] + _MODULE_ORDER)
 
 

@@ -88,7 +88,7 @@ Format the response as CSV with a header row.
 
 \subsection{Modules}\label{sec:modules}
 
-Six modules sont testés. Chacun est un paragraphe ajouté à la fin du prompt
+Sept modules sont testés. Chacun est un paragraphe ajouté à la fin du prompt
 de base.
 
 \paragraph{Persona} Ajoute une consigne de rôle en tête du prompt.
@@ -160,7 +160,7 @@ sources — write "evidence uncertain" if unsure.
 \subsection{Plan de mesures}\label{sec:plan-mesures}
 
 Le design expérimental croise deux axes~: la \textbf{composition du prompt}
-(7~modules, 2~bras) et le \textbf{régime d'information} (4~modes d'accès
+(7~modules, 2~bras) et le \textbf{régime d'information} (3~modes d'accès
 aux connaissances). Chaque cellule du tableau prompt~$\times$~régime est
 un point de mesure indépendant.
 
@@ -168,8 +168,7 @@ un point de mesure indépendant.
 
 \begin{description}
 \item[Census] Le Prompt~1 original (40~mots), point de référence bas.
-\item[Base] Le prompt de base DSPy (section~\ref{sec:prompt-base},
-  optimisé par MIPROv2, voir Phase~0), point de référence intermédiaire.
+\item[Base] Le prompt de base manuel (section~\ref{sec:prompt-base}), point de référence intermédiaire.
 \item[Complet] Le prompt de base + les 7~modules, point de référence haut.
 \item[Direct complet] Le prompt direct\_complete existant (1\,200~mots), contrôle externe.
 \end{description}
@@ -213,7 +212,7 @@ un point de mesure indépendant.
 
 \paragraph{Régimes d'information}
 
-Quatre régimes d'accès aux connaissances sont testés en croisant les 18~prompts~:
+Trois régimes d'accès aux connaissances sont testés en croisant les 18~prompts~:
 
 \begin{description}
 \item[Paramétrique] Le modèle répond uniquement à partir de ses poids
@@ -221,65 +220,29 @@ Quatre régimes d'accès aux connaissances sont testés en croisant les 18~promp
 \item[RAG wholesale] Le corpus de 18~documents est injecté intégralement
   dans le contexte avant la requête.
 \item[Recherche web] Le modèle dispose d'un outil de recherche Internet
-  (Tavily ou plugin natif).
-\item[Incrémental] Le modèle part de sa sortie paramétrique (table initiale),
-  puis reçoit les 18~documents un par un~: chaque tour fournit un document
-  et demande de mettre à jour la table. Le régime mesure la valeur marginale
-  de chaque document ajouté et la capacité du modèle à réviser sans régresser.
-  Coût~: $18\times$ plus de tours que les autres régimes~; exécuté sur un
-  sous-panel de modèles (Phase~3).
+  (Tavily ou plugin natif). Ce régime est exécuté sur les 4~prompts
+  d'ancrage uniquement (coût par appel élevé).
 \end{description}
 
 \subsection{Protocole}\label{sec:protocole-ablation}
 
-\paragraph{Phase~0 — Optimisation DSPy du prompt base}
-
-Le prompt base manuel (section~\ref{sec:prompt-base}) est optimisé par
-MIPROv2 sur un ensemble d'entraînement disjoint de l'ensemble d'évaluation
-(répartition 60/40 de l'inventaire de référence). Le prompt résultant~---
-\emph{prompt base DSPy}~--- remplace le prompt base manuel pour toutes les
-phases ultérieures. Les résultats H$_1$ (section suivante) restent valides
-comme référence sur le prompt base manuel~; ils mesurent le gain dû à
-l'ingénierie de prompt humaine, indépendamment de l'optimisation automatique.
-
 \paragraph{Contrôle de la variance}
 
 Tous les appels sont effectués avec $t{=}0{,}0$, graine fixée (\texttt{seed=42})
-et fournisseur épinglé via OpenRouter (\texttt{provider\_order}). Ces trois
-verrous éliminent la variance stochastique~: deux runs identiques devraient
-produire des sorties bit-à-bit identiques. \textbf{Vérification préalable
-obligatoire~:} avant chaque phase, deux répétitions sont lancées sur un modèle
-pilote~; si les sorties sont identiques, une seule répétition suffit pour le
-reste de la campagne. Si le fournisseur n'honore pas le seed (divergence
-observée), on revient à 3~répétitions pour ce modèle ou on l'exclut du panel.
-Cette preuve de déterminisme est reportée en annexe et constitue une garantie
-de reproductibilité pour les relecteurs.
+et fournisseur épinglé via OpenRouter (\texttt{provider\_order}). Pour les
+modèles MoE à grande échelle (DeepSeek~R1~0528 et Kimi~K2~Thinking, 671B),
+le parallélisme tensoriel introduit un non-déterminisme résiduel même avec
+ces verrous~; trois répétitions sont donc obligatoires (\texttt{repeat=3})
+pour ces modèles.
 
-\paragraph{Phase~1 — Sélection des modèles}
+\paragraph{Exécution}
 
-Les prompts~1 (base DSPy) et~9 (complet) sont exécutés sur l'ensemble des
-modèles du census (25+~modèles cloud), \textbf{2~répétitions pilotes} à
-$t{=}0{,}0$ sur les régimes paramétrique et RAG. Si le déterminisme est
-confirmé, une seule répétition est retenue par condition. On retient les
-$k$~modèles dont le $|\Delta\text{F1}|$ moyen dépasse 0,05 (5~points) sur
-au moins un régime.
-
-\paragraph{Phase~2 — Mesure complète (régimes paramétrique, RAG, livesearch)}
-
-Les 18~prompts sont exécutés sur les $k$~modèles retenus à $t{=}0{,}0$,
-\textbf{1~répétition} si le déterminisme est confirmé en Phase~1, sinon~3
-($18 \times k \times 1$ à $18 \times k \times 3$~runs par régime). Chaque
-run produit un CSV évalué contre l'inventaire de référence (163~centrales,
-matching par nom exact et approximatif). Le nombre total de tokens générés
-est mesuré par condition pour contrôler l'effet de budget de sortie.
-
-\paragraph{Phase~3 — Régime incrémental}
-
-Sur un sous-panel de $k'{\leq}k$~modèles~: les 4~prompts d'ancrage (Census,
-Base DSPy, Complet, Frontier) sont exécutés en régime incrémental
-(18~tours par run, \textbf{1~répétition} si déterminisme confirmé). Les
-14~variantes de composition/ablation ne sont pas répétées en régime
-incrémental sauf si Phase~2 révèle des effets d'interaction forts.
+Les 18~prompts sont exécutés sur le panel \texttt{modelset\_ablation\_phase2}
+(4~modèles raisonnants~: DeepSeek~R1~0528, Ernie~4.5~Thinking,
+Qwen3-Max-Thinking, Kimi~K2~Thinking) dans les régimes paramétrique et RAG,
+\textbf{3~répétitions} par condition. Le régime livesearch est exécuté sur
+les 4~prompts d'ancrage uniquement. Chaque run produit un CSV évalué contre
+l'inventaire de référence (section~\ref{sec:metrics}).
 
 \paragraph{Analyse}
 \begin{itemize}
@@ -300,15 +263,10 @@ incrémental sauf si Phase~2 révèle des effets d'interaction forts.
 
 \paragraph{Budget prévisionnel}
 
-Phase~0 (DSPy)~: inclus dans le budget MIPROv2 (ticket~0075).
-Phase~1 (sélection)~: $2 \times 25 \times 2 \times 2 = 200$~runs pilotes,
-${\approx}\,3$~\$.
-Phase~2 (mesure, $k{=}5$, déterminisme confirmé)~: $18 \times 5 \times 1 \times 3 = 270$~runs,
-${\approx}\,5$--15~\$.
-Phase~3 (incrémental, $k'{=}3$, déterminisme confirmé)~: $4 \times 3 \times 1 \times 18 = 216$~tours,
-${\approx}\,2$--5~\$.
-Total (cas favorable)~: ${\approx}\,10$--23~\$~; cas défavorable (déterminisme non confirmé)~:
-${\approx}\,25$--70~\$. Les modèles open-weight réduisent ce budget d'un facteur~5--10.
+Panel de 4~modèles, 18~prompts, 3~répétitions, 2~régimes (paramétrique et RAG)~:
+$4 \times 18 \times 3 \times 2 = 432$~runs, ${\approx}\,15$--40~\$.
+Régime livesearch sur 4~prompts d'ancrage~:
+$4 \times 4 \times 3 = 48$~runs supplémentaires, ${\approx}\,5$--10~\$.
 
 \paragraph{Limites du design}
 
@@ -319,15 +277,33 @@ ${\approx}\,25$--70~\$. Les modèles open-weight réduisent ce budget d'un facte
   factoriel $2^7=128$~prompts). L'asymétrie composition/ablation détecte la
   \emph{présence} d'interactions mais ne les attribue pas à un couple
   spécifique.
-\item \textbf{Régime incrémental limité.} Pour des raisons de coût, le régime
-  incrémental n'est appliqué qu'aux prompts d'ancrage en Phase~3. Les effets
-  d'interaction module~$\times$~incrémental ne sont pas mesurés sauf si
-  Phase~2 les suggère.
-\item \textbf{Dépendance à DSPy.} Si MIPROv2 absorbe l'effet d'un module en
-  l'intégrant au prompt base optimisé, son $\Delta$F1 en ablation sera proche
-  de zéro. Cet effet est attendu pour les modules à fort signal de rappel
-  (cadrage, sourçage-ground).
 \end{itemize}
+
+\subsection{Décisions de conception}\label{sec:decisions-conception}
+
+\paragraph{Baseline fixe, non optimisée}
+
+L'ablation quantifie la contribution de chaque module~; ce signal est
+interprétable seulement si la baseline est fixe et connue. Un optimiseur
+de prompt automatique (DSPy / MIPROv2) peut absorber le signal d'un module
+dans le texte du prompt base~: si c'est le cas, l'ablation renvoie un
+$\Delta$F1 proche de zéro non pas parce que le module est sans effet,
+mais parce que son effet a déjà été capturé par l'optimiseur. Lancer
+l'ablation depuis une baseline DSPy rend le résultat ininterprétable.
+L'optimisation automatique est la bonne étape suivante \emph{après}
+l'ablation, une fois que les modules à conserver sont identifiés~;
+les deux expériences sont orthogonales et doivent rester séparées.
+
+\paragraph{Trois régimes, pas quatre}
+
+Le régime incrémental (le modèle reçoit les documents un par un,
+18~tours par run) n'est pas un régime d'information distinct~: c'est
+une architecture de pipeline différente, applicable dans chacun des
+trois régimes. De plus, son coût ($18\times$ plus de tokens par run)
+est incompatible avec un design factoriel complet prompt~$\times$~régime
+sur 18~prompts. La question «~quelle est la valeur marginale de chaque
+document ajouté~?~» est orthogonale à la question de l'ablation et
+constitue une expérience séparée.
 
 \subsection{Hypothèses pré-enregistrées}\label{sec:hypotheses-ablation}
 
@@ -429,7 +405,7 @@ $S_g$ (ground)& $-$     & $+$
 L'intersection des deux bras couvre désormais neuf modèles (DeepSeek-V3.2,
 Mistral-Small-2603, Gemini-2.5-Flash-Lite, Gemini-3-Flash-Preview,
 Kimi-K2.5, Minimax-M2.7, Qwen3.5-122b-A10b, Qwen3.5-35b-A3b et
-Seed-2.0-Lite), après avoir étendu la campagne Phase~1 à sept modèles
+Seed-2.0-Lite), après avoir étendu la campagne pilote à sept modèles
 \emph{cloud} bon marché supplémentaires déjà présents dans le panel
 \emph{census}. L'échantillon reste modeste mais autorise une décomposition
 quantitative.
@@ -514,7 +490,7 @@ Le benchmark présenté aux chapitres~\ref{chap:evaluation} et~\ref{chap:rag}
   de recherche (Tavily ou plugin natif).
 \end{enumerate}
 
-L'expérience d'ablation (section~\ref{sec:plan-mesures}) croise 16~variantes
+L'expérience d'ablation (section~\ref{sec:plan-mesures}) croise 18~variantes
 de prompt avec trois \emph{régimes d'information}, c'est-à-dire trois modes
 d'accès aux connaissances~:
 
@@ -575,9 +551,8 @@ prompt original.
 (16~prompts $\times$ 2~modèles $\times$ 2~répétitions, régime RAG uniquement)
 exécuté sous le design initial. Ils sont invalidés pour deux raisons~:
 (a)~\texttt{temperature=null} au moment des runs (PR\,\#244 a corrigé ce
-point a posteriori)~; (b)~le design a été révisé (7~modules, prompt base DSPy,
-4~régimes d'information). Les figures seront régénérées après la Phase~2
-révisée. Les résultats pilotes sont conservés ici à titre d'orientation
+point a posteriori)~; (b)~le design a été révisé (7~modules, prompt base
+manuel, 3~régimes d'information, sourcing\_ground ajouté). Les figures seront régénérées après la campagne principale. Les résultats pilotes sont conservés ici à titre d'orientation
 qualitative seulement.}
 
 \begin{figure}[htbp]
@@ -604,4 +579,4 @@ Le signal qualitatif le plus robuste de ce pilote~: pour Kimi~K2~Thinking,
 le module \emph{statistiques} nuit fortement en composition ($-30{,}4$\,pp)
 et son retrait améliore le composite ($+11{,}5$\,pp), suggérant une
 interférence avec le contexte RAG structuré. Ce signal sera prioritaire
-à confirmer en Phase~2 révisée.
+à confirmer en la campagne principale.
