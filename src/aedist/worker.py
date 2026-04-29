@@ -67,7 +67,15 @@ _MODE_TO_METHOD: dict[Method, Method] = {
 # When output_dir ends with /ablation/{aspect}, emit "+{aspect}".
 # When output_dir ends with /ablation/no_{aspect}, emit "-{aspect}".
 _ABLATION_MODULES = frozenset(
-    ["persona", "overview", "narratives", "bibliography", "statistics", "sourcing"]
+    [
+        "persona",
+        "overview",
+        "citation_columns",
+        "sourcing_ground",
+        "narratives",
+        "bibliography",
+        "statistics",
+    ]
 )
 
 

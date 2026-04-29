@@ -1,0 +1,33 @@
+%erg v1
+Title: Tuning visuel du regimes scatter après refresh modèles
+Status: open
+Created: 2026-04-29
+Author: claude
+Blocked-by: 0134
+
+--- log ---
+2026-04-29T20:30Z claude created
+
+--- body ---
+## Context
+
+`fig_regimes_scatter.pdf` a été généré avec les modèles disponibles au
+2026-04-29 (gpt-5.4, mistral-small-2603, mistral-large-2512, deepseek-v3.2).
+Une fois le refresh modèles (ticket 0134) effectué, la figure doit être
+re-générée et l'esthétique affinée pour la présentation Econom'IA 2026-05-27.
+
+## Actions
+
+1. Re-générer `fig_regimes_scatter.pdf` avec les données des nouveaux modèles.
+2. Ajuster les éléments visuels selon besoins :
+   - Taille des points, couleur, opacité
+   - Labels modèles (position, fonte)
+   - Échelle des axes
+   - Titre / annotations éventuelles
+3. Valider rendu dans `slides.pdf` (slide 11).
+
+## Exit criteria
+
+- `fig_regimes_scatter.pdf` reflète la gamme de modèles cible (ticket 0134)
+- Slide 11 validée visuellement par l'auteur
+- `tectonic slides.tex` sans erreur

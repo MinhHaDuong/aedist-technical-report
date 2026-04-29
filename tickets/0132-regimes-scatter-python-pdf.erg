@@ -1,0 +1,33 @@
+%erg v1
+Title: Remplacer le pgfplots regimes scatter par une figure Python PDF
+Status: closed
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T18:00Z claude created
+2026-04-29T18:30Z claude status closed — plot_regimes_scatter.py + PDF + Makefile rule + 4 tests, slides build clean
+
+--- body ---
+## Context
+
+`slides/slides.tex:395` contient un `\begin{axis}` inline qui dessine le
+scatter par régime (5 modèles × 3 méthodes) en consommant
+`regimes_scatter.csv` via pgfplots.
+
+Règle repo : les figures sont générées par Python et incluses comme PDF
+(`\includegraphics`). Test d'enforcement : `tests/test_no_inline_plots.py`
+(ticket 0130).
+
+## Actions
+
+1. Écrire un script Python qui génère `fig_regimes_scatter.pdf` (matplotlib).
+2. Remplacer le bloc `\begin{axis}...\end{axis}` par `\includegraphics`.
+3. Vérifier que `tectonic slides.tex` compile sans erreur.
+4. Supprimer le xfail de `test_no_begin_axis` si c'est la dernière violation.
+
+## Exit criteria
+
+- `slides/slides.tex` ne contient plus de `\begin{axis}` pour le regimes scatter
+- `fig_regimes_scatter.pdf` généré par un script Python commité
+- `tectonic slides.tex` sans erreur
