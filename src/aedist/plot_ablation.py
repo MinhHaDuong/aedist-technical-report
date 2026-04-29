@@ -22,8 +22,16 @@ from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, COLOR_REFUSAL, n
 
 log = logging.getLogger(__name__)
 
-# The 6 prompt modules in display order
-_MODULES = ["persona", "overview", "narratives", "bibliography", "statistics", "sourcing"]
+# The 7 prompt modules in display order
+_MODULES = [
+    "persona",
+    "overview",
+    "citation_columns",
+    "sourcing_ground",
+    "narratives",
+    "bibliography",
+    "statistics",
+]
 
 # Display order for the strip plot: anchors, then single-module, then minus-one.
 # "" entries mark section breaks (visual gaps in the strip plot).
@@ -37,18 +45,20 @@ _VARIANT_ORDER = [
     # Single-module (base + one module)
     "p2_persona",
     "p2_overview",
+    "p2_citation_columns",
+    "p2_sourcing_ground",
     "p2_narratives",
     "p2_bibliography",
     "p2_statistics",
-    "p2_sourcing",
     "",  # ── section break ──
     # Minus-one (composite - one module)
     "p2_no_persona",
     "p2_no_overview",
+    "p2_no_citation_columns",
+    "p2_no_sourcing_ground",
     "p2_no_narratives",
     "p2_no_bibliography",
     "p2_no_statistics",
-    "p2_no_sourcing",
 ]
 
 _MODEL_SHORT_NAMES = {
@@ -59,20 +69,22 @@ _MODEL_SHORT_NAMES = {
 _VARIANT_LABELS = {
     "p2_census": "Census (anchor)",
     "p2_base": "Base (no modules)",
-    "p2_composite": "Composite (all 6)",
+    "p2_composite": "Composite (all 7)",
     "p2_frontier": "Frontier (anchor)",
     "p2_persona": "+ Persona",
     "p2_overview": "+ Overview",
+    "p2_citation_columns": "+ Citation columns",
+    "p2_sourcing_ground": "+ Sourcing ground",
     "p2_narratives": "+ Narratives",
     "p2_bibliography": "+ Bibliography",
     "p2_statistics": "+ Statistics",
-    "p2_sourcing": "+ Sourcing",
     "p2_no_persona": "All − Persona",
     "p2_no_overview": "All − Overview",
+    "p2_no_citation_columns": "All − Citation columns",
+    "p2_no_sourcing_ground": "All − Sourcing ground",
     "p2_no_narratives": "All − Narratives",
     "p2_no_bibliography": "All − Bibliography",
     "p2_no_statistics": "All − Statistics",
-    "p2_no_sourcing": "All − Sourcing",
 }
 
 
