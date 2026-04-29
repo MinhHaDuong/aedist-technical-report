@@ -1,5 +1,5 @@
 %erg v1
-Title: Remplacer le scatter pgfplots slide 4 par une figure Python
+Title: Interdire les plots inline dans les .tex — test + migration scatter
 Status: open
 Created: 2026-04-29
 Author: claude
@@ -10,22 +10,26 @@ Author: claude
 --- body ---
 ## Context
 
-Le slide 4 (57 modèles, 163 centrales) utilise un bloc tikz/pgfplots inline
-pour tracer le scatter. LaTeX n'est pas un langage de description de plots.
-La figure doit être générée par Python et incluse comme PDF, comme
-`fig_scaling_curve.pdf` et `fig_method_convergence.pdf`.
+LaTeX n'est pas un langage de description de plots. Les figures doivent être
+générées par Python et incluses comme PDF — pattern établi par
+`fig_scaling_curve.pdf`, `fig_method_convergence.pdf`.
+
+Le slide 4 (scatter TP/FP, 57 modèles) et le slide RAG (scatter par régime)
+utilisent des blocs pgfplots inline qui consomment des CSV. C'est le symptôme
+visible ; la règle doit être enforced sur tous les .tex présents et futurs.
 
 ## Actions
 
-1. Écrire `src/aedist/plot_census_scatter.py` — génère `census_scatter.pdf`
-   (scatter TP/FP, un point par centrale, même données que le pgfplots actuel).
-2. Remplacer le bloc `\begin{tikzpicture}...\end{tikzpicture}` du slide 4
-   par `\includegraphics{inputs/generated/census_scatter.pdf}`.
-3. Supprimer les références aux CSV `census_scatter_tp/fp.csv` du slides.tex.
-4. `tectonic slides.tex` sans erreur.
+1. Écrire un test pytest `tests/test_no_inline_plots.py` qui cherche
+   `\begin{axis}` dans tous les fichiers `**/*.tex` du repo et échoue
+   si un match est trouvé en dehors d'une liste d'exceptions explicite.
+2. Constater les violations actuelles (le test doit échouer en rouge d'abord).
+3. Pour chaque violation : écrire le `plot_*.py` correspondant, remplacer
+   le bloc tikz/pgfplots par `\includegraphics`.
+4. La liste d'exceptions dans le test doit être vide à la clôture du ticket.
 
 ## Exit criteria
 
-- `census_scatter.pdf` généré par `uv run python -m aedist.plot_census_scatter`
-- Slide 4 affiche la figure Python
-- Plus aucun CSV scatter dans `slides/inputs/generated/` ni référencé dans slides.tex
+- `pytest tests/test_no_inline_plots.py` passe
+- Plus aucun `\begin{axis}` dans les .tex (ou exceptions documentées et justifiées)
+- `tectonic slides.tex` et `tectonic report.tex` sans erreur
