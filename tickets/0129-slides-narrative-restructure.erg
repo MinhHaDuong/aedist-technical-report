@@ -1,0 +1,127 @@
+%erg v1
+Title: Restructurer les slides selon l'arc narratif en 5 actes
+Status: open
+Created: 2026-04-29
+Author: claude
+Blocked-by: 0128
+
+--- log ---
+2026-04-29T14:45Z claude created
+
+--- body ---
+## Context
+
+Les slides actuelles suivent l'ordre chronologique du projet, pas l'ordre argumentatif.
+La matière est là ; c'est la structure qui affaiblit le message.
+
+Thèse centrale à porter du début à la fin :
+« Un LLM n'est pas un instrument de mesure. Un pipeline d'extraction, si —
+à condition de choisir la bonne architecture. »
+
+Corollaire pour l'audience économiste :
+« La question n'est pas "quel modèle ?" mais "quelle méthode ?" »
+
+Ce ticket est bloqué par 0128 (scatter dots) pour que le slide 4 soit correct
+avant la restructuration, et dépend fonctionnellement des résultats de l'ablation
+(ticket 0038) pour les slides Ancrage §III.
+
+## Actions
+
+### Acte I — Le fossé et l'illusion (slides 1–3)
+
+**Slide 2 "Le fossé"** : resserrer. Couper la liste "Pourquoi c'est difficile"
+à 2 bullets. Ajouter 1 chiffre d'accroche sur l'enjeu de données (capacité
+planifiée non documentée en Asie du Sud-Est).
+
+**Slides 3+4 : fusionner** en un seul slide "L'approche évidente — et son plafond".
+- Colonne gauche : ce qu'on fait (passe unique, 57 modèles)
+- Colonne droite : le résultat (scatter chart existant, même plafond pour tous)
+- Légende : « Le choix du modèle ne résout pas le problème »
+Ce slide doit porter la figure scatter (ticket 0128) qui est aujourd'hui vide.
+
+### Acte II — La question qui change tout (slides 4–5)
+
+**"La question centrale"** : reformuler la punchline.
+Remplacer "reddition cognitive" (jargon épistémologique) par
+"Pas 'quel modèle ?' mais 'quelle architecture ?'" — plus direct pour l'audience.
+Garder "les erreurs sont localisables" en corps de slide.
+
+**"Critères de qualité"** : transformer en annonce de programme, pas en framework.
+Titre → "Quatre défaillances, quatre solutions architecturales"
+Présenter les 4 lignes comme 4 problèmes à résoudre (Ancrage / Auditabilité /
+Fraîcheur / Fiabilité), chacun avec son mécanisme.
+van Fraassen et Popper → footnotes, pas corps de slide.
+
+**Supprimer le slide "AEDIST v1"** de cette position ; le déplacer en Acte IV.
+Le remplacer par un slide sobre sur le design expérimental :
+"57 modèles × 5 méthodes × 3 répétitions — $0,82 au total"
+
+### Acte III — L'evidence (slides 7–18)
+
+Structure canonique pour chaque sous-section : failure mode → mécanisme → résultat chiffré.
+
+**Ancrage (4 slides) :**
+1. "RAG élève le plancher" — garder tel quel
+2. "Inversion coût-performance" — garder tel quel
+3. *(nouveau — après résultats ticket 0038)* "Quels modules du prompt comptent ?"
+   ΔF1 par module, bras composition vs ablation, effet régime (param vs RAG).
+   C'est le résultat central qui justifie "Beyond RAG" comme titre.
+4. "Pareto : méthodes, pas modèles" — garder tel quel
+
+**Auditabilité (2 slides — actuellement sous-développée) :**
+1. "Responsabilité épistémique : LLM vs pipeline" — garder
+2. Ajouter un slide avec les chiffres en headline :
+   "~100% des centrales citent une source corpus — ~98% traçables bout-en-bout"
+   Ces chiffres existent dans les slides mais sont noyés dans le texte de slide 14.
+
+**Fraîcheur (1 slide) :**
+"F1@18=88% incrémental vs 46% global" — garder, fort.
+
+**Fiabilité (2 slides, actuellement 5) :**
+1. "Vérification 3 niveaux" — garder la table
+2. Condenser "Mémoire HITL" + "AEDIST v0 agents" en 3 bullets sur ce slide.
+   Couper les slides détail d'implémentation (trop technique pour cette audience).
+
+### Acte IV — L'architecture comme réponse (slides 19–21)
+
+Déplacer ici le slide "AEDIST v0/v1" (supprimé de l'intro).
+Reformuler : "La réponse architecturale : 4 couches × 4 agents"
+Montrer explicitement comment chaque agent mappe sur un critère résolu.
+
+Garder "Échelle de qualité du résultat" et "Échelle de qualité de la méthode"
+— forts comme synthèse visuelle.
+
+### Acte V — Conclusion et ouverture (slides 22–25)
+
+**"Ce que nous avons appris"** : reformuler en 3 leçons numérotées (pas en bullets) :
+1. La méthode domine le modèle.
+2. Chaque critère de qualité s'améliore avec une intervention architecturale mesurable.
+3. Le pipeline est audit-able ; le LLM seul, non.
+
+**"Ce que le pilote a mesuré"** : condenser ou supprimer — l'essentiel
+est dans l'Acte III.
+
+**"Graphe de connaissances"** : garder comme "étape suivante", 1 slide max.
+
+## Dépendance fonctionnelle
+
+Le slide Ancrage §3 ("quels modules comptent ?") ne peut être écrit
+qu'après les résultats de l'ablation (ticket 0038). Les Actes I, II, IV, V
+sont indépendants et peuvent être restructurés maintenant.
+
+Séquence suggérée :
+1. Ce ticket, Actes I+II+IV+V — faisable maintenant
+2. Ticket 0038 (ablation runs)
+3. Compléter Acte III slide Ancrage §3 avec les ΔF1 réels
+4. Relecture narrative complète avant le 27 mai
+
+## Exit criteria
+
+- `tectonic slides.tex` sans erreur
+- Slides 3+4 fusionnés ; figure scatter visible (scatter dots)
+- Slide "critères de qualité" reformulé en "4 défaillances, 4 solutions"
+- Slide "AEDIST v1" déplacé en Acte IV
+- Slide Auditabilité avec les chiffres 100%/98% en headline
+- Slides Fiabilité réduits de 5 à 2
+- Acte V en 3 leçons numérotées
+- Slide Ancrage §3 (ablation) : placeholder si résultats pas encore disponibles
