@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-29T20:00Z claude created
 
+2026-04-29T21:06Z claude note sweep-assess: not-picked hash:7561f462c06a scope:add 30B Ollama model to regimes scatter figure risk:medium
 --- body ---
 ## Context
 
@@ -34,3 +35,8 @@ dans measurements.jsonl avant de lancer).
 
 - `fig_regimes_scatter.pdf` inclut un modèle local 30B avec les 3 méthodes
 - `tectonic slides.tex` sans erreur
+## Picker assessment 2026-04-29T21:06Z
+**Decision:** not-picked
+**Scope:** add 30B Ollama model to regimes scatter figure
+**Risk:** medium
+**Reason:** runner-up; similar to 0137 but larger model
