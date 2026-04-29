@@ -34,6 +34,7 @@
 \bibliographystyle{plainnat}
 
 \input{inputs/generated/macros}
+\InputIfFileExists{inputs/generated/macros_census}{}{}
 
 \begin{document}
 
@@ -135,7 +136,7 @@ La limite de taille des réponses (4K--8K tokens) joue un rôle critique~: l'inf
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\linewidth]{inputs/generated/fig_census_direct.pdf}
-\caption{Résultats des \NumModelsTested{} modèles sur le prompt census (passe unique, sans documentation). Chaque barre~: un run, une couleur par modèle. Ligne verte~: référence (163 centrales).}
+\caption{Résultats des \NumCensusModels{} modèles sur le prompt census (passe unique, sans documentation). Chaque barre~: un run, une couleur par modèle. Ligne verte~: référence (163 centrales).}
 \label{fig:census-direct}
 \end{figure}
 

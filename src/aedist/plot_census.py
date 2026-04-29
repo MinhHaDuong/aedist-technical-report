@@ -73,25 +73,6 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
     return rows
 
 
-def build_scatter_rows(census_rows: list[dict]) -> tuple[list[dict], list[dict]]:
-    """Generate one row per plant for the dot-per-plant scatter chart.
-
-    Model index 0 = best model (highest f1). pgfplots y dir=reverse puts it
-    at the top of the horizontal chart.
-
-    Returns (tp_rows, fp_rows):
-      tp_rows — matched plants, x = 1..n_tp, plotted in positive territory
-      fp_rows — hallucinated plants, x = -1..-n_fp, plotted in negative territory
-    """
-    tp_rows: list[dict] = []
-    fp_rows: list[dict] = []
-    for model_idx, row in enumerate(census_rows):
-        y = model_idx
-        tp_rows.extend({"x": pi, "y": y} for pi in range(1, int(row["n_tp"]) + 1))
-        fp_rows.extend({"x": -pi, "y": y} for pi in range(1, int(row["n_fp"]) + 1))
-    return tp_rows, fp_rows
-
-
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(

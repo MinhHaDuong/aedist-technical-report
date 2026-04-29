@@ -127,4 +127,4 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     reader = csv.DictReader(content.splitlines())
     rows = list(reader)
     assert len(rows) > 0
-    assert set(reader.fieldnames) == {"method", "model", "tp", "fp", "fn"}
+    assert set(reader.fieldnames) == {"method", "model", "tp", "fp", "fn", "local", "size_class"}

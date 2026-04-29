@@ -3,7 +3,7 @@
 # Complete DAG: `make report` or `make slides` pulls all dependencies.
 #
 #   report.pdf ← tab_census.tex, macros.tex ← measurements.jsonl
-#   slides.pdf ← census_bars.csv, pareto.csv ← measurements.jsonl
+#   slides.pdf ← fig_census_direct.pdf, pareto.csv ← measurements.jsonl
 
 MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
@@ -159,7 +159,7 @@ $(SLIDE_GEN)/fig_census_direct.pdf $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --methods direct --prompt-version census \
-	    --output-macros $(SLIDE_GEN)/macros_census.tex
+	    --output-macros $(dir $@)macros_census.tex
 
 $(SLIDE_GEN)/fig_scaling_curve.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)

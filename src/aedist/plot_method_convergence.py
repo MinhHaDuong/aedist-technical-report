@@ -132,7 +132,9 @@ def write_csv(rows: list[dict], output: Path) -> None:
     """Write convergence data as CSV."""
     output.parent.mkdir(parents=True, exist_ok=True)
     with open(output, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["method", "model", "tp", "fp", "fn"])
+        writer = csv.DictWriter(
+            f, fieldnames=["method", "model", "tp", "fp", "fn", "local", "size_class"]
+        )
         writer.writeheader()
         writer.writerows(rows)
     log.info("Wrote %d rows to %s", len(rows), output)
