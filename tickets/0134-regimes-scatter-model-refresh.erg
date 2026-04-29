@@ -1,0 +1,49 @@
+%erg v1
+Title: Rafraîchir les modèles du regimes scatter — GPT-5.5, local 30B/8B, 70B cheap
+Status: open
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T19:00Z claude created
+
+--- body ---
+## Context
+
+`fig_regimes_scatter.pdf` (ticket 0132) affiche actuellement 4 modèles :
+GPT-5.4, Mistral S4, Mistral L3, DeepSeek. L'utilisateur veut :
+- Mettre à jour vers GPT-5.5 (sorti fin avril 2026)
+- Ajouter un modèle local classe 30B (Qwen 3.6 ou équivalent)
+- Ajouter un modèle local classe 8B (contexte in/out suffisant)
+- Ajouter un modèle distant classe 70B moins cher que GPT
+
+Aucun de ces modèles n'a les 3 méthodes (direct + direct+multiturn + rag)
+dans measurements.jsonl au 2026-04-29. Les sweeps ci-dessous sont requis.
+
+## Modèles candidats et gaps
+
+| Rôle | Slug candidat | Méthodes manquantes |
+|---|---|---|
+| GPT-5.5 | `openai/gpt-5.5` (à confirmer) | toutes (nouveau modèle) |
+| Local 30B | `qwen3.5:35b` ou `gemma4:31b` | `direct+multiturn` |
+| Local 8B | `cogito:8b` ou `granite3.3:8b` | `direct`, `direct+multiturn` |
+| 70B cheap distant | `qwen3.5-122b-a10b` | `direct+multiturn` |
+
+Pour le modèle 8B local, vérifier les context windows avant de lancer :
+fenêtre d'entrée ≥ 32k tokens (prompt RAG ~155 ko Markdown compressé).
+
+## Actions
+
+1. Confirmer le slug OpenRouter pour GPT-5.5.
+2. Pour chaque modèle candidat, ajouter les sweeps manquants dans
+   `experiments/experiments.toml` (repeat=3, seed=42).
+3. Lancer les sweeps, vérifier la qualité des sorties.
+4. Mettre à jour `_MODELS` dans `plot_regimes_scatter.py`.
+5. Regénérer `fig_regimes_scatter.pdf` et committer.
+
+## Exit criteria
+
+- `fig_regimes_scatter.pdf` affiche ≥ 5 modèles dont GPT-5.5, un local 30B,
+  un local 8B, un distant 70B cheap
+- Chacun a les 3 méthodes dans measurements.jsonl
+- `tectonic slides.tex` sans erreur
