@@ -1,0 +1,39 @@
+%erg v1
+Title: Ajouter un modèle local 8B au regimes scatter
+Status: open
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T20:00Z claude created
+
+--- body ---
+## Context
+
+`fig_regimes_scatter.pdf` (ticket 0132) doit inclure un modèle local classe 8B.
+Ticket issu du split de 0134.
+
+## Modèles candidats
+
+- `cogito:8b` (Ollama)
+- `granite3.3:8b` (Ollama)
+
+**Prérequis :** vérifier que la context window d'entrée est ≥ 32k tokens
+(prompt RAG ~155 ko Markdown compressé). Écarter les candidats qui ne
+satisfont pas ce critère.
+
+## Actions
+
+1. Vérifier les context windows des candidats (Ollama `show <model>`).
+2. Vérifier dans measurements.jsonl quelles méthodes manquent pour le modèle retenu.
+3. Ajouter les sweeps manquants dans `experiments/experiments.toml` (repeat=3, seed=42).
+4. Lancer les sweeps sur Ollama (serial — un seul job à la fois).
+5. Vérifier la qualité des sorties.
+6. Mettre à jour `_MODELS` dans `plot_regimes_scatter.py`.
+7. Regénérer `fig_regimes_scatter.pdf` et committer.
+
+## Exit criteria
+
+- `fig_regimes_scatter.pdf` inclut un modèle local 8B avec les 3 méthodes
+- Context window ≥ 32k tokens confirmée pour le modèle retenu
+- `tectonic slides.tex` sans erreur
