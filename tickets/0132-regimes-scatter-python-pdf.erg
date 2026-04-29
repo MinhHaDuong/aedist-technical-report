@@ -1,11 +1,12 @@
 %erg v1
 Title: Remplacer le pgfplots regimes scatter par une figure Python PDF
-Status: open
+Status: closed
 Created: 2026-04-29
 Author: claude
 
 --- log ---
 2026-04-29T18:00Z claude created
+2026-04-29T18:30Z claude status closed — plot_regimes_scatter.py + PDF + Makefile rule + 4 tests, slides build clean
 
 --- body ---
 ## Context
