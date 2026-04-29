@@ -1,5 +1,5 @@
 %erg v1
-Title: Interdire les plots inline dans les .tex — test + migration scatter
+Title: Interdire les plots inline dans les .tex — test automatique
 Status: open
 Created: 2026-04-29
 Author: claude
@@ -20,16 +20,12 @@ visible ; la règle doit être enforced sur tous les .tex présents et futurs.
 
 ## Actions
 
-1. Écrire un test pytest `tests/test_no_inline_plots.py` qui cherche
-   `\begin{axis}` dans tous les fichiers `**/*.tex` du repo et échoue
-   si un match est trouvé en dehors d'une liste d'exceptions explicite.
-2. Constater les violations actuelles (le test doit échouer en rouge d'abord).
-3. Pour chaque violation : écrire le `plot_*.py` correspondant, remplacer
-   le bloc tikz/pgfplots par `\includegraphics`.
-4. La liste d'exceptions dans le test doit être vide à la clôture du ticket.
+1. Écrire `tests/test_no_inline_plots.py` : cherche `\begin{axis}` dans
+   tous les `**/*.tex` du repo, échoue si un match est trouvé.
+2. Constater les violations (liste dans le log du ticket).
+3. Ouvrir un ticket de remédiation par violation.
 
 ## Exit criteria
 
 - `pytest tests/test_no_inline_plots.py` passe
-- Plus aucun `\begin{axis}` dans les .tex (ou exceptions documentées et justifiées)
-- `tectonic slides.tex` et `tectonic report.tex` sans erreur
+- Un ticket de remédiation ouvert par `\begin{axis}` trouvé
