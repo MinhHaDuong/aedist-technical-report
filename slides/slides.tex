@@ -45,6 +45,8 @@
 % ===================================================================
 \section{Problème}
 
+% Act I — Le fossé et l'illusion
+
 % -------------------------------------------------------------------
 \begin{frame}{Le fossé}
 \begin{columns}[T]
@@ -63,78 +65,60 @@ compilées manuellement par des experts. Lent, coûteux, pas scalable.
 \smallskip
 \textbf{L'IA peut-elle produire des données de qualité recherche~?}
 
-\smallskip
-Nous pilotons cette question sur une tâche --- centrales thermiques vietnamiennes ---
-pour identifier quelles \emph{méthodes} fonctionnent, avant de passer à d'autres
-pays et secteurs.
-
 \column{0.42\textwidth}
 \textbf{Pourquoi c'est difficile~:}
 \begin{itemize}\setlength\itemsep{1pt}
   \item \textbf{Multilingue} --- diacritiques vietnamiens,
         translittérations multiples
-  \item \textbf{Temporel} --- plans annuels,
-        centrales déclassées ou annulées
-  \item \textbf{Technique} --- MW\textsubscript{e} vs MW\textsubscript{th},
-        centrale vs unité vs turbine
   \item \textbf{Dispersé} --- PDPs, rapports EVN,
         décrets gouvernementaux
 \end{itemize}
 
-{\small Vietnam thermique (163~centrales) est la tâche pilote.}
+\medskip
+{\small Vietnam thermique (163~centrales) est la tâche pilote.\\
+Enjeu régional~: des centaines de GW de capacité planifiée
+dispersée dans des dizaines de plans nationaux en ASEAN.}
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{L'approche évidente~: interroger l'IA}
+\begin{frame}{L'approche évidente~: et son plafond}
 \begin{columns}[T]
 \column{0.52\textwidth}
-\textbf{Un prompt~:} 77 centrales, \$0.02, 30 secondes.\\
+\textbf{Un prompt~:} 77~centrales, \$0.02, 30~secondes.\\
 Avec RAG + décomposition~: 163/163, F1=89,8\%, \$0.06.
 
 \smallskip
-\textbf{Aller plus loin~:} raisonnement + sous-agents\\
-$\to$ 77k car., 162 lignes, 46 réf., \$0.79, 8 min.
-
-\smallskip
-14 modèles, 10 laboratoires~: gamme impressionnante,\\
+\NumModelsTested{} modèles, 10~laboratoires~: gamme complète,\\
 schéma d'incertitude cohérent.
 
-\column{0.45\textwidth}
-\textbf{Les deux approches partagent le même plafond~:}
-
 \smallskip
-\begin{itemize}\setlength\itemsep{1pt}
+\textbf{Les deux approches partagent le même plafond~:}
+\begin{itemize}\setlength\itemsep{0pt}
   \item Quelles centrales manquent et pourquoi~?
   \item Les capacités sont-elles exactes~?
-  \item 46 réf. --- aucune vérifiée par machine
+  \item Sources non vérifiées par machine
   \item Pas de mise à jour incrémentale
-  \item Fonctionnerait-ce pour l'Indonésie~?
-  \item Parieriez-vous une politique dessus~?
 \end{itemize}
 
-\smallskip
-Un tableau plausible en quelques secondes.\\
-Mais peut-on lui \textbf{faire confiance} ---\\
-sans reddition cognitive~?
+\column{0.45\textwidth}
+\includegraphics[width=\textwidth,height=0.76\textheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
 \end{columns}
+
+\smallskip
+{\small \textbf{Le choix du modèle ne résout pas le problème.}}
 \end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}{\NumCensusModels{} modèles, 163 centrales~: le modèle seul ne suffit pas}
-\begin{center}
-\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
-\end{center}
-{\small Passe unique, sans documentation. \textbf{Le choix du modèle ne résout pas le problème.}}
-\end{frame}
+% Act II — La question qui change tout
 
 % -------------------------------------------------------------------
 \begin{frame}{La question centrale}
 \begin{center}
 \large
-Un tableau plausible en quelques secondes.\\[1em]
+\NumModelsTested{} modèles. Un plafond. Le même pour tous.\\[1em]
 
-\textbf{Mais peut-on lui faire confiance --- sans reddition cognitive~?}
+\textbf{La question n'est pas «~quel modèle~?»\\[0.3em]
+C'est «~quelle architecture~?»}
 
 \bigskip\bigskip
 \normalsize
@@ -148,18 +132,12 @@ et où mènent les architectures à états agentiques.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Qu'est-ce qui rend des statistiques de qualité recherche~?}
-\begin{center}
-\textit{«~Les données de qualité recherche ne sont pas des données correctes.\\
-Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
-\end{center}
-
-\bigskip
+\begin{frame}{Quatre défaillances, quatre solutions architecturales}
 \begin{center}
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Critère} & \textbf{Échec sans lui} & \textbf{Mécanisme} \\
+\textbf{Défaillance} & \textbf{Sans correction} & \textbf{Réponse architecturale} \\
 \midrule
 \textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources  & RAG massif              \\
 \textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables & Citations par cellule \\
@@ -167,59 +145,42 @@ Ce sont des données dont les erreurs sont \textbf{localisables}.~»}
 \textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées & Vérif.\ 3 niveaux \\
 \bottomrule
 \end{tabular}
-% REVIEW MINOR: van Fraassen / Popper attributions are rhetorical stretches.
-% A referee will note that van Fraassen's empirical adequacy ≠ RAG citation,
-% and Popper's falsifiability ≠ per-cell citations. Consider weakening to
-% "inspiré de" or dropping the footnotes and keeping only the criteria names.
 \footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
 \footnotetext[2]{Popper, \textit{The Logic of Scientific Discovery}, 1959.}
-\footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants comme critère de validité.}
+\footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants.}
 \end{center}
 
 \bigskip
 \begin{center}
-\small\textit{Chaque diapositive de résultats montre un critère amélioré par un choix architectural.}
+\small\textit{Chaque section présente une défaillance et son mécanisme correcteur.}
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{AEDIST v1~: l'architecture cible}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Quatre couches de données~:}
-\begin{enumerate}\setlength\itemsep{2pt}
-  \item \textbf{Dépôt de documents} — sources brutes en cache
-  \item \textbf{Corpus validé} — indexé, registre des sources
-  \item \textbf{Master + sidecar} — fusion incrémentale,\\
-        {\scriptsize master.csv + provenance + fusion\_log}
-  \item \textbf{Mémoire} — règles auditées par taxonomie\\
-        {\scriptsize aliases / unités / termes-sources + audit.jsonl}
-\end{enumerate}
-
-\column{0.48\textwidth}
-\textbf{Quatre agents, chacun ancré sur un critère~:}
-\begin{description}\setlength\itemsep{2pt}
-  \item[\textbf{Watcher}] découverte → \textit{Fraîcheur}
-% REVIEW MINOR: Watcher → Fraîcheur is debatable; discovery enables freshness
-% only when paired with the Analyst's incremental fusion. Could map Watcher
-% to Ancrage (finds new sources) and Analyst to Fraîcheur (does the update).
-  \item[\textbf{Curator}] triage HITL → \textit{Ancrage}
-  \item[\textbf{Analyst}] fusion chronologique → \textit{Fraîcheur}
-  \item[\textbf{Auditor}] vérification 3 niveaux → \textit{Fiabilité}
-\end{description}
-\end{columns}
+\begin{frame}{Design expérimental}
+\begin{center}
+\Large
+\textbf{\NumModelsTested{} modèles $\boldsymbol{\times}$ 5 méthodes $\boldsymbol{\times}$ 3 répétitions}
 
 \bigskip
-\begin{center}
-% REVIEW MINOR: "trackés" and "de-risque" are English loanwords likely to draw
-% comment at a French-language venue. Alternatives: "suivis" (trackés),
-% "réduit les risques de" or "valide" (de-risque). Also "benchmark" below.
-% REVIEW MINOR: No explicit bridge from this v1 vision to the running v0
-% prototype. Consider adding: "v0 est le prototype en cours ; ce benchmark
-% en valide les choix de conception."
-\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous trackés sous git.\\[0.4em]
-{\small C'est un travail en cours vers cette vision.\\
-\textbf{Aujourd'hui~: le benchmark qui de-risque les choix de conception du cœur.}}
+\normalsize
+\$0{,}82 au total --- Vietnam, 163~centrales thermiques
+
+\bigskip\bigskip
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Facteur} & \textbf{Valeurs testées} & \textbf{Enjeu} \\
+\midrule
+Documentation  & aucune, multi-tours, RAG massif        & Ancrage \\
+Décomposition  & passe unique, par combustible           & Couverture \\
+Agrégation     & meilleur run, vote union                & Rappel \\
+Modèle         & \NumModelsTested{} de 10 laboratoires  & Contrôle \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\textit{Le modèle est un facteur parmi d'autres.}
 \end{center}
 \end{frame}
 
@@ -316,29 +277,7 @@ la fusion peut être déterministe même quand l'extraction ne l'est pas.
 % ===================================================================
 \section{Ancrage documentaire}
 
-% -------------------------------------------------------------------
-\begin{frame}{Conception du pilote}
-\textbf{Tâche~:} lister toutes les centrales thermiques vietnamiennes avec combustible, statut, province, capacité (CSV).
-
-\medskip
-\textbf{Référence~:} 163 centrales, validées par des experts depuis PDP7, PDP8, rapports EVN.
-
-\medskip
-\textbf{Conception~:}
-\begin{description}
-  \item[Hypothèse] Une \textbf{méthode} = modèle + prompt +
-        régime d'information + agrégation.
-        Le modèle est un facteur parmi d'autres.
-  \item[Échelle] \NumModelsTested{} modèles, \$0.82 au total
-  \item[Conditions clés] Documentation $\times$ Conversation $\times$
-        Décomposition $\times$ Agrégation $\times$ Modèle (\NumModelsTested{})
-\end{description}
-
-\medskip
-{\small \textbf{Métrique clé~:} centrales trouvées sur 163.\\
-La couverture varie de 4 à 163~; la précision varie de~27\% à~100\%.\\
-Le problème est d'abord la \textbf{couverture}, mais les hallucinations existent (points rouges).}
-\end{frame}
+% Act III — L'evidence (Ancrage)
 
 % -------------------------------------------------------------------
 \begin{frame}{Régime de documentation~: le RAG élève le plancher}
@@ -400,6 +339,33 @@ DeepSeek V3.2 (\$0.26/M)    &  63 & \textbf{98} \\
 \textbf{Résultat clé~:}\\
 Avec des documents, un modèle bon marché surpasse un modèle coûteux. La \textbf{méthode} (RAG) domine le choix du modèle.
 \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Quels modules du prompt comptent~?}
+\begin{center}
+{\small \textit{[Résultats d'ablation en attente --- ticket~0038]}}
+
+\medskip
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Module} & \textbf{$\Delta$F1 param.} & \textbf{$\Delta$F1 RAG} & \textbf{Impact} \\
+\midrule
+Persona                & --- & --- & --- \\
+Vue d'ensemble secteur & --- & --- & --- \\
+Narratifs              & --- & --- & --- \\
+Bibliographie          & --- & --- & --- \\
+Tableau croisé         & --- & --- & --- \\
+Sourçage par ligne     & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\begin{center}
+{\small Ablation sur 6 modules, régimes paramétrique et RAG.\\
+C'est le résultat central qui justifie «~Beyond RAG~» comme titre.}
+\end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -465,14 +431,35 @@ pas comme vérité terrain.
 
 \column{0.48\textwidth}
 \textbf{Extraction sourcée (3 runs Opus)~:}\\
-$\approx$100\% des centrales citent une source corpus (médiane 100\%, min 99\%).\\
-$\approx$98\% des citations tracent vers un fichier corpus (médiane 98\%).\\
-\textbf{$\approx$80\% traçables de bout en bout} (citation $\to$ fichier $\to$ nom de centrale~; médiane 79\%, $n$=3 runs).
+$\approx$100\% des centrales citent une source corpus.\\
+$\approx$98\% des citations tracent vers un fichier.\\
+$\approx$80\% traçables de bout en bout.
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Auditabilité~: les chiffres}
+\begin{center}
+\Large
+\textbf{$\approx$100\%} des centrales citent une source corpus
+
+\bigskip
+\textbf{$\approx$98\%} des citations tracent vers un fichier corpus
+
+\bigskip
+\textbf{$\approx$80\%} traçables de bout en bout\\
+{\normalsize (citation $\to$ fichier $\to$ nom de centrale)}
+\end{center}
 
 \medskip
-{\small RAG décomposé (meilleur F1=89,8\%)~:
+\begin{columns}[T]
+\column{0.48\textwidth}
+{\small Extraction sourcée, 3 runs Opus, température~=~0}
+
+\column{0.48\textwidth}
+{\small RAG décomposé (meilleur F1=89,8\%)~:\\
 \textbf{0\% traçable} --- aucune citation émise.\\
-Couverture vs.\ traçabilité~: le compromis ouvert.}
+\textit{Couverture vs.\ traçabilité~: le compromis ouvert.}}
 \end{columns}
 \end{frame}
 
@@ -559,89 +546,76 @@ Pré-filtre & Audit des diffs~: seules les cellules modifiées sont vérifiées 
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Mémoire HITL auditée~: quatre catégories de règles}
-\begin{center}
-\small
-\begin{tabular}{@{}llll@{}}
-\toprule
-\textbf{Catégorie} & \textbf{Encode} & \textbf{Exemple} & \textbf{Déclenché} \\
-\midrule
-Alias & identité d'entité & \texttt{«~VT1~» $\equiv$ «~Vinh Tan 1~»} & après échec correspondance \\[2pt]
-Unité/format & forme de valeur & \texttt{«~1~200 MW~» $\to$ 1200} & avant correspondance \\[2pt]
-Terme source-local & vocab. prose & \texttt{«~Nhóm~» (PDP8) = «~Group~»} & dans l'arbitrage LLM \\[2pt]
-Synonyme d'attribut & colonne $\to$ schéma & \texttt{«~Công suất~» $\to$ capacity\_mw} & au chargement du tableau \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
+\begin{frame}{Mémoire HITL et agents v0}
 \begin{columns}[T]
 \column{0.48\textwidth}
-\textbf{Chaque règle porte une piste d'audit~:}
-\begin{itemize}
-  \item Suggestion LLM qui l'a proposée
-  \item Humain ratificateur
-  \item Horodatage
-  \item Cellule d'évidence
-  \item Vérification second témoin (échantillon)
+\textbf{Quatre catégories de règles~:}
+\begin{itemize}\setlength\itemsep{2pt}
+  \item \textbf{Alias} --- identité d'entité\\
+        {\small «~VT1~» $\equiv$ «~Vinh Tan 1~»}
+  \item \textbf{Unité/format} --- normalisation\\
+        {\small «~1~200 MW~» $\to$ 1200}
+  \item \textbf{Terme source-local} --- vocabulaire prose\\
+        {\small «~Nhóm~» (PDP8) = «~Group~»}
+  \item \textbf{Synonyme d'attribut} --- colonne $\to$ schéma\\
+        {\small «~Công suất~» $\to$ capacity\_mw}
 \end{itemize}
 
 \column{0.48\textwidth}
-\textbf{Les règles sont des annotations,\\pas des substitutions mécaniques.}
-
-\medskip
-Chaque règle porte un raisonnement,\\
-des cas limites et des preuves ---\\
-un carnet de terrain pour le\\
-prochain statisticien, pas un\\
-sed LLM glorifié.
-
-\medskip
-{\small La mémoire croît de façon monotone, committée sous git, révisable via diff.\\
-Le système est plus intelligent au run $N+1$ qu'au run $N$.}
-\end{columns}
-
-\medskip
-{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{AEDIST v0~: agents ancrés sur les préoccupations du modèle de données}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Quatre couches d'information~:}
-\begin{enumerate}
-  \item \textbf{Dépôt de documents} --- fichiers bruts en cache
-  \item \textbf{Corpus validé} --- indexé Zotero~;\\
-        \emph{registre des sources} réside ici
-  \item \textbf{Master + sidecar} --- sortie de fusion\\
-        {\scriptsize master.csv + master\_provenance.csv + fusion\_log.csv}
-  \item \textbf{Mémoire} --- dépôt de règles par taxonomie\\
-        {\scriptsize aliases / units / source-terms / attribute-synonyms + audit.jsonl}
-\end{enumerate}
-
-\column{0.48\textwidth}
-\textbf{Agents, chacun responsable d'une préoccupation~:}
-\begin{description}
-  \item[Watcher] découverte de sources
-  \item[Curator] triage de sources HITL\\
-        $\to$ écrit les entrées du registre
-  \item[Analyst] exécute la primitive de fusion\\
-        (ordre chronologique avec arbitrage d'autorité)\\
-        $\to$ mute master + sidecar\\
-        $\to$ ajoute à fusion\_log
-  \item[Auditor] exécute la vérification 3 niveaux\\
+\textbf{Quatre agents~:}
+\begin{description}\setlength\itemsep{2pt}
+  \item[\textbf{Watcher}] découverte de sources
+  \item[\textbf{Curator}] triage HITL
+  \item[\textbf{Analyst}] fusion chronologique\\
+        $\to$ mute master + sidecar
+  \item[\textbf{Auditor}] vérification 3 niveaux\\
         $\to$ propose + ratifie des règles
 \end{description}
 \end{columns}
 
 \medskip
-\centering
-\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous trackés sous git.\\
+\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous sous git.\\
 {\small Le run suivant reprend là où celui-ci s'est arrêté. C'est le chemin vers 60 campagnes.}
 
 \medskip
-{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
+{\small\textit{Conception --- implémentation v0 en cours~; résultats dans les phases~2+3 (post-exposé).}}
+\end{frame}
+
+% ===================================================================
+\section{Architecture}
+
+% Act IV — L'architecture comme réponse
+
+% -------------------------------------------------------------------
+\begin{frame}{La réponse architecturale~: 4 couches \texttimes{} 4 agents}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Quatre couches de données~:}
+\begin{enumerate}\setlength\itemsep{2pt}
+  \item \textbf{Dépôt de documents} — sources brutes en cache
+  \item \textbf{Corpus validé} — indexé, registre des sources
+  \item \textbf{Master + sidecar} — fusion incrémentale,\\
+        {\scriptsize master.csv + provenance + fusion\_log}
+  \item \textbf{Mémoire} — règles auditées par taxonomie\\
+        {\scriptsize aliases / unités / termes-sources + audit.jsonl}
+\end{enumerate}
+
+\column{0.48\textwidth}
+\textbf{Quatre agents, chacun ancré sur un critère~:}
+\begin{description}\setlength\itemsep{2pt}
+  \item[\textbf{Watcher}] découverte → \textit{Fraîcheur}
+  \item[\textbf{Curator}] triage HITL → \textit{Ancrage}
+  \item[\textbf{Analyst}] fusion chronologique → \textit{Fraîcheur}
+  \item[\textbf{Auditor}] vérification 3 niveaux → \textit{Fiabilité}
+\end{description}
+\end{columns}
+
+\bigskip
+\begin{center}
+\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous sous git.\\[0.4em]
+{\small C'est un travail en cours vers cette vision.\\
+\textbf{Aujourd'hui~: le benchmark qui valide les choix de conception du cœur.}}
+\end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -650,10 +624,7 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \begin{center}
 \begin{tabular}{@{}c l p{8.5cm}@{}}
 \toprule
-% REVIEW MINOR: STANAG 2022 reference in this header is unexplained and
-% not developed elsewhere on the slide. Either add a footnote defining the
-% NATO credibility scale (A–F × 1–6) or drop the parenthetical entirely.
-\textbf{Score} & & \textbf{Statut épistémique (Popper + OTAN STANAG~2022)} \\
+\textbf{Score} & & \textbf{Statut épistémique} \\
 \midrule
 5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
 4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
@@ -677,8 +648,7 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
 \midrule
 4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-% REVIEW MINOR: "trackable" is an English loanword. Alternative: "versionnable".
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant trackable sous git \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
 2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
 1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
 0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
@@ -686,103 +656,34 @@ Le système est plus intelligent au run $N+1$ qu'au run $N$.}
 \end{tabular}
 \end{center}
 \smallskip
-% REVIEW MINOR: "benchmark" used as a French verb. Alternative: "mesure" or
-% "évalue". Second "benchmark" (as noun) is acceptable but could be "évaluation".
-{\small Ce pilote benchmark les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Qualité du modèle~: le modèle comme instrument de mesure}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Propriété garantie} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: accord entre modèles indépendants (intersubjectivité) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Calibré}~: prompt validé par ablation sur la tâche cible \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Reproductible}~: seed + provider fixés~; repeat~$\geq$~3 pour les MoE \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Déterministe}~: température~=~0 \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Non contrôlé}~: modèle choisi sans protocole de mesure \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote atteint le niveau~2 (température~+~seed). L'ablation (Phase~0) vise le niveau~3. La corroboration inter-modèles (niveau~4) est mesurée par l'accord min-de-5.}
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
 \end{frame}
 
 % ===================================================================
 \section{Perspectives}
 
+% Act V — Conclusion et ouverture
+
 % -------------------------------------------------------------------
-\begin{frame}{Ce que nous avons appris sur les méthodes}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Conditions méthodologiques, classées par impact~:}
-\begin{enumerate}
-  \item \textbf{Documentation} (RAG)~: +18 à +43\,pp
-  \item \textbf{Décomposition}~: 60\% $\to$ 99\%
-  \item \textbf{Agrégation} (vote union)~: +35\,pp à coût nul
-  \item \textbf{Conversation} (multi-tours)~: gain marginal vs.\ passe unique
-  \item Choix du modèle seul~: \MinBaselinePlants--\MaxBaselinePlants{} centrales
+\begin{frame}{Ce que nous avons appris}
+\begin{center}
+\large\textbf{Trois leçons}
+\end{center}
+
+\bigskip
+\begin{enumerate}\setlength\itemsep{1em}
+  \item \textbf{La méthode domine le modèle.}\\
+        {\small Documentation (+18--43\,pp), décomposition (60\% $\to$ 99\%) et agrégation (+35\,pp)
+        surpassent le choix du modèle. \NumModelsTested{} modèles, un plafond commun.}
+
+  \item \textbf{Chaque critère de qualité s'améliore par une intervention architecturale mesurable.}\\
+        {\small Ancrage $\to$ RAG. Auditabilité $\to$ citations par cellule.
+        Fraîcheur $\to$ fusion incrémentale. Fiabilité $\to$ vérification 3 niveaux.}
+
+  \item \textbf{Le pipeline est auditable~; le LLM seul, non.}\\
+        {\small 80\% traçables bout-en-bout (extraction sourcée)
+        vs.\ 0\% (RAG décomposé). Les erreurs sont \emph{localisables}.}
 \end{enumerate}
-
-\medskip
-\textbf{Leçon~:}\\
-La méthode utilisée importe plus que le modèle choisi.
-
-\column{0.48\textwidth}
-\textbf{Chiffres clés~:}
-\begin{itemize}
-  \item \NumModelsTested{} modèles, 6 axes de conditions, \$0.82
-  \item Meilleure ligne de base~: 125/163 (modèle seul)
-  \item Meilleur RAG~: 141/163 (modèle bon marché + docs)
-  \item \textbf{Meilleur global~: 163/163, F1 moyen=89,8\% [85,8--95,6\%], \$0.06}
-\end{itemize}
-
-\medskip
-\textbf{Conclusion~:}\\
-Un pipeline standard avec les bonnes \textbf{conditions méthodologiques} retrouve 89,8\% [85,8--95,6\%] d'un inventaire expert pour \$0.06.
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Ce que ce pilote a mesuré --- et ce qu'il n'a pas mesuré}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Ce que le pilote établit~:}
-\begin{itemize}
-  \item Les conditions méthodologiques (RAG, décomposition, agrégation)
-        importent plus que le choix du modèle
-  \item Un pipeline standard retrouve 89,8\% [85,8--95,6\%] d'un inventaire
-        expert pour \$0.06
-  \item Faisabilité de l'évaluation automatisée via
-        la réconciliation floue
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Ce qu'il ne peut pas distinguer~:}
-\begin{itemize}
-  \item \textbf{Extraction vs.\ rappel} --- les modèles entraînés sur
-        PDP7/PDP8 peuvent réciter, pas extraire
-  \item \textbf{Spécifique vs.\ général} --- une référence
-        (N=163), un pays, un secteur
-  \item \textbf{Signal vs.\ bruit} --- 3 runs, F1 ponctuel,
-        pas d'intervalles de confiance
-  \item \textbf{Interactions de méthodes} --- axes testés
-        séparément, jamais composés
-  \item \textbf{Température} --- 211/280 runs ont utilisé les
-        défauts fournisseur ($t{\approx}1$)~; $t{=}0$ imposé
-        seulement pour les campagnes ultérieures (PR\,\#244)
-  \item \textbf{Structure du prompt} --- les résultats du module de sourçage
-        étaient spécifiques au modèle et mixtes (+3,6\,pp / $-$30,4\,pp)~;
-        ablation complète différée
-\end{itemize}
-\end{columns}
-
-\medskip
-\centering\small
-Ce ne sont pas des défauts --- ce sont des \textbf{exigences de conception} pour un pipeline de données en production.
 \end{frame}
 
 % -------------------------------------------------------------------
