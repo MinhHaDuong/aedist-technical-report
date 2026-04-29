@@ -1,0 +1,25 @@
+{
+  "run_id": "ffa204d30df8",
+  "timestamp": "2026-04-29T22:45:41.408389Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "cogito:8b",
+    "temperature": 0.0,
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 33.583,
+    "cost_usd": 0.0
+  },
+  "result_file": "experiments/outputs/direct_multiturn/cogito-8b-run3.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}

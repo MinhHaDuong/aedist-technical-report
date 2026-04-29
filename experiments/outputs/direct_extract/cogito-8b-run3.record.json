@@ -1,0 +1,26 @@
+{
+  "run_id": "44ad49a764cb",
+  "timestamp": "2026-04-29T22:45:34.551257Z",
+  "method": "direct",
+  "method_params": {
+    "model": "cogito:8b",
+    "temperature": 0.0,
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072
+    }
+  },
+  "resource_use": {
+    "wall_s": 4.982,
+    "tokens_in": 63,
+    "tokens_out": 338
+  },
+  "result_file": "experiments/outputs/direct_extract/cogito-8b-run3.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}

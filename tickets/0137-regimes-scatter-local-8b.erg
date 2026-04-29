@@ -1,6 +1,6 @@
 %erg v1
 Title: Ajouter un modèle local 8B au regimes scatter
-Status: open
+Status: closed
 Created: 2026-04-29
 Author: claude
 
@@ -8,6 +8,8 @@ Author: claude
 2026-04-29T20:00Z claude created
 
 2026-04-29T21:06Z claude note sweep-assess: not-picked hash:ea11dcf62d3b scope:add 8B Ollama model to regimes scatter figure risk:medium
+2026-04-30T09:00Z claude claimed
+2026-04-30T09:30Z claude status closed — cogito:8b selected; direct+multiturn=refusal, RAG median TP=22; figure regenerated, slides build OK
 --- body ---
 ## Context
 

@@ -1,4 +1,4 @@
-"""Generate regimes scatter plot: 5 models × 3 methods, one dot per TP plant.
+"""Generate regimes scatter plot: models × 3 methods, one dot per TP plant.
 
 Shows how RAG lifts the identification floor across all models.
 Median TP across runs per model-method combo.
@@ -24,6 +24,7 @@ _MODELS = [
     ("mistral-small-2603", "Mistral S4"),
     ("mistral-large-2512", "Mistral L3"),
     ("deepseek-v3.2", "DeepSeek"),
+    ("cogito:8b", "Cogito 8B"),
 ]
 
 _METHODS = [
