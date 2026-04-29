@@ -14,6 +14,7 @@ COLOR_HALLUC = _palette["semantic"]["halluc"]
 COLOR_REFUSAL = _palette["semantic"]["refusal"]
 COLOR_ALERT = _palette["semantic"]["alert"]
 COLOR_REFERENCE = _palette["semantic"]["reference"]
+COLOR_IDENTIFIED = _palette["quality"]["identified"]
 FAMILY_COLORS = _palette["families"]
 
 

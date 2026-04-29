@@ -361,40 +361,7 @@ Le problème est d'abord la \textbf{couverture}, mais les hallucinations existen
 {\scriptsize \textit{Limite de fenêtre de contexte~: la sous-interrogation par type de combustible et la fusion résolvent la troncature ($+$15--35~pp pour les modèles sujets à la troncature).}}
 
 \column{0.56\textwidth}
-\begin{tikzpicture}
-\begin{axis}[
-    width=\textwidth,
-    height=5.8cm,
-    xlabel={Centrales identifiées (un point = une centrale)},
-    xmin=0, xmax=170,
-    ytick={0,1,2,4,5,6,8,9,10,12,13,14,16,17,18},
-    yticklabels={Direct,Multi-tours,RAG,%
-                 Direct,Multi-tours,RAG,%
-                 Direct,Multi-tours,RAG,%
-                 Direct,Multi-tours,RAG,%
-                 Direct,Multi-tours,RAG},
-    y tick label style={font=\tiny, anchor=east},
-    ymin=-0.5, ymax=19,
-    y dir=reverse,
-    axis x line=bottom,
-    axis y line=left,
-    xticklabel style={font=\tiny},
-    legend style={at={(0.98,0.02)}, anchor=south east, font=\scriptsize},
-    clip=false,
-]
-\addplot[only marks, mark=*, mark size=1pt, color=qualyellow, opacity=0.8]
-    table[x=x, y=y, col sep=comma] {inputs/generated/regimes_scatter.csv};
-\addlegendentry{Identifiée}
-% Reference line at 163
-\addplot[dashed, thick, color=qualgreen, forget plot] coordinates {(163, -0.5) (163, 19)};
-% Model group labels
-\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,1)   {GPT-5.4};
-\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,5)   {Gemini FL};
-\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,9)   {Mistral S4};
-\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,13)  {Mistral L3};
-\node[font=\tiny\bfseries, anchor=east, xshift=-2pt] at (axis cs:0,17)  {DeepSeek};
-\end{axis}
-\end{tikzpicture}
+\includegraphics[width=\textwidth]{inputs/generated/fig_regimes_scatter.pdf}
 \end{columns}
 \end{frame}
 
