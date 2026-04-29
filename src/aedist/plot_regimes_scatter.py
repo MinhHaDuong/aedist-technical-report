@@ -15,13 +15,12 @@ from pathlib import Path
 from statistics import median
 
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_IDENTIFIED, COLOR_REFERENCE, normalize_model
+from .util import COLOR_REFERENCE, normalize_model
 
 log = logging.getLogger(__name__)
 
 _MODELS = [
     ("gpt-5.4", "GPT-5.4"),
-    ("gemini-2.5-flash-lite", "Gemini FL"),
     ("mistral-small-2603", "Mistral S4"),
     ("mistral-large-2512", "Mistral L3"),
     ("deepseek-v3.2", "DeepSeek"),
@@ -56,7 +55,6 @@ def load_regimes_data() -> dict[tuple[str, str], list[int]]:
 def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
-    from matplotlib.lines import Line2D
 
     fig, ax = plt.subplots(figsize=(7, 5))
     fig.subplots_adjust(left=0.22)
@@ -82,9 +80,9 @@ def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> No
                     ax.scatter(
                         xs,
                         ys,
-                        s=2,
-                        c=COLOR_IDENTIFIED,
-                        alpha=0.8,
+                        s=6,
+                        c="black",
+                        alpha=0.6,
                         marker=".",
                         linewidths=0,
                     )
@@ -113,13 +111,6 @@ def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> No
             ha="right",
             va="center",
         )
-
-    ax.legend(
-        handles=[Line2D([0], [0], color=COLOR_IDENTIFIED, linewidth=3, label="Identifiée")],
-        loc="lower right",
-        fontsize=8,
-        framealpha=0.9,
-    )
 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
