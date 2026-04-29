@@ -1,16 +1,12 @@
-Last updated: 2026-04-29T00:00Z (housekeeping: rebased onto origin/main after PRs #293/#294, now 6 ahead)
+Last updated: 2026-04-29T20:30Z
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1128 passing, 1 skipped, 1 xfailed. `make lint` now includes ruff + ticket structure check.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1131 passing, 1 skipped, 1 xfailed. `make lint` includes ruff + ticket structure check.
 
-**2026-04-25 housekeeping:** Deleted stale branch `worktree-healthcheck`; updated README.md (32→49 models, 52→49 registry, 61→68 tests); updated models.yaml header (46→49 instances).
+**2026-04-29 (today):** Slides now fully pgfplots-free: census scatter (ticket 0131, PR #296) and regimes scatter (ticket 0132) replaced with Python PDF figures. Adherence test added (`test_no_inline_plots.py`, ticket 0130). Ablation module split: `citation_columns` (ablatable) + `sourcing_ground` (S_g base), MoE repeat=3 fixed (PR #295). Regimes scatter visual tuned (ticket 0135). Ticket planning: 0133 deferred (pending), 0134 narrowed to cloud-only, 0136/0137 added for local 30B/8B.
 
-**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated, tickets/memory audited. Also: ticket log-placement validator added (`scripts/check_ticket_structure.py`, PR #292), 10 historical tickets fixed.
-
-**Previous session (2026-04-24, morning):** Orphaned worktrees/branches cleaned, stale .wip files cleared, diverged main reconciled.
-
-**2026-04-23:** Census chart moved; v1 architecture slide added; N-plants charts redesigned as horizontal scatter; quality ladder slides inserted (PR #285).
+**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated. Ticket log-placement validator added (PR #292).
 
 ## Blockers
 
@@ -18,9 +14,10 @@ None.
 
 ## Next actions
 
-1. **Slides direct editing** — user will edit slides.tex directly (loanwords, STANAG, Watcher mapping, footnote attributions per REVIEW MINOR comments).
-2. **Launch ablation Phase 1** — `--seed 42 --provider DeepSeek --temperature 0.0`, 2 pilot reps on base prompt, verify determinism.
-3. **Ticket 0102** — escalation-rate decay verification (post-talk).
+1. **Nightly (tonight):** ticket 0134 — cloud regimes scatter refresh (GPT-5.5 + 70B cheap).
+2. **Ticket 0129** — slides narrative restructure (5-act arc).
+3. **Ticket 0133** (pending, deferred) — replace Pareto scatter pgfplots with Python PDF.
+4. **Ticket 0102** — escalation-rate decay verification (post-talk).
 
 ## North star
 
@@ -69,13 +66,27 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] v1 prototype: incremental fusion loop, 18 iterations master+doc_i (ticket 0076, PR #278)
 - [x] Full namespace audit: method values, sweep names, prompts, query modules, output dirs, report labels (tickets 0120-0126, epic 0069, PRs #286-#291)
 - [x] Ticket log-placement validator + 10-ticket batch fix (ticket 0127, PR #292)
+- [x] Ablation: citation_columns / sourcing_ground split, MoE repeat=3 fixed (PR #295)
+- [x] Slides pgfplots-free: census scatter (ticket 0131, PR #296), regimes scatter (ticket 0132, PR #297)
+- [ ] Regimes scatter model refresh: cloud GPT-5.5 + 70B (ticket 0134)
+- [ ] Regimes scatter model refresh: local 30B (ticket 0136)
+- [ ] Regimes scatter model refresh: local 8B (ticket 0137)
+- [ ] Regimes scatter visual tuning (ticket 0135, blocked by 0134)
+- [ ] Pareto scatter Python PDF (ticket 0133, pending)
+- [ ] Slides narrative restructure (ticket 0129)
 - [ ] Source-grounding verification Phases 2+3 — full audit (tickets 0118-0119, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
 
-## Non-closed tickets (4)
+## Non-closed tickets (10)
 
-- 0075 DSPy/MIPROv2 prompt optimization — survey done (PR #276); prototype deferred post-talk
-- 0102 Verify escalation-rate decay × system (post-talk, blocked by 0097 Phases 2+3)
+- 0075 DSPy/MIPROv2 — pending, deferred post-talk
+- 0102 Verify escalation-rate decay (post-talk, blocked by 0097 Phases 2+3)
 - 0118 Source-grounding Phase 2 — LLM adjudication (post-talk)
 - 0119 Source-grounding Phase 3 — HITL memory (post-talk, blocked by 0118)
+- 0129 Slides narrative restructure (5-act arc)
+- 0133 Pareto scatter Python PDF — pending, deferred (after 0134)
+- 0134 Regimes scatter cloud refresh (GPT-5.5, 70B cheap) — **next nightly**
+- 0135 Regimes scatter visual tuning — blocked by 0134
+- 0136 Regimes scatter local 30B
+- 0137 Regimes scatter local 8B
