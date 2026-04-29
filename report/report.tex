@@ -34,6 +34,7 @@
 \bibliographystyle{plainnat}
 
 \input{inputs/generated/macros}
+\InputIfFileExists{inputs/generated/macros_census}{}{}
 
 \begin{document}
 
@@ -131,6 +132,13 @@ On observe trois stratégies de réponse distinctes~: (a) fourniture de données
 La limite de taille des réponses (4K--8K tokens) joue un rôle critique~: l'information demandée représente au minimum 2~267 tokens même avec des cellules vides, alors que notre table de référence \citep{NLN8GPNI} en compte 27~946. C'est d'autant plus un problème pour les modèles de raisonnement, qui allouent une partie du résultat à la réflexion.
 
 \input{inputs/generated/tab_census}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\linewidth]{inputs/generated/fig_census_direct.pdf}
+\caption{Résultats des \NumCensusModels{} modèles sur le prompt census (passe unique, sans documentation). Chaque barre~: un run, une couleur par modèle. Ligne verte~: référence (163 centrales).}
+\label{fig:census-direct}
+\end{figure}
 
 \section{Expérience 2~: approche conversationnelle avec relances}\label{sec:exp2}
 

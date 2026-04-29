@@ -5,9 +5,6 @@ sorted by f1 descending. f1 is median across runs as a decimal 0-1.
 n_tp and n_fp are median matched/hallucinated plant counts (integers).
 local is 1 for Padme models, 0 otherwise.
 
-Also writes census_scatter_tp.csv and census_scatter_fp.csv alongside
-census_bars.csv — one row per plant, used by the dot-per-plant slide chart.
-
 Usage:
     uv run python -m aedist.plot_census \\
         --measurements measurements.jsonl \\
@@ -76,25 +73,6 @@ def build_census_rows(metrics: list[dict]) -> list[dict]:
     return rows
 
 
-def build_scatter_rows(census_rows: list[dict]) -> tuple[list[dict], list[dict]]:
-    """Generate one row per plant for the dot-per-plant scatter chart.
-
-    Model index 0 = best model (highest f1). pgfplots y dir=reverse puts it
-    at the top of the horizontal chart.
-
-    Returns (tp_rows, fp_rows):
-      tp_rows — matched plants, x = 1..n_tp, plotted in positive territory
-      fp_rows — hallucinated plants, x = -1..-n_fp, plotted in negative territory
-    """
-    tp_rows: list[dict] = []
-    fp_rows: list[dict] = []
-    for model_idx, row in enumerate(census_rows):
-        y = model_idx
-        tp_rows.extend({"x": pi, "y": y} for pi in range(1, int(row["n_tp"]) + 1))
-        fp_rows.extend({"x": -pi, "y": y} for pi in range(1, int(row["n_fp"]) + 1))
-    return tp_rows, fp_rows
-
-
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
@@ -117,16 +95,6 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
     log.info("Wrote %d rows to %s", len(rows), output_path)
-
-    tp_rows, fp_rows = build_scatter_rows(rows)
-    tp_path = output_path.parent / "census_scatter_tp.csv"
-    fp_path = output_path.parent / "census_scatter_fp.csv"
-    for path, data in [(tp_path, tp_rows), (fp_path, fp_rows)]:
-        with open(path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=["x", "y"])
-            writer.writeheader()
-            writer.writerows(data)
-        log.info("Wrote %d rows to %s", len(data), path)
 
 
 if __name__ == "__main__":
