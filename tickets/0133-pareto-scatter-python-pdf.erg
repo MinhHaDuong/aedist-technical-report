@@ -1,0 +1,32 @@
+%erg v1
+Title: Remplacer le pgfplots Pareto scatter par une figure Python PDF
+Status: open
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T18:00Z claude created
+
+--- body ---
+## Context
+
+`slides/slides.tex:473` contient un `\begin{axis}` inline qui dessine le
+scatter Pareto coût-qualité (F1 vs coût, cloud vs local) en consommant
+`pareto.csv` via pgfplots.
+
+Règle repo : les figures sont générées par Python et incluses comme PDF
+(`\includegraphics`). Test d'enforcement : `tests/test_no_inline_plots.py`
+(ticket 0130).
+
+## Actions
+
+1. Écrire un script Python qui génère `fig_pareto.pdf` (matplotlib).
+2. Remplacer le bloc `\begin{axis}...\end{axis}` par `\includegraphics`.
+3. Vérifier que `tectonic slides.tex` compile sans erreur.
+4. Supprimer le xfail de `test_no_begin_axis` si c'est la dernière violation.
+
+## Exit criteria
+
+- `slides/slides.tex` ne contient plus de `\begin{axis}` pour le Pareto scatter
+- `fig_pareto.pdf` généré par un script Python commité
+- `tectonic slides.tex` sans erreur

@@ -1,11 +1,14 @@
 %erg v1
 Title: Interdire les plots inline dans les .tex — test automatique
-Status: open
+Status: closed
 Created: 2026-04-29
 Author: claude
 
 --- log ---
 2026-04-29T17:15Z claude created
+2026-04-29T18:00Z claude note violations: slides/slides.tex:128 (census scatter), slides/slides.tex:395 (regimes scatter), slides/slides.tex:473 (pareto)
+2026-04-29T18:00Z claude note remediation tickets: 0131, 0132, 0133
+2026-04-29T18:00Z claude status closed — test written (xfail), 3 remediation tickets opened
 
 --- body ---
 ## Context
