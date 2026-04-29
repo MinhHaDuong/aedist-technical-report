@@ -1,0 +1,55 @@
+%erg v1
+Title: Régénérer et committer census_scatter_tp/fp.csv — dots disparus du slide 4
+Status: open
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T14:30Z claude created
+
+--- body ---
+## Context
+
+Le slide 4 des slides Econom'IA ("57 modèles, 163 centrales : le modèle seul ne suffit pas")
+utilise depuis le commit 88e91cb (PR #285, 2026-04-23) deux fichiers scatter :
+
+- `slides/inputs/generated/census_scatter_tp.csv` — un point par centrale identifiée
+- `slides/inputs/generated/census_scatter_fp.csv` — un point par centrale hallucinée
+
+Ces fichiers sont écrits par `uv run python -m aedist.plot_census` en même temps que
+`census_bars.csv` (lignes 122-123 de `src/aedist/plot_census.py`). Mais le commit 88e91cb
+n'a commité que `census_bars.csv` — les deux scatter n'étaient pas dans le répertoire
+de travail ou ont été oubliés.
+
+Résultat : le slide affiche uniquement la ligne de référence verte (163 centrales) sans
+aucun point rouge (halluciné) ni jaune (identifié). La figure est vide, le message
+"le choix du modèle ne résout pas le problème" ne passe plus.
+
+## Archéologie git
+
+```
+git log --all -- slides/inputs/generated/census_scatter_tp.csv
+# (aucun résultat — jamais commité)
+git show 88e91cb --stat | grep slides/inputs
+# (aucun résultat — seul src/ et tests/ dans ce commit)
+```
+
+## Actions
+
+1. Depuis la racine du repo :
+   ```
+   uv run python -m aedist.plot_census \
+       --measurements measurements.jsonl \
+       --output slides/inputs/generated/census_bars.csv
+   ```
+2. Vérifier que `slides/inputs/generated/census_scatter_tp.csv` et `census_scatter_fp.csv`
+   ont bien été écrits (≥ 2000 lignes chacun d'après le commit message : 2832 TP, 726 FP).
+3. Rebuilder les slides : `cd slides && tectonic slides.tex`
+4. Vérifier visuellement que les points rouges et jaunes réapparaissent sur le slide 4.
+5. Committer les deux CSV.
+
+## Exit criteria
+
+- `slides/inputs/generated/census_scatter_tp.csv` et `census_scatter_fp.csv` committés
+- Slide 4 : points rouges (FP) visibles à gauche de zéro, points jaunes (TP) entre 0 et 163
+- `tectonic slides.tex` sans erreur sur le frame fragile du slide 4
