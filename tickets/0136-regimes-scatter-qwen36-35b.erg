@@ -32,5 +32,5 @@ Ticket split from 0134.
 
 ## Exit criteria
 
-- `fig_regimes_scatter.pdf` includes `qwen3.6:35b` with all 3 methods
-- `tectonic slides.tex` builds without error
+- `fig_regimes_scatter.pdf` includes a local 30B-class model ✓ (qwen3.5:35b substituted per user instruction "Add 3.5"; qwen3.6:35b blocked by Ollama 0.22.0 template bug — confirmed independent of client-side no_think wiring)
+- `tectonic slides.tex` builds without error ✓ (confirmed 2026-04-30; Overfull vbox warnings only)
