@@ -3,6 +3,7 @@ Title: Audit experiment parameter confounds; fix missing fields in JobSpec/RunRe
 Status: open
 Created: 2026-04-30
 Author: claude
+Blocked-by: 0139
 
 --- log ---
 2026-04-30T10:00Z claude created
@@ -79,23 +80,11 @@ Non-thinking models are unaffected — `no_think=False` is a no-op for them.
 
 ## Actions
 
-### 0. Fix the silent-drop bug (blocking; do before new sweeps)
+### 0. Fix the silent-drop bug (blocked by 0139; do before new sweeps)
 
-Add `seed`, `provider_order`, `max_tokens`, and `num_ctx` as declared fields
-in `JobSpec` so sweep configs are honoured rather than silently ignored.
-Wire them through `worker.execute()` → `build_api_kwargs()` → API.
-Write `seed`, `provider_order`, `max_tokens`, `num_ctx`, and `web_search`
-(effective) to the raw JSON output file so `evaluate.py` can backfill them
-into `RunRecord.method_params.extra`.
-
-Suggested field defaults:
-- `seed: int | None = None` — None means unset (provider default)
-- `provider_order: list[str] | None = None`
-- `max_tokens: int | None = None` — None means model default
-- `num_ctx: int = 32768` — Ollama context window
-
-Add `extra='forbid'` to `JobSpec.model_config` so future unknown sweep
-fields raise an error instead of silently disappearing.
+Tracked in ticket 0139. Once merged, `seed`, `provider_order`, `max_tokens`,
+`num_ctx`, and `web_search` (effective) will be declared `JobSpec` fields,
+wired to the API, written to raw JSON, and backfillable into `RunRecord`.
 
 ### 1. Per-experiment audit: reasoning required / optional / irrelevant
 
