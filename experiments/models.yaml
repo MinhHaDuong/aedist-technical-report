@@ -567,8 +567,8 @@
   name: "Qwen 3.5 9B (local)"
   provider: "Ollama/Padme"
   country: CN
-  architecture: moe
-  context_window: 131072
+  architecture: dense
+  context_window: 262144
   price_per_mtok_in: 0.0
   price_per_mtok_out: 0.0
   size_class: small
