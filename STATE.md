@@ -1,4 +1,4 @@
-Last updated: 2026-04-30T16:50Z
+Last updated: 2026-04-30T17:00Z
 
 ## Status
 
@@ -19,6 +19,28 @@ None.
 1. **Align ablation and prompt_complete.** Tickets 0142 (rewrite ablation modules as verbatim paragraph extractions from `prompts/prompt_complete.txt`) → 0143 (rerun ablation, blocked-by 0142). Today's modules are conceptually similar but not literal; 0142's exit gate is a `diff` between assembled-modules-composite and `prompt_complete.txt`.
 2. **Verify `prompt_complete` reaches F1 = 1 across multiple runs and models.** Current state of `outputs/direct_complete` (n=1 per model, 12 models): **best F1 = 0.557 (GLM-5 Turbo); none at 1.0; three at 0.000 (Ernie 4.5, GPT-5.4, Grok 4.20).** Mean ≈ 0.35. Consequence: the deep-research arm does not yet ceiling the regimes scatter — verify what's broken (extraction parsing? reference mismatch? actual model failure?) before claiming joint stages-3+4 contribution.
 3. **Set up at least one local model with deep-research capability** (web search + reasoning) to run `prompt_complete` to F1 = 1 consistently — overnight is fine. Dev phase: **coal-only subset** of the reference table, not the full thermal inventory. Candidate path: a thinking-capable Ollama model + Tavily/web wrapper + tool-use loop, or a deepagents-style runner (per ticket 0076's evaluation).
+
+## Benchmark-wide F1 leaderboard (2026-04-30, 327 records scanned)
+
+**Nobody hits F1 = 1.0.** Top of the leaderboard:
+
+| F1     | Method              | Model                              | Note |
+|--------|---------------------|------------------------------------|------|
+| 0.988  | decomposed RAG      | DeepSeek V3.2                      | Best-of-runs; the headline `\HeadlineMeanFOne` mean across n=4 is 0.898 |
+| 0.984  | direct (parametric) | **qwen3.5:9b (local)**             | 9B local model on direct extraction — beats most cloud frontier |
+| 0.982  | multiturn / verification | Claude Opus 4.6                |      |
+| 0.975  | decomposed          | Gemini 2.5 Flash Lite              |      |
+| 0.968  | RAG wholesale       | Qwen 3.5 122B                      |      |
+
+Two findings worth weighting against the priorities:
+
+- **The deep-research arm is BELOW the regimes-scatter ceiling.** Best `direct_complete` = 0.557 vs. best benchmark-wide = 0.988. Stages 3+4 (Coherence + Freshness) appear to *lower* extraction F1 in current data — opposite of the assumed narrative arc. **Three `0.000` rows in `direct_complete` (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20)** are very suspicious for capable models — likely an evaluator parse failure on the structured-document output, not actual model failure. **Diagnose this before any priority-3 build**, because if the parser is broken on `prompt_complete` outputs, F1 = 1 is unreachable by construction.
+- **qwen3.5:9b at 0.984 on direct (n=1)** partially answers priority 3 already — a small local model is near-ceiling without tools / web / reasoning. Verify with repeats on coal-only before banking on it. If real, priority 3 may collapse to "use this 9B as the local extractor" rather than "build a deep-research stack".
+
+Quick wins for the return session:
+1. Read one of the `0.000` `direct_complete` records (e.g. `gpt-5.4-run1.record.json`) alongside its `.json` — confirm whether the response contained a valid table the parser missed.
+2. Run qwen3.5:9b/direct ×3 on the coal-only reference to confirm 0.984 reproduces.
+3. Then decide whether priority 3 is "build deep-research locally" or "verify the 9B and ship".
 
 ## Non-closed tickets (15)
 
