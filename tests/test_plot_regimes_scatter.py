@@ -40,7 +40,7 @@ def test_load_excludes_synthetic(tmp_path, monkeypatch):
     patch_measurements_loader(monkeypatch, input_path)
 
     data = load_regimes_data()
-    for (model, _method), tp_list in data.items():
+    for model, _method in data.keys():
         assert not model.endswith("-union"), f"synthetic {model} not filtered"
 
 
