@@ -1,23 +1,42 @@
-Last updated: 2026-04-29T20:30Z
+Last updated: 2026-04-30T16:50Z
 
 ## Status
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1131 passing, 1 skipped, 1 xfailed. `make lint` includes ruff + ticket structure check.
 
-**2026-04-29 (today):** Slides now fully pgfplots-free: census scatter (ticket 0131, PR #296) and regimes scatter (ticket 0132) replaced with Python PDF figures. Adherence test added (`test_no_inline_plots.py`, ticket 0130). Ablation module split: `citation_columns` (ablatable) + `sourcing_ground` (S_g base), MoE repeat=3 fixed (PR #295). Regimes scatter visual tuned (ticket 0135). Ticket planning: 0133 deferred (pending), 0134 narrowed to cloud-only, 0136/0137 added for local 30B/8B.
+**2026-04-30 (today):** Regimes scatter ticket 0134 pivoted to free Hy3 preview top-end (drops paid GPT-5.5; expires 2026-05-08). Cloud sweeps complete (Hy3 + qwen3.6-35b-a3b × direct/multiturn/RAG, $0.52). Local sweeps running in padme tmux `regimes-fill` (qwen3.6:35b + ministral-3:14b + qwen3.5:9b × 3 methods); patched `query_direct.py` and `query_multiturn.py` to use Ollama native `/api/chat` for `num_ctx` (commits `d27c393`, `031cef2`); added `message.thinking` capture in record JSONs (commit `f379c57`). Measurement-framework note `docs/measurement-framework.md` written (axes vs lenses, four limits Articulation/Coverage/Coherence/Freshness). Tickets 0140 (Makefile split), 0141 (registry providers-block refactor), 0142 (rewrite ablation modules verbatim from prompt_complete), 0143 (rerun ablation, blocks on 0142). API-key leak via `ps -ef` discovered + remediated: `~/.claude/scripts/on-start.sh` no longer persists `.env` (`d4653eb`); AEDIST Makefile centralized on `$(UV_RUN) := uv run --project .. --env-file ../.env` (`4000c21`); 5 follow-up tickets opened in Oeconomia / chemin-de-voix / Fuzzy Corpus / Cadens / maiba.
 
-**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291): method values migrated, sweep/modelset keys renamed, query modules renamed to call-pattern axis, output dirs renamed, report labels updated. Ticket log-placement validator added (PR #292).
+**2026-04-29:** Slides fully pgfplots-free: census scatter (ticket 0131, PR #296) and regimes scatter (ticket 0132) replaced with Python PDF figures. Ablation module split: `citation_columns` + `sourcing_ground`, MoE repeat=3 fixed (PR #295).
+
+**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291).
 
 ## Blockers
 
 None.
 
-## Next actions
+## Priorities (operator, set 2026-04-30)
 
-1. **Nightly (tonight):** ticket 0134 — cloud regimes scatter refresh (GPT-5.5 + 70B cheap).
-2. **Ticket 0129** — slides narrative restructure (5-act arc).
-3. **Ticket 0133** (pending, deferred) — replace Pareto scatter pgfplots with Python PDF.
-4. **Ticket 0102** — escalation-rate decay verification (post-talk).
+1. **Align ablation and prompt_complete.** Tickets 0142 (rewrite ablation modules as verbatim paragraph extractions from `prompts/prompt_complete.txt`) → 0143 (rerun ablation, blocked-by 0142). Today's modules are conceptually similar but not literal; 0142's exit gate is a `diff` between assembled-modules-composite and `prompt_complete.txt`.
+2. **Verify `prompt_complete` reaches F1 = 1 across multiple runs and models.** Current state of `outputs/direct_complete` (n=1 per model, 12 models): **best F1 = 0.557 (GLM-5 Turbo); none at 1.0; three at 0.000 (Ernie 4.5, GPT-5.4, Grok 4.20).** Mean ≈ 0.35. Consequence: the deep-research arm does not yet ceiling the regimes scatter — verify what's broken (extraction parsing? reference mismatch? actual model failure?) before claiming joint stages-3+4 contribution.
+3. **Set up at least one local model with deep-research capability** (web search + reasoning) to run `prompt_complete` to F1 = 1 consistently — overnight is fine. Dev phase: **coal-only subset** of the reference table, not the full thermal inventory. Candidate path: a thinking-capable Ollama model + Tavily/web wrapper + tool-use loop, or a deepagents-style runner (per ticket 0076's evaluation).
+
+## Non-closed tickets (15)
+
+- 0075 DSPy/MIPROv2 — pending, deferred post-talk
+- 0102 Verify escalation-rate decay (post-talk, blocked by missing v0 fusion + HITL memory)
+- 0118 Source-grounding Phase 2 — LLM adjudication (post-talk, gate 2026-05-27)
+- 0119 Source-grounding Phase 3 — HITL memory (post-talk, blocked by 0118)
+- 0129 Slides narrative restructure (5-act arc)
+- 0133 Pareto scatter Python PDF — pending, deferred (after 0134)
+- 0134 Regimes scatter — pivoted to Hy3 preview free; cloud done, local in flight on padme
+- 0135 Regimes scatter visual tuning — blocked by 0134
+- 0136 Regimes scatter local 30B — qwen3.6:35b in registry
+- 0137 Regimes scatter local 8B
+- 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
+- 0140 Split Makefile by workpackage
+- 0141 Registry refactor — one entry per logical model with providers sub-block
+- 0142 Rewrite ablation modules verbatim from prompt_complete (priority 1)
+- 0143 Rerun ablation with verbatim modules (blocked-by 0142)
 
 ## North star
 
@@ -68,25 +87,13 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 - [x] Ticket log-placement validator + 10-ticket batch fix (ticket 0127, PR #292)
 - [x] Ablation: citation_columns / sourcing_ground split, MoE repeat=3 fixed (PR #295)
 - [x] Slides pgfplots-free: census scatter (ticket 0131, PR #296), regimes scatter (ticket 0132, PR #297)
-- [ ] Regimes scatter model refresh: cloud GPT-5.5 + 70B (ticket 0134)
-- [ ] Regimes scatter model refresh: local 30B (ticket 0136)
-- [ ] Regimes scatter model refresh: local 8B (ticket 0137)
+- [x] Regimes scatter cloud sweep (ticket 0134, Hy3 preview free + qwen3.6-35b-a3b, $0.52)
+- [ ] Regimes scatter local sweep (ticket 0134, in flight on padme tmux `regimes-fill`)
 - [ ] Regimes scatter visual tuning (ticket 0135, blocked by 0134)
 - [ ] Pareto scatter Python PDF (ticket 0133, pending)
 - [ ] Slides narrative restructure (ticket 0129)
+- [ ] Verify prompt_complete reaches F1 = 1 (priority 2)
+- [ ] Local deep-research model for prompt_complete F1 = 1 on coal-only (priority 3)
 - [ ] Source-grounding verification Phases 2+3 — full audit (tickets 0118-0119, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
-
-## Non-closed tickets (10)
-
-- 0075 DSPy/MIPROv2 — pending, deferred post-talk
-- 0102 Verify escalation-rate decay (post-talk, blocked by 0097 Phases 2+3)
-- 0118 Source-grounding Phase 2 — LLM adjudication (post-talk)
-- 0119 Source-grounding Phase 3 — HITL memory (post-talk, blocked by 0118)
-- 0129 Slides narrative restructure (5-act arc)
-- 0133 Pareto scatter Python PDF — pending, deferred (after 0134)
-- 0134 Regimes scatter cloud refresh (GPT-5.5, 70B cheap) — **next nightly**
-- 0135 Regimes scatter visual tuning — blocked by 0134
-- 0136 Regimes scatter local 30B
-- 0137 Regimes scatter local 8B
