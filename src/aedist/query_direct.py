@@ -91,6 +91,9 @@ def main():
         help="Disable web search even if model has web_search=true",
     )
     parser.add_argument("--dry-run", action="store_true", help="List queries without calling API")
+    parser.add_argument(
+        "--no-think", action="store_true", help="Disable reasoning (Qwen3/thinking models)"
+    )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
     parser.add_argument(
         "--experiments", default="experiments.toml", help="Path to experiments.toml"
@@ -193,6 +196,7 @@ def main():
                     effective_model,
                     max_tokens=args.max_tokens,
                     temperature=args.temperature,
+                    no_think=args.no_think,
                 )
                 api_model_id = model.get("router_model", model_id)
                 # Ollama: bypass /v1/ shim to honour num_ctx (output cap via num_predict)
@@ -209,6 +213,7 @@ def main():
                         [{"role": "user", "content": prompt}],
                         num_ctx,
                         num_predict=args.max_tokens,
+                        no_think=args.no_think,
                     )
                 else:
                     result = query_single_turn(

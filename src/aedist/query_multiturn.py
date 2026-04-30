@@ -70,6 +70,7 @@ def run_conversation(
     budget: BudgetTracker,
     stateless: bool = False,
     ollama_base_url: str | None = None,
+    no_think: bool = False,
     **api_kwargs,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
@@ -79,7 +80,7 @@ def run_conversation(
 
     def _call(msgs):
         if is_ollama:
-            return query_ollama_native(ollama_url, model_id, msgs, num_ctx)
+            return query_ollama_native(ollama_url, model_id, msgs, num_ctx, no_think=no_think)
         return query_single_turn(client, model_id, msgs, **api_kwargs)
 
     messages: list[dict] = []
@@ -192,6 +193,9 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
+    parser.add_argument(
+        "--no-think", action="store_true", help="Disable reasoning (Qwen3/thinking models)"
+    )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
     parser.add_argument(
         "--experiments", default="experiments.toml", help="Path to experiments.toml"
@@ -268,6 +272,7 @@ def main():
                 mt_api_kwargs = build_api_kwargs(
                     model,
                     temperature=args.temperature,
+                    no_think=args.no_think,
                 )
                 ollama_base_url = (
                     routers_config.get("ollama", {}).get("base_url") if args.model_set else None
@@ -281,6 +286,7 @@ def main():
                     budget,
                     stateless=args.stateless,
                     ollama_base_url=ollama_base_url,
+                    no_think=args.no_think,
                     **mt_api_kwargs,
                 )
                 if conv is None:
