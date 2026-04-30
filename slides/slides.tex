@@ -72,51 +72,47 @@ Dans les pays à agences statistiques faibles, ces données sont difficiles d'ac
 
 \medskip
 {\small Tâche pilote: inventaire des centrales thermiques au Vietnam.\\
-Gold standard: liste de 163 centrales compilée par l'auteur sur plusieurs années.}
+Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{L'approche évidente~: et son plafond}
-\begin{columns}[T]
-\column{0.52\textwidth}
-\textbf{Un prompt~:} 77~centrales, \$0.02, 30~secondes.\\
-Avec RAG + décomposition~: 163/163, F1=89,8\%, \$0.06.
+\begin{frame}{Épouvantail: Utiliser un générateur de mots aléatoires}
+
+\textbf{Expérimentation \NumModelsTested{} modèles, 3 runs chacun~:}  % TODO: Vérifier que c'est bien \NumModelsTested{} modèles
+``{\ttfamily \input{../experiments/prompts/prompt_extract.txt}}''
 
 \smallskip
-\NumModelsTested{} modèles, 10~laboratoires~: gamme complète,\\
-schéma d'incertitude cohérent.
-
-\smallskip
-\textbf{Les deux approches partagent le même plafond~:}
+\textbf{Résultats (163 centrales à identifier)~:}
 \begin{itemize}\setlength\itemsep{0pt}
-  \item Quelles centrales manquent et pourquoi~?
-  \item Les capacités sont-elles exactes~?
-  \item Sources non vérifiées par machine
-  \item Pas de mise à jour incrémentale
+  \item Centrales identifiées~:  %Add a macro for the range of TP distribution across runs
+  \item Centrales hallucinées~: %Add a macro for the range of FP distribution across runs
+  \item Durée~: %Add a macro for the total time range across runs
+  \item Coût~: %Add a macro for the total cost range across runs
 \end{itemize}
 
-\column{0.45\textwidth}
-\includegraphics[width=\textwidth,height=0.76\textheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
-\end{columns}
+\end{frame}
 
-\smallskip
-{\small \textbf{Le choix du modèle ne résout pas le problème.}}
+\begin{frame}[plain]
+\centering
+\includegraphics[height=\paperheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
+\begin{tikzpicture}[remember picture,overlay] % TODO: Simplifier en choisissant des modèles et en fixant leur ordre dans un fichier de conf de la figure
+\node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
+Récalcitrant\\
+Incomplet\\
+Hallucinant\\
+Non-deterministe\\
+Non-monotone
+};
+\end{tikzpicture}
 \end{frame}
 
 % Act II — La question qui change tout
 
 % -------------------------------------------------------------------
-\begin{frame}{La question centrale}
+\begin{frame}{Question centrale: «~quelle architecture~?», pas «~quel modèle~?»}
 \begin{center}
 \large
-\NumModelsTested{} modèles. Un plafond. Le même pour tous.\\[1em]
-
-\textbf{La question n'est pas «~quel modèle~?»\\[0.3em]
-C'est «~quelle architecture~?»}
-
-\bigskip\bigskip
-\normalsize
 Les données de qualité recherche ne sont pas des données correctes.\\
 Ce sont des données dont les erreurs sont \textbf{localisables}.
 
