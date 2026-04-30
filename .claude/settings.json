@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "Bash(ssh -f -N -L 11434:127.0.0.1:11434 padme)",
       "Bash(cp __TRACKED_VAR__/ADR.md .)",
