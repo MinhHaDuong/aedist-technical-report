@@ -172,14 +172,6 @@ def test_no_capabilities_unchanged():
     assert "tools" not in kwargs
 
 
-def test_reasoning_model_skips_temperature():
-    """Models with reasoning=true don't get temperature param."""
-    model = {"id": "openai/o3", "reasoning": True}
-    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.7)
-    assert "temperature" not in kwargs
-    assert kwargs["max_tokens"] == 4096
-
-
 def test_web_search_model_gets_plugin():
     """Models with web_search=true get plugins in extra_body."""
     model = {"id": "test/web", "web_search": True}
@@ -189,11 +181,11 @@ def test_web_search_model_gets_plugin():
     assert kwargs["tools"][0]["parameters"]["max_total_results"] == 37
 
 
-def test_both_capabilities():
-    """Model with both reasoning and web_search gets correct params."""
-    model = {"id": "test/both", "reasoning": True, "web_search": True}
+def test_web_search_with_temperature():
+    """Models with web_search get both temperature and tools."""
+    model = {"id": "test/both", "web_search": True}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.0, enable_web_search=True)
-    assert "temperature" not in kwargs
+    assert kwargs["temperature"] == 0.0
     assert kwargs["max_tokens"] == 4096
     assert kwargs["tools"][0]["type"] == "openrouter:web_search"
     assert kwargs["tools"][0]["parameters"]["max_total_results"] == 37
@@ -204,13 +196,6 @@ def test_web_search_false_no_plugin():
     model = {"id": "test/no-web", "web_search": False}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.5)
     assert "tools" not in kwargs
-
-
-def test_reasoning_false_keeps_temperature():
-    """Explicit reasoning=false keeps temperature."""
-    model = {"id": "test/no-reason", "reasoning": False}
-    kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.3)
-    assert kwargs["temperature"] == 0.3
 
 
 def test_no_think_sets_think_false():

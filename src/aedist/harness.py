@@ -333,10 +333,9 @@ def build_api_kwargs(
 ) -> dict:
     """Build API kwargs from model capability flags.
 
-    Reads ``reasoning`` and ``web_search`` flags from the model dict and
-    constructs the appropriate kwargs for ``chat.completions.create()``:
+    Reads ``web_search`` flag from the model dict and constructs the
+    appropriate kwargs for ``chat.completions.create()``:
 
-    - ``reasoning: true`` → omit ``temperature`` (required by OpenAI o-series; other thinking models accept temperature)
     - ``web_search: true`` → add OpenRouter server tool
       ``tools: [{"type": "openrouter:web_search"}]``
       (model decides when to search; ~$0.02 per search call via Exa)
@@ -354,8 +353,7 @@ def build_api_kwargs(
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
 
-    if not model.get("reasoning", False):
-        kwargs["temperature"] = temperature
+    kwargs["temperature"] = temperature
 
     if seed is not None:
         kwargs["seed"] = seed

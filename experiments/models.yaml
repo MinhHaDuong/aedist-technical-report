@@ -2,7 +2,11 @@
 # 49 model instances, updated 2026-04-25
 # Single source of truth. Experiment config in experiments.toml.
 # Sorted by size class, then provider.
-# Capability flags: reasoning (skip temperature), web_search (OpenRouter plugin).
+# Capability flags: web_search (OpenRouter plugin).
+#
+# POLICY: Never delete entries. Comment out with date and reason instead.
+#
+# Retired entries (commented out, not deleted):
 #
 # Removed 2026-04-08:
 #   openai/o3-deep-research    — broken: $1.96 empty response, finish_reason=length
@@ -712,19 +716,27 @@
   license: open-MIT
   web_search: true
 
-- id: "openai/o3"
-  router: openrouter
-  router_model: "openai/o3"
-  name: o3
-  provider: OpenAI
-  country: US
-  architecture: dense
-  context_window: 200000
-  price_per_mtok_in: 2.0
-  price_per_mtok_out: 8.0
-  size_class: frontier
-  license: commercial
-  reasoning: true
-  web_search: true
 
-
+# ---------------------------------------------------------------------------
+# Retired entries — commented out, not deleted (policy: keep history)
+# ---------------------------------------------------------------------------
+#
+# openai/o3 — retired 2026-04-30
+# Reason: superseded by GPT-5; was the only model requiring the reasoning flag
+# (reasoning flag: API errors if temperature is sent — removed entire codepath
+#  rather than carry a single-model exception indefinitely)
+#
+# - id: "openai/o3"
+#   router: openrouter
+#   router_model: "openai/o3"
+#   name: o3
+#   provider: OpenAI
+#   country: US
+#   architecture: dense
+#   context_window: 200000
+#   price_per_mtok_in: 2.0
+#   price_per_mtok_out: 8.0
+#   size_class: frontier
+#   license: commercial
+#   reasoning: true
+#   web_search: true
