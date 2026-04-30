@@ -302,6 +302,9 @@ def test_sweep_output_dirs_unique(experiments):
             allowed_pairs = [
                 {"sweep_direct_extract", "sweep_direct_extract_local"},
                 {"sweep_ablation_p1_direct_base", "sweep_ablation_p1_direct_base_extended"},
+                {"sweep_regimes_direct_cloud", "sweep_regimes_direct_local"},
+                {"sweep_regimes_multiturn_cloud", "sweep_regimes_multiturn_local"},
+                {"sweep_regimes_rag_cloud", "sweep_regimes_rag_local"},
             ]
             if pair not in allowed_pairs:
                 pytest.fail(f"sweeps.{name} and sweeps.{outputs[out]} share output '{out}'")

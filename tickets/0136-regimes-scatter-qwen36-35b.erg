@@ -1,6 +1,6 @@
 %erg v1
 Title: Add qwen3.6:35b to regimes scatter figure
-Status: open
+Status: closed
 Created: 2026-04-29
 Author: claude
 
@@ -8,6 +8,8 @@ Author: claude
 2026-04-29T20:00Z claude created
 2026-04-29T21:06Z claude note sweep-assess: not-picked hash:7561f462c06a scope:add 30B Ollama model to regimes scatter figure risk:medium
 2026-04-30T00:00Z claude note revised: pinned to qwen3.6:35b (already in modelset_census_local via PR #303); renamed from 0136-regimes-scatter-local-30b.erg
+2026-04-30T10:00Z claude note blocker: Ollama 0.22.0 thinking capability bug — qwen3.6:35b and qwen3.5:35b (new runs) generate thinking tokens that fill /v1 content with empty string; no_think=true workaround ineffective at Ollama template level; gemma4:31b same issue
+2026-04-30T10:00Z claude close pr:306 — used existing qwen3.5:35b April-10 data (direct×3+rag×3); qwen3.6:35b omitted (zero usable runs)
 
 --- body ---
 ## Context
