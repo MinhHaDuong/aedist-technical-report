@@ -336,7 +336,7 @@ def build_api_kwargs(
     Reads ``reasoning`` and ``web_search`` flags from the model dict and
     constructs the appropriate kwargs for ``chat.completions.create()``:
 
-    - ``reasoning: true`` → omit ``temperature`` (required by o3, R1, etc.)
+    - ``reasoning: true`` → omit ``temperature`` (required by OpenAI o-series; other thinking models accept temperature)
     - ``web_search: true`` → add OpenRouter server tool
       ``tools: [{"type": "openrouter:web_search"}]``
       (model decides when to search; ~$0.02 per search call via Exa)
