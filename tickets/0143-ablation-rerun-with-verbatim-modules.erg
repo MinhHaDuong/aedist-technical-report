@@ -1,0 +1,82 @@
+%erg v1
+Title: Re-run ablation Phase 1 + Phase 2 with verbatim-from-complete modules
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0142
+
+--- log ---
+2026-04-30T13:26Z claude created — gated on 0142 module rewrite
+
+--- body ---
+## Context
+
+Once 0142 lands (modules rewritten as verbatim paragraph extractions from
+`prompt_complete.txt`), the existing ablation results in
+`outputs/ablation/**` are based on the previous (non-verbatim) modules and
+no longer reflect the canonical deep-research prompt decomposition.
+
+This ticket re-runs the existing ablation sweep configurations with the
+new modules to produce ablation data the discussion can claim is a true
+decomposition of `prompt_complete`.
+
+## Sweeps to re-run
+
+From `experiments/experiments.toml`:
+
+**Phase 1 — Selection across 3 regimes** (base vs. composite):
+- `sweep_ablation_p1_direct_base` / `sweep_ablation_p1_direct_composite`
+- `sweep_ablation_p1_rag_base` / `sweep_ablation_p1_rag_composite`
+- `sweep_ablation_p1_livesearch_base` / `sweep_ablation_p1_livesearch_composite`
+- `sweep_ablation_p1_direct_base_extended` (28 census models)
+
+**Phase 2 — RAG single-module sweeps** (one module on top of base):
+- `sweep_ablation_p2_rag_base` / `sweep_ablation_p2_rag_composite`
+- `sweep_ablation_p2_rag_minus_*` (7 leave-one-out)
+- `sweep_ablation_p2_rag_plus_*` (7 add-one)
+- `sweep_ablation_p2_rag_frontier`
+- `sweep_ablation_p2_rag_census`
+
+Plus the new modules from 0142 may justify additional plus/minus sweeps:
+- `sweep_ablation_p2_rag_plus_observed_vs_projected`
+- `sweep_ablation_p2_rag_plus_pdp_completeness`
+- `sweep_ablation_p2_rag_plus_data_quality_table`
+
+## Actions
+
+1. Verify 0142 closed and module equivalence diff passes.
+2. Move existing `outputs/ablation/**` to `outputs/ablation/_pre-0143/**`
+   (preserve as historical record; do not delete).
+3. Add `experiments.toml` entries for the 3 new plus-sweeps if 0142
+   produced new modules.
+4. Re-run all Phase 1 sweeps with new modules. Compare composite results
+   directly with `prompt_complete` data on the same models — should match
+   modulo MoE non-determinism.
+5. Re-run all Phase 2 RAG sweeps with new modules.
+6. Regenerate ablation tables and figures
+   (`fig_ablation_*`, `tab_ablation_*`).
+7. Update the discussion text in the report to reflect that the ablation
+   now decomposes `prompt_complete` verbatim.
+
+## Cost estimate
+
+Phase 1 + Phase 2 RAG ablation across 3 dev models × ~22 module
+configurations × repeat=3 ≈ ~200 calls. Existing budget caps in
+`experiments.toml`: $5–$10 per sweep, total estimate **~$30–$50**.
+Confirm before launch.
+
+## Test
+
+- Composite ablation (all modules ON) F1 ≈ prompt_complete sweep F1
+  on the same 3 models, within MoE variance. If not, the verbatim
+  extraction in 0142 is incomplete.
+- Phase 2 leave-one-out / add-one results show non-zero effect for at
+  least the largest modules (overview, narratives, statistics).
+
+## Exit criteria
+
+- All ablation sweeps re-run with verbatim modules.
+- Old data preserved under `outputs/ablation/_pre-0143/`.
+- New tables and figures regenerated.
+- Report discussion updated to claim verbatim decomposition.
+- Composite-vs-complete equivalence verified on dev tier.

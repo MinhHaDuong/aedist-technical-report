@@ -1,0 +1,86 @@
+%erg v1
+Title: Rewrite ablation modules to verbatim-extract from prompt_complete
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T13:25Z claude created — option B from prompt-prompt-complete-ablation alignment discussion 2026-04-30
+
+--- body ---
+## Context
+
+Current `experiments/prompts/modules/*.txt` modules are **conceptually
+similar but NOT verbatim** with `experiments/prompts/prompt_complete.txt`
+sections. As a result, the ablation cannot claim to decompose the
+deep-research prompt — it studies a related-but-different modular task.
+
+Mapping audit (2026-04-30):
+
+| `prompt_complete` section | Current module | Match |
+|---|---|---|
+| persona ("You are a senior energy analyst preparing…") | `persona.txt` ("You are a senior energy analyst.") | core verb verbatim, rest stripped |
+| §1 Sector Overview (5 bullets incl. COP26 JETP challenges) | `overview.txt` | conceptually equivalent; **drops "current challenges"** |
+| §2 structured table (12 columns, "every thermal plant", no MWe floor) | `base.txt` | **scope differs**: base demands ≥30 MWe, captive+cogen explicit; prompt_complete is looser |
+| §2 Source_1/Source_2 + "URL not verified" | `citation_columns.txt` | close, not verbatim |
+| §2 per-plant narrative + HIGH/MEDIUM/LOW rubric | `narratives.txt` + `sourcing_ground.txt` | split across two modules; rubric examples differ |
+| §3 cross-tabs a/b/c/d | `statistics.txt` | a/b/c match closely; **d "data quality summary" missing** |
+| §4 Annotated Bibliography (categorized) | `bibliography.txt` | shorter, less structured |
+| Quality instructions (OBSERVED vs PROJECTED, "include every PDP plant", consistent MWe units) | **no module** | unablatable today |
+
+## Why option B
+
+Discussion 2026-04-30 weighed three framings:
+- (A) Present ablation as "modular construction of a benchmark task", not
+  decomposition of prompt_complete. Cleanest narrative, no rerun required.
+- (B) Rewrite modules as verbatim paragraph extractions from prompt_complete,
+  re-run ablation. Stronger claim ("we ablated each component of the
+  deep-research prompt"). Expensive (rerun in 0143).
+- (C) Keep modules; add one for the missing rule; treat composite as
+  near-equivalent. Compromise; weaker claim.
+
+**Decision: B.** Rerun cost is acceptable; the stronger claim simplifies the
+discussion and avoids hand-waving about why ablation modules don't sum to
+prompt_complete.
+
+## Actions
+
+1. **Verbatim extract** each module from `prompt_complete.txt`. Each module
+   text is a literal copy of the corresponding paragraph(s) — no
+   abstraction, no rewording.
+2. **Reconcile scope**: rewrite `base.txt` to match prompt_complete §2's
+   table spec (12 columns, "every thermal plant", no MWe floor). Adds
+   captive/cogen mention only if present in prompt_complete (it is not —
+   so drop those from the new base).
+3. **Add missing modules** for the unablatable bits:
+   - `observed_vs_projected.txt` — distinguish OBSERVED facts from
+     PROJECTED facts (verbatim from prompt_complete Quality instructions).
+   - `pdp_completeness.txt` — "include every plant from PDP7-revised
+     (Decision 428/QĐ-TTg) and PDP8 (Decision 500/QĐ-TTg), even if
+     suspended or cancelled".
+   - `data_quality_table.txt` — the §3 d) cross-tabulation
+     (count of plants by confidence × fuel).
+4. **Verify equivalence**: assemble `[base + persona + overview + narratives
+   + sourcing_ground + citation_columns + statistics + bibliography +
+   observed_vs_projected + pdp_completeness + data_quality_table]` and
+   diff against `prompt_complete.txt`. Should match modulo whitespace and
+   the §-headers structure.
+5. **Update README.md** in `prompts/modules/` to document the new
+   verbatim-extraction policy.
+6. **Mark old data**: prior ablation outputs in `outputs/ablation/` were
+   produced with non-verbatim modules. Don't delete — but the rerun
+   ticket (0143) replaces them as the canonical results.
+
+## Test
+
+`diff <(assemble_prompt with all modules in canonical order) prompt_complete.txt`
+should return only structural-header differences (the §-numbered
+headings) — no content drift.
+
+## Exit criteria
+
+- All 8 existing modules rewritten as verbatim paragraph extractions.
+- 3 new modules created for the previously-unablatable rules.
+- Equivalence diff verified.
+- Module README documents the policy.
+- 0143 (rerun) unblocked.
