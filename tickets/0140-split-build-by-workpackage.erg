@@ -1,0 +1,52 @@
+%erg v1
+Title: Split Makefile by workpackage (analysis / report / slides)
+Status: open
+Created: 2026-04-23
+Author: claude
+
+--- log ---
+2026-04-23T12:06Z claude created
+2026-04-30T11:18Z claude note renumbered from 0112 (collision with 0112-slides-narrative-reframe); fixed coding.md → coding-python.md reference
+
+--- body ---
+## Context
+
+The current `Makefile` (225 lines) already tags its targets by workpackage
+(`measurements`, `tables`, `figures`, `report`, `slides`, `census`) and uses
+`$(GEN)` and `$(SLIDE_GEN)` as output directories for distinct consumers.
+Handoffs are committed under `derived/`. The harness rule "Split the build
+by workpackage" (`~/.claude/skills/harness-rules/coding-python.md:54`,
+reinforced by the handoff-artifact rule in
+`~/.claude/skills/harness-rules/git.md:16`) requires the split to be
+physical, not just implicit, so each writing-side target can build from
+committed artifacts alone — no `uv run`, no data fetch.
+
+Two downstream consumers (report, slides) share upstream analysis; the split
+is three files, not two.
+
+## Actions
+
+1. Extract `analysis.mk`: `measurements`, `census`, `select`, plus rules
+   producing `derived/**`, `$(GEN)/*.tex`, `$(GEN)/*.pdf`,
+   `$(SLIDE_GEN)/*.csv`, `$(SLIDE_GEN)/*.pdf`.
+2. Extract `paper.mk`: `report/report.pdf` and its LaTeX dependencies,
+   taking `derived/**` and `$(GEN)/**` as committed inputs.
+3. Extract `slides.mk`: `slides/slides.pdf`, taking `$(SLIDE_GEN)/**` as
+   committed inputs.
+4. Top-level `Makefile` dispatches: `make report` → `$(MAKE) -f paper.mk`,
+   `make slides` → `$(MAKE) -f slides.mk`, `make measurements` →
+   `$(MAKE) -f analysis.mk`.
+5. Verify `derived/`, `$(GEN)`, `$(SLIDE_GEN)` coverage is complete — any
+   file consumed by `paper.mk` or `slides.mk` but not committed is a gap.
+
+## Test
+
+Build `paper.mk` and `slides.mk` separately in a container with TeX Live
+only. Both must succeed from committed state.
+
+## Exit criteria
+
+- Three workpackage Makefiles exist; top-level is dispatch only.
+- `paper.mk` and `slides.mk` build without Python / uv / network.
+- Handoff manifest (files committed under `derived/`, `$(GEN)`,
+  `$(SLIDE_GEN)`) is documented at the top of `analysis.mk`.
