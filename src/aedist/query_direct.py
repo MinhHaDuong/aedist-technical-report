@@ -229,6 +229,7 @@ def main():
                     "sweep": sweep,
                     "prompt": prompt,
                     "response": result["content"],
+                    "thinking": result.get("thinking", ""),
                     "finish_reason": result["finish_reason"],
                     "usage": usage,
                     "wall_seconds": result["wall_seconds"],

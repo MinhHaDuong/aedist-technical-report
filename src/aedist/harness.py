@@ -309,8 +309,10 @@ def query_ollama_native(
     resp.raise_for_status()
     data = resp.json()
     wall_seconds = round(time.monotonic() - t0, 3)
+    msg = data.get("message", {})
     return {
-        "content": data.get("message", {}).get("content", ""),
+        "content": msg.get("content", ""),
+        "thinking": msg.get("thinking", ""),
         "finish_reason": data.get("done_reason", "stop"),
         "usage": {
             "prompt_tokens": data.get("prompt_eval_count", 0),

@@ -115,6 +115,7 @@ def run_conversation(
         {
             "role": "assistant",
             "content": result["content"],
+            "thinking": result.get("thinking", ""),
             "turn": 0,
             "wall_seconds": result["wall_seconds"],
             "usage": usage,
@@ -150,6 +151,7 @@ def run_conversation(
             {
                 "role": "assistant",
                 "content": result["content"],
+                "thinking": result.get("thinking", ""),
                 "turn": i,
                 "wall_seconds": result["wall_seconds"],
                 "usage": usage,

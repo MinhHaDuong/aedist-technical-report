@@ -264,6 +264,7 @@ def main():
                     "corpus_tokens": corpus_tokens,
                     "prompt": prompt,
                     "response": result["content"],
+                    "thinking": result.get("thinking", ""),
                     "finish_reason": result["finish_reason"],
                     "usage": usage,
                     "wall_seconds": result["wall_seconds"],
