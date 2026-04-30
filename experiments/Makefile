@@ -9,40 +9,45 @@
 # Or simply: `make census` to generate + run in one step.
 #
 # Adding a model to models.yaml → re-run generate (idempotent) + run.
+#
+# --- ENV POLICY ---------------------------------------------------------------
+# All API keys live in the PROJECT .env (../.env relative to this Makefile),
+# not in ~/.claude/.env. Decision 2026-04-30:
+#   - Project .env is the single source of truth for OPENROUTER_API_KEY,
+#     TAVILY_API_KEY, HF_TOKEN, ZENODO_TOKEN, HAL_*, etc.
+#   - Reproducibility: a fresh clone with .env populated runs end-to-end;
+#     no dependence on user-level dotfiles. Avoids the stale-key confusion
+#     we hit (~/.claude/.env had a stale OPENROUTER_API_KEY for weeks).
+#   - User ~/.claude/.env stays for cross-project personal accounts
+#     (Claude Code itself, Anthropic API outside this project, etc.) and
+#     is no longer auto-injected into bash subprocesses by on-start.sh
+#     because doing so leaked all keys via `ps -ef`.
+# Loading mechanism: every `uv run` goes through $(UV_RUN), which uses
+# `--env-file ../.env` so uv populates the env from the file directly.
+# Do NOT `export KEY := $(shell grep ...)` from the Makefile — that puts
+# values onto Make's command line and on into spawned process arguments,
+# the same leak path we just closed.
 
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
 
-# --- Load API key from .env if not already set --------------------------------
-ifeq ($(OPENROUTER_API_KEY),)
-  OPENROUTER_API_KEY := $(shell grep '^OPENROUTER_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
-endif
-export OPENROUTER_API_KEY
-
-# Load Tavily API key from .env or ~/.claude/.env
-ifeq ($(TAVILY_API_KEY),)
-  TAVILY_API_KEY := $(shell grep '^TAVILY_API_KEY=' ../.env 2>/dev/null | cut -d= -f2-)
-endif
-ifeq ($(TAVILY_API_KEY),)
-  TAVILY_API_KEY := $(shell grep '^TAVILY_API_KEY=' ~/.claude/.env 2>/dev/null | cut -d= -f2-)
-endif
-export TAVILY_API_KEY
-
-# Guard: only require OPENROUTER_API_KEY for targets that actually need it.
-# Workers inherit keys from the environment; the guard catches missing keys early.
-_NEEDS_OPENROUTER := census census-run census-summary regimes regimes-run sourced sourced-run frontier frontier-run
-ifneq ($(filter $(_NEEDS_OPENROUTER),$(MAKECMDGOALS)),)
-  $(if $(OPENROUTER_API_KEY),,$(error OPENROUTER_API_KEY not set — export it or add to .env))
-endif
-
-_NEEDS_TAVILY := regimes-run
-ifneq ($(filter $(_NEEDS_TAVILY),$(MAKECMDGOALS)),)
-  $(if $(TAVILY_API_KEY),,$(error TAVILY_API_KEY not set — export it or add to .env))
+# --- Sentinel: project .env exists for targets that need API keys -------------
+# Targets in this list will fail fast with a readable message if .env is
+# missing. Keys themselves are not read into Make variables — uv loads them
+# at child-process spawn time via --env-file.
+_NEEDS_ENV := census census-run census-summary regimes regimes-run \
+              sourced sourced-run frontier frontier-run
+ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
+  $(if $(wildcard ../.env),,$(error ../.env not found — copy ../.env.example and populate API keys))
 endif
 
 # --- Common -------------------------------------------------------------------
-MANAGER := uv run --project .. python -m aedist.manager generate
-WORKER  := uv run --project .. python -m aedist.worker
+# UV_RUN: canonical macro for every uv invocation. --env-file injects the
+# project .env directly into the spawned process; nothing transits Make
+# variables or process command lines.
+UV_RUN  := uv run --project .. --env-file ../.env
+MANAGER := $(UV_RUN) python -m aedist.manager generate
+WORKER  := $(UV_RUN) python -m aedist.worker
 # Cap concurrent OpenRouter workers at API rate limit (default 8).
 # Override: make census-run OR_MAX=16
 OR_MAX  ?= 8
@@ -142,7 +147,7 @@ frontier-run:
 
 # --- Rebuild measurements (materialized view of all outputs) -----------------
 
-EVAL      := uv run --project .. python -m aedist.evaluate
+EVAL      := $(UV_RUN) python -m aedist.evaluate
 REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 
 STRUCTURED_DIRS := census multiturn web rag \
@@ -155,7 +160,7 @@ OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildca
 .PHONY: extract
 extract:
 	@for dir in $(STRUCTURED_DIRS); do \
-	    uv run --project .. python -m aedist.extract \
+	    $(UV_RUN) python -m aedist.extract \
 	        --input outputs/$$dir --output outputs/$$dir; \
 	done
 
@@ -200,11 +205,11 @@ SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
 .PHONY: self-consistency
 
 $(SC_JSON): $(wildcard $(SC_INPUT)/*.json) ../src/aedist/self_consistency.py
-	uv run --project .. python -m aedist.self_consistency \
+	$(UV_RUN) python -m aedist.self_consistency \
 	    --input $(SC_INPUT) --output $(SC_OUTPUT) --measurements ../measurements.jsonl
 
 $(SC_TEX) $(SC_PERRUN) &: ../measurements.jsonl ../src/aedist/tabulate_self_consistency.py
-	uv run --project .. python -m aedist.tabulate_self_consistency \
+	$(UV_RUN) python -m aedist.tabulate_self_consistency \
 	    --output $(SC_TEX) --per-run-output $(SC_PERRUN)
 
 self-consistency: $(SC_TEX) $(SC_PERRUN)
@@ -239,19 +244,17 @@ pdf2md:
 ifndef PDF
 	$(error PDF variable is required. Usage: make pdf2md PDF=path/to/file.pdf)
 endif
-	uv run --project .. --extra pdf python -m aedist.pdf2md_openrouter $(PDF) \
+	$(UV_RUN) --extra pdf python -m aedist.pdf2md_openrouter $(PDF) \
 	    --model $(MODEL) --dpi $(DPI)
 
 build-corpus:
-ifndef ZOTERO_API_KEY
-	$(error ZOTERO_API_KEY not set — export it or add to .env)
-endif
 ifndef ITEMS
 ifndef QUERY
 	$(error Specify ITEMS=key1,key2 or QUERY="search terms")
 endif
 endif
-	uv run --project .. --extra pdf python -m aedist.build_corpus \
+	@grep -q '^ZOTERO_API_KEY=' ../.env || { echo "ZOTERO_API_KEY missing from ../.env — copy from ~/.claude/.env if you have one"; exit 1; }
+	$(UV_RUN) --extra pdf python -m aedist.build_corpus \
 	    $(if $(ITEMS),--items $(ITEMS),--query "$(QUERY)") \
 	    --reference $(CORPUS_REF) \
 	    --output $(CORPUS_OUTPUT) --work-dir $(CORPUS_WORKDIR) \
