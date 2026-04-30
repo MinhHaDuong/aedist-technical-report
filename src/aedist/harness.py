@@ -285,19 +285,23 @@ def query_ollama_native(
     model_id: str,
     messages: list[dict],
     num_ctx: int,
+    num_predict: int | None = None,
 ) -> dict:
-    """Query Ollama via native /api/chat with explicit num_ctx."""
+    """Query Ollama via native /api/chat with explicit num_ctx (and optional num_predict output cap)."""
     import httpx
 
     # base_url is like http://localhost:11434/v1 — strip /v1
     api_url = base_url.rstrip("/").removesuffix("/v1") + "/api/chat"
+    options: dict = {"num_ctx": num_ctx}
+    if num_predict is not None:
+        options["num_predict"] = num_predict
     t0 = time.monotonic()
     resp = httpx.post(
         api_url,
         json={
             "model": model_id,
             "messages": messages,
-            "options": {"num_ctx": num_ctx},
+            "options": options,
             "stream": False,
         },
         timeout=3600.0,

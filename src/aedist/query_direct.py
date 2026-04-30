@@ -194,12 +194,28 @@ def main():
                     temperature=args.temperature,
                 )
                 api_model_id = model.get("router_model", model_id)
-                result = query_single_turn(
-                    client,
-                    api_model_id,
-                    [{"role": "user", "content": prompt}],
-                    **api_kwargs,
-                )
+                # Ollama: bypass /v1/ shim to honour num_ctx (output cap via num_predict)
+                if model.get("router") == "ollama":
+                    ollama_cfg = (
+                        experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
+                    )
+                    ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+                    ctx_window = model.get("context_window", 32768)
+                    num_ctx = min(ctx_window, 81920)
+                    result = query_ollama_native(
+                        ollama_url,
+                        api_model_id,
+                        [{"role": "user", "content": prompt}],
+                        num_ctx,
+                        num_predict=args.max_tokens,
+                    )
+                else:
+                    result = query_single_turn(
+                        client,
+                        api_model_id,
+                        [{"role": "user", "content": prompt}],
+                        **api_kwargs,
+                    )
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
                 budget.add(cost)

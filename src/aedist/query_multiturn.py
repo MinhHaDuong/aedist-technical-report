@@ -68,9 +68,19 @@ def run_conversation(
     model: dict,
     budget: BudgetTracker,
     stateless: bool = False,
+    ollama_base_url: str | None = None,
     **api_kwargs,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
+    is_ollama = model.get("router") == "ollama"
+    num_ctx = min(model.get("context_window", 32768), 81920) if is_ollama else None
+    ollama_url = ollama_base_url or "http://localhost:11434/v1"
+
+    def _call(msgs):
+        if is_ollama:
+            return query_ollama_native(ollama_url, model_id, msgs, num_ctx)
+        return query_single_turn(client, model_id, msgs, **api_kwargs)
+
     messages: list[dict] = []
     turns: list[dict] = []
     total_cost = 0.0
@@ -92,7 +102,7 @@ def run_conversation(
             "context_overflow": True,
         }
 
-    result = query_single_turn(client, model_id, messages, **api_kwargs)
+    result = _call(messages)
     usage = result.get("usage") or {}
     cost = compute_cost(usage, model)
     budget.add(cost)
@@ -127,7 +137,7 @@ def run_conversation(
             context_overflow = True
             break
 
-        result = query_single_turn(client, model_id, messages, **api_kwargs)
+        result = _call(messages)
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model)
         budget.add(cost)
@@ -256,6 +266,9 @@ def main():
                     model,
                     temperature=args.temperature,
                 )
+                ollama_base_url = (
+                    routers_config.get("ollama", {}).get("base_url") if args.model_set else None
+                )
                 conv = run_conversation(
                     client,
                     api_model_id,
@@ -264,6 +277,7 @@ def main():
                     model,
                     budget,
                     stateless=args.stateless,
+                    ollama_base_url=ollama_base_url,
                     **mt_api_kwargs,
                 )
                 if conv is None:

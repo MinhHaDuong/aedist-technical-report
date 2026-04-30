@@ -589,6 +589,19 @@
   size_class: small
   license: open-apache
 
+- id: "ministral-3:14b"
+  router: ollama
+  router_model: "ministral-3:14b"
+  name: "Ministral 3 14B (local)"
+  provider: "Ollama/Padme"
+  country: FR
+  architecture: dense
+  context_window: 262144
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: small
+  license: commercial
+
 - id: "openai/gpt-5-mini"
   router: openrouter
   router_model: "openai/gpt-5-mini"
