@@ -8,6 +8,7 @@ Author: claude
 2026-04-29T19:00Z claude created
 2026-04-29T20:00Z claude note restreint aux modèles cloud (GPT-5.5 + 70B cheap) — local 30B→0136, 8B→0137
 
+2026-04-29T21:06Z claude note sweep-assess: not-picked hash:eef466fab30c scope:add GPT-5.5 and 70B cheap cloud models to regimes scatter risk:medium
 --- body ---
 ## Context
 
@@ -34,3 +35,8 @@ Mistral L3, DeepSeek. Ce ticket ajoute les modèles cloud manquants.
 - `fig_regimes_scatter.pdf` inclut GPT-5.5 et un distant 70B cheap
 - Chacun a les 3 méthodes dans measurements.jsonl
 - `tectonic slides.tex` sans erreur
+## Picker assessment 2026-04-29T21:06Z
+**Decision:** not-picked
+**Scope:** add GPT-5.5 and 70B cheap cloud models to regimes scatter
+**Risk:** medium
+**Reason:** involves real API spending on OpenRouter

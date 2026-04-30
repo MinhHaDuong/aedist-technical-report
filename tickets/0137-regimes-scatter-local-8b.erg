@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-29T20:00Z claude created
 
+2026-04-29T21:06Z claude note sweep-assess: not-picked hash:ea11dcf62d3b scope:add 8B Ollama model to regimes scatter figure risk:medium
 --- body ---
 ## Context
 
@@ -37,3 +38,8 @@ satisfont pas ce critère.
 - `fig_regimes_scatter.pdf` inclut un modèle local 8B avec les 3 méthodes
 - Context window ≥ 32k tokens confirmée pour le modèle retenu
 - `tectonic slides.tex` sans erreur
+## Picker assessment 2026-04-29T21:06Z
+**Decision:** not-picked
+**Scope:** add 8B Ollama model to regimes scatter figure
+**Risk:** medium
+**Reason:** runner-up; Ollama serial constraint, local compute, requires context-window check first
