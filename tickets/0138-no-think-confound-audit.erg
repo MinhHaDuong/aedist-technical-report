@@ -1,26 +1,66 @@
 %erg v1
-Title: Audit existing runs for no_think confound; decide redo policy
+Title: Audit experiment parameter confounds; fix missing fields in JobSpec/RunRecord
 Status: open
 Created: 2026-04-30
 Author: claude
 
 --- log ---
 2026-04-30T10:00Z claude created
+2026-04-30T11:00Z claude note expanded scope: seed/provider_order silent-drop bug discovered; max_tokens and num_ctx added as confounds; title updated
 
 --- body ---
 
 ## Context
 
-`no_think` was introduced in PR #303 (2026-04-30). All existing runs predate
-it and therefore never set the flag — they ran thinking-capable models in
-their provider default mode. For Qwen3 and Kimi K2 that default is
-**thinking on** (chain-of-thought enabled); for other models the flag has no
-effect.
+Several API parameters that materially affect results are either (a) not
+declared in `JobSpec` and therefore silently dropped when loading sweep
+configs, or (b) not propagated into `RunRecord` / `measurements.jsonl`.
+This ticket covers the full inventory, fix policy, and redo decisions.
 
-This is a confound: existing runs mixing thinking-on and thinking-off models
-are not directly comparable to future runs where we can control the flag
-explicitly. We need to understand the exposure, decide what to do, and update
-analysis scripts accordingly.
+The `no_think` confound (PR #303, 2026-04-30) triggered the audit. Expanding
+scope revealed a more serious problem: `seed` and `provider_order` are
+**silently dropped** by Pydantic when a sweep YAML is loaded into `JobSpec`
+— they are not declared fields. Fifty-seven sweeps set `seed = 42` believing
+it controlled MoE reproducibility. It didn't reach the API.
+
+## Parameter inventory
+
+| Parameter | In `JobSpec` | In `RunRecord` | Effect if uncontrolled |
+|-----------|-------------|---------------|----------------------|
+| `no_think` | ✓ (PR #303) | ✓ via `extra` (PR #303) | CoT on/off → quality + token cost |
+| `web_search` (effective) | ✓ field | ✗ not written | Web-augmented vs. parametric |
+| `seed` | ✗ **silently dropped** | ✗ | MoE non-determinism uncontrolled |
+| `provider_order` | ✗ **silently dropped** | ✗ | Cross-provider FP variance (MoE) |
+| `max_tokens` | ✗ not a field | ✗ | Output truncation; query_direct uses 32768, worker uses model default |
+| `num_ctx` | ✗ not a field | ✗ | RAG context truncation for Ollama (default 32768, query_rag.py caps at 81920) |
+| `temperature` | ✓ field | ✓ via evaluate.py backfill | Controlled since PR #244 |
+| `reasoning_effort` | ✗ not in harness | n/a | Future: o4-series models only |
+
+### Bug: seed and provider_order are silently dropped
+
+`JobSpec` is a Pydantic model with no `extra='allow'` or `extra='forbid'`
+config — unknown fields are silently ignored. `experiments.toml` sets
+`seed = 42` in 57 sweeps and `provider` in the fusion sweeps, but neither
+reaches `build_api_kwargs`. Consequence:
+
+- MoE models (DeepSeek V3.2, Qwen3 MoE) ran without seed pinning despite
+  the config stating `seed = 42`.
+- No provider pinning for non-fusion worker sweeps → cross-provider
+  floating-point variance was not eliminated.
+- The belief that MoE runs were reproducible is incorrect.
+
+### Inconsistency: max_tokens
+
+`query_direct.py` (legacy standalone path) always passes `max_tokens=32768`.
+The worker path calls `build_api_kwargs` without `max_tokens`, so the model
+applies its own default (varies by model, often 8192–16384). Runs via the
+two paths are not comparable on output length.
+
+### Inconsistency: num_ctx (Ollama)
+
+`query_rag.py` caps at `min(ctx_window, 81920)`. The worker's `query_model()`
+defaults to 32768. Local RAG runs through the worker may have truncated
+context that the standalone script did not.
 
 ## Scope: which models are affected
 
@@ -38,6 +78,24 @@ Thinking-capable models present in the registry and in existing outputs:
 Non-thinking models are unaffected — `no_think=False` is a no-op for them.
 
 ## Actions
+
+### 0. Fix the silent-drop bug (blocking; do before new sweeps)
+
+Add `seed`, `provider_order`, `max_tokens`, and `num_ctx` as declared fields
+in `JobSpec` so sweep configs are honoured rather than silently ignored.
+Wire them through `worker.execute()` → `build_api_kwargs()` → API.
+Write `seed`, `provider_order`, `max_tokens`, `num_ctx`, and `web_search`
+(effective) to the raw JSON output file so `evaluate.py` can backfill them
+into `RunRecord.method_params.extra`.
+
+Suggested field defaults:
+- `seed: int | None = None` — None means unset (provider default)
+- `provider_order: list[str] | None = None`
+- `max_tokens: int | None = None` — None means model default
+- `num_ctx: int = 32768` — Ollama context window
+
+Add `extra='forbid'` to `JobSpec.model_config` so future unknown sweep
+fields raise an error instead of silently disappearing.
 
 ### 1. Per-experiment audit: reasoning required / optional / irrelevant
 
@@ -122,18 +180,16 @@ b. **Scatter / bar plots**: add `no_think` as a filter/facet variable so
 c. **Summary tables**: add a column or footnote marking which runs used
    `no_think=true`.
 
-## Sub-tickets to file if actions are confirmed
-
-- File: capture `no_think` in `RunRecord` (propagate from `JobSpec` → worker
-  → record file → `measurements.jsonl`).
-- File: retrospective token analysis script to flag probable thinking-on
-  runs (plot `tokens_out` distributions per model, highlight outliers).
-
 ## Exit criteria
 
-- Every existing sweep classified A/B/C/D in the table above, reviewed by
-  user.
-- Redo decisions recorded in this ticket log.
-- At least one of: (a) `no_think` captured in `RunRecord`, or (b) explicit
-  note in methods section disclosing the confound.
-- Analysis scripts updated to control for `no_think` as a variable.
+- `seed`, `provider_order`, `max_tokens`, `num_ctx`, `web_search` (effective)
+  declared in `JobSpec` with sensible defaults.
+- `JobSpec.model_config` has `extra='forbid'`.
+- All five parameters written to raw JSON output and backfilled into
+  `RunRecord.method_params.extra` by `evaluate.py`.
+- Every existing sweep classified A/B/C/D for `no_think` in the table above,
+  reviewed by user.
+- Redo decisions for seed-uncontrolled MoE sweeps documented here.
+- Analysis scripts updated to control for `no_think` and `web_search` as
+  filter variables.
+- Methods section disclosures drafted for all uncontrolled parameters.
