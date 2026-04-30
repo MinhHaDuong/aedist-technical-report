@@ -1,8 +1,7 @@
 # Measurement framework: axes, lenses, and the four limits
 
 *Working note — captures the intellectual framing for the AEDIST benchmark
-discussion. Operational status (sweeps, tickets, in-flight data) lives
-elsewhere; this is the conceptual scaffold the paper hangs from.*
+discussion. This is the conceptual scaffold the paper hangs from.*
 
 ## The dimensions in play
 
@@ -22,48 +21,46 @@ applied to the matrix).
 
 ### Axes — what changes between cells of the design
 
-- **Model.** Scale × architecture (dense / MoE) × provenance (open /
-  commercial). Registry's `size_class` field (edge → frontier).
-- **Method / regime.** direct → multiturn → RAG → web → reasoning → agent.
-  Equivalently: what information enters at inference time.
-- **Prompt structure.** Which modules are ON. The ablation axis.
+- **Method** direct → multiturn → RAG → web → reasoning → general agent → custom team.
+  Linearity is a convenience simplification of recent AI history.
+- **Model.** Scale × architecture (dense / MoE) × provenance × cost × license (open /
+  closed). Registry's `size_class` field (edge → frontier). The scale is a proxy for model capacity, but rapid technical progress and specialization must be considered.
+- **Prompt.** Prompts are text, therefore not ordered, but the ablation study provides a modular structure.
 
 ### Lenses — how you read the matrix
 
-- **Statistical-limit attribution.** Which of the four limits did this
-  regime relax?
-- **Quality of extracted output.** Recall / precision / sourcing /
-  calibration.
-- **Quality of the input data.** Training cutoff, RAG corpus completeness,
-  web freshness.
-- **Information condition.** Parametric / +docs / +web / +tools — but this
-  is *near-redundant* with the regime axis. Flag the redundancy in prose;
-  do not double-count.
+- **Quality of the input data.** Training cutoff, RAG corpus completeness, web freshness.
+- **Quality of extracted output.** Recall / precision / sourcing / calibration.
+- **Statistical-limit attribution.** Which of the statistical limits do this method relax?
+- **Epistemic-limit attribution.** Which of the epistemic (scientific knowledge) limits do this method relax?
+- **Information condition.** Parametric / +docs / +web / +tools — but this is *colinear* with the regime axis. Flag the redundancy in prose; do not double-count.
 
-## The four statistical limits
+## The history of AI - statistical limits mapping
 
-Each AI-history stage of "raising LLM limits" maps cleanly to a classical
-statistical-quality limit. Each is the next bottleneck once the previous
-one is relaxed.
+We can roughly map recent AI-history stage to a statistical-quality limit. Each is the next bottleneck once the previous one is relaxed.
 
 | AI stage | Statistical limit | What it is |
 |---|---|---|
-| **Engineer prompt** | **Articulation** | Asking what you meant to ask. Speaking clearly across the human-model language barrier. |
+| **Engineer prompt** | **Articulation** | Asking what you meant to ask. Speaking clearly across the human-model language barrier.|
 | **Provide documents** | **Coverage** | Facts the model never saw in training. |
+| **Web** | **Freshness** | Facts moved on since training cutoff. |
 | **Reason** | **Coherence** (internal) | Facts present, combined inconsistently. |
-| **Agent** | **Freshness** | Facts moved on since training cutoff. |
+| **Agent** | **?** | ? |
+
+Can we have columns in the report to name the limits from the point of view of a
+- Philosopher of Science
+- Statistican
+- Economist (guéguerre économètres vs. statisticiens)
+- Journalist
+- Energy System Modeler
+- Business Intelligence Analyst
+- Military Intelligence Analyst
+- IT researcher
 
 ### Provenance of each term
 
-- **Articulation.** Type-III error in classical statistics (Kimball 1957,
-  *On the Errors of the Third Kind*; Mosteller 1948); echoes
-  philosophy-of-science discussions of "articulating a question". Chosen
-  over *Specification* (cold), *Alignment* (AI-safety baggage), *Intent*
-  (loose), and *Clarity* (too soft) for active-process framing and lack
-  of terminological collision.
-- **Coverage.** Standard sampling/selection-bias literature (Cochran,
-  *Sampling Techniques*; Kish, *Survey Sampling*). In ML: dataset bias,
-  training-data lacunae.
+- **Articulation.** Type-III error in classical statistics (Kimball 1957, *On the Errors of the Third Kind*; Mosteller 1948); echoes philosophy-of-science discussions of "articulating a question". Chosen over *Specification* (cold), *Alignment* (AI-safety baggage), *Intent* (loose), and *Clarity* (too soft) for active-process framing and lack of terminological collision.
+- **Coverage.** Standard sampling/selection-bias literature (Cochran, *Sampling Techniques*; Kish, *Survey Sampling*). In ML: dataset bias, training-data lacunae.
 - **Coherence.** Three independent textbook anchors that all reinforce
   the right intuition:
   - Bayesian: de Finetti's coherence (a credence set is coherent iff the
@@ -79,13 +76,13 @@ one is relaxed.
   specifically temporal staleness — exactly what stage-4 closes.
   *Currency* was rejected for the money / wide-circulation collisions.
 
-### Why the order is forced
+### Why the order is a real capability evolution
+%J AI INVERSE 2 et 3 dans l'historique + AJOUTE AGENTS + TEAMS
 
 You cannot substitute one stage's fix for another's:
 - Articulation error is not closed by handing over more documents.
 - Coverage gaps are not closed by reasoning harder over what you have.
-- Coherence failures are not closed by web search alone (search results
-  still need correct synthesis).
+- Coherence failures are not closed by web search alone (search results still need correct synthesis).
 - Freshness gaps are not closed by anything internal to a static model.
 
 Each stage is the minimal fix for the next limit.
