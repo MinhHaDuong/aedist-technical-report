@@ -37,6 +37,7 @@ from .harness import (
     make_client_for_router,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     select_models,
