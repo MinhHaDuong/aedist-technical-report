@@ -9,6 +9,7 @@ Author: claude
 2026-04-29T20:00Z claude note restreint aux modèles cloud (GPT-5.5 + 70B cheap) — local 30B→0136, 8B→0137
 
 2026-04-29T21:06Z claude note sweep-assess: not-picked hash:eef466fab30c scope:add GPT-5.5 and 70B cheap cloud models to regimes scatter risk:medium
+2026-04-30T1207Z claude note de-risk: GPT-5.5=openai/gpt-5.5 $5/$30per Mtok; 70B-cheap=qwen/qwen3.5-122b-a10b $0.26/$2.08per Mtok; est. spend $2 (sources: openrouter.ai/openai/gpt-5.5, openrouter.ai/qwen/qwen3.5-122b-a10b)
 --- body ---
 ## Context
 
@@ -17,10 +18,24 @@ Mistral L3, DeepSeek. Ce ticket ajoute les modèles cloud manquants.
 
 ## Modèles candidats et gaps
 
-| Rôle | Slug candidat | Méthodes manquantes |
-|---|---|---|
-| GPT-5.5 | `openai/gpt-5.5` (à confirmer sur OpenRouter) | toutes (nouveau modèle) |
-| 70B cheap distant | `qwen/qwen3.5-122b-a10b` | `direct+multiturn` |
+| Rôle | Slug confirmé | Prix $/Mtok (in/out) | Méthodes manquantes |
+|---|---|---|---|
+| GPT-5.5 | `openai/gpt-5.5` | $5 / $30 | toutes (direct, multiturn, RAG) |
+| 70B cheap distant | `qwen/qwen3.5-122b-a10b` (122B MoE, ~10B actifs) | $0.26 / $2.08 | `direct+multiturn` |
+
+Slugs vérifiés sur OpenRouter le 2026-04-30 (openrouter.ai/openai/gpt-5.5,
+openrouter.ai/qwen/qwen3.5-122b-a10b). Alternative envisagée :
+`meta-llama/llama-3.3-70b-instruct` ($0.10 / $0.32) — moins cher mais
+moins SOTA que Qwen3.5-122b-a10b (sortie fév. 2026, archi VLM hybride
+linear-attention + sparse MoE). On garde Qwen3.5-122b-a10b.
+
+### Estimation de coût (repeat=3, ~7 prompts/méthode)
+
+Hypothèses : input ~500 tok/prompt ; output ~300 (direct, RAG), ~1500 (multiturn).
+
+- GPT-5.5 (3 méthodes) : ~$0.24 (direct) + ~$1.00 (multiturn) + ~$0.24 (RAG) ≈ **$1.48**
+- Qwen3.5-122b-a10b (2 méthodes) : ~$0.016 (direct) + ~$0.07 (multiturn) ≈ **$0.08**
+- **Total estimé ≈ $1.6** (marge MoE +25 % → budget $2)
 
 ## Actions
 
