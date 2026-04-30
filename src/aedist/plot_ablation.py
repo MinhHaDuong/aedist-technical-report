@@ -118,6 +118,18 @@ def load_ablation_data() -> list[dict]:
     return rows
 
 
+def _write_placeholder_pdf(output: Path, message: str) -> None:
+    """Write a one-page placeholder PDF so downstream Make/LaTeX targets resolve."""
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 2))
+    ax.text(0.5, 0.5, message, ha="center", va="center", fontsize=11, color="gray")
+    ax.set_axis_off()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output, bbox_inches="tight", dpi=150)
+    plt.close(fig)
+
+
 def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
     """Generate ablation strip plot as PDF.
 
@@ -128,9 +140,9 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
     import numpy as np
     from matplotlib.lines import Line2D
 
-    # Guard: empty data produces no figure
     if not rows:
-        log.warning("No ablation data; skipping strip plot")
+        log.warning("No ablation data; writing placeholder strip plot")
+        _write_placeholder_pdf(output, "Ablation data not yet collected")
         return
 
     fig, ax = plt.subplots(figsize=(10, 7.5))
@@ -287,7 +299,8 @@ def write_heatmap_pdf(rows: list[dict], output: Path) -> None:
     # Guard: empty data produces no figure
     non_refusal = [r for r in rows if not r["is_refusal"]]
     if not non_refusal:
-        log.warning("No non-refusal ablation data; skipping heatmap")
+        log.warning("No non-refusal ablation data; writing placeholder heatmap")
+        _write_placeholder_pdf(output, "Ablation data not yet collected")
         return
 
     # Compute mean F1 per (variant, model) excluding refusals
