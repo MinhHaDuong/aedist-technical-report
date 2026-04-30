@@ -1,5 +1,5 @@
 %erg v1
-Title: Rafraîchir les modèles cloud du regimes scatter — GPT-5.5, 70B cheap
+Title: Rafraîchir les modèles cloud du regimes scatter — Hy3 preview
 Status: open
 Created: 2026-04-29
 Author: claude
@@ -9,49 +9,48 @@ Author: claude
 2026-04-29T20:00Z claude note restreint aux modèles cloud (GPT-5.5 + 70B cheap) — local 30B→0136, 8B→0137
 
 2026-04-29T21:06Z claude note sweep-assess: not-picked hash:eef466fab30c scope:add GPT-5.5 and 70B cheap cloud models to regimes scatter risk:medium
-2026-04-30T1207Z claude note de-risk: GPT-5.5=openai/gpt-5.5 $5/$30per Mtok; 70B-cheap=qwen/qwen3.5-122b-a10b $0.26/$2.08per Mtok; est. spend $2 (sources: openrouter.ai/openai/gpt-5.5, openrouter.ai/qwen/qwen3.5-122b-a10b)
+2026-04-30T12:07Z claude note de-risk: GPT-5.5=openai/gpt-5.5 $5/$30per Mtok; 70B-cheap=qwen/qwen3.5-122b-a10b $0.26/$2.08per Mtok; est. spend $2 (sources: openrouter.ai/openai/gpt-5.5, openrouter.ai/qwen/qwen3.5-122b-a10b)
+2026-04-30T12:24Z claude note pivot: drop 70B baseline (Qwen3.5-122b-a10b) and GPT-5.5; use tencent/hy3-preview:free as top-end (MoE, 262k ctx, $0/$0). Free preview expires 2026-05-08 — sweeps must run before then
 --- body ---
 ## Context
 
 `fig_regimes_scatter.pdf` affiche actuellement 4 modèles : GPT-5.4, Mistral S4,
-Mistral L3, DeepSeek. Ce ticket ajoute les modèles cloud manquants.
+Mistral L3, DeepSeek. Ce ticket ajoute un modèle cloud top-end gratuit.
 
-## Modèles candidats et gaps
+## Modèle ajouté
 
 | Rôle | Slug confirmé | Prix $/Mtok (in/out) | Méthodes manquantes |
 |---|---|---|---|
-| GPT-5.5 | `openai/gpt-5.5` | $5 / $30 | toutes (direct, multiturn, RAG) |
-| 70B cheap distant | `qwen/qwen3.5-122b-a10b` (122B MoE, ~10B actifs) | $0.26 / $2.08 | `direct+multiturn` |
+| Top-end (free preview) | `tencent/hy3-preview:free` (MoE Tencent, 262k ctx) | $0 / $0 | toutes (direct, multiturn, RAG) |
 
-Slugs vérifiés sur OpenRouter le 2026-04-30 (openrouter.ai/openai/gpt-5.5,
-openrouter.ai/qwen/qwen3.5-122b-a10b). Alternative envisagée :
-`meta-llama/llama-3.3-70b-instruct` ($0.10 / $0.32) — moins cher mais
-moins SOTA que Qwen3.5-122b-a10b (sortie fév. 2026, archi VLM hybride
-linear-attention + sparse MoE). On garde Qwen3.5-122b-a10b.
+Slug vérifié sur OpenRouter le 2026-04-30. **Deadline : preview gratuit
+expire 2026-05-08** — sweeps à lancer avant cette date.
 
-### Estimation de coût (repeat=3, ~7 prompts/méthode)
+Décision 2026-04-30 : abandon de GPT-5.5 ($5/$30) et de la baseline
+70B Qwen3.5-122b-a10b. Hy3 preview suffit comme top-end ; gratuit,
+donc aucun risque de spend.
 
-Hypothèses : input ~500 tok/prompt ; output ~300 (direct, RAG), ~1500 (multiturn).
+### Estimation de coût
 
-- GPT-5.5 (3 méthodes) : ~$0.24 (direct) + ~$1.00 (multiturn) + ~$0.24 (RAG) ≈ **$1.48**
-- Qwen3.5-122b-a10b (2 méthodes) : ~$0.016 (direct) + ~$0.07 (multiturn) ≈ **$0.08**
-- **Total estimé ≈ $1.6** (marge MoE +25 % → budget $2)
+Hy3 preview est gratuit ($0/$0). **Total ≈ $0** (modulo rate limits sur le tier free).
 
 ## Actions
 
-1. Confirmer le slug OpenRouter pour GPT-5.5.
-2. Ajouter les sweeps manquants dans `experiments/experiments.toml` (repeat=3, seed=42).
-3. Lancer les sweeps ; vérifier la qualité des sorties.
+1. Ajouter `tencent/hy3-preview:free` au registre `experiments/models.yaml`
+   (size_class: frontier).
+2. Ajouter les sweeps Hy3 preview dans `experiments/experiments.toml`
+   (repeat=3, seed=42 ; direct + multiturn + RAG).
+3. Lancer les sweeps **avant 2026-05-08**.
 4. Mettre à jour `_MODELS` dans `plot_regimes_scatter.py`.
 5. Regénérer `fig_regimes_scatter.pdf` et committer.
 
 ## Exit criteria
 
-- `fig_regimes_scatter.pdf` inclut GPT-5.5 et un distant 70B cheap
-- Chacun a les 3 méthodes dans measurements.jsonl
+- `fig_regimes_scatter.pdf` inclut Hy3 preview au top-end
+- Hy3 preview a les 3 méthodes dans measurements.jsonl
 - `tectonic slides.tex` sans erreur
 ## Picker assessment 2026-04-29T21:06Z
 **Decision:** not-picked
 **Scope:** add GPT-5.5 and 70B cheap cloud models to regimes scatter
 **Risk:** medium
-**Reason:** involves real API spending on OpenRouter
+**Reason:** involves real API spending on OpenRouter (superseded 2026-04-30: pivot to free Hy3 preview, no spend)

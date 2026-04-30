@@ -18,6 +18,21 @@
 
 # --- Frontier ---
 
+- id: "tencent/hy3-preview:free"
+  router: openrouter
+  router_model: "tencent/hy3-preview:free"
+  name: "Hy3 Preview"
+  provider: Tencent
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: frontier
+  license: commercial
+  web_search: true
+  # Free preview — expires 2026-05-08. Sweep before then or remove.
+
 - id: "qwen/qwen3-max-thinking"
   router: openrouter
   router_model: "qwen/qwen3-max-thinking"
