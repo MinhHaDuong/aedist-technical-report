@@ -2,7 +2,7 @@ Last updated: 2026-04-30T17:00Z
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1131 passing, 1 skipped, 1 xfailed. `make lint` includes ruff + ticket structure check.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1135 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
 
 **2026-04-30 (today):** Regimes scatter ticket 0134 pivoted to free Hy3 preview top-end (drops paid GPT-5.5; expires 2026-05-08). Cloud sweeps complete (Hy3 + qwen3.6-35b-a3b × direct/multiturn/RAG, $0.52). Local sweeps running in padme tmux `regimes-fill` (qwen3.6:35b + ministral-3:14b + qwen3.5:9b × 3 methods); patched `query_direct.py` and `query_multiturn.py` to use Ollama native `/api/chat` for `num_ctx` (commits `d27c393`, `031cef2`); added `message.thinking` capture in record JSONs (commit `f379c57`). Measurement-framework note `docs/measurement-framework.md` written (axes vs lenses, four limits Articulation/Coverage/Coherence/Freshness). Tickets 0140 (Makefile split), 0141 (registry providers-block refactor), 0142 (rewrite ablation modules verbatim from prompt_complete), 0143 (rerun ablation, blocks on 0142). API-key leak via `ps -ef` discovered + remediated: `~/.claude/scripts/on-start.sh` no longer persists `.env` (`d4653eb`); AEDIST Makefile centralized on `$(UV_RUN) := uv run --project .. --env-file ../.env` (`4000c21`); 5 follow-up tickets opened in Oeconomia / chemin-de-voix / Fuzzy Corpus / Cadens / maiba.
 
