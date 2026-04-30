@@ -6,6 +6,7 @@ Author: claude
 
 --- log ---
 2026-04-30T11:15Z claude created — split from 0138; seed silent-drop confirmed
+2026-04-30T11:30Z claude note ADR-7 decided: metrics dict = complete scientific record; added finish_reason and records_to_metrics expansion to scope
 
 --- body ---
 
@@ -63,10 +64,39 @@ MoE models ran without seed pinning despite the config claiming otherwise.
 - Raw JSON output file contains `"seed": 42` key.
 - `evaluate.py` backfill sets `record.method_params.extra["seed"] = 42`.
 
+## Action 6: Capture finish_reason in RunRecord
+
+`finish_reason` (`"stop"` | `"length"` | ...) is written to raw JSON today
+but never backfilled into `RunRecord`. It is the cleanest signal for output
+truncation (`"length"` means the model hit `max_tokens`).
+
+- Add backfill in `evaluate.py`: read `"finish_reason"` from raw JSON →
+  `record.method_params.extra["finish_reason"]`.
+- Surface in `records_to_metrics()` via the existing `extra` loop (already
+  wired for 0139 fields).
+
+## Action 7: Analyst query path (passive context-limit detection)
+
+After 0139 + finish_reason, a researcher can detect context-limited runs
+without re-reading raw files:
+
+```python
+# Output truncation
+df[df["finish_reason"] == "length"]
+
+# Input context near limit (Ollama RAG)
+df[df["tokens_in"] / df["num_ctx"] > 0.9]
+```
+
+No new script needed — `load_metrics()` returns the complete record.
+Document this pattern in `measurements.py` module docstring as an example.
+
 ## Exit criteria
 
 - All five parameters declared in `JobSpec`.
 - `extra="forbid"` enforced; existing sweep configs pass validation.
 - Parameters reach the API (verified by inspecting a dry-run request).
 - Parameters written to raw JSON and backfilled into `RunRecord`.
+- `finish_reason` backfilled into `RunRecord.method_params.extra`.
+- `records_to_metrics()` emits all scientific-record fields (ADR-7).
 - Tests green.

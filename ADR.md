@@ -70,3 +70,57 @@ Les règles de la mémoire ratifiée par HITL (alias, unité/format, terme local
 - L'audit externe (relecture méthodologique, due diligence) repose sur la lisibilité des décisions humaines encodées dans la mémoire.
 
 **Conséquence opérationnelle** : chaque règle YAML dans `data/memory/` porte au minimum les champs `pattern`, `replacement`, `rationale`, `edge_cases`, `ratified_by`, `evidence` (passage source + document + ligne/page). Le code de vérification lit `pattern` et `replacement` ; les humains lisent tout le reste. La règle est d'abord une **note de terrain**, secondairement une substitution.
+
+---
+
+## ADR-7: The metrics dict is the complete scientific record
+
+**Decided**: 2026-04-30
+
+`records_to_metrics()` in `measurements.py` produces one dict per run. That
+dict must contain **all fields a scientist needs to understand experimental
+conditions and interpret results**. Figures and tables are projections that
+select the columns they need. The dict is not defined by what the paper
+currently shows.
+
+**Three layers in the data flow:**
+
+```
+Raw JSON          →  RunRecord / measurements.jsonl  →  metrics dict  →  figures / tables
+(worker writes)      (complete record, JSONL)            (flat dict)      (column projections)
+```
+
+**What belongs in the metrics dict (conditions + results):**
+
+| Category | Fields |
+|----------|--------|
+| Model identity | `model`, `method`, `prompt_version` |
+| Controlled conditions | `temperature`, `seed`, `max_tokens`, `num_ctx`, `no_think`, `web_search` (effective), `provider_order` |
+| Diagnostic | `tokens_in`, `tokens_out`, `finish_reason` |
+| Results | `f1`, `coverage`, `precision`, `n_matched`, `n_missed`, `n_hallucinated`, `fuel_accuracy`, `status_accuracy`, `province_accuracy` |
+| Resources | `cost_usd`, `wall_seconds` |
+
+**What does not belong:** bookkeeping fields (`run_id`, `timestamp`,
+`result_file`, `validation`). These are in `RunRecord` for system purposes;
+they are not scientific data.
+
+**Justification:**
+
+`measurements.jsonl` is declared the single source of truth (MASTERPLAN §4).
+That claim is only meaningful if the metrics dict is complete. A lossy
+projection forces analysts to re-read raw JSON files to answer diagnostic
+questions ("did this run hit the context limit?", "was seed set?"). The
+complete record makes such questions answerable without leaving the table.
+
+Figures and tables are already projections — they select the columns they
+display. Making the source richer does not change them.
+
+**Operational consequences:**
+
+- `records_to_metrics()` is expanded to include all condition and diagnostic
+  fields listed above. Scripts that read metrics dicts ignore unused columns.
+- New fields in `RunRecord` (from ticket 0139: `seed`, `provider_order`,
+  `max_tokens`, `num_ctx`, `web_search` effective; `finish_reason`) are
+  surfaced in the metrics dict on the same schedule.
+- `records_to_metrics()` docstring is updated to state this contract
+  explicitly.
