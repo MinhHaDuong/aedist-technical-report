@@ -1,0 +1,31 @@
+%erg v1
+Title: Add qwen3.6:35b to regimes scatter figure
+Status: open
+Created: 2026-04-29
+Author: claude
+
+--- log ---
+2026-04-29T20:00Z claude created
+2026-04-29T21:06Z claude note sweep-assess: not-picked hash:7561f462c06a scope:add 30B Ollama model to regimes scatter figure risk:medium
+2026-04-30T00:00Z claude note revised: pinned to qwen3.6:35b (already in modelset_census_local via PR #303); renamed from 0136-regimes-scatter-local-30b.erg
+
+--- body ---
+## Context
+
+`fig_regimes_scatter.pdf` (ticket 0132) must include a local 30B-class model.
+`qwen3.6:35b` was added to `modelset_census_local` in PR #303 (no_think=true).
+Ticket split from 0134.
+
+## Actions
+
+1. Check `measurements.jsonl` for which methods are already present for `qwen3.6:35b`.
+2. Add missing sweeps in `experiments/experiments.toml` (repeat=3, seed=42, no_think=true).
+3. Run sweeps on Ollama (serial — one job at a time).
+4. Inspect output quality.
+5. Update `_MODELS` in `plot_regimes_scatter.py`.
+6. Regenerate `fig_regimes_scatter.pdf` and commit.
+
+## Exit criteria
+
+- `fig_regimes_scatter.pdf` includes `qwen3.6:35b` with all 3 methods
+- `tectonic slides.tex` builds without error
