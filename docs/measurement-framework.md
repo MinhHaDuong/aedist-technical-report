@@ -1,4 +1,4 @@
-# Measurement framework: axes, lenses, and the four limits
+# Measurement framework: axes, lenses, three qualities
 
 *Working note — captures the intellectual framing for the AEDIST benchmark
 discussion. This is the conceptual scaffold the paper hangs from.*
@@ -37,9 +37,37 @@ applied to the matrix).
 considered but is colinear with the method axis; treat it as a property
 of the method, not a separate lens.)
 
-## The history of AI - statistical limits mapping
+## Three qualities the paper measures
 
-We can roughly map recent AI-history stage to a statistical-quality limit. Each is the next bottleneck once the previous one is relaxed.
+The paper carves measurement-from-LLM into three quality types, each
+with its own axis, bottleneck, and experimental story:
+
+| Quality | Question | Bottleneck closes at |
+|---|---|---|
+| **Data quality** | Are the input facts present, complete, and current? | Deep research (RAG + web + reasoning) |
+| **Answer quality** | Did the model produce the correct extracted answer? | Governed by the four answer-quality limits below |
+| **Method quality** | Can we trust the process that produced the answer? | Open frontier — agentic + multi-agent teams |
+
+Data quality and answer quality cap out at the same place: deep
+research with `prompt_complete`. Once the system has the right inputs
+and the right reasoning over them, both the data-completeness and
+answer-correctness questions saturate — F1 → 1 is in reach on cloud
+deep-research with capable models. **Method quality is a different
+axis.** Once data and answer are right, the question becomes whether
+we can audit the process — verify that each emitted fact has a valid
+citation, cross-check via independent re-extraction, surface
+disagreement honestly. This is what agentic and multi-agent systems
+contribute, and it is not the same axis as the four limits below.
+
+The four limits in the next section are *answer-quality* limits. They
+do not span method quality. The Agent row in the limits table is
+therefore not a fifth limit but a pointer to the separate axis
+treated in §Method quality.
+
+## The four answer-quality limits
+
+Recent AI-history stages map onto a sequence of answer-quality limits.
+Each is the next bottleneck once the previous one is relaxed.
 
 | AI stage | Statistical limit | What it is |
 |---|---|---|
@@ -47,7 +75,7 @@ We can roughly map recent AI-history stage to a statistical-quality limit. Each 
 | **Provide documents** | **Coverage** | Facts the model never saw in training. |
 | **Web** | **Freshness** | Facts moved on since training cutoff. |
 | **Reason** | **Coherence** (weak, internal) | Facts present, combined inconsistently. |
-| **Agent** | **?** | Open question: the Agent stage may close a limit *outside* the four (e.g. *closure* — the answer-vs-action gap), in which case the four-limits frame ends at deep research and Agent is the next regime. Pending the capability-timeline review. |
+| **Agent** | (separate axis — not a fifth answer-quality limit) | The Agent stage closes a perpendicular axis: *method quality* (auditability, verified provenance, cross-checking). The four answer-quality limits end at deep research; Agent and Team systems open a different question, treated in §Method quality below. |
 
 Can we have columns in the report to name the limits from the point of view of a
 - Philosopher of Science
@@ -144,39 +172,90 @@ Within the four limits, substitutability is still constrained:
   The four-tuple is a logical decomposition, not always cleanly
   observable in any single sweep.
 
-## Narrative arc
+## Method quality: verifiable vs. verified
 
-1. **Setup.** Measurement-from-LLM is hard. Four statistical limits
-   (Articulation / Coverage / Coherence / Freshness).
-2. **Model floor.** The census figure plots cost vs. quality across all
-   (model, regime) combinations — the noisy floor set by the *model* axis.
-3. **Regime ladder.** The regimes scatter (fixed prompt = `prompt_extract`)
-   varies *only* the regime — direct / multiturn / RAG. Each step relaxes
-   one statistical limit.
-4. **Prompt decomposition.** The ablation (fixed regime = RAG) holds the
-   regime constant and decomposes the *prompt-structure* axis into modules.
-   This tells us which prompt elements contribute what.
-5. **Joint ceiling, with a missing link.** The frontier deep-research arm
-   uses `prompt_complete` plus reasoning plus web — the meet of the two
-   parallel branches that emerged after RAG (web for Freshness, reasoning
-   for Coherence). The gap between the regimes-scatter ceiling and the
-   deep-research result is therefore *three* deltas glued together: the
-   web branch, the reasoning branch, and the prompt-structure switch from
-   `prompt_extract` to `prompt_complete`. We cannot attribute the gap to
-   any single limit without an intermediate cell (e.g., RAG + reasoning,
-   no web) that isolates the Coherence contribution. Either we add that
-   cell, or we present deep research as an upper-bound demonstration of
-   the joint capability and refuse to decompose the gap.
-6. **Provenance overlay — verifiable vs. verified.** Source-grounding has
-   two layers. *Verifiable* means the model emitted a citation; cheap,
-   automatable, present-or-absent. *Verified* means a human or tool
-   confirmed the citation actually supports the claim; expensive,
-   audit-driven. The verified layer is precisely a Coherence diagnostic
-   — citations that exist but mis-attribute facts are weak-internal-
-   coherence failures with an external pointer attached, which folds
-   provenance back into the four-limits frame instead of leaving it as
-   a separate overlay. We measure verifiable; we flag verified as
-   future work.
+Method quality has two layers, increasing in cost and audit value:
+
+- **Verifiable** — the model emits a citation alongside each
+  extracted fact. Cheap; automatable; binary (present / absent). A
+  single agent with the right prompt can hit this floor.
+- **Verified** — the citation is checked: the linked source resolves
+  and contains the claim. Expensive; audit-driven. Requires either
+  human review or a second system that re-reads the source. **This is
+  the natural job of a multi-agent / team system** — extractor agent
+  produces verifiable claims, auditor agent re-reads the cited
+  sources and flags mismatches.
+
+Method quality is not subsumed by the four answer-quality limits. A
+run can be high-answer-quality and low-method-quality (correct answer
+with no traceable provenance) or low-answer-quality and
+high-method-quality (wrong answer, but every claim has a verifiable
+citation that is honestly wrong). The two axes vary independently;
+the paper measures both.
+
+Candidate AEDIST method-quality metrics:
+
+- **Citation validity rate** — fraction of emitted citations whose
+  URL resolves and whose linked content contains the claimed fact.
+- **Re-extraction agreement** — second agent re-extracts
+  independently; measure inter-agent agreement on the plant
+  inventory.
+- **Self-audit pass rate** — agent flags its own LOW-confidence
+  claims and the flag matches ground truth.
+- **Adversarial robustness** — claim survives "are you sure? show me
+  a contradicting source" without unnecessary backpedalling.
+
+The verifiable-vs-verified distinction subsumes the earlier
+"provenance overlay" framing: provenance is not a separate dimension
+bolted onto answer quality, it *is* method quality. Stages 6 (general
+agent) and 7 (agent teams) of the capability ladder enter the paper
+through this section, not through the answer-quality ladder.
+
+## Narrative arc — three parts
+
+The paper presents three quality stories in sequence:
+
+### Part 1 — Methods
+
+Set up the capability ladder (LLM → RAG → {web ∥ reason} → deep
+research → agent → team) and the four answer-quality limits
+(Articulation / Coverage / Coherence / Freshness). State scope
+explicitly: the four limits govern answer quality only; method
+quality is a separate axis, treated in Part 3.
+
+### Part 2 — Data and answer quality up to the deep-research ceiling
+
+The census figure plots cost vs. quality across all (model, method)
+cells — the noisy floor set by the *model* axis.
+
+The regimes-scatter (fixed prompt = `prompt_extract`) varies only
+the method axis: direct → multiturn → RAG → RAG + reasoning. Each
+step relaxes one of the four limits. The RAG + reasoning cell
+(ticket 0144) isolates the Coherence contribution.
+
+The ablation (fixed method = RAG) holds the method constant and
+decomposes the prompt-structure axis into modules — which prompt
+elements contribute what.
+
+The deep-research cell extends the ladder with `prompt_complete`,
+reasoning, and web. **Hypothesis:** F1 → 1 on cloud × capable models
+× 3 reps. *Decent* if it holds for cloud; *interesting* if it also
+holds for a sovereign / open-weight model. The deep-research cell
+caps both data quality (inputs are now complete) and answer quality
+(reasoning over `prompt_complete` saturates).
+
+### Part 3 — Method quality and the trust frontier
+
+Once data and answer quality saturate, the open question is process
+trustworthiness: can each fact be audited? Single-agent runs add
+citations (verifiable); multi-agent / team runs add re-extraction
+and audit (verified). The method-quality figure is distinct from
+the regimes-scatter — y-axis becomes citation validity,
+re-extraction agreement, self-audit pass rate, or adversarial
+robustness, not F1 on the inventory.
+
+This is where capability stages 6 and 7 enter: not as another column
+on the data-quality ladder, but as a different axis of progress.
 
 ## Why we want one canonical naming page
 
