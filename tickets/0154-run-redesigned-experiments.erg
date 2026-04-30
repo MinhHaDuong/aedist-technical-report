@@ -1,0 +1,52 @@
+%erg v1
+Title: Run the redesigned experiments and record verdicts
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0150
+Blocked-by: 0153
+Blocked-by: 0144
+Blocked-by: 0139
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+Execute the redesigned experimental matrix from 0153, after 0150
+preregistration and 0144 / 0139 prerequisite fixes. Generate the
+data that supports or falsifies the argument's hypotheses.
+
+Discipline: decision rules are pre-registered. Verdicts are
+recorded honestly. Falsifications are documented, not buried.
+
+## Actions
+
+1. Test one before blasting: dry-run + 1 real call per regime
+   (`workflow.md` rule). Inspect output tokens, wall time, content
+   quality. Then full sweeps.
+2. Run cloud sweeps first (lower wall-time risk; results inform
+   local-sweep model selection).
+3. Run local sweeps on Padme. Budget agentic-loop wall-time
+   conservatively (10–30 min/query for 24–32B reasoning models;
+   3 reps × N queries can exceed 24h).
+4. After each sweep: extract metrics, regenerate figures, update
+   `hypotheses.md` with the supported / falsified / inconclusive
+   verdict. No p-hacking — apply the pre-registered decision rule.
+5. Where a hypothesis is falsified: short post-mortem in
+   `docs/findings.md` and an honest update to `argument.md`.
+6. After all sweeps: regenerate the report PDF (`make`).
+   Reproducibility check: `make` from a clean tree rebuilds
+   `report.pdf` without manual intervention.
+
+## Exit criteria
+
+- All confirmatory hypotheses have a verdict in
+  `docs/hypotheses.md`.
+- All figures regenerate from current data (no manual edits to
+  generated artefacts).
+- Falsifications documented in `docs/findings.md`; `argument.md`
+  updated honestly where claims did not survive.
+- `make` rebuilds `report.pdf` cleanly from current tree.

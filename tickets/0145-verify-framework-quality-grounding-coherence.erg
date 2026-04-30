@@ -1,0 +1,56 @@
+%erg v1
+Title: Verify coherence between measurement-framework and quality-grounding
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+`docs/measurement-framework.md` introduces four limits (Articulation,
+Coverage, Coherence, Freshness) split 2/2 between data and answer
+quality. `docs/quality-grounding.md` independently maps the project's
+operational metrics to philosophy-of-science frameworks (van Fraassen
+empirical adequacy, statistical professional codes).
+
+The two documents must be coherent before we commit to the framework
+as the paper's argument (ticket 0147 renames it accordingly).
+
+**Known terminology collision: "Coverage".** In
+`measurement-framework.md` it is a data-quality *limit* — facts the
+model never saw in training. In `quality-grounding.md` it is a
+recall *metric* — `n_matched / n_reference` (`metrics.py:61`). One
+of these names must change, or the disambiguation must be made
+loud and explicit.
+
+## Actions
+
+1. Read both docs end-to-end. Produce a mapping table: each
+   measurement-framework concept ↔ each quality-grounding concept,
+   marking *exact match* / *approximate match* / *collision* /
+   *orphan*.
+2. Resolve the Coverage collision. Options: rename the limit (e.g.,
+   "Reach"), rename the metric (e.g., "Recall" — already standard),
+   or hold both meanings with explicit prose disambiguation on
+   first use in each doc.
+3. Check that the four limits each have a grounding-doc analogue.
+   Where missing, either expand grounding or trim framework.
+4. Check that quality-grounding metrics (F1, evidence score, error
+   counts) cleanly map onto the three qualities (data / answer /
+   method).
+5. Commit a coherence note (or update both docs) summarising the
+   resolution.
+
+## Exit criteria
+
+- Mapping table committed (in `argument.md` after 0147, or as
+  `docs/framework-grounding-map.md`).
+- Coverage collision resolved with one canonical meaning per doc
+  and disambiguation prose where the same word appears in both
+  contexts.
+- No orphan concepts: each framework concept either has a
+  grounding-doc analogue or an explicit out-of-scope note.

@@ -1,0 +1,45 @@
+%erg v1
+Title: Align slides on the argument's three-part structure
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0147
+Blocked-by: 0149
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+`slides/slides.tex` was restructured to a 5-act arc (ticket 0129)
+before the three-quality argument crystallised. After 0147
+(rename to argument.md) and 0149 (hypothesis extraction), the
+slides need to mirror the same structure: methods + four limits,
+data/answer-quality saturation through deep research,
+method-quality frontier through agentic and multi-agent.
+
+## Actions
+
+1. Walk `slides/slides.tex`. Map each frame to a section of
+   `argument.md`, or mark "out of scope" / "drop".
+2. Restructure into the three-part arc:
+   - Part 1 — Methods (capability ladder + four limits + scope)
+   - Part 2 — Data and answer quality up to deep-research ceiling
+     (regimes-scatter, ablation, hypothesis verdicts H1–H3)
+   - Part 3 — Method quality and the trust frontier (verifiable /
+     verified, hypothesis verdicts H4)
+3. Re-render figures from updated experimental data once 0154
+   produces them; until then, placeholder where data isn't ready.
+4. Build with tectonic. No inline pgfplots usage — adherence test
+   from ticket 0130 will fail if reintroduced. Use the Python-PDF
+   pattern (ticket 0132) for new figures.
+5. Slide count discipline: ≤25 frames for a typical talk.
+
+## Exit criteria
+
+- Slide structure mirrors argument three-part arc.
+- All figures render cleanly via tectonic; no inline pgfplots.
+- No frame references the old "framework" name.
+- ≤25 frames in the main deck (overflow into appendix if needed).

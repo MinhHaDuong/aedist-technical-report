@@ -1,0 +1,43 @@
+%erg v1
+Title: Expand capability timeline to all major labs and produce a figure
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+`docs/capability-timeline.md` covers four labs (OpenAI, Anthropic,
+Google DeepMind, Mistral) with a 7-stage matrix and 27 primary
+sources. The argument's "order is observed, not forced" claim
+strengthens with broader coverage. A figure (stage × time, one
+band per lab) is also useful for slides and the paper.
+
+## Actions
+
+1. Add labs: Meta (Llama family), DeepSeek, xAI (Grok), Alibaba
+   (Qwen). Optionally Cohere, AI21, Reka.
+2. For each new lab, fill the seven-stage matrix: instruct / RAG /
+   web / reasoning / deep research / general agent / agent teams.
+   Primary announcement URLs only (per the discipline used in
+   the existing matrix).
+3. Produce a figure: x-axis time, y-axis lab, markers per stage
+   shipped. Render to PDF in the appropriate `inputs/generated/`
+   directory or wherever paper figures live.
+4. Update `argument.md` (after 0147) §"Why the order is observed,
+   not forced" to cite the expanded matrix and reference the
+   figure.
+5. Honest gaps subsection: list cells where primary sourcing
+   failed; do not paper over them.
+
+## Exit criteria
+
+- `capability-timeline.md` matrix has ≥7 labs.
+- Figure rendered and committed; renders cleanly via `make` or
+  the standard build.
+- Bibliography contains primary URLs for each non-empty cell.
+- Honest-gaps subsection updated; no silent omissions.

@@ -1,0 +1,54 @@
+%erg v1
+Title: Extract main results and hypotheses to be tested
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0148
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+The argument predicts specific empirical outcomes. Distil them
+into a numbered hypothesis list with operational definitions,
+decision rules, and a link to the experimental sweep that tests
+each. This is the bridge between argument prose and experimental
+matrix (0153) and the precondition for preregistration (0150).
+
+Pre-specifying decision rules — *before* the data is read — is
+the discipline the rest of the workflow rests on.
+
+## Actions
+
+1. Walk `argument.md` and extract every claim that is
+   empirically testable. Candidate list (non-exhaustive):
+   - **H1** — Deep research × `prompt_complete` × cloud capable
+     model achieves F1 → 1 with 3 reps.
+   - **H2** — Deep research × `prompt_complete` × *local* capable
+     model (Magistral or equivalent) achieves F1 → 1.
+   - **H3** — Each step on the regimes-scatter ladder closes one
+     specific limit (Articulation, Coverage, Coherence, Freshness),
+     measurably and in the predicted order.
+   - **H4** — Method-quality metrics (citation validity,
+     re-extraction agreement) discriminate single-agent vs.
+     multi-agent runs even when F1 is equal.
+   - **H5** — Information-condition is colinear with the method
+     axis: no residual variance after method is partialled out.
+2. For each hypothesis: operational metric, threshold for
+   *supported* / *falsified* / *inconclusive*, required sweep,
+   decision rule.
+3. Mark hypotheses *confirmatory* (precise prediction, ready to
+   pre-register) or *exploratory* (open-ended, declare as such).
+4. Commit as `docs/hypotheses.md`. Cross-link to `argument.md`
+   paragraphs and to specific sweep keys in `experiments.toml`.
+
+## Exit criteria
+
+- Hypothesis list committed; each item has metric, threshold,
+  sweep reference.
+- Each hypothesis traceable to an `argument.md` paragraph.
+- Decision rules pre-specified before any new data is read.
+- Confirmatory / exploratory split made explicit.

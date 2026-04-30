@@ -1,0 +1,49 @@
+%erg v1
+Title: Preregister confirmatory hypotheses before running experiments
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0149
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+Pre-register the confirmatory hypotheses from 0149 to a public
+registry (OSF, AsPredicted) before running the redesigned
+experiments. This disciplines data-driven retrofitting and is a
+credibility lift in peer review.
+
+"If possible" caveat: not all hypotheses preregister cleanly.
+Exploratory hypotheses (H4, H5 in 0149's candidate list) are
+better declared as exploratory than forced into a confirmatory
+template.
+
+## Actions
+
+1. Choose a registry. OSF Registries is the standard for
+   non-trial research; AsPredicted is lighter-weight. Default to
+   OSF unless project policy says otherwise.
+2. From `docs/hypotheses.md`: take the confirmatory subset (H1,
+   H2, H3 as drafted). Leave exploratory ones declared but
+   unregistered.
+3. Fill the registry form: research question, design, sample
+   size / model panel, analysis plan, decision rules. Use the
+   operational definitions from 0149 verbatim — do not edit
+   between docs and registry.
+4. Commit the registry DOI / link to `docs/hypotheses.md` and to
+   `STATE.md`.
+5. After the timestamp, treat the confirmatory set as frozen: any
+   change requires a registered amendment.
+
+## Exit criteria
+
+- Confirmatory hypotheses registered with timestamp *before* any
+  new sweep runs.
+- Registry link committed to `hypotheses.md`.
+- Exploratory hypotheses explicitly declared as exploratory.
+- Workflow rule added (or noted in `STATE.md`): no edits to
+  registered hypotheses without an amendment.

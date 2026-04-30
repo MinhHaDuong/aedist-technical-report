@@ -1,0 +1,49 @@
+%erg v1
+Title: Audit the argument with multiple frontier LLMs
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0147
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+Before committing the paper's argument, stress-test it against
+independent LLM critics. Different models surface different
+weaknesses — training-distribution biases, methodological priors,
+domain familiarity. Cheap insurance against blind spots.
+
+The audit also doubles as a calibration probe: if frontier models
+converge on the same critique, that signal is stronger than any
+single reviewer's voice.
+
+## Actions
+
+1. Define an audit prompt:
+   > Read `docs/argument.md`. Identify (a) the strongest internal
+   > inconsistency, (b) the weakest empirical claim, (c) the most
+   > likely methodological objection from a peer reviewer, (d) the
+   > one claim you would drop if forced. Cite specific lines. Be
+   > terse.
+2. Run on a model panel: GPT-5.5, Claude Opus 4.7, Gemini 2.5 Pro,
+   Mistral Large / Magistral, DeepSeek V3.2, Qwen3-Max-Thinking.
+   Use deep-research / reasoning surfaces where available so the
+   model can do its own homework on cited refs.
+3. Aggregate findings: cluster by which claim each model contests.
+   Distinct objections go in a critique table; consensus
+   objections go top.
+4. Either revise `argument.md` to address top critiques, or
+   document each objection as "considered and rejected because X".
+
+## Exit criteria
+
+- Audit run on ≥5 frontier models.
+- Aggregated critique table committed as
+  `docs/argument-audit.md`.
+- Each top-cluster objection either resolved in `argument.md` or
+  flagged with an explicit justification for keeping the claim.
+- Audit prompt and model versions logged for reproducibility.

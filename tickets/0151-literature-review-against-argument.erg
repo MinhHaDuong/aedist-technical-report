@@ -1,0 +1,53 @@
+%erg v1
+Title: Conduct literature review against the argument
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0149
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+Each empirical claim in the argument needs a literature anchor:
+where has this been studied before, where does our claim go
+beyond, where might we be reinventing? The
+`/related-work-note` skill is the project's established workflow
+for per-paragraph due diligence. Anchored to the hypotheses (0149)
+so the lit review tracks specific testable claims, not loose
+prose.
+
+## Actions
+
+1. For each major paragraph in `argument.md`, run
+   `/related-work-note`. Output: a per-paragraph note with
+   relevance, history, cited works (detailed),
+   related-but-not-cited (justified), methods, verification
+   checklist, and a bibliography section with DOI/URL.
+2. Specifically target prior work on: van Fraassen empirical
+   adequacy in ML evaluation, RAG evaluation literature (RAGAS,
+   TruLens, RAGTruth), reasoning-model benchmarks (MATH, GPQA,
+   ARC-AGI), deep-research evals (SimpleQA, BrowseComp,
+   GAIA), agentic-system evals (SWE-Bench, HumanEval, OSWorld),
+   citation / provenance accuracy literature, Type-III error
+   (Articulation), measurement-from-LLM survey work.
+3. Aggregate notes into `docs/argument-related-work.md` with a
+   strict citation budget per paragraph (10–15 anchors, per
+   `writing.md`).
+4. Add high-quality refs to the project's `refs.bib` via
+   `/bib-merge`. No in-repo doc references in the bibliography
+   (`writing.md` rule).
+5. Identify gaps: claims with no prior literature → flag for
+   epistemic-humility prose ("to our knowledge", "we did not
+   find"; never "nobody has done").
+
+## Exit criteria
+
+- One related-work note per major argument paragraph.
+- Master related-work doc committed.
+- `refs.bib` updated; no broken citations; no in-repo `*.md`
+  entries.
+- Gaps explicitly flagged with epistemic-humility language.

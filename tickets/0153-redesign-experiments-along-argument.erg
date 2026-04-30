@@ -1,0 +1,51 @@
+%erg v1
+Title: Redesign experiments along the argument's hypotheses
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0149
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+The current `experiments.toml` accumulated incrementally — useful
+data, but the matrix is not minimum-power-to-test-the-claims.
+After 0149 produces a hypothesis list, redesign top-down: minimum
+sweeps to test each hypothesis with adequate power, model lineup
+pinned, budget scoped.
+
+## Actions
+
+1. For each hypothesis in `docs/hypotheses.md`: identify the
+   cell(s) needed to test it.
+2. Audit existing sweeps against the matrix: keep / archive / new.
+   Tag obsolete sweeps for archival (do not delete; they are part
+   of the project's history and grounding).
+3. Consolidate: `experiments.toml` should be readable end-to-end
+   as the operational expression of `hypotheses.md`. Each sweep
+   key references the hypothesis it tests.
+4. Pin model lineup:
+   - 5 models for the regimes-scatter (per the "5 selected
+     models" narrative).
+   - 2 cloud agentic + 1 local agentic (Magistral or
+     equivalent — see discussion in this thread) for the
+     method-quality figure.
+5. Address the missing-link cell from ticket 0144 (RAG +
+   reasoning, no web).
+6. Budget: 3-rep MoE runs are mandatory (`experiment-design.md`).
+   Estimate cost; if over budget, drop reps before dropping
+   hypotheses.
+7. Commit `docs/experiments-design.md` explaining the matrix and
+   the cost / power tradeoffs.
+
+## Exit criteria
+
+- `experiments.toml` reorganised; each sweep traces back to a
+  hypothesis ID.
+- Model lineup pinned; cost estimate within budget.
+- `experiments-design.md` committed.
+- Existing redundant sweeps marked for archival.

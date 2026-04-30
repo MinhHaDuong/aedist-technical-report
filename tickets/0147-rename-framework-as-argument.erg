@@ -1,0 +1,43 @@
+%erg v1
+Title: Rename measurement-framework.md to argument.md
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0145
+
+--- log ---
+2026-04-30T19:00Z claude created
+
+--- body ---
+
+## Context
+
+The doc has matured from intellectual scaffolding into a thesis: the
+four limits split 2/2 between data and answer; method quality is a
+perpendicular axis; the regimes-scatter ladder visits each limit;
+deep research saturates data and answer quality. This is no longer
+a "framework" — it's an argument the paper makes.
+
+Rename to reflect the upgrade. Done after 0145 confirms the
+argument is coherent with the project's quality-grounding doc, so
+we don't commit to an "argument" label on a doc that turns out to
+have a load-bearing inconsistency.
+
+## Actions
+
+1. `git mv docs/measurement-framework.md docs/argument.md`.
+2. Update doc title: "The argument: axes, lenses, three qualities"
+   or similar. Update the working-note disclaimer at the top.
+3. Update internal cross-references (slides, other docs, ticket
+   bodies referencing the old path, `capability-timeline.md`
+   backlink).
+4. `grep -rn 'measurement-framework' .` → 0 hits after the pass.
+5. Update `STATE.md` if it mentions the framework.
+
+## Exit criteria
+
+- File renamed; git history preserved (`git log --follow
+  docs/argument.md` still works).
+- All cross-references updated.
+- Title and intro paragraph reflect "argument" framing.
+- No build breakage from broken references.
