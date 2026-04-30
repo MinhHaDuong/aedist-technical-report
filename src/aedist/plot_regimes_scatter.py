@@ -24,6 +24,7 @@ _MODELS = [
     ("mistral-small-2603", "Mistral S4"),
     ("mistral-large-2512", "Mistral L3"),
     ("deepseek-v3.2", "DeepSeek"),
+    ("qwen3.5:35b", "Qwen3.5 35B"),
     ("cogito:8b", "Cogito 8B"),
 ]
 
