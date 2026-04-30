@@ -39,43 +39,51 @@ of the method, not a separate lens.)
 
 ## Three qualities the paper measures
 
-The paper carves measurement-from-LLM into three quality types, each
-with its own axis, bottleneck, and experimental story:
+The paper carves measurement-from-LLM into three quality types. The
+four limits split 2/2 between *data* (properties of the inputs) and
+*answer* (properties of the output given the inputs); method quality
+is a third, perpendicular axis.
 
-| Quality | Question | Bottleneck closes at |
-|---|---|---|
-| **Data quality** | Are the input facts present, complete, and current? | Deep research (RAG + web + reasoning) |
-| **Answer quality** | Did the model produce the correct extracted answer? | Governed by the four answer-quality limits below |
-| **Method quality** | Can we trust the process that produced the answer? | Open frontier — agentic + multi-agent teams |
+| Quality | Question | Limits | Closed by |
+|---|---|---|---|
+| **Data quality** | Are the input facts present, complete, and current? | Coverage, Freshness | RAG + web |
+| **Answer quality** | Did the model produce the correct output given the inputs? | Articulation, Coherence | Prompts + reasoning |
+| **Method quality** | Can we trust the process that produced the answer? | (separate axis — see §Method quality) | Agentic + multi-agent teams |
 
-Data quality and answer quality cap out at the same place: deep
-research with `prompt_complete`. Once the system has the right inputs
-and the right reasoning over them, both the data-completeness and
-answer-correctness questions saturate — F1 → 1 is in reach on cloud
-deep-research with capable models. **Method quality is a different
-axis.** Once data and answer are right, the question becomes whether
-we can audit the process — verify that each emitted fact has a valid
+Data and answer quality are conceptually orthogonal but **bundled by
+the F1 metric on AEDIST.** "Did the model have the facts?" (Coverage
+/ Freshness) and "did the model state them correctly?" (Articulation
+/ Coherence) collapse into a single F1 number on extracted
+inventories. The two qualities saturate together at
+deep-research-with-`prompt_complete` not because they happen to
+coincide but because that condition closes all four limits
+simultaneously.
+
+**Method quality is a different axis.** Once the four data- and
+answer-quality limits are closed, the question becomes whether we
+can audit the process — verify that each emitted fact has a valid
 citation, cross-check via independent re-extraction, surface
 disagreement honestly. This is what agentic and multi-agent systems
-contribute, and it is not the same axis as the four limits below.
+contribute, and it is not the same axis as the four limits.
 
-The four limits in the next section are *answer-quality* limits. They
-do not span method quality. The Agent row in the limits table is
-therefore not a fifth limit but a pointer to the separate axis
-treated in §Method quality.
+The Agent row in the limits table below is therefore not a fifth
+limit but a pointer to the separate axis treated in §Method quality.
 
-## The four answer-quality limits
+## The four limits: two on data, two on the answer
 
-Recent AI-history stages map onto a sequence of answer-quality limits.
-Each is the next bottleneck once the previous one is relaxed.
+Recent AI-history stages map onto a sequence of measurement limits.
+Two are properties of the *inputs* (Coverage, Freshness — data-quality
+limits); two are properties of the *output given the inputs*
+(Articulation, Coherence — answer-quality limits). Each is the next
+bottleneck once the previous one is relaxed.
 
-| AI stage | Statistical limit | What it is |
-|---|---|---|
-| **Engineer prompt / clarify in multiturn** | **Articulation** | Asking what you meant to ask. Speaking clearly across the human-model language barrier. Multiturn clarification is a second mechanism for the same limit. |
-| **Provide documents** | **Coverage** | Facts the model never saw in training. |
-| **Web** | **Freshness** | Facts moved on since training cutoff. |
-| **Reason** | **Coherence** (weak, internal) | Facts present, combined inconsistently. |
-| **Agent** | (separate axis — not a fifth answer-quality limit) | The Agent stage closes a perpendicular axis: *method quality* (auditability, verified provenance, cross-checking). The four answer-quality limits end at deep research; Agent and Team systems open a different question, treated in §Method quality below. |
+| AI stage | Limit | Quality | What it is |
+|---|---|---|---|
+| **Engineer prompt / clarify in multiturn** | **Articulation** | answer | Asking what you meant to ask. Speaking clearly across the human-model language barrier. Multiturn clarification is a second mechanism for the same limit. |
+| **Provide documents** | **Coverage** | data | Facts the model never saw in training. |
+| **Web** | **Freshness** | data | Facts moved on since training cutoff. |
+| **Reason** | **Coherence** (weak, internal) | answer | Facts present, combined inconsistently. |
+| **Agent** | (separate axis) | method | The Agent stage closes a perpendicular axis: *method quality* (auditability, verified provenance, cross-checking). The four data- and answer-quality limits end at deep research; Agent and Team systems open a different question, treated in §Method quality below. |
 
 Can we have columns in the report to name the limits from the point of view of a
 - Philosopher of Science
@@ -186,11 +194,11 @@ Method quality has two layers, increasing in cost and audit value:
   produces verifiable claims, auditor agent re-reads the cited
   sources and flags mismatches.
 
-Method quality is not subsumed by the four answer-quality limits. A
-run can be high-answer-quality and low-method-quality (correct answer
-with no traceable provenance) or low-answer-quality and
-high-method-quality (wrong answer, but every claim has a verifiable
-citation that is honestly wrong). The two axes vary independently;
+Method quality is not subsumed by the four limits. A run can be
+right-on-output (correct answer) but low-method-quality (no
+traceable provenance), or wrong-on-output (incorrect answer) but
+high-method-quality (every claim has a verifiable citation that
+turns out to be honestly wrong). The two axes vary independently;
 the paper measures both.
 
 Candidate AEDIST method-quality metrics:
@@ -218,10 +226,11 @@ The paper presents three quality stories in sequence:
 ### Part 1 — Methods
 
 Set up the capability ladder (LLM → RAG → {web ∥ reason} → deep
-research → agent → team) and the four answer-quality limits
-(Articulation / Coverage / Coherence / Freshness). State scope
-explicitly: the four limits govern answer quality only; method
-quality is a separate axis, treated in Part 3.
+research → agent → team) and the four limits — two on data
+(Coverage, Freshness) and two on the answer (Articulation,
+Coherence). State scope explicitly: the four limits govern data and
+answer quality; method quality is a separate axis, treated in
+Part 3.
 
 ### Part 2 — Data and answer quality up to the deep-research ceiling
 
@@ -229,9 +238,18 @@ The census figure plots cost vs. quality across all (model, method)
 cells — the noisy floor set by the *model* axis.
 
 The regimes-scatter (fixed prompt = `prompt_extract`) varies only
-the method axis: direct → multiturn → RAG → RAG + reasoning. Each
-step relaxes one of the four limits. The RAG + reasoning cell
-(ticket 0144) isolates the Coherence contribution.
+the method axis. Each step relaxes one limit, alternating between
+data and answer quality:
+
+- direct → multiturn — closes **Articulation** (answer)
+- → RAG — closes **Coverage** (data)
+- → RAG + reasoning — closes **Coherence** (answer); ticket 0144
+- → deep research — closes **Freshness** (data), bundled with the
+  `prompt_complete` switch (a second Articulation lift)
+
+The four-step ladder visits each limit; the deep-research step is
+the only one that bundles two deltas, which is why ticket 0144's
+intermediate cell matters for clean attribution.
 
 The ablation (fixed method = RAG) holds the method constant and
 decomposes the prompt-structure axis into modules — which prompt
