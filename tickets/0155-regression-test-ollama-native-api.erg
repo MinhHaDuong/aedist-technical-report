@@ -9,11 +9,11 @@ Author: claude
 2026-04-30T21:30Z human note — close only when PR#309 merges (test committed but not yet on main)
 
 2026-04-30T20:05Z claude note sweep-pick: picked hash:79b4294650d8 scope:add one test file asserting all query_*.py use Ollama /api/chat for local models risk:low — test file only, no production code changes, no external deps
+2026-04-30T21:38Z claude note sweep-skip: cooldown-recent-pick hash:79b4294650d8 expires:2026-05-01T04:05Z
 --- body ---
-## Context
-
-Discovered 2026-04-30 (commit `d27c393`): `query_direct.py` and
-`query_multiturn.py` were calling `query_single_turn` directly for
+:38Z claude note sweep-skip: cooldown-recent-pick hash:79b4294650d8 expires:2026-05-01T04:05Z
+--- body ---
+ng `query_single_turn` directly for
 local Ollama models, going through the OpenAI `/v1/` shim that
 **silently ignores `num_ctx`**, so Ollama defaulted to 4096-token
 context regardless of the model's declared `context_window`. The
