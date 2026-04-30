@@ -8,6 +8,7 @@ Author: claude
 2026-04-30T11:15Z claude created — split from 0138; seed silent-drop confirmed
 2026-04-30T11:30Z claude note ADR-7 decided: metrics dict = complete scientific record; added finish_reason and records_to_metrics expansion to scope
 
+2026-04-30T20:05Z claude note sweep-assess: not-picked hash:931962ecd1e1 scope:add seed, provider_order, max_tokens, num_ctx to JobSpec; wire through worker and evaluate; forbid unknown fields risk:medium — touches worker execution path and evaluate backfill across multiple files
 --- body ---
 
 ## Context
@@ -100,3 +101,8 @@ Document this pattern in `measurements.py` module docstring as an example.
 - `finish_reason` backfilled into `RunRecord.method_params.extra`.
 - `records_to_metrics()` emits all scientific-record fields (ADR-7).
 - Tests green.
+## Picker assessment 2026-04-30T20:05Z
+**Decision:** not-picked
+**Scope:** add seed, provider_order, max_tokens, num_ctx to JobSpec; wire through worker and evaluate; forbid unknown fields
+**Risk:** medium — touches worker execution path and evaluate backfill across multiple files
+**Reason:** medium risk; correct fix for seed silent-drop bug but multiple-file change

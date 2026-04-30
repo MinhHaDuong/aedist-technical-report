@@ -11,11 +11,11 @@ Author: claude
 2026-04-29T21:06Z claude note sweep-assess: not-picked hash:eef466fab30c scope:add GPT-5.5 and 70B cheap cloud models to regimes scatter risk:medium
 2026-04-30T12:07Z claude note de-risk: GPT-5.5=openai/gpt-5.5 $5/$30per Mtok; 70B-cheap=qwen/qwen3.5-122b-a10b $0.26/$2.08per Mtok; est. spend $2 (sources: openrouter.ai/openai/gpt-5.5, openrouter.ai/qwen/qwen3.5-122b-a10b)
 2026-04-30T12:24Z claude note pivot: drop 70B baseline (Qwen3.5-122b-a10b) and GPT-5.5; use tencent/hy3-preview:free as top-end (MoE, 262k ctx, $0/$0). Free preview expires 2026-05-08 — sweeps must run before then
+2026-04-30T20:05Z claude note sweep-skip: scope-too-large expires:2026-05-01T12:00Z hash:ba30430a6d6d
 --- body ---
-## Context
-
-`fig_regimes_scatter.pdf` affiche actuellement 4 modèles : GPT-5.4, Mistral S4,
-Mistral L3, DeepSeek. Ce ticket ajoute un modèle cloud top-end gratuit.
+:05Z claude note sweep-skip: scope-too-large expires:2026-05-01T12:00Z hash:ba30430a6d6d
+--- body ---
+3, DeepSeek. Ce ticket ajoute un modèle cloud top-end gratuit.
 
 ## Modèle ajouté
 

@@ -7,11 +7,11 @@ Author: claude
 --- log ---
 2026-04-30T12:55Z claude created — follow-up to 0134 lineup discussion
 
+2026-04-30T20:05Z claude note sweep-skip: scope-too-large expires:2026-05-02T12:00Z hash:f8a1c80f13c2
 --- body ---
-## Context
-
-`experiments/models.yaml` currently has duplicate entries for "same model,
-different provider":
+:05Z claude note sweep-skip: scope-too-large expires:2026-05-02T12:00Z hash:f8a1c80f13c2
+--- body ---
+der":
 
 - `qwen/qwen3.5-35b-a3b` (cloud) + `qwen3.5:35b` (local)
 - `qwen/qwen3.5-122b-a10b` (cloud) + `qwen3.5:122b` (local)

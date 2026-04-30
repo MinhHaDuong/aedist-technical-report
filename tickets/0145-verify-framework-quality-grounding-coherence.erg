@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-30T19:00Z claude created
 
+2026-04-30T20:05Z claude note sweep-assess: not-picked hash:88b8c6948a22 scope:read two docs, produce mapping table, resolve Coverage terminology collision risk:low — docs edits only
 --- body ---
 
 ## Context
@@ -54,3 +55,8 @@ loud and explicit.
   contexts.
 - No orphan concepts: each framework concept either has a
   grounding-doc analogue or an explicit out-of-scope note.
+## Picker assessment 2026-04-30T20:05Z
+**Decision:** not-picked
+**Scope:** read two docs, produce mapping table, resolve Coverage terminology collision
+**Risk:** low — docs edits only
+**Reason:** runner-up: low risk docs task but less immediately blocking than 0155

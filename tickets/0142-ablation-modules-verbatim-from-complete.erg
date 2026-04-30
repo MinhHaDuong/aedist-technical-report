@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-04-30T13:25Z claude created — option B from prompt-prompt-complete-ablation alignment discussion 2026-04-30
 
+2026-04-30T20:05Z claude note sweep-assess: not-picked hash:a7490e8008b6 scope:rewrite 8 ablation modules verbatim from prompt_complete, create 3 new modules, verify diff risk:low — text/prompt file edits only
 --- body ---
 ## Context
 
@@ -84,3 +85,8 @@ headings) — no content drift.
 - Equivalence diff verified.
 - Module README documents the policy.
 - 0143 (rerun) unblocked.
+## Picker assessment 2026-04-30T20:05Z
+**Decision:** not-picked
+**Scope:** rewrite 8 ablation modules verbatim from prompt_complete, create 3 new modules, verify diff
+**Risk:** low — text/prompt file edits only
+**Reason:** low risk but larger scope; requires careful diff verification; deferred

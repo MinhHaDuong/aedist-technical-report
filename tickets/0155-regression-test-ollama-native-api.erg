@@ -8,6 +8,7 @@ Author: claude
 2026-04-30T17:10Z claude created — class-shape follow-up to commits d27c393 + 031cef2
 2026-04-30T21:30Z human note — close only when PR#309 merges (test committed but not yet on main)
 
+2026-04-30T20:05Z claude note sweep-pick: picked hash:79b4294650d8 scope:add one test file asserting all query_*.py use Ollama /api/chat for local models risk:low — test file only, no production code changes, no external deps
 --- body ---
 ## Context
 
@@ -64,3 +65,8 @@ assertion.
 - Don't rewrite `query_*.py` modules to share an Ollama wrapper —
   that's a separate refactor (would close 0141-style design work).
   This ticket is about catching regressions, not consolidating.
+## Picker assessment 2026-04-30T20:05Z
+**Decision:** picked
+**Scope:** add one test file asserting all query_*.py use Ollama /api/chat for local models
+**Risk:** low — test file only, no production code changes, no external deps
+**Reason:** lowest risk candidate; test-adding task; well-scoped single file output

@@ -8,6 +8,7 @@ Author: claude
 2026-04-23T12:06Z claude created
 2026-04-30T11:18Z claude note renumbered from 0112 (collision with 0112-slides-narrative-reframe); fixed coding.md → coding-python.md reference
 
+2026-04-30T20:05Z claude note sweep-assess: not-picked hash:b59926afa707 scope:split 225-line Makefile into analysis.mk, paper.mk, slides.mk with dispatch-only top level risk:medium — Makefile changes can silently break builds
 --- body ---
 ## Context
 
@@ -50,3 +51,8 @@ only. Both must succeed from committed state.
 - `paper.mk` and `slides.mk` build without Python / uv / network.
 - Handoff manifest (files committed under `derived/`, `$(GEN)`,
   `$(SLIDE_GEN)`) is documented at the top of `analysis.mk`.
+## Picker assessment 2026-04-30T20:05Z
+**Decision:** not-picked
+**Scope:** split 225-line Makefile into analysis.mk, paper.mk, slides.mk with dispatch-only top level
+**Risk:** medium — Makefile changes can silently break builds
+**Reason:** medium risk; requires careful coverage verification; deferred
