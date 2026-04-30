@@ -620,6 +620,8 @@ class Worker:
         method_params = MethodParams(model=job.model_filter or "unknown")
         if ablation_pv is not None:
             method_params.prompt_version = ablation_pv
+        if job.no_think:
+            method_params.extra = {"no_think": True}
         record = RunRecord(
             method=emitted_method,
             method_params=method_params,
