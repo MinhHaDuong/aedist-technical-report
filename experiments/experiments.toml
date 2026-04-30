@@ -63,6 +63,7 @@ model_ids = [
     "gemma4:e2b",
     "cogito:8b",
     "granite3.3:8b",
+    "qwen3.6:35b",
 ]
 
 [sets.modelset_frontier]
