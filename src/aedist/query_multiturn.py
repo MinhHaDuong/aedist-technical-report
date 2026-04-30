@@ -70,6 +70,7 @@ def run_conversation(
     budget: BudgetTracker,
     stateless: bool = False,
     ollama_base_url: str | None = None,
+    no_think: bool = False,
     **api_kwargs,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
@@ -79,7 +80,7 @@ def run_conversation(
 
     def _call(msgs):
         if is_ollama:
-            return query_ollama_native(ollama_url, model_id, msgs, num_ctx)
+            return query_ollama_native(ollama_url, model_id, msgs, num_ctx, no_think=no_think)
         return query_single_turn(client, model_id, msgs, **api_kwargs)
 
     messages: list[dict] = []
@@ -285,6 +286,7 @@ def main():
                     budget,
                     stateless=args.stateless,
                     ollama_base_url=ollama_base_url,
+                    no_think=args.no_think,
                     **mt_api_kwargs,
                 )
                 if conv is None:

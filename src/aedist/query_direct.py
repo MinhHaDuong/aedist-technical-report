@@ -213,6 +213,7 @@ def main():
                         [{"role": "user", "content": prompt}],
                         num_ctx,
                         num_predict=args.max_tokens,
+                        no_think=args.no_think,
                     )
                 else:
                     result = query_single_turn(
