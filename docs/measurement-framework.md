@@ -275,6 +275,55 @@ robustness, not F1 on the inventory.
 This is where capability stages 6 and 7 enter: not as another column
 on the data-quality ladder, but as a different axis of progress.
 
+## Empirical caveat (2026-04-30)
+
+The narrative arc above assumes the deep-research cell ceilings the
+regimes scatter — that *prompt_complete* + reasoning + web saturates
+both data and answer quality. **The data on disk today does not yet
+support that hypothesis.** Scan of 327 record files:
+
+- **Best benchmark-wide F1 = 0.988** — DeepSeek V3.2 on decomposed
+  RAG (Phase 4 cell), n=4 mean ≈ 0.898.
+- **Best deep-research-cell F1 = 0.557** — GLM-5 Turbo on
+  `prompt_complete` + reasoning. n=1 across 12 frontier models;
+  three at 0.000 (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20); mean
+  across the cell ≈ 0.35.
+- The deep-research cell currently sits *below* the regimes-scatter
+  ceiling, not above it. Stages 3 + 4 (Coherence + Freshness) appear
+  to *lower* F1 over stages 1 + 2 in our measurement — the opposite
+  of the narrative.
+
+Two interpretations, both have to be tested before the arc is
+defended in the paper:
+
+1. **Evaluator artefact.** `prompt_complete` returns a structured
+   document — sector overview, narrative paragraphs, multiple tables,
+   bibliography — and the extractor may be choking on the framing
+   instead of pulling the inventory table out. Three `0.000` rows
+   on capable models (GPT-5.4, Grok 4.20, Ernie thinking) is the
+   smoking gun. **Diagnosis target: read one such record's `.json`
+   alongside its `.record.json` and confirm whether a valid table
+   was missed.**
+2. **Genuine over-exploration.** Deep research really does
+   over-cover and dilute precision against a fixed reference; the
+   arc would need rewriting to say stages 3 + 4 trade F1 for
+   completeness or sourcing rather than raising F1.
+
+Both interpretations are worth ruling in / out empirically — but
+(1) must be eliminated first because it's measurement-side and
+fixable. Until that pass is done, the deep-research-ceiling claim
+in Part 2 is **a hypothesis the present data does not corroborate**,
+and the paper should mark it as such rather than asserting the
+saturation.
+
+A related local-side surprise: **qwen3.5:9b** at **F1 = 0.984** on
+direct extraction (n=1). A 9B local model on the parametric regime,
+without RAG / web / reasoning, sits within 0.004 of the
+benchmark-wide best. If this reproduces under repeats on the
+coal-only dev subset, the local-model question for the deep-research
+arm collapses — you may not need a deep-research stack on this task
+at all, just a well-suited small model.
+
 ## Why we want one canonical naming page
 
 Today the codebase has at least three names for the same thing:
