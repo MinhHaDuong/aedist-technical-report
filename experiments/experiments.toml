@@ -268,6 +268,100 @@ budget_usd = 2
 seed = 42
 output = "outputs/rag_per_fuel"
 
+# ---------------------------------------------------------------------------
+# Ticket 0134 — regimes scatter model refresh
+# ---------------------------------------------------------------------------
+# 5 models × 3 methods (direct, multiturn, RAG) for fig_regimes_scatter.pdf.
+# Cloud + local pair on qwen3.6:35b controls for provider/quantization.
+# Hy3 preview is free but expires 2026-05-08 — sweeps must run before then.
+# Outputs to a dedicated sub-dir to avoid evaluate-all overwriting existing
+# census/RAG runs (per #92 fix).
+
+[sets.modelset_regimes_scatter_cloud]
+model_ids = [
+    "tencent/hy3-preview:free",
+    "qwen/qwen3.6-35b-a3b",
+]
+
+[sets.modelset_regimes_scatter_local]
+model_ids = [
+    "qwen3.6:35b",
+    "ministral-3:14b",
+    "qwen3.5:9b",
+]
+
+[sweeps.sweep_regimes_direct_cloud]
+mode = "single"
+prompt = "prompts/prompt_extract.txt"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_cloud"
+repeat = 3
+budget_usd = 1
+seed = 42
+output = "outputs/regimes_scatter/direct_extract"
+
+[sweeps.sweep_regimes_direct_local]
+mode = "single"
+prompt = "prompts/prompt_extract.txt"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_local"
+repeat = 3
+budget_usd = 0
+seed = 42
+no_think = true
+output = "outputs/regimes_scatter/direct_extract"
+ollama_url = "http://localhost:11434/v1"
+
+[sweeps.sweep_regimes_multiturn_cloud]
+mode = "multiturn"
+prompt = "prompts/prompt_extract.txt"
+followups = "prompts/prompt_followups.txt"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_cloud"
+repeat = 3
+budget_usd = 2
+seed = 42
+output = "outputs/regimes_scatter/direct_multiturn"
+
+[sweeps.sweep_regimes_multiturn_local]
+mode = "multiturn"
+prompt = "prompts/prompt_extract.txt"
+followups = "prompts/prompt_followups.txt"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_local"
+repeat = 3
+budget_usd = 0
+seed = 42
+no_think = true
+output = "outputs/regimes_scatter/direct_multiturn"
+ollama_url = "http://localhost:11434/v1"
+
+[sweeps.sweep_regimes_rag_cloud]
+mode = "rag"
+prompt = "prompts/prompt_extract.txt"
+corpus = "data/rag_corpus"
+strategy = "wholesale"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_cloud"
+repeat = 3
+budget_usd = 1
+seed = 42
+output = "outputs/regimes_scatter/rag_extract"
+
+[sweeps.sweep_regimes_rag_local]
+mode = "rag"
+prompt = "prompts/prompt_extract.txt"
+corpus = "data/rag_corpus"
+strategy = "wholesale"
+models = "models.yaml"
+model_set = "modelset_regimes_scatter_local"
+repeat = 3
+budget_usd = 0
+seed = 42
+no_think = true
+output = "outputs/regimes_scatter/rag_extract"
+ollama_url = "http://localhost:11434/v1"
+
 # Verification regimes on top 3 configs
 #
 # Question: What is the marginal cost of going from "AI says 120 plants"
