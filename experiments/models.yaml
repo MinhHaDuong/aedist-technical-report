@@ -355,6 +355,21 @@
   license: open-apache
   web_search: true
 
+- id: "qwen/qwen3.6-35b-a3b"
+  router: openrouter
+  router_model: "qwen/qwen3.6-35b-a3b"
+  name: "Qwen 3.6 35B"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.16
+  price_per_mtok_out: 0.97
+  params: "35B MoE (3B active)"
+  size_class: medium
+  license: open-apache
+  web_search: true
+
 - id: "bytedance-seed/seed-2.0-lite"
   router: openrouter
   router_model: "bytedance-seed/seed-2.0-lite"

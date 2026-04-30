@@ -1,0 +1,86 @@
+%erg v1
+Title: Registry refactor — one entry per model, providers as a sub-block
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T12:55Z claude created — follow-up to 0134 lineup discussion
+
+--- body ---
+## Context
+
+`experiments/models.yaml` currently has duplicate entries for "same model,
+different provider":
+
+- `qwen/qwen3.5-35b-a3b` (cloud) + `qwen3.5:35b` (local)
+- `qwen/qwen3.5-122b-a10b` (cloud) + `qwen3.5:122b` (local)
+- `qwen/qwen3.6-35b-a3b` (cloud, added 2026-04-30) + `qwen3.6:35b` (local)
+- and others (Mistral Small 4, Gemma 4 31B, …)
+
+Each pair has its own `architecture`, `context_window`, `params`, `license`,
+`web_search` flags. These can drift out of sync when a model spec is updated
+(e.g. registry corrected qwen3.5:9b architecture from `moe` to `dense`
+2026-04-30 — only the local entry was wrong).
+
+Decision deferred at the time so the 0134 Hy3 lineup could ship before the
+2026-05-08 free-preview expiry. This ticket captures the refactor as a
+follow-up.
+
+## Proposed schema
+
+```yaml
+- id: "qwen3.6-35b-a3b"
+  name: "Qwen 3.6 35B"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  params: "35B MoE (3B active)"
+  size_class: medium
+  license: open-apache
+  context_window: 262144   # logical max; per-provider overrides allowed
+  providers:
+    - router: openrouter
+      router_model: "qwen/qwen3.6-35b-a3b"
+      price_per_mtok_in: 0.16
+      price_per_mtok_out: 0.97
+      web_search: true
+    - router: ollama
+      router_model: "qwen3.6:35b"
+      price_per_mtok_in: 0.0
+      price_per_mtok_out: 0.0
+      quantization: Q4_K_M
+```
+
+Model-level fields stay flat. Provider-specific fields move under
+`providers:`. Sweeps in `experiments.toml` reference the model `id` plus a
+provider selector.
+
+## Actions
+
+1. Inventory all duplicate pairs in current `models.yaml` (~10 pairs).
+2. Update the loader (`experiments/.../models.py` or wherever `models.yaml`
+   is parsed) to accept the new schema; keep backward-compat for entries
+   without a `providers:` block during the transition.
+3. Update `experiments.toml` sweep entries to use `model_id` + `provider`
+   instead of the current pinning by full slug. Test that existing sweeps
+   still produce the same JobSpec.
+4. Migrate `models.yaml` entries pair-by-pair, deleting the duplicate as
+   each pair is consolidated. Per registry policy, comment-out (don't
+   delete) — but the deletion target here is a redundancy, not a retired
+   model, so a single migration commit is acceptable with a clear log.
+5. Drop the backward-compat path once all entries migrated.
+
+## Test
+
+- `pytest experiments/tests/test_registry.py` — new schema parses, old
+  schema parses, JobSpec built from both is identical.
+- A dry-run sweep over a representative subset (3 pairs) produces the
+  same model lookup results before vs. after migration.
+
+## Exit criteria
+
+- One entry per logical model in `models.yaml`.
+- All sweeps in `experiments.toml` use `model_id` + `provider`.
+- No duplicate-pair drift possible (loader rejects unknown top-level keys).
+- Tests green.
