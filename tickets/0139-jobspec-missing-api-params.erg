@@ -1,0 +1,102 @@
+%erg v1
+Title: Add seed, provider_order, max_tokens, num_ctx to JobSpec; forbid unknown fields
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T11:15Z claude created — split from 0138; seed silent-drop confirmed
+2026-04-30T11:30Z claude note ADR-7 decided: metrics dict = complete scientific record; added finish_reason and records_to_metrics expansion to scope
+
+--- body ---
+
+## Context
+
+Five API parameters that materially affect results are missing from `JobSpec`.
+Pydantic silently drops unknown fields on load, so sweep configs that set
+them are quietly ignored. Discovered during 0138 audit (2026-04-30).
+
+Confirmed bug: `seed = 42` appears in 57 sweeps in `experiments.toml` but
+`seed` is not a `JobSpec` field. It is never passed to `build_api_kwargs()`.
+MoE models ran without seed pinning despite the config claiming otherwise.
+`provider_order` / `provider` has the same problem for non-fusion sweeps.
+
+## Missing fields
+
+| Field | Type | Default | Effect |
+|-------|------|---------|--------|
+| `seed` | `int \| None` | `None` | RNG pin for reproducibility (OpenRouter: best-effort) |
+| `provider_order` | `list[str] \| None` | `None` | Backend routing; eliminates cross-provider FP variance on MoE |
+| `max_tokens` | `int \| None` | `None` | Output cap; `query_direct.py` hardcodes 32768, worker uses model default — inconsistency |
+| `num_ctx` | `int` | `32768` | Ollama context window; `query_rag.py` uses `min(ctx_window, 81920)`, worker defaults to 32768 — inconsistency |
+| `web_search` (effective write) | already a field | — | Field exists; not written to raw JSON output so not backfillable into RunRecord |
+
+## Actions
+
+1. Add the four missing fields to `JobSpec` in `schema.py` with the defaults
+   above and docstrings matching `build_api_kwargs` parameter docs.
+
+2. Add `model_config = ConfigDict(extra="forbid")` to `JobSpec` so future
+   unknown sweep-config keys raise `ValidationError` instead of silently
+   disappearing.
+
+3. Wire the new fields through `worker.execute()` → `build_api_kwargs()`:
+   - Pass `seed=job.seed`, `provider_order=job.provider_order`,
+     `max_tokens=job.max_tokens` to `build_api_kwargs`.
+   - Pass `num_ctx=job.num_ctx` to `query_model()` (Ollama path).
+
+4. Write all five parameters to the raw JSON output in `worker._execute_common()`
+   so `evaluate.py` can backfill them into `RunRecord.method_params.extra`:
+   `seed`, `provider_order`, `max_tokens`, `num_ctx`, `web_search` (effective).
+
+5. Extend `evaluate.py` backfill to read these keys from raw JSON into
+   `method_params.extra` (same pattern as `temperature` at line 223).
+
+6. Update `experiments.toml`: confirm existing `seed = 42` entries are still
+   valid under the new field (they should just work once the field exists).
+   Check `provider` entries in fusion sweeps map correctly to `provider_order`.
+
+## Test
+
+- `JobSpec.model_validate({"seed": 42, ...})` populates `job.seed == 42`.
+- `JobSpec.model_validate({"unknown_key": 1, ...})` raises `ValidationError`.
+- `build_api_kwargs` call in worker includes `seed=42` when set.
+- Raw JSON output file contains `"seed": 42` key.
+- `evaluate.py` backfill sets `record.method_params.extra["seed"] = 42`.
+
+## Action 6: Capture finish_reason in RunRecord
+
+`finish_reason` (`"stop"` | `"length"` | ...) is written to raw JSON today
+but never backfilled into `RunRecord`. It is the cleanest signal for output
+truncation (`"length"` means the model hit `max_tokens`).
+
+- Add backfill in `evaluate.py`: read `"finish_reason"` from raw JSON →
+  `record.method_params.extra["finish_reason"]`.
+- Surface in `records_to_metrics()` via the existing `extra` loop (already
+  wired for 0139 fields).
+
+## Action 7: Analyst query path (passive context-limit detection)
+
+After 0139 + finish_reason, a researcher can detect context-limited runs
+without re-reading raw files:
+
+```python
+# Output truncation
+df[df["finish_reason"] == "length"]
+
+# Input context near limit (Ollama RAG)
+df[df["tokens_in"] / df["num_ctx"] > 0.9]
+```
+
+No new script needed — `load_metrics()` returns the complete record.
+Document this pattern in `measurements.py` module docstring as an example.
+
+## Exit criteria
+
+- All five parameters declared in `JobSpec`.
+- `extra="forbid"` enforced; existing sweep configs pass validation.
+- Parameters reach the API (verified by inspecting a dry-run request).
+- Parameters written to raw JSON and backfilled into `RunRecord`.
+- `finish_reason` backfilled into `RunRecord.method_params.extra`.
+- `records_to_metrics()` emits all scientific-record fields (ADR-7).
+- Tests green.

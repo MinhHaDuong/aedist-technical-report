@@ -2,7 +2,11 @@
 # 49 model instances, updated 2026-04-25
 # Single source of truth. Experiment config in experiments.toml.
 # Sorted by size class, then provider.
-# Capability flags: reasoning (skip temperature), web_search (OpenRouter plugin).
+# Capability flags: web_search (OpenRouter plugin).
+#
+# POLICY: Never delete entries. Comment out with date and reason instead.
+#
+# Retired entries (commented out, not deleted):
 #
 # Removed 2026-04-08:
 #   openai/o3-deep-research    — broken: $1.96 empty response, finish_reason=length
@@ -26,7 +30,6 @@
   price_per_mtok_out: 3.9
   size_class: frontier
   license: commercial
-  reasoning: true
   web_search: true
 
 - id: "anthropic/claude-opus-4.6"
@@ -113,7 +116,6 @@
   price_per_mtok_out: 2.0
   size_class: frontier
   license: commercial
-  reasoning: true
   web_search: true
 
 - id: "openai/gpt-5.4"
@@ -171,7 +173,6 @@
   price_per_mtok_out: 3.96
   size_class: frontier
   license: open-other
-  reasoning: true
   web_search: true
 
 
@@ -249,7 +250,6 @@
   params: "21B MoE (3B active)"
   size_class: large
   license: commercial
-  reasoning: true
   web_search: true
 
 - id: "meta-llama/llama-4-maverick"
@@ -463,6 +463,19 @@
   size_class: medium
   license: open-apache
 
+- id: "qwen3.6:35b"
+  router: ollama
+  router_model: "qwen3.6:35b"
+  name: "Qwen 3.6 35B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
 
 # --- Small ---
 
@@ -479,7 +492,6 @@
   params: 24B
   size_class: small
   license: open-apache
-  reasoning: true
   web_search: true
 
 - id: "cogito:8b"
@@ -702,22 +714,29 @@
   params: "671B MoE"
   size_class: frontier
   license: open-MIT
-  reasoning: true
-  web_search: true
-
-- id: "openai/o3"
-  router: openrouter
-  router_model: "openai/o3"
-  name: o3
-  provider: OpenAI
-  country: US
-  architecture: dense
-  context_window: 200000
-  price_per_mtok_in: 2.0
-  price_per_mtok_out: 8.0
-  size_class: frontier
-  license: commercial
-  reasoning: true
   web_search: true
 
 
+# ---------------------------------------------------------------------------
+# Retired entries — commented out, not deleted (policy: keep history)
+# ---------------------------------------------------------------------------
+#
+# openai/o3 — retired 2026-04-30
+# Reason: superseded by GPT-5; was the only model requiring the reasoning flag
+# (reasoning flag: API errors if temperature is sent — removed entire codepath
+#  rather than carry a single-model exception indefinitely)
+#
+# - id: "openai/o3"
+#   router: openrouter
+#   router_model: "openai/o3"
+#   name: o3
+#   provider: OpenAI
+#   country: US
+#   architecture: dense
+#   context_window: 200000
+#   price_per_mtok_in: 2.0
+#   price_per_mtok_out: 8.0
+#   size_class: frontier
+#   license: commercial
+#   reasoning: true
+#   web_search: true

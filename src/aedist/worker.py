@@ -193,6 +193,7 @@ class Worker:
             model_entry,
             temperature=job.temperature,
             enable_web_search=job.web_search,
+            no_think=job.no_think,
         )
 
         pool_label = self.worker_id
@@ -619,6 +620,8 @@ class Worker:
         method_params = MethodParams(model=job.model_filter or "unknown")
         if ablation_pv is not None:
             method_params.prompt_version = ablation_pv
+        if job.no_think:
+            method_params.extra = {"no_think": True}
         record = RunRecord(
             method=emitted_method,
             method_params=method_params,

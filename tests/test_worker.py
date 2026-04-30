@@ -163,6 +163,33 @@ def test_complete_returns_runrecord(tmp_path: Path) -> None:
     assert record.result_file == "out.json"
 
 
+def test_complete_no_think_captured_in_extra(tmp_path: Path) -> None:
+    """complete() records no_think=True in method_params.extra when set."""
+    jobs_root = tmp_path / "jobs"
+    worker = Worker("w1", jobs_root=jobs_root)
+
+    job = _make_job(job_id="nt-test", model_filter="qwen3.6:35b")
+    job = job.model_copy(update={"no_think": True})
+    _write_pending(jobs_root, job)
+    worker.acquire(job)
+
+    record = worker.complete(job, {"result_file": "out.json"})
+    assert record.method_params.extra == {"no_think": True}
+
+
+def test_complete_no_think_absent_when_false(tmp_path: Path) -> None:
+    """complete() does not set extra when no_think is False."""
+    jobs_root = tmp_path / "jobs"
+    worker = Worker("w1", jobs_root=jobs_root)
+
+    job = _make_job(job_id="nt-false-test", model_filter="openai/gpt-4o")
+    _write_pending(jobs_root, job)
+    worker.acquire(job)
+
+    record = worker.complete(job, {"result_file": "out.json"})
+    assert record.method_params.extra is None
+
+
 def test_fail_moves_to_failed(tmp_path: Path) -> None:
     """fail() moves the running file to failed/."""
     jobs_root = tmp_path / "jobs"

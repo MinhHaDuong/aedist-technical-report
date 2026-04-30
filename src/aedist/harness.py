@@ -329,13 +329,13 @@ def build_api_kwargs(
     enable_web_search: bool = False,
     seed: int | None = None,
     provider_order: list[str] | None = None,
+    no_think: bool = False,
 ) -> dict:
     """Build API kwargs from model capability flags.
 
-    Reads ``reasoning`` and ``web_search`` flags from the model dict and
-    constructs the appropriate kwargs for ``chat.completions.create()``:
+    Reads ``web_search`` flag from the model dict and constructs the
+    appropriate kwargs for ``chat.completions.create()``:
 
-    - ``reasoning: true`` → omit ``temperature`` (required by o3, R1, etc.)
     - ``web_search: true`` → add OpenRouter server tool
       ``tools: [{"type": "openrouter:web_search"}]``
       (model decides when to search; ~$0.02 per search call via Exa)
@@ -353,8 +353,7 @@ def build_api_kwargs(
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
 
-    if not model.get("reasoning", False):
-        kwargs["temperature"] = temperature
+    kwargs["temperature"] = temperature
 
     if seed is not None:
         kwargs["seed"] = seed
@@ -373,6 +372,8 @@ def build_api_kwargs(
     extra: dict = {}
     if provider_order:
         extra["provider"] = {"order": provider_order, "allow_fallbacks": False}
+    if no_think:
+        extra["think"] = False
     if extra:
         kwargs["extra_body"] = extra
 

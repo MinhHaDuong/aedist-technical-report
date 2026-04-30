@@ -1,4 +1,4 @@
-"""Tests for aedist.query_direct — reasoning flag, sweep derivation, budget, dry-run."""
+"""Tests for aedist.query_direct — sweep derivation, budget, dry-run."""
 
 import json
 import sys
@@ -28,7 +28,6 @@ def _make_mock_response(prompt_tokens=100, completion_tokens=200):
 def _minimal_models_yaml(
     tmp_path: Path,
     *,
-    reasoning: bool = False,
     web_search: bool = False,
 ) -> Path:
     p = tmp_path / "models.yaml"
@@ -42,8 +41,6 @@ def _minimal_models_yaml(
         "  architecture: dense\n"
         "  size_class: edge\n"
     )
-    if reasoning:
-        lines += "  reasoning: true\n"
     if web_search:
         lines += "  web_search: true\n"
     p.write_text(lines)
@@ -103,47 +100,13 @@ def test_basic_produces_output(mock_openai_cls, tmp_path):
 
 
 @patch("aedist.harness.OpenAI")
-def test_reasoning_model_omits_temperature(mock_openai_cls, tmp_path):
-    """Models with reasoning: true must not send temperature to the API."""
+def test_sends_temperature(mock_openai_cls, tmp_path):
+    """All models send temperature to the API."""
     mock_client = MagicMock()
     mock_client.chat.completions.create.return_value = _make_mock_response()
     mock_openai_cls.return_value = mock_client
 
-    models_path = _minimal_models_yaml(tmp_path, reasoning=True)
-    prompt_path = _prompt_file(tmp_path)
-    output_dir = tmp_path / "out"
-
-    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "query_direct",
-                "--prompt",
-                str(prompt_path),
-                "--models",
-                str(models_path),
-                "--output",
-                str(output_dir),
-            ],
-        ):
-            from aedist.query_direct import main
-
-            main()
-
-    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
-    assert "temperature" not in call_kwargs
-    assert call_kwargs["max_tokens"] == 32768
-
-
-@patch("aedist.harness.OpenAI")
-def test_non_reasoning_sends_temperature(mock_openai_cls, tmp_path):
-    """Models without reasoning flag send temperature to the API."""
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.return_value = _make_mock_response()
-    mock_openai_cls.return_value = mock_client
-
-    models_path = _minimal_models_yaml(tmp_path, reasoning=False)
+    models_path = _minimal_models_yaml(tmp_path)
     prompt_path = _prompt_file(tmp_path)
     output_dir = tmp_path / "out"
 
@@ -509,41 +472,6 @@ def test_web_search_model_gets_plugin(mock_openai_cls, tmp_path):
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert call_kwargs["tools"][0]["type"] == "openrouter:web_search"
     assert call_kwargs["temperature"] == 0.0
-
-
-@patch("aedist.query_direct.build_api_kwargs", _build_api_kwargs_web_enabled)
-@patch("aedist.harness.OpenAI")
-def test_both_reasoning_and_web_search(mock_openai_cls, tmp_path):
-    """Model with both reasoning and web_search gets correct params."""
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.return_value = _make_mock_response()
-    mock_openai_cls.return_value = mock_client
-
-    models_path = _minimal_models_yaml(tmp_path, reasoning=True, web_search=True)
-    prompt_path = _prompt_file(tmp_path)
-    output_dir = tmp_path / "out"
-
-    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "query_direct",
-                "--prompt",
-                str(prompt_path),
-                "--models",
-                str(models_path),
-                "--output",
-                str(output_dir),
-            ],
-        ):
-            from aedist.query_direct import main
-
-            main()
-
-    call_kwargs = mock_client.chat.completions.create.call_args.kwargs
-    assert "temperature" not in call_kwargs
-    assert call_kwargs["tools"][0]["type"] == "openrouter:web_search"
 
 
 @patch("aedist.harness.OpenAI")

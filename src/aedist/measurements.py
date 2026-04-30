@@ -1,16 +1,26 @@
-"""Measurements loader — sole read interface for benchmark results.
+"""Measurements loader — sole read interface for benchmark results (ADR-7).
 
-All reporting scripts import ``load()`` instead of reading files directly.
-The path to the measurements cache is read from ``experiments.toml [paths]``.
+All reporting scripts import ``load()`` or ``load_metrics()`` instead of
+reading files directly.  The path to the measurements cache is read from
+``experiments.toml [paths]``.
+
+Data flow::
+
+    Raw JSON  →  RunRecord / measurements.jsonl  →  metrics dict  →  figures / tables
+    (worker)     (complete record, JSONL)            (flat dict)      (column projections)
+
+The metrics dict returned by ``records_to_metrics()`` is the **complete
+scientific record**: all experimental conditions and all result metrics.
+Figures and tables are projections that select the columns they need.
+Bookkeeping fields (run_id, timestamp, result_file, validation) are excluded.
 
 Usage::
 
-    from aedist.measurements import load
+    from aedist.measurements import load, load_metrics
 
-    records = load()                        # all records
+    records = load()                        # list[RunRecord], all methods
     records = load(method="rag")            # filtered by method
-    records = load(method="direct")         # single-turn results
-    records = load(method="rag_livesearch") # web-augmented results
+    metrics = load_metrics()                # list[dict], complete scientific record
 """
 
 import tomllib
@@ -62,11 +72,22 @@ def measurements_path() -> Path:
 
 
 def records_to_metrics(records: list[RunRecord]) -> list[dict]:
-    """Convert RunRecord rows to the reporting dict format.
+    """Convert RunRecord rows to the complete scientific record (ADR-7).
 
-    Produces dicts with keys: label, f1, coverage, precision, n_reference,
-    n_system, n_matched, n_missed, n_hallucinated, fuel_accuracy,
-    status_accuracy, province_accuracy, cost_usd, wall_seconds.
+    Returns one dict per run containing all experimental conditions and result
+    metrics.  Figures and tables project onto whatever columns they need.
+
+    Condition fields: model, method, prompt_version, temperature, no_think,
+    web_search (effective), seed, max_tokens, num_ctx, provider_order.
+    Diagnostic fields: tokens_in, tokens_out, finish_reason.
+    Result fields: f1, coverage, precision, n_matched, n_missed,
+    n_hallucinated, fuel_accuracy, status_accuracy, province_accuracy.
+    Resource fields: cost_usd, wall_seconds.
+
+    Fields backed by ticket 0139 (seed, max_tokens, num_ctx, provider_order,
+    web_search effective, finish_reason) are included when present in the
+    record; absent otherwise.  Bookkeeping fields (run_id, timestamp,
+    result_file, validation) are excluded.
     """
     result = []
     for r in records:
@@ -85,8 +106,18 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
         stem = Path(r.result_file).stem if r.result_file else r.run_id
         label = f"{prompt_version}/{stem}" if prompt_version else stem
 
+        extra = r.method_params.extra or {}
+
         d: dict = {
+            # --- identity ---
             "label": label,
+            "model": r.method_params.model,
+            "method": r.method,
+            "prompt_version": r.method_params.prompt_version,
+            # --- controlled conditions ---
+            "temperature": r.method_params.temperature,
+            "no_think": extra.get("no_think", False),
+            # --- results ---
             "coverage": coverage,
             "precision": precision,
             "f1": s.f1 if s.f1 is not None else 0.0,
@@ -100,10 +131,27 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
             "province_accuracy": s.province_accuracy,
         }
 
+        # --- resources ---
         if r.resource_use.cost_usd is not None:
             d["cost_usd"] = r.resource_use.cost_usd
         if r.resource_use.wall_s is not None:
             d["wall_seconds"] = r.resource_use.wall_s
+        # --- diagnostic (always include when present) ---
+        if r.resource_use.tokens_in is not None:
+            d["tokens_in"] = r.resource_use.tokens_in
+        if r.resource_use.tokens_out is not None:
+            d["tokens_out"] = r.resource_use.tokens_out
+        # --- 0139 fields: included once RunRecord carries them ---
+        for key in (
+            "seed",
+            "max_tokens",
+            "num_ctx",
+            "provider_order",
+            "web_search",
+            "finish_reason",
+        ):
+            if key in extra:
+                d[key] = extra[key]
 
         result.append(d)
     return result
