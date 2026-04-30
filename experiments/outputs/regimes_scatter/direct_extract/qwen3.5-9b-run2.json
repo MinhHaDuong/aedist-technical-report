@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.5:9b",
+  "date": "2026-04-30",
+  "run": 2,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,Connection Date,Province,Capacity (MWe)\nThai Nguyen 1,Coal,Operational,2011,Thai Nguyen,738\nThai Nguyen 2,Coal,Operational,2012,Thai Nguyen,738\nThai Nguyen 3,Coal,Operational,2013,Thai Nguyen,738\nHien Son,Coal,Operational,2000,Thai Nguyen,220\nNghi Son 1,Coal,Operational,2014,Quang Ninh,738\nNghi Son 2,Coal,Operational,2015,Quang Ninh,738\nDung Quat 1,Coal,Operational,2012,Quang Ngai,2760\nDung Quat 2,Coal,Operational,2013,Quang Ngai,2760\nDung Quat 3,Coal,Planned,2024,Quang Ngai,600\nLong Thanh 1,Coal,Under Construction,2026,Long An,600\nLong Thanh 2,Coal,Planned,2026,Long An,600\nMy Tho 1,Coal,Operational,2016,Tien Giang,438\nNam Dinh 1,Coal,Operational,2014,Nam Dinh,2344\nNam Dinh 2,Coal,Operational,2016,Nam Dinh,2344\nBinh Son 1,Coal,Operational,2013,Bac Giang,820\nPhuoc Long 1,Coal,Operational,2014,Bac Ninh,743\nThai Binh 1,Coal,Operational,2014,Thai Binh,765\nHa Nam 1,Coal,Operational,2015,Ha Nam,280\nTan Hiep,Coal,Operational,2013,Quang Nam,180\nDong Nai 1,Coal,Operational,2009,Binh Duong,260\nDong Nai 2,Coal,Operational,2010,Binh Duong,260\nFormosa LNG 1 (Hiep Phuoc),Imported LNG,Operational,2023,Hai Phong,600\nFormosa LNG 2 (Nghi Son 3),Imported LNG,Operational,2023,Hai Phong,1200\nFormosa LNG 3 (Bac Lieu),Imported LNG,Planned,2024,Bac Lieu,500\nHien Giang Gas,Local Natural Gas,Operational,2021,Tien Giang,1200\nNinh Binh Gas,Local Natural Gas,Under Construction,2025,Ninh Binh,1600\nVung Ang 1,Imported LNG,Operational,2016,Cau Rieong,200\nVung Ang 2,Imported LNG,Planned,2027,Cau Rieong,200\nTien Giang Gas,Local Natural Gas,Planned,2025,Tien Giang,500\nQuang Nam Gas,Local Natural Gas,Planned,2026,Quang Nam,400\nHa Nam 2,Coal,Planned,2024,Ha Nam,400\nQuang Ngai 1,Coal,Operational,2010,Quang Ngai,500\nDinh Van,Coal,Operational,2016,Quang Nam,250\nPhu My 1,Solar,Operational,2017,Bien Hoa,200\nBinh Dien 1,Hydro,Operational,2005,Bac Lieu,350\nBac Lieu 1,Coal,Planned,2025,Bac Lieu,300\nCao Bang 1,Hydro,Operational,2011,Cao Bang,160\nDa Nang 1,Hydro,Operational,2010,Da Nang,50\nNhi Thanh,Coal,Operational,2013,Quang Ninh,220\nThai Nguyen 4,Coal,Planned,2025,Thai Nguyen,300\nThai Binh 2,Coal,Planned,2024,Thai Binh,200\nHa Nam 3,Coal,Planned,2026,Ha Nam,200\nBinh Duong 1,Coal,Operational,2012,Binh Duong,150\nVung Ang 3,Imported LNG,Planned,2027,Cau Rieong,200\n\n*Disclaimer: This CSV lists major commercial thermal power plants (Coal, Gas, LNG) in Vietnam. Many smaller IPP projects or biomass plants are excluded. Construction stages and Connection Dates (COD) are subject to frequent changes due to economic and regulatory factors. Capacity figures represent net generation capacity in MWe.*",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 8161
+  },
+  "wall_seconds": 156.757,
+  "cost_usd": 0.0,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

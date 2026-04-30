@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.5:9b",
+  "date": "2026-04-30",
+  "run": 3,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant_Name,Construction_Stage,Fuel_Type,Province,Capacity_MWe,COD_Year\nNhat Tan 1,Operational,Coal,Hung Yen,2230,2010\nNhat Tan 2,Operational,Coal,Hung Yen,810,2013\nSon My 1,Operational,Coal,Quang Ngai,735,2014\nSon My 2,Operational,Coal,Quang Ngai,735,2015\nSon My 3,Operational,Coal,Quang Ngai,2200,2020\nDung Quat 1,Operational,Coal,Quang Ngai,1200,2015\nDung Quat 1A,Operational,Coal,Quang Ngai,1200,2016\nDung Quat 2,Operational,Local Natural Gas,Quang Ngai,600,2018\nThai Binh 1,Operational,Coal,Thai Binh,624,2015\nThai Binh 2,Operational,Coal,Thai Binh,507,2018\nThai Binh 3,Operational,Coal,Thai Binh,624,2020\nNghi Son 1,Operational,Coal,Thanh Hoa,665,2016\nNghi Son 2,Operational,Coal,Thanh Hoa,665,2017\nSon Nam 1,Operational,Coal,Thanh Hoa,600,2014\nSon Nam 2,Operational,Coal,Thanh Hoa,600,2016\nSon Nam 3,Operational,Coal,Thanh Hoa,600,2019\nHung Son 1,Operational,Coal,Hung Yen,600,2017\nHung Son 2,Operational,Coal,Hung Yen,600,2018\nHung Son 3,Under Construction,Coal,Hung Yen,600,2024\nDong Anh 1,Operational,Coal,Hai Duong,600,2014\nDong Anh 2,Under Construction,Coal,Hai Duong,600,2024\nTam Dao 1,Operational,Coal,Nam Dinh,1325,2012\nTam Dao 2,Operational,Coal,Nam Dinh,600,2014\nHiep Phuong 1,Operational,Coal,Nghue An,600,2015\nHa Long 1,Planned,Coal,Quang Ninh,1120,2024\nTam Dao 3,Planned,Coal,Hai Duong,600,2024\nPhuc Loi 1,Operational,Local Natural Gas,Bac Ninh,300,2019\nPhuc Loi 2,Operational,Local Natural Gas,Bac Ninh,300,2019\nPhuc Loi 3,Operational,Local Natural Gas,Bac Ninh,150,2020\nLong Thanh 1,Operational,Local Natural Gas,Hai Phong,450,2019\nLong Thanh 2,Operational,Local Natural Gas,Hai Phong,450,2020\nHai Phong LNG,Operational,Imported LNG,Hai Phong,1100,2019\nFormosa 1,Operational,Imported LNG,Hai Phong,1220,2015\nFormosa 2,Operational,Imported LNG,Hai Phong,1220,2017\nSon Tra 1,Operational,Coal,Da Nang,665,2016\nSon Tra 2,Operational,Coal,Da Nang,665,2018\nNinh Hoa 1,Operational,Local Natural Gas,Khanh Hoa,200,2021\nNinh Hoa 2,Operational,Local Natural Gas,Khanh Hoa,200,2022\nVan Phong 1,Operational,Local Natural Gas,Khanh Hoa,200,2021\nQuang Tri 1,Operational,Local Natural Gas,Quang Tri,400,2013\nSon Tra 3,Planned,Imported LNG,Da Nang,345,2024\nHiep Phuong 2,Planned,Coal,Nghue An,600,2024\nThai Binh 4,Planned,Coal,Thai Binh,600,2024\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 7623
+  },
+  "wall_seconds": 146.351,
+  "cost_usd": 0.0,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

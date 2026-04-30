@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.6:35b",
+  "date": "2026-04-30",
+  "run": 1,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,COD,Province,Capacity_MWe\nPhu My 1,Local Natural Gas,Operational,1994,Ba Ria-Vung Tau,420\nPhu My 2,Local Natural Gas,Operational,1996,Ba Ria-Vung Tau,1100\nPhu My 3,Local Natural Gas,Operational,2001,Ba Ria-Vung Tau,900\nPhu My 4,Local Natural Gas,Operational,2006,Ba Ria-Vung Tau,600\nLong Son LNG,Imported LNG,Operational,2015,Ba Ria-Vung Tau,700\nPhu My LNG,Imported LNG,Operational,2018,Ba Ria-Vung Tau,400\nThi Vai LNG,Imported LNG,Operational,2021,Ba Ria-Vung Tau,600\nNam Dinh Gas,Local Natural Gas,Operational,2015,Nam Dinh,600\nQuang Ninh Gas,Local Natural Gas,Operational,2020,Quang Ninh,600\nCa Mau Gas,Local Natural Gas,Operational,2021,Ca Mau,600\nPhut Duyen II,Coal,Operational,2020,Quang Ninh,1200\nThai Nguyen,Coal,Operational,2020,Thai Nguyen,600\nQuang Ninh I,Coal,Operational,2012,Quang Ninh,900\nNam Dinh 1,Coal,Operational,2021,Nam Dinh,600\nNinh Thuan 2,Coal,Operational,2023,Ninh Thuan,1000\nCa Mau 2,Coal,Operational,2023,Ca Mau,1200\nBinh Son,Coal,Operational,2021,Quang Ngai,1200\nTuy Thanh 2,Coal,Operational,2022,Quang Nam,1200\nPhong Dien,Coal,Operational,2022,Thua Thien Hue,600\nVan Phong 1,Coal,Under Construction,2026,Khanh Hoa,600\nVan Phong 2,Coal,Under Construction,2027,Khanh Hoa,600\nQuang Tri,Coal,Under Construction,2025,Quang Tri,1200\nCon Co,Coal,Planned,2028,Quang Tri,1200\nTan Rai 2,Coal,Cancelled,N/A,Ninh Thuan,600\nCa Nuoc,Coal,Suspended,N/A,Ninh Thuan,1200",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 6731
+  },
+  "wall_seconds": 186.848,
+  "cost_usd": 0.0,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

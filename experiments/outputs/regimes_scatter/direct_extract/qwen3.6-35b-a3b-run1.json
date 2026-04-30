@@ -1,0 +1,24 @@
+{
+  "model": "qwen/qwen3.6-35b-a3b",
+  "date": "2026-04-30",
+  "run": 1,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Plant Name,Fuel Type,Construction Stage,COD,Province,Capacity_MWe\nPhu My 1,Local Natural Gas,Operational,1994,Ba Ria-Vung Tau,300\nPhu My 2,Local Natural Gas,Operational,1995,Ba Ria-Vung Tau,600\nPhu My 3,Local Natural Gas,Operational,2002,Ba Ria-Vung Tau,1200\nPhu My 4,Local Natural Gas,Operational,2010,Ba Ria-Vung Tau,1200\nVinh Tan 1,Local Natural Gas,Operational,2010,Ba Ria-Vung Tau,600\nVinh Tan 2,Local Natural Gas,Operational,2011,Ba Ria-Vung Tau,600\nVinh Tan 3,Local Natural Gas,Operational,2012,Ba Ria-Vung Tau,600\nVinh Tan 4,Local Natural Gas,Operational,2013,Ba Ria-Vung Tau,600\nDong Nai,Local Natural Gas,Operational,2002,Dong Nai,600\nCa Mau 1,Local Natural Gas,Operational,2002,Ca Mau,600\nCa Mau 2,Local Natural Gas,Operational,2003,Ca Mau,600\nNam Dinh 1,Coal,Operational,2010,Nam Dinh,600\nNam Dinh 2,Coal,Operational,2011,Nam Dinh,600\nDa Nang,Coal,Operational,2008,Da Nang,600\nPhuc Hung,Coal,Operational,2010,Hung Yen,600\nThang Long,Coal,Operational,2011,Hung Yen,600\nVan Phong 1,Coal,Operational,2013,Khanh Hoa,600\nVan Phong 2,Coal,Operational,2014,Khanh Hoa,600\nVan Phong 3,Coal,Operational,2015,Khanh Hoa,600\nVan Phong 4,Coal,Operational,2016,Khanh Hoa,600\nNghi Son,Coal,Operational,2017,Thanh Hoa,1200\nQuang Ninh 1,Coal,Operational,2015,Quang Ninh,600\nQuang Ninh 2,Coal,Operational,2016,Quang Ninh,600\nThuan Thuan 1,Coal,Operational,2018,Binh Thuan,600\nThuan Thuan 2,Coal,Operational,2019,Binh Thuan,600\nBac Trieu,Coal,Operational,2014,Thai Nguyen,600\nThai Binh 1,Coal,Operational,2015,Thai Binh,600\nThai Binh 2,Coal,Operational,2016,Thai Binh,600\nHa Tinh 1,Coal,Operational,2018,Ha Tinh,600\nHa Tinh 2,Coal,Operational,2019,Ha Tinh,600\nNam Dinh 3,Coal,Under Construction,2025,Nam Dinh,600\nNam Dinh 4,Coal,Under Construction,2026,Nam Dinh,600\nPhu My 5,Local Natural Gas,Planned,2026,Ba Ria-Vung Tau,1200\nVinh Tan 5,Local Natural Gas,Planned,2027,Ba Ria-Vung Tau,600\nCa Mau 3,Local Natural Gas,Planned,2028,Ca Mau,600\nNghi Son LNG,Imported LNG,Planned,2027,Thanh Hoa,1200\nVan Phong LNG,Imported LNG,Planned,2028,Khanh Hoa,1200\nBac Lieu LNG,Imported LNG,Planned,2029,Bac Lieu,1200\n\nNote: Data reflects publicly available information from EVN, Vietnam's Ministry of Industry and Trade, and industry reports as of 2024. Commercial Operation Dates (COD) and construction stages are subject to change due to regulatory reviews, financing, fuel supply agreements, and Vietnam's Power Development Plan 8 (PDP8) which has delayed or restructured several coal projects while prioritizing gas and LNG infrastructure. Capacities are net installed capacity in MWe.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 4850
+  },
+  "wall_seconds": 28.387,
+  "cost_usd": 0.00471458,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

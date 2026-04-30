@@ -1,0 +1,44 @@
+{
+  "model": "qwen3.6:35b",
+  "run": 1,
+  "date": "2026-04-30",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Here is the consolidated CSV table of thermal power plants in Vietnam, extracted and normalized from the provided regulatory documents, annual reports, and power development plans (PDP7A/PDP8 drafts). Duplicates across phases have been merged, and fuel types are mapped strictly to your requested categories.\n\n```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (Year),Province,Capacity (MWe)\nUông Bí,coal,Operating,2011,Quảng Ninh,105\nUông Bí Mở rộng,coal,Operating,2011,Quảng Ninh,330\nPhả Lại I & II,coal,Operating,1995-2010,Hải Dương,1040\nNinh Bình,coal,Operating,1995,Ninh Bình,100\nHải Phòng I,coal,Operating,1994,Hải Phòng,300\nQuảng Ninh I,coal,Operating,1995,Quảng Ninh,300\nNa Dương,coal,Delayed,2023,Thái Nguyên,110\nSơn Đông,coal,Operating,2010,Quảng Ninh,220\nFormosa Hà Tĩnh,coal,Operating,2010,Hà Tĩnh,150\nDuyên Hải III,coal,Operating,2016-2017,Trà Vinh,1244\nDuyên Hải III Mở rộng,coal,Planned,2019,Trà Vinh,660\nThái Bình I,coal,Operating,2017,Thái Bình,600\nThái Bình II,coal,Delayed,2020-2021,Thái Bình,1200\nVĩnh Tân IV,coal,Operating,2017-2018,Ninh Thuận,1200\nVĩnh Tân IV Mở rộng,coal,Operating,2019,Ninh Thuận,600\nLong Phú I,coal,Delayed,2022-2023,Sóc Trăng,1200\nNghi Sơn I,coal,Operating,2013-2014,Thanh Hóa,600\nNghi Sơn II,coal,Delayed,2026,Thanh Hóa,1200\nCông Thanh,coal,Delayed,2024-2026,Thanh Hóa,600\nHải Dương,coal,Delayed,2021,Hải Dương,1200\nCẩm Phả III,coal,Cancelled,-,Quảng Ninh,440\nNam Định I,coal,Delayed,2024-2025,Nam Định,1200\nNam Định II,coal,Planned,-,Nam Định,2000\nQuảng Trạch I,coal,Under Construction,2024-2025,Quảng Bình,1200\nQuảng Trạch II,coal,Planned,2025-2028,Quảng Bình,1200\nVũng Áng II,coal,Delayed,2026,Hà Tĩnh,1200\nVũng Áng III,coal,Cancelled,-,Hà Tĩnh,1200\nLong Phú II,coal,Delayed,2029-2030,Sóc Trăng,1200\nLong Phú III,coal,Delayed,2027-2028,Sóc Trăng,1800\nVĩnh Tân III,coal,Delayed,2024-2025,Ninh Thuận,1980\nVân Phong I,coal,Delayed,2023-2024,Khánh Hòa,1320\nKiên Giang I & II,local natural gas,Delayed,2030+,Kiên Giang,1500\nTBKHH Miền Trung I & II,local natural gas,Delayed,2024-2025,Quảng Ngãi,1500\nTBKHH Dung Quất I,local natural gas,Delayed,2024,Quảng Ngãi,750\nTBKHH Dung Quất II,local natural gas,Cancelled,-,Quảng Ngãi,750\nTBKHH Dung Quất III,local natural gas,Delayed,2024,Quảng Ngãi,750\nSông Hậu I,coal,Under Construction,2021-2022,Hậu Giang,1200\nSông Hậu II,coal,Delayed,2024-2027,Hậu Giang,2000\nHải Lăng I,imported LNG,Planned,2026-2027,Quảng Trị,4500\nChân Mây,imported LNG,Planned,2026-2028,Thừa Thiên Huế,4000\nCà Ná I & II,imported LNG,Planned,2025-2030,Ninh Thuận,6000\nLong Sơn I,imported LNG,Delayed,2025-2026,Bà Rịa-Vũng Tàu,1200\nLong Sơn II & III,imported LNG,Planned,2030+,Bà Rịa-Vũng Tàu,3200\nLong Sơn IV,imported LNG,Planned,-,Bà Rịa-Vũng Tàu,3600\nHiệp Phước I & II,imported LNG,Planned,2021-2022,Bà Rịa-Vũng Tàu,2700\nPhú Mỹ 3.1,imported LNG,Planned,-,Bà Rịa-Vũng Tàu,850\nBà Rịa 2,imported LNG,Planned,-,Bà Rịa-Vũng Tàu,1200\nLong An I & II,imported LNG,Planned,2025-2035,Long An,3000\nTân Phước I & II,imported LNG,Delayed,2026-2030,Tiền Giang,1200\nCà Mau 1, 2, 3,imported LNG,Planned,-,Cà Mau,4500\nTân Thuận,imported LNG,Planned,-,Cà Mau,3200\nSông Đốc,imported LNG,Planned,-,Cà Mau,3000\nBến Tre,imported LNG,Planned,-,Bến Tre,3000\nHải Phòng 1-4,imported LNG,Planned,2027-2030,Hải Phòng,12500+\nQuảng Ninh 1-4,imported LNG,Planned,2027-2030,Quảng Ninh,10500+\nThái Bình,imported LNG,Planned,2027-2029,Thái Bình,4500\nNghi Sơn,imported LNG,Planned,-,Thanh Hóa,5000\nHà Tĩnh,imported LNG,Planned,-,Hà Tĩnh,6000\nQuảng Bình,imported LNG,Planned,-,Quảng Bình,3000\nQuảng Nam,imported LNG,Planned,-,Quảng Nam,4000\nBình Định I-III,coal,Planned,-,Bình Định,3200\nQuảng Trị I & II,coal,Delayed/Planned,2026-2027+,Quảng Trị,4000\nPhong Điền,coal,Planned,-,Thừa Thiên Huế,2000\nDuy Trưng,coal,Planned,-,Phú Yên,4000\nKiên Lương III,coal,Cancelled,-,Kiên Giang,3600\nNam Than (Miền Bắc & Nam),coal,Planned,2029-2030,Quảng Ninh/Thanh Hóa/Nam Định/Hà Tĩnh,7000\nTây Ninh,local natural gas,Planned,2025,Tây Ninh,450\nSơn La (Dùng cho Q&N & Hà Tĩnh),coal,Planned,-,Sơn La,1050\nYên Hưng,coal,Planned,2027,Quảng Ninh,1200\nUông Bí III,coal,Planned,2027,Quảng Ninh,1200\nSơn Mỹ I,imported LNG,Planned,2026-2028,Bình Thuận,2250\nSơn Mỹ II,imported LNG,Planned,2023-2024,Bình Thuận,2250\nNhơn Trạch,imported LNG,Planned,2021-2022,Đồng Nai,1500\nBạc Liêu,imported LNG,Planned,2025-2027,Bạc Liêu,3200\nCái Mép,imported LNG,Planned,-,Bà Rịa-Vũng Tàu,6000\nMỹ Giang,imported LNG,Planned,2027-2028,Khánh Hòa,6000\nVân Phong,imported LNG,Planned,2028-2029,Khánh Hòa,3000\nKê Gà,imported LNG,Planned,2031-2035,Ninh Thuận,3600\nPhú Tân,imported LNG,Planned,-,Cà Mau,4500\nBắc Ninh,imported LNG,Planned,2025-2026,Bắc Ninh,3000\nHà Đông,imported LNG,Planned,2025,Hà Đông,3000\nĐông Triều,imported LNG,Planned,2026,Quảng Ninh,3000\nHà Tĩnh 1 & 2,imported LNG,Planned,2028-2030,Hà Tĩnh,6000\nQuảng Bình 1 & 2,imported LNG,Planned,2028-2030,Quảng Bình,4500\nHải Lăng 2,imported LNG,Planned,2031-2035,Quảng Trị,1500\nQuảng Nam 1 & 2,imported LNG,Planned,2029-2031,Quảng Nam,6000\nBình Định 1 & 2,imported LNG,Planned,2028-2030,Bình Định,6000\n```\n\n**Notes on Data Normalization:**\n- **Fuel Type:** Mapped strictly to your requested categories. Domestic gas fields (Lô B, Cá Voi Xanh, Báo Vàng, Kèn Bầu, Phú Mỹ, Nhơn Trạch, Cà Mau) are classified as `local natural gas`. All LNG projects are classified as `imported LNG`. Coal projects are `coal`.\n- **Construction Stage:** Consolidated from PDP7A/PDP8 drafts, EVN annual reports, and ministerial communications. Stages include `Operating`, `Under Construction`, `Delayed`, `Planned`, and `Cancelled`.\n- **Capacity:** Summed where phases were listed separately in source documents. Capacities reflect latest approved/planned figures.\n- **Provinces:** Standardized to administrative provinces. Cross-provincial or multi-site projects are noted accordingly.\n- **Historical/Oil Plants:** Older oil-fired/gas turbines (Thủ Đức, Cần Thơ, Hiệp Phước, Bourbon, Vê Dan, Đầm Phú Mỹ, etc.) have been omitted as they are either decommissioned, converted to LNG/domestic gas, or superseded by the LNG transition roadmap in the provided documents. If you need those historical entries added, let me know.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 78652,
+    "completion_tokens": 12337
+  },
+  "wall_seconds": 875.898,
+  "cost_usd": 0.0,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

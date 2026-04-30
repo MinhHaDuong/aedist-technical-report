@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.5:9b",
+  "date": "2026-04-30",
+  "run": 1,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nThan Hoa,Coal,Completed,2009,Hai Phong,400\nThan Hoa 2,Coal,Completed,2009,Hai Phong,200\nThan Hoa Long Son,Coal,Completed,2020,Hai Phong,1130\nPhuc Yen 1,Coal,Completed,2016,Thua Thien Hue,800\nPhuc Yen 2,Coal,Under Construction,2027,Thua Thien Hue,600\nMy Hinh,Coal,Under Construction,2024,Quang Nam,1600\nMy Hinh 2,Coal,Planned,2029,Quang Nam,1000\nNhat Le 1,Coal,Completed,2009,Long An,212\nNhat Le 2,Coal,Cancelled,-,Long An,-\nHai Phong,Coal,Completed,2013,Hai Phong,1325\nTan Hai,Coal,Completed,2012,Hai Phong,600\nPhuong My 1,Coal,Completed,2009,Binh Thuan,400\nPhuong My 2,Coal,Completed,2017,Binh Thuan,400\nVan Phuc 1,Coal,Completed,2008,Hai Duong,600\nVan Phuc 2,Coal,Completed,2013,Hai Duong,600\nHa Tinh,Coal,Completed,2008,Ha Tinh,600\nHapinh,Coal,Completed,2008,Hai Duong,600\nNhat Hoi,Coal,Completed,2009,Hai Phong,400\nHai Nam,Coal,Completed,1993,Hai Duong,400\nLong Thanh,Coal,Under Construction,2024,Ho Chi Minh City,800\nNinh Binh,Coal,Under Construction,2024,Ninh Binh,600\nNam Oai,Coal,Under Construction,2025,Hai Duong,800\nDung Quat 1,Local Gas,Completed,2010,Quang Ngai,860\nDung Quat 2,Coal,Under Construction,2026,Quang Ngai,600\nBac Lieu,Local Gas,Completed,2012,Bac Lieu,150\nMy Khe,Local Gas,Completed,2013,Ba Ria Vung Tau,105\nBac Lieu 2,Local Gas,Completed,2017,Bac Lieu,260\nPhuoc Long,Coal,Planned,2028,Lai Chau,600\nPhuoc Long 2,Coal,Planned,2030,Lai Chau,600\nQuang Ngai 1,Coal,Completed,2010,Quang Ngai,600\nQuang Ngai 2,Coal,Completed,2010,Quang Ngai,600\nQuang Ngai 3,Coal,Under Construction,2026,Quang Ngai,1000\nNinh Thuan 1,Coal,Completed,2010,Ninh Thuan,600\nNinh Thuan 2,Coal,Completed,2011,Ninh Thuan,600\nNinh Thuan 3,Coal,Completed,2015,Ninh Thuan,600\nNhat Le Gas,Local Gas,Planned,2026,Long An,200\nTan Hai Gas,Planned,2026,Hai Phong,200\nPhuoc Yen 3,Coal,Planned,2028,Thua Thien Hue,600\nPhuoc Yen 4,Coal,Planned,2030,Thua Thien Hue,600\nHai Long 1,Coal,Planned,2027,Hai Long,600\nHai Long 2,Coal,Planned,2027,Hai Long,600\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 6049
+  },
+  "wall_seconds": 121.645,
+  "cost_usd": 0.0,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "small",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "model": "qwen/qwen3.6-35b-a3b",
+  "date": "2026-04-30",
+  "run": 2,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "# Note: Data compiled from EVN reports, PDP8, IRENA, and IEA as of mid-2024. Capacities are net installed. COD dates are approximate or planned. Imported LNG power plants are still in planning/approval stages in Vietnam; all operational gas plants use local natural gas. This list covers major thermal power plants; a complete registry requires EVN internal data.\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Generation Capacity (MWe)\nPhả Lại Thermal Power Plant,Coal,Operational,1994,Phú Thọ,300\nUông Bí Thermal Power Plant,Coal,Operational,2002,Quảng Ninh,600\nMông Dương Thermal Power Plant,Coal,Operational,2005,Quảng Ninh,600\nNghi Sơn Thermal Power Plant,Coal,Operational,2015,Thanh Hóa,1200\nDuyên Hải Thermal Power Plant,Coal,Operational,2014,Trà Vinh,1200\nVĩnh Tân Thermal Power Plant,Coal,Operational,2013,Bình Thuận,1200\nThái Bình 1 & 2 Thermal Power Plant,Coal,Operational,2014,Thái Bình,1200\nHải Hà Thermal Power Plant,Coal,Operational,2012,Quảng Ninh,600\nCẩm Phả Thermal Power Plant,Coal,Operational,2011,Quảng Ninh,600\nCần Thơ Thermal Power Plant,Coal,Operational,2014,Cần Thơ,1200\nNam Định 1 & 2 Thermal Power Plant,Coal,Operational,2015,Nam Định,1200\nNghi Sơn 2 Thermal Power Plant,Coal,Under Construction,2026 (planned),Thanh Hóa,1200\nDuyên Hải 3 Thermal Power Plant,Coal,Under Construction,2025 (planned),Trà Vinh,1200\nVĩnh Tân 3 Thermal Power Plant,Coal,Under Construction,2024 (planned),Bình Thuận,600\nThái Bình 3 Thermal Power Plant,Coal,Under Construction,2025 (planned),Thái Bình,600\nPhú Mỹ 1-4 Thermal Power Plant,Local Natural Gas,Operational,1995-2002,Bà Rịa-Vũng Tàu,4000\nCà Mau 1 & 2 Thermal Power Plant,Local Natural Gas,Operational,2003-2004,Cà Mau,1200\nNhơn Trạch 1 & 2 Thermal Power Plant,Local Natural Gas,Operational,2001-2002,Đồng Nai,1100\nTrà Vinh 1 & 2 Thermal Power Plant,Local Natural Gas,Operational,2010-2011,Trà Vinh,1200\nVĩnh Tân 1 & 2 Thermal Power Plant,Local Natural Gas,Operational,2009-2010,Bình Thuận,1200\nCần Thơ Gas Thermal Power Plant,Local Natural Gas,Operational,2008,Cần Thơ,600\nNam Định 3 Thermal Power Plant,Local Natural Gas,Operational,2012,Nam Định,600\nĐạm Phú Mỹ Thermal Power Plant,Local Natural Gas,Operational,2006,Bà Rịa-Vũng Tàu,600\nHải Hà Gas Thermal Power Plant,Local Natural Gas,Operational,2012,Quảng Ninh,600\nNghi Sơn LNG-Fired Thermal Power Plant (Planned),Imported LNG,Planned,2028 (planned),Thanh Hóa,1200",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 6805
+  },
+  "wall_seconds": 30.03,
+  "cost_usd": 0.006610929999999999,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}

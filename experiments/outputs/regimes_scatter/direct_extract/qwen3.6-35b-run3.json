@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.6:35b",
+  "date": "2026-04-30",
+  "run": 3,
+  "sweep": "extract",
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "Name,Fuel Type,Construction Stage,COD,Province,Capacity_MWe\nCai Beo Power Plant,Coal,Operational,2014-06,Dong Nai,1200\nMong Duong 2 Power Plant,Coal,Operational,2020-03,Binh Dinh,1200\nPhu My 1 Power Plant,Local Natural Gas,Operational,1994-12,Ba Ria-Vung Tau,290\nPhu My 2 Power Plant,Local Natural Gas,Operational,1997-01,Ba Ria-Vung Tau,1080\nPhu My 3 Power Plant,Local Natural Gas,Operational,2002-11,Ba Ria-Vung Tau,1350\nPhu My 4 Power Plant,Local Natural Gas,Operational,2002-11,Ba Ria-Vung Tau,1350\nThuan An Power Plant,Local Natural Gas,Operational,2005-12,Binh Thuan,1600\nNam Dinh 1 Power Plant,Coal,Operational,2021-11,Nam Dinh,600\nNam Dinh 2 Power Plant,Coal,Operational,2022-05,Nam Dinh,600\nNam Dinh 3 Power Plant,Imported LNG,Under Construction,2025-12,Nam Dinh,600\nNam Dinh 4 Power Plant,Imported LNG,Planned,2026-12,Nam Dinh,600\nNghi Son Power Plant,Imported LNG,Operational,2016-10,Thanh Hoa,3600\nVan Phong Power Plant,Coal,Cancelled,--,Khanh Hoa,2400\nQuang Ninh Thermal Cluster (Dinh Vu, Hong Gai, Phao Dinh, etc.),Coal,Operational,2010-2023,Quang Ninh,3150\nHa Tinh Power Plant,Coal,Operational,2021-03,Ha Tinh,600\nTuy Duc Power Plant,Coal,Operational,2022-06,Quang Tri,600\nCa Mau 1 Power Plant,Local Natural Gas,Operational,1995-09,Ca Mau,290\nCa Mau 2 Power Plant,Local Natural Gas,Operational,1995-09,Ca Mau,290\nLong Son Power Plant,Imported LNG,Operational,2023-04,Ba Ria-Vung Tau,1200\nBac Cau My Power Plant,Local Natural Gas,Planned,2027-06,Kien Giang,800\nYen Bai 2 Power Plant,Coal,Cancelled,--,Yen Bai,600\nThai Binh 2 Power Plant,Coal,Operational,2022-11,Thai Binh,600\nPhu Yen 1 Power Plant,Coal,Operational,2023-08,Phu Yen,600\nDong Nai 2 Power Plant,Coal,Operational,2023-09,Dong Nai,600\nSon La Power Plant,Coal,Planned,2028-12,Son La,600\nCa Mau LNG-Fired Power Plant,Imported LNG,Under Construction,2024-12,Ca Mau,800\nHaiphong Thermal Cluster,Coal/Local Natural Gas,Operational,2000-2010,Hai Phong,1800\nBac Lieu Power Plant,Coal,Operational,2023-12,Bac Lieu,600\nKien Giang Gas-Fired Power Plant,Local Natural Gas,Under Construction,2025-06,Kien Giang,800\nBinh Thuan Gas-Fired Power Plant,Imported LNG,Planned,2026-06,Binh Thuan,600\nNghe An Power Plant,Coal,Planned,2029-06,Nghe An,600\nDak Lak Power Plant,Coal,Planned,2030-12,Dak Lak,600\n\nNote: This table includes major/confirmed thermal power plants based on Vietnam's PDP8 (2023), MOIT/EVN publications, and public IPP disclosures as of mid-2024. \"All\" thermal plants in Vietnam number in the hundreds (including small-scale/distributed thermal), but this list covers utility-scale facilities with capacities ≥290 MWe. Construction stages, CODs, and fuel classifications are subject to policy revisions, fuel conversion initiatives (coal-to-gas/LNG), and financing updates. Verify with MOIT/EVN or project developers for investment, tender, or operational planning.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 63,
+    "completion_tokens": 6228
+  },
+  "wall_seconds": 1085.892,
+  "cost_usd": 0.0,
+  "max_tokens": 32768,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Ollama/Padme",
+    "context_window": 262144
+  }
+}

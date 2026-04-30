@@ -1,0 +1,44 @@
+{
+  "model": "qwen/qwen3.6-35b-a3b",
+  "run": 1,
+  "date": "2026-04-30",
+  "strategy": "wholesale",
+  "corpus_files": [
+    "EVN_Annual_Report_2010_2011_CapacitiesTable.md",
+    "EVN_Annual_Report_2017_CapacitiesTable.md",
+    "EVN_Annual_Report_2018_CapacitiesTable.md",
+    "PDP7A_annex1_table1.md",
+    "PDP7A_annex1_table2.md",
+    "PDP7A_annex1_table3.md",
+    "PDP7_annex1.md",
+    "PDP7_annex2.md",
+    "PDP8_annex2_table1.md",
+    "PDP8_annex2_table2.md",
+    "PDP8_annex2_table3.md",
+    "PDP8_annex2_table4.md",
+    "PDP8_annex2_table5.md",
+    "Report_32_annex1.md",
+    "Report_58_annex.md",
+    "Study_E542_table_9.1.md",
+    "Study_E542_table_9.2.md",
+    "Study_E542_table_9.5A.md"
+  ],
+  "corpus_tokens": 37283,
+  "prompt": "Provide a table listing all thermal power plants in Vietnam, including their fuel type (coal / local natural gas / imported LNG), construction stage, connection date (observed or planned COD), province, and generation capacity (in MWe). Format the response in CSV.",
+  "response": "```csv\nPlant Name,Fuel Type,Construction Stage,Connection Date (COD),Province,Capacity (MWe)\nUông Bí,Coal,Operational,2002,Quảng Ninh,105\nUông Bí Extension 1,Coal,Operational,2011,Quảng Ninh,300\nUông Bí Extension 2,Coal,Operational,2011,Quảng Ninh,330\nPhả Lại 1,Coal,Operational,1994,Hải Dương,440\nPhả Lại 2,Coal,Operational,2002,Hải Dương,600\nNinh Bình,Coal,Operational,2002,Ninh Bình,100\nHải Phòng 1,Coal,Operational,2002,Hải Phòng,600\nHải Phòng 2,Coal,Operational,2014,Hải Phòng,600\nQuảng Ninh 1,Coal,Operational,2012,Quảng Ninh,600\nQuảng Ninh 2,Coal,Operational,2015,Quảng Ninh,600\nMông Dương 1,Coal,Operational,2016,Quảng Ninh,500\nMông Dương 2,Coal,Operational,2015,Quảng Ninh,700\nThái Bình 1,Coal,Operational,2017,Thái Bình,600\nThái Bình 2,Coal,Planned,2020,Thái Bình,1200\nVĩnh Tân 1,Coal,Operational,2016,Bình Thuận,1200\nVĩnh Tân 2,Coal,Operational,2014,Bình Thuận,1244\nVĩnh Tân 3,Coal,Planned,2023-2024,Bình Thuận,1980\nVĩnh Tân 4,Coal,Operational,2018,Bình Thuận,1200\nDuyên Hải 1,Coal,Operational,2014,Trà Vinh,1245\nDuyên Hải 2,Coal,Planned,2021,Trà Vinh,1200\nDuyên Hải 3,Coal,Operational,2016,Trà Vinh,1245\nNghi Sơn 1,Coal,Operational,2013,Thanh Hóa,600\nNghi Sơn 2,Coal,Planned,2021-2022,Thanh Hóa,1200\nVũng Áng 1,Coal,Operational,2012,Hà Tĩnh,600\nVũng Áng 2,Coal,Planned,2024,Hà Tĩnh,1200\nVũng Áng 3,Coal,Planned,Post-2030,Hà Tĩnh,1200\nQuảng Trạch 1,Coal,Planned,2024-2025,Quảng Bình,1200\nQuảng Trạch 2,Coal,Planned,2026,Quảng Bình,1200\nVân Phong 1,Coal,Planned,2023-2024,Khánh Hòa,1320\nLong Phú 1,Coal,Operational,2015,Sóc Trăng,1200\nLong Phú 2,Coal,Planned,2025-2026,Sóc Trăng,1320\nLong Phú 3,Coal,Planned,TBD,Sóc Trăng,1800\nSông Hậu 1,Coal,Operational,2019,Hậu Giang,1200\nSông Hậu 2,Coal,Planned,2024,Hậu Giang,2000\nHải Dương 1,Coal,Planned,2020-2021,Hải Dương,600\nHải Dương 2,Coal,Planned,2021,Hải Dương,600\nNam Định 1,Coal,Planned,2024-2025,Nam Định,1200\nNam Định 2,Coal,Planned,TBD,Nam Định,1200\nQuảng Trị 1,Coal,Planned,2026-2027,Quảng Trị,1200\nQuảng Trị 2,Coal,Planned,TBD,Quảng Trị,1200\nCam Thanh,Coal,Planned,2024,Quảng Nam,600\nAn Khánh - Bắc Giang,Coal,Planned,2023,Bắc Giang,650\nQuỳnh Lập 1,Coal,Planned,2026,Thanh Hóa,1200\nQuỳnh Lập 2,Coal,Planned,2027-2028,Thanh Hóa,1200\nHải Phòng 3,Coal,Planned,2028-2029,Hải Phòng,1200\nQuảng Ninh 3,Coal,Planned,2029-2030,Quảng Ninh,1200\nLong An 1,Coal,Planned,2024-2025,Long An,1200\nLong An 2,Coal,Planned,2026-2027,Long An,1600\nTân Phước 1,Coal,Planned,2029-2030,Tiền Giang,1200\nTân Phước 2,Coal,Planned,2028-2029,Tiền Giang,1200\nFormosa Hà Tĩnh 2,Coal,Operational,2016,Hà Tĩnh,150\nFormosa Hà Tĩnh 3&4,Coal,Operational,2016,Hà Tĩnh,200\nFormosa Hà Tĩnh 5,Coal,Operational,2016,Hà Tĩnh,150\nFormosa Hà Tĩnh 6&7,Coal,Planned,2020,Hà Tĩnh,300\nFormosa Hà Tĩnh 8&9,Coal,Planned,2020,Hà Tĩnh,200\nFormosa Hà Tĩnh 10,Coal,Planned,2020,Hà Tĩnh,150\nThăng Long,Coal,Operational,2017,Hải Dương,600\nCông Thanh,Coal,Planned,2024,Quảng Nam,600\nNa Dương 2,Coal,Planned,2023,Lạng Sơn,110\nCam Pha 3,Coal,Planned,TBD,Quảng Ninh,440\nSơn Mỹ I,LNG,Planned,2026-2028,Ninh Thuận,2250\nSơn Mỹ II,LNG,Planned,2023-2024,Ninh Thuận,2250\nPhú Mỹ 1,Local Natural Gas,Operational,2000,Bà Rịa - Vũng Tàu,1108\nPhú Mỹ 2.1,Local Natural Gas,Operational,2002,Bà Rịa - Vũng Tàu,896\nPhú Mỹ 2.2,Local Natural Gas,Operational,2002,Bà Rịa - Vũng Tàu,740\nPhú Mỹ 3,Local Natural Gas,Operational,2002,Bà Rịa - Vũng Tàu,740\nPhú Mỹ 4,Local Natural Gas,Operational,2002,Bà Rịa - Vũng Tàu,450\nNhơn Trạch 1,Local Natural Gas,Operational,1995,Đồng Nai,465\nNhơn Trạch 2,Local Natural Gas,Operational,2002,Đồng Nai,750\nNhơn Trạch 3 & 4,Local Natural Gas,Planned,2022-2023,Đồng Nai,1500\nCà Mau 1,Local Natural Gas,Operational,2001,Cà Mau,750\nCà Mau 2,Local Natural Gas,Operational,2001,Cà Mau,750\nBà Rịa,Local Natural Gas,Operational,2001,Bà Rịa - Vũng Tàu,389\nThủ Đức (Gas),Local Natural Gas,Operational,2002,TP. Hồ Chí Minh,128\nThủ Đức (Oil),Oil,Operational,1994,TP. Hồ Chí Minh,165\nCần Thơ (Gas),Local Natural Gas,Operational,2002,Cần Thơ,150\nCần Thơ (Oil),Oil,Operational,1994,Cần Thơ,35\nÔ Môn 1,Local Natural Gas/Oil,Operational,2002,Cần Thơ,660\nÔ Môn 2,Local Natural Gas,Planned,TBD,Cần Thơ,1050\nÔ Môn 3,Local Natural Gas,Planned,2025,Cần Thơ,1050\nÔ Môn 4,Local Natural Gas,Planned,2023,Cần Thơ,1050\nDung Quất 1,Local Natural Gas,Planned,2023-2024,Quảng Ngãi,750\nDung Quất 2,Local Natural Gas,Planned,2026,Quảng Ngãi,750\nDung Quất 3,Local Natural Gas,Planned,2024,Quảng Ngãi,750\nMiền Trung 1,Local Natural Gas,Planned,2024,Quảng Trị/Quảng Ngãi,750\nMiền Trung 2,Local Natural Gas,Planned,2024-2025,Quảng Trị/Quảng Ngãi,750\nKiên Giang 1 & 2,Local Natural Gas,Planned,Post-2030,Kiên Giang,1500\nLNG Quảng Ninh,LNG,Planned,2021-2030,Quảng Ninh,1500\nLNG Thái Bình,LNG,Planned,2021-2030,Thái Bình,1500\nLNG Nghi Sơn,LNG,Planned,2021-2030,Thanh Hóa,1500\nLNG Quảng Trạch II,LNG,Planned,2021-2030,Quảng Bình,1500\nLNG Quỳnh Lập/Nghi Sơn,LNG,Planned,2021-2030,Thanh Hóa,1500\nLNG Hải Lăng 1,LNG,Planned,2021-2030,Quảng Trị,1500\nLNG Cà Ná,LNG,Planned,2021-2030,Ninh Thuận,1500\nLNG Long Sơn,LNG,Planned,2031-2035,Bà Rịa - Vũng Tàu,1500\nLNG Hiệp Phước 1,LNG,Planned,2021-2030,Đồng Nai,1200\nLNG Long An 1,LNG,Planned,2021-2030,Long An,1500\nLNG Long An 2,LNG,Planned,2031-2035,Long An,1500\nLNG Bạc Liêu,LNG,Planned,2021-2030,Bạc Liêu,3200\nFormosa HT2,Cogeneration/Industrial Gas,Planned,2021-2030,Hà Tĩnh,650\nHòa Phát II,Cogeneration/Industrial Gas,Planned,2021-2030,Hải Phòng,300\nHải Hà 1-4,Cogeneration/Industrial Gas,Planned,2019-2030,Hải Dương,2100\nĐức Giang,Cogeneration/Industrial Gas,Planned,2021-2030,Hải Dương,100\nHiệp Phước (Oil),Oil,Operational,2002,Đồng Nai,375\nBourbon (Oil),Oil,Operational,2002,Đồng Nai,24\nAmata (Diesel),Diesel,Operational,2002,Bắc Ninh,14\n```",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 78652,
+    "completion_tokens": 17962
+  },
+  "wall_seconds": 135.137,
+  "cost_usd": 0.03000746,
+  "temperature": 0.0,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "moe",
+    "provider": "Alibaba",
+    "context_window": 262144
+  }
+}
