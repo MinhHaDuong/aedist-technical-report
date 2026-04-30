@@ -219,7 +219,12 @@ def make_client_for_router(router: str, routers_config: dict) -> OpenAI:
             raise SystemExit(f"Set {env_key} environment variable")
     else:
         api_key = "ollama"
-    return OpenAI(base_url=base_url, api_key=api_key)
+    kwargs: dict = {"base_url": base_url, "api_key": api_key}
+    if not env_key:
+        import httpx
+
+        kwargs["timeout"] = httpx.Timeout(connect=5.0, read=3600.0, write=600.0, pool=600.0)
+    return OpenAI(**kwargs)
 
 
 # ---------------------------------------------------------------------------
@@ -286,6 +291,7 @@ def query_ollama_native(
     messages: list[dict],
     num_ctx: int,
     num_predict: int | None = None,
+    no_think: bool = False,
 ) -> dict:
     """Query Ollama via native /api/chat with explicit num_ctx (and optional num_predict output cap)."""
     import httpx
@@ -295,6 +301,8 @@ def query_ollama_native(
     options: dict = {"num_ctx": num_ctx}
     if num_predict is not None:
         options["num_predict"] = num_predict
+    if no_think:
+        options["think"] = False
     t0 = time.monotonic()
     resp = httpx.post(
         api_url,

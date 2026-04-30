@@ -192,6 +192,9 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="List what would be queried, don't call API"
     )
+    parser.add_argument(
+        "--no-think", action="store_true", help="Disable reasoning (Qwen3/thinking models)"
+    )
     parser.add_argument("--model-set", default=None, help="Model set name from experiments.toml")
     parser.add_argument(
         "--experiments", default="experiments.toml", help="Path to experiments.toml"
@@ -268,6 +271,7 @@ def main():
                 mt_api_kwargs = build_api_kwargs(
                     model,
                     temperature=args.temperature,
+                    no_think=args.no_think,
                 )
                 ollama_base_url = (
                     routers_config.get("ollama", {}).get("base_url") if args.model_set else None
