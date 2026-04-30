@@ -1,0 +1,88 @@
+%erg v1
+Title: Add RAG + reasoning cell (no web) to isolate the Coherence delta
+Status: open
+Created: 2026-04-30
+Author: claude
+Blocked-by: 0139
+
+--- log ---
+2026-04-30T18:00Z claude created — missing-link cell from measurement-framework.md narrative arc point 5
+
+--- body ---
+
+## Context
+
+The regimes-scatter ladder samples direct -> multiturn -> RAG. The deep
+research arm (top-right) uses RAG + reasoning + web + `prompt_complete`.
+The gap between RAG and deep research is therefore *three* deltas glued
+together: web (Freshness), reasoning (Coherence), and prompt-structure
+(`prompt_extract` -> `prompt_complete`).
+
+Adding a single intermediate cell — RAG + reasoning, no web, same
+`prompt_extract` as the rest of the ladder — isolates the Coherence
+contribution. Without this cell, the deep-research delta cannot be
+decomposed and is presented as an upper-bound demonstration only.
+
+See `docs/measurement-framework.md` narrative arc point 5 ("Joint
+ceiling, with a missing link") and the DAG framing in §"Why the order
+is observed, not forced".
+
+## Constraint: clean experimental conditions
+
+Blocked by 0139. Until `JobSpec` declares `seed` / `provider_order` /
+`max_tokens` / `num_ctx` as fields and forbids unknown keys, any new
+sweep runs without controlled experimental conditions. The whole point
+of this cell is a *clean* decomposition; no point adding a diagnostic
+cell on top of an uncontrolled foundation.
+
+## Design choice locked: closed-corpus RAG, not open retrieval
+
+For this cell we re-use the *same retrieved documents* as plain
+`rag_extract`, not "ask the model to find serious sources." Reason: we
+want to vary one thing at a time. Open retrieval would re-introduce
+Coverage / Freshness variance that we are explicitly trying to hold
+fixed. The "let the model discover sources" condition is a different
+experiment (closer to deep research with a smaller model) and should
+not be conflated with the Coherence isolation.
+
+## Actions
+
+1. After 0139 lands, define a new sweep `rag_extract_thinking` in
+   `experiments.toml`: same prompts and corpus as `rag_extract`, plus
+   `no_think=false` for thinking-capable models. Pin `seed=42`; for MoE
+   models pin `provider_order` and set `repeat=3` (project rule:
+   `experiment-design.md` "MoE models require repeat=3").
+2. Test one before blasting: dry-run prompt assembly check, then 1 real
+   call per regime, inspect output tokens / wall time / content quality
+   (`workflow.md` rule), then full sweep.
+3. Run on the regimes-scatter model lineup (post-0134). Constrain to
+   thinking-capable models; non-thinking models in the lineup get a
+   `no_think=false` no-op control row for clean grouping.
+4. Update `fig_regimes_scatter` to render the new cell between RAG and
+   deep research on the method axis.
+5. Update `docs/measurement-framework.md` narrative arc point 5:
+   replace the "either we add the cell or refuse to decompose"
+   sentence with the actual measured decomposition once data is in.
+
+## Test
+
+For at least one capable model present in both `rag_extract`
+(thinking-off) and the new `rag_extract_thinking` sweep:
+
+- `delta_quality = q_thinking - q_no_thinking` is finite and
+  measurable.
+- `delta_cost = tokens_thinking - tokens_no_thinking` shows the
+  expected CoT inflation.
+- The delta is interpretable as the Coherence contribution holding
+  Coverage and Freshness fixed.
+
+## Exit criteria
+
+- New sweep defined; dry-run validated.
+- One-call-per-regime sanity pass logged.
+- Full sweep complete on the agreed model lineup with `repeat=3` for
+  MoE.
+- `fig_regimes_scatter` shows the new cell between RAG and deep
+  research.
+- `measurement-framework.md` arc point 5 updated with the measured
+  decomposition.
