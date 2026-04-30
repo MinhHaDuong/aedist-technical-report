@@ -211,3 +211,17 @@ def test_reasoning_false_keeps_temperature():
     model = {"id": "test/no-reason", "reasoning": False}
     kwargs = build_api_kwargs(model, max_tokens=4096, temperature=0.3)
     assert kwargs["temperature"] == 0.3
+
+
+def test_no_think_sets_think_false():
+    """no_think=True parameter adds think:false to extra_body."""
+    model = {"id": "qwen3.6:35b"}
+    kwargs = build_api_kwargs(model, temperature=0.0, no_think=True)
+    assert kwargs.get("extra_body", {}).get("think") is False
+
+
+def test_no_think_false_no_extra_body():
+    """no_think absent or False does not add think key."""
+    model = {"id": "some-model"}
+    kwargs = build_api_kwargs(model, temperature=0.0)
+    assert "think" not in kwargs.get("extra_body", {})

@@ -295,6 +295,12 @@ class JobSpec(BaseModel):
         "sweep config — OpenRouter injects ~300K tokens of search results "
         "when active (see ticket 0094).",
     )
+    no_think: bool = Field(
+        default=False,
+        description="Suppress chain-of-thought for thinking-capable models. "
+        "Injects the provider-appropriate flag (Ollama/OpenAI-compat: extra_body.think=false). "
+        "Set per-sweep, not per-model.",
+    )
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)
     estimated_duration: float | None = Field(

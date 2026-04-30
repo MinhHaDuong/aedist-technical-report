@@ -463,6 +463,19 @@
   size_class: medium
   license: open-apache
 
+- id: "qwen3.6:35b"
+  router: ollama
+  router_model: "qwen3.6:35b"
+  name: "Qwen 3.6 35B (local)"
+  provider: "Ollama/Padme"
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+
 
 # --- Small ---
 

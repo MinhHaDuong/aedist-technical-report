@@ -329,6 +329,7 @@ def build_api_kwargs(
     enable_web_search: bool = False,
     seed: int | None = None,
     provider_order: list[str] | None = None,
+    no_think: bool = False,
 ) -> dict:
     """Build API kwargs from model capability flags.
 
@@ -373,6 +374,8 @@ def build_api_kwargs(
     extra: dict = {}
     if provider_order:
         extra["provider"] = {"order": provider_order, "allow_fallbacks": False}
+    if no_think:
+        extra["think"] = False
     if extra:
         kwargs["extra_body"] = extra
 

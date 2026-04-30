@@ -193,6 +193,7 @@ class Worker:
             model_entry,
             temperature=job.temperature,
             enable_web_search=job.web_search,
+            no_think=job.no_think,
         )
 
         pool_label = self.worker_id
