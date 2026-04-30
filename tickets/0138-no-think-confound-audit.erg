@@ -1,0 +1,139 @@
+%erg v1
+Title: Audit existing runs for no_think confound; decide redo policy
+Status: open
+Created: 2026-04-30
+Author: claude
+
+--- log ---
+2026-04-30T10:00Z claude created
+
+--- body ---
+
+## Context
+
+`no_think` was introduced in PR #303 (2026-04-30). All existing runs predate
+it and therefore never set the flag — they ran thinking-capable models in
+their provider default mode. For Qwen3 and Kimi K2 that default is
+**thinking on** (chain-of-thought enabled); for other models the flag has no
+effect.
+
+This is a confound: existing runs mixing thinking-on and thinking-off models
+are not directly comparable to future runs where we can control the flag
+explicitly. We need to understand the exposure, decide what to do, and update
+analysis scripts accordingly.
+
+## Scope: which models are affected
+
+Thinking-capable models present in the registry and in existing outputs:
+
+| Model | Outputs present |
+|-------|----------------|
+| `qwen/qwen3-max-thinking` | direct_complete, ablation/* |
+| `qwen/qwen3.5-122b-a10b` | rag_per_fuel_v2 |
+| `moonshotai/kimi-k2-thinking` | direct_complete |
+| `baidu/ernie-4.5-21b-a3b-thinking` | direct_complete |
+| `z-ai/glm-5.1` | direct_complete |
+| `cogito:8b` | ticket 0137 (regimes scatter only, local) |
+
+Non-thinking models are unaffected — `no_think=False` is a no-op for them.
+
+## Actions
+
+### 1. Per-experiment audit: reasoning required / optional / irrelevant
+
+For each sweep in `experiments.toml`, classify:
+- **A — thinking off preferred**: extraction/listing tasks where CoT wastes
+  tokens and may hurt structured output compliance.
+- **B — thinking on preferred**: hard inference tasks (provenance, status
+  reasoning under ambiguity).
+- **C — comparison axis**: experiment is explicitly comparing thinking-on vs
+  thinking-off (needs both runs).
+- **D — unaffected**: no thinking-capable models in the model set.
+
+Proposed initial classification (to be verified):
+
+| Sweep | Class | Rationale |
+|-------|-------|-----------|
+| direct_complete / direct_extract | A | Structured CSV extraction; CoT likely hurts |
+| direct_multiturn | B | Multi-step reasoning; CoT plausibly helps |
+| rag_extract / rag_cited / rag_per_fuel* | A | RAG context is the evidence; CoT wastes tokens |
+| rag_livesearch | B | Source synthesis benefits from CoT |
+| ablation/* | A | Ablation is about prompt modules, not CoT |
+| frontier (deep-research sweep) | B | Frontier reasoning is the point |
+| scenarios (qualitative) | B | Open-ended; thinking on is appropriate |
+
+### 2. Can we infer thinking mode from existing traces?
+
+Check what signal is recoverable ex-post:
+
+a. **`<think>...</think>` in content**: OpenRouter strips thinking tokens
+   before returning `content` — confirmed absent in sampled files.
+   → **Not available**.
+
+b. **Completion token count as proxy**: thinking adds a large hidden token
+   block. A thinking-on run typically shows 2–10× more `tokens_out` than the
+   same prompt without thinking. Compare `tokens_out` distributions per model:
+   if a thinking model shows the same token budget as non-thinking variants,
+   thinking was likely off or minimal.
+   → **Weak signal; worth checking**.
+
+c. **Wall-clock time**: thinking significantly increases latency. Compare
+   `wall_seconds` across runs for the same model.
+   → **Corroborating signal only**.
+
+d. **Provider metadata**: OpenRouter may expose thinking token counts in
+   usage data, but the harness only captures `prompt_tokens` /
+   `completion_tokens`. The hidden thinking tokens may be billed separately
+   but not visible in the current record schema.
+   → **Not captured; see sub-ticket below**.
+
+**Verdict**: ex-post marking as "thinking-on / thinking-off" is not reliable
+from current data. We can flag *probable* thinking-on based on elevated
+`tokens_out`, but cannot confirm.
+
+### 3. Redo policy
+
+Recommendation (to be ratified by user):
+
+- **Class A sweeps with thinking-capable models**: redo with `no_think=true`
+  once the sweep is scheduled for other reasons (don't trigger reruns solely
+  for this).
+- **Class B sweeps**: no action — thinking-on was the right behaviour.
+- **Class C**: these runs don't exist yet; new sweeps should set both variants
+  explicitly.
+- **Regimes scatter (ticket 0137)**: cogito:8b was added without `no_think`.
+  Classify as Class A (structured extraction). Flag the data point; consider
+  a single redo run when convenient.
+
+Do **not** invalidate or retract existing results for the report. Disclose the
+confound in the methods section: "runs predating PR #303 used provider-default
+thinking mode; thinking-capable models in Class A sweeps were re-run with
+no_think=true for the final results."
+
+### 4. Schema and analysis script updates
+
+a. **`RunRecord.method_params.extra`**: add `no_think: bool` field for new
+   runs so the parameter is captured in `measurements.jsonl`.  (Currently
+   `no_think` lives only in `JobSpec`, not propagated to `RunRecord`.)
+
+b. **Scatter / bar plots**: add `no_think` as a filter/facet variable so
+   thinking-on and thinking-off runs are not averaged together.
+
+c. **Summary tables**: add a column or footnote marking which runs used
+   `no_think=true`.
+
+## Sub-tickets to file if actions are confirmed
+
+- File: capture `no_think` in `RunRecord` (propagate from `JobSpec` → worker
+  → record file → `measurements.jsonl`).
+- File: retrospective token analysis script to flag probable thinking-on
+  runs (plot `tokens_out` distributions per model, highlight outliers).
+
+## Exit criteria
+
+- Every existing sweep classified A/B/C/D in the table above, reviewed by
+  user.
+- Redo decisions recorded in this ticket log.
+- At least one of: (a) `no_think` captured in `RunRecord`, or (b) explicit
+  note in methods section disclosing the confound.
+- Analysis scripts updated to control for `no_think` as a variable.
