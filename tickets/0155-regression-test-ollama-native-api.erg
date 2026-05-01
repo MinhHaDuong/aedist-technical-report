@@ -1,44 +1,68 @@
 %erg v1
 Title: Regression test — query_*.py must use Ollama native /api/chat for local models
-Status: closed
+Status: open
 Created: 2026-04-30
 Author: claude
 
 --- log ---
 2026-04-30T17:10Z claude created — class-shape follow-up to commits d27c393 + 031cef2
-2026-04-30T20:05Z claude note sweep-pick: picked hash:79b4294650d8 scope:add one test file asserting all query_*.py use Ollama /api/chat for local models risk:low — test file only, no production code changes, no external deps
-2026-04-30T21:00Z claude claimed
-2026-04-30T21:00Z claude status doing — raid 0155, worktree-isolated execution
+2026-04-30T20:05Z claude sweep-pick: picked scope:"add one test file asserting all query_*.py use Ollama /api/chat for local models" risk:"low" reason:"lowest risk candidate; test-adding task; well-scoped single file output"
 2026-04-30T21:30Z human note — close only when PR#309 merges (test committed but not yet on main)
-2026-04-30T21:38Z claude note sweep-skip: cooldown-recent-pick hash:79b4294650d8 expires:2026-05-01T04:05Z
-2026-05-01T06:00Z claude close pr:309 — 7 tests pass; test isolation fix applied (patch.dict vs @patch makes_client)
+2026-04-30T21:38Z claude sweep-skip: cooldown-recent-pick expires:2026-05-01T04:05Z
 
 --- body ---
 ## Context
 
-Pre-d27c393, `query_direct.py` and `query_multiturn.py` were calling
-`query_single_turn` directly for local Ollama models, going through the
-OpenAI `/v1/` shim that **silently ignores `num_ctx`**, so Ollama defaulted
-to 4096-token context regardless of the model's declared `context_window`.
-The `query_rag.py` sister file already had the correct pattern (uses
+Discovered 2026-04-30 (commit `d27c393`): `query_direct.py` and
+`query_multiturn.py` were calling `query_single_turn` directly for
+local Ollama models, going through the OpenAI `/v1/` shim that
+**silently ignores `num_ctx`**, so Ollama defaulted to 4096-token
+context regardless of the model's declared `context_window`. The
+`query_rag.py` sister file already had the correct pattern (uses
 `query_ollama_native` with `num_ctx = min(ctx_window, 81920)`).
 
-Two of three query files had the bug; the bug class is "uses OpenAI shim for
-a router that needs native API options." A future new query module could
-re-introduce it without anything catching it.
+Two of three query files had the bug; the bug class is "uses
+OpenAI shim for a router that needs native API options." A future
+new query module (e.g. `query_fusion.py`, `query_per_fuel.py`,
+or any new method script) could re-introduce it without anything
+catching it.
 
 ## Actions
 
-1. Add a unit / integration test that asserts: for every `aedist.query_*` CLI
-   module, an Ollama-routed model call produces a request to `/api/chat` with
-   an explicit `num_ctx` in the options block, **not** to `/v1/chat/completions`.
-2. Implementation: mock `httpx.post`; build a tiny model_set with one Ollama
-   model; invoke each `query_*.main()`; assert URL ends with `/api/chat` and
-   `payload["options"]["num_ctx"]` is set.
-3. Wire into CI.
+1. Add a unit / integration test that asserts: for every
+   `aedist.query_*` CLI module, an Ollama-routed model call
+   produces a request to `/api/chat` with an explicit `num_ctx`
+   in the options block, **not** to `/v1/chat/completions`.
+2. Implementation sketch:
+   - Mock `httpx.post` (or capture via a localhost wiremock).
+   - Build a tiny model_set with one Ollama model
+     (`router: ollama, context_window: 32768`).
+   - Invoke each `query_*.main()` with `--dry-run`-style flag or
+     a single-call short-circuit.
+   - Assert the captured request URL ends with `/api/chat` and
+     that `payload["options"]["num_ctx"]` is set.
+3. Wire into `make lint` / CI.
+
+## Test
+
+The new test fails on the *pre-d27c393* version of
+`query_direct.py` (which calls `query_single_turn` directly) and
+passes on the post-fix version. That's the regression-bound: any
+future module that re-introduces the bug pattern will trip this
+assertion.
 
 ## Exit criteria
 
-- `tests/test_ollama_native_api.py` covering all three current query CLIs ✓
-- New `query_*.py` requires explicit registration (deliberate friction) ✓
-- CI runs the test on every PR ✓
+- One test file (e.g. `tests/test_ollama_native_api.py`) covering
+  all three current query CLIs.
+- The test imports each module by name so a *new* `query_*.py`
+  file added later will require explicit registration in the test
+  (deliberate friction — surfaces the question "did you use
+  `query_ollama_native`?").
+- CI runs the test on every PR.
+
+## Out of scope
+
+- Don't rewrite `query_*.py` modules to share an Ollama wrapper —
+  that's a separate refactor (would close 0141-style design work).
+  This ticket is about catching regressions, not consolidating.
