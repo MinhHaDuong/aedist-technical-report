@@ -81,7 +81,7 @@ bottleneck once the previous one is relaxed.
 | AI stage | Limit | Quality | What it is |
 |---|---|---|---|
 | **Engineer prompt / clarify in multiturn** | **Articulation** | answer | Asking what you meant to ask. Speaking clearly across the human-model language barrier. Multiturn clarification is a second mechanism for the same limit. |
-| **Provide documents** | **Coverage** | data | Facts the model never saw in training. Operationalised by the recall metric `n_matched / n_reference` (see `quality-grounding.md` §1). |
+| **Provide documents** | **Coverage** | data | Facts the model never saw in training. |
 | **Web** | **Freshness** | data | Facts moved on since training cutoff. |
 | **Reason** | **Coherence** (weak, internal) | answer | Facts present, combined inconsistently. |
 | **Agent** | (separate axis) | method | The Agent stage closes a perpendicular axis: *method quality* (auditability, verified provenance, cross-checking). The four data- and answer-quality limits end at deep research; Agent and Team systems open a different question, treated in §Method quality below. |
