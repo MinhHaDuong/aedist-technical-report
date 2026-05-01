@@ -284,7 +284,7 @@ vs. GEM) would estimate reference disagreement rate.
 
 ---
 
-## 4. Coherence: data model and scope
+## 4. Coherence (DQAF — table-level structural consistency): data model and scope
 
 ### 4.1 Pilot data model (v1, this paper)
 

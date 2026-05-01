@@ -1,12 +1,13 @@
 %erg v1
 Title: Rename measurement-framework.md to argument.md
-Status: open
+Status: closed
 Created: 2026-04-30
 Author: claude
 Blocked-by: 0145
 
 --- log ---
 2026-04-30T19:00Z claude created
+2026-05-01T00:00Z claude status closed — file renamed, title/intro updated, cross-references cleaned
 
 --- body ---
 
@@ -26,12 +27,12 @@ have a load-bearing inconsistency.
 ## Actions
 
 1. `git mv docs/measurement-framework.md docs/argument.md`.
-2. Update doc title: "The argument: axes, lenses, three qualities"
-   or similar. Update the working-note disclaimer at the top.
+2. Update doc title: "The argument: axes, lenses, four limits"
+   and update the working-note disclaimer at the top.
 3. Update internal cross-references (slides, other docs, ticket
    bodies referencing the old path, `capability-timeline.md`
    backlink).
-4. `grep -rn 'measurement-framework' .` → 0 hits after the pass.
+4. `grep -rn 'measurement-framework' .` → 0 live references after the pass.
 5. Update `STATE.md` if it mentions the framework.
 
 ## Exit criteria
