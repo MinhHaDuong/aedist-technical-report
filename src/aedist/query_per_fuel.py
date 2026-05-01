@@ -293,6 +293,15 @@ def main():
             log.warning("Skip %s: corpus too large for context window", label)
             continue
 
+        # Ollama: bypass /v1/ shim to honour num_ctx; resolved once per model
+        if router == "ollama":
+            ollama_cfg = routers_config.get("ollama", {}) if args.model_set else {}
+            ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+            ollama_num_ctx = min(ctx_window or 32768, 81920)
+        else:
+            ollama_url = None
+            ollama_num_ctx = None
+
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
                 return
@@ -304,16 +313,6 @@ def main():
             log.info("Querying %s run %d/%d (decomposed RAG)...", label, run, args.repeat)
 
             api_model_id = model.get("router_model", model_id)
-            # Ollama: bypass /v1/ shim to honour num_ctx
-            ollama_url_val = None
-            num_ctx_val = None
-            if router == "ollama":
-                ollama_cfg = (
-                    experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
-                )
-                ollama_url_val = ollama_cfg.get("base_url", "http://localhost:11434/v1")
-                ctx_window = model.get("context_window", 32768)
-                num_ctx_val = min(ctx_window, 81920)
             dec_api_kwargs = build_api_kwargs(
                 model,
                 temperature=args.temperature,
@@ -324,8 +323,8 @@ def main():
                 corpus_text,
                 budget,
                 model,
-                ollama_url=ollama_url_val,
-                num_ctx=num_ctx_val,
+                ollama_url=ollama_url,
+                num_ctx=ollama_num_ctx,
                 **dec_api_kwargs,
             )
 

@@ -192,6 +192,13 @@ def main():
                 )
             client = legacy_client
 
+        # Ollama: bypass /v1/ shim to honour num_ctx; resolved once per model
+        if router == "ollama":
+            ollama_cfg = routers_config.get("ollama", {}) if args.model_set else {}
+            ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+            ctx_window = model.get("context_window", 32768)
+            num_ctx = min(ctx_window, 81920)
+
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
                 return
@@ -219,12 +226,6 @@ def main():
                     temperature=args.temperature,
                 )
                 if router == "ollama":
-                    ollama_cfg = (
-                        experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
-                    )
-                    ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
-                    ctx_window = model.get("context_window", 32768)
-                    num_ctx = min(ctx_window, 81920)
                     result = query_ollama_native(
                         ollama_url,
                         api_model_id,
