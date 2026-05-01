@@ -14,6 +14,10 @@ Usage:
 
     # Aggregate only (responses already saved)
     uv run python scripts/audit_argument.py --aggregate-only
+
+WARNING: --aggregate-only overwrites the entire argument-audit.md, including
+manually-authored 'Consensus clusters' and 'Disposition' sections. Back up
+or git-stash before re-running if those sections have been edited.
 """
 
 import argparse

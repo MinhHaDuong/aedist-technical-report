@@ -18,7 +18,7 @@
 
 **Source document:** `docs/argument.md`
 
-**Limitation:** Models cannot follow relative links (`capability-timeline.md`) or verify cited references. This audit targets the argument's internal logic, not citation accuracy.
+**Limitations:** Models cannot follow relative links (`capability-timeline.md`) or verify cited references — this audit targets the argument's internal logic, not citation accuracy. Reasoning/thinking modes were not explicitly enabled; native-thinking models (qwen3-max-thinking, deepseek-r1-0528) engage by default, others ran standard inference.
 
 ## (a) Strongest internal inconsistency
 
