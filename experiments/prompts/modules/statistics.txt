@@ -1,4 +1,4 @@
-After the inventory, produce cross-tabulation summary tables:
-a) Capacity by fuel x status (total MWe per cell, with row and column totals)
-b) Top 15 provinces by total thermal capacity, broken down by fuel
-c) Timeline of capacity additions by period and fuel type
+Produce these cross-tabulations from your inventory:
+a) **Capacity by fuel × status**: Total MWe in each cell (Coal/Gas/LNG rows × Operational/Under construction/Approved/Planned columns), with row and column totals
+b) **Top provinces**: The 15 provinces with highest total thermal capacity (all statuses combined), showing breakdown by fuel
+c) **Timeline of additions**: Capacity entering service by period — pre-2005, 2005–2010, 2011–2015, 2016–2020, 2021–2025, 2026–2030, post-2030 — by fuel type
