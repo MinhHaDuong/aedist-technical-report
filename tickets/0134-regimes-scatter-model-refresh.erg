@@ -13,7 +13,10 @@ Author: claude
 2026-04-30T12:24Z claude note pivot: drop 70B baseline (Qwen3.5-122b-a10b) and GPT-5.5; use tencent/hy3-preview:free as top-end (MoE, 262k ctx, $0/$0). Free preview expires 2026-05-08 — sweeps must run before then
 2026-04-30T20:05Z claude note sweep-skip: scope-too-large expires:2026-05-01T12:00Z hash:ba30430a6d6d
 2026-04-30T21:38Z claude note sweep-skip: scope-too-large hash:d9018c23f6a0 expires:2026-05-01T12:00Z
+2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:d9018c23f6a0
+
 --- body ---
+**Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. The 2026-05-08 free-preview deadline remains hard; recommend manual triage to decide if this is still highest-priority work.
 3, DeepSeek. Ce ticket ajoute un modèle cloud top-end gratuit.
 
 ## Modèle ajouté
