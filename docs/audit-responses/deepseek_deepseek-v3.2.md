@@ -1,0 +1,19 @@
+# Audit response: deepseek/deepseek-v3.2
+
+**Date:** 2026-05-01T20:08:53.205572+00:00
+**Tokens:** 4273 in / 399 out
+**Wall time:** 31.384s
+
+---
+
+## (a) Strongest inconsistency
+The document asserts that deep research "caps both data quality (inputs are now complete) and answer quality" and that F1 → 1, but then states: "The data on disk today does not yet support that hypothesis." It notes the "deep-research cell currently sits *below* the regimes-scatter ceiling, not above it." This directly contradicts the central narrative that each stage relaxes a limit, culminating in saturation.
+
+## (b) Weakest empirical claim
+The claim that "Stages 2 vs. 3 also swap in some labs — OpenAI shipped Browse with Bing (May 2023) before consumer file upload (Oct 2023)" is presented as a key empirical finding supporting the order of limits. However, this is a single, dated anecdote about product release order, not a systematic measurement of capability or limit relaxation in the context of the extraction task. It lacks the quantitative grounding of the F1 metrics discussed elsewhere.
+
+## (c) Most likely methodological objection
+A reviewer would object to the collapsing of distinct "data quality" and "answer quality" concepts into a single F1 metric. The document admits this bundling: "Data and answer quality are conceptually orthogonal but **bundled by the F1 metric on AEDIST.**" This conflation makes it impossible to disentangle whether a performance change is due to improved input coverage/freshness or improved reasoning/articulation, undermining the core thesis about distinct limits.
+
+## (d) Claim to drop
+Drop the claim that "The deep-research cell extends the ladder... **Hypothesis:** F1 → 1." The "Empirical caveat" section explicitly states current data contradicts this, showing best deep-research F1 at 0.557 and even 0.000 for some models. Retaining this unsupported hypothesis weakens the paper's credibility; it should be presented as a failed or pending hypothesis to be tested.
