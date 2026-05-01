@@ -1,0 +1,112 @@
+%erg v1
+Title: Model registry becomes model instance registry (Name, DisplayName, baseURL, modelID)
+Status: open
+Created: 2026-05-01
+Author: claude
+
+--- log ---
+2026-05-01T10:00Z claude created — supersedes 0141 per design discussion
+
+--- body ---
+## Context
+
+Ticket 0141 proposed grouping cloud+local providers under one logical model entry.
+This ticket adopts the cleaner decision from design discussion: keep one entry per
+*deployed instance* (a specific router+endpoint combination), and align the schema
+with the OpenAI / liteLLM field conventions.
+
+The key field clarifications:
+- `name` → renamed `Name`: instance identifier used in experiments register and
+  `experiments.toml` sweep references (e.g. `"qwen3.5:35b"`, `"qwen/qwen3.5-35b-a3b"`).
+- NEW `display_name`: human-readable label used in figures and paper tables
+  (e.g. `"Qwen 3.5 35B (local)"` → `"Qwen 3.5 35B"`). No router provenance in
+  display name; that belongs in figure captions.
+- NEW `base_url`: API endpoint string, replacing the `router` enum. Makes every
+  instance directly callable via the OpenAI SDK / liteLLM with zero adapter code.
+  Examples: `"https://openrouter.ai/api/v1"` (OpenRouter),
+  `"http://localhost:11434/v1"` (Ollama).
+- `router_model` → renamed `model_id`: the OpenAI-format model string passed to
+  the API. Already present; rename makes the liteLLM semantics explicit.
+
+Retiring the `router` enum removes the last place that requires provider-specific
+dispatch logic in the runner.
+
+Relation to 0141: Close 0141 as `won't do` after this ticket ships.
+
+## Proposed schema (one entry, post-migration)
+
+```yaml
+- name: "qwen3.5:35b"              # instance key — used in experiments.toml
+  display_name: "Qwen 3.5 35B"     # label for figures and tables
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:35b"          # OpenAI-format model string
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 131072
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: medium
+  license: open-apache
+```
+
+Cloud example:
+```yaml
+- name: "qwen/qwen3.5-35b-a3b"
+  display_name: "Qwen 3.5 35B"
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.5-35b-a3b"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.16
+  price_per_mtok_out: 1.3
+  params: "35B MoE (3B active)"
+  size_class: medium
+  license: open-apache
+  web_search: true
+```
+
+## Actions
+
+1. Update `models.yaml`:
+   - Rename `id` → `name`, `name` → `display_name` throughout.
+   - Add `base_url` to every entry (OpenRouter URL or `http://localhost:11434/v1`).
+   - Rename `router_model` → `model_id`.
+   - Remove `router` field from every entry.
+   - Keep all other fields (provider, country, architecture, etc.) unchanged.
+   - Update the header comment (entry count, date).
+
+2. Update the loader/parser (`experiments/` code that reads `models.yaml`):
+   - Accept new field names; reject unknown top-level keys (strict mode).
+   - Build `ModelInstance` dataclass with `name`, `display_name`, `base_url`,
+     `model_id`, and remaining metadata fields.
+   - Use `base_url` + `model_id` to construct the OpenAI client call; no more
+     `router` dispatch branch.
+
+3. Update `experiments.toml` sweep entries: replace any remaining uses of
+   old field names in sweep references.
+
+4. Update all downstream code that reads `model.name` or `model.id` to use
+   `model.name` (instance key) vs `model.display_name` (figures).
+   Specifically: figure-generation scripts must use `display_name`.
+
+5. Update tests in `experiments/tests/` to reflect new schema.
+
+6. Close ticket 0141 as `won't do` with cross-reference to this ticket.
+
+## Test
+
+- `pytest experiments/tests/test_registry.py` — all entries parse; ModelInstance
+  fields populated; no `router` field present; `base_url` non-empty on all entries.
+- Dry-run sweep: runner constructs API calls using `base_url` + `model_id`; no
+  router-dispatch code path exercised.
+- Figure script smoke test: labels use `display_name` not `name`.
+
+## Exit criteria
+
+- `models.yaml` uses `name`, `display_name`, `base_url`, `model_id` throughout.
+- Runner has zero `router`-dispatch branches.
+- All figures use `display_name` for axis/legend labels.
+- Tests green; ticket 0141 closed.

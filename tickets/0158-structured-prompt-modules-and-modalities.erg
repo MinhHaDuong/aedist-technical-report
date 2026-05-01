@@ -1,0 +1,94 @@
+%erg v1
+Title: Frame one-shot experiment as structured prompt with modules and modalities
+Status: open
+Created: 2026-05-01
+Author: claude
+
+--- log ---
+2026-05-01T10:00Z claude created
+
+--- body ---
+## Context
+
+The current one-shot prompt is an informal composition of concerns. To turn it
+into a rigorous ablation surface — and to position multi-turn as a natural
+extension — we need to decompose the prompt into *modules*, each with a
+discrete set of *modalities* (variants, including an explicit absent/zero level).
+
+This design has two payoffs:
+1. **Ablation**: each figure cell in the heatmap corresponds to one modality
+   choice per module. We can isolate which module drives quality.
+2. **Multi-turn reuse**: multi-turn is introduced in the paper as "reusing the
+   module structure across turns", not as a separate paradigm. It shares the
+   vocabulary defined here.
+
+The module/modality vocabulary becomes the canonical framing for the experiment
+design section of the paper and the slides.
+
+## Proposed module taxonomy
+
+| Module | Modality 0 (absent) | Modality 1 | Modality 2 | Modality 3 | … |
+|--------|---------------------|------------|------------|------------|---|
+| **Persona** | absent | "You are a Business Intelligence Analyst" | "You are an Energy Statistician" | "You are an Energy Transition Engineer-Economist" | |
+| **Goal** | absent | terse statement of task | elaborated objective with success criteria | | |
+| **Scope** | absent | national energy system overview | asset-level inventory (history + situation per plant, organized geographically and by power center) | include methodological note | include bibliography |
+| **Information provided** | absent | document titles only | full text (current RAG baseline) | grounded excerpts with provenance | |
+| **Context** | absent | country macro context | regulatory + planning context | historical trend context | |
+| **Constraint** | absent | internal coherence (peer-review standard) | external coherence with detailed provenance block (key table + row citations) | control totals with references | |
+
+Each module is independent. The one-shot prompt is one point in this combinatorial
+space. The ablation studies (ticket 0142, 0143) sample this space systematically.
+
+## Framing multi-turn
+
+Multi-turn reuses the same module vocabulary: the first turn establishes Persona,
+Goal, and Scope; subsequent turns deliver Information and Context incrementally,
+with Constraints enforced in the final turn. This framing makes multi-turn a
+*temporal decomposition* of the same structured prompt, not a different methodology.
+
+Paper structure:
+- §3 Experiment design: introduce the module/modality vocabulary.
+- §3.1 One-shot baseline: one prompt per module modality combination.
+- §3.2 Multi-turn extension: same modules, split across turns.
+- Results refer back to module names in analysis.
+
+## Actions
+
+1. Document the module taxonomy in `docs/prompt-modules.md` (or as a section in
+   `docs/argument.md`). Include the table above; enumerate all defined modalities
+   per module; mark which modality combinations have been run vs. planned.
+
+2. Update `experiments/prompts/` (or wherever prompt templates live) to reflect
+   module structure:
+   - One file (or section) per module.
+   - Modality 0 = empty string / no block.
+   - `experiments.toml` selects modality index per module per sweep.
+
+3. Update `JobSpec` / experiment schema so each job records the full module vector
+   (e.g. `persona=2, goal=1, scope=3, information=2, context=0, constraint=1`).
+   This makes every result self-describing without reverse-engineering the prompt.
+
+4. Update the ablation figures (tickets 0142/0143) to label axes with module names
+   and modality descriptions, not prompt IDs.
+
+5. Add a section in `docs/argument.md` (or dedicated `docs/prompt-modules.md`)
+   that defines multi-turn as the temporal decomposition of the module vector.
+   Ensure §3 of the paper draft references this vocabulary.
+
+## Test
+
+- `pytest experiments/tests/test_prompt_assembly.py`:
+  - Each (module, modality) combination assembles to a non-empty prompt block
+    (except modality 0, which must be empty).
+  - A full one-shot prompt assembled from specific modality choices is
+    byte-for-byte reproducible.
+- JobSpec serialized from an experiment includes the module vector.
+
+## Exit criteria
+
+- Module taxonomy documented with all defined modalities.
+- Prompt templates organised by module; modality 0 = absent handled cleanly.
+- `experiments.toml` sweeps reference module/modality indices, not raw strings.
+- JobSpec records module vector for every run.
+- Ablation figure axes use module names.
+- Multi-turn framed as module-vector decomposition in `docs/argument.md`.

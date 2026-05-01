@@ -1,0 +1,90 @@
+%erg v1
+Title: Formally evaluate model instance capabilities across eight dimensions
+Status: open
+Created: 2026-05-01
+Author: claude
+Blocked-by: 0156
+
+--- log ---
+2026-05-01T10:00Z claude created
+
+--- body ---
+## Context
+
+We need a formal capability profile for each model instance in the registry.
+Currently capability flags are binary (`web_search: true/false`) and architectural
+metadata (`architecture`, `size_class`) acts as a proxy. This is insufficient for
+interpreting result variance: a model that scores low on energy statistics questions
+may do so because of weak domain knowledge, weak arithmetic, or weak multilingual
+reasoning — and distinguishing these requires measured capability levels.
+
+The capability profile is also a paper contribution: it lets us frame the registry
+not just as a benchmark *lineup* but as a *characterised instrument*.
+
+## Dimensions
+
+| Dimension | What it measures | Example benchmark / probe |
+|-----------|-----------------|--------------------------|
+| **Arithmetic** | Numerical reasoning, unit conversion, percent calculations | GSM8K subsets; custom energy-unit conversion probes |
+| **General knowledge** | Factual recall breadth, world knowledge cutoff | MMLU subsets |
+| **Reasoning** | Multi-step deductive / causal reasoning | ARC-Challenge; custom chain-of-thought probes |
+| **Web search** | Ability to retrieve and cite live documents | Grounded QA with known URLs; registry `web_search` flag as precondition |
+| **Multilingual** | Quality in Vietnamese and French (AEDIST languages) | Parallel prompt pairs; consistency of numerical answers across languages |
+| **Energy domain** | Knowledge of power systems, capacity factors, fuel types | Custom 20-question energy quiz (VN-specific) |
+| **Statistics** | Interpretation of tables, confidence intervals, percentages | Custom stat-reading probes on PDP8 data fragments |
+| **Geography** | Knowledge of Vietnamese provinces, power regions, river basins | Custom 15-question geography quiz |
+
+Score: ordinal 0–3 per dimension (0 = absent / fails consistently, 1 = partial,
+2 = adequate, 3 = strong).
+
+## Actions
+
+1. Write a probe suite (`experiments/capability_probes/`):
+   - One YAML/TOML file per dimension with 15–25 questions + gold answers.
+   - Include an automated scorer where possible (exact-match or regex for numeric
+     answers; LLM-as-judge with a fixed rubric for open-ended).
+
+2. Run the probe suite against all model instances in the registry using the
+   standard runner (respecting `base_url` + `model_id` from 0156).
+   - `repeat=3` for all MoE models (rule: AEDIST experiment design).
+   - Log results to `experiments/outputs/capability/`.
+
+3. Score each instance on each dimension; record in
+   `experiments/outputs/capability/scores.csv` with columns:
+   `name, arithmetic, general_knowledge, reasoning, web_search, multilingual,
+    energy, statistics, geography`.
+
+4. Add `capabilities` block to each `models.yaml` entry after scoring:
+   ```yaml
+   capabilities:
+     arithmetic: 2
+     general_knowledge: 3
+     reasoning: 2
+     web_search: 1        # 0 if web_search: false in registry
+     multilingual: 2
+     energy: 1
+     statistics: 2
+     geography: 1
+   ```
+
+5. Generate a capability heatmap figure (`figures/capability_heatmap.pdf`)
+   showing model instances × dimensions, using `display_name` labels (0156/0157).
+
+6. Write a short methods note (≤1 page) in `docs/` describing the probe design
+   and scoring rubric, for paper §A (appendix).
+
+## Test
+
+- `pytest experiments/tests/test_capability_probes.py`:
+  - All probe files parse and have ≥ 15 questions each.
+  - Scorer returns an integer 0–3 for every (model, dimension) pair.
+- `scores.csv` has one row per registry entry; no NaN values.
+- Heatmap renders without error.
+
+## Exit criteria
+
+- Probe suite covers all 8 dimensions with ≥ 15 questions each.
+- All registry model instances scored.
+- `scores.csv` committed and `models.yaml` updated with `capabilities` blocks.
+- Capability heatmap figure generated.
+- Methods note drafted.

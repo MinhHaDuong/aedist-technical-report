@@ -1,0 +1,100 @@
+%erg v1
+Title: Add figures configuration file with ordered modelset
+Status: open
+Created: 2026-05-01
+Author: claude
+Blocked-by: 0156
+
+--- log ---
+2026-05-01T10:00Z claude created
+
+--- body ---
+## Context
+
+Figure-generation scripts currently embed the model list and ordering directly in
+code or derive it ad-hoc from the registry. This produces inconsistent ordering
+across figures and forces code changes to adjust which models appear.
+
+A dedicated `figures.toml` (or `figures.yaml`) configuration file decouples the
+*visual presentation layer* from the experiment infrastructure:
+- Defines the canonical ordered list of model instances to show in figures.
+- References models by their `name` field from the instance registry (ticket 0156).
+- Display labels come from `display_name`; this file need not repeat them.
+- Supports multiple named modelsets (e.g. `frontier`, `ablation`, `full`) so
+  different figures can use different subsets from the same config.
+
+Depends on 0156 because the config references `name` and uses `display_name` from
+the updated registry.
+
+## Proposed schema
+
+```toml
+# figures.toml — model presentation layer for AEDIST figures
+
+[modelsets.frontier]
+# Ordered list of model instance names for frontier-model figures.
+# Order = left-to-right on bar charts, top-to-bottom on scatter labels.
+models = [
+  "anthropic/claude-opus-4.6",
+  "openai/gpt-5.4",
+  "google/gemini-3-flash-preview",
+  "deepseek/deepseek-v3.2",
+  "mistralai/mistral-large-2512",
+  "x-ai/grok-4.20",
+  "qwen/qwen3-max-thinking",
+  "moonshotai/kimi-k2-thinking",
+  "z-ai/glm-5-turbo",
+  "tencent/hy3-preview:free",
+]
+
+[modelsets.full]
+# All models in canonical paper order (size_class then provider).
+models = [
+  # frontier
+  "anthropic/claude-opus-4.6",
+  # ... etc
+]
+
+[modelsets.ablation]
+# Models used in ablation study figures.
+models = [
+  "anthropic/claude-sonnet-4.6",
+  "deepseek/deepseek-v3.2",
+  "mistralai/mistral-large-2512",
+  "qwen/qwen3.5-35b-a3b",
+  "mistralai/mistral-small-2603",
+]
+```
+
+## Actions
+
+1. Create `experiments/figures.toml` with at least three named modelsets:
+   `frontier`, `full`, `ablation`. Order within each set = canonical paper order.
+
+2. Write a loader function `load_modelset(name: str) -> list[ModelInstance]` that:
+   - Reads `figures.toml` to get the ordered name list.
+   - Looks each name up in the registry (via the 0156 loader) to get the full
+     `ModelInstance` with `display_name` and metadata.
+   - Raises `KeyError` if a name in the config is not in the registry.
+
+3. Update all figure-generation scripts to call `load_modelset(...)` rather than
+   building their own model lists.
+
+4. Add a validator (or extend the pre-commit hook) to check that every model name
+   in `figures.toml` resolves in the current registry.
+
+## Test
+
+- `pytest experiments/tests/test_figures_config.py`:
+  - Each modelset loads without error.
+  - No name in any modelset is missing from the registry.
+  - Order of returned instances matches config order.
+- Smoke test: generate one figure type for each modelset; verify axis labels match
+  `display_name` values.
+
+## Exit criteria
+
+- `experiments/figures.toml` exists with `frontier`, `full`, `ablation` modelsets.
+- All figure scripts use `load_modelset()`.
+- Validator blocks commits that reference unknown model names.
+- Tests green.
