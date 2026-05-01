@@ -1,0 +1,101 @@
+%erg v1
+Title: Implement claude-code-cli route in experiment runner
+Status: open
+Created: 2026-05-01
+Author: claude
+Blocked-by: 0156
+
+--- log ---
+2026-05-01T10:15Z claude created — split from 0156 amendment
+
+--- body ---
+## Context
+
+Ticket 0156 introduces a `route` enum and reserves `claude-code-cli` as a value.
+This ticket implements the calling adapter so model instances with
+`route: claude-code-cli` can participate in sweeps on the same footing as
+OpenRouter and Ollama instances.
+
+The Claude Code CLI (`claude`) is the natural way to run Anthropic models locally
+without exposing an API key in the sweep environment: it authenticates via the
+user's existing Claude Code session. It also gives access to Claude's full
+extended-thinking and tool-use capabilities through its native interface.
+
+The adapter wraps `claude --print --model {model_id} -p {prompt}` (non-interactive
+`--print` mode) and maps the output to the same `CompletionResult` structure the
+rest of the runner uses.
+
+## Calling convention
+
+```
+claude --print --model claude-sonnet-4-6 -p "$(cat prompt.txt)"
+```
+
+Relevant flags:
+- `--print` — non-interactive output mode, exits after one response.
+- `--model MODEL` — selects the model (uses `model_id` from registry).
+- `-p TEXT` — prompt text (alternative: pipe via stdin).
+- `--output-format json` — structured output including `usage` token counts.
+
+Token counts come from the JSON output's `usage` block; map to
+`prompt_tokens` / `completion_tokens` for the `CompletionResult`.
+
+## Registry example
+
+```yaml
+- name: "claude-sonnet-4-6-cli"
+  display_name: "Claude Sonnet 4.6"
+  route: claude-code-cli
+  model_id: "claude-sonnet-4-6"
+  provider: Anthropic
+  country: US
+  architecture: dense
+  context_window: 1000000
+  price_per_mtok_in: 0.0           # billed via Claude subscription, not per-token
+  price_per_mtok_out: 0.0
+  size_class: frontier
+  license: commercial
+  web_search: true                  # Claude Code CLI has web search via tools
+```
+
+## Actions
+
+1. Confirm `claude --print` behaviour on Padme: run a smoke call and capture
+   stdout; verify `--output-format json` is available in the installed CLI
+   version.
+
+2. Write `experiments/routes/claude_code_cli.py`:
+   - `call(model_id: str, prompt: str, **kwargs) -> CompletionResult`
+   - Builds the subprocess command; captures stdout/stderr.
+   - Parses JSON output for content and token counts.
+   - Raises `RouteError` on non-zero exit or unparseable output.
+   - Respects a timeout (default 300 s, configurable in `experiments.toml`).
+
+3. Register the adapter in the runner's `route` dispatch table.
+
+4. Add one `claude-code-cli` model instance to `models.yaml` (e.g.
+   `claude-sonnet-4-6-cli` and `claude-opus-4-6-cli`).
+
+5. Add to `experiments.toml` a minimal sweep entry that exercises the
+   `claude-code-cli` route so CI can verify end-to-end (dry-run mode).
+
+6. Document any rate-limit or concurrency constraints: the CLI likely serialises
+   through one session, so `max_workers=1` is the safe default for this route.
+
+## Test
+
+- Unit test (`test_claude_code_cli_route.py`):
+  - Mock subprocess; verify command assembled correctly for a given `model_id`
+    and prompt.
+  - Verify `CompletionResult` fields populated from mock JSON output.
+  - Verify `RouteError` raised on non-zero subprocess exit.
+- Integration smoke test (skipped in CI if `claude` binary absent):
+  - One real call with a short prompt; assert non-empty content and
+    `completion_tokens > 0`.
+
+## Exit criteria
+
+- `claude-code-cli` route callable from the runner with no code changes.
+- At least two Anthropic instances in `models.yaml` using this route.
+- Unit tests green; integration smoke test passes on Padme.
+- Runner docs updated to list `claude-code-cli` as a supported route.

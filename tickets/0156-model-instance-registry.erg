@@ -6,6 +6,7 @@ Author: claude
 
 --- log ---
 2026-05-01T10:00Z claude created — supersedes 0141 per design discussion
+2026-05-01T10:15Z claude note amended — added `route` enum field; Claude Code CLI route split to ticket 0160
 
 --- body ---
 ## Context
@@ -21,23 +22,37 @@ The key field clarifications:
 - NEW `display_name`: human-readable label used in figures and paper tables
   (e.g. `"Qwen 3.5 35B (local)"` → `"Qwen 3.5 35B"`). No router provenance in
   display name; that belongs in figure captions.
-- NEW `base_url`: API endpoint string, replacing the `router` enum. Makes every
-  instance directly callable via the OpenAI SDK / liteLLM with zero adapter code.
-  Examples: `"https://openrouter.ai/api/v1"` (OpenRouter),
-  `"http://localhost:11434/v1"` (Ollama).
+- NEW `route`: named enum that tells the runner *which calling convention* to use.
+  Replaces the old two-value `router` field with a richer open enum. The runner
+  dispatches on `route`; `base_url` and `model_id` are the parameters.
+  Defined values: `openrouter`, `ollama`, `openllm`, `claude-code-cli`, `codex`.
+- NEW `base_url`: API endpoint for OpenAI-SDK-compatible routes. Omit or null for
+  CLI-based routes (`claude-code-cli`, `codex`).
+  Examples: `"https://openrouter.ai/api/v1"` (openrouter),
+  `"http://localhost:11434/v1"` (ollama).
 - `router_model` → renamed `model_id`: the OpenAI-format model string passed to
-  the API. Already present; rename makes the liteLLM semantics explicit.
+  the API, or the model flag for CLI-based routes.
 
-Retiring the `router` enum removes the last place that requires provider-specific
-dispatch logic in the runner.
+Route enum — calling conventions:
+
+| route | SDK / tool | auth | base_url required |
+|-------|-----------|------|-------------------|
+| `openrouter` | OpenAI SDK | `OPENROUTER_API_KEY` | yes |
+| `ollama` | OpenAI SDK | none | yes (localhost) |
+| `openllm` | OpenAI SDK | optional token | yes |
+| `claude-code-cli` | subprocess `claude` CLI | session auth | no (ticket 0160) |
+| `codex` | subprocess `codex` CLI | `OPENAI_API_KEY` | no |
 
 Relation to 0141: Close 0141 as `won't do` after this ticket ships.
+Claude Code CLI implementation: ticket 0160.
 
 ## Proposed schema (one entry, post-migration)
 
+Ollama (local):
 ```yaml
 - name: "qwen3.5:35b"              # instance key — used in experiments.toml
   display_name: "Qwen 3.5 35B"     # label for figures and tables
+  route: ollama
   base_url: "http://localhost:11434/v1"
   model_id: "qwen3.5:35b"          # OpenAI-format model string
   provider: Alibaba
@@ -50,10 +65,11 @@ Relation to 0141: Close 0141 as `won't do` after this ticket ships.
   license: open-apache
 ```
 
-Cloud example:
+OpenRouter (cloud):
 ```yaml
 - name: "qwen/qwen3.5-35b-a3b"
   display_name: "Qwen 3.5 35B"
+  route: openrouter
   base_url: "https://openrouter.ai/api/v1"
   model_id: "qwen/qwen3.5-35b-a3b"
   provider: Alibaba
@@ -68,45 +84,71 @@ Cloud example:
   web_search: true
 ```
 
+Claude Code CLI (ticket 0160):
+```yaml
+- name: "claude-sonnet-4-6-cli"
+  display_name: "Claude Sonnet 4.6"
+  route: claude-code-cli
+  model_id: "claude-sonnet-4-6"    # passed as --model flag
+  provider: Anthropic
+  country: US
+  architecture: dense
+  context_window: 1000000
+  price_per_mtok_in: 0.0           # session-auth, billed separately
+  price_per_mtok_out: 0.0
+  size_class: frontier
+  license: commercial
+```
+
 ## Actions
 
 1. Update `models.yaml`:
    - Rename `id` → `name`, `name` → `display_name` throughout.
-   - Add `base_url` to every entry (OpenRouter URL or `http://localhost:11434/v1`).
+   - Add `route` to every entry (enum value from the table above).
+   - Add `base_url` to every OpenAI-SDK-compatible entry; omit for CLI routes.
    - Rename `router_model` → `model_id`.
-   - Remove `router` field from every entry.
+   - Remove old `router` field from every entry.
    - Keep all other fields (provider, country, architecture, etc.) unchanged.
    - Update the header comment (entry count, date).
 
 2. Update the loader/parser (`experiments/` code that reads `models.yaml`):
    - Accept new field names; reject unknown top-level keys (strict mode).
-   - Build `ModelInstance` dataclass with `name`, `display_name`, `base_url`,
-     `model_id`, and remaining metadata fields.
-   - Use `base_url` + `model_id` to construct the OpenAI client call; no more
-     `router` dispatch branch.
+   - Build `ModelInstance` dataclass with `name`, `display_name`, `route`,
+     `base_url` (optional), `model_id`, and remaining metadata fields.
+   - Validate `route` is in the defined enum at load time.
+   - `base_url` required when `route in {openrouter, ollama, openllm}`, forbidden
+     when `route in {claude-code-cli, codex}`.
 
-3. Update `experiments.toml` sweep entries: replace any remaining uses of
+3. Update the runner to dispatch on `route`:
+   - `openrouter` / `ollama` / `openllm`: OpenAI SDK with `base_url` + `model_id`.
+   - `claude-code-cli`: delegate to the adapter from ticket 0160.
+   - `codex`: subprocess `codex -m {model_id} -p {prompt}` (stub for now).
+
+4. Update `experiments.toml` sweep entries: replace any remaining uses of
    old field names in sweep references.
 
-4. Update all downstream code that reads `model.name` or `model.id` to use
+5. Update all downstream code that reads `model.name` or `model.id` to use
    `model.name` (instance key) vs `model.display_name` (figures).
    Specifically: figure-generation scripts must use `display_name`.
 
-5. Update tests in `experiments/tests/` to reflect new schema.
+6. Update tests in `experiments/tests/` to reflect new schema.
 
-6. Close ticket 0141 as `won't do` with cross-reference to this ticket.
+7. Close ticket 0141 as `won't do` with cross-reference to this ticket.
 
 ## Test
 
-- `pytest experiments/tests/test_registry.py` — all entries parse; ModelInstance
-  fields populated; no `router` field present; `base_url` non-empty on all entries.
-- Dry-run sweep: runner constructs API calls using `base_url` + `model_id`; no
-  router-dispatch code path exercised.
+- `pytest experiments/tests/test_registry.py`:
+  - All entries parse; `ModelInstance` fields populated.
+  - `route` is a valid enum value on every entry.
+  - `base_url` present iff `route` is SDK-based.
+  - No old `router` or `router_model` field present.
+- Dry-run sweep: runner dispatches on `route`; OpenAI-SDK path exercises
+  `base_url` + `model_id`; CLI stubs are called with correct `model_id`.
 - Figure script smoke test: labels use `display_name` not `name`.
 
 ## Exit criteria
 
-- `models.yaml` uses `name`, `display_name`, `base_url`, `model_id` throughout.
-- Runner has zero `router`-dispatch branches.
+- `models.yaml` uses `name`, `display_name`, `route`, `base_url`, `model_id`.
+- Runner dispatches on `route`; each path is tested.
 - All figures use `display_name` for axis/legend labels.
 - Tests green; ticket 0141 closed.
