@@ -6,7 +6,7 @@ Author: claude
 Blocked-by: 0139
 
 --- log ---
-2026-04-30T18:00Z claude created — missing-link cell from measurement-framework.md narrative arc point 5
+2026-04-30T18:00Z claude created — missing-link cell from argument.md narrative arc point 5
 
 --- body ---
 
@@ -23,7 +23,7 @@ Adding a single intermediate cell — RAG + reasoning, no web, same
 contribution. Without this cell, the deep-research delta cannot be
 decomposed and is presented as an upper-bound demonstration only.
 
-See `docs/measurement-framework.md` narrative arc point 5 ("Joint
+See `docs/argument.md` narrative arc point 5 ("Joint
 ceiling, with a missing link") and the DAG framing in §"Why the order
 is observed, not forced".
 
@@ -60,7 +60,7 @@ not be conflated with the Coherence isolation.
    `no_think=false` no-op control row for clean grouping.
 4. Update `fig_regimes_scatter` to render the new cell between RAG and
    deep research on the method axis.
-5. Update `docs/measurement-framework.md` narrative arc point 5:
+5. Update `docs/argument.md` narrative arc point 5:
    replace the "either we add the cell or refuse to decompose"
    sentence with the actual measured decomposition once data is in.
 
@@ -84,5 +84,5 @@ For at least one capable model present in both `rag_extract`
   MoE.
 - `fig_regimes_scatter` shows the new cell between RAG and deep
   research.
-- `measurement-framework.md` arc point 5 updated with the measured
+- `argument.md` arc point 5 updated with the measured
   decomposition.
