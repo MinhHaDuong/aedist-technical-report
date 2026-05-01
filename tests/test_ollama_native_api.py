@@ -16,12 +16,16 @@ import yaml
 # Registry: deliberate friction for new query modules
 # ---------------------------------------------------------------------------
 
-OLLAMA_DISPATCH = {"query_direct", "query_multiturn", "query_rag"}
+OLLAMA_DISPATCH = {
+    "query_direct",
+    "query_multiturn",
+    "query_rag",
+    "query_per_fuel",
+    "query_livesearch",
+}
 NO_OLLAMA_DISPATCH = {
     "query",
     "query_fusion",
-    "query_livesearch",
-    "query_per_fuel",
     "query_verification",
 }
 
@@ -267,6 +271,90 @@ def test_query_rag_ollama_uses_native_api(mock_httpx_post, tmp_path):
         ],
     ):
         from aedist.query_rag import main
+
+        main()
+
+    _assert_ollama_native_call(mock_httpx_post)
+
+
+# ---------------------------------------------------------------------------
+# Per-module dispatch: query_per_fuel
+# ---------------------------------------------------------------------------
+
+
+@patch("httpx.post")
+@patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"})
+def test_query_per_fuel_ollama_uses_native_api(mock_httpx_post, tmp_path):
+    mock_httpx_post.return_value = _ollama_response()
+    _write_models_yaml(tmp_path)
+    _write_prompt(tmp_path)
+    corpus_dir = tmp_path / "corpus"
+    corpus_dir.mkdir()
+    (corpus_dir / "doc.md").write_text("# Test\nSome corpus content about power plants.")
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+
+    with patch.object(
+        sys,
+        "argv",
+        [
+            "query_per_fuel",
+            "--prompt",
+            str(tmp_path / "prompt.txt"),
+            "--corpus",
+            str(corpus_dir),
+            "--models",
+            str(tmp_path / "models.yaml"),
+            "--output",
+            str(output_dir),
+        ],
+    ):
+        from aedist.query_per_fuel import main
+
+        main()
+
+    assert mock_httpx_post.call_count == 3, (
+        f"Expected 3 sub-query calls (one per fuel), got {mock_httpx_post.call_count}"
+    )
+    for call in mock_httpx_post.call_args_list:
+        url = call.args[0] if call.args else call.kwargs.get("url", "")
+        assert url.endswith("/api/chat"), f"Expected /api/chat, got: {url}"
+        payload = call.kwargs.get("json", {})
+        assert "num_ctx" in payload.get("options", {}), (
+            f"num_ctx missing from options: {payload.get('options')}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Per-module dispatch: query_livesearch
+# ---------------------------------------------------------------------------
+
+
+@patch("aedist.query_livesearch.run_web_searches")
+@patch("httpx.post")
+@patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key", "TAVILY_API_KEY": "fake-key"})
+def test_query_livesearch_ollama_uses_native_api(mock_httpx_post, mock_web_searches, tmp_path):
+    mock_httpx_post.return_value = _ollama_response()
+    mock_web_searches.return_value = ("Web search context about power plants.", [])
+    _write_models_yaml(tmp_path)
+    _write_prompt(tmp_path)
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+
+    with patch.object(
+        sys,
+        "argv",
+        [
+            "query_livesearch",
+            "--prompt",
+            str(tmp_path / "prompt.txt"),
+            "--models",
+            str(tmp_path / "models.yaml"),
+            "--output",
+            str(output_dir),
+        ],
+    ):
+        from aedist.query_livesearch import main
 
         main()
 

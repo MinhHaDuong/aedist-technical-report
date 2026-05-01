@@ -30,6 +30,7 @@ from .harness import (
     make_client_for_router,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     select_models,
@@ -191,6 +192,13 @@ def main():
                 )
             client = legacy_client
 
+        # Ollama: bypass /v1/ shim to honour num_ctx; resolved once per model
+        if router == "ollama":
+            ollama_cfg = routers_config.get("ollama", {}) if args.model_set else {}
+            ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+            ctx_window = model.get("context_window", 32768)
+            num_ctx = min(ctx_window, 81920)
+
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
                 return
@@ -217,7 +225,15 @@ def main():
                     model,
                     temperature=args.temperature,
                 )
-                result = query_single_turn(client, api_model_id, messages, **api_kwargs)
+                if router == "ollama":
+                    result = query_ollama_native(
+                        ollama_url,
+                        api_model_id,
+                        messages,
+                        num_ctx,
+                    )
+                else:
+                    result = query_single_turn(client, api_model_id, messages, **api_kwargs)
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
                 budget.add(cost)
@@ -239,7 +255,7 @@ def main():
                 }
                 save_json(filepath, record)
                 log.info("  Done. cost=%.6f total=%.6f USD", cost, budget.total_cost)
-            except openai.APIError as e:
+            except (openai.APIError, httpx.HTTPError) as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 
     log.info("Completed. Total cost: %.6f USD", budget.total_cost)
