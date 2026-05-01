@@ -1,64 +1,78 @@
-Last updated: 2026-04-30T17:00Z
+Last updated: 2026-05-01T10:30Z
 
 ## Status
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1135 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
 
-**2026-04-30 (today):** Regimes scatter ticket 0134 pivoted to free Hy3 preview top-end (drops paid GPT-5.5; expires 2026-05-08). Cloud sweeps complete (Hy3 + qwen3.6-35b-a3b × direct/multiturn/RAG, $0.52). Local sweeps running in padme tmux `regimes-fill` (qwen3.6:35b + ministral-3:14b + qwen3.5:9b × 3 methods); patched `query_direct.py` and `query_multiturn.py` to use Ollama native `/api/chat` for `num_ctx` (commits `d27c393`, `031cef2`); added `message.thinking` capture in record JSONs (commit `f379c57`). Argument note `docs/argument.md` written (axes vs lenses, four limits Articulation/Coverage/Coherence/Freshness); renamed from `measurement-framework.md` (ticket 0147). Tickets 0140 (Makefile split), 0141 (registry providers-block refactor), 0142 (rewrite ablation modules verbatim from prompt_complete), 0143 (rerun ablation, blocks on 0142). API-key leak via `ps -ef` discovered + remediated: `~/.claude/scripts/on-start.sh` no longer persists `.env` (`d4653eb`); AEDIST Makefile centralized on `$(UV_RUN) := uv run --project .. --env-file ../.env` (`4000c21`); 5 follow-up tickets opened in Oeconomia / chemin-de-voix / Fuzzy Corpus / Cadens / maiba.
+**2026-05-01 (today):** Opened 5 tickets for experiment infrastructure redesign:
+- **0156** Model instance registry: `name`/`display_name`/`route`/`base_url`/`model_id` schema. Adds `route` enum (openrouter, ollama, openllm, claude-code-cli, codex). Supersedes 0141.
+- **0157** `figures.toml` with ordered named modelsets (`frontier`, `full`, `ablation`). Blocked by 0156.
+- **0158** Structured prompt taxonomy: modules (persona, goal, scope, information, context, constraint) × modalities. Frames multi-turn as temporal decomposition. Independent.
+- **0159** Formal capability evaluation: 8 dimensions (arithmetic, general knowledge, reasoning, web search, multilingual, energy, statistics, geography), ordinal 0–3 scores. Blocked by 0156.
+- **0160** Claude Code CLI route adapter (`claude --print --model`). Blocked by 0156.
 
-**2026-04-29:** Slides fully pgfplots-free: census scatter (ticket 0131, PR #296) and regimes scatter (ticket 0132) replaced with Python PDF figures. Ablation module split: `citation_columns` + `sourcing_ground`, MoE repeat=3 fixed (PR #295).
+All 6 local branches pushed to origin. Tests green.
 
-**2026-04-24:** Full namespace audit completed (epic 0069, 7 tickets, PRs #286–#291).
+**2026-04-30:** Regimes scatter (ticket 0134) pivoted to free Hy3 preview; cloud sweeps complete ($0.52). Argument note `docs/argument.md` written (four limits Articulation/Coverage/Coherence/Freshness). Tickets 0147–0155 opened and progressed. API-key leak via `ps -ef` remediated.
+
+**2026-04-29:** Slides fully pgfplots-free. Ablation module split MoE repeat=3 fixed (PR #295).
 
 ## Blockers
 
 None.
 
-## Priorities (operator, set 2026-04-30)
+## Priorities (set 2026-04-30, confirmed 2026-05-01)
 
-1. **Align ablation and prompt_complete.** Tickets 0142 (rewrite ablation modules as verbatim paragraph extractions from `prompts/prompt_complete.txt`) → 0143 (rerun ablation, blocked-by 0142). Today's modules are conceptually similar but not literal; 0142's exit gate is a `diff` between assembled-modules-composite and `prompt_complete.txt`.
-2. **Verify `prompt_complete` reaches F1 = 1 across multiple runs and models.** Current state of `outputs/direct_complete` (n=1 per model, 12 models): **best F1 = 0.557 (GLM-5 Turbo); none at 1.0; three at 0.000 (Ernie 4.5, GPT-5.4, Grok 4.20).** Mean ≈ 0.35. Consequence: the deep-research arm does not yet ceiling the regimes scatter — verify what's broken (extraction parsing? reference mismatch? actual model failure?) before claiming joint stages-3+4 contribution.
-3. **Set up at least one local model with deep-research capability** (web search + reasoning) to run `prompt_complete` to F1 = 1 consistently — overnight is fine. Dev phase: **coal-only subset** of the reference table, not the full thermal inventory. Candidate path: a thinking-capable Ollama model + Tavily/web wrapper + tool-use loop, or a deepagents-style runner (per ticket 0076's evaluation).
+1. **Align ablation and prompt_complete.** Ticket 0142 (rewrite ablation modules verbatim from `prompt_complete.txt`) → 0143 (rerun). Exit gate: `diff` assembled-composite vs `prompt_complete.txt` = 0.
+2. **Diagnose `direct_complete` F1 = 0.000 rows.** Three capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) score zero — almost certainly a parser failure on structured-document output. Read one raw `.record.json` + confirm before any priority-3 build. If parser is broken, F1 = 1 is unreachable by construction.
+3. **Verify qwen3.5:9b/direct ×3 on coal-only.** Single-run F1 = 0.984 on direct is remarkable; confirm with repeats before deciding whether priority-3 reduces to "use this 9B" vs "build deep-research stack".
+4. **Registry / figures infrastructure (new, 0156→0160).** Blocked only by implementation order: 0156 first, then 0157/0159/0160 in parallel.
 
-## Benchmark-wide F1 leaderboard (2026-04-30, 327 records scanned)
+## Benchmark-wide F1 leaderboard (2026-04-30, 327 records)
 
-**Nobody hits F1 = 1.0.** Top of the leaderboard:
+**Nobody hits F1 = 1.0.** Top:
 
 | F1     | Method              | Model                              | Note |
 |--------|---------------------|------------------------------------|------|
-| 0.988  | decomposed RAG      | DeepSeek V3.2                      | Best-of-runs; the headline `\HeadlineMeanFOne` mean across n=4 is 0.898 |
-| 0.984  | direct (parametric) | **qwen3.5:9b (local)**             | 9B local model on direct extraction — beats most cloud frontier |
-| 0.982  | multiturn / verification | Claude Opus 4.6                |      |
+| 0.988  | decomposed RAG      | DeepSeek V3.2                      | headline mean n=4: 0.898 |
+| 0.984  | direct (parametric) | qwen3.5:9b (local)                 | n=1, needs confirmation |
+| 0.982  | multiturn / verification | Claude Opus 4.6               |      |
 | 0.975  | decomposed          | Gemini 2.5 Flash Lite              |      |
 | 0.968  | RAG wholesale       | Qwen 3.5 122B                      |      |
 
-Two findings worth weighting against the priorities:
+**Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
 
-- **The deep-research arm is BELOW the regimes-scatter ceiling.** Best `direct_complete` = 0.557 vs. best benchmark-wide = 0.988. Stages 3+4 (Coherence + Freshness) appear to *lower* extraction F1 in current data — opposite of the assumed narrative arc. **Three `0.000` rows in `direct_complete` (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20)** are very suspicious for capable models — likely an evaluator parse failure on the structured-document output, not actual model failure. **Diagnose this before any priority-3 build**, because if the parser is broken on `prompt_complete` outputs, F1 = 1 is unreachable by construction.
-- **qwen3.5:9b at 0.984 on direct (n=1)** partially answers priority 3 already — a small local model is near-ceiling without tools / web / reasoning. Verify with repeats on coal-only before banking on it. If real, priority 3 may collapse to "use this 9B as the local extractor" rather than "build a deep-research stack".
+## Open tickets (20)
 
-Quick wins for the return session:
-1. Read one of the `0.000` `direct_complete` records (e.g. `gpt-5.4-run1.record.json`) alongside its `.json` — confirm whether the response contained a valid table the parser missed.
-2. Run qwen3.5:9b/direct ×3 on the coal-only reference to confirm 0.984 reproduces.
-3. Then decide whether priority 3 is "build deep-research locally" or "verify the 9B and ship".
-
-## Non-closed tickets (15)
-
-- 0075 DSPy/MIPROv2 — pending, deferred post-talk
-- 0102 Verify escalation-rate decay (post-talk, blocked by missing v0 fusion + HITL memory)
-- 0118 Source-grounding Phase 2 — LLM adjudication (post-talk, gate 2026-05-27)
-- 0119 Source-grounding Phase 3 — HITL memory (post-talk, blocked by 0118)
-- 0129 Slides narrative restructure (5-act arc)
-- 0133 Pareto scatter Python PDF — pending, deferred (after 0134)
-- 0134 Regimes scatter — pivoted to Hy3 preview free; cloud done, local in flight on padme
+- 0075 DSPy/MIPROv2 — pending, post-talk
+- 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
+- 0118 Source-grounding Phase 2 — LLM adjudication, post-talk, gate 2026-05-27
+- 0119 Source-grounding Phase 3 — HITL memory, blocked by 0118
+- 0129 Slides narrative restructure (5-act arc) — in progress, worktree at /tmp/wt-slides-0129
+- 0133 Pareto scatter Python PDF — deferred, after 0134
+- 0134 Regimes scatter — cloud done, local in flight on padme tmux `regimes-fill`
 - 0135 Regimes scatter visual tuning — blocked by 0134
-- 0136 Regimes scatter local 30B — qwen3.6:35b in registry
+- 0136 Regimes scatter local 30B
 - 0137 Regimes scatter local 8B
 - 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
 - 0140 Split Makefile by workpackage
-- 0141 Registry refactor — one entry per logical model with providers sub-block
-- 0142 Rewrite ablation modules verbatim from prompt_complete (priority 1)
-- 0143 Rerun ablation with verbatim modules (blocked-by 0142)
+- 0142 Rewrite ablation modules verbatim from prompt_complete **(priority 1)**
+- 0143 Rerun ablation with verbatim modules — blocked by 0142
+- 0146 Capability timeline expand and figure
+- 0148 Audit argument by LLMs
+- 0155 Regression test — Ollama native API — open, worktree active
+- 0156 Model instance registry (name/display_name/route/base_url/model_id)
+- 0157 figures.toml ordered modelsets — blocked by 0156
+- 0158 Structured prompt modules/modalities taxonomy
+- 0159 Capability evaluation 8 dimensions — blocked by 0156
+- 0160 Claude Code CLI route adapter — blocked by 0156
+
+## Stale worktrees (review needed)
+
+- `worktree-0145-framework-grounding-map`: ticket 0145 is closed; 3 commits not on main (superseded by PR #311 merge). Safe to delete.
+- `worktree-agent-a579117c972e1f0d7`: Ollama fixes for ticket 0155 (3 commits). May overlap with `worktree-ticket-0155-ollama-regression`.
+- `worktree-ticket-0155-ollama-regression`: active, ticket 0155 open.
+- `/tmp/wt-slides-0129`: active, ticket 0129 in progress.
 
 ## North star
 
