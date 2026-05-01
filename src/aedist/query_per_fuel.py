@@ -25,6 +25,7 @@ import logging
 from datetime import date
 from pathlib import Path
 
+import httpx
 import openai
 
 from .extract import (
@@ -166,7 +167,7 @@ def query_decomposed(
                 result = query_ollama_native(ollama_url, model_id, messages, num_ctx)
             else:
                 result = query_single_turn(client, model_id, messages, **api_kwargs)
-        except openai.APIError as e:
+        except (openai.APIError, httpx.HTTPError) as e:
             log.error("  Error on %s sub-query: %s", fuel, e)
             return None
 
