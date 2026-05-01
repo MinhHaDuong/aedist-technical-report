@@ -255,7 +255,7 @@ def main():
                 }
                 save_json(filepath, record)
                 log.info("  Done. cost=%.6f total=%.6f USD", cost, budget.total_cost)
-            except openai.APIError as e:
+            except (openai.APIError, httpx.HTTPError) as e:
                 log.error("Error querying %s run %d: %s", label, run, e)
 
     log.info("Completed. Total cost: %.6f USD", budget.total_cost)
