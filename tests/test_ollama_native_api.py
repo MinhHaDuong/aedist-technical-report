@@ -152,8 +152,10 @@ def test_query_ollama_native_num_predict():
 
 
 @patch("httpx.post")
-@patch("aedist.harness.OpenAI")
-def test_query_direct_ollama_uses_native_api(mock_openai_cls, mock_httpx_post, tmp_path):
+@patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"})
+def test_query_direct_ollama_uses_native_api(mock_httpx_post, tmp_path):
+    # patch.dict keeps make_client() intact so query_direct.make_client is
+    # never bound to a MagicMock (which would pollute later tests via sys.modules)
     mock_httpx_post.return_value = _ollama_response()
     _write_models_yaml(tmp_path)
     _write_prompt(tmp_path)
@@ -192,8 +194,8 @@ def test_query_direct_ollama_uses_native_api(mock_openai_cls, mock_httpx_post, t
 
 
 @patch("httpx.post")
-@patch("aedist.harness.OpenAI")
-def test_query_multiturn_ollama_uses_native_api(mock_openai_cls, mock_httpx_post, tmp_path):
+@patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"})
+def test_query_multiturn_ollama_uses_native_api(mock_httpx_post, tmp_path):
     mock_httpx_post.return_value = _ollama_response()
     _write_models_yaml(tmp_path)
     _write_prompt(tmp_path)
@@ -234,8 +236,8 @@ def test_query_multiturn_ollama_uses_native_api(mock_openai_cls, mock_httpx_post
 
 
 @patch("httpx.post")
-@patch("aedist.harness.OpenAI")
-def test_query_rag_ollama_uses_native_api(mock_openai_cls, mock_httpx_post, tmp_path):
+@patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"})
+def test_query_rag_ollama_uses_native_api(mock_httpx_post, tmp_path):
     mock_httpx_post.return_value = _ollama_response()
     _write_models_yaml(tmp_path)
     _write_prompt(tmp_path)
