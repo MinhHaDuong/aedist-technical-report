@@ -136,14 +136,18 @@ def load_experiments(path: str) -> dict:
 # Prompt assembly
 # ---------------------------------------------------------------------------
 
-# Module ordering: persona is prepended, all others appended in this order.
+# Persona and overview are prepended (before base); all others appended.
+_BEFORE_BASE = frozenset({"persona", "overview"})
 _MODULE_ORDER = [
     "overview",
-    "citation_columns",
-    "sourcing_ground",
     "narratives",
-    "bibliography",
+    "sourcing_ground",
     "statistics",
+    "data_quality_table",
+    "bibliography",
+    "citation_columns",
+    "observed_vs_projected",
+    "pdp_completeness",
 ]
 KNOWN_MODULES = frozenset(["persona"] + _MODULE_ORDER)
 
@@ -153,8 +157,8 @@ def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
 
     *modules_dir* contains ``base.txt`` and one file per module
     (e.g. ``persona.txt``, ``overview.txt``).  The *module_names* list
-    selects which modules to include.  ``persona`` is prepended before
-    the base; all others are appended in a fixed order.
+    selects which modules to include.  ``persona`` and ``overview`` are
+    prepended before the base; all others are appended in a fixed order.
 
     Raises ``ValueError`` if *module_names* contains unknown names.
     """
@@ -166,11 +170,10 @@ def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     base = (modules_dir / "base.txt").read_text().strip()
     parts_before: list[str] = []
     parts_after: list[str] = []
-    # Sort requested modules into fixed order for reproducibility.
     ordered = [m for m in ["persona"] + _MODULE_ORDER if m in module_names]
     for name in ordered:
         text = (modules_dir / f"{name}.txt").read_text().strip()
-        if name == "persona":
+        if name in _BEFORE_BASE:
             parts_before.append(text)
         else:
             parts_after.append(text)

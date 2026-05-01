@@ -267,15 +267,15 @@ def test_assemble_prompt():
     modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
     # Base only
     base = assemble_prompt(modules_dir, [])
-    assert "Produce a comprehensive CSV table" in base
+    assert "For EVERY thermal power plant" in base
     assert "senior energy analyst" not in base
-    # With persona (prepended)
+    # With persona (prepended before base)
     with_persona = assemble_prompt(modules_dir, ["persona"])
     assert with_persona.startswith("You are a senior energy analyst")
-    assert "Produce a comprehensive CSV table" in with_persona
-    # With overview (appended)
-    with_overview = assemble_prompt(modules_dir, ["overview"])
-    assert with_overview.index("sector overview") > with_overview.index("CSV table")
+    assert "For EVERY thermal power plant" in with_persona
+    # With overview (prepended before base, after persona)
+    with_both = assemble_prompt(modules_dir, ["persona", "overview"])
+    assert with_both.index("thermal power sector") < with_both.index("For EVERY")
 
 
 def test_assemble_prompt_unknown_module_raises():
