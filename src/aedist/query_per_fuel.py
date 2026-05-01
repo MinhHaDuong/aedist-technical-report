@@ -43,6 +43,7 @@ from .harness import (
     make_client_for_router,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     select_models,
@@ -140,6 +141,9 @@ def query_decomposed(
     corpus_text: str,
     budget: BudgetTracker,
     model: dict,
+    *,
+    ollama_url: str | None = None,
+    num_ctx: int | None = None,
     **api_kwargs,
 ) -> dict | None:
     """Run 3 sub-queries and merge results. Returns record dict or None."""
@@ -158,7 +162,10 @@ def query_decomposed(
         ]
 
         try:
-            result = query_single_turn(client, model_id, messages, **api_kwargs)
+            if ollama_url and num_ctx:
+                result = query_ollama_native(ollama_url, model_id, messages, num_ctx)
+            else:
+                result = query_single_turn(client, model_id, messages, **api_kwargs)
         except openai.APIError as e:
             log.error("  Error on %s sub-query: %s", fuel, e)
             return None
@@ -296,6 +303,16 @@ def main():
             log.info("Querying %s run %d/%d (decomposed RAG)...", label, run, args.repeat)
 
             api_model_id = model.get("router_model", model_id)
+            # Ollama: bypass /v1/ shim to honour num_ctx
+            ollama_url_val = None
+            num_ctx_val = None
+            if router == "ollama":
+                ollama_cfg = (
+                    experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
+                )
+                ollama_url_val = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+                ctx_window = model.get("context_window", 32768)
+                num_ctx_val = min(ctx_window, 81920)
             dec_api_kwargs = build_api_kwargs(
                 model,
                 temperature=args.temperature,
@@ -306,6 +323,8 @@ def main():
                 corpus_text,
                 budget,
                 model,
+                ollama_url=ollama_url_val,
+                num_ctx=num_ctx_val,
                 **dec_api_kwargs,
             )
 

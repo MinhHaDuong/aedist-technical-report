@@ -30,6 +30,7 @@ from .harness import (
     make_client_for_router,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     select_models,
@@ -217,7 +218,21 @@ def main():
                     model,
                     temperature=args.temperature,
                 )
-                result = query_single_turn(client, api_model_id, messages, **api_kwargs)
+                if router == "ollama":
+                    ollama_cfg = (
+                        experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
+                    )
+                    ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+                    ctx_window = model.get("context_window", 32768)
+                    num_ctx = min(ctx_window, 81920)
+                    result = query_ollama_native(
+                        ollama_url,
+                        api_model_id,
+                        messages,
+                        num_ctx,
+                    )
+                else:
+                    result = query_single_turn(client, api_model_id, messages, **api_kwargs)
                 usage = result.get("usage") or {}
                 cost = compute_cost(usage, model)
                 budget.add(cost)
