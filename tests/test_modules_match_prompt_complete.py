@@ -40,11 +40,11 @@ def test_modules_cover_prompt_complete():
     actual = _content_lines(assembled)
 
     missing = expected - actual
-    assert not missing, f"Lines in prompt_complete but not in assembled composite:\n" + "\n".join(
+    assert not missing, "Lines in prompt_complete but not in assembled composite:\n" + "\n".join(
         sorted(missing)
     )
 
     extra = actual - expected
-    assert not extra, f"Lines in assembled composite but not in prompt_complete:\n" + "\n".join(
+    assert not extra, "Lines in assembled composite but not in prompt_complete:\n" + "\n".join(
         sorted(extra)
     )
