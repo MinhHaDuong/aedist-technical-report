@@ -14,7 +14,7 @@ Author: claude
 
 ## Context
 
-`docs/measurement-framework.md` introduces four limits (Articulation,
+`docs/argument.md` introduces four limits (Articulation,
 Coverage, Coherence, Freshness) split 2/2 between data and answer
 quality. `docs/quality-grounding.md` independently maps the project's
 operational metrics to philosophy-of-science frameworks (van Fraassen
@@ -24,7 +24,7 @@ The two documents must be coherent before we commit to the framework
 as the paper's argument (ticket 0147 renames it accordingly).
 
 **Known terminology collision: "Coverage".** In
-`measurement-framework.md` it is a data-quality *limit* — facts the
+`argument.md` it is a data-quality *limit* — facts the
 model never saw in training. In `quality-grounding.md` it is a
 recall *metric* — `n_matched / n_reference` (`metrics.py:61`). One
 of these names must change, or the disambiguation must be made
@@ -33,7 +33,7 @@ loud and explicit.
 ## Actions
 
 1. Read both docs end-to-end. Produce a mapping table: each
-   measurement-framework concept ↔ each quality-grounding concept,
+   argument concept ↔ each quality-grounding concept,
    marking *exact match* / *approximate match* / *collision* /
    *orphan*.
 2. Resolve the Coverage collision. Options: rename the limit (e.g.,
