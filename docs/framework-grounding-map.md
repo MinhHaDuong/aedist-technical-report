@@ -1,9 +1,9 @@
 # Framework-grounding concept map
 
-*Mapping between `measurement-framework.md` (four limits, three
+*Mapping between `argument.md` (four limits, three
 qualities) and `quality-grounding.md` (philosophy of science,
-professional codes, operational metrics). After ticket 0147, this
-content folds into `argument.md`.*
+professional codes, operational metrics). This content will fold into
+`argument.md` once the framework section is stable.*
 
 ## Concept mapping table
 
@@ -47,7 +47,7 @@ code and output tables already parenthesise the metric as "Coverage
 in `glossaire.tex`. No rename is needed. The resolution is
 disambiguation prose on first use:
 
-- In `measurement-framework.md`, when introducing the Coverage limit:
+- In `argument.md`, when introducing the Coverage limit:
   add a parenthetical noting that the operational metric is recall
   (`n_matched / n_reference`).
 - In `quality-grounding.md`, the existing parenthetical "Coverage
@@ -80,7 +80,7 @@ Resolution: both meanings are valid and complementary. On first use in
 each document, qualify which sense is intended:
 
 - Framework: "Coherence (weak, internal — claim-level self-consistency)"
-  is already present in `measurement-framework.md`.
+  is already present in `argument.md`.
 - Grounding: "Coherence (DQAF — table-level structural consistency)" on
   first use in §4 of `quality-grounding.md`.
 
@@ -95,6 +95,6 @@ These are *not* synonyms despite both involving time:
 
 The project measures wall-clock time (Timeliness) but does not yet
 measure input-data currency against a dated reference (Freshness). This
-gap is noted in `measurement-framework.md`'s empirical caveat: the
+gap is noted in `argument.md`'s empirical caveat: the
 deep-research cell that should close Freshness has not yet reached its
 expected ceiling.
