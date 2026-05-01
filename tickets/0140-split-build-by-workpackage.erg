@@ -9,7 +9,10 @@ Author: claude
 2026-04-30T11:18Z claude note renumbered from 0112 (collision with 0112-slides-narrative-reframe); fixed coding.md → coding-python.md reference
 
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:b59926afa707 scope:split 225-line Makefile into analysis.mk, paper.mk, slides.mk with dispatch-only top level risk:medium — Makefile changes can silently break builds
+2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:b59926afa707
+
 --- body ---
+**Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. Makefile refactoring requires careful coverage verification to avoid silent build breaks. Recommend manual triage for scheduling.
 ## Context
 
 The current `Makefile` (225 lines) already tags its targets by workpackage
