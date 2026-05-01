@@ -1,6 +1,6 @@
 %erg v1
 Title: Regression test — query_*.py must use Ollama native /api/chat for local models
-Status: open
+Status: closed
 Created: 2026-04-30
 Author: claude
 
@@ -9,6 +9,7 @@ Author: claude
 2026-04-30T20:05Z claude sweep-pick: picked scope:"add one test file asserting all query_*.py use Ollama /api/chat for local models" risk:"low" reason:"lowest risk candidate; test-adding task; well-scoped single file output"
 2026-04-30T21:30Z human note — close only when PR#309 merges (test committed but not yet on main)
 2026-04-30T21:38Z claude sweep-skip: cooldown-recent-pick expires:2026-05-01T04:05Z
+2026-05-01T06:58Z claude status closed — PR#309 merged 2026-04-30T20:17Z; ollama native API regression test on main
 
 --- body ---
 ## Context
