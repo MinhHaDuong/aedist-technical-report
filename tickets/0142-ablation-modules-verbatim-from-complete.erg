@@ -1,6 +1,6 @@
 %erg v1
 Title: Rewrite ablation modules to verbatim-extract from prompt_complete
-Status: doing
+Status: closed
 Created: 2026-04-30
 Author: claude
 
@@ -10,6 +10,9 @@ Author: claude
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:a7490e8008b6 scope:rewrite 8 ablation modules verbatim from prompt_complete, create 3 new modules, verify diff risk:low — text/prompt file edits only
 2026-05-01T12:00Z claude claimed
 2026-05-01T12:30Z claude status doing — raid 0142: all 11 modules written, harness updated, equivalence test passing, experiments.toml composites updated
+2026-05-02T06:18Z claude claimed — raid session, worktree raid-0142
+2026-05-02T06:18Z claude note decomposition: citation_columns/sourcing_ground repurposed to Quality instruction bullets (Source columns embedded in base table header, can't extract separately); overview moved before base in assembly order; 3 orphan QI bullets folded into sourcing_ground (1+2), pdp_completeness (5+6+7)
+2026-05-02T06:30Z claude status closed — all 11 modules verbatim-extracted, section headers included, equivalence test passes (0 content drift, 4 whitespace-only diffs), README updated, 21 tests pass + 1 xfail
 --- body ---
 ## Context
 
