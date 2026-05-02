@@ -298,6 +298,20 @@ not falsifiable within this paper's design.
 
 ---
 
+## Preregistration workflow rule
+
+Once the confirmatory hypotheses (H1, H2, H3, H6, H7) are submitted to
+OSF Registries and timestamped, they are **frozen**. Any modification to
+a registered hypothesis — threshold, decision rule, sweep configuration,
+or operational definition — requires a registered amendment on OSF before
+the modified sweep is run. Exploratory hypotheses (H4, H5) and
+observational claims (O1–O3) are not subject to this constraint.
+
+OSF registration draft: `docs/preregistration-osf.md`.
+Registry DOI: *to be filled after submission.*
+
+---
+
 ## Confirmatory / exploratory split for preregistration (ticket 0150)
 
 **Preregisterable (confirmatory):** H1, H2, H3, H6, H7. These have
