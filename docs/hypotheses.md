@@ -20,6 +20,43 @@ effect sizes.*
 
 ---
 
+## Pending revisions (2026-05-02)
+
+This document is **provisional**. Two changes are in scope before the
+confirmatory subset can be preregistered (ticket 0150).
+
+**1. Revise against empirical reality.** The H1 evidence base — best
+n=1 F1 = 0.557 on `prompt_complete`, with 3/12 frontier models
+returning F1 = None due to a parser artifact — is too sparse to anchor
+a confirmatory test. Before formalizing H1–H7, run `prompt_complete`
+on SOTA deep-research mode (cloud, web + reasoning) at `repeat = 3` to
+attempt to falsify the null *"SOTA delivers F1 = 1 with full
+traceability."* If the null holds on richer evidence, H1, H2, H3, and
+H7 will be reframed or merged. Tracked as ticket 0161; 0149 sits
+`pending` on this work, which transitively blocks 0150.
+
+**2. Add the second tension: ambiguity vs. trust.** F1 captures only
+the accuracy/coverage axis. The verification framework introduces a
+second axis — *ambiguity vs. trust* — which is a property of the
+human–model pair, not the model alone. A response with F1 = 0.95 that
+fabricates citations is not equivalent to a response with F1 = 0.90
+whose every claim resolves to a verifiable source. Two presentation
+graphs are planned:
+
+1. **Accuracy vs. coverage** — decompose F1 into precision and recall
+   per model × method.
+2. **F1 vs. trust** — trust scored on the verification scale (citation
+   validity, claim grounding). The trust score can be applied at row
+   level (whole response) or cell level (per claim). Lets us see
+   whether models with comparable F1 differ in trust, and whether
+   high-trust regimes sacrifice F1.
+
+H4 currently captures part of this axis as an exploratory hypothesis.
+A sharper trust hypothesis (provisionally H8) will be added once the
+SOTA runs in 0161 yield calibration data on the trust scale.
+
+---
+
 ### H1 — Deep-research saturation (cloud)
 
 - **Argument anchor:** §Narrative arc, Part 2 (lines 257–264); §Empirical
@@ -38,17 +75,20 @@ effect sizes.*
 - **Sweep:** `sweep_direct_complete` — modify: `repeat` 1→3,
   `model_set` → `modelset_frontier_10labs` (12 models). Re-run after
   parser fix.
-- **Decision rule:**
-  - *Supported:* Mean F1 ≥ 0.95 across ≥3 frontier models at n=3,
-    with bootstrap 95% CI lower bound ≥ 0.90.
-  - *Falsified:* No model achieves mean F1 ≥ 0.90 at n=3 after parser
-    fix confirmed.
-  - *Inconclusive:* 1–2 models reach ≥0.95 but the majority do not, or
-    CI straddles 0.90.
+- **Decision rule:** Let M = `modelset_frontier_10labs` (12 models).
+  For each model m ∈ M, let F̄(m) be the per-model mean F1 across n=3
+  reps and CI₉₅(m) the bootstrap 95% confidence interval of F̄(m).
+  - *Supported:* At least 3 of the 12 models in M have F̄(m) ≥ 0.95
+    AND the lower bound of CI₉₅(m) ≥ 0.90.
+  - *Falsified:* No model in M has F̄(m) ≥ 0.90 (parser fix confirmed).
+  - *Inconclusive:* 1 or 2 models in M satisfy the *Supported*
+    threshold; or some model has F̄(m) ≥ 0.90 but its CI₉₅(m) lower
+    bound < 0.90.
 - **Current evidence:** Best n=1 F1 = 0.557 (GLM-5 Turbo); mean across
   cell ≈ 0.35; 3/12 models at None (parser failure). **Currently
   contradicted** — 6/6 audit models flagged this (audit finding #1).
-- **Status:** Confirmatory, conditional on parser fix.
+- **Status:** Confirmatory, conditional on parser fix and on the SOTA
+  empirical baseline (ticket 0161; see *Pending revisions*).
 
 ---
 

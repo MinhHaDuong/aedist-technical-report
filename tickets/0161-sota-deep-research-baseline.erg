@@ -1,0 +1,88 @@
+%erg v1
+Title: SOTA deep-research empirical baseline — F1=1 + traceability null
+Status: open
+Created: 2026-05-02
+Author: claude
+
+--- log ---
+2026-05-02T14:00Z claude created — blocks 0149; calibrates trust axis for hypotheses revision
+
+--- body ---
+
+## Context
+
+Ticket 0149 (PR #316) extracted hypotheses H1–H7 from `argument.md`,
+but the H1 evidence base is too sparse to anchor a confirmatory test:
+best n=1 F1 = 0.557 on `prompt_complete`, with 3/12 frontier models
+returning F1 = None due to a parser artifact (STATE.md priority 2).
+
+Initial hunch (STATE.md): SOTA frontier models in deep-research mode
+with **complete prompts** can deliver F1 ≈ 1 *and* full traceability
+(citations resolve, content matches claim). If that null holds on
+richer evidence, H1–H7 collapse or change shape. We need this empirical
+baseline before preregistering anything.
+
+This ticket also produces the calibration data for the second tension
+identified during PR #316 review: the **ambiguity / trust** axis,
+orthogonal to F1. Outputs are scored on both axes (accuracy/coverage
+and trust) so the two-graph plan in `hypotheses.md` ("Pending
+revisions" section) can be realised.
+
+## Actions
+
+1. Resolve the evaluator parser artifact (STATE.md priority 2): make
+   `evaluate_extraction()` parse `prompt_complete` outputs from
+   GPT-5.4, Grok 4.20, Ernie 4.5 Thinking. Confirm via dry-run on
+   archived run records — F1 should no longer return None.
+
+2. Design sweep `sweep_direct_complete_v2` in `experiments.toml`:
+   - `model_set = "modelset_frontier_10labs"` (12 models)
+   - `prompt = "prompt_complete"`
+   - `regime = "direct_web_reasoning"` (deep-research mode)
+   - `repeat = 3` (mandatory; MoE non-determinism per
+     `.claude/rules/experiment-design.md`)
+   - `seed = 42`, provider pinning where supported.
+   - Capture full traceability metadata: citations (URL + extracted
+     snippet), retrieval log, reasoning trace where exposed.
+
+3. Test one before blasting (per workflow rules): one real call per
+   regime first; inspect token counts and content quality before the
+   full batch.
+
+4. Score on two axes:
+   - **Accuracy/coverage:** F1 macro on coal-only dev subset
+     (existing pipeline).
+   - **Trust:** verification-scale rubric on emitted citations
+     (URL resolves, content contains claim) and on claim grounding
+     (each numeric claim traces to a source line). Applicable per
+     claim (cell) or per response (row).
+
+5. Wire `trust_score` into `RunRecord` and `records_to_metrics()` in
+   the same PR (per ADR-7 / `experiment-design.md`).
+
+6. Write a `src/aedist/plot_*.py` script for the F1 vs. trust scatter
+   and wire it as a `.pdf` artifact in the Makefile (per `writing.md`:
+   no inline plots).
+
+7. Report outcome in `docs/hypotheses.md` "Pending revisions" section:
+   null falsified / null holds / inconclusive, with implications for
+   H1–H7 wording. Promote a sharpened trust hypothesis (provisional
+   H8) if the calibration warrants a sharp prediction.
+
+## Test
+
+Adherence test (TDD red): `tests/test_records_metrics_trust.py` —
+assert that `records_to_metrics(record)` returns a dict containing
+`trust_score` whenever the record's regime includes deep research.
+
+## Exit criteria
+
+- Parser artifact resolved (no more `F1 = None` on `prompt_complete`).
+- Sweep run with full results in `measurements.jsonl`, including
+  per-claim citation metadata and `trust_score`.
+- F1 vs. trust plot artifact generated and wired into the Makefile DAG.
+- `docs/hypotheses.md` revised: H1–H7 confirmed unchanged, reframed,
+  or merged based on results; H8 (trust) added if calibration supports
+  a sharp prediction.
+- Ticket 0149 unblocked (status closed); 0150 preregistration
+  unblocked.
