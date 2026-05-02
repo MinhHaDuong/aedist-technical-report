@@ -1,8 +1,8 @@
-Last updated: 2026-05-01T10:30Z
+Last updated: 2026-05-02T11:45Z
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1135 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1142 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
 
 **2026-05-01 (today):** Opened 5 tickets for experiment infrastructure redesign:
 - **0156** Model instance registry: `name`/`display_name`/`route`/`base_url`/`model_id` schema. Adds `route` enum (openrouter, ollama, openllm, claude-code-cli, codex). Supersedes 0141.
@@ -42,25 +42,20 @@ None.
 
 **Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
 
-## Open tickets (20)
+## Open tickets (17)
 
 - 0075 DSPy/MIPROv2 — pending, post-talk
 - 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
 - 0118 Source-grounding Phase 2 — LLM adjudication, post-talk, gate 2026-05-27
 - 0119 Source-grounding Phase 3 — HITL memory, blocked by 0118
-- 0129 Slides narrative restructure (5-act arc) — in progress, worktree at /tmp/wt-slides-0129
 - 0133 Pareto scatter Python PDF — deferred, after 0134
 - 0134 Regimes scatter — cloud done, local in flight on padme tmux `regimes-fill`
 - 0135 Regimes scatter visual tuning — blocked by 0134
-- 0136 Regimes scatter local 30B
-- 0137 Regimes scatter local 8B
 - 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
 - 0140 Split Makefile by workpackage
 - 0142 Rewrite ablation modules verbatim from prompt_complete **(priority 1)**
 - 0143 Rerun ablation with verbatim modules — blocked by 0142
 - 0146 Capability timeline expand and figure
-- 0148 Audit argument by LLMs
-- 0155 Regression test — Ollama native API — open, worktree active
 - 0156 Model instance registry (name/display_name/route/base_url/model_id)
 - 0157 figures.toml ordered modelsets — blocked by 0156
 - 0158 Structured prompt modules/modalities taxonomy
@@ -69,10 +64,8 @@ None.
 
 ## Stale worktrees (review needed)
 
-- `worktree-0145-framework-grounding-map`: ticket 0145 is closed; 3 commits not on main (superseded by PR #311 merge). Safe to delete.
-- `worktree-agent-a579117c972e1f0d7`: Ollama fixes for ticket 0155 (3 commits). May overlap with `worktree-ticket-0155-ollama-regression`.
-- `worktree-ticket-0155-ollama-regression`: active, ticket 0155 open.
-- `/tmp/wt-slides-0129`: active, ticket 0129 in progress.
+- `verify-315`: detached HEAD, no associated open ticket — investigate and remove.
+- `/tmp/wt-slides-0129`: ticket 0129 closed — check if any work needs merging, then delete.
 
 ## North star
 
