@@ -1,4 +1,4 @@
-Last updated: 2026-05-02T11:45Z
+Last updated: 2026-05-02T14:30Z
 
 ## Status
 
@@ -42,7 +42,7 @@ None.
 
 **Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
 
-## Open tickets (17)
+## Open tickets (22 open, 3 pending)
 
 - 0075 DSPy/MIPROv2 — pending, post-talk
 - 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
@@ -51,11 +51,19 @@ None.
 - 0133 Pareto scatter Python PDF — deferred, after 0134
 - 0134 Regimes scatter — cloud done, local in flight on padme tmux `regimes-fill`
 - 0135 Regimes scatter visual tuning — blocked by 0134
+- 0138 Audit experiment parameter confounds; fix missing fields in JobSpec/RunRecord
 - 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
 - 0140 Split Makefile by workpackage
+- 0141 Registry refactor — one entry per model, providers as sub-block (superseded by 0156)
 - 0142 Rewrite ablation modules verbatim from prompt_complete **(priority 1)**
 - 0143 Rerun ablation with verbatim modules — blocked by 0142
+- 0144 Add RAG + reasoning cell (no web) to isolate Coherence delta
 - 0146 Capability timeline expand and figure
+- 0150 Preregister confirmatory hypotheses on OSF — pending review
+- 0151 Conduct literature review against the argument
+- 0152 Align slides on the argument's three-part structure
+- 0153 Redesign experiments along the argument's hypotheses
+- 0154 Run the redesigned experiments and record verdicts
 - 0156 Model instance registry (name/display_name/route/base_url/model_id)
 - 0157 figures.toml ordered modelsets — blocked by 0156
 - 0158 Structured prompt modules/modalities taxonomy
@@ -66,6 +74,7 @@ None.
 
 - `verify-315`: detached HEAD, no associated open ticket — investigate and remove.
 - `/tmp/wt-slides-0129`: ticket 0129 closed — check if any work needs merging, then delete.
+- `.claude/worktrees/raid-0142`: ticket 0142 closed (PRs #313/#319/#320 merged) — safe to remove.
 
 ## North star
 
