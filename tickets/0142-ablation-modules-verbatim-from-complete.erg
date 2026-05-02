@@ -1,6 +1,6 @@
 %erg v1
 Title: Rewrite ablation modules to verbatim-extract from prompt_complete
-Status: open
+Status: closed
 Created: 2026-04-30
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-04-30T13:25Z claude created — option B from prompt-prompt-complete-ablation alignment discussion 2026-04-30
 
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:a7490e8008b6 scope:rewrite 8 ablation modules verbatim from prompt_complete, create 3 new modules, verify diff risk:low — text/prompt file edits only
+2026-05-02T15:10Z claude status closed — work done in PRs #313 and #319; ticket not closed at merge time
 --- body ---
 ## Context
 
