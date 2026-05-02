@@ -1,8 +1,9 @@
 """Verify that assembling all modules reproduces prompt_complete.txt content.
 
 Every non-blank, non-header line in prompt_complete.txt must appear in the
-assembled composite, and vice versa.  Headers (lines starting with #) and
-blank lines are structural scaffolding that modules don't replicate.
+assembled composite, and vice versa.  Headers and blank lines are stripped
+for comparison since assembly joins modules with \\n\\n (which may differ
+from the original whitespace).
 """
 
 import re
