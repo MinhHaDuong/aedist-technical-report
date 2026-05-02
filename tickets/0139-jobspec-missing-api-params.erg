@@ -10,7 +10,10 @@ Author: claude
 
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:931962ecd1e1 scope:add seed, provider_order, max_tokens, num_ctx to JobSpec; wire through worker and evaluate; forbid unknown fields risk:medium — touches worker execution path and evaluate backfill across multiple files
 2026-05-01T00:00Z claude note path-reference in 0144 body updated to docs/argument.md (ticket 0147 rename)
+2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:931962ecd1e1
+
 --- body ---
+**Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. The seed silent-drop bug fix is correct but the scope is substantial (schema + wiring + backfill). Recommend triage for prioritization.
 
 ## Context
 
