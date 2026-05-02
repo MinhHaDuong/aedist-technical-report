@@ -1,12 +1,15 @@
 %erg v1
 Title: Extract main results and hypotheses to be tested
-Status: open
+Status: closed
 Created: 2026-04-30
 Author: claude
-Blocked-by: 0148
 
 --- log ---
 2026-04-30T19:00Z claude created
+2026-05-02T01:11Z claude claimed
+2026-05-02T01:15Z claude status doing — writing hypotheses.md from argument.md + audit findings
+2026-05-02T01:25Z claude status closed — docs/hypotheses.md committed, PR #316 opened
+2026-05-02T13:00Z claude note rebased onto main; PR #316 narrowed to docs/hypotheses.md + this status close (audit infra and ticket housekeeping landed independently via PRs #314, #317, #318)
 
 --- body ---
 
