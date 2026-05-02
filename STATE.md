@@ -1,4 +1,4 @@
-Last updated: 2026-05-01T10:30Z
+Last updated: 2026-05-02T08:55Z
 
 ## Status
 
@@ -23,7 +23,7 @@ None.
 
 ## Priorities (set 2026-04-30, confirmed 2026-05-01)
 
-1. **Align ablation and prompt_complete.** Ticket 0142 (rewrite ablation modules verbatim from `prompt_complete.txt`) → 0143 (rerun). Exit gate: `diff` assembled-composite vs `prompt_complete.txt` = 0.
+1. **Rerun ablation with verbatim modules.** Ticket 0142 closed (PR #313). Ticket 0143 (rerun) now unblocked. Exit gate: `diff` assembled-composite vs `prompt_complete.txt` = 0 (verified).
 2. **Diagnose `direct_complete` F1 = 0.000 rows.** Three capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) score zero — almost certainly a parser failure on structured-document output. Read one raw `.record.json` + confirm before any priority-3 build. If parser is broken, F1 = 1 is unreachable by construction.
 3. **Verify qwen3.5:9b/direct ×3 on coal-only.** Single-run F1 = 0.984 on direct is remarkable; confirm with repeats before deciding whether priority-3 reduces to "use this 9B" vs "build deep-research stack".
 4. **Registry / figures infrastructure (new, 0156→0160).** Blocked only by implementation order: 0156 first, then 0157/0159/0160 in parallel.
@@ -42,7 +42,7 @@ None.
 
 **Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
 
-## Open tickets (20)
+## Open tickets (19)
 
 - 0075 DSPy/MIPROv2 — pending, post-talk
 - 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
@@ -56,8 +56,7 @@ None.
 - 0137 Regimes scatter local 8B
 - 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
 - 0140 Split Makefile by workpackage
-- 0142 Rewrite ablation modules verbatim from prompt_complete **(priority 1)**
-- 0143 Rerun ablation with verbatim modules — blocked by 0142
+- 0143 Rerun ablation with verbatim modules — unblocked (0142 merged in PR #313)
 - 0146 Capability timeline expand and figure
 - 0148 Audit argument by LLMs
 - 0155 Regression test — Ollama native API — open, worktree active
