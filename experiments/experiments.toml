@@ -1,17 +1,10 @@
 # AEDIST Benchmark — Experiment Configuration
-# Model sets and router definitions. Registry in models.yaml.
+# Model sets. Registry in models.yaml (includes per-model base_url).
 
 [paths]
 outputs = "experiments/outputs"
 measurements = "measurements.jsonl"
 reference = "data/reference/vietnam_thermal_v1.csv"
-
-[routers.openrouter]
-base_url = "https://openrouter.ai/api/v1"
-env_key = "OPENROUTER_API_KEY"
-
-[routers.ollama]
-base_url = "http://localhost:11434/v1"
 
 # ---------------------------------------------------------------------------
 # Model sets — explicit ID lists referencing models.yaml entries

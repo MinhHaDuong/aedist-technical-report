@@ -23,7 +23,9 @@ def main():
     parser = argparse.ArgumentParser(description="List model names for Makefile targets")
     parser.add_argument("models", help="Path to models.yaml")
     parser.add_argument("--set", required=True, dest="model_set", help="Model set name")
-    parser.add_argument("--experiments", default="experiments.toml", help="Path to experiments.toml")
+    parser.add_argument(
+        "--experiments", default="experiments.toml", help="Path to experiments.toml"
+    )
     parser.add_argument(
         "--format",
         choices=["short", "full", "padme-short"],
@@ -52,18 +54,18 @@ def main():
         sys.exit(1)
 
     set_ids = set(model_set["model_ids"])
-    selected = [m for m in models if m["id"] in set_ids]
-    missing = set_ids - {m["id"] for m in selected}
+    selected = [m for m in models if m["name"] in set_ids]
+    missing = set_ids - {m["name"] for m in selected}
     if missing:
         print(f"Error: IDs not found in registry: {sorted(missing)}", file=sys.stderr)
         sys.exit(1)
 
     if args.format == "full":
-        names = [m["id"] for m in selected]
+        names = [m["name"] for m in selected]
     elif args.format == "padme-short":
-        names = [m["id"].replace(":", "-") for m in selected]
+        names = [m["name"].replace(":", "-") for m in selected]
     else:
-        names = [short_name(m["id"]) for m in selected]
+        names = [short_name(m["name"]) for m in selected]
 
     print(" ".join(names))
 

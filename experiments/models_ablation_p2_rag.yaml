@@ -1,10 +1,11 @@
 # Phase 2 RAG ablation — 2 models with strongest opposite-direction signal
 # from Phase 1 (ticket 0066). DeepSeek V3.2 (-27.4pp) vs Kimi K2 (+25.8pp).
 
-- id: "deepseek/deepseek-v3.2"
-  router: openrouter
-  router_model: "deepseek/deepseek-v3.2"
-  name: "DeepSeek V3.2"
+- name: "deepseek/deepseek-v3.2"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "deepseek/deepseek-v3.2"
+  display_name: "DeepSeek V3.2"
   provider: DeepSeek
   country: CN
   architecture: moe
@@ -16,10 +17,11 @@
   license: open-MIT
   web_search: true
 
-- id: "moonshotai/kimi-k2-thinking"
-  router: openrouter
-  router_model: "moonshotai/kimi-k2-thinking"
-  name: "Kimi K2 Thinking"
+- name: "moonshotai/kimi-k2-thinking"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "moonshotai/kimi-k2-thinking"
+  display_name: "Kimi K2 Thinking"
   provider: "Moonshot AI"
   country: CN
   architecture: moe
