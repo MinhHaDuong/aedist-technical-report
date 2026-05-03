@@ -75,6 +75,7 @@ None.
 - `verify-315`: detached HEAD, no associated open ticket — investigate and remove.
 - `/tmp/wt-slides-0129`: ticket 0129 closed — check if any work needs merging, then delete.
 - `.claude/worktrees/raid-0142`: ticket 0142 closed (PRs #313/#319/#320 merged) — safe to remove.
+- `.claude/worktrees/agent-ace1b9a565323f258` (branch `ticket/0156-model-registry-refactor`): partial Python migration from failed 0156 raid — useful reference for ticket 0161 but safe to remove after consulting.
 
 ## North star
 
