@@ -1,6 +1,6 @@
 %erg v1
 Title: Model registry becomes model instance registry (Name, DisplayName, baseURL, modelID)
-Status: open
+Status: closed
 Created: 2026-05-01
 Author: claude
 
@@ -8,6 +8,7 @@ Author: claude
 2026-05-01T10:00Z claude created — supersedes 0141 per design discussion
 2026-05-01T10:15Z claude note amended — added `route` enum field; Claude Code CLI route split to ticket 0160
 2026-05-03T10:00Z claude note split — raid hit budget mid-migration; YAML done, Python deferred to ticket 0161; this ticket now covers YAML + shim + tests only
+2026-05-03T10:15Z claude status closed — PR #322 merged; Python migration in ticket 0161
 
 --- body ---
 ## Context
