@@ -36,6 +36,9 @@ VALID_LICENSES = {"commercial", "open-apache", "open-MIT", "open-llama", "open",
 VALID_ROUTES = ROUTES_REQUIRE_BASE_URL | ROUTES_NO_BASE_URL
 
 
+BANNED_FIELDS_V1 = {"id", "router", "router_model"}
+
+
 def test_schema_validation(models):
     """Each model entry has all required fields with valid values (v2 schema)."""
     for model in models:
@@ -43,6 +46,8 @@ def test_schema_validation(models):
         present = set(model.keys())
         missing = REQUIRED_FIELDS_V2 - present
         assert not missing, f"{model_name} missing fields: {missing}"
+        leftover = BANNED_FIELDS_V1 & present
+        assert not leftover, f"{model_name} still has v1 fields: {leftover}"
 
         assert model["country"] in VALID_COUNTRIES, (
             f"{model_name}: invalid country {model['country']}"
