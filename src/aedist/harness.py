@@ -28,7 +28,17 @@ log = logging.getLogger(__name__)
 def load_models(path: str) -> list[dict]:
     """Load model registry from YAML file."""
     with open(path) as f:
-        return yaml.safe_load(f)
+        models = yaml.safe_load(f) or []
+    # Backward-compat aliases: callers still using old field names continue to work
+    # while the Python migration (ticket 0161) is in progress.
+    for m in models:
+        if "name" in m and "id" not in m:
+            m["id"] = m["name"]
+        if "route" in m and "router" not in m:
+            m["router"] = m["route"]
+        if "model_id" in m and "router_model" not in m:
+            m["router_model"] = m["model_id"]
+    return models
 
 
 def select_models(models: list[dict], ids: list[str]) -> list[dict]:
