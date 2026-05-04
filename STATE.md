@@ -1,4 +1,17 @@
-Last updated: 2026-05-04T10:30Z
+Last updated: 2026-05-04T10:50Z
+
+## North star
+
+Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. **Not which model is best, but which method produces trustworthy statistics with locatable errors.** PyPSA-ASEAN remains the long-term target; the benchmark de-risks v1 pipeline design choices. See MASTERPLAN.md.
+
+## Current milestone: Econom'IA 2026 — Cergy, 2026-05-27
+
+Conference talk at Thema/Cergy. Deliverable: French slides.
+Title: *Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics*
+Thesis: 4 quality criteria (Grounding/Auditability/Freshness/Confidence) — each slide section lifts one criterion.
+Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.sciencesconf.org/
+
+**Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference.
 
 ## Status
 
@@ -42,7 +55,7 @@ None.
 
 **Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
 
-## Open tickets (23)
+## Open tickets (22)
 
 - 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
 - 0118 Source-grounding Phase 2 — LLM adjudication, post-talk, gate 2026-05-27
@@ -52,7 +65,6 @@ None.
 - 0138 No-Think confound audit
 - 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
 - 0140 Split Makefile by workpackage
-- 0141 Registry refactor — one entry per model, providers as a sub-block
 - 0143 Rerun ablation with verbatim modules — unblocked (0142 merged in PR #313)
 - 0144 RAG reasoning/coherence cell
 - 0146 Capability timeline expand and figure
@@ -68,18 +80,7 @@ None.
 - 0159 Capability evaluation 8 dimensions — blocked by 0156
 - 0160 Claude Code CLI route adapter — blocked by 0156
 
-## North star
 
-Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. **Not which model is best, but which method produces trustworthy statistics with locatable errors.** PyPSA-ASEAN remains the long-term target; the benchmark de-risks v1 pipeline design choices. See MASTERPLAN.md.
-
-## Current milestone: Econom'IA 2026 — Cergy, 2026-05-27
-
-Conference talk at Thema/Cergy. Deliverable: French slides.
-Title: *Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics*
-Thesis: 4 quality criteria (Grounding/Auditability/Freshness/Confidence) — each slide section lifts one criterion.
-Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.sciencesconf.org/
-
-**Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference.
 
 ## Follow-on milestone: Journal submission
 
