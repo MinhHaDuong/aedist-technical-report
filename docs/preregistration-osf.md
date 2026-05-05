@@ -85,7 +85,7 @@ study.
 ### Blinding
 
 Not applicable. The evaluation pipeline is deterministic: model outputs
-are scored against a fixed reference dataset by `evaluate_extraction()`.
+are scored against a fixed reference dataset by `cmd_evaluate()`.
 There is no subjective judgment in scoring.
 
 ### Study design
@@ -97,10 +97,10 @@ Factorial benchmark design. The experimental matrix crosses:
   open-weight models (2–4), matched 5-model panels for paired tests.
 - **Prompt** (fixed per hypothesis): `prompt_extract` for H3/H6/H7,
   `prompt_complete` for H1/H2.
-- **Repetitions**: n=3 per cell (n=5 for MoE models per project rule).
+- **Repetitions**: n=3 per cell (MoE models also n=3 minimum per project rule).
 
 Fixed factors: reference dataset (Vietnam thermal v1, coal-only dev
-subset), evaluation function (`evaluate_extraction()`), seed=42.
+subset), evaluation function (`cmd_evaluate()`), seed=42.
 
 ---
 
@@ -136,7 +136,7 @@ Each experimental run:
    fixed parameters: `seed=42`, `temperature=0.0` (when supported),
    `max_tokens` per model spec.
 3. Parse the model response into a structured power-plant inventory.
-4. Score against the reference dataset using `evaluate_extraction()`,
+4. Score against the reference dataset using `cmd_evaluate()`,
    which computes per-plant precision, recall, and F1 macro.
 5. Record all parameters and results to `measurements.jsonl` via
    `records_to_metrics()`.
@@ -172,7 +172,7 @@ non-deterministic even with seed pinning due to tensor parallelism).
 ### Measured variables
 
 **Primary outcome:** F1 macro on the coal-only dev subset (Vietnam
-thermal v1 reference). Computed by `evaluate_extraction()` as the
+thermal v1 reference). Computed by `cmd_evaluate()` as the
 harmonic mean of precision and recall, macro-averaged across plants.
 
 **Secondary (recorded but not used for confirmatory decisions):**
@@ -299,7 +299,7 @@ this registration) is declared as prior.
 - Hypotheses extracted from: `docs/argument.md`
 - Hypothesis list: `docs/hypotheses.md` (ticket 0149, PR #316)
 - Experimental design: `experiments.toml` (sweep configurations)
-- Evaluation code: `src/aedist/evaluate.py` (`evaluate_extraction()`)
+- Evaluation code: `src/aedist/evaluate.py` (`cmd_evaluate()`)
 - Metrics pipeline: `src/aedist/measurements.py` (`records_to_metrics()`)
 - Repository: [AEDIST on GitHub](https://github.com/haduong/aedist-technical-report)
 
