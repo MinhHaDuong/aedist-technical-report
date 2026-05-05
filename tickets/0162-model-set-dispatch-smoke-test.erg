@@ -1,0 +1,53 @@
+%erg v1
+Title: Add --model-set dispatch smoke test to catch NameError on untested code path
+Status: open
+Created: 2026-05-05
+Author: claude
+
+--- log ---
+2026-05-05T09:45Z claude created
+
+--- body ---
+## Context
+
+PR #326 (ticket 0161) introduced `make_client_for_route(model)` in 6 query
+modules but ruff stripped the import from 5 of them because tests never
+exercise the `--model-set` dispatch path. All 1144 tests passed; the bug
+was caught by the verify phase's manual review, not by CI.
+
+The bug class: a symbol imported from `.harness` is used only inside an
+`if args.model_set:` branch. Tests call the query entry points with
+`--models` (legacy path), never `--model-set`, so ruff sees the import as
+unused and removes it. Python's late name resolution means the `NameError`
+surfaces only at production runtime.
+
+## Actions
+
+1. In `tests/test_query.py` (or a new `tests/test_model_set_dispatch.py`),
+   add a parametrized smoke test that calls each query entry point with
+   `--model-set` using a minimal fixture registry entry. The test should
+   verify that `make_client_for_route` is reachable (i.e., the import
+   exists and the function is callable) without making real API calls —
+   mock `make_client_for_route` to return a sentinel, assert it was called.
+
+2. Cover all 6 query entry points that have the `if args.model_set:` path:
+   `query`, `query_direct`, `query_rag`, `query_multiturn`,
+   `query_livesearch`, `query_per_fuel`.
+
+3. Mark tests `@pytest.mark.integration` if they need a model registry
+   fixture; otherwise plain unit tests with mocked client creation.
+
+## Test
+
+```python
+def test_model_set_dispatch_reaches_make_client_for_route(monkeypatch):
+    """Regression: ruff stripped make_client_for_route imports in 5/6 modules (PR #326)."""
+    ...
+```
+
+## Exit criteria
+
+- At least one test per query module exercises the `--model-set` branch.
+- `make_client_for_route` is called (or verifiably reachable) in each.
+- If a future PR accidentally drops the import, CI catches it.
+- Full suite: 1144+ passed, 0 regressions.
