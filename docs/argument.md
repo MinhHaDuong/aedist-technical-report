@@ -287,35 +287,32 @@ support that hypothesis.** Scan of 327 record files:
   RAG (Phase 4 cell), n=4 mean ≈ 0.898.
 - **Best deep-research-cell F1 = 0.557** — GLM-5 Turbo on
   `prompt_complete` + reasoning. n=1 across 12 frontier models;
-  three at 0.000 (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20); mean
-  across the cell ≈ 0.35.
+  two refusals (GPT-5.4, Grok 4.20) and one format failure (Ernie
+  4.5 Thinking: returned aggregate capacity tables and per-plant
+  prose in `**Field**: value` format, not a parseable inventory
+  table); mean across n=9 successful attempts ≈ 0.46 (≈ 0.35 if
+  non-attempts are counted as zero).
 - The deep-research cell currently sits *below* the regimes-scatter
   ceiling, not above it. Stages 3 + 4 (Coherence + Freshness) appear
   to *lower* F1 over stages 1 + 2 in our measurement — the opposite
   of the narrative.
 
-Two interpretations, both have to be tested before the arc is
-defended in the paper:
+**Diagnosis: the evaluator artefact interpretation is
+ruled out.** `_classify_orphan()` in `evaluate.py` correctly returns
+`status=refusal` for GPT-5.4 and Grok 4.20 (no tables in their
+responses) and `status=error` for Ernie 4.5 Thinking (aggregate
+pipe tables present, but no per-plant inventory table with a plant
+name column). Regression tests in
+`tests/test_evaluator_robustness.py` pin this behaviour.
 
-1. **Evaluator artefact.** `prompt_complete` returns a structured
-   document — sector overview, narrative paragraphs, multiple tables,
-   bibliography — and the extractor may be choking on the framing
-   instead of pulling the inventory table out. Three `0.000` rows
-   on capable models (GPT-5.4, Grok 4.20, Ernie thinking) is the
-   smoking gun. **Diagnosis target: read one such record's `.json`
-   alongside its `.record.json` and confirm whether a valid table
-   was missed.**
-2. **Genuine over-exploration.** Deep research really does
-   over-cover and dilute precision against a fixed reference; the
-   arc would need rewriting to say stages 3 + 4 trade F1 for
-   completeness or sourcing rather than raising F1.
+The remaining open interpretation is genuine over-exploration: deep
+research really does over-cover and dilute precision against a fixed
+reference. The arc would need rewriting to say stages 3 + 4 trade
+F1 for completeness or sourcing rather than raising F1.
 
-Both interpretations are worth ruling in / out empirically — but
-(1) must be eliminated first because it's measurement-side and
-fixable. Until that pass is done, the deep-research-ceiling claim
-in Part 2 is **a hypothesis the present data does not corroborate**,
-and the paper should mark it as such rather than asserting the
-saturation.
+The deep-research-ceiling claim in Part 2 is **a hypothesis the
+present data does not corroborate**, and the paper should mark it as
+such rather than asserting the saturation.
 
 A related local-side surprise: **qwen3.5:9b** at **F1 = 0.984** on
 direct extraction (n=1). A 9B local model on the parametric regime,

@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-05T11:30Z claude created — risk identified in 2026-04-30 caveat: 3 models at F1=0.000 on prompt_complete runs; no ticket tracked this
+2026-05-05T12:00Z claude note diagnosis complete — evaluator correct; 2 refusals, 1 format-error; doc fix + regression tests
 
 --- body ---
 ## Context
