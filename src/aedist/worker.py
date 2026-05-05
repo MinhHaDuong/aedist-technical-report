@@ -183,11 +183,11 @@ class Worker:
         output_dir = Path(job.output_dir)
 
         if job.model_filter:
-            models = [m for m in models if job.model_filter in m["id"]]
+            models = [m for m in models if job.model_filter in m["name"]]
         if not models:
             raise ValueError(f"No model matched filter {job.model_filter!r}")
         model_entry = models[0]
-        model_id = model_entry["id"]
+        model_id = model_entry["name"]
         run = job.run_number
         api_kwargs = build_api_kwargs(
             model_entry,

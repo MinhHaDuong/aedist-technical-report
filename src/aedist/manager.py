@@ -82,9 +82,9 @@ def generate(
     skipped = 0
 
     for model in models:
-        model_id = model["id"]
+        model_name = model["name"]
         for run in range(1, parent_spec.repeat + 1):
-            job_id = _deterministic_job_id(sweep_key, model_id, run)
+            job_id = _deterministic_job_id(sweep_key, model_name, run)
 
             if job_id in existing:
                 skipped += 1
@@ -96,7 +96,7 @@ def generate(
                 mode=parent_spec.mode,
                 prompt=parent_spec.prompt,
                 models_file=parent_spec.models_file,
-                model_filter=model_id,
+                model_filter=model_name,
                 corpus=parent_spec.corpus,
                 followups=parent_spec.followups,
                 strategy=parent_spec.strategy,
@@ -129,7 +129,8 @@ def main() -> None:
     gen.add_argument("sweep_yaml", nargs="?", help="Path to sweep YAML config (legacy).")
     gen.add_argument("--sweep", help="Sweep name from experiments.toml.")
     gen.add_argument(
-        "--experiments", default="experiments.toml",
+        "--experiments",
+        default="experiments.toml",
         help="Path to experiments.toml (default: experiments.toml).",
     )
     gen.add_argument(

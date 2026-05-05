@@ -31,40 +31,40 @@ SAMPLE_METRICS = [
 
 SAMPLE_CLOUD = [
     {
-        "id": "openai/gpt-5.4",
-        "name": "GPT-5.4",
+        "name": "openai/gpt-5.4",
+        "display_name": "GPT-5.4",
         "provider": "OpenAI",
         "country": "US",
         "size_class": "frontier",
         "price_per_mtok_in": 2.5,
     },
     {
-        "id": "deepseek/deepseek-v3.2",
-        "name": "DeepSeek V3.2",
+        "name": "deepseek/deepseek-v3.2",
+        "display_name": "DeepSeek V3.2",
         "provider": "DeepSeek",
         "country": "CN",
         "size_class": "frontier",
         "price_per_mtok_in": 0.26,
     },
     {
-        "id": "anthropic/claude-opus-4.6",
-        "name": "Claude Opus 4.6",
+        "name": "anthropic/claude-opus-4.6",
+        "display_name": "Claude Opus 4.6",
         "provider": "Anthropic",
         "country": "US",
         "size_class": "frontier",
         "price_per_mtok_in": 5.0,
     },
     {
-        "id": "google/gemini-2.5-flash-lite",
-        "name": "Gemini 2.5 Flash Lite",
+        "name": "google/gemini-2.5-flash-lite",
+        "display_name": "Gemini 2.5 Flash Lite",
         "provider": "Google",
         "country": "US",
         "size_class": "edge",
         "price_per_mtok_in": 0.1,
     },
     {
-        "id": "mistralai/mistral-large-2512",
-        "name": "Mistral Large 3",
+        "name": "mistralai/mistral-large-2512",
+        "display_name": "Mistral Large 3",
         "provider": "Mistral",
         "country": "FR",
         "size_class": "frontier",
@@ -74,20 +74,20 @@ SAMPLE_CLOUD = [
 
 SAMPLE_PADME = [
     {
-        "id": "qwen3.5:122b",
-        "name": "Qwen 3.5 122B (local)",
+        "name": "qwen3.5:122b",
+        "display_name": "Qwen 3.5 122B (local)",
         "provider": "Ollama/Padme",
         "country": "CN",
     },
     {
-        "id": "glm-4.7-flash",
-        "name": "GLM 4.7 Flash (local)",
+        "name": "glm-4.7-flash",
+        "display_name": "GLM 4.7 Flash (local)",
         "provider": "Ollama/Padme",
         "country": "CN",
     },
     {
-        "id": "nemotron-3-nano",
-        "name": "Nemotron 3 Nano (local)",
+        "name": "nemotron-3-nano",
+        "display_name": "Nemotron 3 Nano (local)",
         "provider": "Ollama/Padme",
         "country": "US",
     },
@@ -151,14 +151,14 @@ class TestSelectModels:
         selected = self._select(n=1)
         cloud = [s for s in selected if "Padme" not in s.get("provider", "")]
         assert len(cloud) == 1
-        assert cloud[0]["id"] == "openai/gpt-5.4"
+        assert cloud[0]["name"] == "openai/gpt-5.4"
 
     def test_n1_best_local_is_qwen(self):
         """Best local model is padme-qwen3.5-122b (F1=0.49)."""
         selected = self._select(n=1)
         local = [s for s in selected if "Padme" in s.get("provider", "")]
         assert len(local) == 1
-        assert local[0]["id"] == "qwen3.5:122b"
+        assert local[0]["name"] == "qwen3.5:122b"
 
     def test_n2_gives_four_models(self):
         """--n 2 → 2 cloud + 2 local = 4 total."""
@@ -215,21 +215,21 @@ class TestDiverseSelection:
     def test_us_frontier_is_best_f1(self):
         """GPT-5.4 (F1=0.65) beats Claude Opus (F1=0.60) for US frontier."""
         selected = self._select(["US"])
-        assert selected[0]["id"] == "openai/gpt-5.4"
+        assert selected[0]["name"] == "openai/gpt-5.4"
 
     def test_fr_frontier_is_mistral(self):
         selected = self._select(["FR"])
-        assert selected[0]["id"] == "mistralai/mistral-large-2512"
+        assert selected[0]["name"] == "mistralai/mistral-large-2512"
 
     def test_cn_frontier_is_deepseek(self):
         selected = self._select(["CN"])
-        assert selected[0]["id"] == "deepseek/deepseek-v3.2"
+        assert selected[0]["name"] == "deepseek/deepseek-v3.2"
 
     def test_cheap_tier_beats_local_floor(self):
         """Cheap models must have F1 > best local (0.49)."""
         selected = self._select(["US"], n_cheap=2)
         # Frontier pick is GPT-5.4; cheap picks from remaining
-        cheap = [m for m in selected if m["id"] != "openai/gpt-5.4"]
+        cheap = [m for m in selected if m["name"] != "openai/gpt-5.4"]
         for m in cheap:
             assert m["_median_f1"] > 0.49 if "_median_f1" in m else True
 
@@ -239,14 +239,14 @@ class TestDiverseSelection:
         # With no frontier requirement, all slots are cheap tier
         # Sorted by price: gemini-flash-lite ($0.1) is cheapest but F1=0.40
         # which is below local floor (0.49), so it should be excluded
-        ids = [m["id"] for m in selected]
-        assert "google/gemini-2.5-flash-lite" not in ids
+        names = [m["name"] for m in selected]
+        assert "google/gemini-2.5-flash-lite" not in names
 
     def test_cheap_excludes_frontier_picks(self):
         """A model picked for frontier is not duplicated in cheap tier."""
         selected = self._select(["US", "CN", "FR"], n_cheap=5)
-        ids = [m["id"] for m in selected]
-        assert len(ids) == len(set(ids))
+        names = [m["name"] for m in selected]
+        assert len(names) == len(set(names))
 
     def test_missing_country_warns(self, caplog):
         """Requesting a country with no frontier model logs a warning."""

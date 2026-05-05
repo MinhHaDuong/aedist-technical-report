@@ -27,7 +27,7 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
-    make_client_for_router,
+    make_client_for_route,
     model_metadata,
     output_path,
     query_ollama_native,
@@ -144,7 +144,7 @@ def main():
         models = select_models(models, set_ids)
 
     if args.model:
-        models = [m for m in models if m["id"] == args.model]
+        models = [m for m in models if m["name"] == args.model]
         if not models:
             raise SystemExit(f"Model {args.model} not found in {args.models}")
 
@@ -156,7 +156,7 @@ def main():
     if args.dry_run:
         for model in models:
             for run in range(1, args.repeat + 1):
-                log.info("Would query %s run %d (web-augmented)", model["id"], run)
+                log.info("Would query %s run %d (web-augmented)", model["name"], run)
         return
 
     # Run web searches once (same context for all models/runs)
@@ -170,32 +170,30 @@ def main():
 
     legacy_client = None
     if args.model_set:
-        routers_config = experiments.get("routers", {})
         clients: dict = {}
     else:
         legacy_client = make_client()
     budget = BudgetTracker(args.budget_usd)
 
     for model in models:
-        model_id = model["id"]
-        label = model.get("name", model_id)
+        model_id = model["name"]
+        label = model.get("display_name", model_id)
 
-        router = model.get("router")
-        if args.model_set and router:
-            if router not in clients:
-                clients[router] = make_client_for_router(router, routers_config)
-            client = clients[router]
+        route = model.get("route")
+        if args.model_set and route:
+            if route not in clients:
+                clients[route] = make_client_for_route(model)
+            client = clients[route]
         else:
             if legacy_client is None:
                 raise SystemExit(
-                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                    f"{model_id}: no route field and no legacy client (use --base-url or add route to registry)"
                 )
             client = legacy_client
 
         # Ollama: bypass /v1/ shim to honour num_ctx; resolved once per model
-        if router == "ollama":
-            ollama_cfg = routers_config.get("ollama", {}) if args.model_set else {}
-            ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+        if route == "ollama":
+            ollama_url = model.get("base_url", "http://localhost:11434/v1")
             ctx_window = model.get("context_window", 32768)
             num_ctx = min(ctx_window, 81920)
 
@@ -220,12 +218,12 @@ def main():
                     },
                     {"role": "user", "content": prompt},
                 ]
-                api_model_id = model.get("router_model", model_id)
+                api_model_id = model.get("model_id", model_id)
                 api_kwargs = build_api_kwargs(
                     model,
                     temperature=args.temperature,
                 )
-                if router == "ollama":
+                if route == "ollama":
                     result = query_ollama_native(
                         ollama_url,
                         api_model_id,

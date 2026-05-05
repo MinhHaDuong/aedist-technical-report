@@ -21,8 +21,8 @@ def _minimal_models_yaml(tmp_path: Path) -> Path:
     """Write a minimal models.yaml with one cheap model."""
     p = tmp_path / "models.yaml"
     p.write_text(
-        "- id: test/tiny-model\n"
-        "  name: Tiny\n"
+        "- name: test/tiny-model\n"
+        "  display_name: Tiny\n"
         "  price_per_mtok_in: 1.0\n"
         "  price_per_mtok_out: 2.0\n"
         "  context_window: 8000\n"
@@ -51,13 +51,23 @@ def test_repeat_produces_n_files(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--repeat", "3",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--repeat",
+                "3",
+            ],
+        ):
             from aedist.query import main
+
             main()
 
     # Find JSON files in the date subdirectory
@@ -79,12 +89,21 @@ def test_output_json_has_operational_metrics(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+            ],
+        ):
             from aedist.query import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -115,14 +134,25 @@ def test_budget_guard_stops(mock_openai_cls, tmp_path):
 
     # Budget of 0.0008 should allow 1 call but stop before the 2nd
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--repeat", "5",
-            "--budget-usd", "0.0008",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--repeat",
+                "5",
+                "--budget-usd",
+                "0.0008",
+            ],
+        ):
             from aedist.query import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -141,13 +171,22 @@ def test_dry_run_no_api_calls(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--dry-run",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--dry-run",
+            ],
+        ):
             from aedist.query import main
+
             main()
 
     mock_client.chat.completions.create.assert_not_called()
@@ -169,12 +208,21 @@ def test_skip_existing_files(mock_openai_cls, tmp_path):
     # Run twice
     for _ in range(2):
         with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-            with patch.object(sys, "argv", [
-                "query", "--prompt", str(prompt_path),
-                "--models", str(models_path),
-                "--output", str(output_dir),
-            ]):
+            with patch.object(
+                sys,
+                "argv",
+                [
+                    "query",
+                    "--prompt",
+                    str(prompt_path),
+                    "--models",
+                    str(models_path),
+                    "--output",
+                    str(output_dir),
+                ],
+            ):
                 from aedist.query import main
+
                 main()
 
     # Only 1 API call (second run should skip)
@@ -193,13 +241,23 @@ def test_output_prefix_in_filenames(mock_openai_cls, tmp_path):
     output_dir = tmp_path / "out"
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(sys, "argv", [
-            "query", "--prompt", str(prompt_path),
-            "--models", str(models_path),
-            "--output", str(output_dir),
-            "--output-prefix", "padme",
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--output-prefix",
+                "padme",
+            ],
+        ):
             from aedist.query import main
+
             main()
 
     json_files = list(output_dir.rglob("*.json"))
@@ -218,13 +276,23 @@ def test_base_url_passed_to_client(mock_openai_cls, tmp_path):
     prompt_path = _prompt_file(tmp_path)
     output_dir = tmp_path / "out"
 
-    with patch.object(sys, "argv", [
-        "query", "--prompt", str(prompt_path),
-        "--models", str(models_path),
-        "--output", str(output_dir),
-        "--base-url", "http://localhost:11434/v1",
-    ]):
+    with patch.object(
+        sys,
+        "argv",
+        [
+            "query",
+            "--prompt",
+            str(prompt_path),
+            "--models",
+            str(models_path),
+            "--output",
+            str(output_dir),
+            "--base-url",
+            "http://localhost:11434/v1",
+        ],
+    ):
         from aedist.query import main
+
         main()
 
     mock_openai_cls.assert_called_with(

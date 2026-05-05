@@ -338,7 +338,7 @@ def _harness_patches(tmp_path):
     """
     return {
         "make_client": MagicMock(return_value=MagicMock()),
-        "load_models": MagicMock(return_value=[{"id": "qwen3:8b"}]),
+        "load_models": MagicMock(return_value=[{"name": "qwen3:8b"}]),
         "query_single_turn": MagicMock(return_value=_canned_single_result()),
         "compute_cost": MagicMock(return_value=0.0),
         "model_metadata": MagicMock(return_value={}),
