@@ -57,7 +57,7 @@ func (t *Erg) Status() string {
 	if vs, ok := t.Headers["Status"]; ok && len(vs) > 0 {
 		return vs[0]
 	}
-	return ""
+	return "open"
 }
 
 func (t *Erg) BlockedBy() []string {
@@ -231,7 +231,7 @@ func loadErgs(dir string) []Erg {
 // ---------------------------------------------------------------------------
 
 var (
-	requiredHeaders = []string{"Title", "Status", "Created", "Author"}
+	requiredHeaders = []string{"Title", "Created", "Author"}
 	validHeaders    = map[string]bool{
 		"Title": true, "Status": true, "Created": true,
 		"Author": true, "Blocked-by": true,

@@ -52,7 +52,7 @@ validator rejects files missing either one).
 | Header | Required | Type | Values |
 |--------|----------|------|--------|
 | `Title` | yes | string | Short imperative sentence |
-| `Status` | yes | enum | `open`, `doing`, `closed`, `pending` |
+| `Status` | no | enum | `open`, `doing`, `closed`, `pending` |
 | `Created` | yes | date | `YYYY-MM-DD` |
 | `Author` | yes | string | Agent or human identifier |
 | `Blocked-by` | no | ref | Ticket ID or `gh#N` (repeatable) |
@@ -60,11 +60,13 @@ validator rejects files missing either one).
 No other headers are valid in v1. No `X-` extensions. If v2 needs new
 headers, it declares `%ticket v2` and extends the set.
 
-**Status values:**
+**Status values (when present):**
 - `open` — available for work.
 - `doing` — work in progress.
 - `closed` — completed or cancelled.
 - `pending` — awaiting external input (e.g., review). Excluded from ready query.
+
+**Status default:** absent `Status` header is treated as `open`. New tickets should omit it; `erg close` manages it automatically.
 
 **`Blocked-by` references:**
 - A 4-digit ID (e.g., `0041`) refers to a local ticket.
