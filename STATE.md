@@ -1,4 +1,4 @@
-Last updated: 2026-05-05T08:00Z
+Last updated: 2026-05-05T22:00Z
 
 ## North star
 
@@ -15,31 +15,26 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 ## Status
 
-Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1144 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
+Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1150 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
 
-**2026-05-01 (today):** Opened 5 tickets for experiment infrastructure redesign:
-- **0156** Model instance registry: `name`/`display_name`/`route`/`base_url`/`model_id` schema. Adds `route` enum (openrouter, ollama, openllm, claude-code-cli, codex). Supersedes 0141.
-- **0157** `figures.toml` with ordered named modelsets (`frontier`, `full`, `ablation`). Blocked by 0156.
-- **0158** Structured prompt taxonomy: modules (persona, goal, scope, information, context, constraint) × modalities. Frames multi-turn as temporal decomposition. Independent.
-- **0159** Formal capability evaluation: 8 dimensions (arithmetic, general knowledge, reasoning, web search, multilingual, energy, statistics, geography), ordinal 0–3 scores. Blocked by 0156.
-- **0160** Claude Code CLI route adapter (`claude --print --model`). Blocked by 0156.
+**Deep-research hypothesis H1 (reformulated, 2026-05-05):** See `docs/experiment-roadmap.md`. H1 requires all four: (a) F1 ≥ 0.988, (b) source-grounding ≥ 80%, (c) no truncation, (d) statistical coherence.
 
-All 6 local branches pushed to origin. Tests green.
+**2026-05-05:** Raid on ticket 0163 complete (PR #327). F1=0.000 mystery solved: GPT-5.4 + Grok 4.20 refused; Ernie 4.5 Thinking produced aggregate tables (no per-plant inventory). Evaluator is correct. Regression tests added (`tests/test_evaluator_robustness.py`). Output token ceiling raised 32K→64K (Claude Opus was at 31K/32K). Experiment roadmap written (`docs/experiment-roadmap.md`).
 
-**2026-04-30:** Regimes scatter (ticket 0134) pivoted to free Hy3 preview; cloud sweeps complete ($0.52). Argument note `docs/argument.md` written (four limits Articulation/Coverage/Coherence/Freshness). Tickets 0147–0155 opened and progressed. API-key leak via `ps -ef` remediated.
-
-**2026-04-29:** Slides fully pgfplots-free. Ablation module split MoE repeat=3 fixed (PR #295).
+**erg v2 migration (2026-05-05):** 126 closed tickets auto-archived to `tickets/closed/` by new erg binary. Open count: 25.
 
 ## Blockers
 
-None.
+- **0139** (seed + finish_reason in RunRecord) should be resolved before Phase 3 full runs. Workaround for Phase 1 pilots: grep finish_reason from raw JSON manually.
+- **0150** OSF preregistration — human action, ~20 min, form at `docs/preregistration-osf.md`. Must precede full runs for confirmatory claim.
 
-## Priorities (set 2026-04-30, confirmed 2026-05-01)
+## Priorities (2026-05-05)
 
-1. **Rerun ablation with verbatim modules.** Ticket 0142 closed (PR #313). Ticket 0143 (rerun) now unblocked. Exit gate: `diff` assembled-composite vs `prompt_complete.txt` = 0 (verified).
-2. **Diagnose `direct_complete` F1 = 0.000 rows.** Three capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) score zero — almost certainly a parser failure on structured-document output. Read one raw `.record.json` + confirm before any priority-3 build. If parser is broken, F1 = 1 is unreachable by construction.
-3. **Verify qwen3.5:9b/direct ×3 on coal-only.** Single-run F1 = 0.984 on direct is remarkable; confirm with repeats before deciding whether priority-3 reduces to "use this 9B" vs "build deep-research stack".
-4. **Registry / figures infrastructure (0157→0161).** Ticket 0156 closed (PR #322, models.yaml v2 schema). Tickets 0157/0159/0160/0161 now unblocked.
+1. **Phase 0 gate**: 0164 price audit + 0150 OSF registration → unlock Phase 1 pilots.
+2. **Phase 1 pilots** (~$5–10): 3 frontier cloud models × `prompt_complete` × 3 reps. Check finish_reason, row count, F1 after each run.
+3. **0139 JobSpec**: add seed, provider_order, finish_reason to RunRecord — needed before Phase 3 full runs.
+4. **Prompt meta-review** by 3 SOTA agents (Claude Opus 4.6, DeepSeek R1, + 1) — needs go-ahead.
+5. **Slides update** for H1 reformulation (4-criteria, not just F1).
 
 ## Benchmark-wide F1 leaderboard (2026-04-30, 327 records)
 
@@ -53,34 +48,35 @@ None.
 | 0.975  | decomposed          | Gemini 2.5 Flash Lite              |      |
 | 0.968  | RAG wholesale       | Qwen 3.5 122B                      |      |
 
-**Deep-research arm BELOW regimes-scatter ceiling:** best `direct_complete` = 0.557 vs benchmark-wide = 0.988. Stages 3+4 currently lower F1 — diagnose parser before building further.
+**`direct_complete` arm:** best F1 = 0.557 (n=9, excl. 3 non-attempts). Three frontier models failed: 2 refusals (GPT-5.4, Grok 4.20), 1 format error (Ernie 4.5 Thinking — aggregate tables only). Evaluator confirmed correct.
 
-## Open tickets (22)
+## Open tickets (25)
 
-- 0102 Verify escalation-rate decay — post-talk, blocked by missing v0 fusion + HITL memory
-- 0118 Source-grounding Phase 2 — LLM adjudication, post-talk, gate 2026-05-27
+- 0075 DSPy/MIPROv2 autoresearch — post-talk
+- 0102 Verify escalation-rate decay — post-talk, blocked by missing fusion+HITL
+- 0118 Source-grounding Phase 2 — LLM adjudication, post-talk
 - 0119 Source-grounding Phase 3 — HITL memory, blocked by 0118
-- 0134 Regimes scatter — cloud done, local in flight on padme tmux `regimes-fill`
+- 0133 Pareto scatter Python PDF
+- 0134 Regimes scatter — local sweep in flight on padme tmux `regimes-fill`
 - 0135 Regimes scatter visual tuning — blocked by 0134
 - 0138 No-Think confound audit
-- 0139 JobSpec missing API params (seed, provider_order, max_tokens, num_ctx, finish_reason)
+- **0139** JobSpec: seed + provider_order + finish_reason in RunRecord *(Phase 0 gate)*
 - 0140 Split Makefile by workpackage
-- 0143 Rerun ablation with verbatim modules — unblocked (0142 merged in PR #313)
-- 0144 RAG reasoning/coherence cell
+- 0143 Rerun ablation with verbatim modules — unblocked (0142 merged)
+- 0144 RAG+reasoning coherence cell — blocked by 0139
 - 0146 Capability timeline expand and figure
-- 0149 Extract main results and hypotheses to be tested
-- 0150 Preregister hypotheses *(pending review)*
+- 0149 Extract main results and hypotheses — open PR #316
+- **0150** Preregister hypotheses *(pending human, Phase 0 gate)*
 - 0151 Literature review against argument
 - 0152 Align slides on argument
 - 0153 Redesign experiments along argument
-- 0154 Run redesigned experiments
+- 0154 Run redesigned experiments — blocked by 0153
 - 0157 figures.toml ordered modelsets
 - 0158 Structured prompt modules/modalities taxonomy
 - 0159 Capability evaluation 8 dimensions
 - 0160 Claude Code CLI route adapter
-- 0161 Model instance registry — Python migration (phase 2 of ticket 0156)
-
-
+- 0162 Model-set dispatch smoke test
+- **0164** Model registry price audit *(Phase 0 gate — run before any sweep >$10)*
 
 ## Follow-on milestone: Journal submission
 
@@ -119,12 +115,13 @@ None.
 - [x] Ablation: citation_columns / sourcing_ground split, MoE repeat=3 fixed (PR #295)
 - [x] Slides pgfplots-free: census scatter (ticket 0131, PR #296), regimes scatter (ticket 0132, PR #297)
 - [x] Regimes scatter cloud sweep (ticket 0134, Hy3 preview free + qwen3.6-35b-a3b, $0.52)
+- [x] Model instance registry: Python migration complete (tickets 0156/0161, PR #326)
+- [x] Evaluator confirmed correct: F1=0.000 = refusals/format errors, not parser bug (ticket 0163, PR #327)
 - [ ] Regimes scatter local sweep (ticket 0134, in flight on padme tmux `regimes-fill`)
 - [ ] Regimes scatter visual tuning (ticket 0135, blocked by 0134)
 - [ ] Pareto scatter Python PDF (ticket 0133, pending)
 - [ ] Slides narrative restructure (ticket 0129)
-- [ ] Verify prompt_complete reaches F1 = 1 (priority 2)
-- [ ] Local deep-research model for prompt_complete F1 = 1 on coal-only (priority 3)
+- [ ] H1 pilot runs: 3 frontier models × prompt_complete × 3 reps (Phase 1, ~$5-10)
 - [ ] Source-grounding verification Phases 2+3 — full audit (tickets 0118-0119, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
