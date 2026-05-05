@@ -7,6 +7,7 @@ Author: claude
 --- log ---
 2026-05-03T10:00Z claude created — phase 2 of 0156 after YAML + shim landed
 2026-05-04T10:45Z claude note removed Blocked-by: 0156 — 0156 is closed (PR #322)
+2026-05-05T08:30Z claude note assessed worktree agent-ace1b9a565323f258 (branch ticket/0156-model-registry-refactor); harness.py + query.py changes valid, YAML changes redundant (already in main via PR #322); worktree pruned
 
 --- body ---
 ## Context
@@ -22,13 +23,12 @@ This ticket removes the shim and migrates every call site to the new field names
 1. In `src/aedist/harness.py`:
    - Remove the backward-compat alias block from `load_models()`.
    - Replace `make_client_for_router(router, routers_config)` with `make_client_for_route(model)`
-     (reads `model["route"]` and `model["base_url"]` directly). The partial implementation
-     from the failed raid (worktree `agent-ace1b9a565323f258`) can be used as a starting point.
+     (reads `model["route"]` and `model["base_url"]` directly; dispatches on `openrouter`,
+     `ollama`, `openllm` with appropriate auth/timeout logic).
 
 2. Update `src/aedist/query.py`:
    - `m["id"]` → `m["name"]`; `m.get("router")` → `m.get("route")`; `m.get("router_model", ...)` → `m.get("model_id", ...)`
    - Client dispatch: use `make_client_for_route(model)` instead of `make_client_for_router(router, routers_config)`
-   - Partial implementation from raid worktree is correct; apply it.
 
 3. Update `src/aedist/query_direct.py`, `query_rag.py`, `query_multiturn.py`,
    `query_per_fuel.py`, `query_livesearch.py` — same field-name substitutions as step 2.
