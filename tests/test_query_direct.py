@@ -130,7 +130,7 @@ def test_sends_temperature(mock_openai_cls, tmp_path):
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert call_kwargs["temperature"] == 0.0
-    assert call_kwargs["max_tokens"] == 32768
+    assert call_kwargs["max_tokens"] == 65536
 
 
 @patch("aedist.harness.OpenAI")

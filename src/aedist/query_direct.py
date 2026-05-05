@@ -46,8 +46,11 @@ from .harness import (
 
 log = logging.getLogger(__name__)
 
-# Frontier defaults: maximize quality and output length
-DEFAULT_MAX_TOKENS = 32768
+# Frontier defaults: maximize quality and output length.
+# prompt_complete responses run 30–80K tokens on capable models; 32K caused
+# near-truncation on Claude Opus (31374 tok). Raised to 65536 — check
+# finish_reason="length" in outputs to detect models that still hit the cap.
+DEFAULT_MAX_TOKENS = 65536
 DEFAULT_TEMPERATURE = 0.0
 
 
