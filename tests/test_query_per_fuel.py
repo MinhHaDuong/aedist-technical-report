@@ -128,7 +128,7 @@ class TestQueryDecomposed:
         monkeypatch.setattr(qd_mod, "compute_cost", lambda usage, model: 0.001)
 
         budget = BudgetTracker(budget_usd=10.0)
-        model = {"id": "test-model", "price_per_mtok_in": 0, "price_per_mtok_out": 0}
+        model = {"name": "test-model", "price_per_mtok_in": 0, "price_per_mtok_out": 0}
         result = qd_mod.query_decomposed(
             client=None,
             model_id="test-model",
@@ -157,7 +157,7 @@ class TestQueryDecomposed:
         budget = BudgetTracker(budget_usd=0.001)
         budget.add(0.002)  # exceed the budget
 
-        model = {"id": "test-model"}
+        model = {"name": "test-model"}
         result = qd_mod.query_decomposed(
             client=None,
             model_id="test-model",
@@ -184,7 +184,7 @@ class TestQueryDecomposed:
         monkeypatch.setattr(qd_mod, "query_single_turn", fake_query_error)
 
         budget = BudgetTracker(budget_usd=10.0)
-        model = {"id": "test-model"}
+        model = {"name": "test-model"}
         result = qd_mod.query_decomposed(
             client=None,
             model_id="test-model",
@@ -211,7 +211,7 @@ class TestQueryDecomposed:
         monkeypatch.setattr(qd_mod, "compute_cost", lambda usage, model: 0.0001)
 
         budget = BudgetTracker(budget_usd=10.0)
-        model = {"id": "test-model"}
+        model = {"name": "test-model"}
         result = qd_mod.query_decomposed(
             client=None,
             model_id="test-model",
@@ -253,7 +253,7 @@ class TestQueryDecomposed:
         monkeypatch.setattr(qd_mod, "compute_cost", lambda usage, model: 0.001)
 
         budget = BudgetTracker(budget_usd=10.0)
-        model = {"id": "test-model"}
+        model = {"name": "test-model"}
         result = qd_mod.query_decomposed(
             client=None,
             model_id="test-model",
@@ -293,8 +293,8 @@ class TestQueryDecomposedMain:
         # Create minimal models.yaml
         models_file = tmp_path / "models.yaml"
         models_file.write_text(
-            "- id: test-model\n"
-            "  name: Test Model\n"
+            "- name: test-model\n"
+            "  display_name: Test Model\n"
             "  context_window: 100000\n"
             "  price_per_mtok_in: 1.0\n"
             "  price_per_mtok_out: 2.0\n"
@@ -344,13 +344,13 @@ class TestQueryDecomposedMain:
 
         models_file = tmp_path / "models.yaml"
         models_file.write_text(
-            "- id: model-a\n"
-            "  name: A\n"
+            "- name: model-a\n"
+            "  display_name: A\n"
             "  context_window: 100000\n"
             "  price_per_mtok_in: 1.0\n"
             "  price_per_mtok_out: 2.0\n"
-            "- id: model-b\n"
-            "  name: B\n"
+            "- name: model-b\n"
+            "  display_name: B\n"
             "  context_window: 100000\n"
             "  price_per_mtok_in: 1.0\n"
             "  price_per_mtok_out: 2.0\n"
@@ -395,7 +395,7 @@ class TestQueryDecomposedMain:
         prompt_file.write_text("prompt text")
 
         models_file = tmp_path / "models.yaml"
-        models_file.write_text("- id: model-a\n  name: A\n  context_window: 100000\n")
+        models_file.write_text("- name: model-a\n  display_name: A\n  context_window: 100000\n")
 
         output_dir = tmp_path / "output"
 

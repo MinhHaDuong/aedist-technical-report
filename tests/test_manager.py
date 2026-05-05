@@ -12,9 +12,9 @@ from aedist.schema import JobSpec, Method
 def _write_sweep(tmp_path: Path, repeat: int = 2) -> Path:
     """Write a minimal sweep YAML and model registry, return sweep path."""
     models = [
-        {"id": "provider/model-a", "name": "Model A"},
-        {"id": "provider/model-b", "name": "Model B"},
-        {"id": "provider/model-c", "name": "Model C"},
+        {"name": "provider/model-a", "display_name": "Model A"},
+        {"name": "provider/model-b", "display_name": "Model B"},
+        {"name": "provider/model-c", "display_name": "Model C"},
     ]
     models_path = tmp_path / "models.yaml"
     models_path.write_text(yaml.dump(models))
@@ -102,7 +102,7 @@ def test_dirs_created(tmp_path: Path):
 
 def test_prompt_modules_propagated_to_jobs(tmp_path: Path):
     """Sweep with prompt_modules propagates to each generated job."""
-    models = [{"id": "provider/model-a", "name": "Model A"}]
+    models = [{"name": "provider/model-a", "display_name": "Model A"}]
     models_path = tmp_path / "models.yaml"
     models_path.write_text(yaml.dump(models))
 
@@ -129,7 +129,7 @@ def test_prompt_modules_propagated_to_jobs(tmp_path: Path):
 
 def test_prompt_modules_empty_list_propagated(tmp_path: Path):
     """Sweep with empty prompt_modules list propagates correctly."""
-    models = [{"id": "provider/model-a", "name": "Model A"}]
+    models = [{"name": "provider/model-a", "display_name": "Model A"}]
     models_path = tmp_path / "models.yaml"
     models_path.write_text(yaml.dump(models))
 

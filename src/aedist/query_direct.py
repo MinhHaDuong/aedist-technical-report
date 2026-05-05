@@ -34,7 +34,7 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
-    make_client_for_router,
+    make_client_for_route,
     model_metadata,
     output_path,
     query_ollama_native,
@@ -123,7 +123,7 @@ def main():
         models = select_models(models, set_ids)
 
     if args.model:
-        models = [m for m in models if m["id"] == args.model]
+        models = [m for m in models if m["name"] == args.model]
         if not models:
             raise SystemExit(f"Model {args.model} not found in {args.models}")
 
@@ -135,7 +135,7 @@ def main():
         est_total = (est_cost_in + est_cost_out) * args.repeat
         log.info(
             "  %s: ~%d prompt tokens, max %d output → est $%.4f/run, $%.4f total",
-            model.get("name", model["id"]),
+            model.get("display_name", model["name"]),
             prompt_tokens_est,
             args.max_tokens,
             est_cost_in + est_cost_out,
@@ -146,28 +146,27 @@ def main():
         log.info("Dry run — no API calls made.")
         return
 
-    # Build client(s): per-router when using experiments.toml, else single legacy client
+    # Build client(s): per-route when using experiments.toml, else single legacy client
     legacy_client = None
     if args.model_set:
-        routers_config = experiments.get("routers", {})
         clients: dict = {}
     else:
         legacy_client = make_client()
     budget = BudgetTracker(args.budget_usd)
 
     for model in models:
-        model_id = model["id"]
-        label = model.get("name", model_id)
+        model_id = model["name"]
+        label = model.get("display_name", model_id)
 
-        router = model.get("router")
-        if args.model_set and router:
-            if router not in clients:
-                clients[router] = make_client_for_router(router, routers_config)
-            client = clients[router]
+        route = model.get("route")
+        if args.model_set and route:
+            if route not in clients:
+                clients[route] = make_client_for_route(model)
+            client = clients[route]
         else:
             if legacy_client is None:
                 raise SystemExit(
-                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                    f"{model_id}: no route field and no legacy client (use --base-url or add route to registry)"
                 )
             client = legacy_client
 
@@ -198,13 +197,10 @@ def main():
                     temperature=args.temperature,
                     no_think=args.no_think,
                 )
-                api_model_id = model.get("router_model", model_id)
+                api_model_id = model.get("model_id", model_id)
                 # Ollama: bypass /v1/ shim to honour num_ctx (output cap via num_predict)
-                if model.get("router") == "ollama":
-                    ollama_cfg = (
-                        experiments.get("routers", {}).get("ollama", {}) if args.model_set else {}
-                    )
-                    ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+                if model.get("route") == "ollama":
+                    ollama_url = model.get("base_url", "http://localhost:11434/v1")
                     ctx_window = model.get("context_window", 32768)
                     num_ctx = min(ctx_window, 81920)
                     result = query_ollama_native(
