@@ -297,7 +297,7 @@ support that hypothesis.** Scan of 327 record files:
   to *lower* F1 over stages 1 + 2 in our measurement — the opposite
   of the narrative.
 
-**Diagnosis (2026-05-05): the evaluator artefact interpretation is
+**Diagnosis: the evaluator artefact interpretation is
 ruled out.** `_classify_orphan()` in `evaluate.py` correctly returns
 `status=refusal` for GPT-5.4 and Grok 4.20 (no tables in their
 responses) and `status=error` for Ernie 4.5 Thinking (aggregate

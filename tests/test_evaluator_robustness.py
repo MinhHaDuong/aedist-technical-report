@@ -159,7 +159,7 @@ class TestWellFormedPlantInventory:
         # Verify the CSV has plant rows (not just a header)
         csv_text = result.output_path.read_text(encoding="utf-8")
         lines = [ln for ln in csv_text.splitlines() if ln.strip()]
-        assert len(lines) >= 2, "Expected header + at least one data row"
+        assert len(lines) >= 9, "Expected header + 8 data rows"
         # First data row should contain 'Pha Lai 1'
         assert "Pha Lai 1" in csv_text, "Expected plant name 'Pha Lai 1' in extracted CSV"
 
