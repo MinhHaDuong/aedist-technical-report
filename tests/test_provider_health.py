@@ -357,9 +357,9 @@ def test_sweep_parks_remaining_cells_after_hard_stop(tmp_path):
 
     health = ProviderHealth()
     models = [
-        {"id": "deepseek/deepseek-chat", "router": "openrouter"},
-        {"id": "deepseek/deepseek-chat", "router": "openrouter"},
-        {"id": "deepseek/deepseek-chat", "router": "openrouter"},
+        {"name": "deepseek/deepseek-chat", "route": "openrouter"},
+        {"name": "deepseek/deepseek-chat", "route": "openrouter"},
+        {"name": "deepseek/deepseek-chat", "route": "openrouter"},
     ]
     dispatches = 0
     parks: list[tuple[str, int]] = []
@@ -377,30 +377,30 @@ def test_sweep_parks_remaining_cells_after_hard_stop(tmp_path):
         raise PaymentRequiredError()
 
     for run, model in enumerate(models, start=1):
-        if health.is_blocked(model["router"], model["id"]):
+        if health.is_blocked(model["route"], model["name"]):
             park_cell(
                 tmp_path,
                 sweep_id="t",
-                model_id=model["id"],
+                model_id=model["name"],
                 run=run,
                 prompt_hash="h",
-                reason=health.block_reason(model["router"], model["id"]) or "blocked",
+                reason=health.block_reason(model["route"], model["name"]) or "blocked",
             )
-            parks.append((model["id"], run))
+            parks.append((model["name"], run))
             continue
         try:
             fake_dispatch(model, run)
         except Exception as exc:
-            health.record_failure(model["router"], model["id"], exc)
+            health.record_failure(model["route"], model["name"], exc)
             park_cell(
                 tmp_path,
                 sweep_id="t",
-                model_id=model["id"],
+                model_id=model["name"],
                 run=run,
                 prompt_hash="h",
-                reason=health.block_reason(model["router"], model["id"]) or "failed",
+                reason=health.block_reason(model["route"], model["name"]) or "failed",
             )
-            parks.append((model["id"], run))
+            parks.append((model["name"], run))
 
     assert dispatches == 1  # only the first one tried
     assert len(parks) == 3  # all three parked

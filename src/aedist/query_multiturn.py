@@ -28,7 +28,6 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
-    make_client_for_router,
     model_metadata,
     output_path,
     query_ollama_native,
@@ -74,7 +73,7 @@ def run_conversation(
     **api_kwargs,
 ) -> dict | None:
     """Run a multi-turn conversation. Returns record dict or None if budget exceeded."""
-    is_ollama = model.get("router") == "ollama"
+    is_ollama = model.get("route") == "ollama"
     num_ctx = min(model.get("context_window", 32768), 81920) if is_ollama else None
     ollama_url = ollama_base_url or "http://localhost:11434/v1"
 
@@ -217,37 +216,38 @@ def main():
         models = select_models(models, set_ids)
 
     if args.model:
-        models = [m for m in models if m["id"] == args.model]
+        models = [m for m in models if m["name"] == args.model]
         if not models:
             raise SystemExit(f"Model {args.model} not found in {args.models}")
 
     if args.dry_run:
         for model in models:
             for run in range(1, args.repeat + 1):
-                log.info("Would query %s run %d (%d turns)", model["id"], run, 1 + len(followups))
+                log.info(
+                    "Would query %s run %d (%d turns)", model["name"], run, 1 + len(followups)
+                )
         return
 
     legacy_client = None
     if args.model_set:
-        routers_config = experiments.get("routers", {})
         clients: dict = {}
     else:
         legacy_client = make_client()
     budget = BudgetTracker(args.budget_usd)
 
     for model in models:
-        model_id = model["id"]
-        label = model.get("name", model_id)
+        model_id = model["name"]
+        label = model.get("display_name", model_id)
 
-        router = model.get("router")
-        if args.model_set and router:
-            if router not in clients:
-                clients[router] = make_client_for_router(router, routers_config)
-            client = clients[router]
+        route = model.get("route")
+        if args.model_set and route:
+            if route not in clients:
+                clients[route] = make_client_for_route(model)
+            client = clients[route]
         else:
             if legacy_client is None:
                 raise SystemExit(
-                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                    f"{model_id}: no route field and no legacy client (use --base-url or add route to registry)"
                 )
             client = legacy_client
 
@@ -268,15 +268,13 @@ def main():
             )
 
             try:
-                api_model_id = model.get("router_model", model_id)
+                api_model_id = model.get("model_id", model_id)
                 mt_api_kwargs = build_api_kwargs(
                     model,
                     temperature=args.temperature,
                     no_think=args.no_think,
                 )
-                ollama_base_url = (
-                    routers_config.get("ollama", {}).get("base_url") if args.model_set else None
-                )
+                ollama_base_url = model.get("base_url") if model.get("route") == "ollama" else None
                 conv = run_conversation(
                     client,
                     api_model_id,

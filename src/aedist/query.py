@@ -34,7 +34,6 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
-    make_client_for_router,
     model_metadata,
     output_path,
     query_single_turn,
@@ -115,20 +114,19 @@ def main():
 
     # Filter to single model if requested
     if args.model:
-        models = [m for m in models if m["id"] == args.model]
+        models = [m for m in models if m["name"] == args.model]
         if not models:
             raise SystemExit(f"Model {args.model} not found in {args.models}")
 
     if args.dry_run:
         for model in models:
             for run in range(1, args.repeat + 1):
-                log.info("Would query %s run %d", model["id"], run)
+                log.info("Would query %s run %d", model["name"], run)
         return
 
-    # Build client(s): per-router when using experiments.toml, else single legacy client
+    # Build client(s): per-route when using experiments.toml, else single legacy client
     legacy_client = None
     if args.model_set:
-        routers_config = experiments.get("routers", {})
         clients: dict[str, object] = {}
     else:
         legacy_client = make_client(args.base_url)
@@ -146,26 +144,26 @@ def main():
     prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
 
     for model in models:
-        model_id = model["id"]
-        label = model.get("name", model_id)
+        model_id = model["name"]
+        label = model.get("display_name", model_id)
 
         # Resolve client
-        router = model.get("router")
-        if args.model_set and router:
-            if router not in clients:
-                clients[router] = make_client_for_router(router, routers_config)
-            client = clients[router]
+        route = model.get("route")
+        if args.model_set and route:
+            if route not in clients:
+                clients[route] = make_client_for_route(model)
+            client = clients[route]
         else:
             if legacy_client is None:
                 raise SystemExit(
-                    f"{model_id}: no router field and no legacy client (use --base-url or add router to registry)"
+                    f"{model_id}: no route field and no legacy client (use --base-url or add route to registry)"
                 )
             client = legacy_client
 
-        # Router key for health tracking. Falls back to the model id's
+        # Route key for health tracking. Falls back to the model id's
         # namespace (e.g. "deepseek") when a legacy single-client run
-        # has no router field.
-        router_key = router or (model_id.split("/", 1)[0] if "/" in model_id else "default")
+        # has no route field.
+        router_key = route or (model_id.split("/", 1)[0] if "/" in model_id else "default")
 
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
@@ -191,7 +189,7 @@ def main():
 
             log.info("Querying %s run %d/%d...", label, run, args.repeat)
             try:
-                api_model_id = model.get("router_model", model_id)
+                api_model_id = model.get("model_id", model_id)
                 api_kwargs = build_api_kwargs(
                     model,
                     temperature=args.temperature,

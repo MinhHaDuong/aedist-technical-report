@@ -63,10 +63,11 @@ def _ollama_response():
 
 def _ollama_model(context_window=32768):
     return {
-        "id": "test-ollama:9b",
-        "name": "Test Ollama 9B",
-        "router": "ollama",
-        "router_model": "test-ollama:9b",
+        "name": "test-ollama:9b",
+        "display_name": "Test Ollama 9B",
+        "route": "ollama",
+        "model_id": "test-ollama:9b",
+        "base_url": "http://localhost:11434/v1",
         "context_window": context_window,
         "price_per_mtok_in": 0,
         "price_per_mtok_out": 0,

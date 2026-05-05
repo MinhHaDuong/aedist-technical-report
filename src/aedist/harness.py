@@ -29,23 +29,14 @@ def load_models(path: str) -> list[dict]:
     """Load model registry from YAML file."""
     with open(path) as f:
         models = yaml.safe_load(f) or []
-    # Backward-compat aliases: callers still using old field names continue to work
-    # while the Python migration (ticket 0161) is in progress.
-    for m in models:
-        if "name" in m and "id" not in m:
-            m["id"] = m["name"]
-        if "route" in m and "router" not in m:
-            m["router"] = m["route"]
-        if "model_id" in m and "router_model" not in m:
-            m["router_model"] = m["model_id"]
     return models
 
 
 def select_models(models: list[dict], ids: list[str]) -> list[dict]:
     """Filter models by ID list. Warns on IDs not found in registry."""
     id_set = set(ids)
-    result = [m for m in models if m["id"] in id_set]
-    missing = id_set - {m["id"] for m in result}
+    result = [m for m in models if m["name"] in id_set]
+    missing = id_set - {m["name"] for m in result}
     if missing:
         log.warning("Model IDs not found in registry: %s", sorted(missing))
     return result
@@ -217,15 +208,15 @@ def make_client(base_url: str | None = None) -> OpenAI:
     )
 
 
-def make_client_for_router(router: str, routers_config: dict) -> OpenAI:
-    """Create an OpenAI-compatible client from router config.
+def make_client_for_route(model: dict) -> OpenAI:
+    """Create an OpenAI-compatible client from model registry entry.
 
-    Resolves base_url and API key from the router definition in
-    experiments.toml's [routers] section.
+    Reads ``route`` and ``base_url`` directly from the model dict
+    (v2 registry schema).  For Ollama (no env_key), uses a long timeout
+    and a dummy API key.
     """
-    cfg = routers_config[router]
-    base_url = cfg["base_url"]
-    env_key = cfg.get("env_key")
+    base_url = model["base_url"]
+    env_key = model.get("env_key")
     if env_key:
         api_key = os.environ.get(env_key)
         if not api_key:

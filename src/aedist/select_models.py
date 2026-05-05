@@ -75,11 +75,11 @@ def load_registry(models: list[dict], *, is_padme: bool = False) -> dict[str, di
     """
     result: dict[str, dict] = {}
     for model in models:
-        model_id = model["id"]
+        model_name = model["name"]
         if is_padme:
-            slug = "padme-" + model_id.replace(":", "-")
+            slug = "padme-" + model_name.replace(":", "-")
         else:
-            slug = model_id.split("/")[-1].replace(":", "-")
+            slug = model_name.split("/")[-1].replace(":", "-")
         result[slug] = {**model, "_slug": slug}
     return result
 
@@ -125,7 +125,7 @@ def select_models(
                 log.info(
                     "  %s: %s (median F1=%.1f%%)",
                     label,
-                    m.get("name", m["_slug"]),
+                    m.get("display_name", m["_slug"]),
                     m["_median_f1"] * 100,
                 )
             return picked
@@ -152,7 +152,7 @@ def select_models(
             scored.append(entry)
 
     # 1. Frontier tier: best F1 per required country (frontier only)
-    picked_ids: set[str] = set()
+    picked_names: set[str] = set()
     frontier_picks: list[dict] = []
     for country in require_countries:
         candidates = [
@@ -160,17 +160,17 @@ def select_models(
             for m in scored
             if m.get("country") == country
             and m.get("size_class") == "frontier"
-            and m["id"] not in picked_ids
+            and m["name"] not in picked_names
         ]
         candidates.sort(key=lambda m: m["_median_f1"], reverse=True)
         if candidates:
             pick = candidates[0]
             frontier_picks.append(pick)
-            picked_ids.add(pick["id"])
+            picked_names.add(pick["name"])
             log.info(
                 "  frontier %s: %s (F1=%.1f%%)",
                 country,
-                pick.get("name", pick["id"]),
+                pick.get("display_name", pick["name"]),
                 pick["_median_f1"] * 100,
             )
         else:
@@ -182,14 +182,14 @@ def select_models(
     log.info("  local floor: F1=%.1f%%", local_floor * 100)
 
     cheap_candidates = [
-        m for m in scored if m["id"] not in picked_ids and m["_median_f1"] > local_floor
+        m for m in scored if m["name"] not in picked_names and m["_median_f1"] > local_floor
     ]
     cheap_candidates.sort(key=lambda m: m.get("price_per_mtok_in", 999))
     cheap_picks = cheap_candidates[:n_cheap]
     for m in cheap_picks:
         log.info(
             "  cheap: %s ($%.2f/Mtok, F1=%.1f%%)",
-            m.get("name", m["id"]),
+            m.get("display_name", m["name"]),
             m.get("price_per_mtok_in", 0),
             m["_median_f1"] * 100,
         )
@@ -274,8 +274,8 @@ def main() -> None:
         cloud_models = all_models
     else:
         # New: single registry, split by router field
-        cloud_models = [m for m in all_models if m.get("router") != "ollama"]
-        padme_models = [m for m in all_models if m.get("router") == "ollama"]
+        cloud_models = [m for m in all_models if m.get("route") != "ollama"]
+        padme_models = [m for m in all_models if m.get("route") == "ollama"]
 
     cloud_reg = load_registry(cloud_models, is_padme=False)
     padme_reg = load_registry(padme_models, is_padme=True)

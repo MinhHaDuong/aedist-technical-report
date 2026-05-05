@@ -31,7 +31,7 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
-    make_client_for_router,
+    make_client_for_route,
     model_metadata,
     output_path,
     query_ollama_native,
@@ -147,7 +147,7 @@ def main():
     log.info("Corpus: %d files, ~%d tokens", len(corpus_files), corpus_tokens)
 
     if args.model:
-        models = [m for m in models if m["id"] == args.model]
+        models = [m for m in models if m["name"] == args.model]
         if not models:
             raise SystemExit(f"Model {args.model} not found in {args.models}")
 
@@ -158,21 +158,18 @@ def main():
                 "OK" if corpus_tokens < ctx * CONTEXT_WINDOW_SAFETY_MARGIN else "SKIP (too large)"
             )
             for run in range(1, args.repeat + 1):
-                log.info("Would query %s run %d [%s]", model["id"], run, fits)
+                log.info("Would query %s run %d [%s]", model["name"], run, fits)
         return
 
     budget = BudgetTracker(args.budget_usd)
-    routers_config = experiments.get("routers", {}) if experiments else {}
     clients: dict[str, object] = {}
 
     for model in models:
-        model_id = model["id"]
-        label = model.get("name", model_id)
-        # Consolidated registry entries always have "router". Legacy per-experiment
-        # YAML files (without "router") fall through to the base_url path.
-        router = model.get("router")
-        base_url = model.get("base_url")  # legacy path only
-        is_ollama = router == "ollama" if router else bool(base_url)
+        model_id = model["name"]
+        label = model.get("display_name", model_id)
+        route = model.get("route")
+        base_url = model.get("base_url")
+        is_ollama = route == "ollama"
 
         ctx_window = model.get("context_window", 0)
 
@@ -194,11 +191,11 @@ def main():
                 log.info("Skip %s run %d (cached)", label, run)
                 continue
 
-            # Create/switch client per router
-            if router and routers_config:
-                if router not in clients:
-                    clients[router] = make_client_for_router(router, routers_config)
-                client = clients[router]
+            # Create/switch client per route
+            if route:
+                if route not in clients:
+                    clients[route] = make_client_for_route(model)
+                client = clients[route]
             elif base_url:
                 if base_url not in clients:
                     clients[base_url] = make_client(base_url)
@@ -217,13 +214,10 @@ def main():
                 ]
                 # Use native Ollama API to set num_ctx (OpenAI /v1/ ignores it)
                 # Size to actual need, not model max — saves KV cache VRAM
-                # router_model is the ID the router expects (future-proof for Phase B)
-                api_model_id = model.get("router_model", model_id)
+                # model_id is the ID the backend API expects
+                api_model_id = model.get("model_id", model_id)
                 if is_ollama:
-                    ollama_cfg = routers_config.get("ollama", {})
-                    ollama_url = (
-                        ollama_cfg.get("base_url") or base_url or "http://localhost:11434/v1"
-                    )
+                    ollama_url = base_url or "http://localhost:11434/v1"
                     num_ctx = min(ctx_window, 81920)
                     result = query_ollama_native(
                         ollama_url,
