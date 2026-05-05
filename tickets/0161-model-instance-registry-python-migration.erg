@@ -1,6 +1,6 @@
 %erg v1
 Title: Model instance registry — Python migration (phase 2 of ticket 0156)
-Status: open
+Status: closed
 Created: 2026-05-03
 Author: claude
 
@@ -9,6 +9,7 @@ Author: claude
 2026-05-04T10:45Z claude note removed Blocked-by: 0156 — 0156 is closed (PR #322)
 2026-05-05T08:30Z claude note assessed worktree agent-ace1b9a565323f258 (branch ticket/0156-model-registry-refactor); harness.py + query.py changes valid, YAML changes redundant (already in main via PR #322); worktree pruned
 2026-05-05T09:00Z claude status doing — raid 0161: scope validated, actions 7/10 not needed (plot scripts don't use registry, 0141 already closed)
+2026-05-05T09:30Z claude status closed — PR #326 merged; 17 files, 1144 tests pass; import bug caught in verify phase
 
 --- body ---
 ## Context
