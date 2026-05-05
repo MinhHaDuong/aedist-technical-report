@@ -28,7 +28,6 @@ unknown versions rather than silently misparsing).
 ```
 %erg v1
 Title: Short imperative description
-Status: open
 Created: 2026-03-27
 Author: claude
 
@@ -52,28 +51,22 @@ validator rejects files missing either one).
 | Header | Required | Type | Values |
 |--------|----------|------|--------|
 | `Title` | yes | string | Short imperative sentence |
-| `Status` | no | enum | `open`, `doing`, `closed`, `pending` |
+| `Closed` | no | string | Reason for closure (free text) |
 | `Created` | yes | date | `YYYY-MM-DD` |
 | `Author` | yes | string | Agent or human identifier |
-| `Blocked-by` | no | ref | Ticket ID or `gh#N` (repeatable) |
+| `Blocked-by` | no | ref | Ticket ID (repeatable) |
 
-No other headers are valid in v1. No `X-` extensions. If v2 needs new
-headers, it declares `%ticket v2` and extends the set.
+No other headers are valid in v1. No `X-` extensions.
 
-**Status values (when present):**
-- `open` — available for work.
-- `doing` — work in progress.
-- `closed` — completed or cancelled.
-- `pending` — awaiting external input (e.g., review). Excluded from ready query.
-
-**Status default:** absent `Status` header is treated as `open`. New tickets should omit it; `erg close` manages it automatically.
+**`Closed` header:** absent means open. Present (any value) means closed. Use
+`erg close <id> <reason>` — it appends the header automatically. Do not write
+it by hand except in migrations.
 
 **`Blocked-by` references:**
 - A 4-digit ID (e.g., `0041`) refers to a local ticket.
-- `gh#N` refers to a GitHub issue. Resolved via API when online, treated as
-  satisfied (non-blocking) when offline.
 - Repeatable: one `Blocked-by:` line per dependency.
-- A blocker must be `closed` to unblock. `doing` and `pending` still block.
+- A blocker must have a `Closed:` header to unblock.
+- `gh#N` (GitHub issue refs) are deprecated and rejected by the validator.
 
 ### ID assignment
 
@@ -106,7 +99,6 @@ Append-only. Each line records one event:
 | Verb | Meaning |
 |------|---------|
 | `created` | Ticket created |
-| `status` | Status changed. Detail: new status + reason |
 | `note` | Free-form annotation |
 
 Lines are never edited or deleted. To correct an error, append a new line.
@@ -144,14 +136,13 @@ this format.
 ## Ready query
 
 A ticket is **ready** when:
-- `Status: open` (not `doing`, not `closed`, not `pending`)
-- Every `Blocked-by` local ref points to a `Status: closed` ticket
-- Every `Blocked-by: gh#N` is either resolved via API or treated as satisfied (offline)
+- No `Closed:` header present
+- Every `Blocked-by` local ref points to a ticket that has a `Closed:` header
 
 ### Archive criteria
 
 A ticket is **archivable** when:
-- `Status: closed`
+- Has a `Closed:` header
 - Last log entry older than 90 days
 - Not referenced by any live ticket's `Blocked-by` header (DAG safety)
 
@@ -162,15 +153,15 @@ Archive moves the file to `tickets/archive/` via `git mv`.
 The Go validator enforces:
 1. Magic first line is `%erg v1` (reject unknown versions)
 2. All required headers present
-3. No unknown headers
-4. `Status` value is in the enum (`open`, `doing`, `closed`, `pending`)
-5. `Created` is a valid ISO date (`YYYY-MM-DD`)
-6. Filename matches `NNNN-{slug}.erg` pattern (4-digit ID, ASCII slug)
-7. No duplicate IDs across `tickets/` and `tickets/archive/`
-8. `Blocked-by` local refs point to existing ticket IDs
-9. No dependency cycles
-10. Log lines match `{timestamp} {actor} {verb}` format
-11. Each separator (`--- log ---`, `--- body ---`) appears exactly once
+3. No unknown headers (`Status:` is no longer valid — use `Closed:`)
+4. `Created` is a valid ISO date (`YYYY-MM-DD`)
+5. Filename matches `NNNN-{slug}.erg` pattern (4-digit ID, ASCII slug)
+6. No duplicate IDs across `tickets/` and `tickets/archive/`
+7. `Blocked-by` local refs point to existing ticket IDs
+8. No dependency cycles
+9. Log lines match `{timestamp} {actor} {verb}` format
+10. Each separator (`--- log ---`, `--- body ---`) appears exactly once
+11. `gh#N` refs in `Blocked-by` are rejected (deprecated scheme)
 
 ## Relationship to GitHub Issues
 
