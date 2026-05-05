@@ -34,6 +34,7 @@ from .harness import (
     load_experiments,
     load_models,
     make_client,
+    make_client_for_route,
     model_metadata,
     output_path,
     query_single_turn,
