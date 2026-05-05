@@ -1,8 +1,8 @@
 %erg v1
 Title: Verify incrementality of the fusion method (order-sensitivity probe)
-Status: closed
 Created: 2026-04-17
 Author: claude
+Closed: migrated from Status: closed
 
 --- log ---
 2026-04-17T11:45Z claude created — implements ADR-5 trait × target = script for the incrementality trait (MASTERPLAN §Method traits §Empirical limits). Blocked on the v0 fusion prototype existing end-to-end.

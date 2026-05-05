@@ -1,8 +1,8 @@
 %erg v1
 Title: make_client must not leak OPENROUTER_API_KEY to local endpoints
-Status: closed
 Created: 2026-04-17
 Author: claude
+Closed: migrated from Status: closed
 
 --- log ---
 2026-04-17T12:35Z claude created — `make_client("http://localhost:11434/v1")` currently forwards the real OpenRouter key to a local Ollama endpoint. Two tests red; also a real security/correctness concern.

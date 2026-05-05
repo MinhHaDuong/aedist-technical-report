@@ -1,9 +1,9 @@
 %erg v1
 Title: Sync technical report to v0 pipeline design (Ch. 6 + Ch. 3 reframe)
-Status: closed
 Created: 2026-04-17
 Author: claude
 Blocked-by: 0097
+Closed: migrated from Status: closed
 
 --- log ---
 2026-04-17T10:00Z claude created — first of two report-sync tickets carved out after slides received the full v0 pipeline design. Ch. 6 ("Architecture proposée") still describes a vision-level 4-layer / 4-agent sketch with no formal v0 data model; Ch. 3 still frames RAG as an endpoint rather than as a retrieval component of the fusion pipeline.
