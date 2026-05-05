@@ -18,10 +18,11 @@
 
 # --- Frontier ---
 
-- id: "tencent/hy3-preview:free"
-  router: openrouter
-  router_model: "tencent/hy3-preview:free"
-  name: "Hy3 Preview"
+- name: "tencent/hy3-preview:free"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "tencent/hy3-preview:free"
+  display_name: "Hy3 Preview"
   provider: Tencent
   country: CN
   architecture: moe
@@ -33,10 +34,11 @@
   web_search: true
   # Free preview — expires 2026-05-08. Sweep before then or remove.
 
-- id: "qwen/qwen3-max-thinking"
-  router: openrouter
-  router_model: "qwen/qwen3-max-thinking"
-  name: "Qwen3 Max Thinking"
+- name: "qwen/qwen3-max-thinking"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3-max-thinking"
+  display_name: "Qwen3 Max Thinking"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -47,10 +49,11 @@
   license: commercial
   web_search: true
 
-- id: "anthropic/claude-opus-4.6"
-  router: openrouter
-  router_model: "anthropic/claude-opus-4.6"
-  name: "Claude Opus 4.6"
+- name: "anthropic/claude-opus-4.6"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "anthropic/claude-opus-4.6"
+  display_name: "Claude Opus 4.6"
   provider: Anthropic
   country: US
   architecture: dense
@@ -61,10 +64,11 @@
   license: commercial
   web_search: true
 
-- id: "anthropic/claude-sonnet-4.6"
-  router: openrouter
-  router_model: "anthropic/claude-sonnet-4.6"
-  name: "Claude Sonnet 4.6"
+- name: "anthropic/claude-sonnet-4.6"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "anthropic/claude-sonnet-4.6"
+  display_name: "Claude Sonnet 4.6"
   provider: Anthropic
   country: US
   architecture: dense
@@ -75,10 +79,11 @@
   license: commercial
   web_search: true
 
-- id: "deepseek/deepseek-v3.2"
-  router: openrouter
-  router_model: "deepseek/deepseek-v3.2"
-  name: "DeepSeek V3.2"
+- name: "deepseek/deepseek-v3.2"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "deepseek/deepseek-v3.2"
+  display_name: "DeepSeek V3.2"
   provider: DeepSeek
   country: CN
   architecture: moe
@@ -90,10 +95,11 @@
   license: open-MIT
   web_search: true
 
-- id: "google/gemini-3-flash-preview"
-  router: openrouter
-  router_model: "google/gemini-3-flash-preview"
-  name: "Gemini 3 Flash"
+- name: "google/gemini-3-flash-preview"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "google/gemini-3-flash-preview"
+  display_name: "Gemini 3 Flash"
   provider: Google
   country: US
   architecture: dense
@@ -104,10 +110,11 @@
   license: commercial
   web_search: true
 
-- id: "mistralai/mistral-large-2512"
-  router: openrouter
-  router_model: "mistralai/mistral-large-2512"
-  name: "Mistral Large 3"
+- name: "mistralai/mistral-large-2512"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "mistralai/mistral-large-2512"
+  display_name: "Mistral Large 3"
   provider: Mistral
   country: FR
   architecture: moe
@@ -119,10 +126,11 @@
   license: open-apache
   web_search: true
 
-- id: "moonshotai/kimi-k2-thinking"
-  router: openrouter
-  router_model: "moonshotai/kimi-k2-thinking"
-  name: "Kimi K2 Thinking"
+- name: "moonshotai/kimi-k2-thinking"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "moonshotai/kimi-k2-thinking"
+  display_name: "Kimi K2 Thinking"
   provider: "Moonshot AI"
   country: CN
   architecture: moe
@@ -133,10 +141,11 @@
   license: commercial
   web_search: true
 
-- id: "openai/gpt-5.4"
-  router: openrouter
-  router_model: "openai/gpt-5.4"
-  name: GPT-5.4
+- name: "openai/gpt-5.4"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "openai/gpt-5.4"
+  display_name: GPT-5.4
   provider: OpenAI
   country: US
   architecture: dense
@@ -147,10 +156,11 @@
   license: commercial
   web_search: true
 
-- id: "x-ai/grok-4.20"
-  router: openrouter
-  router_model: "x-ai/grok-4.20"
-  name: "Grok 4.20"
+- name: "x-ai/grok-4.20"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "x-ai/grok-4.20"
+  display_name: "Grok 4.20"
   provider: xAI
   country: US
   architecture: dense
@@ -161,10 +171,11 @@
   license: commercial
   web_search: true
 
-- id: "z-ai/glm-5-turbo"
-  router: openrouter
-  router_model: "z-ai/glm-5-turbo"
-  name: "GLM-5 Turbo"
+- name: "z-ai/glm-5-turbo"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "z-ai/glm-5-turbo"
+  display_name: "GLM-5 Turbo"
   provider: "Zhipu AI"
   country: CN
   architecture: moe
@@ -176,10 +187,11 @@
   license: open-other
   web_search: true
 
-- id: "z-ai/glm-5.1"
-  router: openrouter
-  router_model: "z-ai/glm-5.1"
-  name: "GLM-5.1"
+- name: "z-ai/glm-5.1"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "z-ai/glm-5.1"
+  display_name: "GLM-5.1"
   provider: "Zhipu AI"
   country: CN
   architecture: moe
@@ -193,10 +205,11 @@
 
 # --- Large ---
 
-- id: "qwen/qwen3.5-122b-a10b"
-  router: openrouter
-  router_model: "qwen/qwen3.5-122b-a10b"
-  name: "Qwen 3.5 122B"
+- name: "qwen/qwen3.5-122b-a10b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.5-122b-a10b"
+  display_name: "Qwen 3.5 122B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -208,10 +221,11 @@
   license: open-apache
   web_search: true
 
-- id: "qwen/qwen3.5-397b-a17b"
-  router: openrouter
-  router_model: "qwen/qwen3.5-397b-a17b"
-  name: "Qwen 3.5 397B"
+- name: "qwen/qwen3.5-397b-a17b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.5-397b-a17b"
+  display_name: "Qwen 3.5 397B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -223,10 +237,11 @@
   license: open-apache
   web_search: true
 
-- id: "qwen/qwen3.5-plus-02-15"
-  router: openrouter
-  router_model: "qwen/qwen3.5-plus-02-15"
-  name: "Qwen 3.5 Plus"
+- name: "qwen/qwen3.5-plus-02-15"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.5-plus-02-15"
+  display_name: "Qwen 3.5 Plus"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -237,10 +252,11 @@
   license: commercial
   web_search: true
 
-- id: "alibaba/tongyi-deepresearch-30b-a3b"
-  router: openrouter
-  router_model: "alibaba/tongyi-deepresearch-30b-a3b"
-  name: "Tongyi DeepResearch 30B"
+- name: "alibaba/tongyi-deepresearch-30b-a3b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "alibaba/tongyi-deepresearch-30b-a3b"
+  display_name: "Tongyi DeepResearch 30B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -252,10 +268,11 @@
   license: commercial
   web_search: true
 
-- id: "baidu/ernie-4.5-21b-a3b-thinking"
-  router: openrouter
-  router_model: "baidu/ernie-4.5-21b-a3b-thinking"
-  name: "ERNIE 4.5 Thinking"
+- name: "baidu/ernie-4.5-21b-a3b-thinking"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "baidu/ernie-4.5-21b-a3b-thinking"
+  display_name: "ERNIE 4.5 Thinking"
   provider: Baidu
   country: CN
   architecture: moe
@@ -267,10 +284,11 @@
   license: commercial
   web_search: true
 
-- id: "meta-llama/llama-4-maverick"
-  router: openrouter
-  router_model: "meta-llama/llama-4-maverick"
-  name: "Llama 4 Maverick"
+- name: "meta-llama/llama-4-maverick"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "meta-llama/llama-4-maverick"
+  display_name: "Llama 4 Maverick"
   provider: Meta
   country: US
   architecture: moe
@@ -282,10 +300,11 @@
   license: open-llama
   web_search: true
 
-- id: "minimax/minimax-m2.7"
-  router: openrouter
-  router_model: "minimax/minimax-m2.7"
-  name: "MiniMax M2.7"
+- name: "minimax/minimax-m2.7"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "minimax/minimax-m2.7"
+  display_name: "MiniMax M2.7"
   provider: MiniMax
   country: CN
   architecture: dense
@@ -296,10 +315,11 @@
   license: commercial
   web_search: true
 
-- id: "moonshotai/kimi-k2.5"
-  router: openrouter
-  router_model: "moonshotai/kimi-k2.5"
-  name: "Kimi K2.5"
+- name: "moonshotai/kimi-k2.5"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "moonshotai/kimi-k2.5"
+  display_name: "Kimi K2.5"
   provider: "Moonshot AI"
   country: CN
   architecture: moe
@@ -310,10 +330,11 @@
   license: commercial
   web_search: true
 
-- id: "qwen3.5:122b"
-  router: ollama
-  router_model: "qwen3.5:122b"
-  name: "Qwen 3.5 122B (local)"
+- name: "qwen3.5:122b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:122b"
+  display_name: "Qwen 3.5 122B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: moe
@@ -323,10 +344,11 @@
   size_class: large
   license: open-apache
 
-- id: "xiaomi/mimo-v2-pro"
-  router: openrouter
-  router_model: "xiaomi/mimo-v2-pro"
-  name: "MiMo V2 Pro"
+- name: "xiaomi/mimo-v2-pro"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "xiaomi/mimo-v2-pro"
+  display_name: "MiMo V2 Pro"
   provider: Xiaomi
   country: CN
   architecture: dense
@@ -340,10 +362,11 @@
 
 # --- Medium ---
 
-- id: "qwen/qwen3.5-35b-a3b"
-  router: openrouter
-  router_model: "qwen/qwen3.5-35b-a3b"
-  name: "Qwen 3.5 35B"
+- name: "qwen/qwen3.5-35b-a3b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.5-35b-a3b"
+  display_name: "Qwen 3.5 35B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -355,10 +378,11 @@
   license: open-apache
   web_search: true
 
-- id: "qwen/qwen3.6-35b-a3b"
-  router: openrouter
-  router_model: "qwen/qwen3.6-35b-a3b"
-  name: "Qwen 3.6 35B"
+- name: "qwen/qwen3.6-35b-a3b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.6-35b-a3b"
+  display_name: "Qwen 3.6 35B"
   provider: Alibaba
   country: CN
   architecture: moe
@@ -370,10 +394,11 @@
   license: open-apache
   web_search: true
 
-- id: "bytedance-seed/seed-2.0-lite"
-  router: openrouter
-  router_model: "bytedance-seed/seed-2.0-lite"
-  name: "Seed 2.0 Lite"
+- name: "bytedance-seed/seed-2.0-lite"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "bytedance-seed/seed-2.0-lite"
+  display_name: "Seed 2.0 Lite"
   provider: ByteDance
   country: CN
   architecture: dense
@@ -384,10 +409,11 @@
   license: commercial
   web_search: true
 
-- id: "inception/mercury-2"
-  router: openrouter
-  router_model: "inception/mercury-2"
-  name: "Mercury 2"
+- name: "inception/mercury-2"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "inception/mercury-2"
+  display_name: "Mercury 2"
   provider: Inception
   country: Other
   architecture: dense
@@ -398,10 +424,11 @@
   license: commercial
   web_search: true
 
-- id: "nvidia/nemotron-3-nano-30b-a3b"
-  router: openrouter
-  router_model: "nvidia/nemotron-3-nano-30b-a3b"
-  name: "Nemotron 3 Nano 30B"
+- name: "nvidia/nemotron-3-nano-30b-a3b"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "nvidia/nemotron-3-nano-30b-a3b"
+  display_name: "Nemotron 3 Nano 30B"
   provider: NVIDIA
   country: US
   architecture: moe
@@ -413,10 +440,11 @@
   license: open-other
   web_search: true
 
-- id: "gemma4:31b"
-  router: ollama
-  router_model: "gemma4:31b"
-  name: "Gemma 4 31B (local)"
+- name: "gemma4:31b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "gemma4:31b"
+  display_name: "Gemma 4 31B (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: dense
@@ -426,10 +454,11 @@
   size_class: medium
   license: open-other
 
-- id: "google/gemma-4-26b-a4b-it"
-  router: openrouter
-  router_model: "google/gemma-4-26b-a4b-it"
-  name: "Gemma 4 26B A4B"
+- name: "google/gemma-4-26b-a4b-it"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "google/gemma-4-26b-a4b-it"
+  display_name: "Gemma 4 26B A4B"
   provider: Google
   country: US
   architecture: moe
@@ -440,10 +469,11 @@
   license: open-apache
   params: "25.2B MoE (3.8B active)"
 
-- id: "google/gemma-4-31b-it"
-  router: openrouter
-  router_model: "google/gemma-4-31b-it"
-  name: "Gemma 4 31B"
+- name: "google/gemma-4-31b-it"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "google/gemma-4-31b-it"
+  display_name: "Gemma 4 31B"
   provider: Google
   country: US
   architecture: dense
@@ -454,10 +484,11 @@
   license: open-apache
   params: "31B dense"
 
-- id: "glm-4.7-flash"
-  router: ollama
-  router_model: "glm-4.7-flash"
-  name: "GLM 4.7 Flash (local)"
+- name: "glm-4.7-flash"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "glm-4.7-flash"
+  display_name: "GLM 4.7 Flash (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: dense
@@ -467,10 +498,11 @@
   size_class: medium
   license: open-apache
 
-- id: "nemotron-3-nano"
-  router: ollama
-  router_model: "nemotron-3-nano"
-  name: "Nemotron 3 Nano (local)"
+- name: "nemotron-3-nano"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "nemotron-3-nano"
+  display_name: "Nemotron 3 Nano (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: moe
@@ -480,10 +512,11 @@
   size_class: medium
   license: open-other
 
-- id: "qwen3.5:35b"
-  router: ollama
-  router_model: "qwen3.5:35b"
-  name: "Qwen 3.5 35B (local)"
+- name: "qwen3.5:35b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:35b"
+  display_name: "Qwen 3.5 35B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: moe
@@ -493,10 +526,11 @@
   size_class: medium
   license: open-apache
 
-- id: "qwen3.6:35b"
-  router: ollama
-  router_model: "qwen3.6:35b"
-  name: "Qwen 3.6 35B (local)"
+- name: "qwen3.6:35b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.6:35b"
+  display_name: "Qwen 3.6 35B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: moe
@@ -509,10 +543,11 @@
 
 # --- Small ---
 
-- id: "mistralai/mistral-small-2603"
-  router: openrouter
-  router_model: "mistralai/mistral-small-2603"
-  name: "Mistral Small 4"
+- name: "mistralai/mistral-small-2603"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "mistralai/mistral-small-2603"
+  display_name: "Mistral Small 4"
   provider: Mistral
   country: FR
   architecture: dense
@@ -524,10 +559,11 @@
   license: open-apache
   web_search: true
 
-- id: "cogito:8b"
-  router: ollama
-  router_model: "cogito:8b"
-  name: "Cogito 8B (local)"
+- name: "cogito:8b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "cogito:8b"
+  display_name: "Cogito 8B (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: dense
@@ -537,10 +573,11 @@
   size_class: small
   license: open-apache
 
-- id: "devstral-small-2"
-  router: ollama
-  router_model: "devstral-small-2"
-  name: "Devstral Small 2 (local)"
+- name: "devstral-small-2"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "devstral-small-2"
+  display_name: "Devstral Small 2 (local)"
   provider: "Ollama/Padme"
   country: FR
   architecture: dense
@@ -550,10 +587,11 @@
   size_class: small
   license: open-apache
 
-- id: "granite3.3:8b"
-  router: ollama
-  router_model: "granite3.3:8b"
-  name: "Granite 3.3 8B (local)"
+- name: "granite3.3:8b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "granite3.3:8b"
+  display_name: "Granite 3.3 8B (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: dense
@@ -563,10 +601,11 @@
   size_class: small
   license: open-apache
 
-- id: "mistral-small3.2"
-  router: ollama
-  router_model: "mistral-small3.2"
-  name: "Mistral Small 3.2 (local)"
+- name: "mistral-small3.2"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "mistral-small3.2"
+  display_name: "Mistral Small 3.2 (local)"
   provider: "Ollama/Padme"
   country: FR
   architecture: dense
@@ -576,10 +615,11 @@
   size_class: small
   license: open-apache
 
-- id: "qwen3.5:9b"
-  router: ollama
-  router_model: "qwen3.5:9b"
-  name: "Qwen 3.5 9B (local)"
+- name: "qwen3.5:9b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:9b"
+  display_name: "Qwen 3.5 9B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: dense
@@ -589,10 +629,11 @@
   size_class: small
   license: open-apache
 
-- id: "ministral-3:14b"
-  router: ollama
-  router_model: "ministral-3:14b"
-  name: "Ministral 3 14B (local)"
+- name: "ministral-3:14b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "ministral-3:14b"
+  display_name: "Ministral 3 14B (local)"
   provider: "Ollama/Padme"
   country: FR
   architecture: dense
@@ -602,10 +643,11 @@
   size_class: small
   license: commercial
 
-- id: "openai/gpt-5-mini"
-  router: openrouter
-  router_model: "openai/gpt-5-mini"
-  name: "GPT-5 Mini"
+- name: "openai/gpt-5-mini"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "openai/gpt-5-mini"
+  display_name: "GPT-5 Mini"
   provider: OpenAI
   country: US
   architecture: dense
@@ -616,10 +658,11 @@
   license: commercial
   web_search: true
 
-- id: "stepfun/step-3.5-flash"
-  router: openrouter
-  router_model: "stepfun/step-3.5-flash"
-  name: "Step 3.5 Flash"
+- name: "stepfun/step-3.5-flash"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "stepfun/step-3.5-flash"
+  display_name: "Step 3.5 Flash"
   provider: StepFun
   country: CN
   architecture: dense
@@ -630,10 +673,11 @@
   license: commercial
   web_search: true
 
-- id: "xiaomi/mimo-v2-flash"
-  router: openrouter
-  router_model: "xiaomi/mimo-v2-flash"
-  name: "MiMo V2 Flash"
+- name: "xiaomi/mimo-v2-flash"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "xiaomi/mimo-v2-flash"
+  display_name: "MiMo V2 Flash"
   provider: Xiaomi
   country: CN
   architecture: dense
@@ -647,10 +691,11 @@
 
 # --- Edge ---
 
-- id: "qwen/qwen3.6-plus-preview:free"
-  router: openrouter
-  router_model: "qwen/qwen3.6-plus-preview:free"
-  name: "Qwen 3.6 Plus Preview"
+- name: "qwen/qwen3.6-plus-preview:free"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.6-plus-preview:free"
+  display_name: "Qwen 3.6 Plus Preview"
   provider: Alibaba
   country: CN
   architecture: dense
@@ -661,10 +706,11 @@
   license: commercial
   web_search: true
 
-- id: "google/gemini-2.5-flash-lite"
-  router: openrouter
-  router_model: "google/gemini-2.5-flash-lite"
-  name: "Gemini 2.5 Flash Lite"
+- name: "google/gemini-2.5-flash-lite"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "google/gemini-2.5-flash-lite"
+  display_name: "Gemini 2.5 Flash Lite"
   provider: Google
   country: US
   architecture: dense
@@ -675,10 +721,11 @@
   license: commercial
   web_search: true
 
-- id: "gemma4:e2b"
-  router: ollama
-  router_model: "gemma4:e2b"
-  name: "Gemma 4 E2B (local)"
+- name: "gemma4:e2b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "gemma4:e2b"
+  display_name: "Gemma 4 E2B (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: dense
@@ -688,10 +735,11 @@
   size_class: edge
   license: open-other
 
-- id: "gemma4:e4b"
-  router: ollama
-  router_model: "gemma4:e4b"
-  name: "Gemma 4 E4B (local)"
+- name: "gemma4:e4b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "gemma4:e4b"
+  display_name: "Gemma 4 E4B (local)"
   provider: "Ollama/Padme"
   country: US
   architecture: dense
@@ -701,10 +749,11 @@
   size_class: edge
   license: open-other
 
-- id: "qwen3.5:2b"
-  router: ollama
-  router_model: "qwen3.5:2b"
-  name: "Qwen 3.5 2B (local)"
+- name: "qwen3.5:2b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:2b"
+  display_name: "Qwen 3.5 2B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: dense
@@ -714,10 +763,11 @@
   size_class: edge
   license: open-apache
 
-- id: "qwen3.5:4b"
-  router: ollama
-  router_model: "qwen3.5:4b"
-  name: "Qwen 3.5 4B (local)"
+- name: "qwen3.5:4b"
+  route: ollama
+  base_url: "http://localhost:11434/v1"
+  model_id: "qwen3.5:4b"
+  display_name: "Qwen 3.5 4B (local)"
   provider: "Ollama/Padme"
   country: CN
   architecture: moe
@@ -727,10 +777,11 @@
   size_class: edge
   license: open-apache
 
-- id: "openai/gpt-5-nano"
-  router: openrouter
-  router_model: "openai/gpt-5-nano"
-  name: "GPT-5 Nano"
+- name: "openai/gpt-5-nano"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "openai/gpt-5-nano"
+  display_name: "GPT-5 Nano"
   provider: OpenAI
   country: US
   architecture: dense
@@ -744,10 +795,11 @@
 
 # --- Reasoning / Deep Research ---
 
-- id: "deepseek/deepseek-r1-0528"
-  router: openrouter
-  router_model: "deepseek/deepseek-r1-0528"
-  name: "DeepSeek R1 0528"
+- name: "deepseek/deepseek-r1-0528"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "deepseek/deepseek-r1-0528"
+  display_name: "DeepSeek R1 0528"
   provider: DeepSeek
   country: CN
   architecture: moe
@@ -769,10 +821,11 @@
 # (reasoning flag: API errors if temperature is sent — removed entire codepath
 #  rather than carry a single-model exception indefinitely)
 #
-# - id: "openai/o3"
-#   router: openrouter
-#   router_model: "openai/o3"
-#   name: o3
+# - name: "openai/o3"
+#   route: openrouter
+#   base_url: "https://openrouter.ai/api/v1"
+#   model_id: "openai/o3"
+#   display_name: o3
 #   provider: OpenAI
 #   country: US
 #   architecture: dense

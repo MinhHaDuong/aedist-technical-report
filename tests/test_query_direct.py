@@ -248,12 +248,12 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
     call_args = mock_client.chat.completions.create.call_args
     messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
     user_content = messages[0]["content"]
-    # persona is prepended before base, overview appended after base
+    # persona and overview are prepended before base
     assert "You are an expert." in user_content
     assert "Base prompt text." in user_content
     assert "Provide an overview." in user_content
-    assert user_content.index("You are an expert.") < user_content.index("Base prompt text.")
-    assert user_content.index("Base prompt text.") < user_content.index("Provide an overview.")
+    assert user_content.index("You are an expert.") < user_content.index("Provide an overview.")
+    assert user_content.index("Provide an overview.") < user_content.index("Base prompt text.")
 
 
 @patch("aedist.harness.OpenAI")

@@ -823,8 +823,8 @@ def test_prompt_modules_assembled_in_execute(tmp_path: Path) -> None:
     assert "You are an expert." in content
     assert "Base prompt text." in content
     assert "Provide an overview." in content
-    assert content.index("You are an expert.") < content.index("Base prompt text.")
-    assert content.index("Base prompt text.") < content.index("Provide an overview.")
+    assert content.index("You are an expert.") < content.index("Provide an overview.")
+    assert content.index("Provide an overview.") < content.index("Base prompt text.")
 
 
 def test_prompt_modules_empty_uses_base_only_in_worker(tmp_path: Path) -> None:

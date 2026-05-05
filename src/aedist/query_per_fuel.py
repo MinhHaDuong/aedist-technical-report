@@ -25,6 +25,7 @@ import logging
 from datetime import date
 from pathlib import Path
 
+import httpx
 import openai
 
 from .extract import (
@@ -43,6 +44,7 @@ from .harness import (
     make_client_for_router,
     model_metadata,
     output_path,
+    query_ollama_native,
     query_single_turn,
     save_json,
     select_models,
@@ -140,6 +142,9 @@ def query_decomposed(
     corpus_text: str,
     budget: BudgetTracker,
     model: dict,
+    *,
+    ollama_url: str | None = None,
+    num_ctx: int | None = None,
     **api_kwargs,
 ) -> dict | None:
     """Run 3 sub-queries and merge results. Returns record dict or None."""
@@ -158,8 +163,11 @@ def query_decomposed(
         ]
 
         try:
-            result = query_single_turn(client, model_id, messages, **api_kwargs)
-        except openai.APIError as e:
+            if ollama_url and num_ctx:
+                result = query_ollama_native(ollama_url, model_id, messages, num_ctx)
+            else:
+                result = query_single_turn(client, model_id, messages, **api_kwargs)
+        except (openai.APIError, httpx.HTTPError) as e:
             log.error("  Error on %s sub-query: %s", fuel, e)
             return None
 
@@ -285,6 +293,15 @@ def main():
             log.warning("Skip %s: corpus too large for context window", label)
             continue
 
+        # Ollama: bypass /v1/ shim to honour num_ctx; resolved once per model
+        if router == "ollama":
+            ollama_cfg = routers_config.get("ollama", {}) if args.model_set else {}
+            ollama_url = ollama_cfg.get("base_url", "http://localhost:11434/v1")
+            ollama_num_ctx = min(ctx_window or 32768, 81920)
+        else:
+            ollama_url = None
+            ollama_num_ctx = None
+
         for run in range(1, args.repeat + 1):
             if not budget.check_or_warn():
                 return
@@ -306,6 +323,8 @@ def main():
                 corpus_text,
                 budget,
                 model,
+                ollama_url=ollama_url,
+                num_ctx=ollama_num_ctx,
                 **dec_api_kwargs,
             )
 

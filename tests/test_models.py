@@ -10,11 +10,12 @@ EXPERIMENTS_DIR = Path(__file__).parent.parent / "experiments"
 MODELS_PATH = EXPERIMENTS_DIR / "models.yaml"
 EXPERIMENTS_PATH = EXPERIMENTS_DIR / "experiments.toml"
 
-REQUIRED_FIELDS = {
-    "id",
-    "router",
-    "router_model",
+# Native fields in models.yaml (v2 schema — ticket 0156)
+REQUIRED_FIELDS_V2 = {
     "name",
+    "display_name",
+    "route",
+    "model_id",
     "provider",
     "country",
     "architecture",
@@ -24,48 +25,57 @@ REQUIRED_FIELDS = {
     "size_class",
     "license",
 }
+# SDK-based routes require base_url; CLI routes must not have it.
+ROUTES_REQUIRE_BASE_URL = {"openrouter", "ollama", "openllm"}
+ROUTES_NO_BASE_URL = {"claude-code-cli", "codex"}
 
 VALID_COUNTRIES = {"US", "CN", "FR", "Other"}
 VALID_ARCHITECTURES = {"dense", "moe"}
 VALID_SIZE_CLASSES = {"frontier", "large", "medium", "small", "edge"}
 VALID_LICENSES = {"commercial", "open-apache", "open-MIT", "open-llama", "open", "open-other"}
-VALID_ROUTERS = {"openrouter", "ollama"}
+VALID_ROUTES = ROUTES_REQUIRE_BASE_URL | ROUTES_NO_BASE_URL
+
+
+BANNED_FIELDS_V1 = {"id", "router", "router_model"}
 
 
 def test_schema_validation(models):
-    """Each model entry has all required fields with valid values."""
+    """Each model entry has all required fields with valid values (v2 schema)."""
     for model in models:
-        model_id = model.get("id", "<missing>")
+        model_name = model.get("name", "<missing>")
         present = set(model.keys())
-        missing = REQUIRED_FIELDS - present
-        assert not missing, f"{model_id} missing fields: {missing}"
+        missing = REQUIRED_FIELDS_V2 - present
+        assert not missing, f"{model_name} missing fields: {missing}"
+        leftover = BANNED_FIELDS_V1 & present
+        assert not leftover, f"{model_name} still has v1 fields: {leftover}"
 
         assert model["country"] in VALID_COUNTRIES, (
-            f"{model_id}: invalid country {model['country']}"
+            f"{model_name}: invalid country {model['country']}"
         )
         assert model["architecture"] in VALID_ARCHITECTURES, (
-            f"{model_id}: invalid architecture {model['architecture']}"
+            f"{model_name}: invalid architecture {model['architecture']}"
         )
         assert model["size_class"] in VALID_SIZE_CLASSES, (
-            f"{model_id}: invalid size_class {model['size_class']}"
+            f"{model_name}: invalid size_class {model['size_class']}"
         )
         assert model["license"] in VALID_LICENSES, (
-            f"{model_id}: invalid license {model['license']}"
+            f"{model_name}: invalid license {model['license']}"
         )
-        assert model["router"] in VALID_ROUTERS, f"{model_id}: invalid router {model['router']}"
-        assert isinstance(model["context_window"], int), f"{model_id}: context_window must be int"
+        assert model["route"] in VALID_ROUTES, f"{model_name}: invalid route {model['route']}"
+        route = model["route"]
+        if route in ROUTES_REQUIRE_BASE_URL:
+            assert "base_url" in model, f"{model_name}: route={route} requires base_url"
+        if route in ROUTES_NO_BASE_URL:
+            assert "base_url" not in model, f"{model_name}: route={route} must not have base_url"
+        assert isinstance(model["context_window"], int), (
+            f"{model_name}: context_window must be int"
+        )
         assert isinstance(model["price_per_mtok_in"], (int, float)), (
-            f"{model_id}: price_per_mtok_in must be numeric"
+            f"{model_name}: price_per_mtok_in must be numeric"
         )
         assert isinstance(model["price_per_mtok_out"], (int, float)), (
-            f"{model_id}: price_per_mtok_out must be numeric"
+            f"{model_name}: price_per_mtok_out must be numeric"
         )
-
-
-def test_router_model_matches_id(models):
-    """In Phase A, router_model == id for every entry (scaffolding for Phase B)."""
-    for model in models:
-        assert model["router_model"] == model["id"], f"{model['id']}: router_model mismatch"
 
 
 def test_coverage(models):
@@ -76,8 +86,8 @@ def test_coverage(models):
     assert len(models) >= 45, f"Expected >= 45 models, got {len(models)}"
     # Spot-check that every model has required pricing fields
     for m in models:
-        assert m.get("price_per_mtok_in") is not None, f"{m['id']}: missing price_per_mtok_in"
-        assert m.get("price_per_mtok_out") is not None, f"{m['id']}: missing price_per_mtok_out"
+        assert m.get("price_per_mtok_in") is not None, f"{m['name']}: missing price_per_mtok_in"
+        assert m.get("price_per_mtok_out") is not None, f"{m['name']}: missing price_per_mtok_out"
     assert "US" in countries
     assert "CN" in countries
     assert {"frontier", "large", "medium", "small", "edge"} <= size_classes, (
@@ -85,20 +95,20 @@ def test_coverage(models):
     )
 
 
-def test_unique_ids(models):
-    """All model IDs must be unique."""
-    ids = [m["id"] for m in models]
-    assert len(ids) == len(set(ids)), (
-        f"Duplicate IDs found: {[x for x in ids if ids.count(x) > 1]}"
+def test_unique_names(models):
+    """All model instance names must be unique."""
+    names = [m["name"] for m in models]
+    assert len(names) == len(set(names)), (
+        f"Duplicate names found: {[x for x in names if names.count(x) > 1]}"
     )
 
 
 def test_experiments_model_ids_exist(models, experiments):
     """Every model_id in experiments.toml exists in the registry."""
-    registry_ids = {m["id"] for m in models}
+    registry_names = {m["name"] for m in models}
     for set_name, spec in experiments["sets"].items():
         for mid in spec["model_ids"]:
-            assert mid in registry_ids, (
+            assert mid in registry_names, (
                 f"experiments.toml sets.{set_name}: '{mid}' not in registry"
             )
 
@@ -113,10 +123,11 @@ def test_experiments_sets_nonempty(experiments):
         assert len(spec["model_ids"]) > 0, f"sets.{set_name} is empty"
 
 
-def test_experiments_routers(experiments):
-    """Router definitions have required fields."""
-    for name, router in experiments["routers"].items():
-        assert "base_url" in router, f"routers.{name} missing base_url"
+def test_no_routers_section(experiments):
+    """experiments.toml no longer has a [routers] section — base_url is per-model (ticket 0156)."""
+    assert "routers" not in experiments, (
+        "experiments.toml [routers] section should have been removed"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -231,14 +242,16 @@ def test_sweep_model_sets_exist(experiments):
 
 def test_sweep_model_set_ids_in_registry(models, experiments):
     """model_ids in sets referenced by sweeps all exist in the registry."""
-    registry_ids = {m["id"] for m in models}
+    registry_names = {m["name"] for m in models}
     for name, sweep in experiments["sweeps"].items():
         set_name = sweep.get("model_set")
         if set_name is None:
             continue
         model_set = experiments["sets"][set_name]
         for mid in model_set["model_ids"]:
-            assert mid in registry_ids, f"sweeps.{name} → sets.{set_name}: '{mid}' not in registry"
+            assert mid in registry_names, (
+                f"sweeps.{name} → sets.{set_name}: '{mid}' not in registry"
+            )
 
 
 def test_sweep_prompts_exist(experiments):
@@ -267,15 +280,15 @@ def test_assemble_prompt():
     modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
     # Base only
     base = assemble_prompt(modules_dir, [])
-    assert "Produce a comprehensive CSV table" in base
+    assert "For EVERY thermal power plant" in base
     assert "senior energy analyst" not in base
-    # With persona (prepended)
+    # With persona (prepended before base)
     with_persona = assemble_prompt(modules_dir, ["persona"])
     assert with_persona.startswith("You are a senior energy analyst")
-    assert "Produce a comprehensive CSV table" in with_persona
-    # With overview (appended)
-    with_overview = assemble_prompt(modules_dir, ["overview"])
-    assert with_overview.index("sector overview") > with_overview.index("CSV table")
+    assert "For EVERY thermal power plant" in with_persona
+    # With overview (prepended before base, after persona)
+    with_both = assemble_prompt(modules_dir, ["persona", "overview"])
+    assert with_both.index("thermal power sector") < with_both.index("For EVERY")
 
 
 def test_assemble_prompt_unknown_module_raises():
