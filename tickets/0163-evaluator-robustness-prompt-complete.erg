@@ -1,0 +1,56 @@
+%erg v1
+Title: Test evaluator robustness to prompt_complete output format
+Created: 2026-05-05
+Author: claude
+
+--- log ---
+2026-05-05T11:30Z claude created — risk identified in 2026-04-30 caveat: 3 models at F1=0.000 on prompt_complete runs; no ticket tracked this
+
+--- body ---
+## Context
+
+The 2026-04-30 empirical caveat in `docs/argument.md` notes that three
+capable frontier models (GPT-5.4, Grok 4.20, Ernie 4.5 Thinking) scored
+F1=0.000 on `prompt_complete` runs. Interpretation is ambiguous:
+
+1. **Evaluator artefact**: `prompt_complete` returns a rich structured
+   document (sector overview, per-plant narratives, 4 statistical tables,
+   bibliography) and the extractor may be skipping the inventory table or
+   failing to parse it from the surrounding prose.
+2. **Genuine model failure**: the model produced no usable plant table.
+
+The evaluator was designed against `prompt_extract`-style outputs
+(concise table, minimal surrounding text). It has never been explicitly
+tested against `prompt_complete`-style outputs.
+
+If interpretation (1) is correct, the F1=0.000 rows are measurement
+bugs, not model failures. This must be ruled out before the deep-research
+saturation hypothesis (H1) can be evaluated.
+
+## Actions
+
+1. Read one F1=0.000 raw output file (e.g., `gpt-5.4-run1.json` or
+   `grok-4.20-run1.json` in `outputs/direct_complete/`). Confirm whether
+   the model produced a plant inventory table or not.
+
+2. Run the extractor manually on that file and trace which step fails:
+   - Is the table present but not parsed?
+   - Is the table present but in a section the extractor doesn't reach?
+   - Is no table present at all?
+
+3. If (1) is the issue: fix the extractor to handle `prompt_complete`
+   output format, re-evaluate all `direct_complete` outputs, update
+   `measurements.jsonl`.
+
+4. If (2): document as genuine model failure. No code change needed.
+
+5. Add a regression test: `test_evaluator_prompt_complete.py` with a
+   minimal fixture that has the `prompt_complete` format (prose + table +
+   bibliography) and verifies the extractor scores it correctly.
+
+## Exit criteria
+
+- Root cause of F1=0.000 rows identified and documented.
+- If evaluator bug: fixed, re-evaluated, test added.
+- If model failure: confirmed by reading the raw output, documented.
+- `docs/argument.md` empirical caveat updated with the diagnosis.

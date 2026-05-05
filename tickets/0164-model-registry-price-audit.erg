@@ -1,0 +1,39 @@
+%erg v1
+Title: Quarterly model registry price and availability audit
+Created: 2026-05-05
+Author: claude
+
+--- log ---
+2026-05-05T11:30Z claude created — prices last updated 2026-04-25; need cadence to keep cost estimates accurate
+
+--- body ---
+## Context
+
+`experiments/models.yaml` contains `price_per_mtok_in` and
+`price_per_mtok_out` for each cloud model. These drive cost estimates
+before sweeps and cost actuals in `RunRecord`. Stale prices cause
+budget surprises and inaccurate cost reporting in the paper.
+
+Last committed: 2026-05-03 (header claims 2026-04-25).
+Frontier model prices change frequently (DeepSeek, Qwen, Gemini
+especially).
+
+## Actions
+
+1. For each cloud model in `models.yaml`, check current pricing on the
+   provider or OpenRouter pricing page.
+2. Update any entries that have changed by >10%.
+3. Flag models that are no longer available or have been superseded.
+4. Add a `prices_verified` date comment to the file header.
+5. Commit with a log entry noting which prices changed.
+
+## Recurrence
+
+Run this audit before any sweep that has a total budget >$10 USD.
+Do not run large sweeps with prices older than 30 days.
+
+## Exit criteria
+
+- All cloud model prices verified against current provider pages.
+- `models.yaml` header updated with verification date.
+- Any unavailable models flagged or removed.
