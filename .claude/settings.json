@@ -12,5 +12,19 @@
       "Bash(mv tests/test_select_top.py tests/test_select_models.py)",
       "Edit(*/.git/hooks/*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=$(cat | jq -r '.tool_input.file_path // empty'); case \"$file\" in *.erg) tickets/tools/go/erg validate tickets/ 2>&1 ;; esac",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }
