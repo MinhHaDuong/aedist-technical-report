@@ -1,4 +1,4 @@
-Last updated: 2026-05-04T10:50Z
+Last updated: 2026-05-05T08:00Z
 
 ## North star
 
@@ -39,7 +39,7 @@ None.
 1. **Rerun ablation with verbatim modules.** Ticket 0142 closed (PR #313). Ticket 0143 (rerun) now unblocked. Exit gate: `diff` assembled-composite vs `prompt_complete.txt` = 0 (verified).
 2. **Diagnose `direct_complete` F1 = 0.000 rows.** Three capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) score zero — almost certainly a parser failure on structured-document output. Read one raw `.record.json` + confirm before any priority-3 build. If parser is broken, F1 = 1 is unreachable by construction.
 3. **Verify qwen3.5:9b/direct ×3 on coal-only.** Single-run F1 = 0.984 on direct is remarkable; confirm with repeats before deciding whether priority-3 reduces to "use this 9B" vs "build deep-research stack".
-4. **Registry / figures infrastructure (new, 0156→0160).** Blocked only by implementation order: 0156 first, then 0157/0159/0160 in parallel.
+4. **Registry / figures infrastructure (0157→0161).** Ticket 0156 closed (PR #322, models.yaml v2 schema). Tickets 0157/0159/0160/0161 now unblocked.
 
 ## Benchmark-wide F1 leaderboard (2026-04-30, 327 records)
 
@@ -69,16 +69,16 @@ None.
 - 0144 RAG reasoning/coherence cell
 - 0146 Capability timeline expand and figure
 - 0149 Extract main results and hypotheses to be tested
-- 0150 Preregister hypotheses
+- 0150 Preregister hypotheses *(pending review)*
 - 0151 Literature review against argument
 - 0152 Align slides on argument
 - 0153 Redesign experiments along argument
 - 0154 Run redesigned experiments
-- 0157 figures.toml ordered modelsets — blocked by 0156
-- 0161 Model instance registry — Python migration (phase 2 of ticket 0156)
+- 0157 figures.toml ordered modelsets
 - 0158 Structured prompt modules/modalities taxonomy
-- 0159 Capability evaluation 8 dimensions — blocked by 0156
-- 0160 Claude Code CLI route adapter — blocked by 0156
+- 0159 Capability evaluation 8 dimensions
+- 0160 Claude Code CLI route adapter
+- 0161 Model instance registry — Python migration (phase 2 of ticket 0156)
 
 
 
