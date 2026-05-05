@@ -1,4 +1,4 @@
-// erg — validate, ready, archive %erg v1 files.
+// erg — validate, ready, archive, graph, close %erg v1 files.
 // No external dependencies (stdlib only).
 //
 // Usage:
@@ -6,10 +6,17 @@
 //	erg validate [dir|file ...]
 //	erg ready    [dir] [--json]
 //	erg archive  [dir] [--days N] [--execute]
+//	erg graph    [dir] [--json]
+//	erg next-id  [dir]
+//	erg close    <id|file> <reason> [dir]
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -34,6 +41,9 @@ type Erg struct {
 	HasMagic bool
 	HasLog   bool
 	HasBody  bool
+	// Separator occurrence counts. A well-formed ticket has exactly 1 of each.
+	LogSepCount  int
+	BodySepCount int
 }
 
 func (t *Erg) Title() string {
@@ -128,6 +138,8 @@ func parseErg(path string) Erg {
 	hasMagic := false
 	hasLog := false
 	hasBody := false
+	logSepCount := 0
+	bodySepCount := 0
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
@@ -147,15 +159,21 @@ func parseErg(path string) Erg {
 			// Fall through to header parsing
 		}
 
-		if !hasBody && trimmed == "--- log ---" {
-			section = "log"
-			hasLog = true
-			continue
+		if trimmed == "--- log ---" {
+			logSepCount++
+			if !hasBody {
+				section = "log"
+				hasLog = true
+				continue
+			}
 		}
-		if !hasBody && trimmed == "--- body ---" {
-			section = "body"
-			hasBody = true
-			continue
+		if trimmed == "--- body ---" {
+			bodySepCount++
+			if !hasBody {
+				section = "body"
+				hasBody = true
+				continue
+			}
 		}
 
 		switch section {
@@ -179,13 +197,15 @@ func parseErg(path string) Erg {
 	}
 
 	return Erg{
-		Path:     path,
-		Headers:  headers,
-		LogLines: logLines,
-		Body:     strings.Join(bodyLines, "\n"),
-		HasMagic: hasMagic,
-		HasLog:   hasLog,
-		HasBody:  hasBody,
+		Path:         path,
+		Headers:      headers,
+		LogLines:     logLines,
+		Body:         strings.Join(bodyLines, "\n"),
+		HasMagic:     hasMagic,
+		HasLog:       hasLog,
+		HasBody:      hasBody,
+		LogSepCount:  logSepCount,
+		BodySepCount: bodySepCount,
 	}
 }
 
@@ -291,12 +311,16 @@ func validateErg(t *Erg, allIDs map[string]bool) []string {
 		}
 	}
 
-	// Rule 11: both separators present
+	// Rule 11: each separator appears exactly once
 	if !t.HasLog {
 		errors = append(errors, fmt.Sprintf("%s: missing '--- log ---' separator", name))
+	} else if t.LogSepCount > 1 {
+		errors = append(errors, fmt.Sprintf("%s: '--- log ---' separator appears %d times (expected 1)", name, t.LogSepCount))
 	}
 	if !t.HasBody {
 		errors = append(errors, fmt.Sprintf("%s: missing '--- body ---' separator", name))
+	} else if t.BodySepCount > 1 {
+		errors = append(errors, fmt.Sprintf("%s: '--- body ---' separator appears %d times (expected 1)", name, t.BodySepCount))
 	}
 
 	return errors
@@ -485,31 +509,6 @@ type readyEntry struct {
 	id, title, file string
 }
 
-func loadWip() map[string]string {
-	wip := make(map[string]string)
-	cmd := exec.Command("git", "rev-parse", "--git-common-dir")
-	out, err := cmd.Output()
-	if err != nil {
-		return wip
-	}
-	wipDir := filepath.Join(strings.TrimSpace(string(out)), "ticket-wip")
-	entries, err := os.ReadDir(wipDir)
-	if err != nil {
-		return wip
-	}
-	for _, e := range entries {
-		if e.IsDir() || filepath.Ext(e.Name()) != ".wip" {
-			continue
-		}
-		tid := strings.TrimSuffix(e.Name(), ".wip")
-		data, err := os.ReadFile(filepath.Join(wipDir, e.Name()))
-		if err == nil {
-			wip[tid] = strings.TrimSpace(string(data))
-		}
-	}
-	return wip
-}
-
 func cmdReady(args []string) int {
 	useJSON := false
 	var rest []string
@@ -541,8 +540,6 @@ func cmdReady(args []string) int {
 		}
 	}
 
-	wip := loadWip()
-
 	var warnings []string
 	var ready []readyEntry
 	openCount := 0
@@ -554,12 +551,7 @@ func cmdReady(args []string) int {
 		}
 		openCount++
 
-		// Exclude WIP-claimed tickets
 		tid := t.FilenameID()
-		if _, claimed := wip[tid]; claimed {
-			continue
-		}
-
 		blocked := false
 		for _, refID := range t.BlockedBy() {
 			if strings.HasPrefix(refID, "gh#") {
@@ -593,12 +585,8 @@ func cmdReady(args []string) int {
 				if i == len(ready)-1 {
 					comma = ""
 				}
-				wipField := ""
-				if w, ok := wip[r.id]; ok {
-					wipField = fmt.Sprintf(",\n    \"wip\": \"%s\"", jsonEscape(w))
-				}
-				fmt.Printf("  {\n    \"id\": \"%s\",\n    \"title\": \"%s\",\n    \"file\": \"%s\"%s\n  }%s\n",
-					jsonEscape(r.id), jsonEscape(r.title), jsonEscape(r.file), wipField, comma)
+				fmt.Printf("  {\n    \"id\": \"%s\",\n    \"title\": \"%s\",\n    \"file\": \"%s\"\n  }%s\n",
+					jsonEscape(r.id), jsonEscape(r.title), jsonEscape(r.file), comma)
 			}
 			fmt.Println("]")
 		}
@@ -614,11 +602,7 @@ func cmdReady(args []string) int {
 		} else {
 			fmt.Printf("Ready tickets (%d):\n", len(ready))
 			for _, r := range ready {
-				suffix := ""
-				if w, ok := wip[r.id]; ok {
-					suffix = "  (wip: " + w + ")"
-				}
-				fmt.Printf("  %-8s %-40s %s%s\n", r.id, r.file, r.title, suffix)
+				fmt.Printf("  %-8s %-40s %s\n", r.id, r.file, r.title)
 			}
 		}
 	}
@@ -793,6 +777,317 @@ func cmdArchive(args []string) int {
 }
 
 // ---------------------------------------------------------------------------
+// Graph — visualize the ticket dependency DAG
+// ---------------------------------------------------------------------------
+
+func cmdGraph(args []string) int {
+	useJSON := false
+	var rest []string
+	for _, a := range args {
+		if a == "--json" {
+			useJSON = true
+		} else {
+			rest = append(rest, a)
+		}
+	}
+
+	ticketDir := "tickets"
+	if len(rest) > 0 {
+		ticketDir = rest[0]
+	}
+
+	info, err := os.Stat(ticketDir)
+	if err != nil || !info.IsDir() {
+		fmt.Printf("Directory not found: %s\n", ticketDir)
+		return 1
+	}
+
+	tickets := loadErgs(ticketDir)
+	if len(tickets) == 0 {
+		fmt.Println("No tickets found.")
+		return 0
+	}
+
+	// Build lookup maps
+	byID := make(map[string]*Erg)
+	statusByID := make(map[string]string)
+	for i := range tickets {
+		id := tickets[i].FilenameID()
+		if id != "" {
+			byID[id] = &tickets[i]
+			statusByID[id] = tickets[i].Status()
+		}
+	}
+
+	// Build children map (reverse of Blocked-by): if B is blocked by A, then A -> B
+	children := make(map[string][]string)
+	hasParent := make(map[string]bool)
+	for i := range tickets {
+		id := tickets[i].FilenameID()
+		for _, ref := range tickets[i].BlockedBy() {
+			if strings.HasPrefix(ref, "gh#") {
+				continue
+			}
+			if _, exists := byID[ref]; exists {
+				children[ref] = append(children[ref], id)
+				hasParent[id] = true
+			}
+		}
+	}
+
+	// Sort children for deterministic output
+	for k := range children {
+		sort.Strings(children[k])
+	}
+
+	// Determine annotation for a ticket
+	annotate := func(id string) string {
+		status := statusByID[id]
+		if status == "open" {
+			// Check if blocked
+			t := byID[id]
+			for _, ref := range t.BlockedBy() {
+				if strings.HasPrefix(ref, "gh#") {
+					continue
+				}
+				if s, ok := statusByID[ref]; ok && s != "closed" {
+					return "open, blocked"
+				}
+			}
+			return "open, READY"
+		}
+		return status
+	}
+
+	// Find root nodes (no parent in the DAG)
+	var roots []string
+	for i := range tickets {
+		id := tickets[i].FilenameID()
+		if id != "" && !hasParent[id] {
+			roots = append(roots, id)
+		}
+	}
+	sort.Strings(roots)
+
+	if useJSON {
+		type jsonNode struct {
+			id, title, status, annotation string
+			blockedBy                     []string
+			deps                          []string
+		}
+		var nodes []jsonNode
+		for i := range tickets {
+			id := tickets[i].FilenameID()
+			n := jsonNode{
+				id:         id,
+				title:      tickets[i].Title(),
+				status:     tickets[i].Status(),
+				annotation: annotate(id),
+				blockedBy:  tickets[i].BlockedBy(),
+				deps:       children[id],
+			}
+			nodes = append(nodes, n)
+		}
+		fmt.Println("[")
+		for i, n := range nodes {
+			comma := ","
+			if i == len(nodes)-1 {
+				comma = ""
+			}
+			blockedByJSON := "[]"
+			if len(n.blockedBy) > 0 {
+				var parts []string
+				for _, b := range n.blockedBy {
+					parts = append(parts, fmt.Sprintf("\"%s\"", jsonEscape(b)))
+				}
+				blockedByJSON = "[" + strings.Join(parts, ", ") + "]"
+			}
+			depsJSON := "[]"
+			if len(n.deps) > 0 {
+				var parts []string
+				for _, d := range n.deps {
+					parts = append(parts, fmt.Sprintf("\"%s\"", jsonEscape(d)))
+				}
+				depsJSON = "[" + strings.Join(parts, ", ") + "]"
+			}
+			fmt.Printf("  {\n    \"id\": \"%s\",\n    \"title\": \"%s\",\n    \"status\": \"%s\",\n    \"annotation\": \"%s\",\n    \"blocked_by\": %s,\n    \"unblocks\": %s\n  }%s\n",
+				jsonEscape(n.id), jsonEscape(n.title), jsonEscape(n.status), jsonEscape(n.annotation), blockedByJSON, depsJSON, comma)
+		}
+		fmt.Println("]")
+		return 0
+	}
+
+	// ASCII tree output
+	var printTree func(id string, prefix string, isLast bool)
+	printTree = func(id string, prefix string, isLast bool) {
+		t := byID[id]
+		if t == nil {
+			return
+		}
+		ann := annotate(id)
+		connector := "-> "
+		if prefix == "" {
+			connector = ""
+		}
+		fmt.Printf("%s%s%s %s [%s]\n", prefix, connector, id, t.Title(), ann)
+
+		kids := children[id]
+		childPrefix := prefix
+		if prefix != "" {
+			if isLast {
+				childPrefix = prefix[:len(prefix)-3] + "   "
+			} else {
+				childPrefix = prefix[:len(prefix)-3] + "|  "
+			}
+		}
+		for i, kid := range kids {
+			last := i == len(kids)-1
+			if childPrefix == "" {
+				printTree(kid, "   ", last)
+			} else {
+				printTree(kid, childPrefix+"   ", last)
+			}
+		}
+	}
+
+	for _, root := range roots {
+		printTree(root, "", true)
+	}
+
+	return 0
+}
+
+// ---------------------------------------------------------------------------
+// Next-ID — print the next available ticket ID
+// ---------------------------------------------------------------------------
+
+func cmdNextID(args []string) int {
+	ticketDir := "tickets"
+	if len(args) > 0 {
+		ticketDir = args[0]
+	}
+
+	maxID := 0
+
+	// Scan both tickets/ and tickets/archive/
+	for _, dir := range []string{ticketDir, filepath.Join(ticketDir, "archive")} {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			continue
+		}
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".erg") {
+				continue
+			}
+			stem := strings.TrimSuffix(e.Name(), ".erg")
+			if idx := strings.Index(stem, "-"); idx > 0 {
+				stem = stem[:idx]
+			}
+			if n, err := strconv.Atoi(stem); err == nil && n > maxID {
+				maxID = n
+			}
+		}
+	}
+
+	fmt.Printf("%04d\n", maxID+1)
+	return 0
+}
+
+// ---------------------------------------------------------------------------
+// Close — atomic ticket closure
+// ---------------------------------------------------------------------------
+
+var statusLineRE = regexp.MustCompile(`(?m)^Status:.*$`)
+
+func cmdClose(args []string) int {
+	if len(args) < 2 {
+		fmt.Fprintln(os.Stderr, "Usage: erg close <id|file> <reason> [dir]")
+		return 1
+	}
+
+	idOrFile := args[0]
+	reason := args[1]
+	ticketDir := "tickets"
+	if len(args) >= 3 {
+		ticketDir = args[2]
+	}
+
+	// Resolve to file path
+	var ticketPath string
+	if strings.HasSuffix(idOrFile, ".erg") {
+		// Provided a file path directly
+		ticketPath = idOrFile
+	} else {
+		// Provided a 4-digit ID — glob for it under ticketDir
+		pattern := filepath.Join(ticketDir, fmt.Sprintf("%s-*.erg", idOrFile))
+		matches, err := filepath.Glob(pattern)
+		if err != nil || len(matches) == 0 {
+			fmt.Fprintf(os.Stderr, "close: no ticket found for ID %s in %s\n", idOrFile, ticketDir)
+			return 1
+		}
+		if len(matches) > 1 {
+			fmt.Fprintf(os.Stderr, "close: ambiguous ID %s — matches: %s\n", idOrFile, strings.Join(matches, ", "))
+			return 1
+		}
+		ticketPath = matches[0]
+	}
+
+	// Read and parse
+	data, err := os.ReadFile(ticketPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "close: cannot read %s: %v\n", ticketPath, err)
+		return 1
+	}
+
+	ticket := parseErg(ticketPath)
+
+	// Idempotent: already closed
+	if ticket.Status() == "closed" {
+		fmt.Println("ALREADY_CLOSED")
+		return 0
+	}
+
+	// Replace Status line only within the header section (before "--- log ---").
+	// Splitting the file at the log separator bounds the regex so a "Status:"
+	// line inside the body (e.g. inside a code fence or quoted example) is
+	// never rewritten.
+	raw := string(data)
+	logSep := "\n--- log ---"
+	logIdx := strings.Index(raw, logSep)
+	var content string
+	if logIdx < 0 {
+		// No log separator yet — operate on the whole file (validator will
+		// reject it later, but we should still behave deterministically).
+		content = statusLineRE.ReplaceAllString(raw, "Status: closed")
+	} else {
+		header := statusLineRE.ReplaceAllString(raw[:logIdx], "Status: closed")
+		content = header + raw[logIdx:]
+	}
+
+	// Append log line before "--- body ---"
+	now := time.Now().UTC().Format("2006-01-02T15:04Z")
+	logLine := fmt.Sprintf("%s claude status closed — %s", now, reason)
+
+	bodyIdx := strings.Index(content, "\n--- body ---")
+	if bodyIdx < 0 {
+		// Fallback: append at end
+		content = content + "\n" + logLine + "\n"
+	} else {
+		// Insert log line before the body separator
+		content = content[:bodyIdx] + "\n" + logLine + content[bodyIdx:]
+	}
+
+	// Write back
+	if err := os.WriteFile(ticketPath, []byte(content), 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "close: cannot write %s: %v\n", ticketPath, err)
+		return 1
+	}
+
+	fmt.Println("CLOSED")
+	return 0
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -818,13 +1113,104 @@ func sortedKeys2[V any](m map[string]V) []string {
 // Main dispatch
 // ---------------------------------------------------------------------------
 
+const updateURL = "https://raw.githubusercontent.com/MinhHaDuong/git-erg/main/tickets/tools/go/erg"
+
+func selfHash(path string) (string, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256(data)
+	return hex.EncodeToString(sum[:]), nil
+}
+
+func cmdVersion(_ []string) int {
+	self, err := os.Executable()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "version: cannot resolve executable: %v\n", err)
+		return 1
+	}
+	h, err := selfHash(self)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "version: cannot hash self: %v\n", err)
+		return 1
+	}
+	fmt.Println(h)
+	return 0
+}
+
+func cmdUpdate(_ []string) int {
+	self, err := os.Executable()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "update: cannot resolve executable: %v\n", err)
+		return 1
+	}
+
+	localHash, err := selfHash(self)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "update: cannot hash self: %v\n", err)
+		return 1
+	}
+
+	url := os.Getenv("ERG_UPDATE_URL")
+	if url == "" {
+		url = updateURL
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "update: offline or unreachable — %v\n", err)
+		return 0
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Fprintf(os.Stderr, "update: server returned %d\n", resp.StatusCode)
+		return 0
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "update: failed to read response: %v\n", err)
+		return 0
+	}
+
+	sum := sha256.Sum256(body)
+	remoteHash := hex.EncodeToString(sum[:])
+
+	if localHash == remoteHash {
+		fmt.Println("erg: already up to date")
+		return 0
+	}
+
+	tmp := self + ".tmp"
+	if err := os.WriteFile(tmp, body, 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "update: cannot write temp file: %v\n", err)
+		return 1
+	}
+	if err := os.Rename(tmp, self); err != nil {
+		_ = os.Remove(tmp)
+		fmt.Fprintf(os.Stderr, "update: cannot replace binary: %v\n", err)
+		return 1
+	}
+
+	fmt.Printf("erg: updated (%s → %s)\n", localHash[:12], remoteHash[:12])
+	return 0
+}
+
 func printUsage() {
 	fmt.Fprintln(os.Stderr, "Usage: erg <command> [args...]")
 	fmt.Fprintln(os.Stderr)
 	fmt.Fprintln(os.Stderr, "Commands:")
-	fmt.Fprintln(os.Stderr, "  validate [dir|files...]   Validate %erg v1 files")
+	fmt.Fprintln(os.Stderr, "  validate [dir|files...]   Validate erg v1 ticket files")
 	fmt.Fprintln(os.Stderr, "  ready [dir] [--json]      Show tickets ready for work")
 	fmt.Fprintln(os.Stderr, "  archive [dir] [--days N] [--execute]  Archive old closed tickets")
+	fmt.Fprintln(os.Stderr, "  graph [dir] [--json]      Show ticket dependency DAG")
+	fmt.Fprintln(os.Stderr, "  next-id [dir]             Print the next available ticket ID")
+	fmt.Fprintln(os.Stderr, "  close <id|file> <reason> [dir]  Close a ticket atomically")
+	fmt.Fprintln(os.Stderr, "  version                   Print sha256 of this binary")
+	fmt.Fprintln(os.Stderr, "  update                    Fetch and replace binary from origin")
 }
 
 func main() {
@@ -844,6 +1230,16 @@ func main() {
 		exitCode = cmdReady(rest)
 	case "archive":
 		exitCode = cmdArchive(rest)
+	case "graph":
+		exitCode = cmdGraph(rest)
+	case "next-id":
+		exitCode = cmdNextID(rest)
+	case "close":
+		exitCode = cmdClose(rest)
+	case "version":
+		exitCode = cmdVersion(rest)
+	case "update":
+		exitCode = cmdUpdate(rest)
 	case "-h", "--help", "help":
 		printUsage()
 		exitCode = 0

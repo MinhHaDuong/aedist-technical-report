@@ -14,6 +14,7 @@ Author: claude
 2026-05-02T06:18Z claude note decomposition: citation_columns/sourcing_ground repurposed to Quality instruction bullets (Source columns embedded in base table header, can't extract separately); overview moved before base in assembly order; 3 orphan QI bullets folded into sourcing_ground (1+2), pdp_completeness (5+6+7)
 2026-05-02T06:30Z claude status closed — all 11 modules verbatim-extracted, section headers included, equivalence test passes (0 content drift, 4 whitespace-only diffs), README updated, 21 tests pass + 1 xfail
 2026-05-02T08:50Z claude note PR #313 merged 2026-05-01T16:19Z; 1145 tests pass; all exit criteria met
+2026-05-02T15:10Z claude note work done in PRs #313 and #319; ticket not closed at merge time
 --- body ---
 ## Context
 
