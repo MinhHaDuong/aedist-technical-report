@@ -66,3 +66,26 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     rows = list(reader)
     assert len(rows) == 2
     assert set(reader.fieldnames) == {"model", "f1", "cost_usd", "local"}
+
+
+def test_main_writes_figure(tmp_path, monkeypatch):
+    """CLI --figure writes a PDF."""
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, SAMPLE_METRICS)
+    patch_measurements_loader(monkeypatch, input_path)
+    figure_path = tmp_path / "fig_pareto.pdf"
+
+    import sys
+
+    from aedist.plot_pareto import main
+
+    sys.argv = [
+        "plot_pareto",
+        "--output",
+        str(tmp_path / "pareto.csv"),
+        "--figure",
+        str(figure_path),
+    ]
+    main()
+    assert figure_path.exists()
+    assert figure_path.stat().st_size > 0

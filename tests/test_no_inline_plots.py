@@ -25,7 +25,6 @@ def _tracked_tex_files() -> list[Path]:
     return [REPO_ROOT / f for f in result.stdout.split("\0") if f.endswith(".tex")]
 
 
-@pytest.mark.xfail(reason="remediation pending: ticket 0133")
 def test_no_begin_axis():
     violations = []
     for tex_file in _tracked_tex_files():
