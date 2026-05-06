@@ -12,6 +12,7 @@ import pytest
 
 from aedist import harness
 
+# query_fusion and query_verification don't use make_client_for_route
 QUERY_MODULES = [
     "aedist.query",
     "aedist.query_direct",
