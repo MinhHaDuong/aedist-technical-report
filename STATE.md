@@ -1,4 +1,4 @@
-Last updated: 2026-05-05T22:00Z
+Last updated: 2026-05-06T18:00Z
 
 ## North star
 
@@ -8,7 +8,7 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 Conference talk at Thema/Cergy. Deliverable: French slides.
 Title: *Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics*
-Thesis: 4 quality criteria (Grounding/Auditability/Freshness/Confidence) — each slide section lifts one criterion.
+Thesis: four quality properties (Accuracy, Coherence, Provenance, Temporality) — each rung of the method ladder lifts one limit.
 Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.sciencesconf.org/
 
 **Paper sequencing**: report stays exploratory. Paper writing opens after slides are locked post-conference.
@@ -17,24 +17,30 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMeanFOne`, deepseek-v3.2/rag_per_fuel, n=4 runs). CI: 1150 passing, 1 skipped, 2 xfailed. `make lint` includes ruff + ticket structure check.
 
-**Deep-research hypothesis H1 (reformulated, 2026-05-05):** See `docs/experiment-roadmap.md`. H1 requires all four: (a) F1 ≥ 0.988, (b) source-grounding ≥ 80%, (c) no truncation, (d) statistical coherence.
+**Argument arc (2026-05-06, finalized):** `docs/synopsis.md` locked. Four quality properties: Accuracy, Coherence, Provenance, Temporality. Four method-ladder limits: Articulation, Coverage, Freshness, Coherence (Provenance unaddressed by any rung). H1–H4 confirmatory hypotheses formulated and registered in `docs/hypotheses.md` and `docs/preregistration-osf.md`.
 
-**2026-05-05:** Raid on ticket 0163 complete (PR #327). F1=0.000 mystery solved: GPT-5.4 + Grok 4.20 refused; Ernie 4.5 Thinking produced aggregate tables (no per-plant inventory). Evaluator is correct. Regression tests added (`tests/test_evaluator_robustness.py`). Output token ceiling raised 32K→64K (Claude Opus was at 31K/32K). Experiment roadmap written (`docs/experiment-roadmap.md`).
+**H1–H4 (2026-05-06):**
+- **H1** (Articulation rung): multi-turn adds measurable F1 over direct; paired ΔF1 ≥ 0.03, p < 0.05
+- **H2** (Coverage rung): RAG adds measurable F1 over multi-turn; same decision rule
+- **H3** (accuracy–provenance trade-off): single parametric prompt does not simultaneously achieve full recall and verifiable per-row attribution; ΔF1(complete−extract) < −0.10 AND citation validity < 0.50
+- **H4** (local approaches frontier): qwen3.5:122b on A4000 GPU within 0.05 F1 of cloud frontier ceiling (0.988)
 
-**erg v2 migration (2026-05-05):** 126 closed tickets auto-archived to `tickets/closed/` by new erg binary. Open count: 25.
+**Phase 0 gates (2026-05-06):** 0163 ✓ (evaluator correct), 0164 ✓ (price audit), 0150 pending human (~20 min).
+
+**Prompt fixes (2026-05-06):** `prompt_complete.txt` + module files updated: lifecycle scope broadened (proposed→dismantled), count hint removed, LOW-confidence tiebreaker added.
 
 ## Blockers
 
-- **0139** (seed + finish_reason in RunRecord) should be resolved before Phase 3 full runs. Workaround for Phase 1 pilots: grep finish_reason from raw JSON manually.
-- **0150** OSF preregistration — human action, ~20 min, form at `docs/preregistration-osf.md`. Must precede full runs for confirmatory claim.
+- **0150** OSF preregistration — human action, ~20 min, form at `docs/preregistration-osf.md`. **Must precede all confirmatory sweep runs.**
+- **0139** (seed + finish_reason in RunRecord) needed before Phase 3 full runs. Workaround for Phase 1: grep finish_reason from raw JSON manually.
 
-## Priorities (2026-05-05)
+## Priorities (2026-05-06)
 
-1. **Phase 0 gate**: 0164 price audit + 0150 OSF registration → unlock Phase 1 pilots.
-2. **Phase 1 pilots** (~$5–10): 3 frontier cloud models × `prompt_complete` × 3 reps. Check finish_reason, row count, F1 after each run.
-3. **0139 JobSpec**: add seed, provider_order, finish_reason to RunRecord — needed before Phase 3 full runs.
-4. **Prompt meta-review** by 3 SOTA agents (Claude Opus 4.6, DeepSeek R1, + 1) — needs go-ahead.
-5. **Slides update** for H1 reformulation (4-criteria, not just F1).
+1. **0150 OSF preregistration** — human action, unblocks all confirmatory runs.
+2. **Phase 1 pilots** (~$2–5): 5 matched frontier models × `prompt_extract` × 3 conditions × 3 reps. Verify finish_reason, row count, F1.
+3. **Phase 2 H3 sweep** (~$5–10): 5 models × `prompt_complete_no_web` × 3 reps (Condition A shared with Phase 1 direct).
+4. **0165 prompt module–aspect mapping** — design ablation with modules targeting property aspects.
+5. **0139 JobSpec** — add seed, provider_order, finish_reason to RunRecord.
 
 ## Benchmark-wide F1 leaderboard (2026-04-30, 327 records)
 
@@ -48,7 +54,7 @@ Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMe
 | 0.975  | decomposed          | Gemini 2.5 Flash Lite              |      |
 | 0.968  | RAG wholesale       | Qwen 3.5 122B                      |      |
 
-**`direct_complete` arm:** best F1 = 0.557 (n=9, excl. 3 non-attempts). Three frontier models failed: 2 refusals (GPT-5.4, Grok 4.20), 1 format error (Ernie 4.5 Thinking — aggregate tables only). Evaluator confirmed correct.
+**`direct_complete` arm:** best F1 = 0.557 (n=9, excl. 3 non-attempts). Three frontier models failed: 2 refusals (GPT-5.4, Grok 4.20), 1 format error (Ernie 4.5 Thinking — aggregate tables only). Evaluator confirmed correct (ticket 0163).
 
 ## Open tickets (25)
 
@@ -76,7 +82,7 @@ Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMe
 - 0159 Capability evaluation 8 dimensions
 - 0160 Claude Code CLI route adapter
 - 0162 Model-set dispatch smoke test
-- **0164** Model registry price audit *(Phase 0 gate — run before any sweep >$10)*
+- **0165** Prompt module–aspect mapping *(design ablation, unblocked)*
 
 ## Follow-on milestone: Journal submission
 
@@ -117,11 +123,13 @@ Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMe
 - [x] Regimes scatter cloud sweep (ticket 0134, Hy3 preview free + qwen3.6-35b-a3b, $0.52)
 - [x] Model instance registry: Python migration complete (tickets 0156/0161, PR #326)
 - [x] Evaluator confirmed correct: F1=0.000 = refusals/format errors, not parser bug (ticket 0163, PR #327)
+- [x] Model registry price audit: 6 prices updated >10%, 1 model retired (ticket 0164, 2026-05-06)
+- [x] H1–H4 hypothesis set finalized: synopsis.md + hypotheses.md + preregistration-osf.md + roadmap (2026-05-06)
 - [ ] Regimes scatter local sweep (ticket 0134, in flight on padme tmux `regimes-fill`)
 - [ ] Regimes scatter visual tuning (ticket 0135, blocked by 0134)
 - [ ] Pareto scatter Python PDF (ticket 0133, pending)
-- [ ] Slides narrative restructure (ticket 0129)
-- [ ] H1 pilot runs: 3 frontier models × prompt_complete × 3 reps (Phase 1, ~$5-10)
+- [ ] Phase 1 sweeps: H1/H2 ladder (5 models × 3 conditions × 3 reps, ~$2-5, blocked by OSF gate)
+- [ ] Phase 2 sweeps: H3 parametric attribution (5 models × 2 conditions × 3 reps, ~$5-10, blocked by OSF gate)
 - [ ] Source-grounding verification Phases 2+3 — full audit (tickets 0118-0119, post-talk)
 - [ ] Escalation-rate decay verification (ticket 0102, post-talk)
 - [ ] DSPy/MIPROv2 prompt optimization prototype (ticket 0075, post-talk)
