@@ -120,7 +120,8 @@ effect sizes.*
   model, both at n=3. "Approaches" = within 0.05 F1 of cloud frontier
   mean.
 - **Sweep:** `sweep_direct_complete_local` (local model, `repeat` = 3)
-  + comparison against cloud frontier best (H3 sweep).
+  + comparison against cloud frontier best on `prompt_extract` (H1/H2
+  panel or existing direct sweeps; F1 = 0.988 current ceiling).
 - **Decision rule:**
   - *Supported:* Local mean F1 ≥ cloud frontier mean F1 − 0.05,
     bootstrap 95% CI lower bound ≥ 0.90.

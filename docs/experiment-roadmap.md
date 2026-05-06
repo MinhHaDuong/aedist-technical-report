@@ -21,8 +21,8 @@ operational definitions and decision rules.
 |----|-------|-------------|--------|
 | H1 | direct → multiturn adds measurable F1 (Articulation) | None | Ready |
 | H2 | multiturn → RAG adds measurable F1 (Coverage) | None | Ready |
-| H3 | frontier cloud fails provenance bar despite acceptable recall | Parser fix 0163 ✓ | Ready |
-| H4 | local workstation GPU approaches cloud frontier result quality | H3 complete | Pending H3 |
+| H3 | parametric single-prompt does not achieve recall + verifiable attribution simultaneously | Parser fix 0163 ✓ | Ready |
+| H4 | local workstation GPU approaches cloud frontier result quality | None | Ready |
 
 ---
 
@@ -69,27 +69,27 @@ Run matched 5-model panels for the two ladder rungs.
 
 ---
 
-## Phase 2 — Frontier deep-research sweeps: H3 (~$30–50)
+## Phase 2 — Parametric attribution sweep: H3 (~$5–10)
 
-- **Models:** 12 frontier cloud models (10 labs)
-- **Prompt:** `prompt_complete`
-- **Runs:** 12 models × 3 reps = 36 runs
-- **Post-run:** method-quality audit — citation validity rate for each output
-- **Check after each run:** `finish_reason`, table row count, F1
+Test whether asking for per-row attribution depresses recall in the parametric regime.
 
-**Gate:** If F1 < 0.3 across all models AND evaluator confirmed correct → deep research does not achieve acceptable recall; H3 is inconclusive (provenance bar moot). Diagnose before Phase 3.
+- **Models:** Same 5 matched frontier models as Phase 1
+- **Condition A:** `prompt_extract`, parametric (reuse Phase 1 direct runs)
+- **Condition B:** `prompt_complete`, parametric — no web, no RAG (`sweep_direct_complete_no_web`)
+- **Runs:** 5 models × 1 new condition × 3 reps = 15 new runs (Condition A shared with Phase 1)
+- **Post-run:** citation validity audit on Condition B outputs
 
 | H3 outcome | Finding | Implication |
 |---|---|---|
-| ≥3 models F1 ≥ 0.90 AND all citation validity < 0.50 | **H3 supported** | Gap confirmed — specialised architecture needed |
-| Any model achieves F1 ≥ 0.90 AND citation validity ≥ 0.90 | **H3 falsified** | Frontier already clears provenance bar — revisit argument |
-| F1 < 0.90 across all models | **Inconclusive** | Result quality not yet acceptable; method bar moot |
+| Mean ΔF1 < −0.10 AND citation validity < 0.50 | **H3 supported** | Trade-off confirmed — attribution request collapses recall and citations are untrustworthy; single-prompt insufficient |
+| ΔF1 > −0.05 AND citation validity ≥ 0.50 | **H3 falsified** | Both achievable in single prompt — revisit architecture argument |
+| ΔF1 between −0.05 and −0.10, or citation validity mixed | **Inconclusive** | Partial evidence; cannot conclude |
 
 ---
 
 ## Phase 3 — Local model sweeps: H4 (~$0, local compute)
 
-Gated on H3 completing (cloud frontier mean required for gap comparison).
+Comparison baseline: cloud frontier best on `prompt_extract` (current ceiling F1 = 0.988, from existing direct sweeps). No gate on H3.
 
 - **Models:** `qwen3.5:9b` (parametric baseline) + `qwen3.5:122b` (if deep-research harness ready)
 - **Prompt:** `prompt_extract` (parametric) and/or `prompt_complete` (if harness extended)
@@ -123,8 +123,9 @@ After H1–H4 are decided:
       |
       ├── Phase 1 (H1, H2) — unblocked, run in parallel
       |
-      └── Phase 2 (H3)
-            └── Phase 3 (H4) — gated on Phase 2 cloud mean
+      ├── Phase 2 (H3) — parametric attribution sweep, independent
+      |
+      └── Phase 3 (H4) — local model sweep, independent
                   └── Phase 4 (X1, X2) — exploratory, no gate
 
 0139 (JobSpec: seed, provider_order, finish_reason) — parallel, improves record integrity
