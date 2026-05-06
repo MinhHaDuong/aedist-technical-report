@@ -28,8 +28,8 @@ extraction through RAG, reasoning, and deep-research architectures —
 on a fixed reference dataset (Vietnam thermal power, coal-only dev
 subset).
 
-This preregistration covers five confirmatory hypotheses (H1, H2, H3,
-H6, H7) derived from the project's argument document
+This preregistration covers four confirmatory hypotheses (H1, H2, H3,
+H4) derived from the project's argument document
 (`docs/argument.md`). Each hypothesis tests a specific prediction about
 how method complexity, model provenance, or prompt structure affects
 extraction quality (F1 macro). Decision rules, thresholds, and sweep
@@ -42,36 +42,34 @@ thresholds. Thresholds are grounded in operational sufficiency for the
 downstream use case (PyPSA-ASEAN pipeline input) or in pre-committed
 effect sizes.
 
-Two additional hypotheses (H4: method-quality metrics, H5: prompt-module
+Two additional analyses (method-quality metrics; prompt-module
 composition) are declared exploratory and are not included in this
 registration.
 
 ### Hypotheses
 
-**H1 — Deep-research saturation (cloud).** Deep research (reasoning +
-web search + `prompt_complete` prompt) on cloud frontier models
-saturates both data and answer quality, reaching F1 comparable to or
-exceeding the current decomposed-RAG ceiling (F1 = 0.988).
+**H1 — Method ladder rung 1: Articulation.** Direct → multiturn adds
+measurable F1 via the Articulation mechanism. Claim: paired mean
+ΔF1 ≥ 0.03, p < 0.05, one-sided permutation test across 5 matched
+models × 3 reps.
 
-**H2 — Deep-research saturation (local / sovereign).** At least one
-open-weight model runnable locally (e.g., Magistral, Qwen 3.5 122B)
-achieves deep-research saturation on the same task.
+**H2 — Method ladder rung 2: Coverage.** Multiturn → RAG adds
+measurable F1 via the Coverage mechanism. Decision: same as H1.
 
-**H3 — Method ladder closes named limits measurably.** Each step on the
-method ladder produces a measurable F1 improvement attributable to the
-named limit via the mechanism each step adds. The ladder is a partial
-order (DAG), not a strict linear chain. Four rungs: direct → multiturn
-(Articulation), multiturn → RAG (Coverage), RAG → RAG+reasoning
-(Coherence), RAG+reasoning → deep research (Freshness).
+**H3 — Frontier cloud fails full attribution and provenance bar
+(falsification target).** A frontier cloud agent (reasoning + web +
+`prompt_complete`) will achieve acceptable recall (F1 ≥ 0.90) yet fail
+the full attribution/provenance bar (citations verifiable but not
+verified, attribution per-row not per-cell). Supported if ≥3 of 12
+models achieve F1 ≥ 0.90 AND all models show citation validity rate
+< 0.50. Falsified if frontier achieves both F1 ≥ 0.90 AND citation
+validity ≥ 0.90. Inconclusive if F1 < 0.90 across all models (method
+quality moot) or method-quality metrics not fully instrumented.
 
-**H6 — Small-model direct extraction reproduces.** The qwen3.5:9b
-F1 = 0.984 result on direct extraction (n=1) reproduces under repeated
-runs (n=3) on the coal-only dev subset.
-
-**H7 — Intermediate cell isolates Coherence.** The RAG + reasoning cell
-(no web access) achieves higher F1 than RAG-only, isolating the
-Coherence contribution from the Freshness contribution bundled in deep
-research.
+**H4 — Local model approaches cloud frontier result quality.** A local
+open-weight model on a single workstation GPU (≤16 GB VRAM) approaches
+cloud frontier result quality; auditability arrives as a structural
+property. "Approaches" = within 0.05 F1 of cloud frontier mean.
 
 ---
 
@@ -91,12 +89,12 @@ There is no subjective judgment in scoring.
 ### Study design
 
 Factorial benchmark design. The experimental matrix crosses:
-- **Method** (5 levels): direct, multiturn, RAG, RAG+reasoning, deep
-  research.
+- **Method** (4 levels): direct, multiturn, RAG, deep research
+  (reasoning + web + `prompt_complete`).
 - **Model** (variable): frontier cloud models (12, from 10 labs), local
   open-weight models (2–4), matched 5-model panels for paired tests.
-- **Prompt** (fixed per hypothesis): `prompt_extract` for H3/H6/H7,
-  `prompt_complete` for H1/H2.
+- **Prompt**: `prompt_extract` for H1/H2; `prompt_complete` (with
+  reasoning and web search) for H3 and H4.
 - **Repetitions**: n=3 per cell (MoE models also n=3 minimum per project rule).
 
 Fixed factors: reference dataset (Vietnam thermal v1, coal-only dev
@@ -119,13 +117,13 @@ The 327 records cover 57 model×method×prompt combinations across
 direct, multiturn, RAG, and deep-research regimes. Key observations
 from existing data:
 - Best F1 = 0.988 (DeepSeek V3.2, decomposed RAG, n=4).
-- Deep-research (`prompt_complete`) results are currently degraded:
+- Deep-research (`prompt_complete`) results were previously degraded:
   best n=1 F1 = 0.557, with 3/12 models returning parser failures.
-  A parser artifact (evaluator cannot parse structured-document output)
-  must be fixed before H1 sweeps can run.
-- qwen3.5:9b achieved F1 = 0.984 on direct extraction (n=1), flagged
-  as requiring confirmation.
-- RAG+reasoning cell does not exist in existing data.
+  A parser artifact (evaluator could not parse structured-document
+  output) was fixed before H3 sweeps can run (ticket 0163, Done
+  2026-05-05).
+- qwen3.5:9b achieved F1 = 0.984 on direct extraction (n=1), providing
+  a data point for local model capability.
 
 ### Data collection procedures
 
@@ -144,21 +142,20 @@ Each experimental run:
 ### Sample size
 
 Per hypothesis:
-- **H1:** 12 frontier models × 3 reps = 36 runs.
-- **H2:** 2–4 local models × 3 reps = 6–12 runs.
-- **H3:** 5 matched models × 4 rungs × 3 reps = 60 runs (20 per rung,
-  shared baselines across adjacent rungs).
-- **H6:** 1 model (qwen3.5:9b) × 3 reps = 3 runs.
-- **H7:** 5 matched models × 2 conditions (RAG, RAG+reasoning) × 3
-  reps = 30 runs (RAG baseline shared with H3 rung 2).
+- **H1:** 5 matched models × 2 conditions (direct, multiturn) × 3 reps
+  = 30 runs.
+- **H2:** 5 matched models × 2 conditions (multiturn, RAG) × 3 reps
+  = 30 runs (multiturn baseline shared with H1).
+- **H3:** 12 frontier models × 3 reps = 36 runs.
+- **H4:** 2–4 local models × 3 reps = 6–12 runs.
 
-Total new runs: approximately 105–135 (after accounting for shared
+Total new runs: approximately 75–85 (after accounting for shared
 baselines).
 
 ### Sample size rationale
 
 n=3 repetitions per cell provides sufficient data for bootstrap 95%
-confidence intervals on F1. For paired comparisons (H3, H7), 5 models
+confidence intervals on F1. For paired comparisons (H1, H2), 5 models
 × 3 reps gives 15 paired observations per rung, adequate for
 permutation tests at α=0.05.
 
@@ -193,27 +190,36 @@ within each model.
 
 ### Statistical models
 
-**H1 (cloud saturation):** Descriptive. For each of 12 frontier
-models, compute mean F1 and bootstrap 95% CI across n=3 reps.
-Decision: count how many models achieve mean F1 ≥ 0.95 with CI lower
-bound ≥ 0.90.
+**H1 (Articulation rung):** Paired permutation test. For the
+direct → multiturn rung, compute the paired mean F1 difference
+(multiturn minus direct) across 5 matched models (using per-model
+mean of n=3 reps on `prompt_extract`). Test statistic: mean paired
+difference. P-value: proportion of 10,000 permutations (sign flips)
+yielding a test statistic ≥ observed. One-sided test (predicted
+direction: multiturn ≥ direct).
 
-**H2 (local saturation):** Same as H1, applied to 2–4 local models.
-Decision: at least one model achieves mean F1 ≥ 0.95, CI lower bound
-≥ 0.90.
+**H2 (Coverage rung):** Same paired permutation test as H1, applied to
+the multiturn → RAG rung on `prompt_extract`.
 
-**H3 (method ladder):** Paired permutation test per rung. For each
-rung, compute the paired mean F1 difference (higher-method minus
-lower-method) across 5 matched models (using per-model mean of n=3
-reps). Test statistic: mean paired difference. P-value: proportion of
-10,000 permutations (sign flips) yielding a test statistic ≥ observed.
-One-sided test (predicted direction: higher method ≥ lower method).
+**H3 (frontier falsification target):** For each of 12 frontier
+models, compute mean F1 and bootstrap 95% CI across n=3 reps. Count
+how many models achieve mean F1 ≥ 0.90. If that count reaches the
+threshold, also evaluate citation validity rate for each model. The
+decision requires both F1 and citation-validity components to be
+assessed (see decision rules below). If citation-validity
+instrumentation is not complete at run time, H3 is declared
+Inconclusive regardless of F1 outcome. The F1 decision rule uses
+`prompt_complete` output. Auditability (citations verifiable but not
+verified, attribution per-row not per-cell) is a qualitative framing
+claim; the statistical test operates only on F1 and citation validity
+rate.
 
-**H6 (small-model reproduces):** Descriptive. Compute mean F1 and
-bootstrap 95% CI for qwen3.5:9b across n=3 reps of direct extraction.
-
-**H7 (intermediate cell):** Same paired permutation test as H3,
-comparing RAG+reasoning vs. RAG-only across 5 matched models.
+**H4 (local vs. cloud):** Compute mean F1 and bootstrap 95% CI for
+2–4 local models. Compare local mean F1 against the cloud frontier
+mean from H3 runs. Gap = cloud frontier mean − local mean. The
+"auditability as structural property" claim is interpretive and is not
+part of the test statistic; it will be argued in prose based on the
+model's deployment characteristics.
 
 ### Transformations
 
@@ -223,11 +229,11 @@ the range of interest (0.4–1.0). No transformation needed.
 ### Inference criteria
 
 - **Significance threshold:** α = 0.05 (one-sided) for permutation
-  tests (H3, H7).
+  tests (H1, H2).
 - **Bootstrap CI:** 95%, bias-corrected and accelerated (BCa), 10,000
   resamples.
 - **No multiple-comparison correction** across hypotheses. Each
-  hypothesis tests a distinct, pre-specified prediction. The five
+  hypothesis tests a distinct, pre-specified prediction. The four
   hypotheses are not a family of tests on the same null.
 
 ### Data exclusion
@@ -236,8 +242,8 @@ the range of interest (0.4–1.0). No transformation needed.
   response, timeout, API error) are excluded from analysis and reported
   separately as "parser failures" with count and reason.
 - No post-hoc exclusion of models or runs based on outcome values.
-- If H1's parser-fix precondition is not met (parser still fails on
-  `prompt_complete` output for ≥3 models), H1 is declared untestable
+- If H3's parser-fix precondition is not verified (parser still fails
+  on `prompt_complete` output for ≥3 models), H3 is declared untestable
   and the precondition failure is reported.
 
 ### Missing data
@@ -251,10 +257,10 @@ the range of interest (0.4–1.0). No transformation needed.
 ### Exploratory analyses (not preregistered)
 
 The following analyses will be reported as exploratory:
-- **H4 — Method-quality metrics** (citation validity, re-extraction
-  agreement) discriminate verification levels. Requires new metric
+- **Method-quality metrics** (citation validity, re-extraction
+  agreement) discriminating verification levels. Requires new metric
   infrastructure not yet built.
-- **H5 — Prompt-module composition effects.** Ablation sweep analysis
+- **Prompt-module composition effects.** Ablation sweep analysis
   with thresholds informed by existing data.
 - Cost-effectiveness analysis (F1 per dollar).
 - Model-family clustering and architecture effects (dense vs. MoE).
@@ -266,11 +272,10 @@ The following analyses will be reported as exploratory:
 
 | Hypothesis | Supported | Falsified | Inconclusive |
 |------------|-----------|-----------|--------------|
-| H1 (cloud) | Mean F1 ≥ 0.95 for ≥3 models, CI lb ≥ 0.90 | No model F1 ≥ 0.90 after parser fix | 1–2 models reach ≥0.95, or CI straddles 0.90 |
-| H2 (local) | ≥1 model F1 ≥ 0.95, CI lb ≥ 0.90 | No model F1 > 0.80 | Best between 0.80 and 0.95 |
-| H3 (ladder) | ≥3/4 rungs: paired ΔF1 ≥ 0.03, p < 0.05 | ≥2 rungs falsified or reversed | Positive Δ < 0.03 or p ≥ 0.05 |
-| H6 (small) | Mean F1 ≥ 0.95, CI lb ≥ 0.90 | Mean F1 < 0.90 | Mean F1 between 0.90 and 0.95 |
-| H7 (coherence) | RAG+reasoning > RAG by ≥ 0.02, p < 0.05 | RAG+reasoning ≤ RAG | Positive Δ < 0.02 or p ≥ 0.05 |
+| H1 (Articulation) | Paired ΔF1 ≥ 0.03, p < 0.05 | Paired ΔF1 < 0 (reversed) | Positive Δ < 0.03 or p ≥ 0.05 |
+| H2 (Coverage) | Paired ΔF1 ≥ 0.03, p < 0.05 | Paired ΔF1 < 0 (reversed) | Positive Δ < 0.03 or p ≥ 0.05 |
+| H3 (frontier falsification) | ≥3 models F1 ≥ 0.90 AND all models citation validity < 0.50 | Frontier achieves F1 ≥ 0.90 AND citation validity ≥ 0.90 | F1 < 0.90 across all models, or method-quality metrics not fully instrumented |
+| H4 (local vs. cloud) | Local mean F1 ≥ cloud mean − 0.05, CI lb ≥ 0.90 | Gap > 0.10 | Gap between 0.05 and 0.10 |
 
 ---
 
@@ -281,12 +286,10 @@ their sweeps can run:
 
 | Hypothesis | Precondition | Status |
 |------------|-------------|--------|
-| H1 | Parser fix for `prompt_complete` output (ticket 0163) | Done (2026-05-05) |
-| H2 | None (but benefits from H1 parser fix) | Ready |
-| H3 rungs 1–2 | None | Ready |
-| H3 rungs 3–4 | Ticket 0144 (RAG+reasoning cell) | Pending |
-| H6 | None | Ready |
-| H7 | Ticket 0144 (RAG+reasoning cell) | Pending |
+| H1 | None | Ready |
+| H2 | None | Ready |
+| H3 | Parser fix for `prompt_complete` output (ticket 0163) | Done (2026-05-05) |
+| H4 | H3 sweeps complete (cloud frontier mean required for gap comparison) | Pending H3 |
 
 The preregistration timestamp must precede any new sweep runs for the
 confirmatory hypotheses. Existing data (327 records, collected before
