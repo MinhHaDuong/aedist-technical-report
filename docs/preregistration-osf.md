@@ -281,7 +281,7 @@ their sweeps can run:
 
 | Hypothesis | Precondition | Status |
 |------------|-------------|--------|
-| H1 | Parser fix for `prompt_complete` output (STATE.md priority 2) | Pending |
+| H1 | Parser fix for `prompt_complete` output (ticket 0163) | Done (2026-05-05) |
 | H2 | None (but benefits from H1 parser fix) | Ready |
 | H3 rungs 1–2 | None | Ready |
 | H3 rungs 3–4 | Ticket 0144 (RAG+reasoning cell) | Pending |
@@ -301,7 +301,7 @@ this registration) is declared as prior.
 - Experimental design: `experiments.toml` (sweep configurations)
 - Evaluation code: `src/aedist/evaluate.py` (`cmd_evaluate()`)
 - Metrics pipeline: `src/aedist/measurements.py` (`records_to_metrics()`)
-- Repository: [AEDIST on GitHub](https://github.com/haduong/aedist-technical-report)
+- Repository: [AEDIST on GitHub](https://github.com/MinhHaDuong/aedist-technical-report)
 
 ---
 
