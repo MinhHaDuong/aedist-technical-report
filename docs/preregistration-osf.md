@@ -56,15 +56,14 @@ models × 3 reps.
 **H2 — Method ladder rung 2: Coverage.** Multiturn → RAG adds
 measurable F1 via the Coverage mechanism. Decision: same as H1.
 
-**H3 — Frontier cloud fails full attribution and provenance bar
-(falsification target).** A frontier cloud agent (reasoning + web +
-`prompt_complete`) will achieve acceptable recall (F1 ≥ 0.90) yet fail
-the full attribution/provenance bar (citations verifiable but not
-verified, attribution per-row not per-cell). Supported if ≥3 of 12
-models achieve F1 ≥ 0.90 AND all models show citation validity rate
-< 0.50. Falsified if frontier achieves both F1 ≥ 0.90 AND citation
-validity ≥ 0.90. Inconclusive if F1 < 0.90 across all models (method
-quality moot) or method-quality metrics not fully instrumented.
+**H3 — Accuracy–provenance incompatibility in single parametric prompts.**
+A frontier model given a single prompt without document provision cannot
+simultaneously achieve full recall and verifiable per-row attribution.
+Asking for source citations collapses recall; not asking yields no
+provenance. Test: compare F1(`prompt_complete`, no web) vs
+F1(`prompt_extract`, no web) on a matched 5-model panel. Supported if
+mean ΔF1 < −0.10 AND citation validity rate on `prompt_complete` < 0.50.
+Falsified if ΔF1 > −0.05 AND citation validity ≥ 0.50.
 
 **H4 — Local model approaches cloud frontier result quality.** A local
 open-weight model on a single workstation GPU (≤16 GB VRAM) approaches
@@ -146,7 +145,7 @@ Per hypothesis:
   = 30 runs.
 - **H2:** 5 matched models × 2 conditions (multiturn, RAG) × 3 reps
   = 30 runs (multiturn baseline shared with H1).
-- **H3:** 12 frontier models × 3 reps = 36 runs.
+- **H3:** 5 matched models × 2 conditions (prompt_extract, prompt_complete no-web) × 3 reps = 30 runs (Condition A baseline shared with H1/H2).
 - **H4:** 2–4 local models × 3 reps = 6–12 runs.
 
 Total new runs: approximately 75–85 (after accounting for shared
@@ -201,18 +200,15 @@ direction: multiturn ≥ direct).
 **H2 (Coverage rung):** Same paired permutation test as H1, applied to
 the multiturn → RAG rung on `prompt_extract`.
 
-**H3 (frontier falsification target):** For each of 12 frontier
-models, compute mean F1 and bootstrap 95% CI across n=3 reps. Count
-how many models achieve mean F1 ≥ 0.90. If that count reaches the
-threshold, also evaluate citation validity rate for each model. The
-decision requires both F1 and citation-validity components to be
-assessed (see decision rules below). If citation-validity
-instrumentation is not complete at run time, H3 is declared
-Inconclusive regardless of F1 outcome. The F1 decision rule uses
-`prompt_complete` output. Auditability (citations verifiable but not
-verified, attribution per-row not per-cell) is a qualitative framing
-claim; the statistical test operates only on F1 and citation validity
-rate.
+**H3 (parametric incompatibility):** Paired permutation test. For each
+of 5 matched models, compute mean F1 under `prompt_extract` (Condition A)
+and `prompt_complete` without web (Condition B), both parametric. Test
+statistic: mean paired ΔF1 = F1(B) − F1(A). P-value: proportion of
+10,000 sign-flip permutations with test statistic ≤ observed. One-sided
+test (predicted direction: B < A). Also compute citation validity rate on
+Condition B outputs; report as descriptive (no significance test on
+citation validity). If citation-validity instrumentation is not complete,
+the ΔF1 test still runs; only the secondary measure is missing.
 
 **H4 (local vs. cloud):** Compute mean F1 and bootstrap 95% CI for
 2–4 local models. Compare local mean F1 against the cloud frontier
@@ -274,7 +270,7 @@ The following analyses will be reported as exploratory:
 |------------|-----------|-----------|--------------|
 | H1 (Articulation) | Paired ΔF1 ≥ 0.03, p < 0.05 | Paired ΔF1 < 0 (reversed) | Positive Δ < 0.03 or p ≥ 0.05 |
 | H2 (Coverage) | Paired ΔF1 ≥ 0.03, p < 0.05 | Paired ΔF1 < 0 (reversed) | Positive Δ < 0.03 or p ≥ 0.05 |
-| H3 (frontier falsification) | ≥3 models F1 ≥ 0.90 AND all models citation validity < 0.50 | Frontier achieves F1 ≥ 0.90 AND citation validity ≥ 0.90 | F1 < 0.90 across all models, or method-quality metrics not fully instrumented |
+| H3 (parametric incompatibility) | Mean ΔF1 < −0.10, p < 0.05, AND citation validity < 0.50 | Mean ΔF1 > −0.05 AND citation validity ≥ 0.50 | ΔF1 between −0.05 and −0.10, or citation validity mixed |
 | H4 (local vs. cloud) | Local mean F1 ≥ cloud mean − 0.05, CI lb ≥ 0.90 | Gap > 0.10 | Gap between 0.05 and 0.10 |
 
 ---
@@ -289,7 +285,7 @@ their sweeps can run:
 | H1 | None | Ready |
 | H2 | None | Ready |
 | H3 | Parser fix for `prompt_complete` output (ticket 0163) | Done (2026-05-05) |
-| H4 | H3 sweeps complete (cloud frontier mean required for gap comparison) | Pending H3 |
+| H4 | None (compares local model against H1/H2 baseline, not H3) | Ready |
 
 The preregistration timestamp must precede any new sweep runs for the
 confirmatory hypotheses. Existing data (327 records, collected before

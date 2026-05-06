@@ -62,38 +62,46 @@ effect sizes.*
 
 ---
 
-### H3 — Frontier cloud fails full attribution and provenance bar
+### H3 — Accuracy–provenance incompatibility in single parametric prompts
 
 - **Argument anchor:** §Method quality: verifiable vs. verified;
   §Narrative arc, Part 3
-- **Claim:** A state-of-the-art cloud agent with extended reasoning, web
-  access, and a fully specified extraction prompt will achieve acceptable
-  result quality (F1 ≥ 0.90) yet fail the full attribution and provenance
-  requirements: citations verifiable but not verified, attribution per-row
-  not per-cell, no as-of date recorded per value.
-- **Why falsification:** This is the paper's central motivation. If
-  frontier already satisfies the provenance bar, there is no gap to close.
+- **Claim:** A frontier model given a single prompt without document
+  provision cannot simultaneously achieve full recall and verifiable
+  per-row attribution. Asking for source citations causes the model to
+  report only what it can justify — collapsing recall. Not asking for
+  citations produces high recall but no provenance. The two requirements
+  are incompatible in the single-prompt parametric regime.
+- **Why this matters:** If the incompatibility is real, no prompt
+  engineering fixes it — a multi-step or retrieval-based architecture is
+  necessary. This is the paper's central structural motivation.
 - **Operational definition:**
-  - *Result quality:* F1 macro on coal-only dev subset ≥ 0.90.
-  - *Method quality:* Citation validity rate (fraction of citations that
-    resolve and contain the claimed fact) and per-cell attribution rate.
-    Measured via post-hoc audit of `sweep_direct_complete` outputs.
-  - *Supported condition:* Result quality passes, method quality fails.
-- **Sweep:** `sweep_direct_complete` (12 frontier models, `repeat` = 3)
-  + method-quality audit of outputs.
+  - *Condition A:* `prompt_extract` (attribution not requested), frontier
+    model, parametric (no web, no RAG).
+  - *Condition B:* `prompt_complete` (per-row source columns + bibliography
+    required), same model, parametric (no web, no RAG).
+  - *Primary measure:* ΔF1 = F1(B) − F1(A). A large negative delta
+    confirms recall collapse.
+  - *Secondary measure:* citation validity rate on Condition B outputs
+    (fraction of cited sources that resolve and contain the claim).
+- **Sweep:** Matched 5-model panel, `repeat` = 3, parametric only.
+  `sweep_regimes_direct_extract` (Condition A, reuse existing) vs new
+  `sweep_direct_complete_no_web` (Condition B, no web access).
 - **Decision rule:**
-  - *Supported (H3 confirmed):* ≥3 of 12 models achieve mean F1 ≥ 0.90
-    at n=3, AND all models score citation validity rate < 0.50 in audit.
-  - *Falsified:* Frontier models achieve both F1 ≥ 0.90 AND citation
-    validity ≥ 0.90 (provenance bar already cleared).
-  - *Inconclusive:* F1 < 0.90 across all models (method quality moot), or
-    method-quality audit not completed.
+  - *Supported:* Mean ΔF1 < −0.10 across matched models AND Condition B
+    citation validity rate < 0.50 — recall collapses when attribution is
+    requested, and the citations are not trustworthy anyway.
+  - *Falsified:* Mean ΔF1 > −0.05 AND citation validity ≥ 0.50 — both
+    accuracy and provenance are achievable in a single prompt.
+  - *Inconclusive:* ΔF1 between −0.05 and −0.10, or citation validity
+    mixed (0.50–0.90).
 - **Precondition:** Parser fix for `prompt_complete` output (ticket 0163,
   Done 2026-05-05).
-- **Current evidence:** Best deep-research F1 = 0.557 (GLM-5 Turbo, n=1,
-  pre-parser-fix); mean ≈ 0.35. Result quality not yet acceptable; new
-  sweeps needed after parser fix.
-- **Status:** Confirmatory, pending new sweeps.
+- **Current evidence:** Indirect only. `prompt_complete` best F1 = 0.557
+  (GLM-5 Turbo, n=1, with web access) vs `prompt_extract` best F1 = 0.988
+  (DeepSeek V3.2, RAG). Controlled parametric comparison not yet run;
+  confounds (web, reasoning, regime) prevent attribution of the gap.
+- **Status:** Confirmatory (new `sweep_direct_complete_no_web` needed).
 
 ---
 
