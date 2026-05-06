@@ -2,9 +2,12 @@
 Title: Quarterly model registry price and availability audit
 Created: 2026-05-05
 Author: claude
+Closed: price audit complete 2026-05-06
 
 --- log ---
 2026-05-05T11:30Z claude created — prices last updated 2026-04-25; need cadence to keep cost estimates accurate
+2026-05-06T10:00Z claude note — price audit done
+2026-05-06T18:00Z claude note — closed vs OpenRouter /api/v1/models (370 models). 6 entries updated >10%: x-ai/grok-4.20 (in -37.5%, out -58.3%), moonshotai/kimi-k2-thinking (in +27.7%, out +25%), google/gemma-4-26b-a4b-it (in -50%, out -17.5%), z-ai/glm-5.1 (in -16.7%, out -11.6%), qwen/qwen3.5-35b-a3b (out -23.1%), deepseek/deepseek-r1-0528 (in +11.1%). Retired: qwen/qwen3.6-plus-preview:free (no longer on OR, superseded by qwen/qwen3.6-plus paid). Flagged: tencent/hy3-preview:free expires 2026-05-08. Verified: prices_verified header added.
 
 --- body ---
 ## Context
