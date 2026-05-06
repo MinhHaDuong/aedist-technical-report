@@ -1,0 +1,68 @@
+%erg v1
+Title: Design prompt ablation with modules mapped to property aspects
+Created: 2026-05-06
+Author: claude
+
+--- log ---
+2026-05-06T16:00Z claude created
+
+--- body ---
+## Context
+
+The four quality properties (Accuracy, Coherence, Provenance, Temporality)
+each decompose into multiple aspects. For example:
+
+- **Accuracy**: recall (list all assets), precision (only real assets),
+  attribute correctness (right values per plant)
+- **Coherence**: cross-row consistency, aggregate totals match per-plant sums
+- **Provenance**: per-row source tracing, two independent sources,
+  verified not merely verifiable, per-cell not per-row, model-independent,
+  incrementally updateable
+- **Temporality**: as-of date per value, status-change notes, conditional
+  projections
+
+A prompt module for "add Source columns" maps to the per-row attribution
+*aspect* of Provenance, not to Provenance as a whole. A module for "list
+all plants including retired and dismantled" maps to the recall *aspect*
+of Accuracy.
+
+The current ablation design (X2 / sweep_ablation_*) uses composite
+modules whose effect on individual aspects is confounded. The clean
+experiment would:
+1. Enumerate the aspects of each property that a prompt instruction
+   could plausibly affect.
+2. Write one minimal module per aspect.
+3. Run single-module additions on a baseline (no-module) prompt,
+   measuring the effect on all four properties and their aspects.
+4. This lets you attribute: "adding source columns depresses recall
+   but improves verifiability" — the H3 mechanism, measured cleanly.
+
+## Actions
+
+1. Enumerate aspects per property (draft in this ticket body or a
+   companion doc).
+2. Map existing prompt_complete.txt sections to aspects — identify
+   which sections are already modular and which conflate multiple aspects.
+3. Design minimal per-aspect modules. Each module should be the
+   smallest instruction that moves one aspect needle.
+4. Specify measurement: for each aspect, define a computable metric
+   (F1 for recall/precision, citation-validity for provenance aspects,
+   cross-tab consistency for coherence, date-coverage for temporality).
+5. Wire into sweep_ablation_* family.
+
+## Notes
+
+- Modules may target aspects, not whole properties — this is expected
+  and correct. The goal is interpretability, not a 1:1 property mapping.
+- H3 (accuracy–provenance trade-off) is a special case: it predicts that
+  adding the provenance aspect module (source columns) depresses the
+  recall aspect of Accuracy. This ticket's ablation design would measure
+  that directly.
+- The existing 10-module ablation (Phase 2, ticket 0143) may already have
+  useful partial data — audit it before designing new sweeps.
+
+## Exit criteria
+
+- A table: aspect → minimal module → metric exists and is agreed.
+- At least one sweep run demonstrating the recall/provenance trade-off
+  measured at aspect level.
