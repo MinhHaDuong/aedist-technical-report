@@ -56,11 +56,11 @@ models × 3 reps.
 **H2 — Method ladder rung 2: Coverage.** Multiturn → RAG adds
 measurable F1 via the Coverage mechanism. Decision: same as H1.
 
-**H3 — Accuracy–provenance incompatibility in single parametric prompts.**
-A frontier model given a single prompt without document provision cannot
-simultaneously achieve full recall and verifiable per-row attribution.
-Asking for source citations collapses recall; not asking yields no
-provenance. Test: compare F1(`prompt_complete`, no web) vs
+**H3 — Accuracy–provenance trade-off in single parametric prompts.**
+On current state-of-the-art systems, a single prompt without document
+provision does not simultaneously achieve full recall and verifiable
+per-row attribution. Asking for source citations depresses recall; not
+asking yields no provenance. Test: compare F1(`prompt_complete`, no web) vs
 F1(`prompt_extract`, no web) on a matched 5-model panel. Supported if
 mean ΔF1 < −0.10 AND citation validity rate on `prompt_complete` < 0.50.
 Falsified if ΔF1 > −0.05 AND citation validity ≥ 0.50.

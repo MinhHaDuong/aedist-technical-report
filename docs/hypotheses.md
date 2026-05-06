@@ -66,12 +66,13 @@ effect sizes.*
 
 - **Argument anchor:** §Method quality: verifiable vs. verified;
   §Narrative arc, Part 3
-- **Claim:** A frontier model given a single prompt without document
-  provision cannot simultaneously achieve full recall and verifiable
-  per-row attribution. Asking for source citations causes the model to
-  report only what it can justify — collapsing recall. Not asking for
-  citations produces high recall but no provenance. The two requirements
-  are incompatible in the single-prompt parametric regime.
+- **Claim:** On current state-of-the-art systems, a single prompt without
+  document provision does not simultaneously achieve full recall and
+  verifiable per-row attribution. Asking for source citations causes the
+  model to report only what it can justify — depressing recall. Not asking
+  for citations produces higher recall but no provenance. The empirical
+  claim is that this trade-off holds across current frontier models; it
+  is not a claim of impossibility in principle.
 - **Why this matters:** If the incompatibility is real, no prompt
   engineering fixes it — a multi-step or retrieval-based architecture is
   necessary. This is the paper's central structural motivation.

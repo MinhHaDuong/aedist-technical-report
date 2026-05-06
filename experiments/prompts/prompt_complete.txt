@@ -11,7 +11,7 @@ Provide introductory context on Vietnam's thermal power sector covering:
 
 ## 2. Plant-by-Plant Inventory
 
-For EVERY thermal power plant in Vietnam — operational, under construction, approved, and planned under PDP7 revised and PDP8 — provide:
+For EVERY thermal power plant in Vietnam — at every stage of its lifetime, from proposed and announced through under construction, operational, and suspended to retired and dismantled — provide:
 
 ### Structured table
 Format: Markdown table with columns:
@@ -57,6 +57,6 @@ For each source provide:
 - Do NOT fabricate or hallucinate source URLs. If you cannot recall the exact URL, write "URL not verified" rather than inventing one
 - Distinguish OBSERVED facts (plant is operating, verified COD) from PROJECTED facts (planned capacity, expected COD from PDP)
 - Include every plant from PDP7 revised (Decision 428/QĐ-TTg, 2016) and PDP8 (Decision 500/QĐ-TTg, 2023), even if suspended or cancelled — note which plan authorized each
-- Be exhaustive: Vietnam has approximately 80–100 thermal units across 50+ plant complexes. Missing plants reduces the value of this inventory
+- Be exhaustive across all lifecycle stages: include assets that have ever been proposed, announced, under construction, operational, suspended, cancelled, retired, or dismantled. The inventory covers the full historical and prospective record, not only currently operating plants
 - When you know a plant exists but cannot identify a primary source, include it with confidence LOW and Source = "not found" — never omit a known plant for lack of a citation
 - Use consistent units: MWe for net capacity throughout
