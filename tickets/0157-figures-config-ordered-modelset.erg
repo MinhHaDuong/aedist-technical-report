@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-01T10:00Z claude created
 2026-05-04T10:45Z claude note removed Blocked-by: 0156 — 0156 is closed (PR #322)
+2026-05-07T08:00Z claude note reimagined: narrowed scope — only plot_regimes_scatter has hardcoded model list; other 6 scripts derive from data
 
 --- body ---
 ## Context
