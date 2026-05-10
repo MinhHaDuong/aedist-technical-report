@@ -142,9 +142,10 @@ $(SLIDE_GEN)/census_bars.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_census --output $@
 
-$(SLIDE_GEN)/pareto.csv: $(MEASUREMENTS)
+$(SLIDE_GEN)/fig_pareto.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_pareto --output $@
+	uv run python -m aedist.plot_pareto \
+	    --output $(SLIDE_GEN)/pareto.csv --figure $@
 
 $(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
 	@mkdir -p $(dir $@)
@@ -202,7 +203,7 @@ report/report.pdf: report/report.tex report/refs.bib \
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
-    $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv \
+    $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/fig_pareto.pdf \
     $(SLIDE_GEN)/regimes.csv $(SLIDE_GEN)/fig_census_direct.pdf \
     $(SLIDE_GEN)/macros_census.tex \
     $(SLIDE_GEN)/fig_method_convergence.pdf \
@@ -219,7 +220,7 @@ slides/slides.pdf: slides/slides.tex \
 report: report/report.pdf
 slides: slides/slides.pdf
 tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
-figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/pareto.csv $(SLIDE_GEN)/fig_census_direct.pdf $(GEN)/fig_census_direct.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
+figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/fig_pareto.pdf $(SLIDE_GEN)/fig_census_direct.pdf $(GEN)/fig_census_direct.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census
