@@ -22,13 +22,19 @@ SAMPLE_METRICS = [
     {"label": "rag/gpt-5.4-union", "n_matched": 160, "n_hallucinated": 1, "n_missed": 3},
 ]
 
+# Minimal models list matching the sample data (slug, display_name).
+SAMPLE_MODELS = [
+    ("gpt-5.4", "GPT-5.4"),
+    ("gemini-2.5-flash-lite", "Gemini Flash"),
+]
+
 
 def test_load_filters_to_target_models(tmp_path, monkeypatch):
     input_path = tmp_path / "measurements.jsonl"
     write_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
 
-    data = load_regimes_data()
+    data = load_regimes_data(SAMPLE_MODELS)
     models = {model for model, _ in data}
     assert "qwen3" not in models
     assert "gpt-5.4" in models
@@ -39,7 +45,7 @@ def test_load_excludes_synthetic(tmp_path, monkeypatch):
     write_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
 
-    data = load_regimes_data()
+    data = load_regimes_data(SAMPLE_MODELS)
     for model, _method in data.keys():
         assert not model.endswith("-union"), f"synthetic {model} not filtered"
 
@@ -49,7 +55,7 @@ def test_load_returns_tp_counts(tmp_path, monkeypatch):
     write_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
 
-    data = load_regimes_data()
+    data = load_regimes_data(SAMPLE_MODELS)
     for tp_list in data.values():
         assert all(isinstance(v, int) and v >= 0 for v in tp_list)
 
@@ -59,11 +65,11 @@ def test_write_pdf(tmp_path, monkeypatch):
     write_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
 
-    data = load_regimes_data()
+    data = load_regimes_data(SAMPLE_MODELS)
     output = tmp_path / "fig_regimes_scatter.pdf"
 
     from aedist.plot_regimes_scatter import write_pdf
 
-    write_pdf(data, output)
+    write_pdf(data, SAMPLE_MODELS, output)
     assert output.exists()
     assert output.stat().st_size > 0
