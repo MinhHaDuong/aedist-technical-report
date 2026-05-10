@@ -2,11 +2,14 @@
 Title: Add figures configuration file with ordered modelset
 Created: 2026-05-01
 Author: claude
+Closed: merged PR #330
 
 --- log ---
 2026-05-01T10:00Z claude created
 2026-05-04T10:45Z claude note removed Blocked-by: 0156 — 0156 is closed (PR #322)
 2026-05-07T08:00Z claude note reimagined: narrowed scope — only plot_regimes_scatter has hardcoded model list; other 6 scripts derive from data
+2026-05-10T13:35Z claude note verify-reroll — round 1: full modelset absent; exit criteria not updated after scope narrowing
+2026-05-10T14:00Z claude note closed — merged PR #330
 
 --- body ---
 ## Context
