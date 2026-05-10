@@ -14,19 +14,18 @@ from collections import defaultdict
 from pathlib import Path
 from statistics import median
 
+from .figures_config import load_modelset
 from .measurements import SYNTHETIC_SUFFIXES, load
 from .util import COLOR_REFERENCE, normalize_model
 
 log = logging.getLogger(__name__)
 
-_MODELS = [
-    ("gpt-5.4", "GPT-5.4"),
-    ("mistral-small-2603", "Mistral S4"),
-    ("mistral-large-2512", "Mistral L3"),
-    ("deepseek-v3.2", "DeepSeek"),
-    ("qwen3.5:35b", "Qwen3.5 35B"),
-    ("cogito:8b", "Cogito 8B"),
-]
+
+def _get_models() -> list[tuple[str, str]]:
+    """Load (slug, display_name) pairs from figures.toml regimes_scatter modelset."""
+    models = load_modelset("regimes_scatter")
+    return [(normalize_model(m["name"]), m["display_name"]) for m in models]
+
 
 _METHODS = [
     ("direct", "Direct"),
@@ -35,9 +34,11 @@ _METHODS = [
 ]
 
 
-def load_regimes_data() -> dict[tuple[str, str], list[int]]:
-    """Return {(model_slug, method): [tp, tp, ...]} for the 5 target models."""
-    model_slugs = {slug for slug, _ in _MODELS}
+def load_regimes_data(
+    models: list[tuple[str, str]],
+) -> dict[tuple[str, str], list[int]]:
+    """Return {(model_slug, method): [tp, tp, ...]} for the target models."""
+    model_slugs = {slug for slug, _ in models}
     method_values = {m for m, _ in _METHODS}
 
     tp_by_combo: dict[tuple[str, str], list[int]] = defaultdict(list)
@@ -54,7 +55,11 @@ def load_regimes_data() -> dict[tuple[str, str], list[int]]:
     return dict(tp_by_combo)
 
 
-def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> None:
+def write_pdf(
+    tp_by_combo: dict[tuple[str, str], list[int]],
+    models: list[tuple[str, str]],
+    output: Path,
+) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -65,7 +70,7 @@ def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> No
     ytick_labels = []
     model_label_ys = []
 
-    for model_idx, (model_slug, model_name) in enumerate(_MODELS):
+    for model_idx, (model_slug, model_name) in enumerate(models):
         base_y = model_idx * 4
         model_label_ys.append((base_y + 1, model_name))
         for method_idx, (method_value, method_label) in enumerate(_METHODS):
@@ -95,7 +100,7 @@ def write_pdf(tp_by_combo: dict[tuple[str, str], list[int]], output: Path) -> No
     ax.set_yticklabels(ytick_labels, fontsize=7)
     ax.set_xlabel("Centrales identifiées (un point = une centrale)", fontsize=9)
     ax.set_xlim(0, 175)
-    ymax = (len(_MODELS) - 1) * 4 + 2
+    ymax = (len(models) - 1) * 4 + 2
     ax.set_ylim(-0.5, ymax + 0.5)
     ax.invert_yaxis()
     ax.spines["top"].set_visible(False)
@@ -126,8 +131,9 @@ def main() -> None:
     parser.add_argument("--output", required=True, help="Path to write PDF")
     args = parser.parse_args()
 
-    data = load_regimes_data()
-    write_pdf(data, Path(args.output))
+    models = _get_models()
+    data = load_regimes_data(models)
+    write_pdf(data, models, Path(args.output))
 
 
 if __name__ == "__main__":

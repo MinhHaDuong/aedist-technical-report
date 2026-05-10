@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-01T10:00Z claude created
 2026-05-04T10:45Z claude note removed Blocked-by: 0156 — 0156 is closed (PR #322)
+2026-05-07T08:00Z claude note reimagined: narrowed scope — only plot_regimes_scatter has hardcoded model list; other 6 scripts derive from data
 
 --- body ---
 ## Context
@@ -94,6 +95,10 @@ models = [
 ## Exit criteria
 
 - `experiments/figures.toml` exists with `frontier`, `full`, `ablation` modelsets.
-- All figure scripts use `load_modelset()`.
-- Validator blocks commits that reference unknown model names.
+- Figure scripts that maintain a static ordered model list use `load_modelset()`.
+  Scripts that derive models from measurement data are out of scope — forcing a
+  static modelset on them would be counterproductive (as of this PR: only
+  `plot_regimes_scatter.py` had a static list; others derive from data).
+- Validator blocks commits that reference unknown model names (CI-level: every
+  modelset entry must resolve in the registry, enforced by `test_figures_config.py`).
 - Tests green.
