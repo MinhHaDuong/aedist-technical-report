@@ -161,7 +161,7 @@ $(SLIDE_GEN)/fig_census_direct.pdf $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 	    --output $@ --methods direct --prompt-version census \
 	    --output-macros $(dir $@)macros_census.tex
 
-$(SLIDE_GEN)/fig_regimes_scatter.pdf: $(MEASUREMENTS)
+$(SLIDE_GEN)/fig_regimes_scatter.pdf: $(MEASUREMENTS) experiments/figures.toml
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_regimes_scatter \
 	    --output $@

@@ -8,6 +8,11 @@ from .harness import load_models
 _EXPERIMENTS_DIR = Path(__file__).resolve().parent.parent.parent / "experiments"
 
 
+def _load_config(figures_path: Path) -> dict:
+    with open(figures_path, "rb") as f:
+        return tomllib.load(f)
+
+
 def load_modelset(
     name: str,
     *,
@@ -22,9 +27,7 @@ def load_modelset(
     figures_path = figures_path or _EXPERIMENTS_DIR / "figures.toml"
     registry_path = registry_path or _EXPERIMENTS_DIR / "models.yaml"
 
-    with open(figures_path, "rb") as f:
-        config = tomllib.load(f)
-
+    config = _load_config(figures_path)
     modelsets = config.get("modelsets", {})
     if name not in modelsets:
         raise KeyError(f"Unknown modelset {name!r}; available: {sorted(modelsets)}")
@@ -45,6 +48,4 @@ def load_modelset(
 def available_modelsets(*, figures_path: Path | None = None) -> list[str]:
     """Return sorted list of modelset names defined in figures.toml."""
     figures_path = figures_path or _EXPERIMENTS_DIR / "figures.toml"
-    with open(figures_path, "rb") as f:
-        config = tomllib.load(f)
-    return sorted(config.get("modelsets", {}))
+    return sorted(_load_config(figures_path).get("modelsets", {}))
