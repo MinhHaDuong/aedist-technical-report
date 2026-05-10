@@ -1,4 +1,4 @@
-Last updated: 2026-05-06T18:00Z
+Last updated: 2026-05-10T09:00Z
 
 ## North star
 
@@ -56,13 +56,12 @@ Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMe
 
 **`direct_complete` arm:** best F1 = 0.557 (n=9, excl. 3 non-attempts). Three frontier models failed: 2 refusals (GPT-5.4, Grok 4.20), 1 format error (Ernie 4.5 Thinking — aggregate tables only). Evaluator confirmed correct (ticket 0163).
 
-## Open tickets (25)
+## Open tickets (22)
 
 - 0075 DSPy/MIPROv2 autoresearch — post-talk
 - 0102 Verify escalation-rate decay — post-talk, blocked by missing fusion+HITL
 - 0118 Source-grounding Phase 2 — LLM adjudication, post-talk
 - 0119 Source-grounding Phase 3 — HITL memory, blocked by 0118
-- 0133 Pareto scatter Python PDF
 - 0134 Regimes scatter — local sweep in flight on padme tmux `regimes-fill`
 - 0135 Regimes scatter visual tuning — blocked by 0134
 - 0138 No-Think confound audit
@@ -77,11 +76,9 @@ Pipeline end-to-end. Benchmark: 57 models, headline F1 macro-wired (`\HeadlineMe
 - 0152 Align slides on argument
 - 0153 Redesign experiments along argument
 - 0154 Run redesigned experiments — blocked by 0153
-- 0157 figures.toml ordered modelsets
 - 0158 Structured prompt modules/modalities taxonomy
 - 0159 Capability evaluation 8 dimensions
 - 0160 Claude Code CLI route adapter
-- 0162 Model-set dispatch smoke test
 - **0165** Prompt module–aspect mapping *(design ablation, unblocked)*
 
 ## Follow-on milestone: Journal submission
