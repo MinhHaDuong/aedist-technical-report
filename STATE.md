@@ -1,4 +1,4 @@
-Last updated: 2026-05-10T09:00Z
+Last updated: 2026-05-14T19:30Z
 
 ## North star
 
@@ -17,10 +17,16 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 Complete exploratory research, freeze the argument and the slides story.
 
-## Priorities (set 2026-04-30, confirmed 2026-05-01)
-1. Align workplan on docs/synopsis.md. Do we really need to register, this is not medical trials? 
-2. Implement the experiment described in synopsys.md, asking the SOTA for the complete report with per-asset discussion and summary table. **Falsify H0: Deep research agents are enough**.
-3. Implement the prototype described in synopsys.md.
+## Workplan (set 2026-05-14)
+
+1. Align workplan on docs/synopsis.md. Do we really need to register, this is not medical trials?
+2. **Implement the SOTA experiment (synopsis §4 — Falsify H0: Deep research agents are enough).** Umbrella **0166**, four SOTA agents (Anthropic Opus 4.7 / OpenAI GPT-5.5 / Mistral Large 2512 / Qwen3-Max via DashScope). Phase-5 raid in progress; **work moves to padme** for Wave 2 onwards.
+   - **Wave 1 (done, merged PR #331):** ticket 0172 — RunRecord schema extension. Pydantic `RunRecord` + `ResourceUse` gained 14 optional agent-mode fields; `records_to_metrics()` projects them per ADR-7.
+   - **Wave 2 (ready, padme):** tickets **0167 / 0168 / 0169 / 0173** — four direct-API adapters, parallel. All four blocked-by are now satisfied (0172 merged). Live smokes authorised at $0.50/adapter; 0169 Mistral has a $0.50 pricing-probe pre-gate before its smoke (connector pricing unpublished). 0173 Qwen needs the user to provision a DashScope API key at `~/.config/keys/dashscope.env` before its smoke.
+   - **Wave 3 (after Wave 2):** tickets **0170 / 0171** — Phase A reflexive prompt-design harness + Phase C cross-eval (mechanical Accuracy via existing `evaluate.py` / `metrics.py` / `reconcile.py`; 0–3 anchored rubric; parser-enforced quoted-span check).
+   - **Phase B (queries):** runs after Wave 3 lands, on explicit user authorisation. Budget cap ~$140 total.
+   - Full implementation specs: `tickets/0166-raid-plans.md`. Each adapter ticket has its log-entry with Imagine refinements applied.
+3. Implement the prototype described in synopsis (the stateful-agentic v1, synopsis §5). Not yet ticketed; opens after Wave 3 lands and Phase B has run.
 
 ## Backlog
 1. **Diagnose `direct_complete` F1 = 0.000 rows.** Three capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) score zero — almost certainly a parser failure on structured-document output. Read one raw `.record.json` + confirm before any priority-3 build. If parser is broken, F1 = 1 is unreachable by construction.
