@@ -8,10 +8,12 @@ Blocked-by: 0169
 Blocked-by: 0170
 Blocked-by: 0171
 Blocked-by: 0172
+Blocked-by: 0173
 
 --- log ---
 2026-05-14T12:00Z claude created
 2026-05-14T13:00Z claude note Raid Imagine pass: all six PROCEED. Two real concerns to track: (a) 0169 ESCALATE — Mistral web_search connector pricing unpublished; gate live smoke on a $0.50 probe of billed-units, fork to Kimi as 0173 if opaque. (b) 0167 Action 1 wording loosened — Opus 4.7 needs thinking={type:adaptive}, not enabled+budget_tokens. Wave order set via Blocked-by: 0172 (Wave 1) -> 0167/0168/0169 (Wave 2) -> 0170/0171 (Wave 3).
+2026-05-14T14:30Z claude note Expanded from 3 to 4 SOTA agents on user decision after 2026-05-14 field survey. Added Qwen3-Max via DashScope (CN, ticket 0173) as 4th slot for corpus diversity (Chinese-language sources under-indexed by Western search; hypothesis-relevant for Vietnamese power sector). Kimi K2.6 disqualified (thinking+web_search mutually exclusive). Wave 2 now: 0167/0168/0169/0173 parallel. Budget cap raised from ~$100 to ~$140. Cross-eval matrix 4x3 (was 3x3).
 
 --- body ---
 ## Context
@@ -31,20 +33,33 @@ quality, especially on Provenance.
 This ticket is the umbrella tracker. It is closed once all blocking
 work tickets close AND the experiment has been run and analyzed.
 
-## Three SOTA agents
+## Four SOTA agents (expanded from synopsis §4's "three" on 2026-05-14)
 
 API path only — no browser automation. Direct-API keys at `~/.config/keys/`:
 
-1. **Anthropic Claude Opus 4.x** — `anthropic.env`, web_search tool +
-   extended thinking (ticket 0167).
-2. **OpenAI GPT-5.x** — `openai.env`, Responses API + web_search_preview
-   + reasoning (ticket 0168).
-3. **Mistral Large** — `mistral.env`, Agents API + web_search connector
-   (ticket 0169). Swappable for Kimi K2.5 if a Moonshot subscription is
-   acquired — record this decision in the log when made.
+1. **Anthropic Claude Opus 4.7** (US) — `anthropic.env`, web_search tool
+   + adaptive thinking (ticket 0167).
+2. **OpenAI GPT-5.5** (US) — `openai.env`, Responses API + web_search +
+   reasoning (ticket 0168).
+3. **Mistral Large 2512** (FR) — `mistral.env`, Agents API + web_search
+   connector (ticket 0169). Pricing-probe gate before live smoke; halt
+   and reconsider if connector billing is opaque.
+4. **Qwen3-Max via DashScope** (CN) — `dashscope.env` (precondition:
+   user signs up for Alibaba Cloud Model Studio), web_search tool
+   inside thinking mode (ticket 0173).
+
+Geographic / corpus spread: US Anthropic (Brave) + US OpenAI (Bing) +
+FR Mistral (EU corpus) + CN Qwen (Chinese-language sources). For a
+Vietnamese power-sector inventory, Chinese-language investor and
+trade documents under-indexed by Western search are hypothesis-
+relevant — the 4th slot is not theatre.
+
+Kimi K2.6 is disqualified: docs state thinking and `$web_search` are
+mutually exclusive, fatal for synopsis §4's "extended reasoning AND
+web access" requirement.
 
 OpenRouter is available but its plugin-based web search is billed
-separately, so direct APIs are preferred here.
+separately, so direct APIs are preferred throughout.
 
 ## Experiment structure (synopsis §4)
 
@@ -77,22 +92,24 @@ modelset `modelset_frontier_10labs`) is the naive one-shot baseline the
 synopsis compares against. Do **not** re-run it. The cross-eval (0171)
 reads from it directly.
 
-## Budget envelope
+## Budget envelope (4-agent expansion)
 
-- Phase A (prompt design): ≤ $1 per model × 3 = $3.
-- Phase B (3 reps × $10 cap): ≤ $30 per model × 3 = $90.
-- Phase C (cross-eval, cheap chat completions): ≤ $5 total.
-- **Cap: ~$100 total.** Hard cap enforced per-run by adapters; soft
+- Phase A (prompt design): ≤ $1 per model × 4 = $4.
+- Phase B (3 reps × $10 cap): ≤ $30 per model × 4 = $120.
+- Phase C (cross-eval, cheap chat completions): ≤ $10 total
+  (12 subject runs × 3 evaluators ≈ 36 calls + baseline scoring).
+- Smoke + probe: 4 × $0.50 = $2 + Mistral probe ≤ $0.50 = $2.50.
+- **Cap: ~$140 total.** Hard cap enforced per-run by adapters; soft
   cap monitored at the umbrella by inspecting cost totals after Phase A
   before launching Phase B.
 
 ## Exit criteria
 
 - All blocking tickets closed.
-- 3 × 3 = 9 SOTA agent runs recorded in `measurements.jsonl` with
+- 4 × 3 = 12 SOTA agent runs recorded in `measurements.jsonl` with
   full provenance (designed prompt, raw report, parsed table,
   citations list, cost, latency).
-- Cross-evaluation matrix (3 models × 3 evaluators × 4 dimensions)
+- Cross-evaluation matrix (4 models × 3 evaluators × 4 dimensions)
   written to `experiments/derived/sota_cross_eval.csv`.
 - Comparative table generated and included in slides/report.
 - One paragraph added to `docs/synopsis.md` §4 stating the empirical

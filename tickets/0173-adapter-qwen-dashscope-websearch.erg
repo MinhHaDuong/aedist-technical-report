@@ -1,0 +1,112 @@
+%erg 0.1
+Title: Adapter — Qwen3-Max via DashScope with web_search + thinking mode
+Created: 2026-05-14
+Author: claude
+Blocked-by: 0172
+
+--- log ---
+2026-05-14T14:30Z claude created
+2026-05-14T14:30Z claude note Opens fourth SOTA-experiment slot for geographic + corpus diversity (CN frontier alongside US Anthropic/OpenAI and FR Mistral). Per 2026-05-14 SOTA field survey: Qwen3-Max supports the web_search tool inside thinking mode via DashScope Responses API; transparent pricing $10/1K searches international (or $0.57/1K mainland-region). User decision: run experiment with 4 agents rather than 3.
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+Fourth agent slot: Alibaba Qwen3-Max via DashScope (Alibaba Cloud
+Model Studio). Adds Chinese-corpus search diversity to the
+Anthropic/OpenAI Western baselines and the Mistral EU slot. Vietnamese
+power-sector reporting often appears in Chinese-language investor and
+trade documents that Western search engines under-index — this slot
+is hypothesis-relevant, not just geographic theatre.
+
+Required capabilities (verified 2026-05-14 against Alibaba docs):
+- Native `web_search` tool inside one API call.
+- Thinking mode (`enable_thinking` / `reasoning_effort`) supported on
+  the same call for `qwen3-max-*` (the docs explicitly confirm this
+  for qwen3-max).
+- Frontier-tier model (qwen3-max-2026-01-23 or current production ID
+  at implementation time).
+
+API key precondition: user signs up for Alibaba Cloud Model Studio,
+completes KYC, generates a DashScope API key, stores it at
+`~/.config/keys/dashscope.env` as `DASHSCOPE_API_KEY=...`. The
+international endpoint (`dashscope-intl.aliyuncs.com`) is cleanest
+from outside mainland China; verify region/endpoint match the key.
+
+## Actions
+
+1. Add `src/aedist/adapter_qwen_dashscope.py`, mirroring the protocol
+   surface of 0167 / 0168 / 0169:
+   - `build_request(prompt, *, model, max_tokens, enable_thinking, web_search) -> dict`
+   - `parse_response(resp, model_meta) -> RunRecord`
+   - `run(prompt, *, dry_run, ...) -> RunRecord`
+   - Constants: `AGENT_FAMILY = "qwen-direct"`, `DEFAULT_MODEL = "qwen3-max-2026-01-23"`, `API_DOCS_VERIFIED = "2026-05-14"`.
+2. SDK choice: the official `dashscope` Python SDK. Alternative path —
+   OpenAI-compatible endpoint via `openai` SDK pointed at
+   `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` — is
+   simpler but historically lags on tool-call schema fidelity. Default
+   to `dashscope`; record the choice in the driver header comment.
+3. Request shape (per
+   https://www.alibabacloud.com/help/en/model-studio/web-search,
+   verified 2026-05-14):
+   ```python
+   dashscope.Generation.call(
+       model="qwen3-max-2026-01-23",
+       messages=[{"role": "user", "content": prompt}],
+       tools=[{"type": "web_search"}],
+       enable_thinking=True,
+       result_format="message",
+       max_tokens=...,
+   )
+   ```
+4. Register the model in `experiments/models.yaml` under family
+   `qwen-direct`, route `dashscope`, with the price card (input,
+   output, reasoning tokens, and `price_per_web_search_call_usd`
+   ≈ $0.010 international or $0.00057 mainland — confirm at
+   registration time).
+5. Hard cost cap per call: $10. Pre-call cap = `max_tokens` guard +
+   estimated n_searches; post-call verify from `usage` block. Surface
+   `tool_calls_cost_usd` as a discrete RunRecord field (same field
+   added for 0169 connector fees — already in 0172's schema list).
+6. `--dry-run` mode prints assembled kwargs without sending.
+7. Smoke: same canonical prompt as 0167/0168/0169 — "List 3 coal power
+   plants in Vietnam with one citation each, ≤200 words" — under $0.50.
+
+## Test
+
+`tests/test_adapter_qwen_dashscope.py`:
+- `--dry-run` payload contains the `web_search` tool entry, `enable_thinking=True`, and the model ID.
+- Canned response parses correctly: thinking-trace text → `reasoning_summary`,
+  web_search hits → `citations` + `web_search_calls`, message body → narrative.
+  Use a fixture under `tests/fixtures/qwen_dashscope_response.json`.
+- Cost arithmetic matches a fixture price card (input + output +
+  reasoning tokens + n_searches × per-search price).
+- **Non-tautological assertion** (avoid "kwargs match what we set"):
+  parse a fixture with three asymmetric web-search hits and assert
+  `len(record.web_search_calls) == 3` AND
+  `len(record.citations) == 5` (e.g. 5 distinct URLs across the
+  3 searches). The asymmetry catches both "forgot len()" and
+  "deduplicated wrong list" bugs.
+
+## Exit criteria
+
+- `--dry-run` works end-to-end.
+- One live smoke call recorded under `experiments/outputs/sota_smoke/qwen_<ts>.json`.
+- Capability compose (thinking + web_search in one call) confirmed.
+- Tests pass.
+- Model entry in `experiments/models.yaml`.
+
+## Notes
+
+- "Thinking mode + web_search supported in qwen3-max" is explicit in
+  the Alibaba docs but the docs ALSO list models where web_search is
+  available in non-thinking mode only — DO NOT generalize. Pin to
+  qwen3-max and reverify the model ID at implementation time; cite
+  the docs URL + date in the driver comment.
+- International vs mainland endpoint matters for both price and
+  latency. Default to international unless the user explicitly
+  configures otherwise.
+- The 4-agent experiment design (vs synopsis §4's "three") is a
+  deliberate scope expansion for corpus diversity (US/US/FR/CN).
+  Update synopsis §4 prose only after the experiment runs and the
+  decision proves load-bearing.
