@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-14T12:00Z claude created
+2026-05-14T13:00Z claude note Imagine: PROCEED. RunRecord is Pydantic at src/aedist/schema.py:180-239 (NOT dataclass/TypedDict). Extend additively, all new fields Optional with defaults. Nest correctly: wall_clock_s/cost_usd already on ResourceUse (reuse wall_s,cost_usd; add cost_breakdown,thinking_tokens there); agent_family/agent_mode/synopsis_sha/designed_prompt_sha/web_search_calls/citations/parsed_table_path go top-level on RunRecord. Also first-class for agent runs: finish_reason, retry_count, error, reasoning_summary. records_to_metrics() at measurements.py:74 projects each new field; web_search_calls/citations exposed as counts in metrics dict, lists kept in record. Update ADR-7 in ADR.md (no new measurements_schema.md). 330 existing measurements.jsonl records all parse cleanly because new fields default None. Wave order: this ticket first, then 0167/0168/0169 in parallel, then 0170 + 0171.
 
 --- body ---
 ## Context

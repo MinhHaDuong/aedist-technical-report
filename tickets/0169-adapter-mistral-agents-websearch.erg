@@ -2,9 +2,11 @@
 Title: Adapter — Mistral Agents API with web_search connector
 Created: 2026-05-14
 Author: claude
+Blocked-by: 0172
 
 --- log ---
 2026-05-14T12:00Z claude created
+2026-05-14T13:00Z claude note Imagine: ESCALATE on pricing. Mistral web_search connector price not published on docs or pricing page (2026-05-14). Beta-API status acceptable. Gate before live smoke: one probe call (~$0.50) inspecting billed-units; if billing opaque, halt and fork to Kimi K2.5 as ticket 0173. Surface tool_calls_cost_usd as a discrete RunRecord field so connector fees do not blend into token cost. Use mistralai SDK beta.agents + beta.conversations.
 
 --- body ---
 ## Context

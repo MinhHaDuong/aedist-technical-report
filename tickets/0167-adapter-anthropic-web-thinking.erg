@@ -2,9 +2,11 @@
 Title: Adapter — Anthropic Claude with web_search tool + extended thinking
 Created: 2026-05-14
 Author: claude
+Blocked-by: 0172
 
 --- log ---
 2026-05-14T12:00Z claude created
+2026-05-14T13:00Z claude note Imagine: PROCEED. Loosen Action 1 thinking-config wording — Opus 4.7 rejects manual enabled+budget_tokens; use thinking={type:adaptive,display:summarized}. Pin default model claude-opus-4-7. Tool form: tools=[{type:web_search_20250305,name:web_search,max_uses:N}]. tool_choice must be auto or none. Capability verified on docs 2026-05-14.
 
 --- body ---
 ## Context
