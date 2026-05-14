@@ -7,7 +7,6 @@ Blocked-by: 0168
 Blocked-by: 0169
 Blocked-by: 0170
 Blocked-by: 0171
-Blocked-by: 0172
 Blocked-by: 0173
 
 --- log ---
@@ -15,6 +14,7 @@ Blocked-by: 0173
 2026-05-14T13:00Z claude note Raid Imagine pass: all six PROCEED. Two real concerns to track: (a) 0169 ESCALATE — Mistral web_search connector pricing unpublished; gate live smoke on a $0.50 probe of billed-units, fork to Kimi as 0173 if opaque. (b) 0167 Action 1 wording loosened — Opus 4.7 needs thinking={type:adaptive}, not enabled+budget_tokens. Wave order set via Blocked-by: 0172 (Wave 1) -> 0167/0168/0169 (Wave 2) -> 0170/0171 (Wave 3).
 2026-05-14T14:30Z claude note Expanded from 3 to 4 SOTA agents on user decision after 2026-05-14 field survey. Added Qwen3-Max via DashScope (CN, ticket 0173) as 4th slot for corpus diversity (Chinese-language sources under-indexed by Western search; hypothesis-relevant for Vietnamese power sector). Kimi K2.6 disqualified (thinking+web_search mutually exclusive). Wave 2 now: 0167/0168/0169/0173 parallel. Budget cap raised from ~$100 to ~$140. Cross-eval matrix 4x3 (was 3x3).
 
+2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 --- body ---
 ## Context
 

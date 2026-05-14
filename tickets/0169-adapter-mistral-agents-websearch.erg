@@ -2,13 +2,13 @@
 Title: Adapter — Mistral Agents API with web_search connector
 Created: 2026-05-14
 Author: claude
-Blocked-by: 0172
 
 --- log ---
 2026-05-14T12:00Z claude created
 2026-05-14T13:00Z claude note Imagine: ESCALATE on pricing. Mistral web_search connector price not published on docs or pricing page (2026-05-14). Beta-API status acceptable. Gate before live smoke: one probe call (~$0.50) inspecting billed-units; if billing opaque, halt and fork to Kimi K2.5 as ticket 0173. Surface tool_calls_cost_usd as a discrete RunRecord field so connector fees do not blend into token cost. Use mistralai SDK beta.agents + beta.conversations.
 2026-05-14T14:30Z claude note Kimi swap path obsolete: K2.6 docs confirm thinking and $web_search are mutually exclusive, fatal for synopsis §4. If Mistral probe shows opaque billing, halt 0169 at probe and STOP; do NOT fork to Kimi. Corpus diversity now comes from 0173 Qwen3-Max (CN), opened as a parallel Wave-2 slot independent of this ticket's outcome.
 
+2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 --- body ---
 ## Context
 
