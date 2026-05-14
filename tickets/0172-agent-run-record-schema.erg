@@ -1,0 +1,85 @@
+%erg 0.1
+Title: RunRecord / output schema for SOTA agent-mode runs
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+Existing `RunRecord` is shaped around a single chat-completion call
+with no tools and a flat completion text. SOTA-agent runs add several
+new first-class fields: an agent-designed prompt (for Phase B), a
+sequence of tool calls (web_search invocations + results), citations,
+a reasoning/thinking trace, and a structured table parsed out of the
+narrative.
+
+ADR-7 says `records_to_metrics()` in `measurements.py` is the single
+scientific record. Any new field must flow through there.
+
+## The new fields
+
+Additions to `RunRecord` (and `records_to_metrics`):
+
+- `agent_family` — `anthropic-direct`, `openai-direct`, `mistral-direct`.
+- `agent_mode` — `phase_a_design`, `phase_b_run`, `phase_c_score`, or
+  `smoke`.
+- `designed_prompt_sha` — when `agent_mode == phase_b_run`, the SHA of
+  the Phase-A prompt being executed; null otherwise.
+- `synopsis_sha` — git SHA of `docs/synopsis.md` at the time the run
+  was launched; freezes the experimental spec.
+- `web_search_calls` — JSON array of `{query, urls_returned[]}`.
+- `citations` — JSON array of `{url, snippet?, supports_claim?}`.
+- `thinking_tokens` — int or null.
+- `parsed_table_path` — relative path to the CSV extracted from the
+  narrative, if a table was emitted; null otherwise.
+- `cost_usd` and `cost_breakdown` — input/output/cache/reasoning
+  tokens × price card.
+- `wall_clock_s`.
+
+For Phase-C scoring runs, extra dimensional fields are stored
+separately in `sota_cross_eval.csv` (ticket 0171), not in
+`RunRecord` — the RunRecord captures the evaluator *call*, the
+evaluation *content* lives in the cross-eval CSV.
+
+## Actions
+
+1. Extend the `RunRecord` dataclass / TypedDict definition wherever
+   it lives (probably `src/aedist/measurements.py` — verify).
+2. Update `records_to_metrics()` to project every new field per ADR-7.
+3. Update any JSONL writer + reader to round-trip the new fields. The
+   schema must be additive: old records (without the new fields)
+   continue to parse with the new fields = null.
+4. Add a `tests/test_measurements_agent_fields.py` that constructs a
+   sample agent-mode record, writes it, reads it back, and confirms
+   `records_to_metrics()` exposes every new column.
+5. Document the schema additions in `docs/measurements_schema.md` (or
+   wherever the schema is already documented — find and extend it).
+
+## Test
+
+- A backward-compatibility test that reads a fixture record from before
+  this change and asserts it still parses with new fields = None.
+- A new-record round-trip test.
+- A `records_to_metrics()` assertion that every new field appears.
+
+## Exit criteria
+
+- Schema extended.
+- All existing CI passes.
+- New tests pass.
+- Old `measurements.jsonl` (the production file) reads cleanly with
+  the new code — verify with a one-shot script, do not modify the
+  file.
+
+## Notes
+
+- Adapters 0167–0169 each emit one of these records. This ticket
+  defines the contract they target — coordinate with whichever
+  adapter ticket lands first by writing the schema test fixtures
+  early.
+- Do not put rubric scores inside `RunRecord`. The cross-eval CSV
+  (0171) is the right home for those.

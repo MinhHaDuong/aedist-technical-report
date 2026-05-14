@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Reflexive prompt-design harness (Phase A)
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+Phase A of the experiment: each of the three SOTA agents is asked to
+*design its own prompt and settings* to produce the best statistical
+report it can under the budget cap. The three resulting prompts are
+then used in Phase B (executed via the adapters from 0167–0169).
+
+This ticket builds the harness for Phase A. It does **not** run the
+queries — the user explicitly excluded query execution from this
+raid.
+
+## The meta-prompt
+
+The Phase-A request to each agent is a single user message containing:
+
+1. The *baseline prompt* — the existing `experiments/prompts/prompt_complete.txt`,
+   verbatim, as the lower-bound starting point.
+2. The *quality bar* — the four numbered subsections from `docs/synopsis.md`
+   §2 ("Second, the quality bar"), verbatim. Use `extract_synopsis_section`
+   (helper to add) so the prompt-design harness pulls the live text and
+   does not drift from the paper.
+3. The *task statement*: "Design the prompt and the settings you would
+   use to produce the best statistical report on Vietnamese thermal
+   power plants this method can yield, given a budget cap of $10 and
+   an overnight wall-clock budget. Output: (a) the prompt body, (b) the
+   recommended generation settings, (c) a brief rationale for the
+   design. Your output will be executed unchanged."
+4. A required structured-output envelope so the result is machine-
+   parseable into `{prompt, settings, rationale}`.
+
+## Actions
+
+1. Create `experiments/sota/phase_a_prompt_design.py`:
+   - Assembles the meta-prompt from the live synopsis + baseline.
+   - Calls the configured adapter (0167/0168/0169) in dry-run.
+   - When run with `--live`, sends one request per agent and writes
+     the parsed `{prompt, settings, rationale}` plus raw transcript to
+     `experiments/outputs/sota_phase_a/<agent>/<timestamp>.json`.
+2. The harness must be agent-agnostic: it takes an adapter name and
+   any adapter-specific options, then delegates. No agent-specific
+   logic in this file.
+3. Validate the structured-output envelope. If an agent ignores the
+   schema, fail loudly with the raw payload so the human can re-issue
+   the meta-prompt by hand.
+4. Total Phase-A budget cap: $5 (covers 3 agents × ~$1 each plus
+   retries).
+
+## Test
+
+`tests/test_phase_a_harness.py`:
+- The assembled meta-prompt includes the verbatim baseline + verbatim
+  quality-bar §2.
+- The harness rejects responses missing the envelope keys.
+- `--dry-run` against each registered adapter prints a fully formed
+  request.
+- Canned-response parsing produces a Phase-A record with non-empty
+  `prompt`, `settings`, `rationale`.
+
+## Exit criteria
+
+- `--dry-run` works against all three adapters.
+- Tests pass.
+- Output directory layout documented in
+  `experiments/outputs/sota_phase_a/README.md`.
+- No live Phase-A calls have been made — those are an explicit, user-
+  approved follow-up step.
+
+## Notes
+
+- The meta-prompt is the experiment. Treat it as a first-class artefact:
+  freeze the synopsis revision SHA used to build it in each Phase-A
+  record so the experiment is reproducible after the synopsis evolves.
+- The output `prompt` from each agent becomes the input to Phase B
+  (executed by re-invoking the same adapter with that prompt). Phase B
+  is intentionally trivial harness given that 0167–0169 already provide
+  single-call dispatch; no separate Phase-B ticket is required.

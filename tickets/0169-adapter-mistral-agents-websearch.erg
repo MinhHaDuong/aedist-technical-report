@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Adapter — Mistral Agents API with web_search connector
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+Mistral fills the third agent slot via its Agents API with the built-in
+`web_search` connector.
+
+This slot is **swappable** for Moonshot Kimi K2.5 if the user
+subscribes to Moonshot — both offer web-search + reasoning via direct
+API. If swapped, fork this ticket rather than rewriting it: keep this
+one closed-as-superseded for traceability.
+
+API key at `~/.config/keys/mistral.env`. Use the official `mistralai`
+Python SDK against the Agents endpoint, not OpenRouter.
+
+## Actions
+
+1. Add a `mistral_agent` driver. The driver:
+   - Loads the key from `~/.config/keys/mistral.env`.
+   - Creates (or reuses) an agent definition with the `web_search`
+     connector enabled and a reasoning-capable model (Mistral Large
+     2512 or current strongest).
+   - Calls the conversation endpoint with a single user message.
+   - Returns: final text, all tool calls/citations from the
+     connector, per-call cost.
+2. Decide whether to create one persistent agent per experiment run
+   (cleaner audit trail) or one ephemeral agent per call. Document the
+   choice in the driver comments.
+3. Register the model in `experiments/models.yaml` under family
+   `mistral-direct`.
+4. Hard cost cap per call: $10.
+5. `--dry-run` mode.
+6. Smoke: 1 real call, trivial prompt, confirm ≥1 web_search tool
+   call and total cost < $0.50.
+
+## Test
+
+`tests/test_adapter_mistral.py`:
+- `--dry-run` payload contains agent ID/config, connector list,
+  message.
+- Canned response parses into the run-record schema (0172).
+- Cost calculation matches fixture pricing.
+
+## Exit criteria
+
+- `--dry-run` works.
+- One live smoke recorded under `experiments/outputs/sota_smoke/`.
+- Tests pass.
+- Model entry in `models.yaml`.
+
+## Notes
+
+- Verify the Mistral Agents API surface and `web_search` connector
+  with the docs on the day this is built; record the URL + date in a
+  driver comment.
+- If the Agents API surface proves too unstable or the web_search
+  connector is unavailable for the chosen model tier, stop and ask
+  the user before falling back to a non-native search path.

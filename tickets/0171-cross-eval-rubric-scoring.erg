@@ -1,0 +1,98 @@
+%erg 0.1
+Title: Cross-evaluation rubric + scoring harness (Phase C)
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+Phase C: for each Phase-B output, the two *other* agents score it
+along the four quality dimensions, and additionally compare it to the
+naive baseline at `experiments/outputs/direct_complete/`. This ticket
+operationalises the rubric and builds the scoring harness.
+
+This is the highest-risk piece of the experiment: the rubric *is* the
+measurement. If it scores generically, the results say nothing
+specific. The advisor flagged this; treat the rubric design as a
+deliverable, not a side effect.
+
+## The rubric
+
+Four dimensions, each on a 0–5 scale with **anchored** descriptors
+(not just "low / high"):
+
+1. **Accuracy** — row-level recall and precision against a freshly
+   inferred plant universe, plus attribute-level correctness. The
+   evaluator is given the reference inventory at
+   `data/reference/vietnam_thermal_v1.csv` so this can be computed
+   semi-mechanically by the evaluator-as-judge.
+2. **Coherence** — internal: no contradictory rows, totals match
+   subtotals, no duplicate units. External: units, orders of
+   magnitude, geographic placement, technology types are plausible.
+3. **Provenance** — fraction of cells (or rows, if cell-level absent)
+   with a citation; fraction of citations that actually resolve to a
+   primary source supporting the claim; fraction of values backed by
+   ≥2 independent sources.
+4. **Temporality** — fraction of values with a best-effort as-of date
+   or validity period; clarity of distinction between current /
+   planned / retired.
+
+Each score must come with a one-sentence justification quoting a
+specific span from the report being scored. Generic prose like "the
+provenance is partially documented" is rejected.
+
+## Actions
+
+1. Write `experiments/sota/phase_c_rubric.md` — the canonical rubric
+   with anchored 0/1/2/3/4/5 descriptors per dimension. This file is
+   the rubric of record; the scoring prompt embeds it verbatim.
+2. Write `experiments/sota/phase_c_score.py` — the scoring harness:
+   - Input: one Phase-B output to score + the rubric + the reference
+     inventory.
+   - Calls the chosen evaluator adapter (any of 0167–0169) in
+     scoring-only mode (no web_search needed — the report is self-
+     contained).
+   - Output: a row in `experiments/derived/sota_cross_eval.csv` with
+     columns `subject_model`, `subject_run`, `evaluator_model`,
+     `dim_accuracy`, `dim_coherence`, `dim_provenance`,
+     `dim_temporality`, plus a `_justification` column per dim, plus
+     `eval_cost_usd`, `eval_latency_s`.
+3. Score the naive baseline runs in `experiments/outputs/direct_complete/`
+   with the same rubric and same evaluator pool, so the comparison
+   table can include them as a control column.
+4. Inter-rater notes: each subject report is scored by both other
+   agents (so 9 Phase-B runs × 2 evaluators = 18 scoring calls; plus
+   ~10 baseline runs × 2 = 20 scoring calls). Budget cap $5.
+5. Self-scoring is excluded by construction — record this exclusion
+   explicitly in the rubric file.
+
+## Test
+
+`tests/test_phase_c_rubric.py`:
+- The rubric file exists and contains all four dimensions with anchor
+  text for at least levels 0, 3, 5.
+- The scoring prompt assembled by `phase_c_score.py` embeds the
+  rubric verbatim plus the reference inventory.
+- A canned evaluator response with the four scores + justifications
+  parses correctly and writes a valid CSV row.
+- A response without justifications is rejected.
+
+## Exit criteria
+
+- Rubric file checked in and reviewed.
+- `--dry-run` of `phase_c_score.py` against each adapter works.
+- Tests pass.
+- One live scoring call against an existing `direct_complete` run
+  recorded as a smoke and reviewed by hand for plausibility (this is
+  small and informative — not a "blast").
+
+## Notes
+
+- The rubric is what the slides will show, indirectly. Spend more
+  time on the anchor descriptors than on the harness plumbing.
+- The justification requirement is the anti-hallucination guard: it
+  forces the evaluator to ground its score in the report text.

@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Adapter — Anthropic Claude with web_search tool + extended thinking
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+This ticket wires Anthropic's Claude as one of the three agents.
+
+Required capabilities:
+- Extended thinking (interleaved reasoning).
+- `web_search` tool (Anthropic native tool — not OpenRouter plugin).
+- Long-form output (the agent should be able to produce a multi-page
+  narrative + structured CSV table).
+
+API key at `~/.config/keys/anthropic.env`. Use the `anthropic` Python
+SDK directly, not OpenRouter.
+
+## Actions
+
+1. Add an `anthropic_agent` driver in `experiments/` (sibling of the
+   existing OpenRouter dispatcher). The driver:
+   - Loads the key from `~/.config/keys/anthropic.env`.
+   - Calls `messages.create(...)` with `tools=[{"type": "web_search_*"}]`
+     and `thinking={"type": "enabled", "budget_tokens": ...}`.
+   - Returns the raw response, final text, all tool calls + tool
+     results (citations), thinking trace tokens, and per-call cost
+     computed from input/output/cache tokens against the current
+     Anthropic price card.
+2. Choose the model. Default to the most capable production Opus
+   currently available (`claude-opus-4-6` or `claude-opus-4-7`).
+   Verify the chosen ID supports both `web_search` and `thinking` in
+   the same call before locking it in.
+3. Register the model in `experiments/models.yaml` under a new family
+   `anthropic-direct` (separate from the OpenRouter route).
+4. Hard cost cap per call: $10. Computed pre-call from `max_tokens` +
+   estimated tool turns; verified post-call. Raise a clear error if
+   the cap would be exceeded.
+5. Write a `--dry-run` mode that prints the assembled request payload
+   without sending it.
+6. Smoke test: 1 real call with a trivial prompt ("List 3 coal power
+   plants in Vietnam with one citation each, ≤200 words"). Confirm
+   non-empty text, ≥1 tool call, ≥1 citation, and total cost < $0.50.
+
+## Test
+
+`tests/test_adapter_anthropic.py` (unit):
+- `--dry-run` returns a payload containing the model ID, the
+  web_search tool entry, and the thinking config.
+- A canned successful response is parsed correctly into the run-record
+  schema (defined in 0172).
+- Cost computation against a fixture price card matches expected.
+
+A live smoke is run by hand from the CLI, not in unit tests.
+
+## Exit criteria
+
+- `--dry-run` works end-to-end.
+- One live smoke call recorded under `experiments/outputs/sota_smoke/`
+  with the run-record schema from 0172.
+- Tests in `tests/test_adapter_anthropic.py` pass.
+- Model entry in `models.yaml` with `family: anthropic-direct`,
+  `route: native`, and the web_search + thinking capabilities flagged.
+
+## Notes
+
+- The adapter is the *transport*. Prompt content lives in Phase A
+  (ticket 0170). Do not embed the experiment prompt in this ticket's
+  code.
+- Cite the Anthropic docs URL used to verify tool + thinking
+  compatibility in a comment at the top of the driver, with the date
+  of the check (docs change).

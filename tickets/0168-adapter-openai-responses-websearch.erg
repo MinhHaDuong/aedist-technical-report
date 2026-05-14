@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Adapter — OpenAI Responses API with web_search + reasoning
+Created: 2026-05-14
+Author: claude
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
+This ticket wires OpenAI's GPT-5 as one of the three agents.
+
+Required capabilities:
+- Reasoning effort (`reasoning: {"effort": "high"}` or equivalent on
+  the current Responses API).
+- `web_search` tool (the native Responses API tool, billed inside the
+  call — not the chat-completions `tools` array fallback).
+- Long-form output.
+
+API key at `~/.config/keys/openai.env`. Use the official `openai`
+Python SDK against the Responses endpoint, not OpenRouter.
+
+## Actions
+
+1. Add an `openai_agent` driver. The driver:
+   - Loads the key from `~/.config/keys/openai.env`.
+   - Calls `client.responses.create(...)` with `tools=[{"type":
+     "web_search_preview"}]` (or the current production tool name)
+     and `reasoning={"effort": "high"}`.
+   - Returns: final text, all `web_search_call` items (URLs +
+     snippets), reasoning summary if available, per-call cost from
+     input/output/reasoning token usage against the OpenAI price card.
+2. Choose the model. Default to the most capable production GPT-5
+   variant (`gpt-5.4`, `gpt-5-pro`, or current equivalent). Verify the
+   chosen ID supports both `web_search` and high reasoning effort on
+   the same call.
+3. Register in `experiments/models.yaml` under family `openai-direct`.
+4. Hard cost cap per call: $10. Enforced pre-call (estimate) and
+   verified post-call.
+5. `--dry-run` mode prints the assembled request without sending.
+6. Smoke: 1 real call, trivial prompt, confirm ≥1 web_search_call and
+   total cost < $0.50.
+
+## Test
+
+`tests/test_adapter_openai.py`:
+- `--dry-run` payload contains model ID, web_search tool, reasoning
+  config.
+- Canned response parses into the run-record schema (0172).
+- Cost calculation matches fixture pricing.
+
+## Exit criteria
+
+- `--dry-run` works end-to-end.
+- One live smoke call recorded under `experiments/outputs/sota_smoke/`.
+- Tests pass.
+- Model entry in `models.yaml`.
+
+## Notes
+
+- The Responses API is distinct from `chat.completions`. Do **not**
+  route this adapter through OpenRouter — OpenRouter charges web
+  search separately and we want the native, in-call-billed path.
+- Document the API + tool versions used (with date) at the top of the
+  driver; the OpenAI Responses API surface evolves.

@@ -1,0 +1,106 @@
+%erg 0.1
+Title: SOTA frontier-API experiment — falsify H0 (umbrella)
+Created: 2026-05-14
+Author: claude
+Blocked-by: 0167
+Blocked-by: 0168
+Blocked-by: 0169
+Blocked-by: 0170
+Blocked-by: 0171
+Blocked-by: 0172
+
+--- log ---
+2026-05-14T12:00Z claude created
+
+--- body ---
+## Context
+
+Implements the experiment described in `docs/synopsis.md` §4
+("Fourth, the commercially available frontier"). Tests whether
+state-of-the-art commercial AI agents — given extended reasoning, web
+access, and a self-designed prompt under a $10 / overnight budget —
+clear the four-dimension quality bar (Accuracy, Coherence, Provenance,
+Temporality) for power-plant inventory extraction.
+
+Falsification target: H0 = "Deep research agents are enough." Expected
+outcome (per synopsis): improvement on all four dimensions over the
+naive baseline, but still falling short of scientifically acceptable
+quality, especially on Provenance.
+
+This ticket is the umbrella tracker. It is closed once all blocking
+work tickets close AND the experiment has been run and analyzed.
+
+## Three SOTA agents
+
+API path only — no browser automation. Direct-API keys at `~/.config/keys/`:
+
+1. **Anthropic Claude Opus 4.x** — `anthropic.env`, web_search tool +
+   extended thinking (ticket 0167).
+2. **OpenAI GPT-5.x** — `openai.env`, Responses API + web_search_preview
+   + reasoning (ticket 0168).
+3. **Mistral Large** — `mistral.env`, Agents API + web_search connector
+   (ticket 0169). Swappable for Kimi K2.5 if a Moonshot subscription is
+   acquired — record this decision in the log when made.
+
+OpenRouter is available but its plugin-based web search is billed
+separately, so direct APIs are preferred here.
+
+## Experiment structure (synopsis §4)
+
+**Phase A — Reflexive prompt design.** Each agent receives the baseline
+prompt + the four-quality-dimension paragraphs + budget cap, and is
+asked to produce a fully-specified prompt and settings that maximise
+the quality of the resulting statistical report it can produce within
+≤$10 and an overnight wall-clock budget. Each model designs its own
+prompt; the prompts are not shared across models. (Ticket 0170.)
+
+**Phase B — Execution.** Each model's designed prompt is run 3 times.
+For closed-weight SOTA agents (single provider each), the three runs
+use the same provider; for open-weight agents (if added later) use
+different providers. Document the asymmetry in the run record.
+
+**Phase C — Cross-evaluation.** For each output, the two *other* agents
+score it along the four dimensions (Accuracy, Coherence, Provenance,
+Temporality), and compare against the naive baseline located in
+`experiments/outputs/direct_complete/`. Scoring rubric and harness in
+ticket 0171.
+
+**Phase D — Synthesis.** Aggregate scores into a comparative table for
+the slides and the technical report. Authored after raid closes;
+captured as a follow-up ticket once 0167–0172 land.
+
+## Baseline (already exists)
+
+`experiments/outputs/direct_complete/` (sweep `sweep_direct_complete`,
+modelset `modelset_frontier_10labs`) is the naive one-shot baseline the
+synopsis compares against. Do **not** re-run it. The cross-eval (0171)
+reads from it directly.
+
+## Budget envelope
+
+- Phase A (prompt design): ≤ $1 per model × 3 = $3.
+- Phase B (3 reps × $10 cap): ≤ $30 per model × 3 = $90.
+- Phase C (cross-eval, cheap chat completions): ≤ $5 total.
+- **Cap: ~$100 total.** Hard cap enforced per-run by adapters; soft
+  cap monitored at the umbrella by inspecting cost totals after Phase A
+  before launching Phase B.
+
+## Exit criteria
+
+- All blocking tickets closed.
+- 3 × 3 = 9 SOTA agent runs recorded in `measurements.jsonl` with
+  full provenance (designed prompt, raw report, parsed table,
+  citations list, cost, latency).
+- Cross-evaluation matrix (3 models × 3 evaluators × 4 dimensions)
+  written to `experiments/derived/sota_cross_eval.csv`.
+- Comparative table generated and included in slides/report.
+- One paragraph added to `docs/synopsis.md` §4 stating the empirical
+  outcome and whether H0 was falsified.
+
+## Notes
+
+- "Test one before blasting": every adapter (0167–0169) ships with a
+  dry-run + single-call smoke. No batch run before smoke passes.
+- Queries are NOT launched as part of this raid. The raid produces
+  tooling only. Query execution is a separate, explicit user-approved
+  step.
