@@ -2,12 +2,12 @@
 Title: Adapter — Qwen3-Max via DashScope with web_search + thinking mode
 Created: 2026-05-14
 Author: claude
-Blocked-by: 0172
 
 --- log ---
 2026-05-14T14:30Z claude created
 2026-05-14T14:30Z claude note Opens fourth SOTA-experiment slot for geographic + corpus diversity (CN frontier alongside US Anthropic/OpenAI and FR Mistral). Per 2026-05-14 SOTA field survey: Qwen3-Max supports the web_search tool inside thinking mode via DashScope Responses API; transparent pricing $10/1K searches international (or $0.57/1K mainland-region). User decision: run experiment with 4 agents rather than 3.
 
+2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 --- body ---
 ## Context
 

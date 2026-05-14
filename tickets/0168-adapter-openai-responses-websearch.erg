@@ -2,12 +2,12 @@
 Title: Adapter — OpenAI Responses API with web_search + reasoning
 Created: 2026-05-14
 Author: claude
-Blocked-by: 0172
 
 --- log ---
 2026-05-14T12:00Z claude created
 2026-05-14T13:00Z claude note Imagine: PROCEED. Tool name is web_search (not web_search_preview — that is a legacy alias). Pre-call cap = max_output_tokens guard, not a fabricated dollar pre-estimate; verify cost post-call from usage. Default model gpt-5.5 (search + reasoning explicitly co-supported). Capability verified on docs 2026-05-14.
 
+2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 --- body ---
 ## Context
 

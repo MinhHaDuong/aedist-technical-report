@@ -159,6 +159,19 @@ class ResourceUse(BaseModel):
     cost_usd: float | None = Field(default=None, ge=0, description="API cost in USD.")
     tokens_in: int | None = Field(default=None, ge=0)
     tokens_out: int | None = Field(default=None, ge=0)
+    # --- agent-mode additions (ticket 0172) ---
+    cost_breakdown: dict | None = Field(
+        default=None,
+        description=(
+            "Per-bucket dollar costs for agent-mode runs. Conventional keys: "
+            "'input', 'output', 'cache', 'reasoning'. Omit absent buckets."
+        ),
+    )
+    thinking_tokens: int | None = Field(
+        default=None,
+        ge=0,
+        description="Reasoning/thinking tokens billed separately by the provider.",
+    )
 
 
 class ResultSummary(BaseModel):
@@ -206,6 +219,84 @@ class RunRecord(BaseModel):
             "Run validation result (ticket 0072). Shape: "
             "{ok: bool, category: str, flags: list[str]}. Populated at "
             "assemble-time from validate_run() on the companion raw JSON."
+        ),
+    )
+
+    # -- agent-mode additions (ticket 0172, umbrella 0166) -------------------
+    # All optional with None defaults so the 330 pre-existing measurements.jsonl
+    # records parse unchanged. Field-level contracts (literal values for
+    # agent_family/agent_mode, entry shapes for the list fields) are documented
+    # in tickets/0166-raid-plans.md §0172 rather than enforced by a StrEnum,
+    # so adapters 0167/0168/0169/0173 can land independently.
+    agent_family: str | None = Field(
+        default=None,
+        description=(
+            "Agent stack identity. One of: 'anthropic-direct', 'openai-direct', "
+            "'mistral-direct', 'qwen-direct'. None for legacy non-agent runs."
+        ),
+    )
+    agent_mode: str | None = Field(
+        default=None,
+        description=(
+            "Agent run phase. One of: 'phase_a_design', 'phase_b_run', "
+            "'phase_c_score', 'smoke', 'probe'."
+        ),
+    )
+    synopsis_sha: str | None = Field(
+        default=None,
+        description="git SHA of docs/synopsis.md at launch time (spec freeze).",
+    )
+    designed_prompt_sha: str | None = Field(
+        default=None,
+        description=(
+            "SHA of the Phase-A-designed prompt being executed. Set on "
+            "phase_b_run records, None otherwise."
+        ),
+    )
+    web_search_calls: list[dict] | None = Field(
+        default=None,
+        description=(
+            "Tool-call trace. Each entry: "
+            "{'query': str, 'urls_returned': list[str]}."
+        ),
+    )
+    citations: list[dict] | None = Field(
+        default=None,
+        description=(
+            "Citation trace. Each entry: "
+            "{'url': str, 'snippet': str|None, 'supports_claim': bool|None}."
+        ),
+    )
+    parsed_table_path: str | None = Field(
+        default=None,
+        description=(
+            "Repo-relative path to the CSV extracted from the agent's narrative."
+        ),
+    )
+    finish_reason: str | None = Field(
+        default=None,
+        description="Provider-reported terminating condition (stop, length, ...).",
+    )
+    retry_count: int | None = Field(
+        default=None,
+        ge=0,
+        description="Number of retries before this run succeeded or terminally failed.",
+    )
+    error: str | None = Field(
+        default=None,
+        description="Error string when status != ok; None on success.",
+    )
+    reasoning_summary: str | None = Field(
+        default=None,
+        description="Provider-supplied summary of the model's reasoning trace.",
+    )
+    tool_calls_cost_usd: float | None = Field(
+        default=None,
+        ge=0,
+        description=(
+            "Connector / web-search fees billed separately from token cost. "
+            "Kept distinct from resource_use.cost_usd so token economics "
+            "are not blended with per-call connector pricing."
         ),
     )
 
