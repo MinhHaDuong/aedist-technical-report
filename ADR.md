@@ -99,6 +99,7 @@ Raw JSON          →  RunRecord / measurements.jsonl  →  metrics dict  →  f
 | Diagnostic | `tokens_in`, `tokens_out`, `finish_reason` |
 | Results | `f1`, `coverage`, `precision`, `n_matched`, `n_missed`, `n_hallucinated`, `fuel_accuracy`, `status_accuracy`, `province_accuracy` |
 | Resources | `cost_usd`, `wall_seconds` |
+| Agent runs (0172) | `agent_family`, `agent_mode`, `synopsis_sha`, `designed_prompt_sha`, `n_web_search_calls`, `n_citations`, `parsed_table_path`, `retry_count`, `error`, `reasoning_summary`, `thinking_tokens`, `cost_breakdown`, `tool_calls_cost_usd` |
 
 **What does not belong:** bookkeeping fields (`run_id`, `timestamp`,
 `result_file`, `validation`). These are in `RunRecord` for system purposes;
@@ -124,3 +125,11 @@ display. Making the source richer does not change them.
   surfaced in the metrics dict on the same schedule.
 - `records_to_metrics()` docstring is updated to state this contract
   explicitly.
+- Ticket 0172 (SOTA frontier-API experiment, umbrella 0166): agent-mode
+  fields are surfaced as a single row in the table above. Schema additions
+  are strictly optional — the 330 pre-existing `measurements.jsonl` records
+  parse unchanged. `web_search_calls` and `citations` are projected as
+  counts (`n_web_search_calls`, `n_citations`); the raw lists remain in
+  the `RunRecord` for forensic re-reading. `tool_calls_cost_usd` is kept
+  distinct from `cost_usd` so connector / web-search fees do not blend
+  with token economics.

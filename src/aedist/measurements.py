@@ -88,6 +88,13 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
     web_search effective, finish_reason) are included when present in the
     record; absent otherwise.  Bookkeeping fields (run_id, timestamp,
     result_file, validation) are excluded.
+
+    Agent-mode fields (ticket 0172, umbrella 0166): agent_family,
+    agent_mode, synopsis_sha, designed_prompt_sha, n_web_search_calls,
+    n_citations, parsed_table_path, finish_reason, retry_count, error,
+    reasoning_summary, thinking_tokens, cost_breakdown, tool_calls_cost_usd
+    are surfaced when the underlying RunRecord field is non-None. Lists
+    are projected as counts; the raw lists stay in the RunRecord.
     """
     result = []
     for r in records:
@@ -152,6 +159,41 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
         ):
             if key in extra:
                 d[key] = extra[key]
+
+        # --- agent-mode fields (ticket 0172) -----------------------------
+        # Scalars: omit-when-None to match the existing pattern above.
+        # Lists: surface as counts so reporting can pivot without re-loading
+        # the raw record; the raw lists stay in the RunRecord itself.
+        if r.agent_family is not None:
+            d["agent_family"] = r.agent_family
+        if r.agent_mode is not None:
+            d["agent_mode"] = r.agent_mode
+        if r.synopsis_sha is not None:
+            d["synopsis_sha"] = r.synopsis_sha
+        if r.designed_prompt_sha is not None:
+            d["designed_prompt_sha"] = r.designed_prompt_sha
+        if r.web_search_calls is not None:
+            d["n_web_search_calls"] = len(r.web_search_calls)
+        if r.citations is not None:
+            d["n_citations"] = len(r.citations)
+        if r.parsed_table_path is not None:
+            d["parsed_table_path"] = r.parsed_table_path
+        # finish_reason is also written from extra above (0139 path); the
+        # first-class field takes precedence when present.
+        if r.finish_reason is not None:
+            d["finish_reason"] = r.finish_reason
+        if r.retry_count is not None:
+            d["retry_count"] = r.retry_count
+        if r.error is not None:
+            d["error"] = r.error
+        if r.reasoning_summary is not None:
+            d["reasoning_summary"] = r.reasoning_summary
+        if r.tool_calls_cost_usd is not None:
+            d["tool_calls_cost_usd"] = r.tool_calls_cost_usd
+        if r.resource_use.thinking_tokens is not None:
+            d["thinking_tokens"] = r.resource_use.thinking_tokens
+        if r.resource_use.cost_breakdown is not None:
+            d["cost_breakdown"] = r.resource_use.cost_breakdown
 
         result.append(d)
     return result
