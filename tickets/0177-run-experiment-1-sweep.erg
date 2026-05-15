@@ -1,0 +1,30 @@
+%erg v1
+Title: Run Experiment 1 production sweep (45 runs)
+Created: 2026-05-15
+Author: claude
+Blocked-by: 0175
+
+--- log ---
+2026-05-15T14:05Z claude created
+
+--- body ---
+## Context
+
+Once design is locked (ticket 0175), run the full sweep:
+9 models × 5 repeats = 45 runs, temperature=0, base.txt prompt.
+
+## Actions
+
+1. Confirm preflight passes: `make -C experiments preflight`
+2. Run: `make -C experiments sweep_ablation_p1_direct_base`
+   (or the upgraded sweep name if renamed in 0175)
+3. Monitor for refusals, parse errors, truncation — record counts in log
+4. Run `make -C experiments rebuild-measurements` to ingest results
+5. Spot-check 3 runs manually: one high-F1, one low-F1, one refusal/error
+
+## Exit criteria
+
+- [ ] 45 run files in `experiments/outputs/ablation/direct/p1_base/`
+- [ ] All runs in `measurements.jsonl` with `prompt_version = "p1_base"`
+- [ ] Refusal/error count logged here
+- [ ] Spot-check passed (3 runs reviewed)

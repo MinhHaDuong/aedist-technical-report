@@ -10,7 +10,17 @@ This paper builds the argument in six steps.
 
 Submitting a direct query to a large language model produces an inventory-shaped answer, but not one that meets statistical or scientific quality standards. Numbers shift between runs, citations are absent or fabricated, and there is no way to tell which cells one should trust.
 
-Describe the experiment 1: prompt, sample, repeats, results in terms of discovered plants, results in terms of F1 vs. cost
+**Experiment 1 — Parametric baseline.** We query nine language models from the *modelset_ablation_journal* set — spanning cheap reasoning models through frontier-class systems across four laboratories — with a fixed structured table specification prompt (the *base* prompt, reproduced in Annex A). No documents are provided; models draw exclusively on parametric knowledge. Each model is queried five times at temperature zero, yielding 45 runs against a 163-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
+
+**Expected results.** [TO BE UPDATED after sweep] Pilot data (25 runs, 10 models, same prompt) shows row-level F1 ranging from 0.38 to 0.88 across models, with within-model run variance of 0.3–0.4 F1 points for some models — a spread larger than the gap between many adjacent models. Cell-level attributes consistently fall below row-level F1: fuel accuracy ≈ 0.55, status accuracy ≈ 0.45, reflecting that semantic classification errors concentrate in harder attributes once a plant is found. No monotonic relationship between API cost and F1 is observed. Two qualitatively distinct failure modes appear in the pilot: under-listing (high precision, low recall — the model reports only plants it is confident about) and over-listing (100% recall but low precision — the model reports everything plausible, including duplicates and non-entities). The five failure labels in Figure 1 — refusal, under-coverage, fabrication, high variance, and non-monotone ordering — organise the full model-by-run distribution.
+
+![Figure 1 — PLACEHOLDER](inputs/generated/fig_census_direct.pdf)
+
+*Figure 1. Direct-query performance across all models and runs on the 163-plant Vietnam thermal reference. Each point is one run; models are grouped on the vertical axis. Coloured annotations on the right identify five qualitative failure modes visible in the parametric regime: Récalcitrant (refusal to produce a table), Incomplet (systematic under-coverage), Hallucinant (fabricated plants driving false positives), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering). [PLACEHOLDER — will be regenerated from Experiment 1 sweep data.]*
+
+![Figure 2 — PLACEHOLDER](inputs/generated/fig_pareto.pdf)
+
+*Figure 2. Cost–quality Pareto frontier across all experimental conditions (model × method × documentation level, Experiments 1–3). Each point is one (model, method) combination; the Pareto-efficient frontier is drawn. The parametric baseline (Experiment 1) populates the left-hand cluster; RAG and decomposed conditions push the frontier upward. Best Pareto-efficient point in current data: DeepSeek V3.2 decomposed+RAG at mean F1 = 89.8% and cost = \$0.06 per run. [PLACEHOLDER — will be updated after Experiment 1 sweep completes.]*
 
 ## Second, the quality bar that any acceptable dataset must clear
 
@@ -50,4 +60,85 @@ The heroic single prompt to a frontier agent approach leaves a lot on the table.
 In future research, we aim to demonstrate that this method is model independence, runnable on local models for sovereignty and cost. Whether a well-chosen local model achieves this without the initial full deep-research stack, or whether parametric extraction already suffices, remains to be explored. 
 
 We also aim to refine the method to ensure the per-cell provenance tracking, not just per row.  Each cell is a claim: a (source, date, confidence, conflict-resolution history) tuple. Sixth, a structural analogy. Each cell in a power-plant inventory — one plant, one attribute, one value — maps to a knowledge-graph triple: subject, predicate, object. Fusing tables from competing sources is therefore the same problem as fusing overlapping triple sets, with the same need for conflict resolution, source authority, and temporal versioning. Cases that rule-based schema-fixed systems cannot handle cleanly — assets mid-lifecycle, contested sources, multilingual records, conditional projections — are where language-model reasoning adds genuine value. This paper works with narratives structured tables; graph databases are a natural next layer.
+
+---
+
+## Annex A — Experiment 1: Technical specification
+
+*[DRAFT — design pending ticket 0174. This annex describes the experiment as it will be run.]*
+
+### Task
+
+Identify all thermal power plants in Vietnam from parametric model knowledge alone. The target population is defined by the reference inventory `data/reference/vietnam_thermal_v1.csv`: 163 plant-level records covering coal (76) and gas/gas-oil (87), across all lifecycle statuses (operational, under construction, proposed, planned, cancelled, retired). The reference was compiled by the author from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports, MOIT decisions) and is version-locked for this experiment.
+
+### Prompt
+
+The *base* prompt is the sole input to the model. It is reproduced in full below; no system message, no documents, no tools are provided.
+
+> **2. Plant-by-Plant Inventory**
+>
+> For EVERY thermal power plant in Vietnam — at every stage of its lifetime, from proposed and announced through under construction, operational, and suspended to retired and dismantled — provide:
+>
+> **Structured table**
+> Format: Markdown table with columns:
+> | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 |
+>
+> Where:
+> - Fuel: Coal / Domestic gas / Imported LNG
+> - Technology: Subcritical / Supercritical / USC / CCGT / OCGT / CFB
+> - Status: Operational / Under construction / Approved / Planned / Suspended / Cancelled
+> - COD: Actual commercial operation date or expected date
+> - Sources: primary source references (numbered, detailed in bibliography)
+
+### Models
+
+Nine models from `modelset_ablation_journal` (defined in `experiments/experiments.toml`):
+
+| Model | Lab | Size class | Reasoning |
+|---|---|---|---|
+| ernie-4.5-21b-a3b-thinking | Baidu | mid | yes |
+| mistral-small-2603 | Mistral | mid | yes |
+| deepseek-r1-0528 | DeepSeek | frontier | yes |
+| kimi-k2-thinking | Moonshot | frontier | yes |
+| qwen3-max-thinking | Alibaba | frontier | yes |
+| glm-5.1 | Zhipu AI | frontier | yes |
+| gpt-5.4 | OpenAI | frontier | no |
+| claude-sonnet-4.6 | Anthropic | mid | no |
+| claude-opus-4.6 | Anthropic | frontier | no |
+
+### Run parameters
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| Repeats per model | 5 | Sufficient to characterise within-model variance; pilot (n=2–5) shows variance stabilises |
+| Temperature | 0 | Isolates prompt-driven variance from sampling noise; residual variance under T=0 is the stronger claim |
+| Seed | 42 | Reproducibility where supported by provider |
+| Max tokens | provider default | Not capped; refusals and truncations recorded as run outcomes |
+| Total runs | 45 | 9 models × 5 repeats |
+
+### Evaluation
+
+Each run is evaluated against the reference by `src/aedist/evaluate.py` using fuzzy plant-name matching (`matching_threshold = 0.85`). Metrics recorded per run:
+
+| Metric | Level | Description |
+|---|---|---|
+| `n_plants` | run | Number of rows extracted |
+| `tp`, `fp`, `fn` | run | True/false positives, false negatives against reference |
+| `f1` | run | Row-level F1 = 2·P·R / (P+R) |
+| `fuel_accuracy` | cell | Fraction of matched rows with correct fuel classification |
+| `status_accuracy` | cell | Fraction of matched rows with correct lifecycle status |
+| `province_accuracy` | cell | Fraction of matched rows with correct province |
+| `cost_usd` | run | API cost in USD |
+| `wall_s` | run | Wall-clock time in seconds |
+| `tokens_out` | run | Output tokens consumed |
+
+Run outcomes other than `ok` (refusal, empty, parse error) are recorded with `f1 = 0` and flagged in `status`.
+
+### Sweep configuration
+
+The sweep is defined in `experiments/experiments.toml` as `sweep_ablation_p1_direct_base` (dev tier, `modelset_ablation_dev`) and will be upgraded to `modelset_ablation_journal` for the production run. Outputs land in `experiments/outputs/ablation/direct/p1_base/`. Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
+
+### What this experiment does and does not test
+
+This experiment establishes the *parametric ceiling*: the best row-level quality achievable from model memory alone with a well-specified prompt and no external information. It leaves three of the four quality limits open: Coverage (facts absent from training data), Freshness (facts post-dating training cutoff), and Coherence (synthesis errors across the table). Only Articulation — the gap between intent and prompt — is partially addressed by the structured prompt. The gap between this ceiling and the quality bar defined in §2 motivates the subsequent experiments.
 

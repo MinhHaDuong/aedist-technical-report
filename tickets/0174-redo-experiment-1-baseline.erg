@@ -1,0 +1,34 @@
+%erg v1
+Title: Redo Experiment 1 — parametric baseline sweep with base prompt
+Created: 2026-05-15
+Author: claude
+
+--- log ---
+2026-05-15T14:05Z claude created
+
+--- body ---
+## Context
+
+Experiment 1 establishes the parametric ceiling: best row-level F1 achievable from
+model memory alone, no documents, no search. The current census sweep used
+`prompt_extract.txt` (a one-sentence CSV request). We are replacing it with `base.txt`
+(the structured table specification with column definitions), which is a more defensible
+"competent analyst" baseline and avoids the strawman critique.
+
+The pilot (25 runs, 10 models, `p1_base` prompt version) is too small to report.
+This ticket upgrades to the journal-tier model set (9 models × 5 repeats = 45 runs)
+and locks temperature at 0 to separate prompt-driven variance from sampling noise.
+
+See Annex A in `slides/manuscript/main.md` for the full technical specification.
+
+Blocked-by: 0175
+Blocked-by: 0176
+
+## Exit criteria
+
+- [ ] `sweep_ablation_p1_direct_base` upgraded to `modelset_ablation_journal` in experiments.toml
+- [ ] 45 runs complete in `experiments/outputs/ablation/direct/p1_base/`
+- [ ] `measurements.jsonl` updated via `make rebuild-measurements`
+- [ ] Expected-results paragraph in `slides/manuscript/main.md` updated (TO BE UPDATED marker removed)
+- [ ] `fig_census_direct.pdf` regenerated from new data
+- [ ] `macros_census` macros updated

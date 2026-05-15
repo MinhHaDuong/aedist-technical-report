@@ -1,0 +1,38 @@
+%erg v1
+Title: Document reference dataset provenance for Experiment 1
+Created: 2026-05-15
+Author: claude
+
+--- log ---
+2026-05-15T14:05Z claude created
+
+--- body ---
+## Context
+
+Both peer reviewers (ChatGPT and Claude) flag the reference dataset as a
+methodological contribution that must be described in the paper, not assumed.
+The gold standard's credibility bounds all three experiments' claims.
+
+`data/reference/vietnam_thermal_v1.csv` exists (163 plants) but its construction
+is not described in the manuscript.
+
+## Actions
+
+1. Add a paragraph to `slides/manuscript/main.md` §2 ("The quality bar") or
+   as a subsection of Annex A describing:
+   - Which primary sources were consulted (PDP7, PDP7A, PDP8 annexes, EVN annual
+     reports, MOIT decisions — cross-check against actual data/rag_corpus contents)
+   - How conflicts between sources were resolved (which source wins, by what rule)
+   - Residual uncertainty: which fields have the most disputed values
+     (the 62 "proposed" + 21 "planned" rows carry high uncertainty)
+   - Version lock: commit hash or date at which the reference is frozen for
+     Experiments 1–3
+
+2. Add a `PROVENANCE.md` in `data/reference/` documenting the above for
+   reproducibility.
+
+## Exit criteria
+
+- [ ] Provenance paragraph added to the manuscript
+- [ ] `data/reference/PROVENANCE.md` written
+- [ ] At least the top-3 disputed status cases documented
