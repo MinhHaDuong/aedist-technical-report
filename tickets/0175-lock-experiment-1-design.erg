@@ -1,0 +1,35 @@
+%erg v1
+Title: Lock Experiment 1 design decisions before re-sweep
+Created: 2026-05-15
+Author: claude
+
+--- log ---
+2026-05-15T14:05Z claude created
+
+--- body ---
+## Context
+
+Before running the full Experiment 1 sweep, three design decisions must be
+explicitly resolved and committed. Writing the Annex A spec first (done) made
+the open questions visible.
+
+## Actions
+
+1. **Prompt**: confirm `base.txt` is the final Experiment 1 prompt. Decide whether
+   the "Épouvantail" slide frame keeps `prompt_extract.txt` as the strawman or is
+   updated to `base.txt`. Update `slides/slides.tex` accordingly.
+
+2. **Model set**: confirm `modelset_ablation_journal` is the right set. Check whether
+   any model in the set has been retired or renamed since the set was defined.
+   Update experiments.toml `sweep_ablation_p1_direct_base` to use it.
+
+3. **Temperature**: confirm T=0 for all runs. Verify that `seed=42` is set in the
+   sweep config. Note in Annex A which providers ignore seed (document as a
+   limitation, not a blocker).
+
+## Exit criteria
+
+- [ ] Decision on `prompt_extract.txt` vs `base.txt` for the slides "Épouvantail" frame documented in a log entry here
+- [ ] `sweep_ablation_p1_direct_base` points to `modelset_ablation_journal` with `temperature = 0.0` and `seed = 42`
+- [ ] No retired model IDs in the journal model set
+- [ ] Annex A in `slides/manuscript/main.md` updated if any design decision changed

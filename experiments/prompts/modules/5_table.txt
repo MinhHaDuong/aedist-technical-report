@@ -1,0 +1,16 @@
+## Structured power plants table
+
+Tabulate for every thermal power plant in Vietnam:
+
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 | Notes |
+
+Where:
+- Fuel: Coal / Domestic gas / Imported LNG
+- Technology (coal): Subcritical / Supercritical / USC
+- Technology (gas): CCGT / OCGT
+- Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired
+- Total MWe: Include units > 30MWe.
+- COD: Actual or expected commercial operation date
+- Sources: specify where in the document, include URL
+
+Output format: Markdown.

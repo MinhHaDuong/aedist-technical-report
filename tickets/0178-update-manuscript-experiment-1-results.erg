@@ -1,0 +1,41 @@
+%erg v1
+Title: Update manuscript with Experiment 1 results
+Created: 2026-05-15
+Author: claude
+Blocked-by: 0177
+
+--- log ---
+2026-05-15T14:05Z claude created
+
+--- body ---
+## Context
+
+After sweep runs (ticket 0177), update all manuscript artefacts that carry
+Experiment 1 results. Several are currently placeholders.
+
+## Actions
+
+1. Remove "TO BE UPDATED" marker from the expected-results paragraph in
+   `slides/manuscript/main.md` §1; replace with actual numbers from sweep.
+
+2. Regenerate `inputs/generated/fig_census_direct.pdf` from new data.
+   Update the figure placeholder caption with actual model count and run count.
+
+3. Update `inputs/generated/macros_census.tex` with new \NumModelsTested{} etc.
+
+4. Update the bullet-point results on the "Épouvantail" slide in `slides/slides.tex`:
+   - Centrales identifiées: macro for TP range across runs
+   - Centrales hallucinées: macro for FP range across runs
+   - Durée: wall-clock range
+   - Coût: cost range
+
+5. Remove [PLACEHOLDER] tags from Figure 2 (Pareto) caption if the Pareto
+   frontier is also updated by the new data.
+
+## Exit criteria
+
+- [ ] "TO BE UPDATED" marker gone from manuscript
+- [ ] `fig_census_direct.pdf` regenerated
+- [ ] `macros_census` macros correct
+- [ ] Slides bullet points filled in
+- [ ] `make` (full build) produces `slides.pdf` without errors
