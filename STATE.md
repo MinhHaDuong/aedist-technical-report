@@ -1,4 +1,4 @@
-Last updated: 2026-05-14T19:30Z
+Last updated: 2026-05-15T17:00Z
 
 ## North star
 
@@ -17,10 +17,10 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 Complete exploratory research, freeze the argument and the slides story.
 
-## Workplan (set 2026-05-14)
+## Workplan (set 2026-05-15)
 
-1. Align workplan on docs/synopsis.md. Do we really need to register, this is not medical trials?
-2. **Implement the SOTA experiment (synopsis §4 — Falsify H0: Deep research agents are enough).** Umbrella **0166**, four SOTA agents (Anthropic Opus 4.7 / OpenAI GPT-5.5 / Mistral Large 2512 / Qwen3-Max via DashScope). Phase-5 raid in progress; **work moves to padme** for Wave 2 onwards.
+1. **Experiment 1 baseline re-sweep (ticket chain 0174–0178).** Branch `t0174-exp1-baseline` pushed, pending review. Unblocked now: **0175** (lock design — update harness.py _MODULE_ORDER, modules/README.md, experiments.toml, Annex A) and **0176** (reference provenance — write PROVENANCE.md + manuscript paragraph). Blocked: 0177 (45-run sweep) on 0175; 0178 (update manuscript) on 0177.
+2. **Implement the SOTA experiment (slides §4 — Falsify H0: Deep research agents are enough).** Umbrella **0166**, four SOTA agents (Anthropic Opus 4.7 / OpenAI GPT-5.5 / Mistral Large 2512 / Qwen3-Max via DashScope). Phase-5 raid in progress; **work moves to padme** for Wave 2 onwards.
    - **Wave 1 (done, merged PR #331):** ticket 0172 — RunRecord schema extension. Pydantic `RunRecord` + `ResourceUse` gained 14 optional agent-mode fields; `records_to_metrics()` projects them per ADR-7.
    - **Wave 2 (ready, padme):** tickets **0167 / 0168 / 0169 / 0173** — four direct-API adapters, parallel. All four blocked-by are now satisfied (0172 merged). Live smokes authorised at $0.50/adapter; 0169 Mistral has a $0.50 pricing-probe pre-gate before its smoke (connector pricing unpublished). 0173 Qwen needs the user to provision a DashScope API key at `~/.config/keys/dashscope.env` before its smoke.
    - **Wave 3 (after Wave 2):** tickets **0170 / 0171** — Phase A reflexive prompt-design harness + Phase C cross-eval (mechanical Accuracy via existing `evaluate.py` / `metrics.py` / `reconcile.py`; 0–3 anchored rubric; parser-enforced quoted-span check).
