@@ -1,0 +1,127 @@
+%erg 0.1
+Title: Re-run Experiment 1 production sweep on corrected journal set (17 models × 5 reps = 85 runs)
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T20:35Z claude created — supersedes 0177 (halted). All prerequisites merged to main: #338 (silent-drop fix), #341 (qwen3.6-max-preview added, journal set is 17 models), #346 (Opus 4.7→4.6 swap + max_tokens 32768 + budget $15).
+
+--- body ---
+## Context
+
+Ticket 0177 attempted the Experiment 1 production sweep on 2026-05-20 and
+was halted before completion. Two issues surfaced during that attempt:
+
+1. **Silent-drop regressions in the manager+worker pipeline** introduced by
+   ticket 0175 — `model_set`, `seed`, `max_tokens`, and the `modules_dir`
+   default were all silently dropped. Without these, the sweep cannot
+   honour the 0175 lock.
+   Fixed in PR #338 (commit d7c6efe).
+
+2. **Journal model set inconsistencies** — `qwen3-max` was paired with three
+   `qwen3.6-*` siblings; user requested an Opus 4.7→4.6 swap on inspection.
+   Both qwen3.6-max-preview and claude-opus-4.6 verified live on OpenRouter
+   /api/v1/models 2026-05-20.
+   Fixed in PR #341 (qwen3.6-max-preview added — augment, not replace) and
+   PR #346 (Opus 4.7→4.6 swap + uniform `max_tokens` raise to 32768 +
+   `budget_usd` raise to $15, because Opus 4.7 had hit `finish_reason=length`
+   on smoke output truncated at 78 table rows).
+
+Net result on `main` (HEAD 2d8e268, 2026-05-20 ~20:31Z):
+
+- Journal set has **17 models × 5 reps = 85 runs** (augment kept both
+  `qwen3-max` and `qwen3.6-max-preview` so Experiment 2's within-family
+  thinking pair survives).
+- Sweep config: `temperature=0.0`, `seed=42`, `max_tokens=32768`,
+  `budget_usd=15`, `prompt_modules=[]`, `system_instruction` declares
+  no-web-search.
+- Output dir: `experiments/outputs/ablation/direct/p1_base/`.
+
+## Provenance from 0177 (smoke evidence)
+
+The 0177 attempt produced one verified-good smoke record before halting:
+`mistralai/mistral-small-2603` run 1 with the patched code, recorded
+`cost=$0.0026`, `wall=22.5s`, `finish_reason=stop`, 42 table rows, all four
+locked knobs (`system_instruction`, `seed=42`, `max_tokens=8192`,
+`temperature=0.0`) present in the saved JSON. That validates the pipeline
+end-to-end; the rerun does not need to re-smoke before draining.
+
+The 0177 attempt also surfaced **Opus 4.7 truncation at 8192 max_tokens** —
+the very reason PR #346 raised the cap to 32768. Opus 4.6 is expected to
+behave the same way per-call (same model family / API ceiling), so the
+32768 cap is the controlled variable for the rerun.
+
+## Actions
+
+1. Preflight (`make -C experiments preflight`). `OPENROUTER_API_KEY` must be
+   set; Tavily / Ollama / GROBID warnings are non-blocking.
+
+2. Generate jobs from the locked sweep config:
+   `uv run --project .. --env-file ../.env python -m aedist.manager generate --sweep sweep_ablation_p1_direct_base --experiments experiments.toml`
+   Expected output: **85 jobs**, exactly **17 unique `model_filter` values**.
+   (Anything else means PR #338 / #341 / #346 regressed — STOP.)
+
+3. Drain in parallel. Use 4 OpenRouter workers (8 is the upper bound but
+   4 keeps per-batch cost visibility cleaner given Opus 4.6 is the budget
+   anchor). Inline pattern, NOT the Makefile `census-run` target (that
+   target depends on the dead `census` sweep):
+
+   ```bash
+   for i in 1 2 3 4; do
+     uv run --project .. --env-file ../.env python -m aedist.worker openrouter --drain &
+   done
+   wait
+   ```
+
+   Monitor done/failed/spend live. Expected wall time 15–30 minutes.
+
+4. `make -C experiments rebuild-measurements` to ingest the 85 records into
+   `measurements.jsonl`. All should land with `prompt_version = "p1_base"`,
+   `seed=42`, `max_tokens=32768`.
+
+5. **Spot-check 3 runs** per the original 0177 exit criteria:
+   - highest F1 (verify table is plausible),
+   - lowest non-null F1 (diagnose failure mode),
+   - one parse-error / refusal / `finish_reason=length` (classify).
+   Record findings in this ticket log.
+
+## Budget rules
+
+- HARD LIMIT: `budget_usd=15` per the sweep config. The per-job
+  `BudgetTracker` enforces it per-call; total spend is the sum across
+  85 calls and must be tracked out-of-band.
+- If total spend > $12 at <70% complete: halt, post a cost-table comment,
+  escalate.
+- If a single model accounts for >40% of spend: check `finish_reason` and
+  response content for that model (length-truncation / loop pathology).
+  Expected anchor: Opus 4.6 (~$0.20–0.40 per run, 5 reps × ~$1–2 total).
+
+## Exit criteria
+
+- [ ] 85 run files in `experiments/outputs/ablation/direct/p1_base/`,
+      one per (model × rep) for the 17 journal models × 5 reps.
+- [ ] All 85 entries in `measurements.jsonl` with `prompt_version = "p1_base"`
+      and `seed = 42`.
+- [ ] Refusal / parse-error / `finish_reason=length` counts logged here.
+- [ ] Total spend logged here.
+- [ ] Spot-check passed (3 runs reviewed: high-F1, low-F1, parse-error /
+      length-truncation).
+- [ ] No deletion of 0177 or rewrite of 0177 history — 0177 remains as the
+      halted predecessor for provenance.
+
+## Notes
+
+- 0177 will be closed by a follow-up commit on this branch (or by the
+  agent that lands the spot-checks) with reason "supplanted by 0181 —
+  rerun on corrected 17-model journal set after PRs #338 / #341 / #346".
+  Do not close 0177 in this ticket's commit — close it in the commit
+  that lands the 85 measurements, so the closure carries the evidence.
+
+- 0178 (manuscript update) consumes 0181's measurements directly. The
+  manuscript annex must note the 0175→0180→0181 chain: original lock,
+  set revision, rerun. PR #346's commit message and the open `tickets/0180`
+  (rename ablation→exp1) capture the upstream context.
+
+- 0181 carries no Blocked-by because all blockers are merged. If the
+  user wants the rerun to wait on any further upstream change, add
+  Blocked-by manually.
