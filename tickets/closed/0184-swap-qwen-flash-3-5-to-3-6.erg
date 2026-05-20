@@ -1,0 +1,138 @@
+%erg 0.1
+Title: Swap qwen/qwen3.5-flash-02-23 → qwen/qwen3.6-flash in journal model set
+Created: 2026-05-20
+Author: claude
+Closed: autoclosed — PR #349 (code) + PR #360 (data)
+
+--- log ---
+2026-05-20T23:20Z claude created — discovered during 0181 execution. 4 of 4 qwen3.5-flash runs hit finish_reason=length at ~35-38K tokens (above the 32768 max_tokens cap, indicating it would happily emit >40K). Same family newer-generation qwen3.6-flash exists on OpenRouter.
+2026-05-20T23:24Z claude smoke PASS — qwen/qwen3.6-flash, 2 calls on locked Experiment 1 prompt (modules=[], system_instruction=no-web-search, seed=42, max_tokens=32768, temp=0.0). Call 1: wall=43s ctok=6949 finish=stop cost=$0.00786. Call 2: wall=57s ctok=13809 finish=stop cost=$0.01558. 2/2 stop, no bimodal latency, both well under 600s. Far less verbose than 3.5-flash (~10× less). Swap approved; proceeding to models.yaml + journal-set edit in a follow-up commit.
+2026-05-21T00:30Z claude note Caveat: the two 2026-05-20 smoke calls above were billed (~$0.024 to OpenRouter) but full response bodies were NOT saved — only `response_tail_200` was captured to /tmp/smoke_36flash_results.json (non-tracked, ephemeral). Those calls cannot be claimed as production reps. When 0184 lands and 0181's executing agent runs the delta, all 5 qwen3.6-flash reps will be fresh runs. To prevent recurrence, src/aedist/smoke.py now saves full response JSON per call to a configurable directory (default /tmp/aedist-smoke); future smoke probes should use it rather than ad-hoc Python scripts.
+
+2026-05-20T22:48Z HDMX-coding-agent closed — autoclosed — PR #349 (code) + PR #360 (data)
+--- body ---
+## Context
+
+During the 0181 sweep all 4 of 4 `qwen/qwen3.5-flash-02-23` records hit
+`finish_reason=length` at 35K–38K completion tokens, with the sweep cap
+at `max_tokens=32768`:
+
+```
+run=2 wall=288s  finish=length ctok=36071
+run=3 wall=837s  finish=length ctok=35467
+run=4 wall=285s  finish=length ctok=38490
+run=5 wall=840s  finish=length ctok=35363
+```
+
+Bimodal wall time (285s vs 840s) suggests OpenRouter routes to multiple
+upstream providers with very different latencies. Two of those four wall
+times (837s, 840s) exceed the 600s SIGALRM timeout, causing the
+worker-wedge pathology that ticket 0183 also addresses.
+
+The model is otherwise reasonable — same family as the other Qwen
+entries — but is the **oldest generation** in the journal set's Qwen
+column. All other Qwen entries are 3.6:
+
+```
+qwen/qwen3.6-27b
+qwen/qwen3.6-35b-a3b
+qwen/qwen3.5-flash-02-23    ← only 3.5
+qwen/qwen3.6-plus
+qwen/qwen3-max
+qwen/qwen3.6-max-preview
+```
+
+Replacing it with the newer `qwen/qwen3.6-flash` (verified live on
+OpenRouter 2026-05-20 `/api/v1/models`) brings the family to all-3.6
+and may also resolve the verbosity issue. Provider metadata:
+
+```
+qwen/qwen3.6-flash
+  context_length: 1000000
+  max_completion_tokens: 65536
+  pricing: $0.1875/Mtok in, $1.125/Mtok out
+  architecture: text+image+video → text (Qwen3 tokenizer)
+```
+
+Note pricing: 3.6-flash is ~3x more expensive per output token than the
+3.5 snapshot ($1.125/Mtok vs $0.40/Mtok). Sweep cost increment for 5
+reps × ~$0.02 each = ~$0.05 extra.
+
+## Decision
+
+**Replace, not augment.** Same role in the journal set — Qwen mid-tier
+Flash MoE — different generation. Keep `qwen3.5-flash-02-23` in
+models.yaml (project policy "never delete entries") but comment it out
+of journal set use.
+
+## Smoke test required before commit
+
+Before landing the journal-set change, smoke-test `qwen/qwen3.6-flash`
+with the locked Experiment 1 prompt config (no_web_search system
+instruction, prompt_modules=[], seed=42, max_tokens=32768,
+temperature=0.0). Pass criteria:
+
+- API call succeeds, no schema/auth errors.
+- `finish_reason=stop` on at least one of two smoke calls (not 4/4
+  length like qwen3.5-flash). If 3.6-flash also hits length on this
+  prompt, this ticket flips to "raise max_tokens for Qwen-Flash to
+  65536" instead, since the model swap alone doesn't fix the issue.
+- Wall time under 600s consistently (so the SIGALRM-wedge pathology
+  doesn't apply).
+
+Smoke evidence belongs in this ticket log before the journal-set edit
+ships.
+
+## Actions
+
+1. **Smoke test** `qwen/qwen3.6-flash` on the locked Experiment 1
+   prompt. 2 calls minimum. Record finish_reason, completion_tokens,
+   wall_seconds. If smoke fails per the criteria above, do NOT swap —
+   re-evaluate as "raise max_tokens for Qwen-Flash" instead.
+2. **models.yaml**: add `qwen/qwen3.6-flash` entry with verified prices
+   from OpenRouter (see above). Mirror the YAML shape of adjacent Qwen
+   entries (provider Alibaba, country CN, architecture moe,
+   size_class TBD-likely-medium, context_window 1000000).
+3. **models.yaml**: comment out `qwen3.5-flash-02-23` entry with date
+   and reason. Do not delete (project policy).
+4. **experiments.toml** `[sets.modelset_ablation_journal]`: replace
+   `"qwen/qwen3.5-flash-02-23"` with `"qwen/qwen3.6-flash"`. Set
+   stays at 17.
+5. **post-0181 cleanup**: discard the 4 existing `qwen3.5-flash-02-23`
+   records under `outputs/ablation/direct/p1_base/`. Their replacements
+   on the 3.6-flash slug land in a tiny follow-up sweep (5 reps × $0.02
+   each ≈ $0.10).
+6. Note in 0181's closing log entry that the Qwen Flash reps came from
+   3.6-flash per 0184, not 3.5-flash-02-23 as originally listed in
+   PR #341.
+
+## Exit criteria
+
+- [ ] Smoke evidence for `qwen/qwen3.6-flash` recorded in this log:
+      finish_reason, ctok, wall_s for at least 2 calls
+- [ ] `models.yaml` has new `qwen/qwen3.6-flash` entry with verified
+      prices
+- [ ] `qwen3.5-flash-02-23` commented out in `models.yaml` with date +
+      reason
+- [ ] Journal set replaces 3.5 with 3.6; still 17 models
+- [ ] 4 stale 3.5-flash records deleted from outputs/p1_base/
+- [ ] 5 fresh 3.6-flash reps run; ≥4 of 5 finish_reason=stop
+- [ ] measurements.jsonl rebuilt; 3.6-flash records present with
+      `prompt_version="p1_base"`, `seed=42`
+- [ ] 0181 closing log entry references 0184
+- [ ] 0178 manuscript annex notes the chain
+
+## Notes
+
+- Related to 0182 (deepseek-flash swap) and 0183 (httpx timeout). The
+  three together pre-empt most of the wedge and truncation pathologies
+  exposed by 0181. 0184 is the "Qwen verbose" arm.
+- If smoke shows 3.6-flash is just as verbose, the registered fallback
+  is "raise per-model max_tokens to 65536 in models.yaml for Qwen Flash
+  entries." That requires a small harness change to read per-model
+  max_tokens overrides (currently sweep-only via JobSpec). Out of scope
+  here unless the smoke says so.
+- A more drastic fallback if even 65K truncates: drop the Flash entry
+  from the journal set entirely. The Qwen column would have 5 entries
+  instead of 6. Manuscript story unchanged (still covers Qwen frontier
+  to Qwen mid-tier).
