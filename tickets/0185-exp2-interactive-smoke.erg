@@ -1,0 +1,181 @@
+%erg 0.1
+Title: Interactive smoke for Experiment 2 — Phase A + B on one agent at a time
+Created: 2026-05-20
+Author: HDMX-coding-agent
+Blocked-by: 0167
+Blocked-by: 0168
+Blocked-by: 0169
+Blocked-by: 0173
+
+--- log ---
+2026-05-20T22:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Experiment 2 (SOTA frontier, umbrella 0166) prevoit ~$140 d'echanges
+LLM repartis sur Phase A (reflexive prompt design) + Phase B (execution
+N=3) + Phase C (cross-evaluation). Avant d'automatiser tout cela via
+0170 (Phase A harness) et de lancer Phase B en batch, on veut faire
+**un smoke interactif end-to-end sur un seul agent**, avec arrets
+PRESS SPACE TO CONTINUE entre chaque echange LLM, pour que l'auteur
+puisse:
+
+1. Inspecter le meta-prompt assemble avant l'envoi (verifier baseline +
+   quality bar + task statement + JSON envelope).
+2. Inspecter la reponse Phase A (designed prompt + settings + rationale)
+   avant de l'utiliser pour Phase B.
+3. Inspecter la requete Phase B (designed prompt + tools + thinking
+   config) avant l'envoi.
+4. Inspecter la reponse Phase B (narrative + table + citations + cost)
+   et decider si Phase B-full (N=3) est justifiee.
+
+Ordre par cost-ascending (smoke Wave-2 baseline):
+
+| Agent | Baseline smoke | Budget Phase A+B |
+|---|---|---|
+| Mistral | $0.025 | ~$11 |
+| Qwen | $0.038 | ~$11 |
+| OpenAI | $0.084 | ~$11 |
+| Anthropic | $0.088 | ~$11 |
+
+Total cap: $44. Aucun envoi sans appui SPACE explicite.
+
+C'est l'application litterale de la regle projet "Test one before
+blasting" (`.claude/rules/workflow.md`) au niveau experiment design,
+pas seulement par-call.
+
+Lien aux tickets connexes:
+- Substitue partiellement 0170 (Phase A harness automatise) — les
+  artefacts produits ici informent le design de 0170. 0170 reste
+  ouvert et automatise apres validation manuelle.
+- Pre-requis a Phase B-0 (1 rep × 4 agents) et Phase B-full (3 reps ×
+  4 agents) de l'umbrella 0166.
+
+## Relevant files
+
+- `experiments/prompts/prompt_complete.txt` — baseline prompt verbatim
+  pour {baseline}
+- `docs/synopsis.md` §2 — quality bar (4 dimensions) verbatim pour
+  {quality_bar}
+- `src/aedist/adapter_mistral.py` — adapter cible #1 (cheapest)
+- `src/aedist/adapter_qwen_dashscope.py` — adapter cible #2
+- `src/aedist/adapter_openai_responses.py` — adapter cible #3
+- `src/aedist/query_anthropic.py` — adapter cible #4
+- `src/aedist/schema.py` — RunRecord pour serialisation des outputs
+- `experiments/outputs/sota_smoke/` — repertoire pour les artefacts
+  (sortir vers `sota_exp2_smoke/` pour distinguer du smoke adapter)
+
+## Actions
+
+1. Creer `experiments/sota/exp2_interactive_smoke.py`:
+   - argparse: `--agent {mistral,qwen,openai,anthropic}` (required),
+     `--output-dir` (defaut `experiments/outputs/sota_exp2_smoke/`),
+     `--no-confirm` (skip SPACE gates pour rerun apres validation
+     interactive prealable), `--budget-cap` (defaut $15 par run).
+   - Helper `wait_for_space(prompt: str)` — affiche le prompt + "PRESS
+     SPACE to continue, or 'q' to abort > ", lit stdin, abort propre
+     si 'q'.
+   - Pipeline par run:
+     a. Assembler le meta-prompt Phase A (baseline + quality bar +
+        task + JSON envelope spec).
+     b. AFFICHER meta-prompt assemble (long → tronquer + sauver
+        version complete a un path affiche).
+     c. SPACE gate.
+     d. Envoyer Phase A via adapter selectionne (sans web_search).
+     e. AFFICHER reponse Phase A (designed_prompt, settings,
+        rationale) + cost effectif.
+     f. SPACE gate.
+     g. Assembler Phase B request a partir du designed_prompt +
+        settings extraits.
+     h. AFFICHER Phase B request (truncated).
+     i. SPACE gate.
+     j. Envoyer Phase B via adapter (avec web_search + thinking selon
+        settings designed).
+     k. AFFICHER reponse Phase B (narrative summary, citations
+        count, table-row count si parseable, cost, wall time).
+     l. SPACE gate.
+     m. Sauvegarder artefact `<agent>_phase_a.json` +
+        `<agent>_phase_b.json` (RunRecord serialise).
+   - Pre-call cap par phase: Phase A $1, Phase B $15. Abort si
+     estime depasse.
+
+2. Documenter le layout d'output dans
+   `experiments/outputs/sota_exp2_smoke/README.md`.
+
+3. Pas de test d'integration automatise (la nature interactive l'exclut).
+   Test unitaire seulement:
+   `tests/test_exp2_interactive_smoke.py` — verifier que
+   `assemble_meta_prompt()` produit un texte non-vide contenant baseline
+   + quality bar; verifier `wait_for_space` retourne sur 'q'.
+
+4. Ordre d'execution recommande:
+   `--agent mistral` (premier — moins cher, validation initiale du
+   meta-prompt et du shape des reponses).
+   Puis Qwen, OpenAI, Anthropic dans cet ordre.
+
+5. Quand les 4 ont passe le smoke, ouvrir une ticket de suite:
+   "Phase B-0 batch (N=1 × 4 agents)" en mode non-interactif via
+   `--no-confirm`, qui prend les prompts deja valides comme baseline.
+
+## Test
+
+`tests/test_exp2_interactive_smoke.py`:
+- `test_assemble_meta_prompt_contains_baseline_and_quality_bar` —
+  appeler l'assembleur, asserter que le texte resultant contient une
+  ancre de `prompt_complete.txt` ("senior energy analyst") et une
+  ancre de la quality-bar synopsis §2 ("Accuracy" ou "Temporality").
+- `test_wait_for_space_aborts_on_q` — patcher stdin avec "q\n",
+  asserter que la fonction leve SystemExit ou retourne False
+  selon la convention choisie.
+
+Aucun test d'integration (sortirait du scope `check-fast`; l'usage
+est interactif par construction).
+
+## Verification
+
+- [ ] `uv run python -m aedist.experiments.exp2_interactive_smoke --agent mistral`
+      affiche le meta-prompt assemble puis attend SPACE.
+- [ ] 'q' avorte proprement (pas d'appel API, exit code 0 ou 1
+      documente).
+- [ ] SPACE envoie a Mistral, recoit la reponse Phase A, affiche le
+      designed_prompt extrait.
+- [ ] SPACE suivant assemble Phase B request avec settings designed,
+      l'affiche.
+- [ ] SPACE final envoie Phase B, affiche la reponse + cost effectif,
+      sauve artefact.
+- [ ] Total cost run < $15.
+- [ ] Repeter avec `--agent qwen`, `--agent openai`, `--agent anthropic`.
+
+## Invariants
+
+- Aucun call API sans appui SPACE explicite (sauf `--no-confirm`).
+- Budget cap par phase enforce pre-call.
+- Artefacts sauvegardes sous schema RunRecord — Phase B-0 batch
+  pourra les replayer/agréger.
+- N'edite aucun adapter source — c'est un consommateur read-only des
+  4 modules adapter.
+
+## Exit criteria
+
+- Script `exp2_interactive_smoke.py` + tests unitaires verts.
+- README documente l'output layout.
+- 4 paires d'artefacts (Phase A + Phase B, 1 par agent) sauvees sous
+  `experiments/outputs/sota_exp2_smoke/`.
+- Validation utilisateur explicite sur chaque echange (oeil humain
+  approuve le meta-prompt, le designed_prompt, et la reponse Phase B
+  pour les 4 agents).
+- Ticket de suite pour Phase B-0 batch ouvert.
+
+## Notes
+
+- L'argument "test one before blasting" est ici applique a deux
+  niveaux: (a) un agent a la fois (vs 4 en parallele), (b) chaque
+  echange LLM est gate par humain (vs pipeline automatise).
+- 0170 reste l'objectif a terme (harness automatise reproductible).
+  Ce ticket produit les premieres execution-traces qui rendent 0170
+  bien specifie.
+- "PRESS SPACE TO CONTINUE" — au sens UNIX, on lira une ligne complete
+  (l'utilisateur tape entree). Si vrai SPACE single-key est demande,
+  utiliser `termios` raw mode + read 1 byte. Defaut: ligne (plus
+  portable, ESC ne casse pas le terminal).
