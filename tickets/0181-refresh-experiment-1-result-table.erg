@@ -9,6 +9,7 @@ Blocked-by: 0184
 --- log ---
 2026-05-20T20:35Z claude created — supersedes 0177 (halted). All prerequisites merged to main: #338 (silent-drop fix), #341 (qwen3.6-max-preview added, journal set is 17 models), #346 (Opus 4.7→4.6 swap + max_tokens 32768 + budget $15).
 2026-05-20T23:30Z claude note Refocus: a 85-run sweep already executed in the parallel worktree agent-ad937f289caeac791 on 2026-05-20 between ~20:43Z and ~22:53Z (4-then-16-then-24-worker drain). 76/85 finish=stop, 9 length-truncated (8 of those clustered in two model entries that 0182 and 0184 swap out). 0181 is no longer "run the sweep" — the sweep ran. 0181 is the maintenance ticket: after 0182/0183/0184 land the model-registry + config fixes, refresh the result table by re-running only the records that need replacing (failures, truncations attributable to wrong-slug or wrong-cap, and any new models added to the lineup). Repurposed title, body rewritten.
+2026-05-21T00:10Z claude note Post-rebase update: 0177 was closed on main via PR #354 (commit fd4fbf2, "Wave 2 sweep merged"). The 85 records and the updated experiments/models.yaml are now tracked on main. 0181 no longer has any "close 0177" responsibility — that exit criterion and the corresponding Action 8 are dropped. The "records in parallel worktree" note in the body is also stale since the records are on main now; updated accordingly.
 
 --- body ---
 ## Context
@@ -113,10 +114,6 @@ set with the **current** sweep config. Three steps:
 7. Spot-check 3 records (high-F1, low non-null F1, length-truncation).
    Record findings in this ticket log.
 
-8. Close 0177 in the same commit that lands the spot-checks, with
-   reason "supplanted by 0181 after model-lineup corrections via
-   0182, 0183, 0184".
-
 ## Exit criteria
 
 - [ ] All blocker tickets (0182, 0183, 0184) merged to main
@@ -130,17 +127,16 @@ set with the **current** sweep config. Three steps:
       (target: ≤2 out of 85, anomalies only)
 - [ ] Spot-check passed (3 records reviewed)
 - [ ] Total cost of the delta logged here
-- [ ] 0177 closed with the rationale above
 
 ## Notes
 
-- The first end-to-end sweep run is on a parallel worktree, not this
-  one. The records / measurements may need to be ported to this
-  worktree (or to whatever worktree the executing agent uses) before
-  the delta runs. Simplest: copy the 85 `*.json` files (and any
-  `.record.json` / `.csv` companions) from
-  `.claude/worktrees/agent-ad937f289caeac791/experiments/outputs/ablation/direct/p1_base/`
-  to the executing worktree's equivalent directory before step 2.
+- The first end-to-end sweep run was landed to main via PR #354
+  ("Wave 2 sweep merged"). All 85 raw records (`*.json`, `*.csv`,
+  `*.record.json` triples) and the corresponding `experiments/models.yaml`
+  update are now tracked under
+  `experiments/outputs/ablation/direct/p1_base/` on `main`. The executing
+  agent for 0181 starts from a fresh checkout off main; no
+  cross-worktree porting needed.
 - 0184 already produced 2 smoke calls of `qwen/qwen3.6-flash` against
   the locked Experiment 1 prompt. Those smoke records do NOT count as
   reps for the result table — they were one-off Python calls with no
