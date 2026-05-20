@@ -1,0 +1,32 @@
+%erg v1
+Title: Add ablation/direct to Makefile STRUCTURED_DIRS
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T21:00Z claude created
+
+--- body ---
+## Context
+
+`make extract` covers a hardcoded `STRUCTURED_DIRS` list in `experiments/Makefile`
+that excludes `ablation`. Exp 1 sweep (`sweep_ablation_p1_direct_base`) writes to
+`outputs/ablation/direct/p1_base/`. Models that return JSON without a CSV companion
+(e.g. gpt-5-mini) are not extracted and stay as orphan JSONs scored as
+`refusal`/`error`/`empty` instead of F1.
+
+`rebuild-measurements` finds existing `.record.json` files under `outputs/ablation/`
+but does not trigger extraction for JSON-only runs.
+
+## Actions
+
+1. Add `ablation/direct` to `STRUCTURED_DIRS` in `experiments/Makefile`.
+2. Verify `make extract` now processes `outputs/ablation/direct/p1_base/*.json`.
+3. Confirm `gpt-5-mini-run*.json` (already present) produce CSVs and valid records.
+
+## Exit criteria
+
+- [ ] `STRUCTURED_DIRS` includes `ablation/direct` (or the specific subdirectory)
+- [ ] `make extract` produces CSVs for existing JSON-only runs in `outputs/ablation/direct/p1_base/`
+- [ ] `make rebuild-measurements` assembles all ablation records into `measurements.jsonl`
+- [ ] `make check` passes
