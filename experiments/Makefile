@@ -151,7 +151,8 @@ EVAL      := $(UV_RUN) python -m aedist.evaluate
 REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 
 STRUCTURED_DIRS := census multiturn web rag \
-                   decomposed decomposed_v2 sourced frontier
+                   decomposed decomposed_v2 sourced frontier \
+                   ablation/direct/p1_base ablation/direct/p1_composite
 
 OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
                 $(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv)
@@ -182,7 +183,7 @@ evaluate-all-records:
 	@$(MAKE) --no-print-directory -j$$(nproc) \
 	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
-	for f in outputs/*/*-run*.json derived/*/*-run*.json; do \
+	for f in outputs/*/*-run*.json outputs/*/*/*-run*.json derived/*/*-run*.json; do \
 	    [ -f "$${f%.json}.csv" ] && continue; \
 	    rec="$${f%.json}.record.json"; \
 	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \
