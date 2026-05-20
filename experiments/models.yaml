@@ -50,6 +50,30 @@
   license: commercial
   web_search: true
 
+# Direct-route SOTA-agent entry (ticket 0173, umbrella 0166). First
+# entry to use the optional `family:` field — read by the agent-mode
+# dispatcher to select the right adapter (adapter_qwen_dashscope.py).
+# International endpoint pricing verified 2026-05-20. Mainland routing
+# is out of scope; per-search fee is ~$0.00057 mainland vs $0.010 intl.
+- name: "qwen3-max-2026-01-23"
+  family: qwen-direct
+  route: dashscope
+  base_url: "https://dashscope-intl.aliyuncs.com/api/v1"
+  model_id: "qwen3-max-2026-01-23"
+  display_name: "Qwen3 Max (DashScope direct, thinking + web_search)"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 1.2
+  price_per_mtok_out: 6.0
+  price_per_mtok_reasoning: 6.0
+  price_per_web_search_call_usd: 0.010
+  size_class: frontier
+  license: commercial
+  web_search: true
+  reasoning_effort: "default"
+
 - name: "anthropic/claude-opus-4.6"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"
