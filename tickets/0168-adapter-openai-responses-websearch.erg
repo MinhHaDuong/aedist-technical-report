@@ -8,6 +8,7 @@ Author: claude
 2026-05-14T13:00Z claude note Imagine: PROCEED. Tool name is web_search (not web_search_preview — that is a legacy alias). Pre-call cap = max_output_tokens guard, not a fabricated dollar pre-estimate; verify cost post-call from usage. Default model gpt-5.5 (search + reasoning explicitly co-supported). Capability verified on docs 2026-05-14.
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-05-20T22:55Z HDMX-coding-agent note Derisk pass — live probe against gpt-5.5 via Responses API surfaced two parser-blocking gotchas now folded into the spec: (1) include=["web_search_call.action.sources"] is mandatory — without it response carries the query only, output_text.annotations is empty, URLs are lost; (2) reasoning.summary stays empty even at effort=high/summary=detailed, so RunRecord.reasoning_summary will typically be None for this adapter. Compose works (web_search + reasoning on same call). billing field on response is informational only ({payer: developer}); cost still derived from usage × price card. Account funded +$30 on 2026-05-20.
 --- body ---
 ## Context
 
@@ -27,13 +28,27 @@ Python SDK against the Responses endpoint, not OpenRouter.
 ## Actions
 
 1. Add an `openai_agent` driver. The driver:
-   - Loads the key from `~/.config/keys/openai.env`.
-   - Calls `client.responses.create(...)` with `tools=[{"type":
-     "web_search_preview"}]` (or the current production tool name)
-     and `reasoning={"effort": "high"}`.
-   - Returns: final text, all `web_search_call` items (URLs +
-     snippets), reasoning summary if available, per-call cost from
-     input/output/reasoning token usage against the OpenAI price card.
+   - Loads `OPENAI_API_KEY` from `~/.config/keys/openai.env`.
+   - Calls `client.responses.create(...)` with:
+     ```python
+     tools=[{"type": "web_search"}]
+     reasoning={"effort": "high"}
+     include=["web_search_call.action.sources"]
+     ```
+     The `include` directive is **mandatory** to surface URLs —
+     without it the response's `web_search_call.action` carries only
+     the query and `output_text.annotations` stays empty (verified
+     empirically 2026-05-20 against `gpt-5.5`).
+   - Returns: final text (from `message.content[].output_text`), all
+     `web_search_call` entries (each with `action.query` and
+     `action.sources[]` of URLs), per-call cost from
+     `usage.input_tokens` / `output_tokens` /
+     `output_tokens_details.reasoning_tokens` against the OpenAI
+     price card. Note: `reasoning.summary` items are empirically
+     empty even at `effort=high, summary=detailed` — the model
+     reasons (reasoning_tokens > 0) but does not surface a textual
+     summary, so RunRecord.`reasoning_summary` will typically be
+     None for this adapter.
 2. Choose the model. Default to the most capable production GPT-5
    variant (`gpt-5.4`, `gpt-5-pro`, or current equivalent). Verify the
    chosen ID supports both `web_search` and high reasoning effort on
@@ -48,10 +63,34 @@ Python SDK against the Responses endpoint, not OpenRouter.
 ## Test
 
 `tests/test_adapter_openai.py`:
-- `--dry-run` payload contains model ID, web_search tool, reasoning
-  config.
-- Canned response parses into the run-record schema (0172).
-- Cost calculation matches fixture pricing.
+- `--dry-run` payload contains the model ID, `tools=[{"type":"web_search"}]`,
+  `reasoning={"effort":"high"}`, and `include=["web_search_call.action.sources"]`.
+  Assert the `include` key is present — missing it is the #1 way to
+  ship a silent-citation-loss bug.
+- Canned response parses correctly using the verified native shape:
+  - `output[*]` with `type: "web_search_call"`: each entry's
+    `action.query` is the search query; `action.sources[]` carries
+    URL objects. Aggregate into RunRecord `web_search_calls`
+    (per-execution) and `citations` (flattened across sources).
+  - `output[*]` with `type: "reasoning"`: reasoning ran, but
+    `summary` is typically empty. Use `usage.output_tokens_details.reasoning_tokens`
+    as the reasoning-magnitude signal; `reasoning_summary` may be
+    None.
+  - `output[*]` with `type: "message"`: `content[].output_text` is
+    the narrative; do NOT depend on `output_text.annotations[]` for
+    citations (empirically empty even on full effort).
+  - `usage.input_tokens` + `output_tokens` + `reasoning_tokens` for
+    cost.
+  - `usage.input_tokens_details.cached_tokens` for cache-hit accounting.
+  Use a fixture under `tests/fixtures/openai_responses_response.json`
+  built from a recorded probe (do not invent the shape).
+- Cost arithmetic matches a fixture price card (input fresh, input
+  cached, output, reasoning tokens, n_searches × per-search price).
+- **Non-tautological assertion**: fixture with 2 distinct
+  `web_search_call` entries totaling 7 unique URLs across both
+  `action.sources` arrays. Assert `len(record.web_search_calls) == 2`
+  AND `len(record.citations) == 7`. Asymmetric counts catch
+  parser bugs that confuse search invocations with URL aggregation.
 
 ## Exit criteria
 
