@@ -219,7 +219,15 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
         tokens_out=usage.get("completion_tokens"),
     )
     record.method_params.model = raw.get("model", record.method_params.model)
-    record.method_params.extra = raw.get("model_metadata")
+    extra = dict(raw.get("model_metadata") or {})
+    # Surface per-sweep / per-model controls into the metrics dict via extra
+    # (ticket 0175 / ADR-7): system_instruction declares the baseline
+    # no-web-search regime; reasoning_effort is a per-model capability flag
+    # (gpt-oss-*, qwen3-max).
+    for key in ("system_instruction", "reasoning_effort"):
+        if raw.get(key) is not None:
+            extra[key] = raw[key]
+    record.method_params.extra = extra or None
     if "temperature" in raw:
         record.method_params.temperature = raw["temperature"]
 

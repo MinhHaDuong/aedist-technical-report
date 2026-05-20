@@ -12,6 +12,7 @@ Author: claude
 2026-05-20T09:00Z user note Mistral lineup locked: Small 4 (2603) / Medium 3.5 / Large 3 (2512); version-number incoherence is Mistral's per-tier branding and will be noted in one sentence in Annex A
 2026-05-20T09:20Z user note OpenAI lab in EN family expanded to 3 models: GPT-5.5 + gpt-oss-120b + gpt-oss-20b; both gpt-oss are MoE with configurable reasoning depth — set to minimum for the parametric baseline; total set now 16 models / 80 runs
 2026-05-20T09:30Z user note baseline must send a system instruction "No websearch" to the API; runner currently sends only a user message (query_direct.py:212/221) — system-message plumbing must be added in this ticket
+2026-05-20T10:30Z claude note implemented harness rewrite (assemble_prompt + build_messages + reasoning_effort), JobSpec.system_instruction, worker/query_direct threading, 11-entry models.yaml addition, 16-model journal v2 set, all p1 sweeps updated to new module names, p1_base/ git mv to p1_base.pilot/, Annex A rewrite. make check-fast passes (1186 tests).
 
 --- body ---
 ## Context

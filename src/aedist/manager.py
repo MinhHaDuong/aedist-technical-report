@@ -105,6 +105,7 @@ def generate(
                 repeat=1,
                 run_number=run,
                 budget_usd=parent_spec.budget_usd,
+                system_instruction=parent_spec.system_instruction,
                 output_dir=parent_spec.output_dir,
                 timeout_seconds=parent_spec.timeout_seconds,
                 worker_pool=parent_spec.worker_pool,

@@ -793,16 +793,17 @@ def test_prompt_modules_assembled_in_execute(tmp_path: Path) -> None:
     """Worker.execute() uses assemble_prompt when job has prompt_modules."""
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt text.")
-    (modules_dir / "persona.txt").write_text("You are an expert.")
-    (modules_dir / "overview.txt").write_text("Provide an overview.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
+    (modules_dir / "1_persona.txt").write_text("You are an expert.")
+    (modules_dir / "3_overview.txt").write_text("Provide an overview.")
 
     job = JobSpec(
         job_id="pm-test",
         priority=50,
         mode=Method.SINGLE,
         prompt="unused",  # should be ignored when prompt_modules is set
-        prompt_modules=["persona", "overview"],
+        prompt_modules=["1_persona", "3_overview"],
         modules_dir=str(modules_dir),
         models_file="models.yaml",
         model_filter="qwen3:8b",
@@ -816,22 +817,25 @@ def test_prompt_modules_assembled_in_execute(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    # Verify the assembled prompt was used (persona before base, overview after)
+    # Verify the assembled prompt is in lex order: 1_persona, 2_goal, 3_overview, 5_table.
     call_args = patches["query_single_turn"].call_args[0]
     messages = call_args[2]
     content = messages[0]["content"]
     assert "You are an expert." in content
-    assert "Base prompt text." in content
+    assert "Goal text." in content
     assert "Provide an overview." in content
-    assert content.index("You are an expert.") < content.index("Provide an overview.")
-    assert content.index("Provide an overview.") < content.index("Base prompt text.")
+    assert "Table spec." in content
+    assert content.index("You are an expert.") < content.index("Goal text.")
+    assert content.index("Goal text.") < content.index("Provide an overview.")
+    assert content.index("Provide an overview.") < content.index("Table spec.")
 
 
-def test_prompt_modules_empty_uses_base_only_in_worker(tmp_path: Path) -> None:
-    """Worker.execute() with empty prompt_modules uses base.txt only."""
+def test_prompt_modules_empty_uses_always_pair_only_in_worker(tmp_path: Path) -> None:
+    """Worker.execute() with empty prompt_modules uses the always-pair (2_goal + 5_table) only."""
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt only.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
 
     job = JobSpec(
         job_id="pm-empty",
@@ -854,7 +858,82 @@ def test_prompt_modules_empty_uses_base_only_in_worker(tmp_path: Path) -> None:
 
     call_args = patches["query_single_turn"].call_args[0]
     messages = call_args[2]
-    assert messages[0]["content"] == "Base prompt only."
+    assert messages[0]["content"] == "Goal text.\n\nTable spec."
+
+
+def test_system_instruction_round_trip_in_execute(tmp_path: Path) -> None:
+    """JobSpec.system_instruction propagates to messages[0] and to the saved record.
+
+    Ticket 0175 round-trip: setting system_instruction on a JobSpec must
+    (a) prepend a system role message to the chat completions call, and
+    (b) persist the instruction in the saved JSON record so evaluate.py can
+    surface it via records_to_metrics (ADR-7).
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="sysinst-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+        system_instruction="Do not search the web.",
+    )
+
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    # (a) messages[0] is the system role with the instruction text
+    call_args = patches["query_single_turn"].call_args[0]
+    messages = call_args[2]
+    assert messages[0] == {"role": "system", "content": "Do not search the web."}
+    assert messages[1]["role"] == "user"
+    assert messages[1]["content"] == "List thermal plants"
+
+    # (b) save_json record carries system_instruction so evaluate.py can backfill
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["system_instruction"] == "Do not search the web."
+
+
+def test_reasoning_effort_surfaced_in_record(tmp_path: Path) -> None:
+    """Per-model reasoning_effort flag is persisted in the saved JSON record.
+
+    Ticket 0175: gpt-oss-* and qwen3-max declare reasoning_effort="minimal" in
+    models.yaml; the runner must surface this into the record so
+    records_to_metrics can include it in the metrics dict (ADR-7).
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="re-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    patches = _harness_patches(tmp_path)
+    patches["load_models"] = MagicMock(
+        return_value=[{"name": "qwen3:8b", "reasoning_effort": "minimal"}]
+    )
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["reasoning_effort"] == "minimal"
 
 
 def test_rag_empty_corpus_raises_runtime_error(tmp_path: Path) -> None:

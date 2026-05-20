@@ -216,12 +216,13 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
     models_path = _minimal_models_yaml(tmp_path)
     output_dir = tmp_path / "out"
 
-    # Create modules directory with base + persona + overview
+    # Post-rename module scheme: 2_goal + 5_table are the always-pair; add optional.
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt text.")
-    (modules_dir / "persona.txt").write_text("You are an expert.")
-    (modules_dir / "overview.txt").write_text("Provide an overview.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
+    (modules_dir / "1_persona.txt").write_text("You are an expert.")
+    (modules_dir / "3_overview.txt").write_text("Provide an overview.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
         with patch.object(
@@ -230,8 +231,8 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
             [
                 "query_direct",
                 "--prompt-modules",
-                "persona",
-                "overview",
+                "1_persona",
+                "3_overview",
                 "--modules-dir",
                 str(modules_dir),
                 "--models",
@@ -244,21 +245,23 @@ def test_prompt_modules_assembles_prompt(mock_openai_cls, tmp_path):
 
             main()
 
-    # Verify the assembled prompt was sent to the API
+    # Verify the assembled prompt was sent to the API.
+    # Lex order: 1_persona, 2_goal, 3_overview, 5_table.
     call_args = mock_client.chat.completions.create.call_args
     messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
     user_content = messages[0]["content"]
-    # persona and overview are prepended before base
     assert "You are an expert." in user_content
-    assert "Base prompt text." in user_content
+    assert "Goal text." in user_content
+    assert "Table spec." in user_content
     assert "Provide an overview." in user_content
-    assert user_content.index("You are an expert.") < user_content.index("Provide an overview.")
-    assert user_content.index("Provide an overview.") < user_content.index("Base prompt text.")
+    assert user_content.index("You are an expert.") < user_content.index("Goal text.")
+    assert user_content.index("Goal text.") < user_content.index("Provide an overview.")
+    assert user_content.index("Provide an overview.") < user_content.index("Table spec.")
 
 
 @patch("aedist.harness.OpenAI")
-def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
-    """--prompt-modules with no modules uses base.txt only."""
+def test_prompt_modules_empty_list_uses_always_pair_only(mock_openai_cls, tmp_path):
+    """--prompt-modules with no modules uses the always-pair (2_goal + 5_table) only."""
     mock_client = MagicMock()
     mock_client.chat.completions.create.return_value = _make_mock_response()
     mock_openai_cls.return_value = mock_client
@@ -268,7 +271,8 @@ def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
 
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt only.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
         with patch.object(
@@ -291,7 +295,7 @@ def test_prompt_modules_empty_list_uses_base_only(mock_openai_cls, tmp_path):
 
     call_args = mock_client.chat.completions.create.call_args
     messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
-    assert messages[0]["content"] == "Base prompt only."
+    assert messages[0]["content"] == "Goal text.\n\nTable spec."
 
 
 @patch("aedist.harness.OpenAI")
@@ -336,8 +340,9 @@ def test_prompt_modules_dry_run(mock_openai_cls, tmp_path):
 
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt text.")
-    (modules_dir / "persona.txt").write_text("You are an expert.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
+    (modules_dir / "1_persona.txt").write_text("You are an expert.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
         with patch.object(
@@ -346,7 +351,7 @@ def test_prompt_modules_dry_run(mock_openai_cls, tmp_path):
             [
                 "query_direct",
                 "--prompt-modules",
-                "persona",
+                "1_persona",
                 "--modules-dir",
                 str(modules_dir),
                 "--models",
@@ -375,8 +380,9 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
 
     modules_dir = tmp_path / "modules"
     modules_dir.mkdir()
-    (modules_dir / "base.txt").write_text("Base prompt text.")
-    (modules_dir / "persona.txt").write_text("You are an expert.")
+    (modules_dir / "2_goal.txt").write_text("Goal text.")
+    (modules_dir / "5_table.txt").write_text("Table spec.")
+    (modules_dir / "1_persona.txt").write_text("You are an expert.")
 
     with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
         with patch.object(
@@ -385,7 +391,7 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
             [
                 "query_direct",
                 "--prompt-modules",
-                "persona",
+                "1_persona",
                 "--modules-dir",
                 str(modules_dir),
                 "--models",
@@ -401,7 +407,7 @@ def test_prompt_modules_sweep_name(mock_openai_cls, tmp_path):
     json_files = list(output_dir.rglob("*.json"))
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
-    assert record["sweep"] == "modules_persona"
+    assert record["sweep"] == "modules_1_persona"
 
 
 @patch("aedist.harness.OpenAI")

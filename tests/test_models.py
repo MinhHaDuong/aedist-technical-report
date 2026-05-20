@@ -264,9 +264,15 @@ def test_sweep_prompts_exist(experiments):
 
 
 def test_sweep_prompt_modules_exist(experiments):
-    """Module files referenced by prompt_modules exist on disk."""
+    """Module files referenced by prompt_modules exist on disk.
+
+    Post-rename (ticket 0175), the always-pair is ``2_goal.txt`` + ``5_table.txt``.
+    Other modules are opt-in via ``prompt_modules``; the assembler validates
+    them at call time.
+    """
     modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
-    assert (modules_dir / "base.txt").exists(), "modules/base.txt missing"
+    assert (modules_dir / "2_goal.txt").exists(), "modules/2_goal.txt missing"
+    assert (modules_dir / "5_table.txt").exists(), "modules/5_table.txt missing"
     for name, sweep in experiments["sweeps"].items():
         for mod in sweep.get("prompt_modules", []):
             mod_path = modules_dir / f"{mod}.txt"
@@ -274,21 +280,29 @@ def test_sweep_prompt_modules_exist(experiments):
 
 
 def test_assemble_prompt():
-    """assemble_prompt composes base + modules correctly."""
+    """assemble_prompt composes the always-pair + opt-in modules correctly."""
     from aedist.harness import assemble_prompt
 
     modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
-    # Base only
+    # Always-pair only (locked Experiment 1 baseline)
     base = assemble_prompt(modules_dir, [])
-    assert "For EVERY thermal power plant" in base
-    assert "senior energy analyst" not in base
-    # With persona (prepended before base)
-    with_persona = assemble_prompt(modules_dir, ["persona"])
-    assert with_persona.startswith("You are a senior energy analyst")
-    assert "For EVERY thermal power plant" in with_persona
-    # With overview (prepended before base, after persona)
-    with_both = assemble_prompt(modules_dir, ["persona", "overview"])
-    assert with_both.index("thermal power sector") < with_both.index("For EVERY")
+    assert "thermal generation assets" in base  # from 2_goal
+    assert "Structured power plants table" in base  # from 5_table
+    assert "senior energy analyst" not in base  # 1_persona not included
+    # With 1_persona — lex sort puts it before 2_goal
+    with_persona = assemble_prompt(modules_dir, ["1_persona"])
+    assert with_persona.startswith("## Role")
+    assert with_persona.index("senior energy analyst") < with_persona.index(
+        "thermal generation assets"
+    )
+    # With 1_persona + 3_overview — lex order: 1_persona, 2_goal, 3_overview, 5_table
+    with_overview = assemble_prompt(modules_dir, ["1_persona", "3_overview"])
+    assert (
+        with_overview.index("senior energy analyst")
+        < with_overview.index("thermal generation assets")
+        < with_overview.index("Sector Overview")
+        < with_overview.index("Structured power plants table")
+    )
 
 
 def test_assemble_prompt_unknown_module_raises():

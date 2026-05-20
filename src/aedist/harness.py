@@ -137,49 +137,49 @@ def load_experiments(path: str) -> dict:
 # Prompt assembly
 # ---------------------------------------------------------------------------
 
-# Persona and overview are prepended (before base); all others appended.
-_BEFORE_BASE = frozenset({"persona", "overview"})
-_MODULE_ORDER = [
-    "overview",
-    "narratives",
-    "sourcing_ground",
-    "statistics",
-    "data_quality_table",
-    "bibliography",
-    "citation_columns",
-    "observed_vs_projected",
-    "pdp_completeness",
-]
-KNOWN_MODULES = frozenset(["persona"] + _MODULE_ORDER)
+# Modules that are always included regardless of the caller's selection.
+# Post-rename (commit 4dc99e5) these are the new implicit "always" set,
+# replacing the previous ``base.txt`` single-file role. ``2_goal`` declares
+# the task; ``5_table`` declares the structured output schema. Together they
+# are the locked Experiment 1 baseline (ticket 0175).
+ALWAYS_MODULES = ("2_goal", "5_table")
 
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
-    """Assemble a prompt from base + named modules.
+    """Assemble a prompt from the always-pair plus named optional modules.
 
-    *modules_dir* contains ``base.txt`` and one file per module
-    (e.g. ``persona.txt``, ``overview.txt``).  The *module_names* list
-    selects which modules to include.  ``persona`` and ``overview`` are
-    prepended before the base; all others are appended in a fixed order.
+    *modules_dir* is scanned at call time for ``*.txt`` files. Each filename
+    stem is a module identifier (e.g. ``1_persona``, ``A_Statistics``). The
+    two modules in :data:`ALWAYS_MODULES` (``2_goal`` and ``5_table``) are
+    always included; the *module_names* list adds optional modules. The
+    union is sorted lexicographically by filename and joined with
+    ``"\\n\\n"``.
 
-    Raises ``ValueError`` if *module_names* contains unknown names.
+    Raises ``ValueError`` if any name in *module_names* does not resolve
+    to a file in *modules_dir*.
     """
-    unknown = set(module_names) - KNOWN_MODULES
+    available = {p.stem for p in modules_dir.glob("*.txt")}
+    requested = set(module_names) | set(ALWAYS_MODULES)
+    unknown = requested - available
     if unknown:
         raise ValueError(
-            f"Unknown prompt modules: {sorted(unknown)}. Known: {sorted(KNOWN_MODULES)}"
+            f"Unknown prompt modules: {sorted(unknown)}. Available: {sorted(available)}"
         )
-    base = (modules_dir / "base.txt").read_text().strip()
-    parts_before: list[str] = []
-    parts_after: list[str] = []
-    ordered = [m for m in ["persona"] + _MODULE_ORDER if m in module_names]
-    for name in ordered:
-        text = (modules_dir / f"{name}.txt").read_text().strip()
-        if name in _BEFORE_BASE:
-            parts_before.append(text)
-        else:
-            parts_after.append(text)
-    sections = parts_before + [base] + parts_after
+    sections = [(modules_dir / f"{name}.txt").read_text().strip() for name in sorted(requested)]
     return "\n\n".join(sections)
+
+
+def build_messages(user_text: str, system_instruction: str | None) -> list[dict]:
+    """Build a chat-completions message list, prepending a system message when given.
+
+    Returns ``[{"role": "system", ...}, {"role": "user", ...}]`` when
+    *system_instruction* is a non-empty string, otherwise just the user message.
+    """
+    messages: list[dict] = []
+    if system_instruction:
+        messages.append({"role": "system", "content": system_instruction})
+    messages.append({"role": "user", "content": user_text})
+    return messages
 
 
 def make_client(base_url: str | None = None) -> OpenAI:
@@ -392,6 +392,13 @@ def build_api_kwargs(
         extra["provider"] = {"order": provider_order, "allow_fallbacks": False}
     if no_think:
         extra["think"] = False
+    # Per-model reasoning_effort (typed "minimal" | "low" | "medium" | "high").
+    # Used by OpenAI gpt-oss-* and other reasoning-configurable models; expressed
+    # via OpenRouter's unified reasoning field (see ticket 0175). This is a
+    # capability of the model, not a sweep-wide knob — set in models.yaml.
+    reasoning_effort = model.get("reasoning_effort")
+    if reasoning_effort:
+        extra["reasoning"] = {"effort": reasoning_effort}
     if extra:
         kwargs["extra_body"] = extra
 

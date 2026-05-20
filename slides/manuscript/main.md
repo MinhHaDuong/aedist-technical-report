@@ -10,7 +10,7 @@ This paper builds the argument in six steps.
 
 Submitting a direct query to a large language model produces an inventory-shaped answer, but not one that meets statistical or scientific quality standards. Numbers shift between runs, citations are absent or fabricated, and there is no way to tell which cells one should trust.
 
-**Experiment 1 — Parametric baseline.** We query nine language models from the *modelset_ablation_journal* set — spanning cheap reasoning models through frontier-class systems across four laboratories — with a fixed structured table specification prompt (the *base* prompt, reproduced in Annex A). No documents are provided; models draw exclusively on parametric knowledge. Each model is queried five times at temperature zero, yielding 45 runs against a 163-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
+**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex A). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 163-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
 
 **Expected results.** [TO BE UPDATED after sweep] Pilot data (25 runs, 10 models, same prompt) shows row-level F1 ranging from 0.38 to 0.88 across models, with within-model run variance of 0.3–0.4 F1 points for some models — a spread larger than the gap between many adjacent models. Cell-level attributes consistently fall below row-level F1: fuel accuracy ≈ 0.55, status accuracy ≈ 0.45, reflecting that semantic classification errors concentrate in harder attributes once a plant is found. No monotonic relationship between API cost and F1 is observed. Two qualitatively distinct failure modes appear in the pilot: under-listing (high precision, low recall — the model reports only plants it is confident about) and over-listing (100% recall but low precision — the model reports everything plausible, including duplicates and non-entities). The five failure labels in Figure 1 — refusal, under-coverage, fabrication, high variance, and non-monotone ordering — organise the full model-by-run distribution.
 
@@ -65,7 +65,7 @@ We also aim to refine the method to ensure the per-cell provenance tracking, not
 
 ## Annex A — Experiment 1: Technical specification
 
-*[DRAFT — design pending ticket 0174. This annex describes the experiment as it will be run.]*
+*[Design locked by ticket 0175 (2026-05-20). This annex describes the experiment as it will be run.]*
 
 ### Task
 
@@ -73,38 +73,55 @@ Identify all thermal power plants in Vietnam from parametric model knowledge alo
 
 ### Prompt
 
-The *base* prompt is the sole input to the model. It is reproduced in full below; no system message, no documents, no tools are provided.
+The baseline prompt is the locked composition of two modules from `experiments/prompts/modules/`: `2_goal.txt` (task declaration) and `5_table.txt` (structured table specification). These are the implicit "always" pair — every sweep includes them; ablations opt in to additional modules. The assembled prompt is the concatenation in filename lex order, joined by a blank line:
 
-> **2. Plant-by-Plant Inventory**
+> **## Goal**
 >
-> For EVERY thermal power plant in Vietnam — at every stage of its lifetime, from proposed and announced through under construction, operational, and suspended to retired and dismantled — provide:
+> Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30MWe) structured as follows:
 >
-> **Structured table**
-> Format: Markdown table with columns:
-> | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 |
+> **## Structured power plants table**
+>
+> Tabulate for every thermal power plant in Vietnam:
+>
+> | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 | Notes |
 >
 > Where:
 > - Fuel: Coal / Domestic gas / Imported LNG
-> - Technology: Subcritical / Supercritical / USC / CCGT / OCGT / CFB
-> - Status: Operational / Under construction / Approved / Planned / Suspended / Cancelled
-> - COD: Actual commercial operation date or expected date
-> - Sources: primary source references (numbered, detailed in bibliography)
+> - Technology (coal): Subcritical / Supercritical / USC
+> - Technology (gas): CCGT / OCGT
+> - Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired
+> - Total MWe: Include units > 30MWe.
+> - COD: Actual or expected commercial operation date
+> - Sources: specify where in the document, include URL
+>
+> Output format: Markdown.
+
+No persona, no narratives, no quality bullets — those land in ablation sweeps, not the baseline. Every API call carries a system instruction explicitly forbidding web search: *"You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."*
 
 ### Models
 
-Nine models from `modelset_ablation_journal` (defined in `experiments/experiments.toml`):
+Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
 
-| Model | Lab | Size class | Reasoning |
-|---|---|---|---|
-| ernie-4.5-21b-a3b-thinking | Baidu | mid | yes |
-| mistral-small-2603 | Mistral | mid | yes |
-| deepseek-r1-0528 | DeepSeek | frontier | yes |
-| kimi-k2-thinking | Moonshot | frontier | yes |
-| qwen3-max-thinking | Alibaba | frontier | yes |
-| glm-5.1 | Zhipu AI | frontier | yes |
-| gpt-5.4 | OpenAI | frontier | no |
-| claude-sonnet-4.6 | Anthropic | mid | no |
-| claude-opus-4.6 | Anthropic | frontier | no |
+| Model | Lab | Family | Size class | Reasoning |
+|---|---|---|---|---|
+| claude-opus-4.7 | Anthropic | EN | frontier | no |
+| claude-sonnet-4.6 | Anthropic | EN | frontier | no |
+| claude-haiku-4.5 | Anthropic | EN | mid | no |
+| gpt-5.5 | OpenAI | EN | frontier | no |
+| gpt-oss-120b | OpenAI | EN | large | minimal |
+| gpt-oss-20b | OpenAI | EN | mid | minimal |
+| mistral-small-2603 | Mistral | FR | mid | yes |
+| mistral-medium-3-5 | Mistral | FR | mid | no |
+| mistral-large-2512 | Mistral | FR | frontier | no |
+| qwen3.6-27b | Alibaba | ZH | mid | no |
+| qwen3.6-35b-a3b | Alibaba | ZH | mid | no |
+| qwen3.5-flash-02-23 | Alibaba | ZH | mid | no |
+| qwen3.6-plus | Alibaba | ZH | frontier | no |
+| qwen3-max | Alibaba | ZH | frontier | minimal |
+| deepseek-v4-pro | DeepSeek | ZH | frontier | no |
+| deepseek-v4-flash:free | DeepSeek | ZH | mid | no |
+
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and `qwen3-max` are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. All four Wave-2 SOTA agents (Opus 4.7, GPT-5.5, Mistral Large 2512, Qwen 3 Max) are included so Experiment 2's "deep research vs parametric" claim can be tested within-model.
 
 ### Run parameters
 
@@ -113,8 +130,11 @@ Nine models from `modelset_ablation_journal` (defined in `experiments/experiment
 | Repeats per model | 5 | Sufficient to characterise within-model variance; pilot (n=2–5) shows variance stabilises |
 | Temperature | 0 | Isolates prompt-driven variance from sampling noise; residual variance under T=0 is the stronger claim |
 | Seed | 42 | Reproducibility where supported by provider |
-| Max tokens | provider default | Not capped; refusals and truncations recorded as run outcomes |
-| Total runs | 45 | 9 models × 5 repeats |
+| Max tokens | 8192 | Bounded for cost predictability; truncations recorded as run outcomes |
+| Budget | $10 | Per-sweep cap; the runner halts at exceedance |
+| Total runs | 80 | 16 models × 5 repeats |
+
+`seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max, deepseek-v4-pro, deepseek-v4-flash:free) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.
 
 ### Evaluation
 
@@ -136,7 +156,7 @@ Run outcomes other than `ok` (refusal, empty, parse error) are recorded with `f1
 
 ### Sweep configuration
 
-The sweep is defined in `experiments/experiments.toml` as `sweep_ablation_p1_direct_base` (dev tier, `modelset_ablation_dev`) and will be upgraded to `modelset_ablation_journal` for the production run. Outputs land in `experiments/outputs/ablation/direct/p1_base/`. Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
+The sweep is defined in `experiments/experiments.toml` as `sweep_ablation_p1_direct_base` (model_set = `modelset_ablation_journal`, repeat = 5, T = 0, seed = 42, budget_usd = 10, max_tokens = 8192, prompt_modules = []). Outputs land in `experiments/outputs/ablation/direct/p1_base/`; the prior pilot runs are preserved under `p1_base.pilot/` (ticket 0175 renamed the directory to keep journal and pilot data separate). Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
 
 ### What this experiment does and does not test
 

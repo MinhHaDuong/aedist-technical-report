@@ -30,6 +30,7 @@ from .harness import (
     BudgetTracker,
     assemble_prompt,
     build_api_kwargs,
+    build_messages,
     compute_cost,
     load_experiments,
     load_models,
@@ -198,7 +199,7 @@ def main():
                 result = query_single_turn(
                     client,
                     api_model_id,
-                    [{"role": "user", "content": prompt}],
+                    build_messages(prompt, None),
                     **api_kwargs,
                 )
                 usage = result.get("usage") or {}
