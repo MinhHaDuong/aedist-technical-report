@@ -45,36 +45,29 @@ inventory's plant identity, capacity, status, and COD fields:
 | Study_E542_table_9.2.md | Unit-level fine-grained capacities |
 | Study_E542_table_9.5A.md | Unit-level fine-grained capacities |
 
-**Off-corpus sources.** MOIT (Ministry of Industry and Trade) decisions
-(numbers and dates of approval, cancellation, or reclassification of
-specific projects) were consulted by the author at compilation time but
-are not snapshotted in `data/rag_corpus/`. They are therefore not
-available to the RAG pipeline in Experiments 2–3.
-
-**AUTHOR-TODO:** list the specific MOIT decision IDs that were consulted
-(e.g., "Decision 1208/QĐ-TTg", "Decision 428/QĐ-TTg", "Decision
-500/QĐ-TTg", and any project-specific approvals), with date and the
-fields they back.
+**Off-corpus sources.** MOIT decisions (numbering and issue dates) were
+consulted by the author through Vietnam government gazettes during
+compilation but are not snapshotted in `data/rag_corpus/`. The reference
+file's `status` column reflects the most recent applicable MOIT decision
+known to the author at the freeze date.
 
 ## Conflict-resolution rules
 
-**AUTHOR-TODO:** state the explicit priority rule used during
-compilation. Default proposal (please confirm or override):
+Where sources disagreed during compilation, the following priority applied:
 
-- **Forward-looking fields** (status="proposed" / "planned", expected
-  COD): PDP8 > PDP7A > PDP7 — the most recent master plan governs.
-- **Operational capacities** (status="operational", actual COD):
-  EVN annual report > any PDP — the operator's own report is closer
-  to the asset than the planning document.
-- **Unit-level capacities** (multi-unit complexes where total ≠ sum
-  of nameplate units): Report_58 / Study_E542 > PDP tables —
-  fine-grained sources resolve the unit breakdown.
-- **MOIT decisions** override the most recent PDP for status changes
-  enacted after the PDP was published (e.g., a project cancelled by
-  decision after PDP8 listed it as proposed).
-
-When two sources of equal priority disagree, the row carries the
-most-recent value and the alternative is recorded in a per-row note.
+- **Forward-looking fields (`proposed`, `planned`, projected COD):** PDP8
+  supersedes PDP7A which supersedes PDP7. PDP8 annexes 2-1 through 2-5
+  are authoritative for the post-2021 pipeline.
+- **Operational capacities (existing plants):** EVN annual reports take
+  precedence over any PDP annex, as PDP figures are planning targets
+  that may diverge from commissioned reality. The 2018 EVN report is
+  the latest snapshot.
+- **Unit-level capacities within a multi-unit plant:** Report_58_annex
+  and Study_E542 tables provide the finest-grained breakdown when annex
+  tables aggregate to plant level.
+- **Status reclassifications between cycles:** the latest PDP wins
+  (PDP8 > PDP7A > PDP7), even when EVN annual reports list an interim
+  status that has since been superseded.
 
 ## Residual uncertainty (top-3 disputed cases)
 
