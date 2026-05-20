@@ -549,3 +549,64 @@ def test_no_web_search_flag_noop_without_web_model(mock_openai_cls, tmp_path):
 
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
     assert "tools" not in call_kwargs
+
+
+@patch("aedist.harness.OpenAI")
+def test_sweep_propagates_system_instruction_to_messages(mock_openai_cls, tmp_path):
+    """--sweep reads system_instruction from experiments.toml and prepends a system message.
+
+    Regression guard: the --sweep CLI dispatch path in query_direct.main() must
+    reach build_messages() with the sweep's system_instruction. Without a test
+    here, the ``if args.sweep:`` branch could lose its imports to ruff between
+    edits (cf. feedback_model_set_dispatch_test_gap in user memory).
+    """
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path)
+    prompt_path = _prompt_file(tmp_path)
+    output_dir = tmp_path / "out"
+
+    experiments_path = tmp_path / "experiments.toml"
+    sentinel = "TEST-SENTINEL: answer from parametric knowledge only."
+    experiments_path.write_text(
+        '[sets.tiny_set]\nmodel_ids = ["test/tiny-model"]\n'
+        "\n"
+        "[sweeps.tiny_sweep]\n"
+        f'system_instruction = "{sentinel}"\n'
+    )
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_direct",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_dir),
+                "--sweep",
+                "tiny_sweep",
+                "--experiments",
+                str(experiments_path),
+            ],
+        ):
+            from aedist.query_direct import main
+
+            main()
+
+    call_args = mock_client.chat.completions.create.call_args
+    messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
+    assert messages[0]["role"] == "system"
+    assert messages[0]["content"] == sentinel
+    assert messages[1]["role"] == "user"
+
+    # And the system_instruction is persisted in the saved record.
+    json_files = list(output_dir.rglob("*.json"))
+    assert len(json_files) == 1
+    record = json.loads(json_files[0].read_text())
+    assert record["system_instruction"] == sentinel
