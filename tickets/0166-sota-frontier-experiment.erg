@@ -15,6 +15,7 @@ Blocked-by: 0173
 2026-05-14T14:30Z claude note Expanded from 3 to 4 SOTA agents on user decision after 2026-05-14 field survey. Added Qwen3-Max via DashScope (CN, ticket 0173) as 4th slot for corpus diversity (Chinese-language sources under-indexed by Western search; hypothesis-relevant for Vietnamese power sector). Kimi K2.6 disqualified (thinking+web_search mutually exclusive). Wave 2 now: 0167/0168/0169/0173 parallel. Budget cap raised from ~$100 to ~$140. Cross-eval matrix 4x3 (was 3x3).
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-05-20T22:45Z HDMX-coding-agent note Derisk pass complete (Wave-2 prereqs landed via #337, #339, #340): Qwen and Mistral probes PASS with full billing transparency; Anthropic and OpenAI funded (Anthropic +$25, OpenAI +$30, balances current). Anthropic compose verified — claude-opus-4-7 + web_search_20250305 + adaptive thinking match the corrected spec. OpenAI compose verified — gpt-5.5 + web_search + reasoning, with two parser-blocking gotchas folded into 0168 (must pass include=['web_search_call.action.sources'] to surface URLs; reasoning.summary stays empty even at effort=high/summary=detailed). Phase B-0 (N=1) folded into experiment structure as a gate before Phase B (N=3).
 --- body ---
 ## Context
 
@@ -70,10 +71,27 @@ the quality of the resulting statistical report it can produce within
 ≤$10 and an overnight wall-clock budget. Each model designs its own
 prompt; the prompts are not shared across models. (Ticket 0170.)
 
-**Phase B — Execution.** Each model's designed prompt is run 3 times.
-For closed-weight SOTA agents (single provider each), the three runs
-use the same provider; for open-weight agents (if added later) use
-different providers. Document the asymmetry in the run record.
+**Phase B-0 — Single-rep smoke.** Before the full N=3 execution, run
+each model's designed prompt **once** end-to-end. This is the project's
+"Test one before blasting" rule (`.claude/rules/workflow.md`) applied
+at the experiment level: 4 outputs surface parser bugs, prompt
+failures, model refusals, and real per-call cost before triple-budget
+commitment. Phase C scoring runs on these 4 outputs as a structural
+test of the cross-eval harness. Gate to Phase B: a review pass that
+confirms (i) all 4 adapters produced valid RunRecords, (ii) the
+parsed tables are non-empty, (iii) costs match the ≤$10/call budget
+empirically. If any agent fails, fix at N=1 cost — do not graduate
+to N=3 until the smoke is clean.
+
+**Phase B — Execution (N=3).** Each model's designed prompt is run
+3 times. For closed-weight SOTA agents (single provider each), the
+three runs use the same provider; for open-weight agents (if added
+later) use different providers. Document the asymmetry in the run
+record. Phase B is gated on a clean Phase B-0 review.
+
+The single-rep claim in Phase B-0 cannot stand in for variance
+analysis — N=1 cannot report "model X is consistently better than Y".
+Only the post-Phase-B N=3 dataset supports such comparisons.
 
 **Phase C — Cross-evaluation.** For each output, the two *other* agents
 score it along the four dimensions (Accuracy, Coherence, Provenance,
@@ -95,13 +113,18 @@ reads from it directly.
 ## Budget envelope (4-agent expansion)
 
 - Phase A (prompt design): ≤ $1 per model × 4 = $4.
-- Phase B (3 reps × $10 cap): ≤ $30 per model × 4 = $120.
+- Phase B-0 (1 rep × $10 cap): ≤ $10 per model × 4 = $40. Gate to B.
+- Phase B (3 reps × $10 cap, includes B-0's run): incremental ≤ $20
+  per model × 4 = $80 on top of B-0.
 - Phase C (cross-eval, cheap chat completions): ≤ $10 total
   (12 subject runs × 3 evaluators ≈ 36 calls + baseline scoring).
 - Smoke + probe: 4 × $0.50 = $2 + Mistral probe ≤ $0.50 = $2.50.
-- **Cap: ~$140 total.** Hard cap enforced per-run by adapters; soft
-  cap monitored at the umbrella by inspecting cost totals after Phase A
-  before launching Phase B.
+  Derisk probes 2026-05-20 (Qwen, Mistral, Anthropic, OpenAI):
+  ~$0.50 actually spent.
+- **Cap: ~$140 total (B-0 first ≤ $60; gate to N=3 then ≤ $90 more).**
+  Hard cap enforced per-run by adapters; soft cap monitored at the
+  umbrella by inspecting cost totals after Phase A and again after
+  Phase B-0 before launching Phase B-full.
 
 ## Exit criteria
 
