@@ -1,0 +1,81 @@
+{
+  "object": "conversation.response",
+  "conversation_id": "conv_019e47311d94764b88e8e27a561a1be0",
+  "outputs": [
+    {
+      "object": "entry",
+      "type": "tool.execution",
+      "created_at": "2026-05-20T21:01:02.215620Z",
+      "completed_at": "2026-05-20T21:01:03.000648Z",
+      "agent_id": "ag_019e47311d0877d19da4d65de3d811e9",
+      "model": "mistral-large-2512",
+      "id": "tool_exec_019e47311f8774eba512fdfa96127890",
+      "name": "web_search",
+      "arguments": "{\"query\": \"list of coal power plants in Vietnam 2026\"}",
+      "function": "web_search",
+      "info": {}
+    },
+    {
+      "object": "entry",
+      "type": "message.output",
+      "created_at": "2026-05-20T21:01:03.347366Z",
+      "completed_at": "2026-05-20T21:01:05.732135Z",
+      "agent_id": "ag_019e47311d0877d19da4d65de3d811e9",
+      "model": "mistral-large-2512",
+      "id": "msg_019e473123f371ee892d2855eeac023d",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Here are three coal power plants in Vietnam, each with a citation:\n\n1. **Vung Ang II Coal-Fired Power Plant** – Located in Ky Loi, this 1.32 GW ultra-supercritical coal-fired plant was inaugurated in April 2026 and is a joint venture between Mitsubishi Corporation and KEPCO"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant",
+          "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+          "favicon": null,
+          "description": "<strong>Vung Ang II Thermal Power (VAPCO),</strong> the project investor in the 1.32 GW Vung Ang II coal-fired power plant in Ky Loi (Vietnam), has officially inaugurated the project (VietnamNet, 20/04/2026)."
+        },
+        {
+          "type": "text",
+          "text": ".\n\n2. **Duyen Hai Power Plant I & III** – A 2,488 MW thermal power project located in Tra Vinh, developed and owned by Vietnam Electricity"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Top five thermal power plants in operation in Vietnam",
+          "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+          "favicon": null,
+          "description": "The Duyen Hai Power Plant I &amp; III is a 2,488MW thermal power project located in Tra Vinh, Vietnam. Post completion of construction, the project was commissioned in 2016. The project was developed by Vietnam Electricity. Vietnam Electricity own the project. Buy the profile here. The 1,800MW Vinh Tan Coal Fired Power Plant IV thermal power project is located in Binh Thuan, Vietnam."
+        },
+        {
+          "type": "text",
+          "text": ".\n\n3. **Van Phong 1 BOT Coal-Fired Power Plant** – One of Vietnam’s largest coal-fired plants, located near the Phu Khanh oil reservoir, and considered for future biomass co-firing"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Transition pathways for Vietnam’s major coal-thermal power plants | United Nations Development Programme",
+          "url": "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+          "favicon": null,
+          "description": "The <strong>Van Phong 1 BOT Coal-fired Power Plant</strong>, a new and largest coal-firing power plant, is at a convenient location for integrating Solar PV, cofiring biomass, and coal to change to biomass firing completely."
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 176,
+    "completion_tokens": 186,
+    "total_tokens": 5113,
+    "connector_tokens": 4751,
+    "connectors": {
+      "web_search": 1
+    }
+  },
+  "guardrails": null
+}
