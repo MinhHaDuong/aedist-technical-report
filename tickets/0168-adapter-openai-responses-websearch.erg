@@ -8,6 +8,7 @@ Author: claude
 2026-05-14T13:00Z claude note Imagine: PROCEED. Tool name is web_search (not web_search_preview — that is a legacy alias). Pre-call cap = max_output_tokens guard, not a fabricated dollar pre-estimate; verify cost post-call from usage. Default model gpt-5.5 (search + reasoning explicitly co-supported). Capability verified on docs 2026-05-14.
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-05-20T20:30Z HDMX-coding-agent note Action 1 snippet superseded by 0180 — tool name is "web_search" (preview alias removed).
 --- body ---
 ## Context
 
@@ -29,7 +30,8 @@ Python SDK against the Responses endpoint, not OpenRouter.
 1. Add an `openai_agent` driver. The driver:
    - Loads the key from `~/.config/keys/openai.env`.
    - Calls `client.responses.create(...)` with `tools=[{"type":
-     "web_search_preview"}]` (or the current production tool name)
+     "web_search"}]` (the current production tool name; the legacy
+     alias `web_search_preview` is no longer accepted)
      and `reasoning={"effort": "high"}`.
    - Returns: final text, all `web_search_call` items (URLs +
      snippets), reasoning summary if available, per-call cost from
