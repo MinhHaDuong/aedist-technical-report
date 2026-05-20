@@ -1,4 +1,4 @@
-Last updated: 2026-05-15T17:00Z
+Last updated: 2026-05-20T22:10Z
 
 ## North star
 
@@ -20,12 +20,13 @@ Complete exploratory research, freeze the argument and the slides story.
 ## Workplan (set 2026-05-15)
 
 1. **Experiment 1 baseline re-sweep (ticket chain 0174–0178).** Branch `t0174-exp1-baseline` pushed, pending review. Unblocked now: **0175** (lock design — update harness.py _MODULE_ORDER, modules/README.md, experiments.toml, Annex A) and **0176** (reference provenance — write PROVENANCE.md + manuscript paragraph). Blocked: 0177 (45-run sweep) on 0175; 0178 (update manuscript) on 0177.
-2. **Implement the SOTA experiment (slides §4 — Falsify H0: Deep research agents are enough).** Umbrella **0166**, four SOTA agents (Anthropic Opus 4.7 / OpenAI GPT-5.5 / Mistral Large 2512 / Qwen3-Max via DashScope). Phase-5 raid in progress; **work moves to padme** for Wave 2 onwards.
-   - **Wave 1 (done, merged PR #331):** ticket 0172 — RunRecord schema extension. Pydantic `RunRecord` + `ResourceUse` gained 14 optional agent-mode fields; `records_to_metrics()` projects them per ADR-7.
-   - **Wave 2 (ready, padme):** tickets **0167 / 0168 / 0169 / 0173** — four direct-API adapters, parallel. All four blocked-by are now satisfied (0172 merged). Live smokes authorised at $0.50/adapter; 0169 Mistral has a $0.50 pricing-probe pre-gate before its smoke (connector pricing unpublished). 0173 Qwen needs the user to provision a DashScope API key at `~/.config/keys/dashscope.env` before its smoke.
-   - **Wave 3 (after Wave 2):** tickets **0170 / 0171** — Phase A reflexive prompt-design harness + Phase C cross-eval (mechanical Accuracy via existing `evaluate.py` / `metrics.py` / `reconcile.py`; 0–3 anchored rubric; parser-enforced quoted-span check).
-   - **Phase B (queries):** runs after Wave 3 lands, on explicit user authorisation. Budget cap ~$140 total.
-   - Full implementation specs: `tickets/0166-raid-plans.md`. Each adapter ticket has its log-entry with Imagine refinements applied.
+2. **Implement the SOTA experiment (slides §4 — Falsify H0: Deep research agents are enough).** Umbrella **0166**, four SOTA agents (Anthropic Opus 4.6 / OpenAI GPT-5.5 / Mistral Large 2512 / Qwen3-Max via DashScope).
+   - **Wave 1 (done, PR #331):** ticket 0172 — RunRecord schema extension.
+   - **Wave 2 (DONE 2026-05-20, PRs #350/#351/#353/#352):** tickets 0167/0168/0169/0173 — four direct-API adapters merged. All 4 live smokes recorded ($0.235 total / cap $2.00, 49 citations across the wave). Adapter surface inconsistency to flag for Phase A (0170): Anthropic exposes `dispatch`+`main`; the 3 others expose `build_request`/`parse_response`/`run`.
+   - **Next: ticket 0185 (interactive smoke for Exp 2)** — author-gated PRESS-SPACE walkthrough of Phase A+B on one agent at a time, starting Mistral (cheapest at $0.025 baseline). Validates meta-prompt + designed prompt + Phase B response before automating via 0170.
+   - **Wave 3:** tickets 0170 (Phase A harness) + 0171 (Phase C cross-eval rubric, 0-3 anchored). 0170 informed by 0185 traces.
+   - **Phase B (queries):** after Wave 3 + 0185 validation. Budget cap ~$140 total.
+   - **Follow-ups from Wave 2:** 0186 (`erg next-id` cross-worktree fix), 0187 (Qwen adapter: ADR-7 method_params + cost cap default + dashscope pin).
 3. Implement the prototype described in synopsis (the stateful-agentic v1, synopsis §5). Not yet ticketed; opens after Wave 3 lands and Phase B has run.
 
 ## Backlog
