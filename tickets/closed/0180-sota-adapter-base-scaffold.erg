@@ -1,0 +1,100 @@
+%erg 0.1
+Title: SOTA adapter base scaffold + sota_smoke dir + fix 0167/0168 spec drift
+Created: 2026-05-20
+Author: claude
+Closed: autoclosed — PR #337
+
+--- log ---
+2026-05-20T20:00Z claude created
+
+2026-05-20T19:41Z HDMX-coding-agent closed — autoclosed — PR #337
+--- body ---
+## Context
+
+Wave-2 prerequisite for the four SOTA-agent adapters (0167 Anthropic,
+0168 OpenAI Responses, 0169 Mistral Agents, 0173 Qwen DashScope) under
+umbrella 0166. Without this scaffold, four parallel adapter PRs will
+re-invent the same protocol shape, cost-cap math, and dry-run printer
+three or four different ways. Cheap to land first, expensive to
+unify after the fact.
+
+Also folds in two stale spec corrections to 0167 and 0168 that an
+implementer would otherwise follow into a broken first call.
+
+This PR is **tooling only**. No live API calls, no smoke run, no
+adapter implementations. Just the shared surface area.
+
+## Actions
+
+1. **`src/aedist/adapter_base.py`** — one file, no external deps beyond
+   pydantic. Contains:
+   - `AgentAdapter` Protocol declaring `build_request(prompt, *,
+     model, max_tokens, **opts) -> dict`, `parse_response(resp,
+     model_meta) -> RunRecord`, `run(prompt, *, dry_run, ...) ->
+     RunRecord`. Adapters 0167/0168/0169/0173 implement this Protocol.
+   - `estimate_call_cost(*, max_tokens, price_in, price_out,
+     n_searches=0, price_per_search=0.0) -> float` — pre-call upper
+     bound used by the $10 cap. Pure function, fully unit-testable.
+   - `enforce_cost_cap(estimated_usd, cap_usd=10.0)` — raises
+     `CostCapExceeded` with a clear message naming both numbers.
+   - `format_dry_run(payload: dict) -> str` — canonical JSON pretty-print
+     of the assembled request, with key ordering stable across adapters
+     so dry-run diffs are readable.
+   - `CostCapExceeded` exception type.
+
+2. **`experiments/outputs/sota_smoke/`** — create the directory with a
+   short `README.md` describing its purpose (smoke + probe artifacts
+   from adapters 0167/0168/0169/0173, NOT batch runs) and the filename
+   convention (`<agent>_<YYYYMMDDTHHMMZ>.json`).
+
+3. **Fix `tickets/0167-adapter-anthropic-web-thinking.erg` Action 1
+   wording**: replace the `thinking={"type": "enabled",
+   "budget_tokens": ...}` snippet with `thinking={"type": "adaptive",
+   "display": "summarized"}`. Update the `tools=` snippet to
+   `tools=[{"type": "web_search_20250305", "name": "web_search",
+   "max_uses": N}]`. Append a one-line log entry noting the
+   correction supersedes the body text. This brings the body in sync
+   with the 2026-05-14 log note (Opus 4.7 rejects the old form).
+
+4. **Fix `tickets/0168-adapter-openai-responses-websearch.erg` Action 1
+   wording**: replace `"web_search_preview"` with `"web_search"` in the
+   inline code snippet. Append a one-line log entry noting the
+   correction supersedes the body text. Brings body in sync with the
+   2026-05-14 log note (preview is the legacy alias).
+
+## Test
+
+`tests/test_adapter_base.py` (unit, no network):
+
+- `estimate_call_cost` arithmetic: trivial case (no searches),
+  search-only case, mixed case. Use asymmetric numbers so swapped
+  operands would fail.
+- `enforce_cost_cap` raises with both numbers in the message when
+  exceeded; returns silently when below cap.
+- `format_dry_run` output is deterministic (same input → same string)
+  and key-ordered.
+- Protocol conformance: a tiny in-test stub adapter implementing the
+  Protocol passes `isinstance(stub, AgentAdapter)` (use
+  `@runtime_checkable` on the Protocol).
+
+No subprocess, no sleep. Pure unit. Belongs in `make check-fast`.
+
+## Exit criteria
+
+- `src/aedist/adapter_base.py` exists and is importable.
+- `experiments/outputs/sota_smoke/README.md` exists.
+- `tests/test_adapter_base.py` passes locally.
+- Tickets 0167 and 0168 body text reflects the validated 2026-05-14
+  call shape. Log entries record the supersession.
+- No new dependencies in `pyproject.toml`.
+- PR body links 0166 umbrella and notes "Wave-2 prerequisite — unblocks
+  parallel 0167/0168/0169/0173 implementation".
+
+## Notes
+
+- This ticket is **scaffold only**. Do NOT begin any adapter
+  implementation here. Adapter PRs land separately against
+  0167/0168/0169/0173 once this scaffold merges.
+- The Protocol is intentionally minimal. Resist the urge to add
+  retry/backoff/rate-limit primitives now — let the first concrete
+  adapter surface the real needs.
