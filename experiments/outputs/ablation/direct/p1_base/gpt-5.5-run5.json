@@ -1,0 +1,25 @@
+{
+  "model": "openai/gpt-5.5",
+  "date": "2026-05-20",
+  "run": 5,
+  "response": "I can’t honestly produce a **complete, primary-sourced** inventory with document locations and URLs under the constraints here.\n\nI don’t have web-search access, and I should not fabricate or guess URLs or source locations. For this request, accuracy depends on checking current Vietnamese primary sources such as:\n\n- **PDP8 / Power Development Plan VIII** — Decision No. 500/QĐ-TTg and implementation plan decisions.\n- **PDP7 revised** — Decision No. 428/QĐ-TTg.\n- Ministry of Industry and Trade / Government Office decisions and project approvals.\n- EVN / PV Power / Vinacomin / provincial investor disclosures.\n- BOT project company releases and government approval documents.\n- Retirement/cancellation/suspension notices for coal and gas projects.\n- COD confirmations from owners, EVN, NLDC, or government sources.\n\nBecause the table you request requires **every past, present and future Vietnamese thermal asset >30 MWe**, with **status, COD, technology, unit configuration, owner/developer, and two primary sources with exact document locations and URLs**, I would need verified source documents in front of me.\n\nIf you can provide any of the following, I can produce the Markdown table exactly in your requested format:\n\n1. PDFs or links to PDP8 and PDP8 implementation plan documents.  \n2. PDFs or links to PDP7 revised and earlier PDP documents if retired/cancelled assets are needed.  \n3. A source pack of EVN, PV Power, Vinacomin, PetroVietnam, MOIT, and project-company pages.  \n4. Permission to work from a non-primary preliminary list that you provide, which I can structure and flag for verification.\n\nI can also provide a **blank Markdown template** or a **non-sourced preliminary plant list from general knowledge**, but it would not meet your stated requirement of being a complete, primary-sourced reference inventory.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 234,
+    "completion_tokens": 908
+  },
+  "wall_seconds": 23.014,
+  "cost_usd": 0.014205,
+  "temperature": 0.0,
+  "seed": 42,
+  "max_tokens": 32768,
+  "model_metadata": {
+    "size_class": "frontier",
+    "country": "US",
+    "architecture": "dense",
+    "provider": "OpenAI",
+    "context_window": 1050000
+  },
+  "prompt": "## Goal\n\nProduce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30MWe) structured as follows:\n\n## Structured power plants table\n\nTabulate for every thermal power plant in Vietnam:\n\n| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 | Notes |\n\nWhere:\n- Fuel: Coal / Domestic gas / Imported LNG\n- Technology (coal): Subcritical / Supercritical / USC\n- Technology (gas): CCGT / OCGT\n- Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired\n- Total MWe: Include units > 30MWe.\n- COD: Actual or expected commercial operation date\n- Sources: specify where in the document, include URL\n\nOutput format: Markdown.",
+  "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+}

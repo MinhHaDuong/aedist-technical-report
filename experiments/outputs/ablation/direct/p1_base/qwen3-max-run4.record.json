@@ -1,0 +1,31 @@
+{
+  "run_id": "9c77f3664be9",
+  "timestamp": "2026-05-20T21:27:36.909765Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen/qwen3-max",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 262144,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "reasoning_effort": "minimal",
+      "seed": 42
+    }
+  },
+  "resource_use": {
+    "wall_s": 14.111,
+    "cost_usd": 0.00187824,
+    "tokens_in": 243,
+    "tokens_out": 433
+  },
+  "result_file": "experiments/outputs/ablation/direct/p1_base/qwen3-max-run4.json",
+  "result_summary": {
+    "status": "refusal"
+  }
+}

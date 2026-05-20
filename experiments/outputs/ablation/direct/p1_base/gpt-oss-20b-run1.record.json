@@ -1,0 +1,39 @@
+{
+  "run_id": "eccc5d71f38b",
+  "timestamp": "2026-05-20T21:25:29.912865Z",
+  "method": "direct",
+  "method_params": {
+    "model": "openai/gpt-oss-20b",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "OpenAI",
+      "context_window": 131072,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "reasoning_effort": "minimal",
+      "seed": 42
+    }
+  },
+  "resource_use": {
+    "wall_s": 200.957,
+    "cost_usd": 0.0014448500000000001,
+    "tokens_in": 285,
+    "tokens_out": 7153
+  },
+  "result_file": "experiments/outputs/ablation/direct/p1_base/gpt-oss-20b-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 65,
+    "tp": 65,
+    "fp": 0,
+    "fn": 98,
+    "f1": 0.5702,
+    "fuel_accuracy": 0.0462,
+    "status_accuracy": 0.1077,
+    "province_accuracy": 0.1077
+  }
+}

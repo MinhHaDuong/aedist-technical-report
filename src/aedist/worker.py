@@ -185,7 +185,9 @@ class Worker:
         output_dir = Path(job.output_dir)
 
         if job.model_filter:
-            models = [m for m in models if job.model_filter in m["name"]]
+            # Exact match: substring matching causes silent model-collision bugs
+            # (e.g. filter "qwen/qwen3-max" otherwise picks "qwen/qwen3-max-thinking").
+            models = [m for m in models if m["name"] == job.model_filter]
         if not models:
             raise ValueError(f"No model matched filter {job.model_filter!r}")
         model_entry = models[0]
@@ -832,3 +834,7 @@ def main(argv=None):
             log.info("No pending jobs.")
         else:
             log.info("Completed job, method=%s", record.method)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,30 +1,43 @@
 %erg 0.1
-Title: Run Experiment 1 production sweep (45 runs)
+Title: Run Experiment 1 production sweep (85 runs)
 Created: 2026-05-15
 Author: claude
 
 --- log ---
 2026-05-15T14:05Z claude created
-
 2026-05-20T18:57Z HDMX-coding-agent note blocker 0175 closed — Blocked-by removed.
+2026-05-20T20:18Z HDMX-coding-agent note smoke PASS — mistral-small-2603, finish_reason=stop, completion_tokens=7009, cost=$0.0042, system_instruction propagated, seed=42, max_tokens=32768
+2026-05-20T21:25Z HDMX-coding-agent note full sweep COMPLETE — 85/85 runs (17 models × 5 reps), 4 refusals (3 parse-error: gpt-5.5-run5, qwen3-max run2/4; 1 status=refusal: deepseek-v4-flash:free-run1), 9 length-truncations (5× qwen3.5-flash-02-23, 3× deepseek-v4-flash:free@4096 provider cap, 1× qwen3.6-27b), total spend $3.159, longest completion_tokens=114693 (qwen3.5-flash-02-23 run1). Opus 4.6 length-truncations=0 (no regression).
+2026-05-20T21:26Z HDMX-coding-agent note spot-check: highest F1=0.760 (gpt-oss-20b run4, 100 plants extracted); lowest valid F1=0.012 (gpt-5.5 run4, emitted 1 plant only); parse-error (gpt-5.5 run5, status=refusal — output had no recognizable plant-name column).
 --- body ---
 ## Context
 
 Once design is locked (ticket 0175), run the full sweep:
-9 models × 5 repeats = 45 runs, temperature=0, base.txt prompt.
+17 models × 5 repeats = 85 runs, temperature=0, seed=42, max_tokens=32768,
+base.txt prompt, locked system_instruction (parametric, no web).
+Journal model set: 3 Anthropic + 3 OpenAI + 3 Mistral + 6 Qwen + 2 DeepSeek.
 
 ## Actions
 
 1. Confirm preflight passes: `make -C experiments preflight`
-2. Run: `make -C experiments sweep_ablation_p1_direct_base`
-   (or the upgraded sweep name if renamed in 0175)
-3. Monitor for refusals, parse errors, truncation — record counts in log
-4. Run `make -C experiments rebuild-measurements` to ingest results
-5. Spot-check 3 runs manually: one high-F1, one low-F1, one refusal/error
+2. Smoke: one model × repeat=1 (mistral-small-2603) to verify finish_reason=stop,
+   max_tokens/seed/system_instruction propagated, parse OK.
+3. Generate jobs: `uv run python -m aedist.manager generate --sweep
+   sweep_ablation_p1_direct_base --experiments experiments.toml`
+   — assert exactly 85 jobs queued (17 × 5).
+4. Drain with OR_MAX=8 parallel openrouter workers.
+5. Monitor for refusals, parse errors, truncation. Specifically watch Opus 4.6
+   — any finish_reason=length is a regression (escalate).
+6. Run `make -C experiments rebuild-measurements` to ingest results.
+7. Spot-check 3 runs manually: one high-F1, one low (non-null) F1, one
+   refusal/parse-error if any.
 
 ## Exit criteria
 
-- [ ] 45 run files in `experiments/outputs/ablation/direct/p1_base/`
-- [ ] All runs in `measurements.jsonl` with `prompt_version = "p1_base"`
-- [ ] Refusal/error count logged here
+- [ ] 85 run files in `experiments/outputs/ablation/direct/p1_base/`
+- [ ] All 85 runs in `measurements.jsonl` with `prompt_version = "p1_base"`
+      and `max_tokens=32768` recorded per row
+- [ ] Refusal/parse-error/length-truncation counts logged here
 - [ ] Spot-check passed (3 runs reviewed)
+- [ ] Per-model cost table in PR body
+- [ ] Total spend ≤ $15 (budget cap)

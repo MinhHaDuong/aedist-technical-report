@@ -498,6 +498,45 @@ def test_openrouter_full_lifecycle(tmp_path: Path) -> None:
     assert record.resource_use.tokens_out == 100
 
 
+def test_model_filter_uses_exact_match(tmp_path: Path) -> None:
+    """model_filter must match by exact equality, not substring containment.
+
+    Ticket 0177 regression: filter ``qwen/qwen3-max`` previously matched both
+    ``qwen/qwen3-max`` and ``qwen/qwen3-max-thinking`` and silently picked
+    whichever came first in models.yaml.
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List plants")
+
+    job = JobSpec(
+        job_id="exact-match",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen/qwen3-max",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    patches = _harness_patches(tmp_path)
+    patches["load_models"] = MagicMock(
+        return_value=[
+            {"name": "qwen/qwen3-max-thinking"},
+            {"name": "qwen/qwen3-max"},
+        ]
+    )
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    call_args = patches["query_single_turn"].call_args[0]
+    assert call_args[1] == "qwen/qwen3-max"
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["model"] == "qwen/qwen3-max"
+
+
 # ---------------------------------------------------------------------------
 # Mode dispatch tests (Ticket 0023)
 # ---------------------------------------------------------------------------
