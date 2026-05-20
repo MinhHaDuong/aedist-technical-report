@@ -16,7 +16,6 @@ dependencies = [
     "openai>=1.0",
     "pyyaml",
     "matplotlib>=3.8",
-    "mistralai>=1.0",
     "numpy>=1.24",
     "scipy>=1.10",
 ]
