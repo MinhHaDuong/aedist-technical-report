@@ -1,0 +1,83 @@
+%erg 0.1
+Title: Qwen adapter follow-ups — ADR-7 metrics, cost cap default, dashscope pin
+Created: 2026-05-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-20T23:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Three non-blocking findings raised during PR #352 (ticket 0173)
+second-round verify, pre-existing in the WIP commit and inherited
+through the merge. Not regressions, but worth closing.
+
+## Relevant files
+
+- `src/aedist/adapter_qwen_dashscope.py` — parse_response, cost cap default
+- `pyproject.toml` — `dashscope>=1.20` line (no upper pin)
+- `src/aedist/schema.py` — RunRecord.method_params for ADR-7 reference
+
+## Actions
+
+1. **Thread call-site values into method_params.extra** (not literals).
+   `parse_response` currently writes `enable_thinking=True` and
+   `enable_search=True` into `method_params.extra` as hardcoded
+   literals. If a future caller invokes the adapter with either
+   disabled, the record will misreport the actual run conditions
+   (violates ADR-7: "metrics dict is the complete scientific record").
+   Fix: pass the actual call-site values through.
+
+2. **Align cost_cap_usd default with ticket cap.** Adapter default is
+   `cost_cap_usd=0.50`. Ticket 0173 specifies `$10` cap per call (same
+   as sibling adapters 0167/0168/0169). Smoke happens to be ≤$0.50 by
+   the canonical prompt + max_tokens choice, but the cap is a separate
+   guardrail. Raise default to `10.0` or wire it from a config; do
+   NOT silently allow $10 calls under a $0.50 default.
+
+3. **Pin dashscope upper bound.** Currently `dashscope>=1.20` —
+   floor only. Add a sane upper, e.g. `dashscope>=1.20,<2.0` to
+   prevent surprise major-version upgrade.
+
+## Test
+
+`tests/test_adapter_qwen_dashscope.py`:
+- New `test_method_params_extra_reflects_call_site_args` — call
+  `parse_response` on a fixture that was generated with
+  `enable_thinking=False` (i.e. minimal reasoning-tokens), assert
+  `record.method_params.extra["enable_thinking"] == False`.
+  Repeat for `enable_search=False`.
+- New `test_default_cost_cap_matches_ticket_spec` — read the module's
+  `DEFAULT_COST_CAP_USD` (or equivalent), assert `== 10.0`.
+
+## Verification
+
+- [ ] parse_response surfaces actual call-site flags, verified by test.
+- [ ] cost_cap_usd default raised, all sibling adapters checked for
+      the same drift class.
+- [ ] dashscope upper-bound pin landed in pyproject.toml + uv.lock
+      regenerated.
+- [ ] No change in adapter behaviour for existing callers (smoke
+      output regression-free against `qwen_1a3a34a9f1bb.json`).
+
+## Invariants
+
+- Existing smoke artifact `experiments/outputs/sota_smoke/qwen_1a3a34a9f1bb.json`
+  remains a valid regression baseline.
+- No new API calls during this fix (offline-only change).
+
+## Exit criteria
+
+- Three sub-fixes landed, tests green, ruff clean.
+- Sister adapters (0167/0168/0169) audited for the same patterns and
+  fixed in the same PR if applicable (most likely 0168 cost_cap_usd
+  default — check during audit).
+
+## Notes
+
+- Discovered during verify on PR #352 (commit `291f8b3`, fix +
+  re-verify pass). Verify recommended NOT to block merge of #352;
+  this ticket carries the work forward.
+- Audit scope: limit to direct-API adapters under `src/aedist/`
+  (anthropic / openai / mistral / qwen).
