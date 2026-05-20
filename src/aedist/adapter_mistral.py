@@ -104,6 +104,13 @@ def build_request(
     future per-call settings (e.g. ``temperature``); unknown keys are
     ignored so the adapter remains forward-compatible with raid-plan
     callers that pass extra metadata.
+
+    Note on ``max_tokens``: empirically (2026-05-20 derisk) the
+    ``POST /v1/conversations`` endpoint *rejects* ``max_tokens`` with
+    HTTP 422 ("Extra inputs are not permitted"). It must be set at
+    agent-create time (``completion_args.max_tokens``) rather than per
+    conversation. We therefore push the cap into the agent body and
+    leave the conversation body free of it.
     """
     del opts  # reserved for future overrides; intentionally unused
     agent_body = {
@@ -111,11 +118,11 @@ def build_request(
         "name": "aedist-sota-agent",
         "description": "AEDIST SOTA experiment agent with web_search connector.",
         "tools": [{"type": "web_search"}],
+        "completion_args": {"max_tokens": max_tokens},
     }
     conversation_body = {
         "agent_id": "<assigned-after-agent-create>",
         "inputs": [{"role": "user", "content": prompt}],
-        "max_tokens": max_tokens,
     }
     return {
         "agent_create": {"method": "POST", "path": "/v1/agents", "body": agent_body},

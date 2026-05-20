@@ -24,6 +24,7 @@ from aedist.adapter_mistral import (
     DEFAULT_MODEL,
     build_request,
     parse_response,
+    run,
 )
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "mistral_conversation_response.json"
@@ -44,6 +45,35 @@ def fixture_response() -> dict:
     return json.loads(FIXTURE_PATH.read_text())
 
 
+def test_run_dry_run_short_circuits_before_network():
+    """The dry-run branch of ``run()`` must construct a RunRecord without
+    any HTTP call. We assert on the record's structure — if httpx were
+    invoked, no `MISTRAL_API_KEY` is set in the test environment so the
+    call would either fail at SystemExit or attempt a real request.
+
+    This closes the coverage hole: the eight other tests exercise
+    ``build_request`` and ``parse_response`` in isolation but never
+    cross the ``run()`` entry point's dry-run early-return.
+    """
+    record = run(
+        "hello",
+        dry_run=True,
+        model_meta={
+            "model_id": DEFAULT_MODEL,
+            "price_per_mtok_in": 0.5,
+            "price_per_mtok_out": 1.5,
+            "price_per_web_search_call_usd": 0.025,
+        },
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+    )
+    assert record.agent_family == AGENT_FAMILY
+    assert record.agent_mode == "smoke"
+    assert record.method_params.extra == {"dry_run": True}
+    assert record.method_params.model == DEFAULT_MODEL
+
+
 # ---------------------------------------------------------------------------
 # build_request
 # ---------------------------------------------------------------------------
@@ -57,6 +87,10 @@ def test_build_request_emits_agent_create_with_web_search_tool():
     body = create["body"]
     assert body["model"] == DEFAULT_MODEL
     assert body["tools"] == [{"type": "web_search"}]
+    # max_tokens belongs in completion_args at agent-create time — the
+    # /v1/conversations endpoint rejects it as "Extra inputs are not
+    # permitted" (verified 2026-05-20 against the live API).
+    assert body["completion_args"]["max_tokens"] == 600
 
 
 def test_build_request_emits_conversation_with_agent_id_placeholder_and_inputs():
@@ -70,7 +104,9 @@ def test_build_request_emits_conversation_with_agent_id_placeholder_and_inputs()
     # marked placeholder, not an empty string that hides the contract.
     assert body["agent_id"] == "<assigned-after-agent-create>"
     assert body["inputs"] == [{"role": "user", "content": "hello world"}]
-    assert body["max_tokens"] == 600
+    # max_tokens is NOT a conversation-level field on Mistral Agents API
+    # (it lives in agent.completion_args; see above test).
+    assert "max_tokens" not in body
 
 
 def test_build_request_declares_delete_path():

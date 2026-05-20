@@ -147,6 +147,34 @@
   license: open-apache
   web_search: true
 
+# Adapter 0169 (umbrella 0166) — Mistral Agents API path, native web_search connector.
+# Routed direct to Mistral (not OpenRouter) so the web_search connector tokens are
+# surfaced discretely in the response usage block. Driver: src/aedist/adapter_mistral.py.
+# HTTP shape verified 2026-05-20; per-call cost on this model empirically ~€0.01–0.03.
+- name: "mistral-large-2512"
+  family: mistral-direct
+  route: mistral-agents
+  base_url: "https://api.mistral.ai"
+  model_id: "mistral-large-2512"
+  env_key: MISTRAL_API_KEY
+  display_name: "Mistral Large 3 (Agents API)"
+  provider: Mistral
+  country: FR
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.5
+  price_per_mtok_out: 1.5
+  # Connector pricing: empirical bound from the 2026-05-20 derisk probe. Flat per-call
+  # is the simpler shape; if Mistral publishes a per-connector-token rate, swap to
+  # `price_per_connector_mtok` (the adapter's `_compute_costs` handles either).
+  price_per_web_search_call_usd: 0.025
+  params: "675B MoE (41B active)"
+  size_class: frontier
+  license: open-apache
+  web_search: true
+  # prices_verified: 2026-05-20 — token rates mirror the openrouter entry above;
+  #   connector rate is an empirical bound. Refine from invoice after Phase B.
+
 - name: "moonshotai/kimi-k2-thinking"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"
