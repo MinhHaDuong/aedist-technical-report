@@ -1,0 +1,396 @@
+match_type,reference_name,system_name,reference_province,system_province,reference_fuel,system_fuel,reference_capacity_mwe,system_capacity_mwe,capacity_diff_pct,fuel_match,status_match,province_match,reference_source_ref,system_source_ref,similarity_score
+exact_capacity_diff,An Khánh - Bac Giang,Nhà máy Điện Đạm Đạm 34,bac giang,bac lieu,coal,coal,650.0,0.0,100.0,True,False,False,,,50.0
+exact_capacity_diff,An Khánh 1,Nhà máy Điện Phú Tân,thai nguyen,an giang,coal,coal,116.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Bà Rịa GT,Nhà máy Điện Cà Ná 2,ba ria - vung tau,ninh thuan,gas,gas,46.0,0.0,100.0,True,True,False,,,53.333333333333336
+exact_capacity_diff,Bạc Liêu 1,Nhà máy Điện Đạm Đạm 57,bac lieu,bac lieu,coal,coal,1200.0,0.0,100.0,True,True,True,,,50.0
+exact_capacity_diff,Cam Pha 3,Nhà máy Điện Đạm Đạm 15,quang ninh,bac lieu,coal,coal,440.0,0.0,100.0,True,False,False,,,55.55555555555556
+exact_capacity_diff,Cao Ngạn,Nhà máy Điện Đạm Cà Mau,thai nguyen,ca mau,coal,gas,114.0,0.0,100.0,False,True,False,,,57.14285714285714
+exact_capacity_diff,Cong Thanh,Nhà máy Điện Đạm Đạm 24,thanh hoa,bac lieu,coal,coal,600.0,0.0,100.0,True,True,False,,,46.15384615384615
+exact_capacity_diff,Cà Mau I,Nhà máy Điện Đạm Đạm 50,ca mau,bac lieu,gas,coal,771.0,0.0,100.0,False,False,False,,,62.5
+exact_capacity_diff,Cà Mau II,Nhà máy Điện Đạm Đạm 51,ca mau,bac lieu,gas,coal,771.0,0.0,100.0,False,False,False,,,62.5
+exact_capacity_diff,Cẩm Phả 1,Nhà máy Điện Đạm Đạm 12,quang ninh,bac lieu,coal,coal,340.0,0.0,100.0,True,False,False,,,66.66666666666667
+exact_capacity_diff,Cẩm Phả 2,Nhà máy Điện Đạm Đạm 13,quang ninh,bac lieu,coal,coal,340.0,0.0,100.0,True,False,False,,,55.55555555555556
+exact_capacity_diff,Dong Nai Formosa,Nhà máy Điện Đạm Đạm,đong nai,bac lieu,coal,coal,150.0,0.0,100.0,True,False,False,,,45.45454545454546
+exact_capacity_diff,Dong Nai Formosa,Nhà máy Điện Đạm Đạm 8,đong nai,bac lieu,coal,coal,300.0,0.0,100.0,True,False,False,,,45.45454545454546
+exact_capacity_diff,Duc Giang - Lao Cai Chemical,Nhà máy Điện Cà Mau,lao cai,ca mau,coal,imported gas,100.0,0.0,100.0,False,False,False,,,47.05882352941176
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase I,Nhà máy Điện Đạm Đạm 109,quang ngai,bac lieu,coal,coal,2400.0,0.0,100.0,True,False,False,,,38.095238095238095
+exact_capacity_diff,Dung Quat Special Economic Zone (J-Power) Phase II,Nhà máy Điện Đạm Đạm 105,quang ngai,bac lieu,coal,coal,2000.0,0.0,100.0,True,False,False,,,33.333333333333336
+exact_capacity_diff,Duyen Hai 1,Nhà máy Điện Đạm Đạm 81,tra vinh,bac lieu,coal,coal,1244.0,0.0,100.0,True,False,False,,,54.54545454545454
+exact_capacity_diff,Duyen Hai 2,Nhà máy Điện Đạm Đạm 25,tra vinh,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,54.54545454545454
+exact_capacity_diff,Duyen Hai 3,Nhà máy Điện Đạm Đạm 82,tra vinh,bac lieu,coal,coal,1244.0,0.0,100.0,True,False,False,,,54.54545454545454
+exact_capacity_diff,Duyen Hai 3 Extension,Nhà máy Điện Đạm Đạm 36,tra vinh,bac lieu,coal,coal,660.0,0.0,100.0,True,False,False,,,42.42424242424242
+exact_capacity_diff,Duyên Hải 2,Nhà máy Điện Đạm Đạm 58,tra vinh,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,54.54545454545454
+exact_capacity_diff,Formosa HT2,Nhà máy Điện Đạm Đạm 35,ha tinh,bac lieu,coal,coal,650.0,0.0,100.0,True,False,False,,,31.57894736842105
+exact_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Nhà máy Điện Đạm Đạm 18,ha tinh,bac lieu,coal,coal,450.0,0.0,100.0,True,False,False,,,46.15384615384615
+exact_capacity_diff,Ha Tinh Formosa Plastics Steel Complex,Nhà máy Điện Đạm Đạm 19,ha tinh,bac lieu,coal,coal,450.0,0.0,100.0,True,False,False,,,46.15384615384615
+exact_capacity_diff,Hai Duong,Nhà máy Điện Đạm Đạm 59,hai duong,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,46.15384615384615
+exact_capacity_diff,Hai Ha CHP Phase 1,Nhà máy Điện Đạm Đạm 2,quang ninh,bac lieu,coal,coal,150.0,0.0,100.0,True,False,False,,,45.714285714285715
+exact_capacity_diff,Hai Ha CHP Phase 2,Nhà máy Điện Đạm Đạm 41,quang ninh,bac lieu,coal,coal,750.0,0.0,100.0,True,False,False,,,45.714285714285715
+exact_capacity_diff,Hai Ha CHP Phase 3,Nhà máy Điện Đạm Đạm 26,quang ninh,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,45.714285714285715
+exact_capacity_diff,Hai Ha CHP Phase 4,Nhà máy Điện Đạm Đạm 27,quang ninh,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,45.714285714285715
+exact_capacity_diff,Hai Phong 1,Nhà máy Điện Đạm Đạm 28,hai phong,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,Hai Phong 2,Nhà máy Điện Đạm Đạm 29,hai phong,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,Hai Phong 3,Nhà máy Điện Đạm Đạm 60,hai phong,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,Hải Phòng,Nhà máy Điện Đạm Đạm 23,hai phong,bac lieu,gas,coal,500.0,0.0,100.0,False,False,False,,,46.15384615384615
+exact_capacity_diff,LNG Bà Rịa 2,Nhà máy Điện Đạm Đạm 61,ba ria - vung tau,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Bình Định,Nhà máy Điện Đạm Đạm 138,binh đinh,bac lieu,gas,coal,5000.0,0.0,100.0,False,False,False,,,46.15384615384615
+exact_capacity_diff,LNG Bạc Liêu,Nhà máy Điện Đạm Đạm 121,bac lieu,bac lieu,gas,coal,3200.0,0.0,100.0,False,False,True,,,50.0
+exact_capacity_diff,LNG Bến Tre,Nhà máy Điện Đạm Đạm 112,ben tre,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,LNG Chân Mây,Nhà máy Điện Đạm Đạm 126,hue,bac lieu,gas,coal,4000.0,0.0,100.0,False,False,False,,,80.0
+exact_capacity_diff,LNG Cà Mau 1,Nhà máy Điện Đạm Đạm 88,ca mau,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,62.5
+exact_capacity_diff,"LNG Cà Mau 2,3",Nhà máy Điện Đạm Đạm 113,ca mau,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,55.55555555555556
+fuzzy_capacity_diff,LNG Cà Ná,Nhà máy Điện Cà Ná 1,ninh thuan,ninh thuan,gas,gas,1500.0,0.0,100.0,True,False,True,,,100.0
+exact_capacity_diff,LNG Cà Ná II+III,Nhà máy Điện Đạm Đạm 129,ninh thuan,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,55.55555555555556
+exact_capacity_diff,LNG Cái Mép Hạ,Nhà máy Điện Đạm Đạm 139,ba ria - vung tau,bac lieu,gas,coal,6000.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Hiệp Phước (phase I),Nhà máy Điện Đạm Đạm 62,tp ho chi minh,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,30.000000000000004
+exact_capacity_diff,LNG Hiệp Phước (phase II),Nhà máy Điện Đạm Đạm 89,tp ho chi minh,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,30.000000000000004
+exact_capacity_diff,LNG Hà Tĩnh,Nhà máy Điện Đạm Đạm 140,ha tinh,bac lieu,gas,coal,6000.0,0.0,100.0,False,False,False,,,57.14285714285714
+exact_capacity_diff,LNG Hải Lăng,Nhà máy Điện Đạm Đạm 90,quang tri,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,57.14285714285714
+exact_capacity_diff,LNG Hải Lăng (2 and 3),Nhà máy Điện Đạm Đạm 130,quang tri,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,57.14285714285714
+exact_capacity_diff,LNG Hải Phòng 1 (Tiên Lãng),Nhà máy Điện Đạm Đạm 131,hai phong,bac lieu,coal,coal,4500.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,LNG Hải Phòng 2 (Cát Hải),Nhà máy Điện Đạm Đạm 101,hai phong,bac lieu,coal,coal,1600.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,LNG Hải Phòng 3 (Cát Hải),Nhà máy Điện Đạm Đạm 132,hai phong,bac lieu,coal,coal,4500.0,0.0,100.0,True,False,False,,,42.10526315789473
+exact_capacity_diff,LNG Hải Phòng 4 (Đồ Sơn),Nhà máy Điện Đạm Đạm 133,hai phong,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,42.10526315789473
+exact_capacity_diff,LNG Long An I,Nhà máy Điện Đạm Đạm 91,long an,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Long An I phase 2,Nhà máy Điện Đạm Đạm 92,long an,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,48.275862068965516
+exact_capacity_diff,LNG Long An II,Nhà máy Điện Đạm Đạm 93,long an,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,47.05882352941176
+exact_capacity_diff,LNG Long An II phase 2,Nhà máy Điện Đạm Đạm 94,long an,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,41.379310344827594
+exact_capacity_diff,LNG Long Sơn,Nhà máy Điện Đạm Đạm 63,ba ria - vung tau,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,33.333333333333336
+exact_capacity_diff,LNG Long Sơn II+III,Nhà máy Điện Đạm Đạm 122,ba ria - vung tau,bac lieu,gas,coal,3200.0,0.0,100.0,False,False,False,,,33.333333333333336
+exact_capacity_diff,LNG Long Sơn IV (địa điểm Tây),Nhà máy Điện Đạm Đạm 125,ba ria - vung tau,bac lieu,gas,coal,3600.0,0.0,100.0,False,False,False,,,33.333333333333336
+exact_capacity_diff,LNG Mũi Kê Gà 1,Nhà máy Điện Đạm Đạm 64,binh thuan,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,45.45454545454546
+exact_capacity_diff,"LNG Mũi Kê Gà 2,3",Nhà máy Điện Đạm Đạm 110,binh thuan,bac lieu,gas,coal,2400.0,0.0,100.0,False,False,False,,,46.15384615384615
+exact_capacity_diff,LNG Mỹ Giang,Nhà máy Điện Đạm Đạm 141,khanh hoa,bac lieu,gas,coal,6000.0,0.0,100.0,False,False,False,,,62.5
+fuzzy_capacity_diff,LNG Nghi Sơn (Thanh Hóa),Nhà máy Điện Nghi Sơn,thanh hoa,thanh hoa,gas,coal,5000.0,0.0,100.0,False,False,True,,,100.0
+exact_capacity_diff,LNG Nhơn Trạch 3,Nhà máy Điện Đạm Đạm 42,đong nai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Nhơn Trạch 4,Nhà máy Điện Đạm Đạm 43,đong nai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Núi Thành (Quảng Nam),Nhà máy Điện Đạm Đạm 123,quang nam,bac lieu,gas,coal,3200.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Phong Điền – Huế,Nhà máy Điện Đạm Đạm 114,hue,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Phú Mỹ 3.1,Nhà máy Điện Đạm Đạm 52,ba ria - vung tau,bac lieu,gas,coal,850.0,0.0,100.0,False,False,False,,,55.55555555555556
+exact_capacity_diff,LNG Quảng Bình,Nhà máy Điện Đạm Đạm 115,quang binh,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,40.0
+exact_capacity_diff,LNG Quảng Nam,Nhà máy Điện Đạm Đạm 127,quang nam,bac lieu,gas,coal,4000.0,0.0,100.0,False,False,False,,,44.44444444444444
+exact_capacity_diff,LNG Quảng Ninh 1 (Cẩm Phả),Nhà máy Điện Đạm Đạm 95,quang ninh,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,LNG Quảng Ninh 2 (Cẩm Phả),Nhà máy Điện Đạm Đạm 96,quang ninh,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,LNG Quảng Ninh 3 (Quảng Yên),Nhà máy Điện Đạm Đạm 134,quang ninh,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,LNG Quảng Ninh 4 (Hải Hà),Nhà máy Điện Đạm Đạm 116,quang ninh,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,LNG Quảng Trạch 2,Nhà máy Điện Đạm Đạm 97,quang binh,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,38.46153846153846
+exact_capacity_diff,LNG Quỳnh Lập,Nhà máy Điện Đạm Đạm 98,nghe an,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,53.333333333333336
+exact_capacity_diff,LNG Sông Đốc (Cà Mau),Nhà máy Điện Đạm Đạm 117,ca mau,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,37.5
+exact_capacity_diff,LNG Sơn Mỹ I,Nhà máy Điện Đạm Đạm 107,binh thuan,bac lieu,gas,coal,2250.0,0.0,100.0,False,False,False,,,62.5
+exact_capacity_diff,LNG Sơn Mỹ II,Nhà máy Điện Đạm Đạm 108,binh thuan,bac lieu,gas,coal,2250.0,0.0,100.0,False,False,False,,,62.5
+exact_capacity_diff,LNG Thái Bình,Nhà máy Điện Đạm Đạm 135,thai binh,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,46.15384615384615
+exact_capacity_diff,LNG Tân Phước,Nhà máy Điện Đạm Đạm 136,tien giang,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,36.36363636363637
+exact_capacity_diff,"LNG Tân Thuận – Đầm Dơi, Cà Mau",Nhà máy Điện Đạm Đạm 124,ca mau,bac lieu,gas,coal,3200.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,LNG Vân Phong (J-Power),Nhà máy Điện Đạm Đạm 118,khanh hoa,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,36.36363636363637
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 1,Nhà máy Điện Đạm Đạm 119,khanh hoa,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,41.17647058823529
+exact_capacity_diff,LNG Vân Phong (Mỹ Giang) phase 2,Nhà máy Điện Đạm Đạm 120,khanh hoa,bac lieu,gas,coal,3000.0,0.0,100.0,False,False,False,,,40.0
+exact_capacity_diff,LNG miền Nam,Nhà máy Điện Đạm Đạm 99,"hiep phuoc 2, ben tre, mui ke ga, ca mau,",bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,75.0
+exact_capacity_diff,Lee & Man,Nhà máy Điện Phú Tân 2,hau giang,an giang,coal,coal,125.0,0.0,100.0,True,False,False,,,44.44444444444444
+exact_capacity_diff,Long An 2,Nhà máy Điện Đạm Đạm 102,long an,bac lieu,gas,coal,1600.0,0.0,100.0,False,False,False,,,47.05882352941176
+exact_capacity_diff,Long An 1,Nhà máy Điện Đạm Đạm 65,long an,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,47.05882352941176
+exact_capacity_diff,Long Phú 1,Nhà máy Điện Đạm Đạm 66,soc trang,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,42.85714285714286
+exact_capacity_diff,Long Phú 2,Nhà máy Điện Đạm Đạm 84,soc trang,bac lieu,coal,coal,1320.0,0.0,100.0,True,True,False,,,42.85714285714286
+exact_capacity_diff,Long Phú 3,Nhà máy Điện Đạm Đạm 103,soc trang,bac lieu,coal,coal,1800.0,0.0,100.0,True,True,False,,,42.85714285714286
+exact_capacity_diff,Mao Khe,Nhà máy Điện Đạm Đạm 16,quang ninh,bac lieu,coal,coal,440.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Mong Duong 1,Nhà máy Điện Đạm Đạm 56,quang ninh,bac lieu,coal,coal,1080.0,0.0,100.0,True,False,False,,,33.333333333333336
+exact_capacity_diff,Mong Duong 2,Nhà máy Điện Đạm Đạm 80,quang ninh,bac lieu,coal,coal,1240.0,0.0,100.0,True,False,False,,,33.333333333333336
+fuzzy_capacity_diff,Na Dương 1,Nhà máy Điện Mông Dương 1,lang son,quang ninh,coal,coal,110.0,0.0,100.0,True,True,False,,,90.0
+fuzzy_capacity_diff,Na Dương 2,Nhà máy Điện Mông Dương 2,lang son,quang ninh,coal,coal,110.0,0.0,100.0,True,True,False,,,90.0
+exact_capacity_diff,Nam Dinh 1,Nhà máy Điện Đạm Đạm 67,nam dinh,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,50.0
+exact_capacity_diff,Nghi Son 1,Nhà máy Điện Đạm Đạm 30,thanh hoa,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,44.44444444444444
+exact_capacity_diff,Nghi Son 2,Nhà máy Điện Đạm Đạm 68,thanh hoa,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,44.44444444444444
+exact_capacity_diff,Ninh Binh,Nhà máy Điện Đạm Phú Mỹ,ninh binh,ba ria - vung tau,coal,gas,100.0,0.0,100.0,False,False,False,,,46.15384615384615
+exact_capacity_diff,Ninh Thuan Novatek project,Nhà máy Điện Đạm Đạm 137,ninh thuan,bac lieu,gas,coal,4500.0,0.0,100.0,False,False,False,,,37.2093023255814
+exact_capacity_diff,Nong Son 1,Nhà máy Điện Ngã Năm,quang nam,soc trang,coal,coal,30.0,0.0,100.0,True,True,False,,,52.63157894736843
+exact_capacity_diff,NĐ Cần Thơ,Nhà máy Điện Đạm Đạm 3,can tho,bac lieu,unknown,coal,165.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,NĐ Hiệp Phước,Nhà máy Điện Đạm Đạm 10,tp ho chi minh,bac lieu,unknown,coal,310.0,0.0,100.0,False,False,False,,,38.46153846153846
+exact_capacity_diff,NĐ LNG miền Bắc,Nhà máy Điện Uông Bí 2,"thai binh, nam đinh, nghi son, thanh hoa",quang ninh,gas,coal,0.0,0.0,,False,False,False,,,53.84615384615385
+exact_capacity_diff,NĐ Thủ Đức,Nhà máy Điện Đạm Đạm 7,tp ho chi minh,bac lieu,gas,coal,290.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,NĐ Ô Môn I,Nhà máy Điện Đạm Đạm 37,can tho,bac lieu,unknown,coal,660.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,Phả Lại 1,Nhà máy Điện Đạm Đạm 17,hai duong,bac lieu,coal,coal,440.0,0.0,100.0,True,False,False,,,58.82352941176471
+exact_capacity_diff,Phả Lại 2,Nhà máy Điện Đạm Đạm 31,hai duong,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,58.82352941176471
+exact_capacity_diff,Phả Lại 3,Nhà máy Điện Đạm Đạm 38,hai duong,bac lieu,coal,coal,660.0,0.0,100.0,True,True,False,,,58.82352941176471
+fuzzy_capacity_diff,Quang Ninh 1,Nhà máy Điện Quảng Ninh,quang ninh,quang ninh,gas,coal,600.0,0.0,100.0,False,False,True,,,90.9090909090909
+fuzzy_capacity_diff,Quang Ninh 2,Nhà máy Điện Quảng Ninh 2,quang ninh,quang ninh,gas,coal,600.0,0.0,100.0,False,False,True,,,100.0
+exact_capacity_diff,Quang Ninh 3,Nhà máy Điện Đạm Đạm 69,quang ninh,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,Quảng Trạch 1,Nhà máy Điện Đạm Đạm 87,quang binh,bac lieu,coal,coal,1400.0,0.0,100.0,True,False,False,,,38.46153846153846
+exact_capacity_diff,Quảng Trạch 2,Nhà máy Điện Đạm Đạm 70,quang binh,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,38.46153846153846
+exact_capacity_diff,Quảng Trị 1,Nhà máy Điện Đạm Đạm 85,quang tri,bac lieu,coal,coal,1320.0,0.0,100.0,True,True,False,,,36.36363636363637
+exact_capacity_diff,Quảng Trị 2,Nhà máy Điện Đạm Đạm 71,quang tri,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,36.36363636363637
+exact_capacity_diff,Quảng Trị – Huế area,Nhà máy Điện Đạm Đạm 128,quang tri,bac lieu,gas,coal,4000.0,0.0,100.0,False,False,False,,,35.89743589743589
+exact_capacity_diff,Quỳnh Lập 1,Nhà máy Điện Đạm Đạm 72,nghe an,bac lieu,coal,coal,1200.0,0.0,100.0,True,True,False,,,53.333333333333336
+exact_capacity_diff,Quỳnh Lập 2,Nhà máy Điện Đạm Đạm 73,nghe an,bac lieu,coal,coal,1200.0,0.0,100.0,True,True,False,,,53.333333333333336
+exact_capacity_diff,Son Dong,Nhà máy Điện Đạm Đạm 6,bac giang,bac lieu,coal,coal,220.0,0.0,100.0,True,False,False,,,33.333333333333336
+exact_capacity_diff,Sông Hậu 1,Nhà máy Điện Đạm Đạm 74,hau giang,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Sông Hậu 2,Nhà máy Điện Đạm Đạm 106,hau giang,bac lieu,coal,coal,2000.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,TBKHH Bà Rịa 1,Nhà máy Điện Đạm Đạm 4,ba ria - vung tau,bac lieu,gas,coal,169.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,TBKHH Bà Rịa 2,Nhà máy Điện Đạm Đạm 5,ba ria - vung tau,bac lieu,gas,coal,175.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,TBKHH Dung Quất I,Nhà máy Điện Đạm Đạm 44,quang ngai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,42.10526315789473
+exact_capacity_diff,TBKHH Dung Quất II,Nhà máy Điện Đạm Đạm 45,quang ngai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,42.10526315789473
+exact_capacity_diff,TBKHH Dung Quất III,Nhà máy Điện Đạm Đạm 46,quang ngai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,42.10526315789473
+exact_capacity_diff,"TBKHH Kiên Giang I, II",Nhà máy Điện Đạm Đạm 100,kien giang,bac lieu,gas,coal,1500.0,0.0,100.0,False,False,False,,,46.666666666666664
+exact_capacity_diff,TBKHH Nhơn Trạch I,Nhà máy Điện Đạm Đạm 21,đong nai,bac lieu,gas,coal,465.0,0.0,100.0,False,False,False,,,50.0
+exact_capacity_diff,TBKHH Nhơn Trạch II,Nhà máy Điện Đạm Đạm 47,đong nai,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,50.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 1,Nhà máy Điện Phú Mỹ 1,ba ria - vung tau,ba ria - vung tau,gas,gas,1140.0,0.0,100.0,True,True,True,,,100.0
+exact_capacity_diff,TBKHH Phú Mỹ 2.1,Nhà máy Điện Đạm Đạm 22,ba ria - vung tau,bac lieu,gas,coal,499.0,0.0,100.0,False,False,False,,,55.55555555555556
+exact_capacity_diff,TBKHH Phú Mỹ 2.1 MR,Nhà máy Điện Đạm Đạm 20,ba ria - vung tau,bac lieu,gas,coal,450.0,0.0,100.0,False,False,False,,,47.61904761904761
+exact_capacity_diff,TBKHH Phú Mỹ 2.2,Nhà máy Điện Đạm Đạm 40,ba ria - vung tau,bac lieu,gas,coal,740.0,0.0,100.0,False,False,False,,,55.55555555555556
+fuzzy_capacity_diff,TBKHH Phú Mỹ 3,Nhà máy Điện Phú Mỹ 3,ba ria - vung tau,ba ria - vung tau,gas,gas,740.0,0.0,100.0,True,True,True,,,100.0
+fuzzy_capacity_diff,TBKHH Phú Mỹ 4,Nhà máy Điện Phú Mỹ 4,ba ria - vung tau,ba ria - vung tau,gas,gas,468.0,0.0,100.0,True,True,True,,,100.0
+exact_capacity_diff,TBKHH Quảng Trị (khí Báo Vàng),Nhà máy Điện Đạm Đạm 14,quang tri,bac lieu,gas,coal,340.0,0.0,100.0,False,False,False,,,33.333333333333336
+exact_capacity_diff,TBKHH miền Trung I,Nhà máy Điện Đạm Đạm 48,quang nam,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,TBKHH miền Trung II,Nhà máy Điện Đạm Đạm 49,quang nam,bac lieu,gas,coal,750.0,0.0,100.0,False,False,False,,,41.666666666666664
+exact_capacity_diff,TBKHH Ô Môn I,Nhà máy Điện Đạm Đạm 39,can tho,bac lieu,gas,coal,660.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,TBKHH Ô Môn II,Nhà máy Điện Đạm Đạm 53,can tho,bac lieu,gas,coal,1050.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,TBKHH Ô Môn III,Nhà máy Điện Đạm Đạm 54,can tho,bac lieu,gas,coal,1050.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,TBKHH Ô Môn IV,Nhà máy Điện Đạm Đạm 55,can tho,bac lieu,gas,coal,1050.0,0.0,100.0,False,False,False,,,42.85714285714286
+exact_capacity_diff,Thang Long,Nhà máy Điện Đạm Đạm 32,quang ninh,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,42.85714285714286
+fuzzy_capacity_diff,Thái Bình 1,Nhà máy Điện Thái Bình 1,thai binh,thai binh,coal,coal,600.0,0.0,100.0,True,True,True,,,100.0
+fuzzy_capacity_diff,Thái Bình 2,Nhà máy Điện Thái Bình 2,thai binh,thai binh,coal,coal,1200.0,0.0,100.0,True,True,True,,,100.0
+exact_capacity_diff,Tân Phước 1,Nhà máy Điện Đạm Đạm 75,tien giang,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,40.0
+exact_capacity_diff,Tân Phước 2,Nhà máy Điện Đạm Đạm 76,tien giang,bac lieu,gas,coal,1200.0,0.0,100.0,False,False,False,,,40.0
+fuzzy_capacity_diff,Uong Bi I,Nhà máy Điện Uông Bí 1,quang ninh,quang ninh,coal,coal,105.0,0.0,100.0,True,False,True,,,100.0
+exact_capacity_diff,Uong Bi I extension,Nhà máy Điện Đạm Đạm 9,quang ninh,bac lieu,coal,coal,300.0,0.0,100.0,True,False,False,,,32.25806451612904
+exact_capacity_diff,Uong Bi II extension,Nhà máy Điện Đạm Đạm 11,quang ninh,bac lieu,coal,coal,330.0,0.0,100.0,True,False,False,,,32.25806451612904
+exact_capacity_diff,Vedan Vietnam Cogeneration power station,Nhà máy Điện Phú Mỹ 2,đong nai,ba ria - vung tau,coal,gas,60.0,0.0,100.0,False,True,False,,,40.0
+exact_capacity_diff,Vinh Tan 1,Nhà máy Điện Đạm Đạm 77,binh thuan,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Vinh Tan 2,Nhà máy Điện Đạm Đạm 83,binh thuan,bac lieu,coal,coal,1244.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Vinh Tan 3,Nhà máy Điện Đạm Đạm 104,binh thuan,bac lieu,coal,coal,1980.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Vinh Tan 4,Nhà máy Điện Đạm Đạm 78,binh thuan,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,57.14285714285714
+exact_capacity_diff,Vinh Tan 4 extension,Nhà máy Điện Đạm Đạm 33,binh thuan,bac lieu,coal,coal,600.0,0.0,100.0,True,False,False,,,43.75
+exact_capacity_diff,Vung Ang 1,Nhà máy Điện Đạm Đạm 79,ha tinh,bac lieu,coal,coal,1200.0,0.0,100.0,True,False,False,,,44.44444444444444
+exact_capacity_diff,Vung Ang 2,Nhà máy Điện Đạm Đạm 86,ha tinh,bac lieu,coal,coal,1330.0,0.0,100.0,True,False,False,,,44.44444444444444
+exact_capacity_diff,Vung Ang 3,Nhà máy Điện Đạm Đạm 111,ha tinh,bac lieu,coal,coal,2400.0,0.0,100.0,True,True,False,,,44.44444444444444
+fuzzy_capacity_diff,Vân Phong 1,Nhà máy Điện Vân Phong,khanh hoa,khanh hoa,coal,imported gas,1432.0,0.0,100.0,False,False,True,,,90.0
+system_only,,Nhà máy Điện Đạm Đạm 142,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 143,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 144,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 145,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 146,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 147,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 148,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 149,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 150,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 151,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 152,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 153,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 154,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 155,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 156,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 157,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 158,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 159,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 160,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 161,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 162,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 163,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 164,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 165,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 166,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 167,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 168,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 169,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 170,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 171,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 172,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 173,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 174,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 175,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 176,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 177,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 178,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 179,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 180,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 181,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 182,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 183,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 184,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 185,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 186,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 187,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 188,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 189,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 190,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 191,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 192,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 193,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 194,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 195,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 196,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 197,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 198,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 199,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 200,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 201,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 202,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 203,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 204,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 205,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 206,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 207,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 208,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 209,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 210,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 211,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 212,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 213,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 214,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 215,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 216,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 217,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 218,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 219,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 220,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 221,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 222,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 223,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 224,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 225,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 226,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 227,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 228,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 229,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 230,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 231,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 232,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 233,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 234,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 235,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 236,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 237,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 238,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 239,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 240,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 241,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 242,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 243,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 244,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 245,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 246,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 247,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 248,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 249,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 250,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 251,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 252,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 253,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 254,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 255,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 256,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 257,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 258,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 259,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 260,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 261,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 262,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 263,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 264,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 265,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 266,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 267,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 268,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 269,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 270,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 271,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 272,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 273,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 274,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 275,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 276,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 277,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 278,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 279,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 280,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 281,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 282,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 283,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 284,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 285,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 286,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 287,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 288,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 289,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 290,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 291,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 292,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 293,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 294,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 295,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 296,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 297,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 298,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 299,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 300,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 301,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 302,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 303,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 304,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 305,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 306,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 307,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 308,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 309,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 310,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 311,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 312,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 313,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 314,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 315,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 316,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 317,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 318,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 319,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 320,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 321,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 322,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 323,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 324,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 325,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 326,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 327,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 328,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 329,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 330,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 331,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 332,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 333,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 334,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 335,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 336,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 337,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 338,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 339,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 340,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 341,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 342,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 343,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 344,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 345,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 346,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 347,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 348,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 349,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 350,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 351,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 352,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 353,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 354,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 355,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 356,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 357,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 358,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 359,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 360,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 361,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 362,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 363,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 364,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 365,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 366,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 367,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 368,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 369,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 370,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 371,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 372,,bac lieu,,coal,,0.0,,,,,,,
+system_only,,Nhà máy Điện Đạm Đạm 373,,bac lieu,,coal,,0.0,,,,,,,
