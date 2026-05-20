@@ -33,9 +33,7 @@ def _content_lines(text: str) -> set[str]:
     return lines
 
 
-@pytest.mark.skip(
-    reason="prompt_complete.txt drifted from modules after commit 4dc99e5; see docstring"
-)
+@pytest.mark.skip(reason="prompt_complete.txt drift from 4dc99e5; see ticket 0179")
 @pytest.mark.adherence
 def test_modules_cover_prompt_complete():
     """Assembled composite covers every content line of prompt_complete.txt."""
