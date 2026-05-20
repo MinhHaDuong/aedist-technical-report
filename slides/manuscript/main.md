@@ -110,7 +110,7 @@ Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/exp
 
 | Model | Lab | Family | Size class | Reasoning |
 |---|---|---|---|---|
-| claude-opus-4.7 | Anthropic | EN | frontier | no |
+| claude-opus-4.6 | Anthropic | EN | frontier | no |
 | claude-sonnet-4.6 | Anthropic | EN | frontier | no |
 | claude-haiku-4.5 | Anthropic | EN | mid | no |
 | gpt-5.5 | OpenAI | EN | frontier | no |
@@ -128,7 +128,7 @@ Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/exp
 | deepseek-v4-pro | DeepSeek | ZH | frontier | no |
 | deepseek-v4-flash:free | DeepSeek | ZH | mid | no |
 
-Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and the two `qwen3*-max` variants are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. All four Wave-2 SOTA agents (Opus 4.7, GPT-5.5, Mistral Large 2512, Qwen 3 Max) are included so Experiment 2's "deep research vs parametric" claim can be tested within-model.
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and the two `qwen3*-max` variants are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max — so Experiment 2's "deep research vs parametric" claim can be tested within-lab. Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table.
 
 ### Run parameters
 
@@ -137,8 +137,8 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 | Repeats per model | 5 | Sufficient to characterise within-model variance; pilot (n=2–5) shows variance stabilises |
 | Temperature | 0 | Isolates prompt-driven variance from sampling noise; residual variance under T=0 is the stronger claim |
 | Seed | 42 | Reproducibility where supported by provider |
-| Max tokens | 8192 | Bounded for cost predictability; truncations recorded as run outcomes |
-| Budget | $10 | Per-sweep cap; the runner halts at exceedance |
+| Max tokens | 32768 | Sized to accommodate verbose frontier models (Opus, GPT-5.5) on the full Vietnam thermal-plant table; an 8k cap truncated Opus 4.6/4.7 mid-table during pilot |
+| Budget | $15 | Per-sweep cap; the runner halts at exceedance |
 | Total runs | 85 | 17 models × 5 repeats |
 
 `seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max, qwen3.6-max-preview, deepseek-v4-pro, deepseek-v4-flash:free) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.

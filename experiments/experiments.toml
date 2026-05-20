@@ -162,7 +162,7 @@ model_ids = [
 [sets.modelset_ablation_journal]
 model_ids = [
     # EN — Anthropic
-    "anthropic/claude-opus-4.7",
+    "anthropic/claude-opus-4.6",
     "anthropic/claude-sonnet-4.6",
     "anthropic/claude-haiku-4.5",
     # EN — OpenAI
@@ -523,8 +523,8 @@ model_set = "modelset_ablation_journal"
 repeat = 5
 temperature = 0.0
 seed = 42
-budget_usd = 10
-max_tokens = 8192
+budget_usd = 15
+max_tokens = 32768
 system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
 output = "outputs/ablation/direct/p1_base"
 
