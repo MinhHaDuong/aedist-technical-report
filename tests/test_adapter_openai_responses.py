@@ -21,11 +21,14 @@ from types import SimpleNamespace
 
 import pytest
 
+from aedist.adapter_base import CostCapExceeded
 from aedist.adapter_openai_responses import (
     AGENT_FAMILY,
+    DEFAULT_COST_CAP_USD,
     DEFAULT_MODEL,
     build_request,
     parse_response,
+    run,
 )
 
 FIXTURE = Path(__file__).parent / "fixtures" / "openai_responses_response.json"
@@ -167,3 +170,60 @@ def test_build_request_includes_web_search_sources_directive():
 
 def test_default_model_is_gpt_5_5():
     assert DEFAULT_MODEL == "gpt-5.5"
+
+
+# ---------------------------------------------------------------------------
+# Cost cap enforcement — ticket 0168 Action 4 (pre-call estimate)
+# ---------------------------------------------------------------------------
+
+
+def test_run_raises_costcap_before_http_call_when_estimate_exceeds_cap():
+    """``run()`` must enforce the cost cap PRE-call.
+
+    Pricing chosen so that the conservative estimate (max_tokens billed at
+    both input and output rates) exceeds a $1 cap by a wide margin:
+
+        price_per_mtok_in = price_per_mtok_out = 1_000.0  -> $1e-3/token
+        max_output_tokens = 10_000
+        estimate = 10_000 * (1e-3 + 1e-3) = $20.00 >> $1.00
+
+    No HTTP client is constructed; the exception must fire from the cap
+    check, not from a missing OPENAI_API_KEY or a network call.
+    """
+    expensive_card = {
+        "price_per_mtok_in_fresh": 1_000.0,
+        "price_per_mtok_in": 1_000.0,
+        "price_per_mtok_out": 1_000.0,
+    }
+    with pytest.raises(CostCapExceeded):
+        run(
+            "trivial prompt",
+            dry_run=False,
+            max_output_tokens=10_000,
+            price_card=expensive_card,
+            cap_usd=1.0,
+        )
+
+
+def test_run_dry_run_still_enforces_cap_pre_call():
+    """Even ``dry_run=True`` must respect the cap — guards against a caller
+    discovering the breach only when they flip dry_run to False.
+    """
+    expensive_card = {
+        "price_per_mtok_in_fresh": 1_000.0,
+        "price_per_mtok_in": 1_000.0,
+        "price_per_mtok_out": 1_000.0,
+    }
+    with pytest.raises(CostCapExceeded):
+        run(
+            "trivial prompt",
+            dry_run=True,
+            max_output_tokens=10_000,
+            price_card=expensive_card,
+            cap_usd=1.0,
+        )
+
+
+def test_default_cost_cap_is_ten_dollars():
+    """Ticket 0168 Action 4 spec: hard cap per call $10."""
+    assert DEFAULT_COST_CAP_USD == 10.0

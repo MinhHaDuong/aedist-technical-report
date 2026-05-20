@@ -43,7 +43,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from aedist.adapter_base import format_dry_run
+from aedist.adapter_base import (
+    enforce_cost_cap,
+    estimate_call_cost,
+    format_dry_run,
+)
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 
 log = logging.getLogger(__name__)
@@ -59,6 +63,11 @@ WEB_SEARCH_SOURCES_INCLUDE = "web_search_call.action.sources"
 # ``max_output_tokens`` argument.
 DEFAULT_MAX_OUTPUT_TOKENS = 2000
 SMOKE_COST_CAP_USD = 0.50
+
+# Hard cap per call — ticket 0168 Action 4 (umbrella 0166).
+# Enforced pre-call from the conservative estimate (max_tokens billed at both
+# input + output rates) and verified post-call against the actual cost.
+DEFAULT_COST_CAP_USD = 10.0
 
 
 # ---------------------------------------------------------------------------
@@ -298,14 +307,35 @@ def run(
     max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
     reasoning_effort: str = "high",
     price_card: dict | None = None,
+    cap_usd: float = DEFAULT_COST_CAP_USD,
 ) -> RunRecord:
-    """Execute one OpenAI Responses call (or dry-run) and return a RunRecord."""
+    """Execute one OpenAI Responses call (or dry-run) and return a RunRecord.
+
+    Enforces a hard per-call cost cap (ticket 0168 Action 4):
+      * **Pre-call**: ``estimate_call_cost`` against ``max_output_tokens`` and
+        the input/output rates from ``price_card``; raises ``CostCapExceeded``
+        before the HTTP call when the estimate exceeds ``cap_usd``.
+      * **Post-call**: re-checks ``record.resource_use.cost_usd`` against
+        ``cap_usd``; raises ``CostCapExceeded`` if the actual billed cost
+        breached it (defence in depth against estimate drift).
+    """
     payload = build_request(
         prompt,
         model=model,
         max_output_tokens=max_output_tokens,
         reasoning_effort=reasoning_effort,
     )
+    pc = price_card if price_card is not None else DEFAULT_PRICE_CARD
+    # Prices in the card are $/Mtok; estimate_call_cost expects $/token.
+    p_in = pc.get("price_per_mtok_in_fresh", pc.get("price_per_mtok_in", 0.0)) / 1_000_000
+    p_out = pc.get("price_per_mtok_out", 0.0) / 1_000_000
+    estimated = estimate_call_cost(
+        max_tokens=max_output_tokens,
+        price_in=p_in,
+        price_out=p_out,
+    )
+    enforce_cost_cap(estimated, cap_usd=cap_usd)
+
     if dry_run:
         print(format_dry_run(payload))
         return RunRecord(
@@ -323,10 +353,11 @@ def run(
     resp = client.responses.create(**payload)
     wall = round(time.monotonic() - t0, 3)
 
-    pc = price_card if price_card is not None else DEFAULT_PRICE_CARD
     record = parse_response(resp, pc)
     record.resource_use.wall_s = wall
     record.agent_mode = "smoke"
+    # Defence in depth: actual cost must also respect the cap.
+    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
     return record
 
 
