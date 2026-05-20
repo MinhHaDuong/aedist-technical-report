@@ -2,6 +2,7 @@
 Title: Run Experiment 1 production sweep (85 runs)
 Created: 2026-05-15
 Author: claude
+Closed: autoclosed — PR #354 (Wave 2 retry, 85 records landed)
 
 --- log ---
 2026-05-15T14:05Z claude created
@@ -9,6 +10,7 @@ Author: claude
 2026-05-20T20:18Z HDMX-coding-agent note smoke PASS — mistral-small-2603, finish_reason=stop, completion_tokens=7009, cost=$0.0042, system_instruction propagated, seed=42, max_tokens=32768
 2026-05-20T21:25Z HDMX-coding-agent note full sweep COMPLETE — 85/85 runs (17 models × 5 reps), 4 refusals (3 parse-error: gpt-5.5-run5, qwen3-max run2/4; 1 status=refusal: deepseek-v4-flash:free-run1), 9 length-truncations (5× qwen3.5-flash-02-23, 3× deepseek-v4-flash:free@4096 provider cap, 1× qwen3.6-27b), total spend $3.159, longest completion_tokens=114693 (qwen3.5-flash-02-23 run1). Opus 4.6 length-truncations=0 (no regression).
 2026-05-20T21:26Z HDMX-coding-agent note spot-check: highest F1=0.760 (gpt-oss-20b run4, 100 plants extracted); lowest valid F1=0.012 (gpt-5.5 run4, emitted 1 plant only); parse-error (gpt-5.5 run5, status=refusal — output had no recognizable plant-name column).
+2026-05-20T21:42Z HDMX-coding-agent closed — autoclosed — PR #354 (Wave 2 retry, 85 records landed)
 --- body ---
 ## Context
 
