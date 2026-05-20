@@ -198,14 +198,14 @@ def _parse_anthropic_response(resp: Any) -> dict:
             txt = _get(block, "text", "") or ""
             if txt:
                 text_parts.append(txt)
-            for cit in _get(block, "citations", []) or []:
-                citations.append(
-                    {
-                        "url": _get(cit, "url"),
-                        "snippet": _get(cit, "cited_text"),
-                        "supports_claim": None,
-                    }
-                )
+            citations.extend(
+                {
+                    "url": _get(cit, "url"),
+                    "snippet": _get(cit, "cited_text"),
+                    "supports_claim": None,
+                }
+                for cit in _get(block, "citations", []) or []
+            )
         elif bt == "server_tool_use":
             tu_id = _get(block, "id", "")
             query = _get(_get(block, "input", {}) or {}, "query")
