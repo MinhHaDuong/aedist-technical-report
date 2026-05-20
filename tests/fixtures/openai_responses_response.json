@@ -1,0 +1,65 @@
+{
+  "id": "resp_test_0168",
+  "object": "response",
+  "model": "gpt-5.5",
+  "status": "completed",
+  "output": [
+    {
+      "type": "reasoning",
+      "id": "rs_0",
+      "summary": []
+    },
+    {
+      "type": "web_search_call",
+      "id": "ws_0",
+      "status": "completed",
+      "action": {
+        "type": "search",
+        "query": "vietnam coal power plants operational",
+        "sources": [
+          {"type": "url", "url": "https://example.com/evn-coal-list"},
+          {"type": "url", "url": "https://example.com/pdp8-annex"},
+          {"type": "url", "url": "https://example.com/vinh-tan"},
+          {"type": "url", "url": "https://example.com/duyen-hai"}
+        ]
+      }
+    },
+    {
+      "type": "web_search_call",
+      "id": "ws_1",
+      "status": "completed",
+      "action": {
+        "type": "search",
+        "query": "Phu My 2.2 capacity",
+        "sources": [
+          {"type": "url", "url": "https://example.com/phu-my-overview"},
+          {"type": "url", "url": "https://example.com/edf-phu-my"},
+          {"type": "url", "url": "https://example.com/vn-gas-plants"}
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "msg_0",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "Vietnam operates several large coal plants including Vinh Tan and Duyen Hai. Phu My 2.2 is a gas plant.",
+          "annotations": []
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "input_tokens": 100,
+    "input_tokens_details": {
+      "cached_tokens": 20
+    },
+    "output_tokens": 500,
+    "output_tokens_details": {
+      "reasoning_tokens": 1500
+    },
+    "total_tokens": 600
+  }
+}

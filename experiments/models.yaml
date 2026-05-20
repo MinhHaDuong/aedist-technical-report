@@ -157,6 +157,37 @@
   license: commercial
   web_search: true
 
+# Adapter 0168 (umbrella 0166) — OpenAI Responses API path, native web_search + reasoning.
+# Routed direct to OpenAI (not OpenRouter) so web_search is billed in-call rather than
+# as a separate Exa connector. Driver: src/aedist/adapter_openai_responses.py.
+# Price card pending official 2026 gpt-5.5 page; placeholder mirrors gpt-5.4 rates.
+# Cached input estimated at 25% of fresh (typical OpenAI prompt-cache discount).
+- name: "gpt-5.5"
+  family: openai-direct
+  route: openai-responses
+  base_url: "https://api.openai.com/v1"
+  model_id: "gpt-5.5"
+  env_key: OPENAI_API_KEY
+  display_name: "GPT-5.5 (Responses API)"
+  provider: OpenAI
+  country: US
+  architecture: dense
+  context_window: 1050000
+  price_per_mtok_in: 2.5
+  price_per_mtok_in_fresh: 2.5
+  price_per_mtok_in_cached: 0.625
+  price_per_mtok_out: 15.0
+  price_per_mtok_reasoning: 15.0
+  # OpenAI bundles web_search billing into reasoning/output tokens on the
+  # Responses API for gpt-5.x — no separate per-search line. If that changes,
+  # add a price_per_websearch_call_usd bucket here.
+  size_class: frontier
+  license: commercial
+  web_search: true
+  reasoning_effort: high
+  # prices_verified: 2026-05-20 — placeholder mirrored from gpt-5.4. Reconfirm against
+  #   the official OpenAI price page before Phase-B batch runs.
+
 - name: "x-ai/grok-4.20"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"
