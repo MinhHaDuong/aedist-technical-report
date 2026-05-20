@@ -1,0 +1,76 @@
+%erg v1
+Title: Rename ablation legacy to exp1 throughout pipeline
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T22:10Z claude created
+
+--- body ---
+## Context
+
+The Experiment 1 baseline sweep is currently named `sweep_ablation_p1_direct_base`
+and writes to `outputs/ablation/direct/p1_base/`. The "ablation" naming is a legacy
+from ticket 0038 (prompt-composition ablation: `p1_base` vs `p1_composite`).
+
+In the current three-experiment framing (parametric baseline → frontier agents →
+stateful-agentic system), there is no ablation. The sweep *is* Experiment 1. The
+stale naming is now actively confusing: a reader of `experiments.toml` cannot tell
+that `sweep_ablation_p1_direct_base` is the Exp 1 baseline of record.
+
+## Actions
+
+1. Rename in `experiments/experiments.toml`:
+   - `[sweeps.sweep_ablation_p1_direct_base]` → `[sweeps.sweep_exp1_baseline]`
+   - `output = "outputs/ablation/direct/p1_base"` → `output = "outputs/exp1/baseline"`
+   - Decide whether to also rename `sweep_ablation_p1_direct_base_extended` and
+     `sweep_ablation_p1_composite` (likely yes — keep the family aligned).
+   - Decide whether `modelset_ablation_journal` should become `modelset_exp1` (the
+     set is the 9-model journal lineup; consider if it's reused elsewhere).
+
+2. Rename in `experiments/Makefile`:
+   - Update `STRUCTURED_DIRS` (currently includes `ablation/direct/p1_base` and
+     `ablation/direct/p1_composite` from PR #342 — both need updating).
+   - Add an `exp1` target group (`exp1`, `exp1-generate`, `exp1-run`) parallel to
+     `census`, `regimes`, etc.
+
+3. Move existing outputs:
+   - `git mv outputs/ablation/direct/p1_base/ outputs/exp1/baseline/`
+   - `git mv outputs/ablation/direct/p1_composite/` (decide target path).
+
+4. Update references:
+   - `slides/manuscript/main.md` line ~139: `sweep_ablation_p1_*` → new name.
+   - Annex A in same file: any path references.
+   - Other tickets in chain 0174–0178 that reference paths or sweep names.
+   - `STATE.md` workplan entry.
+
+5. Decide fate of `outputs/ablation/livesearch/` and `outputs/ablation/rag/` — are
+   they still used? If yes, they need new homes. If no, archive or delete.
+
+## Test
+
+- `make rebuild-measurements` produces a `measurements.jsonl` whose records have
+  the new path prefixes.
+- `aedist evaluate` accepts the new output directory.
+- `tests/test_*.py` referencing old paths updated and pass.
+- `make check` passes.
+
+## Exit criteria
+
+- [ ] `experiments.toml` has no `sweep_ablation_*` keys (or a deliberate decision
+      to keep some recorded in a log entry)
+- [ ] No `outputs/ablation/` directory left in the repo
+- [ ] Manuscript main.md and STATE.md updated
+- [ ] `make rebuild-measurements` produces a clean `measurements.jsonl`
+- [ ] `make check` passes
+- [ ] PR linked to this ticket merged
+
+## Notes
+
+- Purely cosmetic refactor — no behaviour change.
+- Risk: breaking references in tickets 0174–0178 that are about to do the Exp 1
+  re-sweep. Coordinate timing: either land this *before* the re-sweep, or *after*
+  the re-sweep results are absorbed into `measurements.jsonl` (so the rename
+  doesn't invalidate in-flight work).
+- The `extended` and `composite` variants may not be Exp 1 — verify before
+  renaming. `p1_composite` was the ablation comparison arm.

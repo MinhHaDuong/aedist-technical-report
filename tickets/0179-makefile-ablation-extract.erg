@@ -1,10 +1,12 @@
 %erg v1
 Title: Add ablation/direct to Makefile STRUCTURED_DIRS
 Created: 2026-05-20
+Closed: PR #342 merged
 Author: claude
 
 --- log ---
 2026-05-20T21:00Z claude created
+2026-05-20T22:00Z claude note PR #342 merged — STRUCTURED_DIRS extended with ablation/direct/p1_base + p1_composite; orphan-eval glob widened to 2 levels
 
 --- body ---
 ## Context
