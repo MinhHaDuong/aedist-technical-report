@@ -7,6 +7,8 @@ Author: claude
 2026-05-15T14:05Z claude created
 
 2026-05-20T18:57Z HDMX-coding-agent note blocker 0175 closed — Blocked-by removed.
+2026-05-20T19:20Z HDMX-coding-agent note Preflight + smoke pass after fix(manager+worker): 0175 left model_set/seed/max_tokens silently dropped and modules_dir default wrong for Makefile cwd. Patched (commit bd46943); 80 jobs generated (16 journal models × 5 reps); smoke mistralai/mistral-small-2603 run 1 ok: $0.0026, 22.5s, finish_reason=stop, 42 table rows, system_instruction+seed=42+max_tokens=8192+temperature=0.0 recorded.
+2026-05-20T19:55Z HDMX-coding-agent note Halted: user spotted that the journal set's Qwen flagship (qwen3-max) is one generation behind its qwen3.6-* siblings — qwen/qwen3.6-max-preview is available on OpenRouter. Filed ticket 0180 to revise the set. Sweep should rerun under a new ticket once 0180 lands. Commit bd46943 (manager+worker silent-drop fixes) is the durable deliverable from this attempt and is PR'd separately. 73 pending jobs and 6 partial outputs/p1_base/ records discarded.
 --- body ---
 ## Context
 
