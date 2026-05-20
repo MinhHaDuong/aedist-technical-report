@@ -9,6 +9,7 @@ Author: claude
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T20:30Z HDMX-coding-agent note Action 1 snippet superseded by 0180 — adaptive thinking, web_search_20250305 tool form.
+2026-05-20T22:50Z HDMX-coding-agent note Derisk pass PASS — live probe against claude-opus-4-7 with corrected spec (adaptive thinking + tools=[{type:web_search_20250305, name:web_search, max_uses:N}]) returned HTTP 200, all three capabilities composed. Response shape: content[] mixing types thinking / server_tool_use (per query) / web_search_tool_result (with N URLs) / text (with citations[] on cited segments). usage.server_tool_use.web_search_requests is the search count. Per-call cost ~$0.20 with max_tokens=2048 and modest input (search results balloon input_tokens to ~12k). Account funded +$25 on 2026-05-20.
 --- body ---
 ## Context
 
