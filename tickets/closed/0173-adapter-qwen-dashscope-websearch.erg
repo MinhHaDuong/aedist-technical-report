@@ -2,6 +2,7 @@
 Title: Adapter — Qwen3-Max via DashScope with web_search + thinking mode
 Created: 2026-05-14
 Author: claude
+Closed: autoclosed — PR #352
 
 --- log ---
 2026-05-14T14:30Z claude created
@@ -10,6 +11,7 @@ Author: claude
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T22:00Z HDMX-coding-agent note Derisk pass: key present at ~/.config/keys/alibaba.env (QWEN_API_KEY_AEDIST); model qwen3-max-2026-01-23 accessible on intl endpoint; thinking + server-side search compose verified (reasoning_tokens + plugins.search.count + output.search_info.search_results[] surfaced in one call). Action 3 snippet corrected — original tools=[{"type":"web_search"}] triggers client-side function calling, NOT server-side search. Test section updated to target real response shape. Key precondition updated. CN sources confirmed in top results (mofcom.gov.cn, baike.baidu.com).
 2026-05-20T23:30Z HDMX-coding-agent note Adapter + tests + models.yaml entry landed (PR pending). Live smoke recorded at experiments/outputs/sota_smoke/qwen_1a3a34a9f1bb.json: 5182 in / 3647 out (3490 reasoning) tokens, 1 web_search, 8 citations, finish_reason=stop, total ~$0.038. Capability compose confirmed (thinking_tokens>0 AND citations non-empty). 9 unit tests green; ruff clean.
+2026-05-20T21:57Z HDMX-coding-agent closed — autoclosed — PR #352
 --- body ---
 ## Context
 
