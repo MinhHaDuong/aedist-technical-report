@@ -1010,6 +1010,22 @@
   web_search: false
   reasoning_effort: "minimal"
 
+- name: "qwen/qwen3.6-max-preview"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.6-max-preview"
+  display_name: "Qwen 3.6 Max Preview"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 1.04
+  price_per_mtok_out: 6.24
+  size_class: frontier
+  license: commercial
+  web_search: false
+  reasoning_effort: "minimal"
+
 - name: "deepseek/deepseek-v4-pro"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"

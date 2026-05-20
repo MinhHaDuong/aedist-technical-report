@@ -10,7 +10,7 @@ This paper builds the argument in six steps.
 
 Submitting a direct query to a large language model produces an inventory-shaped answer, but not one that meets statistical or scientific quality standards. Numbers shift between runs, citations are absent or fabricated, and there is no way to tell which cells one should trust.
 
-**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex A). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 163-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
+**Experiment 1 — Parametric baseline.** We query seventeen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex A). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 163-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
 
 **Expected results.** [TO BE UPDATED after sweep] Pilot data (25 runs, 10 models, same prompt) shows row-level F1 ranging from 0.38 to 0.88 across models, with within-model run variance of 0.3–0.4 F1 points for some models — a spread larger than the gap between many adjacent models. Cell-level attributes consistently fall below row-level F1: fuel accuracy ≈ 0.55, status accuracy ≈ 0.45, reflecting that semantic classification errors concentrate in harder attributes once a plant is found. No monotonic relationship between API cost and F1 is observed. Two qualitatively distinct failure modes appear in the pilot: under-listing (high precision, low recall — the model reports only plants it is confident about) and over-listing (100% recall but low precision — the model reports everything plausible, including duplicates and non-entities). The five failure labels in Figure 1 — refusal, under-coverage, fabrication, high variance, and non-monotone ordering — organise the full model-by-run distribution.
 
@@ -124,10 +124,11 @@ Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/exp
 | qwen3.5-flash-02-23 | Alibaba | ZH | mid | no |
 | qwen3.6-plus | Alibaba | ZH | frontier | no |
 | qwen3-max | Alibaba | ZH | frontier | minimal |
+| qwen3.6-max-preview | Alibaba | ZH | frontier | minimal |
 | deepseek-v4-pro | DeepSeek | ZH | frontier | no |
 | deepseek-v4-flash:free | DeepSeek | ZH | mid | no |
 
-Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and `qwen3-max` are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. All four Wave-2 SOTA agents (Opus 4.7, GPT-5.5, Mistral Large 2512, Qwen 3 Max) are included so Experiment 2's "deep research vs parametric" claim can be tested within-model.
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and the two `qwen3*-max` variants are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. All four Wave-2 SOTA agents (Opus 4.7, GPT-5.5, Mistral Large 2512, Qwen 3 Max) are included so Experiment 2's "deep research vs parametric" claim can be tested within-model.
 
 ### Run parameters
 
@@ -138,9 +139,9 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 | Seed | 42 | Reproducibility where supported by provider |
 | Max tokens | 8192 | Bounded for cost predictability; truncations recorded as run outcomes |
 | Budget | $10 | Per-sweep cap; the runner halts at exceedance |
-| Total runs | 80 | 16 models × 5 repeats |
+| Total runs | 85 | 17 models × 5 repeats |
 
-`seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max, deepseek-v4-pro, deepseek-v4-flash:free) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.
+`seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max, qwen3.6-max-preview, deepseek-v4-pro, deepseek-v4-flash:free) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.
 
 ### Evaluation
 
