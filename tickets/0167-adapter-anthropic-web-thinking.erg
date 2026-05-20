@@ -10,6 +10,7 @@ Author: claude
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T20:30Z HDMX-coding-agent note Action 1 snippet superseded by 0180 — adaptive thinking, web_search_20250305 tool form.
 2026-05-20T22:50Z HDMX-coding-agent note Derisk pass PASS — live probe against claude-opus-4-7 with corrected spec (adaptive thinking + tools=[{type:web_search_20250305, name:web_search, max_uses:N}]) returned HTTP 200, all three capabilities composed. Response shape: content[] mixing types thinking / server_tool_use (per query) / web_search_tool_result (with N URLs) / text (with citations[] on cited segments). usage.server_tool_use.web_search_requests is the search count. Per-call cost ~$0.20 with max_tokens=2048 and modest input (search results balloon input_tokens to ~12k). Account funded +$25 on 2026-05-20.
+2026-05-20T23:30Z HDMX-coding-agent note Model pinned to claude-opus-4-6 (user decision). Compose re-verified on 4.6: identical response shape (2 thinking blocks, 1 server_tool_use, 1 web_search_tool_result, 3 text with 1 citation), same usage block, lower per-call cost (~$0.12 vs ~$0.20). Action 2 updated to pin 4.6 explicitly; do not silently upgrade.
 --- body ---
 ## Context
 
@@ -37,10 +38,12 @@ SDK directly, not OpenRouter.
      results (citations), thinking trace tokens, and per-call cost
      computed from input/output/cache tokens against the current
      Anthropic price card.
-2. Choose the model. Default to the most capable production Opus
-   currently available (`claude-opus-4-6` or `claude-opus-4-7`).
-   Verify the chosen ID supports both `web_search` and `thinking` in
-   the same call before locking it in.
+2. Model: pinned to `claude-opus-4-6`. Decision recorded 2026-05-20:
+   compose (adaptive thinking + web_search_20250305) verified on
+   `claude-opus-4-6` with identical response shape to 4.7 and lower
+   per-call cost (~$0.12 vs ~$0.20 in the smoke probe). Do not
+   silently upgrade to 4.7 without re-verifying compose; the API
+   surface may diverge in future point releases.
 3. Register the model in `experiments/models.yaml` under a new family
    `anthropic-direct` (separate from the OpenRouter route).
 4. Hard cost cap per call: $10. Computed pre-call from `max_tokens` +
