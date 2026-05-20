@@ -154,6 +154,57 @@ def test_prompt_modules_empty_list_propagated(tmp_path: Path):
     assert spec.prompt_modules == []
 
 
+def test_model_set_filters_registry(tmp_path: Path):
+    """sweep_config with model_set restricts fan-out to that set's model_ids.
+
+    Regression: prior to this fix, the manager iterated all models in
+    models.yaml and silently ignored ``model_set`` (the field isn't on
+    JobSpec, and pydantic's default extra='ignore' dropped it). Ticket 0175
+    repointed the journal sweep to a 16-model set; ticket 0177 hit the bug
+    by generating 315 jobs (63 models × 5 reps) instead of 80.
+    """
+    models = [
+        {"name": "provider/model-a", "display_name": "Model A"},
+        {"name": "provider/model-b", "display_name": "Model B"},
+        {"name": "provider/model-c", "display_name": "Model C"},
+    ]
+    models_path = tmp_path / "models.yaml"
+    models_path.write_text(yaml.dump(models))
+
+    experiments_path = tmp_path / "experiments.toml"
+    experiments_path.write_text(
+        '[sets.set_two]\nmodel_ids = ["provider/model-a", "provider/model-c"]\n'
+    )
+
+    sweep_config = {
+        "mode": "single",
+        "prompt_modules": [],
+        "models": str(models_path),
+        "model_set": "set_two",
+        "repeat": 2,
+        "budget_usd": 5,
+        "seed": 42,
+        "max_tokens": 8192,
+        "output": "outputs/ablation/test",
+    }
+    jobs_root = tmp_path / "jobs"
+    generated, _ = generate(
+        jobs_root=jobs_root,
+        sweep_config=sweep_config,
+        sweep_name="ablation_set_filter",
+        experiments_path=experiments_path,
+    )
+    assert generated == 4  # 2 models in set × 2 reps
+
+    filters = set()
+    for job_file in (jobs_root / "pending").iterdir():
+        spec = JobSpec.from_yaml(job_file.read_text())
+        filters.add(spec.model_filter)
+        assert spec.seed == 42
+        assert spec.max_tokens == 8192
+    assert filters == {"provider/model-a", "provider/model-c"}
+
+
 def test_idempotency_across_dirs(tmp_path: Path):
     """Jobs already in running/done/failed are skipped."""
     sweep_path = _write_sweep(tmp_path, repeat=1)

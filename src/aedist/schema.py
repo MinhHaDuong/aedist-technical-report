@@ -375,6 +375,19 @@ class JobSpec(BaseModel):
     )
     budget_usd: float = Field(default=10.0, ge=0)
     temperature: float = Field(default=0.0, ge=0.0, le=2.0, description="Sampling temperature.")
+    seed: int | None = Field(
+        default=None,
+        ge=0,
+        description="RNG seed pinned for reproducibility. "
+        "OpenRouter applies best-effort; combine with provider pinning for MoE models. "
+        "Per-sweep, not per-model.",
+    )
+    max_tokens: int | None = Field(
+        default=None,
+        ge=1,
+        description="Maximum completion tokens. None lets the provider default apply. "
+        "Per-sweep, not per-model.",
+    )
     web_search: bool = Field(
         default=False,
         description="Enable web search tools. Must be explicitly enabled in "
