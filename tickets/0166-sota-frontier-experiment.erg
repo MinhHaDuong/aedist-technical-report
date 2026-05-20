@@ -3,7 +3,6 @@ Title: SOTA frontier-API experiment — falsify H0 (umbrella)
 Created: 2026-05-14
 Author: claude
 Blocked-by: 0167
-Blocked-by: 0168
 Blocked-by: 0169
 Blocked-by: 0170
 Blocked-by: 0171
@@ -17,6 +16,7 @@ Blocked-by: 0173
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T22:45Z HDMX-coding-agent note Derisk pass complete (Wave-2 prereqs landed via #337, #339, #340): Qwen and Mistral probes PASS with full billing transparency; Anthropic and OpenAI funded (Anthropic +$25, OpenAI +$30, balances current). Anthropic compose verified — claude-opus-4-7 + web_search_20250305 + adaptive thinking match the corrected spec. OpenAI compose verified — gpt-5.5 + web_search + reasoning, with two parser-blocking gotchas folded into 0168 (must pass include=['web_search_call.action.sources'] to surface URLs; reasoning.summary stays empty even at effort=high/summary=detailed). Phase B-0 (N=1) folded into experiment structure as a gate before Phase B (N=3).
 2026-05-20T23:30Z HDMX-coding-agent note Anthropic slot pinned to claude-opus-4-6 (was 4.7). Compose re-verified on 4.6: identical shape, ~40% cheaper per call. See 0167 log.
+2026-05-20T21:39Z HDMX-coding-agent note blocker 0168 closed — Blocked-by removed.
 --- body ---
 ## Context
 

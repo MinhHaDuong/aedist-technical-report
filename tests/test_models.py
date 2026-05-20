@@ -26,7 +26,7 @@ REQUIRED_FIELDS_V2 = {
     "license",
 }
 # SDK-based routes require base_url; CLI routes must not have it.
-ROUTES_REQUIRE_BASE_URL = {"openrouter", "ollama", "openllm"}
+ROUTES_REQUIRE_BASE_URL = {"openrouter", "ollama", "openllm", "openai-responses"}
 ROUTES_NO_BASE_URL = {"claude-code-cli", "codex"}
 
 VALID_COUNTRIES = {"US", "CN", "FR", "Other"}
