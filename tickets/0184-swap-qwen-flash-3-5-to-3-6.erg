@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-20T23:20Z claude created — discovered during 0181 execution. 4 of 4 qwen3.5-flash runs hit finish_reason=length at ~35-38K tokens (above the 32768 max_tokens cap, indicating it would happily emit >40K). Same family newer-generation qwen3.6-flash exists on OpenRouter.
 2026-05-20T23:24Z claude smoke PASS — qwen/qwen3.6-flash, 2 calls on locked Experiment 1 prompt (modules=[], system_instruction=no-web-search, seed=42, max_tokens=32768, temp=0.0). Call 1: wall=43s ctok=6949 finish=stop cost=$0.00786. Call 2: wall=57s ctok=13809 finish=stop cost=$0.01558. 2/2 stop, no bimodal latency, both well under 600s. Far less verbose than 3.5-flash (~10× less). Swap approved; proceeding to models.yaml + journal-set edit in a follow-up commit.
+2026-05-21T00:30Z claude note Caveat: the two 2026-05-20 smoke calls above were billed (~$0.024 to OpenRouter) but full response bodies were NOT saved — only `response_tail_200` was captured to /tmp/smoke_36flash_results.json (non-tracked, ephemeral). Those calls cannot be claimed as production reps. When 0184 lands and 0181's executing agent runs the delta, all 5 qwen3.6-flash reps will be fresh runs. To prevent recurrence, src/aedist/smoke.py now saves full response JSON per call to a configurable directory (default /tmp/aedist-smoke); future smoke probes should use it rather than ad-hoc Python scripts.
 
 --- body ---
 ## Context
