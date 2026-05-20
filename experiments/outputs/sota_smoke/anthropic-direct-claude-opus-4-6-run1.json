@@ -1,0 +1,284 @@
+{
+  "run_record": {
+    "run_id": "8ceab7fc40ab",
+    "timestamp": "2026-05-20T20:54:31.863700Z",
+    "method": "frontier",
+    "method_params": {
+      "model": "claude-opus-4-6",
+      "temperature": null,
+      "max_tokens": null,
+      "prompt_version": null,
+      "extra": {
+        "run_number": 1
+      }
+    },
+    "resource_use": {
+      "wall_s": 10.062,
+      "cost_usd": 0.077935,
+      "tokens_in": 13507,
+      "tokens_out": 416,
+      "cost_breakdown": {
+        "input": 0.067535,
+        "output": 0.0104
+      },
+      "thinking_tokens": null
+    },
+    "result_file": null,
+    "result_summary": {
+      "status": "ok",
+      "n_plants": null,
+      "tp": null,
+      "fp": null,
+      "fn": null,
+      "f1": null,
+      "fuel_accuracy": null,
+      "status_accuracy": null,
+      "province_accuracy": null
+    },
+    "justification": null,
+    "validation": null,
+    "agent_family": "anthropic-direct",
+    "agent_mode": "smoke",
+    "synopsis_sha": null,
+    "designed_prompt_sha": null,
+    "web_search_calls": [
+      {
+        "query": "coal power plants in Vietnam",
+        "urls_returned": [
+          "https://en.wikipedia.org/wiki/List_of_coal-fired_power_stations_in_Vietnam",
+          "https://en.evn.com.vn/d6/news/Overview-of-coal-fired-thermal-power-development-in-Vietnam-66-163-1573.aspx",
+          "https://www.reccessary.com/en/news/vietnam-coal-plants-decarbonization-2050",
+          "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+          "https://theinvestor.vn/24-bln-coal-fired-power-plant-in-central-vietnam-nears-completion-ready-to-connect-to-grid-d13247.html",
+          "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+          "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+          "https://www.gem.wiki/Vung_Ang_power_station",
+          "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station"
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "url": "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station",
+        "snippet": "Pha Lai Thermal Power Plant is the largest coal-fired power plant in Vietnam located in Pha Lai, Chí Linh District, Hải Dương Province, roughly 65 kil...",
+        "supports_claim": null
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station",
+        "snippet": "It has an installed electric capacity of 1,040 MW. ",
+        "supports_claim": null
+      },
+      {
+        "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+        "snippet": "The Duyen Hai Power Plant I &amp; III is a 2,488MW thermal power project located in Tra Vinh, Vietnam. Post completion of construction, the project wa...",
+        "supports_claim": null
+      },
+      {
+        "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+        "snippet": "Vung Ang II Thermal Power (VAPCO), the project investor in the 1.32 GW Vung Ang II coal-fired power plant in Ky Loi (Vietnam), has officially inaugura...",
+        "supports_claim": null
+      }
+    ],
+    "parsed_table_path": null,
+    "finish_reason": "end_turn",
+    "retry_count": 0,
+    "error": null,
+    "reasoning_summary": "The user wants 3 coal power plants in Vietnam with citations. Let me search for this.\n\nI have enough information to list 3 coal power plants in Vietnam with citations.",
+    "tool_calls_cost_usd": 0.01
+  },
+  "parsed": {
+    "text": "Here are three coal power plants in Vietnam:\n\n1. **Phả Lại Power Station** — The largest coal-fired power plant in Vietnam, located in Phả Lại, Chí Linh District, Hải Dương Province, about 65 km north-east of Hanoi, with an installed capacity of 1,040 MW.\n\n2. **Duyên Hải Power Plant I & III** — A 2,488 MW thermal power project located in Trà Vinh, Vietnam, commissioned in 2016 and developed by Vietnam Electricity.\n\n3. **Vũng Áng II Power Plant** — A 1.32 GW coal-fired plant in Kỳ Lợi, Vietnam, officially inaugurated in April 2026. The US$2.2 billion ultra-supercritical project was developed under a BOT model by Mitsubishi Corporation (60%) and KEPCO (40%).",
+    "n_searches": 1,
+    "n_citations": 4,
+    "n_web_search_calls": 1,
+    "reasoning_summary": "The user wants 3 coal power plants in Vietnam with citations. Let me search for this.\n\nI have enough information to list 3 coal power plants in Vietnam with citations."
+  },
+  "raw_response": {
+    "id": "msg_01EqS23snQjwxprYaBq5M7hg",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpoCCmMIDRgCKkBqYL1gzOnRCnr2ySohaOwoUVHoyepX+rZsyW7aD7Ep+fK7+r7iG7/j4tGM4F2bfrOoow9o4u8uu79L9VGUg5/SMg9jbGF1ZGUtb3B1cy00LTY4AEIIdGhpbmtpbmcSDGXshdT5JqcuQBGUjRoMEtoBGlHQP3kf+1whIjC+w7DHZUvAAEGAQnEP1UjLvjdynbDz14HT/yUb6k33+FIB5d0dMIQrVTr9/Yp5xLAqZWZoDmKEup4ZYijUomie5jXqMbLwR+djkCBooKD813Txrol3308tDVdTmqrtbGktV0p5NEzxFVHnl8UcsLOUfITxyPygoYBxYzy75HsPj1XzS2yPzRPDofrmXxqzQ2G3kEG/pVoUGAE=",
+        "thinking": "The user wants 3 coal power plants in Vietnam with citations. Let me search for this.",
+        "type": "thinking"
+      },
+      {
+        "id": "srvtoolu_014i4wHtvWMe8EueBXSJCQJy",
+        "caller": null,
+        "input": {
+          "query": "coal power plants in Vietnam"
+        },
+        "name": "web_search",
+        "type": "server_tool_use"
+      },
+      {
+        "caller": {
+          "type": "direct"
+        },
+        "content": [
+          {
+            "encrypted_content": "EpQECioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDMXbCSDIW0jsaBAJXBoME7s66R1Rn2sxQ0d9IjCPALHJux5bb5wg0O4Pk8y2bjYHLiSqKsX19tVn39RQESUyhhItpHHOiAQEctwt6XIqlwMsKXZ98rSg59jxp1dufR97SlR6gT5KRT7E2lc02wuKRNTgcE4ZMSGDfTsKZ6ksJTHlWeqhV7zRxFzvq4gKduPB9hAfSaf4qBNVHRBB8NaC828si5RZ3kUbD8iUZ6AmSrAhSKnJfcHhdVelasEX7Z3nOvwVTRCkQ73uthiP6Iab2r+EkAvEwV0FVb1i9+MjG+VQBBpzk/h0DX6aF/C/kkbvx/BLJRaPs/eAMy5rTbgx3eLdm2Y7/F/ljqKhruqJXhOtLhXYvGjggNwMPfdOMrAG7l0nrcQ8x+pinOyPlMuGDnBCm7Lg2ijvaHmkSoclnYUQuvdkdd+RucVYcPSTnknZnoLgiEn9vPAP3v2DA1wGQOyErUY1hKyPz7JIa2iCyZqaOhOIZBXlRz1K52viF1sxWkcKD23qbESJ439RLV2f+OjxQoJ+Mx16O0AenBXcUSECUK5eYp0/aHiji36iUA6ea5L6QJQJNYuZLrS6zr5S92X4i4W7R/fkE+1foDevKTxW8GYciu4MWQxBxMoXHs5CZC1rED26jxgD",
+            "page_age": "May 9, 2025",
+            "title": "List of coal-fired power stations in Vietnam - Wikipedia",
+            "type": "web_search_result",
+            "url": "https://en.wikipedia.org/wiki/List_of_coal-fired_power_stations_in_Vietnam"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": null,
+            "title": "Overview of coal-fired thermal power development in Vietnam",
+            "type": "web_search_result",
+            "url": "https://en.evn.com.vn/d6/news/Overview-of-coal-fired-thermal-power-development-in-Vietnam-66-163-1573.aspx"
+          },
+          {
+            "encrypted_content": "EsoHCioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDDkVFZdsI61q/K47QBoMISVMWJXSqIqldRNxIjBLcjKDzB1EKwhA/tCA379Sn1yn/4wh3dLTz8v4iXG8z194exEwFLkA1Oy9QAE+sAwqzQbDWNT+t3nuumyS9TjY5pCD85O28pDaOb4BAQlJE40vCGuUOnanfRKJgQWeM0eWCgmdY9/vSv6FnCjQLzDpieLtrrZP7MwtWw6DSE+9uql2myZU7+xLv3RLKBNCW6WjrHbtmJ45LCE+YmR9CCYAjZxI9Vz1klirmEOS1I3BbKy7LS4WIPXsDP5kIxeyMOj3qR2/BVDUKbHtMSn6+0H/s+85Nq8EnFORtxp+JDaU+l85j4iFPTTxq7iQ8TeZ30aNHVsHtctZ6b9KBFaEHhNzzdnS8l8m/vH54X9uLVoxBFY4irrxYra0uF+r667U+A8OqPAa0sD1TDn88unrNoZrK1zaPSiXWsjXFJWfUZ/FEOeC3e8F64LKF4aEsOv3MjeDoZDoCtXP0XXLBwM+esk27ZU9S5LZ+4FBJJm5WHY9n+0ktVQa6xlCkUyAq2VqL2VgLqe3HrVfgB83Lta7UC2gjV9aE9wBA1AcXxGReX+eZJ9DrE8Q/0PRQYo83k09ckKAGg0HWm7HkjmW5cQ3bZ8ekmiWnxXZJB3p2Jl/8AI9xpMGFUazL5/d6VHCxwOUT/UmU71cAw8OEXJCovyD4f7WPezmyIq83UnI++wD78HGDo89G3vawQOUljRtgfbyYz1YyKJX4kMF5qZ0OXV567QiZy0ODx/PJeeF9KksX+4xqRnYnL+Rtsj+xf2X/oT5XjHFOpHGEtb+Wf1DyD75K+nXWIXZVVqHq+TM1om3yRRr6nw19MCc6r2sBgtNOKYYemOGRtThjOHae+mQcYB9LqieMUPIYdvKJiMsrHUYR5r2FZkMxIvl4BMH7koK5/b+oR6N392n8H7dmfrC/YvWKKtuHRy87YGIISJPwKzJwSoIeV7UusbV+f46p4R0f8phGnV5Ua4smTi4obGFUoNxFTc2zM912U49BtMn15qeaRlx7i9dHhKnllMe6fK+lv5RPOb83vs5mNVhE9pJ0jlmgDZyZEy2GNCPuvSft48NdbtrlOgqOkogoDmSmPmyVTVkkHnyC23kAfmEjaq4xKaVvYumc3Ih+dVHT/nCeiH7uv9eMRUbQ9qEFc2nnB8iXtSQICPy1Fk8jSCy2wUjup5EdJ3q1SLJnRt3qzUxtmgeua8tLhgD",
+            "page_age": "February 21, 2025",
+            "title": "Vietnam unveils coal phase-out plan, intends to stop 2 coal-power plants by 2030 | NEWS | Reccessary",
+            "type": "web_search_result",
+            "url": "https://www.reccessary.com/en/news/vietnam-coal-plants-decarbonization-2050"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": "September 9, 2024",
+            "title": "Top five thermal power plants in operation in Vietnam",
+            "type": "web_search_result",
+            "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": "November 8, 2024",
+            "title": "$2.4 bln coal-fired power plant in central Vietnam nears completion, ready to connect to grid",
+            "type": "web_search_result",
+            "url": "https://theinvestor.vn/24-bln-coal-fired-power-plant-in-central-vietnam-nears-completion-ready-to-connect-to-grid-d13247.html"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": null,
+            "title": "Transition pathways for Vietnam’s major coal-thermal power plants | United Nations Development Programme",
+            "type": "web_search_result",
+            "url": "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": "1 month ago",
+            "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant",
+            "type": "web_search_result",
+            "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html"
+          },
+          {
+            "encrypted_content": "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",
+            "page_age": "January 27, 2026",
+            "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki",
+            "type": "web_search_result",
+            "url": "https://www.gem.wiki/Vung_Ang_power_station"
+          },
+          {
+            "encrypted_content": "Ep0ICioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDGNdwQCd0aSXsUeRtRoMx8YR0jMW5XKGCjZlIjDbSV9OEYmBvUa0WxGgJTMEpg7rP0uaqn5Xcd2uw/m1MDJ+wIzzVYyrg/36Fsgrxc0qoAeDkgJDvcIgJ1Z+Z8fxaGzdvMswmQymw2NVeB022IINm4M2zrZvEQABkBwG82OEImQv6puq7baXV8fInqgvyOq9kwluRwrMy4+hE93sZcHzrXpRnW1OJuKofyngobijVGMU36M0uojhgWomt5UHh4dSo40Cybe89beLtQEHoYhDkhrZX+2fPcMcvra/D8DFhV7rzCjzYjGiKDsva856ixOA8twYeeDWcuvyT5MhudR9L94nYrh+ZvrGnxcEAltP/plam6YPTg3aeiAzrYXGeEfKGv4HSb3He0Ffpfa/uNWdhEbjA+6Nan2Mhu3ev3UGNZt5ks7L+7UQv0hV4yTU4K1Dhe2RhOPtwQJdPGY+nh9xcmt9iaX8j3cjOlpCpIyIT5h2OtTMK5HAcRFhdJ14aHS3pfJ6vcb0CGt7lN7AlYR1gvr4Og74QHe5NLrBK49FEBPx9tCd0AYThCFJoVa9vBlj/lqrV4DZT8ME/g5L3BBPj7WPEE7W5162oaoLPSjAUkikGX36/Bmh/2nm6NfNwdx5/G/TDZ8ZdWkUzEnIQh7IFA5tJ/S/juNMgAMhjMNLkrBQdzf2nFUWT/qqeynijxUWQ1VJx+bac+SdkFujgIkURIij00/MphlJh/5JVOvaf9qompKlSJeCzbITF+6EnBC9nqKHJ0EgTQDARYPzosqafI1aRFbWAhsBZZlBBvs1ghZ/hHVl43batbRAPy7bdaxBVl/wZ+BP9fmcRpPBLMUZA4WkfOdHDolIqyvzMObGsv6hiLwEn0+1e+XeWS/xLZIsSNkqoAoL1TMW7uSIaqct2Lg1OmKYHZuQ02uiu85Tr6Ub+eWlF7wAZoyqQ3HItqA/A+503++6v9nxmlEkTfHgNgBR+MbU4Ri9bzIYkCuK4y76Yi+t6Z5nGmS1FdRCQdGYBTlzK18hO0K9Rc6j+I0bO7oRh6KthaWFnlBTbInWtqt7qK33cfXQkjuEL2q1/8Bfr9W36jyssH71jhiy4ZEqvLfBAN8iib12+uGydob11ZfCFpL0iH4f++4q9f0p+mTmeW6o97UKIrBXGJNb3WbHvfUJ+v60Xot7x+Ib5lsbAeqCNg4/tgF89qTYyw1fmos4cW/iccX4O6eKstrWsr5sGmNWadwv9zOr88iO++qO6me2RTohGwD0+1WCG1DsdCQ475E71rk4KLCfRYf0lyVhSiFfDrUmndX8KrhBANP5VnQe+TDoCPR4qKfvSeZ4B+vyGAM=",
+            "page_age": "November 24, 2023",
+            "title": "Phả Lại Power Station - Wikipedia",
+            "type": "web_search_result",
+            "url": "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station"
+          }
+        ],
+        "tool_use_id": "srvtoolu_014i4wHtvWMe8EueBXSJCQJy",
+        "type": "web_search_tool_result"
+      },
+      {
+        "signature": "EpUCCmMIDRgCKkDctYmyMbI1fbP07Og/OsuWBO63X3sk6B0MQo6e2fV6wjxviag3i3FnS9NvTNt6qaBzmGcV067hiZNFLNPTEBB5Mg9jbGF1ZGUtb3B1cy00LTY4AEIIdGhpbmtpbmcSDMC7b9bv11P92IvI/BoMuflwrQdONDau8mQwIjCiZZUfI5jDwyKB6s5bUrdiXY7mHNBG5GQxS+qn279srgKbBBOzduSeuEg21QPaIIMqYGPadaxTNaguDNLanyHwTik193GvlQn0sRj58J0vaTcBxp7uE0h8ezXdu67C3HrxI84yCqYLLaDTlyYeuYSDcuDFQI0F08sJq6MqTG2A2VCOCmkh7DFH+g8AKaYJnTr6mBgB",
+        "thinking": "I have enough information to list 3 coal power plants in Vietnam with citations.",
+        "type": "thinking"
+      },
+      {
+        "citations": null,
+        "text": "Here are three coal power plants in Vietnam:\n\n1. **Phả Lại Power Station** — ",
+        "type": "text"
+      },
+      {
+        "citations": [
+          {
+            "cited_text": "Pha Lai Thermal Power Plant is the largest coal-fired power plant in Vietnam located in Pha Lai, Chí Linh District, Hải Dương Province, roughly 65 kil...",
+            "encrypted_index": "Eo8BCioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDKZo74j0fqnZYA0wGxoMNsgnsiHvHRCzNDo3IjD9B5IUX6sBTcw90Z6ZMHsp4kONPgg8/gs8jg9ETmJEzfdw63ODBh0j4mnEw3xtf4IqE37NDE84xQlNDYiQNVrv83l5Gw4YBA==",
+            "title": "Phả Lại Power Station - Wikipedia",
+            "type": "web_search_result_location",
+            "url": "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station"
+          },
+          {
+            "cited_text": "It has an installed electric capacity of 1,040 MW. ",
+            "encrypted_index": "Eo8BCioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDJ1ehq3EKTvDVYU9zxoMW9TDyE1kNi/y16+tIjD/JimStUcbg0x6Y5s3e/r6A0PwcdVpsNlwh7b0Vid2NjiQpFKsYWe47B/BMFlG3UUqE4J14Uy0gQ04Dcdd11nl++U6zmEYBA==",
+            "title": "Phả Lại Power Station - Wikipedia",
+            "type": "web_search_result_location",
+            "url": "https://en.wikipedia.org/wiki/Ph%E1%BA%A3_L%E1%BA%A1i_Power_Station"
+          }
+        ],
+        "text": "The largest coal-fired power plant in Vietnam, located in Phả Lại, Chí Linh District, Hải Dương Province, about 65 km north-east of Hanoi, with an installed capacity of 1,040 MW.",
+        "type": "text"
+      },
+      {
+        "citations": null,
+        "text": "\n\n2. **Duyên Hải Power Plant I & III** — ",
+        "type": "text"
+      },
+      {
+        "citations": [
+          {
+            "cited_text": "The Duyen Hai Power Plant I &amp; III is a 2,488MW thermal power project located in Tra Vinh, Vietnam. Post completion of construction, the project wa...",
+            "encrypted_index": "EpEBCioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDKsJqu6ehjl2XvNDpRoM2AM5y+/SGrKhChHTIjC0z0zVJv8kqY56k14mtM0R0P2sf3ykyOfANuS2MbslyqqN/fY6NaJ5o96ee6DamEoqFVv00S8SLhJ9sgeMp13lZgGhLy1nTxgE",
+            "title": "Top five thermal power plants in operation in Vietnam",
+            "type": "web_search_result_location",
+            "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/"
+          }
+        ],
+        "text": "A 2,488 MW thermal power project located in Trà Vinh, Vietnam, commissioned in 2016 and developed by Vietnam Electricity.",
+        "type": "text"
+      },
+      {
+        "citations": null,
+        "text": "\n\n3. **Vũng Áng II Power Plant** — ",
+        "type": "text"
+      },
+      {
+        "citations": [
+          {
+            "cited_text": "Vung Ang II Thermal Power (VAPCO), the project investor in the 1.32 GW Vung Ang II coal-fired power plant in Ky Loi (Vietnam), has officially inaugura...",
+            "encrypted_index": "EpEBCioIDxgCIiQwOTk1MDAxNi0yMzBkLTRhN2QtYWE0Yy00YjkyNTI4ZTdjYTUSDHNsmRCy5C4I6ZrzHRoMvZe7XcZjPyTjcErgIjAA6sR/g76186iMm6+OHdwWk5dX3pjwsurNmQHKVjKdi18YZ6af6neGjIObBhqggkgqFRmEddORcwAyfbu3mtwdjnJgmn3UrxgE",
+            "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant",
+            "type": "web_search_result_location",
+            "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html"
+          }
+        ],
+        "text": "A 1.32 GW coal-fired plant in Kỳ Lợi, Vietnam, officially inaugurated in April 2026. The US$2.2 billion ultra-supercritical project was developed under a BOT model by Mitsubishi Corporation (60%) and KEPCO (40%).",
+        "type": "text"
+      }
+    ],
+    "model": "claude-opus-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 13507,
+      "output_tokens": 416,
+      "server_tool_use": {
+        "web_fetch_requests": 0,
+        "web_search_requests": 1
+      },
+      "service_tier": "standard"
+    }
+  },
+  "cost_breakdown": {
+    "total": 0.087935,
+    "input": 0.067535,
+    "output": 0.0104,
+    "cache_read": 0.0,
+    "cache_write": 0.0,
+    "web_search": 0.01
+  }
+}

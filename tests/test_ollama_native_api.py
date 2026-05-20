@@ -25,6 +25,7 @@ OLLAMA_DISPATCH = {
 }
 NO_OLLAMA_DISPATCH = {
     "query",
+    "query_anthropic",
     "query_fusion",
     "query_verification",
 }

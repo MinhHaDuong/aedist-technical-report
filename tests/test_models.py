@@ -27,7 +27,7 @@ REQUIRED_FIELDS_V2 = {
 }
 # SDK-based routes require base_url; CLI routes must not have it.
 ROUTES_REQUIRE_BASE_URL = {"openrouter", "ollama", "openllm", "openai-responses"}
-ROUTES_NO_BASE_URL = {"claude-code-cli", "codex"}
+ROUTES_NO_BASE_URL = {"anthropic-direct", "claude-code-cli", "codex"}
 
 VALID_COUNTRIES = {"US", "CN", "FR", "Other"}
 VALID_ARCHITECTURES = {"dense", "moe"}

@@ -2,6 +2,7 @@
 Title: Adapter — Anthropic Claude with web_search tool + extended thinking
 Created: 2026-05-14
 Author: claude
+Closed: autoclosed — PR #351
 
 --- log ---
 2026-05-14T12:00Z claude created
@@ -11,6 +12,7 @@ Author: claude
 2026-05-20T20:30Z HDMX-coding-agent note Action 1 snippet superseded by 0180 — adaptive thinking, web_search_20250305 tool form.
 2026-05-20T22:50Z HDMX-coding-agent note Derisk pass PASS — live probe against claude-opus-4-7 with corrected spec (adaptive thinking + tools=[{type:web_search_20250305, name:web_search, max_uses:N}]) returned HTTP 200, all three capabilities composed. Response shape: content[] mixing types thinking / server_tool_use (per query) / web_search_tool_result (with N URLs) / text (with citations[] on cited segments). usage.server_tool_use.web_search_requests is the search count. Per-call cost ~$0.20 with max_tokens=2048 and modest input (search results balloon input_tokens to ~12k). Account funded +$25 on 2026-05-20.
 2026-05-20T23:30Z HDMX-coding-agent note Model pinned to claude-opus-4-6 (user decision). Compose re-verified on 4.6: identical response shape (2 thinking blocks, 1 server_tool_use, 1 web_search_tool_result, 3 text with 1 citation), same usage block, lower per-call cost (~$0.12 vs ~$0.20). Action 2 updated to pin 4.6 explicitly; do not silently upgrade.
+2026-05-20T21:47Z HDMX-coding-agent closed — autoclosed — PR #351
 --- body ---
 ## Context
 

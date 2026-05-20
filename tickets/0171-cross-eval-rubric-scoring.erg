@@ -2,12 +2,12 @@
 Title: Cross-evaluation rubric + scoring harness (Phase C)
 Created: 2026-05-14
 Author: claude
-Blocked-by: 0167
 
 --- log ---
 2026-05-14T12:00Z claude created
 2026-05-14T13:00Z claude note Imagine: PROCEED with three deltas. (1) Rubric resolution 0-3 anchored for LLM-judged dims (LLM-as-judge calibration collapses on 0-5); Accuracy stays continuous from mechanical metrics, binned only for display. (2) Reuse existing mechanical infra: src/aedist/evaluate.py + metrics.py + matching/ for Accuracy + recall + precision; src/aedist/score_provenance.py for cited-fraction; LLM judges only Coherence-external, Provenance-resolves-and-supports, Temporality. Inject mechanical numbers into judge prompt as priors. (3) Quoted-span justification verified by parser substring check (case+whitespace fold) — hard schema reject if span not found in subject markdown.
 
+2026-05-20T21:47Z HDMX-coding-agent note blocker 0167 closed — Blocked-by removed.
 --- body ---
 ## Context
 
