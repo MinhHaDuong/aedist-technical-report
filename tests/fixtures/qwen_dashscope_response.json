@@ -1,0 +1,63 @@
+{
+  "_provenance": "Synthetic fixture matching the DashScope qwen3-max-2026-01-23 response shape verified empirically on 2026-05-20 (ticket 0173). Constructed from the documented shape because the live derisk response was not persisted. Asymmetry between usage.plugins.search.count (3) and search_info.search_results length (5) is intentional — it catches dedup/len-misuse bugs in parse_response.",
+  "status_code": 200,
+  "request_id": "req-fixture-0173-20260520",
+  "output": {
+    "search_info": {
+      "search_results": [
+        {
+          "index": 1,
+          "url": "https://mofcom.gov.cn/article/news/202509/20250903556789.shtml",
+          "title": "China-Vietnam Energy Cooperation Report 2026",
+          "site_name": "mofcom.gov.cn"
+        },
+        {
+          "index": 2,
+          "url": "https://baike.baidu.com/item/Vinh-Tan-Power-Plant",
+          "title": "Vinh Tan Power Plant - Baidu Baike",
+          "site_name": "baike.baidu.com"
+        },
+        {
+          "index": 3,
+          "url": "https://www.evn.com.vn/d6/news/Press-release-coal-fleet-2025-6-12-1376.aspx",
+          "title": "EVN Press Release — Coal Fleet Status 2025",
+          "site_name": "evn.com.vn"
+        },
+        {
+          "index": 4,
+          "url": "https://en.vietnamplus.vn/coal-power-plant-Duyen-Hai-3-update/265432.vnp",
+          "title": "Duyen Hai 3 Update — Vietnam Plus",
+          "site_name": "vietnamplus.vn"
+        },
+        {
+          "index": 5,
+          "url": "https://www.reuters.com/business/energy/vietnam-coal-capacity-2026-01-15/",
+          "title": "Vietnam coal capacity outlook — Reuters",
+          "site_name": "reuters.com"
+        }
+      ]
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "reasoning_content": "The user is asking for three Vietnamese coal power plants with a citation each. I should search for current operational coal plants. Let me search for Vinh Tan, Duyen Hai, and Vung Ang as well-known examples and verify with citations.",
+          "content": "Three operational coal power plants in Vietnam:\n\n1. **Vinh Tan 2 Power Plant** (Binh Thuan, 1244 MW) [2]\n2. **Duyen Hai 3 Power Plant** (Tra Vinh, 1245 MW) [4]\n3. **Vung Ang 1 Power Plant** (Ha Tinh, 1200 MW) [3]"
+        }
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 42,
+    "output_tokens": 2150,
+    "output_tokens_details": {
+      "reasoning_tokens": 1900
+    },
+    "plugins": {
+      "search": {
+        "count": 3
+      }
+    }
+  }
+}
