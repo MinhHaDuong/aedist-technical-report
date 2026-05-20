@@ -9,7 +9,7 @@ import argparse
 import hashlib
 from pathlib import Path
 
-from .harness import load_models
+from .harness import load_experiments, load_models
 from .schema import JobSpec
 
 _JOB_SUBDIRS = ("pending", "running", "done", "failed")
@@ -47,30 +47,60 @@ def _ensure_dirs(jobs_root: Path) -> None:
         (jobs_root / subdir).mkdir(parents=True, exist_ok=True)
 
 
+def _filter_models_by_set(
+    models: list[dict],
+    model_set: str,
+    experiments_path: str | Path,
+) -> list[dict]:
+    """Restrict the model registry to ids listed in ``[sets.<model_set>]``.
+
+    Resolves ``model_set`` against ``[sets]`` in ``experiments.toml`` and
+    returns only the registry entries whose ``name`` is in the allowed set.
+    Raises KeyError if the named set does not exist.
+    """
+    experiments = load_experiments(experiments_path)
+    sets = experiments.get("sets", {})
+    if model_set not in sets:
+        raise KeyError(f"Unknown model_set {model_set!r}; available: {sorted(sets)}")
+    allowed = set(sets[model_set].get("model_ids", []))
+    filtered = [m for m in models if m["name"] in allowed]
+    missing = allowed - {m["name"] for m in filtered}
+    if missing:
+        raise KeyError(f"model_set {model_set!r} references unknown model ids: {sorted(missing)}")
+    return filtered
+
+
 def generate(
     sweep_path: str | None = None,
     jobs_root: Path | None = None,
     *,
     sweep_config: dict | None = None,
     sweep_name: str | None = None,
+    experiments_path: str | Path = "experiments.toml",
 ) -> tuple[int, int]:
     """Fan out a sweep config into individual job files.
 
     Provide either *sweep_path* (YAML file) or *sweep_config* (dict from TOML).
     When using *sweep_config*, pass *sweep_name* for deterministic job IDs.
+    If the sweep config sets ``model_set``, the model registry is filtered
+    to that named set in *experiments_path* before fan-out.
     Returns (generated_count, skipped_count).
     """
     if sweep_config is not None:
         parent_spec = JobSpec.from_toml_section(sweep_config)
         sweep_key = sweep_name or "toml"
+        model_set = sweep_config.get("model_set")
     elif sweep_path is not None:
         sweep = Path(sweep_path)
         parent_spec = JobSpec.from_sweep_yaml(sweep)
         sweep_key = str(sweep)
+        model_set = None
     else:
         raise ValueError("Provide sweep_path or sweep_config")
 
     models = load_models(parent_spec.models_file)
+    if model_set:
+        models = _filter_models_by_set(models, model_set, experiments_path)
 
     if jobs_root is None:
         jobs_root = Path("jobs")
@@ -105,6 +135,11 @@ def generate(
                 repeat=1,
                 run_number=run,
                 budget_usd=parent_spec.budget_usd,
+                temperature=parent_spec.temperature,
+                seed=parent_spec.seed,
+                max_tokens=parent_spec.max_tokens,
+                web_search=parent_spec.web_search,
+                no_think=parent_spec.no_think,
                 system_instruction=parent_spec.system_instruction,
                 output_dir=parent_spec.output_dir,
                 timeout_seconds=parent_spec.timeout_seconds,
@@ -143,14 +178,13 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "generate":
         if args.sweep:
-            from .harness import load_experiments
-
             config = load_experiments(args.experiments)
             section = config["sweeps"][args.sweep]
             generated, skipped = generate(
                 jobs_root=Path(args.jobs_dir),
                 sweep_config=section,
                 sweep_name=args.sweep,
+                experiments_path=args.experiments,
             )
         elif args.sweep_yaml:
             generated, skipped = generate(args.sweep_yaml, Path(args.jobs_dir))

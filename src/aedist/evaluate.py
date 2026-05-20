@@ -224,12 +224,14 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
     # (ticket 0175 / ADR-7): system_instruction declares the baseline
     # no-web-search regime; reasoning_effort is a per-model capability flag
     # (gpt-oss-*, qwen3-max).
-    for key in ("system_instruction", "reasoning_effort"):
+    for key in ("system_instruction", "reasoning_effort", "seed"):
         if raw.get(key) is not None:
             extra[key] = raw[key]
     record.method_params.extra = extra or None
     if "temperature" in raw:
         record.method_params.temperature = raw["temperature"]
+    if "max_tokens" in raw and raw["max_tokens"] is not None:
+        record.method_params.max_tokens = raw["max_tokens"]
 
 
 def _rel_path(path: Path) -> str:

@@ -174,9 +174,10 @@ class Worker:
         """
         client = self.make_client()
         if job.prompt_modules is not None:
-            modules_dir = (
-                Path(job.modules_dir) if job.modules_dir else Path("experiments/prompts/modules")
-            )
+            # Default resolves relative to cwd; the experiments/Makefile sets
+            # cwd=experiments/ before invoking the worker (see UV_RUN macro),
+            # so "prompts/modules" finds experiments/prompts/modules/*.txt.
+            modules_dir = Path(job.modules_dir) if job.modules_dir else Path("prompts/modules")
             prompt = assemble_prompt(modules_dir, job.prompt_modules)
         else:
             prompt = Path(job.prompt).read_text().strip()
@@ -193,6 +194,8 @@ class Worker:
         api_kwargs = build_api_kwargs(
             model_entry,
             temperature=job.temperature,
+            max_tokens=job.max_tokens,
+            seed=job.seed,
             enable_web_search=job.web_search,
             no_think=job.no_think,
         )
@@ -324,6 +327,8 @@ class Worker:
             "wall_seconds": result["wall_seconds"],
             "cost_usd": cost,
             "temperature": (api_kwargs or {}).get("temperature"),
+            "seed": (api_kwargs or {}).get("seed"),
+            "max_tokens": (api_kwargs or {}).get("max_tokens"),
             "model_metadata": model_metadata(model_entry),
         }
         if model_entry.get("reasoning_effort"):
