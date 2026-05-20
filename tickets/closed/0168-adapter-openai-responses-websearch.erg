@@ -2,6 +2,7 @@
 Title: Adapter — OpenAI Responses API with web_search + reasoning
 Created: 2026-05-14
 Author: claude
+Closed: autoclosed — PR #350
 
 --- log ---
 2026-05-14T12:00Z claude created
@@ -10,6 +11,7 @@ Author: claude
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T20:30Z HDMX-coding-agent note Action 1 snippet superseded by 0180 — tool name is "web_search" (preview alias removed).
 2026-05-20T22:55Z HDMX-coding-agent note Derisk pass — live probe against gpt-5.5 via Responses API surfaced two parser-blocking gotchas now folded into the spec: (1) include=["web_search_call.action.sources"] is mandatory — without it response carries the query only, output_text.annotations is empty, URLs are lost; (2) reasoning.summary stays empty even at effort=high/summary=detailed, so RunRecord.reasoning_summary will typically be None for this adapter. Compose works (web_search + reasoning on same call). billing field on response is informational only ({payer: developer}); cost still derived from usage × price card. Account funded +$30 on 2026-05-20.
+2026-05-20T21:39Z HDMX-coding-agent closed — autoclosed — PR #350
 --- body ---
 ## Context
 
