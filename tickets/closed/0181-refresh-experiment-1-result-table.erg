@@ -2,15 +2,14 @@
 Title: Refresh and update the result table on the final model lineup by running failed and new as needed, after fixing code that must
 Created: 2026-05-20
 Author: claude
-Blocked-by: 0182
-Blocked-by: 0183
-Blocked-by: 0184
+Closed: autoclosed — PR #349 (code) + PR #360 (data)
 
 --- log ---
 2026-05-20T20:35Z claude created — supersedes 0177 (halted). All prerequisites merged to main: #338 (silent-drop fix), #341 (qwen3.6-max-preview added, journal set is 17 models), #346 (Opus 4.7→4.6 swap + max_tokens 32768 + budget $15).
 2026-05-20T23:30Z claude note Refocus: a 85-run sweep already executed in the parallel worktree agent-ad937f289caeac791 on 2026-05-20 between ~20:43Z and ~22:53Z (4-then-16-then-24-worker drain). 76/85 finish=stop, 9 length-truncated (8 of those clustered in two model entries that 0182 and 0184 swap out). 0181 is no longer "run the sweep" — the sweep ran. 0181 is the maintenance ticket: after 0182/0183/0184 land the model-registry + config fixes, refresh the result table by re-running only the records that need replacing (failures, truncations attributable to wrong-slug or wrong-cap, and any new models added to the lineup). Repurposed title, body rewritten.
 2026-05-21T00:10Z claude note Post-rebase update: 0177 was closed on main via PR #354 (commit fd4fbf2, "Wave 2 sweep merged"). The 85 records and the updated experiments/models.yaml are now tracked on main. 0181 no longer has any "close 0177" responsibility — that exit criterion and the corresponding Action 8 are dropped. The "records in parallel worktree" note in the body is also stale since the records are on main now; updated accordingly.
 
+2026-05-20T22:48Z HDMX-coding-agent closed — autoclosed — PR #349 (code) + PR #360 (data)
 --- body ---
 ## Context
 

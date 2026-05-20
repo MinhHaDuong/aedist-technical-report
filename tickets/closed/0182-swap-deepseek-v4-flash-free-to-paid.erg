@@ -2,10 +2,12 @@
 Title: Swap deepseek/deepseek-v4-flash:free → deepseek/deepseek-v4-flash (paid) in journal set
 Created: 2026-05-20
 Author: claude
+Closed: autoclosed — PR #349 (code) + PR #360 (data)
 
 --- log ---
 2026-05-20T20:50Z claude created — discovered during 0181 execution. Free-tier route caps completion at 4096 tokens regardless of requested max_tokens=32768.
 
+2026-05-20T22:48Z HDMX-coding-agent closed — autoclosed — PR #349 (code) + PR #360 (data)
 --- body ---
 ## Context
 
