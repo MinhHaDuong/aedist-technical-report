@@ -65,6 +65,26 @@
   license: commercial
   web_search: true
 
+# Native Anthropic route — used by SOTA agent ticket 0167 (web_search + adaptive thinking).
+# Pricing verified 2026-05-20 against live API smoke; ~$0.12/call at 12k in / 2k out / 1 search.
+- name: "anthropic-direct/claude-opus-4-6"
+  family: anthropic-direct
+  route: anthropic-direct
+  model_id: "claude-opus-4-6"
+  display_name: "Claude Opus 4.6 (Anthropic direct)"
+  provider: Anthropic
+  country: US
+  architecture: dense
+  context_window: 1000000
+  price_per_mtok_in: 5.0
+  price_per_mtok_out: 25.0
+  price_per_mtok_cache_read: 0.50
+  price_per_mtok_cache_write: 6.25
+  price_per_web_search: 0.010
+  size_class: frontier
+  license: commercial
+  web_search: true
+
 - name: "anthropic/claude-sonnet-4.6"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"
