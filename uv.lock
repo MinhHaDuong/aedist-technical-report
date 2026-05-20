@@ -18,6 +18,7 @@ name = "aedist"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [
+    { name = "anthropic" },
     { name = "httpx" },
     { name = "matplotlib" },
     { name = "numpy" },
@@ -55,6 +56,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "anthropic", specifier = ">=0.40" },
     { name = "deepagents", marker = "extra == 'v1-prototype'", specifier = ">=0.5.3" },
     { name = "httpx" },
     { name = "langchain", marker = "extra == 'v1-prototype'", specifier = ">=1.0" },

@@ -1,0 +1,253 @@
+"""Unit tests for the Anthropic Claude adapter (ticket 0167).
+
+Pure unit tests — no subprocess, no network, no SDK call. Belong in
+``make check-fast``. The fixture lives at ``tests/fixtures/anthropic_response.json``
+and mimics the shape verified live on 2026-05-20 against ``claude-opus-4-6``.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from aedist.query_anthropic import (
+    AGENT_FAMILY,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_MAX_USES,
+    DEFAULT_MODEL,
+    DEFAULT_PRICE_PER_WEB_SEARCH_USD,
+    _compute_anthropic_cost,
+    _parse_anthropic_response,
+    assemble_request,
+)
+
+FIXTURE_PATH = Path(__file__).parent / "fixtures" / "anthropic_response.json"
+
+
+@pytest.fixture
+def anthropic_fixture() -> dict:
+    """Load the recorded ``messages.create`` response shape."""
+    return json.loads(FIXTURE_PATH.read_text())
+
+
+@pytest.fixture
+def price_card() -> dict:
+    """Published Anthropic Claude Opus 4.6 token prices + web_search surcharge."""
+    return {
+        "family": AGENT_FAMILY,
+        "route": AGENT_FAMILY,
+        "model_id": DEFAULT_MODEL,
+        "price_per_mtok_in": 5.0,
+        "price_per_mtok_out": 25.0,
+        "price_per_mtok_cache_read": 0.50,
+        "price_per_mtok_cache_write": 6.25,
+        "price_per_web_search": DEFAULT_PRICE_PER_WEB_SEARCH_USD,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Parsing — the *first failing test* from raid plan §0167
+# ---------------------------------------------------------------------------
+
+
+def test_parse_response_extracts_citations_and_search_calls(anthropic_fixture):
+    """End-to-end parse: thinking + server_tool_use + result + text+citation."""
+    parsed = _parse_anthropic_response(anthropic_fixture)
+
+    # One search call (the single server_tool_use block).
+    assert len(parsed["web_search_calls"]) == 1
+    call = parsed["web_search_calls"][0]
+    assert call["query"].startswith("Vietnam operational coal")
+    # urls_returned is stitched from the matching web_search_tool_result by id.
+    assert len(call["urls_returned"]) == 2
+    assert any("evn.com.vn" in u for u in call["urls_returned"])
+
+    # One inline citation on the text block (richer signal than result URLs).
+    assert len(parsed["citations"]) == 1
+    cit = parsed["citations"][0]
+    assert "evn.com.vn" in cit["url"]
+    assert cit["snippet"] is not None and "Vinh Tan" in cit["snippet"]
+
+    # Narrative non-empty.
+    assert parsed["text"]
+    assert "Vietnam" in parsed["text"]
+
+    # n_searches from usage.server_tool_use.web_search_requests (authoritative).
+    assert parsed["n_searches"] == 1
+
+    # Thinking captured as reasoning_summary.
+    assert parsed["reasoning_summary"] is not None
+    assert "search" in parsed["reasoning_summary"].lower()
+
+    # Token usage carried through.
+    assert parsed["tokens_in"] == 12000
+    assert parsed["tokens_out"] == 600
+
+    # finish_reason wired from stop_reason.
+    assert parsed["finish_reason"] == "end_turn"
+
+
+# ---------------------------------------------------------------------------
+# Cost arithmetic
+# ---------------------------------------------------------------------------
+
+
+def test_compute_cost_against_hand_arithmetic(anthropic_fixture, price_card):
+    """Hand-computed cost matches the adapter's breakdown.
+
+    Hand math:
+      input   = 12000 / 1e6 * $5.00  = $0.060
+      output  =   600 / 1e6 * $25.00 = $0.015
+      cache   = 0
+      search  = 1 * $0.010           = $0.010
+      ---------------------------------------
+      total                          = $0.085
+    """
+    usage = anthropic_fixture["usage"]
+    cost = _compute_anthropic_cost(usage, price_card, n_searches=1)
+
+    assert cost["input"] == pytest.approx(0.060, abs=1e-9)
+    assert cost["output"] == pytest.approx(0.015, abs=1e-9)
+    assert cost["cache_read"] == pytest.approx(0.0, abs=1e-9)
+    assert cost["cache_write"] == pytest.approx(0.0, abs=1e-9)
+    assert cost["web_search"] == pytest.approx(0.010, abs=1e-9)
+    assert cost["total"] == pytest.approx(0.085, abs=1e-9)
+
+
+def test_compute_cost_asymmetric_arguments_catches_swaps(price_card):
+    """Swapping input_tokens and output_tokens must change the answer.
+
+    Catches the classic "I priced output at input rate" bug.
+    """
+    a = _compute_anthropic_cost(
+        {"input_tokens": 1000, "output_tokens": 100}, price_card, n_searches=0
+    )
+    b = _compute_anthropic_cost(
+        {"input_tokens": 100, "output_tokens": 1000}, price_card, n_searches=0
+    )
+    # a = 1000*5 + 100*25 = 5000 + 2500 = 7500 / 1e6 = 0.0075
+    # b = 100*5 + 1000*25 = 500 + 25000 = 25500 / 1e6 = 0.0255
+    assert a["total"] == pytest.approx(0.0075)
+    assert b["total"] == pytest.approx(0.0255)
+    assert a["total"] != b["total"]
+
+
+# ---------------------------------------------------------------------------
+# Dry-run payload assembly
+# ---------------------------------------------------------------------------
+
+
+def test_assemble_request_contains_model_websearch_and_thinking():
+    payload = assemble_request(
+        "Hello, world.",
+        DEFAULT_MODEL,
+        max_tokens=DEFAULT_MAX_TOKENS,
+        max_uses=DEFAULT_MAX_USES,
+    )
+
+    assert payload["model"] == DEFAULT_MODEL
+    assert payload["max_tokens"] == DEFAULT_MAX_TOKENS
+    assert payload["messages"] == [{"role": "user", "content": "Hello, world."}]
+
+    # Adaptive thinking — NOT manual {enabled, budget_tokens}.
+    assert payload["thinking"] == {"type": "adaptive", "display": "summarized"}
+
+    # web_search tool entry must be present, well-typed, with max_uses wired.
+    [tool] = payload["tools"]
+    assert tool["type"] == "web_search_20250305"
+    assert tool["name"] == "web_search"
+    assert tool["max_uses"] == DEFAULT_MAX_USES
+
+    # tool_choice must be "auto" (or none). Live API rejects forced tool use.
+    assert payload["tool_choice"] == {"type": "auto"}
+
+
+def test_assemble_request_default_model_pinned_to_4_6():
+    """Ticket 0167 decision (2026-05-20): pin claude-opus-4-6, not 4.7."""
+    payload = assemble_request("ping")
+    assert payload["model"] == "claude-opus-4-6"
+
+
+# ---------------------------------------------------------------------------
+# Empty / degenerate inputs
+# ---------------------------------------------------------------------------
+
+
+def test_parse_empty_content_returns_empty_lists():
+    parsed = _parse_anthropic_response({"content": [], "usage": {}, "stop_reason": "stop"})
+    assert parsed["text"] == ""
+    assert parsed["citations"] == []
+    assert parsed["web_search_calls"] == []
+    assert parsed["n_searches"] == 0
+    assert parsed["reasoning_summary"] is None
+
+
+def test_parse_handles_multiple_text_blocks_with_citations():
+    """Citations from several text blocks accumulate in order."""
+    resp = {
+        "content": [
+            {
+                "type": "text",
+                "text": "Para 1. ",
+                "citations": [
+                    {"type": "web_search_result_location", "url": "https://a", "cited_text": "x"}
+                ],
+            },
+            {
+                "type": "text",
+                "text": "Para 2.",
+                "citations": [
+                    {"type": "web_search_result_location", "url": "https://b", "cited_text": "y"}
+                ],
+            },
+        ],
+        "usage": {"input_tokens": 1, "output_tokens": 1},
+        "stop_reason": "end_turn",
+    }
+    parsed = _parse_anthropic_response(resp)
+    assert parsed["text"] == "Para 1. Para 2."
+    assert [c["url"] for c in parsed["citations"]] == ["https://a", "https://b"]
+
+
+def test_parse_stitches_tool_use_to_result_by_id():
+    """server_tool_use and web_search_tool_result are paired by tool_use_id."""
+    resp = {
+        "content": [
+            {
+                "type": "server_tool_use",
+                "id": "T1",
+                "name": "web_search",
+                "input": {"query": "q1"},
+            },
+            {
+                "type": "server_tool_use",
+                "id": "T2",
+                "name": "web_search",
+                "input": {"query": "q2"},
+            },
+            {
+                "type": "web_search_tool_result",
+                "tool_use_id": "T2",
+                "content": [{"type": "web_search_result", "url": "https://second"}],
+            },
+            {
+                "type": "web_search_tool_result",
+                "tool_use_id": "T1",
+                "content": [{"type": "web_search_result", "url": "https://first"}],
+            },
+        ],
+        "usage": {
+            "input_tokens": 1,
+            "output_tokens": 1,
+            "server_tool_use": {"web_search_requests": 2},
+        },
+        "stop_reason": "end_turn",
+    }
+    parsed = _parse_anthropic_response(resp)
+    # Order follows server_tool_use appearance, not result appearance.
+    assert [c["query"] for c in parsed["web_search_calls"]] == ["q1", "q2"]
+    assert parsed["web_search_calls"][0]["urls_returned"] == ["https://first"]
+    assert parsed["web_search_calls"][1]["urls_returned"] == ["https://second"]
+    assert parsed["n_searches"] == 2
