@@ -255,10 +255,7 @@ class RunRecord(BaseModel):
     )
     web_search_calls: list[dict] | None = Field(
         default=None,
-        description=(
-            "Tool-call trace. Each entry: "
-            "{'query': str, 'urls_returned': list[str]}."
-        ),
+        description=("Tool-call trace. Each entry: {'query': str, 'urls_returned': list[str]}."),
     )
     citations: list[dict] | None = Field(
         default=None,
@@ -269,9 +266,7 @@ class RunRecord(BaseModel):
     )
     parsed_table_path: str | None = Field(
         default=None,
-        description=(
-            "Repo-relative path to the CSV extracted from the agent's narrative."
-        ),
+        description=("Repo-relative path to the CSV extracted from the agent's narrative."),
     )
     finish_reason: str | None = Field(
         default=None,
@@ -391,6 +386,13 @@ class JobSpec(BaseModel):
         description="Suppress chain-of-thought for thinking-capable models. "
         "Injects the provider-appropriate flag (Ollama/OpenAI-compat: extra_body.think=false). "
         "Set per-sweep, not per-model.",
+    )
+    system_instruction: str | None = Field(
+        default=None,
+        description="Optional system-role message prepended to single-turn calls. "
+        "Used by the parametric baseline (ticket 0175) to declare 'no web search'. "
+        "Per-sweep, not per-model — different regimes (RAG, livesearch) carry "
+        "different system instructions in their own sweeps.",
     )
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)

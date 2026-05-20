@@ -1,7 +1,7 @@
 """Generate base-vs-census LaTeX comparison table.
 
 Compares the minimal 40-word ``census`` prompt against the structured 300-word
-``p1_base`` prompt on the models that were run under both arms.  Reports
+``p1_base`` pilot prompt on the models that were run under both arms.  Reports
 per-model precision/recall/F1, $\\Delta$F1 = F1$_\\text{base}$ - F1$_\\text{census}$,
 mean input-token delta, and a 95 % bootstrap CI on the macro-average $\\Delta$F1.
 
@@ -13,12 +13,16 @@ Inputs
 ------
 Census arm  : ``measurements.jsonl`` rows where ``method == "direct"`` and
               ``method_params.prompt_version == "census"``.
-Base arm    : ``experiments/outputs/ablation/direct/p1_base/*.record.json``.
+Base arm    : ``experiments/outputs/ablation/direct/p1_base.pilot/*.record.json``.
 
 The intersection of models present in both arms is used.  If fewer than two
 models intersect, the script exits non-zero with a clear message.
 
-Ticket: 0057 (base vs census analysis).
+Ticket: 0057 (base vs census analysis). Ticket 0175 renamed the source
+directory to ``p1_base.pilot/`` so the journal sweep writes to a clean
+``p1_base/`` directory; this script still consumes the pilot data.
+TODO(0175 follow-up): once 0177 lands, decide whether this becomes a
+pilot-vs-census or journal-vs-census or pilot-vs-journal comparison.
 """
 
 from __future__ import annotations
@@ -37,7 +41,7 @@ from .tabulate_utils import format_model_name
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base")
+_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base.pilot")
 _DEFAULT_OUTPUT = Path("report/inputs/generated/tab_base_vs_census.tex")
 _BOOTSTRAP_SEED = 20260411
 

@@ -160,6 +160,15 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
             if key in extra:
                 d[key] = extra[key]
 
+        # --- 0175 fields: per-sweep system instruction + per-model reasoning_effort ---
+        # Surfaced so figures and tables can confirm the baseline regime
+        # (no_websearch system message, minimal reasoning on gpt-oss / qwen3-max)
+        # without re-reading raw JSON. Both omit-when-absent.
+        if "system_instruction" in extra:
+            d["system_instruction"] = extra["system_instruction"]
+        if "reasoning_effort" in extra:
+            d["reasoning_effort"] = extra["reasoning_effort"]
+
         # --- agent-mode fields (ticket 0172) -----------------------------
         # Scalars: omit-when-None to match the existing pattern above.
         # Lists: surface as counts so reporting can pivot without re-loading

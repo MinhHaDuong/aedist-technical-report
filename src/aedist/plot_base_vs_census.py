@@ -1,7 +1,14 @@
-"""Scatter plot comparing F1 on the census prompt vs the p1_base prompt.
+"""Scatter plot comparing F1 on the census prompt vs the p1_base pilot prompt.
 
 One point per model (intersection of both arms), with the y=x diagonal drawn
 and point area proportional to ``log(Δtokens_in + 1)``.  Ticket 0057.
+
+NOTE: Ticket 0175 renamed the pilot directory ``p1_base/ → p1_base.pilot/``
+so the journal sweep can write to a clean ``p1_base/`` going forward. This
+plot still consumes the pilot data. After 0177 lands, the script should be
+revisited (pilot vs journal vs census semantics, see PR description).
+TODO(0175 follow-up): decide whether to retain pilot vs census or switch to
+journal vs census once journal runs are ingested.
 """
 
 from __future__ import annotations
@@ -17,7 +24,7 @@ from .tabulate_utils import format_model_name
 log = logging.getLogger(__name__)
 
 _DEFAULT_OUTPUT = Path("report/inputs/generated/fig_base_vs_census.pdf")
-_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base")
+_DEFAULT_P1_BASE_DIR = Path("experiments/outputs/ablation/direct/p1_base.pilot")
 
 
 def _make_figure(table: dict, output: Path) -> None:

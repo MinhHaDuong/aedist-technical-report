@@ -30,6 +30,7 @@ from .harness import (
     BudgetTracker,
     assemble_prompt,
     build_api_kwargs,
+    build_messages,
     compute_cost,
     load_experiments,
     load_models,
@@ -101,6 +102,16 @@ def main():
     parser.add_argument(
         "--experiments", default="experiments.toml", help="Path to experiments.toml"
     )
+    parser.add_argument(
+        "--sweep",
+        default=None,
+        help="Sweep name from experiments.toml; reads system_instruction from [sweeps.<name>].",
+    )
+    parser.add_argument(
+        "--system-instruction",
+        default=None,
+        help="System message prepended to every API call (overrides --sweep value).",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -120,10 +131,18 @@ def main():
     models = load_models(args.models)
     output_dir = Path(args.output)
 
+    system_instruction = args.system_instruction
     if args.model_set:
         experiments = load_experiments(args.experiments)
         set_ids = experiments["sets"][args.model_set]["model_ids"]
         models = select_models(models, set_ids)
+        if args.sweep and system_instruction is None:
+            sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
+            system_instruction = sweep_section.get("system_instruction")
+    elif args.sweep and system_instruction is None:
+        experiments = load_experiments(args.experiments)
+        sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
+        system_instruction = sweep_section.get("system_instruction")
 
     if args.model:
         models = [m for m in models if m["name"] == args.model]
@@ -201,6 +220,7 @@ def main():
                     no_think=args.no_think,
                 )
                 api_model_id = model.get("model_id", model_id)
+                messages = build_messages(prompt, system_instruction)
                 # Ollama: bypass /v1/ shim to honour num_ctx (output cap via num_predict)
                 if model.get("route") == "ollama":
                     ollama_url = model.get("base_url", "http://localhost:11434/v1")
@@ -209,7 +229,7 @@ def main():
                     result = query_ollama_native(
                         ollama_url,
                         api_model_id,
-                        [{"role": "user", "content": prompt}],
+                        messages,
                         num_ctx,
                         num_predict=args.max_tokens,
                         no_think=args.no_think,
@@ -218,7 +238,7 @@ def main():
                     result = query_single_turn(
                         client,
                         api_model_id,
-                        [{"role": "user", "content": prompt}],
+                        messages,
                         **api_kwargs,
                     )
                 usage = result.get("usage") or {}
@@ -242,6 +262,10 @@ def main():
                     "temperature": args.temperature,
                     "model_metadata": model_metadata(model),
                 }
+                if system_instruction:
+                    record["system_instruction"] = system_instruction
+                if model.get("reasoning_effort"):
+                    record["reasoning_effort"] = model["reasoning_effort"]
                 save_json(filepath, record)
 
                 # Report

@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Refresh prompt_complete.txt to match modules/ post-rename and re-enable test_modules_match_prompt_complete
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T00:00Z claude created
+
+--- body ---
+## Context
+
+Commit `4dc99e5` ("prompts: restructure modules to numbered scheme (1-6, A-D)")
+renamed the module files under `experiments/prompts/modules/` and edited their
+contents, but `experiments/prompts/prompt_complete.txt` was not regenerated
+from the new module set. The drift was discovered while merging PR #334
+(ticket 0175): `tests/test_modules_match_prompt_complete.py` fails because
+content lines in `prompt_complete.txt` no longer match the assembled
+composite of `modules/*.txt`.
+
+In PR #334 the failing test was marked `@pytest.mark.skip` so the suite would
+stay green while ticket 0175 landed the harness rewrite. The skip is
+technical debt: that adherence test is the regression guard that *would have*
+caught harness.py reading `base.txt` after the rename. Without re-enabling
+it, future module-rename drift will go undetected the same way.
+
+## Actions
+
+1. Regenerate `experiments/prompts/prompt_complete.txt` from the current
+   module set via the new `assemble_prompt(modules_dir, names)` contract.
+   Either:
+   - Add a small Make target that writes the assembled composite, or
+   - Run a one-off script and check the result in.
+   The composite must use the ALWAYS_MODULES pair (`2_goal`, `5_table`)
+   plus the canonical optional modules (`1_persona`, `3_overview`,
+   `4_narratives`, `6_bibliography`, `A_Statistics`, `B_Temporality`,
+   `C_Uncertainty`, `D_Completeness`) — matching
+   `sweep_ablation_p1_direct_composite` in `experiments/experiments.toml`.
+
+2. Un-skip `tests/test_modules_match_prompt_complete.py`: remove the
+   `@pytest.mark.skip(...)` decorator. Keep `@pytest.mark.adherence`.
+
+3. Verify the test asserts the right invariant under the new always-pair
+   contract. If `assemble_prompt` always injects `2_goal + 5_table`, the
+   test must call `assemble_prompt` with the full module list explicitly
+   (not rely on an "all modules" globbing path that no longer exists in
+   harness.py) — adapt accordingly.
+
+4. (Optional, recommended) Add a Make rule so `prompt_complete.txt` is a
+   build artifact regenerated from `modules/*.txt`, with a stamp file or
+   direct dependency. This converts the adherence test from a periodic
+   audit into a build-time invariant.
+
+## Test
+
+```python
+@pytest.mark.adherence
+def test_modules_cover_prompt_complete():
+    from aedist.harness import assemble_prompt
+    modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
+    prompt_complete = (EXPERIMENTS_DIR / "prompts" / "prompt_complete.txt").read_text()
+    all_stems = sorted(p.stem for p in modules_dir.glob("*.txt"))
+    assembled = assemble_prompt(modules_dir, all_stems)
+    assert _content_lines(prompt_complete) == _content_lines(assembled)
+```
+
+## Exit criteria
+
+- `experiments/prompts/prompt_complete.txt` matches the assembled output of
+  the canonical composite module list (modulo blank-line / header whitespace).
+- `pytest tests/test_modules_match_prompt_complete.py` runs (not skips) and
+  passes.
+- No `@pytest.mark.skip` decorator remains in
+  `tests/test_modules_match_prompt_complete.py`.
+- `make check-fast` and `make check` both pass.
+
+## Reference
+
+Follow-up from PR #334 (ticket 0175). See PR description "Out of scope"
+section and the file docstring of `tests/test_modules_match_prompt_complete.py`.

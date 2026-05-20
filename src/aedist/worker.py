@@ -18,6 +18,7 @@ from .harness import (
     BudgetTracker,
     assemble_prompt,
     build_api_kwargs,
+    build_messages,
     compute_cost,
     load_models,
     make_client,
@@ -218,6 +219,7 @@ class Worker:
                 run,
                 pool_label,
                 api_kwargs=api_kwargs,
+                system_instruction=job.system_instruction,
             )
         elif mode == Method.RAG:
             return self._execute_rag(
@@ -324,17 +326,31 @@ class Worker:
             "temperature": (api_kwargs or {}).get("temperature"),
             "model_metadata": model_metadata(model_entry),
         }
+        if model_entry.get("reasoning_effort"):
+            record["reasoning_effort"] = model_entry["reasoning_effort"]
         if extra_fields:
             record.update(extra_fields)
         save_json(filepath, record)
         return self._build_result(result, cost, filepath)
 
     def _execute_single(
-        self, client, model_id, model_entry, prompt, output_dir, run, pool_label, api_kwargs=None
+        self,
+        client,
+        model_id,
+        model_entry,
+        prompt,
+        output_dir,
+        run,
+        pool_label,
+        api_kwargs=None,
+        system_instruction=None,
     ):
         """Execute a single-turn query."""
         log.info("Querying %s run %d ...", model_id, run)
-        messages = [{"role": "user", "content": prompt}]
+        messages = build_messages(prompt, system_instruction)
+        extra: dict = {"prompt": prompt}
+        if system_instruction:
+            extra["system_instruction"] = system_instruction
         return self._query_and_save(
             client,
             model_id,
@@ -343,7 +359,7 @@ class Worker:
             output_dir,
             run,
             pool_label,
-            extra_fields={"prompt": prompt},
+            extra_fields=extra,
             api_kwargs=api_kwargs,
         )
 

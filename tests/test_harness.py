@@ -210,3 +210,17 @@ def test_no_think_false_no_extra_body():
     model = {"id": "some-model"}
     kwargs = build_api_kwargs(model, temperature=0.0)
     assert "think" not in kwargs.get("extra_body", {})
+
+
+def test_reasoning_effort_per_model():
+    """model.reasoning_effort surfaces as extra_body.reasoning.effort (ticket 0175)."""
+    model = {"id": "openai/gpt-oss-120b", "reasoning_effort": "minimal"}
+    kwargs = build_api_kwargs(model, temperature=0.0)
+    assert kwargs["extra_body"]["reasoning"] == {"effort": "minimal"}
+
+
+def test_reasoning_effort_absent_no_extra():
+    """No reasoning_effort on the model leaves extra_body without a reasoning key."""
+    model = {"id": "openai/gpt-5.5"}
+    kwargs = build_api_kwargs(model, temperature=0.0)
+    assert "reasoning" not in kwargs.get("extra_body", {})
