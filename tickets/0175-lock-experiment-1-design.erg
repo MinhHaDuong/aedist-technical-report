@@ -1,35 +1,144 @@
-%erg v1
+%erg 0.1
 Title: Lock Experiment 1 design decisions before re-sweep
 Created: 2026-05-15
 Author: claude
 
 --- log ---
 2026-05-15T14:05Z claude created
+2026-05-20T08:00Z user note baseline prompt locked: composition of 2_goal.txt + 5_table.txt (no persona, no narratives, no quality bullets)
+2026-05-20T08:00Z claude note scope expanded: commit 4dc99e5 renamed module files to N_name / Letter_Name scheme but left harness.py reading base.txt and old _MODULE_ORDER names; sweep cannot run until harness is updated to the new scheme
+2026-05-20T08:15Z user note assembly contract locked: 2_goal + 5_table are the new implicit "always" (replacing base.txt); other modules opt-in via prompt_modules; assembled in filename lex order, no special prepend/append logic
+2026-05-20T09:00Z user note journal model set redesigned around three language families (EN/FR/ZH) + SOTA overlap; replaces previous 9-model ablation_journal; see "Locked decisions / Model set v2" below
+2026-05-20T09:00Z user note Mistral lineup locked: Small 4 (2603) / Medium 3.5 / Large 3 (2512); version-number incoherence is Mistral's per-tier branding and will be noted in one sentence in Annex A
+2026-05-20T09:20Z user note OpenAI lab in EN family expanded to 3 models: GPT-5.5 + gpt-oss-120b + gpt-oss-20b; both gpt-oss are MoE with configurable reasoning depth — set to minimum for the parametric baseline; total set now 16 models / 80 runs
+2026-05-20T09:30Z user note baseline must send a system instruction "No websearch" to the API; runner currently sends only a user message (query_direct.py:212/221) — system-message plumbing must be added in this ticket
 
 --- body ---
 ## Context
 
-Before running the full Experiment 1 sweep, three design decisions must be
-explicitly resolved and committed. Writing the Annex A spec first (done) made
-the open questions visible.
+Before running the full Experiment 1 sweep, design decisions must be explicitly
+resolved and committed. Writing the Annex A spec first surfaced the open
+questions. Pre-flight inspection of `experiments/prompts/modules/` revealed
+that commit 4dc99e5 ("prompts: restructure modules to numbered scheme")
+renamed every module file but did not propagate the rename into
+`src/aedist/harness.py`, `modules/README.md`, or the sweep configs — so any
+sweep launched today would crash on `base.txt` not found.
+
+This ticket locks the design decisions and lands the harness fix in one
+atomic change so the sweep is runnable end-to-end.
+
+## Locked decisions
+
+- **Assembly contract**: `2_goal.txt` and `5_table.txt` are implicitly always
+  included (the post-rename equivalent of the old `base.txt`). Other modules
+  are opt-in via `prompt_modules` in `experiments.toml`. The assembled prompt
+  is the concatenation of selected modules **in filename lex order**, with
+  the two always-modules slotted at their natural positions. No special
+  prepend/append logic, no `_BEFORE_BASE` set.
+- **Baseline prompt (Experiment 1)**: `prompt_modules = []` → just the
+  always-pair (`2_goal` + `5_table`). No persona, no narratives, no quality
+  bullets. The "Épouvantail" slide frame continues to display
+  `prompt_extract.txt` as the strawman; the benchmark sweep uses the locked
+  2_goal+5_table composition.
+- **Model set**: `modelset_ablation_journal` v2 — 16 models × 5 repeats = 80 runs,
+  organised around three language families (EN / FR / ZH) with multiple labs
+  per family. All four SOTA Wave-2 agents (Opus 4.7, GPT-5.5, Mistral Large
+  2512, Qwen 3 Max) are included so Experiment 2's "deep research vs
+  parametric" claim can be tested within-model. Full IDs:
+    EN — Anthropic: `anthropic/claude-opus-4.7`, `anthropic/claude-sonnet-4.6`, `anthropic/claude-haiku-4.5`
+    EN — OpenAI:    `openai/gpt-5.5`, `openai/gpt-oss-120b`, `openai/gpt-oss-20b`
+    FR — Mistral:   `mistralai/mistral-small-2603` (Small 4), `mistralai/mistral-medium-3.5`, `mistralai/mistral-large-2512` (Large 3)
+    ZH — Qwen:      `qwen/qwen3.6-27b`, `qwen/qwen3.6-35b-a3b`, `qwen/qwen3.5-flash-02-23`, `qwen/qwen3.6-plus`, `qwen/qwen3-max`
+    ZH — DeepSeek:  `deepseek/deepseek-v4-pro`, `deepseek/deepseek-v4-flash:free`
+  No `-thinking` variants. `qwen/qwen3-max` (non-thinking) replaces the
+  previous `qwen3-max-thinking`. Mistral version-numbers (Small 4 / Medium
+  3.5 / Large 3) are per-tier branding by Mistral, not a generation order —
+  noted in Annex A. The two `gpt-oss` models are MoE with configurable
+  reasoning depth — for the parametric baseline, reasoning must be set to
+  minimum/none (mirroring the no-thinking discipline for Qwen).
+- **Sampling**: `temperature = 0.0`, `seed = 42`. Providers that ignore seed
+  are documented in Annex A as a limitation, not a blocker.
+- **System instruction (baseline)**: every API call carries a system message
+  forbidding web search. Proposed exact text (revise in code review if
+  needed):
+
+      You have no web search capability. Do not claim to perform searches,
+      do not invoke tools, do not fabricate URLs. Answer from parametric
+      knowledge only.
+
+  The instruction is sweep-scoped, not model-scoped — different regimes
+  (RAG, livesearch) will use different system instructions in their own
+  sweeps. Configured per-sweep via a new `system_instruction` field in
+  `experiments.toml`.
 
 ## Actions
 
-1. **Prompt**: confirm `base.txt` is the final Experiment 1 prompt. Decide whether
-   the "Épouvantail" slide frame keeps `prompt_extract.txt` as the strawman or is
-   updated to `base.txt`. Update `slides/slides.tex` accordingly.
+1. **Harness rename**: rewrite `src/aedist/harness.py::assemble_prompt`. Drop
+   `_MODULE_ORDER`, `_BEFORE_BASE`, `base.txt`, and the persona-special-case.
+   New contract: discover module files in `modules/`, always include
+   `2_goal.txt` and `5_table.txt`, union with names listed in
+   `prompt_modules`, sort the result lexicographically by filename, join with
+   `"\n\n"`. `KNOWN_MODULES` becomes the set of files discovered at load.
+   Validation rejects names that don't resolve to a file.
 
-2. **Model set**: confirm `modelset_ablation_journal` is the right set. Check whether
-   any model in the set has been retired or renamed since the set was defined.
-   Update experiments.toml `sweep_ablation_p1_direct_base` to use it.
+   Also: thread a `system_instruction: str | None` through the runner
+   (`src/aedist/query_direct.py`). When non-empty, prepend
+   `{"role": "system", "content": system_instruction}` to the messages list
+   for both `query_single_turn` and `query_ollama_native` paths
+   (currently lines 212/221). Surface it as a `system_instruction` field on
+   sweep configs in `experiments.toml`. Baseline sweep value:
+   `"You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."`
 
-3. **Temperature**: confirm T=0 for all runs. Verify that `seed=42` is set in the
-   sweep config. Note in Annex A which providers ignore seed (document as a
-   limitation, not a blocker).
+2. **README**: rewrite `experiments/prompts/modules/README.md` to document
+   the new scheme. Drop references to `base.txt` / `persona.txt` / etc.
+
+3. **Tests**: fix `tests/test_modules_match_prompt_complete.py` (and any
+   sibling that hardcodes old module names) so the suite passes.
+
+4. **Sweep config**: update `experiments.toml`
+   `[sweeps.sweep_ablation_p1_direct_base]`:
+   - `prompt_modules = []`  (always-pair only)
+   - `model_set = "modelset_ablation_journal"`
+   - `repeat = 5`
+   - `temperature = 0.0`, `seed = 42`
+   Also audit and update the composite/RAG/livesearch sweeps so their
+   `prompt_modules` lists use the new module names (e.g. `["1_persona",
+   "3_overview", "4_narratives", "6_bibliography", "A_Statistics",
+   "B_Temporality", "C_Uncertainty", "D_Completeness"]` — drop "2_goal" and
+   "5_table" from any list since they are always-included).
+
+5. **Model set rewrite**: replace `[sets.modelset_ablation_journal]` in
+   `experiments.toml` with the 16-model v2 list (above). Add new entries to
+   `experiments/models.yaml` for the 11 IDs not yet registered:
+   `claude-opus-4.7`, `claude-haiku-4.5`, `gpt-5.5`, `gpt-oss-120b`,
+   `gpt-oss-20b`, `mistral-medium-3.5`, `qwen3.6-27b`,
+   `qwen3.5-flash-02-23`, `qwen3.6-plus`, `qwen3-max`, `deepseek-v4-pro`,
+   `deepseek-v4-flash:free`. Each entry needs
+   `name / route=openrouter / base_url / model_id / display_name / provider`.
+   For `:free` suffix in `name`, verify the registry loader handles the colon
+   (it's the OR-side variant separator). For both `gpt-oss-*`, configure the
+   harness to request minimum reasoning depth (OpenAI's API parameter; check
+   how OR exposes it — typically a `reasoning_effort` field or similar).
+
+6. **Output directory cleanup**: `experiments/outputs/ablation/direct/p1_base/`
+   currently holds 67 files from prior pilot + ticket-0057 extension runs
+   (modelset_ablation_dev × 2 reps + census_extended set, pre-rename prompt
+   semantics). Move to `experiments/outputs/ablation/direct/p1_base.pilot/`
+   via `git mv` before 0177 launches, so `rebuild-measurements` does not
+   mix pilot and journal data. Update `.gitignore` / data manifests if any
+   reference the old path.
+
+7. **Annex A**: update `slides/manuscript/main.md` Annex A to reference the
+   `2_goal + 5_table` composition (not `base.txt`). Document which providers
+   ignore `seed`.
 
 ## Exit criteria
 
-- [ ] Decision on `prompt_extract.txt` vs `base.txt` for the slides "Épouvantail" frame documented in a log entry here
-- [ ] `sweep_ablation_p1_direct_base` points to `modelset_ablation_journal` with `temperature = 0.0` and `seed = 42`
-- [ ] No retired model IDs in the journal model set
-- [ ] Annex A in `slides/manuscript/main.md` updated if any design decision changed
+- [ ] `harness.py` reads modules by filename-prefix order; no `base.txt` reference
+- [ ] `modules/README.md` reflects the post-rename scheme
+- [ ] `make check-fast` (or repo equivalent) passes — modules + assembly tests green
+- [ ] `sweep_ablation_p1_direct_base` configured: `prompt_modules = []`, journal set, repeat=5, T=0, seed=42, budget_usd=10
+- [ ] No retired model IDs in journal set
+- [ ] `p1_base/` pilot files moved to `p1_base.pilot/` via `git mv`
+- [ ] Annex A reflects locked decisions
+- [ ] `make -C experiments preflight` passes (or repo equivalent) — assembled baseline prompt prints cleanly
