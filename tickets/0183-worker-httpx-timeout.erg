@@ -1,0 +1,113 @@
+%erg 0.1
+Title: Pass explicit httpx timeout to chat.completions.create() so wedged workers fail fast
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T20:58Z claude created — discovered while diagnosing 0181's slow throughput. Three worker leases observed past their 600s SIGALRM timeout, two of them 130–200s into expired status, all wedged on deepseek/deepseek-v4-pro. SIGALRM does not reliably interrupt openai-python's underlying httpx network call.
+
+--- body ---
+## Context
+
+During the 0181 sweep (concurrent agent in `agent-ad937f289caeac791`),
+throughput collapsed from the expected ~5 minutes wall time to ~3 hours
+observed. Diagnosis showed three of 8 workers were wedged on
+`deepseek/deepseek-v4-pro` with lease ages of 285s, 733s, and 798s. The
+600-second SIGALRM timeout in `worker.run_one()` (worker.py:686–693)
+fires correctly but **does not interrupt the active HTTP call** —
+openai-python's httpx layer holds the socket open and ignores the
+Python-level signal because the call is in a C extension (synchronous
+network read).
+
+Net effect:
+- One slow / hanging provider can tie up multiple workers indefinitely.
+- The lease expires (filesystem timestamp shows it), but the Python
+  process is still blocked, so the worker doesn't notice. The next
+  worker that polls won't see the lease as expired either, because
+  `poll()` only scans `pending/`, not `running/`.
+- Wall throughput becomes dominated by the slowest single call, with
+  workers stranded in the meantime.
+
+## The fix
+
+The OpenAI client accepts a `timeout=` keyword that maps directly to the
+httpx request timeout. httpx **does** honour timeouts at the socket level
+(it raises `httpx.ReadTimeout` / `openai.APITimeoutError`), which
+propagates up through `query_single_turn` as a normal exception and
+gets caught by `run_one`'s except clause → moves the job to `failed/`
+→ worker picks up the next job.
+
+Implementation: `src/aedist/harness.py:query_single_turn` (line ~432)
+adds `timeout=` to the kwargs. The value should come from the job's
+`timeout_seconds` field (already on `JobSpec`, defaults to 600). One
+small wrinkle: openai-python's `timeout` parameter accepts either a
+single float (total timeout) or an `httpx.Timeout` object for finer
+control (connect/read/write/pool). For our use, a single float matching
+`timeout_seconds` is sufficient.
+
+Sketch:
+
+```python
+def query_single_turn(client, model_id, messages, *, timeout=None, **kwargs):
+    t0 = time.monotonic()
+    response = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        timeout=timeout,
+        **kwargs,
+    )
+    ...
+```
+
+Caller side (`worker.py:_query_and_save`): thread `job.timeout_seconds`
+through. The argument is keyword-only on the harness side so existing
+callers that don't pass it still work (just no timeout, current
+behaviour).
+
+## Actions
+
+1. Add `timeout` keyword-only parameter to `query_single_turn` in
+   `src/aedist/harness.py`. Default to `None` (= no timeout). Pass it
+   through to `client.chat.completions.create()`.
+2. In `worker.py`, propagate `job.timeout_seconds` into the
+   `query_single_turn` call within `_query_and_save`.
+3. Optional: also pass timeout to the multi-turn and RAG paths
+   (`run_conversation`, `run_web_searches`, `query_decomposed`). These
+   make multiple OpenAI calls per job; passing the same timeout to each
+   is the simplest correct behaviour.
+4. Keep SIGALRM as a backstop — it's harmless when httpx already
+   timed out, and it covers non-OpenAI code paths (e.g. file I/O,
+   prompt assembly) that don't go through httpx.
+5. Add a regression test: mock the OpenAI client to sleep longer than
+   the timeout, assert `query_single_turn` raises `APITimeoutError`
+   within `timeout + small_margin` seconds.
+
+## Exit criteria
+
+- [ ] `query_single_turn` accepts `timeout=` kwarg, passes to client
+- [ ] Worker passes `job.timeout_seconds` (which is already 600s by
+      JobSpec default) through to `query_single_turn`
+- [ ] Multi-turn / RAG / web paths covered (or scoped out with reason)
+- [ ] Unit test verifies the timeout actually fires (mocked httpx)
+- [ ] Lint + existing tests pass
+
+## Notes
+
+- Discovered during 0181 sweep execution; the wedged workers were on
+  paid `deepseek-v4-pro`, not the free-tier route. So this is not
+  unique to free-tier rate limits — even paid routes can hang.
+- The user observation: "OpenRouter has no concurrency limit". That's
+  true at the routing layer, but it doesn't mean individual provider
+  backends are equally fast or responsive. Some calls genuinely take
+  10+ minutes on big MoE models; others may genuinely hang upstream.
+  This ticket addresses the "genuinely hang" case so it doesn't block
+  the whole sweep.
+- A possible follow-up (out of scope here): reclaim-expired-leases logic
+  in `poll()` so that an externally-killed worker (kill -9, network
+  partition, OOM) doesn't strand a job. That's a separate concern
+  about *worker death*, whereas this ticket addresses *call hang*.
+- Cost / safety analysis: a 600s timeout on a real long-output Opus call
+  produces ~$0.20 of partial billing per timeout. If the provider would
+  have eventually returned (just slowly), we lose that work. But the
+  job goes to failed/ and can be manually requeued — the cost is
+  bounded.
