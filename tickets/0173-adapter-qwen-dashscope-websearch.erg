@@ -8,6 +8,7 @@ Author: claude
 2026-05-14T14:30Z claude note Opens fourth SOTA-experiment slot for geographic + corpus diversity (CN frontier alongside US Anthropic/OpenAI and FR Mistral). Per 2026-05-14 SOTA field survey: Qwen3-Max supports the web_search tool inside thinking mode via DashScope Responses API; transparent pricing $10/1K searches international (or $0.57/1K mainland-region). User decision: run experiment with 4 agents rather than 3.
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-05-20T22:00Z HDMX-coding-agent note Derisk pass: key present at ~/.config/keys/alibaba.env (QWEN_API_KEY_AEDIST); model qwen3-max-2026-01-23 accessible on intl endpoint; thinking + server-side search compose verified (reasoning_tokens + plugins.search.count + output.search_info.search_results[] surfaced in one call). Action 3 snippet corrected — original tools=[{"type":"web_search"}] triggers client-side function calling, NOT server-side search. Test section updated to target real response shape. Key precondition updated. CN sources confirmed in top results (mofcom.gov.cn, baike.baidu.com).
 --- body ---
 ## Context
 
@@ -27,11 +28,11 @@ Required capabilities (verified 2026-05-14 against Alibaba docs):
 - Frontier-tier model (qwen3-max-2026-01-23 or current production ID
   at implementation time).
 
-API key precondition: user signs up for Alibaba Cloud Model Studio,
-completes KYC, generates a DashScope API key, stores it at
-`~/.config/keys/dashscope.env` as `DASHSCOPE_API_KEY=...`. The
-international endpoint (`dashscope-intl.aliyuncs.com`) is cleanest
-from outside mainland China; verify region/endpoint match the key.
+API key: already present at `~/.config/keys/alibaba.env` as
+`QWEN_API_KEY_AEDIST=...` (validated 2026-05-20 against
+`qwen3-max-2026-01-23` on the international endpoint). The
+international endpoint (`dashscope-intl.aliyuncs.com`) is the
+default; mainland routing is out of scope.
 
 ## Actions
 
@@ -46,19 +47,32 @@ from outside mainland China; verify region/endpoint match the key.
    `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` — is
    simpler but historically lags on tool-call schema fidelity. Default
    to `dashscope`; record the choice in the driver header comment.
-3. Request shape (per
-   https://www.alibabacloud.com/help/en/model-studio/web-search,
-   verified 2026-05-14):
+3. Request shape (verified empirically 2026-05-20 against
+   `qwen3-max-2026-01-23` on the international endpoint —
+   supersedes the `tools=[{"type":"web_search"}]` snippet that was
+   based on a misread of
+   https://www.alibabacloud.com/help/en/model-studio/web-search):
    ```python
    dashscope.Generation.call(
        model="qwen3-max-2026-01-23",
        messages=[{"role": "user", "content": prompt}],
-       tools=[{"type": "web_search"}],
        enable_thinking=True,
+       enable_search=True,
+       search_options={
+           "enable_source": True,
+           "enable_citation": True,
+           "citation_format": "[<number>]",
+       },
        result_format="message",
        max_tokens=...,
    )
    ```
+   Why this shape and not `tools=[{"type":"web_search"}]`: the latter
+   triggers OpenAI-style **client-side** function calling — the
+   server returns a `tool_call` requesting *we* run the search and
+   reply with a `tool` message. To get server-side search execution
+   with citations surfaced in the same response, use `enable_search`
+   + `search_options`. Confirmed against `qwen3-max-2026-01-23`.
 4. Register the model in `experiments/models.yaml` under family
    `qwen-direct`, route `dashscope`, with the price card (input,
    output, reasoning tokens, and `price_per_web_search_call_usd`
@@ -75,18 +89,35 @@ from outside mainland China; verify region/endpoint match the key.
 ## Test
 
 `tests/test_adapter_qwen_dashscope.py`:
-- `--dry-run` payload contains the `web_search` tool entry, `enable_thinking=True`, and the model ID.
-- Canned response parses correctly: thinking-trace text → `reasoning_summary`,
-  web_search hits → `citations` + `web_search_calls`, message body → narrative.
-  Use a fixture under `tests/fixtures/qwen_dashscope_response.json`.
+- `--dry-run` payload contains `enable_search=True`, `enable_thinking=True`,
+  the `search_options` block with `enable_source`/`enable_citation`/`citation_format`,
+  and the model ID. The payload must NOT contain a `tools` key (that
+  would activate client-side function calling — see Action 3).
+- Canned response parses correctly using the native DashScope
+  response shape:
+  - `output.choices[0].message.reasoning_content` → `reasoning_summary`
+  - `output.search_info.search_results[]` → `citations` (each item
+    surfaces `url`, `title`, `site_name`; preserve the `index` for
+    cross-reference to inline `[N]` markers in the narrative)
+  - `usage.plugins.search.count` → number of searches the server
+    executed; this is the `web_search_calls` count (the API does
+    NOT surface per-query attribution — `search_results` is a flat
+    aggregated list across all searches in the call)
+  - `output.choices[0].message.content` → narrative
+  - `usage.output_tokens_details.reasoning_tokens` → `thinking_tokens`
+  Use a fixture under `tests/fixtures/qwen_dashscope_response.json`
+  built from a real recorded smoke response (do not invent the
+  shape).
 - Cost arithmetic matches a fixture price card (input + output +
   reasoning tokens + n_searches × per-search price).
 - **Non-tautological assertion** (avoid "kwargs match what we set"):
-  parse a fixture with three asymmetric web-search hits and assert
-  `len(record.web_search_calls) == 3` AND
-  `len(record.citations) == 5` (e.g. 5 distinct URLs across the
-  3 searches). The asymmetry catches both "forgot len()" and
-  "deduplicated wrong list" bugs.
+  parse a fixture with `usage.plugins.search.count == 3` and
+  `search_results` containing 5 distinct URLs and assert
+  `record.web_search_calls == 3` (or `len(record.web_search_calls) == 3`
+  depending on schema mapping decided at implementation time) AND
+  `len(record.citations) == 5`. The asymmetry between search count
+  and URL count catches both "forgot len()" and "deduplicated wrong
+  list" bugs.
 
 ## Exit criteria
 
