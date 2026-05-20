@@ -1,0 +1,68 @@
+{
+  "_provenance": "Constructed 2026-05-20 from the empirical HTTP shape captured during the 2026-05-20 derisk probe documented in tickets/0169-adapter-mistral-agents-websearch.erg. Field names (outputs[].type, content[].type=tool_reference, usage.connector_tokens, usage.connectors.web_search) are taken verbatim from that probe. Counts are intentionally asymmetric: 2 tool.execution entries vs 4 tool_reference entries — so a parser that confuses search-call count with citation count fails this fixture.",
+  "conversation_id": "conv_fixture_0169",
+  "agent_id": "ag_fixture_0169",
+  "model": "mistral-large-2512",
+  "outputs": [
+    {
+      "type": "tool.execution",
+      "id": "te_001",
+      "name": "web_search",
+      "arguments": "{\"query\": \"Phu My 2.2 power plant capacity Vietnam\"}"
+    },
+    {
+      "type": "tool.execution",
+      "id": "te_002",
+      "name": "web_search",
+      "arguments": "{\"query\": \"EVN coal power plants Vietnam 2025\"}"
+    },
+    {
+      "type": "message.output",
+      "id": "msg_001",
+      "role": "assistant",
+      "content": [
+        {"type": "text", "text": "Three notable coal-fired power plants in Vietnam include the following. "},
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phu My 2.2 BOT Power Plant — Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Phu_My_2.2_Power_Plant",
+          "description": "Combined-cycle gas turbine plant in Ba Ria-Vung Tau province, 715 MW."
+        },
+        {"type": "text", "text": "Vinh Tan 4 (1200 MW) operates in Binh Thuan. "},
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan 4 Thermal Power Plant",
+          "url": "https://www.evn.com.vn/d6/news/Vinh-Tan-4-Thermal-Power-Plant-66-142-1234.aspx",
+          "description": "EVN-operated 1200 MW supercritical coal plant commissioned 2018."
+        },
+        {"type": "text", "text": "Duyen Hai 3 (1245 MW) operates in Tra Vinh. "},
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Duyen Hai Power Complex",
+          "url": "https://www.gem.wiki/Duyen_Hai_power_station",
+          "description": "Five-unit coal complex on the Mekong delta coast."
+        },
+        {"type": "text", "text": "Hai Phong (1200 MW) operates in northern Vietnam."},
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hai Phong Thermal Power Plant",
+          "url": "https://www.gem.wiki/Hai_Phong_power_station",
+          "description": "Subcritical coal-fired plant, four 300 MW units."
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 120,
+    "completion_tokens": 380,
+    "connector_tokens": 4200,
+    "total_tokens": 4700,
+    "connectors": {
+      "web_search": 2
+    }
+  }
+}
