@@ -149,9 +149,13 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
         if r.resource_use.tokens_out is not None:
             d["tokens_out"] = r.resource_use.tokens_out
         # --- 0139 fields: included once RunRecord carries them ---
+        # max_tokens lives on the typed MethodParams slot — evaluate.py
+        # routes it there (evaluate.py:233), so read it directly. Reading
+        # only from ``extra`` would silently drop the value (ADR-7 trap).
+        if r.method_params.max_tokens is not None:
+            d["max_tokens"] = r.method_params.max_tokens
         for key in (
             "seed",
-            "max_tokens",
             "num_ctx",
             "provider_order",
             "web_search",

@@ -137,6 +137,31 @@ class TestRecordsToMetrics:
         assert metrics[0]["coverage"] == 0.0
         assert metrics[0]["precision"] == 0.0
 
+    def test_max_tokens_surfaced_from_typed_slot(self):
+        """max_tokens lives on MethodParams (typed slot); evaluate.py routes
+        it there directly (see evaluate.py:233). records_to_metrics must
+        read the typed attribute, not look it up in ``extra``. Without this
+        path the field is silently dropped from measurements.jsonl —
+        the ADR-7 trap the metrics_dict_complete_scientific_record rule
+        is meant to prevent.
+        """
+        record = RunRecord(
+            method=Method.DIRECT,
+            method_params=MethodParams(model="m", max_tokens=8192),
+            result_summary=ResultSummary(tp=1, fp=0, fn=0, f1=1.0),
+            result_file="census/m-run1.csv",
+        )
+        [m] = records_to_metrics([record])
+        assert m["max_tokens"] == 8192
+
+    def test_max_tokens_absent_when_unset(self):
+        """Omit-when-None pattern: a record without max_tokens must not
+        introduce a stray key into the metrics dict (matches the contract
+        already documented for 0139 fields)."""
+        record = _make_record("census/m-run1", tp=1, fp=0, fn=0, f1=1.0)
+        metrics = records_to_metrics([record])
+        assert "max_tokens" not in metrics[0]
+
 
 class TestOutputEquivalence:
     """Pure reporting functions produce identical output from RunRecords."""
