@@ -9,6 +9,7 @@ Author: claude
 2026-05-14T14:30Z claude note Kimi swap path obsolete: K2.6 docs confirm thinking and $web_search are mutually exclusive, fatal for synopsis §4. If Mistral probe shows opaque billing, halt 0169 at probe and STOP; do NOT fork to Kimi. Corpus diversity now comes from 0173 Qwen3-Max (CN), opened as a parallel Wave-2 slot independent of this ticket's outcome.
 
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-05-20T22:15Z HDMX-coding-agent note Derisk probe PASS — ESCALATE on pricing resolved. Billing IS transparent: response `usage` block surfaces `prompt_tokens`, `completion_tokens`, `connector_tokens`, `connectors: {"web_search": N}`, `total_tokens` as discrete fields. Rate-limit headers expose `x-ratelimit-*-web-search-{minute,day}` (30/min, 10000/day). API verified: POST /v1/agents to create (returns ag_*), POST /v1/conversations with agent_id to invoke, DELETE /v1/agents/{id} to clean up (HTTP 204). Citations surface as `output[].content[].tool_reference` entries with `url`, `title`, `description`. Swap-to-Kimi language now fully obsolete — drop. Per-call cost on mistral-large-2512 ~€0.01–0.03 empirically; $10 cap is heavy ceiling.
 --- body ---
 ## Context
 
@@ -16,27 +17,36 @@ Part of the SOTA frontier-API experiment (umbrella 0166, synopsis §4).
 Mistral fills the third agent slot via its Agents API with the built-in
 `web_search` connector.
 
-This slot is **swappable** for Moonshot Kimi K2.5 if the user
-subscribes to Moonshot — both offer web-search + reasoning via direct
-API. If swapped, fork this ticket rather than rewriting it: keep this
-one closed-as-superseded for traceability.
-
-API key at `~/.config/keys/mistral.env`. Use the official `mistralai`
-Python SDK against the Agents endpoint, not OpenRouter.
+API key at `~/.config/keys/mistral.env` as `MISTRAL_API_KEY` (verified
+2026-05-20). Use the official `mistralai` Python SDK against the
+Agents endpoint, not OpenRouter. The HTTP shape was verified directly
+against the live API on 2026-05-20 — see the log entry for empirical
+field names that the parser must target.
 
 ## Actions
 
 1. Add a `mistral_agent` driver. The driver:
-   - Loads the key from `~/.config/keys/mistral.env`.
-   - Creates (or reuses) an agent definition with the `web_search`
-     connector enabled and a reasoning-capable model (Mistral Large
-     2512 or current strongest).
-   - Calls the conversation endpoint with a single user message.
-   - Returns: final text, all tool calls/citations from the
-     connector, per-call cost.
-2. Decide whether to create one persistent agent per experiment run
-   (cleaner audit trail) or one ephemeral agent per call. Document the
-   choice in the driver comments.
+   - Loads `MISTRAL_API_KEY` from `~/.config/keys/mistral.env`.
+   - Creates an agent via `POST /v1/agents` with `model:
+     "mistral-large-2512"` and `tools: [{"type": "web_search"}]`;
+     captures the returned `id` (shape `ag_...`).
+   - Invokes via `POST /v1/conversations` with `agent_id` and
+     `inputs: [{"role": "user", "content": prompt}]`.
+   - Parses the response `outputs` list: entries of `type:
+     "tool.execution"` (one per search invocation, with the search
+     query in `arguments`) and `type: "message.output"` (carrying
+     `content[]` items of `type: "text"` and `type: "tool_reference"`
+     — the latter are citations with `tool`, `title`, `url`,
+     `description`).
+   - Returns: final text (concatenated `text` items), all citations
+     (from `tool_reference` items), per-call cost computed from the
+     `usage` block (`prompt_tokens`, `completion_tokens`,
+     `connector_tokens`, `connectors.web_search`).
+2. Agent lifecycle: create one persistent agent per Phase-B experiment
+   run-suite (one create call at suite start, all calls reuse the
+   same `agent_id`, one `DELETE /v1/agents/{id}` at suite end —
+   verified to return HTTP 204). Audit trail benefit outweighs the
+   trivial per-call agent creation cost. Document in driver header.
 3. Register the model in `experiments/models.yaml` under family
    `mistral-direct`.
 4. Hard cost cap per call: $10.
@@ -47,10 +57,33 @@ Python SDK against the Agents endpoint, not OpenRouter.
 ## Test
 
 `tests/test_adapter_mistral.py`:
-- `--dry-run` payload contains agent ID/config, connector list,
-  message.
-- Canned response parses into the run-record schema (0172).
-- Cost calculation matches fixture pricing.
+- `--dry-run` payload contains the agent-create body (model name +
+  `tools: [{"type": "web_search"}]`) and the conversation invocation
+  body (`agent_id` placeholder + `inputs` message).
+- Canned response parses correctly using the verified native shape:
+  - `outputs[*]` with `type: "tool.execution"` and `name:
+    "web_search"` → `web_search_calls` (one entry per execution,
+    `arguments` carries the query)
+  - `outputs[*]` with `type: "message.output"` → narrative; within
+    its `content[]`, `type: "text"` items concatenate into the
+    answer body, `type: "tool_reference"` items map to `citations`
+    (preserving `url`, `title`, `description`)
+  - `usage.prompt_tokens` + `usage.completion_tokens` +
+    `usage.connector_tokens` → cost breakdown
+  - `usage.connectors.web_search` → search-call count (sanity-check
+    matches `len(web_search_calls)`)
+  Use a fixture under `tests/fixtures/mistral_conversation_response.json`
+  built from a recorded probe response (do not invent the shape).
+- Cost arithmetic matches a fixture price card. Treat
+  `connector_tokens` as a separately-billed bucket so `cost_breakdown`
+  reports it distinctly from input/output tokens.
+- **Non-tautological assertion**: fixture with 2 distinct
+  `tool.execution` entries (2 search queries) and 4 `tool_reference`
+  items across the `message.output`. Assert
+  `len(record.web_search_calls) == 2` AND
+  `len(record.citations) == 4` AND
+  `record.usage.connectors.web_search == 2`. Asymmetric counts catch
+  parser bugs that confuse executions with citations.
 
 ## Exit criteria
 
@@ -61,9 +94,11 @@ Python SDK against the Agents endpoint, not OpenRouter.
 
 ## Notes
 
-- Verify the Mistral Agents API surface and `web_search` connector
-  with the docs on the day this is built; record the URL + date in a
-  driver comment.
-- If the Agents API surface proves too unstable or the web_search
-  connector is unavailable for the chosen model tier, stop and ask
-  the user before falling back to a non-native search path.
+- API surface verified 2026-05-20 by direct probe — see log entry.
+  Re-verify only if implementation lands more than ~30 days later.
+- Web-search quota visible in response headers
+  (`x-ratelimit-limit-web-search-{minute,day}`): 30/min, 10000/day on
+  the validated key. Phase B (3 reps × 1 prompt) is well within these.
+- Connector-token billing is not the same as token billing; surface
+  `connector_tokens` as a distinct line in `cost_breakdown` rather
+  than blending into `tokens_in`/`tokens_out`.
