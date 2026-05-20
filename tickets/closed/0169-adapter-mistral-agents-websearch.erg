@@ -2,6 +2,7 @@
 Title: Adapter — Mistral Agents API with web_search connector
 Created: 2026-05-14
 Author: claude
+Closed: autoclosed — PR #353
 
 --- log ---
 2026-05-14T12:00Z claude created
@@ -11,6 +12,7 @@ Author: claude
 2026-05-14T19:11Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-05-20T22:15Z HDMX-coding-agent note Derisk probe PASS — ESCALATE on pricing resolved. Billing IS transparent: response `usage` block surfaces `prompt_tokens`, `completion_tokens`, `connector_tokens`, `connectors: {"web_search": N}`, `total_tokens` as discrete fields. Rate-limit headers expose `x-ratelimit-*-web-search-{minute,day}` (30/min, 10000/day). API verified: POST /v1/agents to create (returns ag_*), POST /v1/conversations with agent_id to invoke, DELETE /v1/agents/{id} to clean up (HTTP 204). Citations surface as `output[].content[].tool_reference` entries with `url`, `title`, `description`. Swap-to-Kimi language now fully obsolete — drop. Per-call cost on mistral-large-2512 ~€0.01–0.03 empirically; $10 cap is heavy ceiling.
 2026-05-20T23:05Z HDMX-coding-agent note Smoke PASS. Discrepancy from earlier shape note: POST /v1/conversations rejects body `max_tokens` (HTTP 422 "Extra inputs are not permitted"). Workaround: set `completion_args.max_tokens` on agent-create instead. Adapter+test updated. Live smoke: 1 call, prompt "List 3 coal power plants in Vietnam with one citation each, ≤200 words", max_tokens=600, cap_usd=$0.50. Result: 1 web_search call, 3 citations, 176 in / 186 out tokens, 4751 connector_tokens, wall 4.52s, total cost $0.0254 (token $0.0004 + connector $0.025 flat-rate placeholder). Agent created and deleted (204), no orphan. Raw saved to experiments/outputs/sota_smoke/mistral_20260520T210101Z.json.
+2026-05-20T21:52Z HDMX-coding-agent closed — autoclosed — PR #353
 --- body ---
 ## Context
 
