@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Fix journal model set — qwen3.6-max-preview and Opus 4.6 swap
+Created: 2026-05-20
+Author: claude
+
+--- log ---
+2026-05-20T19:50Z claude created — discovered while running 0177; OpenRouter list confirmed qwen3.6-max-preview availability.
+2026-05-20T20:05Z claude note user directive: swap Anthropic flagship from claude-opus-4.7 to claude-opus-4.6 in the same fix. Both are live on OpenRouter (verified 2026-05-20 via /api/v1/models). Ticket scope expanded.
+
+--- body ---
+## Context
+
+The journal model set locked by ticket 0175 (`[sets.modelset_ablation_journal]`
+in `experiments/experiments.toml:162-185`) has two flagship choices that need
+revision before the 0177 sweep runs:
+
+**Qwen flagship**: pairs three `qwen3.6-*` siblings (`27b`, `35b-a3b`, `plus`)
+with `qwen/qwen3-max` as the flagship — one generation behind the family.
+
+**Anthropic flagship**: uses `anthropic/claude-opus-4.7` — user directs swap
+to `anthropic/claude-opus-4.6` (no rationale recorded; presume more stable /
+cheaper / better-characterised for the baseline).
+
+Verification (2026-05-20, OpenRouter `/api/v1/models`):
+
+```
+$ curl -s https://openrouter.ai/api/v1/models | jq -r '.data[].id | select(test("qwen.*max"))'
+qwen/qwen3.6-max-preview
+qwen/qwen3-max-thinking
+qwen/qwen3-max
+
+$ curl -s https://openrouter.ai/api/v1/models | jq -r '.data[].id | select(test("claude.*opus"))'
+anthropic/claude-opus-4.7-fast
+anthropic/claude-opus-4.7
+anthropic/claude-opus-4.6-fast
+anthropic/claude-opus-4.6
+anthropic/claude-opus-4.5
+anthropic/claude-opus-4.1
+anthropic/claude-opus-4
+```
+
+Both `qwen/qwen3.6-max-preview` and `anthropic/claude-opus-4.6` are live.
+
+## Impact on downstream tickets
+
+- **0177 (this sweep)**: blocked on 0180. Sweep should rerun after 0180 lands.
+- **Experiment 2** ("deep research vs parametric" within-model claim): the
+  intended within-family pair is `qwen3-max` ↔ `qwen3-max-thinking`. If
+  0180 *replaces* qwen3-max with qwen3.6-max-preview, Exp 2 loses that
+  pair unless qwen3-max stays in the registry (it can stay in models.yaml
+  without being in the journal set).
+
+## Actions
+
+1. **models.yaml**:
+   - Add `qwen/qwen3.6-max-preview` (verified prices from `/api/v1/models`).
+   - Verify `anthropic/claude-opus-4.6` is already in models.yaml; add if
+     missing with verified prices.
+   - Annotate provider, country, architecture, context window, size_class
+     for any new entry. Reference: existing entries follow a consistent
+     YAML shape.
+2. **experiments.toml** `[sets.modelset_ablation_journal]`:
+   - Swap `anthropic/claude-opus-4.7` → `anthropic/claude-opus-4.6`.
+   - For Qwen flagship: decide between **augment** (16 → 17 models, both
+     qwen3-max and qwen3.6-max-preview kept — preserves Exp 2 pair) and
+     **replace** (swap qwen3-max → qwen3.6-max-preview). Augment is the
+     safer default; +5 reps at ~$0.30. Surface the choice to the human
+     in the ticket log before executing.
+3. Re-run the parametric baseline sweep on the corrected set under a new
+   ticket (call it 0181-rerun-experiment-1-sweep). Commit bd46943
+   (manager+worker silent-drop fixes) is a prerequisite — must be merged
+   to main before the rerun.
+4. 0178 manuscript annex notes the 0175 → 0180 → 0181 chain so reviewers
+   understand the model-set version.
+
+## Exit criteria
+
+- [ ] `anthropic/claude-opus-4.6` present in `models.yaml` with verified prices
+- [ ] `qwen/qwen3.6-max-preview` present in `models.yaml` with verified prices
+- [ ] `[sets.modelset_ablation_journal]` updated:
+      Anthropic flagship → 4.6;
+      Qwen flagship per recorded augment/replace decision (log the reasoning here)
+- [ ] `make check-fast` passes (no schema or test regressions)
+- [ ] 0181 rerun ticket created (depends-on: 0180, bd46943-PR merged)
+- [ ] 0178 manuscript annex notes the model-set revision
+
+## Notes
+
+- Discovered during 0177 (run-experiment-1-sweep). The 0177 mission spec
+  explicitly forbade reconfiguring model IDs ("0175 locked them"), so the
+  fix-up belongs in this separate ticket.
+- The four silent-drop fixes in commit bd46943 (model_set / seed / max_tokens
+  / modules_dir) are a prerequisite for any future sweep against this set.
+  Currently on branch t0177, separate PR.
+- "preview" suffix: OpenRouter sometimes deprecates `:preview` slugs once a
+  GA variant ships. Worth checking quarterly; if `qwen/qwen3.6-max` (no
+  preview) lands, switch to that in the same ticket cycle.
+- Opus 4.7 stays in models.yaml as a retired flagship reference; only the
+  journal-set membership changes.
