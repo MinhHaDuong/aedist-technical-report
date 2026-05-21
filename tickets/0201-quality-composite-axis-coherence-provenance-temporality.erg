@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Quality composite axis: coherence/provenance/temporality scorers
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T12:30Z claude created — follow-up from ticket 0196 (Pareto figure)
+
+--- body ---
+
+## Context
+
+The Figure 2 Pareto chart (ticket 0196) plots Accuracy (row-level F1)
+on the y-axis. The §2 quality framework defines four dimensions:
+Accuracy, Coherence, Provenance, Temporality. Today only Accuracy is
+scored — the other three lack measurement infrastructure.
+
+Until those scorers exist, the Pareto figure axis must stay narrow
+("Accuracy" not "Quality") to avoid overclaiming. This ticket tracks
+the work to extend it.
+
+## Blocked-by
+
+Blocked-by Experiments 2/3 data tickets — coherence/provenance/temporality
+metrics are only meaningful when the dataset includes the rich-output
+variants (RAG, decomposed, agentic) that Exp 1 deliberately excludes.
+
+## Exit criteria
+
+- [ ] Three scorers landed (coherence, provenance, temporality) with
+  unit tests on a small reference dataset.
+- [ ] Each scorer exposes a per-run scalar in `records_to_metrics()`
+  per ADR-7.
+- [ ] A composite Quality score is defined (mean, weighted mean, or
+  worst-of) with the choice justified in the docstring.
+- [ ] Pareto figure y-axis can be flipped between Accuracy and the
+  composite via a `--quality-axis` flag.
+- [ ] Manuscript Figure 2 caption updated to reflect whichever axis
+  ends up canonical.

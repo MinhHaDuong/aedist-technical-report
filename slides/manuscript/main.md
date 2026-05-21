@@ -18,9 +18,10 @@ Submitting a direct query to a large language model produces an inventory-shaped
 
 *Figure 1. Direct-query performance across 16 models and 80 runs on the 163-plant Vietnam thermal reference. Each bar is one run; blue segments are correctly identified plants (TP), orange segments are fabricated plants (FP). The dashed green line marks the 163-plant reference. Models are grouped on the vertical axis. Five qualitative failure modes are visible: Récalcitrant (refusal), Incomplet (systematic under-coverage), Hallucinant (fabricated plants), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering).*
 
-![Figure 2 — PLACEHOLDER](inputs/generated/fig_pareto.pdf)
+![Figure 2](inputs/generated/fig_pareto.pdf)
+<!-- raw data: slides/inputs/generated/pareto.csv -->
 
-*Figure 2. Cost–quality Pareto frontier across all experimental conditions (model × method × documentation level, Experiments 1–3). Each point is one (model, method) combination; the Pareto-efficient frontier is drawn. The parametric baseline (Experiment 1) populates the left-hand cluster; RAG and decomposed conditions push the frontier upward. Best Pareto-efficient point in current data: DeepSeek V3.2 decomposed+RAG at mean F1 = 89.8% and cost = \$0.06 per run. [PLACEHOLDER — will be updated after Experiment 1 sweep completes.]*
+*Figure 2. Accuracy–cost view across the Experiment 1 lineup. Each marker is one of the sixteen models from `modelset_ablation_journal`, plotted at its median row-level F1 across the five reps against its mean per-call API cost (USD, linear scale). Whiskers span the minimum and maximum F1 observed across the reps for that model — a direct view of within-model run-to-run variability rather than a confidence interval. Marker colour encodes language family: blue for EN labs (Anthropic, OpenAI), vermillion for FR (Mistral), bluish-green for ZH (Alibaba, DeepSeek), all from the colorblind-safe palette in `palette.toml`. No Pareto-efficient envelope is drawn; the figure is descriptive. Per-model numbers backing this figure are written to `slides/inputs/generated/pareto.csv` for audit.*
 
 ## Second, the quality bar that any acceptable dataset must clear
 
