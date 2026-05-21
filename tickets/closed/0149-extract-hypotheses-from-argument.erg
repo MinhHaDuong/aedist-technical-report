@@ -2,6 +2,7 @@
 Title: Extract main results and hypotheses to be tested
 Created: 2026-04-30
 Author: claude
+Closed: superseded — docs/hypotheses.md rewritten on main as H1–H4 (commits 844c3f3, 3d39253, c614e4c, 297f2e1, aeb63f1); PR #316 closed without merge
 
 --- log ---
 2026-04-30T19:00Z claude created
@@ -11,6 +12,7 @@ Author: claude
 2026-05-02T15:05Z user status open — PR #316 too complex to merge; reworking
 
 2026-05-10T22:02Z note still blocking 0152 (align-slides); staged to satisfy pre-commit ref check
+2026-05-21T08:50Z claude closed superseded — deliverable already on main via separate commits; new H1–H4 framework supersedes the H1–H7 version in PR #316
 --- body ---
 
 ## Context
