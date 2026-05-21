@@ -35,6 +35,7 @@ Pricing notes:
 import json
 import logging
 import os
+import random
 import time
 from pathlib import Path
 from typing import Any
@@ -291,10 +292,94 @@ def _extract_query(arguments: Any) -> str:
 # HTTP transport
 # ---------------------------------------------------------------------------
 
+# Retry policy for transient gateway / network failures on the Mistral
+# Agents beta API (ticket 0215). The 2026-05-21 multi-turn smoke
+# (ticket 0185) was killed by a single HTTP 502 from
+# POST /v1/conversations/{id}; that endpoint is empirically flaky.
+#
+# Policy: max 3 retries, exponential backoff 1s/2s/4s with ±10% jitter.
+# Retry only on transient signals — never on 4xx (a 4xx is a request
+# bug, not a server hiccup; retrying would have papered over the 422
+# bugs fixed in tickets 0211/0212).
+RETRYABLE_STATUSES = frozenset({502, 503, 504})
+RETRYABLE_EXCEPTIONS: tuple[type[Exception], ...] = (
+    httpx.ReadTimeout,
+    httpx.ConnectTimeout,
+    httpx.RemoteProtocolError,
+)
+MAX_RETRIES = 3
+BACKOFF_BASE_S = 1.0
+
+
+def _sleep_with_backoff(attempt: int) -> None:
+    """Sleep for ``BACKOFF_BASE_S * 2**attempt`` seconds, ±10% jitter.
+
+    ``attempt`` is the zero-indexed retry number (0 → ~1s, 1 → ~2s,
+    2 → ~4s). Extracted so tests can monkeypatch ``time.sleep`` to a
+    no-op and still cover the retry control flow.
+    """
+    delay = BACKOFF_BASE_S * (2**attempt) * (1.0 + random.uniform(-0.1, 0.1))
+    time.sleep(delay)
+
+
+def _request_with_retry(
+    method: str,
+    client: httpx.Client,
+    url: str,
+    **kwargs: Any,
+) -> httpx.Response:
+    """Issue an HTTP request with the transient-failure retry policy.
+
+    Wraps ``client.post``/``client.delete``. Retries on the statuses in
+    :data:`RETRYABLE_STATUSES` and on the exceptions in
+    :data:`RETRYABLE_EXCEPTIONS`. On 4xx (or any other non-retryable
+    status), raises immediately via ``raise_for_status``. Logs every
+    retry attempt with the URL and the reason so post-mortems are
+    tractable. On exhaustion, raises the final status's
+    ``HTTPStatusError`` (or re-raises the final exception).
+    """
+    last_exc: Exception | None = None
+    for attempt in range(MAX_RETRIES + 1):  # 1 initial + up to MAX_RETRIES
+        try:
+            resp = getattr(client, method)(url, **kwargs)
+        except RETRYABLE_EXCEPTIONS as exc:
+            last_exc = exc
+            if attempt < MAX_RETRIES:
+                log.warning(
+                    "Mistral %s %s transient failure (%s); retry %d/%d",
+                    method.upper(),
+                    url,
+                    type(exc).__name__,
+                    attempt + 1,
+                    MAX_RETRIES,
+                )
+                _sleep_with_backoff(attempt)
+                continue
+            raise
+        if resp.status_code not in RETRYABLE_STATUSES:
+            return resp
+        if attempt < MAX_RETRIES:
+            log.warning(
+                "Mistral %s %s returned HTTP %d; retry %d/%d",
+                method.upper(),
+                url,
+                resp.status_code,
+                attempt + 1,
+                MAX_RETRIES,
+            )
+            _sleep_with_backoff(attempt)
+            continue
+        # Out of retries — surface the final response as an HTTPStatusError.
+        resp.raise_for_status()
+        return resp  # unreachable; for type-checker peace of mind
+    # Loop exited without return — only possible if MAX_RETRIES < 0.
+    assert last_exc is not None
+    raise last_exc
+
 
 def _create_agent(client: httpx.Client, body: dict) -> str:
     """POST /v1/agents — returns the new agent_id (``ag_*``)."""
-    resp = client.post("/v1/agents", json=body, timeout=60.0)
+    resp = _request_with_retry("post", client, "/v1/agents", json=body, timeout=60.0)
     resp.raise_for_status()
     data = resp.json()
     agent_id = data.get("id")
@@ -305,7 +390,26 @@ def _create_agent(client: httpx.Client, body: dict) -> str:
 
 def _start_conversation(client: httpx.Client, body: dict) -> dict:
     """POST /v1/conversations — returns the parsed response body."""
-    resp = client.post("/v1/conversations", json=body, timeout=600.0)
+    resp = _request_with_retry("post", client, "/v1/conversations", json=body, timeout=600.0)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def _append_conversation(client: httpx.Client, conversation_id: str, body: dict) -> dict:
+    """POST /v1/conversations/{id} — append a turn to an existing conversation.
+
+    Path-bound append endpoint (Mistral Agents beta API, verified
+    2026-05-21). The agent is implied by the conversation; ``agent_id``
+    and ``conversation_id`` MUST NOT appear in ``body`` (HTTP 422
+    otherwise — see tickets 0211/0212).
+    """
+    resp = _request_with_retry(
+        "post",
+        client,
+        f"/v1/conversations/{conversation_id}",
+        json=body,
+        timeout=600.0,
+    )
     resp.raise_for_status()
     return resp.json()
 
@@ -315,10 +419,12 @@ def _delete_agent(client: httpx.Client, agent_id: str) -> None:
 
     Cleanup must never raise to the caller — a failed delete is a
     hygiene issue, not a result failure. Orphans can be swept later via
-    the Mistral console.
+    the Mistral console. The retry wrapper may raise ``HTTPStatusError``
+    on exhaustion; ``httpx.HTTPError`` covers that subclass plus all
+    transport exceptions so the contract holds.
     """
     try:
-        resp = client.delete(f"/v1/agents/{agent_id}", timeout=30.0)
+        resp = _request_with_retry("delete", client, f"/v1/agents/{agent_id}", timeout=30.0)
         if resp.status_code not in (200, 204):
             log.warning(
                 "Mistral DELETE /v1/agents/%s returned HTTP %s: %s",
@@ -459,13 +565,7 @@ def run(
         }
         _attach_metadata(conv_body)
         with httpx.Client(base_url=API_BASE, headers=headers) as client:
-            resp = client.post(
-                f"/v1/conversations/{conversation_id}",
-                json=conv_body,
-                timeout=600.0,
-            )
-            resp.raise_for_status()
-            raw = resp.json()
+            raw = _append_conversation(client, conversation_id, conv_body)
         agent_id = continuation["agent_id"]
     else:
         # Mode 1 or 2: create agent + invoke.
