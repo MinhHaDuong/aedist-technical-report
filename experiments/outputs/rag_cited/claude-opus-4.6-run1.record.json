@@ -1,10 +1,10 @@
 {
   "run_id": "77bdaf3e4084",
   "timestamp": "2026-04-10T15:45:20.266029Z",
-  "method": "sourced",
+  "method": "rag",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
-    "prompt_version": "sourced",
+    "prompt_version": "cited",
     "extra": {
       "size_class": "frontier",
       "country": "US",

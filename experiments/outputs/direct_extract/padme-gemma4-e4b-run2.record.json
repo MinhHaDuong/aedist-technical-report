@@ -1,7 +1,7 @@
 {
   "run_id": "f5b2063d3843",
   "timestamp": "2026-04-10T15:45:00.876086Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "gemma4:e4b",
     "prompt_version": "census",

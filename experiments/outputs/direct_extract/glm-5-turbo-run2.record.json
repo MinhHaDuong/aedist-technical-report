@@ -1,7 +1,7 @@
 {
   "run_id": "d2ea61ef9bb5",
   "timestamp": "2026-04-10T15:44:55.816061Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "z-ai/glm-5-turbo",
     "prompt_version": "census",

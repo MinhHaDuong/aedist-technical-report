@@ -1,10 +1,10 @@
 {
   "run_id": "3a10d8d17d75",
   "timestamp": "2026-04-10T15:45:24.269413Z",
-  "method": "verification",
+  "method": "rag+verification",
   "method_params": {
     "model": "claude-opus-4.6-tool-run1_filtered",
-    "prompt_version": "verification"
+    "prompt_version": "per_fuel"
   },
   "resource_use": {},
   "result_file": "experiments/derived/verification/claude-opus-4.6-tool-run1_filtered.csv",

@@ -1,7 +1,7 @@
 {
   "run_id": "76d2c2a69d01",
   "timestamp": "2026-04-10T17:59:10.907441Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
     "prompt_version": "p1_composite",

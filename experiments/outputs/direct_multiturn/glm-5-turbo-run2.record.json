@@ -1,10 +1,10 @@
 {
   "run_id": "aa78c503ff02",
   "timestamp": "2026-04-10T15:45:14.057133Z",
-  "method": "multiturn",
+  "method": "direct+multiturn",
   "method_params": {
     "model": "z-ai/glm-5-turbo",
-    "prompt_version": "multiturn",
+    "prompt_version": "followups",
     "extra": {
       "size_class": "large",
       "country": "CN",

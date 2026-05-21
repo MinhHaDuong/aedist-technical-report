@@ -1,7 +1,7 @@
 {
   "run_id": "edaee5404f68",
   "timestamp": "2026-04-10T15:44:57.954229Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "meta-llama/llama-4-maverick",
     "prompt_version": "census",

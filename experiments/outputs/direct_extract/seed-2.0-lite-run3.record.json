@@ -1,7 +1,7 @@
 {
   "run_id": "5431b545bcbd",
   "timestamp": "2026-04-10T15:45:02.940670Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "bytedance-seed/seed-2.0-lite",
     "prompt_version": "census",

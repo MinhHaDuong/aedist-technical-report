@@ -1,7 +1,7 @@
 {
   "run_id": "81ce85dfb0c2",
   "timestamp": "2026-04-10T15:45:02.200540Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "xiaomi/mimo-v2-flash",
     "prompt_version": "census",

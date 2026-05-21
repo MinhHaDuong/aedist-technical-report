@@ -1,7 +1,7 @@
 {
   "run_id": "bc897ef55f1b",
   "timestamp": "2026-04-10T15:44:59.045388Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-large-2512",
     "prompt_version": "census",

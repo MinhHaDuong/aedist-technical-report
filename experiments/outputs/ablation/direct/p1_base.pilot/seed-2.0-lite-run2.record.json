@@ -1,7 +1,7 @@
 {
   "run_id": "2fbcf73dad9f",
   "timestamp": "2026-04-11T11:09:37.384352Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "bytedance-seed/seed-2.0-lite",
     "prompt_version": "p1_base",
@@ -19,7 +19,7 @@
     "tokens_in": 480,
     "tokens_out": 5789
   },
-  "result_file": "experiments/outputs/ablation/direct/p1_base/seed-2.0-lite-run2.csv",
+  "result_file": "experiments/outputs/ablation/direct/p1_base.pilot/seed-2.0-lite-run2.csv",
   "result_summary": {
     "status": "ok",
     "n_plants": 39,

@@ -1,7 +1,7 @@
 {
   "run_id": "72ea7ea4cb79",
   "timestamp": "2026-04-10T15:44:56.036170Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
     "prompt_version": "census",

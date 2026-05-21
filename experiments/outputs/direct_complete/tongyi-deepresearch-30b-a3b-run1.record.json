@@ -1,10 +1,10 @@
 {
   "run_id": "8d40c91ce722",
   "timestamp": "2026-04-10T15:45:08.383243Z",
-  "method": "frontier",
+  "method": "direct",
   "method_params": {
     "model": "alibaba/tongyi-deepresearch-30b-a3b",
-    "prompt_version": "frontier",
+    "prompt_version": "complete",
     "extra": {
       "size_class": "large",
       "country": "CN",

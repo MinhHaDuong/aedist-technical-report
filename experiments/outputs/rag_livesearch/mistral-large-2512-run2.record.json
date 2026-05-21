@@ -1,10 +1,10 @@
 {
   "run_id": "0e7007a459bf",
   "timestamp": "2026-04-10T15:45:21.148699Z",
-  "method": "web",
+  "method": "rag_livesearch",
   "method_params": {
     "model": "mistralai/mistral-large-2512",
-    "prompt_version": "web",
+    "prompt_version": "extract",
     "extra": {
       "size_class": "frontier",
       "country": "FR",
