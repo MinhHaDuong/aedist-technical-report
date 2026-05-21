@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Audit experiment parameter confounds; fix missing fields in JobSpec/RunRecord
+Title: Audit experiment parameter confounds and document redo decisions
 Created: 2026-04-30
 Author: claude
 
@@ -9,6 +9,8 @@ Author: claude
 2026-05-21T07:00Z claude note dedup with 0139 — dropped schema/wiring bullets from Exit criteria; the fix lives in 0139 (already Blocked-by)
 
 2026-05-21T08:07Z HDMX-coding-agent note blocker 0139 closed — Blocked-by removed.
+2026-05-21T08:30Z claude note refreshed body post-0139: parameter inventory updated (all 6 fields now in JobSpec + extra=forbid), classification corrected for Exp 1 (thinking-on is design intent), redo decisions documented, methods disclosure drafted.
+
 --- body ---
 
 ## Context
@@ -24,44 +26,39 @@ scope revealed a more serious problem: `seed` and `provider_order` are
 — they are not declared fields. Fifty-seven sweeps set `seed = 42` believing
 it controlled MoE reproducibility. It didn't reach the API.
 
-## Parameter inventory
+## Parameter inventory (current, post-0139)
 
-| Parameter | In `JobSpec` | In `RunRecord` | Effect if uncontrolled |
-|-----------|-------------|---------------|----------------------|
-| `no_think` | ✓ (PR #303) | ✓ via `extra` (PR #303) | CoT on/off → quality + token cost |
-| `web_search` (effective) | ✓ field | ✗ not written | Web-augmented vs. parametric |
-| `seed` | ✗ **silently dropped** | ✗ | MoE non-determinism uncontrolled |
-| `provider_order` | ✗ **silently dropped** | ✗ | Cross-provider FP variance (MoE) |
-| `max_tokens` | ✗ not a field | ✗ | Output truncation; query_direct uses 32768, worker uses model default |
-| `num_ctx` | ✗ not a field | ✗ | RAG context truncation for Ollama (default 32768, query_rag.py caps at 81920) |
-| `temperature` | ✓ field | ✓ via evaluate.py backfill | Controlled since PR #244 |
+| Parameter | In `JobSpec` | In `RunRecord` | Status |
+|-----------|-------------|---------------|--------|
+| `no_think` | ✓ (PR #303) | ✓ via `extra` (PR #303) | Fixed — Ollama plumbing repaired in PR #370 reroll |
+| `web_search` (effective) | ✓ field | ✓ via `extra` (PR #370) | Fixed |
+| `seed` | ✓ (PR #370) | ✓ via `extra` (PR #370) | Fixed |
+| `provider_order` | ✓ (PR #370) | ✓ via `extra` (PR #370) | Fixed |
+| `max_tokens` | ✓ (PR #370) | ✓ via `extra` (PR #370) | Fixed; Ollama maps to `num_predict` |
+| `num_ctx` | ✓ (PR #370) | ✓ via `extra` (PR #370) | Fixed; Ollama-only |
+| `temperature` | ✓ field | ✓ via `evaluate.py` backfill | Controlled since PR #244 |
+| `finish_reason` | n/a | ✓ via `extra` (PR #370) | Truncation signal exposed |
 | `reasoning_effort` | ✗ not in harness | n/a | Future: o4-series models only |
 
-### Bug: seed and provider_order are silently dropped
+`JobSpec.model_config = ConfigDict(extra="forbid")` is now enforced (PR #370): unknown
+keys in sweep configs raise `ValidationError` instead of silently disappearing.
+`manager.generate` now uses `parent.model_dump()` for per-job fanout so future
+`JobSpec` fields propagate without needing a hand-list update.
 
-`JobSpec` is a Pydantic model with no `extra='allow'` or `extra='forbid'`
-config — unknown fields are silently ignored. `experiments.toml` sets
-`seed = 42` in 57 sweeps and `provider` in the fusion sweeps, but neither
-reaches `build_api_kwargs`. Consequence:
+### Historical context (bugs fixed in PR #370)
 
-- MoE models (DeepSeek V3.2, Qwen3 MoE) ran without seed pinning despite
-  the config stating `seed = 42`.
-- No provider pinning for non-fusion worker sweeps → cross-provider
-  floating-point variance was not eliminated.
-- The belief that MoE runs were reproducible is incorrect.
+Pre-PR #370 state: 57 sweeps set `seed = 42` believing they pinned MoE
+reproducibility — the field was not declared in `JobSpec`, silently dropped on
+load, never reached `build_api_kwargs`. Same problem for `provider` in fusion
+sweeps. `max_tokens` was inconsistent between `query_direct.py` (hardcoded 32768)
+and the worker path (model default). `num_ctx` was inconsistent between
+`query_rag.py` (81920 cap) and the worker (32768).
 
-### Inconsistency: max_tokens
-
-`query_direct.py` (legacy standalone path) always passes `max_tokens=32768`.
-The worker path calls `build_api_kwargs` without `max_tokens`, so the model
-applies its own default (varies by model, often 8192–16384). Runs via the
-two paths are not comparable on output length.
-
-### Inconsistency: num_ctx (Ollama)
-
-`query_rag.py` caps at `min(ctx_window, 81920)`. The worker's `query_model()`
-defaults to 32768. Local RAG runs through the worker may have truncated
-context that the standalone script did not.
+Consequence: MoE models (DeepSeek V3.2, Qwen3 MoE, etc.) ran without seed
+pinning or provider pinning despite configs claiming otherwise. The
+`MoE models require repeat=3` rule was tightened in response — empirical
+characterisation of variance, since seed+provider pinning alone could not be
+trusted to control it.
 
 ## Scope: which models are affected
 
@@ -78,36 +75,31 @@ Thinking-capable models present in the registry and in existing outputs:
 
 Non-thinking models are unaffected — `no_think=False` is a no-op for them.
 
-## Actions
+## Sweep classification for `no_think`
 
-### 0. Fix the silent-drop bug (blocked by 0139; do before new sweeps)
-
-Tracked in ticket 0139. Once merged, `seed`, `provider_order`, `max_tokens`,
-`num_ctx`, and `web_search` (effective) will be declared `JobSpec` fields,
-wired to the API, written to raw JSON, and backfillable into `RunRecord`.
-
-### 1. Per-experiment audit: reasoning required / optional / irrelevant
-
-For each sweep in `experiments.toml`, classify:
+Classes:
 - **A — thinking off preferred**: extraction/listing tasks where CoT wastes
   tokens and may hurt structured output compliance.
-- **B — thinking on preferred**: hard inference tasks (provenance, status
-  reasoning under ambiguity).
+- **B — thinking on (or allowed)**: parametric capability measurement or
+  open-ended reasoning where CoT is part of the model's capability under test.
 - **C — comparison axis**: experiment is explicitly comparing thinking-on vs
-  thinking-off (needs both runs).
+  thinking-off (needs both variants).
 - **D — unaffected**: no thinking-capable models in the model set.
 
-Proposed initial classification (to be verified):
+Corrected classification (ratified 2026-05-21 — Exp 1 reclassified from A to B
+per design intent):
 
 | Sweep | Class | Rationale |
 |-------|-------|-----------|
-| direct_complete / direct_extract | A | Structured CSV extraction; CoT likely hurts |
-| direct_multiturn | B | Multi-step reasoning; CoT plausibly helps |
-| rag_extract / rag_cited / rag_per_fuel* | A | RAG context is the evidence; CoT wastes tokens |
-| rag_livesearch | B | Source synthesis benefits from CoT |
-| ablation/* | A | Ablation is about prompt modules, not CoT |
-| frontier (deep-research sweep) | B | Frontier reasoning is the point |
-| scenarios (qualitative) | B | Open-ended; thinking on is appropriate |
+| `sweep_ablation_p1_direct_base` (Exp 1 baseline) | **B** | Parametric ceiling — best F1 from model memory. CoT is part of capability. Constraint is no-web (via `system_instruction`), not no-think. Only `qwen3-max-thinking` in journal panel. |
+| `sweep_direct_multiturn` | B | Multi-step reasoning; CoT plausibly helps |
+| `sweep_direct_extract` / `_local` | A | Structured CSV extraction with cogito:8b — CoT wastes tokens |
+| `sweep_rag_extract` / `rag_cited` / `rag_per_fuel*` | A | RAG context is the evidence; CoT wastes tokens |
+| `sweep_rag_livesearch` | B | Source synthesis benefits from CoT |
+| `sweep_regimes_*_local` | A | Already set `no_think=true`; Ollama plumbing fixed in PR #370 reroll |
+| `sweep_ablation_p2_rag_*` | A | Module ablation — RAG-grounded extraction |
+| `frontier` (deep-research / SOTA umbrella 0166) | B | Frontier reasoning is the point |
+| `scenarios` (qualitative) | B | Open-ended; thinking on is appropriate |
 
 ### 2. Can we infer thinking mode from existing traces?
 
@@ -138,45 +130,65 @@ d. **Provider metadata**: OpenRouter may expose thinking token counts in
 from current data. We can flag *probable* thinking-on based on elevated
 `tokens_out`, but cannot confirm.
 
-### 3. Redo policy
+## Redo decisions (final)
 
-Recommendation (to be ratified by user):
+- **Exp 1 baseline (`sweep_ablation_p1_direct_base`)**: rerun completed
+  2026-05-20 with `seed = 42` actually reaching the API (PR #370 partial
+  landed). 16 models × 5 reps = 80 runs in `outputs/ablation/direct/p1_base/`.
+  Thinking-on is correct per design — **no further redo needed**.
+- **Local sweeps with `no_think = true`** (`regimes_*_local`,
+  `direct_extract_local`): the Ollama plumbing was broken until PR #370's
+  reroll fix landed. Any runs from these sweeps that feed published
+  figures should be regenerated *if* re-run for any other reason; do not
+  trigger reruns solely for this. Current slides (Econom'IA 2026) do not
+  depend on these sweeps.
+- **Pre-PR #370 MoE runs in the historical record**: `measurements.jsonl`
+  contains 327+ records from before the seed-silent-drop fix. None feed the
+  current Exp 1 baseline (overwritten by the rerun). Disclose in methods,
+  do not retract.
+- **Class A sweeps with thinking-capable models** (`rag_extract`, `rag_cited`,
+  `rag_per_fuel*`, `ablation_p2_rag_*`): if any of these feed a published
+  figure and used a thinking model with provider-default CoT, schedule a
+  redo when convenient. Check the figure DAG before deciding.
 
-- **Class A sweeps with thinking-capable models**: redo with `no_think=true`
-  once the sweep is scheduled for other reasons (don't trigger reruns solely
-  for this).
-- **Class B sweeps**: no action — thinking-on was the right behaviour.
-- **Class C**: these runs don't exist yet; new sweeps should set both variants
-  explicitly.
-- **Regimes scatter (ticket 0137)**: cogito:8b was added without `no_think`.
-  Classify as Class A (structured extraction). Flag the data point; consider
-  a single redo run when convenient.
+## Methods disclosure draft (for the manuscript)
 
-Do **not** invalidate or retract existing results for the report. Disclose the
-confound in the methods section: "runs predating PR #303 used provider-default
-thinking mode; thinking-capable models in Class A sweeps were re-run with
-no_think=true for the final results."
+> Several API parameters that influence run behaviour were initially declared
+> in sweep configuration files but silently dropped by the schema layer
+> (Pydantic `BaseModel` with permissive defaults). The affected parameters
+> are `seed`, `provider_order`, `max_tokens`, and `num_ctx`. The bug was
+> identified during the no_think audit (PR #303, April 2026) and fully
+> repaired in PR #370 (May 2026), which declares the missing fields, enforces
+> `extra="forbid"` to prevent future silent drops, and plumbs all parameters
+> through both the OpenRouter and Ollama-native dispatch paths. Runs predating
+> PR #370 are kept as exploratory background; the published Experiment 1
+> baseline (16 models × 5 reps) was generated post-fix with `seed = 42`
+> verifiably reaching the provider. Mixture-of-experts models in the journal
+> panel are characterised by repeat-level variance (5 replicates) rather
+> than relying on seed pinning alone, since OpenRouter applies seeds on a
+> best-effort basis and cross-provider routing can introduce floating-point
+> variance that no seed controls.
 
-### 4. Schema and analysis script updates
+## Analysis-script status
 
-a. **`RunRecord.method_params.extra`**: add `no_think: bool` field for new
-   runs so the parameter is captured in `measurements.jsonl`.  (Currently
-   `no_think` lives only in `JobSpec`, not propagated to `RunRecord`.)
-
-b. **Scatter / bar plots**: add `no_think` as a filter/facet variable so
-   thinking-on and thinking-off runs are not averaged together.
-
-c. **Summary tables**: add a column or footnote marking which runs used
-   `no_think=true`.
+`records_to_metrics()` in `src/aedist/measurements.py` already emits `no_think`,
+`web_search`, `seed`, `max_tokens`, `num_ctx`, `provider_order`, and
+`finish_reason` as conditioning columns (lines 80–93). After PR #370 the data
+pipeline populates them: raw JSON written by `worker._execute_common()` →
+`evaluate.py` backfills into `RunRecord.method_params.extra` → surfaced by
+`records_to_metrics()`. Analysts can now filter/facet on these without
+re-reading raw JSON.
 
 ## Exit criteria
 
-- Schema + wiring fix (`seed`, `provider_order`, `max_tokens`, `num_ctx`,
-  `web_search` declared in `JobSpec`, `extra='forbid'`, raw-JSON write +
-  `RunRecord` backfill) tracked in 0139 — not duplicated here.
-- Every existing sweep classified A/B/C/D for `no_think` in the table above,
-  reviewed by user.
-- Redo decisions for seed-uncontrolled MoE sweeps documented here.
-- Analysis scripts updated to control for `no_think` and `web_search` as
-  filter variables.
-- Methods section disclosures drafted for all uncontrolled parameters.
+- [x] Schema + wiring fix landed via 0139 / PR #370 (seed, provider_order,
+      max_tokens, num_ctx, web_search, finish_reason in JobSpec/RunRecord;
+      `extra="forbid"` enforced).
+- [x] Every existing sweep classified above; Exp 1 reclassified out of
+      Class A per design intent.
+- [x] Redo decisions documented; Exp 1 baseline regenerated post-fix; other
+      sweeps assessed against figure DAG.
+- [x] Analysis-script support verified — `records_to_metrics()` emits all
+      conditioning columns; data pipeline populates them post-PR #370.
+- [x] Methods disclosure paragraph drafted (above) — to be inserted into the
+      manuscript when paper writing opens post-conference.
