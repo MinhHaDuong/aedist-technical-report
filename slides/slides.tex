@@ -13,7 +13,7 @@
 \setbeamertemplate{frame numbering}[fraction]
 
 \InputIfFileExists{inputs/generated/macros}{}{}
-\InputIfFileExists{inputs/generated/macros_census}{}{}
+\InputIfFileExists{inputs/generated/macros_p1_base}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
 \definecolor{missed}{HTML}{E8505B}
@@ -95,7 +95,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 
 \begin{frame}[plain]
 \centering
-\includegraphics[height=\paperheight,keepaspectratio]{inputs/generated/fig_census_direct.pdf}
+\includegraphics[height=\paperheight,keepaspectratio]{inputs/generated/fig_direct_p1_base.pdf}
 \begin{tikzpicture}[remember picture,overlay] % TODO: Simplifier en choisissant des modèles et en fixant leur ordre dans un fichier de conf de la figure
 \node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
 Récalcitrant\\
@@ -360,14 +360,10 @@ C'est le résultat central qui justifie «~Beyond RAG~» comme titre.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Pareto coût-qualité~: les méthodes, pas les modèles}
+\begin{frame}{Coût × qualité --- aucun front Pareto par modèle}
 \begin{center}
-\includegraphics[width=0.85\textwidth]{inputs/generated/fig_pareto.pdf}
+\includegraphics[width=0.85\textwidth]{inputs/generated/fig_direct_cost_quality.pdf}
 \end{center}
-
-\smallskip
-{\small Meilleur point Pareto~: DeepSeek V3.2 décomposé+RAG --- F1 moyen=89,8\% [85,8--95,6\%] à \$0.06.\\
-{\scriptsize \textit{Piège~: l'union de runs exploite la variance pour gonfler le rappel --- irréproductible à $t{=}0$, méthode non valide.}}}
 \end{frame}
 
 % ===================================================================

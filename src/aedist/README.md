@@ -71,7 +71,7 @@ Generate LaTeX tables and plot CSVs from `measurements.jsonl`.
 | `tabulate_macros.py` | `\newcommand` macros for inline numbers |
 | `tabulate_utils.py` | Shared label parsing utilities |
 | `plot_census.py` | Census bar-chart CSV |
-| `plot_pareto.py` | Pareto-front CSV (F1 vs cost) |
+| `plot_cost_quality.py` | Cost × quality CSV + scatter (TP vs cost, Experiment 1) |
 
 ### Data processing
 

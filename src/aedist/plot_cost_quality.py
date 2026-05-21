@@ -1,8 +1,9 @@
-"""Generate Pareto-front CSV and scatter PDF from measurements.jsonl.
+"""Generate cost × quality CSV and scatter PDF from measurements.jsonl.
 
 Scope: **Experiment 1 only** (the parametric baseline sweep,
 ``experiments/outputs/ablation/direct/p1_base/``). Pilot rows under
-``p1_base.pilot/`` are excluded.
+``p1_base.pilot/`` are excluded. The figure is descriptive — no
+Pareto-efficient envelope is drawn.
 
 Y axis: per-model **count of correctly identified plants** (true positives,
 ``n_matched`` in measurements) plotted as median with min/max whiskers
@@ -30,9 +31,9 @@ reused for Experiments 2/3.
 
 Usage::
 
-    uv run python -m aedist.plot_pareto \\
-        --output slides/inputs/generated/pareto.csv \\
-        --figure slides/inputs/generated/fig_pareto.pdf \\
+    uv run python -m aedist.plot_cost_quality \\
+        --output slides/inputs/generated/cost_quality.csv \\
+        --figure slides/inputs/generated/fig_direct_cost_quality.pdf \\
         --xscale log
 """
 
@@ -75,11 +76,11 @@ def _is_p1_base_row(result_file: str) -> bool:
     return any(result_file.startswith(P1_BASE_DIR + sub) for sub in P1_INCLUDED_SUBDIRS)
 
 
-def build_pareto_rows(
+def build_cost_quality_rows(
     metrics: list[dict],
     source_by_label: dict[str, str] | None = None,
 ) -> list[dict]:
-    """Build rows for the Pareto chart.
+    """Build rows for the cost × quality chart.
 
     Returns list of dicts. Each row carries per-rep ``(tp, cost, source)``
     tuples under ``reps`` so the figure can plot each rep at its own cost
@@ -150,7 +151,7 @@ def build_pareto_rows(
 
 
 def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
-    """Write the Pareto scatter (correctly-identified plants vs cost) to *output*.
+    """Write the cost × quality scatter (correctly-identified plants vs cost) to *output*.
 
     Each model gets one **filled circle** at its median TP count and an
     **x marker** for every other rep — the eye sees both the central
@@ -294,9 +295,9 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
-        description="Generate Pareto CSV and/or scatter PDF (Experiment 1 only)",
+        description="Generate cost × quality CSV and/or scatter PDF (Experiment 1 only)",
     )
-    parser.add_argument("--output", help="Path to write pareto.csv")
+    parser.add_argument("--output", help="Path to write cost_quality.csv")
     parser.add_argument("--figure", help="Path to write scatter PDF")
     parser.add_argument(
         "--xscale",
@@ -328,7 +329,7 @@ def main() -> None:
         label = f"{prompt_version}/{stem}" if prompt_version else stem
         source_by_label[label] = "topup" if ".topup" in r.result_file else "base"
 
-    rows = build_pareto_rows(metrics, source_by_label=source_by_label)
+    rows = build_cost_quality_rows(metrics, source_by_label=source_by_label)
 
     if args.output:
         output_path = Path(args.output)

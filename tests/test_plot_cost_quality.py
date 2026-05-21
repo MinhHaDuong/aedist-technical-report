@@ -1,4 +1,4 @@
-"""Tests for aedist.plot_pareto — Pareto CSV from metrics JSON."""
+"""Tests for aedist.plot_cost_quality — cost × quality CSV from metrics JSON."""
 
 import csv
 import re
@@ -8,7 +8,7 @@ import sys
 import pytest
 from conftest import patch_measurements_loader, write_measurements
 
-from aedist.plot_pareto import _is_p1_base_row, build_pareto_rows, write_pdf
+from aedist.plot_cost_quality import _is_p1_base_row, build_cost_quality_rows, write_pdf
 from aedist.util import family_color, model_family_color
 
 # Sample with three architectural families (Claude/Mistral/Qwen) and varying
@@ -55,9 +55,9 @@ _CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {
 }
 
 
-def test_build_pareto_rows():
+def test_build_cost_quality_rows():
     """Rows expose TP and F1 stats per model, plus family + cost."""
-    rows = build_pareto_rows(SAMPLE_METRICS)
+    rows = build_cost_quality_rows(SAMPLE_METRICS)
     assert len(rows) == 3
     assert all(set(r.keys()) == _EXPECTED_KEYS for r in rows)
     by_model = {r["model"]: r for r in rows}
@@ -72,16 +72,16 @@ def test_build_pareto_rows():
     assert by_model["qwen3.6-plus"]["family"] == "qwen"
 
 
-def test_build_pareto_rows_sorted_by_median_tp():
+def test_build_cost_quality_rows_sorted_by_median_tp():
     """Rows are sorted by median TP descending."""
-    rows = build_pareto_rows(SAMPLE_METRICS)
+    rows = build_cost_quality_rows(SAMPLE_METRICS)
     medians = [r["median_tp"] for r in rows]
     assert medians == sorted(medians, reverse=True)
 
 
 def test_cost_mean_across_reps():
     """Per-model cost is the mean across rep costs (all reps share cost here)."""
-    rows = build_pareto_rows(SAMPLE_METRICS)
+    rows = build_cost_quality_rows(SAMPLE_METRICS)
     by_model = {r["model"]: r for r in rows}
     assert by_model["claude-opus-4.6"]["cost_usd"] == 0.10
     assert by_model["mistral-large-2512"]["cost_usd"] == 0.05
@@ -107,7 +107,7 @@ def test_is_p1_base_row():
     assert not _is_p1_base_row("experiments/outputs/ablation/rag/p1_base/claude-opus-4.6-run1.csv")
 
 
-def test_pareto_family_colours():
+def test_cost_quality_family_colours():
     """The three language families resolve to three distinct palette colours."""
     en = family_color("claude-opus-4.6")
     fr = family_color("mistral-large-2512")
@@ -121,7 +121,7 @@ def test_pareto_family_colours():
     assert zh == family_color("ZH")
 
 
-def test_pareto_model_family_colours():
+def test_cost_quality_model_family_colours():
     """The five architectural families resolve to five distinct palette colours."""
     claude = model_family_color("claude-opus-4.6")
     gpt = model_family_color("gpt-5.5")
@@ -134,21 +134,21 @@ def test_pareto_model_family_colours():
     assert qwen == model_family_color("qwen3.6-plus")
 
 
-def test_pareto_per_rep_points(tmp_path):
+def test_cost_quality_per_rep_points(tmp_path):
     """Build returns the full per-rep TP list so write_pdf can plot every rep."""
-    rows = build_pareto_rows(SAMPLE_METRICS)
+    rows = build_cost_quality_rows(SAMPLE_METRICS)
     by_model = {r["model"]: r for r in rows}
     # Each sample model has 3 reps; tp_values must surface all of them.
     assert by_model["claude-opus-4.6"]["tp_values"] == [80, 82, 85]
     assert by_model["mistral-large-2512"]["tp_values"] == [50, 52, 55]
     assert by_model["qwen3.6-plus"]["tp_values"] == [30, 33, 35]
     # write_pdf still renders without raising.
-    figure_path = tmp_path / "fig_pareto.pdf"
+    figure_path = tmp_path / "fig_cost_quality.pdf"
     write_pdf(rows, figure_path)
     assert figure_path.exists() and figure_path.stat().st_size > 0
 
 
-def test_pareto_reps_carry_per_rep_cost():
+def test_cost_quality_reps_carry_per_rep_cost():
     """reps surfaces each rep's individual cost so the figure can scatter in x."""
     # Vary cost per rep within a model so the test isn't degenerate.
     metrics = [
@@ -156,7 +156,7 @@ def test_pareto_reps_carry_per_rep_cost():
         {"label": "p1_base/claude-opus-4.6-run2", "n_matched": 82, "f1": 0.5, "cost_usd": 0.12},
         {"label": "p1_base/claude-opus-4.6-run3", "n_matched": 85, "f1": 0.5, "cost_usd": 0.14},
     ]
-    rows = build_pareto_rows(metrics)
+    rows = build_cost_quality_rows(metrics)
     by_model = {r["model"]: r for r in rows}
     reps = by_model["claude-opus-4.6"]["reps"]
     assert [rep["cost"] for rep in reps] == [0.10, 0.12, 0.14]
@@ -165,7 +165,7 @@ def test_pareto_reps_carry_per_rep_cost():
     assert by_model["claude-opus-4.6"]["mean_cost"] == 0.12
 
 
-def test_pareto_base_topup_partition():
+def test_cost_quality_base_topup_partition():
     """source_by_label partitions reps into base vs topup cohorts."""
     source_by_label = {
         # Mark one of each model's reps as a topup
@@ -173,18 +173,18 @@ def test_pareto_base_topup_partition():
         "p1_base/mistral-large-2512-run3": "topup",
         "p1_base/qwen3.6-plus-run3": "topup",
     }
-    rows = build_pareto_rows(SAMPLE_METRICS, source_by_label=source_by_label)
+    rows = build_cost_quality_rows(SAMPLE_METRICS, source_by_label=source_by_label)
     by_model = {r["model"]: r for r in rows}
     assert by_model["claude-opus-4.6"]["base_tp_values"] == [80, 82]
     assert by_model["claude-opus-4.6"]["topup_tp_values"] == [85]
     # Without a source map, everything defaults to base.
-    rows_no_map = build_pareto_rows(SAMPLE_METRICS)
+    rows_no_map = build_cost_quality_rows(SAMPLE_METRICS)
     by_model_no_map = {r["model"]: r for r in rows_no_map}
     assert by_model_no_map["claude-opus-4.6"]["base_tp_values"] == [80, 82, 85]
     assert by_model_no_map["claude-opus-4.6"]["topup_tp_values"] == []
 
 
-def test_pareto_xscale_flag(tmp_path, monkeypatch):
+def test_cost_quality_xscale_flag(tmp_path, monkeypatch):
     """--xscale log and --xscale linear both run and reflect in the figure."""
     input_path = tmp_path / "measurements.jsonl"
     # Stamp the result_file via post-processing so the p1_base filter accepts these rows.
@@ -192,13 +192,13 @@ def test_pareto_xscale_flag(tmp_path, monkeypatch):
     patch_measurements_loader(monkeypatch, input_path)
 
     for scale in ("linear", "log"):
-        figure_path = tmp_path / f"fig_pareto_{scale}.pdf"
-        from aedist.plot_pareto import main
+        figure_path = tmp_path / f"fig_cost_quality_{scale}.pdf"
+        from aedist.plot_cost_quality import main
 
         sys.argv = [
-            "plot_pareto",
+            "plot_cost_quality",
             "--output",
-            str(tmp_path / f"pareto_{scale}.csv"),
+            str(tmp_path / f"cost_quality_{scale}.csv"),
             "--figure",
             str(figure_path),
             "--xscale",
@@ -214,12 +214,12 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     input_path = tmp_path / "measurements.jsonl"
     _write_p1_base_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
-    output_path = tmp_path / "pareto.csv"
+    output_path = tmp_path / "cost_quality.csv"
 
-    from aedist.plot_pareto import main
+    from aedist.plot_cost_quality import main
 
     sys.argv = [
-        "plot_pareto",
+        "plot_cost_quality",
         "--output",
         str(output_path),
     ]
@@ -237,14 +237,14 @@ def test_main_writes_figure(tmp_path, monkeypatch):
     input_path = tmp_path / "measurements.jsonl"
     _write_p1_base_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
-    figure_path = tmp_path / "fig_pareto.pdf"
+    figure_path = tmp_path / "fig_cost_quality.pdf"
 
-    from aedist.plot_pareto import main
+    from aedist.plot_cost_quality import main
 
     sys.argv = [
-        "plot_pareto",
+        "plot_cost_quality",
         "--output",
-        str(tmp_path / "pareto.csv"),
+        str(tmp_path / "cost_quality.csv"),
         "--figure",
         str(figure_path),
     ]
@@ -312,7 +312,7 @@ def _write_p1_base_measurements(path, metrics):
 def test_help_lists_xscale_flag():
     """--help advertises the --xscale flag."""
     result = subprocess.run(
-        ["uv", "run", "python", "-m", "aedist.plot_pareto", "--help"],
+        ["uv", "run", "python", "-m", "aedist.plot_cost_quality", "--help"],
         capture_output=True,
         text=True,
     )
