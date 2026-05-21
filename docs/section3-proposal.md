@@ -1,7 +1,7 @@
 ---
 title: "§3 proposal — from chatbots to knowledge management"
 author: claude (drafting), Ha-Duong Minh (author directive)
-ticket: 0212
+ticket: 0219
 date: 2026-05-21
 status: DRAFT — awaiting author sign-off before touching slides/manuscript/main.md
 ---
