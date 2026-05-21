@@ -1,0 +1,62 @@
+%erg 0.1
+Title: deepseek-v4-pro returns null content via OpenRouter, hangs the worker
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T11:42Z claude created — observed during ticket 0198 topup; killed 2 worker leases after 25 min each
+
+--- body ---
+## Context
+
+During the ticket 0198 topup (2026-05-21), two worker leases for
+`deepseek/deepseek-v4-pro` ran for ~25 minutes each before being killed
+manually. Output file `bybwzvtfn.output` showed a `200 OK` response
+followed by an internal openai-sdk retry and a second `200 OK`, then
+silence — the worker never wrote the result file and never moved to
+the next job.
+
+A fresh probe outside the worker reproduces the underlying issue:
+
+```
+client.chat.completions.create(model='deepseek/deepseek-v4-pro', ...)
+  -> openai.OpenAIError: 'NoneType' object is not subscriptable
+```
+
+OpenRouter returns a 200 but `choice.message.content` is `None` for this
+model on a non-trivial fraction of calls. The SDK's response parser
+chokes on `None`; the worker has no handler for this provider-side
+null-content pattern.
+
+## Why it matters
+
+`deepseek/deepseek-v4-pro` is in `modelset_ablation_journal` and in the
+frozen `modelset_exp1_baseline`. With the harness in current state, any
+sweep including this model can stall on null content for the duration of
+the SDK's internal retries (which here pushed past 25 minutes per call).
+
+## Actions
+
+1. In `worker._query_and_save` (or a layer above), detect `result["content"] is None` and treat as a hard failure (move to `failed/`, write error log, continue).
+2. Surface the provider-side null in the error message so the operator
+   can distinguish "OpenRouter routed to a broken endpoint" from
+   "network glitch" / "429".
+3. Optional: emit a metric or telemetry line so we can quantify how
+   often this happens to which OpenRouter providers.
+
+## Test
+
+```python
+@pytest.mark.integration
+def test_worker_handles_null_content():
+    # Mock OpenRouter returning 200 + choice.message.content=None
+    # Assert worker writes error log, job lands in failed/, drain continues
+```
+
+## Exit criteria
+
+- [ ] Null content from any model results in a clean failure within ≤2 min
+      (not 25 min).
+- [ ] Failure mode is distinguishable from rate-limit and network errors
+      in the error log.
+- [ ] Integration test guards the behaviour.

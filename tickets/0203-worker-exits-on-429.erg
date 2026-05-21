@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Worker exits on 429 instead of marking single job failed and continuing
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T11:40Z claude created — uncovered during ticket 0198 raid
+
+--- body ---
+## Context
+
+During the ticket 0198 topup (2026-05-21), the OpenRouter worker exited
+the entire `--drain` loop on the first 429 response from any model,
+leaving the rest of the pending queue untouched. This cost ~30 minutes
+of session time fighting around `qwen3.6-flash` (free-tier rate-limited)
+and forced a manual "sideline the offending model" pattern.
+
+Concrete sequence observed:
+1. Worker leases pending job for `qwen/qwen3.6-flash`.
+2. OpenRouter returns 429 (upstream Alibaba free-tier rate limit).
+3. OpenAI SDK retries once (0.45s backoff), gets 429 again.
+4. Worker logs "Queue drained, exiting." and exits cleanly (exit 0).
+5. Job remains in `jobs/failed/` with an error log.
+6. **All other pending jobs in the queue are untouched.**
+
+Expected: the rate-limited job moves to `failed/`, the worker continues
+to lease the next pending job, the drain loop only exits when the queue
+is genuinely empty.
+
+## Why it matters
+
+Parallel workers partially mitigate this (a 429 only kills one worker
+slot, not the whole queue), but the bug still loses concurrency on every
+free-tier failure. For sequential drains it's worse — one bad model
+blocks the entire batch.
+
+## Actions
+
+1. Locate the run loop in `experiments/src/aedist/worker.py` that exits
+   on what looks like "queue drained" after a job failure.
+2. Distinguish "job failed" from "queue empty" — only the latter should
+   cause the drain loop to exit.
+3. On 429 specifically, consider exponential backoff before moving to
+   `failed/` — Alibaba's free tier resets within 30-60s in practice.
+4. Add an integration test that fails before the fix: spawn worker
+   against a mock 429, then a mock 200, assert the worker processed
+   both jobs.
+
+## Test
+
+```python
+@pytest.mark.integration
+def test_worker_continues_after_429():
+    # Two pending jobs; first 429s, second 200s
+    # Assert worker processes both, queue ends empty, failed/ has 1, done/ has 1
+```
+
+## Exit criteria
+
+- [ ] Worker continues to next pending job after a 429 failure.
+- [ ] 429-failed jobs land in `failed/` with error log as before.
+- [ ] Integration test guards the behaviour.
+- [ ] `make check` passes.
