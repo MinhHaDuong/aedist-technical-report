@@ -19,12 +19,14 @@ Family colouring: per-model colour comes from
 axis: Claude / GPT / Mistral / Qwen / DeepSeek). Single marker per
 model; colour conveys family.
 
-x-axis scale: controlled by ``--xscale {linear,log}`` (default log).
-For log mode, models reporting ``cost_usd <= 0`` are dropped with a
-warning — clamping to an ε or pinning to a dedicated "\\$0" tick would
-mis-represent the scale. All Experiment 1 models are cloud and carry
-non-zero costs, so this branch does not fire on current data; it
-becomes relevant when the script is reused for Experiments 2/3.
+x-axis: cost per call in **USD cents** (``cost_usd × 100``), displayed
+in decimal (not scientific) notation. Scale controlled by
+``--xscale {linear,log}`` (default log). For log mode, models reporting
+``cost_usd <= 0`` are dropped with a warning — clamping to an ε or
+pinning to a dedicated "\\$0" tick would mis-represent the scale. All
+Experiment 1 models are cloud and carry non-zero costs, so this branch
+does not fire on current data; it becomes relevant when the script is
+reused for Experiments 2/3.
 
 Usage::
 
@@ -174,9 +176,10 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     for r in filtered:
         colour = model_family_color(r["model"])
         median = r["median_tp"]
+        cost_cents = r["cost_usd"] * 100.0  # display axis is USD cents
         # Thin min-max line behind the markers (range cue).
         ax.plot(
-            [r["cost_usd"], r["cost_usd"]],
+            [cost_cents, cost_cents],
             [r["min_tp"], r["max_tp"]],
             color=colour,
             linewidth=0.6,
@@ -187,7 +190,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         base_reps = r.get("base_tp_values") or []
         if base_reps:
             ax.scatter(
-                [r["cost_usd"]] * len(base_reps),
+                [cost_cents] * len(base_reps),
                 base_reps,
                 marker="o",
                 facecolors="none",
@@ -200,7 +203,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         topup_reps = r.get("topup_tp_values") or []
         if topup_reps:
             ax.scatter(
-                [r["cost_usd"]] * len(topup_reps),
+                [cost_cents] * len(topup_reps),
                 topup_reps,
                 marker="x",
                 color=colour,
@@ -211,7 +214,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         # Pooled median: filled square (drawn at the computed value, not at a
         # specific rep — the median may interpolate between two reps).
         ax.scatter(
-            [r["cost_usd"]],
+            [cost_cents],
             [median],
             marker="s",
             color=colour,
@@ -229,13 +232,23 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         zorder=1,
     )
 
-    ax.set_xlabel("Coût par requête (USD)")
+    ax.set_xlabel("Coût par requête (cents USD)")
     ax.set_ylabel("Nombre de centrales bien identifiées")
     ax.set_ylim(0, N_REFERENCE_PLANTS * 1.05)
     if xscale == "log":
+        from matplotlib.ticker import ScalarFormatter
+
         ax.set_xscale("log")
+        # Decimal tick labels (0.1, 1, 10, …) instead of 10⁻¹, 10⁰, 10¹.
+        fmt = ScalarFormatter()
+        fmt.set_scientific(False)
+        ax.xaxis.set_major_formatter(fmt)
+        ax.xaxis.set_minor_formatter(fmt)
     else:
-        ax.set_xlim(-0.005, max((r["cost_usd"] for r in filtered), default=0.30) * 1.05)
+        ax.set_xlim(
+            -0.05,
+            max((r["cost_usd"] * 100.0 for r in filtered), default=30.0) * 1.05,
+        )
     ax.grid(True, alpha=0.3)
 
     # Architectural-family legend (colour). Cohort glyphs are described in
