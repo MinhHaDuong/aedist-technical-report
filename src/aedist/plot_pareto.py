@@ -139,6 +139,16 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     for r in filtered:
         colour = model_family_color(r["model"])
         median = r["median_tp"]
+        # Thin min-max line behind the markers (the eye still wants a
+        # range cue even with per-rep markers visible).
+        ax.plot(
+            [r["cost_usd"], r["cost_usd"]],
+            [r["min_tp"], r["max_tp"]],
+            color=colour,
+            linewidth=0.6,
+            alpha=0.7,
+            zorder=1,
+        )
         # Non-median reps: x markers (one entry from tp_values takes the
         # median slot and is drawn as a filled circle below).
         tp_values = list(r.get("tp_values") or [])
