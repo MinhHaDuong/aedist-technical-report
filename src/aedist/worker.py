@@ -361,6 +361,12 @@ class Worker:
             ollama_base_url=self.ollama_base_url,
             **(api_kwargs or {}),
         )
+        if result.get("content") is None:
+            raise RuntimeError(
+                f"Null content from {model_id}: provider returned HTTP 200 "
+                f"but message.content is None "
+                f"(finish_reason={result.get('finish_reason')})"
+            )
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model_entry)
 

@@ -1114,3 +1114,49 @@ def test_worker_rejects_claude_code_cli_route(tmp_path: Path) -> None:
 
     # Confirm query_model was never reached.
     patches["query_model"].assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0204: null content detection
+# ---------------------------------------------------------------------------
+
+
+def test_null_content_raises_descriptive_error(tmp_path: Path) -> None:
+    """Null content from provider raises immediately with model ID and finish_reason.
+
+    Ticket 0204: deepseek-v4-pro returns HTTP 200 but choice.message.content
+    is None. If the SDK tolerates this, the worker must fail fast rather than
+    saving a None response. The error message must be distinguishable from
+    rate-limit and network errors.
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="null-content",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="deepseek/deepseek-v4-pro",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    null_result = {
+        "content": None,
+        "finish_reason": "stop",
+        "usage": {"prompt_tokens": 50, "completion_tokens": 0},
+        "wall_seconds": 1.0,
+    }
+    patches = _harness_patches(tmp_path)
+    patches["load_models"] = MagicMock(return_value=[{"name": "deepseek/deepseek-v4-pro"}])
+    patches["query_model"] = MagicMock(return_value=null_result)
+
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    with patch.multiple("aedist.worker", **patches):
+        with pytest.raises(RuntimeError, match="Null content from deepseek/deepseek-v4-pro"):
+            worker.execute(job)
+
+    patches["save_json"].assert_not_called()
