@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Capture full usage dict (reasoning_tokens) in query_single_turn
+Created: 2026-05-21
+Author: claude
+Closed: autoclosed — PR #379
+
+--- log ---
+2026-05-21T10:00Z claude created — probe confirmed OpenRouter passes reasoning_tokens; harness strips them
+2026-05-21T12:00Z claude note renumbered 0195 → 0197 to avoid collision with origin/main's tickets/0195-client-timeout-regression-class.erg (committed during this branch's life); branch name and PR #379 title retain the original 0195 label for continuity
+
+2026-05-21T09:20Z HDMX-coding-agent closed — autoclosed — PR #379
+--- body ---
+## Context
+
+`harness.py:492-495` constructs a stripped-down `usage` dict containing
+only `prompt_tokens` and `completion_tokens`, discarding the rest of the
+`response.usage` object — including `completion_tokens_details.reasoning_tokens`.
+
+A 10-call probe (2026-05-21) against OpenRouter confirmed:
+- OpenRouter reliably populates `completion_tokens_details.reasoning_tokens`
+  for both reasoning models (gpt-oss-*, qwen3-max-thinking, deepseek-v4-pro)
+  and non-reasoning baselines (where the value is 0).
+- Our `worker.py:347` stores whatever `usage` dict `query_single_turn`
+  returns, so the data is lost at the harness boundary, not at the worker.
+
+Consequence: Exp 1 raw JSONs cannot tell us whether thinking-capable models
+actually reasoned. Annex A "Reasoning" column is based on registry
+metadata, not measurement.
+
+## Fix
+
+In `query_single_turn`, replace the hand-built two-key dict with
+`response.usage.model_dump()` (OpenAI SDK Pydantic model → dict).
+This preserves `completion_tokens_details`, `prompt_tokens_details`,
+and any future fields the SDK exposes.
+
+## Test
+
+Mock a response with `completion_tokens_details = {"reasoning_tokens": 42}`
+and assert it survives in the returned `usage` dict.
+
+## Exit criteria
+
+- [ ] `query_single_turn` returns the full usage dict.
+- [ ] New regression test in `tests/test_harness.py` pins the contract.
+- [ ] Existing tests still pass.
+- [ ] Worker raw JSON downstream is unchanged (still writes `usage` as-is).
+
+## Out of scope
+
+- Surfacing `reasoning_tokens` in `records_to_metrics()` / Annex A column —
+  separate ticket. This one is the capture-side fix; the analysis side
+  is a downstream consumer change.
+- Registry-level redesign (per-row reasoning_effort grids) — separate
+  design dialogue.

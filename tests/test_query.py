@@ -14,6 +14,10 @@ def _make_mock_response(prompt_tokens=100, completion_tokens=200):
     resp.choices[0].finish_reason = "stop"
     resp.usage.prompt_tokens = prompt_tokens
     resp.usage.completion_tokens = completion_tokens
+    resp.usage.model_dump.return_value = {
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+    }
     return resp
 
 

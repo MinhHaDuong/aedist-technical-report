@@ -1,0 +1,123 @@
+%erg 0.1
+Title: Exp 1 reasoning-intensity top-up (canary + 2-rep) with pooled outcome metrics
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T12:00Z claude created — follow-up to 0197 PR #379; capture column needs empirical data, but full N=5 rerun is too expensive in slide-deadline window
+
+2026-05-21T09:20Z HDMX-coding-agent note blocker 0197 closed — Blocked-by removed.
+--- body ---
+## Context
+
+PR #379 (ticket 0197) fixed the harness to capture
+`usage.completion_tokens_details.reasoning_tokens` and surfaced it through
+`evaluate.py` / `records_to_metrics`. The fix is data-side only; the
+2026-05-20 Exp 1 baseline runs (16 models × 5 reps in
+`outputs/ablation/direct/p1_base/`) have no reasoning-token field because
+the bug stripped it.
+
+Annex A's "Reasoning" column was dropped in PR #379 as a hotfix (the
+labels described registry metadata, not measurement). Restoring it with
+empirical data needs a small rerun that records reasoning_tokens.
+
+## Design
+
+**Asymmetric pooling.** Add N=3 new reps per model, pooling them with the
+original N=5 for outcome metrics (F1, coverage, accuracy, cost) but using
+only the new N=3 for the reasoning-tokens column. The pooling rests on
+"call shape unchanged → same provider distribution"; this needs verification
+before we commit.
+
+**Canary gate (test one before blasting).** Run the rerun as 1 + 2:
+
+1. Canary: 1 rep × 16 models with the fixed harness, same sweep config as
+   `sweep_ablation_p1_direct_base` writing to a separate output dir
+   (`outputs/ablation/direct/p1_base.topup_canary/`).
+2. For each model, compare the canary F1 against the existing 5-rep range:
+   - If canary F1 ∈ [mean − 2σ, mean + 2σ] → pool with original 5 reps,
+     proceed to top-up step.
+   - If outside that range → flag as "provider drift suspected"; do not
+     pool that model's outcome metrics; still use its canary + future
+     top-up reps for reasoning_tokens with a footnote.
+3. Top-up: 2 more reps × 16 models, same output dir as the canary, so each
+   model ends with N=3 post-fix reps (canary + top-up).
+4. Regenerate Annex A model table with a new
+   "Reasoning tokens (median over 3 post-fix reps)" column.
+5. Regenerate figures and tables consuming `measurements.jsonl`; update
+   manuscript prose where it cites specific F1 numbers.
+
+## Sweep config
+
+Reuse `sweep_ablation_p1_direct_base` as-is (no changes to model_set,
+prompt, temperature, seed, max_tokens, system_instruction); only the
+output directory and rep count differ:
+
+```toml
+[sweeps.sweep_ablation_p1_direct_base_topup]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "modelset_ablation_journal"
+repeat = 1                          # canary first; top-up to 3 via second invocation
+temperature = 0.0
+seed = 42
+budget_usd = 5
+max_tokens = 32768
+system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+output = "outputs/ablation/direct/p1_base.topup"
+```
+
+(Second invocation with `repeat = 2` adds the remaining reps to the same
+output directory.)
+
+## Cost and time budget
+
+- Canary: ~$0.60, ~45 min wall (longest model ≈ 10 min)
+- Sanity check: ~10 min analyst time
+- Top-up: ~$1.20, ~90 min wall
+- Pipeline regen + manuscript update: ~50 min analyst time
+- **Total: ~$1.80, ~3.5 hours mostly-unattended**
+
+Stays inside the Econom'IA 2026 window (slides 2026-05-27).
+
+## Disclosure for methods section
+
+> Experiment 1 baseline was run as 5 reps per model on 2026-05-20 and
+> topped up with 3 additional reps per model on 2026-05-{TBD} after a
+> harness fix (PR #379) made reasoning-token counts visible. Outcome
+> metrics (F1, coverage, fuel/status/province accuracy) pool the two
+> cohorts (n=8); reasoning-tokens are reported from the post-fix cohort
+> only (n=3). A canary rep per model was compared against the original
+> 5-rep range before pooling; provider-drift suspects (canary F1 outside
+> ±2σ of the original range) are reported separately.
+
+## Test
+
+- Canary sweep loads cleanly under the post-PR #379 schema (no `extra=forbid` failures).
+- `measurements.jsonl` records for the new reps carry `thinking_tokens`
+  (non-None for the gpt-oss-* entries at minimum).
+- A spot-check assertion: for `openai/gpt-oss-120b`, `thinking_tokens > 0`
+  on the canary rep.
+
+## Exit criteria
+
+- [ ] PR #379 merged (this ticket's prerequisite).
+- [ ] Canary 16-model sweep written, gate decision logged per model.
+- [ ] Top-up sweep written; each non-drift model has N=3 post-fix reps.
+- [ ] `measurements.jsonl` regenerated; per-model `thinking_tokens` median
+      computed for the post-fix cohort.
+- [ ] Annex A model table regains a measured "Reasoning tokens" column.
+- [ ] Figures and tables regenerated; manuscript prose updated for any
+      F1 numbers that shifted by more than the reported precision.
+- [ ] Methods-section disclosure paragraph added.
+
+## Out of scope
+
+- Per-row registry redesign (model-variant naming for reasoning effort) —
+  separate design dialogue.
+- Probing `reasoning_effort = "minimal"` registry declarations the
+  2026-05-21 probe suggested are no-ops or counterproductive (e.g.
+  `qwen/qwen3-max`) — record findings as project memory if encountered;
+  changes belong to a registry-cleanup ticket.
+- Exp 2 (deep research) rerun — separate budget decision, post-conference.

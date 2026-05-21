@@ -108,26 +108,26 @@ No persona, no narratives, no quality bullets — those land in ablation sweeps,
 
 Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
 
-| Model | Lab | Family | Size class | Reasoning |
-|---|---|---|---|---|
-| claude-opus-4.6 | Anthropic | EN | frontier | no |
-| claude-sonnet-4.6 | Anthropic | EN | frontier | no |
-| claude-haiku-4.5 | Anthropic | EN | mid | no |
-| gpt-5.5 | OpenAI | EN | frontier | no |
-| gpt-oss-120b | OpenAI | EN | large | minimal |
-| gpt-oss-20b | OpenAI | EN | mid | minimal |
-| mistral-small-2603 | Mistral | FR | mid | yes |
-| mistral-medium-3-5 | Mistral | FR | mid | no |
-| mistral-large-2512 | Mistral | FR | frontier | no |
-| qwen3.6-27b | Alibaba | ZH | mid | no |
-| qwen3.6-35b-a3b | Alibaba | ZH | mid | no |
-| qwen3.6-flash | Alibaba | ZH | mid | no |
-| qwen3.6-plus | Alibaba | ZH | frontier | no |
-| qwen3-max-thinking | Alibaba | ZH | frontier | yes (default) |
-| deepseek-v4-pro | DeepSeek | ZH | frontier | no |
-| deepseek-v4-flash | DeepSeek | ZH | mid | no |
+| Model | Lab | Family | Size class |
+|---|---|---|---|
+| claude-opus-4.6 | Anthropic | EN | frontier |
+| claude-sonnet-4.6 | Anthropic | EN | frontier |
+| claude-haiku-4.5 | Anthropic | EN | mid |
+| gpt-5.5 | OpenAI | EN | frontier |
+| gpt-oss-120b | OpenAI | EN | large |
+| gpt-oss-20b | OpenAI | EN | mid |
+| mistral-small-2603 | Mistral | FR | mid |
+| mistral-medium-3-5 | Mistral | FR | mid |
+| mistral-large-2512 | Mistral | FR | frontier |
+| qwen3.6-27b | Alibaba | ZH | mid |
+| qwen3.6-35b-a3b | Alibaba | ZH | mid |
+| qwen3.6-flash | Alibaba | ZH | mid |
+| qwen3.6-plus | Alibaba | ZH | frontier |
+| qwen3-max-thinking | Alibaba | ZH | frontier |
+| deepseek-v4-pro | DeepSeek | ZH | frontier |
+| deepseek-v4-flash | DeepSeek | ZH | mid |
 
-Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. `qwen3-max-thinking` keeps the provider's default reasoning depth (a minimal-effort smoke first produced 5/5 refusals; the default-effort lineup recovered 5/5 usable rows after a parser fix that handles markdown section dividers inside structured-output tables). The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. **GPT-5.5 declines this task on 3 of 5 reps**, opening with "I can't honestly produce a complete, primary-sourced inventory..." and refusing to fabricate URLs or source citations from parametric knowledge alone. We retain the declined responses as data — a model viewpoint on the request's epistemic standard, not extraction noise.
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. All sixteen models received identical call parameters (T=0, seed=42, max_tokens=32768, no-web system instruction). The only reasoning-related signal sent was `reasoning_effort = "minimal"` for the two `gpt-oss-*` entries, declared in the registry. Per-call reasoning-token counts are not reported here: the harness stripped `usage.completion_tokens_details` from records before writing them to disk, a bug discovered post-run and fixed in PR #379 (ticket 0195). A 2026-05-21 probe with the same prompt against four of the panel models found `reasoning_tokens = 0` whenever no `reasoning_effort` was sent, including `qwen3-max-thinking` (the lab's explicit thinking variant via OpenRouter), `mistral-small-2603`, and `claude-opus-4.6`; we therefore do not characterise within-panel reasoning intensity until a post-fix rerun. For `qwen3-max-thinking`, an early minimal-effort smoke produced 5/5 refusals; the no-effort lineup recovered 5/5 usable rows after a parser fix that handles markdown section dividers inside structured-output tables. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. **GPT-5.5 declines this task on 3 of 5 reps**, opening with "I can't honestly produce a complete, primary-sourced inventory..." and refusing to fabricate URLs or source citations from parametric knowledge alone. We retain the declined responses as data — a model viewpoint on the request's epistemic standard, not extraction noise.
 
 ### Run parameters
 

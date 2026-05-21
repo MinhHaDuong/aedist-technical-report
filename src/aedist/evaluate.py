@@ -212,11 +212,18 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
 
     raw = json.loads(json_path.read_text(encoding="utf-8"))
     usage = raw.get("usage") or {}
+    # OpenRouter passes reasoning tokens under completion_tokens_details
+    # (per-ticket 0195 the harness now preserves the full usage dict).
+    # Surfaced as thinking_tokens — the same ResourceUse slot the direct-
+    # adapter paths (Anthropic, OpenAI Responses, Qwen DashScope) populate.
+    details = usage.get("completion_tokens_details") or {}
+    thinking_tokens = details.get("reasoning_tokens") if isinstance(details, dict) else None
     record.resource_use = ResourceUse(
         wall_s=raw.get("wall_seconds") or raw.get("total_wall_seconds"),
         cost_usd=raw.get("cost_usd") or raw.get("total_cost_usd"),
         tokens_in=usage.get("prompt_tokens"),
         tokens_out=usage.get("completion_tokens"),
+        thinking_tokens=thinking_tokens,
     )
     record.method_params.model = raw.get("model", record.method_params.model)
     extra = dict(raw.get("model_metadata") or {})

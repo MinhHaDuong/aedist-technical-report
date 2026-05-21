@@ -314,3 +314,52 @@ class TestBackfillJobSpecFields:
         assert record.finish_reason == "length"
         assert record.method_params.max_tokens == 32768
         assert record.method_params.temperature == 0.0
+
+    def test_backfill_captures_reasoning_tokens(self, tmp_path):
+        """Ticket 0195: reasoning_tokens from OpenRouter usage land on resource_use.
+
+        OpenRouter passes thinking-token counts under
+        ``usage.completion_tokens_details.reasoning_tokens``. The harness
+        preserves the full usage dict (PR #379); evaluate.py routes the
+        value onto ``resource_use.thinking_tokens`` so records_to_metrics
+        can surface it without re-reading raw JSON.
+        """
+        from aedist.evaluate import _backfill_resource_use
+        from aedist.schema import Method, MethodParams, RunRecord
+
+        raw_path = tmp_path / "gpt-oss-120b-run1.json"
+        raw_path.write_text(
+            '{"model": "openai/gpt-oss-120b", "response": "x", '
+            '"finish_reason": "stop", '
+            '"usage": {"prompt_tokens": 88, "completion_tokens": 159, '
+            '"completion_tokens_details": {"reasoning_tokens": 94, "audio_tokens": 0}}, '
+            '"wall_seconds": 6.66, "cost_usd": 0.001}',
+            encoding="utf-8",
+        )
+        record = RunRecord(
+            method=Method.DIRECT,
+            method_params=MethodParams(model="openai/gpt-oss-120b"),
+        )
+        _backfill_resource_use(record, raw_path)
+        assert record.resource_use.thinking_tokens == 94
+        assert record.resource_use.tokens_out == 159
+
+    def test_backfill_missing_reasoning_details_is_none(self, tmp_path):
+        """Non-reasoning models return no completion_tokens_details — thinking_tokens stays None."""
+        from aedist.evaluate import _backfill_resource_use
+        from aedist.schema import Method, MethodParams, RunRecord
+
+        raw_path = tmp_path / "claude-run1.json"
+        raw_path.write_text(
+            '{"model": "anthropic/claude-haiku-4.5", "response": "x", '
+            '"finish_reason": "stop", '
+            '"usage": {"prompt_tokens": 100, "completion_tokens": 50}, '
+            '"wall_seconds": 1.0, "cost_usd": 0.001}',
+            encoding="utf-8",
+        )
+        record = RunRecord(
+            method=Method.DIRECT,
+            method_params=MethodParams(model="anthropic/claude-haiku-4.5"),
+        )
+        _backfill_resource_use(record, raw_path)
+        assert record.resource_use.thinking_tokens is None
