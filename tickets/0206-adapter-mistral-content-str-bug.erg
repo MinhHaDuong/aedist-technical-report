@@ -1,0 +1,50 @@
+%erg 0.1
+Title: adapter_mistral.parse_response crashes on string-typed content
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T13:00Z claude created — observed live three times in the Exp 2 smoke (0185); blocks every Mistral SOTA cloud call
+
+--- body ---
+## Context
+
+`src/aedist/adapter_mistral.py:parse_response` (lines ~184–256) assumes
+`outputs[*].content` is always `list[dict]` of typed chunks. The
+2026-05-20 derisk fixture (`tests/fixtures/mistral_conversation_response.json`)
+captured exactly that shape.
+
+But the Mistral Conversations API also returns a second, flat shape:
+
+- `content` as a `str` — the entire narrative inline, no typed chunks.
+
+Observed live three times in a row on 2026-05-21 in the Exp 2 smoke
+(ticket 0185). The current parser iterates with `chunk.get("type")` and
+raises `AttributeError: 'str' object has no attribute 'get'`. Every
+Mistral SOTA cloud call is blocked.
+
+## Actions
+
+1. Add a `str`-branch in `parse_response`: when `content` is a `str`,
+   treat the whole string as the narrative; no `web_search_calls` or
+   `citations` to extract (the flat shape carries no tool-reference
+   markup).
+2. Keep the existing `list[dict]` branch intact.
+
+## Test
+
+`tests/test_adapter_mistral.py::test_parse_response_handles_str_content_shape`
+— load the new fixture, parse, assert no raise and `status == "ok"`.
+
+## Exit criteria
+
+- [ ] Both content shapes covered by separate fixtures and dedicated tests
+- [ ] `uv run pytest tests/test_adapter_mistral.py` all green
+- [ ] `uv run ruff check src/aedist/adapter_mistral.py tests/test_adapter_mistral.py` clean
+- [ ] `make check-fast` green
+
+## Related
+
+- Bug surfaced from ticket 0185 (Exp 2 interactive smoke).
+- Ticket 0207 tracks the consumer-side defensive code in
+  `experiments/sota/exp2_interactive_smoke.py` that masked the symptom.

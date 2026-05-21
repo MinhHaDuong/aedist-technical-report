@@ -196,11 +196,14 @@ def parse_response(
     - ``type == "tool.execution"`` with ``name == "web_search"`` → one
       entry in :attr:`RunRecord.web_search_calls`. The search query is
       parsed from the JSON-encoded ``arguments`` string.
-    - ``type == "message.output"`` → iterate its ``content[]``:
-        * ``type == "text"`` → append to the narrative.
-        * ``type == "tool_reference"`` → one entry in
-          :attr:`RunRecord.citations` with ``url`` + ``snippet`` derived
-          from ``description``.
+    - ``type == "message.output"`` → ``content`` is empirically one of
+      two shapes:
+        * ``list[dict]`` of typed chunks (2026-05-20 derisk fixture) —
+          iterate; ``type == "text"`` chunks join the narrative,
+          ``type == "tool_reference"`` chunks become citations.
+        * ``str`` — a flat narrative inline (observed live 2026-05-21
+          in the Exp 2 smoke, ticket 0185 / fix 0206). The whole string
+          is the narrative; no tool-reference markup is carried.
     """
     web_search_calls: list[dict] = []
     citations: list[dict] = []
@@ -212,7 +215,13 @@ def parse_response(
             query = _extract_query(item.get("arguments"))
             web_search_calls.append({"query": query, "urls_returned": []})
         elif kind == "message.output":
-            for chunk in item.get("content", []) or []:
+            content = item.get("content")
+            # Flat-string shape (ticket 0206) — whole string is the
+            # narrative; nothing else to extract.
+            if isinstance(content, str):
+                narrative_chunks.append(content)
+                continue
+            for chunk in content or []:
                 ctype = chunk.get("type")
                 if ctype == "text":
                     narrative_chunks.append(chunk.get("text", ""))
