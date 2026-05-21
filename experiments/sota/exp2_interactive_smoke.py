@@ -37,14 +37,31 @@ import yaml
 
 from aedist import adapter_mistral
 from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+from experiments.sota import dialogue_classifier
 
 _TRIPLE_QUOTE_RE = re.compile(r'"""(.*?)"""', re.DOTALL)
 _TOKENS_PER_MTOK = 1_000_000
 
-# --- Policy locked by ticket 0207 (option B, multi-turn auto-reply) --------
+# --- Policy locked by ticket 0214 (state machine + LLM classifier) ---------
+# Supersedes the two-slot ticket 0207 policy. Three reply slots:
+# ENCOURAGE (≤3 times), VERIFY (used once after first report), TERMINAL
+# (budget trigger or encouragement-exhaustion graceful exit).
 PHASE_B_TOTAL_BUDGET_USD = 10.00
 BUDGET_TRIGGER_FRAC = 0.20  # terminal reply when remaining ≤ this fraction of cap
-STANDARD_REPLY = "Proceed as you think is best in autonomous agentic mode."
+MAX_ENCOURAGEMENTS = 3
+
+ENCOURAGE_REPLY = "Proceed as you think is best in autonomous agentic mode."
+VERIFY_REPLY = (
+    "Thank you for the inventory. Please now verify and polish it in ONE "
+    "focused pass, prioritising: (a) per-row provenance — every Source 1 "
+    "and Source 2 cell must point to a specific URL from your "
+    "bibliography; (b) coverage — any plant present in your bibliography "
+    "but absent from the table; (c) temporality — every row has an "
+    "as-of date or status-change note; (d) internal consistency — "
+    "capacity totals reconcile across the table and the statistical "
+    "summary. Return the corrected inventory only — no meta-commentary "
+    "on what you changed."
+)
 TERMINAL_REPLY = (
     "I have no additional directive to give you. Please proceed to "
     "generating the report without further asking. If you cannot, we "
@@ -324,7 +341,7 @@ def total_cost(record: RunRecord) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Multi-turn auto-reply loop (ticket 0207 policy)
+# Multi-turn dialogue state machine (ticket 0214 policy)
 # ---------------------------------------------------------------------------
 
 
@@ -336,22 +353,99 @@ def format_status_line(remaining_usd: float, cap_usd: float, elapsed_s: float) -
     )
 
 
-def select_reply(remaining_usd: float, cap_usd: float) -> tuple[str, bool]:
-    """Return (reply_text, is_terminal) per ticket 0207 policy."""
-    if remaining_usd <= BUDGET_TRIGGER_FRAC * cap_usd:
-        return TERMINAL_REPLY, True
-    return STANDARD_REPLY, False
-
-
 def _turn_artefact_paths(output_dir: Path, agent: str, turn: int) -> dict[str, Path]:
-    """Per-turn artefact paths under output_dir."""
+    """Per-turn artefact paths under output_dir.
+
+    Five files per turn (ticket 0214 adds ``classification``):
+
+    - ``.user.txt``         — exact bytes of the user-side message
+    - ``.raw.json``         — raw provider response
+    - ``.record.json``      — parsed RunRecord
+    - ``.cost.json``        — cost / budget bookkeeping
+    - ``.classification.json`` — classifier verdict + classifier cost
+    """
     base = output_dir / f"{agent}_turn_{turn:02d}"
     return {
         "user": Path(str(base) + ".user.txt"),
         "raw": Path(str(base) + ".raw.json"),
         "record": Path(str(base) + ".record.json"),
         "cost": Path(str(base) + ".cost.json"),
+        "classification": Path(str(base) + ".classification.json"),
     }
+
+
+def _next_reply(
+    *,
+    verify_used: bool,
+    encouragement_count: int,
+    remaining_usd: float,
+    cap_usd: float,
+    last_class: str,
+) -> tuple[str, str, dict]:
+    """Compute the next user-side reply slot and the updated state.
+
+    Returns ``(reply_text, slot_name, state_delta)`` where ``slot_name``
+    is one of ``"encourage"``, ``"verify"``, ``"terminal"``, or
+    ``"stop"`` (no reply — accept response and exit), and
+    ``state_delta`` carries the new values for the tracked variables.
+
+    Transition rules (ticket 0214 §"State machine"):
+
+    1. Budget trigger (remaining ≤ 20 % of cap) — TERMINAL, regardless
+       of class. Overrides everything else.
+    2. ``last_class == "report"``:
+       - If verify has not been used: VERIFY, set ``verify_used``,
+         reset ``encouragement_count`` (so a later no_report cycle
+         starts fresh — dead code under caller's "stop after verify
+         response" rule, but harmless and matches the spec).
+       - Else: STOP (the verify-round response is the polished one).
+    3. ``last_class == "no_report"``:
+       - The counter records the running tally of no_report
+         responses seen so far. If that tally has reached
+         ``MAX_ENCOURAGEMENTS`` (3), send TERMINAL — graceful exit
+         after three consecutive no_reports. Otherwise send
+         ENCOURAGE and bump the counter.
+    """
+    if remaining_usd <= BUDGET_TRIGGER_FRAC * cap_usd:
+        return TERMINAL_REPLY, "terminal", {}
+
+    if last_class == "report":
+        if not verify_used:
+            return (
+                VERIFY_REPLY,
+                "verify",
+                {"verify_used": True, "encouragement_count": 0},
+            )
+        # Verify already spent; the next response is the polished one.
+        return "", "stop", {}
+
+    # last_class == "no_report"
+    # 3-strike rule: count no_report observations; on the 3rd, send
+    # TERMINAL on the next user turn. This is the test-anchored
+    # interpretation of MAX_ENCOURAGEMENTS — the ticket §State machine
+    # pseudocode reads ``count < 3 → encourage``, which would yield 3
+    # encouragements + TERMINAL on turn 5; the caller's test scenario
+    # ("turns 1–3 classified as no_report → TERMINAL on turn 4")
+    # implies the counter increments first, then the bound is checked.
+    new_count = encouragement_count + 1
+    if new_count >= MAX_ENCOURAGEMENTS:
+        return TERMINAL_REPLY, "terminal", {"encouragement_count": new_count}
+    return ENCOURAGE_REPLY, "encourage", {"encouragement_count": new_count}
+
+
+def _extract_narrative_from_raw_path(raw_path: Path) -> str:
+    """Read a saved raw Mistral response and return the assistant narrative.
+
+    Wraps the safe extractor so the classifier only sees the user-visible
+    text. Returns ``""`` on any read or parse failure (the classifier's
+    own defensive path will then return ``"no_report"``).
+    """
+    try:
+        raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        log.warning("Could not load raw artefact %s for classification: %s", raw_path, exc)
+        return ""
+    return extract_narrative_from_mistral_raw(raw)
 
 
 def run_phase_b_multiturn(
@@ -363,15 +457,24 @@ def run_phase_b_multiturn(
     max_tokens: int,
     agent: str = "mistral",
 ) -> dict:
-    """Run the Phase B multi-turn auto-reply loop on a single agent.
+    """Run the Phase B dialogue as a state machine on a single agent.
 
-    Policy: ticket 0207. Per-turn user message is the designed prompt
-    on turn 1, and a status-prefixed standard reply on turns 2..N-1.
-    When remaining budget ≤ BUDGET_TRIGGER_FRAC × cap, the terminal
-    reply fires; the next assistant response is the last accepted one.
+    Policy: ticket 0214 (supersedes ticket 0207). After each assistant
+    reply, the harness classifies the narrative as ``"report"`` or
+    ``"no_report"`` via :func:`dialogue_classifier.classify_report` and
+    selects the next user-side reply via :func:`_next_reply`:
+
+    - ENCOURAGE (≤ 3 times before forcing TERMINAL)
+    - VERIFY    (sent once after the first reply classified as report)
+    - TERMINAL  (budget trigger, or encouragement-exhaustion graceful exit)
+
+    Classifier cost is **harness overhead** — accumulated under
+    ``total_classifier_cost_usd`` but never deducted from the SOTA
+    agent's budget.
 
     Returns a dict with ``records``, ``turns``, ``total_spent_usd``,
-    ``terminal_sent``, and ``agent_id`` (for caller-side cleanup).
+    ``terminal_sent``, ``agent_id`` (for caller-side cleanup), and
+    ``total_classifier_cost_usd``.
     """
     if agent != "mistral":
         raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
@@ -382,17 +485,19 @@ def run_phase_b_multiturn(
     agent_id: str | None = None
     terminal_sent = False
     records: list[RunRecord] = []
+    verify_used = False
+    encouragement_count = 0
+    total_classifier_cost_usd = 0.0
     turn = 1
+    last_slot = "designed_prompt"
+    pending_reply = ""  # populated after each turn's classification
 
     while True:
         if turn == 1:
             user_text = designed_prompt
         else:
             status = format_status_line(remaining, cap_usd, elapsed_s)
-            reply, is_terminal = select_reply(remaining, cap_usd)
-            if is_terminal:
-                terminal_sent = True
-            user_text = f"{status}\n\n{reply}"
+            user_text = f"{status}\n\n{pending_reply}"
 
         paths = _turn_artefact_paths(output_dir, agent, turn)
         paths["user"].write_text(user_text, encoding="utf-8")
@@ -427,6 +532,17 @@ def run_phase_b_multiturn(
         elapsed_s += record.resource_use.wall_s or 0.0
 
         paths["record"].write_text(record.model_dump_json(indent=2), encoding="utf-8")
+
+        # Classify the assistant's response. Classifier cost is harness
+        # overhead, tracked separately from the SOTA agent's spend.
+        narrative = _extract_narrative_from_raw_path(paths["raw"])
+        cls_result = dialogue_classifier.classify_report(narrative)
+        total_classifier_cost_usd += cls_result.classifier_cost_usd
+        paths["classification"].write_text(
+            json.dumps(dialogue_classifier.result_to_artefact_dict(cls_result), indent=2),
+            encoding="utf-8",
+        )
+
         paths["cost"].write_text(
             json.dumps(
                 {
@@ -434,7 +550,10 @@ def run_phase_b_multiturn(
                     "spent_usd": spent_this_turn,
                     "remaining_usd": remaining,
                     "elapsed_s": elapsed_s,
-                    "is_terminal_reply": terminal_sent,
+                    "is_terminal_reply": last_slot == "terminal",
+                    "user_slot": last_slot,
+                    "classification": cls_result.class_,
+                    "classifier_cost_usd": cls_result.classifier_cost_usd,
                 },
                 indent=2,
             ),
@@ -449,16 +568,26 @@ def run_phase_b_multiturn(
             continuation = {"agent_id": agent_id, "conversation_id": conv_id}
 
         log.info(
-            "Phase B turn %d: spent=$%.4f remaining=$%.4f tokens_out=%s web_search=%d%s",
+            "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
+            "web_search=%d class=%s%s",
             turn,
+            last_slot,
             spent_this_turn,
             remaining,
             record.resource_use.tokens_out,
             len(record.web_search_calls or []),
-            " [terminal reply sent]" if terminal_sent and turn > 1 else "",
+            cls_result.class_,
+            " [terminal reply was sent]" if terminal_sent and turn > 1 else "",
         )
 
+        # If the terminal reply was sent on the previous iteration, this
+        # accepted response is the last one. Stop now.
         if terminal_sent:
+            break
+        # If the verify reply was sent on the previous iteration, this
+        # accepted response IS the polished one. Stop — never cycle
+        # back to encouragement after the one-shot verify round.
+        if last_slot == "verify":
             break
         if remaining <= 0:
             log.warning("Budget exhausted without terminal reply having fired; stopping.")
@@ -466,6 +595,22 @@ def run_phase_b_multiturn(
         if turn >= TURN_SAFETY_CAP:
             log.warning("Hit safety cap of %d turns; stopping.", TURN_SAFETY_CAP)
             break
+
+        # Decide the next user-side reply based on the just-seen class.
+        pending_reply, last_slot, state_delta = _next_reply(
+            verify_used=verify_used,
+            encouragement_count=encouragement_count,
+            remaining_usd=remaining,
+            cap_usd=cap_usd,
+            last_class=cls_result.class_,
+        )
+        verify_used = state_delta.get("verify_used", verify_used)
+        encouragement_count = state_delta.get("encouragement_count", encouragement_count)
+        if last_slot == "stop":
+            # Verify response already accepted; nothing more to send.
+            break
+        if last_slot == "terminal":
+            terminal_sent = True
         turn += 1
 
     return {
@@ -474,6 +619,7 @@ def run_phase_b_multiturn(
         "total_spent_usd": cap_usd - remaining - initial_spent_usd,
         "terminal_sent": terminal_sent,
         "agent_id": agent_id,
+        "total_classifier_cost_usd": total_classifier_cost_usd,
     }
 
 

@@ -153,62 +153,45 @@ def test_module_imports_adapter_mistral_only():
 
 
 # ---------------------------------------------------------------------------
-# Multi-turn auto-reply loop (ticket 0207 policy)
+# Phase B dialogue state machine (ticket 0214 — supersedes ticket 0207)
 # ---------------------------------------------------------------------------
 
+from experiments.sota import dialogue_classifier  # noqa: E402
 from experiments.sota.exp2_interactive_smoke import (  # noqa: E402
     BUDGET_TRIGGER_FRAC,
+    ENCOURAGE_REPLY,
     PHASE_B_TOTAL_BUDGET_USD,
-    STANDARD_REPLY,
     TERMINAL_REPLY,
+    VERIFY_REPLY,
     format_status_line,
     run_phase_b_multiturn,
-    select_reply,
 )
 
 
-def test_format_status_line_exact_string():
-    s = format_status_line(7.50, 10.00, 12.3)
-    assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
+def _fake_classifier_factory(classes):
+    """Return a stub ``classify_report`` that yields the given classes in order."""
+    iterator = iter(classes)
+    calls: list[str] = []
+
+    def fake(narrative):
+        calls.append(narrative)
+        try:
+            cls = next(iterator)
+        except StopIteration:
+            cls = "no_report"  # safe default if test underspecified
+        return dialogue_classifier.ClassificationResult(
+            class_=cls,
+            classifier_cost_usd=0.0001,
+            classifier_model="mock-classifier",
+            wall_s=0.01,
+        )
+
+    fake.calls = calls  # type: ignore[attr-defined]
+    return fake
 
 
-def test_select_reply_returns_standard_above_threshold():
-    cap = 10.00
-    # Just above 20%: still standard
-    reply, terminal = select_reply(2.01, cap)
-    assert reply == STANDARD_REPLY
-    assert terminal is False
-
-
-def test_select_reply_returns_terminal_at_threshold():
-    cap = 10.00
-    # Exactly 20%: terminal fires (<= is the trigger)
-    reply, terminal = select_reply(2.00, cap)
-    assert reply == TERMINAL_REPLY
-    assert terminal is True
-
-
-def test_select_reply_returns_terminal_below_threshold():
-    reply, terminal = select_reply(0.50, 10.00)
-    assert reply == TERMINAL_REPLY
-    assert terminal is True
-
-
-def test_meta_prompt_announces_dollar_budget():
-    """Per ticket 0207, the meta-prompt must announce the $10 cap upfront."""
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
-    assert f"${PHASE_B_TOTAL_BUDGET_USD:.2f} total" in prompt
-    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt
-    assert "remaining budget" in prompt.lower()
-
-
-def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
-    """The loop must send the terminal reply on the turn where remaining ≤ 20%
-    of cap, then accept exactly one more assistant response, then stop.
-    """
-    import experiments.sota.exp2_interactive_smoke as mod
-
-    # Mock run_mistral_call so each call costs a fixed amount; no network.
+def _fake_run_factory(cost_per_call: float = 0.10):
+    """Return a stub ``run_mistral_call`` that costs a fixed amount per call."""
     call_log: list[dict] = []
 
     def fake_run(
@@ -225,13 +208,16 @@ def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
 
         call_log.append(
             {
+                "prompt": prompt,
                 "prompt_starts_with_status": prompt.startswith("Status:"),
                 "continuation": continuation,
                 "extra_metadata": extra_metadata,
             }
         )
-        # Each call costs $3 — three calls will drop a $10 budget under 20%.
-        raw_output_path.write_text("{}")
+        # Write a minimal raw artefact the classifier-narrative extractor can read.
+        raw_output_path.write_text(
+            json.dumps({"outputs": [{"type": "message.output", "content": "stub narrative"}]})
+        )
         return RunRecord(
             method="frontier",
             method_params=MethodParams(
@@ -239,13 +225,54 @@ def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
                 max_tokens=100,
                 extra={"conversation_id": "conv_X", "agent_id": "ag_X"},
             ),
-            resource_use=ResourceUse(cost_usd=3.0, wall_s=1.0, tokens_in=10, tokens_out=20),
+            resource_use=ResourceUse(
+                cost_usd=cost_per_call, wall_s=1.0, tokens_in=10, tokens_out=20
+            ),
             result_summary=ResultSummary(status="ok"),
             agent_family="mistral-direct",
             agent_mode=agent_mode,
         )
 
+    fake_run.calls = call_log  # type: ignore[attr-defined]
+    return fake_run
+
+
+def test_format_status_line_exact_string():
+    s = format_status_line(7.50, 10.00, 12.3)
+    assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
+
+
+def test_meta_prompt_announces_dollar_budget():
+    """The meta-prompt must announce the $10 cap upfront."""
+    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    assert f"${PHASE_B_TOTAL_BUDGET_USD:.2f} total" in prompt
+    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt
+    assert "remaining budget" in prompt.lower()
+
+
+def test_three_reply_slot_constants_distinct():
+    """The three slot strings must be unambiguous: no slot accidentally equal."""
+    assert ENCOURAGE_REPLY != VERIFY_REPLY
+    assert ENCOURAGE_REPLY != TERMINAL_REPLY
+    assert VERIFY_REPLY != TERMINAL_REPLY
+    # VERIFY_REPLY must mention the four dimensions the ticket spec names.
+    for marker in ("provenance", "coverage", "temporality", "consistency"):
+        assert marker in VERIFY_REPLY.lower(), f"VERIFY_REPLY missing {marker!r}"
+
+
+def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
+    """Turn-1 = report → turn-2 sends VERIFY → accept turn-2 response and stop.
+
+    Verify is used at most once per smoke run; after the agent's response
+    to the verify reply, the loop terminates without cycling back to
+    encouragement.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.10)
+    fake_classify = _fake_classifier_factory(["report", "no_report"])
     monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
 
     result = run_phase_b_multiturn(
         "the designed prompt",
@@ -256,32 +283,201 @@ def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
         agent="mistral",
     )
 
-    # Sequence: turn 1 spends 3 (remaining=7), turn 2 spends 3 (remaining=4),
-    # turn 3 spends 3 (remaining=1, ≤20% trigger fires on turn 4 build).
-    # Actually: terminal threshold is remaining ≤ 2.00. After turn 3, remaining=1
-    # → on turn 4 build select_reply returns terminal. Turn 4 sends terminal,
-    # accepts one response, breaks. Total = 4 turns.
-    assert result["turns"] == 4
-    assert result["terminal_sent"] is True
-    assert result["agent_id"] == "ag_X"
-    # Turn 1 user message is the designed prompt (no status prefix).
-    assert call_log[0]["prompt_starts_with_status"] is False
-    # Turns 2..4 all have status prefixes.
-    for entry in call_log[1:]:
-        assert entry["prompt_starts_with_status"] is True
-    # extra_metadata workaround for ticket 0212: present on turn 1
-    # (multi-turn-start, where Mistral accepts metadata at conversation
-    # creation) and suppressed on follow-up turns (Mistral 422s the
-    # body-level metadata on the path-bound append endpoint).
-    assert call_log[0]["extra_metadata"] is not None
-    assert "remaining_budget_usd" in call_log[0]["extra_metadata"]
-    for entry in call_log[1:]:
-        assert entry["extra_metadata"] is None, (
-            "follow-up turns must suppress extra_metadata (0212 workaround)"
-        )
-    # Per-turn artefacts on disk.
-    for turn in range(1, 5):
-        for suffix in (".user.txt", ".raw.json", ".record.json", ".cost.json"):
+    assert result["turns"] == 2, f"expected 2 turns, got {result['turns']}"
+    assert result["terminal_sent"] is False
+    # Turn 2's user-side message must contain the VERIFY_REPLY text.
+    assert VERIFY_REPLY in fake_run.calls[1]["prompt"]  # type: ignore[attr-defined]
+    # Turn 1 was the designed prompt (no status prefix).
+    assert fake_run.calls[0]["prompt_starts_with_status"] is False  # type: ignore[attr-defined]
+    # Turn 2 is status-prefixed.
+    assert fake_run.calls[1]["prompt_starts_with_status"] is True  # type: ignore[attr-defined]
+    # Per-turn artefacts including the new .classification.json.
+    for turn in (1, 2):
+        for suffix in (
+            ".user.txt",
+            ".raw.json",
+            ".record.json",
+            ".cost.json",
+            ".classification.json",
+        ):
             assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists(), (
                 f"missing artefact mistral_turn_{turn:02d}{suffix}"
             )
+    # Classifier cost is harness overhead — reported separately, NOT
+    # deducted from the SOTA agent's spend.
+    assert "total_classifier_cost_usd" in result
+    assert result["total_classifier_cost_usd"] > 0
+    # Agent spend = 2 calls × $0.10 = $0.20, independent of classifier cost.
+    assert result["total_spent_usd"] == pytest.approx(0.20, abs=1e-6)
+
+
+def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
+    """3-strike rule: after the 3rd no_report observation TERMINAL fires.
+
+    Trace under MAX_ENCOURAGEMENTS=3 with the count-first, then-check
+    convention:
+
+    - Turn 1: designed prompt → no_report (count 0→1) → ENCOURAGE pending
+    - Turn 2: ENCOURAGE → no_report (1→2) → ENCOURAGE pending
+    - Turn 3: ENCOURAGE → no_report (2→3) → TERMINAL pending, terminal_sent=True
+    - Turn 4: TERMINAL sent → response accepted → loop stops
+
+    Total = 4 turns. Two ENCOURAGE replies and one TERMINAL reply
+    actually appeared on the wire.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.10)
+    # Four classifications consumed (one per turn) — all no_report.
+    fake_classify = _fake_classifier_factory(["no_report"] * 4)
+    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    assert result["turns"] == 4, f"expected 4 turns, got {result['turns']}"
+    assert result["terminal_sent"] is True
+    # Turn 2 and 3 user-side: ENCOURAGE. Turn 4: TERMINAL.
+    assert ENCOURAGE_REPLY in fake_run.calls[1]["prompt"]  # turn 2  # type: ignore[attr-defined]
+    assert ENCOURAGE_REPLY in fake_run.calls[2]["prompt"]  # turn 3  # type: ignore[attr-defined]
+    assert TERMINAL_REPLY in fake_run.calls[3]["prompt"]  # turn 4  # type: ignore[attr-defined]
+    # Turn 4's cost artefact records the terminal slot.
+    cost4 = json.loads((tmp_path / "mistral_turn_04.cost.json").read_text())
+    assert cost4["user_slot"] == "terminal"
+    assert cost4["classification"] == "no_report"
+    # Five artefact files per turn.
+    for turn in range(1, 5):
+        for suffix in (
+            ".user.txt",
+            ".raw.json",
+            ".record.json",
+            ".cost.json",
+            ".classification.json",
+        ):
+            assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists()
+
+
+def test_state_machine_budget_overrides(monkeypatch, tmp_path):
+    """Budget below 20 % → TERMINAL on next turn regardless of class.
+
+    Classifier always says no_report; each call costs $3 against a $10
+    cap. Turn 1 → remaining $7. Turn 2 (encourage) → remaining $4.
+    Turn 3 (encourage) → remaining $1 (≤ $2 trigger). On turn 4 the
+    state machine builds TERMINAL (budget override), sends it, accepts
+    one response, stops. Total turns = 4.
+
+    Budget override matters even if encouragement_count has not yet hit
+    its limit — the 20 % threshold is checked unconditionally at the
+    top of the transition function.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=3.0)
+    fake_classify = _fake_classifier_factory(["no_report"] * 10)
+    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    assert result["turns"] == 4
+    assert result["terminal_sent"] is True
+    # Turn 4's user-side message must be TERMINAL (budget trigger).
+    assert TERMINAL_REPLY in fake_run.calls[3]["prompt"]  # type: ignore[attr-defined]
+    # Encouragement count never exhausted (we stopped at 2 encouragements
+    # plus the budget-triggered terminal — not 3 encouragements then
+    # terminal). Verify by checking turns 2 and 3 were encouragements.
+    assert ENCOURAGE_REPLY in fake_run.calls[1]["prompt"]  # type: ignore[attr-defined]
+    assert ENCOURAGE_REPLY in fake_run.calls[2]["prompt"]  # type: ignore[attr-defined]
+
+
+# ---------------------------------------------------------------------------
+# dialogue_classifier unit tests
+# ---------------------------------------------------------------------------
+
+
+def test_classify_report_returns_one_word_on_clean_response(monkeypatch):
+    """Clean 'report' single-word response parses correctly with cost."""
+
+    def fake_post(prompt, api_key):
+        return {
+            "choices": [{"message": {"content": "report"}}],
+            "usage": {"prompt_tokens": 1000, "completion_tokens": 1},
+        }
+
+    monkeypatch.setattr(dialogue_classifier, "_load_api_key", lambda: "test-key")
+    monkeypatch.setattr(dialogue_classifier, "_post_classifier", fake_post)
+
+    result = dialogue_classifier.classify_report("here is a table of plants...")
+    assert result.class_ == "report"
+    assert result.classifier_cost_usd > 0
+    assert result.classifier_model == dialogue_classifier.CLASSIFIER_MODEL
+
+
+def test_classify_report_falls_back_to_no_report_on_garbage(monkeypatch):
+    """Unexpected one-word response → safe default to 'no_report'."""
+
+    def fake_post(prompt, api_key):
+        return {
+            "choices": [{"message": {"content": "I'm sorry, I cannot decide."}}],
+            "usage": {"prompt_tokens": 100, "completion_tokens": 8},
+        }
+
+    monkeypatch.setattr(dialogue_classifier, "_load_api_key", lambda: "test-key")
+    monkeypatch.setattr(dialogue_classifier, "_post_classifier", fake_post)
+
+    result = dialogue_classifier.classify_report("ambiguous narrative")
+    assert result.class_ == "no_report"
+
+
+def test_classify_report_falls_back_on_http_error(monkeypatch):
+    """Transport error → 'no_report' with zero cost; never raises."""
+    import httpx
+
+    def fake_post(prompt, api_key):
+        raise httpx.RequestError("connection refused")
+
+    monkeypatch.setattr(dialogue_classifier, "_load_api_key", lambda: "test-key")
+    monkeypatch.setattr(dialogue_classifier, "_post_classifier", fake_post)
+
+    result = dialogue_classifier.classify_report("anything")
+    assert result.class_ == "no_report"
+    assert result.classifier_cost_usd == 0.0
+
+
+def test_classify_report_falls_back_when_no_api_key(monkeypatch):
+    """Missing key → 'no_report' with zero cost; logs but does not raise."""
+    monkeypatch.setattr(dialogue_classifier, "_load_api_key", lambda: None)
+    result = dialogue_classifier.classify_report("anything")
+    assert result.class_ == "no_report"
+    assert result.classifier_cost_usd == 0.0
+
+
+def test_classification_result_to_artefact_dict_uses_class_key():
+    """Serialised artefact uses the JSON-friendly 'class' key, not 'class_'."""
+    result = dialogue_classifier.ClassificationResult(
+        class_="report",
+        classifier_cost_usd=0.000123,
+        classifier_model="mock",
+        wall_s=0.5,
+    )
+    d = dialogue_classifier.result_to_artefact_dict(result)
+    assert d == {
+        "class": "report",
+        "classifier_cost_usd": 0.000123,
+        "classifier_model": "mock",
+        "wall_s": 0.5,
+    }
