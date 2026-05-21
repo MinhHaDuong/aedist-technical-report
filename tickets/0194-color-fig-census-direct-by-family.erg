@@ -1,0 +1,106 @@
+%erg 0.1
+Title: One presentation-config file defining family colors; all plots use it
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T08:00Z claude created
+2026-05-21T08:15Z claude note amended scope — single shared config, all plot_*.py consume it
+
+--- body ---
+## Context
+
+Figure 1 (`fig_census_direct.pdf`) currently colors each model with a
+hash-derived hue (`_model_color` in `plot_method_convergence.py`). The
+manuscript's Annex A groups the 16 journal-lineup models by language
+family (EN: Anthropic + OpenAI, FR: Mistral, ZH: Alibaba + DeepSeek).
+A family-coded palette would let readers see family-level patterns at a
+glance. Beyond Figure 1, every plot in `src/aedist/plot_*.py` currently
+chooses its own colors ad hoc, so the same model appears in different
+hues across figures — visually incoherent and bug-prone when slides and
+report sit side by side.
+
+This ticket therefore introduces **one presentation-configuration file**
+that defines a color per model family. All plot scripts must read from
+it. No plot script may hardcode model or family colors.
+
+## Relevant files
+
+- `src/aedist/util.py` — already exports `COLOR_HALLUC`, `COLOR_REFERENCE`;
+  natural home for `family_color(model: str) -> tuple`.
+- `experiments/figures.toml` — already used by `plot_regimes_scatter.py`;
+  good candidate location for the family palette under a new
+  `[presentation.family_colors]` section.
+- `src/aedist/models.py` — check whether `family` is already a registered
+  field on model entries. If not, add it.
+- All `src/aedist/plot_*.py`:
+  - `plot_method_convergence.py` — `_model_color()` (line ~28)
+  - `plot_ablation.py`, `plot_base_vs_census.py`, `plot_census.py`,
+    `plot_pareto.py`, `plot_regimes_scatter.py`, `plot_scaling_curve.py`
+  - Audit each for hardcoded model/family colors; route through the
+    shared helper.
+
+## Actions
+
+1. **Confirm family metadata.** Locate where model family is recorded
+   (model registry vs. inferred from lab/slug). If not present, add
+   `family: "EN" | "FR" | "ZH"` to the journal-lineup models. The
+   registry is the source of truth; never re-derive family inside plot
+   scripts.
+2. **Add the presentation config.** Append a `[presentation.family_colors]`
+   table to `experiments/figures.toml` (or a new `presentation.toml` if
+   `figures.toml` should stay strictly about layout). Define one
+   colorblind-safe hue per family (Wong palette or ColorBrewer Set2).
+   Include a `default` fallback hue for unknown families.
+3. **Expose a single helper.** In `src/aedist/util.py`, add
+   `family_color(model_or_family: str) -> tuple[float, float, float]`
+   reading from the config. Cache the parsed config at module load.
+4. **Refactor every plot script.** Remove any hardcoded model/family
+   colors and route through `family_color()`. Drop the old hash-derived
+   `_model_color()` from `plot_method_convergence.py`. For figures that
+   need within-family lightness variation, derive it deterministically
+   from the model slug, not from a hash.
+5. **Legend discipline.** Each figure that uses family colors emits a
+   small in-figure legend with the EN/FR/ZH mapping. Where space is
+   constrained (slides), the slide-side caption or overlay can carry the
+   legend instead.
+6. **Rebuild artifacts.** Regenerate `slides/inputs/generated/fig_*.pdf`
+   and `report/inputs/generated/fig_*.pdf` via the existing Makefile
+   targets.
+
+## Test
+
+- `tests/test_family_colors.py` (new):
+  - `family_color("claude-opus-4.6") == family_color("gpt-5.5")` (both EN)
+  - `family_color("claude-opus-4.6") != family_color("mistral-large-2512")` (EN vs FR)
+  - `family_color("mistral-large-2512") != family_color("deepseek-v4-pro")` (FR vs ZH)
+  - `family_color("unknown-model")` returns the default fallback hue.
+- `tests/test_no_hardcoded_plot_colors.py` (new, `@pytest.mark.adherence`):
+  grep every `src/aedist/plot_*.py` for hex literals (`#[0-9A-Fa-f]{3,6}`)
+  and RGB tuples outside `util.py`. Adherence test, like
+  `test_no_inline_plots.py`.
+
+## Invariants
+
+- Figure layouts (bar arrangement, axes, reference lines, model ordering)
+  must not change — only colors change.
+- The report-side `fig_census_direct.pdf` (broader `census` data, ~37
+  models, some without a family attribute) must still render. The
+  default fallback hue covers them.
+- No plot script may import the config directly; everything goes through
+  `family_color()` so the config schema can evolve in one place.
+
+## Exit criteria
+
+- [ ] `experiments/figures.toml` (or `presentation.toml`) defines exactly
+      one color per family + a default fallback
+- [ ] `src/aedist/util.py::family_color()` is the only function that
+      reads the config
+- [ ] No `src/aedist/plot_*.py` contains a hardcoded model or family
+      color; all routes through `family_color()`
+- [ ] Every figure that uses family colors carries an EN/FR/ZH legend
+      (in-figure or via slide-side overlay)
+- [ ] Unit test for `family_color()` passes
+- [ ] Adherence test catches hardcoded hex/RGB in plot scripts
+- [ ] `make slides/slides.pdf` and `make report/report.pdf` both build cleanly
+- [ ] `make check-fast` passes
