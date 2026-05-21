@@ -2,10 +2,12 @@
 Title: smoke: add --promote-as-production flag to reuse smoke calls as sweep reps
 Created: 2026-05-21
 Author: claude
+Closed: PR #363 already landed (e4832eb); ticket body exit criteria all checked
 
 --- log ---
 2026-05-21T00:30Z claude created — salvaged from locked t0181 worktree (agent-abeb2c877); no other worktree carries this work
 
+2026-05-21T07:32Z HDMX-coding-agent closed — PR #363 already landed (e4832eb); ticket body exit criteria all checked
 --- body ---
 ## Context
 

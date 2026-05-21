@@ -28,7 +28,7 @@ Land Exp 1 results in the manuscript; freeze the slides story by 2026-05-26.
 
 ## Backlog (post-conference)
 
-1. **Tooling** — 0179 (refresh prompt_complete.txt), 0186 (`erg next-id` cross-worktree), 0187 (Qwen adapter ADR-7 method_params + cost cap default + dashscope pin), 0143 (rerun ablation with verbatim modules).
+1. **Tooling** — 0191 (refresh prompt_complete.txt), 0187 (Qwen adapter ADR-7 method_params + cost cap default + dashscope pin), 0183 (worker httpx timeout). Raid-skill follow-ups and `erg next-id` cross-worktree re-filed to ~/.claude/tickets and ~/git-erg respectively. 0143 closed/archived (superseded by 0174 + 0192).
 2. **Scaling-curve diagnosis** — direct_complete F1=0 on 3 capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) — likely parser failure on structured-document output. Read one raw `.record.json` before any priority-3 build.
 3. **Registry / figures infrastructure** — 0156→0160 implementation order.
 
