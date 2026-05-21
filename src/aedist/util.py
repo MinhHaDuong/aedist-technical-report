@@ -29,6 +29,16 @@ _LANG_PROVIDER_MAP: dict[str, str] = _LANGUAGE_FAMILIES["provider_map"]
 _LANG_SLUG_PREFIX_MAP: dict[str, str] = _LANGUAGE_FAMILIES["slug_prefix_map"]
 _LANG_FALLBACK = _LANG_DIRECT["fallback"]
 
+_valid_codes = set(_LANG_DIRECT) - {"fallback"}
+assert set(_LANG_PROVIDER_MAP.values()) <= _valid_codes, (
+    f"palette.toml provider_map maps to unknown family codes: "
+    f"{set(_LANG_PROVIDER_MAP.values()) - _valid_codes}"
+)
+assert set(_LANG_SLUG_PREFIX_MAP.values()) <= _valid_codes, (
+    f"palette.toml slug_prefix_map maps to unknown family codes: "
+    f"{set(_LANG_SLUG_PREFIX_MAP.values()) - _valid_codes}"
+)
+
 
 @cache
 def _provider_for_model(slug: str) -> str | None:

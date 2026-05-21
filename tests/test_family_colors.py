@@ -65,3 +65,11 @@ def test_returns_hex_string():
     assert isinstance(val, str)
     assert val.startswith("#")
     assert len(val) == 7
+
+
+def test_local_only_slugs_resolve_via_prefix_map():
+    # Locally-served models that never reach a provider field (Ollama path)
+    # must still resolve to a language family. Regression for the cogito/granite
+    # gap caught during /verify on PR 380.
+    assert family_color("cogito:8b") == family_color("EN")
+    assert family_color("granite3.3:8b") == family_color("EN")
