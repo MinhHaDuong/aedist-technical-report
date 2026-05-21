@@ -2,12 +2,14 @@
 Title: Exp 1 reasoning-intensity top-up (canary + 2-rep) with pooled outcome metrics
 Created: 2026-05-21
 Author: claude
+Closed: Merged in PR #386 — reasoning-tokens topup + interday-variability column + Annex A restoration
 
 --- log ---
 2026-05-21T12:00Z claude created — follow-up to 0197 PR #379; capture column needs empirical data, but full N=5 rerun is too expensive in slide-deadline window
 
 2026-05-21T09:20Z HDMX-coding-agent note blocker 0197 closed — Blocked-by removed.
 2026-05-21T13:30Z user note decision: pool all topup reps with the original five unconditionally — no canary gate, no ±2σ comparison. Intra-day variability is absorbed into the reported within-model spread and disclosed in the methods section.
+2026-05-21T11:43Z HDMX-coding-agent closed — Merged in PR #386 — reasoning-tokens topup + interday-variability column + Annex A restoration
 --- body ---
 ## Context
 
