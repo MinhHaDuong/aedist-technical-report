@@ -81,7 +81,21 @@ class AgentAdapter(Protocol):
         prompt: str,
         *,
         dry_run: bool,
+        continuation: dict | None = None,
+        extra_metadata: dict | None = None,
         **opts: Any,
     ) -> RunRecord:
-        """Execute one agent call (or print the dry-run payload) and return a record."""
+        """Execute one agent call (or print the dry-run payload) and return a record.
+
+        ``continuation`` is a provider-specific token for chaining
+        multi-turn conversations.  ``None`` starts a new conversation
+        (backward-compatible default).  ``extra_metadata`` carries
+        key/value pairs for the provider's metadata surface (e.g.
+        ``remaining_budget_usd``); adapters that lack metadata support
+        log a warning and continue.
+
+        Note: the Anthropic adapter uses ``dispatch()`` rather than
+        ``run()``; this Protocol documents the canonical four-adapter
+        surface but does not force a rename on the Anthropic side.
+        """
         ...

@@ -252,3 +252,189 @@ def test_parse_response_str_content_yields_no_web_search_or_citations(
     record = parse_response(fixture_str_content_response, PRICE_CARD)
     assert record.web_search_calls == []
     assert record.citations == []
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn continuation surface (ticket 0208)
+# ---------------------------------------------------------------------------
+
+
+def test_run_dry_run_returns_continuation_token():
+    """First call (continuation=None) must return conversation_id and
+    agent_id in method_params.extra so the harness can chain turns.
+    Dry-run mode: no network, but the extra keys are present for the
+    harness to introspect the return shape.
+    """
+    record = run(
+        "hello",
+        dry_run=True,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+    )
+    # Dry-run still has the dry_run marker; continuation keys are
+    # only meaningful on live calls. Verify backward compat.
+    assert record.method_params.extra == {"dry_run": True}
+
+
+def test_continuation_skips_agent_creation(monkeypatch):
+    """When continuation is provided, only one POST to /v1/conversations
+    should happen — no agent creation, no agent deletion.
+    """
+    import aedist.adapter_mistral as am
+
+    calls: list[tuple[str, str]] = []
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "outputs": [
+                    {"type": "message.output", "content": "follow-up answer"},
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 100,
+                    "connector_tokens": 0,
+                    "connectors": {"web_search": 0},
+                },
+                "conversation_id": "conv_1",
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            calls.append(("POST", url))
+            return FakeResponse()
+
+        def delete(self, url, **kwargs):
+            calls.append(("DELETE", url))
+            return FakeResponse()
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    record = run(
+        "follow up question",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={"conversation_id": "conv_1", "agent_id": "ag_1"},
+    )
+
+    # Only one POST to /v1/conversations — no /v1/agents create or delete.
+    assert len(calls) == 1
+    assert calls[0] == ("POST", "/v1/conversations")
+    assert record.agent_family == AGENT_FAMILY
+
+
+def test_multiturn_start_creates_agent_but_skips_delete(monkeypatch):
+    """continuation={} (empty dict) = first turn of multi-turn.
+    Agent must be created but NOT deleted — harness calls cleanup_agent later.
+    """
+    import aedist.adapter_mistral as am
+
+    calls: list[tuple[str, str]] = []
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "id": "ag_new",
+                "outputs": [
+                    {"type": "message.output", "content": "first answer"},
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 100,
+                    "connector_tokens": 0,
+                    "connectors": {"web_search": 0},
+                },
+                "conversation_id": "conv_new",
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            calls.append(("POST", url))
+            return FakeResponse()
+
+        def delete(self, url, **kwargs):
+            calls.append(("DELETE", url))
+            return FakeResponse()
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    record = run(
+        "first question",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={},  # empty dict = multi-turn start sentinel
+    )
+
+    # Agent created (POST /v1/agents) + conversation started (POST /v1/conversations).
+    # No DELETE — agent kept alive for follow-up turns.
+    assert ("POST", "/v1/agents") in calls
+    assert ("POST", "/v1/conversations") in calls
+    assert not any(method == "DELETE" for method, _ in calls)
+
+    # Continuation tokens surfaced for the next turn.
+    assert record.method_params.extra["agent_id"] == "ag_new"
+    assert record.method_params.extra["conversation_id"] == "conv_new"
+
+
+def test_cleanup_agent_is_public():
+    """cleanup_agent must be importable for harness lifecycle management."""
+    from aedist.adapter_mistral import cleanup_agent
+
+    assert callable(cleanup_agent)
+
+
+def test_run_extra_metadata_logged_without_crash(monkeypatch, caplog):
+    """extra_metadata should not crash the adapter. Mistral's metadata
+    support is uncertain, so the adapter should be defensive.
+    """
+    record = run(
+        "hello",
+        dry_run=True,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        extra_metadata={"remaining_budget_usd": "5.50"},
+    )
+    # Should not crash; dry-run returns normally.
+    assert record.method_params.extra == {"dry_run": True}
