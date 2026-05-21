@@ -39,6 +39,21 @@ assert set(_LANG_SLUG_PREFIX_MAP.values()) <= _valid_codes, (
     f"{set(_LANG_SLUG_PREFIX_MAP.values()) - _valid_codes}"
 )
 
+_MODEL_FAMILIES = _palette["model_families"]
+_MODEL_FAMILY_DIRECT = {
+    code: _MODEL_FAMILIES[code]
+    for code in _MODEL_FAMILIES
+    if isinstance(_MODEL_FAMILIES[code], str)
+}
+_MODEL_FAMILY_PREFIX_MAP: dict[str, str] = _MODEL_FAMILIES["prefix_map"]
+_MODEL_FAMILY_FALLBACK = _MODEL_FAMILY_DIRECT["fallback"]
+
+_mf_valid = set(_MODEL_FAMILY_DIRECT) - {"fallback"}
+assert set(_MODEL_FAMILY_PREFIX_MAP.values()) <= _mf_valid, (
+    f"palette.toml model_families.prefix_map maps to unknown family codes: "
+    f"{set(_MODEL_FAMILY_PREFIX_MAP.values()) - _mf_valid}"
+)
+
 
 @cache
 def _provider_for_model(slug: str) -> str | None:
@@ -100,6 +115,53 @@ def family_color(model_or_family: str) -> str:
         return _LANG_DIRECT[best_family]
 
     return _LANG_FALLBACK
+
+
+def model_family_color(model: str) -> str:
+    """Return the colorblind-safe hex color for an architectural model family.
+
+    "Architectural family" is the lineage of a model — Claude / GPT / Mistral /
+    Qwen / DeepSeek and so on — resolved by longest-prefix match against the
+    ``model_families.prefix_map`` table in ``palette.toml``. This is the colour
+    axis used by Figure 2 (Pareto). Distinct from :func:`family_color`, which
+    encodes the lab's *country* via the language-family table.
+
+    Returns the fallback hue when no prefix matches. Empty input returns
+    fallback.
+    """
+    if not model:
+        return _MODEL_FAMILY_FALLBACK
+
+    slug = normalize_model(model).lower()
+
+    best_prefix = ""
+    best_family: str | None = None
+    for prefix, family in _MODEL_FAMILY_PREFIX_MAP.items():
+        if slug.startswith(prefix.lower()) and len(prefix) > len(best_prefix):
+            best_prefix = prefix
+            best_family = family
+    if best_family and best_family in _MODEL_FAMILY_DIRECT:
+        return _MODEL_FAMILY_DIRECT[best_family]
+
+    return _MODEL_FAMILY_FALLBACK
+
+
+def model_family(model: str) -> str:
+    """Return the architectural-family code for *model* (e.g. ``"claude"``).
+
+    Companion to :func:`model_family_color` for legend construction.
+    Returns ``"fallback"`` when no prefix matches.
+    """
+    if not model:
+        return "fallback"
+    slug = normalize_model(model).lower()
+    best_prefix = ""
+    best_family: str | None = None
+    for prefix, family in _MODEL_FAMILY_PREFIX_MAP.items():
+        if slug.startswith(prefix.lower()) and len(prefix) > len(best_prefix):
+            best_prefix = prefix
+            best_family = family
+    return best_family if best_family else "fallback"
 
 
 def normalize_model(raw: str) -> str:

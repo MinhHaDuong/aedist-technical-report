@@ -90,6 +90,38 @@ Xiaomi        = "ZH"
 "minimax"   = "ZH"
 "step"      = "ZH"
 
+# Architectural model families — used by Figure 2 (Pareto) to colour models by
+# their architectural lineage rather than by lab country. Independent from the
+# language_families table above. Each family is a slug prefix on the model id.
+# Resolve via ``aedist.util.model_family_color()``. Wong colorblind-safe palette.
+[model_families]
+claude   = "#0072B2"  # blue
+gpt      = "#D55E00"  # vermillion
+mistral  = "#009E73"  # bluish-green
+qwen     = "#CC79A7"  # reddish-purple
+deepseek = "#E69F00"  # orange
+gemini   = "#56B4E9"  # sky-blue (not in Exp 1; future-proofing)
+gemma    = "#F0E442"  # yellow   (not in Exp 1; future-proofing)
+llama    = "#999933"  # olive    (not in Exp 1; future-proofing)
+fallback = "#999999"  # gray
+
+# Slug-prefix → architectural family. Longest-prefix match wins. Keep small;
+# extend only when a new architectural lineage joins the Exp 1+ matrix.
+[model_families.prefix_map]
+"claude"     = "claude"
+"gpt"        = "gpt"
+"o1"         = "gpt"
+"o3"         = "gpt"
+"o4"         = "gpt"
+"mistral"    = "mistral"
+"devstral"   = "mistral"
+"ministral"  = "mistral"
+"qwen"       = "qwen"
+"deepseek"   = "deepseek"
+"gemini"     = "gemini"
+"gemma"      = "gemma"
+"llama"      = "llama"
+
 [quality]
 # One dot = one power plant; color encodes evidence level
 hallucinated = "#E74C3C"  # red   — FP: plant not in reference

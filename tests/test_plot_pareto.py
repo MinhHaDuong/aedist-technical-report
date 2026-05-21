@@ -9,45 +9,59 @@ import pytest
 from conftest import patch_measurements_loader, write_measurements
 
 from aedist.plot_pareto import _is_p1_base_row, build_pareto_rows, write_pdf
-from aedist.util import family_color
+from aedist.util import family_color, model_family_color
 
-# Sample with three families (EN/FR/ZH) and varying F1 per rep so min/max
-# whiskers are testable. Labels mirror the p1_base prompt_version so the
-# slug stripper recovers clean model names; the result_file used by the
-# Experiment 1 filter is controlled by the test fixtures that need it.
+# Sample with three architectural families (Claude/Mistral/Qwen) and varying
+# tp + F1 per rep so min/max whiskers are testable. Labels mirror the
+# p1_base prompt_version so the slug stripper recovers clean model names;
+# the result_file used by the Experiment 1 filter is controlled by the
+# test fixtures that need it.
 SAMPLE_METRICS = [
-    {"label": "p1_base/claude-opus-4.6-run1", "f1": 0.55, "cost_usd": 0.10},
-    {"label": "p1_base/claude-opus-4.6-run2", "f1": 0.50, "cost_usd": 0.10},
-    {"label": "p1_base/claude-opus-4.6-run3", "f1": 0.60, "cost_usd": 0.10},
-    {"label": "p1_base/mistral-large-2512-run1", "f1": 0.40, "cost_usd": 0.05},
-    {"label": "p1_base/mistral-large-2512-run2", "f1": 0.42, "cost_usd": 0.05},
-    {"label": "p1_base/mistral-large-2512-run3", "f1": 0.45, "cost_usd": 0.05},
-    {"label": "p1_base/qwen3.6-plus-run1", "f1": 0.30, "cost_usd": 0.02},
-    {"label": "p1_base/qwen3.6-plus-run2", "f1": 0.35, "cost_usd": 0.02},
-    {"label": "p1_base/qwen3.6-plus-run3", "f1": 0.32, "cost_usd": 0.02},
+    {"label": "p1_base/claude-opus-4.6-run1", "n_matched": 80, "f1": 0.55, "cost_usd": 0.10},
+    {"label": "p1_base/claude-opus-4.6-run2", "n_matched": 82, "f1": 0.50, "cost_usd": 0.10},
+    {"label": "p1_base/claude-opus-4.6-run3", "n_matched": 85, "f1": 0.60, "cost_usd": 0.10},
+    {"label": "p1_base/mistral-large-2512-run1", "n_matched": 50, "f1": 0.40, "cost_usd": 0.05},
+    {"label": "p1_base/mistral-large-2512-run2", "n_matched": 52, "f1": 0.42, "cost_usd": 0.05},
+    {"label": "p1_base/mistral-large-2512-run3", "n_matched": 55, "f1": 0.45, "cost_usd": 0.05},
+    {"label": "p1_base/qwen3.6-plus-run1", "n_matched": 30, "f1": 0.30, "cost_usd": 0.02},
+    {"label": "p1_base/qwen3.6-plus-run2", "n_matched": 33, "f1": 0.35, "cost_usd": 0.02},
+    {"label": "p1_base/qwen3.6-plus-run3", "n_matched": 35, "f1": 0.32, "cost_usd": 0.02},
 ]
+
+_EXPECTED_KEYS = {
+    "model",
+    "family",
+    "median_tp",
+    "min_tp",
+    "max_tp",
+    "median_f1",
+    "min_f1",
+    "max_f1",
+    "cost_usd",
+}
 
 
 def test_build_pareto_rows():
-    """Rows have correct models with median F1, min/max F1, and cost."""
+    """Rows expose TP and F1 stats per model, plus family + cost."""
     rows = build_pareto_rows(SAMPLE_METRICS)
     assert len(rows) == 3
-    assert all(
-        set(r.keys()) == {"model", "median_f1", "min_f1", "max_f1", "cost_usd"} for r in rows
-    )
+    assert all(set(r.keys()) == _EXPECTED_KEYS for r in rows)
     by_model = {r["model"]: r for r in rows}
-    # Median, min, max of [0.50, 0.55, 0.60]
-    assert by_model["claude-opus-4.6"]["median_f1"] == 0.55
-    assert by_model["claude-opus-4.6"]["min_f1"] == 0.50
-    assert by_model["claude-opus-4.6"]["max_f1"] == 0.60
-    assert by_model["mistral-large-2512"]["median_f1"] == 0.42
-    assert by_model["qwen3.6-plus"]["median_f1"] == 0.32
+    # Median, min, max of [80, 82, 85]
+    assert by_model["claude-opus-4.6"]["median_tp"] == 82
+    assert by_model["claude-opus-4.6"]["min_tp"] == 80
+    assert by_model["claude-opus-4.6"]["max_tp"] == 85
+    assert by_model["claude-opus-4.6"]["family"] == "claude"
+    assert by_model["mistral-large-2512"]["median_tp"] == 52
+    assert by_model["mistral-large-2512"]["family"] == "mistral"
+    assert by_model["qwen3.6-plus"]["median_tp"] == 33
+    assert by_model["qwen3.6-plus"]["family"] == "qwen"
 
 
-def test_build_pareto_rows_sorted_by_median():
-    """Rows are sorted by median F1 descending."""
+def test_build_pareto_rows_sorted_by_median_tp():
+    """Rows are sorted by median TP descending."""
     rows = build_pareto_rows(SAMPLE_METRICS)
-    medians = [r["median_f1"] for r in rows]
+    medians = [r["median_tp"] for r in rows]
     assert medians == sorted(medians, reverse=True)
 
 
@@ -72,7 +86,7 @@ def test_is_p1_base_row():
 
 
 def test_pareto_family_colours():
-    """The three families resolve to three distinct palette colours."""
+    """The three language families resolve to three distinct palette colours."""
     en = family_color("claude-opus-4.6")
     fr = family_color("mistral-large-2512")
     zh = family_color("qwen3.6-plus")
@@ -83,6 +97,19 @@ def test_pareto_family_colours():
     assert en == family_color("EN")
     assert fr == family_color("FR")
     assert zh == family_color("ZH")
+
+
+def test_pareto_model_family_colours():
+    """The five architectural families resolve to five distinct palette colours."""
+    claude = model_family_color("claude-opus-4.6")
+    gpt = model_family_color("gpt-5.5")
+    mistral = model_family_color("mistral-large-2512")
+    qwen = model_family_color("qwen3-max-thinking")
+    deepseek = model_family_color("deepseek-v4-pro")
+    assert len({claude, gpt, mistral, qwen, deepseek}) == 5
+    # Within-family models share the colour even across size tiers.
+    assert claude == model_family_color("claude-haiku-4.5")
+    assert qwen == model_family_color("qwen3.6-plus")
 
 
 def test_pareto_whiskers_present(tmp_path):
@@ -98,15 +125,15 @@ def test_pareto_whiskers_present(tmp_path):
     write_pdf(rows, figure_path)
     assert figure_path.exists()
 
-    # Inspect the last rendered figure: 3 models → 3 errorbar containers.
+    # Inspect a re-rendered figure: 3 models → 3 errorbar containers.
     # write_pdf calls plt.close on its fig, so we re-render here to inspect.
     fig, ax = plt.subplots()
     for r in rows:
-        median = r["median_f1"]
+        median = r["median_tp"]
         ax.errorbar(
             [r["cost_usd"]],
             [median],
-            yerr=[[median - r["min_f1"]], [r["max_f1"] - median]],
+            yerr=[[median - r["min_tp"]], [r["max_tp"] - median]],
             fmt="o",
         )
     containers = [c for c in ax.containers if isinstance(c, ErrorbarContainer)]
@@ -140,7 +167,7 @@ def test_pareto_xscale_flag(tmp_path, monkeypatch):
 
 
 def test_main_writes_csv(tmp_path, monkeypatch):
-    """CLI writes well-formed CSV with the new median/min/max schema."""
+    """CLI writes well-formed CSV with the TP + F1 schema."""
     input_path = tmp_path / "measurements.jsonl"
     _write_p1_base_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
@@ -159,7 +186,7 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     reader = csv.DictReader(content.splitlines())
     rows = list(reader)
     assert len(rows) == 3
-    assert set(reader.fieldnames) == {"model", "median_f1", "min_f1", "max_f1", "cost_usd"}
+    assert set(reader.fieldnames) == _EXPECTED_KEYS
 
 
 def test_main_writes_figure(tmp_path, monkeypatch):
