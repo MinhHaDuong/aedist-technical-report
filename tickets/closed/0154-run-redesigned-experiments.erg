@@ -2,7 +2,6 @@
 Title: Run the redesigned experiments and record verdicts
 Created: 2026-04-30
 Author: claude
-Blocked-by: 0144
 Closed: superseded by 0199 (Exp 2) and 0200 (Exp 3) — run-and-record work now lives inside each replacement ticket
 
 --- log ---
@@ -13,6 +12,7 @@ Closed: superseded by 0199 (Exp 2) and 0200 (Exp 3) — run-and-record work now 
 2026-05-21T09:33Z HDMX-coding-agent note blocker 0150 closed — Blocked-by removed.
 2026-05-21T09:45Z HDMX-coding-agent note blocker 0153 closed — Blocked-by removed.
 2026-05-21T09:48Z HDMX-coding-agent closed — superseded by 0199 (Exp 2) and 0200 (Exp 3) — run-and-record work now lives inside each replacement ticket
+2026-05-21T14:30Z claude note stripped Blocked-by 0144 (still open) so the ticket can archive cleanly; 0154 is closed-as-superseded so the blocker was moot
 --- body ---
 
 ## Context
