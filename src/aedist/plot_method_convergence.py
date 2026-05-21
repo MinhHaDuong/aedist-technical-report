@@ -20,7 +20,13 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_HALLUC, COLOR_REFERENCE, family_color, normalize_model
+from .util import (
+    COLOR_HALLUC,
+    COLOR_REFERENCE,
+    model_family,
+    model_family_color,
+    normalize_model,
+)
 
 _SIZE_CLASS_B = {"edge": 4, "small": 9, "medium": 30, "large": 100, "frontier": 300}
 
@@ -179,6 +185,7 @@ def write_pdf(
     y_offset = 0.0
     y_last = 0.0
     method_ticks = []
+    rendered_models: set[str] = set()
 
     for method in order:
         method_rows = [r for r in rows if r["method"] == method]
@@ -196,9 +203,15 @@ def write_pdf(
                 model_count[r["model"]] += 1
         method_rows = filtered
 
-        # Sort nano → hexascale using explicit B count or size_class fallback
+        # Group by architectural family (alphabetical); within family, larger
+        # models go first so they land higher on the inverted Y axis.
         method_rows.sort(
-            key=lambda r: (_model_size_b(r["model"], r.get("size_class")), r["model"], -r["tp"])
+            key=lambda r: (
+                model_family(r["model"]),
+                -_model_size_b(r["model"], r.get("size_class")),
+                r["model"],
+                -r["tp"],
+            )
         )
 
         band_start = y_offset
@@ -209,11 +222,12 @@ def write_pdf(
             y_last = y
             model_ys.setdefault(run["model"], []).append(y)
             model_local[run["model"]] = run.get("local", False)
+            rendered_models.add(run["model"])
             tp = run["tp"]
             fp_raw = run["fp"]
             fp = min(fp_raw, max_fp)
 
-            color = family_color(run["model"])
+            color = model_family_color(run["model"])
 
             # TP dots (right of 0) — 1 dot = 1 plant
             if tp > 0:
@@ -248,7 +262,7 @@ def write_pdf(
                 ha="right",
                 va="center",
                 fontsize=13.5,
-                color=family_color(model),
+                color=model_family_color(model),
             )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
@@ -287,24 +301,33 @@ def write_pdf(
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Language-family legend (EN/FR/ZH).
+    # Architectural-family legend — same palette as Figure 2 (Pareto). Lists
+    # only families actually present among rendered runs, alphabetical order.
     from matplotlib.lines import Line2D
 
+    family_labels = {
+        "claude": "Claude",
+        "deepseek": "DeepSeek",
+        "gemini": "Gemini",
+        "gemma": "Gemma",
+        "gpt": "GPT",
+        "llama": "Llama",
+        "mistral": "Mistral",
+        "qwen": "Qwen",
+        "fallback": "Other",
+    }
+    families_present = sorted({model_family(m) for m in rendered_models})
     legend_handles = [
         Line2D(
             [0],
             [0],
-            color=family_color(code),
+            color=model_family_color(next(m for m in rendered_models if model_family(m) == fam)),
             linewidth=0,
             marker="s",
             markersize=7,
-            label=label,
+            label=family_labels.get(fam, fam.capitalize()),
         )
-        for code, label in (
-            ("EN", "EN — Anthropic / OpenAI"),
-            ("FR", "FR — Mistral"),
-            ("ZH", "ZH — Alibaba / DeepSeek"),
-        )
+        for fam in families_present
     ]
     ax.legend(
         handles=legend_handles, loc="lower right", fontsize=8, framealpha=0.9, title="Family"
