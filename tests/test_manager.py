@@ -205,6 +205,70 @@ def test_model_set_filters_registry(tmp_path: Path):
     assert filters == {"provider/model-a", "provider/model-c"}
 
 
+def test_fanout_forwards_all_jobspec_fields(tmp_path: Path):
+    """Ticket 0139 regression guard: ``manager.generate`` must propagate
+    every JobSpec field from the parent spec to the per-job spec, except
+    the four fields that legitimately differ per job (``job_id``,
+    ``model_filter``, ``repeat``, ``run_number``).
+
+    Prior to ticket 0139, the per-job ``JobSpec(...)`` call hand-listed
+    fields. That hand-list silently dropped any new JobSpec field added
+    later (the original silent-drop bug for ``seed``). This test reads
+    the parent spec via ``model_dump`` and compares against the child;
+    when a new field is added to JobSpec, this test fails until the
+    manager forwards it.
+    """
+    models = [
+        {"name": "provider/model-a", "display_name": "Model A"},
+    ]
+    models_path = tmp_path / "models.yaml"
+    models_path.write_text(yaml.dump(models))
+
+    sweep_path = tmp_path / "sweep.yaml"
+    sweep_path.write_text(
+        f"mode: single\n"
+        f"prompt: prompts/prompt.txt\n"
+        f"models: {models_path}\n"
+        f"repeat: 1\n"
+        f"budget_usd: 5\n"
+        f"seed: 42\n"
+        f"max_tokens: 8192\n"
+        f"web_search: true\n"
+        f"no_think: true\n"
+        f"provider_order: [DeepSeek, Alibaba]\n"
+        f"num_ctx: 65536\n"
+        f"temperature: 0.5\n"
+        f"system_instruction: 'no web search'\n"
+        f"output: outputs/test\n"
+    )
+    jobs_root = tmp_path / "jobs"
+
+    generate(str(sweep_path), jobs_root)
+
+    parent = JobSpec.from_sweep_yaml(sweep_path)
+    job_files = list((jobs_root / "pending").iterdir())
+    assert len(job_files) == 1
+    child = JobSpec.from_yaml(job_files[0].read_text())
+
+    per_job_overrides = {"job_id", "model_filter", "repeat", "run_number"}
+    parent_dump = parent.model_dump()
+    child_dump = child.model_dump()
+    for field, expected in parent_dump.items():
+        if field in per_job_overrides:
+            continue
+        assert child_dump[field] == expected, (
+            f"manager.generate dropped JobSpec field {field!r}: "
+            f"parent={expected!r}, child={child_dump[field]!r}"
+        )
+    # Spot-check the 0139 batch explicitly.
+    assert child.seed == 42
+    assert child.max_tokens == 8192
+    assert child.web_search is True
+    assert child.no_think is True
+    assert child.provider_order == ["DeepSeek", "Alibaba"]
+    assert child.num_ctx == 65536
+
+
 def test_idempotency_across_dirs(tmp_path: Path):
     """Jobs already in running/done/failed are skipped."""
     sweep_path = _write_sweep(tmp_path, repeat=1)
