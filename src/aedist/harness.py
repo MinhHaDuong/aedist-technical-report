@@ -187,6 +187,13 @@ def make_client(base_url: str | None = None) -> OpenAI:
 
     When *base_url* is provided (e.g. Ollama), use it directly with a
     dummy API key.  Otherwise default to OpenRouter.
+
+    ``max_retries=1`` (ticket 0183): openai-python defaults to 2, which —
+    combined with the worker's 600s per-call timeout — gives a worst-case
+    wall time around 30 minutes per wedged call. One retry caps that to
+    roughly 20 minutes while still tolerating a single transient network
+    blip. The worker-level requeue (failed/ → manual rerun) is the real
+    backstop, so we don't need aggressive in-client retries.
     """
     if base_url:
         from urllib.parse import urlparse
@@ -198,13 +205,14 @@ def make_client(base_url: str | None = None) -> OpenAI:
                 raise SystemExit("Set OPENROUTER_API_KEY environment variable")
         else:
             api_key = "ollama"
-        return OpenAI(base_url=base_url, api_key=api_key)
+        return OpenAI(base_url=base_url, api_key=api_key, max_retries=1)
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise SystemExit("Set OPENROUTER_API_KEY environment variable")
     return OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
+        max_retries=1,
     )
 
 
@@ -223,7 +231,7 @@ def make_client_for_route(model: dict) -> OpenAI:
             raise SystemExit(f"Set {env_key} environment variable")
     else:
         api_key = "ollama"
-    kwargs: dict = {"base_url": base_url, "api_key": api_key}
+    kwargs: dict = {"base_url": base_url, "api_key": api_key, "max_retries": 1}
     if not env_key:
         import httpx
 

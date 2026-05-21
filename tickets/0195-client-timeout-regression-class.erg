@@ -1,0 +1,122 @@
+%erg 0.1
+Title: Standing regression test — every OpenAI() client and chat.create() callsite is wedge-safe
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T08:30Z claude created — sweep follow-up from raid 0183/0187/0191 (celebrate phase). The wedge fix in PR #374 protects the worker pipeline, but the sweep found 5+ OpenAI()/chat.create() callsites outside that pipeline that remain unprotected. Class shape merits a standing test, not just per-call fixes.
+
+--- body ---
+## Context
+
+Ticket 0183 (PR #374) fixed wedged workers by injecting
+`api_kwargs["timeout"] = job.timeout_seconds` in `worker.execute()` and
+setting `max_retries=1` on the OpenAI client built by `make_client` and
+`make_client_for_route`. The fix relies on a single chokepoint — the
+worker's pre-dispatch — for all five mode handlers.
+
+The celebrate-phase sweep found callsites that bypass that chokepoint
+entirely:
+
+- `src/aedist/adapter_openai_responses.py:351, 396` — direct-API
+  responses adapter used in the SOTA experiment Phase A path. Builds
+  its own `OpenAI()` client, does not pass `max_retries=1`, does not
+  thread a `timeout=` into `client.responses.create()`.
+- `src/aedist/pdf2md_openrouter.py:54` and
+  `src/aedist/pdf2md_openrouter_doc.py:58` — pdf2md tooling that
+  invokes `client.chat.completions.create(...)` without a timeout.
+- `src/aedist/harness.py:239` — a third `OpenAI()` instance whose
+  retry/timeout posture has not been audited.
+- The PR #374 verify also flagged: `run_fusion()` builds its own
+  client locally — same blindspot.
+
+A per-callsite fix would close today's gaps but not catch the
+*next* `OpenAI()` someone adds in a new module. The class shape calls
+for a standing test that fails whenever an `OpenAI()` is constructed
+without `max_retries` set, or when a `chat.completions.create()` /
+`responses.create()` call lacks a `timeout` and isn't inside the
+worker pipeline.
+
+## Actions
+
+1. **Audit and inventory.** Grep `src/aedist/` for every `OpenAI(`
+   constructor and every `client.chat.completions.create(` /
+   `client.responses.create(` callsite. Classify each as "inside
+   worker pipeline" (covered by `api_kwargs["timeout"]` injection) or
+   "outside" (must explicitly pass `timeout=`).
+
+2. **Fix the existing instances.** For each "outside" callsite,
+   either:
+   - Add `max_retries=1` on the `OpenAI()` construction, AND
+   - Pass `timeout=` (with a sane default that maps to JobSpec when
+     a JobSpec is in scope, or a module-level constant otherwise).
+   - Or document why the callsite is exempt (e.g., a smoke script
+     that's user-driven and short-lived).
+
+3. **Add the standing test.** `tests/test_client_timeout_safety.py`
+   (`@pytest.mark.adherence`): parse the AST of `src/aedist/*.py`,
+   walk every `OpenAI(...)` call and every `*.create(...)` call on a
+   client expression. Assert the structural invariants. Failures
+   surface at unit-test time, not in prod after the next wedge.
+
+4. **Cover fusion mode.** PR #374 explicitly scoped out
+   `_execute_fusion` because it builds its own `api_kw` locally. Wire
+   timeout into `run_fusion()` as part of this ticket or split it out
+   if the change is non-trivial.
+
+## Test
+
+`tests/test_client_timeout_safety.py`:
+
+```python
+@pytest.mark.adherence
+def test_every_openai_constructor_sets_max_retries():
+    """Class invariant: any OpenAI() inside src/aedist/ must pin max_retries.
+
+    The default (2) compounds a 600s timeout into ~30min worst-case wedge.
+    """
+    import ast
+    from pathlib import Path
+
+    src_dir = Path("src/aedist")
+    offenders = []
+    for py in src_dir.rglob("*.py"):
+        tree = ast.parse(py.read_text())
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and node.func.id == "OpenAI"):
+                kw_names = {kw.arg for kw in node.keywords}
+                if "max_retries" not in kw_names:
+                    offenders.append(f"{py}:{node.lineno}")
+    assert not offenders, (
+        "OpenAI() constructed without max_retries — see ticket 0195:\n  "
+        + "\n  ".join(offenders)
+    )
+```
+
+A second test mirrors the contract for `*.create()` callsites: if
+the call's positional/keyword args lack a `timeout`, the file must
+appear in an allow-list of "inside-worker-pipeline" modules
+(`worker.py`, `harness.py`'s `query_single_turn` only, where the
+kwarg is threaded externally).
+
+## Exit criteria
+
+- [ ] Inventory of every `OpenAI()` and `client.*.create()` in
+      `src/aedist/`, classified as covered / uncovered.
+- [ ] Every uncovered callsite either fixed or explicitly exempted
+      with a one-line comment + entry in the test's allow-list.
+- [ ] `tests/test_client_timeout_safety.py` exists, marked
+      `@pytest.mark.adherence`, and passes.
+- [ ] `make check` passes.
+
+## Notes
+
+- Sweep evidence collected during the celebrate phase of raid
+  0183/0187/0191. See PR #374's `/verify` output for the
+  fusion-mode caveat that motivated lifting this to a class-level
+  test.
+- Out of scope: rate-limiting / circuit-breaker logic. The standing
+  test pins *wedge safety* (a hung call cannot lock up a worker),
+  not *throughput optimization*.
