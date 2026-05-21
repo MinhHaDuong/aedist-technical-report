@@ -1,0 +1,92 @@
+%erg 0.1
+Title: Worker job-board dispatch lacks claude-code-cli branch (route only works via query_direct.py)
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T13:35Z claude created — coverage gap found during 0160 celebrate sweep
+
+--- body ---
+## Context
+
+Ticket 0160 / PR #395 added the `claude-code-cli` route adapter
+(`query_claude_cli` in `src/aedist/harness.py`) and wired it into the
+legacy / manual entry point `src/aedist/query_direct.py`. End-to-end
+smoke against `query_direct.py --model claude-sonnet-4-6-cli` works.
+
+The job-board worker (`src/aedist/worker.py`) was NOT updated. Its
+`_query_and_save` calls `query_model(client, ...)` unconditionally,
+and `query_model` only dispatches between Ollama-native and
+OpenAI-compatible — there is no branch for `claude-code-cli`. A worker
+asked to process a job whose model has `route: claude-code-cli` would
+either NPE (the route's client is `None`) or fall through to the
+OpenAI path with a None client.
+
+The example sweep added in PR #395 (`[sweeps.sweep_smoke_claude_cli]`
+in `experiments/experiments.toml`) goes through `manager generate` →
+worker drain. As written it would silently fail at worker runtime.
+This is documented inline (the docstring of `query_claude_cli` says
+"not suitable for controlled sweeps") but the registry + sweep
+plumbing doesn't prevent the misconfiguration.
+
+## Scope
+
+Two reasonable resolutions:
+
+1. **Wire the route through the worker too.** Mirror the
+   `query_direct.py` change: in `_query_and_save`, detect
+   `model_entry.get("route") == "claude-code-cli"`, call
+   `query_claude_cli(model_id, messages)`, bill from `result["cost_usd"]`.
+   Skip `compute_cost` (registry prices are 0.0 — would silently bill 0).
+
+2. **Fail fast.** Add an assertion early in worker dispatch that rejects
+   the route with a clear message pointing at `query_direct.py`. Cheaper
+   to implement, harder to use.
+
+(1) is the right answer if any user wants to run multi-rep cli sweeps
+with budget tracking via the job board. (2) is enough if the route is
+purely for capability checks via `query_direct.py`.
+
+Note: the same gap exists for the direct adapters (`anthropic`,
+`openai-responses`, `mistral-agents`, `qwen-dashscope`) — they all live
+outside the worker too. So this gap is consistent with the existing
+class of "direct adapters bypass the worker". The fix should either be
+done across the class (worker learns to dispatch on `route` and call
+the right per-route module) or scoped to just the `claude-code-cli`
+case if the direct-adapter exclusion is intentional.
+
+## Actions (option 1)
+
+1. In `src/aedist/worker.py::_query_and_save`, before calling
+   `query_model`, branch on `model_entry.get("route") == "claude-code-cli"`.
+2. Call `query_claude_cli(model_id, messages, timeout=job.timeout_seconds)`.
+3. Compute `cost = float(result.get("cost_usd") or 0.0)` instead of
+   `compute_cost(usage, model_entry)`.
+4. Record `provider_order = None` (no OpenRouter routing on this path)
+   and any other extra_body-derived fields as None.
+5. Add an integration test under `tests/test_worker.py` (or similar):
+   mock the CLI subprocess, drive a one-job drain, assert `done/` has 1
+   file and `cost_usd` came from the mock JSON.
+
+## Actions (option 2)
+
+1. In `src/aedist/worker.py::_query_and_save`, raise
+   `NotImplementedError` if `model_entry.get("route") == "claude-code-cli"`
+   with a message pointing at `query_direct.py`.
+2. Update `experiments/experiments.toml`'s
+   `[sweeps.sweep_smoke_claude_cli]` comment to flag it as
+   `query_direct.py`-only.
+
+## Test
+
+Adherence: a test that loads every `route` value referenced in
+`experiments/models.yaml` and asserts the worker either handles it
+or refuses with a clear error.
+
+## Exit criteria
+
+- [ ] Either: worker dispatches `claude-code-cli` correctly (option 1),
+      OR: worker raises a clear `NotImplementedError` (option 2).
+- [ ] Example sweep in `experiments.toml` documents the path that
+      actually works.
+- [ ] `make check` passes.
