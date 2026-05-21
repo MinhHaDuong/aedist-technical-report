@@ -1,0 +1,105 @@
+%erg 0.1
+Title: Experiment 3 — §5 tailored solution: spec and demonstration
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T12:25Z claude created — replacement for closed 0153 (Exp 3 leg)
+
+--- body ---
+
+## Context
+
+The manuscript's §5 "Fifth, a tailored solution can work"
+(`slides/manuscript/main.md` lines 56–62) describes a stateful
+agentic workflow: a knowledge base of narrative asset histories,
+fully sourced; the statistical table is a derived artefact of the
+narrative inventory; initial generation by deep-research heroic
+prompt; automatic verification of the four §2 quality dimensions;
+incremental update with new documents; memory of human judgements
+preserved.
+
+Unlike Exp 1 and Exp 2, this is closer to a **demonstration / case
+study** than a clean N-rep sweep — the value is the integrated
+workflow producing one carefully audited inventory, not a
+distribution of F1 scores. This ticket pins the spec and runs the
+demonstration.
+
+Replaces the §5 portion of the now-closed 0153.
+
+## Relevant files
+
+- `slides/manuscript/main.md` lines 56–62 — §5 prose to
+  operationalise.
+- `slides/manuscript/main.md` Annex A — pattern to adapt (a case
+  study annex will differ from a sweep annex; both are valid).
+- `experiments/` — likely needs a sub-directory for stateful
+  workflow artefacts (narrative store, source links, judgement log).
+- `src/aedist/` — current modules assume one-shot prompt → table;
+  stateful workflow needs new orchestration.
+- 0146 (capability-timeline-expand-and-figure) — may overlap on the
+  "incremental update" angle.
+
+## Actions
+
+1. **Pin the workflow architecture.** Define the components:
+   narrative store schema (per-asset, per-cell provenance),
+   initial-extraction agent (deep-research-style), four
+   automatic-verifier agents (one per quality dimension), update
+   orchestrator, human-judgement memory. Decide which already exist
+   in the codebase vs. need building.
+2. **Pin the demonstration scope.** Vietnam thermal fleet (same as
+   Exp 1) — start from the deep-research output of Exp 2's best
+   agent, run through the workflow, produce the final reconciled
+   inventory. One run, not a sweep.
+3. **Define success criteria.** Row-level F1 vs Exp 1 ceiling; cell-
+   level provenance resolve rate; temporal validity per cell;
+   coherence (internal consistency). Decide what "acceptable
+   scientific quality" means as a numeric threshold for §5's claim
+   to be supported.
+4. **Annex D in `main.md`.** Author the workflow spec. Will differ
+   from Annex A — this is a system architecture, not a sweep matrix.
+5. **Build the missing components.** Each verifier and the
+   orchestration loop, with tests.
+6. **Run the demonstration.** One full pass on the Vietnam fleet.
+   Capture the audit trail (per-cell provenance, per-judgement
+   record, time-and-cost summary).
+7. **Update H-verdicts.** §5 primarily tests H3 (Accuracy–provenance
+   joint optimisation) — does the stateful workflow break the
+   incompatibility observed in Exp 1 / Exp 2? Also touches H4
+   (local-model viability) if the workflow is re-run with a local
+   backbone.
+8. **Update manuscript prose.** Replace §5's forward-looking "we aim
+   to demonstrate" with the observed outcome.
+
+## Test
+
+- `tests/test_narrative_store_schema.py` — round-trip on a small
+  fixture; per-cell (source, date, confidence, conflict-resolution)
+  tuple preserved.
+- `tests/test_verifier_*.py` — one per quality dimension; happy-path
+  + at-least-one-failure-mode fixture.
+- `tests/test_annex_d_present.py` — adherence: main.md has Annex D
+  describing the workflow.
+
+## Invariants
+
+- The narrative is the source of truth; the table is derived.
+  Adding a row to the table without a corresponding narrative entry
+  must fail.
+- Every cell carries provenance — no anonymous values.
+- Human-judgement memory is append-only — corrections create new
+  entries, never overwrite.
+
+## Exit criteria
+
+- [ ] Annex D in `main.md` describes the workflow architecture and
+      the demonstration scope.
+- [ ] Narrative store + four verifiers + orchestrator implemented
+      and tested.
+- [ ] One demonstration run on Vietnam fleet completed; audit trail
+      captured.
+- [ ] H3 (and H4 if local-backbone run is included) updated in
+      `docs/hypotheses.md`.
+- [ ] §5 manuscript prose updated with observed outcome.
+- [ ] `make report.pdf` and `make slides.pdf` rebuild cleanly.

@@ -1,0 +1,105 @@
+%erg 0.1
+Title: Experiment 2 — §4 SOTA frontier: spec and run
+Created: 2026-05-21
+Author: claude
+Blocked-by: 0144
+
+--- log ---
+2026-05-21T12:20Z claude created — replacement for closed 0153 (Exp 2 leg)
+
+--- body ---
+
+## Context
+
+The manuscript's §4 "Fourth, the commercially available frontier"
+(`slides/manuscript/main.md` lines 52–54) proposes an experiment with
+three state-of-the-art cloud AI agents that have extended reasoning
+and web access. Each is given the full prompt + quality criteria and
+allowed to tune prompt/settings within a $10 + overnight budget;
+each then runs three times with different providers; the resulting
+three tables are cross-compared by the other two models. The
+conjecture: the method always improves on all four §2 dimensions but
+falls short of scientifically acceptable quality.
+
+This ticket pins the technical spec for that experiment in the same
+Annex-A pattern Exp 1 has, and runs it.
+
+Replaces the §4 portion of the now-closed 0153 (which was written
+before the argument crystallised on three SOTA cloud agents).
+
+## Relevant files
+
+- `slides/manuscript/main.md` lines 52–54 — §4 prose; the experiment
+  description to operationalise.
+- `slides/manuscript/main.md` Annex A — the pattern to mirror for an
+  "Annex C — Experiment 2: Technical specification" section.
+- `experiments/experiments.toml` — add a `sweep_exp2_*` block.
+- `experiments/prompts/modules/` — the prompt modules each agent will
+  start from before tuning.
+- `src/aedist/evaluate.py` — pairwise cross-model judging is new
+  evaluation surface; check what exists vs what's needed.
+- 0144 (RAG-reasoning-coherence-cell) — likely overlaps the
+  prompt-tuning leg; resolve before opening this work.
+
+## Actions
+
+1. **Pin the three SOTA agents.** Candidates from current frontier
+   landscape: OpenAI deep-research, Anthropic deep-research,
+   Google deep-research, plus possible challengers (xAI deep-search,
+   Perplexity). Three, not two — match §4 prose. Decide cost ceilings
+   (the §4 prose says \$10 / overnight per agent; total budget ≈ \$90
+   for 3 agents × 3 reps).
+2. **Define the prompt-tuning protocol.** What does the agent receive?
+   What may it tune (system instruction, schema, retrieval params)?
+   What is locked? When is "tuning done" decided?
+3. **Define the cross-model judging protocol.** Each result table is
+   judged by the other two SOTA models on the four §2 dimensions
+   (accuracy, coherence, provenance, temporality). Pin the rubric.
+   Decide whether judges are blind to which agent produced which
+   table.
+4. **Annex C in `main.md`.** Author the full technical spec following
+   Annex A's structure: Task, Prompt, Models, Run parameters,
+   Evaluation, Sweep configuration, What this experiment does and
+   does not test.
+5. **Wire `experiments.toml`** with the sweep config.
+6. **Test one before blasting.** Dry-run, then 1 real call per agent
+   to verify cost / wall-time / output format. Project rule.
+7. **Run the sweep.** 3 agents × 3 reps = 9 runs. Ingest into
+   `measurements.jsonl`.
+8. **Update H-verdicts.** Map results to H1 (Articulation —
+   prompt-tuning leg), H2 (Coverage — deep-research web leg),
+   H3 (Accuracy–provenance — pairwise judging leg). Record in
+   `docs/hypotheses.md`.
+9. **Update manuscript prose.** §4 "we conjecture …" sentence
+   replaced with "we observed …" verdict; figure (Pareto / new
+   cross-model comparison) regenerated.
+
+## Test
+
+- `tests/test_exp2_sweep_config_valid.py` — exists and parses cleanly;
+  budget cap matches the documented \$90.
+- `tests/test_annex_c_present.py` — main.md contains an "Annex C —
+  Experiment 2" section with the seven sub-sections of Annex A's
+  pattern. Adherence-style.
+- Run-level: each of 9 runs lands in `measurements.jsonl` with the
+  expected schema fields populated.
+
+## Invariants
+
+- 4-dimensional rubric stays accuracy / coherence / provenance /
+  temporality — no scope creep into "speed" or "fluency" axes.
+- Pairwise judging cannot self-judge — each table is judged by the
+  other two models only.
+- Budget cap enforced per the sweep config; the runner halts at
+  exceedance (Exp 1 pattern).
+
+## Exit criteria
+
+- [ ] Annex C in `main.md` follows Annex A's structure exactly.
+- [ ] `experiments.toml` block + dry-run pass.
+- [ ] 9 runs ingested into `measurements.jsonl`; refusals/errors flagged.
+- [ ] H-verdicts updated in `docs/hypotheses.md`.
+- [ ] §4 manuscript prose updated with observed result, conjecture
+      sentence replaced or removed.
+- [ ] Figure regenerated (Pareto and/or a new §4-specific figure).
+- [ ] `make report.pdf` and `make slides.pdf` rebuild cleanly.
