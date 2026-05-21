@@ -988,6 +988,41 @@
   license: commercial
   web_search: false
 
+# Ticket 0160: claude-code-cli route. Authenticates via the user's
+# existing Claude Code session (no API key required in the sweep
+# environment). Pricing is billed against the user's Anthropic
+# subscription / API plan, not the registry's price_per_mtok_* fields —
+# the CLI reports actual cost in `total_cost_usd` per call and the
+# runner uses that value instead of compute_cost(). The registry prices
+# are kept at 0 to surface any accidental misuse via compute_cost().
+- name: "claude-sonnet-4-6-cli"
+  route: claude-code-cli
+  model_id: "claude-sonnet-4-6"
+  display_name: "Claude Sonnet 4.6 (CLI)"
+  provider: Anthropic
+  country: US
+  architecture: dense
+  context_window: 1000000
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: frontier
+  license: commercial
+  web_search: false
+
+- name: "claude-opus-4-7-cli"
+  route: claude-code-cli
+  model_id: "claude-opus-4-7"
+  display_name: "Claude Opus 4.7 (CLI)"
+  provider: Anthropic
+  country: US
+  architecture: dense
+  context_window: 1000000
+  price_per_mtok_in: 0.0
+  price_per_mtok_out: 0.0
+  size_class: frontier
+  license: commercial
+  web_search: false
+
 - name: "openai/gpt-5.5"
   route: openrouter
   base_url: "https://openrouter.ai/api/v1"

@@ -355,6 +355,99 @@ def query_ollama_native(
 
 
 # ---------------------------------------------------------------------------
+# Claude Code CLI (subprocess, --print mode)
+# ---------------------------------------------------------------------------
+
+
+def query_claude_cli(
+    model_id: str,
+    messages: list[dict],
+    *,
+    timeout: float = 600.0,
+    max_budget_usd: float | None = None,
+) -> dict:
+    """Query via Claude Code CLI in non-interactive --print mode.
+
+    Authenticates via the user's existing Claude Code session (no API key
+    in the sweep environment). Runs with --bare to skip hooks, plugin
+    sync, CLAUDE.md auto-discovery, and other interactive-mode overhead;
+    --allowedTools "" to disallow every tool so the model answers from
+    parametric knowledge only (matches the no-web Exp 1 discipline).
+
+    Cost is reported by the CLI itself in `total_cost_usd`; pricing is
+    governed by the user's Anthropic subscription / API plan, not by the
+    registry's price_per_mtok_* fields.
+
+    Messages: a single system message (optional) plus one user message
+    are supported; multi-turn is not. The CLI takes the prompt on stdin.
+
+    Limitations:
+    - No temperature, seed, or max_tokens control — runs use CLI defaults.
+    - Single user turn only (no conversation history).
+    - Reasoning tokens are not surfaced separately by the CLI's JSON.
+    """
+    import subprocess
+
+    system_text = ""
+    user_text = ""
+    for msg in messages:
+        role = msg.get("role")
+        content = msg.get("content", "")
+        if role == "system":
+            system_text = content
+        elif role == "user":
+            user_text = content
+    if not user_text:
+        raise ValueError("query_claude_cli: messages must include a user turn")
+
+    cmd = [
+        "claude",
+        "--print",
+        "--bare",
+        "--model",
+        model_id,
+        "--output-format",
+        "json",
+        "--allowedTools",
+        "",
+        "--no-session-persistence",
+    ]
+    if system_text:
+        cmd.extend(["--append-system-prompt", system_text])
+    if max_budget_usd is not None:
+        cmd.extend(["--max-budget-usd", f"{max_budget_usd:.4f}"])
+
+    t0 = time.monotonic()
+    proc = subprocess.run(
+        cmd,
+        input=user_text,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+    wall_seconds = round(time.monotonic() - t0, 3)
+
+    if proc.returncode != 0:
+        raise RuntimeError(f"claude CLI exited {proc.returncode}: {proc.stderr[:500]}")
+
+    data = json.loads(proc.stdout)
+    if data.get("is_error"):
+        raise RuntimeError(f"claude CLI error: {data.get('result', 'unknown')}")
+
+    usage = data.get("usage", {})
+    return {
+        "content": data.get("result", ""),
+        "finish_reason": data.get("stop_reason", "stop"),
+        "usage": {
+            "prompt_tokens": usage.get("input_tokens", 0),
+            "completion_tokens": usage.get("output_tokens", 0),
+        },
+        "wall_seconds": wall_seconds,
+        "cost_usd": data.get("total_cost_usd", 0.0),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Capability-driven API kwargs
 # ---------------------------------------------------------------------------
 
