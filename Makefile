@@ -156,10 +156,17 @@ $(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
 
-$(SLIDE_GEN)/fig_census_direct.pdf $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
+$(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --methods direct --prompt-version census \
+	    --output-macros $(dir $@)macros_census.tex
+
+$(SLIDE_GEN)/fig_census_direct.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_method_convergence \
+	    --output $@ --methods direct --prompt-version p1_base \
+	    --result-dir experiments/outputs/ablation/direct/p1_base/ \
 	    --output-macros $(dir $@)macros_census.tex
 
 $(SLIDE_GEN)/fig_regimes_scatter.pdf: $(MEASUREMENTS) experiments/figures.toml
