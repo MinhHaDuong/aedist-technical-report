@@ -2,12 +2,12 @@
 Title: Experiment 3 — reconstruction from verified bibliography (5 strategies × 5 models)
 Created: 2026-05-21
 Author: claude
-Blocked-by: 0185
 
 --- log ---
 2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
 2026-05-21T15:00Z claude note Tier scheme sharpened in design dialogue: provenance role (primary/secondary/tertiary) not institution; default-exclude for Tier 3; four-oracle Tier-2 stack (pipeline.ods, rag_corpus, Zotero, allowlist {gem.wiki, enerdata.net}). Canonical scheme landed in report/inputs/verification_methods.tex §sec:verif-filter with Admiralty STANAG 2511 antecedent cited. Smoke fixture (experiments/outputs/sota_smoke/) confirmed as the development corpus — ~50 unique URLs across 4 provider schemas covering Tier-1/2/3 edge cases.
 2026-05-21T16:00Z HDMX-coding-agent note swapped Blocked-by 0166 → 0185 — backlog audit found 0202 only needs one cheap deep-research bibliography (produced by 0185), not the full 12-cell N=3 cross-eval that 0166 promises; 0166/0170/0171 deferred to post-talk full-scope work
+2026-05-21T16:30Z HDMX-coding-agent note dropped Blocked-by entirely — Mistral smoke on rebuild-exp2-smoke branch already produced the input artefact: experiments/outputs/sota_exp2_smoke/mistral_turn_01.report.md (sectoral overview + Annotated Bibliography in 6 categories) and mistral_turn_01.citations.json (120 URLs). Source agent pinned to Mistral. 0185's reopen is for publication-readiness review (0213/0214/0215) — orthogonal to Exp 3's reconstruction input
 
 --- body ---
 
@@ -38,11 +38,22 @@ this ticket; the case study is 0200, blocked by 0202.
 
 ## Starting state (= Exp 2 output)
 
-- Source agent: **cheapest among Exp 2 Phase B winners**. Resolves once
-  Exp 2 Phase B cost data is in; pin in this ticket's log when decided.
-- From the agent's deep-research report:
-  - **Kept**: sectoral overview, bibliography.
-  - **Thrown away**: inventory, table.
+- Source agent: **Mistral Large 2512** (the only SOTA agent for which
+  the 0185 smoke produced a usable deep-research report as of
+  2026-05-21). Artefacts on `rebuild-exp2-smoke` branch:
+  - `experiments/outputs/sota_exp2_smoke/mistral_turn_01.report.md`
+    — full report, ~25 KB. Contains §1 Sector Overview, §2 Per-Plant
+    Discussion, §3 Structured Plants Table, **§4 Annotated
+    Bibliography** (6 categories: Government Decisions, Sectoral
+    Plans, Company Reports, Regulatory & IO, News & Media, Academic),
+    §5 Statistical Summaries, §6 Reconciliation, §7 Final Notes.
+  - `experiments/outputs/sota_exp2_smoke/mistral_turn_01.citations.json`
+    — 120 URLs with titles.
+- From the report:
+  - **Kept**: §1 Sector Overview, §4 Annotated Bibliography (+ 120
+    citations from citations.json).
+  - **Thrown away**: §2, §3, §5, §6, §7 (the inventory, table, stats,
+    reconciliation, notes — everything downstream of the bibliography).
 
 ## Verification protocol (HITL)
 
