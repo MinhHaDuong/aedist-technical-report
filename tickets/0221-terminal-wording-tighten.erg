@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Annex C — tighten TERMINAL trigger wording on encouragement count
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T19:30Z claude created — /verify consider on PR #405
+
+--- body ---
+
+## Context
+
+`slides/manuscript/main.md` (Annex C, *Phase B dialogue policy*)
+currently says:
+
+> *TERMINAL (sent when remaining budget ≤ 20% of the cap, or when
+> three ENCOURAGE replies have not produced a report)*
+
+This phrasing is ambiguous in light of the 0214 implementation
+clarification (the post-merge ticket update): the counter is
+incremented before the bound check, so the third **no_report
+observation** triggers TERMINAL — meaning ENCOURAGE is sent on the
+first two no_reports and TERMINAL on the third. The pure no_report
+trace is 4 turns total:
+
+1. designed_prompt → no_report (count 0→1) → ENCOURAGE
+2. ENCOURAGE → no_report (1→2) → ENCOURAGE
+3. ENCOURAGE → no_report (2→3) → TERMINAL
+4. TERMINAL → response captured → stop
+
+The current Annex C wording could be read either way ("3 ENCOURAGE
+sent, 4th decides" or "2 ENCOURAGE sent, 3rd is TERMINAL"). The
+implementation and tests anchor the latter.
+
+## Actions
+
+1. Rewrite the TERMINAL clause to be unambiguous, e.g.:
+   *"TERMINAL (sent when remaining budget ≤ 20% of the cap, or after
+   three consecutive `no_report` classifications — ENCOURAGE on the
+   first two, TERMINAL on the third)"*
+2. Optionally add a parenthetical (4-turn trace) for the reader.
+
+## Exit criteria
+
+- [ ] TERMINAL clause phrasing matches the 0214 implementation
+      anchor.
+- [ ] No reader can interpret it as "send 3 ENCOURAGE, decide on
+      4th."

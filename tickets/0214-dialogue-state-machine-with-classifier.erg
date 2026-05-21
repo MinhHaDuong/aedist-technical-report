@@ -66,14 +66,23 @@ if class == "report":
         # response. Accept it and stop.
         stop
 elif class == "no_report":
-    if encouragement_count < 3:
-        send ENCOURAGE_REPLY (with budget status);
-        encouragement_count += 1
+    encouragement_count += 1   # increment first, then check (anchored by tests)
+    if encouragement_count < MAX_ENCOURAGEMENTS:   # MAX_ENCOURAGEMENTS = 3
+        send ENCOURAGE_REPLY (with budget status)
     else:
-        # 3 encouragements exhausted without a report; graceful exit
+        # encouragement budget exhausted without a report; graceful exit
         send TERMINAL_REPLY (with budget status); accept one more
         response; stop.
 ```
+
+(Implementation note clarified post-merge: `encouragement_count` is
+incremented *before* the bound check so TERMINAL fires on the third
+no_report observation — i.e., total 4 turns for the pure no_report
+trace: turn 1 = designed prompt, turns 2–3 = ENCOURAGE, turn 4 =
+TERMINAL response accepted, stop. This matches
+`test_state_machine_three_no_reports_then_terminal` in
+`tests/test_exp2_interactive_smoke.py` and was the anchor verified
+during /verify on PR #401.)
 
 Status reminder (chat-text prefix) appears on every user-side
 message after turn 1, as in the current policy.

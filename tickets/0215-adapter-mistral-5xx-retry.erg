@@ -39,7 +39,7 @@ Retry on:
 Do NOT retry on:
 
 - 4xx (client error — our request is wrong, retry won't help)
-- 422 specifically (the previous 0211/0212 bugs would have been
+- 422 specifically (the previous 0211/0218 bugs would have been
   papered over by retry)
 
 Policy: at most 3 retries; exponential backoff

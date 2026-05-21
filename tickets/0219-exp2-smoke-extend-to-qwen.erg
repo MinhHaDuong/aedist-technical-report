@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Exp 2 smoke — extend the harness to Qwen (second agent, closes 0207)
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T19:00Z claude created — author's 2-hour autonomous window did not stretch to Qwen; ticket carries the spec
+
+--- body ---
+
+## Context
+
+The Exp 2 multi-turn smoke (ticket 0185) currently runs on Mistral
+only. Ticket 0207's exit criteria include "at least one other agent
+smoked end-to-end with the same policy". Qwen3-Max via DashScope is
+the next-cheapest agent and the natural second target (smoke baseline
+\$0.038, similar order of magnitude to Mistral).
+
+The harness (`experiments/sota/exp2_interactive_smoke.py`) has
+`--agent qwen` wired in argparse but `run_phase_b_multiturn` raises
+`NotImplementedError` for anything other than Mistral. Wiring Qwen
+is a self-contained slice.
+
+## Per-provider differences to handle
+
+| Concern | Mistral | Qwen DashScope |
+|---|---|---|
+| Continuation | `{agent_id, conversation_id}` (path-bound endpoint) | `{messages: [...]}` (history prepended in request) |
+| Agent lifecycle | Create + delete (`cleanup_agent`) | None (stateless API) |
+| System prompt surface | `agent_create.description` | `messages[0]` with `role: "system"` |
+| Metadata surface | `body.metadata` on create, **rejected on follow-ups** (workaround 0218) | None (Qwen adapter prepends a system message — fallback already in adapter) |
+| Raw-response persistence | Adapter `output_path=...` writes it | Adapter does NOT save raw; smoke must extract from RunRecord or call the SDK directly |
+
+## Open question (block before code)
+
+Qwen's `adapter_qwen_dashscope.run()` returns a `RunRecord` and
+discards the raw `dashscope.Generation.call()` response. The smoke
+needs the raw narrative text to (a) feed the classifier, (b) save
+as `.report.md`, (c) extract `tool_reference` citations. Three
+ways to handle:
+
+1. **Stash narrative in `RunRecord.method_params.extra`** at adapter
+   parse time. Read-only-friendly *if* the adapter author agrees;
+   otherwise out-of-scope per the smoke's no-edit-adapter rule.
+2. **Call `dashscope.Generation.call` directly in the smoke**,
+   bypassing the adapter for the raw step and using the adapter only
+   for cost/parse. Doubles transport surface; not preferred.
+3. **Extend `adapter_qwen_dashscope` to accept `output_path` and
+   save raw before parsing** — same shape as Mistral. Cleanest;
+   parallel-adapter ticket if needed.
+
+Recommend route (3) unless author overrides. File a sibling adapter
+ticket "save raw on Qwen DashScope adapter for downstream
+consumers".
+
+## Actions
+
+1. Resolve the raw-persistence question (above).
+2. Add `run_qwen_call(...)` in the smoke, analogous to
+   `run_mistral_call` — forwards `continuation`, `extra_metadata`,
+   `system_prompt` to the adapter.
+3. Extend `run_phase_b_multiturn` to dispatch on `agent`:
+   - Mistral: `run_mistral_call` + `adapter_mistral.cleanup_agent`
+   - Qwen: `run_qwen_call`, no cleanup
+4. Add system_prompt threading for Qwen (ticket 0213 scope was
+   Mistral-only): prepend `{role: "system", content: system_prompt}`
+   to the `messages` list on the first turn.
+5. Unit tests:
+   - `test_qwen_smoke_end_to_end_with_mocked_adapter`
+   - `test_qwen_no_cleanup_call`
+6. Live smoke on Qwen end-to-end. Budget cap \$10. Verify
+   per-row Source 1 / Source 2 columns are populated after VERIFY.
+7. Update §4 first-observation paragraph to "Mistral + Qwen pilot
+   (n=2 agents)" with both observed inventories cited.
+
+## Exit criteria
+
+- [ ] Raw-persistence question resolved (likely via a sibling adapter
+      ticket).
+- [ ] Qwen wired in `run_phase_b_multiturn` with system_prompt.
+- [ ] Unit tests green.
+- [ ] Live Qwen smoke produces a structured inventory with populated
+      source columns; artefacts under
+      `experiments/outputs/sota_exp2_smoke/qwen_*`.
+- [ ] §4 prose updated; 0207's "second agent" exit criterion can be
+      checked off.
+
+## Out of scope
+
+- OpenAI + Anthropic extensions (separate tickets when their turn
+  comes; Phase B-0 review gate per Annex C).
+- Tweaking the state machine or reply strings — those are locked by
+  0214.

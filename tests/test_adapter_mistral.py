@@ -789,7 +789,7 @@ def test_run_extra_metadata_logged_without_crash(monkeypatch, caplog):
 # that triggers ONLY on transient signals (502/503/504, ReadTimeout,
 # ConnectTimeout, RemoteProtocolError). 4xx — and 422 in particular —
 # must NEVER be retried; that would have papered over the request-shape
-# bugs fixed in tickets 0211/0212.
+# bugs fixed in tickets 0211/0218.
 # ---------------------------------------------------------------------------
 
 
@@ -855,7 +855,7 @@ def test_create_agent_does_not_retry_on_422(_no_sleep):
     """422 (client error) must raise immediately — no retry.
 
     Retrying 4xx would have papered over the request-shape bugs fixed
-    in tickets 0211/0212; the regression guard is load-bearing.
+    in tickets 0211/0218; the regression guard is load-bearing.
     """
     client = _FakeResponseSequence(
         [

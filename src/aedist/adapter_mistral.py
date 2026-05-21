@@ -300,7 +300,7 @@ def _extract_query(arguments: Any) -> str:
 # Policy: max 3 retries, exponential backoff 1s/2s/4s with ±10% jitter.
 # Retry only on transient signals — never on 4xx (a 4xx is a request
 # bug, not a server hiccup; retrying would have papered over the 422
-# bugs fixed in tickets 0211/0212).
+# bugs fixed in tickets 0211/0218).
 RETRYABLE_STATUSES = frozenset({502, 503, 504})
 RETRYABLE_EXCEPTIONS: tuple[type[Exception], ...] = (
     httpx.ReadTimeout,
@@ -401,7 +401,7 @@ def _append_conversation(client: httpx.Client, conversation_id: str, body: dict)
     Path-bound append endpoint (Mistral Agents beta API, verified
     2026-05-21). The agent is implied by the conversation; ``agent_id``
     and ``conversation_id`` MUST NOT appear in ``body`` (HTTP 422
-    otherwise — see tickets 0211/0212).
+    otherwise — see tickets 0211/0218).
     """
     resp = _request_with_retry(
         "post",
