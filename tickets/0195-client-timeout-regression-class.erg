@@ -2,9 +2,11 @@
 Title: Standing regression test — every OpenAI() client and chat.create() callsite is wedge-safe
 Created: 2026-05-21
 Author: claude
+Closed: wontfix — overengineering for the current operational model (supervised runs). The uncovered callsites (responses adapter, pdf2md tooling, fusion) are user-driven where a human can kill a wedge. PR #374's worker-pipeline fix is sufficient because workers are the only unattended-sweep path. Reopen if/when runs move to unsupervised batch.
 
 --- log ---
 2026-05-21T08:30Z claude created — sweep follow-up from raid 0183/0187/0191 (celebrate phase). The wedge fix in PR #374 protects the worker pipeline, but the sweep found 5+ OpenAI()/chat.create() callsites outside that pipeline that remain unprotected. Class shape merits a standing test, not just per-call fixes.
+2026-05-21T09:00Z claude closed wontfix — user feedback: "overengineering, the runs are supervised." Standing AST test is infrastructure for an unattended-sweep operational model; current model is human-supervised for the bypass callsites.
 
 --- body ---
 ## Context
