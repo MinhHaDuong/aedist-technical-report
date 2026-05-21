@@ -10,6 +10,7 @@ Author: claude
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:931962ecd1e1 scope:add seed, provider_order, max_tokens, num_ctx to JobSpec; wire through worker and evaluate; forbid unknown fields risk:medium — touches worker execution path and evaluate backfill across multiple files
 2026-05-01T00:00Z claude note path-reference in 0144 body updated to docs/argument.md (ticket 0147 rename)
 2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:931962ecd1e1
+2026-05-21T00:00Z claude note implemented on t0139-jobspec-forbid-extras: added provider_order + num_ctx, _remap_sweep_fields strips model_set/ollama_url, JobSpec model_config=ConfigDict(extra=forbid), worker uses query_model (Ollama num_ctx honoured), raw JSON writes 5 fields, evaluate.py backfills the batch + finish_reason; audit shows 58/63 sweeps load cleanly (5 verification/fusion sweeps fail pre-existing missing-required-fields, routed externally not through manager.generate); canary sweep_ablation_p1_direct_base loads.
 
 --- body ---
 **Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. The seed silent-drop bug fix is correct but the scope is substantial (schema + wiring + backfill). Recommend triage for prioritization.

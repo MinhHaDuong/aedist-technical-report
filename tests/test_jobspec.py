@@ -189,6 +189,121 @@ class TestJobSpecPromptModules:
         assert j.prompt_modules == []
 
 
+class TestJobSpecForbidExtras:
+    """Ticket 0139: extra='forbid' rejects unknown keys, accepts new fields."""
+
+    def test_unknown_key_rejected(self):
+        with pytest.raises(ValidationError) as exc_info:
+            _make_jobspec(bogus_field=42)
+        assert "bogus_field" in str(exc_info.value) or "Extra inputs" in str(exc_info.value)
+
+    def test_seed_field(self):
+        j = _make_jobspec(seed=42)
+        assert j.seed == 42
+
+    def test_provider_order_field(self):
+        j = _make_jobspec(provider_order=["DeepSeek", "Alibaba"])
+        assert j.provider_order == ["DeepSeek", "Alibaba"]
+
+    def test_provider_order_default_none(self):
+        j = _make_jobspec()
+        assert j.provider_order is None
+
+    def test_num_ctx_field(self):
+        j = _make_jobspec(num_ctx=65536)
+        assert j.num_ctx == 65536
+
+    def test_num_ctx_default(self):
+        j = _make_jobspec()
+        assert j.num_ctx == 32768
+
+    def test_max_tokens_field(self):
+        j = _make_jobspec(max_tokens=8192)
+        assert j.max_tokens == 8192
+
+    def test_web_search_field(self):
+        j = _make_jobspec(web_search=True)
+        assert j.web_search is True
+
+    def test_round_trip_new_fields(self):
+        original = _make_jobspec(
+            seed=42,
+            provider_order=["DeepSeek"],
+            num_ctx=16384,
+            max_tokens=8192,
+            web_search=True,
+        )
+        restored = JobSpec.from_yaml(original.to_yaml())
+        assert restored == original
+
+
+class TestJobSpecSweepRemap:
+    """Ticket 0139: _remap_sweep_fields strips manager-owned and deprecated keys."""
+
+    def test_model_set_stripped(self):
+        """model_set is resolved by manager._filter_models_by_set, not JobSpec."""
+        section = {
+            "mode": "single",
+            "prompt": "p.txt",
+            "models": "models.yaml",
+            "model_set": "modelset_journal",
+            "repeat": 1,
+            "output": "outputs/test",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.mode == Method.SINGLE
+
+    def test_ollama_url_stripped(self):
+        """ollama_url is a legacy sweep key; base URL comes from registry/worker."""
+        section = {
+            "mode": "single",
+            "prompt": "p.txt",
+            "models": "models.yaml",
+            "ollama_url": "http://localhost:11434/v1",
+            "repeat": 1,
+            "output": "outputs/test",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.mode == Method.SINGLE
+
+    def test_unknown_sweep_key_rejected(self):
+        section = {
+            "mode": "single",
+            "prompt": "p.txt",
+            "models": "models.yaml",
+            "frobnicate": True,
+            "repeat": 1,
+            "output": "outputs/test",
+        }
+        with pytest.raises(ValidationError):
+            JobSpec.from_toml_section(section)
+
+    def test_canary_sweep_loads(self):
+        """The live Exp 1 sweep (sweep_ablation_p1_direct_base) must load.
+
+        This is the regression check for the forbid flip — if it ever fails,
+        a new field was added to the canary sweep without being declared on
+        JobSpec or stripped in _remap_sweep_fields.
+        """
+        section = {
+            "mode": "single",
+            "prompt_modules": [],
+            "models": "models.yaml",
+            "model_set": "modelset_ablation_journal",
+            "repeat": 5,
+            "temperature": 0.0,
+            "seed": 42,
+            "budget_usd": 15,
+            "max_tokens": 32768,
+            "system_instruction": "You have no web search capability.",
+            "output": "outputs/ablation/direct/p1_base",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.mode == Method.SINGLE
+        assert j.seed == 42
+        assert j.max_tokens == 32768
+
+
 class TestLeaseInfo:
     def test_construction(self):
         now = datetime.now(UTC)
