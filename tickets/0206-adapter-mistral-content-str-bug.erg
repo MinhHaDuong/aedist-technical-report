@@ -2,10 +2,12 @@
 Title: adapter_mistral.parse_response crashes on string-typed content
 Created: 2026-05-21
 Author: claude
+Closed: fix merged on main via PR #394 (5585e91)
 
 --- log ---
 2026-05-21T13:00Z claude created — observed live three times in the Exp 2 smoke (0185); blocks every Mistral SOTA cloud call
 
+2026-05-21T15:36Z HDMX-coding-agent closed — fix merged on main via PR #394 (5585e91)
 --- body ---
 ## Context
 
