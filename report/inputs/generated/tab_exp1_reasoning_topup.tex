@@ -6,8 +6,7 @@
 \label{tab:exp1-reasoning-topup}
 \begin{tabular}{lrrrrrr}
 \toprule
-Model & $N_{\text{base}}$ & $N_{\text{post}}$ & F1 baseline & F1 post-fix & $\Delta$F1 & Reasoning tokens \\
- & & & & & & (median) \\
+Model & $N_{\text{base}}$ & $N_{\text{post}}$ & F1 baseline & F1 post-fix & $\Delta$F1 & Reasoning tokens* \\
 \midrule
 Claude-Haiku-4.5 & 5 & 3 & 0.189 & 0.189 & +0.000 & 0 \\
 Claude-Opus-4.6 & 5 & 3 & 0.463\,$\pm$\,0.057 & 0.500\,$\pm$\,0.011 & +0.036 & 0 \\
@@ -27,4 +26,5 @@ Qwen3.6-Flash & 5 & 0 & 0.385\,$\pm$\,0.068 & --- & --- & --- \\
 Qwen3.6-Plus & 5 & 3 & 0.440\,$\pm$\,0.063 & 0.328\,$\pm$\,0.081 & -0.111 & 6\,677 \\
 \bottomrule
 \end{tabular}
+\\[0.5ex]\small\textsuperscript{*} Median over 3 runs.
 \end{table}

@@ -135,8 +135,7 @@ def generate_table_tex(rows: list[dict]) -> str:
         "\\begin{tabular}{lrrrrrr}",
         "\\toprule",
         "Model & $N_{\\text{base}}$ & $N_{\\text{post}}$ & F1 baseline & "
-        "F1 post-fix & $\\Delta$F1 & Reasoning tokens \\\\",
-        " & & & & & & (median) \\\\",
+        "F1 post-fix & $\\Delta$F1 & Reasoning tokens* \\\\",
         "\\midrule",
     ]
 
@@ -177,6 +176,7 @@ def generate_table_tex(rows: list[dict]) -> str:
         [
             "\\bottomrule",
             "\\end{tabular}",
+            "\\\\[0.5ex]\\small\\textsuperscript{*} Median over 3 runs.",
             "\\end{table}",
         ]
     )

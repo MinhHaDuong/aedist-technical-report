@@ -109,7 +109,7 @@ No persona, no narratives, no quality bullets — those land in ablation sweeps,
 
 Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
 
-| Model | Lab | Family | Size class | Reasoning tokens (median, post-fix) |
+| Model | Lab | Family | Size class | Reasoning tokens* |
 |---|---|---|---|---|
 | claude-opus-4.6 | Anthropic | EN | frontier | 0 |
 | claude-sonnet-4.6 | Anthropic | EN | frontier | 0 |
@@ -127,6 +127,8 @@ Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/exp
 | qwen3-max-thinking | Alibaba | ZH | frontier | 0 |
 | deepseek-v4-pro | DeepSeek | ZH | frontier | 16,774 |
 | deepseek-v4-flash | DeepSeek | ZH | mid | 775 |
+
+\* Median over 3 runs.
 
 Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. All sixteen models received identical call parameters (T=0, seed=42, max_tokens=32768, no-web system instruction). The only reasoning-related signal sent was `reasoning_effort = "minimal"` for the two `gpt-oss-*` entries, declared in the registry. The "Reasoning tokens" column reports the median `completion_tokens_details.reasoning_tokens` field over the post-fix top-up cohort (ticket 0198, 2026-05-21, $N{\leq}3$ per model). The original baseline cohort (2026-05-20) ran on a harness that stripped `usage.completion_tokens_details` before writing records to disk, a bug fixed in PR #379 (ticket 0195); the top-up sweep was issued post-fix with identical call shape to recover the column. Two regimes are visible: Anthropic and Mistral models report 0 reasoning tokens across all reps; DeepSeek V4, all Qwen3.6 entries that we could run, GPT-OSS, and GPT-5.5 allocate between dozens and 16,774 tokens to internal reasoning. `qwen3-max-thinking` reports 0 despite the explicit naming: OpenRouter does not expose reasoning tokens for this model in the absence of an explicit `reasoning_effort` flag. `qwen3.6-flash` is reported as "—": Alibaba's free-tier upstream rate-limited all top-up attempts across the session. For `qwen3-max-thinking`, an early minimal-effort smoke produced 5/5 refusals; the no-effort lineup recovered 5/5 usable rows after a parser fix that handles markdown section dividers inside structured-output tables. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. **GPT-5.5 declines this task on 3 of 5 reps**, opening with "I can't honestly produce a complete, primary-sourced inventory..." and refusing to fabricate URLs or source citations from parametric knowledge alone. We retain the declined responses as data — a model viewpoint on the request's epistemic standard, not extraction noise.
 
