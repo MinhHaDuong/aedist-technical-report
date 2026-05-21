@@ -49,6 +49,81 @@ pas des données correctes, mais des données \emph{corrigeables}~: quand un
 relecteur trouve une erreur, le pipeline indique quelle source était erronée
 et quoi corriger.
 
+Ce triage éditorial amont s'inscrit dans une tradition plus ancienne de
+classification de sources en renseignement, notamment le système
+\emph{Admiralty} (OTAN STANAG 2511, hérité des pratiques navales
+britanniques de la Seconde Guerre mondiale), qui distingue la
+\emph{fiabilité de la source} (A--F, de «~complètement fiable~» à «~ne
+peut être jugée~») de la \emph{crédibilité de l'information} (1--6, de
+«~confirmée par d'autres sources~» à «~ne peut être jugée~»), formant
+une matrice 6$\times$6. Notre filtre amont à trois niveaux (Tier~1
+primaire \;/\; Tier~2 dérivé curaté avec responsabilité éditoriale,
+type GEM ou enerdata \;/\; Tier~3 tertiaire ou sans responsabilité, exclu
+par défaut) est une simplification unidimensionnelle de cet axe
+\emph{source}~; l'axe \emph{crédibilité} revient en aval dans le rubric
+0--5 de \emph{quality-grounding} (§2.2), où la corroboration par sources
+indépendantes joue le rôle de la crédibilité multi-sources.
+
+\subsubsection{Filtre amont des sources}\label{sec:verif-filter}
+
+Le filtre éditorial introduit en §\ref{sec:verif-frontload} se précise en
+trois niveaux, ordonnés par \emph{rôle épistémique de la donnée} plutôt
+que par identité de l'éditeur. Une même institution peut publier à
+différents niveaux selon qu'elle produit la donnée ou qu'elle l'agrège~:
+\texttt{banktrack.org} publie au niveau~1 ses propres analyses de
+portefeuilles bancaires, mais au niveau~3 quand il agrège GEM en note
+de plaidoyer. La classification porte sur l'URL, pas sur le domaine.
+
+\paragraph{Niveau~1 --- source primaire.}
+L'éditeur \emph{est} le producteur de la donnée. Pour le secteur
+énergétique vietnamien~: décisions gouvernementales (\emph{Quyết định},
+\texttt{chinhphu.vn}, \texttt{moit.gov.vn}), rapports annuels EVN et
+PetroVietnam, communiqués officiels des exploitants
+(\texttt{aesmongduong.vn} pour Mong~Duong, etc.), documents de projets
+des bailleurs internationaux (Banque mondiale, ADB, PNUD).
+\emph{Admission automatique, marquage «~primaire~».}
+
+\paragraph{Niveau~2 --- dérivée curatée avec responsabilité éditoriale.}
+La source agrège ou retraite des données primaires sous sa propre
+responsabilité, avec une méthodologie documentée. L'appartenance est
+vérifiée contre quatre oracles, dans l'ordre~:
+\begin{enumerate}
+\item Bibliographie sourcée de l'auteur (\texttt{docs/pipeline.ods},
+  feuilles \emph{References}, \emph{Power plants}, \emph{Terminals})~;
+\item Corpus RAG local (\texttt{data/rag_corpus/}, extraits markdown des
+  annexes PDP7/7A/8 et rapports annuels EVN)~;
+\item Bibliothèque Zotero de l'auteur (vérification par API)~;
+\item Liste de domaines de confiance~: \texttt{gem.wiki} (Global Energy
+  Monitor, inventaire NGO avec méthodologie de vérification satellitaire
+  et terrain), \texttt{enerdata.net} (fournisseur commercial de
+  statistiques sectorielles). Cette liste croît par promotion explicite,
+  non par défaut.
+\end{enumerate}
+\emph{Admission automatique, marquage «~secondaire curaté~».}
+
+\paragraph{Niveau~3 --- tertiaire ou sans responsabilité éditoriale.}
+La source agrège des sources secondaires sans méthodologie documentée
+(Wikipédia~--- texte révisable par quiconque, sans engagement éditorial),
+publie de la revue de presse sectorielle sans données propres
+(\texttt{power-technology.com}, \texttt{nsenergybusiness.com},
+\texttt{reccessary.com}), ou ne cite aucune source identifiable.
+\emph{Exclusion par défaut.} L'opérateur peut promouvoir une URL au
+niveau~2 par décision explicite~; la question à laquelle il répond est
+unique~: \emph{cette URL est-elle la source de référence pour la donnée,
+ou cite-t-elle une autre source~?} Beaucoup de sources tertiaires ne
+citent rien~--- la réponse est alors triviale et l'exclusion est
+maintenue.
+
+\paragraph{Canonisation par appariement flou.}
+Avant classification, les URL et les titres sont canonisés par
+appariement flou pour éviter qu'une même source de référence apparaisse
+deux fois dans la bibliographie vérifiée~: normalisation des hôtes
+(\texttt{en./www./m.}), suppression des paramètres de requête et
+fragments, fusion des miroirs PDF/HTML d'un même document, appariement
+par similarité de titre entre prépublication et publication. Un seul
+enregistrement par \emph{document de référence}, indépendamment du
+nombre d'URL qui y mènent.
+
 \subsubsection{Vérification déterministe à trois niveaux}\label{sec:verif-tiers}
 
 La vérification automatisée suit une chaîne à trois niveaux, par ordre

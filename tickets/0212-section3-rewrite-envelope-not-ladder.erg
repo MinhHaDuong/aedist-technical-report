@@ -1,0 +1,122 @@
+%erg 0.1
+Title: §3 rewrite — drop the ladder framing, reframe as envelope pushed by agent capabilities
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T17:00Z claude created — author directive (verbatim below) during §2/§4 citation sweep
+
+--- body ---
+
+## Context
+
+§3 of `slides/manuscript/main.md` ("Third, from chatbots to knowledge
+management", lines 40–51 pre-edit) is currently an embryo: six
+"limits" enumerated (articulation, coverage, reasoning, tool-use,
+retroactivity, agency) with three of them stubbed (`—.`), followed by
+a one-paragraph industry trajectory narrative. It needs a rewrite.
+
+## Author directive (2026-05-21, verbatim)
+
+> Section 3 is embryo. Open a ticket to sweep existing contents (see
+> previous line) and propose a page. We made empirical research, had a
+> timeline. Do NOT try to defend the mapping of quality <-> industry
+> stages. Quality axes are ordered, and even within an axis it is
+> simplifying to think of it as a ladder. Better think of it as a
+> spider graph (aside: we will probably need such a graph to grade the
+> reports quality. I hope there is a ticket already open for quality
+> judgment). The industry is pushing the enveloppe not climbing a
+> ladder. Agent capabilities improve statistical dataset quality. Do
+> we need a heatmap or a flow chart ?
+
+## Constraints (load-bearing)
+
+- **No defense of a quality↔stages mapping.** The current §3 implicitly
+  maps each capability (articulation, coverage, reasoning, …) onto a
+  §2 quality dimension. Drop that mapping. It is not the claim.
+- **Quality axes are ordered but not ladders.** Within accuracy /
+  coherence / provenance / temporality, "ladder" oversimplifies. Use
+  spider-graph framing instead — each axis a separate ray, joint
+  performance an enclosed shape.
+- **Industry pushes the envelope, not climbs a ladder.** The §3
+  narrative is about the outer surface of what is commercially
+  attainable expanding over time, not about labs climbing the same
+  staircase.
+- **One-sentence thesis.** Agent capabilities improve statistical
+  dataset quality. That is the claim §3 should land.
+
+## Sweep targets (read all before proposing)
+
+- `slides/manuscript/main.md` §3 (current state)
+- `docs/capability-timeline.md` (empirical chronology, four-lab matrix)
+- `docs/related-work/03-capability-ladder.md` (15-citation due-diligence note)
+- `report/report.tex` (esp. the capability-history sections, French
+  prose, and existing citations)
+- `slides/slides.tex` (the talk version of the same argument)
+- Tickets 0146 (capability-timeline expand + figure — sweep-skipped
+  twice as scope-too-large), 0152 (align-slides-on-argument),
+  0144 (RAG/reasoning/coherence-cell)
+
+## Open visualization question
+
+Heatmap vs flowchart vs spider-graph montage? Possibilities:
+
+- **Heatmap** — labs × capability-stage × time-of-arrival. Reads as
+  "the envelope advances across the industry," not "this lab is
+  ahead."
+- **Flowchart / DAG** — capabilities as nodes, dependencies as edges
+  (1→2 sequential; 3+4 parallel and merging into 5; 5→6→7). Reads as
+  "these capabilities have a structural ordering" without claiming a
+  performance ladder.
+- **Spider-graph montage** — one spider per generation of agents,
+  showing the joint accuracy/coherence/provenance/temporality
+  envelope expanding over time. Reads as "the achievable quality
+  surface grows."
+- **Combination** — heatmap or DAG for the capability surface, spider
+  graph for the quality surface.
+
+The proposal should pick one (or none), with rationale.
+
+## Related open tickets
+
+- **0201** — Quality composite axis (coherence/provenance/temporality
+  scorers). This is the ticket the author refers to as "quality
+  judgment". The spider-graph-for-grading concern is already covered
+  there; this §3 ticket does not duplicate scope. If §3 lands a
+  spider-graph figure, the figure-generation script likely lives
+  next to whatever 0201 produces.
+- **0146** — Capability timeline expansion + figure. Has the data
+  substrate (seven-stage matrix, ≥4 labs). The proposal here may
+  share or refactor that figure.
+- **0199** — Experiment 2 spec/run. The §4 result will eventually
+  push the §3 envelope; the §3 page should land before Exp 2 results
+  arrive so §4 can land into a coherent §3.
+
+## Actions
+
+1. Read all sweep targets end-to-end. Take notes.
+2. Draft a §3 proposal as a single self-contained page (max ≈ 1.5
+   pages rendered) that obeys the four constraints above. Save the
+   draft to `docs/section3-proposal.md` for review before touching
+   `slides/manuscript/main.md`.
+3. Pick a visualization mode (heatmap / flowchart / spider / none)
+   with a one-paragraph rationale.
+4. List the citations the rewrite will need; cross-check against
+   `report/refs.bib` and `docs/related-work/03-capability-ladder.md`.
+5. After author sign-off on the proposal, write the §3 prose to
+   `slides/manuscript/main.md` and wire any new figure into the
+   Makefile per the figures-are-artifacts rule.
+
+## Exit criteria
+
+- [ ] `docs/section3-proposal.md` exists, ≤ 1.5 rendered pages.
+- [ ] Proposal answers the heatmap-vs-flowchart-vs-spider question
+      with rationale.
+- [ ] Author has approved the proposal (log entry on this ticket).
+- [ ] `slides/manuscript/main.md` §3 replaced.
+- [ ] Any new figure has a Makefile target and renders cleanly via
+      `pandoc slides/manuscript/main.md -o main.pdf
+      --pdf-engine=tectonic --resource-path=slides`.
+- [ ] No paragraph in §3 defends a quality↔stages mapping.
+- [ ] One-sentence thesis "agent capabilities improve statistical
+      dataset quality" appears explicitly in the rewrite.

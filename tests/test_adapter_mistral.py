@@ -17,11 +17,14 @@ its `_provenance` field and the ticket log entry.
 import json
 from pathlib import Path
 
+import httpx
 import pytest
 
 from aedist.adapter_mistral import (
     AGENT_FAMILY,
     DEFAULT_MODEL,
+    _append_conversation,
+    _create_agent,
     build_request,
     parse_response,
     run,
@@ -524,3 +527,126 @@ def test_run_extra_metadata_logged_without_crash(monkeypatch, caplog):
     )
     # Should not crash; dry-run returns normally.
     assert record.method_params.extra == {"dry_run": True}
+
+
+# ---------------------------------------------------------------------------
+# Retry policy (ticket 0215)
+#
+# The Mistral Agents beta API is empirically flaky on 5xx (the 2026-05-21
+# multi-turn smoke turn-3 was killed by a single HTTP 502; ticket 0185).
+# The adapter wraps each POST/DELETE with an exponential-backoff retry
+# that triggers ONLY on transient signals (502/503/504, ReadTimeout,
+# ConnectTimeout, RemoteProtocolError). 4xx — and 422 in particular —
+# must NEVER be retried; that would have papered over the request-shape
+# bugs fixed in tickets 0211/0212.
+# ---------------------------------------------------------------------------
+
+
+class _FakeResponseSequence:
+    """Drives a queued list of (status_code, body_json) pairs.
+
+    Each ``post``/``delete`` pops the next entry and returns a response
+    whose ``raise_for_status`` raises an authentic
+    :class:`httpx.HTTPStatusError` (subclass of ``httpx.HTTPError``) for
+    non-2xx — so the retry-vs-no-retry tests actually exercise the same
+    exception type the live API produces.
+    """
+
+    def __init__(self, entries: list[tuple[int, dict]]):
+        self._entries = list(entries)
+        self.calls: list[tuple[str, str]] = []
+
+    def _next(self, method: str, url: str) -> httpx.Response:
+        self.calls.append((method, url))
+        status, body = self._entries.pop(0)
+        request = httpx.Request(method.upper(), f"https://example.invalid{url}")
+        return httpx.Response(status, json=body, request=request)
+
+    def post(self, url: str, **_kwargs: object) -> httpx.Response:
+        return self._next("POST", url)
+
+    def delete(self, url: str, **_kwargs: object) -> httpx.Response:
+        return self._next("DELETE", url)
+
+
+@pytest.fixture
+def _no_sleep(monkeypatch):
+    """Skip the backoff sleeps so retry tests run instantly."""
+    monkeypatch.setattr("aedist.adapter_mistral.time.sleep", lambda _s: None)
+
+
+def test_create_agent_retries_on_502(_no_sleep):
+    """502 twice → 200 ok: ``_create_agent`` retries and returns the id."""
+    client = _FakeResponseSequence(
+        [
+            (502, {"error": "bad gateway"}),
+            (502, {"error": "bad gateway"}),
+            (200, {"id": "ag_retry_success"}),
+        ]
+    )
+    agent_id = _create_agent(client, {"model": DEFAULT_MODEL})
+    assert agent_id == "ag_retry_success"
+    # 1 initial + 2 retries = 3 attempts total.
+    assert len(client.calls) == 3
+    assert all(m == "POST" and u == "/v1/agents" for m, u in client.calls)
+
+
+def test_create_agent_gives_up_after_3_retries(_no_sleep):
+    """502 × 4: ``_create_agent`` exhausts retries and raises ``HTTPStatusError``."""
+    client = _FakeResponseSequence([(502, {"error": "bad gateway"})] * 4)
+    with pytest.raises(httpx.HTTPStatusError):
+        _create_agent(client, {"model": DEFAULT_MODEL})
+    # 1 initial + 3 retries = 4 attempts; then raise.
+    assert len(client.calls) == 4
+
+
+def test_create_agent_does_not_retry_on_422(_no_sleep):
+    """422 (client error) must raise immediately — no retry.
+
+    Retrying 4xx would have papered over the request-shape bugs fixed
+    in tickets 0211/0212; the regression guard is load-bearing.
+    """
+    client = _FakeResponseSequence(
+        [
+            (422, {"detail": "Extra inputs are not permitted"}),
+            # Extras intentionally present — if a retry leaked in we'd
+            # see a second call and the test would still fail on the
+            # call-count assertion.
+            (200, {"id": "ag_should_not_reach"}),
+        ]
+    )
+    with pytest.raises(httpx.HTTPStatusError):
+        _create_agent(client, {"model": DEFAULT_MODEL})
+    assert len(client.calls) == 1, "422 must not trigger any retry"
+
+
+def test_append_conversation_retries_on_503(_no_sleep):
+    """The path-bound follow-up POST also goes through the retry wrapper.
+
+    Bonus coverage per the ticket: this is the endpoint that killed the
+    0185 multi-turn smoke (POST /v1/conversations/{id}).
+    """
+    client = _FakeResponseSequence(
+        [
+            (503, {"error": "service unavailable"}),
+            (
+                200,
+                {
+                    "outputs": [
+                        {"type": "message.output", "content": "follow-up ok"},
+                    ],
+                    "usage": {
+                        "prompt_tokens": 10,
+                        "completion_tokens": 5,
+                        "connector_tokens": 0,
+                        "connectors": {"web_search": 0},
+                    },
+                },
+            ),
+        ]
+    )
+    raw = _append_conversation(client, "conv_abc", {"inputs": []})
+    assert raw["outputs"][0]["content"] == "follow-up ok"
+    assert len(client.calls) == 2
+    # All calls hit the path-bound URL — not bare /v1/conversations.
+    assert all(u == "/v1/conversations/conv_abc" for _, u in client.calls)

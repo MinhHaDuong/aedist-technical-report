@@ -2,10 +2,12 @@
 Title: Worker exits on 429 instead of marking single job failed and continuing
 Created: 2026-05-21
 Author: claude
+Closed: autoclosed — PR #402
 
 --- log ---
 2026-05-21T11:40Z claude created — uncovered during ticket 0198 raid
 
+2026-05-21T16:06Z HDMX-coding-agent closed — autoclosed — PR #402
 --- body ---
 ## Context
 

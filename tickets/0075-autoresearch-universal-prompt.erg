@@ -2,6 +2,7 @@
 Title: Survey automated prompt-optimization frameworks (DSPy et al.) for a universal prompt
 Created: 2026-04-11
 Author: claude
+Closed: wontfix — no clear simple scoring script and the framework requires model independence
 
 --- log ---
 2026-04-11T20:00Z claude created — brain dump from operator
@@ -19,6 +20,7 @@ Author: claude
 2026-04-26T10:00Z claude note orchestrator reimagined+planned: survey done, prototype remains. Wrote concrete 7-step execution plan with integration points, model selection, cost estimate, and file layout. Feasibility verified against codebase.
 2026-04-26T15:10Z haduong deferred — Phase 5 (Execute) blocked until after Econom'IA talk 2026-05-27. Do not pick this ticket autonomously before that date. When picked post-talk, proceed directly to Execute (Phase 5) — no need to ask for direction.
 
+2026-05-21T15:23Z HDMX-coding-agent closed — wontfix — no clear simple scoring script and the framework requires model independence
 --- body ---
 ## Context
 

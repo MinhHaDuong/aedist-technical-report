@@ -2,10 +2,14 @@
 Title: Experiment 3 — reconstruction from verified bibliography (5 strategies × 5 models)
 Created: 2026-05-21
 Author: claude
-Blocked-by: 0166
 
 --- log ---
 2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
+2026-05-21T15:00Z claude note Tier scheme sharpened in design dialogue: provenance role (primary/secondary/tertiary) not institution; default-exclude for Tier 3; four-oracle Tier-2 stack (pipeline.ods, rag_corpus, Zotero, allowlist {gem.wiki, enerdata.net}). Canonical scheme landed in report/inputs/verification_methods.tex §sec:verif-filter with Admiralty STANAG 2511 antecedent cited. Smoke fixture (experiments/outputs/sota_smoke/) confirmed as the development corpus — ~50 unique URLs across 4 provider schemas covering Tier-1/2/3 edge cases.
+2026-05-21T16:00Z HDMX-coding-agent note swapped Blocked-by 0166 → 0185 — backlog audit found 0202 only needs one cheap deep-research bibliography (produced by 0185), not the full 12-cell N=3 cross-eval that 0166 promises; 0166/0170/0171 deferred to post-talk full-scope work
+2026-05-21T16:30Z HDMX-coding-agent note dropped Blocked-by entirely — Mistral smoke on rebuild-exp2-smoke branch already produced the input artefact: experiments/outputs/sota_exp2_smoke/mistral_turn_01.report.md (sectoral overview + Annotated Bibliography in 6 categories) and mistral_turn_01.citations.json (120 URLs). Source agent pinned to Mistral. 0185's reopen is for publication-readiness review (0213/0214/0215) — orthogonal to Exp 3's reconstruction input
+2026-05-21T17:00Z HDMX-coding-agent note imported the two artefacts into main as tests/fixtures/exp3_source_mistral_report.md and tests/fixtures/exp3_source_mistral_citations.json — durable on main, no dependency on rebuild-exp2-smoke branch for 0202 to start
+2026-05-21T18:00Z HDMX-coding-agent note clarification — 120 citation entries → 42 unique URLs (Mistral repeats URLs across cited passages). Document store for reconstruction itself is already on main at data/rag_corpus/ (18 primary-source markdown files); the bibliography is just the candidate URL list to classify
 
 --- body ---
 
@@ -36,43 +40,78 @@ this ticket; the case study is 0200, blocked by 0202.
 
 ## Starting state (= Exp 2 output)
 
-- Source agent: **cheapest among Exp 2 Phase B winners**. Resolves once
-  Exp 2 Phase B cost data is in; pin in this ticket's log when decided.
-- From the agent's deep-research report:
-  - **Kept**: sectoral overview, bibliography.
-  - **Thrown away**: inventory, table.
+- Source agent: **Mistral Large 2512** (the only SOTA agent for which
+  the 0185 smoke produced a usable deep-research report as of
+  2026-05-21). Artefacts checked in as fixtures on main:
+  - `tests/fixtures/exp3_source_mistral_report.md` — full report,
+    ~25 KB, 233 lines. Contains §1 Sector Overview, §2 Per-Plant
+    Discussion, §3 Structured Plants Table, **§4 Annotated
+    Bibliography** (6 categories: Government Decisions, Sectoral
+    Plans, Company Reports, Regulatory & IO, News & Media, Academic),
+    §5 Statistical Summaries, §6 Reconciliation, §7 Final Notes.
+  - `tests/fixtures/exp3_source_mistral_citations.json` — 120
+    citation entries → **42 unique URLs** (Mistral repeats the same
+    URL across cited passages).
+  Originals live on `rebuild-exp2-smoke` at
+  `experiments/outputs/sota_exp2_smoke/mistral_turn_01.{report.md,citations.json}`.
+  Note: the document corpus for reconstruction itself (Tier-2 oracle
+  (b) in the verification protocol below) is the existing
+  `data/rag_corpus/` on main — 18 verified primary-source markdown
+  files (EVN annual reports, PDP7/7A/8 annexes, Report 32/58, Study
+  E542 tables). The Mistral bibliography is the **candidate URL list**
+  the Tier 1/2/3 classifier sifts; `data/rag_corpus/` is the existing
+  curated stock.
+- From the report:
+  - **Kept**: §1 Sector Overview, §4 Annotated Bibliography (+ 120
+    citations from citations.json).
+  - **Thrown away**: §2, §3, §5, §6, §7 (the inventory, table, stats,
+    reconciliation, notes — everything downstream of the bibliography).
 
 ## Verification protocol (HITL)
 
-Three-tier deterministic classifier; output is a verified-bibliography
-CSV checked into the repo.
+Three-tier classifier ordered by *epistemic role of the datum*, not by
+publisher identity. Canonical scheme in `report/inputs/verification_methods.tex`
+§`sec:verif-filter` — that section is the source of record; this table is
+the implementer's quick reference.
 
 | Tier | Rule | Action |
 |------|------|--------|
-| 1 | Publisher is government, domestic public agency, company record, company press release, or government-owned news outlet | AUTO-OK + tagged primary |
-| 2 | Source doc is in user's Zotero library (and not Tier 1) | AUTO-OK + tagged non-primary |
-| 3 | Anything else | HITL — present claim snippet, await verdict |
+| 1 | Publisher *is* the producer of the datum (gov.vn / moit.gov.vn / chinhphu.vn / EVN / PetroVietnam / operator press releases / IFI project docs: WB, ADB, IEA, UNDP) | AUTO-OK + tagged primary |
+| 2 | URL appears in one of four oracles: (a) `docs/pipeline.ods` References sheet; (b) `data/rag_corpus/`; (c) Zotero library; (d) domain allowlist `{gem.wiki, enerdata.net}` | AUTO-OK + tagged secondary-curated |
+| 3 | Tertiary aggregation (Wikipedia, `power-technology.com`, `nsenergybusiness.com`, `reccessary.com`) or uncited | **DEFAULT-EXCLUDE.** Operator may promote per-URL by explicit decision. |
 
-Edge cases (strictest-reading defaults; refine if they bite in practice):
+Edge cases (strictest-reading defaults; refine if they bite):
 
-- State news outlet reporting on a derivative doc → Tier 1 (primary by
-  publisher; not by informational status).
+- Same domain, different role: `banktrack.org` own research → Tier 1;
+  banktrack.org policy brief aggregating GEM → Tier 3. Per-URL, not per-domain.
+- State news outlet reporting on a derivative doc → Tier 3 (the outlet
+  is not the producer; it's reporting on someone who is).
 - Dead URL whose doc is in Zotero with PDF attachment → Tier 2 (Zotero
   copy is citation of record).
-- Tier 1 publisher with dead link, not in Zotero → Tier 1 if publisher
-  identity is confirmable; else Tier 3.
+- Tier 1 publisher with dead link, not in any oracle → Tier 1 if
+  publisher identity is confirmable; else Tier 3 (default-excluded).
 
 Implementation:
 
-- Zotero membership check via existing API key (memory:
-  `reference_zotero.md`, user ID 95318).
-- Primary-publisher allowlist: starts small (gov.vn, EVN, MOIT, PVN,
-  IEA, VNA, …); grows as needed; maintained alongside the verification
-  script.
-- Tier 3 interactive prompt: per source, present URL + claim snippet,
-  capture verdict (primary / secondary / reject) + free-text note.
+- Fuzzy URL+title canonicalization (host normalization `en./www./m.`,
+  strip query/fragment, fuse PDF/HTML twins, fuzzy title match for
+  preprint/publication pairs) — one row per *document of record*, not
+  per URL string.
+- Tier-2 oracle precedence: `pipeline.ods` → `rag_corpus/` → Zotero
+  (API, memory `reference_zotero.md`, user ID 95318) → domain allowlist.
+- Tier-1 publisher allowlist: starts small (`gov.vn`, `chinhphu.vn`,
+  `moit.gov.vn`, `evn.com.vn`, `pvn.vn`, `worldbank.org`, `adb.org`,
+  `iea.org`, `undp.org`, …); grows by explicit promotion.
+- Tier-2 domain allowlist: `{gem.wiki, enerdata.net}`; grows by explicit
+  promotion only (never by default — generics like `worldpowerdata.com`,
+  `database.earth`, `worldpowerplants.com` stay Tier 3 until earned).
+- Tier-3 default-exclude UX: operator sees a summary "N URLs excluded
+  by default; review? [y/N]" — drill-down on demand, not per-URL prompt.
+  Promotion question (per URL when drilled): "Is this URL the source of
+  record for the claim, or is it citing another source?" Most tertiaries
+  cite nothing → answer is trivial → exclusion maintained.
 - Output: `experiments/exp3/verified_bibliography.csv` —
-  `(source_url, tier, primary, notes)`.
+  `(source_url_canonical, tier, primary, oracle_hit, notes)`.
 
 ## Reconstruction strategies (compared)
 

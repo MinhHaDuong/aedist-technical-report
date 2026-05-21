@@ -2,12 +2,14 @@
 Title: Reflexive prompt-design harness (Phase A)
 Created: 2026-05-14
 Author: claude
+Tag: deferred
 
 --- log ---
 2026-05-14T12:00Z claude created
 2026-05-14T13:00Z claude note Imagine: PROCEED. Place meta-prompt template at experiments/prompts/phase_a_meta_prompt.txt with {baseline}/{quality_bar}/{task_and_envelope} placeholders. Record baseline_sha + meta_prompt_sha alongside synopsis_sha. Specify minimal adapter protocol: assemble_request(user_message)->payload; dispatch(payload, dry_run: bool)->RunRecord. Use prompted JSON not function-calling (keeps the three adapters symmetric).
 
 2026-05-20T21:47Z HDMX-coding-agent note blocker 0167 closed — Blocked-by removed.
+2026-05-21T16:00Z HDMX-coding-agent note tagged deferred — backlog audit; 0185 is doing Phase A manually for the talk, automated harness is post-talk work
 --- body ---
 ## Context
 

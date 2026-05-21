@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Guard non-worker query paths against null content from provider
+Created: 2026-05-21
+Author: claude
+Tag: deferred
+
+--- log ---
+2026-05-21T18:50Z claude created — celebrate sweep for PR #402
+
+--- body ---
+## Context
+
+PR #402 added a null-content guard in `worker._query_and_save()`, but
+`query_single_turn()` returns `result["content"]` which can be None
+from providers like deepseek-v4-pro. Ten+ non-worker callsites use
+`result["content"]` without guarding.
+
+Most critical: `query_multiturn.py:114` appends `{"role": "assistant",
+"content": None}` to the message list, corrupting conversation state.
+Others (`query_direct`, `query_rag`, `query.py`, `smoke.py`, `verify.py`)
+save None to JSON or use it as text — less destructive but still wrong.
+
+`prototype_v1_fusion.py` already handles it with `or ""`.
+
+## Actions
+
+1. Add null-content guard in `query_single_turn()` itself (the source),
+   raising `RuntimeError` with model ID. This covers all downstream
+   callers without per-file patches.
+2. Alternatively, return `""` instead of `None` from `query_single_turn()`
+   and let callers decide if empty content is an error for their context.
+
+## Exit criteria
+
+- [ ] `query_single_turn()` never returns `content=None`
+- [ ] `query_multiturn` does not append None content to messages
+- [ ] Unit test with mocked None content verifies the guard
