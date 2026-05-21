@@ -28,6 +28,29 @@ Minh Ha-Duong, CIRED – CNRS
 └── pyproject.toml           # Python package config
 ```
 
+## Model routes
+
+Each entry in `experiments/models.yaml` declares a `route:` field telling
+the runner how to reach the model. Available routes:
+
+| Route             | Auth                                | Notes                                                                                  |
+|-------------------|-------------------------------------|----------------------------------------------------------------------------------------|
+| `openrouter`      | `OPENROUTER_API_KEY`                | Default; OpenAI-compatible API. Covers most cloud models. Also the dispatch path for local `llama_server` (point `base_url` at the local endpoint). |
+| `ollama`          | none (local)                        | Native `/api/chat` to honour `num_ctx`; serial only (Padme has one GPU). **Deprecated** in favour of `llama_server` via `openrouter` (OpenAI-compatible, no special path needed). |
+| `anthropic`       | `ANTHROPIC_API_KEY`                 | Direct Anthropic Messages API; web-search via official tool. Ticket 0167.             |
+| `openai-responses`| `OPENAI_API_KEY`                    | Direct OpenAI Responses API; web-search + reasoning. Ticket 0168.                     |
+| `mistral-agents`  | `MISTRAL_API_KEY`                   | Direct Mistral Agents API; web-search connector. Ticket 0169.                         |
+| `qwen-dashscope`  | `DASHSCOPE_API_KEY`                 | Direct Alibaba DashScope; thinking + web_search. Ticket 0173.                         |
+| `claude-code-cli` | user's existing Claude Code session | Subprocess wrapper around `claude --print --bare`; no API key in sweep env. Ticket 0160. |
+
+The `claude-code-cli` route is convenient for capability checks that
+should not consume an `ANTHROPIC_API_KEY` budget: bills against the
+user's subscription, runs in `--bare` mode (no hooks, no tools, no
+`CLAUDE.md` context). Limitations: no temperature/seed/`max_tokens`
+control, single-turn only. Registry entries:
+`claude-sonnet-4-6-cli`, `claude-opus-4-7-cli`. Example sweep:
+`sweep_smoke_claude_cli` in `experiments/experiments.toml`.
+
 ## Building
 
 Requires [Tectonic](https://tectonic-typesetting.github.io/) and [uv](https://docs.astral.sh/uv/).

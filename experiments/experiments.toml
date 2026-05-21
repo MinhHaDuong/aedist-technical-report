@@ -1021,3 +1021,27 @@ corpus = "data/rag_corpus"
 reference = "data/reference/vietnam_thermal_v1.csv"
 output = "derived/fusion_proto_dev"
 seed = 42
+
+# Ticket 0160: example sweep exercising the claude-code-cli route.
+# Authenticates via the user's existing Claude Code session — no
+# API key needed in the sweep environment. Bills against the user's
+# Anthropic subscription/plan, not registry pricing. Useful for
+# qualitative capability checks; not suitable for controlled sweeps
+# (no T=0/seed/max_tokens control).
+[sets.modelset_claude_cli_smoke]
+model_ids = [
+    "claude-sonnet-4-6-cli",
+]
+
+[sweeps.sweep_smoke_claude_cli]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "modelset_claude_cli_smoke"
+repeat = 1
+temperature = 0.0
+seed = 42
+budget_usd = 1
+max_tokens = 4096
+system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+output = "outputs/smoke/claude_cli"

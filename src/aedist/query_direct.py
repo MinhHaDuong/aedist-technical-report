@@ -38,6 +38,7 @@ from .harness import (
     make_client_for_route,
     model_metadata,
     output_path,
+    query_claude_cli,
     query_ollama_native,
     query_single_turn,
     save_json,
@@ -183,8 +184,15 @@ def main():
         route = model.get("route")
         if args.model_set and route:
             if route not in clients:
-                clients[route] = make_client_for_route(model)
+                if route == "claude-code-cli":
+                    # Adapter is a subprocess; no OpenAI-style client needed.
+                    clients[route] = None
+                else:
+                    clients[route] = make_client_for_route(model)
             client = clients[route]
+        elif route == "claude-code-cli":
+            # Legacy path also supports claude-code-cli (no client needed).
+            client = None
         else:
             if legacy_client is None:
                 raise SystemExit(
@@ -234,6 +242,14 @@ def main():
                         num_predict=args.max_tokens,
                         no_think=args.no_think,
                     )
+                elif model.get("route") == "claude-code-cli":
+                    # Subprocess adapter; auth via user's Claude Code session.
+                    # Temperature/seed/max_tokens are not configurable via the
+                    # CLI — sweep flags are ignored on this route.
+                    result = query_claude_cli(
+                        api_model_id,
+                        messages,
+                    )
                 else:
                     result = query_single_turn(
                         client,
@@ -242,7 +258,12 @@ def main():
                         **api_kwargs,
                     )
                 usage = result.get("usage") or {}
-                cost = compute_cost(usage, model)
+                # Claude CLI reports cost in the result; other routes
+                # compute from registry pricing.
+                if model.get("route") == "claude-code-cli":
+                    cost = float(result.get("cost_usd") or 0.0)
+                else:
+                    cost = compute_cost(usage, model)
                 budget.add(cost)
 
                 filepath = output_path(output_dir, model_id, run)
