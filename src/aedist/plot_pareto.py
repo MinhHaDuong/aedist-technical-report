@@ -97,6 +97,7 @@ def build_pareto_rows(metrics: list[dict]) -> list[dict]:
             "median_tp": int(statistics.median(tp_values)),
             "min_tp": min(tp_values),
             "max_tp": max(tp_values),
+            "tp_values": list(tp_values),
             "median_f1": round(statistics.median(f1_values), 4) if f1_values else 0.0,
             "min_f1": round(min(f1_values), 4) if f1_values else 0.0,
             "max_f1": round(max(f1_values), 4) if f1_values else 0.0,
@@ -110,8 +111,9 @@ def build_pareto_rows(metrics: list[dict]) -> list[dict]:
 def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     """Write the Pareto scatter (correctly-identified plants vs cost) to *output*.
 
-    Each model is rendered as one point at its median TP count with
-    whiskers spanning min/max across the 5 reps. Colour conveys the
+    Each model gets one **filled circle** at its median TP count and an
+    **x marker** for every other rep — the eye sees both the central
+    tendency and the full per-rep spread. Colour conveys the
     architectural family via :func:`aedist.util.model_family_color`.
     A horizontal reference line marks ``N_REFERENCE_PLANTS`` (the full
     Vietnam thermal inventory). ``xscale`` accepts ``"linear"`` or
@@ -137,18 +139,36 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     for r in filtered:
         colour = model_family_color(r["model"])
         median = r["median_tp"]
-        lo = median - r["min_tp"]
-        hi = r["max_tp"] - median
-        ax.errorbar(
+        # Non-median reps: x markers (one entry from tp_values takes the
+        # median slot and is drawn as a filled circle below).
+        tp_values = list(r.get("tp_values") or [])
+        if tp_values:
+            median_consumed = False
+            non_median = []
+            for v in tp_values:
+                if v == median and not median_consumed:
+                    median_consumed = True
+                    continue
+                non_median.append(v)
+        else:
+            non_median = []
+        if non_median:
+            ax.scatter(
+                [r["cost_usd"]] * len(non_median),
+                non_median,
+                marker="x",
+                color=colour,
+                s=30,
+                linewidths=1.2,
+                zorder=2,
+            )
+        # Median: filled circle.
+        ax.scatter(
             [r["cost_usd"]],
             [median],
-            yerr=[[lo], [hi]],
-            fmt="o",
+            marker="o",
             color=colour,
-            ecolor=colour,
-            elinewidth=1.0,
-            capsize=3,
-            markersize=6,
+            s=40,
             zorder=3,
         )
 
@@ -190,7 +210,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
             ("deepseek-v4", "DeepSeek"),
         )
     ]
-    ax.legend(handles=legend_handles, loc="lower right", fontsize="small")
+    ax.legend(handles=legend_handles, loc="upper right", fontsize="small")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
@@ -241,6 +261,7 @@ def main() -> None:
                     "max_f1",
                     "cost_usd",
                 ],
+                extrasaction="ignore",
             )
             writer.writeheader()
             writer.writerows(rows)

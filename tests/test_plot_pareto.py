@@ -34,11 +34,14 @@ _EXPECTED_KEYS = {
     "median_tp",
     "min_tp",
     "max_tp",
+    "tp_values",
     "median_f1",
     "min_f1",
     "max_f1",
     "cost_usd",
 }
+
+_CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {"tp_values"}  # tp_values is in-memory only
 
 
 def test_build_pareto_rows():
@@ -112,33 +115,18 @@ def test_pareto_model_family_colours():
     assert qwen == model_family_color("qwen3.6-plus")
 
 
-def test_pareto_whiskers_present(tmp_path):
-    """Rendered figure carries errorbar containers (one per model)."""
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.container import ErrorbarContainer
-
+def test_pareto_per_rep_points(tmp_path):
+    """Build returns the full per-rep TP list so write_pdf can plot every rep."""
     rows = build_pareto_rows(SAMPLE_METRICS)
+    by_model = {r["model"]: r for r in rows}
+    # Each sample model has 3 reps; tp_values must surface all of them.
+    assert by_model["claude-opus-4.6"]["tp_values"] == [80, 82, 85]
+    assert by_model["mistral-large-2512"]["tp_values"] == [50, 52, 55]
+    assert by_model["qwen3.6-plus"]["tp_values"] == [30, 33, 35]
+    # write_pdf still renders without raising.
     figure_path = tmp_path / "fig_pareto.pdf"
     write_pdf(rows, figure_path)
-    assert figure_path.exists()
-
-    # Inspect a re-rendered figure: 3 models → 3 errorbar containers.
-    # write_pdf calls plt.close on its fig, so we re-render here to inspect.
-    fig, ax = plt.subplots()
-    for r in rows:
-        median = r["median_tp"]
-        ax.errorbar(
-            [r["cost_usd"]],
-            [median],
-            yerr=[[median - r["min_tp"]], [r["max_tp"] - median]],
-            fmt="o",
-        )
-    containers = [c for c in ax.containers if isinstance(c, ErrorbarContainer)]
-    assert len(containers) == len(rows)
-    plt.close(fig)
+    assert figure_path.exists() and figure_path.stat().st_size > 0
 
 
 def test_pareto_xscale_flag(tmp_path, monkeypatch):
@@ -186,7 +174,7 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     reader = csv.DictReader(content.splitlines())
     rows = list(reader)
     assert len(rows) == 3
-    assert set(reader.fieldnames) == _EXPECTED_KEYS
+    assert set(reader.fieldnames) == _CSV_EXPECTED_KEYS
 
 
 def test_main_writes_figure(tmp_path, monkeypatch):
