@@ -2,12 +2,14 @@
 Title: One presentation-config file defining family colors; all plots use it
 Created: 2026-05-21
 Author: claude
+Closed: autoclosed — PR #380
 
 --- log ---
 2026-05-21T08:00Z claude created
 2026-05-21T08:15Z claude note amended scope — single shared config, all plot_*.py consume it
 2026-05-21T15:30Z claude note implemented: palette.toml [language_families], family_color() helper, refactored plot_method_convergence + plot_pareto
 
+2026-05-21T09:54Z HDMX-coding-agent closed — autoclosed — PR #380
 --- body ---
 ## Context
 
