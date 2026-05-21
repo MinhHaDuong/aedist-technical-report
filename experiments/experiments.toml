@@ -184,6 +184,37 @@ model_ids = [
     "deepseek/deepseek-v4-flash:free",
 ]
 
+# Frozen replica of the 2026-05-20 Experiment 1 baseline cohort (ticket
+# 0198). Differs from modelset_ablation_journal in two slots that were
+# renamed in-registry since the baseline ran (qwen3.6-flash → 3.5-flash-02-23,
+# deepseek-v4-flash:free → no :free suffix on the paid variant). Used by
+# sweep_ablation_p1_direct_base_topup so the new reps call the same
+# upstream model the baseline did, preserving the pooling claim.
+[sets.modelset_exp1_baseline]
+model_ids = [
+    # EN — Anthropic
+    "anthropic/claude-opus-4.6",
+    "anthropic/claude-sonnet-4.6",
+    "anthropic/claude-haiku-4.5",
+    # EN — OpenAI
+    "openai/gpt-5.5",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    # FR — Mistral
+    "mistralai/mistral-small-2603",
+    "mistralai/mistral-medium-3-5",
+    "mistralai/mistral-large-2512",
+    # ZH — Qwen (qwen3.6-flash here, current journal set uses qwen3.5-flash-02-23)
+    "qwen/qwen3.6-27b",
+    "qwen/qwen3.6-35b-a3b",
+    "qwen/qwen3.6-flash",
+    "qwen/qwen3.6-plus",
+    "qwen/qwen3-max-thinking",
+    # ZH — DeepSeek (paid variant here, current journal set uses :free)
+    "deepseek/deepseek-v4-pro",
+    "deepseek/deepseek-v4-flash",
+]
+
 # RAG regime — top performers from existing RAG data
 [sets.modelset_ablation_rag]
 model_ids = [
@@ -536,7 +567,7 @@ output = "outputs/ablation/direct/p1_base"
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "modelset_ablation_journal"
+model_set = "modelset_exp1_baseline"
 repeat = 1
 temperature = 0.0
 seed = 42

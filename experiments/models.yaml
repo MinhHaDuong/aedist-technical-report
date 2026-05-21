@@ -1158,3 +1158,39 @@
   size_class: medium
   license: open-MIT
   web_search: false
+
+# Baseline-cohort registry restoration for ticket 0198. The 2026-05-20
+# Exp 1 baseline (5 reps × 16 models) used these IDs; the paid variant
+# was later replaced with the :free variant in modelset_ablation_journal.
+# Restored so modelset_exp1_baseline can re-call the same upstream model
+# for the reasoning-token top-up. Pricing inferred from baseline records:
+# (5242 out − 3281 out) × p_out = $0.00044 → p_out ≈ $0.22/Mtok.
+- name: "deepseek/deepseek-v4-flash"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "deepseek/deepseek-v4-flash"
+  display_name: "DeepSeek V4 Flash"
+  provider: DeepSeek
+  country: CN
+  architecture: moe
+  context_window: 1048576
+  price_per_mtok_in: 0.10
+  price_per_mtok_out: 0.22
+  size_class: medium
+  license: open-MIT
+  web_search: false
+
+- name: "qwen/qwen3.6-flash"
+  route: openrouter
+  base_url: "https://openrouter.ai/api/v1"
+  model_id: "qwen/qwen3.6-flash"
+  display_name: "Qwen 3.6 Flash"
+  provider: Alibaba
+  country: CN
+  architecture: moe
+  context_window: 262144
+  price_per_mtok_in: 0.10
+  price_per_mtok_out: 0.40
+  size_class: medium
+  license: open-apache
+  web_search: false
