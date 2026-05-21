@@ -150,21 +150,105 @@ def build_cost_quality_rows(
     return rows
 
 
+# Family assignment for the 2-panel split. Panel A holds Western families
+# (Claude / GPT / Mistral); panel B holds Chinese families (Qwen / DeepSeek).
+# Note: gpt-oss-* are open-weight but still routed to panel A by family.
+_PANEL_A_FAMILIES = {"claude", "gpt", "mistral"}
+_PANEL_B_FAMILIES = {"qwen", "deepseek"}
+
+
+def _plot_one_row(ax, row: dict) -> None:
+    """Render a single model's reps + median marker on *ax*."""
+    colour = model_family_color(row["model"])
+    reps = row.get("reps") or []
+    # Display axis is cents; convert each rep's cost individually so
+    # the per-rep cost variation (driven by output-token counts)
+    # shows up as in-cluster horizontal spread.
+    base = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "base"]
+    topup = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "topup"]
+    # Polyline through all reps sorted by cost — the per-rep "trajectory"
+    # in (cost, TP) space replaces the previous vertical min-max line.
+    all_pts = sorted([(rep["cost"] * 100.0, rep["tp"]) for rep in reps], key=lambda p: p[0])
+    if len(all_pts) >= 2:
+        ax.plot(
+            [c for c, _ in all_pts],
+            [t for _, t in all_pts],
+            color=colour,
+            linewidth=0.6,
+            alpha=0.6,
+            zorder=1,
+        )
+    if base:
+        ax.scatter(
+            [c for c, _ in base],
+            [t for _, t in base],
+            marker="o",
+            facecolors="none",
+            edgecolors=colour,
+            s=36,
+            linewidths=1.0,
+            zorder=2,
+        )
+    if topup:
+        ax.scatter(
+            [c for c, _ in topup],
+            [t for _, t in topup],
+            marker="x",
+            color=colour,
+            s=30,
+            linewidths=1.2,
+            zorder=2,
+        )
+    ax.scatter(
+        [row["median_cost"] * 100.0],
+        [row["median_tp"]],
+        marker="s",
+        color=colour,
+        s=50,
+        zorder=3,
+    )
+
+
+def _configure_axes(ax, xscale: str, xmax: float) -> None:
+    """Apply shared cosmetic settings (reference line, scale, ticks, grid) to *ax*."""
+    ax.axhline(
+        N_REFERENCE_PLANTS,
+        color=COLOR_REFERENCE,
+        linestyle="--",
+        linewidth=1.0,
+        alpha=0.7,
+        zorder=1,
+    )
+    if xscale == "log":
+        from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
+
+        ax.set_xscale("log")
+        ticks = [0.1, 0.5, 1, 5, 10, 20, 30]
+        ax.xaxis.set_major_locator(FixedLocator(ticks))
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _pos: f"{x:g}"))
+        ax.xaxis.set_minor_formatter(NullFormatter())
+    else:
+        ax.set_xlim(-0.05, xmax * 1.05)
+    ax.grid(True, alpha=0.3)
+
+
 def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     """Write the cost × quality scatter (correctly-identified plants vs cost) to *output*.
 
-    Each model gets one **filled circle** at its median TP count and an
-    **x marker** for every other rep — the eye sees both the central
-    tendency and the full per-rep spread. Colour conveys the
-    architectural family via :func:`aedist.util.model_family_color`.
-    A horizontal reference line marks ``N_REFERENCE_PLANTS`` (the full
-    Vietnam thermal inventory). ``xscale`` accepts ``"linear"`` or
-    ``"log"``; log mode drops zero-cost models with a warning.
+    Two-panel layout: panel (a) holds Claude / GPT / Mistral; panel (b)
+    holds Qwen / DeepSeek. Both panels share the X and Y axes so the
+    cost gap between Western and Chinese families is visible at a
+    glance. Each model gets a filled square at its median (TP, cost),
+    unfilled circles for journal-sweep reps, and ✕ markers for the
+    reasoning-token top-up reps. A horizontal reference line marks
+    ``N_REFERENCE_PLANTS`` on each panel. Y axis runs from -5 so
+    refusal markers at TP=0 sit above the axis line. ``xscale``
+    accepts ``"linear"`` or ``"log"``; log mode drops zero-cost models
+    with a warning.
     """
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
-    # Drop cloud models without cost data (legacy behaviour).
     filtered = [r for r in rows if r["cost_usd"] > 0]
     if xscale == "log":
         dropped = [r["model"] for r in rows if r["cost_usd"] <= 0]
@@ -176,96 +260,38 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
                 ", ".join(dropped),
             )
 
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-
-    for r in filtered:
-        colour = model_family_color(r["model"])
-        reps = r.get("reps") or []
-        # Display axis is cents; convert each rep's cost individually so
-        # the per-rep cost variation (driven by output-token counts)
-        # shows up as in-cluster horizontal spread.
-        base = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "base"]
-        topup = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "topup"]
-        # Polyline through all reps sorted by cost — the per-rep "trajectory"
-        # in (cost, TP) space replaces the previous vertical min-max line.
-        all_pts = sorted([(rep["cost"] * 100.0, rep["tp"]) for rep in reps], key=lambda p: p[0])
-        if len(all_pts) >= 2:
-            ax.plot(
-                [c for c, _ in all_pts],
-                [t for _, t in all_pts],
-                color=colour,
-                linewidth=0.6,
-                alpha=0.6,
-                zorder=1,
-            )
-
-        # Yesterday's reps (p1_base/, 2026-05-20 journal sweep): unfilled circle.
-        if base:
-            ax.scatter(
-                [c for c, _ in base],
-                [t for _, t in base],
-                marker="o",
-                facecolors="none",
-                edgecolors=colour,
-                s=36,
-                linewidths=1.0,
-                zorder=2,
-            )
-        # Today's reps (p1_base.topup*/, post-PR-#379 reasoning-token top-up): x.
-        if topup:
-            ax.scatter(
-                [c for c, _ in topup],
-                [t for _, t in topup],
-                marker="x",
-                color=colour,
-                s=30,
-                linewidths=1.2,
-                zorder=2,
-            )
-        # Pooled median square at (median cost, median TP). The median is
-        # computed independently per axis — it may not coincide with any
-        # specific rep when the rep-count is even.
-        ax.scatter(
-            [r["median_cost"] * 100.0],
-            [r["median_tp"]],
-            marker="s",
-            color=colour,
-            s=50,
-            zorder=3,
+    panel_a = [r for r in filtered if r["family"] in _PANEL_A_FAMILIES]
+    panel_b = [r for r in filtered if r["family"] in _PANEL_B_FAMILIES]
+    unassigned = [
+        r for r in filtered if r["family"] not in (_PANEL_A_FAMILIES | _PANEL_B_FAMILIES)
+    ]
+    if unassigned:
+        log.warning(
+            "Unassigned family for %d model(s) (%s); rendered in panel (a) by default.",
+            len(unassigned),
+            ", ".join(r["model"] for r in unassigned),
         )
+        panel_a = panel_a + unassigned
 
-    # Reference line at the full inventory size.
-    ax.axhline(
-        N_REFERENCE_PLANTS,
-        color=COLOR_REFERENCE,
-        linestyle="--",
-        linewidth=1.0,
-        alpha=0.7,
-        zorder=1,
-    )
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(11, 4.5), sharex=True, sharey=True)
 
-    ax.set_xlabel("Coût par requête (cents USD)")
-    ax.set_ylabel("Nombre de centrales bien identifiées")
-    ax.set_ylim(0, N_REFERENCE_PLANTS * 1.05)
-    if xscale == "log":
-        from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
+    for r in panel_a:
+        _plot_one_row(ax_a, r)
+    for r in panel_b:
+        _plot_one_row(ax_b, r)
 
-        ax.set_xscale("log")
-        # Explicit tick locations: 0.1, 0.5, 1, 5, 10, 20, 30 cents.
-        ticks = [0.1, 0.5, 1, 5, 10, 20, 30]
-        ax.xaxis.set_major_locator(FixedLocator(ticks))
-        # `g` format drops trailing zeros: 1.0 → "1", 0.5 stays "0.5".
-        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _pos: f"{x:g}"))
-        ax.xaxis.set_minor_formatter(NullFormatter())
-    else:
-        ax.set_xlim(
-            -0.05,
-            max((r["cost_usd"] * 100.0 for r in filtered), default=30.0) * 1.05,
-        )
-    ax.grid(True, alpha=0.3)
+    xmax = max((r["cost_usd"] * 100.0 for r in filtered), default=30.0)
+    _configure_axes(ax_a, xscale, xmax)
+    _configure_axes(ax_b, xscale, xmax)
 
-    # Architectural-family legend (colour). Cohort glyphs are described in
-    # the caption, not on the figure — the figure stays tidy.
+    # sharey=True propagates the limit; setting on ax_a is enough.
+    ax_a.set_ylim(-5, N_REFERENCE_PLANTS * 1.05)
+
+    ax_a.set_title("(a) Claude / GPT / Mistral", loc="left", fontsize="medium")
+    ax_b.set_title("(b) Qwen / DeepSeek", loc="left", fontsize="medium")
+    ax_a.set_ylabel("Nombre de centrales bien identifiées")
+    fig.supxlabel("Coût par requête (cents USD)")
+
     family_handles = [
         Line2D(
             [0],
@@ -284,7 +310,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
             ("deepseek-v4", "DeepSeek"),
         )
     ]
-    ax.legend(handles=family_handles, loc="upper right", fontsize="small")
+    ax_a.legend(handles=family_handles, loc="upper left", fontsize="small")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
