@@ -1,0 +1,175 @@
+%erg 0.1
+Title: Exp 2 Phase B — multi-turn auto-reply policy with dollar budget
+Created: 2026-05-21
+Author: claude
+Blocked-by: 0208
+
+--- log ---
+2026-05-21T14:25Z claude created — open questions from 0185 Mistral smoke
+2026-05-21T15:00Z claude note policy locked (option B) per author direction 2026-05-21; reframed from "string-vs-dict + turn discipline" to "multi-turn auto-reply harness"
+
+--- body ---
+
+## Context
+
+The Exp 2 smoke on Mistral (ticket 0185, run 2026-05-21) surfaced
+that SOTA cloud agents do not necessarily produce the inventory on
+their first response — Mistral returned a 365-token plan-and-ask
+preamble. The §4 manuscript premise is
+
+> "we give each model our complete prompt and the quality criteria
+> above, and ask it to tune the prompt and settings to produce the
+> best statistical report it can within a budget cap of ten dollars
+> and an overnight wall-clock budget"
+
+That premise implies a multi-turn budget, not a one-shot call.
+Forcing one-shot turn-discipline would measure the agents with
+their hands tied behind their back, not the commercially available
+frontier in its natural mode.
+
+**Policy locked (author direction 2026-05-21):** option B — accept
+ask-and-reply with a *minimum-steering* auto-reply policy, bounded
+by a per-agent dollar budget, with the budget announced upfront in
+the meta-prompt and reminded on every user turn.
+
+## The policy (fixed condition for Annex C)
+
+### Budget cap
+
+- Per agent: **$10.00 total** (matches §4 prose).
+- Announced verbatim inside the Phase A meta-prompt (turn 1):
+
+  > "Your budget for this conversation is $10.00 total. All your
+  > tool calls, search calls, and thinking tokens are billed
+  > against this cap. Each of our replies will remind you of your
+  > remaining budget. When the remaining budget is small, please
+  > prioritise producing the final report."
+
+- Reminder line prepended to every user-turn message after turn 1:
+
+  > "Status: remaining budget $X.XX of $10.00; wall-clock elapsed Ys."
+
+  (Wall-clock included because §4 also says "overnight"; the agent
+  is informed of *both* resource axes on every turn.)
+
+- **Also pass remaining budget as a structured parameter** on each
+  follow-up request, where the provider exposes a metadata surface:
+
+  | Provider | Surface |
+  |---|---|
+  | Mistral Agents | request-body `metadata` (best-effort; verify shape at implementation time) |
+  | Anthropic | `metadata` field |
+  | OpenAI Responses | `metadata` |
+  | Qwen DashScope | `extra_body.metadata` |
+
+  Key/value: `{"remaining_budget_usd": "X.XX", "cap_usd": "10.00"}`.
+  Strings (not floats) to avoid float-precision noise. If a provider
+  doesn't accept the field, fall back to chat-text reminder only and
+  log the fallback in the per-turn cost artefact.
+
+  Goal: give the agent a machine-parseable signal alongside the
+  human-readable status line, so a thinking-capable model can
+  programmatically condition its strategy on the cap.
+
+### Reply slots (two strings, two states)
+
+**Standard auto-reply** (every turn 2..N until the cap trigger):
+
+> "Proceed as you think is best in autonomous agentic mode."
+
+(Prepended with the status line above. Otherwise verbatim, no
+agent-specific tuning.)
+
+**Terminal auto-reply** (fires when remaining_budget ≤ 20% of cap,
+or hard cap hit — whichever comes first):
+
+> "I have no additional directive to give you. Please proceed to
+> generating the report without further asking. If you cannot, we
+> would appreciate to know why, but the discussion will stop here
+> in any case. Thanks for your understanding."
+
+After the terminal reply is sent, the next agent response is the
+last one accepted — the conversation closes regardless of whether
+the agent produced an inventory or asked again.
+
+### What gets logged
+
+For every turn:
+
+- `{agent}_turn_NN.user.json` — the exact bytes sent (with status
+  prefix)
+- `{agent}_turn_NN.assistant.json` — the raw provider response
+- `{agent}_turn_NN.cost.json` — token + connector dollar breakdown,
+  remaining budget after the turn
+
+Turn count is itself §4 data ("Mistral asked 1, Claude proceeded
+directly, ChatGPT asked 2…").
+
+### What goes in Annex C
+
+The two reply strings (verbatim), the cap ($10), the trigger
+threshold (≤20%), and the reminder format. The policy is a fixed
+experimental condition, not a per-agent tunable.
+
+## Implementation
+
+The current `experiments/sota/exp2_interactive_smoke.py` is
+single-turn by construction. Multi-turn requires:
+
+1. **Adapter capability** (ticket 0208): each of the four SOTA
+   adapters needs a *continuation surface* — a way to send a
+   follow-up message against an existing conversation. Per provider:
+   - Mistral: `POST /v1/conversations/{id}` (append to conversation)
+   - Anthropic: messages list with all prior turns
+   - OpenAI Responses: `previous_response_id`
+   - Qwen DashScope: messages array
+2. **Harness loop** (this ticket, after 0208): a turn loop that
+   - tracks remaining budget,
+   - selects standard vs terminal reply,
+   - sends + records the turn,
+   - terminates after the terminal reply's response is captured.
+
+The loop replaces the current Phase B single call. Phase A stays as
+today (single design call).
+
+## Relevant files
+
+- `experiments/sota/exp2_interactive_smoke.py` — current Phase B
+  (single call) to replace with turn loop
+- `experiments/outputs/sota_exp2_smoke/` — output layout (extend
+  with per-turn files)
+- `slides/manuscript/main.md` Annex C (to be written by 0199) —
+  policy goes here as fixed condition
+- `tickets/0208-multi-turn-adapter-capability.erg` — adapter
+  prerequisite
+
+## Actions
+
+1. Wait for 0208 (multi-turn adapter capability) to land.
+2. Rewrite Phase B in the smoke harness as a turn loop with the
+   policy above. Cap the loop at the dollar trigger; no separate
+   turn-count cap.
+3. Re-smoke Mistral end-to-end with the new harness. Capture turn
+   count and final report quality.
+4. Repeat for one more agent (next cheapest after Mistral — Qwen)
+   to verify the policy holds cross-provider, before opening 0199
+   batch.
+5. Document the policy verbatim in 0199 (which writes Annex C).
+
+## Test
+
+- Unit test for the budget-reminder formatter (input: cap, spent,
+  elapsed → output: exact status string).
+- Unit test for the reply selector (input: remaining_budget / cap
+  → output: "standard" or "terminal").
+- Unit test for the turn loop's terminal condition (mock adapter
+  returning planned spend; loop must terminate on threshold cross).
+
+## Exit criteria
+
+- [ ] Turn loop implemented, gated behind 0208 closure
+- [ ] Mistral smoke re-run produces an actual inventory under the
+      $10 / 80% policy
+- [ ] At least one other agent smoked end-to-end with the same
+      policy
+- [ ] Policy text + cap + threshold documented for 0199 / Annex C

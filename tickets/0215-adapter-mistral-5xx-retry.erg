@@ -5,7 +5,6 @@ Author: claude
 
 --- log ---
 2026-05-21T17:00Z claude created — turn 3 of 0185 multi-turn smoke (2026-05-21) lost to HTTP 502 Bad Gateway from Mistral
-2026-05-21T18:30Z claude note implementing retry wrapper at adapter layer; 4 POST sites + 3 retry-policy tests + 1 bonus on path-bound append
 
 --- body ---
 

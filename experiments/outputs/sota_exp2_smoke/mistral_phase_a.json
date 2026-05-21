@@ -1,0 +1,53 @@
+{
+  "run_id": "3c8c9f4fd0b5",
+  "timestamp": "2026-05-21T14:43:19.255288Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 2710,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you",
+      "conversation_id": "conv_019e4afd0c9371b084b54e0f080cd8d7",
+      "agent_id": "ag_019e4afd0be175b7bf0efacee2da3a9a"
+    }
+  },
+  "resource_use": {
+    "wall_s": 41.312,
+    "cost_usd": 0.0052515,
+    "tokens_in": 2373,
+    "tokens_out": 2710,
+    "cost_breakdown": {
+      "input": 0.0011865,
+      "output": 0.004065
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_a_design",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}

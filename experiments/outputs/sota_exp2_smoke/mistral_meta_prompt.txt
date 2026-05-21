@@ -1,0 +1,134 @@
+You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you want to do it.
+
+# BUDGET (ticket 0207 policy, fixed condition)
+
+Your budget for this entire engagement is **$10.00 total**. All your tool calls, search calls, and thinking tokens are billed against this cap. After this design turn, you will be in a multi-turn execution conversation; each of our replies will remind you of your remaining budget both in plain text and (where the provider supports it) via a structured metadata field. When the remaining budget drops below 20%, we will send a single terminal reply asking you to finalise; the next response after that is the last one we accept. Prioritise producing the final report — do not stall on planning.
+
+You will be given:
+- a BASELINE PROMPT that defines the task
+- a QUALITY BAR (four dimensions) on which your output will be judged
+
+# BASELINE PROMPT
+
+"""
+## Role
+
+You are a senior energy analyst preparing a comprehensive technical inventory of Vietnam's thermal power sector, to lay the ground for model-based engineering/economic analysis of the energy transition.
+
+## Goal
+
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30MWe) structured as follows:
+
+## Sector Overview
+
+Provide introductory context on Vietnam's thermal power sector covering:
+- Evolution of the national electricity generation mix (hydro, thermal, renewables) with key statistics (installed capacity GW, generation TWh, shares by fuel)...
+- Policy framework: regulation and planning mechanisms, reforms, stated or implicit goals...
+- Energy supply landscape: resources and reserves, domestic vs. imported, terminals and pipelines, interconnectors...
+- Key institutional actors: Generation-Transmission-Distribution companies, Energy and Mining companies, Local authorities, Ministerial authorities, other stakeholders... Position, influence, relationships.
+- Current challenges: energy trilemma, international markets...
+
+## Per-plant discussion
+
+Provide a sourced narrative for each plant (or plant complex) covering:
+- Development history and timeline (original plan, actual progress)
+- Notable issues: delays, financing changes, ownership transfers, legal issues, controversies, technology changes
+- Current status confidence: HIGH (verified by government decision or company annual report), MEDIUM (confirmed by multiple news sources), LOW (only found in older plans, status uncertain)
+
+## Structured power plants table
+
+Tabulate for every thermal power plant in Vietnam:
+
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 | Notes |
+
+Where:
+- Fuel: Coal / Domestic gas / Imported LNG
+- Technology (coal): Subcritical / Supercritical / USC
+- Technology (gas): CCGT / OCGT
+- Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired
+- Total MWe: Include units > 30MWe.
+- COD: Actual or expected commercial operation date
+- Sources: specify where in the document, include URL
+
+Output format: Markdown.
+
+## Annotated Bibliography
+
+List every source cited, organized by category:
+
+**Categories**: Government decisions / Sectoral development plans / Company activity reports / Company filings & press releases / Regulatory & international organization reports / News & media / Academic sources
+
+For each source provide:
+- Full citation: author/agency, title, date, publisher
+- URL if available online (do NOT fabricate URLs — if you are unsure of the exact URL, say "URL not verified")
+- For non English-language sources: original title in original language, then English translation in brackets
+- Summary annotation: what specific information was drawn from this source
+
+## Statistical Summary Tables
+
+Produce these cross-tabulations from your inventory:
+a) **Capacity by fuel × status**: Total MWe in each cell (Coal/Gas/LNG rows × Operational/Under construction/Approved/Planned columns), with row and column totals
+b) **Top provinces**: The 15 provinces with highest total thermal capacity (all statuses combined), showing breakdown by fuel
+c) **Timeline of additions**: Capacity entering service by period — pre-2005, 2005–2010, 2011–2015, 2016–2020, 2021–2025, 2026–2030, post-2030 — by fuel type
+d) **Data quality summary**: Count of plants by confidence level (High/Medium/Low) and fuel type
+
+Reconcile results with reference documents you may have.
+
+## Condition materiality
+
+Distinguish material observed facts (e.g. signed permit, operating plant, verified COD) from forward-looking statements (planned capacity, expected COD date).
+- Results must include both.
+- Use the Note column to qualify assets by scenario conditions if necessary.
+
+## Express confidence and doubt levels
+
+- PRIORITIZE primary sources: Official decisions, Company regulatory filings, company disclosures...
+- When a finding comes from a primary source, cite the source.
+- When uncertain, mark confidence as LOW and explain why in the Notes field.
+- NEVER fabricate or hallucinate sources or links. If you recall a source but cannot find its handle, write e.g. "URL not verified" rather than inventing one.
+
+## Strive for statistical completeness
+
+- Include every plant from historical records in the last 50 years, even if suspended or cancelled
+- The inventory covers the full historical and prospective record, not only currently operating plants
+- Be exhaustive across all lifecycle stages: include assets that have ever been proposed, announced, under construction, operational, suspended, cancelled, retired, or dismantled...
+- When you know a plant exists but cannot identify a primary source, include it with confidence LOW and Source = "not found" — never omit a known plant for lack of a citation
+"""
+
+# QUALITY BAR
+
+The inventory you produce on the next turn will be judged on these four dimensions:
+
+"""
+## Second, the quality bar that any acceptable dataset must clear
+
+Datasets can be assessed on four dimensions: accuracy, coherence, provenance, and temporality.
+
+1. *Accuracy* asks whether the dataset contains the right assets and the right attributes. At the row level, this means recall and precision: does the system find all relevant assets, and does it exclude non-assets or duplicates? For a simple inventory table, this can be measured against a manually curated reference table using precision, recall, and F1 score. At the cell level, accuracy asks whether the attributes attached to each asset are correct: capacity, fuel type, location, operator, commissioning year, status, and so on. A system can therefore be accurate in entity discovery but weak in attribute extraction, or conversely reliable on attributes once the correct asset has been identified.
+
+2. *Coherence* asks whether the dataset is internally and externally consistent. Internally, statistical tables have control constraints: aggregate totals should match regional or technology subtotals when those totals are known; capacities should not be negative; duplicate units should not be counted twice; and cross-row values should not contradict one another. Externally, the dataset should remain compatible with other available knowledge: units, orders of magnitude, geographic location, technology type, and commissioning dates should all be plausible. When sources contradict one another, the dataset should reconcile them convincingly — recording which source was chosen and why — rather than silently adopting one value. A minimal coherence requirement is non-contradiction. A stronger requirement is inferential closure: the system should derive and expose all consequences that follow from the available documents and accounting rules, rather than merely storing isolated claims.
+
+3. *Provenance* requires a pedigree for each data item. Every row, and ideally every cell, should trace back to specific passages, tables, images, or records in specific sources. Strong provenance means more than attaching a plausible citation: the cited source must actually support the value claimed. Ideally, each important item should be backed by two independent primary sources. Weaker forms of justification — for example, one primary source, a regulator database, or a clearly marked secondary compilation — are still preferable to unsupported values, provided their evidential status is explicit. Satellite imagery and visual inspection can also provide evidence for industrial assets, but they are costly, hard to scale, and mainly confirm the presence of existing installations rather than full project histories.
+
+4. *Temporality* is not metadata added after the fact; it is part of the statistical fact itself. Energy infrastructure changes over time: projects are announced, financed, permitted, built, commissioned, repowered, mothballed, retired, cancelled, or renamed. Every value should therefore carry a best-effort “as-of” date or validity period, and notable status changes should be flagged. A statistical dataset should distinguish clearly current status from past reports, planned capacity from operating capacity, and source publication date from the date of the underlying fact. While a single inventory dataset may not require reconstructing full historical trajectories, energy modeling and scenario projections do require a the database with a strong historical dimension.
+
+The task is not simply to generate a plausible inventory-shaped answer. The statistical object is a dated, sourced, internally reconciled set of claims about energy-system assets and events. Accuracy determines whether the claims are correct; coherence determines whether they can coexist; provenance determines whether they are auditable; and temporality determines what period of the world they describe.
+"""
+
+# YOUR DESIGN TASK NOW
+
+Design an improved prompt and a settings configuration aimed at maximising your performance on the four quality dimensions. You have full freedom to rewrite, expand, or restructure the baseline prompt. You may use web search if it helps you design; web search will also be available when you execute the designed prompt.
+
+Return ONLY a single JSON object with this exact shape:
+
+{
+  "designed_prompt": "<the prompt you want to receive next turn — sent to you verbatim>",
+  "settings": {
+    "thinking": true_or_false,
+    "max_tokens": <int>,
+    "rationale_for_settings": "<short string>"
+  },
+  "rationale": "<2-4 sentences naming which of the four dimensions your changes target and how>"
+}
+
+Output ONLY the JSON object. No markdown fence, no prose around it.

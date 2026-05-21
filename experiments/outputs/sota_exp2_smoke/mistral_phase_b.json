@@ -1,0 +1,48 @@
+{
+  "run_id": "ff7cedc484e1",
+  "timestamp": "2026-05-21T12:18:13.059120Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 365,
+    "prompt_version": null,
+    "extra": {
+      "recovered_from_raw": true
+    }
+  },
+  "resource_use": {
+    "wall_s": 7.776,
+    "cost_usd": 0.002266,
+    "tokens_in": 3437,
+    "tokens_out": 365,
+    "cost_breakdown": null,
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": null,
+  "citations": null,
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": null
+}
