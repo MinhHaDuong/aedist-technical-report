@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-21T10:00Z claude created — probe confirmed OpenRouter passes reasoning_tokens; harness strips them
+2026-05-21T12:00Z claude note renumbered 0195 → 0197 to avoid collision with origin/main's tickets/0195-client-timeout-regression-class.erg (committed during this branch's life); branch name and PR #379 title retain the original 0195 label for continuity
 
 --- body ---
 ## Context
