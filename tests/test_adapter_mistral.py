@@ -28,6 +28,9 @@ from aedist.adapter_mistral import (
 )
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "mistral_conversation_response.json"
+FIXTURE_STR_CONTENT_PATH = (
+    Path(__file__).parent / "fixtures" / "mistral_conversation_response_str_content.json"
+)
 
 
 # Pricing card mirrored from the models.yaml entry registered in this
@@ -43,6 +46,18 @@ PRICE_CARD = {
 @pytest.fixture
 def fixture_response() -> dict:
     return json.loads(FIXTURE_PATH.read_text())
+
+
+@pytest.fixture
+def fixture_str_content_response() -> dict:
+    """Fixture for the flat-string content shape (ticket 0206).
+
+    The Mistral Conversations API empirically returns two content
+    shapes: ``list[dict]`` of typed chunks (the 2026-05-20 derisk
+    fixture) and ``str`` (observed live 2026-05-21 in the Exp 2 smoke,
+    ticket 0185). This fixture exercises the second shape.
+    """
+    return json.loads(FIXTURE_STR_CONTENT_PATH.read_text())
 
 
 def test_run_dry_run_short_circuits_before_network():
@@ -207,3 +222,33 @@ def test_parse_response_falls_back_to_flat_per_call_price(fixture_response):
     record = parse_response(fixture_response, card)
     # 2 web_search calls × $0.025 = $0.050
     assert record.tool_calls_cost_usd == pytest.approx(0.05, rel=1e-9)
+
+
+# ---------------------------------------------------------------------------
+# parse_response — flat string content shape (ticket 0206)
+#
+# Empirically Mistral returns ``outputs[*].content`` in two shapes:
+#   1. ``list[dict]`` of typed chunks (the 2026-05-20 derisk fixture).
+#   2. ``str`` — a flat narrative inline (observed live 2026-05-21 in
+#      the Exp 2 smoke, ticket 0185). The parser must handle both
+#      without raising ``AttributeError: 'str' object has no attribute
+#      'get'``.
+# ---------------------------------------------------------------------------
+
+
+def test_parse_response_handles_str_content_shape(fixture_str_content_response):
+    """The flat-string shape must parse cleanly with status == "ok"."""
+    record = parse_response(fixture_str_content_response, PRICE_CARD)
+    assert record.result_summary.status == "ok"
+    # Usage round-trip — the str-shape still carries a usage block.
+    assert record.resource_use.tokens_in == 100
+    assert record.resource_use.tokens_out == 50
+
+
+def test_parse_response_str_content_yields_no_web_search_or_citations(
+    fixture_str_content_response,
+):
+    """The flat-string shape carries no tool-reference markup."""
+    record = parse_response(fixture_str_content_response, PRICE_CARD)
+    assert record.web_search_calls == []
+    assert record.citations == []
