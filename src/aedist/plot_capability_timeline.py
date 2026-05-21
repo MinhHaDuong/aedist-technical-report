@@ -122,7 +122,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
                 f"  TBD: {', '.join(missing_labs)}",
                 fontsize=7,
                 va="center",
-                color="#666666",
+                color="gray",
                 zorder=2,
             )
 
