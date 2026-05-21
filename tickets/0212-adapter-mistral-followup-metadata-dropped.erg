@@ -1,0 +1,100 @@
+%erg 0.1
+Title: adapter_mistral follow-up turn likely drops `extra_metadata` silently
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T16:45Z claude created — known limitation flagged by 0211 raid agent in PR #398
+
+--- body ---
+
+## Context
+
+Ticket 0207's locked policy says the per-turn budget reminder is
+delivered to the agent in *two* ways:
+
+1. **Chat-text prefix** ("Status: remaining budget $X.XX of $10.00…")
+2. **Structured `extra_metadata`** parameter on the provider request
+
+PR #398 (ticket 0211, fixed the follow-up endpoint shape) flagged
+that Mistral's append-to-conversation endpoint —
+`POST /v1/conversations/{conversation_id}` — does **not** accept a
+`metadata` field per the published API surface; the docs list only
+`inputs / completion_args / handoff_execution / store / stream /
+tool_confirmations`.
+
+The PR kept `_attach_metadata(conv_body)` on the follow-up branch as
+a defensive no-change-of-behaviour move, with two possible empirical
+behaviours:
+
+- **silent drop** (Mistral ignores unknown body keys): chat-text
+  reminder reaches the model; structured-parameter half of 0207's
+  policy degrades silently on Mistral turns 2+.
+- **422 reject** (Mistral validates strict): every follow-up turn
+  would crash — which we have NOT seen in the live 0185 smoke (turn
+  2 422 was on the URL shape, not the body); so the silent-drop
+  hypothesis is more likely.
+
+Either way, the structured signal is unreliable on Mistral after
+turn 1, even though it works on the start-of-conversation call
+(create + invoke shape, where `metadata` IS in the documented field
+list).
+
+## Why this matters
+
+The 0207 policy was specifically designed to give thinking-capable
+models a machine-parseable budget signal — not just a string they
+might or might not parse. If Mistral can only see the budget in
+chat-text on follow-up turns, we lose half the signal pathway for
+the agent we're piloting on. The other three SOTA agents may have
+the same limitation in their own continuation shapes.
+
+## Relevant files
+
+- `src/aedist/adapter_mistral.py` — `is_followup` branch (post-PR
+  #398), the `_attach_metadata(conv_body)` call on line ~458 that
+  may be silently dropped
+- `src/aedist/adapter_openai_responses.py` — verify whether
+  `metadata` is documented on the `previous_response_id` chain call,
+  not just the initial create
+- `src/aedist/adapter_qwen_dashscope.py` — already uses the
+  system-message fallback (documented in PR #396)
+- `src/aedist/query_anthropic.py` — verify whether `metadata` is
+  accepted on multi-turn `messages.create` calls
+
+## Actions
+
+1. **Live-confirm Mistral behaviour**: send one follow-up with an
+   intentionally garbage `metadata` field. If 422 → we have a real
+   bug. If 200 → silent drop, document as a known degradation.
+2. **Adopt the Qwen-style fallback for Mistral follow-ups**: when
+   `extra_metadata` is provided on a follow-up turn, prepend the
+   key/value pairs as a `[metadata]` line *inside* the user message
+   text. The chat-text status line already does this for
+   human-readable budget; this would add a machine-parseable line
+   too (e.g. `[budget] remaining_budget_usd=2.50; cap_usd=10.00`).
+3. **Audit the other three adapters** for the same continuation/
+   metadata gap. OpenAI Responses: the `previous_response_id` chain
+   probably accepts metadata (it's a regular `responses.create`
+   call). Anthropic: the messages-array protocol's `metadata` field
+   should work on continuation. Qwen already does the fallback.
+4. **Document the final per-provider semantics** in a comment block
+   near each adapter's `_attach_metadata`/equivalent, and in the
+   0207 policy spec.
+
+## Out of scope
+
+- Re-architecting `extra_metadata` into a typed cross-provider
+  surface. The current dict-passthrough is fine; this ticket is
+  about wire-level support on follow-up turns only.
+
+## Exit criteria
+
+- [ ] Mistral follow-up turn empirically confirmed (silent-drop or
+      422); behaviour documented in adapter docstring.
+- [ ] If silent-drop: `_attach_metadata` on follow-up either dropped
+      entirely or replaced with the Qwen-style chat-text prepend.
+- [ ] OpenAI / Anthropic continuation paths audited for the same
+      gap.
+- [ ] 0207 policy spec updated with the per-provider degradation
+      notes.
