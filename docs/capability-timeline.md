@@ -5,6 +5,16 @@ chronology of capability stages (base instruct -> retrieval -> browsing /
 reasoning -> deep research -> tool / agent use -> multi-agent) at OpenAI,
 Anthropic, Google DeepMind, and Mistral.*
 
+> **Status note (ticket 0212, 2026-05-21).** The §3 figure aligns the
+> capability history with Experiment 1's five-lab panel (Anthropic,
+> OpenAI, Mistral, Alibaba, DeepSeek). The machine-readable source of
+> truth for the figure is `data/capability_timeline.csv`. This markdown
+> note still documents the original four-lab matrix (incl. Google) for
+> narrative context; the proposal in `docs/section3-proposal.md`
+> describes the alignment work and the Qwen / DeepSeek primary-source
+> rows that remain pending. Once those rows land, this note will be
+> rewritten to the five-lab panel and Google demoted to a footnote.
+
 ## Hypothesis
 
 The seven capability stages we track are not a strict chain. The claim:
