@@ -5,6 +5,8 @@ Author: claude
 
 --- log ---
 2026-05-20T20:58Z claude created — discovered while diagnosing 0181's slow throughput. Three worker leases observed past their 600s SIGALRM timeout, two of them 130–200s into expired status, all wedged on deepseek/deepseek-v4-pro. SIGALRM does not reliably interrupt openai-python's underlying httpx network call.
+2026-05-21T13:00Z claude note imagine-narrowed to single insertion in worker.execute (api_kwargs["timeout"] = job.timeout_seconds) + max_retries=1 on OpenAI client + unit test mocking APITimeoutError. SIGALRM kept as backstop. Reclaim-expired-leases logic deferred to separate ticket.
+2026-05-21T13:30Z claude note implemented on t0183-httpx-timeout — single edit in worker.py threads timeout into every mode (single/RAG/web/decomposed/multiturn via shared api_kwargs); make_client + make_client_for_route get max_retries=1; 3 new unit tests in tests/test_harness.py; 2 existing OpenAI() mock-assertion tests updated.
 
 --- body ---
 ## Context

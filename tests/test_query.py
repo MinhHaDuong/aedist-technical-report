@@ -298,4 +298,5 @@ def test_base_url_passed_to_client(mock_openai_cls, tmp_path):
     mock_openai_cls.assert_called_with(
         base_url="http://localhost:11434/v1",
         api_key="ollama",
+        max_retries=1,
     )

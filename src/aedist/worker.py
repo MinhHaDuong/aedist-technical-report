@@ -208,6 +208,15 @@ class Worker:
             enable_web_search=job.web_search,
             no_think=job.no_think,
         )
+        # Thread the job's timeout into every chat.completions.create() call
+        # (ticket 0183). The OpenAI client's `timeout` kwarg maps to httpx's
+        # socket-level timeout, which actually interrupts wedged network reads
+        # — unlike SIGALRM, which the C extension ignores. All mode handlers
+        # (single/RAG/web/decomposed/multiturn) unpack api_kwargs into
+        # query_single_turn(...), so this single line covers them all. Fusion
+        # mode is the lone exception: run_fusion() builds its own client and
+        # api_kw locally — out of scope here, tracked separately.
+        api_kwargs["timeout"] = job.timeout_seconds
 
         pool_label = self.worker_id
         if should_skip(output_dir, model_id, run, pool_label):

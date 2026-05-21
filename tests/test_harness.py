@@ -107,6 +107,7 @@ def test_make_client_custom_base_url():
         mock_cls.assert_called_once_with(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
+            max_retries=1,
         )
 
 
@@ -418,3 +419,76 @@ def test_query_model_ollama_local_sweep_jobspec_end_to_end(monkeypatch, tmp_path
         "no_think=true on local sweep must reach the Ollama wire — "
         "regression for ticket 0139 silent-drop"
     )
+
+
+# ---------------------------------------------------------------------------
+# query_single_turn timeout propagation (ticket 0183)
+# ---------------------------------------------------------------------------
+
+
+def test_query_single_turn_forwards_timeout_kwarg():
+    """A ``timeout=`` kwarg given to query_single_turn reaches the OpenAI call.
+
+    Worker.execute() injects ``api_kwargs["timeout"] = job.timeout_seconds`` so
+    that httpx can interrupt wedged network reads. This test pins the contract:
+    if the kwarg silently disappears on the way down, the wedge-fix is dead.
+    """
+    from unittest.mock import MagicMock
+
+    from aedist.harness import query_single_turn
+
+    client = MagicMock()
+    response = MagicMock()
+    response.choices = [MagicMock(message=MagicMock(content="ok"), finish_reason="stop")]
+    response.usage = MagicMock(prompt_tokens=1, completion_tokens=1)
+    client.chat.completions.create.return_value = response
+
+    query_single_turn(client, "test/m", [{"role": "user", "content": "hi"}], timeout=42.0)
+    call_kwargs = client.chat.completions.create.call_args.kwargs
+    assert call_kwargs["timeout"] == 42.0
+
+
+def test_query_single_turn_surfaces_api_timeout_error():
+    """APITimeoutError from the OpenAI client propagates unwrapped to the caller.
+
+    The worker's exception handler relies on this: an unswallowed timeout moves
+    the job from running/ to failed/ and frees the worker for the next job.
+    Wrapping or hiding the exception would re-create the wedge this ticket
+    fixes.
+    """
+    from unittest.mock import MagicMock
+
+    import httpx
+    import openai
+    import pytest
+
+    from aedist.harness import query_single_turn
+
+    client = MagicMock()
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    client.chat.completions.create.side_effect = openai.APITimeoutError(request)
+
+    with pytest.raises(openai.APITimeoutError):
+        query_single_turn(
+            client,
+            "test/m",
+            [{"role": "user", "content": "hi"}],
+            timeout=1.0,
+        )
+
+
+def test_make_client_default_sets_max_retries():
+    """make_client() (OpenRouter default) pins max_retries=1 on the OpenAI client."""
+    import os
+    from unittest.mock import patch
+
+    with (
+        patch("aedist.harness.OpenAI") as mock_cls,
+        patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}),
+    ):
+        from aedist.harness import make_client
+
+        make_client()
+        call_kwargs = mock_cls.call_args.kwargs
+        assert call_kwargs["max_retries"] == 1
+        assert call_kwargs["base_url"] == "https://openrouter.ai/api/v1"
