@@ -298,6 +298,50 @@ def test_run_one_failure(tmp_path: Path) -> None:
     assert "execution failed" in error_txt
 
 
+class _FailThenSucceedWorker(Worker):
+    """Worker that fails on the first execute, succeeds on the second."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._call_count = 0
+
+    def execute(self, job: JobSpec) -> dict:
+        self._call_count += 1
+        if self._call_count == 1:
+            raise RuntimeError("simulated 429")
+        return {
+            "result_file": "outputs/test/result.json",
+            "wall_seconds": 1.0,
+            "cost_usd": 0.01,
+            "tokens_in": 100,
+            "tokens_out": 50,
+        }
+
+
+def test_drain_continues_after_job_failure(tmp_path: Path) -> None:
+    """drain() continues to next pending job after a failure (ticket 0203).
+
+    Before the fix, a failed job caused run_one() to return None, which
+    the drain loop interpreted as "queue empty" and exited — leaving
+    remaining pending jobs unprocessed.
+    """
+    jobs_root = tmp_path / "jobs"
+    worker = _FailThenSucceedWorker("w1", jobs_root=jobs_root)
+
+    job1 = _make_job(job_id="will-fail", priority=90)
+    job2 = _make_job(job_id="will-pass", priority=50)
+    _write_pending(jobs_root, job1)
+    _write_pending(jobs_root, job2)
+
+    records = worker.drain()
+
+    assert len(records) == 1
+    assert (jobs_root / "failed" / "will-fail.yaml").exists()
+    assert (jobs_root / "failed" / "will-fail.error.txt").exists()
+    assert (jobs_root / "done" / "will-pass.yaml").exists()
+    assert not list((jobs_root / "pending").iterdir())
+
+
 # ---------------------------------------------------------------------------
 # PadmeWorker tests
 # ---------------------------------------------------------------------------
@@ -1070,3 +1114,49 @@ def test_worker_rejects_claude_code_cli_route(tmp_path: Path) -> None:
 
     # Confirm query_model was never reached.
     patches["query_model"].assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0204: null content detection
+# ---------------------------------------------------------------------------
+
+
+def test_null_content_raises_descriptive_error(tmp_path: Path) -> None:
+    """Null content from provider raises immediately with model ID and finish_reason.
+
+    Ticket 0204: deepseek-v4-pro returns HTTP 200 but choice.message.content
+    is None. If the SDK tolerates this, the worker must fail fast rather than
+    saving a None response. The error message must be distinguishable from
+    rate-limit and network errors.
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="null-content",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="deepseek/deepseek-v4-pro",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    null_result = {
+        "content": None,
+        "finish_reason": "stop",
+        "usage": {"prompt_tokens": 50, "completion_tokens": 0},
+        "wall_seconds": 1.0,
+    }
+    patches = _harness_patches(tmp_path)
+    patches["load_models"] = MagicMock(return_value=[{"name": "deepseek/deepseek-v4-pro"}])
+    patches["query_model"] = MagicMock(return_value=null_result)
+
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    with patch.multiple("aedist.worker", **patches):
+        with pytest.raises(RuntimeError, match="Null content from deepseek/deepseek-v4-pro"):
+            worker.execute(job)
+
+    patches["save_json"].assert_not_called()

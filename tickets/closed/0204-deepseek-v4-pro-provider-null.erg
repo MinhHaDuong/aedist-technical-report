@@ -2,9 +2,11 @@
 Title: deepseek-v4-pro returns null content via OpenRouter, hangs the worker
 Created: 2026-05-21
 Author: claude
+Closed: null-content guard in _query_and_save + drain continuation from 0203 — PR #402
 
 --- log ---
 2026-05-21T11:42Z claude created — observed during ticket 0198 topup; killed 2 worker leases after 25 min each
+2026-05-21T18:45Z claude closed — PR #402 merged
 
 --- body ---
 ## Context
