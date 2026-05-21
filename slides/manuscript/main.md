@@ -109,26 +109,26 @@ No persona, no narratives, no quality bullets — those land in ablation sweeps,
 
 Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
 
-| Model | Lab | Family | Size class |
-|---|---|---|---|
-| claude-opus-4.6 | Anthropic | EN | frontier |
-| claude-sonnet-4.6 | Anthropic | EN | frontier |
-| claude-haiku-4.5 | Anthropic | EN | mid |
-| gpt-5.5 | OpenAI | EN | frontier |
-| gpt-oss-120b | OpenAI | EN | large |
-| gpt-oss-20b | OpenAI | EN | mid |
-| mistral-small-2603 | Mistral | FR | mid |
-| mistral-medium-3-5 | Mistral | FR | mid |
-| mistral-large-2512 | Mistral | FR | frontier |
-| qwen3.6-27b | Alibaba | ZH | mid |
-| qwen3.6-35b-a3b | Alibaba | ZH | mid |
-| qwen3.6-flash | Alibaba | ZH | mid |
-| qwen3.6-plus | Alibaba | ZH | frontier |
-| qwen3-max-thinking | Alibaba | ZH | frontier |
-| deepseek-v4-pro | DeepSeek | ZH | frontier |
-| deepseek-v4-flash | DeepSeek | ZH | mid |
+| Model | Lab | Family | Size class | Reasoning tokens (median, post-fix) |
+|---|---|---|---|---|
+| claude-opus-4.6 | Anthropic | EN | frontier | 0 |
+| claude-sonnet-4.6 | Anthropic | EN | frontier | 0 |
+| claude-haiku-4.5 | Anthropic | EN | mid | 0 |
+| gpt-5.5 | OpenAI | EN | frontier | 1,537 |
+| gpt-oss-120b | OpenAI | EN | large | 35 |
+| gpt-oss-20b | OpenAI | EN | mid | 18 |
+| mistral-small-2603 | Mistral | FR | mid | 0 |
+| mistral-medium-3-5 | Mistral | FR | mid | 0 |
+| mistral-large-2512 | Mistral | FR | frontier | 0 |
+| qwen3.6-27b | Alibaba | ZH | mid | 5,735 |
+| qwen3.6-35b-a3b | Alibaba | ZH | mid | 8,143 |
+| qwen3.6-flash | Alibaba | ZH | mid | — (rate-limited) |
+| qwen3.6-plus | Alibaba | ZH | frontier | 6,677 |
+| qwen3-max-thinking | Alibaba | ZH | frontier | 0 |
+| deepseek-v4-pro | DeepSeek | ZH | frontier | 16,774 |
+| deepseek-v4-flash | DeepSeek | ZH | mid | 775 |
 
-Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. All sixteen models received identical call parameters (T=0, seed=42, max_tokens=32768, no-web system instruction). The only reasoning-related signal sent was `reasoning_effort = "minimal"` for the two `gpt-oss-*` entries, declared in the registry. Per-call reasoning-token counts are not reported here: the harness stripped `usage.completion_tokens_details` from records before writing them to disk, a bug discovered post-run and fixed in PR #379 (ticket 0195). A 2026-05-21 probe with the same prompt against four of the panel models found `reasoning_tokens = 0` whenever no `reasoning_effort` was sent, including `qwen3-max-thinking` (the lab's explicit thinking variant via OpenRouter), `mistral-small-2603`, and `claude-opus-4.6`; we therefore do not characterise within-panel reasoning intensity until a post-fix rerun. For `qwen3-max-thinking`, an early minimal-effort smoke produced 5/5 refusals; the no-effort lineup recovered 5/5 usable rows after a parser fix that handles markdown section dividers inside structured-output tables. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. **GPT-5.5 declines this task on 3 of 5 reps**, opening with "I can't honestly produce a complete, primary-sourced inventory..." and refusing to fabricate URLs or source citations from parametric knowledge alone. We retain the declined responses as data — a model viewpoint on the request's epistemic standard, not extraction noise.
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. All sixteen models received identical call parameters (T=0, seed=42, max_tokens=32768, no-web system instruction). The only reasoning-related signal sent was `reasoning_effort = "minimal"` for the two `gpt-oss-*` entries, declared in the registry. The "Reasoning tokens" column reports the median `completion_tokens_details.reasoning_tokens` field over the post-fix top-up cohort (ticket 0198, 2026-05-21, $N{\leq}3$ per model). The original baseline cohort (2026-05-20) ran on a harness that stripped `usage.completion_tokens_details` before writing records to disk, a bug fixed in PR #379 (ticket 0195); the top-up sweep was issued post-fix with identical call shape to recover the column. Two regimes are visible: Anthropic and Mistral models report 0 reasoning tokens across all reps; DeepSeek V4, all Qwen3.6 entries that we could run, GPT-OSS, and GPT-5.5 allocate between dozens and 16,774 tokens to internal reasoning. `qwen3-max-thinking` reports 0 despite the explicit naming: OpenRouter does not expose reasoning tokens for this model in the absence of an explicit `reasoning_effort` flag. `qwen3.6-flash` is reported as "—": Alibaba's free-tier upstream rate-limited all top-up attempts across the session. For `qwen3-max-thinking`, an early minimal-effort smoke produced 5/5 refusals; the no-effort lineup recovered 5/5 usable rows after a parser fix that handles markdown section dividers inside structured-output tables. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. **GPT-5.5 declines this task on 3 of 5 reps**, opening with "I can't honestly produce a complete, primary-sourced inventory..." and refusing to fabricate URLs or source citations from parametric knowledge alone. We retain the declined responses as data — a model viewpoint on the request's epistemic standard, not extraction noise.
 
 ### Run parameters
 
@@ -142,6 +142,12 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 | Total runs | 80 | 16 models × 5 repeats |
 
 `seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max-thinking, deepseek-v4-pro, deepseek-v4-flash) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated. To our knowledge, MoE non-determinism specifically for multi-row structured outputs at deterministic decoding settings has not been characterised in prior literature; the present discipline is informed by in-project measurement rather than external benchmarks.
+
+### Post-fix top-up cohort and interday variability
+
+The original 16-model × 5-rep baseline was executed on 2026-05-20 against a harness that silently dropped `usage.completion_tokens_details` (PR #379, ticket 0195). To recover the reasoning-token signal without re-running the full sweep, ticket 0198 added a post-fix top-up: $N{\leq}3$ additional reps per model on 2026-05-21, identical call shape (same `model_set` IDs — recorded as the frozen `modelset_exp1_baseline`, since two journal-set IDs had been edited between the two days; same prompt, temperature, seed, max_tokens, system instruction). Outcome metrics (F1, coverage, fuel/status/province accuracy) pool both cohorts; reasoning_tokens are reported from the post-fix cohort only. Three models (qwen3.6-flash on Alibaba's rate-limited free tier; gpt-5.5 with refusals on principled grounds; deepseek-v4-pro with provider-side `null` content errors) yielded fewer than 3 post-fix reps; the per-model N is shown in the topup-results table (`tab_exp1_reasoning_topup` in the report).
+
+A canary rep per model was compared against the original 5-rep range before launching the top-up. Three models showed $|\Delta\text{F1}| > 2\sigma_{\text{baseline}}$ between cohorts at fixed call shape and seed: deepseek-v4-pro ($-0.185$), qwen3.6-27b ($+0.289$), qwen3.6-35b-a3b ($+0.165$). We pool all reps regardless and surface this as an interday-variability finding rather than excluding the drift models: $T{=}0$ and `seed=42` do not neutralise silent provider-side movement (routing changes, checkpoint updates) for these labs over a 24-hour window. To our knowledge, day-scale F1 drift at fixed deterministic call parameters has not been quantified for production LLM APIs on structured extraction tasks.
 
 ### Evaluation
 
