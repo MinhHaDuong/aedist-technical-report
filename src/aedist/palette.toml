@@ -91,8 +91,9 @@ Xiaomi        = "ZH"
 "minimax"   = "ZH"
 "step"      = "ZH"
 
-# Architectural model families — used by Figure 2 (Pareto) to colour models by
-# their architectural lineage rather than by lab country. Independent from the
+# Architectural model families — used by the cost × quality scatter (Figure 2)
+# to colour models by their architectural lineage rather than by lab country.
+# Independent from the
 # language_families table above. Each family is a slug prefix on the model id.
 # Resolve via ``aedist.util.model_family_color()``. Wong colorblind-safe palette.
 [model_families]

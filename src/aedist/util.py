@@ -124,8 +124,9 @@ def model_family_color(model: str) -> str:
     "Architectural family" is the lineage of a model — Claude / GPT / Mistral /
     Qwen / DeepSeek and so on — resolved by longest-prefix match against the
     ``model_families.prefix_map`` table in ``palette.toml``. This is the colour
-    axis used by Figure 2 (Pareto). Distinct from :func:`family_color`, which
-    encodes the lab's *country* via the language-family table.
+    axis used by the cost × quality scatter (Figure 2). Distinct from
+    :func:`family_color`, which encodes the lab's *country* via the
+    language-family table.
 
     Returns the fallback hue when no prefix matches. Empty input returns
     fallback.
