@@ -991,3 +991,34 @@ def test_rag_empty_corpus_raises_runtime_error(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         with pytest.raises(RuntimeError, match="RAG corpus load failed"):
             worker.execute(job)
+
+
+# ---------------------------------------------------------------------------
+# Timeout threading (Ticket 0183)
+# ---------------------------------------------------------------------------
+
+
+def test_execute_threads_timeout_into_api_kwargs(tmp_path: Path) -> None:
+    """Worker.execute() injects job.timeout_seconds into api_kwargs (ticket 0183).
+
+    This is the load-bearing single-line fix: without it, openai-python's
+    httpx layer holds the socket open and SIGALRM cannot interrupt the wedge.
+    Pin the contract so a future refactor cannot drop the kwarg silently.
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = _make_job(
+        mode="single",
+        model_filter="qwen3:8b",
+        timeout_seconds=123,
+    )
+    job = job.model_copy(update={"prompt": str(prompt_file)})
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+
+    patches = _harness_patches(tmp_path)
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    call_kwargs = patches["query_model"].call_args.kwargs
+    assert call_kwargs.get("timeout") == 123
