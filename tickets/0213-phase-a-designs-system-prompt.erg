@@ -1,0 +1,83 @@
+%erg 0.1
+Title: Phase A also designs the system prompt (not just user prompt + settings)
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T17:00Z claude created — author quality review of 0185 turn-1 inventory, 2026-05-21
+
+--- body ---
+
+## Context
+
+The Exp 2 smoke (ticket 0185) currently asks Phase A to design only
+`designed_prompt` (user-side text) and `settings`
+(thinking, max_tokens). The **system prompt** is left untouched —
+it's whatever each adapter's default agent description carries
+(Mistral: `"AEDIST SOTA experiment agent with web_search connector."`).
+
+The §4 manuscript prose says
+
+> "we give each model our complete prompt and the quality criteria
+> above, and ask it to tune **the prompt and settings**"
+
+The plural "prompt" is naturally read as both system and user.
+Leaving the system prompt fixed is leaving a strong lever on the
+table — system prompts often steer behaviour more than user prompts.
+
+Author quality-review (2026-05-21) of the turn-1 inventory flagged
+this explicitly: per-row source columns came back empty even
+though the original `prompt_complete.txt` asks for per-cell
+sourcing. A designed system prompt could enforce that behaviourally
+("you MUST populate every Source 1 and Source 2 cell") in a way that
+user-side instructions alone don't always survive.
+
+## Per-adapter system-prompt surface
+
+| Adapter | Where the system prompt lives |
+|---|---|
+| Mistral Agents | `POST /v1/agents` body `description` field |
+| Anthropic | `messages.create` `system` parameter |
+| OpenAI Responses | `instructions` parameter on `responses.create` |
+| Qwen DashScope | `messages[0]` with `role: "system"` |
+
+## Actions
+
+1. Extend the Phase A JSON envelope spec (in
+   `experiments/sota/exp2_interactive_smoke.py::assemble_meta_prompt`)
+   to include a fourth required key: `system_prompt` (string).
+2. Update `extract_phase_a_design` to require the new key
+   (existing tolerant-JSON parsing already handles arbitrary keys).
+3. Thread `design["system_prompt"]` into Mistral's `agent_create`
+   body's `description` field via a new `system_prompt` kwarg on
+   `adapter_mistral.run()` (multi-turn-start mode only — follow-up
+   turns reuse the agent).
+4. Document the per-adapter surface (above) in a docstring near
+   the kwarg so the other three adapters get the same treatment
+   when extended.
+5. Tests:
+   - `test_extract_phase_a_design_requires_system_prompt_key`
+   - `test_assemble_meta_prompt_announces_system_prompt_field`
+   - `test_adapter_mistral_system_prompt_threads_to_agent_description`
+     (mock httpx; verify agent_create body has the right
+     description field)
+6. Re-smoke Mistral with the extended envelope.
+
+## Invariants
+
+- Backward compatibility: if Phase A doesn't return a
+  `system_prompt` key (older saved designs), the smoke must fall
+  back to the adapter's default and log the fallback.
+- The system prompt is a string only — no nested structure (don't
+  invite Mistral to return a dict for it, per the dict-vs-string
+  finding from earlier 0185 runs).
+
+## Exit criteria
+
+- [ ] Phase A envelope spec includes `system_prompt`
+- [ ] Mistral adapter accepts a `system_prompt` kwarg in
+      multi-turn-start mode
+- [ ] Per-adapter system-prompt surface documented
+- [ ] Re-smoke produces an inventory where per-row source columns
+      are no longer empty (or, if still empty, we have data showing
+      it's a model-skill issue not a prompt-design issue)

@@ -1,0 +1,190 @@
+%erg 0.1
+Title: Phase B dialogue as a state machine driven by an LLM report-classifier
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T17:00Z claude created — author redesign of 0207 policy after the 2026-05-21 smoke surfaced its limits
+
+--- body ---
+
+## Context
+
+The current Phase B loop (ticket 0207, landed in commits leading
+to 0185 closure) sends the same generic "Proceed as you think is
+best in autonomous agentic mode." reply on every follow-up turn
+until budget triggers the terminal reply. The 2026-05-21 multi-turn
+smoke showed two failure modes of this policy:
+
+- Turn 1 produced a usable report. Turn 2 sent the generic
+  encouragement — but the right reply was "verify and polish what
+  you just produced, especially the per-row source columns." We
+  wasted a turn (and ended up triggering the model to *plan* an
+  improvement instead of doing one) because the harness didn't
+  know what had already been delivered.
+- After three generic encouragements with no report, we'd keep
+  going indefinitely (only the budget cap stops us). There's no
+  graceful "we don't think this is going anywhere" exit short of
+  exhaustion.
+
+The locked policy ("two reply slots: standard + terminal") was too
+coarse. Replacing it with a small state machine, driven by an LLM
+classifier on each assistant reply, gives both stronger steering
+and a defensible stop condition.
+
+## State machine (author's spec, 2026-05-21)
+
+Variables tracked per Phase B session:
+
+- `verify_used: bool` — has the one verify/polish round been spent?
+- `encouragement_count: int` (0..3) — how many "proceed autonomously"
+  replies have we sent without seeing a report
+- `remaining_budget_usd: float` — total cap minus spend so far
+- `wall_elapsed_s: float` — for the status reminder
+
+After each assistant reply (including turn 1's), classify the reply
+via an LLM call (cheap model, see below). Two classes:
+
+- **report**: the assistant produced a structured inventory
+  (table + sources + narrative — at least one of those, materially)
+- **no_report**: the assistant did not produce a report
+  (planning, clarification, refusal, partial intermediate)
+
+Transition rules:
+
+```
+if remaining_budget <= BUDGET_TRIGGER_FRAC * cap_usd:
+    send TERMINAL_REPLY (with budget status); accept one more
+    response; stop. Overrides everything below.
+
+if class == "report":
+    if not verify_used:
+        send VERIFY_REPLY (with budget status); verify_used = True;
+        encouragement_count = 0
+    else:
+        # we already used our one verify round; this is the polished
+        # response. Accept it and stop.
+        stop
+elif class == "no_report":
+    if encouragement_count < 3:
+        send ENCOURAGE_REPLY (with budget status);
+        encouragement_count += 1
+    else:
+        # 3 encouragements exhausted without a report; graceful exit
+        send TERMINAL_REPLY (with budget status); accept one more
+        response; stop.
+```
+
+Status reminder (chat-text prefix) appears on every user-side
+message after turn 1, as in the current policy.
+
+## Three reply strings (verbatim, fixed condition for Annex C)
+
+**ENCOURAGE_REPLY** (≤3 times before forcing terminal):
+
+> "Proceed as you think is best in autonomous agentic mode."
+
+**VERIFY_REPLY** (sent once after the first reply classified as
+report):
+
+> "Thank you for the inventory. Please now verify and polish it
+> in ONE focused pass, prioritising: (a) per-row provenance — every
+> Source 1 and Source 2 cell must point to a specific URL from
+> your bibliography; (b) coverage — any plant present in your
+> bibliography but absent from the table; (c) temporality — every
+> row has an as-of date or status-change note; (d) internal
+> consistency — capacity totals reconcile across the table and the
+> statistical summary. Return the corrected inventory only — no
+> meta-commentary on what you changed."
+
+**TERMINAL_REPLY** (as today):
+
+> "I have no additional directive to give you. Please proceed to
+> generating the report without further asking. If you cannot, we
+> would appreciate to know why, but the discussion will stop here
+> in any case. Thanks for your understanding."
+
+## Classifier
+
+- **Model**: a cheap fast LLM, pinned in `models.yaml` under a new
+  family `classifier`. Candidate: `mistral-small-latest` or
+  `gpt-5-nano` or `openrouter/openai/gpt-5-mini`. Cost per
+  classification: well under $0.001.
+- **Surface**: a single function
+  `classify_report(narrative: str) -> Literal["report", "no_report"]`
+  in `experiments/sota/dialogue_classifier.py`. Same module exposes
+  the model id and the prompt as constants for reproducibility.
+- **Prompt**: short, structured, demands a single-word answer.
+  Example draft:
+
+  > You are a classification assistant. The following is a single
+  > response from an AI agent that was asked to produce a structured
+  > inventory of Vietnam's thermal power plants (>30MWe). Did this
+  > response materially deliver an inventory? Reply with exactly
+  > one word: "report" if it includes a structured table or
+  > equivalent enumeration of plants, "no_report" if it is
+  > planning, clarification, refusal, or a meta-statement about
+  > intent without the substance.
+  >
+  > AGENT RESPONSE:
+  > ```
+  > {narrative_excerpt_up_to_8K_chars}
+  > ```
+  >
+  > Reply with exactly one word: "report" or "no_report".
+
+- **Failure modes**: classifier 4xx / 5xx / parse-fail (model
+  returns something other than the two expected words) → treat as
+  `no_report` and log; never crash the smoke.
+- **Cost accounting**: classifier cost is **harness overhead**,
+  not part of the SOTA agent's $10 budget. Reported separately in
+  the per-turn cost artefact under a `classifier_cost_usd` key.
+
+## Per-turn artefacts (extended)
+
+In addition to the current four files per turn, add:
+
+- `{agent}_turn_NN.classification.json` — `{class: "report"|"no_report", classifier_cost_usd: float, classifier_model: str, wall_s: float}`
+
+So the manuscript can later report turn counts AND turn shape
+("Mistral: turn 1 = report, turn 2 = verify-polish, turn 3 =
+report; closed at turn 3 polished.").
+
+## Actions
+
+1. Add `experiments/sota/dialogue_classifier.py` with the
+   `classify_report()` function + unit tests (mocked).
+2. Pin the classifier model in `models.yaml` (or as a constant in
+   the module, depending on project preference).
+3. Replace `run_phase_b_multiturn` with a state-machine
+   implementation per the spec above. Keep the same external
+   surface (output dir layout, artefacts).
+4. Update `format_status_line` / `select_reply` to expose three
+   slots instead of two; deprecate the binary terminal-threshold
+   logic in favour of the state machine.
+5. Unit-test the state machine with mocked adapter and mocked
+   classifier — at minimum:
+   - report on turn 1 → verify-reply on turn 2 → accept turn 2's
+     response and stop
+   - no_report ×4 → encourage ×3 → terminal on turn 4 → accept and
+     stop
+   - budget exhausted mid-flow → terminal overrides regardless
+6. Re-smoke Mistral end-to-end with the state machine. Verify a
+   verify-polish round actually fills the per-row source columns
+   (which is the test of whether the redesign was worth it).
+
+## Out of scope
+
+- Multi-class classification (just "report" / "no_report").
+- Classifying the *quality* of the report (that's evaluation, not
+  dialogue control).
+
+## Exit criteria
+
+- [ ] State machine implemented; old two-slot logic removed.
+- [ ] Classifier module + tests; classifier cost separated from
+      agent cost in artefacts.
+- [ ] Re-smoke on Mistral shows: turn-2 verify reply triggered after
+      a turn-1 report, polished inventory landed by turn 3.
+- [ ] Policy text (verbatim three reply strings + state machine +
+      classifier model id) documented for 0199 / Annex C.

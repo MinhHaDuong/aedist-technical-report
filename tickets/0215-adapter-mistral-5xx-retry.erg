@@ -1,0 +1,104 @@
+%erg 0.1
+Title: adapter_mistral (and harness) retry on transient 5xx with exponential backoff
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T17:00Z claude created — turn 3 of 0185 multi-turn smoke (2026-05-21) lost to HTTP 502 Bad Gateway from Mistral
+
+--- body ---
+
+## Context
+
+The 2026-05-21 multi-turn smoke on Mistral produced a 25.4K-char
+inventory on turn 1, planned an upgrade on turn 2, and then the
+turn-3 follow-up (which would have executed the upgrade) was
+killed by an HTTP 502 Bad Gateway from
+`POST /v1/conversations/{conversation_id}`. The 502 is server-side
+flakiness of the Mistral Agents beta API — not a request-shape bug.
+
+The harness has no retry policy. A single 5xx aborts the entire
+multi-turn loop and forfeits whatever the agent would have
+produced. With the conference push depending on at least one
+clean multi-turn run per agent, this is a quality risk for the
+§4 evidence.
+
+## Scope
+
+Add a small retry policy at the **adapter** layer for both Mistral
+endpoints used in the multi-turn flow:
+
+- `POST /v1/conversations` (create)
+- `POST /v1/conversations/{id}` (append)
+
+Retry on:
+
+- HTTP 502, 503, 504 (transient gateway / availability)
+- `httpx.ReadTimeout`, `httpx.ConnectTimeout`, `httpx.RemoteProtocolError`
+
+Do NOT retry on:
+
+- 4xx (client error — our request is wrong, retry won't help)
+- 422 specifically (the previous 0211/0212 bugs would have been
+  papered over by retry)
+
+Policy: at most 3 retries; exponential backoff
+(1s, 2s, 4s, with ±10% jitter). Log each retry attempt.
+
+## Per-adapter footprint
+
+| Adapter | HTTP transport | Retry surface |
+|---|---|---|
+| Mistral Agents | raw httpx | wrap `_create_agent`, `_start_conversation`, the new path-bound append, and `_delete_agent` |
+| Anthropic | Anthropic SDK | SDK has built-in retries; verify config |
+| OpenAI Responses | OpenAI SDK | SDK has built-in retries; verify config |
+| Qwen DashScope | DashScope SDK | unclear; verify |
+
+This ticket targets Mistral specifically since that's where the
+empirical 502 happened and Mistral's transport is raw httpx (no
+SDK-level retry). The other three adapters get a sibling audit if
+they're missing retries — file separately if so.
+
+## Relevant files
+
+- `src/aedist/adapter_mistral.py:286-321` — the three transport
+  helpers (`_create_agent`, `_start_conversation`, `_delete_agent`)
+  and the new follow-up POST inline in `run()` post-#398
+- `tests/test_adapter_mistral.py` — extend with retry-on-5xx test
+  using monkeypatched httpx that returns 502 once then 200
+
+## Actions
+
+1. Add a `_retry_post()` helper (or extract a tiny retry decorator)
+   in `adapter_mistral.py` that wraps an httpx call with the policy
+   above. Reuse for all 4 endpoints.
+2. Apply to `_create_agent`, `_start_conversation`, the inline
+   follow-up POST, and `_delete_agent` (last one's failure is
+   already non-raising; the retry just makes it more likely to
+   succeed).
+3. Tests:
+   - `test_create_agent_retries_on_502` — mock httpx to return 502
+     twice then 200; assert single record returned
+   - `test_create_agent_gives_up_after_3_retries` — return 502 ×4;
+     assert raises `httpx.HTTPStatusError`
+   - `test_create_agent_does_not_retry_on_422` — return 422; assert
+     raises immediately, no retry
+4. Re-smoke 0185 if the May-21 smoke turn-3 scenario recurs.
+
+## Out of scope
+
+- Tenacity or third-party retry libraries — a hand-rolled loop in
+  <20 lines is enough and avoids a new dependency.
+- Idempotency-key support — Mistral's API is idempotent-by-design
+  on the create endpoints (different agent_id per call); the
+  append endpoint is conversation-scoped so a duplicate is at
+  worst an extra user turn (not silently destructive).
+- Adapter-level retry policy for the other 3 adapters (audit
+  ticket sibling, file if/when needed).
+
+## Exit criteria
+
+- [ ] All four Mistral POSTs go through the retry wrapper
+- [ ] Three unit tests cover retry, gives-up, no-retry-on-4xx
+- [ ] `make check-fast` green
+- [ ] Logs show retry attempts so post-mortems are tractable
