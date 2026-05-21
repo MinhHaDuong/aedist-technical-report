@@ -52,34 +52,56 @@ def test_assemble_meta_prompt_contains_baseline_and_quality_bar():
     assert "Output ONLY" in prompt  # explicit no-prose instruction
 
 
+def test_assemble_meta_prompt_announces_system_prompt_field():
+    """Ticket 0213: the Phase A envelope must include `system_prompt` as a
+    required string key, with an explicit instruction that it MUST be a
+    string (not a JSON object) — the dict-vs-string ambiguity already
+    cost us one turn during 0185.
+    """
+    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    assert "system_prompt" in prompt, "envelope spec must announce system_prompt key"
+    # The string-only constraint must be explicit in the prose.
+    assert "MUST be a plain JSON string" in prompt, (
+        "envelope spec must say system_prompt is a string, not a dict"
+    )
+
+
 def test_extract_phase_a_design_parses_clean_json():
     payload = json.dumps(
         {
             "designed_prompt": "X",
+            "system_prompt": "sys",
             "settings": {"thinking": True, "max_tokens": 8000, "rationale_for_settings": "y"},
             "rationale": "targets accuracy and provenance",
         }
     )
     obj = extract_phase_a_design(payload)
     assert obj["designed_prompt"] == "X"
+    assert obj["system_prompt"] == "sys"
     assert obj["settings"]["thinking"] is True
 
 
 def test_extract_phase_a_design_strips_markdown_fence():
     """Model sometimes wraps JSON in ```json ... ``` despite instructions."""
-    raw = '```json\n{"designed_prompt":"X","settings":{},"rationale":"z"}\n```'
+    raw = '```json\n{"designed_prompt":"X","system_prompt":"S","settings":{},"rationale":"z"}\n```'
     obj = extract_phase_a_design(raw)
     assert obj["designed_prompt"] == "X"
+    assert obj["system_prompt"] == "S"
 
 
 def test_extract_phase_a_design_tolerates_prose_preamble():
-    raw = 'Sure! Here is my design:\n{"designed_prompt":"X","settings":{},"rationale":"y"}'
+    raw = (
+        "Sure! Here is my design:\n"
+        '{"designed_prompt":"X","system_prompt":"S","settings":{},"rationale":"y"}'
+    )
     obj = extract_phase_a_design(raw)
     assert obj["designed_prompt"] == "X"
 
 
 def test_extract_phase_a_design_tolerates_prose_postamble():
-    raw = '{"designed_prompt":"X","settings":{},"rationale":"y"}\n\nLet me know!'
+    raw = (
+        '{"designed_prompt":"X","system_prompt":"S","settings":{},"rationale":"y"}\n\nLet me know!'
+    )
     obj = extract_phase_a_design(raw)
     assert obj["designed_prompt"] == "X"
 
@@ -92,6 +114,39 @@ def test_extract_phase_a_design_raises_on_invalid_json():
 def test_extract_phase_a_design_raises_on_missing_keys():
     with pytest.raises(ValueError, match="missing required key"):
         extract_phase_a_design('{"designed_prompt":"X"}')
+
+
+def test_extract_phase_a_design_requires_system_prompt_key():
+    """Ticket 0213: system_prompt is a required key in the Phase A envelope."""
+    payload = json.dumps(
+        {
+            "designed_prompt": "X",
+            # system_prompt deliberately absent
+            "settings": {"thinking": True, "max_tokens": 8000},
+            "rationale": "no system prompt provided",
+        }
+    )
+    with pytest.raises(ValueError, match="missing required key 'system_prompt'"):
+        extract_phase_a_design(payload)
+
+
+def test_extract_phase_a_design_rejects_system_prompt_as_dict():
+    """Ticket 0213: system_prompt must be a plain string, not a dict.
+
+    The dict-vs-string burn earlier in 0185 motivated explicit type
+    enforcement here — the harness threads this value verbatim into the
+    Mistral agent description field, which is a string.
+    """
+    payload = json.dumps(
+        {
+            "designed_prompt": "X",
+            "system_prompt": {"role": "system", "content": "S"},
+            "settings": {"thinking": True, "max_tokens": 8000},
+            "rationale": "structured",
+        }
+    )
+    with pytest.raises(ValueError, match="'system_prompt' must be a string"):
+        extract_phase_a_design(payload)
 
 
 def test_extract_narrative_from_mistral_raw_concatenates_text_chunks():
@@ -119,7 +174,10 @@ def test_extract_narrative_from_mistral_raw_handles_string_content():
 
 def test_extract_phase_a_design_handles_python_triple_quotes():
     """SOTA models occasionally use Python ``\"\"\"`` inside JSON; we normalise."""
-    raw = '{"designed_prompt": """multi\nline\nprompt""", "settings": {}, "rationale": "y"}'
+    raw = (
+        '{"designed_prompt": """multi\nline\nprompt""", '
+        '"system_prompt": "S", "settings": {}, "rationale": "y"}'
+    )
     obj = extract_phase_a_design(raw)
     assert obj["designed_prompt"] == "multi\nline\nprompt"
 
@@ -203,6 +261,7 @@ def _fake_run_factory(cost_per_call: float = 0.10):
         max_tokens,
         continuation=None,
         extra_metadata=None,
+        system_prompt=None,
     ):
         from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
@@ -212,6 +271,7 @@ def _fake_run_factory(cost_per_call: float = 0.10):
                 "prompt_starts_with_status": prompt.startswith("Status:"),
                 "continuation": continuation,
                 "extra_metadata": extra_metadata,
+                "system_prompt": system_prompt,
             }
         )
         # Write a minimal raw artefact the classifier-narrative extractor can read.
@@ -281,6 +341,7 @@ def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
+        system_prompt="designed system text",
     )
 
     assert result["turns"] == 2, f"expected 2 turns, got {result['turns']}"
@@ -291,6 +352,14 @@ def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
     assert fake_run.calls[0]["prompt_starts_with_status"] is False  # type: ignore[attr-defined]
     # Turn 2 is status-prefixed.
     assert fake_run.calls[1]["prompt_starts_with_status"] is True  # type: ignore[attr-defined]
+    # Ticket 0213: system_prompt is forwarded only on the multi-turn-start
+    # turn (turn 1); follow-up turns must pass None because the agent is
+    # already created with its description fixed.
+    assert fake_run.calls[0]["system_prompt"] == "designed system text"  # type: ignore[attr-defined]
+    for entry in fake_run.calls[1:]:  # type: ignore[attr-defined]
+        assert entry["system_prompt"] is None, (
+            "follow-up turns must not pass system_prompt (agent already created)"
+        )
     # Per-turn artefacts including the new .classification.json.
     for turn in (1, 2):
         for suffix in (

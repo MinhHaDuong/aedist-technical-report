@@ -137,6 +137,7 @@ Return ONLY a single JSON object with this exact shape:
 
 {{
   "designed_prompt": "<the prompt you want to receive next turn — sent to you verbatim>",
+  "system_prompt": "<the system prompt that will be installed on you before the next turn — sent to you verbatim>",
   "settings": {{
     "thinking": true_or_false,
     "max_tokens": <int>,
@@ -144,6 +145,8 @@ Return ONLY a single JSON object with this exact shape:
   }},
   "rationale": "<2-4 sentences naming which of the four dimensions your changes target and how>"
 }}
+
+The `system_prompt` field MUST be a plain JSON string (a single quoted text value), not a nested JSON object or list. The harness installs it verbatim as the agent's system-level instruction (e.g. Mistral's agent `description`, Anthropic's `system` parameter, OpenAI's `instructions`). Persistent behavioural directives (per-cell sourcing, never-decline, voice) belong here; per-turn task framing belongs in `designed_prompt`.
 
 Output ONLY the JSON object. No markdown fence, no prose around it.
 """
@@ -247,9 +250,13 @@ def extract_phase_a_design(response_text: str) -> dict:
             raise ValueError(
                 f"Phase A response is not valid JSON: {exc}; first 400 chars: {preview!r}"
             ) from exc
-    for key in ("designed_prompt", "settings", "rationale"):
+    for key in ("designed_prompt", "system_prompt", "settings", "rationale"):
         if key not in obj:
             raise ValueError(f"Phase A JSON missing required key {key!r}; got keys {list(obj)}")
+    if not isinstance(obj["system_prompt"], str):
+        raise ValueError(
+            f"Phase A 'system_prompt' must be a string, got {type(obj['system_prompt']).__name__}"
+        )
     return obj
 
 
@@ -301,6 +308,7 @@ def run_mistral_call(
     max_tokens: int,
     continuation: dict | None = None,
     extra_metadata: dict | None = None,
+    system_prompt: str | None = None,
 ) -> RunRecord:
     """Single Mistral Agents call, with the registry-driven model metadata.
 
@@ -308,7 +316,10 @@ def run_mistral_call(
     ``parse_response`` raises on an unexpected content shape (str-content
     bug is fixed on main via PR #394 but defense in depth stays). The
     ``continuation`` and ``extra_metadata`` kwargs were added to the four
-    SOTA adapters in PR #396 (ticket 0208); we forward them.
+    SOTA adapters in PR #396 (ticket 0208); we forward them. The
+    ``system_prompt`` kwarg (ticket 0213) is forwarded as the agent
+    ``description`` at multi-turn-start or single-turn create time;
+    follow-up turns must pass ``None`` (the adapter raises otherwise).
     """
     meta = load_model_meta("mistral")
     t0 = time.monotonic()
@@ -323,6 +334,7 @@ def run_mistral_call(
             output_path=raw_output_path,
             continuation=continuation,
             extra_metadata=extra_metadata,
+            system_prompt=system_prompt,
         )
     except AttributeError as exc:
         if not raw_output_path.exists():
@@ -456,6 +468,7 @@ def run_phase_b_multiturn(
     initial_spent_usd: float,
     max_tokens: int,
     agent: str = "mistral",
+    system_prompt: str | None = None,
 ) -> dict:
     """Run the Phase B dialogue as a state machine on a single agent.
 
@@ -471,6 +484,10 @@ def run_phase_b_multiturn(
     Classifier cost is **harness overhead** — accumulated under
     ``total_classifier_cost_usd`` but never deducted from the SOTA
     agent's budget.
+
+    Per ticket 0213, ``system_prompt`` is installed on the agent at
+    creation time (turn 1 only). Follow-up turns must not re-send it —
+    the agent is already created.
 
     Returns a dict with ``records``, ``turns``, ``total_spent_usd``,
     ``terminal_sent``, ``agent_id`` (for caller-side cleanup), and
@@ -516,6 +533,11 @@ def run_phase_b_multiturn(
         if is_followup_turn:
             extra_metadata = None
 
+        # System prompt is installed at agent-create time (turn 1, when
+        # continuation={}). Follow-up turns reuse the agent and must pass
+        # None — the adapter raises ValueError otherwise (ticket 0213).
+        turn_system_prompt = system_prompt if not is_followup_turn else None
+
         record = run_mistral_call(
             user_text,
             cap_usd=max(remaining, 0.01),  # adapter wants positive cap
@@ -524,6 +546,7 @@ def run_phase_b_multiturn(
             max_tokens=max_tokens,
             continuation=continuation,
             extra_metadata=extra_metadata,
+            system_prompt=turn_system_prompt,
         )
         records.append(record)
 
@@ -729,6 +752,11 @@ def main(argv: list[str] | None = None) -> int:
     requested_max_tokens = int(
         design.get("settings", {}).get("max_tokens") or args.phase_b_max_tokens
     )
+    designed_system_prompt = design["system_prompt"]
+    log.info(
+        "Phase B system prompt: str/%d chars (installed on agent at create time).",
+        len(designed_system_prompt),
+    )
 
     phase_b = run_phase_b_multiturn(
         designed_prompt,
@@ -737,6 +765,7 @@ def main(argv: list[str] | None = None) -> int:
         initial_spent_usd=total_cost(phase_a),
         max_tokens=requested_max_tokens,
         agent=args.agent,
+        system_prompt=designed_system_prompt,
     )
 
     if phase_b["agent_id"]:

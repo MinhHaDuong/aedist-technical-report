@@ -512,6 +512,257 @@ def test_cleanup_agent_is_public():
     assert callable(cleanup_agent)
 
 
+# ---------------------------------------------------------------------------
+# system_prompt kwarg (ticket 0213)
+# ---------------------------------------------------------------------------
+
+
+def test_run_threads_system_prompt_to_agent_description(monkeypatch):
+    """Ticket 0213: ``system_prompt`` kwarg must populate the
+    ``agent_create`` body's ``description`` field on multi-turn-start
+    mode (continuation={}). The body is the only Mistral surface where
+    a system-level instruction lives — see the adapter docstring's
+    cross-adapter table.
+    """
+    import aedist.adapter_mistral as am
+
+    bodies: dict[str, dict] = {}
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def __init__(self, payload: dict):
+            self._payload = payload
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return self._payload
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            body = kwargs.get("json") or {}
+            if url == "/v1/agents":
+                bodies["agent_create"] = body
+                return FakeResponse({"id": "ag_X"})
+            if url == "/v1/conversations":
+                bodies["conversation_start"] = body
+                return FakeResponse(
+                    {
+                        "outputs": [{"type": "message.output", "content": "ok"}],
+                        "usage": {
+                            "prompt_tokens": 10,
+                            "completion_tokens": 20,
+                            "connector_tokens": 0,
+                            "connectors": {"web_search": 0},
+                        },
+                        "conversation_id": "conv_X",
+                    }
+                )
+            raise AssertionError(f"unexpected POST to {url}")
+
+        def delete(self, url, **kwargs):
+            return FakeResponse({})
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    run(
+        "first prompt",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={},  # multi-turn start
+        system_prompt="custom system text",
+    )
+
+    assert "agent_create" in bodies
+    assert bodies["agent_create"]["description"] == "custom system text", (
+        f"expected description='custom system text'; got {bodies['agent_create']!r}"
+    )
+
+
+def test_run_threads_system_prompt_in_single_turn_mode(monkeypatch):
+    """Single-turn mode (continuation=None) also accepts system_prompt
+    and threads it through the agent body's description. Backward
+    compatibility: omitting the kwarg leaves the default description in
+    place (covered by every existing test).
+    """
+    import aedist.adapter_mistral as am
+
+    captured: dict[str, dict] = {}
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def __init__(self, payload: dict):
+            self._payload = payload
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return self._payload
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            body = kwargs.get("json") or {}
+            if url == "/v1/agents":
+                captured["agent_create"] = body
+                return FakeResponse({"id": "ag_X"})
+            return FakeResponse(
+                {
+                    "outputs": [{"type": "message.output", "content": "ok"}],
+                    "usage": {
+                        "prompt_tokens": 5,
+                        "completion_tokens": 7,
+                        "connector_tokens": 0,
+                        "connectors": {"web_search": 0},
+                    },
+                    "conversation_id": "conv_X",
+                }
+            )
+
+        def delete(self, url, **kwargs):
+            return FakeResponse({})
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    run(
+        "single-turn prompt",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        system_prompt="ST-only system text",
+    )
+
+    assert captured["agent_create"]["description"] == "ST-only system text"
+
+
+def test_run_followup_rejects_system_prompt_kwarg(monkeypatch):
+    """Ticket 0213: passing system_prompt on a follow-up turn (when the
+    agent is already created) must raise ValueError. The agent's
+    description is fixed at creation time; silently ignoring would mask
+    a programmer error (matching the codebase's history of dict-vs-string
+    and HTTP 422 silent-accept incidents).
+    """
+    import aedist.adapter_mistral as am
+
+    # No HTTP should be issued — the validation happens before the
+    # transport block. Still stub the key loader to guard against the
+    # SystemExit path masking a different failure.
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+
+    with pytest.raises(ValueError, match="system_prompt cannot be set on a follow-up turn"):
+        run(
+            "follow up question",
+            dry_run=False,
+            model_meta=PRICE_CARD,
+            max_tokens=600,
+            cap_usd=10.0,
+            agent_mode="smoke",
+            continuation={"conversation_id": "conv_1", "agent_id": "ag_1"},
+            system_prompt="should be rejected",
+        )
+
+
+def test_run_default_description_when_no_system_prompt(monkeypatch):
+    """Backward compat: when ``system_prompt`` is omitted, the agent
+    body's description falls back to ``build_request``'s default. This
+    locks in the no-change-for-existing-callers contract.
+    """
+    import aedist.adapter_mistral as am
+
+    captured: dict[str, dict] = {}
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def __init__(self, payload: dict):
+            self._payload = payload
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return self._payload
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            body = kwargs.get("json") or {}
+            if url == "/v1/agents":
+                captured["agent_create"] = body
+                return FakeResponse({"id": "ag_X"})
+            return FakeResponse(
+                {
+                    "outputs": [{"type": "message.output", "content": "ok"}],
+                    "usage": {
+                        "prompt_tokens": 5,
+                        "completion_tokens": 7,
+                        "connector_tokens": 0,
+                        "connectors": {"web_search": 0},
+                    },
+                    "conversation_id": "conv_X",
+                }
+            )
+
+        def delete(self, url, **kwargs):
+            return FakeResponse({})
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    run(
+        "no system prompt here",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+    )
+
+    # The default description from build_request — unchanged.
+    assert captured["agent_create"]["description"] == (
+        "AEDIST SOTA experiment agent with web_search connector."
+    )
+
+
 def test_run_extra_metadata_logged_without_crash(monkeypatch, caplog):
     """extra_metadata should not crash the adapter. Mistral's metadata
     support is uncertain, so the adapter should be defensive.

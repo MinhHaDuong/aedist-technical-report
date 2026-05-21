@@ -468,6 +468,7 @@ def run(
     output_path: Path | None = None,
     continuation: dict | None = None,
     extra_metadata: dict | None = None,
+    system_prompt: str | None = None,
     **opts: Any,
 ) -> RunRecord:
     """Execute one Mistral Agents call (or print the dry-run payload).
@@ -491,15 +492,53 @@ def run(
     ``metadata`` field when present. Wrapped defensively since the
     Mistral beta API may not support it.
 
+    ``system_prompt`` (ticket 0213) installs a designed system-level
+    instruction on the Mistral agent at create time by overriding the
+    default ``agent.description``. Only meaningful in modes 1 and 2 —
+    the follow-up mode reuses an already-created agent, so passing
+    ``system_prompt`` alongside ``continuation['agent_id']`` raises
+    ``ValueError`` (fail-fast matching this codebase's history of
+    dict-vs-string and HTTP 422 silent-accept incidents).
+
+    **System-prompt surface across SOTA adapters** (for future extension
+    by 0214 etc. — keep this table in sync when adding new adapters):
+
+    +----------------+--------------------------------------------------+
+    | Adapter        | Where the system prompt lives                    |
+    +================+==================================================+
+    | Mistral Agents | ``POST /v1/agents`` body ``description`` field   |
+    +----------------+--------------------------------------------------+
+    | Anthropic      | ``messages.create`` ``system`` parameter         |
+    +----------------+--------------------------------------------------+
+    | OpenAI         | ``instructions`` parameter on                    |
+    | Responses      | ``responses.create``                             |
+    +----------------+--------------------------------------------------+
+    | Qwen           | ``messages[0]`` with ``role: "system"``          |
+    | DashScope      |                                                  |
+    +----------------+--------------------------------------------------+
+
     ``model_meta`` is the registry entry for the chosen model (see
     ``experiments/models.yaml``). When omitted, a minimal default is
     used so the dry-run path is still usable for ad-hoc smokes.
     """
     del opts  # reserved for forward-compat
+    # Fail-fast: system_prompt cannot be set on a follow-up turn (agent
+    # is already created with its description fixed). Ticket 0213.
+    is_followup_call = (
+        continuation is not None and continuation.get("agent_id") and system_prompt is not None
+    )
+    if is_followup_call:
+        raise ValueError(
+            "system_prompt cannot be set on a follow-up turn: the Mistral agent "
+            "is already created and its description is fixed. Pass system_prompt "
+            "only on the first turn (continuation=None or continuation={})."
+        )
     meta = model_meta or {"model_id": DEFAULT_MODEL}
     payload = build_request(
         prompt, model=meta.get("model_id", DEFAULT_MODEL), max_tokens=max_tokens
     )
+    if system_prompt is not None:
+        payload["agent_create"]["body"]["description"] = system_prompt
 
     # Conservative cost cap — assume worst-case token usage and a few
     # connector calls. enforce_cost_cap raises CostCapExceeded if over.
