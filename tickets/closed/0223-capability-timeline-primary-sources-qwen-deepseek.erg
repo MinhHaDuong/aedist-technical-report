@@ -2,6 +2,7 @@
 Title: Capability-timeline primary sources for Qwen and DeepSeek (close TBD cells)
 Created: 2026-05-21
 Author: claude
+Closed: autoclosed — PR #406
 
 --- log ---
 2026-05-21T20:30Z claude created — follow-up from 0219 proposal; closes TBD cells in data/capability_timeline.csv and the §3 figure
@@ -13,6 +14,7 @@ Author: claude
 2026-05-21T22:45Z claude note reroll-fix: docs/capability-timeline.md rewritten to 5-lab panel (Qwen + DeepSeek paragraphs added, Google moved to footnote, bibliography extended with refs 28-37); make slides verified clean; refs.bib criterion vacuously satisfied (no §3 prose cites the new keys yet); PR body to be updated with 6 dated / 4 absent state and correct 2025-05-13 Alibaba stage-5 date
 2026-05-21T23:05Z claude note verify-gate round 2: ESCALATE — 6/7 criteria ADDRESSED (criteria 3 vacuously satisfied via conditional wording + project convention); stale PR body verifiable: still open, gh pr edit blocked by classic-projects GraphQL error; corrected body posted at issuecomment-4512552661, escalate to merge-time override
 2026-05-21T23:30Z claude note renamed 0218 → 0223 to resolve a second ID collision — the parallel adapter-mistral ticket renumbered itself 0212→0218 in PR #405, landing alongside this branch's 0218. Yielded again; the Qwen/DeepSeek follow-up is now 0223.
+2026-05-21T20:46Z HDMX-coding-agent closed — autoclosed — PR #406
 --- body ---
 
 ## Context
