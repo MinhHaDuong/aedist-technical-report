@@ -9,6 +9,8 @@ Author: claude
 2026-05-21T12:00Z user note three refinements: no local runs (drop local/cloud distinction); use palette.toml via family_color() from 0194 (not copy of PR pattern); whiskers = min/max
 
 2026-05-21T09:54Z HDMX-coding-agent note blocker 0194 closed — Blocked-by removed.
+2026-05-21T09:56Z claim raid-agent (ticket 0196 work)
+2026-05-21T10:05Z raid-agent implemented pareto figure rewrite per Decisions
 --- body ---
 
 ## Context
