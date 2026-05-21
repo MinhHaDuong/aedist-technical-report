@@ -150,3 +150,132 @@ def test_module_imports_adapter_mistral_only():
     # Only mistral dispatch is wired; others should not be imported here.
     for forbidden in ("adapter_openai_responses", "adapter_qwen_dashscope", "query_anthropic"):
         assert forbidden not in text, f"unexpected import: {forbidden}"
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn auto-reply loop (ticket 0207 policy)
+# ---------------------------------------------------------------------------
+
+from experiments.sota.exp2_interactive_smoke import (  # noqa: E402
+    BUDGET_TRIGGER_FRAC,
+    PHASE_B_TOTAL_BUDGET_USD,
+    STANDARD_REPLY,
+    TERMINAL_REPLY,
+    format_status_line,
+    run_phase_b_multiturn,
+    select_reply,
+)
+
+
+def test_format_status_line_exact_string():
+    s = format_status_line(7.50, 10.00, 12.3)
+    assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
+
+
+def test_select_reply_returns_standard_above_threshold():
+    cap = 10.00
+    # Just above 20%: still standard
+    reply, terminal = select_reply(2.01, cap)
+    assert reply == STANDARD_REPLY
+    assert terminal is False
+
+
+def test_select_reply_returns_terminal_at_threshold():
+    cap = 10.00
+    # Exactly 20%: terminal fires (<= is the trigger)
+    reply, terminal = select_reply(2.00, cap)
+    assert reply == TERMINAL_REPLY
+    assert terminal is True
+
+
+def test_select_reply_returns_terminal_below_threshold():
+    reply, terminal = select_reply(0.50, 10.00)
+    assert reply == TERMINAL_REPLY
+    assert terminal is True
+
+
+def test_meta_prompt_announces_dollar_budget():
+    """Per ticket 0207, the meta-prompt must announce the $10 cap upfront."""
+    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    assert f"${PHASE_B_TOTAL_BUDGET_USD:.2f} total" in prompt
+    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt
+    assert "remaining budget" in prompt.lower()
+
+
+def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
+    """The loop must send the terminal reply on the turn where remaining ≤ 20%
+    of cap, then accept exactly one more assistant response, then stop.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    # Mock run_mistral_call so each call costs a fixed amount; no network.
+    call_log: list[dict] = []
+
+    def fake_run(
+        prompt,
+        *,
+        cap_usd,
+        agent_mode,
+        raw_output_path,
+        max_tokens,
+        continuation=None,
+        extra_metadata=None,
+    ):
+        from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+
+        call_log.append(
+            {
+                "prompt_starts_with_status": prompt.startswith("Status:"),
+                "continuation": continuation,
+                "extra_metadata": extra_metadata,
+            }
+        )
+        # Each call costs $3 — three calls will drop a $10 budget under 20%.
+        raw_output_path.write_text("{}")
+        return RunRecord(
+            method="frontier",
+            method_params=MethodParams(
+                model="mistral-large-2512",
+                max_tokens=100,
+                extra={"conversation_id": "conv_X", "agent_id": "ag_X"},
+            ),
+            resource_use=ResourceUse(cost_usd=3.0, wall_s=1.0, tokens_in=10, tokens_out=20),
+            result_summary=ResultSummary(status="ok"),
+            agent_family="mistral-direct",
+            agent_mode=agent_mode,
+        )
+
+    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    # Sequence: turn 1 spends 3 (remaining=7), turn 2 spends 3 (remaining=4),
+    # turn 3 spends 3 (remaining=1, ≤20% trigger fires on turn 4 build).
+    # Actually: terminal threshold is remaining ≤ 2.00. After turn 3, remaining=1
+    # → on turn 4 build select_reply returns terminal. Turn 4 sends terminal,
+    # accepts one response, breaks. Total = 4 turns.
+    assert result["turns"] == 4
+    assert result["terminal_sent"] is True
+    assert result["agent_id"] == "ag_X"
+    # Turn 1 user message is the designed prompt (no status prefix).
+    assert call_log[0]["prompt_starts_with_status"] is False
+    # Turns 2..4 all have status prefixes.
+    for entry in call_log[1:]:
+        assert entry["prompt_starts_with_status"] is True
+    # extra_metadata is present on every call.
+    for entry in call_log:
+        assert entry["extra_metadata"] is not None
+        assert "remaining_budget_usd" in entry["extra_metadata"]
+    # Per-turn artefacts on disk.
+    for turn in range(1, 5):
+        for suffix in (".user.txt", ".raw.json", ".record.json", ".cost.json"):
+            assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists(), (
+                f"missing artefact mistral_turn_{turn:02d}{suffix}"
+            )

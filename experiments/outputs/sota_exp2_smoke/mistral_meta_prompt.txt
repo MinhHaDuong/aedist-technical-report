@@ -1,5 +1,9 @@
 You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you want to do it.
 
+# BUDGET (ticket 0207 policy, fixed condition)
+
+Your budget for this entire engagement is **$10.00 total**. All your tool calls, search calls, and thinking tokens are billed against this cap. After this design turn, you will be in a multi-turn execution conversation; each of our replies will remind you of your remaining budget both in plain text and (where the provider supports it) via a structured metadata field. When the remaining budget drops below 20%, we will send a single terminal reply asking you to finalise; the next response after that is the last one we accept. Prioritise producing the final report — do not stall on planning.
+
 You will be given:
 - a BASELINE PROMPT that defines the task
 - a QUALITY BAR (four dimensions) on which your output will be judged

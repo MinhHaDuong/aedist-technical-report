@@ -41,6 +41,18 @@ from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 _TRIPLE_QUOTE_RE = re.compile(r'"""(.*?)"""', re.DOTALL)
 _TOKENS_PER_MTOK = 1_000_000
 
+# --- Policy locked by ticket 0207 (option B, multi-turn auto-reply) --------
+PHASE_B_TOTAL_BUDGET_USD = 10.00
+BUDGET_TRIGGER_FRAC = 0.20  # terminal reply when remaining ≤ this fraction of cap
+STANDARD_REPLY = "Proceed as you think is best in autonomous agentic mode."
+TERMINAL_REPLY = (
+    "I have no additional directive to give you. Please proceed to "
+    "generating the report without further asking. If you cannot, we "
+    "would appreciate to know why, but the discussion will stop here "
+    "in any case. Thanks for your understanding."
+)
+TURN_SAFETY_CAP = 20
+
 log = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -77,6 +89,10 @@ def assemble_meta_prompt(baseline_path: Path, quality_bar_path: Path) -> str:
     baseline = baseline_path.read_text(encoding="utf-8").strip()
     quality_bar = extract_quality_bar(quality_bar_path.read_text(encoding="utf-8"))
     return f"""You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you want to do it.
+
+# BUDGET (ticket 0207 policy, fixed condition)
+
+Your budget for this entire engagement is **${PHASE_B_TOTAL_BUDGET_USD:.2f} total**. All your tool calls, search calls, and thinking tokens are billed against this cap. After this design turn, you will be in a multi-turn execution conversation; each of our replies will remind you of your remaining budget both in plain text and (where the provider supports it) via a structured metadata field. When the remaining budget drops below {int(BUDGET_TRIGGER_FRAC * 100)}%, we will send a single terminal reply asking you to finalise; the next response after that is the last one we accept. Prioritise producing the final report — do not stall on planning.
 
 You will be given:
 - a BASELINE PROMPT that defines the task
@@ -266,14 +282,16 @@ def run_mistral_call(
     agent_mode: str,
     raw_output_path: Path,
     max_tokens: int,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
 ) -> RunRecord:
     """Single Mistral Agents call, with the registry-driven model metadata.
 
     Wraps ``adapter_mistral.run()`` with a recovery path for the case where
-    ``parse_response`` raises on an unexpected content shape — the adapter
-    always saves the raw response to ``raw_output_path`` first, so we can
-    rebuild a minimal RunRecord locally and let the smoke continue. We time
-    the outer call so ``wall_s`` survives the recovery.
+    ``parse_response`` raises on an unexpected content shape (str-content
+    bug is fixed on main via PR #394 but defense in depth stays). The
+    ``continuation`` and ``extra_metadata`` kwargs were added to the four
+    SOTA adapters in PR #396 (ticket 0208); we forward them.
     """
     meta = load_model_meta("mistral")
     t0 = time.monotonic()
@@ -286,6 +304,8 @@ def run_mistral_call(
             cap_usd=cap_usd,
             agent_mode=agent_mode,
             output_path=raw_output_path,
+            continuation=continuation,
+            extra_metadata=extra_metadata,
         )
     except AttributeError as exc:
         if not raw_output_path.exists():
@@ -301,6 +321,151 @@ def run_mistral_call(
 def total_cost(record: RunRecord) -> float:
     """Token cost + connector (web_search) cost."""
     return (record.resource_use.cost_usd or 0.0) + (record.tool_calls_cost_usd or 0.0)
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn auto-reply loop (ticket 0207 policy)
+# ---------------------------------------------------------------------------
+
+
+def format_status_line(remaining_usd: float, cap_usd: float, elapsed_s: float) -> str:
+    """The exact status-prefix string the harness puts on every Phase B user turn."""
+    return (
+        f"Status: remaining budget ${remaining_usd:.2f} of ${cap_usd:.2f}; "
+        f"wall-clock elapsed {elapsed_s:.1f}s."
+    )
+
+
+def select_reply(remaining_usd: float, cap_usd: float) -> tuple[str, bool]:
+    """Return (reply_text, is_terminal) per ticket 0207 policy."""
+    if remaining_usd <= BUDGET_TRIGGER_FRAC * cap_usd:
+        return TERMINAL_REPLY, True
+    return STANDARD_REPLY, False
+
+
+def _turn_artefact_paths(output_dir: Path, agent: str, turn: int) -> dict[str, Path]:
+    """Per-turn artefact paths under output_dir."""
+    base = output_dir / f"{agent}_turn_{turn:02d}"
+    return {
+        "user": Path(str(base) + ".user.txt"),
+        "raw": Path(str(base) + ".raw.json"),
+        "record": Path(str(base) + ".record.json"),
+        "cost": Path(str(base) + ".cost.json"),
+    }
+
+
+def run_phase_b_multiturn(
+    designed_prompt: str,
+    *,
+    output_dir: Path,
+    cap_usd: float,
+    initial_spent_usd: float,
+    max_tokens: int,
+    agent: str = "mistral",
+) -> dict:
+    """Run the Phase B multi-turn auto-reply loop on a single agent.
+
+    Policy: ticket 0207. Per-turn user message is the designed prompt
+    on turn 1, and a status-prefixed standard reply on turns 2..N-1.
+    When remaining budget ≤ BUDGET_TRIGGER_FRAC × cap, the terminal
+    reply fires; the next assistant response is the last accepted one.
+
+    Returns a dict with ``records``, ``turns``, ``total_spent_usd``,
+    ``terminal_sent``, and ``agent_id`` (for caller-side cleanup).
+    """
+    if agent != "mistral":
+        raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
+
+    remaining = cap_usd - initial_spent_usd
+    elapsed_s = 0.0
+    continuation: dict | None = {}  # empty dict = start multi-turn, keep Mistral agent alive
+    agent_id: str | None = None
+    terminal_sent = False
+    records: list[RunRecord] = []
+    turn = 1
+
+    while True:
+        if turn == 1:
+            user_text = designed_prompt
+        else:
+            status = format_status_line(remaining, cap_usd, elapsed_s)
+            reply, is_terminal = select_reply(remaining, cap_usd)
+            if is_terminal:
+                terminal_sent = True
+            user_text = f"{status}\n\n{reply}"
+
+        paths = _turn_artefact_paths(output_dir, agent, turn)
+        paths["user"].write_text(user_text, encoding="utf-8")
+
+        extra_metadata = {
+            "remaining_budget_usd": f"{remaining:.2f}",
+            "cap_usd": f"{cap_usd:.2f}",
+        }
+
+        record = run_mistral_call(
+            user_text,
+            cap_usd=max(remaining, 0.01),  # adapter wants positive cap
+            agent_mode="phase_b_run",
+            raw_output_path=paths["raw"],
+            max_tokens=max_tokens,
+            continuation=continuation,
+            extra_metadata=extra_metadata,
+        )
+        records.append(record)
+
+        spent_this_turn = total_cost(record)
+        remaining -= spent_this_turn
+        elapsed_s += record.resource_use.wall_s or 0.0
+
+        paths["record"].write_text(record.model_dump_json(indent=2), encoding="utf-8")
+        paths["cost"].write_text(
+            json.dumps(
+                {
+                    "turn": turn,
+                    "spent_usd": spent_this_turn,
+                    "remaining_usd": remaining,
+                    "elapsed_s": elapsed_s,
+                    "is_terminal_reply": terminal_sent,
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        extra = record.method_params.extra or {}
+        if agent_id is None and extra.get("agent_id"):
+            agent_id = str(extra["agent_id"])
+        conv_id = extra.get("conversation_id")
+        if conv_id and agent_id:
+            continuation = {"agent_id": agent_id, "conversation_id": conv_id}
+
+        log.info(
+            "Phase B turn %d: spent=$%.4f remaining=$%.4f tokens_out=%s web_search=%d%s",
+            turn,
+            spent_this_turn,
+            remaining,
+            record.resource_use.tokens_out,
+            len(record.web_search_calls or []),
+            " [terminal reply sent]" if terminal_sent and turn > 1 else "",
+        )
+
+        if terminal_sent:
+            break
+        if remaining <= 0:
+            log.warning("Budget exhausted without terminal reply having fired; stopping.")
+            break
+        if turn >= TURN_SAFETY_CAP:
+            log.warning("Hit safety cap of %d turns; stopping.", TURN_SAFETY_CAP)
+            break
+        turn += 1
+
+    return {
+        "records": records,
+        "turns": turn,
+        "total_spent_usd": cap_usd - remaining - initial_spent_usd,
+        "terminal_sent": terminal_sent,
+        "agent_id": agent_id,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -389,9 +554,10 @@ def main(argv: list[str] | None = None) -> int:
         log.info("--stop-after-phase-a set; exiting before Phase B.")
         return 0
 
-    # --- Phase B: run ---
+    # --- Phase B: multi-turn auto-reply loop (ticket 0207 policy) ---
     wait_for_space(
-        f"Phase B: send designed prompt to {args.agent}. Cap ${args.budget_cap_phase_b:.2f}.",
+        f"Phase B: multi-turn loop on {args.agent}. Total cap ${PHASE_B_TOTAL_BUDGET_USD:.2f} "
+        f"(after Phase A's ${total_cost(phase_a):.4f}).",
         no_confirm=args.no_confirm,
     )
     designed_prompt_raw = design["designed_prompt"]
@@ -408,31 +574,30 @@ def main(argv: list[str] | None = None) -> int:
     requested_max_tokens = int(
         design.get("settings", {}).get("max_tokens") or args.phase_b_max_tokens
     )
-    phase_b_raw_path = args.output_dir / f"{args.agent}_phase_b.raw.json"
-    phase_b = run_mistral_call(
+
+    phase_b = run_phase_b_multiturn(
         designed_prompt,
-        cap_usd=args.budget_cap_phase_b,
-        agent_mode="phase_b_run",
-        raw_output_path=phase_b_raw_path,
+        output_dir=args.output_dir,
+        cap_usd=PHASE_B_TOTAL_BUDGET_USD,
+        initial_spent_usd=total_cost(phase_a),
         max_tokens=requested_max_tokens,
+        agent=args.agent,
     )
-    phase_b_path = args.output_dir / f"{args.agent}_phase_b.json"
-    phase_b_path.write_text(phase_b.model_dump_json(indent=2), encoding="utf-8")
+
+    if phase_b["agent_id"]:
+        try:
+            adapter_mistral.cleanup_agent(phase_b["agent_id"])
+            log.info("Cleaned up Mistral agent %s", phase_b["agent_id"])
+        except Exception as exc:  # noqa: BLE001 — cleanup failures should not raise
+            log.warning("Mistral agent cleanup failed: %s", exc)
+
     log.info(
-        "Phase B done: cost=$%.4f, wall=%ss, tokens_out=%s, web_search=%d, citations=%d -> %s",
-        total_cost(phase_b),
-        phase_b.resource_use.wall_s,
-        phase_b.resource_use.tokens_out,
-        len(phase_b.web_search_calls or []),
-        len(phase_b.citations or []),
-        phase_b_path,
-    )
-    log.info(
-        "SMOKE TOTAL: $%.4f (Phase A $%.4f + Phase B $%.4f). Wall %.1fs.",
-        total_cost(phase_a) + total_cost(phase_b),
+        "SMOKE TOTAL: $%.4f (Phase A $%.4f + Phase B $%.4f over %d turns; terminal_sent=%s).",
+        total_cost(phase_a) + phase_b["total_spent_usd"],
         total_cost(phase_a),
-        total_cost(phase_b),
-        (phase_a.resource_use.wall_s or 0) + (phase_b.resource_use.wall_s or 0),
+        phase_b["total_spent_usd"],
+        phase_b["turns"],
+        phase_b["terminal_sent"],
     )
     return 0
 
