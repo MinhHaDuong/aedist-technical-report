@@ -204,12 +204,21 @@ def write_pdf(
                 model_count[r["model"]] += 1
         method_rows = filtered
 
+        # Resolve size per model (not per record). Different reps of the same
+        # model can carry different size_class values in the data — take the
+        # minimum so that any real registry match (or named size_class) wins
+        # over the 500 default fallback when size_class is "unknown".
+        model_size: dict[str, float] = {}
+        for r in method_rows:
+            sz = _model_size_b(r["model"], r.get("size_class"))
+            model_size[r["model"]] = min(sz, model_size.get(r["model"], sz))
+
         # Group by architectural family (alphabetical); within family, larger
         # models go first so they land higher on the inverted Y axis.
         method_rows.sort(
             key=lambda r: (
                 model_family(r["model"]),
-                -_model_size_b(r["model"], r.get("size_class")),
+                -model_size[r["model"]],
                 r["model"],
                 -r["tp"],
             )
