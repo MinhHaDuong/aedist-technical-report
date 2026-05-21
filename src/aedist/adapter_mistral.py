@@ -442,15 +442,30 @@ def run(
 
     if is_followup:
         # Mode 3: follow-up turn — reuse existing agent and conversation.
+        # Mistral's append-to-conversation endpoint is path-bound:
+        # POST /v1/conversations/{conversation_id} with body {"inputs": [...]}.
+        # The agent is implied by the existing conversation; agent_id and
+        # conversation_id MUST NOT appear in the body (HTTP 422 otherwise).
+        # Docs verified 2026-05-21:
+        # https://docs.mistral.ai/api/endpoint/beta/conversations
+        conversation_id = continuation.get("conversation_id")
+        if not conversation_id:
+            raise ValueError(
+                "Mistral follow-up turn requires continuation['conversation_id']; "
+                f"got {continuation!r}"
+            )
         conv_body: dict[str, Any] = {
-            "agent_id": continuation["agent_id"],
             "inputs": [{"role": "user", "content": prompt}],
         }
-        if continuation.get("conversation_id"):
-            conv_body["conversation_id"] = continuation["conversation_id"]
         _attach_metadata(conv_body)
         with httpx.Client(base_url=API_BASE, headers=headers) as client:
-            raw = _start_conversation(client, conv_body)
+            resp = client.post(
+                f"/v1/conversations/{conversation_id}",
+                json=conv_body,
+                timeout=600.0,
+            )
+            resp.raise_for_status()
+            raw = resp.json()
         agent_id = continuation["agent_id"]
     else:
         # Mode 1 or 2: create agent + invoke.
@@ -483,7 +498,11 @@ def run(
     # Surface continuation tokens for multi-turn chaining.
     if record.method_params.extra is None:
         record.method_params.extra = {}
-    record.method_params.extra["conversation_id"] = raw.get("conversation_id")
+    # The path-bound append endpoint does not echo conversation_id in
+    # its response (the caller already knew it — it was in the URL).
+    # Fall back to the value we sent so >2-turn chains stay robust.
+    followup_conv_id = continuation.get("conversation_id") if continuation else None
+    record.method_params.extra["conversation_id"] = raw.get("conversation_id") or followup_conv_id
     if agent_id is not None:
         record.method_params.extra["agent_id"] = agent_id
 

@@ -1,0 +1,53 @@
+%erg 0.1
+Title: adapter_mistral follow-up turn raises HTTP 422 on POST /v1/conversations
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T00:00Z claude created
+
+--- body ---
+## Context
+
+PR #396 (ticket 0208) added a `continuation` kwarg to
+`adapter_mistral.run()` so the Exp 2 SOTA harness (ticket 0185) can do
+multi-turn conversations against the Mistral Agents API. The follow-up
+turn code path currently POSTs to `/v1/conversations` with the
+`agent_id` and `conversation_id` in the request body. That endpoint
+shape is the **create** shape, not the **append** shape — Mistral
+returns HTTP 422 because:
+- the `agent_id` field is rejected on appends, and
+- the `conversation_id` belongs in the URL path, not the body.
+
+Per the live docs (https://docs.mistral.ai/api/endpoint/beta/conversations,
+verified 2026-05-21):
+
+```
+POST /v1/conversations/{conversation_id}
+Body: {"inputs": [{"role": "user", "content": "<text>"}]}
+```
+
+The single-turn path (`continuation=None`) and the multi-turn-start
+path (`continuation={}`) are correct as-is — only the follow-up branch
+is wrong.
+
+## Actions
+
+1. Fix the `is_followup` branch in `src/aedist/adapter_mistral.py`:
+   - POST to `/v1/conversations/{conversation_id}` (path-bound).
+   - Body becomes `{"inputs": [{"role": "user", "content": prompt}]}`.
+   - Keep the `metadata` attachment via `_attach_metadata`.
+2. Strengthen
+   `tests/test_adapter_mistral.py::test_continuation_skips_agent_creation`
+   to assert the URL path explicitly (path-bound, never bare
+   `/v1/conversations`).
+3. Run `make check-fast`; iterate until green.
+
+## Exit criteria
+
+- [ ] is_followup posts to `/v1/conversations/{conversation_id}`
+- [ ] body contains `inputs` only (no `agent_id`, no `conversation_id`)
+- [ ] test asserts the URL path explicitly
+- [ ] `make check-fast` green
+- [ ] ruff clean
+- [ ] PR opened with ticket marker; ticket 0185 unblocks on landing
