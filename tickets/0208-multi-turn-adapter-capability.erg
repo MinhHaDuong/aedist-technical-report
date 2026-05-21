@@ -1,0 +1,35 @@
+%erg 0.1
+Title: Multi-turn continuation surface across the four SOTA adapters
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T15:30Z claude created
+
+--- body ---
+## Context
+
+Exp 2 (ticket 0199) needs multi-turn conversations with the four SOTA
+adapters. Each adapter currently supports single-turn only. Adding two
+optional kwargs (`continuation` and `extra_metadata`) to each adapter's
+entry point gives the Exp 2 harness (ticket 0207) the surface it needs.
+
+## Actions
+
+1. Add `continuation: dict | None = None` and `extra_metadata: dict | None = None`
+   to the `AgentAdapter.run()` Protocol in `adapter_base.py`.
+2. Wire both kwargs through each of the four adapters:
+   - Mistral (`adapter_mistral.py`): conversation_id + agent_id reuse
+   - OpenAI Responses (`adapter_openai_responses.py`): previous_response_id
+   - Qwen DashScope (`adapter_qwen_dashscope.py`): messages array prefix
+   - Anthropic (`query_anthropic.py`): messages array prefix
+3. Expose `cleanup_agent()` in the Mistral adapter for lifecycle management.
+4. Tests: 2+ per adapter (continuation-token return, continuation passthrough).
+
+## Exit criteria
+
+- [ ] All existing adapter tests pass unchanged
+- [ ] New tests: at minimum 2 per adapter
+- [ ] `make check-fast` green
+- [ ] `uv run ruff check` clean on changed files
+- [ ] PR references this ticket and notes 0207 as downstream consumer

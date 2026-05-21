@@ -227,3 +227,62 @@ def test_run_dry_run_still_enforces_cap_pre_call():
 def test_default_cost_cap_is_ten_dollars():
     """Ticket 0168 Action 4 spec: hard cap per call $10."""
     assert DEFAULT_COST_CAP_USD == 10.0
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn continuation surface (ticket 0208)
+# ---------------------------------------------------------------------------
+
+
+def test_run_dry_run_returns_continuation_ready_record():
+    """Dry-run with continuation=None must succeed without crash.
+    The continuation token is only meaningful on live calls.
+    """
+    record = run(
+        "test prompt",
+        dry_run=True,
+        model=DEFAULT_MODEL,
+        max_output_tokens=100,
+        price_card=PRICE_CARD,
+        cap_usd=DEFAULT_COST_CAP_USD,
+    )
+    assert record.agent_family == AGENT_FAMILY
+    assert record.result_summary.status == "qualitative"
+
+
+def test_parse_response_returns_response_id_in_extra():
+    """parse_response must include response_id in method_params.extra
+    so the harness can use it for previous_response_id chaining.
+    """
+    resp = _load_fixture()
+    record = parse_response(resp, PRICE_CARD)
+    assert record.method_params.extra is not None
+    assert "response_id" in record.method_params.extra
+
+
+def test_run_dry_run_accepts_continuation_kwarg():
+    """run() must accept continuation kwarg without crashing on dry-run."""
+    record = run(
+        "follow up",
+        dry_run=True,
+        model=DEFAULT_MODEL,
+        max_output_tokens=100,
+        price_card=PRICE_CARD,
+        cap_usd=DEFAULT_COST_CAP_USD,
+        continuation={"response_id": "resp_abc"},
+    )
+    assert record.agent_family == AGENT_FAMILY
+
+
+def test_run_dry_run_accepts_extra_metadata_kwarg():
+    """run() must accept extra_metadata kwarg without crashing."""
+    record = run(
+        "prompt",
+        dry_run=True,
+        model=DEFAULT_MODEL,
+        max_output_tokens=100,
+        price_card=PRICE_CARD,
+        cap_usd=DEFAULT_COST_CAP_USD,
+        extra_metadata={"remaining_budget_usd": "5.50"},
+    )
+    assert record.agent_family == AGENT_FAMILY

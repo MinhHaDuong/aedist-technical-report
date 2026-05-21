@@ -238,9 +238,13 @@ def parse_response(resp: Any, price_card: dict) -> RunRecord:
     output_tokens = _get(usage, "output_tokens", 0) or 0
     reasoning_tokens = _get(_get(usage, "output_tokens_details"), "reasoning_tokens", 0) or 0
 
+    response_id = _get(resp, "id")
     record = RunRecord(
         method=Method.FRONTIER,
-        method_params=MethodParams(model=model_id),
+        method_params=MethodParams(
+            model=model_id,
+            extra={"response_id": response_id},
+        ),
         agent_family=AGENT_FAMILY,
         resource_use=ResourceUse(
             cost_usd=cost_usd,
@@ -308,6 +312,8 @@ def run(
     reasoning_effort: str = "high",
     price_card: dict | None = None,
     cap_usd: float = DEFAULT_COST_CAP_USD,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
 ) -> RunRecord:
     """Execute one OpenAI Responses call (or dry-run) and return a RunRecord.
 
@@ -318,6 +324,14 @@ def run(
       * **Post-call**: re-checks ``record.resource_use.cost_usd`` against
         ``cap_usd``; raises ``CostCapExceeded`` if the actual billed cost
         breached it (defence in depth against estimate drift).
+
+    Multi-turn chaining (ticket 0208):
+      * ``continuation=None`` → new conversation (current behavior).
+      * ``continuation={"response_id": "resp_..."}`` → passes
+        ``previous_response_id`` to the SDK to chain responses.
+      * ``extra_metadata`` → passed as the ``metadata`` dict on the SDK
+        call. Values must be strings (OpenAI constraint); the caller is
+        responsible for stringifying.
     """
     payload = build_request(
         prompt,
@@ -335,6 +349,12 @@ def run(
         price_out=p_out,
     )
     enforce_cost_cap(estimated, cap_usd=cap_usd)
+
+    # Wire continuation and metadata into the SDK payload.
+    if continuation is not None and continuation.get("response_id"):
+        payload["previous_response_id"] = continuation["response_id"]
+    if extra_metadata is not None:
+        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
 
     if dry_run:
         print(format_dry_run(payload))

@@ -30,6 +30,7 @@ response, set ``enable_search=True`` and pass ``search_options``.
 
 from __future__ import annotations
 
+import logging
 import os
 import time
 from pathlib import Path
@@ -43,6 +44,8 @@ from aedist.adapter_base import (
     format_dry_run,
 )
 from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+
+_log = logging.getLogger(__name__)
 
 AGENT_FAMILY = "qwen-direct"
 DEFAULT_MODEL = "qwen3-max-2026-01-23"
@@ -77,12 +80,17 @@ def build_request(
     enable_thinking: bool = True,
     enable_search: bool = True,
     search_options: dict | None = None,
+    continuation: dict | None = None,
 ) -> dict:
     """Assemble the DashScope ``Generation.call`` kwargs.
 
     The returned dict is consumed in two ways:
     - ``--dry-run`` prints it via :func:`format_dry_run`.
     - Live mode splats it into ``dashscope.Generation.call(**payload)``.
+
+    Multi-turn (ticket 0208): when ``continuation`` is provided with a
+    ``messages`` key, those messages are prepended to the new user
+    message to form the full conversation history.
 
     Important: this function intentionally never sets a ``tools`` key.
     Setting it would activate client-side function calling and break
@@ -94,9 +102,14 @@ def build_request(
             "enable_citation": True,
             "citation_format": "[<number>]",
         }
+    # Build messages: prepend history from continuation if present.
+    if continuation is not None and continuation.get("messages"):
+        messages = list(continuation["messages"]) + [{"role": "user", "content": prompt}]
+    else:
+        messages = [{"role": "user", "content": prompt}]
     payload: dict[str, Any] = {
         "model": model,
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": messages,
         "enable_thinking": enable_thinking,
         "enable_search": enable_search,
         "search_options": search_options,
@@ -273,6 +286,12 @@ def parse_response(
     # remains the canonical record.
     if narrative is not None and record.method_params.extra is not None:
         record.method_params.extra["narrative_preview"] = narrative[:200]
+        # Multi-turn continuation (ticket 0208): include the conversation
+        # messages so the harness can replay history on the next turn.
+        record.method_params.extra["messages"] = [
+            {"role": "user", "content": prompt or ""},
+            {"role": "assistant", "content": narrative},
+        ]
     return record
 
 
@@ -312,15 +331,31 @@ def run(
     model_meta: dict | None = None,
     cost_cap_usd: float = DEFAULT_COST_CAP_USD,
     base_url: str = DEFAULT_BASE_URL,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
 ) -> RunRecord:
-    """Execute one DashScope call (or print the dry-run payload)."""
+    """Execute one DashScope call (or print the dry-run payload).
+
+    Multi-turn (ticket 0208): ``continuation`` with a ``messages`` key
+    prepends conversation history. ``extra_metadata`` is prepended as
+    a system-message budget reminder (DashScope lacks a metadata surface).
+    """
     payload = build_request(
         prompt,
         model=model,
         max_tokens=max_tokens,
         enable_thinking=enable_thinking,
         enable_search=enable_search,
+        continuation=continuation,
     )
+    # DashScope lacks a metadata surface. Prepend a system message as a
+    # practical fallback so the model sees budget information.
+    if extra_metadata is not None:
+        meta_text = "; ".join(f"{k}={v}" for k, v in extra_metadata.items())
+        payload["messages"].insert(0, {"role": "system", "content": f"[metadata] {meta_text}"})
+        _log.info(
+            "Qwen: injected extra_metadata as system message (DashScope has no metadata surface)"
+        )
 
     # Pre-call cap: assume worst-case token billing + a small per-call
     # search budget (n_searches is unknown until the response lands).

@@ -212,3 +212,62 @@ def test_default_cost_cap_matches_ticket_spec() -> None:
     qwen adapter previously drifted to $0.50; ticket 0187 aligns it.
     """
     assert DEFAULT_COST_CAP_USD == 10.0
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn continuation surface (ticket 0208)
+# ---------------------------------------------------------------------------
+
+
+def test_parse_response_returns_messages_in_extra(canned_response: dict, price_card: dict) -> None:
+    """parse_response must include a messages list in method_params.extra
+    so the harness can replay the conversation history for multi-turn.
+    """
+    record = parse_response(canned_response, model_meta=price_card, prompt="test question")
+    assert record.method_params.extra is not None
+    assert "messages" in record.method_params.extra
+    msgs = record.method_params.extra["messages"]
+    # Must contain at least the user message and assistant reply.
+    assert len(msgs) >= 2
+    assert msgs[0]["role"] == "user"
+    assert msgs[-1]["role"] == "assistant"
+
+
+def test_build_request_with_continuation_prepends_history() -> None:
+    """When continuation has messages, build_request must prepend them
+    before the new user message.
+    """
+    history = [
+        {"role": "user", "content": "first question"},
+        {"role": "assistant", "content": "first answer"},
+    ]
+    payload = build_request(
+        "follow up",
+        max_tokens=100,
+        continuation={"messages": history},
+    )
+    msgs = payload["messages"]
+    assert len(msgs) == 3
+    assert msgs[0] == {"role": "user", "content": "first question"}
+    assert msgs[1] == {"role": "assistant", "content": "first answer"}
+    assert msgs[2] == {"role": "user", "content": "follow up"}
+
+
+def test_build_request_without_continuation_is_single_message() -> None:
+    """Without continuation, messages is just the one user message."""
+    payload = build_request("hello", max_tokens=100)
+    assert payload["messages"] == [{"role": "user", "content": "hello"}]
+
+
+def test_run_dry_run_accepts_continuation_and_extra_metadata() -> None:
+    """run() must accept both new kwargs without crashing on dry-run."""
+    from aedist.adapter_qwen_dashscope import run as qwen_run
+
+    record = qwen_run(
+        "follow up",
+        dry_run=True,
+        max_tokens=100,
+        continuation={"messages": [{"role": "user", "content": "q1"}]},
+        extra_metadata={"remaining_budget_usd": "3.00"},
+    )
+    assert record.agent_family == AGENT_FAMILY

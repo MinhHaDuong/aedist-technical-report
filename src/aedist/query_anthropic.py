@@ -340,6 +340,7 @@ def _record_from_parsed(
     run_number: int,
     parsed_table_path: str | None = None,
     error: str | None = None,
+    messages_for_continuation: list[dict] | None = None,
 ) -> RunRecord:
     """Build a RunRecord from a parsed Anthropic response."""
     total_cost = float(cost_breakdown.get("total", 0.0))
@@ -350,11 +351,14 @@ def _record_from_parsed(
         for k, v in cost_breakdown.items()
         if k in {"input", "output", "cache_read", "cache_write"} and v
     }
+    extra: dict[str, Any] = {"run_number": run_number}
+    if messages_for_continuation is not None:
+        extra["messages"] = messages_for_continuation
     return RunRecord(
         method=Method.FRONTIER,
         method_params=MethodParams(
             model=model,
-            extra={"run_number": run_number},
+            extra=extra,
         ),
         resource_use=ResourceUse(
             wall_s=wall_s,
@@ -389,6 +393,8 @@ def dispatch(
     budget: BudgetTracker | None = None,
     cap_usd: float = 0.50,
     key_path: str | os.PathLike = DEFAULT_KEY_PATH,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
 ) -> dict:
     """Execute one Anthropic agent call (or print a dry-run payload).
 
@@ -396,10 +402,36 @@ def dispatch(
     (provider response or ``None`` on dry-run), and ``output_path`` (Path
     when persisted, ``None`` on dry-run). The 0170-facing entry point.
 
+    Multi-turn chaining (ticket 0208):
+      * ``continuation=None`` → new conversation (current behavior).
+      * ``continuation={"messages": [...]}`` → replaces ``payload["messages"]``
+        with the continuation messages, then appends the new user message.
+      * ``extra_metadata`` → Anthropic supports a ``metadata`` parameter
+        with at least ``user_id``. Non-user_id keys are logged as warnings
+        and passed through defensively.
+
     ``cap_usd`` is enforced both pre-call (against the conservative upper
     bound from :func:`aedist.adapter_base.estimate_call_cost`) and
     post-call (against actual billed amount).
     """
+    # Wire continuation into payload messages.
+    if continuation is not None and continuation.get("messages"):
+        # Build messages from continuation history + new user message.
+        new_user_msg = (
+            payload["messages"][-1] if payload.get("messages") else {"role": "user", "content": ""}
+        )
+        payload["messages"] = list(continuation["messages"]) + [new_user_msg]
+
+    # Wire extra_metadata into the Anthropic metadata parameter.
+    if extra_metadata is not None:
+        payload["metadata"] = extra_metadata
+        non_standard = [k for k in extra_metadata if k != "user_id"]
+        if non_standard:
+            log.info(
+                "Anthropic: passing non-standard metadata keys %s — may be ignored by API",
+                non_standard,
+            )
+
     model_id = model["model_id"]
     max_tokens = int(payload.get("max_tokens", DEFAULT_MAX_TOKENS))
     max_uses = int(
@@ -454,6 +486,13 @@ def dispatch(
     if budget is not None:
         budget.add(breakdown["total"])
 
+    # Build the conversation messages for multi-turn continuation:
+    # the full messages list (including the new assistant reply) so
+    # the harness can replay history on the next turn.
+    continuation_messages = list(payload.get("messages", []))
+    if parsed.get("text"):
+        continuation_messages.append({"role": "assistant", "content": parsed["text"]})
+
     record = _record_from_parsed(
         parsed,
         model=model_id,
@@ -464,6 +503,7 @@ def dispatch(
         thinking_tokens=None,  # Anthropic reports total output incl. thinking.
         agent_mode=agent_mode,
         run_number=run,
+        messages_for_continuation=continuation_messages,
     )
 
     # Persist as one self-contained JSON: record + raw response + parsed view.

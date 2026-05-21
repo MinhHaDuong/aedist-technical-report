@@ -163,7 +163,15 @@ class _StubAdapter:
     def parse_response(self, resp: Any, model_meta: dict) -> RunRecord:
         return RunRecord(method="frontier", method_params={"model": "stub"})
 
-    def run(self, prompt: str, *, dry_run: bool, **opts: Any) -> RunRecord:
+    def run(
+        self,
+        prompt: str,
+        *,
+        dry_run: bool,
+        continuation: dict | None = None,
+        extra_metadata: dict | None = None,
+        **opts: Any,
+    ) -> RunRecord:
         return RunRecord(method="frontier", method_params={"model": "stub"})
 
 

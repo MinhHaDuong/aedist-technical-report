@@ -251,3 +251,75 @@ def test_parse_stitches_tool_use_to_result_by_id():
     assert parsed["web_search_calls"][0]["urls_returned"] == ["https://first"]
     assert parsed["web_search_calls"][1]["urls_returned"] == ["https://second"]
     assert parsed["n_searches"] == 2
+
+
+# ---------------------------------------------------------------------------
+# Multi-turn continuation surface (ticket 0208)
+# ---------------------------------------------------------------------------
+
+
+def test_dispatch_accepts_continuation_kwarg(anthropic_fixture, price_card, tmp_path):
+    """dispatch() must accept continuation kwarg on dry-run without crash."""
+    from aedist.query_anthropic import dispatch
+
+    payload = assemble_request("hello", DEFAULT_MODEL, max_tokens=DEFAULT_MAX_TOKENS)
+    result = dispatch(
+        payload,
+        price_card,
+        dry_run=True,
+        output_dir=tmp_path,
+        continuation={"messages": [{"role": "user", "content": "q1"}]},
+    )
+    # Dry-run returns None record.
+    assert result["run_record"] is None
+
+
+def test_dispatch_accepts_extra_metadata_kwarg(price_card, tmp_path):
+    """dispatch() must accept extra_metadata kwarg on dry-run without crash."""
+    from aedist.query_anthropic import dispatch
+
+    payload = assemble_request("hello", DEFAULT_MODEL, max_tokens=DEFAULT_MAX_TOKENS)
+    result = dispatch(
+        payload,
+        price_card,
+        dry_run=True,
+        output_dir=tmp_path,
+        extra_metadata={"remaining_budget_usd": "5.50"},
+    )
+    assert result["run_record"] is None
+
+
+def test_record_from_parsed_includes_messages_in_extra():
+    """_record_from_parsed must include messages in method_params.extra
+    when provided, so the harness can chain multi-turn conversations.
+    """
+    from aedist.query_anthropic import _record_from_parsed
+
+    parsed = {
+        "text": "answer text",
+        "web_search_calls": [],
+        "citations": [],
+        "reasoning_summary": None,
+        "finish_reason": "end_turn",
+    }
+    record = _record_from_parsed(
+        parsed,
+        model=DEFAULT_MODEL,
+        cost_breakdown={"total": 0.01, "input": 0.005, "output": 0.005},
+        tokens_in=100,
+        tokens_out=50,
+        wall_s=1.0,
+        thinking_tokens=None,
+        agent_mode="smoke",
+        run_number=1,
+        messages_for_continuation=[
+            {"role": "user", "content": "q1"},
+            {"role": "assistant", "content": "answer text"},
+        ],
+    )
+    assert record.method_params.extra is not None
+    assert "messages" in record.method_params.extra
+    msgs = record.method_params.extra["messages"]
+    assert len(msgs) == 2
+    assert msgs[0]["role"] == "user"
+    assert msgs[1]["role"] == "assistant"
