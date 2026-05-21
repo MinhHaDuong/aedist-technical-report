@@ -21,7 +21,7 @@ Submitting a direct query to a large language model produces an inventory-shaped
 ![Figure 2](inputs/generated/fig_pareto.pdf)
 <!-- raw data: slides/inputs/generated/pareto.csv -->
 
-*Figure 2. Accuracy–cost view across the Experiment 1 lineup. Each marker is one of the sixteen models from `modelset_ablation_journal`, plotted at its median row-level F1 across the five reps against its mean per-call API cost (USD, linear scale). Whiskers span the minimum and maximum F1 observed across the reps for that model — a direct view of within-model run-to-run variability rather than a confidence interval. Marker colour encodes language family: blue for EN labs (Anthropic, OpenAI), vermillion for FR (Mistral), bluish-green for ZH (Alibaba, DeepSeek), all from the colorblind-safe palette in `palette.toml`. No Pareto-efficient envelope is drawn; the figure is descriptive. Per-model numbers backing this figure are written to `slides/inputs/generated/pareto.csv` for audit.*
+*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup. Each marker is one of the sixteen models from `modelset_ablation_journal`, plotted at its median count of true-positive plant matches across the five reps against its mean per-call API cost (USD, log scale). Whiskers span the minimum and maximum count observed across the reps — a direct view of within-model run-to-run variability rather than a confidence interval. The dashed reference line at 163 marks the full Vietnam thermal inventory. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. No Pareto-efficient envelope is drawn; the figure is descriptive. Per-model numbers backing this figure are written to `slides/inputs/generated/pareto.csv` for audit.*
 
 ## Second, the quality bar that any acceptable dataset must clear
 
@@ -145,7 +145,7 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 
 ### Evaluation
 
-Each run is evaluated against the reference by `src/aedist/evaluate.py` using fuzzy plant-name matching (`matching_threshold = 0.85`). Metrics recorded per run:
+Each run is evaluated against the reference by `src/aedist/evaluate.py`. Plant pairs are matched by mixed-integer linear programming (MILP) — the LP matcher in `src/aedist/matching/lp.py` (ADR-2) — minimising a cost that combines (i) rapidfuzz `partial_ratio` name similarity, with candidate pairs requiring `similarity_threshold ≥ 90` (integer 0–100 scale), and (ii) a small capacity-difference term (`capacity_weight · |Δcapacity_MWe|`, default weight 0.001). Province and fuel are deliberately not part of the matching cost (ADR-3); they are scored separately as cell-level attribute accuracy on the matched pairs. The optimal one-to-one assignment is then solved globally rather than picked greedily. Metrics recorded per run:
 
 | Metric | Level | Description |
 |---|---|---|
