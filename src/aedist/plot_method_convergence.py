@@ -43,6 +43,7 @@ _KNOWN_SIZE_B: dict[str, float] = {
     "mimo-v2-pro": 1000,  # ~1T MoE, 42B active
     "minimax-m2.7": 230,  # 230B MoE, 10B active
     "mistral-large-2512": 675,  # 675B MoE, 41B active (Mistral Large 3)
+    "mistral-medium-3-5": 200,  # undisclosed; rough estimate to place between Small (119) and Large (675)
     "mistral-small-2603": 119,  # 119B MoE, 6.5B active (Mistral Small 4 — NOT 24B dense)
     "mistral-small3.2": 24,  # dense
     "nemotron-3-nano": 30,  # 30B MoE, 3B active
