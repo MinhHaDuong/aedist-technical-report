@@ -226,7 +226,7 @@ class RunRecord(BaseModel):
     # All optional with None defaults so the 330 pre-existing measurements.jsonl
     # records parse unchanged. Field-level contracts (literal values for
     # agent_family/agent_mode, entry shapes for the list fields) are documented
-    # in tickets/0166-raid-plans.md §0172 rather than enforced by a StrEnum,
+    # in tickets/0166-sota-frontier-raid-plans.md §0172 rather than enforced by a StrEnum,
     # so adapters 0167/0168/0169/0173 can land independently.
     agent_family: str | None = Field(
         default=None,
