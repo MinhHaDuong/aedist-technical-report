@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Annex C — disclosure footnote on Mistral × Mistral classifier coupling
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T19:30Z claude created — /verify consider on PR #405
+
+--- body ---
+
+## Context
+
+The Phase B dialogue state machine uses `mistral-small-latest` (a
+Mistral model) as the classifier deciding `report` vs `no_report`
+for each agent's reply. In the n=1 pilot (ticket 0185) this means
+**Mistral classifying Mistral** — a same-vendor self-evaluation
+pair. The full Exp 2 batch (4 agents, ticket 0199) extends the
+classifier's reach to OpenAI / Anthropic / Qwen, where it's
+cross-vendor and uncontroversial; but the Mistral × Mistral pair
+remains in the batch.
+
+Why this matters: a same-vendor classifier could systematically
+under- or over-classify the subject vendor's output style, biasing
+the harness state-machine transitions. The pilot did not surface
+such bias (the classifier correctly identified Mistral's planning
+preamble as no_report and the inventory turn as report), but n=1
+is not a robustness claim.
+
+This is an **experimental-design transparency note**, not a defect.
+A footnote in Annex C documenting the coupling lets reviewers
+account for it.
+
+## Actions
+
+1. Add a footnote (or a one-sentence acknowledgment) to Annex C's
+   *Phase B dialogue policy* section explicitly naming the Mistral ×
+   Mistral coupling.
+2. Optional, time-permitting: a calibration sanity check — sample
+   K Mistral outputs from the pilot, hand-label them, compare to
+   classifier verdict. K = 6 is enough to detect gross bias.
+
+## Out of scope
+
+- Replacing the classifier with a different model. The classifier
+  choice was locked by 0214; changing it would invalidate the
+  manuscript's "fixed condition" framing.
+
+## Exit criteria
+
+- [ ] Annex C carries a footnote / sentence acknowledging the
+      coupling.
+- [ ] No claim is made about classifier robustness without K-sample
+      sanity check.
