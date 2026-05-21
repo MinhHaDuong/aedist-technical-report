@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-21T16:45Z claude created — known limitation flagged by 0211 raid agent in PR #398
+2026-05-21T16:50Z claude note empirical resolution: HTTP 422 (NOT silent drop). Re-smoke after PR #398 sent extra_metadata on the follow-up; Mistral 422'd the body. Harness-side workaround landed in the same commit (skip extra_metadata on follow-up turns); ticket scope unchanged (the adapter still attaches metadata defensively — it should learn to skip on follow-ups too).
 
 --- body ---
 

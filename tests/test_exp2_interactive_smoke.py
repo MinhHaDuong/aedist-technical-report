@@ -269,10 +269,16 @@ def test_phase_b_multiturn_terminates_on_budget_trigger(monkeypatch, tmp_path):
     # Turns 2..4 all have status prefixes.
     for entry in call_log[1:]:
         assert entry["prompt_starts_with_status"] is True
-    # extra_metadata is present on every call.
-    for entry in call_log:
-        assert entry["extra_metadata"] is not None
-        assert "remaining_budget_usd" in entry["extra_metadata"]
+    # extra_metadata workaround for ticket 0212: present on turn 1
+    # (multi-turn-start, where Mistral accepts metadata at conversation
+    # creation) and suppressed on follow-up turns (Mistral 422s the
+    # body-level metadata on the path-bound append endpoint).
+    assert call_log[0]["extra_metadata"] is not None
+    assert "remaining_budget_usd" in call_log[0]["extra_metadata"]
+    for entry in call_log[1:]:
+        assert entry["extra_metadata"] is None, (
+            "follow-up turns must suppress extra_metadata (0212 workaround)"
+        )
     # Per-turn artefacts on disk.
     for turn in range(1, 5):
         for suffix in (".user.txt", ".raw.json", ".record.json", ".cost.json"):

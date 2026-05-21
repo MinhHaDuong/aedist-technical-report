@@ -3,6 +3,7 @@ Title: Interactive smoke for Experiment 2 — Phase A + B on one agent at a time
 Created: 2026-05-20
 Author: HDMX-coding-agent
 Blocked-by: 0207
+Closed: exit criterion met: turn 1 of multi-turn smoke produced a 25.4K-char structured inventory of Vietnam thermal assets (sector overview / per-plant narratives / table / statistical summaries / annotated bibliography) with 120 web citations on Mistral. Multi-turn loop validated end-to-end through turn 2 (PR #398 + 0212 workaround). Turn 3 hit transient Mistral 502 — out of scope. Total spend $0.32 of $10 cap.
 
 --- log ---
 2026-05-20T22:30Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Blocked-by: 0207
 
 2026-05-21T12:20Z HDMX-coding-agent closed — smoke validated end-to-end shape + cost envelope on Mistral (cheapest agent only, per author direction 2026-05-21); 6 artefacts under experiments/outputs/sota_exp2_smoke/; 3 of 4 agents deferred to 0199 batch design after 0207 resolves dict-vs-string + turn discipline; adapter bug 0206 tracked separately
 2026-05-21T15:30Z claude reopened — close was premature. Smoke discovered the multi-turn / dict-vs-string impedance mismatch productively, but did NOT produce an inventory: Phase B returned a 365-token plan-and-ask preamble, not the report. The operational exit criterion is "we get a report." Blocked-by 0207 (multi-turn auto-reply policy, which is itself blocked by 0208 multi-turn adapter capability).
+2026-05-21T14:46Z HDMX-coding-agent closed — exit criterion met: turn 1 of multi-turn smoke produced a 25.4K-char structured inventory of Vietnam thermal assets (sector overview / per-plant narratives / table / statistical summaries / annotated bibliography) with 120 web citations on Mistral. Multi-turn loop validated end-to-end through turn 2 (PR #398 + 0212 workaround). Turn 3 hit transient Mistral 502 — out of scope. Total spend $0.32 of $10 cap.
 --- body ---
 ## Context
 

@@ -397,10 +397,19 @@ def run_phase_b_multiturn(
         paths = _turn_artefact_paths(output_dir, agent, turn)
         paths["user"].write_text(user_text, encoding="utf-8")
 
-        extra_metadata = {
+        extra_metadata: dict | None = {
             "remaining_budget_usd": f"{remaining:.2f}",
             "cap_usd": f"{cap_usd:.2f}",
         }
+        # Per ticket 0212: Mistral's path-bound append endpoint rejects
+        # body-level `metadata` with HTTP 422 (empirically confirmed
+        # 2026-05-21). On follow-up turns (when `continuation` carries
+        # an agent_id), suppress the structured metadata signal — the
+        # chat-text status prefix still informs the model. Adapter-side
+        # fix is 0212's scope.
+        is_followup_turn = bool(continuation and continuation.get("agent_id"))
+        if is_followup_turn:
+            extra_metadata = None
 
         record = run_mistral_call(
             user_text,
