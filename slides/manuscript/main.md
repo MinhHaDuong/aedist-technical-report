@@ -54,9 +54,9 @@ Looking the historical offer of the major AI industry players, we found that the
 
 How well do the state of the art tools perform when it comes to producing research-quality statistical datasets? The parametric ceiling of §1 is a deliberately handicapped baseline — no web, no tools, no reasoning budget beyond what each model carries internally. The commercially available frontier, by contrast, ships agents that combine extended reasoning, web search, document ingestion, and tool use into a single "deep research" surface. The question is whether removing the §1 handicaps suffices to clear the §2 quality bar.
 
-**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with three state-of-the-art cloud AI agents that have extended reasoning and web access. The experiment proceeds as follows. First, select three agents with deep-research surfaces (candidate pool: OpenAI deep-research, Anthropic deep-research, Google deep-research, with xAI deep-search and Perplexity as alternates). Second, we give each agent our complete prompt and the four-dimensional quality criteria of §2, and ask it to tune the prompt and settings to produce the best statistical report it can within a budget cap of ten dollars and an overnight wall-clock budget. Each agent returns its own tuned prompt. Third, we run the fully specified prompt three times for each agent, with different providers when supported. Fourth, we ask the other two agents to analyse and compare the three results on each of the four §2 dimensions, and to compare each table against the §1 parametric baseline. Pairwise judging is non-self-judging: each table is rated by the other two agents only.
+**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with four state-of-the-art cloud AI agents that have extended reasoning and web access, queried over direct vendor APIs (no browser automation): Anthropic Claude Opus 4.6 (US, web_search + adaptive thinking), OpenAI GPT-5.5 (US, Responses API + web_search + reasoning), Mistral Large 2512 (FR, Agents API + web_search connector), and Qwen3-Max via DashScope (CN, web_search inside thinking mode). The fourth slot is hypothesis-relevant rather than decorative: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search. The experiment proceeds in four phases. **Phase A** — each agent receives the baseline prompt and the four §2 quality criteria, and is asked to design its own fully-specified prompt and settings to maximise quality within a $10 / overnight budget. **Phase B-0** — each designed prompt runs once (N=1) as a smoke gate, applying the project's *Test one before blasting* rule at the experiment level. **Phase B** — gated on a clean B-0 review, each designed prompt runs N=3 against a single provider per agent. **Phase C** — each of the twelve outputs (4 agents × 3 reps) is scored on the four §2 dimensions by the three *other* agents; cross-evaluation is non-self-judging by construction. The naive one-shot baseline for cross-comparison is `experiments/outputs/direct_complete/` (`sweep_direct_complete`, `modelset_frontier_10labs`), distinct from §1's per-model parametric sweep. The falsification target is H0 = "deep research is enough."
 
-**Conjectured results.** We conjecture that the deep-research method improves on all four §2 dimensions over the §1 parametric baseline — accuracy lifts because the agent fetches primary sources, coherence lifts because reasoning surfaces cross-row contradictions, provenance lifts because URLs are emitted alongside values, temporality lifts because retrieval is current. We further conjecture that the method nonetheless falls short of the scientifically acceptable quality required by §2: row-level F1 plateaus below the manual-curation reference; per-cell provenance, when sampled, fails the strong-citation test (the cited source does not always support the value claimed); temporal validity is sporadically attached rather than systematic; and pairwise judges disagree on absolute quality, indicating that the four dimensions do not collapse to a single scalar even at the frontier. We did not find published evaluations of frontier deep-research agents against accuracy, coherence, provenance, and temporality jointly on a structured-output task; the experiment described here is designed to fill that gap.
+**Conjectured results.** We conjecture that the deep-research method improves on all four §2 dimensions over the parametric baseline — accuracy lifts because the agent fetches primary sources, coherence lifts because reasoning surfaces cross-row contradictions, provenance lifts because URLs are emitted alongside values, temporality lifts because retrieval is current. We further conjecture that the method nonetheless falls short of the scientifically acceptable quality required by §2: row-level F1 plateaus below the manual-curation reference; per-cell provenance, when sampled, fails the strong-citation test (the cited source does not always support the value claimed); temporal validity is sporadically attached rather than systematic; and the cross-evaluating judges disagree on absolute quality, indicating that the four dimensions do not collapse to a single scalar even at the frontier. We did not find published evaluations of frontier deep-research agents against accuracy, coherence, provenance, and temporality jointly on a structured-output task; the experiment described here is designed to fill that gap.
 
 ![Figure 3](inputs/generated/fig_exp2_cross_eval.pdf){.placeholder}
 <!-- placeholder — ticket 0199 produces this figure -->
@@ -208,34 +208,73 @@ This experiment establishes the *parametric ceiling*: the best row-level quality
 
 ## Annex C — Experiment 2: Technical specification
 
-*[PLACEHOLDER — to be filled by ticket 0199. The structure mirrors Annex B: Task, Agents, Prompt-tuning protocol, Run parameters, Cross-model judging rubric, Sweep configuration, What this experiment does and does not test.]*
+*[Design captured by ticket 0166 (umbrella) and operationalised by tickets 0167–0173 (per-agent adapters), 0170 (Phase A harness), 0171 (Phase C cross-eval rubric), 0185 (interactive smoke), 0199 (run + manuscript update). At the time of writing, Phase A and Phase B-0 are runnable per-agent via the interactive smoke; Phase B and Phase C have not yet executed. This annex pins the specification; the conjectured-results paragraph in §4 will be replaced by an observed-results paragraph when 0199 completes.]*
 
 ### Task
 
-Identify all thermal power plants in Vietnam using three SOTA cloud agents with extended reasoning and web access. Same target population as Experiment 1: the 163-plant version-locked reference inventory at `data/reference/vietnam_thermal_v1.csv`.
+Identify all thermal power plants in Vietnam using four SOTA cloud agents with extended reasoning and web access. Same target population as Experiment 1: the 163-plant version-locked reference inventory at `data/reference/vietnam_thermal_v1.csv`.
 
 ### Agents
 
-Three deep-research surfaces to be pinned from: OpenAI deep-research, Anthropic deep-research, Google deep-research, xAI deep-search, Perplexity. *[Final selection — ticket 0199.]*
+Four direct-API agents, ordered by ascending baseline smoke cost. API keys live at `~/.config/keys/`. OpenRouter is not used here — vendor-direct invocation keeps web-search billing transparent.
 
-### Protocol
+| # | Vendor | Model | Country | Surface | Ticket |
+|---|---|---|---|---|---|
+| 1 | Mistral | Mistral Large 2512 | FR | Agents API + `web_search` connector | 0169 |
+| 2 | Alibaba | Qwen3-Max | CN | DashScope, `web_search` inside thinking mode | 0173 |
+| 3 | OpenAI | GPT-5.5 | US | Responses API + `web_search` + reasoning | 0168 |
+| 4 | Anthropic | Claude Opus 4.6 | US | Anthropic API + `web_search_20250305` + adaptive thinking | 0167 |
 
-1. Each agent receives the §2 quality criteria and the §1 baseline prompt. It tunes prompt/settings within a \$10 + overnight budget cap.
-2. The tuned prompt is run 3 times per agent against different providers when supported. Total: 9 runs.
-3. Each result table is judged by the other two agents — non-self-judging — on the four §2 dimensions (accuracy, coherence, provenance, temporality) using a pinned rubric.
-4. Cross-agent dispersion on each dimension is reported alongside per-agent means.
+Anthropic is pinned to Opus 4.6 (not 4.7) per the 2026-05-20 compose decision: identical call shape, ~40% lower per-call cost on the verified probe. Kimi K2.6 is disqualified — vendor docs document `thinking` and `$web_search` as mutually exclusive, fatal for §4's "extended reasoning AND web access" requirement. Geographic / corpus spread (US × 2 + FR + CN) is hypothesis-relevant: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search.
 
-### Budget
+### Baseline reference for cross-comparison
 
-Total cap ≈ \$90 (3 agents × \$10 tuning + 3 agents × 3 reps × \$10 run-time, with the runner halting at exceedance per the Experiment 1 pattern).
+The naive one-shot baseline that §4 compares against is **not** §1's `modelset_ablation_journal` sweep. It is the pre-existing `experiments/outputs/direct_complete/` artifact from `sweep_direct_complete` over `modelset_frontier_10labs` — a wider lab survey at a single rep per model. Phase C reads from it directly; it is not re-run.
 
-### Sweep configuration
+### Phase structure
 
-`sweep_exp2_*` block in `experiments/experiments.toml` — see ticket 0199 actions 5–7.
+**Phase A — Reflexive prompt design.** Each agent receives the baseline prompt (`experiments/prompts/prompt_complete.txt`), the four §2 quality-dimension paragraphs verbatim, the task statement, a JSON envelope spec, and the per-run budget cap. The agent is asked to return a fully-specified prompt and settings that maximise the quality of the report it will produce within ≤\$10 and an overnight wall-clock. Outputs land as `<agent>_phase_a.json` with the designed prompt, settings, and rationale fields. Per-agent cap: \$1. Harness: ticket 0170.
+
+**Phase B-0 — Single-rep smoke.** Each designed prompt runs once (N=1) end-to-end. This is *Test one before blasting* applied at the experiment level: four outputs surface adapter parser bugs, prompt failures, refusals, and real per-call cost before triple-budget commitment. Gate to Phase B is a human review confirming (i) all four adapters produced valid `RunRecord` instances, (ii) parsed tables are non-empty, (iii) costs match the ≤\$10/call budget empirically. Per-agent cap: \$10.
+
+**Phase B — Execution (N=3).** Gated on a clean B-0 review. Each designed prompt runs three times against a single provider per agent (closed-weight SOTA agents have one vendor each; the cross-provider variance reported for MoE models in Annex B does not apply). Per-agent incremental cap: \$20 on top of B-0. Total per-agent budget across A + B-0 + B: ≤\$31; observed total for all four ≈ \$120 plus probes.
+
+**Phase C — Cross-evaluation.** For each of the twelve subject outputs (4 agents × 3 reps), the three *other* agents score it on the four §2 dimensions using a pinned rubric (ticket 0171). Self-judging is excluded by construction. ≈36 scoring calls plus baseline scoring; per-call cap ≤\$0.30 (cheap chat completions, no web). Cap: \$10.
+
+**Phase D — Synthesis.** Aggregate to a `4 × 3 × 4` (agents × evaluators × dimensions) tensor at `experiments/derived/sota_cross_eval.csv`. The §4 figure (Figure 3) is generated from this table.
+
+### Budget envelope
+
+| Phase | Per-agent | Total |
+|---|---|---|
+| A — prompt design | ≤\$1 | ≤\$4 |
+| B-0 — smoke (N=1) | ≤\$10 | ≤\$40 |
+| B — incremental over B-0 (Δ to N=3) | ≤\$20 | ≤\$80 |
+| C — cross-eval | — | ≤\$10 |
+| Probes / smoke setup | — | ≤\$3 |
+| **Total cap** | **≤\$31** | **≈\$140** |
+
+Hard cap enforced per-call by adapters; soft cap monitored at the umbrella by inspecting cost totals after Phase A and again after Phase B-0 before launching Phase B-full.
+
+### Harness
+
+This experiment is script-based, not sweep-based. No `sweep_exp2_*` block exists in `experiments/experiments.toml`. Implementation surface:
+
+- `src/aedist/adapter_mistral.py` — Mistral Agents API adapter.
+- `src/aedist/adapter_qwen_dashscope.py` — DashScope adapter.
+- `src/aedist/adapter_openai_responses.py` — OpenAI Responses adapter.
+- `src/aedist/query_anthropic.py` — Anthropic adapter.
+- `experiments/sota/exp2_interactive_smoke.py` *(scaffolded by 0185; status: A and B-0 runnable per agent with SPACE-gated review)*.
+- `experiments/outputs/sota_smoke/` and `sota_exp2_smoke/` — artifact directories.
+- `experiments/derived/sota_cross_eval.csv` — Phase C output target.
+
+### Evaluation
+
+Phase B outputs are evaluated against the 163-plant reference using the same `src/aedist/evaluate.py` machinery as §1 (LP matcher, ADR-2/3, `similarity_threshold = 90`, `capacity_weight = 0.001`). Phase C cross-evaluation adds four LLM-judged dimension scores per output using the rubric in ticket 0171. The per-run schema in `measurements.jsonl` carries the four-dimension scores alongside the standard `f1` / attribute-accuracy fields.
 
 ### What this experiment does and does not test
 
-This experiment tests whether removing the §1 handicaps (no web, no tools, no documents) — by handing the task to a commercially available deep-research surface — clears the §2 quality bar. It does not test custom workflows or local models; that is §5. It does not test how the four dimensions trade off under a fixed budget; that is §5 + ticket 0201 once the composite-quality scorers exist.
+This experiment tests whether removing the §1 handicaps (no web, no tools, no documents) — by handing the task to a commercially available deep-research surface — clears the §2 quality bar. It does not test custom workflows or local models; that is §5. It does not test how the four dimensions trade off under a fixed budget; that is §5 + ticket 0201 once the composite-quality scorers exist. It does not test browser-automated surfaces (ChatGPT.com, Claude.ai chat UI) — only direct vendor APIs.
 
 ---
 
