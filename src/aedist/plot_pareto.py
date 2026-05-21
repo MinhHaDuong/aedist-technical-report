@@ -236,15 +236,14 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     ax.set_ylabel("Nombre de centrales bien identifiées")
     ax.set_ylim(0, N_REFERENCE_PLANTS * 1.05)
     if xscale == "log":
-        from matplotlib.ticker import FixedLocator, NullFormatter, ScalarFormatter
+        from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
         ax.set_xscale("log")
         # Explicit tick locations: 0.1, 0.5, 1, 5, 10, 20, 30 cents.
         ticks = [0.1, 0.5, 1, 5, 10, 20, 30]
         ax.xaxis.set_major_locator(FixedLocator(ticks))
-        fmt = ScalarFormatter()
-        fmt.set_scientific(False)
-        ax.xaxis.set_major_formatter(fmt)
+        # `g` format drops trailing zeros: 1.0 → "1", 0.5 stays "0.5".
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _pos: f"{x:g}"))
         ax.xaxis.set_minor_formatter(NullFormatter())
     else:
         ax.set_xlim(
