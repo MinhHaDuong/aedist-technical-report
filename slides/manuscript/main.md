@@ -21,7 +21,7 @@ Submitting a direct query to a large language model produces an inventory-shaped
 ![Figure 2](inputs/generated/fig_pareto.pdf)
 <!-- raw data: slides/inputs/generated/pareto.csv -->
 
-*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup. Each of the sixteen models from `modelset_ablation_journal` contributes one filled circle at its median count of true-positive plant matches across the reps plus one ✕ marker per non-median rep, both plotted against the mean per-call API cost (USD, log scale). A thin vertical line spans the minimum-to-maximum count for the model — a direct view of within-model run-to-run variability rather than a confidence interval. The dashed reference line at 163 marks the full Vietnam thermal inventory. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. No Pareto-efficient envelope is drawn; the figure is descriptive. Per-model numbers backing this figure are written to `slides/inputs/generated/pareto.csv` for audit.*
+*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup. Each of the sixteen models from `modelset_ablation_journal` contributes: a **filled square** at the pooled median TP count, **unfilled circles** at every rep from the 2026-05-20 journal sweep, and **✕ markers** at every rep from the 2026-05-21 reasoning-token top-up (ticket 0198, pooled unconditionally — no canary gate, intra-day variability absorbed into the reported within-model spread). A thin vertical line spans the minimum-to-maximum count across the pooled cohort. All glyphs share the mean per-call API cost (USD, log scale). The dashed reference line at 163 marks the full Vietnam thermal inventory. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. No Pareto-efficient envelope is drawn; the figure is descriptive. Per-model numbers backing this figure are written to `slides/inputs/generated/pareto.csv` for audit.*
 
 ## Second, the quality bar that any acceptable dataset must clear
 
@@ -164,6 +164,8 @@ Run outcomes other than `ok` (refusal, empty, parse error) are recorded with `f1
 ### Sweep configuration
 
 The sweep is defined in `experiments/experiments.toml` as `sweep_ablation_p1_direct_base` (model_set = `modelset_ablation_journal`, repeat = 5, T = 0, seed = 42, budget_usd = 10, max_tokens = 8192, prompt_modules = []). Outputs land in `experiments/outputs/ablation/direct/p1_base/`; the prior pilot runs are preserved under `p1_base.pilot/` (ticket 0175 renamed the directory to keep journal and pilot data separate). Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
+
+Experiment 1 was run as 5 reps per model on 2026-05-20 and topped up with 3 additional reps per model on 2026-05-21 after a harness fix (PR #379) restored capture of `reasoning_tokens`. The top-up reps land in `experiments/outputs/ablation/direct/p1_base.topup_canary/` and `p1_base.topup/`; we pool them with the original five unconditionally — no canary gate. Intra-day variability across the two acquisition windows is absorbed into the reported within-model spread rather than filtered out.
 
 ### What this experiment does and does not test
 
