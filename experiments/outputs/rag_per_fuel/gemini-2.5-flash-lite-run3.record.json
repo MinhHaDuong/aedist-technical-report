@@ -1,10 +1,10 @@
 {
   "run_id": "76277b194edd",
   "timestamp": "2026-04-10T15:45:09.066543Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "decomposed",
+    "prompt_version": "per_fuel",
     "extra": {
       "size_class": "edge",
       "country": "US",

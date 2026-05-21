@@ -1,7 +1,7 @@
 {
   "run_id": "b21bcfe8d7de",
   "timestamp": "2026-04-10T15:45:01.133031Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "glm-4.7-flash",
     "prompt_version": "census",

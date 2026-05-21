@@ -1,7 +1,7 @@
 {
   "run_id": "61326a1572ec",
   "timestamp": "2026-04-10T17:59:04.846510Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
     "prompt_version": "p1_base",
@@ -19,7 +19,7 @@
     "tokens_in": 418,
     "tokens_out": 4284
   },
-  "result_file": "experiments/outputs/ablation/direct/p1_base/deepseek-v3.2-run1.csv",
+  "result_file": "experiments/outputs/ablation/direct/p1_base.pilot/deepseek-v3.2-run1.csv",
   "result_summary": {
     "status": "ok",
     "n_plants": 73,

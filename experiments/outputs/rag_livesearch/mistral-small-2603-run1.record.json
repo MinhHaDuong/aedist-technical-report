@@ -1,10 +1,10 @@
 {
   "run_id": "01161cc317af",
   "timestamp": "2026-04-10T15:45:21.774768Z",
-  "method": "web",
+  "method": "rag_livesearch",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
-    "prompt_version": "web",
+    "prompt_version": "extract",
     "extra": {
       "size_class": "small",
       "country": "FR",

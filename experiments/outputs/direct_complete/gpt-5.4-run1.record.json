@@ -1,10 +1,10 @@
 {
   "run_id": "7d2d5cd2abfe",
   "timestamp": "2026-04-10T15:46:39.742587Z",
-  "method": "frontier",
+  "method": "direct",
   "method_params": {
     "model": "openai/gpt-5.4",
-    "prompt_version": "frontier",
+    "prompt_version": "complete",
     "extra": {
       "size_class": "frontier",
       "country": "US",

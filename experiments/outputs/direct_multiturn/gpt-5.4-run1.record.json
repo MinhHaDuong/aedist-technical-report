@@ -1,10 +1,10 @@
 {
   "run_id": "46d4ea0d2b15",
   "timestamp": "2026-04-10T15:45:14.331216Z",
-  "method": "multiturn",
+  "method": "direct+multiturn",
   "method_params": {
     "model": "openai/gpt-5.4",
-    "prompt_version": "multiturn",
+    "prompt_version": "followups",
     "extra": {
       "size_class": "frontier",
       "country": "US",

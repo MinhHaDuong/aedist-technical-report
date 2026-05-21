@@ -1,7 +1,7 @@
 {
   "run_id": "851c91cdeca8",
   "timestamp": "2026-04-10T15:44:55.856648Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "x-ai/grok-4.20",
     "prompt_version": "census",

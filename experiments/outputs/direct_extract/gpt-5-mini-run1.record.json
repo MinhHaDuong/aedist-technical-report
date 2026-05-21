@@ -1,7 +1,7 @@
 {
   "run_id": "597a9833dde7",
   "timestamp": "2026-04-10T15:44:53.933020Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "openai/gpt-5-mini",
     "prompt_version": "census",

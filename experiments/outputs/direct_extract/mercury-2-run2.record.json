@@ -1,7 +1,7 @@
 {
   "run_id": "7d84003ed927",
   "timestamp": "2026-04-10T15:44:57.266525Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "inception/mercury-2",
     "prompt_version": "census",

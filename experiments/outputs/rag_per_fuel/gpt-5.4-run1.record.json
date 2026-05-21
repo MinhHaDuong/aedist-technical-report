@@ -1,10 +1,10 @@
 {
   "run_id": "12cb432bdc35",
   "timestamp": "2026-04-10T15:45:13.709021Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "openai/gpt-5.4",
-    "prompt_version": "decomposed",
+    "prompt_version": "per_fuel",
     "extra": {
       "size_class": "frontier",
       "country": "US",

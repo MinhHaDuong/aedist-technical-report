@@ -1,7 +1,7 @@
 {
   "run_id": "4a204447088d",
   "timestamp": "2026-04-10T17:49:49.240387Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
     "prompt_version": "p1_composite",

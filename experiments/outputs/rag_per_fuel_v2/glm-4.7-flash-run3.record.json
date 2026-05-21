@@ -1,7 +1,7 @@
 {
   "run_id": "b74a4f87a21b",
   "timestamp": "2026-04-13T18:17:23.131209Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "glm-4.7-flash",
     "prompt_version": "decomposed_v2"

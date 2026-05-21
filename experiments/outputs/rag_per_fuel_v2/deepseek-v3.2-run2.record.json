@@ -1,7 +1,7 @@
 {
   "run_id": "01b7694bee8f",
   "timestamp": "2026-04-13T18:16:23.883784Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
     "prompt_version": "decomposed_v2",

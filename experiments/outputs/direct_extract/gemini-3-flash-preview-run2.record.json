@@ -1,7 +1,7 @@
 {
   "run_id": "7fa9a3513397",
   "timestamp": "2026-04-10T15:44:55.802289Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "google/gemini-3-flash-preview",
     "prompt_version": "census",

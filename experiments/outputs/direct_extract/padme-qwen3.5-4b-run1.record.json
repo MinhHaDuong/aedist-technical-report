@@ -1,7 +1,7 @@
 {
   "run_id": "a8b2ef5684e3",
   "timestamp": "2026-04-10T15:45:01.000606Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "qwen3.5:4b",
     "prompt_version": "census",

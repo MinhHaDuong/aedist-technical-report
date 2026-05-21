@@ -1,10 +1,10 @@
 {
   "run_id": "39102a14c951",
   "timestamp": "2026-04-10T15:45:14.577451Z",
-  "method": "multiturn",
+  "method": "direct+multiturn",
   "method_params": {
     "model": "mistralai/mistral-large-2512",
-    "prompt_version": "multiturn",
+    "prompt_version": "followups",
     "extra": {
       "size_class": "frontier",
       "country": "FR",

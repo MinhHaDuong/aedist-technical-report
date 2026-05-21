@@ -1,7 +1,7 @@
 {
   "run_id": "5de9c0f6c17b",
   "timestamp": "2026-04-11T11:09:13.211422Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
     "prompt_version": "p1_base",
@@ -19,7 +19,7 @@
     "tokens_in": 430,
     "tokens_out": 22825
   },
-  "result_file": "experiments/outputs/ablation/direct/p1_base/gemini-2.5-flash-lite-run2.csv",
+  "result_file": "experiments/outputs/ablation/direct/p1_base.pilot/gemini-2.5-flash-lite-run2.csv",
   "result_summary": {
     "status": "ok",
     "n_plants": 356,

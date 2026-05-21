@@ -1,10 +1,10 @@
 {
   "run_id": "920a91d1b537",
   "timestamp": "2026-04-10T15:45:18.845217Z",
-  "method": "web",
+  "method": "rag_livesearch",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
-    "prompt_version": "web",
+    "prompt_version": "extract",
     "extra": {
       "size_class": "frontier",
       "country": "CN",

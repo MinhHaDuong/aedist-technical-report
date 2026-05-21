@@ -1,7 +1,7 @@
 {
   "run_id": "fe21a32b1914",
   "timestamp": "2026-04-10T15:45:00.993460Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "nemotron-3-nano",
     "prompt_version": "census",

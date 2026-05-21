@@ -1,7 +1,7 @@
 {
   "run_id": "8c2417de2e71",
   "timestamp": "2026-04-10T15:45:03.831896Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "stepfun/step-3.5-flash",
     "prompt_version": "census",

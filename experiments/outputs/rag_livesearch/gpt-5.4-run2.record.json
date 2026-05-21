@@ -1,10 +1,10 @@
 {
   "run_id": "f54c78c60025",
   "timestamp": "2026-04-10T15:45:21.287142Z",
-  "method": "web",
+  "method": "rag_livesearch",
   "method_params": {
     "model": "openai/gpt-5.4",
-    "prompt_version": "web",
+    "prompt_version": "extract",
     "extra": {
       "size_class": "frontier",
       "country": "US",

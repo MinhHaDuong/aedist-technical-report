@@ -1,7 +1,7 @@
 {
   "run_id": "b3211c5f70f0",
   "timestamp": "2026-04-13T18:16:26.370964Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "qwen/qwen3.5-122b-a10b",
     "prompt_version": "decomposed_v2",

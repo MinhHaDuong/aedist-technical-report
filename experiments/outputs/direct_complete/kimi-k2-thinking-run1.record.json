@@ -1,10 +1,10 @@
 {
   "run_id": "67530ba7ce42",
   "timestamp": "2026-04-10T15:45:06.738913Z",
-  "method": "frontier",
+  "method": "direct",
   "method_params": {
     "model": "moonshotai/kimi-k2-thinking",
-    "prompt_version": "frontier",
+    "prompt_version": "complete",
     "extra": {
       "size_class": "frontier",
       "country": "CN",

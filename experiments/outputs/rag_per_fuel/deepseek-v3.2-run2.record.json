@@ -1,10 +1,10 @@
 {
   "run_id": "02072b0966d3",
   "timestamp": "2026-04-13T14:25:44.177098Z",
-  "method": "decomposed",
+  "method": "rag",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
-    "prompt_version": "decomposed",
+    "prompt_version": "per_fuel",
     "extra": {
       "size_class": "frontier",
       "country": "CN",

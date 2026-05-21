@@ -1,10 +1,10 @@
 {
   "run_id": "bb34c29b87b3",
   "timestamp": "2026-04-10T15:45:20.470188Z",
-  "method": "web",
+  "method": "rag_livesearch",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "web",
+    "prompt_version": "extract",
     "extra": {
       "size_class": "edge",
       "country": "US",

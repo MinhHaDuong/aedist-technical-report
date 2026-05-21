@@ -1,7 +1,7 @@
 {
   "run_id": "446498d03c9c",
   "timestamp": "2026-04-10T15:44:55.922123Z",
-  "method": "single",
+  "method": "direct",
   "method_params": {
     "model": "anthropic/claude-sonnet-4.6",
     "prompt_version": "census",

@@ -1,10 +1,10 @@
 {
   "run_id": "887744ea7f94",
   "timestamp": "2026-04-10T15:45:05.476824Z",
-  "method": "frontier",
+  "method": "direct",
   "method_params": {
     "model": "minimax/minimax-m2.7",
-    "prompt_version": "frontier",
+    "prompt_version": "complete",
     "extra": {
       "size_class": "large",
       "country": "CN",
