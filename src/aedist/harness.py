@@ -296,8 +296,16 @@ def query_ollama_native(
     num_ctx: int,
     num_predict: int | None = None,
     no_think: bool = False,
+    temperature: float | None = None,
+    seed: int | None = None,
 ) -> dict:
-    """Query Ollama via native /api/chat with explicit num_ctx (and optional num_predict output cap)."""
+    """Query Ollama via native /api/chat with explicit num_ctx (and optional num_predict output cap).
+
+    Plumbs JobSpec-declared API parameters into the Ollama ``options`` payload
+    so sweep configs are not silently dropped at the wire (ticket 0139):
+    ``temperature``, ``seed``, ``num_predict`` (Ollama's name for max_tokens),
+    and ``think=false`` (no_think) all land in ``options``.
+    """
     import httpx
 
     # base_url is like http://localhost:11434/v1 — strip /v1
@@ -307,6 +315,10 @@ def query_ollama_native(
         options["num_predict"] = num_predict
     if no_think:
         options["think"] = False
+    if temperature is not None:
+        options["temperature"] = temperature
+    if seed is not None:
+        options["seed"] = seed
     t0 = time.monotonic()
     resp = httpx.post(
         api_url,
@@ -423,9 +435,34 @@ def query_model(
 
     Models without '/' in their ID are assumed to be Ollama (e.g. 'qwen3.5:2b').
     Ollama native API is used so num_ctx is honoured (the /v1/ shim ignores it).
+
+    For the Ollama branch, translate OpenAI-shape ``api_kwargs`` (as produced
+    by :func:`build_api_kwargs`) into Ollama-shape ``options`` parameters so
+    JobSpec-declared values reach the wire (ticket 0139):
+
+    | OpenAI-shape kwarg           | Ollama option       |
+    |------------------------------|---------------------|
+    | ``temperature``              | ``temperature``     |
+    | ``seed``                     | ``seed``            |
+    | ``max_tokens``               | ``num_predict``     |
+    | ``extra_body["think"]=False``| ``think=False``     |
+
+    OpenRouter-only keys (``extra_body["provider"]``, ``extra_body["reasoning"]``,
+    ``tools``) are dropped on the Ollama branch — they have no Ollama analogue.
     """
     if "/" not in model_id:
-        return query_ollama_native(ollama_base_url, model_id, messages, num_ctx)
+        extra_body = kwargs.get("extra_body") or {}
+        no_think = extra_body.get("think") is False
+        return query_ollama_native(
+            ollama_base_url,
+            model_id,
+            messages,
+            num_ctx,
+            num_predict=kwargs.get("max_tokens"),
+            no_think=no_think,
+            temperature=kwargs.get("temperature"),
+            seed=kwargs.get("seed"),
+        )
     return query_single_turn(client, model_id, messages, **kwargs)
 
 

@@ -224,3 +224,197 @@ def test_reasoning_effort_absent_no_extra():
     model = {"id": "openai/gpt-5.5"}
     kwargs = build_api_kwargs(model, temperature=0.0)
     assert "reasoning" not in kwargs.get("extra_body", {})
+
+
+# ---------------------------------------------------------------------------
+# query_model — Ollama-branch wire-level plumbing (ticket 0139 regression)
+# ---------------------------------------------------------------------------
+#
+# query_model dispatched OpenRouter-shape api_kwargs to query_ollama_native
+# without translating them to Ollama's options payload. Result: temperature,
+# seed, max_tokens, and no_think were silently dropped at the wire for any
+# Ollama model_id (no slash). Tests below patch httpx.post and assert on
+# the JSON body actually sent — mocking query_model itself would miss the
+# bug, mocking query_ollama_native would miss the dispatcher translation.
+
+
+def _make_ollama_http_mock(monkeypatch):
+    """Patch httpx.post (imported lazily inside query_ollama_native) and capture call args."""
+    from unittest.mock import MagicMock
+
+    import httpx
+
+    fake_response = MagicMock()
+    fake_response.raise_for_status = MagicMock()
+    fake_response.json = MagicMock(
+        return_value={
+            "message": {"content": "ok", "thinking": ""},
+            "done_reason": "stop",
+            "prompt_eval_count": 1,
+            "eval_count": 1,
+        }
+    )
+    mock_post = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(httpx, "post", mock_post)
+    return mock_post
+
+
+def test_query_model_ollama_plumbs_jobspec_params_to_options(monkeypatch):
+    """JobSpec-declared params land in the Ollama options payload at the wire (0139)."""
+    from aedist.harness import build_api_kwargs, query_model
+
+    mock_post = _make_ollama_http_mock(monkeypatch)
+
+    # Realistic flow: build_api_kwargs(no_think=True, seed=42, max_tokens=4096,
+    # temperature=0.0) — exactly what sweep_regimes_direct_local declares.
+    model = {"id": "qwen3.6:30b", "name": "qwen3.6:30b"}
+    api_kwargs = build_api_kwargs(
+        model,
+        temperature=0.0,
+        seed=42,
+        max_tokens=4096,
+        no_think=True,
+    )
+    # Dispatch through query_model with an Ollama-shaped model_id (no slash).
+    query_model(
+        client=None,  # unused on Ollama branch
+        model_id="qwen3.6:30b",
+        messages=[{"role": "user", "content": "hi"}],
+        num_ctx=16384,
+        ollama_base_url="http://localhost:11434/v1",
+        **api_kwargs,
+    )
+
+    assert mock_post.call_count == 1
+    sent = mock_post.call_args.kwargs["json"]
+    assert sent["model"] == "qwen3.6:30b"
+    options = sent["options"]
+    assert options["num_ctx"] == 16384
+    assert options["num_predict"] == 4096
+    assert options["temperature"] == 0.0
+    assert options["seed"] == 42
+    assert options["think"] is False
+
+
+def test_query_model_ollama_no_think_false_omits_think(monkeypatch):
+    """no_think=False (build_api_kwargs default) leaves think absent — proves we don't hardcode."""
+    from aedist.harness import build_api_kwargs, query_model
+
+    mock_post = _make_ollama_http_mock(monkeypatch)
+
+    model = {"id": "qwen3.6:30b", "name": "qwen3.6:30b"}
+    api_kwargs = build_api_kwargs(
+        model,
+        temperature=0.7,
+        seed=42,
+        no_think=False,  # explicit default — extra_body should be absent
+    )
+    query_model(
+        client=None,
+        model_id="qwen3.6:30b",
+        messages=[{"role": "user", "content": "hi"}],
+        num_ctx=32768,
+        **api_kwargs,
+    )
+
+    options = mock_post.call_args.kwargs["json"]["options"]
+    assert "think" not in options
+    assert options["temperature"] == 0.7
+    assert options["seed"] == 42
+    # max_tokens absent → num_predict absent
+    assert "num_predict" not in options
+
+
+def test_query_model_ollama_drops_openrouter_only_keys(monkeypatch):
+    """provider_order + reasoning_effort + tools are OpenRouter-only — must not reach Ollama wire."""
+    from aedist.harness import build_api_kwargs, query_model
+
+    mock_post = _make_ollama_http_mock(monkeypatch)
+
+    # A pathological config: OpenRouter-only knobs on an Ollama model.
+    # Should be silently dropped (no Ollama analogue), not error.
+    model = {
+        "id": "qwen3.6:30b",
+        "name": "qwen3.6:30b",
+        "web_search": True,
+        "reasoning_effort": "minimal",
+    }
+    api_kwargs = build_api_kwargs(
+        model,
+        temperature=0.0,
+        seed=42,
+        provider_order=["DeepSeek"],
+        enable_web_search=True,
+        no_think=True,
+    )
+    query_model(
+        client=None,
+        model_id="qwen3.6:30b",
+        messages=[{"role": "user", "content": "hi"}],
+        **api_kwargs,
+    )
+
+    sent = mock_post.call_args.kwargs["json"]
+    # Ollama JSON body has model/messages/options/stream — nothing else.
+    assert set(sent.keys()) == {"model", "messages", "options", "stream"}
+    options = sent["options"]
+    assert options["temperature"] == 0.0
+    assert options["seed"] == 42
+    assert options["think"] is False
+    # OpenRouter-only knobs not present anywhere in the wire payload.
+    assert "provider" not in options
+    assert "reasoning" not in options
+    assert "tools" not in sent
+
+
+def test_query_model_ollama_local_sweep_jobspec_end_to_end(monkeypatch, tmp_path):
+    """End-to-end: build_api_kwargs from a `sweep_regimes_direct_local`-shaped JobSpec
+    reaches the Ollama wire with no_think honoured (0139)."""
+    from aedist.harness import build_api_kwargs, query_model
+    from aedist.schema import JobSpec, Method, WorkerPool
+
+    mock_post = _make_ollama_http_mock(monkeypatch)
+
+    # Shape mirrors sweep_regimes_direct_local in experiments.toml:
+    # temperature=0.0, seed=42, no_think=true, max_tokens set, num_ctx set.
+    job = JobSpec(
+        models_file=str(tmp_path / "models.yaml"),
+        mode=Method.SINGLE,
+        prompt=str(tmp_path / "prompt.txt"),
+        output_dir=str(tmp_path / "out"),
+        worker_pool=WorkerPool.PADME,
+        run_number=1,
+        temperature=0.0,
+        seed=42,
+        max_tokens=4096,
+        num_ctx=16384,
+        no_think=True,
+    )
+    model_entry = {"id": "qwen3.6:30b", "name": "qwen3.6:30b"}
+    api_kwargs = build_api_kwargs(
+        model_entry,
+        temperature=job.temperature,
+        max_tokens=job.max_tokens,
+        seed=job.seed,
+        provider_order=job.provider_order,
+        enable_web_search=job.web_search,
+        no_think=job.no_think,
+    )
+    query_model(
+        client=None,
+        model_id=model_entry["name"],
+        messages=[{"role": "user", "content": "test"}],
+        num_ctx=job.num_ctx,
+        ollama_base_url="http://localhost:11434/v1",
+        **api_kwargs,
+    )
+
+    options = mock_post.call_args.kwargs["json"]["options"]
+    assert options["temperature"] == 0.0
+    assert options["seed"] == 42
+    assert options["num_predict"] == 4096
+    assert options["num_ctx"] == 16384
+    assert options["think"] is False, (
+        "no_think=true on local sweep must reach the Ollama wire — "
+        "regression for ticket 0139 silent-drop"
+    )
