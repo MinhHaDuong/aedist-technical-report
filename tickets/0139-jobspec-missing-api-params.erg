@@ -2,6 +2,7 @@
 Title: Add seed, provider_order, max_tokens, num_ctx to JobSpec; forbid unknown fields
 Created: 2026-04-30
 Author: claude
+Closed: schema fix landed: provider_order + num_ctx added, extra='forbid' enforced, Ollama params plumbed through query_model (PR #370, sha 3c8c5460)
 
 --- log ---
 2026-04-30T11:15Z claude created — split from 0138; seed silent-drop confirmed
@@ -13,6 +14,7 @@ Author: claude
 2026-05-21T00:00Z claude note implemented on t0139-jobspec-forbid-extras: added provider_order + num_ctx, _remap_sweep_fields strips model_set/ollama_url, JobSpec model_config=ConfigDict(extra=forbid), worker uses query_model (Ollama num_ctx honoured), raw JSON writes 5 fields, evaluate.py backfills the batch + finish_reason; audit shows 58/63 sweeps load cleanly (5 verification/fusion sweeps fail pre-existing missing-required-fields, routed externally not through manager.generate); canary sweep_ablation_p1_direct_base loads.
 2026-05-21T14:30Z claude note REROLL fix: plumbed temperature/seed/max_tokens/no_think through query_model Ollama branch — verify-gate found that worker._query_and_save dispatches via query_model, whose Ollama branch was discarding **kwargs, silently dropping all four params on local sweeps (sweep_regimes_direct_local etc). Extended query_ollama_native to accept temperature+seed, translated OpenAI-shape kwargs to Ollama options at the dispatch site, added 4 wire-level regression tests in test_harness.py that mock httpx.post and assert on the json["options"] payload. Full suite 1279 passed, ruff clean.
 
+2026-05-21T08:07Z HDMX-coding-agent closed — schema fix landed: provider_order + num_ctx added, extra='forbid' enforced, Ollama params plumbed through query_model (PR #370, sha 3c8c5460)
 --- body ---
 **Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. The seed silent-drop bug fix is correct but the scope is substantial (schema + wiring + backfill). Recommend triage for prioritization.
 
