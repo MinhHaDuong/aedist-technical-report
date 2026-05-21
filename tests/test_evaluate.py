@@ -278,3 +278,39 @@ class TestAssembleValidation:
             "truncated_input",
             "provider_error",
         }
+
+
+class TestBackfillJobSpecFields:
+    """Ticket 0139: _backfill_resource_use surfaces JobSpec API params + finish_reason."""
+
+    def test_backfill_0139_fields_from_raw_json(self, tmp_path):
+        from aedist.evaluate import _backfill_resource_use
+        from aedist.schema import Method, MethodParams, RunRecord
+
+        raw_path = tmp_path / "deepseek-run1.json"
+        raw_path.write_text(
+            '{"model": "deepseek/deepseek-v3.2", '
+            '"response": "x", "finish_reason": "length", '
+            '"usage": {"prompt_tokens": 100, "completion_tokens": 32768}, '
+            '"wall_seconds": 12.3, "cost_usd": 0.05, '
+            '"temperature": 0.0, "seed": 42, "max_tokens": 32768, '
+            '"provider_order": ["DeepSeek"], "num_ctx": 32768, '
+            '"web_search": false, "model_metadata": {"context_window": 128000}}',
+            encoding="utf-8",
+        )
+        record = RunRecord(
+            method=Method.DIRECT,
+            method_params=MethodParams(model="deepseek/deepseek-v3.2"),
+        )
+        _backfill_resource_use(record, raw_path)
+
+        extra = record.method_params.extra or {}
+        assert extra.get("seed") == 42
+        assert extra.get("provider_order") == ["DeepSeek"]
+        assert extra.get("num_ctx") == 32768
+        assert extra.get("web_search") is False
+        assert extra.get("finish_reason") == "length"
+        # finish_reason is also promoted to first-class RunRecord field.
+        assert record.finish_reason == "length"
+        assert record.method_params.max_tokens == 32768
+        assert record.method_params.temperature == 0.0

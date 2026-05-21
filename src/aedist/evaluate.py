@@ -223,8 +223,18 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
     # Surface per-sweep / per-model controls into the metrics dict via extra
     # (ticket 0175 / ADR-7): system_instruction declares the baseline
     # no-web-search regime; reasoning_effort is a per-model capability flag
-    # (gpt-oss-*, qwen3-max).
-    for key in ("system_instruction", "reasoning_effort", "seed"):
+    # (gpt-oss-*, qwen3-max). The 0139 batch (seed, provider_order, num_ctx,
+    # web_search, finish_reason) makes JobSpec API params analyst-visible
+    # without re-reading raw JSON.
+    for key in (
+        "system_instruction",
+        "reasoning_effort",
+        "seed",
+        "provider_order",
+        "num_ctx",
+        "web_search",
+        "finish_reason",
+    ):
         if raw.get(key) is not None:
             extra[key] = raw[key]
     record.method_params.extra = extra or None
@@ -232,6 +242,12 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
         record.method_params.temperature = raw["temperature"]
     if "max_tokens" in raw and raw["max_tokens"] is not None:
         record.method_params.max_tokens = raw["max_tokens"]
+    # finish_reason promotes to first-class RunRecord field too (ticket 0139
+    # Action 6). The extra-dict backfill above keeps the records_to_metrics
+    # path stable; this assignment lets r.finish_reason take precedence in
+    # measurements.records_to_metrics when both are populated.
+    if raw.get("finish_reason") is not None and record.finish_reason is None:
+        record.finish_reason = raw["finish_reason"]
 
 
 def _rel_path(path: Path) -> str:

@@ -17,7 +17,9 @@ from typing import Any
 from uuid import uuid4
 
 import yaml
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+_NON_JOBSPEC_SWEEP_KEYS_DEFAULT: tuple[str, ...] = ("model_set", "ollama_url")
 
 
 class FuelType(StrEnum):
@@ -340,7 +342,15 @@ class JobSpec(BaseModel):
 
     Mirrors the sweep YAML configs with additional per-job fields
     for scheduling and resource management.
+
+    ``model_config = ConfigDict(extra="forbid")`` is enabled so that unknown
+    keys in sweep configs raise ``ValidationError`` instead of silently being
+    dropped (ticket 0139). Manager-owned keys that don't belong on a JobSpec
+    (``model_set``, ``ollama_url``) are popped in ``_remap_sweep_fields``
+    before validation.
     """
+
+    model_config = ConfigDict(extra="forbid")
 
     job_id: str = Field(default_factory=lambda: uuid4().hex[:12])
     priority: int = Field(default=0, description="Higher value = higher priority.")
@@ -400,6 +410,20 @@ class JobSpec(BaseModel):
         "Injects the provider-appropriate flag (Ollama/OpenAI-compat: extra_body.think=false). "
         "Set per-sweep, not per-model.",
     )
+    provider_order: list[str] | None = Field(
+        default=None,
+        description="OpenRouter provider routing pins. When set, routing is "
+        "restricted to the listed backends in order with no fallback. Eliminates "
+        "cross-provider floating-point variance on MoE models like DeepSeek V3 "
+        "(see ticket 0139). Per-sweep, not per-model.",
+    )
+    num_ctx: int = Field(
+        default=32768,
+        ge=1,
+        description="Ollama context window (`num_ctx`) used by the native /api/chat "
+        "dispatch. Ignored on cloud routes. Default matches harness.query_model "
+        "for backward compatibility (ticket 0139).",
+    )
     system_instruction: str | None = Field(
         default=None,
         description="Optional system-role message prepended to single-turn calls. "
@@ -445,11 +469,23 @@ class JobSpec(BaseModel):
 
     @staticmethod
     def _remap_sweep_fields(data: dict[str, Any]) -> dict[str, Any]:
-        """Remap sweep-config field names to JobSpec field names."""
+        """Remap sweep-config field names to JobSpec field names.
+
+        Also strips manager-owned and deprecated sweep keys that don't belong
+        on a JobSpec (``_NON_JOBSPEC_SWEEP_KEYS_DEFAULT``, ticket 0139):
+
+        - ``model_set``: resolved by ``manager._filter_models_by_set`` against
+          ``[sets.*]`` in experiments.toml; never reaches the worker.
+        - ``ollama_url``: legacy sweep key. The Ollama base URL is taken from
+          the model registry entry (``base_url``) or the PadmeWorker default.
+          Sweep-level overrides are not wired and are dropped.
+        """
         if "models" in data and "models_file" not in data:
             data["models_file"] = data.pop("models")
         if "output" in data and "output_dir" not in data:
             data["output_dir"] = data.pop("output")
+        for key in _NON_JOBSPEC_SWEEP_KEYS_DEFAULT:
+            data.pop(key, None)
         return data
 
     @classmethod

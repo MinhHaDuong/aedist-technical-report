@@ -120,31 +120,20 @@ def generate(
                 skipped += 1
                 continue
 
-            job = JobSpec(
-                job_id=job_id,
-                priority=parent_spec.priority,
-                mode=parent_spec.mode,
-                prompt=parent_spec.prompt,
-                models_file=parent_spec.models_file,
-                model_filter=model_name,
-                corpus=parent_spec.corpus,
-                followups=parent_spec.followups,
-                strategy=parent_spec.strategy,
-                prompt_modules=parent_spec.prompt_modules,
-                modules_dir=parent_spec.modules_dir,
-                repeat=1,
-                run_number=run,
-                budget_usd=parent_spec.budget_usd,
-                temperature=parent_spec.temperature,
-                seed=parent_spec.seed,
-                max_tokens=parent_spec.max_tokens,
-                web_search=parent_spec.web_search,
-                no_think=parent_spec.no_think,
-                system_instruction=parent_spec.system_instruction,
-                output_dir=parent_spec.output_dir,
-                timeout_seconds=parent_spec.timeout_seconds,
-                worker_pool=parent_spec.worker_pool,
+            # Clone the parent spec via model_dump and override the per-job
+            # fields. Avoids the silent-drop bug that prompted ticket 0139:
+            # the prior hand-list omitted any new JobSpec field added later.
+            # Per-job overrides: model_filter, repeat=1, run_number, job_id.
+            parent_data = parent_spec.model_dump()
+            parent_data.update(
+                {
+                    "job_id": job_id,
+                    "model_filter": model_name,
+                    "repeat": 1,
+                    "run_number": run,
+                }
             )
+            job = JobSpec.model_validate(parent_data)
 
             filename = f"{job.priority:03d}-{job_id}.yaml"
             (jobs_root / "pending" / filename).write_text(job.to_yaml())

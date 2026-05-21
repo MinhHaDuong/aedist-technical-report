@@ -322,7 +322,7 @@ def test_padme_worker_custom_base_url(tmp_path: Path) -> None:
 
 
 def _canned_single_result():
-    """Canned result dict from query_single_turn."""
+    """Canned result dict from query_model."""
     return {
         "content": "Plant A,coal,operational",
         "finish_reason": "stop",
@@ -339,7 +339,7 @@ def _harness_patches(tmp_path):
     return {
         "make_client": MagicMock(return_value=MagicMock()),
         "load_models": MagicMock(return_value=[{"name": "qwen3:8b"}]),
-        "query_single_turn": MagicMock(return_value=_canned_single_result()),
+        "query_model": MagicMock(return_value=_canned_single_result()),
         "compute_cost": MagicMock(return_value=0.0),
         "model_metadata": MagicMock(return_value={}),
         "save_json": MagicMock(),
@@ -372,8 +372,8 @@ def test_padme_worker_execute(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    # Verify model ID and message structure passed to query_single_turn
-    call_args = patches["query_single_turn"].call_args[0]
+    # Verify model ID and message structure passed to query_model
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen3:8b"  # model_id
     messages = call_args[2]
     assert len(messages) == 1
@@ -453,8 +453,8 @@ def test_openrouter_worker_execute(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    # Verify model ID and message structure passed to query_single_turn
-    call_args = patches["query_single_turn"].call_args[0]
+    # Verify model ID and message structure passed to query_model
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen3:8b"
     messages = call_args[2]
     assert len(messages) == 1
@@ -531,7 +531,7 @@ def test_model_filter_uses_exact_match(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    call_args = patches["query_single_turn"].call_args[0]
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen/qwen3-max"
     saved = patches["save_json"].call_args[0][1]
     assert saved["model"] == "qwen/qwen3-max"
@@ -564,7 +564,7 @@ def test_rag_job_dispatches_to_rag_pipeline(tmp_path: Path) -> None:
         worker.execute(job)
 
     # RAG path should build system+user messages with corpus, not just user message
-    call_args = patches["query_single_turn"].call_args
+    call_args = patches["query_model"].call_args
     messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
     assert len(messages) == 2  # system (corpus) + user (prompt)
     assert messages[0]["role"] == "system"
@@ -622,7 +622,7 @@ def test_web_job_dispatches_to_web(tmp_path: Path, monkeypatch) -> None:
             worker.execute(job)
 
     # Web path builds system message with web search context
-    call_args = patches["query_single_turn"].call_args
+    call_args = patches["query_model"].call_args
     messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
     assert messages[0]["role"] == "system"
     assert "web context" in messages[0]["content"]
@@ -669,7 +669,7 @@ def test_decomposed_job_dispatches_to_decomposed(tmp_path: Path) -> None:
 
 
 def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
-    """A job with mode=single still calls query_single_turn."""
+    """A job with mode=single still calls query_model."""
     prompt_file = tmp_path / "prompt.txt"
     prompt_file.write_text("List thermal plants")
 
@@ -681,8 +681,8 @@ def test_single_job_dispatches_to_single(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    patches["query_single_turn"].assert_called_once()
-    call_args = patches["query_single_turn"].call_args[0]
+    patches["query_model"].assert_called_once()
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen3:8b"
     assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
@@ -725,7 +725,7 @@ def test_dispatch_shared_between_padme_and_openrouter(tmp_path: Path) -> None:
         with patch.multiple("aedist.worker", **patches):
             worker.execute(job)
         # Both workers should dispatch RAG the same way
-        call_args = patches["query_single_turn"].call_args
+        call_args = patches["query_model"].call_args
         messages = call_args[0][2] if len(call_args[0]) > 2 else call_args[1].get("messages")
         assert len(messages) == 2
         assert messages[0]["role"] == "system"
@@ -747,7 +747,7 @@ def test_verification_job_raises_not_implemented(tmp_path: Path) -> None:
 
 
 def test_frontier_job_dispatches_like_single(tmp_path: Path) -> None:
-    """Frontier mode dispatches through query_single_turn like single mode."""
+    """Frontier mode dispatches through query_model like single mode."""
     prompt_file = tmp_path / "prompt.txt"
     prompt_file.write_text("List thermal plants")
 
@@ -759,14 +759,14 @@ def test_frontier_job_dispatches_like_single(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    patches["query_single_turn"].assert_called_once()
-    call_args = patches["query_single_turn"].call_args[0]
+    patches["query_model"].assert_called_once()
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen3:8b"
     assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
 
 def test_sourced_job_dispatches_like_single(tmp_path: Path) -> None:
-    """Sourced mode dispatches through query_single_turn (same as single)."""
+    """Sourced mode dispatches through query_model (same as single)."""
     prompt_file = tmp_path / "prompt.txt"
     prompt_file.write_text("List thermal plants")
 
@@ -778,8 +778,8 @@ def test_sourced_job_dispatches_like_single(tmp_path: Path) -> None:
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    patches["query_single_turn"].assert_called_once()
-    call_args = patches["query_single_turn"].call_args[0]
+    patches["query_model"].assert_called_once()
+    call_args = patches["query_model"].call_args[0]
     assert call_args[1] == "qwen3:8b"
     assert call_args[2] == [{"role": "user", "content": "List thermal plants"}]
 
@@ -857,7 +857,7 @@ def test_prompt_modules_assembled_in_execute(tmp_path: Path) -> None:
         worker.execute(job)
 
     # Verify the assembled prompt is in lex order: 1_persona, 2_goal, 3_overview, 5_table.
-    call_args = patches["query_single_turn"].call_args[0]
+    call_args = patches["query_model"].call_args[0]
     messages = call_args[2]
     content = messages[0]["content"]
     assert "You are an expert." in content
@@ -895,7 +895,7 @@ def test_prompt_modules_empty_uses_always_pair_only_in_worker(tmp_path: Path) ->
     with patch.multiple("aedist.worker", **patches):
         worker.execute(job)
 
-    call_args = patches["query_single_turn"].call_args[0]
+    call_args = patches["query_model"].call_args[0]
     messages = call_args[2]
     assert messages[0]["content"] == "Goal text.\n\nTable spec."
 
@@ -930,7 +930,7 @@ def test_system_instruction_round_trip_in_execute(tmp_path: Path) -> None:
         worker.execute(job)
 
     # (a) messages[0] is the system role with the instruction text
-    call_args = patches["query_single_turn"].call_args[0]
+    call_args = patches["query_model"].call_args[0]
     messages = call_args[2]
     assert messages[0] == {"role": "system", "content": "Do not search the web."}
     assert messages[1]["role"] == "user"

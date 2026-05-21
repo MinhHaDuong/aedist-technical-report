@@ -24,7 +24,7 @@ from .harness import (
     make_client,
     model_metadata,
     output_path,
-    query_single_turn,
+    query_model,
     save_json,
     should_skip,
 )
@@ -106,6 +106,12 @@ def _derive_ablation_prompt_version(output_dir: Path) -> str | None:
 
 class Worker:
     """Base worker that implements the poll-acquire-execute-complete lifecycle."""
+
+    # Default Ollama base URL used by query_model() when dispatching Ollama
+    # model IDs (those without "/"). Cloud workers leave this at the default
+    # because cloud model IDs route via query_single_turn instead.
+    # PadmeWorker overrides via its base_url argument.
+    ollama_base_url: str = "http://localhost:11434/v1"
 
     def __init__(self, worker_id: str, jobs_root: Path = Path("jobs")) -> None:
         self.worker_id = worker_id
@@ -198,6 +204,7 @@ class Worker:
             temperature=job.temperature,
             max_tokens=job.max_tokens,
             seed=job.seed,
+            provider_order=job.provider_order,
             enable_web_search=job.web_search,
             no_think=job.no_think,
         )
@@ -223,6 +230,7 @@ class Worker:
                 output_dir,
                 run,
                 pool_label,
+                job,
                 api_kwargs=api_kwargs,
                 system_instruction=job.system_instruction,
             )
@@ -259,6 +267,7 @@ class Worker:
                 output_dir,
                 run,
                 pool_label,
+                job,
                 api_kwargs=api_kwargs,
             )
         elif mode == Method.DECOMPOSED:
@@ -308,17 +317,35 @@ class Worker:
         pool_label,
         extra_fields=None,
         api_kwargs=None,
+        job=None,
     ):
-        """Run query_single_turn, save JSON, return standard result dict.
+        """Run query_model, save JSON, return standard result dict.
 
         Common path for single, RAG, and web modes that all use
-        query_single_turn with different message lists.
+        a single-turn model query with different message lists. Uses
+        ``query_model`` so Ollama IDs dispatch through native /api/chat
+        with ``num_ctx`` honoured (ticket 0139).
         """
-        result = query_single_turn(client, model_id, messages, **(api_kwargs or {}))
+        num_ctx = job.num_ctx if job is not None else 32768
+        result = query_model(
+            client,
+            model_id,
+            messages,
+            num_ctx=num_ctx,
+            ollama_base_url=self.ollama_base_url,
+            **(api_kwargs or {}),
+        )
         usage = result.get("usage") or {}
         cost = compute_cost(usage, model_entry)
 
         filepath = output_path(output_dir, model_id, run, pool_label)
+        # Extract OpenRouter provider pin from extra_body for raw-JSON capture
+        # (ticket 0139): provider_order is wired via extra_body in
+        # build_api_kwargs and is otherwise invisible at this layer.
+        extra_body = (api_kwargs or {}).get("extra_body") or {}
+        provider_order = None
+        if isinstance(extra_body.get("provider"), dict):
+            provider_order = extra_body["provider"].get("order")
         record = {
             "model": model_id,
             "date": date.today().isoformat(),
@@ -331,6 +358,9 @@ class Worker:
             "temperature": (api_kwargs or {}).get("temperature"),
             "seed": (api_kwargs or {}).get("seed"),
             "max_tokens": (api_kwargs or {}).get("max_tokens"),
+            "provider_order": provider_order,
+            "num_ctx": num_ctx,
+            "web_search": bool(job.web_search) if job is not None else False,
             "model_metadata": model_metadata(model_entry),
         }
         if model_entry.get("reasoning_effort"):
@@ -349,6 +379,7 @@ class Worker:
         output_dir,
         run,
         pool_label,
+        job,
         api_kwargs=None,
         system_instruction=None,
     ):
@@ -368,6 +399,7 @@ class Worker:
             pool_label,
             extra_fields=extra,
             api_kwargs=api_kwargs,
+            job=job,
         )
 
     def _execute_rag(
@@ -411,6 +443,7 @@ class Worker:
                 "corpus_files": corpus_files,
             },
             api_kwargs=api_kwargs,
+            job=job,
         )
 
     def _execute_multiturn(
@@ -479,6 +512,7 @@ class Worker:
         output_dir,
         run,
         pool_label,
+        job,
         api_kwargs=None,
     ):
         """Execute a web-augmented query."""
@@ -512,6 +546,7 @@ class Worker:
             pool_label,
             extra_fields={"prompt": prompt, "web_searches": search_log},
             api_kwargs=api_kwargs,
+            job=job,
         )
 
     def _execute_decomposed(
@@ -744,6 +779,9 @@ class PadmeWorker(Worker):
     ) -> None:
         super().__init__(worker_id="padme", jobs_root=jobs_root)
         self.base_url = base_url
+        # Make the Ollama base URL available to query_model() dispatch via the
+        # base Worker hook (ticket 0139). Cloud workers keep the class default.
+        self.ollama_base_url = base_url
 
     def make_client(self):
         """Create an OpenAI-compatible client for Ollama."""
