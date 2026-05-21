@@ -1,0 +1,49 @@
+{
+  "model": "qwen/qwen3.6-27b",
+  "date": "2026-05-21",
+  "run": 2,
+  "response": null,
+  "finish_reason": "length",
+  "usage": {
+    "completion_tokens": 16384,
+    "prompt_tokens": 250,
+    "total_tokens": 16634,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 10397,
+      "rejected_prediction_tokens": null,
+      "image_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost": 0.05332925,
+    "is_byok": false,
+    "cost_details": {
+      "upstream_inference_cost": 0.05332925,
+      "upstream_inference_prompt_cost": 8.125e-05,
+      "upstream_inference_completions_cost": 0.053248
+    }
+  },
+  "wall_seconds": 209.619,
+  "cost_usd": 0.0131572,
+  "temperature": 0.0,
+  "seed": 42,
+  "max_tokens": 32768,
+  "provider_order": null,
+  "num_ctx": 32768,
+  "web_search": false,
+  "model_metadata": {
+    "size_class": "medium",
+    "country": "CN",
+    "architecture": "dense",
+    "provider": "Alibaba",
+    "context_window": 262144
+  },
+  "prompt": "## Goal\n\nProduce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30MWe) structured as follows:\n\n## Structured power plants table\n\nTabulate for every thermal power plant in Vietnam:\n\n| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | COD | Owner/Developer | Source 1 | Source 2 | Notes |\n\nWhere:\n- Fuel: Coal / Domestic gas / Imported LNG\n- Technology (coal): Subcritical / Supercritical / USC\n- Technology (gas): CCGT / OCGT\n- Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired\n- Total MWe: Include units > 30MWe.\n- COD: Actual or expected commercial operation date\n- Sources: specify where in the document, include URL\n\nOutput format: Markdown.",
+  "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+}
