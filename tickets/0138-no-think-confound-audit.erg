@@ -2,13 +2,13 @@
 Title: Audit experiment parameter confounds; fix missing fields in JobSpec/RunRecord
 Created: 2026-04-30
 Author: claude
-Blocked-by: 0139
 
 --- log ---
 2026-04-30T10:00Z claude created
 2026-04-30T11:00Z claude note expanded scope: seed/provider_order silent-drop bug discovered; max_tokens and num_ctx added as confounds; title updated
 2026-05-21T07:00Z claude note dedup with 0139 — dropped schema/wiring bullets from Exit criteria; the fix lives in 0139 (already Blocked-by)
 
+2026-05-21T08:07Z HDMX-coding-agent note blocker 0139 closed — Blocked-by removed.
 --- body ---
 
 ## Context

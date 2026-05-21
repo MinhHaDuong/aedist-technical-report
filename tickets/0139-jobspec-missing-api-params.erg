@@ -2,6 +2,7 @@
 Title: Add seed, provider_order, max_tokens, num_ctx to JobSpec; forbid unknown fields
 Created: 2026-04-30
 Author: claude
+Closed: schema fix landed: provider_order + num_ctx added, extra='forbid' enforced, Ollama params plumbed through query_model (PR #370, sha 3c8c5460)
 
 --- log ---
 2026-04-30T11:15Z claude created — split from 0138; seed silent-drop confirmed
@@ -11,6 +12,7 @@ Author: claude
 2026-05-01T00:00Z claude note path-reference in 0144 body updated to docs/argument.md (ticket 0147 rename)
 2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:931962ecd1e1
 
+2026-05-21T08:07Z HDMX-coding-agent closed — schema fix landed: provider_order + num_ctx added, extra='forbid' enforced, Ollama params plumbed through query_model (PR #370, sha 3c8c5460)
 --- body ---
 **Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. The seed silent-drop bug fix is correct but the scope is substantial (schema + wiring + backfill). Recommend triage for prioritization.
 
