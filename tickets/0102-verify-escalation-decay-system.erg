@@ -2,6 +2,7 @@
 Title: Verify escalation-rate decay of the system (memory amortization)
 Created: 2026-04-17
 Author: claude
+Blocked-by: 0119
 
 --- log ---
 2026-04-17T11:45Z claude created — trait × target = script (ADR-5) for the escalation-rate decay claim. Blocked on v0 fusion prototype + HITL memory (ticket 0097 Phase 2+3).
@@ -14,10 +15,18 @@ Author: claude
 
 2026-04-30T20:05Z claude note sweep-skip: scope-too-large expires:2026-05-02T12:00Z hash:6891fafed785
 2026-04-30T21:38Z claude note sweep-skip: scope-too-large hash:8d194ae194e4 expires:2026-05-02T12:00Z
+2026-05-21T12:45Z claude note restored Blocked-by — body said "Blocked on 0097 Phase 2+3" but 0097 closed 2026-04-22 after spinning Phase 2+3 out to 0118/0119; real blocker is 0119 (HITL memory, which transitively waits on 0118). Also rewrote Context paragraph that was lost — body had opened mid-sentence at " 1) instead / of escalating (tier 2+3)".
+
 --- body ---
- 1) instead
-of escalating (tier 2+3). This ticket measures whether the claim
-holds empirically.
+
+## Context
+
+ADR-5 claims that the fusion pipeline resolves changed cells
+autonomously (tier 1) instead of escalating to a stronger reviewer
+(tier 2) or a human (tier 3), and that the escalation rate per step
+decays across successive runs as HITL ratifications accumulate into
+a memory store. This ticket measures whether the claim holds
+empirically.
 
 Trait: escalation-rate decay. Target: system (pipeline + memory
 persistence across runs). ADR-5.
@@ -56,8 +65,3 @@ def test_new_source_may_re_spike_rate():
 - Decay curve + structured report.
 - Hooked into healthcheck tests-green battery.
 - Milestone attachment: **Scale** (system property across runs).
-
-## Status
-
-**Blocked** on ticket 0097 Phase 2+3 (LLM adjudication + HITL
-memory) to produce the memory substrate this script measures.
