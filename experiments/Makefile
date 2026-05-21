@@ -152,7 +152,8 @@ REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 
 STRUCTURED_DIRS := census multiturn web rag \
                    decomposed decomposed_v2 sourced frontier \
-                   ablation/direct/p1_base ablation/direct/p1_composite
+                   ablation/direct/p1_base ablation/direct/p1_base.topup \
+                   ablation/direct/p1_composite
 
 OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
                 $(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv)
@@ -225,6 +226,15 @@ $(EXP1_COST_TEX): ../measurements.jsonl ../src/aedist/tabulate_exp1_cost_summary
 
 .PHONY: exp1-cost-summary
 exp1-cost-summary: $(EXP1_COST_TEX)
+
+EXP1_TOPUP_TEX := ../report/inputs/generated/tab_exp1_reasoning_topup.tex
+
+$(EXP1_TOPUP_TEX): ../measurements.jsonl ../src/aedist/tabulate_exp1_reasoning_topup.py
+	$(UV_RUN) python -m aedist.tabulate_exp1_reasoning_topup \
+	    --measurements ../measurements.jsonl --output $(EXP1_TOPUP_TEX)
+
+.PHONY: exp1-reasoning-topup
+exp1-reasoning-topup: $(EXP1_TOPUP_TEX)
 
 # --- Utility -----------------------------------------------------------------
 
