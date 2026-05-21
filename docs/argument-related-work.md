@@ -8,6 +8,57 @@ reader the overview and aggregates the bibliography for a future
 
 Generated 2026-05-21.
 
+## Methodology and provenance — what kind of review this is
+
+This is an **author's due-diligence review**, not a systematic
+review. The standard adopted is *"defensible under peer review of one
+paragraph"*: for each major claim in `slides/manuscript/main.md`, a
+referee's likely "why didn't you cite X?" should have a prepared
+answer, with the alternatives either cited or explicitly justified as
+not-cited.
+
+**Authorship and assistance.** The per-paragraph notes were drafted by
+an LLM agent (Claude, via the `related-work-note` skill, single
+pass, 2026-05-21) under the author's direction. The author has not yet
+read each primary source end-to-end; the candidate set, summaries,
+and "why-cite / why-not-cite" justifications are LLM-generated and
+require an author verification pass before the references move from
+this working file into manuscript prose. The seven-section template,
+biblatex format, and the "related but not cited" requirement come
+from the project's `related-work-note` skill specification.
+
+**Search and identifier resolution.** Candidates were assembled by
+agent-side recall (parametric knowledge plus targeted web fetches),
+not by a structured database query (no Web of Science / Scopus /
+Semantic Scholar export). Every DOI, arXiv eprint, and URL in the
+bibliographies was resolved via `WebFetch` at generation time; three
+identifiers did not resolve cleanly and are flagged for re-resolution
+at submission (IMF DQAF page — 403, URL canonical; CACM Wikidata
+DOI — verified via DBLP fallback; VLDB Ditto PDF — arXiv version
+used, PVLDB volume / issue / pages stripped).
+
+**Citation budget.** Target 10–15 anchors per paragraph per the
+project's `writing.md` rule, with a tier mix of one field-defining
+anchor + one recent survey + two-to-three frontier works (≤2 years
+old). §0 (synopsis) delivered 8 anchors by design — synopsis-level
+overlap with §2 and §5 meant deeper anchors live in the downstream
+notes. §3 (capability ladder) was the budget's tightest point: the
+brief listed ~15 candidate topics for one paragraph; cuts are
+documented per-note.
+
+**What this review did not do.** No systematic database query.
+No exhaustive coverage. No author re-read of primary sources yet (per
+per-note Verification checklists). No preprint→peer-reviewed-update
+sweep. No reproduction of cited methods. The "related but not cited"
+sections are LLM-judged and may miss closely-adjacent work the author
+would catch.
+
+**Disclosure for the eventual paper.** When the manuscript adds a
+formal Related Work section, this review's LLM-assisted provenance
+should be carried into the paper's Methods or acknowledgements as a
+single explicit sentence — following emerging community norms for AI
+assistance disclosure in academic writing.
+
 ## §0 Synopsis
 
 Open energy-system models (PyPSA family) require sourced/auditable
