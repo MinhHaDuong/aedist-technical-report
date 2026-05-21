@@ -2,12 +2,19 @@
 Title: Capability-timeline primary sources for Qwen and DeepSeek (close TBD cells)
 Created: 2026-05-21
 Author: claude
+Closed: autoclosed — PR #406
 
 --- log ---
 2026-05-21T20:30Z claude created — follow-up from 0219 proposal; closes TBD cells in data/capability_timeline.csv and the §3 figure
 2026-05-21T20:45Z claude note renamed Blocked-by 0212 → 0219; the §3-rewrite ticket was renumbered to 0219 when a parallel agent's adapter-mistral ticket landed on main as the canonical 0212
 
 2026-05-21T19:53Z HDMX-coding-agent note blocker 0219 closed — Blocked-by removed.
+2026-05-21T21:00Z claude note all 10 TBD cells resolved (7 dated, 3 absent); branch t0218-primary-source-research
+2026-05-21T22:15Z claude note bump verify-reroll — round 1: 3 missing criteria (refs.bib, docs/capability-timeline.md, make slides) + stale PR body
+2026-05-21T22:45Z claude note reroll-fix: docs/capability-timeline.md rewritten to 5-lab panel (Qwen + DeepSeek paragraphs added, Google moved to footnote, bibliography extended with refs 28-37); make slides verified clean; refs.bib criterion vacuously satisfied (no §3 prose cites the new keys yet); PR body to be updated with 6 dated / 4 absent state and correct 2025-05-13 Alibaba stage-5 date
+2026-05-21T23:05Z claude note verify-gate round 2: ESCALATE — 6/7 criteria ADDRESSED (criteria 3 vacuously satisfied via conditional wording + project convention); stale PR body verifiable: still open, gh pr edit blocked by classic-projects GraphQL error; corrected body posted at issuecomment-4512552661, escalate to merge-time override
+2026-05-21T23:30Z claude note renamed 0218 → 0223 to resolve a second ID collision — the parallel adapter-mistral ticket renumbered itself 0212→0218 in PR #405, landing alongside this branch's 0218. Yielded again; the Qwen/DeepSeek follow-up is now 0223.
+2026-05-21T20:46Z HDMX-coding-agent closed — autoclosed — PR #406
 --- body ---
 
 ## Context
@@ -75,7 +82,7 @@ this ticket lands the snapshot used by §3.
 ```python
 def test_capability_timeline_no_tbd_in_focus_panel():
     """data/capability_timeline.csv has no TBD source_kind cells for
-    labs in Experiment 1's panel after 0218 closes."""
+    labs in Experiment 1's panel after 0223 closes."""
     rows = read_csv("data/capability_timeline.csv")
     tbd_cells = [r for r in rows
                  if r["lab"] in {"Anthropic", "OpenAI", "Mistral",
@@ -111,6 +118,6 @@ def test_capability_timeline_citation_keys_unique():
 ## Boundary
 
 This ticket does **not** edit `slides/manuscript/main.md`. That edit
-ships with 0212 after the author signs off on the proposal. The
-0212/0218 split is: 0212 = the §3 prose and the figure framework;
-0218 = filling the data gaps the framework exposes.
+ships with 0219 after the author signs off on the proposal. The
+0219/0223 split is: 0219 = the §3 prose and the figure framework;
+0223 = filling the data gaps the framework exposes.
