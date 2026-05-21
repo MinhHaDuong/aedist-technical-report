@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-04-30T19:00Z claude created
 2026-05-21T08:50Z claude note removed Blocked-by 0149 — 0149 superseded (docs/hypotheses.md rewritten on main via 844c3f3/297f2e1/aeb63f1); PR #316 closed
+2026-05-21T09:55Z claude note rebased argument source argument.md -> slides/manuscript/main.md (current working manuscript)
 
 --- body ---
 
@@ -21,7 +22,7 @@ method-quality frontier through agentic and multi-agent.
 ## Actions
 
 1. Walk `slides/slides.tex`. Map each frame to a section of
-   `argument.md`, or mark "out of scope" / "drop".
+   `slides/manuscript/main.md`, or mark "out of scope" / "drop".
 2. Restructure into the three-part arc:
    - Part 1 — Methods (capability ladder + four limits + scope)
    - Part 2 — Data and answer quality up to deep-research ceiling

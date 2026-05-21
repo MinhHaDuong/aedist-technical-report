@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-04-30T19:00Z claude created
 2026-05-21T07:32Z claude note removed stale Blocked-by 0149 — blocker closed
+2026-05-21T09:55Z claude note rebased target file argument.md -> slides/manuscript/main.md (current working manuscript)
 
 --- body ---
 
@@ -21,7 +22,7 @@ prose.
 
 ## Actions
 
-1. For each major paragraph in `argument.md`, run
+1. For each major paragraph in `slides/manuscript/main.md`, run
    `/related-work-note`. Output: a per-paragraph note with
    relevance, history, cited works (detailed),
    related-but-not-cited (justified), methods, verification

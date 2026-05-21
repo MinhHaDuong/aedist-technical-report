@@ -9,6 +9,7 @@ Blocked-by: 0139
 
 --- log ---
 2026-04-30T19:00Z claude created
+2026-05-21T09:55Z claude note rebased argument source slides/manuscript/main.md -> slides/manuscript/main.md (current working manuscript)
 
 --- body ---
 
@@ -35,7 +36,7 @@ recorded honestly. Falsifications are documented, not buried.
    `hypotheses.md` with the supported / falsified / inconclusive
    verdict. No p-hacking — apply the pre-registered decision rule.
 5. Where a hypothesis is falsified: short post-mortem in
-   `docs/findings.md` and an honest update to `argument.md`.
+   `docs/findings.md` and an honest update to `slides/manuscript/main.md`.
 6. After all sweeps: regenerate the report PDF (`make`).
    Reproducibility check: `make` from a clean tree rebuilds
    `report.pdf` without manual intervention.
@@ -46,6 +47,6 @@ recorded honestly. Falsifications are documented, not buried.
   `docs/hypotheses.md`.
 - All figures regenerate from current data (no manual edits to
   generated artefacts).
-- Falsifications documented in `docs/findings.md`; `argument.md`
+- Falsifications documented in `docs/findings.md`; `slides/manuscript/main.md`
   updated honestly where claims did not survive.
 - `make` rebuilds `report.pdf` cleanly from current tree.
