@@ -26,11 +26,13 @@ existing `fig_regimes_scatter.pdf` is fossilised on pre-refresh model
 data and a misspecified ladder (mixed multi-turn coaxing with
 information regimes); supersedes 0135.
 
-Boundary with 0200 (the §5 stateful production demonstration): Exp 3
-selects the winning reconstruction strategy; the §5 work layers
-cell-level provenance verifiers + judgement memory on top of it. No
-overlap. Numbering call (Exp 3 vs Exp 4 for 0200) deferred — see
-"Follow-ups" below.
+Boundary with 0200 (the §5 stateful production demonstration, now
+retitled as "case study, time permitting" per design dialogue
+2026-05-21): Exp 3 selects the winning reconstruction strategy; the
+§5 case study layers cell-level provenance verifiers + judgement
+memory on top of it. No overlap. The talk's narrative arc is "three
+experiments and a case study (if we get to it in time)" — Exp 3 is
+this ticket; the case study is 0200, blocked by 0202.
 
 ## Starting state (= Exp 2 output)
 
@@ -126,8 +128,9 @@ Two figures (locked in design dialogue 2026-05-21):
   closed in same commit.
 - `tickets/0166-sota-frontier-experiment.erg` — Exp 2 umbrella;
   produces the starting deep-research report.
-- `tickets/0200-exp3-tailored-solution-spec-and-run.erg` — sibling
-  scope; see "Follow-ups" for numbering reconciliation.
+- `tickets/0200-case-study-tailored-solution-spec-and-run.erg` —
+  sibling scope (§5 stateful production demonstration); architecturally
+  convergent, separate ticket; now `Blocked-by: 0202`.
 - `src/aedist/plot_regimes_scatter.py` — retired; reborn as
   `plot_reconstruction_strategies.py`.
 - `experiments/figures.toml` — register new figure.
@@ -180,9 +183,6 @@ Two figures (locked in design dialogue 2026-05-21):
 
 ## Follow-ups
 
-- **Numbering**: if this experiment keeps "Exp 3", rename 0200 to
-  "Experiment 4 — §5 stateful production" and add `Blocked-by: 0202`
-  there. Pending explicit user call.
 - **Slide-side wiring**: `slides/slides.tex:294` currently
   `\includegraphics` the retired figure. Replace once
   `fig_reconstruction_strategies.pdf` is built.
@@ -200,4 +200,3 @@ Two figures (locked in design dialogue 2026-05-21):
       `tests/test_reconstruction_runner.py` pass.
 - [ ] `make check-fast` passes.
 - [ ] 0135 closed-as-superseded (done in same commit as creation).
-- [ ] 0200 renaming decision recorded (Follow-ups item).
