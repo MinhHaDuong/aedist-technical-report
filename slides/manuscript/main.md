@@ -58,6 +58,8 @@ How well do the state of the art tools perform when it comes to producing resear
 
 **Conjectured results.** We conjecture that the deep-research method improves on all four §2 dimensions over the parametric baseline — accuracy lifts because the agent fetches primary sources, coherence lifts because reasoning surfaces cross-row contradictions, provenance lifts because URLs are emitted alongside values, temporality lifts because retrieval is current. We further conjecture that the method nonetheless falls short of the scientifically acceptable quality required by §2: row-level F1 plateaus below the manual-curation reference; per-cell provenance, when sampled, fails the strong-citation test (the cited source does not always support the value claimed); temporal validity is sporadically attached rather than systematic; and the cross-evaluating judges disagree on absolute quality, indicating that the four dimensions do not collapse to a single scalar even at the frontier. We did not find published evaluations of frontier deep-research agents against accuracy, coherence, provenance, and temporality jointly on a structured-output task; the experiment described here is designed to fill that gap.
 
+**First observation (Mistral pilot, n=1 agent).** A budget-bounded pilot run of the multi-turn protocol on Mistral Large 2512 (ticket 0185, $0.25 of a $10 cap over three turns) yielded a 24,568-character structured inventory of 47 Vietnamese thermal plants spanning operational, under-construction, planned, approved, cancelled, and announced lifecycle statuses, with 85 web citations harvested during retrieval and per-row Source 1 / Source 2 URLs populated on every table row after a single verify-and-polish turn. The Phase A meta-prompt advertised the $10 budget upfront and reminded the model of the remaining budget on every user turn; a one-shot LLM classifier (`mistral-small-latest`) decided after each turn whether the agent had produced a report, switching the harness reply between *proceed autonomously* and *verify and polish*. The pilot is consistent with the lifts conjectured above on accuracy, coherence, provenance, and temporality, but does not yet falsify the "falls short" conjecture: row-level F1 against the 163-plant reference (47 of 163 plants enumerated), the strong-citation rate, and the inter-judge agreement remain to be measured by the full Exp 2 batch (Annex C; ticket 0199). Artefact: `experiments/outputs/sota_exp2_smoke/mistral_turn_03.report.md`.
+
 ![Figure 3](inputs/generated/fig_exp2_cross_eval.pdf){.placeholder}
 <!-- placeholder — ticket 0199 produces this figure -->
 
@@ -208,7 +210,7 @@ This experiment establishes the *parametric ceiling*: the best row-level quality
 
 ## Annex C — Experiment 2: Technical specification
 
-*[Design captured by ticket 0166 (umbrella) and operationalised by tickets 0167–0173 (per-agent adapters), 0170 (Phase A harness), 0171 (Phase C cross-eval rubric), 0185 (interactive smoke), 0199 (run + manuscript update). At the time of writing, Phase A and Phase B-0 are runnable per-agent via the interactive smoke; Phase B and Phase C have not yet executed. This annex pins the specification; the conjectured-results paragraph in §4 will be replaced by an observed-results paragraph when 0199 completes.]*
+*[Design captured by ticket 0166 (umbrella) and operationalised by tickets 0167–0173 (per-agent adapters), 0170 (Phase A harness), 0171 (Phase C cross-eval rubric), 0185 (interactive smoke), 0207 (Phase B multi-turn auto-reply policy), 0213 (Phase A system-prompt design), 0214 (dialogue state machine + classifier), 0215 (transport retry), 0199 (run + manuscript update). At the time of writing, the multi-turn smoke has produced a full pilot inventory on Mistral (n=1 agent, ticket 0185 closure); Phase B at N=3 and Phase C on the remaining three agents have not yet executed. This annex pins the specification; the conjectured-results paragraph in §4 will be replaced by an observed-results paragraph when 0199 completes.]*
 
 ### Task
 
@@ -233,9 +235,21 @@ The naive one-shot baseline that §4 compares against is **not** §1's `modelset
 
 ### Phase structure
 
-**Phase A — Reflexive prompt design.** Each agent receives the baseline prompt (`experiments/prompts/prompt_complete.txt`), the four §2 quality-dimension paragraphs verbatim, the task statement, a JSON envelope spec, and the per-run budget cap. The agent is asked to return a fully-specified prompt and settings that maximise the quality of the report it will produce within ≤\$10 and an overnight wall-clock. Outputs land as `<agent>_phase_a.json` with the designed prompt, settings, and rationale fields. Per-agent cap: \$1. Harness: ticket 0170.
+**Phase A — Reflexive prompt design.** Each agent receives the baseline prompt (`experiments/prompts/prompt_complete.txt`), the four §2 quality-dimension paragraphs verbatim, the task statement, a JSON envelope spec, and the per-run budget cap (announced upfront — see "Phase B dialogue policy" below). The agent is asked to return a fully-specified design — `system_prompt` (threaded into the provider's system field at agent creation), `designed_prompt` (the user-side prompt sent on turn 1 of Phase B), `settings` (`thinking`, `max_tokens`), and `rationale` — that maximises the quality of the report it will produce within ≤\$10 and an overnight wall-clock. Outputs land as `<agent>_phase_a.json` with the four envelope fields. Per-agent cap: \$1. Harness: tickets 0170, 0213.
 
-**Phase B-0 — Single-rep smoke.** Each designed prompt runs once (N=1) end-to-end. This is *Test one before blasting* applied at the experiment level: four outputs surface adapter parser bugs, prompt failures, refusals, and real per-call cost before triple-budget commitment. Gate to Phase B is a human review confirming (i) all four adapters produced valid `RunRecord` instances, (ii) parsed tables are non-empty, (iii) costs match the ≤\$10/call budget empirically. Per-agent cap: \$10.
+**Phase B-0 — Single-rep smoke.** Each designed prompt runs once (N=1) end-to-end through the multi-turn auto-reply loop (see "Phase B dialogue policy"). This is *Test one before blasting* applied at the experiment level: four outputs surface adapter parser bugs, prompt failures, refusals, and real per-call cost before triple-budget commitment. Gate to Phase B is a human review confirming (i) all four adapters produced valid `RunRecord` instances, (ii) parsed tables are non-empty, (iii) costs match the ≤\$10/call budget empirically. Per-agent cap: \$10.
+
+#### Phase B dialogue policy (locked by tickets 0207 + 0214; fixed experimental condition)
+
+After the Phase A design call, Phase B is a multi-turn conversation against the same agent, driven by a small state machine. The author-side reply is one of three fixed strings; the choice is made by a one-shot LLM classifier (`mistral-small-latest`) that decides after each agent response whether the agent has "produced a report" or not. The classifier's cost is harness overhead and is *not* deducted from the SOTA agent's \$10 budget.
+
+Three reply strings, verbatim:
+
+- **ENCOURAGE** (sent up to three times before forcing terminal): *"Proceed as you think is best in autonomous agentic mode."*
+- **VERIFY** (sent exactly once after the first agent response classified as a report): *"Thank you for the inventory. Please now verify and polish it in ONE focused pass, prioritising: (a) per-row provenance — every Source 1 and Source 2 cell must point to a specific URL from your bibliography; (b) coverage — any plant present in your bibliography but absent from the table; (c) temporality — every row has an as-of date or status-change note; (d) internal consistency — capacity totals reconcile across the table and the statistical summary. Return the corrected inventory only — no meta-commentary on what you changed."*
+- **TERMINAL** (sent when remaining budget ≤ 20% of the cap, or when three ENCOURAGE replies have not produced a report): *"I have no additional directive to give you. Please proceed to generating the report without further asking. If you cannot, we would appreciate to know why, but the discussion will stop here in any case. Thanks for your understanding."*
+
+Every user-side message after turn 1 carries a chat-text status prefix — *"Status: remaining budget \$X.XX of \$10.00; wall-clock elapsed Ys."* — and, where the provider exposes a metadata surface, a structured `extra_metadata = {"remaining_budget_usd": "X.XX", "cap_usd": "10.00"}` field on the request. After VERIFY's response is captured (or after TERMINAL's response), the loop terminates.
 
 **Phase B — Execution (N=3).** Gated on a clean B-0 review. Each designed prompt runs three times against a single provider per agent (closed-weight SOTA agents have one vendor each; the cross-provider variance reported for MoE models in Annex B does not apply). Per-agent incremental cap: \$20 on top of B-0. Total per-agent budget across A + B-0 + B: ≤\$31; observed total for all four ≈ \$120 plus probes.
 
@@ -260,12 +274,13 @@ Hard cap enforced per-call by adapters; soft cap monitored at the umbrella by in
 
 This experiment is script-based, not sweep-based. No `sweep_exp2_*` block exists in `experiments/experiments.toml`. Implementation surface:
 
-- `src/aedist/adapter_mistral.py` — Mistral Agents API adapter.
-- `src/aedist/adapter_qwen_dashscope.py` — DashScope adapter.
-- `src/aedist/adapter_openai_responses.py` — OpenAI Responses adapter.
-- `src/aedist/query_anthropic.py` — Anthropic adapter.
-- `experiments/sota/exp2_interactive_smoke.py` *(scaffolded by 0185; status: A and B-0 runnable per agent with SPACE-gated review)*.
-- `experiments/outputs/sota_smoke/` and `sota_exp2_smoke/` — artifact directories.
+- `src/aedist/adapter_mistral.py` — Mistral Agents API adapter (multi-turn continuation + 5xx retry per tickets 0208/0215).
+- `src/aedist/adapter_qwen_dashscope.py` — DashScope adapter (multi-turn continuation per ticket 0208).
+- `src/aedist/adapter_openai_responses.py` — OpenAI Responses adapter (multi-turn continuation per ticket 0208).
+- `src/aedist/query_anthropic.py` — Anthropic adapter (multi-turn continuation per ticket 0208).
+- `experiments/sota/exp2_interactive_smoke.py` — author-side harness running Phase A + Phase B state machine.
+- `experiments/sota/dialogue_classifier.py` — one-shot LLM classifier deciding `report` vs `no_report` per ticket 0214.
+- `experiments/outputs/sota_smoke/` and `sota_exp2_smoke/` — artifact directories. Each Phase B turn writes `<agent>_turn_NN.{user.txt,raw.json,record.json,cost.json,classification.json,report.md,citations.json}`.
 - `experiments/derived/sota_cross_eval.csv` — Phase C output target.
 
 ### Evaluation
