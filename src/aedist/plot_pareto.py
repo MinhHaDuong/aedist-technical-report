@@ -15,12 +15,9 @@ import logging
 from pathlib import Path
 
 from .tabulate_macros import load_and_summarize
-from .util import COLOR_MATCHED
+from .util import COLOR_LOCAL, COLOR_MATCHED
 
 log = logging.getLogger(__name__)
-
-# Darker blue for local models (matched colour mixed with black).
-_COLOR_LOCAL = "#1A5070"
 
 
 def write_pdf(rows: list[dict], output: Path) -> None:
@@ -49,7 +46,7 @@ def write_pdf(rows: list[dict], output: Path) -> None:
         ax.scatter(
             [r["cost_usd"] for r in local],
             [r["f1"] for r in local],
-            color=_COLOR_LOCAL,
+            color=COLOR_LOCAL,
             marker="^",
             s=50,
             label="Modèles locaux",

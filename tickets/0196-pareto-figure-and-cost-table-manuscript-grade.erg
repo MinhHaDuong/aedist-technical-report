@@ -2,13 +2,13 @@
 Title: Promote Pareto figure and Exp 1 cost table to manuscript-grade
 Created: 2026-05-21
 Author: claude
-Blocked-by: 0194
 
 --- log ---
 2026-05-21T11:30Z claude created
 2026-05-21T11:45Z user note decisions on the six actions — see Decisions section in body
 2026-05-21T12:00Z user note three refinements: no local runs (drop local/cloud distinction); use palette.toml via family_color() from 0194 (not copy of PR pattern); whiskers = min/max
 
+2026-05-21T09:54Z HDMX-coding-agent note blocker 0194 closed — Blocked-by removed.
 --- body ---
 
 ## Context
