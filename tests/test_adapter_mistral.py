@@ -344,6 +344,78 @@ def test_continuation_skips_agent_creation(monkeypatch):
     assert record.agent_family == AGENT_FAMILY
 
 
+def test_multiturn_start_creates_agent_but_skips_delete(monkeypatch):
+    """continuation={} (empty dict) = first turn of multi-turn.
+    Agent must be created but NOT deleted — harness calls cleanup_agent later.
+    """
+    import aedist.adapter_mistral as am
+
+    calls: list[tuple[str, str]] = []
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "id": "ag_new",
+                "outputs": [
+                    {"type": "message.output", "content": "first answer"},
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 100,
+                    "connector_tokens": 0,
+                    "connectors": {"web_search": 0},
+                },
+                "conversation_id": "conv_new",
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            calls.append(("POST", url))
+            return FakeResponse()
+
+        def delete(self, url, **kwargs):
+            calls.append(("DELETE", url))
+            return FakeResponse()
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    record = run(
+        "first question",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={},  # empty dict = multi-turn start sentinel
+    )
+
+    # Agent created (POST /v1/agents) + conversation started (POST /v1/conversations).
+    # No DELETE — agent kept alive for follow-up turns.
+    assert ("POST", "/v1/agents") in calls
+    assert ("POST", "/v1/conversations") in calls
+    assert not any(method == "DELETE" for method, _ in calls)
+
+    # Continuation tokens surfaced for the next turn.
+    assert record.method_params.extra["agent_id"] == "ag_new"
+    assert record.method_params.extra["conversation_id"] == "conv_new"
+
+
 def test_cleanup_agent_is_public():
     """cleanup_agent must be importable for harness lifecycle management."""
     from aedist.adapter_mistral import cleanup_agent

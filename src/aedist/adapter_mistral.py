@@ -366,14 +366,20 @@ def run(
 ) -> RunRecord:
     """Execute one Mistral Agents call (or print the dry-run payload).
 
-    Lifecycle for single-turn (``continuation=None``): create agent ->
-    start conversation -> parse -> delete agent. The delete runs in
-    ``finally`` so an orphan ``ag_*`` is never left behind.
+    Three lifecycle modes controlled by ``continuation``:
 
-    Multi-turn (``continuation`` is a dict with ``conversation_id`` and
-    ``agent_id``): skip agent creation, send a follow-up message to the
-    existing conversation. The agent is NOT deleted — the harness calls
-    :func:`cleanup_agent` at session end.
+    1. ``continuation=None`` — **single-turn** (backward-compatible
+       default): create agent -> invoke conversation -> delete agent.
+       The delete runs in ``finally`` so no orphan ``ag_*`` is left.
+
+    2. ``continuation={}`` (empty dict) — **first turn of multi-turn**:
+       create agent -> invoke conversation -> **skip delete**. Returns
+       ``agent_id`` + ``conversation_id`` in ``method_params.extra``.
+       The harness must call :func:`cleanup_agent` at session end.
+
+    3. ``continuation={"agent_id": ..., "conversation_id": ...}`` —
+       **follow-up turn**: skip agent creation, send follow-up message
+       to existing conversation. No create, no delete.
 
     ``extra_metadata`` is attached to the conversation request body's
     ``metadata`` field when present. Wrapped defensively since the
@@ -422,38 +428,48 @@ def run(
     }
     t0 = time.monotonic()
 
-    if continuation is not None:
-        # Multi-turn follow-up: reuse existing agent and conversation.
+    # Determine lifecycle mode from continuation shape.
+    is_followup = continuation is not None and continuation.get("agent_id")
+    is_multiturn_start = continuation is not None and not continuation.get("agent_id")
+    agent_id: str | None = None
+
+    def _attach_metadata(body: dict[str, Any]) -> None:
+        if extra_metadata is not None:
+            try:
+                body["metadata"] = extra_metadata
+            except Exception:
+                log.warning("Failed to attach extra_metadata to Mistral conversation body")
+
+    if is_followup:
+        # Mode 3: follow-up turn — reuse existing agent and conversation.
         conv_body: dict[str, Any] = {
             "agent_id": continuation["agent_id"],
             "inputs": [{"role": "user", "content": prompt}],
         }
         if continuation.get("conversation_id"):
             conv_body["conversation_id"] = continuation["conversation_id"]
-        if extra_metadata is not None:
-            try:
-                conv_body["metadata"] = extra_metadata
-            except Exception:
-                log.warning("Failed to attach extra_metadata to Mistral conversation body")
+        _attach_metadata(conv_body)
         with httpx.Client(base_url=API_BASE, headers=headers) as client:
             raw = _start_conversation(client, conv_body)
+        agent_id = continuation["agent_id"]
     else:
-        # Single-turn: create agent, invoke, delete.
-        agent_id: str | None = None
+        # Mode 1 or 2: create agent + invoke.
         with httpx.Client(base_url=API_BASE, headers=headers) as client:
             try:
                 agent_id = _create_agent(client, payload["agent_create"]["body"])
                 conv_body = dict(payload["conversation_start"]["body"])
                 conv_body["agent_id"] = agent_id
-                if extra_metadata is not None:
-                    try:
-                        conv_body["metadata"] = extra_metadata
-                    except Exception:
-                        log.warning("Failed to attach extra_metadata to Mistral conversation body")
+                _attach_metadata(conv_body)
                 raw = _start_conversation(client, conv_body)
-            finally:
+            except BaseException:
+                # On failure, always clean up the agent (if created).
                 if agent_id is not None:
                     _delete_agent(client, agent_id)
+                raise
+            # Mode 1 (single-turn): delete immediately.
+            # Mode 2 (multi-turn start): keep alive.
+            if not is_multiturn_start and agent_id is not None:
+                _delete_agent(client, agent_id)
 
     wall_s = round(time.monotonic() - t0, 3)
     if output_path is not None:
@@ -464,16 +480,11 @@ def run(
 
     record = parse_response(raw, meta, wall_s=wall_s, agent_mode=agent_mode, prompt=prompt)
 
-    # Surface continuation token for multi-turn chaining. On single-turn
-    # (continuation=None) the agent is already deleted, but we still
-    # return the conversation_id for informational parity. On multi-turn,
-    # the agent_id carries through from the continuation dict.
+    # Surface continuation tokens for multi-turn chaining.
     if record.method_params.extra is None:
         record.method_params.extra = {}
     record.method_params.extra["conversation_id"] = raw.get("conversation_id")
-    if continuation is not None:
-        record.method_params.extra["agent_id"] = continuation["agent_id"]
-    elif agent_id is not None:
+    if agent_id is not None:
         record.method_params.extra["agent_id"] = agent_id
 
     return record
