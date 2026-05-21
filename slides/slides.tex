@@ -79,16 +79,16 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 % -------------------------------------------------------------------
 \begin{frame}{Épouvantail: Utiliser un générateur de mots aléatoires}
 
-\textbf{Expérimentation \NumModelsTested{} modèles, 3 runs chacun~:}  % TODO: Vérifier que c'est bien \NumModelsTested{} modèles
+\textbf{Expérimentation \NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
 ``{\ttfamily \input{../experiments/prompts/prompt_extract.txt}}''
 
 \smallskip
 \textbf{Résultats (163 centrales à identifier)~:}
 \begin{itemize}\setlength\itemsep{0pt}
-  \item Centrales identifiées~:  %Add a macro for the range of TP distribution across runs
-  \item Centrales hallucinées~: %Add a macro for the range of FP distribution across runs
-  \item Durée~: %Add a macro for the total time range across runs
-  \item Coût~: %Add a macro for the total cost range across runs
+  \item Centrales identifiées~: \CensusTPMin{}--\CensusTPMax{} par run
+  \item Centrales hallucinées~: \CensusFPMin{}--\CensusFPMax{} par run
+  \item Durée~: \CensusWallMin{}--\CensusWallMax{}~s
+  \item Coût~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
 
 \end{frame}
