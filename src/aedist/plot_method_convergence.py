@@ -274,7 +274,7 @@ def write_pdf(
     ax.text(
         163,
         y_top,
-        "163\nreal plants",
+        "163\nplants",
         color=COLOR_REFERENCE,
         fontsize=16,
         va="bottom",
