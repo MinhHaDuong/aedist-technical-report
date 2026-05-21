@@ -54,6 +54,26 @@ def test_record_saves_full_response_not_tail():
 def test_smoke_marker_in_record():
     """Smoke records carry an explicit smoke=True marker so a downstream
     rebuild-measurements run can filter them out and not treat them as
-    production reps."""
+    production reps. The marker is omitted only when
+    --promote-as-production is set."""
     src = inspect.getsource(smoke.smoke_one)
-    assert '"smoke": True' in src
+    assert 'record["smoke"] = True' in src
+
+
+def test_promote_as_production_flag_present():
+    """The --promote-as-production flag must be wired through main() so a
+    smoke run can be intentionally claimed as a production rep."""
+    src = inspect.getsource(smoke.main)
+    assert "--promote-as-production" in src
+    assert "promote_as_production=args.promote_as_production" in src
+
+
+def test_promote_changes_filename_and_strips_marker():
+    """smoke_one's promote_as_production branch must name files {slug}-run{N}.json
+    (matching the worker convention) and must NOT include the smoke marker
+    when in production mode."""
+    src = inspect.getsource(smoke.smoke_one)
+    # Conditional suffix
+    assert '"run" if promote_as_production' in src
+    # Marker is gated behind the not-promote branch
+    assert "if not promote_as_production" in src

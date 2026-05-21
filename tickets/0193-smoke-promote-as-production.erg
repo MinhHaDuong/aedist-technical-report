@@ -1,0 +1,52 @@
+%erg 0.1
+Title: smoke: add --promote-as-production flag to reuse smoke calls as sweep reps
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T00:30Z claude created — salvaged from locked t0181 worktree (agent-abeb2c877); no other worktree carries this work
+
+--- body ---
+## Context
+
+`src/aedist/smoke.py` writes one-off probe records under
+`{slug}-smoke{N}.json` and stamps each record with `"smoke": True` so a
+downstream `rebuild-measurements` pass can filter them out. That's the
+right default — smoke runs should never be confused with production reps.
+
+But it forces a redundant job-board drain in one practical case: a model
+that passes its smoke check (e.g. 5 calls all `finish=stop`, cost within
+cap, structured output well-formed) still needs the worker to redo those
+same 5 calls to count as production reps. For the journal lineup, this
+doubles the cost of every model that needs a pre-sweep smoke gate.
+
+Adds an opt-in `--promote-as-production` flag that:
+
+1. Saves files under `{slug}-run{N}.json` (matches the worker convention)
+2. Omits the `"smoke": True` marker, so the records are
+   indistinguishable from worker output
+3. Logs `mode: production` so the run is unambiguous in logs
+
+Default behaviour is unchanged — the flag is opt-in and the smoke marker
+remains present unless `--promote-as-production` is set.
+
+## Provenance
+
+The patch existed only as uncommitted changes in the locked salvage
+worktree `agent-abeb2c877ac0b4075` (branch `t0181`). t0181 itself is
+closed and squash-merged via PR #349 + #360 + #362; this feature was
+not part of any of those merges. Searched all 17 active worktrees:
+no other copy. This ticket rescues the patch onto a fresh branch.
+
+## Exit criteria
+
+- [x] `--promote-as-production` CLI flag wired through `main()` into
+      `smoke_one()`
+- [x] When flag set: file naming follows `{slug}-run{N}.json`, `"smoke"`
+      marker omitted
+- [x] When flag unset: existing behaviour unchanged (`{slug}-smoke{N}.json`
+      + `"smoke": True`)
+- [x] Three new unit tests in `tests/test_smoke.py` verify wiring,
+      filename, and marker semantics
+- [x] `uv run ruff check` clean
+- [x] `uv run pytest tests/test_smoke.py` green (7/7)
