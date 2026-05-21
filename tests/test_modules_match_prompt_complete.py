@@ -5,11 +5,9 @@ assembled composite, and vice versa.  Headers and blank lines are stripped
 for comparison since assembly joins modules with \\n\\n (which may differ
 from the original whitespace).
 
-NOTE (ticket 0175): the post-rename modules drifted from prompt_complete.txt
-(content edits in 5_table.txt, 2_goal.txt that were not back-propagated). The
-test is currently skipped pending a refresh of prompt_complete.txt to match
-the new modules. The invariant is still meaningful as a regression guard
-once the two sides are reconciled.
+Reconciled in ticket 0191: prompt_complete.txt was regenerated from the
+post-rename modules via ``assemble_prompt`` so this adherence test is
+active again as the regression guard against future module-rename drift.
 """
 
 import re
@@ -33,7 +31,6 @@ def _content_lines(text: str) -> set[str]:
     return lines
 
 
-@pytest.mark.skip(reason="prompt_complete.txt drift from 4dc99e5; see ticket 0191")
 @pytest.mark.adherence
 def test_modules_cover_prompt_complete():
     """Assembled composite covers every content line of prompt_complete.txt."""
