@@ -279,12 +279,18 @@ def test_run_dry_run_returns_continuation_token():
 
 
 def test_continuation_skips_agent_creation(monkeypatch):
-    """When continuation is provided, only one POST to /v1/conversations
+    """When continuation is provided, only one POST to /v1/conversations/{id}
     should happen — no agent creation, no agent deletion.
+
+    Mistral's append-to-conversation endpoint is path-bound. This test
+    asserts the URL path explicitly so a regression to the create-shape
+    endpoint (which returns HTTP 422 live — ticket 0211) cannot sneak
+    back in. The previous version of this test only counted POSTs,
+    which is why the 0208 bug went unnoticed in unit tests.
     """
     import aedist.adapter_mistral as am
 
-    calls: list[tuple[str, str]] = []
+    calls: list[tuple[str, str, dict]] = []
 
     class FakeResponse:
         status_code = 200
@@ -318,11 +324,11 @@ def test_continuation_skips_agent_creation(monkeypatch):
             pass
 
         def post(self, url, **kwargs):
-            calls.append(("POST", url))
+            calls.append(("POST", url, kwargs.get("json") or {}))
             return FakeResponse()
 
         def delete(self, url, **kwargs):
-            calls.append(("DELETE", url))
+            calls.append(("DELETE", url, {}))
             return FakeResponse()
 
     monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
@@ -338,10 +344,90 @@ def test_continuation_skips_agent_creation(monkeypatch):
         continuation={"conversation_id": "conv_1", "agent_id": "ag_1"},
     )
 
-    # Only one POST to /v1/conversations — no /v1/agents create or delete.
+    # Only one POST — no /v1/agents create or delete.
     assert len(calls) == 1
-    assert calls[0] == ("POST", "/v1/conversations")
+    method, url, _body = calls[0]
+    assert method == "POST"
+    # Path-bound endpoint (ticket 0211): must include the conversation id.
+    assert url == "/v1/conversations/conv_1", (
+        f"follow-up should POST to /v1/conversations/{{id}}, got: {calls}"
+    )
+    # Bare /v1/conversations is the *create* endpoint — would 422 live.
+    assert not any(u == "/v1/conversations" for _, u, _ in calls), (
+        f"follow-up must not POST to bare /v1/conversations (creates new), got: {calls}"
+    )
     assert record.agent_family == AGENT_FAMILY
+
+
+def test_continuation_body_omits_agent_id_and_conversation_id(monkeypatch):
+    """Path-bound append endpoint rejects agent_id and conversation_id in
+    the body (HTTP 422 live — ticket 0211). The body must contain only
+    `inputs` (plus optional `metadata`).
+    """
+    import aedist.adapter_mistral as am
+
+    bodies: list[dict] = []
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "outputs": [
+                    {"type": "message.output", "content": "follow-up answer"},
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 100,
+                    "connector_tokens": 0,
+                    "connectors": {"web_search": 0},
+                },
+                "conversation_id": "conv_1",
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            bodies.append(kwargs.get("json") or {})
+            return FakeResponse()
+
+        def delete(self, url, **kwargs):
+            return FakeResponse()
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    run(
+        "follow up question",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={"conversation_id": "conv_1", "agent_id": "ag_1"},
+    )
+
+    assert len(bodies) == 1
+    body = bodies[0]
+    assert "inputs" in body
+    assert "agent_id" not in body, (
+        f"agent_id is rejected by the path-bound append endpoint; body={body}"
+    )
+    assert "conversation_id" not in body, (
+        f"conversation_id belongs in the URL, not the body; body={body}"
+    )
 
 
 def test_multiturn_start_creates_agent_but_skips_delete(monkeypatch):
