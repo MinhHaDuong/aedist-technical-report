@@ -123,11 +123,11 @@ Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/exp
 | qwen3.6-35b-a3b | Alibaba | ZH | mid | no |
 | qwen3.6-flash | Alibaba | ZH | mid | no |
 | qwen3.6-plus | Alibaba | ZH | frontier | no |
-| qwen3.6-max-preview | Alibaba | ZH | frontier | minimal |
+| qwen3-max-thinking | Alibaba | ZH | frontier | yes (default) |
 | deepseek-v4-pro | DeepSeek | ZH | frontier | no |
 | deepseek-v4-flash | DeepSeek | ZH | mid | no |
 
-Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models and `qwen3.6-max-preview` are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3.6 Max Preview — so Experiment 2's "deep research vs parametric" claim can be tested within-lab. Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. GPT-5.5 systematically declines this task from parametric knowledge alone, citing the request's "complete, primary-sourced" framing; the declined responses are kept as data — model viewpoint, not noise.
+Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own scheme and does not denote a generation order; we adopt their naming verbatim. Two `gpt-oss-*` models are reasoning-configurable; we set `reasoning_effort = "minimal"` to mirror the no-thinking discipline applied to thinking-capable Qwens elsewhere in the registry. `qwen3-max-thinking` keeps the provider's default reasoning depth (a minimal-effort smoke first produced 5/5 refusals; the default-effort lineup recovered 4/5 usable rows). The four Wave-2 SOTA labs (Anthropic, OpenAI, Mistral, Alibaba) each contribute their journal-pinned flagship — Opus 4.6, GPT-5.5, Mistral Large 2512, Qwen 3 Max Thinking — so Experiment 2's "deep research vs parametric" claim can be tested within-model (qwen3-max via OpenRouter here, qwen3-max-2026-01-23 via DashScope in Experiment 2). Opus 4.6 is preferred over the newer 4.7 for the parametric baseline because 4.7's verbosity exceeds the `max_tokens` budget on the full Vietnam plant table. GPT-5.5 systematically declines this task from parametric knowledge alone, citing the request's "complete, primary-sourced" framing; the declined responses are kept as data — model viewpoint, not noise.
 
 ### Run parameters
 
@@ -140,7 +140,7 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 | Budget | $15 | Per-sweep cap; the runner halts at exceedance |
 | Total runs | 85 | 17 models × 5 repeats |
 
-`seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max, qwen3.6-max-preview, deepseek-v4-pro, deepseek-v4-flash:free) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.
+`seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max-thinking, deepseek-v4-pro, deepseek-v4-flash) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated.
 
 ### Evaluation
 

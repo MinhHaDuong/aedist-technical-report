@@ -1,9 +1,9 @@
 {
-  "run_id": "5d7f940dcffe",
-  "timestamp": "2026-05-20T21:26:45.411994Z",
+  "run_id": "34f314fef19e",
+  "timestamp": "2026-05-21T06:42:57.383498Z",
   "method": "direct",
   "method_params": {
-    "model": "qwen/qwen3.6-max-preview",
+    "model": "qwen/qwen3-max-thinking",
     "temperature": 0.0,
     "max_tokens": 32768,
     "prompt_version": "p1_base",
@@ -14,26 +14,25 @@
       "provider": "Alibaba",
       "context_window": 262144,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "reasoning_effort": "minimal",
       "seed": 42
     }
   },
   "resource_use": {
-    "wall_s": 237.078,
-    "cost_usd": 0.05520320000000001,
-    "tokens_in": 250,
-    "tokens_out": 8805
+    "wall_s": 142.851,
+    "cost_usd": 0.01850784,
+    "tokens_in": 243,
+    "tokens_out": 4697
   },
-  "result_file": "experiments/outputs/ablation/direct/p1_base/qwen3.6-max-preview-run5.csv",
+  "result_file": "experiments/outputs/ablation/direct/p1_base/qwen3-max-thinking-run3.csv",
   "result_summary": {
     "status": "ok",
-    "n_plants": 17,
-    "tp": 17,
+    "n_plants": 16,
+    "tp": 16,
     "fp": 0,
-    "fn": 146,
-    "f1": 0.1889,
-    "fuel_accuracy": 0.4706,
-    "status_accuracy": 0.5882,
-    "province_accuracy": 0.7647
+    "fn": 147,
+    "f1": 0.1788,
+    "fuel_accuracy": 0.6875,
+    "status_accuracy": 0.6875,
+    "province_accuracy": 0.9375
   }
 }

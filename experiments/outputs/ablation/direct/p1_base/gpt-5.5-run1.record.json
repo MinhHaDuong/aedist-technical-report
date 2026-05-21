@@ -1,6 +1,6 @@
 {
-  "run_id": "d7a9322f2d7c",
-  "timestamp": "2026-05-20T21:25:20.535302Z",
+  "run_id": "86357fe577c5",
+  "timestamp": "2026-05-21T06:45:45.971799Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-5.5",
@@ -18,18 +18,13 @@
     }
   },
   "resource_use": {
-    "wall_s": 46.353,
-    "cost_usd": 0.03099,
+    "wall_s": 23.726,
+    "cost_usd": 0.01476,
     "tokens_in": 234,
-    "tokens_out": 2027
+    "tokens_out": 945
   },
-  "result_file": "experiments/outputs/ablation/direct/p1_base/gpt-5.5-run1.csv",
+  "result_file": "experiments/outputs/ablation/direct/p1_base/gpt-5.5-run1.json",
   "result_summary": {
-    "status": "empty",
-    "n_plants": 0,
-    "tp": 0,
-    "fp": 0,
-    "fn": 163,
-    "f1": 0.0
+    "status": "refusal"
   }
 }

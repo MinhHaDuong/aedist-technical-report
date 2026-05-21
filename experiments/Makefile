@@ -215,6 +215,17 @@ $(SC_TEX) $(SC_PERRUN) &: ../measurements.jsonl ../src/aedist/tabulate_self_cons
 
 self-consistency: $(SC_TEX) $(SC_PERRUN)
 
+# --- Experiment 1 cost summary ----------------------------------------------
+
+EXP1_COST_TEX := ../report/inputs/generated/tab_exp1_cost_summary.tex
+
+$(EXP1_COST_TEX): ../measurements.jsonl ../src/aedist/tabulate_exp1_cost_summary.py
+	$(UV_RUN) python -m aedist.tabulate_exp1_cost_summary \
+	    --measurements ../measurements.jsonl --output $(EXP1_COST_TEX)
+
+.PHONY: exp1-cost-summary
+exp1-cost-summary: $(EXP1_COST_TEX)
+
 # --- Utility -----------------------------------------------------------------
 
 # Convert a PDF to Markdown for the RAG corpus.
