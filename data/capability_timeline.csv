@@ -21,16 +21,16 @@ Mistral,5,Deep research,2025-07-17,primary-blog,mistral-lechat-deep-2025,Le Chat
 Mistral,6,Tool use / agents,2025-05-27,primary-blog,mistral-agents-api-2025,Mistral Agents API
 Mistral,7,Multi-agent,2025-05-27,primary-blog,mistral-agents-api-2025,Agents API multi-agent orchestration (same launch)
 Alibaba,1,Base instruct LLM,2023-08-03,primary-blog,qwen-7b-2023,Qwen-7B open-source release (Tongyi Qianwen)
-Alibaba,2,Retrieval / file upload,,TBD,,Tongyi Qianwen file upload — primary-source date pending
-Alibaba,3,Browsing / web search,,TBD,,Tongyi Qianwen web search — primary-source date pending
+Alibaba,2,Retrieval / file upload,2023-10-31,primary-blog,alibaba-apsara-2023,Tongyi ZoneWit document upload at Apsara 2023 (alibabacloud.com/blog/600550)
+Alibaba,3,Browsing / web search,2024-08-20,product-launch,,tongyi.ai domain launch with deep search (aibase.com/news/11149; no primary lab blog found)
 Alibaba,4,Reasoning surface,2024-11-28,primary-blog,qwen-qwq-2024,QwQ-32B-Preview
-Alibaba,5,Deep research,,TBD,,Qwen3 agent surface vs explicit deep-research product — verify
-Alibaba,6,Tool use / agents,,TBD,,Qwen-Agent framework primary-source release date — verify
-Alibaba,7,Multi-agent,,TBD,,no productised multi-agent consumer surface yet — record as honest gap if confirmed
+Alibaba,5,Deep research,2025-05-15,primary-blog,qwen-deep-research-2025,Qwen Deep Research on QwenChat (qwen.ai WeChat announcement)
+Alibaba,6,Tool use / agents,2024-04-07,release-notes,qwen-agent-2024,Qwen-Agent v0.0.1 on PyPI/GitHub (github.com/QwenLM/Qwen-Agent/releases)
+Alibaba,7,Multi-agent,,absent,,no productised multi-agent consumer surface as of 2025-05-21 cutoff; Qwen-Agent framework is developer-only
 DeepSeek,1,Base instruct LLM,2023-11-29,primary-blog,deepseek-67b-2023,DeepSeek LLM 7B/67B announcement
-DeepSeek,2,Retrieval / file upload,,TBD,,DeepSeek Chat file upload — primary-source date pending
-DeepSeek,3,Browsing / web search,,TBD,,DeepSeek Chat web search toggle — primary-source date pending
+DeepSeek,2,Retrieval / file upload,2025-01-15,primary-blog,deepseek-app-2025,DeepSeek App launch with file upload and text extraction (api-docs.deepseek.com/news/news250115)
+DeepSeek,3,Browsing / web search,2024-12-10,primary-blog,deepseek-v25-1210,Internet Search live on chat.deepseek.com (api-docs.deepseek.com/news/news1210)
 DeepSeek,4,Reasoning surface,2025-01-20,primary-blog,deepseek-r1-2025,DeepSeek-R1
-DeepSeek,5,Deep research,,absent,,no productised deep-research consumer surface (honest gap)
-DeepSeek,6,Tool use / agents,,TBD,,API-side tool use exists; agentic consumer surface — verify
-DeepSeek,7,Multi-agent,,absent,,no productised multi-agent consumer surface
+DeepSeek,5,Deep research,,absent,,no productised deep-research consumer surface as of 2025-05-21 cutoff
+DeepSeek,6,Tool use / agents,2024-07-25,release-notes,deepseek-function-calling-2024,Function Calling API launch (api-docs.deepseek.com/updates)
+DeepSeek,7,Multi-agent,,absent,,no productised multi-agent consumer surface as of 2025-05-21 cutoff
