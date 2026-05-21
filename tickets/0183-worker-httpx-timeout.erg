@@ -2,6 +2,7 @@
 Title: Pass explicit httpx timeout to chat.completions.create() so wedged workers fail fast
 Created: 2026-05-20
 Author: claude
+Closed: merged via PR #374 — single api_kwargs insertion + max_retries=1 on OpenAI client
 
 --- log ---
 2026-05-20T20:58Z claude created — discovered while diagnosing 0181's slow throughput. Three worker leases observed past their 600s SIGALRM timeout, two of them 130–200s into expired status, all wedged on deepseek/deepseek-v4-pro. SIGALRM does not reliably interrupt openai-python's underlying httpx network call.
