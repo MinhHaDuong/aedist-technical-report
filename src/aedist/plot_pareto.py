@@ -81,64 +81,68 @@ def build_pareto_rows(
 ) -> list[dict]:
     """Build rows for the Pareto chart.
 
-    Returns list of dicts with keys: model, family, median_tp, min_tp,
-    max_tp, tp_values (pooled), base_tp_values, topup_tp_values,
-    median_f1, min_f1, max_f1, cost_usd. Sorted by median_tp descending —
-    the plotted axis. Median / min / max are computed over the **pooled**
-    distribution.
+    Returns list of dicts. Each row carries per-rep ``(tp, cost, source)``
+    tuples under ``reps`` so the figure can plot each rep at its own cost
+    rather than collapsing all reps onto a single x-coordinate. Per-model
+    summary statistics (median, min, max for TP and cost) are also
+    surfaced for the median marker and the min-max range line.
+
+    Schema: model, family, reps (list of ``{tp, cost, source}``),
+    median_tp, min_tp, max_tp, tp_values, base_tp_values, topup_tp_values,
+    median_cost, mean_cost, median_f1, min_f1, max_f1, cost_usd
+    (alias for mean_cost, kept for CSV stability).
+    Sorted by median_tp descending — the plotted Y axis.
 
     *source_by_label* maps each metric's ``label`` to either ``"base"``
     (original sweep) or ``"topup"`` (post-2026-05-21 reasoning-token
     top-up reps, ticket 0198). Labels not in the map default to
-    ``"base"``. The figure uses the per-source partition to draw
-    different markers for each cohort.
+    ``"base"``.
     """
     import statistics
 
     if source_by_label is None:
         source_by_label = {}
 
-    tp_by_model: dict[str, list[int]] = {}
-    base_tp_by_model: dict[str, list[int]] = {}
-    topup_tp_by_model: dict[str, list[int]] = {}
+    reps_by_model: dict[str, list[dict]] = {}
     f1_by_model: dict[str, list[float]] = {}
-    cost_by_model: dict[str, list[float]] = {}
 
     for entry in metrics:
         slug = slug_from_label(entry["label"])
         source = source_by_label.get(entry["label"], "base")
         tp = entry.get("n_matched")
-        if tp is not None:
-            tp_int = int(tp)
-            tp_by_model.setdefault(slug, []).append(tp_int)
-            if source == "topup":
-                topup_tp_by_model.setdefault(slug, []).append(tp_int)
-            else:
-                base_tp_by_model.setdefault(slug, []).append(tp_int)
+        cost = entry.get("cost_usd")
+        if tp is not None and cost is not None and cost > 0:
+            reps_by_model.setdefault(slug, []).append(
+                {"tp": int(tp), "cost": float(cost), "source": source}
+            )
         f1 = entry.get("f1")
         if f1 is not None:
             f1_by_model.setdefault(slug, []).append(f1)
-        cost = entry.get("cost_usd")
-        if cost is not None and cost > 0:
-            cost_by_model.setdefault(slug, []).append(cost)
 
     rows = []
-    for slug, tp_values in tp_by_model.items():
+    for slug, reps in reps_by_model.items():
+        tp_values = [rep["tp"] for rep in reps]
+        costs = [rep["cost"] for rep in reps]
+        base_tp_values = [rep["tp"] for rep in reps if rep["source"] == "base"]
+        topup_tp_values = [rep["tp"] for rep in reps if rep["source"] == "topup"]
         f1_values = f1_by_model.get(slug, [])
-        costs = cost_by_model.get(slug, [])
+        mean_cost = round(sum(costs) / len(costs), 6) if costs else 0.0
         row = {
             "model": slug,
             "family": model_family(slug),
+            "reps": list(reps),
             "median_tp": int(statistics.median(tp_values)),
             "min_tp": min(tp_values),
             "max_tp": max(tp_values),
             "tp_values": list(tp_values),
-            "base_tp_values": list(base_tp_by_model.get(slug, [])),
-            "topup_tp_values": list(topup_tp_by_model.get(slug, [])),
+            "base_tp_values": base_tp_values,
+            "topup_tp_values": topup_tp_values,
+            "median_cost": round(statistics.median(costs), 6) if costs else 0.0,
+            "mean_cost": mean_cost,
             "median_f1": round(statistics.median(f1_values), 4) if f1_values else 0.0,
             "min_f1": round(min(f1_values), 4) if f1_values else 0.0,
             "max_f1": round(max(f1_values), 4) if f1_values else 0.0,
-            "cost_usd": round(sum(costs) / len(costs), 6) if costs else 0.0,
+            "cost_usd": mean_cost,
         }
         rows.append(row)
     rows.sort(key=lambda r: r["median_tp"], reverse=True)
@@ -175,23 +179,30 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
 
     for r in filtered:
         colour = model_family_color(r["model"])
-        median = r["median_tp"]
-        cost_cents = r["cost_usd"] * 100.0  # display axis is USD cents
-        # Thin min-max line behind the markers (range cue).
-        ax.plot(
-            [cost_cents, cost_cents],
-            [r["min_tp"], r["max_tp"]],
-            color=colour,
-            linewidth=0.6,
-            alpha=0.7,
-            zorder=1,
-        )
+        reps = r.get("reps") or []
+        # Display axis is cents; convert each rep's cost individually so
+        # the per-rep cost variation (driven by output-token counts)
+        # shows up as in-cluster horizontal spread.
+        base = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "base"]
+        topup = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "topup"]
+        # Polyline through all reps sorted by cost — the per-rep "trajectory"
+        # in (cost, TP) space replaces the previous vertical min-max line.
+        all_pts = sorted([(rep["cost"] * 100.0, rep["tp"]) for rep in reps], key=lambda p: p[0])
+        if len(all_pts) >= 2:
+            ax.plot(
+                [c for c, _ in all_pts],
+                [t for _, t in all_pts],
+                color=colour,
+                linewidth=0.6,
+                alpha=0.6,
+                zorder=1,
+            )
+
         # Yesterday's reps (p1_base/, 2026-05-20 journal sweep): unfilled circle.
-        base_reps = r.get("base_tp_values") or []
-        if base_reps:
+        if base:
             ax.scatter(
-                [cost_cents] * len(base_reps),
-                base_reps,
+                [c for c, _ in base],
+                [t for _, t in base],
                 marker="o",
                 facecolors="none",
                 edgecolors=colour,
@@ -200,22 +211,22 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
                 zorder=2,
             )
         # Today's reps (p1_base.topup*/, post-PR-#379 reasoning-token top-up): x.
-        topup_reps = r.get("topup_tp_values") or []
-        if topup_reps:
+        if topup:
             ax.scatter(
-                [cost_cents] * len(topup_reps),
-                topup_reps,
+                [c for c, _ in topup],
+                [t for _, t in topup],
                 marker="x",
                 color=colour,
                 s=30,
                 linewidths=1.2,
                 zorder=2,
             )
-        # Pooled median: filled square (drawn at the computed value, not at a
-        # specific rep — the median may interpolate between two reps).
+        # Pooled median square at (median cost, median TP). The median is
+        # computed independently per axis — it may not coincide with any
+        # specific rep when the rep-count is even.
         ax.scatter(
-            [cost_cents],
-            [median],
+            [r["median_cost"] * 100.0],
+            [r["median_tp"]],
             marker="s",
             color=colour,
             s=50,
@@ -331,6 +342,8 @@ def main() -> None:
                     "median_tp",
                     "min_tp",
                     "max_tp",
+                    "median_cost",
+                    "mean_cost",
                     "median_f1",
                     "min_f1",
                     "max_f1",

@@ -31,20 +31,28 @@ SAMPLE_METRICS = [
 _EXPECTED_KEYS = {
     "model",
     "family",
+    "reps",
     "median_tp",
     "min_tp",
     "max_tp",
     "tp_values",
     "base_tp_values",
     "topup_tp_values",
+    "median_cost",
+    "mean_cost",
     "median_f1",
     "min_f1",
     "max_f1",
     "cost_usd",
 }
 
-# In-memory only — these are list-valued so the CSV writer drops them.
-_CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {"tp_values", "base_tp_values", "topup_tp_values"}
+# In-memory only — list/dict-valued fields are dropped by the CSV writer.
+_CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {
+    "reps",
+    "tp_values",
+    "base_tp_values",
+    "topup_tp_values",
+}
 
 
 def test_build_pareto_rows():
@@ -138,6 +146,23 @@ def test_pareto_per_rep_points(tmp_path):
     figure_path = tmp_path / "fig_pareto.pdf"
     write_pdf(rows, figure_path)
     assert figure_path.exists() and figure_path.stat().st_size > 0
+
+
+def test_pareto_reps_carry_per_rep_cost():
+    """reps surfaces each rep's individual cost so the figure can scatter in x."""
+    # Vary cost per rep within a model so the test isn't degenerate.
+    metrics = [
+        {"label": "p1_base/claude-opus-4.6-run1", "n_matched": 80, "f1": 0.5, "cost_usd": 0.10},
+        {"label": "p1_base/claude-opus-4.6-run2", "n_matched": 82, "f1": 0.5, "cost_usd": 0.12},
+        {"label": "p1_base/claude-opus-4.6-run3", "n_matched": 85, "f1": 0.5, "cost_usd": 0.14},
+    ]
+    rows = build_pareto_rows(metrics)
+    by_model = {r["model"]: r for r in rows}
+    reps = by_model["claude-opus-4.6"]["reps"]
+    assert [rep["cost"] for rep in reps] == [0.10, 0.12, 0.14]
+    assert [rep["tp"] for rep in reps] == [80, 82, 85]
+    assert by_model["claude-opus-4.6"]["median_cost"] == 0.12
+    assert by_model["claude-opus-4.6"]["mean_cost"] == 0.12
 
 
 def test_pareto_base_topup_partition():
