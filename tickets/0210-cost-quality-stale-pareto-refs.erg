@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Clean residual "Pareto" refs in palette/util after fig_pareto → fig_direct_cost_quality rename
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T16:15Z claude created
+
+--- body ---
+## Context
+
+After the figure rename (a61a3f2..d1fe235 on main), two code locations
+still call Figure 2 "Pareto" in comments/docstrings:
+
+- `src/aedist/palette.toml:94` — comment "Figure 2 (Pareto) to colour models by"
+- `src/aedist/util.py:127` — docstring "Figure 2 (Pareto). Distinct from..."
+
+These are non-functional but factually misleading after the split into
+the cost × quality scatter. Also worth a second pass on the historical
+reply notes in `slides/manuscript/synopsys-experiment1-replies.md` (the
+"Pareto frontier placeholder" language is from when Figure 2 was a
+placeholder; it now exists, and is not a Pareto frontier).
+
+## Exit criteria
+
+- [ ] palette.toml comment updated to reference cost × quality
+- [ ] util.py docstring updated similarly
+- [ ] reply notes in synopsys-experiment1-replies.md either updated to
+      reflect current figure 2 reality, or marked clearly as historical
+      review correspondence (keep as-is is also acceptable if framed)
+- [ ] grep for "Pareto" / "pareto" in src/aedist/ and slides/manuscript/
+      returns only deliberate uses (caption disclaimer, slide title that
+      explicitly says "no Pareto front")
