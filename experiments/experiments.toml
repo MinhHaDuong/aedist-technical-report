@@ -527,6 +527,24 @@ max_tokens = 32768
 system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
 output = "outputs/ablation/direct/p1_base"
 
+# Ticket 0198: reasoning-intensity top-up. Same call shape as the base
+# sweep; new reps capture reasoning_tokens (PR #379). Canary = repeat 1,
+# then repeat 3 for top-up (run 1 skipped by should_skip). Pooled with
+# original 5-rep baseline for outcome metrics; reasoning_tokens reported
+# from post-fix cohort only.
+[sweeps.sweep_ablation_p1_direct_base_topup]
+mode = "single"
+prompt_modules = []
+models = "models.yaml"
+model_set = "modelset_ablation_journal"
+repeat = 1
+temperature = 0.0
+seed = 42
+budget_usd = 5
+max_tokens = 32768
+system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+output = "outputs/ablation/direct/p1_base.topup"
+
 # Ticket 0057 retained as pilot extension: 9 cheap cloud models on the
 # 2-rep dev set. Ticket 0175 repoints output to p1_base.pilot/ so the
 # journal sweep above writes to a clean p1_base/ directory.
