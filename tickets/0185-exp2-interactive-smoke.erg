@@ -2,11 +2,14 @@
 Title: Interactive smoke for Experiment 2 — Phase A + B on one agent at a time
 Created: 2026-05-20
 Author: HDMX-coding-agent
+Blocked-by: 0207
 
 --- log ---
 2026-05-20T22:30Z HDMX-coding-agent created
 2026-05-21T00:20Z HDMX-coding-agent note unblock — all 4 adapter blockers (0167/0168/0169/0173) closed via Wave 2 merges 2026-05-20
 
+2026-05-21T12:20Z HDMX-coding-agent closed — smoke validated end-to-end shape + cost envelope on Mistral (cheapest agent only, per author direction 2026-05-21); 6 artefacts under experiments/outputs/sota_exp2_smoke/; 3 of 4 agents deferred to 0199 batch design after 0207 resolves dict-vs-string + turn discipline; adapter bug 0206 tracked separately
+2026-05-21T15:30Z claude reopened — close was premature. Smoke discovered the multi-turn / dict-vs-string impedance mismatch productively, but did NOT produce an inventory: Phase B returned a 365-token plan-and-ask preamble, not the report. The operational exit criterion is "we get a report." Blocked-by 0207 (multi-turn auto-reply policy, which is itself blocked by 0208 multi-turn adapter capability).
 --- body ---
 ## Context
 
@@ -53,8 +56,9 @@ Lien aux tickets connexes:
 
 - `experiments/prompts/prompt_complete.txt` — baseline prompt verbatim
   pour {baseline}
-- `docs/synopsis.md` §2 — quality bar (4 dimensions) verbatim pour
-  {quality_bar}
+- `slides/manuscript/main.md` §2 ("Second, the quality bar that any
+  acceptable dataset must clear", lines 26-38) — quality bar
+  (4 dimensions) verbatim pour {quality_bar}
 - `src/aedist/adapter_mistral.py` — adapter cible #1 (cheapest)
 - `src/aedist/adapter_qwen_dashscope.py` — adapter cible #2
 - `src/aedist/adapter_openai_responses.py` — adapter cible #3
@@ -121,7 +125,8 @@ Lien aux tickets connexes:
 - `test_assemble_meta_prompt_contains_baseline_and_quality_bar` —
   appeler l'assembleur, asserter que le texte resultant contient une
   ancre de `prompt_complete.txt` ("senior energy analyst") et une
-  ancre de la quality-bar synopsis §2 ("Accuracy" ou "Temporality").
+  ancre de la quality bar §2 de `slides/manuscript/main.md`
+  ("Accuracy" ou "Temporality").
 - `test_wait_for_space_aborts_on_q` — patcher stdin avec "q\n",
   asserter que la fonction leve SystemExit ou retourne False
   selon la convention choisie.
@@ -155,14 +160,21 @@ est interactif par construction).
 
 ## Exit criteria
 
+**Operational (revised 2026-05-21):**
+- **We get a report.** Phase B (or the multi-turn loop, post-0207)
+  produces an actual statistical inventory of Vietnam thermal assets
+  on at least one agent. A plan-and-ask preamble is not a report;
+  a refusal with explanation is not a report either. The deliverable
+  is a structured table + sources + narrative, or as close to that
+  as the agent will produce within the $10 budget.
+
+**Mechanical (already met by the 2026-05-21 smoke run):**
 - Script `exp2_interactive_smoke.py` + tests unitaires verts.
 - README documente l'output layout.
-- 4 paires d'artefacts (Phase A + Phase B, 1 par agent) sauvees sous
-  `experiments/outputs/sota_exp2_smoke/`.
-- Validation utilisateur explicite sur chaque echange (oeil humain
-  approuve le meta-prompt, le designed_prompt, et la reponse Phase B
-  pour les 4 agents).
-- Ticket de suite pour Phase B-0 batch ouvert.
+- At least one agent's full artefact set (Phase A + design + Phase B)
+  saved under `experiments/outputs/sota_exp2_smoke/`.
+- Multi-turn loop integrated when 0207 lands.
+- (Original scope: 4 agents — deferred to 0199 batch design.)
 
 ## Notes
 

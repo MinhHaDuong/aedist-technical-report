@@ -2,10 +2,12 @@
 Title: Experiment 2 — §4 SOTA frontier: spec and run
 Created: 2026-05-21
 Author: claude
-Blocked-by: 0144
+Blocked-by: 0185
 
 --- log ---
 2026-05-21T12:20Z claude created — replacement for closed 0153 (Exp 2 leg)
+2026-05-21T13:00Z claude note dropped Blocked-by 0144 — 0144 is a local closed-corpus RAG+thinking cell (no web, fixed retrieval, regimes-scatter lineup); 0199 is cloud SOTA agents with web access and self-tuned prompts. No execution overlap; relation is synthesis-after-the-fact only.
+2026-05-21T15:30Z claude note added Blocked-by 0185 — 0199 batch (3 agents × 3 reps) cannot run until 0185 smoke actually produces a report on Mistral. 0185 reopened with operational exit criterion "we get a report"; dependency chain is 0208 → 0207 → 0185 → 0199.
 
 --- body ---
 
@@ -38,8 +40,11 @@ before the argument crystallised on three SOTA cloud agents).
   start from before tuning.
 - `src/aedist/evaluate.py` — pairwise cross-model judging is new
   evaluation surface; check what exists vs what's needed.
-- 0144 (RAG-reasoning-coherence-cell) — likely overlaps the
-  prompt-tuning leg; resolve before opening this work.
+- 0144 (RAG-reasoning-coherence-cell) — independent experiment
+  (closed-corpus RAG+thinking, no web, regimes-scatter lineup). Not a
+  blocker. Useful only for downstream synthesis: comparing the local
+  Coherence delta against any Coherence rise observed in the SOTA
+  cloud agents.
 
 ## Actions
 
@@ -66,10 +71,10 @@ before the argument crystallised on three SOTA cloud agents).
    to verify cost / wall-time / output format. Project rule.
 7. **Run the sweep.** 3 agents × 3 reps = 9 runs. Ingest into
    `measurements.jsonl`.
-8. **Update H-verdicts.** Map results to H1 (Articulation —
-   prompt-tuning leg), H2 (Coverage — deep-research web leg),
-   H3 (Accuracy–provenance — pairwise judging leg). Record in
-   `docs/hypotheses.md`.
+8. **Report on the four §2 axes** (accuracy / coherence /
+   provenance / temporality). No H-mapping — the conference push is
+   manuscript-driven, H1–H4 / OSF preregistration is off the critical
+   path.
 9. **Update manuscript prose.** §4 "we conjecture …" sentence
    replaced with "we observed …" verdict; figure (Pareto / new
    cross-model comparison) regenerated.
@@ -98,7 +103,7 @@ before the argument crystallised on three SOTA cloud agents).
 - [ ] Annex C in `main.md` follows Annex A's structure exactly.
 - [ ] `experiments.toml` block + dry-run pass.
 - [ ] 9 runs ingested into `measurements.jsonl`; refusals/errors flagged.
-- [ ] H-verdicts updated in `docs/hypotheses.md`.
+- [ ] §2-axis results reported in Annex C + §4 prose.
 - [ ] §4 manuscript prose updated with observed result, conjecture
       sentence replaced or removed.
 - [ ] Figure regenerated (Pareto and/or a new §4-specific figure).
