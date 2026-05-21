@@ -1,0 +1,71 @@
+%erg 0.1
+Title: VERIFY_REPLY v2 — agent spins a panel of four axis-specialized verifiers
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T20:00Z claude created — author direction post-PR #405; live re-smoke planned
+
+--- body ---
+
+## Context
+
+The locked Phase B dialogue policy (ticket 0214; Annex C) ships
+three reply strings: ENCOURAGE, VERIFY, TERMINAL. The current
+VERIFY string asks the agent to "verify and polish in ONE focused
+pass", prioritising four §2 axes (per-row provenance, coverage,
+temporality, internal consistency) — but invites the agent to do
+this monolithically.
+
+Author direction (2026-05-21): boost the verify round by *asking
+the agent itself* to spin a panel of four axis-specialised verifier
+subagents — one per §2 dimension, ideally on different models from
+the subject agent where the platform supports cross-model handoff.
+Monolithic introspection → distributed pluralistic review.
+
+This is a v1 → v2 policy bump. The state-machine structure is
+unchanged (VERIFY is still one slot, fired once per session); only
+the VERIFY string content changes.
+
+## Actions
+
+1. Update `VERIFY_REPLY` in
+   `experiments/sota/exp2_interactive_smoke.py` to the v2 wording
+   (see PR for verbatim text).
+2. Update unit test `test_three_reply_slot_constants_distinct` if
+   the four-axis-marker check is too brittle — the v2 text uses
+   uppercase axis names (ACCURACY/COHERENCE/PROVENANCE/TEMPORALITY)
+   instead of lowercase markers; either keep both forms or relax to
+   case-insensitive.
+3. Bump the policy version reference in Annex C
+   (`slides/manuscript/main.md`, *Phase B dialogue policy*) and
+   inline the new VERIFY text verbatim (preserving the "fixed
+   condition" framing).
+4. Re-smoke Mistral end-to-end. Compare outcomes vs the v1 polished
+   inventory: turn count, citations gained on the verify turn,
+   whether the agent explicitly references "verifier subagents" in
+   its response, source-cell quality.
+
+## Tests
+
+- `test_three_reply_slot_constants_distinct` (existing) — relaxed
+  axis-marker check (case-insensitive).
+- The state-machine end-to-end tests must continue to pass
+  unchanged (they don't inspect VERIFY content beyond presence).
+
+## Out of scope
+
+- Tooling the agent's subagent dispatch (we cannot force it; the
+  prompt is a *suggestion*).
+- Changing the ENCOURAGE or TERMINAL strings.
+- Per-axis verdict aggregation (the agent integrates internally;
+  we only see the final polished inventory).
+
+## Exit criteria
+
+- [ ] VERIFY_REPLY updated to v2 wording.
+- [ ] Annex C carries the v2 text verbatim with a version note.
+- [ ] Unit tests green.
+- [ ] One re-smoke artefact on Mistral committed; turn-by-turn
+      cost/classification recorded; qualitative comparison with the
+      v1 polished inventory documented in the smoke commit message.

@@ -315,9 +315,12 @@ def test_three_reply_slot_constants_distinct():
     assert ENCOURAGE_REPLY != VERIFY_REPLY
     assert ENCOURAGE_REPLY != TERMINAL_REPLY
     assert VERIFY_REPLY != TERMINAL_REPLY
-    # VERIFY_REPLY must mention the four dimensions the ticket spec names.
-    for marker in ("provenance", "coverage", "temporality", "consistency"):
+    # VERIFY_REPLY (v2 per ticket 0223) must mention the four §2 axes by name.
+    for marker in ("accuracy", "coherence", "provenance", "temporality"):
         assert marker in VERIFY_REPLY.lower(), f"VERIFY_REPLY missing {marker!r}"
+    # v2-specific: the verify reply asks the agent to spin a panel of subagents.
+    assert "panel of four" in VERIFY_REPLY.lower() or "four independent" in VERIFY_REPLY.lower()
+    assert "different model" in VERIFY_REPLY.lower()
 
 
 def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):

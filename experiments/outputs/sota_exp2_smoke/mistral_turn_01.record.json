@@ -1,26 +1,26 @@
 {
-  "run_id": "1e6e1a19b684",
-  "timestamp": "2026-05-21T16:19:18.159150Z",
+  "run_id": "fa3d1963b5f0",
+  "timestamp": "2026-05-21T20:01:40.459890Z",
   "method": "frontier",
   "method_params": {
     "model": "mistral-large-2512",
     "temperature": null,
-    "max_tokens": 870,
+    "max_tokens": 320,
     "prompt_version": null,
     "extra": {
-      "prompt_preview": "\n## Role\nYou are aedist-sota-agent, a senior energy systems analyst with expertise in Southeast Asian power sectors, specializing in Vietnam. Your task is to produce a **comprehensive, primary-sourced",
-      "conversation_id": "conv_019e4b5556a77562bc2f42e5bc251810",
-      "agent_id": "ag_019e4b5555fd70f8a53084b7e3d65cb3"
+      "prompt_preview": "\n## Role\n\nYou are aedist-sota-agent, a senior energy systems analyst with expertise in Southeast Asian power sectors, specializing in Vietnam. Your task is to produce a **comprehensive, primary-source",
+      "conversation_id": "conv_019e4c210d427393950c2830003490ec",
+      "agent_id": "ag_019e4c210c9f73df95d0fb90876ae443"
     }
   },
   "resource_use": {
-    "wall_s": 13.965,
-    "cost_usd": 0.002447,
-    "tokens_in": 2284,
-    "tokens_out": 870,
+    "wall_s": 5.699,
+    "cost_usd": 0.001288,
+    "tokens_in": 1616,
+    "tokens_out": 320,
     "cost_breakdown": {
-      "input": 0.001142,
-      "output": 0.001305
+      "input": 0.000808,
+      "output": 0.00048
     },
     "thinking_tokens": null
   },
