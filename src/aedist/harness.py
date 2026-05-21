@@ -489,10 +489,10 @@ def query_single_turn(
     )
     wall_seconds = round(time.monotonic() - t0, 3)
     choice = response.choices[0]
-    usage = {
-        "prompt_tokens": response.usage.prompt_tokens,
-        "completion_tokens": response.usage.completion_tokens,
-    }
+    # Preserve the full usage dict (incl. completion_tokens_details.reasoning_tokens
+    # exposed by OpenRouter for reasoning-capable models). Falls back to {} if the
+    # provider returned no usage block. Ticket 0195.
+    usage = response.usage.model_dump() if response.usage is not None else {}
     return {
         "content": choice.message.content,
         "finish_reason": choice.finish_reason,

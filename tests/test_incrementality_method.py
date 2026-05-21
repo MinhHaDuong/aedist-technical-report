@@ -26,6 +26,7 @@ def _make_mock_client(response_text: str, finish_reason: str = "stop") -> MagicM
     resp.choices = [choice]
     resp.usage.prompt_tokens = 100
     resp.usage.completion_tokens = 50
+    resp.usage.model_dump.return_value = {"prompt_tokens": 100, "completion_tokens": 50}
     client = MagicMock()
     client.chat.completions.create.return_value = resp
     return client

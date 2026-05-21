@@ -6,13 +6,19 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 
-def _make_mock_response(content="name,fuel\nPlant A,coal", prompt_tokens=100, completion_tokens=200):
+def _make_mock_response(
+    content="name,fuel\nPlant A,coal", prompt_tokens=100, completion_tokens=200
+):
     resp = MagicMock()
     resp.choices = [MagicMock()]
     resp.choices[0].message.content = content
     resp.choices[0].finish_reason = "stop"
     resp.usage.prompt_tokens = prompt_tokens
     resp.usage.completion_tokens = completion_tokens
+    resp.usage.model_dump.return_value = {
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+    }
     return resp
 
 
@@ -44,23 +50,32 @@ def test_web_query_with_tavily(mock_openai_cls, mock_tavily, tmp_path):
     mock_client.chat.completions.create.return_value = _make_mock_response()
     mock_openai_cls.return_value = mock_client
 
-    mock_tavily.return_value = [
-        {"title": "Vietnam Power Plants", "content": "Pha Lai, Ba Ria..."}
-    ]
+    mock_tavily.return_value = [{"title": "Vietnam Power Plants", "content": "Pha Lai, Ba Ria..."}]
 
     prompt, models, output = _setup_files(tmp_path)
 
-    with patch.dict("os.environ", {
-        "OPENROUTER_API_KEY": "fake-key",
-        "TAVILY_API_KEY": "fake-tavily",
-    }):
-        with patch.object(sys, "argv", [
-            "query_livesearch",
-            "--prompt", str(prompt),
-            "--models", str(models),
-            "--output", str(output),
-        ]):
+    with patch.dict(
+        "os.environ",
+        {
+            "OPENROUTER_API_KEY": "fake-key",
+            "TAVILY_API_KEY": "fake-tavily",
+        },
+    ):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_livesearch",
+                "--prompt",
+                str(prompt),
+                "--models",
+                str(models),
+                "--output",
+                str(output),
+            ],
+        ):
             from aedist.query_livesearch import main
+
             main()
 
     json_files = list(output.rglob("*.json"))
@@ -81,13 +96,21 @@ def test_web_query_skips_without_tavily_key(mock_openai_cls, tmp_path):
     env = {"OPENROUTER_API_KEY": "fake-key"}
     # Ensure TAVILY_API_KEY is NOT set
     with patch.dict("os.environ", env, clear=True):
-        with patch.object(sys, "argv", [
-            "query_livesearch",
-            "--prompt", str(prompt),
-            "--models", str(models),
-            "--output", str(output),
-        ]):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_livesearch",
+                "--prompt",
+                str(prompt),
+                "--models",
+                str(models),
+                "--output",
+                str(output),
+            ],
+        ):
             from aedist.query_livesearch import main
+
             main()
 
     # No API calls — models skipped due to missing Tavily
@@ -108,17 +131,28 @@ def test_web_query_output_metadata(mock_openai_cls, mock_tavily, tmp_path):
 
     prompt, models, output = _setup_files(tmp_path)
 
-    with patch.dict("os.environ", {
-        "OPENROUTER_API_KEY": "fake-key",
-        "TAVILY_API_KEY": "fake-tavily",
-    }):
-        with patch.object(sys, "argv", [
-            "query_livesearch",
-            "--prompt", str(prompt),
-            "--models", str(models),
-            "--output", str(output),
-        ]):
+    with patch.dict(
+        "os.environ",
+        {
+            "OPENROUTER_API_KEY": "fake-key",
+            "TAVILY_API_KEY": "fake-tavily",
+        },
+    ):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_livesearch",
+                "--prompt",
+                str(prompt),
+                "--models",
+                str(models),
+                "--output",
+                str(output),
+            ],
+        ):
             from aedist.query_livesearch import main
+
             main()
 
     json_files = list(output.rglob("*.json"))

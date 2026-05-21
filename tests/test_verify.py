@@ -384,6 +384,7 @@ def test_self_mode_calls_api(tmp_path):
     mock_response.choices[0].finish_reason = "stop"
     mock_response.usage.prompt_tokens = 200
     mock_response.usage.completion_tokens = 100
+    mock_response.usage.model_dump.return_value = {"prompt_tokens": 200, "completion_tokens": 100}
 
     with patch("aedist.harness.OpenAI") as mock_cls:
         mock_client = MagicMock()

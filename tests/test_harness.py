@@ -477,6 +477,56 @@ def test_query_single_turn_surfaces_api_timeout_error():
         )
 
 
+def test_query_single_turn_preserves_reasoning_tokens():
+    """``usage`` dict round-trips ``completion_tokens_details.reasoning_tokens``.
+
+    OpenRouter populates this field for reasoning-capable models (gpt-oss-*,
+    qwen3-max-thinking, deepseek-v4-pro, etc.). The harness must hand the
+    full dict to the worker so Annex A / records_to_metrics can surface
+    actual reasoning intensity rather than relying on registry metadata.
+    Ticket 0195.
+    """
+    from unittest.mock import MagicMock
+
+    from aedist.harness import query_single_turn
+
+    client = MagicMock()
+    usage = MagicMock()
+    usage.model_dump.return_value = {
+        "prompt_tokens": 88,
+        "completion_tokens": 159,
+        "completion_tokens_details": {"reasoning_tokens": 94, "audio_tokens": 0},
+        "prompt_tokens_details": {"cached_tokens": 0},
+    }
+    response = MagicMock()
+    response.choices = [MagicMock(message=MagicMock(content="ok"), finish_reason="stop")]
+    response.usage = usage
+    client.chat.completions.create.return_value = response
+
+    result = query_single_turn(client, "test/m", [{"role": "user", "content": "hi"}])
+
+    assert result["usage"]["prompt_tokens"] == 88
+    assert result["usage"]["completion_tokens"] == 159
+    assert result["usage"]["completion_tokens_details"]["reasoning_tokens"] == 94
+    assert result["usage"]["prompt_tokens_details"]["cached_tokens"] == 0
+
+
+def test_query_single_turn_handles_missing_usage():
+    """If the provider returns no usage block, return ``{}`` rather than crash."""
+    from unittest.mock import MagicMock
+
+    from aedist.harness import query_single_turn
+
+    client = MagicMock()
+    response = MagicMock()
+    response.choices = [MagicMock(message=MagicMock(content="ok"), finish_reason="stop")]
+    response.usage = None
+    client.chat.completions.create.return_value = response
+
+    result = query_single_turn(client, "test/m", [{"role": "user", "content": "hi"}])
+    assert result["usage"] == {}
+
+
 def test_make_client_default_sets_max_retries():
     """make_client() (OpenRouter default) pins max_retries=1 on the OpenAI client."""
     import os
