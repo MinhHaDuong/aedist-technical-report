@@ -1,4 +1,4 @@
-Last updated: 2026-05-21T00:00Z
+Last updated: 2026-05-21T11:50Z
 
 ## North star
 
@@ -17,7 +17,7 @@ Land Exp 1 results in the manuscript; freeze the slides story by 2026-05-26.
 
 ## Workplan
 
-1. **Experiment 1 — DONE.** Tickets 0174→0177 + follow-ups 0179/0181/0182/0183/0184 all closed. Final journal-v2 lineup: 16 models × 5 reps = 80 rows in `experiments/outputs/ablation/direct/p1_base/` (77 ok / 3 declined / 0 error / $2.85 total). The 3 declines are all GPT-5.5 — kept as data, semantic refusal of the task's "complete, primary-sourced" framing. Cost summary: `make exp1-cost-summary` (→ `report/inputs/generated/tab_exp1_cost_summary.tex`). **0178 next**: pull F1, refusal, cost numbers into the manuscript's Annex A results section + the H1–H4 discussion.
+1. **Experiment 1 — DONE.** Baseline 16×5=80 rows in `outputs/ablation/direct/p1_base/` (77 ok / 3 declined / $2.85) plus topup 16×≤3=43 rows in `p1_base.topup/` (PR #386, ticket 0198) capturing `reasoning_tokens`. 0178 (manuscript Annex A) and 0198 (interday-variability column) both closed. Cost summary: `make exp1-cost-summary`; reasoning table: `make exp1-reasoning-topup`.
 2. **SOTA experiment (slides §4 — Falsify H0).** Umbrella **0166**, four agents (Opus 4.6 / GPT-5.5 / Mistral Large 2512 / qwen3-max via DashScope).
    - **Wave 1 (done, PR #331):** 0172 RunRecord schema extension.
    - **Wave 2 (done, PRs #350/#351/#352/#353):** 0167/0168/0169/0173 direct-API adapters merged. All 4 live smokes recorded ($0.235 total / cap $2.00, 49 citations across the wave).
@@ -28,7 +28,7 @@ Land Exp 1 results in the manuscript; freeze the slides story by 2026-05-26.
 
 ## Backlog (post-conference)
 
-1. **Tooling** — 0191 (refresh prompt_complete.txt), 0187 (Qwen adapter ADR-7 method_params + cost cap default + dashscope pin), 0183 (worker httpx timeout). Raid-skill follow-ups and `erg next-id` cross-worktree re-filed to ~/.claude/tickets and ~/git-erg respectively. 0143 closed/archived (superseded by 0174 + 0192).
+1. **Tooling** — 0203 (worker exits on 429), 0204 (deepseek-v4-pro null content hangs worker) — both surfaced during the 0198 raid. Raid-skill follow-ups and `erg next-id` cross-worktree re-filed to ~/.claude/tickets and ~/git-erg respectively.
 2. **Scaling-curve diagnosis** — direct_complete F1=0 on 3 capable models (Ernie 4.5 Thinking, GPT-5.4, Grok 4.20) — likely parser failure on structured-document output. Read one raw `.record.json` before any priority-3 build.
 3. **Registry / figures infrastructure** — 0156→0160 implementation order.
 
