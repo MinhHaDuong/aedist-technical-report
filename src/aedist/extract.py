@@ -112,6 +112,12 @@ def _extract_pipe_tables(text: str) -> list[str]:
             elif len(cells) != ncols:
                 continue  # skip mismatched rows
             current.append(",".join(f'"{c}"' for c in cells))
+        elif current and "|" in stripped and stripped.count("|") == 2:
+            # Single-cell row inside a table — typically a markdown section
+            # divider like `| **Coal-Fired Power Plants** |`. Skip it
+            # silently without flushing so the table stays cohesive across
+            # sections (observed empirically in qwen3-max-thinking output).
+            continue
         else:
             if current:
                 _flush()
