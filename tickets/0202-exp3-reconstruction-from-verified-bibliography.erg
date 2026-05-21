@@ -9,6 +9,7 @@ Author: claude
 2026-05-21T16:00Z HDMX-coding-agent note swapped Blocked-by 0166 → 0185 — backlog audit found 0202 only needs one cheap deep-research bibliography (produced by 0185), not the full 12-cell N=3 cross-eval that 0166 promises; 0166/0170/0171 deferred to post-talk full-scope work
 2026-05-21T16:30Z HDMX-coding-agent note dropped Blocked-by entirely — Mistral smoke on rebuild-exp2-smoke branch already produced the input artefact: experiments/outputs/sota_exp2_smoke/mistral_turn_01.report.md (sectoral overview + Annotated Bibliography in 6 categories) and mistral_turn_01.citations.json (120 URLs). Source agent pinned to Mistral. 0185's reopen is for publication-readiness review (0213/0214/0215) — orthogonal to Exp 3's reconstruction input
 2026-05-21T17:00Z HDMX-coding-agent note imported the two artefacts into main as tests/fixtures/exp3_source_mistral_report.md and tests/fixtures/exp3_source_mistral_citations.json — durable on main, no dependency on rebuild-exp2-smoke branch for 0202 to start
+2026-05-21T18:00Z HDMX-coding-agent note clarification — 120 citation entries → 42 unique URLs (Mistral repeats URLs across cited passages). Document store for reconstruction itself is already on main at data/rag_corpus/ (18 primary-source markdown files); the bibliography is just the candidate URL list to classify
 
 --- body ---
 
@@ -49,9 +50,17 @@ this ticket; the case study is 0200, blocked by 0202.
     Plans, Company Reports, Regulatory & IO, News & Media, Academic),
     §5 Statistical Summaries, §6 Reconciliation, §7 Final Notes.
   - `tests/fixtures/exp3_source_mistral_citations.json` — 120
-    URLs with titles.
+    citation entries → **42 unique URLs** (Mistral repeats the same
+    URL across cited passages).
   Originals live on `rebuild-exp2-smoke` at
   `experiments/outputs/sota_exp2_smoke/mistral_turn_01.{report.md,citations.json}`.
+  Note: the document corpus for reconstruction itself (Tier-2 oracle
+  (b) in the verification protocol below) is the existing
+  `data/rag_corpus/` on main — 18 verified primary-source markdown
+  files (EVN annual reports, PDP7/7A/8 annexes, Report 32/58, Study
+  E542 tables). The Mistral bibliography is the **candidate URL list**
+  the Tier 1/2/3 classifier sifts; `data/rag_corpus/` is the existing
+  curated stock.
 - From the report:
   - **Kept**: §1 Sector Overview, §4 Annotated Bibliography (+ 120
     citations from citations.json).
