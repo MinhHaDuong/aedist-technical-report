@@ -79,6 +79,50 @@ class TestClassifyOrphan:
         }
         assert _classify_orphan(raw) == "refusal"
 
+    def test_refusal_with_token_gesture_table_is_refusal(self):
+        """Refusal language wins over trailing table content.
+
+        Some models (qwen3-max-thinking, gpt-5.5) decline the task in
+        prose and then bolt a tiny acknowledgment table onto the end.
+        The table-presence heuristic alone misclassifies these as 'error';
+        the intent — decline to produce the requested inventory — is a
+        refusal regardless of trailing token gestures.
+        """
+        raw = {
+            "model": "test",
+            "response": (
+                "I cannot fulfill this request for the following reasons:\n\n"
+                "⚠️ I lack web access and cannot verify project status.\n\n"
+                "| Reason | Detail |\n|---|---|\n"
+                "| No web | Cannot fetch live data |\n"
+            ),
+        }
+        assert _classify_orphan(raw) == "refusal"
+
+    def test_critical_limitation_opener_is_refusal(self):
+        """qwen3-max-thinking's '⚠️ Critical Limitation Notice' opener."""
+        raw = {
+            "model": "test",
+            "response": (
+                "⚠️ **Critical Limitation Notice**\n"
+                "I cannot fulfill this request as specified.\n\n"
+                "| Reason |\n|---|\n| No web access |\n"
+            ),
+        }
+        assert _classify_orphan(raw) == "refusal"
+
+    def test_cant_with_apostrophe_is_refusal(self):
+        """gpt-5.5's 'I can't honestly produce...' opener (typographic apostrophe)."""
+        raw = {
+            "model": "test",
+            "response": (
+                "I can’t honestly produce the requested inventory "
+                "without source verification.\n\n"
+                "| Field | Value |\n|---|---|\n| Status | Declined |\n"
+            ),
+        }
+        assert _classify_orphan(raw) == "refusal"
+
 
 class TestAssembleValidation:
     """cmd_assemble attaches validate_run() results to each RunRecord."""

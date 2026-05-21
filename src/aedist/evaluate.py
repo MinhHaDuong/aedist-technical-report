@@ -335,6 +335,27 @@ def _evaluate_csv_file(system_path: Path, ref_path: Path, args: argparse.Namespa
         log.info("Saved: %s, %s", out / f"reconciliation_{system_path.stem}.csv", record_path)
 
 
+_REFUSAL_OPENERS = re.compile(
+    r"^\s*(?:[⚠*#]+\s*)?(?:\*+)?\s*"
+    r"(?:I (?:cannot|can(?:'|’)t|am unable to|won(?:'|’)t|will not|"
+    r"do not have|don(?:'|’)t have)"
+    r"|Critical Limitation"
+    r"|Per (?:your|my) (?:constraints?|operational constraints))",
+    re.IGNORECASE,
+)
+
+
+def _looks_like_refusal(response: str) -> bool:
+    """Detect refusal-opener language in the first lines of a response.
+
+    Refusals often include a token-gesture table after the decline text,
+    which the table-presence heuristic alone misclassifies as 'error'.
+    The semantic intent is decline regardless of trailing content shape.
+    """
+    head = response.lstrip()[:400]
+    return bool(_REFUSAL_OPENERS.match(head))
+
+
 def _classify_orphan(raw: dict) -> str:
     """Classify a JSON-only result (no CSV companion) into a status string.
 
@@ -352,6 +373,13 @@ def _classify_orphan(raw: dict) -> str:
 
     if not isinstance(response, str) or not response.strip():
         return "empty"
+
+    # Refusal language at the start of the response wins regardless of
+    # whether the model bolted a token-gesture table onto the decline.
+    # Semantic intent — the model declined to produce the requested
+    # output — should classify as refusal, not error.
+    if _looks_like_refusal(response):
+        return "refusal"
 
     # Only use strong table signals (fenced blocks, pipe tables).
     # The inline CSV fallback is too aggressive for classification —
