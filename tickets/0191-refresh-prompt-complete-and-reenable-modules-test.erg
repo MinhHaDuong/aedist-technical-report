@@ -2,6 +2,7 @@
 Title: Refresh prompt_complete.txt to match modules/ post-rename and re-enable test_modules_match_prompt_complete
 Created: 2026-05-20
 Author: claude
+Closed: merged via PR #372 — prompt_complete.txt regenerated; @pytest.mark.skip removed; adherence test passes
 
 --- log ---
 2026-05-20T00:00Z claude created
