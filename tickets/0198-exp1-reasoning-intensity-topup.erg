@@ -7,6 +7,7 @@ Author: claude
 2026-05-21T12:00Z claude created — follow-up to 0197 PR #379; capture column needs empirical data, but full N=5 rerun is too expensive in slide-deadline window
 
 2026-05-21T09:20Z HDMX-coding-agent note blocker 0197 closed — Blocked-by removed.
+2026-05-21T13:30Z user note decision: pool all topup reps with the original five unconditionally — no canary gate, no ±2σ comparison. Intra-day variability is absorbed into the reported within-model spread and disclosed in the methods section.
 --- body ---
 ## Context
 
@@ -23,29 +24,27 @@ empirical data needs a small rerun that records reasoning_tokens.
 
 ## Design
 
-**Asymmetric pooling.** Add N=3 new reps per model, pooling them with the
-original N=5 for outcome metrics (F1, coverage, accuracy, cost) but using
-only the new N=3 for the reasoning-tokens column. The pooling rests on
-"call shape unchanged → same provider distribution"; this needs verification
-before we commit.
+**Unconditional pooling (decided 2026-05-21).** Add N=3 new reps per model
+and pool them with the original N=5 for outcome metrics (F1, coverage,
+accuracy, cost). The reasoning-tokens column uses the new N=3 only
+(the original 5 carry no reasoning-tokens field by construction). No
+canary gate, no ±2σ comparison: intra-day variability across the two
+acquisition windows is absorbed into the reported within-model spread
+and disclosed in the methods section.
 
-**Canary gate (test one before blasting).** Run the rerun as 1 + 2:
+**Run shape.** Split for budget control, not for gating:
 
-1. Canary: 1 rep × 16 models with the fixed harness, same sweep config as
-   `sweep_ablation_p1_direct_base` writing to a separate output dir
-   (`outputs/ablation/direct/p1_base.topup_canary/`).
-2. For each model, compare the canary F1 against the existing 5-rep range:
-   - If canary F1 ∈ [mean − 2σ, mean + 2σ] → pool with original 5 reps,
-     proceed to top-up step.
-   - If outside that range → flag as "provider drift suspected"; do not
-     pool that model's outcome metrics; still use its canary + future
-     top-up reps for reasoning_tokens with a footnote.
-3. Top-up: 2 more reps × 16 models, same output dir as the canary, so each
-   model ends with N=3 post-fix reps (canary + top-up).
-4. Regenerate Annex A model table with a new
+1. First pass: 1 rep × 16 models with the fixed harness, same sweep
+   config as `sweep_ablation_p1_direct_base`, output to
+   `outputs/ablation/direct/p1_base.topup_canary/`.
+2. Second pass: 2 more reps × 16 models, output to
+   `outputs/ablation/direct/p1_base.topup/`.
+3. Regenerate Annex A model table with a new
    "Reasoning tokens (median over 3 post-fix reps)" column.
-5. Regenerate figures and tables consuming `measurements.jsonl`; update
-   manuscript prose where it cites specific F1 numbers.
+4. Regenerate figures and tables consuming `measurements.jsonl`; update
+   manuscript prose where it cites specific F1 numbers. Figure 2
+   (`plot_pareto.py`) already pools p1_base + p1_base.topup* via
+   `_is_p1_base_row` and renders the two cohorts with distinct glyphs.
 
 ## Sweep config
 
@@ -84,33 +83,35 @@ Stays inside the Econom'IA 2026 window (slides 2026-05-27).
 ## Disclosure for methods section
 
 > Experiment 1 baseline was run as 5 reps per model on 2026-05-20 and
-> topped up with 3 additional reps per model on 2026-05-{TBD} after a
-> harness fix (PR #379) made reasoning-token counts visible. Outcome
-> metrics (F1, coverage, fuel/status/province accuracy) pool the two
-> cohorts (n=8); reasoning-tokens are reported from the post-fix cohort
-> only (n=3). A canary rep per model was compared against the original
-> 5-rep range before pooling; provider-drift suspects (canary F1 outside
-> ±2σ of the original range) are reported separately.
+> topped up with 3 additional reps per model on 2026-05-21 after a
+> harness fix (PR #379) restored reasoning-token capture. Outcome
+> metrics (F1, coverage, fuel/status/province accuracy, cost) pool
+> the two cohorts unconditionally for n=8. Reasoning-tokens are
+> reported from the post-fix cohort only (n=3, the original five
+> carry no field by construction). Intra-day variability across the
+> two acquisition windows is absorbed into the reported within-model
+> spread rather than filtered out — Figure 2 makes the two cohorts
+> visually distinct so the spread can be inspected directly.
 
 ## Test
 
-- Canary sweep loads cleanly under the post-PR #379 schema (no `extra=forbid` failures).
+- Top-up sweep loads cleanly under the post-PR #379 schema (no `extra=forbid` failures).
 - `measurements.jsonl` records for the new reps carry `thinking_tokens`
   (non-None for the gpt-oss-* entries at minimum).
 - A spot-check assertion: for `openai/gpt-oss-120b`, `thinking_tokens > 0`
-  on the canary rep.
+  on at least one top-up rep.
 
 ## Exit criteria
 
 - [ ] PR #379 merged (this ticket's prerequisite).
-- [ ] Canary 16-model sweep written, gate decision logged per model.
-- [ ] Top-up sweep written; each non-drift model has N=3 post-fix reps.
+- [ ] Both top-up sweeps written; each model has N=3 post-fix reps total.
 - [ ] `measurements.jsonl` regenerated; per-model `thinking_tokens` median
       computed for the post-fix cohort.
 - [ ] Annex A model table regains a measured "Reasoning tokens" column.
 - [ ] Figures and tables regenerated; manuscript prose updated for any
       F1 numbers that shifted by more than the reported precision.
-- [ ] Methods-section disclosure paragraph added.
+- [ ] Methods-section disclosure paragraph added (already drafted in
+      Annex A's Sweep configuration section, ticket 0198 sub-edit).
 
 ## Out of scope
 

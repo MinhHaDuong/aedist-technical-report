@@ -19,12 +19,14 @@ Family colouring: per-model colour comes from
 axis: Claude / GPT / Mistral / Qwen / DeepSeek). Single marker per
 model; colour conveys family.
 
-x-axis scale: controlled by ``--xscale {linear,log}`` (default log).
-For log mode, models reporting ``cost_usd <= 0`` are dropped with a
-warning — clamping to an ε or pinning to a dedicated "\\$0" tick would
-mis-represent the scale. All Experiment 1 models are cloud and carry
-non-zero costs, so this branch does not fire on current data; it
-becomes relevant when the script is reused for Experiments 2/3.
+x-axis: cost per call in **USD cents** (``cost_usd × 100``), displayed
+in decimal (not scientific) notation. Scale controlled by
+``--xscale {linear,log}`` (default log). For log mode, models reporting
+``cost_usd <= 0`` are dropped with a warning — clamping to an ε or
+pinning to a dedicated "\\$0" tick would mis-represent the scale. All
+Experiment 1 models are cloud and carry non-zero costs, so this branch
+does not fire on current data; it becomes relevant when the script is
+reused for Experiments 2/3.
 
 Usage::
 
@@ -44,7 +46,18 @@ from .util import COLOR_REFERENCE, model_family, model_family_color
 
 log = logging.getLogger(__name__)
 
-P1_BASE_PATH_PREFIX = "experiments/outputs/ablation/direct/p1_base/"
+# Experiment 1 lives under outputs/ablation/direct/. The journal sweep wrote
+# to p1_base/ on 2026-05-20; the reasoning-token top-up (ticket 0198) added
+# reps to p1_base.topup_canary/ and p1_base.topup/. We pool all three
+# directories into the Exp 1 distribution unconditionally — no canary gate,
+# intra-day variability is absorbed into the reported within-model variance.
+# Pilot runs (p1_base.pilot/) remain excluded.
+P1_BASE_DIR = "experiments/outputs/ablation/direct/"
+P1_INCLUDED_SUBDIRS = (
+    "p1_base/",
+    "p1_base.topup/",
+    "p1_base.topup_canary/",
+)
 P1_PILOT_MARKER = "/p1_base.pilot/"
 
 # Vietnam thermal reference inventory size (Annex A, line 72).
@@ -52,34 +65,56 @@ N_REFERENCE_PLANTS = 163
 
 
 def _is_p1_base_row(result_file: str) -> bool:
-    """Return True for direct-baseline rows (Experiment 1), excluding pilots."""
-    return result_file.startswith(P1_BASE_PATH_PREFIX) and P1_PILOT_MARKER not in result_file
+    """Return True for direct-baseline rows that count toward Experiment 1.
+
+    Pools the original journal sweep with the post-PR-#379 top-up reps
+    (ticket 0198). Excludes pilot runs.
+    """
+    if P1_PILOT_MARKER in result_file:
+        return False
+    return any(result_file.startswith(P1_BASE_DIR + sub) for sub in P1_INCLUDED_SUBDIRS)
 
 
-def build_pareto_rows(metrics: list[dict]) -> list[dict]:
+def build_pareto_rows(
+    metrics: list[dict],
+    source_by_label: dict[str, str] | None = None,
+) -> list[dict]:
     """Build rows for the Pareto chart.
 
     Returns list of dicts with keys: model, family, median_tp, min_tp,
-    max_tp, median_f1, min_f1, max_f1, cost_usd.  Sorted by median_tp
-    descending — the plotted axis.
+    max_tp, tp_values (pooled), base_tp_values, topup_tp_values,
+    median_f1, min_f1, max_f1, cost_usd. Sorted by median_tp descending —
+    the plotted axis. Median / min / max are computed over the **pooled**
+    distribution.
 
-    Per-model statistics are computed across the rep distribution in
-    *metrics*: median / min / max for both correctly-identified plant
-    counts (``n_matched``) and row-level F1; mean cost per call. The
-    caller is responsible for pre-filtering *metrics* to the desired
-    scope (e.g. Experiment 1 rows only via ``_is_p1_base_row``).
+    *source_by_label* maps each metric's ``label`` to either ``"base"``
+    (original sweep) or ``"topup"`` (post-2026-05-21 reasoning-token
+    top-up reps, ticket 0198). Labels not in the map default to
+    ``"base"``. The figure uses the per-source partition to draw
+    different markers for each cohort.
     """
     import statistics
 
+    if source_by_label is None:
+        source_by_label = {}
+
     tp_by_model: dict[str, list[int]] = {}
+    base_tp_by_model: dict[str, list[int]] = {}
+    topup_tp_by_model: dict[str, list[int]] = {}
     f1_by_model: dict[str, list[float]] = {}
     cost_by_model: dict[str, list[float]] = {}
 
     for entry in metrics:
         slug = slug_from_label(entry["label"])
+        source = source_by_label.get(entry["label"], "base")
         tp = entry.get("n_matched")
         if tp is not None:
-            tp_by_model.setdefault(slug, []).append(int(tp))
+            tp_int = int(tp)
+            tp_by_model.setdefault(slug, []).append(tp_int)
+            if source == "topup":
+                topup_tp_by_model.setdefault(slug, []).append(tp_int)
+            else:
+                base_tp_by_model.setdefault(slug, []).append(tp_int)
         f1 = entry.get("f1")
         if f1 is not None:
             f1_by_model.setdefault(slug, []).append(f1)
@@ -98,6 +133,8 @@ def build_pareto_rows(metrics: list[dict]) -> list[dict]:
             "min_tp": min(tp_values),
             "max_tp": max(tp_values),
             "tp_values": list(tp_values),
+            "base_tp_values": list(base_tp_by_model.get(slug, [])),
+            "topup_tp_values": list(topup_tp_by_model.get(slug, [])),
             "median_f1": round(statistics.median(f1_values), 4) if f1_values else 0.0,
             "min_f1": round(min(f1_values), 4) if f1_values else 0.0,
             "max_f1": round(max(f1_values), 4) if f1_values else 0.0,
@@ -139,46 +176,49 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     for r in filtered:
         colour = model_family_color(r["model"])
         median = r["median_tp"]
-        # Thin min-max line behind the markers (the eye still wants a
-        # range cue even with per-rep markers visible).
+        cost_cents = r["cost_usd"] * 100.0  # display axis is USD cents
+        # Thin min-max line behind the markers (range cue).
         ax.plot(
-            [r["cost_usd"], r["cost_usd"]],
+            [cost_cents, cost_cents],
             [r["min_tp"], r["max_tp"]],
             color=colour,
             linewidth=0.6,
             alpha=0.7,
             zorder=1,
         )
-        # Non-median reps: x markers (one entry from tp_values takes the
-        # median slot and is drawn as a filled circle below).
-        tp_values = list(r.get("tp_values") or [])
-        if tp_values:
-            median_consumed = False
-            non_median = []
-            for v in tp_values:
-                if v == median and not median_consumed:
-                    median_consumed = True
-                    continue
-                non_median.append(v)
-        else:
-            non_median = []
-        if non_median:
+        # Yesterday's reps (p1_base/, 2026-05-20 journal sweep): unfilled circle.
+        base_reps = r.get("base_tp_values") or []
+        if base_reps:
             ax.scatter(
-                [r["cost_usd"]] * len(non_median),
-                non_median,
+                [cost_cents] * len(base_reps),
+                base_reps,
+                marker="o",
+                facecolors="none",
+                edgecolors=colour,
+                s=36,
+                linewidths=1.0,
+                zorder=2,
+            )
+        # Today's reps (p1_base.topup*/, post-PR-#379 reasoning-token top-up): x.
+        topup_reps = r.get("topup_tp_values") or []
+        if topup_reps:
+            ax.scatter(
+                [cost_cents] * len(topup_reps),
+                topup_reps,
                 marker="x",
                 color=colour,
                 s=30,
                 linewidths=1.2,
                 zorder=2,
             )
-        # Median: filled circle.
+        # Pooled median: filled square (drawn at the computed value, not at a
+        # specific rep — the median may interpolate between two reps).
         ax.scatter(
-            [r["cost_usd"]],
+            [cost_cents],
             [median],
-            marker="o",
+            marker="s",
             color=colour,
-            s=40,
+            s=50,
             zorder=3,
         )
 
@@ -192,23 +232,35 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         zorder=1,
     )
 
-    ax.set_xlabel("Coût par requête (USD)")
+    ax.set_xlabel("Coût par requête (cents USD)")
     ax.set_ylabel("Nombre de centrales bien identifiées")
     ax.set_ylim(0, N_REFERENCE_PLANTS * 1.05)
     if xscale == "log":
+        from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
+
         ax.set_xscale("log")
+        # Explicit tick locations: 0.1, 0.5, 1, 5, 10, 20, 30 cents.
+        ticks = [0.1, 0.5, 1, 5, 10, 20, 30]
+        ax.xaxis.set_major_locator(FixedLocator(ticks))
+        # `g` format drops trailing zeros: 1.0 → "1", 0.5 stays "0.5".
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _pos: f"{x:g}"))
+        ax.xaxis.set_minor_formatter(NullFormatter())
     else:
-        ax.set_xlim(-0.005, max((r["cost_usd"] for r in filtered), default=0.30) * 1.05)
+        ax.set_xlim(
+            -0.05,
+            max((r["cost_usd"] * 100.0 for r in filtered), default=30.0) * 1.05,
+        )
     ax.grid(True, alpha=0.3)
 
-    # Architectural-family legend — order matches Exp 1 lineup density.
-    legend_handles = [
+    # Architectural-family legend (colour). Cohort glyphs are described in
+    # the caption, not on the figure — the figure stays tidy.
+    family_handles = [
         Line2D(
             [0],
             [0],
             color=model_family_color(slug_seed),
             linewidth=0,
-            marker="o",
+            marker="s",
             markersize=7,
             label=label,
         )
@@ -220,7 +272,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
             ("deepseek-v4", "DeepSeek"),
         )
     ]
-    ax.legend(handles=legend_handles, loc="upper right", fontsize="small")
+    ax.legend(handles=family_handles, loc="upper right", fontsize="small")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
@@ -249,10 +301,23 @@ def main() -> None:
 
     from .measurements import load, records_to_metrics
 
-    # Filter at the boundary: Experiment 1 == direct/p1_base/ (no pilots).
+    # Filter at the boundary: Experiment 1 == p1_base + topup variants.
     records = [r for r in load() if r.result_file and _is_p1_base_row(r.result_file)]
     metrics = records_to_metrics(records)
-    rows = build_pareto_rows(metrics)
+
+    # Build label → "base" | "topup" map so the plotter can render the two
+    # cohorts with different glyphs. Label format matches records_to_metrics:
+    # f"{prompt_version}/{stem}" (or just the stem when prompt_version is empty).
+    source_by_label: dict[str, str] = {}
+    for r in records:
+        if not r.result_file:
+            continue
+        stem = Path(r.result_file).stem
+        prompt_version = r.method_params.prompt_version or ""
+        label = f"{prompt_version}/{stem}" if prompt_version else stem
+        source_by_label[label] = "topup" if ".topup" in r.result_file else "base"
+
+    rows = build_pareto_rows(metrics, source_by_label=source_by_label)
 
     if args.output:
         output_path = Path(args.output)

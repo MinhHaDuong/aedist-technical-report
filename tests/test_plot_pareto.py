@@ -35,13 +35,16 @@ _EXPECTED_KEYS = {
     "min_tp",
     "max_tp",
     "tp_values",
+    "base_tp_values",
+    "topup_tp_values",
     "median_f1",
     "min_f1",
     "max_f1",
     "cost_usd",
 }
 
-_CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {"tp_values"}  # tp_values is in-memory only
+# In-memory only — these are list-valued so the CSV writer drops them.
+_CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {"tp_values", "base_tp_values", "topup_tp_values"}
 
 
 def test_build_pareto_rows():
@@ -77,8 +80,16 @@ def test_cost_mean_across_reps():
 
 
 def test_is_p1_base_row():
-    """Filter accepts direct/p1_base rows but rejects pilot and other sweeps."""
+    """Filter pools p1_base + topup variants, rejects pilots and other sweeps."""
+    # Pooled into Experiment 1:
     assert _is_p1_base_row("experiments/outputs/ablation/direct/p1_base/claude-opus-4.6-run1.csv")
+    assert _is_p1_base_row(
+        "experiments/outputs/ablation/direct/p1_base.topup/claude-opus-4.6-run6.csv"
+    )
+    assert _is_p1_base_row(
+        "experiments/outputs/ablation/direct/p1_base.topup_canary/claude-opus-4.6-run1.csv"
+    )
+    # Rejected:
     assert not _is_p1_base_row(
         "experiments/outputs/ablation/direct/p1_base.pilot/claude-opus-4.6-run1.csv"
     )
@@ -127,6 +138,25 @@ def test_pareto_per_rep_points(tmp_path):
     figure_path = tmp_path / "fig_pareto.pdf"
     write_pdf(rows, figure_path)
     assert figure_path.exists() and figure_path.stat().st_size > 0
+
+
+def test_pareto_base_topup_partition():
+    """source_by_label partitions reps into base vs topup cohorts."""
+    source_by_label = {
+        # Mark one of each model's reps as a topup
+        "p1_base/claude-opus-4.6-run3": "topup",
+        "p1_base/mistral-large-2512-run3": "topup",
+        "p1_base/qwen3.6-plus-run3": "topup",
+    }
+    rows = build_pareto_rows(SAMPLE_METRICS, source_by_label=source_by_label)
+    by_model = {r["model"]: r for r in rows}
+    assert by_model["claude-opus-4.6"]["base_tp_values"] == [80, 82]
+    assert by_model["claude-opus-4.6"]["topup_tp_values"] == [85]
+    # Without a source map, everything defaults to base.
+    rows_no_map = build_pareto_rows(SAMPLE_METRICS)
+    by_model_no_map = {r["model"]: r for r in rows_no_map}
+    assert by_model_no_map["claude-opus-4.6"]["base_tp_values"] == [80, 82, 85]
+    assert by_model_no_map["claude-opus-4.6"]["topup_tp_values"] == []
 
 
 def test_pareto_xscale_flag(tmp_path, monkeypatch):
