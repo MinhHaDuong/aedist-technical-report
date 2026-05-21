@@ -1,0 +1,113 @@
+%erg 0.1
+Title: Promote Pareto figure and Exp 1 cost table to manuscript-grade
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T11:30Z claude created
+
+--- body ---
+
+## Context
+
+The cost–quality Pareto frontier (Figure 2 in `slides/manuscript/main.md`,
+line 21) and the Experiment 1 cost table are both half-built. The
+caption claims the script does things the script does not do, the
+caption's numbers are stale pilot data, the cost table renders as
+LaTeX only and does not land in the manuscript, and the "quality"
+axis covers only Accuracy of the four §2 dimensions. Surfaced during
+0151 review (2026-05-21 conversation); not picked up by any earlier
+ticket.
+
+## Relevant files
+
+- `src/aedist/plot_pareto.py` — scatter plot (no envelope, no family
+  colouring, linear x).
+- `src/aedist/tabulate_exp1_cost_summary.py` — per-model LaTeX table.
+- `experiments/Makefile:220–227` — wires `make exp1-cost-summary` to
+  `report/inputs/generated/tab_exp1_cost_summary.tex`.
+- `Makefile:145–148` — wires `fig_pareto.pdf` to
+  `slides/inputs/generated/`.
+- `slides/manuscript/main.md:21–23` — Figure 2 placeholder + stale
+  caption ("DeepSeek V3.2 decomposed+RAG @ F1 = 89.8%, $0.06" — pilot
+  numbers from a model no longer in the journal lineup).
+- `slides/manuscript/main.md` Annex A — currently no cost table.
+- PR #375 (already on main) — adds model-family colouring to
+  `fig_census_direct`; pattern to copy.
+
+## Actions
+
+Six independently-decidable items. Order them however ships fastest;
+do not bundle.
+
+1. **Caption rewrite.** Replace the stale placeholder caption with
+   one that matches current Exp 1 data ($2.85 total, F1 ≤ 0.76, no
+   Exp 2/3 yet — so the caption stops over-claiming about cost-pushing
+   conditions). Concretely: drop "model × method × documentation level,
+   Experiments 1–3" until Exp 2/3 land; drop the DeepSeek-V3.2 example
+   that no longer exists in the lineup; mark the figure as "Experiment 1
+   only" or hide it until Exp 2.
+2. **Draw the Pareto envelope.** The caption says "the Pareto-efficient
+   frontier is drawn" — make it true. ~10 LoC after sorting points by
+   cost ascending and keeping monotonically-increasing F1.
+3. **Family colouring.** Lift the model-family colour map from PR #375's
+   `plot_census` work into `plot_pareto`. Three families today: EN, FR,
+   ZH. Markers stay cloud=○ / local=△ as a second axis.
+4. **Log x-axis decision.** Defer to Exp 2/3 (when cost spread crosses
+   ~3 orders of magnitude) **or** flip to log10 now for forward-compat.
+   Pick one; document the choice in the script docstring.
+5. **Cost table in Annex A.** Decide: (a) port
+   `tabulate_exp1_cost_summary.py` to also emit a markdown table the
+   manuscript `\input`s or pastes into Annex A, or (b) accept that the
+   per-model cost table lives only in `report.pdf` and main.md stays
+   prose-only on costs ($2.85 total, range across models already in §1
+   "Results").
+6. **Quality composite axis (deferred).** A real quality-vs-cost
+   frontier requires coherence + provenance + temporality scorers,
+   which only become measurable once Exp 2/3 land documents. File a
+   placeholder follow-up ticket at the end of this work so the
+   ambition is durable.
+
+## Test
+
+For each scripted change, the existing `tests/test_plot_pareto.py`
+fixture is the entry point; extend with:
+
+- `test_pareto_envelope_monotone` — after the envelope is added, no
+  point is strictly above-and-left of the envelope.
+- `test_pareto_family_colours` — three families present in the input
+  produce three distinct colours; legend reflects them.
+- `test_caption_has_no_stale_pilot_numbers` — adherence-style grep on
+  `slides/manuscript/main.md`, fails if "DeepSeek V3.2 decomposed+RAG"
+  or "89.8%" or "$0.06" appears.
+
+## Verification
+
+- [ ] Action 1: caption matches current data; adherence grep passes.
+- [ ] Action 2: envelope visible in the regenerated PDF; test passes.
+- [ ] Action 3: family colours visible in the regenerated PDF; legend
+  shows EN / FR / ZH (or equivalent labels).
+- [ ] Action 4: docstring of `plot_pareto.py` states the chosen axis
+  scale and the rationale.
+- [ ] Action 5: either the markdown table appears in `main.md` Annex A
+  and matches the LaTeX one, or the ticket records "manuscript stays
+  prose-only on costs" as the decision.
+- [ ] Action 6: follow-up ticket filed referencing this one.
+
+## Invariants
+
+- `make figures` still produces `fig_pareto.pdf` without error.
+- `make exp1-cost-summary` still produces the LaTeX table for the
+  report build.
+- No inline pgfplots reintroduced (adherence test from 0130).
+- The Python-to-PDF figure pattern is preserved (no inline plots).
+
+## Exit criteria
+
+- Actions 1–5 decided and either applied or recorded as "not now" in
+  the ticket log.
+- Action 6 follow-up ticket filed.
+- `fig_pareto.pdf` regenerates cleanly with envelope and family
+  colouring (if Actions 2 and 3 land).
+- `main.md` Figure 2 caption no longer carries stale pilot numbers
+  (Action 1 lands regardless of the other actions).
