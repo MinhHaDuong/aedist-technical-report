@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-21T11:30Z claude created
+2026-05-21T11:45Z user note decisions on the six actions — see Decisions section in body
 
 --- body ---
 
@@ -35,64 +36,88 @@ ticket.
 - PR #375 (already on main) — adds model-family colouring to
   `fig_census_direct`; pattern to copy.
 
-## Actions
+## Decisions (2026-05-21)
 
-Six independently-decidable items. Order them however ships fastest;
-do not bundle.
+User-confirmed direction for each original action:
 
-1. **Caption rewrite.** Replace the stale placeholder caption with
-   one that matches current Exp 1 data ($2.85 total, F1 ≤ 0.76, no
-   Exp 2/3 yet — so the caption stops over-claiming about cost-pushing
-   conditions). Concretely: drop "model × method × documentation level,
-   Experiments 1–3" until Exp 2/3 land; drop the DeepSeek-V3.2 example
-   that no longer exists in the lineup; mark the figure as "Experiment 1
-   only" or hide it until Exp 2.
-2. **Draw the Pareto envelope.** The caption says "the Pareto-efficient
-   frontier is drawn" — make it true. ~10 LoC after sorting points by
-   cost ascending and keeping monotonically-increasing F1.
-3. **Family colouring.** Lift the model-family colour map from PR #375's
-   `plot_census` work into `plot_pareto`. Three families today: EN, FR,
-   ZH. Markers stay cloud=○ / local=△ as a second axis.
-4. **Log x-axis decision.** Defer to Exp 2/3 (when cost spread crosses
-   ~3 orders of magnitude) **or** flip to log10 now for forward-compat.
-   Pick one; document the choice in the script docstring.
-5. **Cost table in Annex A.** Decide: (a) port
-   `tabulate_exp1_cost_summary.py` to also emit a markdown table the
-   manuscript `\input`s or pastes into Annex A, or (b) accept that the
-   per-model cost table lives only in `report.pdf` and main.md stays
-   prose-only on costs ($2.85 total, range across models already in §1
-   "Results").
-6. **Quality composite axis (deferred).** A real quality-vs-cost
-   frontier requires coherence + provenance + temporality scorers,
-   which only become measurable once Exp 2/3 land documents. File a
-   placeholder follow-up ticket at the end of this work so the
-   ambition is durable.
+| # | Item | Decision |
+|---|---|---|
+| 1 | Caption rewrite | **YES** — and be explicit it's *Accuracy*, not Quality |
+| 2 | Pareto envelope | **NO** — do not draw |
+| 3 | Family colouring | **YES** — copy PR #375 pattern |
+| 4 | Log x-axis | **PARAMETER** — `--xscale linear\|log` CLI flag; truly undecided, want both views, same script reused later |
+| 5 | Cost table → Annex A | **NO PORT** — instead, add a one-line markdown comment near Figure 2 pointing to the CSV path |
+| 6 | Quality composite | **DEFER** — confirmed; file a follow-up at the end |
+
+New requirement surfaced during decision: **median + whiskers** for
+within-model variability. The 5-rep F1 distribution per model should
+be visible as a point (median) with whiskers (min/max or IQR — TBD).
+
+## Actions (revised)
+
+1. **Caption rewrite (main.md:23).** Drop the "Quality" framing; use
+   *Accuracy (row-level F1)*. Drop the stale "DeepSeek V3.2
+   decomposed+RAG @ F1 = 89.8%, $0.06" example. Scope the figure to
+   Experiment 1 only. Add a one-line comment immediately after the
+   `\includegraphics` line giving the CSV path
+   (`slides/inputs/generated/pareto.csv`) so a reader can audit the
+   numbers.
+2. **`plot_pareto.py` — family colouring.** Three families: EN, FR, ZH.
+   Resolve via the model registry (the same source PR #375 used for
+   `plot_census`). Keep cloud=○ / local=△ as the second axis. Legend
+   shows both dimensions.
+3. **`plot_pareto.py` — median + whiskers.** Replace single-point
+   scatter with median F1 + whiskers across the 5 reps per model. The
+   per-rep F1 distribution is in `measurements.jsonl` — surface it
+   through the existing aggregation path (`tabulate_macros.load_and_summarize`
+   already exposes median; add min/max or IQR).
+4. **`plot_pareto.py` — `--xscale linear|log` CLI flag.** Default
+   linear (current behaviour). When `--xscale log`: zero-cost local
+   models can't plot on log; decide (a) drop with a warning, (b) plot
+   at a dedicated "$0" tick, or (c) clamp to a small ε. Document the
+   chosen handling in the script docstring. Both modes should produce
+   readable figures because the script will be reused later when
+   Exp 2/3 cost spread justifies log.
+5. **DO NOT** draw the Pareto envelope (decision #2).
+6. **DO NOT** port the cost table to Annex A markdown (decision #5).
+   Manuscript stays prose-only on costs; report.pdf keeps the LaTeX
+   table.
+7. **Adherence test.** `test_caption_has_no_stale_pilot_numbers` —
+   greps `slides/manuscript/main.md` for the stale strings ("DeepSeek
+   V3.2 decomposed+RAG", "89.8%", "$0.06"); fails if found.
+8. **At the end:** file a follow-up ticket "Quality composite axis:
+   coherence/provenance/temporality scorers" (blocked-by: Exp 2/3
+   data tickets).
 
 ## Test
 
 For each scripted change, the existing `tests/test_plot_pareto.py`
 fixture is the entry point; extend with:
 
-- `test_pareto_envelope_monotone` — after the envelope is added, no
-  point is strictly above-and-left of the envelope.
 - `test_pareto_family_colours` — three families present in the input
   produce three distinct colours; legend reflects them.
+- `test_pareto_whiskers_present` — the rendered figure contains
+  whisker artefacts (matplotlib errorbar lines, or equivalent).
+- `test_pareto_xscale_flag` — `--xscale log` produces a figure whose
+  axes report log scale; `--xscale linear` produces linear.
 - `test_caption_has_no_stale_pilot_numbers` — adherence-style grep on
   `slides/manuscript/main.md`, fails if "DeepSeek V3.2 decomposed+RAG"
   or "89.8%" or "$0.06" appears.
 
+Envelope test dropped (decision #2 — no envelope drawn).
+
 ## Verification
 
-- [ ] Action 1: caption matches current data; adherence grep passes.
-- [ ] Action 2: envelope visible in the regenerated PDF; test passes.
-- [ ] Action 3: family colours visible in the regenerated PDF; legend
-  shows EN / FR / ZH (or equivalent labels).
-- [ ] Action 4: docstring of `plot_pareto.py` states the chosen axis
-  scale and the rationale.
-- [ ] Action 5: either the markdown table appears in `main.md` Annex A
-  and matches the LaTeX one, or the ticket records "manuscript stays
-  prose-only on costs" as the decision.
-- [ ] Action 6: follow-up ticket filed referencing this one.
+- [ ] Caption rewritten: explicit "Accuracy", no stale pilot numbers,
+  Exp-1 scope; adherence grep passes.
+- [ ] CSV path comment added in `main.md` near Figure 2.
+- [ ] Family colours visible in regenerated PDF; legend shows EN/FR/ZH.
+- [ ] Median + whiskers visible per model in regenerated PDF.
+- [ ] `--xscale linear` and `--xscale log` both produce readable figures;
+  zero-cost handling documented in docstring.
+- [ ] No envelope drawn (regression check).
+- [ ] No cost table ported to manuscript (regression check).
+- [ ] Follow-up ticket filed for quality composite axis.
 
 ## Invariants
 
