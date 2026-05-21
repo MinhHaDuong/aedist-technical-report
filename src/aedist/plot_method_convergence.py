@@ -16,7 +16,7 @@ import argparse
 import csv
 import logging
 import re
-from collections import Counter, defaultdict
+from collections import defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
@@ -147,6 +147,28 @@ def write_csv(rows: list[dict], output: Path) -> None:
     log.info("Wrote %d rows to %s", len(rows), output)
 
 
+def _select_min_median_max(rows: list[dict]) -> list[dict]:
+    """Pick min, median, and max TP reps per model.
+
+    For each model, sort its reps by TP ascending and return three
+    representatives: the worst (index 0), the median (index len//2),
+    and the best (index -1). Models with ≤3 reps are returned in full.
+    This is the honest summary of within-model variance — top-N hides
+    the low-TP tail (e.g. GPT-OSS-20B ranges 21 → 163 across 5 reps).
+    """
+    by_model: dict[str, list[dict]] = {}
+    for r in rows:
+        by_model.setdefault(r["model"], []).append(r)
+    out: list[dict] = []
+    for runs in by_model.values():
+        runs_sorted = sorted(runs, key=lambda r: r["tp"])
+        if len(runs_sorted) <= 3:
+            out.extend(runs_sorted)
+        else:
+            out.extend([runs_sorted[0], runs_sorted[len(runs_sorted) // 2], runs_sorted[-1]])
+    return out
+
+
 def write_pdf(
     rows: list[dict],
     output: Path,
@@ -174,11 +196,7 @@ def write_pdf(
         method_rows = [r for r in rows if r["method"] == method]
         if models:
             method_rows = [r for r in method_rows if r["model"] in models]
-        model_count: Counter[str] = Counter()
-        for r in method_rows:
-            if model_count[r["model"]] < max_runs_per_model:
-                model_count[r["model"]] += 1
-        total_runs += sum(model_count.values())
+        total_runs += len(_select_min_median_max(method_rows))
     fig_height = max(4.2, 0.08 * total_runs + 0.5 * len(order))
 
     fig, ax = plt.subplots(figsize=(10, fig_height))
@@ -194,14 +212,8 @@ def write_pdf(
         if not method_rows:
             continue
 
-        # Limit runs per model
-        model_count = Counter()
-        filtered = []
-        for r in method_rows:
-            if model_count[r["model"]] < max_runs_per_model:
-                filtered.append(r)
-                model_count[r["model"]] += 1
-        method_rows = filtered
+        # Pick representative reps per model: min / median / max TP.
+        method_rows = _select_min_median_max(method_rows)
 
         # Resolve size per model (not per record). Different reps of the same
         # model can carry different size_class values in the data — take the

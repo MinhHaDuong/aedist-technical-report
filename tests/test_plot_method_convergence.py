@@ -111,6 +111,30 @@ def test_core_models_requires_all_methods(tmp_path, monkeypatch):
     assert core == set()
 
 
+def test_select_min_median_max_picks_three_representatives():
+    """Per-model selection surfaces the min / median / max TP rep — not top-N."""
+    from aedist.plot_method_convergence import _select_min_median_max
+
+    rows = [
+        {"model": "M", "tp": 21},
+        {"model": "M", "tp": 65},
+        {"model": "M", "tp": 70},
+        {"model": "M", "tp": 100},
+        {"model": "M", "tp": 163},
+    ]
+    picks = _select_min_median_max(rows)
+    assert [r["tp"] for r in picks] == [21, 70, 163]
+
+
+def test_select_min_median_max_passthrough_for_small_groups():
+    """Models with ≤3 reps are returned in TP-ascending order, no down-selection."""
+    from aedist.plot_method_convergence import _select_min_median_max
+
+    rows = [{"model": "M", "tp": 50}, {"model": "M", "tp": 10}, {"model": "M", "tp": 30}]
+    picks = _select_min_median_max(rows)
+    assert [r["tp"] for r in picks] == [10, 30, 50]
+
+
 def test_main_writes_csv(tmp_path, monkeypatch):
     """CLI writes well-formed CSV with expected columns."""
     input_path = tmp_path / "measurements.jsonl"
