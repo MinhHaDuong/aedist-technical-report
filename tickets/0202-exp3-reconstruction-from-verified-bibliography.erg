@@ -6,6 +6,7 @@ Blocked-by: 0166
 
 --- log ---
 2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
+2026-05-21T15:00Z claude note Tier scheme sharpened in design dialogue: provenance role (primary/secondary/tertiary) not institution; default-exclude for Tier 3; four-oracle Tier-2 stack (pipeline.ods, rag_corpus, Zotero, allowlist {gem.wiki, enerdata.net}). Canonical scheme landed in report/inputs/verification_methods.tex §sec:verif-filter with Admiralty STANAG 2511 antecedent cited. Smoke fixture (experiments/outputs/sota_smoke/) confirmed as the development corpus — ~50 unique URLs across 4 provider schemas covering Tier-1/2/3 edge cases.
 
 --- body ---
 
@@ -44,35 +45,49 @@ this ticket; the case study is 0200, blocked by 0202.
 
 ## Verification protocol (HITL)
 
-Three-tier deterministic classifier; output is a verified-bibliography
-CSV checked into the repo.
+Three-tier classifier ordered by *epistemic role of the datum*, not by
+publisher identity. Canonical scheme in `report/inputs/verification_methods.tex`
+§`sec:verif-filter` — that section is the source of record; this table is
+the implementer's quick reference.
 
 | Tier | Rule | Action |
 |------|------|--------|
-| 1 | Publisher is government, domestic public agency, company record, company press release, or government-owned news outlet | AUTO-OK + tagged primary |
-| 2 | Source doc is in user's Zotero library (and not Tier 1) | AUTO-OK + tagged non-primary |
-| 3 | Anything else | HITL — present claim snippet, await verdict |
+| 1 | Publisher *is* the producer of the datum (gov.vn / moit.gov.vn / chinhphu.vn / EVN / PetroVietnam / operator press releases / IFI project docs: WB, ADB, IEA, UNDP) | AUTO-OK + tagged primary |
+| 2 | URL appears in one of four oracles: (a) `docs/pipeline.ods` References sheet; (b) `data/rag_corpus/`; (c) Zotero library; (d) domain allowlist `{gem.wiki, enerdata.net}` | AUTO-OK + tagged secondary-curated |
+| 3 | Tertiary aggregation (Wikipedia, `power-technology.com`, `nsenergybusiness.com`, `reccessary.com`) or uncited | **DEFAULT-EXCLUDE.** Operator may promote per-URL by explicit decision. |
 
-Edge cases (strictest-reading defaults; refine if they bite in practice):
+Edge cases (strictest-reading defaults; refine if they bite):
 
-- State news outlet reporting on a derivative doc → Tier 1 (primary by
-  publisher; not by informational status).
+- Same domain, different role: `banktrack.org` own research → Tier 1;
+  banktrack.org policy brief aggregating GEM → Tier 3. Per-URL, not per-domain.
+- State news outlet reporting on a derivative doc → Tier 3 (the outlet
+  is not the producer; it's reporting on someone who is).
 - Dead URL whose doc is in Zotero with PDF attachment → Tier 2 (Zotero
   copy is citation of record).
-- Tier 1 publisher with dead link, not in Zotero → Tier 1 if publisher
-  identity is confirmable; else Tier 3.
+- Tier 1 publisher with dead link, not in any oracle → Tier 1 if
+  publisher identity is confirmable; else Tier 3 (default-excluded).
 
 Implementation:
 
-- Zotero membership check via existing API key (memory:
-  `reference_zotero.md`, user ID 95318).
-- Primary-publisher allowlist: starts small (gov.vn, EVN, MOIT, PVN,
-  IEA, VNA, …); grows as needed; maintained alongside the verification
-  script.
-- Tier 3 interactive prompt: per source, present URL + claim snippet,
-  capture verdict (primary / secondary / reject) + free-text note.
+- Fuzzy URL+title canonicalization (host normalization `en./www./m.`,
+  strip query/fragment, fuse PDF/HTML twins, fuzzy title match for
+  preprint/publication pairs) — one row per *document of record*, not
+  per URL string.
+- Tier-2 oracle precedence: `pipeline.ods` → `rag_corpus/` → Zotero
+  (API, memory `reference_zotero.md`, user ID 95318) → domain allowlist.
+- Tier-1 publisher allowlist: starts small (`gov.vn`, `chinhphu.vn`,
+  `moit.gov.vn`, `evn.com.vn`, `pvn.vn`, `worldbank.org`, `adb.org`,
+  `iea.org`, `undp.org`, …); grows by explicit promotion.
+- Tier-2 domain allowlist: `{gem.wiki, enerdata.net}`; grows by explicit
+  promotion only (never by default — generics like `worldpowerdata.com`,
+  `database.earth`, `worldpowerplants.com` stay Tier 3 until earned).
+- Tier-3 default-exclude UX: operator sees a summary "N URLs excluded
+  by default; review? [y/N]" — drill-down on demand, not per-URL prompt.
+  Promotion question (per URL when drilled): "Is this URL the source of
+  record for the claim, or is it citing another source?" Most tertiaries
+  cite nothing → answer is trivial → exclusion maintained.
 - Output: `experiments/exp3/verified_bibliography.csv` —
-  `(source_url, tier, primary, notes)`.
+  `(source_url_canonical, tier, primary, oracle_hit, notes)`.
 
 ## Reconstruction strategies (compared)
 
