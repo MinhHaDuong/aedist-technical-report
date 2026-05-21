@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Split Makefile by workpackage (v2 against current main)
+Created: 2026-05-21
+Author: claude
+
+--- log ---
+2026-05-21T12:00Z claude created — refile of 0140 (superseded) against current main state
+
+--- body ---
+## Context
+
+Reopens [[0140-split-build-by-workpackage]] which was attempted on
+2026-05-01 and abandoned after the worktree's commits drifted three weeks
+behind a moving `Makefile`. The closing rationale: handoff-artifact
+snapshots from the original work conflict with main's regenerated
+versions, and `experiments/Makefile` has since grown new targets
+(`exp1-reasoning-topup`, `exp1-cost-summary`, Pareto figure paths,
+`p1_base.topup` extraction) that the original split did not consider.
+
+The structural intent stands and matches the project rule in
+`~/.claude/rules/coding-python.md`:
+
+> Split the build by workpackage. Analysis (Python/R, data access) and
+> writing (LaTeX, Quarto) workpackages live in separate Makefiles. A
+> writing-side build must produce the manuscript from handoff artifacts
+> alone — no `uv run`, no data fetch.
+
+## Current state (2026-05-21)
+
+The repository has two Makefiles:
+
+- `experiments/Makefile` — analysis-side. Drives extract, evaluate,
+  measurements.jsonl assembly, all tabulators (`tab_exp1_cost_summary`,
+  `tab_exp1_reasoning_topup`, `tab_per_run`, etc.), all figures
+  (`fig_census_direct`, `fig_pareto`, `fig_regimes_scatter`). Targets
+  write into `../report/inputs/generated/` and `../slides/inputs/generated/`.
+- No top-level / writing-side Makefile. `report/report.pdf` and
+  `slides/slides.pdf` are built ad-hoc (manual tectonic / latexmk).
+
+## Actions (v2)
+
+1. Inventory the current `experiments/Makefile` (≈300 lines as of
+   2026-05-21) and tag each target with its workpackage.
+2. Create three Makefiles:
+   - **`analysis.mk`** (or keep at `experiments/Makefile`) — everything
+     that needs `uv run` / Python / network. Owns `measurements.jsonl`,
+     all `.record.json` regeneration, all tabulators, all figures.
+   - **`paper.mk`** at repo root — builds `report/report.pdf` from
+     `report/inputs/generated/**` taken as committed inputs. TeX +
+     bibtex only; no `uv run`.
+   - **`slides.mk`** at repo root — builds `slides/slides.pdf` from
+     `slides/inputs/generated/**` taken as committed inputs. TeX only;
+     no `uv run`.
+3. Top-level `Makefile` dispatches: `make analysis|paper|slides`
+   delegate via `$(MAKE) -f <file>`.
+4. Audit `report/inputs/generated/` and `slides/inputs/generated/` for
+   completeness — every file `paper.mk`/`slides.mk` references must be
+   committed. Add to `analysis.mk` any generator that's still missing.
+5. Add `tests/test_makefile_split.py` (`@pytest.mark.adherence`)
+   asserting `paper.mk`/`slides.mk` contain no `uv run`, no Python, no
+   `wget`/`curl`.
+
+## Test
+
+Clean-room build of `paper.mk` and `slides.mk` in a container with
+TeX Live only (no Python, no internet). Both must succeed from the
+state of `report/inputs/generated/` and `slides/inputs/generated/` as
+committed.
+
+## Exit criteria
+
+- [ ] `analysis.mk`, `paper.mk`, `slides.mk` exist; top-level `Makefile`
+      is dispatch-only.
+- [ ] `paper.mk` and `slides.mk` build without Python / uv / network.
+- [ ] Handoff manifest documented at the top of `analysis.mk`.
+- [ ] Adherence test enforces "no Python in writing-side Makefiles".
+- [ ] `make check` passes.
+
+## Differences from 0140
+
+- Drop the original handoff-artifact-snapshot commit — regenerate
+  fresh from current main's analysis pipeline.
+- Account for new targets added since 2026-05-01: `exp1-reasoning-topup`,
+  `exp1-cost-summary`, Pareto figure (`fig_pareto`), `p1_base.topup`
+  extraction.
+- Account for two new generated tables (`tab_exp1_cost_summary.tex`,
+  `tab_exp1_reasoning_topup.tex`).

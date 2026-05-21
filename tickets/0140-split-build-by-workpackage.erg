@@ -2,6 +2,7 @@
 Title: Split Makefile by workpackage (analysis / report / slides)
 Created: 2026-04-23
 Author: claude
+Closed: Superseded — 3-week-old branch's structural commits conflict with current Makefile additions (exp1-reasoning-topup, exp1-cost-summary, Pareto figure paths) and stale handoff-artifact snapshots; refile as 0205 against current main
 
 --- log ---
 2026-04-23T12:06Z claude created
@@ -10,6 +11,7 @@ Author: claude
 2026-04-30T20:05Z claude note sweep-assess: not-picked hash:b59926afa707 scope:split 225-line Makefile into analysis.mk, paper.mk, slides.mk with dispatch-only top level risk:medium — Makefile changes can silently break builds
 2026-05-02T00:00Z claude note sweep-skip: three-strikes hash:b59926afa707
 
+2026-05-21T12:03Z HDMX-coding-agent closed — Superseded — 3-week-old branch's structural commits conflict with current Makefile additions (exp1-reasoning-topup, exp1-cost-summary, Pareto figure paths) and stale handoff-artifact snapshots; refile as 0205 against current main
 --- body ---
 **Status: needs-human review.** Three consecutive sweep cycles did not close this ticket. Makefile refactoring requires careful coverage verification to avoid silent build breaks. Recommend manual triage for scheduling.
 ## Context
