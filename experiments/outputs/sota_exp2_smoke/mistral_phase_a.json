@@ -1,22 +1,27 @@
 {
-  "run_id": "bc30a9fbdbe0",
-  "timestamp": "2026-05-21T12:18:05.227756Z",
+  "run_id": "4d7c980f18ab",
+  "timestamp": "2026-05-21T14:22:33.513445Z",
   "method": "frontier",
   "method_params": {
     "model": "mistral-large-2512",
     "temperature": null,
-    "max_tokens": 3510,
+    "max_tokens": 2949,
     "prompt_version": null,
     "extra": {
-      "recovered_from_raw": true
+      "prompt_preview": "You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you",
+      "conversation_id": "conv_019e4ae9f9bb772588df2ed5a984c955",
+      "agent_id": "ag_019e4ae9f838712aa54e3187c1768854"
     }
   },
   "resource_use": {
-    "wall_s": 57.643,
-    "cost_usd": 0.006379999999999999,
-    "tokens_in": 2230,
-    "tokens_out": 3510,
-    "cost_breakdown": null,
+    "wall_s": 46.284,
+    "cost_usd": 0.00561,
+    "tokens_in": 2373,
+    "tokens_out": 2949,
+    "cost_breakdown": {
+      "input": 0.0011865,
+      "output": 0.0044235
+    },
     "thinking_tokens": null
   },
   "result_file": null,
@@ -37,12 +42,12 @@
   "agent_mode": "phase_a_design",
   "synopsis_sha": null,
   "designed_prompt_sha": null,
-  "web_search_calls": null,
-  "citations": null,
+  "web_search_calls": [],
+  "citations": [],
   "parsed_table_path": null,
   "finish_reason": "stop",
   "retry_count": null,
   "error": null,
   "reasoning_summary": null,
-  "tool_calls_cost_usd": null
+  "tool_calls_cost_usd": 0.0
 }
