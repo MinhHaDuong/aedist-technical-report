@@ -2,10 +2,12 @@
 Title: Rename ablation legacy to exp1 throughout pipeline
 Created: 2026-05-20
 Author: claude
+Tag: deferred
 
 --- log ---
 2026-05-20T22:10Z claude created
 2026-05-21T00:00Z claude note renumbered from 0180 to 0192 to resolve ID collision with closed 0180 (sota-adapter-base-scaffold, PR #337)
+2026-05-21T14:00Z claude note deferred — touches manuscript main.md which 0178 also targets; merge risk too high 5 days before Econom'IA (2026-05-27). Scope decision recorded: Phase 2 ablation sweeps keep their name (genuinely ARE ablation); only Exp 1 mislabeled items rename. Revisit post-conference.
 
 --- body ---
 ## Context
