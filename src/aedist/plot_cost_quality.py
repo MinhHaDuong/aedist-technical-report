@@ -292,8 +292,8 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     ax_a.set_ylabel("Nombre de centrales bien identifiées")
     fig.supxlabel("Coût par requête (cents USD)")
 
-    family_handles = [
-        Line2D(
+    def _family_handle(slug_seed: str, label: str) -> Line2D:
+        return Line2D(
             [0],
             [0],
             color=model_family_color(slug_seed),
@@ -302,15 +302,18 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
             markersize=7,
             label=label,
         )
-        for slug_seed, label in (
-            ("claude-opus", "Claude"),
-            ("gpt-5", "GPT"),
-            ("mistral-large", "Mistral"),
-            ("qwen3-max", "Qwen"),
-            ("deepseek-v4", "DeepSeek"),
-        )
+
+    panel_a_handles = [
+        _family_handle("claude-opus", "Claude"),
+        _family_handle("gpt-5", "GPT"),
+        _family_handle("mistral-large", "Mistral"),
     ]
-    ax_a.legend(handles=family_handles, loc="upper left", fontsize="small")
+    panel_b_handles = [
+        _family_handle("qwen3-max", "Qwen"),
+        _family_handle("deepseek-v4", "DeepSeek"),
+    ]
+    ax_a.legend(handles=panel_a_handles, loc="upper left", fontsize="small")
+    ax_b.legend(handles=panel_b_handles, loc="upper left", fontsize="small")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
