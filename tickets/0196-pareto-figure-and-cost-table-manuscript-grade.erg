@@ -2,10 +2,12 @@
 Title: Promote Pareto figure and Exp 1 cost table to manuscript-grade
 Created: 2026-05-21
 Author: claude
+Blocked-by: 0194
 
 --- log ---
 2026-05-21T11:30Z claude created
 2026-05-21T11:45Z user note decisions on the six actions — see Decisions section in body
+2026-05-21T12:00Z user note three refinements: no local runs (drop local/cloud distinction); use palette.toml via family_color() from 0194 (not copy of PR pattern); whiskers = min/max
 
 --- body ---
 
@@ -44,14 +46,21 @@ User-confirmed direction for each original action:
 |---|---|---|
 | 1 | Caption rewrite | **YES** — and be explicit it's *Accuracy*, not Quality |
 | 2 | Pareto envelope | **NO** — do not draw |
-| 3 | Family colouring | **YES** — copy PR #375 pattern |
+| 3 | Family colouring | **YES** — via `palette.toml` + `family_color()` (built by 0194); do not hardcode |
 | 4 | Log x-axis | **PARAMETER** — `--xscale linear\|log` CLI flag; truly undecided, want both views, same script reused later |
 | 5 | Cost table → Annex A | **NO PORT** — instead, add a one-line markdown comment near Figure 2 pointing to the CSV path |
 | 6 | Quality composite | **DEFER** — confirmed; file a follow-up at the end |
 
-New requirement surfaced during decision: **median + whiskers** for
-within-model variability. The 5-rep F1 distribution per model should
-be visible as a point (median) with whiskers (min/max or IQR — TBD).
+New requirements surfaced during decision:
+- **median + whiskers** for within-model variability. The 5-rep F1
+  distribution per model is shown as a point (median F1) with
+  whiskers spanning **min/max** across the reps (not IQR — decision
+  locked).
+- **Drop the local/cloud distinction.** No local runs are part of
+  Experiment 1 (all 16 journal-lineup models are cloud). Remove the
+  `local==1` branch from `plot_pareto.py` and the cloud=○ / local=△
+  marker dimension. Use a single marker per point; family carries the
+  encoding via `family_color()`.
 
 ## Actions (revised)
 
@@ -62,15 +71,19 @@ be visible as a point (median) with whiskers (min/max or IQR — TBD).
    `\includegraphics` line giving the CSV path
    (`slides/inputs/generated/pareto.csv`) so a reader can audit the
    numbers.
-2. **`plot_pareto.py` — family colouring.** Three families: EN, FR, ZH.
-   Resolve via the model registry (the same source PR #375 used for
-   `plot_census`). Keep cloud=○ / local=△ as the second axis. Legend
-   shows both dimensions.
-3. **`plot_pareto.py` — median + whiskers.** Replace single-point
-   scatter with median F1 + whiskers across the 5 reps per model. The
-   per-rep F1 distribution is in `measurements.jsonl` — surface it
-   through the existing aggregation path (`tabulate_macros.load_and_summarize`
-   already exposes median; add min/max or IQR).
+2. **`plot_pareto.py` — family colouring.** Use `family_color()` from
+   `src/aedist/util.py` (built by ticket 0194). Three families today:
+   EN, FR, ZH. Single marker per model — no cloud/local distinction
+   (no local runs in Exp 1). Legend shows the three family colours.
+3. **`plot_pareto.py` — median + whiskers (min/max).** Replace
+   single-point scatter with median F1 + min/max whiskers across the
+   5 reps per model. The per-rep F1 distribution is in
+   `measurements.jsonl`; surface it through the existing aggregation
+   path (`tabulate_macros.load_and_summarize` already exposes median;
+   add min and max).
+3a. **Drop local-model branch.** Remove the `local==1` filter and
+   the `cloud` vs `local` markers from `plot_pareto.py`. Experiment 1
+   is all cloud; the distinction is not informative.
 4. **`plot_pareto.py` — `--xscale linear|log` CLI flag.** Default
    linear (current behaviour). When `--xscale log`: zero-cost local
    models can't plot on log; decide (a) drop with a warning, (b) plot
@@ -111,8 +124,10 @@ Envelope test dropped (decision #2 — no envelope drawn).
 - [ ] Caption rewritten: explicit "Accuracy", no stale pilot numbers,
   Exp-1 scope; adherence grep passes.
 - [ ] CSV path comment added in `main.md` near Figure 2.
-- [ ] Family colours visible in regenerated PDF; legend shows EN/FR/ZH.
-- [ ] Median + whiskers visible per model in regenerated PDF.
+- [ ] Family colours come from `family_color()` (not hardcoded);
+  legend shows EN/FR/ZH.
+- [ ] Median + min/max whiskers visible per model in regenerated PDF.
+- [ ] No cloud/local distinction remains in `plot_pareto.py`.
 - [ ] `--xscale linear` and `--xscale log` both produce readable figures;
   zero-cost handling documented in docstring.
 - [ ] No envelope drawn (regression check).
