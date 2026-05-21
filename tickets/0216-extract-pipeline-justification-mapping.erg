@@ -1,0 +1,154 @@
+%erg 0.1
+Title: Extract justification mapping from docs/pipeline.ods
+Created: 2026-05-21
+Author: HDMX-coding-agent
+Tag: deferred
+
+--- log ---
+2026-05-21T18:15Z HDMX-coding-agent created — gold-standard justification table is human-workflow shaped; needs ingestion + transform into a callable `justifies(doc_url, row_id) -> bool/evidence` API for downstream source-validation work
+
+--- body ---
+
+## Context
+
+`docs/pipeline.ods` is the project's gold-standard justification table:
+each plant-row is backed by one or more sources, and the human-authored
+justifications live in three places:
+
+1. **Source URL columns** — the canonical URL for the datum.
+2. **Notes column** — free-text justification (often citing where in
+   the source to look).
+3. **Reconciliation-with-source-tables columns** — cross-references to
+   primary tables (PDP8 annex 2 table 5, EVN annual report 2018 table N,
+   etc.).
+
+This table is curated for human workflow, not machine consumption.
+Nothing today exposes "does document X justify the value in row Y?"
+as a callable query. Several downstream tickets need that lookup:
+
+- **0118** (LLM adjudication of citation matches, post-talk) needs a
+  gold-standard mapping to score against — "is the model's cited URL
+  actually one of the human-curated justifying URLs for that row?"
+- **0119** (HITL memory accumulation, post-talk) seeds its memory from
+  the existing curated rulings encoded in pipeline.ods.
+- **0102** (escalation-rate decay, post-talk, blocked by 0118+0119)
+  measures decay against the rulings this table encodes.
+- **0202** (Exp 3 reconstruction) uses pipeline.ods as Tier-2 oracle
+  (a) in the URL classifier. Currently only the URL-presence check is
+  cheap; this ticket extends to URL+claim binding ("URL X justifies
+  attribute A of plant P").
+
+Without this extraction, the gold standard is locked behind manual
+inspection of an ODS file by an operator. Automating it converts a
+hand-curated artefact into a load-bearing eval/oracle component.
+
+## Relevant files
+
+- `docs/pipeline.ods` — source of truth. Multi-sheet workbook; relevant
+  sheets are at minimum the per-row plant inventory + a References
+  sheet. The exact sheet structure should be discovered during
+  ingestion, not assumed here.
+- `data/rag_corpus/` — 18 primary-source markdown files referenced by
+  many pipeline.ods rows; the ODS rows may name these files directly
+  in their reconciliation columns. The ingestion must resolve those
+  references.
+- `tests/fixtures/exp3_source_mistral_citations.json` — the 42 unique
+  URLs from Exp 2's Mistral deep-research bibliography. Acceptance
+  smoke target for the extracted mapping: of those 42 URLs, how many
+  match an ODS justification? (Higher = more of the bibliography is
+  already gold-justified.)
+
+## Actions
+
+1. **Survey the workbook structure.** Open `docs/pipeline.ods` with
+   pyexcel-ods or python-odf or similar (no new heavyweight deps —
+   reuse what's in pyproject.toml if anything; else add a thin
+   dependency). Enumerate sheets, column headers per sheet, row counts.
+   Document findings in a short note checked in as
+   `experiments/exp3/pipeline_schema.md`.
+2. **Design the target schema.** A flat JSONL or CSV row per
+   `(plant_row_id, source_ref, justification_text, justification_kind)`
+   tuple, where:
+   - `source_ref` is canonicalised: URL (after host normalisation,
+     query-string strip, PDF/HTML twin fusion); or `data/rag_corpus/<file>.md`
+     if the reconciliation column points to a corpus file.
+   - `justification_kind` ∈ `{url, note, table_ref}` matching which of
+     the three column groups the entry came from.
+   - `plant_row_id` is whatever the ODS uses as its stable row key.
+3. **Implement the extractor.** `scripts/extract_pipeline_justifications.py`
+   reads the ODS and writes the mapping to
+   `experiments/exp3/pipeline_justifications.jsonl`. Idempotent;
+   re-running produces a byte-identical file unless the source ODS
+   changed.
+4. **Build the query API.** `src/aedist/justifications.py` exposes
+   `justifies(source_ref: str, row_id: str) -> Justification | None`
+   reading from the jsonl. Fuzzy URL canonicalisation matches the
+   classifier in 0202 (one row per document of record).
+5. **Wire as Tier-2 oracle.** 0202's Tier-2 classifier currently
+   checks "URL in pipeline.ods References sheet" as a presence test.
+   Extend to "URL is named as a justification for any plant row" via
+   the new API.
+6. **Acceptance smoke.** Against the 42-URL Mistral bibliography fixture:
+   report (a) how many URLs match a pipeline.ods justification, (b) how
+   many are unmatched (candidates for the Tier-3 default-exclude
+   tier), (c) which plant rows are referenced by the matched URLs.
+   This output is the eval baseline 0118 will score against.
+
+## Test
+
+`tests/test_pipeline_justifications.py`:
+
+- `test_schema_columns_present` — the produced jsonl has the four
+  required keys per row.
+- `test_url_canonicalization` — `https://gem.wiki/Page` and
+  `https://www.gem.wiki/Page/` resolve to the same canonical form;
+  PDF and HTML twins fuse.
+- `test_corpus_reference_resolution` — a reconciliation cell naming
+  `PDP8_annex2_table5` resolves to `data/rag_corpus/PDP8_annex2_table5.md`.
+- `test_justifies_query_returns_evidence` — given a known
+  (URL, row_id) pair from a fixture, the API returns the
+  justification text and kind.
+- `test_unknown_pair_returns_none` — unmatched pairs return None
+  (not an exception).
+
+Fixture: a 5-row excerpt of pipeline.ods as
+`tests/fixtures/pipeline_excerpt.ods`, hand-picked to cover all three
+justification kinds. Keep small for round-trip-fast tests.
+
+## Verification
+
+- [ ] `pipeline_justifications.jsonl` produced and checked in.
+- [ ] `justifies()` API callable from a python REPL against the
+      generated mapping.
+- [ ] Acceptance smoke reports a non-trivial match rate on the
+      Mistral bibliography fixture (set a floor only after the first
+      run — purely informational at first).
+- [ ] 0202's Tier-2 classifier reads from `justifies()` (not from a
+      naive URL-in-cell grep) — this is the deferred integration step.
+
+## Invariants
+
+- The ODS file is read-only; the extractor never writes back.
+- The generated jsonl is committed (handoff artefact, per
+  `~/.claude/rules/git.md`).
+- URL canonicalisation is centralised and shared with 0202's
+  classifier (no two normalisers in the codebase).
+
+## Exit criteria
+
+- [ ] `scripts/extract_pipeline_justifications.py` ingests pipeline.ods.
+- [ ] `experiments/exp3/pipeline_justifications.jsonl` checked in.
+- [ ] `src/aedist/justifications.py` exposes `justifies()` query API.
+- [ ] `tests/test_pipeline_justifications.py` passes.
+- [ ] `experiments/exp3/pipeline_schema.md` documents the discovered
+      workbook structure.
+- [ ] Acceptance smoke output (matched / unmatched URLs against the
+      Mistral bibliography) recorded in this ticket's log.
+
+## Notes
+
+This is post-talk work. Tag `deferred` until after 2026-05-27. The
+talk's Exp 3 demo can run with manual operator inspection of
+pipeline.ods; this ticket converts that to a programmatic oracle for
+the post-talk research line (0118/0119/0102) and for any later Exp 3
+re-runs.
