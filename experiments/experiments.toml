@@ -1028,6 +1028,15 @@ seed = 42
 # Anthropic subscription/plan, not registry pricing. Useful for
 # qualitative capability checks; not suitable for controlled sweeps
 # (no T=0/seed/max_tokens control).
+#
+# IMPORTANT (ticket 0209): this sweep runs via the legacy
+# `python -m aedist.query_direct --sweep sweep_smoke_claude_cli` path
+# ONLY. The job-board worker (`aedist.worker`) raises NotImplementedError
+# for route=claude-code-cli — the route's lack of T=0/seed/max_tokens
+# control is incompatible with the worker's budget / reproducibility
+# semantics. Do not run `aedist.manager generate --sweep
+# sweep_smoke_claude_cli && aedist.worker openrouter --drain` with this
+# config; you'll get a fast-failing NotImplementedError per job.
 [sets.modelset_claude_cli_smoke]
 model_ids = [
     "claude-sonnet-4-6-cli",

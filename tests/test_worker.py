@@ -1022,3 +1022,51 @@ def test_execute_threads_timeout_into_api_kwargs(tmp_path: Path) -> None:
 
     call_kwargs = patches["query_model"].call_args.kwargs
     assert call_kwargs.get("timeout") == 123
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0209: worker rejects route=claude-code-cli with a clear pointer.
+# ---------------------------------------------------------------------------
+
+
+def test_worker_rejects_claude_code_cli_route(tmp_path: Path) -> None:
+    """A model entry with route=claude-code-cli must fail fast in the worker.
+
+    Ticket 0160 wired the route through ``aedist.query_direct`` only.
+    The job-board worker (this module) raises NotImplementedError with
+    a clear pointer instead of crashing inside ``query_model`` on a
+    None client.
+    """
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("hello")
+
+    job = JobSpec(
+        job_id="cli-reject",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="claude-sonnet-4-6-cli",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+    )
+
+    cli_model = {
+        "name": "claude-sonnet-4-6-cli",
+        "route": "claude-code-cli",
+        "model_id": "claude-sonnet-4-6",
+    }
+    patches = _harness_patches(tmp_path)
+    patches["load_models"] = MagicMock(return_value=[cli_model])
+    patches["query_model"] = MagicMock(
+        side_effect=AssertionError("query_model must not be called")
+    )
+
+    worker = OpenRouterWorker(jobs_root=tmp_path / "jobs")
+    with patch.multiple("aedist.worker", **patches):
+        with pytest.raises(NotImplementedError, match="claude-code-cli"):
+            worker.execute(job)
+
+    # Confirm query_model was never reached.
+    patches["query_model"].assert_not_called()

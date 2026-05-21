@@ -335,6 +335,23 @@ class Worker:
         ``query_model`` so Ollama IDs dispatch through native /api/chat
         with ``num_ctx`` honoured (ticket 0139).
         """
+        # Ticket 0209: the claude-code-cli route (ticket 0160) is wired
+        # through ``aedist.query_direct.main`` only — not through the
+        # job-board worker. The route's adapter has no temperature,
+        # seed, or max_tokens control and bills against the user's
+        # Claude Code subscription, both of which conflict with the
+        # job-board's budget / reproducibility semantics. Fail fast
+        # here with a clear pointer instead of letting the call fall
+        # through ``query_model`` and crash with a NoneType client.
+        if (model_entry or {}).get("route") == "claude-code-cli":
+            raise NotImplementedError(  # noqa: hygiene — documented design choice
+                f"model {model_id!r} uses route=claude-code-cli, which is "
+                "not supported by the job-board worker. Run via "
+                "`python -m aedist.query_direct --model <id>` instead "
+                "(see ticket 0160 / PR #395 and the claude-code-cli row "
+                "in README.md → Model routes)."
+            )
+
         num_ctx = job.num_ctx if job is not None else 32768
         result = query_model(
             client,
