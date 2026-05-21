@@ -1,0 +1,203 @@
+%erg 0.1
+Title: Experiment 3 — reconstruction from verified bibliography (5 strategies × 5 models)
+Created: 2026-05-21
+Author: claude
+Blocked-by: 0166
+
+--- log ---
+2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
+
+--- body ---
+
+## Context
+
+Manuscript §3 ("From chatbots to knowledge management",
+`slides/manuscript/main.md` lines 39–50) argues that information
+staging matters: how a model integrates verified sources into a
+trusted inventory is itself a measurable variable. Exp 3 operationalises
+this as a stateful reconstruction sweep — start from Exp 2's cheapest
+deep-research output, throw away the inventory and table, keep the
+sectoral overview and bibliography, HITL-verify the bibliography, then
+rebuild the inventory from verified sources via four strategies,
+comparing against Exp 2's unverified table as null control.
+
+Replaces the §3 regimes-ladder portion of now-closed 0153. The
+existing `fig_regimes_scatter.pdf` is fossilised on pre-refresh model
+data and a misspecified ladder (mixed multi-turn coaxing with
+information regimes); supersedes 0135.
+
+Boundary with 0200 (the §5 stateful production demonstration): Exp 3
+selects the winning reconstruction strategy; the §5 work layers
+cell-level provenance verifiers + judgement memory on top of it. No
+overlap. Numbering call (Exp 3 vs Exp 4 for 0200) deferred — see
+"Follow-ups" below.
+
+## Starting state (= Exp 2 output)
+
+- Source agent: **cheapest among Exp 2 Phase B winners**. Resolves once
+  Exp 2 Phase B cost data is in; pin in this ticket's log when decided.
+- From the agent's deep-research report:
+  - **Kept**: sectoral overview, bibliography.
+  - **Thrown away**: inventory, table.
+
+## Verification protocol (HITL)
+
+Three-tier deterministic classifier; output is a verified-bibliography
+CSV checked into the repo.
+
+| Tier | Rule | Action |
+|------|------|--------|
+| 1 | Publisher is government, domestic public agency, company record, company press release, or government-owned news outlet | AUTO-OK + tagged primary |
+| 2 | Source doc is in user's Zotero library (and not Tier 1) | AUTO-OK + tagged non-primary |
+| 3 | Anything else | HITL — present claim snippet, await verdict |
+
+Edge cases (strictest-reading defaults; refine if they bite in practice):
+
+- State news outlet reporting on a derivative doc → Tier 1 (primary by
+  publisher; not by informational status).
+- Dead URL whose doc is in Zotero with PDF attachment → Tier 2 (Zotero
+  copy is citation of record).
+- Tier 1 publisher with dead link, not in Zotero → Tier 1 if publisher
+  identity is confirmable; else Tier 3.
+
+Implementation:
+
+- Zotero membership check via existing API key (memory:
+  `reference_zotero.md`, user ID 95318).
+- Primary-publisher allowlist: starts small (gov.vn, EVN, MOIT, PVN,
+  IEA, VNA, …); grows as needed; maintained alongside the verification
+  script.
+- Tier 3 interactive prompt: per source, present URL + claim snippet,
+  capture verdict (primary / secondary / reject) + free-text note.
+- Output: `experiments/exp3/verified_bibliography.csv` —
+  `(source_url, tier, primary, notes)`.
+
+## Reconstruction strategies (compared)
+
+| # | Strategy | Mechanics |
+|---|---|---|
+| 0 | **Null control** | Exp 2's unverified table, no reconstruction |
+| 1 | **Batch RAG** | All verified sources in system context, one shot |
+| 2 | **Incremental chronological** | One doc per turn, publication-date order |
+| 3 | **Incremental random** | One doc per turn, random order (seeded) |
+| 4 | **Incremental ranked** | One doc per turn, mistral-embed cosine similarity to task statement |
+
+State for strategies 2–4: the **working report** (table + bibliography
++ per-cell provenance), a structured object. At each turn, model
+receives (current report, next doc) and produces (updated report). The
+model does not get a growing raw-context window — only the structured
+state.
+
+## Matrix
+
+- Models: 5 reconstruction models (post-0134 regimes-scatter lineup).
+- Strategies: 5 conditions (1 null + 4 ways).
+- Reps: **3 per cell** (matches MoE rule; sufficient given Exp 1
+  stability).
+- Cost: reported, not controlled. Incremental strategies will be more
+  expensive than batch RAG due to per-turn state replay.
+
+## Ranker
+
+**`mistral-embed` + cosine similarity**, fixed across all reconstruction
+models. Cheap (~$0.10/M tokens; sub-cent for the whole bibliography),
+deterministic, no cross-model confound. Mistral does not ship a
+dedicated cross-encoder reranker (as of cutoff Jan 2026); embeddings +
+cosine is the in-stack equivalent.
+
+## Quality readout
+
+Two figures (locked in design dialogue 2026-05-21):
+
+1. **`fig_reconstruction_strategies.pdf`** — cost vs F1 per (model,
+   strategy). Replaces retired `fig_regimes_scatter.pdf`. Family
+   colouring per PR #375 / 0194 pattern; median + whiskers per Exp 1
+   convention.
+2. **`tab_reconstruction_quality_dims.{tex|md}`** — F1 + Coverage +
+   Trade-off + Local (the four H1–H4 dimensions where measurable) per
+   (model, strategy). The stateful reconstruction exposes per-cell
+   provenance, so these dimensions are nearly free at scoring time.
+   Lands in an Annex.
+
+## Relevant files
+
+- `slides/manuscript/main.md:39–50` — §3 prose this operationalises.
+- `tickets/0135-regimes-scatter-visual-tuning.erg` — superseded;
+  closed in same commit.
+- `tickets/0166-sota-frontier-experiment.erg` — Exp 2 umbrella;
+  produces the starting deep-research report.
+- `tickets/0200-exp3-tailored-solution-spec-and-run.erg` — sibling
+  scope; see "Follow-ups" for numbering reconciliation.
+- `src/aedist/plot_regimes_scatter.py` — retired; reborn as
+  `plot_reconstruction_strategies.py`.
+- `experiments/figures.toml` — register new figure.
+- `experiments/exp3/` — new directory: verified_bibliography.csv,
+  state-snapshot artefacts, reconstruction outputs.
+
+## Actions
+
+1. **Wait for Exp 2 Phase B output** (blocker: 0166). Pin cheapest
+   agent in this ticket's log.
+2. **Build the HITL verification script** with the Tier 1/2/3
+   classifier. Run once on the cheapest agent's bibliography. Output:
+   `experiments/exp3/verified_bibliography.csv`.
+3. **Build the reconstruction harness** — stateful runner maintaining
+   the working report; per-turn loop; persists final inventory +
+   per-cell provenance. Strategies 1–4 share the state object; differ
+   only in doc-presentation policy.
+4. **Test one before blasting** (project rule, `workflow.md`): per
+   strategy, dry-run prompt assembly + one real call against the
+   cheapest model before launching the full matrix.
+5. **Run the matrix**: 5 models × 5 strategies × 3 reps = 75 cells.
+6. **Score**: row-level F1 vs reference; cell-level provenance resolve
+   rate; coherence; temporal validity.
+7. **Generate the two artefacts** (figure + table).
+8. **Wire artefacts** into `slides/manuscript/main.md` §3 + relevant
+   Annex.
+9. **Update H-verdicts** in `docs/hypotheses.md` per Exp 3 evidence.
+
+## Test
+
+- `tests/test_verification_classifier.py` — Tier 1/2/3 logic on
+  fixtures (gov.vn URL → Tier 1; Zotero-hit URL → Tier 2; arbitrary
+  blog → Tier 3 prompt path).
+- `tests/test_reconstruction_runner.py` — given a fake doc stream and
+  model stub, the four strategies produce four distinct doc orderings;
+  state is updated, never appended-to.
+- `tests/test_reconstruction_no_stale_data.py` (adherence) — greps
+  `fig_reconstruction_strategies` provenance for pre-refresh model
+  slugs.
+
+## Invariants
+
+- Verified bibliography is identical across all four reconstruction
+  strategies. Source-set divergence breaks the comparison.
+- State is per (model, strategy, rep), captured in a structured object,
+  not a context-window dump.
+- Null control uses Exp 2's table verbatim; no post-hoc edits.
+- `mistral-embed` is the only ranker used across all models.
+- No inline pgfplots (covered by existing `test_no_inline_plots.py`).
+
+## Follow-ups
+
+- **Numbering**: if this experiment keeps "Exp 3", rename 0200 to
+  "Experiment 4 — §5 stateful production" and add `Blocked-by: 0202`
+  there. Pending explicit user call.
+- **Slide-side wiring**: `slides/slides.tex:294` currently
+  `\includegraphics` the retired figure. Replace once
+  `fig_reconstruction_strategies.pdf` is built.
+
+## Exit criteria
+
+- [ ] `experiments/exp3/verified_bibliography.csv` produced and
+      reviewed.
+- [ ] 75-cell matrix complete with `repeat=3` and seed pinning.
+- [ ] `fig_reconstruction_strategies.pdf` generated, wired into
+      `slides/manuscript/main.md` §3 and `slides/slides.tex`.
+- [ ] `tab_reconstruction_quality_dims.*` generated, included in Annex.
+- [ ] `docs/hypotheses.md` updated with Exp 3 evidence on H1–H4.
+- [ ] `tests/test_verification_classifier.py`,
+      `tests/test_reconstruction_runner.py` pass.
+- [ ] `make check-fast` passes.
+- [ ] 0135 closed-as-superseded (done in same commit as creation).
+- [ ] 0200 renaming decision recorded (Follow-ups item).

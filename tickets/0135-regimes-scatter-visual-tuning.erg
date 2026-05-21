@@ -2,11 +2,14 @@
 Title: Tuning visuel du regimes scatter après refresh modèles
 Created: 2026-04-29
 Author: claude
+Closed: superseded by 0202
 
 --- log ---
 2026-04-29T20:30Z claude created
 
 2026-05-10T21:55Z HDMX-coding-agent note blocker 0134 closed — Blocked-by removed
+2026-05-21T13:35Z claude note superseded by 0202 — the regimes-scatter figure is being replaced, not tuned; the underlying ladder was misspecified (multi-turn is an interaction pattern, not an information regime); replacement design is "reconstruction from verified bibliography" with five strategies (null / batch RAG / incremental chrono+random+ranked); ranker = mistral-embed; HITL source verification inside Exp 3
+
 --- body ---
 ## Context
 
