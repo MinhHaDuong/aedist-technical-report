@@ -11,9 +11,10 @@ Tag: deferred
 
 ## Context
 
-`docs/pipeline.ods` is the project's gold-standard justification table:
-each plant-row is backed by one or more sources, and the human-authored
-justifications live in three places:
+`docs/pipeline.ods` is the project's **source of truth for rating
+provenance** — a human-curated, gold-standard justification table.
+Each plant-row is backed by one or more sources, and the
+human-authored justifications live in three places:
 
 1. **Source URL columns** — the canonical URL for the datum.
 2. **Notes column** — free-text justification (often citing where in
@@ -24,23 +25,40 @@ justifications live in three places:
 
 This table is curated for human workflow, not machine consumption.
 Nothing today exposes "does document X justify the value in row Y?"
-as a callable query. Several downstream tickets need that lookup:
+as a callable query.
 
-- **0118** (LLM adjudication of citation matches, post-talk) needs a
-  gold-standard mapping to score against — "is the model's cited URL
-  actually one of the human-curated justifying URLs for that row?"
+### Why this ticket is load-bearing, not optional
+
+The downstream source-validation pipeline rests on an LLM adjudicator
+(0118) that rates whether a cited URL supports a value. **That
+adjudicator is itself an agent — and an agent that grades other agents
+must be validated against ground truth, or the whole evaluation is
+circular** ("we trust the judge because the judge says it's right").
+
+`pipeline.ods` is the only existing ground truth. Until it is extracted
+to a callable API, every "X cites Y correctly" claim in the
+provenance-grounding line depends on either (a) manual operator
+inspection of an ODS file, or (b) an unvalidated LLM adjudicator. Both
+are deal-breakers for a publishable claim about source grounding.
+
+### Downstream dependents
+
+- **0118** (LLM adjudication, post-talk) **must** validate against the
+  mapping this ticket produces, or its support-ratings are unscored.
 - **0119** (HITL memory accumulation, post-talk) seeds its memory from
-  the existing curated rulings encoded in pipeline.ods.
-- **0102** (escalation-rate decay, post-talk, blocked by 0118+0119)
-  measures decay against the rulings this table encodes.
-- **0202** (Exp 3 reconstruction) uses pipeline.ods as Tier-2 oracle
-  (a) in the URL classifier. Currently only the URL-presence check is
-  cheap; this ticket extends to URL+claim binding ("URL X justifies
-  attribute A of plant P").
+  the existing curated rulings encoded here.
+- **0102** (escalation-rate decay, blocked by 0118+0119) measures the
+  fusion pipeline against the rulings this table encodes.
+- **0202** (Exp 3 reconstruction) currently treats pipeline.ods as
+  Tier-2 oracle (a) via a naive URL-presence test; this ticket
+  upgrades that to URL+claim binding ("URL X justifies attribute A of
+  plant P").
 
-Without this extraction, the gold standard is locked behind manual
-inspection of an ODS file by an operator. Automating it converts a
-hand-curated artefact into a load-bearing eval/oracle component.
+Without 0216, the post-talk provenance-grounding research line has no
+non-circular evaluation. The talk's Exp 3 demo can still run with
+manual operator inspection of pipeline.ods — this ticket is not on
+the talk critical path — but the publishable defence of the source-
+validation thesis is gated on it.
 
 ## Relevant files
 

@@ -2,6 +2,7 @@
 Title: Source-grounding Phase 2 — LLM adjudication of citation matches
 Created: 2026-04-24
 Author: claude
+Blocked-by: 0216
 
 --- log ---
 2026-04-24T00:00Z claude created — post-conference gate; blocked until after 2026-05-27 talk
@@ -14,6 +15,7 @@ Author: claude
 
 2026-04-30T20:05Z claude note sweep-skip: status-post-conference hash:866d6f2c54aa
 2026-04-30T21:38Z claude note sweep-skip: status-post-conference hash:48d29b09d538
+2026-05-21T18:30Z HDMX-coding-agent note added Blocked-by 0216 — the LLM adjudicator is itself an agent and must be validated against ground truth (pipeline.ods extracted to a callable API); without 0216 the support-rating output is unscored / circularly self-validated
 --- body ---
 * at the URL actually support the extracted value?
 This requires LLM adjudication, not just URL resolution.
