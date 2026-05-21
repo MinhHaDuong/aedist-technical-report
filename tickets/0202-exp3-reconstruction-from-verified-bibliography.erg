@@ -2,11 +2,12 @@
 Title: Experiment 3 — reconstruction from verified bibliography (5 strategies × 5 models)
 Created: 2026-05-21
 Author: claude
-Blocked-by: 0166
+Blocked-by: 0185
 
 --- log ---
 2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
 2026-05-21T15:00Z claude note Tier scheme sharpened in design dialogue: provenance role (primary/secondary/tertiary) not institution; default-exclude for Tier 3; four-oracle Tier-2 stack (pipeline.ods, rag_corpus, Zotero, allowlist {gem.wiki, enerdata.net}). Canonical scheme landed in report/inputs/verification_methods.tex §sec:verif-filter with Admiralty STANAG 2511 antecedent cited. Smoke fixture (experiments/outputs/sota_smoke/) confirmed as the development corpus — ~50 unique URLs across 4 provider schemas covering Tier-1/2/3 edge cases.
+2026-05-21T16:00Z HDMX-coding-agent note swapped Blocked-by 0166 → 0185 — backlog audit found 0202 only needs one cheap deep-research bibliography (produced by 0185), not the full 12-cell N=3 cross-eval that 0166 promises; 0166/0170/0171 deferred to post-talk full-scope work
 
 --- body ---
 
