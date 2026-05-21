@@ -145,7 +145,7 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 
 ### Evaluation
 
-Each run is evaluated against the reference by `src/aedist/evaluate.py`. Plant pairs are matched by mixed-integer linear programming (MILP) — the LP matcher in `src/aedist/matching/lp.py` (ADR-2) — using rapidfuzz `partial_ratio` name similarity as the cost function. Candidate pairs require `similarity_threshold ≥ 90` (default; integer 0–100 scale). The optimal one-to-one assignment is then solved globally rather than picked greedily. Metrics recorded per run:
+Each run is evaluated against the reference by `src/aedist/evaluate.py`. Plant pairs are matched by mixed-integer linear programming (MILP) — the LP matcher in `src/aedist/matching/lp.py` (ADR-2) — minimising a cost that combines (i) rapidfuzz `partial_ratio` name similarity, with candidate pairs requiring `similarity_threshold ≥ 90` (integer 0–100 scale), and (ii) a small capacity-difference term (`capacity_weight · |Δcapacity_MWe|`, default weight 0.001). Province and fuel are deliberately not part of the matching cost (ADR-3); they are scored separately as cell-level attribute accuracy on the matched pairs. The optimal one-to-one assignment is then solved globally rather than picked greedily. Metrics recorded per run:
 
 | Metric | Level | Description |
 |---|---|---|
