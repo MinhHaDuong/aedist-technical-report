@@ -298,6 +298,50 @@ def test_run_one_failure(tmp_path: Path) -> None:
     assert "execution failed" in error_txt
 
 
+class _FailThenSucceedWorker(Worker):
+    """Worker that fails on the first execute, succeeds on the second."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._call_count = 0
+
+    def execute(self, job: JobSpec) -> dict:
+        self._call_count += 1
+        if self._call_count == 1:
+            raise RuntimeError("simulated 429")
+        return {
+            "result_file": "outputs/test/result.json",
+            "wall_seconds": 1.0,
+            "cost_usd": 0.01,
+            "tokens_in": 100,
+            "tokens_out": 50,
+        }
+
+
+def test_drain_continues_after_job_failure(tmp_path: Path) -> None:
+    """drain() continues to next pending job after a failure (ticket 0203).
+
+    Before the fix, a failed job caused run_one() to return None, which
+    the drain loop interpreted as "queue empty" and exited — leaving
+    remaining pending jobs unprocessed.
+    """
+    jobs_root = tmp_path / "jobs"
+    worker = _FailThenSucceedWorker("w1", jobs_root=jobs_root)
+
+    job1 = _make_job(job_id="will-fail", priority=90)
+    job2 = _make_job(job_id="will-pass", priority=50)
+    _write_pending(jobs_root, job1)
+    _write_pending(jobs_root, job2)
+
+    records = worker.drain()
+
+    assert len(records) == 1
+    assert (jobs_root / "failed" / "will-fail.yaml").exists()
+    assert (jobs_root / "failed" / "will-fail.error.txt").exists()
+    assert (jobs_root / "done" / "will-pass.yaml").exists()
+    assert not list((jobs_root / "pending").iterdir())
+
+
 # ---------------------------------------------------------------------------
 # PadmeWorker tests
 # ---------------------------------------------------------------------------

@@ -765,6 +765,25 @@ class Worker:
         finally:
             signal.signal(signal.SIGALRM, old_handler)
 
+    def drain(self) -> list[RunRecord]:
+        """Process all pending jobs then exit. Continues past failures.
+
+        Unlike the naive run_one()-until-None loop, this re-polls after
+        a failure to distinguish "job failed" from "queue empty".
+        """
+        records: list[RunRecord] = []
+        while True:
+            record = self.run_one()
+            if record is not None:
+                log.info("Completed job, method=%s", record.method)
+                records.append(record)
+            elif self.poll() is None:
+                log.info("Queue drained, exiting.")
+                break
+            else:
+                log.info("Job failed, continuing to next pending job.")
+        return records
+
     # -- helpers ---------------------------------------------------------------
 
     def _find_pending_file(self, job: JobSpec) -> Path:
@@ -886,12 +905,7 @@ def main(argv=None):
             if record is None:
                 time.sleep(5)
     elif args.drain:
-        while True:
-            record = worker.run_one()
-            if record is None:
-                log.info("Queue drained, exiting.")
-                break
-            log.info("Completed job, method=%s", record.method)
+        worker.drain()
     else:
         record = worker.run_one()
         if record is None:
