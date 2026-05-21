@@ -62,6 +62,12 @@ DEFAULT_PRICE_PER_MTOK_OUT = 6.0
 DEFAULT_PRICE_PER_MTOK_REASONING = 6.0
 DEFAULT_PRICE_PER_WEB_SEARCH_CALL_USD = 0.010
 
+# Hard cap per call — ticket 0173 / 0187 alignment with sibling adapters
+# (adapter_openai_responses.DEFAULT_COST_CAP_USD, adapter_mistral.run cap_usd).
+# Previously 0.50 (drift): smoke happens to stay under that, but the cap is a
+# guardrail separate from the canonical smoke prompt/max_tokens choice.
+DEFAULT_COST_CAP_USD = 10.0
+
 
 def build_request(
     prompt: str,
@@ -143,6 +149,8 @@ def parse_response(
     prompt: str | None = None,
     max_tokens: int | None = None,
     wall_s: float | None = None,
+    enable_thinking: bool = True,
+    enable_search: bool = True,
 ) -> RunRecord:
     """Convert a DashScope response into a canonical ``RunRecord``.
 
@@ -236,8 +244,8 @@ def parse_response(
             model=meta.get("model_id", DEFAULT_MODEL),
             max_tokens=max_tokens,
             extra={
-                "enable_thinking": True,
-                "enable_search": True,
+                "enable_thinking": enable_thinking,
+                "enable_search": enable_search,
                 "endpoint": meta.get("base_url", DEFAULT_BASE_URL),
                 "prompt_preview": (prompt or "")[:200] if prompt else None,
             },
@@ -302,7 +310,7 @@ def run(
     enable_thinking: bool = True,
     enable_search: bool = True,
     model_meta: dict | None = None,
-    cost_cap_usd: float = 0.50,
+    cost_cap_usd: float = DEFAULT_COST_CAP_USD,
     base_url: str = DEFAULT_BASE_URL,
 ) -> RunRecord:
     """Execute one DashScope call (or print the dry-run payload)."""
@@ -350,4 +358,6 @@ def run(
         prompt=prompt,
         max_tokens=max_tokens,
         wall_s=wall_s,
+        enable_thinking=enable_thinking,
+        enable_search=enable_search,
     )

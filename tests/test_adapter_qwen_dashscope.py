@@ -19,6 +19,7 @@ import pytest
 
 from aedist.adapter_qwen_dashscope import (
     AGENT_FAMILY,
+    DEFAULT_COST_CAP_USD,
     DEFAULT_MODEL,
     build_request,
     parse_response,
@@ -179,3 +180,35 @@ def test_build_request_uses_message_result_format() -> None:
     """
     payload = build_request("hello", max_tokens=100)
     assert payload["result_format"] == "message"
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0187 follow-ups — ADR-7 call-site fidelity + cost-cap default
+# ---------------------------------------------------------------------------
+
+
+def test_method_params_extra_reflects_call_site_args(
+    canned_response: dict, price_card: dict
+) -> None:
+    """ADR-7: ``method_params.extra`` must record the *actual* call-site flags,
+    not hardcoded literals. Before ticket 0187, ``parse_response`` always
+    wrote ``enable_thinking=True`` and ``enable_search=True`` regardless of
+    how the adapter was invoked. A future caller running with reasoning or
+    search disabled would have its run misclassified in the scientific record.
+    """
+    record = parse_response(
+        canned_response,
+        model_meta=price_card,
+        enable_thinking=False,
+        enable_search=False,
+    )
+    assert record.method_params.extra is not None
+    assert record.method_params.extra["enable_thinking"] is False
+    assert record.method_params.extra["enable_search"] is False
+
+
+def test_default_cost_cap_matches_ticket_spec() -> None:
+    """Sibling adapters (mistral, openai-responses) use $10 per call. The
+    qwen adapter previously drifted to $0.50; ticket 0187 aligns it.
+    """
+    assert DEFAULT_COST_CAP_USD == 10.0
