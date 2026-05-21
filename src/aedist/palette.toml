@@ -4,12 +4,16 @@
 # Change a value here and all figures update on next `make figures`.
 
 [semantic]
-matched   = "#2E86AB"  # blue — correctly identified (TP)
-halluc    = "#F5A623"  # orange — hallucinated (FP)
-refusal   = "#BBBBBB"  # gray — model refusal markers
-alert     = "#E74C3C"  # red — warning / primary reference
-reference = "#2ca02c"  # green — inventory reference line (163 plants)
+matched     = "#2E86AB"  # blue — correctly identified (TP)
+halluc      = "#F5A623"  # orange — hallucinated (FP)
+refusal     = "#BBBBBB"  # gray — model refusal markers
+alert       = "#E74C3C"  # red — warning / primary reference
+reference   = "#2ca02c"  # green — inventory reference line (163 plants)
+local_model = "#1A5070"  # darker blue — Padme/local hardware models (vs cloud)
 
+# Architecture families — used by plot_scaling_curve.py for the Qwen 3.5 / Gemma 4
+# scaling sweep. Each family has a direct + rag color pair. Independent concept
+# from the language families below.
 [families.qwen]
 direct = "#AAAAAA"
 rag    = "#2E86AB"
@@ -22,6 +26,68 @@ rag    = "#E07B39"
 direct = "#888888"
 rag    = "#444444"
 
+# Language families — coding scheme described in manuscript Annex A: each
+# journal-lineup model is bucketed by the dominant pre-training language
+# (EN = Anglophone labs, FR = Mistral, ZH = mainland Chinese labs). Plots
+# colored by language family must read from these entries via
+# ``aedist.util.family_color()``. Colors are Wong colorblind-safe.
+[language_families]
+EN       = "#0072B2"  # blue
+FR       = "#D55E00"  # vermillion
+ZH       = "#009E73"  # bluish-green
+fallback = "#999999"  # gray (unknown / non-journal-lineup)
+
+# Provider → language family. Source of truth for who-belongs-where lives in
+# experiments/models.yaml (the `provider` field); this table only encodes the
+# lab-nationality mapping the manuscript uses. Add new providers here when
+# the registry grows.
+[language_families.provider_map]
+Anthropic     = "EN"
+OpenAI        = "EN"
+Google        = "EN"
+Meta          = "EN"
+NVIDIA        = "EN"
+xAI           = "EN"
+Inception     = "EN"
+Mistral       = "FR"
+Alibaba       = "ZH"
+Baidu         = "ZH"
+ByteDance     = "ZH"
+DeepSeek      = "ZH"
+MiniMax       = "ZH"
+"Moonshot AI" = "ZH"
+StepFun       = "ZH"
+Tencent       = "ZH"
+Xiaomi        = "ZH"
+"Zhipu AI"    = "ZH"
+
+# Model-slug-prefix fallback for plots that operate on bare slugs (e.g. local
+# Ollama models) and never see a provider field. Longest-prefix match wins.
+[language_families.slug_prefix_map]
+"claude"    = "EN"
+"gpt"       = "EN"
+"o1"        = "EN"
+"o3"        = "EN"
+"o4"        = "EN"
+"gemini"    = "EN"
+"gemma"     = "EN"
+"llama"     = "EN"
+"nemotron"  = "EN"
+"grok"      = "EN"
+"mercury"   = "EN"
+"mistral"   = "FR"
+"devstral"  = "FR"
+"ministral" = "FR"
+"qwen"      = "ZH"
+"deepseek"  = "ZH"
+"ernie"     = "ZH"
+"glm"       = "ZH"
+"hy"        = "ZH"
+"kimi"      = "ZH"
+"mimo"      = "ZH"
+"minimax"   = "ZH"
+"step"      = "ZH"
+
 [quality]
 # One dot = one power plant; color encodes evidence level
 hallucinated = "#E74C3C"  # red   — FP: plant not in reference
@@ -29,3 +95,4 @@ identified   = "#F1C40F"  # yellow — TP: matched by name
 chars_ok     = "#E67E22"  # orange — TP + correct fuel/status/province
 sourced      = "#27AE60"  # green  — TP + primary source citation
 verified     = "#2E86AB"  # blue   — TP + independently verified
+

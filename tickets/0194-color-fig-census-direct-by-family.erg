@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-21T08:00Z claude created
 2026-05-21T08:15Z claude note amended scope — single shared config, all plot_*.py consume it
+2026-05-21T15:30Z claude note implemented: palette.toml [language_families], family_color() helper, refactored plot_method_convergence + plot_pareto
 
 --- body ---
 ## Context

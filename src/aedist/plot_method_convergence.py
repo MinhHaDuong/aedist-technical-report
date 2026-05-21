@@ -13,22 +13,14 @@ Usage:
 """
 
 import argparse
-import colorsys
 import csv
-import hashlib
 import logging
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_HALLUC, COLOR_REFERENCE, normalize_model
-
-
-def _model_color(model: str) -> tuple[float, float, float]:
-    h = int(hashlib.md5(model.encode()).hexdigest()[:6], 16) / 0xFFFFFF
-    return colorsys.hsv_to_rgb(h, 0.75, 0.82)
-
+from .util import COLOR_HALLUC, COLOR_REFERENCE, family_color, normalize_model
 
 _SIZE_CLASS_B = {"edge": 4, "small": 9, "medium": 30, "large": 100, "frontier": 300}
 
@@ -221,7 +213,7 @@ def write_pdf(
             fp_raw = run["fp"]
             fp = min(fp_raw, max_fp)
 
-            color = _model_color(run["model"])
+            color = family_color(run["model"])
 
             # TP dots (right of 0) — 1 dot = 1 plant
             if tp > 0:
@@ -256,7 +248,7 @@ def write_pdf(
                 ha="right",
                 va="center",
                 fontsize=13.5,
-                color=_model_color(model),
+                color=family_color(model),
             )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
@@ -294,6 +286,29 @@ def write_pdf(
     ax.tick_params(axis="x", labelsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+
+    # Language-family legend (EN/FR/ZH).
+    from matplotlib.lines import Line2D
+
+    legend_handles = [
+        Line2D(
+            [0],
+            [0],
+            color=family_color(code),
+            linewidth=0,
+            marker="s",
+            markersize=7,
+            label=label,
+        )
+        for code, label in (
+            ("EN", "EN — Anthropic / OpenAI"),
+            ("FR", "FR — Mistral"),
+            ("ZH", "ZH — Alibaba / DeepSeek"),
+        )
+    ]
+    ax.legend(
+        handles=legend_handles, loc="lower right", fontsize=8, framealpha=0.9, title="Family"
+    )
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
