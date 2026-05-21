@@ -9,7 +9,7 @@ footnote (see [Note on Google / DeepMind](#note-on-google--deepmind))
 because Gemini is not in Experiment 1's panel but its rollout cadence
 is informative for cross-referencing.*
 
-> **Status note (ticket 0218, 2026-05-21).** This note has been
+> **Status note (ticket 0223, 2026-05-21).** This note has been
 > rewritten to the five-lab panel after Qwen and DeepSeek primary
 > sources landed. The machine-readable source of truth for the §3
 > figure is `data/capability_timeline.csv`. Three Qwen cells and three
