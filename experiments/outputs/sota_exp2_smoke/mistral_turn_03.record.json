@@ -1,26 +1,26 @@
 {
-  "run_id": "8d83713c6a7d",
-  "timestamp": "2026-05-21T16:19:04.137171Z",
+  "run_id": "a663fed1881a",
+  "timestamp": "2026-05-21T16:22:40.769989Z",
   "method": "frontier",
   "method_params": {
     "model": "mistral-large-2512",
     "temperature": null,
-    "max_tokens": 2619,
+    "max_tokens": 6402,
     "prompt_version": null,
     "extra": {
-      "prompt_preview": "You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you",
-      "conversation_id": "conv_019e4b54afb8764bb25a56e05cb55422",
-      "agent_id": "ag_019e4b54aef4735285b46f2213d165d8"
+      "prompt_preview": "Status: remaining budget $9.78 of $10.00; wall-clock elapsed 107.3s.\n\nThank you for the inventory. Please now verify and polish it in ONE focused pass, prioritising: (a) per-row provenance — every Sou",
+      "conversation_id": "conv_019e4b5556a77562bc2f42e5bc251810",
+      "agent_id": "ag_019e4b5555fd70f8a53084b7e3d65cb3"
     }
   },
   "resource_use": {
-    "wall_s": 42.879,
-    "cost_usd": 0.005326,
-    "tokens_in": 2795,
-    "tokens_out": 2619,
+    "wall_s": 107.319,
+    "cost_usd": 0.0330705,
+    "tokens_in": 46935,
+    "tokens_out": 6402,
     "cost_breakdown": {
-      "input": 0.0013975,
-      "output": 0.0039285
+      "input": 0.0234675,
+      "output": 0.009603
     },
     "thinking_tokens": null
   },
@@ -39,7 +39,7 @@
   "justification": null,
   "validation": null,
   "agent_family": "mistral-direct",
-  "agent_mode": "phase_a_design",
+  "agent_mode": "phase_b_run",
   "synopsis_sha": null,
   "designed_prompt_sha": null,
   "web_search_calls": [],
