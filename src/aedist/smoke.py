@@ -98,10 +98,22 @@ def smoke_one(
     api_kwargs: dict,
     call_number: int,
     output_dir: Path,
+    *,
+    promote_as_production: bool = False,
 ) -> dict:
-    """Run a single smoke call, save the full record, return a summary dict."""
+    """Run a single smoke call, save the full record, return a summary dict.
+
+    When *promote_as_production* is True, the saved file follows the worker
+    naming convention ({slug}-run{N}.json) and omits the ``smoke: True``
+    marker, so the record is indistinguishable from one produced by
+    ``aedist.worker``. Use this only when the smoke call is intentionally
+    serving as one of the configured ``repeat`` reps for a production
+    sweep (e.g. to skip a redundant job-board drain for a model that has
+    already passed a separate smoke check).
+    """
     model_id = model_entry["name"]
-    log.info("Calling %s (smoke %d) ...", model_id, call_number)
+    mode = "production" if promote_as_production else "smoke"
+    log.info("Calling %s (%s %d) ...", model_id, mode, call_number)
     t0 = time.monotonic()
     result = query_single_turn(client, model_id, messages, **api_kwargs)
     wall = round(time.monotonic() - t0, 3)
@@ -113,7 +125,6 @@ def smoke_one(
         "model": model_id,
         "date": date.today().isoformat(),
         "run": call_number,
-        "smoke": True,  # explicit marker so consumers can filter out
         "response": result["content"],  # FULL response, not just a tail
         "finish_reason": result["finish_reason"],
         "usage": usage,
@@ -128,10 +139,14 @@ def smoke_one(
         if messages and messages[0].get("role") == "system"
         else None,
     }
+    if not promote_as_production:
+        # explicit marker so consumers can filter out; absent in production mode
+        record["smoke"] = True
 
     slug = model_id.split("/")[-1].replace(":", "-")
     output_dir.mkdir(parents=True, exist_ok=True)
-    filepath = output_dir / f"{slug}-smoke{call_number}.json"
+    suffix = "run" if promote_as_production else "smoke"
+    filepath = output_dir / f"{slug}-{suffix}{call_number}.json"
     filepath.write_text(json.dumps(record, indent=2))
     log.info("Saved %s", filepath)
 
@@ -214,6 +229,15 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Optional path to write a JSON summary (one row per call). Default: stdout only.",
     )
+    parser.add_argument(
+        "--promote-as-production",
+        action="store_true",
+        help="Save records under the worker naming convention "
+        "({slug}-run{N}.json) and omit the 'smoke: True' marker, so the "
+        "files are indistinguishable from production worker output. Use "
+        "only when the smoke calls are intentionally serving as production "
+        "reps for a sweep (e.g. to skip a redundant job-board drain).",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -233,13 +257,22 @@ def main(argv: list[str] | None = None) -> int:
     log.info("model: %s", args.model)
     log.info("calls: %d", args.calls)
     log.info("output: %s", args.output)
+    log.info("mode: %s", "production" if args.promote_as_production else "smoke")
     log.info("api_kwargs: %s", api_kwargs)
 
     client = make_client()
     summaries = []
     for n in range(1, args.calls + 1):
         try:
-            summary = smoke_one(client, model_entry, messages, api_kwargs, n, args.output)
+            summary = smoke_one(
+                client,
+                model_entry,
+                messages,
+                api_kwargs,
+                n,
+                args.output,
+                promote_as_production=args.promote_as_production,
+            )
             summaries.append(summary)
         except Exception as exc:  # surfaces auth, rate-limit, timeout, etc.
             log.error("Call %d failed: %s: %s", n, type(exc).__name__, exc)
