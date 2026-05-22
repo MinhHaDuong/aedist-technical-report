@@ -2,8 +2,8 @@
 
 For each lab in Experiment 1's panel (Anthropic, OpenAI, Mistral, Alibaba,
 DeepSeek), place a marker at the date the lab first shipped each of the
-seven capability stages as a consumer-facing product surface. Rows are
-stages (1 base instruct → 7 multi-agent); markers are coloured by lab.
+eight capability stages as a consumer-facing product surface. Rows are
+stages (1 chat LLM → 8 multi-agent); markers are coloured by lab.
 
 The figure is descriptive: it visualises the *industry envelope* — the
 outer surface of commercially attainable capability — pushing outward.
@@ -61,8 +61,9 @@ STAGE_LABELS = {
     3: "3. Browsing / web search",
     4: "4. Reasoning",
     5: "5. Deep research",
-    6: "6. External tool use (MCP-like)",
-    7: "7. Multi-agent (recursion)",
+    6: "6. Code execution",
+    7: "7. External tool use (MCP-like)",
+    8: "8. Multi-agent (recursion)",
 }
 
 
@@ -90,7 +91,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
             continue
         by_stage[stage].append((lab, ship_date))
 
-    fig, ax = plt.subplots(figsize=(9, 4.5))
+    fig, ax = plt.subplots(figsize=(9, 5.2))
 
     # One y position per stage; stage 1 at the top.
     stages_sorted = sorted(STAGE_LABELS)
