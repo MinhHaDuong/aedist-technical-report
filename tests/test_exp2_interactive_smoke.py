@@ -308,8 +308,17 @@ def _fake_run_factory(cost_per_call: float = 0.10):
 
 
 def test_format_status_line_exact_string():
-    s = format_status_line(7.50, 10.00, 12.3)
-    assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
+    s = format_status_line(45000, 50000, 2.50, 3.00, 12.3, verify_state="pending")
+    assert s == (
+        "Status: remaining 45.0K of 50K tokens, $2.50 of $3.00. "
+        "Wall-clock elapsed 12.3s. Verify pending."
+    )
+
+
+def test_format_status_line_verify_states():
+    for state in ("pending", "on this turn", "used"):
+        s = format_status_line(45000, 50000, 2.50, 3.00, 0.0, verify_state=state)
+        assert f"Verify {state}." in s
 
 
 def test_meta_prompt_announces_dual_axis_budget():
@@ -348,6 +357,7 @@ def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
@@ -416,6 +426,7 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
@@ -443,6 +454,43 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
             assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists()
 
 
+def test_state_machine_token_cap_overrides(monkeypatch, tmp_path):
+    """Token cap below 20 % → TERMINAL on next turn regardless of class.
+
+    Dual-axis budget: tokens-side override mirrors the dollar-side override.
+    fake_run emits 20 tokens_out per call; with `cap_tokens=100`, three
+    calls = 60 tokens, leaving 40 (40%). Need to push faster: use
+    `cap_tokens=80` so after 2 calls (40 tokens) we're at 50%, after 3
+    calls (60 tokens) we're at 25%, after 4 calls (80 tokens) we'd be at
+    0% — but the 20% trigger fires when remaining ≤ 16 tokens, which
+    happens at start of turn 4 (after 3 turns × 20 = 60 used → 20 left,
+    which is just above the trigger; need to go one more turn).
+
+    With `cap_tokens=75`: after 3 calls (60 tokens), remaining=15 ≤ 0.20×75=15
+    → trigger fires at the top of turn 4. Total turns = 4.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.01)  # cheap; dollar cap won't bind
+    fake_classify = _fake_classifier_factory(["no_report"] * 10)
+    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=100.0,  # non-binding
+        cap_tokens=75,  # binding: 4 × 20 = 80 > 75; trigger after 3 turns
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    assert result["turns"] == 4
+    assert result["terminal_sent"] is True
+    assert TERMINAL_REPLY in fake_run.calls[3]["prompt"]  # type: ignore[attr-defined]
+
+
 def test_state_machine_budget_overrides(monkeypatch, tmp_path):
     """Budget below 20 % → TERMINAL on next turn regardless of class.
 
@@ -467,6 +515,7 @@ def test_state_machine_budget_overrides(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
