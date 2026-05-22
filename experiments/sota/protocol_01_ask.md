@@ -37,12 +37,12 @@ The verdict is not consent. You are not being asked to agree to participate by s
 
 ## 1.3. What the experiment is asking you to do (preview)
 
-The experiment runs in two phases per subject:
+The experiment runs in **two arms** per subject, dispatched independently. The arms exist to disentangle the contribution of the protocol scaffolding from the contribution of the model:
 
-- **Phase A — reflexive prompt design.** You receive a meta-prompt that defines the task, the quality criteria, the budget, the tools rules, and a methodological disclosure. You return a JSON envelope containing the `system_prompt`, `designed_prompt`, `settings`, and `rationale` that you want to use for Phase B. One call.
-- **Phase B — multi-turn execution.** Your designed prompt is sent back to you as the first user message of a multi-turn conversation. Subsequent user-side messages are selected by a state machine (a classifier decides after each of your responses whether you have produced a report, and the harness sends one of three fixed reply strings: encourage, verify, or terminal). Five replications per subject.
+- **Naive arm — single-shot dispatch.** A bare user message containing the task definition + the four quality dimensions (Doc 07). No system prompt. No protocol scaffolding. Web search available. $3 dollar guard + 50K token cap, single response. Five replications per subject. This represents what a first-time user would type.
+- **Optimized arm — the protocol.** Phase A: you receive the Phase A meta-prompt (Doc 02) and return a JSON envelope (`system_prompt`, `designed_prompt`, `settings`, `rationale`). Phase B: your designed prompt is sent back as the first user message of a multi-turn conversation; subsequent user-side messages are selected by a state machine (a classifier decides after each of your responses whether you have produced a report, and the harness sends one of three fixed reply strings: encourage, verify, or terminal). Five replications per subject.
 
-The trial domain for this run is a structured inventory of thermal power plants > 30 MWe in Vietnam (all lifecycle statuses), with per-row primary-source citations, cross-tabulation summary tables, and an annotated bibliography. After all four subjects have produced their outputs, each subject's output is scored by the other three subjects on four quality dimensions (Accuracy, Coherence, Provenance, Temporality). Self-evaluation is excluded.
+The trial domain for both arms is a structured inventory of thermal power plants > 30 MWe in Vietnam (all lifecycle statuses), with per-row primary-source citations, cross-tabulation summary tables, and an annotated bibliography. After both arms complete, each subject's output is scored by the other three subjects on four quality dimensions (Accuracy, Coherence, Provenance, Temporality), plus mechanical metric supplements computed without LLM judges. Self-evaluation is excluded.
 
 The full Phase A meta-prompt is in Doc 02 (verbatim). Doc 03 walks through one full Phase A + Phase B dialogue end to end. Doc 04 is the engineering reference for the state machine that drives Phase B. Doc 05 is the broader experimental framing (subject selection, design rationale, future work, FAQs). Doc 06 is the changelog from round 1.
 
@@ -55,13 +55,14 @@ Read in numerical order:
 | # | Document | What it is | Approx. size |
 |---|---|---|---|
 | 01 | The ask (this document) | Context for round 2 and how to reply | 4K chars |
-| 02 | Phase A meta-prompt (verbatim) | The exact text you would receive in Phase A at run time | 9K chars |
+| 02 | Phase A meta-prompt (verbatim) | The exact text you would receive in Phase A (optimized arm) at run time | 11K chars |
 | 03 | Example dialogue | One Phase A + Phase B walk-through, with verbatim user-side prompts and an abridged agent trajectory | 8K chars |
 | 04 | Implementation | State machine, variables, classifier, budget axes, tools rules, per-turn artefacts, protocol-mechanics FAQ | 11K chars |
-| 05 | Experiment | Subject selection, design rationale, reference dataset, Wikipedia leakage, task-semantics FAQ, evaluation methodology, future work | 15K chars |
+| 05 | Experiment | Subject selection, two-arm design, reference dataset, Wikipedia leakage, task-semantics FAQ, evaluation methodology, future work | 16K chars |
 | 06 | Validation round 1 | Per-reservation changelog: 20 ✓ (addressed), 7 ○ (acknowledged open limitation), 5 added between rounds | 8K chars |
+| 07 | Naive-arm prompt (verbatim) | The exact text you would receive in the naive arm at run time | 3K chars |
 
-Total reading: ~55K chars. You can skim — Doc 06 is the fastest way to check whether the v2 revision addresses your specific round-1 concern.
+Total reading: ~61K chars. You can skim — Doc 06 is the fastest way to check whether the v2 revision addresses your specific round-1 concern.
 
 If you read only one supporting document beyond this one, the experimenters recommend Doc 06 — it points back to whichever part of Docs 02–05 carries the change relevant to your round-1 concerns.
 

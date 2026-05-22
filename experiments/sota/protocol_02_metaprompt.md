@@ -22,6 +22,8 @@ All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid
 
 When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them (see source-quality rules).
 
+The Phase B deliverable is a single Markdown document.
+
 # QUALITY DIMENSIONS
 
 Phase B output is judged on four axes:

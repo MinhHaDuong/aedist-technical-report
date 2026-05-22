@@ -19,8 +19,33 @@ from experiments.sota.exp2_interactive_smoke import (
     extract_narrative_from_mistral_raw,
     extract_phase_a_design,
     extract_quality_bar,
+    strip_meta_framing,
     wait_for_space,
 )
+
+
+def test_strip_meta_framing_drops_prefix_and_separator():
+    """The framing line + `---` separator is stripped; content survives intact."""
+    text = "This is the prompt sent to the agents, verbatim.\n\n---\n\n# ROLE\n\nBody content.\n"
+    stripped = strip_meta_framing(text)
+    assert stripped.startswith("# ROLE"), f"unexpected leading content: {stripped[:40]!r}"
+    assert "This is the prompt sent" not in stripped
+    assert "Body content." in stripped
+
+
+def test_strip_meta_framing_idempotent_on_unframed_input():
+    """Files without a framing separator are returned unchanged."""
+    text = "# ROLE\n\nBody.\n"
+    assert strip_meta_framing(text) == text
+
+
+def test_assemble_meta_prompt_strips_framing():
+    """assemble_meta_prompt() must NOT include the framing line in the dispatched bytes."""
+    prompt = assemble_meta_prompt()
+    assert not prompt.startswith("This is the prompt"), (
+        "framing line leaked into dispatched meta-prompt"
+    )
+    assert "# ROLE" in prompt or "# GOAL" in prompt, "meta-prompt content missing"
 
 
 def test_metaprompt_file_exists():
@@ -49,12 +74,16 @@ def test_extract_quality_bar_raises_on_missing_markers():
         extract_quality_bar("no markers here")
 
 
-def test_assemble_meta_prompt_is_doc_02_verbatim():
-    """The assembled meta-prompt is the byte-for-byte content of Doc 02."""
+def test_assemble_meta_prompt_is_doc_02_content_post_framing():
+    """The assembled meta-prompt is Doc 02's content after the framing strip.
+
+    Single source of truth: edits to Doc 02 propagate to the dispatched
+    bytes (modulo the meta-framing line stripped by strip_meta_framing).
+    """
     assembled = assemble_meta_prompt()
     on_disk = METAPROMPT_PATH.read_text(encoding="utf-8")
-    assert assembled == on_disk, (
-        "assemble_meta_prompt() must return Doc 02 verbatim — "
+    assert assembled == strip_meta_framing(on_disk), (
+        "assemble_meta_prompt() must return Doc 02 minus the framing line — "
         "any in-code template would create a second source of truth"
     )
 

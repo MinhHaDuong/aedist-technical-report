@@ -51,6 +51,28 @@ The v1 → v2 changes are intentional and not back-ported into `prompt_complete.
 
 **Excluded by design**: browser-automated surfaces (ChatGPT.com, Claude.ai chat UI), specialised research products (OpenAI deep-research, Google deep-research), open-weight local models. Those are §5 / tailored-solution territory (separate experiment), not §4.
 
+### 3.2.0. The two arms
+
+Each of the four subjects is run through Exp 2 **twice**: once in the naive arm, once in the optimized arm. The arms differ only in the protocol surface above the model; the model, task, reference dataset, budget cap, and tool environment are otherwise identical.
+
+**Naive arm.** Doc 07 (`experiments/sota/protocol_07_naive_prompt.md`) is sent verbatim as the sole user message. No system prompt. Web search enabled. Same $3 dollar guard + 50K token cap as the optimized arm's Phase B sessions. One model response per session. N=5 sessions per subject. Doc 07 is Doc 02's GOAL + QUALITY DIMENSIONS + FORMAT sections with the Phase A/B scaffolding language minimally adapted (the JSON envelope replaced with "Output format: Markdown"; the Phase A design paragraph dropped). The naive arm thus shares the v2 task statement and v2 quality criteria with the optimized arm but has none of the v2 methodology (budget rules, planning headroom, source admissibility, calibrated confidence vocabulary, asset-row rules). This isolates the contribution of the protocol scaffolding to the within-arm score deltas.
+
+**Optimized arm.** Doc 02 sent as the Phase A meta-prompt (a single call returning a JSON envelope). Phase B sessions run the agent's designed prompt through the multi-turn state machine (Doc 04 §2.4) with classifier-routed ENCOURAGE / VERIFY / TERMINAL replies. N=5 Phase B sessions per subject, all reusing the single Phase A design. Optionally gated by Phase B-0 review (§3.2.1).
+
+**Anticipated naive-arm failure modes.** A pilot probe (2026-05-22, N=1 per agent, $1.22 batch cost) found that 3 of 4 subjects produced full inventories single-shot; only Mistral bounced with a delayed clarification request after producing the sector overview. The naive arm is therefore expected to yield comparable outputs to the optimized arm, with the differences attributable to the protocol scaffolding rather than to bounce vs. produce. Outputs are classified by the same `nvidia/nemotron-nano-9b-v2` classifier used by the optimized arm's state machine:
+
+| Outcome | Operational definition | Score in the analysis |
+|---|---|---|
+| **Inventory produced** | Response contains a structured table + sources | Full mechanical metrics + Phase C cross-evaluation |
+| **Partial production** | Response contains some inventory rows but ends in clarifying questions or planning text | Scored on what is present; flagged for the partial-production category |
+| **Bounce only** | Clarifying question, refusal, or planning text without inventory substance | Recorded as outcome category; F1 = 0 by convention; not scored on the four §A1 dimensions |
+
+The per-agent bounce rate (Wilson CI) is itself a primary result.
+
+**Why both arms.** The optimized arm carries the methodological contribution. The naive arm is the comparator that lets the manuscript make causal claims about which features of the protocol load-bear. Without the naive arm, statements of the form "the verify pass increased per-row provenance by Y%" lack a referent.
+
+**Cost envelope per subject**: $1 Phase A + 5 × $3 Phase B (optimized) + 5 × $3 naive = $31. Across 4 subjects ≤ $124. Plus classifier overhead (~$5) and cross-evaluation (~$15). Total batch ≤ $144 — at the original Annex C envelope. The 2026-05-22 N=1 probe cost $1.22.
+
 ### 3.2.1. Phase B-0 gate before the full Phase B batch
 
 The N=5 replication described in Doc 04 §2.9 is administered in two waves. **Phase B-0** is the first wave: one Phase B session per agent (N=1 per agent), end-to-end. The experimenters review the four B-0 outputs together — checking that each adapter produced valid records, that parsed tables are non-empty, that costs sit within the per-session envelope. Only if all four B-0 outputs clear this human review does **Phase B-full** launch the remaining four Phase B sessions per agent. This is the project's *test one before blasting* rule applied at the experiment level: a single agent's pathological behaviour does not silently consume 20 sessions of budget. From the agent's perspective the rule is invisible — each Phase B session looks identical and is governed by the same protocol; the gating happens between sessions, not during one.
