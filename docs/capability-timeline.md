@@ -96,7 +96,7 @@ panel.
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
 | **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
 | **6. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
-| **7. External tool use (MCP-like) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2024-04-07 Qwen-Agent v0.0.1 (developer framework) [(release)][32] | 2024-07-25 Function Calling API [(updates)][36] |
+| **7. External tool use (MCP-like) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
 | **8. Multi-agent coordination** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] | absent | absent |
 
 ## Parallel branches: where the chain becomes a DAG
@@ -202,7 +202,12 @@ typically a precondition rather than the capability itself.
   Tongyi-branded consumer surface arrived early; Qwen-Agent v0.0.1
   shipped as a developer framework on PyPI / GitHub in April 2024
   [(release)][32], well before most peer labs put an agentic surface
-  in front of consumers. The remaining absences are deliberate: stage
+  in front of consumers. Stage 7 (external tool use / MCP) arrived
+  with the Qwen Chat Desktop for macOS in July 2025 [(news)][40],
+  which exposed MCP server configuration and invocation directly to
+  end users; the Windows version followed 2025-08-15. The prior CSV
+  entry (2024-04-07 Qwen-Agent v0.0.1) was a developer framework and
+  has been corrected. The remaining absences are deliberate: stage
   3 (browsing / web search as a consumer Tongyi feature) has no
   primary first-party source we could verify by cutoff; tertiary
   reports point to a tongyi.ai deep-search launch circa 2024-08 but
@@ -218,18 +223,22 @@ typically a precondition rather than the capability itself.
   [(X)][31]; the ticket method allows X posts from the official lab
   handle as a primary source.
 - **DeepSeek has the most compressed stack of any focus lab.** All
-  five productised stages (1, 2, 3, 4, 7) ship between Nov 2023
+  four productised stages (1, 2, 3, 4) ship between Nov 2023
   (DeepSeek LLM 67B) and Jan 2025 (DeepSeek App + R1) — 14 months,
   faster than Mistral's 22-month run. The same pattern that made
   Mistral fast applies in stronger form: by 2024-2025 the scaffolds
   (RAG patterns, web-search integrations, reasoning RL recipes, tool /
   function calling) were public, so a focused lab could ship a stack
   by composition. Stages 5 (deep research consumer product), 6 (code
-  execution consumer surface), and 8 (multi-agent consumer product)
-  are absent: DeepSeek's API surface supports the building blocks but
-  the chat.deepseek.com consumer
-  product does not have a deep-research mode, a code-interpreter
-  toggle, or a multi-agent consumer feature as of the cutoff.
+  execution consumer surface), 7 (external tool use consumer surface),
+  and 8 (multi-agent consumer product) are absent: DeepSeek's API
+  surface supports the building blocks (Function Calling API 2024-07-25
+  [(changelog)][36], V3.1-Terminus Code/Search Agent 2025-09-22) but
+  chat.deepseek.com does not have a deep-research mode, a
+  code-interpreter toggle, a user-facing agentic tool surface, or a
+  multi-agent consumer feature as of the cutoff. The prior stage-7
+  CSV entry (2024-07-25 Function Calling API) was an API/developer
+  capability and has been corrected to absent.
 
 ### Note on Google / DeepMind
 
@@ -287,7 +296,8 @@ encountered.
 [33]: https://api-docs.deepseek.com/news/news1129 "DeepSeek LLM 7B / 67B announcement (DeepSeek, 2023-11-29)."
 [34]: https://api-docs.deepseek.com/news/news250115 "DeepSeek App launch with file upload and text extraction (DeepSeek, 2025-01-15)."
 [35]: https://api-docs.deepseek.com/news/news1210 "V2.5-1210: Internet Search live on chat.deepseek.com (DeepSeek, 2024-12-10)."
-[36]: https://api-docs.deepseek.com/updates "DeepSeek Function Calling API (DeepSeek, 2024-07-25). Stage-7 milestone for DeepSeek; the consumer chat surface does not currently expose a separate agent product."
+[36]: https://api-docs.deepseek.com/updates "DeepSeek Function Calling API (DeepSeek, 2024-07-25). API-level capability; not a consumer product. Stage-7 for DeepSeek is absent: chat.deepseek.com has no user-facing agentic tool surface as of 2026-05-22 cutoff."
+[40]: https://alternativeto.net/news/2025/7/qwen-chat-launches-desktop-app-with-mcp-support-and-multitasking-features/ "Qwen Chat Desktop (macOS) launches with MCP support (AlternativeTo, 2025-07-14, reporting on lab X post). First consumer-facing agentic tool surface for Alibaba / Qwen: end-users can configure and invoke MCP servers from the desktop app. Windows version followed 2025-08-15 (x.com/Alibaba_Qwen/status/1956399490698735950). Stage-7 milestone for Alibaba."
 [37]: https://api-docs.deepseek.com/news/news250120 "DeepSeek-R1 (DeepSeek, 2025-01-20)."
 [38]: https://help.openai.com/en/articles/6825453-chatgpt-release-notes "ChatGPT release notes (OpenAI, 2023-07-06 entry). Code Interpreter beta rollout to ChatGPT Plus users on web; alpha was available via plugins waitlist 2023-03-23 (openai.com/index/chatgpt-plugins/). Stage-6 milestone for OpenAI."
 [39]: https://claude.com/blog/analysis-tool "Introducing the analysis tool in Claude.ai (Anthropic, 2024-10-24; originally anthropic.com/news/analysis-tool, 308 redirect). JavaScript code sandbox in Claude.ai. Update note from 2025-11-05 records that the analysis tool was replaced by more powerful code execution capabilities. Stage-6 milestone for Anthropic."
