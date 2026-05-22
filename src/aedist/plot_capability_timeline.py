@@ -29,22 +29,22 @@ from pathlib import Path
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-from .util import family_color
+from .util import model_family_color
 
 logger = logging.getLogger(__name__)
 
 LAB_ORDER = ["Anthropic", "OpenAI", "Mistral", "Alibaba", "DeepSeek"]
 
-# Colorblind-safe palette: re-use the language-family colours from
-# palette.toml where possible (Anthropic/OpenAI → EN blue, Mistral → FR
-# vermillion, Alibaba/DeepSeek → ZH bluish-green). Differentiate the two
-# labs sharing a family by marker shape, not colour.
+# Per-lab colours from the architectural-model-family palette
+# (palette.toml [model_families]). One distinct colour per lab; shapes
+# are kept lab-specific for accessibility (B&W printing, colorblind
+# belt-and-suspenders).
 LAB_COLOR = {
-    "Anthropic": family_color("EN"),
-    "OpenAI": family_color("EN"),
-    "Mistral": family_color("FR"),
-    "Alibaba": family_color("ZH"),
-    "DeepSeek": family_color("ZH"),
+    "Anthropic": model_family_color("claude"),
+    "OpenAI": model_family_color("gpt"),
+    "Mistral": model_family_color("mistral"),
+    "Alibaba": model_family_color("qwen"),
+    "DeepSeek": model_family_color("deepseek"),
 }
 
 LAB_MARKER = {
@@ -59,10 +59,10 @@ STAGE_LABELS = {
     1: "1. Base instruct LLM",
     2: "2. Retrieval / file upload",
     3: "3. Browsing / web search",
-    4: "4. Reasoning surface",
+    4: "4. Reasoning",
     5: "5. Deep research",
-    6: "6. Tool use / agents",
-    7: "7. Multi-agent",
+    6: "6. External tool use (MCP)",
+    7: "7. Multi-agent (recursion)",
 }
 
 
@@ -73,14 +73,15 @@ def load_rows(path: Path) -> list[dict[str, str]]:
 
 def render(rows: list[dict[str, str]], output: Path) -> None:
     by_stage: dict[int, list[tuple[str, date]]] = defaultdict(list)
-    tbd_by_stage: dict[int, list[str]] = defaultdict(list)
+    missing_by_stage: dict[int, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
 
     for row in rows:
         stage = int(row["stage"])
         lab = row["lab"]
         raw_date = row["date"].strip()
         if not raw_date:
-            tbd_by_stage[stage].append(lab)
+            kind = row.get("source_kind", "TBD").strip() or "TBD"
+            missing_by_stage[stage][kind].append(lab)
             continue
         try:
             ship_date = date.fromisoformat(raw_date)
@@ -109,22 +110,27 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
                 zorder=3,
             )
 
-    # Annotate TBD cells at the right margin.
-    if any(tbd_by_stage.values()):
-        right_x = mdates.date2num(date(2025, 12, 31))
-        for stage, missing_labs in tbd_by_stage.items():
-            if not missing_labs:
-                continue
-            y = y_for_stage[stage]
-            ax.text(
-                right_x,
-                y,
-                f"  TBD: {', '.join(missing_labs)}",
-                fontsize=7,
-                va="center",
-                color="gray",
-                zorder=2,
-            )
+    # Annotate dateless cells at the right margin, labelling by source_kind
+    # so confirmed absences (absent) read differently from open gaps (TBD).
+    right_x = mdates.date2num(date(2025, 12, 31))
+    for stage, by_kind in missing_by_stage.items():
+        y = y_for_stage[stage]
+        parts = []
+        for kind in ("absent", "TBD"):
+            labs = by_kind.get(kind, [])
+            if labs:
+                parts.append(f"{kind}: {', '.join(labs)}")
+        if not parts:
+            continue
+        ax.text(
+            right_x,
+            y,
+            "  " + " | ".join(parts),
+            fontsize=7,
+            va="center",
+            color="gray",
+            zorder=2,
+        )
 
     ax.set_yticks([y_for_stage[s] for s in stages_sorted])
     ax.set_yticklabels([STAGE_LABELS[s] for s in stages_sorted])
