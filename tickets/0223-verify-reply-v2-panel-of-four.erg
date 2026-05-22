@@ -2,9 +2,11 @@
 Title: VERIFY_REPLY v2 — agent spins a panel of four axis-specialized verifiers
 Created: 2026-05-21
 Author: claude
+Closed: superseded by 0224 (full IDH verification cycle). The v2 panel-of-four prompt was implemented and live-smoked on Mistral 2026-05-21T22:01Z: the model acknowledged the panel structure ("incorporating all edits from the four verifier subagents") but produced a narrower polished table (26 plants vs v1's 43; 18.6K vs 24.6K chars) with explicit "first 20 rows for brevity" truncation. Author decision 2026-05-22: lock Exp 2 at 1-round-self-verify (v1) for the conference push; defer the panel approach to the multi-step IDH verification cycle captured in 0224.
 
 --- log ---
 2026-05-21T20:00Z claude created — author direction post-PR #405; live re-smoke planned
+2026-05-22T08:00Z claude closed — v2 implemented and smoked but author chose (c): keep v1 for §4 / Exp 2. v2 evidence committed (in git history of rebuild-exp2-smoke, before revert) for any future replay; superseded by 0224.
 
 --- body ---
 

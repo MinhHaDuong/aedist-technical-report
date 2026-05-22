@@ -1,0 +1,154 @@
+%erg 0.1
+Title: IDH verification cycle — five-step inventory production pipeline (imagine)
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T08:00Z claude created — author imagine-mode sketch post-v2-panel attempt; future territory beyond the conference push (deadline 2026-05-27)
+
+--- body ---
+
+## Imagine-mode disclaimer
+
+This ticket is design dialogue, not commitment. It captures a
+**future territory** the author sketched after a v2 panel-of-four
+verify prompt landed and was tested (ticket 0223, closed
+superseded). Decisions inside this body are *proposals*, subject to
+ratification. No code lands on main from this ticket until each
+step is independently agreed and ticketed.
+
+The Exp 2 §4 exhibit for the conference push remains
+**1-round self-verify, 3 reps, 4 models** (the locked 0214 / Annex C
+policy with the v1 VERIFY_REPLY).
+
+## Context
+
+The §2 quality bar names four dimensions: accuracy, coherence,
+provenance, temporality. The §3 capability ladder explains why the
+parametric baseline (§1), the deep-research frontier (§4), and the
+tailored solution (§5) hit progressively more of those dimensions.
+§5 is sketched but not designed; **0224 is the design**.
+
+A full Imperial-Dragon-Harness (IDH) verification cycle would
+sequence five stages, each adding rigor at the cost of compute:
+
+### i — Bibliographic scoping study
+
+Before the agent attempts the inventory, do a scoping pass over
+the literature / source landscape:
+
+- What primary databases exist (PDP8 official, MOIT decisions, EVN
+  reports, GEM, IEA, Enerdata, JETP filings, news media)?
+- What's their coverage, freshness, language, gating?
+- What search strategy will the inventory pipeline use, in what
+  order, with what stopping rule?
+- Output: a versioned scoping document
+  (`docs/sota/scoping_<task>.md`) that becomes the *Method* of any
+  resulting inventory.
+
+Analogue: systematic-review protocol / PRISMA pre-registration.
+
+### ii — Plan generation and verification
+
+The agent produces an execution plan: which sources to consult in
+what order, what schema to produce, what failure modes to expect.
+The plan is *independently verified* (by a different agent or a
+panel) **before execution begins**.
+
+This catches the Mitroff-Featheringham Type-III error
+(*articulation*, §3 limit #1): solving the wrong problem. Stops
+the agent from spending budget on a misguided approach.
+
+### iii — Self-verification (the v1 Exp 2 step)
+
+Single-agent verify-and-polish pass, as locked in 0214 / Annex C.
+Already operational; Exp 2 (ticket 0199) measures this.
+
+### iv — Panel of expert verifiers
+
+The v2 sketch from 0223. After self-verify, dispatch four
+axis-specialised verifiers in parallel (accuracy / coherence /
+provenance / temporality), preferably on different models.
+Aggregate edits into a single polished inventory.
+
+Open question (from the 0223 smoke): does the panel approach trade
+recall for depth? n=1 evidence suggests yes (43 → 26 plants but
+fresh searches on the verify pass). Future runs should pre-register
+"recall vs depth" as the measured trade-off.
+
+### v — Swarm verification
+
+The deepest step. Two complementary swarms run after the panel:
+
+- **Per-row swarm** — one verifier per table row, each one's job is
+  to verify ONE asset's internal consistency (name, capacity, fuel,
+  technology, status, COD, owner, sources). Cell-level granularity.
+- **Per-source swarm** — one verifier per cited source, each one's
+  job is to confirm that the source actually supports the claims
+  attributed to it. The strong-citation test, applied
+  exhaustively. External coherence between inventory and sources.
+
+Cost scales with #rows × #sources, not constant. Likely $10s–$100s
+per inventory at scale; appropriate only when the dataset is itself
+the deliverable (§5), not when it's an experimental measurement (§4).
+
+## Step ordering and triggers
+
+```
+   i. Scoping study    (offline; before any agent call)
+        ↓
+  ii. Plan + verify    (cheap; gates expensive execution)
+        ↓
+       EXECUTION (the agent produces the inventory)
+        ↓
+ iii. Self-verify      (current Exp 2 step; one polish round)
+        ↓
+  iv. Panel-of-four    (axis-specialised, parallel; recall × depth trade-off)
+        ↓
+   v. Swarm verify     (per-row + per-source; expensive)
+        ↓
+       PUBLISH / shipped artefact
+```
+
+Each step has an explicit gate to the next. Step i may say "no
+inventory is feasible at this quality bar" and abort. Step ii may
+say "the plan is wrong". Each post-execution step may say "more
+work needed, loop back to execution". The pipeline is iterative,
+not linear.
+
+## What this is NOT
+
+- Not a replacement for §1 / §4 / §5 as experimental measurements.
+  Those measure *what current systems do*. The IDH cycle is the
+  *target system* §5 builds toward.
+- Not an immediate implementation. The Exp 2 conference push uses
+  step iii only. Steps i, ii, iv, v are post-conference design
+  work.
+- Not a fixed policy. The five steps may compose differently for
+  different tasks (e.g. event lists vs structured inventories).
+
+## Sub-tickets (to file when each step ratifies)
+
+- 0224.A — bibliographic scoping protocol (analogue to PRISMA)
+- 0224.B — plan generation + plan-verifier prompt + harness
+- 0224.C — re-explore the panel-of-four prompt with measured
+  recall × depth trade-off
+- 0224.D — per-row swarm design (granularity, aggregation,
+  cost-per-row caps)
+- 0224.E — per-source swarm design (strong-citation harness,
+  URL-resolver, claim-matching)
+- 0224.F — end-to-end IDH-cycle integration test on a small
+  asset class (e.g. coal plants only, ~50 rows) before scaling
+
+## Exit criteria
+
+This ticket has **no operational exit criteria** — it is design
+dialogue. The exit criterion is "author has read this, decided
+which sub-tickets to ratify, and either filed them or marked the
+remaining work non-priority." After ratification, this ticket can
+close as "design sketch, sub-tickets carry the work."
+
+## Status
+
+Imagine-mode. Future territory. Open until author ratifies one or
+more sub-tickets.
