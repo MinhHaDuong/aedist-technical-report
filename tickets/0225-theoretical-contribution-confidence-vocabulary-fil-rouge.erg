@@ -1,0 +1,127 @@
+%erg 0.1
+Title: Theoretical contribution (imagine) — confidence-band vocabulary as the paper's fil rouge
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T08:30Z claude created — author imagine direction; binds §1–§6 together via a single theoretical thesis
+
+--- body ---
+
+## Imagine-mode disclaimer
+
+This ticket is design dialogue. It proposes a theoretical thesis
+that could become the paper's *fil rouge* (through-line) connecting
+§1 baseline, §2 quality bar, §3 capability ladder, §4 SOTA frontier,
+§5 tailored solution, and §6 conclusion. The idea is not yet
+ratified into the manuscript; this ticket captures it for review.
+
+## The thesis (author wording, 2026-05-22)
+
+> Equipping an expert agent with a confidence-scale vocabulary
+> alleviates the ambiguity-vs-recall trade-off. Without one, the
+> agent has to crisp-cut between "I know and report" vs "unsure
+> and better not say."
+
+## Why this is load-bearing across §1–§6
+
+**§1 baseline.** The parametric models in §1 face the binary choice
+explicitly. We observe the failure modes (Récalcitrant, Hallucinant,
+Incomplet, Non-déterministe, Non-monotone) precisely because the
+model has only two choices when its parametric knowledge is
+uncertain: fabricate confidently, or refuse. The confidence-band
+vocabulary would let the model output *"likely Vũng Áng 2 is
+operational"* instead of either *"yes operational"* or omission.
+
+**§2 quality bar.** Accuracy / coherence / provenance / temporality
+are currently framed as binary axes (a claim is or is not accurate,
+sourced, dated). The four-dimensional bar would gain a *fifth
+implicit dimension* — confidence — that modulates each. Strong
+provenance (the cited URL fully supports the claim) is genuinely
+different from weak provenance (the cited URL is in the right
+neighbourhood); IPCC-style bands name that difference.
+
+**§3 capability ladder.** Articulation / Coverage / Reasoning /
+Tool use / Retroactivity / Agency are framed as orthogonal lifts.
+Confidence vocabulary is a *cross-cutting* lift — a model that
+ladders Coverage (via RAG) without confidence vocabulary still
+faces the recall-precision binary on each retrieved fact; with
+confidence vocabulary it can include lower-band facts as such.
+
+**§4 SOTA frontier.** The 2026-05-21 v2-panel pilot (ticket 0223)
+documented the failure mode directly: when the verify panel got
+stricter, the polished inventory shrank from 43 to 26 plants. The
+model dropped rows it could not verify rather than retaining them
+with a band. The fil rouge says: *that drop is an artefact of
+missing vocabulary*, not a quality lift. A confidence-band-equipped
+verifier would have kept the 17 rows with "likely" or "about as
+likely as not" labels.
+
+**§5 tailored solution.** The IDH cycle (0224) already adopts IPCC
+bands as a default (cross-cutting idea B). The fil rouge frames why:
+the bands aren't decoration — they're the *operational instantiation*
+of the theoretical contribution.
+
+**§6 conclusion.** The paper's *to our knowledge* claim becomes:
+"to our knowledge, no published evaluation of frontier statistical-
+extraction agents equips them with a confidence-band vocabulary
+across all four §2 dimensions, and we show empirically that the
+absence forces a recall-precision trade-off that vanishes with the
+vocabulary present."
+
+## Empirical anchors already in the paper
+
+Three existing observations support the thesis:
+
+1. The 43→26 plant shrinkage between the v1 and v2 verify rounds
+   in 0185's Mistral pilot (§4 First observation).
+2. Claude Haiku's "consistently 17 plants" *Incomplet* failure
+   mode in §1 — the model refuses to enumerate anything beyond a
+   small high-confidence core.
+3. Qwen 3.6-27B's "268 false positives" *Hallucinant* failure mode
+   in §1 — the same lack of vocabulary pushed the other way: the
+   model included low-confidence plants without labelling them.
+
+Both Haiku and Qwen are responding to the same missing vocabulary
+with opposite biases. The thesis predicts: equip both with bands,
+both improve.
+
+## What this is NOT (out of scope for this ticket)
+
+- Not a new experiment. The thesis is *retrospective* — it
+  reorganises observations already in the paper around a single
+  theoretical claim.
+- Not a re-implementation of Exp 1 or Exp 2. Those are locked.
+- Not a §6 rewrite proposal — that follows once the thesis is
+  ratified.
+
+## If ratified, what changes in the manuscript
+
+- §1: a paragraph naming the binary-choice failure mode and pointing
+  forward to the vocabulary thesis.
+- §2: an explicit "fifth implicit dimension — confidence" added
+  to the four-dimensional bar, *or* a footnote arguing it's
+  cross-cutting (the latter is lighter touch).
+- §3: confidence vocabulary as a cross-cutting capability axis
+  alongside the six ladder rungs (or its own §3.7).
+- §4: the v2-panel observation reframed as evidence for the
+  thesis, not as ambiguous about depth-vs-recall.
+- §5: explicit adoption of IPCC bands (already planned in 0224).
+- §6: the thesis statement as the paper's central claim.
+
+## Open questions
+
+- Choice of vocabulary: literal IPCC 7-band, or a 3-band simplification
+  ("certain / likely / uncertain") for usability?
+- Are there published philosophy-of-science / data-quality precedents
+  for naming "the binary-choice failure mode under uncertainty" as a
+  distinct category? If so, the literature review in §2 expands.
+- Is the thesis falsifiable inside this paper, or does it require a
+  follow-up paper that *measures* the recall improvement when bands
+  are added? Likely the latter — this paper plants the flag.
+
+## Status
+
+Imagine-mode. Ratification = author edits §1–§6 to thread the thesis
+through, after which this ticket closes "thesis adopted, see git
+log on slides/manuscript/main.md."

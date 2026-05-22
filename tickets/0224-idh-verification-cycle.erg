@@ -121,6 +121,26 @@ should adopt across all five steps and all four §2 axes.
 The 0224.* sub-tickets will incorporate both ideas as defaults, not
 addenda.
 
+### Scrub of the current workflow against idea B (2026-05-22)
+
+Sites where the current Exp 2 / Annex C workflow uses binary
+verification and where IPCC-style confidence bands would slot in:
+
+| Site | Current shape | IPCC-band reframe |
+|---|---|---|
+| `dialogue_classifier.py` | `report` / `no_report` | 3+ bands so "partial report" can route to a different reply slot |
+| Annex C VERIFY string | "verify and polish" without confidence attribution | ask the agent to attach a confidence band to every table row (new column) |
+| Phase C cross-eval rubric (0171) | 0–1 scalar per dimension | band per dimension; preserves disagreement strength |
+| Strong-citation test (0218) | binary URL-supports-claim | "fully / partially / weakly / contradicts" |
+| Row *as-of date* (Temporality) | present / absent | band on the as-of itself |
+| Row lifecycle status | discrete category | band on the category (e.g. "operational, very likely") |
+
+The biggest immediate lever is the **VERIFY string** — asking the
+agent to attach bands during the polish pass propagates bands into
+every artefact downstream. A v3 VERIFY (separate from the deferred
+v2 panel approach) is the cheapest concrete implementation of
+idea B and could land before §5 / IDH work begins.
+
 ## Step ordering and triggers
 
 ```
