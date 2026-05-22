@@ -2,10 +2,12 @@
 Title: Capability-timeline — verify Mistral stage-7 and stage-8 are consumer-product dates
 Created: 2026-05-22
 Author: claude
+Closed: autoclosed — PR #422
 
 --- log ---
 2026-05-22T12:45Z claude created — surfaced during celebrate sweep after PRs #419-421 (capability-timeline strictness pass). Same anti-pattern as fixed rows: both Mistral stage-7 and stage-8 cite `mistral-agents-api-2025` (2025-05-27 Agents API), which is a developer API, not a Le Chat consumer-product launch. Flagged in PR #419 review comment; filing here since ticket 0224 is now closed.
 
+2026-05-22T13:11Z HDMX-coding-agent closed — autoclosed — PR #422
 --- body ---
 
 ## Context
