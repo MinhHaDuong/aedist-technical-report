@@ -60,7 +60,7 @@ Stages 1 and 2 ship sequentially within each lab and within ~12 months across th
 <!-- editorial scaffolding (do not render): This is structural evidence that the order is observed in the data, not imposed by the framing. -->
 
 
-The figure goes quiet after mid-2025 because leading labs had filled all eight stages, not because development stalled. After mid-2025, innovation continued in dimensions this schema does not track: context length, shell-level execution, and persistent agent scaffolds.
+The figure goes quiet after mid-2025 because leading labs had filled all eight stages, not because development stalled: context length, shell-level execution, persistent agent scaffolds, and the modality axis — text to vision to real-time audio — all continued to advance outside the tool-affordance ladder this schema tracks. Two further dimensions are absent by construction. The constraint axis — refusal training, content policy, and red-teaming — shaped which requests these consumer products would serve, running alongside the capability expansion the figure shows but perpendicular to it. And the consumer-product methodology excludes the military and dual-use deployment track: a parallel trajectory operating at comparable capability levels, now routine front-page news, that the commercial-product framing does not capture and does not claim to.
 
 The empirical envelope nonetheless leaves the §2 quality bar uncleared, which is what §4 (Experiment 2) tests directly.
 
