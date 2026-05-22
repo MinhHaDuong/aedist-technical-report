@@ -498,8 +498,10 @@ def run_anthropic_call(
         run_number=1,
         messages_for_continuation=continuation_messages,
     )
-    # Surface web_search billing separately into total_cost() via tool_calls_cost_usd.
-    record.tool_calls_cost_usd = float(breakdown.get("web_search", 0.0)) or None
+    # _record_from_parsed already populates ``record.tool_calls_cost_usd``
+    # from ``cost_breakdown["web_search"]`` (see query_anthropic.py:381) —
+    # no need to re-assign here. Surfacing it into total_cost() works
+    # through that field.
     # Stash narrative so the classifier's record-first path skips raw-file parse.
     record.justification = {"output_text": parsed.get("text", "") or ""}
     # Post-call cap recheck (actual billed total). Defense in depth.
