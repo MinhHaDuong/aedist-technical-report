@@ -2,111 +2,42 @@
 Title: Capability-timeline strictness pass — stage-1 chat-product dates, stage-6 MCP reading, code execution
 Created: 2026-05-22
 Author: claude
-Closed: autoclosed — PR #419
+Closed: autoclosed — PR #421
 
 --- log ---
 2026-05-22T07:55Z claude created — surfaced during the §3 revision pass (PRs #408–#413); three strictness gaps in data/capability_timeline.csv that the loose-reading shortcuts left open. Follow-up to closed ticket 0223 (Qwen/DeepSeek primary-source research) and the §3 revision chain anchored on 0219.
 2026-05-22T15:00Z claude note Sub-task 3 (stage-6 code-execution split) landed as ticket 0232 / PR — schema now has 8 stages (6 code execution, 7 external tool use MCP-like, 8 multi-agent recursion). New stage-6 dates: OpenAI 2023-07-06 (release-notes), Anthropic 2024-10-24 (claude.com/blog/analysis-tool), Mistral 2025-02-06 (mistral.ai/news/all-new-le-chat); Alibaba and DeepSeek recorded absent with primary-source checks. Sub-tasks 1 (stage-1 chat-product dates for open-weights labs) and 2 (strict MCP reading for stage 7) remain open.
 2026-05-22T08:00Z claude note Sub-task 2 (stage-7 MCP strictness) closed as no-op — user decision in PR #410: keep loose reading ("MCP-like tool-use protocol covering Anthropic's MCP, OpenAI function calling, and equivalents"); existing dates already valid under this reading.
 2026-05-22T08:00Z claude note Sub-task 1 (stage-1 chat-product dates) — Mistral updated to 2024-02-26 Le Chat beta (confirmed date, first consumer chat product); citation_key updated to mistral-lechat-beta-2024. Alibaba and DeepSeek require additional web verification: Alibaba Tongyi Qianwen launched as invited beta April 2023 / full public ~September 2023 (unclear which qualifies under strict methodology); DeepSeek chat.deepseek.com likely launched simultaneously with the 2023-11-29 model announcement (same API-docs URL pattern) but requires confirmation. Figure re-rendered.
-
 2026-05-22T11:45Z HDMX-coding-agent closed — autoclosed — PR #419
+2026-05-22T12:15Z claude reopened — premature autoclosure: PR #419 fixed stage-7 rows only; stage-1 Alibaba and DeepSeek rows still reference open-weights model releases, not consumer chat-product launches. Remaining scope narrowed to those two cells.
+
+2026-05-22T12:30Z HDMX-coding-agent closed — autoclosed — PR #421
 --- body ---
 
-## Context
+## Remaining scope (all other sub-tasks done)
 
-The §3 capability-timeline figure (originally shipped by ticket 0219,
-data filled by ticket 0223, refined through a series of revision PRs)
-uses a "launch in a public commercial product" methodology
-(`docs/capability-timeline.md` Date definition). Three places in
-`data/capability_timeline.csv` currently do not apply that methodology
-strictly. Each is a follow-up the revision pass deferred so the main
-edits could ship.
+Stage 1 (Chat LLM) — Alibaba and DeepSeek only.
 
-## Strictness gaps to close
+| Lab | Current date | Current source | Problem |
+|-----|-------------|----------------|---------|
+| Alibaba | 2023-08-03 | Qwen-7B open-weights release | Not a consumer product |
+| DeepSeek | 2023-11-29 | DeepSeek LLM 67B announcement | Not a consumer product |
 
-### 1. Stage 1 (Chat LLM) — open-weights labs
-
-Current dates reference open-weights model releases, not consumer
-chat-product launches. Under the strict consumer-product reading:
-
-| Lab | Current date | Strict-reading candidate |
-|---|---|---|
-| Mistral | 2023-09-27 (Mistral 7B Instruct open-weights) | 2024-02-26 Le Chat consumer beta |
-| Alibaba | 2023-08-03 (Qwen-7B open-weights) | ~2023-09 Tongyi Qianwen full public release (or earlier April 2023 invited beta) |
-| DeepSeek | 2023-11-29 (DeepSeek LLM release) | chat.deepseek.com consumer launch — date not yet pinned |
-
-Action: web search each lab's consumer chat product launch; update
-`data/capability_timeline.csv` stage-1 rows; verify the figure
-re-renders with the new dates and the cross-lab ordering still tells
-the same story.
-
-### 2. Stage 6 (External tool use, MCP-like) — strict MCP reading
-
-The loose reading shipped: "MCP-like tool-use protocol" covers
-Anthropic's MCP, OpenAI function calling, and equivalents. A strict
-"MCP available" reading would shift dates to each lab's MCP-support
-announcement (Anthropic 2024-11-25 MCP launch; OpenAI ~2025-03 Agents
-SDK MCP support; Mistral / Qwen / DeepSeek dates need verification).
-
-Action: decide whether to keep the loose reading (current default,
-per the 2026-05-22 user decision logged in PR #410) or do the strict
-pass. If keeping loose: close this sub-task as a no-op with the
-decision recorded. If doing strict: re-research each lab's MCP-support
-milestone and update the CSV / figure.
-
-### 3. Stage 6 — code execution as an earlier tool-use surface
-
-The "external tool use" definition is generous enough to include
-sandboxed code interpreters (Python / shell / JS). Under that reading,
-several labs have a stage-6 milestone *earlier* than the currently-
-recorded agentic surface:
-
-| Lab | Current stage 6 | Code-execution earlier date |
-|---|---|---|
-| OpenAI | 2025-01-23 Operator | 2023-07-06 ChatGPT Code Interpreter |
-| Anthropic | 2024-10-22 Computer use beta | ~2024-08 Claude.ai artifacts + code execution (date needs pinning) |
-| Mistral | 2025-05-27 Agents API | Le Chat Python execution (date needs pinning) |
-| Alibaba | 2024-04-07 Qwen-Agent | Qwen Chat / Tongyi Python toggle (date needs pinning) |
-| DeepSeek | 2024-07-25 Function Calling API | no consumer Python toggle currently |
-
-Backdating OpenAI's stage-6 marker from 2025-01-23 to 2023-07-06 is
-a ~18-month shift — visible in the figure. The cross-lab ordering in
-row 6 would change.
-
-Action: decide framing. Three options listed in the §3 discussion
-that surfaced this gap:
-
-a) Backdate stage 6 to "earliest external-tool-use surface, including
-   code execution" (option recommended in the discussion).
-b) Split stage 6 into 6a (code execution) and 6b (general tool surface
-   / MCP).
-c) Footnote: keep current dates, document code execution as a stage-6
-   sub-capability whose dates would shift the OpenAI marker earlier.
-
-## Why this ticket exists (not done in #412/#413)
-
-The §3 revision pass focused on the framework-vs-model reframing, the
-articulation restoration, the MCP-like wording, and the stage-1 label
-rename. Pushing into strict-date research mid-revision would have
-ballooned the scope and risked the talk-deadline freeze. Parking here
-for deliberate handling.
+Under the strict "launch in a public commercial product" methodology:
+- **Alibaba**: Tongyi Qianwen (tongyi.aliyun.com) — invited beta April 2023;
+  full public release ~September 2023. Need to pin the exact date of
+  general public availability.
+- **DeepSeek**: chat.deepseek.com — may have launched alongside the
+  2023-11-29 model announcement (same URL pattern in api-docs changelog)
+  or separately. Needs primary-source confirmation.
 
 ## Exit criteria
 
-- [ ] Stage 1 dates: decision recorded (keep open-weights / shift to
-      chat-product) and applied to the CSV.
-- [ ] Stage 6 MCP strictness: decision recorded and applied.
-- [ ] Stage 6 code execution: decision recorded; if accepted, CSV
-      updated for OpenAI, Anthropic, Mistral, Alibaba; DeepSeek
-      verified absent on consumer code execution.
+- [ ] Alibaba stage-1 date: consumer chat-product launch date confirmed
+      with primary source; CSV updated.
+- [ ] DeepSeek stage-1 date: consumer chat-product launch date confirmed
+      with primary source; CSV updated.
 - [ ] Figure re-rendered.
-- [ ] `make slides` builds clean.
-- [ ] `docs/capability-timeline.md` schema description updated for
-      whatever stage-6 framing the decisions land on.
-- [ ] Adherence tests still green.
-
-## Cutoff
-
-2026-05-22 (the date of the strictness audit). Cells flipping after
-this date are a separate ticket.
+- [ ] `docs/capability-timeline.md` matrix table row 1 updated.
+- [ ] Adherence tests green.
