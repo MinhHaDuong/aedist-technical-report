@@ -60,6 +60,8 @@ Stages 1 and 2 ship sequentially within each lab and within ~12 months across th
 <!-- editorial scaffolding (do not render): This is structural evidence that the order is observed in the data, not imposed by the framing. -->
 
 
+The figure goes quiet after mid-2025 because leading labs had filled all eight stages, not because development stalled. After mid-2025, innovation continued in dimensions this schema does not track: context length, shell-level execution, and persistent agent scaffolds.
+
 The empirical envelope nonetheless leaves the §2 quality bar uncleared, which is what §4 (Experiment 2) tests directly.
 
 ## Fourth, the commercially available frontier: State-of-the-art general-purpose AI systems still fall short
