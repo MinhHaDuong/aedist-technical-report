@@ -20,7 +20,7 @@ is informative for cross-referencing.*
 
 The seven capability stages we track are not a strict chain. The claim:
 
-- **Stages 1 -> 2 are sequential** (instruct LLM, then retrieval / file
+- **Stages 1 -> 2 are sequential** (chat LLM, then retrieval / file
   upload).
 - **Stages 3 and 4 emerged in parallel** (browsing / web tools AND
   reasoning model surfaces both shipped as products in 2024).
@@ -54,7 +54,7 @@ product co-deployment view: each marker is the date all three lined up.
 
 ## Capability stages (schema)
 
-1. **Base instruct LLM** — text-only, single-turn, parametric memory.
+1. **Chat LLM** — consumer-facing chat product backed by a chat-tuned model (RLHF for dialogue). No retrieval, no tools, no reasoning surface. Pretrained base LLMs and bare "Instruct" checkpoints, which exist earlier or in parallel, are excluded — they were never shipped as standalone consumer products; at most a continuation / completion API.
 2. **Retrieval / RAG / file upload** — documents at inference time.
 3. **Browsing / web search** — live external retrieval as a product.
 4. **Reasoning / chain-of-thought as a product surface** — visible
@@ -79,7 +79,7 @@ panel.
 
 | Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
 |---|---|---|---|---|---|
-| **1. Base instruct LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-09-27 Mistral 7B Instruct [(blog)][22] | 2023-08-03 Qwen-7B (Tongyi Qianwen) [(blog)][28] | 2023-11-29 DeepSeek LLM 7B/67B [(blog)][33] |
+| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-09-27 Mistral 7B Instruct [(blog)][22] | 2023-08-03 Qwen-7B (Tongyi Qianwen) [(blog)][28] | 2023-11-29 DeepSeek LLM 7B/67B [(blog)][33] |
 | **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
 | **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | absent (no first-party source verifiable at cutoff) | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |

@@ -56,7 +56,7 @@ LAB_MARKER = {
 }
 
 STAGE_LABELS = {
-    1: "1. Base instruct LLM",
+    1: "1. Chat LLM",
     2: "2. Retrieval / file upload",
     3: "3. Browsing / web search",
     4: "4. Reasoning",
