@@ -647,7 +647,6 @@ def run_phase_b_multiturn(
     remaining_tokens = cap_tokens
     elapsed_s = 0.0
     continuation: dict | None = {}  # empty dict = start multi-turn, keep Mistral agent alive
-    agent_id: str | None = None
     terminal_sent = False
     records: list[RunRecord] = []
     verify_used = False
@@ -753,14 +752,13 @@ def run_phase_b_multiturn(
         # Provider-specific continuation extraction (Mistral: agent_id +
         # conversation_id; OpenAI: previous_response_id; future Anthropic /
         # Qwen: their own shapes). Each extractor returns the opaque dict
-        # the dispatcher will pass to ``call_fn`` on the next turn.
+        # the dispatcher will pass to ``call_fn`` on the next turn. The
+        # dispatcher never introspects the continuation shape — see the
+        # return value below for the only consumer-facing field
+        # (``agent_id``) that is pulled out by canonical key.
         new_continuation = CONTINUATION_EXTRACTORS[agent](record, continuation)
         if new_continuation is not None:
             continuation = new_continuation
-        # Mistral-specific: keep ``agent_id`` available for caller-side
-        # cleanup (the caller closes the conversation via the returned dict).
-        if agent == "mistral" and continuation and continuation.get("agent_id"):
-            agent_id = continuation["agent_id"]
 
         log.info(
             "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
@@ -821,7 +819,11 @@ def run_phase_b_multiturn(
         "total_spent_usd": cap_usd - remaining - initial_spent_usd,
         "total_tokens_used": cap_tokens - remaining_tokens,
         "terminal_sent": terminal_sent,
-        "agent_id": agent_id,
+        # Mistral exposes ``agent_id`` for caller-side conversation cleanup;
+        # other providers omit the key (None for OpenAI / Anthropic / Qwen).
+        # The dispatcher pulls it by canonical name rather than tracking it
+        # in a local variable — keeps the loop body provider-agnostic.
+        "agent_id": (continuation or {}).get("agent_id"),
         "total_classifier_cost_usd": total_classifier_cost_usd,
     }
 
