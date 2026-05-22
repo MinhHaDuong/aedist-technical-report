@@ -13,9 +13,25 @@ Companion documents:
 
 ## 3.1. Trial instance (this run)
 
-The trial-instance task for this run is **an inventory of thermal power plants > 30 MWe in Vietnam, all lifecycle statuses** (operational, under construction, planned, cancelled, retired). Schema columns: Vietnamese name, English name, province, fuel, technology, units × MW, total MWe, status, COD, owner/developer, Source 1, Source 2, notes. Output is a Markdown document containing a sector overview, per-plant narratives, the structured table, cross-tabulation summary tables, and an annotated bibliography.
+The trial-instance task for this run is **an inventory of thermal power plants > 30 MWe in Vietnam, all lifecycle statuses** (operational, under construction, planned, cancelled, retired). Schema columns: Vietnamese name, English name, province, fuel, technology, units × MW, total MWe, status, **status as-of-date**, COD, owner/developer, **confidence**, Source 1, Source 2, notes. Output is a Markdown document containing a sector overview, per-plant narratives, the structured table, cross-tabulation summary tables, and an annotated bibliography.
 
 The protocol itself is sector- and country-neutral; for a different domain (e.g. Indonesia solar, France hydrogen electrolysers), Parts B and the task-FAQ in §3.6 are substituted; everything else stays.
+
+### 3.1.1. Relationship to `experiments/prompts/prompt_complete.txt` (v1 baseline)
+
+`experiments/prompts/prompt_complete.txt` is the **v1 baseline task statement**, used historically as the input prompt for the §1 parametric baseline (`direct_complete` sweep, 16 models × 5 reps, frozen). It remains the input for any future replication of §1.
+
+Doc 02 is the **v2 evolution** of that baseline. Doc 02 supersedes `prompt_complete.txt` for Exp 2 / §4. The runtime assembler reads Doc 02 verbatim; `prompt_complete.txt` is no longer in the Exp 2 runtime path.
+
+The v1 → v2 changes are intentional and not back-ported into `prompt_complete.txt`:
+
+- **Schema +2 columns**: `Status as-of-date` (between Status and COD) and `Confidence` (between Owner and Source 1). v1 schema has 13 columns; v2 schema has 15.
+- **Confidence vocabulary**: v1 uses descriptive HIGH/MEDIUM/LOW tied to source type. v2 uses an evidence × agreement schema with explicit independence checks and hard ceilings (Doc 02 CONTEXT > Calibrated confidence vocabulary).
+- **Source admissibility**: v1 says "prioritise primary sources" descriptively. v2 has the three-tier admissibility (primary / secondary / NOT admissible) with the Wikipedia / Wikidata / DBpedia / mirrors / aggregator-re-syndication ban (Doc 02 CONTEXT > Source quality management).
+- **Asset-row rules**: v1 silent on multi-phase complexes. v2 has the plant-vs-power-center default + Units × MW arithmetic consistency rule (Doc 02 CONTEXT > Asset-row and status rules).
+- **Capacity rule**: v1 says ">30 MWe". v2 names nameplate electrical MWe explicitly, with gross/net handling.
+
+`prompt_complete.txt` is frozen at the v1 schema. Edits to Doc 02 do not propagate back. This preserves the §1 baseline's reproducibility and makes the v1 → v2 design tightening auditable as the diff between the two artefacts.
 
 ---
 
