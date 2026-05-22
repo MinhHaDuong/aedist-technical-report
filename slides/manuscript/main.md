@@ -39,16 +39,17 @@ The task is not simply to generate a plausible inventory-shaped answer. The stat
 
 ## Third, from chatbots to knowledge management
 
-The recent history of the artificial intelligence industry showcases different breakthroughs meant to overcome limits that precluded early LLM from clearing the quality bar.
+Agent capabilities improve statistical-dataset quality, and the industry trajectory of the past three years operationalises that claim. The improvement is not a single staircase any one lab climbs. It is an envelope — the outer surface of commercially attainable capability — that the industry has pushed outward through a sequence of integrations rather than a sequence of inventions.
 
-1. The *articulation* limit, that is the gap between what an analyst means to ask and what the model answers to. It is narrowed by multi-turn exchange and by prompt engineering. Good articulation improves all dimensions of answer quality. The framing echoes Mitroff and Featheringham's Type-III error (solving the wrong problem); to our knowledge, its explicit translation to the LLM-prompt setting is not formalised in the literature.
-2. The *coverage* limit, since models are trained with a large but finite dataset. Prompt augmentation pushes the limit by providing additional information in the prompt. Without it, responses about facts post-dating a model's training cutoff can be obtained but not be believed. Retrieval-augmented generation (RAG) feeds the model relevant passages from a closed pool of documents, or they can be found by web search.
-3. *Reasoning* alleviates the *coherence* limits that may stem from poor synthesis across sources. Models are trained to produce a chain of thought before generating the answer.
-4. *Tool use* —.
-5. *Retroactivity* —.
-6. *Agency* —.
+The integrations are by now familiar. *Retrieval-augmented generation* [@Lewis-Patrick2020:rag; @Gao-Yunfan2024:rag-survey] answers the coverage limit: parametric memory is finite; document retrieval at inference time isn't. *Reasoning surfaces* — chain-of-thought elicited by prompting [@Wei-Jason2022:cot], later embedded as test-time compute in production models (OpenAI o1, Anthropic extended thinking, Magistral, R1, QwQ) — narrow the coherence and reasoning limits on long, multi-source synthesis. The *join* of retrieval and reasoning is the deep-research surface [@Wei-Jason2025:browsecomp], which lets the model decide what to read and how to read it. *Tool use* and *agency* extend the reach of that decision further still: from a fixed retrieval surface to arbitrary external state [@Yao-Shunyu2023:react; @Mialon-Gregoire2024:gaia; @Jimenez-Carlos2024:swe-bench; @Xie-Tianbao2024:osworld]. Each integration lifts one or more of the §2 quality limits at the margin; none of them lifts all four; their combinations exhibit ordering structure but not a strict performance hierarchy.
 
-Looking the historical offer of the major AI industry players, we found that they first provided interactive chatbots, then added prompt augmentation by RAG. Web access and reasoning arrived in parallel afterwards, both converging at deep research: the capacity to produce long, organized reports from information gathered on demand from the internet.
+![Figure 4](inputs/generated/fig_capability_timeline.pdf)
+
+*Figure 4. Empirical capability rollout across the five labs in Experiment 1. Each row is a capability stage (1 base instruct → 7 multi-agent); each marker places when the named lab first shipped that stage as a consumer-facing product surface. Markers are coloured by language family (EN, FR, ZH) and shaped by lab. The horizontal spread within each row is the cross-lab emergence window; vertical neighbours that overlap in time (notably stages 3 and 4) indicate parallel-not-sequential capability development. The figure is descriptive — no claim is made that any lab is "ahead" or that the order is forced. Source: `data/capability_timeline.csv`; per-lab primary announcements documented in `docs/capability-timeline.md`.*
+
+Three patterns are visible in the figure. (a) Stages 1 and 2 ship sequentially within each lab and within ~12 months across the industry. (b) Stages 3 and 4 emerge in parallel — within each lab the per-product order is not always 3 then 4 (Anthropic inverts; Mistral ships them within months), and the *cross-lab* shipping windows overlap. (c) Stage 5 (deep research) is the empirical join of stages 3 and 4: at every lab where both prerequisites land, deep-research follows within 2–7 months. This is structural evidence that the order is observed in the data, not imposed by the framing.
+
+The empirical envelope nonetheless leaves the §2 quality bar uncleared, which is what §4 (Experiment 2) tests directly.
 
 ## Fourth, the commercially available frontier: State-of-the-art general-purpose AI systems still fall short
 
