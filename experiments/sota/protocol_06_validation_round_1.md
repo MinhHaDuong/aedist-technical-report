@@ -23,7 +23,7 @@ Round 1 review artefacts are committed under `experiments/outputs/sota_exp2_prot
 |---|---|---|---|
 | 1 | Classifier bias — same-vendor pair (all four) | Classifier replaced with `nvidia/nemotron-nano-9b-v2` via OpenRouter; cross-vendor with all four subjects | Doc 04 §2.2; Doc 05 §3.5 |
 | 2 | Dollar/token parity (Anthropic, OpenAI, Qwen) | Dual-axis cap: 50K tokens (visible + thinking, retrieval excluded) + $3 dollar guard, per Phase B session | Doc 04 §2.3; Doc 05 §3.5 |
-| 3 | State machine biases toward early reporting (OpenAI) | Phase A meta-prompt now includes a planning-headroom paragraph explicitly telling the agent the three-encouragement budget is planning space | Doc 04 §2.4.1 |
+| 3 | State machine biases toward early reporting (OpenAI) | Phase A meta-prompt now includes a planning-headroom paragraph explicitly telling the agent the three-encouragement budget is planning space | Doc 02 (CONTEXT > Planning headroom) |
 | 4 | Reference-dataset epistemic status (Anthropic) | §3.3 reframes the reference as a methodological artifact; F1 measures concordance, not correctness | Doc 05 §3.3 |
 | 5 | Thinking tokens in budget (Anthropic) | Doc 04 §2.3: thinking tokens counted toward 50K cap; explicit |
 | 6 | Cross-evaluation rubric transparency (Anthropic, Mistral, OpenAI) | Commitment to publish the rubric and raw inter-rater scores alongside the manuscript | Doc 05 §3.5 |

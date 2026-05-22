@@ -101,40 +101,44 @@ elif class_of(previous_assistant_response) == "no_report":
 
 Authoritative implementation: `experiments/sota/exp2_interactive_smoke.py::run_phase_b_multiturn`.
 
-### 2.4.1. Planning headroom (Phase A meta-prompt embedded paragraph)
-
-The Phase A meta-prompt explicitly informs the agent of the three-encouragement budget:
-
-> The Phase B protocol allows up to three turns of planning and search before any verify pass fires. You are not expected to produce the inventory on turn 1. Treat your first turn(s) as the place to plan your approach, run searches, decompose the task, and surface uncertainty; produce the structured inventory only when your research is mature enough to make verification meaningful. The harness will send ENCOURAGE messages up to three times if your turn does not yet contain a report. After your first response classified as a report, you get exactly one verify-and-polish pass; then the conversation ends.
-
-This is intentional design (round-1 reviewer GPT-5.5 flagged the early-and-shallow-report incentive). The classifier remains binary; the agent's behaviour is shaped by the meta-prompt framing, not by a finer classifier.
-
 ---
 
-## 2.5. Tools and dispatch
+## 2.5. How the policy rules are enforced
 
-### Allowed: retrieval
+The policies themselves (which tools are allowed, what is not admissible as a source) live in Doc 02 — the Phase A meta-prompt. This section is about the **enforcement mechanism** for each policy: where it is wired, whether it can be bypassed, and how compliance is audited.
 
-Tools that *retrieve information* and return it to the agent's context:
-- Provider-native `web_search` (Anthropic `web_search_20250305`, OpenAI `web_search`, Mistral connector, Qwen DashScope search).
+### 2.5.1. Subagent / multi-agent dispatch — instructional only, not hardcoded
+
+**Enforcement mechanism: meta-prompt text.** The Phase A meta-prompt's CONTEXT > Tools and dispatch section instructs the agent that subagent dispatch (Claude Task, OpenAI handoff, panel-of-experts orchestration, Code Interpreter calling an LLM) is not allowed. This is a normative statement; the harness does **not** strip these tools from the provider API call.
+
+**What the harness does NOT do** (gap from the policy):
+- Anthropic API: the `tools` array passed in `messages.create` is whatever each agent's Phase A response specified (or the harness default). Nothing prevents the agent from declaring `Task` as one of its tools and dispatching to a sub-Claude.
+- OpenAI Responses API: response-chaining via `previous_response_id` is enabled; the harness does not inspect whether the chained calls invoke a different model.
+- Mistral / Qwen agent connectors: not disabled at the API call site.
+
+**Compliance audit (post-hoc).** Phase D synthesis inspects provider trace fields where exposed (tool-call records, sub-conversation IDs) for evidence of subagent dispatch. A subject whose response shows sub-LLM invocation has its session flagged as a protocol-compliance violation alongside its accuracy metrics. The enforcement is therefore **instructional + post-hoc audit**, not hard API-level prevention. Closing this gap is documented in the future-work section of Doc 05; for the current batch the experimenters accept the gap and report compliance as a measured metric.
+
+### 2.5.2. Wikipedia citation ban — user-side meta-prompt only, not in system prompt
+
+**Enforcement mechanism: meta-prompt text in Phase A, not propagated to Phase B system prompt.** The Wikipedia leakage rule is part of the Phase A meta-prompt (Doc 02 CONTEXT > Wikipedia leakage). The agent reads it once in Phase A.
+
+**What the agent installs as their Phase B system prompt** is whatever they wrote in their Phase A response's `system_prompt` field. The harness installs that text verbatim on the agent at Phase B create time. The Wikipedia rule is **not automatically prepended** to the agent's chosen system prompt. If the agent did not echo the rule into their system prompt, the rule is not present in Phase B's running context (the agent must remember it from the Phase A turn).
+
+**What the harness does NOT do** (gap from the policy):
+- The harness does not modify the agent's `system_prompt` to inject "Wikipedia citations are not admissible" as a guard clause.
+- The harness does not filter the agent's `web_search` results to remove Wikipedia URLs before they reach the agent's context.
+
+**Compliance audit (post-hoc).** Phase D synthesis counts Wikipedia / Wikidata / mirror citations in each output's bibliography and per-row Source 1 / Source 2 cells. Zero is compliant; non-zero is a protocol-compliance violation. As with the subagent rule, enforcement is **instructional + post-hoc audit**.
+
+### 2.5.3. Tools allowed (positive list)
+
+Tools that *retrieve information* and return it to the agent's context are allowed and exercised by every Phase B run:
+- Provider-native web_search (Anthropic `web_search_20250305`, OpenAI `web_search`, Mistral connector, Qwen DashScope search).
 - Document fetch / URL resolution.
 - Citation lookup against open databases (DOI resolvers, arXiv, etc.).
 - Search-result snippet retrieval.
 
-### Forbidden: subagent dispatch
-
-The agent may **not** delegate this task — or any sub-part of it — to other models, sub-agents, parallel instances of itself, or any external LLM-based service. Reasoning, planning, and verification must happen entirely within the agent's own model in this single conversation. Concrete prohibitions:
-
-- Anthropic Claude `Task` tool (spawning a sub-Claude).
-- OpenAI Responses-API handoff to another model.
-- Mistral Agents-API agent-to-agent handoff connector.
-- Qwen DashScope multi-agent orchestration.
-- Any panel-of-experts / multi-vote ensemble dispatch.
-- Any tool that internally invokes an LLM (a Code Interpreter calling an LLM, a Computer-Use loop talking to another agent, etc.).
-
-### Wikipedia citation rule
-
-Wikipedia, Wikidata, DBpedia, Wikipedia mirrors, and aggregator sites that re-syndicate Wikipedia without independent verification are **not admissible** as Source 1 or Source 2 on any row of the structured inventory. Rationale in Doc 05 §3.4 (Wikipedia leakage). Compliance is auditable in Phase D.
+These are not stripped from the API call; their tokens count toward the $3 dollar guard but not toward the 50K token cap (see §2.3).
 
 ---
 

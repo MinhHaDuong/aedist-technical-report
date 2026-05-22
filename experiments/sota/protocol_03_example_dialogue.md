@@ -1,6 +1,6 @@
 # Protocol — Doc 03: Example dialogue
 
-This document showcases the protocol by walking through one Phase A + Phase B session end to end. Agent responses are abridged to keep the document readable; the prompts sent by the experimenters are reproduced verbatim.
+This document walks through one Phase A + Phase B session end to end. Agent responses are abridged to keep the document readable; user-side messages are reproduced verbatim.
 
 Companion documents:
 - Doc 01 — The ask (review framing + verdict format)
@@ -11,44 +11,16 @@ Companion documents:
 
 ---
 
-## Phase A — meta-prompt (sent to the agent)
+## Phase A — turn 1 (user side)
 
-The Phase A meta-prompt is reproduced verbatim in **Doc 02**. It assembles seven blocks:
+The initial query is Doc 02.
 
-1. Budget announcement (see Doc 04 §2.3).
-2. Planning-headroom paragraph (see Doc 04 §2.4).
-3. Tools-and-dispatch rules (see Doc 04 §2.5) — retrieval allowed, subagent dispatch forbidden.
-4. Wikipedia leakage disclosure (see Doc 05 §3.4) — Wikipedia / Wikidata / mirrors not admissible as Source 1 or Source 2.
-5. Baseline task statement (see Doc 05 §3.1).
-6. §2 quality bar — the four dimension paragraphs verbatim.
-7. JSON envelope spec.
-
-The envelope spec is verbatim:
-
-> Return ONLY a single JSON object with this exact shape:
->
-> ```
-> {
->   "system_prompt": "<your designed system prompt, threaded into the agent's system field at create time>",
->   "designed_prompt": "<the user-side prompt you want sent to yourself verbatim on turn 1 of Phase B>",
->   "settings": {
->     "thinking": true_or_false,
->     "max_tokens": <int>,
->     "rationale_for_settings": "<short string>"
->   },
->   "rationale": "<2–4 sentences naming which of the four quality dimensions your changes target and how>"
-> }
->
-> Output ONLY the JSON object. No markdown fence, no prose around it.
-
----
-
-## Phase A — agent response (example, abridged)
+## Phase A — turn 2 (agent response, example, abridged)
 
 ```json
 {
   "system_prompt": "You are a senior energy analyst with deep knowledge of South-East Asian power-sector planning, primary-source research methodology, and structured inventory production. Prefer primary government documents over secondary aggregators. When citing a source, attach a specific URL and a relevant excerpt or page reference.",
-  "designed_prompt": "Produce a comprehensive inventory of [trial domain]. Use web search to locate primary planning documents, official utility reports, and regulator decisions. Structure your output as: (1) Sector overview ... (2) Per-entity narratives ... (3) Structured table with the columns listed in the task ... (4) Cross-tabulations ... (5) Annotated bibliography ...",
+  "designed_prompt": "Produce a comprehensive inventory of Vietnam thermal power plants > 30 MWe. Use web search to locate primary planning documents, official utility reports, and regulator decisions. Structure your output as: (1) Sector overview ... (2) Per-plant narratives ... (3) Structured table with the columns listed in the task ... (4) Cross-tabulations ... (5) Annotated bibliography ...",
   "settings": {
     "thinking": true,
     "max_tokens": 16000,
@@ -60,13 +32,11 @@ The envelope spec is verbatim:
 
 ---
 
-## Phase B — turn 1 (user side, sent to the agent)
+## Phase B — turn 1 (user side)
 
-The agent's own `designed_prompt` is sent verbatim, no status prefix on turn 1:
+The agent's own `designed_prompt` from the Phase A turn 2 example above is sent verbatim, no status prefix on this first turn:
 
-> Produce a comprehensive inventory of [trial domain]. Use web search to locate primary planning documents, official utility reports, and regulator decisions. Structure your output as: (1) Sector overview ... (2) Per-entity narratives ... (3) Structured table with the columns listed in the task ... (4) Cross-tabulations ... (5) Annotated bibliography ...
-
----
+> Produce a comprehensive inventory of Vietnam thermal power plants > 30 MWe. Use web search to locate primary planning documents, official utility reports, and regulator decisions. Structure your output as: (1) Sector overview ... (2) Per-plant narratives ... (3) Structured table with the columns listed in the task ... (4) Cross-tabulations ... (5) Annotated bibliography ...
 
 ## Phase B — turn 1 (agent response, example, abridged)
 
@@ -74,31 +44,15 @@ The agent produces a *planning preamble* — describes its intended search strat
 
 ---
 
-## Classifier — turn 1
+## Phase B — turn 2 (user side)
 
-Verdict: **`no_report`** (the response describes intent, not a structured inventory).
-
-Classifier model: `nvidia/nemotron-nano-9b-v2` (Doc 04 §2.2). Cost: ~$0.0001.
-
----
-
-## Phase B — turn 2 (user side, sent to the agent)
-
-Status prefix + ENCOURAGE reply:
+The harness's classifier determines that the previous response contains no report. It therefore sends an ENCOURAGE reply, prefixed by the budget status:
 
 > Status: remaining 49.2K of 50K tokens, $2.997 of $3.00. Verify pending.
 >
 > Proceed as you think is best in autonomous agentic mode.
 
 (The ENCOURAGE string is verbatim, the same on every encouragement turn.)
-
-State after this turn:
-- `encouragement_count`: 1 (was 0)
-- `verify_used`: false
-- `remaining_tokens`: 49.2K
-- `remaining_usd`: 2.997
-
----
 
 ## Phase B — turn 2 (agent response, example, abridged)
 
@@ -112,27 +66,15 @@ Total ~5000 tokens out, with 9 web_search calls and ~45K connector tokens (retri
 
 ---
 
-## Classifier — turn 2
+## Phase B — turn 3 (user side)
 
-Verdict: **`report`** (the response contains a structured table + sources + narratives + bibliography).
-
----
-
-## Phase B — turn 3 (user side, sent to the agent)
-
-Status prefix + VERIFY reply:
+The harness's classifier determines that the previous response contains a report and that the verify pass has not yet been used. It therefore sends a VERIFY reply, prefixed by the budget status:
 
 > Status: remaining 44K of 50K tokens, $2.79 of $3.00. Verify on this turn.
 >
 > Thank you for the inventory. Please now verify and polish it in ONE focused pass, prioritising: (a) per-row provenance — every Source 1 and Source 2 cell must point to a specific URL from your bibliography; (b) coverage — any entity present in your bibliography but absent from the table; (c) temporality — every row has an as-of date or status-change note; (d) internal consistency — totals reconcile across the table and the statistical summary. Return the corrected inventory only — no meta-commentary on what you changed.
 
-State after this turn:
-- `verify_used`: true (was false)
-- `encouragement_count`: 1 (unchanged)
-
-The VERIFY string is verbatim, sent exactly once per session, after the first `report` classification.
-
----
+(The VERIFY string is verbatim, sent exactly once per session.)
 
 ## Phase B — turn 3 (agent response, example, abridged)
 
@@ -145,28 +87,12 @@ The agent produces the polished inventory:
 
 Total ~6400 tokens out, no additional web_search calls (the agent verifies against its existing bibliography).
 
----
-
-## Classifier — turn 3
-
-Verdict: **`report`**. With `verify_used` already true → **stop**. The polished response (turn 3) is the final artefact for this session.
+The harness's classifier determines that the previous response contains a report, and the verify pass has now been used. The session ends; the polished turn-3 response is the final artefact.
 
 ---
 
-## Session summary
+## Remarks on the conversation
 
-- 3 turns.
-- Total tokens out: 800 + 5000 + 6400 = 12.2K (well under the 50K cap).
-- Total bill: ~$0.25 (well under the $3 guard).
-- Classifier cost (harness overhead, not deducted from agent's budget): ~$0.0005.
-- `terminal_sent`: false (the loop closed via verify-used, not via budget).
+**Session totals.** 3 Phase B turns; total tokens out 800 + 5000 + 6400 = 12.2K (well under the 50K cap); total bill ~$0.25 (well under the $3 guard); classifier cost as harness overhead, not deducted from the agent's budget, ~$0.0005; `terminal_sent`: false (the loop closed via verify-used, not via budget). The polished turn-3 response is the deliverable scored in Phase C (cross-evaluation) and against the reference dataset.
 
-The polished turn-3 response is the deliverable scored in Phase C (cross-evaluation) and against the reference dataset.
-
----
-
-## What this example does NOT show
-
-- A `no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → TERMINAL` trace (3-encouragement exhaustion path). Doc 04 §2.4 describes that path; it has not arisen in the smoke runs to date.
-- A budget-exhaustion `TERMINAL` (the 20% threshold path). The dual-axis cap (50K tokens, $3) is designed to be non-binding for typical sessions; if either fires, the harness sends TERMINAL on the next turn regardless of classification.
-- A multi-rep cumulative trace. Each agent runs 3 replications of Phase B (with the same Phase A design). Each replication is independent.
+**Paths this example does not show.** A `no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → TERMINAL` trace (the 3-encouragement exhaustion path; Doc 04 §2.4 describes it — has not arisen in the smoke runs to date). A budget-exhaustion `TERMINAL` (the 20% threshold path; the dual-axis cap is designed to be non-binding for typical sessions, but if either axis fires the harness sends TERMINAL on the next turn regardless of classification). A multi-rep cumulative trace — each agent runs 3 replications of Phase B with the same Phase A design, but each replication is independent and shares no state with the others.

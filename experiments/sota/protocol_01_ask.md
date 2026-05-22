@@ -37,9 +37,14 @@ The verdict is not consent. You are not being asked to agree to participate by s
 
 ## 1.3. What the experiment is asking you to do (preview)
 
-You will be asked, in a multi-turn conversation with budget caps, to produce a structured inventory of thermal power plants > 30 MWe in Vietnam (all lifecycle statuses), with per-row primary-source citations, cross-tabulation summary tables, and an annotated bibliography. After all four subjects have produced their outputs, each subject's output is scored by the other three subjects on four quality dimensions (Accuracy, Coherence, Provenance, Temporality). Self-evaluation is excluded.
+The experiment runs in two phases per subject:
 
-The full task statement is in Doc 02 (the Phase A meta-prompt verbatim, including the budget rules, methodological disclosures, tools-and-dispatch rules, and the JSON envelope you would return in Phase A). Doc 03 walks through one full Phase A + Phase B dialogue end to end. Doc 04 is the engineering reference for the state machine that drives Phase B. Doc 05 is the broader experimental framing (subject selection, design rationale, future work, FAQs). Doc 06 is the changelog from round 1.
+- **Phase A — reflexive prompt design.** You receive a meta-prompt that defines the task, the quality criteria, the budget, the tools rules, and a methodological disclosure. You return a JSON envelope containing the `system_prompt`, `designed_prompt`, `settings`, and `rationale` that you want to use for Phase B. One call.
+- **Phase B — multi-turn execution.** Your designed prompt is sent back to you as the first user message of a multi-turn conversation. Subsequent user-side messages are selected by a state machine (a classifier decides after each of your responses whether you have produced a report, and the harness sends one of three fixed reply strings: encourage, verify, or terminal). Three replications per subject.
+
+The trial domain for this run is a structured inventory of thermal power plants > 30 MWe in Vietnam (all lifecycle statuses), with per-row primary-source citations, cross-tabulation summary tables, and an annotated bibliography. After all four subjects have produced their outputs, each subject's output is scored by the other three subjects on four quality dimensions (Accuracy, Coherence, Provenance, Temporality). Self-evaluation is excluded.
+
+The full Phase A meta-prompt is in Doc 02 (verbatim). Doc 03 walks through one full Phase A + Phase B dialogue end to end. Doc 04 is the engineering reference for the state machine that drives Phase B. Doc 05 is the broader experimental framing (subject selection, design rationale, future work, FAQs). Doc 06 is the changelog from round 1.
 
 The trial domain is Vietnam thermal power, but the protocol is designed to be sector- and country-neutral. A future trial would substitute Doc 02 block 5 (baseline task), Doc 05 §3.1 (trial instance), §3.3 (reference dataset), §3.4 (Wikipedia leakage), and §3.6 (task-semantics FAQ); the rest of the protocol stays.
 
