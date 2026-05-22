@@ -46,8 +46,9 @@ _TOKENS_PER_MTOK = 1_000_000
 # Supersedes the two-slot ticket 0207 policy. Three reply slots:
 # ENCOURAGE (≤3 times), VERIFY (used once after first report), TERMINAL
 # (budget trigger or encouragement-exhaustion graceful exit).
-PHASE_B_TOTAL_BUDGET_USD = 10.00
-BUDGET_TRIGGER_FRAC = 0.20  # terminal reply when remaining ≤ this fraction of cap
+PHASE_B_TOTAL_BUDGET_USD = 3.00  # per-session dollar guard
+PHASE_B_TOTAL_TOKEN_CAP = 50_000  # per-session token cap (output + thinking)
+BUDGET_TRIGGER_FRAC = 0.20  # terminal reply when EITHER axis ≤ this fraction of its cap
 MAX_ENCOURAGEMENTS = 3
 
 ENCOURAGE_REPLY = "Proceed as you think is best in autonomous agentic mode."
@@ -75,6 +76,7 @@ log = logging.getLogger(__name__)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BASELINE_PATH = REPO_ROOT / "experiments" / "prompts" / "prompt_complete.txt"
 QUALITY_BAR_PATH = REPO_ROOT / "slides" / "manuscript" / "main.md"
+METAPROMPT_PATH = REPO_ROOT / "experiments" / "sota" / "protocol_02_metaprompt.md"
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_smoke"
 
@@ -101,55 +103,36 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
-def assemble_meta_prompt(baseline_path: Path, quality_bar_path: Path) -> str:
-    """Build the Phase A meta-prompt: baseline + quality bar + design task."""
-    baseline = baseline_path.read_text(encoding="utf-8").strip()
-    quality_bar = extract_quality_bar(quality_bar_path.read_text(encoding="utf-8"))
-    return f"""You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you want to do it.
+_FRAMING_SEPARATOR = "\n---\n"
 
-# BUDGET (ticket 0207 policy, fixed condition)
 
-Your budget for this entire engagement is **${PHASE_B_TOTAL_BUDGET_USD:.2f} total**. All your tool calls, search calls, and thinking tokens are billed against this cap. After this design turn, you will be in a multi-turn execution conversation; each of our replies will remind you of your remaining budget both in plain text and (where the provider supports it) via a structured metadata field. When the remaining budget drops below {int(BUDGET_TRIGGER_FRAC * 100)}%, we will send a single terminal reply asking you to finalise; the next response after that is the last one we accept. Prioritise producing the final report — do not stall on planning.
+def strip_meta_framing(text: str) -> str:
+    """Drop the meta-framing prefix from a protocol prompt file.
 
-You will be given:
-- a BASELINE PROMPT that defines the task
-- a QUALITY BAR (four dimensions) on which your output will be judged
+    Convention used in `protocol_02_metaprompt.md` and `protocol_07_naive_prompt.md`:
+    the file opens with a single framing line ("This is the prompt sent to ...,
+    verbatim. ...") followed by `---` and then the actual prompt content.
+    The framing line is FOR THE REVIEWER, not the agent. The script must
+    strip it before sending the bytes to the model.
 
-# BASELINE PROMPT
+    If no `\\n---\\n` separator is present, the input is returned unchanged.
+    """
+    if _FRAMING_SEPARATOR in text:
+        _, _, content = text.partition(_FRAMING_SEPARATOR)
+        return content.lstrip("\n")
+    return text
 
-\"\"\"
-{baseline}
-\"\"\"
 
-# QUALITY BAR
+def assemble_meta_prompt(metaprompt_path: Path = METAPROMPT_PATH) -> str:
+    """Return the Phase A meta-prompt verbatim from disk, framing stripped.
 
-The inventory you produce on the next turn will be judged on these four dimensions:
-
-\"\"\"
-{quality_bar}
-\"\"\"
-
-# YOUR DESIGN TASK NOW
-
-Design an improved prompt and a settings configuration aimed at maximising your performance on the four quality dimensions. You have full freedom to rewrite, expand, or restructure the baseline prompt. You may use web search if it helps you design; web search will also be available when you execute the designed prompt.
-
-Return ONLY a single JSON object with this exact shape:
-
-{{
-  "designed_prompt": "<the prompt you want to receive next turn — sent to you verbatim>",
-  "system_prompt": "<the system prompt that will be installed on you before the next turn — sent to you verbatim>",
-  "settings": {{
-    "thinking": true_or_false,
-    "max_tokens": <int>,
-    "rationale_for_settings": "<short string>"
-  }},
-  "rationale": "<2-4 sentences naming which of the four dimensions your changes target and how>"
-}}
-
-The `system_prompt` field MUST be a plain JSON string (a single quoted text value), not a nested JSON object or list. The harness installs it verbatim as the agent's system-level instruction (e.g. Mistral's agent `description`, Anthropic's `system` parameter, OpenAI's `instructions`). Persistent behavioural directives (per-cell sourcing, never-decline, voice) belong here; per-turn task framing belongs in `designed_prompt`.
-
-Output ONLY the JSON object. No markdown fence, no prose around it.
-"""
+    The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
+    (Doc 02 of the protocol set). The harness reads it as-is at run time;
+    edits to Doc 02 propagate without code change. The opening framing line
+    ("This is the prompt sent to the agents, verbatim.") is removed before
+    dispatch (see :func:`strip_meta_framing`).
+    """
+    return strip_meta_framing(metaprompt_path.read_text(encoding="utf-8"))
 
 
 def load_model_meta(agent: str) -> dict:
@@ -357,11 +340,25 @@ def total_cost(record: RunRecord) -> float:
 # ---------------------------------------------------------------------------
 
 
-def format_status_line(remaining_usd: float, cap_usd: float, elapsed_s: float) -> str:
-    """The exact status-prefix string the harness puts on every Phase B user turn."""
+def format_status_line(
+    remaining_tokens: int,
+    cap_tokens: int,
+    remaining_usd: float,
+    cap_usd: float,
+    elapsed_s: float,
+    verify_state: str = "pending",
+) -> str:
+    """The exact status-prefix string the harness puts on every Phase B user turn.
+
+    Dual-axis budget (Doc 02 CONTEXT > Budget): 50K-token cap binds reasoning
+    capacity; $3 dollar guard binds total bill. Both visible. ``verify_state``
+    is one of "pending" / "on this turn" / "used".
+    """
     return (
-        f"Status: remaining budget ${remaining_usd:.2f} of ${cap_usd:.2f}; "
-        f"wall-clock elapsed {elapsed_s:.1f}s."
+        f"Status: remaining {remaining_tokens / 1000:.1f}K of {cap_tokens // 1000}K tokens, "
+        f"${remaining_usd:.2f} of ${cap_usd:.2f}. "
+        f"Wall-clock elapsed {elapsed_s:.1f}s. "
+        f"Verify {verify_state}."
     )
 
 
@@ -392,6 +389,8 @@ def _next_reply(
     encouragement_count: int,
     remaining_usd: float,
     cap_usd: float,
+    remaining_tokens: int,
+    cap_tokens: int,
     last_class: str,
 ) -> tuple[str, str, dict]:
     """Compute the next user-side reply slot and the updated state.
@@ -401,9 +400,10 @@ def _next_reply(
     ``"stop"`` (no reply — accept response and exit), and
     ``state_delta`` carries the new values for the tracked variables.
 
-    Transition rules (ticket 0214 §"State machine"):
+    Transition rules (Doc 02 CONTEXT > Budget + Doc 04 §2.4):
 
-    1. Budget trigger (remaining ≤ 20 % of cap) — TERMINAL, regardless
+    1. Dual-axis budget trigger: EITHER ``remaining_usd ≤ 20 % of cap_usd``
+       OR ``remaining_tokens ≤ 20 % of cap_tokens`` → TERMINAL, regardless
        of class. Overrides everything else.
     2. ``last_class == "report"``:
        - If verify has not been used: VERIFY, set ``verify_used``,
@@ -418,7 +418,10 @@ def _next_reply(
          after three consecutive no_reports. Otherwise send
          ENCOURAGE and bump the counter.
     """
-    if remaining_usd <= BUDGET_TRIGGER_FRAC * cap_usd:
+    if (
+        remaining_usd <= BUDGET_TRIGGER_FRAC * cap_usd
+        or remaining_tokens <= BUDGET_TRIGGER_FRAC * cap_tokens
+    ):
         return TERMINAL_REPLY, "terminal", {}
 
     if last_class == "report":
@@ -465,6 +468,7 @@ def run_phase_b_multiturn(
     *,
     output_dir: Path,
     cap_usd: float,
+    cap_tokens: int,
     initial_spent_usd: float,
     max_tokens: int,
     agent: str = "mistral",
@@ -497,6 +501,7 @@ def run_phase_b_multiturn(
         raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
 
     remaining = cap_usd - initial_spent_usd
+    remaining_tokens = cap_tokens
     elapsed_s = 0.0
     continuation: dict | None = {}  # empty dict = start multi-turn, keep Mistral agent alive
     agent_id: str | None = None
@@ -513,14 +518,21 @@ def run_phase_b_multiturn(
         if turn == 1:
             user_text = designed_prompt
         else:
-            status = format_status_line(remaining, cap_usd, elapsed_s)
+            verify_state = (
+                "on this turn" if last_slot == "verify" else "used" if verify_used else "pending"
+            )
+            status = format_status_line(
+                remaining_tokens, cap_tokens, remaining, cap_usd, elapsed_s, verify_state
+            )
             user_text = f"{status}\n\n{pending_reply}"
 
         paths = _turn_artefact_paths(output_dir, agent, turn)
         paths["user"].write_text(user_text, encoding="utf-8")
 
         extra_metadata: dict | None = {
-            "remaining_budget_usd": f"{remaining:.2f}",
+            "remaining_tokens": str(remaining_tokens),
+            "cap_tokens": str(cap_tokens),
+            "remaining_usd": f"{remaining:.2f}",
             "cap_usd": f"{cap_usd:.2f}",
         }
         # Per ticket 0218: Mistral's path-bound append endpoint rejects
@@ -551,7 +563,14 @@ def run_phase_b_multiturn(
         records.append(record)
 
         spent_this_turn = total_cost(record)
+        # Token cap (Doc 02 CONTEXT > Budget): visible output + thinking only.
+        # Web_search / connector / document-fetch payload is retrieval, not
+        # generation, and does not count toward the 50K cap.
+        tokens_this_turn = (record.resource_use.tokens_out or 0) + (
+            record.resource_use.thinking_tokens or 0
+        )
         remaining -= spent_this_turn
+        remaining_tokens -= tokens_this_turn
         elapsed_s += record.resource_use.wall_s or 0.0
 
         paths["record"].write_text(record.model_dump_json(indent=2), encoding="utf-8")
@@ -571,7 +590,11 @@ def run_phase_b_multiturn(
                 {
                     "turn": turn,
                     "spent_usd": spent_this_turn,
+                    "tokens_this_turn": tokens_this_turn,
                     "remaining_usd": remaining,
+                    "remaining_tokens": remaining_tokens,
+                    "cap_usd": cap_usd,
+                    "cap_tokens": cap_tokens,
                     "elapsed_s": elapsed_s,
                     "is_terminal_reply": last_slot == "terminal",
                     "user_slot": last_slot,
@@ -592,12 +615,13 @@ def run_phase_b_multiturn(
 
         log.info(
             "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
-            "web_search=%d class=%s%s",
+            "remaining_tokens=%d web_search=%d class=%s%s",
             turn,
             last_slot,
             spent_this_turn,
             remaining,
             record.resource_use.tokens_out,
+            remaining_tokens,
             len(record.web_search_calls or []),
             cls_result.class_,
             " [terminal reply was sent]" if terminal_sent and turn > 1 else "",
@@ -612,8 +636,12 @@ def run_phase_b_multiturn(
         # back to encouragement after the one-shot verify round.
         if last_slot == "verify":
             break
-        if remaining <= 0:
-            log.warning("Budget exhausted without terminal reply having fired; stopping.")
+        if remaining <= 0 or remaining_tokens <= 0:
+            log.warning(
+                "Budget exhausted (usd=%.4f, tokens=%d) without terminal reply having fired; stopping.",
+                remaining,
+                remaining_tokens,
+            )
             break
         if turn >= TURN_SAFETY_CAP:
             log.warning("Hit safety cap of %d turns; stopping.", TURN_SAFETY_CAP)
@@ -625,6 +653,8 @@ def run_phase_b_multiturn(
             encouragement_count=encouragement_count,
             remaining_usd=remaining,
             cap_usd=cap_usd,
+            remaining_tokens=remaining_tokens,
+            cap_tokens=cap_tokens,
             last_class=cls_result.class_,
         )
         verify_used = state_delta.get("verify_used", verify_used)
@@ -640,6 +670,7 @@ def run_phase_b_multiturn(
         "records": records,
         "turns": turn,
         "total_spent_usd": cap_usd - remaining - initial_spent_usd,
+        "total_tokens_used": cap_tokens - remaining_tokens,
         "terminal_sent": terminal_sent,
         "agent_id": agent_id,
         "total_classifier_cost_usd": total_classifier_cost_usd,
@@ -675,7 +706,7 @@ def main(argv: list[str] | None = None) -> int:
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    meta_prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    meta_prompt = assemble_meta_prompt()
     meta_prompt_path = args.output_dir / f"{args.agent}_meta_prompt.txt"
     meta_prompt_path.write_text(meta_prompt, encoding="utf-8")
     log.info("Meta-prompt assembled (%d chars) -> %s", len(meta_prompt), meta_prompt_path)
@@ -732,9 +763,10 @@ def main(argv: list[str] | None = None) -> int:
         log.info("--stop-after-phase-a set; exiting before Phase B.")
         return 0
 
-    # --- Phase B: multi-turn auto-reply loop (ticket 0207 policy) ---
+    # --- Phase B: multi-turn auto-reply loop (Doc 02 + Doc 04 §2 policy) ---
     wait_for_space(
-        f"Phase B: multi-turn loop on {args.agent}. Total cap ${PHASE_B_TOTAL_BUDGET_USD:.2f} "
+        f"Phase B: multi-turn loop on {args.agent}. Dual cap "
+        f"{PHASE_B_TOTAL_TOKEN_CAP // 1000}K tokens + ${PHASE_B_TOTAL_BUDGET_USD:.2f} per session "
         f"(after Phase A's ${total_cost(phase_a):.4f}).",
         no_confirm=args.no_confirm,
     )
@@ -762,7 +794,8 @@ def main(argv: list[str] | None = None) -> int:
         designed_prompt,
         output_dir=args.output_dir,
         cap_usd=PHASE_B_TOTAL_BUDGET_USD,
-        initial_spent_usd=total_cost(phase_a),
+        cap_tokens=PHASE_B_TOTAL_TOKEN_CAP,
+        initial_spent_usd=0.0,  # Phase B has its own per-session $3 cap independent of Phase A spend
         max_tokens=requested_max_tokens,
         agent=args.agent,
         system_prompt=designed_system_prompt,

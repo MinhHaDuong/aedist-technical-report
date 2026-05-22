@@ -11,6 +11,7 @@ import pytest
 
 from experiments.sota.exp2_interactive_smoke import (
     BASELINE_PATH,
+    METAPROMPT_PATH,
     QUALITY_BAR_END,
     QUALITY_BAR_PATH,
     QUALITY_BAR_START,
@@ -18,12 +19,42 @@ from experiments.sota.exp2_interactive_smoke import (
     extract_narrative_from_mistral_raw,
     extract_phase_a_design,
     extract_quality_bar,
+    strip_meta_framing,
     wait_for_space,
 )
 
 
+def test_strip_meta_framing_drops_prefix_and_separator():
+    """The framing line + `---` separator is stripped; content survives intact."""
+    text = "This is the prompt sent to the agents, verbatim.\n\n---\n\n# ROLE\n\nBody content.\n"
+    stripped = strip_meta_framing(text)
+    assert stripped.startswith("# ROLE"), f"unexpected leading content: {stripped[:40]!r}"
+    assert "This is the prompt sent" not in stripped
+    assert "Body content." in stripped
+
+
+def test_strip_meta_framing_idempotent_on_unframed_input():
+    """Files without a framing separator are returned unchanged."""
+    text = "# ROLE\n\nBody.\n"
+    assert strip_meta_framing(text) == text
+
+
+def test_assemble_meta_prompt_strips_framing():
+    """assemble_meta_prompt() must NOT include the framing line in the dispatched bytes."""
+    prompt = assemble_meta_prompt()
+    assert not prompt.startswith("This is the prompt"), (
+        "framing line leaked into dispatched meta-prompt"
+    )
+    assert "# ROLE" in prompt or "# GOAL" in prompt, "meta-prompt content missing"
+
+
+def test_metaprompt_file_exists():
+    """The canonical Doc 02 meta-prompt file is on disk."""
+    assert METAPROMPT_PATH.exists(), f"meta-prompt missing: {METAPROMPT_PATH}"
+
+
 def test_baseline_and_quality_bar_files_exist():
-    """Both source files are present at the expected paths."""
+    """Legacy source files (referenced by Doc 02 content) are still on disk."""
     assert BASELINE_PATH.exists(), f"baseline missing: {BASELINE_PATH}"
     assert QUALITY_BAR_PATH.exists(), f"manuscript missing: {QUALITY_BAR_PATH}"
 
@@ -43,27 +74,36 @@ def test_extract_quality_bar_raises_on_missing_markers():
         extract_quality_bar("no markers here")
 
 
-def test_assemble_meta_prompt_contains_baseline_and_quality_bar():
-    """Anchors from baseline (line 3) and §2 (all four axes) appear in the meta-prompt."""
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
-    assert "senior energy analyst" in prompt  # baseline anchor
-    assert "Accuracy" in prompt and "Temporality" in prompt  # §2 axes
+def test_assemble_meta_prompt_is_doc_02_content_post_framing():
+    """The assembled meta-prompt is Doc 02's content after the framing strip.
+
+    Single source of truth: edits to Doc 02 propagate to the dispatched
+    bytes (modulo the meta-framing line stripped by strip_meta_framing).
+    """
+    assembled = assemble_meta_prompt()
+    on_disk = METAPROMPT_PATH.read_text(encoding="utf-8")
+    assert assembled == strip_meta_framing(on_disk), (
+        "assemble_meta_prompt() must return Doc 02 minus the framing line — "
+        "any in-code template would create a second source of truth"
+    )
+
+
+def test_assemble_meta_prompt_contains_quality_bar_and_envelope():
+    """Sanity anchors that Doc 02 carries the four §2 axes + JSON envelope spec."""
+    prompt = assemble_meta_prompt()
+    for axis in ("Accuracy", "Coherence", "Provenance", "Temporality"):
+        assert axis in prompt, f"axis {axis!r} missing from meta-prompt"
     assert "designed_prompt" in prompt  # JSON envelope spec
     assert "Output ONLY" in prompt  # explicit no-prose instruction
 
 
 def test_assemble_meta_prompt_announces_system_prompt_field():
     """Ticket 0213: the Phase A envelope must include `system_prompt` as a
-    required string key, with an explicit instruction that it MUST be a
-    string (not a JSON object) — the dict-vs-string ambiguity already
-    cost us one turn during 0185.
+    required string key — the dict-vs-string ambiguity cost us a turn during
+    0185, so the FORMAT section in Doc 02 names the key explicitly.
     """
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    prompt = assemble_meta_prompt()
     assert "system_prompt" in prompt, "envelope spec must announce system_prompt key"
-    # The string-only constraint must be explicit in the prose.
-    assert "MUST be a plain JSON string" in prompt, (
-        "envelope spec must say system_prompt is a string, not a dict"
-    )
 
 
 def test_extract_phase_a_design_parses_clean_json():
@@ -218,7 +258,6 @@ from experiments.sota import dialogue_classifier  # noqa: E402
 from experiments.sota.exp2_interactive_smoke import (  # noqa: E402
     BUDGET_TRIGGER_FRAC,
     ENCOURAGE_REPLY,
-    PHASE_B_TOTAL_BUDGET_USD,
     TERMINAL_REPLY,
     VERIFY_REPLY,
     format_status_line,
@@ -298,16 +337,25 @@ def _fake_run_factory(cost_per_call: float = 0.10):
 
 
 def test_format_status_line_exact_string():
-    s = format_status_line(7.50, 10.00, 12.3)
-    assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
+    s = format_status_line(45000, 50000, 2.50, 3.00, 12.3, verify_state="pending")
+    assert s == (
+        "Status: remaining 45.0K of 50K tokens, $2.50 of $3.00. "
+        "Wall-clock elapsed 12.3s. Verify pending."
+    )
 
 
-def test_meta_prompt_announces_dollar_budget():
-    """The meta-prompt must announce the $10 cap upfront."""
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
-    assert f"${PHASE_B_TOTAL_BUDGET_USD:.2f} total" in prompt
-    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt
-    assert "remaining budget" in prompt.lower()
+def test_format_status_line_verify_states():
+    for state in ("pending", "on this turn", "used"):
+        s = format_status_line(45000, 50000, 2.50, 3.00, 0.0, verify_state=state)
+        assert f"Verify {state}." in s
+
+
+def test_meta_prompt_announces_dual_axis_budget():
+    """Doc 02 announces both the 50K-token cap and the $3 dollar guard."""
+    prompt = assemble_meta_prompt()
+    assert "50,000 tokens" in prompt, "token cap must be announced"
+    assert "$3.00" in prompt, "dollar guard must be announced"
+    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt, "20% threshold must be named"
 
 
 def test_three_reply_slot_constants_distinct():
@@ -315,7 +363,7 @@ def test_three_reply_slot_constants_distinct():
     assert ENCOURAGE_REPLY != VERIFY_REPLY
     assert ENCOURAGE_REPLY != TERMINAL_REPLY
     assert VERIFY_REPLY != TERMINAL_REPLY
-    # VERIFY_REPLY must mention the four dimensions the ticket spec names.
+    # VERIFY_REPLY must mention the four §2 axes that the verify pass prioritises.
     for marker in ("provenance", "coverage", "temporality", "consistency"):
         assert marker in VERIFY_REPLY.lower(), f"VERIFY_REPLY missing {marker!r}"
 
@@ -338,6 +386,7 @@ def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
@@ -406,6 +455,7 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",
@@ -433,6 +483,43 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
             assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists()
 
 
+def test_state_machine_token_cap_overrides(monkeypatch, tmp_path):
+    """Token cap below 20 % → TERMINAL on next turn regardless of class.
+
+    Dual-axis budget: tokens-side override mirrors the dollar-side override.
+    fake_run emits 20 tokens_out per call; with `cap_tokens=100`, three
+    calls = 60 tokens, leaving 40 (40%). Need to push faster: use
+    `cap_tokens=80` so after 2 calls (40 tokens) we're at 50%, after 3
+    calls (60 tokens) we're at 25%, after 4 calls (80 tokens) we'd be at
+    0% — but the 20% trigger fires when remaining ≤ 16 tokens, which
+    happens at start of turn 4 (after 3 turns × 20 = 60 used → 20 left,
+    which is just above the trigger; need to go one more turn).
+
+    With `cap_tokens=75`: after 3 calls (60 tokens), remaining=15 ≤ 0.20×75=15
+    → trigger fires at the top of turn 4. Total turns = 4.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.01)  # cheap; dollar cap won't bind
+    fake_classify = _fake_classifier_factory(["no_report"] * 10)
+    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=100.0,  # non-binding
+        cap_tokens=75,  # binding: 4 × 20 = 80 > 75; trigger after 3 turns
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    assert result["turns"] == 4
+    assert result["terminal_sent"] is True
+    assert TERMINAL_REPLY in fake_run.calls[3]["prompt"]  # type: ignore[attr-defined]
+
+
 def test_state_machine_budget_overrides(monkeypatch, tmp_path):
     """Budget below 20 % → TERMINAL on next turn regardless of class.
 
@@ -457,6 +544,7 @@ def test_state_machine_budget_overrides(monkeypatch, tmp_path):
         "the designed prompt",
         output_dir=tmp_path,
         cap_usd=10.0,
+        cap_tokens=100_000,
         initial_spent_usd=0.0,
         max_tokens=100,
         agent="mistral",

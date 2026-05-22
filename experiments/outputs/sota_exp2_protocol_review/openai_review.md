@@ -1,0 +1,11 @@
+I would not categorically refuse the task as written. The inventory objective is legitimate, and the protocol discloses the main mechanics, budget, classifier, and evaluation structure. However, I would participate only with reservations.
+
+The main scientific weakness is that the task appears substantially too large for the stated budget if the expected standard is “all thermal power plants >30 MWe in Vietnam — past, present, planned, cancelled” with strong per-cell provenance, temporality, narratives, cross-tabs, and bibliography. A 163-row reference set with two sources per row and current-status validation is a research-grade dataset, not a reliably reproducible $10 web-search run. This risks rewarding plausible compression and citation stuffing rather than accuracy.
+
+The state machine may also bias outputs. Because the first “report” triggers a single verify pass and then stops after the next report, agents are incentivized to produce a large first draft early rather than use turns for systematic search. Conversely, an agent that honestly plans or asks clarifying questions may be penalized by encouragement/terminal routing. The Mistral-small classifier is also a possible source of vendor/style bias, especially for the Mistral subject, and its binary “report/no_report” decision may affect how much working time each agent receives.
+
+The comparison across agents may be unfair unless tool access, search result localization, date cutoffs, maximum tokens, and pricing-normalized budgets are carefully controlled. A dollar cap is not equivalent across providers because token pricing, web-search pricing, context length, and tool behavior differ. Phase A prompt design being reused across three Phase-B runs is reasonable, but if Phase A spending reduces each replicate’s budget, agents may be differentially penalized for using search in prompt design.
+
+I would want clarification on whether sources must be live URLs, whether non-English/Vietnamese sources are preferred or required, what counts as one “plant” for multi-phase complexes, how captive/industrial CHP plants are treated, and whether planned/cancelled projects below final investment decision are in scope. I would also recommend publishing the classifier prompt, calibration results, and exact scoring rubric before execution.
+
+VERDICT: ACCEPT-WITH-RESERVATIONS

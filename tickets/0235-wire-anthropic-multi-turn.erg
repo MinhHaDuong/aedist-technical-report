@@ -1,0 +1,122 @@
+%erg 0.1
+Title: Wire Anthropic Messages API into Exp 2 multi-turn Phase B state machine
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T15:30Z claude created — Path B Phase B-0 prerequisite
+
+--- body ---
+
+## Context
+
+`experiments/sota/exp2_interactive_smoke.py::run_phase_b_multiturn` is
+currently Mistral-only. This ticket wires **Anthropic Claude Opus 4.6**
+via the Messages API.
+
+Anthropic's multi-turn surface is the canonical `messages` list:
+client builds and resends the full conversation each call (no
+server-side state). System prompt is a separate `system` parameter
+installed at agent-create time (we send it only on the first call but
+must keep it stable across calls — Anthropic does NOT persist it
+server-side; we send it every call, identical bytes). Tools array
+likewise must be the same across calls.
+
+## Actions
+
+1. **Add `run_anthropic_call()` to `experiments/sota/exp2_interactive_smoke.py`**
+   modeled on `run_mistral_call`. Signature:
+
+   ```python
+   def run_anthropic_call(
+       user_text: str,
+       *,
+       cap_usd: float,
+       agent_mode: str,
+       raw_output_path: Path,
+       max_tokens: int,
+       continuation: dict | None,  # {"messages": list[dict], "system": str}
+       extra_metadata: dict | None,
+       system_prompt: str | None,
+   ) -> RunRecord
+   ```
+
+   Key behaviour:
+   - Turn 1 (continuation is None or empty): build a request with
+     `messages=[{"role": "user", "content": user_text}]`, `system=system_prompt`,
+     `tools=[{"type": "web_search_20250305", ...}]`, `max_tokens=max_tokens`.
+   - Turn 2+ (continuation has messages list): append the previous
+     assistant response (as `{"role": "assistant", "content": [...blocks]}`)
+     and the new user message to the running list, send again. The
+     `system` parameter stays identical bytes across all calls.
+   - Capture the assistant's response content blocks into the
+     continuation for the next turn.
+
+2. **Reuse `query_anthropic.assemble_request` + `dispatch`** where it
+   fits — but extend so the caller can pass the full `messages` list
+   instead of just a single user message. Likely needs a small refactor
+   in `query_anthropic.assemble_request` to accept either a string OR a
+   `messages` list.
+
+3. **Continuation shape** for Anthropic:
+   `{"messages": list[dict], "system": str}`. The caller stores the
+   updated messages list (with the just-received assistant response
+   appended) in the continuation, ready for the next user turn.
+
+4. **Cost accounting**: Anthropic returns `usage.input_tokens`,
+   `usage.output_tokens`, `usage.cache_creation_input_tokens`,
+   `usage.cache_read_input_tokens`. For thinking-enabled models also
+   `usage.thinking_tokens` (when extended thinking is on). Sum
+   `output_tokens + thinking_tokens` into the dual-axis token cap.
+
+5. **Web search billing**: Anthropic charges per `server_tool_use` of
+   type `web_search`. Capture count from `resp.content` (count items of
+   type `server_tool_use` with `tool_name == "web_search"`) and multiply
+   by `price_per_web_search` from `models.yaml`.
+
+6. **Raw output**: save the full `resp.model_dump_json(indent=2)` (or
+   `json.dumps(dict(resp), default=str)` if not pydantic) to
+   `raw_output_path`.
+
+7. **Dispatch table integration** (depends on 0234's table refactor;
+   may need to coordinate so the tables are union-friendly): add
+   `"anthropic": run_anthropic_call` to `CALL_FNS`.
+
+8. **Tests**: extend `tests/test_exp2_interactive_smoke.py` with
+   `test_state_machine_anthropic_dispatch` that mocks
+   `anthropic.Anthropic` and asserts turn-2 sends the full messages
+   list including the prior assistant response.
+
+## First test (TDD)
+
+`test_run_anthropic_call_turn2_appends_assistant_response` — mocks the
+Messages API, asserts: turn-2 request's `messages` list contains the
+turn-1 user message AND the turn-1 assistant response AND the new
+turn-2 user message in that order. `system` is the same bytes across
+turn-1 and turn-2.
+
+## Dependencies
+
+None blocking. `query_anthropic.assemble_request` is the working
+single-call reference. May coordinate with ticket 0234 if the dispatch
+table refactor lands first.
+
+## Exit criteria
+
+- [ ] `run_anthropic_call` function exists with the signature above
+- [ ] `run_phase_b_multiturn` dispatches Anthropic without
+      NotImplementedError
+- [ ] Mock-based unit test asserts turn-2 messages list shape
+- [ ] Live N=1 dispatch on Anthropic optimized arm completes
+      successfully (cost ≤ $3; Opus is the priciest of the four)
+- [ ] `make check-fast` green
+- [ ] Ruff clean
+
+## Out of scope
+
+- Adapter for the naive arm (already wired via `exp2_naive_arm.py`).
+- Multi-turn for OpenAI / Qwen (separate tickets 0234 / 0236).
+- Full N=5 batch dispatch (separate ticket 0237).
+- Extended thinking on/off as a Phase A design choice — the agent's
+  `settings.thinking` field flows through but we don't optimise the
+  cap policy for thinking budget here.
