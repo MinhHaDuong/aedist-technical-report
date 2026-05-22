@@ -120,6 +120,37 @@ What N=5 does not support — and the manuscript will not claim:
 
 Future replications at higher N are still welcome; the per-session artefacts are designed to be append-only so additional reps can be folded in.
 
+### 3.5.1. Pre-registered analysis plan (locked before live batch)
+
+Six pre-registered hypotheses, mapped to specific tests, sample sizes, expected effect sizes, and falsifiers. Tests not in this table — pairwise comparisons, parametric tests, regressions, post-hoc subgroup analyses — will be reported only as **exploratory** if conducted; the manuscript will mark them as such.
+
+| H | Claim | Test | Sample | Expected effect | Power (α=0.05) | Falsifier |
+|---|---|---|---|---|---|---|
+| **H1** | The optimized arm produces higher per-row F1 than the naive arm (pooled across 4 agents) | Mann-Whitney U, two-tailed | n=20 vs n=20 | r ≥ 0.4 (medium) | ~0.55 medium / ~0.85 large | p ≥ 0.05 AND r < 0.2 |
+| **H2** | The four agents differ on per-row F1 ranks within the optimized arm | Friedman test | k=4, n=5 blocks (within-arm) | η² ≥ 0.14 (large) | ~0.45 medium / ~0.85 large | p > 0.10 |
+| **H3** | The verify pass improves per-row provenance rate within the optimized arm (turn-3 ≥ turn-2 of the same session) | Paired Wilcoxon signed-rank | n=20 paired turn-pairs | d ≥ 0.5 (medium) | ~0.75 medium / ~0.99 large | All four agents show d ≤ 0.2 |
+| **H4** | At least one agent's naive-arm bounce rate exceeds 50% | Wilson upper bound per agent | binomial out of 5 per agent | observed proportion | exact | All four agents' upper bound < 50% |
+| **H5** | Wikipedia / Wikidata / mirror citations are absent (post-hoc compliance audit) | Wilson upper bound per agent on count-of-cells-citing-Wikipedia | binomial out of total table cells per session | observed proportion | exact | Any agent shows non-zero Wikipedia citations |
+| **H6** | Phase C cross-eval ranks agree with mechanical metric ranks (per §A1 dimension) | Spearman ρ across 4 agent ranks | n=4 per dimension | \|ρ\| ≥ 0.7 (large) | weak (n=4) | \|ρ\| < 0.3 → Phase C and mechanical metrics diverge |
+
+**Effect-size convention.** For Mann-Whitney U we use rank-biserial r (small 0.10, medium 0.30, large 0.50). For Friedman we use Kendall's W / η² (small 0.01, medium 0.06, large 0.14). For Wilcoxon signed-rank we use matched-pair Cohen's d (small 0.2, medium 0.5, large 0.8).
+
+**Reporting.** Each hypothesis is reported with: test statistic, p-value, effect-size estimate, 95% confidence interval (Wilson for proportions, bootstrap for ranks/correlations). Null results (failure to reject H₀) are reported as null findings, NOT as evidence of absence; the manuscript will use the explicit phrase *"we did not detect"* rather than *"there is no"*.
+
+**Exclusion criteria** (locked):
+- Sessions where the harness crashed before any model response → excluded; replaced with a fresh dispatch up to 2 retries per slot.
+- Sessions where the model returned a refusal classified by the dialogue classifier as `no_report` AND no inventory bytes are present → counted as bounce in H4; not scored on H1/H2/H3 (F1 not computable).
+- Sessions where the model produced an inventory but the dialogue classifier mis-classified (mostly Qwen-style outputs; see 2026-05-22 probe) → counted on H1/H2/H3 by inspection of the artefact, regardless of classifier verdict; the misclassifications themselves are reported.
+- No session is dropped for cost or wall-time reasons; the dual-axis cap is the experimental condition.
+
+**Multiple-comparison correction.** H1–H3 use Bonferroni-corrected α=0.05/3=0.0167 for the headline tests. H4 and H5 are per-agent Wilson CIs (no significance test). H6 is exploratory at α=0.05.
+
+**Stopping rule.** No interim analyses. All N=5 per arm complete before any analysis is run; Phase B-0 gating (§3.2.1) is an artefact-quality check, not a statistical interim.
+
+**Locked at commit SHA**: this analysis plan is fixed before the live batch dispatches. Any amendments are recorded in this section as appended sub-subsections with a date and rationale.
+
+---
+
 ### Dual-axis budget (50K tokens + $3 guard)
 Per round-1 review: dollar-only caps disadvantage models with expensive output tokens. The 50K-token cap binds reasoning capacity comparably; the $3 guard binds total bill. Whichever fires first triggers TERMINAL. See Doc 04 §2.3.
 
