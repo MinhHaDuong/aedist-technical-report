@@ -241,20 +241,17 @@ def test_wait_for_space_continues_on_enter(monkeypatch):
 
 
 def test_module_imports_only_wired_adapters():
-    """The smoke imports only adapters it actually dispatches multi-turn through.
+    """The smoke imports the four wired adapters and nothing else.
 
-    Mistral wired in ticket 0214; OpenAI wired in ticket 0234; Anthropic
-    wired in ticket 0235. Qwen multi-turn wiring is tracked under ticket
-    0236 and must NOT be imported until that lands — keeps the dependency
-    surface honest.
+    Mistral (0214), OpenAI (0234), Anthropic (0235), Qwen (0236) — the
+    full optimized-arm cohort for Exp 2 protocol v3.
     """
     src = Path(__file__).parent.parent / "experiments" / "sota" / "exp2_interactive_smoke.py"
     text = src.read_text()
     assert "adapter_mistral" in text
-    assert "adapter_openai_responses" in text  # 0234 wired OpenAI
-    assert "query_anthropic" in text  # 0235 wired Anthropic
-    for forbidden in ("adapter_qwen_dashscope",):
-        assert forbidden not in text, f"unexpected import: {forbidden}"
+    assert "adapter_openai_responses" in text  # 0234
+    assert "query_anthropic" in text  # 0235
+    assert "adapter_qwen_dashscope" in text  # 0236
 
 
 # ---------------------------------------------------------------------------
@@ -1061,4 +1058,198 @@ def test_state_machine_anthropic_dispatch_chains_messages(monkeypatch, tmp_path)
     assert msgs[0] == {"role": "user", "content": "the designed prompt"}
     assert msgs[1] == {"role": "assistant", "content": "reply-1"}
     # SYSTEM_PROMPT_PASSTHROUGH=True for Anthropic — system re-sent on turn 2.
+    assert call_log[1]["system_prompt"] == "designed system text"
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0236: Qwen DashScope adapter for multi-turn Phase B
+# ---------------------------------------------------------------------------
+
+
+def _make_fake_qwen_resp(*, narrative: str = "stub-qwen"):
+    """Minimal stand-in for ``dashscope.Generation.call()`` return value.
+
+    Mirrors the dict-shape DashScope returns: nested ``output.choices[0].message``
+    plus a top-level ``usage`` dict. Built to exercise
+    ``adapter_qwen_dashscope.parse_response``.
+    """
+    return {
+        "output": {
+            "choices": [
+                {
+                    "message": {
+                        "content": narrative,
+                        "reasoning_content": None,
+                    },
+                    "finish_reason": "stop",
+                },
+            ],
+            "search_info": {"search_results": []},
+        },
+        "usage": {
+            "input_tokens": 100,
+            "output_tokens": 50,
+            "output_tokens_details": {"reasoning_tokens": 0},
+            "plugins": {"search": {"count": 0}},
+        },
+        "request_id": "req_test_001",
+        "status_code": 200,
+    }
+
+
+def test_run_qwen_call_turn1_injects_system(monkeypatch, tmp_path):
+    """Turn 1 Qwen call: messages = [system, user]; enable_search=True; thinking on."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_call(**payload):
+        captured.update(payload)
+        return _make_fake_qwen_resp()
+
+    monkeypatch.setattr("dashscope.Generation.call", fake_call)
+    monkeypatch.setattr("aedist.adapter_qwen_dashscope._resolve_api_key", lambda: "sk-qwen-test")
+
+    record = mod.run_qwen_call(
+        "the prompt",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw.json",
+        max_tokens=1000,
+        continuation=None,
+        extra_metadata=None,
+        system_prompt="you are an analyst",
+    )
+
+    assert captured["messages"] == [
+        {"role": "system", "content": "you are an analyst"},
+        {"role": "user", "content": "the prompt"},
+    ]
+    assert captured["enable_search"] is True
+    assert captured["enable_thinking"] is True
+    # Continuation messages (post-parse override) include system + user + assistant.
+    extra_msgs = (record.method_params.extra or {}).get("messages", [])
+    assert extra_msgs[0] == {"role": "system", "content": "you are an analyst"}
+    assert extra_msgs[1] == {"role": "user", "content": "the prompt"}
+    assert extra_msgs[2] == {"role": "assistant", "content": "stub-qwen"}
+    # Narrative reachable via the record-first classifier path.
+    assert (record.justification or {}).get("output_text") == "stub-qwen"
+
+
+def test_run_qwen_call_turn2_replays_full_history(monkeypatch, tmp_path):
+    """Turn 2+: messages list replays prior history (including system) + new user."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_call(**payload):
+        captured.update(payload)
+        return _make_fake_qwen_resp(narrative="turn-2 reply")
+
+    monkeypatch.setattr("dashscope.Generation.call", fake_call)
+    monkeypatch.setattr("aedist.adapter_qwen_dashscope._resolve_api_key", lambda: "sk-qwen-test")
+
+    prior_history = [
+        {"role": "system", "content": "you are an analyst"},
+        {"role": "user", "content": "first user message"},
+        {"role": "assistant", "content": "first assistant reply"},
+    ]
+
+    mod.run_qwen_call(
+        "second user message",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw_turn2.json",
+        max_tokens=1000,
+        continuation={"messages": prior_history},
+        extra_metadata=None,
+        system_prompt="you are an analyst",  # ignored because continuation carries it
+    )
+
+    # Full history (incl. system) + new user message sent on the wire.
+    assert captured["messages"] == [
+        {"role": "system", "content": "you are an analyst"},
+        {"role": "user", "content": "first user message"},
+        {"role": "assistant", "content": "first assistant reply"},
+        {"role": "user", "content": "second user message"},
+    ]
+
+
+def test_state_machine_qwen_dispatch_chains_messages(monkeypatch, tmp_path):
+    """Dispatcher routes --agent qwen, replays full conversation, re-sends system on turn 2."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    call_log: list[dict] = []
+
+    def fake_run_qwen(
+        prompt,
+        *,
+        cap_usd,  # noqa: ARG001
+        agent_mode,
+        raw_output_path,
+        max_tokens,  # noqa: ARG001
+        continuation=None,
+        extra_metadata=None,
+        system_prompt=None,
+    ):
+        from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+
+        call_log.append(
+            {
+                "prompt": prompt,
+                "continuation": continuation,
+                "extra_metadata": extra_metadata,
+                "system_prompt": system_prompt,
+            }
+        )
+        # Build the full history for the next-turn continuation.
+        if continuation and continuation.get("messages"):
+            history = list(continuation["messages"])
+        else:
+            history = [{"role": "system", "content": system_prompt}] if system_prompt else []
+        history.append({"role": "user", "content": prompt})
+        history.append({"role": "assistant", "content": f"reply-{len(call_log)}"})
+        raw_output_path.write_text(json.dumps({"request_id": f"req_t{len(call_log)}"}))
+        return RunRecord(
+            method="frontier",
+            method_params=MethodParams(
+                model="qwen3-max",
+                max_tokens=100,
+                extra={"messages": history},
+            ),
+            resource_use=ResourceUse(cost_usd=0.10, wall_s=1.0, tokens_in=10, tokens_out=20),
+            result_summary=ResultSummary(status="ok"),
+            agent_family="qwen-direct",
+            agent_mode=agent_mode,
+            justification={"output_text": f"reply-{len(call_log)}"},
+        )
+
+    monkeypatch.setitem(mod.CALL_FNS, "qwen", fake_run_qwen)
+    monkeypatch.setattr(
+        mod.dialogue_classifier,
+        "classify_report",
+        _fake_classifier_factory(["report", "no_report"]),
+    )
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        cap_tokens=100_000,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="qwen",
+        system_prompt="designed system text",
+    )
+
+    assert result["turns"] == 2, f"expected 2 turns, got {result['turns']}"
+    # Turn 1: empty continuation, system installed.
+    assert not call_log[0]["continuation"] or "messages" not in call_log[0]["continuation"]
+    assert call_log[0]["system_prompt"] == "designed system text"
+    # Turn 2: full history (system + user1 + assistant1) replayed.
+    msgs = (call_log[1]["continuation"] or {}).get("messages", [])
+    assert msgs[0] == {"role": "system", "content": "designed system text"}
+    assert msgs[1] == {"role": "user", "content": "the designed prompt"}
+    assert msgs[2] == {"role": "assistant", "content": "reply-1"}
+    # SYSTEM_PROMPT_PASSTHROUGH=True for Qwen — system re-sent on turn 2.
     assert call_log[1]["system_prompt"] == "designed system text"

@@ -509,6 +509,131 @@ def run_anthropic_call(
     return record
 
 
+def run_qwen_call(
+    prompt: str,
+    *,
+    cap_usd: float,
+    agent_mode: str,
+    raw_output_path: Path,
+    max_tokens: int,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
+    system_prompt: str | None = None,
+) -> RunRecord:
+    """Single Qwen DashScope call with full-history resend for multi-turn.
+
+    Continuation shape: ``{"messages": list[dict]}`` — complete conversation
+    history including the leading system message (when present) and each
+    assistant reply. DashScope is stateless on the wire; the client
+    resends everything every call.
+
+    ``system_prompt`` is injected as the first ``{"role": "system", ...}``
+    message on turn 1; turn 2+ inherits it via the replayed history.
+    """
+    import dashscope
+
+    from aedist import adapter_qwen_dashscope
+    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
+
+    meta = load_model_meta("qwen")
+    model_id = meta.get("model_id")
+    is_followup = bool(continuation and continuation.get("messages"))
+
+    # Build the messages list: history + new user, or (turn 1) system + user.
+    if is_followup:
+        messages = list(continuation["messages"]) + [{"role": "user", "content": prompt}]
+    else:
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+    # Use the adapter's payload assembly, then override the messages list
+    # with our explicit history (build_request consults ``continuation``
+    # but stores only [user] without preserving an explicit system role).
+    payload = adapter_qwen_dashscope.build_request(
+        prompt,
+        model=model_id,
+        max_tokens=max_tokens,
+        enable_thinking=True,  # capability default for the optimized arm
+        enable_search=True,
+    )
+    payload["messages"] = messages
+    if extra_metadata is not None:
+        # DashScope lacks a metadata surface; inject as a leading system
+        # message. Mirrors ``adapter_qwen_dashscope.run``'s fallback path.
+        meta_text = "; ".join(f"{k}={v}" for k, v in extra_metadata.items())
+        payload["messages"] = [{"role": "system", "content": f"[metadata] {meta_text}"}] + payload[
+            "messages"
+        ]
+
+    # Pre-call cap.
+    p_in = (
+        float(meta.get("price_per_mtok_in", adapter_qwen_dashscope.DEFAULT_PRICE_PER_MTOK_IN))
+        / _TOKENS_PER_MTOK
+    )
+    p_out = (
+        float(meta.get("price_per_mtok_out", adapter_qwen_dashscope.DEFAULT_PRICE_PER_MTOK_OUT))
+        / _TOKENS_PER_MTOK
+    )
+    p_search = float(
+        meta.get(
+            "price_per_web_search_call_usd",
+            adapter_qwen_dashscope.DEFAULT_PRICE_PER_WEB_SEARCH_CALL_USD,
+        )
+    )
+    estimated = estimate_call_cost(
+        max_tokens=max_tokens,
+        price_in=p_in,
+        price_out=p_out,
+        n_searches=5,
+        price_per_search=p_search,
+    )
+    enforce_cost_cap(estimated, cap_usd=cap_usd)
+
+    dashscope.api_key = adapter_qwen_dashscope._resolve_api_key()
+    dashscope.base_http_api_url = adapter_qwen_dashscope.DEFAULT_BASE_URL
+    t0 = time.monotonic()
+    resp = dashscope.Generation.call(**payload)
+    wall = round(time.monotonic() - t0, 3)
+
+    raw_dump = adapter_qwen_dashscope._response_to_dict(resp)
+    raw_output_path.write_text(json.dumps(raw_dump, indent=2, default=str), encoding="utf-8")
+
+    record = adapter_qwen_dashscope.parse_response(
+        resp,
+        model_meta=meta,
+        prompt=prompt,
+        max_tokens=max_tokens,
+        wall_s=wall,
+        enable_thinking=True,
+        enable_search=True,
+    )
+    record.agent_mode = agent_mode
+
+    # Extract narrative from the raw dump for the continuation + classifier paths.
+    output = raw_dump.get("output") or {}
+    choices = output.get("choices") or []
+    narrative = (choices[0].get("message", {}).get("content")) if choices else None
+
+    # Overwrite parse_response's [user, assistant]-only messages with the
+    # complete history we just sent + the assistant reply. The CONTINUATION
+    # extractor then consumes this on the next turn.
+    extra = record.method_params.extra or {}
+    full_history = list(messages)
+    if narrative:
+        full_history.append({"role": "assistant", "content": narrative})
+    extra["messages"] = full_history
+    record.method_params.extra = extra
+
+    # Stash narrative so the classifier's record-first path skips raw-file parse.
+    record.justification = {"output_text": narrative or ""}
+
+    # Post-call cap recheck (actual billed total).
+    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
+    return record
+
+
 def total_cost(record: RunRecord) -> float:
     """Token cost + connector (web_search) cost."""
     return (record.resource_use.cost_usd or 0.0) + (record.tool_calls_cost_usd or 0.0)
@@ -698,30 +823,40 @@ def _extract_anthropic_continuation(record: RunRecord, current: dict | None) -> 
     return current
 
 
+def _extract_qwen_continuation(record: RunRecord, current: dict | None) -> dict | None:
+    """Qwen: full conversation messages list (stateless DashScope — client resends history)."""
+    extra = record.method_params.extra or {}
+    if extra.get("messages"):
+        return {"messages": list(extra["messages"])}
+    return current
+
+
 CALL_FNS = {
     "mistral": run_mistral_call,
     "openai": run_openai_call,
     "anthropic": run_anthropic_call,
+    "qwen": run_qwen_call,
 }
 
 CONTINUATION_EXTRACTORS = {
     "mistral": _extract_mistral_continuation,
     "openai": _extract_openai_continuation,
     "anthropic": _extract_anthropic_continuation,
+    "qwen": _extract_qwen_continuation,
 }
 
 # Should ``system_prompt`` be passed on follow-up turns (turn > 1)?
 #  - mistral / openai: no — adapter raises (Mistral) or server-side state
 #    inherits via previous_response_id (OpenAI).
-#  - anthropic: yes — server does NOT persist system across calls;
-#    identical bytes must be resent every turn or model behaviour drifts.
-#  - qwen (ticket 0236): yes — stateless API, client resends the full
-#    conversation including the system message every turn.
+#  - anthropic / qwen: yes — both APIs are stateless on the wire; the
+#    client resends the full conversation history (including the system
+#    message) every turn.
 # Default: False (drop on follow-up).
 SYSTEM_PROMPT_PASSTHROUGH = {
     "mistral": False,
     "openai": False,
     "anthropic": True,
+    "qwen": True,
 }
 
 
