@@ -560,12 +560,21 @@ def run_qwen_call(
     )
     payload["messages"] = messages
     if extra_metadata is not None:
-        # DashScope lacks a metadata surface; inject as a leading system
-        # message. Mirrors ``adapter_qwen_dashscope.run``'s fallback path.
+        # DashScope lacks a metadata surface AND allows at most one
+        # ``role=system`` entry. If one is already present (e.g. carried
+        # by ``system_prompt`` or by the continuation), append the metadata
+        # to its content; otherwise prepend a fresh system message.
         meta_text = "; ".join(f"{k}={v}" for k, v in extra_metadata.items())
-        payload["messages"] = [{"role": "system", "content": f"[metadata] {meta_text}"}] + payload[
-            "messages"
-        ]
+        meta_line = f"\n[metadata] {meta_text}"
+        if payload["messages"] and payload["messages"][0].get("role") == "system":
+            payload["messages"][0] = {
+                "role": "system",
+                "content": payload["messages"][0].get("content", "") + meta_line,
+            }
+        else:
+            payload["messages"] = [
+                {"role": "system", "content": f"[metadata] {meta_text}"}
+            ] + payload["messages"]
 
     # Pre-call cap.
     p_in = (

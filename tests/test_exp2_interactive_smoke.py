@@ -1136,6 +1136,53 @@ def test_run_qwen_call_turn1_injects_system(monkeypatch, tmp_path):
     assert (record.justification or {}).get("output_text") == "stub-qwen"
 
 
+def test_run_qwen_call_merges_metadata_into_existing_system(monkeypatch, tmp_path):
+    """When system_prompt AND extra_metadata are both set, exactly one system message.
+
+    Regression: an earlier implementation prepended a SECOND
+    ``{"role": "system"}`` entry when extra_metadata was set, producing
+    payload [metadata-system, real-system, user]. DashScope honours at
+    most one leading system message and would silently drop one of them.
+
+    Correct behaviour: append the [metadata] line to the existing
+    system message content, keeping a single system entry at index 0.
+    """
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_call(**payload):
+        captured.update(payload)
+        return _make_fake_qwen_resp()
+
+    monkeypatch.setattr("dashscope.Generation.call", fake_call)
+    monkeypatch.setattr("aedist.adapter_qwen_dashscope._resolve_api_key", lambda: "sk-qwen-test")
+
+    mod.run_qwen_call(
+        "the prompt",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw.json",
+        max_tokens=1000,
+        continuation=None,
+        extra_metadata={"remaining_usd": "2.50", "cap_usd": "3.00"},
+        system_prompt="you are an analyst",
+    )
+
+    # Exactly one system message at index 0.
+    system_messages = [m for m in captured["messages"] if m.get("role") == "system"]
+    assert len(system_messages) == 1, (
+        f"expected exactly 1 system message, got {len(system_messages)}: "
+        f"{[m for m in captured['messages']]}"
+    )
+    assert captured["messages"][0]["role"] == "system"
+    # Both the agent's system_prompt AND the [metadata] line must be present.
+    sys_content = captured["messages"][0]["content"]
+    assert "you are an analyst" in sys_content
+    assert "[metadata]" in sys_content
+    assert "remaining_usd=2.50" in sys_content
+
+
 def test_run_qwen_call_turn2_replays_full_history(monkeypatch, tmp_path):
     """Turn 2+: messages list replays prior history (including system) + new user."""
     from experiments.sota import exp2_interactive_smoke as mod
