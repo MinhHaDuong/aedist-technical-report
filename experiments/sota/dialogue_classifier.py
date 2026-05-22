@@ -8,11 +8,14 @@ Phase B state machine (`exp2_interactive_smoke.run_phase_b_multiturn`).
 
 Design notes:
 
-- One-shot ``POST /v1/chat/completions`` against the Mistral
-  OpenAI-compatible endpoint. We do **not** route through the Agents
-  API (no web_search, no agent lifecycle to clean up). Pinning the
-  cheapest Mistral chat-completions model keeps overhead well under
+- One-shot ``POST /v1/chat/completions`` via OpenRouter, targeting
+  nvidia/nemotron-nano-9b-v2 — an open-weight model unaffiliated with
+  any of the four Exp 2 subject vendors. Keeps overhead well under
   $0.001 per classification on 8 KiB inputs.
+- Nemotron is a thinking model: reasoning tokens consume the
+  ``max_tokens`` budget before content is emitted. We set
+  ``max_tokens=512`` (enough for ~150 reasoning tokens + a one-word
+  answer). Calibrated in ticket 0226 (4/4 fixtures correct).
 - The classifier cost is **harness overhead**, separate from the SOTA
   agent's $10 Phase B budget. Callers should book it under
   ``classifier_cost_usd`` in the per-turn cost artefact, not deduct
@@ -26,25 +29,22 @@ import logging
 import os
 import time
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Literal
 
 import httpx
 
 log = logging.getLogger(__name__)
 
-# Pinned classifier — cheapest Mistral chat-completions model with
-# adequate instruction-following for a one-word binary classification.
-# Pricing as of 2026-05 (mistral.ai pricing page): $0.20 / $0.60 per
-# Mtok in/out → < $0.001 on 8 KiB prompts.
-CLASSIFIER_MODEL = "mistral-small-latest"
-CLASSIFIER_API_BASE = "https://api.mistral.ai"
-CLASSIFIER_KEY_PATH = Path.home() / ".config" / "keys" / "mistral.env"
+# Pinned classifier — open-weight NVIDIA model, vendor-neutral relative
+# to the four Exp 2 subject models. Calibrated in ticket 0226 (4/4).
+# Pricing as of 2026-05 (OpenRouter): $0.04 / $0.16 per Mtok in/out.
+CLASSIFIER_MODEL = "nvidia/nemotron-nano-9b-v2"
+CLASSIFIER_API_BASE = "https://openrouter.ai/api"
 
 # Conservative pricing card for cost accounting. Kept private to this
 # module — the SOTA harness's $10 cap is unaffected.
-_PRICE_PER_MTOK_IN = 0.20
-_PRICE_PER_MTOK_OUT = 0.60
+_PRICE_PER_MTOK_IN = 0.04
+_PRICE_PER_MTOK_OUT = 0.16
 _TOKENS_PER_MTOK = 1_000_000
 
 # Cap on the narrative excerpt embedded in the prompt. 8 KiB ≈ 2K
@@ -87,26 +87,15 @@ def result_to_artefact_dict(result: ClassificationResult) -> dict:
     }
 
 
-def _load_api_key(path: Path = CLASSIFIER_KEY_PATH) -> str | None:
-    """Read ``MISTRAL_API_KEY`` from disk or env; return ``None`` if absent.
+def _load_api_key() -> str | None:
+    """Read ``OPENROUTER_API_KEY`` from the environment; return ``None`` if absent.
 
     Unlike the SOTA adapter, missing credentials should not raise here
     — the caller would already have failed long before reaching the
     classifier. Return ``None`` so the caller path classifies as
     ``no_report`` and logs.
     """
-    if path.exists():
-        for raw in path.read_text().splitlines():
-            line = raw.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.startswith("MISTRAL_API_KEY="):
-                value = line.split("=", 1)[1].strip()
-                if value and value[0] in {'"', "'"} and value[-1] == value[0]:
-                    value = value[1:-1]
-                if value:
-                    return value
-    return os.environ.get("MISTRAL_API_KEY")
+    return os.environ.get("OPENROUTER_API_KEY")
 
 
 def _build_prompt(narrative: str) -> str:
@@ -156,12 +145,17 @@ def _post_classifier(prompt: str, api_key: str) -> dict:
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "Accept": "application/json",
+        "HTTP-Referer": "https://github.com/haduong/aedist-technical-report",
+        "X-Title": "AEDIST dialogue classifier",
     }
     body = {
         "model": CLASSIFIER_MODEL,
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.0,
-        "max_tokens": 8,
+        # Nemotron is thinking-capable: reasoning tokens consume the
+        # budget before content is emitted. 512 is enough for ~150
+        # reasoning tokens + the one-word answer.
+        "max_tokens": 512,
     }
     with httpx.Client(base_url=CLASSIFIER_API_BASE, headers=headers) as client:
         resp = client.post("/v1/chat/completions", json=body, timeout=30.0)
@@ -180,7 +174,7 @@ def classify_report(narrative: str) -> ClassificationResult:
     api_key = _load_api_key()
     if api_key is None:
         wall = round(time.monotonic() - t0, 3)
-        log.warning("dialogue_classifier: no MISTRAL_API_KEY found; defaulting to 'no_report'.")
+        log.warning("dialogue_classifier: no OPENROUTER_API_KEY found; defaulting to 'no_report'.")
         return ClassificationResult(
             class_="no_report",
             classifier_cost_usd=0.0,

@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Annex C self-caveat — acknowledge the two-paragraph §4 structure
+Created: 2026-05-21
+Author: claude
+Closed: Annex C header note updated — "subsumed by an observed-results paragraph" acknowledges both conjectured and first-observation paragraphs
+
+--- log ---
+2026-05-21T19:30Z claude created — /verify consider on PR #405
+2026-05-22T08:00Z claude closed — manuscript updated: "conjectured-results and first-observation paragraphs in §4 will be subsumed by an observed-results paragraph when 0199 completes"
+
+--- body ---
+
+## Context
+
+`slides/manuscript/main.md:213` (Annex C header note) says:
+
+> *the conjectured-results paragraph in §4 will be replaced by an
+> observed-results paragraph when 0199 completes*
+
+PR #405 inserted a *First observation (Mistral pilot, n=1 agent)*
+paragraph alongside the existing *Conjectured results* paragraph in
+§4 (lines 59–63). The Annex C caveat now technically mis-states the
+structure: §4 carries TWO paragraphs (conjecture + pilot
+observation), and 0199 should subsume both.
+
+The §4 first-observation paragraph self-labels as "Mistral pilot,
+n=1 agent" — the framing is honest. The inconsistency is only in
+how Annex C describes the future replacement.
+
+## Actions
+
+1. Rewrite line 213 to acknowledge the two-paragraph structure, e.g.:
+   *"The conjectured-results and first-observation paragraphs in §4
+   will be subsumed by an observed-results paragraph when 0199
+   completes."*
+
+## Exit criteria
+
+- [ ] Annex C header note updated.
+- [ ] No other Annex C / §4 prose contradicts the structure.

@@ -2,9 +2,11 @@
 Title: adapter_mistral (and harness) retry on transient 5xx with exponential backoff
 Created: 2026-05-21
 Author: claude
+Closed: PR #399 merged; exponential-backoff retry implemented for _start_conversation and _append_conversation
 
 --- log ---
 2026-05-21T17:00Z claude created — turn 3 of 0185 multi-turn smoke (2026-05-21) lost to HTTP 502 Bad Gateway from Mistral
+2026-05-22T08:00Z claude closed — PR #399 merged exponential-backoff retry; exit criteria met
 
 --- body ---
 

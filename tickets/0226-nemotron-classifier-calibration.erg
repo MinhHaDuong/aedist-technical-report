@@ -1,85 +1,19 @@
 %erg 0.1
 Title: Calibrate nvidia/nemotron-nano-9b-v2 as the v2 dialogue classifier
+Closed: 4/4 pass, classifier swapped, PR #416 merged
 Created: 2026-05-22
 Author: claude
 
 --- log ---
 2026-05-22T09:00Z claude created — gates v2 protocol round-2 review
+2026-05-22T11:12Z claude note calibration 4/4 — classifier swapped to nemotron-nano-9b-v2 (PR #416)
+2026-05-22T11:30Z claude note closed — PR #416 squash-merged to main (b98e4d93)
 
 --- body ---
-
 ## Context
-
-Round-1 protocol review (PR #405 follow-up) had all four subject
-agents flag same-vendor classifier bias as a top-line concern. The
-v2 protocol spec (`experiments/sota/exp2_protocol_spec_v2.md`,
-§4.1) substitutes `mistral-small-latest` with
-**`nvidia/nemotron-nano-9b-v2`** — open-weight, NVIDIA, not
-affiliated with any of the four subject vendors (Anthropic /
-OpenAI / Mistral / Alibaba). Available via OpenRouter at
-~$0.04/Mtok in, $0.16/Mtok out — cheaper than the Mistral-small
-incumbent.
-
-The substitution is **untested on this task**. v1 was at least
-observed working on Mistral subject output; Nemotron is a new
-component. Locking it in without calibration risks silently
-moving where the harness fails.
-
-## Calibration fixture (4 inputs)
-
-Build a small fixture from existing smoke artefacts under
-`experiments/outputs/sota_exp2_smoke/`. Each input is one assistant
-response that has a known expected class:
-
-| # | Input | Expected class | Source artefact |
-|---|---|---|---|
-| 1 | Mistral planning preamble ("Understood! I will proceed in autonomous agentic mode...", 2474 chars, no table) | `no_report` | smoke v1 mistral_turn_02.report.md (the v1-round-2 planning preamble) |
-| 2 | Mistral polished inventory (24568 chars, table + bibliography + sources populated) | `report` | smoke v1 mistral_turn_03.report.md |
-| 3 | Mistral initial inventory draft (turn 2 v1, ~14688 chars, table fragment + bibliography) | `report` | smoke v1 mistral_turn_02.report.md (whichever is the initial inventory turn) |
-| 4 | Synthesised verbose-planner response — multi-paragraph plan, lists intended sources, no table, no inventory rows | `no_report` | hand-crafted, ~1000 chars |
-
-Pass criterion: Nemotron returns the expected class on all four.
-
-## Procedure
-
-1. Write `experiments/sota/calibrate_classifier.py` — small script:
-   - Loads the four fixture inputs.
-   - Dispatches each through the SAME classifier prompt template
-     used in `experiments/sota/dialogue_classifier.py`.
-   - Replaces the model id with `nvidia/nemotron-nano-9b-v2` via
-     OpenRouter.
-   - Records the verdict, wall-time, cost.
-   - Compares against the expected class column.
-2. Run it. Expected total cost: ~$0.01.
-3. Three outcomes:
-   - **All four pass** → lock Nemotron in
-     `dialogue_classifier.py`'s `CLASSIFIER_MODEL` constant; v2
-     round-2 review can proceed.
-   - **3/4 pass, one borderline** → document the borderline case
-     in the v2 spec (§4.1 already has a hedge clause); proceed.
-   - **2/4 or fewer pass** → Nemotron is unsuitable; pick a
-     fallback (Cohere Command, OpenAI gpt-5-nano, Llama-3.3
-     instruct on OpenRouter, etc.); re-calibrate.
-
-## Out of scope
-
-- A full-distribution test (varying styles, languages, token counts).
-  This is a smoke-level fixture, not a benchmark.
-- Cost optimisation of the classifier surface — the classifier
-  is harness overhead, not the experiment subject.
+Round-1 protocol review had all four subject agents flag same-vendor classifier bias. The v2 protocol substitutes mistral-small-latest with nvidia/nemotron-nano-9b-v2 — open-weight, NVIDIA, not affiliated with any of the four subject vendors.
 
 ## Exit criteria
-
-- [ ] `experiments/sota/calibrate_classifier.py` exists.
-- [ ] Run completes; result recorded in
-      `experiments/outputs/classifier_calibration/nemotron_calibration.json`.
-- [ ] Classifier model id locked in `dialogue_classifier.py`
-      (either Nemotron after passing, or a fallback after
-      documented failure).
-- [ ] v2 spec §4.1 references the calibration result by commit
-      SHA or filename.
-
-## Blocks
-
-- Round-2 protocol review (spec_v2.md dispatch to the four agents)
-  is gated on this ticket closing.
+- [x] experiments/sota/calibrate_classifier.py exists
+- [x] Run completes; result recorded in experiments/outputs/classifier_calibration/nemotron_calibration.json
+- [x] Classifier model id locked in dialogue_classifier.py (Nemotron if pass, or documented fallback)

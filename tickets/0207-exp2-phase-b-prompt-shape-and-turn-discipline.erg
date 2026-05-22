@@ -2,10 +2,12 @@
 Title: Exp 2 Phase B — multi-turn auto-reply policy with dollar budget
 Created: 2026-05-21
 Author: claude
+Closed: policy locked and implemented via PRs #398/#401; validated by re-smoke PR #405; Annex C documents as fixed condition
 
 --- log ---
 2026-05-21T14:25Z claude created — open questions from 0185 Mistral smoke
 2026-05-21T15:00Z claude note policy locked (option B) per author direction 2026-05-21; reframed from "string-vs-dict + turn discipline" to "multi-turn auto-reply harness"
+2026-05-22T08:00Z claude closed — multi-turn auto-reply policy implemented in PRs #398/#401; validated by PR #405 re-smoke with ENCOURAGE/VERIFY/TERMINAL state machine
 
 --- body ---
 

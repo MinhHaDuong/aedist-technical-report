@@ -2,6 +2,8 @@
 
 *Internal tracking document. Maps each reviewer ask to the manuscript deliverable that addresses it.*
 
+*Historical note: written before Figure 2 was generated. References to "Figure 2 (Pareto frontier placeholder)" date from the planning era — the figure now exists as the cost × quality scatter (`fig_direct_cost_quality.pdf`) and the caption explicitly notes that no Pareto-efficient envelope is drawn. The replies below are preserved as the reviewer-correspondence record.*
+
 ---
 
 ## ChatGPT's 5 asks

@@ -1,22 +1,46 @@
-# Capability rollouts at the four major LLM labs
+# Capability rollouts at the five major LLM labs
 
 *Working note for the AEDIST technical report. Documents the empirical
-chronology of capability stages (base instruct -> retrieval -> browsing /
-reasoning -> deep research -> tool / agent use -> multi-agent) at OpenAI,
-Anthropic, Google DeepMind, and Mistral.*
+chronology of capability stages (chat LLM -> retrieval -> browsing /
+reasoning -> deep research -> code execution -> extensible tool / agent
+use -> multi-agent) at the five labs covered by Experiment 1's panel:
+Anthropic, OpenAI, Mistral, Alibaba (Qwen), and DeepSeek. Google /
+DeepMind is retained as a footnote (see [Note on Google /
+DeepMind](#note-on-google--deepmind)) because Gemini is not in
+Experiment 1's panel but its rollout cadence is informative for
+cross-referencing.*
+
+> **Status note (ticket 0223, 2026-05-21; ticket 0224 stage-6 split,
+> 2026-05-22; ticket 0224 stage-1 strictness pass, 2026-05-22).**
+> This note has been rewritten to the five-lab panel after Qwen and
+> DeepSeek primary sources landed, and stage 6 was later split into
+> 6 (code execution as a fixed sandbox) and 7 (extensible MCP-like
+> tool use) with the old stage 7 renumbered to 8. Stage-1 dates
+> updated to conform to the "launch in a public commercial product"
+> methodology: Alibaba corrected from Qwen-7B open-weights
+> (2023-08-03) to Tongyi Qianwen consumer launch (2023-09-13);
+> DeepSeek note updated to reflect that chat.deepseek.com was live
+> from the 2023-11-29 model release day. The machine-readable source
+> of truth for the §3 figure is `data/capability_timeline.csv`.
+> Four Qwen cells and four DeepSeek cells are recorded as `absent`
+> (no productised consumer surface) with cutoff 2026-05-22; see
+> "Honest gaps and divergences".
 
 ## Hypothesis
 
-The seven capability stages we track are not a strict chain. The claim:
+The eight capability stages we track are not a strict chain. The claim:
 
-- **Stages 1 -> 2 are sequential** (instruct LLM, then retrieval / file
+- **Stages 1 -> 2 are sequential** (chat LLM, then retrieval / file
   upload).
 - **Stages 3 and 4 emerged in parallel** (browsing / web tools AND
   reasoning model surfaces both shipped as products in 2024).
 - **Stage 5 (deep research) is the join of 3 + 4** — multi-step web
   retrieval driven by a reasoning model, with citations.
-- **Stages 6 -> 7 follow** (general tool use / computer use, then
-  multi-agent coordination).
+- **Stages 6 -> 7 -> 8 follow** (code execution as a fixed
+  sandbox, then general / extensible tool use, then multi-agent
+  coordination). Stage 6 ships earliest of the three at OpenAI
+  (~18 months before stage 7) because a single fixed Python sandbox
+  is a smaller surface than an extensible tool registry.
 
 The "ladder" is therefore a small DAG, not a chain, with a fork between
 1-2 and 5, and a merge at 5. The hypothesis is industry-level: at any
@@ -25,32 +49,61 @@ single lab, stage 3 (browsing) was usually shipped well before stage 4
 2024) overlaps the steady-state availability of stage 3 across labs, so
 stage 5 became reachable for all four labs within a six-month window.
 
+## Date definition
+
+The date is launch in a public commercial product, which can be months
+after internal capacity availability and testing with privileged
+partners. Availability via API is another signal we could have used;
+this matrix uses the consumer-product signal because that is the
+relevant threshold for "a working analyst can rely on this capability."
+
+A consequence of this choice: an *absent* cell whose framework
+prerequisites are present (e.g., DeepSeek stage 5 = deep research,
+with stages 3 and 4 shipped) is evidence that the *composer* — the
+framework loop that joins the prerequisites into the named capability
+— has not been packaged as a public product, not that the underlying
+model components are missing. This is the framework × trained-model ×
+product co-deployment view: each marker is the date all three lined up.
+
 ## Capability stages (schema)
 
-1. **Base instruct LLM** — text-only, single-turn, parametric memory.
+1. **Chat LLM** — consumer-facing chat product backed by a chat-tuned model (RLHF for dialogue). No retrieval, no tools, no reasoning surface. Pretrained base LLMs and bare "Instruct" checkpoints, which exist earlier or in parallel, are excluded — they were never shipped as standalone consumer products; at most a continuation / completion API.
 2. **Retrieval / RAG / file upload** — documents at inference time.
 3. **Browsing / web search** — live external retrieval as a product.
 4. **Reasoning / chain-of-thought as a product surface** — visible
    thinking, test-time compute exposed to users.
 5. **Deep research** — multi-step web + reasoning, long-running, citations.
-6. **General tool use / computer use / coding agents** — autonomous
-   action over a tool surface (we record the *agentic surface* form, not
-   the bare function-calling API; the API form is noted in the
-   bibliography for context).
-7. **Multi-agent coordination** — agent teams, sub-agent dispatch,
+6. **Code execution** — *sandboxed code runtime (Python / JS / shell)
+   as a built-in tool in a consumer product. Outputs include text,
+   computed values, and visualisations. Distinct from stage 7 in being
+   a single fixed sandbox rather than an extensible tool registry.*
+7. **External tool use (MCP-like) / computer use / coding agents** —
+   autonomous action over an extensible tool surface (we record the
+   *agentic surface* form, not the bare function-calling API; the API
+   form is noted in the bibliography for context).
+8. **Multi-agent coordination** — agent teams, sub-agent dispatch,
    orchestrator-worker patterns.
 
 ## Matrix: stage x lab
 
-| Stage | OpenAI | Anthropic | Google / DeepMind | Mistral |
-|---|---|---|---|---|
-| **1. Base instruct LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-03-21 Bard [(blog)][14] / 2023-12-06 Gemini 1.0 [(blog)][16] | 2023-09-27 Mistral 7B Instruct [(blog)][22] |
-| **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2023-07-12 NotebookLM [(blog)][15] | 2025-02-06 Le Chat (document upload) [(blog)][23] |
-| **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | Search-grounded since Bard 2023; 2024-12-11 Gemini 2.0 native tool use [(blog)][17] | 2025-02-06 Le Chat web search [(blog)][23] |
-| **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2024-12 Gemini 2.0 Flash Thinking Experimental [(blog)][18] | 2025-06-10 Magistral [(blog)][24] |
-| **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2024-12-11 Gemini Deep Research [(blog)][19] | 2025-07-17 Le Chat dives deep [(blog)][25] |
-| **6. Computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2024-12-11 Project Mariner [(blog)][17] / 2025-10 Gemini 2.5 Computer Use [(blog)][20] | 2025-05-27 Agents API [(blog)][26] |
-| **7. Multi-agent coordination** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-20 Project Mariner multi-task agent system (I/O 2025) [(blog)][27] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] |
+The matrix below is the five-lab panel that backs Experiment 1. The
+machine-readable source of truth is `data/capability_timeline.csv`;
+the rows here mirror that file. Cells marked *absent* are not "we
+could not find a source" but verified gaps: no productised consumer
+surface as of the 2026-05-22 cutoff. Google / DeepMind is recorded in
+a footnote (see below) because Gemini is not in the Experiment 1
+panel.
+
+| Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
+|---|---|---|---|---|---|
+| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2024-02-26 Le Chat beta [(blog)][41] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
+| **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
+| **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | absent (no first-party source verifiable at cutoff) | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
+| **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
+| **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
+| **6. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
+| **7. External tool use (MCP-like) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
+| **8. Multi-agent coordination** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] | absent | absent |
 
 ## Parallel branches: where the chain becomes a DAG
 
@@ -84,7 +137,20 @@ the moment a lab has both prerequisites, the deep-research product
 follows quickly. This is the strongest evidence that stage 5 is a
 join, not a separate capability that the lab "decides" to build.
 
-**Stage 6 splits between research-preview and API form.** The "general
+**Stage 6 (code execution) is the earliest tool surface to ship.** Of
+the three tool-use stages (6 code execution, 7 extensible MCP-like tool
+use, 8 multi-agent recursion), code execution shipped first at every
+lab that has it: OpenAI 2023-07-06 ChatGPT Code Interpreter beta
+predates Operator (stage 7) by ~18 months; Anthropic ships
+its analysis tool (2024-10-24) two days after Computer Use beta
+(2024-10-22), with both within the same week, so stage 6 and stage 7
+overlap rather than lead at Anthropic; Mistral's code interpreter ships
+alongside Le Chat (2025-02-06), well before the Agents API (2025-05-27).
+A single fixed Python / JS sandbox is a smaller surface than an
+extensible tool registry — the build effort scales differently — which
+is consistent with stage 6 leading stages 7 and 8 in the cross-lab data.
+
+**Stage 7 splits between research-preview and API form.** The "general
 tool use" cell is awkward because each lab has at least two distinct
 surfaces: the bare function-calling / tool-use API (OpenAI 2023-06-13,
 Anthropic via tool-use API 2024, Google via Gemini API 2024, Mistral
@@ -95,13 +161,17 @@ typically a precondition rather than the capability itself.
 
 ## Honest gaps and divergences
 
-- **Mistral has the most compressed timeline.** All six product-stage
-  cells (1-6) ship between Sept 2023 and July 2025, ~22 months. By
-  contrast OpenAI's stage 1 to stage 5 spans 27 months and Anthropic's
-  spans 25 months. Mistral arrived later and shipped the stack faster
-  because the scaffold (RAG patterns, web search APIs, reasoning
-  RL recipes) was already public by 2025.
-- **Stage 7 is fuzzy and we did not pin sharp dates.** "Multi-agent
+- **Mistral has the most compressed timeline.** All eight
+  product-stage cells (1-8) ship between Feb 2024 and July 2025,
+  ~17 months, with stages 2/3/6 (file upload, web search, code
+  interpreter) shipping in a single 2025-02-06 Le Chat launch and
+  stages 7/8 (Agents API tool use and multi-agent orchestration) in
+  a single 2025-05-27 launch. By contrast OpenAI's stage 1 to stage
+  5 spans 27 months and Anthropic's spans 25 months. Mistral arrived
+  later and shipped the stack faster because the scaffold (RAG
+  patterns, web search APIs, reasoning RL recipes) was already public
+  by 2025.
+- **Stage 8 is fuzzy and we did not pin sharp dates.** "Multi-agent
   coordination" as a *product surface* (vs a paper / experimental
   framework) is still emerging. OpenAI's Swarm (Oct 2024) was
   explicitly experimental and not for production; the Agents SDK
@@ -112,11 +182,11 @@ typically a precondition rather than the capability itself.
   2025) [(blog)][27], which is the closest thing to a multi-agent
   consumer surface. Mistral's Agents API (May 2025) advertises
   orchestration but the multi-agent semantics are not yet a separate
-  product. Reading the matrix row honestly: stage 7 is an industry
+  product. Reading the matrix row honestly: stage 8 is an industry
   trajectory, not a clean product line.
 - **Mistral stage 2 (file upload) is late.** Le Chat got document
-  upload in Feb 2025, well after Mistral 7B Instruct shipped in Sept
-  2023. The API supported function calling and external retrieval
+  upload in Feb 2025, about a year after Le Chat beta launched in
+  Feb 2024. The API supported function calling and external retrieval
   patterns earlier, but the *consumer-facing* file upload — which is
   what stage 2 is — arrived in 2025.
 - **OpenAI stage 2 boundary is fuzzy.** ChatGPT plugins (March 2023)
@@ -133,6 +203,72 @@ typically a precondition rather than the capability itself.
   search shipped 2025-03-20; API web search shipped 2025-05-07
   separately (mentioned in the same blog rollup [(10)][10]). We
   record the consumer date as the stage-3 milestone.
+- **Alibaba (Qwen) has the broadest agentic developer surface but
+  multiple absent consumer cells.** Tongyi Qianwen opened to the
+  public on 2023-09-13 [(news)][28] after receiving Chinese
+  regulatory clearance; the Qwen-7B open-weights release (Aug 2023)
+  predates this but is a model publication, not a consumer product.
+  Qwen-Agent v0.0.1
+  shipped as a developer framework on PyPI / GitHub in April 2024
+  [(release)][32], well before most peer labs put an agentic surface
+  in front of consumers. Stage 7 (external tool use / MCP) arrived
+  with the Qwen Chat Desktop for macOS in July 2025 [(news)][40],
+  which exposed MCP server configuration and invocation directly to
+  end users; the Windows version followed 2025-08-15. The prior CSV
+  entry (2024-04-07 Qwen-Agent v0.0.1) was a developer framework and
+  has been corrected. The remaining absences are deliberate: stage
+  3 (browsing / web search as a consumer Tongyi feature) has no
+  primary first-party source we could verify by cutoff; tertiary
+  reports point to a tongyi.ai deep-search launch circa 2024-08 but
+  the lab itself does not blog it. Stage 6 (code execution as a
+  consumer Qwen Chat feature) is absent because chat.qwen.ai
+  "artifacts" mode is HTML / SVG preview rather than a Python or JS
+  sandbox; the Qwen-Agent code-interpreter tool and Qwen Code Docker
+  sandbox are developer-facing surfaces. Stage 8 (multi-agent
+  consumer product) is absent because Qwen-Agent remains a developer
+  framework — there is no QwenChat-side multi-agent product.
+  Stage 5 (Deep Research on Qwen Chat, 2025-05-13) is the only cell
+  sourced from a lab X / Twitter post rather than a long-form blog
+  [(X)][31]; the ticket method allows X posts from the official lab
+  handle as a primary source.
+- **DeepSeek has the most compressed stack of any focus lab.** All
+  four productised stages (1, 2, 3, 4) ship between Nov 2023
+  (DeepSeek LLM 67B + chat.deepseek.com) and Jan 2025 (DeepSeek
+  App + R1) — 14 months, faster than Mistral's 17-month run.
+  Stage-1 note: the 2023-11-29 GitHub repo release linked
+  chat.deepseek.com in the original README (first commit
+  f8b3d77, 2023-11-29T11:06Z) [(repo)][33], confirming the consumer
+  chat product was live from launch day — not merely a model
+  publication. The same pattern that made Mistral fast applies in
+  stronger form: by 2024-2025 the scaffolds (RAG patterns,
+  web-search integrations, reasoning RL recipes, tool / function
+  calling) were public, so a focused lab could ship a stack by
+  composition. Stages 5 (deep research consumer product), 6 (code
+  execution consumer surface), 7 (external tool use consumer
+  surface), and 8 (multi-agent consumer product) are absent:
+  DeepSeek's API surface supports the building blocks (Function
+  Calling API 2024-07-25 [(changelog)][36], V3.1-Terminus
+  Code/Search Agent 2025-09-22) but chat.deepseek.com does not have
+  a deep-research mode, a code-interpreter toggle, a user-facing
+  agentic tool surface, or a multi-agent consumer feature as of the
+  cutoff. The prior stage-7 CSV entry (2024-07-25 Function Calling
+  API) was an API/developer capability and has been corrected to
+  absent.
+
+### Note on Google / DeepMind
+
+Gemini is not in Experiment 1's five-lab panel, so it is not in the
+matrix above; the historical record is preserved here for cross-lab
+context. Stage 1: 2023-03-21 Bard [(blog)][14] / 2023-12-06 Gemini 1.0
+[(blog)][16]. Stage 2: 2023-07-12 NotebookLM [(blog)][15]. Stage 3:
+search-grounded since Bard 2023; 2024-12-11 Gemini 2.0 native tool use
+[(blog)][17]. Stage 4: 2024-12 Gemini 2.0 Flash Thinking Experimental
+[(blog)][18]. Stage 5: 2024-12-11 Gemini Deep Research [(blog)][19].
+Stage 6 (code execution): part of the 2024-12-11 Gemini 2.0 native
+tool use launch [(blog)][17] (Gemini app code-execution tool). Stage 7:
+2024-12-11 Project Mariner [(blog)][17] / 2025-10 Gemini 2.5 Computer
+Use [(blog)][20]. Stage 8: 2025-05-20 Project Mariner multi-task agent
+system (I/O 2025) [(blog)][27].
 
 ## Bibliography
 
@@ -167,3 +303,17 @@ encountered.
 [25]: https://mistral.ai/news/le-chat-dives-deep "Le Chat dives deep (Mistral, 2025-07-17). Deep Research preview."
 [26]: https://mistral.ai/news/agents-api "Build AI agents with the Mistral Agents API (Mistral, 2025-05-27)."
 [27]: https://blog.google/innovation-and-ai/models-and-research/google-deepmind/gemini-universal-ai-assistant/ "Gemini as a universal AI assistant (Google I/O 2025, 2025-05-20). Project Mariner expanded to 10 simultaneous tasks; closest consumer surface to multi-agent."
+[28]: https://technode.com/2023/09/14/alibaba-opens-its-ai-model-tongyi-qianwen-to-the-public/ "Alibaba opens its AI model Tongyi Qianwen to the public (TechNode, 2023-09-14). Reports the September 13, 2023 WeChat announcement by Alibaba Cloud; model accessible via official website and mobile app after Chinese regulatory clearance. Stage-1 milestone for Alibaba. The Qwen-7B open-weights release (2023-08-03, qwenlm.github.io/blog/qwen-7b/) predates this but is not the consumer-product milestone."
+[29]: https://www.alibabacloud.com/blog/600550 "Tongyi ZoneWit document upload at Apsara 2023 (Alibaba Cloud, 2023-10-31). Consumer document-analysis surface on Tongyi Qianwen."
+[30]: https://qwenlm.github.io/blog/qwq-32b-preview/ "QwQ-32B-Preview (Alibaba, 2024-11-28). First reasoning-surface model from the Qwen team."
+[31]: https://x.com/Alibaba_Qwen/status/1922307096886051025 "Deep Research live on Qwen Chat (Alibaba_Qwen on X, 2025-05-13). Lab X post is the primary source; no long-form blog at the time of cutoff."
+[32]: https://github.com/QwenLM/Qwen-Agent/releases "Qwen-Agent v0.0.1 (QwenLM on GitHub / PyPI, 2024-04-07). Developer-facing agent framework; predates most peer-lab consumer agents but is not itself a consumer surface."
+[33]: https://github.com/deepseek-ai/DeepSeek-LLM "DeepSeek LLM GitHub repository (deepseek-ai, first commit 2023-11-29T11:06Z). Open-weights release of 7B/67B base and chat models; original README (commit f8b3d77) links chat.deepseek.com — confirming the consumer chat product was live from launch day. Stage-1 milestone for DeepSeek. The api-docs.deepseek.com/news/news1129 URL (the original citation) returns 404."
+[34]: https://api-docs.deepseek.com/news/news250115 "DeepSeek App launch with file upload and text extraction (DeepSeek, 2025-01-15)."
+[35]: https://api-docs.deepseek.com/news/news1210 "V2.5-1210: Internet Search live on chat.deepseek.com (DeepSeek, 2024-12-10)."
+[36]: https://api-docs.deepseek.com/updates "DeepSeek Function Calling API (DeepSeek, 2024-07-25). API-level capability; not a consumer product. Stage-7 for DeepSeek is absent: chat.deepseek.com has no user-facing agentic tool surface as of 2026-05-22 cutoff."
+[40]: https://alternativeto.net/news/2025/7/qwen-chat-launches-desktop-app-with-mcp-support-and-multitasking-features/ "Qwen Chat Desktop (macOS) launches with MCP support (AlternativeTo, 2025-07-14, reporting on lab X post). First consumer-facing agentic tool surface for Alibaba / Qwen: end-users can configure and invoke MCP servers from the desktop app. Windows version followed 2025-08-15 (x.com/Alibaba_Qwen/status/1956399490698735950). Stage-7 milestone for Alibaba."
+[37]: https://api-docs.deepseek.com/news/news250120 "DeepSeek-R1 (DeepSeek, 2025-01-20)."
+[38]: https://help.openai.com/en/articles/6825453-chatgpt-release-notes "ChatGPT release notes (OpenAI, 2023-07-06 entry). Code Interpreter beta rollout to ChatGPT Plus users on web; alpha was available via plugins waitlist 2023-03-23 (openai.com/index/chatgpt-plugins/). Stage-6 milestone for OpenAI."
+[39]: https://claude.com/blog/analysis-tool "Introducing the analysis tool in Claude.ai (Anthropic, 2024-10-24; originally anthropic.com/news/analysis-tool, 308 redirect). JavaScript code sandbox in Claude.ai. Update note from 2025-11-05 records that the analysis tool was replaced by more powerful code execution capabilities. Stage-6 milestone for Anthropic."
+[41]: https://mistral.ai/news/le-chat-mistral "Le Chat beta (Mistral, 2024-02-26). First public consumer chat product from Mistral. Mistral 7B Instruct (2023-09-27) was an open-weights model release without a consumer chat interface; Le Chat beta is the stage-1 consumer-product milestone."

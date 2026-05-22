@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Add adherence test: capability_timeline.csv dates must appear in prose matrix
+Closed: fixed in PR #426 — test_capability_timeline_sync.py added
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T00:00Z claude created
+2026-05-22T12:00Z claude note PR #426 merged; 11 adherence tests pass including sync test
+2026-05-22T12:00Z claude closed
+
+--- body ---
+## Context
+
+Two CSV-vs-prose date divergences found so far:
+- Mistral stage-1: fixed in PR #422
+- Alibaba stage-3: open in ticket 0232
+
+The root cause is that `data/capability_timeline.csv` is the declared source
+of truth, but `docs/capability-timeline.md` is edited by hand. When one is
+updated, the other can silently fall out of sync.
+
+## Actions
+
+Add `tests/test_capability_timeline_sync.py` with an `@pytest.mark.adherence`
+test that:
+1. Reads all non-absent dates from `data/capability_timeline.csv`
+2. Checks each date appears in the matrix section of
+   `docs/capability-timeline.md`
+3. Skips rows where the date is `absent` or empty
+4. Special-cases intentionally approximate entries (e.g. OpenAI stage-8
+   `2025-03-01` shown as `2025-03` in prose): add an allowlist of
+   `(lab, stage)` pairs that are exempt from exact-date matching
+
+This test runs with `make check-fast` and catches divergences before push.
+
+## Exit criteria
+
+- [ ] `tests/test_capability_timeline_sync.py` exists and passes
+- [ ] The test catches the Alibaba stage-3 case (will fail until 0232 is resolved)
+- [ ] `pytest -m adherence` passes after 0232 is resolved
+- [ ] `make check` passes

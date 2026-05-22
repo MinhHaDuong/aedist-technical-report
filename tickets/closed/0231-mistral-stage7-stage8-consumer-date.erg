@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Capability-timeline — verify Mistral stage-7 and stage-8 are consumer-product dates
+Created: 2026-05-22
+Author: claude
+Closed: autoclosed — PR #422
+
+--- log ---
+2026-05-22T12:45Z claude created — surfaced during celebrate sweep after PRs #419-421 (capability-timeline strictness pass). Same anti-pattern as fixed rows: both Mistral stage-7 and stage-8 cite `mistral-agents-api-2025` (2025-05-27 Agents API), which is a developer API, not a Le Chat consumer-product launch. Flagged in PR #419 review comment; filing here since ticket 0224 is now closed.
+
+2026-05-22T13:11Z HDMX-coding-agent closed — autoclosed — PR #422
+--- body ---
+
+## Context
+
+After fixing stage-1 (Mistral, Alibaba, DeepSeek) and stage-7 (Alibaba, DeepSeek)
+to use consumer-product launch dates, the capability-timeline audit found two
+remaining suspicious cells:
+
+| Lab | Stage | Current date | Current source | Concern |
+|-----|-------|-------------|----------------|---------|
+| Mistral | 7 | 2025-05-27 | mistral-agents-api-2025 (Agents API) | Developer API, not Le Chat consumer product |
+| Mistral | 8 | 2025-05-27 | mistral-agents-api-2025 (Agents API) | Developer API, not Le Chat consumer product |
+
+Both rows share the same citation key and date: the Mistral Agents API launch.
+The Agents API is a developer-facing REST API for building agentic pipelines —
+it is not a consumer feature in Le Chat.
+
+## Research needed
+
+1. Does **Le Chat** (chat.mistral.ai) currently expose external tool use
+   (MCP / plugin calling / general tool invocation) to end users?
+   - If yes: find the launch date and update stage-7 to that date.
+   - If no: set stage-7 to absent.
+
+2. Does **Le Chat** have a multi-agent / recursion consumer feature?
+   - If yes: find the launch date and update stage-8.
+   - If no: set stage-8 to absent.
+
+3. Check Mistral's blog (mistral.ai/news/) and Le Chat changelog for any
+   consumer-facing tool-use or multi-agent announcements.
+
+## Exit criteria
+
+- [ ] Mistral stage-7 date: verified consumer-product date or set to absent.
+- [ ] Mistral stage-8 date: verified consumer-product date or set to absent.
+- [ ] `data/capability_timeline.csv` updated.
+- [ ] `docs/capability-timeline.md` matrix row 7 and row 8 updated.
+- [ ] Figure re-rendered.
+- [ ] Adherence tests green.

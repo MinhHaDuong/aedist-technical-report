@@ -1,0 +1,123 @@
+%erg 0.1
+Title: Capability-timeline primary sources for Qwen and DeepSeek (close TBD cells)
+Created: 2026-05-21
+Author: claude
+Closed: autoclosed — PR #406
+
+--- log ---
+2026-05-21T20:30Z claude created — follow-up from 0219 proposal; closes TBD cells in data/capability_timeline.csv and the §3 figure
+2026-05-21T20:45Z claude note renamed Blocked-by 0212 → 0219; the §3-rewrite ticket was renumbered to 0219 when a parallel agent's adapter-mistral ticket landed on main as the canonical 0212
+
+2026-05-21T19:53Z HDMX-coding-agent note blocker 0219 closed — Blocked-by removed.
+2026-05-21T21:00Z claude note all 10 TBD cells resolved (7 dated, 3 absent); branch t0218-primary-source-research
+2026-05-21T22:15Z claude note bump verify-reroll — round 1: 3 missing criteria (refs.bib, docs/capability-timeline.md, make slides) + stale PR body
+2026-05-21T22:45Z claude note reroll-fix: docs/capability-timeline.md rewritten to 5-lab panel (Qwen + DeepSeek paragraphs added, Google moved to footnote, bibliography extended with refs 28-37); make slides verified clean; refs.bib criterion vacuously satisfied (no §3 prose cites the new keys yet); PR body to be updated with 6 dated / 4 absent state and correct 2025-05-13 Alibaba stage-5 date
+2026-05-21T23:05Z claude note verify-gate round 2: ESCALATE — 6/7 criteria ADDRESSED (criteria 3 vacuously satisfied via conditional wording + project convention); stale PR body verifiable: still open, gh pr edit blocked by classic-projects GraphQL error; corrected body posted at issuecomment-4512552661, escalate to merge-time override
+2026-05-21T23:30Z claude note renamed 0218 → 0223 to resolve a second ID collision — the parallel adapter-mistral ticket renumbered itself 0212→0218 in PR #405, landing alongside this branch's 0218. Yielded again; the Qwen/DeepSeek follow-up is now 0223.
+2026-05-21T20:46Z HDMX-coding-agent closed — autoclosed — PR #406
+--- body ---
+
+## Context
+
+Ticket 0212 ships the §3 proposal + capability-timeline swimlane figure
+with **partial** data for Qwen (Alibaba) and DeepSeek. Of 14 (lab,
+stage) cells across those two labs, 4 are populated with verified
+primary-source dates (Qwen-7B 2023-08-03, QwQ-32B-Preview 2024-11-28,
+DeepSeek LLM 67B 2023-11-29, DeepSeek-R1 2025-01-20). The remaining 10
+cells are flagged `TBD` (date column empty, `source_kind` literal
+`TBD` or `absent`) and render as a grey right-margin annotation in
+the figure so the gap stays visible.
+
+Closing this ticket means promoting each TBD cell to one of:
+- a verified primary-source date (lab announcement blog, English or
+  Chinese), OR
+- an explicit "no productised consumer surface as of <cutoff>" annotation
+  recorded as `source_kind=absent` in the CSV.
+
+This is exactly the "if gaps perform more deep research" work the
+author asked for during the 0212 design dialogue (2026-05-21).
+
+## TBD cells (10)
+
+| Lab | Stage | Status in 0212 ship | Action |
+|---|---|---|---|
+| Alibaba | 2 Retrieval / file upload | TBD | find Tongyi Qianwen file-upload launch (likely 2024) |
+| Alibaba | 3 Browsing / web search | TBD | find Tongyi web-search product launch |
+| Alibaba | 5 Deep research | TBD | Qwen3 / Tongyi deep-research surface — verify whether shipped |
+| Alibaba | 6 Tool use / agents | TBD | Qwen-Agent framework primary date OR consumer agent surface |
+| Alibaba | 7 Multi-agent | TBD | verify whether a consumer multi-agent surface exists |
+| DeepSeek | 2 Retrieval / file upload | TBD | DeepSeek Chat file-upload launch |
+| DeepSeek | 3 Browsing / web search | TBD | DeepSeek Chat web-search launch |
+| DeepSeek | 5 Deep research | absent (conjectured) | confirm no productised deep-research consumer surface |
+| DeepSeek | 6 Tool use / agents | TBD | API tool-use exists; verify consumer agent surface |
+| DeepSeek | 7 Multi-agent | absent (conjectured) | confirm no productised multi-agent consumer surface |
+
+## Method
+
+1. **Web search per cell.** Primary lab blog / press release, in
+   English or Chinese. Chinese-language announcements are acceptable —
+   record the URL as-is, transliterate the title in the note column.
+2. **Domain priority for primaries.** Alibaba: `qwenlm.github.io`,
+   `tongyi.aliyun.com`, `damo.alibaba.com`, official Qwen X/Twitter,
+   `huggingface.co/Qwen` model card release dates as fallback.
+   DeepSeek: `deepseek.com`, `api-docs.deepseek.com`, official
+   DeepSeek X/Twitter, `huggingface.co/deepseek-ai`.
+3. **Tertiary aggregators (techcrunch, theverge, infoworld) are not
+   accepted** as the primary source — they may serve as cross-check
+   pointers only.
+4. **Definite-absence ruling.** A cell may be closed as
+   `source_kind=absent` if (a) no productised consumer-facing surface
+   exists as of the cutoff date AND (b) absence is checked against
+   the lab's own announcements page through cutoff. Record the
+   cutoff date in the note column.
+
+## Cutoff date
+
+2026-05-21 (the date the §3 proposal ships). Cells that flip from
+absent → present after this date are followed up in a separate ticket;
+this ticket lands the snapshot used by §3.
+
+## Test
+
+```python
+def test_capability_timeline_no_tbd_in_focus_panel():
+    """data/capability_timeline.csv has no TBD source_kind cells for
+    labs in Experiment 1's panel after 0223 closes."""
+    rows = read_csv("data/capability_timeline.csv")
+    tbd_cells = [r for r in rows
+                 if r["lab"] in {"Anthropic", "OpenAI", "Mistral",
+                                  "Alibaba", "DeepSeek"}
+                 and r["source_kind"] == "TBD"]
+    assert tbd_cells == [], f"unresolved TBD cells: {tbd_cells}"
+
+
+def test_capability_timeline_citation_keys_unique():
+    """Each non-empty citation_key must point at a refs.bib entry."""
+    # Implementation: parse refs.bib once, assert every non-empty
+    # citation_key in the CSV is present.
+```
+
+## Exit criteria
+
+- [ ] All 10 TBD cells resolved to either a verified date or an
+      explicit absent ruling, with primary-source URLs in the note
+      column.
+- [ ] `data/capability_timeline.csv` updated; no TBD strings remain
+      for the five Exp 1 labs.
+- [ ] Citations added to `report/refs.bib` for any new primary
+      sources cited in §3 prose.
+- [ ] `docs/capability-timeline.md` rewritten to the five-lab panel
+      (drop Google to footnote, add Qwen + DeepSeek narrative
+      paragraphs matching the existing OpenAI / Anthropic / Mistral
+      sections).
+- [ ] Figure re-rendered; no TBD annotations remain in the right
+      margin of the swimlane.
+- [ ] Adherence test for "no TBD cells in focus panel" added.
+- [ ] `make slides` builds with the updated figure.
+
+## Boundary
+
+This ticket does **not** edit `slides/manuscript/main.md`. That edit
+ships with 0219 after the author signs off on the proposal. The
+0219/0223 split is: 0219 = the §3 prose and the figure framework;
+0223 = filling the data gaps the framework exposes.
