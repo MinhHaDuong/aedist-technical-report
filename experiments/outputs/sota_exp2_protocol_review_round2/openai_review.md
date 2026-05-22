@@ -1,0 +1,13 @@
+The v2 protocol is substantially stronger than v1. My main round-1 concerns appear addressed: the same-vendor classifier issue is removed via a third-party classifier with calibration; token/dollar budget accounting is clearer and fairer; thinking tokens are counted; Phase A now explicitly grants planning headroom; plant-row semantics, lifecycle scope, primary/secondary source hierarchy, and conflict handling are much better specified; and the reference dataset is properly framed as a methodological artifact rather than ground truth. The Wikipedia leakage disclosure is important and welcome.
+
+I would not refuse to participate as written. The task remains difficult but not incoherent: a comprehensive Vietnam thermal inventory across all lifecycle statuses is large for a $3 / 50K generation budget, but the protocol explicitly prioritizes recall, provenance, and uncertainty over polished prose, which is appropriate.
+
+My substantive reservations are threefold. First, two key constraints are still enforced only instructionally and post hoc: no subagent dispatch, and no Wikipedia/Wikidata-derived citation use. Because the Phase B system prompt is agent-authored and the harness does not inject the source bans or strip tools, compliance partly depends on Phase A self-propagation. That is acceptable for an experiment measuring autonomous prompt design, but it should be analyzed as a protocol-compliance variable, not merely a footnote.
+
+Second, the evaluation remains vulnerable to reference and matching artifacts. The 163-entry reference is single-author curated and previously exposed through Wikipedia; F1 against it will be informative but should not dominate interpretation. The name-similarity threshold may under-match Vietnamese/English naming variants or merged/split power-center rows, even with MILP.
+
+Third, cross-evaluation by the same four subject models is useful but not independent adjudication. Excluding self-evaluation helps, but stylistic, vendor, or language-source preferences could affect scores. Publishing raw scores and rubrics mitigates this, but I would still treat Phase C as comparative expert-model judgment rather than ground-truth quality measurement.
+
+Overall, the remaining weaknesses are acknowledged limitations rather than blockers. The protocol is sound enough to run, provided these caveats are prominently reported.
+
+VERDICT: ACCEPT-WITH-RESERVATIONS

@@ -1,0 +1,34 @@
+[
+  {
+    "agent": "mistral",
+    "status": "ok",
+    "verdict": "VERDICT: ACCEPT",
+    "cost_usd": 0.0081355,
+    "tokens_out": 447,
+    "wall_s": 11.63
+  },
+  {
+    "agent": "qwen",
+    "status": "ok",
+    "verdict": "VERDICT: ACCEPT-WITH-RESERVATIONS",
+    "cost_usd": 0.0192828,
+    "tokens_out": 315,
+    "wall_s": 14.26
+  },
+  {
+    "agent": "openai",
+    "status": "ok",
+    "verdict": "VERDICT: ACCEPT-WITH-RESERVATIONS",
+    "cost_usd": 0.042785000000000004,
+    "tokens_out": 494,
+    "wall_s": 13.14
+  },
+  {
+    "agent": "anthropic",
+    "status": "ok",
+    "verdict": "VERDICT: ACCEPT",
+    "cost_usd": 0.13442500000000002,
+    "tokens_out": 1725,
+    "wall_s": 44.11
+  }
+]

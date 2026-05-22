@@ -279,9 +279,14 @@ REVIEWERS = {
 
 
 def extract_verdict(narrative: str) -> str:
-    """Pull the VERDICT: line out of the agent's review, or empty if absent."""
+    """Pull the VERDICT: line out of the agent's review, or empty if absent.
+
+    Tolerant of common markdown decorations the round-1 + round-2 verdicts
+    have arrived wrapped in: code fences (Anthropic round 1), markdown bold
+    (Mistral round 2), markdown italic, leading/trailing whitespace.
+    """
     for line in reversed(narrative.splitlines()):
-        line = line.strip().strip("`").strip()
+        line = line.strip().strip("`").strip("*").strip("_").strip()
         if line.startswith("VERDICT:"):
             return line
     return ""
