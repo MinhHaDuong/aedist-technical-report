@@ -1,17 +1,19 @@
 %erg 0.1
 Title: Calibrate nvidia/nemotron-nano-9b-v2 as the v2 dialogue classifier
+Closed: 4/4 pass, classifier swapped, PR #416 merged
 Created: 2026-05-22
 Author: claude
 
 --- log ---
 2026-05-22T09:00Z claude created — gates v2 protocol round-2 review
 2026-05-22T11:12Z claude note calibration 4/4 — classifier swapped to nemotron-nano-9b-v2 (PR #416)
+2026-05-22T11:30Z claude note closed — PR #416 squash-merged to main (b98e4d93)
 
 --- body ---
 ## Context
 Round-1 protocol review had all four subject agents flag same-vendor classifier bias. The v2 protocol substitutes mistral-small-latest with nvidia/nemotron-nano-9b-v2 — open-weight, NVIDIA, not affiliated with any of the four subject vendors.
 
 ## Exit criteria
-- [ ] experiments/sota/calibrate_classifier.py exists
-- [ ] Run completes; result recorded in experiments/outputs/classifier_calibration/nemotron_calibration.json
-- [ ] Classifier model id locked in dialogue_classifier.py (Nemotron if pass, or documented fallback)
+- [x] experiments/sota/calibrate_classifier.py exists
+- [x] Run completes; result recorded in experiments/outputs/classifier_calibration/nemotron_calibration.json
+- [x] Classifier model id locked in dialogue_classifier.py (Nemotron if pass, or documented fallback)
