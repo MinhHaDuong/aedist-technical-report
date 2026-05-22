@@ -20,9 +20,32 @@ import yaml
 log = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SPEC_PATH = REPO_ROOT / "experiments" / "sota" / "exp2_protocol_spec.md"
+PROTOCOL_DIR = REPO_ROOT / "experiments" / "sota"
+PROTOCOL_DOC_PATHS = (
+    PROTOCOL_DIR / "protocol_01_ask.md",
+    PROTOCOL_DIR / "protocol_02_metaprompt.md",
+    PROTOCOL_DIR / "protocol_03_example_dialogue.md",
+    PROTOCOL_DIR / "protocol_04_implementation.md",
+    PROTOCOL_DIR / "protocol_05_experiment.md",
+    PROTOCOL_DIR / "protocol_06_validation_round_1.md",
+)
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
-DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_protocol_review"
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_protocol_review_round2"
+
+
+def load_spec_bundle(paths: tuple[Path, ...] = PROTOCOL_DOC_PATHS) -> str:
+    """Concatenate the protocol document bundle for round-2 dispatch.
+
+    Each doc is preceded by a separator marking its filename so the reviewer
+    can see boundaries. The order is the read order specified in Doc 01 §1.4.
+    """
+    parts = []
+    for path in paths:
+        parts.append(f"\n\n========== BEGIN {path.name} ==========\n\n")
+        parts.append(path.read_text(encoding="utf-8"))
+        parts.append(f"\n\n========== END {path.name} ==========\n")
+    return "".join(parts).strip()
+
 
 AGENTS = ("mistral", "qwen", "openai", "anthropic")
 
@@ -278,8 +301,12 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    spec = SPEC_PATH.read_text(encoding="utf-8")
-    log.info("Spec loaded: %d chars from %s", len(spec), SPEC_PATH)
+    spec = load_spec_bundle()
+    log.info(
+        "Protocol bundle loaded: %d chars from %d docs",
+        len(spec),
+        len(PROTOCOL_DOC_PATHS),
+    )
 
     summary: list[dict] = []
     for agent in args.agents:

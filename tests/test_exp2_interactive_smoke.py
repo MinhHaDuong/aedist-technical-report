@@ -11,6 +11,7 @@ import pytest
 
 from experiments.sota.exp2_interactive_smoke import (
     BASELINE_PATH,
+    METAPROMPT_PATH,
     QUALITY_BAR_END,
     QUALITY_BAR_PATH,
     QUALITY_BAR_START,
@@ -22,8 +23,13 @@ from experiments.sota.exp2_interactive_smoke import (
 )
 
 
+def test_metaprompt_file_exists():
+    """The canonical Doc 02 meta-prompt file is on disk."""
+    assert METAPROMPT_PATH.exists(), f"meta-prompt missing: {METAPROMPT_PATH}"
+
+
 def test_baseline_and_quality_bar_files_exist():
-    """Both source files are present at the expected paths."""
+    """Legacy source files (referenced by Doc 02 content) are still on disk."""
     assert BASELINE_PATH.exists(), f"baseline missing: {BASELINE_PATH}"
     assert QUALITY_BAR_PATH.exists(), f"manuscript missing: {QUALITY_BAR_PATH}"
 
@@ -43,27 +49,32 @@ def test_extract_quality_bar_raises_on_missing_markers():
         extract_quality_bar("no markers here")
 
 
-def test_assemble_meta_prompt_contains_baseline_and_quality_bar():
-    """Anchors from baseline (line 3) and §2 (all four axes) appear in the meta-prompt."""
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
-    assert "senior energy analyst" in prompt  # baseline anchor
-    assert "Accuracy" in prompt and "Temporality" in prompt  # §2 axes
+def test_assemble_meta_prompt_is_doc_02_verbatim():
+    """The assembled meta-prompt is the byte-for-byte content of Doc 02."""
+    assembled = assemble_meta_prompt()
+    on_disk = METAPROMPT_PATH.read_text(encoding="utf-8")
+    assert assembled == on_disk, (
+        "assemble_meta_prompt() must return Doc 02 verbatim — "
+        "any in-code template would create a second source of truth"
+    )
+
+
+def test_assemble_meta_prompt_contains_quality_bar_and_envelope():
+    """Sanity anchors that Doc 02 carries the four §2 axes + JSON envelope spec."""
+    prompt = assemble_meta_prompt()
+    for axis in ("Accuracy", "Coherence", "Provenance", "Temporality"):
+        assert axis in prompt, f"axis {axis!r} missing from meta-prompt"
     assert "designed_prompt" in prompt  # JSON envelope spec
     assert "Output ONLY" in prompt  # explicit no-prose instruction
 
 
 def test_assemble_meta_prompt_announces_system_prompt_field():
     """Ticket 0213: the Phase A envelope must include `system_prompt` as a
-    required string key, with an explicit instruction that it MUST be a
-    string (not a JSON object) — the dict-vs-string ambiguity already
-    cost us one turn during 0185.
+    required string key — the dict-vs-string ambiguity cost us a turn during
+    0185, so the FORMAT section in Doc 02 names the key explicitly.
     """
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    prompt = assemble_meta_prompt()
     assert "system_prompt" in prompt, "envelope spec must announce system_prompt key"
-    # The string-only constraint must be explicit in the prose.
-    assert "MUST be a plain JSON string" in prompt, (
-        "envelope spec must say system_prompt is a string, not a dict"
-    )
 
 
 def test_extract_phase_a_design_parses_clean_json():
@@ -218,7 +229,6 @@ from experiments.sota import dialogue_classifier  # noqa: E402
 from experiments.sota.exp2_interactive_smoke import (  # noqa: E402
     BUDGET_TRIGGER_FRAC,
     ENCOURAGE_REPLY,
-    PHASE_B_TOTAL_BUDGET_USD,
     TERMINAL_REPLY,
     VERIFY_REPLY,
     format_status_line,
@@ -302,12 +312,12 @@ def test_format_status_line_exact_string():
     assert s == "Status: remaining budget $7.50 of $10.00; wall-clock elapsed 12.3s."
 
 
-def test_meta_prompt_announces_dollar_budget():
-    """The meta-prompt must announce the $10 cap upfront."""
-    prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
-    assert f"${PHASE_B_TOTAL_BUDGET_USD:.2f} total" in prompt
-    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt
-    assert "remaining budget" in prompt.lower()
+def test_meta_prompt_announces_dual_axis_budget():
+    """Doc 02 announces both the 50K-token cap and the $3 dollar guard."""
+    prompt = assemble_meta_prompt()
+    assert "50,000 tokens" in prompt, "token cap must be announced"
+    assert "$3.00" in prompt, "dollar guard must be announced"
+    assert f"{int(BUDGET_TRIGGER_FRAC * 100)}%" in prompt, "20% threshold must be named"
 
 
 def test_three_reply_slot_constants_distinct():

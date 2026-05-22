@@ -75,6 +75,7 @@ log = logging.getLogger(__name__)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BASELINE_PATH = REPO_ROOT / "experiments" / "prompts" / "prompt_complete.txt"
 QUALITY_BAR_PATH = REPO_ROOT / "slides" / "manuscript" / "main.md"
+METAPROMPT_PATH = REPO_ROOT / "experiments" / "sota" / "protocol_02_metaprompt.md"
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_smoke"
 
@@ -101,55 +102,14 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
-def assemble_meta_prompt(baseline_path: Path, quality_bar_path: Path) -> str:
-    """Build the Phase A meta-prompt: baseline + quality bar + design task."""
-    baseline = baseline_path.read_text(encoding="utf-8").strip()
-    quality_bar = extract_quality_bar(quality_bar_path.read_text(encoding="utf-8"))
-    return f"""You are a state-of-the-art AI assistant being evaluated on a structured statistical-inventory task. In the NEXT turn you will be asked to produce the inventory itself. In THIS turn, you design how you want to do it.
+def assemble_meta_prompt(metaprompt_path: Path = METAPROMPT_PATH) -> str:
+    """Return the Phase A meta-prompt verbatim from disk.
 
-# BUDGET (ticket 0207 policy, fixed condition)
-
-Your budget for this entire engagement is **${PHASE_B_TOTAL_BUDGET_USD:.2f} total**. All your tool calls, search calls, and thinking tokens are billed against this cap. After this design turn, you will be in a multi-turn execution conversation; each of our replies will remind you of your remaining budget both in plain text and (where the provider supports it) via a structured metadata field. When the remaining budget drops below {int(BUDGET_TRIGGER_FRAC * 100)}%, we will send a single terminal reply asking you to finalise; the next response after that is the last one we accept. Prioritise producing the final report — do not stall on planning.
-
-You will be given:
-- a BASELINE PROMPT that defines the task
-- a QUALITY BAR (four dimensions) on which your output will be judged
-
-# BASELINE PROMPT
-
-\"\"\"
-{baseline}
-\"\"\"
-
-# QUALITY BAR
-
-The inventory you produce on the next turn will be judged on these four dimensions:
-
-\"\"\"
-{quality_bar}
-\"\"\"
-
-# YOUR DESIGN TASK NOW
-
-Design an improved prompt and a settings configuration aimed at maximising your performance on the four quality dimensions. You have full freedom to rewrite, expand, or restructure the baseline prompt. You may use web search if it helps you design; web search will also be available when you execute the designed prompt.
-
-Return ONLY a single JSON object with this exact shape:
-
-{{
-  "designed_prompt": "<the prompt you want to receive next turn — sent to you verbatim>",
-  "system_prompt": "<the system prompt that will be installed on you before the next turn — sent to you verbatim>",
-  "settings": {{
-    "thinking": true_or_false,
-    "max_tokens": <int>,
-    "rationale_for_settings": "<short string>"
-  }},
-  "rationale": "<2-4 sentences naming which of the four dimensions your changes target and how>"
-}}
-
-The `system_prompt` field MUST be a plain JSON string (a single quoted text value), not a nested JSON object or list. The harness installs it verbatim as the agent's system-level instruction (e.g. Mistral's agent `description`, Anthropic's `system` parameter, OpenAI's `instructions`). Persistent behavioural directives (per-cell sourcing, never-decline, voice) belong here; per-turn task framing belongs in `designed_prompt`.
-
-Output ONLY the JSON object. No markdown fence, no prose around it.
-"""
+    The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
+    (Doc 02 of the protocol set). The harness reads it as-is at run time;
+    edits to Doc 02 propagate without code change.
+    """
+    return metaprompt_path.read_text(encoding="utf-8")
 
 
 def load_model_meta(agent: str) -> dict:
@@ -675,7 +635,7 @@ def main(argv: list[str] | None = None) -> int:
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    meta_prompt = assemble_meta_prompt(BASELINE_PATH, QUALITY_BAR_PATH)
+    meta_prompt = assemble_meta_prompt()
     meta_prompt_path = args.output_dir / f"{args.agent}_meta_prompt.txt"
     meta_prompt_path.write_text(meta_prompt, encoding="utf-8")
     log.info("Meta-prompt assembled (%d chars) -> %s", len(meta_prompt), meta_prompt_path)
