@@ -8,9 +8,18 @@ You are again asked to review and return a structured `VERDICT:` line. The forma
 
 ## Method-neutrality note
 
-The trial instance for this run is **the inventory of Vietnam thermal power plants > 30 MWe**. The protocol itself, however, is designed to be sector- and country-neutral. Part A (Method) and §C2 (FAQ on the protocol) carry no instance-specific content and are reusable across future trials (e.g. Indonesia solar, France hydrogen electrolysers, etc.). Part B (Trial) and §C1 (FAQ on the ask) carry the trial-specific parameters and would be substituted wholesale for a new domain.
+The trial instance for this run is **the inventory of Vietnam thermal power plants > 30 MWe**. The protocol itself, however, is designed to be sector- and country-neutral:
 
-The Phase A meta-prompt that you will receive at run time must not inject elements that leak help, sources, or answer fragments specific to the trial instance — the agent's ability to identify and curate primary sources for an arbitrary domain is itself part of what the experiment measures.
+- **Part A (Method) and §C2 (FAQ on the protocol)** carry no instance-specific content and are reusable across future trials (Indonesia solar, France hydrogen electrolysers, etc.).
+- **Part B (Trial) and §C1 (FAQ on the ask)** carry the trial-specific parameters and would be substituted wholesale for a new domain.
+
+### What the experimenters' method must NOT do
+
+The Phase A meta-prompt we send you must not enumerate or leak answer-fragments specific to the trial instance — e.g. naming specific plants the reference contains, listing the source documents the reference was compiled from, or giving tier-by-tier examples that disambiguate which sources you should consult. Naming the *trial* (Vietnam thermal, >30 MWe, schema columns) is allowed and necessary; naming the *answer* (or a roadmap to it) is not. The agent's ability to identify and curate primary sources for an arbitrary domain is itself part of what the experiment measures.
+
+### What the agent is free to do
+
+The agent's `designed_prompt` (the response you produce in Phase A, sent verbatim to yourself on turn 1 of Phase B) is fully under your control. You are free to bake Vietnam-specific knowledge, search strategies, candidate source lists, schema refinements, language preferences, decomposition plans, and any other instance-specific elements you find useful into your own prompt. You are designing *for yourself*, not designing the experimental method. The method-neutrality rule constrains the experimenters' upstream method, not the agent's downstream design.
 
 ---
 
