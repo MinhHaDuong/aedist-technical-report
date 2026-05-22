@@ -96,7 +96,7 @@ panel.
 
 | Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
 |---|---|---|---|---|---|
-| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-09-27 Mistral 7B Instruct [(blog)][22] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
+| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2024-02-26 Le Chat beta [(blog)][41] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
 | **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
 | **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | absent (no first-party source verifiable at cutoff) | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
@@ -162,8 +162,8 @@ typically a precondition rather than the capability itself.
 ## Honest gaps and divergences
 
 - **Mistral has the most compressed timeline.** All eight
-  product-stage cells (1-8) ship between Sept 2023 and July 2025,
-  ~22 months, with stages 2/3/6 (file upload, web search, code
+  product-stage cells (1-8) ship between Feb 2024 and July 2025,
+  ~17 months, with stages 2/3/6 (file upload, web search, code
   interpreter) shipping in a single 2025-02-06 Le Chat launch and
   stages 7/8 (Agents API tool use and multi-agent orchestration) in
   a single 2025-05-27 launch. By contrast OpenAI's stage 1 to stage
@@ -185,8 +185,8 @@ typically a precondition rather than the capability itself.
   product. Reading the matrix row honestly: stage 8 is an industry
   trajectory, not a clean product line.
 - **Mistral stage 2 (file upload) is late.** Le Chat got document
-  upload in Feb 2025, well after Mistral 7B Instruct shipped in Sept
-  2023. The API supported function calling and external retrieval
+  upload in Feb 2025, about a year after Le Chat beta launched in
+  Feb 2024. The API supported function calling and external retrieval
   patterns earlier, but the *consumer-facing* file upload — which is
   what stage 2 is — arrived in 2025.
 - **OpenAI stage 2 boundary is fuzzy.** ChatGPT plugins (March 2023)
@@ -234,7 +234,7 @@ typically a precondition rather than the capability itself.
 - **DeepSeek has the most compressed stack of any focus lab.** All
   four productised stages (1, 2, 3, 4) ship between Nov 2023
   (DeepSeek LLM 67B + chat.deepseek.com) and Jan 2025 (DeepSeek
-  App + R1) — 14 months, faster than Mistral's 22-month run.
+  App + R1) — 14 months, faster than Mistral's 17-month run.
   Stage-1 note: the 2023-11-29 GitHub repo release linked
   chat.deepseek.com in the original README (first commit
   f8b3d77, 2023-11-29T11:06Z) [(repo)][33], confirming the consumer
@@ -316,3 +316,4 @@ encountered.
 [37]: https://api-docs.deepseek.com/news/news250120 "DeepSeek-R1 (DeepSeek, 2025-01-20)."
 [38]: https://help.openai.com/en/articles/6825453-chatgpt-release-notes "ChatGPT release notes (OpenAI, 2023-07-06 entry). Code Interpreter beta rollout to ChatGPT Plus users on web; alpha was available via plugins waitlist 2023-03-23 (openai.com/index/chatgpt-plugins/). Stage-6 milestone for OpenAI."
 [39]: https://claude.com/blog/analysis-tool "Introducing the analysis tool in Claude.ai (Anthropic, 2024-10-24; originally anthropic.com/news/analysis-tool, 308 redirect). JavaScript code sandbox in Claude.ai. Update note from 2025-11-05 records that the analysis tool was replaced by more powerful code execution capabilities. Stage-6 milestone for Anthropic."
+[41]: https://mistral.ai/news/le-chat-mistral "Le Chat beta (Mistral, 2024-02-26). First public consumer chat product from Mistral. Mistral 7B Instruct (2023-09-27) was an open-weights model release without a consumer chat interface; Le Chat beta is the stage-1 consumer-product milestone."
