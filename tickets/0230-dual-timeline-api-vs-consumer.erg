@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Dual capability timeline — API availability vs consumer-product launch
+Created: 2026-05-22
+Author: claude
+Tag: deferred
+
+--- log ---
+2026-05-22T09:30Z claude created — post-session 2026-05-22 imagination: user proposed two tables/figures for the capability timeline, one for API availability and one for consumer-facing product launch. Deferred to post-conference (2026-05-27) to conserve tokens. Follow-up to the strictness audit in 0224 (stage-7 Alibaba/DeepSeek API dates to be replaced with consumer dates as part of 0224's exit criteria).
+
+--- body ---
+
+## Context
+
+The capability-timeline figure (data/capability_timeline.csv, currently one row per
+lab × stage) records only one date per cell, defined as "launch in a public commercial
+product." During the 2026-05-22 revision session, two inconsistencies were found:
+Alibaba stage 7 (Qwen-Agent v0.0.1 on PyPI) and DeepSeek stage 7 (Function Calling
+API launch) were API/developer-framework dates, not consumer-product dates. That
+inconsistency was fixed in a separate ticket.
+
+The root tension is that **API availability** and **consumer-product launch** tell
+different stories:
+
+- API timeline: when could a developer build with this capability?
+- Consumer timeline: when did mainstream users gain access?
+
+The gap between the two is itself informative: it reveals productization speed and
+which labs move fastest from capability to user-facing deployment.
+
+## Proposal
+
+Add a parallel dataset `data/capability_timeline_api.csv` (same schema as
+`capability_timeline.csv`) recording API-availability dates for each lab × stage cell.
+Generate a second figure `fig_capability_timeline_api.pdf` alongside the existing
+`fig_capability_timeline.pdf`.
+
+Add a third figure or a combined figure showing the gap (API date → consumer date)
+per lab per stage, or use paired markers (hollow = API, filled = consumer) on a
+single swimlane.
+
+Update §3 of the manuscript to reference both timelines where the argument benefits
+(e.g., Chinese labs tend to API-first, Western labs vary).
+
+## Data collection scope
+
+40 cells × 2 timelines = 80 data points total. Key cells where API and consumer dates
+are known to diverge:
+
+| Lab | Stage | API approx | Consumer approx | Gap |
+|-----|-------|-----------|-----------------|-----|
+| Anthropic | 7 | 2024-11-25 MCP launch | 2024-10-22 computer use beta | ~1 month (consumer first!) |
+| OpenAI | 7 | ~2024-04 function calling | 2025-01-23 Operator | ~9 months |
+| Alibaba | 7 | 2024-04-07 Qwen-Agent PyPI | TBD consumer | unknown |
+| DeepSeek | 7 | 2024-07-25 API | TBD consumer | unknown |
+
+Stage 1 (Chat LLM) and stage 3 (browsing/web search) likely also have notable gaps.
+
+## Exit criteria
+
+- [ ] `data/capability_timeline_api.csv` populated for all 5 labs × 8 stages,
+      with primary-source citations.
+- [ ] `fig_capability_timeline_api.pdf` generated and committed.
+- [ ] §3 prose updated to reference both timelines (or the gap figure).
+- [ ] `docs/capability-timeline.md` schema section updated with API-date methodology.
+- [ ] `make check` passes; adherence tests green.
+
+## Cutoff
+
+Post-conference (after 2026-05-27 Econom'IA talk). Do not start before the talk slides
+are locked.
