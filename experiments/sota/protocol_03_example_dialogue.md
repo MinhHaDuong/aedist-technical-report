@@ -1,26 +1,27 @@
-# Protocol — Doc 1: Example dialogue
+# Protocol — Doc 03: Example dialogue
 
 This document showcases the protocol by walking through one Phase A + Phase B session end to end. Agent responses are abridged to keep the document readable; the prompts sent by the experimenters are reproduced verbatim.
 
 Companion documents:
-- Doc 2 — Implementation (state machine, variables, classifier, budget axes, tools, artefacts)
-- Doc 3 — Experiment (subject selection, design rationale, future work, FAQ on the ask)
-- Doc 4 — Validation round 1 (per-reservation changelog: what changed since round 1)
-- Doc 5 — The ask (your review)
+- Doc 01 — The ask (review framing + verdict format)
+- Doc 02 — Phase A meta-prompt (verbatim) — this dialogue abridges it; the full bytes the agent receives are there
+- Doc 04 — Implementation (state machine, variables, classifier, budget axes, tools, artefacts)
+- Doc 05 — Experiment (subject selection, design rationale, future work, FAQ on the ask)
+- Doc 06 — Validation round 1 (per-reservation changelog: what changed since round 1)
 
 ---
 
 ## Phase A — meta-prompt (sent to the agent)
 
-The Phase A meta-prompt assembles five blocks:
+The Phase A meta-prompt is reproduced verbatim in **Doc 02**. It assembles seven blocks:
 
-1. The baseline task statement (see Doc 3 §3.1).
-2. The four §2 quality-dimension paragraphs verbatim (the §2 quality bar).
-3. The Wikipedia leakage disclosure (see Doc 3 §3.4) — operational rule that Wikipedia / Wikidata / mirrors are not admissible as Source 1 or Source 2.
-4. The budget announcement (see Doc 2 §2.3).
-5. The tools-and-dispatch rules (see Doc 2 §2.5) — retrieval allowed, subagent dispatch forbidden.
-6. The planning-headroom paragraph (see Doc 2 §2.4).
-7. The JSON envelope spec.
+1. Budget announcement (see Doc 04 §2.3).
+2. Planning-headroom paragraph (see Doc 04 §2.4).
+3. Tools-and-dispatch rules (see Doc 04 §2.5) — retrieval allowed, subagent dispatch forbidden.
+4. Wikipedia leakage disclosure (see Doc 05 §3.4) — Wikipedia / Wikidata / mirrors not admissible as Source 1 or Source 2.
+5. Baseline task statement (see Doc 05 §3.1).
+6. §2 quality bar — the four dimension paragraphs verbatim.
+7. JSON envelope spec.
 
 The envelope spec is verbatim:
 
@@ -77,7 +78,7 @@ The agent produces a *planning preamble* — describes its intended search strat
 
 Verdict: **`no_report`** (the response describes intent, not a structured inventory).
 
-Classifier model: `nvidia/nemotron-nano-9b-v2` (Doc 2 §2.2). Cost: ~$0.0001.
+Classifier model: `nvidia/nemotron-nano-9b-v2` (Doc 04 §2.2). Cost: ~$0.0001.
 
 ---
 
@@ -107,7 +108,7 @@ The agent executes the planned search, fetches several primary documents, produc
 - Cross-tabulations (capacity by fuel × status, etc.)
 - An annotated bibliography (~85 citations)
 
-Total ~5000 tokens out, with 9 web_search calls and ~45K connector tokens (retrieval payload — not counted toward the 50K cap, see Doc 2 §2.3).
+Total ~5000 tokens out, with 9 web_search calls and ~45K connector tokens (retrieval payload — not counted toward the 50K cap, see Doc 04 §2.3).
 
 ---
 
@@ -166,6 +167,6 @@ The polished turn-3 response is the deliverable scored in Phase C (cross-evaluat
 
 ## What this example does NOT show
 
-- A `no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → TERMINAL` trace (3-encouragement exhaustion path). Doc 2 §2.4 describes that path; it has not arisen in the smoke runs to date.
+- A `no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → ENCOURAGE → no_report → TERMINAL` trace (3-encouragement exhaustion path). Doc 04 §2.4 describes that path; it has not arisen in the smoke runs to date.
 - A budget-exhaustion `TERMINAL` (the 20% threshold path). The dual-axis cap (50K tokens, $3) is designed to be non-binding for typical sessions; if either fires, the harness sends TERMINAL on the next turn regardless of classification.
 - A multi-rep cumulative trace. Each agent runs 3 replications of Phase B (with the same Phase A design). Each replication is independent.

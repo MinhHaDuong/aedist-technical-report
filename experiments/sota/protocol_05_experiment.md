@@ -1,12 +1,13 @@
-# Protocol — Doc 3: Experiment
+# Protocol — Doc 05: Experiment
 
 The broader experimental framing: subject selection, design rationale, what's measured, what's out of scope, future work. The task-semantics FAQ lives at §3.6.
 
 Companion documents:
-- Doc 1 — Example dialogue
-- Doc 2 — Implementation
-- Doc 4 — Validation round 1 (per-reservation changelog)
-- Doc 5 — The ask
+- Doc 01 — The ask (review framing + verdict format)
+- Doc 02 — Phase A meta-prompt verbatim
+- Doc 03 — Example dialogue
+- Doc 04 — Implementation
+- Doc 06 — Validation round 1 (per-reservation changelog)
 
 ---
 
@@ -36,7 +37,7 @@ The protocol itself is sector- and country-neutral; for a different domain (e.g.
 
 ### 3.2.1. Phase B-0 gate before the full Phase B batch
 
-The N=3 replication described in Doc 2 §2.9 is administered in two waves. **Phase B-0** is the first wave: one Phase B session per agent (N=1 per agent), end-to-end. The experimenters review the four B-0 outputs together — checking that each adapter produced valid records, that parsed tables are non-empty, that costs sit within the per-session envelope. Only if all four B-0 outputs clear this human review does **Phase B-full** launch the remaining two Phase B sessions per agent. This is the project's *test one before blasting* rule applied at the experiment level: a single agent's pathological behaviour does not silently consume 12 sessions of budget. From the agent's perspective the rule is invisible — each Phase B session looks identical and is governed by the same protocol; the gating happens between sessions, not during one.
+The N=3 replication described in Doc 04 §2.9 is administered in two waves. **Phase B-0** is the first wave: one Phase B session per agent (N=1 per agent), end-to-end. The experimenters review the four B-0 outputs together — checking that each adapter produced valid records, that parsed tables are non-empty, that costs sit within the per-session envelope. Only if all four B-0 outputs clear this human review does **Phase B-full** launch the remaining two Phase B sessions per agent. This is the project's *test one before blasting* rule applied at the experiment level: a single agent's pathological behaviour does not silently consume 12 sessions of budget. From the agent's perspective the rule is invisible — each Phase B session looks identical and is governed by the same protocol; the gating happens between sessions, not during one.
 
 ---
 
@@ -69,13 +70,13 @@ This experiment measures **single-agent** capability under a fixed budget. Subag
 Limited statistical power, acknowledged. Trade-off is total batch cost vs effect-size detectability. N=3 keeps the batch under ~$48 hard ceiling (4 × $12) while providing enough variance estimation for the qualitative findings the paper claims. Future replications at higher N are welcome.
 
 ### Dual-axis budget (50K tokens + $3 guard)
-Per round-1 review: dollar-only caps disadvantage models with expensive output tokens. The 50K-token cap binds reasoning capacity comparably; the $3 guard binds total bill. Whichever fires first triggers TERMINAL. See Doc 2 §2.3.
+Per round-1 review: dollar-only caps disadvantage models with expensive output tokens. The 50K-token cap binds reasoning capacity comparably; the $3 guard binds total bill. Whichever fires first triggers TERMINAL. See Doc 04 §2.3.
 
 ### Third-party classifier (Nemotron)
 Per round-1 review: same-vendor classifier creates self-evaluation pairs. Nemotron is open-weight, NVIDIA, not affiliated with any of the four subject vendors. Calibration is gated (ticket 0226) before the live batch.
 
 ### Planning headroom in Phase A
-Per round-1 review: the state machine biases toward early-but-shallow first reports. Phase A meta-prompt now explicitly tells the agent the three-encouragement budget is planning space. See Doc 2 §2.4.1.
+Per round-1 review: the state machine biases toward early-but-shallow first reports. Phase A meta-prompt now explicitly tells the agent the three-encouragement budget is planning space. See Doc 04 §2.4.1.
 
 ### Wikipedia disclosure + citation ban + audit
 Per author addition: the reference dataset's existence on Wikipedia is a contamination risk for both training-data and web-search leakage. Disclosed; cited Wikipedia is disqualified at Source 1/2; compliance is post-hoc audited.

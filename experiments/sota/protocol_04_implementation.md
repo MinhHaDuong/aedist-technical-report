@@ -1,12 +1,13 @@
-# Protocol — Doc 2: Implementation
+# Protocol — Doc 04: Implementation
 
-Engineering reference for the state machine behind Doc 1's example dialogue. The prompts themselves (ENCOURAGE / VERIFY / TERMINAL strings, Phase A meta-prompt blocks) are reproduced in Doc 1 and are not reprinted here.
+Engineering reference for the state machine behind Doc 03's example dialogue. The prompts themselves (ENCOURAGE / VERIFY / TERMINAL strings, Phase A meta-prompt blocks) are reproduced in Doc 03 and are not reprinted here.
 
 Companion documents:
-- Doc 1 — Example dialogue (the prompts in context)
-- Doc 3 — Experiment (rationale)
-- Doc 4 — Validation round 1 (changes since the previous version)
-- Doc 5 — The ask
+- Doc 01 — The ask (review framing + verdict format)
+- Doc 02 — Phase A meta-prompt verbatim
+- Doc 03 — Example dialogue (the prompts in context)
+- Doc 05 — Experiment (rationale)
+- Doc 06 — Validation round 1 (changes since the previous version)
 
 ---
 
@@ -133,13 +134,13 @@ The agent may **not** delegate this task — or any sub-part of it — to other 
 
 ### Wikipedia citation rule
 
-Wikipedia, Wikidata, DBpedia, Wikipedia mirrors, and aggregator sites that re-syndicate Wikipedia without independent verification are **not admissible** as Source 1 or Source 2 on any row of the structured inventory. Rationale in Doc 3 §3.4 (Wikipedia leakage). Compliance is auditable in Phase D.
+Wikipedia, Wikidata, DBpedia, Wikipedia mirrors, and aggregator sites that re-syndicate Wikipedia without independent verification are **not admissible** as Source 1 or Source 2 on any row of the structured inventory. Rationale in Doc 05 §3.4 (Wikipedia leakage). Compliance is auditable in Phase D.
 
 ---
 
 ## 2.6. Reply strings
 
-Three slots: ENCOURAGE / VERIFY / TERMINAL. Verbatim text reproduced in Doc 1 ("Phase B — turn 2" for ENCOURAGE; "Phase B — turn 3" for VERIFY; the TERMINAL string sits in the harness for the budget-exhaustion or 3-strike paths). The strings are a fixed experimental condition; do not paraphrase.
+Three slots: ENCOURAGE / VERIFY / TERMINAL. Verbatim text reproduced in Doc 03 ("Phase B — turn 2" for ENCOURAGE; "Phase B — turn 3" for VERIFY; the TERMINAL string sits in the harness for the budget-exhaustion or 3-strike paths). The strings are a fixed experimental condition; do not paraphrase.
 
 ---
 
