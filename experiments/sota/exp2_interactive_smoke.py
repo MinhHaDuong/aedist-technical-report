@@ -401,6 +401,114 @@ def run_openai_call(
     return record
 
 
+def run_anthropic_call(
+    prompt: str,
+    *,
+    cap_usd: float,
+    agent_mode: str,
+    raw_output_path: Path,
+    max_tokens: int,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
+    system_prompt: str | None = None,
+) -> RunRecord:
+    """Single Anthropic Messages call with full-history resend for multi-turn.
+
+    Continuation shape: ``{"messages": list[dict]}`` — the complete
+    conversation history including each prior assistant reply. Anthropic
+    is stateless on the wire; the client resends everything each call.
+    The ``system_prompt`` MUST be passed as identical bytes on every
+    turn (server does NOT persist it across calls; absence on a
+    follow-up turn changes model behaviour).
+
+    Cost accounting: ``cost_usd`` excludes ``web_search`` server-tool
+    fees, which go into ``tool_calls_cost_usd``. The dual-axis budget
+    cap then deducts the full session bill via :func:`total_cost`.
+    ``tokens_out`` includes any thinking output (Anthropic reports it
+    bundled in the output count).
+    """
+    import anthropic
+
+    from aedist import query_anthropic
+    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
+
+    meta = load_model_meta("anthropic")
+    model_id = meta.get("model_id")
+    is_followup = bool(continuation and continuation.get("messages"))
+
+    payload = query_anthropic.assemble_request(
+        prompt,
+        model=model_id,
+        max_tokens=max_tokens,
+        max_uses=3,
+    )
+    if system_prompt:
+        payload["system"] = system_prompt
+    if is_followup:
+        new_user_msg = payload["messages"][-1]
+        payload["messages"] = list(continuation["messages"]) + [new_user_msg]
+    if extra_metadata is not None:
+        # Anthropic only honours ``user_id`` natively; other keys pass through.
+        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
+
+    # Pre-call cap. n_searches uses the provisioned ``max_uses=3`` as the
+    # conservative ceiling; the post-call recheck below tightens against
+    # actual web_search invocations.
+    p_in = float(meta.get("price_per_mtok_in", 0.0)) / _TOKENS_PER_MTOK
+    p_out = float(meta.get("price_per_mtok_out", 0.0)) / _TOKENS_PER_MTOK
+    p_search = float(meta.get("price_per_web_search", 0.01))
+    estimated = estimate_call_cost(
+        max_tokens=max_tokens,
+        price_in=p_in,
+        price_out=p_out,
+        n_searches=3,
+        price_per_search=p_search,
+    )
+    enforce_cost_cap(estimated, cap_usd=cap_usd)
+
+    api_key = query_anthropic._load_key(query_anthropic.DEFAULT_KEY_PATH)
+    client = anthropic.Anthropic(api_key=api_key)
+    t0 = time.monotonic()
+    resp = client.messages.create(**payload)
+    wall = round(time.monotonic() - t0, 3)
+
+    raw_output_path.write_text(
+        json.dumps(query_anthropic._response_to_dict(resp), indent=2, default=str),
+        encoding="utf-8",
+    )
+
+    parsed = query_anthropic._parse_anthropic_response(resp)
+    usage = query_anthropic._usage_dict(resp)
+    breakdown = query_anthropic._compute_anthropic_cost(usage, meta, parsed["n_searches"])
+
+    # Build conversation messages for the next turn (full history replay).
+    continuation_messages = list(payload.get("messages", []))
+    if parsed.get("text"):
+        continuation_messages.append({"role": "assistant", "content": parsed["text"]})
+
+    record = query_anthropic._record_from_parsed(
+        parsed,
+        model=model_id,
+        cost_breakdown=breakdown,
+        tokens_in=parsed["tokens_in"],
+        tokens_out=parsed["tokens_out"],
+        wall_s=wall,
+        thinking_tokens=None,
+        agent_mode=agent_mode,
+        run_number=1,
+        messages_for_continuation=continuation_messages,
+    )
+    # _record_from_parsed already populates ``record.tool_calls_cost_usd``
+    # from ``cost_breakdown["web_search"]`` (see query_anthropic.py:381) —
+    # no need to re-assign here. Surfacing it into total_cost() works
+    # through that field.
+    # Stash narrative so the classifier's record-first path skips raw-file parse.
+    record.justification = {"output_text": parsed.get("text", "") or ""}
+    # Post-call cap recheck (actual billed total). Defense in depth.
+    enforce_cost_cap(float(breakdown.get("total", 0.0)), cap_usd=cap_usd)
+    return record
+
+
 def total_cost(record: RunRecord) -> float:
     """Token cost + connector (web_search) cost."""
     return (record.resource_use.cost_usd or 0.0) + (record.tool_calls_cost_usd or 0.0)
@@ -582,26 +690,38 @@ def _extract_openai_continuation(record: RunRecord, current: dict | None) -> dic
     return current
 
 
+def _extract_anthropic_continuation(record: RunRecord, current: dict | None) -> dict | None:
+    """Anthropic: full conversation messages list (stateless API — client resends history)."""
+    extra = record.method_params.extra or {}
+    if extra.get("messages"):
+        return {"messages": list(extra["messages"])}
+    return current
+
+
 CALL_FNS = {
     "mistral": run_mistral_call,
     "openai": run_openai_call,
+    "anthropic": run_anthropic_call,
 }
 
 CONTINUATION_EXTRACTORS = {
     "mistral": _extract_mistral_continuation,
     "openai": _extract_openai_continuation,
+    "anthropic": _extract_anthropic_continuation,
 }
 
 # Should ``system_prompt`` be passed on follow-up turns (turn > 1)?
 #  - mistral / openai: no — adapter raises (Mistral) or server-side state
 #    inherits via previous_response_id (OpenAI).
-#  - anthropic / qwen (wired in 0235 / 0236): yes — Anthropic requires
-#    identical bytes every call; Qwen is stateless and resends the full
+#  - anthropic: yes — server does NOT persist system across calls;
+#    identical bytes must be resent every turn or model behaviour drifts.
+#  - qwen (ticket 0236): yes — stateless API, client resends the full
 #    conversation including the system message every turn.
 # Default: False (drop on follow-up).
 SYSTEM_PROMPT_PASSTHROUGH = {
     "mistral": False,
     "openai": False,
+    "anthropic": True,
 }
 
 

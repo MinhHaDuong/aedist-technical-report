@@ -243,15 +243,17 @@ def test_wait_for_space_continues_on_enter(monkeypatch):
 def test_module_imports_only_wired_adapters():
     """The smoke imports only adapters it actually dispatches multi-turn through.
 
-    Mistral wired in ticket 0214; OpenAI wired in ticket 0234. Anthropic and
-    Qwen multi-turn wiring is tracked under tickets 0235 / 0236 and must NOT
-    be imported until those land — keeps the dependency surface honest.
+    Mistral wired in ticket 0214; OpenAI wired in ticket 0234; Anthropic
+    wired in ticket 0235. Qwen multi-turn wiring is tracked under ticket
+    0236 and must NOT be imported until that lands — keeps the dependency
+    surface honest.
     """
     src = Path(__file__).parent.parent / "experiments" / "sota" / "exp2_interactive_smoke.py"
     text = src.read_text()
     assert "adapter_mistral" in text
     assert "adapter_openai_responses" in text  # 0234 wired OpenAI
-    for forbidden in ("adapter_qwen_dashscope", "query_anthropic"):
+    assert "query_anthropic" in text  # 0235 wired Anthropic
+    for forbidden in ("adapter_qwen_dashscope",):
         assert forbidden not in text, f"unexpected import: {forbidden}"
 
 
@@ -864,3 +866,199 @@ def test_dispatch_tables_share_provider_set():
     # SYSTEM_PROMPT_PASSTHROUGH may be a subset (missing entry = default False),
     # but every key in it must be a known provider.
     assert set(mod.SYSTEM_PROMPT_PASSTHROUGH).issubset(set(mod.CALL_FNS))
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0235: Anthropic Messages API adapter for multi-turn Phase B
+# ---------------------------------------------------------------------------
+
+
+def _make_fake_anthropic_resp(*, narrative: str = "stub"):
+    """Minimal stand-in for ``anthropic.messages.create()`` return value."""
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        id="msg_test_001",
+        model="claude-opus-4-6",
+        stop_reason="end_turn",
+        content=[
+            SimpleNamespace(type="text", text=narrative, citations=[]),
+        ],
+        usage=SimpleNamespace(
+            input_tokens=100,
+            output_tokens=50,
+            cache_creation_input_tokens=0,
+            cache_read_input_tokens=0,
+            server_tool_use=SimpleNamespace(web_search_requests=2),
+        ),
+    )
+
+
+def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_path):
+    """Turn 1: system installed, messages = [{user, prompt}], no replayed history."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_create(**payload):
+        captured.update(payload)
+        return _make_fake_anthropic_resp()
+
+    fake_client = type("C", (), {})()
+    fake_client.messages = type("M", (), {"create": staticmethod(fake_create)})()
+    monkeypatch.setattr("anthropic.Anthropic", lambda **kw: fake_client)  # noqa: ARG005
+    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda _: "sk-ant-test")
+
+    record = mod.run_anthropic_call(
+        "the prompt",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw.json",
+        max_tokens=1000,
+        continuation=None,
+        extra_metadata=None,
+        system_prompt="you are an analyst",
+    )
+
+    assert captured["system"] == "you are an analyst"
+    assert captured["messages"] == [{"role": "user", "content": "the prompt"}]
+    # Single web_search tool installed at turn 1 (max_uses=3 default).
+    assert any(t.get("name") == "web_search" for t in captured["tools"])
+    assert record.agent_mode == "phase_b_run"
+    # Narrative stashed for the record-first classifier path.
+    assert (record.justification or {}).get("output_text") == "stub"
+
+
+def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
+    """Turn 2+: messages list contains prior turns AND system is re-sent identically.
+
+    Anthropic is stateless on the wire: every call must replay the full
+    conversation history including each previous assistant reply, AND the
+    ``system`` parameter must be passed as identical bytes every turn.
+    """
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_create(**payload):
+        captured.update(payload)
+        return _make_fake_anthropic_resp(narrative="turn-2 reply")
+
+    fake_client = type("C", (), {})()
+    fake_client.messages = type("M", (), {"create": staticmethod(fake_create)})()
+    monkeypatch.setattr("anthropic.Anthropic", lambda **kw: fake_client)  # noqa: ARG005
+    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda _: "sk-ant-test")
+
+    prior_history = [
+        {"role": "user", "content": "first user message"},
+        {"role": "assistant", "content": "first assistant reply"},
+    ]
+
+    mod.run_anthropic_call(
+        "second user message",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw_turn2.json",
+        max_tokens=1000,
+        continuation={"messages": prior_history},
+        extra_metadata=None,
+        system_prompt="you are an analyst",
+    )
+
+    # Full history replayed: prior 2 + new user = 3 messages.
+    assert captured["messages"] == [
+        {"role": "user", "content": "first user message"},
+        {"role": "assistant", "content": "first assistant reply"},
+        {"role": "user", "content": "second user message"},
+    ]
+    # System bytes identical to turn 1 (required by Anthropic).
+    assert captured["system"] == "you are an analyst"
+
+
+def test_state_machine_anthropic_dispatch_chains_messages(monkeypatch, tmp_path):
+    """Dispatcher routes --agent anthropic and appends turn-1 reply into turn-2 messages.
+
+    Two-turn trace under ``[report, no_report]``: turn-1 is the designed
+    prompt; the classifier returns "report" → VERIFY fires on turn-2.
+    On turn-2 the dispatcher must pass ``continuation["messages"]`` that
+    contains the turn-1 user message AND the turn-1 assistant reply.
+    System prompt MUST be re-sent on turn-2 (SYSTEM_PROMPT_PASSTHROUGH).
+    """
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    call_log: list[dict] = []
+
+    def fake_run_anthropic(
+        prompt,
+        *,
+        cap_usd,  # noqa: ARG001
+        agent_mode,
+        raw_output_path,
+        max_tokens,  # noqa: ARG001
+        continuation=None,
+        extra_metadata=None,
+        system_prompt=None,
+    ):
+        from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+
+        call_log.append(
+            {
+                "prompt": prompt,
+                "continuation": continuation,
+                "extra_metadata": extra_metadata,
+                "system_prompt": system_prompt,
+            }
+        )
+        # Build the next-turn messages list: prior history (if any) + this turn.
+        history = list((continuation or {}).get("messages", []))
+        history.append({"role": "user", "content": prompt})
+        history.append({"role": "assistant", "content": f"reply-{len(call_log)}"})
+        raw_output_path.write_text(json.dumps({"id": f"msg_t{len(call_log)}"}))
+        return RunRecord(
+            method="frontier",
+            method_params=MethodParams(
+                model="claude-opus-4-6",
+                max_tokens=100,
+                extra={"run_number": 1, "messages": history},
+            ),
+            resource_use=ResourceUse(
+                cost_usd=0.10,
+                wall_s=1.0,
+                tokens_in=10,
+                tokens_out=20,
+                thinking_tokens=None,
+            ),
+            result_summary=ResultSummary(status="ok"),
+            agent_family="anthropic-direct",
+            agent_mode=agent_mode,
+            justification={"output_text": f"reply-{len(call_log)}"},
+        )
+
+    monkeypatch.setitem(mod.CALL_FNS, "anthropic", fake_run_anthropic)
+    monkeypatch.setattr(
+        mod.dialogue_classifier,
+        "classify_report",
+        _fake_classifier_factory(["report", "no_report"]),
+    )
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        cap_tokens=100_000,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="anthropic",
+        system_prompt="designed system text",
+    )
+
+    assert result["turns"] == 2, f"expected 2 turns, got {result['turns']}"
+    # Turn 1: empty continuation, system installed.
+    assert not call_log[0]["continuation"] or "messages" not in call_log[0]["continuation"]
+    assert call_log[0]["system_prompt"] == "designed system text"
+    # Turn 2: messages list contains turn-1 user + turn-1 assistant.
+    msgs = (call_log[1]["continuation"] or {}).get("messages", [])
+    assert msgs[0] == {"role": "user", "content": "the designed prompt"}
+    assert msgs[1] == {"role": "assistant", "content": "reply-1"}
+    # SYSTEM_PROMPT_PASSTHROUGH=True for Anthropic — system re-sent on turn 2.
+    assert call_log[1]["system_prompt"] == "designed system text"
