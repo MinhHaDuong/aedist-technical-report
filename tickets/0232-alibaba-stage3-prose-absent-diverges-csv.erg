@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Fix Alibaba stage-3 prose: CSV has 2025-03-07 but matrix says absent
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T00:00Z claude created
+
+--- body ---
+## Context
+
+`data/capability_timeline.csv` records Alibaba stage 3 (Browsing / web search)
+as `2025-03-07` with source type `release-notes` and note:
+> "Qwen-Agent QwQ-32B parallel/multi-step/multi-turn tool-call demo with web
+> search; rolled out further via Qwen3 MCP cookbooks 2025-05-01 and
+> Qwen-Agent Qwen3-VL image+web search 2025-09-23; Qwen Chat web search
+> current — earliest verifiable demo date used"
+
+But `docs/capability-timeline.md` matrix cell shows:
+> `absent (no first-party source verifiable at cutoff)`
+
+Found during celebrate sweep after PR #422. Same CSV-vs-prose divergence
+pattern that prompted the Mistral stage-1 fix.
+
+## Actions
+
+1. Determine whether `2025-03-07` qualifies as a consumer-product milestone
+   under the stage methodology (launch in a public commercial product, not
+   just a developer demo). The source type is `release-notes` and the note
+   says "demo", which may not meet the threshold.
+2. If it qualifies: update the prose matrix cell and add a bibliography entry.
+3. If it does not qualify: update the CSV to `absent` with a note explaining
+   why the demo date was rejected.
+
+## Exit criteria
+
+- [ ] CSV and prose matrix agree on Alibaba stage-3 (either both show the
+      date or both show absent)
+- [ ] Rationale for the decision is documented in the CSV note field
+- [ ] `make check` passes
