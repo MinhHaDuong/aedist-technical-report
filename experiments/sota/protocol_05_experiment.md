@@ -37,7 +37,7 @@ The protocol itself is sector- and country-neutral; for a different domain (e.g.
 
 ### 3.2.1. Phase B-0 gate before the full Phase B batch
 
-The N=3 replication described in Doc 04 §2.9 is administered in two waves. **Phase B-0** is the first wave: one Phase B session per agent (N=1 per agent), end-to-end. The experimenters review the four B-0 outputs together — checking that each adapter produced valid records, that parsed tables are non-empty, that costs sit within the per-session envelope. Only if all four B-0 outputs clear this human review does **Phase B-full** launch the remaining two Phase B sessions per agent. This is the project's *test one before blasting* rule applied at the experiment level: a single agent's pathological behaviour does not silently consume 12 sessions of budget. From the agent's perspective the rule is invisible — each Phase B session looks identical and is governed by the same protocol; the gating happens between sessions, not during one.
+The N=5 replication described in Doc 04 §2.9 is administered in two waves. **Phase B-0** is the first wave: one Phase B session per agent (N=1 per agent), end-to-end. The experimenters review the four B-0 outputs together — checking that each adapter produced valid records, that parsed tables are non-empty, that costs sit within the per-session envelope. Only if all four B-0 outputs clear this human review does **Phase B-full** launch the remaining four Phase B sessions per agent. This is the project's *test one before blasting* rule applied at the experiment level: a single agent's pathological behaviour does not silently consume 20 sessions of budget. From the agent's perspective the rule is invisible — each Phase B session looks identical and is governed by the same protocol; the gating happens between sessions, not during one.
 
 ---
 
@@ -66,8 +66,21 @@ Compliance is auditable: Phase D synthesis counts Wikipedia/Wikidata citations i
 ### Single-agent, no subagents
 This experiment measures **single-agent** capability under a fixed budget. Subagent dispatch (Claude `Task` tool, OpenAI handoff, panel-of-experts patterns) would externalise cost to vendors and accounts the experimenters do not control, confound the per-agent Phase C comparison, and silently turn an agent's "output" into the integration of sub-LLMs' outputs. Multi-agent designs are tested in §5 / IDH ticket 0224, not here.
 
-### N=3 replication
-Limited statistical power, acknowledged. Trade-off is total batch cost vs effect-size detectability. N=3 keeps the batch under ~$48 hard ceiling (4 × $12) while providing enough variance estimation for the qualitative findings the paper claims. Future replications at higher N are welcome.
+### N=5 replication and pre-registered analysis
+After round-1 review flagged N=3 as statistically weak (Anthropic), the experimenters investigated whether the cost/wall-time constraint that drove N=3 actually bound. It did not: at observed Mistral pilot spend (~$0.27 / session) the differential between N=3 and N=5 is ~$2 batch-wide, and ~8 min additional serial-within-agent wall time (the four agents run in parallel since they're different APIs). N=3 was a placeholder, not a power calculation. **The protocol uses N=5.**
+
+What N=5 supports — pre-registered analysis plan, only non-parametric:
+- Qualitative description per agent (median + IQR of F1; modal failure mode; turn-count distribution; classifier-verdict pattern).
+- Friedman test across the 4 agents on per-dimension rank scores (k=4, n=5 paired blocks). Power adequate for medium effect sizes (~0.5 standard deviations).
+- Pairwise Wilcoxon rank-sum (Bonferroni-corrected for 6 pairs) only when Friedman flags an overall difference.
+- Wilson confidence intervals on per-agent compliance rates (Wikipedia citation count = 0 fraction, refusal rate, terminal-trigger rate).
+
+What N=5 does not support — and the manuscript will not claim:
+- Parametric tests (t-test, ANOVA, regression). The dataset is too small for normality-dependent inference.
+- Small-effect detection. Underpowered.
+- Tight between-agent variance estimation. Conservative Wilson CIs only, not standard errors.
+
+Future replications at higher N are still welcome; the per-session artefacts are designed to be append-only so additional reps can be folded in.
 
 ### Dual-axis budget (50K tokens + $3 guard)
 Per round-1 review: dollar-only caps disadvantage models with expensive output tokens. The 50K-token cap binds reasoning capacity comparably; the $3 guard binds total bill. Whichever fires first triggers TERMINAL. See Doc 04 §2.3.
@@ -146,10 +159,29 @@ Each polished Phase B output is compared against the reference inventory (§3.3)
 Metrics recorded per session: `n_plants`, `tp`, `fp`, `fn`, `f1`, `fuel_accuracy`, `status_accuracy`, `province_accuracy`, `cost_usd`, `wall_s`, `tokens_out`. Session outcomes other than `ok` (refusal, empty, parse error) are recorded with `f1 = 0` and flagged in `status`.
 
 ### 3.8.2. Cross-evaluation on the four §A1 quality dimensions
-Each of the 12 Phase-B outputs (4 agents × 3 reps) is scored on the four dimensions by the other three subject agents using a pinned rubric (ticket 0171). Self-evaluation is excluded. The classifier is not used for scoring; Phase C uses the subject models as evaluators. The rubric and raw inter-rater scores will be published with the manuscript.
+Each of the 20 Phase-B outputs (4 agents × 5 reps) is scored on the four dimensions by the other three subject agents using a pinned rubric (ticket 0171). Self-evaluation is excluded. The classifier is not used for scoring; Phase C uses the subject models as evaluators. The rubric and raw inter-rater scores will be published with the manuscript.
+
+Phase C is a **comparative** measurement — it places the four subjects in a rank order on each dimension. It is **not** an absolute quality measurement; stylistic, vendor, or language-source preferences of the four evaluator-models can introduce correlated bias. Mechanical metric supplements (next section, §3.8.4) provide absolute measurements per dimension to triangulate against the Phase C ranks.
 
 ### 3.8.3. Protocol-compliance audit
 For each output: Wikipedia / Wikidata / mirror citation count (§3.4); whether subagent dispatch was attempted (logged from provider traces); session-by-session `terminal_sent` rate; classifier-misclassification cases identified by manual review.
+
+### 3.8.4. Mechanical metric supplements (triangulating Phase C)
+
+Phase C's rank scoring is comparative across the four subjects. To triangulate against absolute quality, each Phase-B output is also scored on a set of mechanical metrics — computed from the artefact itself, no LLM judges:
+
+| §A1 dimension | Mechanical supplement | Computed by |
+|---|---|---|
+| **Accuracy** | Row-level F1 vs reference (already in §3.8.1) + per-attribute cell accuracies (fuel, status, province) | `src/aedist/evaluate.py` |
+| **Coherence** | Aggregate totals reconciliation residual: `|sum(table) − sum(stat_summary)|` per fuel × status cell. Duplicate-name count. Sign / unit-magnitude sanity. | New post-hoc script (single file) |
+| **Provenance** | URL-resolution rate (fraction of cited URLs returning 200). Per-row source-completeness rate (rows with Source 1 AND Source 2 populated). Strong-citation NLI on a random sample of 30 rows per output, using a single small classifier (one-shot, not the 4 subject panel) | URL resolver + NLI sampling step |
+| **Temporality** | As-of-date presence rate per row. Lifecycle-status enum compliance rate (rows using the declared status vocabulary). Median age of cited primary sources. | Pure string / date parsing |
+
+These metrics are absolute (a row either has an as-of date or it doesn't; a URL either resolves or it doesn't). They cannot be gamed by stylistic preference. Phase C and the mechanical metrics together form a richer picture than either alone — agreement between them on a finding strengthens it; disagreement is itself a result worth reporting.
+
+The NLI sampling step uses one cheap classifier (e.g. `nvidia/nemotron-nano-9b-v2`, the same model already validated for the dialogue classifier) on 30 random rows per output. Cost: ~$0.005 per output × 20 outputs = $0.10 batch-wide. The classifier prompt and the per-claim labels will be published with the manuscript.
+
+---
 
 ## 3.9. What this experiment does NOT do
 
@@ -166,7 +198,7 @@ For each output: Wikipedia / Wikidata / mirror citation count (§3.4); whether s
 - **Multi-step verification (IDH cycle)** — bibliographic scoping + plan generation + self-verify + panel of expert verifiers + per-row/per-source swarm verifier. Ticket 0224.
 - **Confidence vocabulary** — equipping verifiers (and subjects) with IPCC-style confidence bands, alleviating the ambiguity-vs-recall trade-off. Ticket 0225.
 - **Cross-trial generalization** — the protocol is sector- and country-neutral. Replication on other domains (Indonesia solar, France hydrogen, etc.) is future work.
-- **Higher N replication** — to detect smaller effect sizes than the qualitative findings claimed at N=3.
+- **Higher N replication** — N=5 is the analysis pre-registered for this run; N=10+ would tighten between-agent variance estimation enough to drop Wilson CIs and report SEs.
 - **Subagent / panel architectures** — fair comparison of multi-agent systems vs single-agent vs human-curated workflows. Requires a different protocol; out of scope here.
 - **Blind human adjudicator panel** — round-1 reviewer suggestion. Desirable; out of scope for this run.
 - **Energy / CO₂ instrumentation** — dollar cap is a proxy for what the experimenters actually care about (the inference footprint). Vendors do not expose energy or CO₂ at call time. The paper calls for standardised disclosure.

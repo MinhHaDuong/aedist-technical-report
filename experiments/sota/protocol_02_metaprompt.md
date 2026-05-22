@@ -66,7 +66,7 @@ Whichever cap reaches 20% of its initial value first triggers a terminal reply. 
 
 Web search input/output, connector tokens, and document-fetch payload do not count toward the 50,000-token cap — those are retrieval payload, not your generation. They do count toward the $3 dollar guard.
 
-Phase A (this turn) has a separate $1 ceiling. Across one Phase A and three Phase B sessions per subject, the total per-subject budget is ≤ $10.
+Phase A (this turn) has a separate $1 ceiling. Across one Phase A and five Phase B sessions per subject, the total per-subject budget is ≤ $16.
 
 If budget becomes tight, preserve recall, provenance, and uncertainty notes; compress overview, narratives, and bibliography annotations.
 

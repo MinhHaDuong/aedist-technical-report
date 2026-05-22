@@ -44,17 +44,25 @@ Round 1 review artefacts are committed under `experiments/outputs/sota_exp2_prot
 
 ---
 
-## 4.3. Concerns acknowledged but not addressed (○)
+## 4.3. Round-1 concerns initially deferred — re-investigated post-round 2 (◐)
+
+After round 2 returned two ACCEPT-WITH-RESERVATIONS verdicts (Qwen, OpenAI), the experimenters investigated whether the remaining open limitations had been correctly classified. Three were upgraded from "documented as known limitation" to "investigated, position taken, doc updated":
+
+| # | Concern (raised by) | Round-1 status | Round-2 position |
+|---|---|---|---|
+| A | Small n = 3 (Anthropic round 1) | Open limitation (cost) | **Addressed.** Investigation found the cost differential to N=5 is ~$2 batch-wide and ~8 min wall-time; N=3 was a placeholder, not a power calculation. **Protocol bumped to N=5** with a pre-registered non-parametric analysis plan (Friedman test, Wilcoxon pairwise, Wilson CIs on rates). Doc 05 §3.5 §"N=5 replication and pre-registered analysis" |
+| E | Cross-evaluation incentive structure (Anthropic round 1) | Open limitation (human adjudicator out of scope) | **Reframed.** Phase C remains a comparative rank measurement (acknowledged not absolute quality). **Added mechanical metric supplements** per dimension (URL-resolution rate, totals-reconciliation residual, as-of-date presence rate, attribute accuracies) computed without LLM judges. Phase C + mechanical metrics triangulate; agreement strengthens findings, disagreement is itself a result. Doc 05 §3.8.4 |
+| Subagent dispatch — instructional only (Qwen round 2, Doc 04 §2.5.1) | Stated as "API-level enforcement is a gap" | **Reframed.** Investigation of the four adapters confirmed **all four declare only retrieval tools** at the API call (Anthropic: `web_search_20250305`; OpenAI: `web_search`; Mistral: `web_search` connector; Qwen: server-side `enable_search`). The agent has no API surface to invoke a delegation tool. The "gap" was overstated. Doc 04 §2.5.1 corrected to "API-level whitelist + post-hoc audit for the edge case." |
+
+Concerns still in the open-limitation column (○):
 
 | # | Concern (raised by) | Status | Reason |
 |---|---|---|---|
-| A | Small n = 3 (Anthropic) | Open limitation | Higher N would push past the ~$48 batch ceiling. Documented for future replication |
-| B | Task too large for the per-session budget (OpenAI) | Open limitation | Acknowledged in Doc 05 §3.5; the dual-axis cap (50K + $3) is the primary capacity constraint and is more permissive than v1's $10. Mistral's smoke at $0.25 / 12K tokens suggests tractability; Opus / GPT-5.5 may have less slack |
-| C | Parametric-recall leakage from training data (implicit) | Open limitation | Cannot be controlled at run time. Post-hoc analysis will flag suspicious parametric-recall fingerprints. See Doc 05 §3.4 |
-| D | Energy / CO₂ are not exposed (author addition) | Open limitation | Acknowledged in Doc 04 §2.3 and Doc 05 §3.8. Dollar cap is a proxy; the paper calls for standardised vendor disclosure |
-| E | Cross-evaluation incentive structure (Anthropic) | Open limitation | Each agent scores its competitors; systematic stylistic preferences could correlate. A blinded human adjudicator subset is desirable but out-of-scope for this run; documented |
-| F | OpenAI's "what counts as a primary source" — was answered with tier hierarchy (Q3.6.4) but the underlying concern is that mid-tier and tier-1 are not always cleanly separable for a given domain | Partially addressed | The tier hierarchy is the experimenter's contract; agent judgement at the boundary is part of the task |
-| G | OpenAI's concern that Phase A spending eats into each Phase B replicate | Addressed differently | The per-Phase-B budget ($3) is independent of Phase A; Phase A has its own $1 cap. The aggregate per-agent ($10 = $1 A + 3 × $3 B) holds. See Doc 04 §2.3 |
+| B | Task too large for the per-session budget (OpenAI round 1) | Open limitation | The dual-axis cap (50K + $3 per session) is more permissive than v1's $10 single cap. Mistral pilot at $0.27 / 12K tokens suggests tractability for the cheapest agent. Opus / GPT-5.5 will burn budget faster; the manuscript will report cost saturation as a finding if it occurs |
+| C | Parametric-recall leakage from training data (implicit) | Open limitation | Cannot be controlled at run time. Post-hoc analysis flags suspicious parametric-recall fingerprints (claims close to reference without supporting search). Doc 05 §3.4 |
+| D | Energy / CO₂ are not exposed (author addition) | Open limitation | Vendors do not expose either at call time. Dollar cap is a proxy; the manuscript calls for standardised vendor disclosure. Doc 02 CONTEXT > Budget |
+| F | OpenAI's "what counts as a primary source" — agent judgement at the tier boundary is part of the task | Partially addressed | Doc 02 CONTEXT > Source quality management names the six tiers method-generally; identifying which sources of the trial domain fit which tier is the agent's job |
+| G | Phase A spending eats into each Phase B replicate (OpenAI round 1) | Addressed differently | Per-Phase-B budget ($3) is independent of Phase A; Phase A has its own $1 cap. Aggregate per-agent ($16 = $1 A + 5 × $3 B) holds. Doc 04 §2.3 |
 
 ---
 

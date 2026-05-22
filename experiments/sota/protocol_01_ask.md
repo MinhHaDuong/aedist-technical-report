@@ -40,7 +40,7 @@ The verdict is not consent. You are not being asked to agree to participate by s
 The experiment runs in two phases per subject:
 
 - **Phase A — reflexive prompt design.** You receive a meta-prompt that defines the task, the quality criteria, the budget, the tools rules, and a methodological disclosure. You return a JSON envelope containing the `system_prompt`, `designed_prompt`, `settings`, and `rationale` that you want to use for Phase B. One call.
-- **Phase B — multi-turn execution.** Your designed prompt is sent back to you as the first user message of a multi-turn conversation. Subsequent user-side messages are selected by a state machine (a classifier decides after each of your responses whether you have produced a report, and the harness sends one of three fixed reply strings: encourage, verify, or terminal). Three replications per subject.
+- **Phase B — multi-turn execution.** Your designed prompt is sent back to you as the first user message of a multi-turn conversation. Subsequent user-side messages are selected by a state machine (a classifier decides after each of your responses whether you have produced a report, and the harness sends one of three fixed reply strings: encourage, verify, or terminal). Five replications per subject.
 
 The trial domain for this run is a structured inventory of thermal power plants > 30 MWe in Vietnam (all lifecycle statuses), with per-row primary-source citations, cross-tabulation summary tables, and an annotated bibliography. After all four subjects have produced their outputs, each subject's output is scored by the other three subjects on four quality dimensions (Accuracy, Coherence, Provenance, Temporality). Self-evaluation is excluded.
 

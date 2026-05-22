@@ -107,16 +107,24 @@ Authoritative implementation: `experiments/sota/exp2_interactive_smoke.py::run_p
 
 The policies themselves (which tools are allowed, what is not admissible as a source) live in Doc 02 — the Phase A meta-prompt. This section is about the **enforcement mechanism** for each policy: where it is wired, whether it can be bypassed, and how compliance is audited.
 
-### 2.5.1. Subagent / multi-agent dispatch — instructional only, not hardcoded
+### 2.5.1. Subagent / multi-agent dispatch — API-level whitelist + instructional
 
-**Enforcement mechanism: meta-prompt text.** The Phase A meta-prompt's CONTEXT > Tools and dispatch section instructs the agent that subagent dispatch (Claude Task, OpenAI handoff, panel-of-experts orchestration, Code Interpreter calling an LLM) is not allowed. This is a normative statement; the harness does **not** strip these tools from the provider API call.
+**Enforcement mechanism: tool-whitelist at the API call site (primary) + meta-prompt text (secondary).** Each of the four adapters declares only retrieval tools to the provider's API; delegation tools are never declared, so the agent has no API surface to invoke them.
 
-**What the harness does NOT do** (gap from the policy):
-- Anthropic API: the `tools` array passed in `messages.create` is whatever each agent's Phase A response specified (or the harness default). Nothing prevents the agent from declaring `Task` as one of its tools and dispatching to a sub-Claude.
-- OpenAI Responses API: response-chaining via `previous_response_id` is enabled; the harness does not inspect whether the chained calls invoke a different model.
-- Mistral / Qwen agent connectors: not disabled at the API call site.
+Per-provider audit:
 
-**Compliance audit (post-hoc).** Phase D synthesis inspects provider trace fields where exposed (tool-call records, sub-conversation IDs) for evidence of subagent dispatch. A subject whose response shows sub-LLM invocation has its session flagged as a protocol-compliance violation alongside its accuracy metrics. The enforcement is therefore **instructional + post-hoc audit**, not hard API-level prevention. Closing this gap is documented in the future-work section of Doc 05; for the current batch the experimenters accept the gap and report compliance as a measured metric.
+| Adapter | Tools declared on API call | Delegation possible |
+|---|---|---|
+| Anthropic | `web_search_20250305` only (`query_anthropic.py::assemble_request`) | No — `task` / sub-agent tool never declared |
+| OpenAI Responses | `web_search` only (`adapter_openai_responses.py::build_request`) | No — `code_interpreter`, function-handoff never declared |
+| Mistral Agents | `web_search` connector only (`adapter_mistral.py::build_request`) | No — agent-to-agent handoff connector never enabled |
+| Qwen DashScope | No `tools` field at all; server-side search via `enable_search=True` | No — client-side function-calling intentionally not enabled |
+
+The agent's `designed_prompt` and `system_prompt` are plain text; they cannot declare new tool surfaces. The only way to invoke a tool on the API is for the harness to declare it in the request body, and the harness whitelist contains no delegation tools.
+
+**Residual edge case (not the failure mode the prohibition prevents):** the agent could `web_search` a URL that itself hosts an LLM service. The result is one-shot retrieval — payload bytes returned to context — not a control-flow handoff to a sub-agent. The agent cannot drive a multi-step dialogue with another model; the only multi-step structure is the one this protocol governs.
+
+**Compliance audit (post-hoc, for the edge case).** Phase D synthesis inspects provider trace fields for any evidence of unexpected tool invocations. A subject whose response shows the agent attempting (e.g.) to JSON-format a sub-LLM invocation that the API would have rejected is flagged for review. This is belt-and-braces beyond the API-level whitelist.
 
 ### 2.5.2. Wikipedia citation ban — user-side meta-prompt only, not in system prompt
 
@@ -197,7 +205,7 @@ Filename pattern: `{agent}_turn_NN.*` where `{agent}` ∈ `{mistral, qwen, opena
 
 ## 2.9. Replication
 
-Each agent's Phase B is run **three times** with the same designed prompt (one Phase A design, three independent Phase B sessions). Phase A is run **once** per agent.
+Each agent's Phase B is run **five times** with the same designed prompt (one Phase A design, five independent Phase B sessions). Phase A is run **once** per agent.
 
 Per agent: 1 Phase A + 3 Phase B = 4 sessions. Per batch: 4 agents × 4 sessions = 16 sessions.
 
