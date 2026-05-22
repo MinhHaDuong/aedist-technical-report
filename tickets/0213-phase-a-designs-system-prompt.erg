@@ -2,10 +2,12 @@
 Title: Phase A also designs the system prompt (not just user prompt + settings)
 Created: 2026-05-21
 Author: claude
+Closed: PR #400 merged; Phase A system_prompt threading complete; re-smoke confirms per-row source columns populated
 
 --- log ---
 2026-05-21T17:00Z claude created — author quality review of 0185 turn-1 inventory, 2026-05-21
 2026-05-21T18:00Z claude note implemented: Phase A envelope gains required system_prompt key; Mistral adapter run() takes system_prompt kwarg, threads to agent.description on create; follow-up turns raise ValueError (fail-fast per dict-vs-string history). Strict ValueError on missing key (deviates from ticket invariant about fallback — see PR body).
+2026-05-22T08:00Z claude closed — PR #400 merged; exit criteria met per PR #405 re-smoke
 
 --- body ---
 

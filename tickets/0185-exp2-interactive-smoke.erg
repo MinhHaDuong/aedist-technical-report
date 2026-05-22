@@ -2,9 +2,7 @@
 Title: Interactive smoke for Experiment 2 — Phase A + B on one agent at a time
 Created: 2026-05-20
 Author: HDMX-coding-agent
-Blocked-by: 0213
-Blocked-by: 0214
-Blocked-by: 0215
+Closed: PR #405 merged; re-smoke with state machine + system_prompt + retry produces 43-plant inventory with per-row source columns — all exit criteria met
 
 --- log ---
 2026-05-20T22:30Z HDMX-coding-agent created
@@ -15,6 +13,8 @@ Blocked-by: 0215
 2026-05-21T14:46Z HDMX-coding-agent closed — exit criterion met: turn 1 of multi-turn smoke produced a 25.4K-char structured inventory of Vietnam thermal assets (sector overview / per-plant narratives / table / statistical summaries / annotated bibliography) with 120 web citations on Mistral. Multi-turn loop validated end-to-end through turn 2 (PR #398 + 0218 workaround). Turn 3 hit transient Mistral 502 — out of scope. Total spend $0.32 of $10 cap.
 2026-05-21T17:15Z claude reopened — author quality review of turn-1 inventory (2026-05-21) flagged three improvements: (1) Phase A should design the system prompt too (ticket 0213); (2) Phase B dialogue should be a state-machine with LLM classifier and three reply slots, not the current two-slot generic-then-terminal (ticket 0214); (3) harness should retry on transient 5xx (ticket 0215). Re-smoke required after all three land. Operational exit criterion stays "we get a report", now with the implicit qualifier "of acceptable quality" — per-row source columns populated, polished by the verify round, robust to transient 5xx.
 2026-05-21T18:50Z claude note PR #405 /verify-gate REROLL round 1 — (a) §4 prose said "47 of 163 plants" but turn-3 artefact has 43 unique-name rows; corrected to "43 of 163" (and "43 Vietnamese thermal plants"); (b) tests/test_adapter_mistral.py:792,858 still said "0211/0212" after the 0212→0218 rename in this branch — propagated to "0211/0218". make check-fast green.
+2026-05-22T08:00Z claude closed — PR #405 merged; all three re-smoke blockers (0213/0214/0215) landed; 43-plant inventory with per-row source URLs produced; operational exit criterion "report of acceptable quality" met
+
 --- body ---
 ## Context
 

@@ -2,9 +2,11 @@
 Title: Phase B dialogue as a state machine driven by an LLM report-classifier
 Created: 2026-05-21
 Author: claude
+Closed: PR #401 merged; dialogue state machine + LLM classifier implemented; verified by re-smoke (PR #405)
 
 --- log ---
 2026-05-21T17:00Z claude created — author redesign of 0207 policy after the 2026-05-21 smoke surfaced its limits
+2026-05-22T08:00Z claude closed — PR #401 merged; state machine with ENCOURAGE/VERIFY/TERMINAL + classifier validated by PR #405 re-smoke
 
 --- body ---
 
