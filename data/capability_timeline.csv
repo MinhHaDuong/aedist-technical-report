@@ -1,33 +1,33 @@
 lab,stage,stage_name,date,source_kind,citation_key,note
-OpenAI,1,Base instruct LLM,2022-11-30,primary-blog,openai-chatgpt-2022,Introducing ChatGPT
+OpenAI,1,Chat LLM,2022-11-30,primary-blog,openai-chatgpt-2022,Introducing ChatGPT
 OpenAI,2,Retrieval / file upload,2023-10-30,release-notes,openai-alltools-2023,ChatGPT All-Tools (PDF / file analysis) — release-notes only; coverage cited
 OpenAI,3,Browsing / web search,2023-05-12,release-notes,openai-browse-2023,Browse with Bing rollout to Plus per release notes; blog post is plugins (2023-03-23)
 OpenAI,4,Reasoning,2024-09-12,primary-blog,openai-o1-2024,Learning to Reason / o1-preview
 OpenAI,5,Deep research,2025-02-02,primary-blog,openai-deep-research-2025,Introducing deep research
 OpenAI,6,External tool use (MCP-like),2025-01-23,primary-blog,openai-operator-2025,Introducing Operator (CUA)
 OpenAI,7,Multi-agent (recursion),2025-03-01,primary-blog,openai-agents-sdk-2025,New tools for building agents / Agents SDK (Swarm Oct 2024 was experimental)
-Anthropic,1,Base instruct LLM,2023-03-14,primary-blog,anthropic-claude-2023,Introducing Claude
+Anthropic,1,Chat LLM,2023-03-14,primary-blog,anthropic-claude-2023,Introducing Claude
 Anthropic,2,Retrieval / file upload,2024-06-25,primary-blog,anthropic-projects-2024,Collaborate with Claude on Projects (file upload)
 Anthropic,3,Browsing / web search,2025-03-20,primary-blog,anthropic-web-search-2025,Claude can now search the web
 Anthropic,4,Reasoning,2025-02-24,primary-blog,anthropic-37-2025,Claude 3.7 Sonnet extended thinking
 Anthropic,5,Deep research,2025-04-15,primary-blog,anthropic-research-2025,Claude takes research to new places
 Anthropic,6,External tool use (MCP-like),2024-10-22,primary-blog,anthropic-computer-use-2024,Computer use beta + Claude 3.5 Sonnet
 Anthropic,7,Multi-agent (recursion),2025-06-13,engineering-blog,anthropic-multi-agent-2025,How we built our multi-agent research system
-Mistral,1,Base instruct LLM,2023-09-27,primary-blog,mistral-7b-2023,Mistral 7B Instruct
+Mistral,1,Chat LLM,2023-09-27,primary-blog,mistral-7b-2023,Mistral 7B Instruct
 Mistral,2,Retrieval / file upload,2025-02-06,primary-blog,mistral-lechat-2025,The all new le Chat (document upload)
 Mistral,3,Browsing / web search,2025-02-06,primary-blog,mistral-lechat-2025,The all new le Chat (web search in same launch)
 Mistral,4,Reasoning,2025-06-10,primary-blog,mistral-magistral-2025,Magistral (first reasoning model from Mistral)
 Mistral,5,Deep research,2025-07-17,primary-blog,mistral-lechat-deep-2025,Le Chat dives deep
 Mistral,6,External tool use (MCP-like),2025-05-27,primary-blog,mistral-agents-api-2025,Mistral Agents API
 Mistral,7,Multi-agent (recursion),2025-05-27,primary-blog,mistral-agents-api-2025,Agents API multi-agent orchestration (same launch)
-Alibaba,1,Base instruct LLM,2023-08-03,primary-blog,qwen-7b-2023,Qwen-7B open-source release (Tongyi Qianwen)
+Alibaba,1,Chat LLM,2023-08-03,primary-blog,qwen-7b-2023,Qwen-7B open-source release (Tongyi Qianwen)
 Alibaba,2,Retrieval / file upload,2023-10-31,primary-blog,alibaba-apsara-2023,Tongyi ZoneWit document upload at Apsara 2023 (alibabacloud.com/blog/600550)
 Alibaba,3,Browsing / web search,2025-03-07,release-notes,qwen-agent-qwq-tool-call-2025,Qwen-Agent QwQ-32B parallel/multi-step/multi-turn tool-call demo with web search; rolled out further via Qwen3 MCP cookbooks 2025-05-01 and Qwen-Agent Qwen3-VL image+web search 2025-09-23; Qwen Chat web search current — earliest verifiable demo date used
 Alibaba,4,Reasoning,2024-11-28,primary-blog,qwen-qwq-2024,QwQ-32B-Preview
 Alibaba,5,Deep research,2025-05-13,primary-blog,qwen-deep-research-2025,Deep Research on Qwen Chat live (x.com/Alibaba_Qwen/status/1922307096886051025); broader expansion in Qwen app public beta 2025-11-17/18 with full research-report + multi-slide PowerPoint generation
 Alibaba,6,External tool use (MCP-like),2024-04-07,release-notes,qwen-agent-2024,Qwen-Agent v0.0.1 on PyPI/GitHub (github.com/QwenLM/Qwen-Agent/releases)
 Alibaba,7,Multi-agent (recursion),,absent,,no productised multi-agent consumer surface as of 2026-05-22 cutoff; Qwen-Agent framework is developer-only and Qwen Code SubAgent (roadmap v0.0.11) is a developer-tool component not a consumer product
-DeepSeek,1,Base instruct LLM,2023-11-29,primary-blog,deepseek-67b-2023,DeepSeek LLM 7B/67B announcement
+DeepSeek,1,Chat LLM,2023-11-29,primary-blog,deepseek-67b-2023,DeepSeek LLM 7B/67B announcement
 DeepSeek,2,Retrieval / file upload,2025-01-15,primary-blog,deepseek-app-2025,DeepSeek App launch with file upload and text extraction (api-docs.deepseek.com/news/news250115)
 DeepSeek,3,Browsing / web search,2024-12-10,primary-blog,deepseek-v25-1210,Internet Search live on chat.deepseek.com (api-docs.deepseek.com/news/news1210)
 DeepSeek,4,Reasoning,2025-01-20,primary-blog,deepseek-r1-2025,DeepSeek-R1
