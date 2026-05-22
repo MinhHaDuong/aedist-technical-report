@@ -136,7 +136,10 @@ def _call_openrouter(prompt: str, model: str, api_key: str) -> dict:
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.0,
-        "max_tokens": 32,
+        # Nemotron is thinking-capable: reasoning tokens consume the
+        # max_tokens budget before content is emitted. 512 is enough for
+        # ~150 reasoning tokens + a one-word answer.
+        "max_tokens": 512,
     }
     with httpx.Client(base_url=OPENROUTER_BASE, headers=headers) as client:
         resp = client.post("/v1/chat/completions", json=body, timeout=60.0)
@@ -171,6 +174,7 @@ def _run_one(fixture: dict, model: str, api_key: str) -> dict:
         "wall_s": wall_s,
         "prompt_tokens": usage.get("prompt_tokens"),
         "completion_tokens": usage.get("completion_tokens"),
+        "reasoning_tokens": (usage.get("completion_tokens_details") or {}).get("reasoning_tokens"),
         "cost_usd": round(cost, 8),
     }
 
