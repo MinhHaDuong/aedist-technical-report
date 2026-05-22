@@ -22,15 +22,15 @@ Mistral,6,External tool use (MCP-like),2025-05-27,primary-blog,mistral-agents-ap
 Mistral,7,Multi-agent (recursion),2025-05-27,primary-blog,mistral-agents-api-2025,Agents API multi-agent orchestration (same launch)
 Alibaba,1,Base instruct LLM,2023-08-03,primary-blog,qwen-7b-2023,Qwen-7B open-source release (Tongyi Qianwen)
 Alibaba,2,Retrieval / file upload,2023-10-31,primary-blog,alibaba-apsara-2023,Tongyi ZoneWit document upload at Apsara 2023 (alibabacloud.com/blog/600550)
-Alibaba,3,Browsing / web search,,absent,,no primary lab blog found; tertiary reports tongyi.ai deep search circa 2024-08 but no first-party source verifiable within cutoff
+Alibaba,3,Browsing / web search,2025-03-07,release-notes,qwen-agent-qwq-tool-call-2025,Qwen-Agent QwQ-32B parallel/multi-step/multi-turn tool-call demo with web search; rolled out further via Qwen3 MCP cookbooks 2025-05-01 and Qwen-Agent Qwen3-VL image+web search 2025-09-23; Qwen Chat web search current — earliest verifiable demo date used
 Alibaba,4,Reasoning,2024-11-28,primary-blog,qwen-qwq-2024,QwQ-32B-Preview
-Alibaba,5,Deep research,2025-05-13,primary-blog,qwen-deep-research-2025,Deep Research on Qwen Chat live (x.com/Alibaba_Qwen/status/1922307096886051025)
+Alibaba,5,Deep research,2025-05-13,primary-blog,qwen-deep-research-2025,Deep Research on Qwen Chat live (x.com/Alibaba_Qwen/status/1922307096886051025); broader expansion in Qwen app public beta 2025-11-17/18 with full research-report + multi-slide PowerPoint generation
 Alibaba,6,External tool use (MCP-like),2024-04-07,release-notes,qwen-agent-2024,Qwen-Agent v0.0.1 on PyPI/GitHub (github.com/QwenLM/Qwen-Agent/releases)
-Alibaba,7,Multi-agent (recursion),,absent,,no productised multi-agent consumer surface as of 2025-05-21 cutoff; Qwen-Agent framework is developer-only
+Alibaba,7,Multi-agent (recursion),,absent,,no productised multi-agent consumer surface as of 2026-05-22 cutoff; Qwen-Agent framework is developer-only and Qwen Code SubAgent (roadmap v0.0.11) is a developer-tool component not a consumer product
 DeepSeek,1,Base instruct LLM,2023-11-29,primary-blog,deepseek-67b-2023,DeepSeek LLM 7B/67B announcement
 DeepSeek,2,Retrieval / file upload,2025-01-15,primary-blog,deepseek-app-2025,DeepSeek App launch with file upload and text extraction (api-docs.deepseek.com/news/news250115)
 DeepSeek,3,Browsing / web search,2024-12-10,primary-blog,deepseek-v25-1210,Internet Search live on chat.deepseek.com (api-docs.deepseek.com/news/news1210)
 DeepSeek,4,Reasoning,2025-01-20,primary-blog,deepseek-r1-2025,DeepSeek-R1
-DeepSeek,5,Deep research,,absent,,no productised deep-research consumer surface as of 2025-05-21 cutoff
+DeepSeek,5,Deep research,,absent,,no productised deep-research consumer surface as of 2026-05-22 cutoff; model-side components shipped (V3.1 stronger multi-step reasoning for search 2025-08-21; V3.1-Terminus stronger Code/Search Agent 2025-09-22; V3.2 thinking-during-tools 2025-12-01) but no DeepSeek-branded deep-research composer product launched
 DeepSeek,6,External tool use (MCP-like),2024-07-25,release-notes,deepseek-function-calling-2024,Function Calling API launch (api-docs.deepseek.com/updates)
-DeepSeek,7,Multi-agent (recursion),,absent,,no productised multi-agent consumer surface as of 2025-05-21 cutoff
+DeepSeek,7,Multi-agent (recursion),,absent,,no productised multi-agent consumer surface as of 2026-05-22 cutoff; V4 Preview (2026-04-24) advertises enhanced agentic capabilities and Claude Code/OpenClaw/OpenCode integration but recursion is delegated to third-party orchestrators rather than a DeepSeek-branded product

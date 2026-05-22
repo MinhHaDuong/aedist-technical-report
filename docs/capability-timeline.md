@@ -36,6 +36,22 @@ single lab, stage 3 (browsing) was usually shipped well before stage 4
 2024) overlaps the steady-state availability of stage 3 across labs, so
 stage 5 became reachable for all four labs within a six-month window.
 
+## Date definition
+
+The date is launch in a public commercial product, which can be months
+after internal capacity availability and testing with privileged
+partners. Availability via API is another signal we could have used;
+this matrix uses the consumer-product signal because that is the
+relevant threshold for "a working analyst can rely on this capability."
+
+A consequence of this choice: an *absent* cell whose framework
+prerequisites are present (e.g., DeepSeek stage 5 = deep research,
+with stages 3 and 4 shipped) is evidence that the *composer* — the
+framework loop that joins the prerequisites into the named capability
+— has not been packaged as a public product, not that the underlying
+model components are missing. This is the framework × trained-model ×
+product co-deployment view: each marker is the date all three lined up.
+
 ## Capability stages (schema)
 
 1. **Base instruct LLM** — text-only, single-turn, parametric memory.
