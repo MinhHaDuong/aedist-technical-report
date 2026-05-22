@@ -11,14 +11,20 @@ Experiment 1's panel but its rollout cadence is informative for
 cross-referencing.*
 
 > **Status note (ticket 0223, 2026-05-21; ticket 0224 stage-6 split,
-> 2026-05-22).** This note has been rewritten to the five-lab panel
-> after Qwen and DeepSeek primary sources landed, and stage 6 was
-> later split into 6 (code execution as a fixed sandbox) and 7
-> (extensible MCP-like tool use) with the old stage 7 renumbered to
-> 8. The machine-readable source of truth for the §3 figure is
-> `data/capability_timeline.csv`. Four Qwen cells and four DeepSeek
-> cells are recorded as `absent` (no productised consumer surface)
-> with cutoff 2026-05-22; see "Honest gaps and divergences".
+> 2026-05-22; ticket 0224 stage-1 strictness pass, 2026-05-22).**
+> This note has been rewritten to the five-lab panel after Qwen and
+> DeepSeek primary sources landed, and stage 6 was later split into
+> 6 (code execution as a fixed sandbox) and 7 (extensible MCP-like
+> tool use) with the old stage 7 renumbered to 8. Stage-1 dates
+> updated to conform to the "launch in a public commercial product"
+> methodology: Alibaba corrected from Qwen-7B open-weights
+> (2023-08-03) to Tongyi Qianwen consumer launch (2023-09-13);
+> DeepSeek note updated to reflect that chat.deepseek.com was live
+> from the 2023-11-29 model release day. The machine-readable source
+> of truth for the §3 figure is `data/capability_timeline.csv`.
+> Four Qwen cells and four DeepSeek cells are recorded as `absent`
+> (no productised consumer surface) with cutoff 2026-05-22; see
+> "Honest gaps and divergences".
 
 ## Hypothesis
 
@@ -90,7 +96,7 @@ panel.
 
 | Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
 |---|---|---|---|---|---|
-| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-09-27 Mistral 7B Instruct [(blog)][22] | 2023-08-03 Qwen-7B (Tongyi Qianwen) [(blog)][28] | 2023-11-29 DeepSeek LLM 7B/67B [(blog)][33] |
+| **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2023-09-27 Mistral 7B Instruct [(blog)][22] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
 | **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
 | **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | absent (no first-party source verifiable at cutoff) | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
@@ -198,8 +204,11 @@ typically a precondition rather than the capability itself.
   separately (mentioned in the same blog rollup [(10)][10]). We
   record the consumer date as the stage-3 milestone.
 - **Alibaba (Qwen) has the broadest agentic developer surface but
-  multiple absent consumer cells.** Qwen-7B (Aug 2023) and the
-  Tongyi-branded consumer surface arrived early; Qwen-Agent v0.0.1
+  multiple absent consumer cells.** Tongyi Qianwen opened to the
+  public on 2023-09-13 [(news)][28] after receiving Chinese
+  regulatory clearance; the Qwen-7B open-weights release (Aug 2023)
+  predates this but is a model publication, not a consumer product.
+  Qwen-Agent v0.0.1
   shipped as a developer framework on PyPI / GitHub in April 2024
   [(release)][32], well before most peer labs put an agentic surface
   in front of consumers. Stage 7 (external tool use / MCP) arrived
@@ -224,21 +233,27 @@ typically a precondition rather than the capability itself.
   handle as a primary source.
 - **DeepSeek has the most compressed stack of any focus lab.** All
   four productised stages (1, 2, 3, 4) ship between Nov 2023
-  (DeepSeek LLM 67B) and Jan 2025 (DeepSeek App + R1) — 14 months,
-  faster than Mistral's 22-month run. The same pattern that made
-  Mistral fast applies in stronger form: by 2024-2025 the scaffolds
-  (RAG patterns, web-search integrations, reasoning RL recipes, tool /
-  function calling) were public, so a focused lab could ship a stack
-  by composition. Stages 5 (deep research consumer product), 6 (code
-  execution consumer surface), 7 (external tool use consumer surface),
-  and 8 (multi-agent consumer product) are absent: DeepSeek's API
-  surface supports the building blocks (Function Calling API 2024-07-25
-  [(changelog)][36], V3.1-Terminus Code/Search Agent 2025-09-22) but
-  chat.deepseek.com does not have a deep-research mode, a
-  code-interpreter toggle, a user-facing agentic tool surface, or a
-  multi-agent consumer feature as of the cutoff. The prior stage-7
-  CSV entry (2024-07-25 Function Calling API) was an API/developer
-  capability and has been corrected to absent.
+  (DeepSeek LLM 67B + chat.deepseek.com) and Jan 2025 (DeepSeek
+  App + R1) — 14 months, faster than Mistral's 22-month run.
+  Stage-1 note: the 2023-11-29 GitHub repo release linked
+  chat.deepseek.com in the original README (first commit
+  f8b3d77, 2023-11-29T11:06Z) [(repo)][33], confirming the consumer
+  chat product was live from launch day — not merely a model
+  publication. The same pattern that made Mistral fast applies in
+  stronger form: by 2024-2025 the scaffolds (RAG patterns,
+  web-search integrations, reasoning RL recipes, tool / function
+  calling) were public, so a focused lab could ship a stack by
+  composition. Stages 5 (deep research consumer product), 6 (code
+  execution consumer surface), 7 (external tool use consumer
+  surface), and 8 (multi-agent consumer product) are absent:
+  DeepSeek's API surface supports the building blocks (Function
+  Calling API 2024-07-25 [(changelog)][36], V3.1-Terminus
+  Code/Search Agent 2025-09-22) but chat.deepseek.com does not have
+  a deep-research mode, a code-interpreter toggle, a user-facing
+  agentic tool surface, or a multi-agent consumer feature as of the
+  cutoff. The prior stage-7 CSV entry (2024-07-25 Function Calling
+  API) was an API/developer capability and has been corrected to
+  absent.
 
 ### Note on Google / DeepMind
 
@@ -288,12 +303,12 @@ encountered.
 [25]: https://mistral.ai/news/le-chat-dives-deep "Le Chat dives deep (Mistral, 2025-07-17). Deep Research preview."
 [26]: https://mistral.ai/news/agents-api "Build AI agents with the Mistral Agents API (Mistral, 2025-05-27)."
 [27]: https://blog.google/innovation-and-ai/models-and-research/google-deepmind/gemini-universal-ai-assistant/ "Gemini as a universal AI assistant (Google I/O 2025, 2025-05-20). Project Mariner expanded to 10 simultaneous tasks; closest consumer surface to multi-agent."
-[28]: https://qwenlm.github.io/blog/qwen-7b/ "Qwen-7B (Alibaba, 2023-08-03). First open-weight release of the Tongyi Qianwen series."
+[28]: https://technode.com/2023/09/14/alibaba-opens-its-ai-model-tongyi-qianwen-to-the-public/ "Alibaba opens its AI model Tongyi Qianwen to the public (TechNode, 2023-09-14). Reports the September 13, 2023 WeChat announcement by Alibaba Cloud; model accessible via official website and mobile app after Chinese regulatory clearance. Stage-1 milestone for Alibaba. The Qwen-7B open-weights release (2023-08-03, qwenlm.github.io/blog/qwen-7b/) predates this but is not the consumer-product milestone."
 [29]: https://www.alibabacloud.com/blog/600550 "Tongyi ZoneWit document upload at Apsara 2023 (Alibaba Cloud, 2023-10-31). Consumer document-analysis surface on Tongyi Qianwen."
 [30]: https://qwenlm.github.io/blog/qwq-32b-preview/ "QwQ-32B-Preview (Alibaba, 2024-11-28). First reasoning-surface model from the Qwen team."
 [31]: https://x.com/Alibaba_Qwen/status/1922307096886051025 "Deep Research live on Qwen Chat (Alibaba_Qwen on X, 2025-05-13). Lab X post is the primary source; no long-form blog at the time of cutoff."
 [32]: https://github.com/QwenLM/Qwen-Agent/releases "Qwen-Agent v0.0.1 (QwenLM on GitHub / PyPI, 2024-04-07). Developer-facing agent framework; predates most peer-lab consumer agents but is not itself a consumer surface."
-[33]: https://api-docs.deepseek.com/news/news1129 "DeepSeek LLM 7B / 67B announcement (DeepSeek, 2023-11-29)."
+[33]: https://github.com/deepseek-ai/DeepSeek-LLM "DeepSeek LLM GitHub repository (deepseek-ai, first commit 2023-11-29T11:06Z). Open-weights release of 7B/67B base and chat models; original README (commit f8b3d77) links chat.deepseek.com — confirming the consumer chat product was live from launch day. Stage-1 milestone for DeepSeek. The api-docs.deepseek.com/news/news1129 URL (the original citation) returns 404."
 [34]: https://api-docs.deepseek.com/news/news250115 "DeepSeek App launch with file upload and text extraction (DeepSeek, 2025-01-15)."
 [35]: https://api-docs.deepseek.com/news/news1210 "V2.5-1210: Internet Search live on chat.deepseek.com (DeepSeek, 2024-12-10)."
 [36]: https://api-docs.deepseek.com/updates "DeepSeek Function Calling API (DeepSeek, 2024-07-25). API-level capability; not a consumer product. Stage-7 for DeepSeek is absent: chat.deepseek.com has no user-facing agentic tool surface as of 2026-05-22 cutoff."
