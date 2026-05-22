@@ -1,10 +1,13 @@
 %erg 0.1
 Title: Add adherence test: capability_timeline.csv dates must appear in prose matrix
+Closed: fixed in PR #426 — test_capability_timeline_sync.py added
 Created: 2026-05-22
 Author: claude
 
 --- log ---
 2026-05-22T00:00Z claude created
+2026-05-22T12:00Z claude note PR #426 merged; 11 adherence tests pass including sync test
+2026-05-22T12:00Z claude closed
 
 --- body ---
 ## Context
