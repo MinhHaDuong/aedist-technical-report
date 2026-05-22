@@ -46,7 +46,7 @@ The trial domain for this run is a structured inventory of thermal power plants 
 
 The full Phase A meta-prompt is in Doc 02 (verbatim). Doc 03 walks through one full Phase A + Phase B dialogue end to end. Doc 04 is the engineering reference for the state machine that drives Phase B. Doc 05 is the broader experimental framing (subject selection, design rationale, future work, FAQs). Doc 06 is the changelog from round 1.
 
-The trial domain is Vietnam thermal power, but the protocol is designed to be sector- and country-neutral. A future trial would substitute Doc 02 block 5 (baseline task), Doc 05 §3.1 (trial instance), §3.3 (reference dataset), §3.4 (Wikipedia leakage), and §3.6 (task-semantics FAQ); the rest of the protocol stays.
+The trial domain is Vietnam thermal power, but the protocol is designed to be sector- and country-neutral. A future trial would substitute Doc 02's GOAL section (trial task) and the Source quality management examples in CONTEXT, plus Doc 05 §3.1 (trial instance), §3.3 (reference dataset), §3.4 (Wikipedia leakage), and §3.6 (task-semantics FAQ); the rest of the protocol stays.
 
 ## 1.4. The six documents — read order
 

@@ -8,33 +8,31 @@ You are a state-of-the-art AI assistant being evaluated as a subject in a struct
 
 # GOAL
 
-In Phase A — this turn — you design your own approach. You will return a JSON envelope containing a `system_prompt` to install on yourself at agent-create time, a `designed_prompt` to receive as the first user message of Phase B, runtime `settings`, and a short `rationale`. You have full freedom over what those four fields contain.
+In Phase A — this turn — you design your own approach. You will return a JSON envelope containing a `system_prompt` to install on yourself at agent-create time, a `designed_prompt` to receive as the first user message of Phase B, runtime `settings`, and a short `rationale`. You have full freedom over what those four fields contain. The designed Phase B prompt should be operational, not philosophical: it should define search strategy, source hierarchy, table schema, confidence rules, budget discipline, and stopping criteria.
 
 In Phase B you will produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe), structured as follows:
 
 - a sector overview (electricity mix, policy framework, key institutional actors, current challenges)
-- a sourced per-plant narrative for each plant (development history, notable issues, current-status confidence levelled HIGH / MEDIUM / LOW)
-- a structured power-plants table with columns: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status (Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired), COD, Owner/Developer, Source 1, Source 2, Notes
+- a concise sourced per-plant narrative for each plant (development history, notable issues, including key plant attributes, possibly confidence-qualified)
+- the requested structured power-plants table with columns: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes
 - statistical summary tables (capacity by fuel × status; top 15 provinces; timeline of additions by period and fuel; data-quality summary by confidence level and fuel)
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
-Each row in the table corresponds to one plant. A power center co-locating several phases (each with its own commissioning, operator, or BOT arrangement) is referenced in the narratives and Notes column but does not get its own row — the phases do. All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
+All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
 
-Prioritise primary sources. When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even when you cannot identify a primary source — record them with confidence LOW and Source = "not found" rather than omitting.
+When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them (see source-quality rules).
 
-Your Phase B output will be judged on four quality dimensions. See CONTEXT below for the verbatim dimension paragraphs.
+# QUALITY DIMENSIONS
 
-# PAYLOAD
+Phase B output is judged on four axes:
 
-The four §2 quality-dimension paragraphs, against which your Phase B output will be judged:
+1. *Accuracy* — right assets and right attributes. Row level: recall and precision against a curated reference (F1). Cell level: capacity, fuel, location, operator, COD, status correct. Confident fabrication is the policed failure mode.
+2. *Coherence* — internally and externally consistent. Totals reconcile with known subtotals; no negative capacities, no double-counted units, no cross-row contradiction; values plausible in unit, magnitude, geography, technology, date. Conflicting sources reconciled explicitly (which chosen and why), not silently.
+3. *Provenance* — each value traces to a source that actually supports it, not a merely plausible citation. Two independent primaries is the ideal; one primary, a regulator database, or a marked secondary is weaker but acceptable if its status is explicit. Unsupported values are the failure.
+4. *Temporality* — every value carries a best-effort as-of date; status changes are flagged. Distinguish current status from past reports, planned from operating capacity, source date from fact date.
 
-1. *Accuracy* asks whether the dataset contains the right assets and the right attributes. At the row level, this means recall and precision: does the system find all relevant assets, and does it exclude non-assets or duplicates? For a simple inventory table, this can be measured against a manually curated reference table using precision, recall, and F1 score. At the cell level, accuracy asks whether the attributes attached to each asset are correct: capacity, fuel type, location, operator, commissioning year, status, and so on. A system can therefore be accurate in entity discovery but weak in attribute extraction, or conversely reliable on attributes once the correct asset has been identified. Plausibility is not truth — confidently-stated fabrications are the failure mode this dimension polices.
-
-2. *Coherence* asks whether the dataset is internally and externally consistent. Internally, statistical tables have control constraints: aggregate totals should match regional or technology subtotals when those totals are known; capacities should not be negative; duplicate units should not be counted twice; and cross-row values should not contradict one another. Externally, the dataset should remain compatible with other available knowledge: units, orders of magnitude, geographic location, technology type, and commissioning dates should all be plausible. When sources contradict one another, the dataset should reconcile them convincingly — recording which source was chosen and why — rather than silently adopting one value. A minimal coherence requirement is non-contradiction. A stronger requirement is inferential closure: the system should derive and expose all consequences that follow from the available documents and accounting rules, rather than merely storing isolated claims.
-
-3. *Provenance* requires a pedigree for each data item. Every row, and ideally every cell, should trace back to specific passages, tables, images, or records in specific sources. Strong provenance means more than attaching a plausible citation: the cited source must actually support the value claimed. Ideally, each important item should be backed by two independent primary sources. Weaker forms of justification — for example, one primary source, a regulator database, or a clearly marked secondary compilation — are still preferable to unsupported values, provided their evidential status is explicit. Satellite imagery and visual inspection can also provide evidence for industrial assets, but they are costly, hard to scale, and mainly confirm the presence of existing installations rather than full project histories.
-
-4. *Temporality* is not metadata added after the fact; it is part of the statistical fact itself. Energy infrastructure changes over time: projects are announced, financed, permitted, built, commissioned, repowered, mothballed, retired, cancelled, or renamed. Every value should therefore carry a best-effort "as-of" date or validity period, and notable status changes should be flagged. A statistical dataset should distinguish clearly current status from past reports, planned capacity from operating capacity, and source publication date from the date of the underlying fact. While a single inventory dataset may not require reconstructing full historical trajectories, energy modeling and scenario projections do require a the database with a strong historical dimension.
+We prefer a comprehensive inventory with uncertainty clearly expressed over a
+shortlist of well-known assets.
 
 # FORMAT
 
@@ -70,26 +68,68 @@ Web search input/output, connector tokens, and document-fetch payload do not cou
 
 Phase A (this turn) has a separate $1 ceiling. Across one Phase A and three Phase B sessions per subject, the total per-subject budget is ≤ $10.
 
+If budget becomes tight, preserve recall, provenance, and uncertainty notes; compress overview, narratives, and bibliography annotations.
+
 ## Planning headroom
 
-The Phase B protocol allows up to three turns of planning and search before any verify pass fires. You are not expected to produce the inventory on turn 1. Treat your first turn(s) as the place to plan your approach, run searches, decompose the task, and surface uncertainty; produce the structured inventory only when your research is mature enough to make verification meaningful. The harness will encourage you up to three times if your turn does not yet contain a report. After your first response classified as a report, you get exactly one verify-and-polish pass; then the conversation ends.
+Up to three turns of planning/search before the verify pass. Don't aim to produce the inventory on turn 1 — use early turns to search, decompose, and surface uncertainty. The harness prompts you up to three times while no report is present. After your first turn classified as a report, you get one verify-and-polish pass, then the conversation ends.
 
 ## Tools and dispatch
 
-Allowed: tools that retrieve information — provider-native web search, document fetch, URL resolution, citation lookup against open databases.
+No tool that delegates reasoning/generation to another model (no sub-agents, no model-to-model handoff, no LLM-invoking code interpreter). Retrieval tools only. This experiment measures single-agent capability under a fixed budget.
 
-Not allowed: tools that delegate reasoning or generation to another model — including spawning sub-agents (Anthropic Claude Task tool), model-to-model handoff (OpenAI Responses API handoff, Mistral agent-to-agent connector, Qwen DashScope multi-agent orchestration), any panel-of-experts dispatch, or any tool that internally invokes an LLM (a Code Interpreter that calls an LLM, a Computer-Use loop that talks to another agent, etc.). Reasoning, planning, and verification must happen entirely within your own model in this single conversation.
+## Source quality management
 
-This experiment measures single-agent capability under a fixed budget. Multi-agent designs are tested separately, not here.
+Two distinct epistemic roles — do not conflate them:
+- Discovery & characterization: parametric knowledge and web search, including tertiary sources, MAY be used to generate leads, locate assets, and form initial hypotheses about attributes.
+- Justification in the final inventory: a claim can be justified ONLY by an admissible independently consulted source that actually supports it.
 
-## Wikipedia leakage (methodological disclosure)
+Admissible primary sources: official government documents; regulator-aggregated official data; operator filings/press releases.
 
-The authors have published a derivative of the reference inventory for this trial to Wikipedia prior to this experiment. Two consequences:
+Admissible secondary sources: international-institution reports; bylined trade press; industry trackers and data brokers that expose the primary they cite.
 
-1. Training-data leakage. If you were trained on data crawled after the Wikipedia upload, you may have absorbed the reference values into parametric memory. The experiment cannot control this layer; it will be flagged post-hoc.
+Not admissible sources:
+- Tertiary compilations (encyclopedias, Wikipedia/Wikidata/DBpedia, mirrors, aggregators re-syndicating without independent verification).
+- Any deposited dataset that does NOT expose, per value, the primary source it draws from — a DOI or repository deposit does not by itself confer admissibility.
 
-2. Web-search leakage (operational rule). Wikipedia and Wikipedia-derived sources are not admissible as Source 1 or Source 2 on any row of your inventory. This includes English and local-language Wikipedia, Wikidata, DBpedia, Wikipedia mirrors, and aggregator sites that re-syndicate Wikipedia without independent verification. If retrieval surfaces Wikipedia, trace to the primary source Wikipedia cites and use that instead. Compliance is auditable: post-experiment synthesis counts Wikipedia/Wikidata citations in your bibliography. Zero is compliant. Non-zero is reported as a protocol-compliance violation alongside accuracy metrics.
+Local-language sources are preferred but not required; when used, include the original-language title plus an English translation in brackets.
 
-Source quality, in descending order of preference for Source 1 / Source 2: primary government documents; regulator-aggregated official data; operator filings and press releases; international institution reports; reputable trade press with named-author bylines; industry trackers that cite primaries. Below that (general news aggregators, unsourced blogs, opinion pieces) — not admissible. Identifying which sources of the trial domain fit which tier is part of the task; this prompt does not enumerate them.
+If a lead surfaces only via an inadmissible source, trace to its original source and cite that; if none is found, record Source = "not found", confidence LOW. In the table mention the inadmissible source in Notes, not in Sources.
 
-When sources disagree on a value, cite the higher-tier source as Source 1 and the lower-tier or contradicting source as Source 2, with a Notes entry explaining the discrepancy. Secondary aggregators are acceptable for the strong-citation test if they cite a verifiable primary; cite both the aggregator and the primary it references. Local-language sources are valuable but not required; when used, include the original-language title plus an English translation in brackets.
+## Calibrated confidence vocabulary
+
+The statistical table assigns a confidence level to each row based on evidence and agreement:
+-  HIGH   = >=2 INDEPENDENT concordant sources, at least one is primary
+-  MEDIUM = 1 primary source, OR a sourced aggregator citing a verifiable primary
+-  LOW    = secondary only / inferred / unresolved conflict / not found
+
+Independence check (run BEFORE judging agreement):
+-  Trace each source to its origin; merge sources sharing one origin into ONE.
+-  Sources re-syndicating Wikipedia/Wikidata are NOT independent and NOT admissible.
+-  Filling both Source columns does not by itself confer HIGH; independence is required
+
+Hard ceilings (override the above):
+- Commercial operator self-reported not confirmed by an official source: cap claim at MEDIUM.
+- Status attested only by a source older than 24 months and unconfirmed since: cap status at MEDIUM (LOW if older than 48 months). Freshness is measured on the publication date of the most recent admissible source attesting the status — NOT on the older Status as-of-date.
+- "Source = not found" rows: LOW by construction.
+
+The detailed inventory must assign a confidence level to the row-level existence/status claim and may additionally qualify one or two disputed attributes among capacity, status, fuel, COD, owner/operator, or location. Per claim, expose: value — level — [evidence axis / agreement axis] — sources. Doing more would likely exceed the resources allowed. When sources disagree on a value, investigate for material errors (transcription, translation, technical issues), for genuine changes over time, and for other likely causes. If still unresolved, follow the higher-tier source. Discuss the resolution in the detailed inventory, include a note in the statistical table.
+
+## Asset-row and status rules
+
+Each row corresponds to one asset record. The DEFAULT unit is the plant / unit-group, not the power center: when a site co-locates several plants with distinct capacity, COD, owner/developer, fuel, status, or financing (BOT/IPP) arrangements, each one is its own row. Aggregate to center-level in a single row ONLY when detailed evidence is unavailable; in that case mark the row ambiguous and explain the aggregation in Notes. Conversely, do not split a single plant into multiple rows when the only difference is individual generating units sharing one commissioning, owner, and status — record these as Units × MW on one row.
+
+Status definitions:
+- Operational: commissioned or reported in service.
+- Under construction: physical construction or EPC execution has begun.
+- Approved: formally approved, permitted, or included in a binding plan, but construction is not confirmed.
+- Planned: proposed or listed in a planning cycle, but not yet approved or materially committed.
+- Suspended: previously active, approved, or under construction but halted without formal cancellation.
+- Cancelled: formally cancelled, removed, or replaced by another project.
+- Retired: previously operational but permanently closed or decommissioned.
+
+Capacity rule:
+Record nameplate electrical capacity in MWe when available. If sources do not distinguish gross vs net, record the stated MW value and note "gross/net unspecified". Do not mix thermal MW, boiler capacity, steam output, or investment package capacity with electrical MWe. For Units × MW, make arithmetic consistent with Total MWe or explain discrepancies in Notes.
+
+Narrative discipline:
+Prioritise the structured table. Provide full per-plant narratives only for major, disputed, ambiguous, or historically important assets. For straightforward operational assets, a compact Notes entry is sufficient.

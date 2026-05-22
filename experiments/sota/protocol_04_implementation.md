@@ -120,7 +120,7 @@ The policies themselves (which tools are allowed, what is not admissible as a so
 
 ### 2.5.2. Wikipedia citation ban — user-side meta-prompt only, not in system prompt
 
-**Enforcement mechanism: meta-prompt text in Phase A, not propagated to Phase B system prompt.** The Wikipedia leakage rule is part of the Phase A meta-prompt (Doc 02 CONTEXT > Wikipedia leakage). The agent reads it once in Phase A.
+**Enforcement mechanism: meta-prompt text in Phase A, not propagated to Phase B system prompt.** The Wikipedia leakage rule is part of the Phase A meta-prompt (Doc 02 CONTEXT > Source quality management, where Wikipedia/Wikidata/DBpedia/mirrors are listed in the "Not admissible sources" category). The agent reads it once in Phase A.
 
 **What the agent installs as their Phase B system prompt** is whatever they wrote in their Phase A response's `system_prompt` field. The harness installs that text verbatim on the agent at Phase B create time. The Wikipedia rule is **not automatically prepended** to the agent's chosen system prompt. If the agent did not echo the rule into their system prompt, the rule is not present in Phase B's running context (the agent must remember it from the Phase A turn).
 
