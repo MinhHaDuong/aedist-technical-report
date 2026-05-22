@@ -2,11 +2,13 @@
 Title: Capability-timeline strictness pass — stage-1 chat-product dates, stage-6 MCP reading, code execution
 Created: 2026-05-22
 Author: claude
+Closed: autoclosed — PR #419
 
 --- log ---
 2026-05-22T07:55Z claude created — surfaced during the §3 revision pass (PRs #408–#413); three strictness gaps in data/capability_timeline.csv that the loose-reading shortcuts left open. Follow-up to closed ticket 0223 (Qwen/DeepSeek primary-source research) and the §3 revision chain anchored on 0219.
 2026-05-22T15:00Z claude note Sub-task 3 (stage-6 code-execution split) landed as ticket 0232 / PR — schema now has 8 stages (6 code execution, 7 external tool use MCP-like, 8 multi-agent recursion). New stage-6 dates: OpenAI 2023-07-06 (release-notes), Anthropic 2024-10-24 (claude.com/blog/analysis-tool), Mistral 2025-02-06 (mistral.ai/news/all-new-le-chat); Alibaba and DeepSeek recorded absent with primary-source checks. Sub-tasks 1 (stage-1 chat-product dates for open-weights labs) and 2 (strict MCP reading for stage 7) remain open.
 
+2026-05-22T11:45Z HDMX-coding-agent closed — autoclosed — PR #419
 --- body ---
 
 ## Context
