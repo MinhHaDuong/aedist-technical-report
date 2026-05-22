@@ -330,6 +330,77 @@ def run_mistral_call(
         return _runrecord_from_raw(raw_output_path, meta, agent_mode=agent_mode, wall_s=wall_s)
 
 
+def run_openai_call(
+    prompt: str,
+    *,
+    cap_usd: float,
+    agent_mode: str,
+    raw_output_path: Path,
+    max_tokens: int,
+    continuation: dict | None = None,
+    extra_metadata: dict | None = None,
+    system_prompt: str | None = None,
+) -> RunRecord:
+    """Single OpenAI Responses call with continuation chaining for multi-turn.
+
+    Continuation shape: ``{"response_id": str}``. On follow-up turns the SDK
+    receives ``previous_response_id``, which restores server-side state.
+    The ``system_prompt`` becomes ``instructions=`` on turn 1 only —
+    follow-up turns inherit it via the chained response.
+
+    Cost accounting per Doc 02 CONTEXT > Budget: ``tokens_out +
+    thinking_tokens`` count against the 50K token cap; ``cost_usd``
+    against the $3 dollar guard. OpenAI bundles web_search billing into
+    reasoning/output tokens for gpt-5.x (see :mod:`aedist.adapter_openai_responses`),
+    so there is no separate ``tool_calls_cost_usd`` bucket for this provider.
+
+    Hard cap enforcement mirrors :func:`adapter_openai_responses.run`'s
+    defense-in-depth pattern: pre-call cost estimate against ``cap_usd``,
+    then a post-call recheck of the billed cost.
+    """
+    from openai import OpenAI
+
+    from aedist import adapter_openai_responses
+    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
+
+    meta = load_model_meta("openai")
+    is_followup = bool(continuation and continuation.get("response_id"))
+
+    payload = adapter_openai_responses.build_request(
+        prompt,
+        model=meta.get("model_id"),
+        max_output_tokens=max_tokens,
+        reasoning_effort="low",  # web_search rejects "minimal"; "low" is the docs floor
+    )
+    if system_prompt and not is_followup:
+        payload["instructions"] = system_prompt
+    if is_followup:
+        payload["previous_response_id"] = continuation["response_id"]
+    if extra_metadata is not None:
+        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
+
+    # Pre-call cap check (estimate). Mirrors adapter_openai_responses.run
+    # so single-turn callers and multi-turn dispatch enforce the same ceiling.
+    p_in = meta.get("price_per_mtok_in_fresh", meta.get("price_per_mtok_in", 0.0)) / 1_000_000
+    p_out = meta.get("price_per_mtok_out", 0.0) / 1_000_000
+    estimated = estimate_call_cost(max_tokens=max_tokens, price_in=p_in, price_out=p_out)
+    enforce_cost_cap(estimated, cap_usd=cap_usd)
+
+    client = OpenAI(api_key=adapter_openai_responses._load_openai_key())
+    t0 = time.monotonic()
+    resp = client.responses.create(**payload)
+    wall = round(time.monotonic() - t0, 3)
+
+    raw_output_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
+
+    record = adapter_openai_responses.parse_response(resp, meta)
+    record.agent_mode = agent_mode
+    record.resource_use.wall_s = wall
+    # Post-call cap recheck (actual). Catches estimate-vs-billed drift.
+    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
+    return record
+
+
 def total_cost(record: RunRecord) -> float:
     """Token cost + connector (web_search) cost."""
     return (record.resource_use.cost_usd or 0.0) + (record.tool_calls_cost_usd or 0.0)
@@ -463,6 +534,77 @@ def _extract_narrative_from_raw_path(raw_path: Path) -> str:
     return extract_narrative_from_mistral_raw(raw)
 
 
+def _narrative_from_record_or_raw(record: RunRecord, raw_path: Path) -> str:
+    """Pull narrative from the RunRecord if present, else parse the raw artefact.
+
+    OpenAI (and future Anthropic / Qwen) adapters populate
+    ``record.justification["output_text"]`` with the assistant narrative.
+    The Mistral adapter does not, so we fall back to re-reading the raw
+    artefact and parsing it via :func:`extract_narrative_from_mistral_raw`.
+    The dispatch path is provider-agnostic — only the data source differs.
+    """
+    just = record.justification or {}
+    if isinstance(just, dict) and just.get("output_text"):
+        return just["output_text"]
+    return _extract_narrative_from_raw_path(raw_path)
+
+
+# ---------------------------------------------------------------------------
+# Per-provider dispatch tables (ticket 0234)
+#
+# Each adapter exposes one ``run_*_call`` with the unified signature and
+# one continuation extractor that translates its ``record.method_params.extra``
+# into the opaque ``continuation`` dict consumed on the next turn. The
+# dispatcher routes purely by these tables and never introspects the
+# continuation shape. Adding a new provider = three additions (call_fn,
+# extractor, SYSTEM_PROMPT_PASSTHROUGH policy).
+# ---------------------------------------------------------------------------
+
+
+def _extract_mistral_continuation(record: RunRecord, current: dict | None) -> dict | None:
+    """Mistral: persist agent_id across turns, refresh conversation_id."""
+    extra = record.method_params.extra or {}
+    cur = current or {}
+    agent_id = cur.get("agent_id")
+    if agent_id is None and extra.get("agent_id"):
+        agent_id = str(extra["agent_id"])
+    conv_id = extra.get("conversation_id")
+    if conv_id and agent_id:
+        return {"agent_id": agent_id, "conversation_id": conv_id}
+    return current
+
+
+def _extract_openai_continuation(record: RunRecord, current: dict | None) -> dict | None:
+    """OpenAI: chain previous_response_id from the just-returned response."""
+    extra = record.method_params.extra or {}
+    if extra.get("response_id"):
+        return {"response_id": str(extra["response_id"])}
+    return current
+
+
+CALL_FNS = {
+    "mistral": run_mistral_call,
+    "openai": run_openai_call,
+}
+
+CONTINUATION_EXTRACTORS = {
+    "mistral": _extract_mistral_continuation,
+    "openai": _extract_openai_continuation,
+}
+
+# Should ``system_prompt`` be passed on follow-up turns (turn > 1)?
+#  - mistral / openai: no — adapter raises (Mistral) or server-side state
+#    inherits via previous_response_id (OpenAI).
+#  - anthropic / qwen (wired in 0235 / 0236): yes — Anthropic requires
+#    identical bytes every call; Qwen is stateless and resends the full
+#    conversation including the system message every turn.
+# Default: False (drop on follow-up).
+SYSTEM_PROMPT_PASSTHROUGH = {
+    "mistral": False,
+    "openai": False,
+}
+
+
 def run_phase_b_multiturn(
     designed_prompt: str,
     *,
@@ -497,14 +639,14 @@ def run_phase_b_multiturn(
     ``terminal_sent``, ``agent_id`` (for caller-side cleanup), and
     ``total_classifier_cost_usd``.
     """
-    if agent != "mistral":
+    call_fn = CALL_FNS.get(agent)
+    if call_fn is None:
         raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
 
     remaining = cap_usd - initial_spent_usd
     remaining_tokens = cap_tokens
     elapsed_s = 0.0
     continuation: dict | None = {}  # empty dict = start multi-turn, keep Mistral agent alive
-    agent_id: str | None = None
     terminal_sent = False
     records: list[RunRecord] = []
     verify_used = False
@@ -535,22 +677,23 @@ def run_phase_b_multiturn(
             "remaining_usd": f"{remaining:.2f}",
             "cap_usd": f"{cap_usd:.2f}",
         }
-        # Per ticket 0218: Mistral's path-bound append endpoint rejects
-        # body-level `metadata` with HTTP 422 (empirically confirmed
-        # 2026-05-21). On follow-up turns (when `continuation` carries
-        # an agent_id), suppress the structured metadata signal — the
-        # chat-text status prefix still informs the model. Adapter-side
-        # fix is 0218's scope.
-        is_followup_turn = bool(continuation and continuation.get("agent_id"))
+        is_followup_turn = turn > 1
+        # Per-provider quirks on follow-up turns:
+        #  - Mistral 422s on body-level ``metadata`` against the append endpoint
+        #    (ticket 0218); OpenAI accepts it but we drop for symmetry — the
+        #    user-text status prefix already conveys the same info to the model.
         if is_followup_turn:
             extra_metadata = None
+        # ``system_prompt`` on follow-up: drop unless the adapter requires
+        # identical bytes every call (Anthropic, Qwen — see
+        # ``SYSTEM_PROMPT_PASSTHROUGH``).
+        turn_system_prompt = (
+            system_prompt
+            if not is_followup_turn or SYSTEM_PROMPT_PASSTHROUGH.get(agent, False)
+            else None
+        )
 
-        # System prompt is installed at agent-create time (turn 1, when
-        # continuation={}). Follow-up turns reuse the agent and must pass
-        # None — the adapter raises ValueError otherwise (ticket 0213).
-        turn_system_prompt = system_prompt if not is_followup_turn else None
-
-        record = run_mistral_call(
+        record = call_fn(
             user_text,
             cap_usd=max(remaining, 0.01),  # adapter wants positive cap
             agent_mode="phase_b_run",
@@ -577,7 +720,7 @@ def run_phase_b_multiturn(
 
         # Classify the assistant's response. Classifier cost is harness
         # overhead, tracked separately from the SOTA agent's spend.
-        narrative = _extract_narrative_from_raw_path(paths["raw"])
+        narrative = _narrative_from_record_or_raw(record, paths["raw"])
         cls_result = dialogue_classifier.classify_report(narrative)
         total_classifier_cost_usd += cls_result.classifier_cost_usd
         paths["classification"].write_text(
@@ -606,12 +749,16 @@ def run_phase_b_multiturn(
             encoding="utf-8",
         )
 
-        extra = record.method_params.extra or {}
-        if agent_id is None and extra.get("agent_id"):
-            agent_id = str(extra["agent_id"])
-        conv_id = extra.get("conversation_id")
-        if conv_id and agent_id:
-            continuation = {"agent_id": agent_id, "conversation_id": conv_id}
+        # Provider-specific continuation extraction (Mistral: agent_id +
+        # conversation_id; OpenAI: previous_response_id; future Anthropic /
+        # Qwen: their own shapes). Each extractor returns the opaque dict
+        # the dispatcher will pass to ``call_fn`` on the next turn. The
+        # dispatcher never introspects the continuation shape — see the
+        # return value below for the only consumer-facing field
+        # (``agent_id``) that is pulled out by canonical key.
+        new_continuation = CONTINUATION_EXTRACTORS[agent](record, continuation)
+        if new_continuation is not None:
+            continuation = new_continuation
 
         log.info(
             "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
@@ -672,7 +819,11 @@ def run_phase_b_multiturn(
         "total_spent_usd": cap_usd - remaining - initial_spent_usd,
         "total_tokens_used": cap_tokens - remaining_tokens,
         "terminal_sent": terminal_sent,
-        "agent_id": agent_id,
+        # Mistral exposes ``agent_id`` for caller-side conversation cleanup;
+        # other providers omit the key (None for OpenAI / Anthropic / Qwen).
+        # The dispatcher pulls it by canonical name rather than tracking it
+        # in a local variable — keeps the loop body provider-agnostic.
+        "agent_id": (continuation or {}).get("agent_id"),
         "total_classifier_cost_usd": total_classifier_cost_usd,
     }
 
@@ -683,7 +834,12 @@ def main(argv: list[str] | None = None) -> int:
         "--agent",
         required=True,
         choices=sorted(FAMILY_BY_AGENT),
-        help="Which SOTA agent to smoke (only 'mistral' wired in this iteration).",
+        help=(
+            "Which SOTA agent to smoke. main() end-to-end currently runs only "
+            "'mistral' (Phase A narrative extraction is Mistral-shape; multi-agent "
+            "main() wiring is ticket 0237). Phase B dispatch supports 'mistral' "
+            "and 'openai' programmatically via run_phase_b_multiturn()."
+        ),
     )
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     p.add_argument("--no-confirm", action="store_true", help="Skip SPACE gates.")
@@ -702,7 +858,12 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
     if args.agent != "mistral":
-        sys.exit(f"Only --agent mistral is wired in this iteration; got {args.agent!r}.")
+        sys.exit(
+            f"main() end-to-end only wires 'mistral' "
+            f"(Phase A narrative is Mistral-shape; multi-agent main() is ticket 0237). "
+            f"Got --agent {args.agent!r}. For OpenAI Phase B dispatch, call "
+            f"run_phase_b_multiturn() programmatically."
+        )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 

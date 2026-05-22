@@ -240,13 +240,18 @@ def test_wait_for_space_continues_on_enter(monkeypatch):
     wait_for_space("test gate", no_confirm=False)
 
 
-def test_module_imports_adapter_mistral_only():
-    """The smoke must not import or edit the other 3 adapters in this iteration."""
+def test_module_imports_only_wired_adapters():
+    """The smoke imports only adapters it actually dispatches multi-turn through.
+
+    Mistral wired in ticket 0214; OpenAI wired in ticket 0234. Anthropic and
+    Qwen multi-turn wiring is tracked under tickets 0235 / 0236 and must NOT
+    be imported until those land — keeps the dependency surface honest.
+    """
     src = Path(__file__).parent.parent / "experiments" / "sota" / "exp2_interactive_smoke.py"
     text = src.read_text()
     assert "adapter_mistral" in text
-    # Only mistral dispatch is wired; others should not be imported here.
-    for forbidden in ("adapter_openai_responses", "adapter_qwen_dashscope", "query_anthropic"):
+    assert "adapter_openai_responses" in text  # 0234 wired OpenAI
+    for forbidden in ("adapter_qwen_dashscope", "query_anthropic"):
         assert forbidden not in text, f"unexpected import: {forbidden}"
 
 
@@ -379,7 +384,7 @@ def test_state_machine_report_then_verify_then_stop(monkeypatch, tmp_path):
 
     fake_run = _fake_run_factory(cost_per_call=0.10)
     fake_classify = _fake_classifier_factory(["report", "no_report"])
-    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
     monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
 
     result = run_phase_b_multiturn(
@@ -448,7 +453,7 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
     fake_run = _fake_run_factory(cost_per_call=0.10)
     # Four classifications consumed (one per turn) — all no_report.
     fake_classify = _fake_classifier_factory(["no_report"] * 4)
-    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
     monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
 
     result = run_phase_b_multiturn(
@@ -502,7 +507,7 @@ def test_state_machine_token_cap_overrides(monkeypatch, tmp_path):
 
     fake_run = _fake_run_factory(cost_per_call=0.01)  # cheap; dollar cap won't bind
     fake_classify = _fake_classifier_factory(["no_report"] * 10)
-    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
     monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
 
     result = run_phase_b_multiturn(
@@ -537,7 +542,7 @@ def test_state_machine_budget_overrides(monkeypatch, tmp_path):
 
     fake_run = _fake_run_factory(cost_per_call=3.0)
     fake_classify = _fake_classifier_factory(["no_report"] * 10)
-    monkeypatch.setattr(mod, "run_mistral_call", fake_run)
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
     monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
 
     result = run_phase_b_multiturn(
@@ -638,3 +643,224 @@ def test_classification_result_to_artefact_dict_uses_class_key():
         "classifier_model": "mock",
         "wall_s": 0.5,
     }
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0234: OpenAI Responses API adapter for multi-turn Phase B
+# ---------------------------------------------------------------------------
+
+
+def _make_fake_openai_resp(*, resp_id: str = "resp_test_001", narrative: str = "stub"):
+    """Minimal stand-in for ``openai.responses.create()`` return value.
+
+    Built to exercise :func:`adapter_openai_responses.parse_response`,
+    which is the same parser :func:`run_openai_call` uses.
+    """
+    from types import SimpleNamespace
+
+    class _Resp(SimpleNamespace):
+        def model_dump_json(self, indent: int | None = None) -> str:
+            return json.dumps({"id": resp_id, "narrative": narrative}, indent=indent)
+
+    return _Resp(
+        id=resp_id,
+        model="gpt-5.5",
+        status="completed",
+        output=[
+            SimpleNamespace(
+                type="message",
+                content=[SimpleNamespace(type="output_text", text=narrative)],
+            ),
+        ],
+        usage=SimpleNamespace(
+            input_tokens=100,
+            output_tokens=50,
+            output_tokens_details=SimpleNamespace(reasoning_tokens=200),
+            input_tokens_details=SimpleNamespace(cached_tokens=0),
+        ),
+    )
+
+
+def test_run_openai_call_turn1_no_continuation(monkeypatch, tmp_path):
+    """Turn 1: instructions=system_prompt; tools includes web_search; no previous_response_id."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_create(**payload):
+        captured.update(payload)
+        return _make_fake_openai_resp()
+
+    fake_client = type("C", (), {})()
+    fake_client.responses = type("R", (), {"create": staticmethod(fake_create)})()
+    monkeypatch.setattr("openai.OpenAI", lambda **kw: fake_client)  # noqa: ARG005
+    monkeypatch.setattr(
+        "aedist.adapter_openai_responses._load_openai_key", lambda: "sk-test-fixture"
+    )
+
+    record = mod.run_openai_call(
+        "the prompt",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw.json",
+        max_tokens=1000,
+        continuation=None,
+        extra_metadata=None,
+        system_prompt="you are an analyst",
+    )
+
+    assert captured["input"] == "the prompt"
+    assert captured["instructions"] == "you are an analyst"
+    assert {"type": "web_search"} in captured["tools"]
+    assert "previous_response_id" not in captured
+    # Cost cap accounting (Doc 02 CONTEXT > Budget): tokens_out (50) + thinking (200) = 250.
+    assert record.resource_use.tokens_out == 50
+    assert record.resource_use.thinking_tokens == 200
+    assert record.agent_mode == "phase_b_run"
+    # Raw artefact written for downstream classifier read paths.
+    assert (tmp_path / "raw.json").exists()
+    # Justification carries the narrative for the record-first classifier path.
+    assert (record.justification or {}).get("output_text") == "stub"
+
+
+def test_run_openai_call_turn2_uses_previous_response_id(monkeypatch, tmp_path):
+    """Turn 2+: previous_response_id is forwarded; instructions NOT re-sent."""
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_create(**payload):
+        captured.update(payload)
+        return _make_fake_openai_resp(resp_id="resp_test_turn2")
+
+    fake_client = type("C", (), {})()
+    fake_client.responses = type("R", (), {"create": staticmethod(fake_create)})()
+    monkeypatch.setattr("openai.OpenAI", lambda **kw: fake_client)  # noqa: ARG005
+    monkeypatch.setattr(
+        "aedist.adapter_openai_responses._load_openai_key", lambda: "sk-test-fixture"
+    )
+
+    mod.run_openai_call(
+        "follow-up prompt",
+        cap_usd=3.0,
+        agent_mode="phase_b_run",
+        raw_output_path=tmp_path / "raw_turn2.json",
+        max_tokens=1000,
+        continuation={"response_id": "resp_test_turn1"},
+        extra_metadata=None,
+        system_prompt="you are an analyst",  # passed but should be ignored on followup
+    )
+
+    assert captured["previous_response_id"] == "resp_test_turn1"
+    assert "instructions" not in captured, (
+        "follow-up turn must not re-send instructions — server-side state inherits"
+    )
+
+
+def test_state_machine_openai_dispatch_chains_response_id(monkeypatch, tmp_path):
+    """Dispatcher routes --agent openai through run_openai_call and chains response_id.
+
+    Turn-1 has empty continuation. Turn-2's call must receive
+    ``continuation={"response_id": <turn1_resp_id>}`` — proving the
+    CONTINUATION_EXTRACTORS table replaces the Mistral-specific
+    agent_id / conversation_id extraction without code branching in
+    the dispatcher body.
+    """
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    call_log: list[dict] = []
+
+    def fake_run_openai(
+        prompt,
+        *,
+        cap_usd,  # noqa: ARG001  # signature parity; cap enforced inside the real call
+        agent_mode,
+        raw_output_path,
+        max_tokens,  # noqa: ARG001
+        continuation=None,
+        extra_metadata=None,
+        system_prompt=None,
+    ):
+        from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+
+        call_log.append(
+            {
+                "prompt": prompt,
+                "continuation": continuation,
+                "extra_metadata": extra_metadata,
+                "system_prompt": system_prompt,
+            }
+        )
+        raw_output_path.write_text(json.dumps({"id": f"resp_t{len(call_log)}"}))
+        return RunRecord(
+            method="frontier",
+            method_params=MethodParams(
+                model="gpt-5.5",
+                max_tokens=100,
+                extra={"response_id": f"resp_t{len(call_log)}"},
+            ),
+            resource_use=ResourceUse(
+                cost_usd=0.10,
+                wall_s=1.0,
+                tokens_in=10,
+                tokens_out=20,
+                thinking_tokens=5,
+            ),
+            result_summary=ResultSummary(status="ok"),
+            agent_family="openai-direct",
+            agent_mode=agent_mode,
+            justification={"output_text": "stub narrative"},
+        )
+
+    monkeypatch.setitem(mod.CALL_FNS, "openai", fake_run_openai)
+    monkeypatch.setattr(
+        mod.dialogue_classifier,
+        "classify_report",
+        _fake_classifier_factory(["report", "no_report"]),
+    )
+
+    result = run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        cap_tokens=100_000,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="openai",
+        system_prompt="designed system text",
+    )
+
+    assert result["turns"] == 2, f"expected 2 turns, got {result['turns']}"
+    # Turn 1: continuation is the initial empty dict — no response_id yet.
+    assert not call_log[0]["continuation"] or "response_id" not in call_log[0]["continuation"]
+    # System prompt installed on turn 1.
+    assert call_log[0]["system_prompt"] == "designed system text"
+    # Turn 2: continuation carries the turn-1 response_id.
+    assert call_log[1]["continuation"] == {"response_id": "resp_t1"}
+    # OpenAI is in SYSTEM_PROMPT_PASSTHROUGH = False group → system masked on follow-up.
+    assert call_log[1]["system_prompt"] is None
+    # Per-turn artefacts present for both turns.
+    for turn in (1, 2):
+        for suffix in (".user.txt", ".raw.json", ".record.json", ".classification.json"):
+            assert (tmp_path / f"openai_turn_{turn:02d}{suffix}").exists(), (
+                f"missing artefact openai_turn_{turn:02d}{suffix}"
+            )
+
+
+def test_dispatch_tables_share_provider_set():
+    """CALL_FNS and CONTINUATION_EXTRACTORS must cover the same providers.
+
+    Catches drift where someone adds a new provider to one table but
+    forgets the other — a partial wiring would crash at runtime with
+    a KeyError. Cheap structural invariant.
+    """
+    from experiments.sota import exp2_interactive_smoke as mod
+
+    assert set(mod.CALL_FNS) == set(mod.CONTINUATION_EXTRACTORS), (
+        f"CALL_FNS={set(mod.CALL_FNS)} but "
+        f"CONTINUATION_EXTRACTORS={set(mod.CONTINUATION_EXTRACTORS)} — "
+        "every wired provider needs both"
+    )
+    # SYSTEM_PROMPT_PASSTHROUGH may be a subset (missing entry = default False),
+    # but every key in it must be a known provider.
+    assert set(mod.SYSTEM_PROMPT_PASSTHROUGH).issubset(set(mod.CALL_FNS))
