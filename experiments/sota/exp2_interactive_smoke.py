@@ -333,7 +333,7 @@ def run_mistral_call(
 def run_openai_call(
     prompt: str,
     *,
-    cap_usd: float,  # noqa: ARG001  # parity with run_mistral_call; OpenAI cap is enforced by parse_response cost cap
+    cap_usd: float,
     agent_mode: str,
     raw_output_path: Path,
     max_tokens: int,
@@ -353,10 +353,15 @@ def run_openai_call(
     against the $3 dollar guard. OpenAI bundles web_search billing into
     reasoning/output tokens for gpt-5.x (see :mod:`aedist.adapter_openai_responses`),
     so there is no separate ``tool_calls_cost_usd`` bucket for this provider.
+
+    Hard cap enforcement mirrors :func:`adapter_openai_responses.run`'s
+    defense-in-depth pattern: pre-call cost estimate against ``cap_usd``,
+    then a post-call recheck of the billed cost.
     """
     from openai import OpenAI
 
     from aedist import adapter_openai_responses
+    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
 
     meta = load_model_meta("openai")
     is_followup = bool(continuation and continuation.get("response_id"))
@@ -374,6 +379,13 @@ def run_openai_call(
     if extra_metadata is not None:
         payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
 
+    # Pre-call cap check (estimate). Mirrors adapter_openai_responses.run
+    # so single-turn callers and multi-turn dispatch enforce the same ceiling.
+    p_in = meta.get("price_per_mtok_in_fresh", meta.get("price_per_mtok_in", 0.0)) / 1_000_000
+    p_out = meta.get("price_per_mtok_out", 0.0) / 1_000_000
+    estimated = estimate_call_cost(max_tokens=max_tokens, price_in=p_in, price_out=p_out)
+    enforce_cost_cap(estimated, cap_usd=cap_usd)
+
     client = OpenAI(api_key=adapter_openai_responses._load_openai_key())
     t0 = time.monotonic()
     resp = client.responses.create(**payload)
@@ -384,6 +396,8 @@ def run_openai_call(
     record = adapter_openai_responses.parse_response(resp, meta)
     record.agent_mode = agent_mode
     record.resource_use.wall_s = wall
+    # Post-call cap recheck (actual). Catches estimate-vs-billed drift.
+    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
     return record
 
 
