@@ -1,0 +1,68 @@
+{
+  "summary": {
+    "model": "nvidia/nemotron-nano-9b-v2",
+    "n_correct": 4,
+    "n_total": 4,
+    "total_cost_usd": 0.000386,
+    "passed": true,
+    "threshold": "3/4"
+  },
+  "results": [
+    {
+      "fixture_id": "turn_01_planning",
+      "description": "planning preamble \u2014 Step-by-Step Execution Plan",
+      "expected": "no_report",
+      "verdict": "no_report",
+      "correct": true,
+      "reply_raw": "no_report\n",
+      "model": "nvidia/nemotron-nano-9b-v2",
+      "wall_s": 3.059,
+      "prompt_tokens": 993,
+      "completion_tokens": 204,
+      "reasoning_tokens": 254,
+      "cost_usd": 7.236e-05
+    },
+    {
+      "fixture_id": "turn_02_initial_report",
+      "description": "initial inventory with sector overview + table",
+      "expected": "report",
+      "verdict": "report",
+      "correct": true,
+      "reply_raw": "report\n",
+      "model": "nvidia/nemotron-nano-9b-v2",
+      "wall_s": 3.477,
+      "prompt_tokens": 2304,
+      "completion_tokens": 265,
+      "reasoning_tokens": 306,
+      "cost_usd": 0.00013456
+    },
+    {
+      "fixture_id": "turn_03_polished_report",
+      "description": "polished inventory \u2014 full structured table",
+      "expected": "report",
+      "verdict": "report",
+      "correct": true,
+      "reply_raw": "report\n",
+      "model": "nvidia/nemotron-nano-9b-v2",
+      "wall_s": 3.678,
+      "prompt_tokens": 2124,
+      "completion_tokens": 259,
+      "reasoning_tokens": 298,
+      "cost_usd": 0.0001264
+    },
+    {
+      "fixture_id": "fixture_04_adversarial_planner",
+      "description": "hand-crafted verbose planner with report-like headings but no table",
+      "expected": "no_report",
+      "verdict": "no_report",
+      "correct": true,
+      "reply_raw": "no_report\n",
+      "model": "nvidia/nemotron-nano-9b-v2",
+      "wall_s": 3.27,
+      "prompt_tokens": 423,
+      "completion_tokens": 224,
+      "reasoning_tokens": 270,
+      "cost_usd": 5.276e-05
+    }
+  ]
+}
