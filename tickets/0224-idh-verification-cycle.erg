@@ -92,6 +92,35 @@ Cost scales with #rows × #sources, not constant. Likely $10s–$100s
 per inventory at scale; appropriate only when the dataset is itself
 the deliverable (§5), not when it's an experimental measurement (§4).
 
+### Cross-cutting design ideas (author, 2026-05-22)
+
+These two ideas apply across steps i–v, not to any single step:
+
+**A. Workflow-level upfront verification.** Before steps i–v execute,
+the agent can verify the *entire workflow itself* — review the
+scoping document + planned schema + chosen sources + intended
+sub-steps as a whole, and surface inconsistencies *before* any
+compute is spent. This is meta: not verifying an artefact but
+verifying the *process producing the artefact*. Analogue:
+research-grant peer review on a proposal, before the experiment is
+run. Cheap; catches Type-III errors (Mitroff–Featheringham) at the
+planning stage.
+
+**B. Verification as confidence classification, not binary
+filtering.** Rephrase every verifier's output from
+*pass/fail* to *IPCC-style confidence band*: virtually certain
+(>99%), very likely (>90%), likely (>66%), about as likely as not
+(33–66%), unlikely (<33%), very unlikely (<10%), exceptionally
+unlikely (<1%). Each verified claim carries its band; the
+downstream consumer (e.g. the agent's polish step, or the final
+manuscript footnote) decides what to do with each band rather than
+discarding weak signals. Preserves epistemic information that
+binary verification destroys. This is a vocabulary the harness
+should adopt across all five steps and all four §2 axes.
+
+The 0224.* sub-tickets will incorporate both ideas as defaults, not
+addenda.
+
 ## Step ordering and triggers
 
 ```
