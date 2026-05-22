@@ -1,0 +1,124 @@
+%erg 0.1
+Title: Wire Qwen DashScope into Exp 2 multi-turn Phase B state machine
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T15:30Z claude created — Path B Phase B-0 prerequisite
+
+--- body ---
+
+## Context
+
+`experiments/sota/exp2_interactive_smoke.py::run_phase_b_multiturn` is
+currently Mistral-only. This ticket wires **Alibaba Qwen3-Max** via
+the DashScope Generation API.
+
+Qwen's DashScope `Generation.call` is stateless: the client sends the
+full conversation history each call. System prompt is the first
+message of role `"system"`. No server-side state. No `previous_*_id`
+chaining. Cheapest of the three to wire conceptually (just resend
+everything) but no protocol short-cut.
+
+## Actions
+
+1. **Add `run_qwen_call()` to `experiments/sota/exp2_interactive_smoke.py`**
+   modeled on `run_mistral_call`. Signature:
+
+   ```python
+   def run_qwen_call(
+       user_text: str,
+       *,
+       cap_usd: float,
+       agent_mode: str,
+       raw_output_path: Path,
+       max_tokens: int,
+       continuation: dict | None,  # {"messages": list[dict]} with full history
+       extra_metadata: dict | None,
+       system_prompt: str | None,
+   ) -> RunRecord
+   ```
+
+   Key behaviour:
+   - Turn 1 (continuation is None or empty): build a `messages` list
+     `[{"role": "system", "content": system_prompt}, {"role": "user",
+     "content": user_text}]` if `system_prompt` is set, else just the
+     user message. Call `dashscope.Generation.call(model=..., messages=messages,
+     result_format="message", max_tokens=max_tokens, enable_thinking=...,
+     enable_search=True)`.
+   - Turn 2+ (continuation has messages list): append the previous
+     assistant response (`{"role": "assistant", "content": <text>}`) and
+     the new user message to the running list, send again.
+   - Capture the assistant's text into the continuation for the next
+     turn.
+
+2. **Thinking budget**: Qwen's `enable_thinking` parameter routes
+   to a thinking surface; the response contains `thinking_content`
+   separately from `content`. Include `thinking_content` length (token
+   estimate) in the dual-axis token cap. The agent's
+   `settings.thinking` from Phase A drives this.
+
+3. **Web search**: `enable_search=True` is the right knob for Qwen3-Max
+   (server-side retrieval). Cost is bundled in the token bill — no
+   separate `web_search_call` event.
+
+4. **Cost accounting**: Qwen returns `usage.input_tokens`,
+   `usage.output_tokens`. Use the per-model `price_per_mtok_in` /
+   `price_per_mtok_out` from `models.yaml`. If `thinking_content` is
+   present, count those tokens too (Qwen bills them at the output rate;
+   confirm in `models.yaml`).
+
+5. **API key**: Read from `~/.config/keys/alibaba.env` (preferred) with
+   fallback to `~/.claude/.env`. Key var name: try `DASHSCOPE_API_KEY=`
+   then `QWEN_API_KEY_AEDIST=` then `QWEN_API_KEY=`. The existing
+   `review_qwen` in `experiments/sota/exp2_protocol_review.py` is the
+   working reference.
+
+6. **Raw output**: save `json.dumps(dict(resp), default=str, indent=2)`
+   to `raw_output_path`. Qwen response is not pydantic; the `dict(resp)`
+   coercion is required (see `review_qwen` line 218).
+
+7. **Dispatch table integration**: add `"qwen": run_qwen_call` to
+   `CALL_FNS` (depends on 0234 refactor).
+
+8. **Rate-limit awareness**: Free-tier Qwen models on OpenRouter
+   rate-limit hard, per project memory `feedback_qwen_free_tier_rate_limit`.
+   Production Qwen3-Max via DashScope is paid; less likely to rate-limit
+   but worth a 5–10s back-off between turns if a 429 surfaces.
+
+9. **Tests**: extend `tests/test_exp2_interactive_smoke.py` with
+   `test_state_machine_qwen_dispatch` that mocks
+   `dashscope.Generation.call` and asserts turn-2 sends the full
+   conversation history including the prior assistant response.
+
+## First test (TDD)
+
+`test_run_qwen_call_resends_history` — mocks `dashscope.Generation.call`,
+asserts: turn-2 request's `messages` list contains the system message
+(if set), the turn-1 user message, the turn-1 assistant response, and
+the new turn-2 user message in that order.
+
+## Dependencies
+
+None blocking. `review_qwen` in `exp2_protocol_review.py` is the
+working single-call reference. May coordinate with ticket 0234 if the
+dispatch table refactor lands first.
+
+## Exit criteria
+
+- [ ] `run_qwen_call` function exists with the signature above
+- [ ] `run_phase_b_multiturn` dispatches Qwen without
+      NotImplementedError
+- [ ] Mock-based unit test asserts turn-2 messages list shape
+- [ ] Live N=1 dispatch on Qwen optimized arm completes successfully
+      (cost ≤ $1; Qwen3-Max via DashScope is cheap-ish)
+- [ ] `make check-fast` green
+- [ ] Ruff clean
+
+## Out of scope
+
+- Adapter for the naive arm (already wired via `exp2_naive_arm.py`).
+- Multi-turn for OpenAI / Anthropic (separate tickets 0234 / 0235).
+- Full N=5 batch dispatch (separate ticket 0237).
+- DashScope thinking-mode optimisation (the Phase A `settings.thinking`
+  field flows through but we don't policy-shape the thinking budget).

@@ -1,0 +1,121 @@
+%erg 0.1
+Title: Wire OpenAI Responses API into Exp 2 multi-turn Phase B state machine
+Created: 2026-05-22
+Author: claude
+
+--- log ---
+2026-05-22T15:30Z claude created — Path B Phase B-0 prerequisite
+
+--- body ---
+
+## Context
+
+`experiments/sota/exp2_interactive_smoke.py::run_phase_b_multiturn` is
+currently Mistral-only — it raises `NotImplementedError(f"--agent {agent!r}
+not wired for multi-turn yet")` for any non-Mistral agent. To run Phase
+B-0 smoke + full N=5 optimized batch across all four subjects, we need
+to wire each provider's multi-turn pattern into the state machine.
+
+This ticket wires **OpenAI GPT-5.5** via the Responses API. The
+Responses API has a native multi-turn surface via `previous_response_id`
+chaining: each call references the prior response and state lives
+server-side. Cheapest of the three to wire.
+
+## Actions
+
+1. **Add `run_openai_call()` to `experiments/sota/exp2_interactive_smoke.py`**
+   modeled on `run_mistral_call`, but using `openai.OpenAI().responses.create()`
+   with `previous_response_id` for turns 2+. Signature:
+
+   ```python
+   def run_openai_call(
+       user_text: str,
+       *,
+       cap_usd: float,
+       agent_mode: str,
+       raw_output_path: Path,
+       max_tokens: int,
+       continuation: dict | None,  # {"previous_response_id": str} for turns 2+
+       extra_metadata: dict | None,
+       system_prompt: str | None,  # only used on turn 1
+   ) -> RunRecord
+   ```
+
+   Key behaviour:
+   - Turn 1 (continuation is None or empty): build a request with
+     `input=user_text`, `instructions=system_prompt`, `tools=[{"type":
+     "web_search"}]`, `reasoning={"effort": "low"}` (web_search rejects
+     `minimal`), `max_output_tokens=max_tokens`.
+   - Turn 2+ (continuation has `previous_response_id`): build a request
+     with `previous_response_id=<id>`, `input=user_text`. Do NOT pass
+     `instructions` again (system is installed on the first turn).
+   - Capture the response's `id` into the returned RunRecord's
+     `method_params.extra` so the caller can chain.
+
+2. **Update `run_phase_b_multiturn`** to dispatch to the right adapter
+   based on `agent` — replace the `raise NotImplementedError` block with
+   a dispatch table:
+   ```python
+   CALL_FNS = {"mistral": run_mistral_call, "openai": run_openai_call, ...}
+   call_fn = CALL_FNS.get(agent)
+   if call_fn is None:
+       raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
+   record = call_fn(user_text, ...)
+   ```
+
+3. **Continuation field convention**: define a per-agent shape for
+   `continuation` returned in `record.method_params.extra`. For OpenAI:
+   `{"previous_response_id": resp.id}`. Caller code already handles
+   `continuation = {...}` for Mistral; generalise the extract.
+
+4. **Cost accounting**: OpenAI Responses returns `usage.input_tokens`,
+   `usage.output_tokens`, `usage.reasoning_tokens` (sometimes nested
+   under `output_tokens_details.reasoning_tokens`). Sum
+   `output_tokens + reasoning_tokens` into `record.resource_use.tokens_out
+   + record.resource_use.thinking_tokens` for the dual-axis cap (Doc 02
+   CONTEXT > Budget — visible output + thinking only, web_search payload
+   excluded).
+
+5. **Web search billing**: OpenAI charges per `web_search` call (a flat
+   fee per invocation). Capture call count from `resp.output` (count
+   items of type `web_search_call`) and multiply by `price_per_web_search`
+   from `models.yaml`. Put into `record.tool_calls_cost_usd`.
+
+6. **Raw output**: save the full `resp.model_dump_json(indent=2)` to
+   `raw_output_path`.
+
+7. **Tests**: extend `tests/test_exp2_interactive_smoke.py` with a
+   `test_state_machine_openai_dispatch` that mocks `openai.OpenAI` and
+   asserts the dispatch table routes correctly + that `previous_response_id`
+   is forwarded on turns 2+.
+
+## First test (TDD)
+
+`test_run_openai_call_turn1_no_continuation` — mocks the Responses API,
+asserts: `instructions=system_prompt` is set, `tools` includes
+`web_search`, `previous_response_id` is NOT in the request, returned
+record has `tokens_out + thinking_tokens` summed correctly.
+
+## Dependencies
+
+None blocking. Existing single-call `review_openai` in
+`experiments/sota/exp2_protocol_review.py` (which uses Responses API
+without `previous_response_id`) is a working reference for the API
+shape.
+
+## Exit criteria
+
+- [ ] `run_openai_call` function exists with the signature above
+- [ ] `run_phase_b_multiturn` dispatches OpenAI without
+      NotImplementedError
+- [ ] Mock-based unit test asserts turn-1 vs turn-2 request shapes
+- [ ] Live N=1 dispatch on OpenAI optimized arm completes successfully
+      (smoke validation; cost ≤ $1)
+- [ ] `make check-fast` green
+- [ ] Ruff clean
+
+## Out of scope
+
+- Adapter for the naive arm (already wired via `exp2_naive_arm.py`).
+- Multi-turn for non-OpenAI providers (separate tickets 0235 / 0236).
+- Full N=5 batch dispatch (separate ticket 0237).
