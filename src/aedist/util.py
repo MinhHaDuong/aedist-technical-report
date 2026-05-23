@@ -17,6 +17,8 @@ COLOR_ALERT = _palette["semantic"]["alert"]
 COLOR_REFERENCE = _palette["semantic"]["reference"]
 COLOR_LOCAL = _palette["semantic"]["local_model"]
 COLOR_NEUTRAL = _palette["semantic"]["neutral"]
+COLOR_ARM_NAIVE = _palette["semantic"]["arm_naive"]
+COLOR_ARM_OPTIMISED = _palette["semantic"]["arm_optimised"]
 COLOR_IDENTIFIED = _palette["quality"]["identified"]
 FAMILY_COLORS = _palette["families"]
 
