@@ -19,7 +19,7 @@ import json
 import logging
 from pathlib import Path
 
-from .util import model_family_color
+from .util import COLOR_NEUTRAL, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -143,14 +143,14 @@ def make_figure(probes_dir: Path, output: Path) -> None:
         ax.tick_params(left=False)
 
     legend_handles = [
-        mpatches.Patch(color="#444444", label="● report"),
+        mpatches.Patch(color=COLOR_NEUTRAL, label="● report"),
         plt.Line2D(
             [0],
             [0],
             marker="o",
             color="w",
             markerfacecolor="none",
-            markeredgecolor="#444444",
+            markeredgecolor=COLOR_NEUTRAL,
             markersize=6,
             label="○ no_report",
         ),
