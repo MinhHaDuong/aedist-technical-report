@@ -59,9 +59,9 @@ STAGE_LABELS = {
     1: "1. Chat LLM",
     2: "2. Retrieval / file upload",
     3: "3. Browsing / web search",
-    4: "4. Reasoning",
-    5: "5. Deep research",
-    6: "6. Code execution",
+    4: "4. Code execution",
+    5: "5. Reasoning",
+    6: "6. Deep research",
     7: "7. External tool use (MCP-like)",
     8: "8. Multi-agent (recursion)",
 }
