@@ -1,4 +1,4 @@
-Last updated: 2026-05-23T22:30Z
+Last updated: 2026-05-23T23:30Z
 
 ## North star
 
@@ -20,9 +20,31 @@ Milestones in order:
 
 ## Current goal
 
-**Experiment 3 runs, then manuscript + slides update for presentation.**
+**Experiment 3 N=1 gate — launch now, review, then N=2 and N=3.**
 
-Exp 2 Figure 3 (naive vs optimised metadata comparison) is done and merged (PR #469). §4 prose updated with observed results.
+All blocking PRs merged (#468 evidence-pack, #474 conversation persistence, #476 Phase-B token floor).
+Detection: flag any run where `tokens_out == max_tokens` for Phase A or final Phase B turn (Mistral returns stop not length at cap).
+
+### Launch commands (run from `/home/haduong/aedist-technical-report/`, N=1 gate)
+
+```bash
+# Arm 3 (naive + evidence pack, ~2 min for 4 agents)
+uv run python experiments/sota/exp2_naive_arm.py \
+  --agents mistral openai anthropic qwen \
+  --n 1 \
+  --output-dir experiments/outputs/sota_exp3_arm3_batch1 \
+  --evidence-pack-manifest experiments/evidence_packs/all18tables.yaml
+
+# Arm 4 (optimized multi-turn + evidence pack, ~40 min for 4 agents)
+uv run python experiments/sota/exp2_interactive_smoke.py \
+  --agents mistral openai anthropic qwen \
+  --output-dir experiments/outputs/sota_exp3_arm4_batch1 \
+  --evidence-pack-manifest experiments/evidence_packs/all18tables.yaml \
+  --no-confirm
+```
+
+After N=1: review truncation flags, then rerun with `--run-number 2` (Arm 4) / `--n 2` (Arm 3) for N=2.
+Ticket 0250 tracks the full sweep.
 
 ## Workplan
 
