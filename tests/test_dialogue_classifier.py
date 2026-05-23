@@ -21,9 +21,9 @@ from experiments.sota.dialogue_classifier import (
 # ── Model and endpoint constants ──────────────────────────────────────
 
 
-def test_classifier_model_is_nemotron():
-    """Verify the pinned classifier is nvidia/nemotron-nano-9b-v2."""
-    assert CLASSIFIER_MODEL == "nvidia/nemotron-nano-9b-v2"
+def test_classifier_model_is_deepseek_v4_pro():
+    """Verify the pinned classifier is deepseek/deepseek-v4-pro (ticket 0243 upgrade)."""
+    assert CLASSIFIER_MODEL == "deepseek/deepseek-v4-pro"
 
 
 def test_classifier_api_base_is_openrouter():
@@ -82,7 +82,8 @@ def test_parse_class(raw, expected):
 def test_compute_cost_usd():
     usage = {"prompt_tokens": 2304, "completion_tokens": 265}
     cost = _compute_cost_usd(usage)
-    expected = 2304 * 0.04 / 1_000_000 + 265 * 0.16 / 1_000_000
+    # v4-pro pricing: $0.435/$0.870 per Mtok in/out
+    expected = 2304 * 0.435 / 1_000_000 + 265 * 0.870 / 1_000_000
     assert abs(cost - expected) < 1e-10
 
 
@@ -119,7 +120,7 @@ def test_classify_report_returns_report(monkeypatch):
 
     result = classify_report("Here is a table of power plants...")
     assert result.class_ == "report"
-    assert result.classifier_model == "nvidia/nemotron-nano-9b-v2"
+    assert result.classifier_model == "deepseek/deepseek-v4-pro"
     assert result.classifier_cost_usd > 0
 
 
@@ -186,11 +187,10 @@ def test_post_classifier_body_contains_model_and_max_tokens():
     Reads the source to confirm the constants without making a real API call.
     """
     src = open("experiments/sota/dialogue_classifier.py").read()
-    # Model is set from the module constant
     assert "CLASSIFIER_MODEL" in src
-    assert '"nvidia/nemotron-nano-9b-v2"' in src
-    # max_tokens accommodates thinking model reasoning tokens
-    assert '"max_tokens": 512' in src
+    assert '"deepseek/deepseek-v4-pro"' in src
+    # 1024 provides headroom for v4-pro reasoning tokens before content
+    assert '"max_tokens": 1024' in src
 
 
 # ── Boundary cases (ticket 0243) ────────────────────────────────────
@@ -280,3 +280,45 @@ def test_boundary_candidate_universe_live_classifier():
     assert result.class_ == "no_report", (
         f"Classifier returned '{result.class_}' for candidate-universe turn; expected 'no_report'"
     )
+
+
+def test_boundary_preliminary_roster_prompt_includes_narrative(monkeypatch):
+    """PRELIMINARY ROSTER turn with explicit heading is passed to classifier correctly."""
+    fixture = FIXTURES_DIR / "classifier_boundary_preliminary_roster_no_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    narrative = fixture.read_text()
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    captured = {}
+
+    def mock_post(prompt, api_key):
+        captured["prompt"] = prompt
+        return _make_mock_response("no_report\n")
+
+    monkeypatch.setattr("experiments.sota.dialogue_classifier._post_classifier", mock_post)
+    result = classify_report(narrative)
+    assert result.class_ == "no_report"
+    assert "PRELIMINARY ROSTER" in captured["prompt"]
+
+
+@pytest.mark.integration
+def test_boundary_preliminary_roster_live_classifier():
+    """Integration: classifier labels a PRELIMINARY ROSTER turn as 'no_report'."""
+    fixture = FIXTURES_DIR / "classifier_boundary_preliminary_roster_no_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    if not _load_api_key():
+        pytest.skip("OPENROUTER_API_KEY not set")
+    narrative = fixture.read_text()
+    result = classify_report(narrative)
+    assert result.class_ == "no_report", (
+        f"Classifier returned '{result.class_}' for PRELIMINARY ROSTER turn; expected 'no_report'"
+    )
+
+
+def test_max_narrative_chars_is_16k():
+    """Excerpt window must be 16K — smaller values hide inventory tables in long responses."""
+    from experiments.sota.dialogue_classifier import _MAX_NARRATIVE_CHARS
+
+    assert _MAX_NARRATIVE_CHARS == 16_000
