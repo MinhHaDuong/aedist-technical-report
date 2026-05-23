@@ -405,8 +405,9 @@ def _call_with_retry(client: Any, payload: dict) -> Any:
         try:
             try:
                 return client.messages.create(**payload)
-            except anthropic.APIStatusError as stream_exc:
-                # SDK raises when max_tokens would exceed the 10-min non-streaming limit.
+            except (anthropic.APIStatusError, ValueError) as stream_exc:
+                # SDK raises ValueError (client-side) or APIStatusError when max_tokens > 21333
+                # (expected_time = 3600 * max_tokens / 128_000 > 600s triggers streaming requirement).
                 if "Streaming is required" not in str(stream_exc):
                     raise
                 log.info("Falling back to streaming (max_tokens too large for non-streaming)")
