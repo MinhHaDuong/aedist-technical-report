@@ -38,6 +38,7 @@ import argparse
 import json
 import logging
 import os
+import random  # used by _sleep_with_backoff
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -68,6 +69,63 @@ SMOKE_COST_CAP_USD = 0.50
 # Enforced pre-call from the conservative estimate (max_tokens billed at both
 # input + output rates) and verified post-call against the actual cost.
 DEFAULT_COST_CAP_USD = 10.0
+
+# ---------------------------------------------------------------------------
+# Retry policy for transient / rate-limit failures (ticket 0244).
+# Mirrors the Mistral adapter pattern: 3 retries, 1s/2s/4s exponential
+# backoff ±10% jitter. Retry on 429, 5xx, connection errors only.
+# ---------------------------------------------------------------------------
+_MAX_RETRIES = 3
+_BACKOFF_BASE_S = 1.0
+
+
+def _sleep_with_backoff(attempt: int) -> None:
+    delay = _BACKOFF_BASE_S * (2**attempt) * (1.0 + random.uniform(-0.1, 0.1))
+    time.sleep(delay)
+
+
+def _call_with_retry(client: Any, payload: dict) -> Any:
+    import openai
+
+    last_exc: Exception | None = None
+    for attempt in range(_MAX_RETRIES + 1):
+        try:
+            return client.responses.create(**payload)
+        except openai.RateLimitError as exc:
+            last_exc = exc
+            if attempt < _MAX_RETRIES:
+                log.warning("OpenAI 429 rate limit; retry %d/%d", attempt + 1, _MAX_RETRIES)
+                _sleep_with_backoff(attempt)
+                continue
+            raise
+        except openai.APIStatusError as exc:
+            if exc.status_code >= 500:
+                last_exc = exc
+                if attempt < _MAX_RETRIES:
+                    log.warning(
+                        "OpenAI HTTP %d transient; retry %d/%d",
+                        exc.status_code,
+                        attempt + 1,
+                        _MAX_RETRIES,
+                    )
+                    _sleep_with_backoff(attempt)
+                    continue
+                raise
+            raise
+        except openai.APIConnectionError as exc:
+            last_exc = exc
+            if attempt < _MAX_RETRIES:
+                log.warning(
+                    "OpenAI connection error (%s); retry %d/%d",
+                    type(exc).__name__,
+                    attempt + 1,
+                    _MAX_RETRIES,
+                )
+                _sleep_with_backoff(attempt)
+                continue
+            raise
+    assert last_exc is not None
+    raise last_exc
 
 
 # ---------------------------------------------------------------------------
@@ -374,9 +432,9 @@ def run(
 
     from openai import OpenAI
 
-    client = OpenAI(api_key=_load_openai_key(), max_retries=5)
+    client = OpenAI(api_key=_load_openai_key(), max_retries=0)
     t0 = time.monotonic()
-    resp = client.responses.create(**payload)
+    resp = _call_with_retry(client, payload)
     wall = round(time.monotonic() - t0, 3)
 
     record = parse_response(resp, pc)
@@ -419,9 +477,9 @@ def _smoke(args: argparse.Namespace) -> None:
 
     from openai import OpenAI
 
-    client = OpenAI(api_key=_load_openai_key(), max_retries=5)
+    client = OpenAI(api_key=_load_openai_key(), max_retries=0)
     t0 = time.monotonic()
-    resp = client.responses.create(**payload)
+    resp = _call_with_retry(client, payload)
     wall = round(time.monotonic() - t0, 3)
 
     record = parse_response(resp, DEFAULT_PRICE_CARD)
