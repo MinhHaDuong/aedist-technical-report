@@ -1,0 +1,508 @@
+{
+  "run_id": "b97d9881b3d3",
+  "timestamp": "2026-05-23T11:01:48.363808Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 2145,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "## INSTRUCTIONS FOR THERMAL GENERATION ASSET INVENTORY (VIETNAM)\n\n### SCOPE\nProduce a complete, primary-sourced inventory of Vietnam's thermal generation assets (> 30 MWe), including operational, unde",
+      "conversation_id": "conv_019e547ed2c6754c9f723eca7dcc6959",
+      "agent_id": "ag_019e547ed24170c2a24810a3aab9b0a5"
+    }
+  },
+  "resource_use": {
+    "wall_s": 50.477,
+    "cost_usd": 0.0038515,
+    "tokens_in": 1268,
+    "tokens_out": 2145,
+    "cost_breakdown": {
+      "input": 0.000634,
+      "output": 0.0032175,
+      "connector": 0.275
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [
+    {
+      "query": "Vietnam Ministry of Industry and Trade thermal power plant database",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam Electricity (EVN) power generation assets list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "General Department of Energy Vietnam thermal power plants inventory",
+      "urls_returned": []
+    },
+    {
+      "query": "IEA Vietnam power generation report 2025 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "World Bank Vietnam energy sector update 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Global Energy Monitor Vietnam thermal power plants database",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam coal power plants list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam gas and LNG power plants list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam power development plan VIII (PDP8) thermal generation assets",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam approved, planned, and cancelled power plants 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam captive power plants list 2026",
+      "urls_returned": []
+    }
+  ],
+  "citations": [
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx",
+      "snippet": "By the end of 2023, the total power source capacity (commercial operation accepted) of the entire system reached about 80,555MW, an increase of ~2,800MW compared to that of 2022, of which the total capacity of wind and solar power is 21,664MW, accounting for 27%, coal-fired thermal power is 26,757MW, accounting for 33.2%; hydropower (including small hydropower) is 22,872MW, accounting for 28.4%. The scale of Vietnam&#x27;s power system ranks first in the ASEAN region in terms of power source capacity. Structure of power source capacity of the entire system by the end of 2023 ... - The total power generation and import output of the entire system in 2023 is 280.6 billion kWh, an increase of 4.56% compared to that of 2022.",
+      "supports_claim": null,
+      "title": "Overview of national power sources in 2023 - Vietnam Electricity"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-market",
+      "snippet": "On the grid side, <strong>the VND 7,410 billion (USD 300 million) 500 kV Lào Cai–Vĩnh Yên line will move 3,000 MW of northern hydro output when it goes live in September 2025</strong>. Equipment localization is gathering momentum; CS Wind is spending USD ...",
+      "supports_claim": null,
+      "title": "Vietnam Power Market Size & Share | Industry Trends & Forecast 2030"
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx",
+      "snippet": "By the end of 2023, the total power ... the total capacity of wind and solar power is 21,664MW, accounting for 27%, <strong>coal-fired thermal power is 26,757MW</strong>, accounting for 33.2%; hydropower (including small hydropower) is 22,872MW, ...",
+      "supports_claim": null,
+      "title": "Overview of national power sources in 2023 - Vietnam Electricity"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/List_of_coal-fired_power_stations_in_Vietnam",
+      "snippet": "About 20 GW of power stations in Vietnam are coal-fired. In 2019 coal-fired power stations were generated almost 40% of Vietnams electricity and was about a quarter of the coal was imported. Source: Initial query from Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated ...",
+      "supports_claim": null,
+      "title": "List of coal-fired power stations in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://blogs.duanemorris.com/vietnam/2022/05/05/vietnam-power-development-plan-8-published-latest-content-of-the-draft-national-power-plan-8/",
+      "snippet": "By 2025, the total capacity of ... for 27.2-27.5%; -coal-fired power plants 28,867 MW, accounting for 29.3-30.8%; -<strong>gas thermal power (including LNG) 14,947 MW, accounting for 15.2-15.9%</strong>; -renewable energy sources other than hydroelectricity (wind power, solar power, biomass ...",
+      "supports_claim": null,
+      "title": "VIETNAM – POWER DEVELOPMENT PLAN 8 PUBLISHED – LATEST CONTENT OF THE DRAFT NATIONAL POWER PLAN 8"
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx",
+      "snippet": "By the end of 2023, the total power source capacity (commercial operation accepted) of the entire system reached about 80,555MW, an increase of ~2,800MW compared to that of 2022, of which the total capacity of wind and solar power is 21,664MW, accounting for 27%, coal-fired thermal power is 26,757MW, accounting for 33.2%; hydropower (including small hydropower) is 22,872MW, accounting for 28.4%. The scale of Vietnam&#x27;s power system ranks first in the ASEAN region in terms of power source capacity. Structure of power source capacity of the entire system by the end of 2023 ... - The total power generation and import output of the entire system in 2023 is 280.6 billion kWh, an increase of 4.56% compared to that of 2022.",
+      "supports_claim": null,
+      "title": "Overview of national power sources in 2023 - Vietnam Electricity"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Natural_gas_in_Vietnam",
+      "snippet": "According to Global Energy Monitor there are only <strong>10 operating oil and gas energy plants in Vietnam as of 2026</strong>. While the government&#x27;s plans imply opening many more, multiple multibillion dollar LNG plants have struggled to open, because of delays in land acquisition, supply chains, financing ...",
+      "supports_claim": null,
+      "title": "Natural gas in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://www.energyconnects.com/news/gas-lng/2026/january/vietnam-to-tweak-rules-to-encourage-lng-power-plant-development/",
+      "snippet": "While the strategy envisions a fleet of LNG-fired power plants with a combined capacity of 22.5 GW by 2030, Vietnam currently only has two operational LNG-fired power plants with a combined capacity of 1.62 GW. As such, the government plans to increase momentum on development over the next five years, prioritising an overall transformation of the country’s energy landscape.",
+      "supports_claim": null,
+      "title": "Vietnam to accelerate LNG power plant development with new rule changes"
+    },
+    {
+      "url": "https://theinvestor.vn/vietnams-first-lng-power-plants-may-incur-38-mln-loss-in-2026-broker-d17870.html",
+      "snippet": "Vietnam’s first LNG-to-power plants, <strong>Nhon Trach 3 and Nhon Trach 4,</strong> are expected to post a combined loss of VND1 trillion ($37.98 million) in 2026, their first full year of commercial operations, predicted Vietcap Securities.",
+      "supports_claim": null,
+      "title": "Vietnam’s first LNG power plants may incur $38 mln loss in 2026: broker"
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx",
+      "snippet": "By the end of 2023, the total power source capacity (commercial operation accepted) of the entire system reached about 80,555MW, an increase of ~2,800MW compared to that of 2022, of which the total capacity of wind and solar power is 21,664MW, accounting for 27%, coal-fired thermal power is 26,757MW, accounting for 33.2%; hydropower (including small hydropower) is 22,872MW, accounting for 28.4%. The scale of Vietnam&#x27;s power system ranks first in the ASEAN region in terms of power source capacity. Structure of power source capacity of the entire system by the end of 2023 ... - The total power generation and import output of the entire system in 2023 is 280.6 billion kWh, an increase of 4.56% compared to that of 2022.",
+      "supports_claim": null,
+      "title": "Overview of national power sources in 2023 - Vietnam Electricity"
+    },
+    {
+      "url": "https://world-nuclear.org/information-library/country-profiles/countries-t-z/vietnam",
+      "snippet": "In September 2025 PECC2, a Vietnamese power engineering company, signed an agreement with Rosatom to update the feasibility study for <strong>Ninh Thuan 1.</strong> In March 2026 an intergovernmental agreement was signed with Russia for the construction of Ninh Thuan 1, using two VVER-1200 reactors based on ...",
+      "supports_claim": null,
+      "title": "Nuclear Power in Vietnam - World Nuclear Association"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Nuclear_power_in_Vietnam",
+      "snippet": "<strong>On 23 March 2026, an intergovernmental agreement was signed with Russia for Rosatom to build two VVER‑1200 reactors at Ninh Thuan 1,</strong> using the new units at the Leningrad II Nuclear Power Plant for reference. The nuclear power plants planned, prior to the 2016 cancellation, would have been ...",
+      "supports_claim": null,
+      "title": "Nuclear power in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://www.nuclearbusiness-platform.com/media/insights/vietnam-readiness-for-nuclear",
+      "snippet": "EVN and PVN have also been instructed ... adjustments, with the target of completing Ninh Thuan 1 NPP by September 2025 and <strong>Ninh Thuan 2 NPP</strong> no later than June 2026....",
+      "supports_claim": null,
+      "title": "Navigating Vietnam’s Readiness for Preparing Their First Nuclear Power Plant"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal</strong> with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.reccessary.com/en/insight/grid-upgrades-and-market-reform-vietnam",
+      "snippet": "(Photo: iStock) <strong>On 13th November 2025, the National Assembly of Vietnam approved the Resolution on the Socio-Economic Development Plan for 2026</strong>, setting an ambitious target of at least 10% annual economic growth.",
+      "supports_claim": null,
+      "title": "Grid upgrades and market reform: Reshaping Vietnam’s renewable energy market | INSIGHT | Reccessary"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal</strong> with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.vietnam-briefing.com/news/vietnams-national-electricity-development-plan-2021-2030-roadmap-approved.html/",
+      "snippet": "According to the approved roadmap, the country plans to bolster its capacities in thermal, LNG thermal, and coal-fired thermal power plants to <strong>14,930 MW, 22,400 MW, and 30,127 MW</strong>, respectively.",
+      "supports_claim": null,
+      "title": "Roadmap for Vietnam’s Power Development Plan 8 (PDP8) Approved"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal</strong> with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.vietnam-briefing.com/news/vietnams-national-electricity-development-plan-2021-2030-roadmap-approved.html/",
+      "snippet": "According to the approved roadmap, the country plans to bolster its capacities in thermal, LNG thermal, and coal-fired thermal power plants to <strong>14,930 MW, 22,400 MW, and 30,127 MW</strong>, respectively.",
+      "supports_claim": null,
+      "title": "Roadmap for Vietnam’s Power Development Plan 8 (PDP8) Approved"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal</strong> with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.vietnam-briefing.com/news/vietnams-national-electricity-development-plan-2021-2030-roadmap-approved.html/",
+      "snippet": "According to the approved roadmap, the country plans to bolster its capacities in thermal, LNG thermal, and coal-fired thermal power plants to <strong>14,930 MW, 22,400 MW, and 30,127 MW</strong>, respectively.",
+      "supports_claim": null,
+      "title": "Roadmap for Vietnam’s Power Development Plan 8 (PDP8) Approved"
+    },
+    {
+      "url": "https://the-shiv.com/vietnams-coal-power-industry/",
+      "snippet": "Vietnam’s coal power industry remains a dominant source of energy, accounting for nearly half of the country’s electricity generation. The rapid economic growth and industrialisation over the past two decades have led to a significant increase in energy demand, making coal a reliable and affordable option to meet these needs. The country has invested heavily in expanding its coal-fired power capacity, with numerous plants built in recent years and several more under construction.",
+      "supports_claim": null,
+      "title": "Vietnam’s Coal Industry 2026: Production, Imports & Future"
+    },
+    {
+      "url": "https://greenfdc.org/vietnams-eight-national-power-development-plan-pdp8/",
+      "snippet": "PDP8 puts a focus on <strong>power stations fired with domestic gas</strong> rather than the expansion of the infrastructure serving imported LNG. LNG thermal power plants should be largely converted to hydrogen once the technology is commercialized.",
+      "supports_claim": null,
+      "title": "Vietnam’s Eight National Power Development Plan (PDP8) – Green Finance & Development Center"
+    },
+    {
+      "url": "https://www.mekongeye.com/2023/05/29/vietnam-pdp8",
+      "snippet": "Nevertheless, planning for the long term, the PDP8 calls for developing flexibility technology, such as <strong>2,400 MW of pumped hydro storage, 300 MW of battery storage and 300 MW of fast start-up gas engines</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam's Power Development Plan 8: A bold step towards a net-zero future"
+    },
+    {
+      "url": "https://world-nuclear.org/information-library/country-profiles/countries-t-z/vietnam",
+      "snippet": "In September 2025 PECC2, a Vietnamese power engineering company, signed an agreement with Rosatom to update the feasibility study for <strong>Ninh Thuan 1.</strong> In March 2026 an intergovernmental agreement was signed with Russia for the construction of Ninh Thuan 1, using two VVER-1200 reactors based on ...",
+      "supports_claim": null,
+      "title": "Nuclear Power in Vietnam - World Nuclear Association"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>LNG Cong Thanh</strong> with a capacity of 1500 MW. This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system (based on the Letter No.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "Vietnam currently has <strong>73 power plants (hydro, thermal, gas, renewables source), 48 of those with capacity greater than 30MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://the-shiv.com/electricity-in-vietnam/",
+      "snippet": "Home » Manufacturing &amp; Industry » Electricity in Vietnam 2026: Pricing, Shortages, Supply &amp; Sources ... Read this first 📘 Section 1 provides a general overview &amp; pricing. 📊 Section 2 breaks down key power policy initiatives. 🏭 Section 3 looks at Vietnam’s power generation mix.",
+      "supports_claim": null,
+      "title": "How Electricity in Vietnam Works (2026): Shortages, Pricing, Regulations & More"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "Vietnam currently has <strong>73 power plants (hydro, thermal, gas, renewables source), 48 of those with capacity greater than 30MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://the-shiv.com/electricity-in-vietnam/",
+      "snippet": "Home » Manufacturing &amp; Industry » Electricity in Vietnam 2026: Pricing, Shortages, Supply &amp; Sources ... Read this first 📘 Section 1 provides a general overview &amp; pricing. 📊 Section 2 breaks down key power policy initiatives. 🏭 Section 3 looks at Vietnam’s power generation mix.",
+      "supports_claim": null,
+      "title": "How Electricity in Vietnam Works (2026): Shortages, Pricing, Regulations & More"
+    },
+    {
+      "url": "https://www.powermag.com/first-of-several-lng-fueled-power-plants-comes-online-in-vietnam/",
+      "snippet": "PetroVietnam Power (PV Power), a subsidiary of state-owned PetroVietnam, said it has started initial operation of the first of two 812-MW LNG-fired units at its <strong>Nhon Trach power plant</strong>, located in Dong Nai province, near Ho Chi Minh City in southern ...",
+      "supports_claim": null,
+      "title": "First of Several LNG-Fueled Power Plants Comes Online in Vietnam"
+    },
+    {
+      "url": "https://www.lngindustry.com/liquid-natural-gas/20022026/sk-innovation-to-lead-us23-billion-lng-mega-project-in-vietnam/",
+      "snippet": "The consortium, comprising SK Innovation, PV Power (PetroVietnam Power Corp., a subsidiary of Vietnam’s state-run PetroVietnam group), and Vietnamese company, NASU, has been designated by the government of Nghe An Province as the project developer for the Quynh Lap LNG power project. This initiative will establish a 1500 MW combined cycle gas power plant, a 250 000 m3 LNG terminal, and a dedicated port in the Quynh Lap region, approximately 220 km south of Hanoi.",
+      "supports_claim": null,
+      "title": "SK Innovation to lead US$2.3 billion LNG mega project in Vietnam | LNG Industry"
+    },
+    {
+      "url": "https://www.powermag.com/first-of-several-lng-fueled-power-plants-comes-online-in-vietnam/",
+      "snippet": "PetroVietnam Power (PV Power), a subsidiary of state-owned PetroVietnam, said it has started initial operation of the first of two 812-MW LNG-fired units at its <strong>Nhon Trach power plant</strong>, located in Dong Nai province, near Ho Chi Minh City in southern ...",
+      "supports_claim": null,
+      "title": "First of Several LNG-Fueled Power Plants Comes Online in Vietnam"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "Vietnam currently has <strong>73 power plants (hydro, thermal, gas, renewables source), 48 of those with capacity greater than 30MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "Vietnam currently has <strong>73 power plants (hydro, thermal, gas, renewables source), 48 of those with capacity greater than 30MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.virtusprosperity.com/post/vietnam-energy-sector-2026-2030-completing-policy-frameworks-to-unlock-a-new-growth-cycle",
+      "snippet": "Pressure on the national energy system is becoming increasingly evident as the 2026 Socio-Economic Development Plan Resolution targets <strong>minimum GDP growth of 10% per year for the 2026–2030 period</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam Energy Sector 2026–2030: Completing Policy Frameworks to Unlock a New Growth Cycle"
+    },
+    {
+      "url": "https://www.aoshearman.com/en/insights/vietnams-pdp8-gets-a-makeover",
+      "snippet": "In contrast, the original PDP8 limited itself to the possibility of developing these power sources if there were sufficient resources. Other key revisions, including with respect to thermal power development and general power strategy goals include the following.",
+      "supports_claim": null,
+      "title": "What are the new changes to Vietnam's PDP8"
+    },
+    {
+      "url": "https://www.energyconnects.com/news/gas-lng/2026/january/vietnam-to-tweak-rules-to-encourage-lng-power-plant-development/",
+      "snippet": "While the strategy envisions a fleet of LNG-fired power plants with a combined capacity of 22.5 GW by 2030, Vietnam currently only has two operational LNG-fired power plants with a combined capacity of 1.62 GW. As such, the government plans to increase momentum on development over the next five years, prioritising an overall transformation of the country’s energy landscape.",
+      "supports_claim": null,
+      "title": "Vietnam to accelerate LNG power plant development with new rule changes"
+    },
+    {
+      "url": "https://world-nuclear.org/information-library/country-profiles/countries-t-z/vietnam",
+      "snippet": "In September 2025 PECC2, a Vietnamese power engineering company, signed an agreement with Rosatom to update the feasibility study for <strong>Ninh Thuan 1.</strong> In March 2026 an intergovernmental agreement was signed with Russia for the construction of Ninh Thuan 1, using two VVER-1200 reactors based on ...",
+      "supports_claim": null,
+      "title": "Nuclear Power in Vietnam - World Nuclear Association"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Nuclear_power_in_Vietnam",
+      "snippet": "<strong>On 23 March 2026, an intergovernmental agreement was signed with Russia for Rosatom to build two VVER‑1200 reactors at Ninh Thuan 1,</strong> using the new units at the Leningrad II Nuclear Power Plant for reference. The nuclear power plants planned, prior to the 2016 cancellation, would have been ...",
+      "supports_claim": null,
+      "title": "Nuclear power in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://www.nuclearbusiness-platform.com/media/insights/vietnam-readiness-for-nuclear",
+      "snippet": "EVN and PVN have also been instructed ... adjustments, with the target of completing Ninh Thuan 1 NPP by September 2025 and <strong>Ninh Thuan 2 NPP</strong> no later than June 2026....",
+      "supports_claim": null,
+      "title": "Navigating Vietnam’s Readiness for Preparing Their First Nuclear Power Plant"
+    },
+    {
+      "url": "https://www.enerdata.net/estore/energy-market/vietnam/",
+      "snippet": "12/06/2025 - <strong>Vietnam launches pilot phase of a new ETS to cover 50% of its CO2 emissions</strong>",
+      "supports_claim": null,
+      "title": "Vietnam Energy Information | Enerdata"
+    },
+    {
+      "url": "https://www.virtusprosperity.com/post/vietnam-energy-sector-2026-2030-completing-policy-frameworks-to-unlock-a-new-growth-cycle",
+      "snippet": "Pressure on the national energy system is becoming increasingly evident as the 2026 Socio-Economic Development Plan Resolution targets <strong>minimum GDP growth of 10% per year for the 2026–2030 period</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam Energy Sector 2026–2030: Completing Policy Frameworks to Unlock a New Growth Cycle"
+    },
+    {
+      "url": "https://en.vietnamplus.vn/vietnam-prepares-contingency-plans-for-2026-dry-season-power-shortages-post342540.vnp",
+      "snippet": "EVN is also speeding up major power generation and transmission projects. The <strong>Quang Trach I thermal power plant</strong> is expected to connect its first unit to the national grid in April 2026 and begin commercial operation in May 2026.",
+      "supports_claim": null,
+      "title": "Vietnam rolls out contingency plans to avert 2026 dry-season power shortages | Vietnam+ (VietnamPlus)"
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx",
+      "snippet": "By the end of 2023, the total power ... the total capacity of wind and solar power is 21,664MW, accounting for 27%, <strong>coal-fired thermal power is 26,757MW</strong>, accounting for 33.2%; hydropower (including small hydropower) is 22,872MW, ...",
+      "supports_claim": null,
+      "title": "Overview of national power sources in 2023 - Vietnam Electricity"
+    },
+    {
+      "url": "https://the-shiv.com/vietnams-coal-power-industry/",
+      "snippet": "Vietnam’s coal power industry remains a dominant source of energy, accounting for nearly half of the country’s electricity generation. The rapid economic growth and industrialisation over the past two decades have led to a significant increase in energy demand, making coal a reliable and affordable option to meet these needs. The country has invested heavily in expanding its coal-fired power capacity, with numerous plants built in recent years and several more under construction.",
+      "supports_claim": null,
+      "title": "Vietnam’s Coal Industry 2026: Production, Imports & Future"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Natural_gas_in_Vietnam",
+      "snippet": "According to Global Energy Monitor there are only <strong>10 operating oil and gas energy plants in Vietnam as of 2026</strong>. While the government&#x27;s plans imply opening many more, multiple multibillion dollar LNG plants have struggled to open, because of delays in land acquisition, supply chains, financing ...",
+      "supports_claim": null,
+      "title": "Natural gas in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://www.energyconnects.com/news/gas-lng/2026/january/vietnam-to-tweak-rules-to-encourage-lng-power-plant-development/",
+      "snippet": "While the strategy envisions a fleet of LNG-fired power plants with a combined capacity of 22.5 GW by 2030, Vietnam currently only has two operational LNG-fired power plants with a combined capacity of 1.62 GW. As such, the government plans to increase momentum on development over the next five years, prioritising an overall transformation of the country’s energy landscape.",
+      "supports_claim": null,
+      "title": "Vietnam to accelerate LNG power plant development with new rule changes"
+    },
+    {
+      "url": "https://www.gasworld.com/story/vietnam-breaks-ground-on-2-3bn-lng-power-plant/2250252.article/",
+      "snippet": "Vietnam’s LNG sector is currently small but rapidly expanding. As of 2026, the country has only <strong>two operational LNG-fired power plants one one functional import terminal</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam breaks ground on $2.3bn LNG power plant | LNG / LPG | gasworld"
+    },
+    {
+      "url": "https://www.reccessary.com/en/insight/grid-upgrades-and-market-reform-vietnam",
+      "snippet": "(Photo: iStock) <strong>On 13th November 2025, the National Assembly of Vietnam approved the Resolution on the Socio-Economic Development Plan for 2026, setting an ambitious target of at least 10% annual economic growth</strong>.",
+      "supports_claim": null,
+      "title": "Grid upgrades and market reform: Reshaping Vietnam’s renewable energy market | INSIGHT | Reccessary"
+    },
+    {
+      "url": "https://www.reccessary.com/en/insight/grid-upgrades-and-market-reform-vietnam",
+      "snippet": "(Photo: iStock) <strong>On 13th November 2025, the National Assembly of Vietnam approved the Resolution on the Socio-Economic Development Plan for 2026</strong>, setting an ambitious target of at least 10% annual economic growth.",
+      "supports_claim": null,
+      "title": "Grid upgrades and market reform: Reshaping Vietnam’s renewable energy market | INSIGHT | Reccessary"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Energy_in_Vietnam",
+      "snippet": "It is forecasted that in the future, domestic coal resources will not meet the demand for consumption in general, electricity production in particular and must be imported in huge quantities ... (2020: 86 million tons, 2025: <strong>121 million tons</strong> and ...",
+      "supports_claim": null,
+      "title": "Energy in Vietnam - Wikipedia"
+    },
+    {
+      "url": "https://theinvestor.vn/vietnam-energy-shock-clouds-the-outlook-for-2026-d18887.html",
+      "snippet": "... The most difficult period will be in Q2 and Q3/2026 as <strong>high global energy prices (and limited supplies) hit their peaks before easing toward end-2026</strong>, write UOB analysts in their latest report on Vietnam economic forecasts released last Friday.",
+      "supports_claim": null,
+      "title": "Vietnam: Energy shock clouds the outlook for 2026"
+    },
+    {
+      "url": "https://www.iea.org/reports/achieving-a-net-zero-electricity-sector-in-viet-nam/executive-summary",
+      "snippet": "Achieving a Net Zero Electricity Sector in Viet Nam - Analysis and key findings. A report by the International Energy Agency.",
+      "supports_claim": null,
+      "title": "Executive summary – Achieving a Net Zero Electricity Sector in Viet Nam – Analysis - IEA"
+    },
+    {
+      "url": "https://assets.bbhub.io/professional/sites/24/BNEF_VietnamNZS_EN.pdf",
+      "snippet": "scenarios: In BNEF’s Net Zero Scenario (NZS), Vietnam’s energy-related emissions need to · <strong>peak in 2026 at 353 million metric tons (MtCO2)</strong> to be consistent with the Paris Agreement · goal of keeping global warming to well below 2C above pre-industrial levels.",
+      "supports_claim": null,
+      "title": "c Net-Zero Transition: Opportunities for Vietnam December 23, 2024"
+    },
+    {
+      "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+      "snippet": "<strong>Vung Ang II Thermal Power (VAPCO),</strong> the project investor in the 1.32 GW Vung Ang II coal-fired power plant in Ky Loi (Vietnam), has officially inaugurated the project (VietnamNet, 20/04/2026).",
+      "supports_claim": null,
+      "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant"
+    },
+    {
+      "url": "https://asia.nikkei.com/business/energy/mitsubishi-brings-vietnam-coal-plant-online-with-asia-only-fuel-chain",
+      "snippet": "The <strong>Vung Ang II</strong> power plant will supply electricity equivalent to about 3% of Vietnam&#x27;s demand.",
+      "supports_claim": null,
+      "title": "Mitsubishi brings Vietnam coal plant online with Asia-only fuel chain - Nikkei Asia"
+    },
+    {
+      "url": "https://www.blackridgeresearch.com/news-releases/vietnam-inaugurates-first-lng-powered-plants-in-dong-nai-province-worldwide",
+      "snippet": "Vietnam inaugurates LNG-powered plants <strong>Nhon Trach 3 and 4 in Dong Nai province</strong>, and facilities start commercial operations in 2026.",
+      "supports_claim": null,
+      "title": "Vietnam Inaugurates First LNG-Powered Plants in Dong Nai"
+    },
+    {
+      "url": "https://theinvestor.vn/vietnams-first-lng-power-plants-may-incur-38-mln-loss-in-2026-broker-d17870.html",
+      "snippet": "Vietnam’s first LNG-to-power plants, <strong>Nhon Trach 3 and Nhon Trach 4,</strong> are expected to post a combined loss of VND1 trillion ($37.98 million) in 2026, their first full year of commercial operations, predicted Vietcap Securities.",
+      "supports_claim": null,
+      "title": "Vietnam’s first LNG power plants may incur $38 mln loss in 2026: broker"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/power-plant-profile-quang-trach-i-power-plant-vietnam/",
+      "snippet": "The <strong>Quang Trach I Power Plant</strong> is 1,200MW coal fired power project. It is planned in Quang Binh, Vietnam. According to GlobalData, who tracks and profiles over 170,000 power plants worldwide, the project is currently at the under construction stage.",
+      "supports_claim": null,
+      "title": "Power plant profile: Quang Trach I Power Plant, Vietnam"
+    },
+    {
+      "url": "https://en.vietnamplus.vn/vietnam-prepares-contingency-plans-for-2026-dry-season-power-shortages-post342540.vnp",
+      "snippet": "EVN is also speeding up major power generation and transmission projects. The <strong>Quang Trach I thermal power plant</strong> is expected to connect its first unit to the national grid in April 2026 and begin commercial operation in May 2026.",
+      "supports_claim": null,
+      "title": "Vietnam rolls out contingency plans to avert 2026 dry-season power shortages | Vietnam+ (VietnamPlus)"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-5-thermal-power-plants-in-development-in-vietnam/",
+      "snippet": "... The <strong>4,500MW Long Son Electricity Centre Power Plant</strong> is located in Ba Ria-Vung Tau, Vietnam. It is owned by Power Engineering Consulting 2; Mitsubishi; Thanh Thanh Cong Industrial Zone; Pacific; General Electric International; Evngenco 3.",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in development in Vietnam"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-5-thermal-power-plants-in-development-in-vietnam/",
+      "snippet": "... The <strong>4,500MW Long Son Electricity Centre Power Plant</strong> is located in Ba Ria-Vung Tau, Vietnam. It is owned by Power Engineering Consulting 2; Mitsubishi; Thanh Thanh Cong Industrial Zone; Pacific; General Electric International; Evngenco 3.",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in development in Vietnam"
+    },
+    {
+      "url": "https://www.lngindustry.com/liquid-natural-gas/20022026/sk-innovation-to-lead-us23-billion-lng-mega-project-in-vietnam/",
+      "snippet": "The consortium, comprising SK Innovation, PV Power (PetroVietnam Power Corp., a subsidiary of Vietnam’s state-run PetroVietnam group), and Vietnamese company, NASU, has been designated by the government of Nghe An Province as the project developer for the Quynh Lap LNG power project. This initiative will establish a 1500 MW combined cycle gas power plant, a 250 000 m3 LNG terminal, and a dedicated port in the Quynh Lap region, approximately 220 km south of Hanoi.",
+      "supports_claim": null,
+      "title": "SK Innovation to lead US$2.3 billion LNG mega project in Vietnam | LNG Industry"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>LNG Cong Thanh</strong> with a capacity of 1500 MW. This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system (based on the Letter No.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>LNG Cong Thanh</strong> with a capacity of 1500 MW. This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system (based on the Letter No.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.mondaq.com/oil-gas-electricity/1618640/vietnams-national-power-development-plan-for-coal-fired-plants",
+      "snippet": "This total capacity does not include the capacity of delayed/abandoned projects (<strong>Cong Thanh, Nam Dinh I, Quang Tri, Vinh Tan III, Song Hau II</strong>). [4] Vietnam does not have a plan to develop new coal-fired plants after 2030.",
+      "supports_claim": null,
+      "title": "Vietnam's National Power Development Plan For Coal-Fired Plants - Oil, Gas & Electricity - Vietnam"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Ninh_power_station",
+      "snippet": "This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. In November 2018, two of the plant&#x27;s four units were shut down temporarily due to coal shortages. Quang Ninh Thermal Power lost VND 311.4 billion in Q3 2018.[1] When built, Quang Ninh power station was the largest coal plant permitted in Vietnam.[2]",
+      "supports_claim": null,
+      "title": "Quang Ninh power station - Global Energy Monitor"
+    }
+  ],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.275
+}
