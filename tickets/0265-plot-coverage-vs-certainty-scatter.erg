@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Plot coverage vs. certainty scatter for all Exp2 runs
+Created: 2026-05-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-23T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The bibliography quality table (`tab_exp2_bib_quality.tex`, ticket 0264) reveals a
+coverage–certainty tradeoff across Exp2 agents and arms: agents that enumerate more
+plants tend to cite lower-quality sources, and vice versa.  GPT optimised maximises
+both (148 rows, 88% primary); Qwen optimised trades breadth for citation discipline
+(15 rows, 55% primary); Claude optimised achieves high coverage (127 rows) at lower
+primary rate (28%).
+
+This ticket tracks a scatter plot of that tradeoff across all 40 individual runs
+(not just the per-agent means).  The plot is the visual core of the "key tradeoff of
+the talk": any system that targets complete provenance necessarily limits its own
+coverage, and vice versa.
+
+## Relevant files
+
+- `report/inputs/generated/tab_exp2_bib_quality.csv` — per-run source data (40 rows)
+- `src/aedist/extract_exp2_bib.py` — parser that produced the CSV
+- `src/aedist/plot_exp2_arms_comparison.py` — existing three-panel figure (palette reference)
+- `report/exp2-analysis.mk` — Makefile target to wire in
+
+## Actions
+
+1. Write `src/aedist/plot_exp2_coverage_certainty.py`:
+   - X axis: `n_rows` (coverage — inventory table row count)
+   - Y axis: `src1_primary / src1_present` (certainty — primary rate among cited rows)
+   - One point per run; colour by agent (project palette); shape by arm (filled circle = optimised, open circle = naive)
+   - Label outliers: any point where n_rows > 100 or primary_rate > 0.8
+   - CLI: `--input` (CSV), `--output` (PDF)
+   - Output: `report/inputs/generated/fig_exp2_coverage_certainty.pdf`
+
+2. Wire Makefile target in `report/exp2-analysis.mk`:
+   - Prerequisite: `$(GEN)/tab_exp2_bib_quality.csv`
+   - Output: `$(GEN)/fig_exp2_coverage_certainty.pdf`
+   - Add to `exp2-analysis-report` phony target
+
+3. Add `\input` or `\includegraphics` reference in the appropriate section of
+   `slides/manuscript/main.md` (§4, after the provenance-quality paragraph).
+
+## Test
+
+```python
+# tests/test_plot_exp2_coverage_certainty.py
+
+def test_script_runs_without_error(tmp_path):
+    """End-to-end: script reads CSV and writes a PDF without crashing."""
+    import subprocess, sys
+    out = tmp_path / "fig.pdf"
+    result = subprocess.run(
+        [sys.executable, "-m", "aedist.plot_exp2_coverage_certainty",
+         "--input", "report/inputs/generated/tab_exp2_bib_quality.csv",
+         "--output", str(out)],
+        capture_output=True,
+    )
+    assert result.returncode == 0, result.stderr.decode()
+    assert out.exists() and out.stat().st_size > 1000
+```
+
+## Exit criteria
+
+- [ ] Scatter PDF generated for all 40 runs; no missing points (assert in script)
+- [ ] Agent colours match project palette (`palette.toml`)
+- [ ] Makefile idempotent (second `make` does not rebuild)
+- [ ] `make check-fast` passes
