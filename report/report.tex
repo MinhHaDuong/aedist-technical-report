@@ -197,6 +197,7 @@ Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesu
 Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211 sur 280~sorties) ont été réalisés sans spécifier le paramètre \emph{temperature} de l'API~; le fournisseur applique alors sa valeur par défaut (typiquement~1,0 pour les API compatibles OpenAI). Seuls les sweeps direct\_complete et les bras paramétrique et livesearch de l'ablation utilisent explicitement $t{=}0$. Les modèles de raisonnement (o3, DeepSeek~R1, QwQ) ignorent ce paramètre~: leur température interne est fixée par le fournisseur. Le bras RAG de l'ablation a été exécuté à $t{\approx}1$ tandis que les autres bras utilisaient $t{=}0$, introduisant un confondant potentiel. L'amplitude de ce biais est bornée~: l'extraction structurée en CSV est vraisemblablement moins sensible à la température que la génération de texte libre, et les classements entre modèles, fondés sur le F1 médian de trois runs, restent robustes pour les différences supérieures à~0,05. Les scripts d'interrogation sont désormais instrumentés pour imposer $t{=}0$ par défaut sur toutes les futures expériences.
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
+\InputIfFileExists{inputs/generated/tab_exp2_arms}{}{}
 
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
