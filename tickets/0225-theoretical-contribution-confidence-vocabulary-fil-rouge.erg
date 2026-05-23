@@ -48,7 +48,7 @@ ladders Coverage (via RAG) without confidence vocabulary still
 faces the recall-precision binary on each retrieved fact; with
 confidence vocabulary it can include lower-band facts as such.
 
-**§4 SOTA frontier.** The 2026-05-21 v2-panel pilot (ticket 0223)
+**§4 SOTA frontier.** The 2026-05-21 v2-panel pilot (ticket 0228)
 documented the failure mode directly: when the verify panel got
 stricter, the polished inventory shrank from 43 to 26 plants. The
 model dropped rows it could not verify rather than retaining them
@@ -57,7 +57,7 @@ missing vocabulary*, not a quality lift. A confidence-band-equipped
 verifier would have kept the 17 rows with "likely" or "about as
 likely as not" labels.
 
-**§5 tailored solution.** The IDH cycle (0224) already adopts IPCC
+**§5 tailored solution.** The IDH cycle (0229) already adopts IPCC
 bands as a default (cross-cutting idea B). The fil rouge frames why:
 the bands aren't decoration — they're the *operational instantiation*
 of the theoretical contribution.
@@ -106,7 +106,7 @@ both improve.
   alongside the six ladder rungs (or its own §3.7).
 - §4: the v2-panel observation reframed as evidence for the
   thesis, not as ambiguous about depth-vs-recall.
-- §5: explicit adoption of IPCC bands (already planned in 0224).
+- §5: explicit adoption of IPCC bands (already planned in 0229).
 - §6: the thesis statement as the paper's central claim.
 
 ## Open questions

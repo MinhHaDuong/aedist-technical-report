@@ -12,7 +12,7 @@ Author: claude
 
 This ticket is design dialogue, not commitment. It captures a
 **future territory** the author sketched after a v2 panel-of-four
-verify prompt landed and was tested (ticket 0223, closed
+verify prompt landed and was tested (ticket 0228, closed
 superseded). Decisions inside this body are *proposals*, subject to
 ratification. No code lands on main from this ticket until each
 step is independently agreed and ticketed.
@@ -27,7 +27,7 @@ The §2 quality bar names four dimensions: accuracy, coherence,
 provenance, temporality. The §3 capability ladder explains why the
 parametric baseline (§1), the deep-research frontier (§4), and the
 tailored solution (§5) hit progressively more of those dimensions.
-§5 is sketched but not designed; **0224 is the design**.
+§5 is sketched but not designed; **0229 is the design**.
 
 A full Imperial-Dragon-Harness (IDH) verification cycle would
 sequence five stages, each adding rigor at the cost of compute:
@@ -66,12 +66,12 @@ Already operational; Exp 2 (ticket 0199) measures this.
 
 ### iv — Panel of expert verifiers
 
-The v2 sketch from 0223. After self-verify, dispatch four
+The v2 sketch from 0228. After self-verify, dispatch four
 axis-specialised verifiers in parallel (accuracy / coherence /
 provenance / temporality), preferably on different models.
 Aggregate edits into a single polished inventory.
 
-Open question (from the 0223 smoke): does the panel approach trade
+Open question (from the 0228 smoke): does the panel approach trade
 recall for depth? n=1 evidence suggests yes (43 → 26 plants but
 fresh searches on the verify pass). Future runs should pre-register
 "recall vs depth" as the measured trade-off.
@@ -118,7 +118,7 @@ discarding weak signals. Preserves epistemic information that
 binary verification destroys. This is a vocabulary the harness
 should adopt across all five steps and all four §2 axes.
 
-The 0224.* sub-tickets will incorporate both ideas as defaults, not
+The 0229.* sub-tickets will incorporate both ideas as defaults, not
 addenda.
 
 ### Scrub of the current workflow against idea B (2026-05-22)
@@ -178,15 +178,15 @@ not linear.
 
 ## Sub-tickets (to file when each step ratifies)
 
-- 0224.A — bibliographic scoping protocol (analogue to PRISMA)
-- 0224.B — plan generation + plan-verifier prompt + harness
-- 0224.C — re-explore the panel-of-four prompt with measured
+- 0229.A — bibliographic scoping protocol (analogue to PRISMA)
+- 0229.B — plan generation + plan-verifier prompt + harness
+- 0229.C — re-explore the panel-of-four prompt with measured
   recall × depth trade-off
-- 0224.D — per-row swarm design (granularity, aggregation,
+- 0229.D — per-row swarm design (granularity, aggregation,
   cost-per-row caps)
-- 0224.E — per-source swarm design (strong-citation harness,
+- 0229.E — per-source swarm design (strong-citation harness,
   URL-resolver, claim-matching)
-- 0224.F — end-to-end IDH-cycle integration test on a small
+- 0229.F — end-to-end IDH-cycle integration test on a small
   asset class (e.g. coal plants only, ~50 rows) before scaling
 
 ## Exit criteria
