@@ -28,6 +28,8 @@ This is a 4-arm factorial comparison on the four subject systems already used in
 Baseline protocol surface A is the single deep research prompt.
 Baseline protocol surface B is the multiturn design: plan, execute, verify, with web search.
 
+Arms 1 and 2 are frozen historical baselines reused from the archived `experiments/outputs/direct_complete/` and `experiments/outputs/direct_multiturn/` result sets; this experiment only runs Arms 3 and 4 and compares them to those archived controls.
+
 The evidence pack is assembled application-side from [experiments/evidence_packs/all18tables.yaml](/home/haduong/aedist-technical-report/experiments/evidence_packs/all18tables.yaml) and the canonical corpus under [data/rag_corpus](/home/haduong/aedist-technical-report/data/rag_corpus).
 
 The study compares Arm 3 vs Arm 1 and Arm 4 vs Arm 2. Arms 1 and 2 are the baselines; arms 3 and 4 are the intervention conditions.
