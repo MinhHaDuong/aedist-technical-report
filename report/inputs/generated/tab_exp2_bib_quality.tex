@@ -2,18 +2,20 @@
 \begin{longtable}[]{@{}llrrrrrr@{}}
 \caption{Experiment~2: bibliography quality by agent and arm (mean across valid runs)}\label{tab:exp2-bib-quality}\\
 \toprule
-Arm & Agent & Rows & S1 (\%) & S2 (\%) & S1 Prim. (\%) & Notes (\%) & Bib \\
+Agent & Arm & Rows & S1 (\%) & S2 (\%) & S1 Prim. (\%) & Notes (\%) & Bib \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-Naive & Claude (4/5) & 36 [12--72] & 95\% & 67\% & 19\% & 77\% & 0 \\
- & GPT & 105 [69--120] & 61\% & 43\% & 62\% & 59\% & 15 [10--21] \\
- & Mistral (3/5) & 49 [33--60] & 4\% & 0\% & 0\% & 32\% & 11 [8--15] \\
- & Qwen & 71 [65--75] & 53\% & 53\% & 73\% & 39\% & 15 [15--16] \\
+Claude & Naive (4/5) & 36 [12--72] & 95\% & 67\% & 19\% & 77\% & 0 \\
+ & Optimised & 127 [85--151] & 50\% & 38\% & 28\% & 29\% & 6 [0--18] \\
 \midrule
-Optimised & Claude & 127 [85--151] & 50\% & 38\% & 28\% & 29\% & 6 [0--18] \\
- & GPT & 148 [103--181] & 56\% & 55\% & 88\% & 54\% & 39 [31--50] \\
- & Mistral (3/5) & 22 [15--26] & 73\% & 55\% & 5\% & 71\% & 3 [0--10] \\
- & Qwen & 15 [10--19] & 79\% & 57\% & 55\% & 80\% & 1 [0--5] \\
+GPT & Naive & 105 [69--120] & 61\% & 43\% & 62\% & 59\% & 15 [10--21] \\
+ & Optimised & 148 [103--181] & 56\% & 55\% & 88\% & 54\% & 39 [31--50] \\
+\midrule
+Mistral & Naive (3/5) & 49 [33--60] & 4\% & 0\% & 0\% & 32\% & 11 [8--15] \\
+ & Optimised (3/5) & 22 [15--26] & 73\% & 55\% & 5\% & 71\% & 3 [0--10] \\
+\midrule
+Qwen & Naive & 71 [65--75] & 53\% & 53\% & 73\% & 39\% & 15 [15--16] \\
+ & Optimised & 15 [10--19] & 79\% & 57\% & 55\% & 80\% & 1 [0--5] \\
 \end{longtable}

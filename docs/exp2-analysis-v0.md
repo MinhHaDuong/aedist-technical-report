@@ -80,6 +80,68 @@ Dataset and Descriptive Statistics
 ### Placeholder conclusion block
 - 1 paragraph: descriptive baseline used by all hypothesis sections.
 
+## 3.5) Bibliography quality and source provenance
+
+### Section title
+Bibliography Quality and Source Provenance
+
+### What goes here
+
+For each of the 40 runs (4 agents × 5 reps × 2 arms), each markdown output was parsed to count
+the citation structure in the inventory table and the bibliography section.  Metrics are aggregated
+as mean across valid runs (runs with `n_rows > 0`); range shown in brackets.
+
+**Column definitions** (Table `tab_exp2_bib_quality`):
+
+| Column | Definition |
+|--------|-----------|
+| Rows | Inventory table rows (data rows only, header excluded). Proxy for coverage. |
+| S1 (%) | Share of rows with a substantive Source 1 citation (not blank, not "—", not "not found"). |
+| S2 (%) | Same for the second source column. Dual-source is the metaprompt compliance target. |
+| S1 Prim. (%) | Of the S1 citations present, the fraction classified as primary: official government documents (`*.gov.vn`, `moit.gov.vn`, `evn.com.vn`, `pvpower.vn`, `genco3.com`), named annual reports, PDP-series documents. |
+| Notes (%) | Share of rows with substantive Notes cell. High Notes% is a compliance signal: the metaprompt requires agents to document inadmissible (tertiary) sources in Notes rather than S1/S2. |
+| Bib | Total bibliography entries (mean \[min--max\] across valid runs). |
+
+Artefact: `report/inputs/generated/tab_exp2_bib_quality.tex`
+
+### Discussion
+
+**GPT leads on provenance compliance in the optimised arm**: 88% of Source 1 citations classify
+as primary, and it produces a mean 39 bibliography entries — the highest among all four agents.
+The optimised protocol amplifies this advantage: the naive-arm primary rate is already 62%,
+rising to 88% optimised.  OpenAI's self-designed Phase A prompt independently replicates the
+metaprompt source taxonomy.
+
+**Claude's naive arm shows a paradoxical pattern**: near-complete S1 citation rate (95%) but low
+primary classification (19%).  The agent cites something in almost every row, but mostly secondary
+or tertiary sources.  The optimised arm reduces S1 rate (50%) without substantially improving
+the primary rate (28%), suggesting the verify step does not resolve source-tier compliance.
+
+**Mistral's naive arm is effectively uncited**: 4% S1 coverage and zero primary citations, confirming
+that without an explicit sourcing scaffold, Mistral does not attempt systematic provenance.  The
+optimised arm improves citation coverage (73%) but the primary rate remains the lowest of the four
+agents (5%) — Mistral's web search preferentially returns secondary trade press over official
+primary documents.
+
+**Qwen's coverage regression has a direct provenance explanation**: the agent's self-designed Phase A
+protocol imposed a strict PDP8 → EVN → ERAV admissibility hierarchy that already limits Turn 1
+inventory to primary-tier sources only.  As a consequence, Qwen optimised achieves the highest
+Notes compliance rate (80%) — it honestly documents tertiary sources it cannot admit rather than
+silently including them.  The coverage–certainty tradeoff is the core empirical signal: GPT
+optimised maximises both (148 rows, 88% primary); Qwen optimised trades breadth for citation
+discipline (15 rows, 55% primary); Claude optimised achieves high coverage (127 rows) at lower
+primary rate (28%).
+
+**Naive arm had no source taxonomy**: the naive-arm prompt (Doc-07) contains no source-quality
+section.  Naive-arm metrics therefore measure unaided sourcing behaviour; the optimised-vs-naive
+contrast isolates the sourcing scaffold's contribution.
+
+### Relevant artefacts
+- `report/inputs/generated/tab_exp2_bib_quality.csv` — flat per-run data (40 rows)
+- `report/inputs/generated/tab_exp2_bib_quality.tex` — longtable, 8 rows (agent × arm)
+- `src/aedist/extract_exp2_bib.py` — parser
+- `src/aedist/tabulate_exp2_bib_quality.py` — aggregator + renderer
+
 ## 4) H1
 
 ### Section title
