@@ -1,7 +1,7 @@
 """Render the empirical capability transition matrix for §3.
 
 8×8 heatmap: for each ordered pair (i, j) of capability stages, the
-fraction of labs where stage i shipped before stage j (conditional on
+fraction of labs where feature i shipped before feature j (conditional on
 both being present). White = no lab made that transition; green = all
 labs did. N is labelled per cell.
 
