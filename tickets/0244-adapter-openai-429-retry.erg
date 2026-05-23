@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Add 429 / transient-failure retry to adapter_openai_responses
+Title: Add 429 / transient-failure retry to adapter_openai_responses and adapter_anthropic
 Created: 2026-05-23
 Author: claude
 
@@ -9,42 +9,47 @@ Author: claude
 --- body ---
 ## Context
 
-The three SOTA adapters have uneven retry coverage:
+The four SOTA adapters have uneven retry coverage:
 
 | Adapter | 429 retry | Transient retry | Where |
 |---------|-----------|-----------------|-------|
 | `adapter_mistral.py` | ✓ (PR #399) | ✓ exponential backoff | `_request_with_retry` |
 | `adapter_qwen_dashscope.py` | ✓ | ✓ | `_call_with_retry` |
 | `adapter_openai_responses.py` | ✗ | ✗ | — |
+| `adapter_anthropic.py` | ✗ | ✗ | — |
 
 Ticket 0242 listed "429-retry added to OpenAI and Qwen adapters" as an
-exit criterion, but OpenAI was not implemented. No 429 errors occurred
+exit criterion, but OpenAI was not implemented. Anthropic was not
+mentioned in 0242 but has the same gap. No 429 errors occurred
 during the N=5 batch because 1-agent-per-process parallelism means no
 same-provider contention, but the gap remains for future runs with higher
 concurrency or provider-side rate limits.
 
 ## What to implement
 
-Mirror the Mistral retry policy in `adapter_openai_responses.py`:
+Mirror the Mistral retry policy in both missing adapters:
 
 - Max 3 retries, exponential backoff 1s / 2s / 4s ± 10% jitter
 - Retry on: 429 (rate limit), 5xx transient, connection timeout
 - Do NOT retry on: 4xx (except 429) — these are request-shape bugs
-- Log each retry attempt with URL and reason
+- Log each retry attempt with provider and reason
 
-The OpenAI Responses API uses `openai.OpenAI().responses.create(...)`.
-The SDK raises `openai.RateLimitError` (429) and
-`openai.APIStatusError` (5xx). Wrap the `client.responses.create` call.
+**OpenAI** (`adapter_openai_responses.py`): raises `openai.RateLimitError`
+(429) and `openai.APIStatusError` (5xx). Wrap `client.responses.create`.
+
+**Anthropic** (`adapter_anthropic.py`): raises `anthropic.RateLimitError`
+(429) and `anthropic.APIStatusError` (5xx). Wrap `client.messages.create`.
 
 ## Reference
 
 - `src/aedist/adapter_mistral.py` lines ~295–382 — retry implementation to mirror
 - `src/aedist/adapter_qwen_dashscope.py` lines ~57–74 — Qwen variant
 - `src/aedist/adapter_openai_responses.py` — target file
+- `src/aedist/adapter_anthropic.py` — target file
 
 ## Exit criteria
 
-- [ ] `_call_with_retry` wrapper added to `adapter_openai_responses.py`
-- [ ] Retries on `openai.RateLimitError` and 5xx `openai.APIStatusError`
-- [ ] Unit test: monkeypatched client raises 429 twice then succeeds → 1 result returned, 2 retries logged
+- [ ] `_call_with_retry` (or equivalent) added to `adapter_openai_responses.py`
+- [ ] `_call_with_retry` (or equivalent) added to `adapter_anthropic.py`
+- [ ] Unit tests: monkeypatched client raises 429 twice then succeeds → 1 result, 2 retries logged (one test per adapter)
 - [ ] `make check` passes
