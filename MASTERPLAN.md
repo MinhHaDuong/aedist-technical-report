@@ -192,6 +192,11 @@ Deliverable: slides (French, Beamer) in `slides/`. Consumes current state (censu
 - Slides synced to the v0 pipeline design (fusion reframe, fragment taxonomy, incrementality, master + sidecar, 3-tier verification, 4-category HITL memory, agents anchored on data-model concerns).
 - Technical report carries warning boxes in Ch. 3 RAG intro, Ch. 6 Architecture proposée, and `inputs/verification_methods.tex`. Full rewrite tracked in tickets 0098 (Ch. 6 + Ch. 3 reframe) and 0099 (verification_methods.tex). Both blocked by 0097 (source-grounding Phase 1 results feed the rewrites).
 
+**Experiment structure (2026-05-23):** Three experiments feed the talk evidence.
+- **Experiment 1** — memory ceiling: 16 models × 5 reps, no retrieval (done).
+- **Experiment 2** — SOTA multi-turn: naive arm (Arm 1) and optimized arm (Arm 2), 4 subjects × 5 reps each (done).
+- **Experiment 3** — evidence-pack intervention: 4-arm design reusing Exp 2 arms as frozen baselines; Arms 3/4 inject a fixed 18-source prompt-side evidence pack; protocol at `docs/protocol-experiment-3.md` (adopted 2026-05-23). Any local-vs-cloud comparison is a separate future experiment.
+
 ### Presentation (done)
 
 Present the methods benchmark pilot.

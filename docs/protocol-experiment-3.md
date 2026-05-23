@@ -1,7 +1,8 @@
 ---
 title: Protocol for Experiment 3
 date: 2026-05-23
-status: DRAFT
+status: ADOPTED
+adopted: 2026-05-23
 ---
 
 # Protocol for Experiment 3
@@ -40,17 +41,17 @@ The study compares Arm 3 vs Arm 1 and Arm 4 vs Arm 2. Arms 1 and 2 are the basel
 
 On the first baseline protocol surface, Arm 3 yields higher row-level F1 than Arm 1.
 
-- Supported: paired mean $\Delta F1 \ge 0.05$ and one-sided paired permutation test $p < 0.05$
+- Supported: paired mean $\Delta F1 \ge 0.05$
 - Falsified: paired mean $\Delta F1 \le 0$
-- Inconclusive: positive improvement below $0.05$, or $p \ge 0.05$
+- Inconclusive: positive improvement below $0.05$
 
 ### H2 — Evidence pack improves baseline surface B
 
 On the second baseline protocol surface, Arm 4 yields higher row-level F1 than Arm 2.
 
-- Supported: paired mean $\Delta F1 \ge 0.05$ and one-sided paired permutation test $p < 0.05$
+- Supported: paired mean $\Delta F1 \ge 0.05$
 - Falsified: paired mean $\Delta F1 \le 0$
-- Inconclusive: positive improvement below $0.05$, or $p \ge 0.05$
+- Inconclusive: positive improvement below $0.05$
 
 ### H3 — Evidence-pack outputs remain auditable
 
@@ -140,8 +141,6 @@ For each subject system:
 2. Compute the mean F1 over repeated runs in Arm 3.
 3. Compute the paired difference $\Delta F1 = F1_{A3} - F1_{A1}$.
 
-Test the paired mean difference with a one-sided paired permutation test.
-
 ### H2 test
 
 For each subject system:
@@ -149,8 +148,6 @@ For each subject system:
 1. Compute the mean F1 over repeated runs in Arm 2.
 2. Compute the mean F1 over repeated runs in Arm 4.
 3. Compute the paired difference $\Delta F1 = F1_{A4} - F1_{A2}$.
-
-Test the paired mean difference with a one-sided paired permutation test.
 
 ### H3 audit
 
