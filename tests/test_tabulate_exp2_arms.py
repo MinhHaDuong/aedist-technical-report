@@ -1,14 +1,17 @@
-"""Tests for aedist.tabulate_exp2_arms."""
+"""Tests for aedist.tabulate_exp2_arms (reads from CSV intermediate)."""
 
+import csv
 import json
 
 import pytest
 
 from aedist.tabulate_exp2_arms import (
     _is_truncated,
-    generate_exp2_arms_table,
+    _load_runs,
+    _run_is_truncated,
+    generate_latex,
     main,
-    summarize_arm,
+    summarize_arms,
 )
 
 
@@ -16,211 +19,254 @@ def _write_json(path, payload):
     path.write_text(json.dumps(payload))
 
 
+def _write_csv(path, rows, fieldnames):
+    with path.open("w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+_FIELDS = [
+    "arm",
+    "agent",
+    "model",
+    "run",
+    "classification",
+    "narrative_chars",
+    "inventory_rows",
+    "cost_usd",
+    "wall_s",
+    "turns",
+]
+
+
+# --- _is_truncated -----------------------------------------------------------
+
+
 def test_is_truncated_when_finish_reason_length():
-    payload = {
-        "finish_reason": "length",
-        "usage": {"completion_tokens": 8000},
-        "max_tokens": 8192,
-    }
-    assert _is_truncated(payload)
+    assert _is_truncated(
+        {"finish_reason": "length", "usage": {"completion_tokens": 8000}, "max_tokens": 8192}
+    )
 
 
 def test_is_truncated_when_completion_hits_max_tokens():
-    payload = {
-        "finish_reason": "stop",
-        "usage": {"completion_tokens": 8192},
-        "max_tokens": 8192,
-    }
-    assert _is_truncated(payload)
+    assert _is_truncated(
+        {"finish_reason": "stop", "usage": {"completion_tokens": 8192}, "max_tokens": 8192}
+    )
 
 
 def test_is_not_truncated_when_completion_below_cap():
-    payload = {
-        "finish_reason": "stop",
-        "usage": {"completion_tokens": 5000},
-        "max_tokens": 8192,
-    }
-    assert not _is_truncated(payload)
-
-
-def test_summarize_arm_uses_raw_truncation(tmp_path):
-    arm_dir = tmp_path / "naive"
-    arm_dir.mkdir()
-
-    _write_json(
-        arm_dir / "qwen_run01.raw.json",
-        {
-            "finish_reason": "length",
-            "usage": {"completion_tokens": 8192},
-            "max_tokens": 8192,
-        },
-    )
-    _write_json(
-        arm_dir / "qwen_run02.raw.json",
-        {
-            "finish_reason": "stop",
-            "usage": {"completion_tokens": 4000},
-            "max_tokens": 8192,
-        },
+    assert not _is_truncated(
+        {"finish_reason": "stop", "usage": {"completion_tokens": 5000}, "max_tokens": 8192}
     )
 
-    rows = summarize_arm(
+
+# --- _run_is_truncated -------------------------------------------------------
+
+
+def test_run_is_truncated_reads_raw_json(tmp_path):
+    _write_json(
+        tmp_path / "qwen_run01.raw.json",
+        {"finish_reason": "length", "usage": {"completion_tokens": 8192}, "max_tokens": 8192},
+    )
+    assert _run_is_truncated(tmp_path, "qwen", 1)
+
+
+def test_run_is_not_truncated_when_raw_missing(tmp_path):
+    assert not _run_is_truncated(tmp_path, "qwen", 99)
+
+
+# --- _load_runs --------------------------------------------------------------
+
+
+def test_load_runs_parses_types(tmp_path):
+    csv_path = tmp_path / "runs.csv"
+    _write_csv(
+        csv_path,
         [
             {
+                "arm": "naive",
                 "agent": "qwen",
-                "run": 1,
-                "model": "qwen3-max-2026-01-23",
+                "model": "qwen3-max",
+                "run": "1",
                 "classification": "report",
-                "cost_usd": 0.10,
-                "wall_s": 100.0,
+                "narrative_chars": "5000",
+                "inventory_rows": "23",
+                "cost_usd": "0.05",
+                "wall_s": "120.0",
+                "turns": "1",
             },
             {
-                "agent": "qwen",
-                "run": 2,
-                "model": "qwen3-max-2026-01-23",
+                "arm": "optimised",
+                "agent": "mistral",
+                "model": "mistral-large",
+                "run": "2",
                 "classification": "no_report",
-                "cost_usd": 0.20,
-                "wall_s": 200.0,
+                "narrative_chars": "200",
+                "inventory_rows": "None",
+                "cost_usd": "0.01",
+                "wall_s": "10.0",
+                "turns": "3",
             },
         ],
-        arm_dir,
-        "Naive",
+        _FIELDS,
     )
 
-    assert len(rows) == 1
-    row = rows[0]
-    assert row["report_rate"] == 0.5
-    assert row["trunc_rate"] == 0.5
-    assert row["median_cost_usd"] == pytest.approx(0.15)
-    assert row["median_wall_s"] == 150.0
+    rows = _load_runs(csv_path)
+    assert len(rows) == 2
+    assert rows[0]["run"] == 1
+    assert rows[0]["inventory_rows"] == 23
+    assert rows[1]["inventory_rows"] is None
+    assert rows[1]["turns"] == 3
 
 
-def test_generate_exp2_arms_table_contains_expected_columns(tmp_path):
+# --- summarize_arms ----------------------------------------------------------
+
+
+def test_summarize_arms_report_rate(tmp_path):
     naive_dir = tmp_path / "naive"
-    optimized_dir = tmp_path / "optimized"
+    optimised_dir = tmp_path / "optimised"
     naive_dir.mkdir()
-    optimized_dir.mkdir()
+    optimised_dir.mkdir()
 
+    runs = [
+        {
+            "arm": "naive",
+            "agent": "qwen",
+            "model": "qwen3-max",
+            "run": 1,
+            "classification": "report",
+            "narrative_chars": 5000,
+            "inventory_rows": 20,
+            "cost_usd": 0.10,
+            "wall_s": 100.0,
+            "turns": 1,
+        },
+        {
+            "arm": "naive",
+            "agent": "qwen",
+            "model": "qwen3-max",
+            "run": 2,
+            "classification": "no_report",
+            "narrative_chars": 100,
+            "inventory_rows": 0,
+            "cost_usd": 0.02,
+            "wall_s": 20.0,
+            "turns": 1,
+        },
+    ]
+
+    summary = summarize_arms(runs, naive_dir, optimised_dir)
+    assert len(summary) == 1
+    row = summary[0]
+    assert row["report_rate"] == pytest.approx(0.5)
+    assert row["median_cost_usd"] == pytest.approx(0.06)
+    assert row["n_runs"] == 2
+
+
+def test_summarize_arms_truncation_from_raw(tmp_path):
+    naive_dir = tmp_path / "naive"
+    naive_dir.mkdir()
     _write_json(
         naive_dir / "qwen_run01.raw.json",
-        {
-            "finish_reason": "length",
-            "usage": {"completion_tokens": 8192},
-            "max_tokens": 8192,
-        },
-    )
-    _write_json(
-        optimized_dir / "qwen_run01.raw.json",
-        {
-            "finish_reason": "stop",
-            "usage": {"completion_tokens": 5000},
-            "max_tokens": 8192,
-        },
+        {"finish_reason": "length", "usage": {"completion_tokens": 8192}, "max_tokens": 8192},
     )
 
-    latex = generate_exp2_arms_table(
-        [
-            {
-                "agent": "qwen",
-                "run": 1,
-                "model": "qwen3-max-2026-01-23",
-                "classification": "report",
-                "cost_usd": 0.11,
-                "wall_s": 111.0,
-            }
-        ],
-        [
-            {
-                "agent": "qwen",
-                "run": 1,
-                "model": "qwen3-max-2026-01-23",
-                "classification": "report",
-                "total_cost_usd": 0.22,
-                "wall_s": 222.0,
-                "turns": 2,
-            }
-        ],
-        naive_dir,
-        optimized_dir,
-    )
+    runs = [
+        {
+            "arm": "naive",
+            "agent": "qwen",
+            "model": "qwen3-max",
+            "run": 1,
+            "classification": "report",
+            "narrative_chars": 5000,
+            "inventory_rows": 20,
+            "cost_usd": 0.10,
+            "wall_s": 100.0,
+            "turns": 1,
+        },
+    ]
 
+    summary = summarize_arms(runs, naive_dir, tmp_path / "optimised")
+    assert summary[0]["trunc_rate"] == pytest.approx(1.0)
+
+
+# --- generate_latex ----------------------------------------------------------
+
+
+def test_generate_latex_contains_required_structure():
+    summary = [
+        {
+            "arm": "naive",
+            "model": "qwen3-max-2026-01-23",
+            "n_runs": 5,
+            "report_rate": 0.8,
+            "trunc_rate": 0.0,
+            "median_turns": 1.0,
+            "median_cost_usd": 0.05,
+            "median_wall_s": 120.0,
+        },
+        {
+            "arm": "optimised",
+            "model": "qwen3-max-2026-01-23",
+            "n_runs": 5,
+            "report_rate": 1.0,
+            "trunc_rate": 0.0,
+            "median_turns": 2.5,
+            "median_cost_usd": 0.20,
+            "median_wall_s": 300.0,
+        },
+    ]
+    latex = generate_latex(summary)
     assert "\\label{tab:exp2-arms}" in latex
     assert "Report (\\%)" in latex
-    assert "Truncated (\\%)" in latex
     assert "Naive" in latex
-    assert "Optimized" in latex
+    assert "Optimised" in latex
+
+
+# --- main --------------------------------------------------------------------
 
 
 def test_main_writes_output(tmp_path):
     naive_dir = tmp_path / "naive"
-    optimized_dir = tmp_path / "optimized"
+    optimised_dir = tmp_path / "optimised"
     naive_dir.mkdir()
-    optimized_dir.mkdir()
+    optimised_dir.mkdir()
 
-    _write_json(
-        naive_dir / "qwen_run01.raw.json",
-        {
-            "finish_reason": "length",
-            "usage": {"completion_tokens": 8192},
-            "max_tokens": 8192,
-        },
-    )
-    _write_json(
-        optimized_dir / "qwen_run01.raw.json",
-        {
-            "finish_reason": "stop",
-            "usage": {"completion_tokens": 6000},
-            "max_tokens": 8192,
-        },
-    )
-
-    naive_summary = tmp_path / "naive_summary.json"
-    optimized_summary = tmp_path / "optimized_summary.json"
-    output_file = tmp_path / "generated" / "tab_exp2_arms.tex"
-
-    _write_json(
-        naive_summary,
+    csv_path = tmp_path / "runs.csv"
+    _write_csv(
+        csv_path,
         [
             {
+                "arm": "naive",
                 "agent": "qwen",
-                "run": 1,
-                "model": "qwen3-max-2026-01-23",
+                "model": "qwen3-max",
+                "run": "1",
                 "classification": "report",
-                "cost_usd": 0.11,
-                "wall_s": 111.0,
-            }
+                "narrative_chars": "5000",
+                "inventory_rows": "23",
+                "cost_usd": "0.05",
+                "wall_s": "120.0",
+                "turns": "1",
+            },
         ],
-    )
-    _write_json(
-        optimized_summary,
-        [
-            {
-                "agent": "qwen",
-                "run": 1,
-                "model": "qwen3-max-2026-01-23",
-                "classification": "report",
-                "total_cost_usd": 0.22,
-                "wall_s": 222.0,
-                "turns": 2,
-            }
-        ],
+        _FIELDS,
     )
 
+    out = tmp_path / "tab_exp2_arms.tex"
     main(
         [
+            "--input",
+            str(csv_path),
             "--output",
-            str(output_file),
-            "--naive-summary",
-            str(naive_summary),
-            "--optimized-summary",
-            str(optimized_summary),
+            str(out),
             "--naive-dir",
             str(naive_dir),
-            "--optimized-dir",
-            str(optimized_dir),
+            "--optimised-dir",
+            str(optimised_dir),
         ]
     )
 
-    content = output_file.read_text()
+    content = out.read_text()
     assert "\\begin{longtable}" in content
     assert "\\label{tab:exp2-arms}" in content
