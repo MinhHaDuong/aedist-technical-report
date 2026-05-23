@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Implement evidence-pack assembly for Experiment 3
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T15:57Z Copilot created
+
+--- body ---
+## Context
+The Experiment 3 protocol and evidence-pack manifest are committed, but the runtime still needs to load the manifest and inject the assembled pack into Arms 3 and 4.
+
+## Actions
+1. Add a manifest loader that reads `experiments/evidence_packs/all18tables.yaml`.
+2. Render the evidence pack deterministically from `data/rag_corpus` and the manifest metadata.
+3. Append the rendered pack to the prompt for the intervention arms.
+
+## Test
+Add a test that renders the pack from the manifest and asserts stable ordering, stable headers, and presence of the expected `source_id` blocks.
+
+## Exit criteria
+The runtime can assemble the evidence pack from the manifest, inject it into the intervention arms, and the new tests pass without changing the baseline arms.
