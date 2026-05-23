@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Dialogue classifier false labels at boundary turns (verify + candidate-universe)
+Created: 2026-05-23
+Author: claude
+
+--- log ---
+2026-05-23T13:35Z claude created — root-cause investigation of Phase B "null-content glitch" revealed two classifier accuracy failures
+
+--- body ---
+## Context
+
+During Exp 2 Phase B N=5 batch, two runs were manually aborted and
+retried after the dialogue classifier (nvidia/nemotron-nano-9b-v2)
+returned incorrect labels on specific turn types. Both were initially
+misdiagnosed as "null content glitches". Root cause investigation
+(2026-05-23) shows they are classifier false negatives/positives.
+
+### Case 1 — False negative on verify turn (Mistral rep 2)
+
+- Turn 1 (designed_prompt): Mistral produced a substantial candidate
+  universe + partial inventory with tables. Classifier: `report` ✓
+- Turn 2 (verify): Mistral produced an 18,700-char polished inventory
+  with 26 table rows. `extract_narrative_from_mistral_raw` correctly
+  extracted the full text. Classifier: `no_report` ✗
+
+Evidence: `/tmp/mistral_run02_failed_rep2/mistral_turn_02.raw.json`
+(18,700-char content, 26 markdown table rows).
+
+### Case 2 — False positive on designed_prompt turn (OpenAI rep 3)
+
+- Turn 1 (designed_prompt): OpenAI produced a 12,482-char candidate
+  universe. Model explicitly wrote "I will **not** produce the final
+  inventory yet." Classifier: `report` ✗
+- Turn 2 (verify): sent prematurely; model correctly said it could not
+  verify a non-existent inventory. Classifier: `no_report` ✓
+
+Evidence: `/tmp/openai_run03_failed_rep3/openai_turn_01.record.json`
+(output_text starts "Turn 1 — Candidate universe + source map progress
+note … I will not produce the final inventory yet").
+
+## Hypotheses
+
+The boundary cases where the classifier fails:
+
+1. **Verify turn response**: formatted as "corrected/verified inventory"
+   with tables — classifier may not distinguish this from a partial-
+   progress response because it lacks the explicit framing it expects.
+
+2. **Candidate-universe designed_prompt turn**: contains many markdown
+   tables (plant candidates) but explicitly says it is not the final
+   inventory — classifier may key on table presence alone.
+
+## Exit criteria
+
+- [ ] Audit classifier prompt and few-shot examples for these two failure modes
+- [ ] Add at least 2 boundary examples to the classifier test suite:
+  - A verify-turn polished inventory → expected `report`
+  - A candidate-universe turn with explicit "not final" language → expected `no_report`
+- [ ] Re-run the failed artefacts through the updated classifier and confirm correct labels
+- [ ] `make check` passes
