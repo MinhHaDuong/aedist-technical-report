@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Exp2 Figure 3 — metadata comparison (conference-critical)
+Created: 2026-05-23
+Author: claude
+
+--- log ---
+2026-05-23T21:00Z claude created — conference-critical path item; must land before 2026-05-27
+
+--- body ---
+## Context
+
+Conference deliverable (Econom'IA 2026, 2026-05-27). Produces the Figure 3 currently
+placeholder in `slides/manuscript/main.md` §4. Full F1 evaluation is post-conference
+(tracked in 0255/H1); this ticket uses the metadata already in the arm summary JSONs.
+
+Canonical data sources:
+- `experiments/outputs/sota_exp2_naive_arm/` — Arm 1 (naive, N=5 × 4 agents)
+- `experiments/outputs/sota_exp2_brerun1/` — Arm 2 (optimized, corrected classifier)
+- `sota_exp2_phase_b_full/` excluded (weak classifier — README says DO NOT USE)
+
+## Actions
+
+1. **`src/aedist/tabulate_exp2_arms.py`** — already exists on t251; verify it reads
+   from `sota_exp2_naive_arm/` and `sota_exp2_brerun1/`, emits a CSV with columns:
+   `arm, agent, run, classification, narrative_chars, inventory_rows, cost_usd, wall_s`.
+   Naive arm JSONs have no `inventory_rows`; emit `None` for those rows.
+
+2. **`src/aedist/plot_exp2_arms_comparison.py`** — new script. Reads the CSV from (1).
+   Produces `report/inputs/generated/fig_exp2_arms_comparison.pdf`:
+   - Panel A: grouped bar chart — narrative_chars by agent × arm (report-classified runs only)
+   - Panel B: grouped bar chart — inventory_rows by agent × arm (optimized arm only, naive = N/A)
+   - Panel C: cost_usd by agent × arm
+   Style: project palette (`src/aedist/palette.toml`), no inline pgfplots.
+
+3. **`report/exp2-analysis.mk`** — add targets:
+   ```
+   $(GEN)/tab_exp2_arms.csv: ...sota_exp2_naive_arm/... ...sota_exp2_brerun1/...
+       uv run python -m aedist.tabulate_exp2_arms --output $@
+
+   $(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms.csv
+       uv run python -m aedist.plot_exp2_arms_comparison --input $< --output $@
+   ```
+   Add both to `exp2-analysis-report` phony target dependencies.
+
+4. **`slides/manuscript/main.md`** — replace the Figure 3 placeholder include path with
+   `inputs/generated/fig_exp2_arms_comparison.pdf` and update the caption to reflect
+   the metadata metrics shown (not the cross-eval rubric scores — those are post-conference).
+   Update §4 prose: "three agents × three reps" → "four agents × five reps, two arms".
+
+## Test
+
+- `tests/test_tabulate_exp2_arms.py` — already exists on t251; extend to assert:
+  - reads from `sota_exp2_brerun1/` not `sota_exp2_phase_b_full/`
+  - `inventory_rows` is `None` for naive arm rows
+  - `classification` column present and values in `{report, no_report}`
+- `tests/test_plot_exp2_arms_comparison.py` — smoke: script runs with `--dry-run` without error.
+
+## Exit criteria
+
+- [ ] `make -f report/exp2-analysis.mk exp2-analysis-report` runs without error
+- [ ] `fig_exp2_arms_comparison.pdf` exists and renders three panels
+- [ ] `main.md` Figure 3 placeholder replaced with the generated figure path
+- [ ] §4 prose agent/rep count updated to match actuals
+- [ ] `make check-fast` passes

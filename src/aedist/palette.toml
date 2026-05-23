@@ -11,6 +11,8 @@ alert       = "#E74C3C"  # red — warning / primary reference
 reference   = "#2ca02c"  # green — inventory reference line (163 plants)
 local_model = "#1A5070"  # darker blue — Padme/local hardware models (vs cloud)
 neutral     = "#444444"  # dark gray — colour-agnostic glyphs in legends
+arm_naive      = "#AAAAAA"  # medium gray — Exp2 naive (single-shot) arm
+arm_optimised  = "#0072B2"  # blue — Exp2 optimised (multi-turn) arm
 
 # Architecture families — used by plot_scaling_curve.py for the Qwen 3.5 / Gemma 4
 # scaling sweep. Each family has a direct + rag color pair. Independent concept

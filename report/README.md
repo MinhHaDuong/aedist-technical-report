@@ -39,4 +39,16 @@ have changed.
 | `tab_census.tex` | `tabulate_census.py` — census longtable |
 | `tab_comparaison.tex` | `tabulate_comparaison.py` — census vs RAG |
 | `tab_relances.tex` | `tabulate_relances.py` — multi-turn progression |
+| `tab_exp2_arms.tex` | `tabulate_exp2_arms.py` — Exp2 naive vs optimized operational summary |
+| `tab_exp2_outline_dataset.tex` | `tabulate_exp2_outline_dataset.py` — Exp2 outline dataset descriptive placeholder |
+| `fig_exp2_outline_dataset.tex` | `plot_exp2_outline_dataset.py` — Exp2 outline dataset figure placeholder |
+| `tab_exp2_outline_hypotheses_map.tex` | `tabulate_exp2_outline_hypotheses_map.py` — H1-H6 test mapping placeholder |
+| `tab_exp2_outline_protocol_fidelity.tex` | `tabulate_exp2_outline_protocol_fidelity.py` — protocol fidelity matrix placeholder |
+| `tab_exp2_outline_h1.tex` | `tabulate_exp2_outline_h1.py` — H1 section table placeholder |
+| `fig_exp2_outline_h2.tex` | `plot_exp2_outline_h2.py` — H2 section figure placeholder |
+| `tab_exp2_outline_h3.tex` | `tabulate_exp2_outline_h3.py` — H3 section table placeholder |
+| `tab_exp2_outline_h4.tex` | `tabulate_exp2_outline_h4.py` — H4 section table placeholder |
+| `tab_exp2_outline_h5.tex` | `tabulate_exp2_outline_h5.py` — H5 section table placeholder |
+| `fig_exp2_outline_h6.tex` | `plot_exp2_outline_h6.py` — H6 section figure placeholder |
+| `tab_exp2_outline_hypothesis_status.tex` | `tabulate_exp2_outline_hypothesis_status.py` — synthesis status placeholder |
 | `tab_converter_benchmark.tex` | `compare_converters.py` — PDF converter comparison |

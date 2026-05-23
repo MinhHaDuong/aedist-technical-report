@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 H6 section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the H6 section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. State H6 exactly as in protocol.
+2. Insert H6 visual placeholder and Spearman-rho test placeholder.
+3. Include divergence interpretation guidance when rho is low.
+
+## Test
+Validate section reflects rank-agreement analysis rather than raw-score equivalence.
+
+## Exit criteria
+H6 section is complete and faithful to the rank-agreement hypothesis.

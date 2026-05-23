@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 H3 section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the H3 section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. State H3 exactly as in protocol.
+2. Insert H3 table placeholder, paired Wilcoxon test placeholder, and conclusion placeholder.
+3. Include agent-wise sensitivity note placeholder.
+
+## Test
+Validate section structure and paired-test framing against protocol text.
+
+## Exit criteria
+H3 section is complete and consistent with the defined verify-step claim.

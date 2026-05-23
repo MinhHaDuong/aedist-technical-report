@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 context and protocol lock section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the Context and Protocol Lock section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. Describe two-arm design, N=5 per model per arm, and evaluation commitments H1-H6.
+2. State exclusion criteria and multiple-comparison correction policy.
+3. Link section claims to protocol commitments only.
+
+## Test
+Cross-check every sentence against protocol section 3.5.1 and 3.8 mapping table.
+
+## Exit criteria
+Context/protocol section is complete with no drift from registered tests and falsifiers.

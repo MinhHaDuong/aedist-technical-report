@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 dataset and descriptive statistics section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the Dataset and Descriptive Statistics section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. Summarize data provenance and run counts by model and arm.
+2. Use generated placeholders/artifacts for table and figure references.
+3. Make caveats explicit, including excluded sources.
+
+## Test
+Verify all described numbers map to generated artifacts and source JSON summaries.
+
+## Exit criteria
+Dataset section reports descriptive statistics clearly and reproducibly without inferential overreach.

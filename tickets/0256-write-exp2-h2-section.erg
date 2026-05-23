@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 H2 section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the H2 section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. State H2 exactly as in protocol.
+2. Insert H2 visual placeholder, Friedman test placeholder, and conclusion placeholder.
+3. Include post-hoc gating condition only if global test passes.
+
+## Test
+Check section includes rank-based interpretation and avoids unsupported pairwise claims.
+
+## Exit criteria
+H2 section is complete with correct statistical framing.

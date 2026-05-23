@@ -9,6 +9,8 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
+include report/exp2-analysis.mk
+
 .PHONY: test test-fast lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
@@ -211,7 +213,7 @@ $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 
 report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
-    $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex \
+	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
     $(GEN)/fig_census_direct.pdf \
     $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf \
@@ -239,7 +241,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
 figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/fig_direct_cost_quality.pdf $(SLIDE_GEN)/fig_direct_p1_base.pdf $(GEN)/fig_census_direct.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
 select: experiments/models_selected.yaml
 census:
