@@ -1,0 +1,51 @@
+BEGIN PHASE B — VIETNAM THERMAL GENERATION INVENTORY
+
+You have up to 3 planning turns before producing the report, then 1 verify pass. Budget: 50k gen tokens, $3 cost guard. Execute this plan:
+
+## TURN 1 — FOUNDATION SEARCHES
+Goal: Establish the universe of plants via authoritative lists.
+Search targets (batch where independent):
+  Q1: "Quy hoạch điện VIII danh mục nhà máy nhiệt điện" (PDP8 thermal plant list)
+  Q2: "Vietnam coal power plants list capacity MW"
+  Q3: "Vietnam LNG gas power plants planned approved"
+  Q4: "EVN annual report 2024 installed capacity"
+After results: build a preliminary plant roster in compact internal format (name, province, fuel, MW, status, source hint). Count plants found. Identify gaps (e.g., smaller industrial CHP, retired units, cancelled PDP7 projects).
+
+## TURN 2 — GAP-FILLING & ATTRIBUTE VERIFICATION
+Goal: Fill gaps from Turn 1, verify disputed attributes, find second sources for HIGH confidence.
+Search targets (adapt based on Turn 1 gaps):
+  - Specific plant names found but lacking COD or owner
+  - "Vietnam retired thermal power plants"
+  - "nhà máy nhiệt điện than Việt Nam công suất" (coal thermal capacity Vietnamese)
+  - IEEFA Vietnam coal tracker or similar secondary
+  - Any province clusters needing resolution
+After results: update roster, assign preliminary confidence, flag unresolved conflicts.
+
+## TURN 3 — COMPILE REPORT
+Goal: Produce the full Markdown deliverable.
+Structure:
+  1. Sector Overview (≤400 words): electricity mix, PDP8 policy, key actors (EVN, PVN, MOIT, Electricity Regulatory Authority), challenges (coal phase-down, LNG transition, renewable integration)
+  2. Per-plant narratives: full narratives ONLY for major/disputed/ambiguous assets (e.g., Vĩnh Tân complex, Thái Bình 2, Long Phú 1, Ô Môn LNG, Sơn Mỹ LNG); compact Notes entries for straightforward plants
+  3. Structured table — columns in exact order: Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes
+  4. Statistical summaries:
+     a. Capacity by Fuel × Status matrix
+     b. Top 15 provinces by total thermal MWe
+     c. Timeline of capacity additions by 5-year period and fuel
+     d. Data-quality summary: row count and MWe by confidence level and fuel
+  5. Annotated bibliography: every source cited; full citation, URL (or 'URL not verified'), original-language title + [English translation], 1-sentence annotation
+
+## TURN 4 — VERIFY PASS
+Goal: Reconcile totals, check arithmetic, fix cross-row contradictions, compress if over budget.
+
+## SEARCH RULES
+- ≤5 searches per turn, ≤15 total
+- Batch independent queries
+- Vietnamese-language queries for government sources
+- English queries for international/trade sources
+- If a search returns nothing useful, do NOT repeat it — reformulate or move on
+
+## STOPPING CRITERIA
+- Report is complete when: (a) ≥80% of known Vietnamese thermal plants >30 MWe are listed, (b) every row has ≥1 source, (c) statistical tables reconcile with plant table, (d) bibliography is complete
+- If budget forces early stop: emit what you have with a 'BUDGET NOTE' section listing known gaps
+
+BEGIN TURN 1 NOW. Execute the foundation searches and build the preliminary roster.
