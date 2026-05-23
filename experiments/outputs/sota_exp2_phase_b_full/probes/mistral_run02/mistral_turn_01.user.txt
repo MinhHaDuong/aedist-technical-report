@@ -1,0 +1,73 @@
+## INSTRUCTIONS FOR THERMAL GENERATION ASSET INVENTORY (VIETNAM)
+
+### SCOPE
+Produce a complete, primary-sourced inventory of Vietnam's thermal generation assets (> 30 MWe), including operational, under construction, approved, planned, suspended, cancelled, and retired plants. Cover all fuels (coal, domestic gas, imported LNG) and technologies (Subcritical, Supercritical, USC, CCGT, OCGT). Include grid-connected, micro-grid, off-grid, and captive plants.
+
+### SEARCH STRATEGY
+1. **Phase 1 (Discovery)**:
+   - Use web_search to identify official government sources (e.g., Ministry of Industry and Trade, Vietnam Electricity, General Department of Energy), regulator databases, and operator filings.
+   - Search for recent industry reports from the IEA, World Bank, Global Energy Monitor, and reputable trade press (e.g., Reuters, S&P Global, Vietnam News).
+   - Compile a list of all known plants from these sources, including those with incomplete data.
+
+2. **Phase 2 (Verification)**:
+   - For each plant, retrieve at least two independent, admissible sources. Prioritize primary sources (e.g., government approvals, operator press releases, regulator filings).
+   - If only one source is available, mark confidence as MEDIUM or LOW and explain in Notes.
+   - Trace all secondary sources to their original primary source. If the original source cannot be found, record 'Source = not found' and mark confidence as LOW.
+
+3. **Phase 3 (Reconciliation)**:
+   - Compare sources for consistency. Investigate and resolve discrepancies in capacity, status, COD, fuel, or owner.
+   - Document all conflicts and resolutions in the Notes field. If unresolved, follow the higher-tier source and explain your reasoning.
+
+### TABLE SCHEMA
+Produce a structured table with the following columns:
+- **Name (Vietnamese)**: Original Vietnamese name of the plant.
+- **Name (English)**: English translation or transliteration.
+- **Province**: Province where the plant is located.
+- **Fuel**: Coal / Domestic gas / Imported LNG.
+- **Technology**: Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas.
+- **Units × MW**: Number of units and capacity per unit (e.g., 2 × 600 MWe).
+- **Total MWe**: Total nameplate electrical capacity (gross/net unspecified unless noted).
+- **Status**: Operational / Under construction / Approved / Planned / Suspended / Cancelled / Retired.
+- **Status as-of-date**: Date of the most recent admissible source attesting the status.
+- **COD**: Commercial Operation Date (if applicable).
+- **Owner/Developer**: Owner or developer of the plant.
+- **Confidence**: HIGH / MEDIUM / LOW (see confidence rules below).
+- **Source 1**: Primary or highest-tier source.
+- **Source 2**: Secondary or additional source (if available).
+- **Notes**: Conflicts, resolutions, assumptions, or additional context.
+
+### CONFIDENCE RULES
+- **HIGH**: >=2 independent, concordant sources, at least one primary.
+- **MEDIUM**: 1 primary source, OR a sourced aggregator citing a verifiable primary.
+- **LOW**: Secondary only, inferred, unresolved conflict, or 'Source = not found'.
+
+### STOPPING CRITERIA
+- **Completeness**: All known plants (> 30 MWe) are included, even if some attributes are missing or confidence is LOW.
+- **Provenance**: Every claim is supported by at least one admissible source, or explicitly marked as 'Source = not found'.
+- **Budget**: Stop if either the 50,000-token or $3.00 budget cap reaches 20% of its initial value.
+
+### OUTPUT FORMAT
+Deliver a single Markdown document with:
+1. **Sector Overview**: Electricity mix, policy framework, key institutional actors, current challenges.
+2. **Per-Plant Narratives**: Concise sourced narratives for major, disputed, or ambiguous assets. Compact Notes for straightforward assets.
+3. **Structured Power-Plants Table**: As defined above.
+4. **Statistical Summary Tables**:
+   - Capacity by fuel × status.
+   - Top 15 provinces by capacity.
+   - Timeline of additions by period and fuel.
+   - Data-quality summary by confidence level and fuel.
+5. **Annotated Bibliography**: Full citation, URL (if available), original-language title + English translation, and summary annotation for every source cited.
+
+### BUDGET DISCIPLINE
+- Use early turns for search, decomposition, and uncertainty surfacing.
+- Prioritize recall, provenance, and uncertainty notes over narrative elaboration if budget becomes tight.
+- Compress overview, narratives, and bibliography annotations if necessary.
+
+### FINAL VERIFICATION
+After producing the report, you will receive one verify-and-polish pass. Use this to:
+- Reconcile any remaining conflicts.
+- Fill gaps in provenance.
+- Ensure all totals and summaries are internally consistent.
+- Trim output to fit budget if needed.
+
+Begin by searching for official government sources and recent industry reports to compile a comprehensive list of plants.

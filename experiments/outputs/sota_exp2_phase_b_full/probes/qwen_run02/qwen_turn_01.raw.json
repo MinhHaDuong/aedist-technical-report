@@ -1,0 +1,8 @@
+{
+  "status_code": 400,
+  "request_id": "3c3a04ed-22e8-95da-b0ef-92b2479bc171",
+  "code": "InvalidParameter",
+  "message": "<400> InternalError.Algo.InvalidParameter: Model generation timed out. Please switch to streaming mode for your request.",
+  "output": null,
+  "usage": null
+}

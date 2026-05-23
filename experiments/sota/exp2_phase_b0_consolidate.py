@@ -65,11 +65,13 @@ def _narrative_from_raw(raw_path: Path) -> str:
     content = raw.get("content")
     if isinstance(content, list):
         return "".join(item.get("text", "") for item in content if item.get("type") == "text")
-    # Mistral Agents API: outputs[0].content[*].{type,text}
+    # Mistral Agents API: outputs[0].content — str (newer API) or list[{type,text}]
     outputs = raw.get("outputs")
     if outputs and isinstance(outputs, list):
-        items = outputs[0].get("content") or []
-        return "".join(item.get("text", "") for item in items if item.get("type") == "text")
+        content = outputs[0].get("content") or ""
+        if isinstance(content, str):
+            return content
+        return "".join(item.get("text", "") for item in content if item.get("type") == "text")
     return ""
 
 
@@ -161,7 +163,7 @@ def _process_agent(agent_dir: Path, agent: str) -> dict:
 
     return {
         "agent": agent,
-        "run": 1,
+        "run": -1,  # caller sets run number
         "arm": "optimized",
         "model": model,
         "classification": final_classification,
@@ -271,6 +273,7 @@ def consolidate(phase_b0_dir: Path, run_number: int = 1) -> None:
 
         log.info("Processing %s ...", agent)
         rec = _process_agent(agent_dir, agent)
+        rec["run"] = run_number  # stamp actual run number
         narrative = rec.pop("_narrative", "")
         final_turn_base = rec.pop("_final_turn_base", None)
 
@@ -305,9 +308,17 @@ def consolidate(phase_b0_dir: Path, run_number: int = 1) -> None:
         shutil.move(str(src), str(probes_dir / src.name))
         log.info("Moved %s → probes/", src.name)
 
-    # Write summary.json and README.md
-    (phase_b0_dir / "summary.json").write_text(json.dumps(records, indent=2), encoding="utf-8")
-    _write_readme(phase_b0_dir, records, run_date, probes_dir)
+    # Accumulate summary.json: load existing, replace entries for this run, append new
+    summary_path = phase_b0_dir / "summary.json"
+    if summary_path.exists():
+        existing = _load_json(summary_path) or []
+        kept = [r for r in existing if r.get("run") != run_number]
+    else:
+        kept = []
+    all_records = kept + records
+    all_records.sort(key=lambda r: (r.get("run", 0), r.get("agent", "")))
+    summary_path.write_text(json.dumps(all_records, indent=2), encoding="utf-8")
+    _write_readme(phase_b0_dir, all_records, run_date, probes_dir)
 
     log.info("Consolidation complete. Output: %s", phase_b0_dir)
 
