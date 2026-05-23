@@ -1,0 +1,294 @@
+{
+  "run_id": "255ef71b9b24",
+  "timestamp": "2026-05-23T08:12:23.908595Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 4000,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "Status: remaining 45.8K of 50K tokens, $2.74 of $3.00. Wall-clock elapsed 87.2s. Verify on this turn.\n\nThank you for the inventory. Please now verify and polish it in ONE focused pass, prioritising: (",
+      "conversation_id": "conv_019e53e2060373faad4fdd12c6e48a1c",
+      "agent_id": "ag_019e53e20578708cb2ffff18b71ab666"
+    }
+  },
+  "resource_use": {
+    "wall_s": 72.547,
+    "cost_usd": 0.032916,
+    "tokens_in": 53832,
+    "tokens_out": 4000,
+    "cost_breakdown": {
+      "input": 0.026916,
+      "output": 0.006
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The plant was reported to be <strong>2 x 600 MW</strong>, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The plant was reported to be <strong>2 x 600 MW, with an estimated capital cost of US$1.2 billion</strong>.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+      "snippet": "<strong>Vung Ang II Thermal Power (VAPCO), the project investor in the 1.32 GW Vung Ang II coal-fired power plant in Ky Loi (Vietnam),</strong> has officially inaugurated the project (VietnamNet, 20/04/2026).",
+      "supports_claim": null,
+      "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The plant was reported to be <strong>2 x 600 MW, with an estimated capital cost of US$1.2 billion</strong>.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "<strong>Unit 1 was slated for commercial operation in May 2026, and Unit 2 was slated for commercial operation in October 2026</strong>.[42] In December 2025, a contract was awarded for the supply of imported coal for the trial run of Quảng Trạch-1.[43] ...",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://en.vietnamplus.vn/vietnam-prepares-contingency-plans-for-2026-dry-season-power-shortages-post342540.vnp",
+      "snippet": "The group has established a steering ... to develop flexible operating scenarios aimed at ensuring energy security. <strong>Vung Ang 2 Thermal Power Plant</strong> serves as a new driving force for Vietnam’s national energy security...",
+      "supports_claim": null,
+      "title": "Vietnam rolls out contingency plans to avert 2026 dry-season power shortages | Vietnam+ (VietnamPlus)"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "<strong>Unit 1 was slated for commercial operation in May 2026, and Unit 2 was slated for commercial operation in October 2026</strong>.[42] In December 2025, a contract was awarded for the supply of imported coal for the trial run of Quảng Trạch-1.[43] ...",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://theinvestor.vn/central-vietnam-17-bln-thermal-power-plant-to-begin-operations-in-2026-d6240.html",
+      "snippet": "“Provincial authorities will always stand by the investor to complete the project on schedule,” he said. The <strong>Quang Trach I thermal power plant</strong> project covers about 48.6 hectares in Vinh Son village, Quang Dong commune, Quang Trach district.",
+      "supports_claim": null,
+      "title": "Central Vietnam $1.7 bln thermal power plant to begin operations in 2026"
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "TKV stated that the period would not be extended any further, as <strong>target commercial operation remained 2026</strong>.[24] On September 22, 2023, it was reported that three contractors had submitted bids for the EPC package.",
+      "supports_claim": null,
+      "title": "Na Duong power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "In April 2024, the Lang Son Provincial People&#x27;s Committee approved TKV Electricity Corporation and the investment policy of <strong>Na Dương-2.</strong> The project reportedly had a total capital investment of 4.09 billion VND.",
+      "supports_claim": null,
+      "title": "Na Duong power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+      "snippet": "In a visit to the area in March ... that the plant would be commissioned by 2025.[31] In June 2019 the completion date for <strong>Sông Hậu-2</strong> was listed as 2024 in the Ministry Of Industry And Trade&#x27;s report on the implementation ...",
+      "supports_claim": null,
+      "title": "Song Hau Thermal Power Plant - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+      "snippet": "Investment planning would be ongoing through December 2023, and <strong>construction was slated to take place between July 2025 and December 2026</strong>. The industrial park would be adjacent to Sông Hậu-2 Thermal Power Plant.[72] According to PDP7, released ...",
+      "supports_claim": null,
+      "title": "Song Hau Thermal Power Plant - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+      "snippet": "In a visit to the area in March ... that the plant would be commissioned by 2025.[31] In June 2019 the completion date for <strong>Sông Hậu-2</strong> was listed as 2024 in the Ministry Of Industry And Trade&#x27;s report on the implementation ...",
+      "supports_claim": null,
+      "title": "Song Hau Thermal Power Plant - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+      "snippet": "Investment planning would be ongoing through December 2023, and <strong>construction was slated to take place between July 2025 and December 2026</strong>. The industrial park would be adjacent to Sông Hậu-2 Thermal Power Plant.[72] According to PDP7, released ...",
+      "supports_claim": null,
+      "title": "Song Hau Thermal Power Plant - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+      "snippet": "↑ BOT Contract Signed for <strong>Vinh Tan 1 Thermoelectric Plant</strong>, talkvietnam, Dec. 27, 2012. ↑ Signing BOT Contract for Vinh Tan 1 Thermal Power Plant, Vietnam Ministry of Industry &amp; Trade press release, Dec.",
+      "supports_claim": null,
+      "title": "Vinh Tan power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "Thermal capacity accounted for 50.5% of total power plant installations globally in 2023, according to GlobalData, with <strong>total recorded thermal capacity of 4,608GW</strong>. This is expected to contribute 35.2% by the end of 2030 with capacity of ...",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in operation in Vietnam"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "Thermal capacity accounted for 50.5% of total power plant installations globally in 2023, according to GlobalData, with <strong>total recorded thermal capacity of 4,608GW</strong>. This is expected to contribute 35.2% by the end of 2030 with capacity of ...",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in operation in Vietnam"
+    },
+    {
+      "url": "https://www.gem.wiki/Thai_Binh_Power_Center",
+      "snippet": "↑ Thai Binh 2 Thermal Power Plant has been made the Cooling Pipe System by Vietnam, Vietnam Energy, 27 May 2015. ↑ Nhà máy Nhiệt điện Thái Bình 2 thành công lắp đặt bao hơi Tổ máy số 2, Vietnam Ministry of Industry &amp; Trade website, 19 May 2015.",
+      "supports_claim": null,
+      "title": "Thai Binh Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Nam_Dinh_power_station",
+      "snippet": "In June 2019, the completion date ... Steering Committee on power development stated that <strong>Unit 1 was scheduled to be commissioned in Q1 2025 and Unit 2 in Q3 2025</strong>.[19] In October 2020, at a conference on land acquisition, ...",
+      "supports_claim": null,
+      "title": "Nam Dinh power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-epc-market",
+      "snippet": "August 2025: In the Mekong Delta city of Can Tho, state-run Petrovietnam has commenced construction on its <strong>O Mon IV thermal power plant</strong>, a project valued at VND27.7 trillion (USD 1.05 billion).",
+      "supports_claim": null,
+      "title": "Vietnam Power EPC Market Size & Share 2026 - 2031"
+    },
+    {
+      "url": "https://vietnamnews.vn/economy/1719118/viet-nam-kicks-off-construction-of-key-thermal-power-plant.html",
+      "snippet": "<strong>Ô Môn 4 Thermal Power Plant</strong> will bring Petrovietnam’s total installed capacity to over 9,3000 MW, accounting for around 10 per cent of the country’s total power capacity.",
+      "supports_claim": null,
+      "title": "Việt Nam kicks off construction of key thermal power plant"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-epc-market",
+      "snippet": "August 2025: In the Mekong Delta city of Can Tho, state-run Petrovietnam has commenced construction on its <strong>O Mon IV thermal power plant</strong>, a project valued at VND27.7 trillion (USD 1.05 billion).",
+      "supports_claim": null,
+      "title": "Vietnam Power EPC Market Size & Share 2026 - 2031"
+    },
+    {
+      "url": "https://www.offshore-energy.biz/pm-wants-vietnams-first-lng-power-plants-online-by-june-as-delays-loom/",
+      "snippet": "Additionally, the <strong>Block BO Mon and Hiep Phuoc 1</strong> combined cycle power plants, with a combined capacity of 6,634 megawatts (MW), are considered the only other projects that could become commercially operational before 2030.",
+      "supports_claim": null,
+      "title": "PM wants Vietnam’s first LNG power plants online by June as delays loom - Offshore Energy"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-market",
+      "snippet": "Equipment localization reduces lead times: CS Wind’s Long An plant will supply regional tower demand, while Siemens Energy and GE bid to localize turbine assembly to meet PDP-8 local-content targets. The storage space is nascent but strategic; T&amp;T aims to command a 40–50% national share with 2 GWh of annual battery output by 2026, competing with Chinese and Korean suppliers.",
+      "supports_claim": null,
+      "title": "Vietnam Power Market Size & Share | Industry Trends & Forecast 2030"
+    },
+    {
+      "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+      "snippet": "In January 2026, the fate of the <strong>Vĩnh Tân-3 project was not yet clear</strong>. The Ministry of Industry and Trade was reportedly continuing to evaluate whether the power station would be developed as planned.[52] In December 2013, Electricity of Vietnam ...",
+      "supports_claim": null,
+      "title": "Vinh Tan power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "In 2007, the Vung Ang II Thermal Power Joint Stock Company (VAPCO) was established to build and operate the power plant, a joint venture between OneEnergy Ltd and the Hanoi based Refrigeration Electrical Engineering Co. (REE). OneEnergy Lts is a 50:50 venture between the Hong Kong based CLP and the Tokyo based Mitsubishi Corp. The plant was reported to be 2 x 600 MW, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, including the most recent and detailed, have listed the capacity as 2 x 600 MW.[23]The plant&#x27;s owners expected to begin construction in March 2015; however, this didn&#x27;t happen.[24]",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-5-thermal-power-plants-in-development-in-vietnam/",
+      "snippet": "... The <strong>4,500MW Long Son Electricity Centre Power Plant</strong> is located in Ba Ria-Vung Tau, Vietnam. It is owned by Power Engineering Consulting 2; Mitsubishi; Thanh Thanh Cong Industrial Zone; Pacific; General Electric International; Evngenco 3.",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in development in Vietnam"
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-5-thermal-power-plants-in-development-in-vietnam/",
+      "snippet": "Listed below are the five largest upcoming thermal power plants by capacity in Vietnam, according to GlobalData’s power plants database. GlobalData uses proprietary data and analytics to provide a complete picture of the global thermal power segment.",
+      "supports_claim": null,
+      "title": "Top five thermal power plants in development in Vietnam"
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included <strong>Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong-1, Vũng Áng-2, Hai Duong Thermal Power Plant, and Duyên Hải-2.</strong>[68] The ministry ...",
+      "supports_claim": null,
+      "title": "Vung Ang power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Tri_power_station",
+      "snippet": "In September 2025, Quang Tri Provincial People&#x27;s Committee was assigned to &quot;analyze and clarify urgent requirements for project investment&quot;. EVNGENCO 1 stated that, if selected for the project, <strong>construction could begin in the second half of 2026</strong>.",
+      "supports_claim": null,
+      "title": "Quang Tri power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.powermag.com/first-of-several-lng-fueled-power-plants-comes-online-in-vietnam/",
+      "snippet": "<strong>Thai Binh LNG Power</strong>, a joint venture among Japan’s Tokyo Gas, Kyuden International Corp., and Vietnam’s Truong Thanh Vietnam Group, has said that its $2 billion LNG Thai Binh power plant project in Vietnam’s Thai Binh province should complete ...",
+      "supports_claim": null,
+      "title": "First of Several LNG-Fueled Power Plants Comes Online in Vietnam"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>LNG Cong Thanh</strong> with a capacity of 1500 MW. This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system (based on the Letter No. 5473/VPCP-CN dated 31 July 2024 of the Government Office addressing ...",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.lexology.com/library/detail.aspx?g=584af23a-2a9b-42dd-9b50-5ed66ef74cd1",
+      "snippet": "Quang Tri province has approved a US$1.59 billion LNG-fired power scheme by Vietnam Electricity (EVN) to boost local energy capacity. The <strong>Quang Trach III</strong> LNG-fired power plant, with a planned capacity of 1,500MW, will cost about VND41.83 trillion ...",
+      "supports_claim": null,
+      "title": "Vietnam Infrastructure Spotlight January 2026 - Lexology"
+    },
+    {
+      "url": "https://www.freshfields.com/en/our-thinking/briefings/2026/01/vietnam-infrastructure-spotlight-january-2026",
+      "snippet": "Green light. Quang Tri province has approved a US$1.59 billion LNG-fired power scheme by Vietnam Electricity (EVN) to boost local energy capacity. The <strong>Quang Trach III</strong> LNG-fired power plant, with a planned capacity of 1,500MW, will cost about VND41.83 trillion (US$1.59 billion).",
+      "supports_claim": null,
+      "title": "Vietnam Infrastructure Spotlight January 2026 | Freshfields"
+    },
+    {
+      "url": "https://www.lexology.com/library/detail.aspx?g=584af23a-2a9b-42dd-9b50-5ed66ef74cd1",
+      "snippet": "Quang Tri province has approved a US$1.59 billion LNG-fired power scheme by Vietnam Electricity (EVN) to boost local energy capacity. The <strong>Quang Trach III</strong> LNG-fired power plant, with a planned capacity of 1,500MW, will cost about VND41.83 trillion ...",
+      "supports_claim": null,
+      "title": "Vietnam Infrastructure Spotlight January 2026 - Lexology"
+    }
+  ],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}
