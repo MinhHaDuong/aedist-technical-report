@@ -1,0 +1,11 @@
+{
+  "agent": "openai",
+  "run": 4,
+  "model": "gpt-5.5",
+  "classification": "report",
+  "tokens_out": 14411,
+  "wall_s": 189.51,
+  "cost_usd": 0.2604,
+  "classifier_cost_usd": 0.000134,
+  "narrative_chars": 49295
+}

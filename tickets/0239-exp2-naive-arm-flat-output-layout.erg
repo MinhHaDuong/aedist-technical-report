@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Emit flat run artifacts directly in exp2 naive arm
+Created: 2026-05-23
+Author: copilot
+
+--- log ---
+2026-05-23T07:35Z copilot created — output cleanup showed producer currently emits one-file run subdirectories and requires post-run flattening
+
+--- body ---
+
+## Context
+
+The Exp2 naive arm producer (`experiments/sota/exp2_naive_arm.py`) currently
+writes each production run's raw payload into a per-run subdirectory
+(e.g., `.../mistral_run01/mistral_probe.raw.json`) while metadata and narrative
+are written at top level (`mistral_run01.json`, `mistral_run01.md`). This yields
+an awkward 2-files-plus-1-file-directory shape per run and requires manual
+post-run restructuring.
+
+There is currently no Makefile target orchestrating this arm with a cleanup
+step, so layout consistency depends on manual file moves.
+
+## Actions
+
+1. Update `experiments/sota/exp2_naive_arm.py` so production runs write a flat
+   3-file set directly at top level:
+   - `<agent>_runNN.json`
+   - `<agent>_runNN.md`
+   - `<agent>_runNN.raw.json`
+
+2. Preserve probe behavior as explicit probe snapshots, but keep naming
+   unambiguous (current vs legacy/provenance).
+
+3. If this arm gets Makefile orchestration, add a dedicated target with
+documented output paths and no post-hoc restructuring requirement.
+
+4. Update docs/comments in the script and output README language so emitted
+   artifact contracts match actual behavior.
+
+## First test
+
+Add a unit/integration test that runs the naive-arm writer in a temp output
+directory with mocked providers and asserts that, for `n>1`, no `*_runNN/`
+subdirectories are created and `*_runNN.raw.json` files exist at top level.
+
+## Exit criteria
+
+- [ ] Producer emits flat 3-file production artifacts directly
+- [ ] No one-file run subdirectories are created for production runs
+- [ ] Probe outputs remain preserved and clearly named
+- [ ] Tests enforce flat output contract for future changes
+- [ ] Any orchestration docs/targets reflect the final artifact layout
+
+## Out of scope
+
+- Re-running Exp2 naive-arm experiments solely to rewrite historical outputs
+- Changing scientific metrics or classifier behavior
