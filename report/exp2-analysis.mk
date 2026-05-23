@@ -10,6 +10,7 @@ OPTIMISED_DIR := experiments/outputs/sota_exp2_brerun1
 NAIVE_JSONS    := $(wildcard $(NAIVE_DIR)/*.json)
 OPTIMISED_JSONS := $(wildcard $(OPTIMISED_DIR)/*.json)
 NAIVE_MDS      := $(wildcard $(NAIVE_DIR)/*.md)
+OPTIMISED_MDS  := $(wildcard $(OPTIMISED_DIR)/*.md)
 PROBE_RAWS     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.raw.json)
 PROBE_CLSF     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.classification.json)
 
@@ -46,6 +47,23 @@ $(GEN)/fig_exp2_turn_trajectory.pdf: $(PROBE_RAWS) $(PROBE_CLSF)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_turn_trajectory \
 	    --probes-dir $(OPTIMISED_DIR)/probes \
+	    --output $@
+
+# --- Bibliography quality CSV (reads markdown outputs) ----------------------
+
+$(GEN)/tab_exp2_bib_quality.csv: $(NAIVE_MDS) $(OPTIMISED_MDS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.extract_exp2_bib \
+	    --naive-dir $(NAIVE_DIR) \
+	    --optimised-dir $(OPTIMISED_DIR) \
+	    --output $@
+
+# --- Bibliography quality LaTeX table (reads from CSV) ----------------------
+
+$(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_bib_quality \
+	    --input $< \
 	    --output $@
 
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
@@ -116,4 +134,6 @@ exp2-analysis-report: \
 	$(GEN)/tab_exp2_arms.tex \
 	$(GEN)/fig_exp2_arms_comparison.pdf \
 	$(GEN)/fig_exp2_turn_trajectory.pdf \
+	$(GEN)/tab_exp2_bib_quality.csv \
+	$(GEN)/tab_exp2_bib_quality.tex \
 	$(EXP2_OUTLINE_ARTIFACTS)
