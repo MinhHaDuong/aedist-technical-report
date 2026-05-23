@@ -1,3 +1,4 @@
+# WEAK CLASSIFIER -- DO NOT USE
 # SOTA Exp2 Optimized Arm — Phase B Full Batch (N=5)
 
 ## What This Folder Is
