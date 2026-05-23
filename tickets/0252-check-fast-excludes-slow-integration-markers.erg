@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Fix make check-fast to exclude slow/integration markers
+Created: 2026-05-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-23T18:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`make check-fast` is defined as `test lint` with no marker filtering.
+1467 tests are collected, including `@pytest.mark.integration` (subprocess/sleep)
+and `@pytest.mark.slow` (network/real-data) tests.
+The project rule requires check-fast to complete in < 30 s, but the suite
+times out at 60 s in the healthcheck probe and likely takes much longer.
+
+## Root cause
+
+`Makefile` `check-fast` target runs bare `uv run pytest` (via `test`),
+which collects all 1467 tests. The markers are registered in `pyproject.toml`
+but not applied as excludes in the fast target.
+
+## Exit criteria
+
+- [ ] `make check-fast` runs in < 30 s on a warm machine
+- [ ] `make check-fast` excludes `integration` and `slow` markers
+- [ ] `make check` continues to run the full suite (no change)
+- [ ] `make check-fast` passes in CI (ticket/STATE-only diffs bypass CI, so verify locally)
+
+## Proposed fix
+
+In `Makefile`, split the `test` target or add a `test-fast` target:
+
+```makefile
+test-fast:
+	uv run pytest -m "not integration and not slow"
+
+test:
+	uv run pytest
+
+check-fast: test-fast lint
+
+check: test lint
+```
