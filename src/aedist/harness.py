@@ -144,6 +144,15 @@ def load_experiments(path: str) -> dict:
 # are the locked Experiment 1 baseline (ticket 0175).
 ALWAYS_MODULES = ("2_goal", "5_table")
 
+EVIDENCE_PACK_HEADER_FIELDS = (
+    "source_id",
+    "file",
+    "document_title",
+    "section_title",
+    "source_type",
+    "relevance",
+)
+
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     """Assemble a prompt from the always-pair plus named optional modules.
@@ -167,6 +176,68 @@ def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
         )
     sections = [(modules_dir / f"{name}.txt").read_text().strip() for name in sorted(requested)]
     return "\n\n".join(sections)
+
+
+def load_evidence_pack_manifest(manifest_path: Path) -> dict:
+    """Load and validate an evidence-pack manifest YAML file."""
+    data = yaml.safe_load(manifest_path.read_text())
+    if not isinstance(data, dict):
+        raise ValueError(f"Invalid manifest at {manifest_path}: expected mapping root")
+    items = data.get("items")
+    if not isinstance(items, list) or not items:
+        raise ValueError(f"Invalid manifest at {manifest_path}: expected non-empty items list")
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"Invalid manifest at {manifest_path}: item #{index} must be a mapping"
+            )
+        missing = [field for field in ("source_id", "file") if not item.get(field)]
+        if missing:
+            raise ValueError(
+                f"Invalid manifest at {manifest_path}: item #{index} missing {missing}"
+            )
+    return data
+
+
+def _resolve_manifest_source_root(manifest_path: Path, source_root: str) -> Path:
+    """Resolve source_root relative to project root for deterministic pack assembly."""
+    source_root_path = Path(source_root)
+    if source_root_path.is_absolute():
+        return source_root_path
+    # Manifest lives at experiments/evidence_packs/*.yaml; parents[2] is repo root.
+    return manifest_path.resolve().parents[2] / source_root_path
+
+
+def assemble_evidence_pack(manifest_path: Path) -> str:
+    """Render the evidence pack deterministically from manifest metadata and source files.
+
+    Determinism contract:
+    - preserve manifest order
+    - same header fields for every source block
+    - source text embedded verbatim
+    """
+    manifest = load_evidence_pack_manifest(manifest_path)
+    source_root = manifest.get("source_root")
+    if not isinstance(source_root, str) or not source_root.strip():
+        raise ValueError(f"Invalid manifest at {manifest_path}: missing source_root")
+    corpus_root = _resolve_manifest_source_root(manifest_path, source_root)
+
+    blocks: list[str] = []
+    for item in manifest["items"]:
+        source_path = corpus_root / str(item["file"])
+        if not source_path.exists():
+            raise FileNotFoundError(f"Evidence-pack source file not found: {source_path}")
+
+        block_lines = ["## Source Block"]
+        block_lines.extend(
+            [f"{field}: {item.get(field, '')}" for field in EVIDENCE_PACK_HEADER_FIELDS]
+        )
+        block_lines.append("<<<SOURCE_TEXT>>>")
+        block_lines.append(source_path.read_text())
+        block_lines.append("<<<END_SOURCE_TEXT>>>")
+        blocks.append("\n".join(block_lines))
+
+    return "\n\n".join(blocks)
 
 
 def build_messages(user_text: str, system_instruction: str | None) -> list[dict]:
@@ -428,7 +499,10 @@ def query_claude_cli(
     wall_seconds = round(time.monotonic() - t0, 3)
 
     if proc.returncode != 0:
-        raise RuntimeError(f"claude CLI exited {proc.returncode}: {proc.stderr[:500]}")
+        stderr_preview = (proc.stderr or "").strip()[:500]
+        stdout_preview = (proc.stdout or "").strip()[:500]
+        details = stderr_preview or stdout_preview or "no output"
+        raise RuntimeError(f"claude CLI exited {proc.returncode}: {details}")
 
     data = json.loads(proc.stdout)
     if data.get("is_error"):
