@@ -1,0 +1,17 @@
+{
+  "agent": "anthropic",
+  "run": 3,
+  "arm": "optimized",
+  "model": "claude-opus-4-6",
+  "classification": "report",
+  "turns": 3,
+  "class_trace": "no_report\u2192report\u2192report",
+  "inventory_rows": 135,
+  "phase_a_cost_usd": 0.08845,
+  "phase_b_cost_usd": 1.954965,
+  "total_cost_usd": 2.043415,
+  "classifier_cost_usd": 0.007457,
+  "wall_s": 657.9,
+  "tokens_out": 15655,
+  "narrative_chars": 26691
+}
