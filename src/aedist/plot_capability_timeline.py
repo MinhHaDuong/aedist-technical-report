@@ -2,14 +2,14 @@
 
 For each lab in Experiment 1's panel (Anthropic, OpenAI, Mistral, Alibaba,
 DeepSeek), place a marker at the date the lab first shipped each of the
-eight capability stages as a consumer-facing product surface. Rows are
-stages (1 chat LLM → 8 multi-agent); markers are coloured by lab.
+eight capability features as a consumer-facing product surface. Rows are
+features (1 chat LLM → 8 multi-agent); markers are coloured by lab.
 
 The figure is descriptive: it visualises the *industry envelope* — the
 outer surface of commercially attainable capability — pushing outward.
 It does not claim that any lab is "ahead" or that the order is forced.
 
-Data source: ``data/capability_timeline.csv`` (one row per (lab, stage)
+Data source: ``data/capability_timeline.csv`` (one row per (lab, feature)
 cell). Cells with an empty ``date`` field render as a "TBD" annotation
 at the right margin of the row, so honest gaps stay visible.
 
@@ -55,7 +55,7 @@ LAB_MARKER = {
     "DeepSeek": "v",
 }
 
-STAGE_LABELS = {
+FEATURE_LABELS = {
     1: "1. Chat LLM",
     2: "2. Retrieval / file upload",
     3: "3. Browsing / web search",
@@ -94,7 +94,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
     fig, ax = plt.subplots(figsize=(9, 5.2))
 
     # One y position per stage; stage 1 at the top.
-    stages_sorted = sorted(STAGE_LABELS)
+    stages_sorted = sorted(FEATURE_LABELS)
     y_for_stage = {s: len(stages_sorted) - i for i, s in enumerate(stages_sorted)}
 
     for stage in stages_sorted:
@@ -134,7 +134,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
         )
 
     ax.set_yticks([y_for_stage[s] for s in stages_sorted])
-    ax.set_yticklabels([STAGE_LABELS[s] for s in stages_sorted])
+    ax.set_yticklabels([FEATURE_LABELS[s] for s in stages_sorted])
     ax.set_ylim(0.5, len(stages_sorted) + 0.5)
 
     ax.set_xlim(date(2022, 9, 1), date(2026, 1, 1))
