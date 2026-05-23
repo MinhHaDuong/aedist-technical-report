@@ -561,6 +561,78 @@ def test_state_machine_three_no_reports_then_terminal(monkeypatch, tmp_path):
             assert (tmp_path / f"mistral_turn_{turn:02d}{suffix}").exists()
 
 
+def test_conversation_json_persisted_after_run(monkeypatch, tmp_path):
+    """run_phase_b_multiturn must write {agent}_conversation.json with the full exchange.
+
+    Covers the showstopper gap for stateful APIs (Mistral, OpenAI): unlike
+    Anthropic/Qwen which resend the full history every call, stateful providers
+    only carry agent_id/conversation_id in their continuation — the conversation
+    is server-side only.  The client-side conversation_history ensures the
+    complete dialogue is persisted locally regardless of provider.
+    """
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.10)
+    fake_classify = _fake_classifier_factory(["no_report", "report", "no_report"])
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    run_phase_b_multiturn(
+        "the designed prompt",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        cap_tokens=100_000,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+        system_prompt="you are an analyst",
+    )
+
+    conv_path = tmp_path / "mistral_conversation.json"
+    assert conv_path.exists(), "mistral_conversation.json must be written"
+    conv = json.loads(conv_path.read_text())
+    messages = conv["messages"]
+    # System prompt is first.
+    assert messages[0] == {"role": "system", "content": "you are an analyst"}
+    # Alternating user / assistant pairs follow.
+    roles = [m["role"] for m in messages[1:]]
+    assert roles == ["user", "assistant"] * ((len(messages) - 1) // 2), (
+        f"expected alternating user/assistant, got {roles}"
+    )
+    # Turn-1 user message is the designed prompt.
+    assert messages[1]["content"] == "the designed prompt"
+    # Every assistant message is non-empty.
+    for m in messages:
+        if m["role"] == "assistant":
+            assert m["content"], "assistant message must be non-empty"
+
+
+def test_conversation_json_written_without_system_prompt(monkeypatch, tmp_path):
+    """conversation.json is correct when no system_prompt is passed."""
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    fake_run = _fake_run_factory(cost_per_call=0.10)
+    fake_classify = _fake_classifier_factory(["report", "no_report"])
+    monkeypatch.setitem(mod.CALL_FNS, "mistral", fake_run)
+    monkeypatch.setattr(mod.dialogue_classifier, "classify_report", fake_classify)
+
+    run_phase_b_multiturn(
+        "user prompt only",
+        output_dir=tmp_path,
+        cap_usd=10.0,
+        cap_tokens=100_000,
+        initial_spent_usd=0.0,
+        max_tokens=100,
+        agent="mistral",
+    )
+
+    conv = json.loads((tmp_path / "mistral_conversation.json").read_text())
+    messages = conv["messages"]
+    # No system prompt — first message is the user turn.
+    assert messages[0]["role"] == "user"
+    assert messages[0]["content"] == "user prompt only"
+
+
 def test_state_machine_token_cap_overrides(monkeypatch, tmp_path):
     """Token cap below 20 % → TERMINAL on next turn regardless of class.
 
