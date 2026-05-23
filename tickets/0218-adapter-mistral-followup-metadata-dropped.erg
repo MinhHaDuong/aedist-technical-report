@@ -2,11 +2,13 @@
 Title: adapter_mistral follow-up turn likely drops `extra_metadata` silently
 Created: 2026-05-21
 Author: claude
+Closed: substantially resolved: 422 (not silent-drop) confirmed; caller-guard landed (exp2_interactive_smoke.py:999-1000 sets extra_metadata=None on follow-ups); OpenAI/Anthropic/Qwen continuation audited; policy in exp2_protocol_spec.md:75. Residual adapter self-guard tracked in 0247.
 
 --- log ---
 2026-05-21T16:45Z claude created — known limitation flagged by 0211 raid agent in PR #398
 2026-05-21T16:50Z claude note empirical resolution: HTTP 422 (NOT silent drop). Re-smoke after PR #398 sent extra_metadata on the follow-up; Mistral 422'd the body. Harness-side workaround landed in the same commit (skip extra_metadata on follow-up turns); ticket scope unchanged (the adapter still attaches metadata defensively — it should learn to skip on follow-ups too).
 
+2026-05-23T13:51Z HDMX-coding-agent closed — substantially resolved: 422 (not silent-drop) confirmed; caller-guard landed (exp2_interactive_smoke.py:999-1000 sets extra_metadata=None on follow-ups); OpenAI/Anthropic/Qwen continuation audited; policy in exp2_protocol_spec.md:75. Residual adapter self-guard tracked in 0247.
 --- body ---
 
 ## Context
