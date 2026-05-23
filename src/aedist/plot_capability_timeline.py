@@ -57,9 +57,9 @@ LAB_MARKER = {
 
 FEATURE_LABELS = {
     1: "1. Chat LLM",
-    2: "2. Retrieval / file upload",
-    3: "3. Browsing / web search",
-    4: "4. Code execution",
+    2: "2. Browsing / web search",
+    3: "3. Code execution",
+    4: "4. Retrieval / file upload",
     5: "5. Reasoning",
     6: "6. External tool use (MCP-like)",
     7: "7. Deep research",

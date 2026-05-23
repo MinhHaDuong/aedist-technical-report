@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 
 FEATURE_LABELS = {
     1: "1. Chat LLM",
-    2: "2. Retrieval",
-    3: "3. Browsing",
-    4: "4. Code exec.",
+    2: "2. Browsing",
+    3: "3. Code exec.",
+    4: "4. Retrieval",
     5: "5. Reasoning",
     6: "6. Tool use",
     7: "7. Deep research",
