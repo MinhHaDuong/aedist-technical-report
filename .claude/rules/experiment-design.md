@@ -24,10 +24,10 @@ When N reps are already pinned to the same value of a parameter (e.g. temperatur
 
 **Why:** `measurements.jsonl` is only trustworthy as a source of truth if the metrics dict contains everything needed to diagnose confounds without re-reading raw JSON.
 
-**How to apply:** When adding new run parameters, wire them into `records_to_metrics()` in the same PR that adds them to `RunRecord`. Never define the metrics dict by what the paper currently shows. Bookkeeping-only fields excluded: `run_id`, `timestamp`, `result_file`, `validation`.
+**How to apply:** When adding new run parameters, wire them into `records_to_metrics()` in the same merge request that adds them to `RunRecord`. Never define the metrics dict by what the paper currently shows. Bookkeeping-only fields excluded: `run_id`, `timestamp`, `result_file`, `validation`.
 
 ## MoE models require repeat=3
 
 MoE models (DeepSeek V3.2, deepseek-v3, any 671B MoE) are non-deterministic even with `seed=42` and provider pinning. Completion token counts vary wildly across identical calls (e.g. 2308/3237/5443). Root cause: MoE tensor parallelism. `repeat=3` is mandatory for all cloud MoE sweeps. Do not reduce to `repeat=1` based on seed+provider pinning alone.
 
-**Why:** Confirmed during PR #278 (2026-04-22): 3 identical calls same prompt/model/seed/provider all produced different output lengths. Seed+provider pinning controls OpenRouter routing but not MoE kernel non-determinism.
+**Why:** Confirmed during merge request #278 (2026-04-22): 3 identical calls same prompt/model/seed/provider all produced different output lengths. Seed+provider pinning controls OpenRouter routing but not MoE kernel non-determinism.

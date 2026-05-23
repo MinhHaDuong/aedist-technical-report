@@ -6,12 +6,9 @@
 
 | Location | Purpose |
 |----------|---------|
-| `hooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
-| `tickets/` | Local `.erg` tickets (committed, travel with repo) |
-| `tickets/tools/go/` | Validator source; build with `go build -o erg .` |
-| `.claude/rules/` | Project rules (incl. `tickets.md` from git-erg) |
-| `.claude/skills/` | Project skills (ticket-* from git-erg) |
-| `.claude/hooks/` | Project-specific hooks |
+| `tickets/` | Local `.erg` tickets (instructions: `tickets/AGENTS.md`) |
+| `tickets/erg` | Tickets management binary. |
+| `.claude/rules/` | Project rules (TODO: replace with scoped hooks) |
 | `.claude/settings.json` | Project permissions and hooks |
 
 ## Imperial Dragon workflow
@@ -39,21 +36,21 @@ Deliverable: a ticket ready to execute. No production code commit, change only t
 
 Explore alternatives, design strategies, and prototype approaches using throwaway code, worktree isolated.
 
-Consider interaction with other tickets and PR.
+Consider interaction with other tickets and merge requests.
 
 ### Execute
 
-Goal: deliver a PR to close one ticket.
+Goal: deliver a merge request to close one ticket.
 
 Environment: fresh context in a worktree, the ticket is the only input. Worktree mandatory: never touch files on main.
 
-Method: Autonomous execution using test-driven development. Use `make check-fast` during development, `make check` before PR.
+Method: Autonomous execution using test-driven development. Use `make check-fast` during development, `make check` before merge request.
 
-Constraint: Maintain the Makefile DAG, prerequisites and targets must match each script's actual file reads and writes. Doc propagation belongs to the PR.
+Constraint: Maintain the Makefile DAG, prerequisites and targets must match each script's actual file reads and writes. Doc propagation belongs to the merge request.
 
 ### Verify
 
-Review each PR before merging:
+Review each merge request before merging:
 
 1. **Review**: Route between `/review` (stock), `/review-pr` or `/review-pr-prose` (IDH).
 2. **Fix**: Fix all issues. Nits: fix them. Push back against "No need to fix now" mindset. Non-fixed open tickets for oversized deferred work.
@@ -64,19 +61,9 @@ Review each PR before merging:
 
 Cleanup worktrees and branches, summarize what was accomplished, reflect on lessons, consolidate memory, dream forward.
 
-## Skills (slash commands)
+## Skills
 
-### [git-erg](https://github.com/MinhHaDuong/git-erg) (travels with repo — always available)
-
-| Skill | When | Purpose |
-|-------|------|---------|
-| `/ticket-new [title]` | Creating a local ticket | Write `%erg v1` file with next ID, commit |
-| `/ticket-ready` | Choosing what to work on | List unblocked, unclaimed tickets |
-| `/ticket-claim NNNN` | Starting work on a ticket | Write `.wip` claim, set `Status: doing`, commit |
-| `/ticket-close NNNN` | Completing work | Set `Status: closed`, release `.wip`, commit |
-| `/ticket-release NNNN` | Abandoning work | Restore `Status: open`, release `.wip`, commit |
-
-### [Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness) (user-level — may not be available)
+### [Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness)
 
 | Skill | When | Purpose |
 |-------|------|---------|
@@ -84,8 +71,8 @@ Cleanup worktrees and branches, summarize what was accomplished, reflect on less
 | `/celebrate` | After completing a ticket | Reflect, update STATE, clean up |
 | `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
 | `/new-ticket` | Creating a GitHub issue | Write handoff document with test spec |
-| `/review-pr N` | Reviewing a pull request (code) | Multi-perspective agent review |
-| `/review-pr-prose N` | Reviewing a pull request (prose) | Simulated peer review panel |
+| `/review-pr N` | Reviewing a merge request (code) | Multi-perspective agent review |
+| `/review-pr-prose N` | Reviewing a merge request (prose) | Simulated peer review panel |
 | `/memory` | Writing or sweeping persistent memory | Enforce caps, TTLs, staleness |
 | `/autonomous` | Unsupervised autonomous session | Imperial Dragon cycles with 60/40 balance |
 | `/submission-branch` | Creating a submission branch | Sprout, freeze, revision lifecycle |
@@ -94,24 +81,11 @@ Cleanup worktrees and branches, summarize what was accomplished, reflect on less
 
 ## Autonomous workflow (details in /orchestrator skill)
 
-Orchestrator reviews the tickets DAG and organize work in waves. It assembles teams of agents (isolation:worktree) working in imperial dragon order. It provisions the agents with context and brief, and supervises their work to break hangs or loops.
-Team Imagine: each ticket gets reviewed and challenged. Why now, why this scope, should we do something else better...
-Team Planning.
-Team Verification: independently review the plans and annotate for prerequisites, assumptions, feasibility in environment.
-Team Execute delivers the PR.
-Team Verify fixes them.
-Team Audit assumes non-compliance and lint, reverify, inspect scope creep and fix again.
-The orchestrator receives the clean PRs, reviews each against its ticket, and performs the merge in order. It then loops to the first step.
+Orchestrator runs tickets in waves with isolated worktrees and one ordered loop:
+1. Imagine: challenge ticket scope, motivation, and alternatives.
+2. Plan + Verify: produce plans, then independently check assumptions and feasibility.
+3. Execute + Verify: deliver a merge request, then fix all review findings.
+4. Audit: re-check for non-compliance, lint gaps, and scope creep.
+5. Gate + merge: approve only clean merge requests, merge in dependency order, then repeat.
 
 In autonomous mode, orchestrator never defers for human input. In the face of hard issues, it resorts first to a diverse team of agent experts. It then escalates to deep research. Thirdly, it works around the issue.
-
-## Two ticket systems
-
-| Concern | Tool | Skills |
-|---------|------|--------|
-| Local work organization, sequencing | `.erg` files in `tickets/` | git-erg: `/ticket-new`, `/ticket-ready`, `/ticket-claim`, `/ticket-close` |
-| Cross-worktree deconfliction | `.git/ticket-wip/*.wip` | git-erg: automatic via `/ticket-claim` and `/ticket-close` |
-| Cross-agent coordination, public visibility | GitHub Issues | IDH: `/new-ticket`, `/start-ticket` |
-| Linking the two | `Blocked-by: gh#N` in `.erg` headers | — |
-
-Local tickets travel with the repo. GitHub issues are for humans and other agents. Use both; they don't overlap.
