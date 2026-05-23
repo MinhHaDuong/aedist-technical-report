@@ -23,6 +23,6 @@ You read and write `.erg` text files directly — no CLI needed.
 
 ## Format spec
 
-@.claude/rules/tickets.md
+See `tickets/spec-erg-v1.md` for the full format specification.
 
 # --- git-erg --- end
