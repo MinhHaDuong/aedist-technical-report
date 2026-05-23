@@ -39,22 +39,13 @@ def _load_csv(path: Path) -> list[dict]:
             n_rows = int(row["n_rows"])
             if n_rows == 0:
                 continue
-            src1_present = int(row["src1_present"])
-            if src1_present == 0:
-                # Primary rate is undefined when no sources are cited;
-                # plotting at y=0 would conflate "did not cite" with
-                # "cited only non-primary sources."
-                continue
-            raw_primary = row["src1_primary"]
-            src1_primary = int(raw_primary) if raw_primary else 0
-            primary_rate = src1_primary / src1_present
             rows.append(
                 {
                     "agent": row["agent"],
                     "arm": row["arm"],
                     "run": int(row["run"]),
                     "n_rows": n_rows,
-                    "primary_rate": primary_rate,
+                    "src2_present": int(row["src2_present"]),
                 }
             )
     return rows
@@ -71,7 +62,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
             if not subset:
                 continue
             xs = [r["n_rows"] for r in subset]
-            ys = [r["primary_rate"] for r in subset]
+            ys = [r["src2_present"] for r in subset]
 
             if arm == "optimised":
                 ax.scatter(
@@ -96,11 +87,14 @@ def make_figure(rows: list[dict], output: Path) -> None:
                     label=f"{_AGENT_LABELS[agent]} naive",
                 )
 
+    max_val = max(max(r["n_rows"], r["src2_present"]) for r in rows)
+    ax.plot([0, max_val], [0, max_val], color="0.75", linewidth=0.8, zorder=1, linestyle="--")
+
     for r in rows:
-        if r["n_rows"] > 140 or (r["n_rows"] > 100 and r["primary_rate"] > 0.9):
+        if r["n_rows"] > 140 or r["src2_present"] > 100:
             ax.annotate(
                 f"{_AGENT_LABELS[r['agent']].split()[0]} r{r['run']}",
-                (r["n_rows"], r["primary_rate"]),
+                (r["n_rows"], r["src2_present"]),
                 fontsize=5.5,
                 xytext=(4, 4),
                 textcoords="offset points",
@@ -109,9 +103,9 @@ def make_figure(rows: list[dict], output: Path) -> None:
             )
 
     ax.set_xlabel("Inventory rows (coverage)", fontsize=9)
-    ax.set_ylabel("Primary source rate (certainty)", fontsize=9)
+    ax.set_ylabel("Rows with Source 2 (corroboration)", fontsize=9)
     ax.set_xlim(left=-5)
-    ax.set_ylim(-0.05, 1.05)
+    ax.set_ylim(bottom=-5)
     ax.tick_params(labelsize=8)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
