@@ -383,6 +383,7 @@ def _harness_patches(tmp_path):
     return {
         "make_client": MagicMock(return_value=MagicMock()),
         "load_models": MagicMock(return_value=[{"name": "qwen3:8b"}]),
+        "append_evidence_pack": MagicMock(side_effect=lambda prompt, _: prompt),
         "query_model": MagicMock(return_value=_canned_single_result()),
         "compute_cost": MagicMock(return_value=0.0),
         "model_metadata": MagicMock(return_value={}),
@@ -978,11 +979,46 @@ def test_system_instruction_round_trip_in_execute(tmp_path: Path) -> None:
     messages = call_args[2]
     assert messages[0] == {"role": "system", "content": "Do not search the web."}
     assert messages[1]["role"] == "user"
-    assert messages[1]["content"] == "List thermal plants"
 
     # (b) save_json record carries system_instruction so evaluate.py can backfill
     saved = patches["save_json"].call_args[0][1]
     assert saved["system_instruction"] == "Do not search the web."
+
+
+def test_evidence_pack_manifest_injected_and_persisted(tmp_path: Path) -> None:
+    """JobSpec evidence_pack_manifest appends prompt content and is saved in raw output."""
+    prompt_file = tmp_path / "prompt.txt"
+    prompt_file.write_text("List thermal plants")
+
+    job = JobSpec(
+        job_id="evpack-test",
+        priority=50,
+        mode=Method.SINGLE,
+        prompt=str(prompt_file),
+        models_file="models.yaml",
+        model_filter="qwen3:8b",
+        output_dir=str(tmp_path / "out"),
+        repeat=1,
+        budget_usd=1.0,
+        evidence_pack_manifest="experiments/evidence_packs/all18tables.yaml",
+    )
+
+    worker = PadmeWorker(jobs_root=tmp_path / "jobs")
+    patches = _harness_patches(tmp_path)
+    patches["append_evidence_pack"] = MagicMock(
+        side_effect=lambda prompt, _: prompt + "\n\n## Evidence Pack\n\nsource_id: demo"
+    )
+
+    with patch.multiple("aedist.worker", **patches):
+        worker.execute(job)
+
+    call_args = patches["query_model"].call_args[0]
+    messages = call_args[2]
+    assert "## Evidence Pack" in messages[-1]["content"]
+    assert messages[0]["content"].startswith("List thermal plants")
+
+    saved = patches["save_json"].call_args[0][1]
+    assert saved["evidence_pack_manifest"] == "experiments/evidence_packs/all18tables.yaml"
 
 
 def test_reasoning_effort_surfaced_in_record(tmp_path: Path) -> None:

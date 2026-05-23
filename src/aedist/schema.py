@@ -431,6 +431,11 @@ class JobSpec(BaseModel):
         "Per-sweep, not per-model — different regimes (RAG, livesearch) carry "
         "different system instructions in their own sweeps.",
     )
+    evidence_pack_manifest: str | None = Field(
+        default=None,
+        description="Optional path to evidence-pack manifest YAML. "
+        "When set, the runtime appends the assembled evidence pack to the prompt.",
+    )
     output_dir: str = Field(..., description="Output directory for results.")
     timeout_seconds: int = Field(default=600, ge=0)
     estimated_duration: float | None = Field(

@@ -239,6 +239,7 @@ def test_fanout_forwards_all_jobspec_fields(tmp_path: Path):
         f"num_ctx: 65536\n"
         f"temperature: 0.5\n"
         f"system_instruction: 'no web search'\n"
+        f"evidence_pack_manifest: experiments/evidence_packs/all18tables.yaml\n"
         f"output: outputs/test\n"
     )
     jobs_root = tmp_path / "jobs"
@@ -267,6 +268,7 @@ def test_fanout_forwards_all_jobspec_fields(tmp_path: Path):
     assert child.no_think is True
     assert child.provider_order == ["DeepSeek", "Alibaba"]
     assert child.num_ctx == 65536
+    assert child.evidence_pack_manifest == "experiments/evidence_packs/all18tables.yaml"
 
 
 def test_idempotency_across_dirs(tmp_path: Path):

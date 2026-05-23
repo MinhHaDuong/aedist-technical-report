@@ -28,6 +28,7 @@ import openai
 
 from .harness import (
     BudgetTracker,
+    append_evidence_pack,
     assemble_prompt,
     build_api_kwargs,
     build_messages,
@@ -113,6 +114,14 @@ def main():
         default=None,
         help="System message prepended to every API call (overrides --sweep value).",
     )
+    parser.add_argument(
+        "--evidence-pack-manifest",
+        default=None,
+        help=(
+            "Optional evidence-pack manifest YAML path. "
+            "When set, append the assembled evidence pack to the prompt."
+        ),
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -133,6 +142,7 @@ def main():
     output_dir = Path(args.output)
 
     system_instruction = args.system_instruction
+    evidence_pack_manifest = args.evidence_pack_manifest
     if args.model_set:
         experiments = load_experiments(args.experiments)
         set_ids = experiments["sets"][args.model_set]["model_ids"]
@@ -140,10 +150,17 @@ def main():
         if args.sweep and system_instruction is None:
             sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
             system_instruction = sweep_section.get("system_instruction")
+        if args.sweep and evidence_pack_manifest is None:
+            sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
+            evidence_pack_manifest = sweep_section.get("evidence_pack_manifest")
     elif args.sweep and system_instruction is None:
         experiments = load_experiments(args.experiments)
         sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
         system_instruction = sweep_section.get("system_instruction")
+        if evidence_pack_manifest is None:
+            evidence_pack_manifest = sweep_section.get("evidence_pack_manifest")
+
+    prompt = append_evidence_pack(prompt, evidence_pack_manifest)
 
     if args.model:
         models = [m for m in models if m["name"] == args.model]
@@ -285,6 +302,8 @@ def main():
                 }
                 if system_instruction:
                     record["system_instruction"] = system_instruction
+                if evidence_pack_manifest:
+                    record["evidence_pack_manifest"] = evidence_pack_manifest
                 if model.get("reasoning_effort"):
                     record["reasoning_effort"] = model["reasoning_effort"]
                 save_json(filepath, record)

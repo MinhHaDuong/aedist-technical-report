@@ -153,6 +153,8 @@ EVIDENCE_PACK_HEADER_FIELDS = (
     "relevance",
 )
 
+EVIDENCE_PACK_SECTION_TITLE = "## Evidence Pack"
+
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     """Assemble a prompt from the always-pair plus named optional modules.
@@ -238,6 +240,44 @@ def assemble_evidence_pack(manifest_path: Path) -> str:
         blocks.append("\n".join(block_lines))
 
     return "\n\n".join(blocks)
+
+
+def _resolve_evidence_pack_manifest_path(manifest_path: str | Path) -> Path:
+    """Resolve a manifest path from cwd/repo-relative conventions.
+
+    Runtime callers invoke from both repo root and experiments/ subdirs.
+    This resolver accepts any of:
+    - absolute path
+    - repo-relative path (e.g. experiments/evidence_packs/all18tables.yaml)
+    - experiments-relative path (e.g. evidence_packs/all18tables.yaml)
+    """
+    candidate = Path(manifest_path)
+    if candidate.is_absolute():
+        return candidate
+
+    repo_root = Path(__file__).resolve().parents[2]
+    search_paths = [
+        Path.cwd() / candidate,
+        repo_root / candidate,
+        repo_root / "experiments" / candidate,
+    ]
+    for path in search_paths:
+        if path.exists():
+            return path
+    # Preserve deterministic error paths while still returning a sensible default.
+    return search_paths[0]
+
+
+def append_evidence_pack(prompt: str, manifest_path: str | Path | None) -> str:
+    """Append a rendered evidence pack to a prompt when configured.
+
+    Returns the original prompt byte-identically when ``manifest_path`` is not set.
+    """
+    if not manifest_path:
+        return prompt
+    resolved_manifest = _resolve_evidence_pack_manifest_path(manifest_path)
+    evidence_pack = assemble_evidence_pack(resolved_manifest)
+    return f"{prompt}\n\n{EVIDENCE_PACK_SECTION_TITLE}\n\n{evidence_pack}"
 
 
 def build_messages(user_text: str, system_instruction: str | None) -> list[dict]:

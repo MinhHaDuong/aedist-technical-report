@@ -235,6 +235,7 @@ def _backfill_resource_use(record: RunRecord, json_path: Path) -> None:
     # without re-reading raw JSON.
     for key in (
         "system_instruction",
+        "evidence_pack_manifest",
         "reasoning_effort",
         "seed",
         "provider_order",

@@ -225,6 +225,10 @@ class TestJobSpecForbidExtras:
         j = _make_jobspec(web_search=True)
         assert j.web_search is True
 
+    def test_evidence_pack_manifest_field(self):
+        j = _make_jobspec(evidence_pack_manifest="experiments/evidence_packs/all18tables.yaml")
+        assert j.evidence_pack_manifest == "experiments/evidence_packs/all18tables.yaml"
+
     def test_round_trip_new_fields(self):
         original = _make_jobspec(
             seed=42,
@@ -232,6 +236,7 @@ class TestJobSpecForbidExtras:
             num_ctx=16384,
             max_tokens=8192,
             web_search=True,
+            evidence_pack_manifest="experiments/evidence_packs/all18tables.yaml",
         )
         restored = JobSpec.from_yaml(original.to_yaml())
         assert restored == original
@@ -302,6 +307,18 @@ class TestJobSpecSweepRemap:
         assert j.mode == Method.SINGLE
         assert j.seed == 42
         assert j.max_tokens == 32768
+
+    def test_evidence_pack_manifest_from_toml_section(self):
+        section = {
+            "mode": "single",
+            "prompt": "p.txt",
+            "models": "models.yaml",
+            "repeat": 1,
+            "output": "outputs/test",
+            "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml",
+        }
+        j = JobSpec.from_toml_section(section)
+        assert j.evidence_pack_manifest == "experiments/evidence_packs/all18tables.yaml"
 
 
 class TestLeaseInfo:
