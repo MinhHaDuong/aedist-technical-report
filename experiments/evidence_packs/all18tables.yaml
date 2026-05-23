@@ -1,0 +1,131 @@
+version: 1
+description: >-
+  Evidence-pack manifest for all 18 markdown source files in data/rag_corpus.
+  The source files remain unchanged; this manifest carries pack metadata.
+source_root: data/rag_corpus
+items:
+  - source_id: evn_ar_2010_2011_capacities
+    file: EVN_Annual_Report_2010_2011_CapacitiesTable.md
+    document_title: EVN Annual Report 2010-2011
+    section_title: Corporate overview - installed capacity of power plants as of 31/12/2011
+    source_type: operator annual report table extract
+    relevance: Installed-capacity and owner baseline from EVN for the 2011 system, including thermal plants alongside other generation types
+
+  - source_id: evn_ar_2017_capacities
+    file: EVN_Annual_Report_2017_CapacitiesTable.md
+    document_title: Vietnam Electricity Annual Report 2017
+    section_title: Table - EVN and GENCOs power plants
+    source_type: operator annual report table extract
+    relevance: Installed-capacity roster from EVN and GENCOs in 2017, useful as an operator-side baseline with mixed generation types
+
+  - source_id: evn_ar_2018_capacities
+    file: EVN_Annual_Report_2018_CapacitiesTable.md
+    document_title: Vietnam Electricity Annual Report 2018
+    section_title: Table - EVN and GENCOs power plants
+    source_type: operator annual report table extract
+    relevance: Installed-capacity roster from EVN and GENCOs in 2018, useful as an operator-side baseline with mixed generation types
+
+  - source_id: pdp7a_annex1_table1
+    file: PDP7A_annex1_table1.md
+    document_title: Revised PDP7 Annex I
+    section_title: Table 1 - projects entering operation in 2016-2020
+    source_type: policy annex table extract
+    relevance: Commissioning schedule roster for 2016-2020 under revised PDP7; mixed generation types, includes thermal-relevant projects
+
+  - source_id: pdp7a_annex1_table2
+    file: PDP7A_annex1_table2.md
+    document_title: Revised PDP7 Annex I
+    section_title: Table 2 - projects entering operation in 2021-2025
+    source_type: policy annex table extract
+    relevance: Commissioning schedule roster for 2021-2025 under revised PDP7; mixed generation types, includes thermal-relevant projects
+
+  - source_id: pdp7a_annex1_table3
+    file: PDP7A_annex1_table3.md
+    document_title: Revised PDP7 Annex I
+    section_title: Table 3 - projects entering operation in 2026-2030
+    source_type: policy annex table extract
+    relevance: Commissioning schedule roster for 2026-2030 under revised PDP7; mixed generation types, includes thermal-relevant projects
+
+  - source_id: pdp7_annex1
+    file: PDP7_annex1.md
+    document_title: PDP7 Annex I
+    section_title: Projects entering operation in 2011-2020
+    source_type: policy annex table extract
+    relevance: Historical commissioning roster under PDP7, useful for project lineage and planned-vs-operating baselines across generation types
+
+  - source_id: pdp7_annex2
+    file: PDP7_annex2.md
+    document_title: PDP7 Annex II
+    section_title: Planned project list for 2021-2030
+    source_type: policy annex table extract
+    relevance: Forward-looking project list under PDP7, useful for historical planning lineage and superseded thermal project expectations
+
+  - source_id: pdp8_annex2_table1
+    file: PDP8_annex2_table1.md
+    document_title: PDP8 Annex II
+    section_title: Table 1 - LNG thermal power plants
+    source_type: policy annex table extract
+    relevance: Current-policy LNG thermal project list under PDP8, including implementation notes and fallback locations
+
+  - source_id: pdp8_annex2_table2
+    file: PDP8_annex2_table2.md
+    document_title: PDP8 Annex II
+    section_title: Table 2 - coal thermal plants under construction
+    source_type: policy annex table extract
+    relevance: Current-policy list of coal thermal plants already under construction under PDP8
+
+  - source_id: pdp8_annex2_table3
+    file: PDP8_annex2_table3.md
+    document_title: PDP8 Annex II
+    section_title: Table 3 - delayed coal thermal projects with financing or shareholder difficulties
+    source_type: policy annex table extract
+    relevance: Current-policy list of delayed or troubled coal thermal projects under PDP8, with issue notes useful for status reasoning
+
+  - source_id: pdp8_annex2_table4
+    file: PDP8_annex2_table4.md
+    document_title: PDP8 Annex II
+    section_title: Table 4 - cogeneration and industrial by-product power sources
+    source_type: policy annex table extract
+    relevance: Industrial energy-source roster under PDP8; mostly non-target for thermal inventory but useful as contextual boundary material
+
+  - source_id: pdp8_annex2_table5
+    file: PDP8_annex2_table5.md
+    document_title: PDP8 Annex II
+    section_title: Table 5 - domestic gas thermal power plants
+    source_type: policy annex table extract
+    relevance: Current-policy list of domestic-gas thermal projects under PDP8
+
+  - source_id: report_32_annex1
+    file: Report_32_annex1.md
+    document_title: Report 32 Annex 1
+    section_title: Progress summary of priority power-source projects under revised PDP7
+    source_type: implementation progress annex table
+    relevance: Project progress tracking under revised PDP7 with schedule and assessment columns, useful for status and delay reasoning
+
+  - source_id: report_58_annex
+    file: Report_58_annex.md
+    document_title: Report 58 Annex
+    section_title: Progress summary of priority power-source projects under revised PDP7
+    source_type: implementation progress annex table
+    relevance: Project progress tracking under revised PDP7 with evaluation columns, useful for status, delay, and implementation reasoning
+
+  - source_id: study_e542_pl9_1
+    file: Study_E542_table_9.1.md
+    document_title: PDP8 draft 3 study E-542 annex
+    section_title: PL9.1 - potential LNG plant sites and capacities
+    source_type: study annex table extract
+    relevance: Potential LNG site roster and capacity potential from the PDP8 draft study, useful for pre-policy option space
+
+  - source_id: study_e542_pl9_2
+    file: Study_E542_table_9.2.md
+    document_title: PDP8 draft 3 study E-542 annex
+    section_title: PL9.2 - updated progress of coal projects and regional import-coal site potential
+    source_type: study annex table extract
+    relevance: Coal project progress and potential site roster from the PDP8 draft study, useful for status and pre-policy option space
+
+  - source_id: study_e542_pl9_5a
+    file: Study_E542_table_9.5A.md
+    document_title: PDP8 draft 3 study E-542 annex
+    section_title: PL9.5A - potential thermal power sources considered for investment
+    source_type: study annex table extract
+    relevance: Long-horizon thermal project potential table from the PDP8 draft study, useful for candidate-project and regional planning context

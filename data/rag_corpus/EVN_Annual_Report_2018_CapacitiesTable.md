@@ -1,6 +1,6 @@
 <!-- PDF page 1 -->
 
-# Vietnam Electricity Annual Rerpot 2018, pp 34-35
+# Vietnam Electricity Annual Report 2018, pp 34-35
 
 ## Table "EVN'S AND GENCOS' POWER PLANTS"
 
