@@ -51,7 +51,10 @@ _TOKENS_PER_MTOK = 1_000_000
 # tokens — plenty to recognise an inventory header + a few rows.
 _MAX_NARRATIVE_CHARS = 8_000
 
-CLASSIFIER_PROMPT_TEMPLATE = """You are a classification assistant. The following is a single response from an AI agent that was asked to produce a structured inventory of Vietnam's thermal power plants (>30MWe). Did this response materially deliver an inventory? Reply with exactly one word: "report" if it includes a structured table or equivalent enumeration of plants, "no_report" if it is planning, clarification, refusal, or a meta-statement about intent without the substance.
+CLASSIFIER_PROMPT_TEMPLATE = """You are a classification assistant. The following is a single response from an AI agent that was asked to produce a structured inventory of Vietnam's thermal power plants (>30MWe). Did this response materially deliver an inventory?
+
+- "report": the response contains a structured table or equivalent enumeration of power plants. This includes verified, corrected, or polished inventories — even when framed as "here is the corrected version".
+- "no_report": the response is planning, clarification, refusal, or a meta-statement about intent. IMPORTANT: if the response contains preliminary tables but explicitly states it is NOT the final inventory (e.g. "I will not produce the final inventory yet", "candidate universe", "working ledger"), classify as "no_report" regardless of table presence.
 
 AGENT RESPONSE:
 ```

@@ -2,8 +2,10 @@
 
 Pure unit tests — no network, no API key. Uses monkeypatching and
 httpx mocking to verify request construction, key loading, parsing,
-and cost computation.
+and cost computation. Boundary tests added for ticket 0243.
 """
+
+from pathlib import Path
 
 import pytest
 
@@ -189,3 +191,92 @@ def test_post_classifier_body_contains_model_and_max_tokens():
     assert '"nvidia/nemotron-nano-9b-v2"' in src
     # max_tokens accommodates thinking model reasoning tokens
     assert '"max_tokens": 512' in src
+
+
+# ── Boundary cases (ticket 0243) ────────────────────────────────────
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
+
+
+def test_prompt_template_addresses_boundary_cases():
+    """Verify the prompt template handles verify-turn and candidate-universe cases."""
+    from experiments.sota.dialogue_classifier import CLASSIFIER_PROMPT_TEMPLATE
+
+    assert (
+        "verified" in CLASSIFIER_PROMPT_TEMPLATE.lower()
+        or "corrected" in CLASSIFIER_PROMPT_TEMPLATE.lower()
+    )
+    assert (
+        "not the final inventory" in CLASSIFIER_PROMPT_TEMPLATE.lower()
+        or "candidate universe" in CLASSIFIER_PROMPT_TEMPLATE.lower()
+    )
+
+
+def test_boundary_verify_turn_prompt_includes_narrative(monkeypatch):
+    """Verify-turn polished inventory is passed to the classifier correctly."""
+    fixture = FIXTURES_DIR / "classifier_boundary_verify_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    narrative = fixture.read_text()
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    captured = {}
+
+    def mock_post(prompt, api_key):
+        captured["prompt"] = prompt
+        return _make_mock_response("report\n")
+
+    monkeypatch.setattr("experiments.sota.dialogue_classifier._post_classifier", mock_post)
+    result = classify_report(narrative)
+    assert result.class_ == "report"
+    assert "verified and polished inventory" in captured["prompt"]
+
+
+def test_boundary_candidate_universe_prompt_includes_narrative(monkeypatch):
+    """Candidate-universe turn with 'not final' language is passed correctly."""
+    fixture = FIXTURES_DIR / "classifier_boundary_candidate_no_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    narrative = fixture.read_text()
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    captured = {}
+
+    def mock_post(prompt, api_key):
+        captured["prompt"] = prompt
+        return _make_mock_response("no_report\n")
+
+    monkeypatch.setattr("experiments.sota.dialogue_classifier._post_classifier", mock_post)
+    result = classify_report(narrative)
+    assert result.class_ == "no_report"
+    assert "will not produce the final inventory" in captured["prompt"].lower()
+
+
+@pytest.mark.integration
+def test_boundary_verify_turn_live_classifier():
+    """Integration: updated classifier correctly labels a verify-turn inventory as 'report'."""
+    fixture = FIXTURES_DIR / "classifier_boundary_verify_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    if not _load_api_key():
+        pytest.skip("OPENROUTER_API_KEY not set")
+    narrative = fixture.read_text()
+    result = classify_report(narrative)
+    assert result.class_ == "report", (
+        f"Classifier returned '{result.class_}' for verify-turn polished inventory; expected 'report'"
+    )
+
+
+@pytest.mark.integration
+def test_boundary_candidate_universe_live_classifier():
+    """Integration: updated classifier correctly labels a candidate-universe turn as 'no_report'."""
+    fixture = FIXTURES_DIR / "classifier_boundary_candidate_no_report.txt"
+    if not fixture.exists():
+        pytest.skip("boundary fixture not available")
+    if not _load_api_key():
+        pytest.skip("OPENROUTER_API_KEY not set")
+    narrative = fixture.read_text()
+    result = classify_report(narrative)
+    assert result.class_ == "no_report", (
+        f"Classifier returned '{result.class_}' for candidate-universe turn; expected 'no_report'"
+    )
