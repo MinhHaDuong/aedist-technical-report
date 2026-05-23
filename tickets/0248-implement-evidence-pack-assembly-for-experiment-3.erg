@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Implement evidence-pack assembler function for Experiment 3
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T15:57Z Copilot created
+2026-05-23T16:02Z Copilot note Scope reduced to the assembler function only; runtime injection moves to a separate patch ticket.
+
+--- body ---
+## Context
+The Experiment 3 protocol and evidence-pack manifest are committed, but the codebase still needs a reusable function that loads the manifest and renders the pack deterministically.
+
+## Actions
+1. Add a manifest loader that reads `experiments/evidence_packs/all18tables.yaml`.
+2. Render the evidence pack deterministically from `data/rag_corpus` and the manifest metadata.
+3. Expose the assembler as a reusable function for later runtime wiring.
+
+## Test
+Add a test that renders the pack from the manifest and asserts stable ordering, stable headers, and presence of the expected `source_id` blocks.
+
+## Exit criteria
+The codebase exposes a tested assembler function for the evidence pack, and it does not yet change the prompt path.

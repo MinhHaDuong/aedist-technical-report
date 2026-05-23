@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Run Experiment 3 intervention arms
+Created: 2026-05-23
+Author: Copilot
+Blocked-by: 0249
+
+--- log ---
+2026-05-23T16:02Z Copilot created
+
+--- body ---
+## Context
+The Experiment 3 protocol is drafted and the implementation path is split into an assembler prerequisite and a runtime patch. This ticket covers the actual Experiment 3 runs after the codebase patch lands. Arms 1 and 2 are reused as existing baselines; they are not rerun.
+
+The frozen baseline controls are the archived result set in `experiments/outputs/sota_exp2_naive_arm/` for Arm 1 and the archived result set in `experiments/outputs/sota_exp2_brerun1/` for Arm 2.
+
+## Actions
+1. Confirm the four-subject panel and the frozen prompts for Arms 3 and 4 against the existing Arms 1 and 2 baselines.
+2. Run the Experiment 3 sweep for Arms 3 and 4 once the runtime patch ticket is complete.
+3. Collect the raw outputs, scored outputs, and summary metrics for the intervention arms and compare them to the frozen baseline artifact sets in `experiments/outputs/sota_exp2_naive_arm/` and `experiments/outputs/sota_exp2_brerun1/`.
+
+## Test
+Before dispatching the full sweep, run a single smoke instance to verify that the arm-specific prompt path is producing the expected intervention-arm variants and that the archived baseline artifact sets remain unchanged.
+
+## Exit criteria
+The Arms 3 and 4 Experiment 3 runs complete, the archived baseline artifact sets remain reused as-is, and the run artifacts are ready for downstream scoring or reporting.
