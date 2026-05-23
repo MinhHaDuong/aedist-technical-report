@@ -166,11 +166,16 @@ def test_smoke_real_cli():
     if shutil.which("claude") is None:
         pytest.skip("claude CLI not installed")
 
-    result = query_claude_cli(
-        "claude-sonnet-4-6",
-        [{"role": "user", "content": "Reply with exactly one word: pong"}],
-        timeout=60.0,
-    )
+    try:
+        result = query_claude_cli(
+            "claude-sonnet-4-6",
+            [{"role": "user", "content": "Reply with exactly one word: pong"}],
+            timeout=60.0,
+        )
+    except RuntimeError as exc:
+        if "Not logged in" in str(exc):
+            pytest.skip("claude CLI not logged in")
+        raise
     assert result["content"].strip().lower().startswith("pong")
     assert result["usage"]["completion_tokens"] > 0
     assert result["cost_usd"] >= 0

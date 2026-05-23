@@ -2,7 +2,6 @@ from pathlib import Path
 
 from aedist.harness import EVIDENCE_PACK_HEADER_FIELDS, assemble_evidence_pack
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_PATH = REPO_ROOT / "experiments" / "evidence_packs" / "all18tables.yaml"
 

@@ -229,8 +229,9 @@ def assemble_evidence_pack(manifest_path: Path) -> str:
             raise FileNotFoundError(f"Evidence-pack source file not found: {source_path}")
 
         block_lines = ["## Source Block"]
-        for field in EVIDENCE_PACK_HEADER_FIELDS:
-            block_lines.append(f"{field}: {item.get(field, '')}")
+        block_lines.extend(
+            [f"{field}: {item.get(field, '')}" for field in EVIDENCE_PACK_HEADER_FIELDS]
+        )
         block_lines.append("<<<SOURCE_TEXT>>>")
         block_lines.append(source_path.read_text())
         block_lines.append("<<<END_SOURCE_TEXT>>>")
@@ -498,7 +499,10 @@ def query_claude_cli(
     wall_seconds = round(time.monotonic() - t0, 3)
 
     if proc.returncode != 0:
-        raise RuntimeError(f"claude CLI exited {proc.returncode}: {proc.stderr[:500]}")
+        stderr_preview = (proc.stderr or "").strip()[:500]
+        stdout_preview = (proc.stdout or "").strip()[:500]
+        details = stderr_preview or stdout_preview or "no output"
+        raise RuntimeError(f"claude CLI exited {proc.returncode}: {details}")
 
     data = json.loads(proc.stdout)
     if data.get("is_error"):
