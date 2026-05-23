@@ -1,4 +1,4 @@
-Last updated: 2026-05-23T18:05Z
+Last updated: 2026-05-23T22:30Z
 
 ## North star
 
@@ -20,7 +20,9 @@ Milestones in order:
 
 ## Current goal
 
-**Execute the conference runway: finish Experiment 3 runs, complete joint Exp 2+3 analysis, then update manuscript and slides for presentation.**
+**Experiment 3 runs, then manuscript + slides update for presentation.**
+
+Exp 2 Figure 3 (naive vs optimised metadata comparison) is done and merged (PR #469). §4 prose updated with observed results.
 
 ## Workplan
 
