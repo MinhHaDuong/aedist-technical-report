@@ -1,0 +1,17 @@
+{
+  "agent": "openai",
+  "run": 3,
+  "arm": "optimized",
+  "model": "gpt-5.5-2026-04-23",
+  "classification": "report",
+  "turns": 2,
+  "class_trace": "report\u2192report",
+  "inventory_rows": 121,
+  "phase_a_cost_usd": 0.038992,
+  "phase_b_cost_usd": 0.503205,
+  "total_cost_usd": 0.542197,
+  "classifier_cost_usd": 0.000281,
+  "wall_s": 262.7,
+  "tokens_out": 18391,
+  "narrative_chars": 57622
+}

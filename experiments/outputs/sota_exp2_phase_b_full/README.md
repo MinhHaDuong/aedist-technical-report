@@ -14,8 +14,12 @@ Run date: 2026-05-23
 | mistral | mistral-large-2512 | report | 3 | $0.4358 | 27 |
 | openai | gpt-5.5-2026-04-23 | report | 2 | $0.4750 | 112 |
 | qwen | qwen3-max-2026-01-23 | report | 3 | $0.1430 | 18 |
+| anthropic | claude-opus-4-6 | report | 2 | $1.4082 | 26 |
+| mistral | mistral-large-2512 | report | 2 | $0.3665 | 38 |
+| openai | gpt-5.5-2026-04-23 | report | 2 | $0.5422 | 121 |
+| qwen | qwen3-max-2026-01-23 | report | 2 | $0.1678 | 18 |
 
-**Total cost:** $4.7113
+**Total cost:** $7.1960
 
 ## Classifier note
 
@@ -35,6 +39,11 @@ Probe audit files in `probes/`:
 - `summary_20260523T1033Z_anthropic.md`
 - `summary_20260523T1038Z_qwen.md`
 - `summary_20260523T1043Z_mistral.md`
+- `summary_20260523T1049Z_mistral.md`
+- `summary_20260523T1049Z_openai.md`
+- `summary_20260523T1054Z_qwen.md`
+- `summary_20260523T1055Z_anthropic.md`
+- `summary_20260523T1100Z_openai.md`
 
 ## File layout
 
