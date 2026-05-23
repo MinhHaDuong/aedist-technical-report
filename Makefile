@@ -196,6 +196,11 @@ $(SLIDE_GEN)/fig_capability_timeline.pdf: data/capability_timeline.csv
 	uv run python -m aedist.plot_capability_timeline \
 	    --input $< --output $@
 
+$(SLIDE_GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_capability_dag \
+	    --input $< --output $@
+
 $(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 
