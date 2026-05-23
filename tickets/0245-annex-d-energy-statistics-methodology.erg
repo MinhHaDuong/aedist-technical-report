@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Extend Annex D with international energy statistics methodology literature
+Created: 2026-05-23
+Author: haduong
+
+--- log ---
+2026-05-23T11:00Z haduong created
+
+--- body ---
+## Context
+
+Annex D of `slides/manuscript/main.md` introduces the state-vs-event ontological
+tension and its expression in accounting, statistics, and IAM practice.
+The annex currently lacks grounding in the literature on *statistical collection work*
+— the professional practice of collecting, organizing, and publishing energy data
+at the national and international level.
+
+This literature is relevant because:
+1. National energy statistics methodologies address the T1/T2 temporality distinction
+   directly (e.g., IEA guidance on "as-of" dates, revision policies, vintaging).
+2. The §2 quality bar claims to be grounded in data-quality frameworks (Wang & Strong,
+   IMF DQAF) but does not connect to energy-sector-specific practice.
+3. Reviewers from energy-statistics backgrounds will expect these citations.
+
+## Candidate sources to review
+
+- IEA *Energy Statistics Manual* (IEA/OECD, 2005) — reference date conventions,
+  revision policy, flow vs. stock distinctions in energy balances
+- UNSD *International Recommendations for Energy Statistics* (IRES, 2012) —
+  UN standard on coverage, timeliness, and revision
+- Eurostat *Energy Statistics — an overview* / *Manual of Supply, Transformation
+  and Consumption of Energy* — EU harmonisation approach
+- IRENA *Renewable Energy Statistics* methodology notes
+- IEA *Tracking Clean Energy Progress* methodology — near-real-time vs. annual
+  reconciliation practice
+
+## Task
+
+1. Read each source's chapter on data quality / revision / timeliness.
+2. Identify which passages speak directly to T1 vs. T2 (snapshot currency vs.
+   historical reconstructability).
+3. Draft 1–2 paragraphs extending Annex D with these grounding references.
+4. Add citations to `report/refs.bib`.
+5. Update the Annex D pointer sentence ("See ticket 0243...") with a substantive
+   summary sentence once the extension is drafted.
+
+## Exit criteria
+
+- [ ] At least 3 of the 5 candidate sources reviewed
+- [ ] Annex D extended by 1–2 paragraphs with proper citations
+- [ ] `report/refs.bib` updated with new entries
+- [ ] `make check` passes
