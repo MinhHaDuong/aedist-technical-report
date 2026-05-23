@@ -330,8 +330,35 @@ def run_mistral_call(
         return _runrecord_from_raw(raw_output_path, meta, agent_mode=agent_mode, wall_s=wall_s)
 
 
+def _load_openai_key() -> str:
+    """Load OpenAI key from env or ``~/.config/keys/openai.env``.
+
+    Accepts only ``OPENAI_API_KEY_AEDIST``.
+    """
+    key = os.environ.get("OPENAI_API_KEY_AEDIST")
+    if key:
+        return key
+    env_file = Path.home() / ".config" / "keys" / "openai.env"
+    if env_file.exists():
+        for line in env_file.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                k, _, v = line.partition("=")
+                if k.strip() == "OPENAI_API_KEY_AEDIST":
+                    return v.strip().strip('"').strip("'")
+    raise SystemExit(
+        "OpenAI key not set (expected OPENAI_API_KEY_AEDIST) "
+        "and not found in ~/.config/keys/openai.env"
+    )
+
+
+_TOKENS_PER_MTOK_F = 1_000_000.0
+
+
 def run_openai_call(
-    prompt: str,
+    user_text: str,
     *,
     cap_usd: float,
     agent_mode: str,
@@ -341,305 +368,161 @@ def run_openai_call(
     extra_metadata: dict | None = None,
     system_prompt: str | None = None,
 ) -> RunRecord:
-    """Single OpenAI Responses call with continuation chaining for multi-turn.
+    """Single OpenAI Responses API call for Exp 2 Phase B multi-turn.
 
-    Continuation shape: ``{"response_id": str}``. On follow-up turns the SDK
-    receives ``previous_response_id``, which restores server-side state.
-    The ``system_prompt`` becomes ``instructions=`` on turn 1 only —
-    follow-up turns inherit it via the chained response.
+    Uses ``previous_response_id`` chaining for turns 2+: server-side state
+    is preserved and only the new user message needs to be sent. This is the
+    cheapest multi-turn pattern for the Responses API and is the reason OpenAI
+    is the easiest provider to wire.
 
-    Cost accounting per Doc 02 CONTEXT > Budget: ``tokens_out +
-    thinking_tokens`` count against the 50K token cap; ``cost_usd``
-    against the $3 dollar guard. OpenAI bundles web_search billing into
-    reasoning/output tokens for gpt-5.x (see :mod:`aedist.adapter_openai_responses`),
-    so there is no separate ``tool_calls_cost_usd`` bucket for this provider.
+    Dispatch contract (shared across all per-provider call shims):
+    - ``continuation`` is opaque per-provider state: ``None`` or ``{}`` means
+      turn 1; ``{"previous_response_id": str}`` means follow-up turn.
+    - ``system_prompt`` is only sent on turn 1 (as ``instructions``); callers
+      must pass ``None`` on follow-up turns.
+    - The returned record's ``method_params.extra`` carries
+      ``{"previous_response_id": resp.id}`` so the dispatcher can pass it
+      as ``continuation`` on the next turn without inspecting its contents.
 
-    Hard cap enforcement mirrors :func:`adapter_openai_responses.run`'s
-    defense-in-depth pattern: pre-call cost estimate against ``cap_usd``,
-    then a post-call recheck of the billed cost.
+    Cost accounting: ``tokens_out`` = visible output tokens;
+    ``thinking_tokens`` = reasoning tokens from
+    ``usage.output_tokens_details.reasoning_tokens``. Both flow into the
+    dual-axis budget cap in ``run_phase_b_multiturn`` (50K tokens OR $3).
+    OpenAI bundles web_search billing into reasoning/output tokens for
+    gpt-5.x — ``tool_calls_cost_usd`` is 0 for this model. If a
+    ``price_per_web_search`` key ever appears in models.yaml, this
+    function will use it automatically.
     """
     from openai import OpenAI
 
-    from aedist import adapter_openai_responses
-    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
-
     meta = load_model_meta("openai")
-    is_followup = bool(continuation and continuation.get("response_id"))
-
-    payload = adapter_openai_responses.build_request(
-        prompt,
-        model=meta.get("model_id"),
-        max_output_tokens=max_tokens,
-        reasoning_effort="low",  # web_search rejects "minimal"; "low" is the docs floor
+    model_id = meta.get("model_id", "gpt-5.5")
+    p_out = float(meta.get("price_per_mtok_out", 15.0)) / _TOKENS_PER_MTOK_F
+    p_reasoning = (
+        float(meta.get("price_per_mtok_reasoning", meta.get("price_per_mtok_out", 15.0)))
+        / _TOKENS_PER_MTOK_F
     )
-    if system_prompt and not is_followup:
-        payload["instructions"] = system_prompt
+    p_in_fresh = (
+        float(meta.get("price_per_mtok_in_fresh", meta.get("price_per_mtok_in", 2.5)))
+        / _TOKENS_PER_MTOK_F
+    )
+    p_in_cached = (
+        float(meta.get("price_per_mtok_in_cached", p_in_fresh * _TOKENS_PER_MTOK_F))
+        / _TOKENS_PER_MTOK_F
+    )
+    price_per_web_search = float(meta.get("price_per_web_search", 0.0))
+
+    is_followup = bool(continuation and continuation.get("previous_response_id"))
+
+    # Build the request kwargs.
+    kwargs: dict = {
+        "model": model_id,
+        "input": user_text,
+        "tools": [{"type": "web_search"}],
+        # reasoning.effort="low" is used in Phase B for cost control.
+        # "minimal" is rejected by OpenAI when web_search is active.
+        "reasoning": {"effort": "low"},
+        "include": ["web_search_call.action.sources"],
+        "max_output_tokens": max_tokens,
+    }
+
     if is_followup:
-        payload["previous_response_id"] = continuation["response_id"]
+        kwargs["previous_response_id"] = continuation["previous_response_id"]  # type: ignore[index]
+    else:
+        # Turn 1: install the system prompt as the session instructions.
+        if system_prompt is not None:
+            kwargs["instructions"] = system_prompt
+
     if extra_metadata is not None:
-        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
+        kwargs["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
 
-    # Pre-call cap check (estimate). Mirrors adapter_openai_responses.run
-    # so single-turn callers and multi-turn dispatch enforce the same ceiling.
-    p_in = meta.get("price_per_mtok_in_fresh", meta.get("price_per_mtok_in", 0.0)) / 1_000_000
-    p_out = meta.get("price_per_mtok_out", 0.0) / 1_000_000
-    estimated = estimate_call_cost(max_tokens=max_tokens, price_in=p_in, price_out=p_out)
-    enforce_cost_cap(estimated, cap_usd=cap_usd)
-
-    client = OpenAI(api_key=adapter_openai_responses._load_openai_key())
+    client = OpenAI(api_key=_load_openai_key())
     t0 = time.monotonic()
-    resp = client.responses.create(**payload)
-    wall = round(time.monotonic() - t0, 3)
+    resp = client.responses.create(**kwargs)
+    wall_s = round(time.monotonic() - t0, 3)
+
+    # --- Parse usage ---
+    usage = resp.usage
+    input_tokens = int(getattr(usage, "input_tokens", 0) or 0)
+    output_tokens = int(getattr(usage, "output_tokens", 0) or 0)
+    output_details = getattr(usage, "output_tokens_details", None)
+    reasoning_tokens = int(getattr(output_details, "reasoning_tokens", 0) or 0)
+    input_details = getattr(usage, "input_tokens_details", None)
+    cached_tokens = int(getattr(input_details, "cached_tokens", 0) or 0)
+    fresh_in = max(input_tokens - cached_tokens, 0)
+
+    cost_usd = (
+        fresh_in * p_in_fresh
+        + cached_tokens * p_in_cached
+        + output_tokens * p_out
+        + reasoning_tokens * p_reasoning
+    )
+    cost_breakdown = {
+        "input": round(fresh_in * p_in_fresh, 8),
+        "cached": round(cached_tokens * p_in_cached, 8),
+        "output": round(output_tokens * p_out, 8),
+        "reasoning": round(reasoning_tokens * p_reasoning, 8),
+    }
+
+    # --- Parse web search calls ---
+    web_search_calls: list[dict] = []
+    citations: list[dict] = []
+    narrative_parts: list[str] = []
+    for item in resp.output or []:
+        item_type = getattr(item, "type", "")
+        if item_type == "web_search_call":
+            action = getattr(item, "action", None)
+            query = getattr(action, "query", "") if action else ""
+            sources = getattr(action, "sources", []) or [] if action else []
+            urls: list[str] = []
+            for src in sources:
+                url = getattr(src, "url", None)
+                if url:
+                    urls.append(url)
+                    citations.append({"url": url, "snippet": None, "supports_claim": None})
+            web_search_calls.append({"query": query, "urls_returned": urls})
+        elif item_type == "message":
+            for block in getattr(item, "content", []) or []:
+                if getattr(block, "type", "") == "output_text":
+                    text = getattr(block, "text", "")
+                    if text:
+                        narrative_parts.append(text)
+
+    narrative = "\n\n".join(narrative_parts)
+
+    # Web search cost: OpenAI bundles this into token billing for gpt-5.x;
+    # price_per_web_search is 0.0 in models.yaml. Forward-compatible if key
+    # is added later.
+    n_web_searches = len(web_search_calls)
+    tool_calls_cost_usd = price_per_web_search * n_web_searches if price_per_web_search else None
 
     raw_output_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
 
-    record = adapter_openai_responses.parse_response(resp, meta)
-    record.agent_mode = agent_mode
-    record.resource_use.wall_s = wall
-    # Post-call cap recheck (actual). Catches estimate-vs-billed drift.
-    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
-    return record
-
-
-def run_anthropic_call(
-    prompt: str,
-    *,
-    cap_usd: float,
-    agent_mode: str,
-    raw_output_path: Path,
-    max_tokens: int,
-    continuation: dict | None = None,
-    extra_metadata: dict | None = None,
-    system_prompt: str | None = None,
-) -> RunRecord:
-    """Single Anthropic Messages call with full-history resend for multi-turn.
-
-    Continuation shape: ``{"messages": list[dict]}`` — the complete
-    conversation history including each prior assistant reply. Anthropic
-    is stateless on the wire; the client resends everything each call.
-    The ``system_prompt`` MUST be passed as identical bytes on every
-    turn (server does NOT persist it across calls; absence on a
-    follow-up turn changes model behaviour).
-
-    Cost accounting: ``cost_usd`` excludes ``web_search`` server-tool
-    fees, which go into ``tool_calls_cost_usd``. The dual-axis budget
-    cap then deducts the full session bill via :func:`total_cost`.
-    ``tokens_out`` includes any thinking output (Anthropic reports it
-    bundled in the output count).
-    """
-    import anthropic
-
-    from aedist import query_anthropic
-    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
-
-    meta = load_model_meta("anthropic")
-    model_id = meta.get("model_id")
-    is_followup = bool(continuation and continuation.get("messages"))
-
-    payload = query_anthropic.assemble_request(
-        prompt,
-        model=model_id,
-        max_tokens=max_tokens,
-        max_uses=3,
-    )
-    if system_prompt:
-        payload["system"] = system_prompt
-    if is_followup:
-        new_user_msg = payload["messages"][-1]
-        payload["messages"] = list(continuation["messages"]) + [new_user_msg]
-    if extra_metadata is not None:
-        # Anthropic only honours ``user_id`` natively; other keys pass through.
-        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
-
-    # Pre-call cap. n_searches uses the provisioned ``max_uses=3`` as the
-    # conservative ceiling; the post-call recheck below tightens against
-    # actual web_search invocations.
-    p_in = float(meta.get("price_per_mtok_in", 0.0)) / _TOKENS_PER_MTOK
-    p_out = float(meta.get("price_per_mtok_out", 0.0)) / _TOKENS_PER_MTOK
-    p_search = float(meta.get("price_per_web_search", 0.01))
-    estimated = estimate_call_cost(
-        max_tokens=max_tokens,
-        price_in=p_in,
-        price_out=p_out,
-        n_searches=3,
-        price_per_search=p_search,
-    )
-    enforce_cost_cap(estimated, cap_usd=cap_usd)
-
-    api_key = query_anthropic._load_key(query_anthropic.DEFAULT_KEY_PATH)
-    client = anthropic.Anthropic(api_key=api_key)
-    t0 = time.monotonic()
-    resp = client.messages.create(**payload)
-    wall = round(time.monotonic() - t0, 3)
-
-    raw_output_path.write_text(
-        json.dumps(query_anthropic._response_to_dict(resp), indent=2, default=str),
-        encoding="utf-8",
-    )
-
-    parsed = query_anthropic._parse_anthropic_response(resp)
-    usage = query_anthropic._usage_dict(resp)
-    breakdown = query_anthropic._compute_anthropic_cost(usage, meta, parsed["n_searches"])
-
-    # Build conversation messages for the next turn (full history replay).
-    continuation_messages = list(payload.get("messages", []))
-    if parsed.get("text"):
-        continuation_messages.append({"role": "assistant", "content": parsed["text"]})
-
-    record = query_anthropic._record_from_parsed(
-        parsed,
-        model=model_id,
-        cost_breakdown=breakdown,
-        tokens_in=parsed["tokens_in"],
-        tokens_out=parsed["tokens_out"],
-        wall_s=wall,
-        thinking_tokens=None,
+    record = RunRecord(
+        method="frontier",
+        method_params=MethodParams(
+            model=model_id,
+            max_tokens=max_tokens,
+            # Continuation token for the next turn — opaque to the dispatcher.
+            extra={"previous_response_id": resp.id},
+        ),
+        resource_use=ResourceUse(
+            wall_s=wall_s,
+            cost_usd=cost_usd,
+            tokens_in=input_tokens,
+            tokens_out=output_tokens,
+            thinking_tokens=reasoning_tokens,
+            cost_breakdown=cost_breakdown,
+        ),
+        result_summary=ResultSummary(status="ok" if narrative else "empty"),
+        agent_family="openai-direct",
         agent_mode=agent_mode,
-        run_number=1,
-        messages_for_continuation=continuation_messages,
+        finish_reason=getattr(resp, "status", None),
+        web_search_calls=web_search_calls or None,
+        citations=citations or None,
+        tool_calls_cost_usd=tool_calls_cost_usd,
+        justification={"output_text": narrative},
     )
-    # _record_from_parsed already populates ``record.tool_calls_cost_usd``
-    # from ``cost_breakdown["web_search"]`` (see query_anthropic.py:381) —
-    # no need to re-assign here. Surfacing it into total_cost() works
-    # through that field.
-    # Stash narrative so the classifier's record-first path skips raw-file parse.
-    record.justification = {"output_text": parsed.get("text", "") or ""}
-    # Post-call cap recheck (actual billed total). Defense in depth.
-    enforce_cost_cap(float(breakdown.get("total", 0.0)), cap_usd=cap_usd)
-    return record
-
-
-def run_qwen_call(
-    prompt: str,
-    *,
-    cap_usd: float,
-    agent_mode: str,
-    raw_output_path: Path,
-    max_tokens: int,
-    continuation: dict | None = None,
-    extra_metadata: dict | None = None,
-    system_prompt: str | None = None,
-) -> RunRecord:
-    """Single Qwen DashScope call with full-history resend for multi-turn.
-
-    Continuation shape: ``{"messages": list[dict]}`` — complete conversation
-    history including the leading system message (when present) and each
-    assistant reply. DashScope is stateless on the wire; the client
-    resends everything every call.
-
-    ``system_prompt`` is injected as the first ``{"role": "system", ...}``
-    message on turn 1; turn 2+ inherits it via the replayed history.
-    """
-    import dashscope
-
-    from aedist import adapter_qwen_dashscope
-    from aedist.adapter_base import enforce_cost_cap, estimate_call_cost
-
-    meta = load_model_meta("qwen")
-    model_id = meta.get("model_id")
-    is_followup = bool(continuation and continuation.get("messages"))
-
-    # Build the messages list: history + new user, or (turn 1) system + user.
-    if is_followup:
-        messages = list(continuation["messages"]) + [{"role": "user", "content": prompt}]
-    else:
-        messages = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
-        messages.append({"role": "user", "content": prompt})
-
-    # Use the adapter's payload assembly, then override the messages list
-    # with our explicit history (build_request consults ``continuation``
-    # but stores only [user] without preserving an explicit system role).
-    payload = adapter_qwen_dashscope.build_request(
-        prompt,
-        model=model_id,
-        max_tokens=max_tokens,
-        enable_thinking=True,  # capability default for the optimized arm
-        enable_search=True,
-    )
-    payload["messages"] = messages
-    if extra_metadata is not None:
-        # DashScope lacks a metadata surface AND allows at most one
-        # ``role=system`` entry. If one is already present (e.g. carried
-        # by ``system_prompt`` or by the continuation), append the metadata
-        # to its content; otherwise prepend a fresh system message.
-        meta_text = "; ".join(f"{k}={v}" for k, v in extra_metadata.items())
-        meta_line = f"\n[metadata] {meta_text}"
-        if payload["messages"] and payload["messages"][0].get("role") == "system":
-            payload["messages"][0] = {
-                "role": "system",
-                "content": payload["messages"][0].get("content", "") + meta_line,
-            }
-        else:
-            payload["messages"] = [
-                {"role": "system", "content": f"[metadata] {meta_text}"}
-            ] + payload["messages"]
-
-    # Pre-call cap.
-    p_in = (
-        float(meta.get("price_per_mtok_in", adapter_qwen_dashscope.DEFAULT_PRICE_PER_MTOK_IN))
-        / _TOKENS_PER_MTOK
-    )
-    p_out = (
-        float(meta.get("price_per_mtok_out", adapter_qwen_dashscope.DEFAULT_PRICE_PER_MTOK_OUT))
-        / _TOKENS_PER_MTOK
-    )
-    p_search = float(
-        meta.get(
-            "price_per_web_search_call_usd",
-            adapter_qwen_dashscope.DEFAULT_PRICE_PER_WEB_SEARCH_CALL_USD,
-        )
-    )
-    estimated = estimate_call_cost(
-        max_tokens=max_tokens,
-        price_in=p_in,
-        price_out=p_out,
-        n_searches=5,
-        price_per_search=p_search,
-    )
-    enforce_cost_cap(estimated, cap_usd=cap_usd)
-
-    dashscope.api_key = adapter_qwen_dashscope._resolve_api_key()
-    dashscope.base_http_api_url = adapter_qwen_dashscope.DEFAULT_BASE_URL
-    t0 = time.monotonic()
-    resp = dashscope.Generation.call(**payload)
-    wall = round(time.monotonic() - t0, 3)
-
-    raw_dump = adapter_qwen_dashscope._response_to_dict(resp)
-    raw_output_path.write_text(json.dumps(raw_dump, indent=2, default=str), encoding="utf-8")
-
-    record = adapter_qwen_dashscope.parse_response(
-        resp,
-        model_meta=meta,
-        prompt=prompt,
-        max_tokens=max_tokens,
-        wall_s=wall,
-        enable_thinking=True,
-        enable_search=True,
-    )
-    record.agent_mode = agent_mode
-
-    # Extract narrative from the raw dump for the continuation + classifier paths.
-    output = raw_dump.get("output") or {}
-    choices = output.get("choices") or []
-    narrative = (choices[0].get("message", {}).get("content")) if choices else None
-
-    # Overwrite parse_response's [user, assistant]-only messages with the
-    # complete history we just sent + the assistant reply. The CONTINUATION
-    # extractor then consumes this on the next turn.
-    extra = record.method_params.extra or {}
-    full_history = list(messages)
-    if narrative:
-        full_history.append({"role": "assistant", "content": narrative})
-    extra["messages"] = full_history
-    record.method_params.extra = extra
-
-    # Stash narrative so the classifier's record-first path skips raw-file parse.
-    record.justification = {"output_text": narrative or ""}
-
-    # Post-call cap recheck (actual billed total).
-    enforce_cost_cap(record.resource_use.cost_usd or 0.0, cap_usd=cap_usd)
     return record
 
 
@@ -776,99 +659,6 @@ def _extract_narrative_from_raw_path(raw_path: Path) -> str:
     return extract_narrative_from_mistral_raw(raw)
 
 
-def _narrative_from_record_or_raw(record: RunRecord, raw_path: Path) -> str:
-    """Pull narrative from the RunRecord if present, else parse the raw artefact.
-
-    OpenAI (and future Anthropic / Qwen) adapters populate
-    ``record.justification["output_text"]`` with the assistant narrative.
-    The Mistral adapter does not, so we fall back to re-reading the raw
-    artefact and parsing it via :func:`extract_narrative_from_mistral_raw`.
-    The dispatch path is provider-agnostic — only the data source differs.
-    """
-    just = record.justification or {}
-    if isinstance(just, dict) and just.get("output_text"):
-        return just["output_text"]
-    return _extract_narrative_from_raw_path(raw_path)
-
-
-# ---------------------------------------------------------------------------
-# Per-provider dispatch tables (ticket 0234)
-#
-# Each adapter exposes one ``run_*_call`` with the unified signature and
-# one continuation extractor that translates its ``record.method_params.extra``
-# into the opaque ``continuation`` dict consumed on the next turn. The
-# dispatcher routes purely by these tables and never introspects the
-# continuation shape. Adding a new provider = three additions (call_fn,
-# extractor, SYSTEM_PROMPT_PASSTHROUGH policy).
-# ---------------------------------------------------------------------------
-
-
-def _extract_mistral_continuation(record: RunRecord, current: dict | None) -> dict | None:
-    """Mistral: persist agent_id across turns, refresh conversation_id."""
-    extra = record.method_params.extra or {}
-    cur = current or {}
-    agent_id = cur.get("agent_id")
-    if agent_id is None and extra.get("agent_id"):
-        agent_id = str(extra["agent_id"])
-    conv_id = extra.get("conversation_id")
-    if conv_id and agent_id:
-        return {"agent_id": agent_id, "conversation_id": conv_id}
-    return current
-
-
-def _extract_openai_continuation(record: RunRecord, current: dict | None) -> dict | None:
-    """OpenAI: chain previous_response_id from the just-returned response."""
-    extra = record.method_params.extra or {}
-    if extra.get("response_id"):
-        return {"response_id": str(extra["response_id"])}
-    return current
-
-
-def _extract_anthropic_continuation(record: RunRecord, current: dict | None) -> dict | None:
-    """Anthropic: full conversation messages list (stateless API — client resends history)."""
-    extra = record.method_params.extra or {}
-    if extra.get("messages"):
-        return {"messages": list(extra["messages"])}
-    return current
-
-
-def _extract_qwen_continuation(record: RunRecord, current: dict | None) -> dict | None:
-    """Qwen: full conversation messages list (stateless DashScope — client resends history)."""
-    extra = record.method_params.extra or {}
-    if extra.get("messages"):
-        return {"messages": list(extra["messages"])}
-    return current
-
-
-CALL_FNS = {
-    "mistral": run_mistral_call,
-    "openai": run_openai_call,
-    "anthropic": run_anthropic_call,
-    "qwen": run_qwen_call,
-}
-
-CONTINUATION_EXTRACTORS = {
-    "mistral": _extract_mistral_continuation,
-    "openai": _extract_openai_continuation,
-    "anthropic": _extract_anthropic_continuation,
-    "qwen": _extract_qwen_continuation,
-}
-
-# Should ``system_prompt`` be passed on follow-up turns (turn > 1)?
-#  - mistral / openai: no — adapter raises (Mistral) or server-side state
-#    inherits via previous_response_id (OpenAI).
-#  - anthropic / qwen: yes — both APIs are stateless on the wire; the
-#    client resends the full conversation history (including the system
-#    message) every turn.
-# Default: False (drop on follow-up).
-SYSTEM_PROMPT_PASSTHROUGH = {
-    "mistral": False,
-    "openai": False,
-    "anthropic": True,
-    "qwen": True,
-}
-
-
 def run_phase_b_multiturn(
     designed_prompt: str,
     *,
@@ -903,6 +693,17 @@ def run_phase_b_multiturn(
     ``terminal_sent``, ``agent_id`` (for caller-side cleanup), and
     ``total_classifier_cost_usd``.
     """
+    # Dispatch table: each provider registers its per-turn call shim here.
+    # Each shim accepts the same keyword-only signature (see run_mistral_call /
+    # run_openai_call) and returns a RunRecord whose method_params.extra IS
+    # the opaque continuation dict for the next turn. The dispatcher routes
+    # the dict without introspecting its contents — per-provider continuation
+    # shape varies (Mistral: {"agent_id", "conversation_id"};
+    # OpenAI: {"previous_response_id"}; 0235/0236 will add their own shapes).
+    CALL_FNS: dict[str, object] = {
+        "mistral": run_mistral_call,
+        "openai": run_openai_call,
+    }
     call_fn = CALL_FNS.get(agent)
     if call_fn is None:
         raise NotImplementedError(f"--agent {agent!r} not wired for multi-turn yet")
@@ -910,7 +711,8 @@ def run_phase_b_multiturn(
     remaining = cap_usd - initial_spent_usd
     remaining_tokens = cap_tokens
     elapsed_s = 0.0
-    continuation: dict | None = {}  # empty dict = start multi-turn, keep Mistral agent alive
+    continuation: dict | None = {}  # empty dict = start multi-turn
+    agent_id: str | None = None  # Mistral-only; populated for cleanup after loop
     terminal_sent = False
     records: list[RunRecord] = []
     verify_used = False
@@ -941,23 +743,25 @@ def run_phase_b_multiturn(
             "remaining_usd": f"{remaining:.2f}",
             "cap_usd": f"{cap_usd:.2f}",
         }
-        is_followup_turn = turn > 1
-        # Per-provider quirks on follow-up turns:
-        #  - Mistral 422s on body-level ``metadata`` against the append endpoint
-        #    (ticket 0218); OpenAI accepts it but we drop for symmetry — the
-        #    user-text status prefix already conveys the same info to the model.
-        if is_followup_turn:
-            extra_metadata = None
-        # ``system_prompt`` on follow-up: drop unless the adapter requires
-        # identical bytes every call (Anthropic, Qwen — see
-        # ``SYSTEM_PROMPT_PASSTHROUGH``).
-        turn_system_prompt = (
-            system_prompt
-            if not is_followup_turn or SYSTEM_PROMPT_PASSTHROUGH.get(agent, False)
-            else None
-        )
+        # A turn is a follow-up if the continuation dict is non-empty.
+        # For Mistral, the follow-up key is "agent_id" (HTTP 422 on metadata
+        # for the path-bound append endpoint — ticket 0218). For OpenAI the
+        # key is "previous_response_id". Both are truthy when continuation
+        # was set from the previous turn's record.extra.
+        is_followup_turn = bool(continuation)
+        if agent == "mistral":
+            # Mistral's path-bound append endpoint rejects body-level metadata
+            # with HTTP 422 on follow-up turns (ticket 0218).
+            if continuation and continuation.get("agent_id"):
+                extra_metadata = None
 
-        record = call_fn(
+        # System prompt is installed on turn 1 only. Follow-up turns must
+        # pass None — for Mistral the agent is already created with its
+        # description fixed (ticket 0213); for OpenAI instructions are
+        # installed on the session server-side.
+        turn_system_prompt = system_prompt if not is_followup_turn else None
+
+        record = call_fn(  # type: ignore[operator]
             user_text,
             cap_usd=max(remaining, 0.01),  # adapter wants positive cap
             agent_mode="phase_b_run",
@@ -984,7 +788,7 @@ def run_phase_b_multiturn(
 
         # Classify the assistant's response. Classifier cost is harness
         # overhead, tracked separately from the SOTA agent's spend.
-        narrative = _narrative_from_record_or_raw(record, paths["raw"])
+        narrative = _extract_narrative_from_raw_path(paths["raw"])
         cls_result = dialogue_classifier.classify_report(narrative)
         total_classifier_cost_usd += cls_result.classifier_cost_usd
         paths["classification"].write_text(
@@ -1013,16 +817,12 @@ def run_phase_b_multiturn(
             encoding="utf-8",
         )
 
-        # Provider-specific continuation extraction (Mistral: agent_id +
-        # conversation_id; OpenAI: previous_response_id; future Anthropic /
-        # Qwen: their own shapes). Each extractor returns the opaque dict
-        # the dispatcher will pass to ``call_fn`` on the next turn. The
-        # dispatcher never introspects the continuation shape — see the
-        # return value below for the only consumer-facing field
-        # (``agent_id``) that is pulled out by canonical key.
-        new_continuation = CONTINUATION_EXTRACTORS[agent](record, continuation)
-        if new_continuation is not None:
-            continuation = new_continuation
+        extra = record.method_params.extra or {}
+        if agent_id is None and extra.get("agent_id"):
+            agent_id = str(extra["agent_id"])
+        conv_id = extra.get("conversation_id")
+        if conv_id and agent_id:
+            continuation = {"agent_id": agent_id, "conversation_id": conv_id}
 
         log.info(
             "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
@@ -1083,11 +883,7 @@ def run_phase_b_multiturn(
         "total_spent_usd": cap_usd - remaining - initial_spent_usd,
         "total_tokens_used": cap_tokens - remaining_tokens,
         "terminal_sent": terminal_sent,
-        # Mistral exposes ``agent_id`` for caller-side conversation cleanup;
-        # other providers omit the key (None for OpenAI / Anthropic / Qwen).
-        # The dispatcher pulls it by canonical name rather than tracking it
-        # in a local variable — keeps the loop body provider-agnostic.
-        "agent_id": (continuation or {}).get("agent_id"),
+        "agent_id": agent_id,
         "total_classifier_cost_usd": total_classifier_cost_usd,
     }
 
@@ -1098,12 +894,7 @@ def main(argv: list[str] | None = None) -> int:
         "--agent",
         required=True,
         choices=sorted(FAMILY_BY_AGENT),
-        help=(
-            "Which SOTA agent to smoke. main() end-to-end currently runs only "
-            "'mistral' (Phase A narrative extraction is Mistral-shape; multi-agent "
-            "main() wiring is ticket 0237). Phase B dispatch supports 'mistral' "
-            "and 'openai' programmatically via run_phase_b_multiturn()."
-        ),
+        help="Which SOTA agent to smoke (only 'mistral' wired in this iteration).",
     )
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     p.add_argument("--no-confirm", action="store_true", help="Skip SPACE gates.")
@@ -1122,12 +913,7 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
     if args.agent != "mistral":
-        sys.exit(
-            f"main() end-to-end only wires 'mistral' "
-            f"(Phase A narrative is Mistral-shape; multi-agent main() is ticket 0237). "
-            f"Got --agent {args.agent!r}. For OpenAI Phase B dispatch, call "
-            f"run_phase_b_multiturn() programmatically."
-        )
+        sys.exit(f"Only --agent mistral is wired in this iteration; got {args.agent!r}.")
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
