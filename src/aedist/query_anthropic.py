@@ -31,6 +31,7 @@ import argparse
 import json
 import logging
 import os
+import random  # used by _sleep_with_backoff
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -382,6 +383,64 @@ def _record_from_parsed(
     )
 
 
+# ---------------------------------------------------------------------------
+# Retry policy for transient / rate-limit failures (ticket 0244).
+# Mirrors the Mistral adapter pattern: 3 retries, 1s/2s/4s exponential
+# backoff ±10% jitter. Retry on 429, 5xx, connection errors only.
+# ---------------------------------------------------------------------------
+_MAX_RETRIES = 3
+_BACKOFF_BASE_S = 1.0
+
+
+def _sleep_with_backoff(attempt: int) -> None:
+    delay = _BACKOFF_BASE_S * (2**attempt) * (1.0 + random.uniform(-0.1, 0.1))
+    time.sleep(delay)
+
+
+def _call_with_retry(client: Any, payload: dict) -> Any:
+    import anthropic
+
+    last_exc: Exception | None = None
+    for attempt in range(_MAX_RETRIES + 1):
+        try:
+            return client.messages.create(**payload)
+        except anthropic.RateLimitError as exc:
+            last_exc = exc
+            if attempt < _MAX_RETRIES:
+                log.warning("Anthropic 429 rate limit; retry %d/%d", attempt + 1, _MAX_RETRIES)
+                _sleep_with_backoff(attempt)
+                continue
+            raise
+        except anthropic.APIStatusError as exc:
+            if exc.status_code >= 500:
+                last_exc = exc
+                if attempt < _MAX_RETRIES:
+                    log.warning(
+                        "Anthropic HTTP %d transient; retry %d/%d",
+                        exc.status_code,
+                        attempt + 1,
+                        _MAX_RETRIES,
+                    )
+                    _sleep_with_backoff(attempt)
+                    continue
+                raise
+            raise
+        except anthropic.APIConnectionError as exc:
+            last_exc = exc
+            if attempt < _MAX_RETRIES:
+                log.warning(
+                    "Anthropic connection error (%s); retry %d/%d",
+                    type(exc).__name__,
+                    attempt + 1,
+                    _MAX_RETRIES,
+                )
+                _sleep_with_backoff(attempt)
+                continue
+            raise
+    assert last_exc is not None
+    raise last_exc
+
+
 def dispatch(
     payload: dict,
     model: dict,
@@ -468,7 +527,7 @@ def dispatch(
     client = anthropic.Anthropic(api_key=api_key)
 
     t0 = time.monotonic()
-    resp = client.messages.create(**payload)
+    resp = _call_with_retry(client, payload)
     wall_s = round(time.monotonic() - t0, 3)
 
     parsed = _parse_anthropic_response(resp)

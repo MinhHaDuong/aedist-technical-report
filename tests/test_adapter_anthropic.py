@@ -323,3 +323,114 @@ def test_record_from_parsed_includes_messages_in_extra():
     assert len(msgs) == 2
     assert msgs[0]["role"] == "user"
     assert msgs[1]["role"] == "assistant"
+
+
+# ── Retry policy (ticket 0244) ──────────────────────────────────────
+
+
+@pytest.fixture()
+def _no_sleep_anthropic(monkeypatch):
+    monkeypatch.setattr("aedist.query_anthropic.time.sleep", lambda _: None)
+
+
+class _FakeRateLimitError(Exception):
+    pass
+
+
+class _FakeAPIStatusError(Exception):
+    def __init__(self, status_code):
+        self.status_code = status_code
+        super().__init__(f"HTTP {status_code}")
+
+
+class _FakeAPIConnectionError(Exception):
+    pass
+
+
+def _patch_anthropic_exceptions(monkeypatch):
+    import types
+
+    fake_anthropic = types.ModuleType("anthropic")
+    fake_anthropic.RateLimitError = _FakeRateLimitError
+    fake_anthropic.APIStatusError = _FakeAPIStatusError
+    fake_anthropic.APIConnectionError = _FakeAPIConnectionError
+    monkeypatch.setitem(__import__("sys").modules, "anthropic", fake_anthropic)
+
+
+def test_anthropic_retry_succeeds_after_429(_no_sleep_anthropic, monkeypatch):
+    """429 twice then success → result returned, 3 attempts total."""
+    _patch_anthropic_exceptions(monkeypatch)
+    from aedist.query_anthropic import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class messages:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count <= 2:
+                    raise _FakeRateLimitError("rate limited")
+                return {"result": "ok"}
+
+    result = _call_with_retry(FakeClient(), {"model": "test"})
+    assert result == {"result": "ok"}
+    assert call_count == 3
+
+
+def test_anthropic_retry_exhausts_on_429(_no_sleep_anthropic, monkeypatch):
+    """429 × 4 → raises after exhausting retries."""
+    _patch_anthropic_exceptions(monkeypatch)
+    from aedist.query_anthropic import _call_with_retry
+
+    class FakeClient:
+        class messages:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                raise _FakeRateLimitError("rate limited")
+
+    with pytest.raises(_FakeRateLimitError):
+        _call_with_retry(FakeClient(), {"model": "test"})
+
+
+def test_anthropic_retry_skips_4xx(_no_sleep_anthropic, monkeypatch):
+    """Non-429 4xx raises immediately — no retry."""
+    _patch_anthropic_exceptions(monkeypatch)
+    from aedist.query_anthropic import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class messages:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                raise _FakeAPIStatusError(422)
+
+    with pytest.raises(_FakeAPIStatusError):
+        _call_with_retry(FakeClient(), {"model": "test"})
+    assert call_count == 1, "4xx must not trigger any retry"
+
+
+def test_anthropic_retry_retries_500(_no_sleep_anthropic, monkeypatch):
+    """500 once then success → retried."""
+    _patch_anthropic_exceptions(monkeypatch)
+    from aedist.query_anthropic import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class messages:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count == 1:
+                    raise _FakeAPIStatusError(502)
+                return {"result": "ok"}
+
+    result = _call_with_retry(FakeClient(), {"model": "test"})
+    assert result == {"result": "ok"}
+    assert call_count == 2

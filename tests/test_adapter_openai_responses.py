@@ -286,3 +286,115 @@ def test_run_dry_run_accepts_extra_metadata_kwarg():
         extra_metadata={"remaining_budget_usd": "5.50"},
     )
     assert record.agent_family == AGENT_FAMILY
+
+
+# ── Retry policy (ticket 0244) ──────────────────────────────────────
+
+
+@pytest.fixture()
+def _no_sleep_openai(monkeypatch):
+    monkeypatch.setattr("aedist.adapter_openai_responses.time.sleep", lambda _: None)
+
+
+class _FakeRateLimitError(Exception):
+    pass
+
+
+class _FakeAPIStatusError(Exception):
+    def __init__(self, status_code):
+        self.status_code = status_code
+        super().__init__(f"HTTP {status_code}")
+
+
+class _FakeAPIConnectionError(Exception):
+    pass
+
+
+def _patch_openai_exceptions(monkeypatch):
+    """Monkeypatch openai exception types so tests stay import-light."""
+    import types
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.RateLimitError = _FakeRateLimitError
+    fake_openai.APIStatusError = _FakeAPIStatusError
+    fake_openai.APIConnectionError = _FakeAPIConnectionError
+    monkeypatch.setitem(__import__("sys").modules, "openai", fake_openai)
+
+
+def test_call_with_retry_succeeds_after_429(_no_sleep_openai, monkeypatch):
+    """429 twice then success → result returned, 3 attempts total."""
+    _patch_openai_exceptions(monkeypatch)
+    from aedist.adapter_openai_responses import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class responses:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count <= 2:
+                    raise _FakeRateLimitError("rate limited")
+                return {"result": "ok"}
+
+    result = _call_with_retry(FakeClient(), {"model": "test"})
+    assert result == {"result": "ok"}
+    assert call_count == 3
+
+
+def test_call_with_retry_exhausts_on_429(_no_sleep_openai, monkeypatch):
+    """429 × 4 (initial + 3 retries) → raises."""
+    _patch_openai_exceptions(monkeypatch)
+    from aedist.adapter_openai_responses import _call_with_retry
+
+    class FakeClient:
+        class responses:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                raise _FakeRateLimitError("rate limited")
+
+    with pytest.raises(_FakeRateLimitError):
+        _call_with_retry(FakeClient(), {"model": "test"})
+
+
+def test_call_with_retry_skips_4xx(_no_sleep_openai, monkeypatch):
+    """Non-429 4xx raises immediately — no retry."""
+    _patch_openai_exceptions(monkeypatch)
+    from aedist.adapter_openai_responses import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class responses:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                raise _FakeAPIStatusError(422)
+
+    with pytest.raises(_FakeAPIStatusError):
+        _call_with_retry(FakeClient(), {"model": "test"})
+    assert call_count == 1, "4xx must not trigger any retry"
+
+
+def test_call_with_retry_retries_500(_no_sleep_openai, monkeypatch):
+    """500 once then success → retried."""
+    _patch_openai_exceptions(monkeypatch)
+    from aedist.adapter_openai_responses import _call_with_retry
+
+    call_count = 0
+
+    class FakeClient:
+        class responses:  # noqa: N801
+            @staticmethod
+            def create(**kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count == 1:
+                    raise _FakeAPIStatusError(502)
+                return {"result": "ok"}
+
+    result = _call_with_retry(FakeClient(), {"model": "test"})
+    assert result == {"result": "ok"}
+    assert call_count == 2
