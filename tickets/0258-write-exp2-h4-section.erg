@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 H4 section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the H4 section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. State H4 exactly as in protocol.
+2. Insert H4 table placeholder and Wilson upper-bound test placeholder.
+3. Use threshold language carefully for the >50% claim.
+
+## Test
+Check that the section reports confidence-bound logic and does not over-claim point estimates.
+
+## Exit criteria
+H4 section is complete with correct binomial-threshold interpretation.

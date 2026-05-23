@@ -1,0 +1,29 @@
+%erg 0.1
+Title: Complete Exp2 analysis report
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+2026-05-23T17:31Z Copilot note Umbrella ticket tracking section-level report delivery from protocol-locked outline.
+
+--- body ---
+## Context
+This umbrella ticket coordinates full delivery of the Exp2 report from the protocol-first outline in `docs/exp2-analysis-v0.md`.
+
+The report is delivered section by section with one child ticket per section.
+
+## Child tickets
+- 0252 Introduction section
+- 0253 Context and protocol lock section
+- 0254 Dataset and descriptive statistics section
+- 0255 H1 section
+- 0256 H2 section
+- 0257 H3 section
+- 0258 H4 section
+- 0259 H5 section
+- 0260 H6 section
+- 0261 Synthesis and limits section
+
+## Exit criteria
+All child tickets are closed and the report section texts are integrated coherently in `report/report.tex` (or its generated includes) with protocol-faithful claims only.

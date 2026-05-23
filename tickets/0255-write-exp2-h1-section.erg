@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 H1 section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the H1 section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. State H1 exactly as in protocol.
+2. Insert H1 table, test placeholder, and conclusion placeholder.
+3. Keep interpretation tied to Mann-Whitney result and effect size.
+
+## Test
+Check section contains hypothesis statement, artifact pointer, test pointer, and bounded conclusion text.
+
+## Exit criteria
+H1 section is complete and methodologically aligned with the protocol.

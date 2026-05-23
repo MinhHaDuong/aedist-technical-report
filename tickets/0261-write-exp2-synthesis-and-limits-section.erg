@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Write Exp2 synthesis and limits section
+Created: 2026-05-23
+Author: Copilot
+
+--- log ---
+2026-05-23T17:30Z Copilot created
+
+--- body ---
+## Context
+Write the Synthesis and Limits section from `docs/exp2-analysis-v0.md`.
+
+## Actions
+1. Consolidate H1-H6 status in one synthesis table.
+2. Separate supported claims from deferred claims.
+3. Add explicit next actions for unresolved evidence blocks.
+
+## Test
+Check section only aggregates previous section outcomes and adds no new inferential claims.
+
+## Exit criteria
+Synthesis section is complete, conservative, and ready for final report integration.
