@@ -2,6 +2,7 @@
 Title: Experiment 3 — reconstruction from verified bibliography (5 strategies × 5 models)
 Created: 2026-05-21
 Author: claude
+Closed: superseded — Exp 3 redesigned as Arms 3/4; live ticket 0250
 
 --- log ---
 2026-05-21T13:30Z claude created — replaces the §3 regimes-ladder portion of closed 0153; supersedes 0135
@@ -11,6 +12,7 @@ Author: claude
 2026-05-21T17:00Z HDMX-coding-agent note imported the two artefacts into main as tests/fixtures/exp3_source_mistral_report.md and tests/fixtures/exp3_source_mistral_citations.json — durable on main, no dependency on rebuild-exp2-smoke branch for 0202 to start
 2026-05-21T18:00Z HDMX-coding-agent note clarification — 120 citation entries → 42 unique URLs (Mistral repeats URLs across cited passages). Document store for reconstruction itself is already on main at data/rag_corpus/ (18 primary-source markdown files); the bibliography is just the candidate URL list to classify
 
+2026-05-23T20:11Z HDMX-coding-agent closed — superseded — Exp 3 redesigned as Arms 3/4; live ticket 0250
 --- body ---
 
 ## Context

@@ -2,13 +2,14 @@
 Title: Patch Experiment 3 runtime to inject evidence pack
 Created: 2026-05-23
 Author: Copilot
-Blocked-by: 0248
+Closed: autoclosed — PR #468
 
 --- log ---
 2026-05-23T16:02Z Copilot created
 2026-05-23T16:05Z Copilot note Patch should use a shared helper with a no-op default; baseline arms stay unchanged and arms 3/4 opt in through config.
 2026-05-23T16:06Z Copilot note The authoritative output record format is the shared RunRecord/measurements.jsonl path; any extra evidence-pack metadata must be additive.
 
+2026-05-23T20:11Z HDMX-coding-agent closed — autoclosed — PR #468
 --- body ---
 ## Context
 The evidence-pack assembler is its own prerequisite. This ticket is the codebase patch that threads the assembled pack into the Experiment 3 runtime so the intervention arms can use it.
