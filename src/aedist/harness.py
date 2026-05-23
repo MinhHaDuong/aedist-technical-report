@@ -153,7 +153,7 @@ EVIDENCE_PACK_HEADER_FIELDS = (
     "relevance",
 )
 
-EVIDENCE_PACK_SECTION_TITLE = "## Evidence Pack"
+EVIDENCE_PACK_SECTION_TITLE = "# Evidence pack"
 
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
@@ -224,13 +224,22 @@ def assemble_evidence_pack(manifest_path: Path) -> str:
         raise ValueError(f"Invalid manifest at {manifest_path}: missing source_root")
     corpus_root = _resolve_manifest_source_root(manifest_path, source_root)
 
+    items = manifest["items"]
+    manifest_lines = [
+        "These are manually curated primary sources meant to boost but not replace your own deep research.",
+        "",
+    ]
+    for index, item in enumerate(items, start=1):
+        manifest_lines.append(f"{index}. {item['source_id']} — {item.get('document_title', '')}")
+    preamble = "\n".join(manifest_lines)
+
     blocks: list[str] = []
-    for item in manifest["items"]:
+    for index, item in enumerate(items, start=1):
         source_path = corpus_root / str(item["file"])
         if not source_path.exists():
             raise FileNotFoundError(f"Evidence-pack source file not found: {source_path}")
 
-        block_lines = ["## Source Block"]
+        block_lines = [f"## Chunk {index}"]
         block_lines.extend(
             [f"{field}: {item.get(field, '')}" for field in EVIDENCE_PACK_HEADER_FIELDS]
         )
@@ -239,7 +248,7 @@ def assemble_evidence_pack(manifest_path: Path) -> str:
         block_lines.append("<<<END_SOURCE_TEXT>>>")
         blocks.append("\n".join(block_lines))
 
-    return "\n\n".join(blocks)
+    return preamble + "\n\n" + "\n\n".join(blocks)
 
 
 def _resolve_evidence_pack_manifest_path(manifest_path: str | Path) -> Path:
