@@ -274,8 +274,11 @@ def parse_response(resp: Any, price_card: dict) -> RunRecord:
 
 
 def _load_openai_key() -> str:
-    """Load ``OPENAI_API_KEY`` from env or ``~/.config/keys/openai.env``."""
-    key = os.environ.get("OPENAI_API_KEY")
+    """Load OpenAI key from env or ``~/.config/keys/openai.env``.
+
+    Accepts only the project key ``OPENAI_API_KEY_AEDIST``.
+    """
+    key = os.environ.get("OPENAI_API_KEY_AEDIST")
     if key:
         return key
     env_file = Path.home() / ".config" / "keys" / "openai.env"
@@ -286,9 +289,12 @@ def _load_openai_key() -> str:
                 continue
             if "=" in line:
                 k, _, v = line.partition("=")
-                if k.strip() == "OPENAI_API_KEY":
+                if k.strip() == "OPENAI_API_KEY_AEDIST":
                     return v.strip().strip('"').strip("'")
-    raise SystemExit("OPENAI_API_KEY not set and not found in ~/.config/keys/openai.env")
+    raise SystemExit(
+        "OpenAI key not set (expected OPENAI_API_KEY_AEDIST) "
+        "and not found in ~/.config/keys/openai.env"
+    )
 
 
 # Default price card for gpt-5.5 — pending official verification on
