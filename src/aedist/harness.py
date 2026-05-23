@@ -264,8 +264,8 @@ def _resolve_evidence_pack_manifest_path(manifest_path: str | Path) -> Path:
     for path in search_paths:
         if path.exists():
             return path
-    # Preserve deterministic error paths while still returning a sensible default.
-    return search_paths[0]
+    searched = ", ".join(str(path) for path in search_paths)
+    raise FileNotFoundError(f"Evidence-pack manifest not found. Searched: {searched}")
 
 
 def append_evidence_pack(prompt: str, manifest_path: str | Path | None) -> str:

@@ -618,15 +618,19 @@ def test_sweep_propagates_system_instruction_to_messages(mock_openai_cls, tmp_pa
 
 @patch("aedist.harness.OpenAI")
 def test_sweep_evidence_pack_injection_only_when_configured(mock_openai_cls, tmp_path):
-    """Baseline sweep keeps prompt unchanged; intervention sweep appends evidence pack."""
+    """All four arms should keep baseline prompts unchanged for Arms 1/2 and append the pack for Arms 3/4."""
     mock_client = MagicMock()
     mock_client.chat.completions.create.return_value = _make_mock_response()
     mock_openai_cls.return_value = mock_client
 
+    from pytest import MonkeyPatch
+
+    monkeypatch = MonkeyPatch()
+    monkeypatch.chdir(tmp_path)
+
     models_path = _minimal_models_yaml(tmp_path)
     prompt_path = _prompt_file(tmp_path)
-    output_arm1 = tmp_path / "out-arm1"
-    output_arm3 = tmp_path / "out-arm3"
+    outputs = {arm: tmp_path / f"out-arm{arm}" for arm in range(1, 5)}
 
     corpus_dir = tmp_path / "data" / "rag_corpus"
     corpus_dir.mkdir(parents=True)
@@ -649,67 +653,66 @@ def test_sweep_evidence_pack_injection_only_when_configured(mock_openai_cls, tmp
         "[sweeps.arm1]\n"
         'system_instruction = "No web search"\n'
         "\n"
+        "[sweeps.arm2]\n"
+        'system_instruction = "No web search"\n'
+        "\n"
         "[sweeps.arm3]\n"
+        'system_instruction = "No web search"\n'
+        "evidence_pack_manifest = \"experiments/evidence_packs/mini.yaml\"\n"
+        "\n"
+        "[sweeps.arm4]\n"
         'system_instruction = "No web search"\n'
         f'evidence_pack_manifest = "{manifest_path}"\n'
     )
 
-    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "query_direct",
-                "--prompt",
-                str(prompt_path),
-                "--models",
-                str(models_path),
-                "--output",
-                str(output_arm1),
-                "--sweep",
-                "arm1",
-                "--experiments",
-                str(experiments_path),
-            ],
-        ):
-            from aedist.query_direct import main
+    def run_sweep(sweep_name: str, output_dir: Path) -> tuple[list[dict], dict]:
+        mock_client.chat.completions.create.reset_mock()
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+            with patch.object(
+                sys,
+                "argv",
+                [
+                    "query_direct",
+                    "--prompt",
+                    str(prompt_path),
+                    "--models",
+                    str(models_path),
+                    "--output",
+                    str(output_dir),
+                    "--sweep",
+                    sweep_name,
+                    "--experiments",
+                    str(experiments_path),
+                ],
+            ):
+                from aedist.query_direct import main
 
-            main()
+                main()
 
-    arm1_call = mock_client.chat.completions.create.call_args
-    arm1_messages = arm1_call.kwargs.get("messages") or arm1_call[1].get("messages")
-    assert arm1_messages[1]["content"] == "List power plants."
-    arm1_record = json.loads(next(output_arm1.rglob("*.json")).read_text())
+        call_args = mock_client.chat.completions.create.call_args
+        messages = call_args.kwargs.get("messages") or call_args[1].get("messages")
+        record = json.loads(next(output_dir.rglob("*.json")).read_text())
+        return messages, record
+
+    arm1_messages, arm1_record = run_sweep("arm1", outputs[1])
+    arm2_messages, arm2_record = run_sweep("arm2", outputs[2])
+    arm3_messages, arm3_record = run_sweep("arm3", outputs[3])
+    arm4_messages, arm4_record = run_sweep("arm4", outputs[4])
+
+    baseline_prompt = "List power plants."
+    assert arm1_messages[1]["content"] == baseline_prompt
+    assert arm2_messages[1]["content"] == baseline_prompt
+    assert arm1_messages[1]["content"] == arm2_messages[1]["content"]
     assert "evidence_pack_manifest" not in arm1_record
+    assert "evidence_pack_manifest" not in arm2_record
 
-    mock_client.chat.completions.create.reset_mock()
+    for messages, record in ((arm3_messages, arm3_record), (arm4_messages, arm4_record)):
+        assert messages[1]["content"].startswith(baseline_prompt)
+        assert "## Evidence Pack" in messages[1]["content"]
+        assert "source_id: demo_source" in messages[1]["content"]
+        assert record["evidence_pack_manifest"] in {
+            "experiments/evidence_packs/mini.yaml",
+            str(manifest_path),
+        }
 
-    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "query_direct",
-                "--prompt",
-                str(prompt_path),
-                "--models",
-                str(models_path),
-                "--output",
-                str(output_arm3),
-                "--sweep",
-                "arm3",
-                "--experiments",
-                str(experiments_path),
-            ],
-        ):
-            from aedist.query_direct import main
-
-            main()
-
-    arm3_call = mock_client.chat.completions.create.call_args
-    arm3_messages = arm3_call.kwargs.get("messages") or arm3_call[1].get("messages")
-    assert "## Evidence Pack" in arm3_messages[1]["content"]
-    assert "source_id: demo_source" in arm3_messages[1]["content"]
-
-    arm3_record = json.loads(next(output_arm3.rglob("*.json")).read_text())
-    assert arm3_record["evidence_pack_manifest"] == str(manifest_path)
+    monkeypatch.undo()
