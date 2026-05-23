@@ -53,8 +53,8 @@ STAGE_LABELS = {
     3: "3. Browsing",
     4: "4. Code exec.",
     5: "5. Reasoning",
-    6: "6. Deep research",
-    7: "7. Tool use",
+    6: "6. Tool use",
+    7: "7. Deep research",
     8: "8. Multi-agent",
 }
 

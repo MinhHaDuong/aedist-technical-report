@@ -61,8 +61,8 @@ STAGE_LABELS = {
     3: "3. Browsing / web search",
     4: "4. Code execution",
     5: "5. Reasoning",
-    6: "6. Deep research",
-    7: "7. External tool use (MCP-like)",
+    6: "6. External tool use (MCP-like)",
+    7: "7. Deep research",
     8: "8. Multi-agent (recursion)",
 }
 
