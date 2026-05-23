@@ -1,0 +1,59 @@
+%erg 0.1
+Title: adapter_mistral: self-guard against metadata on follow-up turns
+Created: 2026-05-23
+Author: claude
+Tag: deferred
+
+--- log ---
+2026-05-23T00:00Z claude created — residual from 0218; caller-guard exists, adapter still attaches metadata on follow-up (footgun)
+
+--- body ---
+## Context
+
+Spun off from 0218 (closed substantially-resolved). The Mistral
+follow-up 422 on body-level `metadata` is empirically confirmed and
+fully mitigated **at the caller**: `experiments/sota/exp2_interactive_smoke.py:999-1000`
+sets `extra_metadata = None` on every turn > 1.
+
+The **adapter itself is not hardened**. `adapter_mistral.py:605`
+unconditionally calls `_attach_metadata(conv_body)` on the follow-up
+branch. Any future caller that forgets the `None` guard will hit a
+runtime 422 — and this adapter's own docstring cites a "history of
+HTTP 422 silent-accept incidents." This is belt-and-suspenders, not
+a live bug (Exp 2 already ran clean, uniform treatment across arms).
+
+## Relevant files
+
+- `src/aedist/adapter_mistral.py` — `is_followup` branch (~:588-608),
+  `_attach_metadata` (~:581), the unconditional call at ~:605
+- `src/aedist/adapter_mistral.py:491` — docstring still says metadata
+  "may not support it"; should state the confirmed follow-up 422
+- `experiments/sota/exp2_protocol_spec.md:75` — policy stated
+  conditionally; could enumerate per-provider metadata degradation
+
+## Actions
+
+1. On the Mistral follow-up branch, either skip `_attach_metadata`
+   entirely, or adopt the Qwen-style prepend (a machine-parseable
+   `[metadata]` line inside the user message text) so the structured
+   budget signal survives turn 2+. Prefer the prepend — it preserves
+   the 0207 policy intent rather than dropping the signal.
+2. Unit-test the follow-up metadata path (currently untested — the
+   only `extra_metadata` test, `test_exp2_interactive_smoke.py:1242`,
+   exercises the Qwen turn-1 path).
+3. Tighten the adapter docstring (:491) to state the confirmed 422,
+   not "may not support it".
+
+## Out of scope
+
+- Re-architecting `extra_metadata` into a typed cross-provider surface
+  (still out of scope, as in 0218).
+
+## Exit criteria
+
+- [ ] Mistral follow-up branch no longer sends a 422-triggering
+      `metadata` body key; budget signal preserved via prepend OR
+      explicitly dropped with a documented rationale.
+- [ ] Unit test covers the Mistral follow-up metadata path.
+- [ ] Adapter docstring (:491) states the confirmed follow-up 422.
+- [ ] `make check` passes.

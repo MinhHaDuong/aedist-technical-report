@@ -2,10 +2,14 @@
 Title: Empirical capability DAG: transition-order matrix and timing panel
 Created: 2026-05-23
 Author: haduong
+Closed: autoclosed — PR #453
 
 --- log ---
 2026-05-23T11:30Z haduong created
+2026-05-23T14:00Z claude note 8 stages in data, not 7 — corrected heatmap size
+2026-05-23T14:00Z claude note §3 "2-7 months" claim is 0.9-4.8 months in data — prose fix needed
 
+2026-05-23T13:23Z HDMX-coding-agent closed — autoclosed — PR #453
 --- body ---
 ## Context
 
@@ -17,7 +21,7 @@ A companion figure would make the DAG structure directly visible from the data.
 
 ## Proposed figure: two panels
 
-### Panel A — Transition-order matrix (7×7 heatmap)
+### Panel A — Transition-order matrix (8×8 heatmap)
 
 For each ordered pair (i, j) of capability stages:
 - Cell value = fraction of labs where stage i was acquired before stage j
@@ -57,7 +61,7 @@ For transitions with N ≥ 4:
 ## Exit criteria
 
 - [ ] `plot_capability_dag.py` reads `data/capability_timeline.csv`
-- [ ] Panel A: 7×7 heatmap with N labelled per cell
+- [ ] Panel A: 8×8 heatmap with N labelled per cell
 - [ ] Panel B: dot-range for N≥4 transitions only, N labelled
 - [ ] Output wired as `inputs/generated/fig_capability_dag.pdf`
 - [ ] Makefile target in place
