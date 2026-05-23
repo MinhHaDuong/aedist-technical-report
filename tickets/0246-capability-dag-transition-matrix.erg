@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Empirical capability DAG: transition-order matrix and timing panel
+Created: 2026-05-23
+Author: haduong
+
+--- log ---
+2026-05-23T11:30Z haduong created
+
+--- body ---
+## Context
+
+Section §3 of `slides/manuscript/main.md` describes the capability ladder as a
+partial order (DAG), not a total sequence. Stages 3 and 4 are parallel; stage 5
+follows both. This claim currently rests on prose and the timeline figure (Fig 4).
+
+A companion figure would make the DAG structure directly visible from the data.
+
+## Proposed figure: two panels
+
+### Panel A — Transition-order matrix (7×7 heatmap)
+
+For each ordered pair (i, j) of capability stages:
+- Cell value = fraction of labs where stage i was acquired before stage j
+  (conditional on both being acquired)
+- Cells near 1.0 → strong empirical ordering
+- Cells near 0.5 → parallel / interchangeable
+- Cells near 0.0 → reverse ordering observed
+- Label N per cell (some transitions have fewer than 5 labs)
+
+### Panel B — Time-gap dot-range plot
+
+For transitions with N ≥ 4:
+- Show raw dots (one per lab) + range bar
+- X-axis: gap in months between stage i and stage j
+- Only high-confidence transitions (N ≥ 4) to avoid false precision
+- Caption must label N per transition explicitly
+
+## Data source
+
+`data/capability_timeline.csv` — per-lab, per-stage launch dates for 5 labs
+(Anthropic, OpenAI, Mistral, Qwen, DeepSeek).
+
+## Implementation
+
+- New script: `src/aedist/plot_capability_dag.py`
+- Output: `inputs/generated/fig_capability_dag.pdf`
+- Makefile target wired from `data/capability_timeline.csv`
+- Include in §3 as companion to Fig 4
+
+## Honest design constraints
+
+- N=5 labs total; some cells drop to N=2–3
+- Panel B only shows cells with N ≥ 4
+- "Descriptive historical record, N=5 labs" in caption — no statistical inference
+- Raw scatter preferred over means for Panel B
+
+## Exit criteria
+
+- [ ] `plot_capability_dag.py` reads `data/capability_timeline.csv`
+- [ ] Panel A: 7×7 heatmap with N labelled per cell
+- [ ] Panel B: dot-range for N≥4 transitions only, N labelled
+- [ ] Output wired as `inputs/generated/fig_capability_dag.pdf`
+- [ ] Makefile target in place
+- [ ] Figure included in §3 with caption
+- [ ] §3 prose updated to reflect the empirical DAG structure found (notation and parallel/sequential claims follow the data)
+- [ ] `make check` passes
