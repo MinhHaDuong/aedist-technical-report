@@ -1,4 +1,4 @@
-Last updated: 2026-05-23T16:30Z
+Last updated: 2026-05-23T18:05Z
 
 ## North star
 
@@ -32,9 +32,7 @@ Milestones in order:
 
 ## Backlog (post-conference)
 
-1. **Tooling** — 0203/0204 raid follow-ups still open.
-2. **Scaling-curve diagnosis** — direct_complete F1=0 on 3 capable models; likely parser failure on structured-document output.
-3. **Registry / figures infrastructure** — 0156→0160.
+1. **Scaling-curve diagnosis** — direct_complete F1=0 on 3 capable models; likely parser failure on structured-document output.
 
 ## Suspended / deferred
 
