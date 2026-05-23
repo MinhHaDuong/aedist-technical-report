@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-23T13:35Z claude created — gap found during Phase B post-mortem: Mistral (PR #399) and Qwen have retry; OpenAI does not
+2026-05-23T14:00Z claude note Anthropic adapter is query_anthropic.py (not adapter_anthropic.py) — correct file names in body
 
 --- body ---
 ## Context
@@ -16,7 +17,7 @@ The four SOTA adapters have uneven retry coverage:
 | `adapter_mistral.py` | ✓ (PR #399) | ✓ exponential backoff | `_request_with_retry` |
 | `adapter_qwen_dashscope.py` | ✓ | ✓ | `_call_with_retry` |
 | `adapter_openai_responses.py` | ✗ | ✗ | — |
-| `adapter_anthropic.py` | ✗ | ✗ | — |
+| `query_anthropic.py` | ✗ | ✗ | — |
 
 Ticket 0242 listed "429-retry added to OpenAI and Qwen adapters" as an
 exit criterion, but OpenAI was not implemented. Anthropic was not
@@ -37,19 +38,20 @@ Mirror the Mistral retry policy in both missing adapters:
 **OpenAI** (`adapter_openai_responses.py`): raises `openai.RateLimitError`
 (429) and `openai.APIStatusError` (5xx). Wrap `client.responses.create`.
 
-**Anthropic** (`adapter_anthropic.py`): raises `anthropic.RateLimitError`
-(429) and `anthropic.APIStatusError` (5xx). Wrap `client.messages.create`.
+**Anthropic** (`query_anthropic.py`): raises `anthropic.RateLimitError`
+(429) and `anthropic.APIStatusError` (5xx). Wrap `client.messages.create`
+inside `dispatch()`.
 
 ## Reference
 
 - `src/aedist/adapter_mistral.py` lines ~295–382 — retry implementation to mirror
 - `src/aedist/adapter_qwen_dashscope.py` lines ~57–74 — Qwen variant
 - `src/aedist/adapter_openai_responses.py` — target file
-- `src/aedist/adapter_anthropic.py` — target file
+- `src/aedist/query_anthropic.py` — target file (Anthropic adapter; retry goes in `dispatch()`)
 
 ## Exit criteria
 
 - [ ] `_call_with_retry` (or equivalent) added to `adapter_openai_responses.py`
-- [ ] `_call_with_retry` (or equivalent) added to `adapter_anthropic.py`
+- [ ] `_call_with_retry` (or equivalent) added to `query_anthropic.py`
 - [ ] Unit tests: monkeypatched client raises 429 twice then succeeds → 1 result, 2 retries logged (one test per adapter)
 - [ ] `make check` passes
