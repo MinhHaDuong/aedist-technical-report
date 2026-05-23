@@ -1610,3 +1610,19 @@ def test_meta_prompt_not_augmented_with_evidence_pack(
     meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
     assert meta_prompt_file.exists()
     assert "# Evidence pack" not in meta_prompt_file.read_text()
+
+
+def test_min_phase_b_max_tokens_flag_present():
+    """--min-phase-b-max-tokens must be wired in argparse with a default of 16000."""
+    src = open("experiments/sota/exp2_interactive_smoke.py", encoding="utf-8").read()
+    assert "--min-phase-b-max-tokens" in src
+    assert "default=16000" in src
+
+
+def test_min_phase_b_max_tokens_floor_applied():
+    """Floor must be enforced with max(), not an if-guard, in _run_one_agent."""
+    src = open("experiments/sota/exp2_interactive_smoke.py", encoding="utf-8").read()
+    # The floor is applied via max(designed, args.min_phase_b_max_tokens)
+    assert "args.min_phase_b_max_tokens" in src
+    # Must use max(), not a conditional assignment
+    assert "max(\n        int(design.get" in src or "= max(" in src

@@ -1315,8 +1315,9 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
         else json.dumps(designed_prompt_raw, indent=2, ensure_ascii=False)
     )
     designed_prompt = append_evidence_pack(designed_prompt, args.evidence_pack_manifest)
-    requested_max_tokens = int(
-        design.get("settings", {}).get("max_tokens") or args.phase_b_max_tokens
+    requested_max_tokens = max(
+        int(design.get("settings", {}).get("max_tokens") or args.phase_b_max_tokens),
+        args.min_phase_b_max_tokens,
     )
     designed_system_prompt = design["system_prompt"]
 
@@ -1381,6 +1382,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--budget-cap-phase-b", type=float, default=15.0)
     p.add_argument("--phase-a-max-tokens", type=int, default=8000)
     p.add_argument("--phase-b-max-tokens", type=int, default=12000)
+    p.add_argument(
+        "--min-phase-b-max-tokens",
+        type=int,
+        default=16000,
+        help="Floor applied to Phase A's designed max_tokens for Phase B turns. "
+        "Prevents low Phase A estimates from truncating multi-turn outputs.",
+    )
     p.add_argument(
         "--stop-after-phase-a",
         action="store_true",
