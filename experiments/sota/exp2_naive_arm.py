@@ -45,7 +45,7 @@ AGENTS = ("mistral", "qwen", "openai", "anthropic")
 PROBE_MAX_TOKENS = 16_000       # mistral baseline
 OPENAI_MAX_TOKENS = 32_000      # gpt-5.5 truncated at 16K
 QWEN_MAX_TOKENS = 32_000        # qwen3.7-max (thinking disabled)
-ANTHROPIC_MAX_TOKENS = 64_000   # opus thinking + web search eat headroom before text
+ANTHROPIC_MAX_TOKENS = 32_000   # 64K triggers SDK streaming requirement; 32K fits ~9 min
 QWEN_CALL_TIMEOUT = 600         # 160K+ char prompt with evidence pack is slow
 PROBE_CAP_USD = 3.00
 ANTHROPIC_CAP_USD = 6.00        # input alone costs ~$1.7; 64K output adds ~$1.6
@@ -191,6 +191,7 @@ def probe_qwen(prompt: str, output_dir: Path) -> dict:
                 break
     dashscope.api_key = api_key
     dashscope.base_http_api_url = "https://dashscope-intl.aliyuncs.com/api/v1"
+    dashscope.request_timeout = QWEN_CALL_TIMEOUT
     t0 = time.monotonic()
     resp = dashscope.Generation.call(
         model=meta.get("model_id"),
@@ -199,7 +200,6 @@ def probe_qwen(prompt: str, output_dir: Path) -> dict:
         max_tokens=QWEN_MAX_TOKENS,
         enable_thinking=False,
         enable_search=True,  # the whole point of the probe
-        call_timeout=QWEN_CALL_TIMEOUT,
     )
     wall_s = round(time.monotonic() - t0, 2)
     narrative = ""
