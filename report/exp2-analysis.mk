@@ -10,6 +10,8 @@ OPTIMISED_DIR := experiments/outputs/sota_exp2_brerun1
 NAIVE_JSONS    := $(wildcard $(NAIVE_DIR)/*.json)
 OPTIMISED_JSONS := $(wildcard $(OPTIMISED_DIR)/*.json)
 NAIVE_MDS      := $(wildcard $(NAIVE_DIR)/*.md)
+PROBE_RAWS     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.raw.json)
+PROBE_CLSF     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.classification.json)
 
 # --- Intermediate: flat per-run CSV ------------------------------------------
 
@@ -36,6 +38,14 @@ $(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
+	    --output $@
+
+# --- Figure: turn-by-turn trajectory for Arm 2 (reads from probes/) ---------
+
+$(GEN)/fig_exp2_turn_trajectory.pdf: $(PROBE_RAWS) $(PROBE_CLSF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_turn_trajectory \
+	    --probes-dir $(OPTIMISED_DIR)/probes \
 	    --output $@
 
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
@@ -105,4 +115,5 @@ exp2-analysis-report: \
 	$(GEN)/tab_exp2_arms_runs.csv \
 	$(GEN)/tab_exp2_arms.tex \
 	$(GEN)/fig_exp2_arms_comparison.pdf \
+	$(GEN)/fig_exp2_turn_trajectory.pdf \
 	$(EXP2_OUTLINE_ARTIFACTS)
