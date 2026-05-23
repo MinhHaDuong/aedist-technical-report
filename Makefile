@@ -104,17 +104,6 @@ $(GEN)/tab_relances.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_relances --output $@
 
-$(GEN)/tab_exp2_arms_runs.csv: $(wildcard experiments/outputs/sota_exp2_naive_arm/*.json) $(wildcard experiments/outputs/sota_exp2_naive_arm/*.md) $(wildcard experiments/outputs/sota_exp2_brerun1/*.json)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_exp2_arms_runs \
-	    --naive-dir experiments/outputs/sota_exp2_naive_arm \
-	    --optimised-dir experiments/outputs/sota_exp2_brerun1 \
-	    --output $@
-
-$(GEN)/tab_exp2_arms.tex: $(GEN)/tab_exp2_arms_runs.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_exp2_arms --input $< --output $@
-
 $(GEN)/tab_comparaison.tex: $(MEASUREMENTS) derived/variance_decomposition.json
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_comparaison --output $@ --variance-json derived/variance_decomposition.json
