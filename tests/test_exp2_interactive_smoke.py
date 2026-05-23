@@ -1374,3 +1374,167 @@ def test_state_machine_qwen_dispatch_chains_messages(monkeypatch, tmp_path):
     assert msgs[2] == {"role": "assistant", "content": "reply-1"}
     # SYSTEM_PROMPT_PASSTHROUGH=True for Qwen — system re-sent on turn 2.
     assert call_log[1]["system_prompt"] == "designed system text"
+
+
+# ---------------------------------------------------------------------------
+# Regression guards — must pass before and after the --evidence-pack-manifest patch
+# ---------------------------------------------------------------------------
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+MANIFEST_PATH = REPO_ROOT / "experiments" / "evidence_packs" / "all18tables.yaml"
+
+FAKE_DESIGN = {
+    "designed_prompt": "Extract thermal plants from the documents.",
+    "system_prompt": "You are an energy data analyst.",
+    "settings": {"max_tokens": 4000},
+}
+
+FAKE_PHASE_B_RESULT = {
+    "turns": 2,
+    "total_spent_usd": 0.05,
+    "records": [],
+}
+
+
+@pytest.fixture()
+def phase_a_reuse_dir(tmp_path):
+    """Minimal Phase A reuse dir for mistral_run01 — skips Phase A API call."""
+    reuse = tmp_path / "phase_a_probes" / "mistral_run01"
+    reuse.mkdir(parents=True)
+    (reuse / "mistral_phase_a_design.json").write_text(json.dumps(FAKE_DESIGN), encoding="utf-8")
+    for fname in ("mistral_phase_a.json", "mistral_phase_a.raw.json"):
+        (reuse / fname).write_bytes(b"{}")
+    return tmp_path / "phase_a_probes"
+
+
+@pytest.fixture()
+def patched_phase_b(monkeypatch):
+    """Capture the prompt passed to run_phase_b_multiturn; suppress downstream reads."""
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    captured: dict = {}
+
+    def fake_phase_b(prompt, **kwargs):
+        captured["prompt"] = prompt
+        return FAKE_PHASE_B_RESULT
+
+    monkeypatch.setattr(mod, "run_phase_b_multiturn", fake_phase_b)
+    monkeypatch.setattr(mod, "_read_turn_field", lambda *_a, **_k: ["report"])
+    monkeypatch.setattr(mod, "_estimate_inventory_rows", lambda *_a, **_k: 5)
+    return captured
+
+
+def test_main_dry_run_exits_zero(tmp_path):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    ret = main(["--agents", "mistral", "--dry-run", "--no-confirm", "--output-dir", str(tmp_path)])
+    assert ret == 0
+
+
+def test_main_without_manifest_phase_b_gets_raw_designed_prompt(
+    phase_a_reuse_dir, patched_phase_b, tmp_path
+):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    main(
+        [
+            "--agents",
+            "mistral",
+            "--reuse-phase-a-from",
+            str(phase_a_reuse_dir),
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    assert patched_phase_b["prompt"] == FAKE_DESIGN["designed_prompt"]
+
+
+# ---------------------------------------------------------------------------
+# TDD tests — currently FAILING; pass after the --evidence-pack-manifest patch
+# ---------------------------------------------------------------------------
+
+
+def test_main_accepts_evidence_pack_manifest_flag(phase_a_reuse_dir, patched_phase_b, tmp_path):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    ret = main(
+        [
+            "--agents",
+            "mistral",
+            "--reuse-phase-a-from",
+            str(phase_a_reuse_dir),
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+            "--evidence-pack-manifest",
+            str(MANIFEST_PATH),
+        ]
+    )
+    assert ret == 0
+
+
+def test_phase_b_prompt_contains_evidence_pack_when_manifest_set(
+    phase_a_reuse_dir, patched_phase_b, tmp_path
+):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    main(
+        [
+            "--agents",
+            "mistral",
+            "--reuse-phase-a-from",
+            str(phase_a_reuse_dir),
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+            "--evidence-pack-manifest",
+            str(MANIFEST_PATH),
+        ]
+    )
+    assert "# Evidence pack" in patched_phase_b["prompt"]
+    assert "Chunk 1" in patched_phase_b["prompt"]
+    assert FAKE_DESIGN["designed_prompt"] in patched_phase_b["prompt"]
+
+
+def test_phase_b_prompt_not_augmented_without_manifest(
+    phase_a_reuse_dir, patched_phase_b, tmp_path
+):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    main(
+        [
+            "--agents",
+            "mistral",
+            "--reuse-phase-a-from",
+            str(phase_a_reuse_dir),
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    assert "# Evidence pack" not in patched_phase_b["prompt"]
+
+
+def test_meta_prompt_not_augmented_with_evidence_pack(
+    phase_a_reuse_dir, patched_phase_b, tmp_path
+):
+    """Phase A meta-prompt must NOT contain the evidence pack even when manifest is set."""
+    from experiments.sota.exp2_interactive_smoke import main
+
+    main(
+        [
+            "--agents",
+            "mistral",
+            "--reuse-phase-a-from",
+            str(phase_a_reuse_dir),
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+            "--evidence-pack-manifest",
+            str(MANIFEST_PATH),
+        ]
+    )
+    meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
+    assert meta_prompt_file.exists()
+    assert "# Evidence pack" not in meta_prompt_file.read_text()

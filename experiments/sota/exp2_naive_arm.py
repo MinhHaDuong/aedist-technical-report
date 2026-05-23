@@ -30,6 +30,7 @@ from pathlib import Path
 
 import yaml
 
+from aedist.harness import append_evidence_pack
 from experiments.sota import dialogue_classifier
 from experiments.sota.exp2_interactive_smoke import strip_meta_framing
 
@@ -281,11 +282,19 @@ def main(argv: list[str] | None = None) -> int:
         help="Replications per agent (default 1 for probe; 5 for production batch).",
     )
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    p.add_argument(
+        "--evidence-pack-manifest",
+        type=str,
+        default=None,
+        metavar="YAML",
+        help="Path to an evidence-pack manifest YAML (Arm 3). Omit for Arm 1 baseline.",
+    )
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     prompt = load_naive_prompt()
+    prompt = append_evidence_pack(prompt, args.evidence_pack_manifest)
     log.info("Naive prompt loaded: %d chars from %s", len(prompt), NAIVE_PROMPT_PATH)
 
     summary: list[dict] = []
@@ -318,6 +327,11 @@ def main(argv: list[str] | None = None) -> int:
                 "cost_usd": round(result["cost_usd"], 4),
                 "classifier_cost_usd": round(cls_result.classifier_cost_usd, 6),
                 "narrative_chars": len(result["narrative"]),
+                **(
+                    {"evidence_pack_manifest": args.evidence_pack_manifest}
+                    if args.evidence_pack_manifest
+                    else {}
+                ),
             }
             (args.output_dir / f"{tag}.json").write_text(
                 json.dumps(meta_record, indent=2),
