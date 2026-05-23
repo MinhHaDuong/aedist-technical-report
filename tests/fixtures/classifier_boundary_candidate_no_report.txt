@@ -1,0 +1,94 @@
+## Turn 1 — Candidate universe + source map progress note
+
+I will **not** produce the final inventory yet. Retrieval is not sufficient for a complete, primary-sourced, >30 MWe Vietnam thermal-asset reference document. I’ve started the working ledger and separated **discovery leads** from sources likely usable for final justification.
+
+### 1. Initial authoritative / semi-authoritative source map
+
+Likely final-usable sources found so far:
+
+| Source handle | Type | Likely use |
+|---|---:|---|
+| `EVN-Annual-2024/2025` | EVN annual report, primary/official | National installed capacity totals by fuel and ownership; EVN/GENCO capacity context. |
+| `EVN-Annual-2022-2023` | EVN annual report, primary/official | Historical power-system totals; coal/gas capacity reconciliation. |
+| `EVN-Overview-2023` | EVN official article | 2023 generation/fuel context; gas and coal supply context. |
+| `PDP8-Decision-500-2023` | Prime Minister decision, official | National planning envelope; coal/gas/LNG targets. Need official annex retrieval. |
+| `PDP8-Implementation-Decision-262-2024` | Prime Minister decision, official | Project-level PDP8 implementation list. Need official annex retrieval, especially gas/LNG/coal appendices. |
+| `Revised-PDP8-Decision-768-2025 / Decision-1509 references` | Government/planning update, official or legal summaries found | Updated planning cycle and transition rules; need official text/annexes. |
+| `MOIT-Key-Energy-Projects-2634-2025` | MOIT / PM decision notice | Current list of national key energy projects, including LNG terminals and gas-to-power chains. |
+| `EVNGENCO3-Annual-2024` | Operator annual report | Phú Mỹ, Vĩnh Tân 2, Mông Dương 1 operating status, O&M references to Phú Mỹ 3 / Vĩnh Tân 4. |
+| `EVNGENCO3-Annual-2023` | Operator annual report | Plant details and self-consumption / operation context. |
+| `PVPower-Annual-2024` | Listed company annual report | Cà Mau 1–2, Nhơn Trạch 1–2, Vũng Áng 1, Nhơn Trạch 3–4 status and ownership. |
+
+Useful but **not final-justification** unless traced to primary:
+
+| Source handle | Type | Use only as |
+|---|---:|---|
+| Mayer Brown / Legal500 / VILAF / KPMG PDP8 summaries | Law-firm / advisory summaries | Discovery and cross-checking of PDP8 project lists. |
+| Wikipedia / scraped power-station lists | Tertiary | Discovery only; not final evidence. |
+| GEM trackers | Tracker | Discovery / gap-check; final only if primary cannot be found and clearly labelled LOW, but I will first trace all rows to primary/operator/lender sources. |
+| Trade press / securities news | Secondary | Status freshness where official/operator source is absent; capped per confidence rules. |
+
+### 2. Initial candidate asset universe — working ledger skeleton
+
+This is **not yet final** and is intentionally broad. I will verify plant-by-plant, split co-located assets where required, and add captive/CHP/off-grid rows during gap-fill.
+
+#### Coal — operating / recently commissioned / retired / under construction / planned leads
+
+| Candidate / Vietnamese lead | English lead | Province | Initial status hypothesis | Key gaps to verify |
+|---|---|---:|---|---|
+| Uông Bí | Uong Bi | Quảng Ninh | Operating; older units partly retired? | Split old vs expansion; COD/capacity; retirement history. |
+| Ninh Bình | Ninh Binh | Ninh Bình | Operating/legacy | Capacity >30; status freshness; retirement plan. |
+| Phả Lại 1–2 | Pha Lai | Hải Dương | Operating | Unit split, technology, CODs. |
+| Hải Phòng 1–2 | Hai Phong | Hải Phòng | Operating | Owner, units, CODs. |
+| Quảng Ninh 1–2 | Quang Ninh | Quảng Ninh | Operating | Units, CODs, ownership. |
+| Cẩm Phả 1–2 | Cam Pha | Quảng Ninh | Operating | TKV ownership; units/capacity. |
+| Mông Dương 1 | Mong Duong 1 | Quảng Ninh | Operating | EVNGENCO3 evidence found; need second source. |
+| Mông Dương 2 | Mong Duong 2 | Quảng Ninh | Operating BOT | Owner changes / AES exit? capacity; COD. |
+| Thái Bình 1 | Thai Binh 1 | Thái Bình | Operating | Units/COD/owner. |
+| Thái Bình 2 | Thai Binh 2 | Thái Bình | Operating since 2023 | COD exact date; PVN/PV Power operator status. |
+| Nam Định 1 | Nam Dinh 1 | Nam Định | Planned / BOT uncertain | Status current; financing; PDP8 treatment. |
+| Na Dương 1 | Na Duong 1 | Lạng Sơn | Operating | Lignite/captive? exact capacity/COD. |
+| Na Dương 2 | Na Duong 2 | Lạng Sơn | Planned/approved | PDP8 status; developer. |
+| Cao Ngạn | Cao Ngan | Thái Nguyên | Operating | Capacity, owner, COD. |
+| Sơn Động | Son Dong | Bắc Giang | Operating | Capacity, owner, fuel. |
+| An Khánh 1 | An Khanh 1 | Thái Nguyên | Operating/captive IPP? | Owner/status; source quality. |
+| An Khánh–Bắc Giang | An Khanh–Bac Giang | Bắc Giang | Planned/cancelled? | Need verify; may be LOW if not found. |
+| Nghi Sơn 1 | Nghi Son 1 | Thanh Hóa | Operating | EVNGENCO1 source needed. |
+| Nghi Sơn 2 | Nghi Son 2 | Thanh Hóa | Operating BOT | Lender/operator source needed. |
+| Vũng Áng 1 | Vung Ang 1 | Hà Tĩnh | Operating | PV Power annual report found; need second. |
+| Vũng Áng 2 | Vung Ang 2 | Hà Tĩnh | Under construction | Developer/lender/EPC; COD target/status. |
+| Quảng Trạch 1 | Quang Trach 1 | Quảng Bình | Under construction | EVN/PM source; units. |
+| Quảng Trạch 2 | Quang Trach 2 | Quảng Bình | Planned / fuel-switch? | PDP8/revised PDP8 treatment. |
+| Formosa Hà Tĩnh captive coal | Formosa Ha Tinh captive power | Hà Tĩnh | Operating captive | Unit/capacity and status source needed. |
+| Vĩnh Tân 1 | Vinh Tan 1 | Bình Thuận | Operating BOT | Owner/COD/source. |
+| Vĩnh Tân 2 | Vinh Tan 2 | Bình Thuận | Operating | EVNGENCO3 source found; need second. |
+| Vĩnh Tân 3 | Vinh Tan 3 | Bình Thuận | Cancelled / suspended | Formal cancellation/source needed. |
+| Vĩnh Tân 4 | Vinh Tan 4 | Bình Thuận | Operating | EVN/EVNGENCO3 O&M evidence; owner/source. |
+| Duyên Hải 1 | Duyen Hai 1 | Trà Vinh | Operating | EVNGENCO1 source needed. |
+| Duyên Hải 2 | Duyen Hai 2 | Trà Vinh | Operating BOT | Owner/COD. |
+| Duyên Hải 3 | Duyen Hai 3 | Trà Vinh | Operating | EVNGENCO1 source needed. |
+| Duyên Hải 3 mở rộng | Duyen Hai 3 Extension | Trà Vinh | Operating | Separate row likely. |
+| Sông Hậu 1 | Song Hau 1 | Hậu Giang | Operating | PVN/PV Power source; CODs. |
+| Sông Hậu 2 | Song Hau 2 | Hậu Giang | Terminated/cancelled or restructured? | Very important disputed status. |
+| Long Phú 1 | Long Phu 1 | Sóc Trăng | Suspended / stalled construction | Sanctions/arbitration/current plan. |
+| Long Phú 2 | Long Phu 2 | Sóc Trăng | Cancelled? | Formal status. |
+| Long Phú 3 | Long Phu 3 | Sóc Trăng | Cancelled/planned? | Formal status. |
+| Kiên Lương 1 | Kien Luong 1 | Kiên Giang | Cancelled / removed | Formal cancellation source. |
+| Hải Dương / BOT Hải Dương | Hai Duong | Hải Dương | Operating BOT | JAKS/China source; COD/capacity. |
+| Mạo Khê | Mao Khe | Quảng Ninh | Operating | TKV source. |
+| Cẩm Phả captive/industrial variants | Cam Pha industrial/captive | Quảng Ninh | Possible duplicate risk | Deduplicate with Cẩm Phả TPP. |
+
+#### Domestic gas — operating / under construction / planned leads
+
+| Candidate / Vietnamese lead | English lead | Province | Initial status hypothesis | Key gaps |
+|---|---|---:|---|---|
+| Bà Rịa | Ba Ria | Bà Rịa–Vũng Tàu | Operating older gas turbines? | OCGT/CCGT split, retirement. |
+| Thủ Đức | Thu Duc | TP.HCM | Retired/standby? | >30 MWe, status. |
+| Hiệp Phước | Hiep Phuoc | TP.HCM | Operating/retired gas/oil IPP? | Fuel and status. |
+| Phú Mỹ 1 | Phu My 1 | Bà Rịa–Vũng Tàu | Operating CCGT | Units/capacity. |
+| Phú Mỹ 2.1 | Phu My 2.1 | Bà Rịa–Vũng Tàu | Operating | Split base/extension? |
+| Phú Mỹ 2.2 | Phu My 2.2 | Bà Rịa–Vũng Tàu | Operating BOT | BOT owner/source. |
+| Phú Mỹ 3 | Phu My 3 | Bà Rịa–Vũng Tàu | Operating BOT; O&M transition 2024 | Owner/current O&M. |
+| Phú Mỹ 4 | Phu My 4 | Bà Rịa–Vũng Tàu | Operating | Units/capacity. |
+| Nhơn Trạch 1 | Nhon Trach 1 | Đồng Nai | Operating | PV Power source found. |
+| Nhơn Trạch 2 | Nhon Trach 2 | Đồng Nai | Operating | PV Power / 

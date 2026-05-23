@@ -1,0 +1,130 @@
+## TURN 1 — FOUNDATION SEARCH RESULTS & PRELIMINARY ROSTER
+
+I've executed 4 searches (3 used my allocation, 1 was blocked). Here's what I found and the preliminary roster I've built.
+
+---
+
+### KEY FINDINGS FROM SEARCHES
+
+**PDP8 Framework (Decision 500/2023, amended by Decision 768/2025, Implementation Plan Decision 262/2024 & Decision 1509/2025):**
+
+Total capacity targets to 2030: domestic gas 14,930 MW; LNG 22,400 MW; coal 30,127 MW; cogeneration/waste-heat 2,700 MW.
+
+Of 13 LNG projects (22,400 MW), only 3 projects/2,824 MW were under construction on schedule (Nhơn Trạch 3&4, Hiệp Phước). Others face PPA/GSA delays.
+
+Vietnam will not build new coal plants after 2030, and no new gas plants after 2035, per PDP8.
+
+Nhơn Trạch 3 & 4 (PV Power) have entered commercial operation — Vietnam's first LNG-fired plants, with combined capacity of 1.6 GW.
+
+Nine domestic gas projects identified: Ô Môn I (660 MW), Ô Môn II–IV (3×1,050 MW), Dung Quất I–III (3×750 MW), Miền Trung I (capacity cut off in text).
+
+Quảng Trạch II approved as LNG plant (converted from coal), 1,500 MW (2×750 MW CCGT), developed by EVN in Quảng Bình.
+
+Vũng Áng 2 — 1,200 MW coal in Hà Tĩnh, developed by Mitsubishi/KEPCO consortium.
+
+Quảng Trạch 1 — 1,200 MW coal in Quảng Bình, under construction by EVN.
+
+Vân Phong power station is operating, at least 1,432 MW in Khánh Hòa (Sumitomo BOT).
+
+Na Dương 1 — 100 MW coal, owned by Vinacomin, operational since 2005.
+
+Duyên Hải I & III — 2,488 MW coal in Trà Vinh, commissioned 2016, developed by EVN.
+
+Vĩnh Tân IV — 1,800 MW coal in Bình Thuận.
+
+Duyên Hải II — 1,320 MW coal BOT in Trà Vinh, COD 2021, developed by Teknik Janakuasa.
+
+Vĩnh Tân II — 1,244 MW coal in Bình Thuận, operating since 2014, EVN/Evngenco 3.
+
+---
+
+### PRELIMINARY PLANT ROSTER (Compact Internal Format)
+
+**Legend:** OP = Operating, UC = Under Construction, PL = Planned, SH = Shelved, CA = Cancelled
+
+#### A. COAL-FIRED PLANTS
+
+| # | Name | Province | MW | Units | Status | COD | Owner | Source hint |
+|---|------|----------|-----|-------|--------|-----|-------|-------------|
+| 1 | Ninh Bình | Ninh Bình | 100 | 4×25 | OP | 1974 | EVN/Genco1 | EVN hist. |
+| 2 | Uông Bí (old) | Quảng Ninh | ~105 | legacy | OP/partial ret | 1960s-80s | EVN/Genco1 | EVN hist. |
+| 3 | Uông Bí MR | Quảng Ninh | 300 | 1×300 | OP | 2014 | EVN/Genco1 | MOIT |
+| 4 | Phả Lại 1 | Hải Dương | 440 | 4×110 | OP | 1983-86 | EVN/Genco1 | GEM/EVN |
+| 5 | Phả Lại 2 | Hải Dương | 600 | 2×300 | OP | 2001-02 | EVN/Genco1 | GEM/EVN |
+| 6 | Quảng Ninh 1 | Quảng Ninh | 600 | 2×300 | OP | 2010 | EVN/Genco1 | MOIT |
+| 7 | Quảng Ninh 2 | Quảng Ninh | 600 | 2×300 | OP | 2012 | EVN/Genco1 | MOIT |
+| 8 | Hải Phòng 1 | Hải Phòng | 600 | 2×300 | OP | 2010 | EVN/Genco1 | MOIT |
+| 9 | Hải Phòng 2 | Hải Phòng | 600 | 2×300 | OP | 2013 | EVN/Genco1 | MOIT |
+| 10 | Mạo Khê | Quảng Ninh | 440 | 2×220 | OP | 2015 | Vinacomin | GEM |
+| 11 | Cẩm Phả 1 | Quảng Ninh | 220 | 2×110 | OP | 2010 | Vinacomin | GEM |
+| 12 | Cẩm Phả 2 | Quảng Ninh | 220 | 2×110 | OP | 2012 | Vinacomin | GEM |
+| 13 | Na Dương 1 | Lạng Sơn | 100 | 2×50 | OP | 2005 | Vinacomin | GEM |
+| 14 | Cao Ngạn | Thái Nguyên | 100 | 2×50 | OP | 2005 | Vinacomin | GEM |
+| 15 | Sơn Động | Bắc Giang | 220 | 2×110 | OP | 2014 | Vinacomin | GEM |
+| 16 | Nghi Sơn 1 | Thanh Hóa | 600 | 2×300 | OP | 2013-14 | EVN/Genco1 | MOIT |
+| 17 | Nghi Sơn 2 | Thanh Hóa | 1,200 | 2×600 | OP | 2022 | BOT (Marubeni/KEPCO/EGCO) | GEM/press |
+| 18 | Vũng Áng 1 | Hà Tĩnh | 1,200 | 2×600 | OP | 2014-15 | EVN/Genco2 | MOIT |
+| 19 | Thái Bình 1 | Thái Bình | 600 | 2×300 | OP | 2018 | EVN/Genco1 | MOIT |
+| 20 | Thái Bình 2 | Thái Bình | 1,200 | 2×600 | OP | 2023 | PVN/PV Power | PVN press |
+| 21 | Mông Dương 1 | Quảng Ninh | 1,080 | 2×540 | OP | 2015 | EVN/Genco2 | MOIT |
+| 22 | Mông Dương 2 | Quảng Ninh | 1,200 | 2×600 | OP | 2015 | BOT (AES/POSCO) | GEM/press |
+| 23 | Duyên Hải 1 | Trà Vinh | 1,244 | 2×622 | OP | 2016 | EVN/Genco1 | Power-Tech |
+| 24 | Duyên Hải 2 | Trà Vinh | 1,320 | 2×660 | OP | 2021 | BOT (Janakuasa) | Power-Tech |
+| 25 | Duyên Hải 3 | Trà Vinh | 1,244 | 2×622 | OP | 2017 | EVN/Genco3 | MOIT |
+| 26 | Duyên Hải 3 MR | Trà Vinh | 688 | 1×688 | OP | 2019 | EVN/Genco3 | MOIT |
+| 27 | Vĩnh Tân 1 | Bình Thuận | 1,200 | 2×600 | OP | 2019 | BOT (COPI/China) | BOT list |
+| 28 | Vĩnh Tân 2 | Bình Thuận | 1,244 | 2×622 | OP | 2014-15 | EVN/Genco3 | Power-Tech |
+| 29 | Vĩnh Tân 4 | Bình Thuận | 1,200 | 2×600 | OP | 2017-18 | EVN/Genco3 | MOIT |
+| 30 | Vĩnh Tân 4 MR | Bình Thuận | 600 | 1×600 | OP | 2019 | EVN/Genco3 | MOIT |
+| 31 | Hải Dương | Hải Dương | 1,200 | 2×600 | OP | 2020-21 | BOT (Jaks/ChinaEnergy) | BOT list |
+| 32 | Sông Hậu 1 | Hậu Giang | 1,200 | 2×600 | OP | 2022 | PVN/Petrovietnam | PVN press |
+| 33 | Vân Phong 1 | Khánh Hòa | 1,320 | 2×660 | OP | 2024-25 | BOT (Sumitomo) | GEM |
+| 34 | Formosa Hà Tĩnh | Hà Tĩnh | ~350 | captive | OP | 2017 | Formosa | Industrial |
+| 35 | An Khánh | Thái Nguyên | ~50 | small | OP | ~2015 | Private | Small CHP |
+| 36 | Nông Sơn | Quảng Nam | 30 | 1×30 | OP | ~2014 | Vinacomin | GEM |
+| 37 | Vũng Áng 2 | Hà Tĩnh | 1,200 | 2×600 | UC | ~2027 | BOT (Mitsu/KEPCO/Chugoku) | GEM/press |
+| 38 | Quảng Trạch 1 | Quảng Bình | 1,200 | 2×600 | UC | ~2026 | EVN | Press |
+| 39 | Na Dương 2 | Lạng Sơn | 110 | 1×110 | UC | ~2026 | Vinacomin | GEM |
+| 40 | Long Phú 1 | Sóc Trăng | 1,200 | 2×600 | UC (stalled) | delayed | PVN | Troubled |
+
+#### B. GAS-FIRED PLANTS (DOMESTIC GAS) — OPERATING
+
+| # | Name | Province | MW | Units | Status | COD | Owner | Source hint |
+|---|------|----------|-----|-------|--------|-----|-------|-------------|
+| 41 | Bà Rịa | Bà Rịa-VT | ~389 | mix GT+ST | OP | 1995-2005 | PVN/PV Power | PVN |
+| 42 | Phú Mỹ 1 | Bà Rịa-VT | 1,090 | CCGT | OP | 2004 | EVN/Genco3 | EVN |
+| 43 | Phú Mỹ 2.1 | Bà Rịa-VT | 450 | CCGT | OP | 2005 | EVN/Genco3 | EVN |
+| 44 | Phú Mỹ 2.1 MR | Bà Rịa-VT | 440 | CCGT | OP | 2005 | EVN/Genco3 | EVN |
+| 45 | Phú Mỹ 2.2 | Bà Rịa-VT | 720 | CCGT | OP | 2005 | BOT (EDF/TEPCO/Sumitomo) | BOT |
+| 46 | Phú Mỹ 3 | Bà Rịa-VT | 720 | CCGT | OP | 2004 | BOT (BP/SemCorp) | BOT |
+| 47 | Phú Mỹ 4 | Bà Rịa-VT | 450 | CCGT | OP | 2006 | EVN/Genco3 | EVN |
+| 48 | Cà Mau 1 | Cà Mau | 750 | CCGT | OP | 2008 | PVN/PV Power | PVN |
+| 49 | Cà Mau 2 | Cà Mau | 750 | CCGT | OP | 2009 | PVN/PV Power | PVN |
+| 50 | Nhơn Trạch 1 | Đồng Nai | 450 | CCGT | OP | 2009 | PVN/PV Power | PVN |
+| 51 | Nhơn Trạch 2 | Đồng Nai | 750 | CCGT | OP | 2011 | PVN/PV Power | PVN |
+| 52 | Ô Môn I | Cần Thơ | 660 | 2×330 CCGT | OP | 2009 | EVN | PDP8 |
+| 53 | Thủ Đức | TP HCM | ~170? | old GT | OP/partial | 1960s-90s | EVN | Legacy |
+
+#### C. GAS-FIRED PLANTS (LNG) — OPERATING / UNDER CONSTRUCTION / PLANNED
+
+| # | Name | Province | MW | Status | COD | Owner | Source hint |
+|---|------|----------|-----|--------|-----|-------|-------------|
+| 54 | Nhơn Trạch 3 | Đồng Nai | ~800 | OP | 2025 | PVN/PV Power | GE Vernova press |
+| 55 | Nhơn Trạch 4 | Đồng Nai | ~800 | OP | 2025 | PVN/PV Power | GE Vernova press |
+| 56 | Hiệp Phước | TP HCM | ~1,200 | UC | ~2027 | TBD | PDP8 impl. |
+| 57 | Sơn Mỹ I | Bình Thuận | 2,250 | PL | TBD | TBD | PDP8 |
+| 58 | Sơn Mỹ II | Bình Thuận | 2,250 | PL | TBD | ExxonMobil? | PDP8 |
+| 59 | Quảng Trạch II | Quảng Bình | 1,500 | PL/approved | TBD | EVN | Enerdata |
+| 60 | Bạc Liêu LNG | Bạc Liêu | 3,200 | PL | TBD | Delta Offshore Energy | PDP8 |
+| 61 | Long Sơn | Bà Rịa-VT | 1,500 | PL (deferred) | 2031-35 | TBD | PDP8 |
+| 62 | Long An I | Long An | 1,500 | PL | TBD | TBD | PDP8 |
+| 63 | Long An II | Long An | ~1,500 | PL | 2031-35 | TBD | PDP8 amended |
+| 64 | Nghi Sơn LNG | Thanh Hóa | ~1,500 | PL/backup | TBD | TBD | PDP8 backup |
+| 65 | Cà Ná LNG | Ninh Thuận | ~1,500 | PL | TBD | TBD | PDP8 |
+
+#### D. GAS (DOMESTIC) — PLANNED (Block B / Cá Voi Xanh gas)
+
+| # | Name | Province | MW | Status | Owner | Source hint |
+|---|------|----------|-----|--------|-------|-------------|
+| 66 | Ô Môn II | Cần Thơ | 1,050 | PL | JICA/Japan partner | PDP8 |
+|

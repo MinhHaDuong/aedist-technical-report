@@ -9,13 +9,12 @@ Phase B state machine (`exp2_interactive_smoke.run_phase_b_multiturn`).
 Design notes:
 
 - One-shot ``POST /v1/chat/completions`` via OpenRouter, targeting
-  nvidia/nemotron-nano-9b-v2 — an open-weight model unaffiliated with
-  any of the four Exp 2 subject vendors. Keeps overhead well under
-  $0.001 per classification on 8 KiB inputs.
-- Nemotron is a thinking model: reasoning tokens consume the
-  ``max_tokens`` budget before content is emitted. We set
-  ``max_tokens=512`` (enough for ~150 reasoning tokens + a one-word
-  answer). Calibrated in ticket 0226 (4/4 fixtures correct).
+  deepseek/deepseek-v4-pro — a DeepSeek model unaffiliated with any of
+  the four Exp 2 subject vendors (Anthropic, OpenAI, Mistral, Qwen).
+  Upgraded from nvidia/nemotron-nano-9b-v2 in ticket 0243 after a full
+  45-turn audit showed nemotron at 8K had 11 routing errors; v4-pro at
+  16K achieves 10/10 on boundary cases with stable results (calibrated
+  2026-05-23). Cost ≈ $0.0018/call, $0.08/batch of 20 runs.
 - The classifier cost is **harness overhead**, separate from the SOTA
   agent's $10 Phase B budget. Callers should book it under
   ``classifier_cost_usd`` in the per-turn cost artefact, not deduct
@@ -35,23 +34,27 @@ import httpx
 
 log = logging.getLogger(__name__)
 
-# Pinned classifier — open-weight NVIDIA model, vendor-neutral relative
-# to the four Exp 2 subject models. Calibrated in ticket 0226 (4/4).
-# Pricing as of 2026-05 (OpenRouter): $0.04 / $0.16 per Mtok in/out.
-CLASSIFIER_MODEL = "nvidia/nemotron-nano-9b-v2"
+# Pinned classifier — DeepSeek model, vendor-neutral relative to the
+# four Exp 2 subject vendors. Calibrated 2026-05-23 (10/10 boundary
+# cases, stable across 3 runs). Upgraded from nemotron-nano-9b-v2.
+# Pricing as of 2026-05 (OpenRouter): $0.435 / $0.870 per Mtok in/out.
+CLASSIFIER_MODEL = "deepseek/deepseek-v4-pro"
 CLASSIFIER_API_BASE = "https://openrouter.ai/api"
 
 # Conservative pricing card for cost accounting. Kept private to this
 # module — the SOTA harness's $10 cap is unaffected.
-_PRICE_PER_MTOK_IN = 0.04
-_PRICE_PER_MTOK_OUT = 0.16
+_PRICE_PER_MTOK_IN = 0.435
+_PRICE_PER_MTOK_OUT = 0.870
 _TOKENS_PER_MTOK = 1_000_000
 
-# Cap on the narrative excerpt embedded in the prompt. 8 KiB ≈ 2K
-# tokens — plenty to recognise an inventory header + a few rows.
-_MAX_NARRATIVE_CHARS = 8_000
+# 16K chars ≈ 4K tokens. Doubled from 8K after audit showed long
+# responses (>8K) hide their inventory table past the old cutoff.
+_MAX_NARRATIVE_CHARS = 16_000
 
-CLASSIFIER_PROMPT_TEMPLATE = """You are a classification assistant. The following is a single response from an AI agent that was asked to produce a structured inventory of Vietnam's thermal power plants (>30MWe). Did this response materially deliver an inventory? Reply with exactly one word: "report" if it includes a structured table or equivalent enumeration of plants, "no_report" if it is planning, clarification, refusal, or a meta-statement about intent without the substance.
+CLASSIFIER_PROMPT_TEMPLATE = """You are a classification assistant. The following is a single response from an AI agent that was asked to produce a structured inventory of Vietnam's thermal power plants (>30MWe). Did this response materially deliver an inventory?
+
+- "report": the response contains a structured table or equivalent enumeration of power plants. This includes verified, corrected, or polished inventories — even when framed as "here is the corrected version".
+- "no_report": the response is planning, clarification, refusal, or a meta-statement about intent. IMPORTANT: if the response contains preliminary tables but explicitly states it is NOT the final inventory (e.g. "I will not produce the final inventory yet", "candidate universe", "working ledger", "PRELIMINARY ROSTER", "FOUNDATION SEARCH RESULTS"), classify as "no_report" regardless of table presence.
 
 AGENT RESPONSE:
 ```
@@ -152,10 +155,10 @@ def _post_classifier(prompt: str, api_key: str) -> dict:
         "model": CLASSIFIER_MODEL,
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.0,
-        # Nemotron is thinking-capable: reasoning tokens consume the
-        # budget before content is emitted. 512 is enough for ~150
-        # reasoning tokens + the one-word answer.
-        "max_tokens": 512,
+        # v4-pro is a reasoning model: reasoning tokens consume budget
+        # before content. Observed ~77 reasoning tokens on short prompts;
+        # 1024 provides headroom for longer classification inputs.
+        "max_tokens": 1024,
     }
     with httpx.Client(base_url=CLASSIFIER_API_BASE, headers=headers) as client:
         resp = client.post("/v1/chat/completions", json=body, timeout=30.0)
