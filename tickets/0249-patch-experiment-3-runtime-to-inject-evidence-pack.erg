@@ -7,12 +7,15 @@ Blocked-by: 0248
 --- log ---
 2026-05-23T16:02Z Copilot created
 2026-05-23T16:05Z Copilot note Patch should use a shared helper with a no-op default; baseline arms stay unchanged and arms 3/4 opt in through config.
+2026-05-23T16:06Z Copilot note Extend the shared output record format additively if the intervention arms need extra evidence-pack metadata; do not fork the baseline record shape.
 
 --- body ---
 ## Context
 The evidence-pack assembler is its own prerequisite. This ticket is the codebase patch that threads the assembled pack into the Experiment 3 runtime so the intervention arms can use it.
 
 The patch should not create separate arm-specific runner implementations. The shared runner should accept an optional evidence-pack config/path, default to no injection, and let the intervention arms opt in.
+
+If the run artifacts need extra evidence-pack metadata, extend the shared output schema additively so the baseline arms keep the same record shape.
 
 ## Actions
 1. Add or extend a shared prompt-building helper in `src/aedist/harness.py` so it can render the pack from the manifest when asked.
@@ -25,6 +28,7 @@ The patch should not create separate arm-specific runner implementations. The sh
 - `src/aedist/worker.py` — runtime path used by the job runner.
 - `src/aedist/query_direct.py` — standalone CLI path, if Experiment 3 is exercised through the direct runner.
 - `src/aedist/schema.py` — optional field for the evidence-pack path/config, if the job spec needs to carry it.
+- `src/aedist/schema.py` and/or `src/aedist/evaluate.py` — additive output-record field(s) if the evidence-pack metadata must appear in the run artifacts.
 - `tests/` — deterministic render test plus prompt-path integration test.
 
 ## Test
