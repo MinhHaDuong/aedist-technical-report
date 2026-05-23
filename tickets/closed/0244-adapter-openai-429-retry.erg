@@ -2,11 +2,13 @@
 Title: Add 429 / transient-failure retry to adapter_openai_responses and adapter_anthropic
 Created: 2026-05-23
 Author: claude
+Closed: autoclosed — PR #452
 
 --- log ---
 2026-05-23T13:35Z claude created — gap found during Phase B post-mortem: Mistral (PR #399) and Qwen have retry; OpenAI does not
 2026-05-23T14:00Z claude note Anthropic adapter is query_anthropic.py (not adapter_anthropic.py) — correct file names in body
 
+2026-05-23T13:58Z HDMX-coding-agent closed — autoclosed — PR #452
 --- body ---
 ## Context
 
