@@ -40,9 +40,14 @@ def _load_csv(path: Path) -> list[dict]:
             if n_rows == 0:
                 continue
             src1_present = int(row["src1_present"])
+            if src1_present == 0:
+                # Primary rate is undefined when no sources are cited;
+                # plotting at y=0 would conflate "did not cite" with
+                # "cited only non-primary sources."
+                continue
             raw_primary = row["src1_primary"]
             src1_primary = int(raw_primary) if raw_primary else 0
-            primary_rate = src1_primary / src1_present if src1_present > 0 else 0.0
+            primary_rate = src1_primary / src1_present
             rows.append(
                 {
                     "agent": row["agent"],

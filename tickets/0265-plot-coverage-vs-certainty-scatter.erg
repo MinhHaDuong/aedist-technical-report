@@ -67,7 +67,7 @@ def test_script_runs_without_error(tmp_path):
 
 ## Exit criteria
 
-- [ ] Scatter PDF generated for all 40 runs; no missing points (assert in script)
+- [ ] Scatter PDF generated for all runs with plottable data (non-zero inventory rows and at least one Source 1 citation); excluded runs documented in caption
 - [ ] Agent colours match project palette (`palette.toml`)
 - [ ] Makefile idempotent (second `make` does not rebuild)
 - [ ] `make check-fast` passes
