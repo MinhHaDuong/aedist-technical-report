@@ -37,6 +37,7 @@ from pathlib import Path
 import yaml
 
 from aedist import adapter_mistral
+from aedist.harness import append_evidence_pack
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
 
@@ -1300,6 +1301,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
         if isinstance(designed_prompt_raw, str)
         else json.dumps(designed_prompt_raw, indent=2, ensure_ascii=False)
     )
+    designed_prompt = append_evidence_pack(designed_prompt, args.evidence_pack_manifest)
     requested_max_tokens = int(
         design.get("settings", {}).get("max_tokens") or args.phase_b_max_tokens
     )
@@ -1385,6 +1387,14 @@ def main(argv: list[str] | None = None) -> int:
         metavar="DIR",
         help="Load Phase A design from DIR/<agent>_run01/ instead of calling the "
         "Phase A API. Use for reps 2–N to reuse the rep-1 design.",
+    )
+    p.add_argument(
+        "--evidence-pack-manifest",
+        type=str,
+        default=None,
+        metavar="YAML",
+        help="Path to an evidence-pack manifest YAML (Arm 4). Injected into the Phase B "
+        "prompt only. Omit for Arm 2 baseline.",
     )
     args = p.parse_args(argv)
 

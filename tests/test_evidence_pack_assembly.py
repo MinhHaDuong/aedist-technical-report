@@ -32,8 +32,8 @@ def test_assemble_evidence_pack_has_stable_headers_and_expected_source_blocks() 
     """Every source block has stable headers and includes expected source_id blocks."""
     assembled = assemble_evidence_pack(MANIFEST_PATH)
 
-    # Manifest has 18 source blocks.
-    assert assembled.count("## Source Block") == 18
+    # Manifest has 18 chunks.
+    assert assembled.count("## Chunk ") == 18
 
     for field in EVIDENCE_PACK_HEADER_FIELDS:
         assert assembled.count(f"{field}:") >= 18
@@ -82,7 +82,10 @@ def test_resolve_evidence_pack_manifest_path_search_order(monkeypatch, tmp_path)
 
     assert _resolve_evidence_pack_manifest_path("local.yaml") == cwd_manifest
     assert _resolve_evidence_pack_manifest_path("repo_only.yaml") == repo_manifest
-    assert _resolve_evidence_pack_manifest_path("evidence_packs/exp_only.yaml") == experiments_manifest
+    assert (
+        _resolve_evidence_pack_manifest_path("evidence_packs/exp_only.yaml")
+        == experiments_manifest
+    )
     assert _resolve_evidence_pack_manifest_path(experiments_manifest) == experiments_manifest
 
 
