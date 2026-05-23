@@ -9,6 +9,7 @@ Author: claude
 2026-05-21T15:30Z claude note added Blocked-by 0185 — 0199 batch (3 agents × 3 reps) cannot run until 0185 smoke actually produces a report on Mistral. 0185 reopened with operational exit criterion "we get a report"; dependency chain is 0208 → 0207 → 0185 → 0199.
 
 2026-05-21T14:46Z HDMX-coding-agent note blocker 0185 closed — Blocked-by removed.
+2026-05-23T13:30Z HDMX-coding-agent note Phase-C cross-eval (rubric + scoring harness, Figure 3) is tracked in 0171 — refreshed and rehomed there as this experiment's Phase-C leg; scores both arms (naive + optimized), 40 subject outputs. See 0171 for the anchored-rubric design. Action 3 here is operationalised by 0171.
 --- body ---
 
 ## Context
