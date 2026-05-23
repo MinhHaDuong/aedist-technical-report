@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Revisit Alibaba stage-3 absent decision — Qwen Chat v0.2 launch primary source
+Created: 2026-05-23
+Author: claude
+
+--- log ---
+2026-05-23T09:00Z claude created — primary source surfaced during dead-agent salvage of t0229; overrides 0232's absent decision
+
+--- body ---
+
+## Context
+
+`data/capability_timeline.csv` currently records Alibaba stage 3
+(Browsing / web search) as `absent`, the decision frozen by ticket 0232
+/ PR #426 after the 2025-03-07 Qwen-Agent QwQ-32B demo was rejected as
+a developer SDK, not a consumer product.
+
+A dead-agent salvage (t0229-research-absent-cells, killed mid-commit
+2026-05-22) surfaced a *different* primary source that 0232 never
+evaluated: the Qwen Chat v0.2 launch on chat.qwen.ai, announced via
+the `@Alibaba_Qwen` X handle on 2025-01-24 with built-in web search.
+That post is `x.com/Alibaba_Qwen/status/1882818582758961351`. The
+snowflake-decoded timestamp is 2025-01-24T15:51 UTC. The launch is
+cross-confirmed by the 2025-01-27 `qwen2.5-1m` blog which references
+Qwen Chat as supporting "perform searches".
+
+This is a consumer-product launch on Alibaba's official channel — it
+meets the stage-3 methodology threshold (launch in a public commercial
+product, primary source from the lab itself). The X post is the
+primary source; the format is the same one the matrix already accepts
+for Alibaba stage 5 (Deep Research on Qwen Chat, also sourced from
+`@Alibaba_Qwen` X — see bibliography entry [31]).
+
+## Actions
+
+1. Update Alibaba stage-3 row in `data/capability_timeline.csv` from
+   `absent` to `2025-01-24, primary-blog, qwen-chat-v02-2025`.
+2. Add bibliography entry [42] in `docs/capability-timeline.md`
+   pointing to `x.com/Alibaba_Qwen/status/1882818582758961351`.
+3. Update the prose matrix cell (Alibaba × stage 3) in
+   `docs/capability-timeline.md` from `absent` to the new dated entry.
+4. Remove the stage-3 absence line from the Alibaba bullet in the
+   "Honest gaps and divergences" section (lines ~206-232).
+5. Regenerate `slides/inputs/generated/fig_capability_timeline.pdf`
+   via `uv run python -m aedist.plot_capability_timeline`.
+6. Verify `tests/test_capability_timeline.py` and
+   `tests/test_capability_timeline_sync.py` pass.
+
+## Findings (quoted from t0229 research notes, dead-agent worktree
+agent-a7857d2544354003c, branch t0229-research-absent-cells before
+salvage)
+
+**Alibaba stage 3 → 2025-01-24.** Qwen Chat v0.2 launch on
+chat.qwen.ai. Primary source: `@Alibaba_Qwen` X status
+`1882818582758961351` (snowflake decode: 2025-01-24T15:51 UTC).
+Cross-confirmed via the 2025-01-27 `qwen2.5-1m` blog post which
+references Qwen Chat as supporting "perform searches".
+
+The t0229 research also re-verified DeepSeek stage 5 absence via a
+sweep of `api-docs.deepseek.com/news/` (15 entries from 2024-07-25
+through 2026-04-24 V4 Preview). That finding is already reflected in
+current main with a stronger note citing V3.1/V3.1-Terminus/V3.2
+model-component components; t0229's news-index citation is
+supplementary evidence, not a new decision.
+
+## Exit criteria
+
+- [x] CSV Alibaba s3 row updated to dated primary-blog entry with note
+- [x] Bibliography entry [42] points to the X post
+- [x] Prose matrix cell at Alibaba × stage 3 dated
+- [x] Honest-gaps Alibaba bullet no longer mentions stage 3 as absent
+- [x] Figure regenerated from the updated CSV
+- [x] `tests/test_capability_timeline*.py` pass (2 passed)
+- [x] Fast suite passes (1432 passed, 1 skipped, 1 xfailed)
+- [x] Adherence suite passes (11 passed)
