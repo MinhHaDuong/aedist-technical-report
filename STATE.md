@@ -1,4 +1,4 @@
-Last updated: 2026-05-22T22:00Z
+Last updated: 2026-05-23T09:30Z
 
 ## North star
 
@@ -13,20 +13,25 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 ## Current goal
 
-**Finish OSF pre-registration**, then dispatch both arms (naive + optimized). Slides freeze 2026-05-26.
+**Complete Exp 2 Phase B-0 re-run**, then full N=5 optimized batch. Slides freeze 2026-05-26.
 
 ## Workplan
 
 1. **Experiment 1 — DONE.** 16×5=80 rows, reasoning topup PR #386. Cost summary: `make exp1-cost-summary`.
-2. **Experiment 2 — protocol v3 + four-provider adapters all landed.**
-   - Protocol v3 merged (#428): six-doc spec + naive arm + §3.5.1 pre-registration plan with H1–H6.
-   - Path B adapters merged: #429 OpenAI / #430 Anthropic / #431 Qwen wire each provider into the Phase B multi-turn state machine via the `CALL_FNS` dispatch tables. Mistral was already wired.
-   - **OSF pre-registration IN FLIGHT.** First archival failed (third-party files error); user troubleshooting with support@osf.io. Howto at `docs/preregistration-howto.md`.
-   - **Next once OSF DOI lands:**
-     - Tag commit `exp2-prereg-v1`, push.
-     - Naive-arm batch: `uv run python -m experiments.sota.exp2_naive_arm --n 5` (~$20, ~30 min).
-     - Optimized-arm Phase B-0 smoke (ticket **0237**, blocked-by closed 0234/0235/0236 — now unblocked).
-     - Optimized-arm full N=5 if B-0 passes.
+2. **Experiment 2 — naive arm DONE; optimized arm B-0 re-run pending.**
+   - Protocol v3 merged (#428). Tag `exp2-prereg-v1` confirmed on origin/main.
+   - Naive arm: all four providers complete (flat layout in `experiments/outputs/sota_exp2_naive_arm/`).
+   - Adapter restore in review: PR #437 restores Anthropic + Qwen dispatch tables reverted by #433. Must merge before re-run.
+   - **Phase B-0 first attempt (2026-05-23):** OpenAI WARN (162 rows, classifier broken); Qwen WARN (32 rows, token cap hit); Mistral FAIL (Phase A parser — fix in t0237-fg bb0def4); Anthropic FAIL (killed). See `experiments/outputs/sota_exp2_phase_b0/summary.md`.
+   - **B-0 re-run TODO** (after #437 merges):
+     ```
+     uv run python -m experiments.sota.exp2_interactive_smoke \
+         --agents mistral anthropic \
+         --output-dir experiments/outputs/sota_exp2_phase_b0 \
+         --no-confirm
+     ```
+     OpenAI and Qwen artefacts already exist; accepted as WARN by inspection per §3.5.1.
+   - Optimized-arm full N=5 if B-0 passes (ticket 0237).
 3. Stateful-agentic v1 prototype (synopsis §5). Opens post-conference.
 
 ## Backlog (post-conference)
