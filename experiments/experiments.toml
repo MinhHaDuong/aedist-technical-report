@@ -155,9 +155,9 @@ model_ids = [
 # Journal tier — v2 (ticket 0175): 16 models × 5 reps = 80 runs.
 # Organised around three language families (EN/FR/ZH) with multiple labs per
 # family. All four SOTA Wave-2 agents (Opus 4.7, GPT-5.5, Mistral Large 2512,
-# Qwen 3 Max) are included so Experiment 2's "deep research vs parametric"
+# Qwen 3.7 Max) are included so Experiment 2's "deep research vs parametric"
 # claim can be tested within-model. No -thinking variants in the parametric
-# baseline; reasoning-configurable models (gpt-oss-*, qwen3-max) declare
+# baseline; reasoning-configurable models (gpt-oss-*, qwen3.7-max) declare
 # reasoning_effort="minimal" in models.yaml.
 [sets.modelset_ablation_journal]
 model_ids = [
@@ -178,7 +178,7 @@ model_ids = [
     "qwen/qwen3.6-35b-a3b",
     "qwen/qwen3.5-flash-02-23",
     "qwen/qwen3.6-plus",
-    "qwen/qwen3-max-thinking",
+    "qwen/qwen3.7-max",
     # ZH — DeepSeek
     "deepseek/deepseek-v4-pro",
     "deepseek/deepseek-v4-flash:free",
