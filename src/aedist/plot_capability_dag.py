@@ -25,7 +25,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-STAGE_LABELS = {
+FEATURE_LABELS = {
     1: "1. Chat LLM",
     2: "2. Retrieval",
     3: "3. Browsing",
@@ -63,13 +63,16 @@ def compute_matrix(
         for j in stages:
             if i == j:
                 continue
-            n_before = 0
+            n_before: float = 0
             n_total = 0
             for lab in lab_dates:
                 if i in lab_dates[lab] and j in lab_dates[lab]:
                     n_total += 1
-                    if lab_dates[lab][i] < lab_dates[lab][j]:
+                    di, dj = lab_dates[lab][i], lab_dates[lab][j]
+                    if di < dj:
                         n_before += 1
+                    elif di == dj:
+                        n_before += 0.5  # tie: split evenly so (i,j)+(j,i)=100%
             counts[i - 1, j - 1] = n_total
             if n_total >= 2:
                 frac[i - 1, j - 1] = n_before / n_total
@@ -98,14 +101,14 @@ def render(lab_dates: dict[str, dict[int, date]], output: Path) -> None:
             label = f"{f:.0%}\nN={n}" if f > 0 else f"N={n}"
             ax.text(j, i, label, ha="center", va="center", fontsize=6, color=text_color)
 
-    labels = [STAGE_LABELS[s] for s in range(1, N_STAGES + 1)]
+    labels = [FEATURE_LABELS[s] for s in range(1, N_STAGES + 1)]
     ax.set_xticks(range(N_STAGES))
     ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=7)
     ax.set_yticks(range(N_STAGES))
     ax.set_yticklabels(labels, fontsize=7)
-    ax.set_xlabel("Stage j (column)", fontsize=8)
-    ax.set_ylabel("Stage i (row)", fontsize=8)
-    ax.set_title("Fraction of labs where i shipped before j", fontsize=9, pad=8)
+    ax.set_xlabel("Feature j (column)", fontsize=8)
+    ax.set_ylabel("Feature i (row)", fontsize=8)
+    ax.set_title("Fraction of labs where feature i shipped before feature j", fontsize=9, pad=8)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
