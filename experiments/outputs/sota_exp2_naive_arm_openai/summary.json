@@ -1,0 +1,57 @@
+[
+  {
+    "agent": "openai",
+    "run": 1,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 13557,
+    "wall_s": 174.0,
+    "cost_usd": 0.2673,
+    "classifier_cost_usd": 0.000151,
+    "narrative_chars": 49930
+  },
+  {
+    "agent": "openai",
+    "run": 2,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 14753,
+    "wall_s": 181.33,
+    "cost_usd": 0.2658,
+    "classifier_cost_usd": 0.000134,
+    "narrative_chars": 60852
+  },
+  {
+    "agent": "openai",
+    "run": 3,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 13280,
+    "wall_s": 172.99,
+    "cost_usd": 0.2437,
+    "classifier_cost_usd": 0.000153,
+    "narrative_chars": 41882
+  },
+  {
+    "agent": "openai",
+    "run": 4,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 14411,
+    "wall_s": 189.51,
+    "cost_usd": 0.2604,
+    "classifier_cost_usd": 0.000134,
+    "narrative_chars": 49295
+  },
+  {
+    "agent": "openai",
+    "run": 5,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 11882,
+    "wall_s": 149.27,
+    "cost_usd": 0.2219,
+    "classifier_cost_usd": 0.000142,
+    "narrative_chars": 37584
+  }
+]
