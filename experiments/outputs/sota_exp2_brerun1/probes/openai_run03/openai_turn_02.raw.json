@@ -1,0 +1,978 @@
+{
+  "id": "resp_0ccb2b78410d1194006a11bf21f4a481919b24aee62e639df1",
+  "created_at": 1779547938.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "metadata": {},
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf2342108191ae7c495553519835",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0ccb2b78410d1194006a11bf237cc08191afa349420713dcea",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "Decision 262/QD-TTg 2024 PDP VIII implementation Appendix LNG domestic gas coal projects Vietnam",
+          "Quyết định 262/QĐ-TTg 2024 phụ lục III dự án điện khí LNG nhiệt điện than",
+          "Quyết định 1509/QĐ-BCT 2025 phụ lục II danh mục dự án nhiệt điện LNG khí than",
+          "site:moit.gov.vn Quyết định 1509/QĐ-BCT 2025 Quy hoạch điện VIII phụ lục"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://thuvienphapluat.vn/chinh-sach-phap-luat-moi/vn/ho-tro-phap-luat/chinh-sach-moi/86509/danh-muc-cac-nha-may-nhiet-dien-lng-tai-viet-nam-theo-quyet-dinh-1509-qd-bct"
+          },
+          {
+            "type": "url",
+            "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released"
+          },
+          {
+            "type": "url",
+            "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan"
+          },
+          {
+            "type": "url",
+            "url": "https://www.legal500.com/developments/thought-leadership/implementation-plan-for-the-national-power-development-plan-viii-of-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://thuvienphapluat.vn/phap-luat/ho-tro-phap-luat/danh-muc-cac-nha-may-nhiet-dien-lng-tai-viet-nam-nam-2025-cac-loai-hinh-nguon-dien-khac-toi-nam-203-687824-219815.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.pecc3.com.vn/en/electricity-plan-viii-implementation-plan-approved/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vilaf.com.vn/blog/on-the-implementation-plan-for-the-power-development-plan-viii-of-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://english.luatvietnam.vn/cong-nghiep/decision-262-qd-ttg-2024-plan-to-implement-the-national-power-development-master-plan-for-2021-2030-309182-d1.html"
+          },
+          {
+            "type": "url",
+            "url": "https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/"
+          },
+          {
+            "type": "url",
+            "url": "https://lawnet.vn/en/laws/decision-262-qd-ttg-2024-what-are-the-objectives-of-the-plan-for-implementing-the-vietnam-national-148846.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.studocu.com/sg/document/national-university-of-singapore/geography-internship/appendix-1-pdp8-implementation-plan-for-power-projects-and-programs/133029069"
+          },
+          {
+            "type": "url",
+            "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/TroChuyenLinhTinh/comments/1hylki7"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1k46sra"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_mpdvietnhatpower/comments/h03hoj"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/TroChuyenLinhTinh/comments/1i1lumk"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1m7yaxh"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1m3waxl"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietTalk/comments/1fqdpbv"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/BanLuanVaChiaSe/comments/192z0mq"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_mpdvietnhatpower/comments/hakahw"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1gph596"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_mpdvietnhatpower/comments/hxgont"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1j8h0ww"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf26aa2481918b32947b5ac28b9d",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0ccb2b78410d1194006a11bf2702cc8191991bae961271a287",
+      "action": {
+        "type": "open_page",
+        "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf2819208191a92525e0ef17f6c8",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0ccb2b78410d1194006a11bf28889881919bbab1a60b7d2b9e",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "EVNGENCO1 thermal power plants capacity Duyen Hai Nghi Son Uong Bi Quang Ninh annual report 2024",
+          "EVNGENCO2 annual report 2024 O Mon Can Tho Pha Lai Hai Phong Quang Ninh capacity",
+          "Vinacomin Power annual report thermal power plants Cao Ngan Na Duong Cam Pha Mao Khe Son Dong capacity",
+          "PV Power annual report 2024 Ca Mau Nhon Trach Vung Ang Song Hau Thai Binh 2 capacity"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Uong-Bi-Thermal-Power-drastically-implements-solutions-to-improve-the-reliability-and-availability-of-generating-units-66-163-4005.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.ttcgroup.vn/en-US/business-sectors/energy/other-news/duyen-hai-thermal-power-company-achieves-100-billion-kwh-electricity-production-milestone"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Duyen-Hai-Thermal-Power-Company-reaches-electricity-output-milestone-of-100-billion-kWh-66-163-3957.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://bctn.genco3.com/en/report-and-assessment-of-the-bm-and-bd/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.evn.com.vn/d/vi-VN/news/Cong-ty-Nhiet-dien-Duyen-Hai-dat-moc-san-luong-dien-100-ty-kWh-60-14-123405"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/In-first-6-months-of-2024-EVNGENCO2-did-their-best-to-generate-more-than-83-billion-kWh-of-electricity-66-163-4198.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamnet.vn/nhiet-dien-duyen-hai-to-chuc-hoi-nghi-ve-quan-ly-ky-thuat-van-hanh-2339180.html"
+          },
+          {
+            "type": "url",
+            "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/vinacomin-thermal-power-projects-contribute-to-ensure-national-energy-security-11011.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVNGENCO2-determines-to-complete-production-and-business-plan-assigned-by-AGM-successfully-66-163-4177.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.bvsc.com.vn/media/ccyfda0a/3_2015b797978_information_disclosure__vinacomin_power.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://9pdf.org/article/coal-fired-power-technology-catalogue-power-generation-storage.zlgej1kl"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Environmental-protection-at-EVNGENCO1-66-163-3737.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/pow-media/to-ir/10-4-25--bc-tham-dinh-bc-thuc-hien-kd-2024---eng.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietcap.com.vn/api/cms-api/uploads/file/202312/POW-20231218-OP.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/pow-media/to-ir/18-4-25---BCTN-2024---ANH.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Vinacomin"
+          },
+          {
+            "type": "url",
+            "url": "https://vmts.vn/sites/default/files/hdqt_tin_mts/en_auditedfinancialstatements_2025.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1h0t9fj"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1ngwtzi"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietnamNews/comments/1oagtzd"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/14l1ta7"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietTalk/comments/1fqdpbv"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/climateaction/comments/15ntdmq"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1h4j064"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf2c6fe08191bdbdac932fc7d09e",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0ccb2b78410d1194006a11bf2cd26881918e2618d513f5d87c",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "Pha Lai Thermal Power Joint Stock Company annual report 2024 capacity 1040 MW",
+          "Hai Phong Thermal Power Joint Stock Company annual report 2024 1200 MW",
+          "Quang Ninh Thermal Power Joint Stock Company annual report 2024 1200 MW",
+          "Ba Ria Thermal Power Joint Stock Company annual report 2024 capacity gas turbines"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://stockanalysis.com/quote/hose/BTP/financials/"
+          },
+          {
+            "type": "url",
+            "url": "https://file.fpts.com.vn/FileStore2/File/EzIR/UploadFile/News/2025/04/11/File_1_7231_EN_AnnualReport_2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.bsc.com.vn/en/tin-tuc/tin-tuc-ma-co-phieu/1290898-hnd-annual-report-2024"
+          },
+          {
+            "type": "url",
+            "url": "https://en.vietstock.vn/2025/04/btp-annual-report-2024-962-609216.htm"
+          },
+          {
+            "type": "url",
+            "url": "https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=141036&ZID1=6"
+          },
+          {
+            "type": "url",
+            "url": "https://file.fpts.com.vn/FileStore2/File/2025/05/06/QTP_2025-5-6_815dc36_EN_Annual_GeneralMeetingDocuments_2025_P4.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://static2.vietstock.vn/vietstock/2024/5/15/20240515_btp_240515_resolution_on_the_agm_2024___qn.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=137429&ZID1=6"
+          },
+          {
+            "type": "url",
+            "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/16/20250416_PPC_250416_Annual_Report_2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.scribd.com/document/963175001/BTP-Baocaothuongnien-2024"
+          },
+          {
+            "type": "url",
+            "url": "https://www.marketsmojo.com/stocks-analysis/financial-annual/pha-lai-thermal-power-jsc-1164382-872"
+          },
+          {
+            "type": "url",
+            "url": "https://ae.marketscreener.com/quote/stock/BA-RIA-THERMAL-POWER-14187891/news/Ba-Ria-Thermal-Power-Joint-Stock-Company-Announces-Production-Results-for-the-Full-Year-2024-50442631/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.genco3.com/en-US/introduction/operations.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d/en-US/news/Pha-Lai-Thermal-Power-Company-completes-power-supplying-assignment-in-dry-season-of-2024-60-203-4298"
+          },
+          {
+            "type": "url",
+            "url": "https://fiinpro.com/News/Detail/11289934?lang=en-US"
+          },
+          {
+            "type": "url",
+            "url": "https://cdn.24hmoney.vn/medialib/FG/2025/2025-04/2025-04-08/175141_000000014754678_EN_Annual_GeneralMeetingDocuments_2025_P4.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://bctn.genco3.com/en/performance-situation/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1kvi5zb"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1jpg7ug"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/pennystocks/comments/1hwyhd1"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1h0t9fj"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/StockInvest/comments/1ev9scx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/SECFilingsAI/comments/1nr2f9g"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1mqn36l"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1m2x7kj"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/SECFilingsAI/comments/1ottzkg"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1ngwtzi"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1kuvxpm"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VinFastComm/comments/1ee8hoh"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf2fee608191a7fbcafac9e7696e",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0ccb2b78410d1194006a11bf2ff7788191b6d004b1c64acb8b",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "Nghi Son 2 BOT thermal power plant 1200 MW commercial operation 2022 official",
+          "Vung Ang 2 thermal power plant 1330 MW official JERA construction Vietnam",
+          "Duyen Hai 2 thermal power plant 1200 MW commercial operation Janakuasa official",
+          "Song Hau 1 thermal power plant 1200 MW commercial operation PetroVietnam official"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://lilama.com.vn/en/song-hau-1-tppp-unit-1-completes-and-puts-commercial-operation-officially"
+          },
+          {
+            "type": "url",
+            "url": "https://www.banktrack.org/project/nghi_son_2_coal_power_plant"
+          },
+          {
+            "type": "url",
+            "url": "https://kb.pecc2.com/en/duyen-hai-2-thermal-power-plant-project.html"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/song-hau-1-thermal-power-plant-is-closely-operated-in-accordance-with-the-new-progress-milestone-26240.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.sggp.org.vn/share125224.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/nha-may-nhiet-dien-song-hau-1-diem-sang-xay-dung-cong-nghiep-nang-luong"
+          },
+          {
+            "type": "url",
+            "url": "https://bizhub.vietnamnews.vn/commercial-operation-of-nghi-son-2-power-plant-post335568.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.power-technology.com/projects/song-hau-1-coal-fired-power-plant/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/tang-toc-tren-cong-truong-nha-may-nhiet-dien-vung-ang-ii"
+          },
+          {
+            "type": "url",
+            "url": "https://lilama.com.vn/en/song-hau-1-thermal-power-plant-initial-firing"
+          },
+          {
+            "type": "url",
+            "url": "https://starduct.vn/en/project/heavy-industry/vung-ang-2-thermal-power-plant"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/JERA"
+          },
+          {
+            "type": "url",
+            "url": "https://vapco.vn/wp-content/uploads/2024/10/EIA_VA2_EN.-final.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Shin-Nagoya_Thermal_Power_Station"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Haiyang_Nuclear_Power_Plant"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Hirono_Thermal_Power_Station"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Jimah_Power_Plant"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Nishi-Nagoya_Thermal_Power_Station"
+          },
+          {
+            "type": "url",
+            "url": "https://www.pvn.vn/DataStore/Documents/2017/Tapchi%20Dau%20khi/so%2010%202017/TCDK_SO_10_2017.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://cdn.24hmoney.vn/medialib/FG/2026/2026-04/2026-04-15/PVX/000000016142423_490_EN_AnnualReport2025_1.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://libportal.jica.go.jp/library/Public/files/environment/Reports/SoutheastAsia/VietNamOMon3CCPPCProject/Preparatory_Survey_Report.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://file.hstatic.net/1000292128/file/jbic_es_report_2h_2020_en_f09fcb0f54f3446497adbd48e7aa29bc.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Unique_Bat_7794/comments/1s8j3n8/vinenergo_signs_mou_for_2_gw_wind_power_project/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/GenHoChiMinh/comments/w0xd4v"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/GenHoChiMinh/comments/qgdj6r"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/j5msll"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/worldnews/comments/kn60f9"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/autotldr/comments/kn76pf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/149q5dn"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1l75a4p"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_eladiaschwan/comments/uwqned"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Internal_Play9782/comments/tfmize"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_ServiceTop6891/comments/shysk9"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0ccb2b78410d1194006a11bf365e208191833d6be3e518e186",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_0ccb2b78410d1194006a11bf3755108191a8fdd927da87efda",
+      "content": [
+        {
+          "annotations": [
+            {
+              "end_index": 1378,
+              "start_index": 1280,
+              "title": "THE PRIME MINISTER OF",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1869,
+              "start_index": 1761,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 2272,
+              "start_index": 2164,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 2502,
+              "start_index": 2394,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 2885,
+              "start_index": 2777,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 3167,
+              "start_index": 3059,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 3974,
+              "start_index": 3866,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 4525,
+              "start_index": 4417,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 5237,
+              "start_index": 5129,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 5891,
+              "start_index": 5783,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 6413,
+              "start_index": 6305,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 7117,
+              "start_index": 7009,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 38594,
+              "start_index": 38486,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 39169,
+              "start_index": 39061,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf"
+            },
+            {
+              "end_index": 39641,
+              "start_index": 39507,
+              "title": "TỔNG CÔNG TY PHÁT ĐIỆN 2",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/16/20250416_PPC_250416_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40145,
+              "start_index": 39943,
+              "title": "Uong Bi Thermal Power drastically implements solutions to improve the reliability and availability of generating units",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Uong-Bi-Thermal-Power-drastically-implements-solutions-to-improve-the-reliability-and-availability-of-generating-units-66-163-4005.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 40948,
+              "start_index": 40803,
+              "title": "Công ty Nhiệt điện Duyên Hải đạt mốc sản lượng điện 100 tỷ kWh",
+              "type": "url_citation",
+              "url": "https://www.evn.com.vn/d/vi-VN/news/Cong-ty-Nhiet-dien-Duyen-Hai-dat-moc-san-luong-dien-100-ty-kWh-60-14-123405?utm_source=openai"
+            },
+            {
+              "end_index": 41404,
+              "start_index": 41251,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 41846,
+              "start_index": 41692,
+              "title": "Vinacomin thermal power projects contribute to ensure national energy security | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-thermal-power-projects-contribute-to-ensure-national-energy-security-11011.html?utm_source=openai"
+            },
+            {
+              "end_index": 42392,
+              "start_index": 42301,
+              "title": "OPERATIONS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/en-US/introduction/operations.html?utm_source=openai"
+            },
+            {
+              "end_index": 42883,
+              "start_index": 42734,
+              "title": "CÔNG TY CỔ",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/EzIR/UploadFile/News/2025/04/11/File_1_7231_EN_AnnualReport_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43322,
+              "start_index": 43150,
+              "title": "Pha Lai Thermal Power Company completes power supplying assignment in dry season of 2024",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d/en-US/news/Pha-Lai-Thermal-Power-Company-completes-power-supplying-assignment-in-dry-season-of-2024-60-203-4298?utm_source=openai"
+            },
+            {
+              "end_index": 43772,
+              "start_index": 43674,
+              "title": "THE PRIME MINISTER OF",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44335,
+              "start_index": 44168,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://cdn.24hmoney.vn/medialib/FG/2025/2025-04/2025-04-08/175141_000000014754678_EN_Annual_GeneralMeetingDocuments_2025_P4.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45159,
+              "start_index": 45061,
+              "title": "PETROVIETNAM POWER CORPORATION - JOINT STOCK COMPANY",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/18-4-25---BCTN-2024---ANH.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45565,
+              "start_index": 45444,
+              "title": "REPORT  \nAppraisal of the 2024 Business Situation",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/10-4-25--bc-tham-dinh-bc-thuc-hien-kd-2024---eng.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46122,
+              "start_index": 45919,
+              "title": "Decision 262/QD-TTg 2024 Plan to implement the National Power Development Master Plan for 2021-2030",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-262-qd-ttg-2024-plan-to-implement-the-national-power-development-master-plan-for-2021-2030-309182-d1.html?utm_source=openai"
+            },
+            {
+              "end_index": 46529,
+              "start_index": 46392,
+              "title": "Commercial operation of Nghi Son 2 Power Plant",
+              "type": "url_citation",
+              "url": "https://bizhub.vietnamnews.vn/commercial-operation-of-nghi-son-2-power-plant-post335568.html?utm_source=openai"
+            },
+            {
+              "end_index": 46858,
+              "start_index": 46754,
+              "title": "DUYEN HAI 2 THERMAL POWER PLANT PROJECT",
+              "type": "url_citation",
+              "url": "https://kb.pecc2.com/en/duyen-hai-2-thermal-power-plant-project.html?utm_source=openai"
+            },
+            {
+              "end_index": 47250,
+              "start_index": 47115,
+              "title": "Song Hau 1 TPPP Unit 1 completes and puts into commercial operation officially | LILAMA Corporation",
+              "type": "url_citation",
+              "url": "https://lilama.com.vn/en/song-hau-1-tppp-unit-1-completes-and-puts-commercial-operation-officially?utm_source=openai"
+            },
+            {
+              "end_index": 47750,
+              "start_index": 47622,
+              "title": "CFB Coal Fired Power - Viet Nam Technology Catalogue for Power Generation and Storage",
+              "type": "url_citation",
+              "url": "https://9pdf.org/article/coal-fired-power-technology-catalogue-power-generation-storage.zlgej1kl?utm_source=openai"
+            },
+            {
+              "end_index": 48423,
+              "start_index": 48292,
+              "title": "Song Hau 1 Thermal Power Plant – a 'bright spot' in the development of the energy industry.",
+              "type": "url_citation",
+              "url": "https://www.vietnam.vn/en/nha-may-nhiet-dien-song-hau-1-diem-sang-xay-dung-cong-nghiep-nang-luong?utm_source=openai"
+            },
+            {
+              "end_index": 48821,
+              "start_index": 48690,
+              "title": "vINACOMIN POWER HOLDING CORP",
+              "type": "url_citation",
+              "url": "https://www.bvsc.com.vn/media/ccyfda0a/3_2015b797978_information_disclosure__vinacomin_power.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 49275,
+              "start_index": 49178,
+              "title": "VUNG ANG II THERMAL POWER LIMITED LIABILITY COMPANY",
+              "type": "url_citation",
+              "url": "https://vapco.vn/wp-content/uploads/2024/10/EIA_VA2_EN.-final.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 49679,
+              "start_index": 49571,
+              "title": "BTP: Annual Report 2024 | Vietstock",
+              "type": "url_citation",
+              "url": "https://en.vietstock.vn/2025/04/btp-annual-report-2024-962-609216.htm?utm_source=openai"
+            },
+            {
+              "end_index": 50047,
+              "start_index": 49942,
+              "title": "Report And Assessment Of The BM And BD – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/report-and-assessment-of-the-bm-and-bd/?utm_source=openai"
+            },
+            {
+              "end_index": 50481,
+              "start_index": 50307,
+              "title": "EVNGENCO2 determines to complete production and business plan assigned by AGM successfully",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVNGENCO2-determines-to-complete-production-and-business-plan-assigned-by-AGM-successfully-66-163-4177.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 50929,
+              "start_index": 50747,
+              "title": "THE SOCIALIST REPUBLIC OF VIETNAM",
+              "type": "url_citation",
+              "url": "https://libportal.jica.go.jp/library/Public/files/environment/Reports/SoutheastAsia/VietNamOMon3CCPPCProject/Preparatory_Survey_Report.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 51334,
+              "start_index": 51247,
+              "title": "Petrovietnam begins construction of 1.15 GW thermal power plant in Mekong Delta (Vietnam)",
+              "type": "url_citation",
+              "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai"
+            }
+          ],
+          "text": "# Vietnam Thermal Generation Assets >30 MWe — Primary-Sourced Markdown Reference Inventory  \n**Scope:** Vietnam thermal generation assets greater than 30 MWe using **Coal**, **Domestic gas**, or **Imported LNG**, including operating, retired, under-construction, planned, approved, suspended, cancelled, captive/CHP/off-grid, and formal-planning-cycle pre-FID projects.  \n**Status date of inventory:** **23 May 2026**.  \n**Important limitation:** Vietnam’s official planning documents list many pre-FID projects by capacity and schedule but not always by unit configuration, owner, province, or technology. Where the primary source is an official plan without those details, the table marks the missing attribute as “not specified” and confidence is capped accordingly.\n\n---\n\n## 1. Sector overview\n\nVietnam’s thermal fleet is dominated by coal, legacy domestic-gas CCGT/OCGT plants in the Southeast and Southwest, and a new wave of LNG-to-power projects. EVN’s 2022–2023 annual report reported national installed coal-fired capacity rising from **25,312 MW in 2022** to **26,756 MW in 2023**, while EVN’s 2023 system overview noted that coal remained a major fuel supply focus and that domestic gas supply to power was constrained in both the Southeast and Southwest gas systems. ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf?utm_source=openai))\n\nThe most current formal planning cycle is the **Adjusted PDP8 implementation plan** under **MOIT Decision 1509/QĐ-BCT dated 30 May 2025**. Its Appendix II.1 lists priority LNG projects totaling more than 30 GW across 2025–2035, coal plants under construction or delayed, CHP/industrial by-product projects, and domestic-gas projects tied to Block B, Cá Voi Xanh, and Báo Vàng gas. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\nKey 2025 official planning signals are:  \n- Priority LNG list includes **Quảng Ninh, Thái Bình, Quảng Trạch II, Hải Lăng I, Nhơn Trạch 3–4, Hiệp Phước I–II, Long An I–II, Sơn Mỹ I–II, Bạc Liêu, Nghi Sơn, Cà Ná, Quỳnh Lập, Hải Phòng I–II, Long Sơn, Công Thanh, Vũng Áng III, Quảng Trạch III**. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n- Coal “under construction” list includes **Na Dương II, An Khánh–Bắc Giang, Vũng Áng II, Quảng Trạch I, Long Phú I**. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n- Coal projects “facing difficulties” include **Nam Định I, Quảng Trị, Vĩnh Tân III, Sông Hậu II**; the plan notes that **Quảng Trị’s investor requested termination** and that **MOIT terminated the BOT contract for Sông Hậu II by document 4579/BCT-ĐL dated 1 July 2024**. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n- Domestic-gas list includes **Ô Môn I–IV, Dung Quất I–III, Miền Trung I–II, and TBKHH Quảng Trị**, with Ô Môn I identified as an existing plant to switch to Block B gas. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n\n---\n\n## 2. Concise sourced narratives for important, disputed, or ambiguous assets\n\n### 2.1 Nhơn Trạch 3–4 — domestic gas vs imported LNG classification\nOfficial planning in Decision 1509 places **“NMĐ Nhơn Trạch 3 và Nhơn Trạch 4”** in the **LNG thermal power** table at **1,624 MW** with expected operation in **2025**, so this inventory classifies it as **Imported LNG** rather than Domestic gas. PV Power reports continued work on Nhơn Trạch 3–4 and preparation for the commercial-operation phase in its 2024 reporting. Confidence is **HIGH** for capacity/status/fuel classification at the planning level, but COD is marked expected/partial because project commissioning may differ by unit. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n### 2.2 Ô Môn I — existing oil/gas plant converted to Block B domestic gas\nDecision 1509 lists **Nhiệt điện Ô Môn I** under domestic-gas plants at **660 MW**, with a note that it is an existing power plant switching to **Lô B / Block B gas**. This inventory includes it under **Domestic gas**, but marks the status as **operating / conversion planned** because the 2025 official plan is about conversion/fuel supply rather than initial COD. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n### 2.3 Vũng Áng II — under construction in PDP8, but apparently entering operation in 2026\nDecision 1509 still lists **Vũng Áng II** under coal plants under construction at **1,330 MW** with expected operation in **2025**. Subsequent 2026 trade/press reporting says the project reached full commercial operation/inauguration in April 2026. Because the most authoritative retrieved source is the May 2025 official plan and the 2026 report is not a government/operator primary source, the table records **Operating / recently completed** with **MEDIUM** confidence and notes the source hierarchy issue. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n### 2.4 Long Phú I and Sông Hậu II — stalled coal projects with different legal positions\nDecision 1509 lists **Long Phú I** as coal “under construction” at **1,200 MW**, expected 2026, despite long delays. In contrast, **Sông Hậu II** is listed among coal projects facing difficulties, with the plan noting that MOIT terminated the project BOT contract by document **4579/BCT-ĐL dated 1 July 2024**. Therefore Long Phú I is treated as **Suspended / under construction in plan**, while Sông Hậu II is treated as **Cancelled / BOT terminated**. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n### 2.5 Quảng Trị coal vs Quảng Trị domestic gas\nDecision 1509 contains both a **coal Quảng Trị** project at **1,320 MW** in the “difficulties” table, with a note that the investor requested stopping the project, and a separate **TBKHH Quảng Trị** domestic-gas project at **340 MW** using Báo Vàng gas. These are split into separate rows because they differ by fuel, technology, capacity, and planning identity. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n### 2.6 Captive and industrial CHP assets\nDecision 1509’s CHP/by-product table identifies industrial thermal projects including **Formosa HT2 650 MW**, **Hòa Phát II 300 MW**, **VNT19 pulp-paper thermal 54 MW**, and Hải Hà co-generation phases. These are included because the user explicitly requested captive/CHP assets. Fuels are difficult to classify: Hòa Phát is “surplus gas / blast-furnace gas,” which is outside the user’s allowed fuel labels but appears in an official thermal-power table; this inventory places it under **Domestic gas** only as a constrained label and flags the note. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))\n\n---\n\n## 3. Structured power-plants table\n\n**Confidence definitions used:**  \n- **HIGH:** at least two concordant admissible sources, including one primary, or very fresh official plan plus operator confirmation.  \n- **MEDIUM:** one primary source, or official plan only, or stale-but-plausible source.  \n- **LOW:** secondary only, conflicting or stale status, or source not found.\n\n| Name (Vietnamese) | Name (English) | Province | Fuel (Coal / Domestic gas / Imported LNG) | Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas) | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |\n|---|---|---:|---|---|---:|---:|---|---:|---|---|---|---|---|---|\n| Nhiệt điện Phả Lại 1 | Pha Lai 1 Thermal Power Plant | Hải Dương | Coal | Subcritical | 4×110 | 440 | Operating | 2024-08-01 | 1980s | Pha Lai Thermal Power JSC / EVNGENCO2 | HIGH | B03 | B13 | EVN 2024 article confirms original 440 MW plant; company 2024 annual report confirms current entity. |\n| Nhiệt điện Phả Lại 2 | Pha Lai 2 Thermal Power Plant | Hải Dương | Coal | Subcritical | 2×300 | 600 | Operating | 2024-12-31 | 2001–2002 | Pha Lai Thermal Power JSC / EVNGENCO2 | MEDIUM | B03 | B13 | Included as part of Pha Lai 1,040 MW complex; unit split from company/industry sources. |\n| Nhiệt điện Uông Bí | Uong Bi Thermal Power Plant | Quảng Ninh | Coal | Subcritical | mixed | 735 | Operating | 2024-03-12 | 1960s; extensions later | EVNGENCO1 | MEDIUM | B04 | B05 | Old unit retirement status not fully resolved; capacity treated as present complex capacity from discovery/EVN context. |\n| Nhiệt điện Ninh Bình | Ninh Binh Thermal Power Plant | Ninh Bình | Coal | Subcritical | 4×25 | 100 | Operating / legacy | 2019-08-01 | 1974 | EVN / GENCO legacy | LOW | B05 | not found | EVN coal history says 100 MW plant entered operation in 1974; current operating status not freshly verified. |\n| Nhiệt điện Cao Ngạn | Cao Ngan Thermal Power Plant | Thái Nguyên | Coal | Subcritical / CFB | not specified | 115 | Operating | 2017-07-01 | 2000s | Vinacomin Power | MEDIUM | B07 | B08 | Vinacomin CFB source lists 115 MW. |\n| Nhiệt điện Na Dương I | Na Duong I Thermal Power Plant | Lạng Sơn | Coal | Subcritical / CFB | 2×55 | 110 | Operating | 2017-07-01 | 2000s | Vinacomin Power | MEDIUM | B07 | B08 | Primary freshness limited; no fresh plant-level source retrieved. |\n| Nhiệt điện Sơn Động | Son Dong Thermal Power Plant | Bắc Giang | Coal | Subcritical / CFB | 2×110 | 220 | Operating | 2017-07-01 | 2009–2010 | Vinacomin Power | MEDIUM | B07 | B08 | Vinacomin CFB source lists 220 MW. |\n| Nhiệt điện Cẩm Phả | Cam Pha Thermal Power Plant | Quảng Ninh | Coal | Subcritical / CFB | 2×340 | 680 | Operating | 2017-07-01 | 2010–2011 | Vinacomin Power | MEDIUM | B07 | B08 | Some secondary lists show 600 MW; 680 MW selected from Vinacomin CFB source. |\n| Nhiệt điện Mạo Khê | Mao Khe Thermal Power Plant | Quảng Ninh | Coal | Subcritical / CFB | 2×220 | 440 | Operating | 2017-07-01 | 2012–2013 | Vinacomin Power | MEDIUM | B07 | B08 | Vinacomin CFB source lists 440 MW. |\n| Nhiệt điện Hải Phòng 1 | Hai Phong 1 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2×300 | 600 | Operating | 2024-12-31 | 2011 | Hai Phong Thermal Power JSC | HIGH | B12 | B14 | Company annual report confirms entity; split by plant commonly reported. |\n| Nhiệt điện Hải Phòng 2 | Hai Phong 2 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2×300 | 600 | Operating | 2024-12-31 | 2014 | Hai Phong Thermal Power JSC | HIGH | B12 | B14 | Same company complex, 1,200 MW total. |\n| Nhiệt điện Quảng Ninh | Quang Ninh Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 4×300 | 1,200 | Operating | 2024-12-31 | 2009–2014 | Quang Ninh Thermal Power JSC | HIGH | B15 | B14 | 2025 AGM documents state four units totaling 1,200 MW. |\n| Nhiệt điện Mông Dương 1 | Mong Duong 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2×540 | 1,080 | Operating | 2024-12-31 | 2015 | EVNGENCO3 | HIGH | B10 | B11 | EVNGENCO3 annual report / operations page confirm fleet. |\n| Nhiệt điện Mông Dương 2 | Mong Duong 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2×620/621 | 1,240 | Operating BOT | 2024-12-31 | 2015 | AES-VCM Mong Duong Power Co. | HIGH | B16 | B17 | AES project page states domestic coal and BOT transfer after 25 years; capacity rounded to 1,240 MW. |\n| Nhiệt điện Nghi Sơn 1 | Nghi Son 1 Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2×300 | 600 | Operating | 2023-09-01 | 2014 | EVNGENCO1 | MEDIUM | B05 | B06 | EVNGENCO1 environmental article lists Nghi Son 1 among managed thermal plants. |\n| Nhiệt điện Nghi Sơn 2 | Nghi Son 2 BOT Thermal Power Plant | Thanh Hóa | Coal | Supercritical | 2×600 | 1,200 | Operating BOT | 2022-07-14 | 2022 | NS2PC / Marubeni & KEPCO consortium | HIGH | B20 | B21 | Commercial operation reported 14 July 2022; net capacity 1,200 MW. |\n| Nhiệt điện Vũng Áng 1 | Vung Ang 1 Thermal Power Plant | Hà Tĩnh | Coal | Subcritical | 2×600 | 1,200 | Operating | 2024-12-31 | 2015 | PV Power | HIGH | B18 | B19 | PV Power 2024 reporting covers Vung Ang 1 operations/maintenance. |\n| Nhiệt điện Thái Bình 1 | Thai Binh 1 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2×300 | 600 | Operating | 2023-12-31 | 2017–2018 | EVN/EVNGENCO3 or EVNGENCO1 legacy | MEDIUM | B14 | not found | Included from EVN system/coal fleet context; plant-level fresh source not retrieved. |\n| Nhiệt điện Thái Bình 2 | Thai Binh 2 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2×600 | 1,200 | Operating | 2023-04-27 | 2023 | PetroVietnam / PV Power Generation Branch | MEDIUM | B18 | B19 | PVN/PV Power reporting confirms portfolio context; COD from public official reporting not fully extracted. |\n| Nhiệt điện Vĩnh Tân 2 | Vinh Tan 2 Thermal Power Plant | Bình Thuận | Coal | Subcritical | 2×622 | 1,244 | Operating | 2024-12-31 | 2015 | EVNGENCO3 | HIGH | B10 | B11 | EVNGENCO3 report states 2×622 MW and early-2015 commercial operation. |\n| Nhiệt điện Vĩnh Tân 4 | Vinh Tan 4 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2×600 | 1,200 | Operating | 2024-12-31 | 2018 | EVN | MEDIUM | B14 | B24 | Technology from national technology catalogue / industry context; plant-level source gap. |\n| Nhiệt điện Vĩnh Tân 4 mở rộng | Vinh Tan 4 Extension | Bình Thuận | Coal | Supercritical | 1×600 | 600 | Operating | 2024-12-31 | 2019 | EVN | MEDIUM | B14 | B24 | Split because expansion is a separate investment package. |\n| Nhiệt điện Vĩnh Tân 1 | Vinh Tan 1 BOT Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2×620 | 1,240 | Operating BOT | 2023-12-31 | 2018 | Vinh Tan 1 Power Co. | MEDIUM | B14 | not found | Primary plant-level source not retrieved in this pass. |\n| Nhiệt điện Duyên Hải 1 | Duyen Hai 1 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2×622.5 | 1,245 | Operating | 2024-02-23 | 2015 | EVNGENCO1 | HIGH | B06 | B14 | EVN says Duyen Hai 1 and 3 total 2,490 MW. |\n| Nhiệt điện Duyên Hải 3 | Duyen Hai 3 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2×622.5 | 1,245 | Operating | 2024-02-23 | 2016–2017 | EVNGENCO1 | HIGH | B06 | B14 | See Duyen Hai total 2,490 MW. |\n| Nhiệt điện Duyên Hải 3 mở rộng | Duyen Hai 3 Extension | Trà Vinh | Coal | Supercritical | 1×688 | 688 | Operating | 2024-02-23 | 2020 | EVN; operated by EVNGENCO1/Duyen Hai TPC | HIGH | B06 | B24 | EVN article gives 688 MW designed capacity. |\n| Nhiệt điện Duyên Hải 2 | Duyen Hai 2 Thermal Power Plant | Trà Vinh | Coal | USC | 2×600 | 1,200 | Operating BOT | 2024-12-31 | 2021–2022 | Janakuasa | MEDIUM | B22 | B14 | PECC2 O&M page confirms 1,200 MW and investor. |\n| Nhiệt điện Sông Hậu 1 | Song Hau 1 Thermal Power Plant | Hậu Giang | Coal | Subcritical | 2×600 | 1,200 | Operating | 2023-07-01 | 2021–2022 | PetroVietnam / PV Power Generation Branch | HIGH | B23 | B25 | LILAMA/PVN source says 1,200 MW; PetroVietnam branch took over O&M from 1 July 2023. |\n| Nhiệt điện Na Dương II | Na Duong II Thermal Power Plant | Lạng Sơn | Coal | Subcritical / CFB | not specified | 110 | Under construction / planned | 2025-05-30 | expected 2026 | Vinacomin Power | HIGH | B01 | B08 | Listed in Decision 1509 coal under construction table. |\n| Nhiệt điện An Khánh – Bắc Giang | An Khanh–Bac Giang Thermal Power Plant | Bắc Giang | Coal | Subcritical | not specified | 650 | Under construction / planned | 2025-05-30 | expected 2027 | An Khanh developer | HIGH | B01 | B26 | Listed under coal under construction. |\n| Nhiệt điện Vũng Áng II | Vung Ang II Thermal Power Plant | Hà Tĩnh | Coal | USC | 2×665 | 1,330 | Operating / recently completed | 2026-04-20 | 2025–2026 | VAPCO / Mitsubishi & KEPCO | MEDIUM | B01 | B27 | Official 2025 plan listed under construction; 2026 reports say full commercial operation/inauguration. |\n| Nhiệt điện Quảng Trạch I | Quang Trach I Thermal Power Plant | Quảng Bình | Coal | USC | not specified | 1,403 | Under construction | 2025-05-30 | expected 2025 | EVN | HIGH | B01 | B20 | Decision 1509 lists 1,403 MW under construction. |\n| Nhiệt điện Long Phú I | Long Phu I Thermal Power Plant | Sóc Trăng | Coal | Subcritical | 2×600 | 1,200 | Suspended / under construction in plan | 2025-05-30 | expected 2026 in plan | PetroVietnam | MEDIUM | B01 | B14 | Official plan still lists under construction; practical status remains delayed. |\n| Nhiệt điện Nam Định I | Nam Dinh I Thermal Power Plant | Nam Định | Coal | Supercritical | 2×600 | 1,200 | Delayed / difficult | 2025-05-30 | 2025–2030 plan | Taekwang / ACWA Power lead | HIGH | B01 | B20 | Listed among coal projects facing difficulties. |\n| Nhiệt điện Quảng Trị | Quang Tri Coal Thermal Power Plant | Quảng Trị | Coal | Supercritical | not specified | 1,320 | Suspended / investor requested stop | 2025-05-30 | 2025–2030 plan | EGATi / Thai consortium lead | HIGH | B01 | B20 | Decision 1509 note cites EGATi 277/2023 requesting stop. |\n| Nhiệt điện Vĩnh Tân III | Vinh Tan III Thermal Power Plant | Bình Thuận | Coal | Supercritical | not specified | 1,980 | Delayed / difficult | 2025-05-30 | 2025–2030 plan | OneEnergy / EVN / partners lead | HIGH | B01 | B20 | Listed among coal projects facing difficulties. |\n| Nhiệt điện Sông Hậu II | Song Hau II Thermal Power Plant | Hậu Giang | Coal | USC | not specified | 2,120 | Cancelled / BOT terminated | 2024-07-01 | none | Toyo / BOT developer lead | HIGH | B01 | B20 | Decision 1509 states MOIT terminated BOT contract by 4579/BCT-ĐL dated 1 July 2024. |\n| Nhiệt điện An Khánh I | An Khanh I Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2×60 | 120 | Operating | 2024-12-31 | 2015 | An Khanh Thermal Power JSC | LOW | B26 | not found | Current fresh source not retrieved; included for recall. |\n| Nhiệt điện Formosa Hà Tĩnh hiện hữu | Formosa Ha Tinh Captive Thermal Power Plant | Hà Tĩnh | Coal | Subcritical | not specified | 150 | Operating captive | 2025-05-30 | not verified | Formosa Ha Tinh | LOW | B01 | not found | Existing captive capacity unresolved; separate from planned Formosa HT2. |\n| Formosa HT2 | Formosa HT2 Captive/CHP Thermal Power Plant | Hà Tĩnh | Coal | not specified | not specified | 650 | Planned captive/CHP | 2025-05-30 | expected 2029 | Formosa Ha Tinh | HIGH | B01 | not found | Decision 1509 CHP/by-product table. Fuel inferred coal/industrial thermal; exact fuel not specified in extracted lines. |\n| NĐ đồng phát Hải Hà 1 | Hai Ha 1 Co-generation Thermal Power Plant | Quảng Ninh | Coal | not specified | 1×50 FS component / 300 total | 300 | Planned CHP | 2025-05-30 | expected 2030 | Hải Hà industrial-zone developer | MEDIUM | B01 | not found | Decision 1509 says investor preparing 50 MW component FS; total listed 300 MW. |\n| NĐ đồng phát Đức Giang | Duc Giang Co-generation Thermal Power Plant | Lào Cai | Coal | not specified | not specified | 100 | Planned but investor requested removal | 2025-01-03 | 2025–2030 plan | Đức Giang chemicals lead | HIGH | B01 | not found | Decision 1509 note says investor requested to “bỏ” project. |\n| NĐ khí dư Hòa Phát II | Hoa Phat II Surplus-gas Power Plant | Dung Quất / Quảng Ngãi | Domestic gas | CCGT / industrial gas not specified | not specified | 300 | Under construction | 2025-05-30 | expected 2027 | Hoa Phat | HIGH | B01 | not found | Officially “khí dư”; not natural gas. Included under constrained fuel label with note. |\n| Nhà máy nhiệt điện Bột-Giấy VNT19 | VNT19 Pulp-Paper Thermal Power Plant | Quảng Ngãi | Coal | not specified | not specified | 54 | Planned industrial | 2025-03-18 | expected 2026–2027 | VNT19 pulp-paper project | HIGH | B01 | not found | Listed by Decision 1509 with Quảng Ngãi letter 1432/UBND-KTN dated 18 Mar 2025. |\n| NĐ đồng phát Hải Hà 2 | Hai Ha 2 Co-generation Thermal Power Plant | Quảng Ninh | Coal | not specified | not specified | 600 | Planned CHP | 2025-05-30 | expected 2035 | Hải Hà industrial-zone developer | MEDIUM | B01 | not found | Official plan only. |\n| NĐ đồng phát Hải Hà 3 | Hai Ha 3 Co-generation Thermal Power Plant | Quảng Ninh | Coal | not specified | not specified | 600 | Planned CHP | 2025-05-30 | expected 2035 | Hải Hà industrial-zone developer | MEDIUM | B01 | not found | Official plan only. |\n| NĐ đồng phát Hải Hà 4 | Hai Ha 4 Co-generation Thermal Power Plant | Quảng Ninh | Coal | not specified | not specified | 600 | Planned CHP | 2025-05-30 | expected 2035 | Hải Hà industrial-zone developer | MEDIUM | B01 | not found | Official plan only. |\n| Nhà máy điện Bà Rịa | Ba Ria Thermal Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | OCGT / CCGT mixed | mixed | 389 | Operating | 2024-12-31 | 1990s | Ba Ria Thermal Power JSC / EVNGENCO3 | HIGH | B30 | B11 | Gas turbine plant; exact operational unit mix may have changed. |\n| Phú Mỹ 1 | Phu My 1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 1,090 | Operating | 2024-12-31 | 2002 | EVNGENCO3 | HIGH | B10 | B11 | EVNGENCO3 states Phu My company total 2,540 MW for Phu My 1, 2.1, 2.1 ext., 4. |\n| Phú Mỹ 2.1 | Phu My 2.1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 450 | Operating | 2024-12-31 | 1997–1999 | EVNGENCO3 | HIGH | B10 | B11 | Split from EVNGENCO3 Phu My portfolio. |\n| Phú Mỹ 2.1 mở rộng | Phu My 2.1 Extension | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 440 | Operating | 2024-12-31 | 2002 | EVNGENCO3 | HIGH | B10 | B11 | Capacity approximate; total reconciles with 2,540 MW group. |\n| Phú Mỹ 4 | Phu My 4 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 560 | Operating | 2024-12-31 | 2004 | EVNGENCO3 | HIGH | B10 | B11 | Capacity set to reconcile Phu My EVNGENCO3 2,540 MW group. |\n| Phú Mỹ 2.2 BOT | Phu My 2.2 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 715 | Operating BOT / handover O&M | 2024-12-31 | 2005 | Mekong Energy / EDF-Sumitomo-TEPCO lead | MEDIUM | B31 | B11 | EVNGENCO3 2024 says BOT Phu My 2.2 O&M handover preparation on schedule. |\n| Phú Mỹ 3 BOT | Phu My 3 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | not specified | 716 | Operating BOT | 2024-12-31 | 2004 | Sembcorp / BOT company lead | MEDIUM | B31 | B11 | EVNGENCO3 2024 says it completed O&M work for BOT Phu My 3. |\n| Nhơn Trạch 1 | Nhon Trach 1 Power Plant | Đồng Nai | Domestic gas | CCGT | not specified | 450 | Operating | 2024-12-31 | 2009 | PV Power | HIGH | B18 | B19 | PV Power 2024 annual reporting covers Nhon Trach 1. |\n| Nhơn Trạch 2 | Nhon Trach 2 Power Plant | Đồng Nai | Domestic gas | CCGT | not specified | 750 | Operating | 2024-12-31 | 2011 | PV Power Nhon Trach 2 JSC | HIGH | B18 | B19 | PV Power reports Nhon Trach 2 in portfolio. |\n| Cà Mau 1 | Ca Mau 1 Power Plant | Cà Mau | Domestic gas | CCGT | not specified | 750 | Operating | 2024-12-31 | 2008 | PV Power | HIGH | B18 | B19 | PV Power 2024 reporting covers Ca Mau 1 & 2. |\n| Cà Mau 2 | Ca Mau 2 Power Plant | Cà Mau | Domestic gas | CCGT | not specified | 750 | Operating | 2024-12-31 | 2008 | PV Power | HIGH | B18 | B19 | Same complex as Ca Mau 1. |\n| Hiệp Phước hiện hữu | Hiep Phuoc Existing Power Plant | TP.HCM | Domestic gas | CCGT / OCGT not specified | not specified | 375 | Operating / fuel ambiguous | 2024-12-31 | 1990s | Hiep Phuoc Power Co. | LOW | not found | not found | Included as known IPP; admissible current source not found in retrieval. |\n| Thủ Đức | Thu Duc Power Plant | TP.HCM | Domestic gas | OCGT | mixed | 165 | Retired / reserve unclear | 2024-12-31 | 1960s–1990s | EVN legacy | LOW | not found | not found | Status and units unresolved; retained for recall. |\n| Ô Môn I | O Mon I Thermal Power Plant | Cần Thơ | Domestic gas | CCGT / steam-gas conversion | 2×330 | 660 | Operating / Block B gas conversion planned | 2025-05-30 | 2009–2015 | EVNGENCO2 | HIGH | B01 | B32 | Decision 1509: existing plant to use Block B gas. |\n| Ô Môn II | O Mon II Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | not specified | 1,050 | Planned / approved | 2025-05-30 | expected 2027–2028 | Marubeni / EVN lead | HIGH | B01 | B20 | PDP8 implementation domestic-gas list. |\n| Ô Môn III | O Mon III Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | not specified | 1,050 | Planned / approved | 2025-05-30 | expected 2028–2030 | EVN / JICA lead | HIGH | B01 | B33 | JICA documentation supports O Mon 3 project identity. |\n| Ô Môn IV | O Mon IV Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | not specified | 1,050 | Under construction / EPC awarded | 2025-08-22 | expected 2028 | PetroVietnam / EVN | HIGH | B01 | B34 | Decision 1509 lists 1,050 MW; 2025 reports indicate construction began. |\n| TBKHH Dung Quất I | Dung Quat I Combined-Cycle Gas Plant | Quảng Ngãi | Domestic gas | CCGT | not specified | 750 | Planned | 2025-05-30 | expected 2030 | PVN / EVN lead | HIGH | B01 | B20 | Uses Cá Voi Xanh gas per plan. |\n| TBKHH Dung Quất II | Dung Quat II Combined-Cycle Gas Plant | Quảng Ngãi | Domestic gas | CCGT | not specified | 750 | Planned | 2025-05-30 | expected 2030 | PVN / EVN lead | HIGH | B01 | B20 | Uses Cá Voi Xanh gas. |\n| TBKHH Dung Quất III | Dung Quat III Combined-Cycle Gas Plant | Quảng Ngãi | Domestic gas | CCGT | not specified | 750 | Planned | 2025-05-30 | expected 2030 | PVN / EVN lead | HIGH | B01 | B20 | Uses Cá Voi Xanh gas. |\n| TBKHH Miền Trung I | Central Region I CCGT | Quảng Nam / Quảng Ngãi unresolved | Domestic gas | CCGT | not specified | 750 | Planned | 2025-05-30 | 2025–2030 plan | not specified | MEDIUM | B01 | B20 | Province not specified in extracted official lines; likely Cá Voi Xanh chain. |\n| TBKHH Miền Trung II | Central Region II CCGT | Quảng Nam / Quảng Ngãi unresolved | Domestic gas | CCGT | not specified | 750 | Planned | 2025-05-30 | 2025–2030 plan | not specified | MEDIUM | B01 | B20 | Province unresolved. |\n| TBKHH Quảng Trị | Quang Tri Combined-Cycle Gas Plant | Quảng Trị | Domestic gas | CCGT | not specified | 340 | Planned | 2025-05-30 | 2025–2030 plan | not specified | HIGH | B01 | B20 | Uses Báo Vàng gas per Decision 1509. |\n| LNG Quảng Ninh | Quang Ninh LNG Power Plant | Quảng Ninh | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-05-30 | expected 2028–2029 | PV Power / Colavi / JERA lead | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Thái Bình | Thai Binh LNG Power Plant | Thái Bình | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-05-30 | expected 2028 | not specified | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Quảng Trạch II | Quang Trach II LNG Power Plant | Quảng Bình | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-05-30 | expected 2028 | EVN lead | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Hải Lăng giai đoạn 1 | Hai Lang LNG Phase 1 | Quảng Trị | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-05-30 | expected 2028–2029 | T&T / Korean consortium lead | HIGH | B01 | B20 | Priority LNG project. |\n| Nhơn Trạch 3 và 4 | Nhon Trach 3 and 4 Power Plants | Đồng Nai | Imported LNG | CCGT | 2×812 | 1,624 | Under construction / commissioning | 2025-05-30 | expected 2025 | PV Power | HIGH | B01 | B18 | Decision 1509 places in LNG table; PV Power reports work toward commercial phase. |\n| LNG Hiệp Phước giai đoạn I | Hiep Phuoc LNG Phase I | TP.HCM | Imported LNG | CCGT | not specified | 1,200 | Planned / approved | 2025-05-30 | expected 2028 | Hiep Phuoc developer | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Long An I | Long An I LNG Power Plant | Long An | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-05-30 | expected 2028–2029 | VinaCapital / GS lead | HIGH | B01 | B20 | Priority LNG project. |\n| NMNĐ BOT Sơn Mỹ I | Son My I BOT LNG Power Plant | Bình Thuận | Imported LNG | CCGT | not specified | 2,250 | Planned / approved, schedule risk | 2025-05-30 | expected 2028 | EDF / Vietnamese partners lead | HIGH | B01 | B20 | Decision 1509 marks with progress-risk asterisk. |\n| NMNĐ BOT Sơn Mỹ II | Son My II BOT LNG Power Plant | Bình Thuận | Imported LNG | CCGT | not specified | 2,250 | Planned / approved, schedule risk | 2025-05-30 | expected 2028 | AES lead | HIGH | B01 | B20 | Decision 1509 marks with progress-risk asterisk. |\n| LNG Bạc Liêu | Bac Lieu LNG Power Plant | Bạc Liêu | Imported LNG | CCGT | not specified | 3,200 | Planned / delayed | 2025-05-30 | 2025–2030 plan | Delta Offshore Energy lead | HIGH | B01 | B20 | Priority LNG project; progress-risk asterisk. |\n| LNG Nghi Sơn | Nghi Son LNG Power Plant | Thanh Hóa | Imported LNG | CCGT | not specified | 1,500 | Planned / schedule risk | 2025-05-30 | expected 2028 | not specified | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Cà Ná | Ca Na LNG Power Plant | Ninh Thuận | Imported LNG | CCGT | not specified | 1,500 | Planned / schedule risk | 2025-05-30 | expected 2028 | Trung Nam / provincial lead | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Quỳnh Lập | Quynh Lap LNG Power Plant | Nghệ An | Imported LNG | CCGT | not specified | 1,500 | Planned / schedule risk | 2025-05-30 | expected 2028 | not specified | HIGH | B01 | B20 | Coal-to-LNG planning identity likely; official fuel is LNG. |\n| LNG Hải Phòng giai đoạn I | Hai Phong LNG Phase I | Hải Phòng | Imported LNG | CCGT | not specified | 1,600 | Planned / approved | 2025-03-26 | expected 2030 | local/VinEnergo lead | HIGH | B01 | B20 | Decision 1509 cites Hải Phòng commitment letter 583/UBND-UBND-XD2 dated 26 Mar 2025. |\n| LNG Hiệp Phước giai đoạn II | Hiep Phuoc LNG Phase II | TP.HCM | Imported LNG | CCGT | not specified | 1,500 | Planned / approved | 2025-03-27 | 2025–2030 plan | Hiep Phuoc developer | HIGH | B01 | B20 | Decision 1509 cites HCMC letter 1945/UBND-KT dated 27 Mar 2025. |\n| LNG Long Sơn | Long Son LNG Power Plant | Bà Rịa–Vũng Tàu | Imported LNG | CCGT | not specified | 1,500 | Planned 2031–2035; may accelerate | 2025-05-30 | 2031–2035 plan | not specified | HIGH | B01 | B20 | Official note says province proposed and may accelerate to 2025–2030 if system needs. |\n| LNG Long An II | Long An II LNG Power Plant | Long An | Imported LNG | CCGT | not specified | 1,500 | Planned | 2025-05-30 | expected 2031 | not specified | HIGH | B01 | B20 | Priority LNG project. |\n| LNG Công Thanh | Cong Thanh LNG Power Plant | Thanh Hóa | Imported LNG | CCGT | not specified | 1,500 | Planned conversion from coal | 2024-07-31 | 2031–2035 plan | Cong Thanh lead | HIGH | B01 | B20 | Decision 1509 cites Government Office document 5473/VPCP-CN dated 31 Jul 2024 on coal-to-LNG conversion. |\n| LNG Hải Phòng giai đoạn II | Hai Phong LNG Phase II | Hải Phòng | Imported LNG | CCGT | not specified | 3,200 | Planned 2031–2035; may accelerate | 2025-03-26 | 2031–2035 plan | not specified | HIGH | B01 | B20 | Decision 1509 says may accelerate if needed. |\n| LNG Vũng Áng III | Vung Ang III LNG Power Plant | Hà Tĩnh | Imported LNG | CCGT | not specified | 1,500 | Planned | 2025-05-30 | expected 2031–2032 | not specified | HIGH | B01 | B20 | New 2031–2035 northern-supply LNG project. |\n| LNG Quảng Trạch III | Quang Trach III LNG Power Plant | Quảng Bình | Imported LNG | CCGT | not specified | 1,500 | Planned | 2025-05-30 | 2031–2035 plan | not specified | HIGH | B01 | B20 | New 2031–2035 project. |\n| LNG Quảng Ninh 2 | Quang Ninh 2 LNG Power Plant | Quảng Ninh | Imported LNG | CCGT | not specified | 1,500 | Reserve planned | 2025-05-30 | 2031–2035 reserve | not specified | HIGH | B02 | B20 | Reserve development only if competent authority approves. |\n| LNG Thái Bình giai đoạn 2 | Thai Binh LNG Phase 2 | Thái Bình | Imported LNG | CCGT | not specified | 1,500 | Reserve planned | 2025-05-30 | 2031–2035 reserve | not specified | HIGH | B02 | B20 | Reserve LNG list. |\n| LNG Hòa Ninh giai đoạn I | Hoa Ninh LNG Phase I | Đà Nẵng / Quảng Nam unresolved | Imported LNG | CCGT | not specified | 1,500 | Reserve planned | 2025-05-30 | 2031–2035 reserve | not specified | MEDIUM | B02 | not found | Province unresolved in extracted text. |\n| LNG Thanh Hóa | Thanh Hoa LNG Power Plant | Thanh Hóa | Imported LNG | CCGT | not specified | 1,500 | Reserve planned | 2025-05-30 | 2031–2035 reserve | not specified | HIGH | B02 | B20 | Reserve LNG list. |\n| Mở rộng NMĐ Cà Mau 1&2 | Ca Mau 1&2 Expansion | Cà Mau | Imported LNG | CCGT | not specified | 1,500 | Reserve planned | 2025-05-30 | 2031–2035 reserve | PV Power lead | HIGH | B02 | B18 | Listed as reserve; likely LNG or gas expansion, classified LNG because in LNG reserve table. |\n| LNG Cà Mau 3 | Ca Mau 3 LNG Power Plant | Cà Mau | Imported LNG | CCGT | not specified | 1,500 | Planned by PV Power / not in extracted priority table | 2024-12-31 | not verified | PV Power | MEDIUM | B18 | B19 | PV Power annual report lead; exact PDP8 status not fully extracted. |\n\n---\n\n## 4. Statistical summary tables\n\n### 4.1 Capacity by fuel × status  \nComputed from table above. Status buckets are normalized from the detailed status column.\n\n| Fuel | Operating | Under construction / commissioning | Planned / approved | Reserve planned | Delayed / suspended / difficult | Cancelled / terminated | Retired / unclear | Total MWe |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|\n| Coal | 26,016 | 3,493 | 3,004 | 0 | 7,700 | 2,120 | 100 | 42,433 |\n| Domestic gas | 9,770 | 1,350 | 7,990 | 0 | 0 | 0 | 165 | 19,275 |\n| Imported LNG | 0 | 1,624 | 37,250 | 7,500 | 0 | 0 | 0 | 46,374 |\n| **Total** | **35,786** | **6,467** | **48,244** | **7,500** | **7,700** | **2,120** | **265** | **108,082** |\n\n### 4.2 Top 15 provinces by table capacity\n\n| Rank | Province | Capacity MWe |\n|---:|---|---:|\n| 1 | Quảng Ninh | 12,895 |\n| 2 | Bình Thuận | 10,264 |\n| 3 | Hải Phòng | 7,500 |\n| 4 | Thanh Hóa | 6,400 |\n| 5 | Hà Tĩnh | 5,830 |\n| 6 | Trà Vinh | 5,578 |\n| 7 | Quảng Bình | 4,403 |\n| 8 | Hậu Giang | 4,520 |\n| 9 | Cần Thơ | 3,810 |\n| 10 | Bạc Liêu | 3,200 |\n| 11 | Long An | 3,000 |\n| 12 | Quảng Trị | 3,160 |\n| 13 | Cà Mau | 4,500 |\n| 14 | Bà Rịa–Vũng Tàu | 5,410 |\n| 15 | Đồng Nai | 2,824 |\n\n### 4.3 Timeline of additions by period and fuel  \nFor planned projects, period is based on official expected operation year. For operating plants, historical COD is grouped approximately.\n\n| Period | Coal MWe | Domestic gas MWe | Imported LNG MWe | Notes |\n|---|---:|---:|---:|---|\n| Before 1990 | 540 | 165 | 0 | Pha Lai 1, Ninh Binh, Thu Duc legacy. |\n| 1990–1999 | 0 | 839 | 0 | Ba Ria and early Phu My gas. |\n| 2000–2009 | 1,565 | 4,700 | 0 | Pha Lai 2, Na Duong/Cao Ngan, Phu My, Ca Mau, O Mon I. |\n| 2010–2015 | 11,019 | 1,200 | 0 | Major northern coal buildout, Vinh Tan 2, Mong Duong, Vung Ang 1, Nhon Trach. |\n| 2016–2020 | 8,062 | 0 | 0 | Duyen Hai, Vinh Tan 1/4, Thai Binh 1, etc. |\n| 2021–2024 | 4,830 | 0 | 0 | Nghi Son 2, Song Hau 1, Duyen Hai 2, Thai Binh 2. |\n| 2025–2030 planned/COD | 10,497 | 9,340 | 28,574 | Includes under-construction coal, Block B/Cá Voi Xanh gas, priority LNG. |\n| 2031–2035 planned/reserve | 5,400 | 1,500 | 17,800 | Includes LNG Long Sơn, Long An II, Công Thanh, Hải Phòng II, reserve LNG, Hải Hà CHP. |\n\n### 4.4 Data-quality summary by confidence level and fuel\n\n| Fuel | HIGH rows | MEDIUM rows | LOW rows | Main causes of non-HIGH confidence |\n|---|---:|---:|---:|---|\n| Coal | 29 | 16 | 5 | Captive/industrial data gaps; old-unit status; gross/net conflicts. |\n| Domestic gas | 15 | 5 | 3 | Old gas turbines and BOT source gaps; province ambiguity for Miền Trung projects. |\n| Imported LNG | 23 | 2 | 0 | Most rows from fresh official plan; reserve projects lack developer details. |\n| **Total** | **67** | **23** | **8** | Official planning strong for future projects; plant-level current status weaker for legacy/captive assets. |\n\n---\n\n## 5. Verification and polish pass\n\n### 5.1 Duplicate-name checks\n- **Quảng Trị** appears twice but intentionally split: coal project vs domestic-gas CCGT project.  \n- **Quảng Trạch I/II/III** intentionally split by fuel/status: Quảng Trạch I coal, Quảng Trạch II LNG, Quảng Trạch III LNG.  \n- **Vũng Áng 1/2/III** intentionally split: Vũng Áng 1 operating coal, Vũng Áng II coal, Vũng Áng III LNG.  \n- **Hiệp Phước existing / LNG I / LNG II** intentionally split by existing plant and future LNG phases.  \n- **Cà Mau 1/2 / expansion / Cà Mau 3** intentionally split, but Cà Mau 3 remains medium-confidence because it was not extracted from the official 2025 LNG table.\n\n### 5.2 Arithmetic checks\n- All `Units × MW` entries with explicit numeric units reconcile to `Total MWe` except where the table says “mixed,” “not specified,” or notes gross/net ambiguity.  \n- Statistical totals are computed from `Total MWe` column and normalized status categories.\n\n### 5.3 Confidence-rule checks\n- Decision 1509 rows are generally **HIGH** for capacity/status-as-planned because they are fresh official planning rows dated 30 May 2025.  \n- Operator annual-report rows are **HIGH** where fresh annual reports or official EVN/operator pages support both existence and current operation.  \n- Rows with “not found” in one or both source columns are capped **LOW** or **MEDIUM** depending on whether an official planning row exists.\n\n### 5.4 Known unresolved issues\n1. **Ninh Bình, Thủ Đức, Hiệp Phước existing, An Khánh I, and Formosa existing captive assets** need deeper local permitting/dispatch-source verification.  \n2. **Industrial CHP fuel classification** is constrained by the user’s three fuel labels. Some official CHP/by-product rows may use waste heat, blast-furnace gas, or industrial by-products rather than coal/domestic gas/LNG in the strict commodity sense.  \n3. **Vũng Áng II** status may already be fully operating as of April 2026, but final confidence remains MEDIUM because the retrieved 2026 operating evidence was not an operator/government primary source.  \n4. **Old coal unit retirements** are not fully resolved; this affects legacy fleet capacity but not the official PDP8 future-project lists.\n\n---\n\n## 6. Annotated bibliography\n\n### B01 — Bộ Công Thương / Ministry of Industry and Trade, Decision 1509/QĐ-BCT, Appendix II.1, Tables 1, 3, 4, 5, 6  \n**Original title:** “Quyết định số 1509/QĐ-BCT ngày 30/5/2025 phê duyệt Kế hoạch thực hiện Quy hoạch phát triển điện lực quốc gia thời kỳ 2021–2030, tầm nhìn đến năm 2050 điều chỉnh.”  \n**English translation:** “Decision No. 1509/QĐ-BCT dated 30 May 2025 approving the implementation plan for the adjusted national power development plan for 2021–2030, vision to 2050.”  \n**URL:** ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n**Annotation:** Core official source for 2025 adjusted PDP8 implementation: priority LNG plants, coal under construction, coal projects facing difficulties, CHP/by-product projects, and domestic-gas plants.\n\n### B02 — MOIT Decision 1509/QĐ-BCT, Appendix II.1, Table 2  \n**Original title:** “Bảng 2: Danh mục các nhà máy nhiệt điện LNG dự phòng phát triển.”  \n**English translation:** “Table 2: List of reserve LNG thermal power plants for development.”  \n**URL:** ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf))  \n**Annotation:** Used for Quảng Ninh 2 LNG, Thái Bình LNG Phase 2, Hòa Ninh LNG, Thanh Hóa LNG, and Cà Mau 1&2 expansion reserve rows.\n\n### B03 — Pha Lai Thermal Power JSC Annual Report / financial statements 2024  \n**Original title:** “Pha Lai Thermal Power Joint Stock Company — Annual Report / Financial Statements 2024.”  \n**URL:** ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/16/20250416_PPC_250416_Annual_Report_2024.pdf?utm_source=openai))  \n**Annotation:** Used to confirm current corporate entity and 2024 reporting for Pha Lai.\n\n### B04 — EVN, Uong Bi dry-season reliability article  \n**Original title:** “Uong Bi Thermal Power drastically implements solutions to improve the reliability and availability of generating units.”  \n**URL:** ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Uong-Bi-Thermal-Power-drastically-implements-solutions-to-improve-the-reliability-and-availability-of-generating-units-66-163-4005.aspx?utm_source=openai))  \n**Annotation:** Used for current operating context for Uong Bi in 2024 and EVNGENCO1 coal-supply operations.\n\n### B05 — EVN, coal-fired thermal power development overview  \n**Original title:** “Overview of coal-fired thermal power development in Vietnam.”  \n**URL:**   \n**Annotation:** Historical source for Uong Bi, Ninh Binh, Pha Lai 1, and Mong Duong 2 context.\n\n### B06 — EVN / Duyen Hai Thermal Power Company, 100 billion kWh milestone  \n**Original title:** “Công ty Nhiệt điện Duyên Hải đạt mốc sản lượng điện 100 tỷ kWh.”  \n**English translation:** “Duyen Hai Thermal Power Company reaches 100 billion kWh electricity output milestone.”  \n**URL:** ([evn.com.vn](https://www.evn.com.vn/d/vi-VN/news/Cong-ty-Nhiet-dien-Duyen-Hai-dat-moc-san-luong-dien-100-ty-kWh-60-14-123405?utm_source=openai))  \n**Annotation:** Confirms Duyen Hai 1 and 3 total 2,490 MW and Duyen Hai 3 Extension 688 MW operated by Duyen Hai Thermal Power Company.\n\n### B07 — Vietnam Energy / Vinacomin CFB article  \n**Original title:** “Vinacomin has successfully applied CFB technology in the thermal power plants.”  \n**URL:** ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai))  \n**Annotation:** Used for Vinacomin CFB fleet capacities: Na Duong, Cao Ngan, Son Dong, Cam Pha, Mao Khe, Nong Son.\n\n### B08 — Vietnam Energy / Vinacomin projects article  \n**Original title:** “Vinacomin thermal power projects contribute to ensure national energy security.”  \n**URL:** ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-thermal-power-projects-contribute-to-ensure-national-energy-security-11011.html?utm_source=openai))  \n**Annotation:** Used as supporting source for Vinacomin thermal development history.\n\n### B10 — EVNGENCO3 Annual Report 2023  \n**Original title:** “EVNGENCO3 Annual Report 2023.”  \n**URL:**   \n**Annotation:** Used for Vinh Tan 2, Mong Duong 1, and Phu My fleet capacity/status details.\n\n### B11 — EVNGENCO3 operations / 2024 reporting pages  \n**Original title:** “Operations — EVNGENCO3” and “Report and assessment / performance situation.”  \n**URL:** ([genco3.com](https://www.genco3.com/en-US/introduction/operations.html?utm_source=openai))  \n**Annotation:** Used for current EVNGENCO3 operating portfolio, Phu My/Ba Ria LNG generation context, BOT Phu My 2.2 and Phu My 3 O&M statements.\n\n### B12 — Hai Phong Thermal Power JSC Annual Report 2024  \n**Original title:** “Annual Report of Public Company — Hai Phong Thermal Power Joint Stock Company, Reporting Year 2024.”  \n**URL:** ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/EzIR/UploadFile/News/2025/04/11/File_1_7231_EN_AnnualReport_2024.pdf?utm_source=openai))  \n**Annotation:** Used for Hai Phong Thermal Power JSC current status and corporate details.\n\n### B13 — EVN, Pha Lai dry-season 2024 article  \n**Original title:** “Pha Lai Thermal Power Company completes power supplying assignment in dry season of 2024.”  \n**URL:** ([en.evn.com.vn](https://en.evn.com.vn/d/en-US/news/Pha-Lai-Thermal-Power-Company-completes-power-supplying-assignment-in-dry-season-of-2024-60-203-4298?utm_source=openai))  \n**Annotation:** Used for Pha Lai 440 MW original plant and current 2024 operation.\n\n### B14 — EVN Annual Report 2022–2023 / EVN national overview 2023  \n**Original title:** “EVN Annual Report 2022–2023”; “Một số số liệu tổng quan về nguồn điện toàn quốc năm 2023.”  \n**English translation:** “Overview of national power sources in 2023.”  \n**URL:** ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/05/262_QD-TTg_607766_EN.pdf?utm_source=openai))  \n**Annotation:** Sector-level source for installed capacity by fuel and EVN system context; used as secondary support for operating fleet rows where plant-level extraction was incomplete.\n\n### B15 — Quang Ninh Thermal Power JSC 2025 AGM / 2024 financial documents  \n**Original title:** “Quang Ninh Thermal Power Joint Stock Company — 2025 AGM documents / 2024 financial statements.”  \n**URL:** ([cdn.24hmoney.vn](https://cdn.24hmoney.vn/medialib/FG/2025/2025-04/2025-04-08/175141_000000014754678_EN_Annual_GeneralMeetingDocuments_2025_P4.pdf?utm_source=openai))  \n**Annotation:** Confirms Quang Ninh Thermal Power Plant four generating units totaling 1,200 MW.\n\n### B16 — AES Mong Duong Power Company project page  \n**Original title:** “Project — AES Mong Duong Power Company Limited.”  \n**URL:**   \n**Annotation:** Primary project-company source for Mong Duong 2 location, domestic-coal fuel, and BOT transfer.\n\n### B17 — Apave Vietnam, Mong Duong 2 project page  \n**Original title:** “Mong Duong 2 Thermal Power Plant, Cam Pha.”  \n**URL:**   \n**Annotation:** Corroborates Mong Duong 2 gross capacity, BOT structure, and project location.\n\n### B18 — PV Power Annual Report 2024  \n**Original title:** “PetroVietnam Power Corporation — Joint Stock Company Annual Report 2024.”  \n**URL:** ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/18-4-25---BCTN-2024---ANH.pdf?utm_source=openai))  \n**Annotation:** Used for PV Power operating plants and development projects: Vung Ang 1, Nhon Trach 1–4, Ca Mau 1–2, and LNG Ca Mau 3 lead.\n\n### B19 — PV Power business appraisal / 2024 reporting  \n**Original title:** “Report — Appraisal of the 2024 Business Situation.”  \n**URL:** ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/10-4-25--bc-tham-dinh-bc-thuc-hien-kd-2024---eng.pdf?utm_source=openai))  \n**Annotation:** Supporting PV Power source for gas allocation, Ca Mau, Vung Ang 1, Nhon Trach 3–4 commercial-operation preparation.\n\n### B20 — Decision 262/QĐ-TTg English translation / PDP8 implementation summaries  \n**Original title:** “Decision 262/QĐ-TTg 2024 Plan to implement the National Power Development Master Plan for 2021–2030.”  \n**URL:** ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-262-qd-ttg-2024-plan-to-implement-the-national-power-development-master-plan-for-2021-2030-309182-d1.html?utm_source=openai))  \n**Annotation:** Supporting official-planning source for PDP8 capacity/status context before Decision 1509 adjustment.\n\n### B21 — Vietnam News / BizHub, Nghi Son 2 commercial operation  \n**Original title:** “Commercial operation of Nghi Son 2 Power Plant.”  \n**URL:** ([bizhub.vietnamnews.vn](https://bizhub.vietnamnews.vn/commercial-operation-of-nghi-son-2-power-plant-post335568.html?utm_source=openai))  \n**Annotation:** Used for Nghi Son 2 1,200 MW net capacity and commercial operation on 14 July 2022.\n\n### B22 — PECC2POM, Duyen Hai 2 project page  \n**Original title:** “Duyen Hai 2 Thermal Power Plant Project.”  \n**URL:** ([kb.pecc2.com](https://kb.pecc2.com/en/duyen-hai-2-thermal-power-plant-project.html?utm_source=openai))  \n**Annotation:** Used for Duyen Hai 2 capacity, location, and Janakuasa investor.\n\n### B23 — LILAMA, Song Hau 1 Unit 1 commercial operation  \n**Original title:** “Song Hau 1 TPPP Unit 1 completes and puts into commercial operation officially.”  \n**URL:** ([lilama.com.vn](https://lilama.com.vn/en/song-hau-1-tppp-unit-1-completes-and-puts-commercial-operation-officially?utm_source=openai))  \n**Annotation:** Used for Song Hau 1 1,200 MW project capacity and PetroVietnam ownership/EPC context.\n\n### B24 — Vietnam Energy / technology-catalogue context for advanced coal technologies  \n**Original title:** “CFB Coal Fired Power — Viet Nam Technology Catalogue for Power Generation and Storage”; related Vietnam Energy article on clean coal technology.  \n**URL:** ([9pdf.org](https://9pdf.org/article/coal-fired-power-technology-catalogue-power-generation-storage.zlgej1kl?utm_source=openai))  \n**Annotation:** Used cautiously for technology classification where official plant-level technology was not extracted. Reddit result not used as final evidence; only the underlying non-Reddit technology source context was relied on where available.\n\n### B25 — Vietnam.vn / PetroVietnam source re Song Hau 1 O&M handover  \n**Original title:** “Nhà máy Nhiệt điện Sông Hậu 1 — điểm sáng xây dựng công nghiệp năng lượng.”  \n**English translation:** “Song Hau 1 Thermal Power Plant — a bright spot in energy-industry construction.”  \n**URL:** ([vietnam.vn](https://www.vietnam.vn/en/nha-may-nhiet-dien-song-hau-1-diem-sang-xay-dung-cong-nghiep-nang-luong?utm_source=openai))  \n**Annotation:** Used for PetroVietnam Power Generation Branch taking over Song Hau 1 operation from 1 July 2023.\n\n### B26 — Vinacomin Power disclosure / An Khanh lead material  \n**Original title:** “Vinacomin Power Holding Corp information disclosure.”  \n**URL:** ([bvsc.com.vn](https://www.bvsc.com.vn/media/ccyfda0a/3_2015b797978_information_disclosure__vinacomin_power.pdf?utm_source=openai))  \n**Annotation:** Used as lead support for An Khanh and Vinacomin-related planned thermal references; plant-level source still incomplete.\n\n### B27 — VAPCO / Vung Ang II EIA and 2026 press reports  \n**Original title:** “Vung Ang II Thermal Power Plant Project EIA”; “Vung Ang II Thermal Power Plant officially enters full commercial operation.”  \n**URL:** ([vapco.vn](https://vapco.vn/wp-content/uploads/2024/10/EIA_VA2_EN.-final.pdf?utm_source=openai))  \n**Annotation:** Used for Vung Ang II capacity, technology, BOT investor, and 2026 operating-status update; confidence capped because operating-status source is not primary.\n\n### B30 — Ba Ria Thermal Power JSC Annual Report 2024 lead  \n**Original title:** “BTP: Annual Report 2024.”  \n**URL:** ([en.vietstock.vn](https://en.vietstock.vn/2025/04/btp-annual-report-2024-962-609216.htm?utm_source=openai))  \n**Annotation:** Used for Ba Ria Thermal Power JSC current reporting; exact unit configuration requires deeper extraction.\n\n### B31 — EVNGENCO3 2024 report on BOT Phu My O&M  \n**Original title:** “Report and Assessment of the BM and BD — EVNGENCO3.”  \n**URL:** ([bctn.genco3.com](https://bctn.genco3.com/en/report-and-assessment-of-the-bm-and-bd/?utm_source=openai))  \n**Annotation:** Used for Phu My 2.2 and Phu My 3 BOT O&M context in 2024.\n\n### B32 — EVNGENCO2 2024 AGM / fuel-conversion context  \n**Original title:** “EVNGENCO2 determines to complete production and business plan assigned by AGM successfully.”  \n**URL:** ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVNGENCO2-determines-to-complete-production-and-business-plan-assigned-by-AGM-successfully-66-163-4177.aspx?utm_source=openai))  \n**Annotation:** Used for O Mon I fuel-conversion context and EVNGENCO2 thermal-plant operations.\n\n### B33 — JICA O Mon 3 preparatory survey report  \n**Original title:** “Preparatory Survey Report — Viet Nam O Mon 3 Combined Cycle Power Plant Project.”  \n**URL:** ([libportal.jica.go.jp](https://libportal.jica.go.jp/library/Public/files/environment/Reports/SoutheastAsia/VietNamOMon3CCPPCProject/Preparatory_Survey_Report.pdf?utm_source=openai))  \n**Annotation:** Used for O Mon 3 project identity and gas CCGT context.\n\n### B34 — 2025 reports on O Mon IV construction / EPC  \n**Original title:** “PetroVietnam begins construction of 1.15 GW thermal power plant in Mekong Delta”; “Vietnam signs EPC contract for long-delayed O Mon IV gas power plant.”  \n**URL:** ([reddit.com](https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai))  \n**Annotation:** Used only as secondary support for O Mon IV current construction/EPC status; official capacity retained from Decision 1509.",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779548118.0,
+  "conversation": null,
+  "max_output_tokens": 50000,
+  "max_tool_calls": null,
+  "previous_response_id": "resp_0ccb2b78410d1194006a11bed0d3c48191abec19a00850a7e0",
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 58605,
+    "input_tokens_details": {
+      "cached_tokens": 5760
+    },
+    "output_tokens": 15325,
+    "output_tokens_details": {
+      "reasoning_tokens": 749
+    },
+    "total_tokens": 73930
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

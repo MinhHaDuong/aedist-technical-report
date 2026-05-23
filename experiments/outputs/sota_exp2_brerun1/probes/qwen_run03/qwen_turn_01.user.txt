@@ -1,0 +1,34 @@
+PHASE B EXECUTION PROTOCOL
+
+OBJECTIVE: Generate single Markdown report: Comprehensive inventory of Vietnam thermal plants >30 MWe (coal/gas/LNG), past/present/future.
+
+WORKFLOW:
+TURN 1 (Discovery): 
+- Query: 'Vietnam PDP8 thermal power appendix official MOIT 2023', 'EVN operational power plants list 2024', 'Vietnam coal power plant database ERAV'
+- Output: Preliminary plant list (Name, Province, Fuel) + sector overview bullets (mix, policy, actors). Tag each item: [Source candidate] + confidence tier.
+TURN 2 (Verification):
+- For each plant: Query specific attributes using Vietnamese keywords: '[Plant Name] công suất COD chủ đầu tư' + English variants. Prioritize MOIT decrees, EVN press releases, project feasibility studies.
+- Resolve conflicts: Prefer MOIT > EVN > operator > secondary. Document resolution in Notes.
+- Build draft table with all columns. Flag LOW-confidence rows.
+TURN 3 (Synthesis):
+- Reconcile totals (capacity by fuel/status). Verify no double-counting. Add statistical tables.
+- Finalize bibliography: Full citation + URL (or 'URL not verified') + [Original Title] + [English translation] for non-English + annotation of extracted data.
+- Generate final Markdown.
+
+OUTPUT REQUIREMENTS:
+- Table columns: Name (Vietnamese), Name (English), Province, Fuel, Technology, Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes
+- Confidence column: HIGH/MEDIUM/LOW per protocol
+- Notes field: Explain conflicts, LOW confidence, aggregation choices
+- Bibliography: Annotated per source-quality rules
+- Narratives: Only for disputed/ambiguous/historically significant plants
+
+BUDGET SAFETY:
+- Monitor cumulative tokens. If >40k used: truncate narratives, simplify overview, keep full table.
+- If dollar budget <$0.60: Cease new searches; finalize using retrieved sources only.
+- NEVER exceed 50k tokens total generation.
+
+STOPPING CRITERIA:
+- All plants from PDP8/EVN lists processed
+- Confidence assigned to every row
+- All values traceable to cited sources
+- Statistical tables reconcile with row sums

@@ -1,0 +1,17 @@
+{
+  "agent": "qwen",
+  "run": 3,
+  "arm": "optimized",
+  "model": "qwen3-max-2026-01-23",
+  "classification": "report",
+  "turns": 2,
+  "class_trace": "report\u2192report",
+  "inventory_rows": 18,
+  "phase_a_cost_usd": 0.032929,
+  "phase_b_cost_usd": 0.137082,
+  "total_cost_usd": 0.170011,
+  "classifier_cost_usd": 0.002828,
+  "wall_s": 488.9,
+  "tokens_out": 13054,
+  "narrative_chars": 6599
+}

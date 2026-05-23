@@ -1,0 +1,17 @@
+{
+  "agent": "mistral",
+  "run": 5,
+  "arm": "optimized",
+  "model": "mistral-large-2512",
+  "classification": "report",
+  "turns": 3,
+  "class_trace": "no_report\u2192report\u2192report",
+  "inventory_rows": 25,
+  "phase_a_cost_usd": 0.003867,
+  "phase_b_cost_usd": 0.351007,
+  "total_cost_usd": 0.354874,
+  "classifier_cost_usd": 0.005535,
+  "wall_s": 214.8,
+  "tokens_out": 4000,
+  "narrative_chars": 13412
+}
