@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import logging
 import os
+import random
 import time
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,35 @@ from aedist.adapter_base import (
 from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
 
 _log = logging.getLogger(__name__)
+
+_MAX_RETRIES = 3
+_RATE_LIMIT_WAIT_S = 60.0
+_TRANSIENT_BACKOFF_S = 1.0
+_RETRYABLE_TRANSIENT = frozenset({502, 503, 504})
+
+
+def _call_with_retry(**payload: Any) -> Any:
+    """Wrap dashscope.Generation.call with retry on 429 and transient errors."""
+    for attempt in range(_MAX_RETRIES + 1):
+        resp = dashscope.Generation.call(**payload)
+        status = getattr(resp, "status_code", 200)
+        if status == 200:
+            return resp
+        if status == 429 and attempt < _MAX_RETRIES:
+            wait = _RATE_LIMIT_WAIT_S * (1.0 + random.uniform(-0.1, 0.1))
+            _log.warning(
+                "Qwen 429 rate limit; retry %d/%d in %.0fs", attempt + 1, _MAX_RETRIES, wait
+            )
+            time.sleep(wait)
+            continue
+        if status in _RETRYABLE_TRANSIENT and attempt < _MAX_RETRIES:
+            delay = _TRANSIENT_BACKOFF_S * (2**attempt) * (1.0 + random.uniform(-0.1, 0.1))
+            _log.warning("Qwen HTTP %d transient; retry %d/%d", status, attempt + 1, _MAX_RETRIES)
+            time.sleep(delay)
+            continue
+        return resp
+    raise AssertionError("unreachable: loop always returns")
+
 
 AGENT_FAMILY = "qwen-direct"
 DEFAULT_MODEL = "qwen3-max-2026-01-23"
@@ -384,7 +414,7 @@ def run(
     dashscope.base_http_api_url = base_url
 
     start = time.perf_counter()
-    resp = dashscope.Generation.call(**payload)
+    resp = _call_with_retry(**payload)
     wall_s = time.perf_counter() - start
 
     return parse_response(

@@ -374,7 +374,7 @@ def run(
 
     from openai import OpenAI
 
-    client = OpenAI(api_key=_load_openai_key())
+    client = OpenAI(api_key=_load_openai_key(), max_retries=5)
     t0 = time.monotonic()
     resp = client.responses.create(**payload)
     wall = round(time.monotonic() - t0, 3)
@@ -419,7 +419,7 @@ def _smoke(args: argparse.Namespace) -> None:
 
     from openai import OpenAI
 
-    client = OpenAI(api_key=_load_openai_key())
+    client = OpenAI(api_key=_load_openai_key(), max_retries=5)
     t0 = time.monotonic()
     resp = client.responses.create(**payload)
     wall = round(time.monotonic() - t0, 3)

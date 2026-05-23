@@ -17,6 +17,7 @@ Blocked-by: 0171
 2026-05-20T21:47Z HDMX-coding-agent note blocker 0167 closed — Blocked-by removed.
 2026-05-20T21:52Z HDMX-coding-agent note blocker 0169 closed — Blocked-by removed.
 2026-05-20T21:57Z HDMX-coding-agent note blocker 0173 closed — Blocked-by removed.
+2026-05-23T11:00Z claude note N updated from 3 to 5 per latest protocol; body and budget updated accordingly
 --- body ---
 ## Context
 
@@ -74,27 +75,27 @@ the quality of the resulting statistical report it can produce within
 ≤$10 and an overnight wall-clock budget. Each model designs its own
 prompt; the prompts are not shared across models. (Ticket 0170.)
 
-**Phase B-0 — Single-rep smoke.** Before the full N=3 execution, run
+**Phase B-0 — Single-rep smoke.** Before the full N=5 execution, run
 each model's designed prompt **once** end-to-end. This is the project's
 "Test one before blasting" rule (`.claude/rules/workflow.md`) applied
 at the experiment level: 4 outputs surface parser bugs, prompt
-failures, model refusals, and real per-call cost before triple-budget
+failures, model refusals, and real per-call cost before full-budget
 commitment. Phase C scoring runs on these 4 outputs as a structural
 test of the cross-eval harness. Gate to Phase B: a review pass that
 confirms (i) all 4 adapters produced valid RunRecords, (ii) the
 parsed tables are non-empty, (iii) costs match the ≤$10/call budget
 empirically. If any agent fails, fix at N=1 cost — do not graduate
-to N=3 until the smoke is clean.
+to N=5 until the smoke is clean.
 
-**Phase B — Execution (N=3).** Each model's designed prompt is run
-3 times. For closed-weight SOTA agents (single provider each), the
-three runs use the same provider; for open-weight agents (if added
+**Phase B — Execution (N=5).** Each model's designed prompt is run
+5 times. For closed-weight SOTA agents (single provider each), the
+five runs use the same provider; for open-weight agents (if added
 later) use different providers. Document the asymmetry in the run
 record. Phase B is gated on a clean Phase B-0 review.
 
 The single-rep claim in Phase B-0 cannot stand in for variance
 analysis — N=1 cannot report "model X is consistently better than Y".
-Only the post-Phase-B N=3 dataset supports such comparisons.
+Only the post-Phase-B N=5 dataset supports such comparisons.
 
 **Phase C — Cross-evaluation.** For each output, the two *other* agents
 score it along the four dimensions (Accuracy, Coherence, Provenance,
@@ -117,14 +118,14 @@ reads from it directly.
 
 - Phase A (prompt design): ≤ $1 per model × 4 = $4.
 - Phase B-0 (1 rep × $10 cap): ≤ $10 per model × 4 = $40. Gate to B.
-- Phase B (3 reps × $10 cap, includes B-0's run): incremental ≤ $20
-  per model × 4 = $80 on top of B-0.
+- Phase B (5 reps × $10 cap, includes B-0's run): incremental ≤ $40
+  per model × 4 = $160 on top of B-0.
 - Phase C (cross-eval, cheap chat completions): ≤ $10 total
-  (12 subject runs × 3 evaluators ≈ 36 calls + baseline scoring).
+  (20 subject runs × 3 evaluators ≈ 60 calls + baseline scoring).
 - Smoke + probe: 4 × $0.50 = $2 + Mistral probe ≤ $0.50 = $2.50.
   Derisk probes 2026-05-20 (Qwen, Mistral, Anthropic, OpenAI):
   ~$0.50 actually spent.
-- **Cap: ~$140 total (B-0 first ≤ $60; gate to N=3 then ≤ $90 more).**
+- **Cap: ~$220 total (B-0 first ≤ $60; gate to N=5 then ≤ $160 more).**
   Hard cap enforced per-run by adapters; soft cap monitored at the
   umbrella by inspecting cost totals after Phase A and again after
   Phase B-0 before launching Phase B-full.
