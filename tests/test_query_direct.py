@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from aedist.harness import EVIDENCE_PACK_SECTION_TITLE
 from aedist.harness import build_api_kwargs as _real_build_api_kwargs
 
 
@@ -658,7 +659,7 @@ def test_sweep_evidence_pack_injection_only_when_configured(mock_openai_cls, tmp
         "\n"
         "[sweeps.arm3]\n"
         'system_instruction = "No web search"\n'
-        "evidence_pack_manifest = \"experiments/evidence_packs/mini.yaml\"\n"
+        'evidence_pack_manifest = "experiments/evidence_packs/mini.yaml"\n'
         "\n"
         "[sweeps.arm4]\n"
         'system_instruction = "No web search"\n'
@@ -708,7 +709,7 @@ def test_sweep_evidence_pack_injection_only_when_configured(mock_openai_cls, tmp
 
     for messages, record in ((arm3_messages, arm3_record), (arm4_messages, arm4_record)):
         assert messages[1]["content"].startswith(baseline_prompt)
-        assert "## Evidence Pack" in messages[1]["content"]
+        assert EVIDENCE_PACK_SECTION_TITLE in messages[1]["content"]
         assert "source_id: demo_source" in messages[1]["content"]
         assert record["evidence_pack_manifest"] in {
             "experiments/evidence_packs/mini.yaml",

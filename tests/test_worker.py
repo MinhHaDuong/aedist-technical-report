@@ -5,6 +5,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from aedist.harness import (
+    EVIDENCE_PACK_SECTION_TITLE,  # used in test_evidence_pack_manifest_injected_and_persisted
+)
 from aedist.schema import JobSpec, Method
 from aedist.worker import OpenRouterWorker, PadmeWorker, Worker
 
@@ -1006,7 +1009,9 @@ def test_evidence_pack_manifest_injected_and_persisted(tmp_path: Path) -> None:
     worker = PadmeWorker(jobs_root=tmp_path / "jobs")
     patches = _harness_patches(tmp_path)
     patches["append_evidence_pack"] = MagicMock(
-        side_effect=lambda prompt, _: prompt + "\n\n## Evidence Pack\n\nsource_id: demo"
+        side_effect=lambda prompt, _: (
+            prompt + f"\n\n{EVIDENCE_PACK_SECTION_TITLE}\n\nsource_id: demo"
+        )
     )
 
     with patch.multiple("aedist.worker", **patches):
@@ -1014,7 +1019,7 @@ def test_evidence_pack_manifest_injected_and_persisted(tmp_path: Path) -> None:
 
     call_args = patches["query_model"].call_args[0]
     messages = call_args[2]
-    assert "## Evidence Pack" in messages[-1]["content"]
+    assert EVIDENCE_PACK_SECTION_TITLE in messages[-1]["content"]
     assert messages[0]["content"].startswith("List thermal plants")
 
     saved = patches["save_json"].call_args[0][1]
