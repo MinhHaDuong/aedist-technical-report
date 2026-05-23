@@ -1,4 +1,4 @@
-Last updated: 2026-05-23T12:00Z
+Last updated: 2026-05-23T12:35Z
 
 ## North star
 
@@ -13,7 +13,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 
 ## Current goal
 
-**Merge Phase B-0 code PRs, then launch N=5 batch (ticket 0242).**
+**Launch N=5 batch for Exp 2 optimized arm (ticket 0242). Phase B-0 PRs merged (#442, #443).**
 
 ## Workplan
 
@@ -21,7 +21,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Homepage: https://economia.s
 2. **Experiment 2 — naive arm DONE; optimized arm B-0 gate PASSED.**
    - Phase B-0: all 4 agents classified `report`, total cost $2.72. Ticket 0237 closed.
    - Outputs in `experiments/outputs/sota_exp2_phase_b0/` (consolidated flat layout).
-   - **Phase B-full (N=5) next:** ticket 0242 unblocked. Code PRs (branch t0237-fg) pending merge.
+   - **Phase B-full (N=5) next:** ticket 0242. Code PRs merged (#442, #443).
    - Launch: `--run-number N --reuse-phase-a-from experiments/outputs/sota_exp2_phase_b0/probes --output-dir experiments/outputs/sota_exp2_phase_b_full`; see ticket 0242 for full commands.
 3. Stateful-agentic v1 prototype (synopsis §5). Opens post-conference.
 
