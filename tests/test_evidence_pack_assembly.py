@@ -1,8 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 from aedist.harness import (
     EVIDENCE_PACK_HEADER_FIELDS,
     EVIDENCE_PACK_SECTION_TITLE,
+    _resolve_evidence_pack_manifest_path,
     append_evidence_pack,
     assemble_evidence_pack,
 )
@@ -54,3 +57,45 @@ def test_append_evidence_pack_adds_section_when_manifest_set() -> None:
     assert combined.startswith(prompt)
     assert EVIDENCE_PACK_SECTION_TITLE in combined
     assert "source_id: evn_ar_2010_2011_capacities" in combined
+
+
+def test_resolve_evidence_pack_manifest_path_search_order(monkeypatch, tmp_path) -> None:
+    """Manifest resolution should accept cwd-relative, repo-relative, and experiments-relative paths."""
+    fake_repo = tmp_path / "repo"
+    fake_source = fake_repo / "src" / "aedist"
+    fake_source.mkdir(parents=True)
+    fake_harness = fake_source / "harness.py"
+    fake_harness.touch()
+    monkeypatch.setattr("aedist.harness.__file__", str(fake_harness))
+
+    cwd = tmp_path / "cwd"
+    cwd.mkdir()
+    monkeypatch.chdir(cwd)
+
+    cwd_manifest = cwd / "local.yaml"
+    cwd_manifest.write_text("cwd")
+    repo_manifest = fake_repo / "repo_only.yaml"
+    repo_manifest.write_text("repo")
+    experiments_manifest = fake_repo / "experiments" / "evidence_packs" / "exp_only.yaml"
+    experiments_manifest.parent.mkdir(parents=True)
+    experiments_manifest.write_text("experiments")
+
+    assert _resolve_evidence_pack_manifest_path("local.yaml") == cwd_manifest
+    assert _resolve_evidence_pack_manifest_path("repo_only.yaml") == repo_manifest
+    assert _resolve_evidence_pack_manifest_path("evidence_packs/exp_only.yaml") == experiments_manifest
+    assert _resolve_evidence_pack_manifest_path(experiments_manifest) == experiments_manifest
+
+
+def test_resolve_evidence_pack_manifest_path_missing(monkeypatch, tmp_path) -> None:
+    """Missing manifests should raise a clear FileNotFoundError listing searched paths."""
+    fake_repo = tmp_path / "repo"
+    fake_source = fake_repo / "src" / "aedist"
+    fake_source.mkdir(parents=True)
+    fake_harness = fake_source / "harness.py"
+    fake_harness.touch()
+    monkeypatch.setattr("aedist.harness.__file__", str(fake_harness))
+
+    (tmp_path / "cwd").mkdir()
+    monkeypatch.chdir(tmp_path / "cwd")
+    with pytest.raises(FileNotFoundError, match="Evidence-pack manifest not found"):
+        _resolve_evidence_pack_manifest_path("missing.yaml")

@@ -147,16 +147,17 @@ def main():
         experiments = load_experiments(args.experiments)
         set_ids = experiments["sets"][args.model_set]["model_ids"]
         models = select_models(models, set_ids)
-        if args.sweep and system_instruction is None:
+        if args.sweep and (system_instruction is None or evidence_pack_manifest is None):
             sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
+        if args.sweep and system_instruction is None:
             system_instruction = sweep_section.get("system_instruction")
         if args.sweep and evidence_pack_manifest is None:
-            sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
             evidence_pack_manifest = sweep_section.get("evidence_pack_manifest")
-    elif args.sweep and system_instruction is None:
+    elif args.sweep and (system_instruction is None or evidence_pack_manifest is None):
         experiments = load_experiments(args.experiments)
         sweep_section = experiments.get("sweeps", {}).get(args.sweep, {})
-        system_instruction = sweep_section.get("system_instruction")
+        if system_instruction is None:
+            system_instruction = sweep_section.get("system_instruction")
         if evidence_pack_manifest is None:
             evidence_pack_manifest = sweep_section.get("evidence_pack_manifest")
 

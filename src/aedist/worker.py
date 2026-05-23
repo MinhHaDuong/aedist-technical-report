@@ -399,6 +399,8 @@ class Worker:
         }
         if model_entry.get("reasoning_effort"):
             record["reasoning_effort"] = model_entry["reasoning_effort"]
+        if job and job.evidence_pack_manifest and job.mode not in (Method.MULTITURN,):
+            record["evidence_pack_manifest"] = job.evidence_pack_manifest
         if extra_fields:
             record.update(extra_fields)
         save_json(filepath, record)
@@ -528,6 +530,11 @@ class Worker:
                 "date": date.today().isoformat(),
                 "temperature": (api_kwargs or {}).get("temperature"),
                 "model_metadata": model_metadata(model_entry),
+                **(
+                    {"evidence_pack_manifest": job.evidence_pack_manifest}
+                    if job.evidence_pack_manifest
+                    else {}
+                ),
                 **conv,
             },
         )
