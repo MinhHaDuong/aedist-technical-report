@@ -98,7 +98,7 @@ panel.
 |---|---|---|---|---|---|
 | **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2024-02-26 Le Chat beta [(blog)][41] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
 | **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
-| **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | absent (no first-party source verifiable at cutoff) | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
+| **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | 2025-01-24 Qwen Chat v0.2 web search [(X)][42] | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
 | **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
 | **6. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
@@ -216,11 +216,13 @@ typically a precondition rather than the capability itself.
   which exposed MCP server configuration and invocation directly to
   end users; the Windows version followed 2025-08-15. The prior CSV
   entry (2024-04-07 Qwen-Agent v0.0.1) was a developer framework and
-  has been corrected. The remaining absences are deliberate: stage
-  3 (browsing / web search as a consumer Tongyi feature) has no
-  primary first-party source we could verify by cutoff; tertiary
-  reports point to a tongyi.ai deep-search launch circa 2024-08 but
-  the lab itself does not blog it. Stage 6 (code execution as a
+  has been corrected. Stage 3 (browsing / web search) is dated to the
+  2025-01-24 Qwen Chat v0.2 launch, primary-sourced from the
+  `@Alibaba_Qwen` X post (snowflake-decoded 2025-01-24T15:51 UTC) and
+  cross-confirmed by the 2025-01-27 qwen2.5-1m blog; an earlier
+  2025-03-07 Qwen-Agent QwQ-32B demo was rejected (ticket 0232) as a
+  developer SDK and is not the consumer-product threshold. The
+  remaining absences are deliberate: stage 6 (code execution as a
   consumer Qwen Chat feature) is absent because chat.qwen.ai
   "artifacts" mode is HTML / SVG preview rather than a Python or JS
   sandbox; the Qwen-Agent code-interpreter tool and Qwen Code Docker
@@ -317,3 +319,4 @@ encountered.
 [38]: https://help.openai.com/en/articles/6825453-chatgpt-release-notes "ChatGPT release notes (OpenAI, 2023-07-06 entry). Code Interpreter beta rollout to ChatGPT Plus users on web; alpha was available via plugins waitlist 2023-03-23 (openai.com/index/chatgpt-plugins/). Stage-6 milestone for OpenAI."
 [39]: https://claude.com/blog/analysis-tool "Introducing the analysis tool in Claude.ai (Anthropic, 2024-10-24; originally anthropic.com/news/analysis-tool, 308 redirect). JavaScript code sandbox in Claude.ai. Update note from 2025-11-05 records that the analysis tool was replaced by more powerful code execution capabilities. Stage-6 milestone for Anthropic."
 [41]: https://mistral.ai/news/le-chat-mistral "Le Chat beta (Mistral, 2024-02-26). First public consumer chat product from Mistral. Mistral 7B Instruct (2023-09-27) was an open-weights model release without a consumer chat interface; Le Chat beta is the stage-1 consumer-product milestone."
+[42]: https://x.com/Alibaba_Qwen/status/1882818582758961351 "Qwen Chat v0.2 launch with built-in web search (Alibaba_Qwen on X, snowflake-decoded 2025-01-24T15:51 UTC). Primary source from the lab handle, same format the matrix accepts for Alibaba stage 5 ([31]). Cross-confirmed by the 2025-01-27 qwen2.5-1m blog referencing Qwen Chat as supporting 'perform searches'. Stage-3 milestone for Alibaba; supersedes the absent decision from ticket 0232 / PR #426 which only considered the 2025-03-07 Qwen-Agent QwQ-32B demo."
