@@ -16,6 +16,7 @@ from pathlib import Path
 
 from .harness import (
     BudgetTracker,
+    append_evidence_pack,
     assemble_prompt,
     build_api_kwargs,
     build_messages,
@@ -187,6 +188,7 @@ class Worker:
             prompt = assemble_prompt(modules_dir, job.prompt_modules)
         else:
             prompt = Path(job.prompt).read_text().strip()
+        prompt = append_evidence_pack(prompt, job.evidence_pack_manifest)
         models = load_models(job.models_file)
         output_dir = Path(job.output_dir)
 
@@ -421,6 +423,8 @@ class Worker:
         extra: dict = {"prompt": prompt}
         if system_instruction:
             extra["system_instruction"] = system_instruction
+        if job.evidence_pack_manifest:
+            extra["evidence_pack_manifest"] = job.evidence_pack_manifest
         return self._query_and_save(
             client,
             model_id,
@@ -710,8 +714,13 @@ class Worker:
         method_params = MethodParams(model=job.model_filter or "unknown")
         if ablation_pv is not None:
             method_params.prompt_version = ablation_pv
+        extra: dict[str, bool | str] = {}
         if job.no_think:
-            method_params.extra = {"no_think": True}
+            extra["no_think"] = True
+        if job.evidence_pack_manifest:
+            extra["evidence_pack_manifest"] = job.evidence_pack_manifest
+        if extra:
+            method_params.extra = extra
         record = RunRecord(
             method=emitted_method,
             method_params=method_params,

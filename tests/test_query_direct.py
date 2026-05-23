@@ -614,3 +614,102 @@ def test_sweep_propagates_system_instruction_to_messages(mock_openai_cls, tmp_pa
     assert len(json_files) == 1
     record = json.loads(json_files[0].read_text())
     assert record["system_instruction"] == sentinel
+
+
+@patch("aedist.harness.OpenAI")
+def test_sweep_evidence_pack_injection_only_when_configured(mock_openai_cls, tmp_path):
+    """Baseline sweep keeps prompt unchanged; intervention sweep appends evidence pack."""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_response()
+    mock_openai_cls.return_value = mock_client
+
+    models_path = _minimal_models_yaml(tmp_path)
+    prompt_path = _prompt_file(tmp_path)
+    output_arm1 = tmp_path / "out-arm1"
+    output_arm3 = tmp_path / "out-arm3"
+
+    corpus_dir = tmp_path / "data" / "rag_corpus"
+    corpus_dir.mkdir(parents=True)
+    (corpus_dir / "source.md").write_text("Installed capacity table")
+    manifest_path = tmp_path / "experiments" / "evidence_packs" / "mini.yaml"
+    manifest_path.parent.mkdir(parents=True)
+    manifest_path.write_text(
+        "source_root: data/rag_corpus\n"
+        "items:\n"
+        "  - source_id: demo_source\n"
+        "    file: source.md\n"
+        "    document_title: Demo\n"
+        "    section_title: Capacity\n"
+        "    source_type: primary\n"
+        "    relevance: baseline check\n"
+    )
+
+    experiments_path = tmp_path / "experiments.toml"
+    experiments_path.write_text(
+        "[sweeps.arm1]\n"
+        'system_instruction = "No web search"\n'
+        "\n"
+        "[sweeps.arm3]\n"
+        'system_instruction = "No web search"\n'
+        f'evidence_pack_manifest = "{manifest_path}"\n'
+    )
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_direct",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_arm1),
+                "--sweep",
+                "arm1",
+                "--experiments",
+                str(experiments_path),
+            ],
+        ):
+            from aedist.query_direct import main
+
+            main()
+
+    arm1_call = mock_client.chat.completions.create.call_args
+    arm1_messages = arm1_call.kwargs.get("messages") or arm1_call[1].get("messages")
+    assert arm1_messages[1]["content"] == "List power plants."
+    arm1_record = json.loads(next(output_arm1.rglob("*.json")).read_text())
+    assert "evidence_pack_manifest" not in arm1_record
+
+    mock_client.chat.completions.create.reset_mock()
+
+    with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "query_direct",
+                "--prompt",
+                str(prompt_path),
+                "--models",
+                str(models_path),
+                "--output",
+                str(output_arm3),
+                "--sweep",
+                "arm3",
+                "--experiments",
+                str(experiments_path),
+            ],
+        ):
+            from aedist.query_direct import main
+
+            main()
+
+    arm3_call = mock_client.chat.completions.create.call_args
+    arm3_messages = arm3_call.kwargs.get("messages") or arm3_call[1].get("messages")
+    assert "## Evidence Pack" in arm3_messages[1]["content"]
+    assert "source_id: demo_source" in arm3_messages[1]["content"]
+
+    arm3_record = json.loads(next(output_arm3.rglob("*.json")).read_text())
+    assert arm3_record["evidence_pack_manifest"] == str(manifest_path)
