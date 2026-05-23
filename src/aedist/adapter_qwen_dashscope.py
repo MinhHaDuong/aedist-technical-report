@@ -74,7 +74,7 @@ def _call_with_retry(**payload: Any) -> Any:
             time.sleep(delay)
             continue
         return resp
-    return resp  # unreachable
+    raise AssertionError("unreachable: loop always returns")
 
 
 AGENT_FAMILY = "qwen-direct"

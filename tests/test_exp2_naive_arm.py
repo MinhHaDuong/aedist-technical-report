@@ -1,7 +1,37 @@
 import json
+import re
 from types import SimpleNamespace
 
 from experiments.sota import exp2_naive_arm
+from experiments.sota.exp2_naive_arm import _write_summary_md
+
+
+def test_write_summary_md_timestamped_filename(tmp_path):
+    summary = [
+        {
+            "agent": "mistral",
+            "run": 1,
+            "model": "m",
+            "classification": "report",
+            "cost_usd": 0.1,
+            "wall_s": 5.0,
+            "narrative_chars": 100,
+        },
+        {
+            "agent": "openai",
+            "run": 1,
+            "model": "o",
+            "classification": "report",
+            "cost_usd": 0.2,
+            "wall_s": 8.0,
+            "narrative_chars": 200,
+        },
+    ]
+    path = _write_summary_md(tmp_path, summary)
+    assert re.match(r"summary_\d{8}T\d{4}Z_mistral_openai\.md", path.name)
+    content = path.read_text(encoding="utf-8")
+    assert "mistral" in content
+    assert "openai" in content
 
 
 def test_probe_mistral_parses_flat_string_content(monkeypatch, tmp_path):

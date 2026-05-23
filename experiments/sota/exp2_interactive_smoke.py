@@ -31,7 +31,7 @@ import logging
 import re
 import sys
 import time
-from datetime import UTC
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -1181,7 +1181,6 @@ def _estimate_inventory_rows(agent: str, phase_b: dict, output_dir: Path) -> int
 
 
 def _write_summary(output_dir: Path, per_agent: list[dict]) -> Path:
-    from datetime import datetime
 
     agents_slug = "_".join(item["agent"] for item in per_agent)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%MZ")

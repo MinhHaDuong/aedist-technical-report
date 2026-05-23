@@ -282,6 +282,38 @@ def test_main_dry_run_multiple_agents_writes_meta_and_summary(tmp_path):
     assert "openai" in summary
 
 
+def test_reuse_phase_a_skips_api_and_copies_design(tmp_path):
+    """--reuse-phase-a-from loads Phase A artefacts without calling any API."""
+    # Build a minimal Phase A fixture: probes/mistral_run01/ with the required files.
+    phase_a_dir = tmp_path / "probes" / "mistral_run01"
+    phase_a_dir.mkdir(parents=True)
+    design = {
+        "system_prompt": "You are an analyst.",
+        "designed_prompt": "List capacity by fuel type.",
+        "settings": {"thinking": False, "max_tokens": 2000},
+        "rationale": "Short test.",
+    }
+    (phase_a_dir / "mistral_phase_a_design.json").write_text(json.dumps(design), encoding="utf-8")
+    (phase_a_dir / "mistral_phase_a.json").write_text("{}", encoding="utf-8")
+
+    out_dir = tmp_path / "out"
+    rc = main(
+        [
+            "--agents",
+            "mistral",
+            "--stop-after-phase-a",
+            "--no-confirm",
+            "--reuse-phase-a-from",
+            str(tmp_path / "probes"),
+            "--output-dir",
+            str(out_dir),
+        ]
+    )
+    assert rc == 0
+    # Design file must be copied into the run dir.
+    assert (out_dir / "mistral_run01" / "mistral_phase_a_design.json").exists()
+
+
 def test_module_imports_only_wired_adapters():
     """The smoke imports the four wired adapters and nothing else.
 
