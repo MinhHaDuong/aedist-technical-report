@@ -1,11 +1,9 @@
-"""Render the empirical capability-ordering figure for §3.
+"""Render the empirical capability transition matrix for §3.
 
-Panel A: 8×8 heatmap showing, for each ordered pair (i, j) of
-capability stages, the fraction of labs where stage i shipped before
-stage j (conditional on both being present).  N is labelled per cell.
-
-Panel B: dot-range plot for transitions with N ≥ 4, showing the
-time gap (months) between stage i and stage j for each lab.
+8×8 heatmap: for each ordered pair (i, j) of capability stages, the
+fraction of labs where stage i shipped before stage j (conditional on
+both being present). White = no lab made that transition; green = all
+labs did. N is labelled per cell.
 
 Data source: ``data/capability_timeline.csv``.
 
@@ -25,27 +23,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .util import model_family_color
-
 logger = logging.getLogger(__name__)
-
-LAB_ORDER = ["Anthropic", "OpenAI", "Mistral", "Alibaba", "DeepSeek"]
-
-LAB_COLOR = {
-    "Anthropic": model_family_color("claude"),
-    "OpenAI": model_family_color("gpt"),
-    "Mistral": model_family_color("mistral"),
-    "Alibaba": model_family_color("qwen"),
-    "DeepSeek": model_family_color("deepseek"),
-}
-
-LAB_MARKER = {
-    "Anthropic": "o",
-    "OpenAI": "s",
-    "Mistral": "D",
-    "Alibaba": "^",
-    "DeepSeek": "v",
-}
 
 STAGE_LABELS = {
     1: "1. Chat LLM",
@@ -59,7 +37,6 @@ STAGE_LABELS = {
 }
 
 N_STAGES = 8
-MIN_N_PANEL_B = 4
 
 
 def load_lab_dates(path: Path) -> dict[str, dict[int, date]]:
@@ -99,11 +76,13 @@ def compute_matrix(
     return frac, counts
 
 
-def render_heatmap(ax: plt.Axes, frac: np.ndarray, counts: np.ndarray) -> None:
-    cmap = plt.cm.Greens
+def render(lab_dates: dict[str, dict[int, date]], output: Path) -> None:
+    frac, counts = compute_matrix(lab_dates)
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
 
     masked = np.ma.masked_invalid(frac)
-    ax.imshow(masked, cmap=cmap, vmin=0.0, vmax=1.0, aspect="equal", origin="upper")
+    ax.imshow(masked, cmap=plt.cm.Greens, vmin=0.0, vmax=1.0, aspect="equal", origin="upper")
 
     for i in range(N_STAGES):
         for j in range(N_STAGES):
@@ -126,98 +105,7 @@ def render_heatmap(ax: plt.Axes, frac: np.ndarray, counts: np.ndarray) -> None:
     ax.set_yticklabels(labels, fontsize=7)
     ax.set_xlabel("Stage j (column)", fontsize=8)
     ax.set_ylabel("Stage i (row)", fontsize=8)
-    ax.set_title("(a) Fraction of labs where i shipped before j", fontsize=9, pad=8)
-
-
-def render_dotrange(
-    ax: plt.Axes,
-    lab_dates: dict[str, dict[int, date]],
-    frac: np.ndarray,
-    counts: np.ndarray,
-) -> None:
-    transitions = []
-    for i in range(1, N_STAGES + 1):
-        for j in range(i + 1, N_STAGES + 1):
-            n = counts[i - 1, j - 1]
-            if n >= MIN_N_PANEL_B:
-                f = frac[i - 1, j - 1]
-                transitions.append((i, j, n, f))
-
-    transitions.sort(key=lambda t: t[3], reverse=True)
-
-    y_positions = list(range(len(transitions)))
-    y_labels = []
-
-    for y_pos, (i, j, n, _f) in enumerate(transitions):
-        gaps = []
-        for lab in LAB_ORDER:
-            if i in lab_dates.get(lab, {}) and j in lab_dates.get(lab, {}):
-                gap_days = (lab_dates[lab][j] - lab_dates[lab][i]).days
-                gap_months = gap_days / 30.44
-                gaps.append((lab, gap_months))
-                ax.scatter(
-                    gap_months,
-                    y_pos,
-                    s=60,
-                    marker=LAB_MARKER[lab],
-                    color=LAB_COLOR[lab],
-                    edgecolor="black",
-                    linewidth=0.5,
-                    zorder=3,
-                )
-        if gaps:
-            values = [g for _, g in gaps]
-            ax.plot(
-                [min(values), max(values)],
-                [y_pos, y_pos],
-                color="gray",
-                linewidth=1,
-                zorder=1,
-            )
-        y_labels.append(f"{i}→{j} (N={n})")
-
-    ax.axvline(0, color="gray", linewidth=0.5, linestyle="--", zorder=0)
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(y_labels, fontsize=7)
-    ax.set_xlabel("Gap (months, i before j)", fontsize=8)
-    ax.set_title(f"(b) Time gap for transitions with N ≥ {MIN_N_PANEL_B}", fontsize=9, pad=8)
-    ax.invert_yaxis()
-    ax.grid(axis="x", linestyle=":", alpha=0.4)
-
-    handles = [
-        plt.Line2D(
-            [],
-            [],
-            linestyle="",
-            marker=LAB_MARKER[lab],
-            markerfacecolor=LAB_COLOR[lab],
-            markeredgecolor="black",
-            markersize=7,
-            label=lab,
-        )
-        for lab in LAB_ORDER
-    ]
-    ax.legend(
-        handles=handles,
-        loc="lower right",
-        fontsize=7,
-        frameon=True,
-        framealpha=0.9,
-    )
-
-
-def render(lab_dates: dict[str, dict[int, date]], output: Path) -> None:
-    frac, counts = compute_matrix(lab_dates)
-
-    fig, (ax_heat, ax_dots) = plt.subplots(
-        1,
-        2,
-        figsize=(12, 5.5),
-        gridspec_kw={"width_ratios": [1, 1.2]},
-    )
-
-    render_heatmap(ax_heat, frac, counts)
-    render_dotrange(ax_dots, lab_dates, frac, counts)
+    ax.set_title("Fraction of labs where i shipped before j", fontsize=9, pad=8)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
