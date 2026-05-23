@@ -20,9 +20,9 @@ New slash-invocable automation → `.claude/skills/<name>/SKILL.md`, never `.cla
 
 In an `EnterWorktree` session, `Edit`/`Write`/`Read` tools accept any absolute path. Edits at `/home/haduong/<repo>/<file>` go to the **main repo**, not the worktree. Always use worktree-rooted paths. Confirm with `pwd` and `git branch --show-current` before committing — if branch is `main`, stop.
 
-## Closing issues and PRs
+## Closing tickets and merge requests
 
-Never close GitHub issues or PRs without explicit user confirmation, even when acceptance criteria appear met. Recommend closures but always ask first, especially never close PRs belonging to other sessions or worktrees.
+Never close forge tickets or merge requests without explicit user confirmation, even when acceptance criteria appear met. Recommend closures but always ask first, especially never close merge requests belonging to other sessions or worktrees.
 
 ## Ruff post-edit hook strips unused imports
 
