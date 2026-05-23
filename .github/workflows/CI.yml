@@ -4,16 +4,46 @@ on:
     branches: [main]
   pull_request:
 jobs:
+  # Decide whether the diff touches anything that lint/tests care about.
+  # `chore` is true ONLY when *every* changed file is a ticket or STATE.md
+  # (predicate-quantifier: every). Anything else — code, configs, docs, a
+  # mixed diff, or an empty/errored output — leaves it != 'true', so the
+  # heavy steps below run. Fail-safe: ambiguity always runs full CI.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      chore: ${{ steps.filter.outputs.chore }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          predicate-quantifier: 'every'
+          filters: |
+            chore:
+              - 'tickets/**'
+              - 'STATE.md'
   lint:
+    needs: changes
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
-      - run: uv run ruff check src/ tests/
+      - if: needs.changes.outputs.chore != 'true'
+        uses: actions/checkout@v4
+      - if: needs.changes.outputs.chore != 'true'
+        uses: astral-sh/setup-uv@v4
+      - if: needs.changes.outputs.chore != 'true'
+        run: uv run ruff check src/ tests/
   tests:
+    needs: changes
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
-      - run: uv sync --group dev
-      - run: uv run pytest -q
+      - if: needs.changes.outputs.chore != 'true'
+        uses: actions/checkout@v4
+      - if: needs.changes.outputs.chore != 'true'
+        uses: astral-sh/setup-uv@v4
+      - if: needs.changes.outputs.chore != 'true'
+        run: uv sync --group dev
+      - if: needs.changes.outputs.chore != 'true'
+        run: uv run pytest -q
