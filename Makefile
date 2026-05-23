@@ -9,9 +9,12 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test lint check-fast check census census-summary show-prompts
+.PHONY: test test-fast lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
+
+test-fast:
+	uv run pytest -m "not integration and not slow"
 
 test:
 	uv run pytest
@@ -20,7 +23,7 @@ lint:
 	uv run ruff check src/ tests/ scripts/
 	uv run python scripts/check_ticket_structure.py
 
-check-fast: test lint
+check-fast: test-fast lint
 
 check: test lint
 
