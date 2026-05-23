@@ -1,0 +1,11 @@
+{
+  "agent": "qwen",
+  "run": 5,
+  "model": "qwen3-max-2026-01-23",
+  "classification": "report",
+  "tokens_out": 8322,
+  "wall_s": 251.86,
+  "cost_usd": 0.0507,
+  "classifier_cost_usd": 0.000142,
+  "narrative_chars": 23011
+}

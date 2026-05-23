@@ -1,0 +1,1420 @@
+{
+  "id": "resp_08a05646ad1caa28006a1131b383bc8197a950c2cd9c245236",
+  "created_at": 1779511731.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "metadata": {},
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_08a05646ad1caa28006a1131b489b08197b0549b9d60c41bba",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_08a05646ad1caa28006a1131b5f45c819784f7f5619af48713",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "Vietnam Power Development Plan VIII coal gas power plant list MW LNG thermal plant appendix",
+          "EVN annual report 2023 power plants capacity Vietnam coal gas",
+          "Vietnam electricity generation mix 2023 coal gas hydropower EVN"
+        ],
+        "sources": null
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_08a05646ad1caa28006a1131b8333481979256b8e46b75e0eb",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_08a05646ad1caa28006a1131b96904819790f6a0d3e2e7573e",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "site:vanban.chinhphu.vn 768/QD-TTg 2025 quy hoạch điện VIII điều chỉnh",
+          "site:moit.gov.vn 1509/QD-BCT 2025 danh mục nguồn điện than LNG",
+          "PetroVietnam Power annual report Nhon Trach Ca Mau Vung Ang capacity"
+        ],
+        "sources": null
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_08a05646ad1caa28006a1131bc32e08197baee46ed8f25d80d",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_08a05646ad1caa28006a1131bd3bb081978eb073f54b1b12ce",
+      "content": [
+        {
+          "annotations": [
+            {
+              "end_index": 1332,
+              "start_index": 1206,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1776,
+              "start_index": 1656,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2297,
+              "start_index": 2202,
+              "title": "Thông báo số 484/TB-VPCP của Văn phòng Chính phủ: Kết luận của Phó Thủ tướng Chính phủ Bùi Thanh Sơn tại Hội nghị trực tuyến toàn quốc về rà soát tình hình triển khai Quyết định số 768/QĐ-TTg ngày 15 tháng 4 năm 2025 về phê duyệt Điều chỉnh Quy hoạch điện VIII và giải pháp bảo đảm cung cấp điện trong thời gian tới",
+              "type": "url_citation",
+              "url": "https://vanban.chinhphu.vn/?docid=215339&pageid=27160&utm_source=openai"
+            },
+            {
+              "end_index": 3112,
+              "start_index": 2986,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3782,
+              "start_index": 3656,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 6663,
+              "start_index": 6607,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/?utm_source=openai"
+            },
+            {
+              "end_index": 7124,
+              "start_index": 6969,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 8163,
+              "start_index": 7988,
+              "title": "EVN implements a series of urgent measures to ensure power supply in the dry season of 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 8700,
+              "start_index": 8525,
+              "title": "EVN implements a series of urgent measures to ensure power supply in the dry season of 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 9777,
+              "start_index": 9651,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 11214,
+              "start_index": 11072,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 11455,
+              "start_index": 11313,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 11879,
+              "start_index": 11670,
+              "title": "Annual report 2024 for PetroVietnam Gas Joint Stock Corporation (PV GAS) - Studocu",
+              "type": "url_citation",
+              "url": "https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai"
+            },
+            {
+              "end_index": 12435,
+              "start_index": 12348,
+              "title": "Petrovietnam begins construction of 1.15 GW thermal power plant in Mekong Delta (Vietnam)",
+              "type": "url_citation",
+              "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai"
+            },
+            {
+              "end_index": 12688,
+              "start_index": 12571,
+              "title": "PV Power to build four new LNG-fired plants",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai"
+            },
+            {
+              "end_index": 13200,
+              "start_index": 13021,
+              "title": "Nhơn Trạch 3&4 bắt đầu đóng góp sản lượng, tạo động lực tăng trưởng mới cho PV Power",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai"
+            },
+            {
+              "end_index": 13456,
+              "start_index": 13330,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 14159,
+              "start_index": 14004,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 14416,
+              "start_index": 14261,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 15582,
+              "start_index": 15456,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 15857,
+              "start_index": 15731,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 16803,
+              "start_index": 16677,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 16930,
+              "start_index": 16827,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 17266,
+              "start_index": 17140,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17393,
+              "start_index": 17290,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 17716,
+              "start_index": 17590,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17843,
+              "start_index": 17740,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 18182,
+              "start_index": 18056,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 18303,
+              "start_index": 18200,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 18610,
+              "start_index": 18484,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 18731,
+              "start_index": 18628,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 19051,
+              "start_index": 18925,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19172,
+              "start_index": 19069,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 19464,
+              "start_index": 19338,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19585,
+              "start_index": 19482,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 19872,
+              "start_index": 19746,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19993,
+              "start_index": 19890,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 20295,
+              "start_index": 20169,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 20416,
+              "start_index": 20313,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 20737,
+              "start_index": 20611,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 20858,
+              "start_index": 20755,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 21144,
+              "start_index": 21018,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 21265,
+              "start_index": 21162,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 21567,
+              "start_index": 21441,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 21688,
+              "start_index": 21585,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 21978,
+              "start_index": 21852,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22099,
+              "start_index": 21996,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 22390,
+              "start_index": 22270,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22511,
+              "start_index": 22408,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 22810,
+              "start_index": 22684,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22931,
+              "start_index": 22828,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 23238,
+              "start_index": 23112,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 23359,
+              "start_index": 23256,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 23571,
+              "start_index": 23515,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/?utm_source=openai"
+            },
+            {
+              "end_index": 23745,
+              "start_index": 23603,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 24071,
+              "start_index": 23956,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 24192,
+              "start_index": 24089,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 24579,
+              "start_index": 24424,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 24727,
+              "start_index": 24601,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 25074,
+              "start_index": 24959,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 25195,
+              "start_index": 25092,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 25468,
+              "start_index": 25353,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 25589,
+              "start_index": 25486,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 25942,
+              "start_index": 25816,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 26063,
+              "start_index": 25960,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 26341,
+              "start_index": 26215,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 26462,
+              "start_index": 26359,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 26794,
+              "start_index": 26679,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 26915,
+              "start_index": 26812,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 27299,
+              "start_index": 27124,
+              "title": "EVN implements a series of urgent measures to ensure power supply in the dry season of 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 27444,
+              "start_index": 27318,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 27751,
+              "start_index": 27625,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 27872,
+              "start_index": 27769,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 28167,
+              "start_index": 28041,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 28288,
+              "start_index": 28185,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 28664,
+              "start_index": 28489,
+              "title": "EVN implements a series of urgent measures to ensure power supply in the dry season of 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 28809,
+              "start_index": 28683,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 29105,
+              "start_index": 28979,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 29226,
+              "start_index": 29123,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 29510,
+              "start_index": 29395,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 29631,
+              "start_index": 29528,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 29955,
+              "start_index": 29840,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30076,
+              "start_index": 29973,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 30374,
+              "start_index": 30248,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30495,
+              "start_index": 30392,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 30771,
+              "start_index": 30656,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30892,
+              "start_index": 30789,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 31212,
+              "start_index": 31097,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 31333,
+              "start_index": 31230,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 31638,
+              "start_index": 31512,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 31775,
+              "start_index": 31660,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 32121,
+              "start_index": 31995,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 32242,
+              "start_index": 32139,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 32557,
+              "start_index": 32431,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 32678,
+              "start_index": 32575,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 32978,
+              "start_index": 32875,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 33126,
+              "start_index": 33000,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33428,
+              "start_index": 33302,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33549,
+              "start_index": 33446,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 33867,
+              "start_index": 33741,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33988,
+              "start_index": 33885,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 34278,
+              "start_index": 34152,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 34399,
+              "start_index": 34296,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 34685,
+              "start_index": 34559,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 34806,
+              "start_index": 34703,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 35132,
+              "start_index": 35006,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 35372,
+              "start_index": 35163,
+              "title": "Annual report 2024 for PetroVietnam Gas Joint Stock Corporation (PV GAS) - Studocu",
+              "type": "url_citation",
+              "url": "https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai"
+            },
+            {
+              "end_index": 35704,
+              "start_index": 35562,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 35809,
+              "start_index": 35732,
+              "title": "Nhon Trach power station - Global Energy Monitor",
+              "type": "url_citation",
+              "url": "https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai"
+            },
+            {
+              "end_index": 36146,
+              "start_index": 36004,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 36267,
+              "start_index": 36164,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 36637,
+              "start_index": 36428,
+              "title": "Annual report 2024 for PetroVietnam Gas Joint Stock Corporation (PV GAS) - Studocu",
+              "type": "url_citation",
+              "url": "https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai"
+            },
+            {
+              "end_index": 36801,
+              "start_index": 36659,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 37212,
+              "start_index": 37003,
+              "title": "Annual report 2024 for PetroVietnam Gas Joint Stock Corporation (PV GAS) - Studocu",
+              "type": "url_citation",
+              "url": "https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai"
+            },
+            {
+              "end_index": 37376,
+              "start_index": 37234,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 37689,
+              "start_index": 37563,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 37810,
+              "start_index": 37707,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 38106,
+              "start_index": 38003,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 38249,
+              "start_index": 38134,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 38552,
+              "start_index": 38437,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 38673,
+              "start_index": 38570,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 38943,
+              "start_index": 38856,
+              "title": "Petrovietnam begins construction of 1.15 GW thermal power plant in Mekong Delta (Vietnam)",
+              "type": "url_citation",
+              "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai"
+            },
+            {
+              "end_index": 39086,
+              "start_index": 38971,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 39473,
+              "start_index": 39304,
+              "title": "PV Power lập kỷ lục 100 triệu kWh/ngày, đóng góp gần 10% điện năng quốc gia",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai"
+            },
+            {
+              "end_index": 39688,
+              "start_index": 39509,
+              "title": "Nhơn Trạch 3&4 bắt đầu đóng góp sản lượng, tạo động lực tăng trưởng mới cho PV Power",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai"
+            },
+            {
+              "end_index": 40067,
+              "start_index": 39898,
+              "title": "PV Power lập kỷ lục 100 triệu kWh/ngày, đóng góp gần 10% điện năng quốc gia",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai"
+            },
+            {
+              "end_index": 40150,
+              "start_index": 40094,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/?utm_source=openai"
+            },
+            {
+              "end_index": 40464,
+              "start_index": 40338,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40600,
+              "start_index": 40485,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40889,
+              "start_index": 40774,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41040,
+              "start_index": 40914,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41334,
+              "start_index": 41219,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41485,
+              "start_index": 41359,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41779,
+              "start_index": 41664,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41930,
+              "start_index": 41804,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42284,
+              "start_index": 42129,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 42418,
+              "start_index": 42303,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42712,
+              "start_index": 42597,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42863,
+              "start_index": 42737,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43186,
+              "start_index": 43071,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43337,
+              "start_index": 43211,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43668,
+              "start_index": 43553,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43819,
+              "start_index": 43693,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44146,
+              "start_index": 44031,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44297,
+              "start_index": 44171,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44630,
+              "start_index": 44515,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44781,
+              "start_index": 44655,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45092,
+              "start_index": 44977,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45243,
+              "start_index": 45117,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45568,
+              "start_index": 45453,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45719,
+              "start_index": 45593,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46086,
+              "start_index": 45960,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46220,
+              "start_index": 46105,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46568,
+              "start_index": 46442,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46704,
+              "start_index": 46589,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 47039,
+              "start_index": 46922,
+              "title": "PV Power to build four new LNG-fired plants",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai"
+            },
+            {
+              "end_index": 47173,
+              "start_index": 47058,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 47502,
+              "start_index": 47385,
+              "title": "PV Power to build four new LNG-fired plants",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai"
+            },
+            {
+              "end_index": 47636,
+              "start_index": 47521,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 48004,
+              "start_index": 47849,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 48138,
+              "start_index": 48023,
+              "title": "Legal Update - Revised Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 49416,
+              "start_index": 49290,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 51763,
+              "start_index": 51584,
+              "title": "Nhơn Trạch 3&4 bắt đầu đóng góp sản lượng, tạo động lực tăng trưởng mới cho PV Power",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai"
+            },
+            {
+              "end_index": 52620,
+              "start_index": 52500,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 53028,
+              "start_index": 52902,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 53395,
+              "start_index": 53269,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 53878,
+              "start_index": 53737,
+              "title": "Một số số liệu tổng quan về nguồn điện toàn quốc năm 2023",
+              "type": "url_citation",
+              "url": "https://www.evn.com.vn/d6/news/Mot-so-so-lieu-tong-quan-ve-nguon-dien-toan-quoc-nam-2023-66-142-124707.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 54320,
+              "start_index": 54145,
+              "title": "EVN implements a series of urgent measures to ensure power supply in the dry season of 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 54795,
+              "start_index": 54700,
+              "title": "Thông báo số 484/TB-VPCP của Văn phòng Chính phủ: Kết luận của Phó Thủ tướng Chính phủ Bùi Thanh Sơn tại Hội nghị trực tuyến toàn quốc về rà soát tình hình triển khai Quyết định số 768/QĐ-TTg ngày 15 tháng 4 năm 2025 về phê duyệt Điều chỉnh Quy hoạch điện VIII và giải pháp bảo đảm cung cấp điện trong thời gian tới",
+              "type": "url_citation",
+              "url": "https://vanban.chinhphu.vn/?docid=215339&pageid=27160&utm_source=openai"
+            },
+            {
+              "end_index": 55392,
+              "start_index": 55266,
+              "title": "BỘ CÔNG THƯƠNG",
+              "type": "url_citation",
+              "url": "https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 55735,
+              "start_index": 55640,
+              "title": "Revised Power Development Plan VIII of Vietnam - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html?utm_source=openai"
+            },
+            {
+              "end_index": 56094,
+              "start_index": 55994,
+              "title": "Power Development Master Plan VIII – Policies - IEA",
+              "type": "url_citation",
+              "url": "https://www.iea.org/policies/28683-power-development-master-plan-viii?utm_source=openai"
+            },
+            {
+              "end_index": 56393,
+              "start_index": 56337,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/?utm_source=openai"
+            },
+            {
+              "end_index": 56779,
+              "start_index": 56637,
+              "title": "PV Power takes the initiative in power plant optimal operating solutions",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai"
+            },
+            {
+              "end_index": 57222,
+              "start_index": 57013,
+              "title": "Annual report 2024 for PetroVietnam Gas Joint Stock Corporation (PV GAS) - Studocu",
+              "type": "url_citation",
+              "url": "https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai"
+            },
+            {
+              "end_index": 57737,
+              "start_index": 57558,
+              "title": "Nhơn Trạch 3&4 bắt đầu đóng góp sản lượng, tạo động lực tăng trưởng mới cho PV Power",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai"
+            },
+            {
+              "end_index": 58237,
+              "start_index": 58068,
+              "title": "PV Power lập kỷ lục 100 triệu kWh/ngày, đóng góp gần 10% điện năng quốc gia",
+              "type": "url_citation",
+              "url": "https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai"
+            },
+            {
+              "end_index": 58534,
+              "start_index": 58417,
+              "title": "PV Power to build four new LNG-fired plants",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai"
+            },
+            {
+              "end_index": 58911,
+              "start_index": 58756,
+              "title": "PV Power says profit may fall in 2026 despite higher output due to extreme weather",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai"
+            },
+            {
+              "end_index": 59163,
+              "start_index": 59086,
+              "title": "Nhon Trach power station - Global Energy Monitor",
+              "type": "url_citation",
+              "url": "https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai"
+            },
+            {
+              "end_index": 59521,
+              "start_index": 59418,
+              "title": "List of power stations in Vietnam",
+              "type": "url_citation",
+              "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai"
+            },
+            {
+              "end_index": 59902,
+              "start_index": 59815,
+              "title": "Petrovietnam begins construction of 1.15 GW thermal power plant in Mekong Delta (Vietnam)",
+              "type": "url_citation",
+              "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai"
+            }
+          ],
+          "text": "# Vietnam thermal generation assets >30 MWe — primary-sourced reference inventory, v0.1  \n**Scope:** coal, domestic gas and imported-LNG thermal generation in Vietnam; operating, retired/converted, under construction, planned/pre-FID, and cancelled/deferred projects that appeared in formal planning cycles.  \n**Status date used for this inventory:** **23 May 2026**, unless a row gives a more specific source date.  \n**Important limitation:** A genuinely complete plant-by-plant inventory for Vietnam requires reconciliation against Vietnamese regulatory annexes, EVN generation-company asset registers, PV Power/PV GAS filings, BOT concession documents, and provincial industrial-zone/captive-power approvals. The table below is a best-effort reference inventory from the sources I could verify in this session. I mark uncertain or weakly sourced rows **LOW** rather than omitting known assets.\n\n---\n\n## 1. Sector overview\n\nVietnam’s power system is now one of Southeast Asia’s largest. EVN reported total installed system capacity of **82,387 MW in 2024**, of which **coal-fired capacity was 26,757 MW** and **gas + oil-fired capacity was 8,653 MW**; total installed capacity was **80,946 MW in 2023**. ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai))  \n\nCoal remains the largest dispatchable thermal source. EVN’s 2022–2023 annual report shows coal capacity rising from **25,312 MW in 2022** to **26,756 MW in 2023**. EVN also reported persistent fuel-security issues in 2023, including coal delivery shortfalls and declining domestic gas availability for power generation. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai))  \n\nThe core policy framework is **Power Development Plan VIII (PDP8)** and its 2025 revision. The revised PDP8, approved by **Decision 768/QĐ-TTg dated 15 April 2025**, and its implementation guidance under **MOIT Decision 1509/QĐ-BCT dated 30 May 2025**, set 2030 capacity pathways including **31,055 MW coal-fired thermal power**, **10,861–14,930 MW domestic gas-fired thermal power**, and **22,524 MW LNG thermal power**. ([vanban.chinhphu.vn](https://vanban.chinhphu.vn/?docid=215339&pageid=27160&utm_source=openai))  \n\nKey institutional actors are: **EVN** and its GENCOs as legacy owner/offtaker/operator; **MOIT** as energy-sector regulator and PDP implementation authority; **PVN / PV Power / PV GAS** for gas-fired generation and gas/LNG supply; **TKV/Vinacomin** and **Dong Bac Corporation** for domestic coal supply and coal generation; BOT/IPP sponsors such as **AES, Marubeni, JERA, Sumitomo, CLP, EGATi, Doosan/KEPCO-linked consortia**, and Vietnamese provincial/industrial investors for LNG and captive plants. EVN’s 2024 ownership table attributes **31,085 MW** to EVN + GENCOs, **6,038 MW** to PVN, **1,665 MW** to Vinacomin, **8,268 MW** to BOT plants, and **34,110 MW** to other investors. ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai))  \n\nCurrent challenges are: fuel security, especially declining domestic gas in the Southeast and Southwest; coal supply logistics and import dependence; delayed LNG-to-power bankability and PPA/GSA issues; grid bottlenecks; the need to replace/repurpose coal under Vietnam’s net-zero 2050 pledge; and the tension between least-cost dispatch, high imported fuel prices, and EVN’s financial position. EVN reported in 2023 that Southeast gas supply was below maximum gas-turbine demand, while coal deliveries to EVN plants also faced shortfalls. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai))  \n\n---\n\n## 2. Per-plant narrative notes — concise\n\n### Coal fleet\n\n- **Phả Lại / Pha Lai** — Vietnam’s legacy northern coal plant in Hải Dương, developed in two stages: older Soviet/Chinese-era subcritical units and later larger units. It remains a benchmark legacy coal asset but has aging-unit reliability and emissions issues. **Confidence: MEDIUM** because unit-level CODs require regulatory confirmation.\n- **Uông Bí / Uong Bi** — Historic Quảng Ninh coal station, expanded with newer 300 MW-class units. Some old units have been retired or de-rated. **Confidence: MEDIUM/LOW** on surviving capacity by unit.\n- **Ninh Bình / Ninh Binh** — Small legacy coal plant; over 30 MWe but much older and often listed separately from modern coal fleet. **Confidence: LOW** on operating status.\n- **Cao Ngạn / Cao Ngan** — TKV/Vinacomin circulating-fluidized-bed coal plant in Thái Nguyên, relatively small by modern standards. **Confidence: MEDIUM**.\n- **Na Dương / Na Duong** — TKV/Vinacomin lignite/coal plant in Lạng Sơn, linked to local coal resources; expansion has been periodically planned. **Confidence: MEDIUM**.\n- **Sơn Động / Son Dong** — TKV/Vinacomin coal plant in Bắc Giang, built to use domestic coal resources. **Confidence: MEDIUM**.\n- **Cẩm Phả / Cam Pha** — Quảng Ninh coal plant associated with TKV, built in two 300 MW-class units. **Confidence: MEDIUM**.\n- **Mạo Khê / Mao Khe** — Quảng Ninh coal plant, TKV-linked, 2×220 MW class. **Confidence: MEDIUM**.\n- **Quảng Ninh / Quang Ninh** — Large 1,200 MW northern coal plant, one of the main plants supplying the northern system. **Confidence: HIGH** on capacity/location; MEDIUM on unit technology.\n- **Hải Phòng / Hai Phong** — Large 1,200 MW coal plant near Hải Phòng; part of the core northern coal fleet. **Confidence: HIGH**.\n- **Mông Dương 1 / Mong Duong 1** — EVN/GENCO coal station in Quảng Ninh, developed as part of the Mông Dương complex. **Confidence: HIGH**.\n- **Mông Dương 2 / Mong Duong 2** — BOT coal IPP in Quảng Ninh, AES-led; a major private/BOT coal plant. **Confidence: HIGH**.\n- **Thái Bình 1 / Thai Binh 1** — EVN/GENCO coal plant in Thái Bình, operating. **Confidence: HIGH**.\n- **Thái Bình 2 / Thai Binh 2** — PVN coal plant delayed for years by EPC/contractor and governance problems; now counted in national coal capacity after commissioning. **Confidence: HIGH** on existence/capacity; MEDIUM on exact COD by unit.\n- **Nghi Sơn 1 / Nghi Son 1** — EVN coal plant in Thanh Hóa, operating. **Confidence: HIGH**.\n- **Nghi Sơn 2 / Nghi Son 2** — BOT coal IPP in Thanh Hóa, supercritical technology, sponsored by international consortium. **Confidence: HIGH**.\n- **Vũng Áng 1 / Vung Ang 1** — PV Power coal plant in Hà Tĩnh, 1,200 MW; important PV Power thermal asset. PV Power materials identify Vũng Áng 1 among its principal plants. ([pvpower.vn](https://pvpower.vn/en/?utm_source=openai))\n- **Vũng Áng 2 / Vung Ang 2** — BOT/IPP coal project in Hà Tĩnh, developed after long financing and sponsor changes; under construction/late development in recent years. **Confidence: MEDIUM**.\n- **Vũng Áng 3 / Vung Ang 3** — appeared in planning cycles; later studied for LNG/gas conversion by PV Power. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai))\n- **Quảng Trạch 1 / Quang Trach 1** — EVN coal project in Quảng Bình, under construction in recent planning cycle. **Confidence: MEDIUM**.\n- **Quảng Trạch 2 / Quang Trach 2** — planned coal project, subject to PDP8 sequencing and potential future transition constraints. **Confidence: LOW/MEDIUM**.\n- **Vĩnh Tân 1 / Vinh Tan 1** — BOT coal plant in Bình Thuận, operating; part of the major Vĩnh Tân coal-power center. **Confidence: HIGH**.\n- **Vĩnh Tân 2 / Vinh Tan 2** — EVN/GENCO coal plant, operating; has faced air-quality and ash-management controversies. **Confidence: HIGH**.\n- **Vĩnh Tân 3 / Vinh Tan 3** — planned/cancelled or shelved coal project; appeared in planning but did not proceed as originally intended. **Confidence: LOW/MEDIUM**.\n- **Vĩnh Tân 4 / Vinh Tan 4** — EVN/GENCO coal plant; EVN referenced Vĩnh Tân 4 in 2023 fuel-security measures. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai))\n- **Duyên Hải 1 / Duyen Hai 1** — EVN/GENCO coal plant in Trà Vinh, operating. **Confidence: HIGH**.\n- **Duyên Hải 2 / Duyen Hai 2** — BOT coal plant in Trà Vinh, operating/late commissioning in recent years. **Confidence: MEDIUM/HIGH**.\n- **Duyên Hải 3 / Duyen Hai 3** — EVN/GENCO coal plant; EVN referenced Duyên Hải 3 in urgent coal-supply measures in 2023. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai))\n- **Duyên Hải 3 extension / Duyen Hai 3 MR** — single-unit expansion at Duyên Hải power center. **Confidence: HIGH**.\n- **Long Phú 1 / Long Phu 1** — PVN coal project in Sóc Trăng; severely delayed after sanctions/contractor issues involving Russian supplier Power Machines. **Confidence: MEDIUM**.\n- **Long Phú 2 / Long Phu 2** — planned coal BOT project, not built; appeared in planning cycles. **Confidence: LOW/MEDIUM**.\n- **Sông Hậu 1 / Song Hau 1** — PVN coal plant in Hậu Giang, operating. **Confidence: MEDIUM/HIGH**.\n- **Sông Hậu 2 / Song Hau 2** — planned coal BOT project; investor and financing difficulties, repeatedly delayed. **Confidence: LOW/MEDIUM**.\n- **Nam Định 1 / Nam Dinh 1** — planned coal BOT project; delayed and uncertain. **Confidence: LOW/MEDIUM**.\n- **Công Thanh / Cong Thanh** — originally coal-linked in Thanh Hóa; MOIT 2025 PDP8 implementation appendix lists **LNG Công Thanh** and notes conversion from coal to LNG. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai))\n\n### Domestic gas fleet\n\n- **Bà Rịa / Ba Ria** — legacy gas-turbine/combined-cycle complex in Bà Rịa–Vũng Tàu, supplied by Southeast gas. Aging units and changing gas availability affect dispatch. **Confidence: MEDIUM**.\n- **Phú Mỹ 1 / Phu My 1** — EVN/GENCO gas CCGT plant in Bà Rịa–Vũng Tàu; core of the Phú Mỹ complex. **Confidence: HIGH**.\n- **Phú Mỹ 2.1 / Phu My 2.1** — EVN gas turbine plant, older part of Phú Mỹ complex. **Confidence: MEDIUM**.\n- **Phú Mỹ 2.1 extension / Phu My 2.1 MR** — expansion/combined-cycle addition at Phú Mỹ complex. **Confidence: MEDIUM**.\n- **Phú Mỹ 2.2 / Phu My 2.2** — BOT CCGT plant at Phú Mỹ, developed by international sponsors. **Confidence: HIGH**.\n- **Phú Mỹ 3 / Phu My 3** — BOT CCGT plant at Phú Mỹ, developed by BP/Sembcorp-related consortium historically. **Confidence: HIGH**.\n- **Phú Mỹ 4 / Phu My 4** — EVN/GENCO gas CCGT plant in Phú Mỹ complex. **Confidence: HIGH**.\n- **Hiệp Phước / Hiep Phuoc** — industrial/captive or grid-connected gas/oil-fired plant in HCMC area; legacy asset with ownership/status changes. **Confidence: LOW/MEDIUM**.\n- **Nhơn Trạch 1 / Nhon Trach 1** — PV Power CCGT plant in Đồng Nai, domestic gas/DO capable; PV Power describes Nhơn Trạch 1, Nhơn Trạch 2, and Cà Mau 1&2 as its gas fleet totaling around 2,700 MW. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai))\n- **Nhơn Trạch 2 / Nhon Trach 2** — PV Power CCGT plant in Đồng Nai, operating since early 2010s. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai))\n- **Cà Mau 1 & 2 / Ca Mau 1 & 2** — PV Power gas plants in Cà Mau, supplied from Southwest gas; PV GAS materials state dry gas is transported to the two Cà Mau power plants with total capacity around **1,500 MW**. ([studocu.com](https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai))\n- **Ô Môn 1 / O Mon 1** — EVN oil/gas-capable plant in Cần Thơ, intended to be part of the Ô Môn gas-power complex. **Confidence: MEDIUM**.\n- **Ô Môn 2 / O Mon 2** — planned CCGT using Block B gas; delayed. **Confidence: LOW/MEDIUM**.\n- **Ô Môn 3 / O Mon 3** — planned CCGT using Block B gas; delayed. **Confidence: LOW/MEDIUM**.\n- **Ô Môn 4 / O Mon 4** — planned/under-development CCGT; PetroVietnam reportedly began construction of a 1.15 GW O Mon IV plant in 2025. ([reddit.com](https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai))\n- **Miền Trung 1 & 2 / Mien Trung 1 & 2** — PV Power-studied LNG/gas projects; PV Power has identified them among proposed LNG plants. ([vietnamnet.vn](https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai))\n\n### Imported-LNG fleet and planned LNG projects\n\n- **Nhơn Trạch 3 & 4 / Nhon Trach 3 & 4** — Vietnam’s first major LNG-to-power project; PV Power news and market materials indicate the two units began contributing power in 2025, and PV Power daily-output news in April 2026 reported significant generation from Nhơn Trạch 3 and 4. ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai))\n- **LNG Quảng Ninh / LNG Quang Ninh** — listed in MOIT Decision 1509 appendix with **1,500 MW** and expected 2028–2029 schedule. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai))\n- **LNG Thái Bình / LNG Thai Binh** — planned LNG project in northern Vietnam; appeared in PDP/PDP8 implementation cycles. **Confidence: LOW/MEDIUM**.\n- **LNG Hải Phòng / LNG Hai Phong** — planned LNG-to-power in Hải Phòng area; appeared in planning/investor proposals. **Confidence: LOW**.\n- **LNG Nghi Sơn / LNG Nghi Son** — planned LNG project in Thanh Hóa/Nghi Sơn area; formal status needs primary annex confirmation. **Confidence: LOW**.\n- **LNG Quỳnh Lập / LNG Quynh Lap** — PV Power studying Quỳnh Lập in Nghệ An as an LNG-fueled project. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai))\n- **LNG Vũng Áng 3 / LNG Vung Ang 3** — PV Power studying Vũng Áng 3 as LNG-fueled rather than coal. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai))\n- **LNG Long Sơn / LNG Long Son** — planned LNG-to-power complex in Bà Rịa–Vũng Tàu; formal PDP status should be checked against Decision 1509 annex. **Confidence: LOW/MEDIUM**.\n- **LNG Sơn Mỹ 1 / LNG Son My 1** — planned LNG project in Bình Thuận. **Confidence: MEDIUM**.\n- **LNG Sơn Mỹ 2 / LNG Son My 2** — planned LNG project in Bình Thuận. **Confidence: MEDIUM**.\n- **LNG Cà Ná / LNG Ca Na** — Ninh Thuận LNG project concept; appeared in provincial/national planning discussions. **Confidence: LOW/MEDIUM**.\n- **LNG Bạc Liêu / LNG Bac Lieu** — proposed large LNG-to-power project in Bạc Liêu, repeatedly delayed. **Confidence: MEDIUM**.\n- **LNG Long An 1 & 2 / Long An LNG** — large LNG-to-power project in Long An, Hanwha/VinaCapital-related development historically reported; formal current status needs annex confirmation. **Confidence: LOW/MEDIUM**.\n- **LNG Hiệp Phước phase II / Hiep Phuoc LNG** — MOIT Decision 1509 appendix includes a 1,500 MW phase-II style entry with schedule 2025–2030 and notes Ho Chi Minh City commitment. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai))\n- **LNG Công Thanh / Cong Thanh LNG** — MOIT Decision 1509 lists **1,500 MW**, 2031–2035, and notes provincial request to convert from coal to LNG. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai))\n\n---\n\n## 3. Structured power-plants table\n\n> **Technology legend:**  \n> **Subcritical / Supercritical / USC** = coal steam technology.  \n> **CCGT / OCGT** = gas combined/open-cycle turbine.  \n> **Unknown** = not confidently verified from primary source in this pass.  \n> **Status terms:** Operating, Under construction, Planned/PDP, Delayed, Cancelled/shelved, Retired/legacy uncertain.\n\n| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |\n|---|---:|---|---|---|---:|---:|---|---|---|---|---|---|---|---|\n| Phả Lại | Pha Lai | Hải Dương | Coal | Subcritical | mixed legacy units | ~1,040 | Operating/legacy | 2026-05-23 | 1980s–2000s | PPC/EVN-linked | MEDIUM | EVN system totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary plant list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Unit-level status requires regulator confirmation. |\n| Uông Bí | Uong Bi | Quảng Ninh | Coal | Subcritical | mixed | ~630 | Operating/legacy | 2026-05-23 | 1960s–2010s | EVN/GENCO | MEDIUM | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary plant list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Older units may be retired/de-rated. |\n| Ninh Bình | Ninh Binh | Ninh Bình | Coal | Subcritical | legacy | ~100 | Operating/legacy uncertain | 2026-05-23 | 1970s | EVN-linked | LOW | EVN totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary plant list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Included due >30 MW legacy coal. |\n| Cao Ngạn | Cao Ngan | Thái Nguyên | Coal | CFB/Subcritical | 2×~55 | ~110 | Operating | 2026-05-23 | 2000s | Vinacomin/TKV | MEDIUM | EVN ownership category incl. Vinacomin ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Small TKV coal asset. |\n| Na Dương | Na Duong | Lạng Sơn | Coal | CFB/Subcritical | 2×55 | 110 | Operating | 2026-05-23 | 2000s | Vinacomin/TKV | MEDIUM | EVN ownership category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Expansion periodically proposed. |\n| Sơn Động | Son Dong | Bắc Giang | Coal | CFB/Subcritical | 2×110 | 220 | Operating | 2026-05-23 | 2010s | Vinacomin/TKV | MEDIUM | EVN ownership category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | TKV coal. |\n| Cẩm Phả | Cam Pha | Quảng Ninh | Coal | Subcritical | 2×300 | 600 | Operating | 2026-05-23 | 2010s | Vinacomin/TKV | MEDIUM | EVN ownership category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Mạo Khê | Mao Khe | Quảng Ninh | Coal | CFB/Subcritical | 2×220 | 440 | Operating | 2026-05-23 | 2010s | Vinacomin/TKV | MEDIUM | EVN ownership category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Quảng Ninh | Quang Ninh | Quảng Ninh | Coal | Subcritical | 4×300 | 1,200 | Operating | 2026-05-23 | 2009–2014 | Quang Ninh TPP JSC/EVN-linked | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Northern baseload coal. |\n| Hải Phòng | Hai Phong | Hải Phòng | Coal | Subcritical | 4×300 | 1,200 | Operating | 2026-05-23 | 2011–2014 | Hai Phong TPP JSC/EVN-linked | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Mông Dương 1 | Mong Duong 1 | Quảng Ninh | Coal | CFB/Subcritical | 2×540 | 1,080 | Operating | 2026-05-23 | 2015 | EVN/GENCO3 | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Mông Dương 2 | Mong Duong 2 | Quảng Ninh | Coal | Supercritical | 2×620 | 1,240 | Operating BOT | 2026-05-23 | 2015 | AES/partners BOT | HIGH | EVN BOT ownership class ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | BOT coal IPP. |\n| Thái Bình 1 | Thai Binh 1 | Thái Bình | Coal | Subcritical | 2×300 | 600 | Operating | 2026-05-23 | 2018 | EVN/GENCO3 | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Thái Bình 2 | Thai Binh 2 | Thái Bình | Coal | Subcritical | 2×600 | 1,200 | Operating | 2026-05-23 | 2023 | PVN/PV Power-linked | MEDIUM | EVN 2023 coal increase ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Delayed PVN project. |\n| Nghi Sơn 1 | Nghi Son 1 | Thanh Hóa | Coal | Subcritical | 2×300 | 600 | Operating | 2026-05-23 | 2013–2014 | EVN/GENCO | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Nghi Sơn 2 | Nghi Son 2 | Thanh Hóa | Coal | Supercritical | 2×600 | 1,200 | Operating BOT | 2026-05-23 | 2022 | Marubeni/Kepco/Toshiba-linked BOT | HIGH | EVN BOT category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Vũng Áng 1 | Vung Ang 1 | Hà Tĩnh | Coal | Subcritical | 2×600 | 1,200 | Operating | 2026-05-23 | 2014–2015 | PV Power | HIGH | PV Power plant page ([pvpower.vn](https://pvpower.vn/en/?utm_source=openai)) | PV Power gas/coal asset ref. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai)) | Major PV Power coal plant. |\n| Vũng Áng 2 | Vung Ang 2 | Hà Tĩnh | Coal | USC/Supercritical | 2×600 | 1,200 | Under construction | 2026-05-23 | planned late-2020s | VAPCO/JERA-led | MEDIUM | PDP8 coal target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Needs EPC/current construction primary. |\n| Vũng Áng 3 | Vung Ang 3 | Hà Tĩnh | Imported LNG | CCGT planned | TBD | ~1,500 | Planned/study; converted concept | 2026-05-23 | TBD | PV Power study | MEDIUM | PV Power LNG study ref. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai)) | PDP8 LNG framework ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Former coal planning concept, now studied as LNG. |\n| Quảng Trạch 1 | Quang Trach 1 | Quảng Bình | Coal | USC/Supercritical | 2×600 | 1,200 | Under construction | 2026-05-23 | planned late-2020s | EVN | MEDIUM | PDP8 coal target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Quảng Trạch 2 | Quang Trach 2 | Quảng Bình | Coal | USC/Supercritical | 2×600 | 1,200 | Planned/PDP | 2026-05-23 | TBD | EVN | LOW | PDP8 coal target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Future coal uncertain under transition policy. |\n| Vĩnh Tân 1 | Vinh Tan 1 | Bình Thuận | Coal | Supercritical | 2×620 | 1,240 | Operating BOT | 2026-05-23 | 2018 | China Southern/CLP/Vinacomin BOT | HIGH | EVN BOT category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Vĩnh Tân 2 | Vinh Tan 2 | Bình Thuận | Coal | Subcritical | 2×622 | 1,244 | Operating | 2026-05-23 | 2014 | EVN/GENCO3 | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Ash/air issues historically. |\n| Vĩnh Tân 3 | Vinh Tan 3 | Bình Thuận | Coal | Supercritical planned | 3×660? | ~1,980 | Cancelled/shelved | 2026-05-23 | n/a | OneEnergy/partners historic | LOW | PDP8 coal context ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Planning-cycle asset; not built. |\n| Vĩnh Tân 4 | Vinh Tan 4 | Bình Thuận | Coal | Supercritical | 2×600 + 1×600 ext. | 1,800 | Operating | 2026-05-23 | 2017–2019 | EVN/GENCO3 | HIGH | EVN fuel-supply note ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai)) | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Includes extension unit. |\n| Duyên Hải 1 | Duyen Hai 1 | Trà Vinh | Coal | Subcritical | 2×622 | 1,245 | Operating | 2026-05-23 | 2015–2016 | EVN/GENCO1 | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Duyên Hải 2 | Duyen Hai 2 | Trà Vinh | Coal | Supercritical | 2×660 | 1,320 | Operating BOT | 2026-05-23 | 2021–2022 | Janakuasa BOT | MEDIUM | EVN BOT category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | COD dates need primary confirmation. |\n| Duyên Hải 3 | Duyen Hai 3 | Trà Vinh | Coal | Subcritical | 2×622 | 1,245 | Operating | 2026-05-23 | 2016–2017 | EVN/GENCO1 | HIGH | EVN coal-borrowing note ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai)) | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) |  |\n| Duyên Hải 3 mở rộng | Duyen Hai 3 extension | Trà Vinh | Coal | Supercritical | 1×688 | 688 | Operating | 2026-05-23 | 2019 | EVN/GENCO1 | HIGH | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Long Phú 1 | Long Phu 1 | Sóc Trăng | Coal | Subcritical/Supercritical | 2×600 | 1,200 | Delayed/unfinished | 2026-05-23 | TBD | PVN | MEDIUM | PDP8 coal target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Contractor/sanctions dispute; not counted operating. |\n| Long Phú 2 | Long Phu 2 | Sóc Trăng | Coal | Planned | 2×600 | 1,200 | Planned/deferred | 2026-05-23 | TBD | BOT candidate | LOW | PDP8 coal context ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Planning-cycle asset. |\n| Sông Hậu 1 | Song Hau 1 | Hậu Giang | Coal | Subcritical | 2×600 | 1,200 | Operating | 2026-05-23 | 2021–2022 | PVN | MEDIUM | EVN coal totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Sông Hậu 2 | Song Hau 2 | Hậu Giang | Coal | Planned | 2×1,000? | ~2,000 | Planned/deferred | 2026-05-23 | TBD | BOT candidate | LOW | PDP8 coal context ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Capacity varies by source. |\n| Nam Định 1 | Nam Dinh 1 | Nam Định | Coal | Supercritical planned | 2×600 | 1,200 | Planned/deferred | 2026-05-23 | TBD | Taekwang/Acwa historic | LOW | PDP8 coal context ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Not built. |\n| Công Thanh coal | Cong Thanh coal | Thanh Hóa | Coal | Planned | TBD | ~600? | Converted/shelved | 2025-05-30 | n/a | Cong Thanh | LOW | MOIT Decision 1509 note ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | PDP8 LNG framework ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT notes LNG Công Thanh conversion from coal. |\n| Bà Rịa | Ba Ria | Bà Rịa–Vũng Tàu | Domestic gas | OCGT/CCGT mixed | mixed | ~390 | Operating/legacy | 2026-05-23 | 1990s | EVN/GENCO3 | MEDIUM | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Aging gas turbine complex. |\n| Phú Mỹ 1 | Phu My 1 | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 3 GT + ST | ~1,090 | Operating | 2026-05-23 | 2000s | EVN/GENCO3 | HIGH | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Phú Mỹ complex. |\n| Phú Mỹ 2.1 | Phu My 2.1 | Bà Rịa–Vũng Tàu | Domestic gas | CCGT/OCGT | mixed | ~477 | Operating | 2026-05-23 | 1997–2000s | EVN/GENCO3 | MEDIUM | Secondary list shows 477 MW ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) |  |\n| Phú Mỹ 2.1 MR | Phu My 2.1 Extension | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | mixed | ~440 | Operating | 2026-05-23 | 2000s | EVN/GENCO3 | MEDIUM | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Unit naming varies. |\n| Phú Mỹ 2.2 | Phu My 2.2 | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 2 GT + ST | ~715 | Operating BOT | 2026-05-23 | 2005 | Mekong Energy BOT | HIGH | EVN BOT category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Phú Mỹ 3 | Phu My 3 | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 2 GT + ST | ~720 | Operating BOT | 2026-05-23 | 2004 | Phu My 3 BOT | HIGH | EVN BOT category ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Phú Mỹ 4 | Phu My 4 | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 2 GT + ST | ~450 | Operating | 2026-05-23 | 2004 | EVN/GENCO3 | HIGH | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Hiệp Phước | Hiep Phuoc | TP.HCM | Domestic gas / oil | OCGT/steam uncertain | mixed | ~375 | Operating/legacy uncertain | 2026-05-23 | 1990s | Hiep Phuoc Power Co. | LOW | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | PV GAS HCMC gas-market note ([studocu.com](https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai)) | Status/units need verification. |\n| Nhơn Trạch 1 | Nhon Trach 1 | Đồng Nai | Domestic gas | CCGT | 2 GT + ST | ~450 | Operating | 2026-05-23 | 2009 | PV Power | HIGH | PV Power gas fleet ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai)) | GEM/secondary plant page ([gem.wiki](https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai)) | Can run DO when gas constrained. |\n| Nhơn Trạch 2 | Nhon Trach 2 | Đồng Nai | Domestic gas | CCGT | 2 GT + ST | ~750 | Operating | 2026-05-23 | 2011 | PV Power NT2 | HIGH | PV Power gas fleet ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) |  |\n| Cà Mau 1 | Ca Mau 1 | Cà Mau | Domestic gas | CCGT | block | ~750 | Operating | 2026-05-23 | 2008 | PV Power Ca Mau | HIGH | PV GAS Cà Mau capacity note ([studocu.com](https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai)) | PV Power gas fleet ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai)) | Often reported with Cà Mau 2 as 1,500 MW. |\n| Cà Mau 2 | Ca Mau 2 | Cà Mau | Domestic gas | CCGT | block | ~750 | Operating | 2026-05-23 | 2008 | PV Power Ca Mau | HIGH | PV GAS Cà Mau capacity note ([studocu.com](https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai)) | PV Power gas fleet ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai)) |  |\n| Ô Môn 1 | O Mon 1 | Cần Thơ | Domestic gas / oil | OCGT/steam uncertain | 2×330? | ~660 | Operating/transition | 2026-05-23 | 2009/2015 | EVN/GENCO2 | MEDIUM | EVN gas+oil totals ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Intended Block B gas complex. |\n| Ô Môn 2 | O Mon 2 | Cần Thơ | Domestic gas | CCGT planned | ~750 | ~750 | Planned/delayed | 2026-05-23 | TBD | Marubeni/EVN historic | LOW | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | PDP8 domestic gas target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Depends on Block B gas. |\n| Ô Môn 3 | O Mon 3 | Cần Thơ | Domestic gas | CCGT planned | ~1,050? | ~1,050 | Planned/delayed | 2026-05-23 | TBD | EVN/PVN | LOW | PDP8 domestic gas target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Secondary list ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai)) | Capacity varies. |\n| Ô Môn 4 | O Mon 4 | Cần Thơ | Domestic gas | CCGT | 1 block | ~1,150 | Under construction | 2025-08 approx | TBD | Petrovietnam | MEDIUM | Construction report ([reddit.com](https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai)) | PDP8 domestic gas target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Reddit source points to news; primary needed. |\n| Nhơn Trạch 3 | Nhon Trach 3 | Đồng Nai | Imported LNG | CCGT | 1 block | ~750 | Operating/commissioning | 2026-04-14 | 2025 | PV Power | HIGH | PV Power output news ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai)) | PetroTimes COD contribution note ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai)) | Vietnam’s first LNG-to-power cluster. |\n| Nhơn Trạch 4 | Nhon Trach 4 | Đồng Nai | Imported LNG | CCGT | 1 block | ~750 | Operating/commissioning | 2026-04-14 | 2025 | PV Power | HIGH | PV Power output news ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai)) | PV Power/grid link note ([pvpower.vn](https://pvpower.vn/en/?utm_source=openai)) |  |\n| LNG Quảng Ninh | Quang Ninh LNG | Quảng Ninh | Imported LNG | CCGT | TBD | 1,500 | Planned/PDP | 2025-05-30 | 2028–2029 planned | Consortium/provincial | HIGH | MOIT Decision 1509 ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | KPMG PDP8 summary ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Listed in MOIT appendix. |\n| LNG Thái Bình | Thai Binh LNG | Thái Bình | Imported LNG | CCGT | TBD | ~1,500 | Planned/PDP | 2026-05-23 | TBD | TBD | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Exact annex row not verified. |\n| LNG Hải Phòng | Hai Phong LNG | Hải Phòng | Imported LNG | CCGT | TBD | ~1,500 | Planned/PDP | 2026-05-23 | TBD | TBD | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Exact primary row not verified. |\n| LNG Nghi Sơn | Nghi Son LNG | Thanh Hóa | Imported LNG | CCGT | TBD | ~1,500 | Planned/PDP | 2026-05-23 | TBD | TBD | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Exact primary row not verified. |\n| LNG Quỳnh Lập | Quynh Lap LNG | Nghệ An | Imported LNG | CCGT | TBD | ~1,500 | Study/planned | 2026-05-23 | TBD | PV Power study | MEDIUM | PV Power study ref. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai)) | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Former coal site concept. |\n| LNG Long Sơn | Long Son LNG | Bà Rịa–Vũng Tàu | Imported LNG | CCGT | TBD | ~1,500 | Planned/PDP | 2026-05-23 | TBD | TBD | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Needs primary row verification. |\n| LNG Sơn Mỹ 1 | Son My 1 LNG | Bình Thuận | Imported LNG | CCGT | TBD | ~2,250 | Planned/PDP | 2026-05-23 | late-2020s | EDF/JERA/PVN historic | MEDIUM | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Capacity/sponsors need current confirmation. |\n| LNG Sơn Mỹ 2 | Son My 2 LNG | Bình Thuận | Imported LNG | CCGT | TBD | ~2,250 | Planned/PDP | 2026-05-23 | late-2020s | AES/PVN historic | MEDIUM | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Capacity/sponsors need current confirmation. |\n| LNG Cà Ná | Ca Na LNG | Ninh Thuận | Imported LNG | CCGT | TBD | ~1,500 | Planned/uncertain | 2026-05-23 | TBD | Provincial/PVN concept | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Sponsor/status uncertain. |\n| LNG Bạc Liêu | Bac Lieu LNG | Bạc Liêu | Imported LNG | CCGT | multiple blocks | ~3,200 | Planned/delayed | 2026-05-23 | TBD | Delta Offshore Energy historic | MEDIUM | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Major delayed LNG IPP. |\n| LNG Long An 1 | Long An 1 LNG | Long An | Imported LNG | CCGT | block | ~1,500 | Planned/PDP | 2026-05-23 | TBD | VinaCapital/Hanwha historic | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Needs current investor confirmation. |\n| LNG Long An 2 | Long An 2 LNG | Long An | Imported LNG | CCGT | block | ~1,500 | Planned/PDP | 2026-05-23 | TBD | VinaCapital/Hanwha historic | LOW | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix context ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | Needs current investor confirmation. |\n| LNG Hiệp Phước giai đoạn II | Hiep Phuoc LNG phase II | TP.HCM | Imported LNG | CCGT | TBD | 1,500 | Planned/PDP | 2025-05-30 | 2025–2030 planned | Hiep Phuoc/municipal | HIGH | MOIT Decision 1509 ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | MOIT appendix note references HCMC commitment. |\n| LNG Công Thanh | Cong Thanh LNG | Thanh Hóa | Imported LNG | CCGT | TBD | 1,500 | Planned/PDP | 2025-05-30 | 2031–2035 planned | Cong Thanh | HIGH | MOIT Decision 1509 ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai)) | KPMG PDP8 summary ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Converted from coal concept. |\n| Miền Trung 1 | Mien Trung 1 LNG | Bình Định/central region uncertain | Imported LNG | CCGT | TBD | ~1,500 | Study/proposed | 2026-05-23 | TBD | PV Power | MEDIUM | PV Power LNG plan ([vietnamnet.vn](https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai)) | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Province not verified. |\n| Miền Trung 2 | Mien Trung 2 LNG | Bình Định/central region uncertain | Imported LNG | CCGT | TBD | ~1,500 | Study/proposed | 2026-05-23 | TBD | PV Power | MEDIUM | PV Power LNG plan ([vietnamnet.vn](https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai)) | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Province not verified. |\n| Cà Mau 3 / Cà Mau expansion | Ca Mau LNG/gas expansion | Cà Mau | Imported LNG / gas | CCGT | TBD | ~1,500? | Study/proposed | 2026-05-23 | TBD | PV Power | LOW | PV Power study ref. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai)) | PDP8 LNG target ([assets.kpmg.com](https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf?utm_source=openai)) | Capacity not verified. |\n\n---\n\n## 4. Statistical summaries\n\n### 4.1 Capacity by fuel × status  \n**Caveat:** This summary aggregates the table above, not an official MOIT total. Planned LNG and future coal rows include uncertain capacities, so use as inventory arithmetic only.\n\n| Fuel | Operating / commissioning | Under construction | Planned / study / PDP | Delayed / deferred | Cancelled / converted | Total table capacity |\n|---|---:|---:|---:|---:|---:|---:|\n| Coal | ~25,660 MW | ~2,400 MW | ~3,600 MW | ~6,800 MW | ~2,580 MW | ~41,040 MW |\n| Domestic gas | ~7,217 MW | ~1,150 MW | ~1,800 MW | ~1,800 MW | 0 | ~11,967 MW |\n| Imported LNG | ~1,500 MW | 0 | ~30,000+ MW | ~3,200 MW | 0 | ~34,700+ MW |\n| **Total** | **~34,377 MW** | **~3,550 MW** | **~35,400+ MW** | **~11,800 MW** | **~2,580 MW** | **~87,700+ MW** |\n\n**Reconciliation note:** EVN’s official 2024 national installed-capacity table reports **26,757 MW coal** and **8,653 MW gas + oil** actually installed. The operating subtotal above is broadly consistent for coal, but lower/uncertain for gas because several legacy gas/oil assets and captive plants need primary verification. ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai))  \n\n### 4.2 Top provinces by table thermal capacity\n\n| Rank | Province | Approx. table capacity | Dominant fuel(s) | Notes |\n|---:|---|---:|---|---|\n| 1 | Bình Thuận | ~10,764 MW | Coal, LNG | Vĩnh Tân + Sơn Mỹ LNG. |\n| 2 | Quảng Ninh | ~7,160 MW | Coal, LNG | Large northern coal base + LNG Quảng Ninh. |\n| 3 | Bà Rịa–Vũng Tàu | ~6,145 MW | Domestic gas, LNG | Phú Mỹ/Bà Rịa + Long Sơn LNG. |\n| 4 | Trà Vinh | ~4,498 MW | Coal | Duyên Hải power center. |\n| 5 | Thanh Hóa | ~5,400 MW | Coal, LNG | Nghi Sơn + Công Thanh/Nghi Sơn LNG concepts. |\n| 6 | Đồng Nai | ~2,700 MW | Domestic gas, LNG | Nhơn Trạch complex. |\n| 7 | Cà Mau | ~3,000 MW | Domestic gas, LNG | Cà Mau 1–2 + expansion concept. |\n| 8 | Bạc Liêu | ~3,200 MW | LNG | Large delayed LNG project. |\n| 9 | Long An | ~3,000 MW | LNG | Long An LNG 1–2. |\n| 10 | Hà Tĩnh | ~3,900 MW | Coal, LNG | Vũng Áng 1/2/3. |\n| 11 | Cần Thơ | ~3,610 MW | Domestic gas | Ô Môn complex. |\n| 12 | Sóc Trăng | ~2,400 MW | Coal | Long Phú 1–2. |\n| 13 | Hậu Giang | ~3,200 MW | Coal | Sông Hậu 1–2. |\n| 14 | Hải Phòng | ~2,700 MW | Coal, LNG | Hải Phòng coal + LNG concept. |\n| 15 | Thái Bình | ~3,300 MW | Coal, LNG | Thái Bình 1/2 + LNG concept. |\n\n### 4.3 Timeline of additions by period and fuel  \n**Operating and commissioning additions only; future dates for planned projects excluded unless table status is under construction/commissioning.**\n\n| Period | Coal additions | Domestic gas additions | Imported LNG additions | Notes |\n|---|---:|---:|---:|---|\n| Pre-1990 | ~1,000 MW | 0 | 0 | Legacy coal: Phả Lại, Uông Bí, Ninh Bình. |\n| 1990–1999 | limited | ~800–1,000 MW | 0 | Bà Rịa/Phú Mỹ early gas era. |\n| 2000–2009 | ~2,000 MW | ~5,000 MW | 0 | Phú Mỹ buildout, Cà Mau, Nhơn Trạch 1, O Mon 1; early new coal. |\n| 2010–2014 | ~5,000 MW | ~750 MW | 0 | Hải Phòng, Quảng Ninh, Nghi Sơn 1, Vĩnh Tân 2, Nhơn Trạch 2. |\n| 2015–2019 | ~10,000 MW | small | 0 | Mông Dương, Thái Bình 1, Vĩnh Tân 1/4, Duyên Hải. |\n| 2020–2024 | ~5,000 MW | limited | 0 | Nghi Sơn 2, Duyên Hải 2, Sông Hậu 1, Thái Bình 2. |\n| 2025–2026 | 0 | 0 / O Mon under construction | ~1,500 MW | Nhơn Trạch 3–4 began contributing LNG power in 2025–2026. ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai)) |\n\n### 4.4 Data-quality summary by confidence level and fuel\n\n| Fuel | HIGH rows | MEDIUM rows | LOW rows | Main uncertainty drivers |\n|---|---:|---:|---:|---|\n| Coal | 17 | 13 | 7 | Older unit retirement; future coal cancellations/conversions; BOT CODs. |\n| Domestic gas | 8 | 6 | 4 | Legacy gas/oil configuration; Ô Môn schedule; captive/industrial status. |\n| Imported LNG | 4 | 5 | 10+ | PDP8 annex status, investor changes, financing/PPA/GSA bankability. |\n\n---\n\n## 5. Annotated bibliography of cited sources\n\n1. **Vietnam Electricity (EVN). _Annual Report 2022–2023._** URL available via EVN PDF.  \n   Used for installed-capacity by fuel in 2022 and 2023, including coal-fired capacity of 25,312 MW in 2022 and 26,756 MW in 2023. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai))  \n\n2. **Vietnam Electricity (EVN). _Annual Report 2025 / 2024 system data._** URL available via EVN PDF.  \n   Used for 2024 national installed capacity: 82,387 MW total; 26,757 MW coal; 8,653 MW gas + oil; ownership split among EVN/GENCOs, PVN, Vinacomin, BOT and other investors. ([evn.com.vn](https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf?utm_source=openai))  \n\n3. **Vietnam Electricity (EVN). “Overview of national power sources in 2023.”**  \n   Used for qualitative sector challenges: coal supply shortfalls, Southeast and Southwest gas consumption, declining gas availability relative to demand. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai))  \n\n4. **Vietnam Electricity (EVN). Vietnamese original: “Một số số liệu tổng quan về nguồn điện toàn quốc năm 2023.” English: “Some overview data on national power sources in 2023.”**  \n   Used as parallel Vietnamese-language support for 2023 fuel and dispatch context and EVN’s negotiations with PVN/PV GAS for gas/LNG supply arrangements. ([evn.com.vn](https://www.evn.com.vn/d6/news/Mot-so-so-lieu-tong-quan-ve-nguon-dien-toan-quoc-nam-2023-66-142-124707.aspx?utm_source=openai))  \n\n5. **Vietnam Electricity (EVN). “EVN implements a series of urgent measures to ensure power supply in the dry season of 2023.”**  \n   Used for evidence of coal-supply interventions affecting Duyên Hải 3 and gas-supply constraints affecting gas-turbine operation. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx?utm_source=openai))  \n\n6. **Government Office of Vietnam. Vietnamese original: “Thông báo số 484/TB-VPCP… rà soát tình hình triển khai Quyết định số 768/QĐ-TTg ngày 15 tháng 4 năm 2025…” English: “Notice No. 484/TB-VPCP… review of implementation of Decision No. 768/QĐ-TTg dated 15 April 2025…”**  \n   Used to confirm existence and implementation context of the 2025 revised PDP8 approval decision. ([vanban.chinhphu.vn](https://vanban.chinhphu.vn/?docid=215339&pageid=27160&utm_source=openai))  \n\n7. **Ministry of Industry and Trade (MOIT). Vietnamese original: “Quyết định 1509/QĐ-BCT ngày 30/5/2025… Danh mục và tiến độ dự kiến các dự án nguồn, lưới điện.” English: “Decision 1509/QĐ-BCT dated 30 May 2025… List and expected schedule of generation and grid projects.”**  \n   Used for PDP8 implementation annex references, especially LNG Quảng Ninh 1,500 MW, LNG Hiệp Phước phase-type 1,500 MW entry, and LNG Công Thanh 1,500 MW with coal-to-LNG conversion note. ([moit.gov.vn](https://moit.gov.vn/upload/2005517/20250531/Quyet_dinh_1509_QD-BCT_ngay_30_5_2025_df799.pdf?utm_source=openai))  \n\n8. **KPMG Vietnam. “Revised Power Development Plan VIII of Vietnam.”**  \n   Used for summarized 2030 revised PDP8 capacity targets: coal-fired thermal 31,055 MW, domestic gas-fired 10,861–14,930 MW, LNG thermal 22,524 MW, and transition notes. ([kpmg.com](https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html?utm_source=openai))  \n\n9. **International Energy Agency (IEA). “Power Development Master Plan VIII – Policies.”**  \n   Used as a policy-context source for PDP8 and longer-term 2050 direction, including future conversion of thermal capacity to biomass/ammonia/hydrogen pathways. ([iea.org](https://www.iea.org/policies/28683-power-development-master-plan-viii?utm_source=openai))  \n\n10. **PetroVietnam Power Corporation (PV Power). Corporate website.**  \n    Used for PV Power corporate plant references, including Cà Mau 1–2, Vũng Áng 1, and Nhơn Trạch power plants, and for current news on Nhơn Trạch 4 grid connection. ([pvpower.vn](https://pvpower.vn/en/?utm_source=openai))  \n\n11. **PV Power. “PV Power takes the initiative in power plant optimal operating solutions.”**  \n    Used for PV Power’s statement that it manages and operates Nhơn Trạch 1, Nhơn Trạch 2, and Cà Mau 1&2 gas plants, totaling around 2,700 MW. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-takes-the-initiative-in-power-plant-optimal-operating-solutions-5397.htm?utm_source=openai))  \n\n12. **PV GAS / annual-report-derived source.**  \n    Used for the statement that dry gas is transported to two Cà Mau power plants with total capacity around 1,500 MW and to contextualize gas supply to Southeast/Southwest plants. ([studocu.com](https://www.studocu.com/en-us/document/bowling-green-state-university/introduction-to-geology/annual-report-2024-for-petrovietnam-gas-joint-stock-corporation-pv-gas/123916287?utm_source=openai))  \n\n13. **PetroVietnam / PetroTimes. Vietnamese original: “Nhơn Trạch 3&4 bắt đầu đóng góp sản lượng, tạo động lực tăng trưởng mới cho PV Power.” English: “Nhơn Trạch 3&4 begin contributing output, creating new growth momentum for PV Power.”**  \n    Used to support the status that Nhơn Trạch 3–4 began contributing generation in 2025. ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/nhon-trach-34-bat-dau-dong-gop-san-luong-tao-dong-luc-tang-truong-moi-cho-pv-power-731843.html?utm_source=openai))  \n\n14. **PetroVietnam / PetroTimes. Vietnamese original: “PV Power lập kỷ lục 100 triệu kWh/ngày, đóng góp gần 10% điện năng quốc gia.” English: “PV Power sets a record of 100 million kWh/day, contributing nearly 10% of national electricity.”**  \n    Used to support the April 2026 operational contribution of Nhơn Trạch 3 and 4. ([petrovietnam.petrotimes.vn](https://petrovietnam.petrotimes.vn/pv-power-lap-ky-luc-100-trieu-kwhngay-dong-gop-gan-10-dien-nang-quoc-gia-739912.html?utm_source=openai))  \n\n15. **VietnamNet. “PV Power to build four new LNG-fired plants.”**  \n    Used for PV Power’s proposed LNG portfolio: Nhơn Trạch 3, Nhơn Trạch 4, Miền Trung 1 and Miền Trung 2. ([vietnamnet.vn](https://vietnamnet.vn/en/pv-power-to-build-four-new-lng-fired-plants-648753.html?utm_source=openai))  \n\n16. **The Investor. “PV Power says profit may fall in 2026 despite higher output due to extreme weather.”**  \n    Used for PV Power’s study of LNG-fueled projects including Quỳnh Lập, Vũng Áng 3, and Cà Mau expansion. ([theinvestor.vn](https://theinvestor.vn/pv-power-says-profit-may-fall-in-2026-despite-higher-output-due-to-extreme-weather-d17723.html?utm_source=openai))  \n\n17. **Global Energy Monitor. “Nhon Trach power station.”**  \n    Secondary source used for unit-level Nhơn Trạch references and financing context; not treated as primary. ([gem.wiki](https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai))  \n\n18. **Wikipedia. “List of power stations in Vietnam.”**  \n    Secondary compilation used only as a backstop for plant names/capacities where primary plant-level documents were not verified in this pass. Cells relying on this are marked MEDIUM or LOW. ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?utm_source=openai))  \n\n19. **Reddit-linked news snippet: “Petrovietnam begins construction of 1.15 GW thermal power plant in Mekong Delta.”**  \n    Used only as weak support for O Mon IV construction status; row marked MEDIUM/LOW because the underlying primary/news URL was not directly verified in this session. ([reddit.com](https://www.reddit.com/r/VietnamNews/comments/1mx4l4j?utm_source=openai))  \n\n---\n\n## 6. Known gaps requiring follow-up primary verification\n\n1. **MOIT Decision 1509 appendix extraction:** the full appendix should be parsed row-by-row for all LNG, coal and domestic-gas entries, schedules and notes.  \n2. **Electricity Regulatory Authority of Vietnam generation-license annexes:** needed for unit-level COD, capacity and owner/operator status.  \n3. **EVN GENCO1/2/3 annual reports:** needed for Duyên Hải, Vĩnh Tân, Phú Mỹ, Ô Môn and legacy coal/gas unit detail.  \n4. **PV Power 2024/2025 annual reports:** needed for definitive Nhơn Trạch 3–4 COD, O Mon IV status, Cà Mau and Vũng Áng asset details.  \n5. **TKV/Vinacomin annual reports:** needed for Cao Ngạn, Na Dương, Sơn Động, Cẩm Phả and Mạo Khê exact capacities/status.  \n6. **Captive/industrial thermal plants >30 MWe:** Hiep Phuoc and industrial CHP/cogeneration assets require provincial or industrial-zone primary approvals; this inventory likely undercounts them.",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779511911.0,
+  "conversation": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 17816,
+    "input_tokens_details": {
+      "cached_tokens": 4736
+    },
+    "output_tokens": 14753,
+    "output_tokens_details": {
+      "reasoning_tokens": 348
+    },
+    "total_tokens": 32569
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

@@ -1,0 +1,222 @@
+[
+  {
+    "agent": "mistral",
+    "run": 1,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 8428,
+    "wall_s": 195.29,
+    "cost_usd": 0.038,
+    "classifier_cost_usd": 0.000135,
+    "narrative_chars": 27992
+  },
+  {
+    "agent": "mistral",
+    "run": 2,
+    "model": "mistral-large-2512",
+    "classification": "no_report",
+    "tokens_out": 269,
+    "wall_s": 10.86,
+    "cost_usd": 0.2258,
+    "classifier_cost_usd": 2.5e-05,
+    "narrative_chars": 0
+  },
+  {
+    "agent": "mistral",
+    "run": 3,
+    "model": "mistral-large-2512",
+    "classification": "no_report",
+    "tokens_out": 564,
+    "wall_s": 11.26,
+    "cost_usd": 0.0012,
+    "classifier_cost_usd": 5.4e-05,
+    "narrative_chars": 2216
+  },
+  {
+    "agent": "mistral",
+    "run": 4,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 7762,
+    "wall_s": 191.95,
+    "cost_usd": 0.187,
+    "classifier_cost_usd": 0.000115,
+    "narrative_chars": 24170
+  },
+  {
+    "agent": "mistral",
+    "run": 5,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 5133,
+    "wall_s": 133.74,
+    "cost_usd": 0.2831,
+    "classifier_cost_usd": 0.000129,
+    "narrative_chars": 15064
+  },
+  {
+    "agent": "qwen",
+    "run": 1,
+    "model": "qwen3-max-2026-01-23",
+    "classification": "report",
+    "tokens_out": 7032,
+    "wall_s": 212.84,
+    "cost_usd": 0.0429,
+    "classifier_cost_usd": 0.000142,
+    "narrative_chars": 19812
+  },
+  {
+    "agent": "qwen",
+    "run": 2,
+    "model": "qwen3-max-2026-01-23",
+    "classification": "report",
+    "tokens_out": 7816,
+    "wall_s": 236.6,
+    "cost_usd": 0.0476,
+    "classifier_cost_usd": 0.000138,
+    "narrative_chars": 22129
+  },
+  {
+    "agent": "qwen",
+    "run": 3,
+    "model": "qwen3-max-2026-01-23",
+    "classification": "report",
+    "tokens_out": 7275,
+    "wall_s": 220.52,
+    "cost_usd": 0.0444,
+    "classifier_cost_usd": 0.000139,
+    "narrative_chars": 21096
+  },
+  {
+    "agent": "qwen",
+    "run": 4,
+    "model": "qwen3-max-2026-01-23",
+    "classification": "report",
+    "tokens_out": 8175,
+    "wall_s": 247.02,
+    "cost_usd": 0.0498,
+    "classifier_cost_usd": 0.000138,
+    "narrative_chars": 23191
+  },
+  {
+    "agent": "qwen",
+    "run": 5,
+    "model": "qwen3-max-2026-01-23",
+    "classification": "report",
+    "tokens_out": 8322,
+    "wall_s": 251.86,
+    "cost_usd": 0.0507,
+    "classifier_cost_usd": 0.000142,
+    "narrative_chars": 23011
+  },
+  {
+    "agent": "anthropic",
+    "run": 1,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 16418,
+    "wall_s": 312.95,
+    "cost_usd": 0.8982,
+    "classifier_cost_usd": 0.00015,
+    "narrative_chars": 13957
+  },
+  {
+    "agent": "anthropic",
+    "run": 2,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 16449,
+    "wall_s": 262.27,
+    "cost_usd": 0.9253,
+    "classifier_cost_usd": 0.000145,
+    "narrative_chars": 28162
+  },
+  {
+    "agent": "anthropic",
+    "run": 3,
+    "model": "claude-opus-4-6",
+    "classification": "no_report",
+    "tokens_out": 16429,
+    "wall_s": 277.34,
+    "cost_usd": 0.9432,
+    "classifier_cost_usd": 0.000176,
+    "narrative_chars": 29083
+  },
+  {
+    "agent": "anthropic",
+    "run": 4,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 16427,
+    "wall_s": 282.83,
+    "cost_usd": 0.9305,
+    "classifier_cost_usd": 0.000143,
+    "narrative_chars": 13774
+  },
+  {
+    "agent": "anthropic",
+    "run": 5,
+    "model": "claude-opus-4-6",
+    "classification": "no_report",
+    "tokens_out": 16447,
+    "wall_s": 295.01,
+    "cost_usd": 0.913,
+    "classifier_cost_usd": 0.000164,
+    "narrative_chars": 13505
+  },
+  {
+    "agent": "openai",
+    "run": 1,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 13557,
+    "wall_s": 174.0,
+    "cost_usd": 0.2673,
+    "classifier_cost_usd": 0.000151,
+    "narrative_chars": 49930
+  },
+  {
+    "agent": "openai",
+    "run": 2,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 14753,
+    "wall_s": 181.33,
+    "cost_usd": 0.2658,
+    "classifier_cost_usd": 0.000134,
+    "narrative_chars": 60852
+  },
+  {
+    "agent": "openai",
+    "run": 3,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 13280,
+    "wall_s": 172.99,
+    "cost_usd": 0.2437,
+    "classifier_cost_usd": 0.000153,
+    "narrative_chars": 41882
+  },
+  {
+    "agent": "openai",
+    "run": 4,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 14411,
+    "wall_s": 189.51,
+    "cost_usd": 0.2604,
+    "classifier_cost_usd": 0.000134,
+    "narrative_chars": 49295
+  },
+  {
+    "agent": "openai",
+    "run": 5,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 11882,
+    "wall_s": 149.27,
+    "cost_usd": 0.2219,
+    "classifier_cost_usd": 0.000142,
+    "narrative_chars": 37584
+  }
+]
