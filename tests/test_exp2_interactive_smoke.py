@@ -226,12 +226,12 @@ def test_extract_phase_a_design_handles_python_triple_quotes():
 def test_extract_phase_a_design_handles_literal_newlines_inside_json_strings():
     """Mistral may emit raw newlines inside quoted values of an otherwise valid envelope."""
     raw = (
-        '```json\n{\n'
+        "```json\n{\n"
         '  "system_prompt": "System line 1\nSystem line 2",\n\n'
         '  "designed_prompt": "Heading\n\nBullet one\nBullet two",\n\n'
         '  "settings": {"thinking": true, "max_tokens": 4000},\n\n'
         '  "rationale": "Because provenance matters."\n'
-        '}\n```'
+        "}\n```"
     )
 
     obj = extract_phase_a_design(raw)
@@ -273,9 +273,11 @@ def test_main_dry_run_multiple_agents_writes_meta_and_summary(tmp_path):
     )
     assert rc == 0
 
-    assert (tmp_path / "mistral" / "mistral_meta_prompt.txt").exists()
-    assert (tmp_path / "openai" / "openai_meta_prompt.txt").exists()
-    summary = (tmp_path / "summary.md").read_text(encoding="utf-8")
+    assert (tmp_path / "mistral_run01" / "mistral_meta_prompt.txt").exists()
+    assert (tmp_path / "openai_run01" / "openai_meta_prompt.txt").exists()
+    summaries = list(tmp_path.glob("summary_*.md"))
+    assert summaries, "no summary_*.md written"
+    summary = summaries[0].read_text(encoding="utf-8")
     assert "mistral" in summary
     assert "openai" in summary
 

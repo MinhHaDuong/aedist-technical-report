@@ -25,6 +25,7 @@ import argparse
 import json
 import logging
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -47,6 +48,38 @@ PROBE_CAP_USD = 3.00
 def load_naive_prompt(path: Path = NAIVE_PROMPT_PATH) -> str:
     """Read Doc 07 from disk, strip the meta-framing line, return the prompt."""
     return strip_meta_framing(path.read_text(encoding="utf-8"))
+
+
+def _write_summary_md(output_dir: Path, summary: list[dict]) -> Path:
+    agents_slug = "_".join(dict.fromkeys(r["agent"] for r in summary if "error" not in r))
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%MZ")
+    filename = f"summary_{ts}_{agents_slug}.md"
+    total_cost = sum(r.get("cost_usd", 0.0) for r in summary)
+    lines = [
+        "# Naive Arm Summary",
+        "",
+        "| Agent | Run | Model | Classification | Cost USD | Wall s | Narrative chars |",
+        "|---|---:|---|---|---:|---:|---:|",
+    ]
+    for r in summary:
+        if "error" in r:
+            lines.append(f"| {r['agent']} | {r['run']} | error | error | 0 | 0 | 0 |")
+        else:
+            lines.append(
+                "| {agent} | {run} | {model} | {cls} | {cost:.4f} | {wall:.1f} | {chars} |".format(
+                    agent=r["agent"],
+                    run=r["run"],
+                    model=r.get("model", "?"),
+                    cls=r.get("classification", "?"),
+                    cost=float(r.get("cost_usd", 0.0)),
+                    wall=float(r.get("wall_s", 0.0)),
+                    chars=int(r.get("narrative_chars", 0)),
+                )
+            )
+    lines += ["", f"Total cost: ${total_cost:.4f}"]
+    path = output_dir / filename
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
 
 
 def load_model_meta(family: str) -> dict:
@@ -306,6 +339,7 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(summary, indent=2),
         encoding="utf-8",
     )
+    summary_md_path = _write_summary_md(args.output_dir, summary)
     total_cost = sum(s.get("cost_usd", 0) for s in summary)
     n_report = sum(1 for s in summary if s.get("classification") == "report")
     n_no_report = sum(1 for s in summary if s.get("classification") == "no_report")
@@ -315,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         n_report,
         n_no_report,
         total_cost,
-        args.output_dir / "summary.json",
+        summary_md_path,
     )
     return 0
 

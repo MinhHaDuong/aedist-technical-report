@@ -31,12 +31,13 @@ import logging
 import re
 import sys
 import time
+from datetime import UTC
 from pathlib import Path
 
 import yaml
 
 from aedist import adapter_mistral
-from aedist.schema import MethodParams, ResourceUse, ResultSummary, RunRecord
+from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
 
 _TRIPLE_QUOTE_RE = re.compile(r'"""(.*?)"""', re.DOTALL)
@@ -493,8 +494,12 @@ def run_anthropic_call(
         new_user_msg = payload["messages"][-1]
         payload["messages"] = list(continuation["messages"]) + [new_user_msg]
     if extra_metadata is not None:
-        # Anthropic only honours ``user_id`` natively; other keys pass through.
-        payload["metadata"] = {k: str(v) for k, v in extra_metadata.items()}
+        # Anthropic metadata only accepts ``user_id``; all other keys are
+        # rejected with a 400.  Drop silently — budget info is already in
+        # the status-line prefix of the user message.
+        user_id = extra_metadata.get("user_id")
+        if user_id:
+            payload["metadata"] = {"user_id": str(user_id)}
 
     # Pre-call cap. n_searches uses the provisioned ``max_uses=3`` as the
     # conservative ceiling; the post-call recheck below tightens against
@@ -1175,7 +1180,13 @@ def _estimate_inventory_rows(agent: str, phase_b: dict, output_dir: Path) -> int
     return 0
 
 
-def _write_summary(output_dir: Path, per_agent: list[dict]) -> None:
+def _write_summary(output_dir: Path, per_agent: list[dict]) -> Path:
+    from datetime import datetime
+
+    agents_slug = "_".join(item["agent"] for item in per_agent)
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%MZ")
+    filename = f"summary_{ts}_{agents_slug}.md"
+
     total_cost = sum(float(item.get("total_cost_usd", 0.0)) for item in per_agent)
     lines = [
         "# Phase B-0 Summary",
@@ -1183,31 +1194,36 @@ def _write_summary(output_dir: Path, per_agent: list[dict]) -> None:
         "| Agent | Status | Cost USD | Wall s | Turns | Class Trace | Inventory Rows |",
         "|---|---:|---:|---:|---:|---|---:|",
     ]
-    for item in per_agent:
-        lines.append(
-            "| {agent} | {status} | {cost:.4f} | {wall:.1f} | {turns} | {trace} | {rows} |".format(
-                agent=item["agent"],
-                status=item.get("status", "error"),
-                cost=float(item.get("total_cost_usd", 0.0)),
-                wall=float(item.get("wall_s", 0.0)),
-                turns=int(item.get("turns", 0)),
-                trace=item.get("class_trace", "n/a"),
-                rows=int(item.get("inventory_rows", 0)),
-            )
+    lines.extend(
+        "| {agent} | {status} | {cost:.4f} | {wall:.1f} | {turns} | {trace} | {rows} |".format(
+            agent=item["agent"],
+            status=item.get("status", "error"),
+            cost=float(item.get("total_cost_usd", 0.0)),
+            wall=float(item.get("wall_s", 0.0)),
+            turns=int(item.get("turns", 0)),
+            trace=item.get("class_trace", "n/a"),
+            rows=int(item.get("inventory_rows", 0)),
         )
+        for item in per_agent
+    )
     lines.append("")
     lines.append(f"Total B-0 cost: ${total_cost:.4f}")
-    (output_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    path = output_dir / filename
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
 
 
 def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
-    agent_output_dir = args.output_dir / agent
+    run_tag = f"{agent}_run{args.run_number:02d}"
+    agent_output_dir = args.output_dir / run_tag
     agent_output_dir.mkdir(parents=True, exist_ok=True)
 
     meta_prompt = assemble_meta_prompt()
     meta_prompt_path = agent_output_dir / f"{agent}_meta_prompt.txt"
     meta_prompt_path.write_text(meta_prompt, encoding="utf-8")
-    log.info("Meta-prompt assembled for %s (%d chars) -> %s", agent, len(meta_prompt), meta_prompt_path)
+    log.info(
+        "Meta-prompt assembled for %s (%d chars) -> %s", agent, len(meta_prompt), meta_prompt_path
+    )
 
     if args.dry_run:
         return {
@@ -1220,25 +1236,48 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
             "inventory_rows": 0,
         }
 
-    wait_for_space(
-        f"Phase A: send meta-prompt to {agent}. Cap ${args.budget_cap_phase_a:.2f}.",
-        no_confirm=args.no_confirm,
-    )
-    phase_a_raw_path = agent_output_dir / f"{agent}_phase_a.raw.json"
-    phase_a = CALL_FNS[agent](
-        meta_prompt,
-        cap_usd=args.budget_cap_phase_a,
-        agent_mode="phase_a_design",
-        raw_output_path=phase_a_raw_path,
-        max_tokens=args.phase_a_max_tokens,
-    )
-    phase_a_path = agent_output_dir / f"{agent}_phase_a.json"
-    phase_a_path.write_text(phase_a.model_dump_json(indent=2), encoding="utf-8")
+    reuse_dir = args.reuse_phase_a_from
+    if reuse_dir is not None:
+        # Reps 2–N: load the rep-1 Phase A design without calling the API.
+        src_dir = reuse_dir / f"{agent}_run01"
+        design_src = src_dir / f"{agent}_phase_a_design.json"
+        if not design_src.exists():
+            raise FileNotFoundError(f"--reuse-phase-a-from: design file not found: {design_src}")
+        design = json.loads(design_src.read_text(encoding="utf-8"))
+        for fname in (
+            f"{agent}_phase_a.json",
+            f"{agent}_phase_a.raw.json",
+            f"{agent}_phase_a_design.json",
+        ):
+            src = src_dir / fname
+            if src.exists():
+                (agent_output_dir / fname).write_bytes(src.read_bytes())
+        phase_a = RunRecord(
+            method=Method.FRONTIER,
+            method_params=MethodParams(model="reused-from-run01"),
+            resource_use=ResourceUse(cost_usd=0.0, wall_s=0.0),
+        )
+        log.info("[%s] Phase A reused from %s (no API call)", agent, src_dir)
+    else:
+        wait_for_space(
+            f"Phase A: send meta-prompt to {agent}. Cap ${args.budget_cap_phase_a:.2f}.",
+            no_confirm=args.no_confirm,
+        )
+        phase_a_raw_path = agent_output_dir / f"{agent}_phase_a.raw.json"
+        phase_a = CALL_FNS[agent](
+            meta_prompt,
+            cap_usd=args.budget_cap_phase_a,
+            agent_mode="phase_a_design",
+            raw_output_path=phase_a_raw_path,
+            max_tokens=args.phase_a_max_tokens,
+        )
+        phase_a_path = agent_output_dir / f"{agent}_phase_a.json"
+        phase_a_path.write_text(phase_a.model_dump_json(indent=2), encoding="utf-8")
 
-    narrative_a = _narrative_from_record_or_raw(phase_a, phase_a_raw_path)
-    design = extract_phase_a_design(narrative_a)
-    design_path = agent_output_dir / f"{agent}_phase_a_design.json"
-    design_path.write_text(json.dumps(design, indent=2, ensure_ascii=False), encoding="utf-8")
+        narrative_a = _narrative_from_record_or_raw(phase_a, phase_a_raw_path)
+        design = extract_phase_a_design(narrative_a)
+        design_path = agent_output_dir / f"{agent}_phase_a_design.json"
+        design_path.write_text(json.dumps(design, indent=2, ensure_ascii=False), encoding="utf-8")
 
     if args.stop_after_phase_a:
         return {
@@ -1333,6 +1372,21 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Exit after Phase A artefacts land; do not call Phase B.",
     )
+    p.add_argument(
+        "--run-number",
+        type=int,
+        default=1,
+        help="Rep number (1-indexed). Appended to the per-agent output subdir: "
+        "<agent>_run{N:02d}. Default 1 keeps the B-0 layout (<agent>_run01).",
+    )
+    p.add_argument(
+        "--reuse-phase-a-from",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="Load Phase A design from DIR/<agent>_run01/ instead of calling the "
+        "Phase A API. Use for reps 2–N to reuse the rep-1 design.",
+    )
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -1357,10 +1411,10 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
 
-    _write_summary(args.output_dir, per_agent)
+    summary_path = _write_summary(args.output_dir, per_agent)
 
     total_cost_usd = sum(float(item.get("total_cost_usd", 0.0)) for item in per_agent)
-    log.info("Phase B-0 summary written -> %s", args.output_dir / "summary.md")
+    log.info("Phase B-0 summary written -> %s", summary_path)
     if not args.dry_run and total_cost_usd > 10.0:
         raise SystemExit(f"Phase B-0 total cost ${total_cost_usd:.4f} exceeds $10.00 cap.")
     return 0

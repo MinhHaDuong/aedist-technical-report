@@ -1,0 +1,90 @@
+%erg 0.1
+Title: Phase B-full: execute reps 2–5 for all 4 optimised-arm agents (N=5)
+Created: 2026-05-23
+Author: claude
+
+--- log ---
+2026-05-23T11:00Z claude created — gated by 0237 (B-0 gate, now passed)
+
+--- body ---
+## Context
+
+Phase B-0 (rep 1) passed for all four agents (openai, qwen, mistral,
+anthropic) on 2026-05-23; all classified `report`, total cost $2.72.
+Per latest protocol (0166), N=5. We need 4 more reps per agent.
+
+Phase A designs are already saved under
+`experiments/outputs/sota_exp2_phase_b0/probes/{agent}/`.
+Reps 2–5 must reuse the same Phase A design — re-running Phase A would
+produce a different strategy and violate the N-reps-of-same-design
+requirement.
+
+## Actions
+
+1. **Add `--run-number N` to `exp2_interactive_smoke.py`** (default 1).
+   Changes `agent_output_dir` from `<outdir>/<agent>` to
+   `<outdir>/<agent>_run{N:02d}` so multiple reps land in the same
+   output-dir without collision.
+
+2. **Add `--reuse-phase-a-from <dir>` to `exp2_interactive_smoke.py`**.
+   When set, loads `{agent}_run01/{agent}_phase_a.json` and
+   `{agent}_run01/{agent}_phase_a_design.json` from `<dir>` instead of
+   calling the Phase A API. Sets phase_a_cost=0 in the run record (cost
+   already counted in rep 1).
+
+3. **Add 429 / rate-limit retry to OpenAI and Qwen adapters**.
+   Mistral already has backoff. Running 2 agents in parallel per rep
+   (the approved pattern) can trigger Anthropic TPM and Qwen
+   thinking-token limits without retry.
+
+4. **Add `--run-number N` to `exp2_phase_b0_consolidate.py`** (default 1).
+   Reads from `<agent>_run{N:02d}/` instead of `<agent>/`, writes
+   `{agent}_run{N:02d}.{md,json,raw.json}` output files.
+
+5. **Launch reps 2–5** using two parallel CLI calls per rep:
+   ```bash
+   # Per rep (N = 2, 3, 4, 5):
+   uv run python -m experiments.sota.exp2_interactive_smoke \
+       --agents openai mistral \
+       --run-number N \
+       --reuse-phase-a-from experiments/outputs/sota_exp2_phase_b0/probes \
+       --output-dir experiments/outputs/sota_exp2_phase_b_full \
+       --no-confirm &
+   uv run python -m experiments.sota.exp2_interactive_smoke \
+       --agents anthropic qwen \
+       --run-number N \
+       --reuse-phase-a-from experiments/outputs/sota_exp2_phase_b0/probes \
+       --output-dir experiments/outputs/sota_exp2_phase_b_full \
+       --no-confirm
+   wait
+   ```
+
+6. **Consolidate each rep** after it completes:
+   ```bash
+   uv run python -m experiments.sota.exp2_phase_b0_consolidate \
+       --phase-b0-dir experiments/outputs/sota_exp2_phase_b_full \
+       --run-number N
+   ```
+
+7. **Copy rep 1 flat files** from B-0 to the unified dir so all 5 reps
+   are co-located:
+   ```bash
+   for agent in openai qwen mistral anthropic; do
+       cp experiments/outputs/sota_exp2_phase_b0/${agent}_run01.* \
+          experiments/outputs/sota_exp2_phase_b_full/
+   done
+   ```
+
+## Cost estimate
+
+- 4 reps × 4 agents × ~$0.68/rep ≈ $11 additional
+- Wall: 4 reps × ~20 min (2-parallel) ≈ 80 min
+
+## Exit criteria
+
+- [ ] `--run-number` and `--reuse-phase-a-from` flags implemented and tested
+- [ ] 429-retry added to OpenAI and Qwen adapters
+- [ ] Reps 2–5 executed; all 16 sessions produce `classification=report`
+- [ ] Consolidation run for each rep
+- [ ] `experiments/outputs/sota_exp2_phase_b_full/{agent}_run{01..05}.*` all present
+- [ ] `make check` passes
