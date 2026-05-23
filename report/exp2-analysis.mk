@@ -66,6 +66,14 @@ $(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality.csv
 	    --input $< \
 	    --output $@
 
+# --- Figure: coverage vs. certainty scatter (reads from bib quality CSV) -----
+
+$(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_coverage_certainty \
+	    --input $< \
+	    --output $@
+
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
 EXP2_OUTLINE_ARTIFACTS := \
@@ -136,4 +144,5 @@ exp2-analysis-report: \
 	$(GEN)/fig_exp2_turn_trajectory.pdf \
 	$(GEN)/tab_exp2_bib_quality.csv \
 	$(GEN)/tab_exp2_bib_quality.tex \
+	$(GEN)/fig_exp2_coverage_certainty.pdf \
 	$(EXP2_OUTLINE_ARTIFACTS)
