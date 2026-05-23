@@ -968,6 +968,13 @@ def run_phase_b_multiturn(
     encouragement_count = 0
     total_classifier_cost_usd = 0.0
     turn = 1
+    # Client-side conversation log — agent-agnostic. Stateful APIs (Mistral,
+    # OpenAI) do not resend history on each call, so this is the only locally
+    # persisted copy of the full exchange. Updated and saved after every turn.
+    conversation_history: list[dict] = []
+    if system_prompt:
+        conversation_history.append({"role": "system", "content": system_prompt})
+    conversation_path = output_dir / f"{agent}_conversation.json"
     last_slot = "designed_prompt"
     pending_reply = ""  # populated after each turn's classification
 
@@ -1036,6 +1043,12 @@ def run_phase_b_multiturn(
         # Classify the assistant's response. Classifier cost is harness
         # overhead, tracked separately from the SOTA agent's spend.
         narrative = _narrative_from_record_or_raw(record, paths["raw"])
+        conversation_history.append({"role": "user", "content": user_text})
+        conversation_history.append({"role": "assistant", "content": narrative})
+        conversation_path.write_text(
+            json.dumps({"messages": conversation_history}, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
         cls_result = dialogue_classifier.classify_report(narrative)
         total_classifier_cost_usd += cls_result.classifier_cost_usd
         paths["classification"].write_text(
