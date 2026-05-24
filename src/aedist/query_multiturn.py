@@ -172,7 +172,7 @@ def main():
     parser = argparse.ArgumentParser(description="Multi-turn LLM queries via OpenRouter")
     parser.add_argument("--prompt", required=True, help="Path to initial prompt text file")
     parser.add_argument("--followups", required=True, help="Path to followups file (one per line)")
-    parser.add_argument("--models", required=True, help="Path to models.yaml")
+    parser.add_argument("--models-registry", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
@@ -208,7 +208,7 @@ def main():
     followups = [
         line.strip() for line in Path(args.followups).read_text().splitlines() if line.strip()
     ]
-    models = load_models(args.models)
+    models = load_models(args.models_registry)
     output_dir = Path(args.output)
 
     if args.model_set:
@@ -219,7 +219,7 @@ def main():
     if args.model:
         models = [m for m in models if m["name"] == args.model]
         if not models:
-            raise SystemExit(f"Model {args.model} not found in {args.models}")
+            raise SystemExit(f"Model {args.model} not found in {args.models_registry}")
 
     if args.dry_run:
         for model in models:
