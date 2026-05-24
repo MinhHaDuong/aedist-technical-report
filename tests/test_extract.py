@@ -6,9 +6,9 @@ import pytest
 
 from aedist.extract import (
     ExtractStatus,
-    _merge_pipe_table_candidates,
-    _is_inventory_header,
     _extract_pipe_tables,
+    _is_inventory_header,
+    _merge_pipe_table_candidates,
     count_best_table_rows,
     extract_fenced_blocks,
     extract_one,
