@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-05-24T12:05Z HDMX-coding-agent scope lock: v1 mechanical scoring is Exp2-first. Exp1 remains out of scope for v1 scoring except as an articulation/annotation reference case.
 2026-05-24T12:15Z HDMX-coding-agent imagine pass: clarified articulation labels, reduced upstream verification to one run per arm, and deferred extracted_rows_path work to 0275.
 2026-05-24T12:25Z HDMX-coding-agent plan pass: execution path is documentation plus spot-check verification only; avoid tautological row-count checks by comparing tabulated inventory_rows against an independent extraction path.
+2026-05-24T12:35Z HDMX-coding-agent feasibility WARN: 0268 remains open and still blocks future Exp1 comparability, but does not block this ticket's Exp2-first articulation matrix and upstream verification work.
 
 --- body ---
 ## Context
@@ -101,8 +102,10 @@ scorer code or CSV schema here.
 
 ## Feasibility
 
-PASS — prompt surfaces and run artifacts already exist; this ticket needs
-documentation plus real-data spot checks, not new infrastructure.
+WARN — prompt surfaces and run artifacts already exist, so this ticket can run
+now as documentation plus real-data spot checks. However, 0268 remains open, so
+future Exp1 scoring still requires null/annotation handling rather than direct
+comparability with Exp2.
 
 ## Exit criteria
 
