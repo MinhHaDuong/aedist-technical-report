@@ -3,29 +3,32 @@
 # Run from the experiments/ directory:
 #   make -f experiment1.mk exp1-batch2
 #
-# Exp 1 measures parametric memory: same prompt as Exp 2 Arm 1
-# (sota/protocol_07_naive_prompt.md) but no web search.
-# batch1 = original run with prompt_complete.txt (frozen, outputs/direct_complete)
-# batch2 = rerun with protocol_07_naive_prompt.md (GEM vocab, unified schema)
+# Parallelism: manager fans out 60 jobs (12 models × 5 reps) to jobs/pending/,
+# then WORKERS worker processes drain the queue concurrently.
+# Set WORKERS on the command line: make -f experiment1.mk WORKERS=12 exp1-batch2
 
-UV_RUN  := PYTHONPATH=.. uv run --project .. --env-file ../.env
-PROMPT  := sota/protocol_07_naive_prompt.md
-MODELS  := models.yaml
-SET     := modelset_frontier_10labs
-OUT     := outputs/exp1_batch2
+UV_RUN  := PYTHONPATH=.. uv run --project ..
+SWEEP   := sweep_exp1_batch2
+JOBS    := jobs/exp1_batch2
+WORKERS := 12
 
 # ─── Batch 2 ──────────────────────────────────────────────────────────────────
 
-$(OUT)/.done: $(PROMPT) $(MODELS)
-	$(UV_RUN) python -m aedist.query_direct \
-	    --prompt $(PROMPT) \
-	    --models-registry $(MODELS) \
-	    --model-set $(SET) \
-	    --output $(OUT)
-	touch $@
+.PHONY: exp1-batch2 exp1-generate exp1-drain exp1-status
 
-# ─── Aliases ──────────────────────────────────────────────────────────────────
+exp1-batch2: exp1-generate exp1-drain
 
-.PRECIOUS: $(OUT)/.done
+exp1-generate:
+	$(UV_RUN) python -m aedist.manager generate \
+	    --sweep $(SWEEP) \
+	    --jobs-dir $(JOBS)
 
-exp1-batch2: $(OUT)/.done ;
+exp1-drain:
+	seq $(WORKERS) | xargs -P $(WORKERS) -I{} \
+	    $(UV_RUN) python -m aedist.worker openrouter --jobs-root $(JOBS) --drain
+
+exp1-status:
+	@echo "pending:  $$(ls $(JOBS)/pending/ 2>/dev/null | wc -l)"
+	@echo "running:  $$(ls $(JOBS)/running/ 2>/dev/null | wc -l)"
+	@echo "done:     $$(ls $(JOBS)/done/    2>/dev/null | wc -l)"
+	@echo "failed:   $$(ls $(JOBS)/failed/  2>/dev/null | wc -l)"
