@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Verify scoring articulation and integrate plant-level fields into upstream results table
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0268
+
+--- log ---
+2026-05-24T09:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0270 scores outputs against 12 metrics. Two preconditions need verification
+before scoring results are interpretable:
+
+**1. Articulation** — do the prompts actually ask models for what we measure?
+
+Current gap (before ticket 0268):
+- Exp 1 `5_table.txt` does NOT ask for Confidence or Status as-of-date → scores
+  for those axes will be 0 by design, not model failure. This must be documented
+  or the rerun (0268) must happen first.
+- Exp 2 naive arm (`protocol_07_naive_prompt.md`) DOES ask for both columns.
+- Temporality [1980, 2026] range: Exp 1 prompt says COD is "actual or expected COD"
+  — does that imply a plausible range? Confirm models understand it.
+- Field completeness: Exp 1 does NOT ask for Province explicitly as required
+  (it's in the table schema but not emphasised). Exp 2 does.
+
+Action: produce a one-page articulation matrix: for each of the 12 metrics,
+which prompt version(s) explicitly ask for the measured field, and which don't.
+Any "no" on a metric where we report a score is a threat to validity.
+
+**2. Upstream integration** — the intermediate table `tab_exp2_arms_runs.csv`
+captures only operational metadata (turns, cost, classification, inventory_rows).
+The `score_mechanical.py` scorer (0270) will parse output files directly.
+
+Verify that: (a) all run output files are findable from the run ID in the CSV,
+(b) the plant-level parsed rows are stable across re-runs of the extractor, and
+(c) the `inventory_rows` count in the CSV matches the actual parsed row count from
+the markdown. If there's a discrepancy, diagnose and fix.
+
+Consider adding a `plant_csv_path` or `extracted_table_path` column to
+`tab_exp2_arms_runs.csv` so the scorer can find the extracted table without
+re-parsing markdown on every invocation.
+
+## Relevant files
+
+- `experiments/prompts/modules/5_table.txt` — Exp 1 prompt (pre- and post-0268)
+- `experiments/sota/protocol_07_naive_prompt.md` — Exp 2 naive prompt
+- `experiments/sota/protocol_02_metaprompt.md` — Exp 2/3 Phase A seeding
+- `src/aedist/tabulate_exp2_arms_runs.py` — intermediate table builder
+- `src/aedist/score_mechanical.py` (0270) — downstream consumer
+
+## Actions
+
+1. **Articulation matrix**: for each metric in the 12-metric set, check each
+   active prompt file for the corresponding column/field name and instruction.
+   Produce a table: `metric × prompt_version → asked_explicitly / implied / absent`.
+   Commit to `experiments/prompts/articulation_matrix.md`.
+
+2. **Exp 1 gap**: confirm that Confidence and Status as-of-date scores on Exp 1
+   outputs will be annotated as "prompt did not ask" in the results, not silently
+   reported as 0. Add a `prompt_version` column to `sota_cross_eval.csv` so
+   downstream analysis can filter.
+
+3. **Upstream path verification**: for a sample of 5 runs from each experiment arm,
+   verify the parser finds the output file, extracts the plant table, and the row
+   count matches `inventory_rows` in the CSV. Document any mismatches.
+
+4. **Optional**: add `extracted_rows_path` column to `tab_exp2_arms_runs.csv`
+   pointing to a pre-extracted CSV of the plant table, so 0270 doesn't reparse
+   markdown on every invocation. Only if the re-parse cost is non-trivial.
+
+## Exit criteria
+
+- [ ] `experiments/prompts/articulation_matrix.md` committed
+- [ ] Each "absent" cell in the matrix has an associated note explaining
+      how the corresponding metric will be annotated in results
+- [ ] Upstream path verification passes for all sample runs
+- [ ] `make check-fast` passes

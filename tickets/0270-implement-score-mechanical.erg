@@ -1,0 +1,101 @@
+%erg 0.1
+Title: Implement score_mechanical.py — 12-metric automatic scoring across 5 axes
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T09:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0171 specifies LLM-as-judge scoring of quality dimensions. This ticket
+implements the mechanical layer: 12 automatic metrics across 5 axes that require
+no LLM call. They serve as direct measurement or as priors injected into a judge
+prompt later.
+
+Axes and metrics (all fractions reported as n_events / n_total_rows):
+
+**Accuracy** (reference-dependent):
+- `acc_tp`, `acc_fp`, `acc_fn`, `acc_f1` (derived from existing `evaluate.py`)
+
+**Coherence** (reference-free):
+- `coh_no_duplicate_frac` — n_unique_plant_names / n_total_rows; 1.0 = no duplicates
+- `coh_vocab_adherent_frac` — fraction of rows where Fuel×Technology pair is in the
+  allowed set (Coal→{Subcritical/Supercritical/USC}, Gas→{CCGT/OCGT}) AND Status is
+  in the 7-value vocabulary. Two checks computed separately, displayed as one index.
+- `coh_high_conf_dual_sourced_frac` — among Confidence=HIGH rows, fraction that also
+  have Source 1 AND Source 2 present. Null when Confidence column absent.
+
+**Provenance** (reference-free):
+- `prov_dual_source_frac` — rows with Source 1 AND Source 2 both non-empty
+- `prov_primary_s1_frac` — rows where Source 1 classified as primary via
+  `classify_source_by_text()` from `verify.py`
+
+**Temporality** (reference-free):
+- `temp_asof_present_frac` — Status as-of-date field non-empty
+- `temp_asof_plausible_frac` — Status as-of-date parses as a date in [1980, 2026]
+  (Vietnam thermal history starts with 1980s Soviet-era plants)
+
+**Field completeness / PyPSA-readiness** (reference-free):
+- `fc_capacity_present_frac` — Total MWe non-null and > 0
+- `fc_cod_plausible_frac` — COD field parses as a year in [1954, 2050]
+- `fc_province_present_frac` — Province field non-empty
+
+## Relevant files
+
+- `src/aedist/score_mechanical.py` — new module (primary deliverable)
+- `src/aedist/score_provenance.py` — reuse `classify_source_by_text()`
+- `src/aedist/evaluate.py` — reuse `load_plants_csv()` and plant-matching logic
+- `experiments/derived/sota_cross_eval.csv` — output destination
+
+## Actions
+
+1. Implement `src/aedist/score_mechanical.py` with 5 scoring functions returning
+   typed dataclasses. Signature:
+   ```python
+   score_accuracy(rows, ref_path: Path | None) -> AccuracyScores
+   score_coherence(rows) -> CoherenceScores
+   score_provenance(rows) -> ProvenanceScores
+   score_temporality(rows) -> TemporalityScores
+   score_field_completeness(rows) -> FieldCompletenessScores
+   ```
+   Where `rows` is `list[dict]` with column-name keys.
+
+2. **Parser**: for Exp 2/3 markdown outputs, check what markdown-table parser
+   already exists in the codebase (`extract_*.py`, `evaluate.py`) before writing
+   a new one. Reuse; do not duplicate.
+
+3. CLI entry point: reads an output file (CSV or markdown with table), runs all
+   5 scoring functions, writes one row to `sota_cross_eval.csv`.
+
+4. Output CSV schema:
+   ```
+   model, run, arm,
+   acc_tp, acc_fp, acc_fn, acc_f1,
+   coh_no_duplicate, coh_no_duplicate_frac,
+   coh_vocab_adherent, coh_vocab_adherent_frac,
+   coh_high_conf_dual_sourced, coh_high_conf_dual_sourced_frac,
+   prov_dual_source, prov_dual_source_frac,
+   prov_primary_s1, prov_primary_s1_frac,
+   temp_asof_present, temp_asof_present_frac,
+   temp_asof_plausible, temp_asof_plausible_frac,
+   fc_capacity_present, fc_capacity_present_frac,
+   fc_cod_plausible, fc_cod_plausible_frac,
+   fc_province_present, fc_province_present_frac
+   ```
+
+## Test
+
+`tests/test_score_mechanical.py`:
+- Row with Fuel=Coal, Technology=CCGT → `coh_vocab_adherent_frac` < 1.0
+- Row Confidence=HIGH, Source 2 empty → `coh_high_conf_dual_sourced_frac` < 1.0
+- Status-as-of="1979" → fails plausible range; "1980" → passes
+- Total MWe="" → `fc_capacity_present_frac` counts as absent
+- Empty table → all fractions = 0.0, no ZeroDivisionError
+
+## Exit criteria
+
+- [ ] `score_mechanical.py` exists with all 5 functions and CLI entry point
+- [ ] `sota_cross_eval.csv` generated for at least one Exp 2 run as smoke check
+- [ ] `make check-fast` passes
