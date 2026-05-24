@@ -6,7 +6,7 @@ Technical feasibility report for the **AEDIST** project (AI-driven Energy Data I
 
 This report (in French) evaluates AI technologies for tracking energy transitions in countries lacking robust statistical offices. It uses Vietnam's thermal power plant inventory (164 plants) as a benchmark case study.
 
-The benchmark tests 73 AI models across multiple configurations: single-shot, multi-turn, RAG, web-augmented, and verified — measuring recall, precision, F1, cost, and latency.
+The benchmark tests 73 AI models across multiple configurations: single-shot, multi-turn, RAG, and web-augmented — measuring recall, precision, F1, cost, and latency.
 
 ## Author
 
