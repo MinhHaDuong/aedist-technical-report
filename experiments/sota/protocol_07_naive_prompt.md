@@ -12,7 +12,7 @@ Produce a complete, primary-sourced reference inventory of Vietnam's past, prese
 - statistical summary tables (capacity by fuel × status; top 15 provinces; timeline of additions by period and fuel; data-quality summary by confidence level and fuel)
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
-All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled projects are in scope if they have appeared in formal planning cycles.
+Scope includes all thermal assets > 30 MWe at any stage of the lifecycle, including shelved or cancelled projects.
 
 When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them.
 
