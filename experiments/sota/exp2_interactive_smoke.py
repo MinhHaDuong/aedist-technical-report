@@ -38,7 +38,11 @@ import yaml
 
 from aedist import adapter_mistral
 from aedist.extract import count_best_table_rows
-from aedist.harness import append_evidence_pack
+from aedist.harness import (
+    EVIDENCE_PACK_SECTION_TITLE,
+    append_evidence_pack,
+    assemble_evidence_pack,
+)
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
 
@@ -106,14 +110,52 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
-def assemble_meta_prompt(metaprompt_path: Path = METAPROMPT_PATH) -> str:
-    """Return the Phase A meta-prompt verbatim from disk.
+_FRAMING_SEPARATOR = "\n---\n"
+
+
+def strip_meta_framing(text: str) -> str:
+    """Drop the meta-framing prefix from a protocol prompt file.
+
+    Convention used in `protocol_02_metaprompt.md` and `protocol_07_naive_prompt.md`:
+    the file opens with a single framing line ("This is the prompt sent to ...,
+    verbatim. ...") followed by `---` and then the actual prompt content.
+    The framing line is FOR THE REVIEWER, not the agent. The script must
+    strip it before sending the bytes to the model.
+
+    If no `\\n---\\n` separator is present, the input is returned unchanged.
+    """
+    if _FRAMING_SEPARATOR in text:
+        _, _, content = text.partition(_FRAMING_SEPARATOR)
+        return content.lstrip("\n")
+    return text
+
+
+def assemble_meta_prompt(
+    metaprompt_path: Path = METAPROMPT_PATH, manifest_path: Path | str | None = None
+) -> str:
+    """Return the Phase A meta-prompt from disk, with framing stripped.
 
     The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
     (Doc 02 of the protocol set). The harness reads it as-is at run time;
-    edits to Doc 02 propagate without code change.
+    edits to Doc 02 propagate without code change. The opening framing line
+    ("This is the prompt sent to the agents, verbatim.") is removed before
+    dispatch (see :func:`strip_meta_framing`).
+
+    When ``manifest_path`` is provided, inject an evidence-pack summary after
+    the budget announcement so Phase A can design with explicit knowledge of
+    available evidence artifacts without revealing chunk bodies.
     """
-    return metaprompt_path.read_text(encoding="utf-8")
+    prompt = strip_meta_framing(metaprompt_path.read_text(encoding="utf-8"))
+    if manifest_path is None:
+        return prompt
+
+    evidence_pack_text = assemble_evidence_pack(Path(manifest_path))
+    summary, _, _ = evidence_pack_text.partition("\n\n## Chunk 1\n")
+    evidence_section = f"\n\n{EVIDENCE_PACK_SECTION_TITLE}\n\n{summary.strip()}\n"
+    planning_marker = "\n## Planning headroom\n"
+    if planning_marker in prompt:
+        return prompt.replace(planning_marker, evidence_section + planning_marker, 1)
+    return prompt + evidence_section
 
 
 def load_model_meta(agent: str) -> dict:
@@ -699,7 +741,7 @@ def format_status_line(
     """
     return (
         f"Status: remaining {remaining_tokens / 1000:.1f}K of {cap_tokens // 1000}K tokens, "
-        f"remaining budget ${remaining_usd:.2f} out of ${cap_usd:.2f}. "
+        f"${remaining_usd:.2f} of ${cap_usd:.2f}. "
         f"Wall-clock elapsed {elapsed_s:.1f}s. "
         f"Verify {verify_state}."
     )
@@ -1205,7 +1247,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
     agent_output_dir = args.output_dir / run_tag
     agent_output_dir.mkdir(parents=True, exist_ok=True)
 
-    meta_prompt = assemble_meta_prompt()
+    meta_prompt = assemble_meta_prompt(manifest_path=args.evidence_pack_manifest)
     meta_prompt_path = agent_output_dir / f"{agent}_meta_prompt.txt"
     meta_prompt_path.write_text(meta_prompt, encoding="utf-8")
     log.info(
@@ -1388,8 +1430,8 @@ def main(argv: list[str] | None = None) -> int:
         type=str,
         default=None,
         metavar="YAML",
-        help="Path to an evidence-pack manifest YAML (Arm 4). Injected into the Phase B "
-        "prompt only. Omit for Arm 2 baseline.",
+        help="Path to an evidence-pack manifest YAML (Arm 4). Injected into the Phase A "
+        "meta-prompt and appended to the Phase B prompt. Omit for Arm 2 baseline.",
     )
     args = p.parse_args(argv)
 

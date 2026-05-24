@@ -126,5 +126,5 @@ Status definitions (use these exact terms, aligned with Global Energy Monitor vo
 Capacity rule:
 Record nameplate electrical capacity in MWe when available. If sources do not distinguish gross vs net, record the stated MW value and note "gross/net unspecified". Do not mix thermal MW, boiler capacity, steam output, or investment package capacity with electrical MWe. For Units × MW, make arithmetic consistent with Total MWe or explain discrepancies in Notes.
 
-Explanatory notes discipline:
-The table comes first. Per-asset notes follow the table and are selective: write one only for assets that are major, disputed, ambiguous, or historically important. For straightforward operational assets a compact Notes cell in the table is sufficient; do not repeat it as a separate note.
+Narrative discipline:
+Prioritise the structured table. Provide full per-plant narratives only for major, disputed, ambiguous, or historically important assets. For straightforward operational assets, a compact Notes entry is sufficient.

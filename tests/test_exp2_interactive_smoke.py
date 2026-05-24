@@ -85,6 +85,19 @@ def test_assemble_meta_prompt_announces_system_prompt_field():
     assert "system_prompt" in prompt, "envelope spec must announce system_prompt key"
 
 
+def test_assemble_meta_prompt_without_manifest_has_no_available_evidence_heading():
+    prompt = assemble_meta_prompt()
+    assert "# Evidence pack" not in prompt
+
+
+def test_assemble_meta_prompt_with_manifest_injects_yaml_before_planning_headroom():
+    prompt = assemble_meta_prompt(manifest_path=MANIFEST_PATH)
+    assert "# Evidence pack" in prompt
+    assert "1. evn_ar_2010_2011_capacities" in prompt
+    assert "## Chunk 1" not in prompt
+    assert prompt.find("# Evidence pack") < prompt.find("## Planning headroom")
+
+
 def test_extract_phase_a_design_parses_clean_json():
     payload = json.dumps(
         {
@@ -395,7 +408,7 @@ def _fake_run_factory(cost_per_call: float = 0.10):
 def test_format_status_line_exact_string():
     s = format_status_line(45000, 50000, 2.50, 3.00, 12.3, verify_state="pending")
     assert s == (
-        "Status: remaining 45.0K of 50K tokens, remaining budget $2.50 out of $3.00. "
+        "Status: remaining 45.0K of 50K tokens, $2.50 of $3.00. "
         "Wall-clock elapsed 12.3s. Verify pending."
     )
 
@@ -1596,7 +1609,7 @@ def test_phase_b_prompt_not_augmented_without_manifest(
 def test_meta_prompt_not_augmented_with_evidence_pack(
     phase_a_reuse_dir, patched_phase_b, tmp_path
 ):
-    """Phase A meta-prompt must NOT contain the evidence pack even when manifest is set."""
+    """Phase A meta-prompt must include the evidence pack when manifest is set."""
     from experiments.sota.exp2_interactive_smoke import main
 
     main(
@@ -1614,7 +1627,28 @@ def test_meta_prompt_not_augmented_with_evidence_pack(
     )
     meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
     assert meta_prompt_file.exists()
-    assert "# Evidence pack" not in meta_prompt_file.read_text()
+    meta_prompt_text = meta_prompt_file.read_text(encoding="utf-8")
+    assert "# Evidence pack" in meta_prompt_text
+    assert "## Chunk 1" not in meta_prompt_text
+    assert "source_id:" not in meta_prompt_text
+
+
+def test_meta_prompt_without_manifest_does_not_include_available_evidence_pack_heading(tmp_path):
+    from experiments.sota.exp2_interactive_smoke import main
+
+    main(
+        [
+            "--agents",
+            "mistral",
+            "--dry-run",
+            "--no-confirm",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
+    assert meta_prompt_file.exists()
+    assert "# Evidence pack" not in meta_prompt_file.read_text(encoding="utf-8")
 
 
 def test_min_phase_b_max_tokens_flag_present():
