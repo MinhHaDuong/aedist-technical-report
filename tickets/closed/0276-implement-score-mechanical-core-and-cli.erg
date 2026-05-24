@@ -2,7 +2,7 @@
 Title: Implement score_mechanical core and CLI over locked contract and ingestion
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0275
+Closed: exit criteria met; scorer core and CLI implemented
 
 --- log ---
 2026-05-24T11:22Z HDMX-coding-agent created
@@ -12,6 +12,8 @@ Blocked-by: 0275
 2026-05-24T12:12Z HDMX-coding-agent smoke pass: scored naive gpt-5.5 run01 and wrote one row to `experiments/derived/sota_cross_eval.csv`.
 2026-05-24T12:14Z HDMX-coding-agent validation pass: `make check-fast` succeeded.
 
+2026-05-24T17:37Z HDMX-coding-agent note blocker 0275 closed — Blocked-by removed.
+2026-05-24T17:37Z HDMX-coding-agent closed — exit criteria met; scorer core and CLI implemented
 --- body ---
 ## Context
 
