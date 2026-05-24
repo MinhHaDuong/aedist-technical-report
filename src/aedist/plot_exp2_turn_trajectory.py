@@ -4,17 +4,17 @@ Four panels, one per agent, sharing a common y-axis scale.  Each panel shows
 N=5 runs as connected lines.  Filled dots = turn classified 'report'; open
 circles = 'no_report'.  Colors from the model-family palette.
 
-Data source: probes/ subdirectory of the optimised arm output directory.
-Each run has per-turn raw API responses (*.raw.json) and classifier verdicts
-(*.classification.json).
+Data source: the mart-derived `exp2_turn_trajectory_view.csv` view.
+The legacy probes/ reader remains available for backward-compatible tests.
 
 Usage:
-    python -m aedist.plot_exp2_turn_trajectory \\
-        --probes-dir experiments/outputs/sota_exp2_brerun1/probes \\
+    python -m aedist.plot_exp2_turn_trajectory \
+        --input report/inputs/generated/exp2_turn_trajectory_view.csv \
         --output report/inputs/generated/fig_exp2_turn_trajectory.pdf
 """
 
 import argparse
+import csv
 import json
 import logging
 from pathlib import Path
@@ -93,6 +93,95 @@ def load_run_turns(probes_dir: Path, agent: str, run: int) -> list[dict]:
         text = _extract_text(json.loads(raw_path.read_text(encoding="utf-8")))
         result.append({"turn": turn_num, "rows": _count_table_rows(text), "cls": cls})
     return result
+
+
+def _load_view_turns(view_csv: Path) -> list[dict]:
+    with view_csv.open(newline="", encoding="utf-8") as fh:
+        return [
+            {
+                "agent": row["agent"],
+                "arm": row["arm"],
+                "run": int(row["run"]),
+                "turn": int(row["turn"]),
+                "rows": int(row["rows"]),
+                "cls": row["cls"],
+            }
+            for row in csv.DictReader(fh)
+        ]
+
+
+def make_figure_from_view(rows: list[dict], output: Path) -> None:
+    import matplotlib.patches as mpatches
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(1, 4, figsize=(10, 3.2), sharey=True)
+
+    for ax, agent in zip(axes, _AGENT_ORDER, strict=True):
+        color = model_family_color(_AGENT_MODEL[agent])
+        for run in range(1, 6):
+            turns = [r for r in rows if r["agent"] == agent and r["run"] == run]
+            if not turns:
+                continue
+            xs = [t["turn"] for t in turns]
+            ys = [t["rows"] for t in turns]
+            ax.plot(xs, ys, color=color, linewidth=0.8, alpha=0.45, zorder=2)
+            for t in turns:
+                if t["cls"] == "report":
+                    ax.scatter([t["turn"]], [t["rows"]], color=color, s=24, zorder=3, linewidths=0)
+                else:
+                    ax.scatter(
+                        [t["turn"]],
+                        [t["rows"]],
+                        facecolors="none",
+                        edgecolors=color,
+                        s=24,
+                        zorder=3,
+                        linewidths=1.1,
+                    )
+
+        ax.set_title(_AGENT_LABELS[agent], fontsize=8, loc="left")
+        ax.set_xlabel("Turn", fontsize=7.5)
+        ax.set_xticks([1, 2, 3, 4])
+        ax.tick_params(labelsize=7.5)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.set_ylim(bottom=0)
+
+    axes[0].set_ylabel("Inventory rows", fontsize=8)
+    for ax in axes[1:]:
+        ax.tick_params(left=False)
+
+    legend_handles = [
+        mpatches.Patch(color=COLOR_NEUTRAL, label="● report"),
+        plt.Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor="none",
+            markeredgecolor=COLOR_NEUTRAL,
+            markersize=6,
+            label="○ no_report",
+        ),
+    ]
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        ncol=2,
+        fontsize=8,
+        frameon=False,
+        bbox_to_anchor=(0.5, -0.06),
+    )
+    fig.suptitle(
+        "Arm 2 (optimised) — inventory rows per turn, N=5 runs per agent",
+        fontsize=9,
+        y=1.01,
+    )
+    fig.tight_layout()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output, bbox_inches="tight", dpi=150)
+    plt.close(fig)
+    log.info("Wrote %s", output)
 
 
 def make_figure(probes_dir: Path, output: Path) -> None:
@@ -179,10 +268,15 @@ def make_figure(probes_dir: Path, output: Path) -> None:
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description="Exp2 Arm 2 turn-trajectory figure")
-    parser.add_argument("--probes-dir", required=True, help="Path to probes/ directory")
+    parser.add_argument("--input", default="report/inputs/generated/exp2_turn_trajectory_view.csv")
+    parser.add_argument("--probes-dir", default=None, help="Legacy probes/ directory input")
     parser.add_argument("--output", required=True, help="Path to write PDF figure")
     args = parser.parse_args(argv)
-    make_figure(Path(args.probes_dir), Path(args.output))
+
+    if args.probes_dir:
+        make_figure(Path(args.probes_dir), Path(args.output))
+    else:
+        make_figure_from_view(_load_view_turns(Path(args.input)), Path(args.output))
 
 
 if __name__ == "__main__":

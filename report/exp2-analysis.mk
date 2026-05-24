@@ -3,6 +3,9 @@
 #   make -f report/exp2-analysis.mk exp2-analysis-report
 
 GEN := report/inputs/generated
+MART_JSONL := $(GEN)/exp2_mart.jsonl
+OLD_STAGE := $(GEN)/exp2-old-path
+MART_STAGE := $(GEN)/exp2-mart-path
 
 NAIVE_DIR    := experiments/outputs/sota_exp2_naive_arm
 OPTIMISED_DIR := experiments/outputs/sota_exp2_brerun1
@@ -14,18 +17,80 @@ OPTIMISED_MDS  := $(wildcard $(OPTIMISED_DIR)/*.md)
 PROBE_RAWS     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.raw.json)
 PROBE_CLSF     := $(wildcard $(OPTIMISED_DIR)/probes/*/*.classification.json)
 
-# --- Intermediate: flat per-run CSV ------------------------------------------
+# --- Canonical mart and mart-derived views ---------------------------------
 
-$(GEN)/tab_exp2_arms_runs.csv: $(NAIVE_JSONS) $(NAIVE_MDS) $(OPTIMISED_JSONS)
+$(MART_JSONL): $(NAIVE_JSONS) $(NAIVE_MDS) $(OPTIMISED_JSONS) $(OPTIMISED_MDS) \
+        experiments/derived/sota_cross_eval.csv $(PROBE_RAWS) $(PROBE_CLSF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.build_exp2_mart \
+	    --naive-dir $(NAIVE_DIR) \
+	    --optimised-dir $(OPTIMISED_DIR) \
+	    --cross-eval-csv experiments/derived/sota_cross_eval.csv \
+	    --output $@ \
+	    --repo-root .
+
+$(GEN)/tab_exp2_arms_runs_view.csv $(GEN)/tab_exp2_bib_quality_view.csv \
+$(GEN)/exp2_turn_trajectory_view.csv $(GEN)/sota_cross_eval_view.csv: $(MART_JSONL)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.build_exp2_mart_views \
+	    --mart-jsonl $(MART_JSONL) \
+	    --output-dir $(GEN) \
+	    --repo-root .
+
+# --- Dual-run parity staging -------------------------------------------------
+
+$(OLD_STAGE)/tab_exp2_arms_runs.csv: $(NAIVE_JSONS) $(NAIVE_MDS) $(OPTIMISED_JSONS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp2_arms_runs \
 	    --naive-dir $(NAIVE_DIR) \
 	    --optimised-dir $(OPTIMISED_DIR) \
 	    --output $@
 
+$(OLD_STAGE)/tab_exp2_bib_quality.csv: $(NAIVE_MDS) $(OPTIMISED_MDS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.extract_exp2_bib \
+	    --naive-dir $(NAIVE_DIR) \
+	    --optimised-dir $(OPTIMISED_DIR) \
+	    --output $@
+
+$(OLD_STAGE)/exp2_turn_trajectory.csv: $(PROBE_RAWS) $(PROBE_CLSF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.export_exp2_turn_trajectory_csv \
+	    --probes-dir $(OPTIMISED_DIR)/probes \
+	    --output $@
+
+$(OLD_STAGE)/sota_cross_eval.csv: experiments/derived/sota_cross_eval.csv
+	@mkdir -p $(dir $@)
+	cp $< $@
+
+$(MART_STAGE)/tab_exp2_arms_runs_view.csv $(MART_STAGE)/tab_exp2_bib_quality_view.csv \
+$(MART_STAGE)/exp2_turn_trajectory_view.csv $(MART_STAGE)/sota_cross_eval_view.csv: $(MART_JSONL)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.build_exp2_mart_views \
+	    --mart-jsonl $(MART_JSONL) \
+	    --output-dir $(MART_STAGE) \
+	    --repo-root .
+
+exp2-old-path: \
+	$(OLD_STAGE)/tab_exp2_arms_runs.csv \
+	$(OLD_STAGE)/tab_exp2_bib_quality.csv \
+	$(OLD_STAGE)/exp2_turn_trajectory.csv \
+	$(OLD_STAGE)/sota_cross_eval.csv
+
+exp2-mart-path: \
+	$(MART_STAGE)/tab_exp2_arms_runs_view.csv \
+	$(MART_STAGE)/tab_exp2_bib_quality_view.csv \
+	$(MART_STAGE)/exp2_turn_trajectory_view.csv \
+	$(MART_STAGE)/sota_cross_eval_view.csv
+
+check-mart-parity: exp2-old-path exp2-mart-path
+	uv run python -m aedist.check_exp2_mart_parity \
+	    --left-dir $(OLD_STAGE) \
+	    --right-dir $(MART_STAGE)
+
 # --- Table: per-model summary (reads from CSV) --------------------------------
 
-$(GEN)/tab_exp2_arms.tex: $(GEN)/tab_exp2_arms_runs.csv
+$(GEN)/tab_exp2_arms.tex: $(GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp2_arms \
 	    --input $< \
@@ -35,7 +100,7 @@ $(GEN)/tab_exp2_arms.tex: $(GEN)/tab_exp2_arms_runs.csv
 
 # --- Figure: three-panel comparison (reads from CSV) -------------------------
 
-$(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs.csv
+$(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
@@ -43,24 +108,17 @@ $(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs.csv
 
 # --- Figure: turn-by-turn trajectory for Arm 2 (reads from probes/) ---------
 
-$(GEN)/fig_exp2_turn_trajectory.pdf: $(PROBE_RAWS) $(PROBE_CLSF)
+$(GEN)/fig_exp2_turn_trajectory.pdf: $(GEN)/exp2_turn_trajectory_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_turn_trajectory \
-	    --probes-dir $(OPTIMISED_DIR)/probes \
+	    --input $< \
 	    --output $@
 
 # --- Bibliography quality CSV (reads markdown outputs) ----------------------
 
-$(GEN)/tab_exp2_bib_quality.csv: $(NAIVE_MDS) $(OPTIMISED_MDS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.extract_exp2_bib \
-	    --naive-dir $(NAIVE_DIR) \
-	    --optimised-dir $(OPTIMISED_DIR) \
-	    --output $@
-
 # --- Bibliography quality LaTeX table (reads from CSV) ----------------------
 
-$(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality.csv
+$(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp2_bib_quality \
 	    --input $< \
@@ -68,7 +126,7 @@ $(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality.csv
 
 # --- Figure: coverage vs. certainty scatter (reads from bib quality CSV) -----
 
-$(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality.csv
+$(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
 	    --input $< \
@@ -76,7 +134,7 @@ $(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality.csv
 
 # --- Figure: five-axis quality spider from cross-eval scores -----------------
 
-$(GEN)/fig_quality_spider.pdf: experiments/derived/sota_cross_eval.csv experiments/quality_spider_config.yaml
+$(GEN)/fig_quality_spider.pdf: $(GEN)/sota_cross_eval_view.csv experiments/quality_spider_config.yaml
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_spider \
 	    --input $< \
@@ -147,11 +205,11 @@ $(GEN)/tab_exp2_outline_hypothesis_status.tex:
 .PHONY: exp2-analysis-report
 
 exp2-analysis-report: \
-	$(GEN)/tab_exp2_arms_runs.csv \
+	$(GEN)/tab_exp2_arms_runs_view.csv \
 	$(GEN)/tab_exp2_arms.tex \
 	$(GEN)/fig_exp2_arms_comparison.pdf \
 	$(GEN)/fig_exp2_turn_trajectory.pdf \
-	$(GEN)/tab_exp2_bib_quality.csv \
+	$(GEN)/tab_exp2_bib_quality_view.csv \
 	$(GEN)/tab_exp2_bib_quality.tex \
 	$(GEN)/fig_exp2_coverage_certainty.pdf \
 	$(GEN)/fig_quality_spider.pdf \
