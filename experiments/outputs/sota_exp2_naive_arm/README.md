@@ -78,11 +78,11 @@ These are operational heuristics for triage, not final scientific labels.
 
 | model | rep# | cost_usd | duration_s | has report | parse OK | #plants | #sources |
 |---|---:|---:|---:|:---:|:---:|---:|---:|
-| claude-opus-4-6 | 1 | 1.1551 | 437.20 | yes | yes | — | 0 |
-| claude-opus-4-6 | 2 | 1.3095 | 551.11 | yes | yes | — | 0 |
-| claude-opus-4-6 | 3 | 1.3449 | 527.46 | yes | yes | — | 0 |
-| claude-opus-4-6 | 4 | 1.3669 | 545.20 | yes | yes | — | 0 |
-| claude-opus-4-6 | 5 | 1.2944 | 580.50 | yes | yes | — | 0 |
+| claude-opus-4-6 | 1 | 1.1551 | 437.20 | yes | yes | 127 | 0 |
+| claude-opus-4-6 | 2 | 1.3095 | 551.11 | yes | yes | 133 | 0 |
+| claude-opus-4-6 | 3 | 1.3449 | 527.46 | yes | yes |  46 | 0 |
+| claude-opus-4-6 | 4 | 1.3669 | 545.20 | yes | yes | 163 | 0 |
+| claude-opus-4-6 | 5 | 1.2944 | 580.50 | yes | yes |  27 | 0 |
 | mistral-large-2512 | 1 | 0.0380 | 195.29 | yes | yes | 54 | 15 |
 | mistral-large-2512 | 2 | 0.2258 | 10.86 | no | no | 0 | 0 |
 | mistral-large-2512 | 3 | 0.0012 | 11.26 | no | no | 0 | 0 |
