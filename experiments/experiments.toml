@@ -505,7 +505,7 @@ output = "outputs/rag_cited"
 # (inventory, scenarios, skill), 1 run each, high max_tokens
 [sweeps.sweep_direct_complete]
 mode = "single"
-prompt = "prompts/prompt_complete.txt"
+prompt = "sota/protocol_07_naive_prompt.md"
 models = "models.yaml"
 model_set = "modelset_frontier_10labs"
 repeat = 1

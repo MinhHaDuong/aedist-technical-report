@@ -1,7 +1,3 @@
-This is the prompt sent to the naive-arm agents, verbatim. Single user message, no system prompt, no protocol scaffolding.
-
----
-
 # GOAL
 
 Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section. Structure it as follows:

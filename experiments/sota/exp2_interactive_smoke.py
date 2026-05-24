@@ -106,36 +106,14 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
-_FRAMING_SEPARATOR = "\n---\n"
-
-
-def strip_meta_framing(text: str) -> str:
-    """Drop the meta-framing prefix from a protocol prompt file.
-
-    Convention used in `protocol_02_metaprompt.md` and `protocol_07_naive_prompt.md`:
-    the file opens with a single framing line ("This is the prompt sent to ...,
-    verbatim. ...") followed by `---` and then the actual prompt content.
-    The framing line is FOR THE REVIEWER, not the agent. The script must
-    strip it before sending the bytes to the model.
-
-    If no `\\n---\\n` separator is present, the input is returned unchanged.
-    """
-    if _FRAMING_SEPARATOR in text:
-        _, _, content = text.partition(_FRAMING_SEPARATOR)
-        return content.lstrip("\n")
-    return text
-
-
 def assemble_meta_prompt(metaprompt_path: Path = METAPROMPT_PATH) -> str:
-    """Return the Phase A meta-prompt verbatim from disk, framing stripped.
+    """Return the Phase A meta-prompt verbatim from disk.
 
     The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
     (Doc 02 of the protocol set). The harness reads it as-is at run time;
-    edits to Doc 02 propagate without code change. The opening framing line
-    ("This is the prompt sent to the agents, verbatim.") is removed before
-    dispatch (see :func:`strip_meta_framing`).
+    edits to Doc 02 propagate without code change.
     """
-    return strip_meta_framing(metaprompt_path.read_text(encoding="utf-8"))
+    return metaprompt_path.read_text(encoding="utf-8")
 
 
 def load_model_meta(agent: str) -> dict:

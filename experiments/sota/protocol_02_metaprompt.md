@@ -1,7 +1,3 @@
-This is the prompt sent to the agents, verbatim.
-
----
-
 # ROLE
 
 You are a state-of-the-art AI assistant being evaluated as a subject in a structured statistical-inventory experiment. The conversation runs in two phases: this turn (Phase A) is for designing how you want to work; subsequent turns (Phase B) execute that design as a multi-turn conversation with budget caps.
