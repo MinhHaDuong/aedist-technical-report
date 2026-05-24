@@ -51,23 +51,43 @@ SAMPLE_METRICS = [
     },
 ]
 
-# Synthetic per_fuel (formerly decomposed) runs for headline macro tests —
-# mirrors the actual rag/per_fuel/deepseek-v3.2 measurements (4 runs, exact values).
-# Post-0120: prompt_version=per_fuel replaces the old decomposed directory label.
+# Synthetic rag_per_fuel (formerly decomposed) runs for headline macro tests —
+# mirrors the actual rag/rag_per_fuel/deepseek-v3.2 measurements (4 runs, exact values).
+# Post-0120: prompt_version=rag_per_fuel replaces the old decomposed directory label.
 HEADLINE_METRICS = [
-    {"label": "per_fuel/deepseek-v3.2-run1", "f1": 0.8859, "coverage": 0.9, "precision": 0.99},
-    {"label": "per_fuel/deepseek-v3.2-run2", "f1": 0.8561, "coverage": 0.88, "precision": 0.99},
-    {"label": "per_fuel/deepseek-v3.2-run3", "f1": 0.9879, "coverage": 1.0, "precision": 0.99},
-    {"label": "per_fuel/deepseek-v3.2-run4", "f1": 0.8601, "coverage": 0.88, "precision": 0.99},
-    # per_fuel_v2 entries must NOT be included when method="per_fuel"
     {
-        "label": "per_fuel_v2/deepseek-v3.2-run1",
+        "label": "rag_per_fuel/deepseek-v3.2-run1",
+        "f1": 0.8859,
+        "coverage": 0.9,
+        "precision": 0.99,
+    },
+    {
+        "label": "rag_per_fuel/deepseek-v3.2-run2",
+        "f1": 0.8561,
+        "coverage": 0.88,
+        "precision": 0.99,
+    },
+    {
+        "label": "rag_per_fuel/deepseek-v3.2-run3",
         "f1": 0.9879,
         "coverage": 1.0,
         "precision": 0.99,
     },
     {
-        "label": "per_fuel_v2/deepseek-v3.2-run2",
+        "label": "rag_per_fuel/deepseek-v3.2-run4",
+        "f1": 0.8601,
+        "coverage": 0.88,
+        "precision": 0.99,
+    },
+    # rag_per_fuel_v2 entries must NOT be included when method="rag_per_fuel"
+    {
+        "label": "rag_per_fuel_v2/deepseek-v3.2-run1",
+        "f1": 0.9879,
+        "coverage": 1.0,
+        "precision": 0.99,
+    },
+    {
+        "label": "rag_per_fuel_v2/deepseek-v3.2-run2",
         "f1": 0.8315,
         "coverage": 0.85,
         "precision": 0.99,
@@ -158,7 +178,7 @@ def test_main_census_csv_headline_macros_nonzero(tmp_path, monkeypatch):
     ]
     main()
     content = output_path.read_text()
-    # HeadlineMeanFOne must not be 0.0 — should be ~89.8 from the 4 per_fuel runs
+    # HeadlineMeanFOne must not be 0.0 — should be ~89.8 from the 4 rag_per_fuel runs
     assert r"\newcommand{\HeadlineMeanFOne}{0.0}" not in content
     assert r"\newcommand{\HeadlineNRuns}{0}" not in content
     assert r"\newcommand{\HeadlineMeanFOne}{89.8}" in content
@@ -170,7 +190,7 @@ def test_main_census_csv_headline_macros_nonzero(tmp_path, monkeypatch):
 
 
 def test_load_headline_result_selects_correct_rows():
-    """Only 'per_fuel/' rows for deepseek-v3.2 are matched; per_fuel_v2 excluded."""
+    """Only 'rag_per_fuel/' rows for deepseek-v3.2 are matched; rag_per_fuel_v2 excluded."""
     result = load_headline_result(HEADLINE_METRICS)
     assert result["n_runs"] == 4
     assert set(result["f1_values"]) == {0.8859, 0.8561, 0.9879, 0.8601}

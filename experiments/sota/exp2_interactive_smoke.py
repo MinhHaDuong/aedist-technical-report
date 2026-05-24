@@ -1305,7 +1305,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
 
     wait_for_space(
         f"Phase B: multi-turn loop on {agent}. Dual cap "
-        f"{PHASE_B_TOTAL_TOKEN_CAP // 1000}K tokens + ${PHASE_B_TOTAL_BUDGET_USD:.2f}.",
+        f"{PHASE_B_TOTAL_TOKEN_CAP // 1000}K tokens + ${args.budget_cap_phase_b:.2f}.",
         no_confirm=args.no_confirm,
     )
     designed_prompt_raw = design["designed_prompt"]
@@ -1324,7 +1324,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
     phase_b = run_phase_b_multiturn(
         designed_prompt,
         output_dir=agent_output_dir,
-        cap_usd=PHASE_B_TOTAL_BUDGET_USD,
+        cap_usd=args.budget_cap_phase_b,
         cap_tokens=PHASE_B_TOTAL_TOKEN_CAP,
         initial_spent_usd=0.0,
         max_tokens=requested_max_tokens,
@@ -1349,7 +1349,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
     status = "pass"
     if not class_trace or "report" not in class_trace:
         status = "fail"
-    if total_cost_usd > PHASE_B_TOTAL_BUDGET_USD + args.budget_cap_phase_a:
+    if total_cost_usd > args.budget_cap_phase_b + args.budget_cap_phase_a:
         status = "fail"
 
     return {
@@ -1442,6 +1442,9 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     summary_path = _write_summary(args.output_dir, per_agent)
+    (args.output_dir / "summary.json").write_text(
+        json.dumps(per_agent, indent=2), encoding="utf-8"
+    )
 
     total_cost_usd = sum(float(item.get("total_cost_usd", 0.0)) for item in per_agent)
     log.info("Phase B-0 summary written -> %s", summary_path)

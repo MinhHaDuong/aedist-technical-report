@@ -1,16 +1,17 @@
 {
-  "run_id": "67b319867992",
-  "timestamp": "2026-04-10T15:45:02.891443Z",
+  "run_id": "fdbeb575f82a",
+  "timestamp": "2026-05-24T09:02:31.289748Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.6-plus-preview:free",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "edge",
       "country": "CN",
       "architecture": "dense",
       "provider": "Alibaba",
-      "context_window": 1000000
+      "context_window": 1000000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.4615,
     "status_accuracy": 0.0385,
     "province_accuracy": 0.7692
-  }
+  },
+  "finish_reason": "stop"
 }

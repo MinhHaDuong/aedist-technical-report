@@ -1,16 +1,17 @@
 {
-  "run_id": "b49791ffd0a4",
-  "timestamp": "2026-04-10T15:45:09.006480Z",
+  "run_id": "bf28ad15c018",
+  "timestamp": "2026-05-24T09:02:51.640896Z",
   "method": "rag",
   "method_params": {
     "model": "deepseek/deepseek-v3.2",
-    "prompt_version": "per_fuel",
+    "prompt_version": "rag_per_fuel",
     "extra": {
       "size_class": "frontier",
       "country": "CN",
       "architecture": "moe",
       "provider": "DeepSeek",
-      "context_window": 163840
+      "context_window": 163840,
+      "finish_reason": "merged"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.3497,
     "status_accuracy": 0.3558,
     "province_accuracy": 0.5337
-  }
+  },
+  "finish_reason": "merged"
 }

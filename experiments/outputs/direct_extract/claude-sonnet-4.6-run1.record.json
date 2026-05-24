@@ -1,16 +1,17 @@
 {
-  "run_id": "23454a78d1a0",
-  "timestamp": "2026-04-10T15:44:55.575789Z",
+  "run_id": "d04a0c1266c8",
+  "timestamp": "2026-05-24T09:02:21.137734Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-sonnet-4.6",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "Anthropic",
-      "context_window": 1000000
+      "context_window": 1000000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.5849,
     "status_accuracy": 0.6792,
     "province_accuracy": 0.8868
-  }
+  },
+  "finish_reason": "stop"
 }

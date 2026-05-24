@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Exp 1 prompt: add Confidence + Status as-of-date columns, prefer low-confidence recall, rerun
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0266
+
+--- log ---
+2026-05-24T08:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Exp 1's `5_table.txt` module requests 13 columns; Exp 2's table asks for 15.
+The two extra columns are **Confidence** (HIGH/MEDIUM/LOW) and **Status as-of-date**.
+Without them, Exp 1 gives models no vocabulary for uncertainty and no instruction to
+prefer recall over precision — which biases outputs toward confident shortlists.
+
+Exp 2's naive prompt already carries the right instruction:
+> "We prefer a comprehensive inventory with uncertainty clearly expressed over a
+> shortlist of well-known assets."
+> "Include known plants even without a primary source rather than omitting them."
+
+That philosophy is absent from Exp 1's current modules. Adding it closes the
+epistemic gap and makes Exp 1 and Exp 2 outputs comparable on confidence-qualified
+recall.
+
+Blocked by 0266 (wall-time column) to land table changes atomically, and by the
+Qwen 3.7 upgrade (branch fix/exp1-qwen37-upgrade, no ticket) so the rerun uses
+the correct model registry.
+
+## Relevant files
+
+- `experiments/prompts/modules/5_table.txt` — add Confidence + Status as-of-date columns
+- `experiments/prompts/modules/C_Uncertainty.txt` — existing uncertainty module; verify
+  its vocabulary aligns with the new table column and the "prefer recall" instruction
+- `experiments/experiments.toml` — sweep_ablation_p1_direct_base: no changes needed
+  (module assembly is automatic)
+- `report/inputs/generated/tab_exp1_cost_summary.tex` — regenerate after rerun
+- `report/inputs/generated/tab_exp1_reasoning_topup.tex` — regenerate after rerun
+
+## Actions
+
+1. **Edit `5_table.txt`**:
+   - Add `Status as-of-date` column after `Status` (best-effort date when status was last confirmed).
+   - Add `Confidence` column after `Owner/Developer` (HIGH / MEDIUM / LOW per Exp 2 vocabulary).
+   - Add after the column legend: "Prefer a comprehensive inventory with uncertainty clearly
+     expressed over a shortlist of well-known assets. Include plants even without a primary
+     source — mark them LOW confidence rather than omitting them."
+
+2. **Cross-check `C_Uncertainty.txt`**: verify the confidence vocabulary there
+   (HIGH/MEDIUM/LOW definitions) is consistent with what Exp 2 uses; align if needed.
+
+3. **Estimate rerun cost** before launching:
+   - Run `make exp1-cost-summary` on existing measurements to get baseline per-model cost.
+   - New prompt adds ~30 tokens/call. At 16 models × 5 reps = 80 calls: negligible (<$0.10 extra).
+   - Dominant cost driver is Qwen 3.7 Max replacing qwen3-max-thinking; compare model pricing.
+   - Write a short cost estimate to the ticket log before launching.
+
+4. **Rerun Exp 1** (`sweep_ablation_p1_direct_base`, all 16 models, 5 reps, T=0, seed=42).
+
+5. **Regenerate tables** and verify wall-time column (0266) and Qwen 3.7 appear correctly.
+
+## Test
+
+```python
+def test_5_table_has_confidence_and_status_asof():
+    text = Path("experiments/prompts/modules/5_table.txt").read_text()
+    assert "Confidence" in text
+    assert "Status as-of-date" in text
+    assert "LOW" in text
+    assert "omitting" in text or "shortlist" in text
+```
+
+## Exit criteria
+
+- [ ] `5_table.txt` contains Confidence + Status as-of-date columns with HIGH/MEDIUM/LOW vocab
+- [ ] `5_table.txt` carries the "prefer recall, mark LOW rather than omit" instruction
+- [ ] `C_Uncertainty.txt` vocabulary is consistent with `5_table.txt`
+- [ ] Cost estimate written to ticket log and approved before rerun
+- [ ] Exp 1 rerun complete (80 calls, ≤3 declined expected)
+- [ ] `make check-fast` passes
+- [ ] `tab_exp1_cost_summary.tex` and `tab_exp1_reasoning_topup.tex` regenerated clean

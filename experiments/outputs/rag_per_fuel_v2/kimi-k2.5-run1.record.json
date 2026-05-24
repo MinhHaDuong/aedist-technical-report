@@ -1,16 +1,17 @@
 {
-  "run_id": "0d3fb140c912",
-  "timestamp": "2026-04-13T18:16:24.573845Z",
+  "run_id": "5a5325becc94",
+  "timestamp": "2026-05-24T09:02:59.069736Z",
   "method": "rag",
   "method_params": {
     "model": "moonshotai/kimi-k2.5",
-    "prompt_version": "decomposed_v2",
+    "prompt_version": "rag_per_fuel_v2",
     "extra": {
       "size_class": "large",
       "country": "CN",
       "architecture": "moe",
       "provider": "Moonshot AI",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "merged"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.5099,
     "status_accuracy": 0.3907,
     "province_accuracy": 0.5563
-  }
+  },
+  "finish_reason": "merged"
 }

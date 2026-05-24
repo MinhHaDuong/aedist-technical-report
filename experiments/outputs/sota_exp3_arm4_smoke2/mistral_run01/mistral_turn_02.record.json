@@ -1,0 +1,484 @@
+{
+  "run_id": "5cc3cc104ef0",
+  "timestamp": "2026-05-23T20:53:34.254619Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 4393,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "Status: remaining 48.9K of 50K tokens, $2.96 of $3.00. Wall-clock elapsed 35.5s. Verify pending.\n\nProceed as you think is best in autonomous agentic mode.",
+      "conversation_id": "conv_019e569b26d870d7b31b1bb5ac3d074b",
+      "agent_id": "ag_019e569b25b97601bf66dce7fa5a3fef"
+    }
+  },
+  "resource_use": {
+    "wall_s": 106.955,
+    "cost_usd": 0.0459635,
+    "tokens_in": 78748,
+    "tokens_out": 4393,
+    "cost_breakdown": {
+      "input": 0.039374,
+      "output": 0.0065895,
+      "connector": 0.35000000000000003
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [
+    {
+      "query": "Vietnam Ministry of Industry and Trade (MOIT) latest decisions on thermal power projects 2024 2025 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "EVN latest press releases on thermal power plant status 2024 2025 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "PVN latest thermal power project updates 2024 2025 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vinacomin thermal power plant status 2024 2025 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam thermal power plant EPC contracts and technology specifications 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam provincial investment plans for thermal power projects 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Global Energy Monitor Vietnam coal and gas plant tracker 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "IEA Vietnam energy report 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam Energy Magazine latest thermal power project updates 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam thermal power plant environmental impact assessments 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "AES Vietnam thermal power projects status 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Sumitomo Vietnam thermal power projects status 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "TATA Power Vietnam thermal power projects status 2024 2025",
+      "urls_returned": []
+    },
+    {
+      "query": "Marubeni Vietnam thermal power projects status 2024 2025",
+      "urls_returned": []
+    }
+  ],
+  "citations": [
+    {
+      "url": "https://www.nortonrosefulbright.com/en/knowledge/publications/1d041eb0/vietnam-power-sector-snapshot",
+      "snippet": "A more predictable and stable supply of domestic natural gas (which is less expensive than LNG) may help lenders to the power project to take a view to not require minimum contracted offtake as power projects using domestic natural gas may be more likely to be dispatched. See Decree 100/2025 – Key features and impact on gas-fired thermal power projects in Vietnam for more details. On 13 August 2025, MOIT chaired a meeting with investors of LNG thermal power projects and related parties.",
+      "supports_claim": null,
+      "title": "Vietnam: Power Sector Snapshot | Global law firm | Norton Rose Fulbright"
+    },
+    {
+      "url": "https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html",
+      "snippet": "Power projects that are included in the power development plan or its implementation plans under <strong>Decision 500/QD-TTg dated 15 May 2023, Decision 262/QD-TTg dated 1 April 2024, or Decision 1682/QD-TTg dated 28 December 2024</strong>, or that have been ...",
+      "supports_claim": null,
+      "title": "Revised Power Development Plan VIII of Vietnam under Decision 768"
+    },
+    {
+      "url": "https://www.vietnam-briefing.com/news/vietnam-revises-pdp8-key-targets-of-the-national-power-development-plan.html/",
+      "snippet": "<strong>174/2024/QH15, dated November 30, 2024, and Resolution No. 189/2025/QH15, dated February 19, 2025</strong>. These resolutions focus on special mechanisms and policies to support investment in the construction of the Ninh Thuan Nuclear Power Project, ...",
+      "supports_claim": null,
+      "title": "Vietnam Revises PDP8: Targets of the National Power Development Plan"
+    },
+    {
+      "url": "https://www.nortonrosefulbright.com/en/knowledge/publications/1d041eb0/vietnam-power-sector-snapshot",
+      "snippet": "This decentralisation is intended to speed up implementation and attract private investment. <strong>Circular 12/2025/TT-BCT (Circular 12) sets out the framework for determination of tariffs for IPP projects</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam: Power Sector Snapshot | Global law firm | Norton Rose Fulbright"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "However, during this period, <strong>there will be no additional development of new coal-fired thermal power</strong>. The PDP8 allows only on-going coal-fired thermal projects currently under construction and under investment promoted for operation during the 2021-2025 period.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "However, during this period, there will be no additional development of new coal-fired thermal power. <strong>The PDP8 allows only on-going coal-fired thermal projects currently under construction and under investment promoted for operation during the 2021-2025 period</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "However, during this period, <strong>there will be no additional development of new coal-fired thermal power</strong>. The PDP8 allows only on-going coal-fired thermal projects currently under construction and under investment promoted for operation during the 2021-2025 period.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+      "snippet": "Despite increasing pressures on its environmental impact, coal will remain the most practical option in the near term to stimulate affordable electricity generation growth at the pace and scale needed. However, during this period, there will be no additional development of new coal-fired thermal power. The PDP8 allows only on-going coal-fired thermal projects currently under construction and under investment promoted for operation during the 2021-2025 period.",
+      "supports_claim": null,
+      "title": "Vietnam - Power Generation, Transmission, and Distribution"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "Under the PDP8 Implementation Plan, <strong>the MOIT is assigned to coordinate with provincial authorities to complete reviewing these projects and submit the list of projects to be developed by 2030 to the Prime Minister for approval before 30 April 2024</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+      "snippet": "As set out in the National Power Development Master Plan, the thermal power sources to be developed from 2021 to 2030 include <strong>domestic gas, LNG, and coal with a total capacity of 14,930 MW, 22,400 MW and 30,127 MW respectively</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam issues Implementation Plan of Power Development Plan 8 - Watson Farley & Williams"
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Government-approves-List-of-important-national-and-key-programs-works-and-projects-in-energy-sector-66-163-4034.aspx",
+      "snippet": "<strong>270/QD-TTg, dated April 2, 2024</strong>, approving the List of important national and key programs, works, and projects in the energy sector (the List). According to this Decision, there are 12 power source projects on the List including Quang Trach ...",
+      "supports_claim": null,
+      "title": "Government approves List of important national and key programs, works, and projects in energy sector"
+    },
+    {
+      "url": "https://vietnamenergy.vn/vietnam-approves-list-of-key-national-energy-projects-for-2025-2035-35295.html",
+      "snippet": "- <strong>Deputy Prime Minister Bui Thanh Son has signed Decision No. 2634/QD-TTg dated December 2, 2025, approving the List of Nationally Important and Priority Energy Projects for the period 2025–2035.</strong>",
+      "supports_claim": null,
+      "title": "Vietnam approves list of key national energy projects for 2025–2035 | Tạp chí Năng lượng Việt Nam"
+    },
+    {
+      "url": "https://en.vietnamplus.vn/unit-1-of-quang-trach-1-thermal-power-plant-connected-to-national-grid-post340980.vnp",
+      "snippet": "<strong>Unit 1 of Quang Trach 1 Thermal Power Plant was successfully connected to the national grid for the first time on April 12,</strong> marking a key milestone towards commercial power generation in May and helping to ease supply pressure during the upcoming ...",
+      "supports_claim": null,
+      "title": "Unit 1 of Quang Trach 1 thermal power plant connected to national grid"
+    },
+    {
+      "url": "https://solarquarter.com/2026/04/13/evn-quang-tri-authorities-review-progress-of-power-and-grid-projects-in-hanoi/",
+      "snippet": "EVN highlighted ongoing developments in major power projects, including the <strong>Quang Trach 1 Thermal Power Plant, which has achieved over 98% completion and is expected to begin commercial operations in 2026</strong>.",
+      "supports_claim": null,
+      "title": "EVN, Quang Tri Authorities Review Progress of Power and Grid Projects in Hanoi - SolarQuarter"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "↑ Cập nhật tiến độ xây dựng dự án Nhiệt điện Quảng Trạch 1 (ngày 4/10/2024), Năng lượng Việt Nam, October 4, 2024 · ↑ Cập nhật tiến độ dự án Nhiệt điện Quảng Trạch 1, Năng lượng Việt Nam, March 31, 2025 · ↑ Coal-fired thermal power supplies nearly 57 percent of electricity, Sài Gòn Giải Phóng, June 4, 2025 · ↑ Toàn cảnh dự án trọng điểm quốc gia Nhà máy Nhiệt điện Quảng Trạch 1, EVNPECC1, April 25, 2025",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://vietnamnews.vn/economy/1732868/evn-returns-to-profit-in-2025-narrowing-accumulated-losses-from-2022-23.html",
+      "snippet": "In 2026, EVN aims to ensure a secure electricity supply, <strong>complete commercial operation of the Quảng Trạch I Thermal Power Plant</strong>, begin construction of 11 power generation projects and complete about 300 grid projects at the 110–220–500kV ...",
+      "supports_claim": null,
+      "title": "EVN returns to profit in 2025, narrowing accumulated losses from 2022–23"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "20, 2025 · ↑ Nguyễn Thuấn, Quang Binh approves adjusted power plant project, Vietnam Economic Times, Sep. 8, 2024 · To access additional data, including interactive maps of the power stations, downloadable datasets, and summary data, please visit the Global Coal Plant Tracker and the Global Oil and Gas Plant Tracker on the Global Energy Monitor website.",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.coherentmarketinsights.com/industry-reports/thermal-power-plant-market",
+      "snippet": "Additionally, <strong>the 1,320-MW Vung Ang II thermal power plant in central Vietnam, with an investment of $2.4 billion, is set to connect to the national grid in December 2024</strong>. The project is backed by Japan&#x27;s Mitsubishi Corporation and Chugoku Electric ...",
+      "supports_claim": null,
+      "title": "Thermal Power Plant Market Size, Share & Analysis, 2026-2033"
+    },
+    {
+      "url": "https://x.com/SEAEnergyNews/status/2054008503501815976",
+      "snippet": "Na Dương II thermal power plant <strong>targets end-2026 operation</strong>. The Na Dương II thermal power plant, developed by Vinacomin Power Holding Corporation, has a capacity of 110MW and is being built adjacent to the existing Na Dương I plant in Na Dương Commune, Lạng Sơn Province.",
+      "supports_claim": null,
+      "title": "SEA Energy News on X: \"🇻🇳 Na Dương II thermal power plant targets end-2026 operation. The Na Dương II thermal power plant, developed by Vinacomin Power Holding Corporation, has a capacity of 110MW and is being built adjacent to the existing Na Dương I plant in Na Dương Commune, Lạng Sơn Province.\" / X"
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "<strong>As of August 2024, electricity generation at Na Dương-1 was reportedly declining due to limited coal supply</strong>.[5] As of October 2025, a biomass co-firing test was being conducted at Na Dương-1 power station.[6] In December 2009, Vinacomin ...",
+      "supports_claim": null,
+      "title": "Na Duong power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://ven.congthuong.vn/vinacomin-power-holding-corporation-15-years-of-ensuring-national-energy-security-55038.html",
+      "snippet": "With the determination of the ... Power Plan VIII, <strong>Vinacomin Power is currently focusing on construction of the Na Duong II power plant to put it into operation and generate electricity by November 2026</strong>....",
+      "supports_claim": null,
+      "title": "Vinacomin - Power Holding Corporation: 15 years of ensuring national energy security"
+    },
+    {
+      "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+      "snippet": "These other sponsors include Japanese ... Q4 2024, and Unit 3 in Q3 2025.[40] According to GreenID the <strong>commissioning date for Units 1-2 is 2025, and for Unit 3 is 2026</strong>.[41]...",
+      "supports_claim": null,
+      "title": "Vinh Tan power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Quynh_Lap_power_station",
+      "snippet": "In June 2018 it was reported that Vietnam’s Ministry of Industry and Trade had asked the central government to allow a joint venture between Hong Kong&#x27;s United Investors Holding (HUI) and Vietnam&#x27;s Geleximco to replace Vinacomin as investor of Quynh Lap-1. Vinacomin is reportedly not able to finance the project, while Chinese banks are ready to provide US$1.6 billion out of US$2.1 billion needed if the project is handed over to the JV.[16] The consortium of Chinese banks that would provide debt financing includes China Development Bank, Bank of China, China Construction Bank, and Industrial and Commercial Bank of China.[17] In June 2019 the completion date for Quỳnh Lập-1 was listed as 2026 in the Ministry Of Industry And Trade&#x27;s report on the implementation of the revised seventh Power Development Plan (PDP7).[18]",
+      "supports_claim": null,
+      "title": "Quynh Lap power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Hai_Phong_Thermal_Power_Station",
+      "snippet": "<strong>Unit 1 would come online in 2021, Unit 2 in 2022, and Units 3 &amp; 4 in 2025</strong>.[13][14] In March 2016, after meeting with Vietnam government officials, Thai company Ratchaburi Electricity Generating Holding (RATCH) said that it was interested in ...",
+      "supports_claim": null,
+      "title": "Hai Phong Thermal Power Station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.evn.com.vn/userfile/User/tcdl/files/2026/1/AnnualRepot2025_V21-20260108144111697.pdf",
+      "snippet": "We cannot provide a description for this page right now",
+      "supports_claim": null,
+      "title": "2024 - 2025 VIETNAM ELECTRICITY"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system</strong> (based on the Letter No. 5473/VPCP-CN dated 31 July 2024 of the Government Office addressing the conversion of the project from using coal ...",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.gem.wiki/Quynh_Lap_power_station",
+      "snippet": "In June 2018 it was reported that Vietnam’s Ministry of Industry and Trade had asked the central government to allow a joint venture between Hong Kong&#x27;s United Investors Holding (HUI) and Vietnam&#x27;s Geleximco to replace Vinacomin as investor of Quynh Lap-1. Vinacomin is reportedly not able to finance the project, while Chinese banks are ready to provide US$1.6 billion out of US$2.1 billion needed if the project is handed over to the JV.[16] The consortium of Chinese banks that would provide debt financing includes China Development Bank, Bank of China, China Construction Bank, and Industrial and Commercial Bank of China.[17] In June 2019 the completion date for Quỳnh Lập-1 was listed as 2026 in the Ministry Of Industry And Trade&#x27;s report on the implementation of the revised seventh Power Development Plan (PDP7).[18]",
+      "supports_claim": null,
+      "title": "Quynh Lap power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.reccessary.com/en/insight/grid-upgrades-and-market-reform-vietnam",
+      "snippet": "The structural barriers and market ... In particular, <strong>the progress of several large-scale thermal power and hydropower projects has been significantly delayed, directly impacting national energy security</strong>....",
+      "supports_claim": null,
+      "title": "Grid upgrades and market reform: Reshaping Vietnam’s renewable energy market | INSIGHT | Reccessary"
+    },
+    {
+      "url": "https://practiceguides.chambers.com/practice-guides/oil-gas-and-the-transition-to-renewables-2025/vietnam/trends-and-developments",
+      "snippet": "The recent signing of the engineering, procurement and construction (EPC) contract for the <strong>O Mon 4</strong> Thermal Power Plant represents a major step in Vietnam’s long-term energy agenda.",
+      "supports_claim": null,
+      "title": "Oil, Gas and the Transition to Renewables 2025 - Vietnam | Global Practice Guides | Chambers and Partners"
+    },
+    {
+      "url": "https://www.power-technology.com/news/o-mon-4-thermal-power-plant-contract-vietnam/",
+      "snippet": "The EPC contract signing ceremony for O Mon 4 thermal power plant project. Credit: Samoila ionut/Shutterstock. The Vietnam National Industry-Energy Group (Petrovietnam) has signed an engineering procurement and construction (EPC) contract with a consortium of South Korea’s Doosan Enerbility Co and Vietnam’s Power Engineering Consulting Joint Stock Company 2 for the O Mon 4 thermal power plan in Vietnam.",
+      "supports_claim": null,
+      "title": "O Mon 4 thermal power plant contract signed"
+    },
+    {
+      "url": "https://www.enerdata.net/publications/daily-energy-news/petrovietnam-signs-epc-contract-12-gw-ccgt-power-project-vietnam.html",
+      "snippet": "<strong>The O Mon IV thermal power plant is scheduled to start operations by December 2028</strong>, raising PetroVietnam&#x27;s installed capacity to over 9,300 MW or about 10% of the country’s power capacity.",
+      "supports_claim": null,
+      "title": "Petrovietnam signs EPC contract for a 1.2 GW CCGT power project in Vietnam | Enerdata"
+    },
+    {
+      "url": "https://www.world-energy.org/article/52456.html",
+      "snippet": "Vietnam National Industry-Energy Group (Petrovietnam) has entered into an engineering, procurement, and construction (EPC) contract with a consortium comprising South Korea’s Doosan Enerbility Co and Vietnam’s Power Engineering Consulting Joint Stock Company 2 for the O Mon 4 thermal power plant in Can Tho city, located in the Mekong Delta.",
+      "supports_claim": null,
+      "title": "EPC Contract Signed for O Mon 4 Thermal Power Plant in Vietnam - World-Energy"
+    },
+    {
+      "url": "https://www.worldconstructionnetwork.com/news/petrovietnam-epc-contract-power-plant/",
+      "snippet": "Vietnam’s state energy group Petrovietnam has signed an engineering, procurement and construction (EPC) contract for the <strong>O Mon 4 thermal power plant</strong>, advancing development of the flagship Block B-O Mon gas-to-power project.",
+      "supports_claim": null,
+      "title": "Petrovietnam signs EPC contract for power plant"
+    },
+    {
+      "url": "https://en.vneconomy.vn/epc-contract-signed-for-972-mln-quang-trach-ii-lng-power-project.htm",
+      "snippet": "The contract signing for Component project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project. Vietnam Electricity (EVN), the Power Project Management Board 2, and a consortium of contractors comprising POWERCHINA and the Vietnam Machinery Erection Corporation (LILAMA) have officially signed the Engineering, Procurement, and Construction (EPC) contract for Component Project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project.",
+      "supports_claim": null,
+      "title": "EPC contract signed for $972 mln Quang Trach II LNG power project - VnEconomy"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "20, 2025 · ↑ Nguyễn Thuấn, Quang Binh approves adjusted power plant project, Vietnam Economic Times, Sep. 8, 2024 · To access additional data, including interactive maps of the power stations, downloadable datasets, and summary data, please visit the Global Coal Plant Tracker and the Global Oil and Gas Plant Tracker on the Global Energy Monitor website.",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-epc-market",
+      "snippet": "<strong>Three regasification terminals, Thi Vai, Son My, and Quang Tri, began service between January 2024 and September 2025</strong>, clearing the fuel bottleneck that had stalled 6.8 GW of combined-cycle projects.",
+      "supports_claim": null,
+      "title": "Vietnam Power EPC Market Size & Share 2026 - 2031"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "Particularly, per Decision No. 215/QĐ-UBND of Ninh Thuan Provincial People Commitee dated 14 April 2025, <strong>the LNG Ca Na Project will begin the procedure of selecting investor from the Q1 to Q4 2025</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "5473/VPCP-CN dated 31 July 2024 of the Government Office addressing the conversion of the project from using coal to using LNG); <strong>LNG Hai Phong Phase II with a capacity of 3200 MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system</strong> (based on the Letter No. 5473/VPCP-CN dated 31 July 2024 of the Government Office addressing the conversion of the project from using coal ...",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "5473/VPCP-CN dated 31 July 2024 of the Government Office addressing the conversion of the project from using coal to using LNG); <strong>LNG Hai Phong Phase II with a capacity of 3200 MW</strong>.",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.investing.com/news/company-news/evn-q1-202526-slides-revenue-rises-as-networks-offset-generation-slump-93CH-4523503",
+      "snippet": "Total electricity generation volumes declined 12.6% to 578 GWh, with renewable sources down 9.8% and <strong>thermal generation plummeting 34.4%</strong>. The segment’s revenue collapsed 27.3% to EUR 73.6 million, while EBIT tumbled 69.1% to just EUR 14.1 million.",
+      "supports_claim": null,
+      "title": "EVN Q1 2025/26 slides: revenue rises as networks offset generation slump By Investing.com"
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "<strong>As of August 2024, electricity generation at Na Dương-1 was reportedly declining due to limited coal supply</strong>.[5] As of October 2025, a biomass co-firing test was being conducted at Na Dương-1 power station.[6] In December 2009, Vinacomin ...",
+      "supports_claim": null,
+      "title": "Na Duong power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2769948-erex-starts-second-biomass-co-firing-test-in-vietnam",
+      "snippet": "<strong>Vinacomin and Erex will renovate both plants in 2026-27</strong> and start commercial co-firing operations around 2027-28.",
+      "supports_claim": null,
+      "title": "Erex starts second biomass co-firing test in Vietnam | Latest Market News"
+    },
+    {
+      "url": "https://ven.congthuong.vn/vinacomin-power-holding-corporation-15-years-of-ensuring-national-energy-security-55038.html",
+      "snippet": "With the determination of the ... Power Plan VIII, <strong>Vinacomin Power is currently focusing on construction of the Na Duong II power plant to put it into operation and generate electricity by November 2026</strong>....",
+      "supports_claim": null,
+      "title": "Vinacomin - Power Holding Corporation: 15 years of ensuring national energy security"
+    },
+    {
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2769948-erex-starts-second-biomass-co-firing-test-in-vietnam",
+      "snippet": "<strong>Erex began the trial co-firing operations at a 57.5MW unit of the 115MW Cao Ngan plant in northern Vietnam on 20 December</strong>. The test runs are expected to last around a month, burning up to 20pc of wood pellets secured domestically, according ...",
+      "supports_claim": null,
+      "title": "Erex starts second biomass co-firing test in Vietnam | Latest Market News"
+    },
+    {
+      "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+      "snippet": "↑ Cập nhật tiến độ xây dựng dự án Nhiệt điện Quảng Trạch 1 (ngày 4/10/2024), Năng lượng Việt Nam, October 4, 2024 · ↑ Cập nhật tiến độ dự án Nhiệt điện Quảng Trạch 1, Năng lượng Việt Nam, March 31, 2025 · ↑ Coal-fired thermal power supplies nearly 57 percent of electricity, Sài Gòn Giải Phóng, June 4, 2025 · ↑ Toàn cảnh dự án trọng điểm quốc gia Nhà máy Nhiệt điện Quảng Trạch 1, EVNPECC1, April 25, 2025",
+      "supports_claim": null,
+      "title": "Quang Trach Power Center - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.power-technology.com/news/o-mon-4-thermal-power-plant-contract-vietnam/",
+      "snippet": "The EPC contract signing ceremony for O Mon 4 thermal power plant project. Credit: Samoila ionut/Shutterstock. The Vietnam National Industry-Energy Group (Petrovietnam) has signed an engineering procurement and construction (EPC) contract with a consortium of South Korea’s Doosan Enerbility Co and Vietnam’s Power Engineering Consulting Joint Stock Company 2 for the O Mon 4 thermal power plan in Vietnam.",
+      "supports_claim": null,
+      "title": "O Mon 4 thermal power plant contract signed"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-epc-market",
+      "snippet": "<strong>Three regasification terminals, Thi Vai, Son My, and Quang Tri, began service between January 2024 and September 2025</strong>, clearing the fuel bottleneck that had stalled 6.8 GW of combined-cycle projects.",
+      "supports_claim": null,
+      "title": "Vietnam Power EPC Market Size & Share 2026 - 2031"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-generation-epc-market",
+      "snippet": "<strong>The project is expected to be commissioned by 2025 and generate up to 8.4 billion kilowatt-hours of electricity per year</strong>. In March 2022, Samsung C&amp;T and Lilama secured an engineering, procurement, and construction (EPC) contract worth VND 24.14 ...",
+      "supports_claim": null,
+      "title": "Power Generation EPC Market in Vietnam - Size, Share & Industry Analysis"
+    },
+    {
+      "url": "https://en.vneconomy.vn/epc-contract-signed-for-972-mln-quang-trach-ii-lng-power-project.htm",
+      "snippet": "The contract signing for Component project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project. Vietnam Electricity (EVN), the Power Project Management Board 2, and a consortium of contractors comprising POWERCHINA and the Vietnam Machinery Erection Corporation (LILAMA) have officially signed the Engineering, Procurement, and Construction (EPC) contract for Component Project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project.",
+      "supports_claim": null,
+      "title": "EPC contract signed for $972 mln Quang Trach II LNG power project - VnEconomy"
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "<strong>This project may be accelerated to the period 2026 – 2030 depending on the demands of the power system</strong> (based on the Letter No. 5473/VPCP-CN dated 31 July 2024 of the Government Office addressing the conversion of the project from using coal ...",
+      "supports_claim": null,
+      "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams"
+    },
+    {
+      "url": "https://www.mordorintelligence.com/industry-reports/vietnam-power-epc-market",
+      "snippet": "<strong>Three regasification terminals, Thi Vai, Son My, and Quang Tri, began service between January 2024 and September 2025</strong>, clearing the fuel bottleneck that had stalled 6.8 GW of combined-cycle projects.",
+      "supports_claim": null,
+      "title": "Vietnam Power EPC Market Size & Share 2026 - 2031"
+    },
+    {
+      "url": "https://en.vneconomy.vn/epc-contract-signed-for-972-mln-quang-trach-ii-lng-power-project.htm",
+      "snippet": "The contract signing for Component project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project. Vietnam Electricity (EVN), the Power Project Management Board 2, and a consortium of contractors comprising POWERCHINA and the Vietnam Machinery Erection Corporation (LILAMA) have officially signed the Engineering, Procurement, and Construction (EPC) contract for Component Project 1 (the Power Plant) of the Quang Trach II Liquefied Natural Gas (LNG) Thermal Power Project.",
+      "supports_claim": null,
+      "title": "EPC contract signed for $972 mln Quang Trach II LNG power project - VnEconomy"
+    },
+    {
+      "url": "https://practiceguides.chambers.com/practice-guides/oil-gas-and-the-transition-to-renewables-2025/vietnam/trends-and-developments",
+      "snippet": "<strong>Before production begins, operators are required to conduct Environmental Impact Assessments (EIAs) to assess the potential environmental impacts</strong>.",
+      "supports_claim": null,
+      "title": "Oil, Gas and the Transition to Renewables 2025 - Vietnam | Global Practice Guides | Chambers and Partners"
+    },
+    {
+      "url": "https://www.aoshearman.com/en/insights/vietnams-pdp8-gets-a-makeover",
+      "snippet": "<strong>The amendment reflects a more aggressive approach to reducing emissions in the near term, indicating a stronger commitment to environmental sustainability</strong>. With the adoption of the new Electricity Law4 in 2024, the Amended PDP8 assigns authorities ...",
+      "supports_claim": null,
+      "title": "What are the new changes to Vietnam's PDP8"
+    },
+    {
+      "url": "https://www.evn.com.vn/userfile/User/tcdl/files/2026/1/AnnualRepot2025_V21-20260108144111697.pdf",
+      "snippet": "We cannot provide a description for this page right now",
+      "supports_claim": null,
+      "title": "2024 - 2025 VIETNAM ELECTRICITY"
+    },
+    {
+      "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+      "snippet": "These other sponsors include Japanese ... Q4 2024, and Unit 3 in Q3 2025.[40] According to GreenID the <strong>commissioning date for Units 1-2 is 2025, and for Unit 3 is 2026</strong>.[41]...",
+      "supports_claim": null,
+      "title": "Vinh Tan power station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.gem.wiki/Quynh_Lap_power_station",
+      "snippet": "In June 2018 it was reported that Vietnam’s Ministry of Industry and Trade had asked the central government to allow a joint venture between Hong Kong&#x27;s United Investors Holding (HUI) and Vietnam&#x27;s Geleximco to replace Vinacomin as investor of Quynh Lap-1. Vinacomin is reportedly not able to finance the project, while Chinese banks are ready to provide US$1.6 billion out of US$2.1 billion needed if the project is handed over to the JV.[16] The consortium of Chinese banks that would provide debt financing includes China Development Bank, Bank of China, China Construction Bank, and Industrial and Commercial Bank of China.[17] In June 2019 the completion date for Quỳnh Lập-1 was listed as 2026 in the Ministry Of Industry And Trade&#x27;s report on the implementation of the revised seventh Power Development Plan (PDP7).[18]",
+      "supports_claim": null,
+      "title": "Quynh Lap power station - Global Energy Monitor - GEM.wiki"
+    },
+    {
+      "url": "https://www.gem.wiki/Hai_Phong_Thermal_Power_Station",
+      "snippet": "<strong>Unit 1 would come online in 2021, Unit 2 in 2022, and Units 3 &amp; 4 in 2025</strong>.[13][14] In March 2016, after meeting with Vietnam government officials, Thai company Ratchaburi Electricity Generating Holding (RATCH) said that it was interested in ...",
+      "supports_claim": null,
+      "title": "Hai Phong Thermal Power Station - Global Energy Monitor"
+    },
+    {
+      "url": "https://www.reccessary.com/en/insight/grid-upgrades-and-market-reform-vietnam",
+      "snippet": "The structural barriers and market ... In particular, <strong>the progress of several large-scale thermal power and hydropower projects has been significantly delayed, directly impacting national energy security</strong>....",
+      "supports_claim": null,
+      "title": "Grid upgrades and market reform: Reshaping Vietnam’s renewable energy market | INSIGHT | Reccessary"
+    }
+  ],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.35000000000000003
+}

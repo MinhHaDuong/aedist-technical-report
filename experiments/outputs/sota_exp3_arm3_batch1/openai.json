@@ -1,0 +1,12 @@
+{
+  "agent": "openai",
+  "run": 1,
+  "model": "gpt-5.5",
+  "classification": "report",
+  "tokens_out": 19909,
+  "wall_s": 225.22,
+  "cost_usd": 0.4982,
+  "classifier_cost_usd": 0.002438,
+  "narrative_chars": 60428,
+  "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml"
+}

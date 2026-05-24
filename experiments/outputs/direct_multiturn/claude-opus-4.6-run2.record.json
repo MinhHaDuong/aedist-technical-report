@@ -1,10 +1,10 @@
 {
-  "run_id": "9fa5180227ae",
-  "timestamp": "2026-04-10T15:45:11.396780Z",
+  "run_id": "b6833f1c1d34",
+  "timestamp": "2026-05-24T09:02:37.044240Z",
   "method": "direct+multiturn",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
-    "prompt_version": "followups",
+    "prompt_version": "direct_multiturn",
     "extra": {
       "size_class": "frontier",
       "country": "US",

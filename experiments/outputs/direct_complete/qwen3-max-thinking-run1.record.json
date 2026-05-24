@@ -1,16 +1,19 @@
 {
-  "run_id": "5b1b6eb8b2f8",
-  "timestamp": "2026-04-10T15:45:08.232138Z",
+  "run_id": "17bf6e6ab776",
+  "timestamp": "2026-05-24T09:02:19.226959Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3-max-thinking",
-    "prompt_version": "complete",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
     "extra": {
       "size_class": "frontier",
       "country": "CN",
       "architecture": "moe",
       "provider": "Alibaba",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +33,6 @@
     "fuel_accuracy": 0.5167,
     "status_accuracy": 0.6,
     "province_accuracy": 0.65
-  }
+  },
+  "finish_reason": "stop"
 }

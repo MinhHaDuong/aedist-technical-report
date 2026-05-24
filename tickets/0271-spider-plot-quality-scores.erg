@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Spider plot — visualize 5-axis quality scores per model/arm, modelset-configurable
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0270
+
+--- log ---
+2026-05-24T09:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0270 produces `sota_cross_eval.csv` with 12 mechanical scores per run.
+This ticket renders those scores as a radar/spider chart — one polygon per model
+or arm — so quality profiles are visually comparable across experiments and modelsets.
+
+The modelset to display should be driven by a YAML config file (analogous to how
+`experiments/figures.toml` or the model registry drives other figures), not hardcoded.
+
+## Relevant files
+
+- `src/aedist/plot_quality_spider.py` — new script (primary deliverable)
+- `experiments/figures.toml` or new `experiments/prompts/quality_spider.yaml` — modelset config
+- `report/inputs/generated/fig_quality_spider.pdf` — output artifact
+- `Makefile` — add target wiring `sota_cross_eval.csv` → `fig_quality_spider.pdf`
+
+## Actions
+
+1. Create a YAML config file (e.g. `experiments/quality_spider_config.yaml`) with:
+   - `modelset`: list of model IDs to include
+   - `axes`: ordered list of axis names to display (default: all 5)
+   - `arms`: which arms to overlay (e.g. `[naive, optimised]`)
+   - `aggregate`: how to aggregate reps (`median` default)
+
+2. Implement `src/aedist/plot_quality_spider.py`:
+   - Reads `sota_cross_eval.csv` and the YAML config
+   - Computes per-model/arm median score per axis (normalised to [0, 1] for display)
+   - Renders a matplotlib polar plot with one polygon per model/arm
+   - Writes PDF to `report/inputs/generated/fig_quality_spider.pdf`
+   - Uses the project's existing color palette / style conventions (check `plot_*.py`)
+
+3. Wire in `Makefile`:
+   ```makefile
+   fig_quality_spider.pdf: sota_cross_eval.csv quality_spider_config.yaml
+       uv run python -m aedist.plot_quality_spider ...
+   ```
+
+4. Add `\includegraphics{fig_quality_spider}` placeholder in report where appropriate.
+
+## Normalisation note
+
+Different axes have different natural maxima:
+- Accuracy: F1 ∈ [0, 1] — use directly
+- Coherence/Provenance/Temporality/FC: fractions ∈ [0, 1] — use directly
+- The five axes are already on the same [0, 1] scale. No rescaling needed.
+
+## Test
+
+- Canned 3-row `sota_cross_eval.csv` → PDF written without error
+- Config with 2 models, 2 arms → 4 polygons in the output
+- Config with unknown model ID → logged warning, silently skipped (not crash)
+
+## Exit criteria
+
+- [ ] `plot_quality_spider.py` exists with YAML-driven modelset config
+- [ ] `fig_quality_spider.pdf` generated from current `sota_cross_eval.csv`
+- [ ] Makefile target present and wired
+- [ ] `make check-fast` passes

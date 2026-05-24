@@ -1,16 +1,17 @@
 {
-  "run_id": "fb32d8b5ed48",
-  "timestamp": "2026-04-10T15:45:00.125556Z",
+  "run_id": "6415a093834c",
+  "timestamp": "2026-05-24T09:02:27.587890Z",
   "method": "direct",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "edge",
       "country": "US",
       "architecture": "dense",
       "provider": "Google",
-      "context_window": 1048576
+      "context_window": 1048576,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.184,
     "status_accuracy": 0.1166,
     "province_accuracy": 0.184
-  }
+  },
+  "finish_reason": "stop"
 }

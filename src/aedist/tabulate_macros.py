@@ -70,14 +70,14 @@ def _headline_pretty(slug: str) -> str:
 def load_headline_result(
     metrics: list[dict],
     model_slug: str = "deepseek-v3.2",
-    method: str = "per_fuel",
+    method: str = "rag_per_fuel",
 ) -> dict:
     """Filter metrics to the headline model/method and compute mean + bootstrap CI.
 
     Rows are matched when their label starts with ``"{method}/"`` (exact first
     path segment) and the slug extracted from the label contains ``model_slug``
-    as a substring.  This deliberately excludes ``per_fuel_v2/`` etc. when
-    ``method="per_fuel"`` (post-0120: formerly ``decomposed``).
+    as a substring. This deliberately excludes ``rag_per_fuel_v2/`` etc. when
+    ``method="rag_per_fuel"`` (post-0120: formerly ``decomposed``).
 
     Returns a dict with keys:
         f1_values   -- list of matched F1 scores
@@ -107,7 +107,7 @@ def load_headline_result(
 def generate_macros(
     summary: dict[str, dict],
     headline_model: str = "deepseek-v3.2",
-    headline_method: str = "per_fuel",
+    headline_method: str = "rag_per_fuel",
     headline_metrics: list[dict] | None = None,
 ) -> str:
     """Generate LaTeX \\newcommand definitions from model summary.
@@ -188,8 +188,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--headline-method",
-        default="per_fuel",
-        help="Method label prefix for headline macros (default: per_fuel)",
+        default="rag_per_fuel",
+        help="Method label prefix for headline macros (default: rag_per_fuel)",
     )
     args = parser.parse_args()
 

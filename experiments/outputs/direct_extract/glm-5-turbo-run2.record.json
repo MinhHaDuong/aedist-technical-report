@@ -1,16 +1,17 @@
 {
-  "run_id": "d2ea61ef9bb5",
-  "timestamp": "2026-04-10T15:44:55.816061Z",
+  "run_id": "f8cdee3d0948",
+  "timestamp": "2026-05-24T09:02:23.264961Z",
   "method": "direct",
   "method_params": {
     "model": "z-ai/glm-5-turbo",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "large",
       "country": "CN",
       "architecture": "dense",
       "provider": "Zhipu AI",
-      "context_window": 202752
+      "context_window": 202752,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.7593,
     "status_accuracy": 0.6296,
     "province_accuracy": 0.8148
-  }
+  },
+  "finish_reason": "stop"
 }

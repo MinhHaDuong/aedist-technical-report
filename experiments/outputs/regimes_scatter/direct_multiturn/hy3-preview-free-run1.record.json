@@ -1,0 +1,25 @@
+{
+  "run_id": "946c2732b994",
+  "timestamp": "2026-05-24T07:37:38.209817Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "tencent/hy3-preview:free",
+    "temperature": 0.0,
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Tencent",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 435.983,
+    "cost_usd": 0.0
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_multiturn/hy3-preview-free-run1.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

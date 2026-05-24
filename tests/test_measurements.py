@@ -300,10 +300,10 @@ class TestHeadlineReplicates:
     """Ticket 0081: headline result must have n>=3 replicates."""
 
     def test_decomposed_deepseek_has_3_replicates(self):
-        """The headline condition (rag/per_fuel, deepseek-v3.2) needs n>=3.
+        """The headline condition (rag/rag_per_fuel, deepseek-v3.2) needs n>=3.
 
         Post-0120 migration: formerly method=decomposed, now method=rag with
-        prompt_version=per_fuel. Filter by both to identify the headline condition.
+        prompt_version=rag_per_fuel. Filter by both to identify the headline condition.
         """
         from aedist.measurements import load
 
@@ -312,7 +312,7 @@ class TestHeadlineReplicates:
             r
             for r in records
             if "deepseek-v3.2" in r.method_params.model
-            and r.method_params.prompt_version == "per_fuel"
+            and r.method_params.prompt_version == "rag_per_fuel"
             and not any(
                 r.result_file.endswith(s)
                 for s in ("-union.csv", "-consolidated.csv", "_filtered.csv")

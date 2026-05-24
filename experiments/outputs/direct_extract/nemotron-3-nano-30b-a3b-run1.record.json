@@ -1,16 +1,17 @@
 {
-  "run_id": "83a4285f542e",
-  "timestamp": "2026-04-10T15:44:58.750416Z",
+  "run_id": "1dc2abd4674b",
+  "timestamp": "2026-05-24T09:02:26.148754Z",
   "method": "direct",
   "method_params": {
     "model": "nvidia/nemotron-3-nano-30b-a3b",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "medium",
       "country": "US",
       "architecture": "moe",
       "provider": "NVIDIA",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.8667,
     "status_accuracy": 0.4,
     "province_accuracy": 0.3333
-  }
+  },
+  "finish_reason": "stop"
 }

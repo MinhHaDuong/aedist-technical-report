@@ -1,0 +1,32 @@
+## PHASE B EXECUTION PROTOCOL: VIETNAM THERMAL ASSETS INVENTORY (>30 MWe)
+
+**TURN 1 (DISCOVERY & SCOPING)**:
+- Search: Vietnam Power Development Plan VIII (PDP8) official decree, MOIT reports 2023-2025, EVN annual reports, IEA Vietnam Energy Outlook 2024, Global Energy Monitor Vietnam coal/gas tracker.
+- Extract: National thermal capacity totals by fuel (coal/domestic gas/LNG), policy framework summary, key actors (EVN, PVN, MOIT), current challenges (grid constraints, JETP impacts).
+- Generate preliminary plant list with: Name (EN/VN), Province, Fuel, Total MWe, Status, COD (if available), Source snippet. Flag conflicts/gaps.
+- Output: Bullet summary of sector findings + preliminary list with confidence flags. DO NOT output full table.
+
+**TURN 2 (ASSET DEEP DIVE)**:
+- For each plant: Search MOIT investment decisions, provincial permits, operator press releases (PVN, EVN units), project EIAs, recent news (last 24mo for status updates).
+- Populate table columns rigorously. For conflicts: document resolution rationale in Notes (e.g., 'Chose MOIT Decree 23/2023 over operator press release due to regulatory authority').
+- Apply confidence rules per row. Note 'gross/net unspecified' if capacity type ambiguous.
+- Output: Draft structured table (all columns) + sector overview paragraph + unresolved items log.
+
+**TURN 3 (VERIFICATION & GAP FILL)**:
+- Reconcile plant-level totals against PDP8/EVN national aggregates. Flag discrepancies.
+- Verify status for plants with last update >18mo: targeted search for recent progress reports.
+- Draft statistical summaries (capacity by fuel×status; top 15 provinces; timeline 2015-2035) and bibliography entries.
+- Output: Near-complete Markdown draft highlighting LOW-confidence rows and unresolved conflicts.
+
+**TURN 4 (FINAL POLISH)**:
+- Finalize conflict resolutions in Notes. Ensure every table value has ≥1 admissible source cited in Source 1/2.
+- Format complete Markdown: Sector overview → Narratives (only major/disputed plants) → Power Plants Table → Statistical Summaries → Annotated Bibliography.
+- Append budget note: 'Estimated tokens used: [X]; Sources consulted: [Y]'.
+
+**CRITICAL CONSTRAINTS**:
+- Plant Row Rule: Split sites with distinct plants (different owner, COD, fuel, or BOT arrangement) into separate rows. Aggregate only when evidence unavailable (mark 'Ambiguous aggregation' in Notes).
+- Capacity Rule: Record electrical MWe only. Never include thermal/boiler capacity.
+- Bibliography: For Vietnamese sources: '[Original Title]' ([English translation]), URL (or 'URL not verified'), annotation of extracted facts.
+- If source URL cannot be verified: write 'URL not verified'—never invent URLs.
+
+Begin Turn 1 now. Report progress and estimated remaining budget after output.
