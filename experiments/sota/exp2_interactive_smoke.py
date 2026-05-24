@@ -721,7 +721,7 @@ def format_status_line(
     """
     return (
         f"Status: remaining {remaining_tokens / 1000:.1f}K of {cap_tokens // 1000}K tokens, "
-        f"${remaining_usd:.2f} of ${cap_usd:.2f}. "
+        f"remaining budget ${remaining_usd:.2f} out of ${cap_usd:.2f}. "
         f"Wall-clock elapsed {elapsed_s:.1f}s. "
         f"Verify {verify_state}."
     )

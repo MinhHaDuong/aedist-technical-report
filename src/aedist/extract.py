@@ -127,6 +127,69 @@ def _extract_pipe_tables(text: str) -> list[str]:
     return tables
 
 
+def _is_inventory_header(header_line: str) -> bool:
+    """Return True when a CSV header line looks like the plant inventory table.
+
+    Statistical recap tables (for example `fuel,capacity`) must not be merged
+    into inventory candidates.
+    """
+    try:
+        header_cells = next(csv.reader([header_line]))
+    except Exception:
+        return False
+
+    canonical = {
+        map_header_to_canonical(norm_header(cell))
+        for cell in header_cells
+    }
+    canonical.discard(None)
+
+    # Inventory table must have a plant-name column and enough plant-attribute
+    # columns to distinguish it from recap/statistical tables.
+    if "name" not in canonical:
+        return False
+    attribute_hits = len(canonical & {"fuel", "status", "cod", "province", "capacity_mwe"})
+    return attribute_hits >= 2
+
+
+def _merge_pipe_table_candidates(tables: list[str]) -> str | None:
+    """Merge split pipe-table candidates that share the same header row.
+
+    Some model outputs split one logical plant table into multiple markdown
+    subtables with repeated headers. Group by header and merge rows for the
+    largest group so downstream parsing/evaluation sees a single inventory.
+    """
+    if len(tables) < 2:
+        return None
+
+    groups: dict[str, list[str]] = {}
+    for table in tables:
+        lines = [ln for ln in table.splitlines() if ln.strip()]
+        if len(lines) < 2:
+            continue
+        header = lines[0]
+        if not _is_inventory_header(header):
+            continue
+        rows = lines[1:]
+        groups.setdefault(header, []).extend(rows)
+
+    if not groups:
+        return None
+
+    best_header = max(groups.keys(), key=lambda h: len(groups[h]))
+    seen: set[str] = set()
+    merged_rows: list[str] = []
+    for row in groups[best_header]:
+        if row in seen:
+            continue
+        seen.add(row)
+        merged_rows.append(row)
+
+    if len(merged_rows) < 2:
+        return None
+    return "\n".join([best_header, *merged_rows])
+
+
 def fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
@@ -233,9 +296,20 @@ def map_header_to_canonical(norm: str) -> str | None:
         "plant_name_project",
     }:
         return "name"
-    if norm in {"fuel", "fuel_type", "fueltype"}:
+    if norm in {"fuel", "fuel_type", "fueltype", "fuel_source", "source_fuel"}:
         return "fuel"
-    if norm in {"status", "construction_stage", "stage", "constructionstage"}:
+    if norm in {
+        "status",
+        "current_status",
+        "current_status_resolution",
+        "status_resolution",
+        "construction_stage",
+        "stage",
+        "constructionstage",
+        "cod_status",
+        "status_cod",
+        "cod_or_status",
+    }:
         return "status"
     if norm in {
         "status_as_of",
@@ -252,6 +326,10 @@ def map_header_to_canonical(norm: str) -> str | None:
     if norm in {
         "capacity_mwe",
         "capacity",
+        "orig_cap",
+        "orig_capacity",
+        "original_cap",
+        "original_capacity",
         "generation_capacity",
         "installed_capacity",
         "installed_capacity_mwe",
@@ -270,7 +348,13 @@ def map_header_to_canonical(norm: str) -> str | None:
     if norm.startswith("capacity"):
         return "capacity_mwe"
     # Provenance columns
-    if norm in {"confidence", "confidence_level", "evidence_confidence"}:
+    if norm in {
+        "confidence",
+        "confidence_level",
+        "evidence_confidence",
+        "conf_provenance",
+        "confidence_provenance",
+    }:
         return "confidence"
     if norm in {"source_1", "source", "reference", "citation"}:
         return "source_1"
@@ -353,7 +437,11 @@ def count_best_table_rows(text: str) -> int:
     rows. Summary tables should therefore not inflate the count when a larger,
     more plant-like inventory table is present in the same markdown response.
     """
-    candidates = _extract_pipe_tables(text)
+    pipe_candidates = _extract_pipe_tables(text)
+    merged_pipe = _merge_pipe_table_candidates(pipe_candidates)
+    candidates = list(pipe_candidates)
+    if merged_pipe:
+        candidates.append(merged_pipe)
     if not candidates:
         return 0
 
@@ -389,8 +477,13 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
         return ExtractResult(ExtractStatus.FAILED, None, f"{json_path.name}: no response text")
 
     blocks = extract_fenced_blocks(response)
+    pipe_candidates = _extract_pipe_tables(response)
     candidates = blocks[:]
-    candidates.extend(_extract_pipe_tables(response))
+    candidates.extend(pipe_candidates)
+    merged_pipe = _merge_pipe_table_candidates(pipe_candidates)
+    merged_subtables = merged_pipe is not None
+    if merged_pipe:
+        candidates.append(merged_pipe)
     # Only try inline fallback when no fenced blocks or pipe tables found
     if not candidates:
         inline = fallback_extract_inline_csv(response)
@@ -411,7 +504,12 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
 
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path.write_text(canonical_csv, encoding="utf-8")
-    return ExtractResult(ExtractStatus.WROTE, out_path, f"{json_path.name}: wrote {out_path.name}")
+    merge_note = " (merged split subtables)" if merged_subtables else ""
+    return ExtractResult(
+        ExtractStatus.WROTE,
+        out_path,
+        f"{json_path.name}: wrote {out_path.name}{merge_note}",
+    )
 
 
 def main(argv: list[str] | None = None) -> None:
