@@ -15,7 +15,7 @@
 #   mkdir -p outputs/sota_exp3_arm4_batch1/run01
 #   echo '[]' > outputs/sota_exp3_arm4_batch1/run01/summary.json
 
-UV_RUN  := uv run --project .. --env-file ../.env
+UV_RUN  := PYTHONPATH=.. uv run --project .. --env-file ../.env
 AGENTS  := mistral openai anthropic qwen
 EP      := evidence_packs/all18tables.yaml
 ARM3    := outputs/sota_exp3_arm3_batch1
