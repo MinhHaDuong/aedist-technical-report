@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Add dual-run parity gate for mart cutover
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0286
+
+--- log ---
+2026-05-24T14:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Before fully trusting the mart flow, run old and new analysis paths side by
+side and gate cutover on parity thresholds.
+
+## Deliverables
+
+1. Dual-run target(s) in Makefile for old-path vs mart-path outputs
+2. Parity checker for key tables/figures or their numeric intermediates
+3. Explicit tolerance policy (exact match where expected, tolerance where needed)
+4. CI/local gate target failing on parity regressions
+
+## Exit criteria
+
+- [ ] Dual-run pipeline target exists
+- [ ] Parity check target exists and is documented
+- [ ] Parity checks pass on current baseline
+- [ ] `make check-fast` passes

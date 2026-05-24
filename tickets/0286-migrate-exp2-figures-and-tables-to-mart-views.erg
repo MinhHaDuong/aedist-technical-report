@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Migrate Exp2 figures/tables to mart-derived views
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0285
+
+--- log ---
+2026-05-24T14:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Switch Exp2 consumer scripts from ad-hoc/raw inputs to mart-derived CSV views.
+This consolidates analysis flow while preserving existing outputs.
+
+## Deliverables
+
+1. Update Exp2 table/figure scripts and Makefile deps to read mart views
+2. Remove direct probe/raw dependencies where replaced by views
+3. Keep output filenames unchanged unless required
+4. Add migration tests asserting script behavior on view inputs
+
+## Exit criteria
+
+- [ ] Exp2 tables read mart views
+- [ ] Exp2 figures read mart views
+- [ ] No direct raw-probe read path remains for migrated consumers
+- [ ] `make check-fast` passes
