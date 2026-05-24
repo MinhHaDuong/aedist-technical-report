@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Lock mechanical scoring contract — schema, nullability, and annotation policy
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0272
+
+--- log ---
+2026-05-24T11:22Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Before implementing any scorer, lock the interpretation contract so metrics are
+scientifically valid and not confounded by prompt articulation gaps.
+
+Ticket 0272 identifies where prompts ask fields explicitly, imply them, or omit
+them. This ticket turns that analysis into a machine-enforceable scoring policy.
+
+## Deliverables
+
+1. Contract doc: `docs/scoring-contract.md` defining, for each metric:
+   - required columns
+   - numerator/denominator definition
+   - when metric is null (not 0)
+   - annotation code when null (e.g., `prompt_not_asked`, `column_missing`, `parse_failed`)
+
+2. Lock output schema for `experiments/derived/sota_cross_eval.csv`:
+   - include `prompt_version`
+   - include per-metric value and per-metric annotation fields where needed
+   - deterministic column order documented in the contract
+
+3. Test fixture policy in `tests/test_score_mechanical_contract.py`:
+   - missing Confidence column -> high-confidence dual-source metric is null + annotated
+   - missing Status as-of-date -> temporality as-of metrics null + annotated
+   - present column but empty values -> metric computes with denominator semantics from contract
+
+## Non-goals
+
+- No parser extraction work.
+- No scoring algorithm implementation beyond minimal helpers required to enforce contract.
+
+## Exit criteria
+
+- [ ] `docs/scoring-contract.md` committed
+- [ ] CSV schema (including `prompt_version`) locked and documented
+- [ ] Contract tests pass
+- [ ] `make check-fast` passes

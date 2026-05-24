@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Mechanical scoring ingestion — parser reuse, run-path resolution, and row-count parity
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0274
+
+--- log ---
+2026-05-24T11:22Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Scoring quality metrics is only meaningful if extracted rows and run metadata are
+stable and reproducible. This ticket isolates ingestion correctness from scoring.
+
+## Actions
+
+1. Implement a reusable ingestion helper module (e.g. `src/aedist/score_ingest.py`) that:
+   - resolves run output paths from known run metadata (arm/model/run)
+   - reuses existing markdown-table extraction from `extract.py`/`evaluate.py`
+   - normalizes extracted row dicts into one canonical header map used by scorer
+
+2. Add parity checks against `tab_exp2_arms_runs.csv`:
+   - for sample runs in each arm, parsed row count equals inventory_rows when comparable
+   - mismatch is surfaced as explicit diagnostic (not silent fallback)
+
+3. Add tests `tests/test_score_ingest.py`:
+   - markdown file with sectioned table still extracts rows correctly
+   - unknown/missing run path returns a typed ingestion error
+   - sample parity test for one naive and one optimised run fixture
+
+4. Optional throughput note:
+   - if re-parse cost is non-trivial, document and optionally emit extracted rows cache path
+
+## Non-goals
+
+- No axis metric formulas.
+- No final cross-eval CSV writer.
+
+## Exit criteria
+
+- [ ] Ingestion helper module committed with parser reuse (no duplicate parser implementation)
+- [ ] Parity diagnostics implemented and tested
+- [ ] Ingestion tests pass
+- [ ] `make check-fast` passes
