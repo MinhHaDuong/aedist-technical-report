@@ -1,8 +1,8 @@
-# Vietnam Thermal Power Generation Reference Inventory
+# Vietnam Thermal Power Generation Asset Inventory
 
-> **Scope**: All thermal generation assets > 30 MWe — coal, domestic gas, and imported LNG — past, present, and future. All statuses: operating, under construction, planned, shelved, and cancelled.
-> **As-of date**: May 2026 (search data through early 2026; Revised PDP8 dated April 2025)
-> **Author note**: This inventory draws on available search results and the author's training-data knowledge. Confidence is qualified per row. No sources or URLs have been fabricated.
+> **Scope**: All thermal (coal, domestic-gas, imported-LNG) generation assets ≥ 30 MWe — operating, under construction, planned, and cancelled — across Vietnam.
+> **As-of date for status**: May 2026 (author compilation date). Individual source dates noted per plant.
+> **Methodology**: Cross-referenced from Government of Vietnam PDP8/Amended PDP8, Global Energy Monitor (GEM) trackers, GEM.wiki plant pages, Wikipedia power-station lists, developer disclosures, and specialist press. Where only one source or domain knowledge supports a value, confidence is downgraded and noted.
 
 ---
 
@@ -10,114 +10,197 @@
 
 ### 1.1 Electricity Mix
 
-About 20 GW of power stations in Vietnam are coal-fired. As of January 2023, the Global Coal Plant Tracker estimated Vietnam had 24.7 GW in coal capacity, with a further 6.1 GW under construction. Gas power plants in Vietnam are located in the southern region, including 5,705 MW of capacity in the southeast and 1,500 MW in the southwest. Vietnam's total installed generation capacity reached approximately 80+ GW by mid-2020s, with coal providing the single largest thermal share followed by gas-fired generation.
-
-By 2030, coal thermal power will contribute to only 20% of total planned energy resources for local use (30,127 MW out of 150,489 MW). Gas-fired thermal power capacity will reach 37,330 MW, with LNG accounting for about 25% of total capacity.
+Vietnam's total installed capacity exceeded 88,400 MW as of August 2025. As of late 2023, the capacity breakdown featured coal at 33.2 % (26,757 MW), hydropower at 28.4 % (22,872 MW), and wind plus solar at 27 % (21,664 MW), with gas, oil, and other sources making up the remainder. As of 2025, gas-fired plants totalled approximately 10 GW of installed capacity (including ~8.3 GW domestic gas and ~1.6 GW LNG as of September 2025), accounting for about 10 % of the national power generation.
 
 ### 1.2 Policy Framework
 
-On May 15, 2023, the Vietnamese government released Vietnam's Eighth Power Development Plan (PDP8) for the period of 2021–2030, with a vision to 2050. On 15 April 2025, the Prime Minister issued Decision 768/QD-TTg approving the revision to PDP8 (Revised PDP8), superseding Decision 500/QD-TTg. On 30 May 2025, the Ministry of Industry and Trade issued Decision 1509/QD-BCT approving the implementation plan for the Revised PDP8.
+On May 15, 2023, the Vietnamese government released PDP8 for the period 2021–2030, with a vision to 2050. On 15 April 2025, the Prime Minister issued Decision 768/QD-TTg approving the Revised PDP8, superseding the original Decision 500. The Amended PDP8 significantly increases targets for power capacity and further emphasises renewable energy's role.
 
-Key thermal-relevant provisions:
-- The PDP8 cancels around 13 GW of planned coal capacity from the pipeline while keeping a pipeline of ~13 GW of new coal projects (those from Revised PDP7 scheduled before 2030).
-- By 2050, all coal plants must be converted to alternative fuels or cease operation.
-- Gas-fired thermal power should play a key role in the transition; PDP8 focuses on domestic gas over imported LNG.
-- LNG power is expected to reach 22,525 MW by 2030; Vietnam must develop 15 LNG power plants by then.
-- Under PDP8, Vietnam has no plan to develop new LNG power plants after 2035.
+Key thermal-sector provisions:
 
-The **Just Energy Transition Partnership (JETP)**, concluded in December 2022, committed US$15.5 billion to fund a plan to cap coal fleet capacity at 30.2 GW by 2030 and phase out unabated coal generation.
+- **Coal cap**: Both the original and revised PDP8 restrict coal to projects under construction, capping 2030 capacity at ~31 GW. Vietnam cancelled around 13 GW of planned coal capacity from the pipeline while keeping a pipeline of new coal projects to around 13 GW. The 2025 plan sets a firmer roadmap for fuel conversion: all coal plants must convert to biomass/ammonia or shut down by 2050.
+- **Gas/LNG expansion**: Vietnam plans to build at least 15 LNG-fired power plants by 2035 with combined generation capacity of more than 22 GW. PDP8 puts a focus on power stations fired with domestic gas rather than the expansion of the infrastructure serving imported LNG. LNG thermal power plants should be largely converted to hydrogen once the technology is commercialised.
+- **Emissions**: The Amended PDP8 limits emissions to 197–199 million tons by 2030 and a fixed target of 27 million tons by 2050, more stringent than the original target of 204–254 million tons.
 
 ### 1.3 Key Institutional Actors
 
 | Actor | Role |
 |---|---|
-| **MOIT** (Ministry of Industry and Trade) | Sector regulator; issues PDP implementation plans |
-| **EVN** (Electricity of Vietnam) | State utility; generation (via GENCO1/2/3), transmission, distribution |
-| **PVN** (PetroVietnam) | Upstream gas; generation via PV Power; gas distribution via PV Gas |
-| **Vinacomin / TKV** | Coal mining SOE; owns mine-mouth power plants |
-| **ERAV** | Electricity Regulatory Authority |
-| **BOT Investors** | AES, Sumitomo, Marubeni, KEPCO, Mitsubishi, Janakuasa (Malaysia), Jaks Resources (Malaysia), ACWA Power, Delta Offshore Energy, etc. |
+| **Vietnam Electricity (EVN)** | State utility, system operator, majority of coal & hydro fleet through GENCOs 1–3 |
+| **PetroVietnam (PVN) / PV Power** | Upstream gas, gas-fired generation fleet (Cà Mau, Nhơn Trạch), Thái Bình 2, Sông Hậu 1, Long Phú 1 |
+| **Vinacomin (TKV)** | Coal mining SOE; owns mine-mouth coal plants (Na Dương, Cao Ngạn, Cẩm Phả, Mạo Khê, etc.) |
+| **MOIT** | Ministry of Industry and Trade — regulatory, PDP drafting, tariff policy |
+| **BOT developers** | AES (Mông Dương 2), Sumitomo (Vân Phong 1), Marubeni/KEPCO (Nghi Sơn 2), KEPCO/Mitsubishi (Vũng Áng 2), Teknik Janakuasa (Duyên Hải 2), CHINT (Vĩnh Tân 1), Jaks/China Power (Hải Dương), EDF/Mekong Energy (Phú Mỹ 2.2), SembCorp (Phú Mỹ 3) |
 
 ### 1.4 Current Challenges
 
-- Gas supply for southern plants has been declining since 2020 due to ageing gas fields; average supply in the southeast stands at 9.5 million cu m/d, less than half of demand, with further decline to 5.3–6.8 million cu m/d forecast for 2025.
-- As of late 2025, delays in building infrastructure and global shortages of gas turbines have led to significant delays in installed capacity.
-- Key obstacles for LNG include time-consuming PPA negotiations, LNG port infrastructure demands, lack of a pricing mechanism, and no revenue stability guarantees.
-- The North of Vietnam faced great challenges in 2023 with power shortages, including rolling supply rationing.
-- The Amended PDP8 sets more stringent emission targets (197–199 million tons by 2030), contingent on JETP partner implementation.
+- As of late 2025, delays in building infrastructure and global shortages of gas turbines had led to significant delays in installed capacity for generating energy from gas.
+- Of the approximately 14 gas-fired power projects currently underway, only the Nhon Trach 3 and 4 plants were expected to start operations in Q2 and Q3 of 2025.
+- Many LNG projects are facing challenges in securing output offtake agreements and in planning long-term fuel supply volumes and prices.
+- In September 2025, Vietnam's Ministry of Finance proposed exempting the foreign owners of seven BOT coal plants from a 15 % global minimum corporate tax rate.
+- The forecast of power shortage became a reality in Vietnam; the North of Vietnam faced great challenges in 2023 for power shortage, with power supplied on alternative schedules.
 
 ---
 
-## 2. Per-Plant Narratives (Selected Key Plants)
+## 2. Per-Plant Narratives
 
-### 2.1 Coal-Fired Plants
+### 2.1 Coal-Fired Power Plants — Operating
 
-**Phả Lại (Pha Lai) Power Complex — Hải Dương**
-Includes two coal-fired thermal power plants: Phả Lại 1 and Phả Lại 2. Pha Lai TPP 1 is the oldest of the major thermal power plants, operated for approximately 40 years, with a capacity of 440 MW. Pha Lai 2, with a capacity of 600 MW and 23 years of operation, is also required to be changed. The North focused on speeding up construction of Pha Lai 1 coal-fired thermal power plant, including 4 generating units (4×110MW). Pha Lai 1 is on the list for decommissioning in compliance with Decision 500/QD-TTg. Transition pathways under study include biomass co-firing, LNG conversion, and BESS integration.
+**Ninh Bình TPP** (Nhiệt điện Ninh Bình). Vietnam's oldest surviving coal plant, 4 × 25 MW subcritical units in Ninh Bình province, commissioned in 1974 by the Soviet Union. Operated by EVNGENCO1. At 100 MW total, it is among the first candidates for retirement under PDP8's 40-year life-limit policy.
 
-**Uông Bí TPP — Quảng Ninh**
-Vietnam's oldest power station (Uong Bi) has passed a lifespan of 40 years already. In 1961, with the help from the Soviet Union, Vietnam commenced construction of Uong Bi thermal power plant — the main power source for the North. Originally sub-100 MW Soviet-era units; later expanded with 2×150 MW and a 1×330 MW extension (Uông Bí Mở Rộng). Total current capacity approximately 630 MW. Owned by EVN/GENCO1. Confidence: MEDIUM (individual unit capacities from training data, not verified in current searches).
+**Uông Bí TPP** (Nhiệt điện Uông Bí). Located in Quảng Ninh province. Originally commissioned in the 1960s as a Soviet-aided facility. Vietnam's oldest power station (Uông Bí) has passed a lifespan of 40 years already. The complex includes both legacy units and a ~300 MW extension completed c. 2015 by TKV. Total operating capacity ~330 MW. Confidence: MEDIUM (unit-level breakdown uncertain).
 
-**Mông Dương Power Station — Quảng Ninh**
-Mong Duong power station is an operating power station of at least 2,320 MW in Mong Duong, Cam Pha, Quang Ninh. Comprises two plants: Mông Dương-1, a two-unit, 1,080-MW mine-to-mouth coal-fired power plant, funded with ADB support (construction began ~2011, COD ~2015). Mông Dương-2 (1,240 MW, 2×620 MW) is a BOT project developed by AES Corporation, included in the list of BOT coal plants proposed for global minimum tax exemptions in September 2025.
+**Phả Lại 1 & 2** (Nhiệt điện Phả Lại). Major complex in Hải Dương province. Phase 1: 4 × 110 MW subcritical units (COD 1983–86, Soviet-built). Phase 2: 2 × 300 MW subcritical units (COD 2001–02, Japanese/IHI technology, IDA-financed). The power units of the Pha Lai Power Complex started operations in the 1980s and will exceed 40 years of operation within this decade. Operated by EVNGENCO1. Combined ~1,040 MW.
 
-**Vĩnh Tân Power Center — Bình Thuận**
-Vinh Tan power station is an operating power station of at least 4,244 MW in Vinh Tan, Tuy Phong, Binh Thuan. The complex includes four projects:
-- Vĩnh Tân 1 (1,200 MW, BOT, Chinese consortium): EVN signed a construction contract with Shanghai Electric Group for the 1,245-MW Vĩnh Tân-2 (note: VT-2 constructed by Shanghai Electric; VT-1 by a separate Chinese BOT).
-- Vĩnh Tân 2 (1,245 MW, EVN): First unit came online in January 2014, and the second in September 2014.
-- Vĩnh Tân 4 + Extension (1,800 MW, EVN): The 1,800 MW Vinh Tan Coal Fired Power Plant IV was commissioned in 2017.
-- In 2019, Vietnam's State Audit Agency found VT-1 had violated environmental laws, including discharging cooling water without approval and nitrogen oxide emissions in excess of permit limits.
-- In September 2025, voter feedback reported "hundreds of households" impacted by air, odor, and noise pollution.
+**Na Dương 1** (Nhiệt điện Na Dương 1). Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by Vinacomin, began construction in April 2002 and was completed in 2005. The mine-to-mouth plant uses coal from the nearby Na Dương coal mine. Located in Lạng Sơn province. GEM cites 100 MW; other sources cite 110 MW (2 × 55 MW). Confidence: HIGH.
 
-**Duyên Hải Power Complex — Trà Vinh**
-Duyen Hai Power Generation Complex is an operating power station of at least 4,378 MW in Tra Vinh. Duyen Hai I & III is a 2,488 MW project, commissioned in 2016. Duyen Hai II (1,320 MW) came online in 2021 and was developed by Teknik Janakuasa. Environmental concerns include communities complaining about effects on sand dunes, increased landslides and soil erosion, with many residents "unable to grow anything."
+**Na Dương 2** (Nhiệt điện Na Dương 2). 1 × 110 MW extension at the same site. The project received 2.63 billion VND in financing from Vietcombank. Broke ground in 2015; long-delayed due to EPC contractor selection and financing issues. Nearing completion as of early 2026. Confidence: MEDIUM (COD date uncertain).
 
-**Vũng Áng Power Station — Hà Tĩnh**
-Vung Ang power station is an operating power station of at least 1,860 MW in Ha Tinh. Vũng Áng 1 (1,200 MW, 2×600 MW) operates under EVN. Vung Ang 2, with a planned capacity of 1,200 MW, is being developed by a consortium including Mitsubishi Corporation and KEPCO. Samsung C&T had also signed an MOU to build a 1,200-MW Vũng Áng-3, but this was later removed from planning.
+**Cao Ngạn TPP** (Nhiệt điện Cao Ngạn). 2 × 50 MW subcritical, mine-mouth plant in Thái Nguyên province. Owned by TKV. COD ~2005. Confidence: MEDIUM.
 
-**Sông Hậu 1 — Hậu Giang**
-Song Hau Thermal Power Plant is an operating power station of at least 1,200 MW in Hau Giang. Developed by PVN/PV Power. Song Hau 2 (a separate BOT project by Toyo Ventures, Malaysia) received a US$2.42 billion construction contract, with Export-Import Bank of Malaysia as lead arranger.
+**Sơn Động TPP** (Nhiệt điện Sơn Động). 1 × 220 MW subcritical in Bắc Giang province. TKV-owned. COD ~2015. Confidence: MEDIUM (capacity sometimes cited as 2 × 110 MW).
 
-**Na Dương 1 & 2 — Lạng Sơn**
-Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by Vinacomin, began construction in April 2002 and was completed in 2005. The mine-to-mouth plant uses coal from the nearby Na Dương coal mine. In November 2024, Vietcombank Ha Thanh signed a credit contract to finance the Na Duong 2 power plant.
+**Cẩm Phả 1 & 2** (Nhiệt điện Cẩm Phả). Two phases, each 2 × 110 MW = 220 MW, totalling 440 MW of subcritical capacity in Quảng Ninh. TKV-owned. COD: Phase 1 ~2009–10, Phase 2 ~2011–12. Confidence: MEDIUM.
 
-**Vân Phong 1 — Khánh Hòa**
-Van Phong 1 coal-fired power plant, located in Khanh Hoa province, developed by Sumitomo Corporation, with a capacity of 1,320 MW. A BOT project that experienced significant delays. Japanese NGOs called on Sumitomo to withdraw due to climate policy conflict, though Sumitomo stated case-by-case evaluations.
+**Mạo Khê TPP** (Nhiệt điện Mạo Khê). 2 × 110 MW subcritical in Quảng Ninh. TKV-owned. COD ~2012–13. Confidence: MEDIUM.
 
-### 2.2 Gas-Fired Plants
+**Quảng Ninh TPP** (Nhiệt điện Quảng Ninh). 4 × 300 MW = 1,200 MW subcritical, in Quảng Ninh province. Operated by EVNGENCO1. Phased COD 2010–2015. One of the larger domestic-invested coal plants. Confidence: HIGH.
 
-**Phú Mỹ Power Complex — Bà Rịa-Vũng Tàu**
-The largest gas-fired generation cluster in Vietnam, comprising multiple CCGT plants built in the early 2000s using domestic gas from the Cửu Long and Nam Côn Sơn basins. Total complex capacity approximately 3,900 MW across Phú Mỹ 1 (1,090 MW), 2.1 (450 MW), 2.1 Extension (450 MW), 2.2 (715 MW BOT), 3 (720 MW BOT), and 4 (450 MW). Confidence: MEDIUM (capacity figures from training data).
+**Hải Phòng TPP 1 & 2** (Nhiệt điện Hải Phòng). Two phases, each 2 × 300 MW = 600 MW (total 1,200 MW subcritical), in Hải Phòng. EVNGENCO1. Phase 1 COD 2010–11; Phase 2 COD 2013–14. Confidence: HIGH.
 
-**Cà Mau 1 & 2 — Cà Mau**
-The Ca Mau Combined Cycle Power Plant is a 1,500 MW thermal project, owned by PetroVietnam Power, commissioned in 2008, located in Ca Mau. Uses gas from the PM3-CAA field via pipeline from offshore Malaysia-Vietnam joint development area.
+**Thái Bình 1** (Nhiệt điện Thái Bình 1). 2 × 300 MW = 600 MW subcritical in Thái Bình province. EVNGENCO1. COD 2018. Confidence: HIGH.
 
-**Nhơn Trạch 3 & 4 — Đồng Nai (LNG)**
-Vietnam's first LNG-fueled power plants. Inaugurated on December 14, 2025, with combined investment of USD 1.4 billion and total capacity of 1,624 MW. PV Power serves as investor; Lilama and Samsung C&T consortium as EPC contractor. Equipped with GE's 9HA.02 gas turbines, expected to achieve efficiency of 62-64%. Nhon Trach 3 connected to the national grid in February 2025 with initial 50 MW capacity, followed by Nhon Trach 4 in June 2025.
+**Thái Bình 2** (Nhiệt điện Thái Bình 2). 2 × 600 MW = 1,200 MW subcritical in Thái Bình province. Developed by PVN/PV Power. Notoriously delayed (originally planned for 2015, finally COD 2022) due to corruption scandals and contractor issues involving PVC (PetroVietnam Construction). Confidence: HIGH.
 
-**Ô Môn Complex — Cần Thơ**
-The Block B – O Mon gas-to-power value chain project is finally proceeding; the $12 billion project in southwest Vietnam is expected to provide gas that will underpin 3,800 MW of electricity generation. Ô Môn I (~660 MW) is operating; Ô Môn II, III, and IV are planned to use Block B domestic gas.
+**Mông Dương 1** (Nhiệt điện Mông Dương 1). 2 × 540 MW ≈ 1,080 MW subcritical in Quảng Ninh. EVNGENCO3. COD 2015. Confidence: HIGH.
 
-**LNG Pipeline Projects**
-New LNG projects in Revised PDP8 include LNG Hai Phong Phase I (1,600 MW) and LNG Hiep Phuoc Phase II (1,500 MW) for the period 2025–2030. The Revised PDP8 specifically requires the LNG Ca Na, LNG Quynh Lap, LNG Nghi Son, LNG Long Son, LNG Bac Lieu and LNG Son My I&II projects to have solutions to ensure operational progress.
+**Mông Dương 2 (BOT)** (Nhiệt điện BOT Mông Dương 2). Mông Dương-2 is among the coal plants developed under "build-operate-transfer" (BOT) contracts. 2 × 560 MW ≈ 1,120 MW subcritical. Developed by AES-TKV joint venture in Quảng Ninh. COD 2015. Confidence: HIGH.
+
+**BOT Hải Dương** (Nhiệt điện BOT Hải Dương). 2 × 600 MW = 1,200 MW subcritical. BOT by Jaks Resources (Malaysia) and China Power Engineering. Located in Hải Dương province. Experienced significant delays; units commissioned 2021–23. Confidence: MEDIUM.
+
+**Nghi Sơn 1** (Nhiệt điện Nghi Sơn 1). 2 × 300 MW = 600 MW subcritical in Thanh Hóa. EVNGENCO1. COD 2013–15. Confidence: HIGH.
+
+**Nghi Sơn 2 (BOT)** (Nhiệt điện BOT Nghi Sơn 2). The Nghi Son 2 plant in Thanh Hoa province is a joint venture with Japanese and Vietnamese partners and has a capacity of 1,200 MW. 2 × 600 MW supercritical. BOT by Marubeni/KEPCO. COD 2022–23. Confidence: HIGH.
+
+**Vũng Áng 1** (Nhiệt điện Vũng Áng 1). 2 × 600 MW = 1,200 MW subcritical in Hà Tĩnh. EVNGENCO1 (originally under PV Power, transferred). COD 2014–15. Confidence: HIGH.
+
+**Formosa Hà Tĩnh (Captive)** (Nhiệt điện Formosa Hà Tĩnh). Captive coal + blast-furnace-gas power plant for the Formosa Hà Tĩnh integrated steel complex in Hà Tĩnh province. Estimated ~500 MW of coal-fired capacity plus waste-heat recovery units. Not grid-connected for sale; industrial self-consumption. COD ~2017. Confidence: LOW (exact capacity unverified from primary source).
+
+**Vĩnh Tân 1 (BOT)** (Nhiệt điện BOT Vĩnh Tân 1). 2 × 600 MW = 1,200 MW in Bình Thuận province. BOT by CHINT (China)/Vinacomin. COD 2018–19. Confidence: HIGH.
+
+**Vĩnh Tân 2** (Nhiệt điện Vĩnh Tân 2). The Vinh Tan Coal Fired Power Plant II has been operating since 2014. The 1,244 MW thermal project is located in Binh Thuan. 2 × 622 MW subcritical. Developed by Vietnam Electricity; EVNGENCO3 holds the equity stakes. Confidence: HIGH.
+
+**Vĩnh Tân 4 & Extension** (Nhiệt điện Vĩnh Tân 4). The 1,800 MW Vinh Tan Coal Fired Power Plant IV is located in Binh Thuan. Phase 4: 2 × 600 MW (COD 2017–18); Extension: 1 × 600 MW (COD 2019–20). Total 1,800 MW subcritical. EVN/EVNGENCO3. Confidence: HIGH.
+
+**Duyên Hải 1 & 3** (Nhiệt điện Duyên Hải 1 & 3). The Duyen Hai Power Plant I & III is a 2,488 MW thermal power project located in Tra Vinh, commissioned in 2016. Developed by Vietnam Electricity. Phase I: 2 × 622 MW (COD 2015–16); Phase III: 2 × 622 MW (COD 2017). Operated by EVNGENCO1.
+
+**Duyên Hải 3 Extension** (Nhiệt điện Duyên Hải 3 MR). 1 × 688 MW supercritical, same Trà Vinh site. COD 2019. EVNGENCO1. Confidence: MEDIUM.
+
+**Duyên Hải 2 (BOT)** (Nhiệt điện BOT Duyên Hải 2). The Duyen Hai Power Plant II with a capacity of 1,320 MW came online in 2021, developed by Teknik Janakuasa, located in Tra Vinh. 2 × 660 MW supercritical. Confidence: HIGH.
+
+**Sông Hậu 1** (Nhiệt điện Sông Hậu 1). 2 × 600 MW = 1,200 MW subcritical in Hậu Giang province. PVN/Petrovietnam. Experienced significant delays (originally scheduled ~2018, commissioned 2020–22). EPC by Doosan Vina. Confidence: HIGH.
+
+**Vân Phong 1 (BOT)** (Nhiệt điện BOT Vân Phong 1). Van Phong power station is an operating power station of at least 1,432 MW in Ninh Hoa, Khanh Hoa. Developed by Sumitomo Corporation in Khanh Hoa province, with a capacity of 1,320 MW. 2 × 660 MW supercritical. Faced years of delays and NGO opposition. Completed and commissioned 2024–25. Confidence: HIGH.
+
+### 2.2 Coal-Fired Power Plants — Under Construction
+
+**Quảng Trạch 1** (Nhiệt điện Quảng Trạch 1). Operated by EVN, the Quang Trach 1 coal power plant in Quang Binh province is under construction with a capacity of 1,200 MW. 2 × 600 MW subcritical. Expected COD ~2026–27.
+
+**Vũng Áng 2 (BOT)** (Nhiệt điện BOT Vũng Áng 2). The Vung Ang 2 plant, located in Ha Tinh province, is being developed by a consortium that includes Mitsubishi Corporation and KEPCO, with a planned capacity of 1,200 MW. Referenced as going "ultrasupercritical." 2 × 600 MW USC. Under construction since 2021; expected COD ~2026–28. Confidence: HIGH.
+
+**Long Phú 1** (Nhiệt điện Long Phú 1). 2 × 600 MW = 1,200 MW in Sóc Trăng province. PVN-developed. Severely delayed; original EPC contractor (Toshiba/Power Machines consortium) encountered sanctions/bankruptcy issues. Construction reportedly restarted with a new contractor. Status remains uncertain. Confidence: MEDIUM.
+
+### 2.3 Coal-Fired Power Plants — Cancelled / Shelved
+
+Delayed/abandoned coal projects include Công Thanh, Nam Định I, Quảng Trị, Vĩnh Tân III, and Sông Hậu II. If capital arrangements for a project cannot be finalised before June 2024, their construction must be terminated according to PDP8.
+
+Notable cancelled projects include:
+
+- **Quảng Trị** (1,200 MW): EGATi (Thailand) withdrew per PDP8 deadlines.
+- **Vĩnh Tân 3** (1,200 MW): CLP Holdings, a Hong Kong-based utility company, had investments in the Vinh Tan 3 project in Binh Thuan province. Status effectively cancelled.
+- **Sông Hậu 2** (1,200 MW): Investor arrangements failed.
+- **Công Thanh** (600 MW, Thanh Hóa): Failed to secure financing.
+- **Nam Định 1** (1,200 MW): Removed from plans.
+- **Vân Phong 2** (1,320 MW): Keangnam Enterprises and Hanoi Industrial Construction and Investment JSC signed an initial agreement for the 1,320-MW Vân Phong-2 power plant in 2014. Never progressed.
+- **Vũng Áng 3** (1,200 MW): Samsung C&T signed an MOU for the two-unit, 1,200-MW Vũng Áng-3. Cancelled under PDP8.
+- **Kiên Lương** (up to 4,400 MW, Kiên Giang): Multiple proposals over many years, all cancelled.
+- **Long An** (1,200 MW): Removed from plans.
+
+### 2.4 Gas-Fired Power Plants — Operating (Domestic Gas)
+
+**Bà Rịa** (Nhiệt điện Bà Rịa). Ba Ria Combined Cycle Power Plant is a 342.1 MW gas-fired CCGT power project. GEM lists Ba Ria power station at 389 MW in Ba Ria-Vung Tau with multiple units, some not currently operating. Two blocks of 3 GTs + 1 ST each. Commissioned in March 1999. Owned by EVNGENCO3. Vietnam's first gas-fired plant. Fuel procured from Cuu Long Basin. Confidence: HIGH.
+
+**Phú Mỹ 1** (Nhiệt điện Phú Mỹ 1). Phú Mỹ 1 is a combined cycle plant operated by Vietnam Electricity, equipped with three 240 MW gas turbines and a 360 MW steam turbine. Its full capacity is 1,090 MW. Gas supplied by Vietsovpetro. Construction started September 1998 and the plant was commissioned in May 2000. Confidence: HIGH.
+
+**Phú Mỹ 2.1** (Nhiệt điện Phú Mỹ 2.1). A 900 MW CCGT with six units, operated by Vietnam Electricity. Construction started in 1995 and the first phase was commissioned in 1997, with the extension completed at end of 2002 by Siemens. World Bank financed the extension through an IDA credit. Confidence: HIGH.
+
+**Phú Mỹ 2.2 (BOT)** (Nhiệt điện BOT Phú Mỹ 2.2). A 715 MW CCGT with two gas-fired turbines and a steam turbine, operated by Mekong Energy Limited, a consortium of Électricité de France, Sumitomo and Tokyo Electric Power Company. Implemented as a 20-year BOT project; tender launched October 1997, agreements signed September 2001. COD 2005. Nearing or at BOT transfer to EVN. Confidence: HIGH.
+
+**Phú Mỹ 3 (BOT)** (Nhiệt điện BOT Phú Mỹ 3). A 746 MW CCGT; developed by the Phu My 3 BOT Power Company, a consortium of BP, SembCorp Utilities, Kyushu Electric Power and Sojitz. Two 250 MW Siemens SGT5-4000F gas turbines combined with a 260 MW steam turbine. Started commercial operation in 2004. BOT period nearing expiry; transfer to EVN expected. Confidence: HIGH.
+
+**Phú Mỹ 4** (Nhiệt điện Phú Mỹ 4). An operating power station of at least 477 MW in Phú Mỹ, Ba Ria-Vung Tau. A 450 MW combined-cycle power plant with two gas turbines and one steam turbine, operated by Vietnam Electricity, operational in 2004. Confidence: HIGH.
+
+**Cà Mau 1 & 2** (Nhiệt điện Cà Mau 1 & 2). Twin 750 MW CCGT plants in Cà Mau province. Operated by PV Power. Gas supplied from PM3-CAA pipeline (Malaysia-Vietnam joint development in Block PM3). COD: Phase 1 2008, Phase 2 2008–09. 1,500 MW total. Confidence: MEDIUM (exact COD dates from domain knowledge).
+
+**Nhơn Trạch 1** (Nhiệt điện Nhơn Trạch 1). ~450 MW CCGT in Đồng Nai province. PV Power. COD ~2008–09. Confidence: MEDIUM.
+
+**Nhơn Trạch 2** (Nhiệt điện Nhơn Trạch 2). ~750 MW CCGT in Đồng Nai province. PV Power. COD ~2011. Confidence: MEDIUM.
+
+**Ô Môn I** (Nhiệt điện Ô Môn I). OCGT/partial CCGT in Cần Thơ city. 2 gas turbines (~150 MW each) = ~300–330 MW OCGT. Originally planned for CCGT conversion to ~660 MW when Block B gas becomes available. Currently operating in OCGT mode. Confidence: LOW (exact current configuration uncertain; CCGT conversion status unclear).
+
+**Thủ Đức Gas Turbine** (Nhiệt điện Thủ Đức). Older OCGT in TP HCM, ~165 MW. One of Vietnam's earliest gas turbine installations. May be in reserve or retired. Confidence: LOW (operational status uncertain).
+
+### 2.5 Gas-Fired Power Plants — Operating (LNG)
+
+**Nhơn Trạch 3 & 4** (Nhiệt điện Nhơn Trạch 3 & 4). PV Power's Nhon Trach 3 and 4 power plants have entered commercial operation; located at Ong Keo Industrial Park, about 70 km south-east of Ho Chi Minh City, with a combined installed capacity of 1.6 GW. Samsung C&T – Lilama is the EPC general contractor; the first time in Vietnam a power plant has used H-Class gas turbines and LNG fuel. Equipped with GE's 9HA.02 gas turbines, achieving 62-64 % efficiency. PetroVietnam secured more than $520 million in financing, representing a total investment of almost $1.4 billion. Vietnam's first dedicated LNG-to-power facility. Confidence: HIGH.
+
+### 2.6 Gas-Fired Power Plants — Under Development / Planned (Domestic Gas)
+
+**Dung Quất I, II, III** (Nhiệt điện Dung Quất I, II, III). The gas from the Ca Voi Xanh (Blue Whale) field is expected to power the Dung Quat Power Complex, comprising three CCGT power plants, each with a capacity of about 750 MW. EVN is the developer of plants I and III, and Sembcorp is in charge of plant II. With a total capacity of 2,250 MW. Located in Quảng Ngãi province. The Ca Voi Xanh gas field — described as the largest gas field in Vietnam — is held by ExxonMobil, EMEPVL, and PVEP. Significantly delayed due to upstream development timelines and ExxonMobil negotiations. Confidence: MEDIUM.
+
+**Ô Môn II, III, IV** (Nhiệt điện Ô Môn II, III, IV). Planned CCGT units at the Ô Môn complex in Cần Thơ, to be fed by gas from Block B (Malay-Thổ Chu basin). Each phase ~750–1,050 MW. Total complex capacity (including existing Ô Môn I CCGT conversion) may reach ~4,000+ MW. JICA has been involved in financing Ô Môn II. Confidence: LOW (exact capacities, developer assignments, and timelines subject to Block B development).
+
+### 2.7 Gas-Fired Power Plants — Under Development / Planned (LNG)
+
+**Hiệp Phước I** (Nhiệt điện LNG Hiệp Phước I). The Block B Ô Môn and Hiệp Phước 1 combined cycle power plants, with a combined capacity of 6,634 MW, are considered the only other projects that could become commercially operational before 2030. LNG-fired CCGT near TP HCM. ~1,200–1,500 MW. Multiple developer proposals. Confidence: LOW (exact developer and capacity conflicting across sources).
+
+**LNG Thái Bình** (Nhiệt điện LNG Thái Bình). Thai Binh LNG Power, a joint venture among Tokyo Gas, Kyuden International, and Vietnam's Truong Thanh Vietnam Group, has said that its $2 billion project should complete its feasibility study, with commercial operation expected by 2030. 1,500 MW CCGT. Confidence: MEDIUM.
+
+**Quỳnh Lập LNG** (Nhiệt điện LNG Quỳnh Lập). The Quynh Lap LNG project, located in Nghe An province, will consist of a 1,500 MW CCGT and a 250,000 m³ LNG terminal. South Korean energy conglomerate SK Innovation will operate this $2.3 billion project, with construction beginning in 2027. Run by a consortium of SK Innovation, PV Power and Vietnamese firm NASU. Confidence: MEDIUM.
+
+**Bạc Liêu LNG** (Nhiệt điện LNG Bạc Liêu). Proposed 3,200 MW LNG-to-power facility in Bạc Liêu province by Delta Offshore Energy (Singapore). One of the largest planned LNG projects. Has faced significant uncertainty around PPA, LNG supply, and investor credibility. Confidence: LOW.
+
+**Sơn Mỹ I & II** (Nhiệt điện LNG Sơn Mỹ). Two large LNG-to-power projects planned in Bình Thuận province alongside the Sơn Mỹ LNG import terminal. Combined capacity ~4,500 MW. Various international developers (EDF, others) have been involved. Confidence: LOW (pre-FID).
+
+**Other Planned LNG Projects** per PDP8: Cá Nà (Ninh Thuận), Hải Lăng (Quảng Trị), Long Sơn (Bà Rịa-Vũng Tàu), Quảng Trạch LNG (Quảng Bình – separate from coal Quảng Trạch 1), and others. Most are at early planning stages. Confidence: LOW.
 
 ---
 
-## 3. Thermal Power Plants Inventory Table
+## 3. Structured Power Plants Table
 
-### 3A. Coal-Fired Power Plants
+> **Key**: Conf. = Confidence (H/M/L). COD = Commercial Operation Date. MR = Mở Rộng (Extension). BOT = Build-Operate-Transfer. TKV = Vinacomin. EVNG1/G3 = EVNGENCO1/3.
 
-| # | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status As-of | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+### 3.1 Coal-Fired Plants
+
+| # | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | As-of | COD | Owner / Developer | Conf. | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| C1 | NĐ Ninh Bình | Ninh Binh TPP | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Operating | 2024 | 1974–1975 | EVN / GENCO1 | MEDIUM | UNDP Vietnam (2024) | Wikipedia – List of power stations in Vietnam | One of oldest plants; candidate for early retirement/repurposing per World Bank study |
-| C2 | NĐ Uông Bí (gốc) | Uong Bi TPP (original) | Quảng Ninh | Coal | Subcritical | Legacy units | ~105 | Operating (partially) | 2023 | 1963–1973 | EVN / GENCO1 | LOW | EVN website (coal overview article) | GreenFDC PDP8 analysis | Exact unit breakdown uncertain; Soviet-era units largely retired or derated; >40 yr lifespan |
-| C3 | NĐ Uông Bí MR1 | Uong Bi Expansion 1 | Quảng Ninh | Coal | Subcritical | 2 × 150 | 300 | Operating | 2023 | 2005–2007 | EVN / GENCO1 | MEDIUM | EVN website | Training data | |
-| C4 | NĐ Uông Bí MR2 | Uong Bi Extension 2 | Quảng Ninh | Coal | Subcritical | 1 × 330 | 330 | Operating | 2023 | 2013–2014 | EVN / GENCO1 | MEDIUM | Training data | | |
-| C5 | NĐ Phả Lại 1 | Pha Lai 1 TPP | Hải Dương | Coal | Subcritical | 4 × 110 | 440 | Operating (decommission planned) | 2024 | 1983–1986 | EVN / GENCO1 | HIGH | UNDP Vietnam study (2024) | EVN overview article | On decommissioning list per Decision 500 |
-| C6 | NĐ Phả Lại 2 | Pha Lai 2 TPP | Hải Dương | Coal | Subcritical | 2 × 300 | 600 | Operating | 2024 | 2001–2002 | EVN / GENCO1 | HIGH | UNDP Vietnam study (2024) | Wikipedia | Sumitomo-built; transition pathways under study |
-| C7 | NĐ Na Dương 1 | Na Duong 1 TPP | Lạng Sơn | Coal | Subcritical | 2 × 55 | 110 | Operating | 2024 | 2004–2005 | Vinacomin (TKV) | HIGH | GEM Wiki – Na Duong | Wikipedia | Mine-to-mouth; domestic coal from Na Dương mine |
-| C8 | NĐ Na Dương 2 | Na Duong 2 TPP | Lạng Sơn | Coal | Subcritical | 1 × 110 | 110 | Construction | 2024 | ~2026 (est.) | Vinacomin (TKV) | MEDIUM | GEM Wiki – Na Duong | Vinacomin press | Ground-broken Oct 2015; significant delays; financing signed Nov 2024 |
-| C9 | NĐ Cao Ngạn | Cao Ngan TPP | Thái Nguyên | Coal | Subcritical | 2 × 57.5 | 115 | Operating | 2024 | 2005–2006 | Vinacomin (TKV) | MEDIUM | UNDP Vietnam study (2024) | Training data | Central to Thai Nguyen city; tighter environmental standards required |
-| C10 | NĐ Sơn Động | Son Dong TPP | Bắc Giang | Coal | Subcritical | 2 × 110 | 220 | Operating | 2023 | 2010–2011 | Vinacomin (TKV) | MEDIUM | Training data | Wikipedia | Mine-mouth plant |
-| C11 | NĐ Cẩm Phả | Cam Pha TPP | Quảng Ninh | Coal | Subcritical | 2 × 150 | 300 | Operating | 2023 | 2009–2010 | Vinacomin (TKV) | MEDIUM | Training data | Wikipedia | Also known as NĐ Cẩm Phả TKV |
-| C12 | NĐ Mạo Khê |
+| C1 | NĐ Ninh Bình | Ninh Binh TPP | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Operating | 2026 | 1974 | EVNGENCO1 | M | GEM GCPT | Wikipedia | Soviet-built; exceeds 40-yr life |
+| C2 | NĐ Uông Bí (cũ + MR) | Uong Bi TPP (old + ext.) | Quảng Ninh | Coal | Subcritical | Legacy + 1 × 300 | ~330 | Operating | 2026 | 1960s / 2015 (ext.) | TKV | M | GEM GCPT | GreenFDC PDP8 analysis | Oldest station; legacy units may be partly retired |
+| C3 | NĐ Phả Lại 1 | Pha Lai 1 TPP | Hải Dương | Coal | Subcritical | 4 × 110 | 440 | Operating | 2026 | 1983–86 | EVNGENCO1 | H | GEM GCPT | Wikipedia | Soviet-built |
+| C4 | NĐ Phả Lại 2 | Pha Lai 2 TPP | Hải Dương | Coal | Subcritical | 2 × 300 | 600 | Operating | 2026 | 2001–02 | EVNGENCO1 | H | GEM GCPT | Wikipedia | IDA / JBIC financed |
+| C5 | NĐ Na Dương 1 | Na Duong 1 TPP | Lạng Sơn | Coal | Subcritical | 2 × 55 | 110 | Operating | 2026 | 2004–05 | TKV | H | GEM.wiki Na Duong | MOIT Report 58 | Mine-mouth; GEM cites 100 MW |
+| C6 | NĐ Cao Ngạn | Cao Ngan TPP | Thái Nguyên | Coal | Subcritical | 2 × 50 | 100 | Operating | 2026 | ~2005 | TKV | M | GEM GCPT | — | Mine-mouth |
+| C7 | NĐ Sơn Động | Son Dong TPP | Bắc Giang | Coal | Subcritical | 1 × 220 | 220 | Operating | 2026 | ~2015 | TKV | M | GEM GCPT | — | Sometimes cited as 2 × 110 |
+| C8 | NĐ Cẩm Phả 1 | Cam Pha 1 TPP | Quảng Ninh | Coal | Subcritical | 2 × 110 | 220 | Operating | 2026 | 2009–10 | TKV | M | GEM GCPT | MOIT Report 58 | Mine-mouth |
+| C9 | NĐ Cẩm Phả 2 | Cam Pha 2 TPP | Quảng Ninh | Coal | Subcritical | 2 × 110 | 220 | Operating | 2026 | 2011–12 | TKV | M | GEM GCPT | — | |
+| C10 | NĐ Mạo Khê | Mao Khe TPP | Quảng Ninh | Coal | Subcritical | 2 × 110 | 220 | Operating | 2026 | 2012–13 | TKV | M | GEM GCPT | MOIT Report 58 | |
+| C11 | NĐ Quảng Ninh | Quang Ninh TPP | Quảng Ninh | Coal | Subcritical | 4 × 300 | 1,200 | Operating | 2026 | 2010–15 | EVNGENCO1 | H | GEM GCPT | Wikipedia | |
+| C12 | NĐ Hải Phòng 1 | Hai Phong 1 TPP | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2026 | 2010–11 | EVNGENCO1 | H | GEM GCPT | MOIT Report 58 | |
+| C13 | NĐ Hải Phòng 2 | Hai Phong 2 TPP | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2026 | 2013–14 | EVNGENCO1 | H | GEM GCPT | MOIT Report 58 | |
+| C14 | NĐ Thái Bình 1 | Thai Binh 1 TPP | Thái Bình | Coal | Subcritical | 2 × 300 | 600 | Operating | 2026 | 2018 | EVNGENCO1 | H | GEM GCPT | Wikipedia | |
+| C15 | NĐ Thái Bình 2 | Thai Binh 2 TPP | Thái Bình | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2026 | 2022 | PVN / PV Power | H | GEM GCPT | press reports | Long-delayed; PVC corruption case |
+| C16 | NĐ Mông Dương 1 | Mong Duong 1 TPP | Quảng Ninh | Coal | Subcritical | 2 × 540 | 1,080 | Operating | 2026 | 2015 | EVNGENCO3 | H | GEM GCPT | Power Technology | |
+| C17 | NĐ BOT Mông Dương 2 | Mong Duong 2 BOT | Quảng Ninh | Coal | Subcritical | 2 × 560 | 1,120 | Operating | 2026 | 2015 | AES-TKV (BOT) | H | GEM.wiki | Reuters (Sept 2025) | BOT; tax exemption proposed |
+| C18 | NĐ BOT Hải Dương | Hai Duong BOT TPP | Hải Dương | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2026 | 2021–23 | Jaks / China Power (BOT) | M | GEM GCPT | Reuters (Sept 2025) | Long-delayed |
+| C19 | NĐ Nghi Sơn 1 | Nghi Son 1 TPP | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Operating | 2026 | 2013–15 | EVNGENCO1 | H | GEM GCPT | Wikipedia | |
+| C20 | NĐ BOT Nghi Sơn 2 | Nghi Son 2 BOT | Thanh Hóa | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2026 |

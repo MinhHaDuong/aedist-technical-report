@@ -42,15 +42,16 @@ Per production run, artifacts are flattened at top level as a 3-file set:
 
 ## When It Ran
 
-Two production waves were executed:
+Three production waves were executed:
 
 - Wave 1 (overnight): 3-agent batch (`mistral`, `qwen`, `anthropic`) from `2026-05-22T23:41:32` to `2026-05-23T00:31:24`.
 - Wave 2 (morning): OpenAI backfill (`openai`) from `2026-05-23T06:45:53` to `2026-05-23T07:00:34` after key availability was fixed.
+- Wave 3 (correction): Anthropic re-run with `max_uses=20` (PR #489 fix) from `2026-05-24T13:07:00` to `2026-05-24T13:51:22`. Wave 1 Anthropic files archived to `tainted/`.
 
-Overall production window from file timestamps:
+Overall production window for current files:
 
-- Start: `2026-05-22T23:41:32`
-- End: `2026-05-23T07:00:34`
+- Start: `2026-05-22T23:41:32` (Mistral/Qwen)
+- End: `2026-05-24T13:51:22` (Anthropic corrected)
 
 ## Who Uses This
 
@@ -77,11 +78,11 @@ These are operational heuristics for triage, not final scientific labels.
 
 | model | rep# | cost_usd | duration_s | has report | parse OK | #plants | #sources |
 |---|---:|---:|---:|:---:|:---:|---:|---:|
-| claude-opus-4-6 | 1 | 0.8982 | 312.95 | yes | yes | 18 | 0 |
-| claude-opus-4-6 | 2 | 0.9253 | 262.27 | yes | yes | 58 | 0 |
-| claude-opus-4-6 | 3 | 0.9432 | 277.34 | no | yes | 81 | 0 |
-| claude-opus-4-6 | 4 | 0.9305 | 282.83 | yes | yes | 5 | 0 |
-| claude-opus-4-6 | 5 | 0.9130 | 295.01 | no | yes | 19 | 0 |
+| claude-opus-4-6 | 1 | 1.1551 | 437.20 | yes | yes | 46 | 0 |
+| claude-opus-4-6 | 2 | 1.3095 | 551.11 | yes | yes | 44 | 0 |
+| claude-opus-4-6 | 3 | 1.3449 | 527.46 | yes | yes | 36 | 0 |
+| claude-opus-4-6 | 4 | 1.3669 | 545.20 | yes | yes | 51 | 0 |
+| claude-opus-4-6 | 5 | 1.2944 | 580.50 | yes | yes | 19 | 0 |
 | mistral-large-2512 | 1 | 0.0380 | 195.29 | yes | yes | 54 | 15 |
 | mistral-large-2512 | 2 | 0.2258 | 10.86 | no | no | 0 | 0 |
 | mistral-large-2512 | 3 | 0.0012 | 11.26 | no | no | 0 | 0 |
@@ -103,20 +104,41 @@ These are operational heuristics for triage, not final scientific labels.
 Headline:
 
 - Total production runs: `20`
-- Total cost: `$6.8398`
-- Runs classified `report`: `16/20`
+- Total cost: `$9.9214` (Anthropic corrected runs: $6.47; others: $3.45)
+- Runs classified `report`: `18/20`
 
 By model family:
 
 - `gpt-5.5`: most consistent for this arm (`5/5` report, `5/5` parse OK), highest plant-yield heuristic (mean `119.8`).
 - `qwen3-max-2026-01-23`: also consistent (`5/5` report, `5/5` parse OK), lower plant-yield than GPT-5.5 (mean `71.0`), with the longest mean runtime (`233.77s`).
 - `mistral-large-2512`: mixed stability (`3/5` report, `3/5` parse OK), including two very short no-report outcomes.
-- `claude-opus-4-6`: highest cost and long runtime; classifier says `3/5` report, but parse heuristic succeeds on all 5 runs, suggesting classifier/report-format mismatch on some outputs.
+- `claude-opus-4-6`: **corrected runs (2026-05-24)** — `5/5` report, wall 437–581s, cost $1.15–$1.37/run. Original tainted runs (see `tainted/`) were `3/5` report with double-truncated output (~16K tokens, all hit max_tokens); corrected runs produce 24K–50K chars at 25K–32K tokens.
 
 Caveats:
 
 - `parse OK`, `#plants`, and `#sources` are heuristic extraction metrics from markdown, not adjudicated quality metrics.
 - Final scientific claims should use the project evaluation pipeline, not this README-only triage layer.
+
+## Data Integrity Note — Anthropic Runs Corrected (2026-05-24)
+
+The original 5 Anthropic runs (Wave 1, 2026-05-22) were produced with
+`max_uses=5` for the Anthropic `web_search_20250305` tool — a harness bug
+(fixed in PR #489, merged 2026-05-24). All 5 original runs hit the cap on
+every call, artificially limiting Claude Opus 4.6 to 5 searches in
+single-shot mode where it needed more.
+
+**What was done:**
+- The 5 tainted files (`anthropic_run01–05.{json,md,raw.json}`) were moved to
+  `tainted/` (see `tainted/README.md` for full details).
+- 5 corrected runs were executed with `max_uses=20` and committed to this
+  directory as `anthropic_run01–05.{json,md}`.
+
+**Analysis impact:**
+- The analysis pipeline (`tabulate_exp2_arms_runs.py`) uses `glob("*.json")`
+  on this directory and does not recurse into `tainted/`, so corrected runs
+  are used automatically with no code changes.
+- The Run Table below will be updated once corrected runs complete.
+- Other agents (Mistral, OpenAI, Qwen) are unaffected; their files are unchanged.
 
 ## Research Notes
 

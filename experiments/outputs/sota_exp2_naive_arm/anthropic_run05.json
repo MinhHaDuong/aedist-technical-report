@@ -2,10 +2,10 @@
   "agent": "anthropic",
   "run": 5,
   "model": "claude-opus-4-6",
-  "classification": "no_report",
-  "tokens_out": 16447,
-  "wall_s": 295.01,
-  "cost_usd": 0.913,
-  "classifier_cost_usd": 0.000164,
-  "narrative_chars": 13505
+  "classification": "report",
+  "tokens_out": 32461,
+  "wall_s": 580.46,
+  "cost_usd": 1.2944,
+  "classifier_cost_usd": 0.002296,
+  "narrative_chars": 24234
 }
