@@ -13,7 +13,7 @@ Usage:
     python -m aedist.query_per_fuel \
         --prompt prompts/prompt_extract.txt \
         --corpus data/rag_corpus/ \
-        --models models_selected.yaml \
+        --models-registry models_selected.yaml \
         --output outputs/rag_per_fuel/ \
         --repeat 3 --budget-usd 2
 """
@@ -220,7 +220,7 @@ def main():
     parser = argparse.ArgumentParser(description="Decomposed RAG queries by fuel type")
     parser.add_argument("--prompt", required=True, help="Path to base prompt (for reference)")
     parser.add_argument("--corpus", required=True, help="Directory with .md corpus files")
-    parser.add_argument("--models", required=True, help="Path to models.yaml")
+    parser.add_argument("--models-registry", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
@@ -243,7 +243,7 @@ def main():
     base_prompt = Path(args.prompt).read_text().strip()
     corpus_text, corpus_files = load_corpus(Path(args.corpus))
     corpus_tokens = estimate_tokens(corpus_text)
-    models = load_models(args.models)
+    models = load_models(args.models_registry)
     output_dir = Path(args.output)
 
     if args.model_set:
@@ -256,7 +256,7 @@ def main():
     if args.model:
         models = [m for m in models if m["name"] == args.model]
         if not models:
-            raise SystemExit(f"Model {args.model} not found in {args.models}")
+            raise SystemExit(f"Model {args.model} not found in {args.models_registry}")
 
     if args.dry_run:
         for model in models:

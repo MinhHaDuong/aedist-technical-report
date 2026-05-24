@@ -81,7 +81,7 @@ def main():
         choices=["wholesale"],
         help="RAG strategy (currently only 'wholesale')",
     )
-    parser.add_argument("--models", required=True, help="Path to models.yaml")
+    parser.add_argument("--models-registry", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
@@ -134,7 +134,7 @@ def main():
 
     corpus_text, corpus_files = load_corpus(Path(args.corpus))
     corpus_tokens = estimate_tokens(corpus_text)
-    models = load_models(args.models)
+    models = load_models(args.models_registry)
     output_dir = Path(args.output)
 
     # Filter by model set from experiments.toml
@@ -149,7 +149,7 @@ def main():
     if args.model:
         models = [m for m in models if m["name"] == args.model]
         if not models:
-            raise SystemExit(f"Model {args.model} not found in {args.models}")
+            raise SystemExit(f"Model {args.model} not found in {args.models_registry}")
 
     if args.dry_run:
         for model in models:
