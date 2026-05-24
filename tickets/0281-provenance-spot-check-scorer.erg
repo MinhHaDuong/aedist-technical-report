@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Automated provenance spot-check — verify N=10 source URLs per run
+Created: 2026-05-24
+Author: haduong
+Blocked-by: 0276
+
+--- log ---
+2026-05-24T14:30Z haduong created
+
+--- body ---
+## Context
+
+The four quality dimensions announced in the protocol (accuracy, coherence,
+provenance, temporality) are evaluated post-hoc. Only accuracy is currently
+measured by the mechanical scorer (0276) via row-level F1 against the 163-plant
+reference. Provenance is the paper's differentiating claim — "agents can produce
+verifiable tables" — but goes unmeasured.
+
+This ticket adds an automated spot-check: for each run, sample N=10 matched
+plant rows at random and verify whether Source 1 is (a) a real URL that resolves
+and (b) a page whose text content actually mentions the plant by name and
+(plausibly) the claimed capacity. Output: a provenance score 0–10 per run.
+
+## Design
+
+Input: one run's `.md` file + the matched plant rows from `sota_cross_eval.csv`
+(produced by 0276 — hence the blocker).
+
+Algorithm:
+1. For each sampled matched row, extract Source 1 URL from the markdown table.
+2. HTTP GET the URL (10s timeout, single retry). Record: resolved / unresolved /
+   fabricated (URL syntactically valid but 404/domain-not-found).
+3. If resolved, search page text for the plant's Vietnamese or English name
+   (case-insensitive). If found and capacity within ±10% of claimed value: PASS.
+4. Emit per-row result (pass/fail/unresolved) and aggregate provenance_score = n_pass / 10.
+
+Output columns added to `sota_cross_eval.csv` (or a companion
+`sota_provenance_sample.csv`):
+  run_id, sampled_rows (JSON list of plant names), n_resolved, n_name_found,
+  n_capacity_match, provenance_score
+
+## Scope limits
+
+- Only Source 1, not Source 2 (keep it simple).
+- N=10 per run (not exhaustive — this is a spot-check, not a full citation audit).
+- No JavaScript rendering (plain HTTP GET only). Dynamic pages score as unresolved.
+- Capacity check is fuzzy ±10%, not exact.
+
+## Why block on 0276
+
+Needs `sota_cross_eval.csv` with matched plant rows to know which rows to sample
+(unmatched rows have no reference to check against).
+
+## Exit criteria
+
+- [ ] `score_provenance.py` or equivalent module implemented with the algorithm above
+- [ ] Output columns defined and documented in `docs/scoring-contract.md`
+- [ ] Smoke test on ≥1 run from `sota_exp2_naive_arm/`
+- [ ] `make check-fast` passes (HTTP calls mocked in tests)
