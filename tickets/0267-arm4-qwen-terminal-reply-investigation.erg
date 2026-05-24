@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Investigate is_terminal_reply=false on both arm 4 Qwen 3.7 turns
+Created: 2026-05-24
+Author: haduong
+
+Closed: 2026-05-24
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T08:50Z haduong created
+2026-05-24T10:30Z HDMX-coding-agent closed non-finding — both symptoms expected behaviour, see body
+
+--- body ---
+2026-05-24T10:30Z HDMX-coding-agent non-finding: is_terminal_reply=false is correct — loop exits via last_slot=="verify" (line 1112 of exp2_interactive_smoke.py), not "terminal". Terminal slot only fires under budget pressure. All 4 agents show the same pattern.
+2026-05-24T10:30Z HDMX-coding-agent non-finding: n_plants/f1/tp/fp/fn all None is expected — runner writes minimal RunRecord files; evaluation against reference ground truth is a separate step (make evaluate-all-records) not yet run on any SOTA arm. measurements.jsonl has 0 Exp2/3 entries. Ticket 0270 will be first code to compute accuracy on SOTA arms.
+2026-05-24T10:30Z HDMX-coding-agent non-finding: Qwen 2 turns is correct — report produced on designed_prompt turn; verify fired immediately and loop exited. No third turn queued.
+2026-05-24T10:30Z HDMX-coding-agent note: Anthropic turn_01 finish_reason=max_tokens (Phase A designed 16k with thinking=true; combined thinking+output hit cap on planning turn). Recovery worked — turn_02 produced report, turn_03 verified. Non-blocking for N=2.
+## Resolution (non-finding)
+
+**is_terminal_reply=false**: correct behaviour. The loop exits at line 1112 of
+`exp2_interactive_smoke.py` when `last_slot == "verify"`, which is the intended
+clean exit after the model produces a polished report. The "terminal" slot only
+fires under budget pressure. All 4 agents show the same pattern.
+
+**n_plants/f1/tp/fp/fn all None**: expected by design. The runner writes minimal
+RunRecord files; evaluation against the reference ground truth is a separate step
+(`make evaluate-all-records`) not yet run on any SOTA arm. `measurements.jsonl`
+has 0 Exp2/3 entries. The 26-row count comes from `_count_markdown_table_rows()`
+in the summary writer — it counts markdown pipe-table lines in the output, not
+from comparison to the reference. Ticket 0270 (score_mechanical.py) will be the
+first code to compute accuracy on SOTA arms.
+
+**Qwen 2 turns**: correct. Qwen produced a `report`-classified output on the
+designed_prompt turn (turn 1), so the loop fired `verify` immediately and exited.
+No third turn was queued.
+
+**Side finding (non-blocking)**: Anthropic turn_01 has `finish_reason: max_tokens`.
+Phase A designed max_tokens=16000 with thinking=true; combined thinking+output
+tokens hit the cap on the planning turn. Recovery worked — turn_02 produced a
+report, turn_03 verified it. The same pattern will recur on N=2 since Phase A
+will again design 16k. Noted for expectation-setting, not a blocker.
+
+## Original exit criteria (all resolved)
+
+- [x] Root cause of `is_terminal_reply` never being set to `true`: confirmed
+      correct — verify-slot exit is the normal clean exit path.
+- [x] The `None` metrics discrepancy explained: evaluation step not yet run;
+      26-row count is from markdown line counting, not reference comparison.
+- [x] Expected behaviour confirmed; no code change needed.

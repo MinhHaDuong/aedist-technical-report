@@ -1,0 +1,25 @@
+{
+  "run_id": "75230a81eb12",
+  "timestamp": "2026-05-24T07:37:41.209956Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "ministral-3:14b",
+    "temperature": 0.0,
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 515.601,
+    "cost_usd": 0.0
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_multiturn/ministral-3-14b-run2.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

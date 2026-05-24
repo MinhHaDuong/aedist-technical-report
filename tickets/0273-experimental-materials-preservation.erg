@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Audit and complete experimental materials preservation — conversation, headers, provenance
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T09:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reproducibility and audit require that every experimental run preserves enough
+material to: (1) reconstruct what the model was sent, (2) reconstruct what the
+model returned, (3) verify the model identity and provider routing.
+
+Current state (as of Exp 3 arm 4):
+
+Per-run output directory contains:
+- `{agent}_conversation.json` — full multi-turn conversation ✓
+- `{agent}_meta_prompt.txt` — the system prompt sent ✓
+- `{agent}_phase_a.json` / `phase_a_design.json` — Phase A output ✓
+- `{agent}_turn_XX.raw.json` — raw API response body ✓
+- `{agent}_turn_XX.record.json` — parsed RunRecord ✓
+- `{agent}_turn_XX.cost.json` — budget tracking ✓
+- `{agent}_turn_XX.user.txt` — user message sent ✓
+
+Raw JSON keys: `status_code`, `request_id`, `code`, `message`, `output`, `usage`
+
+**Gaps identified**:
+1. **HTTP response headers not preserved**: `request_id` is captured inside the
+   body, but full response headers (provider model version, rate limit, routing
+   ID, `x-request-id`, `cf-ray` etc.) are not saved. These are needed to
+   diagnose provider-side non-determinism and verify model routing.
+2. **Exp 1 raw responses**: Exp 1 output dirs have `.record.json` and the raw
+   output as a `.json` file, but no `.raw.json` equivalent. The actual HTTP
+   response body and headers may not be preserved at all.
+3. **No per-run manifest**: there is no `{agent}_manifest.json` listing all files
+   belonging to a run with their purpose and a content hash. Without it, partial
+   runs are hard to detect.
+
+## Actions
+
+1. **Audit HTTP header capture in adapters**: read each adapter
+   (`query_direct.py`, `exp2_interactive_smoke.py`, adapter_* files) and identify
+   where the HTTP response object is available. Check whether headers are discarded
+   after parsing.
+
+2. **Add header preservation**: where headers are available, save them to
+   `{agent}_turn_XX.headers.json` (a flat dict of response headers). For OpenRouter
+   this includes `x-request-id`, `x-openrouter-*`, and routing metadata. For Anthropic
+   it includes `request-id` and `anthropic-version`.
+
+3. **Exp 1 raw response audit**: check whether Exp 1's `.json` output files contain
+   the full API response or just the extracted content. If the raw HTTP body is not
+   preserved, note the gap in a `experiments/outputs/ablation/README.md` so future
+   analysis knows not to rely on it.
+
+4. **Per-run manifest**: add a `{agent}_run_manifest.json` written at the end of each
+   run containing:
+   - List of files with size and SHA-256 hash
+   - Model ID as reported by the API (from response body, not from config)
+   - Provider routing ID (from headers if available)
+   - Timestamp of last write
+   This file is the audit anchor for the run.
+
+5. **Gitignore hygiene**: verify that `.raw.json` files are gitignored (they are
+   large and sensitive) but that `_manifest.json` files ARE tracked (they are the
+   audit anchors and are small).
+
+## Invariants
+
+- Existing output files must not be modified or deleted by this ticket.
+- New preservation code must be additive; runs without it continue to work.
+
+## Exit criteria
+
+- [ ] Adapter audit completed; header-capture gaps documented
+- [ ] `{agent}_turn_XX.headers.json` written for at least one new Exp 3 smoke run
+- [ ] Exp 1 raw response gap documented in `experiments/outputs/ablation/README.md`
+- [ ] `_run_manifest.json` written for at least one new smoke run
+- [ ] `make check-fast` passes

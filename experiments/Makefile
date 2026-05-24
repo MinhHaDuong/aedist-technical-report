@@ -36,7 +36,7 @@ SHELL := /bin/bash
 # missing. Keys themselves are not read into Make variables — uv loads them
 # at child-process spawn time via --env-file.
 _NEEDS_ENV := census census-run census-summary regimes regimes-run \
-              sourced sourced-run frontier frontier-run
+						 sourced sourced-run frontier frontier-run
 ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
   $(if $(wildcard ../.env),,$(error ../.env not found — copy ../.env.example and populate API keys))
 endif
@@ -58,8 +58,6 @@ OR_JOBS = $(shell python3 -c "print(min($(OR_PENDING), $(OR_MAX)))")
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
 
 # --- Census: model census -----------------------------------------------------
-
-S1_OUTPUT  := $(call cfg,census,output)
 
 .PHONY: census census-generate census-run census-summary
 
@@ -155,8 +153,8 @@ STRUCTURED_DIRS := census multiturn web rag \
                    ablation/direct/p1_base ablation/direct/p1_base.topup \
                    ablation/direct/p1_composite
 
-OUTPUT_FILES := $(filter-out %.record.json,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
-                $(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv)
+OUTPUT_FILES := $(filter-out %.record.json derived/rag_consistency/%,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
+				$(filter-out derived/rag_consistency/%,$(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv))
 
 # Extract structured outputs from LLM JSON responses into CSVs.
 .PHONY: extract
