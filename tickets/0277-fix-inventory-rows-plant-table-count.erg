@@ -5,6 +5,8 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-05-24T13:35Z HDMX-coding-agent created from 0272 execution finding: sampled parity mismatch confirmed on openai_run01 (naive 79 vs 118, optimised 83 vs 122). Current best diagnosis is that inventory_rows counts all markdown pipe-table rows including summary tables while scorer extraction targets the main plant table.
+2026-05-24T14:05Z HDMX-coding-agent execute pass: introduced a shared best-table row counter in `aedist.extract`, rewired tabulation/smoke/consolidation/turn-trajectory paths to use plant-table-only counts, added regressions for summary-table inflation, refreshed `report/inputs/generated/tab_exp2_arms_runs.csv`, and marked historical README row counts as pre-0277 heuristic values.
+2026-05-24T14:08Z HDMX-coding-agent validation pass: focused regressions passed and `make check-fast` succeeded.
 
 --- body ---
 ## Context
@@ -44,8 +46,8 @@ ingestion parity checks are ambiguous.
 
 ## Exit criteria
 
-- [ ] Canonical `inventory_rows` definition documented as plant-table rows only
-- [ ] Producer-side counting logic fixed where this metric is emitted
-- [ ] Regression tests cover a markdown output containing a plant table plus summary tables
-- [ ] Any affected generated artifact is refreshed or explicitly documented as historical heuristic output
-- [ ] `make check-fast` passes
+- [x] Canonical `inventory_rows` definition documented as plant-table rows only
+- [x] Producer-side counting logic fixed where this metric is emitted
+- [x] Regression tests cover a markdown output containing a plant table plus summary tables
+- [x] Any affected generated artifact is refreshed or explicitly documented as historical heuristic output
+- [x] `make check-fast` passes

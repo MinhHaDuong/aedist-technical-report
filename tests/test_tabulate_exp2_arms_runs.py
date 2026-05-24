@@ -41,6 +41,23 @@ def test_count_md_table_rows_no_table(tmp_path):
     assert _count_md_table_rows(md) == 0
 
 
+def test_count_md_table_rows_ignores_summary_tables(tmp_path):
+    md = tmp_path / "report.md"
+    _write_md(
+        md,
+        "| Name | Fuel | Province | Capacity | Status | COD |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+        "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+        "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n\n"
+        "| Fuel | Capacity |\n"
+        "| --- | --- |\n"
+        "| Coal | 2910 |\n"
+        "| Gas | 0 |\n",
+    )
+    assert _count_md_table_rows(md) == 3
+
+
 # --- _load_arm_runs ----------------------------------------------------------
 
 
@@ -96,6 +113,43 @@ def test_load_arm_runs_optimised_uses_json_for_inventory_rows(tmp_path):
     assert row["turns"] == 2
 
 
+def test_load_arm_runs_optimised_prefers_md_when_present(tmp_path):
+    _write_json(
+        tmp_path / "openai_run01.json",
+        {
+            "agent": "openai",
+            "run": 1,
+            "model": "gpt-5.5",
+            "arm": "optimised",
+            "classification": "report",
+            "narrative_chars": 18000,
+            "inventory_rows": 122,
+            "turns": 2,
+            "wall_s": 160.0,
+            "total_cost_usd": 0.29,
+            "classifier_cost_usd": 0.0,
+        },
+    )
+    _write_md(
+        tmp_path / "openai_run01.md",
+        "| Name | Fuel | Province | Capacity | Status | COD |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+        "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+        "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n\n"
+        "| Fuel | Capacity |\n"
+        "| --- | --- |\n"
+        "| Coal | 2910 |\n"
+        "| Gas | 0 |\n",
+    )
+
+    rows = _load_arm_runs(tmp_path, "optimised")
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["inventory_rows"] == 3
+    assert row["turns"] == 2
+
+
 def test_load_arm_runs_skips_summary_json(tmp_path):
     _write_json(tmp_path / "summary.json", [{"agent": "x"}])
     _write_json(tmp_path / "summary_20260522T2342Z.json", [{"agent": "y"}])
@@ -132,7 +186,10 @@ def test_build_runs_csv_both_arms(tmp_path):
             "cost_usd": 0.04,
         },
     )
-    _write_md(naive_dir / "qwen_run01.md", "| A | B |\n| - | - |\n| x | y |\n")
+    _write_md(
+        naive_dir / "qwen_run01.md",
+        "| Plant | Capacity |\n| - | - |\n| Qwen Plant | 1 |\n",
+    )
 
     _write_json(
         optimised_dir / "qwen_run01.json",
@@ -181,7 +238,10 @@ def test_main_writes_csv(tmp_path):
             "cost_usd": 0.90,
         },
     )
-    _write_md(naive_dir / "anthropic_run01.md", "| P | C |\n| - | - |\n| A | 1 |\n")
+    _write_md(
+        naive_dir / "anthropic_run01.md",
+        "| Plant | Capacity |\n| - | - |\n| Anthropic Plant | 1 |\n",
+    )
 
     out = tmp_path / "runs.csv"
     main(

@@ -86,6 +86,19 @@ def test_count_table_rows_no_table():
     assert _count_table_rows("Just prose, no table here.") == 0
 
 
+def test_count_table_rows_ignores_summary_tables():
+    text = (
+        "| Name | Fuel | Province | Capacity | Status | COD |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+        "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n\n"
+        "| Fuel | Capacity |\n"
+        "| --- | --- |\n"
+        "| Coal | 1670 |\n"
+    )
+    assert _count_table_rows(text) == 2
+
+
 # --- load_run_turns ----------------------------------------------------------
 
 

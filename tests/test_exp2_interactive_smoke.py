@@ -15,6 +15,7 @@ from experiments.sota.exp2_interactive_smoke import (
     QUALITY_BAR_END,
     QUALITY_BAR_PATH,
     QUALITY_BAR_START,
+    _estimate_inventory_rows,
     assemble_meta_prompt,
     extract_narrative_from_mistral_raw,
     extract_phase_a_design,
@@ -1501,6 +1502,31 @@ def test_main_dry_run_exits_zero(tmp_path):
 
     ret = main(["--agents", "mistral", "--dry-run", "--no-confirm", "--output-dir", str(tmp_path)])
     assert ret == 0
+
+
+def test_estimate_inventory_rows_ignores_summary_tables(monkeypatch, tmp_path):
+    import experiments.sota.exp2_interactive_smoke as mod
+
+    monkeypatch.setattr(mod, "_read_turn_field", lambda *_a, **_k: ["report"])
+    monkeypatch.setattr(mod, "_turn_artefact_paths", lambda *_a, **_k: {"raw": tmp_path / "missing"})
+    monkeypatch.setattr(
+        mod,
+        "_narrative_from_record_or_raw",
+        lambda *_a, **_k: (
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n\n"
+            "| Fuel | Capacity |\n"
+            "| --- | --- |\n"
+            "| Coal | 2910 |\n"
+            "| Gas | 0 |\n"
+        ),
+    )
+
+    phase_b = {"records": [object()], "turns": 1}
+    assert _estimate_inventory_rows("openai", phase_b, tmp_path) == 3
 
 
 def test_main_without_manifest_phase_b_gets_raw_designed_prompt(

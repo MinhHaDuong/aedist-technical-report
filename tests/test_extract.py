@@ -7,6 +7,7 @@ import pytest
 from aedist.extract import (
     ExtractStatus,
     _extract_pipe_tables,
+    count_best_table_rows,
     extract_fenced_blocks,
     extract_one,
     main,
@@ -40,6 +41,12 @@ class TestHeaderMapping:
 
     def test_generation_capacity(self):
         assert map_header_to_canonical(norm_header("Generation Capacity (MWe)")) == "capacity_mwe"
+
+    def test_total_mwe_header(self):
+        assert map_header_to_canonical(norm_header("Total MWe")) == "capacity_mwe"
+
+    def test_installed_capacity_header(self):
+        assert map_header_to_canonical(norm_header("Installed Capacity (MWe)")) == "capacity_mwe"
 
 
 class TestPipeTable:
@@ -78,6 +85,36 @@ class TestPipeTable:
         results = _extract_pipe_tables(text)
         assert len(results) == 2
         assert '"Name"' in results[1]
+
+
+class TestCountBestTableRows:
+    def test_counts_single_table_rows(self):
+        text = (
+            "| Name | Fuel | Province |\n"
+            "| --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong |\n"
+            "| Uong Bi | Coal | Quang Ninh |\n"
+        )
+        assert count_best_table_rows(text) == 2
+
+    def test_ignores_summary_table_when_inventory_table_present(self):
+        text = (
+            "# Report\n\n"
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n\n"
+            "| Fuel | Capacity |\n"
+            "| --- | --- |\n"
+            "| Coal | 2910 |\n"
+            "| Gas | 0 |\n"
+        )
+        assert count_best_table_rows(text) == 3
+
+    def test_returns_zero_when_no_parseable_inventory_table_exists(self):
+        text = "| Fuel | Capacity |\n| --- | --- |\n| Coal | 2910 |\n"
+        assert count_best_table_rows(text) == 0
 
 
 class TestFallbackInlineCSV:
@@ -261,6 +298,16 @@ class TestParseAndCanonicalize:
         csv_text = "Name,Capacity\nPha Lai,unknown\n"
         result = parse_and_canonicalize(csv_text)
         assert ",0," in result or result.endswith(",0\r\n") or ",0\n" in result
+
+    def test_total_mwe_header_is_parsed(self):
+        csv_text = "Name,Total MWe\nPha Lai,440\n"
+        result = parse_and_canonicalize(csv_text)
+        assert "440.0" in result
+
+    def test_capacity_value_with_annotation_is_parsed(self):
+        csv_text = 'Name,Total MWe\nVan Phong 1,"1,320 net"\n'
+        result = parse_and_canonicalize(csv_text)
+        assert "1320.0" in result
 
     def test_empty_csv_raises(self):
         with pytest.raises(ValueError, match="empty"):
