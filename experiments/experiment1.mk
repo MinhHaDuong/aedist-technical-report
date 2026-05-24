@@ -8,7 +8,7 @@
 # batch1 = original run with prompt_complete.txt (frozen, outputs/direct_complete)
 # batch2 = rerun with protocol_07_naive_prompt.md (GEM vocab, unified schema)
 
-UV_RUN  := PYTHONPATH=.. uv run --project .. --env-file ../.env
+UV_RUN  := PYTHONPATH=.. uv run --project ..
 PROMPT  := sota/protocol_07_naive_prompt.md
 MODELS  := models.yaml
 SET     := modelset_exp1_batch2
