@@ -18,6 +18,15 @@ def test_coal_and_ccgt_lowers_vocab_adherence() -> None:
     assert result.vocab_adherence == 0.5
 
 
+def test_status_vocab_adherence_rejects_noncanonical() -> None:
+    rows = [
+        {"name": "A", "fuel": "coal", "status": "Operating"},
+        {"name": "B", "fuel": "coal", "status": "Under Constr."},
+    ]
+    result = score_coherence(rows)
+    assert result.status_vocab_adherence == 0.5
+
+
 def test_high_confidence_missing_source2_lowers_dual_source_metric() -> None:
     rows = [
         {
@@ -38,6 +47,17 @@ def test_temporality_1979_fails_and_1980_passes_plausible_range() -> None:
     ]
     result = score_temporality(rows)
     assert result.plausible_range == 0.5
+
+
+def test_temporality_all_identical_years_scores_zero() -> None:
+    rows = [
+        {"name": "A", "status_as_of": "as-of 2025"},
+        {"name": "B", "status_as_of": "2025"},
+        {"name": "C", "status_as_of": "checked 2025"},
+    ]
+    result = score_temporality(rows)
+    assert result.plausible_range == 0.0
+    assert result.plausible_range_annotation == "all_identical"
 
 
 def test_empty_total_mwe_counted_absent() -> None:

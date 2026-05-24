@@ -10,14 +10,11 @@ def reconcile(request):
     module = importlib.import_module(f"aedist.matching.{request.param}")
     return module.reconcile
 
+
 def test_exact_match(reconcile):
     """Test when group1 and group2 contain exactly matching rows."""
-    group1 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 50}
-    ])
-    group2 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 50}
-    ])
+    group1 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 50}])
+    group2 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 50}])
 
     result = reconcile(group1, group2)
 
@@ -29,11 +26,10 @@ def test_exact_match(reconcile):
     assert row["capacity_file2"] == 50
     assert row["capacity_difference"] == 0
 
+
 def test_only_in_file1(reconcile):
     """Test when group2 is empty, so all group1 capacity is unmatched."""
-    group1 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}
-    ])
+    group1 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}])
     group2 = pd.DataFrame(columns=["name", "name_clean", "capacity_clean"])
 
     result = reconcile(group1, group2)
@@ -45,12 +41,11 @@ def test_only_in_file1(reconcile):
     assert row["capacity_file1"] == 100
     assert row["name_file2"] is None
 
+
 def test_only_in_file2(reconcile):
     """Test when group1 is empty, so all group2 capacity is unmatched."""
     group1 = pd.DataFrame(columns=["name", "name_clean", "capacity_clean"])
-    group2 = pd.DataFrame([
-        {"name": "Plant B", "name_clean": "plant b", "capacity_clean": 80}
-    ])
+    group2 = pd.DataFrame([{"name": "Plant B", "name_clean": "plant b", "capacity_clean": 80}])
 
     result = reconcile(group1, group2)
 
@@ -61,21 +56,22 @@ def test_only_in_file2(reconcile):
     assert row["capacity_file2"] == 80
     assert row["name_file1"] is None
 
+
 def test_fuzzy_match_name(reconcile):
     """
     Test fuzzy matching with names that differ slightly but have capacities
     within the allowed tolerance.
     """
-    group1 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}
-    ])
-    group2 = pd.DataFrame([
-        {
-            "name": "Plant A Incorporated",
-            "name_clean": "plant a incorporated",
-            "capacity_clean": 100,
-        }
-    ])
+    group1 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}])
+    group2 = pd.DataFrame(
+        [
+            {
+                "name": "Plant A Incorporated",
+                "name_clean": "plant a incorporated",
+                "capacity_clean": 100,
+            }
+        ]
+    )
 
     result = reconcile(group1, group2)
 
@@ -83,21 +79,22 @@ def test_fuzzy_match_name(reconcile):
     row = result.iloc[0]
     assert row["status"] == "Matched (Fuzzy)"
 
+
 def test_fuzzy_match_within_tolerance(reconcile):
     """
     Test fuzzy matching with names that differ slightly but have capacities
     within the allowed tolerance.
     """
-    group1 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}
-    ])
-    group2 = pd.DataFrame([
-        {
-            "name": "Plant A Incorporated",
-            "name_clean": "plant a incorporated",
-            "capacity_clean": 145,
-        }
-    ])
+    group1 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}])
+    group2 = pd.DataFrame(
+        [
+            {
+                "name": "Plant A Incorporated",
+                "name_clean": "plant a incorporated",
+                "capacity_clean": 145,
+            }
+        ]
+    )
 
     result = reconcile(group1, group2, capacity_tolerance=50)
 
@@ -107,21 +104,22 @@ def test_fuzzy_match_within_tolerance(reconcile):
     assert row["capacity_file1"] == 100
     assert row["capacity_file2"] == 145
 
+
 def test_fuzzy_match_outside_tolerance(reconcile):
     """
     Test fuzzy matching with names that differ slightly but have capacities
     outside of the allowed tolerance.
     """
-    group1 = pd.DataFrame([
-        {"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}
-    ])
-    group2 = pd.DataFrame([
-        {
-            "name": "Plant A Incorporated",
-            "name_clean": "plant a incorporated",
-            "capacity_clean": 145,
-        }
-    ])
+    group1 = pd.DataFrame([{"name": "Plant A", "name_clean": "plant a", "capacity_clean": 100}])
+    group2 = pd.DataFrame(
+        [
+            {
+                "name": "Plant A Incorporated",
+                "name_clean": "plant a incorporated",
+                "capacity_clean": 145,
+            }
+        ]
+    )
 
     result = reconcile(group1, group2, capacity_tolerance=0)
 
@@ -130,6 +128,7 @@ def test_fuzzy_match_outside_tolerance(reconcile):
     assert row["status"] == "Matched (Fuzzy) (Diff)"
     assert row["capacity_file1"] == 100
     assert row["capacity_file2"] == 145
+
 
 def test_main_example(reconcile):
     """
@@ -143,7 +142,11 @@ def test_main_example(reconcile):
         {"name": "Plant B", "name_clean": "plant b", "capacity_clean": 200},
     ]
     data2 = [
-        {"name": "Plant A Incorporated", "name_clean": "plant a incorporated", "capacity_clean": 105},
+        {
+            "name": "Plant A Incorporated",
+            "name_clean": "plant a incorporated",
+            "capacity_clean": 105,
+        },
         {"name": "Plant B", "name_clean": "plant b", "capacity_clean": 200},
     ]
     file1_df = pd.DataFrame(data1)
@@ -170,6 +173,39 @@ def test_main_example(reconcile):
     # For Plant B: capacity difference = 200 - 200 = 0 (exact match)
     assert row_b["capacity_difference"] == 0
     assert row_b["status"] == "Matched"
+
+
+def test_unit_number_veto(reconcile):
+    """Plants with differing trailing unit numbers must not be matched."""
+    group1 = pd.DataFrame(
+        [{"name": "Na Duong 1", "name_clean": "na duong 1", "capacity_clean": 110}]
+    )
+    group2 = pd.DataFrame(
+        [{"name": "Na Duong 2", "name_clean": "na duong 2", "capacity_clean": 110}]
+    )
+    result = reconcile(group1, group2)
+    assert len(result) == 2
+    assert set(result["status"].tolist()) == {"Only in file1", "Only in file2"}
+
+
+def test_same_unit_number_still_matches(reconcile):
+    """Plants with the same trailing unit number and similar names should match."""
+    group1 = pd.DataFrame(
+        [{"name": "Na Duong 1", "name_clean": "na duong 1", "capacity_clean": 110}]
+    )
+    group2 = pd.DataFrame(
+        [
+            {
+                "name": "Nhiet Dien Na Duong 1",
+                "name_clean": "nhiet dien na duong 1",
+                "capacity_clean": 110,
+            }
+        ]
+    )
+    result = reconcile(group1, group2)
+    assert len(result) == 1
+    assert result.iloc[0]["status"] in {"Matched", "Matched (Fuzzy)"}
+
 
 if __name__ == "__main__":
     pytest.main()

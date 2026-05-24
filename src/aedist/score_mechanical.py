@@ -34,6 +34,27 @@ _ALLOWED_FUELS = {
     "unknown",
 }
 
+_ALLOWED_STATUSES = {
+    # GEM canonical terms
+    "announced",
+    "pre-permit",
+    "pre-permit development",
+    "permitted",
+    "construction",
+    "operating",
+    "shelved",
+    "cancelled",
+    "retired",
+    # Accepted synonyms
+    "operational",
+    "under construction",
+    "approved",
+    "planned",
+    "suspended",
+    "commissioning",
+    "decommissioned",
+}
+
 _CSV_COLUMNS = [
     "arm",
     "model",
@@ -54,8 +75,8 @@ _CSV_COLUMNS = [
     "accuracy_province_annotation",
     "coherence_vocab_adherence",
     "coherence_vocab_adherence_annotation",
-    "coherence_capacity_nonnegative",
-    "coherence_capacity_nonnegative_annotation",
+    "coherence_status_vocab_adherence",
+    "coherence_status_vocab_adherence_annotation",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -85,7 +106,7 @@ class AccuracyScores:
 @dataclass
 class CoherenceScores:
     vocab_adherence: float | None
-    capacity_nonnegative: float | None
+    status_vocab_adherence: float | None
     annotation: str | None = None
 
 
@@ -164,20 +185,20 @@ def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
     if not rows:
         return CoherenceScores(None, None, annotation="no_rows")
 
-    valid_vocab = 0
-    nonnegative = 0
+    valid_fuel = 0
+    valid_status = 0
     for row in rows:
         fuel = (row.get("fuel") or "").strip().lower()
         if fuel in _ALLOWED_FUELS:
-            valid_vocab += 1
+            valid_fuel += 1
 
-        cap = _as_float(_first_nonempty(row, _CAPACITY_KEYS))
-        if cap is not None and cap >= 0:
-            nonnegative += 1
+        status = (row.get("status") or "").strip().lower()
+        if status in _ALLOWED_STATUSES:
+            valid_status += 1
 
     return CoherenceScores(
-        vocab_adherence=_fraction(valid_vocab, len(rows)),
-        capacity_nonnegative=_fraction(nonnegative, len(rows)),
+        vocab_adherence=_fraction(valid_fuel, len(rows)),
+        status_vocab_adherence=_fraction(valid_status, len(rows)),
         annotation=None,
     )
 
@@ -232,6 +253,7 @@ def score_temporality(rows: list[dict[str, str]]) -> TemporalityScores:
 
     with_asof = 0
     plausible = 0
+    years_found: list[int] = []
     for row in rows:
         cell = _pick_asof_cell(row)
         if not cell:
@@ -241,12 +263,17 @@ def score_temporality(rows: list[dict[str, str]]) -> TemporalityScores:
         if not match:
             continue
         year = int(match.group(1))
+        years_found.append(year)
         if 1980 <= year <= 2100:
             plausible += 1
 
     if with_asof == 0:
         plausible_rate = None
         plausible_annotation = "column_empty"
+    elif len(years_found) >= 2 and len(set(years_found)) == 1:
+        # All cells carry the same year — likely the run date stamped on every row.
+        plausible_rate = 0.0
+        plausible_annotation = "all_identical"
     else:
         plausible_rate = _fraction(plausible, with_asof)
         plausible_annotation = None
@@ -350,8 +377,8 @@ def main(argv: list[str] | None = None) -> None:
         "accuracy_province_annotation": accuracy.annotation or "",
         "coherence_vocab_adherence": _fmt(coherence.vocab_adherence),
         "coherence_vocab_adherence_annotation": coherence.annotation or "",
-        "coherence_capacity_nonnegative": _fmt(coherence.capacity_nonnegative),
-        "coherence_capacity_nonnegative_annotation": coherence.annotation or "",
+        "coherence_status_vocab_adherence": _fmt(coherence.status_vocab_adherence),
+        "coherence_status_vocab_adherence_annotation": coherence.annotation or "",
         "provenance_source_presence": _fmt(provenance.source_presence),
         "provenance_source_presence_annotation": provenance.source_presence_annotation or "",
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),

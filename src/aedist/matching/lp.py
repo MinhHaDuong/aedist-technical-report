@@ -103,12 +103,18 @@ def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
     return None
 
 
+def _extract_digit_tokens(name: str) -> frozenset[str]:
+    """Return the set of standalone digit tokens in a name_clean string."""
+    return frozenset(tok for tok in name.split() if tok.isdigit())
+
+
 def _compute_costs(
     df1: pd.DataFrame,
     df2: pd.DataFrame,
     similarity_threshold: int,
     mismatch_penalty: float,
     capacity_weight: float,
+    dummy_cost: float = DEFAULT_DUMMY_COST,
 ) -> dict[tuple[int, int], float]:
     """
     Compute the matching cost for each potential pairing between records of df1 and df2.
@@ -123,21 +129,35 @@ def _compute_costs(
           1 if the fuzzy similarity score (using fuzz.partial_ratio) meets or exceeds similarity_threshold;
           mismatch_penalty otherwise.
 
+    Unit-number veto: if both names contain digit tokens and those sets differ (e.g. "1" vs "2"),
+    the cost is set to 2*dummy_cost+1, making it cheaper for the LP to leave both records
+    unmatched than to accept a cross-unit false positive.
+
     Args:
         df1 (pd.DataFrame): First DataFrame with plant records.
         df2 (pd.DataFrame): Second DataFrame with plant records.
         similarity_threshold (int): Threshold for fuzzy matching.
         mismatch_penalty (float): Penalty applied when fuzzy matching fails.
         capacity_weight (float): Weight coefficient for the capacity difference component.
+        dummy_cost (float): Cost for leaving a record unmatched (used to calibrate veto cost).
 
     Returns:
         dict[tuple[int, int], float]: A mapping from (i, j) indices to computed matching cost.
     """
+    veto_cost = 2 * dummy_cost + 1
     costs: dict[tuple[int, int], float] = {}
     for i in df1.index:
         for j in df2.index:
             name1 = str(df1.loc[i, "name_clean"])
             name2 = str(df2.loc[j, "name_clean"])
+
+            # Unit-number veto: different trailing unit numbers must not match.
+            digits1 = _extract_digit_tokens(name1)
+            digits2 = _extract_digit_tokens(name2)
+            if digits1 and digits2 and digits1 != digits2:
+                costs[(i, j)] = veto_cost
+                continue
+
             cap1 = df1.loc[i, "capacity_clean"]
             cap2 = df2.loc[j, "capacity_clean"]
             if cap1 is None or cap2 is None or math.isnan(cap1) or math.isnan(cap2):
@@ -404,7 +424,9 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
     if empty_result is not None:
         return empty_result
 
-    costs = _compute_costs(df1, df2, similarity_threshold, mismatch_penalty, capacity_weight)
+    costs = _compute_costs(
+        df1, df2, similarity_threshold, mismatch_penalty, capacity_weight, dummy_cost
+    )
     prob, x_vars, u_vars, v_vars = _setup_lp(df1, df2, costs, dummy_cost)
 
     # Warm start: set initial values from greedy pre-alignment
