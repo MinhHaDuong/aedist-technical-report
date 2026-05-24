@@ -38,7 +38,11 @@ import yaml
 
 from aedist import adapter_mistral
 from aedist.extract import count_best_table_rows
-from aedist.harness import EVIDENCE_PACK_SECTION_TITLE, append_evidence_pack, assemble_evidence_pack
+from aedist.harness import (
+    EVIDENCE_PACK_SECTION_TITLE,
+    append_evidence_pack,
+    assemble_evidence_pack,
+)
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
 
