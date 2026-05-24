@@ -7,6 +7,8 @@ import pytest
 from aedist.extract import (
     ExtractStatus,
     _extract_pipe_tables,
+    _is_inventory_header,
+    _merge_pipe_table_candidates,
     count_best_table_rows,
     extract_fenced_blocks,
     extract_one,
@@ -48,6 +50,23 @@ class TestHeaderMapping:
     def test_installed_capacity_header(self):
         assert map_header_to_canonical(norm_header("Installed Capacity (MWe)")) == "capacity_mwe"
 
+    def test_fuel_source_header(self):
+        assert map_header_to_canonical(norm_header("Fuel Source")) == "fuel"
+
+    def test_cod_status_header(self):
+        assert map_header_to_canonical(norm_header("COD / Status")) == "status"
+
+    def test_conf_provenance_header(self):
+        assert map_header_to_canonical(norm_header("Conf. & Provenance")) == "confidence"
+
+    def test_orig_cap_header(self):
+        assert map_header_to_canonical(norm_header("Orig. Cap (MW)")) == "capacity_mwe"
+
+    def test_current_status_resolution_header(self):
+        assert (
+            map_header_to_canonical(norm_header("Current Status / Resolution")) == "status"
+        )
+
 
 class TestPipeTable:
     """Markdown pipe tables should be converted to CSV."""
@@ -86,6 +105,54 @@ class TestPipeTable:
         assert len(results) == 2
         assert '"Name"' in results[1]
 
+    def test_merge_split_subtables_with_same_header(self):
+        text = (
+            "| Name | Fuel | Province |\n| --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong |\n"
+            "| Uong Bi | Coal | Quang Ninh |\n\n"
+            "Some prose in between.\n\n"
+            "| Name | Fuel | Province |\n| --- | --- | --- |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan |\n"
+            "| Nghi Son 2 | Coal | Thanh Hoa |\n"
+        )
+        tables = _extract_pipe_tables(text)
+        merged = _merge_pipe_table_candidates(tables)
+        assert merged is not None
+        lines = merged.strip().splitlines()
+        assert len(lines) == 5  # header + 4 rows
+        assert '"Name","Fuel","Province"' == lines[0]
+
+    def test_merge_ignores_statistical_tables(self):
+        text = (
+            "| Fuel | Capacity |\n| --- | --- |\n| Coal | 2910 |\n\n"
+            "| Fuel | Capacity |\n| --- | --- |\n| Gas | 900 |\n"
+        )
+        tables = _extract_pipe_tables(text)
+        merged = _merge_pipe_table_candidates(tables)
+        assert merged is None
+
+
+class TestInventoryHeaderDetection:
+    def test_inventory_header_true(self):
+        assert _is_inventory_header('"Name","Fuel","Province"') is True
+
+    def test_statistical_header_false(self):
+        assert _is_inventory_header('"Fuel","Capacity"') is False
+
+    def test_inventory_header_variant_true(self):
+        header = (
+            '"Plant Name","Capacity (MW)","Owner / Operator",'
+            '"Fuel Source","COD / Status","Conf. & Provenance"'
+        )
+        assert _is_inventory_header(header) is True
+
+    def test_inventory_header_orig_cap_variant_true(self):
+        header = (
+            '"Plant Name","Orig. Cap (MW)","Original Sponsor",'
+            '"Current Status / Resolution","Conf. & Provenance"'
+        )
+        assert _is_inventory_header(header) is True
+
 
 class TestCountBestTableRows:
     def test_counts_single_table_rows(self):
@@ -115,6 +182,19 @@ class TestCountBestTableRows:
     def test_returns_zero_when_no_parseable_inventory_table_exists(self):
         text = "| Fuel | Capacity |\n| --- | --- |\n| Coal | 2910 |\n"
         assert count_best_table_rows(text) == 0
+
+    def test_merges_split_inventory_subtables_before_counting(self):
+        text = (
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n\n"
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n"
+            "| Nghi Son 2 | Coal | Thanh Hoa | 1320 | Operating | 2023 |\n"
+        )
+        assert count_best_table_rows(text) == 4
 
 
 class TestFallbackInlineCSV:
@@ -507,6 +587,28 @@ class TestExtractOne:
         out.mkdir()
         res = extract_one(jf, out, overwrite=False)
         assert res.status is ExtractStatus.FAILED
+
+    def test_extract_one_merges_split_subtables(self, tmp_path):
+        response = (
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n\n"
+            "Narrative break.\n\n"
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n"
+            "| Nghi Son 2 | Coal | Thanh Hoa | 1320 | Operating | 2023 |\n"
+        )
+        jf = tmp_path / "split.json"
+        jf.write_text(json.dumps({"response": response}), encoding="utf-8")
+        out = tmp_path / "out"
+        out.mkdir()
+        res = extract_one(jf, out, overwrite=False)
+        assert res.status is ExtractStatus.WROTE
+        csv_out = (out / "split.csv").read_text(encoding="utf-8")
+        # Header + 4 rows
+        assert len([ln for ln in csv_out.splitlines() if ln.strip()]) == 5
 
 
 class TestMainSkipsDerivedJson:

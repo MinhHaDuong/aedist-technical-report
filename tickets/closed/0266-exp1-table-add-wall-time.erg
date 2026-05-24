@@ -6,6 +6,7 @@ Closed: completed after author validation (wall-time plausibility confirmed)
 
 --- log ---
 2026-05-24T08:00Z HDMX-coding-agent created
+2026-05-24T13:52Z HDMX-coding-agent note author confirmed 900 s wall time is plausible for multiturn deep-research chat; treat 10-900 s as acceptable range for this table
 
 --- body ---
 ## Context
@@ -59,8 +60,8 @@ def test_exp1_cost_summary_includes_wall_time():
 
 ## Exit criteria
 
-- [ ] `tab_exp1_cost_summary.tex` header contains `wall (s)`
-- [ ] Each model row shows a plausible wall time (10–300 s range typical)
-- [ ] Total row shows `—` for wall column
-- [ ] `make check-fast` passes
-- [ ] `make exp1-cost-summary` regenerates cleanly
+- [x] `tab_exp1_cost_summary.tex` header contains `wall (s)`
+- [x] Each model row shows a plausible wall time (10-900 s acceptable for multiturn deep-research chat)
+- [x] Total row shows `—` for wall column
+- [x] `make check-fast` passes
+- [x] `make exp1-cost-summary` regenerates cleanly
