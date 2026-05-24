@@ -1,0 +1,12 @@
+{
+  "agent": "anthropic",
+  "run": 1,
+  "model": "claude-opus-4-6",
+  "classification": "report",
+  "tokens_out": 31078,
+  "wall_s": 546.96,
+  "cost_usd": 2.6605,
+  "classifier_cost_usd": 0.0026,
+  "narrative_chars": 49714,
+  "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+}
