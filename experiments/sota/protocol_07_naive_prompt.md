@@ -31,3 +31,62 @@ shortlist of well-known assets.
 # FORMAT
 
 Output format: Markdown.
+
+# CONTEXT
+
+## Source quality management
+
+Two distinct epistemic roles — do not conflate them:
+- Discovery & characterization: parametric knowledge and web search, including tertiary sources, MAY be used to generate leads, locate assets, and form initial hypotheses about attributes.
+- Justification in the final inventory: a claim can be justified ONLY by an admissible independently consulted source that actually supports it.
+
+Admissible primary sources: official government documents; regulator-aggregated official data; operator filings/press releases.
+
+Admissible secondary sources: international-institution reports; bylined trade press; industry trackers and data brokers that expose the primary they cite.
+
+Not admissible sources:
+- Tertiary compilations (encyclopedias, Wikipedia/Wikidata/DBpedia, mirrors, aggregators re-syndicating without independent verification).
+- Any deposited dataset that does NOT expose, per value, the primary source it draws from — a DOI or repository deposit does not by itself confer admissibility.
+
+Local-language sources are preferred but not required; when used, include the original-language title plus an English translation in brackets.
+
+If a lead surfaces only via an inadmissible source, trace to its original source and cite that; if none is found, record Source = "not found", confidence LOW. In the table mention the inadmissible source in Notes, not in Sources.
+
+## Calibrated confidence vocabulary
+
+Each row in the inventory table carries a confidence level based on evidence and agreement:
+-  HIGH   = >=2 INDEPENDENT concordant sources, at least one is primary
+-  MEDIUM = 1 primary source, OR a sourced aggregator citing a verifiable primary
+-  LOW    = secondary only / inferred / unresolved conflict / not found
+
+Independence check (run BEFORE judging agreement):
+-  Trace each source to its origin; merge sources sharing one origin into ONE.
+-  Sources re-syndicating Wikipedia/Wikidata are NOT independent and NOT admissible.
+-  Filling both Source columns does not by itself confer HIGH; independence is required
+
+Hard ceilings (override the above):
+- Commercial operator self-reported not confirmed by an official source: cap claim at MEDIUM.
+- Status attested only by a source older than 24 months and unconfirmed since: cap status at MEDIUM (LOW if older than 48 months). Freshness is measured on the publication date of the most recent admissible source attesting the status — NOT on the older Status as-of-date.
+- "Source = not found" rows: LOW by construction.
+
+Explanatory notes must state the confidence level for the row-level existence/status claim and may additionally qualify one or two disputed attributes (capacity, status, fuel, COD, owner/operator, or location). Per qualified claim, state: value, confidence level, evidence type (primary/secondary), and sources. When sources disagree, investigate for transcription errors, time-based changes, and unit/translation issues; follow the higher-tier source if unresolved, and add a note in the Notes cell.
+
+## Asset-row and status rules
+
+Each row corresponds to one asset record. The DEFAULT unit is the plant / unit-group, not the power center: when a site co-locates several plants with distinct capacity, COD, owner/developer, fuel, status, or financing (BOT/IPP) arrangements, each one is its own row. Aggregate to center-level in a single row ONLY when detailed evidence is unavailable; in that case mark the row ambiguous and explain the aggregation in Notes. Conversely, do not split a single plant into multiple rows when the only difference is individual generating units sharing one commissioning, owner, and status — record these as Units × MW on one row.
+
+Status definitions (use these exact terms, aligned with Global Energy Monitor vocabulary):
+- Announced: described in government plans or corporate filings; no permits sought, no land acquired.
+- Pre-permit: environmental and regulatory approvals being sought; no permits issued yet.
+- Permitted: all required government approvals received; construction not yet started.
+- Construction: site preparation or EPC execution underway.
+- Operating: formally commissioned.
+- Shelved: previously active or advancing but progress halted without formal cancellation.
+- Cancelled: formally cancelled or replaced by another project.
+- Retired: permanently closed or decommissioned.
+
+Capacity rule:
+Record nameplate electrical capacity in MWe when available. If sources do not distinguish gross vs net, record the stated MW value and note "gross/net unspecified". Do not mix thermal MW, boiler capacity, steam output, or investment package capacity with electrical MWe. For Units × MW, make arithmetic consistent with Total MWe or explain discrepancies in Notes.
+
+Explanatory notes discipline:
+The table comes first. Per-asset notes follow the table and are selective: write one only for assets that are major, disputed, ambiguous, or historically important. For straightforward operational assets a compact Notes cell in the table is sufficient; do not repeat it as a separate note.
