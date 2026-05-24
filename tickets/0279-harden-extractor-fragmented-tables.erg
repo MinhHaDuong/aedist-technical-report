@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Harden extractor for fragmented plant tables
+Created: 2026-05-24
+Author: haduong
+
+--- log ---
+2026-05-24T14:30Z haduong created
+
+--- body ---
+## Context
+
+`count_best_table_rows` in `src/aedist/extract.py` (introduced in #492) selects
+the single largest markdown table as the plant table. When a model emits three
+sub-tables (coal / gas / LNG), only the largest (typically coal) is counted.
+Run01 result: extractor reports 46 rows vs ~109 actual plant rows across all
+three fuel sub-tables.
+
+This is the extractor side of the single-table problem. Ticket 0278 adds a
+prompt instruction to discourage fragmentation; this ticket ensures the extractor
+handles it robustly even when the model ignores the instruction.
+
+## Design
+
+Fragmentation detection heuristic: if two or more tables within 20 lines of each
+other share the same number of columns AND have compatible headers (≥2 columns
+with identical normalised names — e.g., "Name", "Province", "MWe", "Status"),
+treat them as fragments of one logical table and merge before row-counting.
+
+The merge is additive: concatenate data rows, deduplicate by normalised Vietnamese
+name (case-insensitive, strip diacritics). Header and separator rows are not
+duplicated.
+
+## Scope
+
+- Modify `count_best_table_rows` (or extract a `merge_fragmented_tables` helper
+  it calls) in `src/aedist/extract.py`.
+- Add regression tests in `tests/test_extract.py`:
+  - Input: markdown with 3 consecutive compatible tables (coal/gas/LNG split).
+    Expected: merged row count = sum of data rows across all three.
+  - Input: markdown with unrelated tables (different column counts).
+    Expected: largest table only, no merge.
+- Verify on `experiments/outputs/sota_exp2_naive_arm/anthropic_run01.md`:
+  corrected extractor count ≥ 80 rows (vs current 46).
+
+## Exit criteria
+
+- [ ] `merge_fragmented_tables` or equivalent logic in `extract.py`
+- [ ] Both regression tests pass
+- [ ] Spot-check on anthropic_run01.md: count ≥ 80
+- [ ] `make check-fast` passes

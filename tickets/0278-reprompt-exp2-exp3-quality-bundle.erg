@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Reprompt bundle — table order, single table, no summary tables, max_tokens 64K
+Created: 2026-05-24
+Author: haduong
+Blocked-by: 0279
+Blocked-by: 0280
+
+--- log ---
+2026-05-24T14:30Z haduong created
+
+--- body ---
+## Context
+
+Four concrete protocol fixes identified before next arm3/arm4 run batch.
+All touch prompt files and/or harness constants. Must land before 0250 proceeds.
+
+## Changes
+
+### 1. Table-first output ordering (both prompts)
+
+Current format order in `protocol_07_naive_prompt.md` and `protocol_02_metaprompt.md`:
+  sector overview → per-plant narratives → structured table → summary tables → bibliography
+
+With max_tokens binding (4/5 Anthropic arm1 corrected runs hit 32K), the table
+arrives late and gets truncated. Reorder to:
+  structured table → condensed per-plant notes → bibliography
+
+The primary measurement artifact is always complete even in a truncated run.
+
+### 2. Single-table enforcement (both prompts)
+
+Current column spec lists "Fuel (Coal / Domestic gas / Imported LNG)" which models
+read as an invitation to produce three sub-tables by fuel. Add one explicit line:
+
+  > Produce ONE unified table. Do not split by fuel, status, or any other dimension.
+
+The fixed extractor (0279) handles remaining fragmentation, but the prompt should
+not invite it.
+
+### 3. Remove summary-tables ask (both prompts)
+
+Remove: "statistical summary tables (capacity by fuel × status; top 15 provinces;
+timeline of additions by period and fuel; data-quality summary by confidence level
+and fuel)"
+
+Rationale: summary tables were intended as a coherence-forcing mechanism but
+(a) the token budget is better spent on plant rows, (b) runs truncated before
+the summary section had no coherence enforcement at all, (c) the extractor had
+to be hardened (#492) because of them. The coherence test will be applied
+post-hoc by the mechanical scorer (0276).
+
+### 4. max_tokens bump: 32K → 64K for Anthropic
+
+In `exp2_naive_arm.py`: `ANTHROPIC_MAX_TOKENS = 32_000` → `64_000`.
+In `exp2_interactive_smoke.py`: update the corresponding floor/default constant.
+
+Streaming is already required at 32K, so no API path change needed.
+Cost impact: ~doubles per run ($1.15–$1.37 → ~$2.30), ~$11.50 for 5 runs.
+Justification: 4/5 corrected arm1 runs were truncated at 32K; reference dataset
+is 163 plants; corrected runs yielded 19–51 plants (best table). More tokens
+directly improve recall.
+
+## Files to change
+
+- `experiments/sota/protocol_07_naive_prompt.md`
+- `experiments/sota/protocol_02_metaprompt.md`
+- `experiments/sota/exp2_naive_arm.py` (ANTHROPIC_MAX_TOKENS constant)
+- `experiments/sota/exp2_interactive_smoke.py` (max_tokens floor/default)
+
+## Exit criteria
+
+- [ ] `protocol_07_naive_prompt.md` updated: table first, single-table instruction,
+      summary tables removed
+- [ ] `protocol_02_metaprompt.md` updated: same structural changes + Phase A note
+      that evidence pack manifest follows in the meta-prompt body (see 0280)
+- [ ] `ANTHROPIC_MAX_TOKENS = 64_000` in `exp2_naive_arm.py`
+- [ ] `make check-fast` passes

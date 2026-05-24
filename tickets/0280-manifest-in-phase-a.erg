@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Pass evidence pack manifest to Phase A meta-prompt
+Created: 2026-05-24
+Author: haduong
+
+--- log ---
+2026-05-24T14:30Z haduong created
+
+--- body ---
+## Context
+
+In Arms 3/4 (with evidence pack), Phase A currently runs without any knowledge
+of the evidence pack. The agent designs a retrieval strategy as if it were Arm 2
+(no evidence), and the evidence pack is grafted onto the designed prompt after
+Phase A returns. This means the protocol design step is blind to what data is
+actually available.
+
+Passing the manifest (a small YAML list of available evidence items) in Phase A
+lets the agent write a strategy that actually exploits the pack: e.g., "I will
+start from the GEM tracker entry for each plant, then cross-check against the
+EVN load dispatch reports."
+
+## Design
+
+The manifest YAML is small (~1K chars). It should appear in `protocol_02_metaprompt.md`
+as a filled-in section (e.g., "## Available evidence pack\n<manifest content>")
+when an evidence pack is active.
+
+Option A — inline in prompt file: `assemble_meta_prompt()` accepts an optional
+`manifest_path` and injects the YAML block.
+Option B — passed as a separate section appended by `assemble_meta_prompt()`.
+
+Prefer option A (single function signature change, testable).
+
+## Changes
+
+1. `assemble_meta_prompt(manifest_path: Path | None = None)` in
+   `exp2_interactive_smoke.py`: if manifest_path is provided, append a
+   "## Available evidence pack" section with the YAML contents after the
+   budget announcement.
+
+2. Call site (main loop): pass `args.evidence_pack_manifest` to
+   `assemble_meta_prompt()` when provided.
+
+3. `protocol_02_metaprompt.md`: add a placeholder section near the end:
+   "## Available evidence pack (injected at runtime when --evidence-pack-manifest
+   is provided)". This makes the injection visible when reading the template.
+
+## Exit criteria
+
+- [ ] `assemble_meta_prompt(manifest_path)` implemented and called correctly
+- [ ] Dry-run with `--no-confirm` prints manifest content in the meta-prompt
+      for arm4 invocation
+- [ ] No change to arm2 behaviour (manifest_path=None path unchanged)
+- [ ] `make check-fast` passes
