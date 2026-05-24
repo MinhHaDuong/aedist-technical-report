@@ -31,6 +31,13 @@ prior batch), so variance across reps measures Phase B reproducibility only.
 
 ## Per-Run Results
 
+Note: the `Rows` values recorded in this README reflect the batch-time
+`inventory_rows` heuristic stored in per-run JSON metadata on 2026-05-23.
+Ticket 0277 later tightened the canonical definition to mean plant-table rows
+only, excluding summary tables. Use regenerated downstream artifacts such as
+`report/inputs/generated/tab_exp2_arms_runs.csv` for the corrected canonical
+counts; treat the table below as historical run-log output.
+
 | Agent | Run | Turns | Class trace | Rows | Cost |
 |-------|----:|------:|-------------|-----:|-----:|
 | anthropic | 1 | 3 | no_report→report→report | 117 | $1.780 |
@@ -82,3 +89,6 @@ Classifier: `deepseek/deepseek-v4-pro`, 16K char excerpt, max_tokens=1024.
 - `{agent}_runNN.raw.json` — raw provider response for that turn
 - `summary.json` — machine-readable array of all 20 per-run records
 - `probes/` — per-turn artefacts (`.record.json`, `.classification.json`, `.cost.json`, etc.)
+
+Historical note: the `inventory_rows` field stored in these existing JSON files
+predates the plant-table-only fix from 0277 and may include summary tables.

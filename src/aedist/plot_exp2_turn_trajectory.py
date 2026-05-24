@@ -19,6 +19,7 @@ import json
 import logging
 from pathlib import Path
 
+from .extract import count_best_table_rows
 from .util import COLOR_NEUTRAL, model_family_color
 
 log = logging.getLogger(__name__)
@@ -74,10 +75,7 @@ def _extract_text(d: dict) -> str:
 
 
 def _count_table_rows(text: str) -> int:
-    lines = text.splitlines()
-    tbl = [line.strip() for line in lines if line.strip().startswith("|")]
-    data = [line for line in tbl if not all(c in "-|: " for c in line)]
-    return max(0, len(data) - 1)
+    return count_best_table_rows(text)
 
 
 def load_run_turns(probes_dir: Path, agent: str, run: int) -> list[dict]:

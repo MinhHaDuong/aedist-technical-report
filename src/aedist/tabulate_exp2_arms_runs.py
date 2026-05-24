@@ -3,10 +3,10 @@
 Usage:
     python -m aedist.tabulate_exp2_arms_runs --output report/inputs/generated/tab_exp2_arms_runs.csv
 
-Reads per-run *.json metadata from both arm directories.  For the naive arm,
-inventory_rows is estimated by counting markdown table rows in the paired *.md
-file (same heuristic used inline by the optimised-arm harness).  For the
-optimised arm it is read directly from the JSON.
+Reads per-run *.json metadata from both arm directories. When a paired *.md
+report exists, inventory_rows is derived from the best plant-table candidate in
+that markdown so both arms use the same canonical meaning. The JSON field is
+used only as a fallback when no markdown report is available.
 
 Canonical data sources
     Arm 1 (naive)     experiments/outputs/sota_exp2_naive_arm/
@@ -20,6 +20,8 @@ import json
 import logging
 import re
 from pathlib import Path
+
+from .extract import count_best_table_rows
 
 log = logging.getLogger(__name__)
 
@@ -45,9 +47,8 @@ _RUN_RE = re.compile(r"^([a-z]+)_run(\d+)\.json$")
 def _count_md_table_rows(md_path: Path) -> int:
     if not md_path.exists():
         return 0
-    lines = md_path.read_text(encoding="utf-8", errors="replace").splitlines()
-    table_lines = [line for line in lines if line.startswith("|") and line.endswith("|")]
-    return max(0, len(table_lines) - 2)
+    text = md_path.read_text(encoding="utf-8", errors="replace")
+    return count_best_table_rows(text)
 
 
 def _load_arm_runs(arm_dir: Path, arm_label: str) -> list[dict]:
@@ -62,12 +63,15 @@ def _load_arm_runs(arm_dir: Path, arm_label: str) -> list[dict]:
 
         cost = meta.get("total_cost_usd", meta.get("cost_usd", 0.0))
 
-        if arm_label == "naive":
-            md_path = arm_dir / f"{agent}_run{run:02d}.md"
+        md_path = arm_dir / f"{agent}_run{run:02d}.md"
+        if md_path.exists():
             inventory_rows = _count_md_table_rows(md_path)
+        else:
+            inventory_rows = meta.get("inventory_rows", 0)
+
+        if arm_label == "naive":
             turns = 1
         else:
-            inventory_rows = meta.get("inventory_rows")
             turns = meta.get("turns", 1)
 
         rows.append(

@@ -316,6 +316,28 @@ def parse_and_canonicalize(csv_text: str) -> str:
     return out_buf.getvalue()
 
 
+def count_best_table_rows(text: str) -> int:
+    """Return data-row count for the best plant-table candidate in *text*.
+
+    This mirrors the extraction path used by `extract_one()`: score all pipe-table
+    candidates, select the best one, canonicalize it, then count resulting data
+    rows. Summary tables should therefore not inflate the count when a larger,
+    more plant-like inventory table is present in the same markdown response.
+    """
+    candidates = _extract_pipe_tables(text)
+    if not candidates:
+        return 0
+
+    best = max(candidates, key=score_csv_like_block)
+    try:
+        canonical_csv = parse_and_canonicalize(best)
+    except Exception:
+        return 0
+
+    row_count = sum(1 for line in canonical_csv.splitlines()[1:] if line.strip())
+    return row_count
+
+
 def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractResult:
     out_path = output_dir / f"{json_path.stem}.csv"
     if out_path.exists() and not overwrite:

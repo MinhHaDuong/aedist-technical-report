@@ -37,6 +37,7 @@ from pathlib import Path
 import yaml
 
 from aedist import adapter_mistral
+from aedist.extract import count_best_table_rows
 from aedist.harness import append_evidence_pack
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
@@ -1170,12 +1171,7 @@ def _read_turn_field(output_dir: Path, agent: str, turns: int, field: str) -> li
 
 
 def _count_markdown_table_rows(text: str) -> int:
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    table_lines = [line for line in lines if line.startswith("|") and line.endswith("|")]
-    if len(table_lines) < 3:
-        return 0
-    # Header + separator + data rows.
-    return max(0, len(table_lines) - 2)
+    return count_best_table_rows(text)
 
 
 def _estimate_inventory_rows(agent: str, phase_b: dict, output_dir: Path) -> int:

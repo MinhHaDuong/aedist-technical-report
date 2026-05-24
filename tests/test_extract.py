@@ -7,6 +7,7 @@ import pytest
 from aedist.extract import (
     ExtractStatus,
     _extract_pipe_tables,
+    count_best_table_rows,
     extract_fenced_blocks,
     extract_one,
     main,
@@ -78,6 +79,36 @@ class TestPipeTable:
         results = _extract_pipe_tables(text)
         assert len(results) == 2
         assert '"Name"' in results[1]
+
+
+class TestCountBestTableRows:
+    def test_counts_single_table_rows(self):
+        text = (
+            "| Name | Fuel | Province |\n"
+            "| --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong |\n"
+            "| Uong Bi | Coal | Quang Ninh |\n"
+        )
+        assert count_best_table_rows(text) == 2
+
+    def test_ignores_summary_table_when_inventory_table_present(self):
+        text = (
+            "# Report\n\n"
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n\n"
+            "| Fuel | Capacity |\n"
+            "| --- | --- |\n"
+            "| Coal | 2910 |\n"
+            "| Gas | 0 |\n"
+        )
+        assert count_best_table_rows(text) == 3
+
+    def test_returns_zero_when_no_parseable_inventory_table_exists(self):
+        text = "| Fuel | Capacity |\n| --- | --- |\n| Coal | 2910 |\n"
+        assert count_best_table_rows(text) == 0
 
 
 class TestFallbackInlineCSV:

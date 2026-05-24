@@ -4,6 +4,12 @@ Run date: 2026-05-23
 
 ## Per-agent results
 
+Note: the `Inventory rows` values recorded in this README reflect the original
+2026-05-23 batch-time heuristic stored in per-run JSON metadata. Ticket 0277
+later tightened the canonical definition to mean plant-table rows only,
+excluding summary tables. Treat the table below as historical run-log output;
+use regenerated downstream artifacts for corrected canonical counts.
+
 | Agent | Model | Classification | Turns | Total cost | Inventory rows |
 |-------|-------|---------------|------:|-----------:|---------------:|
 | openai | gpt-5.5-2026-04-23 | report | 4 | $0.9502 | 156 |
@@ -36,3 +42,6 @@ Probe audit files in `probes/`:
 - `{agent}_run01.raw.json` — raw provider response (final report turn)
 - `summary.json` — machine-readable array of per-agent records
 - `probes/` — per-turn debug artefacts and earlier audit files
+
+Historical note: the `inventory_rows` field stored in these existing JSON files
+predates the plant-table-only fix from 0277 and may include summary tables.

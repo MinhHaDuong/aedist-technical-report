@@ -23,6 +23,8 @@ import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 
+from aedist.extract import count_best_table_rows
+
 log = logging.getLogger(__name__)
 
 AGENTS = ["openai", "qwen", "mistral", "anthropic"]
@@ -76,20 +78,8 @@ def _narrative_from_raw(raw_path: Path) -> str:
 
 
 def _count_table_rows(text: str) -> int:
-    """Count non-header markdown table rows (lines starting with | that aren't ---separators)."""
-    rows = 0
-    in_table = False
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("|"):
-            if re.match(r"^\|[-| :]+\|$", stripped):
-                in_table = True
-                continue
-            if in_table:
-                rows += 1
-        else:
-            in_table = False
-    return rows
+    """Count rows in the best plant-table candidate, excluding summary tables."""
+    return count_best_table_rows(text)
 
 
 def _process_agent(agent_dir: Path, agent: str) -> dict:
