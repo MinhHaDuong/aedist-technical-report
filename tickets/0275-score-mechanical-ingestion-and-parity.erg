@@ -9,6 +9,8 @@ Blocked-by: 0277
 2026-05-24T11:22Z HDMX-coding-agent created
 2026-05-24T13:20Z HDMX-coding-agent updated from 0272 execution finding: sampled parity mismatch confirmed on openai_run01 (naive 79 vs 118, optimised 83 vs 122). Likely cause is inventory_rows counting all markdown pipe-table rows including summary tables while scorer extraction targets the main plant table.
 2026-05-24T13:36Z HDMX-coding-agent narrowed scope: inventory_rows producer bug is split into 0277. This ticket stays ingestion/parity only and is blocked until upstream row-count semantics are fixed.
+2026-05-24T15:18Z HDMX-coding-agent execute pass: added `src/aedist/score_ingest.py` to resolve `(arm, model, run)` to canonical markdown rows with typed ingestion errors and CSV-facing parity diagnostics.
+2026-05-24T15:22Z HDMX-coding-agent validation pass: `uv run pytest tests/test_score_ingest.py` and `make check-fast` succeeded.
 
 --- body ---
 ## Context
@@ -46,7 +48,7 @@ Upstream row-count semantics are handled by 0277. This ticket starts only once
 
 ## Exit criteria
 
-- [ ] Ingestion helper module committed with parser reuse (no duplicate parser implementation)
-- [ ] Parity diagnostics implemented and tested
-- [ ] Ingestion tests pass
-- [ ] `make check-fast` passes
+- [x] Ingestion helper module committed with parser reuse (no duplicate parser implementation)
+- [x] Parity diagnostics implemented and tested
+- [x] Ingestion tests pass
+- [x] `make check-fast` passes
