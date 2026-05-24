@@ -16,6 +16,7 @@ Blocked-by: 0216
 2026-04-30T20:05Z claude note sweep-skip: status-post-conference hash:866d6f2c54aa
 2026-04-30T21:38Z claude note sweep-skip: status-post-conference hash:48d29b09d538
 2026-05-21T18:30Z HDMX-coding-agent note added Blocked-by 0216 — the LLM adjudicator is itself an agent and must be validated against ground truth (pipeline.ods extracted to a callable API); without 0216 the support-rating output is unscored / circularly self-validated
+2026-05-24T18:05Z HDMX-coding-agent note linked with 0281 — ticket 0281 is the lightweight URL-level spot-check companion (resolve/name/capacity), while 0118 remains the full LLM support adjudication track.
 --- body ---
 * at the URL actually support the extracted value?
 This requires LLM adjudication, not just URL resolution.

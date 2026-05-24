@@ -2,9 +2,6 @@
 Title: Parent tracker — mechanical scoring pipeline (contract, ingestion, scorer)
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0277
-Blocked-by: 0275
-Blocked-by: 0276
 Closed: all children merged: 0274 0275 0276 0277; sota_cross_eval.csv generated; make check-fast passes
 
 --- log ---
@@ -43,10 +40,10 @@ Implementation is delivered by child tickets.
 
 ## Exit criteria
 
-- [ ] Ticket `0272` merged
-- [ ] Ticket `0274` merged
-- [ ] Ticket `0277` merged
-- [ ] Ticket `0275` merged
-- [ ] Ticket `0276` merged
-- [ ] `experiments/derived/sota_cross_eval.csv` generated for at least one Exp2 run via the new scorer path
-- [ ] `make check-fast` passes on the integration branch that closes this tracker
+- [x] Ticket `0272` merged
+- [x] Ticket `0274` merged
+- [x] Ticket `0277` merged
+- [x] Ticket `0275` merged
+- [x] Ticket `0276` merged
+- [x] `experiments/derived/sota_cross_eval.csv` generated for at least one Exp2 run via the new scorer path
+- [x] `make check-fast` passes on the integration branch that closes this tracker
