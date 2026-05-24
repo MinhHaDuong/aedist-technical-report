@@ -2,6 +2,7 @@
 Title: Materialize Exp2 CSV views from mart
 Created: 2026-05-24
 Author: HDMX-coding-agent
+Blocked-by: 0276
 Blocked-by: 0284
 
 --- log ---
@@ -15,11 +16,14 @@ emitting mart-derived CSV views as build artifacts.
 
 ## Deliverables
 
-1. View generator(s) that read `exp2_mart.jsonl` and write CSV views, e.g.:
+1. View generator(s) that read `exp2_mart.jsonl` and write these CSV views
+   (definitive list — 0286 migrates exactly these consumers):
    - `tab_exp2_arms_runs_view.csv`
    - `tab_exp2_bib_quality_view.csv`
    - `exp2_turn_trajectory_view.csv`
-   - `sota_cross_eval_view.csv`
+   - `sota_cross_eval_view.csv` — requires mechanical scores from 0276; the mart
+     builder (0284) must incorporate `sota_cross_eval.csv` rows produced by
+     `score_mechanical` CLI, or this view will have null score columns
 2. Deterministic column order and null encoding rules
 3. Tests for row-count and key-field parity with source mart slices
 

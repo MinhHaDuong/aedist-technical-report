@@ -2,6 +2,7 @@
 Title: Automated provenance spot-check — verify N=10 source URLs per run
 Created: 2026-05-24
 Author: haduong
+Blocked-by: 0274
 Blocked-by: 0276
 
 --- log ---
@@ -24,14 +25,18 @@ and (b) a page whose text content actually mentions the plant by name and
 ## Design
 
 Input: one run's `.md` file + the matched plant rows from `sota_cross_eval.csv`
-(produced by 0276 — hence the blocker).
+(produced by 0276 — hence the blocker). After the mart migration (0286) lands,
+consumers will read `sota_cross_eval_view.csv` instead; this module should accept
+the path as a CLI argument to avoid hardcoding the pre- vs post-migration name.
 
 Algorithm:
 1. For each sampled matched row, extract Source 1 URL from the markdown table.
 2. HTTP GET the URL (10s timeout, single retry). Record: resolved / unresolved /
    fabricated (URL syntactically valid but 404/domain-not-found).
 3. If resolved, search page text for the plant's Vietnamese or English name
-   (case-insensitive). If found and capacity within ±10% of claimed value: PASS.
+   (case-insensitive). If found, normalize both the claimed capacity and any
+   capacity figure found on the page to MWe (convert GW × 1000, MW as-is) before
+   comparing; if capacity within ±10% of claimed value: PASS.
 4. Emit per-row result (pass/fail/unresolved) and aggregate provenance_score = n_pass / 10.
 
 Output columns added to `sota_cross_eval.csv` (or a companion
@@ -51,9 +56,17 @@ Output columns added to `sota_cross_eval.csv` (or a companion
 Needs `sota_cross_eval.csv` with matched plant rows to know which rows to sample
 (unmatched rows have no reference to check against).
 
+## Naming note
+
+The new module must be named `check_provenance_urls.py` (not `score_provenance.py`):
+`score_mechanical.py` already exports a `score_provenance()` function that measures
+source-column presence structurally. A separate module with the same stem would
+create an import ambiguity.
+
 ## Exit criteria
 
-- [ ] `score_provenance.py` or equivalent module implemented with the algorithm above
-- [ ] Output columns defined and documented in `docs/scoring-contract.md`
+- [ ] `src/aedist/check_provenance_urls.py` implemented with the algorithm above
+- [ ] Output columns appended to the provenance section of the existing
+      `docs/scoring-contract.md` (created by 0274)
 - [ ] Smoke test on ≥1 run from `sota_exp2_naive_arm/`
 - [ ] `make check-fast` passes (HTTP calls mocked in tests)

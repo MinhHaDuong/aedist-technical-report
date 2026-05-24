@@ -13,6 +13,17 @@ Blocked-by: 0283
 Implement a mart builder that reads immutable Exp2 outputs and emits one
 canonical JSONL artifact validated against the schema from 0283.
 
+## Source artifacts
+
+The mart is built from these immutable inputs — do not read anything outside
+this list:
+
+- `experiments/outputs/sota_exp2_naive_arm/*.json` and `*.md` (run metadata + narratives)
+- `experiments/outputs/sota_exp2_brerun1/*.json` and `*.md` (optimised arm)
+- `experiments/derived/sota_cross_eval.csv` (mechanical scores from 0276)
+
+Do NOT read raw API payloads (`*.raw.json`) — they contain verbatim chat text.
+
 ## Deliverables
 
 1. Builder script/module producing `report/inputs/generated/exp2_mart.jsonl`

@@ -21,14 +21,18 @@ handles it robustly even when the model ignores the instruction.
 
 ## Design
 
-Fragmentation detection heuristic: if two or more tables within 20 lines of each
+Fragmentation detection heuristic: if two or more tables within 50 lines of each
 other share the same number of columns AND have compatible headers (≥2 columns
 with identical normalised names — e.g., "Name", "Province", "MWe", "Status"),
 treat them as fragments of one logical table and merge before row-counting.
 
+The 50-line window accommodates models that insert a prose paragraph ("The
+following table lists gas plants...") between fuel sub-tables; 20 lines was too
+tight in practice.
+
 The merge is additive: concatenate data rows, deduplicate by normalised Vietnamese
-name (case-insensitive, strip diacritics). Header and separator rows are not
-duplicated.
+name (case-insensitive, strip diacritics via `unicodedata.normalize('NFKD', ...)`
+— no new dependency, stdlib only). Header and separator rows are not duplicated.
 
 ## Scope
 
@@ -37,6 +41,8 @@ duplicated.
 - Add regression tests in `tests/test_extract.py`:
   - Input: markdown with 3 consecutive compatible tables (coal/gas/LNG split).
     Expected: merged row count = sum of data rows across all three.
+  - Input: markdown with compatible tables separated by a prose paragraph (~10 lines).
+    Expected: still merged (within 50-line window).
   - Input: markdown with unrelated tables (different column counts).
     Expected: largest table only, no merge.
 - Verify on `experiments/outputs/sota_exp2_naive_arm/anthropic_run01.md`:

@@ -1,0 +1,15 @@
+modelset:
+  - gpt-5.5
+axes:
+  - accuracy_precision
+  - provenance_source_presence
+  - provenance_high_conf_dual_source
+  - temporality_asof_presence
+  - temporality_plausible_range
+  - field_completeness_core
+  - field_completeness_capacity
+  - accuracy_coverage
+arms:
+  - naive
+  - optimised
+aggregate: median

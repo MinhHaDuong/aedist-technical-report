@@ -74,6 +74,15 @@ $(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality.csv
 	    --input $< \
 	    --output $@
 
+# --- Figure: five-axis quality spider from cross-eval scores -----------------
+
+$(GEN)/fig_quality_spider.pdf: experiments/derived/sota_cross_eval.csv experiments/quality_spider_config.yaml
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider \
+	    --input $< \
+	    --config experiments/quality_spider_config.yaml \
+	    --output $@
+
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
 EXP2_OUTLINE_ARTIFACTS := \
@@ -145,4 +154,5 @@ exp2-analysis-report: \
 	$(GEN)/tab_exp2_bib_quality.csv \
 	$(GEN)/tab_exp2_bib_quality.tex \
 	$(GEN)/fig_exp2_coverage_certainty.pdf \
+	$(GEN)/fig_quality_spider.pdf \
 	$(EXP2_OUTLINE_ARTIFACTS)

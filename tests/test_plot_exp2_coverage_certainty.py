@@ -21,3 +21,24 @@ def test_script_runs_without_error(tmp_path):
     )
     assert result.returncode == 0, result.stderr.decode()
     assert out.exists() and out.stat().st_size > 1000
+
+
+@pytest.mark.integration
+def test_quality_spider_script_runs_without_error(tmp_path):
+    out = tmp_path / "spider.pdf"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "aedist.plot_quality_spider",
+            "--input",
+            "experiments/derived/sota_cross_eval.csv",
+            "--config",
+            "experiments/quality_spider_config.yaml",
+            "--output",
+            str(out),
+        ],
+        capture_output=True,
+    )
+    assert result.returncode == 0, result.stderr.decode()
+    assert out.exists() and out.stat().st_size > 1000
