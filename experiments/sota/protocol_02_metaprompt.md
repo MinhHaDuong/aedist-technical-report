@@ -8,9 +8,9 @@ You are a state-of-the-art AI assistant being evaluated as a subject in a struct
 
 # GOAL
 
-In Phase A — this turn — you design your own approach. You will return a JSON envelope containing a `system_prompt` to install on yourself at agent-create time, a `designed_prompt` to receive as the first user message of Phase B, runtime `settings`, and a short `rationale`. You have full freedom over what those four fields contain. The designed Phase B prompt should be operational, not philosophical: it should define search strategy, source hierarchy, table schema, confidence rules, budget discipline, and stopping criteria.
+In Phase A — this turn — you design your own approach. You will return a JSON envelope containing a `system_prompt` to install on yourself at agent-create time, a `designed_prompt` to receive as the first user message of Phase B, runtime `settings`, and a short `rationale`. Your freedom covers search strategy, source hierarchy, confidence rules, budget discipline, and stopping criteria — the Phase B deliverable schema and structure are fixed by this prompt. The designed Phase B prompt must be operational, not philosophical.
 
-In Phase B you will produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe), structured as follows:
+In Phase B you will produce a single Markdown document: a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section. Structure it as follows:
 
 - the plant inventory: **exactly one pipe table**, never split into sub-tables by status, fuel, province, or any other dimension. Columns in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes. Do not add statistical summary, cross-tabulation, or any other pipe tables; fold aggregate statistics into prose.
 - per-asset or per-project explanatory notes: for each asset that warrants it (major, disputed, ambiguous, or historically important), a concise sourced note covering development history, notable issues, and confidence-qualified attributes. Straightforward operational assets need no note.
@@ -19,8 +19,6 @@ In Phase B you will produce a complete, primary-sourced reference inventory of V
 All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
 
 When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them (see source-quality rules).
-
-The Phase B deliverable is a single Markdown document.
 
 # QUALITY DIMENSIONS
 
@@ -62,13 +60,13 @@ Phase B has a two-dimensional budget per session:
 - **50,000 tokens** of model generation: visible output + internal thinking / reasoning tokens, summed across all your turns in that session.
 - **$3.00 dollar guard**: everything the provider bills (tokens at all rates + per-call web_search fees + connector tokens at connector rates).
 
-Whichever cap reaches 20% of its initial value first triggers a terminal reply. The classifier cost (a small overhead the harness pays to route the conversation) is not deducted from your budget.
+Whichever cap reaches 20% of its initial value first triggers a terminal reply.
 
 Web search input/output, connector tokens, and document-fetch payload do not count toward the 50,000-token cap — those are retrieval payload, not your generation. They do count toward the $3 dollar guard.
 
 Phase A (this turn) has a separate $1 ceiling. Across one Phase A and five Phase B sessions per subject, the total per-subject budget is ≤ $16.
 
-If budget becomes tight, preserve recall, provenance, and uncertainty notes; compress overview, narratives, and bibliography annotations.
+If budget becomes tight, preserve recall, provenance, and uncertainty notes; compress per-asset notes and bibliography annotations.
 
 ## Planning headroom
 
@@ -98,7 +96,7 @@ If a lead surfaces only via an inadmissible source, trace to its original source
 
 ## Calibrated confidence vocabulary
 
-The statistical table assigns a confidence level to each row based on evidence and agreement:
+Each row in the inventory table carries a confidence level based on evidence and agreement:
 -  HIGH   = >=2 INDEPENDENT concordant sources, at least one is primary
 -  MEDIUM = 1 primary source, OR a sourced aggregator citing a verifiable primary
 -  LOW    = secondary only / inferred / unresolved conflict / not found
@@ -113,7 +111,7 @@ Hard ceilings (override the above):
 - Status attested only by a source older than 24 months and unconfirmed since: cap status at MEDIUM (LOW if older than 48 months). Freshness is measured on the publication date of the most recent admissible source attesting the status — NOT on the older Status as-of-date.
 - "Source = not found" rows: LOW by construction.
 
-The detailed inventory must assign a confidence level to the row-level existence/status claim and may additionally qualify one or two disputed attributes among capacity, status, fuel, COD, owner/operator, or location. Per claim, expose: value — level — [evidence axis / agreement axis] — sources. Doing more would likely exceed the resources allowed. When sources disagree on a value, investigate for material errors (transcription, translation, technical issues), for genuine changes over time, and for other likely causes. If still unresolved, follow the higher-tier source. Discuss the resolution in the detailed inventory, include a note in the statistical table.
+Explanatory notes must state the confidence level for the row-level existence/status claim and may additionally qualify one or two disputed attributes (capacity, status, fuel, COD, owner/operator, or location). Per qualified claim, state: value, confidence level, evidence type (primary/secondary), and sources. When sources disagree, investigate for transcription errors, time-based changes, and unit/translation issues; follow the higher-tier source if unresolved, and add a note in the Notes cell.
 
 ## Asset-row and status rules
 
@@ -122,8 +120,8 @@ Each row corresponds to one asset record. The DEFAULT unit is the plant / unit-g
 Status definitions (use these exact terms in the Status column):
 - Operating: commissioned or reported in service.
 - Under construction: physical construction or EPC execution has begun.
-- Pre-FID: investment decision pending; project has appeared in formal plans or PDP cycles but construction has not started.
-- Approved: formally approved or permitted but pre-FID and construction not confirmed.
+- Approved: government approval or formal permit granted; Final Investment Decision (FID) may still be pending; construction not started.
+- Pre-FID: listed in formal plans or PDP cycles; not yet formally approved; construction not started.
 - Planned: proposed or listed in a planning cycle, but not yet approved or materially committed.
 - Suspended: previously active, approved, or under construction but halted without formal cancellation.
 - Cancelled: formally cancelled, removed, or replaced by another project.
