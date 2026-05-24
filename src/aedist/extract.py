@@ -243,6 +243,14 @@ def map_header_to_canonical(norm: str) -> str | None:
         "capacity_mwe",
         "capacity",
         "generation_capacity",
+        "installed_capacity",
+        "installed_capacity_mwe",
+        "total_mw",
+        "total_mwe",
+        "net_mw",
+        "net_mwe",
+        "gross_mw",
+        "gross_mwe",
         "capacity_mw",
         "capacity_mwe_",
         "capacity_mwe__",
@@ -259,6 +267,16 @@ def map_header_to_canonical(norm: str) -> str | None:
     if norm in {"note", "notes", "comment", "comments"}:
         return "note"
     return None
+
+
+def parse_capacity_value(cell: str) -> str:
+    value = (cell or "").strip()
+    parsed = parse_number(value, integer_expected=True)
+    if parsed is None:
+        match = re.search(r"[~≈≤≥<>]?\s*\d[\d,\.\s]*", value)
+        if match:
+            parsed = parse_number(match.group(0).lstrip("~≈≤≥<> "), integer_expected=True)
+    return str(parsed) if parsed is not None else "0"
 
 
 class ExtractStatus(enum.Enum):
@@ -306,8 +324,7 @@ def parse_and_canonicalize(csv_text: str) -> str:
             val = row[idx] if (idx is not None and idx < len(row)) else ""
             cell = (val or "").strip()
             if canon == "capacity_mwe":
-                n = parse_number(cell, integer_expected=True)
-                cell = str(n) if n is not None else "0"
+                cell = parse_capacity_value(cell)
             out_row.append(cell)
         # Skip completely empty lines (shouldn't happen, but safe)
         if not out_row[0]:

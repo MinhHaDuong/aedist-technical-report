@@ -42,6 +42,12 @@ class TestHeaderMapping:
     def test_generation_capacity(self):
         assert map_header_to_canonical(norm_header("Generation Capacity (MWe)")) == "capacity_mwe"
 
+    def test_total_mwe_header(self):
+        assert map_header_to_canonical(norm_header("Total MWe")) == "capacity_mwe"
+
+    def test_installed_capacity_header(self):
+        assert map_header_to_canonical(norm_header("Installed Capacity (MWe)")) == "capacity_mwe"
+
 
 class TestPipeTable:
     """Markdown pipe tables should be converted to CSV."""
@@ -292,6 +298,16 @@ class TestParseAndCanonicalize:
         csv_text = "Name,Capacity\nPha Lai,unknown\n"
         result = parse_and_canonicalize(csv_text)
         assert ",0," in result or result.endswith(",0\r\n") or ",0\n" in result
+
+    def test_total_mwe_header_is_parsed(self):
+        csv_text = "Name,Total MWe\nPha Lai,440\n"
+        result = parse_and_canonicalize(csv_text)
+        assert "440.0" in result
+
+    def test_capacity_value_with_annotation_is_parsed(self):
+        csv_text = 'Name,Total MWe\nVan Phong 1,"1,320 net"\n'
+        result = parse_and_canonicalize(csv_text)
+        assert "1320.0" in result
 
     def test_empty_csv_raises(self):
         with pytest.raises(ValueError, match="empty"):
