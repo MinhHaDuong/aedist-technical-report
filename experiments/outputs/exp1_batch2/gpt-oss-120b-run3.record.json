@@ -1,0 +1,44 @@
+{
+  "run_id": "2b9153678bcb",
+  "timestamp": "2026-05-24T19:45:20.030592Z",
+  "method": "direct",
+  "method_params": {
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "large",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "OpenAI",
+      "context_window": 131072,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "reasoning_effort": "minimal",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 110.248,
+    "cost_usd": 0.00303315,
+    "tokens_in": 1705,
+    "tokens_out": 4629,
+    "thinking_tokens": 43
+  },
+  "result_file": "experiments/outputs/exp1_batch2/gpt-oss-120b-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 25,
+    "tp": 25,
+    "fp": 0,
+    "fn": 138,
+    "f1": 0.266,
+    "fuel_accuracy": 0.64,
+    "status_accuracy": 0.44,
+    "province_accuracy": 0.32
+  },
+  "finish_reason": "stop"
+}

@@ -151,7 +151,8 @@ REFERENCE := ../data/reference/vietnam_thermal_v1.csv
 STRUCTURED_DIRS := census multiturn web rag \
                    decomposed decomposed_v2 sourced frontier \
                    ablation/direct/p1_base ablation/direct/p1_base.topup \
-                   ablation/direct/p1_composite
+                   ablation/direct/p1_composite \
+                   exp1_batch2
 
 OUTPUT_FILES := $(filter-out %.record.json derived/rag_consistency/%,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
 				$(filter-out derived/rag_consistency/%,$(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv))
