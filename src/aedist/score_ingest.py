@@ -23,8 +23,10 @@ class IngestionErrorKind(enum.Enum):
     RUN_NOT_FOUND = "run_not_found"
     AMBIGUOUS_RUN = "ambiguous_run"
     MISSING_MARKDOWN = "missing_markdown"
+    INVALID_ENCODING = "invalid_encoding"
     NO_TABLE = "no_table"
     PARSE_FAILED = "parse_failed"
+    INVALID_PARITY_ROW = "invalid_parity_row"
 
 
 @dataclass
@@ -122,7 +124,14 @@ def ingest_run(
     optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
 ) -> IngestedRun:
     resolved = resolve_run_paths(locator, naive_dir=naive_dir, optimised_dir=optimised_dir)
-    text = resolved.markdown_path.read_text(encoding="utf-8", errors="replace")
+    try:
+        text = resolved.markdown_path.read_text(encoding="utf-8", errors="strict")
+    except UnicodeDecodeError as exc:
+        raise IngestionError(
+            IngestionErrorKind.INVALID_ENCODING,
+            locator,
+            f"invalid UTF-8 in markdown report {resolved.markdown_path.name}",
+        ) from exc
     candidates = _extract_pipe_tables(text)
     if not candidates:
         raise IngestionError(
@@ -185,17 +194,60 @@ def check_inventory_row_parity_row(
     naive_dir: Path = _DEFAULT_NAIVE_DIR,
     optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
 ) -> ParityDiagnostic:
+    required = {"arm", "model", "run", "inventory_rows"}
+    missing = sorted(k for k in required if not row.get(k))
+    if missing:
+        raise IngestionError(
+            IngestionErrorKind.INVALID_PARITY_ROW,
+            RunLocator(arm=row.get("arm", ""), model=row.get("model", ""), run=0),
+            f"missing required parity fields: {missing}",
+        )
+
+    run_raw = row["run"].strip()
+    expected_raw = row["inventory_rows"].strip()
+    try:
+        run = int(run_raw)
+    except ValueError as exc:
+        raise IngestionError(
+            IngestionErrorKind.INVALID_PARITY_ROW,
+            RunLocator(arm=row["arm"], model=row["model"], run=0),
+            f"invalid run value {run_raw!r}; expected integer",
+        ) from exc
+
+    try:
+        expected_rows = int(expected_raw)
+    except ValueError as exc:
+        raise IngestionError(
+            IngestionErrorKind.INVALID_PARITY_ROW,
+            RunLocator(arm=row["arm"], model=row["model"], run=run),
+            f"invalid inventory_rows value {expected_raw!r}; expected integer",
+        ) from exc
+
     locator = RunLocator(
         arm=row["arm"],
         model=row["model"],
-        run=int(row["run"]),
+        run=run,
     )
-    expected_rows = int(row["inventory_rows"])
     return check_inventory_row_parity(
         locator,
         expected_rows,
         naive_dir=naive_dir,
         optimised_dir=optimised_dir,
+    )
+
+
+def _diagnostic_from_error(err: IngestionError) -> ParityDiagnostic:
+    locator = err.locator
+    return ParityDiagnostic(
+        locator=RunLocator(
+            arm=locator.arm or "<invalid>",
+            model=locator.model or "<invalid>",
+            run=locator.run,
+        ),
+        expected_rows=0,
+        observed_rows=0,
+        matches=False,
+        message=f"{err.kind.value}: {err.detail}",
     )
 
 
@@ -205,13 +257,18 @@ def check_inventory_row_parity_csv(
     naive_dir: Path = _DEFAULT_NAIVE_DIR,
     optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
 ) -> list[ParityDiagnostic]:
+    diagnostics: list[ParityDiagnostic] = []
     with csv_path.open(newline="", encoding="utf-8") as fh:
         reader = csv.DictReader(fh)
-        return [
-            check_inventory_row_parity_row(
-                row,
-                naive_dir=naive_dir,
-                optimised_dir=optimised_dir,
-            )
-            for row in reader
-        ]
+        for row in reader:
+            try:
+                diagnostics.append(
+                    check_inventory_row_parity_row(
+                        row,
+                        naive_dir=naive_dir,
+                        optimised_dir=optimised_dir,
+                    )
+                )
+            except IngestionError as err:
+                diagnostics.append(_diagnostic_from_error(err))
+    return diagnostics

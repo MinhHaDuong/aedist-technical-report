@@ -79,6 +79,27 @@ def test_ingest_run_missing_path_returns_typed_error(tmp_path):
         )
 
     assert excinfo.value.kind is IngestionErrorKind.RUN_NOT_FOUND
+    assert excinfo.value.locator.model == "gpt-5.5"
+    assert "gpt-5.5" in excinfo.value.detail
+
+
+def test_ingest_run_invalid_utf8_returns_typed_error(tmp_path):
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    naive_dir.mkdir()
+    optimised_dir.mkdir()
+
+    _write_json(naive_dir / "openai_run01.json", {"model": "gpt-5.5", "run": 1})
+    (naive_dir / "openai_run01.md").write_bytes(b"\xff\xfe\xfa")
+
+    with pytest.raises(IngestionError) as excinfo:
+        ingest_run(
+            RunLocator(arm="naive", model="gpt-5.5", run=1),
+            naive_dir=naive_dir,
+            optimised_dir=optimised_dir,
+        )
+
+    assert excinfo.value.kind is IngestionErrorKind.INVALID_ENCODING
 
 
 def test_check_inventory_row_parity_for_naive_and_optimised_runs(tmp_path):
@@ -182,4 +203,40 @@ def test_check_inventory_row_parity_csv_reads_runs_csv(tmp_path):
 
     assert len(diagnostics) == 2
     assert diagnostics[0].matches is True
+    assert diagnostics[1].matches is True
+
+
+def test_check_inventory_row_parity_csv_keeps_processing_on_invalid_row(tmp_path):
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    naive_dir.mkdir()
+    optimised_dir.mkdir()
+
+    _write_json(naive_dir / "openai_run01.json", {"model": "gpt-5.5", "run": 1})
+    _write_md(
+        naive_dir / "openai_run01.md",
+        "| Name | Fuel | Capacity | Status | COD | Province |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n",
+    )
+
+    runs_csv = tmp_path / "tab_exp2_arms_runs.csv"
+    _write_csv(
+        runs_csv,
+        ["arm", "model", "run", "inventory_rows"],
+        [
+            {"arm": "naive", "model": "gpt-5.5", "run": "bad", "inventory_rows": 1},
+            {"arm": "naive", "model": "gpt-5.5", "run": 1, "inventory_rows": 1},
+        ],
+    )
+
+    diagnostics = check_inventory_row_parity_csv(
+        runs_csv,
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+    )
+
+    assert len(diagnostics) == 2
+    assert diagnostics[0].matches is False
+    assert diagnostics[0].message.startswith("invalid_parity_row")
     assert diagnostics[1].matches is True
