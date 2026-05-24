@@ -4,12 +4,10 @@ This is the prompt sent to the naive-arm agents, verbatim. Single user message, 
 
 # GOAL
 
-Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe), structured as follows:
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section. Structure it as follows:
 
-- a sector overview (electricity mix, policy framework, key institutional actors, current challenges)
-- a concise sourced per-plant narrative for each plant (development history, notable issues, including key plant attributes, possibly confidence-qualified)
-- the requested structured power-plants table with columns: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes
-- statistical summary tables (capacity by fuel × status; top 15 provinces; timeline of additions by period and fuel; data-quality summary by confidence level and fuel)
+- the plant inventory: **exactly one pipe table**, never split into sub-tables by status, fuel, province, or any other dimension. Columns in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes. Do not add statistical summary, cross-tabulation, or any other pipe tables; fold aggregate statistics into prose.
+- per-asset or per-project explanatory notes: for each asset that warrants it (major, disputed, ambiguous, or historically important), a concise sourced note covering development history, notable issues, and confidence-qualified attributes. Straightforward operational assets need no note.
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
 Scope includes all thermal assets > 30 MWe at any stage of the lifecycle, including shelved or cancelled projects.
