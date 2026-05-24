@@ -19,9 +19,9 @@ places, or empty string when null.
 |--------|------|-------------|
 | `arm` | str | `naive` or `optimised` |
 | `model` | str | Provider model ID |
-| `run` | int | Replication index (1-based) |
+| `run` | int (str in CSV) | Replication index (1-based) |
 | `prompt_version` | str | Prompt family tag, e.g. `exp2` |
-| `n_rows` | int | Plant rows extracted from run output |
+| `n_rows` | int (str in CSV) | Plant rows extracted from run output |
 | `accuracy_coverage` | float\|null | Recall against reference |
 | `accuracy_coverage_annotation` | str | Annotation code or empty |
 | `accuracy_precision` | float\|null | Precision against reference |
@@ -78,6 +78,13 @@ Matching uses the LP-based reconciler in `src/aedist/reconcile.py`.
 | `n_rows == 0` | `no_rows` |
 | `--reference` path not provided or file missing | `reference_missing` |
 
+**Known gap:** when `n_rows > 0` and reference is present but no rows reconcile
+(all FP, 0 TP), `accuracy_fuel`, `accuracy_status`, and `accuracy_province` are
+`None` with empty annotation — a scorer bug by this contract's own rule. It arises
+because these sub-metrics share the top-level `accuracy.annotation` (which is
+`None` on a successful scorer invocation) and their individual denominators
+(matched rows) can be zero even when the scorer completes without error.
+
 ### Coherence
 
 **`coherence_vocab_adherence`**
@@ -95,6 +102,10 @@ Null condition: `n_rows == 0` → annotation `no_rows`.
 Numerator: rows where capacity (first non-empty of `capacity_mwe`, `total_mwe`,
 `total_mw`, `capacity`) parses to a non-negative float.  
 Denominator: `n_rows`.
+
+A row with no capacity value (absent or empty) is NOT counted in the numerator —
+it fails the same as a negative value. The metric measures "capacity is present
+and non-negative" jointly, not "capacity is non-negative given it is present".
 
 Null condition: `n_rows == 0` → annotation `no_rows`.
 
@@ -120,6 +131,12 @@ Denominator: rows where `confidence == "HIGH"`.
 | No `confidence` key in any row | `column_missing` |
 | `confidence` column present but no HIGH rows | `no_high_confidence` |
 
+**Pipeline note:** `parse_and_canonicalize` always emits the full canonical
+header set, inserting `""` for absent columns. For ingested rows, `confidence`
+is therefore always present (possibly empty), so `column_missing` is unreachable
+in the pipeline — the effective code when a model omitted the Confidence column
+is `no_high_confidence` (zero HIGH rows → denominator 0 → null).
+
 ### Temporality
 
 As-of date is resolved from the first non-empty of: `status_as_of`, `as_of`,
@@ -132,6 +149,12 @@ Denominator: `n_rows`.
 
 **Null condition:** none of the as-of column aliases present in any row →
 annotation `column_missing`.
+
+**Pipeline note:** same as provenance above — `parse_and_canonicalize` always
+inserts `status_as_of: ""` for runs that omitted the column. For ingested rows,
+`column_missing` is unreachable; the effective path when the model omitted the
+as-of column is `asof_presence = 0.0` (empty annotation) + `column_empty` on
+`plausible_range`.
 
 **`temporality_plausible_range`**
 
@@ -182,10 +205,15 @@ policy-sanctioned null — treat it as an error.
 
 ## Exp1 null policy
 
-Exp1 prompt (`experiments/prompts/modules/5_table.txt`) does not ask for
-`Confidence` or `Status as-of-date`. The following metrics must be emitted as
-null with `prompt_not_asked` annotation for any row with `prompt_version`
-beginning with `exp1`:
+**Status: not yet implemented in v1 scorer.** The v1 scorer does not inspect
+`prompt_version`. Exp1 rows currently receive `no_high_confidence` and
+`column_empty` rather than `prompt_not_asked`. Implementation is deferred to v2.
+
+**Intended behaviour (v2 target):** Exp1 prompt
+(`experiments/prompts/modules/5_table.txt`) does not ask for `Confidence` or
+`Status as-of-date`. The following metrics should be emitted as null with
+`prompt_not_asked` annotation for any row with `prompt_version` beginning with
+`exp1`:
 
 - `provenance_high_conf_dual_source` — requires `Confidence` column
 - `temporality_asof_presence` — requires `Status as-of-date` column
