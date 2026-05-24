@@ -1,16 +1,17 @@
 {
-  "run_id": "5d71a662f9e2",
-  "timestamp": "2026-04-10T15:44:55.742958Z",
+  "run_id": "12665539492b",
+  "timestamp": "2026-05-24T09:02:21.486894Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "Anthropic",
-      "context_window": 1000000
+      "context_window": 1000000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.726,
     "status_accuracy": 0.6986,
     "province_accuracy": 0.9315
-  }
+  },
+  "finish_reason": "stop"
 }

@@ -1,16 +1,19 @@
 {
-  "run_id": "bf2becac6368",
-  "timestamp": "2026-04-11T11:09:17.094681Z",
+  "run_id": "701ea049124c",
+  "timestamp": "2026-05-24T09:02:10.097992Z",
   "method": "direct",
   "method_params": {
     "model": "google/gemini-3-flash-preview",
-    "prompt_version": "p1_base",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base.pilot",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "Google",
-      "context_window": 1048576
+      "context_window": 1048576,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +33,6 @@
     "fuel_accuracy": 0.55,
     "status_accuracy": 0.575,
     "province_accuracy": 0.8875
-  }
+  },
+  "finish_reason": "stop"
 }

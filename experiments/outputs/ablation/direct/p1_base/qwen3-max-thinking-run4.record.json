@@ -1,6 +1,6 @@
 {
-  "run_id": "d6c0083534e3",
-  "timestamp": "2026-05-21T06:39:39.156698Z",
+  "run_id": "eb2308ad629d",
+  "timestamp": "2026-05-24T09:02:02.986843Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3-max-thinking",
@@ -14,7 +14,8 @@
       "provider": "Alibaba",
       "context_window": 262144,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -34,5 +35,6 @@
     "fuel_accuracy": 0.7,
     "status_accuracy": 0.7,
     "province_accuracy": 0.9
-  }
+  },
+  "finish_reason": "stop"
 }

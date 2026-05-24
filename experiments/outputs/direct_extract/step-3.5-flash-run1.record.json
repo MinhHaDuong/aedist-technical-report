@@ -1,16 +1,17 @@
 {
-  "run_id": "5a034409b200",
-  "timestamp": "2026-04-10T15:45:03.743257Z",
+  "run_id": "f1137d524b73",
+  "timestamp": "2026-05-24T09:02:31.845614Z",
   "method": "direct",
   "method_params": {
     "model": "stepfun/step-3.5-flash",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "small",
       "country": "CN",
       "architecture": "dense",
       "provider": "StepFun",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.8148,
     "status_accuracy": 0.6667,
     "province_accuracy": 0.8148
-  }
+  },
+  "finish_reason": "stop"
 }

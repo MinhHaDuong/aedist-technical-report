@@ -1,6 +1,6 @@
 {
-  "run_id": "b53be5a7bcd0",
-  "timestamp": "2026-04-10T18:01:43.711404Z",
+  "run_id": "0f0682fd729f",
+  "timestamp": "2026-05-24T09:01:57.866509Z",
   "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
@@ -10,7 +10,8 @@
       "country": "FR",
       "architecture": "dense",
       "provider": "Mistral",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.3854,
     "status_accuracy": 0.4062,
     "province_accuracy": 0.5368
-  }
+  },
+  "finish_reason": "stop"
 }

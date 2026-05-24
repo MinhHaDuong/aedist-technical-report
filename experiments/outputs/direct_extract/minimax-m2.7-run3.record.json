@@ -1,16 +1,17 @@
 {
-  "run_id": "57889522f4fa",
-  "timestamp": "2026-04-10T15:44:57.159856Z",
+  "run_id": "a36822beb7e5",
+  "timestamp": "2026-05-24T09:02:24.652236Z",
   "method": "direct",
   "method_params": {
     "model": "minimax/minimax-m2.7",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "large",
       "country": "CN",
       "architecture": "dense",
       "provider": "MiniMax",
-      "context_window": 204800
+      "context_window": 204800,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -27,5 +28,6 @@
     "fp": 0,
     "fn": 163,
     "f1": 0.0
-  }
+  },
+  "finish_reason": "stop"
 }

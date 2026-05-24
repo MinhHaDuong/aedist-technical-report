@@ -1,16 +1,17 @@
 {
-  "run_id": "1a917e294f3c",
-  "timestamp": "2026-04-10T15:45:00.032209Z",
+  "run_id": "ab0759a1fd6c",
+  "timestamp": "2026-05-24T09:02:27.765691Z",
   "method": "direct",
   "method_params": {
     "model": "nemotron-3-nano",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "medium",
       "country": "US",
       "architecture": "moe",
       "provider": "Ollama/Padme",
-      "context_window": 131072
+      "context_window": 131072,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.7778,
     "status_accuracy": 0.7778,
     "province_accuracy": 0.3333
-  }
+  },
+  "finish_reason": "stop"
 }

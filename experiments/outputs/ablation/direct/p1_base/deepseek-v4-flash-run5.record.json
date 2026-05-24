@@ -1,6 +1,6 @@
 {
-  "run_id": "6461f286d5c0",
-  "timestamp": "2026-05-20T22:41:00.900444Z",
+  "run_id": "2567ebafa7dd",
+  "timestamp": "2026-05-24T09:02:00.608867Z",
   "method": "direct",
   "method_params": {
     "model": "deepseek/deepseek-v4-flash",
@@ -14,7 +14,8 @@
       "provider": "DeepSeek",
       "context_window": 1048576,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -34,5 +35,6 @@
     "fuel_accuracy": 0.5063,
     "status_accuracy": 0.481,
     "province_accuracy": 0.7342
-  }
+  },
+  "finish_reason": "stop"
 }

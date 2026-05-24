@@ -1,16 +1,17 @@
 {
-  "run_id": "3aea3ef5aada",
-  "timestamp": "2026-04-10T15:44:53.947657Z",
+  "run_id": "82d1e92c614a",
+  "timestamp": "2026-05-24T09:02:21.285102Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-5-mini",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "small",
       "country": "US",
       "architecture": "dense",
       "provider": "OpenAI",
-      "context_window": 400000
+      "context_window": 400000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -27,5 +28,6 @@
     "fp": 0,
     "fn": 163,
     "f1": 0.0
-  }
+  },
+  "finish_reason": "stop"
 }

@@ -1,16 +1,17 @@
 {
-  "run_id": "7d84003ed927",
-  "timestamp": "2026-04-10T15:44:57.266525Z",
+  "run_id": "52fa6fff28d3",
+  "timestamp": "2026-05-24T09:02:24.043457Z",
   "method": "direct",
   "method_params": {
     "model": "inception/mercury-2",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "medium",
       "country": "Other",
       "architecture": "dense",
       "provider": "Inception",
-      "context_window": 128000
+      "context_window": 128000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.5,
     "status_accuracy": 0.5,
     "province_accuracy": 0.5909
-  }
+  },
+  "finish_reason": "stop"
 }

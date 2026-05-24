@@ -53,9 +53,12 @@ def _extract_text(d: dict) -> str:
         for item in d["output"]:
             if not isinstance(item, dict):
                 continue
+            content = item.get("content")
+            if not isinstance(content, list):
+                continue
             parts.extend(
                 block.get("text", "")
-                for block in item.get("content", [])
+                for block in content
                 if isinstance(block, dict) and block.get("type") == "output_text"
             )
         return " ".join(p for p in parts if p)

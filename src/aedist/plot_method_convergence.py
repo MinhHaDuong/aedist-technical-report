@@ -85,6 +85,7 @@ _METHOD_LABELS = {
 def load_convergence_data(
     prompt_version: str | None = None,
     result_dir: str | None = None,
+    excluded_models: set[str] | None = None,
 ) -> list[dict]:
     """Load and clean measurements for the convergence plot.
 
@@ -106,6 +107,8 @@ def load_convergence_data(
             if not rf.startswith(result_dir):
                 continue
         model = normalize_model(record.method_params.model)
+        if excluded_models and model in excluded_models:
+            continue
         if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
             continue
         s = record.result_summary
@@ -333,6 +336,7 @@ def _build_macros(
     *,
     prompt_version: str | None = None,
     result_dir: str | None = None,
+    excluded_models: set[str] | None = None,
 ) -> str:
     n_models = len({r["model"] for r in rows})
     tps = [r["tp"] for r in rows]
@@ -355,7 +359,10 @@ def _build_macros(
                     continue
             if result_dir is not None and not (r.result_file or "").startswith(result_dir):
                 continue
-            if any(normalize_model(r.method_params.model).endswith(s) for s in SYNTHETIC_SUFFIXES):
+            model = normalize_model(r.method_params.model)
+            if excluded_models and model in excluded_models:
+                continue
+            if any(model.endswith(s) for s in SYNTHETIC_SUFFIXES):
                 continue
             subset.append(r)
         lines.append(f"\\newcommand{{\\CensusNumRuns}}{{{len(subset)}}}")
@@ -409,9 +416,22 @@ def main() -> None:
         default=None,
         help="Only include records whose result_file starts with this prefix",
     )
+    parser.add_argument(
+        "--exclude-models",
+        default=None,
+        help="Comma-separated normalized model names to exclude (e.g. qwen3-max-thinking,qwen3.6-plus)",
+    )
     args = parser.parse_args()
 
-    rows = load_convergence_data(prompt_version=args.prompt_version, result_dir=args.result_dir)
+    excluded_models = None
+    if args.exclude_models:
+        excluded_models = {m.strip() for m in args.exclude_models.split(",") if m.strip()}
+
+    rows = load_convergence_data(
+        prompt_version=args.prompt_version,
+        result_dir=args.result_dir,
+        excluded_models=excluded_models,
+    )
     models = core_models(rows) if args.core_only else None
 
     if args.methods:
@@ -437,6 +457,7 @@ def main() -> None:
                 rows,
                 prompt_version=args.prompt_version,
                 result_dir=args.result_dir,
+                excluded_models=excluded_models,
             )
         )
         log.info("Wrote %s", macros_path)

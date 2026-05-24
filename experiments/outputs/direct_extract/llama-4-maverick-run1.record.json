@@ -1,16 +1,17 @@
 {
-  "run_id": "74e1639253b8",
-  "timestamp": "2026-04-10T15:44:56.137114Z",
+  "run_id": "f45f8d0c5c65",
+  "timestamp": "2026-05-24T09:02:23.257738Z",
   "method": "direct",
   "method_params": {
     "model": "meta-llama/llama-4-maverick",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "large",
       "country": "US",
       "architecture": "moe",
       "provider": "Meta",
-      "context_window": 1048576
+      "context_window": 1048576,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.875,
     "status_accuracy": 0.5,
     "province_accuracy": 0.875
-  }
+  },
+  "finish_reason": "stop"
 }

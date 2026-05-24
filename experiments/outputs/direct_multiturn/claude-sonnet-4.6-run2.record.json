@@ -1,10 +1,10 @@
 {
-  "run_id": "58dfa8e19178",
-  "timestamp": "2026-04-10T15:45:08.579035Z",
+  "run_id": "46829cae1c00",
+  "timestamp": "2026-05-24T09:02:32.932371Z",
   "method": "direct+multiturn",
   "method_params": {
     "model": "anthropic/claude-sonnet-4.6",
-    "prompt_version": "followups",
+    "prompt_version": "direct_multiturn",
     "extra": {
       "size_class": "frontier",
       "country": "US",

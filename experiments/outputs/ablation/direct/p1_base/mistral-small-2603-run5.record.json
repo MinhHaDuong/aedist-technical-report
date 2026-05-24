@@ -1,6 +1,6 @@
 {
-  "run_id": "ae1e201363a0",
-  "timestamp": "2026-05-20T21:25:57.435235Z",
+  "run_id": "b98ffc03133b",
+  "timestamp": "2026-05-24T09:02:03.130735Z",
   "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
@@ -14,7 +14,8 @@
       "provider": "Mistral",
       "context_window": 262144,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -34,5 +35,6 @@
     "fuel_accuracy": 0.4857,
     "status_accuracy": 0.5143,
     "province_accuracy": 0.8286
-  }
+  },
+  "finish_reason": "stop"
 }

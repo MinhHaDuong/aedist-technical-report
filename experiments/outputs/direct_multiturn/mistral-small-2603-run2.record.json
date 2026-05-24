@@ -1,10 +1,10 @@
 {
-  "run_id": "3e60222f294a",
-  "timestamp": "2026-04-10T15:45:13.748909Z",
+  "run_id": "68b92c1c92e7",
+  "timestamp": "2026-05-24T09:02:36.094580Z",
   "method": "direct+multiturn",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
-    "prompt_version": "followups",
+    "prompt_version": "direct_multiturn",
     "extra": {
       "size_class": "small",
       "country": "FR",

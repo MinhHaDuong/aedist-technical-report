@@ -1,16 +1,17 @@
 {
-  "run_id": "7d8b26273c8c",
-  "timestamp": "2026-04-10T15:45:00.730527Z",
+  "run_id": "8aee5a1fba44",
+  "timestamp": "2026-05-24T09:02:28.521505Z",
   "method": "direct",
   "method_params": {
     "model": "glm-4.7-flash",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "medium",
       "country": "CN",
       "architecture": "dense",
       "provider": "Ollama/Padme",
-      "context_window": 131072
+      "context_window": 131072,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.6364,
     "status_accuracy": 0.0227,
     "province_accuracy": 0.4318
-  }
+  },
+  "finish_reason": "stop"
 }

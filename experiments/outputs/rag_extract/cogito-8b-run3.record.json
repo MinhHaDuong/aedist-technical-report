@@ -1,16 +1,17 @@
 {
-  "run_id": "ad760303c52f",
-  "timestamp": "2026-04-13T17:41:42.861757Z",
+  "run_id": "7b5b548889ed",
+  "timestamp": "2026-05-24T09:02:37.148892Z",
   "method": "rag",
   "method_params": {
     "model": "cogito:8b",
-    "prompt_version": "rag",
+    "prompt_version": "rag_extract",
     "extra": {
       "size_class": "small",
       "country": "US",
       "architecture": "dense",
       "provider": "Ollama/Padme",
-      "context_window": 131072
+      "context_window": 131072,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.3226,
     "status_accuracy": 0.0,
     "province_accuracy": 0.5161
-  }
+  },
+  "finish_reason": "stop"
 }
