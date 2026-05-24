@@ -207,9 +207,11 @@ _CANON = [
     "name",
     "fuel",
     "status",
+    "status_as_of",
     "cod",
     "province",
     "capacity_mwe",
+    "confidence",
     "source_1",
     "source_2",
     "note",
@@ -235,6 +237,14 @@ def map_header_to_canonical(norm: str) -> str | None:
         return "fuel"
     if norm in {"status", "construction_stage", "stage", "constructionstage"}:
         return "status"
+    if norm in {
+        "status_as_of",
+        "status_as_of_date",
+        "as_of",
+        "as_of_date",
+        "freshness_date",
+    }:
+        return "status_as_of"
     if norm in {"cod", "connection_date", "date", "connectiondate"}:
         return "cod"
     if norm in {"province", "location"}:
@@ -260,6 +270,8 @@ def map_header_to_canonical(norm: str) -> str | None:
     if norm.startswith("capacity"):
         return "capacity_mwe"
     # Provenance columns
+    if norm in {"confidence", "confidence_level", "evidence_confidence"}:
+        return "confidence"
     if norm in {"source_1", "source", "reference", "citation"}:
         return "source_1"
     if norm in {"source_2", "reference_2", "citation_2"}:
