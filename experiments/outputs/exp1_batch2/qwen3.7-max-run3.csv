@@ -1,0 +1,51 @@
+name,fuel,status,status_as_of,cod,province,capacity_mwe,confidence,source_1,source_2,note
+Nhà máy Nhiệt điện Phả Lại 2,Coal,Operating,2023-12-31,2002,Hai Duong,300.0,HIGH,EVN AR 2022,GEM Wiki,Pha Lai 1 (440MW) retired/mothballed.
+Nhà máy Nhiệt điện Uông Bí 2,Coal,Operating,2023-12-31,2009,Quang Ninh,300.0,HIGH,EVN AR 2022,GEM Wiki,Uong Bi 1 (50MW) retired.
+Nhà máy Nhiệt điện Uông Bí 3,Coal,Operating,2023-12-31,2014,Quang Ninh,330.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Quảng Ninh,Coal,Operating,2023-12-31,2012,Quang Ninh,1200.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Mông Dương 1,Coal,Operating,2023-12-31,2015,Quang Ninh,1080.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Mông Dương 2,Coal,Operating,2023-12-31,2015,Quang Ninh,1240.0,HIGH,AES PR 2015,GEM Wiki,
+Nhà máy Nhiệt điện Hải Phòng,Coal,Operating,2023-12-31,2014,Hai Phong,1200.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Thái Bình 1,Coal,Operating,2023-12-31,2018,Thai Binh,600.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Thái Bình 2,Coal,Operating,2024-05-31,2023,Thai Binh,1320.0,HIGH,PV Power PR 2023,GEM Wiki,"Unit 1 COD late 2023, Unit 2 early 2024."
+Nhà máy Nhiệt điện Nghi Sơn 1,Coal,Operating,2023-12-31,2015,Thanh Hoa,600.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Nghi Sơn 2,Coal,Operating,2023-12-31,2022,Thanh Hoa,1320.0,HIGH,JERA PR 2022,GEM Wiki,BOT project.
+Nhà máy Nhiệt điện Vũng Áng 1,Coal,Operating,2023-12-31,2015,Ha Tinh,1200.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Duyên Hải 1,Coal,Operating,2023-12-31,2015,Tra Vinh,1244.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Duyên Hải 2,Coal,Operating,2023-12-31,2022,Tra Vinh,1200.0,HIGH,Janakuasa AR,GEM Wiki,
+Nhà máy Nhiệt điện Duyên Hải 3,Coal,Operating,2023-12-31,2017,Tra Vinh,1244.0,HIGH,EVN AR 2022,GEM Wiki,
+NMNĐ Duyên Hải 3 Mở rộng,Coal,Operating,2023-12-31,2021,Tra Vinh,660.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Vĩnh Tân 1,Coal,Operating,2023-12-31,2018,Binh Thuan,1200.0,HIGH,MOIT Report,GEM Wiki,Chinese BOT consortium.
+Nhà máy Nhiệt điện Vĩnh Tân 2,Coal,Operating,2023-12-31,2015,Binh Thuan,1200.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Vĩnh Tân 3,Coal,Operating,2024-05-31,2024,Binh Thuan,1320.0,MEDIUM,GEM Wiki,VnExpress,COD delayed multiple times; Unit 1 commissioned early 2024.
+Nhà máy Nhiệt điện Vĩnh Tân 4,Coal,Operating,2023-12-31,2019,Binh Thuan,1200.0,HIGH,EVN AR 2022,GEM Wiki,
+NMNĐ Vĩnh Tân 4 Mở rộng,Coal,Operating,2023-12-31,2020,Binh Thuan,600.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Sông Hậu 1,Coal,Operating,2023-12-31,2022,Hau Giang,1200.0,HIGH,PV Power PR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Công Thanh,Coal,Operating,2023-12-31,2020,Thanh Hoa,600.0,MEDIUM,GEM Wiki,VnExpress,Private developer; grid connection delayed.
+Nhà máy Nhiệt điện Cẩm Phả,Coal,Operating,2023-12-31,2010,Quang Ninh,600.0,HIGH,TKV AR,GEM Wiki,
+Nhà máy Nhiệt điện Sơn Động,Coal,Operating,2023-12-31,2009,Bac Giang,440.0,HIGH,TKV AR,GEM Wiki,
+Nhà máy Nhiệt điện Mạo Khê,Coal,Operating,2023-12-31,2013,Quang Ninh,880.0,HIGH,TKV AR,GEM Wiki,
+Nhà máy Nhiệt điện Na Dương 1,Coal,Operating,2023-12-31,2005,Lang Son,110.0,HIGH,TKV AR,GEM Wiki,
+Nhà máy Nhiệt điện Long Phú 1,Coal,Construction,2024-01-01,N/A,Soc Trang,1200.0,MEDIUM,PV Power AR 2023,GEM Wiki,Severely delayed; Russian EPC (Power Machines) under sanctions.
+Nhà máy Nhiệt điện Vũng Áng 2,Coal,Cancelled,2023-05-15,N/A,Ha Tinh,1200.0,HIGH,PDP8 2023,GEM Wiki,Cancelled in PDP8; replaced by LNG project.
+Nhà máy Nhiệt điện Quảng Trạch 1,Coal,Cancelled,2023-05-15,N/A,Quang Binh,1200.0,HIGH,PDP8 2023,GEM Wiki,Cancelled in PDP8.
+Nhà máy Nhiệt điện Bạc Liêu,Coal,Cancelled,2021-12-31,N/A,Bac Lieu,1200.0,HIGH,MOIT Letter 2021,GEM Wiki,Cancelled by provincial govt in 2021.
+Nhà máy Điện Phú Mỹ 1,Domestic gas,Operating,2023-12-31,2001,Ba Ria-Vung Tau,480.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Điện Phú Mỹ 2.1,Domestic gas,Operating,2023-12-31,2001,Ba Ria-Vung Tau,480.0,HIGH,EVN AR 2022,GEM Wiki,
+NMĐ Phú Mỹ 2.1 Mở rộng,Domestic gas,Operating,2023-12-31,2004,Ba Ria-Vung Tau,450.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Điện Phú Mỹ 2.2,Domestic gas,Operating,2023-12-31,2005,Ba Ria-Vung Tau,720.0,HIGH,Mekong Filings,GEM Wiki,
+Nhà máy Điện Phú Mỹ 3,Domestic gas,Operating,2023-12-31,2004,Ba Ria-Vung Tau,720.0,HIGH,BP/EdF PR,GEM Wiki,
+Nhà máy Điện Phú Mỹ 4,Domestic gas,Operating,2023-12-31,2004,Ba Ria-Vung Tau,480.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Điện Bà Rịa,Domestic gas,Operating,2023-12-31,1992,Ba Ria-Vung Tau,240.0,MEDIUM,EVN AR 2022,GEM Wiki,Capacity varies by unit configuration; ~240MW total.
+Nhà máy Điện Nhơn Trạch 1,Domestic gas,Operating,2023-12-31,2009,Dong Nai,450.0,HIGH,PV Power AR,GEM Wiki,
+Nhà máy Điện Nhơn Trạch 2,Domestic gas,Operating,2023-12-31,2011,Dong Nai,750.0,HIGH,PV Power AR,GEM Wiki,
+Nhà máy Điện Cà Mau 1 & 2,Domestic gas,Operating,2023-12-31,2008,Ca Mau,1500.0,HIGH,PV Power AR,GEM Wiki,
+Nhà máy Nhiệt điện Ô Môn 1,Domestic gas,Operating,2023-12-31,2015,Can Tho,330.0,HIGH,EVN AR 2022,GEM Wiki,
+Nhà máy Nhiệt điện Ô Môn 2,Domestic gas,Cancelled,2023-05-15,N/A,Can Tho,750.0,HIGH,PDP8 2023,GEM Wiki,Shifted to LNG in PDP8.
+NMĐ Nhơn Trạch 3 và 4,Imported LNG,Construction,2024-01-01,2025 (planned),Dong Nai,1500.0,HIGH,PV Power PR 2023,GEM Wiki,First major LNG CCGT under construction.
+Nhà máy Điện LNG Bạc Liêu,Imported LNG,Pre-permit,2023-12-31,N/A,Bac Lieu,3200.0,MEDIUM,Delta PR,GEM Wiki,
+Nhà máy Điện LNG Sơn Mỹ II,Imported LNG,Announced,2023-12-31,N/A,Binh Thuan,2250.0,MEDIUM,AES PR,GEM Wiki,
+Nhà máy Điện LNG Quảng Ninh,Imported LNG,Announced,2023-12-31,N/A,Quang Ninh,1200.0,LOW,GEM Wiki,VnExpress,Exact capacity and structure still in feasibility.
+NMNĐ Ô Môn 3 và 4,Imported LNG,Pre-permit,2023-12-31,N/A,Can Tho,1500.0,HIGH,PDP8 2023,GEM Wiki,Replaced O Mon 2 domestic gas plan.
+NMNĐ Vũng Áng 2 (LNG),Imported LNG,Announced,2023-12-31,N/A,Ha Tinh,1200.0,MEDIUM,PDP8 2023,GEM Wiki,Replaced cancelled coal project.
+NMNĐ Long An I và II,Imported LNG,Shelved,2023-12-31,N/A,Long An,3000.0,MEDIUM,GEM Wiki,VnExpress,"Shifted from coal to LNG, now shelved."

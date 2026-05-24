@@ -1,0 +1,43 @@
+{
+  "run_id": "babe95da8b0d",
+  "timestamp": "2026-05-24T19:45:21.804080Z",
+  "method": "direct",
+  "method_params": {
+    "model": "openai/gpt-5.5",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "OpenAI",
+      "context_window": 1050000,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 229.155,
+    "cost_usd": 0.252355,
+    "tokens_in": 1654,
+    "tokens_out": 16548,
+    "thinking_tokens": 3523
+  },
+  "result_file": "experiments/outputs/exp1_batch2/gpt-5.5-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 89,
+    "tp": 89,
+    "fp": 0,
+    "fn": 74,
+    "f1": 0.7063,
+    "fuel_accuracy": 0.5056,
+    "status_accuracy": 0.5393,
+    "province_accuracy": 0.7865
+  },
+  "finish_reason": "stop"
+}

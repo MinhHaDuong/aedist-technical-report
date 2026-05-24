@@ -7,9 +7,9 @@
 # then WORKERS worker processes drain the queue concurrently.
 # Set WORKERS on the command line: make -f experiment1.mk WORKERS=12 exp1-batch2
 
-UV_RUN  := PYTHONPATH=.. uv run --project ..
+UV_RUN  := env PYTHONPATH=.. uv run --env-file $(HOME)/.claude/.env --project ..
 SWEEP   := sweep_exp1_batch2
-JOBS    := jobs/exp1_batch2
+JOBS    := $(CURDIR)/jobs/exp1_batch2
 WORKERS := 12
 
 # ─── Batch 2 ──────────────────────────────────────────────────────────────────

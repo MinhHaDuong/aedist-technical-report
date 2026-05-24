@@ -1,0 +1,35 @@
+name,fuel,status,status_as_of,cod,province,capacity_mwe,confidence,source_1,source_2,note
+Vĩnh Tân 2,Coal,Operating,2025-01,"2014 (U1), 2015 (U2)",Bình Thuận,1244.0,HIGH,GEM Global Coal Plant Tracker (2024),EVN gen. report,
+Vĩnh Tân 1,Coal,Operating,2025-01,"2018 (U1), 2019 (U2)",Bình Thuận,1200.0,HIGH,GEM Coal Tracker,PDP7 revised (Dec. 428),BOT by China Southern Power Grid
+Vĩnh Tân 4,Coal,Operating,2025-01,"2019 (U1), 2020 (U2, U3)",Bình Thuận,1800.0,HIGH,GEM Coal Tracker,EVN,Supercritical technology
+Duyên Hải 1,Coal,Operating,2025-01,"2015 (U1), 2016 (U2)",Trà Vinh,1245.0,HIGH,GEM Coal Tracker,PDP7 revised,
+Duyên Hải 3,Coal,Operating,2025-01,"2021 (U1), 2022 (U2)",Trà Vinh,1320.0,MEDIUM,GEM Coal Tracker,EVN press release,Press release source not verified
+Mông Dương 1,Coal,Operating,2025-01,"2015 (U1), 2016 (U2)",Quảng Ninh,1080.0,HIGH,GEM Coal Tracker,EVN,
+Mông Dương 2,Coal,Operating,2025-01,2015,Quảng Ninh,1240.0,HIGH,GEM Coal Tracker,AES press release,BOT operated by AES
+Hải Dương,Coal,Operating,2025-01,"2020 (U1), 2021 (U2)",Hải Dương,1200.0,HIGH,GEM Coal Tracker,JAKS media,BOT by JAKS Resources (Malaysia)
+Thái Bình 1,Coal,Operating,2025-01,"2013 (U1), 2014 (U2)",Thái Bình,600.0,MEDIUM,GEM Coal Tracker,EVN,
+Thái Bình 2,Coal,Operating,2025-01,"2022 (U1), 2023 (U2)",Thái Bình,1200.0,HIGH,GEM Coal Tracker,EVN,Long delay; commissioned after corruption probe
+Long Phú 1,Coal,Operating,2025-01,"2021 (U1), 2022 (U2)",Sóc Trăng,1200.0,MEDIUM,GEM Coal Tracker,EVN,
+Sông Hậu 1,Coal,Operating,2025-01,"2020 (U1), 2021 (U2)",Hậu Giang,1200.0,MEDIUM,GEM Coal Tracker,EVN,
+Quảng Trạch 1,Coal,Operating (partial),2025-01,"2023 (U1), 2024 (U2 est.)",Quảng Bình,1200.0,LOW,GEM Coal Tracker,EVN website (not verified),Unit 2 possibly not fully commissioned; information limited
+Na Dương 2,Coal,Operating,2025-01,2015,Lạng Sơn,110.0,MEDIUM,GEM Coal Tracker,Vinacomin,Small mine-mouth plant
+Cao Ngạn,Coal,Operating,2025-01,2006,Thái Nguyên,115.0,LOW,GEM Coal Tracker,Vinacomin,Owner ambiguous; may be TBEA project
+Thăng Long,Coal,Operating,2025-01,"2010, 2011",Quảng Ninh,440.0,MEDIUM,GEM Coal Tracker,Vinacomin,BOT-type structure with Korean participation
+Phả Lại 1,Coal,Operating,2025-01,1980s (U1? Actually refurbished),Hải Dương,440.0,MEDIUM,GEM Coal Tracker,EVN,Older plant; dates approximate
+Quảng Ninh,Coal,Operating,2025-01,"2009 (U1,2), 2014 (U3,4)",Quảng Ninh,1200.0,HIGH,GEM Coal Tracker,EVN,Plant aggregated; Quang Ninh 1 & 2
+Uông Bí 2,Coal,Operating,2025-01,2011,Quảng Ninh,300.0,MEDIUM,GEM Coal Tracker,EVN,"Uong Bi 1 (105 MW, retired) not included"
+Hà Tĩnh (Formosa),Coal,Operating,2025-01,2017 (approx),Hà Tĩnh,650.0,LOW,GEM Coal Tracker (captive),news reports,Captive for steel mill; capacity uncertain; units number not verified
+Vĩnh Tân 3 – Phase 1,Coal,Construction,2025-01,2025 (expected),Bình Thuận,660.0,LOW,GEM Coal Tracker,PDP8 (Decision 500),EPC signed 2021; Unit 1 under construction; bifurcated from Phase 2 due to status difference
+Vĩnh Tân 3 – Phase 2,Coal,Announced,2025-01,—,Bình Thuận,1320.0,LOW,PDP8,GEM Coal Tracker,Not under construction; uncertainty over financing
+Vĩnh Tân 4 mở rộng,Coal,Cancelled,2025-01,—,Bình Thuận,600.0,HIGH,PDP8,GEM Coal Tracker,Excluded in PDP8
+Duyên Hải 3 mở rộng,Coal,Cancelled,2025-01,—,Trà Vinh,660.0,HIGH,PDP8,GEM Coal Tracker,Cancelled in PDP8
+Long Phú 2,Coal,Cancelled,2025-01,—,Sóc Trăng,1320.0,HIGH,PDP8,GEM Coal Tracker,Site preparation started; cancelled due to sanctions/withdrawal
+Long Phú 3,Coal,Cancelled,2025-01,—,Sóc Trăng,1320.0,HIGH,PDP8,GEM Coal Tracker,Cancelled
+Sông Hậu 2,Coal,Cancelled,2025-01,—,Hậu Giang,1980.0,HIGH,PDP8,GEM Coal Tracker,Excluded in PDP8; technology uncertain
+Quảng Trị 1,Coal,Cancelled,2025-01,—,Quảng Trị,1200.0,MEDIUM,PDP8,GEM Coal Tracker,Cancelled after local opposition
+Nam Định 1,Coal,Announced,2025-01,—,Nam Định,1200.0,LOW,PDP8,news reports,Project on hold; strong local opposition; uncertain future
+Nhơn Trạch 3,Imported LNG,Construction,2025-01,2025 (expected),Đồng Nai,750.0,MEDIUM,PDP8,PVN press,Under construction
+Phú Mỹ 2.2,Domestic gas,Operating,2025-01,2005,Bà Rịa - Vũng Tàu,440.0,HIGH,GEM Gas Tracker,MOIT,BOT extension of Phu My 2.1
+Ô Môn 1,Domestic gas,Operating,2025-01,2020,Cần Thơ,660.0,MEDIUM,GEM Gas Tracker,EVN,Uses gas from Cuu Long Basin temporarily; will switch to Block B when available
+Ô Môn 2,Domestic gas,Announced,2025-01,—,Cần Thơ,750.0,LOW,PDP8,GEM Gas Tracker,Gas from Block B; no construction start
+Bạc Liêu (GĐ1),Imported LNG,Announced,2025-01,—,Bạc Liêu,1600.0,LOW,PDP8,company website,First phase; detailed units unconfirmed

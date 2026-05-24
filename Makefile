@@ -167,12 +167,13 @@ $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 	    --output $@ --methods direct --prompt-version census \
 	    --output-macros $(dir $@)macros_census.tex
 
-$(SLIDE_GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
+EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
+
+$(SLIDE_GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
-	    --output $@ --methods direct --prompt-version p1_base \
-	    --result-dir experiments/outputs/ablation/direct/p1_base/ \
-	    --exclude-models qwen3-max-thinking,qwen3.6-plus,qwen3.5-flash-02-23 \
+	    --output $@ --methods direct \
+	    --result-dir experiments/outputs/exp1_batch2/ \
 	    --output-macros $(dir $@)macros_p1_base.tex
 
 $(SLIDE_GEN)/fig_regimes_scatter.pdf: $(MEASUREMENTS) experiments/figures.toml

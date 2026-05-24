@@ -60,6 +60,7 @@ P1_INCLUDED_SUBDIRS = (
     "p1_base.topup_canary/",
 )
 P1_PILOT_MARKER = "/p1_base.pilot/"
+EXP1_BATCH2_DIR = "experiments/outputs/exp1_batch2/"
 
 # Vietnam thermal reference inventory size (Annex A, line 72).
 N_REFERENCE_PLANTS = 163
@@ -71,9 +72,7 @@ def _is_p1_base_row(result_file: str) -> bool:
     Pools the original journal sweep with the post-PR-#379 top-up reps
     (ticket 0198). Excludes pilot runs.
     """
-    if P1_PILOT_MARKER in result_file:
-        return False
-    return any(result_file.startswith(P1_BASE_DIR + sub) for sub in P1_INCLUDED_SUBDIRS)
+    return result_file.startswith(EXP1_BATCH2_DIR)
 
 
 def build_cost_quality_rows(
@@ -158,55 +157,28 @@ _PANEL_B_FAMILIES = {"qwen", "deepseek"}
 
 
 def _plot_one_row(ax, row: dict) -> None:
-    """Render a single model's reps + median marker on *ax*."""
+    """Render a single model's reps as uniform filled disks with a trajectory line."""
     colour = model_family_color(row["model"])
     reps = row.get("reps") or []
-    # Display axis is cents; convert each rep's cost individually so
-    # the per-rep cost variation (driven by output-token counts)
-    # shows up as in-cluster horizontal spread.
-    base = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "base"]
-    topup = [(rep["cost"] * 100.0, rep["tp"]) for rep in reps if rep["source"] == "topup"]
-    # Polyline through all reps sorted by cost — the per-rep "trajectory"
-    # in (cost, TP) space replaces the previous vertical min-max line.
-    all_pts = sorted([(rep["cost"] * 100.0, rep["tp"]) for rep in reps], key=lambda p: p[0])
-    if len(all_pts) >= 2:
+    pts = sorted([(rep["cost"] * 100.0, rep["tp"]) for rep in reps], key=lambda p: p[0])
+    if len(pts) >= 2:
         ax.plot(
-            [c for c, _ in all_pts],
-            [t for _, t in all_pts],
+            [c for c, _ in pts],
+            [t for _, t in pts],
             color=colour,
             linewidth=0.6,
             alpha=0.6,
             zorder=1,
         )
-    if base:
+    if pts:
         ax.scatter(
-            [c for c, _ in base],
-            [t for _, t in base],
+            [c for c, _ in pts],
+            [t for _, t in pts],
             marker="o",
-            facecolors="none",
-            edgecolors=colour,
-            s=36,
-            linewidths=1.0,
-            zorder=2,
-        )
-    if topup:
-        ax.scatter(
-            [c for c, _ in topup],
-            [t for _, t in topup],
-            marker="x",
             color=colour,
-            s=30,
-            linewidths=1.2,
+            s=18,
             zorder=2,
         )
-    ax.scatter(
-        [row["median_cost"] * 100.0],
-        [row["median_tp"]],
-        marker="s",
-        color=colour,
-        s=50,
-        zorder=3,
-    )
 
 
 def _configure_axes(ax, xscale: str, xmax: float) -> None:
@@ -298,8 +270,8 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
             [0],
             color=model_family_color(slug_seed),
             linewidth=0,
-            marker="s",
-            markersize=7,
+            marker="o",
+            markersize=6,
             label=label,
         )
 

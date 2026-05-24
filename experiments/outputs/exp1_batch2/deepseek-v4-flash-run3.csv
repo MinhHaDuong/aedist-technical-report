@@ -1,0 +1,63 @@
+name,fuel,status,status_as_of,cod,province,capacity_mwe,confidence,source_1,source_2,note
+Phả Lại 1,Coal,Retired,2022,1983–1986,Hải Dương,440.0,MEDIUM,EVN Annual Report 2022; GEM (via EVN),–,Units 1–4 retired by 2022; some units may have been converted to biomass. Confidence MEDIUM because EVN report confirms retirement.
+Phả Lại 2,Coal,Operating,2024,1998–2000,Hải Dương,600.0,MEDIUM,EVN Annual Report 2022; GEM,–,Still operating; no major issues.
+Uông Bí 1,Coal,Retired,2020,1963–1966,Quảng Ninh,150.0,LOW,EVN (historical); GEM,–,Unit 1 retired; units 2–3 (2×110) also retired? Aggregated here for simplicity. Confidence LOW due to conflicting retirement dates.
+Uông Bí 2,Coal,Operating,2024,2001–2003,Quảng Ninh,300.0,MEDIUM,EVN; GEM,–,Units 4–5 (2×150 MW). Operating.
+Ninh Bình,Coal,Retired,2020,1974–1976,Ninh Bình,100.0,LOW,Not found,–,Small units; likely <30 MWe per unit but total >30. Status uncertain; possibly all retired. LOW confidence.
+Hải Phòng 1,Coal,Operating,2024,2007–2009,Hải Phòng,600.0,MEDIUM,EVN; N.D.,–,"Unit 1 COD 2007, unit 2 COD 2009."
+Hải Phòng 2,Coal,Operating,2024,2012–2013,Hải Phòng,600.0,MEDIUM,EVN; GEM,–,Units 3–4.
+Quảng Ninh 1,Coal,Operating,2024,2009–2010,Quảng Ninh,600.0,MEDIUM,EVN; GEM,–,–
+Quảng Ninh 2,Coal,Operating,2024,2012–2013,Quảng Ninh,600.0,MEDIUM,EVN; GEM,–,–
+Mông Dương 1,Coal,Operating,2024,2011–2012,Quảng Ninh,450.0,MEDIUM,EVN; GEM,–,Units 1–2 (225 MW each).
+Mông Dương 2,Coal,Operating,2024,"2015 (unit 1), 2016 (unit 2)",Quảng Ninh,600.0,HIGH,AES press release (2015); GEM,EVN Annual Report,AES Mong Duong 2 BOT plant; supercritical.
+Cẩm Phả 1,Coal,Operating,2024,2006–2007,Quảng Ninh,300.0,MEDIUM,EVN; GEM,–,Units 1–2 (150 MW each).
+Cẩm Phả 2,Coal,Operating,2024,2008–2009,Quảng Ninh,300.0,MEDIUM,EVN; GEM,–,Units 3–4 (150 MW each).
+Na Dương 1,Coal,Operating,2024,2009,Lạng Sơn,110.0,MEDIUM,EVN; GEM,–,–
+Na Dương 2,Coal,Operating,2024,2014,Lạng Sơn,110.0,MEDIUM,EVN; GEM,–,–
+Vĩnh Tân 1,Coal,Operating,2024,2010–2011,Bình Thuận,620.0,MEDIUM,EVN; GEM,–,"Units 1–2 (310 MW each, gross/net unspecified)."
+Vĩnh Tân 2,Coal,Operating,2024,2014–2015,Bình Thuận,620.0,MEDIUM,EVN; GEM,–,–
+Vĩnh Tân 3,Coal,Operating,2024,2016–2017,Bình Thuận,620.0,MEDIUM,EVN; GEM,–,–
+Vĩnh Tân 4,Coal,Operating,2024,2018–2019,Bình Thuận,600.0,MEDIUM,EVN; GEM,–,Units 1–2 (300 MW each). Also Vinh Tan 4 Extension? Not included.
+Vĩnh Tân 4 Extension (Vĩnh Tân 4 mở rộng),Coal,Construction,2023,2025 (est.),Bình Thuận,660.0,MEDIUM,PDP8; GEM,–,Unit 3 (660 MW supercritical). Under construction.
+Duyên Hải 1,Coal,Operating,2024,2010–2011,Trà Vinh,600.0,MEDIUM,EVN; GEM,–,–
+Duyên Hải 2,Coal,Operating,2024,2013–2014,Trà Vinh,600.0,MEDIUM,EVN; GEM,–,–
+Duyên Hải 3,Coal,Operating,2024,2017–2018,Trà Vinh,1200.0,MEDIUM,EVN; GEM,–,Units 1–2 (600 MW each).
+Duyên Hải 3 mở rộng,Coal,Construction,2023,2025 (est.),Trà Vinh,660.0,MEDIUM,PDP8; GEM,–,"Unit 3, USC."
+Thái Bình 1,Coal,Operating,2024,2015–2016,Thái Bình,600.0,MEDIUM,EVN; GEM,–,–
+Thái Bình 2,Coal,Operating,2024,2017–2018,Thái Bình,600.0,MEDIUM,EVN; GEM,–,–
+Sông Hậu 1,Coal,Operating,2024,2019–2020,Hậu Giang,600.0,MEDIUM,EVN; GEM,–,–
+Sông Hậu 2,Coal,Construction,2023,2025 (est.),Hậu Giang,600.0,MEDIUM,PDP8; GEM,–,Progress delayed; owner uncertain.
+Long Phú 1,Coal,Operating,2024,2019–2020,Sóc Trăng,600.0,MEDIUM,EVN; GEM,–,–
+Long Phú 2,Coal,Shelved,2022,–,Sóc Trăng,600.0,LOW,GEM; media reports,–,Project suspended due to financing/ policy. Confidence LOW.
+Long Phú 3,Coal,Cancelled,2023,–,Sóc Trăng,1200.0,MEDIUM,PDP7/8; GEM,–,Replaced by LNG or renewable in PDP8.
+Nghi Sơn 1,Coal,Operating,2024,2016–2017,Thanh Hóa,600.0,MEDIUM,EVN; GEM,–,–
+Nghi Sơn 2,Coal,Construction,2023,2025 (est.),Thanh Hóa,600.0,MEDIUM,PDP8; GEM,–,Originally BOT; progress slow.
+Vũng Áng 1,Coal,Operating,2024,2014–2015,Hà Tĩnh,600.0,MEDIUM,EVN; GEM,–,–
+Vũng Áng 2,Coal,Shelved,2022,–,Hà Tĩnh,1200.0,LOW,GEM; media,–,Planned BOT; delayed indefinitely due to environmental concerns.
+Quảng Trạch 1,Coal,Construction,2023,2025 (est.),Quảng Bình,600.0,MEDIUM,PDP8; GEM,–,–
+Quảng Trạch 2,Coal,Announced,2023,–,Quảng Bình,1200.0,LOW,PDP8; GEM,–,"Under PDP8, may be developed later."
+Hải Dương (BOT),Coal,Operating,2024,2020–2021,Hải Dương,600.0,HIGH,JX Nippon press release; GEM,EVN,"BOT plant, units 1&2 commissioned 2020–2021."
+Formosa Hà Tĩnh,Coal,Operating,2024,2015–2016,Hà Tĩnh,300.0,MEDIUM,GEM; Formosa environmental report,–,Captive power for steel plant; some units may be >30 MW. Gross/net unspecified.
+Nhà máy nhiệt điện An Khánh,Coal,Operating,2024,2013,Thái Nguyên,100.0,LOW,Not found,–,Small plant; capacity uncertain. LOW.
+Nhà máy nhiệt điện Cần Thơ,Domestic gas,Retired,2020,1997,Cần Thơ,330.0,MEDIUM,EVN; GEM,–,Old CCGT; retired or converted to reserve.
+Phú Mỹ 1,Domestic gas,Operating,2024,1998–2000 (blocks),Bà Rịa–Vũng Tàu,670.0,MEDIUM,EVN; GEM,–,Combined cycle block; actual configuration 2×?; aggregated as 1×670 for simplicity.
+Phú Mỹ 2.1,Domestic gas,Operating,2024,2002,Bà Rịa–Vũng Tàu,720.0,MEDIUM,EVN; GEM,–,–
+Phú Mỹ 2.2,Domestic gas,Operating,2024,2003,Bà Rịa–Vũng Tàu,720.0,MEDIUM,EVN; GEM,–,–
+Phú Mỹ 3,Domestic gas,Operating,2024,2004,Bà Rịa–Vũng Tàu,720.0,MEDIUM,EVN; GEM,–,–
+Phú Mỹ 4,Domestic gas,Operating,2024,2005,Bà Rịa–Vũng Tàu,720.0,MEDIUM,EVN; GEM,–,–
+Nhơn Trạch 1,Domestic gas,Operating,2024,2010,Đồng Nai,450.0,MEDIUM,PV Power annual report; GEM,–,–
+Nhơn Trạch 2,Domestic gas,Operating,2024,2012,Đồng Nai,760.0,MEDIUM,PV Power; GEM,–,–
+Nhơn Trạch 3 (LNG),Imported LNG,Construction,2024,2025–2026 (est.),Đồng Nai,900.0,MEDIUM,PV Power; GEM,PDP8,First LNG-fired CCGT in Vietnam; unit 1 expected 2024? Delayed.
+Cà Mau 1,Domestic gas,Operating,2024,2006,Cà Mau,450.0,MEDIUM,PV Power; GEM,–,–
+Cà Mau 2,Domestic gas,Operating,2024,2007,Cà Mau,450.0,MEDIUM,PV Power; GEM,–,–
+Ô Môn 1,Domestic gas,Operating,2024,2005,Cần Thơ,330.0,MEDIUM,EVN; GEM,–,–
+Ô Môn 2,Domestic gas,Operating,2024,2007,Cần Thơ,330.0,MEDIUM,EVN; GEM,–,–
+Ô Môn 3,Domestic gas,Operating,2024,2010,Cần Thơ,330.0,MEDIUM,EVN; GEM,–,–
+Ô Môn 4,Domestic gas,Construction,2024,2026 (est.),Cần Thơ,660.0,MEDIUM,PDP8; GEM,–,–
+Bạc Liêu LNG,Imported LNG,Pre-permit,2024,–,Bạc Liêu,1200.0,LOW,GEM; news,–,Proposed floating LNG; progress uncertain. Confidence LOW.
+Long An LNG,Imported LNG,Announced,2023,–,Long An,1200.0,LOW,GEM; PDP8,–,–
+Sơn Mỹ LNG,Imported LNG,Pre-permit,2024,2027 (est.),Bình Thuận,1200.0,MEDIUM,PDP8; GEM,–,Part of Son My power complex; also includes coal? Actually Son My is LNG and coal.
+Quảng Ninh LNG,Imported LNG,Announced,2022,–,Quảng Ninh,1200.0,LOW,PDP8,–,Only in plans.
+Hải Phòng LNG,Imported LNG,Announced,2023,–,Hải Phòng,1200.0,LOW,PDP8,–,–
+Phú Mỹ Mở rộng (LNG),Imported LNG,Announced,2022,–,Bà Rịa–Vũng Tàu,150.0,LOW,PDP8,–,Open cycle peaker; may be gas.
+Thủ Đức (cũ),Domestic gas,Retired,2015,1970s,Hồ Chí Minh,60.0,LOW,Not found,–,Old gas turbines; likely retired.

@@ -1,0 +1,81 @@
+name,fuel,status,status_as_of,cod,province,capacity_mwe,confidence,source_1,source_2,note
+Nhiệt điện Ninh Bình,Coal,Operating,2023-12,1974–1976,Ninh Bình,100.0,MEDIUM,EVNGENCO3-AR2023,NBP-AR2023,"Unit size is below 30 MW, but plant total exceeds 30 MWe. Old lignite/anthracite plant; status freshness capped because latest source is corporate reporting. Gross/net unspecified."
+Nhiệt điện Phả Lại 1,Coal,Operating,2023-12,1983–1986,Hải Dương,440.0,MEDIUM,EVNGENCO2-AR2023,PPC-AR2023,"Often grouped with Pha Lai 2 as “Pha Lai Thermal Power Plant” 1,040 MW. Older Russian-built units. Gross/net unspecified."
+Nhiệt điện Phả Lại 2,Coal,Operating,2023-12,2001–2002,Hải Dương,600.0,MEDIUM,EVNGENCO2-AR2023,PPC-AR2023,Gross/net unspecified.
+Nhiệt điện Uông Bí cũ,Coal,Retired,2023-12,1960s,Quảng Ninh,110.0,LOW,not found,EVNGENCO1-AR2023,Historical Uong Bi units are reported as replaced by later expansion units; exact retirement date and unit configuration require archival EVN confirmation.
+Nhiệt điện Uông Bí mở rộng,Coal,Operating,2023-12,"2006, 2011",Quảng Ninh,630.0,MEDIUM,EVNGENCO1-AR2023,PDP7R,Often cited as Uong Bi 300 MW expansion and Uong Bi 330 MW expansion. Gross/net unspecified.
+Nhiệt điện Cao Ngạn,Coal,Operating,2023-12,2006,Thái Nguyên,115.0,MEDIUM,TKV-AR2023,VCP-AR2023,Circulating fluidized-bed coal plant. Gross/net unspecified.
+Nhiệt điện Na Dương,Coal,Operating,2023-12,2005,Lạng Sơn,110.0,MEDIUM,TKV-AR2023,VCP-AR2023,Mine-mouth lignite/coal plant. Gross/net unspecified.
+Nhiệt điện Sơn Động,Coal,Operating,2023-12,2009–2010,Bắc Giang,220.0,MEDIUM,TKV-AR2023,VCP-AR2023,Gross/net unspecified.
+Nhiệt điện Cẩm Phả,Coal,Operating,2023-12,2010–2011,Quảng Ninh,680.0,MEDIUM,TKV-AR2023,VCP-AR2023,Some sources describe stages as Cam Pha 1 and 2 with 300–340 MW class units; table uses the commonly reported 680 MW plant total. Gross/net unspecified.
+Nhiệt điện Mạo Khê,Coal,Operating,2023-12,2012,Quảng Ninh,440.0,MEDIUM,TKV-AR2023,VCP-AR2023,Gross/net unspecified.
+Nhiệt điện An Khánh,Coal,Operating,2023-12,2015,Thái Nguyên,100.0,LOW,PDP7R,not found,Private coal plant. Primary operator source not verified here; gross/net unspecified.
+Nhiệt điện Hải Phòng 1,Coal,Operating,2023-12,2011,Hải Phòng,600.0,MEDIUM,EVNGENCO2-AR2023,HND-AR2023,"Part of Hai Phong Thermal Power Center, separate from Hai Phong 2. Gross/net unspecified."
+Nhiệt điện Hải Phòng 2,Coal,Operating,2023-12,2013–2014,Hải Phòng,600.0,MEDIUM,EVNGENCO2-AR2023,HND-AR2023,Gross/net unspecified.
+Nhiệt điện Quảng Ninh 1,Coal,Operating,2023-12,2009–2010,Quảng Ninh,600.0,MEDIUM,EVNGENCO1-AR2023,QTP-AR2023,Gross/net unspecified.
+Nhiệt điện Quảng Ninh 2,Coal,Operating,2023-12,2013–2014,Quảng Ninh,600.0,MEDIUM,EVNGENCO1-AR2023,QTP-AR2023,Gross/net unspecified.
+Nhiệt điện Mông Dương 1,Coal,Operating,2023-12,2015,Quảng Ninh,1080.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,CFB coal plant. Gross/net unspecified.
+Nhiệt điện Mông Dương 2,Coal,Operating,2023-12,2015,Quảng Ninh,1120.0,HIGH,AES-MD2,MOIT-BOT-MD2,"BOT plant; capacity commonly stated as 1,120 MW."
+Nhiệt điện Thái Bình 1,Coal,Operating,2023-12,2017–2018,Thái Bình,600.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,Gross/net unspecified.
+Nhiệt điện Thái Bình 2,Coal,Operating,2024-04,2023–2024,Thái Bình,1200.0,HIGH,PVN-TB2-COD,MOIT-TB2,Commercial operation completed after prolonged delays and corruption-related restructuring. Gross/net unspecified.
+Nhiệt điện Nghi Sơn 1,Coal,Operating,2023-12,2013–2014,Thanh Hóa,600.0,MEDIUM,EVNGENCO1-AR2023,PDP7R,Gross/net unspecified.
+Nhiệt điện Nghi Sơn 2,Coal,Operating,2023-08,2022,Thanh Hóa,1200.0,HIGH,JBIC-NS2,NS2PC-COD,BOT plant. Some developer material describes high-efficiency supercritical technology; not classified here as USC.
+Nhiệt điện Vũng Áng 1,Coal,Operating,2023-12,2014–2015,Hà Tĩnh,1200.0,MEDIUM,PVPOWER-AR2023,PDP7R,"Technology label varies in secondary sources; primary annual reporting supports plant and capacity, not detailed steam parameters."
+Nhiệt điện Vũng Áng 2,Coal,Construction,2024-03,Planned 2025–2026,Hà Tĩnh,1320.0,HIGH,JBIC-VA2,PDP8-IP2024,BOT coal project; financing and environmental opposition make schedule uncertain.
+Nhiệt điện Vĩnh Tân 1,Coal,Operating,2023-12,2018,Bình Thuận,1240.0,HIGH,VTP-BOT,MOIT-VT1,BOT project; gross/net unspecified.
+Nhiệt điện Vĩnh Tân 2,Coal,Operating,2023-12,2014–2015,Bình Thuận,1244.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,"Capacity often rounded to 1,200 MW in planning documents; operator reports 1,244 MW."
+Nhiệt điện Vĩnh Tân 4,Coal,Operating,2023-12,2018–2019,Bình Thuận,1800.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,Includes Vinh Tan 4 extension as same owner/site technology group. Gross/net unspecified.
+Nhiệt điện Duyên Hải 1,Coal,Operating,2023-12,2015–2016,Trà Vinh,1245.0,MEDIUM,EVNGENCO1-AR2023,PDP7R,Gross/net unspecified.
+Nhiệt điện Duyên Hải 3,Coal,Operating,2023-12,2016–2017,Trà Vinh,1245.0,MEDIUM,EVNGENCO1-AR2023,PDP7R,Gross/net unspecified.
+Nhiệt điện Duyên Hải 3 mở rộng,Coal,Operating,2023-12,2020,Trà Vinh,688.0,MEDIUM,EVNGENCO1-AR2023,PDP7R,Single-unit extension; gross/net unspecified.
+Nhiệt điện Duyên Hải 2,Coal,Operating,2023-12,2021–2022,Trà Vinh,1320.0,MEDIUM,PDP8,JAKS-DH2,BOT plant; status reported by developer and planning documents.
+Nhiệt điện Long Phú 1,Coal,Shelved,2024-04,"Planned, not commissioned",Sóc Trăng,1200.0,HIGH,PVN-LP1,PDP8-IP2024,Construction began but was severely delayed after sanctions and contractor problems. Not counted as operating.
+Nhiệt điện Long Phú 2,Coal,Cancelled,2023-05,Cancelled before COD,Sóc Trăng,1320.0,MEDIUM,PDP8,TATA-LP2,Withdrawal preceded PDP8 shift away from some coal projects. Exact formal cancellation instrument not verified.
+Nhiệt điện Long Phú 3,Coal,Cancelled,2023-05,Cancelled before COD,Sóc Trăng,1800.0,LOW,PDP8,not found,Included in earlier power-center planning; not retained as coal in PDP8. Configuration uncertain.
+Nhiệt điện Sông Hậu 1,Coal,Operating,2023-12,2021–2022,Hậu Giang,1200.0,HIGH,PVN-SH1-COD,PVPOWER-AR2023,PetroVietnam project later operated within PVN/PV Power ecosystem; gross/net unspecified.
+Nhiệt điện Sông Hậu 2,Coal,Permitted,2024-04,Planned late 2020s,Hậu Giang,2120.0,MEDIUM,PDP8-IP2024,TOYO-SH2,BOT coal project remains in planning implementation lists; financial close and construction status uncertain.
+Nhiệt điện Hải Dương,Coal,Operating,2023-12,2020–2021,Hải Dương,1200.0,MEDIUM,JAKS-HD,PDP8,Gross/net unspecified; BOT plant.
+Nhiệt điện Thăng Long,Coal,Operating,2023-12,2018,Quảng Ninh,600.0,MEDIUM,GELEXIMCO-TL,PDP8,Private coal plant. Gross/net unspecified.
+Nhiệt điện Vân Phong 1,Coal,Operating,2024-01,2023–2024,Khánh Hòa,1320.0,HIGH,SUMITOMO-VP1-COD,PDP8-IP2024,BOT plant; commercial operation of both units reported by developer.
+Nhiệt điện Nam Định 1,Coal,Shelved,2024-04,"Planned, not commissioned",Nam Định,1200.0,MEDIUM,PDP8-IP2024,ACWA-ND1,BOT coal project has approvals but delayed; status treated as shelved rather than construction absent recent site-execution evidence.
+Nhiệt điện Quảng Trạch 1,Coal,Construction,2024-04,Planned 2025–2026,Quảng Bình,1200.0,HIGH,EVN-QT1,PDP8-IP2024,EVN project under construction in PDP8 implementation plan. Gross/net unspecified.
+Nhiệt điện Quảng Trạch 2,Coal,Cancelled,2023-05,Cancelled before COD,Quảng Bình,1200.0,MEDIUM,PDP8,PDP8-IP2024,Earlier coal project effectively replaced in PDP8 by LNG/gas-oriented Quang Trach 2 development.
+Nhiệt điện Quỳnh Lập 1,Coal,Cancelled,2023-05,Cancelled before COD,Nghệ An,1200.0,MEDIUM,PDP8,PDP8-IP2024,Earlier PDP7-revised coal project not retained in PDP8.
+Nhiệt điện Quỳnh Lập 2,Coal,Cancelled,2023-05,Cancelled before COD,Nghệ An,1200.0,LOW,PDP8,not found,Project appeared in earlier power-center plans; exact developer and cancellation instrument not verified.
+Nhiệt điện Vĩnh Tân 3,Coal,Cancelled,2023-05,Cancelled before COD,Bình Thuận,1980.0,MEDIUM,PDP8,CLP-VT3,Developer withdrawal and PDP8 non-retention support cancelled status; formal Vietnamese cancellation document not verified.
+Nhiệt điện Công Thanh,Coal,Shelved,2024-04,"Planned, not commissioned",Thanh Hóa,600.0,LOW,PDP7R,not found,Long-delayed private coal proposal; not clearly retained as active in PDP8. Status uncertain.
+Nhiệt điện Kiên Lương 1,Coal,Cancelled,2023-05,Cancelled before COD,Kiên Giang,1200.0,MEDIUM,PDP8,ITA-KL,Large cancelled coal-power-center project; capacity and staging vary across historical sources.
+Nhiệt điện Kiên Lương 2,Coal,Cancelled,2023-05,Cancelled before COD,Kiên Giang,1200.0,LOW,PDP8,ITA-KL,Later stage of Kien Luong power center; exact uniting and formal cancellation not verified.
+Nhà máy điện Formosa Hà Tĩnh,Coal,Operating,2023-12,2015–2016,Hà Tĩnh,650.0,LOW,FHS-EIA,not found,Captive industrial coal power plant. Unit configuration and net export status uncertain; included because plant total exceeds 30 MWe.
+Nhà máy điện Hòa Phát Dung Quất,Coal,Operating,2023-12,2019–2021,Quảng Ngãi,240.0,LOW,HPG-AR2023,not found,Captive steelworks power using by-product gas and coal/heat recovery may not be a conventional grid coal plant. Fuel classification LOW.
+Nhiệt điện Bà Rịa,Domestic gas,Operating,2023-12,1992–1996,Bà Rịa–Vũng Tàu,389.0,MEDIUM,EVNGENCO3-AR2023,BTP-AR2023,Older gas-turbine/combined-cycle station. Unit configuration simplified; some units historically oil-capable.
+Nhiệt điện Thủ Đức,Domestic gas,Retired,2022-12,1960s–1990s,TP. Hồ Chí Minh,165.0,LOW,not found,EVN-AR2022,Historical oil/gas peaking station; exact retirement date and fuel history uncertain. Included as known retired asset >30 MWe.
+Nhiệt điện Hiệp Phước,Domestic gas,Operating,2023-12,1997–1998,TP. Hồ Chí Minh,375.0,LOW,HIEPPHUOC,PDP7R,Historically fuel-oil plant with later gas/LNG conversion proposals; current fuel classification is uncertain.
+Nhiệt điện Phú Mỹ 1,Domestic gas,Operating,2023-12,2000–2002,Bà Rịa–Vũng Tàu,1090.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,Gas from Nam Con Son/Cuu Long basin system; gross/net unspecified.
+Nhiệt điện Phú Mỹ 2.1,Domestic gas,Operating,2023-12,1997–2002,Bà Rịa–Vũng Tàu,900.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,Phu My 2.1 and extension are inconsistently separated in public sources; row aggregates EVN-operated Phu My 2.1 assets.
+Nhiệt điện Phú Mỹ 2.2,Domestic gas,Operating,2023-12,2005,Bà Rịa–Vũng Tàu,715.0,HIGH,EDF-PM22,MOIT-BOT-PM22,BOT plant.
+Nhiệt điện Phú Mỹ 3,Domestic gas,Operating,2023-12,2004,Bà Rịa–Vũng Tàu,717.0,HIGH,SEMBCORP-PM3,MOIT-BOT-PM3,BOT plant; capacity rounded to nearest MWe.
+Nhiệt điện Phú Mỹ 4,Domestic gas,Operating,2023-12,2004,Bà Rịa–Vũng Tàu,450.0,MEDIUM,EVNGENCO3-AR2023,PDP7R,Gross/net unspecified.
+Nhiệt điện Nhơn Trạch 1,Domestic gas,Operating,2023-12,PV Power,Đồng Nai,450.0,MEDIUM,PVPOWER-AR2023,PDP7R,COD often cited as 2009. Gross/net unspecified.
+Nhiệt điện Nhơn Trạch 2,Domestic gas,Operating,2023-12,2011,Đồng Nai,750.0,MEDIUM,PVPOWER-AR2023,NT2-AR2023,Gross/net unspecified.
+Nhiệt điện Cà Mau 1,Domestic gas,Operating,2023-12,2007–2008,Cà Mau,750.0,MEDIUM,PVPOWER-AR2023,PDP7R,Uses gas from PM3-Ca Mau pipeline.
+Nhiệt điện Cà Mau 2,Domestic gas,Operating,2023-12,2008,Cà Mau,750.0,MEDIUM,PVPOWER-AR2023,PDP7R,Uses gas from PM3-Ca Mau pipeline.
+Nhiệt điện Ô Môn 1,Domestic gas,Operating,2023-12,"2009, 2015",Cần Thơ,660.0,MEDIUM,EVNGENCO2-AR2023,PDP7R,Designed for gas/oil; historically operated on fuel oil pending Block B gas. Fuel classification assumes conversion/supply under gas-chain plan.
+Nhiệt điện Ô Môn 2,Domestic gas,Permitted,2024-04,Planned 2026–2027,Cần Thơ,1050.0,HIGH,PDP8-IP2024,MARUBENI-OM2,Tied to Block B gas development; schedule depends on upstream and pipeline execution.
+Nhiệt điện Ô Môn 3,Domestic gas,Permitted,2024-04,Planned 2027–2028,Cần Thơ,1050.0,MEDIUM,PDP8-IP2024,JICA-OM3,ODA/Japanese-linked project in Block B gas chain.
+Nhiệt điện Ô Môn 4,Domestic gas,Announced,2024-04,Planned late 2020s,Cần Thơ,1050.0,MEDIUM,PDP8-IP2024,PDP8,Gas-chain project; procurement and financing less advanced than O Mon 2/3.
+Nhiệt điện Nhơn Trạch 3,Imported LNG,Construction,2024-04,Planned 2024–2025,Đồng Nai,750.0,HIGH,PVPOWER-AR2023,PDP8-IP2024,First major Vietnamese LNG-to-power project group with Nhon Trach 4; gas supplied through Thi Vai LNG infrastructure.
+Nhiệt điện Nhơn Trạch 4,Imported LNG,Construction,2024-04,Planned 2025,Đồng Nai,750.0,HIGH,PVPOWER-AR2023,PDP8-IP2024,Paired with Nhon Trach 3.
+Nhiệt điện Sơn Mỹ 1,Imported LNG,Permitted,2024-04,Planned late 2020s,Bình Thuận,2250.0,MEDIUM,PDP8-IP2024,EDF-SM1,Part of Son My LNG power center; commercial arrangements still evolving.
+Nhiệt điện Sơn Mỹ 2,Imported LNG,Permitted,2024-04,Planned late 2020s,Bình Thuận,2250.0,MEDIUM,PDP8-IP2024,AES-SM2,Related to Son My LNG terminal development; status below construction.
+Nhà máy điện LNG Bạc Liêu,Imported LNG,Permitted,2024-04,Planned 2027–2030,Bạc Liêu,3200.0,MEDIUM,PDP8-IP2024,DOE-BACLIEU,"Large independent LNG-to-power project. Capacity retained in PDP8 implementation planning, but PPA/financial close uncertainty remains."
+Nhiệt điện LNG Long An 1,Imported LNG,Permitted,2024-04,Planned 2026–2028,Long An,1500.0,MEDIUM,PDP8-IP2024,LONGAN-PPC,Paired with Long An 2; developer and ownership details have changed in public reporting.
+Nhiệt điện LNG Long An 2,Imported LNG,Permitted,2024-04,Planned 2028–2030,Long An,1500.0,MEDIUM,PDP8-IP2024,LONGAN-PPC,Stage 2 of Long An LNG power center.
+Trung tâm điện khí LNG Hải Lăng giai đoạn 1,Imported LNG,Permitted,2024-04,Planned 2026–2028,Quảng Trị,1500.0,MEDIUM,PDP8-IP2024,QUANGTRI-HAILANG,Development-stage LNG project; not under construction in confirmed sources.
+Nhiệt điện LNG Quảng Ninh,Imported LNG,Permitted,2024-04,Planned 2027–2028,Quảng Ninh,1500.0,MEDIUM,PDP8-IP2024,QUANGNINH-LNG,Provincial/developer consortium project; still pre-construction.
+Nhiệt điện LNG Thái Bình,Imported LNG,Announced,2024-04,Planned late 2020s,Thái Bình,1500.0,LOW,PDP8-IP2024,not found,"PDP8 implementation listing supports planned capacity, but developer and project boundaries are not verified."
+Nhiệt điện LNG Nghi Sơn,Imported LNG,Announced,2024-04,Planned late 2020s,Thanh Hóa,1500.0,LOW,PDP8-IP2024,not found,Distinct from Nghi Son 1/2 coal plants. Developer and permitting status uncertain.
+Nhiệt điện LNG Quảng Trạch 2,Imported LNG,Announced,2024-04,Planned late 2020s,Quảng Bình,1500.0,MEDIUM,PDP8-IP2024,PDP8,Successor concept to earlier Quang Trach 2 coal plan; development-stage only.
+Nhiệt điện LNG Chân Mây,Imported LNG,Announced,2024-04,Planned late 2020s,Thừa Thiên Huế,1500.0,LOW,PDP8-IP2024,not found,PDP8 implementation listing supports planned LNG capacity; project-specific primary data not verified.
+Nhiệt điện LNG Cà Ná,Imported LNG,Announced,2024-04,Planned late 2020s,Ninh Thuận,1500.0,LOW,PDP8-IP2024,NINHTHUAN-CANA,Replaces earlier coal-power-center concepts in Ninh Thuan; developer and schedule uncertain.
+Nhiệt điện LNG Hiệp Phước mở rộng,Imported LNG,Announced,2024-04,Planned late 2020s,TP. Hồ Chí Minh,1200.0,LOW,PDP8-IP2024,HIEPPHUOC,"Ambiguous whether this is a repowering/expansion of existing Hiep Phuoc or a new LNG asset. Not double-counted with existing 375 MW because capacity, fuel and development scope differ."
