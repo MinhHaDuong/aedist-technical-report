@@ -2,10 +2,10 @@
 Title: Parent tracker — mechanical scoring pipeline (contract, ingestion, scorer)
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0274
 Blocked-by: 0277
 Blocked-by: 0275
 Blocked-by: 0276
+Closed: all children merged: 0274 0275 0276 0277; sota_cross_eval.csv generated; make check-fast passes
 
 --- log ---
 2026-05-24T09:30Z HDMX-coding-agent created
@@ -13,6 +13,8 @@ Blocked-by: 0276
 2026-05-24T13:36Z HDMX-coding-agent added 0277 as an upstream bugfix child: inventory_rows semantics must be fixed before ingestion parity can be trusted.
 2026-05-24T13:42Z HDMX-coding-agent dependency cleanup: 0272 is archived as completed verification work, so it is no longer listed as an active blocker.
 
+2026-05-24T13:52Z HDMX-coding-agent note blocker 0274 closed — Blocked-by removed.
+2026-05-24T13:52Z HDMX-coding-agent closed — all children merged: 0274 0275 0276 0277; sota_cross_eval.csv generated; make check-fast passes
 --- body ---
 ## Context
 
