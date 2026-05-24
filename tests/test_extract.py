@@ -284,10 +284,17 @@ class TestParseAndCanonicalize:
         csv_text = "Name,Fuel\nPha Lai,Coal\n"
         result = parse_and_canonicalize(csv_text)
         lines = result.strip().splitlines()
-        assert lines[0] == "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note"
+        assert (
+            lines[0]
+            == "name,fuel,status,status_as_of,cod,province,capacity_mwe,confidence,source_1,source_2,note"
+        )
+        header = lines[0].split(",")
         row = lines[1].split(",")
-        assert row[0] == "Pha Lai"
-        assert row[2] == ""  # status missing
+        row_map = dict(zip(header, row, strict=False))
+        assert row_map["name"] == "Pha Lai"
+        assert row_map["status"] == ""  # status missing
+        assert row_map["status_as_of"] == ""  # as-of missing
+        assert row_map["confidence"] == ""  # confidence missing
 
     def test_capacity_normalized(self):
         csv_text = "Name,Capacity\nPha Lai,1200\n"
@@ -401,6 +408,30 @@ class TestHeaderVariantsProvenance:
         """'notes' and 'comment' headers map to note."""
         assert map_header_to_canonical(norm_header("Notes")) == "note"
         assert map_header_to_canonical(norm_header("Comment")) == "note"
+
+
+class TestHeaderVariantsConfidenceTemporality:
+    """Header variant mappings for confidence and as-of columns."""
+
+    def test_header_variant_confidence_maps_to_confidence(self):
+        assert map_header_to_canonical(norm_header("Confidence")) == "confidence"
+        assert map_header_to_canonical(norm_header("Confidence level")) == "confidence"
+
+    def test_header_variant_status_as_of_maps_to_status_as_of(self):
+        assert map_header_to_canonical(norm_header("Status as-of-date")) == "status_as_of"
+        assert map_header_to_canonical(norm_header("As-of date")) == "status_as_of"
+
+    def test_status_as_of_and_confidence_preserved(self):
+        csv_text = (
+            "Name,Fuel,Status,Status as-of-date,COD,Province,Capacity,Confidence\n"
+            "Pha Lai,Coal,Operating,2024 est.,1983,Hai Duong,440,HIGH\n"
+        )
+        result = parse_and_canonicalize(csv_text)
+        header = result.splitlines()[0].split(",")
+        row = result.splitlines()[1].split(",")
+        row_map = dict(zip(header, row, strict=False))
+        assert row_map["status_as_of"] == "2024 est."
+        assert row_map["confidence"] == "HIGH"
 
 
 # ---------------------------------------------------------------------------

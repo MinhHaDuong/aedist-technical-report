@@ -65,7 +65,7 @@ def _write_md(path, content) -> None:
     path.write_text(content, encoding="utf-8")
 
 
-def test_ingested_rows_mark_confidence_metric_column_missing(tmp_path) -> None:
+def test_ingested_rows_mark_confidence_metric_no_high_confidence(tmp_path) -> None:
     naive_dir = tmp_path / "naive"
     optimised_dir = tmp_path / "optimised"
     naive_dir.mkdir()
@@ -89,7 +89,7 @@ def test_ingested_rows_mark_confidence_metric_column_missing(tmp_path) -> None:
     assert result.source_presence == 1.0
     assert result.source_presence_annotation is None
     assert result.high_conf_dual_source is None
-    assert result.high_conf_dual_source_annotation == "column_missing"
+    assert result.high_conf_dual_source_annotation == "no_high_confidence"
 
 
 def test_ingested_rows_mark_temporality_metrics_column_missing(tmp_path) -> None:
@@ -113,7 +113,37 @@ def test_ingested_rows_mark_temporality_metrics_column_missing(tmp_path) -> None
     )
     result = score_temporality(ingested.rows)
 
-    assert result.asof_presence is None
-    assert result.asof_presence_annotation == "column_missing"
+    assert result.asof_presence == 0.0
+    assert result.asof_presence_annotation is None
     assert result.plausible_range is None
-    assert result.plausible_range_annotation == "column_missing"
+    assert result.plausible_range_annotation == "column_empty"
+
+
+def test_ingested_rows_compute_high_conf_dual_source_when_present(tmp_path) -> None:
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    naive_dir.mkdir()
+    optimised_dir.mkdir()
+
+    _write_json(naive_dir / "openai_run01.json", {"model": "gpt-5.5", "run": 1})
+    _write_md(
+        naive_dir / "openai_run01.md",
+        "| Name | Fuel | Capacity | Status | Status as-of-date | COD | Province | Confidence | Source 1 | Source 2 |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | 440 | Operating | 2024 est. | 1983 | Hai Duong | HIGH | EVN report | MOIT |\n",
+    )
+
+    ingested = ingest_run(
+        RunLocator(arm="naive", model="gpt-5.5", run=1),
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+    )
+    prov = score_provenance(ingested.rows)
+    temp = score_temporality(ingested.rows)
+
+    assert prov.high_conf_dual_source == 1.0
+    assert prov.high_conf_dual_source_annotation is None
+    assert temp.asof_presence == 1.0
+    assert temp.asof_presence_annotation is None
+    assert temp.plausible_range == 1.0
+    assert temp.plausible_range_annotation is None
