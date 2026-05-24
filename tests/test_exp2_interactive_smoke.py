@@ -408,7 +408,7 @@ def _fake_run_factory(cost_per_call: float = 0.10):
 def test_format_status_line_exact_string():
     s = format_status_line(45000, 50000, 2.50, 3.00, 12.3, verify_state="pending")
     assert s == (
-        "Status: remaining 45.0K of 50K tokens, remaining budget $2.50 out of $3.00. "
+        "Status: remaining 45.0K of 50K tokens, $2.50 of $3.00. "
         "Wall-clock elapsed 12.3s. Verify pending."
     )
 

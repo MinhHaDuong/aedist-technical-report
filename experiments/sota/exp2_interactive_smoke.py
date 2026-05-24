@@ -106,20 +106,42 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
+_FRAMING_SEPARATOR = "\n---\n"
+
+
+def strip_meta_framing(text: str) -> str:
+    """Drop the meta-framing prefix from a protocol prompt file.
+
+    Convention used in `protocol_02_metaprompt.md` and `protocol_07_naive_prompt.md`:
+    the file opens with a single framing line ("This is the prompt sent to ...,
+    verbatim. ...") followed by `---` and then the actual prompt content.
+    The framing line is FOR THE REVIEWER, not the agent. The script must
+    strip it before sending the bytes to the model.
+
+    If no `\\n---\\n` separator is present, the input is returned unchanged.
+    """
+    if _FRAMING_SEPARATOR in text:
+        _, _, content = text.partition(_FRAMING_SEPARATOR)
+        return content.lstrip("\n")
+    return text
+
+
 def assemble_meta_prompt(
     metaprompt_path: Path = METAPROMPT_PATH, manifest_path: Path | str | None = None
 ) -> str:
-    """Return the Phase A meta-prompt verbatim from disk.
+    """Return the Phase A meta-prompt from disk, with framing stripped.
 
     The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
     (Doc 02 of the protocol set). The harness reads it as-is at run time;
-    edits to Doc 02 propagate without code change.
+    edits to Doc 02 propagate without code change. The opening framing line
+    ("This is the prompt sent to the agents, verbatim.") is removed before
+    dispatch (see :func:`strip_meta_framing`).
 
     When ``manifest_path`` is provided, inject an evidence-pack summary after
     the budget announcement so Phase A can design with explicit knowledge of
     available evidence artifacts without revealing chunk bodies.
     """
-    prompt = metaprompt_path.read_text(encoding="utf-8")
+    prompt = strip_meta_framing(metaprompt_path.read_text(encoding="utf-8"))
     if manifest_path is None:
         return prompt
 
@@ -715,7 +737,7 @@ def format_status_line(
     """
     return (
         f"Status: remaining {remaining_tokens / 1000:.1f}K of {cap_tokens // 1000}K tokens, "
-        f"remaining budget ${remaining_usd:.2f} out of ${cap_usd:.2f}. "
+        f"${remaining_usd:.2f} of ${cap_usd:.2f}. "
         f"Wall-clock elapsed {elapsed_s:.1f}s. "
         f"Verify {verify_state}."
     )
