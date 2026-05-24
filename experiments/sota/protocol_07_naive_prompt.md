@@ -10,6 +10,8 @@ Scope includes all thermal assets > 30 MWe at any stage of the lifecycle, includ
 
 When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them.
 
+Output format: Markdown.
+
 # QUALITY DIMENSIONS
 
 Your output is judged on four axes:
