@@ -53,6 +53,10 @@ attic/
 # Runtime records (keep local, do not track)
 *.record.json
 
+# Evaluation reconciliation artifacts (generated)
+reconciliation_*.csv
+**/reconciliation_*.csv
+
 # Beat cycle runtime log
 beat-log.jsonl
 
