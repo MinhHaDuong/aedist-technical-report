@@ -88,23 +88,19 @@ def test_cost_mean_across_reps():
 
 
 def test_is_p1_base_row():
-    """Filter pools p1_base + topup variants, rejects pilots and other sweeps."""
-    # Pooled into Experiment 1:
-    assert _is_p1_base_row("experiments/outputs/ablation/direct/p1_base/claude-opus-4.6-run1.csv")
-    assert _is_p1_base_row(
-        "experiments/outputs/ablation/direct/p1_base.topup/claude-opus-4.6-run6.csv"
+    """Filter accepts exp1_batch2, rejects everything else."""
+    assert _is_p1_base_row("experiments/outputs/exp1_batch2/claude-opus-4.6-run1.csv")
+    assert _is_p1_base_row("experiments/outputs/exp1_batch2/mistral-large-2512-run3.json")
+    # Rejected — old p1_base directories no longer included:
+    assert not _is_p1_base_row(
+        "experiments/outputs/ablation/direct/p1_base/claude-opus-4.6-run1.csv"
     )
-    assert _is_p1_base_row(
-        "experiments/outputs/ablation/direct/p1_base.topup_canary/claude-opus-4.6-run1.csv"
-    )
-    # Rejected:
     assert not _is_p1_base_row(
         "experiments/outputs/ablation/direct/p1_base.pilot/claude-opus-4.6-run1.csv"
     )
     assert not _is_p1_base_row(
         "experiments/outputs/ablation/livesearch/p1_base/claude-opus-4.6-run1.csv"
     )
-    assert not _is_p1_base_row("experiments/outputs/ablation/rag/p1_base/claude-opus-4.6-run1.csv")
 
 
 def test_cost_quality_family_colours():
@@ -284,15 +280,14 @@ def test_caption_has_no_stale_pilot_numbers():
 
 
 def _write_p1_base_measurements(path, metrics):
-    """write_measurements + rewrite result_file paths to pass the p1_base filter.
+    """write_measurements + rewrite result_file paths to pass the exp1_batch2 filter.
 
     The default conftest helper stamps result_file = f"{label}.csv" which the
     Experiment 1 filter rejects; we rewrite each row's result_file to
-    ``.../direct/p1_base/<original-stem>.csv`` so it satisfies the filter
-    while preserving the per-rep slug that records_to_metrics needs.
+    ``experiments/outputs/exp1_batch2/<original-stem>.csv`` so it satisfies
+    the filter while preserving the per-rep slug that records_to_metrics needs.
     """
     write_measurements(path, metrics)
-    # Patch each line's result_file in place so it satisfies the filter.
     out_lines = []
     for raw in path.read_text().splitlines():
         if not raw.strip():
@@ -302,7 +297,7 @@ def _write_p1_base_measurements(path, metrics):
             out_lines.append(raw)
             continue
         original_stem = m.group(1).rsplit("/", 1)[-1].removesuffix(".csv")
-        new_path = f"experiments/outputs/ablation/direct/p1_base/{original_stem}.csv"
+        new_path = f"experiments/outputs/exp1_batch2/{original_stem}.csv"
         new = raw[: m.start()] + f'"result_file":"{new_path}"' + raw[m.end() :]
         out_lines.append(new)
     path.write_text("\n".join(out_lines) + "\n")
