@@ -12,9 +12,8 @@ In Phase A — this turn — you design your own approach. You will return a JSO
 
 In Phase B you will produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe), structured as follows:
 
-- a sector overview (electricity mix, policy framework, key institutional actors, current challenges)
-- a concise sourced per-plant narrative for each plant (development history, notable issues, including key plant attributes, possibly confidence-qualified)
 - the plant inventory: **exactly one pipe table**, never split into sub-tables by status, fuel, province, or any other dimension. Columns in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes. Do not add statistical summary, cross-tabulation, or any other pipe tables; fold aggregate statistics into prose.
+- per-asset or per-project explanatory notes: for each asset that warrants it (major, disputed, ambiguous, or historically important), a concise sourced note covering development history, notable issues, and confidence-qualified attributes. Straightforward operational assets need no note.
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
 All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
@@ -133,5 +132,5 @@ Status definitions (use these exact terms in the Status column):
 Capacity rule:
 Record nameplate electrical capacity in MWe when available. If sources do not distinguish gross vs net, record the stated MW value and note "gross/net unspecified". Do not mix thermal MW, boiler capacity, steam output, or investment package capacity with electrical MWe. For Units × MW, make arithmetic consistent with Total MWe or explain discrepancies in Notes.
 
-Narrative discipline:
-Prioritise the structured table. Provide full per-plant narratives only for major, disputed, ambiguous, or historically important assets. For straightforward operational assets, a compact Notes entry is sufficient.
+Explanatory notes discipline:
+The table comes first. Per-asset notes follow the table and are selective: write one only for assets that are major, disputed, ambiguous, or historically important. For straightforward operational assets a compact Notes cell in the table is sufficient; do not repeat it as a separate note.
