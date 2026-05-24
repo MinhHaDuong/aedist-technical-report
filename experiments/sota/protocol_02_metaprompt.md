@@ -14,8 +14,7 @@ In Phase B you will produce a complete, primary-sourced reference inventory of V
 
 - a sector overview (electricity mix, policy framework, key institutional actors, current challenges)
 - a concise sourced per-plant narrative for each plant (development history, notable issues, including key plant attributes, possibly confidence-qualified)
-- the requested structured power-plants table with columns: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes
-- statistical summary tables (capacity by fuel × status; top 15 provinces; timeline of additions by period and fuel; data-quality summary by confidence level and fuel)
+- the plant inventory: **exactly one pipe table**, never split into sub-tables by status, fuel, province, or any other dimension. Columns in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes. Do not add statistical summary, cross-tabulation, or any other pipe tables; fold aggregate statistics into prose.
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
 All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
@@ -121,10 +120,11 @@ The detailed inventory must assign a confidence level to the row-level existence
 
 Each row corresponds to one asset record. The DEFAULT unit is the plant / unit-group, not the power center: when a site co-locates several plants with distinct capacity, COD, owner/developer, fuel, status, or financing (BOT/IPP) arrangements, each one is its own row. Aggregate to center-level in a single row ONLY when detailed evidence is unavailable; in that case mark the row ambiguous and explain the aggregation in Notes. Conversely, do not split a single plant into multiple rows when the only difference is individual generating units sharing one commissioning, owner, and status — record these as Units × MW on one row.
 
-Status definitions:
-- Operational: commissioned or reported in service.
+Status definitions (use these exact terms in the Status column):
+- Operating: commissioned or reported in service.
 - Under construction: physical construction or EPC execution has begun.
-- Approved: formally approved, permitted, or included in a binding plan, but construction is not confirmed.
+- Pre-FID: investment decision pending; project has appeared in formal plans or PDP cycles but construction has not started.
+- Approved: formally approved or permitted but pre-FID and construction not confirmed.
 - Planned: proposed or listed in a planning cycle, but not yet approved or materially committed.
 - Suspended: previously active, approved, or under construction but halted without formal cancellation.
 - Cancelled: formally cancelled, removed, or replaced by another project.

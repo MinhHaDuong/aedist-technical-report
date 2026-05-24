@@ -36,12 +36,15 @@ _ALLOWED_FUELS = {
 
 _ALLOWED_STATUSES = {
     "operating",
+    "operational",  # legacy synonym
     "under construction",
-    "cancelled",
-    "planned",
-    "decommissioned",
     "pre-fid",
+    "approved",
+    "planned",
+    "suspended",
+    "cancelled",
     "commissioning",
+    "decommissioned",
     "retired",
 }
 
