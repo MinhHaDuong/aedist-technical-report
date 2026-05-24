@@ -86,15 +86,17 @@ class CoherenceScores:
 @dataclass
 class ProvenanceScores:
     source_presence: float | None
+    source_presence_annotation: str | None
     high_conf_dual_source: float | None
-    annotation: str | None = None
+    high_conf_dual_source_annotation: str | None
 
 
 @dataclass
 class TemporalityScores:
     asof_presence: float | None
+    asof_presence_annotation: str | None
     plausible_range: float | None
-    annotation: str | None = None
+    plausible_range_annotation: str | None
 
 
 @dataclass
@@ -174,11 +176,12 @@ def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
 
 def score_provenance(rows: list[dict[str, str]]) -> ProvenanceScores:
     if not rows:
-        return ProvenanceScores(None, None, annotation="no_rows")
+        return ProvenanceScores(None, "no_rows", None, "no_rows")
 
     with_sources = 0
     high_rows = 0
     high_rows_with_dual = 0
+    has_confidence_column = any("confidence" in row for row in rows)
 
     for row in rows:
         source_1 = (row.get("source_1") or "").strip()
@@ -192,22 +195,32 @@ def score_provenance(rows: list[dict[str, str]]) -> ProvenanceScores:
             if source_1 and source_2:
                 high_rows_with_dual += 1
 
-    high_dual = _fraction(high_rows_with_dual, high_rows)
-    if high_rows == 0:
-        annotation = "column_missing_or_no_high_confidence"
+    if not has_confidence_column:
+        high_dual = None
+        high_annotation = "column_missing"
+    elif high_rows == 0:
+        high_dual = None
+        high_annotation = "no_high_confidence"
     else:
-        annotation = None
+        high_dual = _fraction(high_rows_with_dual, high_rows)
+        high_annotation = None
 
     return ProvenanceScores(
         source_presence=_fraction(with_sources, len(rows)),
+        source_presence_annotation=None,
         high_conf_dual_source=high_dual,
-        annotation=annotation,
+        high_conf_dual_source_annotation=high_annotation,
     )
 
 
 def score_temporality(rows: list[dict[str, str]]) -> TemporalityScores:
     if not rows:
-        return TemporalityScores(None, None, annotation="no_rows")
+        return TemporalityScores(None, "no_rows", None, "no_rows")
+
+    asof_keys = ("status_as_of", "as_of", "date_as_of", "freshness_date")
+    has_asof_column = any(any(k in row for k in asof_keys) for row in rows)
+    if not has_asof_column:
+        return TemporalityScores(None, "column_missing", None, "column_missing")
 
     with_asof = 0
     plausible = 0
@@ -223,16 +236,18 @@ def score_temporality(rows: list[dict[str, str]]) -> TemporalityScores:
         if 1980 <= year <= 2100:
             plausible += 1
 
-    plausible_rate = _fraction(plausible, with_asof)
     if with_asof == 0:
-        annotation = "column_missing_or_empty"
+        plausible_rate = None
+        plausible_annotation = "column_empty"
     else:
-        annotation = None
+        plausible_rate = _fraction(plausible, with_asof)
+        plausible_annotation = None
 
     return TemporalityScores(
         asof_presence=_fraction(with_asof, len(rows)),
+        asof_presence_annotation=None,
         plausible_range=plausible_rate,
-        annotation=annotation,
+        plausible_range_annotation=plausible_annotation,
     )
 
 
@@ -326,13 +341,15 @@ def main(argv: list[str] | None = None) -> None:
         "coherence_capacity_nonnegative": _fmt(coherence.capacity_nonnegative),
         "coherence_capacity_nonnegative_annotation": coherence.annotation or "",
         "provenance_source_presence": _fmt(provenance.source_presence),
-        "provenance_source_presence_annotation": provenance.annotation or "",
+        "provenance_source_presence_annotation": provenance.source_presence_annotation or "",
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),
-        "provenance_high_conf_dual_source_annotation": provenance.annotation or "",
+        "provenance_high_conf_dual_source_annotation": (
+            provenance.high_conf_dual_source_annotation or ""
+        ),
         "temporality_asof_presence": _fmt(temporality.asof_presence),
-        "temporality_asof_presence_annotation": temporality.annotation or "",
+        "temporality_asof_presence_annotation": temporality.asof_presence_annotation or "",
         "temporality_plausible_range": _fmt(temporality.plausible_range),
-        "temporality_plausible_range_annotation": temporality.annotation or "",
+        "temporality_plausible_range_annotation": temporality.plausible_range_annotation or "",
         "field_completeness_core": _fmt(completeness.core_fields),
         "field_completeness_core_annotation": completeness.annotation or "",
         "field_completeness_capacity": _fmt(completeness.capacity_present),
