@@ -13,16 +13,30 @@ Blocked-by: 0285
 Switch Exp2 consumer scripts from ad-hoc/raw inputs to mart-derived CSV views.
 This consolidates analysis flow while preserving existing outputs.
 
+## Files to change
+
+Tables (switch input from raw JSONs → mart views):
+- `src/aedist/tabulate_exp2_arms_runs.py` → read `tab_exp2_arms_runs_view.csv`
+- `src/aedist/tabulate_exp2_bib_quality.py` → read `tab_exp2_bib_quality_view.csv`
+
+Figures (switch input from intermediate CSVs → mart views):
+- `src/aedist/plot_exp2_arms_comparison.py` → read `tab_exp2_arms_runs_view.csv`
+- `src/aedist/plot_exp2_turn_trajectory.py` → read `exp2_turn_trajectory_view.csv`
+- `src/aedist/plot_exp2_coverage_certainty.py` → read `tab_exp2_arms_runs_view.csv`
+- `src/aedist/plot_quality_spider.py` → read `sota_cross_eval_view.csv`
+
+Makefile:
+- `report/exp2-analysis.mk` — update prerequisites to point at `_view.csv` artifacts
+
 ## Deliverables
 
-1. Update Exp2 table/figure scripts and Makefile deps to read mart views
+1. Update above scripts and Makefile deps to read mart views
 2. Remove direct probe/raw dependencies where replaced by views
-3. Keep output filenames unchanged unless required
+3. Keep output filenames unchanged
 4. Add migration tests asserting script behavior on view inputs
 
 ## Exit criteria
 
-- [ ] Exp2 tables read mart views
-- [ ] Exp2 figures read mart views
+- [ ] All scripts in "Files to change" read mart views
 - [ ] No direct raw-probe read path remains for migrated consumers
 - [ ] `make check-fast` passes

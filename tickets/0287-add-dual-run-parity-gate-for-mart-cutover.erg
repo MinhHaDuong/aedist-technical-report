@@ -13,16 +13,29 @@ Blocked-by: 0286
 Before fully trusting the mart flow, run old and new analysis paths side by
 side and gate cutover on parity thresholds.
 
+## Parity scope
+
+Parity is checked on **CSV intermediates, not rendered PDFs**. PDFs are not
+bit-reproducible (font embedding, timestamps). The parity contract is:
+
+- Tables (`tab_*.csv`): exact column-set and row-count match; numeric fields
+  within ±0.001 relative tolerance (floating-point formatting may differ).
+- Figure inputs (`*_view.csv` consumed by plot scripts): same exact/tolerance
+  policy as tables.
+- Rendered PDFs: excluded from parity — visual inspection only.
+
 ## Deliverables
 
-1. Dual-run target(s) in Makefile for old-path vs mart-path outputs
-2. Parity checker for key tables/figures or their numeric intermediates
-3. Explicit tolerance policy (exact match where expected, tolerance where needed)
-4. CI/local gate target failing on parity regressions
+1. Dual-run Makefile targets: `make exp2-old-path` and `make exp2-mart-path`
+   producing outputs into separate staging directories
+2. Parity checker comparing the CSV intermediates listed above
+3. CI/local gate target `make check-mart-parity` failing on regressions
+4. Documented tolerance policy (in the gate script or its docstring)
 
 ## Exit criteria
 
-- [ ] Dual-run pipeline target exists
-- [ ] Parity check target exists and is documented
+- [ ] `make exp2-old-path` and `make exp2-mart-path` targets exist
+- [ ] `make check-mart-parity` checks CSV intermediates with documented tolerances
 - [ ] Parity checks pass on current baseline
+- [ ] Rendered PDFs are explicitly excluded from automated parity
 - [ ] `make check-fast` passes

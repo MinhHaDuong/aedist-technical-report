@@ -16,7 +16,8 @@ emitting mart-derived CSV views as build artifacts.
 
 ## Deliverables
 
-1. View generator(s) that read `exp2_mart.jsonl` and write CSV views, e.g.:
+1. View generator(s) that read `exp2_mart.jsonl` and write these CSV views
+   (definitive list — 0286 migrates exactly these consumers):
    - `tab_exp2_arms_runs_view.csv`
    - `tab_exp2_bib_quality_view.csv`
    - `exp2_turn_trajectory_view.csv`
