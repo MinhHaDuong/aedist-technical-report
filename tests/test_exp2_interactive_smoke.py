@@ -87,18 +87,15 @@ def test_assemble_meta_prompt_announces_system_prompt_field():
 
 def test_assemble_meta_prompt_without_manifest_has_no_available_evidence_heading():
     prompt = assemble_meta_prompt()
-    assert "The following manifest is active for this run:" not in prompt
+    assert "# Evidence pack" not in prompt
 
 
-def test_assemble_meta_prompt_with_manifest_injects_yaml_before_planning_headroom(tmp_path):
-    manifest = tmp_path / "manifest.yaml"
-    manifest.write_text("chunk_1: test-source\n", encoding="utf-8")
-
-    prompt = assemble_meta_prompt(manifest_path=manifest)
-    assert "## Available evidence pack" in prompt
-    assert "```yaml" in prompt
-    assert "chunk_1: test-source" in prompt
-    assert prompt.find("## Available evidence pack") < prompt.find("## Planning headroom")
+def test_assemble_meta_prompt_with_manifest_injects_yaml_before_planning_headroom():
+    prompt = assemble_meta_prompt(manifest_path=MANIFEST_PATH)
+    assert "# Evidence pack" in prompt
+    assert "1. evn_ar_2010_2011_capacities" in prompt
+    assert "## Chunk 1" not in prompt
+    assert prompt.find("# Evidence pack") < prompt.find("## Planning headroom")
 
 
 def test_extract_phase_a_design_parses_clean_json():
@@ -1631,9 +1628,9 @@ def test_meta_prompt_not_augmented_with_evidence_pack(
     meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
     assert meta_prompt_file.exists()
     meta_prompt_text = meta_prompt_file.read_text(encoding="utf-8")
-    assert "## Available evidence pack" in meta_prompt_text
-    assert "```yaml" in meta_prompt_text
-    assert "sources:" in meta_prompt_text
+    assert "# Evidence pack" in meta_prompt_text
+    assert "## Chunk 1" not in meta_prompt_text
+    assert "source_id:" not in meta_prompt_text
 
 
 def test_meta_prompt_without_manifest_does_not_include_available_evidence_pack_heading(tmp_path):
@@ -1651,10 +1648,7 @@ def test_meta_prompt_without_manifest_does_not_include_available_evidence_pack_h
     )
     meta_prompt_file = tmp_path / "mistral_run01" / "mistral_meta_prompt.txt"
     assert meta_prompt_file.exists()
-    assert (
-        "The following manifest is active for this run:"
-        not in meta_prompt_file.read_text(encoding="utf-8")
-    )
+    assert "# Evidence pack" not in meta_prompt_file.read_text(encoding="utf-8")
 
 
 def test_min_phase_b_max_tokens_flag_present():

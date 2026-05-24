@@ -38,7 +38,7 @@ import yaml
 
 from aedist import adapter_mistral
 from aedist.extract import count_best_table_rows
-from aedist.harness import append_evidence_pack
+from aedist.harness import EVIDENCE_PACK_SECTION_TITLE, append_evidence_pack, assemble_evidence_pack
 from aedist.schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from experiments.sota import dialogue_classifier
 
@@ -115,20 +115,17 @@ def assemble_meta_prompt(
     (Doc 02 of the protocol set). The harness reads it as-is at run time;
     edits to Doc 02 propagate without code change.
 
-    When ``manifest_path`` is provided, inject a short "available evidence pack"
-    section after the budget announcement so Phase A can design with explicit
-    knowledge of available evidence artifacts.
+    When ``manifest_path`` is provided, inject an evidence-pack summary after
+    the budget announcement so Phase A can design with explicit knowledge of
+    available evidence artifacts without revealing chunk bodies.
     """
     prompt = metaprompt_path.read_text(encoding="utf-8")
     if manifest_path is None:
         return prompt
 
-    manifest_text = Path(manifest_path).read_text(encoding="utf-8").strip()
-    evidence_section = (
-        "\n\n## Available evidence pack\n\n"
-        "The following manifest is active for this run:\n\n"
-        f"```yaml\n{manifest_text}\n```\n"
-    )
+    evidence_pack_text = assemble_evidence_pack(Path(manifest_path))
+    summary, _, _ = evidence_pack_text.partition("\n\n## Chunk 1\n")
+    evidence_section = f"\n\n{EVIDENCE_PACK_SECTION_TITLE}\n\n{summary.strip()}\n"
     planning_marker = "\n## Planning headroom\n"
     if planning_marker in prompt:
         return prompt.replace(planning_marker, evidence_section + planning_marker, 1)
