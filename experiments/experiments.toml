@@ -1078,3 +1078,20 @@ budget_usd = 1
 max_tokens = 4096
 system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
 output = "outputs/smoke/claude_cli"
+
+# Exp 1 batch 2 — rerun with protocol_07_naive_prompt.md (GEM vocab, unified schema).
+# 12 models: Anthropic×3, OpenAI×3, Qwen×4, DeepSeek×2. No Mistral.
+# Parallelize via: manager generate --sweep sweep_exp1_batch2 && N × worker drain
+[sweeps.sweep_exp1_batch2]
+mode = "single"
+prompt = "sota/protocol_07_naive_prompt.md"
+models = "models.yaml"
+model_set = "modelset_exp1_batch2"
+repeat = 5
+temperature = 0.0
+seed = 42
+budget_usd = 30
+max_tokens = 65536
+web_search = false
+system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
+output = "outputs/exp1_batch2"
