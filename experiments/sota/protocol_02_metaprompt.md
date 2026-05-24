@@ -128,6 +128,3 @@ Record nameplate electrical capacity in MWe when available. If sources do not di
 
 Narrative discipline:
 Prioritise the structured table. Provide full per-plant narratives only for major, disputed, ambiguous, or historically important assets. For straightforward operational assets, a compact Notes entry is sufficient.
-
-<!-- Runtime note: the harness may inject an evidence-pack section here when
---evidence-pack-manifest is provided. Baseline runs keep this absent. -->
