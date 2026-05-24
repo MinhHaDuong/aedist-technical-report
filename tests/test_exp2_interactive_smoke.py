@@ -1621,7 +1621,7 @@ def test_min_phase_b_max_tokens_flag_present():
     """--min-phase-b-max-tokens must be wired in argparse with a default of 16000."""
     src = open("experiments/sota/exp2_interactive_smoke.py", encoding="utf-8").read()
     assert "--min-phase-b-max-tokens" in src
-    assert "default=16000" in src
+    assert "default=32000" in src
 
 
 def test_min_phase_b_max_tokens_floor_applied():

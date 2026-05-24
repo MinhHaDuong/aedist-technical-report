@@ -1359,7 +1359,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--min-phase-b-max-tokens",
         type=int,
-        default=16000,
+        default=32000,
         help="Floor applied to Phase A's designed max_tokens for Phase B turns. "
         "Prevents low Phase A estimates from truncating multi-turn outputs.",
     )
