@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Investigate is_terminal_reply=false on both arm 4 Qwen 3.7 turns
+
+Closed: 2026-05-24
+
+--- log ---
+2026-05-24T08:50Z haduong created
+2026-05-24T10:30Z HDMX-coding-agent closed non-finding
+
+  is_terminal_reply=false: correct — loop exits via last_slot=="verify" (line 1112
+  of exp2_interactive_smoke.py), not "terminal". Terminal slot only fires under
+  budget pressure. All 4 agents show the same pattern.
+
+  n_plants/f1/tp/fp/fn all None: expected — runner writes minimal RunRecord files;
+  evaluation against reference ground truth is a separate step (make
+  evaluate-all-records) not yet run on any SOTA arm. measurements.jsonl has 0
+  Exp2/3 entries. Ticket 0270 will be first code to compute accuracy on SOTA arms.
+
+  Qwen 2 turns: correct — report produced on designed_prompt turn; verify fired
+  immediately and loop exited. No third turn queued.
+
+  Side finding: Anthropic turn_01 finish_reason=max_tokens (Phase A designed 16k
+  with thinking=true; combined thinking+output hit cap on planning turn). Recovery
+  worked — turn_02 produced report, turn_03 verified. Non-blocking for N=2.
+
+--- body ---
+## Context
+
+Arm 4 (multiturn + evidence) Qwen 3.7 Max N=1 gate run produced 2 turns, both
+classified as `report`, 26 inventory rows, $0.34, pass. But both cost.json files
+report `is_terminal_reply: false`:
+
+```
+qwen_turn_01.cost.json: is_terminal_reply: false, user_slot: designed_prompt
+qwen_turn_02.cost.json: is_terminal_reply: false, user_slot: verify
+```
+
+Both turns also show `finish_reason: stop` (not truncated) and `result_summary`
+with all metrics `None` (n_plants, tp, fp, fn, f1 all null despite status=ok).
+
+Evidence: `experiments/outputs/sota_exp3_arm4_batch1/qwen_run01/`
+
+## Symptoms
+
+1. `is_terminal_reply` is never set to `true` — the state machine may have
+   exhausted turns or hit a budget condition without marking the final turn as
+   terminal.
+2. All structured metrics are `None` despite the arm 4 summary reporting 26 rows
+   and `pass`. The 26-row count comes from somewhere but does not flow into the
+   record schema.
+3. Only 2 turns ran. Is that expected for this agent/prompt? Or did the loop exit
+   early?
+
+## Questions to answer
+
+1. What sets `is_terminal_reply: true` in `exp2_interactive_smoke.py`? Under what
+   conditions is it left `false`?
+2. Did the state machine intend a third turn that never ran? Check the conversation
+   JSON (`qwen_conversation.json`, 200K) for the final assistant message and whether
+   a third user slot was queued.
+3. Why are `n_plants / f1 / tp / fp / fn` all `None` in the record while the
+   summary shows 26 rows? Trace where the 26-row count is computed vs where
+   `result_summary` is populated.
+
+## Exit criteria
+
+- [ ] Root cause of `is_terminal_reply` never being set to `true` is identified
+      and either confirmed-correct (both turns are legitimately non-terminal and
+      the loop exited via another condition) or a bug is filed / fixed.
+- [ ] The `None` metrics discrepancy is explained: either the parser did not run,
+      failed silently, or the 26-row count bypasses the record schema.
+- [ ] If a bug: fix lands in a PR against `fix/arm3-tokens-qwen-model` or a
+      follow-on branch; the N=1 gate for Qwen re-runs clean before N=2.
+- [ ] If expected behaviour: add a comment in the state machine code explaining
+      why terminal is never set, and close this ticket as a non-finding.

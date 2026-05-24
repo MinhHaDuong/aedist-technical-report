@@ -1,0 +1,53 @@
+{
+  "run_id": "8e7d82dea3d3",
+  "timestamp": "2026-05-23T21:47:57.350609Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 2314,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "## PHASE B TASK: VIETNAM THERMAL GENERATION INVENTORY (> 30 MWe)\n\n### SEARCH STRATEGY\n1. **Discovery Phase (Turns 1-3):**\n   - Use web_search to identify admissible primary/secondary sources (governme",
+      "conversation_id": "conv_019e56ce743f718181f7473bf47d2070",
+      "agent_id": "ag_019e56ce73167534bfac8c29340906ca"
+    }
+  },
+  "resource_use": {
+    "wall_s": 46.484,
+    "cost_usd": 0.042009500000000005,
+    "tokens_in": 77077,
+    "tokens_out": 2314,
+    "cost_breakdown": {
+      "input": 0.0385385,
+      "output": 0.003471
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}
