@@ -2,11 +2,11 @@
 Title: Lock mechanical scoring contract — schema, nullability, and annotation policy
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0272
 
 --- log ---
 2026-05-24T11:22Z HDMX-coding-agent created
 2026-05-24T12:05Z HDMX-coding-agent scope lock: contract v1 is defined for Exp2-first scoring; Exp1 nullability is specified as future-compatible annotation behavior.
+2026-05-24T13:42Z HDMX-coding-agent dependency cleanup: 0272 is archived as completed verification work, so this ticket now depends on the documented artifact rather than an open blocker.
 
 --- body ---
 ## Context

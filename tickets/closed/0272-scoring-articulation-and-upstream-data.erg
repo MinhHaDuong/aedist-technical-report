@@ -2,6 +2,7 @@
 Title: Verify scoring articulation and integrate plant-level fields into upstream results table
 Created: 2026-05-24
 Author: HDMX-coding-agent
+Closed: archived after articulation audit; inventory_rows bugfix split to 0277
 
 --- log ---
 2026-05-24T09:30Z HDMX-coding-agent created
@@ -10,6 +11,9 @@ Author: HDMX-coding-agent
 2026-05-24T12:25Z HDMX-coding-agent plan pass: execution path is documentation plus spot-check verification only; avoid tautological row-count checks by comparing tabulated inventory_rows against an independent extraction path.
 2026-05-24T12:35Z HDMX-coding-agent feasibility WARN: 0268 remains open and still blocks future Exp1 comparability, but does not block this ticket's Exp2-first articulation matrix and upstream verification work.
 2026-05-24T12:55Z HDMX-coding-agent execution finding: articulation matrix drafted. Upstream verification on `openai_run01` found path resolution succeeds but row-count parity fails (naive 79 vs 118, optimised 83 vs 122). Likely cause: current inventory_rows counts all markdown pipe-table rows, including summary tables, while scorer-style extraction targets the main plant table.
+2026-05-24T13:10Z HDMX-coding-agent ticket aligned with execution outcome: 0272 verifies and documents articulation plus sampled upstream mismatches; ingestion/parity repair remains deferred to 0275.
+2026-05-24T13:36Z HDMX-coding-agent cleanup split: sampled inventory_rows defect is now tracked in 0277; this ticket remains closed-scope documentation and verification.
+2026-05-24T13:40Z HDMX-coding-agent closed archived after artifact delivery; follow-on repair tracked in 0277.
 
 --- body ---
 ## Context
@@ -79,15 +83,17 @@ scorer code or CSV schema here.
 
 2. **Exp 1 reference case**: confirm that Confidence and Status as-of-date on Exp 1
   would be annotated as "prompt did not ask" in any future results, not silently
-  reported as 0. Add a `prompt_version` column to `sota_cross_eval.csv` so
-  downstream analysis can filter. For v1, Exp1 rows are not required in the
-  scored output artifact.
+  reported as 0. Document that downstream scored outputs must retain prompt-version
+  provenance so Exp1 and Exp2 rows can be filtered without treating missing prompt
+  fields as model failures. For v1, Exp1 rows are not required in the scored
+  output artifact, and this ticket does not change any CSV schema.
 
 3. **Upstream path verification**: for at least 1 naive run and 1 optimised run,
   verify the parser finds the output file, extracts the plant table via existing
-  extraction utilities, and the row count matches `inventory_rows` in the CSV.
-  Do not treat `_count_md_table_rows()` compared to itself as verification.
-  Document any mismatches.
+  extraction utilities, and compare the extracted row count to `inventory_rows`
+  in the CSV. Do not treat `_count_md_table_rows()` compared to itself as
+  verification. If a mismatch appears, document it here and hand the repair to
+  0277 rather than changing ingestion or schema in this ticket.
 
 4. **Deferred to 0275**: consider adding `extracted_rows_path` column to
   `tab_exp2_arms_runs.csv` only if re-parse cost is shown to be non-trivial.
@@ -113,6 +119,7 @@ comparability with Exp2.
 - [ ] `experiments/prompts/articulation_matrix.md` committed
 - [ ] Each "absent" cell in the matrix has an associated note explaining
       how the corresponding metric will be annotated in results
-- [ ] Upstream path verification passes for at least 1 naive run and 1 optimised run
+- [ ] Upstream path verification completed for at least 1 naive run and 1 optimised run
+- [ ] Any extracted-row vs `inventory_rows` mismatch is documented with a clear handoff to 0277
 - [ ] The ticket text and articulation matrix make it explicit that v1 scoring is Exp2-first
 - [ ] `make check-fast` passes

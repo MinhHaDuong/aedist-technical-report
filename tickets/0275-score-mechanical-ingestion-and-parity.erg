@@ -3,15 +3,21 @@ Title: Mechanical scoring ingestion — parser reuse, run-path resolution, and r
 Created: 2026-05-24
 Author: HDMX-coding-agent
 Blocked-by: 0274
+Blocked-by: 0277
 
 --- log ---
 2026-05-24T11:22Z HDMX-coding-agent created
+2026-05-24T13:20Z HDMX-coding-agent updated from 0272 execution finding: sampled parity mismatch confirmed on openai_run01 (naive 79 vs 118, optimised 83 vs 122). Likely cause is inventory_rows counting all markdown pipe-table rows including summary tables while scorer extraction targets the main plant table.
+2026-05-24T13:36Z HDMX-coding-agent narrowed scope: inventory_rows producer bug is split into 0277. This ticket stays ingestion/parity only and is blocked until upstream row-count semantics are fixed.
 
 --- body ---
 ## Context
 
 Scoring quality metrics is only meaningful if extracted rows and run metadata are
 stable and reproducible. This ticket isolates ingestion correctness from scoring.
+
+Upstream row-count semantics are handled by 0277. This ticket starts only once
+`inventory_rows` has a stable producer-side meaning or an explicit replacement.
 
 ## Actions
 
@@ -21,7 +27,8 @@ stable and reproducible. This ticket isolates ingestion correctness from scoring
    - normalizes extracted row dicts into one canonical header map used by scorer
 
 2. Add parity checks against `tab_exp2_arms_runs.csv`:
-   - for sample runs in each arm, parsed row count equals inventory_rows when comparable
+   - for sample runs in each arm, parsed row count equals the canonical ingestion
+       row-count target established upstream by 0277
    - mismatch is surfaced as explicit diagnostic (not silent fallback)
 
 3. Add tests `tests/test_score_ingest.py`:

@@ -69,6 +69,7 @@ Implication for the 0270 family:
 - Path resolution is fine for the sampled runs.
 - Plant-table row parity does **not** currently hold between scorer-style extraction
   and `inventory_rows`.
-- Ticket 0275 must decide whether to persist a canonical extracted-table path/row
-  count or to revise the upstream row-count logic so it targets the plant table
-  rather than all markdown tables.
+- Ticket 0277 owns the upstream bugfix: revise row-count logic so it targets the
+  plant table rather than all markdown tables.
+- Ticket 0275 then consumes that corrected upstream meaning for ingestion parity
+  and parser reuse work.
