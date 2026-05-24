@@ -26,7 +26,7 @@ $(OUT)/.done: $(PROMPT) $(MODELS)
 	    --output $(OUT) \
 	    --no-web-search \
 	    --repeat 5 \
-	    --max-tokens 32768 \
+	    --max-tokens 65536 \
 	    --system-instruction "$(NO_WEB_SYS)"
 	touch $@
 
