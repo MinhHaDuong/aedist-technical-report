@@ -1,16 +1,19 @@
 {
-  "run_id": "fb8c573740b3",
-  "timestamp": "2026-04-10T15:45:06.462824Z",
+  "run_id": "700a61936051",
+  "timestamp": "2026-05-24T09:02:18.474224Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
-    "prompt_version": "complete",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "Anthropic",
-      "context_window": 1000000
+      "context_window": 1000000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +33,6 @@
     "fuel_accuracy": 0.0164,
     "status_accuracy": 0.4426,
     "province_accuracy": 0.7377
-  }
+  },
+  "finish_reason": "stop"
 }

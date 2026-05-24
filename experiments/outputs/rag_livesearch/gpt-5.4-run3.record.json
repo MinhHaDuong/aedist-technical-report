@@ -1,16 +1,17 @@
 {
-  "run_id": "8aa8c990ba3b",
-  "timestamp": "2026-04-10T15:45:20.816629Z",
-  "method": "rag_livesearch",
+  "run_id": "d18bc94c6c35",
+  "timestamp": "2026-05-24T09:02:47.067476Z",
+  "method": "rag",
   "method_params": {
     "model": "openai/gpt-5.4",
-    "prompt_version": "extract",
+    "prompt_version": "rag_livesearch",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "OpenAI",
-      "context_window": 1050000
+      "context_window": 1050000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "f1": 0.3861,
     "fuel_accuracy": 0.3077,
     "status_accuracy": 0.1795
-  }
+  },
+  "finish_reason": "stop"
 }

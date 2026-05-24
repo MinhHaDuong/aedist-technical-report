@@ -1,16 +1,17 @@
 {
-  "run_id": "8dd824f93bae",
-  "timestamp": "2026-04-10T15:45:20.716756Z",
-  "method": "rag_livesearch",
+  "run_id": "b734c336f5f2",
+  "timestamp": "2026-05-24T09:02:46.480952Z",
+  "method": "rag",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "extract",
+    "prompt_version": "rag_livesearch",
     "extra": {
       "size_class": "edge",
       "country": "US",
       "architecture": "dense",
       "provider": "Google",
-      "context_window": 1048576
+      "context_window": 1048576,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.1897,
     "status_accuracy": 0.0862,
     "province_accuracy": 0.6034
-  }
+  },
+  "finish_reason": "stop"
 }

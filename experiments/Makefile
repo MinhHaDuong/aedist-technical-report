@@ -183,6 +183,7 @@ evaluate-all-records:
 	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
 	for f in outputs/*/*-run*.json outputs/*/*/*-run*.json derived/*/*-run*.json; do \
+	    [[ "$$f" == *.record.json ]] && continue; \
 	    [ -f "$${f%.json}.csv" ] && continue; \
 	    rec="$${f%.json}.record.json"; \
 	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \

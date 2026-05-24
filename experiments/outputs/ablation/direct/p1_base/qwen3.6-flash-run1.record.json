@@ -1,6 +1,6 @@
 {
-  "run_id": "028aa18fbeee",
-  "timestamp": "2026-05-20T22:40:59.726849Z",
+  "run_id": "8d4fc72a7e45",
+  "timestamp": "2026-05-24T09:02:04.900019Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.6-flash",
@@ -13,7 +13,8 @@
       "architecture": "unknown",
       "provider": "unknown",
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -32,5 +33,6 @@
     "fuel_accuracy": 0.3667,
     "status_accuracy": 0.6333,
     "province_accuracy": 0.5333
-  }
+  },
+  "finish_reason": "stop"
 }

@@ -1,16 +1,17 @@
 {
-  "run_id": "dd6f661344f3",
-  "timestamp": "2026-04-10T15:44:57.562103Z",
+  "run_id": "7679d7fddaf6",
+  "timestamp": "2026-05-24T09:02:24.354369Z",
   "method": "direct",
   "method_params": {
     "model": "moonshotai/kimi-k2.5",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "large",
       "country": "CN",
       "architecture": "moe",
       "provider": "Moonshot AI",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.7447,
     "status_accuracy": 0.766,
     "province_accuracy": 0.8723
-  }
+  },
+  "finish_reason": "stop"
 }

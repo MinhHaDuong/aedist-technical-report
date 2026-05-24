@@ -1442,6 +1442,9 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     summary_path = _write_summary(args.output_dir, per_agent)
+    (args.output_dir / "summary.json").write_text(
+        json.dumps(per_agent, indent=2), encoding="utf-8"
+    )
 
     total_cost_usd = sum(float(item.get("total_cost_usd", 0.0)) for item in per_agent)
     log.info("Phase B-0 summary written -> %s", summary_path)

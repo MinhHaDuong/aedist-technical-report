@@ -1,6 +1,6 @@
 {
-  "run_id": "2f4607a51fbd",
-  "timestamp": "2026-05-20T21:25:25.477823Z",
+  "run_id": "388592aa8e8b",
+  "timestamp": "2026-05-24T09:01:59.854907Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-oss-120b",
@@ -15,7 +15,8 @@
       "context_window": 131072,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
       "reasoning_effort": "minimal",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -35,5 +36,6 @@
     "fuel_accuracy": 0.3,
     "status_accuracy": 0.45,
     "province_accuracy": 0.4
-  }
+  },
+  "finish_reason": "stop"
 }

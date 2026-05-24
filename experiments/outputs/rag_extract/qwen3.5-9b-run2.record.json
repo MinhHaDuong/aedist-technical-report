@@ -1,16 +1,17 @@
 {
-  "run_id": "f98a046946fe",
-  "timestamp": "2026-04-13T17:41:54.732755Z",
+  "run_id": "217d15e92533",
+  "timestamp": "2026-05-24T09:02:51.993542Z",
   "method": "rag",
   "method_params": {
     "model": "qwen3.5:9b",
-    "prompt_version": "rag",
+    "prompt_version": "rag_extract",
     "extra": {
       "size_class": "small",
       "country": "CN",
       "architecture": "moe",
       "provider": "Ollama/Padme",
-      "context_window": 131072
+      "context_window": 131072,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.3436,
     "status_accuracy": 0.2577,
     "province_accuracy": 0.7117
-  }
+  },
+  "finish_reason": "stop"
 }

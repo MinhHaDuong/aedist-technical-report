@@ -45,6 +45,16 @@ def test_extract_text_openai():
     assert _extract_text(d) == "OpenAI output"
 
 
+def test_extract_text_openai_null_content():
+    d = {
+        "output": [
+            {"content": None},
+            {"content": [{"type": "output_text", "text": "Recovered output"}]},
+        ]
+    }
+    assert _extract_text(d) == "Recovered output"
+
+
 def test_extract_text_mistral():
     d = {
         "outputs": [

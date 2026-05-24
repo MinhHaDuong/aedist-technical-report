@@ -1,6 +1,6 @@
 {
-  "run_id": "89f57107bfc6",
-  "timestamp": "2026-05-20T21:24:56.245811Z",
+  "run_id": "7c9e6e4892f1",
+  "timestamp": "2026-05-24T09:01:56.198263Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
@@ -14,7 +14,8 @@
       "provider": "Anthropic",
       "context_window": 1000000,
       "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
-      "seed": 42
+      "seed": 42,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -34,5 +35,6 @@
     "fuel_accuracy": 0.825,
     "status_accuracy": 0.725,
     "province_accuracy": 0.85
-  }
+  },
+  "finish_reason": "stop"
 }

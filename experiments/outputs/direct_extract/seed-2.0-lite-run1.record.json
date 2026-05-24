@@ -1,16 +1,17 @@
 {
-  "run_id": "c8e29505469d",
-  "timestamp": "2026-04-10T15:45:02.652793Z",
+  "run_id": "3ba755245bb4",
+  "timestamp": "2026-05-24T09:02:31.093625Z",
   "method": "direct",
   "method_params": {
     "model": "bytedance-seed/seed-2.0-lite",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "medium",
       "country": "CN",
       "architecture": "dense",
       "provider": "ByteDance",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.6667,
     "status_accuracy": 0.7222,
     "province_accuracy": 0.8889
-  }
+  },
+  "finish_reason": "stop"
 }

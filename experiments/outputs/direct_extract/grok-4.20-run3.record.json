@@ -1,16 +1,17 @@
 {
-  "run_id": "c2a04a7aa6ac",
-  "timestamp": "2026-04-10T15:44:54.915011Z",
+  "run_id": "e654c3141078",
+  "timestamp": "2026-05-24T09:02:22.469815Z",
   "method": "direct",
   "method_params": {
     "model": "x-ai/grok-4.20",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "xAI",
-      "context_window": 2000000
+      "context_window": 2000000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -27,5 +28,6 @@
     "fp": 0,
     "fn": 163,
     "f1": 0.0
-  }
+  },
+  "finish_reason": "stop"
 }

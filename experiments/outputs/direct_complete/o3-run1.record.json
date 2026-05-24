@@ -1,16 +1,19 @@
 {
-  "run_id": "ec02a98722e8",
-  "timestamp": "2026-04-10T15:45:07.355564Z",
+  "run_id": "9762c0c94de0",
+  "timestamp": "2026-05-24T09:02:19.201386Z",
   "method": "direct",
   "method_params": {
     "model": "openai/o3",
-    "prompt_version": "complete",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
     "extra": {
       "size_class": "frontier",
       "country": "US",
       "architecture": "dense",
       "provider": "OpenAI",
-      "context_window": 200000
+      "context_window": 200000,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +33,6 @@
     "fuel_accuracy": 0.7581,
     "status_accuracy": 0.5484,
     "province_accuracy": 0.7581
-  }
+  },
+  "finish_reason": "stop"
 }

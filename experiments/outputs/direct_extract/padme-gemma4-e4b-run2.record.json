@@ -1,16 +1,17 @@
 {
-  "run_id": "f5b2063d3843",
-  "timestamp": "2026-04-10T15:45:00.876086Z",
+  "run_id": "daecdd378e57",
+  "timestamp": "2026-05-24T09:02:28.610406Z",
   "method": "direct",
   "method_params": {
     "model": "gemma4:e4b",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "edge",
       "country": "US",
       "architecture": "dense",
       "provider": "Ollama/Padme",
-      "context_window": 131072
+      "context_window": 131072,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -29,5 +30,6 @@
     "fuel_accuracy": 0.3333,
     "status_accuracy": 0.4444,
     "province_accuracy": 0.1111
-  }
+  },
+  "finish_reason": "stop"
 }

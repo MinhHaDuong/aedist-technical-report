@@ -1,16 +1,19 @@
 {
-  "run_id": "887744ea7f94",
-  "timestamp": "2026-04-10T15:45:05.476824Z",
+  "run_id": "2d4ae6848a08",
+  "timestamp": "2026-05-24T09:02:17.620799Z",
   "method": "direct",
   "method_params": {
     "model": "minimax/minimax-m2.7",
-    "prompt_version": "complete",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
     "extra": {
       "size_class": "large",
       "country": "CN",
       "architecture": "dense",
       "provider": "MiniMax",
-      "context_window": 204800
+      "context_window": 204800,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +33,6 @@
     "fuel_accuracy": 0.7727,
     "status_accuracy": 0.4091,
     "province_accuracy": 0.5455
-  }
+  },
+  "finish_reason": "stop"
 }

@@ -1,16 +1,17 @@
 {
-  "run_id": "0835be44dd9f",
-  "timestamp": "2026-04-10T15:44:58.658689Z",
+  "run_id": "379e9438e332",
+  "timestamp": "2026-05-24T09:02:25.059547Z",
   "method": "direct",
   "method_params": {
     "model": "xiaomi/mimo-v2-flash",
-    "prompt_version": "census",
+    "prompt_version": "direct_extract",
     "extra": {
       "size_class": "small",
       "country": "CN",
       "architecture": "dense",
       "provider": "Xiaomi",
-      "context_window": 262144
+      "context_window": 262144,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.6735,
     "status_accuracy": 0.5306,
     "province_accuracy": 0.7143
-  }
+  },
+  "finish_reason": "stop"
 }

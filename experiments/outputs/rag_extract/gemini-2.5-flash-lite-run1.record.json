@@ -1,16 +1,17 @@
 {
-  "run_id": "4a8ae2958471",
-  "timestamp": "2026-04-13T17:41:56.389663Z",
+  "run_id": "22ad4ec8ef59",
+  "timestamp": "2026-05-24T09:02:50.861912Z",
   "method": "rag",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "rag",
+    "prompt_version": "rag_extract",
     "extra": {
       "size_class": "edge",
       "country": "US",
       "architecture": "dense",
       "provider": "Google",
-      "context_window": 1048576
+      "context_window": 1048576,
+      "finish_reason": "stop"
     }
   },
   "resource_use": {
@@ -30,5 +31,6 @@
     "fuel_accuracy": 0.0368,
     "status_accuracy": 0.3313,
     "province_accuracy": 0.6687
-  }
+  },
+  "finish_reason": "stop"
 }

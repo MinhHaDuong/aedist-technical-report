@@ -1,10 +1,10 @@
 {
-  "run_id": "69b5eddb9859",
-  "timestamp": "2026-04-10T15:45:12.128821Z",
+  "run_id": "a386edcaf1f9",
+  "timestamp": "2026-05-24T09:02:35.184266Z",
   "method": "direct+multiturn",
   "method_params": {
     "model": "google/gemini-2.5-flash-lite",
-    "prompt_version": "followups",
+    "prompt_version": "direct_multiturn",
     "extra": {
       "size_class": "edge",
       "country": "US",
