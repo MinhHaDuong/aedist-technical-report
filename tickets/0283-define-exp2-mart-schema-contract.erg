@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Define Exp2 mart schema contract (Pydantic + docs)
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T14:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Before migration, lock a typed contract for a canonical Exp2 mart. The mart
+must carry stable IDs, metric fields, nullability annotations, and immutable
+artifact pointers. It must not store verbatim chat text.
+
+## Deliverables
+
+1. New schema module (Pydantic) for mart records, for example:
+   - run-level records
+   - turn/probe-level records
+   - mechanical score records
+2. Explicit schema versioning field(s)
+3. Pointer fields to immutable artifacts (`result_file`, `parsed_table_file`,
+   `probe_file`) plus hash fields
+4. Contract doc describing required/optional fields and annotation semantics
+
+## Non-goals
+
+- No consumer migration
+- No Makefile cutover
+
+## Exit criteria
+
+- [ ] Schema module committed with validation tests
+- [ ] Contract doc committed
+- [ ] Schema explicitly bans verbatim chat payload fields
+- [ ] `make check-fast` passes

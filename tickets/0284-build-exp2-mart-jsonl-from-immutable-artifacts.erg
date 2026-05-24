@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Build exp2_mart.jsonl from immutable artifacts
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0283
+
+--- log ---
+2026-05-24T14:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Implement a mart builder that reads immutable Exp2 outputs and emits one
+canonical JSONL artifact validated against the schema from 0283.
+
+## Deliverables
+
+1. Builder script/module producing `report/inputs/generated/exp2_mart.jsonl`
+2. Record-level hash and pointer enrichment
+3. Validation failure on schema mismatch
+4. Tests with fixture outputs proving no verbatim chat payload appears in mart
+
+## Non-goals
+
+- No figure/table migration yet
+
+## Exit criteria
+
+- [ ] Builder writes validated mart JSONL
+- [ ] Mart includes artifact pointers and hashes
+- [ ] Negative test confirms verbatim chat fields are rejected/absent
+- [ ] `make check-fast` passes
