@@ -7,14 +7,14 @@ and temperature=0 for deterministic, exhaustive output.
 Usage:
     uv run python -m aedist.query_direct \
         --prompt sota/protocol_07_naive_prompt.md \
-        --models models_frontier.yaml \
+        --models-registry models_frontier.yaml \
         --output outputs/direct_complete/ \
         --budget-usd 20
 
     # Single model:
     uv run python -m aedist.query_direct \
         --prompt sota/protocol_07_naive_prompt.md \
-        --models models_frontier.yaml \
+        --models-registry models_frontier.yaml \
         --output outputs/direct_complete/ \
         --model anthropic/claude-opus-4.6
 """
@@ -74,7 +74,7 @@ def main():
         default="experiments/prompts/modules",
         help="Directory containing prompt module text files",
     )
-    parser.add_argument("--models", required=True, help="Path to models YAML")
+    parser.add_argument("--models-registry", required=True, help="Path to models YAML")
     parser.add_argument("--output", required=True, help="Output directory")
     parser.add_argument("--model", help="Query only this model (full ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Runs per model")
@@ -138,7 +138,7 @@ def main():
         sweep = Path(args.prompt).stem
         if sweep.startswith("prompt_"):
             sweep = sweep[len("prompt_") :]
-    models = load_models(args.models)
+    models = load_models(args.models_registry)
     output_dir = Path(args.output)
 
     system_instruction = args.system_instruction
@@ -166,7 +166,7 @@ def main():
     if args.model:
         models = [m for m in models if m["name"] == args.model]
         if not models:
-            raise SystemExit(f"Model {args.model} not found in {args.models}")
+            raise SystemExit(f"Model {args.model} not found in {args.models_registry}")
 
     # Estimate cost ceiling
     prompt_tokens_est = len(prompt) // 4

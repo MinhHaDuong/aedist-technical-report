@@ -104,7 +104,7 @@ def run_web_searches(
 def main():
     parser = argparse.ArgumentParser(description="Web-augmented LLM queries via OpenRouter")
     parser.add_argument("--prompt", required=True, help="Path to prompt text file")
-    parser.add_argument("--models", required=True, help="Path to models.yaml")
+    parser.add_argument("--models-registry", required=True, help="Path to models.yaml")
     parser.add_argument("--output", required=True, help="Output directory for results")
     parser.add_argument("--model", help="Query only this model (OpenRouter ID)")
     parser.add_argument("--repeat", type=int, default=1, help="Number of runs per model")
@@ -135,7 +135,7 @@ def main():
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     prompt = Path(args.prompt).read_text().strip()
-    models = load_models(args.models)
+    models = load_models(args.models_registry)
     output_dir = Path(args.output)
 
     if args.model_set:
@@ -146,7 +146,7 @@ def main():
     if args.model:
         models = [m for m in models if m["name"] == args.model]
         if not models:
-            raise SystemExit(f"Model {args.model} not found in {args.models}")
+            raise SystemExit(f"Model {args.model} not found in {args.models_registry}")
 
     tavily_key = os.environ.get("TAVILY_API_KEY")
     if not tavily_key:

@@ -1,0 +1,23 @@
+%erg 0.1
+Title: experiment1.mk and --models-registry rename
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`query_direct.py` (and all other query scripts) used `--models` to accept
+the model registry path, which was ambiguous. Renamed to `--models-registry`
+across all six query scripts and their tests.
+
+`experiment1.mk` did not exist. Exp 1 was run by hand via CLI. Now that
+Exp 1 and Exp 2 Arm 1 share `protocol_07_naive_prompt.md`, a Makefile
+target documents and reproduces the run.
+
+## Exit criteria
+- [x] `--models-registry` accepted; `--models` removed from all six query scripts
+- [x] All tests pass (`make check-fast`)
+- [x] `experiments/experiment1.mk` exists with correct target
