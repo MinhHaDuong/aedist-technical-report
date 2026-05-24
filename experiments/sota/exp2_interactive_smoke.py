@@ -106,14 +106,33 @@ def extract_quality_bar(manuscript_text: str) -> str:
     return manuscript_text[start:end].strip()
 
 
-def assemble_meta_prompt(metaprompt_path: Path = METAPROMPT_PATH) -> str:
+def assemble_meta_prompt(
+    metaprompt_path: Path = METAPROMPT_PATH, manifest_path: Path | str | None = None
+) -> str:
     """Return the Phase A meta-prompt verbatim from disk.
 
     The canonical text lives at ``experiments/sota/protocol_02_metaprompt.md``
     (Doc 02 of the protocol set). The harness reads it as-is at run time;
     edits to Doc 02 propagate without code change.
+
+    When ``manifest_path`` is provided, inject a short "available evidence pack"
+    section after the budget announcement so Phase A can design with explicit
+    knowledge of available evidence artifacts.
     """
-    return metaprompt_path.read_text(encoding="utf-8")
+    prompt = metaprompt_path.read_text(encoding="utf-8")
+    if manifest_path is None:
+        return prompt
+
+    manifest_text = Path(manifest_path).read_text(encoding="utf-8").strip()
+    evidence_section = (
+        "\n\n## Available evidence pack\n\n"
+        "The following manifest is active for this run:\n\n"
+        f"```yaml\n{manifest_text}\n```\n"
+    )
+    planning_marker = "\n## Planning headroom\n"
+    if planning_marker in prompt:
+        return prompt.replace(planning_marker, evidence_section + planning_marker, 1)
+    return prompt + evidence_section
 
 
 def load_model_meta(agent: str) -> dict:
@@ -1205,7 +1224,7 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
     agent_output_dir = args.output_dir / run_tag
     agent_output_dir.mkdir(parents=True, exist_ok=True)
 
-    meta_prompt = assemble_meta_prompt()
+    meta_prompt = assemble_meta_prompt(manifest_path=args.evidence_pack_manifest)
     meta_prompt_path = agent_output_dir / f"{agent}_meta_prompt.txt"
     meta_prompt_path.write_text(meta_prompt, encoding="utf-8")
     log.info(
@@ -1388,8 +1407,8 @@ def main(argv: list[str] | None = None) -> int:
         type=str,
         default=None,
         metavar="YAML",
-        help="Path to an evidence-pack manifest YAML (Arm 4). Injected into the Phase B "
-        "prompt only. Omit for Arm 2 baseline.",
+        help="Path to an evidence-pack manifest YAML (Arm 4). Injected into the Phase A "
+        "meta-prompt and appended to the Phase B prompt. Omit for Arm 2 baseline.",
     )
     args = p.parse_args(argv)
 
