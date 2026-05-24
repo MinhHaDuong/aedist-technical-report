@@ -6,12 +6,17 @@ Blocked-by: 0275
 
 --- log ---
 2026-05-24T11:22Z HDMX-coding-agent created
+2026-05-24T12:05Z HDMX-coding-agent scope lock: scorer implementation v1 targets Exp2 arms only; Exp1 support is deferred until prompt articulation gaps are closed or intentionally annotated.
 
 --- body ---
 ## Context
 
 With contract (0274) and ingestion (0275) locked, implement scoring functions and
 CSV emission with minimal ambiguity.
+
+**Scope lock for v1**: implement scoring for **Exp2 arms only**. The scorer may
+carry null/annotation semantics for Exp1-style omissions, but Exp1 rows are not
+required for the v1 output artifact.
 
 ## Actions
 
@@ -30,6 +35,8 @@ CSV emission with minimal ambiguity.
    - consumes canonical rows from ingestion helper
    - applies contract nullability/annotation policy
    - appends one row to `experiments/derived/sota_cross_eval.csv`
+   - supports `prompt_version` so future Exp1 rows can be represented without
+     changing schema, even though v1 scoring is Exp2-first
 
 4. Add tests `tests/test_score_mechanical.py`:
    - coal+CCGT mismatch lowers vocab adherence
@@ -45,5 +52,5 @@ CSV emission with minimal ambiguity.
 
 - [ ] `score_mechanical.py` implemented with all 5 scorers + CLI
 - [ ] Unit tests for scorer pass
-- [ ] smoke row written to `sota_cross_eval.csv`
+- [ ] smoke row written to `sota_cross_eval.csv` for at least one Exp2 arm run
 - [ ] `make check-fast` passes
