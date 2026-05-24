@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-05-24T11:22Z HDMX-coding-agent created
 2026-05-24T12:05Z HDMX-coding-agent scope lock: contract v1 is defined for Exp2-first scoring; Exp1 nullability is specified as future-compatible annotation behavior.
 2026-05-24T13:42Z HDMX-coding-agent dependency cleanup: 0272 is archived as completed verification work, so this ticket now depends on the documented artifact rather than an open blocker.
+2026-05-24T17:00Z HDMX-coding-agent execute pass: authored docs/scoring-contract.md synthesizing articulation_matrix.md (0272) with the implemented scorer (0276) — column schema, per-metric numerator/denominator, null conditions, all annotation codes, Exp1 null policy, and stub mart schema section for 0283.
 
 --- body ---
 ## Context
@@ -47,8 +48,8 @@ how Exp1-like prompt omissions map to null + annotation for future use.
 
 ## Exit criteria
 
-- [ ] `docs/scoring-contract.md` committed
-- [ ] CSV schema (including `prompt_version`) locked and documented
-- [ ] Contract explicitly states Exp2-first v1 scope and Exp1 null/annotation behavior
-- [ ] Contract tests pass
-- [ ] `make check-fast` passes
+- [x] `docs/scoring-contract.md` committed
+- [x] CSV schema (including `prompt_version`) locked and documented
+- [x] Contract explicitly states Exp2-first v1 scope and Exp1 null/annotation behavior
+- [x] Contract tests pass (in `tests/test_score_mechanical.py`, not a separate file)
+- [x] `make check-fast` passes
