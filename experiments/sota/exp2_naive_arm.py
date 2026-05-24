@@ -42,13 +42,13 @@ MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_naive_arm"
 
 AGENTS = ("mistral", "qwen", "openai", "anthropic")
-PROBE_MAX_TOKENS = 16_000       # mistral baseline
-OPENAI_MAX_TOKENS = 32_000      # gpt-5.5 truncated at 16K
-QWEN_MAX_TOKENS = 32_000        # qwen3.7-max (thinking disabled)
-ANTHROPIC_MAX_TOKENS = 32_000   # 64K triggers SDK streaming requirement; 32K fits ~9 min
-QWEN_CALL_TIMEOUT = 600         # 160K+ char prompt with evidence pack is slow
+PROBE_MAX_TOKENS = 16_000  # mistral baseline
+OPENAI_MAX_TOKENS = 32_000  # gpt-5.5 truncated at 16K
+QWEN_MAX_TOKENS = 32_000  # qwen3.7-max (thinking disabled)
+ANTHROPIC_MAX_TOKENS = 32_000  # 64K triggers SDK streaming requirement; 32K fits ~9 min
+QWEN_CALL_TIMEOUT = 600  # 160K+ char prompt with evidence pack is slow
 PROBE_CAP_USD = 3.00
-ANTHROPIC_CAP_USD = 6.00        # input alone costs ~$1.7; 64K output adds ~$1.6
+ANTHROPIC_CAP_USD = 6.00  # input alone costs ~$1.7; 64K output adds ~$1.6
 
 
 def load_naive_prompt(path: Path = NAIVE_PROMPT_PATH) -> str:
@@ -285,7 +285,18 @@ def main(argv: list[str] | None = None) -> int:
         "--n",
         type=int,
         default=1,
-        help="Replications per agent (default 1 for probe; 5 for production batch).",
+        help="Replications per agent (default 1). Deprecated: prefer --run-number for Makefile use.",
+    )
+    p.add_argument(
+        "--run-number",
+        type=int,
+        default=None,
+        metavar="N",
+        help=(
+            "Run exactly this one rep (1-indexed). "
+            "Always writes to <output-dir>/<agent>_runNN/. "
+            "Use instead of --n for Makefile-driven incremental builds."
+        ),
     )
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     p.add_argument(
@@ -298,6 +309,13 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
+    if args.run_number is not None:
+        run_range: list[int] = [args.run_number]
+        use_subdir = True
+    else:
+        run_range = list(range(1, args.n + 1))
+        use_subdir = args.n > 1
+
     args.output_dir.mkdir(parents=True, exist_ok=True)
     prompt = load_naive_prompt()
     prompt = append_evidence_pack(prompt, args.evidence_pack_manifest)
@@ -305,10 +323,10 @@ def main(argv: list[str] | None = None) -> int:
 
     summary: list[dict] = []
     for agent in args.agents:
-        for run in range(1, args.n + 1):
-            tag = f"{agent}_run{run:02d}" if args.n > 1 else agent
-            log.info("[%s] dispatching naive single-shot (run %d/%d)...", agent, run, args.n)
-            run_dir = args.output_dir / tag if args.n > 1 else args.output_dir
+        for run in run_range:
+            tag = f"{agent}_run{run:02d}" if use_subdir else agent
+            log.info("[%s] dispatching naive single-shot (run %d)...", agent, run)
+            run_dir = args.output_dir / tag if use_subdir else args.output_dir
             run_dir.mkdir(parents=True, exist_ok=True)
             try:
                 result = PROBERS[agent](prompt, run_dir)
