@@ -26,10 +26,6 @@ Your output is judged on four axes:
 We prefer a comprehensive inventory with uncertainty clearly expressed over a
 shortlist of well-known assets.
 
-# FORMAT
-
-Output format: Markdown.
-
 # CONTEXT
 
 ## Source quality management
