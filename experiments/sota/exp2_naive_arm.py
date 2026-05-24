@@ -285,18 +285,7 @@ def main(argv: list[str] | None = None) -> int:
         "--n",
         type=int,
         default=1,
-        help="Replications per agent (default 1). Deprecated: prefer --run-number for Makefile use.",
-    )
-    p.add_argument(
-        "--run-number",
-        type=int,
-        default=None,
-        metavar="N",
-        help=(
-            "Run exactly this one rep (1-indexed). "
-            "Always writes to <output-dir>/<agent>_runNN/. "
-            "Use instead of --n for Makefile-driven incremental builds."
-        ),
+        help="Replications per agent (default 1).",
     )
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     p.add_argument(
@@ -309,12 +298,8 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
-    if args.run_number is not None:
-        run_range: list[int] = [args.run_number]
-        use_subdir = True
-    else:
-        run_range = list(range(1, args.n + 1))
-        use_subdir = args.n > 1
+    run_range = list(range(1, args.n + 1))
+    use_subdir = args.n > 1
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     prompt = load_naive_prompt()

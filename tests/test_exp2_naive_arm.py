@@ -177,38 +177,3 @@ def test_meta_record_includes_manifest_when_set(patched_probers, tmp_path):
     )
     record = json.loads((tmp_path / "mistral.json").read_text())
     assert record.get("evidence_pack_manifest") == str(MANIFEST_PATH)
-
-
-# ---------------------------------------------------------------------------
-# --run-number flag tests (Makefile incremental builds, O(1) per invocation)
-# ---------------------------------------------------------------------------
-
-
-def test_run_number_creates_subdir_for_agent(patched_probers, tmp_path):
-    ret = exp2_naive_arm.main(
-        ["--agents", "mistral", "--run-number", "1", "--output-dir", str(tmp_path)]
-    )
-    assert ret == 0
-    assert (tmp_path / "mistral_run01").is_dir()
-
-
-def test_run_number_only_runs_specified_rep(patched_probers, tmp_path):
-    exp2_naive_arm.main(
-        ["--agents", "mistral", "--run-number", "2", "--output-dir", str(tmp_path)]
-    )
-    assert (tmp_path / "mistral_run02").is_dir()
-    assert not (tmp_path / "mistral_run01").exists()
-
-
-def test_run_number_writes_meta_record(patched_probers, tmp_path):
-    exp2_naive_arm.main(
-        ["--agents", "mistral", "--run-number", "1", "--output-dir", str(tmp_path)]
-    )
-    record = json.loads((tmp_path / "mistral_run01.json").read_text())
-    assert record["agent"] == "mistral"
-    assert record["run"] == 1
-
-
-def test_run_number_flag_in_argparse():
-    src = (REPO_ROOT / "experiments" / "sota" / "exp2_naive_arm.py").read_text()
-    assert "--run-number" in src
