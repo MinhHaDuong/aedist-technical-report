@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Implement score_mechanical core and CLI over locked contract and ingestion
+Created: 2026-05-24
+Author: HDMX-coding-agent
+Blocked-by: 0275
+
+--- log ---
+2026-05-24T11:22Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+With contract (0274) and ingestion (0275) locked, implement scoring functions and
+CSV emission with minimal ambiguity.
+
+## Actions
+
+1. Implement `src/aedist/score_mechanical.py` with 5 scoring functions:
+   - `score_accuracy(rows, ref_path: Path | None) -> AccuracyScores`
+   - `score_coherence(rows) -> CoherenceScores`
+   - `score_provenance(rows) -> ProvenanceScores`
+   - `score_temporality(rows) -> TemporalityScores`
+   - `score_field_completeness(rows) -> FieldCompletenessScores`
+
+2. Reuse existing utilities where applicable:
+   - `evaluate.py` for accuracy / reference matching primitives
+   - `verify.classify_source_by_text()` for primary source classification
+
+3. CLI entry point:
+   - consumes canonical rows from ingestion helper
+   - applies contract nullability/annotation policy
+   - appends one row to `experiments/derived/sota_cross_eval.csv`
+
+4. Add tests `tests/test_score_mechanical.py`:
+   - coal+CCGT mismatch lowers vocab adherence
+   - HIGH confidence with missing Source 2 lowers dual-source metric
+   - as-of 1979 fails plausible range while 1980 passes
+   - empty Total MWe counted absent
+   - empty table does not divide by zero
+
+5. Smoke:
+   - score at least one Exp2 run and commit/refresh `experiments/derived/sota_cross_eval.csv`
+
+## Exit criteria
+
+- [ ] `score_mechanical.py` implemented with all 5 scorers + CLI
+- [ ] Unit tests for scorer pass
+- [ ] smoke row written to `sota_cross_eval.csv`
+- [ ] `make check-fast` passes
