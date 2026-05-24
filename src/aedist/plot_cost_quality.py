@@ -60,6 +60,7 @@ P1_INCLUDED_SUBDIRS = (
     "p1_base.topup_canary/",
 )
 P1_PILOT_MARKER = "/p1_base.pilot/"
+EXP1_BATCH2_DIR = "experiments/outputs/exp1_batch2/"
 
 # Vietnam thermal reference inventory size (Annex A, line 72).
 N_REFERENCE_PLANTS = 163
@@ -71,9 +72,7 @@ def _is_p1_base_row(result_file: str) -> bool:
     Pools the original journal sweep with the post-PR-#379 top-up reps
     (ticket 0198). Excludes pilot runs.
     """
-    if P1_PILOT_MARKER in result_file:
-        return False
-    return any(result_file.startswith(P1_BASE_DIR + sub) for sub in P1_INCLUDED_SUBDIRS)
+    return result_file.startswith(EXP1_BATCH2_DIR)
 
 
 def build_cost_quality_rows(
