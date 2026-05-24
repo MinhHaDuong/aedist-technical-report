@@ -209,7 +209,7 @@ model_ids = [
     "qwen/qwen3.6-35b-a3b",
     "qwen/qwen3.6-flash",
     "qwen/qwen3.6-plus",
-    "qwen/qwen3-max-thinking",
+    "qwen/qwen3.7-max",
     # ZH — DeepSeek (paid variant here, current journal set uses :free)
     "deepseek/deepseek-v4-pro",
     "deepseek/deepseek-v4-flash",
