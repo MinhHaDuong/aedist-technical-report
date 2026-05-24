@@ -4,10 +4,12 @@ Created: 2026-05-24
 Author: haduong
 Blocked-by: 0279
 Blocked-by: 0280
+Closed: Items 1-4 complete: table-first + single-table + no summary tables (PR #507), ANTHROPIC_MAX_TOKENS 64K + min-phase-b floor 32K (PR #509). Blockers 0279/0280 are independent follow-on work.
 
 --- log ---
 2026-05-24T14:30Z haduong created
 
+2026-05-24T17:27Z HDMX-coding-agent closed — Items 1-4 complete: table-first + single-table + no summary tables (PR #507), ANTHROPIC_MAX_TOKENS 64K + min-phase-b floor 32K (PR #509). Blockers 0279/0280 are independent follow-on work.
 --- body ---
 ## Context
 
