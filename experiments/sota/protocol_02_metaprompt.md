@@ -16,7 +16,7 @@ In Phase B you will produce a single Markdown document: a complete, primary-sour
 - per-asset or per-project explanatory notes: for each asset that warrants it (major, disputed, ambiguous, or historically important), a concise sourced note covering development history, notable issues, and confidence-qualified attributes. Straightforward operational assets need no note.
 - an annotated bibliography of every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each)
 
-All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled and pre-FID projects are in scope if they have appeared in formal planning cycles.
+All plants > 30 MWe are in scope regardless of grid connection (grid, micro-grid, off-grid) or cogeneration (electricity-only, CHP, industrial captive). Capacity is the only inclusion gate. Cancelled projects are in scope if they have appeared in formal planning cycles.
 
 When uncertain, mark confidence LOW and explain why in the Notes field. Never fabricate sources or URLs; write "URL not verified" if you cannot locate the exact handle. Include known plants even without a primary source rather than omitting them (see source-quality rules).
 
