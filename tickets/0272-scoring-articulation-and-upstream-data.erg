@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-05-24T09:30Z HDMX-coding-agent created
 2026-05-24T12:05Z HDMX-coding-agent scope lock: v1 mechanical scoring is Exp2-first. Exp1 remains out of scope for v1 scoring except as an articulation/annotation reference case.
 2026-05-24T12:15Z HDMX-coding-agent imagine pass: clarified articulation labels, reduced upstream verification to one run per arm, and deferred extracted_rows_path work to 0275.
+2026-05-24T12:25Z HDMX-coding-agent plan pass: execution path is documentation plus spot-check verification only; avoid tautological row-count checks by comparing tabulated inventory_rows against an independent extraction path.
 
 --- body ---
 ## Context
@@ -52,6 +53,9 @@ Consider adding a `plant_csv_path` or `extracted_table_path` column to
 `tab_exp2_arms_runs.csv` so the scorer can find the extracted table without
 re-parsing markdown on every invocation.
 
+This ticket should stay documentation-plus-verification only. Do not change
+scorer code or CSV schema here.
+
 ## Relevant files
 
 - `experiments/prompts/modules/5_table.txt` — Exp 1 prompt (pre- and post-0268)
@@ -78,12 +82,27 @@ re-parsing markdown on every invocation.
   scored output artifact.
 
 3. **Upstream path verification**: for at least 1 naive run and 1 optimised run,
-  verify the parser finds the output file, extracts the plant table, and the row
-  count matches `inventory_rows` in the CSV. Document any mismatches.
+  verify the parser finds the output file, extracts the plant table via existing
+  extraction utilities, and the row count matches `inventory_rows` in the CSV.
+  Do not treat `_count_md_table_rows()` compared to itself as verification.
+  Document any mismatches.
 
 4. **Deferred to 0275**: consider adding `extracted_rows_path` column to
   `tab_exp2_arms_runs.csv` only if re-parse cost is shown to be non-trivial.
   This ticket should not change the CSV schema.
+
+## First checks
+
+1. Build the articulation matrix from the three prompt surfaces in scope.
+2. For one naive run and one optimised run, confirm path resolution and compare
+  `inventory_rows` to an independently extracted row count.
+3. If the independent extraction disagrees with `inventory_rows`, stop and
+  document the mismatch before proposing any downstream scorer contract.
+
+## Feasibility
+
+PASS — prompt surfaces and run artifacts already exist; this ticket needs
+documentation plus real-data spot checks, not new infrastructure.
 
 ## Exit criteria
 
