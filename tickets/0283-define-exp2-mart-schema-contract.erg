@@ -22,7 +22,9 @@ artifact pointers. It must not store verbatim chat text.
 2. Explicit schema versioning field(s)
 3. Pointer fields to immutable artifacts (`result_file`, `parsed_table_file`,
    `probe_file`) plus hash fields
-4. Contract doc describing required/optional fields and annotation semantics
+4. Contract doc describing required/optional fields and annotation semantics.
+   Extend `docs/scoring-contract.md` (introduced by 0274) rather than creating
+   a parallel document — append a "Mart schema" section.
 
 ## Non-goals
 
@@ -32,6 +34,6 @@ artifact pointers. It must not store verbatim chat text.
 ## Exit criteria
 
 - [ ] Schema module committed with validation tests
-- [ ] Contract doc committed
+- [ ] Mart schema section appended to `docs/scoring-contract.md` (not a new file)
 - [ ] Schema explicitly bans verbatim chat payload fields
 - [ ] `make check-fast` passes

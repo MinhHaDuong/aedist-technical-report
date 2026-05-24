@@ -51,5 +51,8 @@ Prefer option A (single function signature change, testable).
 - [ ] `assemble_meta_prompt(manifest_path)` implemented and called correctly
 - [ ] Dry-run with `--no-confirm` prints manifest content in the meta-prompt
       for arm4 invocation
+- [ ] arm2 dry-run assembled prompt does NOT contain the "## Available evidence pack"
+      section (confirm the placeholder in `protocol_02_metaprompt.md` is a comment
+      or is replaced, not rendered verbatim into arm2 output)
 - [ ] No change to arm2 behaviour (manifest_path=None path unchanged)
 - [ ] `make check-fast` passes

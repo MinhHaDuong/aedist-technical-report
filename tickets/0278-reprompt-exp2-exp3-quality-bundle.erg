@@ -74,4 +74,5 @@ directly improve recall.
 - [ ] `protocol_02_metaprompt.md` updated: same structural changes + Phase A note
       that evidence pack manifest follows in the meta-prompt body (see 0280)
 - [ ] `ANTHROPIC_MAX_TOKENS = 64_000` in `exp2_naive_arm.py`
+- [ ] max_tokens floor/default constant updated in `exp2_interactive_smoke.py`
 - [ ] `make check-fast` passes
