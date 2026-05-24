@@ -226,4 +226,48 @@ All other metrics are scoreable on Exp1 outputs (the remaining fields are
 
 ## Mart schema section
 
-*(To be appended by ticket 0283 — Exp2 mart schema contract.)*
+The Exp2 mart is a JSONL contract for analysis-time records. It is intentionally
+smaller and more structured than the raw run artifacts: it carries stable
+identifiers, nested summaries, and immutable artifact pointers, but it does not
+carry verbatim chat payloads.
+
+### Record kinds
+
+- `run` records summarize one Exp2 run and point to the run JSON artifact.
+- `probe` records summarize one turn/probe slice and point to the probe file.
+- `score` records carry the mechanical-score payload for one run and point to
+	the source run artifact.
+
+### Versioning
+
+- `mart_schema = "exp2_mart"`
+- `mart_schema_version = 1`
+
+Any change that adds, removes, or renames mart fields must bump the schema
+version and ship a new validator model.
+
+### Artifact pointers
+
+Each pointer field is a repo-relative path plus a SHA-256 digest of the target
+file. The schema rejects absolute paths and upward traversal.
+
+- `result_file`
+- `parsed_table_file`
+- `probe_file`
+
+### Nested summaries
+
+Mart records use grouped JSON summaries rather than a flat CSV-shaped record.
+That keeps the mart readable for downstream code while leaving flattening to the
+CSV view layer introduced in later tickets.
+
+- Run records carry `run_summary`.
+- Probe records carry `probe_summary`.
+- Score records carry `score_summary`, grouped into accuracy, coherence,
+	provenance, temporality, and field-completeness sections.
+
+### Forbidden payloads
+
+The mart schema uses strict field checking and must reject any verbatim chat
+payload keys such as `raw_payload`, `messages`, `content`, or `thinking`.
+Only structured summaries, hashes, and artifact pointers are allowed.

@@ -2,7 +2,7 @@
 
 Usage:
     python -m aedist.tabulate_exp2_bib_quality \
-        --input report/inputs/generated/tab_exp2_bib_quality.csv \
+        --input report/inputs/generated/tab_exp2_bib_quality_view.csv \
         --output report/inputs/generated/tab_exp2_bib_quality.tex
 
 Reads the flat per-run CSV produced by extract_exp2_bib and generates a
@@ -17,7 +17,7 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-_DEFAULT_INPUT = Path("report/inputs/generated/tab_exp2_bib_quality.csv")
+_DEFAULT_INPUT = Path("report/inputs/generated/tab_exp2_bib_quality_view.csv")
 
 _AGENT_DISPLAY = {
     "anthropic": "Claude",
