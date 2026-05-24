@@ -2,14 +2,19 @@
 Title: Automated provenance spot-check — verify N=10 source URLs per run
 Created: 2026-05-24
 Author: haduong
+Tag: deferred
+Blocked-by: 0118
 
 --- log ---
 2026-05-24T14:30Z haduong created
 
 2026-05-24T13:52Z HDMX-coding-agent note blocker 0274 closed — Blocked-by removed.
 2026-05-24T17:37Z HDMX-coding-agent note blocker 0276 closed — Blocked-by removed.
+2026-05-24T18:05Z HDMX-coding-agent note deferred post-conference and linked to 0118 — 0281 is now scoped as a lightweight companion metric to Phase 2 source-grounding adjudication, not a pre-conference standalone track.
 --- body ---
 ## Context
+
+Post-conference scope. Do not start before 0118.
 
 The four quality dimensions announced in the protocol (accuracy, coherence,
 provenance, temporality) are evaluated post-hoc. Only accuracy is currently
