@@ -50,6 +50,16 @@ attic/
 # Migration backups
 *.jsonl.bak-*
 
+# Runtime records (keep local, do not track)
+*.record.json
+
+# Required regression fixture used by tests/test_evaluate.py.
+!experiments/outputs/rag_extract/deepseek-v3.2-run1.record.json
+
+# Evaluation reconciliation artifacts (generated)
+reconciliation_*.csv
+**/reconciliation_*.csv
+
 # Beat cycle runtime log
 beat-log.jsonl
 
