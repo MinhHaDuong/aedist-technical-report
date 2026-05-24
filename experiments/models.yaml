@@ -1160,7 +1160,7 @@
   size_class: frontier
   license: commercial
   web_search: false
-  reasoning_effort: "minimal"
+  reasoning_effort: "high"
 
 - name: "qwen/qwen3.6-max-preview"
   route: openrouter
