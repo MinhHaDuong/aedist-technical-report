@@ -1618,7 +1618,7 @@ def test_meta_prompt_not_augmented_with_evidence_pack(
 
 
 def test_min_phase_b_max_tokens_flag_present():
-    """--min-phase-b-max-tokens must be wired in argparse with a default of 16000."""
+    """--min-phase-b-max-tokens must be wired in argparse with a default of 32000."""
     src = open("experiments/sota/exp2_interactive_smoke.py", encoding="utf-8").read()
     assert "--min-phase-b-max-tokens" in src
     assert "default=32000" in src
