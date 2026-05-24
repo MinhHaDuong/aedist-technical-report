@@ -40,6 +40,10 @@ _CSV_COLUMNS = [
     "run",
     "prompt_version",
     "n_rows",
+    "accuracy_coverage",
+    "accuracy_coverage_annotation",
+    "accuracy_precision",
+    "accuracy_precision_annotation",
     "accuracy_f1",
     "accuracy_f1_annotation",
     "accuracy_fuel",
@@ -69,6 +73,8 @@ _CSV_COLUMNS = [
 
 @dataclass
 class AccuracyScores:
+    coverage: float | None
+    precision: float | None
     f1: float | None
     fuel_accuracy: float | None
     status_accuracy: float | None
@@ -136,15 +142,17 @@ def _pick_asof_cell(row: dict[str, str]) -> str:
 
 def score_accuracy(rows: list[dict[str, str]], ref_path: Path | None) -> AccuracyScores:
     if not rows:
-        return AccuracyScores(None, None, None, None, annotation="no_rows")
+        return AccuracyScores(None, None, None, None, None, None, annotation="no_rows")
     if ref_path is None:
-        return AccuracyScores(None, None, None, None, annotation="reference_missing")
+        return AccuracyScores(None, None, None, None, None, None, annotation="reference_missing")
 
     reference = load_plants_csv(ref_path)
     system = plants_from_dicts(rows)
     metrics = compute_metrics(reconcile(reference, system))
     return AccuracyScores(
         f1=metrics.f1,
+        coverage=metrics.coverage,
+        precision=metrics.precision,
         fuel_accuracy=metrics.fuel_accuracy,
         status_accuracy=metrics.status_accuracy,
         province_accuracy=metrics.province_accuracy,
@@ -328,6 +336,10 @@ def main(argv: list[str] | None = None) -> None:
         "run": str(args.run),
         "prompt_version": args.prompt_version,
         "n_rows": str(len(ingested.rows)),
+        "accuracy_coverage": _fmt(accuracy.coverage),
+        "accuracy_coverage_annotation": accuracy.annotation or "",
+        "accuracy_precision": _fmt(accuracy.precision),
+        "accuracy_precision_annotation": accuracy.annotation or "",
         "accuracy_f1": _fmt(accuracy.f1),
         "accuracy_f1_annotation": accuracy.annotation or "",
         "accuracy_fuel": _fmt(accuracy.fuel_accuracy),

@@ -199,6 +199,15 @@ Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
 \InputIfFileExists{inputs/generated/tab_exp2_arms}{}{}
 
+\IfFileExists{inputs/generated/fig_quality_spider.pdf}{
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\linewidth]{inputs/generated/fig_quality_spider.pdf}
+\caption{Profils de qualite sur huit axes en vocabulaire non specialistes pour les bras naive et optimise de l'experience 2.}
+\label{fig:exp2-quality-spider}
+\end{figure}
+}{}
+
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
 \section{Discussion}

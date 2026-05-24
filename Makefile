@@ -216,6 +216,7 @@ report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
 	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
+	$(GEN)/fig_quality_spider.pdf \
     $(GEN)/fig_census_direct.pdf \
     $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf \
     $(GEN)/tab_decomposition_fix.tex \
