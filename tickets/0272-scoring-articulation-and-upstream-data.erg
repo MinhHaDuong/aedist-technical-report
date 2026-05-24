@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-05-24T12:15Z HDMX-coding-agent imagine pass: clarified articulation labels, reduced upstream verification to one run per arm, and deferred extracted_rows_path work to 0275.
 2026-05-24T12:25Z HDMX-coding-agent plan pass: execution path is documentation plus spot-check verification only; avoid tautological row-count checks by comparing tabulated inventory_rows against an independent extraction path.
 2026-05-24T12:35Z HDMX-coding-agent feasibility WARN: 0268 remains open and still blocks future Exp1 comparability, but does not block this ticket's Exp2-first articulation matrix and upstream verification work.
+2026-05-24T12:55Z HDMX-coding-agent execution finding: articulation matrix drafted. Upstream verification on `openai_run01` found path resolution succeeds but row-count parity fails (naive 79 vs 118, optimised 83 vs 122). Likely cause: current inventory_rows counts all markdown pipe-table rows, including summary tables, while scorer-style extraction targets the main plant table.
 
 --- body ---
 ## Context
