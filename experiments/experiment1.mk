@@ -11,8 +11,10 @@
 UV_RUN  := PYTHONPATH=.. uv run --project .. --env-file ../.env
 PROMPT  := sota/protocol_07_naive_prompt.md
 MODELS  := models.yaml
-SET     := modelset_frontier_10labs
+SET     := modelset_exp1_batch2
 OUT     := outputs/exp1_batch2
+NO_WEB_SYS := You have no web search capability. Do not claim to perform searches, \
+              do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.
 
 # ─── Batch 2 ──────────────────────────────────────────────────────────────────
 
@@ -21,7 +23,11 @@ $(OUT)/.done: $(PROMPT) $(MODELS)
 	    --prompt $(PROMPT) \
 	    --models-registry $(MODELS) \
 	    --model-set $(SET) \
-	    --output $(OUT)
+	    --output $(OUT) \
+	    --no-web-search \
+	    --repeat 5 \
+	    --max-tokens 32768 \
+	    --system-instruction "$(NO_WEB_SYS)"
 	touch $@
 
 # ─── Aliases ──────────────────────────────────────────────────────────────────
