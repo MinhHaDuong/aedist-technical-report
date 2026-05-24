@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Backport wall-time column from Exp 2 to Exp 1 cost summary table
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T08:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`tabulate_exp1_cost_summary.py` already computes `wall_s_total` per model in
+`aggregate_per_model()` but never renders it. Exp 2's `tabulate_exp2_arms.py`
+added `Median wall (s)` as a standard column. Adding wall time to the Exp 1
+table gives readers a latency signal alongside cost, and makes the two tables
+consistent for cross-experiment comparison.
+
+Decision record: Exp 2 also added Truncated (%), Report (%) rates, and Median
+turns. None of these backport cleanly: truncation is ~zero in Exp 1 (outputs
+~2 K tokens vs 32 K limit, no `.raw.json` files), rate format is cosmetic at
+N=5, and median turns is multi-turn only.
+
+## Relevant files
+
+- `src/aedist/tabulate_exp1_cost_summary.py` — only file to change
+  - `aggregate_per_model()` (line 34): switch `wall_s_total` accumulator to a
+    list, compute median at aggregation time → `median_wall_s`
+  - `generate_table_tex()` (line 76): add column to header, each data row, and
+    show `—` for the Total row (median of totals is meaningless)
+  - `\begin{tabular}` spec: `@{}lrrrrrr@{}` → `@{}lrrrrrrr@{}`
+
+## Actions
+
+1. In `aggregate_per_model()`: replace `"wall_s_total": 0.0` with
+   `"wall_s_values": []` and accumulate with `.append()`. After the loop,
+   compute `"median_wall_s": statistics.median(agg["wall_s_values"])`.
+   Import `statistics` at the top.
+2. In `generate_table_tex()`:
+   - Update tabular spec to 8 columns.
+   - Append `& wall (s)` to the header row.
+   - Append `& {r['median_wall_s']:.1f}` to each data row.
+   - Show `—` in the Total row's wall cell.
+3. Update caption to mention wall time.
+4. Regenerate the artifact: `make exp1-cost-summary`.
+
+## Test
+
+```python
+def test_exp1_cost_summary_includes_wall_time():
+    tex = generate_table_tex([
+        {"model": "x/m", "n_ok": 5, "n_refused": 0, "n_other": 0,
+         "tokens_in_total": 1000, "tokens_out_total": 500,
+         "cost_usd_total": 0.01, "median_wall_s": 12.3},
+    ])
+    assert "wall (s)" in tex
+    assert "12.3" in tex
+```
+
+## Exit criteria
+
+- [ ] `tab_exp1_cost_summary.tex` header contains `wall (s)`
+- [ ] Each model row shows a plausible wall time (10–300 s range typical)
+- [ ] Total row shows `—` for wall column
+- [ ] `make check-fast` passes
+- [ ] `make exp1-cost-summary` regenerates cleanly
