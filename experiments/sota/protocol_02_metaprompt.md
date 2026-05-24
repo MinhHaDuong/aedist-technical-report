@@ -117,15 +117,15 @@ Explanatory notes must state the confidence level for the row-level existence/st
 
 Each row corresponds to one asset record. The DEFAULT unit is the plant / unit-group, not the power center: when a site co-locates several plants with distinct capacity, COD, owner/developer, fuel, status, or financing (BOT/IPP) arrangements, each one is its own row. Aggregate to center-level in a single row ONLY when detailed evidence is unavailable; in that case mark the row ambiguous and explain the aggregation in Notes. Conversely, do not split a single plant into multiple rows when the only difference is individual generating units sharing one commissioning, owner, and status — record these as Units × MW on one row.
 
-Status definitions (use these exact terms in the Status column):
-- Operating: commissioned or reported in service.
-- Under construction: physical construction or EPC execution has begun.
-- Approved: government approval or formal permit granted; Final Investment Decision (FID) may still be pending; construction not started.
-- Pre-FID: listed in formal plans or PDP cycles; not yet formally approved; construction not started.
-- Planned: proposed or listed in a planning cycle, but not yet approved or materially committed.
-- Suspended: previously active, approved, or under construction but halted without formal cancellation.
-- Cancelled: formally cancelled, removed, or replaced by another project.
-- Retired: previously operational but permanently closed or decommissioned.
+Status definitions (use these exact terms, aligned with Global Energy Monitor vocabulary):
+- Announced: described in government plans or corporate filings; no permits sought, no land acquired.
+- Pre-permit: environmental and regulatory approvals being sought; no permits issued yet.
+- Permitted: all required government approvals received; construction not yet started.
+- Construction: site preparation or EPC execution underway.
+- Operating: formally commissioned.
+- Shelved: previously active or advancing but progress halted without formal cancellation.
+- Cancelled: formally cancelled or replaced by another project.
+- Retired: permanently closed or decommissioned.
 
 Capacity rule:
 Record nameplate electrical capacity in MWe when available. If sources do not distinguish gross vs net, record the stated MW value and note "gross/net unspecified". Do not mix thermal MW, boiler capacity, steam output, or investment package capacity with electrical MWe. For Units × MW, make arithmetic consistent with Total MWe or explain discrepancies in Notes.

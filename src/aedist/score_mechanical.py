@@ -35,17 +35,24 @@ _ALLOWED_FUELS = {
 }
 
 _ALLOWED_STATUSES = {
+    # GEM canonical terms
+    "announced",
+    "pre-permit",
+    "pre-permit development",
+    "permitted",
+    "construction",
     "operating",
-    "operational",  # legacy synonym
+    "shelved",
+    "cancelled",
+    "retired",
+    # Accepted synonyms
+    "operational",
     "under construction",
-    "pre-fid",
     "approved",
     "planned",
     "suspended",
-    "cancelled",
     "commissioning",
     "decommissioned",
-    "retired",
 }
 
 _CSV_COLUMNS = [
