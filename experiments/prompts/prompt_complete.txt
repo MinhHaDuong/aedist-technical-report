@@ -32,7 +32,7 @@ Where:
 - Fuel: Coal / Domestic gas / Imported LNG
 - Technology (coal): Subcritical / Supercritical / USC
 - Technology (gas): CCGT / OCGT
-- Status: Approved / Planned / Operational / Under construction / Suspended / Cancelled / Retired
+- Status: Announced / Pre-permit / Permitted / Construction / Operating / Shelved / Cancelled / Retired
 - Total MWe: Include units > 30MWe.
 - COD: Actual or expected commercial operation date
 - Sources: specify where in the document, include URL
@@ -54,7 +54,7 @@ For each source provide:
 ## Statistical Summary Tables
 
 Produce these cross-tabulations from your inventory:
-a) **Capacity by fuel × status**: Total MWe in each cell (Coal/Gas/LNG rows × Operational/Under construction/Approved/Planned columns), with row and column totals
+a) **Capacity by fuel × status**: Total MWe in each cell (Coal/Gas/LNG rows × Operating/Construction/Permitted/Announced columns), with row and column totals
 b) **Top provinces**: The 15 provinces with highest total thermal capacity (all statuses combined), showing breakdown by fuel
 c) **Timeline of additions**: Capacity entering service by period — pre-2005, 2005–2010, 2011–2015, 2016–2020, 2021–2025, 2026–2030, post-2030 — by fuel type
 d) **Data quality summary**: Count of plants by confidence level (High/Medium/Low) and fuel type

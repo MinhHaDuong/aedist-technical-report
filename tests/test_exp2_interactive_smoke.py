@@ -21,33 +21,14 @@ from experiments.sota.exp2_interactive_smoke import (
     extract_phase_a_design,
     extract_quality_bar,
     main,
-    strip_meta_framing,
     wait_for_space,
 )
 
 
-def test_strip_meta_framing_drops_prefix_and_separator():
-    """The framing line + `---` separator is stripped; content survives intact."""
-    text = "This is the prompt sent to the agents, verbatim.\n\n---\n\n# ROLE\n\nBody content.\n"
-    stripped = strip_meta_framing(text)
-    assert stripped.startswith("# ROLE"), f"unexpected leading content: {stripped[:40]!r}"
-    assert "This is the prompt sent" not in stripped
-    assert "Body content." in stripped
-
-
-def test_strip_meta_framing_idempotent_on_unframed_input():
-    """Files without a framing separator are returned unchanged."""
-    text = "# ROLE\n\nBody.\n"
-    assert strip_meta_framing(text) == text
-
-
-def test_assemble_meta_prompt_strips_framing():
-    """assemble_meta_prompt() must NOT include the framing line in the dispatched bytes."""
+def test_assemble_meta_prompt_starts_with_role():
+    """assemble_meta_prompt() must begin directly with content, no framing line."""
     prompt = assemble_meta_prompt()
-    assert not prompt.startswith("This is the prompt"), (
-        "framing line leaked into dispatched meta-prompt"
-    )
-    assert "# ROLE" in prompt or "# GOAL" in prompt, "meta-prompt content missing"
+    assert prompt.startswith("# ROLE"), f"unexpected leading content: {prompt[:40]!r}"
 
 
 def test_metaprompt_file_exists():
@@ -76,16 +57,12 @@ def test_extract_quality_bar_raises_on_missing_markers():
         extract_quality_bar("no markers here")
 
 
-def test_assemble_meta_prompt_is_doc_02_content_post_framing():
-    """The assembled meta-prompt is Doc 02's content after the framing strip.
-
-    Single source of truth: edits to Doc 02 propagate to the dispatched
-    bytes (modulo the meta-framing line stripped by strip_meta_framing).
-    """
+def test_assemble_meta_prompt_is_doc_02_verbatim():
+    """assemble_meta_prompt() must return Doc 02 verbatim — no in-code template."""
     assembled = assemble_meta_prompt()
     on_disk = METAPROMPT_PATH.read_text(encoding="utf-8")
-    assert assembled == strip_meta_framing(on_disk), (
-        "assemble_meta_prompt() must return Doc 02 minus the framing line — "
+    assert assembled == on_disk, (
+        "assemble_meta_prompt() must return Doc 02 verbatim — "
         "any in-code template would create a second source of truth"
     )
 
@@ -1508,7 +1485,9 @@ def test_estimate_inventory_rows_ignores_summary_tables(monkeypatch, tmp_path):
     import experiments.sota.exp2_interactive_smoke as mod
 
     monkeypatch.setattr(mod, "_read_turn_field", lambda *_a, **_k: ["report"])
-    monkeypatch.setattr(mod, "_turn_artefact_paths", lambda *_a, **_k: {"raw": tmp_path / "missing"})
+    monkeypatch.setattr(
+        mod, "_turn_artefact_paths", lambda *_a, **_k: {"raw": tmp_path / "missing"}
+    )
     monkeypatch.setattr(
         mod,
         "_narrative_from_record_or_raw",

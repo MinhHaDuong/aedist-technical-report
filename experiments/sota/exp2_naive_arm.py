@@ -7,9 +7,8 @@ The contrast with the optimized arm (Phase A meta-prompt + multi-turn
 state machine) isolates the protocol's contribution.
 
 Doc 07 (`experiments/sota/protocol_07_naive_prompt.md`) is the user-side
-prompt — Doc 02's GOAL + QUALITY DIMENSIONS + FORMAT sections, with the
-Phase A/B scaffolding language minimally adapted. The file's opening
-meta-framing line is stripped by `strip_meta_framing` before dispatch.
+prompt — identical output spec to Doc 02's Phase B, without the Phase A
+self-design scaffolding.
 
 Each response is classified via the dialogue classifier (Nemotron).
 Outcome categories per session:
@@ -32,7 +31,6 @@ import yaml
 
 from aedist.harness import append_evidence_pack
 from experiments.sota import dialogue_classifier
-from experiments.sota.exp2_interactive_smoke import strip_meta_framing
 
 log = logging.getLogger(__name__)
 
@@ -52,8 +50,8 @@ ANTHROPIC_CAP_USD = 6.00  # input alone costs ~$1.7; 64K output adds ~$1.6
 
 
 def load_naive_prompt(path: Path = NAIVE_PROMPT_PATH) -> str:
-    """Read Doc 07 from disk, strip the meta-framing line, return the prompt."""
-    return strip_meta_framing(path.read_text(encoding="utf-8"))
+    """Read Doc 07 from disk and return the prompt."""
+    return path.read_text(encoding="utf-8")
 
 
 def _write_summary_md(output_dir: Path, summary: list[dict]) -> Path:
