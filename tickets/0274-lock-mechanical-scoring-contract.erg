@@ -2,10 +2,11 @@
 Title: Lock mechanical scoring contract — schema, nullability, and annotation policy
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0272
 
 --- log ---
 2026-05-24T11:22Z HDMX-coding-agent created
+2026-05-24T12:05Z HDMX-coding-agent scope lock: contract v1 is defined for Exp2-first scoring; Exp1 nullability is specified as future-compatible annotation behavior.
+2026-05-24T13:42Z HDMX-coding-agent dependency cleanup: 0272 is archived as completed verification work, so this ticket now depends on the documented artifact rather than an open blocker.
 
 --- body ---
 ## Context
@@ -15,6 +16,10 @@ scientifically valid and not confounded by prompt articulation gaps.
 
 Ticket 0272 identifies where prompts ask fields explicitly, imply them, or omit
 them. This ticket turns that analysis into a machine-enforceable scoring policy.
+
+**Scope lock for v1**: the contract is defined for Exp2-first scoring. Exp1 is not
+required to emit full mechanical scores in v1; instead, the contract must specify
+how Exp1-like prompt omissions map to null + annotation for future use.
 
 ## Deliverables
 
@@ -28,6 +33,7 @@ them. This ticket turns that analysis into a machine-enforceable scoring policy.
    - include `prompt_version`
    - include per-metric value and per-metric annotation fields where needed
    - deterministic column order documented in the contract
+   - mark Exp1 rows as optional / out of scope for v1 artifact generation
 
 3. Test fixture policy in `tests/test_score_mechanical_contract.py`:
    - missing Confidence column -> high-confidence dual-source metric is null + annotated
@@ -43,5 +49,6 @@ them. This ticket turns that analysis into a machine-enforceable scoring policy.
 
 - [ ] `docs/scoring-contract.md` committed
 - [ ] CSV schema (including `prompt_version`) locked and documented
+- [ ] Contract explicitly states Exp2-first v1 scope and Exp1 null/annotation behavior
 - [ ] Contract tests pass
 - [ ] `make check-fast` passes

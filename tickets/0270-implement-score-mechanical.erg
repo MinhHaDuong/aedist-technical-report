@@ -2,14 +2,16 @@
 Title: Parent tracker — mechanical scoring pipeline (contract, ingestion, scorer)
 Created: 2026-05-24
 Author: HDMX-coding-agent
-Blocked-by: 0272
 Blocked-by: 0274
+Blocked-by: 0277
 Blocked-by: 0275
 Blocked-by: 0276
 
 --- log ---
 2026-05-24T09:30Z HDMX-coding-agent created
 2026-05-24T11:20Z HDMX-coding-agent scope split: converted this composite ticket into a parent tracker and opened child tickets 0274/0275/0276 for staged delivery.
+2026-05-24T13:36Z HDMX-coding-agent added 0277 as an upstream bugfix child: inventory_rows semantics must be fixed before ingestion parity can be trusted.
+2026-05-24T13:42Z HDMX-coding-agent dependency cleanup: 0272 is archived as completed verification work, so it is no longer listed as an active blocker.
 
 --- body ---
 ## Context
@@ -25,6 +27,7 @@ Implementation is delivered by child tickets.
 ## Child tickets
 
 - `0274` — define scoring contract + nullability/annotation policy and lock CSV schema
+- `0277` — fix upstream `inventory_rows` semantics so plant-table counts exclude summary tables
 - `0275` — ingestion and row extraction robustness (parser reuse, run-path resolution, parity tests)
 - `0276` — implement `score_mechanical.py` scoring core + CLI + smoke artifact
 
@@ -32,13 +35,15 @@ Implementation is delivered by child tickets.
 
 1. `0272` verifies articulation and upstream assumptions.
 2. `0274` locks interpretation contract and schema.
-3. `0275` ensures parser/path/row denominators are reliable.
-4. `0276` implements scoring logic against those locked interfaces.
+3. `0277` fixes upstream `inventory_rows` semantics.
+4. `0275` ensures parser/path/row denominators are reliable.
+5. `0276` implements scoring logic against those locked interfaces.
 
 ## Exit criteria
 
 - [ ] Ticket `0272` merged
 - [ ] Ticket `0274` merged
+- [ ] Ticket `0277` merged
 - [ ] Ticket `0275` merged
 - [ ] Ticket `0276` merged
 - [ ] `experiments/derived/sota_cross_eval.csv` generated for at least one Exp2 run via the new scorer path

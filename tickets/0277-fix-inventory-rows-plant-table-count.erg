@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Fix inventory_rows to count the plant table only
+Created: 2026-05-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-24T13:35Z HDMX-coding-agent created from 0272 execution finding: sampled parity mismatch confirmed on openai_run01 (naive 79 vs 118, optimised 83 vs 122). Current best diagnosis is that inventory_rows counts all markdown pipe-table rows including summary tables while scorer extraction targets the main plant table.
+
+--- body ---
+## Context
+
+`inventory_rows` is currently used as an upstream coverage proxy in Exp2 metadata
+and analysis artifacts, but sampled verification in 0272 showed it does not
+consistently represent plant-table rows.
+
+Known failure mode:
+
+- naive `openai_run01`: extracted plant rows = 79 vs `inventory_rows` = 118
+- optimised `openai_run01`: extracted plant rows = 83 vs `inventory_rows` = 122
+
+Current best diagnosis:
+
+- naive-arm tabulation counts every markdown pipe-table row in the report
+- optimised-arm metadata uses the same style of heuristic during run production
+- summary tables are being counted together with the main plant inventory table
+
+This bug is upstream of 0275. Until `inventory_rows` has a canonical meaning,
+ingestion parity checks are ambiguous.
+
+## Actions
+
+1. Define the canonical meaning of `inventory_rows` in Exp2 outputs and docs:
+   plant-table rows only, not all markdown table rows.
+
+2. Fix row counting at the producer level where needed:
+   - `src/aedist/tabulate_exp2_arms_runs.py`
+   - `experiments/sota/exp2_interactive_smoke.py`
+   - `experiments/sota/exp2_phase_b0_consolidate.py`
+
+3. Add regression tests proving summary tables do not inflate `inventory_rows`.
+
+4. Refresh affected generated artifacts or document which ones remain historical
+   and should not be reinterpreted as plant-table counts.
+
+## Exit criteria
+
+- [ ] Canonical `inventory_rows` definition documented as plant-table rows only
+- [ ] Producer-side counting logic fixed where this metric is emitted
+- [ ] Regression tests cover a markdown output containing a plant table plus summary tables
+- [ ] Any affected generated artifact is refreshed or explicitly documented as historical heuristic output
+- [ ] `make check-fast` passes
