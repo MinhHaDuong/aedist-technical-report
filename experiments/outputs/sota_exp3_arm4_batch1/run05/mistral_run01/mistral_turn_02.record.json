@@ -1,0 +1,53 @@
+{
+  "run_id": "52bb2cd21938",
+  "timestamp": "2026-05-25T03:06:56.083478Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 12408,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "Status: remaining 35.8K of 50K tokens, $14.94 of $15.00. Wall-clock elapsed 219.8s. Verify on this turn.\n\nThank you for the inventory. Please now verify and polish it in ONE focused pass, prioritising",
+      "conversation_id": "conv_019e5d13559d73519d72752c99a42fd5",
+      "agent_id": "ag_019e5d1354bb77a7be7bcf879c8f7c95"
+    }
+  },
+  "resource_use": {
+    "wall_s": 184.164,
+    "cost_usd": 0.0640435,
+    "tokens_in": 90863,
+    "tokens_out": 12408,
+    "cost_breakdown": {
+      "input": 0.0454315,
+      "output": 0.018612
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}
