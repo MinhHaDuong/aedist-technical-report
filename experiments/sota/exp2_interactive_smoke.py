@@ -1039,6 +1039,7 @@ def run_phase_b_multiturn(
 
         paths = _turn_artefact_paths(output_dir, agent, turn)
         paths["user"].write_text(user_text, encoding="utf-8")
+        log.info("Phase B turn %d → %s starting ...", turn, last_slot)
 
         extra_metadata: dict | None = {
             "remaining_tokens": str(remaining_tokens),
@@ -1136,7 +1137,7 @@ def run_phase_b_multiturn(
             continuation = new_continuation
 
         log.info(
-            "Phase B turn %d (%s): spent=$%.4f remaining=$%.4f tokens_out=%s "
+            "Phase B turn %d ← %s done: spent=$%.4f remaining=$%.4f tokens_out=%s "
             "remaining_tokens=%d web_search=%d class=%s%s",
             turn,
             last_slot,
