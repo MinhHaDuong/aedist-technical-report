@@ -183,6 +183,11 @@ def write_pdf(
     model_label_ha: str = "right",
     x_label: str = "Nombre de centrales bien identifiées",
     title: str | None = None,
+    fig_width: float = 10.0,
+    fig_height_min: float = 4.2,
+    fig_height_per_run: float = 0.08,
+    fig_height_per_method: float = 0.5,
+    ui_scale: float = 1.0,
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
@@ -204,9 +209,9 @@ def write_pdf(
         if models:
             method_rows = [r for r in method_rows if r["model"] in models]
         total_runs += len(_select_min_median_max(method_rows))
-    fig_height = max(4.2, 0.08 * total_runs + 0.5 * len(order))
+    fig_height = max(fig_height_min, fig_height_per_run * total_runs + fig_height_per_method * len(order))
 
-    fig, ax = plt.subplots(figsize=(10, fig_height))
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     y_offset = 0.0
     y_last = 0.0
@@ -260,19 +265,35 @@ def write_pdf(
             if tp > 0:
                 xs = np.arange(1, tp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, color=color, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(
+                    xs,
+                    ys,
+                    s=4 * ui_scale,
+                    color=color,
+                    marker="|",
+                    linewidths=0.5 * ui_scale,
+                    zorder=3,
+                )
 
             # FP dots (left of 0) — 1 dot = 1 hallucinated plant
             if fp > 0:
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
-                ax.scatter(xs, ys, s=4, color=color, marker="|", linewidths=0.5, zorder=3)
+                ax.scatter(
+                    xs,
+                    ys,
+                    s=4 * ui_scale,
+                    color=color,
+                    marker="|",
+                    linewidths=0.5 * ui_scale,
+                    zorder=3,
+                )
                 if fp_raw > max_fp:
                     ax.text(
                         -fp - 1,
                         y,
                         f"({fp_raw})",
-                        fontsize=5,
+                        fontsize=5 * ui_scale,
                         color=color,
                         va="center",
                         ha="right",
@@ -288,7 +309,7 @@ def write_pdf(
                 label,
                 ha=model_label_ha,
                 va="center",
-                fontsize=13.5,
+                fontsize=13.5 * ui_scale,
                 color=model_family_color(model),
                 bbox={"boxstyle": "round,pad=0.15", "facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
             )
@@ -304,7 +325,7 @@ def write_pdf(
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
     ax.set_yticks([])
-    ax.set_xlabel(x_label, fontsize=11)
+    ax.set_xlabel(x_label, fontsize=11 * ui_scale)
     ax.set_xlim(-max_fp - 15, 185)
     # Invert via ylim order (no invert_yaxis) so set_ylim stays predictable
     ax.set_ylim(y_last + spacing, -spacing)
@@ -318,21 +339,29 @@ def write_pdf(
         y_top,
         "163\nplants",
         color=COLOR_REFERENCE,
-        fontsize=16,
+        fontsize=16 * ui_scale,
         va="bottom",
         ha="center",
     )
     ax.text(
-        -75, y_top, "Hallucinations", color=COLOR_HALLUC, fontsize=16, va="bottom", ha="center"
+        -75,
+        y_top,
+        "Hallucinations",
+        color=COLOR_HALLUC,
+        fontsize=16 * ui_scale,
+        va="bottom",
+        ha="center",
     )
-    ax.tick_params(axis="x", labelsize=9)
+    ax.tick_params(axis="x", labelsize=9 * ui_scale)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
+    top = 0.98
     if title:
-        ax.set_title(title, fontsize=14, fontweight="bold", pad=8)
+        fig.suptitle(title, fontsize=14 * ui_scale, fontweight="bold", y=0.98)
+        top = 0.965
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0.0, 0.0, 1.0, top))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=300)
     plt.close(fig)
@@ -451,6 +480,36 @@ def main() -> None:
         default=None,
         help="Optional figure title.",
     )
+    parser.add_argument(
+        "--fig-width",
+        type=float,
+        default=10.0,
+        help="Figure width in inches for PDF output.",
+    )
+    parser.add_argument(
+        "--fig-height-min",
+        type=float,
+        default=4.2,
+        help="Minimum figure height in inches for PDF output.",
+    )
+    parser.add_argument(
+        "--fig-height-per-run",
+        type=float,
+        default=0.08,
+        help="Figure height increment per run.",
+    )
+    parser.add_argument(
+        "--fig-height-per-method",
+        type=float,
+        default=0.5,
+        help="Figure height increment per method band.",
+    )
+    parser.add_argument(
+        "--ui-scale",
+        type=float,
+        default=1.0,
+        help="Global visual scale factor for marker/text sizes.",
+    )
     args = parser.parse_args()
 
     excluded_models = None
@@ -481,6 +540,11 @@ def main() -> None:
             model_label_ha=args.label_ha,
             x_label=args.xlabel,
             title=args.title,
+            fig_width=args.fig_width,
+            fig_height_min=args.fig_height_min,
+            fig_height_per_run=args.fig_height_per_run,
+            fig_height_per_method=args.fig_height_per_method,
+            ui_scale=args.ui_scale,
         )
     else:
         write_csv(rows, output)
