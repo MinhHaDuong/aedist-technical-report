@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
 
+2026-05-25T17:08Z 2026-05-25T20:20Z haduong design: diverging bars — TP upward (blue), FP downward below zero (orange). Stronger signal than stacked.
 --- body ---
 ## Context
 
@@ -22,13 +23,21 @@ strip plot) where blue=TP and orange=FP are shown together.
 
 ## Design
 
+**Diverging bar chart**: TP bars extend upward from zero (blue, `COLOR_MATCHED`);
+FP bars extend downward below zero (orange, `COLOR_HALLUC`). Zero baseline is
+a horizontal line. This makes recall and hallucination rate immediately readable
+without mental arithmetic — tall blue bar + shallow orange bar = good run.
+
 In `plot_exp2_arms_comparison.py`:
-- Replace the single `inventory_rows` series in Panel A with a stacked or
-  grouped bar: TP (blue) and FP (orange), using the same colour constants
-  (`COLOR_MATCHED`, `COLOR_HALLUC`) as the method-convergence figure
-- Data source: `tab_exp2_arms_runs_view.csv` must carry `n_matched` and
-  `n_hallucinated` (or `inventory_rows - n_matched`) columns; confirm they
-  are present or add them to the mart VIEW
+- Replace the single `inventory_rows` bar with two series:
+  - `n_matched` plotted as positive bars (upward, blue)
+  - `n_hallucinated` (= `inventory_rows - n_matched`) plotted as negative bars
+    (downward, orange) via `ax.bar(..., -n_hallucinated, ...)`
+- Use the same colour constants (`COLOR_MATCHED`, `COLOR_HALLUC`) as the
+  method-convergence figure
+- Y-axis label: "Plants" with tick labels showing absolute values on both sides
+- Data source: `tab_exp2_arms_runs_view.csv` must carry `n_matched`; confirm
+  or patch the mart VIEW to include it
 
 Panel B (report length) and Panel C (cost) are unchanged.
 
