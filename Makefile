@@ -141,16 +141,16 @@ $(GEN)/tab_converter_benchmark.tex: $(CONVERTER_META) $(CONVERTER_DOCS)
 	uv run python -m aedist.compare_converters \
 	    --input $(CONVERTER_TEST) --meta $(CONVERTER_META) --output $@
 
-# --- Chart data for slides ---------------------------------------------------
+# --- Chart data (report canonical; slides references ../report/inputs/generated/) ---
 
-$(SLIDE_GEN)/census_bars.csv: $(MEASUREMENTS)
+$(GEN)/census_bars.csv: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_census --output $@
 
-$(SLIDE_GEN)/fig_direct_cost_quality.pdf: $(MEASUREMENTS)
+$(GEN)/fig_direct_cost_quality.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_cost_quality \
-	    --output $(SLIDE_GEN)/cost_quality.csv --figure $@
+	    --output $(GEN)/cost_quality.csv --figure $@
 
 $(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
 	@mkdir -p $(dir $@)
@@ -169,7 +169,7 @@ $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
-$(SLIDE_GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
+$(GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --methods direct \
@@ -198,17 +198,17 @@ $(GEN)/fig_ablation_heatmap.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_ablation --heatmap $@
 
-$(SLIDE_GEN)/fig_capability_timeline.pdf: data/capability_timeline.csv
+$(GEN)/fig_capability_timeline.pdf: data/capability_timeline.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_capability_timeline \
 	    --input $< --output $@
 
-$(SLIDE_GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
+$(GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_capability_dag \
 	    --input $< --output $@
 
-$(SLIDE_GEN)/macros.tex: $(SLIDE_GEN)/census_bars.csv $(MEASUREMENTS)
+$(SLIDE_GEN)/macros.tex: $(GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 
 # --- Publications -------------------------------------------------------------
@@ -228,9 +228,9 @@ report/report.pdf: report/report.tex report/refs.bib \
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
-    $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/fig_direct_cost_quality.pdf \
-    $(SLIDE_GEN)/regimes.csv $(SLIDE_GEN)/fig_direct_p1_base.pdf \
-    $(SLIDE_GEN)/macros_p1_base.tex \
+    $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf \
+    $(SLIDE_GEN)/regimes.csv $(GEN)/fig_direct_p1_base.pdf \
+    $(GEN)/macros_p1_base.tex \
     $(SLIDE_GEN)/fig_method_convergence.pdf \
     $(SLIDE_GEN)/fig_regimes_scatter.pdf \
     $(SLIDE_GEN)/fig_scaling_curve.pdf \
@@ -245,7 +245,7 @@ slides/slides.pdf: slides/slides.tex \
 report: report/report.pdf
 slides: slides/slides.pdf
 tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
-figures: $(SLIDE_GEN)/census_bars.csv $(SLIDE_GEN)/fig_direct_cost_quality.pdf $(SLIDE_GEN)/fig_direct_p1_base.pdf $(GEN)/fig_census_direct.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
+figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_census_direct.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census
