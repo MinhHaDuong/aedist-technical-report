@@ -2,10 +2,12 @@
 Title: LP matcher LLM validation — fixture tests + Sonnet 4.6 bug hunt
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: Bug found and fixed: LP Mismatched rows split into REFERENCE_ONLY+SYSTEM_ONLY; đ normalisation and single-unit suffix stripping added. Fixture tests deferred to 0312.
 
 --- log ---
 2026-05-25T15:00Z HDMX-coding-agent created
 
+2026-05-25T14:06Z HDMX-coding-agent closed — Bug found and fixed: LP Mismatched rows split into REFERENCE_ONLY+SYSTEM_ONLY; đ normalisation and single-unit suffix stripping added. Fixture tests deferred to 0312.
 --- body ---
 ## Context
 
