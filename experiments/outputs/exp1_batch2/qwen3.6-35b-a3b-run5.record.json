@@ -1,0 +1,43 @@
+{
+  "run_id": "ccd579b25ea3",
+  "timestamp": "2026-05-25T13:38:17.357673Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen/qwen3.6-35b-a3b",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 262144,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 830.623,
+    "cost_usd": 0.013359550000000001,
+    "tokens_in": 1708,
+    "tokens_out": 13491,
+    "thinking_tokens": 7099
+  },
+  "result_file": "experiments/outputs/exp1_batch2/qwen3.6-35b-a3b-run5.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 39,
+    "tp": 16,
+    "fp": 23,
+    "fn": 147,
+    "f1": 0.1584,
+    "fuel_accuracy": 0.4375,
+    "status_accuracy": 0.625,
+    "province_accuracy": 0.9375
+  },
+  "finish_reason": "stop"
+}

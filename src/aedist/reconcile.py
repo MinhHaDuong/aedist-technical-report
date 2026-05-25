@@ -27,6 +27,7 @@ _CLEANER_CONFIG = Path(__file__).parent / "cleaner" / "config.json"
 # Pydantic → DataFrame
 # ---------------------------------------------------------------------------
 
+
 def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
     """Convert a list of Plant to a DataFrame suitable for lp.reconcile().
 
@@ -52,8 +53,16 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
         # empty input, and there is nothing to clean anyway.
         return pd.DataFrame(
             columns=[
-                "name", "province", "fuel", "capacity", "status", "source_ref",
-                "name_clean", "province_clean", "fuel_clean", "capacity_clean",
+                "name",
+                "province",
+                "fuel",
+                "capacity",
+                "status",
+                "source_ref",
+                "name_clean",
+                "province_clean",
+                "fuel_clean",
+                "capacity_clean",
                 "status_clean",
             ]
         )
@@ -67,6 +76,7 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # DataFrame results → ReconciliationEntry
 # ---------------------------------------------------------------------------
+
 
 def _extract_entries(
     result_df: pd.DataFrame,
@@ -87,9 +97,40 @@ def _extract_entries(
             mt = MatchType.REFERENCE_ONLY
         elif status == "Only in file2":
             mt = MatchType.SYSTEM_ONLY
+        elif status == "Mismatched":
+            # LP forced a below-threshold pair (mismatch_penalty < dummy_cost makes it cheaper
+            # to match than to leave both unmatched). Treat as both a missed reference plant
+            # and a hallucinated system plant — emit two separate entries.
+            ref_prov, ref_fuel, _ref_st, ref_src = _lookup_attrs(ref_df, row, "file1")
+            sys_prov, sys_fuel, _sys_st, sys_src = _lookup_attrs(sys_df, row, "file2")
+            entries.append(
+                ReconciliationEntry(
+                    reference_name=_safe(row, "name_file1"),
+                    reference_province=ref_prov,
+                    reference_fuel=ref_fuel,
+                    reference_capacity_mwe=_safe_float(row, "capacity_file1"),
+                    match_type=MatchType.REFERENCE_ONLY,
+                    reference_source_ref=ref_src,
+                )
+            )
+            entries.append(
+                ReconciliationEntry(
+                    system_name=_safe(row, "name_file2"),
+                    system_province=sys_prov,
+                    system_fuel=sys_fuel,
+                    system_capacity_mwe=_safe_float(row, "capacity_file2"),
+                    match_type=MatchType.SYSTEM_ONLY,
+                    system_source_ref=sys_src,
+                )
+            )
+            continue
         else:
-            # "Matched (Fuzzy) (Diff)", "Matched (Diff)", etc.
-            mt = MatchType.FUZZY_CAPACITY_DIFF if "Fuzzy" in str(status) else MatchType.EXACT_CAPACITY_DIFF
+            # "Matched (Fuzzy) (Diff)", "Matched (Diff)"
+            mt = (
+                MatchType.FUZZY_CAPACITY_DIFF
+                if "Fuzzy" in str(status)
+                else MatchType.EXACT_CAPACITY_DIFF
+            )
 
         ref_name = _safe(row, "name_file1")
         sys_name = _safe(row, "name_file2")
@@ -122,24 +163,26 @@ def _extract_entries(
         # Propagate similarity score from LP result row
         sim_score = _safe_float(row, "similarity_score")
 
-        entries.append(ReconciliationEntry(
-            reference_name=ref_name,
-            system_name=sys_name,
-            reference_province=ref_prov,
-            system_province=sys_prov,
-            reference_fuel=ref_fuel,
-            system_fuel=sys_fuel,
-            reference_capacity_mwe=ref_cap,
-            system_capacity_mwe=sys_cap,
-            capacity_diff_pct=cap_diff_pct,
-            match_type=mt,
-            fuel_match=fuel_match,
-            status_match=status_match,
-            province_match=province_match,
-            reference_source_ref=ref_src,
-            system_source_ref=sys_src,
-            similarity_score=sim_score,
-        ))
+        entries.append(
+            ReconciliationEntry(
+                reference_name=ref_name,
+                system_name=sys_name,
+                reference_province=ref_prov,
+                system_province=sys_prov,
+                reference_fuel=ref_fuel,
+                system_fuel=sys_fuel,
+                reference_capacity_mwe=ref_cap,
+                system_capacity_mwe=sys_cap,
+                capacity_diff_pct=cap_diff_pct,
+                match_type=mt,
+                fuel_match=fuel_match,
+                status_match=status_match,
+                province_match=province_match,
+                reference_source_ref=ref_src,
+                system_source_ref=sys_src,
+                similarity_score=sim_score,
+            )
+        )
     return entries
 
 
@@ -183,6 +226,7 @@ def _lookup_attrs(
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def reconcile(
     reference: list[Plant],

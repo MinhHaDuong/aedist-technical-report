@@ -1,0 +1,43 @@
+{
+  "run_id": "5951522c9368",
+  "timestamp": "2026-05-25T13:38:14.956983Z",
+  "method": "direct",
+  "method_params": {
+    "model": "anthropic/claude-opus-4.6",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Anthropic",
+      "context_window": 1000000,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 255.661,
+    "cost_usd": 0.400495,
+    "tokens_in": 1854,
+    "tokens_out": 15649,
+    "thinking_tokens": 0
+  },
+  "result_file": "experiments/outputs/exp1_batch2/claude-opus-4.6-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 95,
+    "tp": 80,
+    "fp": 15,
+    "fn": 83,
+    "f1": 0.6202,
+    "fuel_accuracy": 0.55,
+    "status_accuracy": 0.65,
+    "province_accuracy": 0.8625
+  },
+  "finish_reason": "stop"
+}

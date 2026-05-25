@@ -1,0 +1,43 @@
+{
+  "run_id": "9399b8f55c1c",
+  "timestamp": "2026-05-25T13:38:19.304525Z",
+  "method": "direct",
+  "method_params": {
+    "model": "mistralai/mistral-large-2512",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "frontier",
+      "country": "FR",
+      "architecture": "moe",
+      "provider": "Mistral",
+      "context_window": 262144,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 168.695,
+    "cost_usd": 0.021066,
+    "tokens_in": 1692,
+    "tokens_out": 13480,
+    "thinking_tokens": 0
+  },
+  "result_file": "experiments/outputs/exp1_batch2/mistral-large-2512-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 40,
+    "tp": 34,
+    "fp": 6,
+    "fn": 129,
+    "f1": 0.335,
+    "fuel_accuracy": 0.6176,
+    "status_accuracy": 0.6176,
+    "province_accuracy": 0.9706
+  },
+  "finish_reason": "stop"
+}
