@@ -264,11 +264,16 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     # sharey=True propagates the limit; setting on ax_a is enough.
     ax_a.set_ylim(-5, N_REFERENCE_PLANTS * 1.05)
 
-    ax_a.set_title("(a) Claude / GPT / Mistral", loc="left", fontsize="medium")
-    ax_b.set_title("(b) Qwen / DeepSeek", loc="left", fontsize="medium")
-    ax_a.set_ylabel("Nombre de centrales bien identifiées")
+    ax_a.set_title("(a) Western labs", loc="left", fontsize=11, fontweight="bold")
+    ax_b.set_title("(b) Asian labs", loc="left", fontsize=11, fontweight="bold")
+    ax_a.set_ylabel("Assets correctly identified")
     fig.supxlabel("Cost per run (USD cents)")
-    fig.suptitle("Experiment 1 baseline (no web search)", y=0.995, fontsize="medium")
+    fig.suptitle(
+        "Cost vs. accuracy across 16 models (no web access)",
+        y=0.995,
+        fontsize=13,
+        fontweight="bold",
+    )
 
     def _family_handle(slug_seed: str, label: str) -> Line2D:
         glyph = glyph_for_method("parametric")

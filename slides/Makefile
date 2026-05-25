@@ -6,9 +6,9 @@
 GENERATED := inputs/generated
 ROOT_SLIDE_GEN := slides/inputs/generated
 ROOT_REPORT_GEN := report/inputs/generated
-ROOT_REPORT_ARM_GEN := report/input/generated
+ROOT_REPORT_ARM_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
-LOCAL_ROOT_REPORT_ARM_GEN := ../report/input/generated
+LOCAL_ROOT_REPORT_ARM_GEN := ../report/inputs/generated
 
 SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv \
