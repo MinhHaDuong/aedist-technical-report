@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Separate raw API outputs from derived artifacts in experiment pipeline
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T06:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`exp2_naive_arm.py` writes `{agent}.md` (derived narrative) alongside raw API
+outputs during the run itself. This conflates two concerns: data collection and
+post-processing. Consequences:
+- Improving extraction logic (e.g. table concatenation) requires re-running
+  expensive API calls to regenerate `.md`
+- Raw output directories are not faithful records of API responses
+- `exp2_interactive_smoke.py` already does this correctly (pure raw outputs);
+  the naive arm should follow the same discipline
+
+**Must be resolved before committing raw results** so the committed output
+directories are clean and re-extractable without re-running the API.
+
+## Relevant files
+- `experiments/sota/exp2_naive_arm.py` — writes `{agent}.md` inline (line 393)
+- `experiments/sota/exp2_interactive_smoke.py` — reference implementation
+  (pure raw outputs, no derived files)
+- `experiments/sota/exp2_phase_b0_consolidate.py` — existing consolidation
+  script (old flat layout; needs adapting to run{N}/ layout)
+
+## Actions
+1. Remove `.md` write from `exp2_naive_arm.py` (line 393-394); keep all raw
+   outputs intact
+2. Create `experiments/sota/exp2_extract.py` (or extend
+   `exp2_phase_b0_consolidate.py`) — a standalone extraction script that:
+   - Reads raw outputs for all arms/agents/runs
+   - Concatenates sub-tables across turns (fixes 0290 for analysis side)
+   - Writes `{agent}.md` per run into a separate `derived/` subdir or alongside
+     raw with a clear naming convention
+   - Emits updated `summary.json` with correct `inventory_rows`
+3. Wire into Makefile as a dependent target after the run target
+
+## Test
+After removing `.md` write from naive arm:
+```bash
+make -f experiment2.mk arm1-run01  # must succeed without writing any .md
+ls outputs/sota_exp3_arm1_batch1/run01/*.md  # must be empty (only summary*.md)
+```
+After adding extract step:
+```bash
+python sota/exp2_extract.py --arm 1 --run 01
+ls outputs/sota_exp3_arm1_batch1/run01/derived/  # should contain {agent}.md
+```
+
+## Exit criteria
+- [ ] `exp2_naive_arm.py` writes no `.md` files during the run
+- [ ] A separate extract script regenerates all `.md` from raw outputs alone
+- [ ] Extracted tables concatenate sub-tables (ties into ticket 0290)
+- [ ] Existing arm1/arm3 raw results are re-extractable cleanly
+- [ ] `make check-fast` passes
