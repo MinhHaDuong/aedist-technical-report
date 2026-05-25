@@ -32,8 +32,8 @@ reused for Experiments 2/3.
 Usage::
 
     uv run python -m aedist.plot_cost_quality \\
-        --output slides/inputs/generated/cost_quality.csv \\
-        --figure slides/inputs/generated/fig_direct_cost_quality.pdf \\
+        --output report/inputs/generated/cost_quality.csv \\
+        --figure report/inputs/generated/fig_direct_cost_quality.pdf \\
         --xscale log
 """
 

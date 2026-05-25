@@ -8,7 +8,7 @@ local is 1 for Padme models, 0 otherwise.
 Usage:
     uv run python -m aedist.plot_census \\
         --measurements measurements.jsonl \\
-        --output slides/inputs/generated/census_bars.csv
+        --output report/inputs/generated/census_bars.csv
 """
 
 import argparse
