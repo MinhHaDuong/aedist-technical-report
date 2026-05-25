@@ -1,0 +1,278 @@
+{
+  "run_id": "7f4e47cff759",
+  "timestamp": "2026-05-24T21:09:15.134856Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "gpt-5.5-2026-04-23",
+    "temperature": null,
+    "max_tokens": null,
+    "prompt_version": null,
+    "extra": {
+      "response_id": "resp_08091ed5e4fc2baa006a1368db89608194bfead9f4ea4dd74d"
+    }
+  },
+  "resource_use": {
+    "wall_s": 32.451,
+    "cost_usd": 0.051774999999999995,
+    "tokens_in": 12118,
+    "tokens_out": 1843,
+    "cost_breakdown": {
+      "input": 0.019735,
+      "cached": 0.00264,
+      "output": 0.027645,
+      "reasoning": 0.001755
+    },
+    "thinking_tokens": 117
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": {
+    "output_text": "Discovery pass started; **not ready for final inventory yet**.\n\n**Source families searched so far**\n- **Official planning / policy**\n  - PDP8 full decision/annex English copy: Prime Minister Decision 500/QĐ-TTg, 15 May 2023.\n  - PDP8 implementation plan: Prime Minister Decision 262/QĐ-TTg, 1 April 2024, located via legal/trade summaries; need to retrieve/verify the Vietnamese annex tables directly.\n  - Revised PDP8: Prime Minister Decision 768/QĐ-TTg, 15 April 2025, located via secondary summaries; need direct Vietnamese text/annexes.\n- **Operator / utility leads**\n  - EVN pages on coal-fired thermal fleet and emissions-control upgrades.\n  - EVN historical overview of coal-fired power development.\n  - Need systematic operator verification from EVNGENCO1/2/3, PV Power, Petrovietnam, TKV/Vinacomin, AES, BOT/project-company pages, and provincial authorities.\n- **Secondary/trade leads**\n  - KPMG, Mayer Brown, Frasers, Allen & Gledhill, VILAF summaries of PDP8 implementation.\n  - Vietnam Energy Magazine as a possible secondary source for commissioning/status details.\n  - These are being treated as leads, not final primary sources unless they reproduce official annex detail clearly.\n\n**Provisional asset groups identified for candidate matrix**\n\n1. **Operating / historical coal**\n   - Phả Lại 1–2\n   - Uông Bí / Uông Bí expansion\n   - Ninh Bình\n   - Cao Ngạn\n   - Na Dương\n   - Sơn Động\n   - Cẩm Phả 1–2\n   - Mạo Khê\n   - Hải Phòng 1–2\n   - Quảng Ninh 1–2\n   - Mông Dương 1\n   - Mông Dương 2 BOT\n   - Thái Bình 1\n   - Thái Bình 2\n   - Nghi Sơn 1\n   - Nghi Sơn 2 BOT\n   - Vũng Áng 1\n   - Vũng Áng 2\n   - Vĩnh Tân 1 BOT\n   - Vĩnh Tân 2\n   - Vĩnh Tân 4 / Vĩnh Tân 4 extension\n   - Duyên Hải 1\n   - Duyên Hải 2 BOT\n   - Duyên Hải 3 / Duyên Hải 3 extension\n   - Sông Hậu 1\n   - Long Phú 1\n   - Hải Dương BOT\n   - An Khánh / An Khánh Bắc Giang candidates need verification.\n\n2. **Cancelled / shelved / displaced coal candidates**\n   - Long Phú 2\n   - Long Phú 3\n   - Sông Hậu 2\n   - Vĩnh Tân 3\n   - Vĩnh Tân 4 phase variants / Vĩnh Tân 5 naming conflict to verify\n   - Quảng Trạch 1 and Quảng Trạch 2: need determine whether coal, LNG conversion, or cancelled/superseded status under revised PDP8.\n   - Kiên Lương coal complex\n   - Hải Phòng 3, Quảng Ninh 3, Cẩm Phả 3, other PDP7-era expansion candidates need source confirmation.\n   - Nam Định 1: coal BOT status needs direct verification.\n\n3. **Operating domestic gas / oil-gas thermal**\n   - Bà Rịa\n   - Thủ Đức: older oil/gas units, likely retired/part-retired; need status and capacity verification.\n   - Hiệp Phước: gas/oil IPP; ownership/status unclear.\n   - Phú Mỹ complex split likely required:\n     - Phú Mỹ 1\n     - Phú Mỹ 2.1\n     - Phú Mỹ 2.1 extension\n     - Phú Mỹ 2.2 BOT\n     - Phú Mỹ 3 BOT\n     - Phú Mỹ 4\n   - Nhơn Trạch 1\n   - Nhơn Trạch 2\n   - Cà Mau 1\n   - Cà Mau 2\n   - Ô Môn 1\n   - Ô Môn 2 / 3 / 4: status differs by project.\n   - Cần Thơ / Trà Nóc: older gas/oil thermal; likely retired or reserve; need verification.\n\n4. **Under-construction / future domestic gas**\n   - Nhơn Trạch 3–4: under construction; imported LNG or LNG-backed gas depending source classification; likely row fuel should be Imported LNG.\n   - Ô Môn 3\n   - Ô Môn 4: recent construction/EPC lead found; needs primary PVN/PV Power/EVN verification.\n   - Miền Trung 1–2 / Dung Quất 1–3 gas projects: need current PDP8/revised PDP8 status and developer confirmation.\n   - Kỳ Anh / Cá Voi Xanh-linked gas projects: need status after upstream delays.\n\n5. **Imported LNG projects from PDP8 / implementation plan leads**\n   - Nhơn Trạch 3–4\n   - Hiệp Phước LNG\n   - Long An I\n   - Long An II\n   - Bạc Liêu LNG\n   - Sơn Mỹ I\n   - Sơn Mỹ II\n   - Quảng Ninh LNG\n   - Thái Bình LNG\n   - Nghi Sơn LNG\n   - Hải Lăng LNG phase 1\n   - Cà Ná LNG\n   - Quỳnh Lập / other revised-PDP8 LNG-conversion candidates need direct verification.\n   - Several projects may be “permitted” vs “pre-permit” depending whether they have investment-policy approval, investor selection, FS, PPA, or only PDP inclusion.\n\n**Major uncertainties to resolve in verification pass**\n- **Exact PDP8/revised-PDP8 project list and statuses**: secondary summaries show the annexes exist, but final table should rely on official Decision 262/2024 and Decision 768/2025 texts/annexes where possible.\n- **Coal technology classification**: many older units are clearly subcritical; newer Vĩnh Tân 4, Duyên Hải 3 extension, etc. may be supercritical/USC. Need source-level confirmation rather than inference.\n- **Retired small thermal plants >30 MWe**: Thủ Đức, Cần Thơ/Trà Nóc, Ninh Bình, older Uông Bí/Phả Lại units may have mixed retirement/standby statuses. Need concrete as-of dates.\n- **Plant granularity**: Phú Mỹ and Duyên Hải/Vĩnh Tân complexes require splitting by owner/developer, COD, and financing model.\n- **Cancelled vs shelved**: PDP removal, JETP commitments, sponsor withdrawal, and revised-PDP8 treatment can imply different status; will not mark “Cancelled” unless an official cancellation/removal or sponsor termination is found.\n- **Industrial/captive plants**: An Khánh, Formosa Hà Tĩnh coal/captive generation, and other industrial thermal assets may exceed 30 MWe and need inclusion if grid-scale or recognized generation assets. Need separate search.\n\n**Next searches**\n1. Retrieve official Vietnamese PDFs/text for:\n   - Decision 262/QĐ-TTg 2024 implementation annexes.\n   - Decision 768/QĐ-TTg 2025 revised PDP8 annexes.\n   - PDP7 revised Decision 428/QĐ-TTg 2016 for cancelled/superseded historical coal/gas projects.\n2. Build operator-sourced rows from:\n   - EVNGENCO1, EVNGENCO2, EVNGENCO3 plant pages.\n   - PV Power/PVN plant and annual report pages.\n   - TKV/Vinacomin power company pages.\n   - BOT/project-company sources for AES Mông Dương 2, Nghi Sơn 2, Vĩnh Tân 1, Phú Mỹ 2.2/3, Hải Dương, Vũng Áng 2.\n3. Search ambiguous/captive/retired assets individually."
+  },
+  "validation": null,
+  "agent_family": "openai-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [
+    {
+      "query": null,
+      "urls_returned": [
+        "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html",
+        "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released",
+        "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan",
+        "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf",
+        "https://www.allenandgledhill.com/vn/publication/articles/27821/issues-implementation-plan-for-national-power-development-plan-viii?agreed=cookiepolicy",
+        "https://vietnamenergy.vn/evn-prepares-emissions-control-upgrades-for-30-coal-fired-power-units-35734.html",
+        "https://www.vilaf.com.vn/blog/on-the-implementation-plan-for-the-power-development-plan-viii-of-vietnam/",
+        "https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html",
+        "https://www.weforum.org/stories/2023/05/vietnam-pdp8-power-plan-for-2030/",
+        "https://en.evn.com.vn/d6/news/Development-of-coal-fired-thermal-power-plants-with-high-efficiency-and-environmentally-friendly-technologies-66-163-915.aspx",
+        "https://database.earth/energy/power-plants/coal-power/vietnam",
+        "https://en.evn.com.vn/d/en-US/news/Sharing-experiences-and-solutions-to-improve-reliability-of-coal-fired-thermal-power-plants-in-EVN-60-203-500625",
+        "https://en.evn.com.vn/d6/news/Overview-of-coal-fired-thermal-power-development-in-Vietnam-66-163-1573.aspx",
+        "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf",
+        "https://www.mbs.com.vn/media/fljb3frq/mbs_vietnam-strategy-2h24_20240701-1.pdf",
+        "https://kpmg.com/content/dam/kpmg/vn/pdf/2024/03/vietnam-2024-outlook-report-en.pdf",
+        "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+        "https://britchamvn.com/wp-content/uploads/2024/05/PIC-PDP8-Implementation-Plan-JETP.pdf",
+        "https://en.wikipedia.org/wiki/%C4%90a_Nhim_Hydroelectric_Power_Station",
+        "https://en.wikipedia.org/wiki/Duy%C3%AAn_H%E1%BA%A3i_Power_Station",
+        "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+        "https://en.wikipedia.org/wiki/Thei%C3%9F_power_station",
+        "https://en.wikipedia.org/wiki/Ninh_Thu%E1%BA%ADn_1_Nuclear_Power_Plant",
+        "https://en.wikipedia.org/wiki/Vietnam",
+        "https://www.reddit.com/r/the_shiv_vn/comments/1lw0nzm",
+        "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j",
+        "https://www.reddit.com/r/the_shiv_vn/comments/1l75a4p",
+        "https://www.reddit.com/r/the_shiv_vn/comments/1ksmgv7",
+        "https://www.reddit.com/r/u_Moitruong_hana/comments/o6xf7c",
+        "https://www.reddit.com/r/u_mpdvietnhatpower/comments/hakahw",
+        "https://www.reddit.com/r/u_pc1epcvn/comments/14l1ta7",
+        "https://www.reddit.com/r/climateaction/comments/15ntdmq",
+        "https://www.reddit.com/r/the_shiv_vn/comments/1lb8iej",
+        "https://www.reddit.com/r/the_shiv_vn/comments/1k46sra",
+        "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa",
+        "https://www.reddit.com/r/energy/comments/16xey56"
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.allenandgledhill.com/vn/publication/articles/27821/issues-implementation-plan-for-national-power-development-plan-viii?agreed=cookiepolicy",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://vietnamenergy.vn/evn-prepares-emissions-control-upgrades-for-30-coal-fired-power-units-35734.html",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vilaf.com.vn/blog/on-the-implementation-plan-for-the-power-development-plan-viii-of-vietnam/",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.weforum.org/stories/2023/05/vietnam-pdp8-power-plan-for-2030/",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Development-of-coal-fired-thermal-power-plants-with-high-efficiency-and-environmentally-friendly-technologies-66-163-915.aspx",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://database.earth/energy/power-plants/coal-power/vietnam",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.evn.com.vn/d/en-US/news/Sharing-experiences-and-solutions-to-improve-reliability-of-coal-fired-thermal-power-plants-in-EVN-60-203-500625",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.evn.com.vn/d6/news/Overview-of-coal-fired-thermal-power-development-in-Vietnam-66-163-1573.aspx",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.mbs.com.vn/media/fljb3frq/mbs_vietnam-strategy-2h24_20240701-1.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://kpmg.com/content/dam/kpmg/vn/pdf/2024/03/vietnam-2024-outlook-report-en.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://britchamvn.com/wp-content/uploads/2024/05/PIC-PDP8-Implementation-Plan-JETP.pdf",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/%C4%90a_Nhim_Hydroelectric_Power_Station",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Duy%C3%AAn_H%E1%BA%A3i_Power_Station",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Thei%C3%9F_power_station",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Ninh_Thu%E1%BA%ADn_1_Nuclear_Power_Plant",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Vietnam",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/the_shiv_vn/comments/1lw0nzm",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/the_shiv_vn/comments/1l75a4p",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/the_shiv_vn/comments/1ksmgv7",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/u_Moitruong_hana/comments/o6xf7c",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/u_mpdvietnhatpower/comments/hakahw",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/u_pc1epcvn/comments/14l1ta7",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/climateaction/comments/15ntdmq",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/the_shiv_vn/comments/1lb8iej",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/the_shiv_vn/comments/1k46sra",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa",
+      "snippet": null,
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.reddit.com/r/energy/comments/16xey56",
+      "snippet": null,
+      "supports_claim": null
+    }
+  ],
+  "parsed_table_path": null,
+  "finish_reason": "completed",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": null
+}
