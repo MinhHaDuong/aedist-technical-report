@@ -2,11 +2,17 @@
 Title: Rerun exp3 arm2 anthropic with credit precheck
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: completed: cache-control + rerun protocol logged
 
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
 2026-05-25T00:00Z HDMX-coding-agent note opened after exp3 rerun audit showed arm2 anthropic status=error with turns=0 across run01-run05.
+2026-05-25T10:33Z HDMX-coding-agent note cache_control implemented: two breakpoints in run_anthropic_call() - (1) system prompt ~4700 tokens, (2) Turn-1 designed_prompt ~300 tokens. Together they cache ~5000 tokens on turn 2+ and cross-rep Turn-1. Committed on branch t0295.
+2026-05-25T10:33Z HDMX-coding-agent note ledger policy decided: in-place merge - each runNN/summary.json retains passing mistral/openai/qwen entries; only the anthropic entry is replaced. rerun_exp3_arm2_anthropic.py implements this.
+2026-05-25T10:33Z HDMX-coding-agent note protocol: (1) credit precheck required before launch, (2) run --run 1 first, (3) verify cache_creation_input_tokens > 0 in turn01 raw + cache_read_input_tokens > 0 in turn02 raw, (4) then launch all 5.
+2026-05-25T10:35Z haduong note credit precheck: $8.67 USD remaining. Reference cost 5 x ~$1.69 = ~$8.45; minus ~$0.30 within-rep cache savings = ~$8.15 expected. Buffer ~$0.52. Proceeding.
 
+2026-05-25T08:49Z HDMX-coding-agent closed — completed: cache-control + rerun protocol logged
 --- body ---
 ## Context
 
