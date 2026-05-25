@@ -36,6 +36,11 @@ htmlcov/
 # Generated slide data (report inputs are tracked)
 slides/inputs/generated/
 
+# Intermediate report-generated files — rebuilt by make, not handoff artifacts
+report/inputs/generated/census_bars.csv
+report/inputs/generated/cost_quality.csv
+report/inputs/generated/macros_p1_base.tex
+
 # Experiment working files (large intermediates, not needed for analysis)
 experiments/data/rag_work/
 experiments/jobs/
