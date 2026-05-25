@@ -11,8 +11,12 @@ LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
 SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf \
-	$(GENERATED)/regimes.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
+	$(GENERATED)/regimes.csv \
 	$(GENERATED)/fig_method_convergence.pdf \
 	$(GENERATED)/fig_regimes_scatter.pdf \
 	$(GENERATED)/fig_scaling_curve.pdf \
