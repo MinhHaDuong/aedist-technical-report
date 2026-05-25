@@ -22,7 +22,7 @@ import random
 from pathlib import Path
 
 from .extract import count_best_table_rows
-from .util import COLOR_REFERENCE, model_family_color
+from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -122,6 +122,8 @@ def _load_csv(path: Path) -> list[dict]:
             row["run"] = int(row["run"])
             raw_rows = row["inventory_rows"]
             row["inventory_rows"] = int(raw_rows) if raw_rows not in ("", "None") else 0
+            raw_matched = row.get("n_matched", "")
+            row["n_matched"] = int(raw_matched) if raw_matched not in ("", "None") else None
             row["cost_usd"] = float(row.get("cost_usd") or 0.0)
             row["arm"] = _canonical_arm(row["arm"])
             row["is_report"] = row["classification"] == "report"
@@ -134,6 +136,64 @@ def _load_csv(path: Path) -> list[dict]:
     if "arm4" not in present_arms:
         rows.extend(_load_pack_arm_rows(root / "experiments/derived/arm4_flat", "arm4"))
     return rows
+
+
+def _draw_panel_a_diverging(ax, rows: list[dict]) -> None:
+    """Diverging bar: TP upward (blue/COLOR_MATCHED), FP downward (orange/COLOR_HALLUC)."""
+    import statistics
+
+    bar_width = 0.35
+    arm_offsets = {"arm1": -0.2, "arm2": +0.2}
+
+    for agent_idx, agent in enumerate(_AGENT_ORDER):
+        for arm_key, x_offset in arm_offsets.items():
+            subset = [
+                r for r in rows if r["agent"] == agent and r["arm"] == arm_key and r["is_report"]
+            ]
+            if not subset:
+                continue
+
+            inv_vals = [r["inventory_rows"] for r in subset]
+            matched_vals = [r["n_matched"] for r in subset]
+
+            has_scores = [m for m in matched_vals if m is not None]
+            if has_scores:
+                med_matched = statistics.median(has_scores)
+                inv_with_scores = [
+                    r["inventory_rows"] for r in subset if r["n_matched"] is not None
+                ]
+                med_inv = statistics.median(inv_with_scores)
+                med_halluc = max(0, med_inv - med_matched)
+                x = agent_idx + x_offset
+                ax.bar(x, med_matched, bar_width, color=COLOR_MATCHED, alpha=0.85, zorder=3)
+                if med_halluc > 0:
+                    ax.bar(x, -med_halluc, bar_width, color=COLOR_HALLUC, alpha=0.85, zorder=3)
+            else:
+                med_inv = statistics.median(inv_vals) if inv_vals else 0
+                x = agent_idx + x_offset
+                ax.bar(x, med_inv, bar_width, color="0.70", alpha=0.85, zorder=3)
+
+    ax.axhline(0, color="black", linewidth=0.6, zorder=2)
+    ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
+
+    ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
+    ax.set_ylabel("Plants", fontsize=8)
+    ax.set_ylim(-60, 180)
+    ax.set_xticks(range(len(_AGENT_ORDER)))
+    ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
+    ax.tick_params(axis="y", labelsize=7.5)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.text(
+        0.5,
+        -0.23,
+        "(a) Coverage",
+        transform=ax.transAxes,
+        ha="center",
+        va="top",
+        fontsize=10,
+        fontweight="bold",
+    )
 
 
 def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> None:
@@ -174,7 +234,9 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> N
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     if metric == "inventory_rows":
-        ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
+        ax.axhline(
+            N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1
+        )
         ax.set_ylim(0, 180)
     else:
         ax.set_ylim(bottom=0)
@@ -199,9 +261,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 5.1))
     no_report_rows = [r for r in rows if not r["is_report"]]
     if no_report_rows:
-        sample = ", ".join(
-            f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6]
-        )
+        sample = ", ".join(f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6])
         log.warning(
             "plot_exp2_arms_comparison: excluding %d no_report rows (pipeline bugs): %s",
             len(no_report_rows),
@@ -209,30 +269,33 @@ def make_figure(rows: list[dict], output: Path) -> None:
         )
     rows = [r for r in rows if r["is_report"]]
 
-    for ax, (metric, title, ylabel) in zip(axes, _PANELS, strict=True):
-        _draw_panel(ax, rows, metric, title, ylabel)
+    _draw_panel_a_diverging(axes[0], rows)
+    _draw_panel(axes[1], rows, "cost_usd", "(b) Cost", "API cost per run (USD)")
 
-    legend_handles = []
-    legend_order = ["arm1", "arm3", "arm2", "arm4"]
-    for arm in legend_order:
+    legend_handles = [
+        Line2D([0], [0], color=COLOR_MATCHED, linewidth=6, alpha=0.85, label="Matched (TP)"),
+        Line2D([0], [0], color=COLOR_HALLUC, linewidth=6, alpha=0.85, label="Hallucinated (FP)"),
+        Line2D([0], [0], color="0.70", linewidth=6, alpha=0.85, label="Unscored"),
+    ]
+    arm_handles = []
+    for arm in ["arm1", "arm2"]:
         style = _ARM_STYLE[arm]
-        face = COLOR_REFERENCE if style["filled"] else "none"
-        legend_handles.append(
+        arm_handles.append(
             Line2D(
                 [0],
                 [0],
                 marker=style["marker"],
                 linestyle="",
-                markerfacecolor=face,
+                markerfacecolor="none",
                 markeredgecolor=COLOR_REFERENCE,
                 markersize=6,
                 label=style["label"],
             )
         )
     fig.legend(
-        handles=legend_handles,
+        handles=legend_handles + arm_handles,
         loc="upper center",
-        ncol=4,
+        ncol=5,
         fontsize=7.5,
         frameon=True,
         bbox_to_anchor=(0.5, 0.945),
