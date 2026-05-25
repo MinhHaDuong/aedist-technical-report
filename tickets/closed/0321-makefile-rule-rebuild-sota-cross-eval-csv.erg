@@ -4,8 +4,11 @@ Created: 2026-05-25
 Author: claude
 Closed: Makefile rule added, CSV regenerated with correct columns — PR #567
 
+Blocked-by: 0322
+
 --- log ---
 2026-05-25T20:00Z claude created — gap identified during PR #558 review (0313)
+2026-05-25T23:00Z HDMX-coding-agent imagine — must loop both arm1_flat AND arm2_flat (ticket only said arm1); add Blocked-by 0322 (rebuild would revert column rename if 0321 ships first); need rm -f $@ + || true per scorer call; expect ~31 rows not 32 (anthropic_run04 naive fails ingestion)
 
 2026-05-25T19:23Z HDMX-coding-agent closed — Makefile rule added, CSV regenerated with correct columns — PR #567
 --- body ---

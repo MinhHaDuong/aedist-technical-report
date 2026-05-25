@@ -6,6 +6,7 @@ Closed: autoclosed — PR #566
 
 --- log ---
 2026-05-25T22:30Z HDMX-coding-agent created — found during /celebrate sweep after raid 314–317
+2026-05-25T23:00Z HDMX-coding-agent imagine — simple rename is wrong: status_vocab and capacity_nonneg are different computations; fix = port _capacity_nonnegative() from score_exp1.py into score_mechanical.py and wire to coherence_capacity_nonnegative column; CSV already has correct header so no regeneration needed; exit criteria unchanged
 
 2026-05-25T18:50Z HDMX-coding-agent closed — autoclosed — PR #566
 --- body ---
