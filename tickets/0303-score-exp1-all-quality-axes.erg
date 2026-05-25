@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Score Exp 1 outputs on all 8 quality axes
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`score_mechanical.py` already computes all 8 quality axes (accuracy
+coverage/precision/fuel/status/province, coherence, provenance-structural,
+temporality) from a list of canonical CSV rows. The `score_ingest.py`
+pipeline resolves those rows for Exp 2 arms via RunLocator. Exp 1 outputs
+are flat CSVs in `experiments/outputs/exp1_batch2/{model}-run{N}.csv` and
+need no ingestion — they are already in canonical form.
+
+The prompt for Exp 1 was aligned to request source_1, source_2, and
+status_as_of columns. Those columns are present in the CSVs. Therefore
+the full 8-axis profile can be computed for every Exp 1 run at no
+additional API cost; this unlocks the Exp 1 spider figure (ticket 0306).
+
+## Design
+
+Write `src/aedist/score_exp1.py`:
+- Accept `--input-dir experiments/outputs/exp1_batch2` and
+  `--output experiments/derived/exp1_cross_eval.csv`
+- For each `{model}-run{N}.csv` file in input-dir:
+  - Parse model name and run number from the filename stem
+  - Load rows via `csv.DictReader`
+  - Call `score_accuracy`, `score_coherence`, `score_provenance_structural`,
+    `score_temporality`, `score_field_completeness` from `score_mechanical`
+  - Emit one row to the output CSV with columns matching `sota_cross_eval.csv`
+    schema (arm="parametric", model, run, plus all score columns)
+- Append to `exp1_cross_eval.csv` (do not clobber)
+- Wire into `analysis.mk` as a stamp target depending on all
+  `experiments/outputs/exp1_batch2/*.csv`
+
+The output schema must be compatible with `sota_cross_eval.csv` so the
+spider figure can load both files with identical code.
+
+## Exit criteria
+
+- [ ] `src/aedist/score_exp1.py` implemented and tested
+- [ ] `experiments/derived/exp1_cross_eval.csv` produced; spot-check
+      ≥ 3 rows manually against source CSVs
+- [ ] Schema matches `sota_cross_eval.csv` column for column
+- [ ] `analysis.mk` target wired
+- [ ] `make check-fast` passes

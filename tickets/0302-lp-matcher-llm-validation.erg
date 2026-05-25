@@ -1,0 +1,60 @@
+%erg 0.1
+Title: LP matcher LLM validation — fixture tests + Sonnet 4.6 bug hunt
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The LP matcher assigns model-generated plant names to the 163-plant gold
+reference via string similarity + capacity weight. Exp 1 results show
+claude-sonnet-4-6 achieving implausibly high match counts on a run known
+to hallucinate. This points at a method bug: either the LP matcher is
+over-matching (accepting false positives), or the "no hallucinations"
+verdict is computed incorrectly.
+
+We need LLM-based spot-checking to build trust in the matcher's verdicts
+before presenting Exp 1 figures publicly.
+
+## Scope
+
+1. **Fixture tests.** Write parametrised pytest cases covering:
+   - True positive: model name is a known alias for a reference plant
+     (e.g. "Nhiet dien Duyen Hai 1" → "Nhiệt điện Duyên Hải 1")
+   - True negative: model name has no plausible reference match
+     (hallucinated plant, correct fuel/province but non-existent name)
+   - Near-miss: same province + fuel + plausible capacity but wrong name
+   - Duplicate: two model rows mapping to the same reference row (only
+     one should be accepted)
+   Each fixture includes expected match verdict (matched / unmatched) and
+   the minimum similarity score threshold under which it should flip.
+
+2. **Sonnet 4.6 case investigation.** For the suspicious run, produce a
+   diff table: reference plant ↔ matched model row ↔ similarity score ↔
+   capacity difference. Flag every match where similarity < 80 OR
+   capacity_diff_pct > 30. Output as `experiments/derived/sonnet46_match_audit.csv`.
+
+3. **LLM adjudication sample.** For 20 randomly-sampled matched pairs
+   (across all Exp 1 models, seed=42), prompt a cheap LLM judge
+   (mistral-small-latest) with: "Is this a genuine match? Answer yes/no
+   and one sentence." Record judgements in
+   `experiments/derived/lp_matcher_llm_sample.csv`. Report agreement rate.
+
+## Notes
+
+- Do NOT change the LP matcher itself unless the audit finds a clear bug.
+  File a child ticket for any matcher change.
+- Provenance spot-check of URLs is out of scope here (ticket 0281 handles
+  that post-conference).
+
+## Exit criteria
+
+- [ ] Fixture tests in `tests/test_lp_matcher_validation.py` — all pass
+- [ ] `experiments/derived/sonnet46_match_audit.csv` written and reviewed;
+      any bug found is documented in the log, child ticket filed if fix needed
+- [ ] `experiments/derived/lp_matcher_llm_sample.csv` with ≥ 20 rows,
+      agreement rate ≥ 80% OR known bugs filed
+- [ ] `make check-fast` passes

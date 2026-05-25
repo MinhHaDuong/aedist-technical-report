@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Spider — Exp 2 4-way quality profile (2×2 arms)
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0304
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Exp 2 runs a 2×2 design: {single-shot, multi-turn} × {no pack, with
+pack}. A 4-panel quality spider — one panel per arm, with all 4 SOTA
+agents superposed — shows both the method effect (single vs multi-turn)
+and the data-augmentation effect (pack vs no-pack) on all 8 quality axes.
+
+This ticket is blocked on:
+- 0304 (arm3/arm4 extractors + arm1 full scoring)
+- Phase C: `sota_cross_eval.csv` needs scoring rows for all 4 arms ×
+  4 agents × ≥1 run. Currently only `naive, gpt-5.5, run 1` is scored.
+  Running score_mechanical for the remaining models is a compute job
+  estimated at ~20 API calls × $0.01 = ~$0.20 once ingestion is fixed.
+
+## Design
+
+Extend `plot_quality_spider.py` with a new entry point or flag
+`--mode exp2-4way`. Layout: 2×2 grid.
+  Panel (a) arm1 — naive, no pack
+  Panel (b) arm2 — optimised, no pack
+  Panel (c) arm3 — naive, with pack
+  Panel (d) arm4 — optimised, with pack
+
+Within each panel: 4 agent traces (Anthropic/GPT/Mistral/Qwen) in family
+colours, median of available runs. Reuse the first panel from the simpler
+Exp2-arm1-only spider so layout is consistent.
+
+## Exit criteria
+
+- [ ] All 4 arms × 4 agents have ≥ 1 scored row in `sota_cross_eval.csv`
+- [ ] Figure produced as `report/inputs/generated/fig_spider_exp2_4way.pdf`
+- [ ] Wired in `Makefile` and `slides/manuscript/main.md`
+- [ ] `make check-fast` passes

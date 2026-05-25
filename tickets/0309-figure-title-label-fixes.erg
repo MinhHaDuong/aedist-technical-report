@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Figure title and label fixes — per run, no web search, axis labels
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Three small cosmetic fixes identified during figure review:
+
+1. **Cost axis label**: currently reads "Coût par requête (cents USD)".
+   Change to "Coût par appel (cents USD)" → "Cost per run (USD cents)"
+   consistently. Affects `plot_cost_quality.py` (`fig.supxlabel`).
+
+2. **Cost/quality figure title**: the figure has no title indicating the
+   experimental condition. Add "(no web search)" or "(sans accès web)"
+   as a figure-level subtitle or annotation so readers know Exp 1 is
+   the parametric baseline. Affects `plot_cost_quality.py` /
+   `write_pdf()`.
+
+3. **Y-axis label `fig_direct_p1_base`**: verify the axis label reads
+   "Nombre de centrales bien identifiées" (French, consistent with
+   cost_quality). Standardise if divergent.
+
+## Exit criteria
+
+- [ ] `plot_cost_quality.py`: supxlabel updated to "per run"; panel or
+      figure title annotated "(no web search)"
+- [ ] `plot_method_convergence.py` y-axis label verified / aligned
+- [ ] Regenerated PDFs committed to `report/inputs/generated/`
+- [ ] `make check-fast` passes

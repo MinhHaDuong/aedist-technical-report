@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Extractors for arm 3 and arm 4 flat artifacts
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The arms comparison figure (ticket 0305) and the Exp 2 4-way spider
+(ticket 0311) need flat artifacts for all four arms. arm1_flat/ and
+arm2_flat/ already exist. arm3 (web + evidence pack, single-turn) and
+arm4 (web + evidence pack, multi-turn) have raw data under
+`experiments/outputs/sota_exp3_arm3_batch1/` and
+`experiments/outputs/sota_exp3_arm4_batch1/` but no extractors.
+
+arm3 directory layout:
+  run{N}/
+    {agent}.json   — metadata (has evidence_pack_manifest key)
+    {agent}.md     — narrative report (pre-extracted)
+    {agent}-direct-*.json  — raw API payload (large)
+
+arm4 directory layout:
+  run{N}/
+    {agent}_run{N}/   — per-agent per-run subdir
+      {agent}_turn_*.raw.json   — multi-turn conversation
+      {agent}_turn_*.classification.json
+      ...
+
+arm3 is structurally similar to arm1 (single-turn); the existing
+`extract_arm_single_turn.flatten_single_turn_arm` should work with
+path adaptation since the markdown is already extracted as `{agent}.md`.
+
+arm4 is structurally similar to arm2 (multi-turn); the existing
+`extract_arm_multi_turn` should work with path adaptation.
+
+## Scope
+
+1. Adapt or extend `extract_arm_single_turn.py` to handle arm3's layout:
+   - Fallback: when no raw payload found, read `{agent}.md` directly
+   - Preserve `evidence_pack_manifest` metadata field in output JSON
+
+2. Adapt or extend `extract_arm_multi_turn.py` for arm4's layout:
+   - The per-agent subdir is named `{agent}_run{N}` (not just `{agent}`)
+   - Fix `inventory_rows: 0` bug: arm4 `summary.json` has `inventory_rows`
+     field but it is always 0 — the extractor must count rows from the
+     extracted markdown table, not trust summary.json
+
+3. Add `analysis.mk` stamp targets:
+   - `$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done`
+   - `$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done`
+
+4. Also score arm1 remaining models: `sota_cross_eval.csv` currently has
+   only `naive, gpt-5.5, run 1`. Run `score_mechanical.py` for all
+   remaining arm1 models (anthropic, mistral, qwen, runs 1-5). Fix the
+   hardcoded path in `score_ingest.py` (`sota_exp2_naive_arm` →
+   `sota_exp3_arm1_batch1`) before running.
+
+## Exit criteria
+
+- [ ] `experiments/derived/arm3_flat/` populated (≥ 4 agents × 5 runs)
+- [ ] `experiments/derived/arm4_flat/` populated with correct `inventory_rows`
+      (not all zeros)
+- [ ] `sota_cross_eval.csv` has rows for all 4 arm1 agents × runs
+- [ ] `analysis.mk` stamp targets in place
+- [ ] `make check-fast` passes

@@ -1,0 +1,30 @@
+%erg 0.1
+Title: Remove fig_exp2_turn_trajectory from manuscript and Makefile
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`fig_exp2_turn_trajectory.pdf` is included in `slides/manuscript/main.md`
+but the underlying data (probe records per turn) is missing from the
+current exp2 mart — the mart builder's `_build_probe_records()` looks for
+a `probes/` subdir that does not exist in the flat arm directories. The
+figure renders empty. Removing it from the critical path avoids a
+blank figure in the talk.
+
+Defer the figure itself (do not delete the plot script); just unlink it
+from the manuscript and Makefile until the data is available.
+
+## Exit criteria
+
+- [ ] `slides/manuscript/main.md`: `fig_exp2_turn_trajectory` reference
+      removed (or commented with a TODO note)
+- [ ] `Makefile`: `fig_exp2_turn_trajectory.pdf` target removed from the
+      `figures:` phony dependency list (script and rule may stay)
+- [ ] No broken references remain (grep for `turn_trajectory` in .tex,
+      .md, and Makefile)
+- [ ] `make check-fast` passes
