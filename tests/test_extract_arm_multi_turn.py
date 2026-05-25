@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from aedist.extract_arm_multi_turn import (
     extract_agent_name,
     extract_bibliography,

@@ -1,5 +1,5 @@
 %erg 0.1
-Title: MVP extractor for single-turn arms (arm1, arm3) → derived flat files
+Title: MVP extractor for single-turn arms (arm1, arm3) -> derived flat files
 Created: 2026-05-25
 Author: haduong
 Tag: needs-human
@@ -20,7 +20,7 @@ arm3 is identical in structure, adds `evidence_pack_manifest` field in the JSON.
 
 ## Goal
 
-Write `src/aedist/extract_arm_single_turn.py` — a CLI module that:
+Write `src/aedist/extract_arm_single_turn.py` -- a CLI module that:
 1. Walks `--input-dir` (e.g. `sota_exp3_arm1_batch1/`) across all `run{N}/` subdirs
 2. Writes to `--output-dir` (e.g. `experiments/derived/arm1_flat/`) per run×agent:
    - `{agent}_run{N}.json`    normalized metadata (model, agent, run, classification,
@@ -31,7 +31,7 @@ Write `src/aedist/extract_arm_single_turn.py` — a CLI module that:
 
 ## Notes
 
-- MVP only: no Mistral citation mapping, no table consolidation — those are in 0292
+- MVP only: no Mistral citation mapping, no table consolidation -- those are in 0292
 - `{agent}_run{N}.md` is a straight copy for now; table extraction deferred to 0292
 - Bibliography: split on a `## Sources`, `## References`, or `## Bibliography` heading;
   strip numbering from lines; emit one bullet per entry
