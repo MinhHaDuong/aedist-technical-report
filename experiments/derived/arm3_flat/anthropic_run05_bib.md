@@ -1,0 +1,121 @@
+- EVN Annual Report 2010-2011** (source_id: `evn_ar_2010_2011_capacities`)
+- *Full title (Vietnamese):* Báo cáo thường niên 2010-2011, Tập đoàn Điện lực Việt Nam
+- *English:* Vietnam Electricity Group Annual Report 2010-2011
+- *Source type:* Operator annual report (primary)
+- *URL:* Not verified (EVN corporate publications, print/PDF)
+- *Drawn from:* Installed capacity table as of 31/12/2011 for all EVN and system generation assets—coal, oil, gas, hydro, diesel. Used as the 2011 baseline for capacity, fuel, and ownership attribution of all listed thermal plants.
+- Vietnam Electricity Annual Report 2017** (source_id: `evn_ar_2017_capacities`)
+- *Full title:* Vietnam Electricity Annual Report 2017, p. 14 table "EVN's and GENCOs' Power Plants"
+- *Source type:* Operator annual report (primary)
+- *URL:* Not verified
+- *Drawn from:* Capacity roster for EVN and GENCOs 1-3, showing individual plant capacities and fuel type as of 2017. Used to confirm operating status and capacity of coal and gas plants transferred to GENCOs.
+- Vietnam Electricity Annual Report 2018** (source_id: `evn_ar_2018_capacities`)
+- *Full title:* Vietnam Electricity Annual Report 2018, pp. 34-35 table "EVN's and GENCOs' Power Plants"
+- *Source type:* Operator annual report (primary)
+- *URL:* Not verified
+- *Drawn from:* Most recent EVN/GENCO capacity roster available in the evidence pack. Used as the primary 2018 baseline for operating capacity, ownership, and fuel classification. Key changes from 2017: addition of Thái Bình I and Vĩnh Tân IV under EVN; retirement of Uông Bí original from GENCO 1 list.
+- PDP7 Annex I** (source_id: `pdp7_annex1`)
+- *Full title (Vietnamese):* Phụ lục I – Danh mục các dự án nguồn điện vào vận hành giai đoạn 2011-2020, ban hành kèm theo Quyết định số 1208/QĐ-TTg ngày 21/7/2011
+- *English:* Annex I – List of power source projects entering operation 2011-2020, issued with Decision 1208/QĐ-TTg dated 21 July 2011 [PDP7]
+- *Source type:* Government policy annex (primary)
+- *URL:* Not verified (Vietnamese government gazette)
+- *Drawn from:* Historical commissioning roster under original PDP7. Used for project lineage, planned COD dates, and developer attributions for projects entering operation 2011–2020. Also provides the 2021–2030 indicative project list (Annex II of the same decision).
+- Revised PDP7 Annex I, Table 1** (source_id: `pdp7a_annex1_table1`)
+- *Full title (Vietnamese):* Phụ lục I – Danh mục các nguồn điện vào vận hành giai đoạn 2016-2030, Bảng 1 (2016-2020), ban hành kèm theo Quyết định số 428/QĐ-TTg ngày 18/3/2016
+- *English:* Annex I – Power sources entering operation 2016-2030, Table 1 (2016-2020), Decision 428/QĐ-TTg dated 18 March 2016 [Revised PDP7]
+- *Source type:* Government policy annex (primary)
+- *URL:* Not verified
+- *Drawn from:* Revised commissioning schedule 2016–2020. Used for planned COD dates, capacities, and developer assignments for thermal projects including Duyên Hải III, Thái Bình I/II, Vĩnh Tân IV, Formosa expansions, and Ô Môn III.
+- Revised PDP7 Annex I, Table 2** (source_id: `pdp7a_annex1_table2`)
+- *Full title:* Same decision, Bảng 2 (2021-2025)
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* Planned projects for 2021–2025 including Nghi Sơn II, Vũng Áng II, Hải Dương, Nam Định I, Quảng Trạch I, Kiên Giang, Ô Môn IV, Duyên Hải II, Sông Hậu II, Long Phú II/III, Vĩnh Tân III, Vân Phong, Sơn Mỹ, and others.
+- Revised PDP7 Annex I, Table 3** (source_id: `pdp7a_annex1_table3`)
+- *Full title:* Same decision, Bảng 3 (2026-2030)
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* Planned projects for 2026–2030 including Quỳnh Lập II, Sơn Mỹ I, Long An II, Tân Phước, Ô Môn II, and contingency coal projects marked (*).
+- PDP8 Annex II, Table 1** (source_id: `pdp8_annex2_table1`)
+- *Full title (Vietnamese):* Phụ lục II – Danh mục và tiến độ các dự án nguồn và lưới điện quan trọng, Bảng 1: Danh mục các nhà máy nhiệt điện LNG, Quyết định số 500/QĐ-TTg ngày 15/5/2023
+- *English:* Annex II – List of important power projects, Table 1: LNG thermal power plants, Decision 500/QĐ-TTg dated 15 May 2023 [PDP8]
+- *Source type:* Government policy annex (primary)
+- *URL:* Not verified (Vietnamese government gazette)
+- *Drawn from:* Definitive list of 15 LNG power projects under PDP8, with capacities, planned periods, and implementation notes. Also lists fallback/reserve locations.
+- PDP8 Annex II, Table 2** (source_id: `pdp8_annex2_table2`)
+- *Full title:* Same decision, Bảng 2: Danh mục các NMNĐ than đang xây dựng
+- *English:* Table 2: Coal thermal plants under construction
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* List of 6 coal plants under construction: Na Dương II (110 MW), An Khánh-Bắc Giang (650 MW), Vũng Áng II (1,330 MW), Quảng Trạch I (1,403 MW), Vân Phong I (1,432 MW), Long Phú I (1,200 MW).
+- PDP8 Annex II, Table 3** (source_id: `pdp8_annex2_table3`)
+- *Full title:* Same decision, Bảng 3: Danh mục các dự án NĐ than chậm tiến độ
+- *English:* Table 3: Delayed coal thermal projects with financing/shareholder difficulties
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* List of 5 delayed/troubled coal projects: Công Thanh (600 MW), Nam Định I (1,200 MW), Quảng Trị (1,320 MW), Vĩnh Tân III (1,980 MW), Sông Hậu II (2,120 MW).
+- PDP8 Annex II, Table 4** (source_id: `pdp8_annex2_table4`)
+- *Full title:* Same decision, Bảng 4: Cogeneration and industrial by-product power
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* Cogeneration projects including Hải Hà 1-4, Đức Giang, Formosa HT2 (650 MW), Hòa Phát II (300 MW).
+- PDP8 Annex II, Table 5** (source_id: `pdp8_annex2_table5`)
+- *Full title:* Same decision, Bảng 5: Danh mục các nhà máy nhiệt điện khí trong nước
+- *English:* Table 5: Domestic gas thermal power plants
+- *Source type:* Government policy annex (primary)
+- *Drawn from:* List of 10 domestic-gas projects: Ô Môn I (conversion), Ô Môn II-IV, Dung Quất I-III, Miền Trung I-II, Quảng Trị (Báo Vàng gas).
+- Report 32 Annex 1** (source_id: `report_32_annex1`)
+- *Full title (Vietnamese):* Phụ lục 1 – Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong QHĐ VII điều chỉnh [Báo cáo 32]
+- *English:* Annex 1 – Progress summary of priority power source projects under revised PDP7 [Report 32]
+- *Source type:* Government implementation progress report (primary)
+- *URL:* Not verified
+- *Drawn from:* Detailed project-by-project schedule assessment with comparison of PDP7A schedule, developer-reported schedule, and government-evaluated schedule. Key for establishing actual vs planned COD and delay magnitudes for EVN, PVN, TKV, and BOT projects.
+- Report 58 Annex** (source_id: `report_58_annex`)
+- *Full title (Vietnamese):* Phụ lục – Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong QHĐ VII điều chỉnh [Báo cáo 58]
+- *English:* Progress summary of priority power source projects under revised PDP7 [Report 58]
+- *Source type:* Government implementation progress report (primary)
+- *URL:* Not verified
+- *Drawn from:* Similar structure to Report 32 but from a slightly earlier date. Provides independent progress evaluations; discrepancies between Reports 32 and 58 reflect the evolving status of projects over 2019.
+- PDP8 Draft 3 Study E-542, PL9.1** (source_id: `study_e542_pl9_1`)
+- *Full title (Vietnamese):* Phụ lục PL9.1: Tổng hợp thông tin về tiềm năng quy mô và vị trí xây dựng nhà máy điện TBKHH sử dụng LNG
+- *English:* PL9.1: Summary of LNG CCGT plant potential sites and capacities [PDP8 draft study]
+- *Source type:* Government-commissioned study annex (secondary – draft, not final policy)
+- *URL:* Not verified
+- *Drawn from:* Comprehensive roster of potential LNG sites compiled from Viện Năng Lượng and MOIT as of Dec 2020. Used for site-potential context and pre-policy option space.
+- PDP8 Draft 3 Study E-542, PL9.2** (source_id: `study_e542_pl9_2`)
+- *Full title (Vietnamese):* PL9.2: Cập nhật tiến độ các dự án NĐ than đã có trong QHĐ VII ĐC
+- *English:* PL9.2: Updated coal project progress and potential sites
+- *Source type:* Government-commissioned study annex (secondary – draft)
+- *Drawn from:* Province-level coal project progress as of Oct-Nov 2020, including construction status, site approvals, and developer status. Key for intermediate status snapshots between Reports 32/58 and PDP8 final.
+- PDP8 Draft 3 Study E-542, PL9.5A** (source_id: `study_e542_pl9_5a`)
+- *Full title (Vietnamese):* Phụ lục PL9.5A: Danh mục nguồn nhiệt điện tiềm năng dự kiến xem xét đầu tư
+- *English:* PL9.5A: Potential thermal power sources considered for investment
+- *Source type:* Government-commissioned study annex (secondary – draft)
+- *Drawn from:* Long-horizon potential thermal project table through 2045, broken by region and fuel (LNG, imported coal, domestic coal). Used for option-space context and fuel-type classifications. ### Web-Retrieved Sources
+- VietnamNews (2025-06-27):** "Nhơn Trạch 4 power plant officially connects to national grid"
+- *URL:* https://vietnamnews.vn/economy/1720416/
+- *Source type:* State media (secondary, bylined)
+- *Drawn from:* Nhơn Trạch 4 grid connection milestone, project capacity (1,500 MW combined), expected COD dates.
+- PVN press release (2025-12-14) via vietnam.vn:** "Nhon Trach 3&4 LNG Power Plant: A significant step in Vietnam's energy transition"
+- *URL:* https://www.vietnam.vn/en/dien-khi-lng-nhon-trach-3-4-buoc-di-quan-trong-ve-chuyen-dich-nang-luong-cua-viet-nam
+- *Source type:* Operator press release (primary)
+- *Drawn from:* Confirmed COD dates (NT3: Nov 20, 2025; NT4: Dec 20, 2025), total capacity 1,624 MW, technology (GE 9HA.02), inauguration ceremony details.
+- Enerdata (2023-04-27):** "Vietnam inaugurates the 1.2 GW Thái Bình 2 coal-fired power plant"
+- *URL:* https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-12-gw-thai-binh-2-coal-fired-power-plant.html
+- *Source type:* Trade press (secondary)
+- *Drawn from:* Thái Bình II COD (April 2023), technology (supercritical), and Thái Bình I characterization (subcritical anthracite, COD 2017-2018).
+- vietnam.vn (2025-09-15):** "Highlights of the term: Admiring Vietnam's largest thermal power plant in the Vung Ang Economic Zone"
+- *URL:* https://www.vietnam.vn/en/dau-an-nhiem-ky-ngam-nha-may-nhiet-dien-quy-mo-lon-nhat-viet-nam-tai-kkt-vung-ang
+- *Source type:* State media (secondary)
+- *Drawn from:* Vũng Áng II construction status, USD 2.2 billion investment, USC technology confirmation, commissioning milestones.
+- VIR – Vietnam Investment Review (2025-02-21):** "$2 billion Thai Binh LNG Thermal Power Plant to start construction in September"
+- *URL:* https://vir.com.vn/2-billion-thai-binh-lng-thermal-power-plant-to-start-construction-in-september-123210.html
+- *Source type:* Trade press (secondary)
+- *Drawn from:* LNG Thái Bình project developer identification (Tokyo Gas / Kyuden / Trường Thành consortium), construction timeline.
+- Russin & Vecchi / Mondaq (2025-05-02):** "Vietnam's National Power Development Plan for Coal-Fired Plants"
+- *URL:* https://www.mondaq.com/oil-gas-electricity/1618640/
+- *Source type:* Law firm analysis (secondary)
+- *Drawn from:* Coal plant status table from PDP8 revised, listing COD years and delayed/abandoned project categories (Công Thanh, Nam Định I, Quảng Trị, Vĩnh Tân III, Sông Hậu II).
+- VietnamNews (2026-04-08):** "Coal production proposal amid energy crunch"
+- *URL:* https://vietnamnews.vn/economy/1778953/
+- *Source type:* State media (secondary)
+- *Drawn from:* Total installed coal capacity ~28,000 MW at end-2025. Used for aggregate validation.
+- Power-Technology / GlobalData (various):** Mong Duong II, Duyen Hai II, Long Phu 1, Quang Trach I profiles
+- *URLs:* Various power-technology.com pages
+- *Source type:* Industry data broker (secondary)
+- *Drawn from:* Individual plant capacities, COD dates, technology descriptions. Note: GlobalData is a commercial aggregator; values cross-checked against primary sources where possible.

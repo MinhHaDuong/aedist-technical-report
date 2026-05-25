@@ -1,0 +1,16 @@
+{
+  "agent": "qwen",
+  "class_trace": [
+    "report"
+  ],
+  "classification": "report",
+  "classifier_cost_usd": 0.002424,
+  "cost_usd": 0.3394,
+  "evidence_pack_manifest": "evidence_packs/all18tables.yaml",
+  "model": "qwen3.7-max-2026-05-20",
+  "n_bib_entries": 0,
+  "narrative_chars": 48990,
+  "run": 2,
+  "tokens_out": 18078,
+  "wall_s": 112.39
+}

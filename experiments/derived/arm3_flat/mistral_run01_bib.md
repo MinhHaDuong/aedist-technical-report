@@ -1,0 +1,72 @@
+- Citation:** Vietnam Electricity (EVN). (2011). *EVN Annual Report 2010-2011: Installed Capacity of Power Plants as of 31/12/2011*.
+- Original Title:** *Báo cáo thường niên EVN 2010-2011: Công suất đặt các nhà máy điện tính tới 31/12/2011*
+- URL:** Not publicly available.
+- Summary:** Provides a snapshot of EVN’s installed capacity as of December 31, 2011, including thermal plants (coal, gas, oil), hydropower, and IPPs. Used as a baseline for historical capacity and ownership. ### **2. evn_ar_2017_capacities
+- Citation:** Vietnam Electricity (EVN). (2017). *Vietnam Electricity Annual Report 2017: EVN and GENCOs Power Plants*.
+- Original Title:** *Báo cáo thường niên EVN 2017: Danh mục các nhà máy điện của EVN và các Tổng công ty phát điện*
+- URL:** Not publicly available.
+- Summary:** Lists EVN and GENCOs’ installed capacity as of 2017, including thermal plants, hydropower, and other sources. Used to track changes in ownership and capacity between 2011 and 2017. ### **3. evn_ar_2018_capacities
+- Citation:** Vietnam Electricity (EVN). (2018). *Vietnam Electricity Annual Report 2018: EVN and GENCOs Power Plants*.
+- Original Title:** *Báo cáo thường niên EVN 2018: Danh mục các nhà máy điện của EVN và các Tổng công ty phát điện*
+- URL:** Not publicly available.
+- Summary:** Provides an updated list of EVN and GENCOs’ installed capacity as of 2018, including thermal plants, hydropower, and other sources. Used to track capacity and ownership changes. ### **4. pdp7a_annex1_table1
+- Citation:** Prime Minister of Vietnam. (2016). *Revised Power Development Plan VII: Annex I, Table 1 – Projects Entering Operation in 2016-2020*.
+- Original Title:** *Quyết định số 428/QĐ-TTg: Phụ lục I, Bảng 1 – Danh mục các dự án nguồn điện vào vận hành giai đoạn 2016-2020*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347)
+- Summary:** Lists projects scheduled for commissioning between 2016 and 2020 under the revised PDP7, including thermal plants (coal, gas, oil), hydropower, and renewables. Used to track planned vs. actual commissioning dates. ### **5. pdp7a_annex1_table2
+- Citation:** Prime Minister of Vietnam. (2016). *Revised Power Development Plan VII: Annex I, Table 2 – Projects Entering Operation in 2021-2025*.
+- Original Title:** *Quyết định số 428/QĐ-TTg: Phụ lục I, Bảng 2 – Danh mục các dự án nguồn điện vào vận hành giai đoạn 2021-2025*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347)
+- Summary:** Lists projects scheduled for commissioning between 2021 and 2025 under the revised PDP7, including thermal plants (coal, gas, oil), hydropower, and renewables. Used to track planned projects and their status. ### **6. pdp7a_annex1_table3
+- Citation:** Prime Minister of Vietnam. (2016). *Revised Power Development Plan VII: Annex I, Table 3 – Projects Entering Operation in 2026-2030*.
+- Original Title:** *Quyết định số 428/QĐ-TTg: Phụ lục I, Bảng 3 – Danh mục các dự án nguồn điện vào vận hành giai đoạn 2026-2030*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182347)
+- Summary:** Lists projects scheduled for commissioning between 2026 and 2030 under the revised PDP7, including thermal plants (coal, gas, oil), hydropower, and renewables. Used to track long-term planning and project delays. ### **7. pdp7_annex1
+- Citation:** Prime Minister of Vietnam. (2011). *Power Development Plan VII: Annex I – Projects Entering Operation in 2011-2020*.
+- Original Title:** *Quyết định số 1208/QĐ-TTg: Phụ lục I – Danh mục các dự án nguồn điện vào vận hành giai đoạn 2011-2020*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=110658](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=110658)
+- Summary:** Lists projects scheduled for commissioning between 2011 and 2020 under the original PDP7, including thermal plants (coal, gas, oil), hydropower, and renewables. Used to track planned vs. actual commissioning dates and project lineage. ### **8. pdp7_annex2
+- Citation:** Prime Minister of Vietnam. (2011). *Power Development Plan VII: Annex II – Planned Project List for 2021-2030*.
+- Original Title:** *Quyết định số 1208/QĐ-TTg: Phụ lục II – Dự kiến danh mục các dự án nguồn điện vào vận hành giai đoạn 2021-2030*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=110658](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=110658)
+- Summary:** Lists planned projects for 2021–2030 under the original PDP7, including thermal plants (coal, gas, oil), hydropower, and renewables. Used to track superseded projects and planning changes. ### **9. pdp8_annex2_table1
+- Citation:** Prime Minister of Vietnam. (2023). *Power Development Plan VIII: Annex II, Table 1 – LNG Thermal Power Plants*.
+- Original Title:** *Quyết định số 500/QĐ-TTg: Phụ lục II, Bảng 1 – Danh mục các nhà máy nhiệt điện LNG*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448)
+- Summary:** Lists LNG thermal power plants under PDP8, including capacity, timeline, and implementation notes. Used as the primary source for LNG projects and their status. ### **10. pdp8_annex2_table2
+- Citation:** Prime Minister of Vietnam. (2023). *Power Development Plan VIII: Annex II, Table 2 – Coal Thermal Plants Under Construction*.
+- Original Title:** *Quyết định số 500/QĐ-TTg: Phụ lục II, Bảng 2 – Danh mục các nhà máy nhiệt điện than đang xây dựng*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448)
+- Summary:** Lists coal thermal plants under construction as of PDP8, including capacity and ownership. Used to track ongoing coal projects. ### **11. pdp8_annex2_table3
+- Citation:** Prime Minister of Vietnam. (2023). *Power Development Plan VIII: Annex II, Table 3 – Delayed Coal Thermal Projects with Financing or Shareholder Difficulties*.
+- Original Title:** *Quyết định số 500/QĐ-TTg: Phụ lục II, Bảng 3 – Danh mục các dự án nhiệt điện than chậm tiến độ, gặp khó khăn trong thay đổi cổ đông, thu xếp vốn*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448)
+- Summary:** Lists delayed or troubled coal thermal projects under PDP8, including capacity and issue notes. Used to track project risks and delays. ### **12. pdp8_annex2_table4
+- Citation:** Prime Minister of Vietnam. (2023). *Power Development Plan VIII: Annex II, Table 4 – Cogeneration and Industrial By-Product Power Sources*.
+- Original Title:** *Quyết định số 500/QĐ-TTg: Phụ lục II, Bảng 4 – Danh mục nguồn điện đồng phát, nguồn điện sử dụng nhiệt dư, khí lò cao, sản phẩm phụ của dây chuyền công nghệ trong các cơ sở công nghiệp*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448)
+- Summary:** Lists industrial cogeneration and by-product power sources under PDP8, including capacity and timeline. Used as contextual material for industrial captive plants. ### **13. pdp8_annex2_table5
+- Citation:** Prime Minister of Vietnam. (2023). *Power Development Plan VIII: Annex II, Table 5 – Domestic Gas Thermal Power Plants*.
+- Original Title:** *Quyết định số 500/QĐ-TTg: Phụ lục II, Bảng 5 – Danh mục các nhà máy nhiệt điện khí trong nước*
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=209448)
+- Summary:** Lists domestic gas thermal power plants under PDP8, including capacity and timeline. Used to track gas projects and their status. ### **14. report_32_annex1
+- Citation:** Government of Vietnam, Office of the Government. (2020). *Report 32: Progress Summary of Priority Power-Source Projects Under Revised PDP7*.
+- Original Title:** *Báo cáo số 32: Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong Quy hoạch điện VII điều chỉnh*
+- URL:** Not publicly available.
+- Summary:** Tracks progress of priority power projects under revised PDP7, including schedule, delays, and implementation notes. Used to assess project status and delays. ### **15. report_58_annex
+- Citation:** Government of Vietnam, Office of the Government. (2021). *Report 58: Progress Summary of Priority Power-Source Projects Under Revised PDP7*.
+- Original Title:** *Báo cáo số 58: Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong Quy hoạch điện VII điều chỉnh*
+- URL:** Not publicly available.
+- Summary:** Provides an updated progress summary of priority power projects under revised PDP7, including evaluation of delays and implementation challenges. Used to track project status and risks. ### **16. study_e542_pl9_1
+- Citation:** Institute of Energy, Ministry of Industry and Trade. (2020). *PDP8 Draft 3 Study E-542: Annex PL9.1 – Potential LNG Plant Sites and Capacities*.
+- Original Title:** *Nghiên cứu lập Quy hoạch phát triển điện lực quốc gia giai đoạn 2021-2030, tầm nhìn đến 2045 (Quy hoạch điện VIII): Phụ lục PL9.1 – Tổng hợp thông tin về tiềm năng quy mô và vị trí xây dựng nhà máy điện TBKHH sử dụng LNG*
+- URL:** Not publicly available.
+- Summary:** Lists potential LNG plant sites and capacities from the PDP8 draft study, including regional options and timelines. Used to track pre-policy option space for LNG projects. ### **17. study_e542_pl9_2
+- Citation:** Institute of Energy, Ministry of Industry and Trade. (2020). *PDP8 Draft 3 Study E-542: Annex PL9.2 – Updated Progress of Coal Projects and Regional Import-Coal Site Potential*.
+- Original Title:** *Nghiên cứu lập Quy hoạch phát triển điện lực quốc gia giai đoạn 2021-2030, tầm nhìn đến 2045 (Quy hoạch điện VIII): Phụ lục PL9.2 – Cập nhật tiến độ các dự án nhiệt điện than đã có trong QHĐ VII ĐC và tổng hợp các vị trí tiềm năng xây dựng nhiệt điện than nhập theo vùng*
+- URL:** Not publicly available.
+- Summary:** Provides an updated progress summary of coal projects and potential import-coal sites from the PDP8 draft study. Used to track coal project status and regional planning options. ### **18. study_e542_pl9_5a
+- Citation:** Institute of Energy, Ministry of Industry and Trade. (2020). *PDP8 Draft 3 Study E-542: Annex PL9.5A – Potential Thermal Power Sources Considered for Investment*.
+- Original Title:** *Nghiên cứu lập Quy hoạch phát triển điện lực quốc gia giai đoạn 2021-2030, tầm nhìn đến 2045 (Quy hoạch điện VIII): Phụ lục PL9.5A – Danh mục nguồn nhiệt điện tiềm năng dự kiến xem xét đầu tư*
+- URL:** Not publicly available.
+- Summary:** Lists potential thermal power sources considered for investment in the PDP8 draft study, including capacity and fuel type. Used to track long-horizon project options and regional planning context. ---

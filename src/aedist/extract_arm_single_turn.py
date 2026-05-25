@@ -90,6 +90,13 @@ def _find_raw_payload(run_dir: Path, agent: str) -> dict:
     raise FileNotFoundError(f"no raw payload found for {agent} in {run_dir}")
 
 
+def _load_agent_markdown(run_dir: Path, agent: str) -> str:
+    markdown_path = run_dir / f"{agent}.md"
+    if not markdown_path.exists():
+        raise FileNotFoundError(f"no markdown fallback found for {agent} in {run_dir}")
+    return markdown_path.read_text(encoding="utf-8")
+
+
 def _extract_bib_section(markdown: str) -> str:
     lines = markdown.splitlines()
     start = None
@@ -175,8 +182,11 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
                 continue
 
             agent = str(meta["agent"])
-            payload = _find_raw_payload(run_dir, agent)
-            markdown = _extract_markdown_from_payload(payload)
+            try:
+                payload = _find_raw_payload(run_dir, agent)
+                markdown = _extract_markdown_from_payload(payload)
+            except FileNotFoundError:
+                markdown = _load_agent_markdown(run_dir, agent)
             bib_entries = _extract_bibliography_entries(markdown)
 
             normalized = dict(meta)

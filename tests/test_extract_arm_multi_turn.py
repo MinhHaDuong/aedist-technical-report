@@ -202,3 +202,51 @@ def test_extract_bibliography_no_heading() -> None:
     text, n = extract_bibliography("just some text")
     assert text is None
     assert n == 0
+
+
+def test_process_batch_counts_inventory_rows_from_raw_payload(tmp_path: Path) -> None:
+    input_dir = tmp_path / "input"
+    output_dir = tmp_path / "output"
+    run_dir = input_dir / "run01"
+    agent_dir = run_dir / "testagent_run01"
+    agent_dir.mkdir(parents=True)
+
+    summary = [
+        {
+            "agent": "testagent",
+            "status": "pass",
+            "total_cost_usd": 1.0,
+            "wall_s": 1.0,
+            "turns": 2,
+            "class_trace": "report,report",
+            "inventory_rows": 0,
+        }
+    ]
+    (run_dir / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+
+    raw_payload = {
+        "output": [
+            {
+                "type": "message",
+                "content": [
+                    {
+                        "type": "output_text",
+                        "text": (
+                            "| Name | Fuel | Capacity | Status | COD | Province |\n"
+                            "| --- | --- | --- | --- | --- | --- |\n"
+                            "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n"
+                            "| Uong Bi | Coal | 330 | Operating | 2011 | Quang Ninh |\n"
+                        ),
+                    }
+                ],
+            }
+        ]
+    }
+    (agent_dir / "testagent_turn_02.raw.json").write_text(
+        json.dumps(raw_payload), encoding="utf-8"
+    )
+
+    process_batch(input_dir, output_dir)
+
+    meta = json.loads((output_dir / "testagent_run01.json").read_text(encoding="utf-8"))
+    assert meta["n_rows"] == 2

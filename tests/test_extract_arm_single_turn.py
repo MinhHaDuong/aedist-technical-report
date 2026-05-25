@@ -250,3 +250,33 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
         record for record in records if record.record_kind == "run" and record.arm == "naive"
     ]
     assert len(run_records) == 3
+
+
+def test_flatten_single_turn_arm_falls_back_to_agent_markdown(tmp_path):
+    input_dir = tmp_path / "arm3"
+    output_dir = tmp_path / "arm3_flat"
+    run_dir = input_dir / "run01"
+    run_dir.mkdir(parents=True)
+
+    _write_json(
+        run_dir / "anthropic.json",
+        {
+            "agent": "anthropic",
+            "run": 1,
+            "model": "claude-opus-4-6",
+            "classification": "report",
+            "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml",
+        },
+    )
+    (run_dir / "anthropic.md").write_text(
+        "| Name | Fuel | Capacity | Status | COD | Province |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n",
+        encoding="utf-8",
+    )
+
+    flatten_single_turn_arm(input_dir, output_dir)
+
+    meta = json.loads((output_dir / "anthropic_run01.json").read_text(encoding="utf-8"))
+    assert meta["evidence_pack_manifest"] == "experiments/evidence_packs/all18tables.yaml"
+    assert (output_dir / "anthropic_run01.md").exists()
