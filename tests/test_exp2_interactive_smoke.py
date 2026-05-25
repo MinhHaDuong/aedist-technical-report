@@ -1054,8 +1054,17 @@ def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_pat
         system_prompt="you are an analyst",
     )
 
-    assert captured["system"] == "you are an analyst"
-    assert captured["messages"] == [{"role": "user", "content": "the prompt"}]
+    assert captured["system"] == [
+        {"type": "text", "text": "you are an analyst", "cache_control": {"type": "ephemeral"}}
+    ]
+    assert captured["messages"] == [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "the prompt", "cache_control": {"type": "ephemeral"}}
+            ],
+        }
+    ]
     # Single web_search tool installed at turn 1 (max_uses=3 default).
     assert any(t.get("name") == "web_search" for t in captured["tools"])
     assert record.agent_mode == "phase_b_run"
@@ -1105,8 +1114,10 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
         {"role": "assistant", "content": "first assistant reply"},
         {"role": "user", "content": "second user message"},
     ]
-    # System bytes identical to turn 1 (required by Anthropic).
-    assert captured["system"] == "you are an analyst"
+    # System sent as cache_control block on every turn (SYSTEM_PROMPT_PASSTHROUGH).
+    assert captured["system"] == [
+        {"type": "text", "text": "you are an analyst", "cache_control": {"type": "ephemeral"}}
+    ]
 
 
 def test_state_machine_anthropic_dispatch_chains_messages(monkeypatch, tmp_path):
