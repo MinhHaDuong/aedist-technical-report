@@ -1,20 +1,17 @@
-"""Four-panel coverage comparison figure for Exp2 2x2 arm design.
+"""Two-panel comparison figure for Exp2 4-arm design.
 
 Usage:
     python -m aedist.plot_exp2_arms_comparison \
         --input report/inputs/generated/tab_exp2_arms_runs.csv \
         --output report/inputs/generated/fig_exp2_arms_comparison.pdf
 
-Panels (2x2): one panel per arm.
-    (a) arm1 — web, single-shot
-    (b) arm2 — web, multi-turn
-    (c) arm3 — web + evidence pack, single-shot
-    (d) arm4 — web + evidence pack, multi-turn
+Panels (left to right):
+    (a) coverage (plants enumerated)
+    (b) cost (USD per run)
 
-Each panel: four agent groups on the x-axis, y-axis is enumerated plants
-(coverage). Individual run points are jittered; a thick horizontal bar marks
-the median report value. Runs classified no_report are rendered as x markers
-at y=0.
+Each panel groups by agent on the x-axis. Within each group, all four arms are
+shown with project glyphs and per-model colours. Runs classified no_report are
+rendered as x markers at y=0.
 """
 
 import argparse
@@ -47,11 +44,18 @@ _AGENT_MODEL = {
 }
 
 _ARM_STYLE = {
-    "arm1": {"marker": "o", "filled": False, "label": "(a) arm1 — web, single-shot"},
-    "arm2": {"marker": "D", "filled": False, "label": "(b) arm2 — web, multi-turn"},
-    "arm3": {"marker": "o", "filled": True, "label": "(c) arm3 — +pack, single-shot"},
-    "arm4": {"marker": "D", "filled": True, "label": "(d) arm4 — +pack, multi-turn"},
+    "arm1": {"marker": "o", "filled": False, "offset": -0.27, "label": "arm1 (single-shot)"},
+    "arm2": {"marker": "D", "filled": False, "offset": -0.09, "label": "arm2 (multi-turn)"},
+    "arm3": {"marker": "o", "filled": True, "offset": +0.09, "label": "arm3 (+pack, single-shot)"},
+    "arm4": {"marker": "D", "filled": True, "offset": +0.27, "label": "arm4 (+pack, multi-turn)"},
 }
+
+_ARM_ORDER = ["arm1", "arm2", "arm3", "arm4"]
+
+_PANELS = [
+    ("inventory_rows", "(a) Coverage", "Plants enumerated"),
+    ("cost_usd", "(b) Cost", "Cost per run (USD)"),
+]
 
 
 def _canonical_arm(raw: str) -> str:
@@ -94,6 +98,7 @@ def _load_pack_arm_rows(base_dir: Path, arm: str) -> list[dict]:
                 "run": run,
                 "classification": classification,
                 "inventory_rows": _inventory_rows_from_flat(json_path),
+                "cost_usd": float(payload.get("cost_usd") or 0.0),
                 "is_report": classification == "report",
             }
         )
@@ -107,6 +112,7 @@ def _load_csv(path: Path) -> list[dict]:
             row["run"] = int(row["run"])
             raw_rows = row["inventory_rows"]
             row["inventory_rows"] = int(raw_rows) if raw_rows not in ("", "None") else 0
+            row["cost_usd"] = float(row.get("cost_usd") or 0.0)
             row["arm"] = _canonical_arm(row["arm"])
             row["is_report"] = row["classification"] == "report"
             rows.append(row)
@@ -120,81 +126,120 @@ def _load_csv(path: Path) -> list[dict]:
     return rows
 
 
-def _draw_panel(ax, rows: list[dict], arm: str, title: str) -> None:
+def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> None:
     import numpy as np
 
     rng = random.Random(42)
-    style = _ARM_STYLE[arm]
 
     for agent_idx, agent in enumerate(_AGENT_ORDER):
-        subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
-        if not subset:
-            continue
+        for arm in _ARM_ORDER:
+            style = _ARM_STYLE[arm]
+            subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
+            if not subset:
+                continue
 
-        color = model_family_color(subset[0].get("model", _AGENT_MODEL[agent]))
-        x_center = agent_idx
-        xs = [x_center + rng.uniform(-0.06, 0.06) for _ in subset]
+            color = model_family_color(subset[0].get("model", _AGENT_MODEL[agent]))
+            x_center = agent_idx + style["offset"]
+            xs = [x_center + rng.uniform(-0.04, 0.04) for _ in subset]
 
-        report_xs = [x for x, r in zip(xs, subset, strict=True) if r["is_report"]]
-        report_ys = [r["inventory_rows"] for r in subset if r["is_report"]]
-        noreport_xs = [x for x, r in zip(xs, subset, strict=True) if not r["is_report"]]
+            report_xs = [x for x, r in zip(xs, subset, strict=True) if r["is_report"]]
+            report_ys = [r[metric] for r in subset if r["is_report"]]
+            noreport_xs = [x for x, r in zip(xs, subset, strict=True) if not r["is_report"]]
 
-        if report_xs:
-            face = color if style["filled"] else "none"
-            ax.scatter(
-                report_xs,
-                report_ys,
-                marker=style["marker"],
-                s=26,
-                facecolors=face,
-                edgecolors=color,
-                linewidths=1.1,
-                zorder=3,
-            )
-        if noreport_xs:
-            ax.scatter(
-                noreport_xs,
-                [0] * len(noreport_xs),
-                color=color,
-                s=24,
-                zorder=3,
-                marker="x",
-                linewidths=1.2,
-            )
+            if report_xs:
+                face = color if style["filled"] else "none"
+                ax.scatter(
+                    report_xs,
+                    report_ys,
+                    marker=style["marker"],
+                    s=24,
+                    facecolors=face,
+                    edgecolors=color,
+                    linewidths=1.0,
+                    zorder=3,
+                )
+            if noreport_xs:
+                ax.scatter(
+                    noreport_xs,
+                    [0] * len(noreport_xs),
+                    color=color,
+                    s=22,
+                    zorder=3,
+                    marker="x",
+                    linewidths=1.1,
+                )
 
-        if report_ys:
-            med = float(np.median(report_ys))
-            ax.hlines(
-                med,
-                x_center - 0.10,
-                x_center + 0.10,
-                colors=color,
-                linewidths=2.0,
-                zorder=4,
-            )
+            if report_ys:
+                med = float(np.median(report_ys))
+                ax.hlines(
+                    med,
+                    x_center - 0.07,
+                    x_center + 0.07,
+                    colors=color,
+                    linewidths=1.8,
+                    zorder=4,
+                )
 
     ax.set_title(title, fontsize=8, loc="left")
     ax.set_xticks(range(len(_AGENT_ORDER)))
     ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
     ax.set_xlim(-0.5, len(_AGENT_ORDER) - 0.5)
+    ax.set_ylabel(ylabel, fontsize=8)
     ax.tick_params(axis="y", labelsize=7.5)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
-    ax.set_ylim(0, 180)
+    if metric == "inventory_rows":
+        ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
+        ax.set_ylim(0, 180)
+    else:
+        ax.set_ylim(bottom=0)
 
 
 def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
 
-    fig, axes = plt.subplots(2, 2, figsize=(9.2, 5.8), sharey=True)
-    arm_order = ["arm1", "arm2", "arm3", "arm4"]
-    for ax, arm in zip(axes.flatten(), arm_order, strict=True):
-        _draw_panel(ax, rows, arm, _ARM_STYLE[arm]["label"])
-        if arm in ("arm1", "arm3"):
-            ax.set_ylabel("Plants enumerated", fontsize=8)
+    fig, axes = plt.subplots(1, 2, figsize=(10.0, 3.9))
+    for ax, (metric, title, ylabel) in zip(axes, _PANELS, strict=True):
+        _draw_panel(ax, rows, metric, title, ylabel)
 
-    fig.suptitle("Experiment 2 — 4-arm coverage comparison (N=5 per agent)", fontsize=9, y=1.01)
+    legend_handles = []
+    for arm in _ARM_ORDER:
+        style = _ARM_STYLE[arm]
+        face = COLOR_REFERENCE if style["filled"] else "none"
+        legend_handles.append(
+            Line2D(
+                [0],
+                [0],
+                marker=style["marker"],
+                linestyle="",
+                markerfacecolor=face,
+                markeredgecolor=COLOR_REFERENCE,
+                markersize=6,
+                label=style["label"],
+            )
+        )
+    legend_handles.append(
+        Line2D(
+            [0],
+            [0],
+            marker="x",
+            linestyle="",
+            color=COLOR_REFERENCE,
+            markersize=6,
+            label="no_report",
+        )
+    )
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        ncol=3,
+        fontsize=7.5,
+        frameon=False,
+        bbox_to_anchor=(0.5, -0.08),
+    )
+
+    fig.suptitle("Experiment 2 — 4 arms per model (coverage and cost)", fontsize=9, y=1.01)
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
@@ -204,7 +249,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    parser = argparse.ArgumentParser(description="4-arm Exp2 coverage comparison figure")
+    parser = argparse.ArgumentParser(description="2-panel Exp2 4-arm comparison figure")
     parser.add_argument("--input", required=True, help="Path to tab_exp2_arms_runs.csv")
     parser.add_argument("--output", required=True, help="Path to write PDF figure")
     args = parser.parse_args(argv)
