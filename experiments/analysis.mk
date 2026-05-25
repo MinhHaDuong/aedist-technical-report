@@ -4,6 +4,8 @@
 # artifacts. Override the path variables below to relocate the repository or
 # point at alternate output trees.
 
+SHELL := /bin/bash
+
 ANALYSIS_REPO_ROOT ?= .
 ANALYSIS_EXPERIMENTS_DIR ?= $(ANALYSIS_REPO_ROOT)/experiments
 ANALYSIS_REPORT_DIR ?= $(ANALYSIS_REPO_ROOT)/report
@@ -86,6 +88,25 @@ $(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm4_flat
 	touch $@
+
+# --- Cross-eval CSV (scored per-run, both arms) ----------------------------
+
+$(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done
+	@mkdir -p $(dir $@)
+	rm -f $@
+	@for f in $(ANALYSIS_EXP2_NAIVE_DIR)/*.json; do \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		uv run python -m aedist.score_mechanical --arm naive --model "$$m" --run "$$r" \
+		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
+		    --output-csv $@ || true; \
+	done
+	@for f in $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json; do \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		uv run python -m aedist.score_mechanical --arm optimised --model "$$m" --run "$$r" \
+		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
+		    --output-csv $@ || true; \
+	done
 
 # --- Canonical mart and mart-derived views ---------------------------------
 
