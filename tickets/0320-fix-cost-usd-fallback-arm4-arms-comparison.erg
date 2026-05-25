@@ -1,0 +1,35 @@
+%erg 0.1
+Title: Fix cost_usd vs total_cost_usd fallback in plot_exp2_arms_comparison for arm4
+Created: 2026-05-25
+Author: claude
+
+--- log ---
+2026-05-25T19:30Z claude created — scope overflow from PR #558 (0313 pipeline fix)
+
+--- body ---
+## Context
+
+`plot_exp2_arms_comparison.py` reads `payload.get("cost_usd")` with no
+fallback to `total_cost_usd`. arm4_flat JSON files use `total_cost_usd`
+(multi-turn schema) while arm1/arm2/arm3 use `cost_usd` (single-turn schema).
+This causes arm4 cost bars in the arms comparison figure to show zero.
+
+Found during /verify review of PR #558.
+
+## Actions
+
+1. In `src/aedist/plot_exp2_arms_comparison.py`, locate the cost column
+   read (likely `row.get("cost_usd")` or similar).
+2. Add fallback: `row.get("cost_usd") or row.get("total_cost_usd")`.
+3. Verify arm4 cost values are non-zero after fix.
+
+## Test
+
+Unit test: pass a row dict with only `total_cost_usd` set; assert the
+plot function extracts a non-zero cost value.
+
+## Exit criteria
+
+- [ ] `plot_exp2_arms_comparison.py` uses `cost_usd` with `total_cost_usd` fallback
+- [ ] arm4 cost bars in `fig_exp2_arms_comparison.pdf` show non-zero values
+- [ ] `make check-fast` passes
