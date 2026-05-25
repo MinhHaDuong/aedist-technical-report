@@ -98,6 +98,8 @@ def make_figure(rows: list[dict], output: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(5.5, 4.0))
 
+    rows = [r for r in rows if r["n_rows"] > 0]
+
     for agent, color in _AGENT_COLORS.items():
         for arm in ("naive", "optimised", "arm3", "arm4"):
             subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
@@ -114,33 +116,9 @@ def make_figure(rows: list[dict], output: Path) -> None:
                     zorder=3,
                 )
 
-            # Explicitly show no-report/sparse runs at the origin with an x glyph.
-            zero_idx = [i for i, r in enumerate(subset) if r["n_rows"] == 0]
-            if zero_idx:
-                ax.scatter(
-                    [xs[i] for i in zero_idx],
-                    [ys[i] for i in zero_idx],
-                    marker="x",
-                    s=26,
-                    color=color,
-                    linewidths=1.1,
-                    zorder=4,
-                )
-
-    max_val = max(max(r["n_rows"], r["src2_present"]) for r in rows)
-    ax.plot([0, max_val], [0, max_val], color="0.75", linewidth=0.8, zorder=1, linestyle="--")
-
-    for r in rows:
-        if r["n_rows"] > 140 or r["src2_present"] > 100:
-            ax.annotate(
-                f"{_AGENT_LABELS[r['agent']].split()[0]} r{r['run']}",
-                (r["n_rows"], r["src2_present"]),
-                fontsize=5.5,
-                xytext=(4, 4),
-                textcoords="offset points",
-                color=_AGENT_COLORS[r["agent"]],
-                alpha=0.7,
-            )
+    if rows:
+        max_val = max(max(r["n_rows"], r["src2_present"]) for r in rows)
+        ax.plot([0, max_val], [0, max_val], color="0.75", linewidth=0.8, zorder=1, linestyle="--")
 
     ax.set_xlabel("Assets correctly identified (coverage)", fontsize=9)
     ax.set_ylabel("Assets from two sources (corroboration)", fontsize=9)
@@ -222,15 +200,6 @@ def make_figure(rows: list[dict], output: Path) -> None:
             markeredgecolor="black",
             markersize=6,
             label="arm4 (+sources, multi-turn)",
-        ),
-        Line2D(
-            [0],
-            [0],
-            marker="x",
-            linestyle="",
-            color="black",
-            markersize=6,
-            label="no_report",
         ),
     ]
     ax.legend(
