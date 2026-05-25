@@ -241,6 +241,15 @@ class TestAssembleValidation:
         repo_root = Path(__file__).resolve().parent.parent
         src_raw = repo_root / "experiments/outputs/rag_extract/deepseek-v3.2-run1.json"
         src_rec = repo_root / "experiments/outputs/rag_extract/deepseek-v3.2-run1.record.json"
+        if not src_raw.exists() or not src_rec.exists():
+            src_raw = (
+                repo_root
+                / "experiments/archive/outputs/rag_extract/deepseek-v3.2-run1.json"
+            )
+            src_rec = (
+                repo_root
+                / "experiments/archive/outputs/rag_extract/deepseek-v3.2-run1.record.json"
+            )
         assert src_raw.exists(), f"fixture missing: {src_raw}"
         assert src_rec.exists(), f"fixture missing: {src_rec}"
 

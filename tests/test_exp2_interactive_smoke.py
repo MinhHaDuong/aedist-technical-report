@@ -1055,13 +1055,21 @@ def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_pat
     )
 
     assert captured["system"] == [
-        {"type": "text", "text": "you are an analyst", "cache_control": {"type": "ephemeral"}}
+        {
+            "type": "text",
+            "text": "you are an analyst",
+            "cache_control": {"type": "ephemeral"},
+        }
     ]
     assert captured["messages"] == [
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "the prompt", "cache_control": {"type": "ephemeral"}}
+                {
+                    "type": "text",
+                    "text": "the prompt",
+                    "cache_control": {"type": "ephemeral"},
+                }
             ],
         }
     ]
@@ -1114,9 +1122,14 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
         {"role": "assistant", "content": "first assistant reply"},
         {"role": "user", "content": "second user message"},
     ]
-    # System sent as cache_control block on every turn (SYSTEM_PROMPT_PASSTHROUGH).
+    # System bytes identical to turn 1 (required by Anthropic), represented as
+    # a cache-control text block on every turn (SYSTEM_PROMPT_PASSTHROUGH).
     assert captured["system"] == [
-        {"type": "text", "text": "you are an analyst", "cache_control": {"type": "ephemeral"}}
+        {
+            "type": "text",
+            "text": "you are an analyst",
+            "cache_control": {"type": "ephemeral"},
+        }
     ]
 
 

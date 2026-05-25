@@ -15,6 +15,18 @@ _NAIVE_DIR = Path("experiments/outputs/sota_exp2_naive_arm")
 _OPTIMISED_DIR = Path("experiments/outputs/sota_exp2_brerun1")
 
 
+def _resolve_output_dir(path: Path) -> Path:
+    """Prefer active outputs; fall back to archived outputs for fixtures."""
+    if path.exists():
+        return path
+    archived = Path("experiments/archive") / path.relative_to("experiments")
+    return archived
+
+
+_NAIVE_DIR = _resolve_output_dir(_NAIVE_DIR)
+_OPTIMISED_DIR = _resolve_output_dir(_OPTIMISED_DIR)
+
+
 class TestClassifySourceTier:
     """classify_source_tier maps references to primary/secondary/tertiary."""
 
