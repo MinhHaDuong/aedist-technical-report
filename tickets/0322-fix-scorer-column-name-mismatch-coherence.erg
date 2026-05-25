@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Fix scorer column name mismatch — coherence_status_vocab_adherence vs coherence_capacity_nonnegative
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T22:30Z HDMX-coding-agent created — found during /celebrate sweep after raid 314–317
+
+--- body ---
+## Context
+
+`score_mechanical.py` writes `coherence_status_vocab_adherence` / `coherence_status_vocab_adherence_annotation`
+to `sota_cross_eval.csv`, but after the chore/raid-290-192-313 merge the canonical CSV header
+has `coherence_capacity_nonnegative` / `coherence_capacity_nonnegative_annotation`.
+
+`build_exp2_mart.py` has a backwards-compat shim (line ~88) that reads the old name and falls back
+to the new name, masking the inconsistency. Tests also use the old name.
+
+## Work items
+
+1. Rename the two fields in `score_mechanical.py` output dict and column-list constant to
+   `coherence_capacity_nonnegative` / `coherence_capacity_nonnegative_annotation`.
+2. Remove the compat shim in `build_exp2_mart.py` (lines ~88–91).
+3. Update all test fixtures: `tests/test_build_exp2_mart_views.py`,
+   `tests/test_check_exp2_mart_parity.py`, `tests/test_build_exp2_mart.py`,
+   `tests/test_extract_arm_single_turn.py`.
+4. Regenerate `experiments/derived/sota_cross_eval.csv` (or verify existing rows
+   are already using the new column name — they are after the raid merge).
+5. Add an adherence test that asserts the column names output by `score_mechanical.py`
+   match the header of `sota_cross_eval.csv` — so this class of drift is caught at CI.
+
+## Exit criteria
+
+- [ ] `score_mechanical.py` outputs `coherence_capacity_nonnegative`
+- [ ] Compat shim in `build_exp2_mart.py` removed
+- [ ] All tests updated and passing
+- [ ] Adherence test added (column-name consistency scorer ↔ CSV header)
+- [ ] `make check` passes
