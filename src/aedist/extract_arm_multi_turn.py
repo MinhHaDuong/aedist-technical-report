@@ -64,8 +64,50 @@ def find_last_turn(agent_dir: Path) -> Path | None:
 
 
 def extract_output_text(record: dict[str, Any]) -> str:
-    """Pull the model's text response out of a record JSON."""
+    """Pull the model's text response out of a record JSON.
+
+    Handles four provider formats before the generic fallbacks:
+    - Anthropic native: ``content`` is a list at root with type="text" blocks.
+    - Qwen: ``output`` is a dict with a ``choices`` key.
+    - Mistral Agents: ``outputs`` is a list of message items.
+    - OpenAI-style: ``output`` is a list of message items (existing branch).
+    """
+    # Anthropic native: {"content": [{"type": "thinking", ...}, {"type": "text", "text": "..."}]}
+    content_root = record.get("content")
+    if isinstance(content_root, list):
+        text = " ".join(
+            block.get("text", "")
+            for block in content_root
+            if isinstance(block, dict) and block.get("type") == "text"
+        )
+        if text.strip():
+            return text.strip()
+
+    # Qwen: {"output": {"choices": [{"message": {"content": "..."}}]}}
     output = record.get("output")
+    if isinstance(output, dict) and "choices" in output:
+        choices = output.get("choices", [])
+        if choices:
+            msg_content = choices[0].get("message", {}).get("content", "")
+            if isinstance(msg_content, str) and msg_content.strip():
+                return msg_content.strip()
+
+    # Mistral Agents: {"outputs": [{"type": "message.output", "content": "..."}]}
+    outputs = record.get("outputs")
+    if isinstance(outputs, list):
+        for item in reversed(outputs):
+            if item.get("type") == "message.output":
+                item_content = item.get("content", "")
+                if isinstance(item_content, list):
+                    text = " ".join(
+                        block.get("text", "") for block in item_content if isinstance(block, dict)
+                    )
+                    if text.strip():
+                        return text.strip()
+                elif isinstance(item_content, str) and item_content.strip():
+                    return item_content.strip()
+
+    # OpenAI-style: {"output": [{"type": "message", "content": [...]}]}
     if isinstance(output, list):
         for item in output:
             if item.get("type") != "message":
@@ -83,6 +125,7 @@ def extract_output_text(record: dict[str, Any]) -> str:
             merged = "".join(texts).strip()
             if merged:
                 return merged
+
     for key in ("output", "text", "content", "response"):
         value = record.get(key)
         if isinstance(value, str):
@@ -105,9 +148,7 @@ def _count_inventory_rows(text: str) -> int:
     except Exception:
         lines = [ln.strip() for ln in best.splitlines() if ln.strip()]
         data_rows = [
-            ln
-            for ln in lines
-            if ln.count("|") >= 3 and not re.match(r"^\|?[\s\-:|]+\|?$", ln)
+            ln for ln in lines if ln.count("|") >= 3 and not re.match(r"^\|?[\s\-:|]+\|?$", ln)
         ]
         return max(len(data_rows) - 1, 0)
     return len(list(csv.DictReader(io.StringIO(canonical_csv))))
@@ -186,6 +227,8 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
             method_params = record.get("method_params")
             if isinstance(method_params, dict):
                 model = method_params.get("model")
+            if not model:
+                model = record.get("model")
 
             raw_trace = entry.get("class_trace")
             class_trace: list[str] = []
