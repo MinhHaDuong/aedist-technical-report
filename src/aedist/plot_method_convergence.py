@@ -299,7 +299,7 @@ def write_pdf(
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
     ax.set_yticks([])
-    ax.set_xlabel("Number of power plants", fontsize=11)
+    ax.set_xlabel("Nombre de centrales bien identifiées", fontsize=11)
     ax.set_xlim(-max_fp - 15, 185)
     # Invert via ylim order (no invert_yaxis) so set_ylim stays predictable
     ax.set_ylim(y_last + spacing, -spacing)

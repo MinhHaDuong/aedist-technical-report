@@ -262,7 +262,8 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     ax_a.set_title("(a) Claude / GPT / Mistral", loc="left", fontsize="medium")
     ax_b.set_title("(b) Qwen / DeepSeek", loc="left", fontsize="medium")
     ax_a.set_ylabel("Nombre de centrales bien identifiées")
-    fig.supxlabel("Coût par requête (cents USD)")
+    fig.supxlabel("Cost per run (USD cents)")
+    fig.suptitle("Experiment 1 baseline (no web search)", y=0.995, fontsize="medium")
 
     def _family_handle(slug_seed: str, label: str) -> Line2D:
         return Line2D(
