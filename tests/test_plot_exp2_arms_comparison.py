@@ -38,7 +38,7 @@ def _minimal_rows():
             "wall_s": "120.0",
             "turns": "1",
         }
-        for arm in ("naive", "optimised")
+        for arm in ("naive", "optimised", "arm3", "arm4")
         for agent in ("anthropic", "mistral", "openai", "qwen")
         for i in range(5)
     ]
@@ -51,7 +51,8 @@ def test_load_csv_parses_no_report(tmp_path):
     csv_path = tmp_path / "runs.csv"
     _write_csv(csv_path, _minimal_rows())
     rows = _load_csv(csv_path)
-    assert len(rows) == 40
+    assert len(rows) == 80
+    assert {r["arm"] for r in rows} == {"arm1", "arm2", "arm3", "arm4"}
     no_report = [r for r in rows if not r["is_report"]]
     assert len(no_report) == 1
     assert no_report[0]["inventory_rows"] == 0
