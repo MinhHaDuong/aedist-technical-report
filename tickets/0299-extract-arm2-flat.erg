@@ -1,0 +1,54 @@
+%erg 0.1
+Title: MVP extractor for multi-turn arm2 → derived flat files
+Created: 2026-05-25
+Author: haduong
+Tag: needs-human
+
+--- log ---
+2026-05-25T11:30Z haduong created
+
+--- body ---
+## Context
+
+arm2 (`sota_exp3_arm2_batch1/`) has per-run nested dirs:
+
+  run{N}/
+    summary.json                         top-level per-agent stats
+    {agent}_run01/
+      {agent}_turn_01.record.json        per-turn record (contains model output text)
+      {agent}_turn_02.record.json
+      ...
+      {agent}_turn_0T.record.json        T = last turn (varies per agent/run)
+
+The last turn's record.json holds the final inventory output.
+`summary.json` has: agent, status, total_cost_usd, wall_s, turns, class_trace, inventory_rows.
+
+## Goal
+
+Write `src/aedist/extract_arm_multi_turn.py` — a CLI module that:
+1. Walks `--input-dir` (e.g. `sota_exp3_arm2_batch1/`) across all `run{N}/` subdirs
+2. Identifies last turn per agent by highest turn number in `{agent}_turn_*.record.json`
+3. Writes to `--output-dir` (e.g. `experiments/derived/arm2_flat/`) per run×agent:
+   - `{agent}_run{N}.json`    normalized metadata (model, agent, run, status→classification,
+                               total_cost_usd, wall_s, turns, class_trace as list,
+                               inventory_rows→n_rows, n_bib_entries)
+   - `{agent}_run{N}.md`      verbatim text from last turn's record.json (`output` field or equivalent)
+   - `{agent}_run{N}_bib.md`  bibliography extracted from that output (same rules as 0298)
+
+## Finding the output text in record.json
+
+Inspect `anthropic_turn_04.record.json` to find the field name holding the model's
+text response. Likely `output`, `text`, `content`, or `response`.
+
+## Notes
+
+- Only `status=pass` entries should be emitted; skip `status=error` silently
+- `class_trace` in summary.json is a comma-separated string — split to list
+- agent name is derived from the subdir name `{agent}_run01` → strip `_run01`
+
+## Exit criteria
+
+- [ ] Runs cleanly on `sota_exp3_arm2_batch1/`
+- [ ] Produces 20 triples (4 agents × 5 runs, all pass)
+- [ ] `build_exp2_mart.py` fed the output dir produces ≥ 20 run records
+- [ ] Unit test: last-turn detection picks highest turn number, not alphabetic sort
