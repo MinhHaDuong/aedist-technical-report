@@ -6,6 +6,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{pgfplotstable}
+\usepackage[normalem]{ulem}
 
 \useinnertheme{metropolis}
 \useoutertheme{metropolis}
@@ -21,7 +22,7 @@
 \definecolor{goodf1}{HTML}{2E86AB}
 \definecolor{medf1}{HTML}{F5A623}
 \definecolor{lowf1}{HTML}{E8505B}
-% Quality ladder colors (one dot = one power plant)
+% Quality ladder colors
 \definecolor{qualred}{HTML}{E74C3C}
 \definecolor{qualgray}{HTML}{BBBBBB}
 \definecolor{qualyellow}{HTML}{F1C40F}
@@ -42,10 +43,14 @@
 \titlepage
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+\end{frame}
+
 % ===================================================================
 \section{Problème}
-
-% Act I — Le fossé et l'illusion
 
 % -------------------------------------------------------------------
 \begin{frame}{Le problème}
@@ -76,10 +81,10 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \end{columns}
 \end{frame}
 
-% -------------------------------------------------------------------
-% Exp 1 — Baseline paramétrique
-% -------------------------------------------------------------------
+% ===================================================================
+\section{Expériences}
 
+% -------------------------------------------------------------------
 \begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
 
 \textbf{\NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
@@ -95,7 +100,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \end{itemize}
 
 \medskip
-{\small \textit{Condition~: connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé.}}
+{\small \textit{Condition~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé.}}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -104,7 +109,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
 \begin{tikzpicture}[remember picture,overlay]
 \node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
-Récalcitrant\\
+\sout{Récalcitrant}\\
 Incomplet\\
 Hallucinant\\
 Non-déterministe\\
@@ -114,22 +119,12 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
-% Profils de qualité par famille — spider chart
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
 \includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_direct_cost_quality.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
-% Exp 2 — SOTA avec web search : le design
-% -------------------------------------------------------------------
-
 \begin{frame}{Expérience 2 : le SOTA avec web search ne suffit pas}
 \begin{center}
 \small
@@ -156,16 +151,14 @@ Docs + web      & \texttimes & \texttimes & \checkmark & \checkmark \\
 \end{tabular}
 
 \bigskip
-{\small \textit{Coût total Exp 2 : \$0,82. Les 4 agents ont accès au même corpus RAG vérifié manuellement (PDP7, PDP7A, PDP8, EVN).}}
+{\small \textit{Les 4 agents ont accès au même corpus RAG vérifié manuellement (PDP7, PDP7A, PDP8, EVN).}}
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{La méthode, quelques détails}
-\begin{columns}[T]
-\column{0.48\textwidth}
+\begin{frame}{La méthode --- Infrastructure}
 \textbf{Infrastructure~:}
-\begin{itemize}\setlength\itemsep{3pt}
+\begin{itemize}\setlength\itemsep{6pt}
   \item \textbf{git-erg}~: gestion de tickets locale, agent-friendly\\
         {\small Format texte versionné~; les agents lisent et ferment les tickets comme des humains.}
   \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
@@ -174,15 +167,15 @@ Docs + web      & \texttimes & \texttimes & \checkmark & \checkmark \\
         {\small 4 agents consultés~: 2/4 ont validé sans réserve, 2/4 avec réserves.\\
         \textit{(Les réserves étaient fondées.)}}
 \end{itemize}
+\end{frame}
 
-\column{0.48\textwidth}
-\textbf{Protocole multi-tours (Exp~2)~:}
-\begin{description}\setlength\itemsep{3pt}
+% -------------------------------------------------------------------
+\begin{frame}{La méthode --- Protocole multi-tours (Exp~2)}
+\begin{description}\setlength\itemsep{8pt}
   \item[\textbf{Phase A}] Chaque agent optimise son propre prompt et planifie le job ($\leq$\$1).
   \item[\textbf{Phase B}] Jusqu'à 3 tours de recherche + 1 tour de finalisation.
   \item[\textbf{Transitions}] Script state machine~; un LLM juge à chaque tour si l'agent a produit un rapport ou doit continuer.
 \end{description}
-\end{columns}
 
 \medskip
 \begin{center}
@@ -200,14 +193,14 @@ Un jury de pairs --- mais le jury est aussi un modèle.}}
 % -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
-\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
 \end{frame}
 
-% -------------------------------------------------------------------
-% Act II — La question qui change tout
-% -------------------------------------------------------------------
+% ===================================================================
+\section{Qualité}
 
-\begin{frame}{Question centrale: «~quelle architecture~?», pas «~quel modèle~?»}
+% -------------------------------------------------------------------
+\begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
 \begin{center}
 \large
 Les données de qualité recherche ne sont pas des données correctes.\\
@@ -220,17 +213,17 @@ et où mènent les architectures à états agentiques.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Quatre défaillances, quatre solutions architecturales}
+\begin{frame}{Quatre défaillances}
 \begin{center}
 \small
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}ll@{}}
 \toprule
-\textbf{Défaillance} & \textbf{Sans correction} & \textbf{Réponse architecturale} \\
+\textbf{Défaillance} & \textbf{Symptôme} \\
 \midrule
-\textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources  & RAG massif              \\
-\textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables & Citations par cellule \\
-\textbf{Fraîcheur}                     & Instantané figé à la coupure & Fusion incrémentale   \\
-\textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées & Vérif.\ 3 niveaux \\
+\textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources              \\
+\textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables         \\
+\textbf{Fraîcheur}                     & Instantané figé à la coupure       \\
+\textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées \\
 \bottomrule
 \end{tabular}
 \footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
@@ -240,380 +233,7 @@ et où mènent les architectures à états agentiques.}
 
 \bigskip
 \begin{center}
-\small\textit{Chaque section présente une défaillance et son mécanisme correcteur.}
-\end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Pourquoi ne pas simplement vérifier la sortie~?}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Trois options~:}
-
-\smallskip
-\begin{description}
-  \item[Confiance] Accepter le tableau.
-        {\small (Pas de vérification de provenance.)}
-  \item[Vérifier] Contrôler chaque ligne sur les sources.
-        Corriger. Conserver.
-        {\small (Rapide~: ${\sim}$3h pour 162 lignes.)}
-  \item[Re-extraire] Corpus validé, extraction indépendante,
-        LLM pour la couverture uniquement.
-        {\small (Plus lent, mais réutilisable.)}
-\end{description}
-
-\column{0.48\textwidth}
-\textbf{La vérification suffit pour un tableau.}
-
-\smallskip
-Plafond~:
-\begin{itemize}\setlength\itemsep{1pt}
-  \item Ne peut trouver les \textbf{86 centrales manquantes}
-  \item Pas de mise à jour si PDP8 est révisé
-  \item Ne se transfère pas au pays suivant
-  \item Tableau vérifié, pas un processus réutilisable
-\end{itemize}
-
-\smallskip
-\textbf{Vérification LLM post-hoc~: 0--10\%} d'accord.\\
-{\scriptsize (Barème 0--4~: les modèles rappellent des citations depuis leur connaissance paramétrique. Des opinions, pas de la provenance.)}
-
-\smallskip
-Pour 60 campagnes~: \textbf{justifier en amont}.
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{De l'extraction à la fusion d'information}
-\begin{columns}[T]
-\column{0.52\textwidth}
-RAG traite l'extraction comme \textit{document $\to$ tableau} en une passe.
-
-\smallskip
-Le vrai problème est la \textbf{fusion}~: fragments divers accumulés dans un tableau
-via un processus contrôlé, inspectable.
-
-\smallskip
-\textbf{Trois types de fragments~:}
-\begin{itemize}\setlength\itemsep{0pt}
-  \item \textbf{Sériels} (tableaux~: annexes PDP, EVN) ---
-        alignement de schéma + liaison d'enregistrements
-  \item \textbf{Multi-scalaires} (listes prose) ---
-        vérification d'existence~; confirme/ajoute des lignes
-  \item \textbf{Scalaires} (faits isolés) ---
-        mise à jour d'attribut~; remplit les cellules
-\end{itemize}
-
-{\small Périmètre v0~: sériels uniquement. $\sim$18 tableaux pour le Vietnam.}
-
-\column{0.44\textwidth}
-\textbf{La primitive de fusion~:}
-
-\smallskip
-\begin{center}
-$\mathrm{master} + \mathrm{fragment} \longrightarrow \mathrm{master}'$
-\end{center}
-
-Une source à la fois. Jamais tous les fragments en une passe.
-
-\smallskip
-\textbf{Conséquences~:}
-\begin{itemize}\setlength\itemsep{0pt}
-  \item Chaque étape a un diff inspectable
-  \item Coût en $N$, pas en $N\!\times\!S$
-  \item Auditable par construction
-  \item L'échec est localisé à une étape
-\end{itemize}
-
-C'est le \textbf{à états} dans «~à états agentiques.~»
-\end{columns}
-
-\smallskip
-\centering\small
-Séparer l'extraction de la fusion garantit la reproductibilité~:
-la fusion peut être déterministe même quand l'extraction ne l'est pas.
-\end{frame}
-
-% ===================================================================
-\section{Ancrage documentaire}
-
-% Act III — L'evidence (Ancrage)
-
-% -------------------------------------------------------------------
-\begin{frame}{Régime de documentation~: le RAG élève le plancher}
-\textbf{Mêmes 5 modèles} testés dans 3 conditions méthodologiques $\times$ 3 runs \hfill Coût total~: \$0.89
-
-\medskip
-\begin{columns}[T]
-\column{0.42\textwidth}
-\textbf{Niveaux de documentation~:}
-\begin{enumerate}
-  \item \textbf{Aucun} -- passe unique, connaissance paramétrique uniquement
-  \item \textbf{Multi-tours} -- 3 relances conversationnelles
-  \item \textbf{RAG massif} -- 18 tableaux sources sélectionnés (155 ko) comme contexte système
-\end{enumerate}
-
-\medskip
-{\small Corpus RAG~: tableaux vérifiés manuellement depuis PDP7, PDP7A, PDP8, rapports EVN, étude E542}
-
-\medskip
-{\scriptsize \textit{Limite de fenêtre de contexte~: la sous-interrogation par type de combustible et la fusion résolvent la troncature ($+$15--35~pp pour les modèles sujets à la troncature).}}
-
-\column{0.56\textwidth}
-\includegraphics[width=\textwidth]{inputs/generated/fig_regimes_scatter.pdf}
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Documentation~: inversion coût-performance}
-\textbf{Corpus~:} 18 tableaux Markdown vérifiés manuellement (155 ko) depuis des sources officielles
-
-\medskip
-\begin{columns}[T]
-\column{0.55\textwidth}
-\begin{tabular}{lrr}
-\toprule
-\textbf{Modèle} & \textbf{Direct} & \textbf{+ RAG} \\
-\midrule
-Mistral Small 4 (\$0.15/M)  &  83 & \textbf{141} \\
-GPT-5.4 (\$2.50/M)          & 107 & \textbf{126} \\
-Gemini Flash Lite (\$0.10/M) &  91 & \textbf{126} \\
-Mistral Large 3 (\$0.50/M)  &  62 & \textbf{118} \\
-DeepSeek V3.2 (\$0.26/M)    &  63 & \textbf{98} \\
-\bottomrule
-\end{tabular}
-
-\medskip
-\small Médiane des centrales trouvées (sur 163), 3 runs chacun
-
-\column{0.42\textwidth}
-\textbf{Documents du corpus~:}
-\begin{itemize}
-  \item Annexes PDP7, PDP7A, PDP8
-  \item Rapports annuels EVN 2010--2018
-  \item Tableaux de l'étude E542
-  \item Rapports 32 et 58
-\end{itemize}
-
-\medskip
-\textbf{Résultat clé~:}\\
-Avec des documents, un modèle bon marché surpasse un modèle coûteux. La \textbf{méthode} (RAG) domine le choix du modèle.
-\end{columns}
-\end{frame}
-
-% ===================================================================
-\section{Auditabilité}
-
-% -------------------------------------------------------------------
-\begin{frame}{Responsabilité épistémique~: LLM vs pipeline}
-\begin{center}
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Propriété} & \textbf{Rapport LLM} & \textbf{Pipeline de fusion} \\
-\midrule
-Provenance     & «~Claude l'a dit~» & cellule $\to$ ID source $\to$ document \\
-Mise à jour    & régénérer tout      & ajouter une source \\
-Audit          & opaque              & journal d'étapes + sidecar + registre \\
-Falsifiable    & non                 & vérifier la source contre l'affirmation \\
-Incrémental    & non                 & actif par actif, source par source \\
-À états        & non                 & registre + mémoire persistants \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-Le LLM est un \textbf{index compressé}.\\
-Utiliser pour la \emph{découverte de périmètre},\\
-pas comme vérité terrain.
-
-\column{0.48\textwidth}
-\textbf{Extraction sourcée (3 runs Opus)~:}\\
-$\approx$100\% des centrales citent une source corpus.\\
-$\approx$98\% des citations tracent vers un fichier.\\
-$\approx$80\% traçables de bout en bout.
-\end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Auditabilité~: les chiffres}
-\begin{center}
-\Large
-\textbf{$\approx$100\%} des centrales citent une source corpus
-
-\bigskip
-\textbf{$\approx$98\%} des citations tracent vers un fichier corpus
-
-\bigskip
-\textbf{$\approx$80\%} traçables de bout en bout\\
-{\normalsize (citation $\to$ fichier $\to$ nom de centrale)}
-\end{center}
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-{\small Extraction sourcée, 3 runs Opus, température~=~0}
-
-\column{0.48\textwidth}
-{\small RAG décomposé (meilleur F1=89,8\%)~:\\
-\textbf{0\% traçable} --- aucune citation émise.\\
-\textit{Couverture vs.\ traçabilité~: le compromis ouvert.}}
-\end{columns}
-\end{frame}
-
-% ===================================================================
-\section{Fraîcheur}
-
-% -------------------------------------------------------------------
-\begin{frame}{Fusion incrémentale~: mise à jour sans régénération}
-\textbf{Primitive~:} $\mathrm{master} + \mathrm{doc}_i \longrightarrow \mathrm{master}'$, 18 itérations (ordre chronologique).
-
-\medskip
-\begin{columns}[T]
-\column{0.52\textwidth}
-\textbf{Ce que cela apporte~:}
-\begin{itemize}
-  \item Chaque document ajouté de façon incrémentale --- pas de re-exécution complète
-  \item Chaque mise à jour est un diff~: localisable, réversible
-  \item Le coût croît en $N$ sources, pas en $N \times S$
-\end{itemize}
-
-\column{0.44\textwidth}
-\begin{center}
-\vspace{0.5em}
-\begin{tabular}{lc}
-\hline
-Mode & F1 à $N{=}18$ \\
-\hline
-Incrémental & \textbf{88,0\,\%} \\
-Global      & 46,2\,\% \\
-\hline
-\end{tabular}\\[0.8em]
-{\small Précision~: 100\,\% (aucun faux positif)\\
-Couverture incrémentale~: 78,5\,\%}\\[0.5em]
-{\footnotesize F1 incrémental croît monotonement~; F1 global\\
-s'effondre à $N{=}18$ (instabilité de contexte).}
-\end{center}
-\end{columns}
-\end{frame}
-
-% ===================================================================
-\section{Fiabilité}
-
-% -------------------------------------------------------------------
-\begin{frame}{Vérification à l'échelle~: trois niveaux}
-\begin{center}
-\small
-\begin{tabular}{@{}rl@{}}
-\toprule
-\textbf{Niveau} & \textbf{Mécanisme} \\
-\midrule
-Pré-filtre & Audit des diffs~: seules les cellules modifiées sont vérifiées \\[2pt]
-1 & Correspondance exacte (déterministe) cellule $\leftrightarrow$ table source \\[2pt]
-2 & Arbitrage LLM sur les échecs du niveau~1 $\to$ règle candidate \\[2pt]
-3 & Ratification HITL $\to$ règle en mémoire (piste d'audit) \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Ce que cela apporte~:}
-\begin{itemize}
-  \item Déterminisme en premier~; LLM uniquement en recours
-  \item L'humain ne ratifie qu'\emph{une fois} par règle
-  \item La mémoire rend le run $N+1$ moins coûteux que le run $N$
-  \item Le taux d'escalade est lui-même un signal
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Métriques~:}
-\begin{itemize}
-  \item Taux d'escalade par étape de fusion
-  \item Croissance du nombre de règles (par taxonomie)
-  \item Taux d'acceptation des ratifications
-\end{itemize}
-
-\medskip
-{\small Impasse évitée~: jurys multi-agents (ticket 0059). Ici l'humain valide chaque règle une fois, pas chaque cellule à chaque fois.}
-\end{columns}
-
-\medskip
-{\small\textit{Conception --- implémentation v0 en cours~; résultats empiriques dans les phases~2+3 (post-exposé).}}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Mémoire HITL et agents v0}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Quatre catégories de règles~:}
-\begin{itemize}\setlength\itemsep{2pt}
-  \item \textbf{Alias} --- identité d'entité\\
-        {\small «~VT1~» $\equiv$ «~Vinh Tan 1~»}
-  \item \textbf{Unité/format} --- normalisation\\
-        {\small «~1~200 MW~» $\to$ 1200}
-  \item \textbf{Terme source-local} --- vocabulaire prose\\
-        {\small «~Nhóm~» (PDP8) = «~Group~»}
-  \item \textbf{Synonyme d'attribut} --- colonne $\to$ schéma\\
-        {\small «~Công suất~» $\to$ capacity\_mw}
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Quatre agents~:}
-\begin{description}\setlength\itemsep{2pt}
-  \item[\textbf{Watcher}] découverte de sources
-  \item[\textbf{Curator}] triage HITL
-  \item[\textbf{Analyst}] fusion chronologique\\
-        $\to$ mute master + sidecar
-  \item[\textbf{Auditor}] vérification 3 niveaux\\
-        $\to$ propose + ratifie des règles
-\end{description}
-\end{columns}
-
-\medskip
-\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous sous git.\\
-{\small Le run suivant reprend là où celui-ci s'est arrêté. C'est le chemin vers 60 campagnes.}
-
-\medskip
-{\small\textit{Conception --- implémentation v0 en cours~; résultats dans les phases~2+3 (post-exposé).}}
-\end{frame}
-
-% ===================================================================
-\section{Architecture}
-
-% Act IV — L'architecture comme réponse
-
-% -------------------------------------------------------------------
-\begin{frame}{La réponse architecturale~: 4 couches \texttimes{} 4 agents}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\textbf{Quatre couches de données~:}
-\begin{enumerate}\setlength\itemsep{2pt}
-  \item \textbf{Dépôt de documents} — sources brutes en cache
-  \item \textbf{Corpus validé} — indexé, registre des sources
-  \item \textbf{Master + sidecar} — fusion incrémentale,\\
-        {\scriptsize master.csv + provenance + fusion\_log}
-  \item \textbf{Mémoire} — règles auditées par taxonomie\\
-        {\scriptsize aliases / unités / termes-sources + audit.jsonl}
-\end{enumerate}
-
-\column{0.48\textwidth}
-\textbf{Quatre agents, chacun ancré sur un critère~:}
-\begin{description}\setlength\itemsep{2pt}
-  \item[\textbf{Watcher}] découverte → \textit{Fraîcheur}
-  \item[\textbf{Curator}] triage HITL → \textit{Ancrage}
-  \item[\textbf{Analyst}] fusion chronologique → \textit{Fraîcheur}
-  \item[\textbf{Auditor}] vérification 3 niveaux → \textit{Fiabilité}
-\end{description}
-\end{columns}
-
-\bigskip
-\begin{center}
-\textbf{L'état est persistant.} Registre, sidecar, journal, mémoire~: tous sous git.\\[0.4em]
-{\small C'est un travail en cours vers cette vision.\\
-\textbf{Aujourd'hui~: le benchmark qui valide les choix de conception du cœur.}}
+\small\textit{Chaque défaillance a un mécanisme correcteur mesurable.}
 \end{center}
 \end{frame}
 
@@ -655,66 +275,148 @@ Pré-filtre & Audit des diffs~: seules les cellules modifiées sont vérifiées 
 \end{tabular}
 \end{center}
 \smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (décomposition + agrégation). Les niveaux~3--4 font l'objet du benchmark de phases~2+3.}
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\end{frame}
+
+% -------------------------------------------------------------------
+% Profils de qualité par famille --- spider chart
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
 \end{frame}
 
 % ===================================================================
-\section{Perspectives}
-
-% Act V — Conclusion et ouverture
+\section{Hypothèses}
 
 % -------------------------------------------------------------------
-\begin{frame}{Ce que nous avons appris}
-\begin{center}
-\large\textbf{Trois leçons}
-\end{center}
+\begin{frame}{Nos quatre hypothèses}
+\small
+\begin{tabular}{@{}c p{8.5cm} l@{}}
+\toprule
+\textbf{H} & \textbf{Énoncé} & \textbf{Statut} \\
+\midrule
+H1 & Direct $\to$ multi-tours améliore le F1 (Articulation)
+   & préliminaire \\[3pt]
+H2 & Multi-tours $\to$ RAG améliore le F1 (Couverture)
+   & préliminaire \\[3pt]
+H3 & Un seul prompt ne maximise pas simultanément rappel et provenance
+   & en cours \\[3pt]
+H4 & Un modèle local approche les performances des modèles frontier
+   & en cours \\
+\bottomrule
+\end{tabular}
 
-\bigskip
-\begin{enumerate}\setlength\itemsep{1em}
-  \item \textbf{La méthode domine le modèle.}\\
-        {\small Documentation (+18--43\,pp), décomposition (60\% $\to$ 99\%) et agrégation (+35\,pp)
-        surpassent le choix du modèle. \NumModelsTested{} modèles, un plafond commun.}
+\medskip
+\begin{columns}[T]
+\column{0.52\textwidth}
+{\small \textbf{Tests planifiés~:}\\
+H1, H2~: permutation test apparié ($\Delta$F1 $\geq$ 0{,}03)\\
+H3~: Mann-Whitney U sur $\Delta$F1 (précis. vs rappel)\\
+H4~: bootstrap 95\,\% CI ($\pm$0{,}05 F1)}
 
-  \item \textbf{Chaque critère de qualité s'améliore par une intervention architecturale mesurable.}\\
-        {\small Ancrage $\to$ RAG. Auditabilité $\to$ citations par cellule.
-        Fraîcheur $\to$ fusion incrémentale. Fiabilité $\to$ vérification 3 niveaux.}
+\column{0.46\textwidth}
+{\small \textbf{Évidence directionnelle actuelle~:}\\
+H1~: direct 0{,}42 vs multi-tours 0{,}63\\
+H2~: multi-tours 0{,}63 vs RAG 0{,}68\\
+H3, H4~: sweeps confirmatoires en cours}
+\end{columns}
+\end{frame}
 
-  \item \textbf{Le pipeline est auditable~; le LLM seul, non.}\\
-        {\small 80\% traçables bout-en-bout (extraction sourcée)
-        vs.\ 0\% (RAG décomposé). Les erreurs sont \emph{localisables}.}
+% -------------------------------------------------------------------
+\begin{frame}{Le RAG élève le plancher~: régime de documentation}
+\textbf{Mêmes 5 modèles}, 3 conditions $\times$ 3 runs
+
+\medskip
+\begin{columns}[T]
+\column{0.42\textwidth}
+\textbf{Niveaux~:}
+\begin{enumerate}
+  \item \textbf{Aucun} --- one shot, connaissance paramétrique
+  \item \textbf{Multi-tours} --- 3 relances conversationnelles
+  \item \textbf{RAG massif} --- 18 tableaux sources (155 ko)
+\end{enumerate}
+
+\medskip
+{\scriptsize Corpus~: PDP7, PDP7A, PDP8, rapports EVN, étude E542}
+
+\column{0.56\textwidth}
+\includegraphics[width=\textwidth]{inputs/generated/fig_regimes_scatter.pdf}
+\end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{RAG inverse la relation coût-performance}
+\textbf{Corpus~:} 18 tableaux Markdown vérifiés manuellement (155 ko)
+
+\medskip
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Modèle} & \textbf{Direct} & \textbf{+ RAG} \\
+\midrule
+Mistral Small 4 (\$0.15/M)   &  83 & \textbf{141} \\
+GPT-5.4 (\$2.50/M)           & 107 & \textbf{126} \\
+Gemini Flash Lite (\$0.10/M)  &  91 & \textbf{126} \\
+Mistral Large 3 (\$0.50/M)   &  62 & \textbf{118} \\
+DeepSeek V3.2 (\$0.26/M)     &  63 & \textbf{98}  \\
+\bottomrule
+\end{tabular}
+
+\medskip
+{\small Médiane des centrales trouvées (sur 163), 3 runs chacun}
+
+\column{0.42\textwidth}
+\textbf{Résultat clé~:}
+
+\smallskip
+Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sans RAG.
+
+\medskip
+\textbf{La méthode domine le modèle.}
+\end{columns}
+\end{frame}
+
+% ===================================================================
+\section{Conclusions}
+
+% -------------------------------------------------------------------
+\begin{frame}{Messages clés}
+\begin{enumerate}\setlength\itemsep{1.2em}
+  \item \textbf{RAG FTW~: la méthode domine le modèle.}\\
+        {\small +18--43\,pp de F1 avec RAG~; un modèle bon marché + RAG surpasse
+        les modèles chers sans RAG.}
+
+  \item \textbf{Multi-tours~: pas si utile.}\\
+        {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain~;
+        le RAG massif est l'intervention dominante.}
+
+  \item \textbf{Anthropic trop cher~--- mais c'est juste une question de temps.}\\
+        {\small Opus~4.6 à \$1{,}23 total~: F1 moyen 0{,}46. GPT-OSS-20B à \$0{,}01~: F1 0{,}58.\\
+        Les modèles locaux approchent déjà la frontière.}
 \end{enumerate}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Pourquoi un graphe de connaissances~?}
-\textbf{v0 est relationnel.} Master + sidecar + registre sont des CSV. Cela suffit
-pour un pays, un secteur, une chaîne de sources.
+\begin{frame}{Directions futures}
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Intégration RAG HITL des sources}]
+        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
+        le corpus RAG grandit de façon contrôlée.
 
-\medskip
-Un \textbf{graphe de connaissances} devient nécessaire à trois frontières~:
+  \item[\textbf{Vérifié $>$ vérifiable}]
+        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
+        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
 
-\medskip
-\begin{description}
-  \item[Résolution d'entités à l'échelle]
-        «~Vinh Tan 1~», «~VT1~», «~Vĩnh Tân 1~», «~Vinh Tan Unit 1~» sont une seule centrale.
-        v0 gère cela avec un dépôt de règles d'alias.
-        Un KG le gère nativement comme arêtes d'identité --- entre pays et langues.
+  \item[\textbf{Niveau cellule~: KG par document}]
+        Chaque cellule est un triple (sujet, prédicat, objet)~;
+        la fusion de sources concurrentes devient fusion d'ensembles de triples.
+        Graphe de connaissances en lieu et place d'une master-table plate.
 
-  \item[Provenance multi-sauts]
-        Un chiffre de capacité sourcé depuis PDP7, révisé par PDP8, confirmé par EVN
-        est un \emph{chemin} dans un graphe. Forcer cela dans un sidecar plat perd la
-        structure nécessaire à l'audit et au raisonnement défaisable.
-
-  \item[Fusion inter-domaines]
-        Les centrales sont liées aux entreprises, permis, opérateurs de réseau, bilans d'émissions.
-        ASEAN $\times$ 6 types de combustibles $\times$ données de permis est un problème de graphe,
-        pas une extension de master-table.
+  \item[\textbf{Secteur $\times$ pays}]
+        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
+        à l'eau en Thaïlande. Architecture identique, paramètres différents.
 \end{description}
-
-\medskip
-\centering\small
-\textbf{v0 → v1~:} pipeline relationnel comme banc d'essai.
-\textbf{v2+~:} KG une fois que la résolution d'entités et la fusion inter-domaines sont le goulot.
 \end{frame}
 
 % -------------------------------------------------------------------

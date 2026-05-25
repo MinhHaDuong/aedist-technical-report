@@ -1,3 +1,12 @@
+---
+header-includes:
+  - \usepackage{newunicodechar}
+  - \newunicodechar{✕}{\ensuremath{\times}}
+  - \newunicodechar{≤}{\ensuremath{\leq}}
+  - \newunicodechar{≥}{\ensuremath{\geq}}
+  - \newunicodechar{≈}{\ensuremath{\approx}}
+---
+
 # Synopsis — Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics
 
 Minh Ha-Duong, 2025-05-06
