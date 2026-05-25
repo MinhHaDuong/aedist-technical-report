@@ -10,7 +10,7 @@ Data source: ``data/capability_timeline.csv``.
 Usage:
     uv run python -m aedist.plot_capability_dag \
         --input data/capability_timeline.csv \
-        --output slides/inputs/generated/fig_capability_dag.pdf
+        --output report/inputs/generated/fig_capability_dag.pdf
 """
 
 import argparse
@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("slides/inputs/generated/fig_capability_dag.pdf"),
+        default=Path("report/inputs/generated/fig_capability_dag.pdf"),
     )
     args = parser.parse_args()
 

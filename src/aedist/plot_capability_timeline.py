@@ -16,7 +16,7 @@ at the right margin of the row, so honest gaps stay visible.
 Usage:
     uv run python -m aedist.plot_capability_timeline \\
         --input data/capability_timeline.csv \\
-        --output slides/inputs/generated/fig_capability_timeline.pdf
+        --output report/inputs/generated/fig_capability_timeline.pdf
 """
 
 import argparse
@@ -188,7 +188,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("slides/inputs/generated/fig_capability_timeline.pdf"),
+        default=Path("report/inputs/generated/fig_capability_timeline.pdf"),
         help="output PDF path",
     )
     args = parser.parse_args()
