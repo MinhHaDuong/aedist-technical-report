@@ -1,0 +1,15 @@
+{
+  "agent": "openai",
+  "class_trace": [
+    "report"
+  ],
+  "classification": "report",
+  "classifier_cost_usd": 0.002661,
+  "cost_usd": 0.2559,
+  "model": "gpt-5.5",
+  "n_bib_entries": 15,
+  "narrative_chars": 60074,
+  "run": 3,
+  "tokens_out": 13510,
+  "wall_s": 165.09
+}

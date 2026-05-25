@@ -1,0 +1,45 @@
+- Global Energy Monitor (GEM) – Vung Ang power station
+- *Source:* [GEM Wiki](https://www.gem.wiki/Vung_Ang_power_station)
+- *Annotation:* Primary source for Vung Ang 1 and 2, including ownership, technology, COD, and status. Provides granular unit-level data and references to official Vietnamese government approvals and operator filings.
+- Vietnam Investment Review – Vung Ang II Inauguration (2026)
+- *Source:* [Vietnam Investment Review](https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html)
+- *Annotation:* Official announcement of Vung Ang II’s inauguration, confirming COD, ownership, and BOT structure.
+- Watson Farley & Williams – PDP8 Implementation Plan
+- *Source:* [WFW](https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/)
+- *Annotation:* Official PDP8 Implementation Plan, detailing thermal power projects (coal, gas, LNG) to 2030, including capacity, location, and status. Primary source for LNG projects and coal-to-gas conversions.
+- Global Energy Monitor (GEM) – Vinh Tan power station
+- *Source:* [GEM Wiki](https://www.gem.wiki/Vinh_Tan_power_station)
+- *Annotation:* Comprehensive source for Vinh Tan 1–4, including status, ownership, and technology. References EVN and MOIT filings.
+- Vietnam Electricity (EVN) – Power Plant Portfolio
+- *Source:* [EVN](https://www.evn.com.vn) (via trade.gov and GEM)
+- *Annotation:* Official EVN data on operational and planned thermal plants, including Duyen Hai, O Mon, and Vinh Tan complexes.
+- Ministry of Industry and Trade (MOIT) – PDP8 Official Document
+- *Source:* [VNTRA](https://www.vntpa.org/pdp8-en)
+- *Annotation:* Official English translation of PDP8, outlining thermal power development targets, fuel mix, and project status. Primary source for coal, gas, and LNG projects.
+- World Nuclear Association – Nuclear Power in Vietnam
+- *Source:* [WNA](https://world-nuclear.org/information-library/country-profiles/countries-t-z/vietnam)
+- *Annotation:* Primary source for Ninh Thuan 1 and 2, including reactor technology, ownership, and timeline. References intergovernmental agreements and National Assembly approvals.
+- LILAMA Corporation – Thermal Power Plants
+- *Source:* [LILAMA](https://lilama.com.vn/en/thermal-power-plants)
+- *Annotation:* EPC contractor for multiple BOT coal plants (Nghi Son 2, Vung Ang 2), providing technical and ownership details.
+- Power Technology – Top Thermal Power Plants in Vietnam
+- *Source:* [Power Technology](https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/)
+- *Annotation:* Aggregates data from GlobalData and operator filings, confirming capacity, COD, and ownership for major operational plants.
+- Trade.gov – Vietnam Power Generation, Transmission, and Distribution
+- *Source:* [Trade.gov](https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution)
+- *Annotation:* U.S. Commercial Service report, summarizing Vietnam’s power sector structure, IPP/BOT projects, and regulatory environment.
+- Norton Rose Fulbright – Vietnam Power Sector Snapshot
+- *Source:* [NRF](https://www.nortonrosefulbright.com/en/knowledge/publications/1d041eb0/vietnam-power-sector-snapshot)
+- *Annotation:* Legal analysis of PDP8, LNG-to-power projects, and EVN’s role. References MOIT and EVN filings.
+- Global Energy Monitor (GEM) – Shelved/Cancelled Projects
+- *Source:* [GEM Wiki – Song Hau](https://www.gem.wiki/Song_Hau_Thermal_Power_Plant), [GEM Wiki – Hai Phong 3](https://www.gem.wiki/Hai_Phong_Thermal_Power_Station)
+- *Annotation:* Primary source for shelved/cancelled projects, including Song Hau 2 and Hai Phong 3, with references to MOIT and provincial decisions.
+- Vietnam Energy Online – MOIT Updates (2026)
+- *Source:* [Vietnam Energy Online](https://vietnamenergy.vn/)
+- *Annotation:* Official MOIT updates on thermal power projects, including Quang Trach I and Long Phu 1.
+- AidData – Vinh Tan 1 BOT Project
+- *Source:* [AidData](https://china.aiddata.org/projects/39151/)
+- *Annotation:* Primary source for Vinh Tan 1’s BOT structure, financing, and EPC contractors.
+- UNDP – Transition Pathways for Coal-Thermal Power Plants
+- *Source:* [UNDP Vietnam](https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants)
+- *Annotation:* Case studies on Pha Lai, Cao Ngan, and Van Phong, including repurposing options and international best practices. ---

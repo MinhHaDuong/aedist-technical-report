@@ -12,8 +12,8 @@ ANALYSIS_GEN ?= $(ANALYSIS_GENERATED_DIR)
 ANALYSIS_OUTPUTS_DIR ?= $(ANALYSIS_EXPERIMENTS_DIR)/outputs
 ANALYSIS_DERIVED_DIR ?= $(ANALYSIS_EXPERIMENTS_DIR)/derived
 
-ANALYSIS_EXP2_NAIVE_DIR ?= $(ANALYSIS_OUTPUTS_DIR)/sota_exp2_naive_arm
-ANALYSIS_EXP2_OPTIMISED_DIR ?= $(ANALYSIS_OUTPUTS_DIR)/sota_exp2_brerun1
+ANALYSIS_EXP2_NAIVE_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm1_flat
+ANALYSIS_EXP2_OPTIMISED_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm2_flat
 ANALYSIS_EXP2_CROSS_EVAL_CSV ?= $(ANALYSIS_DERIVED_DIR)/sota_cross_eval.csv
 
 ANALYSIS_EXP2_NAIVE_JSONS := $(wildcard $(ANALYSIS_EXP2_NAIVE_DIR)/*.json)
@@ -50,9 +50,25 @@ ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/fig_exp2_outline_h6.tex \
 	$(ANALYSIS_GEN)/tab_exp2_outline_hypothesis_status.tex
 
+# --- Extraction stamps -------------------------------------------------------
+
+$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1/run*/*.json)
+	uv run python -m aedist.extract_arm_single_turn \
+	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1 \
+	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm1_flat
+	touch $@
+
+$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1/run*/summary.json)
+	uv run python -m aedist.extract_arm_multi_turn \
+	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1 \
+	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat
+	touch $@
+
 # --- Canonical mart and mart-derived views ---------------------------------
 
-$(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_EXP2_NAIVE_JSONS) $(ANALYSIS_EXP2_NAIVE_MDS) \
+$(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
+		$(ANALYSIS_EXP2_NAIVE_JSONS) $(ANALYSIS_EXP2_NAIVE_MDS) \
 		$(ANALYSIS_EXP2_OPTIMISED_JSONS) $(ANALYSIS_EXP2_OPTIMISED_MDS) \
 		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF)
 	@mkdir -p $(dir $@)

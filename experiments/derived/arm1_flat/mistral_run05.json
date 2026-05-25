@@ -1,0 +1,15 @@
+{
+  "agent": "mistral",
+  "class_trace": [
+    "report"
+  ],
+  "classification": "report",
+  "classifier_cost_usd": 0.001017,
+  "cost_usd": 0.2502,
+  "model": "mistral-large-2512",
+  "n_bib_entries": 40,
+  "narrative_chars": 78026,
+  "run": 5,
+  "tokens_out": 16223,
+  "wall_s": 309.07
+}

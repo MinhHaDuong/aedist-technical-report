@@ -120,9 +120,7 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
 
             # Locate the agent subdirectory (e.g. anthropic_run01)
             agent_dirs = [
-                d
-                for d in run_dir.iterdir()
-                if d.is_dir() and extract_agent_name(d.name) == agent
+                d for d in run_dir.iterdir() if d.is_dir() and extract_agent_name(d.name) == agent
             ]
             if not agent_dirs:
                 continue
@@ -152,13 +150,14 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 "agent": agent,
                 "model": model,
                 "run": run_num,
-                "classification": entry.get("status"),
+                "classification": class_trace[-1] if class_trace else None,
                 "total_cost_usd": entry.get("total_cost_usd"),
                 "wall_s": entry.get("wall_s"),
                 "turns": entry.get("turns"),
                 "class_trace": class_trace,
                 "n_rows": entry.get("inventory_rows"),
                 "n_bib_entries": n_bib,
+                "narrative_chars": len(text),
             }
 
             base_name = f"{agent}_run{run_num:02d}"

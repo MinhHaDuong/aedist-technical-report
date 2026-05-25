@@ -1,0 +1,50 @@
+- Global Energy Monitor (GEM) – Vung Ang power station
+- [GEM Wiki](https://www.gem.wiki/Vung_Ang_power_station)
+- *Original title:* Vung Ang power station – Global Energy Monitor
+- Summary:** Provides detailed information on Vũng Áng-1 and Vũng Áng-2, including capacity, technology, ownership, COD, and status. Used for Vũng Áng-1 and Vũng Áng-2 rows.
+- Annotation:** Primary source for Vũng Áng-1 and Vũng Áng-2, confirmed by operator filings and government approvals.
+- VietnamNet – Quang Trach 1 Thermal Power Plant connected to national grid
+- [VietnamPlus](https://en.vietnamplus.vn/unit-1-of-quang-trach-1-thermal-power-plant-connected-to-national-grid-post340980.vnp)
+- *Original title:* Unit 1 of Quang Trach 1 thermal power plant connected to national grid
+- Summary:** Reports the connection of Unit 1 of Quảng Trạch 1 to the national grid on April 12, 2026, and its expected commercial operation in May 2026.
+- Annotation:** Primary source for Quảng Trạch 1’s status and COD, confirmed by EVN.
+- GE Vernova – Nhon Trach 3&4 Power Plant commercial operation
+- [GE Vernova News](https://www.gevernova.com/news/press-releases/ge-vernova-powers-vietnam-commercial-operation-first)
+- *Original title:* GE Vernova powers up Vietnam with commercial operation of first 9HA gas power plant in the country
+- Summary:** Announces the start of commercial operation of Nhơn Trạch 3&4, Vietnam’s first LNG-fired power plant, on January 5, 2026.
+- Annotation:** Primary source for Nhơn Trạch 3&4’s status and COD, confirmed by PV Power and GE Vernova.
+- Global Energy Monitor (GEM) – Vinh Tan power station
+- [GEM Wiki](https://www.gem.wiki/Vinh_Tan_power_station)
+- *Original title:* Vinh Tan power station – Global Energy Monitor
+- Summary:** Provides details on the Vĩnh Tân power complex, including Vĩnh Tân-3’s uncertain status as of January 2026.
+- Annotation:** Primary source for Vĩnh Tân-3’s status, confirmed by regulator data.
+- Watson Farley & Williams – Vietnam issues Implementation Plan of Power Development Plan 8
+- [WFW](https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/)
+- *Original title:* Vietnam issues Implementation Plan of Power Development Plan 8
+- Summary:** Outlines the thermal power sources to be developed under PDP8, including coal, domestic gas, and LNG.
+- Annotation:** Secondary source for PDP8’s thermal power development plan, confirmed by government documents.
+- Enerdata – Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant
+- [Enerdata](https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html)
+- *Original title:* Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant
+- Summary:** Reports the inauguration of Vũng Áng-2 on April 20, 2026, and its development under a BOT model by Mitsubishi and KEPCO.
+- Annotation:** Primary source for Vũng Áng-2’s inauguration and status.
+- Global Energy Monitor (GEM) – Global Integrated Power Tracker
+- [GEM Wiki](https://globalenergymonitor.org/projects/global-integrated-power-tracker)
+- *Original title:* Global Integrated Power Tracker
+- Summary:** Provides unit-level data on thermal power plants, including capacity, status, and ownership.
+- Annotation:** Secondary source for cross-checking plant data, confirmed by March 2026 release.
+- Vietnam Investment Review – Central Vietnam $1.7 bln thermal power plant to begin operations in 2026
+- [The Investor](https://theinvestor.vn/central-vietnam-17-bln-thermal-power-plant-to-begin-operations-in-2026-d6240.html)
+- *Original title:* Central Vietnam $1.7 bln thermal power plant to begin operations in 2026
+- Summary:** Reports on the Quảng Trạch 1 thermal power plant’s expected test run in September 2025 and commercial operation in 2026.
+- Annotation:** Primary source for Quảng Trạch 1’s timeline, confirmed by EVN.
+- Offshore Energy – PM wants Vietnam’s first LNG power plants online by June as delays loom
+- [Offshore Energy](https://www.offshore-energy.biz/pm-wants-vietnams-first-lng-power-plants-online-by-june-as-delays-loom/)
+- *Original title:* PM wants Vietnam’s first LNG power plants online by June as delays loom
+- Summary:** Discusses the status of Vietnam’s first LNG power plants, including Nhơn Trạch 3&4 and Dung Quất I-III.
+- Annotation:** Primary source for LNG project status, confirmed by government and operator announcements.
+- Freshfields – Vietnam Infrastructure Spotlight March 2026
+- [Freshfields](https://www.freshfields.com/en/our-thinking/briefings/2026/03/vietnam-infrastructure-spotlight-march-2026)
+- *Original title:* Vietnam Infrastructure Spotlight March 2026
+- Summary:** Reports on the Ca Na LNG-fired power project and other LNG developments in Vietnam.
+- Annotation:** Primary source for Ca Na LNG’s status and investor details. ---
