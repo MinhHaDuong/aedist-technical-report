@@ -8,6 +8,7 @@ Supersedes: 0291
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
 2026-05-25T12:00Z HDMX-coding-agent add exp2_phase_b0_consolidate.py adaptation requirement (user request); note supersession of 0291; extraction side of 0290 delegated here
+2026-05-25T12:00Z haduong note 0289 post-mortem: branch t0289-source-strip has one committed but unmerged fix. What it got right: _render_mistral_content_with_sources correctly interleaves tool_reference blocks as inline markdown links; _append_sources_section dedup logic is sound. What it got wrong: Source 1/2 table cells contain bare reference numbers (e.g. "16,90") pointing to a numbered bibliography the LLM writes at the bottom — 0289 never parsed that bibliography or mapped numbers to URLs in the cells. The ## Sources appendix is cosmetic; downstream scoring still sees empty/unlinked Source columns. 0292 must parse the LLM-generated numbered bibliography, match reference numbers to URLs, and populate Source cells with actual hyperlinks. The t0289-source-strip helper functions can be cherry-picked as a starting point.
 
 --- body ---
 ## Context
