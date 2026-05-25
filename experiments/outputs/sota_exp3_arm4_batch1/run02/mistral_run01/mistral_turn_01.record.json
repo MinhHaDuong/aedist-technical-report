@@ -1,0 +1,91 @@
+{
+  "run_id": "ff08ab887044",
+  "timestamp": "2026-05-24T20:52:06.131158Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 13160,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "Compile a complete, primary-sourced reference inventory of Vietnam's thermal generation assets (>30 MWe) at all lifecycle stages. Begin the output directly with the inventory table in the following pi",
+      "conversation_id": "conv_019e5bbea3d573918121946fa641c682",
+      "agent_id": "ag_019e5bbea2e170f0af0720590a2473d5"
+    }
+  },
+  "resource_use": {
+    "wall_s": 245.555,
+    "cost_usd": 0.058129,
+    "tokens_in": 76778,
+    "tokens_out": 13160,
+    "cost_breakdown": {
+      "input": 0.038389,
+      "output": 0.01974,
+      "connector": 0.225
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [
+    {
+      "query": "Vietnam thermal power plant database 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam coal power plant list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam LNG power plant list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam gas power plant list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam power plant retirement and cancellation list 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam Electricity (EVN) annual report 2025 thermal power plants",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam Power Development Plan 8 (PDP8) latest updates 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam National Power Transmission Corporation (EVNNPT) thermal power projects 2026",
+      "urls_returned": []
+    },
+    {
+      "query": "Vietnam Ministry of Industry and Trade (MOIT) thermal power plant status 2026",
+      "urls_returned": []
+    }
+  ],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.225
+}

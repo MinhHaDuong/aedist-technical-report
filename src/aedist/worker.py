@@ -296,7 +296,7 @@ class Worker:
         elif mode == Method.FUSION:
             return self._execute_fusion(job)
         elif mode == Method.VERIFICATION:
-            raise NotImplementedError(  # noqa: hygiene — documented design choice
+            raise NotImplementedError(  # noqa: hygiene
                 "verification mode requires external orchestration "
                 "(use query_verification.py directly)"
             )
@@ -346,7 +346,7 @@ class Worker:
         # here with a clear pointer instead of letting the call fall
         # through ``query_model`` and crash with a NoneType client.
         if (model_entry or {}).get("route") == "claude-code-cli":
-            raise NotImplementedError(  # noqa: hygiene — documented design choice
+            raise NotImplementedError(  # noqa: hygiene
                 f"model {model_id!r} uses route=claude-code-cli, which is "
                 "not supported by the job-board worker. Run via "
                 "`python -m aedist.query_direct --model <id>` instead "

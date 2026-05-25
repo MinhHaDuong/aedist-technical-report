@@ -50,11 +50,10 @@ attic/
 # Migration backups
 *.jsonl.bak-*
 
-# Runtime records (keep local, do not track)
-*.record.json
-
-# Required regression fixture used by tests/test_evaluate.py.
-!experiments/outputs/rag_extract/deepseek-v3.2-run1.record.json
+# Derived markdown artifacts from SOTA experiment runs (ticket 0291)
+# These are extracted from raw JSON during post-processing, not primary data
+experiments/outputs/sota_exp3_*/**/*.md
+!experiments/outputs/sota_exp3_*/**/README.md
 
 # Evaluation reconciliation artifacts (generated)
 reconciliation_*.csv

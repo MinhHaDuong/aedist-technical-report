@@ -1,0 +1,53 @@
+{
+  "run_id": "1db28bbf3972",
+  "timestamp": "2026-05-25T03:03:48.168933Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 14174,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "Produce a complete, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe) in the exact Markdown format specified below. Begin directly with th",
+      "conversation_id": "conv_019e5d13559d73519d72752c99a42fd5",
+      "agent_id": "ag_019e5d1354bb77a7be7bcf879c8f7c95"
+    }
+  },
+  "resource_use": {
+    "wall_s": 219.794,
+    "cost_usd": 0.05952349999999999,
+    "tokens_in": 76525,
+    "tokens_out": 14174,
+    "cost_breakdown": {
+      "input": 0.0382625,
+      "output": 0.021261
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}

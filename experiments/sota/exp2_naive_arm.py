@@ -49,6 +49,62 @@ PROBE_CAP_USD = 3.00
 ANTHROPIC_CAP_USD = 6.00  # input alone costs ~$1.7; 64K output adds ~$1.6
 
 
+def _append_sources_section(narrative: str, sources: list[tuple[str, str]]) -> str:
+    """Append a compact sources section to narrative markdown.
+
+    The naive-arm scoring pipeline consumes the generated `.md` file downstream.
+    Keep web/tool references in-band so source-presence checks see them.
+    """
+    if not sources:
+        return narrative
+
+    dedup: list[tuple[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for title, url in sources:
+        key = (title.strip(), url.strip())
+        if not key[1] or key in seen:
+            continue
+        seen.add(key)
+        dedup.append(key)
+
+    if not dedup:
+        return narrative
+
+    lines = ["", "", "## Sources", ""]
+    for title, url in dedup:
+        label = title if title else url
+        lines.append(f"- [{label}]({url})")
+    return narrative.rstrip() + "\n" + "\n".join(lines) + "\n"
+
+
+def _render_mistral_content_with_sources(content: list[dict]) -> tuple[str, list[tuple[str, str]]]:
+    """Render Mistral mixed content blocks into markdown with inline source links.
+
+    Mistral probe outputs interleave `text` and `tool_reference` blocks. Keep the
+    original order so references remain in table cells (e.g., Source 1/Source 2).
+    """
+    parts: list[str] = []
+    sources: list[tuple[str, str]] = []
+
+    for block in content:
+        if not isinstance(block, dict):
+            continue
+        btype = block.get("type")
+        if btype == "text":
+            parts.append(block.get("text", ""))
+            continue
+        if btype == "tool_reference":
+            title = str(block.get("title", "")).strip()
+            url = str(block.get("url", "")).strip()
+            if not url:
+                continue
+            label = title if title else url
+            parts.append(f"[{label}]({url})")
+            sources.append((label, url))
+
+    return "".join(parts), sources
+
+
 def load_naive_prompt(path: Path = NAIVE_PROMPT_PATH) -> str:
     """Read Doc 07 from disk and return the prompt."""
     return path.read_text(encoding="utf-8")
@@ -112,6 +168,7 @@ def probe_mistral(prompt: str, output_dir: Path) -> dict:
         output_path=raw_path,
     )
     narrative = ""
+    sources: list[tuple[str, str]] = []
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
     for item in raw.get("outputs", []):
         if item.get("type") == "message.output":
@@ -119,11 +176,9 @@ def probe_mistral(prompt: str, output_dir: Path) -> dict:
             if isinstance(content, str):
                 narrative = content
             elif isinstance(content, list):
-                narrative = "".join(
-                    c.get("text", "")
-                    for c in content
-                    if isinstance(c, dict) and c.get("type") == "text"
-                )
+                narrative, extracted_sources = _render_mistral_content_with_sources(content)
+                sources.extend(extracted_sources)
+    narrative = _append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": (record.resource_use.cost_usd or 0) + (record.tool_calls_cost_usd or 0),
@@ -151,11 +206,17 @@ def probe_openai(prompt: str, output_dir: Path) -> dict:
     )
     wall_s = round(time.monotonic() - t0, 2)
     narrative = ""
+    sources: list[tuple[str, str]] = []
     for item in resp.output or []:
         if getattr(item, "type", "") == "message":
             for content in item.content or []:
                 if getattr(content, "type", "") == "output_text":
                     narrative += content.text or ""
+                    for ann in getattr(content, "annotations", None) or []:
+                        url = getattr(ann, "url", None)
+                        title = getattr(ann, "title", None) or ""
+                        if isinstance(url, str):
+                            sources.append((str(title), url))
     raw_path = output_dir / "openai_probe.raw.json"
     raw_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
     usage = resp.usage
@@ -163,6 +224,7 @@ def probe_openai(prompt: str, output_dir: Path) -> dict:
     tokens_out = getattr(usage, "output_tokens", 0) or 0
     p_in = float(meta.get("price_per_mtok_in", 0.0)) / 1_000_000
     p_out = float(meta.get("price_per_mtok_out", 0.0)) / 1_000_000
+    narrative = _append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": tokens_in * p_in + tokens_out * p_out,
@@ -245,6 +307,7 @@ def probe_anthropic(prompt: str, output_dir: Path) -> dict:
     record = result.get("run_record")
     raw = result.get("raw_response")
     narrative = ""
+    sources: list[tuple[str, str]] = []
     if isinstance(raw, dict):
         for block in raw.get("content", []):
             if isinstance(block, dict) and block.get("type") == "text":
@@ -253,6 +316,14 @@ def probe_anthropic(prompt: str, output_dir: Path) -> dict:
         for block in raw.content:
             if hasattr(block, "type") and block.type == "text":
                 narrative += block.text or ""
+
+    if record is not None:
+        for ws in record.web_search_calls or []:
+            urls = ws.urls_returned or []
+            query = ws.query or "web_search"
+            sources.extend((query, url) for url in urls)
+
+    narrative = _append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": record.resource_use.cost_usd if record else 0,
