@@ -1,6 +1,7 @@
 """Tests for the Exp2 mart builder."""
 
 import json
+from pathlib import Path
 
 from aedist.build_exp2_mart import build_exp2_mart, write_exp2_mart
 
@@ -127,6 +128,56 @@ def test_build_exp2_mart_ignores_raw_payload_files(tmp_path):
     assert run_record.run_summary.n_rows == 1
     assert probe_record.probe_summary.turn == 1
     assert score_record.score_summary.accuracy.coverage.value == 0.5
+
+
+def test_build_exp2_mart_resolves_repo_relative_paths_from_repo_root(tmp_path, monkeypatch):
+    repo_root = tmp_path / "repo"
+    cwd = tmp_path / "elsewhere"
+    naive_dir = repo_root / "experiments" / "outputs" / "sota_exp2_naive_arm"
+    optimised_dir = repo_root / "experiments" / "outputs" / "sota_exp2_brerun1"
+    naive_dir.mkdir(parents=True)
+    optimised_dir.mkdir(parents=True)
+    cwd.mkdir()
+
+    for arm_dir, arm_name in ((naive_dir, "naive"), (optimised_dir, "optimised")):
+        _write_json(
+            arm_dir / "anthropic_run01.json",
+            {
+                "model": "claude-opus-4-6",
+                "run": 1,
+                "arm": arm_name,
+                "classification": "report",
+                "turns": 1 if arm_name == "naive" else 3,
+                "narrative_chars": 4,
+                "cost_usd": 0.1,
+            },
+        )
+        _write_md(
+            arm_dir / "anthropic_run01.md",
+            "| Name | Fuel | Capacity | Status | COD | Province |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| A | Coal | 1 | Operating | 1983 | HN |\n",
+        )
+
+    (repo_root / "experiments" / "derived").mkdir(parents=True)
+    _write_cross_eval_csv(
+        repo_root / "experiments" / "derived" / "sota_cross_eval.csv",
+        [
+            _score_row("naive", "claude-opus-4-6", 1),
+            _score_row("optimised", "claude-opus-4-6", 1),
+        ],
+    )
+
+    monkeypatch.chdir(cwd)
+    records = build_exp2_mart(
+        naive_dir=Path("experiments/outputs/sota_exp2_naive_arm"),
+        optimised_dir=Path("experiments/outputs/sota_exp2_brerun1"),
+        cross_eval_csv=Path("experiments/derived/sota_cross_eval.csv"),
+        repo_root=repo_root,
+    )
+
+    assert len(records) == 4
+    assert any(record.record_kind == "score" for record in records)
 
 
 def test_write_exp2_mart_writes_jsonl(tmp_path):
