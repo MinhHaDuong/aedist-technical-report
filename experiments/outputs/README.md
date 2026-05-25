@@ -17,5 +17,7 @@ Files are named `{model}[-runN].json` with extracted `.csv` and `.eval.json`.
 
 Derived analyses live in `../derived/`, qualitative experiments in `../qualitative/`.
 
+Exp3 provenance and ledger policy is documented in `sota_exp3_DERIVATION_NOTICE.md`.
+
 Results are evaluated by `make rebuild-measurements`, which extracts CSVs
 from the JSON and scores them against `data/reference/vietnam_thermal_v1.csv`.

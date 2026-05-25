@@ -1,0 +1,36 @@
+%erg 0.1
+Title: Rerun exp3 arm2 anthropic with credit precheck
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+2026-05-25T00:00Z HDMX-coding-agent note opened after exp3 rerun audit showed arm2 anthropic status=error with turns=0 across run01-run05.
+
+--- body ---
+## Context
+
+Exp3 arm2 (`experiments/outputs/sota_exp3_arm2_batch1`) shows Anthropic failures
+for all five runs with `status = error`, `turns = 0`, `wall_s = 0`, and
+`total_cost_usd = 0`.
+
+The interactive runner records these as generic errors when agent execution
+raises before Phase B turns are captured, so we need a clean rerun lane focused
+on Anthropic with explicit budget/credit checks before launch.
+
+## Scope
+
+- Prepare Anthropic-only reruns for arm2 run01-run05.
+- Verify Anthropic/OpenRouter credit availability before reruns.
+- Preserve existing artifacts; write rerun outputs with clear timestamped
+  summaries and provenance notes.
+
+## Exit criteria
+
+- [ ] Credit precheck documented immediately before rerun launch.
+- [ ] Arm2 Anthropic reruns completed for run01-run05.
+- [ ] `summary_*.md` artifacts for reruns show non-error outcomes or explicit
+      failure reason with evidence.
+- [ ] Ledger (`summary.json`) policy decided and documented (in-place overwrite
+      vs separate rerun ledger) before artifact updates.
+- [ ] Ticket close after rerun audit confirms expected behavior.
