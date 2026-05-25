@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Imagine post-processing extraction of web-search and pages-consulted counts
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Provider raw payloads contain tool-use traces, but we do not yet have a unified
+post-processing metric for:
+- number of web searches performed,
+- number of pages consulted/resolved.
+
+## Goal
+
+Design (Imagine phase) a robust post-processing extraction method that works
+across providers and arm formats.
+
+## Questions to answer
+
+- [ ] What are provider-specific fields for web-search calls and returned URLs?
+- [ ] How to normalize into a common schema: `n_web_search_calls`,
+      `n_pages_returned`, `n_unique_domains`, `n_unique_urls`?
+- [ ] How to handle partial traces, retries, and missing/embedded tool records?
+- [ ] Should counts be per-turn, per-run, and per-final-report simultaneously?
+
+## Deliverable
+
+- [ ] Design note with schema proposal and extraction pseudocode.
+- [ ] Validation plan on EXP3 arm1/2/3/4 samples.
