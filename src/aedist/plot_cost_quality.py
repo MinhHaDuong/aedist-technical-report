@@ -43,7 +43,13 @@ import logging
 from pathlib import Path
 
 from .tabulate_utils import strip_label as slug_from_label
-from .util import COLOR_REFERENCE, model_family, model_family_color
+from .util import (
+    COLOR_REFERENCE,
+    glyph_for_method,
+    glyph_scatter_kwargs,
+    model_family,
+    model_family_color,
+)
 
 log = logging.getLogger(__name__)
 
@@ -171,12 +177,11 @@ def _plot_one_row(ax, row: dict) -> None:
             zorder=1,
         )
     if pts:
+        glyph = glyph_scatter_kwargs("parametric", colour)
         ax.scatter(
             [c for c, _ in pts],
             [t for _, t in pts],
-            marker="o",
-            color=colour,
-            s=18,
+            **glyph,
             zorder=2,
         )
 
@@ -266,12 +271,13 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     fig.suptitle("Experiment 1 baseline (no web search)", y=0.995, fontsize="medium")
 
     def _family_handle(slug_seed: str, label: str) -> Line2D:
+        glyph = glyph_for_method("parametric")
         return Line2D(
             [0],
             [0],
             color=model_family_color(slug_seed),
             linewidth=0,
-            marker="o",
+            marker=str(glyph["marker"]),
             markersize=6,
             label=label,
         )

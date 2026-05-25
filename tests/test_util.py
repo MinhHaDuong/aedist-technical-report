@@ -2,7 +2,13 @@
 
 import pytest
 
-from aedist.util import parse_number, strip_diacritics
+from aedist.util import (
+    glyph_for_method,
+    glyph_legend_handles,
+    glyph_scatter_kwargs,
+    parse_number,
+    strip_diacritics,
+)
 
 
 @pytest.mark.parametrize(
@@ -151,3 +157,47 @@ def test_parse_number(s: str, integer_expected: bool, expected: float | None) ->
 )
 def test_strip_diacritics(s: str, expected: str) -> None:
     assert strip_diacritics(s) == expected
+
+
+@pytest.mark.parametrize(
+    "method, marker, size, open_face",
+    [
+        ("parametric", "o", 18, False),
+        ("arm1", "o", 25, True),
+        ("arm2", "D", 20, False),
+        ("arm3", "D", 25, True),
+        ("arm4", "D", 20, False),
+        ("naive", "o", 25, True),
+        ("optimised", "D", 20, False),
+    ],
+)
+def test_glyph_for_method(method: str, marker: str, size: int, open_face: bool) -> None:
+    glyph = glyph_for_method(method)
+    assert glyph["marker"] == marker
+    assert glyph["s"] == size
+    if open_face:
+        assert glyph["facecolors"] == "none"
+    else:
+        assert glyph["facecolors"] != "none"
+
+
+def test_glyph_for_method_unknown() -> None:
+    with pytest.raises(ValueError):
+        glyph_for_method("unknown")
+
+
+def test_glyph_legend_handles_roundtrip() -> None:
+    handles = glyph_legend_handles(["parametric", "arm1", "arm4"])
+    assert len(handles) == 3
+    labels = [h.get_label() for h in handles]
+    assert labels == ["parametric", "arm1", "arm4"]
+
+
+def test_glyph_scatter_kwargs_resolve_auto_colours() -> None:
+    kw = glyph_scatter_kwargs("arm2", "#112233")
+    assert kw["facecolors"] == "#112233"
+    assert kw["edgecolors"] == "#112233"
+
+    kw_open = glyph_scatter_kwargs("arm1", "#445566")
+    assert kw_open["facecolors"] == "none"
+    assert kw_open["edgecolors"] == "#445566"

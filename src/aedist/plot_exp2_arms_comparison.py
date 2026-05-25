@@ -22,7 +22,7 @@ import logging
 import random
 from pathlib import Path
 
-from .util import COLOR_ARM_NAIVE, COLOR_ARM_OPTIMISED
+from .util import glyph_legend_handles, glyph_scatter_kwargs, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -34,11 +34,18 @@ _AGENT_LABELS = {
 }
 _AGENT_ORDER = ["anthropic", "mistral", "openai", "qwen"]
 
+_AGENT_MODEL = {
+    "anthropic": "claude-opus-4.6",
+    "mistral": "mistral-large-2512",
+    "openai": "gpt-5.5",
+    "qwen": "qwen3-max",
+}
+
 _ARM_STYLE = {
-    "naive": {"color": COLOR_ARM_NAIVE, "label": "Naive (single-shot)", "offset": -0.18},
+    "naive": {"method": "arm1", "label": "Single-shot", "offset": -0.18},
     "optimised": {
-        "color": COLOR_ARM_OPTIMISED,
-        "label": "Optimised (multi-turn)",
+        "method": "arm2",
+        "label": "Multi-turn",
         "offset": +0.18,
     },
 }
@@ -70,6 +77,7 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str) -> None:
     rng = random.Random(42)
 
     for agent_idx, agent in enumerate(_AGENT_ORDER):
+        color = model_family_color(_AGENT_MODEL[agent])
         for arm, style in _ARM_STYLE.items():
             subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
             if not subset:
@@ -82,12 +90,17 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str) -> None:
             report_ys = [r[metric] for r in subset if r["is_report"]]
             noreport_xs = [x for x, r in zip(xs, subset, strict=True) if not r["is_report"]]
 
-            ax.scatter(report_xs, report_ys, color=style["color"], s=22, zorder=3, linewidths=0)
+            ax.scatter(
+                report_xs,
+                report_ys,
+                **glyph_scatter_kwargs(style["method"], color),
+                zorder=3,
+            )
             if noreport_xs:
                 ax.scatter(
                     noreport_xs,
                     [0] * len(noreport_xs),
-                    color=style["color"],
+                    color=color,
                     s=22,
                     zorder=3,
                     marker="x",
@@ -100,7 +113,7 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str) -> None:
                     med,
                     x_center - 0.10,
                     x_center + 0.10,
-                    colors=style["color"],
+                    colors=color,
                     linewidths=2.0,
                     zorder=4,
                 )
@@ -116,7 +129,6 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str) -> None:
 
 
 def make_figure(rows: list[dict], output: Path) -> None:
-    import matplotlib.patches as mpatches
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(1, 3, figsize=(9, 3.2))
@@ -125,9 +137,10 @@ def make_figure(rows: list[dict], output: Path) -> None:
         _draw_panel(ax, rows, metric, title)
         ax.set_ylabel(ylabel, fontsize=8)
 
-    legend_handles = [
-        mpatches.Patch(color=style["color"], label=style["label"]) for style in _ARM_STYLE.values()
-    ]
+    legend_handles = glyph_legend_handles(
+        ["arm1", "arm2"],
+        label_overrides={"arm1": "Single-shot", "arm2": "Multi-turn"},
+    )
     fig.legend(
         handles=legend_handles,
         loc="lower center",
@@ -136,7 +149,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
         frameon=False,
         bbox_to_anchor=(0.5, -0.06),
     )
-    fig.suptitle("Experiment 2 — Naive vs optimised arm (N=5 per agent)", fontsize=9, y=1.01)
+    fig.suptitle("Experiment 2 — single-shot vs multi-turn arm (N=5 per agent)", fontsize=9, y=1.01)
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)

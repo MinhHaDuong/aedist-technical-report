@@ -5,6 +5,49 @@ import unicodedata
 from functools import cache
 from pathlib import Path
 
+_GLYPH_METHOD_ALIASES = {
+    "naive": "arm1",
+    "optimised": "arm2",
+}
+
+_GLYPH_BY_METHOD: dict[str, dict[str, object]] = {
+    "parametric": {
+        "marker": "o",
+        "s": 18,
+        "facecolors": "auto",
+        "edgecolors": "auto",
+        "linewidths": 0.8,
+    },
+    "arm1": {
+        "marker": "o",
+        "s": 25,
+        "facecolors": "none",
+        "edgecolors": "auto",
+        "linewidths": 1.0,
+    },
+    "arm2": {
+        "marker": "D",
+        "s": 20,
+        "facecolors": "auto",
+        "edgecolors": "auto",
+        "linewidths": 0.8,
+    },
+    "arm3": {
+        "marker": "D",
+        "s": 25,
+        "facecolors": "none",
+        "edgecolors": "auto",
+        "linewidths": 1.0,
+    },
+    "arm4": {
+        "marker": "D",
+        "s": 20,
+        "facecolors": "auto",
+        "edgecolors": "neutral",
+        "linewidths": 1.2,
+    },
+}
+
 # ── Plot palette (loaded from palette.toml) ──────────────────────────────────
 
 with open(Path(__file__).parent / "palette.toml", "rb") as _f:
@@ -171,6 +214,72 @@ def model_family(model: str) -> str:
 def normalize_model(raw: str) -> str:
     """Strip provider prefix from a model slug: 'openrouter/deepseek-v3' → 'deepseek-v3'."""
     return (raw or "").split("/")[-1]
+
+
+def glyph_for_method(method: str) -> dict[str, object]:
+    """Return canonical scatter kwargs for a method glyph.
+
+    Methods: ``parametric``, ``arm1``, ``arm2``, ``arm3``, ``arm4``.
+    For backwards compatibility, ``naive`` maps to ``arm1`` and
+    ``optimised`` maps to ``arm2``.
+
+    The returned dict is intended for ``matplotlib.axes.Axes.scatter`` and
+    includes marker shape, size, and face/edge color semantics.
+    """
+    canonical = _GLYPH_METHOD_ALIASES.get(method, method)
+    if canonical not in _GLYPH_BY_METHOD:
+        msg = f"unknown method glyph: {method!r}"
+        raise ValueError(msg)
+    glyph = dict(_GLYPH_BY_METHOD[canonical])
+    if glyph.get("edgecolors") == "neutral":
+        glyph["edgecolors"] = COLOR_NEUTRAL
+    return glyph
+
+
+def glyph_scatter_kwargs(method: str, color: str) -> dict[str, object]:
+    """Return scatter kwargs for *method* with placeholder colors resolved."""
+    glyph = glyph_for_method(method)
+    face = glyph.pop("facecolors", "auto")
+    edge = glyph.pop("edgecolors", "auto")
+    glyph["facecolors"] = color if face == "auto" else face
+    glyph["edgecolors"] = color if edge == "auto" else edge
+    return glyph
+
+
+def glyph_legend_handles(
+    methods: list[str],
+    color: str = COLOR_NEUTRAL,
+    label_overrides: dict[str, str] | None = None,
+):
+    """Create legend handles with canonical method glyphs.
+
+    The handle labels are the method names as passed in.
+    """
+    from matplotlib.lines import Line2D
+
+    handles = []
+    if label_overrides is None:
+        label_overrides = {}
+    for method in methods:
+        glyph = glyph_for_method(method)
+        face = glyph.get("facecolors", "auto")
+        edge = glyph.get("edgecolors", "auto")
+        markerface = color if face == "auto" else face
+        markeredge = color if edge == "auto" else edge
+        handles.append(
+            Line2D(
+                [0],
+                [0],
+                linestyle="",
+                marker=str(glyph["marker"]),
+                markersize=max(4.0, float(glyph["s"]) ** 0.5),
+                markerfacecolor=markerface,
+                markeredgecolor=markeredge,
+                markeredgewidth=float(glyph.get("linewidths", 0.8)),
+                label=label_overrides.get(method, method),
+            )
+        )
+    return handles
 
 
 def strip_diacritics(s: str) -> str:
