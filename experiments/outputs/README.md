@@ -1,23 +1,28 @@
-# Experiment outputs — table experiments
+# Experiment outputs — active datasets
 
-Primary LLM outputs: each file is one model's response for one run.
-Files are named `{model}[-runN].json` with extracted `.csv` and `.eval.json`.
+This directory now contains only active output datasets used by current
+analysis and reporting workflows.
 
-## Directories
+## Scope
 
-| Directory | Sweep | Description |
-|-----------|-------|-------------|
-| `census/` | census | All models, structured prompt, 3 runs each |
-| `rag/` | rag | RAG-augmented (wholesale corpus injection) |
-| `multiturn/` | multiturn | Multi-turn with follow-up questions |
-| `web/` | web | Web-search augmented (Tavily) |
-| `decomposed/` | decomposed | Split by fuel type, merged |
-| `sourced/` | sourced | RAG with citation extraction |
-| `frontier/` | frontier | Deep-research prompt, reasoning models |
+- Keep: active experiment arms and batches that should be discoverable by
+	measurements rebuild.
+- Move out: retired sweeps and smoke/probe artifacts.
 
-Derived analyses live in `../derived/`, qualitative experiments in `../qualitative/`.
+Archived outputs live in ../archive/outputs/ and are documented there.
 
-Exp3 provenance and ledger policy is documented in `sota_exp3_DERIVATION_NOTICE.md`.
+## Current layout
 
-Results are evaluated by `make rebuild-measurements`, which extracts CSVs
-from the JSON and scores them against `data/reference/vietnam_thermal_v1.csv`.
+- exp1_batch2/
+- sota_exp3_arm1_batch1/
+- sota_exp3_arm2_batch1/
+- sota_exp3_arm3_batch1/
+- sota_exp3_arm4_batch1/
+- sota_exp3_DERIVATION_NOTICE.md
+
+## Notes
+
+- measurements rebuild reads record artifacts from experiments/outputs and
+	experiments/derived. Archived outputs are intentionally outside that scope.
+- Exp3 provenance and ledger policy is in sota_exp3_DERIVATION_NOTICE.md.
+- Exp2 was arms 1 and 2 only, we are rewording
