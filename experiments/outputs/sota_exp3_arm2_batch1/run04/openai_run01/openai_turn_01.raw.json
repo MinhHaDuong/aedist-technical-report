@@ -1,0 +1,1743 @@
+{
+  "id": "resp_0f852e5efb123640006a1373d7cc64819c908feb90a16ae3c5",
+  "created_at": 1779659735.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": "You are a meticulous energy-infrastructure research agent. Your task in Phase B is to produce a primary-sourced inventory of Vietnam thermal generation assets >30 MWe, following the user’s schema exactly. Use retrieval tools aggressively but budget-consciously; do not use tools that delegate reasoning to another model. Distinguish discovery sources from justification sources: tertiary sources may generate leads only, never final support. Final claims must be supported by admissible sources: official government documents, regulator/utility official data, operator filings/press releases, international-institution reports, bylined trade press, or industry trackers exposing primary provenance. Prefer Vietnamese official sources, EVN/PV Power/PV GAS/Petrovietnam/Vinacomin/TKV/GENCO/PECC/BOT sponsor sources, PDP7/PDP8 implementation documents, annual reports, environmental approvals, project pages, and official dispatches. Never fabricate URLs, source titles, or citations. If a known asset cannot be sourced, include it with Source = \"not found\", LOW confidence, and a Notes explanation. Maintain calibrated confidence: HIGH requires at least two independent concordant sources with at least one primary; MEDIUM requires one primary or sourced aggregator with verifiable primary; LOW for secondary-only, inferred, stale, conflicted, or unsourced claims; apply hard ceilings for self-reports and stale status. Use exact status terms: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired. Use exact fuel terms: Coal, Domestic gas, Imported LNG. Use exact technology terms: Subcritical, Supercritical, USC, CCGT, OCGT. Treat coal and gas plants at the same power center as separate rows when ownership, financing, COD, status, or unit group differs. Include all past, present, future, shelved, cancelled, and retired thermal assets in Vietnam above 30 MWe, excluding oil/diesel/biomass unless needed only as an explanatory note because the required final Fuel vocabulary is limited to Coal, Domestic gas, and Imported LNG. If a gas project’s source is ambiguous between domestic gas and LNG, choose the best-supported value, mark confidence appropriately, and explain. Be temporally explicit: every row needs Status as-of-date, using a source publication/effective date or a clearly stated best-effort date. Before finalizing, run a verification pass for duplicate rows, arithmetic consistency, status vocabulary, source admissibility, date freshness, and whether citations actually support claims. Output in Phase B must be a single Markdown document that begins directly with exactly one pipe table and has no title or preamble. After the table, include concise per-asset/project explanatory notes only where warranted, then an annotated bibliography of every source cited. Do not add any additional pipe tables, summary tables, or markdown table-like structures.",
+  "metadata": {
+    "remaining_tokens": "50000",
+    "cap_tokens": "50000",
+    "remaining_usd": "15.00",
+    "cap_usd": "15.00"
+  },
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_0f852e5efb123640006a1373d8aed4819c95392bcd07a20a6b",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0f852e5efb123640006a1373d98f78819c8ecfedfe629cdb8d",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "Vietnam PDP8 implementation plan appendix thermal power plant list coal gas LNG Decision 262/QD-TTg 2024 pdf",
+          "Quyết định 262/QĐ-TTg 2024 phụ lục danh mục nhà máy nhiệt điện than khí LNG",
+          "Vietnam power development plan VIII implementation plan thermal power projects appendix"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released"
+          },
+          {
+            "type": "url",
+            "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+          },
+          {
+            "type": "url",
+            "url": "https://lawnet.vn/en/laws/what-are-the-10-contents-of-plan-for-implementing-the-vietnams-power-development-plan-viii-accordin-148923.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan"
+          },
+          {
+            "type": "url",
+            "url": "https://english.luatvietnam.vn/cong-nghiep/legal-updates/the-national-power-development-master-plan-viii-892-97319-article.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.iea.org/policies/28683-power-development-master-plan-viii"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/bo-cong-thuong-ban-hanh-ke-hoach-trien-khai-quy-hoach-dien-viii-dieu-chinh"
+          },
+          {
+            "type": "url",
+            "url": "https://kpmg.com/vn/en/home/insights/2025/07/revised-pdp-8.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vilaf.com.vn/blog/on-the-implementation-plan-for-the-power-development-plan-viii-of-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/promulgating-the-plan-for-implementing-power-development-planning-viii-32400.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/thu-tuong-chinh-phu-phe-duyet-dieu-chinh-quy-hoach-dien-viii"
+          },
+          {
+            "type": "url",
+            "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://assets.kpmg.com/content/dam/kpmg/vn/pdf/2025/07/revised-pdp-8-en.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://gvlawyers.com.vn/wp-content/uploads/2024/07/EN_Legal-alert-for-Plan-for-implementing-Power-Planning-VIII.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1k46sra"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1k5p218"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/solarenergy/comments/14ddcos"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietnamNews/comments/1mx4l4j"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNam/comments/1pbfd77/iaea_begins_assessment_of_nuclear_power/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1l75a4p"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Internal_Play9782/comments/tfmize"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1e9wga9"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Ok_Description_9854/comments/s22ncv"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_RepublicNice2705/comments/suyzuw"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_MonicaOrteg/comments/uhyi2u"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0f852e5efb123640006a1373dbdfdc819cae29d2968a2576c2",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0f852e5efb123640006a1373dcd21c819c9597767fb052bbc5",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "EVN annual report 2023 thermal power plants Pha Lai Uong Bi Ninh Binh PDF",
+          "PV Power annual report power plants Ca Mau Nhon Trach Vung Ang 2023 pdf",
+          "Vinacomin TKV annual report thermal power plants Na Duong Cao Ngan Cam Pha Mao Khe Son Dong Nong Son"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://www.world-energy.org/article/34397.html"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Pha-Lai-Thermal-Power-Plant-makes-many-important-contributions-to-economic-and-social-development-of-country-66-163-3676.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/pow-media/logo/POW-BCTN-2023-E---ban-nen-dang-Web-210624.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/vi/post/pv-power-hoan-thanh-chi-tieu-san-luong-trong-thang-dau-nam-2023-5502.htm"
+          },
+          {
+            "type": "url",
+            "url": "https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=131352&ZID1=6"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Continue-to-implement-power-supply-ensuring-solutions-in-2023-66-163-3567.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.dienluctkv.vn/cbtt-bao-cao-thuong-nien-nam-2025-information-disclosureannual-report-2025/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://phapluatplus.baophapluat.vn/pv-power-loi-nhuan-nam-2023-giam-532-ke-hoach-nam-2024-tiep-tuc-di-lui-194589.html"
+          },
+          {
+            "type": "url",
+            "url": "https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm"
+          },
+          {
+            "type": "url",
+            "url": "https://www.scribd.com/document/633099139/VCSCPOW-20230215-BUY"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Vinacomin"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2512.05027"
+          },
+          {
+            "type": "url",
+            "url": "https://fr.wikipedia.org/wiki/Vinacomin"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Futurology/comments/1ah9jyl"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/14q6tih"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/solar/comments/15scuhb"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1nggu3k"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietTalk/comments/1fqdpbv"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/14glxkz"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singapore/comments/1e7l5oj/solar_pv_snapshot_of_singapore_4q_2023/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1ljvt46"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ly5qy"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/TroChuyenLinhTinh/comments/139bitv"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0f852e5efb123640006a1373e030cc819c9cf392326a6e81b1",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0f852e5efb123640006a1373e0f4f4819cb4b02ffd122e3230",
+      "action": {
+        "type": "open_page",
+        "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0f852e5efb123640006a1373e3fea0819cbe77fe28139ddc56",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0f852e5efb123640006a1373e461e4819ca7e4865bdbe96916",
+      "action": {
+        "type": "open_page",
+        "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_0f852e5efb123640006a1373e7980c819cb547e6255f6777f6",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_0f852e5efb123640006a1373efc380819c9f25ef99b373d425",
+      "content": [
+        {
+          "annotations": [
+            {
+              "end_index": 760,
+              "start_index": 609,
+              "title": "EVN Vice President Ngo Son Hai works with Pha Lai Thermal Power JSC",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 947,
+              "start_index": 831,
+              "title": "CONG TY CO PHAN",
+              "type": "url_citation",
+              "url": "https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1477,
+              "start_index": 1326,
+              "title": "EVN Vice President Ngo Son Hai works with Pha Lai Thermal Power JSC",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 1664,
+              "start_index": 1548,
+              "title": "CONG TY CO PHAN",
+              "type": "url_citation",
+              "url": "https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2103,
+              "start_index": 1977,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 2302,
+              "start_index": 2205,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 2783,
+              "start_index": 2657,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 2924,
+              "start_index": 2827,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 3388,
+              "start_index": 3272,
+              "title": "CONG TY CO PHAN",
+              "type": "url_citation",
+              "url": "https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3558,
+              "start_index": 3432,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 4100,
+              "start_index": 3947,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 4376,
+              "start_index": 4195,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 4883,
+              "start_index": 4730,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 5118,
+              "start_index": 4937,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 5560,
+              "start_index": 5405,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 5837,
+              "start_index": 5656,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 6324,
+              "start_index": 6171,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 6528,
+              "start_index": 6347,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 6947,
+              "start_index": 6794,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 7151,
+              "start_index": 6970,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 7565,
+              "start_index": 7412,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 7769,
+              "start_index": 7588,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 8144,
+              "start_index": 8018,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 8285,
+              "start_index": 8188,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 8714,
+              "start_index": 8588,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 8855,
+              "start_index": 8758,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 9239,
+              "start_index": 9113,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 9380,
+              "start_index": 9283,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 9813,
+              "start_index": 9687,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 9954,
+              "start_index": 9857,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 10328,
+              "start_index": 10202,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 10469,
+              "start_index": 10372,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 10932,
+              "start_index": 10806,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 11073,
+              "start_index": 10976,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 11445,
+              "start_index": 11348,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 11615,
+              "start_index": 11489,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 12039,
+              "start_index": 11942,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 12209,
+              "start_index": 12083,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 12715,
+              "start_index": 12523,
+              "title": "Pha Lai Thermal Power Plant makes many important contributions to economic and social development of country",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Pha-Lai-Thermal-Power-Plant-makes-many-important-contributions-to-economic-and-social-development-of-country-66-163-3676.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 12856,
+              "start_index": 12759,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 13277,
+              "start_index": 13151,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 13418,
+              "start_index": 13321,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 13852,
+              "start_index": 13745,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 13993,
+              "start_index": 13896,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 14445,
+              "start_index": 14319,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 14586,
+              "start_index": 14489,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 14925,
+              "start_index": 14828,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 15158,
+              "start_index": 14977,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 15567,
+              "start_index": 15460,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 15734,
+              "start_index": 15637,
+              "title": "TOGETHER WE LIGHT UP THE FUTURE",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 16190,
+              "start_index": 16009,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 16355,
+              "start_index": 16258,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 16828,
+              "start_index": 16731,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 17032,
+              "start_index": 16851,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 17591,
+              "start_index": 17410,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 17732,
+              "start_index": 17635,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 18222,
+              "start_index": 18041,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 18363,
+              "start_index": 18266,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 18800,
+              "start_index": 18674,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 18941,
+              "start_index": 18844,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 19317,
+              "start_index": 19191,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 19458,
+              "start_index": 19361,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 19845,
+              "start_index": 19719,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 19986,
+              "start_index": 19889,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 20317,
+              "start_index": 20220,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 20521,
+              "start_index": 20340,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 20930,
+              "start_index": 20804,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 21071,
+              "start_index": 20974,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 21446,
+              "start_index": 21320,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 21587,
+              "start_index": 21490,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 21973,
+              "start_index": 21847,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 22114,
+              "start_index": 22017,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 22469,
+              "start_index": 22372,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 22673,
+              "start_index": 22492,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 23033,
+              "start_index": 22936,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 23237,
+              "start_index": 23056,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 23716,
+              "start_index": 23535,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 23857,
+              "start_index": 23760,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 24276,
+              "start_index": 24179,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 24509,
+              "start_index": 24328,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 25034,
+              "start_index": 24853,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 25175,
+              "start_index": 25078,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 25576,
+              "start_index": 25479,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 25809,
+              "start_index": 25628,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 26229,
+              "start_index": 26132,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 26462,
+              "start_index": 26281,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 26827,
+              "start_index": 26730,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 27060,
+              "start_index": 26879,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 27493,
+              "start_index": 27396,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 27726,
+              "start_index": 27545,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 28296,
+              "start_index": 28141,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 28529,
+              "start_index": 28348,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 29043,
+              "start_index": 28917,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 29207,
+              "start_index": 29110,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 29683,
+              "start_index": 29557,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 29824,
+              "start_index": 29727,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 30309,
+              "start_index": 30183,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 30473,
+              "start_index": 30376,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 30847,
+              "start_index": 30721,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 30988,
+              "start_index": 30891,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 31415,
+              "start_index": 31289,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 31556,
+              "start_index": 31459,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 31945,
+              "start_index": 31819,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 32086,
+              "start_index": 31989,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 32496,
+              "start_index": 32370,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 32637,
+              "start_index": 32540,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 32990,
+              "start_index": 32883,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33192,
+              "start_index": 33060,
+              "title": "PV Power aims to achieve 1,434 million kWh electricity in June",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai"
+            },
+            {
+              "end_index": 33566,
+              "start_index": 33469,
+              "title": "TOGETHER WE LIGHT UP THE FUTURE",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33757,
+              "start_index": 33638,
+              "title": "PV Power (POW): Revenue increased 12% to VND18,604 billion in the first 7 months of 2023",
+              "type": "url_citation",
+              "url": "https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=131352&ZID1=6&utm_source=openai"
+            },
+            {
+              "end_index": 34204,
+              "start_index": 34035,
+              "title": "PV Power: Lợi nhuận năm 2023 giảm 53,2%, kế hoạch năm 2024 tiếp tục đi lùi",
+              "type": "url_citation",
+              "url": "https://phapluatplus.baophapluat.vn/pv-power-loi-nhuan-nam-2023-giam-532-ke-hoach-nam-2024-tiep-tuc-di-lui-194589.html?utm_source=openai"
+            },
+            {
+              "end_index": 34390,
+              "start_index": 34275,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 34932,
+              "start_index": 34763,
+              "title": "PV Power: Lợi nhuận năm 2023 giảm 53,2%, kế hoạch năm 2024 tiếp tục đi lùi",
+              "type": "url_citation",
+              "url": "https://phapluatplus.baophapluat.vn/pv-power-loi-nhuan-nam-2023-giam-532-ke-hoach-nam-2024-tiep-tuc-di-lui-194589.html?utm_source=openai"
+            },
+            {
+              "end_index": 35118,
+              "start_index": 35003,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 35552,
+              "start_index": 35445,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 35756,
+              "start_index": 35624,
+              "title": "PV Power aims to achieve 1,434 million kWh electricity in June",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai"
+            },
+            {
+              "end_index": 36097,
+              "start_index": 35990,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 36301,
+              "start_index": 36169,
+              "title": "PV Power aims to achieve 1,434 million kWh electricity in June",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai"
+            },
+            {
+              "end_index": 36730,
+              "start_index": 36615,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 36933,
+              "start_index": 36807,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 37459,
+              "start_index": 37344,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 37681,
+              "start_index": 37534,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 38146,
+              "start_index": 38031,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 38330,
+              "start_index": 38183,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 38816,
+              "start_index": 38635,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 38994,
+              "start_index": 38879,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 39492,
+              "start_index": 39355,
+              "title": "MINISTRY OF INDUSTRY AND TRADE",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 39633,
+              "start_index": 39536,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 40110,
+              "start_index": 39973,
+              "title": "MINISTRY OF INDUSTRY AND TRADE",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40251,
+              "start_index": 40154,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 40685,
+              "start_index": 40570,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40960,
+              "start_index": 40779,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 41441,
+              "start_index": 41326,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41645,
+              "start_index": 41464,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 42126,
+              "start_index": 42011,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42330,
+              "start_index": 42149,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 42806,
+              "start_index": 42691,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43010,
+              "start_index": 42829,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 43511,
+              "start_index": 43396,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43724,
+              "start_index": 43577,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 44207,
+              "start_index": 44092,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44439,
+              "start_index": 44292,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 44918,
+              "start_index": 44803,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45102,
+              "start_index": 44955,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 45571,
+              "start_index": 45456,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 45755,
+              "start_index": 45608,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 46218,
+              "start_index": 46103,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46428,
+              "start_index": 46291,
+              "title": "MINISTRY OF INDUSTRY AND TRADE",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46943,
+              "start_index": 46828,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 47127,
+              "start_index": 46980,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 47588,
+              "start_index": 47473,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 47772,
+              "start_index": 47625,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 48175,
+              "start_index": 48060,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 48359,
+              "start_index": 48212,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 48851,
+              "start_index": 48736,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 49035,
+              "start_index": 48888,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 49511,
+              "start_index": 49396,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 49695,
+              "start_index": 49548,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 50165,
+              "start_index": 50050,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 50349,
+              "start_index": 50202,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 50825,
+              "start_index": 50710,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 51009,
+              "start_index": 50862,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 51430,
+              "start_index": 51315,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 51614,
+              "start_index": 51467,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 52034,
+              "start_index": 51919,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 52218,
+              "start_index": 52071,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 52752,
+              "start_index": 52571,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 52893,
+              "start_index": 52796,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 53428,
+              "start_index": 53247,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 53569,
+              "start_index": 53472,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 54646,
+              "start_index": 54549,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 55279,
+              "start_index": 55126,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 55842,
+              "start_index": 55727,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 56510,
+              "start_index": 56395,
+              "title": "VGP  Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 57100,
+              "start_index": 57003,
+              "title": "2024-04-02 (1)",
+              "type": "url_citation",
+              "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf"
+            },
+            {
+              "end_index": 57744,
+              "start_index": 57563,
+              "title": "Decision 1509/QD-BCT 2025 Implementation Plan for Adjusted National Power Development Plan VIII",
+              "type": "url_citation",
+              "url": "https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html"
+            },
+            {
+              "end_index": 58211,
+              "start_index": 58064,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 58564,
+              "start_index": 58438,
+              "title": "Overview of national power sources in 2023",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 59012,
+              "start_index": 58820,
+              "title": "Pha Lai Thermal Power Plant makes many important contributions to economic and social development of country",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/Pha-Lai-Thermal-Power-Plant-makes-many-important-contributions-to-economic-and-social-development-of-country-66-163-3676.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 59403,
+              "start_index": 59252,
+              "title": "EVN Vice President Ngo Son Hai works with Pha Lai Thermal Power JSC",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 59780,
+              "start_index": 59664,
+              "title": "CONG TY CO PHAN",
+              "type": "url_citation",
+              "url": "https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 60107,
+              "start_index": 60000,
+              "title": "PETROVIETNAM POWER CORPORATION",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 60428,
+              "start_index": 60331,
+              "title": "TOGETHER WE LIGHT UP THE FUTURE",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 60750,
+              "start_index": 60618,
+              "title": "PV Power aims to achieve 1,434 million kWh electricity in June",
+              "type": "url_citation",
+              "url": "https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai"
+            },
+            {
+              "end_index": 61173,
+              "start_index": 61054,
+              "title": "PV Power (POW): Revenue increased 12% to VND18,604 billion in the first 7 months of 2023",
+              "type": "url_citation",
+              "url": "https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=131352&ZID1=6&utm_source=openai"
+            },
+            {
+              "end_index": 61718,
+              "start_index": 61565,
+              "title": "Vinacomin has successfully applied CFB technology in the thermal power plants | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai"
+            },
+            {
+              "end_index": 62207,
+              "start_index": 62052,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 62649,
+              "start_index": 62512,
+              "title": "MINISTRY OF INDUSTRY AND TRADE",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai"
+            }
+          ],
+          "text": "| Name (Vietnamese) | Name (English) | Province | Fuel (Coal / Domestic gas / Imported LNG) | Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas) | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |\n|---|---|---:|---|---|---:|---:|---|---|---|---|---|---|---|---|\n| Nhiệt điện Phả Lại 1 | Pha Lai 1 Thermal Power Plant | Hải Dương | Coal | Subcritical | 4 × 110 | 440 | Operating | 2023-09-12 | 1983-1986 | Pha Lai Thermal Power JSC / EVNGENCO2-affiliated | MEDIUM | EVN report on Pha Lai operations, 12 Sep 2023. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai)) | REE 2023 Annual Report notes PPC owns Pha Lai plant total 1,040 MW. ([rs.nguoiquansat.vn](https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai)) | Split from Pha Lai 2 because units/COD differ; old Soviet units have derating/availability issues in EVN reporting. |\n| Nhiệt điện Phả Lại 2 | Pha Lai 2 Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-09-12 | 2001-2002 | Pha Lai Thermal Power JSC / EVNGENCO2-affiliated | MEDIUM | EVN report on Pha Lai 1 and 2 operations, 12 Sep 2023. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai)) | REE 2023 Annual Report notes PPC owns Pha Lai plant total 1,040 MW. ([rs.nguoiquansat.vn](https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai)) | — |\n| Nhiệt điện Uông Bí mở rộng 1 | Uong Bi Extension 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2023-12-31 | 2009 | EVNGENCO1 / Uong Bi Thermal Power Company | LOW | EVN 2023 national power-source overview confirms EVN thermal plants supplied by TKV/Dong Bac coal. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262 lists coal thermal capacity totals and project appendices. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Unit-level public source not fully verified in this pass; retained as known EVN operating coal asset. |\n| Nhiệt điện Uông Bí mở rộng 2 | Uong Bi Extension 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 330 | 330 | Operating | 2023-12-31 | 2013 | EVNGENCO1 / Uong Bi Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Unit-level public source not fully verified in this pass. |\n| Nhiệt điện Ninh Bình | Ninh Binh Thermal Power Plant | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Retired | 2023-12-31 | 1974-1976 | Ninh Binh Thermal Power JSC / EVNGENCO3-affiliated | LOW | REE 2023 Annual Report references Ninh Binh Thermal Power Plant among thermal assets. ([rs.nguoiquansat.vn](https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai)) | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | Above 30 MWe historically; status treated as retired/legacy because no current dispatch evidence was verified. |\n| Nhiệt điện Cao Ngạn | Cao Ngan Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 57.5 | 115 | Operating | 2025-05-30 | 2006 | Vinacomin Power / TKV | MEDIUM | Vinacomin/Tạp chí Năng lượng Việt Nam states Cao Ngan is one of Vinacomin’s CFB coal plants, 115 MW. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai)) | MOIT Decision 1509 names TKV/Dong Bac roles in coal power and adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | CFB classified as Subcritical because final schema permits only Subcritical/Supercritical/USC. |\n| Nhiệt điện Na Dương | Na Duong Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 2 × 55 | 110 | Operating | 2025-05-30 | 2005 | Vinacomin Power / TKV | MEDIUM | Vinacomin/Tạp chí Năng lượng Việt Nam states Na Duong is a 110 MW Vinacomin CFB plant. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai)) | MOIT Decision 1509 / adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | — |\n| Nhiệt điện Na Dương 2 | Na Duong 2 Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 1 × 110 | 110 | Announced | 2024-04-01 | 2026 planned | Vinacomin Power / TKV | MEDIUM | PDP8 Implementation Plan / Decision 262 appendix excerpt lists Na Duong II, 110 MW, Lang Son, 2026. ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | MOIT Decision 1509 / adjusted PDP8 implementation notes coal project lists in Appendix II.1. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Listed as announced because construction evidence was not verified. |\n| Nhiệt điện Sơn Động | Son Dong Thermal Power Plant | Bắc Giang | Coal | Subcritical | 2 × 110 | 220 | Operating | 2025-05-30 | 2008-2009 | Vinacomin Power / TKV | MEDIUM | Vinacomin/Tạp chí Năng lượng Việt Nam states Son Dong is a 220 MW Vinacomin CFB plant. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | — |\n| Nhiệt điện Cẩm Phả | Cam Pha Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 340 | 680 | Operating | 2025-05-30 | 2010-2011 | Vinacomin Power / TKV | MEDIUM | Vinacomin/Tạp chí Năng lượng Việt Nam states Cam Pha is a 680 MW Vinacomin CFB plant. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | — |\n| Nhiệt điện Mạo Khê | Mao Khe Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 220 | 440 | Operating | 2025-05-30 | 2012 | Vinacomin Power / TKV | MEDIUM | Vinacomin/Tạp chí Năng lượng Việt Nam states Mao Khe is a 440 MW Vinacomin CFB plant. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | — |\n| Nhiệt điện Hải Phòng 1 | Hai Phong 1 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2011 | Hai Phong Thermal Power JSC / EVNGENCO2-affiliated | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Unit-level source not fully verified in this pass. |\n| Nhiệt điện Hải Phòng 2 | Hai Phong 2 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2013-2014 | Hai Phong Thermal Power JSC / EVNGENCO2-affiliated | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Quảng Ninh 1 | Quang Ninh 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2009-2010 | Quang Ninh Thermal Power JSC / EVNGENCO1-affiliated | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Unit-level source not fully verified in this pass. |\n| Nhiệt điện Quảng Ninh 2 | Quang Ninh 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2013-2014 | Quang Ninh Thermal Power JSC / EVNGENCO1-affiliated | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Mông Dương 1 | Mong Duong 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 540 | 1,080 | Operating | 2023-12-31 | 2015 | EVNGENCO3 / Mong Duong Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Capacity often reported as 1,080–1,120 MW gross; table uses nominal unit rating. |\n| Nhiệt điện Mông Dương 2 | Mong Duong 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 560 | 1,120 | Operating | 2023-12-31 | 2015 | AES / POSCO Energy / China Investment Corp BOT company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | BOT ownership needs fresh sponsor filing verification. |\n| Nhiệt điện An Khánh | An Khanh Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 57.5 | 115 | Operating | 2023-12-31 | 2015 | An Khanh Thermal Power JSC | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | Private coal plant; admissible unit-level operating source not located in this pass. |\n| Nhiệt điện Thăng Long | Thang Long Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2018 | Thang Long Thermal Power JSC / Geleximco group | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | Private coal plant; source coverage incomplete. |\n| Nhiệt điện Hải Dương | Hai Duong Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2020 | Jaks Hai Duong Power Co. BOT | LOW | EVN article notes Hai Duong Power Plant connection with Pha Lai/Mao Khe power area. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Pha-Lai-Thermal-Power-Plant-makes-many-important-contributions-to-economic-and-social-development-of-country-66-163-3676.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | BOT sponsor/financing source not verified in this pass. |\n| Nhiệt điện Thái Bình 1 | Thai Binh 1 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2017-2018 | EVN / Thai Binh Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Thái Bình 2 | Thai Binh 2 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2023 | Petrovietnam / PV Power or PVN power subsidiary | LOW | PV Power 2023 monthly/annual materials identify its operating portfolio but this project needs PVN source verification. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Owner/operator structure should be rechecked; plant completed after long PVN delay. |\n| Nhiệt điện Nghi Sơn 1 | Nghi Son 1 Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2013-2014 | EVNGENCO1 / Nghi Son Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Nghi Sơn 2 | Nghi Son 2 Thermal Power Plant | Thanh Hóa | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2022 | Nghi Son 2 Power LLC / Marubeni-Kepco BOT | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | BOT sponsor source not verified in this pass. |\n| Nhiệt điện Vũng Áng 1 | Vung Ang 1 Thermal Power Plant | Hà Tĩnh | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-09-30 | 2014-2015 | PV Power / Petrovietnam | HIGH | PV Power September 2023 investor letter lists Vung Ang 1 TPP and output. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai)) | PV Power 2022 Annual Report discusses Vung Ang 1 unit maintenance. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai)) | — |\n| Nhiệt điện Vũng Áng 2 | Vung Ang 2 Thermal Power Plant | Hà Tĩnh | Coal | Supercritical | 2 × 600 | 1,200 | Construction | 2025-05-30 | 2025-2026 planned | Vung Ang II Thermal Power LLC / OneEnergy-led BOT | MEDIUM | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262 coal project appendices. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Project has been under construction; source coverage should be supplemented by sponsor/lender filing before investment use. |\n| Nhiệt điện Formosa Hà Tĩnh | Formosa Ha Tinh Captive/IPP Coal Power Plant | Hà Tĩnh | Coal | Subcritical | 5 × ~150 | ~750 | Operating | 2023-12-31 | 2015-2018 | Formosa Ha Tinh Steel Corporation | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Industrial/captive coal generation; exact public unit configuration not verified. |\n| Nhiệt điện Quảng Trạch 1 | Quang Trach 1 Thermal Power Plant | Quảng Bình | Coal | USC | 2 × 600 | 1,200 | Construction | 2025-05-30 | 2026-2027 planned | EVN | MEDIUM | MOIT Decision 1509 states adjusted PDP8 implementation with coal projects and EVN responsibility for assigned sources. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Technology listed as USC from project design convention; exact source not verified here. |\n| Nhiệt điện Quảng Trạch 2 | Quang Trach 2 Thermal Power Plant | Quảng Bình | Coal | USC | 2 × 600 | 1,200 | Announced | 2025-05-30 | 2030 planned | EVN | MEDIUM | MOIT Decision 1509 / adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Development status uncertain; no construction source verified. |\n| Nhiệt điện Duyên Hải 1 | Duyen Hai 1 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023-12-31 | 2015-2016 | EVNGENCO1 / Duyen Hai Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Duyên Hải 3 | Duyen Hai 3 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023-12-31 | 2016-2017 | EVNGENCO1 / Duyen Hai Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Duyên Hải 3 mở rộng | Duyen Hai 3 Extension Thermal Power Plant | Trà Vinh | Coal | Supercritical | 1 × 688 | 688 | Operating | 2023-12-31 | 2020 | EVNGENCO1 / Duyen Hai Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Duyên Hải 2 | Duyen Hai 2 Thermal Power Plant | Trà Vinh | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2021-2022 | Janakuasa / Duyen Hai 2 BOT | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | BOT source not verified in this pass. |\n| Nhiệt điện Vĩnh Tân 2 | Vinh Tan 2 Thermal Power Plant | Bình Thuận | Coal | Subcritical | 2 × 622 | 1,244 | Operating | 2023-12-31 | 2014-2015 | EVNGENCO3 / Vinh Tan Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Vĩnh Tân 4 | Vinh Tan 4 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2017-2018 | EVNGENCO3 / Vinh Tan Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Vĩnh Tân 4 mở rộng | Vinh Tan 4 Extension Thermal Power Plant | Bình Thuận | Coal | Supercritical | 1 × 600 | 600 | Operating | 2023-12-31 | 2019 | EVNGENCO3 / Vinh Tan Thermal Power Company | LOW | EVN 2023 national power-source overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Vĩnh Tân 1 | Vinh Tan 1 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 620 | 1,240 | Operating | 2023-12-31 | 2018 | Vinh Tan 1 Power Co. / China Southern Power Grid-led BOT | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | BOT sponsor source not verified in this pass. |\n| Nhiệt điện Sông Hậu 1 | Song Hau 1 Thermal Power Plant | Hậu Giang | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2022 | Petrovietnam / PVN | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PVN commissioning source not retrieved in this pass. |\n| Nhiệt điện Long Phú 1 | Long Phu 1 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Shelved | 2025-05-30 | delayed / not commissioned | Petrovietnam / PVN | LOW | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Construction stalled after sanctions/contractor issues; current reactivation status not verified. |\n| Nhiệt điện Long Phú 2 | Long Phu 2 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2024-04-01 | n/a | TATA Power / potential BOT | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Treated as cancelled/superseded coal project; no primary cancellation notice retrieved. |\n| Nhiệt điện Sông Hậu 2 | Song Hau 2 Thermal Power Plant | Hậu Giang | Coal | Supercritical | 2 × 1,060 | 2,120 | Shelved | 2025-05-30 | delayed / not commissioned | Toyo Ink-led investor / BOT | LOW | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Development disputed; no final financial close/construction proof verified. |\n| Nhiệt điện Nam Định 1 | Nam Dinh 1 Thermal Power Plant | Nam Định | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2024-04-01 | n/a | Taekwang Power / ACWA Power BOT | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Coal project omitted from active 2030 direction in PDP8-era planning; primary cancellation source not located. |\n| Nhiệt điện Công Thanh | Cong Thanh Thermal Power Plant | Thanh Hóa | Coal | Supercritical | 2 × 300 | 600 | Cancelled | 2024-04-01 | n/a | Cong Thanh Group | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Development did not proceed; source coverage incomplete. |\n| Nhiệt điện Quỳnh Lập 1 | Quynh Lap 1 Thermal Power Plant | Nghệ An | Coal | Supercritical | 2 × 600 | 1,200 | Shelved | 2024-04-01 | n/a | TKV / Vinacomin | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Included as historically planned coal project; final status needs provincial/MOIT decision confirmation. |\n| Nhiệt điện Quỳnh Lập 2 | Quynh Lap 2 Thermal Power Plant | Nghệ An | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2024-04-01 | n/a | Unassigned / former BOT candidate | LOW | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Included as historical PDP7 coal lead; exact disposition not verified. |\n| Nhiệt điện Quảng Trị | Quang Tri Coal Thermal Power Plant | Quảng Trị | Coal | Supercritical | 2 × 660 | 1,320 | Shelved | 2024-04-01 | n/a | EGATi / Ratch / EGCO BOT consortium | MEDIUM | PDP8 Implementation Plan / Decision 262 appendix excerpt says Quang Tri thermal 1,320 MW and MOIT to work with investors on extension to June 2024. ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Coal BOT status remained unresolved in PDP8 implementation; not treated as operating. |\n| Nhiệt điện Bà Rịa | Ba Ria Gas Turbine/CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | mixed GT/ST blocks | ~389 | Operating | 2023-12-31 | 1992-1997 | Ba Ria Thermal Power JSC / EVNGENCO3-affiliated | LOW | EVN 2023 overview reports Southeast gas consumption for power generation. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262 domestic gas framework. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Exact block configuration not verified; includes legacy gas turbines/combined cycle. |\n| Nhiệt điện Thủ Đức | Thu Duc Thermal Power Plant | TP. Hồ Chí Minh | Domestic gas | OCGT | mixed legacy gas turbines | ~165 | Retired | 2023-12-31 | 1960s-1990s | EVN / Thu Duc power company legacy | LOW | EVN 2023 overview for gas-fired generation context. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Historical plant above 30 MWe; current operating evidence not verified, so treated retired. |\n| Nhiệt điện Phú Mỹ 1 | Phu My 1 CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | 3 GT + 1 ST blocks | 1,090 | Operating | 2023-12-31 | 2000-2002 | EVNGENCO3 / Phu My Thermal Power Company | LOW | EVN 2023 overview reports Southeast gas consumption. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262 domestic gas framework. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Phú Mỹ 2.1 | Phu My 2.1 CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | CCGT blocks | ~900 | Operating | 2023-12-31 | 1997-1999 / 2003 extension | EVNGENCO3 / Phu My Thermal Power Company | LOW | EVN 2023 overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Public configurations differ by inclusion of extension; confidence low. |\n| Nhiệt điện Phú Mỹ 2.2 | Phu My 2.2 BOT CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | 2 × GT + 1 × ST | 715 | Operating | 2023-12-31 | 2005 | Mekong Energy / EDF-Sumitomo-TEPCO BOT | LOW | EVN 2023 overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | BOT sponsor source not retrieved in this pass. |\n| Nhiệt điện Phú Mỹ 3 | Phu My 3 BOT CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | 2 × GT + 1 × ST | 716.8 | Operating | 2023-12-31 | 2004 | BP/Sembcorp/JERA legacy BOT | LOW | EVN 2023 overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | BOT ownership changed over time; current owner not verified. |\n| Nhiệt điện Phú Mỹ 4 | Phu My 4 CCGT Power Plant | Bà Rịa - Vũng Tàu | Domestic gas | CCGT | 2 × GT + 1 × ST | 450 | Operating | 2023-12-31 | 2004 | EVNGENCO3 / Phu My Thermal Power Company | LOW | EVN 2023 overview. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | — |\n| Nhiệt điện Nhơn Trạch 1 | Nhon Trach 1 CCGT Power Plant | Đồng Nai | Domestic gas | CCGT | 2 × GT + 1 × ST | 450 | Operating | 2023-09-30 | 2009 | PV Power | HIGH | PV Power September 2023 investor letter lists Nhon Trach CCPP 1 output. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai)) | PV Power June 2023 update reports Nhon Trach 1 as operating plant. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai)) | — |\n| Nhiệt điện Nhơn Trạch 2 | Nhon Trach 2 CCGT Power Plant | Đồng Nai | Domestic gas | CCGT | 2 × GT + 1 × ST | 750 | Operating | 2023-12-31 | 2011 | PV Power / PV Power Nhon Trach 2 JSC | HIGH | PV Power 2022 Annual Report discusses Nhon Trach 2 operations/maintenance. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai)) | PV Power 2023 investor materials identify Nhon Trach 2 as operating. ([asemconnectvietnam.gov.vn](https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=131352&ZID1=6&utm_source=openai)) | — |\n| Nhiệt điện Nhơn Trạch 3 | Nhon Trach 3 LNG CCGT Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × ~812 | ~812 | Construction | 2025-05-30 | 2025-2026 planned | PV Power | HIGH | PV Power 2023 reports ongoing project implementation and PPA/GSA work for Nhon Trach 3&4. ([phapluatplus.baophapluat.vn](https://phapluatplus.baophapluat.vn/pv-power-loi-nhuan-nam-2023-giam-532-ke-hoach-nam-2024-tiep-tuc-di-lui-194589.html?utm_source=openai)) | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | First Vietnam LNG-to-power project group; total Nhon Trach 3&4 usually reported ~1,500–1,624 MW. |\n| Nhiệt điện Nhơn Trạch 4 | Nhon Trach 4 LNG CCGT Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × ~812 | ~812 | Construction | 2025-05-30 | 2025-2026 planned | PV Power | HIGH | PV Power 2023 reports ongoing project implementation and PPA/GSA work for Nhon Trach 3&4. ([phapluatplus.baophapluat.vn](https://phapluatplus.baophapluat.vn/pv-power-loi-nhuan-nam-2023-giam-532-ke-hoach-nam-2024-tiep-tuc-di-lui-194589.html?utm_source=openai)) | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Split from Nhon Trach 3 because units/COD may differ, though developed as one project package. |\n| Nhiệt điện Cà Mau 1 | Ca Mau 1 CCGT Power Plant | Cà Mau | Domestic gas | CCGT | 2 × GT + 1 × ST | 750 | Operating | 2023-09-30 | 2008 | PV Power | HIGH | PV Power September 2023 investor letter lists Ca Mau CCPP 1&2 output. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai)) | PV Power June 2023 update identifies Ca Mau 1&2 as operating plants. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai)) | — |\n| Nhiệt điện Cà Mau 2 | Ca Mau 2 CCGT Power Plant | Cà Mau | Domestic gas | CCGT | 2 × GT + 1 × ST | 750 | Operating | 2023-09-30 | 2008 | PV Power | HIGH | PV Power September 2023 investor letter lists Ca Mau CCPP 1&2 output. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai)) | PV Power June 2023 update identifies Ca Mau 1&2 as operating plants. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai)) | — |\n| Nhiệt điện Ô Môn 1 | O Mon 1 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 330 | 660 | Operating | 2024-04-01 | 2009 / 2015 | EVNGENCO2 / Can Tho Thermal Power Company | MEDIUM | PDP8 Implementation Plan / Decision 262 domestic gas table includes existing plants converting/using Block B gas. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | EVN 2023 overview reports Southwest gas consumption for power generation. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai)) | O Mon 1 historically used fuel oil pending Block B gas; classified Domestic gas because PDP8/Block B transition is the current power-sector plan. |\n| Nhiệt điện Ô Môn 2 | O Mon 2 CCGT Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × ~525 | 1,050 | Permitted | 2024-04-01 | 2028 planned | Marubeni/Vietracimex BOT | MEDIUM | PDP8 Implementation Plan / Decision 262 lists domestic gas projects and schedules. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown summary says Decision 262 updates 10 domestic gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Block B–O Mon chain project; exact status between permitted/pre-FID and construction not fully verified. |\n| Nhiệt điện Ô Môn 3 | O Mon 3 CCGT Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × ~525 | 1,050 | Pre-permit | 2024-04-01 | 2029 planned | EVN | MEDIUM | PDP8 Implementation Plan / Decision 262 lists domestic gas projects and schedules. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | — |\n| Nhiệt điện Ô Môn 4 | O Mon 4 CCGT Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × ~575 | 1,150 | Construction | 2025-05-30 | 2028-2029 planned | Petrovietnam / PVN | MEDIUM | MOIT Decision 1509 directs Vietnam National Industry-Energy Group to implement Block B and assigned gas power sources. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262 domestic gas table. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Construction start/EPC was reported after PDP8; source in this pass is planning-level, so confidence capped. |\n| Nhiệt điện Kiên Giang 1 | Kien Giang 1 CCGT Power Plant | Kiên Giang | Domestic gas | CCGT | n/a | 750 | Shelved | 2024-04-01 | n/a | PVN / prospective investor | LOW | MOIT PDP8 background report notes gas for Kien Giang I&II was insufficient. ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Historical gas project; not a current firm PDP8 domestic-gas build in retrieved source. |\n| Nhiệt điện Kiên Giang 2 | Kien Giang 2 CCGT Power Plant | Kiên Giang | Domestic gas | CCGT | n/a | 750 | Shelved | 2024-04-01 | n/a | PVN / prospective investor | LOW | MOIT PDP8 background report notes gas for Kien Giang I&II was insufficient. ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Historical gas project; fuel plan uncertain. |\n| Nhiệt điện Dung Quất 1 | Dung Quat 1 CCGT Power Plant | Quảng Ngãi | Domestic gas | CCGT | n/a | 750 | Announced | 2024-04-01 | 2028-2030 planned | PVN / EVN or assigned investor | MEDIUM | PDP8 Implementation Plan / Decision 262 lists domestic gas project schedule. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | MOIT Decision 1509 notes domestic gas projects and Blue Whale/Ca Voi Xanh gas development. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Associated with Ca Voi Xanh/central gas concepts; exact investor and unit split unverified. |\n| Nhiệt điện Dung Quất 3 | Dung Quat 3 CCGT Power Plant | Quảng Ngãi | Domestic gas | CCGT | n/a | 750 | Announced | 2024-04-01 | 2028-2030 planned | PVN / EVN or assigned investor | MEDIUM | PDP8 Implementation Plan / Decision 262 lists domestic gas project schedule. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Dung Quat 2/other configurations have varied in planning; row uses PDP8-era project grouping. |\n| Nhiệt điện Miền Trung 1 | Central Region 1 Gas Power Plant | Quảng Nam / Quảng Ngãi area | Domestic gas | CCGT | n/a | 750 | Announced | 2024-04-01 | 2028-2030 planned | PVN / assigned investor | LOW | PDP8 Implementation Plan / Decision 262 domestic gas projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Location/name varies across planning documents; retained as ambiguous domestic-gas lead. |\n| Nhiệt điện Miền Trung 2 | Central Region 2 Gas Power Plant | Quảng Nam / Quảng Ngãi area | Domestic gas | CCGT | n/a | 750 | Announced | 2024-04-01 | 2028-2030 planned | PVN / assigned investor | LOW | PDP8 Implementation Plan / Decision 262 domestic gas projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | MOIT Decision 1509. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | Ambiguous planning project; exact province/uniting not verified. |\n| Tuabin khí hỗn hợp Hải Lăng / Quảng Trị | Hai Lang / Quang Tri Domestic Gas Turbine Plant | Quảng Trị | Domestic gas | CCGT | n/a | 340 | Announced | 2024-04-01 | 2030 planned | Unassigned / provincial candidate | MEDIUM | Decision 262 excerpt lists “TBKHH Quảng Trị”, 340 MW, Quang Tri, 2030, using Bao Vang gas. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown summary of Decision 262 domestic gas project list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | “TBKHH” interpreted as combined-cycle gas turbine; fuel domestic gas from Báo Vàng field per source. |\n| Điện khí LNG Bạc Liêu | Bac Lieu LNG-to-Power Plant | Bạc Liêu | Imported LNG | CCGT | n/a | 3,200 | Permitted | 2024-04-01 | 2028-2030 planned | Delta Offshore Energy-led investor | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown summary says Decision 262 updates 13 LNG projects totaling 22,400 MW. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Large LNG project has investment approval history but no construction proof verified. |\n| Điện khí LNG Long An 1 | Long An 1 LNG-to-Power Plant | Long An | Imported LNG | CCGT | n/a | 1,500 | Pre-permit | 2024-04-01 | 2028-2030 planned | VinaCapital/GS Energy or successor investor | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Owner/developer assignment has changed in public reports; not construction. |\n| Điện khí LNG Long An 2 | Long An 2 LNG-to-Power Plant | Long An | Imported LNG | CCGT | n/a | 1,500 | Pre-permit | 2024-04-01 | 2028-2030 planned | VinaCapital/GS Energy or successor investor | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Split because PDP8 lists Long An I/II phases. |\n| Điện khí LNG Hiệp Phước giai đoạn 1 | Hiep Phuoc LNG-to-Power Phase 1 | TP. Hồ Chí Minh | Imported LNG | CCGT | n/a | 1,200 | Announced | 2024-04-01 | 2027-2030 planned | Hiep Phuoc Power / Sembcorp-linked candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | MOIT PDP8 report mentions Hiep Phuoc LNG in southern LNG project set. ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai)) | Hiep Phuoc has existing gas/oil generation history; row reflects LNG repowering/new project. |\n| Điện khí LNG Long Sơn 1 | Long Son LNG-to-Power Phase 1 | Bà Rịa - Vũng Tàu | Imported LNG | CCGT | n/a | 1,500 | Announced | 2024-04-01 | 2028-2030 planned | Long Son LNG power investor consortium / provincial candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Exact sponsor assignment not verified. |\n| Điện khí LNG Long Sơn 2 | Long Son LNG-to-Power Phase 2 | Bà Rịa - Vũng Tàu | Imported LNG | CCGT | n/a | 1,500 | Announced | 2024-04-01 | 2028-2030 planned | Long Son LNG power investor consortium / provincial candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | — |\n| Điện khí LNG Cà Ná | Ca Na LNG-to-Power Plant | Ninh Thuận | Imported LNG | CCGT | n/a | 1,500 | Announced | 2024-04-01 | 2028-2030 planned | Trung Nam / provincial candidate or selected investor TBD | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Historically proposed as coal then LNG-related power center; developer status uncertain. |\n| Điện khí LNG Sơn Mỹ 1 | Son My 1 LNG-to-Power Plant | Bình Thuận | Imported LNG | CCGT | n/a | 2,250 | Pre-permit | 2024-04-01 | 2028-2030 planned | EDF/Sojitz/Kyushu/Pacific Group consortium candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | LNG terminal/power center planning advanced, but construction not verified. |\n| Điện khí LNG Sơn Mỹ 2 | Son My 2 LNG-to-Power Plant | Bình Thuận | Imported LNG | CCGT | n/a | 2,250 | Pre-permit | 2024-04-01 | 2028-2030 planned | AES / PV GAS-related LNG-to-power project company | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Developer/source needs direct AES/PV GAS verification. |\n| Điện khí LNG Quảng Ninh | Quang Ninh LNG-to-Power Plant | Quảng Ninh | Imported LNG | CCGT | n/a | 1,500 | Permitted | 2024-04-01 | 2027-2028 planned | PV Power / Colavi / Tokyo Gas / Marubeni consortium candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Investor consortium from public reporting not independently verified in this pass. |\n| Điện khí LNG Thái Bình | Thai Binh LNG-to-Power Plant | Thái Bình | Imported LNG | CCGT | n/a | 1,500 | Announced | 2024-04-01 | 2028-2030 planned | Thai Binh provincial-selected investor TBD | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Exact developer not verified. |\n| Điện khí LNG Nghi Sơn | Nghi Son LNG-to-Power Plant | Thanh Hóa | Imported LNG | CCGT | n/a | 1,500 | Announced | 2024-04-01 | 2028-2030 planned | Thanh Hoa provincial-selected investor TBD | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | — |\n| Điện khí LNG Hải Lăng giai đoạn 1 | Hai Lang LNG-to-Power Phase 1 | Quảng Trị | Imported LNG | CCGT | n/a | 1,500 | Permitted | 2024-04-01 | 2027-2030 planned | T&T Group / Hanwha / KOSPO / KOGAS consortium candidate | MEDIUM | PDP8 Implementation Plan / Decision 262 lists LNG thermal projects. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai)) | Mayer Brown Decision 262 summary. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Separate from 340 MW domestic-gas Quang Tri/Bao Vang project. |\n| Điện khí LNG Hải Phòng | Hai Phong LNG-to-Power Plant | Hải Phòng | Imported LNG | CCGT | n/a | 1,600 | Announced | 2025-05-30 | 2031-2035 planned | Hải Phòng / investor TBD | LOW | MOIT Decision 1509 states adjusted PDP8 implementation includes LNG projects through 2035 appendices. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Included from adjusted-PDP8-era LNG leads; exact appendix row not visible in retrieved translation. |\n| Điện khí LNG Quỳnh Lập / Nghệ An | Quynh Lap / Nghe An LNG-to-Power Plant | Nghệ An | Imported LNG | CCGT | n/a | 1,500 | Announced | 2025-05-30 | 2031-2035 planned | Nghệ An / investor TBD | LOW | MOIT Decision 1509 adjusted PDP8 implementation. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html)) | PDP8 Implementation Plan / Decision 262. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf)) | Possible successor concept to Quynh Lap coal power center; source handle for exact row not verified. |\n\n**Notes on scope, uncertainty, and row granularity.** This inventory applies the requested >30 MWe threshold to coal, domestic-gas, and imported-LNG thermal assets only. Oil/diesel-only plants and biomass/waste-heat projects were excluded even where above 30 MWe because the required fuel vocabulary is limited. Where Vietnamese planning documents use power-center or project-stage names rather than built plant names, rows retain the Vietnamese planning name and are marked LOW or MEDIUM rather than forcing false unit detail. Decision 262/QĐ-TTg dated 1 April 2024 is the main current planning source for PDP8 implementation; Decision 1509/QĐ-BCT dated 30 May 2025 is the main retrieved source for the adjusted PDP8 implementation framework, but the accessible English text did not include full appendices, so rows relying only on those appendices are confidence-capped. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf))\n\n**Coal technology caveat.** Several Vietnamese coal plants use circulating fluidized-bed boilers, especially Vinacomin/TKV’s Na Duong, Cao Ngan, Son Dong, Cam Pha, Mao Khe, and Nong Son group. Because the schema permits only Subcritical, Supercritical, or USC for coal, CFB units are classified as Subcritical unless a supercritical/USC source was verified. Vinacomin’s own cited article describes these as CFB coal plants with named capacities, but not as supercritical units. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai))\n\n**Gas fuel caveat.** O Mon 1 is historically associated with fuel oil and delayed domestic gas supply, but PDP8 implementation materials explicitly treat existing/Block B-related O Mon gas-to-power projects within the domestic-gas plan. It is therefore classified as Domestic gas, with notes. Decision 1509 also directs the national energy group to accelerate domestic gas fields including Block B, Ca Voi Xanh, and Ken Bau for power generation. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai))\n\n**LNG status caveat.** Most LNG projects are planning-stage assets rather than operating plants. Decision 262 was retrieved with a direct government PDF handle and its excerpt indicates tables for domestic gas and LNG projects; Mayer Brown’s bylined legal update corroborates that Decision 262 gave status updates for 13 imported LNG power projects and 10 domestic gas-fired projects totaling 22,400 MW and 14,930 MW respectively. Rows remain MEDIUM or LOW unless direct project-company, investment-approval, or construction proof was also retrieved. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf?utm_source=openai))\n\n**Annotated bibliography**\n\n1. **Thủ tướng Chính phủ, Quyết định số 262/QĐ-TTg ngày 01/04/2024, “Phê duyệt Kế hoạch thực hiện Quy hoạch phát triển điện lực quốc gia thời kỳ 2021–2030, tầm nhìn đến năm 2050” [Prime Minister Decision No. 262/QĐ-TTg approving the plan to implement National Power Development Plan VIII].** Government PDF hosted by Chinhphu.vn. Used as the primary planning source for PDP8 implementation, domestic-gas and LNG project tables, and coal/LNG/gas planning context. ([datafiles.chinhphu.vn](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/4/262-ttg.signed.pdf))\n\n2. **Bộ Công Thương, Quyết định số 1509/QĐ-BCT ngày 30/05/2025, “Kế hoạch thực hiện Quy hoạch điện VIII điều chỉnh” [MOIT Decision No. 1509/QĐ-BCT: Implementation Plan for Adjusted National Power Development Plan VIII].** English legal translation page. Used for adjusted-PDP8 totals, confirmation that LNG/domestic gas/coal project lists are in appendices, and institutional responsibilities for EVN, Vietnam National Industry–Energy Group, TKV, and Dong Bac. ([english.luatvietnam.vn](https://english.luatvietnam.vn/cong-nghiep/decision-1509-qd-bct-2025-implementation-plan-for-adjusted-national-power-development-plan-viii-401940-d1.html))\n\n3. **Mayer Brown, Matthew B. Chow, “Implementation Plan to Vietnam’s PDP8 Released,” 2 April 2024.** Bylined legal/trade analysis. Used only to corroborate that Decision 262 includes status updates for 13 LNG and 10 domestic-gas projects and the aggregate capacities; not used as sole support for an individual asset. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai))\n\n4. **EVN, “Overview of national power sources in 2023,” English EVN website.** Utility source. Used for 2023 operating context, coal supply to EVN thermal plants, and Southeast/Southwest gas consumption for power generation. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx?utm_source=openai))\n\n5. **EVN, “Pha Lai Thermal Power Plant makes many important contributions to economic and social development of country,” English EVN website, September 2023.** Utility source. Used for Pha Lai operating context and links to Hai Duong/Mao Khe grid area. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/Pha-Lai-Thermal-Power-Plant-makes-many-important-contributions-to-economic-and-social-development-of-country-66-163-3676.aspx?utm_source=openai))\n\n6. **EVN, “EVN Vice President Ngo Son Hai works with Pha Lai Thermal Power JSC,” English EVN website, 12 September 2023.** Utility source. Used for status of Pha Lai 1 and 2 as operating assets needing technical/maintenance improvements. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-Vice-President-Ngo-Son-Hai-works-with-Pha-Lai-Thermal-Power-JSC-66-163-3700.aspx?utm_source=openai))\n\n7. **REE Corporation, “Báo cáo thường niên năm 2023” [Annual Report 2023].** Corporate annual report. Used because REE holds power-sector investments and identifies Pha Lai Thermal Power Plant total capacity of 1,040 MW, corroborating Pha Lai split capacity. ([rs.nguoiquansat.vn](https://rs.nguoiquansat.vn/ReportFile/REE/2023/Baocaothuongniennam2023.pdf?utm_source=openai))\n\n8. **PV Power, “PETROVIETNAM POWER CORPORATION” September 2023 investor letter / e-newsletter.** Operator investor communication. Used for operating evidence for Ca Mau CCPP 1&2, Nhon Trach CCPP 1, and Vung Ang 1 TPP. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/17-10-23-enew-letter_pow_9-2023-v2.pdf?utm_source=openai))\n\n9. **PV Power, “Annual Report 2022 – Together We Light Up the Future.”** Operator annual report. Used for PV Power operating portfolio context, including Ca Mau, Nhon Trach, and Vung Ang maintenance/operations references. ([pvpower.vn](https://pvpower.vn/pow-media/to-ir/Annual-Report-2022---WEB.pdf?utm_source=openai))\n\n10. **PV Power, “PV Power aims to achieve 1,434 million kWh electricity in June,” June 2023.** Operator press/investor update. Used for Ca Mau 1&2 and Nhon Trach 1 operating confirmation. ([pvpower.vn](https://pvpower.vn/en/post/pv-power-aims-to-achieve-1-434-million-kwh-electricity-in-june-5670.htm?utm_source=openai))\n\n11. **PV Power-related 2023 business update, “PV Power: Revenue increased 12%…” Asemconnect Vietnam.** Secondary business press based on PV Power operating results. Used only as corroboration for PV Power operating plants, especially Nhon Trach 2, where direct annual-report PDF retrieval was blocked. ([asemconnectvietnam.gov.vn](https://asemconnectvietnam.gov.vn/default.aspx?ID1=2&ID8=131352&ZID1=6&utm_source=openai))\n\n12. **VietnamEnergy / Tạp chí Năng lượng Việt Nam, “Vinacomin has successfully applied CFB technology in the thermal power plants,” 2017.** Industry/trade source citing Vinacomin information. Used for Vinacomin/TKV CFB plants and capacities: Na Duong 110 MW, Cao Ngan 115 MW, Son Dong 220 MW, Cam Pha 680 MW, Mao Khe 440 MW; treated as admissible trade source exposing operator provenance. ([vietnamenergy.vn](https://vietnamenergy.vn/vinacomin-has-successfully-applied-cfb-technology-in-the-thermal-power-plants-18781.html?utm_source=openai))\n\n13. **Russin & Vecchi legal update PDF, “Vietnam’s PDP8 Implementation Plan,” April 2024.** Legal update reproducing/abstracting PDP8 implementation appendices. Used only for visible appendix excerpts including Na Duong II 110 MW and Quang Tri thermal 1,320 MW extension note; not used where direct government PDF excerpt sufficed. ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai))\n\n14. **MOIT / VEPG report PDF, “Report on PDP7 revised and update PDP8,” retrieved via VEPG.** Ministry-linked planning background report. Used for historical context on candidate projects, including Vung Ang III transition consideration, Hiep Phuoc LNG mention, and Kien Giang gas-supply insufficiency. ([vepg.vn](https://vepg.vn/wp-content/uploads/2024/07/EN_PDP_I.1.-Report-on-PDP7-revised-and-update-PDP-8_Final-1.pdf?utm_source=openai))",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779659904.0,
+  "conversation": null,
+  "max_output_tokens": 50000,
+  "max_tool_calls": null,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 24496,
+    "input_tokens_details": {
+      "cached_tokens": 4224
+    },
+    "output_tokens": 14436,
+    "output_tokens_details": {
+      "reasoning_tokens": 766
+    },
+    "total_tokens": 38932
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

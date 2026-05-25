@@ -1,0 +1,1469 @@
+{
+  "id": "resp_09396e8e4df5d677006a137842d82481a3a69d711946f10130",
+  "created_at": 1779660867.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "metadata": {},
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_09396e8e4df5d677006a137844763881a39abe376176c546be",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_09396e8e4df5d677006a137846598081a3802f9c694e01e642",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "EVN annual report 2022 2023 Vietnam power plants coal gas capacity pdf",
+          "PDP8 implementation plan Decision 262 LNG domestic gas list Vietnam capacity",
+          "PDP8 full annexes Vietnam coal plants under construction delayed capacity",
+          "PV Power annual report 2024 Nhon Trach Ca Mau Vung Ang capacity"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://studylib.net/doc/28004090/evnannualreport2022-2-moi-bo-sung-6-3-2024-2"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-and-TKV-cooperate-to-find-solutions-to-prepare-coal-sources-for-power-generation-in-2023-66-163-3231.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://cosodulieu.evn.com.vn/pages/cms/viewdetail-vietnam-electricity-annual-report-2022---2023-id-157331.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-opens-Conference-to-summarize-work-in-2022-and-deploy-tasks-in-2023-66-163-3239.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamnet.vn/en/evn-lacks-coal-for-electricity-generation-2110411.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/evn-bao-lai-vuot-chi-tieu-bat-dau-giam-lo-luy-ke-giai-doan-2022-2023"
+          },
+          {
+            "type": "url",
+            "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-implements-a-series-of-urgent-measures-to-ensure-power-supply-in-the-dry-season-of-2023-66-163-3505.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://luatduonggia.vn/van-ban/quyet-dinh-2976-qd-bct-1113486/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-organizes-Conference-on-Operation-and-Production-of-coal-fired-power-plants-in-Northern-region-66-163-3544.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://s26.q4cdn.com/697131027/files/doc_financials/2022/ar/2023-annual-report-wrap-10K_FINAL.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Vietnam_Electricity"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1nggu3k"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singapore/comments/1j6cuc4"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/1ach8xs"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Futurology/comments/1ah9jyl"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1kvi5zb"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNam/comments/17qekbg"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Ambitious_Spell_5818/comments/szptol"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Alert-Broccoli-3500/comments/1kuw0q8"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/1liqpvf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1e0doyr"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1g1uenh"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_09396e8e4df5d677006a1378493ee081a39a606c9bb7c2d34e",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_09396e8e4df5d677006a13784b36b881a3af95de8ff7a7808c",
+      "content": [
+        {
+          "annotations": [
+            {
+              "end_index": 730,
+              "start_index": 610,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 913,
+              "start_index": 793,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1338,
+              "start_index": 1218,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1537,
+              "start_index": 1390,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 2043,
+              "start_index": 1923,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2219,
+              "start_index": 2099,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2618,
+              "start_index": 2498,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2794,
+              "start_index": 2674,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3172,
+              "start_index": 3052,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3371,
+              "start_index": 3224,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 3754,
+              "start_index": 3634,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3953,
+              "start_index": 3806,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 4339,
+              "start_index": 4219,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 4538,
+              "start_index": 4391,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 4946,
+              "start_index": 4826,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 5145,
+              "start_index": 4998,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 5524,
+              "start_index": 5404,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 5723,
+              "start_index": 5576,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 6106,
+              "start_index": 5986,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 6305,
+              "start_index": 6158,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 6688,
+              "start_index": 6568,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 6887,
+              "start_index": 6740,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 7296,
+              "start_index": 7176,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 7486,
+              "start_index": 7366,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 7895,
+              "start_index": 7775,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 8085,
+              "start_index": 7965,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 8507,
+              "start_index": 8379,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 8703,
+              "start_index": 8583,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 9138,
+              "start_index": 9018,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 9325,
+              "start_index": 9190,
+              "title": "2022 | Annual report --- | ---Accelerating the future",
+              "type": "url_citation",
+              "url": "https://s26.q4cdn.com/697131027/files/doc_financials/2022/ar/2023-annual-report-wrap-10K_FINAL.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 9834,
+              "start_index": 9714,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 10016,
+              "start_index": 9896,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 10421,
+              "start_index": 10301,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 10603,
+              "start_index": 10483,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 11083,
+              "start_index": 10963,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 11282,
+              "start_index": 11135,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 11682,
+              "start_index": 11554,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 11867,
+              "start_index": 11747,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 12271,
+              "start_index": 12151,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 12463,
+              "start_index": 12347,
+              "title": "EVN lacks coal for electricity generation",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/evn-lacks-coal-for-electricity-generation-2110411.html?utm_source=openai"
+            },
+            {
+              "end_index": 12906,
+              "start_index": 12786,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 13134,
+              "start_index": 12952,
+              "title": "EVN organizes Conference on Operation and Production of coal-fired power plants in Northern region",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/d6/news/EVN-organizes-Conference-on-Operation-and-Production-of-coal-fired-power-plants-in-Northern-region-66-163-3544.aspx?utm_source=openai"
+            },
+            {
+              "end_index": 13525,
+              "start_index": 13405,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 13724,
+              "start_index": 13577,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 14153,
+              "start_index": 14019,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 14335,
+              "start_index": 14215,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 14758,
+              "start_index": 14611,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 14957,
+              "start_index": 14810,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 15369,
+              "start_index": 15222,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 15568,
+              "start_index": 15421,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 16052,
+              "start_index": 15905,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 16251,
+              "start_index": 16104,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 16646,
+              "start_index": 16526,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 16845,
+              "start_index": 16698,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 17269,
+              "start_index": 17141,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 17450,
+              "start_index": 17330,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17924,
+              "start_index": 17777,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 18123,
+              "start_index": 17976,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 18567,
+              "start_index": 18439,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 18749,
+              "start_index": 18629,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19139,
+              "start_index": 19011,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 19321,
+              "start_index": 19201,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19699,
+              "start_index": 19579,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19898,
+              "start_index": 19751,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 20320,
+              "start_index": 20200,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 20519,
+              "start_index": 20372,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 20895,
+              "start_index": 20775,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 21094,
+              "start_index": 20947,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 21513,
+              "start_index": 21393,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 21712,
+              "start_index": 21565,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 22098,
+              "start_index": 21978,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22297,
+              "start_index": 22150,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 22807,
+              "start_index": 22660,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 23006,
+              "start_index": 22859,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 23467,
+              "start_index": 23320,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 23666,
+              "start_index": 23519,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 24129,
+              "start_index": 23982,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 24328,
+              "start_index": 24181,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 24822,
+              "start_index": 24675,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 25021,
+              "start_index": 24874,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 25523,
+              "start_index": 25376,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 25722,
+              "start_index": 25575,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 26240,
+              "start_index": 26093,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 26439,
+              "start_index": 26292,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 26929,
+              "start_index": 26782,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 27128,
+              "start_index": 26981,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 27643,
+              "start_index": 27496,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 27842,
+              "start_index": 27695,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 28307,
+              "start_index": 28160,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 28506,
+              "start_index": 28359,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 28930,
+              "start_index": 28783,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 29133,
+              "start_index": 28986,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 29598,
+              "start_index": 29451,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 29804,
+              "start_index": 29657,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 30259,
+              "start_index": 30139,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30440,
+              "start_index": 30320,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30920,
+              "start_index": 30792,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 31099,
+              "start_index": 30971,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 31548,
+              "start_index": 31420,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 31727,
+              "start_index": 31599,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 32163,
+              "start_index": 32035,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 32342,
+              "start_index": 32214,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 32761,
+              "start_index": 32633,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 32940,
+              "start_index": 32812,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 33349,
+              "start_index": 33229,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 33556,
+              "start_index": 33409,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 33964,
+              "start_index": 33836,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 34139,
+              "start_index": 34019,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 34550,
+              "start_index": 34416,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 34756,
+              "start_index": 34609,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 35141,
+              "start_index": 35007,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 35347,
+              "start_index": 35200,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 35769,
+              "start_index": 35635,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 35950,
+              "start_index": 35830,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 36369,
+              "start_index": 36235,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 36550,
+              "start_index": 36430,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 37000,
+              "start_index": 36853,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 37172,
+              "start_index": 37052,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 37666,
+              "start_index": 37519,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 37873,
+              "start_index": 37726,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 38334,
+              "start_index": 38187,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 38541,
+              "start_index": 38394,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 39045,
+              "start_index": 38898,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 39243,
+              "start_index": 39109,
+              "title": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+              "type": "url_citation",
+              "url": "https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 39744,
+              "start_index": 39597,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 39951,
+              "start_index": 39804,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 40439,
+              "start_index": 40292,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 40646,
+              "start_index": 40499,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 41134,
+              "start_index": 40987,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 41341,
+              "start_index": 41194,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 41832,
+              "start_index": 41685,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 42039,
+              "start_index": 41892,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 42531,
+              "start_index": 42384,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 42738,
+              "start_index": 42591,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 43221,
+              "start_index": 43074,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 43428,
+              "start_index": 43281,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 43935,
+              "start_index": 43815,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44118,
+              "start_index": 43998,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44620,
+              "start_index": 44500,
+              "title": "VIETNAM ELECTRICITY",
+              "type": "url_citation",
+              "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44871,
+              "start_index": 44724,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 45348,
+              "start_index": 45201,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 45568,
+              "start_index": 45421,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 46053,
+              "start_index": 45906,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 46273,
+              "start_index": 46126,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 46745,
+              "start_index": 46598,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 46938,
+              "start_index": 46791,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 47443,
+              "start_index": 47296,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 47636,
+              "start_index": 47489,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 48126,
+              "start_index": 47979,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 48319,
+              "start_index": 48172,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 48810,
+              "start_index": 48663,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 49008,
+              "start_index": 48861,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 49497,
+              "start_index": 49350,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 49690,
+              "start_index": 49543,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 50172,
+              "start_index": 50025,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 50365,
+              "start_index": 50218,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 50822,
+              "start_index": 50675,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 51015,
+              "start_index": 50868,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 51438,
+              "start_index": 51291,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 51665,
+              "start_index": 51518,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 52128,
+              "start_index": 51981,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 52352,
+              "start_index": 52205,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 52851,
+              "start_index": 52704,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 53044,
+              "start_index": 52897,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 53539,
+              "start_index": 53392,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 53738,
+              "start_index": 53591,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 54261,
+              "start_index": 54114,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 54454,
+              "start_index": 54307,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 54883,
+              "start_index": 54736,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 55123,
+              "start_index": 54976,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 55584,
+              "start_index": 55437,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 55823,
+              "start_index": 55676,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 56264,
+              "start_index": 56117,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 56483,
+              "start_index": 56336,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 56976,
+              "start_index": 56829,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 57195,
+              "start_index": 57048,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            }
+          ],
+          "text": "| Name (Vietnamese) | Name (English) | Province | Fuel (Coal / Domestic gas / Imported LNG) | Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas) | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |\n|---|---|---|---|---|---:|---:|---|---|---|---|---|---|---|---|\n| Nhiệt điện Ninh Bình | Ninh Binh Thermal Power Plant | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Operating | 2023-12-31 | 1974-1976 | Ninh Binh Thermal Power JSC / EVNGENCO3 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVNGENCO3 equitization disclosure, subsidiary output table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Legacy plant; gross/net unspecified. |\n| Nhiệt điện Uông Bí | Uong Bi Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 + 1 × 330 | 630 | Operating | 2023-12-31 | 2009; 2011 | EVNGENCO1 / Uong Bi Thermal Power Company | MEDIUM | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Modern operating capacity shown; older Uông Bí legacy units excluded because current operating status not consistently confirmed. |\n| Nhiệt điện Phả Lại 1 | Pha Lai 1 Thermal Power Plant | Hải Dương | Coal | Subcritical | 4 × 110 | 440 | Operating | 2023-12-31 | 1983-1986 | Pha Lai Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, current system context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Phả Lại 2 | Pha Lai 2 Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2001-2002 | Pha Lai Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, current system context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Na Dương | Na Duong Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 2 × 55 | 110 | Operating | 2023-12-31 | 2005 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Cao Ngạn | Cao Ngan Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 57.5 | 115 | Operating | 2023-12-31 | 2006 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện An Khánh | An Khanh Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 50 | 100 | Operating | 2023-12-31 | 2015 | An Khanh Thermal Power JSC | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Not the same project as An Khánh - Bắc Giang. |\n| Nhiệt điện Sơn Động | Son Dong Thermal Power Plant | Bắc Giang | Coal | Subcritical | 2 × 110 | 220 | Operating | 2023-12-31 | 2009-2010 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Mạo Khê | Mao Khe Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 220 | 440 | Operating | 2023-12-31 | 2012 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Cẩm Phả 1 | Cam Pha 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2023-12-31 | 2010 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Cẩm Phả 2 | Cam Pha 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2023-12-31 | 2011 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023, national operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Quảng Ninh 1 | Quang Ninh 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2009-2010 | Quang Ninh Thermal Power JSC / EVNGENCO1 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, current operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Quảng Ninh 2 | Quang Ninh 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2013-2014 | Quang Ninh Thermal Power JSC / EVNGENCO1 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, current operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Mông Dương 1 | Mong Duong 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 540 | 1,080 | Operating | 2024-12-31 | 2015 | EVNGENCO3 / Mong Duong Thermal Power Company | HIGH | EVNGENCO3 annual-report page, 1,080 MW and CFB coal description. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 disclosure, COD note: unit 1 in 2015-10 and unit 2 in 2015-12. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | CFB coal plant; gross/net unspecified. |\n| Nhiệt điện Mông Dương 2 | Mong Duong 2 BOT Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 620 | 1,240 | Operating | 2023-12-31 | 2015 | Mong Duong 2 Power Co.; AES-led BOT legacy project | MEDIUM | EVN Annual Report 2022-2023, BOT/operating fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | AES annual report, Mong Duong 2 BOT description. ([s26.q4cdn.com](https://s26.q4cdn.com/697131027/files/doc_financials/2022/ar/2023-annual-report-wrap-10K_FINAL.pdf?utm_source=openai)) | Ownership has changed over time; current shareholders should be checked against latest company registry for transactional use. |\n| Nhiệt điện Hải Phòng 1 | Hai Phong 1 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2011-2012 | Hai Phong Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Hải Phòng 2 | Hai Phong 2 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2013-2014 | Hai Phong Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013, plant-capacity table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Some interim EVN tables captured only one unit before final completion; completed plant total is 600 MWe. |\n| Nhiệt điện Hải Dương / Kinh Môn | Hai Duong Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2020 | JAKS Hai Duong Power Co. BOT | MEDIUM | EVN Annual Report 2022-2023, BOT/operating fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Also known as Kinh Môn. |\n| Nhiệt điện Thái Bình 1 | Thai Binh 1 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2018 | EVN / EVNGENCO3-managed project | HIGH | EVNGENCO3 annual-report page, project-management portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVN Annual Report 2022-2023, current operating coal capacity. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Thái Bình 2 | Thai Binh 2 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2023 | Petrovietnam / Thai Binh 2 project company | MEDIUM | EVN Annual Report 2022-2023, 2023 coal-capacity increase. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | VietnamNet report noting Thai Binh 2 had just entered operation in 2023. ([vietnamnet.vn](https://vietnamnet.vn/en/evn-lacks-coal-for-electricity-generation-2110411.html?utm_source=openai)) | Project-specific PVN source still recommended for HIGH confidence. |\n| Nhiệt điện Nghi Sơn 1 | Nghi Son 1 Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023-12-31 | 2014 | EVNGENCO1 / Nghi Son Thermal Power Company | HIGH | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN article, Nghi Son 1 operating context. ([en.evn.com.vn](https://en.evn.com.vn/d6/news/EVN-organizes-Conference-on-Operation-and-Production-of-coal-fired-power-plants-in-Northern-region-66-163-3544.aspx?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Nghi Sơn 2 | Nghi Son 2 BOT Thermal Power Plant | Thanh Hóa | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2022 | Nghi Son 2 Power Ltd. BOT | MEDIUM | EVN Annual Report 2022-2023, BOT/operating fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Sponsor details require latest project-company filing. |\n| Nhiệt điện Vũng Áng 1 | Vung Ang 1 Thermal Power Plant | Hà Tĩnh | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2024-12-31 | 2014-2015 | PV Power / Petrovietnam | HIGH | PV Power Annual Report 2024, plant-operation references. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Vũng Áng 2 | Vung Ang 2 Thermal Power Plant | Hà Tĩnh | Coal | USC | 2 × 665 | 1,330 | Construction | 2023-05-15 | Planned 2021-2030 | Vung Ang II Thermal Power LLC | HIGH | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 capacity is 1,330 MW. |\n| Nhiệt điện Quảng Trạch 1 | Quang Trach 1 Thermal Power Plant | Quảng Bình | Coal | USC | 2 × 701.5 | 1,403 | Construction | 2023-05-15 | Planned 2021-2030 | EVN | HIGH | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 states 1,403 MW; unit rating shown arithmetically to reconcile total. |\n| Nhiệt điện Vân Phong 1 | Van Phong 1 Thermal Power Plant | Khánh Hòa | Coal | USC | 2 × 716 | 1,432 | Construction | 2023-05-15 | Planned 2021-2030 | Sumitomo / Van Phong Power Co. BOT | HIGH | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 capacity is 1,432 MW. |\n| Nhiệt điện Vĩnh Tân 1 | Vinh Tan 1 BOT Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 620 | 1,240 | Operating | 2023-12-31 | 2018 | Vinh Tan 1 Power Co. BOT | MEDIUM | EVN Annual Report 2022-2023, BOT/operating fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 2 | Vinh Tan 2 Thermal Power Plant | Bình Thuận | Coal | Subcritical | 2 × 622 | 1,244 | Operating | 2024-12-31 | 2015 | EVNGENCO3 / Vinh Tan Thermal Power Company | HIGH | EVNGENCO3 annual-report page, capacity 2 × 622 MW and COD in early 2015. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 disclosure, unit COD note: 2015-01 and 2015-03. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 3 | Vinh Tan 3 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 3 × 660 | 1,980 | Shelved | 2023-05-15 | Not achieved; originally planned 2021-2030 | OneEnergy / EVN / Pacific Corp. legacy consortium | LOW | PDP8 Decision 500 annexes, delayed/difficult coal projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists as behind schedule/facing difficulty; no construction evidence verified. |\n| Nhiệt điện Vĩnh Tân 4 | Vinh Tan 4 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2024-12-31 | 2018-2019 | EVN | HIGH | EVNGENCO3 annual-report page, O&M/project-management portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 4 mở rộng | Vinh Tan 4 Extension Thermal Power Plant | Bình Thuận | Coal | Supercritical | 1 × 600 | 600 | Operating | 2024-12-31 | 2019 | EVN | HIGH | EVNGENCO3 annual-report page, project-management portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Separate extension unit. |\n| Nhiệt điện Duyên Hải 1 | Duyen Hai 1 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023-12-31 | 2015-2016 | EVNGENCO1 | HIGH | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Unit rating shown arithmetically to reconcile total. |\n| Nhiệt điện Duyên Hải 2 | Duyen Hai 2 BOT Thermal Power Plant | Trà Vinh | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2021 | Duyen Hai 2 Power Co. BOT | MEDIUM | EVN Annual Report 2022-2023, BOT/operating fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Duyên Hải 3 | Duyen Hai 3 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023-12-31 | 2016-2017 | EVNGENCO1 | HIGH | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Unit rating shown arithmetically to reconcile total. |\n| Nhiệt điện Duyên Hải 3 mở rộng | Duyen Hai 3 Extension Thermal Power Plant | Trà Vinh | Coal | Supercritical | 1 × 688 | 688 | Operating | 2023-12-31 | 2020 | EVNGENCO1 | MEDIUM | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Separate extension unit. |\n| Nhiệt điện Sông Hậu 1 | Song Hau 1 Thermal Power Plant | Hậu Giang | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023-12-31 | 2022 | Petrovietnam / PV Power | MEDIUM | EVN Annual Report 2022-2023, operating coal-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Plant-specific PVN source still recommended for HIGH confidence. |\n| Nhiệt điện Sông Hậu 2 | Song Hau 2 Thermal Power Plant | Hậu Giang | Coal | Supercritical | 2 × 1,060 | 2,120 | Shelved | 2023-05-15 | Not achieved; originally planned 2021-2030 | Toyo Ink / Song Hau 2 BOT legacy developer | LOW | PDP8 Decision 500 annexes, delayed/difficult coal projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists as delayed/difficult; no construction evidence verified. |\n| Nhiệt điện Long Phú 1 | Long Phu 1 Thermal Power Plant | Sóc Trăng | Coal | Subcritical | 2 × 600 | 1,200 | Construction | 2023-05-15 | Planned 2021-2030 | Petrovietnam | HIGH | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists Long Phu I as under construction. |\n| Nhiệt điện Long Phú 2 | Long Phu 2 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2023-05-15 | Not built | Tata Power legacy BOT developer | LOW | PDP8 Decision 500 annexes, omission from active 2030 coal construction list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Cancellation status relies on tracker and non-retention as active PDP8 coal project. |\n| Nhiệt điện Long Phú 3 | Long Phu 3 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2023-05-15 | Not built | Developer not resolved | LOW | PDP8 Decision 500 annexes, omission from active 2030 coal construction list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Historical PDP7 project; primary cancellation notice not found. |\n| Nhiệt điện Nam Định 1 | Nam Dinh 1 Thermal Power Plant | Nam Định | Coal | Supercritical | 2 × 600 | 1,200 | Shelved | 2023-05-15 | Not achieved; originally planned 2021-2030 | Taekwang Power / Acwa Power legacy BOT | LOW | PDP8 Decision 500 annexes, delayed/difficult coal projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists as behind schedule/facing difficulty; no construction evidence verified. |\n| Nhiệt điện Quảng Trị | Quang Tri Thermal Power Plant | Quảng Trị | Coal | Supercritical | 2 × 660 | 1,320 | Shelved | 2023-05-15 | Not achieved; originally planned 2021-2030 | EGAT International legacy developer | LOW | PDP8 Decision 500 annexes, delayed/difficult coal projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Distinct from Quảng Trị domestic-gas and Hải Lăng LNG projects. |\n| Nhiệt điện Công Thanh | Cong Thanh Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Shelved | 2023-05-15 | Not achieved; extension review to 2024-06 per PDP8 note | Công Thanh Group | LOW | PDP8 Decision 500 annexes, delayed/difficult coal projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 English rendering appears as “Thanh President”; interpreted as Công Thanh. |\n| Nhiệt điện An Khánh - Bắc Giang | An Khanh - Bac Giang Thermal Power Plant | Bắc Giang | Coal | Supercritical | 1 × 650 | 650 | Construction | 2023-05-15 | Planned 2021-2030 | An Khánh Group / project company | MEDIUM | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists 650 MW; detailed unit technology needs EPC confirmation. |\n| Nhiệt điện Na Dương II | Na Duong II Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 1 × 110 | 110 | Construction | 2023-05-15 | Planned 2021-2030 | Vinacomin / TKV | MEDIUM | PDP8 Decision 500 annexes, coal projects under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 lists 110 MW under construction. |\n| Nhiệt điện Quỳnh Lập 1 | Quynh Lap 1 Thermal Power Plant | Nghệ An | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2024-04-01 | Not built | Vinacomin legacy developer | LOW | Draft PDP8 2021, historical coal-project listing. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Decision 262 reporting on Quỳnh Lập LNG replacement. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Coal project treated as cancelled/superseded by Quỳnh Lập LNG planning. |\n| Nhiệt điện Kiên Lương | Kien Luong Thermal Power Center | Kiên Giang | Coal | Subcritical | unresolved | 4,400 | Cancelled | 2023-05-15 | Not built | Tan Tao Energy legacy developer | LOW | Global Coal Plant Tracker, Vietnam unit records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 Decision 500 annexes, no active 2030 coal listing. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Historical multi-unit power-center concept; unit detail unresolved. |\n| Nhiệt điện Bà Rịa | Ba Ria Gas Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | mixed GT/ST units | 389 | Operating | 2023-12-31 | 1990s | Ba Ria Thermal Power JSC / EVNGENCO3 affiliate | HIGH | EVNGENCO3 equitization disclosure, subsidiary output table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating gas-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Older gas-turbine/combined-cycle configuration; exact sub-unit status varies. |\n| Nhiệt điện Phú Mỹ 2.1 | Phu My 2.1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 477 | 477 | Operating | 2024-12-31 | 1997-1998 | EVNGENCO3 / Phu My Thermal Power Company | HIGH | EVNGENCO3 annual-report page, Phu My portfolio and upgraded 477-MW rating. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 2024 overview, Phu My total capacity. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 notes upgraded GT13E2 MXL2 gas turbine. |\n| Nhiệt điện Phú Mỹ 2.1 mở rộng | Phu My 2.1 Extension Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 450 | 450 | Operating | 2024-12-31 | 1999-2000 | EVNGENCO3 / Phu My Thermal Power Company | HIGH | EVNGENCO3 annual-report page, Phu My plant portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 2024 overview, Phu My total capacity. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Capacity reconciles within Phu My EVNGENCO3 portfolio. |\n| Nhiệt điện Phú Mỹ 1 | Phu My 1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 1,090 | 1,090 | Operating | 2024-12-31 | 2000-2002 | EVNGENCO3 / Phu My Thermal Power Company | HIGH | EVNGENCO3 annual-report page, Phu My plant portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 2024 overview, Phu My total capacity. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Block sub-units not split in consulted source. |\n| Nhiệt điện Phú Mỹ 4 | Phu My 4 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 450 | 450 | Operating | 2024-12-31 | 2004 | EVNGENCO3 / Phu My Thermal Power Company | HIGH | EVNGENCO3 annual-report page, Phu My plant portfolio. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVNGENCO3 2024 overview, Phu My total capacity. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Capacity reconciles with Phu My 2,540-MW portfolio. |\n| Nhiệt điện Phú Mỹ 2.2 BOT | Phu My 2.2 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 715 | 715 | Operating | 2023-12-31 | 2005 | Mekong Energy Co. BOT | MEDIUM | EVN Annual Report 2022-2023, BOT/gas-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Global Integrated Power Tracker / GEM gas-plant records. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Phú Mỹ 3 BOT | Phu My 3 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 × 716.8 | 716.8 | Operating | 2024-12-31 | 2004 | Phu My 3 BOT Power Co.; O&M by EVNGENCO3 EPS | MEDIUM | EVNGENCO3 2024 overview, O&M contract reference. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | EVN Annual Report 2022-2023, BOT/gas-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Owner/shareholder details require current BOT filing. |\n| Nhiệt điện Nhơn Trạch 1 | Nhon Trach 1 Power Plant | Đồng Nai | Domestic gas | CCGT | 1 × 450 | 450 | Operating | 2024-12-31 | 2009 | PV Power | HIGH | PV Power Annual Report 2024, Nhon Trach 1 operation references. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | GEM Nhon Trach source trail to PV Power annual reports. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Domestic gas; not LNG. |\n| Nhiệt điện Nhơn Trạch 2 | Nhon Trach 2 Power Plant | Đồng Nai | Domestic gas | CCGT | 1 × 750 | 750 | Operating | 2024-12-31 | 2011 | PV Power Nhon Trach 2 JSC | HIGH | PV Power Annual Report 2024, Nhon Trach references. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | GEM Nhon Trach source trail to PV Power annual reports. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Domestic gas; separate from LNG Nhơn Trạch 3/4. |\n| Nhiệt điện Cà Mau 1 | Ca Mau 1 Power Plant | Cà Mau | Domestic gas | CCGT | 1 × 750 | 750 | Operating | 2024-12-31 | 2008 | PV Power / Ca Mau Petroleum Power Company | HIGH | PV Power Annual Report 2024, Ca Mau operation references. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating gas-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Uses domestic gas from southwest gas system. |\n| Nhiệt điện Cà Mau 2 | Ca Mau 2 Power Plant | Cà Mau | Domestic gas | CCGT | 1 × 750 | 750 | Operating | 2024-12-31 | 2008 | PV Power / Ca Mau Petroleum Power Company | HIGH | PV Power Annual Report 2024, Ca Mau operation references. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | EVN Annual Report 2022-2023, operating gas-fleet context. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Uses domestic gas from southwest gas system. |\n| Nhiệt điện Ô Môn 1 | O Mon 1 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 330 | 660 | Operating | 2024-04-01 | 2009; 2015 | EVNGENCO2 / Can Tho Thermal Power Company | HIGH | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | EVN Annual Report 2012-2013, O Mon 1 unit table. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Existing plant identified for Block B gas; historically oil/dual-fuel pending gas. |\n| Nhiệt điện Ô Môn 2 | O Mon 2 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Pre-permit | 2024-04-01 | Planned 2027 | Marubeni / Vietracimex legacy consortium | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Exact scale subject to implementation-stage unit selection. |\n| Nhiệt điện Ô Môn 3 | O Mon 3 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Pre-permit | 2024-04-01 | Planned 2030 | EVN / successor project entity | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Exact scale subject to implementation-stage unit selection. |\n| Nhiệt điện Ô Môn 4 | O Mon 4 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Construction | 2025 status-change note; Decision 262 base date 2024-04-01 | Planned 2028 | Petrovietnam / PV Power | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PV Power Annual Report 2024 / Block B-O Mon project context. ([file.fpts.com.vn](https://file.fpts.com.vn/FileStore2/File/2025/04/21/20250421_POW_250421_Annual_Report_2024.pdf?utm_source=openai)) | Construction-start status requires current PVN project release for HIGH confidence. |\n| Nhiệt điện Dung Quất 1 | Dung Quat 1 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale subject to implementation. |\n| Nhiệt điện Dung Quất 2 | Dung Quat 2 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale subject to implementation. |\n| Nhiệt điện Dung Quất 3 | Dung Quat 3 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale subject to implementation. |\n| Nhiệt điện Miền Trung 1 | Central Region 1 Combined Gas Turbine Power Plant | Quảng Nam | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | 2024-04-01 | Planned 2030 | Developer not resolved | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Cá Voi Xanh-linked project; Vietnamese project name not fully resolved. |\n| Nhiệt điện Miền Trung 2 | Central Region 2 Combined Gas Turbine Power Plant | Quảng Nam | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | 2024-04-01 | Planned 2030 | Developer not resolved | MEDIUM | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Cá Voi Xanh-linked project; Vietnamese project name not fully resolved. |\n| Nhiệt điện khí Quảng Trị | Quang Tri Combined Gas Turbine Power Plant | Quảng Trị | Domestic gas | CCGT | 1 × 340 | 340 | Pre-permit | 2024-04-01 | Planned 2030 | Developer not resolved | LOW | Decision 262 / PDP8 implementation summary, domestic gas list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mayer Brown Decision 262 note, 10 domestic-gas projects. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Báo Vàng gas; distinct from coal Quảng Trị and LNG Hải Lăng. |\n| Nhiệt điện Thủ Đức | Thu Duc Thermal Power Plant | TP.HCM | Domestic gas | OCGT | 23.5 + 15 + 2 × 37.5 | 113.5 | Retired | 2023-12-31 status inferred from legacy reporting | 1960s-1990s | EVNGENCO3 / Thu Duc Power Company legacy | LOW | EVN Annual Report 2012-2013, Thu Duc gas-turbine capacity listing. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | EVNGENCO3 equitization disclosure, negligible later output. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Historical gas/oil turbine asset; exact retirement date not found. |\n| Nhiệt điện Cần Thơ tua-bin khí | Can Tho Gas Turbine Power Plant | Cần Thơ | Domestic gas | OCGT | 4 × 37.5 | 150 | Retired | 2023-12-31 status inferred from legacy reporting | 1970s-1990s | EVNGENCO2 / Can Tho Thermal Power Company | LOW | EVN Annual Report 2012-2013, Can Tho gas-turbine capacity listing. ([en.evn.com.vn](https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf?utm_source=openai)) | Decision 262 / PDP8 implementation list excludes it from active Block B gas projects except O Mon 1. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Historical turbine plant; exact retirement date not found. |\n| Nhiệt điện Nhơn Trạch 3 | Nhon Trach 3 Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × 812 | 812 | Construction | 2024-04-01 | Planned 2024-2025 | PV Power | HIGH | Decision 262 / PDP8 implementation LNG list, Nhon Trach 3 and 4 at 1,624 MW under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix, same project and capacity. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Listed jointly with Nhơn Trạch 4; split evenly to reconcile total. |\n| Nhiệt điện Nhơn Trạch 4 | Nhon Trach 4 Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × 812 | 812 | Construction | 2024-04-01 | Planned 2024-2025 | PV Power | HIGH | Decision 262 / PDP8 implementation LNG list, Nhon Trach 3 and 4 at 1,624 MW under construction. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix, same project and capacity. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Listed jointly with Nhơn Trạch 3; split evenly to reconcile total. |\n| Nhiệt điện LNG Hiệp Phước giai đoạn 1 | Hiep Phuoc 1 LNG-to-Power | TP.HCM | Imported LNG | CCGT | 2 × 600 | 1,200 | Construction | 2024-04-01 | Planned 2025 | Hiep Phuoc Power / project company | MEDIUM | Decision 262 / PDP8 implementation LNG list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Unit split assumed to reconcile 1,200 MW; exact turbine-block configuration not found. |\n| Điện khí LNG Bạc Liêu | Bac Lieu LNG-to-Power | Bạc Liêu | Imported LNG | CCGT | 4 × 800 | 3,200 | Pre-permit | 2024-04-01 | Planned 2027-2029 | Delta Offshore Energy / Bac Lieu project company | MEDIUM | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 implementation status: preparing feasibility study. |\n| Nhiệt điện Sơn Mỹ 1 BOT | Son My 1 BOT LNG-to-Power | Bình Thuận | Imported LNG | CCGT | 3 × 750 | 2,250 | Pre-permit | 2024-04-01 | Planned 2027-2029 | EDF / Kyushu / Sojitz / Pacific Corp. legacy consortium | MEDIUM | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Sponsor composition may have changed; current investor filing needed for HIGH confidence. |\n| Nhiệt điện Sơn Mỹ 2 | Son My 2 LNG-to-Power | Bình Thuận | Imported LNG | CCGT | 3 × 750 | 2,250 | Pre-permit | 2024-04-01 | Planned 2027-2029 | AES / PV Gas legacy development | MEDIUM | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | PDP8 Decision 500 annexes, LNG project listing. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Current developer status requires fresh primary confirmation. |\n| Nhiệt điện LNG Quảng Ninh | Quang Ninh LNG-to-Power | Quảng Ninh | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-04-01 | Planned 2028-2029 | PV Power / Colavi / Tokyo Gas / Marubeni consortium | HIGH | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Capacity and status reconcile to Decision 262 list. |\n| Nhiệt điện LNG Hải Lăng giai đoạn 1 | Hai Lang LNG Phase 1 | Quảng Trị | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-04-01 | Planned 2028-2029 | T&T / Hanwha / Kogas / Kospo legacy consortium | MEDIUM | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Distinct from Quảng Trị coal and Quảng Trị domestic-gas project. |\n| Nhiệt điện LNG Thái Bình | Thai Binh LNG-to-Power | Thái Bình | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-04-01 | Planned 2029 | Investor selection | HIGH | Decision 262 / PDP8 implementation LNG list, investor selection. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Status: investor selection. |\n| Nhiệt điện LNG Nghi Sơn | Nghi Son LNG-to-Power | Thanh Hóa | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-06-01 | Planned 2029-2030 | Investor selection | HIGH | Decision 262 / PDP8 implementation LNG list, investor selection. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | VietnamNet report that Nghi Son was among projects unable to find investors. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Status-change note: investor not secured as reported after Decision 262. |\n| Nhiệt điện LNG Cà Ná | Ca Na LNG-to-Power | Ninh Thuận | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-06-01 | Planned 2029-2030 | Investor selection | HIGH | Decision 262 / PDP8 implementation LNG list, investor selection. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | VietnamNet report that Ca Na was among projects unable to find investors. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Status-change note: investor not secured as reported after Decision 262. |\n| Nhiệt điện LNG Quảng Trạch II | Quang Trach II LNG-to-Power | Quảng Bình | Imported LNG | CCGT | 2 × 750 | 1,500 | Announced | 2024-04-01 | Planned 2029-2030 | Developer not resolved | MEDIUM | Decision 262 / PDP8 implementation LNG list, no status information available. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Mapped to Announced because implementation summary reports no status information. |\n| Nhiệt điện LNG Quỳnh Lập | Quynh Lap LNG-to-Power | Nghệ An | Imported LNG | CCGT | 2 × 750 | 1,500 | Announced | 2024-06-01 | Planned 2029-2030 | Developer not resolved | MEDIUM | Decision 262 / PDP8 implementation LNG list, no status information available. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Vietnam.vn Decision 262 report on Quynh Lap LNG. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Status-change note: investor not secured in later reporting; replaces earlier Quỳnh Lập coal concept. |\n| Nhiệt điện LNG Long An 1 | Long An 1 LNG-to-Power | Long An | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | 2024-04-01 | Planned 2029-2030 | VinaCapital / GS Energy legacy project interests | MEDIUM | Decision 262 / PDP8 implementation LNG list, preparing FS. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Russin & Vecchi Decision 262 LNG appendix. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Status: preparing feasibility study. |\n| Nhiệt điện LNG Long An 2 | Long An 2 LNG-to-Power | Long An | Imported LNG | CCGT | 2 × 750 | 1,500 | Shelved | 2024-04-01 | After 2030 / unresolved | VinaCapital / GS Energy legacy project interests | LOW | Draft-PDP8 / legacy LNG list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Decision 262 / PDP8 implementation LNG list excludes Long An 2 from 13-project 2030 list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Present in earlier LNG planning but not in the Decision 262 13-project list captured here. |\n| Nhiệt điện LNG Long Sơn | Long Son LNG-to-Power | Bà Rịa–Vũng Tàu | Imported LNG | CCGT | 2 × 750 | 1,500 | Shelved | 2024-04-01 | Unresolved | Developer not resolved | LOW | Draft/secondary PDP8 LNG candidate list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Decision 262 / PDP8 implementation LNG list excludes Long Son from 13-project 2030 list. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Primary active-project status not found. |\n| Nhiệt điện LNG Hải Phòng giai đoạn 1 | Hai Phong LNG Phase 1 | Hải Phòng | Imported LNG | CCGT | 2 × 800 | 1,600 | Announced | 2025-05-13 | Planned 2025-2030 | Developer not resolved | LOW | Revised PDP8 secondary summary, Hai Phong LNG stage I. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Vietnam Energy proposal article, Hai Phong LNG proposal and phasing. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Added/revived in revised-PDP8 reporting; not in the 2024 Decision 262 13-project list. |\n| Nhiệt điện LNG Hải Phòng giai đoạn 2 | Hai Phong LNG Phase 2 | Hải Phòng | Imported LNG | CCGT | 4 × 800 | 3,200 | Announced | 2025-05-13 | Planned 2031-2035 | Developer not resolved | LOW | Russin & Vecchi revised-PDP8 LNG summary, Hai Phong phase 2. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Vietnam Energy proposal article, Hai Phong LNG proposal and phasing. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Future post-2030 phase; primary Vietnamese decision source should be checked before reliance. |",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779660977.0,
+  "conversation": null,
+  "max_output_tokens": 50000,
+  "max_tool_calls": null,
+  "previous_response_id": "resp_09396e8e4df5d677006a137793db4481a38c3e8715eb567b31",
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 57034,
+    "input_tokens_details": {
+      "cached_tokens": 14976
+    },
+    "output_tokens": 12788,
+    "output_tokens_details": {
+      "reasoning_tokens": 300
+    },
+    "total_tokens": 69822
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

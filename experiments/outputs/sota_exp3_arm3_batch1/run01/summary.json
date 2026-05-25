@@ -1,5 +1,41 @@
 [
   {
+    "agent": "mistral",
+    "run": 1,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 9141,
+    "wall_s": 169.11,
+    "cost_usd": 0.0522,
+    "classifier_cost_usd": 0.001638,
+    "narrative_chars": 31949,
+    "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml"
+  },
+  {
+    "agent": "openai",
+    "run": 1,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 19909,
+    "wall_s": 225.22,
+    "cost_usd": 0.4982,
+    "classifier_cost_usd": 0.002438,
+    "narrative_chars": 60428,
+    "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml"
+  },
+  {
+    "agent": "anthropic",
+    "run": 1,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 31072,
+    "wall_s": 533.89,
+    "cost_usd": 2.4674,
+    "classifier_cost_usd": 0.002406,
+    "narrative_chars": 45252,
+    "evidence_pack_manifest": "experiments/evidence_packs/all18tables.yaml"
+  },
+  {
     "agent": "qwen",
     "run": 1,
     "model": "qwen3.7-max-2026-05-20",

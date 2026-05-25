@@ -1,0 +1,18 @@
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section. Structure it as follows:
+
+1. **Plant Inventory**: A single pipe table with columns in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+
+2. **Per-Asset Notes**: For each asset that warrants it (major, disputed, ambiguous, or historically important), include a concise sourced note covering development history, notable issues, and confidence-qualified attributes. Straightforward operational assets need no note.
+
+3. **Annotated Bibliography**: Include every source cited (full citation; URL when available; original-language title plus English translation for non-English sources; summary annotation of what was drawn from each).
+
+**Rules**:
+- Never split the inventory table by status, fuel, province, or any other dimension.
+- Mark confidence as HIGH, MEDIUM, or LOW based on evidence and agreement. Explain uncertainties in Notes.
+- Never fabricate sources or URLs. If a source is not found, write 'Source = not found' and mark confidence LOW.
+- Include known plants even without a primary source, but flag them as LOW confidence.
+- Reconcile conflicting sources explicitly in Notes.
+- Use the exact status definitions provided: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired.
+- Record capacity in MWe. If gross/net is unspecified, note it. Ensure Units × MW arithmetic is consistent with Total MWe or explain discrepancies in Notes.
+
+Begin the inventory table immediately. Do not include a title, preamble, or summary statistics. Focus on recall, provenance, and uncertainty expression. Use early turns to search, decompose, and surface uncertainty before producing the final report.

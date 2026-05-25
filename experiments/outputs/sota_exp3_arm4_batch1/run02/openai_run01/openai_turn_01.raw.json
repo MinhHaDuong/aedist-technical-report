@@ -1,0 +1,237 @@
+{
+  "id": "resp_0cfa7b93146174e5006a1366232cf4819f9407543a7d20479e",
+  "created_at": 1779656227.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": "You are a meticulous energy-infrastructure research agent. Your task is to produce a primary-sourced Markdown reference inventory of Vietnam thermal power generation assets over 30 MWe, including operating, retired, planned, shelved, and cancelled assets. Use retrieval tools aggressively but budget-consciously. Treat the supplied evidence pack as high-priority leads, not complete truth. Prioritize official Vietnamese government power-development plans, Ministry/EVN/PVN/Vinacomin/PV Power/GENCO/operator documents, regulator datasets, annual reports, investor filings, environmental approvals, BOT/IPP project documents, and lender/procurer notices. Use secondary sources only for discovery or when primary evidence is unavailable; label such rows LOW unless a sourced aggregator exposes a verifiable primary. Never cite Wikipedia/Wikidata/DBpedia/mirrors/unsourced aggregators as final sources. Preserve uncertainty rather than fabricating. If a plant is known from leads but no admissible source is found, include it with Source = \"not found\", Confidence = LOW, and explain. \n\nWork in phases: first build a candidate universe from PDP7/PDP7A/PDP8 annexes, EVN annual reports, official project/operator sources, and targeted web searches; second normalize asset rows using plant/unit-group granularity; third reconcile conflicts; fourth write the final Markdown document beginning immediately with exactly one pipe table. Use no title, no preamble, no overview before the table. The table columns must be exactly: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes. Do not create any other pipe tables anywhere. After the table, include concise per-asset/project explanatory notes only where warranted, then an annotated bibliography of every source cited. \n\nApply these rules strictly: row scope is plant/unit-group by default, not power center; split colocated plants when owner, financing, fuel, status, capacity, or COD differs. Aggregate only when evidence lacks detail and mark LOW/ambiguous. Use exact statuses: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired. Record nameplate electrical MWe; if gross/net is not clear, say gross/net unspecified. Ensure Units × MW reconciles with Total MWe or explain discrepancy. Confidence: HIGH only when at least two independent concordant sources exist and at least one is primary; MEDIUM for one primary or a sourced aggregator citing verifiable primary; LOW for secondary-only, inferred, unresolved conflicts, or no source. Operator self-report without official confirmation is capped at MEDIUM. Status older than 24 months and unconfirmed is capped at MEDIUM; older than 48 months is LOW. Independence must be checked by tracing sources to their origin. \n\nUse citations precisely. Every non-common factual claim in the final document must be sourced or clearly marked unsupported. For Vietnamese sources, preserve original title and add English translation in brackets in the bibliography. Avoid long quotations. Budget discipline: use at most three planning/research turns before producing the report if the harness allows, then perform one verification/polish pass. If budget tightens, preserve recall, provenance, and uncertainty over narrative detail.",
+  "metadata": {
+    "remaining_tokens": "50000",
+    "cap_tokens": "50000",
+    "remaining_usd": "15.00",
+    "cap_usd": "15.00"
+  },
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_0cfa7b93146174e5006a136624a504819fbf33dd4ac362c4a1",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_0cfa7b93146174e5006a136625403c819f98817b21eba0bbb5",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "site:moit.gov.vn Quyết định 500/QĐ-TTg Quy hoạch điện VIII phụ lục II nhiệt điện LNG than khí",
+          "EVN annual report 2023 power plants installed capacity thermal Vietnam PDF",
+          "PV Power annual report 2024 Nhơn Trạch 3 4 Cà Mau Nhơn Trạch 2 capacity",
+          "TKV annual report power plants Na Duong Cao Ngan Cam Pha Mao Khe Son Dong"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.evn.com.vn/d6/news/Mot-so-so-lieu-tong-quan-ve-nguon-dien-toan-quoc-nam-2023-66-142-124707.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://evn.com.vn/userfile/User/tcdl/files/2026/4/AnnualRepot2025_V23-20260408155529045.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVNs-employees-have-united-to-overcome-difficulties-and-tried-their-best-to-accomplish-2023s-tasks-66-163-3863.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/khong-con-doc-quyen-phat-dien-evn-hien-chi-nam-37-nguon-dien"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Reliable-operation-of-coal-fired-thermal-power-plants-ensuring-power-supply-in-2024-dry-season-66-163-4303.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-organizes-Conference-on-Operation-and-Production-of-coal-fired-power-plants-in-Northern-region-66-163-3544.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://en.sggp.org.vn/coal-fired-thermal-power-accounts-for-over-42-percent-of-total-power-generation-post100695.html"
+          },
+          {
+            "type": "url",
+            "url": "https://studylib.net/doc/28004090/evnannualreport2022-2-moi-bo-sung-6-3-2024-2"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/Operational-situation-in-November-and-objectives-and-tasks-in-December-2023-66-142-3815.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/d6/news/EVN-deploys-many-solutions-to-improve-reliability-at-power-plants-66-163-3975.aspx"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietcap.com.vn/api/cms-api/uploads/file/202312/ThermalPowerSector-20231218.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.evn.com.vn/userfile/files/2026/4/AnnualRepot2025_V23-20260408155435105.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.scribd.com/document/772933767/2-Eng-Overview-of-VN-power-system-BESS-application-rev"
+          },
+          {
+            "type": "url",
+            "url": "https://www.power-technology.com/data-insights/thermal-power-in-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Vietnam_Electricity"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singapore/comments/1j6cuc4"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/1ach8xs"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/climateaction/comments/15ntdmq"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ClimateActionPlan/comments/15ntbfa"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/149q5dn"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNamNation/comments/1nggu3k"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/14glxkz"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/16xey56"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_pc1epcvn/comments/14l1ta7"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1e0doyr"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/VietNam/comments/17qekbg"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/energy/comments/14q6tih"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "msg_0cfa7b93146174e5006a136627fa54819fba8830edca241a94",
+      "content": [
+        {
+          "annotations": [],
+          "text": "I will **not produce the final inventory yet**. I’ve started the first planning/research phase and will treat the evidence pack as the initial primary-source spine, then verify and supplement from official/operator/lender documents before normalizing rows.\n\n## Phase 1 candidate-universe checklist\n\nScope interpretation for the final table:\n\n- Include **Vietnam thermal generation assets >30 MWe**.\n- Fuels allowed by requested columns: **Coal / Domestic gas / Imported LNG**.\n- Exclude unless needed in notes: hydro, renewables, nuclear, pure oil/diesel-only assets, biomass, waste heat, blast-furnace gas, and industrial by-product plants that cannot be classified into the three requested fuels.\n- Include: **operating, retired, construction, planned, announced, pre-permit, permitted, shelved, cancelled**.\n- Row granularity: **plant or distinct unit-group**, split by owner/developer, fuel, technology, financing/status, COD, or phase where evidence supports it.\n- Final statuses must use exactly: **Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired**.\n\n### A. Operating / retired coal assets to verify\n\nInitial operating/retired universe from EVN annual reports, PDP7/PDP7A, PDP8, PVN/PV Power, Vinacomin/TKV, BOT/project-company sources:\n\n1. **Uông Bí legacy** — 105 MW — retired/planned retirement evidence needed.\n2. **Uông Bí mở rộng 1** — 300 MW.\n3. **Uông Bí mở rộng 2** — 330 MW.\n4. **Phả Lại 1** — 440 MW.\n5. **Phả Lại 2** — 600 MW.\n6. **Ninh Bình** — 100 MW — retired/planned retirement evidence needed.\n7. **Hải Phòng 1** — 600 MW.\n8. **Hải Phòng 2** — 600 MW.\n9. **Quảng Ninh 1** — 600 MW.\n10. **Quảng Ninh 2** — 600 MW.\n11. **Nghi Sơn 1** — 600 MW.\n12. **Thái Bình 1** — 600 MW.\n13. **Thái Bình 2** — 1,200 MW.\n14. **Vũng Áng 1** — 1,200 MW.\n15. **Vũng Áng 2** — 1,330 MW — current construction/commissioning status to verify.\n16. **Mông Dương 1** — 1,080 MW.\n17. **Mông Dương 2 BOT** — 1,200 MW.\n18. **Mạo Khê** — 440 MW.\n19. **Cẩm Phả 1 / 2** — 600 MW total in older EVN table; need exact unit grouping and current TKV source.\n20. **Na Dương 1** — 110/111 MW.\n21. **Cao Ngạn** — 115 MW.\n22. **Sơn Động** — 220 MW.\n23. **Nông Sơn** — 30 MW appears exactly at threshold; because user says over 30 MWe, likely exclude unless evidence says >30.\n24. **An Khánh 1** — 100 MW.\n25. **Thăng Long** — 600 MW.\n26. **Vĩnh Tân 1 BOT** — 1,200 MW.\n27. **Vĩnh Tân 2** — 1,244 MW.\n28. **Vĩnh Tân 4** — 1,200 MW.\n29. **Vĩnh Tân 4 mở rộng** — 600 MW.\n30. **Duyên Hải 1** — 1,245 MW.\n31. **Duyên Hải 2 BOT** — 1,200 MW — operating status to verify.\n32. **Duyên Hải 3** — 1,245 MW.\n33. **Duyên Hải 3 mở rộng** — 660 MW.\n34. **Sông Hậu 1** — 1,200 MW.\n35. **Hải Dương BOT** — 1,200 MW.\n36. **Nghi Sơn 2 BOT** — 1,200 MW.\n37. **Vân Phong 1 BOT** — 1,432 MW — current commercial operation status to verify.\n38. **Long Phú 1** — 1,200 MW — construction/shelved status to verify.\n39. **Quảng Trạch 1** — 1,403 MW — construction status to verify.\n40. **Na Dương 2** — 110 MW — construction/permitted status to verify.\n41. **An Khánh - Bắc Giang** — 650 MW — status to verify.\n42. **Formosa Hà Tĩnh coal units** — likely captive/IPP, multiple 150 MW coal units; classify only if admissible primary source found and not by-product gas.\n43. **Hải Hà cogeneration coal** — PDP8 industrial by-product/cogeneration; include only if fuel can be classed as coal and source is admissible.\n\n### B. Operating / retired domestic gas and historical gas-turbine assets to verify\n\n1. **Phú Mỹ 1** — about 1,090–1,118 MW.\n2. **Phú Mỹ 2.1** — about 900–945 MW.\n3. **Phú Mỹ 2.2 BOT** — 715/740 MW.\n4. **Phú Mỹ 3 BOT** — 715/740 MW.\n5. **Phú Mỹ 4** — about 450–477 MW.\n6. **Bà Rịa** — 389 MW — operating/retired status by units to verify.\n7. **Thủ Đức gas turbines** — 114/128 MW plus oil units; likely retired, need source.\n8. **Cần Thơ gas turbine** — 150/155 MW; likely retired/standby, need source.\n9. **Ô Môn 1** — 660 MW; currently oil-fired but PDP8 says convert to domestic gas Lô B. Need final classification note: existing oil plant with future domestic-gas conversion.\n10. **Ô Môn 2** — 1,050 MW — domestic gas Lô B, planned/construction status to verify.\n11. **Ô Môn 3** — 1,050 MW — domestic gas Lô B, EVN/ODA status to verify.\n12. **Ô Môn 4** — 1,050 MW — domestic gas Lô B, status to verify.\n13. **Nhơn Trạch 1** — 450/465 MW domestic gas.\n14. **Nhơn Trạch 2** — 750 MW domestic gas.\n15. **Cà Mau 1** — 750 MW domestic gas.\n16. **Cà Mau 2** — 750 MW domestic gas.\n17. **Dung Quất 1** — 750 MW domestic gas Cá Voi Xanh, planned.\n18. **Dung Quất 2** — 750 MW domestic gas Cá Voi Xanh, planned.\n19. **Dung Quất 3** — 750 MW domestic gas Cá Voi Xanh, planned.\n20. **Miền Trung 1** — 750 MW domestic gas Cá Voi Xanh, planned.\n21. **Miền Trung 2** — 750 MW domestic gas Cá Voi Xanh, planned.\n22. **Quảng Trị CCGT / Báo Vàng gas** — 340 MW, planned.\n\n### C. Imported LNG projects from PDP8 and implementation plan to verify\n\nCore PDP8 LNG list:\n\n1. **LNG Quảng Ninh** — 1,500 MW.\n2. **LNG Thái Bình** — 1,500 MW.\n3. **LNG Nghi Sơn** — 1,500 MW.\n4. **LNG Quảng Trạch 2** — 1,500 MW, converted from coal.\n5. **LNG Quỳnh Lập / Nghi Sơn** — 1,500 MW, site ambiguity.\n6. **LNG Hải Lăng phase 1** — 1,500 MW.\n7. **LNG Cà Ná** — 1,500 MW.\n8. **Sơn Mỹ 2** — 2,250 MW.\n9. **Sơn Mỹ 1 BOT** — 2,250 MW.\n10. **Long Sơn LNG** — 1,500 MW, 2031–2035 in PDP8.\n11. **Nhơn Trạch 3 & 4** — 1,624 MW, under construction/commissioning status to verify.\n12. **Hiệp Phước LNG phase I** — 1,200 MW.\n13. **Long An 1 LNG** — 1,500 MW.\n14. **Long An 2 LNG** — 1,500 MW, 2031–2035 in PDP8.\n15. **Bạc Liêu LNG** — 3,200 MW.\n\nPotential/replacement LNG sites from PDP8 note and E-542 lead, to include only if announced/pre-permit with admissible source or if historically important cancelled/shelved:\n\n- Chân Mây, Mũi Kê Gà, Tân Phước, Bến Tre, Cà Mau LNG, Cái Mép/Long Sơn variants, Hải Phòng LNG variants, Vân Phong/Mỹ Giang LNG, Phú Mỹ 3.1 LNG, Bà Rịa 2 LNG.\n\n### D. Shelved / cancelled / superseded coal projects to verify\n\nThese appear in PDP7/PDP7A/Report 32/58/E-542 but may have been cancelled, converted to LNG, or dropped from PDP8:\n\n1. **Quỳnh Lập 1** — 1,200 MW — in PDP8 as under construction? actually listed in delayed/legacy sources; verify.\n2. **Quỳnh Lập 2** — 1,200/1,320 MW — likely not in PDP8 coal list; possibly cancelled/shelved or LNG replacement.\n3. **Nam Định 1** — 1,200 MW — PDP8 delayed.\n4. **Nam Định 2** — 1,200/2,000 MW — older PDP only; likely shelved/cancelled.\n5. **Quảng Trị coal** — 1,320 MW — PDP8 delayed; later cancellation/conversion status to verify.\n6. **Vĩnh Tân 3** — 1,980 MW — PDP8 delayed; status to verify.\n7. **Sông Hậu 2** — 2,120 MW — PDP8 delayed; status to verify.\n8. **Long Phú 2** — 1,320 MW — older PDP; status likely shelved.\n9. **Long Phú 3** — 1,800 MW — older PDP; status likely shelved/cancelled.\n10. **Công Thanh** — 600 MW — delayed; status after June 2024 to verify.\n11. **Cẩm Thanh** — 600 MW — PDP8 delayed with June 2024 termination trigger; verify current status.\n12. **Cẩm Phả 3** — 440 MW — old PDP7A/Reports; not in PDP8 list? verify.\n13. **Hải Phòng 3** — 1,200 MW — old PDP; likely dropped/shelved.\n14. **Quảng Ninh 3** — 1,200 MW — old PDP; likely dropped/shelved.\n15. **Vũng Áng 3** — 1,200–2,400 MW — old PDP; likely dropped/shelved.\n16. **Tân Phước 1 / 2 coal** — old PDP; later LNG replacement/potential.\n17. **Kiên Lương coal complex** — 3,600 MW; investment license reportedly revoked; need admissible source.\n18. **Bạc Liêu coal** — older reserve coal project; later LNG Bạc Liêu.\n19. **Bình Định coal projects** — older potential list; likely not final PDP8.\n20. **An Giang coal / Sông Hậu 3 / Uông Bí 3 / Yên Hưng / Phú Thọ / Bắc Giang / Bảo Đại / Phả Lại 3** — include only where official planning source shows enough specificity; likely LOW if no admissible later evidence.\n\n## Source-acquisition plan\n\n### 1. National planning and legal backbone\n\nPriority official sources to retrieve/verify:\n\n- **Decision 1208/QĐ-TTg, 21 July 2011** — PDP7 and annexes.\n- **Decision 428/QĐ-TTg, 18 March 2016** — revised PDP7 and annexes.\n- **Decision 500/QĐ-TTg, 15 May 2023** — PDP8 and Annex II.\n- **PDP8 implementation plan**, including any 2024/2025 Prime Minister decision or MOIT plan update, because project status after PDP8 may have changed.\n- **Report 32 and Report 58** source originals if publicly available, to avoid relying solely on extracted evidence-pack text.\n- Official provincial planning approvals only when national PDP evidence is ambiguous.\n\nSearch strategy already started:\n\n- MOIT / Government portal queries for “Quyết định 500/QĐ-TTg phụ lục II nhiệt điện LNG than khí”.\n- EVN official annual report search.\n- Operator annual report and project-document search for PV Power, TKV, GENCOs, BOT companies.\n\n### 2. EVN / GENCO operating-asset sources\n\nUse as operating baseline and capacity cross-check:\n\n- EVN Annual Report **2010–2011**, **2017**, **2018** from evidence pack.\n- EVN Annual Report **2022–2023** and **2025 / 2024 data** found in search results; these provide current system capacity and ownership totals but may not give a full plant-level table.\n- GENCO 1, GENCO 2, GENCO 3 annual reports and plant pages for plant-level ownership/capacity:\n  - GENCO 1: Uông Bí, Quảng Ninh, Nghi Sơn 1, Duyên Hải 1/3/3MR.\n  - GENCO 2: Phả Lại, Hải Phòng, Cần Thơ/Ô Môn.\n  - GENCO 3: Vĩnh Tân 2, Mông Dương 1, Phú Mỹ, Bà Rịa, Thủ Đức, Ninh Bình.\n- EVN press releases for **COD / commercial operation acceptance** of Vĩnh Tân 4, Vĩnh Tân 4 expansion, Duyên Hải 3 expansion, Quảng Trạch 1, etc.\n\n### 3. PVN / PV Power / PV Power Services sources\n\nTarget sources:\n\n- PV Power annual reports and IPO/prospectus documents for:\n  - Nhơn Trạch 1/2.\n  - Cà Mau 1/2.\n  - Vũng Áng 1.\n  - Nhơn Trạch 3/4 LNG.\n- PVN project updates for:\n  - Thái Bình 2.\n  - Sông Hậu 1.\n  - Long Phú 1.\n  - Ô Môn 3 and 4 / Lô B gas chain.\n- ADB/JICA/World Bank lender documents for Ô Môn 3, Lô B, and related gas-to-power chain, if official Vietnamese/project sources are insufficient.\n\n### 4. Vinacomin / TKV sources\n\nTarget sources:\n\n- TKV Power annual reports / plant pages for:\n  - Na Dương 1/2.\n  - Cao Ngạn.\n  - Cẩm Phả.\n  - Sơn Động.\n  - Mạo Khê.\n  - Nông Sơn boundary check.\n- TKV project notices for Quỳnh Lập 1, Hải Phòng 3, Cẩm Phả 3, Na Dương 2.\n- MOIT/PDP8 current status if TKV project pages are stale.\n\n### 5. BOT / IPP / lender / shareholder sources\n\nPrimary or near-primary sources needed:\n\n- **AES / Mong Duong 2 project company**.\n- **Vĩnh Tân 1 BOT** project-company or China Southern Power Grid / lender documents.\n- **JAKS / Hải Dương BOT** investor announcements.\n- **Nghi Sơn 2** project-company, Marubeni, KEPCO, JBIC/NEXI.\n- **Vân Phong 1** project-company, Sumitomo, JBIC/NEXI.\n- **Vũng Áng 2** VAPCO / Mitsubishi / Chugoku / JBIC/NEXI.\n- **Duyên Hải 2** Janakuasa / lender documents.\n- **Nam Định 1**, **Sông Hậu 2**, **Vĩnh Tân 3**, **Quảng Trị coal**, **Long Phú 2** investor withdrawal/termination/conversion sources.\n- **Sơn Mỹ 1/2 LNG**: AES, EDF, PVN/PV Power, government notices.\n- **Bạc Liêu LNG**: Energy Capital Vietnam, provincial/central approvals.\n- **Long An LNG**: VinaCapital/GS Energy or provincial approvals.\n- **Cà Ná LNG**, **Hải Lăng LNG**, **Quảng Ninh LNG**, **Thái Bình LNG**, **Nghi Sơn LNG**, **Hiệp Phước LNG**, **Long Sơn LNG**: project investor pages, provincial investment decisions, PDP8 implementation plan.\n\n### 6. Technology classification plan\n\nBecause the final table requires a technology label but many Vietnamese planning sources list only capacity/fuel:\n\n- Coal:\n  - Small legacy coal units likely **Subcritical** unless a primary/EPC source proves otherwise.\n  - Large modern 600–660 MW units may be **Subcritical / Supercritical / USC** depending on project-specific source.\n  - Do not infer USC/supercritical without source; mark “Subcritical? / gross/net unspecified” only if evidence is weak, but the final technology field must remain within requested labels. I will use notes to preserve uncertainty where necessary.\n- Gas:\n  - Most modern gas plants are **CCGT**.\n  - Legacy turbine-only assets may be **OCGT**.\n  - Mixed/simple-cycle converted to combined-cycle plants will be split where evidence supports it.\n\n### 7. Reconciliation rules to apply in later turns\n\n- Prefer **PDP8 / implementation plan** over PDP7/PDP7A for future status, unless an operator/lender source after PDP8 gives a more current project status.\n- Treat projects in PDP7/PDP7A but absent from PDP8 as **Shelved** or **Cancelled** only if supported by an admissible source; otherwise **LOW** with explanatory note.\n- A project listed in PDP8 but with no investor / no permit evidence becomes **Pre-permit** or **Announced**, depending on whether it appears only as a planned PDP line or has site/investor approvals.\n- Status older than 24 months without confirmation will cap confidence at **MEDIUM**; older than 48 months at **LOW**.\n- Operator self-report without independent official confirmation capped at **MEDIUM**.\n\n## Initial source acquisition already identified\n\nI have located official EVN sources that will be useful in the next research turn:\n\n- EVN’s **Overview of national power sources in 2023**, published 1 June 2024, reports system capacity and coal/gas/oil aggregate shares.\n- EVN Annual Report **2022–2023** PDF.\n- EVN Annual Report **2025** PDF, containing 2023/2024 installed capacity by ownership and fuel type.\n\nThese will not be enough for plant-level final rows, but they are useful cross-checks against the summed operating universe.\n\n## Next research turn tasks\n\n1. Retrieve/open the official PDP8 decision and implementation plan sources.\n2. Retrieve EVN Annual Report 2022–2023 and 2025 PDF passages for capacity and current construction.\n3. Search and capture PV Power annual reports and project pages for gas assets and Vũng Áng 1.\n4. Search and capture TKV/TKV Power sources for Vinacomin coal assets.\n5. Search BOT/lender project pages for Vĩnh Tân 1, Hải Dương, Nghi Sơn 2, Vân Phong 1, Vũng Áng 2, Duyên Hải 2, Mong Dương 2.\n6. Build the normalized draft inventory and flag all unresolved assets before the final report.",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779656286.0,
+  "conversation": null,
+  "max_output_tokens": 50000,
+  "max_tool_calls": null,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 82123,
+    "input_tokens_details": {
+      "cached_tokens": 4224
+    },
+    "output_tokens": 4535,
+    "output_tokens_details": {
+      "reasoning_tokens": 144
+    },
+    "total_tokens": 86658
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

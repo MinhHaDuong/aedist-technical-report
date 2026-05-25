@@ -1,0 +1,38 @@
+Produce the Phase B deliverable: a single Markdown document inventorying all Vietnam thermal generation assets >30 MWe, past, present, and future, including coal, domestic gas, and imported LNG, and including operating, retired, construction, announced, shelved, and cancelled projects.
+
+Required final structure:
+1. Begin immediately with exactly one Markdown pipe table. No title, no preamble, no overview before the table. The table columns must be exactly, in order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+2. After the table, add concise per-asset/project explanatory notes only for assets that warrant them: major, disputed, ambiguous, historically important, cancelled/shelved, converted/replaced, or source-conflicted. Straightforward operating assets need no long note beyond the table Notes field.
+3. End with an annotated bibliography of every source cited, giving full citation, URL when available, original-language title plus English translation for non-English sources, and a short annotation of what was drawn from it.
+
+Research process and budget discipline:
+- You may use up to three non-report turns for planning/search/decomposition if needed. Do not rush to the final inventory on the first turn unless you already have enough source coverage.
+- First build a discovery list from official PDP documents, EVN/PVN/PV Power/GENCO/Vinacomin/project-company pages, provincial/government decisions, EIAs/ESIAs, World Bank/ADB/JICA documents, and reputable trackers/trade press. Tertiary sources may only generate leads.
+- Then verify each row with admissible sources. For the table Source 1 and Source 2 fields, use compact source labels that correspond exactly to entries in the bibliography. If only one admissible source exists, put "not found" in the other Source field. If no admissible source is located but the asset is a known lead, include it with Source 1 = "not found", Source 2 = "not found", Confidence = LOW.
+- Do not cite Wikipedia, Wikidata, DBpedia, mirrors, unsourced tertiary compilations, or deposited datasets that do not expose per-value primary sourcing as inventory sources. If such a source is the only reason you know of a lead, mention that only in Notes and mark LOW.
+- Favor source quality over polish: primary official/operator/regulator sources first; international-institution documents second; bylined trade press and reputable industry trackers third.
+- Use local Vietnamese names where possible. Include English names/translations separately.
+
+Inventory rules:
+- Scope: every thermal generation asset in Vietnam >30 MWe using coal, domestic gas, or imported LNG at any lifecycle stage, including cancelled/shelved/replaced projects. Exclude hydro, wind, solar, biomass-only, waste-to-energy under threshold, diesel-only isolated generators below threshold, and purely industrial captive boilers unless grid-scale electric capacity >30 MWe is evidenced.
+- Default row unit is the plant/unit-group. Split co-located complexes into separate rows when capacity, COD, owner/developer, status, fuel, or financing differ. Aggregate only when detailed evidence is unavailable; mark ambiguous in Notes.
+- Capacity must be electrical MWe. If gross/net is not specified, state the MW figure and note "gross/net unspecified." Units × MW must reconcile with Total MWe or Notes must explain the discrepancy.
+- Technology vocabulary: for coal use Subcritical, Supercritical, USC, or "not found" if unresolved; for gas use CCGT, OCGT, or "not found" if unresolved. Do not invent technology from capacity alone unless marked inferred LOW in Notes.
+- Fuel field must be one of: Coal, Domestic gas, Imported LNG. If a project converted from coal to LNG or gas to LNG, use the current/replacement fuel for current rows and explain history in Notes; if both versions are distinct cancelled/current assets, use separate rows.
+- Status must be one of exactly: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired. Use Status as-of-date as the best-supported date for the status determination; distinguish source publication date from actual status date when possible.
+- COD should be year or date range if supported; use planned COD for non-operating projects and label in Notes if planned. Use "not found" where unavailable.
+
+Confidence and conflict handling:
+- HIGH = at least two independent concordant sources, with at least one primary.
+- MEDIUM = one primary source, or a sourced aggregator/tracker citing a verifiable primary.
+- LOW = secondary only, inferred, unresolved conflict, stale, or no admissible source.
+- Before assigning HIGH, check independence: sources with the same origin count as one; re-syndicated Wikipedia/Wikidata content is not admissible.
+- Operator self-reports not confirmed by official source cap at MEDIUM. Status attested only by a source older than 24 months and unconfirmed since caps status at MEDIUM; older than 48 months caps status at LOW.
+- If sources conflict, investigate whether differences arise from time changes, gross vs net capacity, Vietnamese/English translation, site vs project aggregation, or transcription error. Prefer higher-tier and fresher sources, document the conflict in Notes, and lower confidence if unresolved.
+
+Output constraints:
+- Exactly one pipe table in the whole document: the inventory table. Do not use pipe tables for summaries, bibliography, or notes.
+- Do not add statistical cross-tabs. If useful, mention aggregate observations only in prose after the main table.
+- Keep notes concise. For qualified claims in explanatory notes, state the value, confidence, evidence type, and source labels.
+- Never fabricate URLs. If you know a document exists but cannot verify the exact URL, write "URL not verified" in the bibliography.
+- If budget becomes tight, prioritize comprehensive rows, Source fields, Confidence, Status as-of-date, and Notes explaining uncertainty over long prose.

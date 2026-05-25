@@ -1,0 +1,12 @@
+{
+  "agent": "qwen",
+  "run": 1,
+  "model": "qwen3.7-max-2026-05-20",
+  "classification": "report",
+  "tokens_out": 9849,
+  "wall_s": 59.01,
+  "cost_usd": 0.2802,
+  "classifier_cost_usd": 0.002888,
+  "narrative_chars": 26618,
+  "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+}

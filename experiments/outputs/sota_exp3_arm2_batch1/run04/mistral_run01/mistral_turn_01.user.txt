@@ -1,0 +1,25 @@
+Compile a complete, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section.
+
+**Inventory Table Structure:**
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+|--------------------|----------------|----------|------|------------|------------|-----------|--------|-------------------|-----|------------------|------------|----------|----------|-------|
+
+**Requirements:**
+1. **Scope:** Include all thermal assets > 30 MWe, regardless of status (announced, operating, retired, cancelled, etc.).
+2. **Source Quality:** Use only admissible sources (official documents, regulator data, operator filings, or sourced secondary reports). Trace all claims to their original source. If a source is unverified, mark it as 'URL not verified' or 'not found' and assign LOW confidence.
+3. **Confidence:** Assign HIGH, MEDIUM, or LOW confidence to each row based on source independence, agreement, and freshness. Explain confidence for disputed or uncertain attributes in Notes.
+4. **Temporality:** Ensure every value has an as-of date. Distinguish current status from past reports and planned from operating capacity.
+5. **Coherence:** Reconcile conflicting sources explicitly in Notes. Avoid double-counting, negative capacities, or cross-row contradictions.
+6. **Notes:** Provide concise, sourced explanatory notes for major, disputed, ambiguous, or historically important assets. Straightforward operational assets may have minimal Notes.
+7. **Bibliography:** Include an annotated bibliography of every source cited, with full citation, URL (if available), original-language title (plus English translation for non-English sources), and a summary of what was drawn from each source.
+
+**Search Strategy:**
+- Use web search to identify leads and locate primary sources.
+- Cross-reference official government databases (e.g., EVN, MOIT, PDP8), operator websites, and regulator reports.
+- Prioritize recent sources (within 24 months for status claims).
+- For each asset, aim for at least two independent sources, with at least one primary.
+
+**Budget Discipline:**
+- Monitor token and dollar budgets closely. Preserve recall, provenance, and uncertainty notes; compress per-asset notes and bibliography annotations if necessary.
+
+Begin the inventory table immediately. Do not include a title, preamble, or overview section.

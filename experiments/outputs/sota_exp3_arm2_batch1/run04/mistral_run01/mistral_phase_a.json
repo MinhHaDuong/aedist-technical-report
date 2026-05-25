@@ -1,0 +1,53 @@
+{
+  "run_id": "c6dff3fc373a",
+  "timestamp": "2026-05-24T21:50:37.556457Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "mistral-large-2512",
+    "temperature": null,
+    "max_tokens": 1439,
+    "prompt_version": null,
+    "extra": {
+      "prompt_preview": "# ROLE\n\nYou are a state-of-the-art AI assistant being evaluated as a subject in a structured statistical-inventory experiment. The conversation runs in two phases: this turn (Phase A) is for designing",
+      "conversation_id": "conv_019e5bf79d0c7488bacfccf41d014349",
+      "agent_id": "ag_019e5bf79c2b76d286f67f8d435315cd"
+    }
+  },
+  "resource_use": {
+    "wall_s": 23.146,
+    "cost_usd": 0.003385,
+    "tokens_in": 2453,
+    "tokens_out": 1439,
+    "cost_breakdown": {
+      "input": 0.0012265,
+      "output": 0.0021585
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": null,
+  "validation": null,
+  "agent_family": "mistral-direct",
+  "agent_mode": "phase_a_design",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [],
+  "citations": [],
+  "parsed_table_path": null,
+  "finish_reason": "stop",
+  "retry_count": null,
+  "error": null,
+  "reasoning_summary": null,
+  "tool_calls_cost_usd": 0.0
+}

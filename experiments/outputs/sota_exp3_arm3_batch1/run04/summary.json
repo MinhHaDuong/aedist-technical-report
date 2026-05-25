@@ -1,0 +1,50 @@
+[
+  {
+    "agent": "mistral",
+    "run": 1,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 15566,
+    "wall_s": 261.97,
+    "cost_usd": 0.0623,
+    "classifier_cost_usd": 0.000993,
+    "narrative_chars": 100967,
+    "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+  },
+  {
+    "agent": "openai",
+    "run": 1,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 19488,
+    "wall_s": 199.3,
+    "cost_usd": 0.4945,
+    "classifier_cost_usd": 0.002811,
+    "narrative_chars": 59006,
+    "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+  },
+  {
+    "agent": "anthropic",
+    "run": 1,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 37852,
+    "wall_s": 656.6,
+    "cost_usd": 2.8404,
+    "classifier_cost_usd": 0.003741,
+    "narrative_chars": 51145,
+    "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+  },
+  {
+    "agent": "qwen",
+    "run": 1,
+    "model": "qwen3.7-max-2026-05-20",
+    "classification": "report",
+    "tokens_out": 9849,
+    "wall_s": 59.01,
+    "cost_usd": 0.2802,
+    "classifier_cost_usd": 0.002888,
+    "narrative_chars": 26618,
+    "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+  }
+]
