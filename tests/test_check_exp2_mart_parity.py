@@ -19,7 +19,18 @@ def test_check_parity_passes_for_matching_views(tmp_path):
 
     _write_csv(
         old_dir / "tab_exp2_arms_runs.csv",
-        ["arm", "agent", "model", "run", "classification", "narrative_chars", "inventory_rows", "cost_usd", "wall_s", "turns"],
+        [
+            "arm",
+            "agent",
+            "model",
+            "run",
+            "classification",
+            "narrative_chars",
+            "inventory_rows",
+            "cost_usd",
+            "wall_s",
+            "turns",
+        ],
         [
             {
                 "arm": "naive",
@@ -37,7 +48,18 @@ def test_check_parity_passes_for_matching_views(tmp_path):
     )
     _write_csv(
         mart_dir / "tab_exp2_arms_runs_view.csv",
-        ["arm", "agent", "model", "run", "classification", "narrative_chars", "inventory_rows", "cost_usd", "wall_s", "turns"],
+        [
+            "arm",
+            "agent",
+            "model",
+            "run",
+            "classification",
+            "narrative_chars",
+            "inventory_rows",
+            "cost_usd",
+            "wall_s",
+            "turns",
+        ],
         [
             {
                 "arm": "naive",
@@ -107,12 +129,30 @@ def test_check_parity_passes_for_matching_views(tmp_path):
     _write_csv(
         old_dir / "exp2_turn_trajectory.csv",
         turn_fields,
-        [{"agent": "anthropic", "arm": "optimised", "run": "1", "turn": "1", "rows": "1", "cls": "report"}],
+        [
+            {
+                "agent": "anthropic",
+                "arm": "optimised",
+                "run": "1",
+                "turn": "1",
+                "rows": "1",
+                "cls": "report",
+            }
+        ],
     )
     _write_csv(
         mart_dir / "exp2_turn_trajectory_view.csv",
         turn_fields,
-        [{"agent": "anthropic", "arm": "optimised", "run": "1", "turn": "1", "rows": "1", "cls": "report"}],
+        [
+            {
+                "agent": "anthropic",
+                "arm": "optimised",
+                "run": "1",
+                "turn": "1",
+                "rows": "1",
+                "cls": "report",
+            }
+        ],
     )
 
     score_fields = [
@@ -135,8 +175,8 @@ def test_check_parity_passes_for_matching_views(tmp_path):
         "accuracy_province_annotation",
         "coherence_vocab_adherence",
         "coherence_vocab_adherence_annotation",
-        "coherence_status_vocab_adherence",
-        "coherence_status_vocab_adherence_annotation",
+        "coherence_capacity_nonnegative",
+        "coherence_capacity_nonnegative_annotation",
         "provenance_source_presence",
         "provenance_source_presence_annotation",
         "provenance_high_conf_dual_source",
@@ -170,8 +210,8 @@ def test_check_parity_passes_for_matching_views(tmp_path):
         "accuracy_province_annotation": "",
         "coherence_vocab_adherence": "1.0000",
         "coherence_vocab_adherence_annotation": "",
-        "coherence_status_vocab_adherence": "1.0000",
-        "coherence_status_vocab_adherence_annotation": "",
+        "coherence_capacity_nonnegative": "1.0000",
+        "coherence_capacity_nonnegative_annotation": "",
         "provenance_source_presence": "1.0000",
         "provenance_source_presence_annotation": "",
         "provenance_high_conf_dual_source": "1.0000",

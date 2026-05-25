@@ -45,8 +45,8 @@ def _score_row(arm):
         "accuracy_province_annotation": "",
         "coherence_vocab_adherence": "1.0000",
         "coherence_vocab_adherence_annotation": "",
-        "coherence_status_vocab_adherence": "1.0000",
-        "coherence_status_vocab_adherence_annotation": "",
+        "coherence_capacity_nonnegative": "1.0000",
+        "coherence_capacity_nonnegative_annotation": "",
         "provenance_source_presence": "1.0000",
         "provenance_source_presence_annotation": "",
         "provenance_high_conf_dual_source": "1.0000",
@@ -125,8 +125,12 @@ def test_write_exp2_mart_views(tmp_path):
     outputs = write_exp2_mart_views(mart_path, output_dir, repo_root=tmp_path)
 
     arms_rows = list(csv.DictReader(outputs["tab_exp2_arms_runs_view.csv"].open(encoding="utf-8")))
-    bib_rows = list(csv.DictReader(outputs["tab_exp2_bib_quality_view.csv"].open(encoding="utf-8")))
-    turn_rows = list(csv.DictReader(outputs["exp2_turn_trajectory_view.csv"].open(encoding="utf-8")))
+    bib_rows = list(
+        csv.DictReader(outputs["tab_exp2_bib_quality_view.csv"].open(encoding="utf-8"))
+    )
+    turn_rows = list(
+        csv.DictReader(outputs["exp2_turn_trajectory_view.csv"].open(encoding="utf-8"))
+    )
     score_rows = list(csv.DictReader(outputs["sota_cross_eval_view.csv"].open(encoding="utf-8")))
 
     assert len(arms_rows) == 2

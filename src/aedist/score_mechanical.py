@@ -75,8 +75,8 @@ _CSV_COLUMNS = [
     "accuracy_province_annotation",
     "coherence_vocab_adherence",
     "coherence_vocab_adherence_annotation",
-    "coherence_status_vocab_adherence",
-    "coherence_status_vocab_adherence_annotation",
+    "coherence_capacity_nonnegative",
+    "coherence_capacity_nonnegative_annotation",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -155,6 +155,33 @@ def _as_float(value: str) -> float | None:
         return float(token)
     except ValueError:
         return None
+
+
+def _capacity_nonnegative(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
+    if not rows:
+        return None, "no_rows"
+
+    seen = 0
+    nonnegative = 0
+    for row in rows:
+        token = ""
+        for key in _CAPACITY_KEYS:
+            raw = row.get(key)
+            if raw is not None and str(raw).strip():
+                token = str(raw)
+                break
+        if not token:
+            continue
+        parsed = _as_float(token)
+        if parsed is None:
+            continue
+        seen += 1
+        if parsed >= 0:
+            nonnegative += 1
+
+    if seen == 0:
+        return None, "column_missing"
+    return round(nonnegative / seen, 4), None
 
 
 def _pick_asof_cell(row: dict[str, str]) -> str:
@@ -353,6 +380,7 @@ def main(argv: list[str] | None = None) -> None:
 
     accuracy = score_accuracy(ingested.rows, ref_path=args.reference)
     coherence = score_coherence(ingested.rows)
+    coherence_capacity, coherence_capacity_annotation = _capacity_nonnegative(ingested.rows)
     provenance = score_provenance(ingested.rows)
     temporality = score_temporality(ingested.rows)
     completeness = score_field_completeness(ingested.rows)
@@ -377,8 +405,8 @@ def main(argv: list[str] | None = None) -> None:
         "accuracy_province_annotation": accuracy.annotation or "",
         "coherence_vocab_adherence": _fmt(coherence.vocab_adherence),
         "coherence_vocab_adherence_annotation": coherence.annotation or "",
-        "coherence_status_vocab_adherence": _fmt(coherence.status_vocab_adherence),
-        "coherence_status_vocab_adherence_annotation": coherence.annotation or "",
+        "coherence_capacity_nonnegative": _fmt(coherence_capacity),
+        "coherence_capacity_nonnegative_annotation": coherence_capacity_annotation or "",
         "provenance_source_presence": _fmt(provenance.source_presence),
         "provenance_source_presence_annotation": provenance.source_presence_annotation or "",
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),
