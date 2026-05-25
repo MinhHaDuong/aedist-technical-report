@@ -11,7 +11,7 @@ import csv
 import logging
 from pathlib import Path
 
-from .util import model_family_color
+from .util import glyph_scatter_kwargs, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -68,22 +68,16 @@ def make_figure(rows: list[dict], output: Path) -> None:
                 ax.scatter(
                     xs,
                     ys,
-                    color=color,
-                    s=40,
+                    **glyph_scatter_kwargs("arm2", color),
                     zorder=3,
                     label=f"{_AGENT_LABELS[agent]} opt.",
-                    linewidths=0.5,
-                    edgecolors="white",
                 )
             else:
                 ax.scatter(
                     xs,
                     ys,
-                    facecolors="none",
-                    edgecolors=color,
-                    s=40,
+                    **glyph_scatter_kwargs("arm1", color),
                     zorder=3,
-                    linewidths=1.2,
                     label=f"{_AGENT_LABELS[agent]} naive",
                 )
 

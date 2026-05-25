@@ -20,7 +20,7 @@ import logging
 from pathlib import Path
 
 from .extract import count_best_table_rows
-from .util import COLOR_NEUTRAL, model_family_color
+from .util import COLOR_NEUTRAL, glyph_legend_handles, glyph_scatter_kwargs, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -111,7 +111,6 @@ def _load_view_turns(view_csv: Path) -> list[dict]:
 
 
 def make_figure_from_view(rows: list[dict], output: Path) -> None:
-    import matplotlib.patches as mpatches
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(1, 4, figsize=(10, 3.2), sharey=True)
@@ -127,16 +126,18 @@ def make_figure_from_view(rows: list[dict], output: Path) -> None:
             ax.plot(xs, ys, color=color, linewidth=0.8, alpha=0.45, zorder=2)
             for t in turns:
                 if t["cls"] == "report":
-                    ax.scatter([t["turn"]], [t["rows"]], color=color, s=24, zorder=3, linewidths=0)
+                    ax.scatter(
+                        [t["turn"]],
+                        [t["rows"]],
+                        **glyph_scatter_kwargs("arm2", color),
+                        zorder=3,
+                    )
                 else:
                     ax.scatter(
                         [t["turn"]],
                         [t["rows"]],
-                        facecolors="none",
-                        edgecolors=color,
-                        s=24,
+                        **glyph_scatter_kwargs("arm3", color),
                         zorder=3,
-                        linewidths=1.1,
                     )
 
         ax.set_title(_AGENT_LABELS[agent], fontsize=8, loc="left")
@@ -151,19 +152,11 @@ def make_figure_from_view(rows: list[dict], output: Path) -> None:
     for ax in axes[1:]:
         ax.tick_params(left=False)
 
-    legend_handles = [
-        mpatches.Patch(color=COLOR_NEUTRAL, label="● report"),
-        plt.Line2D(
-            [0],
-            [0],
-            marker="o",
-            color="w",
-            markerfacecolor="none",
-            markeredgecolor=COLOR_NEUTRAL,
-            markersize=6,
-            label="○ no_report",
-        ),
-    ]
+    legend_handles = glyph_legend_handles(
+        ["arm2", "arm3"],
+        color=COLOR_NEUTRAL,
+        label_overrides={"arm2": "report", "arm3": "no_report"},
+    )
     fig.legend(
         handles=legend_handles,
         loc="lower center",
@@ -185,7 +178,6 @@ def make_figure_from_view(rows: list[dict], output: Path) -> None:
 
 
 def make_figure(probes_dir: Path, output: Path) -> None:
-    import matplotlib.patches as mpatches
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(1, 4, figsize=(10, 3.2), sharey=True)
@@ -204,20 +196,15 @@ def make_figure(probes_dir: Path, output: Path) -> None:
                     ax.scatter(
                         [t["turn"]],
                         [t["rows"]],
-                        color=color,
-                        s=24,
+                        **glyph_scatter_kwargs("arm2", color),
                         zorder=3,
-                        linewidths=0,
                     )
                 else:
                     ax.scatter(
                         [t["turn"]],
                         [t["rows"]],
-                        facecolors="none",
-                        edgecolors=color,
-                        s=24,
+                        **glyph_scatter_kwargs("arm3", color),
                         zorder=3,
-                        linewidths=1.1,
                     )
 
         ax.set_title(_AGENT_LABELS[agent], fontsize=8, loc="left")
@@ -232,19 +219,11 @@ def make_figure(probes_dir: Path, output: Path) -> None:
     for ax in axes[1:]:
         ax.tick_params(left=False)
 
-    legend_handles = [
-        mpatches.Patch(color=COLOR_NEUTRAL, label="● report"),
-        plt.Line2D(
-            [0],
-            [0],
-            marker="o",
-            color="w",
-            markerfacecolor="none",
-            markeredgecolor=COLOR_NEUTRAL,
-            markersize=6,
-            label="○ no_report",
-        ),
-    ]
+    legend_handles = glyph_legend_handles(
+        ["arm2", "arm3"],
+        color=COLOR_NEUTRAL,
+        label_overrides={"arm2": "report", "arm3": "no_report"},
+    )
     fig.legend(
         handles=legend_handles,
         loc="lower center",

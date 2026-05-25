@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from .util import COLOR_NEUTRAL, model_family_color
+from .util import COLOR_NEUTRAL, glyph_for_method, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -57,8 +57,8 @@ _DEFAULT_AXES = [
 ]
 
 _ARM_STYLES = {
-    "naive": {"linestyle": "--", "marker": "o", "label": "naive", "alpha": 0.16},
-    "optimised": {"linestyle": "-", "marker": "s", "label": "optimised", "alpha": 0.10},
+    "naive": {"linestyle": "--", "method": "arm1", "label": "naive", "alpha": 0.16},
+    "optimised": {"linestyle": "-", "method": "arm2", "label": "optimised", "alpha": 0.10},
 }
 
 _CLOSE_TO_PLOT = {"Accuracy", "Temporality"}
@@ -245,13 +245,14 @@ def make_figure(rows: list[dict[str, str]], config: dict, output: Path) -> None:
             closed_values = values + [values[0]]
             family_color = model_family_color(model)
             style = _ARM_STYLES[arm]
+            glyph = glyph_for_method(style["method"])
             ax.plot(
                 closed_angles,
                 closed_values,
                 color=family_color,
                 linestyle=style["linestyle"],
-                marker=style["marker"],
-                markersize=4.5,
+                marker=str(glyph["marker"]),
+                markersize=max(4.0, float(glyph["s"]) ** 0.5),
                 linewidth=1.9,
                 label=f"{model} ({style['label']})",
             )
