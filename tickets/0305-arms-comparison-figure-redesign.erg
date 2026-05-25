@@ -1,47 +1,58 @@
 %erg 0.1
-Title: fig_exp2_arms_comparison — 4-arm redesign
+Title: fig_exp2_arms_comparison — 4-arm 2×2 redesign
 Created: 2026-05-25
 Author: HDMX-coding-agent
 Blocked-by: 0304
 
 --- log ---
 2026-05-25T15:00Z HDMX-coding-agent created
+2026-05-25T16:00Z HDMX-coding-agent amended — 2×2 layout confirmed; full glyph spec added
 
 --- body ---
 ## Context
 
-The current `plot_exp2_arms_comparison.py` shows two arms (naive /
-optimised, i.e. arm1 / arm2) in a 3-panel layout (A coverage, B output
-richness, C cost). The experiment has four arms:
+The current figure shows two arms (arm1 naive / arm2 optimised) in a
+3-panel layout. The experiment is a 2×2 design:
 
-  arm1 — web, single-shot (naive)
-  arm2 — web, multi-turn (optimised)
-  arm3 — web + evidence pack, single-shot
-  arm4 — web + evidence pack, multi-turn
+               single-shot (direct) │ multi-turn
+  no pack          arm1             │    arm2
+  with pack        arm3             │    arm4
 
 Changes requested:
-- Show all four arms
-- Drop panel B (output richness — narrative_chars)
-- Add horizontal reference line at 163 (N_REFERENCE_PLANTS, dashed green)
-- Zeroes from arm4 are extractor failures (fixed by 0304); render
-  no_report runs as × markers at y=0 as before, but do not show genuine
-  zeros as × unless classification == "no_report"
-- Per-model colour from `model_family_color()` (not per-arm colour)
-- Glyph encodes arm: ○ single-shot/direct, ◇ multi-turn;
-  fill encodes evidence pack: open = no pack, filled = with pack
+- 2×2 grid of panels, one panel per arm (layout above)
+- Each panel: 4 agent groups on x-axis, y-axis = plants enumerated
+- Add horizontal reference line at 163 (N_REFERENCE_PLANTS, dashed,
+  colour = COLOR_REFERENCE from palette)
+- Drop the old 3-column layout (A coverage / B output richness / C cost);
+  coverage is the single y-axis; cost moves to a separate row label or
+  is dropped
+- Structural zeros (classification == no_report) rendered as × at y=0
+- Per-model colour from `model_family_color()` — retire COLOR_ARM_NAIVE
+  and COLOR_ARM_OPTIMISED for this figure
+- Glyph encodes arm per palette.toml [glyphs] section (ticket 0308):
+  arm1 = open circle, arm2 = open diamond, arm3 = filled circle,
+  arm4 = filled diamond. Until 0308 lands, hardcode these four glyphs.
+- Shared y-axis across all four panels so the "datapack lifts to 163"
+  effect is immediately visible at a glance
 
-Resulting layout: 2 panels (A coverage, B cost), 4 agent groups × 4
-arm columns each. Or — if 4×4 is too busy — one panel per arm
-(2×2 grid) showing per-agent coverage + cost as two y-axes.
-Use whichever layout is clearer; favour the one that makes the
-"datapack lifts all models to 163" claim immediately visible.
+## Suggested layout sketch
+
+  ┌──────────────┬──────────────┐
+  │ (a) arm1     │ (b) arm2     │
+  │ web, direct  │ web, multi   │
+  ├──────────────┼──────────────┤
+  │ (c) arm3     │ (d) arm4     │
+  │ +pack, direct│ +pack, multi │
+  └──────────────┴──────────────┘
+  x-axis of each panel: Anthropic / Mistral / OpenAI / Qwen
+  y-axis (shared): plants enumerated (0–180), 163 reference line
 
 ## Exit criteria
 
-- [ ] Figure shows all 4 arms, all 4 agents
+- [ ] Figure is a 2×2 grid with panels labelled (a)–(d)
+- [ ] All 4 arms visible; 163 reference line on every panel
 - [ ] No panel B (output richness)
-- [ ] 163 reference line visible on the coverage panel
-- [ ] Glyph + fill correctly encode arm type (single/multi × pack/no-pack)
-- [ ] Per-model colour from palette (no ARM_NAIVE / ARM_OPTIMISED colours)
+- [ ] Per-model colour; glyph per arm
+- [ ] Structural zeros rendered as × at y=0
 - [ ] `make check-fast` passes
 - [ ] Figure committed to `report/inputs/generated/`
