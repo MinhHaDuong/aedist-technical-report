@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-05-25T05:55Z HDMX-coding-agent created
+2026-05-25T06:10Z HDMX-coding-agent note fragmentation observed across arms/agents; JSON output brainstorm added
 
 --- body ---
 ## Context
@@ -22,6 +23,42 @@ constrain output table structure.
   instructs the agent how to design the Phase B prompt
 - `experiments/sota/protocol_06_validation_round_1.md` — validation round
   prompt (if used as VERIFY_REPLY source)
+
+## Fragmentation survey (2026-05-25, table-header count in final output turn)
+
+| Agent    | Arm1 (single-shot) | Arm2 (multi-turn) | Arm3 (RAG) | Arm4 (EP) |
+|----------|--------------------|-------------------|------------|-----------|
+| mistral  | 71h                | 9h                | 2h         | 0h*       |
+| openai   | 88h                | —                 | 72h        | 0h*       |
+| anthropic| 53h                | —                 | 22h        | 34h       |
+| qwen     | 36h                | —                 | 7h         | 0h*       |
+
+\* arm4 non-anthropic uses a different raw format; 0h reflects a parsing gap,
+not confirmed absence of fragmentation.
+
+Arm1 counts are inflated — single-shot outputs include per-plant narrative
+sections; true table count is lower. Fragmentation is cross-agent but worst
+for openai (arm3) and anthropic (arm4). Mistral arm2/3 is the least fragmented.
+
+## Brainstorm: alternative output formats
+
+**Option A — Prescribe exact Markdown header (current plan, Actions below)**
+Simplest, uniform across all agents, no adapter changes.
+
+**Option B — Request JSON output**
+Ask the agent to return the plant inventory as a JSON array in a code block.
+Pros: inherently unified, `inventory_rows = len(data["plants"])` exact.
+Cons: Anthropic has no `response_format` param — compliance is prompt-only;
+JSON is more verbose than a table (more tokens); bibliography stays prose so
+output is hybrid.
+
+**Option C — `submit_inventory` tool call (forced structured output)**
+Define a tool the agent must call to submit its final inventory. API enforces
+the schema; reasoning turns stay as prose.
+Pros: no extraction heuristics; schema-validated.
+Cons: not uniform — Mistral stateful-agent API handles tool use differently
+from Anthropic/OpenAI; Qwen tool-use reliability untested. Would need
+per-adapter implementation. Not worth it until prompt fix proves fragile.
 
 ## Actions
 1. **Prescribe the exact table header** in the Phase A meta-prompt: instruct
