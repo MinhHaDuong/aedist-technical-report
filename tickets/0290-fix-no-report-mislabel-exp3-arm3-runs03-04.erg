@@ -2,11 +2,13 @@
 Title: Fix no_report mislabel in exp3 arm3 runs 03-04 artifacts
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: Artifacts corrected on main (commit c0d1e958); run03/04 anthropic.json and summary.json reclassified to report; READMEs document the correction
 
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
 2026-05-25T00:00Z HDMX-coding-agent note isolated artifact-only correction in dedicated worktree branch `t0290-no-report-separation`.
 
+2026-05-25T16:18Z HDMX-coding-agent closed — Artifacts corrected on main (commit c0d1e958); run03/04 anthropic.json and summary.json reclassified to report; READMEs document the correction
 --- body ---
 ## Context
 

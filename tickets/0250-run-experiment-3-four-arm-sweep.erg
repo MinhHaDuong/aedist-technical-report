@@ -2,6 +2,7 @@
 Title: Run Experiment 3 intervention arms
 Created: 2026-05-23
 Author: Copilot
+Closed: Exp 3 Arms 3 and 4 runs completed per STATE.md workplan item 1
 
 --- log ---
 2026-05-23T16:02Z Copilot created
@@ -9,6 +10,7 @@ Author: Copilot
 2026-05-23T20:11Z HDMX-coding-agent note blocker 0249 closed — Blocked-by removed.
 2026-05-24T16:00Z HDMX-coding-agent note added Blocked-by 0278 (reprompt bundle: table-first, single-table, no summary tables, max_tokens 64K); 0278 is itself blocked on 0279+0280
 2026-05-24T17:27Z HDMX-coding-agent note blocker 0278 closed — Blocked-by removed.
+2026-05-25T16:15Z HDMX-coding-agent closed — Exp 3 Arms 3 and 4 runs completed per STATE.md workplan item 1
 --- body ---
 ## Context
 The Experiment 3 protocol is drafted and the implementation path is split into an assembler prerequisite and a runtime patch. This ticket covers the actual Experiment 3 runs after the codebase patch lands. Arms 1 and 2 are reused as existing baselines; they are not rerun.
