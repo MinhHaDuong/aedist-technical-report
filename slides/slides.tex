@@ -77,9 +77,12 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Épouvantail: Utiliser un générateur de mots aléatoires}
+% Exp 1 — Baseline paramétrique
+% -------------------------------------------------------------------
 
-\textbf{Expérimentation \NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
+\begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
+
+\textbf{\NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
 ``{\ttfamily \input{../experiments/prompts/prompt_extract.txt}}''
 
 \smallskip
@@ -91,25 +94,119 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
   \item Coût~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
 
+\medskip
+{\small \textit{Condition~: connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé.}}
 \end{frame}
 
+% -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
 \includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
-\begin{tikzpicture}[remember picture,overlay] % TODO: Simplifier en choisissant des modèles et en fixant leur ordre dans un fichier de conf de la figure
+\begin{tikzpicture}[remember picture,overlay]
 \node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
 Récalcitrant\\
 Incomplet\\
 Hallucinant\\
-Non-deterministe\\
+Non-déterministe\\
 Non-monotone
 };
 \end{tikzpicture}
 \end{frame}
 
-% Act II — La question qui change tout
+% -------------------------------------------------------------------
+% Profils de qualité par famille — spider chart
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
+\end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_direct_cost_quality.pdf}
+\end{frame}
+
+% -------------------------------------------------------------------
+% Exp 2 — SOTA avec web search : le design
+% -------------------------------------------------------------------
+
+\begin{frame}{Expérience 2 : le SOTA avec web search ne suffit pas}
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Facteur} & \textbf{Valeurs} & \textbf{Enjeu} \\
+\midrule
+\textbf{Nombre de tours}  & passe unique / multi-tours (3 relances) & protocole \\
+\textbf{Documentation}    & aucune / RAG massif (155 ko) + web search & ancrage \\
+\textbf{Agents}           & 4 SOTA : Opus~4.6, GPT-5.5, Mistral Large, Qwen3-Max & contrôle \\
+\textbf{Runs}             & 5 par cellule & variance \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+& \textbf{arm 1} & \textbf{arm 2} & \textbf{arm 3} & \textbf{arm 4} \\
+& passe unique & multi-tours & +docs, passe unique & +docs, multi-tours \\
+\midrule
+Nombre de tours & 1 & 3+ & 1 & 3+ \\
+Docs + web      & \texttimes & \texttimes & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+{\small \textit{Coût total Exp 2 : \$0,82. Les 4 agents ont accès au même corpus RAG vérifié manuellement (PDP7, PDP7A, PDP8, EVN).}}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{La méthode, quelques détails}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Infrastructure~:}
+\begin{itemize}\setlength\itemsep{3pt}
+  \item \textbf{git-erg}~: gestion de tickets locale, agent-friendly\\
+        {\small Format texte versionné~; les agents lisent et ferment les tickets comme des humains.}
+  \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
+        {\small Même script, n'importe quel fournisseur~; les runs sont reproductibles à partir du hash.}
+  \item \textbf{Protocole relu et validé par les LLM eux-mêmes}\\
+        {\small 4 agents consultés~: 2/4 ont validé sans réserve, 2/4 avec réserves.\\
+        \textit{(Les réserves étaient fondées.)}}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Protocole multi-tours (Exp~2)~:}
+\begin{description}\setlength\itemsep{3pt}
+  \item[\textbf{Phase A}] Chaque agent optimise son propre prompt et planifie le job ($\leq$\$1).
+  \item[\textbf{Phase B}] Jusqu'à 3 tours de recherche + 1 tour de finalisation.
+  \item[\textbf{Transitions}] Script state machine~; un LLM juge à chaque tour si l'agent a produit un rapport ou doit continuer.
+\end{description}
+\end{columns}
+
+\medskip
+\begin{center}
+{\small\textit{L'agent conçoit son propre protocole, l'exécute, et un autre LLM arbitre.\\
+Un jury de pairs --- mais le jury est aussi un modèle.}}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_arms_comparison.pdf}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
+\end{frame}
+
+% -------------------------------------------------------------------
+% Act II — La question qui change tout
+% -------------------------------------------------------------------
+
 \begin{frame}{Question centrale: «~quelle architecture~?», pas «~quel modèle~?»}
 \begin{center}
 \large
@@ -144,34 +241,6 @@ et où mènent les architectures à états agentiques.}
 \bigskip
 \begin{center}
 \small\textit{Chaque section présente une défaillance et son mécanisme correcteur.}
-\end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Design expérimental}
-\begin{center}
-\Large
-\textbf{\NumModelsTested{} modèles $\boldsymbol{\times}$ 5 méthodes $\boldsymbol{\times}$ 3 répétitions}
-
-\bigskip
-\normalsize
-\$0{,}82 au total --- Vietnam, 163~centrales thermiques
-
-\bigskip\bigskip
-\small
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Facteur} & \textbf{Valeurs testées} & \textbf{Enjeu} \\
-\midrule
-Documentation  & aucune, multi-tours, RAG massif        & Ancrage \\
-Décomposition  & passe unique, par combustible           & Couverture \\
-Agrégation     & meilleur run, vote union                & Rappel \\
-Modèle         & \NumModelsTested{} de 10 laboratoires  & Contrôle \\
-\bottomrule
-\end{tabular}
-
-\bigskip
-\textit{Le modèle est un facteur parmi d'autres.}
 \end{center}
 \end{frame}
 
@@ -330,40 +399,6 @@ DeepSeek V3.2 (\$0.26/M)    &  63 & \textbf{98} \\
 \textbf{Résultat clé~:}\\
 Avec des documents, un modèle bon marché surpasse un modèle coûteux. La \textbf{méthode} (RAG) domine le choix du modèle.
 \end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Quels modules du prompt comptent~?}
-\begin{center}
-{\small \textit{[Résultats d'ablation en attente --- ticket~0038]}}
-
-\medskip
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Module} & \textbf{$\Delta$F1 param.} & \textbf{$\Delta$F1 RAG} & \textbf{Impact} \\
-\midrule
-Persona                & --- & --- & --- \\
-Vue d'ensemble secteur & --- & --- & --- \\
-Narratifs              & --- & --- & --- \\
-Bibliographie          & --- & --- & --- \\
-Tableau croisé         & --- & --- & --- \\
-Sourçage par ligne     & --- & --- & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\begin{center}
-{\small Ablation sur 6 modules, régimes paramétrique et RAG.\\
-C'est le résultat central qui justifie «~Beyond RAG~» comme titre.}
-\end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Coût × qualité --- aucun front Pareto par modèle}
-\begin{center}
-\includegraphics[width=0.85\textwidth]{../report/inputs/generated/fig_direct_cost_quality.pdf}
-\end{center}
 \end{frame}
 
 % ===================================================================
