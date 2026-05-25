@@ -6,7 +6,9 @@
 GENERATED := inputs/generated
 ROOT_SLIDE_GEN := slides/inputs/generated
 ROOT_REPORT_GEN := report/inputs/generated
+ROOT_REPORT_ARM_GEN := report/input/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
+LOCAL_ROOT_REPORT_ARM_GEN := ../report/input/generated
 
 SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv \
@@ -66,7 +68,7 @@ $(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf: ; $(MAKE) -C .. $(ROOT_REP
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_dag.pdf
 
 # Exp2 manuscript figures are generated under report/inputs/generated.
-$(GENERATED)/fig_exp2_arms_comparison.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf
+$(GENERATED)/fig_exp2_arms_comparison.pdf: $(LOCAL_ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf
 	cp $< $@
 
 $(GENERATED)/fig_exp2_turn_trajectory.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf
@@ -75,7 +77,7 @@ $(GENERATED)/fig_exp2_turn_trajectory.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_tur
 $(GENERATED)/fig_exp2_coverage_certainty.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 	cp $< $@
 
-$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf
+$(LOCAL_ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 

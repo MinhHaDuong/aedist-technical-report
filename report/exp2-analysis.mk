@@ -3,6 +3,7 @@
 #   make -f report/exp2-analysis.mk exp2-analysis-report
 
 GEN := report/inputs/generated
+ARM_FIG_GEN := report/input/generated
 MART_JSONL := $(GEN)/exp2_mart.jsonl
 OLD_STAGE := $(GEN)/exp2-old-path
 MART_STAGE := $(GEN)/exp2-mart-path
@@ -100,7 +101,7 @@ $(GEN)/tab_exp2_arms.tex: $(GEN)/tab_exp2_arms_runs_view.csv
 
 # --- Figure: three-panel comparison (reads from CSV) -------------------------
 
-$(GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs_view.csv
+$(ARM_FIG_GEN)/fig_exp2_arms_comparison.pdf: $(GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
@@ -215,7 +216,7 @@ $(GEN)/tab_exp2_outline_hypothesis_status.tex:
 exp2-analysis-report: \
 	$(GEN)/tab_exp2_arms_runs_view.csv \
 	$(GEN)/tab_exp2_arms.tex \
-	$(GEN)/fig_exp2_arms_comparison.pdf \
+	$(ARM_FIG_GEN)/fig_exp2_arms_comparison.pdf \
 	$(GEN)/fig_exp2_turn_trajectory.pdf \
 	$(GEN)/tab_exp2_bib_quality_view.csv \
 	$(GEN)/tab_exp2_bib_quality.tex \
