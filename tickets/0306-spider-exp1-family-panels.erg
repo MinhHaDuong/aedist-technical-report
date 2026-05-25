@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Spider — Exp 1 quality profiles, 4-panel by model family
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0303
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Once ticket 0303 produces `experiments/derived/exp1_cross_eval.csv` with
+all 8 axes for all Exp 1 models, we can render a quality spider showing
+the parametric ceiling visually. The expected shape: high accuracy arcs
+(matching Exp 1 F1 results) but near-zero provenance and temporality arcs
+(models cite from memory, cannot produce real URLs). This contrast is the
+§2 quality-bar argument made visual.
+
+## Design
+
+New script `plot_quality_spider_exp1.py` (or extend
+`plot_quality_spider.py` with a `--mode exp1` flag — prefer the latter
+to avoid code duplication).
+
+Layout: 4 panels in a 2×2 grid, one per model family:
+  (a) Claude   — haiku-4.5, sonnet-4.6, opus-4.6
+  (b) GPT      — gpt-4o, gpt-4o-mini, gpt-5.5, gpt-oss-*
+  (c) Mistral  — small, medium, large
+  (d) Qwen / DeepSeek — qwen3-* sizes + deepseek-v3, deepseek-r1
+
+Within each panel: superpose all models of that family as overlapping
+spiders, using a lightness ramp within the family colour (lightest =
+smallest model, darkest = largest). Legend shows model names.
+
+Axes (8): accuracy_coverage, accuracy_precision, accuracy_fuel,
+accuracy_status, accuracy_province, provenance_source_presence,
+temporality_asof_presence, field_completeness_core.
+(Omit provenance_high_conf_dual_source and temporality_plausible_range
+if median across all Exp1 models is < 0.05 — not enough signal.)
+
+Median across runs is plotted. Shaded band: min–max across runs (5 reps).
+
+## Exit criteria
+
+- [ ] Figure produced as `report/inputs/generated/fig_spider_exp1_families.pdf`
+- [ ] 4 panels, one per family, models superposed with lightness ramp
+- [ ] Provenance + temporality axes included; annotation if near-zero
+- [ ] Wired in `Makefile` and `slides/manuscript/main.md`
+- [ ] `make check-fast` passes

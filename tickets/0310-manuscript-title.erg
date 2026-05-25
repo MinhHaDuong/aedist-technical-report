@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Manuscript title — self-explaining with subtitle
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The current manuscript title does not immediately convey what the paper
+measures, what dataset it targets, or what the finding is. Reviewers
+and conference attendees should understand the contribution from the
+title alone.
+
+Requirements from the author:
+- Self-explaining: reader understands the object (energy statistics /
+  power plant inventory), the method (LLM / AI agents), and the verdict
+  (quality gap, or "does it reach research quality?")
+- Subtitle: one sharper clause that adds the key finding or scope
+- Language: English (or bilingual if the venue norm is French)
+
+## Candidate frame (to iterate with author)
+
+Example structure:
+  "Can AI Agents Produce Research-Quality Energy Statistics?
+   A Benchmark Study on Vietnam's Thermal Power Fleet"
+
+Or:
+  "From Parametric Recall to Agentic Retrieval:
+   Evaluating LLM-Generated Power Plant Inventories Against a
+   163-Plant Gold Standard"
+
+The author must approve the final title. This ticket is complete when
+the title is updated in `slides/slides.tex`, `slides/manuscript/main.md`,
+and any metadata files (BibTeX, YAML front-matter).
+
+## Exit criteria
+
+- [ ] Author has approved the new title
+- [ ] Updated in `slides/slides.tex` title block
+- [ ] Updated in `slides/manuscript/main.md` YAML front-matter
+- [ ] `make check-fast` passes

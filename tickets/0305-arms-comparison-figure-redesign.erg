@@ -1,0 +1,47 @@
+%erg 0.1
+Title: fig_exp2_arms_comparison — 4-arm redesign
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0304
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The current `plot_exp2_arms_comparison.py` shows two arms (naive /
+optimised, i.e. arm1 / arm2) in a 3-panel layout (A coverage, B output
+richness, C cost). The experiment has four arms:
+
+  arm1 — web, single-shot (naive)
+  arm2 — web, multi-turn (optimised)
+  arm3 — web + evidence pack, single-shot
+  arm4 — web + evidence pack, multi-turn
+
+Changes requested:
+- Show all four arms
+- Drop panel B (output richness — narrative_chars)
+- Add horizontal reference line at 163 (N_REFERENCE_PLANTS, dashed green)
+- Zeroes from arm4 are extractor failures (fixed by 0304); render
+  no_report runs as × markers at y=0 as before, but do not show genuine
+  zeros as × unless classification == "no_report"
+- Per-model colour from `model_family_color()` (not per-arm colour)
+- Glyph encodes arm: ○ single-shot/direct, ◇ multi-turn;
+  fill encodes evidence pack: open = no pack, filled = with pack
+
+Resulting layout: 2 panels (A coverage, B cost), 4 agent groups × 4
+arm columns each. Or — if 4×4 is too busy — one panel per arm
+(2×2 grid) showing per-agent coverage + cost as two y-axes.
+Use whichever layout is clearer; favour the one that makes the
+"datapack lifts all models to 163" claim immediately visible.
+
+## Exit criteria
+
+- [ ] Figure shows all 4 arms, all 4 agents
+- [ ] No panel B (output richness)
+- [ ] 163 reference line visible on the coverage panel
+- [ ] Glyph + fill correctly encode arm type (single/multi × pack/no-pack)
+- [ ] Per-model colour from palette (no ARM_NAIVE / ARM_OPTIMISED colours)
+- [ ] `make check-fast` passes
+- [ ] Figure committed to `report/inputs/generated/`

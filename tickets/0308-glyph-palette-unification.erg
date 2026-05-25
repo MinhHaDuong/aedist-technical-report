@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Unified glyph + palette across all figures
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Figures currently use inconsistent marker/colour conventions. For the
+talk the reader must be able to identify any data point by family and
+method at a glance. A single legend should suffice across all figures.
+
+## Glyph code (to be enforced in all new and existing plot scripts)
+
+Method axis (shape):
+  ●  small filled circle  — parametric (Exp 1, no web)
+  ○  open circle          — web search, single-shot (arm1 / direct)
+  ◆  filled diamond       — web search, multi-turn (arm2)
+  ◇  open diamond         — web search + evidence pack, single-shot (arm3)
+  ⬧  filled diamond (alt) — web search + evidence pack, multi-turn (arm4)
+
+In matplotlib terms:
+  parametric  → marker="o", s=18, filled
+  arm1        → marker="o", s=25, facecolor="none" (open)
+  arm2        → marker="D", s=20, filled
+  arm3        → marker="D", s=25, facecolor="none" (open)
+  arm4        → marker="D", s=20, filled (distinct colour from arm2 via edge)
+
+Colour axis (model family, already defined in palette.toml):
+  Claude / Anthropic  — existing palette colour
+  GPT / OpenAI        — existing palette colour
+  Mistral             — existing palette colour
+  Qwen / Alibaba      — existing palette colour
+  DeepSeek            — existing palette colour
+
+## Implementation
+
+1. Add `glyph_for_method(method: str) -> dict` to `src/aedist/util.py`
+   returning a dict of scatter kwargs: `{"marker": …, "s": …,
+   "facecolors": …, "edgecolors": "auto"}`. Methods: "parametric",
+   "arm1", "arm2", "arm3", "arm4".
+
+2. Update each affected plot script to call `glyph_for_method()` instead
+   of hardcoded marker/size values:
+   - `plot_cost_quality.py`
+   - `plot_exp2_arms_comparison.py`
+   - `plot_quality_spider.py` / `plot_quality_spider_exp1.py`
+   - Any others found by grep
+
+3. Add a shared `plot_legend_patch(ax)` helper (or a standalone
+   legend-only figure) so each figure can include a consistent legend.
+
+## Exit criteria
+
+- [ ] `glyph_for_method()` in `util.py`, covered by unit tests
+- [ ] All listed scripts updated (grep for hardcoded `marker=` in plot_*.py)
+- [ ] Visual spot-check: regenerate PDF for each affected figure; confirm
+      consistent glyphs and colours
+- [ ] `make check-fast` passes
