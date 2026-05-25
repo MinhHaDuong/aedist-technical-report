@@ -43,12 +43,6 @@
 \titlepage
 \end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
-\end{frame}
-
 % ===================================================================
 \section{Problème}
 
@@ -82,7 +76,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \end{frame}
 
 % ===================================================================
-\section{Expériences}
+\section{Expérience 1}
 
 % -------------------------------------------------------------------
 \begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
@@ -119,9 +113,65 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Score} & & \textbf{Statut épistémique} \\
+\midrule
+5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
+4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
+3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
+2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
+1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité de la méthode~: les conditions actives}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
-\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_direct_cost_quality.pdf}
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_cost_quality.pdf}
+\end{frame}
+
+% ===================================================================
+\section{Expérience 2}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -187,7 +237,7 @@ Un jury de pairs --- mais le jury est aussi un modèle.}}
 % -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
-\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_arms_comparison.pdf}
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_arms_comparison.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -197,7 +247,7 @@ Un jury de pairs --- mais le jury est aussi un modèle.}}
 \end{frame}
 
 % ===================================================================
-\section{Qualité}
+\section{Architecture}
 
 % -------------------------------------------------------------------
 \begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
@@ -235,91 +285,6 @@ et où mènent les architectures à états agentiques.}
 \begin{center}
 \small\textit{Chaque défaillance a un mécanisme correcteur mesurable.}
 \end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Score} & & \textbf{Statut épistémique} \\
-\midrule
-5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
-4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
-3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
-2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
-1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Qualité de la méthode~: les conditions actives}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
-\end{frame}
-
-% -------------------------------------------------------------------
-% Profils de qualité par famille --- spider chart
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
-\end{frame}
-
-% ===================================================================
-\section{Hypothèses}
-
-% -------------------------------------------------------------------
-\begin{frame}{Nos quatre hypothèses}
-\small
-\begin{tabular}{@{}c p{8.5cm} l@{}}
-\toprule
-\textbf{H} & \textbf{Énoncé} & \textbf{Statut} \\
-\midrule
-H1 & Direct $\to$ multi-tours améliore le F1 (Articulation)
-   & préliminaire \\[3pt]
-H2 & Multi-tours $\to$ RAG améliore le F1 (Couverture)
-   & préliminaire \\[3pt]
-H3 & Un seul prompt ne maximise pas simultanément rappel et provenance
-   & en cours \\[3pt]
-H4 & Un modèle local approche les performances des modèles frontier
-   & en cours \\
-\bottomrule
-\end{tabular}
-
-\medskip
-\begin{columns}[T]
-\column{0.52\textwidth}
-{\small \textbf{Tests planifiés~:}\\
-H1, H2~: permutation test apparié ($\Delta$F1 $\geq$ 0{,}03)\\
-H3~: Mann-Whitney U sur $\Delta$F1 (précis. vs rappel)\\
-H4~: bootstrap 95\,\% CI ($\pm$0{,}05 F1)}
-
-\column{0.46\textwidth}
-{\small \textbf{Évidence directionnelle actuelle~:}\\
-H1~: direct 0{,}42 vs multi-tours 0{,}63\\
-H2~: multi-tours 0{,}63 vs RAG 0{,}68\\
-H3, H4~: sweeps confirmatoires en cours}
-\end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
