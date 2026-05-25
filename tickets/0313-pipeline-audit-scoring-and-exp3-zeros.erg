@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
 
+2026-05-25T16:33Z 2026-05-25T19:00Z claude note imagine: Bug1=stale CSV (LP fix landed after backfill; no scorer code change needed). Bug2=extract_output_text missing 3 format branches: Anthropic-native (content:list), Qwen (output.choices), Mistral-agents (outputs:list); arm4_flat has 9/20 zero-row entries. Model fallback also missing (entry.get(model) when method_params None). _extract_text in build_exp2_mart_views.py has all 4 formats — copy branches across. Fix sequence: (1) fix extract_output_text, (2) re-extract arm4, (3) delete+rebuild sota_cross_eval.csv via score_mechanical loop (4 models x 5 runs, naive arm), (4) make exp2_mart.jsonl + views. exp2_mart.jsonl absent entirely — needs build.
 --- body ---
 ## Context
 
