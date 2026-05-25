@@ -6,9 +6,7 @@
 GENERATED := inputs/generated
 ROOT_SLIDE_GEN := slides/inputs/generated
 ROOT_REPORT_GEN := report/inputs/generated
-ROOT_REPORT_ARM_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
-LOCAL_ROOT_REPORT_ARM_GEN := ../report/inputs/generated
 
 SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv \
@@ -29,8 +27,8 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
-	$(GENERATED)/fig_exp2_arms_comparison.pdf \
-	$(GENERATED)/fig_exp2_coverage_certainty.pdf
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 
 .PHONY: all clean manuscript
 
@@ -66,19 +64,7 @@ $(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/
 $(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/cost_quality.csv
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_timeline.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_dag.pdf
-
-# Exp2 manuscript figures are generated under report/inputs/generated.
-$(GENERATED)/fig_exp2_arms_comparison.pdf: $(LOCAL_ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf
-	cp $< $@
-
-$(GENERATED)/fig_exp2_turn_trajectory.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf
-	cp $< $@
-
-$(GENERATED)/fig_exp2_coverage_certainty.pdf: $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
-	cp $< $@
-
-$(LOCAL_ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_ARM_GEN)/fig_exp2_arms_comparison.pdf
-$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_turn_trajectory.pdf
+$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 
 clean:

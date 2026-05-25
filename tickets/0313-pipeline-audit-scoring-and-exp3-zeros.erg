@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Pipeline audit — spider scoring stuck at 1.0 and exp3 zero costs/coverage
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Two data-quality anomalies block downstream figures and analysis.
+Both were identified by visual inspection of regenerated figures on 2026-05-25.
+
+## Bug 1 — Spider scores stuck at 1.0
+
+In `sota_cross_eval.csv`, the columns `precision`, `core_fields`, `as_of`,
+and `source` are all reporting 1.0 for most or all rows. Expected range is
+0–1; values near 0 are plausible (agents do not reliably cite sources or
+fill temporal fields). A uniform 1.0 almost certainly indicates a scoring
+bug, not exceptional performance.
+
+Likely suspects:
+- `score_mechanical.py` — normalisation or denominator zero returning 1.0
+- Column name mismatch: scorer writes to wrong column, reader gets default 1.0
+- CSV schema: columns added to the file but not populated by all scoring paths
+
+Investigation steps:
+1. `head -3 experiments/derived/sota_cross_eval.csv` — inspect raw values
+2. Run `score_mechanical.py` on a single known run and inspect output
+3. Check that fieldnames in the CSV writer match the reader's expected columns
+4. Verify the denominator branch in each score function (division by zero → 1.0?)
+
+## Bug 2 — Exp3 zeros in coverage and costs
+
+`fig_exp2_coverage_certainty` and presumably `fig_exp2_arms_comparison`
+show too many zero values for Exp3 runs. Possible causes:
+- Exp3 output JSON not ingested into the mart (extractor not run)
+- Run classification bug: runs classified `no_report` → inventory_rows=0
+- Cost fields empty / None in raw .record.json files
+- Wrong arm label causing Exp3 rows to be filtered out of the aggregation
+
+Investigation steps:
+1. Count non-zero rows per arm in `tab_exp2_arms_runs_view.csv`
+2. Check `experiments/outputs/exp3/` — confirm .record.json files exist
+   and carry non-null `inventory_rows` and `cost_usd`
+3. Trace the mart VIEW that produces `tab_exp2_arms_runs_view.csv` to
+   confirm Exp3 arms are included in the WHERE clause
+
+## Exit criteria
+
+- [ ] Root cause of precision/core_fields/as_of/source=1.0 identified and documented
+- [ ] Scoring bug fixed (or confirmed as data, with explanation)
+- [ ] Root cause of Exp3 zeros identified and documented
+- [ ] Exp3 zero bug fixed (or confirmed as data)
+- [ ] `sota_cross_eval.csv` and `tab_exp2_arms_runs_view.csv` show plausible
+      non-trivial values after regeneration
+- [ ] `make check-fast` passes

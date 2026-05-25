@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Manuscript — inject final figures, freeze narrative, move heatmap to annex
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0313
+Blocked-by: 0314
+Blocked-by: 0315
+Blocked-by: 0316
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Once the pipeline is clean (0313) and figures are updated (0314, 0315),
+the manuscript `slides/manuscript/main.md` needs a final figure-injection
+pass to freeze the narrative. Statistical test results from 0316 are also
+injected here.
+
+Author decision (2026-05-25): the ablation heatmap moves to an annex,
+not the main body.
+
+## Work items
+
+1. **Figure injection** — confirm all figures referenced in `main.md` exist
+   under `report/inputs/generated/` and render correctly in the PDF.
+   Current known gap: `fig_spider_exp1_families.pdf` has no build rule
+   (noted 2026-05-25) — resolve or remove reference.
+
+2. **Spider** — once 0311 (spider 4-way) is unblocked by 0313,
+   wire `fig_spider_exp2_4way.pdf` into the manuscript.
+
+3. **Heatmap to annex** — move the `fig_ablation_heatmap` `\includegraphics`
+   block in `main.md` from the main body to an `## Annex` section.
+
+4. **Statistical results** — inline the key p-values and effect sizes
+   from 0316 into the relevant figure captions and results paragraphs.
+
+5. **Narrative freeze** — after figures and stats are injected, do a single
+   editorial pass to ensure every figure caption matches what the figure
+   actually shows (labels, axis ranges, N counts).
+
+## Exit criteria
+
+- [ ] All `main.md` figure references resolve to existing files
+- [ ] `fig_spider_exp1_families` gap resolved (build rule added or reference removed)
+- [ ] Heatmap in annex section, not main body
+- [ ] Statistical results from 0316 cited in text
+- [ ] `make manuscript` produces a clean PDF
+- [ ] `make check-fast` passes

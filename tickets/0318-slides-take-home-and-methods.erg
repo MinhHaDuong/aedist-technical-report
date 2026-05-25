@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Slides — take-home message slide and 2-slide Methods section
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0317
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+2026-05-25T18:00Z haduong ratified take-home message A
+
+--- body ---
+## Context
+
+The conference talk (Econom'IA 2026, 2026-05-27) needs two structural
+additions to `slides/slides.tex`:
+
+1. **Take-home message slide** — the single thing the audience should
+   remember. Placed near the end, before Q&A. Should synthesise the
+   three-experiment arc into one crisp claim.
+
+2. **Methods section (2 slides)** — currently absent or implicit. Audience
+   needs to understand the evaluation setup before the results land.
+   Two-slide budget:
+   - Slide M1: the reference inventory (163 Vietnamese thermal plants),
+     the matching protocol (LP fuzzy matcher → F1), and the quality bar
+     (4 dimensions: accuracy, coherence, provenance, temporality)
+   - Slide M2: experiment design overview — Exp1 (16 models × 5 reps,
+     parametric), Exp2 (4 SOTA agents × 2 arms, N=5), Exp3 (pipeline)
+
+Blocked by 0317 because the take-home must be grounded in the final
+figures and statistics.
+
+## Take-home message (ratified 2026-05-25)
+
+"Frontier AI agents reach 100-row coverage but fail the provenance bar —
+ a tailored pipeline clears it."
+
+Provisional on data analysis — the full wording is contingent on 0313
+findings. If the pipeline audit changes the coverage picture or the
+provenance result, revisit before implementing.
+
+## Exit criteria
+
+- [ ] Author has approved take-home message wording
+- [ ] Take-home slide added to `slides.tex`
+- [ ] Two Methods slides added (M1: evaluation setup, M2: experiment design)
+- [ ] `make slides.pdf` compiles without error
+- [ ] Talk fits in allotted time (author to verify live)
