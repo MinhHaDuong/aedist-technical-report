@@ -36,26 +36,16 @@ class PowerPlantDataframeCleaner:
             with open(config_path) as file:
                 config = json.load(file)
             self.name_drops: list[str] = config.get("name_drops", [])
-            self.name_substitutions: dict[str, str] = config.get(
-                "name_substitutions", {}
-            )
-            self.province_substitutions: dict[str, str] = config.get(
-                "province_substitutions", {}
-            )
-            self.fuel_substitutions: dict[str, str] = config.get(
-                "fuel_substitutions", {}
-            )
-            self.status_substitutions: dict[str, str] = config.get(
-                "status_substitutions", {}
-            )
+            self.name_substitutions: dict[str, str] = config.get("name_substitutions", {})
+            self.province_substitutions: dict[str, str] = config.get("province_substitutions", {})
+            self.fuel_substitutions: dict[str, str] = config.get("fuel_substitutions", {})
+            self.status_substitutions: dict[str, str] = config.get("status_substitutions", {})
             log.info("Cleaning patterns loaded successfully from JSON.")
         except FileNotFoundError:
             log.error(f"Configuration file '{config_path}' not found.")
             raise
         except json.JSONDecodeError as e:
-            log.error(
-                f"Error decoding JSON configuration file '{config_path}': {e}"
-            )
+            log.error(f"Error decoding JSON configuration file '{config_path}': {e}")
             raise
 
     def validate_dataframe(self, df: pd.DataFrame) -> None:
@@ -85,9 +75,7 @@ class PowerPlantDataframeCleaner:
                 "The 'name' column is missing but 'Plant name' and 'Unit name' columns are found. "
                 "Creating 'name' column by concatenating 'Plant name' and 'Unit name'."
             )
-            df["name"] = (
-                df["Plant name"].astype(str) + " " + df["Unit name"].astype(str)
-            )
+            df["name"] = df["Plant name"].astype(str) + " " + df["Unit name"].astype(str)
             df_cols.add("name")
 
         missing_cols = self.REQUIRED_COLUMNS - df_cols
@@ -121,11 +109,9 @@ class PowerPlantDataframeCleaner:
         log.debug(f"Initial text: '{text}', normalized to: '{s}'")
 
         # Remove diacritics
-        s = "".join(
-            c
-            for c in unicodedata.normalize("NFD", s)
-            if unicodedata.category(c) != "Mn"
-        )
+        # đ/Đ (U+0111/U+0110) is precomposed and not NFD-decomposable; strip explicitly.
+        s = s.replace("đ", "d")
+        s = "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn")
 
         # Drop specified patterns
         if drops:
@@ -139,9 +125,7 @@ class PowerPlantDataframeCleaner:
             for pattern, replacement in substitutions.items():
                 s_before = s
                 s = re.sub(pattern, replacement, s, flags=re.IGNORECASE)
-                log.debug(
-                    f"Substituted '{pattern}' with '{replacement}': '{s_before}' -> '{s}'"
-                )
+                log.debug(f"Substituted '{pattern}' with '{replacement}': '{s_before}' -> '{s}'")
 
         # Clean up whitespace
         s = re.sub(r"\s+", " ", s).strip()
@@ -159,7 +143,9 @@ class PowerPlantDataframeCleaner:
         Returns:
             str: The cleaned plant name.
         """
-        cleaned = self.clean_text(name, drops=self.name_drops, substitutions=self.name_substitutions)
+        cleaned = self.clean_text(
+            name, drops=self.name_drops, substitutions=self.name_substitutions
+        )
         return cleaned
 
     def clean_province(self, province: str) -> str:

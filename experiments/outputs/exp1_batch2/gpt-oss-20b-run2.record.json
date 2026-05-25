@@ -1,6 +1,6 @@
 {
-  "run_id": "97998fb7950c",
-  "timestamp": "2026-05-25T13:38:16.772413Z",
+  "run_id": "35f6abe1946b",
+  "timestamp": "2026-05-25T14:02:30.191493Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-oss-20b",
@@ -32,12 +32,12 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 40,
-    "tp": 10,
-    "fp": 30,
-    "fn": 153,
-    "f1": 0.0985,
-    "fuel_accuracy": 0.4,
-    "status_accuracy": 0.4,
+    "tp": 12,
+    "fp": 28,
+    "fn": 151,
+    "f1": 0.1182,
+    "fuel_accuracy": 0.4167,
+    "status_accuracy": 0.4167,
     "province_accuracy": 1.0
   },
   "finish_reason": "stop"

@@ -1,6 +1,6 @@
 {
-  "run_id": "d7c7ed94e9ab",
-  "timestamp": "2026-05-25T13:38:18.543778Z",
+  "run_id": "924e16b30228",
+  "timestamp": "2026-05-25T14:03:02.434999Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.6-35b-a3b",
@@ -37,7 +37,7 @@
     "f1": 0.188,
     "fuel_accuracy": 0.3182,
     "status_accuracy": 0.4091,
-    "province_accuracy": 0.8636
+    "province_accuracy": 0.9091
   },
   "finish_reason": "stop"
 }

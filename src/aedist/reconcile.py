@@ -8,6 +8,7 @@ For manual review, the output includes province and fuel columns so results
 can be sorted/filtered by province+fuel after the fact.
 """
 
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +22,36 @@ from .schema import MatchType, Plant, ReconciliationEntry
 # ---------------------------------------------------------------------------
 
 _CLEANER_CONFIG = Path(__file__).parent / "cleaner" / "config.json"
+_REFERENCE = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+
+# Strips any trailing digit block (used for base computation only).
+_UNIT_SUFFIX = re.compile(r"\s+\d+$")
+# Only "1" is strippable: "Plant 1" → "Plant". "Plant 2" implies a "Plant 1" exists.
+_FIRST_UNIT_SUFFIX = re.compile(r"\s+1$")
+
+
+def _build_single_unit_names() -> frozenset[str]:
+    """Names of plants that are the sole unit under their base name (from the fixed reference).
+
+    Rule: name must end in " 1" AND no sibling unit exists in the reference.
+    "An Khanh 1" qualifies; "Na Duong 1" does not (Na Duong 2 exists).
+    """
+    if not _REFERENCE.exists():
+        return frozenset()
+    cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
+    raw_names = pd.read_csv(_REFERENCE)["name"].dropna()
+    cleaned = raw_names.apply(cleaner.clean_name)
+    bases = cleaned.apply(lambda s: _UNIT_SUFFIX.sub("", s))
+    base_counts = bases.value_counts()
+    return frozenset(
+        name
+        for name, base in zip(cleaned, bases, strict=True)
+        if _FIRST_UNIT_SUFFIX.search(name) and base_counts[base] == 1
+    )
+
+
+# Fixed at import time: the reference is the golden table, so this set is constant.
+_SINGLE_UNIT_NAMES: frozenset[str] = _build_single_unit_names()
 
 
 # ---------------------------------------------------------------------------
@@ -70,7 +101,26 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
     # Use the existing cleaner for normalization
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
     cleaned = cleaner.clean_dataframe(df)
-    return cleaned
+    return _strip_unique_unit_suffixes(cleaned)
+
+
+def _strip_unique_unit_suffixes(df: pd.DataFrame) -> pd.DataFrame:
+    """Strip trailing unit numbers from name_clean for known single-unit plants.
+
+    Uses _SINGLE_UNIT_NAMES derived from the fixed golden reference, so the
+    stripping rule is identical regardless of what the model output contains.
+    Multi-unit plants (Na Duong 1/2, Nghi Son 1/2/3) are never stripped.
+    """
+    if df.empty or "name_clean" not in df.columns or not _SINGLE_UNIT_NAMES:
+        return df
+    mask = df["name_clean"].isin(_SINGLE_UNIT_NAMES)
+    if not mask.any():
+        return df
+    df = df.copy()
+    df.loc[mask, "name_clean"] = df.loc[mask, "name_clean"].apply(
+        lambda s: _UNIT_SUFFIX.sub("", s)
+    )
+    return df
 
 
 # ---------------------------------------------------------------------------

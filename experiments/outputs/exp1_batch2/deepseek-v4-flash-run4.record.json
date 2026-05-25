@@ -1,6 +1,6 @@
 {
-  "run_id": "d5b32958c083",
-  "timestamp": "2026-05-25T13:38:13.030192Z",
+  "run_id": "5f5760f5943e",
+  "timestamp": "2026-05-25T14:02:02.930189Z",
   "method": "direct",
   "method_params": {
     "model": "deepseek/deepseek-v4-flash",
@@ -35,8 +35,8 @@
     "fp": 2,
     "fn": 124,
     "f1": 0.3824,
-    "fuel_accuracy": 0.5385,
-    "status_accuracy": 0.6923,
+    "fuel_accuracy": 0.5128,
+    "status_accuracy": 0.6667,
     "province_accuracy": 0.8205
   },
   "finish_reason": "stop"

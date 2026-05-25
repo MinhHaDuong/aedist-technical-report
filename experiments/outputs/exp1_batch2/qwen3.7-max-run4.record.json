@@ -1,6 +1,6 @@
 {
-  "run_id": "5a543c33f04b",
-  "timestamp": "2026-05-25T13:38:18.941085Z",
+  "run_id": "e7f7ab4c731c",
+  "timestamp": "2026-05-25T14:03:22.227384Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.7-max",
@@ -32,13 +32,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 39,
-    "tp": 32,
-    "fp": 7,
-    "fn": 131,
-    "f1": 0.3168,
-    "fuel_accuracy": 0.625,
-    "status_accuracy": 0.7812,
-    "province_accuracy": 0.9062
+    "tp": 33,
+    "fp": 6,
+    "fn": 130,
+    "f1": 0.3267,
+    "fuel_accuracy": 0.6364,
+    "status_accuracy": 0.7576,
+    "province_accuracy": 0.9697
   },
   "finish_reason": "stop"
 }

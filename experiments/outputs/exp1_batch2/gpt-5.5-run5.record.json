@@ -1,6 +1,6 @@
 {
-  "run_id": "aa17306597c4",
-  "timestamp": "2026-05-25T13:38:17.430647Z",
+  "run_id": "2b297c416187",
+  "timestamp": "2026-05-25T14:02:20.801919Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-5.5",
@@ -31,13 +31,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 80,
-    "tp": 70,
-    "fp": 10,
-    "fn": 93,
-    "f1": 0.5761,
-    "fuel_accuracy": 0.5286,
-    "status_accuracy": 0.6429,
-    "province_accuracy": 0.8571
+    "tp": 73,
+    "fp": 7,
+    "fn": 90,
+    "f1": 0.6008,
+    "fuel_accuracy": 0.5342,
+    "status_accuracy": 0.6438,
+    "province_accuracy": 0.8767
   },
   "finish_reason": "stop"
 }

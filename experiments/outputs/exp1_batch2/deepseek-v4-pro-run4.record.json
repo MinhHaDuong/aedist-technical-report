@@ -1,6 +1,6 @@
 {
-  "run_id": "c3210c6d3299",
-  "timestamp": "2026-05-25T13:38:14.214529Z",
+  "run_id": "1899f951b9b3",
+  "timestamp": "2026-05-25T14:02:09.613911Z",
   "method": "direct",
   "method_params": {
     "model": "deepseek/deepseek-v4-pro",
@@ -31,13 +31,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 69,
-    "tp": 58,
-    "fp": 11,
-    "fn": 105,
-    "f1": 0.5,
-    "fuel_accuracy": 0.4655,
-    "status_accuracy": 0.6207,
-    "province_accuracy": 0.8793
+    "tp": 60,
+    "fp": 9,
+    "fn": 103,
+    "f1": 0.5172,
+    "fuel_accuracy": 0.5167,
+    "status_accuracy": 0.6833,
+    "province_accuracy": 0.8833
   },
   "finish_reason": "stop"
 }

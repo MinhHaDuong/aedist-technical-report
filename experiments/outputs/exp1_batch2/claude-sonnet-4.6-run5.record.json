@@ -1,6 +1,6 @@
 {
-  "run_id": "cac4b0aef97f",
-  "timestamp": "2026-05-25T13:38:17.086167Z",
+  "run_id": "e2feb5f95a42",
+  "timestamp": "2026-05-25T14:01:57.412404Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-sonnet-4.6",
@@ -31,13 +31,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 179,
-    "tp": 92,
-    "fp": 87,
-    "fn": 71,
-    "f1": 0.538,
-    "fuel_accuracy": 0.4565,
-    "status_accuracy": 0.5543,
-    "province_accuracy": 0.8587
+    "tp": 95,
+    "fp": 84,
+    "fn": 68,
+    "f1": 0.5556,
+    "fuel_accuracy": 0.4737,
+    "status_accuracy": 0.5579,
+    "province_accuracy": 0.8632
   },
   "finish_reason": "stop"
 }

@@ -1,6 +1,6 @@
 {
-  "run_id": "0561c3a9ad98",
-  "timestamp": "2026-05-25T13:38:14.735038Z",
+  "run_id": "35a662490c9b",
+  "timestamp": "2026-05-25T14:01:45.505672Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
@@ -31,13 +31,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 88,
-    "tp": 79,
-    "fp": 9,
-    "fn": 84,
-    "f1": 0.6295,
-    "fuel_accuracy": 0.5696,
-    "status_accuracy": 0.7089,
-    "province_accuracy": 0.8861
+    "tp": 80,
+    "fp": 8,
+    "fn": 83,
+    "f1": 0.6375,
+    "fuel_accuracy": 0.575,
+    "status_accuracy": 0.7125,
+    "province_accuracy": 0.9
   },
   "finish_reason": "stop"
 }

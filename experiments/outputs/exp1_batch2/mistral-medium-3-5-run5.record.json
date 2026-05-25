@@ -1,6 +1,6 @@
 {
-  "run_id": "26166102d905",
-  "timestamp": "2026-05-25T13:38:20.010471Z",
+  "run_id": "dd9e4996e576",
+  "timestamp": "2026-05-25T14:02:50.273516Z",
   "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-medium-3-5",
@@ -31,13 +31,13 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 47,
-    "tp": 38,
-    "fp": 9,
-    "fn": 125,
-    "f1": 0.3619,
-    "fuel_accuracy": 0.4211,
-    "status_accuracy": 0.4737,
-    "province_accuracy": 0.9737
+    "tp": 40,
+    "fp": 7,
+    "fn": 123,
+    "f1": 0.381,
+    "fuel_accuracy": 0.425,
+    "status_accuracy": 0.475,
+    "province_accuracy": 0.95
   },
   "finish_reason": "stop"
 }

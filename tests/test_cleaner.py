@@ -53,6 +53,12 @@ def test_validate_dataframe_missing_columns(cleaner):
         cleaner.validate_dataframe(df)
 
 
+def test_clean_text_d_stroke(cleaner):
+    """đ (U+0111) is precomposed and must be stripped explicitly to 'd'."""
+    assert cleaner.clean_text("Sơn Động") == "son dong"
+    assert cleaner.clean_text("Nhiệt điện Sơn Động") == "nhiet dien son dong"
+
+
 def test_clean_text_drops(cleaner):
     """Test text cleaning with drops."""
     text = "TBKHH Plant A Thermal (Local)"
