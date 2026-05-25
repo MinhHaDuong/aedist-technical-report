@@ -12,7 +12,7 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 
 ## Current goal
 
-**Experiment 3 four-arm sweep running.** Arms 1–4 launched; output dirs accumulating in `experiments/outputs/sota_exp3_arm{1-4}_batch1/`. Next: review truncation flags across all arms, then Exp 2+3 analysis. Ticket 0250 tracks the full sweep.
+Analyze results from experiment 3. Includes validating the analysis pipeline, the table extractor, the figures
 
 ## Status
 <!-- generated 2026-05-24T21:00Z -->
@@ -25,9 +25,9 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 
 ## Workplan
 
-1. **Experiment 3 runs.** Four arms against frozen Arm 1/2 baselines; publish artifacts.
-2. **Experiments 2+3 analysis.** Rebuild derived metrics and comparative tables.
-3. **Update manuscript.** Integrate Exp 2+3 analysis.
+1. **Experiment 3 runs.** DONE.
+2. **Experiments analysis.** Rebuild derived metrics and comparative tables.
+3. **Update manuscript.** Integrate Exp 3 analysis. Verify exp 1 still holds.
 4. **Update slides.** Align conference slides with refreshed evidence.
 5. **Present.** Final rehearsal and delivery at Econom'IA 2026.
 
