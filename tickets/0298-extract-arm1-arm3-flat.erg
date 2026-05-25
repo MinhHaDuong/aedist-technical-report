@@ -1,0 +1,45 @@
+%erg 0.1
+Title: MVP extractor for single-turn arms (arm1, arm3) → derived flat files
+Created: 2026-05-25
+Author: haduong
+Tag: needs-human
+
+--- log ---
+2026-05-25T11:30Z haduong created
+
+--- body ---
+## Context
+
+`build_exp2_mart.py` expects flat `{agent}_run{N}.json` + `{agent}_run{N}.md` files
+at the arm-directory level. The actual data lives in per-run subdirs:
+
+  sota_exp3_arm1_batch1/run{N}/{agent}.json   (metadata, ~200B)
+  sota_exp3_arm1_batch1/run{N}/{agent}.md     (verbatim output)
+
+arm3 is identical in structure, adds `evidence_pack_manifest` field in the JSON.
+
+## Goal
+
+Write `src/aedist/extract_arm_single_turn.py` — a CLI module that:
+1. Walks `--input-dir` (e.g. `sota_exp3_arm1_batch1/`) across all `run{N}/` subdirs
+2. Writes to `--output-dir` (e.g. `experiments/derived/arm1_flat/`) per run×agent:
+   - `{agent}_run{N}.json`    normalized metadata (model, agent, run, classification,
+                               tokens_out, wall_s, cost_usd, classifier_cost_usd,
+                               narrative_chars, n_bib_entries, class_trace=[classification])
+   - `{agent}_run{N}.md`      verbatim output (copy of source .md)
+   - `{agent}_run{N}_bib.md`  bibliography section extracted from output (one bullet/line)
+
+## Notes
+
+- MVP only: no Mistral citation mapping, no table consolidation — those are in 0292
+- `{agent}_run{N}.md` is a straight copy for now; table extraction deferred to 0292
+- Bibliography: split on a `## Sources`, `## References`, or `## Bibliography` heading;
+  strip numbering from lines; emit one bullet per entry
+- `n_bib_entries` = count of bullet lines written to `_bib.md`
+
+## Exit criteria
+
+- [ ] `uv run python -m aedist.extract_arm_single_turn --input-dir ... --output-dir ...` runs
+- [ ] Output dir contains correct files for all 5 runs × 4 agents = 20 triples
+- [ ] `build_exp2_mart.py` fed the output dir produces ≥ 20 run records
+- [ ] Unit test covers the bib extraction split

@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Wire analysis.mk end-to-end and produce talk figures
+Created: 2026-05-25
+Author: haduong
+Blocked-by: 0298
+Blocked-by: 0299
+
+--- log ---
+2026-05-25T11:30Z haduong created
+
+--- body ---
+## Context
+
+Once 0298 and 0299 produce flat derived files, `analysis.mk` needs its default
+paths updated and the full pipeline run to produce PDF figures for the talk.
+
+Current wrong defaults in `analysis.mk`:
+  ANALYSIS_EXP2_NAIVE_DIR    ?= experiments/outputs/sota_exp2_naive_arm   ← does not exist
+  ANALYSIS_EXP2_OPTIMISED_DIR ?= experiments/outputs/sota_exp2_brerun1    ← does not exist
+
+Correct defaults (after 0298/0299):
+  ANALYSIS_EXP2_NAIVE_DIR    ?= experiments/derived/arm1_flat
+  ANALYSIS_EXP2_OPTIMISED_DIR ?= experiments/derived/arm2_flat
+
+## Goal
+
+1. Update the two defaults in `analysis.mk`
+2. Add Make targets for the extraction steps:
+   ```makefile
+   experiments/derived/arm1_flat/.done: $(wildcard experiments/outputs/sota_exp3_arm1_batch1/run*/*.json)
+       uv run python -m aedist.extract_arm_single_turn \
+           --input-dir experiments/outputs/sota_exp3_arm1_batch1 \
+           --output-dir experiments/derived/arm1_flat
+       touch $@
+
+   experiments/derived/arm2_flat/.done: $(wildcard experiments/outputs/sota_exp3_arm2_batch1/run*/summary.json)
+       uv run python -m aedist.extract_arm_multi_turn \
+           --input-dir experiments/outputs/sota_exp3_arm2_batch1 \
+           --output-dir experiments/derived/arm2_flat
+       touch $@
+   ```
+3. Add `.done` stamps as prerequisites to `$(ANALYSIS_EXP2_MART_JSONL)`
+4. Run `make -f experiments/analysis.mk exp2-analysis-report` and verify all
+   PDF figures are produced without errors
+
+## Exit criteria
+
+- [ ] `analysis.mk` defaults point at `experiments/derived/arm{1,2}_flat`
+- [ ] Extraction stamp targets added and wired as prerequisites
+- [ ] `make -f experiments/analysis.mk exp2-analysis-report` completes cleanly
+- [ ] The following PDFs exist and are non-empty:
+      `report/inputs/generated/fig_exp2_arms_comparison.pdf`
+      `report/inputs/generated/fig_exp2_turn_trajectory.pdf`
+      `report/inputs/generated/fig_exp2_coverage_certainty.pdf`
+      `report/inputs/generated/fig_quality_spider.pdf`
+- [ ] Mart contains ≥ 40 run records (4 agents × 5 runs × 2 arms)
