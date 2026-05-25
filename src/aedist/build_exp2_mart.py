@@ -44,6 +44,11 @@ def _pointer(path: Path, repo_root: Path) -> ArtifactPointer:
     return ArtifactPointer(path=relative_path.as_posix(), sha256=_sha256(path))
 
 
+def _resolve_repo_path(repo_root: Path, value: Path | None, default: Path) -> Path:
+    candidate = default if value is None else value
+    return candidate if candidate.is_absolute() else repo_root / candidate
+
+
 def _record_id(arm: str, model: str, run: int, suffix: str = "") -> str:
     safe_model = model.replace("/", "_")
     base = f"exp2/{arm}/{safe_model}/run{run:02d}"
@@ -261,12 +266,15 @@ def _build_probe_records(
 
 
 def build_exp2_mart(
-    naive_dir: Path = _DEFAULT_NAIVE_DIR,
-    optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
-    cross_eval_csv: Path = _DEFAULT_CROSS_EVAL,
+    naive_dir: Path | None = None,
+    optimised_dir: Path | None = None,
+    cross_eval_csv: Path | None = None,
     repo_root: Path | None = None,
 ) -> list[Exp2RunMartRecord | Exp2ScoreMartRecord]:
-    repo_root = repo_root or Path.cwd()
+    repo_root = (repo_root or Path.cwd()).resolve()
+    naive_dir = _resolve_repo_path(repo_root, naive_dir, _DEFAULT_NAIVE_DIR)
+    optimised_dir = _resolve_repo_path(repo_root, optimised_dir, _DEFAULT_OPTIMISED_DIR)
+    cross_eval_csv = _resolve_repo_path(repo_root, cross_eval_csv, _DEFAULT_CROSS_EVAL)
     score_rows, _rows_by_arm_run, rows_by_arm_agent_run = _load_score_rows(cross_eval_csv)
     records: list[Exp2RunMartRecord | Exp2ScoreMartRecord] = []
 
@@ -311,9 +319,9 @@ def build_exp2_mart(
 
 def write_exp2_mart(
     output: Path,
-    naive_dir: Path = _DEFAULT_NAIVE_DIR,
-    optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
-    cross_eval_csv: Path = _DEFAULT_CROSS_EVAL,
+    naive_dir: Path | None = None,
+    optimised_dir: Path | None = None,
+    cross_eval_csv: Path | None = None,
     repo_root: Path | None = None,
 ) -> list[Exp2RunMartRecord | Exp2ScoreMartRecord]:
     records = build_exp2_mart(
@@ -333,21 +341,35 @@ def write_exp2_mart(
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description="Build the Exp2 mart JSONL artifact")
-    parser.add_argument("--output", default=str(_DEFAULT_OUTPUT))
-    parser.add_argument("--naive-dir", default=str(_DEFAULT_NAIVE_DIR))
-    parser.add_argument("--optimised-dir", default=str(_DEFAULT_OPTIMISED_DIR))
-    parser.add_argument("--cross-eval-csv", default=str(_DEFAULT_CROSS_EVAL))
-    parser.add_argument("--repo-root", default=str(Path.cwd()))
+    parser.add_argument("--output")
+    parser.add_argument("--naive-dir")
+    parser.add_argument("--optimised-dir")
+    parser.add_argument("--cross-eval-csv")
+    parser.add_argument("--repo-root")
     args = parser.parse_args(argv)
 
-    records = write_exp2_mart(
-        Path(args.output),
-        naive_dir=Path(args.naive_dir),
-        optimised_dir=Path(args.optimised_dir),
-        cross_eval_csv=Path(args.cross_eval_csv),
-        repo_root=Path(args.repo_root),
+    repo_root = Path(args.repo_root).resolve() if args.repo_root else Path.cwd().resolve()
+    output = _resolve_repo_path(repo_root, Path(args.output) if args.output else None, _DEFAULT_OUTPUT)
+    naive_dir = _resolve_repo_path(repo_root, Path(args.naive_dir) if args.naive_dir else None, _DEFAULT_NAIVE_DIR)
+    optimised_dir = _resolve_repo_path(
+        repo_root,
+        Path(args.optimised_dir) if args.optimised_dir else None,
+        _DEFAULT_OPTIMISED_DIR,
     )
-    log.info("Wrote %d mart records to %s", len(records), args.output)
+    cross_eval_csv = _resolve_repo_path(
+        repo_root,
+        Path(args.cross_eval_csv) if args.cross_eval_csv else None,
+        _DEFAULT_CROSS_EVAL,
+    )
+
+    records = write_exp2_mart(
+        output,
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+        cross_eval_csv=cross_eval_csv,
+        repo_root=repo_root,
+    )
+    log.info("Wrote %d mart records to %s", len(records), output)
 
 
 if __name__ == "__main__":
