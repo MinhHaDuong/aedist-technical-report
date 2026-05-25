@@ -3,8 +3,11 @@ Title: Fix stale argparse defaults in plot scripts after figure relocation
 Created: 2026-05-25
 Author: HDMX-coding-agent
 
+Closed: done — all three scripts updated to report/inputs/generated/; tests pass
+
 --- log ---
 2026-05-25T12:17Z HDMX-coding-agent created
+2026-05-25T16:10Z HDMX-coding-agent closed — exit criteria verified: stale paths fixed in PR #538; tests pass
 
 --- body ---
 ## Context

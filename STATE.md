@@ -1,4 +1,4 @@
-Last updated: 2026-05-24T21:00Z
+Last updated: 2026-05-25T16:10Z
 
 ## North star
 
@@ -12,23 +12,24 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 
 ## Current goal
 
-Analyze results from experiment 3. Includes validating the analysis pipeline, the table extractor, the figures
+Finalize slides and manuscript for conference delivery (2026-05-27). Analysis pipeline complete; figures produced for Exp 1, 2, 3; take-home messages ratified.
 
 ## Status
-<!-- generated 2026-05-24T21:00Z -->
-**Tickets:** 24 ready · 35 open — `erg ready tickets/` for full list
+<!-- generated 2026-05-25T16:10Z -->
+**Tickets:** 28 ready · 50 open — `erg ready tickets/` for full list
 **Recent commits:**
-  f60fe18f chore(tickets): archive exp2 mart bundle (0282-0288) — all closed via PR #513/512
-  afb666cb Merge pull request #515 — feat(exp2): extend experiment2.mk to cover all four arms
-  e83a21cb Merge pull request #514 — fix(ci): keep required rag_extract record fixture tracked
-  85ea1653 Merge pull request #513 — feat(exp2): migrate analysis flow to JSON mart with parity gate
+  d9c365d4 chore: merge working-tree notes into tracked files
+  c21e34f8 Merge pull request #554 — merge-everything-20260525
+  1e10cb6c Merge pull request #550 — t0305 arms comparison figure redesign
+  1c5c4412 Merge pull request #551 — t0306 spider exp1 family panels
+  40245a57 Merge pull request #547 — t302 LP matcher validation
 
 ## Workplan
 
 1. **Experiment 3 runs.** DONE.
-2. **Experiments analysis.** Rebuild derived metrics and comparative tables.
-3. **Update manuscript.** Integrate Exp 3 analysis. Verify exp 1 still holds.
-4. **Update slides.** Align conference slides with refreshed evidence.
+2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
+3. **Update manuscript.** Integrate figures and narrative. (In progress — 0313–0318 open.)
+4. **Update slides.** Align conference slides with refreshed evidence. (In progress.)
 5. **Present.** Final rehearsal and delivery at Econom'IA 2026.
 
 ## Backlog / deferred

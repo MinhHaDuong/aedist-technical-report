@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Clean up stale worktrees for merged tickets 0303–0309
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T16:10Z HDMX-coding-agent created — found by housekeeping sweep
+
+--- body ---
+## Context
+
+Seven worktrees for merged-and-closed tickets still exist on disk:
+
+| Worktree | Branch | Behind main | Dirty files |
+|----------|--------|-------------|-------------|
+| /home/haduong/aedist-wt-0303 | t0303 | 43 commits | analysis.mk modified; score_exp1.py deleted; test_score_exp1.py deleted |
+| /home/haduong/aedist-wt-0304 | t0304 | 33 commits | 5 files dirty |
+| /home/haduong/aedist-wt-0305 | t0305 | 20 commits | 3 files dirty |
+| /home/haduong/aedist-wt-0306 | t0306 | 22 commits | 6 files dirty |
+| /home/haduong/aedist-wt-0307 | t0307 | 43 commits | slides/Makefile, slides/manuscript/main.md modified |
+| /home/haduong/aedist-wt-0308 | t0308 | 28 commits | 5 files dirty |
+| /home/haduong/aedist-wt-0309 | t0309 | 43 commits | 2 files dirty |
+
+All tickets are in `tickets/closed/`. All branches are confirmed merged (PRs #543–#551).
+The dirty files are likely stale (subsequent PRs modified the same files), not intentional work.
+
+## Decision needed
+
+Author should inspect each worktree's dirty files and decide:
+- If changes are stale/superseded: discard and remove worktree
+- If any change has value: commit or cherry-pick to a new branch
+
+## Exit criteria
+
+- [ ] All 7 worktrees removed (`git worktree remove --force <path>` or after discarding)
+- [ ] All 7 branches deleted (`git branch -d t0303 ... t0309`)
+- [ ] `git worktree prune` run to clean up metadata
