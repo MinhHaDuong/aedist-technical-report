@@ -1,0 +1,35 @@
+%erg 0.1
+Title: fig_exp2_coverage_certainty — remove GPT run labels and no_report markers
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0313
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`plot_exp2_coverage_certainty.py` currently annotates individual GPT run
+labels on the scatter and renders `no_report` runs (zero-coverage points)
+as a distinct marker. Both clutter the figure for a conference audience.
+
+Author decision (2026-05-25):
+- Remove per-run GPT text labels from the scatter
+- Remove `no_report` marker type entirely (exclude those runs from the plot)
+
+Blocked by 0313 because the figure should be regenerated on clean data.
+
+## Changes
+
+In `src/aedist/plot_exp2_coverage_certainty.py`:
+1. Remove the `ax.annotate(...)` calls that label individual GPT runs
+2. In the data-loading loop, skip rows where `classification == "no_report"`
+   (or equivalent zero-coverage sentinel) rather than plotting them at (0,0)
+
+## Exit criteria
+
+- [ ] No per-run text labels on the scatter
+- [ ] `no_report` runs excluded from the figure (not plotted at zero)
+- [ ] Figure regenerates cleanly after 0313 is merged
+- [ ] `make check-fast` passes

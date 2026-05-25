@@ -1,0 +1,41 @@
+%erg 0.1
+Title: fig_exp2_arms_comparison Panel A — restore hallucination bars
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0313
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Panel A of `fig_exp2_arms_comparison` currently shows only `inventory_rows`
+(a count of all rows in the output table, used as a coverage proxy). This
+hides a key signal: some of those rows are hallucinated plants (FP).
+
+The figure should distinguish:
+- Correctly identified plants (TP) — matched against the 163-plant reference
+- Hallucinated plants (FP) — rows in the output not matched to any reference plant
+
+This mirrors the visual language of `fig_direct_p1_base` (the method convergence
+strip plot) where blue=TP and orange=FP are shown together.
+
+## Design
+
+In `plot_exp2_arms_comparison.py`:
+- Replace the single `inventory_rows` series in Panel A with a stacked or
+  grouped bar: TP (blue) and FP (orange), using the same colour constants
+  (`COLOR_MATCHED`, `COLOR_HALLUC`) as the method-convergence figure
+- Data source: `tab_exp2_arms_runs_view.csv` must carry `n_matched` and
+  `n_hallucinated` (or `inventory_rows - n_matched`) columns; confirm they
+  are present or add them to the mart VIEW
+
+Panel B (report length) and Panel C (cost) are unchanged.
+
+## Exit criteria
+
+- [ ] Panel A shows TP and FP separately, same colour scheme as fig_direct_p1_base
+- [ ] `tab_exp2_arms_runs_view.csv` carries the needed columns (or mart patched)
+- [ ] Figure regenerates cleanly on clean data (after 0313)
+- [ ] `make check-fast` passes

@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Statistical tests — arm1 vs arm2 coverage and quality comparisons
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Blocked-by: 0313
+
+--- log ---
+2026-05-25T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The manuscript currently reports arm1 vs arm2 differences as observed
+medians with no inferential statistics. Reviewers will ask. With N=5 per
+agent per arm (20 runs per arm total, 4 agents), tests are underpowered
+for global claims but within-agent paired tests are defensible.
+
+## Design
+
+Planned tests (to be confirmed with author before implementation):
+1. **Paired Wilcoxon signed-rank** per agent: arm1 vs arm2 on
+   `inventory_rows` (coverage) and `n_matched` (accuracy).
+   Null: no difference in median. N=5 pairs per agent.
+2. **Permutation test** (agent-stratified) on coverage gain: is the
+   observed arm2 > arm1 pattern consistent across all 4 agents?
+   Note: with N=4 agents, min attainable p = 1/2^4 = 0.0625 (one-tailed)
+   — this cannot reach α=0.05. Report as directional evidence only.
+3. **Effect size** (Cohen's d or rank-biserial r) alongside each p-value.
+
+Output: a summary table `tab_statistical_tests.tex` for the manuscript
+(or inline in text if small), and p-values cited in the figure captions.
+
+Implementation: `src/aedist/tabulate_stat_tests.py` + Makefile target.
+
+## Exit criteria
+
+- [ ] Wilcoxon tests computed per agent on coverage and accuracy
+- [ ] Effect sizes reported alongside p-values
+- [ ] Permutation test result reported with explicit power caveat (N=4)
+- [ ] Results table wired to Makefile and referenced in manuscript
+- [ ] `make check-fast` passes
