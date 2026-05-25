@@ -1,24 +1,13 @@
-Execute the Vietnam thermal power inventory project. You have up to 3 planning turns before producing the report.
+PHASE B — TURN 1 OF 3 PLANNING TURNS
 
-TURN 1 PLAN — Discovery sweep:
-- Search for Vietnam PDP8 (Quy hoạch điện VIII) approved thermal power plant list
-- Search for Global Energy Monitor coal plant tracker Vietnam and gas plant tracker Vietnam
-- Search for EVN current operating thermal fleet
-- Search for Vietnam LNG power projects status
-- Extract as many asset names, capacities, statuses, and locations as possible
-- Note which assets need deeper investigation
+Objective: Broad discovery of Vietnam's thermal generation fleet (coal, domestic gas, imported LNG; >30 MWe; all lifecycle stages including cancelled/shelved/retired).
 
-TURN 2 PLAN — Gap-filling and verification:
-- Search for specific plants with incomplete data from Turn 1
-- Search for cancelled/shelved coal projects in Vietnam
-- Search for BOT thermal power projects Vietnam
-- Cross-reference capacities and statuses across sources
-- Resolve conflicts found in Turn 1
+Instructions:
+1. Search for Vietnam's current and planned thermal power plants using 4-6 well-chosen queries covering: (a) the national power development plan PDP8 thermal components, (b) operating coal power plants in Vietnam, (c) Vietnam LNG and gas power projects, (d) cancelled or shelved coal projects in Vietnam.
+2. From search results + your parametric knowledge, compile a WORKING LIST of all thermal assets you can identify, organized as:
+   - Asset name (Vietnamese + English) | Province | Fuel | Approx MW | Status | Key source found
+3. Flag assets where you have LOW confidence or missing attributes.
+4. Identify specific gaps to fill in Turn 2 (e.g., specific plants needing COD verification, owner confirmation, status updates).
+5. Keep your output concise — a structured working list, not prose. Save generation budget for the final report.
 
-TURN 3 PLAN — Final verification and preparation:
-- Search for any remaining gaps (specific owners, CODs, technology types)
-- Verify status of recently commissioned or under-construction plants
-- Prepare final source list
-- Begin drafting the inventory
-
-Start Turn 1 now. For each search, state what you're looking for, execute the search, and summarize findings as a compact asset ledger. Track source URLs meticulously.
+Do NOT produce the final inventory table yet. This is a research/discovery turn.

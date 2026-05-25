@@ -19,11 +19,11 @@
   },
   {
     "agent": "anthropic",
-    "status": "error",
-    "total_cost_usd": 0.0,
-    "wall_s": 0.0,
-    "turns": 0,
-    "class_trace": "n/a",
+    "status": "pass",
+    "total_cost_usd": 1.7141625000000005,
+    "wall_s": 540.6709999999999,
+    "turns": 4,
+    "class_trace": "no_report,no_report,no_report,report",
     "inventory_rows": 0
   },
   {

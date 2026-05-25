@@ -1,14 +1,13 @@
-Execute Phase B. This is Turn 1 of up to 3 planning turns.
+PHASE B — TURN 1 OF 3 PLANNING TURNS
 
-Your task: build a complete inventory of Vietnam's thermal power plants (>30 MWe; coal, domestic gas, imported LNG; all statuses including cancelled/shelved/retired).
+Objective: Broad discovery of Vietnam's thermal generation fleet (coal, domestic gas, imported LNG; >30 MWe; all lifecycle stages including cancelled/shelved/retired).
 
-Turn 1 plan — run these searches to establish the master asset list:
+Instructions:
+1. Search for Vietnam's current and planned thermal power plants using 4-6 well-chosen queries covering: (a) the national power development plan PDP8 thermal components, (b) operating coal power plants in Vietnam, (c) Vietnam LNG and gas power projects, (d) cancelled or shelved coal projects in Vietnam.
+2. From search results + your parametric knowledge, compile a WORKING LIST of all thermal assets you can identify, organized as:
+   - Asset name (Vietnamese + English) | Province | Fuel | Approx MW | Status | Key source found
+3. Flag assets where you have LOW confidence or missing attributes.
+4. Identify specific gaps to fill in Turn 2 (e.g., specific plants needing COD verification, owner confirmation, status updates).
+5. Keep your output concise — a structured working list, not prose. Save generation budget for the final report.
 
-(a) Search for PDP8-era official lists of Vietnam thermal power plants.
-(b) Search for currently operating coal power plants in Vietnam with capacities.
-(c) Search for Vietnam gas and LNG power plant projects.
-(d) Search for cancelled or shelved coal power projects in Vietnam.
-
-For each search, record: source name, source type (primary/secondary/tertiary), publication date, assets found, and key attributes. Flag gaps for Turn 2.
-
-Output a compact structured log (no prose, no table yet). End with a numbered gap list for Turn 2 searches.
+Do NOT produce the final inventory table yet. This is a research/discovery turn.

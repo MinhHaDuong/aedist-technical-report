@@ -1,0 +1,348 @@
+{
+  "run_id": "4210f505a43f",
+  "timestamp": "2026-05-25T10:04:30.944675Z",
+  "method": "frontier",
+  "method_params": {
+    "model": "claude-opus-4-6",
+    "temperature": null,
+    "max_tokens": null,
+    "prompt_version": null,
+    "extra": {
+      "run_number": 1,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "PHASE B — TURN 1 OF 3 PLANNING TURNS\n\nObjective: Broad discovery of Vietnam's thermal generation fleet (coal, domestic gas, imported LNG; >30 MWe; all lifecycle stages including cancelled/shelved/retired).\n\nInstructions:\n1. Search for Vietnam's current and planned thermal power plants using 4-6 well-chosen queries covering: (a) the national power development plan PDP8 thermal components, (b) operating coal power plants in Vietnam, (c) Vietnam LNG and gas power projects, (d) cancelled or shelved coal projects in Vietnam.\n2. From search results + your parametric knowledge, compile a WORKING LIST of all thermal assets you can identify, organized as:\n   - Asset name (Vietnamese + English) | Province | Fuel | Approx MW | Status | Key source found\n3. Flag assets where you have LOW confidence or missing attributes.\n4. Identify specific gaps to fill in Turn 2 (e.g., specific plants needing COD verification, owner confirmation, status updates).\n5. Keep your output concise — a structured working list, not prose. Save generation budget for the final report.\n\nDo NOT produce the final inventory table yet. This is a research/discovery turn.",
+              "cache_control": {
+                "type": "ephemeral"
+              }
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": "I'll begin broad discovery with 6 searches covering the key segments.## TURN 1 — WORKING LIST & GAP ANALYSIS\n\nI've compiled a comprehensive working list from 6 search queries plus parametric knowledge. Here is the structured output.\n\n---\n\n### A. COAL — OPERATING (confirmed or highly likely)\n\n| # | Asset (Vietnamese) | Province | MW (approx) | Units | COD (approx) | Owner/Operator | Confidence | Key Source |\n|---|---|---|---|---|---|---|---|---|\n| 1 | Uông Bí (Uong Bi) | Quảng Ninh | ~630 | Multi-phase | 1960s–2000s | EVN/EVNGENCO1 | MED — phases unclear | Vietnam's oldest power station (Uong Bi) has passed a lifespan of 40 years |\n| 2 | Phả Lại 1 (Pha Lai 1) | Hải Dương | 440 | 4×110 | 1983–1986 | EVN/EVNGENCO1 | HIGH | Pha Lai TPP 1 is the oldest of the thermal power plants, operated for approximately 40 years, with a capacity of 440MW |\n| 3 | Phả Lại 2 (Pha Lai 2) | Hải Dương | 600 | 2×300 | 2001–2002 | PPC (PhaLai JSC) | MED — owner to verify | Parametric |\n| 4 | Ninh Bình (Ninh Binh) | Ninh Bình | 100 | 4×25 | 1970s | EVN | MED | The World Bank representative shared their initial research results for repurposing of Ninh Binh coal-fired power plant |\n| 5 | Na Dương 1 (Na Duong 1) | Lạng Sơn | 100 | 2×50 | 2005 | Vinacomin/TKV | HIGH | Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by Vinacomin, began construction in April 2002, and was completed in 2005 |\n| 6 | Cao Ngạn (Cao Ngan) | Thái Nguyên | 100 | 2×50 | 2005? | EVNGENCO1 | MED | transition pathways for Vietnam's major coal-thermal power plants—namely Pha Lai, Cao Ngan, and Van Phong |\n| 7 | Sơn Động (Son Dong) | Bắc Giang | 220 | ? | 2013–2015? | Vinacomin/TKV | LOW — MW & COD unverified | Parametric |\n| 8 | An Khánh (An Khanh) | Thái Nguyên | ~50 | ? | 2014? | AKT JSC | LOW | Parametric |\n| 9 | Nông Sơn (Nong Son) | Quảng Nam | 30 | 1×30 | ~2010? | TKV? | LOW | Parametric |\n| 10 | Quảng Ninh 1 (Quang Ninh I) | Quảng Ninh | 600 | 2×300 | 2010–2012 | EVNGENCO1 | MED | Parametric |\n| 11 | Quảng Ninh 2 (Quang Ninh II) | Quảng Ninh | 600 | 2×300 | 2014–2015? | EVNGENCO1 | LOW — existence/capacity to verify | Parametric |\n| 12 | Cẩm Phả 1&2 (Cam Pha) | Quảng Ninh | 670 | Complex | 2010–2015 | Vinacomin/TKV | LOW — unit breakdown unclear | Parametric |\n| 13 | Mông Dương 1 (Mong Duong 1) | Quảng Ninh | 1,080 | 2×540 | 2015 | EVNGENCO3 | MED | Parametric |\n| 14 | Mông Dương 2 (Mong Duong 2) | Quảng Ninh | 1,240 | 2×620 | 2015 | BOT — AES/Posco | HIGH | coal plants developed under \"build-operate-transfer\" (BOT) contracts included Mông Dương-2 |\n| 15 | Hải Phòng 1 (Hai Phong 1) | Hải Phòng | 600 | 2×300 | 2010 | EVNGENCO1 | MED | Parametric |\n| 16 | Hải Phòng 2 (Hai Phong 2) | Hải Phòng | 600 | 2×300 | 2014 | EVNGENCO1 | MED | Parametric |\n| 17 | Thái Bình 1 (Thai Binh 1) | Thái Bình | 600 | 2×300 | 2018 | EVNGENCO1 | MED | Parametric |\n| 18 | Thái Bình 2 (Thai Binh 2) | Thái Bình | 600 | 2×300 | 2022–2024? | PVN/PV Power | LOW — COD disputed | Parametric |\n| 19 | Nghi Sơn 1 (Nghi Son 1) | Thanh Hóa | 600 | 2×300 | 2013–2014 | EVNGENCO1 | MED | Parametric |\n| 20 | Nghi Sơn 2 (Nghi Son 2) | Thanh Hóa | 1,200 | 2×600 | 2022 | BOT — Marubeni/KEPCO | HIGH | the Nghi Son 2 plant in Thanh Hoa province...has a capacity of 1,200 MW |\n| 21 | Vũng Áng 1 (Vung Ang 1) | Hà Tĩnh | 1,200 | 2×600 | 2014–2015 | EVNGENCO1 | HIGH | GEM wiki + parametric |\n| 22 | Vĩnh Tân 1 (Vinh Tan 1) | Bình Thuận | 1,200 | 2×600 | 2018–2019 | BOT — COPI (China) | HIGH | Vĩnh Tân-1 listed as BOT |\n| 23 | Vĩnh Tân 2 (Vinh Tan 2) | Bình Thuận | 1,244 | 2×622 | 2014 | EVNGENCO3 | HIGH | The Vinh Tan Coal Fired Power Plant II has been operating since 2014. The 1,244MW thermal project is located in Binh Thuan |\n| 24 | Vĩnh Tân 4 (Vinh Tan 4) | Bình Thuận | 1,200 | 2×600 | 2017 | EVN | HIGH | The 1,800MW Vinh Tan Coal Fired Power Plant IV...was commissioned in 2017 |\n| 25 | Vĩnh Tân 4 MR (VT4 Extension) | Bình Thuận | 600 | 1×600 | 2019 | EVN | MED | Parametric |\n| 26 | Duyên Hải 1 (Duyen Hai 1) | Trà Vinh | 1,245 | 2×622 | 2015–2016 | EVN/EVNGENCO1 | HIGH | The Duyen Hai Power Plant I & III is a 2,488MW thermal power project located in Tra Vinh (combined I+III) |\n| 27 | Duyên Hải 2 (Duyen Hai 2) | Trà Vinh | 1,320 | 2×660 | 2021 | BOT — Janakuasa (MY) | HIGH | The Duyen Hai Power Plant II...with a capacity of 1,320MW came online in 2021 |\n| 28 | Duyên Hải 3 (Duyen Hai 3) | Trà Vinh | 1,245 | 2×622 | 2017–2018 | EVNGENCO1 | MED | See #26 combined listing |\n| 29 | Duyên Hải 3 MR (DH3 Extension) | Trà Vinh | 688 | 1×688 | 2019–2020 | EVNGENCO1 | MED | Parametric |\n| 30 | Sông Hậu 1 (Song Hau 1) | Hậu Giang | 1,200 | 2×600 | 2020–2022? | EVNGENCO2/PVN | LOW — COD to verify | Parametric |\n| 31 | Hải Dương BOT (Hai Duong) | Hải Dương | 1,200 | 2×600 | 2020–2021? | Jaks Resources (MY)/China Energy | MED | Hai Duong Thermal Power Plant listed among BOT plants |\n| 32 | Vân Phong 1 (Van Phong 1) | Khánh Hòa | 1,432 | 2×716 | 2023–2024 | BOT — Sumitomo/KEPCO | HIGH | In October 2023, Unit 1 was approved for commercial operation. In December 2023, Unit 2 was approved for commercial operation |\n| 33 | Formosa Hà Tĩnh (captive) | Hà Tĩnh | ~500? | ? | 2017 | Formosa Plastics | LOW — capacity & >30 MW status | Parametric |\n\n### B. COAL — UNDER CONSTRUCTION\n\n| # | Asset | Province | MW | Status detail | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 34 | Vũng Áng 2 (Vung Ang 2) | Hà Tĩnh | 1,200 (2×600) | Construction; Unit 1 COD Jul 2025 | HIGH | GEM wiki references Unit 1 commercial operation July 2025; BOT — Mitsubishi/KEPCO |\n| 35 | Quảng Trạch 1 (Quang Trach 1) | Quảng Bình | 1,200 (2×600) | Under construction | MED | listed among PDP8 projects: Quang Trach I |\n| 36 | Long Phú 1 (Long Phu 1) | Sóc Trăng | 1,200 (2×600) | Construction (long-delayed) | MED | Na Duong II, An Khanh – Bac Giang, Vung Ang 2, Quang Trach I, Long Phu 1 in revised PDP8 |\n| 37 | Na Dương 2 (Na Duong 2) | Lạng Sơn | 100 (1×100?) | Construction (EPC signed Dec 2023) | MED | Phase 2...total capital investment of 4.09 billion VND...Vietcombank Ha Thanh signed a credit contract to finance |\n| 38 | An Khánh–Bắc Giang | Bắc Giang | ~600? | Under construction? | LOW — capacity unknown | An Khanh – Bac Giang listed in revised PDP8 |\n\n### C. COAL — CANCELLED / SHELVED (per PDP8)\n\n| # | Asset | Province | MW (planned) | Status | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 39 | Quảng Ninh III | Quảng Ninh | ~1,200? | Cancelled | MED | 13,220 MW of coal-fired power: Quang Ninh III, Cam Pha III, Hai Phong III, Quynh Lap I, II, Vung Ang III, Quang Trach II, Long Phu II, III, Tan Phuoc I, II |\n| 40 | Cẩm Phả III | Quảng Ninh | ~1,200? | Cancelled | MED | Same source |\n| 41 | Hải Phòng III | Hải Phòng | ~1,200? | Cancelled | MED | Same source |\n| 42 | Quỳnh Lập I | Nghệ An | ~1,200? | Cancelled | MED | Same source |\n| 43 | Quỳnh Lập II | Nghệ An | ~1,200? | Cancelled | MED | Same source |\n| 44 | Vũng Áng III | Hà Tĩnh | ~1,200? | Cancelled | MED | Same source |\n| 45 | Quảng Trạch II | Quảng Bình | ~1,200? | Cancelled | MED | Same source |\n| 46 | Long Phú II | Sóc Trăng | ~1,200? | Cancelled | MED | Same source |\n| 47 | Long Phú III | Sóc Trăng | ~1,200? | Cancelled | MED | Same source |\n| 48 | Tân Phước I | Tiền Giang? | ~1,200? | Cancelled | MED | Same source |\n| 49 | Tân Phước II | Tiền Giang? | ~1,200? | Cancelled | MED | Same source |\n| 50 | Vĩnh Tân 3 | Bình Thuận | ~2,000? | Cancelled/Converted? | LOW | Parametric — need to verify |\n| 51 | Sông Hậu 2 | Hậu Giang | ~2,000? | Cancelled? | LOW | Parametric |\n| 52 | Kiên Lương | Kiên Giang | ~3,600? | Cancelled | LOW | Parametric (old PDP7) |\n\n### D. GAS — OPERATING (Domestic Gas, Southeast)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 53 | Bà Rịa (Ba Ria) | BR-VT | ~389 | 1995 | PV Power | MED |\n| 54 | Phú Mỹ 1 (Phu My 1) | BR-VT | ~1,090 | 2002–2004 | EVN/EVNGENCO3 | MED |\n| 55 | Phú Mỹ 2.1 (Phu My 2.1) | BR-VT | ~724 | 2001 | EVNGENCO3 | MED |\n| 56 | Phú Mỹ 2.1 MR (Extension) | BR-VT | ~432 | 2005 | BOT — EDF/Sumitomo? | LOW |\n| 57 | Phú Mỹ 2.2 (Phu My 2.2) | BR-VT | ~715 | 2005 | BOT — One Energy? | LOW |\n| 58 | Phú Mỹ 3 (Phu My 3) | BR-VT | ~720 | 2004 | BOT — Siemens/BP? | LOW |\n| 59 | Phú Mỹ 4 (Phu My 4) | BR-VT | ~450 | ? | EVNGENCO3 | LOW |\n| 60 | Nhơn Trạch 1 (Nhon Trach 1) | Đồng Nai | ~450 | 2008–2009 | PV Power | MED |\n| 61 | Nhơn Trạch 2 (Nhon Trach 2) | Đồng Nai | ~750 | 2011 | PV Power | MED |\n| 62 | Thủ Đức (Thu Duc) | HCMC | ~165 | 1960s–70s | EVN | LOW — may be retired |\n\n### E. GAS — OPERATING (Domestic Gas, Southwest)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 63 | Cà Mau 1 (Ca Mau 1) | Cà Mau | 750 | 2007–2008 | PV Power | HIGH | The Ca Mau Combined Cycle Power Plant is a 1,500MW thermal project. PetroVietnam Power owns the project. It was commissioned in 2008 |\n| 64 | Cà Mau 2 (Ca Mau 2) | Cà Mau | 750 | 2008–2009 | PV Power | HIGH | Same source |\n\n### F. GAS — OPERATING (Central / Other)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 65 | Ô Môn I (O Mon 1) | Cần Thơ | 660 | 2009? | EVNGENCO2 | MED — currently gas turbine OC? | Parametric |\n\n### G. LNG — COMMISSIONED / UNDER CONSTRUCTION\n\n| # | Asset | Province | MW | Status | Owner | Confidence | Source |\n|---|---|---|---|---|---|---|---|\n| 66 | Nhơn Trạch 3 (Nhon Trach 3) | Đồng Nai | 750 | Commissioned Dec 2025 | PV Power | HIGH | Vietnam launches its first LNG-to-power project as the Prime Minister orders the inauguration of Nhon Trach 3 and 4 power plants in Dong Nai on December 14 |\n| 67 | Nhơn Trạch 4 (Nhon Trach 4) | Đồng Nai | 750 | Commissioned Dec 2025 | PV Power | HIGH | Same source |\n\n### H. LNG — PRE-CONSTRUCTION / DEVELOPMENT\n\n| # | Asset | Province | MW | Status | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 68 | Quảng Ninh LNG | Quảng Ninh | 1,500 | Development (target 2028–2029) | MED | Quang Ninh LNG Thermal Power Plant (1,500 MW, projected for 2028-2029) |\n| 69 | Thái Bình LNG | Thái Bình | 1,500 | Development | LOW | Thai Binh Power Plant LNG Storage Facility |\n| 70 | Cà Na LNG (Ca Na) | Ninh Thuận | 1,500 | Development (before 2030) | MED | Ca Na LNG Thermal Power Plant (1,500 MW, before 2030) |\n| 71 | Bạc Liêu LNG | Bạc Liêu | 3,200 | Development (Delta Offshore) | LOW | Bac Lieu Power Plant LNG Storage Facility + parametric |\n| 72 | Sơn Mỹ I (Son My I) | Bình Thuận | 2,250 | Development | LOW | Parametric |\n| 73 | Sơn Mỹ II (Son My II) | Bình Thuận | 2,250 | Development | LOW | Parametric |\n| 74 | LNG Hải Phòng Phase I | Hải Phòng | 1,600 | Development (revised PDP8) | MED | LNG Hai Phong Phase I...1600 MW |\n| 75 | LNG Hiệp Phước Phase II | HCMC | 1,500 | Development (revised PDP8) | MED | LNG Hiep Phuoc Phase II...1500 MW |\n| 76 | LNG Công Thanh (Cong Thanh) | Thanh Hóa | 1,500 (Ph1) / 4,500 total | Development | MED | LNG Cong Thanh with a capacity of 1500 MW...may be accelerated to the period 2026–2030 |\n| 77 | Nghi Sơn LNG | Thanh Hóa | 1,500 | Development (bidding cancelled) | MED | The Nghi Son LNG power project received investment approval in March 2024...capacity of 1,500 MW but Thanh Hoa province later canceled the international bidding process |\n| 78 | Long Sơn LNG (Long An I?) | Long An? | 1,500? | Development | LOW | Parametric |\n| 79 | Hiệp Phước 1 (Hiep Phuoc 1) | HCMC/Long An | ~1,200–1,500 | Development | LOW | Block BO Mon and Hiep Phuoc 1 combined cycle power plants, with a combined capacity of 6,634 megawatts |\n\n### I. DOMESTIC GAS — PLANNED (Block B / Blue Whale chains)\n\n| # | Asset | Province | MW | Gas Source | Status | Confidence | Source |\n|---|---|---|---|---|---|---|---|\n| 80 | Ô Môn II (O Mon 2) | Cần Thơ | 750 | Block B | Development | MED | Block B gas-power project (3,810 MW in Can Tho) |\n| 81 | Ô Môn III (O Mon 3) | Cần Thơ | 750 | Block B | Development | MED | Same chain |\n| 82 | Ô Môn IV (O Mon 4) | Cần Thơ | 750 | Block B | Development | MED | Same chain |\n| 83 | Dung Quất I (Dung Quat 1) | Quảng Ngãi | 750 | Blue Whale | Development | MED | gas from the field is expected to power the Dung Quat Power Complex, comprising three combined cycle gas turbine power plants, each with a capacity of about 750MW |\n| 84 | Dung Quất III (Dung Quat 3) | Quảng Ngãi | 750 | Blue Whale | Development | MED | Same source |\n| 85 | Miền Trung I (Dung Quat 2?) | Quảng Ngãi/Đà Nẵng | 750? | Blue Whale | Development | LOW | Blue Whale gas-power project (3,750 MW in Da Nang and Quang Ngai) |\n| 86 | Quảng Trị TBKHH | Quảng Trị | 340 | Bảo Vàng field | Development | MED | Implementing a mixed gas turbine plant (TBKHH) in Quang Tri (340 MW) using gas from Bao Vang field |\n\n### J. RESERVE LNG PROJECTS (Revised PDP8, 2031–2035)\n\nUnder Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031–2035 with the estimated capacity of 1500 MW per project:\n\n| # | Potential Location | MW | Status |\n|---|---|---|---|\n| 87–91 | Thai Binh, Thanh Hoa, Nam Dinh, Vung Ang, Quang Binh | 1,500 each | Reserve / contingency |\n\n---\n\n### GAPS TO FILL — TURN 2 PRIORITIES\n\n**HIGH PRIORITY (directly affects >1,000 MW rows)**\n1. **Long Phu 1** — construction status, contractor, expected COD (was stalled after Russian sanctions on Power Machines)\n2. **Quang Trach 1** — construction progress, expected COD, contractor\n3. **Thai Binh 2** — exact COD (reports range 2022–2024)\n4. **Song Hau 1** — exact COD (reports range 2020–2022)\n5. **Hai Duong BOT** — COD, exact capacity, operator structure (Jaks/China Energy)\n6. **Vung Ang 2** — Unit 2 status (Unit 1 COD Jul 2025 per GEM)\n7. **O Mon I** — current config (open-cycle GT only? or combined cycle?)\n8. **Block B gas project** — upstream timeline → affects O Mon II/III/IV CODs\n9. **Blue Whale (Ca Voi Xanh)** — ExxonMobil status → affects Dung Quat chain CODs\n\n**MEDIUM PRIORITY (smaller plants, details)**\n10. Uong Bi — phase/unit breakdown and total current MW\n11. Cam Pha — unit breakdown (1 vs 2 phases)\n12. Quang Ninh — is there a Phase II separate from Phase I?\n13. Son Dong — exact MW, COD\n14. An Khanh — exact MW, distinguish from \"An Khanh–Bac Giang\" new project\n15. Phu My complex — exact per-plant MW and BOT vs EVN ownership\n16. Thu Duc — still operating or retired?\n17. Formosa Ha Tinh captive plant — MW (include if >30 MW)\n18. Hoa Phat Dung Quat captive — MW\n\n**LOW PRIORITY (cancelled/shelved details)**\n19. Individual capacities for cancelled 13 GW list\n20. Vinh Tan 3 / Song Hau 2 / Kien Luong — confirm cancelled\n21. Quang Tri thermal (EGATi withdrawal → EVNGENCO1 proposed takeover)\n22. Nam Dinh 1 — is this coal or converted to LNG? (The Nam Dinh 1 project, a joint venture between Taekwang Power (South Korea) and ACWA Power (Saudi Arabia)...will have a capacity of 1,200 MW — fuel type unclear)\n23. Bac Lieu LNG — actual developer status (Delta Offshore viability?)\n\n---\n\n### SUMMARY STATISTICS (preliminary)\n- **Operating coal:** ~20–21 GW across ~30+ units ✓ (consistent with About 20 GW of power stations in Vietnam are coal-fired)\n- **Under construction coal:** ~3.7 GW (Vung Ang 2 + Quang Trach 1 + Long Phu 1 + Na Duong 2 + An Khanh-BG)\n- **Cancelled coal (PDP8):** ~13.2 GW named\n- **Operating domestic gas:** ~7.2 GW (SE + SW + O Mon I)\n- **LNG commissioned:** 1.5 GW (Nhon Trach 3&4)\n- **LNG in development:** ~22–23 GW pipeline per PDP8 targets\n- **Domestic gas planned (Block B + Blue Whale):** ~6–7 GW\n\n**Turn 2 plan:** 6–8 targeted searches on high-priority gaps above, with Vietnamese-language queries where useful."
+        }
+      ]
+    }
+  },
+  "resource_use": {
+    "wall_s": 204.838,
+    "cost_usd": 0.52983,
+    "tokens_in": 43206,
+    "tokens_out": 12552,
+    "cost_breakdown": {
+      "input": 0.21603,
+      "output": 0.3138
+    },
+    "thinking_tokens": null
+  },
+  "result_file": null,
+  "result_summary": {
+    "status": "ok",
+    "n_plants": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "f1": null,
+    "fuel_accuracy": null,
+    "status_accuracy": null,
+    "province_accuracy": null
+  },
+  "justification": {
+    "output_text": "I'll begin broad discovery with 6 searches covering the key segments.## TURN 1 — WORKING LIST & GAP ANALYSIS\n\nI've compiled a comprehensive working list from 6 search queries plus parametric knowledge. Here is the structured output.\n\n---\n\n### A. COAL — OPERATING (confirmed or highly likely)\n\n| # | Asset (Vietnamese) | Province | MW (approx) | Units | COD (approx) | Owner/Operator | Confidence | Key Source |\n|---|---|---|---|---|---|---|---|---|\n| 1 | Uông Bí (Uong Bi) | Quảng Ninh | ~630 | Multi-phase | 1960s–2000s | EVN/EVNGENCO1 | MED — phases unclear | Vietnam's oldest power station (Uong Bi) has passed a lifespan of 40 years |\n| 2 | Phả Lại 1 (Pha Lai 1) | Hải Dương | 440 | 4×110 | 1983–1986 | EVN/EVNGENCO1 | HIGH | Pha Lai TPP 1 is the oldest of the thermal power plants, operated for approximately 40 years, with a capacity of 440MW |\n| 3 | Phả Lại 2 (Pha Lai 2) | Hải Dương | 600 | 2×300 | 2001–2002 | PPC (PhaLai JSC) | MED — owner to verify | Parametric |\n| 4 | Ninh Bình (Ninh Binh) | Ninh Bình | 100 | 4×25 | 1970s | EVN | MED | The World Bank representative shared their initial research results for repurposing of Ninh Binh coal-fired power plant |\n| 5 | Na Dương 1 (Na Duong 1) | Lạng Sơn | 100 | 2×50 | 2005 | Vinacomin/TKV | HIGH | Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by Vinacomin, began construction in April 2002, and was completed in 2005 |\n| 6 | Cao Ngạn (Cao Ngan) | Thái Nguyên | 100 | 2×50 | 2005? | EVNGENCO1 | MED | transition pathways for Vietnam's major coal-thermal power plants—namely Pha Lai, Cao Ngan, and Van Phong |\n| 7 | Sơn Động (Son Dong) | Bắc Giang | 220 | ? | 2013–2015? | Vinacomin/TKV | LOW — MW & COD unverified | Parametric |\n| 8 | An Khánh (An Khanh) | Thái Nguyên | ~50 | ? | 2014? | AKT JSC | LOW | Parametric |\n| 9 | Nông Sơn (Nong Son) | Quảng Nam | 30 | 1×30 | ~2010? | TKV? | LOW | Parametric |\n| 10 | Quảng Ninh 1 (Quang Ninh I) | Quảng Ninh | 600 | 2×300 | 2010–2012 | EVNGENCO1 | MED | Parametric |\n| 11 | Quảng Ninh 2 (Quang Ninh II) | Quảng Ninh | 600 | 2×300 | 2014–2015? | EVNGENCO1 | LOW — existence/capacity to verify | Parametric |\n| 12 | Cẩm Phả 1&2 (Cam Pha) | Quảng Ninh | 670 | Complex | 2010–2015 | Vinacomin/TKV | LOW — unit breakdown unclear | Parametric |\n| 13 | Mông Dương 1 (Mong Duong 1) | Quảng Ninh | 1,080 | 2×540 | 2015 | EVNGENCO3 | MED | Parametric |\n| 14 | Mông Dương 2 (Mong Duong 2) | Quảng Ninh | 1,240 | 2×620 | 2015 | BOT — AES/Posco | HIGH | coal plants developed under \"build-operate-transfer\" (BOT) contracts included Mông Dương-2 |\n| 15 | Hải Phòng 1 (Hai Phong 1) | Hải Phòng | 600 | 2×300 | 2010 | EVNGENCO1 | MED | Parametric |\n| 16 | Hải Phòng 2 (Hai Phong 2) | Hải Phòng | 600 | 2×300 | 2014 | EVNGENCO1 | MED | Parametric |\n| 17 | Thái Bình 1 (Thai Binh 1) | Thái Bình | 600 | 2×300 | 2018 | EVNGENCO1 | MED | Parametric |\n| 18 | Thái Bình 2 (Thai Binh 2) | Thái Bình | 600 | 2×300 | 2022–2024? | PVN/PV Power | LOW — COD disputed | Parametric |\n| 19 | Nghi Sơn 1 (Nghi Son 1) | Thanh Hóa | 600 | 2×300 | 2013–2014 | EVNGENCO1 | MED | Parametric |\n| 20 | Nghi Sơn 2 (Nghi Son 2) | Thanh Hóa | 1,200 | 2×600 | 2022 | BOT — Marubeni/KEPCO | HIGH | the Nghi Son 2 plant in Thanh Hoa province...has a capacity of 1,200 MW |\n| 21 | Vũng Áng 1 (Vung Ang 1) | Hà Tĩnh | 1,200 | 2×600 | 2014–2015 | EVNGENCO1 | HIGH | GEM wiki + parametric |\n| 22 | Vĩnh Tân 1 (Vinh Tan 1) | Bình Thuận | 1,200 | 2×600 | 2018–2019 | BOT — COPI (China) | HIGH | Vĩnh Tân-1 listed as BOT |\n| 23 | Vĩnh Tân 2 (Vinh Tan 2) | Bình Thuận | 1,244 | 2×622 | 2014 | EVNGENCO3 | HIGH | The Vinh Tan Coal Fired Power Plant II has been operating since 2014. The 1,244MW thermal project is located in Binh Thuan |\n| 24 | Vĩnh Tân 4 (Vinh Tan 4) | Bình Thuận | 1,200 | 2×600 | 2017 | EVN | HIGH | The 1,800MW Vinh Tan Coal Fired Power Plant IV...was commissioned in 2017 |\n| 25 | Vĩnh Tân 4 MR (VT4 Extension) | Bình Thuận | 600 | 1×600 | 2019 | EVN | MED | Parametric |\n| 26 | Duyên Hải 1 (Duyen Hai 1) | Trà Vinh | 1,245 | 2×622 | 2015–2016 | EVN/EVNGENCO1 | HIGH | The Duyen Hai Power Plant I & III is a 2,488MW thermal power project located in Tra Vinh (combined I+III) |\n| 27 | Duyên Hải 2 (Duyen Hai 2) | Trà Vinh | 1,320 | 2×660 | 2021 | BOT — Janakuasa (MY) | HIGH | The Duyen Hai Power Plant II...with a capacity of 1,320MW came online in 2021 |\n| 28 | Duyên Hải 3 (Duyen Hai 3) | Trà Vinh | 1,245 | 2×622 | 2017–2018 | EVNGENCO1 | MED | See #26 combined listing |\n| 29 | Duyên Hải 3 MR (DH3 Extension) | Trà Vinh | 688 | 1×688 | 2019–2020 | EVNGENCO1 | MED | Parametric |\n| 30 | Sông Hậu 1 (Song Hau 1) | Hậu Giang | 1,200 | 2×600 | 2020–2022? | EVNGENCO2/PVN | LOW — COD to verify | Parametric |\n| 31 | Hải Dương BOT (Hai Duong) | Hải Dương | 1,200 | 2×600 | 2020–2021? | Jaks Resources (MY)/China Energy | MED | Hai Duong Thermal Power Plant listed among BOT plants |\n| 32 | Vân Phong 1 (Van Phong 1) | Khánh Hòa | 1,432 | 2×716 | 2023–2024 | BOT — Sumitomo/KEPCO | HIGH | In October 2023, Unit 1 was approved for commercial operation. In December 2023, Unit 2 was approved for commercial operation |\n| 33 | Formosa Hà Tĩnh (captive) | Hà Tĩnh | ~500? | ? | 2017 | Formosa Plastics | LOW — capacity & >30 MW status | Parametric |\n\n### B. COAL — UNDER CONSTRUCTION\n\n| # | Asset | Province | MW | Status detail | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 34 | Vũng Áng 2 (Vung Ang 2) | Hà Tĩnh | 1,200 (2×600) | Construction; Unit 1 COD Jul 2025 | HIGH | GEM wiki references Unit 1 commercial operation July 2025; BOT — Mitsubishi/KEPCO |\n| 35 | Quảng Trạch 1 (Quang Trach 1) | Quảng Bình | 1,200 (2×600) | Under construction | MED | listed among PDP8 projects: Quang Trach I |\n| 36 | Long Phú 1 (Long Phu 1) | Sóc Trăng | 1,200 (2×600) | Construction (long-delayed) | MED | Na Duong II, An Khanh – Bac Giang, Vung Ang 2, Quang Trach I, Long Phu 1 in revised PDP8 |\n| 37 | Na Dương 2 (Na Duong 2) | Lạng Sơn | 100 (1×100?) | Construction (EPC signed Dec 2023) | MED | Phase 2...total capital investment of 4.09 billion VND...Vietcombank Ha Thanh signed a credit contract to finance |\n| 38 | An Khánh–Bắc Giang | Bắc Giang | ~600? | Under construction? | LOW — capacity unknown | An Khanh – Bac Giang listed in revised PDP8 |\n\n### C. COAL — CANCELLED / SHELVED (per PDP8)\n\n| # | Asset | Province | MW (planned) | Status | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 39 | Quảng Ninh III | Quảng Ninh | ~1,200? | Cancelled | MED | 13,220 MW of coal-fired power: Quang Ninh III, Cam Pha III, Hai Phong III, Quynh Lap I, II, Vung Ang III, Quang Trach II, Long Phu II, III, Tan Phuoc I, II |\n| 40 | Cẩm Phả III | Quảng Ninh | ~1,200? | Cancelled | MED | Same source |\n| 41 | Hải Phòng III | Hải Phòng | ~1,200? | Cancelled | MED | Same source |\n| 42 | Quỳnh Lập I | Nghệ An | ~1,200? | Cancelled | MED | Same source |\n| 43 | Quỳnh Lập II | Nghệ An | ~1,200? | Cancelled | MED | Same source |\n| 44 | Vũng Áng III | Hà Tĩnh | ~1,200? | Cancelled | MED | Same source |\n| 45 | Quảng Trạch II | Quảng Bình | ~1,200? | Cancelled | MED | Same source |\n| 46 | Long Phú II | Sóc Trăng | ~1,200? | Cancelled | MED | Same source |\n| 47 | Long Phú III | Sóc Trăng | ~1,200? | Cancelled | MED | Same source |\n| 48 | Tân Phước I | Tiền Giang? | ~1,200? | Cancelled | MED | Same source |\n| 49 | Tân Phước II | Tiền Giang? | ~1,200? | Cancelled | MED | Same source |\n| 50 | Vĩnh Tân 3 | Bình Thuận | ~2,000? | Cancelled/Converted? | LOW | Parametric — need to verify |\n| 51 | Sông Hậu 2 | Hậu Giang | ~2,000? | Cancelled? | LOW | Parametric |\n| 52 | Kiên Lương | Kiên Giang | ~3,600? | Cancelled | LOW | Parametric (old PDP7) |\n\n### D. GAS — OPERATING (Domestic Gas, Southeast)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 53 | Bà Rịa (Ba Ria) | BR-VT | ~389 | 1995 | PV Power | MED |\n| 54 | Phú Mỹ 1 (Phu My 1) | BR-VT | ~1,090 | 2002–2004 | EVN/EVNGENCO3 | MED |\n| 55 | Phú Mỹ 2.1 (Phu My 2.1) | BR-VT | ~724 | 2001 | EVNGENCO3 | MED |\n| 56 | Phú Mỹ 2.1 MR (Extension) | BR-VT | ~432 | 2005 | BOT — EDF/Sumitomo? | LOW |\n| 57 | Phú Mỹ 2.2 (Phu My 2.2) | BR-VT | ~715 | 2005 | BOT — One Energy? | LOW |\n| 58 | Phú Mỹ 3 (Phu My 3) | BR-VT | ~720 | 2004 | BOT — Siemens/BP? | LOW |\n| 59 | Phú Mỹ 4 (Phu My 4) | BR-VT | ~450 | ? | EVNGENCO3 | LOW |\n| 60 | Nhơn Trạch 1 (Nhon Trach 1) | Đồng Nai | ~450 | 2008–2009 | PV Power | MED |\n| 61 | Nhơn Trạch 2 (Nhon Trach 2) | Đồng Nai | ~750 | 2011 | PV Power | MED |\n| 62 | Thủ Đức (Thu Duc) | HCMC | ~165 | 1960s–70s | EVN | LOW — may be retired |\n\n### E. GAS — OPERATING (Domestic Gas, Southwest)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 63 | Cà Mau 1 (Ca Mau 1) | Cà Mau | 750 | 2007–2008 | PV Power | HIGH | The Ca Mau Combined Cycle Power Plant is a 1,500MW thermal project. PetroVietnam Power owns the project. It was commissioned in 2008 |\n| 64 | Cà Mau 2 (Ca Mau 2) | Cà Mau | 750 | 2008–2009 | PV Power | HIGH | Same source |\n\n### F. GAS — OPERATING (Central / Other)\n\n| # | Asset | Province | MW | COD | Owner | Confidence |\n|---|---|---|---|---|---|---|\n| 65 | Ô Môn I (O Mon 1) | Cần Thơ | 660 | 2009? | EVNGENCO2 | MED — currently gas turbine OC? | Parametric |\n\n### G. LNG — COMMISSIONED / UNDER CONSTRUCTION\n\n| # | Asset | Province | MW | Status | Owner | Confidence | Source |\n|---|---|---|---|---|---|---|---|\n| 66 | Nhơn Trạch 3 (Nhon Trach 3) | Đồng Nai | 750 | Commissioned Dec 2025 | PV Power | HIGH | Vietnam launches its first LNG-to-power project as the Prime Minister orders the inauguration of Nhon Trach 3 and 4 power plants in Dong Nai on December 14 |\n| 67 | Nhơn Trạch 4 (Nhon Trach 4) | Đồng Nai | 750 | Commissioned Dec 2025 | PV Power | HIGH | Same source |\n\n### H. LNG — PRE-CONSTRUCTION / DEVELOPMENT\n\n| # | Asset | Province | MW | Status | Confidence | Source |\n|---|---|---|---|---|---|---|\n| 68 | Quảng Ninh LNG | Quảng Ninh | 1,500 | Development (target 2028–2029) | MED | Quang Ninh LNG Thermal Power Plant (1,500 MW, projected for 2028-2029) |\n| 69 | Thái Bình LNG | Thái Bình | 1,500 | Development | LOW | Thai Binh Power Plant LNG Storage Facility |\n| 70 | Cà Na LNG (Ca Na) | Ninh Thuận | 1,500 | Development (before 2030) | MED | Ca Na LNG Thermal Power Plant (1,500 MW, before 2030) |\n| 71 | Bạc Liêu LNG | Bạc Liêu | 3,200 | Development (Delta Offshore) | LOW | Bac Lieu Power Plant LNG Storage Facility + parametric |\n| 72 | Sơn Mỹ I (Son My I) | Bình Thuận | 2,250 | Development | LOW | Parametric |\n| 73 | Sơn Mỹ II (Son My II) | Bình Thuận | 2,250 | Development | LOW | Parametric |\n| 74 | LNG Hải Phòng Phase I | Hải Phòng | 1,600 | Development (revised PDP8) | MED | LNG Hai Phong Phase I...1600 MW |\n| 75 | LNG Hiệp Phước Phase II | HCMC | 1,500 | Development (revised PDP8) | MED | LNG Hiep Phuoc Phase II...1500 MW |\n| 76 | LNG Công Thanh (Cong Thanh) | Thanh Hóa | 1,500 (Ph1) / 4,500 total | Development | MED | LNG Cong Thanh with a capacity of 1500 MW...may be accelerated to the period 2026–2030 |\n| 77 | Nghi Sơn LNG | Thanh Hóa | 1,500 | Development (bidding cancelled) | MED | The Nghi Son LNG power project received investment approval in March 2024...capacity of 1,500 MW but Thanh Hoa province later canceled the international bidding process |\n| 78 | Long Sơn LNG (Long An I?) | Long An? | 1,500? | Development | LOW | Parametric |\n| 79 | Hiệp Phước 1 (Hiep Phuoc 1) | HCMC/Long An | ~1,200–1,500 | Development | LOW | Block BO Mon and Hiep Phuoc 1 combined cycle power plants, with a combined capacity of 6,634 megawatts |\n\n### I. DOMESTIC GAS — PLANNED (Block B / Blue Whale chains)\n\n| # | Asset | Province | MW | Gas Source | Status | Confidence | Source |\n|---|---|---|---|---|---|---|---|\n| 80 | Ô Môn II (O Mon 2) | Cần Thơ | 750 | Block B | Development | MED | Block B gas-power project (3,810 MW in Can Tho) |\n| 81 | Ô Môn III (O Mon 3) | Cần Thơ | 750 | Block B | Development | MED | Same chain |\n| 82 | Ô Môn IV (O Mon 4) | Cần Thơ | 750 | Block B | Development | MED | Same chain |\n| 83 | Dung Quất I (Dung Quat 1) | Quảng Ngãi | 750 | Blue Whale | Development | MED | gas from the field is expected to power the Dung Quat Power Complex, comprising three combined cycle gas turbine power plants, each with a capacity of about 750MW |\n| 84 | Dung Quất III (Dung Quat 3) | Quảng Ngãi | 750 | Blue Whale | Development | MED | Same source |\n| 85 | Miền Trung I (Dung Quat 2?) | Quảng Ngãi/Đà Nẵng | 750? | Blue Whale | Development | LOW | Blue Whale gas-power project (3,750 MW in Da Nang and Quang Ngai) |\n| 86 | Quảng Trị TBKHH | Quảng Trị | 340 | Bảo Vàng field | Development | MED | Implementing a mixed gas turbine plant (TBKHH) in Quang Tri (340 MW) using gas from Bao Vang field |\n\n### J. RESERVE LNG PROJECTS (Revised PDP8, 2031–2035)\n\nUnder Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031–2035 with the estimated capacity of 1500 MW per project:\n\n| # | Potential Location | MW | Status |\n|---|---|---|---|\n| 87–91 | Thai Binh, Thanh Hoa, Nam Dinh, Vung Ang, Quang Binh | 1,500 each | Reserve / contingency |\n\n---\n\n### GAPS TO FILL — TURN 2 PRIORITIES\n\n**HIGH PRIORITY (directly affects >1,000 MW rows)**\n1. **Long Phu 1** — construction status, contractor, expected COD (was stalled after Russian sanctions on Power Machines)\n2. **Quang Trach 1** — construction progress, expected COD, contractor\n3. **Thai Binh 2** — exact COD (reports range 2022–2024)\n4. **Song Hau 1** — exact COD (reports range 2020–2022)\n5. **Hai Duong BOT** — COD, exact capacity, operator structure (Jaks/China Energy)\n6. **Vung Ang 2** — Unit 2 status (Unit 1 COD Jul 2025 per GEM)\n7. **O Mon I** — current config (open-cycle GT only? or combined cycle?)\n8. **Block B gas project** — upstream timeline → affects O Mon II/III/IV CODs\n9. **Blue Whale (Ca Voi Xanh)** — ExxonMobil status → affects Dung Quat chain CODs\n\n**MEDIUM PRIORITY (smaller plants, details)**\n10. Uong Bi — phase/unit breakdown and total current MW\n11. Cam Pha — unit breakdown (1 vs 2 phases)\n12. Quang Ninh — is there a Phase II separate from Phase I?\n13. Son Dong — exact MW, COD\n14. An Khanh — exact MW, distinguish from \"An Khanh–Bac Giang\" new project\n15. Phu My complex — exact per-plant MW and BOT vs EVN ownership\n16. Thu Duc — still operating or retired?\n17. Formosa Ha Tinh captive plant — MW (include if >30 MW)\n18. Hoa Phat Dung Quat captive — MW\n\n**LOW PRIORITY (cancelled/shelved details)**\n19. Individual capacities for cancelled 13 GW list\n20. Vinh Tan 3 / Song Hau 2 / Kien Luong — confirm cancelled\n21. Quang Tri thermal (EGATi withdrawal → EVNGENCO1 proposed takeover)\n22. Nam Dinh 1 — is this coal or converted to LNG? (The Nam Dinh 1 project, a joint venture between Taekwang Power (South Korea) and ACWA Power (Saudi Arabia)...will have a capacity of 1,200 MW — fuel type unclear)\n23. Bac Lieu LNG — actual developer status (Delta Offshore viability?)\n\n---\n\n### SUMMARY STATISTICS (preliminary)\n- **Operating coal:** ~20–21 GW across ~30+ units ✓ (consistent with About 20 GW of power stations in Vietnam are coal-fired)\n- **Under construction coal:** ~3.7 GW (Vung Ang 2 + Quang Trach 1 + Long Phu 1 + Na Duong 2 + An Khanh-BG)\n- **Cancelled coal (PDP8):** ~13.2 GW named\n- **Operating domestic gas:** ~7.2 GW (SE + SW + O Mon I)\n- **LNG commissioned:** 1.5 GW (Nhon Trach 3&4)\n- **LNG in development:** ~22–23 GW pipeline per PDP8 targets\n- **Domestic gas planned (Block B + Blue Whale):** ~6–7 GW\n\n**Turn 2 plan:** 6–8 targeted searches on high-priority gaps above, with Vietnamese-language queries where useful."
+  },
+  "validation": null,
+  "agent_family": "anthropic-direct",
+  "agent_mode": "phase_b_run",
+  "synopsis_sha": null,
+  "designed_prompt_sha": null,
+  "web_search_calls": [
+    {
+      "query": "Vietnam PDP8 thermal power plant list capacity",
+      "urls_returned": [
+        "https://www.wfw.com/articles/vietnam-issues-implementation-plan-of-power-development-plan-8/",
+        "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+        "https://greenfdc.org/vietnams-eight-national-power-development-plan-pdp8/",
+        "https://www.mekongeye.com/2023/05/29/vietnam-pdp8",
+        "https://www.frasersvn.com/api/uploads/Legal_Update_The_Revised_PDP_8_EN_April_2025_5cec48fd6d.pdf",
+        "https://www.aoshearman.com/en/insights/vietnams-pdp8-gets-a-makeover",
+        "https://www.dfdl.com/insights/legal-and-tax-updates/vietnam-pdp-8-revised-vietnams-2030-installed-power-capacity-targets/",
+        "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf",
+        "https://www.usasean.org/article/vietnams-revised-national-power-development-plan-8-ambitious-renewable-energy-targets",
+        "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/"
+      ]
+    },
+    {
+      "query": "Vietnam operating coal power plants list MW 2024",
+      "urls_returned": [
+        "https://en.wikipedia.org/wiki/List_of_coal-fired_power_stations_in_Vietnam",
+        "https://www.gem.wiki/Vung_Ang_power_station",
+        "https://www.gem.wiki/Na_Duong_power_station",
+        "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+        "https://www.gem.wiki/Van_Phong_power_station",
+        "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+        "https://the-shiv.com/vietnams-coal-power-industry/",
+        "https://www.trade.gov/country-commercial-guides/vietnam-power-generation-transmission-and-distribution",
+        "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/"
+      ]
+    },
+    {
+      "query": "Vietnam LNG gas power projects status 2024 2025",
+      "urls_returned": [
+        "https://www.spglobal.com/commodity-insights/en/news-research/latest-news/lng/092424-vietnam-faces-domestic-natural-gas-shortfall-for-power-generation-in-2025",
+        "https://theinvestor.vn/two-multi-billion-dollar-lng-power-projects-restarted-in-central-vietnam-d16993.html",
+        "https://www.offshore-energy.biz/pm-wants-vietnams-first-lng-power-plants-online-by-june-as-delays-loom/",
+        "https://www.lexology.com/library/detail.aspx?g=442af86b-e1a3-4c54-a16c-5649aefaaa5d",
+        "https://en.vietnamplus.vn/nhon-trach-3-and-4-thermal-power-plants-vietnams-first-lng-project-post334339.vnp",
+        "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+        "https://www.nortonrosefulbright.com/en/knowledge/publications/1d041eb0/vietnam-power-sector-snapshot",
+        "https://www.aoshearman.com/en/insights/vietnam-impact-on-lng-to-power-projects-of-the-new-electricity-law-guiding-decree-56",
+        "https://angeassociation.com/location/vietnam/"
+      ]
+    },
+    {
+      "query": "Vietnam cancelled shelved coal power projects",
+      "urls_returned": []
+    },
+    {
+      "query": "Global Energy Monitor Vietnam coal plant tracker",
+      "urls_returned": []
+    },
+    {
+      "query": "EVN Vietnam thermal power fleet capacity 2024",
+      "urls_returned": []
+    }
+  ],
+  "citations": [
+    {
+      "url": "https://greenfdc.org/vietnams-eight-national-power-development-plan-pdp8/",
+      "snippet": "Clarify strategy for the retirement of Vietnam’s coal station fleet: Vietnam’s oldest power station (Uong Bi power station) has passed a lifespan of 4...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+      "snippet": "Pha Lai TPP 1 is the oldest of the thermal power plants, operated for approximately 40 years, with a capacity of 440MW.\n\n",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+      "snippet": "The World Bank representative shared their initial research results for repurposing of Ninh Binh coal-fired power plant. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by Vinacomin, began construction in April 2002, and was completed in 2005. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants",
+      "snippet": "The study explored viable transition pathways for Vietnam’s major coal-thermal power plants—namely Pha Lai, Cao Ngan, and Van Phong—assessing the pote...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://the-shiv.com/vietnams-coal-power-industry/",
+      "snippet": "The company has partnered with local entities to develop and operate several coal-fired power plants, including the Nghi Son 2 plant in Thanh Hoa prov...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "The Vinh Tan Coal Fired Power Plant II has been operating since 2014. The 1,244MW thermal project is located in Binh Thuan, Vietnam. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "The 1,800MW Vinh Tan Coal Fired Power Plant IV thermal power project is located in Binh Thuan, Vietnam. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "It was commissioned in 2017.\n\n",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "The Duyen Hai Power Plant I & III is a 2,488MW thermal power project located in Tra Vinh, Vietnam.\n\n",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "The Duyen Hai Power Plant II thermal project with a capacity of 1,320MW came online in 2021. The project was developed by Teknik Janakuasa. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "The list of coal plants, which were developed under “build-operate-transfer” (BOT) contracts, included Mông Dương-2, Vĩnh Tân-1, Nghi Sơn-2, Vân Phong...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Van_Phong_power_station",
+      "snippet": "[26] In October 2023, Unit 1 was approved for commercial operation. In December 2023, Unit 2 was approved for commercial operation. Unit 1 was officia...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Vung_Ang_power_station",
+      "snippet": "[68] The ministry argued that imposing the 15% minimum tax could trigger compensation obligations that “would expose the Vietnamese government to the ...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+      "snippet": "This type of power source is prioritized for unlimited · capacity development, provided it is reasonably priced and makes use of the ... Khanh - Bac G...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.frasersvn.com/api/uploads/Legal_Update_The_Revised_PDP_8_EN_April_2025_5cec48fd6d.pdf",
+      "snippet": "... Na Duong II, An Khanh – Bac Giang, Vung Ang 2, Quang Trach I, Long Phu 1.",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.frasersvn.com/api/uploads/Legal_Update_The_Revised_PDP_8_EN_April_2025_5cec48fd6d.pdf",
+      "snippet": "... Na Duong II, An Khanh – Bac Giang, Vung Ang 2, Quang Trach I, Long Phu 1.",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.gem.wiki/Na_Duong_power_station",
+      "snippet": "Phase 2: As of April 2024, the project reportedly had a total capital investment of 4.09 billion VND. The investment included a 1.46 billion VND capit...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.frasersvn.com/api/uploads/Legal_Update_The_Revised_PDP_8_EN_April_2025_5cec48fd6d.pdf",
+      "snippet": "... Na Duong II, An Khanh – Bac Giang, Vung Ang 2, Quang Trach I, Long Phu 1.",
+      "supports_claim": null
+    },
+    {
+      "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+      "snippet": "No · 13,220 MW of coal-fired power: Quang Ninh III, Cam Pha III, Hai Phong III, Quynh Lap I, II, Vung Ang III, Quang Trach II, Long Phu II, III, Tan P...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.power-technology.com/data-insights/top-five-thermal-power-plants-in-operation-in-vietnam/",
+      "snippet": "The Ca Mau Combined Cycle Power Plant is a 1,500MW thermal project. PetroVietnam Power owns the project. It was commissioned in 2008. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.vietnamplus.vn/nhon-trach-3-and-4-thermal-power-plants-vietnams-first-lng-project-post334339.vnp",
+      "snippet": "Vietnam launches its first LNG-to-power project as the Prime Minister orders the inauguration of Nhon Trach 3 and 4 power plants in Dong Nai on Decemb...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "Many projects already included in the previous decision, such as the Quang Ninh LNG Thermal Power Plant (1,500 MW, projected for 2028-2029) and the Ca...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "Six LNG storage facilities associated with power plants, such as the Quang Ninh Power Plant LNG Storage Facility, the Thai Binh Power Plant LNG Storag...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "Many projects already included in the previous decision, such as the Quang Ninh LNG Thermal Power Plant (1,500 MW, projected for 2028-2029) and the Ca...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "Six LNG storage facilities associated with power plants, such as the Quang Ninh Power Plant LNG Storage Facility, the Thai Binh Power Plant LNG Storag...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "Under Table 1 of Annex III, there are some new LNG to power projects being updated into the Revised PDP8, including: for the period 2025 – 2030, in ac...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "Under Table 1 of Annex III, there are some new LNG to power projects being updated into the Revised PDP8, including: for the period 2025 – 2030, in ac...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "Under Table 1 of Annex III, there are some new LNG to power projects being updated into the Revised PDP8, including: for the period 2025 – 2030, in ac...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://theinvestor.vn/two-multi-billion-dollar-lng-power-projects-restarted-in-central-vietnam-d16993.html",
+      "snippet": "The Nghi Son LNG power project received investment approval in March 2024 and is expected to become one of the key LNG power sources in the region. Th...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://theinvestor.vn/two-multi-billion-dollar-lng-power-projects-restarted-in-central-vietnam-d16993.html",
+      "snippet": "However, Thanh Hoa province later canceled the international bidding process after two rounds of invitations and extensions failed to attract any inve...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.offshore-energy.biz/pm-wants-vietnams-first-lng-power-plants-online-by-june-as-delays-loom/",
+      "snippet": "Additionally, the Block BO Mon and Hiep Phuoc 1 combined cycle power plants, with a combined capacity of 6,634 megawatts (MW), are considered the only...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "In addition, strategic gas-power projects such as the Block B gas-power project (3,810 MW in Can Tho ) and the Blue Whale gas-power project (3,750 MW ...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.offshore-energy.biz/pm-wants-vietnams-first-lng-power-plants-online-by-june-as-delays-loom/",
+      "snippet": "The gas from the field is expected to power the Dung Quat Power Complex, comprising three combined cycle gas turbine power plants, each with a capacit...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.vietnam.vn/en/phe-duyet-danh-muc-du-an-nang-luong-trong-diem-giai-doan-moi",
+      "snippet": "In addition, strategic gas-power projects such as the Block B gas-power project (3,810 MW in Can Tho ) and the Blue Whale gas-power project (3,750 MW ...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf",
+      "snippet": "Implementing a mixed gas turbine plant · (TBKHH) in Quang Tri (340 MW) using gas from Bao Vang field. ",
+      "supports_claim": null
+    },
+    {
+      "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+      "snippet": "Under Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031 – 2035 with the estimated capa...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://the-shiv.com/vietnams-coal-power-industry/",
+      "snippet": "The Nam Dinh 1 project, a joint venture between Taekwang Power (South Korea) and ACWA Power (Saudi Arabia), is located in Nam Dinh province and will h...",
+      "supports_claim": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/List_of_coal-fired_power_stations_in_Vietnam",
+      "snippet": "About 20 GW of power stations in Vietnam are coal-fired. ",
+      "supports_claim": null
+    }
+  ],
+  "parsed_table_path": null,
+  "finish_reason": "end_turn",
+  "retry_count": 0,
+  "error": null,
+  "reasoning_summary": "Let me start with broad discovery searches to build a working list of Vietnam's thermal generation assets. I'll use 4-6 well-chosen queries.\n\nLet me compile a comprehensive working list from the search results and my parametric knowledge. Let me organize by fuel type and status.\n\n## COAL - OPERATING\n\nFrom search results and parametric knowledge:\n\n1. **Pha Lai 1** (Pha Lại 1) - Hai Duong - 440 MW - Operating (1980s) - oldest, UNDP transition study\n2. **Pha Lai 2** (Pha Lại 2) - Hai Duong - 600 MW - Operating (2001-2002)\n3. **Uong Bi** (Uông Bí) - Quang Ninh - 630 MW (multiple expansions) - Operating - oldest per GreenFDC, past 40 years\n\n\n4. **Quang Ninh 1** (Quảng Ninh 1) - Quang Ninh - 600 MW (2×300) - Operating (2010s)\n5. **Cam Pha 1** (Cẩm Phả 1) - Quang Ninh - 600 MW (2×300) - Operating\n6. **Cam Pha 2** (Cẩm Phả 2) - Quang Ninh - 300 MW - Operating\n7. **Mong Duong 1** (Mông Dương 1) - continuing to verify additional plants in the region with capacities ranging from 600 to 1,240 MW, including Mong Duong 2, Hai Phong 1 and 2, Thai Binh 1 and 2, and Nghi Son 1, all operating between 2010 and 2024.\n\nContinuing down the list with Nghi Son 2, Vung Ang 1 and 2, and Vinh Tan 1, which are either operating or recently commissioned with Unit 1 of Vung Ang 2 coming online in July 2025.\n\nNow I'm cataloging the remaining Vinh Tan units—Vinh Tan 2 from 2014 operated by EVNGENCO3, Vinh Tan 4 from 2017 and its 2019 extension, both under EVN—along with the Duyen Hai plants in Tra Vinh, with Duyen Hai 1 commissioned in 2015-2016 and Duyen Hai 2 coming online more recently. Continuing through the list of Vietnamese coal plants, noting Cao Ngan's UNDP transition study status, Ninh Binh's World Bank repurposing initiative, and several smaller operating facilities before reaching Long Phu 1, which is under construction as part of the power development plan. I'm also noting a few additional projects that came up—Na Duong 2 in Lang Son and An Khanh–Bac Giang from the revised PDP8 list. For the under-construction coal plants, I'm tracking Vung Ang 2 with its Unit 1 expected in July 2025, along with Quang Trach 1, Long Phu 1 which appears stalled, and Na Duong 2 where the EPC contract was signed in December 2023. I should also note which projects have been cancelled or shelved according to the latest policy.\n\nLooking at the PDP8 revisions, roughly 13,220 MW of coal capacity was cancelled, including plants like Quang Ninh III, Cam Pha III, Hai Phong III, both Quynh Lap units, Vung Ang III, Quang Trach II, Long Phu II and III, and the Tan Phuoc units. I'm also checking whether Vinh Tan 3 and Song Hau 2 fall into the cancelled category as well.\n\nNow I'm reviewing the operating gas-fired plants, starting with the domestic gas facilities in the Ba Ria-Vung Tau area—Ba Ria, Phu My 1, Phu My 2.1, and its extension—which range from around 389 MW up to over 1,000 MW and came online between the early 2000s and mid-1990s. Now I'm cross-checking these plant listings against the S&P data, which mentions 5,705 MW of gas capacity in the southeast and 1,500 MW in the southwest. The southeast cluster around Ba Ria and the Phu My complex should account for most of that capacity, so I need to verify which plants fall into each region and make sure my totals align. Now I'm cataloging the LNG plants still in development stages across Vietnam—Quang Ninh, Thai Binh, and several projects in the south like Hai Lang with its massive 4,500 MW capacity tied to the Blue Whale gas field, plus the Son My and Bac Lieu facilities that are part of the longer-term pipeline. Continuing through the domestic gas projects, with Cong Thanh totaling 4,500 MW across its phases, then moving into the Dung Quat facilities and the O Mon complex in Can Tho which has multiple planned units alongside its existing operating plant. I'm working through the smaller and older coal plants now—places like Uong Bi, An Khanh, Cao Ngan, Son Dong, and others scattered across Thai Nguyen and Quang Ninh—but I need to verify their exact capacities and commissioning dates. Let me organize what I have so far and flag the specific gaps I need to fill in the next search. I also need to track down information on cancelled coal projects and their capacities, verify whether Vinh Tan 3 was actually cancelled, check if Formosa and Hoa Phat's captive plants exceed the 30 MW threshold, identify any recently retired or mothballed facilities, and clarify the construction status of Na Duong 2 and the An Khanh-Bac Giang project.",
+  "tool_calls_cost_usd": 0.03
+}
