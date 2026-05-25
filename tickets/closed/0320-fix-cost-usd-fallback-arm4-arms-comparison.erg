@@ -2,10 +2,12 @@
 Title: Fix cost_usd vs total_cost_usd fallback in plot_exp2_arms_comparison for arm4
 Created: 2026-05-25
 Author: claude
+Closed: cost_usd fallback fixed in PR #565
 
 --- log ---
 2026-05-25T19:30Z claude created — scope overflow from PR #558 (0313 pipeline fix)
 
+2026-05-25T18:50Z HDMX-coding-agent closed — cost_usd fallback fixed in PR #565
 --- body ---
 ## Context
 
