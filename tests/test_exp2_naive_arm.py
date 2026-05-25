@@ -58,6 +58,79 @@ def test_probe_mistral_parses_flat_string_content(monkeypatch, tmp_path):
     assert result["cost_usd"] == 0.12
 
 
+def test_probe_mistral_keeps_tool_references_in_narrative(monkeypatch, tmp_path):
+    class _Record(SimpleNamespace):
+        resource_use = SimpleNamespace(cost_usd=0.2, tokens_out=100)
+        tool_calls_cost_usd = 0.01
+
+    def fake_run(prompt, *, output_path, **kwargs):  # noqa: ARG001
+        output_path.write_text(
+            json.dumps(
+                {
+                    "outputs": [
+                        {
+                            "type": "message.output",
+                            "content": [
+                                {"type": "text", "text": "Report body."},
+                                {
+                                    "type": "tool_reference",
+                                    "title": "Source A",
+                                    "url": "https://example.com/a",
+                                },
+                            ],
+                        }
+                    ]
+                }
+            )
+        )
+        return _Record()
+
+    monkeypatch.setattr(exp2_naive_arm, "load_model_meta", lambda family: {"model_id": family})
+    monkeypatch.setattr("aedist.adapter_mistral.run", fake_run)
+
+    result = exp2_naive_arm.probe_mistral("prompt", tmp_path)
+
+    assert "Report body." in result["narrative"]
+    assert "## Sources" in result["narrative"]
+    assert "https://example.com/a" in result["narrative"]
+
+
+def test_probe_mistral_inlines_tool_reference_as_markdown_link(monkeypatch, tmp_path):
+    class _Record(SimpleNamespace):
+        resource_use = SimpleNamespace(cost_usd=0.2, tokens_out=100)
+        tool_calls_cost_usd = 0.01
+
+    def fake_run(prompt, *, output_path, **kwargs):  # noqa: ARG001
+        output_path.write_text(
+            json.dumps(
+                {
+                    "outputs": [
+                        {
+                            "type": "message.output",
+                            "content": [
+                                {"type": "text", "text": "| Source 1 |\n|---|\n| "},
+                                {
+                                    "type": "tool_reference",
+                                    "title": "Source A",
+                                    "url": "https://example.com/a",
+                                },
+                                {"type": "text", "text": " |"},
+                            ],
+                        }
+                    ]
+                }
+            )
+        )
+        return _Record()
+
+    monkeypatch.setattr(exp2_naive_arm, "load_model_meta", lambda family: {"model_id": family})
+    monkeypatch.setattr("aedist.adapter_mistral.run", fake_run)
+
+    result = exp2_naive_arm.probe_mistral("prompt", tmp_path)
+
+    assert "[Source A](https://example.com/a)" in result["narrative"]
+
+
 # ---------------------------------------------------------------------------
 # Regression guards — must pass before and after the --evidence-pack-manifest patch
 # ---------------------------------------------------------------------------
