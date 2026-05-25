@@ -1,8 +1,9 @@
 """Tests for aedist.plot_exp2_arms_comparison."""
 
 import csv
+import json
 
-from aedist.plot_exp2_arms_comparison import _load_csv, make_figure
+from aedist.plot_exp2_arms_comparison import _load_csv, _load_pack_arm_rows, make_figure
 
 
 def _write_csv(path, rows):
@@ -66,3 +67,18 @@ def test_make_figure_writes_pdf(tmp_path):
     make_figure(rows, out)
     assert out.exists()
     assert out.stat().st_size > 1000
+
+
+def test_load_pack_arm_rows_total_cost_usd(tmp_path):
+    payload = {
+        "agent": "anthropic",
+        "model": "claude-opus-4-6",
+        "run": 1,
+        "classification": "report",
+        "total_cost_usd": 0.93252,
+        "n_rows": 12,
+    }
+    (tmp_path / "anthropic_run01.json").write_text(json.dumps(payload))
+    rows = _load_pack_arm_rows(tmp_path, "arm4")
+    assert len(rows) == 1
+    assert rows[0]["cost_usd"] > 0

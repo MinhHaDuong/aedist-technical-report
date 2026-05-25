@@ -108,7 +108,7 @@ def _load_pack_arm_rows(base_dir: Path, arm: str) -> list[dict]:
                 "run": run,
                 "classification": classification,
                 "inventory_rows": _inventory_rows_from_flat(json_path),
-                "cost_usd": float(payload.get("cost_usd") or 0.0),
+                "cost_usd": float(payload.get("total_cost_usd", payload.get("cost_usd")) or 0.0),
                 "is_report": classification == "report",
             }
         )
