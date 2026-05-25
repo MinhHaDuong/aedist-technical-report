@@ -511,7 +511,33 @@ def run_anthropic_call(
         max_uses=3,
     )
     if system_prompt:
-        payload["system"] = system_prompt
+        # Breakpoint 1: cache the system prompt (~4700 tokens) so turns 2+
+        # and cross-rep Turn-1 calls pay cache-read rate (~$0.50/MTok) not
+        # $5/MTok.  Exceeds the 4096-token minimum for Opus 4.6.
+        payload["system"] = [
+            {
+                "type": "text",
+                "text": system_prompt,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ]
+    if not is_followup and payload.get("messages"):
+        # Breakpoint 2: cache Turn-1 user message (the designed_prompt).
+        # Identical across all reps — within-rep turns 2+ cache-hit on
+        # system + designed_prompt (~5000 tokens total); cross-rep Turn-1
+        # calls also hit fully when reps are spaced within the 5-min TTL.
+        turn1 = payload["messages"][-1]
+        if isinstance(turn1.get("content"), str):
+            payload["messages"][-1] = {
+                "role": turn1["role"],
+                "content": [
+                    {
+                        "type": "text",
+                        "text": turn1["content"],
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+            }
     if is_followup:
         new_user_msg = payload["messages"][-1]
         payload["messages"] = list(continuation["messages"]) + [new_user_msg]
