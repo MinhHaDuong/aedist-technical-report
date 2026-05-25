@@ -5,8 +5,8 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
-
 2026-05-25T21:15Z haduong scope: talk only — ONE permutation test across 4 agents (sign test on n_matched), directional evidence, power caveat in caption. ONE effect size per metric (rank-biserial or median diff). Output: inline numbers for figure captions, NOT a separate table. Skip per-agent Wilcoxon — too granular for a conference talk.
+2026-05-25T22:00Z HDMX-coding-agent done: script src/aedist/tabulate_stat_tests.py, Makefile target in analysis.mk, caption updated in slides/manuscript/main.md. Results: 0/2 eligible agents arm2>arm1 on n_matched (p=0.75), 1/4 on inventory_rows (p=0.94) — no positive directional evidence; power caveat (min p=0.0625) injected inline. Note: manuscript prose §4 "Observed results" has stale numbers (e.g. "median 135 vs 18") that don't match current CSV — flagged for author review, out of scope for this ticket.
 
 --- body ---
 ## Context
