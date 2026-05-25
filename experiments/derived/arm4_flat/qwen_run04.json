@@ -1,0 +1,16 @@
+{
+  "agent": "qwen",
+  "model": "qwen3.7-max-2026-05-20",
+  "run": 4,
+  "classification": "report",
+  "total_cost_usd": 0.6824,
+  "wall_s": 201.9,
+  "turns": 2,
+  "class_trace": [
+    "report",
+    "report"
+  ],
+  "n_rows": 88,
+  "n_bib_entries": 18,
+  "narrative_chars": 22432
+}

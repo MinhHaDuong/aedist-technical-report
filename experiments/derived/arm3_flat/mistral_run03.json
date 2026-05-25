@@ -1,0 +1,16 @@
+{
+  "agent": "mistral",
+  "class_trace": [
+    "report"
+  ],
+  "classification": "report",
+  "classifier_cost_usd": 0.001381,
+  "cost_usd": 0.0625,
+  "evidence_pack_manifest": "evidence_packs/all18tables.yaml",
+  "model": "mistral-large-2512",
+  "n_bib_entries": 90,
+  "narrative_chars": 74865,
+  "run": 3,
+  "tokens_out": 15722,
+  "wall_s": 274.48
+}

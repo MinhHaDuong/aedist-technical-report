@@ -20,10 +20,14 @@ and writes per-run×agent flat files into the output directory::
 from __future__ import annotations
 
 import argparse
+import csv
+import io
 import json
 import re
 from pathlib import Path
 from typing import Any
+
+from .extract import _extract_pipe_tables, parse_and_canonicalize, score_csv_like_block
 
 _BIB_HEADING_RE = re.compile(
     r"^(#{1,3}\s*(?:Annotated\s+)?Bibliography"
@@ -32,7 +36,8 @@ _BIB_HEADING_RE = re.compile(
     re.IGNORECASE | re.MULTILINE,
 )
 
-_TURN_RE = re.compile(r"_turn_(\d+)\.record\.json$")
+_TURN_RECORD_RE = re.compile(r"_turn_(\d+)\.record\.json$")
+_TURN_RAW_RE = re.compile(r"_turn_(\d+)\.raw\.json$")
 
 
 def extract_agent_name(dir_name: str) -> str:
@@ -44,9 +49,14 @@ def find_last_turn(agent_dir: Path) -> Path | None:
     """Return the path to the highest-numbered turn record in *agent_dir*."""
     candidates: list[tuple[int, Path]] = []
     for path in agent_dir.glob("*_turn_*.record.json"):
-        match = _TURN_RE.search(path.name)
+        match = _TURN_RECORD_RE.search(path.name)
         if match:
             candidates.append((int(match.group(1)), path))
+    if not candidates:
+        for path in agent_dir.glob("*_turn_*.raw.json"):
+            match = _TURN_RAW_RE.search(path.name)
+            if match:
+                candidates.append((int(match.group(1)), path))
     if not candidates:
         return None
     candidates.sort(key=lambda x: x[0])
@@ -55,6 +65,24 @@ def find_last_turn(agent_dir: Path) -> Path | None:
 
 def extract_output_text(record: dict[str, Any]) -> str:
     """Pull the model's text response out of a record JSON."""
+    output = record.get("output")
+    if isinstance(output, list):
+        for item in output:
+            if item.get("type") != "message":
+                continue
+            content = item.get("content")
+            if not isinstance(content, list):
+                continue
+            texts = [
+                part.get("text", "")
+                for part in content
+                if isinstance(part, dict)
+                and part.get("type") in {"output_text", "text"}
+                and isinstance(part.get("text"), str)
+            ]
+            merged = "".join(texts).strip()
+            if merged:
+                return merged
     for key in ("output", "text", "content", "response"):
         value = record.get(key)
         if isinstance(value, str):
@@ -65,6 +93,24 @@ def extract_output_text(record: dict[str, Any]) -> str:
         if isinstance(text, str):
             return text
     return ""
+
+
+def _count_inventory_rows(text: str) -> int:
+    tables = _extract_pipe_tables(text)
+    if not tables:
+        return 0
+    best = max(tables, key=score_csv_like_block)
+    try:
+        canonical_csv = parse_and_canonicalize(best)
+    except Exception:
+        lines = [ln.strip() for ln in best.splitlines() if ln.strip()]
+        data_rows = [
+            ln
+            for ln in lines
+            if ln.count("|") >= 3 and not re.match(r"^\|?[\s\-:|]+\|?$", ln)
+        ]
+        return max(len(data_rows) - 1, 0)
+    return len(list(csv.DictReader(io.StringIO(canonical_csv))))
 
 
 def extract_bibliography(text: str) -> tuple[str | None, int]:
@@ -146,6 +192,8 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
             if isinstance(raw_trace, str) and raw_trace:
                 class_trace = [s.strip() for s in raw_trace.split(",") if s.strip()]
 
+            inventory_rows = _count_inventory_rows(text)
+
             metadata = {
                 "agent": agent,
                 "model": model,
@@ -155,7 +203,7 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 "wall_s": entry.get("wall_s"),
                 "turns": entry.get("turns"),
                 "class_trace": class_trace,
-                "n_rows": entry.get("inventory_rows"),
+                "n_rows": inventory_rows,
                 "n_bib_entries": n_bib,
                 "narrative_chars": len(text),
             }

@@ -1,0 +1,18 @@
+{
+  "agent": "mistral",
+  "model": null,
+  "run": 1,
+  "classification": "report",
+  "total_cost_usd": 0.062318,
+  "wall_s": 1026.225,
+  "turns": 4,
+  "class_trace": [
+    "no_report",
+    "no_report",
+    "report",
+    "report"
+  ],
+  "n_rows": 0,
+  "n_bib_entries": 0,
+  "narrative_chars": 0
+}

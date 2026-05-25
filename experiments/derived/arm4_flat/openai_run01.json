@@ -1,0 +1,17 @@
+{
+  "agent": "openai",
+  "model": null,
+  "run": 1,
+  "classification": "report",
+  "total_cost_usd": 0.37442,
+  "wall_s": 741.358,
+  "turns": 3,
+  "class_trace": [
+    "no_report",
+    "report",
+    "report"
+  ],
+  "n_rows": 130,
+  "n_bib_entries": 0,
+  "narrative_chars": 39963
+}

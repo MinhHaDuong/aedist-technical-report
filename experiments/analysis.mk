@@ -75,6 +75,18 @@ $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done: $(ANALYSIS_EXP1_INPUT_CSVS) $(ANA
 	mkdir -p $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval
 	touch $@
 
+$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/run*/*.json)
+	uv run python -m aedist.extract_arm_single_turn \
+	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1 \
+	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm3_flat
+	touch $@
+
+$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1/run*/summary.json)
+	uv run python -m aedist.extract_arm_multi_turn \
+	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1 \
+	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm4_flat
+	touch $@
+
 # --- Canonical mart and mart-derived views ---------------------------------
 
 $(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \

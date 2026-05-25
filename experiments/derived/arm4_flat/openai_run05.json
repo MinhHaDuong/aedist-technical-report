@@ -1,0 +1,18 @@
+{
+  "agent": "openai",
+  "model": "gpt-5.5-2026-04-23",
+  "run": 5,
+  "classification": "report",
+  "total_cost_usd": 1.8057,
+  "wall_s": 643.1,
+  "turns": 4,
+  "class_trace": [
+    "no_report",
+    "no_report",
+    "report",
+    "report"
+  ],
+  "n_rows": 127,
+  "n_bib_entries": 0,
+  "narrative_chars": 43394
+}

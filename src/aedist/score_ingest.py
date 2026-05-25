@@ -14,7 +14,7 @@ from pathlib import Path
 
 from .extract import _extract_pipe_tables, parse_and_canonicalize, score_csv_like_block
 
-_DEFAULT_NAIVE_DIR = Path("experiments/outputs/sota_exp2_naive_arm")
+_DEFAULT_NAIVE_DIR = Path("experiments/outputs/sota_exp3_arm1_batch1")
 _DEFAULT_OPTIMISED_DIR = Path("experiments/outputs/sota_exp2_brerun1")
 
 

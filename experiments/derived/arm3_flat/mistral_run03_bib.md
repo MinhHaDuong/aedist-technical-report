@@ -1,0 +1,90 @@
+- evn_ar_2010_2011_capacities
+- *Title:* Báo cáo thường niên 2010-2011 [EVN Annual Report 2010-2011]
+- *Source:* Vietnam Electricity (EVN)
+- *URL:* Not verified
+- *Annotation:* Provides installed capacity and ownership of thermal power plants as of 31/12/2011, including coal, oil, and gas-fired plants. Used for historical baseline and technology classification.
+- evn_ar_2017_capacities
+- *Title:* Báo cáo thường niên 2017 [Vietnam Electricity Annual Report 2017]
+- *Source:* Vietnam Electricity (EVN)
+- *URL:* Not verified
+- *Annotation:* Lists installed capacity of EVN and GENCOs' power plants in 2017, including thermal plants. Used for operational status and technology classification.
+- evn_ar_2018_capacities
+- *Title:* Báo cáo thường niên 2018 [Vietnam Electricity Annual Report 2018]
+- *Source:* Vietnam Electricity (EVN)
+- *URL:* Not verified
+- *Annotation:* Lists installed capacity of EVN and GENCOs' power plants in 2018, including thermal plants. Used for operational status and technology classification.
+- pdp7a_annex1_table1
+- *Title:* Phụ lục I: Danh mục các dự án nguồn điện vào vận hành giai đoạn 2016 - 2020 [Annex I: List of power projects entering operation in 2016-2020]
+- *Source:* Revised Power Development Plan VII (PDP7A), Decision No. 428/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Commissioning schedule for thermal power projects (2016-2020). Used for COD, capacity, and status.
+- pdp7a_annex1_table2
+- *Title:* Phụ lục I: Danh mục các dự án nguồn điện vào vận hành giai đoạn 2021 - 2025 [Annex I: List of power projects entering operation in 2021-2025]
+- *Source:* Revised Power Development Plan VII (PDP7A), Decision No. 428/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Commissioning schedule for thermal power projects (2021-2025). Used for COD, capacity, and status.
+- pdp7a_annex1_table3
+- *Title:* Phụ lục I: Danh mục các dự án nguồn điện vào vận hành giai đoạn 2026 - 2030 [Annex I: List of power projects entering operation in 2026-2030]
+- *Source:* Revised Power Development Plan VII (PDP7A), Decision No. 428/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Commissioning schedule for thermal power projects (2026-2030). Used for COD, capacity, and status.
+- pdp7_annex1
+- *Title:* Phụ lục I: Danh mục các dự án nguồn điện vào vận hành giai đoạn 2011 - 2020 [Annex I: List of power projects entering operation in 2011-2020]
+- *Source:* Power Development Plan VII (PDP7), Decision No. 1208/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Historical commissioning schedule for thermal power projects (2011-2020). Used for COD, capacity, and status.
+- pdp7_annex2
+- *Title:* Phụ lục II: Dự kiến danh mục các dự án nguồn điện vào vận hành giai đoạn 2021 - 2030 [Annex II: Expected list of power projects entering operation in 2021-2030]
+- *Source:* Power Development Plan VII (PDP7), Decision No. 1208/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Forward-looking project list for thermal power (2021-2030). Used for historical planning context.
+- pdp8_annex2_table1
+- *Title:* Bảng 1: Danh mục các nhà máy nhiệt điện LNG [Table 1: List of LNG thermal power plants]
+- *Source:* Power Development Plan VIII (PDP8), Decision No. 500/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Current-policy list of LNG thermal projects under PDP8, including implementation notes. Used for status, capacity, and fuel classification.
+- pdp8_annex2_table2
+- *Title:* Bảng 2: Danh mục các nhà máy nhiệt điện than đang xây dựng [Table 2: List of coal thermal plants under construction]
+- *Source:* Power Development Plan VIII (PDP8), Decision No. 500/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Current-policy list of coal thermal plants under construction. Used for status and capacity.
+- pdp8_annex2_table3
+- *Title:* Bảng 3: Danh mục các dự án nhiệt điện than chậm tiến độ, gặp khó khăn trong thay đổi cổ đông, thu xếp vốn [Table 3: List of delayed coal thermal projects with financing or shareholder difficulties]
+- *Source:* Power Development Plan VIII (PDP8), Decision No. 500/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Current-policy list of delayed or troubled coal thermal projects. Used for status and delay reasoning.
+- pdp8_annex2_table4
+- *Title:* Bảng 4: Danh mục nguồn điện đồng phát, nguồn điện sử dụng nhiệt dư, khí lò cao, sản phẩm phụ của dây chuyền công nghệ trong các cơ sở công nghiệp [Table 4: List of cogeneration and industrial by-product power sources]
+- *Source:* Power Development Plan VIII (PDP8), Decision No. 500/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Industrial energy-source roster. Used for status and capacity of industrial by-product plants.
+- pdp8_annex2_table5
+- *Title:* Bảng 5: Danh mục các nhà máy nhiệt điện khí trong nước [Table 5: List of domestic gas thermal power plants]
+- *Source:* Power Development Plan VIII (PDP8), Decision No. 500/QĐ-TTg
+- *URL:* Not verified
+- *Annotation:* Current-policy list of domestic-gas thermal projects. Used for status, capacity, and fuel classification.
+- report_32_annex1
+- *Title:* Phụ lục 1: Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong Quy hoạch điện VII điều chỉnh [Annex 1: Progress summary of priority power-source projects under revised PDP7]
+- *Source:* Report 32, Government of Vietnam
+- *URL:* Not verified
+- *Annotation:* Project progress tracking with schedule and assessment columns. Used for status, delay, and implementation reasoning.
+- report_58_annex
+- *Title:* Phụ lục: Tổng hợp tiến độ thực hiện một số dự án nguồn điện trọng điểm trong Quy hoạch điện VII điều chỉnh [Annex: Progress summary of priority power-source projects under revised PDP7]
+- *Source:* Report 58, Government of Vietnam
+- *URL:* Not verified
+- *Annotation:* Project progress tracking with evaluation columns. Used for status, delay, and implementation reasoning.
+- study_e542_pl9_1
+- *Title:* Phụ lục PL9.1: Tổng hợp thông tin về tiềm năng quy mô và vị trí xây dựng nhà máy điện TBKHH sử dụng LNG [Annex PL9.1: Potential LNG plant sites and capacities]
+- *Source:* PDP8 draft 3 study E-542
+- *URL:* Not verified
+- *Annotation:* Potential LNG site roster and capacity potential. Used for pre-policy option space and regional planning context.
+- study_e542_pl9_2
+- *Title:* Phụ lục PL9.2: Cập nhật tiến độ các dự án nhiệt điện than đã có trong QHĐ VII ĐC và tổng hợp các vị trí tiềm năng xây dựng nhiệt điện than nhập theo vùng [Annex PL9.2: Updated progress of coal projects and regional import-coal site potential]
+- *Source:* PDP8 draft 3 study E-542
+- *URL:* Not verified
+- *Annotation:* Coal project progress and potential site roster. Used for status and pre-policy option space.
+- study_e542_pl9_5a
+- *Title:* Phụ lục PL9.5A: Danh mục nguồn nhiệt điện tiềm năng dự kiến xem xét đầu tư [Annex PL9.5A: Potential thermal power sources considered for investment]
+- *Source:* PDP8 draft 3 study E-542
+- *URL:* Not verified
+- *Annotation:* Long-horizon thermal project potential table. Used for candidate-project and regional planning context.

@@ -1,0 +1,31 @@
+- evn_ar_2010_2011_capacities
+- Citation:** Vietnam Electricity (EVN). (2011). *Báo cáo thường niên 2010-2011* [Annual Report 2010-2011]. EVN.
+- URL:** Not publicly available.
+- Annotation:** Provides a snapshot of Vietnam's installed generation capacity as of December 31, 2011, including thermal plants, owners, and capacities. Used for historical baseline data.
+- evn_ar_2017_capacities
+- Citation:** Vietnam Electricity (EVN). (2017). *Báo cáo thường niên 2017* [Annual Report 2017]. EVN.
+- URL:** Not publicly available.
+- Annotation:** Lists EVN and GENCOs' power plants as of 2017, including thermal plants, capacities, and owners. Used for mid-2010s baseline data.
+- evn_ar_2018_capacities
+- Citation:** Vietnam Electricity (EVN). (2018). *Báo cáo thường niên 2018* [Annual Report 2018]. EVN.
+- URL:** Not publicly available.
+- Annotation:** Lists EVN and GENCOs' power plants as of 2018, including thermal plants, capacities, and owners. Used for 2018 baseline data.
+- pdp7a_annex1_table1
+- Citation:** Prime Minister of Vietnam. (2016). *Quyết định số 428/QĐ-TTg phê duyệt Quy hoạch phát triển điện lực quốc gia điều chỉnh giai đoạn 2011-2020, có xét đến năm 2030* [Decision No. 428/QD-TTg approving the adjusted National Power Development Plan for 2011-2020, with a vision to 2030]. Annex I, Table 1.
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336)
+- Annotation:** Lists projects entering operation in 2016-2020 under the revised PDP7, including thermal plants, capacities, and developers. Used for commissioning schedules and project status.
+- pdp7a_annex1_table2
+- Citation:** Prime Minister of Vietnam. (2016). *Quyết định số 428/QĐ-TTg*. Annex I, Table 2.
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336)
+- Annotation:** Lists projects entering operation in 2021-2025 under the revised PDP7, including thermal plants, capacities, and developers. Used for commissioning schedules and project status.
+- pdp7a_annex1_table3
+- Citation:** Prime Minister of Vietnam. (2016). *Quyết định số 428/QĐ-TTg*. Annex I, Table 3.
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=182336)
+- Annotation:** Lists projects entering operation in 2026-2030 under the revised PDP7, including thermal plants, capacities, and developers. Used for commissioning schedules and project status.
+- pdp7_annex1
+- Citation:** Prime Minister of Vietnam. (2011). *Quyết định số 1208/QĐ-TTg phê duyệt Quy hoạch phát triển điện lực quốc gia giai đoạn 2011-2020, có xét đến năm 2030* [Decision No. 1208/QD-TTg approving the National Power Development Plan for 2011-2020, with a vision to 2030]. Annex I.
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=114023](https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=114023)
+- Annotation:** Lists projects entering operation in 2011-2020 under the original PDP7, including thermal plants, capacities, and developers. Used for historical commissioning schedules and project lineage.
+- pdp7_annex2
+- Citation:** Prime Minister of Vietnam. (2011). *Quyết định số 1208/QĐ-TTg*. Annex II.
+- URL:** [https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=114023](https://vanban.chinhphu.vn/default.aspx?pageid
