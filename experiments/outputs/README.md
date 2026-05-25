@@ -26,3 +26,4 @@ Archived outputs live in ../archive/outputs/ and are documented there.
 	experiments/derived. Archived outputs are intentionally outside that scope.
 - Exp3 provenance and ledger policy is in sota_exp3_DERIVATION_NOTICE.md.
 - Exp2 was arms 1 and 2 only, we are rewording
+- Exp2 was arms 1 and 2 only, we are rewording
