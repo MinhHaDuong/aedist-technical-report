@@ -44,8 +44,8 @@ def _score_row(arm, model, run):
         "accuracy_province_annotation": "",
         "coherence_vocab_adherence": "1.0000",
         "coherence_vocab_adherence_annotation": "",
-        "coherence_status_vocab_adherence": "1.0000",
-        "coherence_status_vocab_adherence_annotation": "",
+        "coherence_capacity_nonnegative": "1.0000",
+        "coherence_capacity_nonnegative_annotation": "",
         "provenance_source_presence": "1.0000",
         "provenance_source_presence_annotation": "",
         "provenance_high_conf_dual_source": "1.0000",
@@ -100,7 +100,9 @@ def test_build_exp2_mart_ignores_raw_payload_files(tmp_path):
     for run_dir, turn_cls in ((naive_dir, "report"), (optimised_dir, "report")):
         probe_dir = run_dir / "probes" / "anthropic_run01"
         probe_dir.mkdir(parents=True)
-        (probe_dir / "anthropic_turn_01.raw.json").write_text("{not: valid json}", encoding="utf-8")
+        (probe_dir / "anthropic_turn_01.raw.json").write_text(
+            "{not: valid json}", encoding="utf-8"
+        )
         _write_json(
             probe_dir / "anthropic_turn_01.classification.json",
             {"class": turn_cls},
@@ -122,9 +124,15 @@ def test_build_exp2_mart_ignores_raw_payload_files(tmp_path):
     )
 
     assert len(records) == 6
-    run_record = next(record for record in records if record.record_kind == "run" and record.arm == "naive")
-    probe_record = next(record for record in records if record.record_kind == "probe" and record.arm == "naive")
-    score_record = next(record for record in records if record.record_kind == "score" and record.arm == "naive")
+    run_record = next(
+        record for record in records if record.record_kind == "run" and record.arm == "naive"
+    )
+    probe_record = next(
+        record for record in records if record.record_kind == "probe" and record.arm == "naive"
+    )
+    score_record = next(
+        record for record in records if record.record_kind == "score" and record.arm == "naive"
+    )
     assert run_record.run_summary.n_rows == 1
     assert probe_record.probe_summary.turn == 1
     assert score_record.score_summary.accuracy.coverage.value == 0.5
@@ -208,7 +216,10 @@ def test_write_exp2_mart_writes_jsonl(tmp_path):
         probe_dir = arm_dir / "probes" / "anthropic_run01"
         probe_dir.mkdir(parents=True)
         _write_json(probe_dir / "anthropic_turn_01.classification.json", {"class": "report"})
-        _write_json(probe_dir / "anthropic_turn_01.raw.json", {"content": [{"type": "text", "text": "| A | 1 |\n"}]})
+        _write_json(
+            probe_dir / "anthropic_turn_01.raw.json",
+            {"content": [{"type": "text", "text": "| A | 1 |\n"}]},
+        )
 
     _write_cross_eval_csv(
         tmp_path / "sota_cross_eval.csv",
@@ -283,7 +294,9 @@ def test_build_exp2_mart_handles_no_report_empty_markdown(tmp_path):
     naive_run = next(
         record
         for record in records
-        if record.record_kind == "run" and record.arm == "naive" and record.model == "mistral-large-2512"
+        if record.record_kind == "run"
+        and record.arm == "naive"
+        and record.model == "mistral-large-2512"
     )
     assert naive_run.run_summary.classification == "no_report"
     assert naive_run.run_summary.n_rows == 0

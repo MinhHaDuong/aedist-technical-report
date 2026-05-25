@@ -1,5 +1,7 @@
 """Tests for mechanical scoring helpers."""
 
+import pytest
+
 from aedist.score_ingest import RunLocator, ingest_run
 from aedist.score_mechanical import (
     score_coherence,
@@ -167,3 +169,19 @@ def test_ingested_rows_compute_high_conf_dual_source_when_present(tmp_path) -> N
     assert temp.asof_presence_annotation is None
     assert temp.plausible_range == 1.0
     assert temp.plausible_range_annotation is None
+
+
+@pytest.mark.adherence
+def test_score_mechanical_columns_match_sota_cross_eval_header() -> None:
+    import csv
+    from pathlib import Path
+
+    from aedist.score_mechanical import _CSV_COLUMNS
+
+    csv_path = Path(__file__).parent.parent / "experiments" / "derived" / "sota_cross_eval.csv"
+    with csv_path.open(newline="", encoding="utf-8") as fh:
+        header = next(csv.reader(fh))
+    assert header == _CSV_COLUMNS, (
+        f"_CSV_COLUMNS in score_mechanical.py does not match sota_cross_eval.csv header.\n"
+        f"Scorer has: {_CSV_COLUMNS}\nCSV has: {header}"
+    )
