@@ -1,4 +1,4 @@
-Last updated: 2026-05-25T16:10Z
+Last updated: 2026-05-25T20:50Z
 
 ## North star
 
@@ -15,20 +15,20 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 Finalize slides and manuscript for conference delivery (2026-05-27). Analysis pipeline complete; figures produced for Exp 1, 2, 3; take-home messages ratified.
 
 ## Status
-<!-- generated 2026-05-25T16:10Z -->
-**Tickets:** 28 ready · 50 open — `erg ready tickets/` for full list
+<!-- generated 2026-05-25T20:50Z -->
+**Tickets:** 31 ready · 42 open — `erg ready tickets/` for full list
 **Recent commits:**
-  d9c365d4 chore: merge working-tree notes into tracked files
-  c21e34f8 Merge pull request #554 — merge-everything-20260525
-  1e10cb6c Merge pull request #550 — t0305 arms comparison figure redesign
-  1c5c4412 Merge pull request #551 — t0306 spider exp1 family panels
-  40245a57 Merge pull request #547 — t302 LP matcher validation
+  f73ea715 Merge pull request #569 — ticket-housekeeping-0318
+  07d84303 Merge pull request #568 — raid-320-321-322-ticket-lifecycle
+  25994741 Merge PR #567: add Makefile rule to rebuild sota_cross_eval.csv (0321)
+  0268a4af Merge PR #566: fix coherence column name mismatch (0322)
+  3fd380f3 Merge PR #565: fix cost_usd fallback for arm4 arms comparison (0320)
 
 ## Workplan
 
 1. **Experiment 3 runs.** DONE.
 2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
-3. **Update manuscript.** Integrate figures and narrative. (In progress — 0313–0318 open.)
+3. **Update manuscript.** Integrate figures and narrative. DONE — 0313–0318 closed.
 4. **Update slides.** Align conference slides with refreshed evidence. (In progress.)
 5. **Present.** Final rehearsal and delivery at Econom'IA 2026.
 
