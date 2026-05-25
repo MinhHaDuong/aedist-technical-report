@@ -1,0 +1,15 @@
+{
+  "agent": "anthropic",
+  "class_trace": [
+    "report"
+  ],
+  "classification": "report",
+  "classifier_cost_usd": 0.002775,
+  "cost_usd": 1.8781,
+  "model": "claude-opus-4-6",
+  "n_bib_entries": 0,
+  "narrative_chars": 48575,
+  "run": 2,
+  "tokens_out": 54789,
+  "wall_s": 1027.57
+}

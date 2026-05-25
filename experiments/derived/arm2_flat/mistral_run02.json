@@ -1,0 +1,16 @@
+{
+  "agent": "mistral",
+  "model": "mistral-large-2512",
+  "run": 2,
+  "classification": "report",
+  "total_cost_usd": 0.19061550000000038,
+  "wall_s": 220.844,
+  "turns": 2,
+  "class_trace": [
+    "report",
+    "report"
+  ],
+  "n_rows": 39,
+  "n_bib_entries": 0,
+  "narrative_chars": 0
+}

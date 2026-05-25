@@ -1,0 +1,73 @@
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Phả Lại | Pha Lai | Hai Duong | Coal | Subcritical PC | 4x44, 2x300 | 776 | Operating | 2024-05-01 | 1986, 2002 | EVNGENCO2 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Phase 1 units slated for retirement |
+| Uông Bí | Uong Bi | Quang Ninh | Coal | Pulverized Coal | 2x330 | 660 | Operating | 2024-05-01 | 2009, 2013 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Expansion units; older units retired |
+| Ninh Bình | Ninh Binh | Ninh Binh | Coal | Pulverized Coal | 4x25 | 100 | Operating | 2024-05-01 | 1974 | EVNGENCO3 | MEDIUM | https://moit.gov.vn/vn/tin-tuc/hoat-dong-cua-bo-truong/lo-trinh-giam-dien-than.html | https://chinhphu.vn/?pageid=27160&docid=278818 | Active phase-out/repurposing target |
+| Mông Dương 1 | Mong Duong 1 | Quang Ninh | Coal | CFB | 2x500 | 1000 | Operating | 2024-05-01 | 2015 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Utilizes circulating fluidized bed |
+| Mông Dương 2 | Mong Duong 2 | Quang Ninh | Coal | Supercritical PC | 2x600 | 1200 | Operating | 2024-05-01 | 2015 | AES-VCM Mong Duong 2 | HIGH | https://www.aes.com/sites/default/files/2023-02/aes-2022-annual-report.pdf | https://chinhphu.vn/?pageid=27160&docid=278818 | BOT project |
+| Hải Phòng | Hai Phong | Hai Phong | Coal | Pulverized Coal | 4x300 | 1200 | Operating | 2024-05-01 | 2009, 2014 | EVNGENCO2 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Quảng Ninh | Quang Ninh | Quang Ninh | Coal | Pulverized Coal | 4x300 | 1200 | Operating | 2024-05-01 | 2008, 2012 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Nghi Sơn 1 | Nghi Son 1 | Thanh Hoa | Coal | Pulverized Coal | 2x300 | 600 | Operating | 2024-05-01 | 2013, 2014 | EVNGENCO1 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Nghi Sơn 2 | Nghi Son 2 | Thanh Hoa | Coal | Supercritical PC | 2x600 | 1200 | Operating | 2024-05-01 | 2022 | Nghi Son 2 Power LLC | HIGH | https://www.marubeni.com/en/investors/library/annual_report/ | https://chinhphu.vn/?pageid=27160&docid=278818 | BOT project |
+| Vũng Áng 1 | Vung Ang 1 | Ha Tinh | Coal | Pulverized Coal | 2x600 | 1200 | Operating | 2024-05-01 | 2014, 2015 | PV Power | HIGH | https://www.pvpower.vn/en/investor-relations/financial-reports/ | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Vĩnh Tân 1 | Vinh Tan 1 | Binh Thuan | Coal | Pulverized Coal | 2x600 | 1200 | Operating | 2024-05-01 | 2018 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Vĩnh Tân 2 | Vinh Tan 2 | Binh Thuan | Coal | Pulverized Coal | 2x600 | 1200 | Operating | 2024-05-01 | 2015 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Vĩnh Tân 3 | Vinh Tan 3 | Binh Thuan | Coal | Supercritical PC | 2x660 | 1320 | Operating | 2024-05-01 | 2024 | Vinh Tan 3 BOT Power | HIGH | https://www.clpgroup.com/en/investors/results-reports/annual-reports/ | https://chinhphu.vn/?pageid=27160&docid=278818 | COD achieved early 2024 |
+| Vĩnh Tân 4 | Vinh Tan 4 | Binh Thuan | Coal | Pulverized Coal | 1x600 | 600 | Operating | 2024-05-01 | 2019 | EVNGENCO3 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Extension unit |
+| Duyên Hải 1 | Duyen Hai 1 | Tra Vinh | Coal | Pulverized Coal | 2x300 | 600 | Operating | 2024-05-01 | 2015 | EVNGENCO1 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Duyên Hải 3 | Duyen Hai 3 | Tra Vinh | Coal | Supercritical PC | 2x600, 1x660 | 1860 | Operating | 2024-05-01 | 2017, 2021 | EVNGENCO1 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Includes extension unit |
+| Thái Bình 2 | Thai Binh 2 | Thai Binh | Coal | Pulverized Coal | 2x600 | 1200 | Operating | 2024-05-01 | 2023 | PV Power | HIGH | https://www.pvpower.vn/en/investor-relations/financial-reports/ | https://chinhphu.vn/?pageid=27160&docid=278818 | Long delayed, official COD 2023 |
+| Nhơn Trạch 1 & 2 | Nhon Trach 1 & 2 | Dong Nai | Gas | CCGT | 1x450, 1x750 | 1200 | Operating | 2024-05-01 | 2009, 2011 | PV Power | HIGH | https://www.pvpower.vn/en/investor-relations/financial-reports/ | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Nhơn Trạch 3 & 4 | Nhon Trach 3 & 4 | Dong Nai | LNG | CCGT | 2x880 | 1760 | Under Construction | 2024-05-01 | 2024-2025 (Exp) | PV Power | HIGH | https://www.pvpower.vn/en/investor-relations/financial-reports/ | https://chinhphu.vn/?pageid=27160&docid=278818 | First utility-scale LNG plant |
+| Phú Mỹ | Phu My | Ba Ria - Vung Tau | Gas | CCGT | Multiple | 2634 | Operating | 2024-05-01 | 1997-2004 | EVNGENCO3 / PV Power | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | Complex of blocks 1, 2.1, 2.2, 3, 4 |
+| Ô Môn 1 | O Mon 1 | Can Tho | Gas/Oil | Steam/Gas | 2x330 | 660 | Operating | 2024-05-01 | 2008 | EVNGENCO2 | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Quảng Trạch 1 | Quang Trach 1 | Quang Binh | Coal | Pulverized Coal | 2x600 | 1200 | Under Construction | 2024-05-01 | 2026 (Exp) | EVN | HIGH | https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx | https://chinhphu.vn/?pageid=27160&docid=278818 | |
+| Vũng Áng 2 | Vung Ang 2 | Ha Tinh | Coal | Supercritical PC | 2x600 | 1200 | Shelved | 2024-05-01 | N/A | One Energy | MEDIUM | https://moit.gov.vn/vn/tin-tuc/hoat-dong-cua-bo-truong/lo-trinh-giam-dien-than.html | https://globalenergymonitor.org/projects/global-coal-plant-tracker/ | Removed from PDP8 final approval |
+| Công Thanh | Cong Thanh | Thanh Hoa | Coal | Pulverized Coal | 1x600 | 600 | Stalled | 2024-05-01 | Delayed | Cong Thanh Group | LOW | https://moit.gov.vn/vn/tin-tuc/hoat-dong-cua-bo-truong/lo-trinh-giam-dien-than.html | https://globalenergymonitor.org/projects/global-coal-plant-tracker/ | Severe financial and legal delays |
+| Formosa Hà Tĩnh | Formosa Ha Tinh | Ha Tinh | Coal/Gas | Captive CFB/PC | 5x150 | 750 | Operating | 2024-05-01 | 2018 | Formosa Plastics | MEDIUM | https://www.fhs.com.vn/en/about-us/environmental-protection/ | https://chinhphu.vn/?pageid=27160&docid=278818 | Captive industrial power |
+
+### Statistical Summary
+
+*   **Total Nameplate Capacity in Inventory:** 27,120 MWe
+*   **Operating Capacity:** 22,360 MWe
+    *   *Coal (Grid):* 17,116 MWe
+    *   *Gas/Oil (Grid):* 4,494 MWe
+    *   *Captive (Coal/Gas):* 750 MWe
+*   **Under Construction:** 2,960 MWe (1,760 MWe LNG; 1,200 MWe Coal)
+*   **Stalled (Technically Under Construction):** 600 MWe (Coal)
+*   **Shelved/Cancelled:** 1,200 MWe (Coal)
+*   *Reconciliation Check:* 22,360 + 2,960 + 600 + 1,200 = 27,120 MWe. All unit-level math (Units × MW = Total MWe) verified and corrected for Nhon Trach 3&4 (1760 MWe), Vinh Tan 1 (1200 MWe), and O Mon 1 (660 MWe).
+
+### Per-Asset Explanatory Notes
+
+*   **Phả Lại & Ninh Bình:** Both facilities operate legacy subcritical units. Ninh Binh (100 MWe) and Pha Lai Phase 1 (176 MWe) are explicitly targeted by the Ministry of Industry and Trade (MOIT) and PDP8 for early retirement or conversion to synchronous condensers/grid support due to severe inefficiencies and urban air quality mandates.
+*   **Mông Dương 2, Nghi Sơn 2, & Vĩnh Tân 3:** These are Build-Operate-Transfer (BOT) projects backed by foreign consortia (AES, Marubeni/KEPCO, CLP). They operate under independent power producer (IPP) frameworks with long-term Power Purchase Agreements (PPAs) backed by government guarantees, distinguishing their financial and operational risk profiles from state-owned EVN assets.
+*   **Thái Bình 2:** Suffered nearly a decade of delays due to the restructuring of Petrovietnam (PVN) and the reallocation of EPC contracts. It officially achieved commercial operation in mid-2023, resolving a major stranded asset risk for PV Power.
+*   **Nhơn Trạch 3 & 4:** Represents Vietnam's critical pivot toward LNG. Capacity corrected to 2x880 MWe (1760 MWe total). While technically "Under Construction" as of early 2024, mechanical completion and cold commissioning are underway. Fuel supply chain (LNG import terminal) synchronization remains the primary variable for final COD.
+*   **Vũng Áng 2:** Originally permitted as a coal-fired BOT project, it was excluded from the final PDP8 approval in May 2023 due to Vietnam's commitment to the Just Energy Transition Partnership (JETP) and domestic pressure to halt new coal. The developer is currently in dispute/negotiation regarding compensation or fuel conversion.
+*   **Công Thanh:** A privately developed domestic project that has been stalled for years due to developer insolvency, credit defaults, and halted construction. MOIT inspections have repeatedly flagged it as a high-risk stalled asset.
+*   **Formosa Hà Tĩnh:** Operates as a captive power plant for the Formosa steel mill. While it feeds excess power to the national grid under specific PPA riders, its primary dispatch is governed by industrial thermal/steam demand rather than grid load-following.
+
+### Annotated Bibliography
+
+1.  **PDP8 Decision 500/QD-TTg (2023).** *Power Development Plan for the 2021-2030 Period with a Vision to 2050.* Prime Minister of Vietnam. 
+    *   *URL:* `https://chinhphu.vn/?pageid=27160&docid=278818`
+    *   *Relevance:* The supreme regulatory document dictating Vietnam's generation mix, capacity additions, and retirement schedules. Serves as the primary baseline for status, fuel type, and PDP8 inclusion/exclusion.
+2.  **Vietnam Electricity (EVN) Annual Reports & Sustainability Reports (2022-2023).** 
+    *   *URL:* `https://www.evn.com.vn/en/c3/cat-Bao-cao-thuong-nien-9-134.aspx`
+    *   *Relevance:* Official operator filings detailing nameplate capacities, COD dates, and operational status for assets owned by EVNGENCO 1, 2, and 3. Provides HIGH confidence verification for state-owned coal and gas fleets.
+3.  **Petrovietnam Power Corporation (PV Power) Audited Financial Statements & Investor Disclosures (2022-2023).**
+    *   *URL:* `https://www.pvpower.vn/en/investor-relations/financial-reports/`
+    *   *Relevance:* Primary source for assets owned by PV Power (Vung Ang 1, Thai Binh 2, Nhon Trach complex). Crucial for verifying the delayed COD of Thai Binh 2 and the construction progress of Nhon Trach 3 & 4 LNG.
+4.  **Global Energy Monitor (GEM) - Global Coal Plant Tracker (2024).**
+    *   *URL:* `https://globalenergymonitor.org/projects/global-coal-plant-tracker/`
+    *   *Relevance:* Vetted secondary institutional database used to cross-reference shelved, cancelled, or stalled private assets (e.g., Cong Thanh, Vung Ang 2) where official government updates are sparse or delayed.
+5.  **Ministry of Industry and Trade (MOIT) Inspection Reports & Retirement Roadmaps (2022-2023).**
+    *   *URL:* `https://moit.gov.vn/vn/tin-tuc/hoat-dong-cua-bo-truong/lo-trinh-giam-dien-than.html`
+    *   *Relevance:* Regulatory directives identifying end-of-life assets (Ninh Binh, Pha Lai Phase 1) and documenting compliance failures or financial stalling in private IPP projects (Cong Thanh).
+6.  **Developer Investor Relations (IR) Filings (AES Corp, Marubeni, CLP Holdings) (2022-2024).**
+    *   *URLs:* `https://www.aes.com/sites/default/files/2023-02/aes-2022-annual-report.pdf` | `https://www.marubeni.com/en/investors/library/annual_report/` | `https://www.clpgroup.com/en/investors/results-reports/annual-reports/`
+    *   *Relevance:* International financial disclosures used to verify the operational status, supercritical technology specs, and BOT PPA structures of foreign-backed assets (Mong Duong 2, Nghi Son 2, Vinh Tan 3).
+7.  **Formosa Ha Tinh Steel Corporation (FHS) Environmental Protection Filings.**
+    *   *URL:* `https://www.fhs.com.vn/en/about-us/environmental-protection/`
+    *   *Relevance:* Primary corporate documentation verifying the captive nature, fuel mix, and capacity of the Formosa industrial power complex.
