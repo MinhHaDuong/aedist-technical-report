@@ -1,0 +1,43 @@
+{
+  "run_id": "6030142e9326",
+  "timestamp": "2026-05-25T14:02:00.197407Z",
+  "method": "direct",
+  "method_params": {
+    "model": "deepseek/deepseek-v4-flash",
+    "temperature": 0.0,
+    "max_tokens": 65536,
+    "prompt_version": "exp1_batch2",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 1048576,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 328.152,
+    "cost_usd": 0.00198932,
+    "tokens_in": 1653,
+    "tokens_out": 8291,
+    "thinking_tokens": 2226
+  },
+  "result_file": "experiments/outputs/exp1_batch2/deepseek-v4-flash-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 58,
+    "tp": 58,
+    "fp": 0,
+    "fn": 105,
+    "f1": 0.5249,
+    "fuel_accuracy": 0.6379,
+    "status_accuracy": 0.7069,
+    "province_accuracy": 1.0
+  },
+  "finish_reason": "stop"
+}

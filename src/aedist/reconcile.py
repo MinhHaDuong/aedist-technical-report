@@ -8,6 +8,7 @@ For manual review, the output includes province and fuel columns so results
 can be sorted/filtered by province+fuel after the fact.
 """
 
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -21,11 +22,42 @@ from .schema import MatchType, Plant, ReconciliationEntry
 # ---------------------------------------------------------------------------
 
 _CLEANER_CONFIG = Path(__file__).parent / "cleaner" / "config.json"
+_REFERENCE = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+
+# Strips any trailing digit block (used for base computation only).
+_UNIT_SUFFIX = re.compile(r"\s+\d+$")
+# Only "1" is strippable: "Plant 1" → "Plant". "Plant 2" implies a "Plant 1" exists.
+_FIRST_UNIT_SUFFIX = re.compile(r"\s+1$")
+
+
+def _build_single_unit_names() -> frozenset[str]:
+    """Names of plants that are the sole unit under their base name (from the fixed reference).
+
+    Rule: name must end in " 1" AND no sibling unit exists in the reference.
+    "An Khanh 1" qualifies; "Na Duong 1" does not (Na Duong 2 exists).
+    """
+    if not _REFERENCE.exists():
+        return frozenset()
+    cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
+    raw_names = pd.read_csv(_REFERENCE)["name"].dropna()
+    cleaned = raw_names.apply(cleaner.clean_name)
+    bases = cleaned.apply(lambda s: _UNIT_SUFFIX.sub("", s))
+    base_counts = bases.value_counts()
+    return frozenset(
+        name
+        for name, base in zip(cleaned, bases, strict=True)
+        if _FIRST_UNIT_SUFFIX.search(name) and base_counts[base] == 1
+    )
+
+
+# Fixed at import time: the reference is the golden table, so this set is constant.
+_SINGLE_UNIT_NAMES: frozenset[str] = _build_single_unit_names()
 
 
 # ---------------------------------------------------------------------------
 # Pydantic → DataFrame
 # ---------------------------------------------------------------------------
+
 
 def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
     """Convert a list of Plant to a DataFrame suitable for lp.reconcile().
@@ -52,8 +84,16 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
         # empty input, and there is nothing to clean anyway.
         return pd.DataFrame(
             columns=[
-                "name", "province", "fuel", "capacity", "status", "source_ref",
-                "name_clean", "province_clean", "fuel_clean", "capacity_clean",
+                "name",
+                "province",
+                "fuel",
+                "capacity",
+                "status",
+                "source_ref",
+                "name_clean",
+                "province_clean",
+                "fuel_clean",
+                "capacity_clean",
                 "status_clean",
             ]
         )
@@ -61,12 +101,32 @@ def plants_to_dataframe(plants: list[Plant]) -> pd.DataFrame:
     # Use the existing cleaner for normalization
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
     cleaned = cleaner.clean_dataframe(df)
-    return cleaned
+    return _strip_unique_unit_suffixes(cleaned)
+
+
+def _strip_unique_unit_suffixes(df: pd.DataFrame) -> pd.DataFrame:
+    """Strip trailing unit numbers from name_clean for known single-unit plants.
+
+    Uses _SINGLE_UNIT_NAMES derived from the fixed golden reference, so the
+    stripping rule is identical regardless of what the model output contains.
+    Multi-unit plants (Na Duong 1/2, Nghi Son 1/2/3) are never stripped.
+    """
+    if df.empty or "name_clean" not in df.columns or not _SINGLE_UNIT_NAMES:
+        return df
+    mask = df["name_clean"].isin(_SINGLE_UNIT_NAMES)
+    if not mask.any():
+        return df
+    df = df.copy()
+    df.loc[mask, "name_clean"] = df.loc[mask, "name_clean"].apply(
+        lambda s: _UNIT_SUFFIX.sub("", s)
+    )
+    return df
 
 
 # ---------------------------------------------------------------------------
 # DataFrame results → ReconciliationEntry
 # ---------------------------------------------------------------------------
+
 
 def _extract_entries(
     result_df: pd.DataFrame,
@@ -87,9 +147,40 @@ def _extract_entries(
             mt = MatchType.REFERENCE_ONLY
         elif status == "Only in file2":
             mt = MatchType.SYSTEM_ONLY
+        elif status == "Mismatched":
+            # LP forced a below-threshold pair (mismatch_penalty < dummy_cost makes it cheaper
+            # to match than to leave both unmatched). Treat as both a missed reference plant
+            # and a hallucinated system plant — emit two separate entries.
+            ref_prov, ref_fuel, _ref_st, ref_src = _lookup_attrs(ref_df, row, "file1")
+            sys_prov, sys_fuel, _sys_st, sys_src = _lookup_attrs(sys_df, row, "file2")
+            entries.append(
+                ReconciliationEntry(
+                    reference_name=_safe(row, "name_file1"),
+                    reference_province=ref_prov,
+                    reference_fuel=ref_fuel,
+                    reference_capacity_mwe=_safe_float(row, "capacity_file1"),
+                    match_type=MatchType.REFERENCE_ONLY,
+                    reference_source_ref=ref_src,
+                )
+            )
+            entries.append(
+                ReconciliationEntry(
+                    system_name=_safe(row, "name_file2"),
+                    system_province=sys_prov,
+                    system_fuel=sys_fuel,
+                    system_capacity_mwe=_safe_float(row, "capacity_file2"),
+                    match_type=MatchType.SYSTEM_ONLY,
+                    system_source_ref=sys_src,
+                )
+            )
+            continue
         else:
-            # "Matched (Fuzzy) (Diff)", "Matched (Diff)", etc.
-            mt = MatchType.FUZZY_CAPACITY_DIFF if "Fuzzy" in str(status) else MatchType.EXACT_CAPACITY_DIFF
+            # "Matched (Fuzzy) (Diff)", "Matched (Diff)"
+            mt = (
+                MatchType.FUZZY_CAPACITY_DIFF
+                if "Fuzzy" in str(status)
+                else MatchType.EXACT_CAPACITY_DIFF
+            )
 
         ref_name = _safe(row, "name_file1")
         sys_name = _safe(row, "name_file2")
@@ -122,24 +213,26 @@ def _extract_entries(
         # Propagate similarity score from LP result row
         sim_score = _safe_float(row, "similarity_score")
 
-        entries.append(ReconciliationEntry(
-            reference_name=ref_name,
-            system_name=sys_name,
-            reference_province=ref_prov,
-            system_province=sys_prov,
-            reference_fuel=ref_fuel,
-            system_fuel=sys_fuel,
-            reference_capacity_mwe=ref_cap,
-            system_capacity_mwe=sys_cap,
-            capacity_diff_pct=cap_diff_pct,
-            match_type=mt,
-            fuel_match=fuel_match,
-            status_match=status_match,
-            province_match=province_match,
-            reference_source_ref=ref_src,
-            system_source_ref=sys_src,
-            similarity_score=sim_score,
-        ))
+        entries.append(
+            ReconciliationEntry(
+                reference_name=ref_name,
+                system_name=sys_name,
+                reference_province=ref_prov,
+                system_province=sys_prov,
+                reference_fuel=ref_fuel,
+                system_fuel=sys_fuel,
+                reference_capacity_mwe=ref_cap,
+                system_capacity_mwe=sys_cap,
+                capacity_diff_pct=cap_diff_pct,
+                match_type=mt,
+                fuel_match=fuel_match,
+                status_match=status_match,
+                province_match=province_match,
+                reference_source_ref=ref_src,
+                system_source_ref=sys_src,
+                similarity_score=sim_score,
+            )
+        )
     return entries
 
 
@@ -183,6 +276,7 @@ def _lookup_attrs(
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def reconcile(
     reference: list[Plant],

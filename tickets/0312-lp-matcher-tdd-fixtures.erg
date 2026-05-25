@@ -1,0 +1,59 @@
+%erg 0.1
+Title: LP matcher — fixture-collection TDD QA
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Tag: deferred
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+2026-05-25T00:00Z HDMX-coding-agent note Spawned from ticket 0302 after surgical Mismatched fix landed (PR #t302)
+
+--- body ---
+## Context
+
+Ticket 0302 found and fixed the Mismatched→EXACT_CAPACITY_DIFF mapping bug in
+`reconcile.py`. The fix is mechanical but the LP matcher has no fixture-driven
+regression suite. The 10 hard cases identified in `exp1_mismatched_audit.csv`
+(Nong Son 1, Na Dương 1, An Khánh 1 blocked at sim≈88.9 by the 90-threshold
+because the cleaner leaves Vietnamese `đ` unstripped) show the matcher needs
+human-verified ground truth to catch future regressions.
+
+The discussion also surfaced a related issue: the cleaner normalises accented
+Vietnamese names incompletely — `đ` stays as `đ` rather than being mapped to
+`d`, which reduces similarity scores for legitimate reference↔system pairs
+(see top-10 in audit). That is a separate ticket scope.
+
+## Proposed design
+
+Directory-based fixture collection:
+
+```
+tests/fixtures/lp_matcher/
+  tp_alias/             # unaccented alias → accented reference
+    reference.csv
+    system.csv
+    expected.csv        # two columns: reference_name, system_name
+  tn_hallucinated/      # hallucinated plant → SYSTEM_ONLY
+    ...
+  near_miss_unit/       # unit-number veto prevents cross-unit match
+    ...
+  duplicate_resolve/    # LP 1:1 constraint: only one of two candidates wins
+    ...
+  mismatched_split/     # LP-forced below-threshold pair → 2 entries, not 1
+    ...
+```
+
+`expected.csv` convention:
+- Matched pair: reference_name=X, system_name=Y
+- Reference-only: reference_name=X, system_name=""
+- System-only:   reference_name="", system_name=Y
+
+The test parametrises over all subdirectories, loads the three CSVs, runs
+`aedist.reconcile.reconcile()`, and compares actual match pairs to expected.
+
+## Exit criteria
+
+- [ ] `tests/fixtures/lp_matcher/` with ≥ 5 fixture directories
+- [ ] `tests/test_lp_matcher_fixtures.py` — parametrised, all pass
+- [ ] Fixture for the Mismatched-split case documents the 0302 fix
+- [ ] `make check-fast` passes
