@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Fix anthropic arm4 table fragmentation — enforce single unified inventory table
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T05:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+All 5 arm4 anthropic runs produce many separate sub-tables (organised by fuel
+type or region) instead of one unified plant inventory table. The final turns
+show 6–44 distinct table headers per turn. `count_best_table_rows()` captures
+only the largest sub-table, making the `inventory_rows` metric unreliable for
+arm4 anthropic. Root cause: the designed prompt and system prompt do not
+constrain output table structure.
+
+## Relevant files
+- `experiments/sota/exp2_interactive_smoke.py` — `run_phase_b_multiturn()`,
+  `VERIFY_REPLY` constant, `TERMINAL_REPLY` constant
+- `experiments/sota/protocol_02_metaprompt.md` — Phase A meta-prompt that
+  instructs the agent how to design the Phase B prompt
+- `experiments/sota/protocol_06_validation_round_1.md` — validation round
+  prompt (if used as VERIFY_REPLY source)
+
+## Actions
+1. **Prescribe the exact table header** in the Phase A meta-prompt: instruct
+   the Phase A designer to begin the Plant Inventory Table section with a
+   specific header row, e.g. `| Plant name | Fuel | Capacity (MWe) | Status |
+   As-of date | Confidence | Source 1 | Source 2 |`. Tell it this is a hard
+   constraint, not a suggestion.
+2. **Add a table-unity reminder to `VERIFY_REPLY`**: append a sentence
+   instructing the agent to consolidate all sub-tables into one master table
+   before returning the corrected inventory.
+3. **Consider adding to `TERMINAL_REPLY`**: if the agent has not yet produced
+   a unified table, explicitly ask for consolidation as the final act.
+
+## Test
+Inspect `anthropic_turn_N.raw.json` for the final turn of a smoke run:
+```python
+assert header_count <= 2  # at most one plant table + one stats table
+```
+Use the same `re.findall(r'^\|[^\n]*(?:Plant|Name|...)`, regex already in
+diagnostic script.
+
+## Exit criteria
+- [ ] A re-run of arm4 anthropic (any single rep, smoke) produces ≤ 2 table
+  headers in the final output turn
+- [ ] `inventory_rows` for that rep is ≥ 40 (plausible Vietnam thermal fleet)
+- [ ] `make check-fast` passes
