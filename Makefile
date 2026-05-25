@@ -173,9 +173,11 @@ $(GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --methods direct \
-	    --label-x 150 --label-ha left \
+	    --label-x 100 --label-ha left \
 	    --xlabel "Assets identified (1 dot = 1 power plant / project)" \
 	    --title "Which models recall Vietnam's 163 thermal power plants projects from memory?" \
+	    --ui-scale 1.35 \
+	    --fig-width 12 --fig-height-min 8 --fig-height-per-run 0.06 --fig-height-per-method 0.35 \
 	    --result-dir experiments/outputs/exp1_batch2/ \
 	    --output-macros $(dir $@)macros_p1_base.tex
 
