@@ -13,7 +13,7 @@
 \setbeamertemplate{frame numbering}[fraction]
 
 \InputIfFileExists{inputs/generated/macros}{}{}
-\InputIfFileExists{inputs/generated/macros_p1_base}{}{}
+\InputIfFileExists{../report/inputs/generated/macros_p1_base}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
 \definecolor{missed}{HTML}{E8505B}
@@ -95,7 +95,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 
 \begin{frame}[plain]
 \centering
-\includegraphics[height=\paperheight,keepaspectratio]{inputs/generated/fig_direct_p1_base.pdf}
+\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
 \begin{tikzpicture}[remember picture,overlay] % TODO: Simplifier en choisissant des modèles et en fixant leur ordre dans un fichier de conf de la figure
 \node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
 Récalcitrant\\
@@ -362,7 +362,7 @@ C'est le résultat central qui justifie «~Beyond RAG~» comme titre.}
 % -------------------------------------------------------------------
 \begin{frame}{Coût × qualité --- aucun front Pareto par modèle}
 \begin{center}
-\includegraphics[width=0.85\textwidth]{inputs/generated/fig_direct_cost_quality.pdf}
+\includegraphics[width=0.85\textwidth]{../report/inputs/generated/fig_direct_cost_quality.pdf}
 \end{center}
 \end{frame}
 
