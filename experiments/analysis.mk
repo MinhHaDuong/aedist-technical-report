@@ -15,6 +15,9 @@ ANALYSIS_DERIVED_DIR ?= $(ANALYSIS_EXPERIMENTS_DIR)/derived
 ANALYSIS_EXP2_NAIVE_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm1_flat
 ANALYSIS_EXP2_OPTIMISED_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm2_flat
 ANALYSIS_EXP2_CROSS_EVAL_CSV ?= $(ANALYSIS_DERIVED_DIR)/sota_cross_eval.csv
+ANALYSIS_EXP1_CROSS_EVAL_CSV ?= $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval.csv
+
+ANALYSIS_EXP1_INPUT_CSVS := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.csv)
 
 ANALYSIS_EXP2_NAIVE_JSONS := $(wildcard $(ANALYSIS_EXP2_NAIVE_DIR)/*.json)
 ANALYSIS_EXP2_OPTIMISED_JSONS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json)
@@ -62,6 +65,14 @@ $(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/
 	uv run python -m aedist.extract_arm_multi_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat
+	touch $@
+
+$(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done: $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py
+	rm -f $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
+	uv run python -m aedist.score_exp1 \
+	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
+	    --output $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
+	mkdir -p $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval
 	touch $@
 
 # --- Canonical mart and mart-derived views ---------------------------------
