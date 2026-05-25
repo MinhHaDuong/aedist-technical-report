@@ -141,6 +141,14 @@ $(GEN)/fig_quality_spider.pdf: $(GEN)/sota_cross_eval_view.csv experiments/quali
 	    --config experiments/quality_spider_config.yaml \
 	    --output $@
 
+# --- Figure: Exp1 family spiders (reads from Exp1 cross-eval CSV) -----------
+
+$(GEN)/fig_spider_exp1_families.pdf: experiments/derived/exp1_cross_eval.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $< \
+	    --output $@
+
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
 EXP2_OUTLINE_ARTIFACTS := \
