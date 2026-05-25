@@ -3,7 +3,7 @@
 Usage:
     python -m aedist.plot_exp2_arms_comparison \
         --input report/inputs/generated/tab_exp2_arms_runs.csv \
-        --output report/input/generated/fig_exp2_arms_comparison.pdf
+        --output report/inputs/generated/fig_exp2_arms_comparison.pdf
 
 Panels (left to right):
     (a) coverage (plants enumerated)

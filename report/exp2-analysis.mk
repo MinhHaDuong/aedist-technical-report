@@ -3,7 +3,7 @@
 #   make -f report/exp2-analysis.mk exp2-analysis-report
 
 GEN := report/inputs/generated
-ARM_FIG_GEN := report/input/generated
+ARM_FIG_GEN := report/inputs/generated
 MART_JSONL := $(GEN)/exp2_mart.jsonl
 OLD_STAGE := $(GEN)/exp2-old-path
 MART_STAGE := $(GEN)/exp2-mart-path
