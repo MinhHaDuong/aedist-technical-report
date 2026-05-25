@@ -1,0 +1,27 @@
+%erg 0.1
+Title: Fix stale argparse defaults in plot scripts after figure relocation
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T12:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #536 relocated fig_capability_dag, fig_capability_timeline, fig_direct_cost_quality,
+census_bars.csv, and cost_quality.csv from `slides/inputs/generated/` to
+`report/inputs/generated/`. The Makefile targets were updated, but three plot
+scripts still have stale `argparse` defaults pointing to the old location:
+
+- `src/aedist/plot_capability_dag.py:129` — `default=Path("slides/inputs/generated/fig_capability_dag.pdf")`
+- `src/aedist/plot_capability_timeline.py:191` — `default=Path("slides/inputs/generated/fig_capability_timeline.pdf")`
+- `src/aedist/plot_cost_quality.py:35-36` — usage docstring and implicit default
+
+Also update the usage examples in module docstrings (lines 13, 19, 35-36).
+
+## Exit criteria
+
+- [ ] All three scripts have `default=Path("report/inputs/generated/...")` for `--output`/`--figure`
+- [ ] Module docstring usage examples updated to match
+- [ ] `make check-fast` passes
