@@ -1,62 +1,117 @@
 %erg 0.1
-Title: Unified glyph + palette across all figures
+Title: Glyph config in palette.toml + display-case PDF for validation
 Created: 2026-05-25
 Author: HDMX-coding-agent
 
 --- log ---
 2026-05-25T15:00Z HDMX-coding-agent created
+2026-05-25T16:00Z HDMX-coding-agent amended — config-file-first design; display case PDF required before applying to figures
 
 --- body ---
 ## Context
 
-Figures currently use inconsistent marker/colour conventions. For the
-talk the reader must be able to identify any data point by family and
-method at a glance. A single legend should suffice across all figures.
+Glyphs (marker shape, size, fill) are currently hardcoded per plot
+script. When a marker choice needs to change — accessibility review,
+journal style guide, B&W printing — the change must be hunted across
+every script. Moving glyph specs into `palette.toml` gives a single
+edit point; `make figures` then propagates the change everywhere.
 
-## Glyph code (to be enforced in all new and existing plot scripts)
+The author must visually validate the glyph code before it is applied
+to figures. A display-case PDF is therefore the primary deliverable;
+updating the actual plot scripts is gated on author sign-off.
 
-Method axis (shape):
-  ●  small filled circle  — parametric (Exp 1, no web)
-  ○  open circle          — web search, single-shot (arm1 / direct)
-  ◆  filled diamond       — web search, multi-turn (arm2)
-  ◇  open diamond         — web search + evidence pack, single-shot (arm3)
-  ⬧  filled diamond (alt) — web search + evidence pack, multi-turn (arm4)
+## Glyph encoding (two orthogonal dimensions)
 
-In matplotlib terms:
-  parametric  → marker="o", s=18, filled
-  arm1        → marker="o", s=25, facecolor="none" (open)
-  arm2        → marker="D", s=20, filled
-  arm3        → marker="D", s=25, facecolor="none" (open)
-  arm4        → marker="D", s=20, filled (distinct colour from arm2 via edge)
+Shape encodes method type:
+  round (circle 'o') = direct / single-shot access
+  diamond ('D')      = multi-turn interaction
 
-Colour axis (model family, already defined in palette.toml):
-  Claude / Anthropic  — existing palette colour
-  GPT / OpenAI        — existing palette colour
-  Mistral             — existing palette colour
-  Qwen / Alibaba      — existing palette colour
-  DeepSeek            — existing palette colour
+Fill encodes data source:
+  small dot ('.')    = parametric (no web, memory only)
+  open (hollow)      = web search
+  filled (solid)     = web search + evidence pack
+
+Resulting 5 distinct glyphs:
+  parametric  → '.', s=20,  filled
+  arm1        → 'o', s=30,  open (facecolor='none')
+  arm2        → 'D', s=25,  open (facecolor='none')
+  arm3        → 'o', s=30,  filled
+  arm4        → 'D', s=25,  filled
 
 ## Implementation
 
-1. Add `glyph_for_method(method: str) -> dict` to `src/aedist/util.py`
-   returning a dict of scatter kwargs: `{"marker": …, "s": …,
-   "facecolors": …, "edgecolors": "auto"}`. Methods: "parametric",
-   "arm1", "arm2", "arm3", "arm4".
+### Step 1 — Add [glyphs] section to palette.toml
 
-2. Update each affected plot script to call `glyph_for_method()` instead
-   of hardcoded marker/size values:
-   - `plot_cost_quality.py`
-   - `plot_exp2_arms_comparison.py`
-   - `plot_quality_spider.py` / `plot_quality_spider_exp1.py`
-   - Any others found by grep
+```toml
+# Glyph encoding — single source of truth for marker shape, size, fill.
+# Shape = method type (round=direct, diamond=multi-turn).
+# Fill  = data source (dot=parametric, open=web, filled=web+pack).
+[glyphs.parametric]
+marker = "."
+size   = 20
+fill   = "full"
+label  = "Parametric — memory only, no web"
 
-3. Add a shared `plot_legend_patch(ax)` helper (or a standalone
-   legend-only figure) so each figure can include a consistent legend.
+[glyphs.arm1]
+marker = "o"
+size   = 30
+fill   = "none"
+label  = "Web, single-shot"
+
+[glyphs.arm2]
+marker = "D"
+size   = 25
+fill   = "none"
+label  = "Web, multi-turn"
+
+[glyphs.arm3]
+marker = "o"
+size   = 30
+fill   = "full"
+label  = "Web + evidence pack, single-shot"
+
+[glyphs.arm4]
+marker = "D"
+size   = 25
+fill   = "full"
+label  = "Web + evidence pack, multi-turn"
+```
+
+### Step 2 — Add `glyph_for_method(method: str) -> dict` to util.py
+
+Returns scatter kwargs:
+  {"marker": …, "s": …, "facecolors": colour|"none", "edgecolors": colour}
+where `colour` is the caller-supplied family colour. If `method` is not
+found in the config, log a warning and return the fallback dot.
+
+### Step 3 — Generate display-case PDF
+
+New script `src/aedist/plot_glyph_display.py`:
+- Reads `[glyphs]` from palette.toml and `[model_families]` colours
+- Draws a grid: rows = methods (parametric, arm1–4), columns = families
+  (Claude, GPT, Mistral, Qwen, DeepSeek)
+- Each cell: 5 jittered dots using the correct marker + colour
+- Row labels on the left (method label from config)
+- Column headers (family name, family colour)
+- Bottom legend: shape = method type, fill = data source
+- Output: `report/inputs/generated/fig_glyph_display.pdf`
+
+**This PDF is the deliverable that gates Step 4.**
+
+### Step 4 — Apply to plot scripts (after author validation)
+
+Update each affected script to call `glyph_for_method()`:
+- `plot_cost_quality.py`
+- `plot_exp2_arms_comparison.py`
+- `plot_quality_spider.py`
+- Others found by grep for hardcoded `marker=`
 
 ## Exit criteria
 
-- [ ] `glyph_for_method()` in `util.py`, covered by unit tests
-- [ ] All listed scripts updated (grep for hardcoded `marker=` in plot_*.py)
-- [ ] Visual spot-check: regenerate PDF for each affected figure; confirm
-      consistent glyphs and colours
+- [ ] `[glyphs]` section added to `palette.toml`
+- [ ] `glyph_for_method()` in `util.py`, unit-tested
+- [ ] `plot_glyph_display.py` written; display case PDF generated and
+      committed to `report/inputs/generated/fig_glyph_display.pdf`
+- [ ] **Author has validated the display case** (log entry required)
+- [ ] Plot scripts updated to call `glyph_for_method()` (after validation)
 - [ ] `make check-fast` passes
