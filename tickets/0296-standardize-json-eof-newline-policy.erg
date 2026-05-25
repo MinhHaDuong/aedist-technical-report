@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Standardize JSON EOF newline policy across runtime writers
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Tag: deferred
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+2026-05-25T00:00Z HDMX-coding-agent note deferred per user request: schedule after talk / slow day.
+
+--- body ---
+## Context
+
+Current JSON write behavior is inconsistent:
+- Some maintenance scripts append a final newline (`+ "\n"`).
+- Some runtime writers (notably Exp2/Exp3 interactive summary writer) do not.
+
+This creates newline-only diffs (`No newline at end of file`) that are non-semantic but noisy in reviews and audits.
+
+## Scope
+
+- Define project stance: JSON text files should end with exactly one trailing newline.
+- Apply stance to runtime JSON writers (starting with Exp2/Exp3 interactive summary writer).
+- Add/align guardrails (formatter, lint, or test) so behavior remains stable.
+
+## Exit criteria
+
+- [ ] Stance documented in repo policy docs.
+- [ ] Runtime writers updated to emit newline-terminated JSON consistently.
+- [ ] Existing newline-only drifts normalized in touched directories.
+- [ ] Verification command added or documented for future drift checks.
+- [ ] Ticket closed after implementation in a dedicated chore commit.

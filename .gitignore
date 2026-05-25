@@ -54,6 +54,7 @@ attic/
 # These are extracted from raw JSON during post-processing, not primary data
 experiments/outputs/sota_exp3_*/**/*.md
 !experiments/outputs/sota_exp3_*/**/README.md
+!experiments/outputs/sota_exp3_*/**/summary_*.md
 
 # Evaluation reconciliation artifacts (generated)
 reconciliation_*.csv
