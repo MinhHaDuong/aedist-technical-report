@@ -64,6 +64,9 @@ class ProvenanceMetrics(BaseModel):
 
     source_presence: MetricValue = Field(default_factory=MetricValue)
     high_conf_dual_source: MetricValue = Field(default_factory=MetricValue)
+    n_rows_with_source: int | None = Field(default=None, ge=0)
+    n_confidence_high: int | None = Field(default=None, ge=0)
+    has_confidence_column: bool | None = Field(default=None)
 
 
 class TemporalityMetrics(BaseModel):
@@ -100,12 +103,15 @@ class RunSummary(BaseModel):
 
     n_rows: int = Field(..., ge=0)
     classification: str | None = Field(default=None)
+    class_trace: list[str] | None = Field(default=None)
     turns: int | None = Field(default=None, ge=0)
+    tokens_in: int | None = Field(default=None, ge=0)
     tokens_out: int | None = Field(default=None, ge=0)
     wall_s: float | None = Field(default=None, ge=0)
     cost_usd: float | None = Field(default=None, ge=0)
     classifier_cost_usd: float | None = Field(default=None, ge=0)
     narrative_chars: int | None = Field(default=None, ge=0)
+    n_bib_entries: int | None = Field(default=None, ge=0)
 
 
 class ProbeSummary(BaseModel):
@@ -129,6 +135,7 @@ class Exp2MartBase(BaseModel):
     record_id: str = Field(..., min_length=1)
     parent_record_id: str | None = Field(default=None)
     arm: Literal["naive", "optimised"]
+    agent: str = Field(..., min_length=1)
     model: str = Field(..., min_length=1)
     run: int = Field(..., ge=1)
     prompt_version: str | None = Field(default=None)
@@ -143,6 +150,9 @@ class Exp2RunMartRecord(Exp2MartBase):
     record_kind: Literal["run"] = "run"
     run_summary: RunSummary
     result_file: ArtifactPointer
+    narrative_file: ArtifactPointer | None = Field(default=None)
+    bib_file: ArtifactPointer | None = Field(default=None)
+    compliance_file: ArtifactPointer | None = Field(default=None)
 
 
 class Exp2ProbeMartRecord(Exp2MartBase):

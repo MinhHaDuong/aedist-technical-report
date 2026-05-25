@@ -65,19 +65,28 @@ def _score_summary(row: dict[str, str]) -> ScoreSummary:
     return ScoreSummary(
         n_rows=int(row["n_rows"]),
         accuracy=AccuracyMetrics(
-            coverage=_metric(row.get("accuracy_coverage"), row.get("accuracy_coverage_annotation")),
-            precision=_metric(row.get("accuracy_precision"), row.get("accuracy_precision_annotation")),
+            coverage=_metric(
+                row.get("accuracy_coverage"), row.get("accuracy_coverage_annotation")
+            ),
+            precision=_metric(
+                row.get("accuracy_precision"), row.get("accuracy_precision_annotation")
+            ),
             f1=_metric(row.get("accuracy_f1"), row.get("accuracy_f1_annotation")),
             fuel=_metric(row.get("accuracy_fuel"), row.get("accuracy_fuel_annotation")),
             status=_metric(row.get("accuracy_status"), row.get("accuracy_status_annotation")),
-            province=_metric(row.get("accuracy_province"), row.get("accuracy_province_annotation")),
+            province=_metric(
+                row.get("accuracy_province"), row.get("accuracy_province_annotation")
+            ),
         ),
         coherence=CoherenceMetrics(
             vocab_adherence=_metric(
-                row.get("coherence_vocab_adherence"), row.get("coherence_vocab_adherence_annotation")
+                row.get("coherence_vocab_adherence"),
+                row.get("coherence_vocab_adherence_annotation"),
             ),
             status_vocab_adherence=_metric(
-                row.get("coherence_status_vocab_adherence", row.get("coherence_capacity_nonnegative")),
+                row.get(
+                    "coherence_status_vocab_adherence", row.get("coherence_capacity_nonnegative")
+                ),
                 row.get(
                     "coherence_status_vocab_adherence_annotation",
                     row.get("coherence_capacity_nonnegative_annotation"),
@@ -86,7 +95,8 @@ def _score_summary(row: dict[str, str]) -> ScoreSummary:
         ),
         provenance=ProvenanceMetrics(
             source_presence=_metric(
-                row.get("provenance_source_presence"), row.get("provenance_source_presence_annotation")
+                row.get("provenance_source_presence"),
+                row.get("provenance_source_presence_annotation"),
             ),
             high_conf_dual_source=_metric(
                 row.get("provenance_high_conf_dual_source"),
@@ -94,15 +104,22 @@ def _score_summary(row: dict[str, str]) -> ScoreSummary:
             ),
         ),
         temporality=TemporalityMetrics(
-            asof_presence=_metric(row.get("temporality_asof_presence"), row.get("temporality_asof_presence_annotation")),
+            asof_presence=_metric(
+                row.get("temporality_asof_presence"),
+                row.get("temporality_asof_presence_annotation"),
+            ),
             plausible_range=_metric(
-                row.get("temporality_plausible_range"), row.get("temporality_plausible_range_annotation")
+                row.get("temporality_plausible_range"),
+                row.get("temporality_plausible_range_annotation"),
             ),
         ),
         field_completeness=FieldCompletenessMetrics(
-            core=_metric(row.get("field_completeness_core"), row.get("field_completeness_core_annotation")),
+            core=_metric(
+                row.get("field_completeness_core"), row.get("field_completeness_core_annotation")
+            ),
             capacity=_metric(
-                row.get("field_completeness_capacity"), row.get("field_completeness_capacity_annotation")
+                row.get("field_completeness_capacity"),
+                row.get("field_completeness_capacity_annotation"),
             ),
         ),
     )
@@ -139,7 +156,9 @@ def _load_score_rows(
             rows_by_arm_run.setdefault((row["arm"], int(row["run"])), []).append(row)
             agent = infer_agent(row["model"])
             if agent is not None:
-                rows_by_arm_agent_run.setdefault((row["arm"], agent, int(row["run"])), []).append(row)
+                rows_by_arm_agent_run.setdefault((row["arm"], agent, int(row["run"])), []).append(
+                    row
+                )
     return rows, rows_by_arm_run, rows_by_arm_agent_run
 
 
@@ -196,6 +215,7 @@ def _build_run_records(
             Exp2RunMartRecord(
                 record_id=_record_id(arm, meta.get("model", agent), run),
                 arm=arm,
+                agent=agent,
                 model=meta.get("model", ""),
                 run=run,
                 prompt_version=meta.get("prompt_version"),
@@ -243,7 +263,9 @@ def _build_probe_records(
             if turn_match is None:
                 continue
             turn = int(turn_match.group(1))
-            cls_path = raw_path.with_name(raw_path.name.replace(".raw.json", ".classification.json"))
+            cls_path = raw_path.with_name(
+                raw_path.name.replace(".raw.json", ".classification.json")
+            )
             probe_label = None
             if cls_path.exists():
                 cls_payload = json.loads(cls_path.read_text(encoding="utf-8"))
@@ -254,6 +276,7 @@ def _build_probe_records(
                     record_id=_record_id(arm, meta.get("model", agent), run, f"turn{turn:02d}"),
                     parent_record_id=_record_id(arm, meta.get("model", agent), run),
                     arm=arm,
+                    agent=agent,
                     model=meta.get("model", ""),
                     run=run,
                     prompt_version=meta.get("prompt_version"),
@@ -287,10 +310,9 @@ def build_exp2_mart(
             optimised_dir=optimised_dir,
         ):
             records.append(run_record)
-            agent = Path(run_record.result_file.path).name.split("_run", 1)[0]
             score_row = _resolve_score_row(
                 run_record.arm,
-                agent,
+                run_record.agent,
                 run_record.model,
                 run_record.run,
                 score_rows,
@@ -300,9 +322,12 @@ def build_exp2_mart(
                 continue
             records.append(
                 Exp2ScoreMartRecord(
-                    record_id=_record_id(run_record.arm, run_record.model, run_record.run, "score"),
+                    record_id=_record_id(
+                        run_record.arm, run_record.model, run_record.run, "score"
+                    ),
                     parent_record_id=run_record.record_id,
                     arm=run_record.arm,
+                    agent=run_record.agent,
                     model=run_record.model,
                     run=run_record.run,
                     prompt_version=score_row.get("prompt_version") or run_record.prompt_version,
@@ -349,8 +374,12 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     repo_root = Path(args.repo_root).resolve() if args.repo_root else Path.cwd().resolve()
-    output = _resolve_repo_path(repo_root, Path(args.output) if args.output else None, _DEFAULT_OUTPUT)
-    naive_dir = _resolve_repo_path(repo_root, Path(args.naive_dir) if args.naive_dir else None, _DEFAULT_NAIVE_DIR)
+    output = _resolve_repo_path(
+        repo_root, Path(args.output) if args.output else None, _DEFAULT_OUTPUT
+    )
+    naive_dir = _resolve_repo_path(
+        repo_root, Path(args.naive_dir) if args.naive_dir else None, _DEFAULT_NAIVE_DIR
+    )
     optimised_dir = _resolve_repo_path(
         repo_root,
         Path(args.optimised_dir) if args.optimised_dir else None,

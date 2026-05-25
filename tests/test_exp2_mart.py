@@ -27,6 +27,7 @@ def test_run_record_carries_mart_version_and_result_pointer() -> None:
     record = Exp2RunMartRecord(
         record_id="exp2-naive/anthropic/01",
         arm="naive",
+        agent="anthropic",
         model="claude-opus-4-6",
         run=1,
         prompt_version="exp2-naive",
@@ -55,6 +56,7 @@ def test_probe_record_requires_probe_pointer() -> None:
         record_id="exp2-naive/anthropic/01/turn-01",
         parent_record_id="exp2-naive/anthropic/01",
         arm="naive",
+        agent="anthropic",
         model="claude-opus-4-6",
         run=1,
         probe_summary={"turn": 1, "probe_label": "report", "rows": 42},
@@ -72,6 +74,7 @@ def test_score_record_rejects_verbatim_chat_payload_fields() -> None:
         Exp2ScoreMartRecord(
             record_id="exp2-naive/anthropic/01/score",
             arm="naive",
+            agent="anthropic",
             model="claude-opus-4-6",
             run=1,
             score_summary={
