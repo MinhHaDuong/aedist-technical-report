@@ -3,8 +3,11 @@ Title: Ex post extractor for EXP3 outputs with unified data flow and source hand
 Created: 2026-05-25
 Author: HDMX-coding-agent
 
+Supersedes: 0291
+
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
+2026-05-25T12:00Z HDMX-coding-agent add exp2_phase_b0_consolidate.py adaptation requirement (user request); note supersession of 0291; extraction side of 0290 delegated here
 
 --- body ---
 ## Context
@@ -28,6 +31,9 @@ its data flow with arms 2 and 4.
 - [ ] Remove extractor responsibilities from `experiments/sota/exp2_naive_arm.py`.
 - [ ] Unify data flow conventions with arm2/arm4 artifacts (conversation/turn/raw
       schemas and derived outputs).
+- [ ] Adapt `experiments/sota/exp2_phase_b0_consolidate.py` to the new run{N}/
+      directory layout (currently expects flat layout; must walk run01/, run02/
+      etc. and discover per-run raw files rather than assuming flat filenames).
 - [ ] Consolidate split tables into a single canonical inventory table.
 - [ ] Strip all non-table preambles from derived report outputs.
 - [ ] Map Mistral `tool_reference` citations into Source columns (Source 1/2)
@@ -39,3 +45,13 @@ its data flow with arms 2 and 4.
 - [ ] Canonical derived outputs are reproducible from raw artifacts only.
 - [ ] No scoring component depends on legacy inline extractor behavior.
 - [ ] Integration test covers split-table consolidation + citation mapping.
+- [ ] `exp2_phase_b0_consolidate.py` (or its replacement) correctly walks the
+      new run{N}/ layout and produces the same aggregated output as before.
+
+## Coordination
+
+- **0291** (Separate raw from derived): superseded — the snapshot commit in
+  branch `t0291-results-cleanstack-nomd` closes Action 1; this ticket closes
+  Action 2. Close 0291 when the branch merges.
+- **0290** (Anthropic table fragmentation): extraction side (sub-table
+  concatenation) tracked here. Prompt-engineering actions remain in 0290.
