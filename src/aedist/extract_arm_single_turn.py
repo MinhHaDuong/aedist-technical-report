@@ -62,7 +62,8 @@ def _extract_markdown_from_payload(payload: dict) -> str:
             texts = [
                 part.get("text", "")
                 for part in parts
-                if part.get("type") in {"output_text", "text"} and isinstance(part.get("text"), str)
+                if part.get("type") in {"output_text", "text"}
+                and isinstance(part.get("text"), str)
             ]
             markdown = "".join(texts).strip()
             if markdown:
@@ -98,7 +99,7 @@ def _extract_bib_section(markdown: str) -> str:
         stripped = line.strip()
         if _BIB_HEADER_RE.match(stripped):
             start = index + 1
-            header_level = len(stripped.split()[0])
+            header_level = len(stripped) - len(stripped.lstrip("#"))
             break
 
     if start is None:
@@ -108,7 +109,7 @@ def _extract_bib_section(markdown: str) -> str:
     for line in lines[start:]:
         stripped = line.strip()
         if stripped.startswith("#"):
-            level = len(stripped.split()[0])
+            level = len(stripped) - len(stripped.lstrip("#"))
             if level <= header_level:
                 break
         section.append(line)
@@ -180,7 +181,9 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
 
             normalized = dict(meta)
             normalized["run"] = run
-            normalized["class_trace"] = [meta.get("classification")] if meta.get("classification") else []
+            normalized["class_trace"] = (
+                [meta.get("classification")] if meta.get("classification") else []
+            )
             normalized["n_bib_entries"] = len(bib_entries)
 
             base_name = f"{agent}_run{run:02d}"
@@ -188,7 +191,9 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
             md_path = output_dir / f"{base_name}.md"
             bib_path = output_dir / f"{base_name}_bib.md"
 
-            _write_text(json_path, json.dumps(normalized, indent=2, ensure_ascii=False))
+            _write_text(
+                json_path, json.dumps(normalized, indent=2, sort_keys=True, ensure_ascii=False)
+            )
             _write_text(md_path, markdown)
             bib_content = "\n".join(f"- {entry}" for entry in bib_entries)
             _write_text(bib_path, bib_content)
@@ -198,7 +203,9 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Flatten single-turn arm outputs into per-run artifacts")
+    parser = argparse.ArgumentParser(
+        description="Flatten single-turn arm outputs into per-run artifacts"
+    )
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
