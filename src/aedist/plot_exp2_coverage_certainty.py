@@ -9,8 +9,10 @@ Usage:
 import argparse
 import csv
 import logging
+import re
 from pathlib import Path
 
+from .extract_exp2_bib import parse_md
 from .util import glyph_scatter_kwargs, model_family_color
 
 log = logging.getLogger(__name__)
@@ -31,14 +33,48 @@ _AGENT_LABELS = {
 
 _AGENT_COLORS = {agent: model_family_color(slug) for agent, slug in _AGENT_SLUG.items()}
 
+_ARM_GLYPH = {
+    "naive": "arm1",
+    "optimised": "arm2",
+    "arm3": "arm3",
+    "arm4": "arm4",
+}
+
+
+def _load_arm_pack_rows(base_dir: Path, arm: str) -> list[dict]:
+    rows: list[dict] = []
+    if not base_dir.exists():
+        return rows
+
+    run_re = re.compile(r"^(?P<agent>[a-z0-9]+)_run(?P<run>\d{2})\.md$")
+    for md_path in sorted(base_dir.glob("*.md")):
+        name = md_path.name
+        if name.endswith("_bib.md"):
+            continue
+        m = run_re.match(name)
+        if not m:
+            continue
+        agent = m.group("agent")
+        if agent not in _AGENT_SLUG:
+            continue
+        summary = parse_md(md_path)
+        rows.append(
+            {
+                "agent": agent,
+                "arm": arm,
+                "run": int(m.group("run")),
+                "n_rows": int(summary.get("n_rows") or 0),
+                "src2_present": int(summary.get("src2_present") or 0),
+            }
+        )
+    return rows
+
 
 def _load_csv(path: Path) -> list[dict]:
     rows = []
     with path.open(newline="") as fh:
         for row in csv.DictReader(fh):
             n_rows = int(row["n_rows"])
-            if n_rows == 0:
-                continue
             rows.append(
                 {
                     "agent": row["agent"],
@@ -48,37 +84,47 @@ def _load_csv(path: Path) -> list[dict]:
                     "src2_present": int(row["src2_present"]),
                 }
             )
+
+    # Add arm3/arm4 datapack runs so the scatter covers all 4 arms x 4 agents x 5 reps.
+    root = path.parents[3]
+    rows.extend(_load_arm_pack_rows(root / "experiments/derived/arm3_flat", "arm3"))
+    rows.extend(_load_arm_pack_rows(root / "experiments/derived/arm4_flat", "arm4"))
     return rows
 
 
 def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
 
     fig, ax = plt.subplots(figsize=(5.5, 4.0))
 
     for agent, color in _AGENT_COLORS.items():
-        for arm in ("naive", "optimised"):
+        for arm in ("naive", "optimised", "arm3", "arm4"):
             subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
             if not subset:
                 continue
             xs = [r["n_rows"] for r in subset]
             ys = [r["src2_present"] for r in subset]
 
-            if arm == "optimised":
+            if arm in _ARM_GLYPH:
                 ax.scatter(
                     xs,
                     ys,
-                    **glyph_scatter_kwargs("arm2", color),
+                    **glyph_scatter_kwargs(_ARM_GLYPH[arm], color),
                     zorder=3,
-                    label=f"{_AGENT_LABELS[agent]} opt.",
                 )
-            else:
+
+            # Explicitly show no-report/sparse runs at the origin with an x glyph.
+            zero_idx = [i for i, r in enumerate(subset) if r["n_rows"] == 0]
+            if zero_idx:
                 ax.scatter(
-                    xs,
-                    ys,
-                    **glyph_scatter_kwargs("arm1", color),
-                    zorder=3,
-                    label=f"{_AGENT_LABELS[agent]} naive",
+                    [xs[i] for i in zero_idx],
+                    [ys[i] for i in zero_idx],
+                    marker="x",
+                    s=26,
+                    color=color,
+                    linewidths=1.1,
+                    zorder=4,
                 )
 
     max_val = max(max(r["n_rows"], r["src2_present"]) for r in rows)
@@ -96,24 +142,105 @@ def make_figure(rows: list[dict], output: Path) -> None:
                 alpha=0.7,
             )
 
-    ax.set_xlabel("Inventory rows (coverage)", fontsize=9)
-    ax.set_ylabel("Rows with Source 2 (corroboration)", fontsize=9)
+    ax.set_xlabel("Assets correctly identified (coverage)", fontsize=9)
+    ax.set_ylabel("Assets from two sources (corroboration)", fontsize=9)
+    ax.set_title(
+        "Coverage vs. Corroboration (out of 163 assets)",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
     ax.set_xlim(left=-5)
     ax.set_ylim(bottom=-5)
     ax.tick_params(labelsize=8)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    handles, labels = ax.get_legend_handles_labels()
-    ax.legend(
-        handles,
-        labels,
+    # Legend 1: model colour mapping.
+    model_handles = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            linestyle="",
+            markerfacecolor=color,
+            markeredgecolor=color,
+            markersize=6,
+            label=_AGENT_LABELS[agent],
+        )
+        for agent, color in _AGENT_COLORS.items()
+    ]
+    model_legend = ax.legend(
+        model_handles,
+        [h.get_label() for h in model_handles],
+        title="Model color",
         fontsize=6.5,
-        ncol=2,
+        title_fontsize=7,
         loc="upper left",
         frameon=False,
-        handletextpad=0.3,
-        columnspacing=1.0,
+    )
+    ax.add_artist(model_legend)
+
+    # Legend 2: glyph style mapping.
+    glyph_handles = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            linestyle="",
+            markerfacecolor="none",
+            markeredgecolor="black",
+            markersize=6,
+            label="arm1 (single-shot)",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="D",
+            linestyle="",
+            markerfacecolor="none",
+            markeredgecolor="black",
+            markersize=6,
+            label="arm2 (multi-turn)",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            linestyle="",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=6,
+            label="arm3 (+sources, single-shot)",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="D",
+            linestyle="",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=6,
+            label="arm4 (+sources, multi-turn)",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="x",
+            linestyle="",
+            color="black",
+            markersize=6,
+            label="no_report",
+        ),
+    ]
+    ax.legend(
+        glyph_handles,
+        [h.get_label() for h in glyph_handles],
+        title="Glyph style",
+        fontsize=6.5,
+        title_fontsize=7,
+        loc="lower right",
+        frameon=False,
     )
 
     fig.tight_layout()

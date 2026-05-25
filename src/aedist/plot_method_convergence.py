@@ -179,6 +179,10 @@ def write_pdf(
     max_runs_per_model: int = 3,
     max_fp: int = 80,
     method_order: list[str] | None = None,
+    model_label_x: float = -5,
+    model_label_ha: str = "right",
+    x_label: str = "Nombre de centrales bien identifiées",
+    title: str | None = None,
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
@@ -274,18 +278,19 @@ def write_pdf(
                         ha="right",
                     )
 
-        # Model name labels at x=-5, right-aligned, centered on each model's runs
+        # Model name labels anchored at a configurable x position.
         for model, ys in model_ys.items():
             y_mid = sum(ys) / len(ys)
             label = f"{model} (local)" if model_local.get(model) else model
             ax.text(
-                -5,
+                model_label_x,
                 y_mid,
                 label,
-                ha="right",
+                ha=model_label_ha,
                 va="center",
                 fontsize=13.5,
                 color=model_family_color(model),
+                bbox={"boxstyle": "round,pad=0.15", "facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
             )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
@@ -299,7 +304,7 @@ def write_pdf(
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
     ax.set_yticks([])
-    ax.set_xlabel("Nombre de centrales bien identifiées", fontsize=11)
+    ax.set_xlabel(x_label, fontsize=11)
     ax.set_xlim(-max_fp - 15, 185)
     # Invert via ylim order (no invert_yaxis) so set_ylim stays predictable
     ax.set_ylim(y_last + spacing, -spacing)
@@ -323,6 +328,9 @@ def write_pdf(
     ax.tick_params(axis="x", labelsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+
+    if title:
+        ax.set_title(title, fontsize=14, fontweight="bold", pad=8)
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -421,6 +429,28 @@ def main() -> None:
         default=None,
         help="Comma-separated normalized model names to exclude (e.g. qwen3-max-thinking,qwen3.6-plus)",
     )
+    parser.add_argument(
+        "--label-x",
+        type=float,
+        default=-5,
+        help="X position for model labels (default: -5).",
+    )
+    parser.add_argument(
+        "--label-ha",
+        choices=("left", "right"),
+        default="right",
+        help="Horizontal alignment for model labels (default: right).",
+    )
+    parser.add_argument(
+        "--xlabel",
+        default="Nombre de centrales bien identifiées",
+        help="X-axis label text.",
+    )
+    parser.add_argument(
+        "--title",
+        default=None,
+        help="Optional figure title.",
+    )
     args = parser.parse_args()
 
     excluded_models = None
@@ -442,7 +472,16 @@ def main() -> None:
 
     output = Path(args.output)
     if output.suffix == ".pdf":
-        write_pdf(rows, output, models=models, method_order=method_order)
+        write_pdf(
+            rows,
+            output,
+            models=models,
+            method_order=method_order,
+            model_label_x=args.label_x,
+            model_label_ha=args.label_ha,
+            x_label=args.xlabel,
+            title=args.title,
+        )
     else:
         write_csv(rows, output)
 

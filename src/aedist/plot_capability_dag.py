@@ -106,9 +106,14 @@ def render(lab_dates: dict[str, dict[int, date]], output: Path) -> None:
     ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=7)
     ax.set_yticks(range(N_STAGES))
     ax.set_yticklabels(labels, fontsize=7)
-    ax.set_xlabel("Feature j (column)", fontsize=8)
-    ax.set_ylabel("Feature i (row)", fontsize=8)
-    ax.set_title("Fraction of labs where feature i shipped before feature j", fontsize=9, pad=8)
+    ax.set_xlabel("Arrived later ->", fontsize=8)
+    ax.set_ylabel("Arrived earlier ->", fontsize=8)
+    ax.set_title(
+        "AI labs follow a consistent capability build-up order",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
 
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)

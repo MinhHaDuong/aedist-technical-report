@@ -35,8 +35,38 @@ def _make_figure(table: dict, output: Path) -> None:
 
     rows = table["rows"]
     if not rows:
-        msg = "plot_base_vs_census: no models in intersection — refusing to plot"
-        raise SystemExit(msg)
+        fig, ax = plt.subplots(figsize=(5.5, 3.6))
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.62,
+            "Base vs census: unavailable",
+            ha="center",
+            va="center",
+            fontsize=12,
+            weight="bold",
+        )
+        ax.text(
+            0.5,
+            0.42,
+            "Need at least 1 shared model between census and base inputs.",
+            ha="center",
+            va="center",
+            fontsize=9,
+        )
+        ax.text(
+            0.5,
+            0.30,
+            "Current intersection size: 0",
+            ha="center",
+            va="center",
+            fontsize=9,
+        )
+        fig.tight_layout()
+        output.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(output)
+        plt.close(fig)
+        return
 
     xs = [row["f1_census"] for row in rows]
     ys = [row["f1_base"] for row in rows]
@@ -90,8 +120,11 @@ def main(argv: list[str] | None = None) -> None:
 
     table = compute_table(p1_base_dir=args.p1_base_dir)
     if table["model_count"] < 2:
-        msg = f"plot_base_vs_census: need >=2 models in intersection, got {table['model_count']}"
-        raise SystemExit(msg)
+        log.warning(
+            "plot_base_vs_census: sparse intersection (%d model%s); generating figure anyway",
+            table["model_count"],
+            "s" if table["model_count"] != 1 else "",
+        )
 
     _make_figure(table, args.output)
     log.info("Wrote %s (%d models)", args.output, table["model_count"])

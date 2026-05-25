@@ -44,17 +44,27 @@ _AGENT_MODEL = {
 }
 
 _ARM_STYLE = {
-    "arm1": {"marker": "o", "filled": False, "offset": -0.27, "label": "arm1 (single-shot)"},
-    "arm2": {"marker": "D", "filled": False, "offset": -0.09, "label": "arm2 (multi-turn)"},
-    "arm3": {"marker": "o", "filled": True, "offset": +0.09, "label": "arm3 (+pack, single-shot)"},
-    "arm4": {"marker": "D", "filled": True, "offset": +0.27, "label": "arm4 (+pack, multi-turn)"},
+    "arm1": {"marker": "o", "filled": False, "offset": -0.27, "label": "Single query"},
+    "arm2": {"marker": "D", "filled": False, "offset": -0.09, "label": "Multi-turn"},
+    "arm3": {
+        "marker": "o",
+        "filled": True,
+        "offset": +0.09,
+        "label": "Single query with docs",
+    },
+    "arm4": {
+        "marker": "D",
+        "filled": True,
+        "offset": +0.27,
+        "label": "Multi-turn with docs",
+    },
 }
 
 _ARM_ORDER = ["arm1", "arm2", "arm3", "arm4"]
 
 _PANELS = [
-    ("inventory_rows", "(a) Coverage", "Plants enumerated"),
-    ("cost_usd", "(b) Cost", "Cost per run (USD)"),
+    ("inventory_rows", "(a) Coverage", "Assets correctly identified"),
+    ("cost_usd", "(b) Cost", "API cost per run (USD)"),
 ]
 
 
@@ -127,8 +137,6 @@ def _load_csv(path: Path) -> list[dict]:
 
 
 def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> None:
-    import numpy as np
-
     rng = random.Random(42)
 
     for agent_idx, agent in enumerate(_AGENT_ORDER):
@@ -144,7 +152,6 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> N
 
             report_xs = [x for x, r in zip(xs, subset, strict=True) if r["is_report"]]
             report_ys = [r[metric] for r in subset if r["is_report"]]
-            noreport_xs = [x for x, r in zip(xs, subset, strict=True) if not r["is_report"]]
 
             if report_xs:
                 face = color if style["filled"] else "none"
@@ -158,29 +165,7 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> N
                     linewidths=1.0,
                     zorder=3,
                 )
-            if noreport_xs:
-                ax.scatter(
-                    noreport_xs,
-                    [0] * len(noreport_xs),
-                    color=color,
-                    s=22,
-                    zorder=3,
-                    marker="x",
-                    linewidths=1.1,
-                )
 
-            if report_ys:
-                med = float(np.median(report_ys))
-                ax.hlines(
-                    med,
-                    x_center - 0.07,
-                    x_center + 0.07,
-                    colors=color,
-                    linewidths=1.8,
-                    zorder=4,
-                )
-
-    ax.set_title(title, fontsize=8, loc="left")
     ax.set_xticks(range(len(_AGENT_ORDER)))
     ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
     ax.set_xlim(-0.5, len(_AGENT_ORDER) - 0.5)
@@ -194,17 +179,42 @@ def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> N
     else:
         ax.set_ylim(bottom=0)
 
+    # Center panel captions below each subplot.
+    ax.text(
+        0.5,
+        -0.23,
+        title,
+        transform=ax.transAxes,
+        ha="center",
+        va="top",
+        fontsize=10,
+        fontweight="bold",
+    )
+
 
 def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.0, 3.9))
+    fig, axes = plt.subplots(1, 2, figsize=(10.0, 5.1))
+    no_report_rows = [r for r in rows if not r["is_report"]]
+    if no_report_rows:
+        sample = ", ".join(
+            f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6]
+        )
+        log.warning(
+            "plot_exp2_arms_comparison: excluding %d no_report rows (pipeline bugs): %s",
+            len(no_report_rows),
+            sample,
+        )
+    rows = [r for r in rows if r["is_report"]]
+
     for ax, (metric, title, ylabel) in zip(axes, _PANELS, strict=True):
         _draw_panel(ax, rows, metric, title, ylabel)
 
     legend_handles = []
-    for arm in _ARM_ORDER:
+    legend_order = ["arm1", "arm3", "arm2", "arm4"]
+    for arm in legend_order:
         style = _ARM_STYLE[arm]
         face = COLOR_REFERENCE if style["filled"] else "none"
         legend_handles.append(
@@ -219,28 +229,25 @@ def make_figure(rows: list[dict], output: Path) -> None:
                 label=style["label"],
             )
         )
-    legend_handles.append(
-        Line2D(
-            [0],
-            [0],
-            marker="x",
-            linestyle="",
-            color=COLOR_REFERENCE,
-            markersize=6,
-            label="no_report",
-        )
-    )
     fig.legend(
         handles=legend_handles,
-        loc="lower center",
-        ncol=3,
+        loc="upper center",
+        ncol=4,
         fontsize=7.5,
-        frameon=False,
-        bbox_to_anchor=(0.5, -0.08),
+        frameon=True,
+        bbox_to_anchor=(0.5, 0.945),
+        borderpad=0.6,
+        labelspacing=0.6,
+        columnspacing=1.2,
     )
 
-    fig.suptitle("Experiment 2 — 4 arms per model (coverage and cost)", fontsize=9, y=1.01)
-    fig.tight_layout()
+    fig.suptitle(
+        "One query, providing documents works better than a conversation with web search",
+        fontsize=12,
+        fontweight="bold",
+        y=1.01,
+    )
+    fig.tight_layout(rect=(0.0, 0.08, 1.0, 0.92))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
