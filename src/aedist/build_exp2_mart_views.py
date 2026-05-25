@@ -21,10 +21,13 @@ _ARMS_RUNS_FIELDS = [
     "classification",
     "narrative_chars",
     "inventory_rows",
+    "n_matched",
     "cost_usd",
     "wall_s",
     "turns",
 ]
+
+_N_REFERENCE_PLANTS = 163
 
 _BIB_FIELDS = [
     "agent",
@@ -123,7 +126,9 @@ def _read_pointer(repo_root: Path, pointer: dict[str, str]) -> Path:
 
 def _extract_text(raw: dict) -> str:
     if "content" in raw and isinstance(raw["content"], list):
-        return " ".join(block.get("text", "") for block in raw["content"] if block.get("type") == "text")
+        return " ".join(
+            block.get("text", "") for block in raw["content"] if block.get("type") == "text"
+        )
     if isinstance(raw.get("output"), dict) and "choices" in raw["output"]:
         return raw["output"]["choices"][0]["message"].get("content", "")
     if isinstance(raw.get("output"), list):
@@ -143,7 +148,9 @@ def _extract_text(raw: dict) -> str:
             if item.get("type") == "message.output":
                 content = item.get("content", "")
                 if isinstance(content, list):
-                    return " ".join(block.get("text", "") for block in content if isinstance(block, dict))
+                    return " ".join(
+                        block.get("text", "") for block in content if isinstance(block, dict)
+                    )
                 return str(content)
     return ""
 
@@ -176,8 +183,16 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
     bib_rows: list[dict] = []
     turn_rows: list[dict] = []
 
+    coverage_by_run: dict[tuple[str, str, int], float] = {}
+    for s in scores:
+        cov = s.get("score_summary", {}).get("accuracy", {}).get("coverage", {}).get("value")
+        if cov is not None:
+            coverage_by_run[(s["arm"], s["model"], s["run"])] = cov
+
     for record in runs:
         agent = _agent_from_artifact_path(record["result_file"]["path"])
+        cov = coverage_by_run.get((record["arm"], record["model"], record["run"]))
+        n_matched = round(cov * _N_REFERENCE_PLANTS) if cov is not None else None
         run_rows.append(
             {
                 "arm": record["arm"],
@@ -187,6 +202,7 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "classification": record["run_summary"].get("classification", ""),
                 "narrative_chars": record["run_summary"].get("narrative_chars", 0),
                 "inventory_rows": record["run_summary"].get("n_rows", 0),
+                "n_matched": n_matched,
                 "cost_usd": record["run_summary"].get("cost_usd", 0.0),
                 "wall_s": record["run_summary"].get("wall_s", 0.0),
                 "turns": record["run_summary"].get("turns", 1),
@@ -194,7 +210,9 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
         )
 
         bib_metrics = parse_md(_read_pointer(repo_root, record["parsed_table_file"]))
-        bib_rows.append({"agent": agent, "arm": record["arm"], "run": record["run"], **bib_metrics})
+        bib_rows.append(
+            {"agent": agent, "arm": record["arm"], "run": record["run"], **bib_metrics}
+        )
 
     for record in probes:
         agent = _agent_from_artifact_path(record["probe_file"]["path"])
@@ -220,9 +238,13 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "prompt_version": record.get("prompt_version", ""),
                 "n_rows": str(summary["n_rows"]),
                 "accuracy_coverage": _fmt(summary["accuracy"]["coverage"].get("value")),
-                "accuracy_coverage_annotation": summary["accuracy"]["coverage"].get("annotation", ""),
+                "accuracy_coverage_annotation": summary["accuracy"]["coverage"].get(
+                    "annotation", ""
+                ),
                 "accuracy_precision": _fmt(summary["accuracy"]["precision"].get("value")),
-                "accuracy_precision_annotation": summary["accuracy"]["precision"].get("annotation", ""),
+                "accuracy_precision_annotation": summary["accuracy"]["precision"].get(
+                    "annotation", ""
+                ),
                 "accuracy_f1": _fmt(summary["accuracy"]["f1"].get("value")),
                 "accuracy_f1_annotation": summary["accuracy"]["f1"].get("annotation", ""),
                 "accuracy_fuel": _fmt(summary["accuracy"]["fuel"].get("value")),
@@ -230,43 +252,57 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "accuracy_status": _fmt(summary["accuracy"]["status"].get("value")),
                 "accuracy_status_annotation": summary["accuracy"]["status"].get("annotation", ""),
                 "accuracy_province": _fmt(summary["accuracy"]["province"].get("value")),
-                "accuracy_province_annotation": summary["accuracy"]["province"].get("annotation", ""),
-                "coherence_vocab_adherence": _fmt(summary["coherence"]["vocab_adherence"].get("value")),
-                "coherence_vocab_adherence_annotation": summary["coherence"]["vocab_adherence"].get(
+                "accuracy_province_annotation": summary["accuracy"]["province"].get(
                     "annotation", ""
                 ),
+                "coherence_vocab_adherence": _fmt(
+                    summary["coherence"]["vocab_adherence"].get("value")
+                ),
+                "coherence_vocab_adherence_annotation": summary["coherence"][
+                    "vocab_adherence"
+                ].get("annotation", ""),
                 "coherence_capacity_nonnegative": _fmt(
                     summary["coherence"]["status_vocab_adherence"].get("value")
                 ),
                 "coherence_capacity_nonnegative_annotation": summary["coherence"][
                     "status_vocab_adherence"
                 ].get("annotation", ""),
-                "provenance_source_presence": _fmt(summary["provenance"]["source_presence"].get("value")),
-                "provenance_source_presence_annotation": summary["provenance"]["source_presence"].get(
-                    "annotation", ""
+                "provenance_source_presence": _fmt(
+                    summary["provenance"]["source_presence"].get("value")
                 ),
+                "provenance_source_presence_annotation": summary["provenance"][
+                    "source_presence"
+                ].get("annotation", ""),
                 "provenance_high_conf_dual_source": _fmt(
                     summary["provenance"]["high_conf_dual_source"].get("value")
                 ),
                 "provenance_high_conf_dual_source_annotation": summary["provenance"][
                     "high_conf_dual_source"
                 ].get("annotation", ""),
-                "temporality_asof_presence": _fmt(summary["temporality"]["asof_presence"].get("value")),
-                "temporality_asof_presence_annotation": summary["temporality"]["asof_presence"].get(
-                    "annotation", ""
+                "temporality_asof_presence": _fmt(
+                    summary["temporality"]["asof_presence"].get("value")
                 ),
-                "temporality_plausible_range": _fmt(summary["temporality"]["plausible_range"].get("value")),
-                "temporality_plausible_range_annotation": summary["temporality"]["plausible_range"].get(
-                    "annotation", ""
+                "temporality_asof_presence_annotation": summary["temporality"][
+                    "asof_presence"
+                ].get("annotation", ""),
+                "temporality_plausible_range": _fmt(
+                    summary["temporality"]["plausible_range"].get("value")
                 ),
-                "field_completeness_core": _fmt(summary["field_completeness"]["core"].get("value")),
+                "temporality_plausible_range_annotation": summary["temporality"][
+                    "plausible_range"
+                ].get("annotation", ""),
+                "field_completeness_core": _fmt(
+                    summary["field_completeness"]["core"].get("value")
+                ),
                 "field_completeness_core_annotation": summary["field_completeness"]["core"].get(
                     "annotation", ""
                 ),
-                "field_completeness_capacity": _fmt(summary["field_completeness"]["capacity"].get("value")),
-                "field_completeness_capacity_annotation": summary["field_completeness"]["capacity"].get(
-                    "annotation", ""
+                "field_completeness_capacity": _fmt(
+                    summary["field_completeness"]["capacity"].get("value")
                 ),
+                "field_completeness_capacity_annotation": summary["field_completeness"][
+                    "capacity"
+                ].get("annotation", ""),
             }
         )
 
@@ -283,7 +319,9 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
     }
 
 
-def write_exp2_mart_views(mart_path: Path, output_dir: Path, repo_root: Path | None = None) -> dict[str, Path]:
+def write_exp2_mart_views(
+    mart_path: Path, output_dir: Path, repo_root: Path | None = None
+) -> dict[str, Path]:
     views = build_exp2_mart_views(mart_path, repo_root=repo_root)
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = {
@@ -295,9 +333,17 @@ def write_exp2_mart_views(mart_path: Path, output_dir: Path, repo_root: Path | N
 
     for filename, path in outputs.items():
         rows = views[filename]
-        fieldnames = _ARMS_RUNS_FIELDS if filename == "tab_exp2_arms_runs_view.csv" else (
-            _BIB_FIELDS if filename == "tab_exp2_bib_quality_view.csv" else (
-                _TURN_FIELDS if filename == "exp2_turn_trajectory_view.csv" else _SCORE_VIEW_FIELDS
+        fieldnames = (
+            _ARMS_RUNS_FIELDS
+            if filename == "tab_exp2_arms_runs_view.csv"
+            else (
+                _BIB_FIELDS
+                if filename == "tab_exp2_bib_quality_view.csv"
+                else (
+                    _TURN_FIELDS
+                    if filename == "exp2_turn_trajectory_view.csv"
+                    else _SCORE_VIEW_FIELDS
+                )
             )
         )
         _write_csv(path, fieldnames, rows)

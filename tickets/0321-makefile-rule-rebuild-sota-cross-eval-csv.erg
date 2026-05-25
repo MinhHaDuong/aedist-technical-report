@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Add Makefile rule to rebuild sota_cross_eval.csv from arm1_flat
+Created: 2026-05-25
+Author: claude
+
+--- log ---
+2026-05-25T20:00Z claude created — gap identified during PR #558 review (0313)
+
+--- body ---
+## Context
+
+`experiments/derived/sota_cross_eval.csv` is listed as a prerequisite of
+`exp2_mart.jsonl` in `experiments/analysis.mk` but has no rule to rebuild
+it. Deleting the file causes `make` to fail with "no rule to make target".
+The file was regenerated manually in PR #558 via a shell loop calling
+`score_mechanical` 20 times (4 models × 5 runs, naive arm).
+
+The correct fix is a `score-cross-eval` phony target (or a stamp-based
+rule) that drives the loop from the Makefile, so `make` can reconstruct
+the file without manual intervention.
+
+## Relevant files
+
+- `experiments/analysis.mk` — add the new rule here, near line 92 where
+  `sota_cross_eval.csv` is consumed as a prerequisite
+- `src/aedist/score_mechanical.py` — the per-row scorer CLI (`--arm`, `--model`, `--run`, `--naive-dir`, `--output-csv`)
+- `experiments/derived/arm1_flat/` — the naive arm flat files; iterate
+  `*.json` to discover model names and run numbers rather than hardcoding
+
+## Actions
+
+1. Add a `$(ANALYSIS_EXP2_CROSS_EVAL_CSV)` rule in `analysis.mk` that
+   depends on `$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done` and loops
+   `score_mechanical` over all `arm1_flat/*.json` entries.
+   Simplest form: a shell `for f in arm1_flat/*.json; do ...score_mechanical...; done`
+   inside the recipe. Use `jq` or `python3 -c` to extract model/run from each JSON.
+2. Remove the manual-loop instructions from any runbook/README that mentions them.
+3. Wire `$(ANALYSIS_EXP2_CROSS_EVAL_CSV)` into `exp2-analysis` phony target
+   if one exists, so `make exp2-analysis` drives a full rebuild end-to-end.
+
+## Test
+
+- Delete `experiments/derived/sota_cross_eval.csv` and run
+  `make experiments/derived/sota_cross_eval.csv` (or `make exp2-analysis`).
+- Verify 19–20 rows are produced with non-trivial precision (< 1.0).
+- `make check-fast` passes.
+
+## Exit criteria
+
+- [ ] `make experiments/derived/sota_cross_eval.csv` rebuilds the file from scratch
+- [ ] Rebuilt CSV has plausible precision values (not all 1.0)
+- [ ] `make exp2-analysis` (or equivalent phony) drives the full pipeline end-to-end
+- [ ] `make check-fast` passes

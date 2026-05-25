@@ -1,0 +1,71 @@
+======================================================================
+Statistical tests: arm1 (naive) vs arm2 (optimised) — Exp 2
+======================================================================
+
+## Per-agent data summary
+
+Agent        arm        n_rows  rows_valid  median_rows   n_matched_valid  median_n_matched
+--------------------------------------------------------------------------------
+anthropic    arm1       5       4           77            4                77.5
+anthropic    arm2       5       2           N/A           2                68.5
+mistral      arm1       5       5           57            5                57
+mistral      arm2       5       0           N/A           0                N/A
+openai       arm1       5       5           83            5                83
+openai       arm2       5       5           86            5                77
+qwen         arm1       5       5           42            5                42
+qwen         arm2       5       5           25            5                21
+
+## Sign test on n_matched (arm2 > arm1)
+
+Rule: agent included only if arm2 has >= 3 scored runs.
+
+  anthropic: arm1 median=77.5, arm2 median=68.5 (4 / 2 scored) → SKIPPED (arm2 scored: 2/5)
+  mistral: arm1 median=57, arm2 median=None (5 / 0 scored) → SKIPPED (arm2 scored: 0/5)
+  openai: arm1 median=83, arm2 median=77 (5 / 5 scored) → included
+    arm2 > arm1: False
+  qwen: arm1 median=42, arm2 median=21 (5 / 5 scored) → included
+    arm2 > arm1: False
+
+Eligible agents: 2 (openai, qwen)
+arm2 > arm1 count: 0/2
+One-tailed sign test p = 0.7500
+Min attainable p (N=2) = 0.2500
+
+HEADLINE: 0/2 eligible agents show arm2 > arm1 on n_matched (p = 0.7500, one-tailed sign test; N=2 agents after eligibility filter, min attainable p = 0.2500)
+
+## Effect size on n_matched (median arm2 − arm1 per agent)
+
+  anthropic: 68.5 − 77.5 = -9.0
+  mistral: insufficient data (arm1 n=5, arm2 n=0)
+  openai: 77.0 − 83.0 = -6.0
+  qwen: 21.0 − 42.0 = -21.0
+  Median of per-agent diffs: -9.0
+
+## Sign test on inventory_rows (arm2 > arm1)
+
+Rule: all 4 agents included; zeros (no_report) are genuine zeros.
+
+  anthropic: arm1 median=77, arm2 median=0 → arm2 > arm1: False
+  mistral: arm1 median=57, arm2 median=0 → arm2 > arm1: False
+  openai: arm1 median=83, arm2 median=86 → arm2 > arm1: True
+  qwen: arm1 median=42, arm2 median=25 → arm2 > arm1: False
+
+arm2 > arm1 count: 1/4
+One-tailed sign test p = 0.9375
+Min attainable p (N=4) = 0.0625
+
+HEADLINE: 1/4 agents show arm2 > arm1 on inventory_rows (p = 0.9375, one-tailed sign test; min attainable p = 0.0625)
+
+## Effect size on inventory_rows (median arm2 − arm1 per agent)
+
+  anthropic: 0.0 − 77.0 = -77.0
+  mistral: 0.0 − 57.0 = -57.0
+  openai: 86.0 − 83.0 = +3.0
+  qwen: 25.0 − 42.0 = -17.0
+  Median of per-agent diffs: -37.0
+
+## Power caveat
+
+N=4 agents, one-tailed sign test: min attainable p = 1/2^4 = 0.0625. This design cannot reach α=0.05. All results should be interpreted as directional evidence only, not as hypothesis tests.
+
+======================================================================

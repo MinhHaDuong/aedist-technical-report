@@ -204,6 +204,12 @@ $(ANALYSIS_EXP2_SPIRE_FIG): $(ANALYSIS_GEN)/sota_cross_eval_view.csv experiments
 	    --config experiments/quality_spider_config.yaml \
 	    --output $@
 
+$(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_stat_tests \
+	    --input $< \
+	    --output $@
+
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
 $(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex:

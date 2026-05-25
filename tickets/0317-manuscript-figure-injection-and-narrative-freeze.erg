@@ -4,12 +4,17 @@ Created: 2026-05-25
 Author: HDMX-coding-agent
 Blocked-by: 0314
 Blocked-by: 0315
-Blocked-by: 0316
+Closed: narrative freeze done, §4 prose and Fig 3+6 captions corrected
 
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
 
 2026-05-25T16:56Z HDMX-coding-agent note blocker 0313 closed — Blocked-by removed.
+2026-05-25T21:15Z HDMX-coding-agent note 0313 merged — block removed. fig_spider_exp1_families.pdf exists (27K) — that gap is resolved. 0311 (spider exp2 4-way) requires arm3/arm4 scoring not available for this push — drop from work items, leave in annex if needed. Focus: inject today's figures (fig_exp2_arms_comparison, fig_exp2_coverage_certainty after 0314+0315), move heatmap to annex, narrative freeze.
+
+2026-05-25T22:00Z HDMX-coding-agent executing on branch feat/0317-manuscript-figure-injection. Heatmap confirmed absent from main body (no-op). All 7 figure refs resolve to existing PDFs. Rewrote Fig 3 caption (3-panel→2-panel, TP/FP diverging bar description). Fixed §4 stale prose with verified data from tab_exp2_arms_runs_view.csv. Fixed provenance prose with tab_exp2_bib_quality_view.csv data. Fixed Fig 6 caption (35→31 runs, 5→9 zero-row exclusions with per-agent breakdown). make check-fast: 1672 passed.
+2026-05-25T17:53Z HDMX-coding-agent note blocker 0316 closed — Blocked-by removed.
+2026-05-25T17:53Z HDMX-coding-agent closed — narrative freeze done, §4 prose and Fig 3+6 captions corrected
 --- body ---
 ## Context
 

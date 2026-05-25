@@ -10,6 +10,7 @@ Tag: deferred
 2026-05-21T14:00Z claude note deferred — touches manuscript main.md which 0178 also targets; merge risk too high 5 days before Econom'IA (2026-05-27). Scope decision recorded: Phase 2 ablation sweeps keep their name (genuinely ARE ablation); only Exp 1 mislabeled items rename. Revisit post-conference.
 
 2026-05-25T16:21Z 2026-05-25T18:30Z claude note imagine: keeping deferred. 0178 conflict risk gone but blast radius wider than listed — 7 src/ files + 141 measurements.jsonl path strings + figure regen needed; git mv moot (dir already archived to experiments/archive/). Two YAGNI smuggles: new Makefile target group (separate ticket), ablation/livesearch cleanup (unrelated). p1_composite scope self-contradiction needs deliberate decision. Execute post-conference.
+2026-05-25T17:03Z 2026-05-25T20:15Z haduong defer — confirmed post-conference. Scope to clean before executing: resolve p1_composite ambiguity, split new Makefile target group into separate ticket, drop ablation/livesearch cleanup, document measurements.jsonl migration plan.
 --- body ---
 ## Context
 

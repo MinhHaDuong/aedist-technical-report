@@ -2,11 +2,15 @@
 Title: Statistical tests — arm1 vs arm2 coverage and quality comparisons
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: directional stat tests delivered, inline numbers in Fig 3 caption, power caveat added
 
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
 
 2026-05-25T16:56Z HDMX-coding-agent note blocker 0313 closed — Blocked-by removed.
+2026-05-25T21:15Z haduong scope: talk only — ONE permutation test across 4 agents (sign test on n_matched), directional evidence, power caveat in caption. ONE effect size per metric (rank-biserial or median diff). Output: inline numbers for figure captions, NOT a separate table. Skip per-agent Wilcoxon — too granular for a conference talk.
+2026-05-25T22:00Z HDMX-coding-agent done: script src/aedist/tabulate_stat_tests.py, Makefile target in analysis.mk, caption updated in slides/manuscript/main.md. Results: 0/2 eligible agents arm2>arm1 on n_matched (p=0.75), 1/4 on inventory_rows (p=0.94) — no positive directional evidence; power caveat (min p=0.0625) injected inline.
+2026-05-25T17:53Z HDMX-coding-agent closed — directional stat tests delivered, inline numbers in Fig 3 caption, power caveat added
 --- body ---
 ## Context
 
@@ -34,8 +38,8 @@ Implementation: `src/aedist/tabulate_stat_tests.py` + Makefile target.
 
 ## Exit criteria
 
-- [ ] Wilcoxon tests computed per agent on coverage and accuracy
-- [ ] Effect sizes reported alongside p-values
-- [ ] Permutation test result reported with explicit power caveat (N=4)
-- [ ] Results table wired to Makefile and referenced in manuscript
+- [ ] Permutation test (sign test across 4 agents) on n_matched arm2 > arm1, reported as directional (p ≥ 0.0625 expected)
+- [ ] Effect size (rank-biserial r or median difference) for n_matched and inventory_rows
+- [ ] Results cited inline in fig_exp2_arms_comparison caption — no separate table
+- [ ] Power caveat explicit: "N=4 agents, min attainable p=0.0625"
 - [ ] `make check-fast` passes
