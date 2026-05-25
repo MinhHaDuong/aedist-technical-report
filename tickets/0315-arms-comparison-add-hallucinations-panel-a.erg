@@ -2,12 +2,14 @@
 Title: fig_exp2_arms_comparison Panel A — restore hallucination bars
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: diverging bar panel A implemented — TP/FP colors, arm1 vs arm2 only
 
 --- log ---
 2026-05-25T17:30Z HDMX-coding-agent created
 
 2026-05-25T16:56Z HDMX-coding-agent note blocker 0313 closed — Blocked-by removed.
 2026-05-25T17:08Z 2026-05-25T20:20Z haduong design: diverging bars — TP upward (blue), FP downward below zero (orange). Stronger signal than stacked.
+2026-05-25T17:53Z HDMX-coding-agent closed — diverging bar panel A implemented — TP/FP colors, arm1 vs arm2 only
 --- body ---
 ## Context
 
