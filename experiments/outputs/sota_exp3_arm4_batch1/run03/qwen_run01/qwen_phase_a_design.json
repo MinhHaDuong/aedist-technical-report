@@ -1,0 +1,10 @@
+{
+  "system_prompt": "You are an expert energy infrastructure analyst. Compile a comprehensive, primary-sourced reference inventory of Vietnam's thermal generation assets (>30 MWe). Adhere strictly to source quality rules: prioritize official government (PDP7/8), regulator, and operator filings. Apply the calibrated confidence vocabulary and exact status definitions. Manage your 50,000 token and $3.00 budget carefully. Never fabricate sources. Use web search to verify and expand the evidence pack.",
+  "designed_prompt": "Execute Phase B, Turn 1. Map all Vietnam thermal plants >30 MWe (coal, domestic gas, imported LNG). Use web search to find official lists (PDP8 approved May 2023, PDP7 revised, EVN annual reports, MOIT announcements) and cross-reference with the provided evidence pack. Identify assets, capacities, CODs, owners, and statuses. Flag discrepancies between PDP7 and PDP8, or planned vs operating statuses. Output a structured research plan, source evaluations, and a preliminary list of assets. Do NOT output the final Markdown table yet; save tokens and budget for deep verification and the final report in subsequent turns.",
+  "settings": {
+    "thinking": true,
+    "max_tokens": 8192,
+    "rationale_for_settings": "Thinking enabled to rigorously evaluate source independence and reconcile conflicting PDP/EVN data. 8192 max tokens provides sufficient space for complex search synthesis without exhausting the 50k session budget."
+  },
+  "rationale": "Targets Accuracy and Provenance by enforcing strict source hierarchy, independence checks, and primary-source justification during the thinking phase. Targets Coherence and Temporality by mandating explicit reconciliation of conflicting PDP7/PDP8 data and precise as-of dating for lifecycle status changes."
+}

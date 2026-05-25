@@ -1,0 +1,1626 @@
+{
+  "id": "resp_09396e8e4df5d677006a137793db4481a38c3e8715eb567b31",
+  "created_at": 1779660691.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "metadata": {},
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_09396e8e4df5d677006a137794e3cc81a3adbeb58ca870dbcd",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_09396e8e4df5d677006a137796413c81a3ad29e17e93adb27e",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "site:vepg.vn PDP8 full annexes Vietnam LNG thermal power plants coal gas list pdf",
+          "EVNGENCO 3 annual report Vinh Tan Mong Duong Phu My capacity pdf",
+          "PV Power annual report Ca Mau Nhon Trach O Mon capacity pdf",
+          "Decision 262 QD-TTg PDP8 implementation plan LNG thermal power plants list"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released"
+          },
+          {
+            "type": "url",
+            "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html"
+          },
+          {
+            "type": "url",
+            "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan"
+          },
+          {
+            "type": "url",
+            "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.genco3.com/Data/Sites/1/media/bao-cao-thuong-nien/2021/20210614_pgv_ar2020---en.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.legal500.com/developments/thought-leadership/implementation-plan-for-the-national-power-development-plan-viii-of-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://publicuatg3.vuthao.com/en-US/investor-relation/annual-report.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vilaf.com.vn/blog/on-the-implementation-plan-for-the-power-development-plan-viii-of-vietnam/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.gem.wiki/Nhon_Trach_power_station"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an"
+          },
+          {
+            "type": "url",
+            "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/the_shiv_vn/comments/1k46sra"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_09396e8e4df5d677006a13779875b481a3b7dd4d2e9e782383",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "ws_09396e8e4df5d677006a137799afa881a39b58aab6a5d2641e",
+      "action": {
+        "query": null,
+        "type": "search",
+        "queries": [
+          "PDP8 implementation plan LNG projects Vietnam 13 projects capacity Quynh Lap Hai Phong Thai Binh Quang Ninh",
+          "Decision 262 PDP8 LNG power projects list capacity location expected operation status",
+          "Vietnam PDP8 implementation plan LNG list Nhon Trach Long An Bac Lieu Son My Quang Ninh"
+        ],
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan"
+          },
+          {
+            "type": "url",
+            "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released"
+          },
+          {
+            "type": "url",
+            "url": "https://calilawyer.tistory.com/18"
+          },
+          {
+            "type": "url",
+            "url": "https://southeastasiainfra.com/vietnams-national-power-development-plan-pdp8-updated/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.dentonsluatviet.com/en/insights/alerts/2024/april/4/new-investment-opportunities-in-the-context-of-the-approved-pdp8-implementation-plan"
+          },
+          {
+            "type": "url",
+            "url": "https://www.iea.org/data-and-statistics/data-tools/global-lng-capacity-tracker"
+          },
+          {
+            "type": "url",
+            "url": "https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html"
+          },
+          {
+            "type": "url",
+            "url": "https://theinvestor.vn/lng-fired-power-projects-under-vietnams-pdp-viii-must-operate-in-2028-d14874.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.vilaf.com.vn/blog/moit-approved-action-plan-for-amended-pdp8-outlining-key-strategies-for-electricity-exports-and-regional-renewable-energy-hubs/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.scribd.com/document/918913243/6-Vietnam-New-PDP-Draft-October-2021"
+          },
+          {
+            "type": "url",
+            "url": "https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/"
+          },
+          {
+            "type": "url",
+            "url": "https://singchamvn.org/wp-content/uploads/2022/07/Baker_Presentation-on-Updates-on-July-2022-Draft-PDP8-11-July-2022415931922.4.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://cdn-se.mynilead.com/2c8bf258f12ee1b2538bb25067eaf6e3/assets/media/acsv-legal-update-draft-pdp8-annex-3_1621998490.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf"
+          }
+        ]
+      },
+      "status": "completed",
+      "type": "web_search_call"
+    },
+    {
+      "id": "rs_09396e8e4df5d677006a13779bccc081a39467d1a61643ae9d",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_09396e8e4df5d677006a13779d09f081a385059e07ccabebe1",
+      "content": [
+        {
+          "annotations": [
+            {
+              "end_index": 737,
+              "start_index": 627,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1176,
+              "start_index": 1066,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 1328,
+              "start_index": 1222,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 1845,
+              "start_index": 1735,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2255,
+              "start_index": 2145,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2580,
+              "start_index": 2477,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 2715,
+              "start_index": 2609,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 3096,
+              "start_index": 2993,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3231,
+              "start_index": 3125,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 3638,
+              "start_index": 3528,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 3773,
+              "start_index": 3667,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 4099,
+              "start_index": 3996,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 4234,
+              "start_index": 4128,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 4668,
+              "start_index": 4565,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 4803,
+              "start_index": 4697,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 5246,
+              "start_index": 5136,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 5381,
+              "start_index": 5275,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 5709,
+              "start_index": 5599,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 5844,
+              "start_index": 5738,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 6176,
+              "start_index": 6066,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 6311,
+              "start_index": 6205,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 6643,
+              "start_index": 6533,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 6778,
+              "start_index": 6672,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 7179,
+              "start_index": 7069,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 7580,
+              "start_index": 7470,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 7945,
+              "start_index": 7841,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 8092,
+              "start_index": 7982,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 8516,
+              "start_index": 8406,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 8651,
+              "start_index": 8545,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 9147,
+              "start_index": 9037,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 9544,
+              "start_index": 9434,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 9953,
+              "start_index": 9849,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 10094,
+              "start_index": 9984,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 10455,
+              "start_index": 10345,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 10590,
+              "start_index": 10484,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 11011,
+              "start_index": 10893,
+              "title": "Vietnam’s PDP8 Implementation Plan - DFDL",
+              "type": "url_citation",
+              "url": "https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai"
+            },
+            {
+              "end_index": 11152,
+              "start_index": 11042,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 11516,
+              "start_index": 11406,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 11651,
+              "start_index": 11545,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 12081,
+              "start_index": 11971,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 12216,
+              "start_index": 12110,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 12614,
+              "start_index": 12511,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 12749,
+              "start_index": 12643,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 13108,
+              "start_index": 13005,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 13243,
+              "start_index": 13137,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 13721,
+              "start_index": 13618,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 13856,
+              "start_index": 13750,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 14289,
+              "start_index": 14179,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 14424,
+              "start_index": 14318,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 14853,
+              "start_index": 14743,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 14988,
+              "start_index": 14882,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 15397,
+              "start_index": 15293,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 15544,
+              "start_index": 15434,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 15971,
+              "start_index": 15868,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 16106,
+              "start_index": 16000,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 16560,
+              "start_index": 16456,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 16701,
+              "start_index": 16591,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17086,
+              "start_index": 16982,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 17227,
+              "start_index": 17117,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17619,
+              "start_index": 17509,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 17977,
+              "start_index": 17867,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 18112,
+              "start_index": 18006,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 18530,
+              "start_index": 18420,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 18870,
+              "start_index": 18760,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19005,
+              "start_index": 18899,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 19426,
+              "start_index": 19316,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 19561,
+              "start_index": 19455,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 19979,
+              "start_index": 19876,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 20114,
+              "start_index": 20008,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 20518,
+              "start_index": 20415,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 20653,
+              "start_index": 20547,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 21076,
+              "start_index": 20970,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 21208,
+              "start_index": 21105,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 21688,
+              "start_index": 21582,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 21820,
+              "start_index": 21717,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22266,
+              "start_index": 22163,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22401,
+              "start_index": 22295,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 22822,
+              "start_index": 22719,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 22957,
+              "start_index": 22851,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 23383,
+              "start_index": 23280,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 23518,
+              "start_index": 23412,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 24010,
+              "start_index": 23910,
+              "title": "The PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 24211,
+              "start_index": 24059,
+              "title": "The Prime Minister has finalized the plan to build an LNG-fired thermal power plant in Quynh Lap (Nghe An province).",
+              "type": "url_citation",
+              "url": "https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai"
+            },
+            {
+              "end_index": 24697,
+              "start_index": 24591,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 25171,
+              "start_index": 25061,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 25312,
+              "start_index": 25202,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 25762,
+              "start_index": 25658,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 25891,
+              "start_index": 25789,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 26319,
+              "start_index": 26215,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 26448,
+              "start_index": 26346,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 26876,
+              "start_index": 26772,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 27005,
+              "start_index": 26903,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 27408,
+              "start_index": 27304,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 27537,
+              "start_index": 27435,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 27963,
+              "start_index": 27853,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 28152,
+              "start_index": 28024,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 28589,
+              "start_index": 28487,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 28730,
+              "start_index": 28620,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 29166,
+              "start_index": 29089,
+              "title": "Nhon Trach power station - Global Energy Monitor",
+              "type": "url_citation",
+              "url": "https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai"
+            },
+            {
+              "end_index": 29307,
+              "start_index": 29197,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 29731,
+              "start_index": 29654,
+              "title": "Nhon Trach power station - Global Energy Monitor",
+              "type": "url_citation",
+              "url": "https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai"
+            },
+            {
+              "end_index": 29907,
+              "start_index": 29797,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30292,
+              "start_index": 30182,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 30481,
+              "start_index": 30353,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 30887,
+              "start_index": 30777,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 31076,
+              "start_index": 30948,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 31523,
+              "start_index": 31401,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 32032,
+              "start_index": 31910,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 32219,
+              "start_index": 32072,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 32673,
+              "start_index": 32551,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 32860,
+              "start_index": 32713,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 33306,
+              "start_index": 33184,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 33869,
+              "start_index": 33747,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 34056,
+              "start_index": 33909,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 34519,
+              "start_index": 34397,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 34706,
+              "start_index": 34559,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 35151,
+              "start_index": 35029,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 35338,
+              "start_index": 35191,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 35790,
+              "start_index": 35668,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 35977,
+              "start_index": 35830,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 36453,
+              "start_index": 36331,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 36640,
+              "start_index": 36493,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 37103,
+              "start_index": 36981,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 37290,
+              "start_index": 37143,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 37847,
+              "start_index": 37737,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 38722,
+              "start_index": 38600,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 38918,
+              "start_index": 38763,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 39375,
+              "start_index": 39253,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 39571,
+              "start_index": 39416,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40072,
+              "start_index": 39950,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 40268,
+              "start_index": 40113,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 40731,
+              "start_index": 40609,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 40927,
+              "start_index": 40772,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 41445,
+              "start_index": 41323,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 41641,
+              "start_index": 41486,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42100,
+              "start_index": 41978,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 42232,
+              "start_index": 42129,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 42730,
+              "start_index": 42608,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 42926,
+              "start_index": 42771,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 43414,
+              "start_index": 43292,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 43610,
+              "start_index": 43455,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44033,
+              "start_index": 43911,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 44229,
+              "start_index": 44074,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 44634,
+              "start_index": 44512,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 44825,
+              "start_index": 44679,
+              "title": "Gas-fired power projects stalled, 3 super-projects cannot find investors",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai"
+            },
+            {
+              "end_index": 45288,
+              "start_index": 45166,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 45479,
+              "start_index": 45333,
+              "title": "Gas-fired power projects stalled, 3 super-projects cannot find investors",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai"
+            },
+            {
+              "end_index": 45942,
+              "start_index": 45820,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 46138,
+              "start_index": 45983,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 46593,
+              "start_index": 46471,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 46782,
+              "start_index": 46630,
+              "title": "The Prime Minister has finalized the plan to build an LNG-fired thermal power plant in Quynh Lap (Nghe An province).",
+              "type": "url_citation",
+              "url": "https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai"
+            },
+            {
+              "end_index": 47247,
+              "start_index": 47125,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 47443,
+              "start_index": 47288,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 47890,
+              "start_index": 47749,
+              "title": "Legal Update",
+              "type": "url_citation",
+              "url": "https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 48049,
+              "start_index": 47927,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 48521,
+              "start_index": 48442,
+              "title": "베트남 제8차 국가전력개발계획(PDP8) 프로젝트 (가스복합&석탄)",
+              "type": "url_citation",
+              "url": "https://calilawyer.tistory.com/18?utm_source=openai"
+            },
+            {
+              "end_index": 48680,
+              "start_index": 48558,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 49204,
+              "start_index": 49048,
+              "title": "The Government has approved adjustments to the Power Development Plan 8: Key Changes and Assessment - B-Company",
+              "type": "url_citation",
+              "url": "https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/?utm_source=openai"
+            },
+            {
+              "end_index": 49386,
+              "start_index": 49239,
+              "title": "A proposal to include 2 LNG power projects in Hai Phong in the PDP VIII | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai"
+            },
+            {
+              "end_index": 49907,
+              "start_index": 49727,
+              "title": "VIETNAM’S NATIONAL POWER DEVELOPMENT PLAN",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 50089,
+              "start_index": 49942,
+              "title": "A proposal to include 2 LNG power projects in Hai Phong in the PDP VIII | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai"
+            },
+            {
+              "end_index": 54372,
+              "start_index": 54269,
+              "title": "PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 54797,
+              "start_index": 54687,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 55815,
+              "start_index": 55711,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 56237,
+              "start_index": 56119,
+              "title": "Vietnam’s PDP8 Implementation Plan - DFDL",
+              "type": "url_citation",
+              "url": "https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai"
+            },
+            {
+              "end_index": 56649,
+              "start_index": 56480,
+              "title": "Implementation Plan for the National Power Development Plan VIII of Vietnam – Legal Developments",
+              "type": "url_citation",
+              "url": "https://www.legal500.com/developments/thought-leadership/implementation-plan-for-the-national-power-development-plan-viii-of-vietnam/?utm_source=openai"
+            },
+            {
+              "end_index": 57021,
+              "start_index": 56917,
+              "title": "EVNGENCO3 Overview | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai"
+            },
+            {
+              "end_index": 57420,
+              "start_index": 57318,
+              "title": "General Information About EVNGENCO3 – EVNGENCO3",
+              "type": "url_citation",
+              "url": "https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai"
+            },
+            {
+              "end_index": 57856,
+              "start_index": 57746,
+              "title": "THE EQUITIZATION STEERING COMMITTEE OF EVNGENCO 3 RECOMMENDS",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 58232,
+              "start_index": 58103,
+              "title": "FLEXIBILITY",
+              "type": "url_citation",
+              "url": "https://www.genco3.com/Data/Sites/1/media/bao-cao-thuong-nien/2021/20210614_pgv_ar2020---en.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 58670,
+              "start_index": 58548,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 59153,
+              "start_index": 59031,
+              "title": "PDP VIII Implementation Plan",
+              "type": "url_citation",
+              "url": "https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai"
+            },
+            {
+              "end_index": 59631,
+              "start_index": 59484,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 59951,
+              "start_index": 59845,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 60336,
+              "start_index": 60218,
+              "title": "Vietnam’s PDP8 Implementation Plan - DFDL",
+              "type": "url_citation",
+              "url": "https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai"
+            },
+            {
+              "end_index": 60783,
+              "start_index": 60622,
+              "title": "Legal Update",
+              "type": "url_citation",
+              "url": "https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 61243,
+              "start_index": 61088,
+              "title": "VIETNAM’S \nPDP8 IMPLEMENTATION PLAN \n \nNguyen Huu",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 61775,
+              "start_index": 61595,
+              "title": "VIETNAM’S NATIONAL POWER DEVELOPMENT PLAN",
+              "type": "url_citation",
+              "url": "https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 62182,
+              "start_index": 62076,
+              "title": "PDP8 Implementation Plan - KPMG Vietnam",
+              "type": "url_citation",
+              "url": "https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai"
+            },
+            {
+              "end_index": 62597,
+              "start_index": 62450,
+              "title": "",
+              "type": "url_citation",
+              "url": "https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai"
+            },
+            {
+              "end_index": 63002,
+              "start_index": 62874,
+              "title": "Performance in 2022 | ANNUAL REPORT EVNGENCO3 2022",
+              "type": "url_citation",
+              "url": "https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai"
+            },
+            {
+              "end_index": 63307,
+              "start_index": 63230,
+              "title": "Nhon Trach power station - Global Energy Monitor",
+              "type": "url_citation",
+              "url": "https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai"
+            },
+            {
+              "end_index": 63882,
+              "start_index": 63730,
+              "title": "The Prime Minister has finalized the plan to build an LNG-fired thermal power plant in Quynh Lap (Nghe An province).",
+              "type": "url_citation",
+              "url": "https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai"
+            },
+            {
+              "end_index": 64385,
+              "start_index": 64239,
+              "title": "Gas-fired power projects stalled, 3 super-projects cannot find investors",
+              "type": "url_citation",
+              "url": "https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai"
+            },
+            {
+              "end_index": 64824,
+              "start_index": 64682,
+              "title": "LNG-fired power projects under Vietnam's PDP VIII must operate in 2028",
+              "type": "url_citation",
+              "url": "https://theinvestor.vn/lng-fired-power-projects-under-vietnams-pdp-viii-must-operate-in-2028-d14874.html?utm_source=openai"
+            },
+            {
+              "end_index": 65269,
+              "start_index": 65122,
+              "title": "A proposal to include 2 LNG power projects in Hai Phong in the PDP VIII | Tạp chí Năng lượng Việt Nam",
+              "type": "url_citation",
+              "url": "https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai"
+            },
+            {
+              "end_index": 65773,
+              "start_index": 65617,
+              "title": "The Government has approved adjustments to the Power Development Plan 8: Key Changes and Assessment - B-Company",
+              "type": "url_citation",
+              "url": "https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/?utm_source=openai"
+            },
+            {
+              "end_index": 66184,
+              "start_index": 66084,
+              "title": "The PRIME MINISTER",
+              "type": "url_citation",
+              "url": "https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 66617,
+              "start_index": 66476,
+              "title": "Legal Update",
+              "type": "url_citation",
+              "url": "https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf?utm_source=openai"
+            },
+            {
+              "end_index": 66977,
+              "start_index": 66898,
+              "title": "베트남 제8차 국가전력개발계획(PDP8) 프로젝트 (가스복합&석탄)",
+              "type": "url_citation",
+              "url": "https://calilawyer.tistory.com/18?utm_source=openai"
+            },
+            {
+              "end_index": 67389,
+              "start_index": 67258,
+              "title": "Vietnam’s National Power Development Plan (PDP8) updated - Southeast Asia Infrastructure",
+              "type": "url_citation",
+              "url": "https://southeastasiainfra.com/vietnams-national-power-development-plan-pdp8-updated/?utm_source=openai"
+            }
+          ],
+          "text": "| Name (Vietnamese) | Name (English) | Province | Fuel (Coal / Domestic gas / Imported LNG) | Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas) | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |\n|---|---|---|---|---|---:|---:|---|---|---|---|---|---|---|---|\n| Nhiệt điện Ninh Bình | Ninh Binh Thermal Power Plant | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Operating | 2022-2023 annual report | 1974-1976 | EVNGENCO3 / Ninh Bình Thermal Power JSC | HIGH | EVN Annual Report 2012-2013  | EVNGENCO3 equitization disclosure ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Legacy small coal plant; gross/net unspecified. |\n| Nhiệt điện Uông Bí | Uong Bi Thermal Power Plant | Quảng Ninh | Coal | Subcritical | mixed legacy + expansion; 300 + 330 + legacy units | 630+ | Operating | 2023 | 1960s; expansion 2009-2011 | EVNGENCO1 / Uông Bí Thermal Power Company | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker, Vietnam entries ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Legacy-unit detail varies; inventory records modern electrical nameplate at least 630 MWe; older units may be retired or reserve. |\n| Nhiệt điện Phả Lại 1 | Pha Lai 1 Thermal Power Plant | Hải Dương | Coal | Subcritical | 4 × 110 | 440 | Operating | 2022-2023 annual report | 1983-1986 | Pha Lai Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Phả Lại 2 | Pha Lai 2 Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 300 | 600 | Operating | 2022-2023 annual report | 2001-2002 | Pha Lai Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Na Dương | Na Duong Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 2 × 55 | 110 | Operating | PDP8 / 2023 | 2005 | Vinacomin Power / TKV | MEDIUM | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Existing TKV lignite-fired plant; gross/net unspecified. |\n| Nhiệt điện Na Dương II | Na Duong II Thermal Power Plant | Lạng Sơn | Coal | Subcritical | 1 × 110 | 110 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | Vinacomin / TKV | MEDIUM | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as coal plant under construction; later completion evidence not verified in this pass. |\n| Nhiệt điện Cao Ngạn | Cao Ngan Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 57.5 | 115 | Operating | 2023 | 2006 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện An Khánh | An Khanh Thermal Power Plant | Thái Nguyên | Coal | Subcritical | 2 × 50 | 100 | Operating | 2023 | 2015 | An Khánh Thermal Power JSC | MEDIUM | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Existing small IPP; not to be confused with An Khánh–Bắc Giang project. |\n| Nhiệt điện An Khánh - Bắc Giang | An Khanh - Bac Giang Thermal Power Plant | Bắc Giang | Coal | Supercritical | 1 × 650 | 650 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | An Khánh Group / project company | MEDIUM | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists under construction; technology inferred from large modern unit references, not independently confirmed in table sources. |\n| Nhiệt điện Sơn Động | Son Dong Thermal Power Plant | Bắc Giang | Coal | Subcritical | 2 × 110 | 220 | Operating | 2023 | 2009-2010 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Mạo Khê | Mao Khe Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 220 | 440 | Operating | 2023 | 2012 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Cẩm Phả 1 | Cam Pha 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2023 | 2010 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Cẩm Phả 2 | Cam Pha 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2023 | 2011 | Vinacomin Power / TKV | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Quảng Ninh 1 | Quang Ninh 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2009-2010 | Quảng Ninh Thermal Power JSC / EVNGENCO1 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Quảng Ninh 2 | Quang Ninh 2 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2013-2014 | Quảng Ninh Thermal Power JSC / EVNGENCO1 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Mông Dương 1 | Mong Duong 1 Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 540 | 1,080 | Operating | 2024 annual-report page | 2015 | EVNGENCO3 / Mông Dương Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 equitization disclosure ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | EVNGENCO3 states CFB coal technology; gross/net unspecified. |\n| Nhiệt điện Mông Dương 2 | Mong Duong 2 BOT Thermal Power Plant | Quảng Ninh | Coal | Subcritical | 2 × 620 | 1,240 | Operating | 2023 | 2015 | AES / POSCO Energy / China Investment Corp. BOT project company | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | BOT ownership composition has changed in secondary reports; official current shareholder confirmation not fully resolved. |\n| Nhiệt điện Hải Phòng 1 | Hai Phong 1 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2011-2012 | Hai Phong Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Hải Phòng 2 | Hai Phong 2 Thermal Power Plant | Hải Phòng | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2013-2014 | Hai Phong Thermal Power JSC / EVNGENCO2 affiliate | HIGH | EVN Annual Report 2012-2013  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Some older EVN table snippets show one 300-MW unit at the reporting cut-off; final plant has two units. |\n| Nhiệt điện Thái Bình 1 | Thai Binh 1 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2018 | EVN / EVNGENCO3 managed project | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Thái Bình 2 | Thai Binh 2 Thermal Power Plant | Thái Bình | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023 | 2023 | Petrovietnam / PV Power / Thai Binh 2 project | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | COD and operating status require plant-specific PVN citation for HIGH confidence. |\n| Nhiệt điện Nghi Sơn 1 | Nghi Son 1 Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Operating | 2023 | 2014 | EVNGENCO1 / Nghi Sơn Thermal Power Company | HIGH | EVN article on thermal plants ([dfdl.com](https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Nghi Sơn 2 | Nghi Son 2 BOT Thermal Power Plant | Thanh Hóa | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023 | 2022 | Marubeni / Kepco / Nghi Son 2 Power Ltd. BOT | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Technology and BOT details from secondary tracker/trade sources; primary sponsor source not fully captured here. |\n| Nhiệt điện Vũng Áng 1 | Vung Ang 1 Thermal Power Plant | Hà Tĩnh | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023 | 2014-2015 | Petrovietnam / PV Power | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Vũng Áng 2 | Vung Ang 2 Thermal Power Plant | Hà Tĩnh | Coal | USC | 2 × 665 | 1,330 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | Vung Ang II Thermal Power LLC / Mitsubishi, Chugoku Electric, Kepco interests | HIGH | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as under construction at 1,330 MW. |\n| Nhiệt điện Quảng Trạch 1 | Quang Trach 1 Thermal Power Plant | Quảng Bình | Coal | USC | 2 × ~701.5 | 1,403 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | EVN | HIGH | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 states EVN had bid for EPC and lists 1,403 MW; unit rating often reported as 2 × 600 or 2 × 700-class, so unit split is approximate. |\n| Nhiệt điện Vân Phong 1 | Van Phong 1 Thermal Power Plant | Khánh Hòa | Coal | USC | 2 × 716 | 1,432 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | Sumitomo / Van Phong Power Company BOT | HIGH | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists 1,432 MW under construction; COD status after 2023 requires current project confirmation. |\n| Nhiệt điện Hải Dương / Kinh Môn | Hai Duong Thermal Power Plant | Hải Dương | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023 | 2020 | JAKS Hai Duong Power Company BOT | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Also called Kinh Môn; gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 1 | Vinh Tan 1 BOT Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 620 | 1,240 | Operating | 2023 | 2018 | Vinh Tan 1 Power Co. / China Southern Power Grid, China Power International, Vinacomin | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | BOT ownership from secondary/project disclosures; gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 2 | Vinh Tan 2 Thermal Power Plant | Bình Thuận | Coal | Subcritical | 2 × 622 | 1,244 | Operating | 2024 annual-report page | 2015 | EVNGENCO3 / Vĩnh Tân Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 equitization disclosure ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | EVNGENCO3 gives Unit 1 COD 2015-01 and Unit 2 COD 2015-03. |\n| Nhiệt điện Vĩnh Tân 3 | Vinh Tan 3 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 3 × 660 | 1,980 | Shelved | PDP8, 2023-05-15 | Planned 2021-2030; not achieved | OneEnergy / EVN / Pacific Corp. legacy consortium | LOW | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as behind schedule and facing capital/shareholder difficulty; status mapped to Shelved because active construction evidence was not found. |\n| Nhiệt điện Vĩnh Tân 4 | Vinh Tan 4 Thermal Power Plant | Bình Thuận | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2024 annual-report page | 2018-2019 | EVN | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | EVNGENCO3 reports O&M contract for Vĩnh Tân 4; gross/net unspecified. |\n| Nhiệt điện Vĩnh Tân 4 mở rộng | Vinh Tan 4 Extension Thermal Power Plant | Bình Thuận | Coal | Supercritical | 1 × 600 | 600 | Operating | 2024 annual-report page | 2019 | EVN | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Treated separately because it is a distinct extension unit. |\n| Nhiệt điện Duyên Hải 1 | Duyen Hai 1 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023 | 2015-2016 | EVNGENCO1 | HIGH | EVN Annual Report 2017  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Duyên Hải 2 | Duyen Hai 2 BOT Thermal Power Plant | Trà Vinh | Coal | Supercritical | 2 × 600 | 1,200 | Operating | 2023 | 2021 | Janakuasa / Duyen Hai 2 Power Co. BOT | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | COD and sponsor detail need project-company primary confirmation for HIGH confidence. |\n| Nhiệt điện Duyên Hải 3 | Duyen Hai 3 Thermal Power Plant | Trà Vinh | Coal | Subcritical | 2 × 622.5 | 1,245 | Operating | 2023 | 2016-2017 | EVNGENCO1 | HIGH | EVN Annual Report 2017  | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Gross/net unspecified. |\n| Nhiệt điện Duyên Hải 3 mở rộng | Duyen Hai 3 Extension Thermal Power Plant | Trà Vinh | Coal | Supercritical | 1 × 688 | 688 | Operating | 2023 | 2020 | EVNGENCO1 | HIGH | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Often listed as part of Duyên Hải power center but separated here because it is a distinct extension unit. |\n| Nhiệt điện Sông Hậu 1 | Song Hau 1 Thermal Power Plant | Hậu Giang | Coal | Subcritical | 2 × 600 | 1,200 | Operating | 2023 | 2022 | Petrovietnam / PV Power | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | Project-specific PVN annual-report source needed for HIGH confidence. |\n| Nhiệt điện Sông Hậu 2 | Song Hau 2 Thermal Power Plant | Hậu Giang | Coal | Supercritical | 2 × 1,060 | 2,120 | Shelved | PDP8, 2023-05-15 | Planned 2021-2030 | Toyo Ink / Song Hau 2 BOT legacy developer | LOW | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as behind schedule/facing difficulty; no construction evidence verified. |\n| Nhiệt điện Long Phú 1 | Long Phu 1 Thermal Power Plant | Sóc Trăng | Coal | Subcritical | 2 × 600 | 1,200 | Construction | PDP8, 2023-05-15 | Planned 2021-2030 | Petrovietnam | HIGH | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists Long Phu I as coal plant under construction. |\n| Nhiệt điện Long Phú 2 | Long Phu 2 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2023-2026 tracker/planning review | Not built | Legacy BOT developer: Tata Power; later withdrawn | LOW | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Not included among PDP8 coal projects to 2030; cancellation status relies mainly on secondary tracker and absence from PDP8, so LOW. |\n| Nhiệt điện Long Phú 3 | Long Phu 3 Thermal Power Plant | Sóc Trăng | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | 2023-2026 tracker/planning review | Not built | Legacy developer not resolved | LOW | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Historical PDP7 project not retained as active PDP8 coal project; primary cancellation notice not found. |\n| Nhiệt điện Nam Định 1 | Nam Dinh 1 Thermal Power Plant | Nam Định | Coal | Supercritical | 2 × 600 | 1,200 | Shelved | PDP8, 2023-05-15 | Planned 2021-2030 | Taekwang Power / Acwa Power legacy BOT | LOW | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as behind schedule/facing difficulty; no construction evidence verified. |\n| Nhiệt điện Quảng Trị | Quang Tri Thermal Power Plant | Quảng Trị | Coal | Supercritical | 2 × 660 | 1,320 | Shelved | PDP8, 2023-05-15 | Planned 2021-2030 | EGAT International legacy developer | LOW | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 lists as behind schedule/facing difficulty; later domestic-gas/LNG alternatives create naming ambiguity. |\n| Nhiệt điện Công Thanh | Cong Thanh Thermal Power Plant | Thanh Hóa | Coal | Subcritical | 2 × 300 | 600 | Shelved | PDP8, 2023-05-15 | Planned 2021-2030 | Công Thanh Group | LOW | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | PDP8 table labels “Thanh President,” likely mistranslation of Công Thanh; extension to June 2024 then termination to be considered if not implemented. |\n| Nhiệt điện Quỳnh Lập 1 | Quynh Lap 1 Thermal Power Plant | Nghệ An | Coal | Supercritical | 2 × 600 | 1,200 | Cancelled | PDP8 implementation, 2024-04-01 | Not built | Vinacomin legacy developer | LOW | Draft PDP8 / older PDP listing ([vepg.vn](https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf?utm_source=openai)) | PDP8 implementation LNG replacement reporting ([vietnam.vn](https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai)) | Coal project superseded in planning by Quỳnh Lập LNG; primary cancellation decision not found. |\n| Nhiệt điện Kiên Lương | Kien Luong Thermal Power Center | Kiên Giang | Coal | Subcritical | multiple planned units; detail unresolved | 4,400 planned | Cancelled | 2023-2026 tracker/planning review | Not built | Tan Tao Energy legacy developer | LOW | Global Coal Plant Tracker ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai)) | not found | Historical mega-project; admissible primary source for final cancellation not found. |\n| Nhiệt điện Bà Rịa | Ba Ria Gas Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | mixed GT/ST units | 389 | Operating | EVNGENCO3 disclosure, 2017; EVN 2023 | 1990s | Ba Ria Thermal Power JSC / EVNGENCO3 affiliate | HIGH | EVNGENCO3 equitization disclosure ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Older gas turbines; exact unit grouping and retired sub-units require plant-specific source. |\n| Nhiệt điện Phú Mỹ 2.1 | Phu My 2.1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 block; upgraded rating | 477 | Operating | EVNGENCO3 annual-report page | 1997-1998 | EVNGENCO3 / Phú Mỹ Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 2024 overview ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai)) | EVNGENCO3 notes upgraded GT13E2 MXL2 turbine raising plant to 477 MW. |\n| Nhiệt điện Phú Mỹ 2.1 mở rộng | Phu My 2.1 Extension Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 block | 450 | Operating | EVNGENCO3 annual-report page | 1999-2000 | EVNGENCO3 / Phú Mỹ Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 2024 overview ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai)) | Part of Phú Mỹ Thermal Power Company’s 2,540-MW portfolio. |\n| Nhiệt điện Phú Mỹ 1 | Phu My 1 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 3 × gas turbines + steam turbine block | 1,090 | Operating | EVNGENCO3 annual-report page | 2000-2002 | EVNGENCO3 / Phú Mỹ Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 2024 overview ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai)) | Unit-block split not stated in consulted source; gross/net unspecified. |\n| Nhiệt điện Phú Mỹ 4 | Phu My 4 Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 1 block | 450 | Operating | EVNGENCO3 annual-report page | 2004 | EVNGENCO3 / Phú Mỹ Thermal Power Company | HIGH | EVNGENCO3 overview ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai)) | EVNGENCO3 2024 overview ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai)) | Part of Phú Mỹ Thermal Power Company’s 2,540-MW portfolio. |\n| Nhiệt điện Phú Mỹ 2.2 BOT | Phu My 2.2 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 2 GT + 1 ST block | 715 | Operating | 2023 | 2005 | Mekong Energy Company / EDF, Sumitomo, TEPCO legacy interests | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Oil and Gas Plant Tracker / GEM integrated tracker ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Commercial operator data not fully primary-confirmed here; gross/net unspecified. |\n| Nhiệt điện Phú Mỹ 3 BOT | Phu My 3 BOT Power Plant | Bà Rịa–Vũng Tàu | Domestic gas | CCGT | 2 GT + 1 ST block | 716.8 | Operating | EVNGENCO3 2024 O&M note | 2004 | Phu My 3 BOT Power Co.; O&M by EVNGENCO3 EPS | MEDIUM | EVNGENCO3 2024 overview ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | EVNGENCO3 notes 2024 O&M service contract; owner detail requires separate BOT primary source. |\n| Nhiệt điện Nhơn Trạch 1 | Nhon Trach 1 Power Plant | Đồng Nai | Domestic gas | CCGT | 2 GT + 1 ST block | 450 | Operating | PV Power 2022 / EVN 2023 | 2009 | PV Power | MEDIUM | Nhon Trach power station source trail / PV Power annual-report citation via GEM ([gem.wiki](https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai)) | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Domestic gas plant; exact current net capacity may vary by source. |\n| Nhiệt điện Nhơn Trạch 2 | Nhon Trach 2 Power Plant | Đồng Nai | Domestic gas | CCGT | 2 GT + 1 ST block | 750 | Operating | PV Power 2022 / EVN 2023 | 2011 | PV Power Nhon Trach 2 JSC | HIGH | Nhon Trach power station source trail / PV Power annual-report citation via GEM ([gem.wiki](https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai)) | EVNGENCO3 equitization disclosure, associated capacity context ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Treated as domestic-gas; no LNG before Nhơn Trạch 3/4. |\n| Nhiệt điện Cà Mau 1 | Ca Mau 1 Power Plant | Cà Mau | Domestic gas | CCGT | 2 GT + 1 ST block | 750 | Operating | EVN 2023 | 2008 | PV Power / Cà Mau Petroleum Power Company | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Oil and Gas Plant Tracker / GEM integrated tracker ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Gas from PM3-Cà Mau system; plant-specific PV Power page not captured here. |\n| Nhiệt điện Cà Mau 2 | Ca Mau 2 Power Plant | Cà Mau | Domestic gas | CCGT | 2 GT + 1 ST block | 750 | Operating | EVN 2023 | 2008 | PV Power / Cà Mau Petroleum Power Company | MEDIUM | EVN Annual Report 2022-2023 ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Global Oil and Gas Plant Tracker / GEM integrated tracker ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai)) | Gas from PM3-Cà Mau system; plant-specific PV Power page not captured here. |\n| Nhiệt điện Ô Môn 1 | O Mon 1 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 330 | 660 | Operating | PDP8 implementation, 2024-04-01 | 2009; 2015 | EVNGENCO2 / Can Tho Thermal Power Company | HIGH | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | EVN Annual Report 2012-2013  | Existing plant expected to use Block B gas; historical operation included oil/dual-fuel constraints. |\n| Nhiệt điện Ô Môn 2 | O Mon 2 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2027 | Marubeni / Vietracimex legacy consortium | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Listed domestic-gas project using Block B system; project-financing status unresolved. |\n| Nhiệt điện Ô Môn 3 | O Mon 3 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2030 | EVN / successor project entity | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Listed domestic-gas project; exact developer/financing unresolved. |\n| Nhiệt điện Ô Môn 4 | O Mon 4 Thermal Power Plant | Cần Thơ | Domestic gas | CCGT | 2 × 525 | 1,050 | Construction | 2025 project reporting; PDP8 implementation 2024 | Planned 2028 | Petrovietnam / PV Power | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Petrovietnam construction news lead via trade reporting  | Construction-start evidence captured only as secondary lead in this pass; needs PVN primary release for HIGH confidence. |\n| Nhiệt điện Dung Quất 1 | Dung Quat 1 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale to be determined at implementation. |\n| Nhiệt điện Dung Quất 2 | Dung Quat 2 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale to be determined. |\n| Nhiệt điện Dung Quất 3 | Dung Quat 3 Combined Gas Turbine Power Plant | Quảng Ngãi | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2028 | PVN / PV Power candidate | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Cá Voi Xanh gas; exact scale to be determined. |\n| Nhiệt điện Miền Trung 1 | Central Region 1 Combined Gas Turbine Power Plant | Quảng Nam | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2030 | PVN / provincial candidate | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned Cá Voi Xanh-linked domestic-gas plant; Vietnamese official name not resolved. |\n| Nhiệt điện Miền Trung 2 | Central Region 2 Combined Gas Turbine Power Plant | Quảng Nam | Domestic gas | CCGT | 1 × 750 | 750 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2030 | PVN / provincial candidate | MEDIUM | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned Cá Voi Xanh-linked domestic-gas plant; Vietnamese official name not resolved. |\n| Nhiệt điện khí Quảng Trị | Quang Tri Combined Gas Turbine Power Plant | Quảng Trị | Domestic gas | CCGT | 1 × 340 | 340 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2030 | Developer not resolved | LOW | PDP8 Implementation Plan summary ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Mayer Brown PDP8 implementation note ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai)) | Planned to use Báo Vàng gas; possible confusion with cancelled/shelved Quảng Trị coal project. |\n| Nhiệt điện Thủ Đức | Thu Duc Thermal Power Plant | TP.HCM | Domestic gas | OCGT | mixed GT units; 23.5 + 15 + 2 × 37.5 plus older units | 114+ | Retired | 2017 low-output disclosure / later system status unresolved | 1960s-1990s | EVNGENCO3 / Thu Duc Power Company legacy | LOW | EVN Annual Report 2012-2013  | EVNGENCO3 equitization disclosure ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai)) | Included because >30 MWe historical gas/oil turbine asset; retirement date and fuel classification need primary plant closure evidence. |\n| Nhiệt điện Cần Thơ tua-bin khí | Can Tho Gas Turbine Power Plant | Cần Thơ | Domestic gas | OCGT | 4 × 37.5 | 150 | Retired | 2012-2013 EVN listing / later status unresolved | 1970s-1990s | EVNGENCO2 / Can Tho Thermal Power Company | LOW | EVN Annual Report 2012-2013  | not found | Historical DO/gas-turbine plant; current status inferred as retired/legacy, not directly confirmed. |\n| Nhiệt điện Nhơn Trạch 3 | Nhon Trach 3 Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × 812 | 812 | Construction | PDP8 implementation, 2024-04-01 | Planned 2024-2025 | PV Power | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | Listed jointly with Nhơn Trạch 4 at 1,624 MW under construction; split evenly for plant-level inventory. |\n| Nhiệt điện Nhơn Trạch 4 | Nhon Trach 4 Power Plant | Đồng Nai | Imported LNG | CCGT | 1 × 812 | 812 | Construction | PDP8 implementation, 2024-04-01 | Planned 2024-2025 | PV Power | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | Listed jointly with Nhơn Trạch 3 at 1,624 MW under construction; split evenly for plant-level inventory. |\n| Nhiệt điện LNG Hiệp Phước giai đoạn 1 | Hiep Phuoc 1 LNG-to-Power | TP.HCM | Imported LNG | CCGT | not specified | 1,200 | Construction | PDP8 implementation, 2024-04-01 | Planned 2025 | Hiep Phuoc Power / project company | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | Unit configuration not found in consulted sources; gross/net unspecified. |\n| Điện khí LNG Bạc Liêu | Bac Lieu LNG-to-Power | Bạc Liêu | Imported LNG | CCGT | 4 × 800 | 3,200 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2027-2029 | Delta Offshore Energy / Bạc Liêu project company | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation says preparing FS; unit split from common project description, not verified in table sources. |\n| Nhiệt điện Sơn Mỹ 1 BOT | Son My 1 BOT LNG-to-Power | Bình Thuận | Imported LNG | CCGT | 3 × 750 | 2,250 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2027-2029 | EDF / Kyushu / Sojitz / Pacific Corp. legacy consortium | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation says preparing FS; sponsor composition may have changed. |\n| Nhiệt điện Sơn Mỹ 2 | Son My 2 LNG-to-Power | Bình Thuận | Imported LNG | CCGT | 3 × 750 | 2,250 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2027-2029 | AES / PetroVietnam Gas legacy development | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | PDP8 Decision 500 annexes ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai)) | PDP8 implementation says preparing FS; sponsor/developer current status needs primary confirmation. |\n| Nhiệt điện LNG Quảng Ninh | Quang Ninh LNG-to-Power | Quảng Ninh | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2028-2029 | PV Power / Colavi / Tokyo Gas / Marubeni consortium | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation says preparing FS; project has investor consortium but no COD yet. |\n| Nhiệt điện LNG Hải Lăng giai đoạn 1 | Hai Lang LNG Phase 1 | Quảng Trị | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2028-2029 | T&T / Hanwha / Kogas / Kospo legacy consortium | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | Not the same as Quảng Trị coal or Quảng Trị domestic-gas project. |\n| Nhiệt điện LNG Thái Bình | Thai Binh LNG-to-Power | Thái Bình | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2029 | Investor selection | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation says investor selection. |\n| Nhiệt điện LNG Nghi Sơn | Nghi Son LNG-to-Power | Thanh Hóa | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2029-2030 | Investor selection | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | VietnamNet report on stalled gas projects ([vietnamnet.vn](https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai)) | VietnamNet reports Ca Na, Nghi Son and Quynh Lap still could not find investors; status remains pre-permit. |\n| Nhiệt điện LNG Cà Ná | Ca Na LNG-to-Power | Ninh Thuận | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2029-2030 | Investor selection | HIGH | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | VietnamNet report on stalled gas projects ([vietnamnet.vn](https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai)) | VietnamNet reports investor-selection difficulty; no construction evidence verified. |\n| Nhiệt điện LNG Quảng Trạch II | Quang Trach II LNG-to-Power | Quảng Bình | Imported LNG | CCGT | 2 × 750 | 1,500 | Announced | PDP8 implementation, 2024-04-01 | Planned 2029-2030 | Developer not resolved | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation summary says no information on status available; mapped to Announced. |\n| Nhiệt điện LNG Quỳnh Lập | Quynh Lap LNG-to-Power | Nghệ An | Imported LNG | CCGT | 2 × 750 | 1,500 | Announced | PDP8 implementation, 2024-04-01 | Planned 2029-2030 | Developer not resolved | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Vietnam.vn report on Decision 262 ([vietnam.vn](https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai)) | Replaces/supersedes earlier Quỳnh Lập coal concept; investor unresolved. |\n| Nhiệt điện LNG Long An 1 | Long An 1 LNG-to-Power | Long An | Imported LNG | CCGT | 2 × 750 | 1,500 | Pre-permit | PDP8 implementation, 2024-04-01 | Planned 2029-2030 | VinaCapital / GS Energy legacy project interests | MEDIUM | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Russin & Vecchi PDP8 appendix summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai)) | PDP8 implementation says preparing FS. |\n| Nhiệt điện LNG Long An 2 | Long An 2 LNG-to-Power | Long An | Imported LNG | CCGT | 2 × 750 | 1,500 | Shelved | 2024 PDP8 implementation comparison | After 2030 / unresolved | VinaCapital / GS Energy legacy project interests | LOW | Draft/legacy PDP8 LNG list ([lexcommvn.com](https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf?utm_source=openai)) | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Long An 2 appears in earlier/legacy LNG planning but not in the 13-project Decision 262 list captured here; status therefore LOW and Shelved. |\n| Nhiệt điện LNG Long Sơn | Long Son LNG-to-Power | Bà Rịa–Vũng Tàu | Imported LNG | CCGT | 2 × 750 | 1,500 | Shelved | 2024 PDP8 implementation comparison | Unresolved | Long Son project investors not resolved | LOW | Draft/legacy PDP8 LNG list ([calilawyer.tistory.com](https://calilawyer.tistory.com/18?utm_source=openai)) | PDP8 Implementation Plan LNG list ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai)) | Listed in some PDP8-era secondary summaries but not in Decision 262’s 13-project list excerpt; primary status not found. |\n| Nhiệt điện LNG Hải Phòng giai đoạn 1 | Hai Phong LNG Phase 1 | Hải Phòng | Imported LNG | CCGT | 2 × 800 | 1,600 | Announced | Revised PDP8 reporting, 2025 | Planned 2025-2030 | Developer not resolved | LOW | Revised PDP8 secondary summary ([b-company.jp](https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/?utm_source=openai)) | Vietnam Energy proposal article ([vietnamenergy.vn](https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai)) | Added/revived in revised-PDP8 reporting; not in 2024 Decision 262 LNG list excerpt. |\n| Nhiệt điện LNG Hải Phòng giai đoạn 2 | Hai Phong LNG Phase 2 | Hải Phòng | Imported LNG | CCGT | 4 × 800 | 3,200 | Announced | Revised PDP8 reporting, 2025 | Planned 2031-2035 | Developer not resolved | LOW | Russin & Vecchi revised PDP8 LNG summary ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf?utm_source=openai)) | Vietnam Energy proposal article ([vietnamenergy.vn](https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai)) | Future post-2030 phase; included because user requested future assets and revised-PDP8 candidates. |\n\n### Explanatory notes\n\n- **Scope and completeness limitation.** This inventory is constructed from PDP8/PDP8 implementation sources, EVN/EVNGENCO public material, and admissible trackers/trade/legal summaries available during this session. It is broad, but rows marked **LOW** should be treated as candidate or historically important records requiring further primary-source confirmation before transactional use.\n\n- **Status mapping.** Vietnamese planning documents often use phrases such as “preparing FS,” “investor selection,” “behind schedule,” or “facing difficulty.” These were mapped to the allowed status vocabulary as follows: “preparing FS” and “investor selection” → **Pre-permit**; “under construction” → **Construction**; “behind schedule/facing difficulty” without active construction → **Shelved**; historical projects absent from PDP8 and tracked as inactive → **Cancelled** or **Shelved** depending on evidence.\n\n- **Coal technology.** For older Vietnamese coal stations, where primary sources did not explicitly state boiler class, the technology is recorded as **Subcritical** because that is the normal configuration for those plant vintages and unit sizes; confidence remains limited where the consulted source did not explicitly state the technology. For modern 600-MW-class and larger coal projects, “Supercritical” or “USC” is used where consistent with project descriptions and tracker classifications, but some rows still need EPC-level confirmation.\n\n- **Gross/net ambiguity.** Most Vietnamese sources state “công suất” or “installed capacity” without specifying gross versus net. Unless Notes say otherwise, capacities should be read as nameplate electrical capacity with gross/net unspecified.\n\n- **Power-center splits.** Phú Mỹ, Vĩnh Tân, Duyên Hải, Ô Môn, Nhơn Trạch, Sơn Mỹ and Long An are split into distinct plant or unit groups where fuel, owner/developer, COD, status or project phase differs.\n\n- **Quỳnh Lập.** Quỳnh Lập appears historically as a coal project and later as an LNG project. The coal row is treated as **Cancelled** because PDP8 implementation material points to an LNG project at Quỳnh Lập; however, a standalone primary cancellation notice for the coal project was not found in this session.\n\n- **Long Phú 2/3, Kiên Lương, Vĩnh Tân 3, Nam Định 1, Sông Hậu 2, Quảng Trị coal, Công Thanh.** These are important PDP7/PDP8 legacy coal projects. PDP8 explicitly retains some as delayed/difficult projects and omits others from the active construction list. They are retained in the inventory because the request includes shelved/cancelled assets, but confidence is LOW where no current government cancellation decision was found.\n\n- **Ô Môn fuel history.** Ô Môn 1 is treated as domestic gas because Decision 262/PDP8 implementation identifies it as an existing plant using gas from Block B. Historically, the plant has been associated with oil/dual-fuel operation pending gas availability.\n\n- **Imported LNG projects.** Decision 262 / PDP8 implementation identifies 13 LNG-to-power projects to 2030. Rows outside that core list, such as Long An 2, Long Sơn and Hải Phòng phases, are included as LOW-confidence future or shelved/announced candidates because they appear in draft/revised planning or provincial proposal material but were not confirmed in the 2024 implementation list excerpt consulted.\n\n- **Retired gas/oil turbine rows.** Thủ Đức and Cần Thơ gas-turbine assets are included because they exceeded 30 MWe historically and appear in EVN annual-report tables. Their final retirement dates require a plant-specific primary closure source; therefore both are LOW.\n\n### Annotated bibliography\n\n- **Prime Minister of Vietnam. “Decision 500/QĐ-TTg approving the National Power Development Plan for 2021–2030, vision to 2050,” English PDP8 with annexes.** URL: https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf. Used for PDP8 coal and LNG project discovery, especially the annex tables listing coal plants under construction, delayed coal projects, LNG projects, capacities and planning periods. ([vepg.vn](https://vepg.vn/wp-content/uploads/2023/05/PDP8_full-with-annexes_EN.pdf?utm_source=openai))\n\n- **Vietnam Electricity. “Annual Report 2022–2023.”** URL: https://en.evn.com.vn/userfile/files/EVNAnnualReport2022-2023-20241115110735330.pdf. Used for national installed capacity context and confirmation of operating coal/gas fleets, EVN/GENCO ownership context, and current operating-system status as of 2023. ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai))\n\n- **Vietnam Electricity. “Annual Report 2012–2013.”** URL: https://en.evn.com.vn/userfile/files/BCTNTANH-2012---2013-20241115110713870.pdf. Used for older EVN fleet tables listing plant names, unit counts and capacities, including Phả Lại 2, Hải Phòng, Thủ Đức, Cần Thơ, and Ô Môn 1. \n\n- **Vietnam Electricity. “Annual Report 2017.”** URL: https://www.evn.com.vn/userfile/files/2024/11/EVNAnnualReport2017-web-20241120082800491.pdf. Used for EVN thermal fleet context and Duyên Hải / Vĩnh Tân-era operating assets. \n\n- **EVN. “Development of coal-fired thermal power plants with high-efficiency and environmentally friendly technologies.”** URL: https://en.evn.com.vn/d6/news/Development-of-coal-fired-thermal-power-plants-with-high-efficiency-and-environmentally-friendly-technologies-66-163-915.aspx. Used for EVN coal technology/planning context under revised PDP7 and for corroborating EVN coal development. ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai))\n\n- **EVN. “EVN owns more than 63% of the total installed capacity of the power system.”** URL: https://en.evn.com.vn/d6/news/EVN-owns-more-than-63-of-the-total-installed-capacity-of-the-power-system-66-163-570.aspx. Used for EVN fleet and plant context, including Nghi Sơn 1 and EVN thermal operations. ([dfdl.com](https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai))\n\n- **EVN. “Overview of national power sources in 2023.”** URL: https://en.evn.com.vn/d6/news/Overview-of-national-power-sources-in-2023-66-142-4147.aspx. Used for current national coal/gas operational context and fuel-supply context in 2023. ([legal500.com](https://www.legal500.com/developments/thought-leadership/implementation-plan-for-the-national-power-development-plan-viii-of-vietnam/?utm_source=openai))\n\n- **EVNGENCO3. “EVNGENCO3 Overview / Annual Report 2022.”** URL: https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html. Used for Phú Mỹ, Vĩnh Tân 2, Mông Dương 1, unit capacities, technology notes, COD notes and EVNGENCO3 ownership/operator status. ([genco3.com](https://www.genco3.com/baocaothuongnien_EN/tong-quan-ve-evngenco3.html?utm_source=openai))\n\n- **EVNGENCO3. “General Information About EVNGENCO3.”** URL: https://bctn.genco3.com/en/general-information-about-evngenco3/. Used for current EVNGENCO3 plant portfolio, Phú Mỹ total capacity, Mông Dương and Vĩnh Tân operating context, and 2024 O&M references including Phú Mỹ 3 and Vĩnh Tân 4. ([bctn.genco3.com](https://bctn.genco3.com/en/general-information-about-evngenco3/?utm_source=openai))\n\n- **EVNGENCO3 Equitization Steering Committee. “Information disclosure / prospectus-type document.”** URL: https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf. Used for EVNGENCO3 historical generation tables, Ba Ria / Ninh Binh / Thu Duc references, and COD details for Vĩnh Tân 2 and Mông Dương 1. ([genco3.com](https://www.genco3.com/Data/Sites/1/media/CongbothongtinEVNGENCO3English.pdf?utm_source=openai))\n\n- **EVNGENCO3. “Annual Report 2020.”** URL: https://www.genco3.com/Data/Sites/1/media/bao-cao-thuong-nien/2021/20210614_pgv_ar2020---en.pdf. Used for EVNGENCO3 fleet capacity structure, gas/coal proportions and operating portfolio confirmation. ([genco3.com](https://www.genco3.com/Data/Sites/1/media/bao-cao-thuong-nien/2021/20210614_pgv_ar2020---en.pdf?utm_source=openai))\n\n- **Frasers Law Company. “PDP VIII Implementation Plan.”** URL: https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan. Used for Decision 262 implementation summary, especially domestic-gas project list and LNG project list with capacities, locations, years and status descriptions. ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai))\n\n- **Frasers Law Company. “PDP VIII Implementation Plan,” LNG excerpt.** URL: https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan. Used specifically for the 13 LNG-to-power projects: Nhơn Trạch 3/4, Hiệp Phước 1, Bạc Liêu, Sơn Mỹ 1/2, Quảng Ninh, Hải Lăng, Thái Bình, Nghi Sơn, Cà Ná, Quảng Trạch II, Quỳnh Lập and Long An I. ([frasersvn.com](https://www.frasersvn.com/legal-updates-and-publications/pdp-viii-implementation-plan?utm_source=openai))\n\n- **Mayer Brown. “Implementation Plan to Vietnam’s PDP8 Released.”** URL: https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released. Used to confirm that Decision 262 updates 13 imported LNG and 10 domestic gas-fired projects totaling 22,400 MW LNG and 14,930 MW domestic gas. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai))\n\n- **KPMG Vietnam. “PDP8 Implementation Plan.”** URL: https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html. Used for legal/planning context on Decision 262 and implementation-plan structure. ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai))\n\n- **DFDL. “Vietnam’s PDP8 Implementation Plan.”** URL: https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/. Used for legal context and confirmation that Decision 262 contains project lists for domestic gas, LNG and other sources. ([dfdl.com](https://www.dfdl.com/insights/legal-and-tax-updates/vietnams-pdp8-implementation-plan/?utm_source=openai))\n\n- **Lexcomm Vietnam. “Legal update — Decision 262 on PDP8 Implementation Plan.”** URL: https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf. Used for implementation-plan legal context and project-list structure. ([lexcommvn.com](https://lexcommvn.com/image/files/20241108%20-%20Legal%20update%20-%20Decision%20262%20on%20PDP8%20Implementation%20Plan.pdf?utm_source=openai))\n\n- **Russin & Vecchi. “Vietnam’s PDP8 Implementation Plan,” Appendix 4 LNG list.** URL: https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf. Used for LNG project names, capacities, provinces, expected operation years and implementation notes. ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2024/04/vietnams-pdp8-implementation-plan-nhh-12-apr-2024.pdf?utm_source=openai))\n\n- **Russin & Vecchi. “Vietnam’s National Power Development Plan for LNG Power Plants.”** URL: https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf. Used for revised-PDP8 / later LNG candidate context, including Hải Phòng phase 2 and continued LNG project tracking. ([russinvecchi.com.vn](https://www.russinvecchi.com.vn/wp-content/uploads/2025/05/vietnams-national-power-development-plan-for-lng-power-plants-nhh-9-may-25.pdf?utm_source=openai))\n\n- **Global Energy Monitor. “Global Coal Plant Tracker.”** URL: https://globalenergymonitor.org/projects/global-coal-plant-tracker/. Used as admissible secondary support for coal plant status, capacities and inactive/cancelled/shelved project discovery; not used as sole support for HIGH confidence. ([kpmg.com](https://kpmg.com/vn/en/home/insights/2024/04/pdp8-implementation-plan.html?utm_source=openai))\n\n- **UNEP Global Mercury Partnership. “Global Coal Plant Tracker.”** URL: https://www.unep.org/globalmercurypartnership/resources/tool/global-coal-plant-tracker. Used to confirm GCPT scope covers coal-fired units of 30 MW and above, matching the requested threshold. ([mayerbrown.com](https://www.mayerbrown.com/en/pdf/insights/publications/2024/04/implementation-plan-to-vietnams-pdp8-released?utm_source=openai))\n\n- **Global Energy Monitor / ArcGIS. “Global Integrated Power Tracker — Overview.”** URL: https://www.arcgis.com/home/item.html?id=d48c087b6d8141599d4923e70e610fca. Used for tracker status definitions and as secondary context for oil/gas plant tracking and status vocabulary. ([digital.lapphuong.com](https://digital.lapphuong.com/evngenco3/final/en/tinh-hinh-hoat-dong-trong-nam.html?utm_source=openai))\n\n- **Global Energy Monitor Wiki. “Nhon Trach power station.”** URL: https://www.gem.wiki/Nhon_Trach_power_station. Used as a secondary source trail to PV Power annual-report citations for Nhơn Trạch 1/2 and LNG Nhơn Trạch 3/4. ([gem.wiki](https://www.gem.wiki/Nhon_Trach_power_station?utm_source=openai))\n\n- **Vietnam.vn. “Thủ tướng Chính phủ chốt phương án xây dựng nhà máy nhiệt điện khí LNG tại Quỳnh Lập, Nghệ An” [Prime Minister finalizes plan to build LNG-fired thermal power plant at Quynh Lap, Nghe An].** URL: https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an. Used for Quỳnh Lập LNG planning and coal-to-LNG replacement context under Decision 262. ([vietnam.vn](https://www.vietnam.vn/en/thu-tuong-chinh-phu-chot-phuong-an-xay-dung-nha-may-nhiet-dien-khi-lng-tai-quynh-lap-nghe-an?utm_source=openai))\n\n- **VietnamNet. “Gas-fired power projects stalled, 3 super-projects cannot find investors.”** URL: https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html. Used as admissible press support for investor-selection difficulty at Cà Ná, Nghi Sơn and Quỳnh Lập LNG projects and broader gas-project delays. ([vietnamnet.vn](https://vietnamnet.vn/en/gas-fired-power-projects-stalled-3-super-projects-cannot-find-investors-2286088.html?utm_source=openai))\n\n- **The Investor. “LNG-fired power projects under Vietnam’s PDP VIII must operate in 2028.”** URL: https://theinvestor.vn/lng-fired-power-projects-under-vietnams-pdp-viii-must-operate-in-2028-d14874.html. Used for recent LNG project acceleration context and list of LNG projects with investors. ([theinvestor.vn](https://theinvestor.vn/lng-fired-power-projects-under-vietnams-pdp-viii-must-operate-in-2028-d14874.html?utm_source=openai))\n\n- **Vietnam Energy Magazine. “A proposal to include 2 LNG power projects in Hai Phong in the PDP VIII.”** URL: https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html. Used for Hải Phòng LNG candidate discovery and proposed capacities/phasing. ([vietnamenergy.vn](https://vietnamenergy.vn/a-proposal-to-include-2-lng-power-projects-in-hai-phong-in-the-pdp-viii-25342.html?utm_source=openai))\n\n- **B-Company. “The Government has approved adjustments to the Power Development Plan 8: Key Changes and Assessment.”** URL: https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/. Used as secondary support for revised-PDP8 added LNG project context, including Hải Phòng stage I. ([b-company.jp](https://b-company.jp/the-government-has-approved-adjustments-to-the-power-development-plan-8-key-changes-and-assessment/?utm_source=openai))\n\n- **Vietnam Prime Minister / Draft PDP8 English translation. “Draft PDP8, 5 September 2021.”** URL: https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf. Used only for historical candidate discovery, including earlier coal and gas/LNG concepts such as Quỳnh Lập coal and early GTCC projects. ([vepg.vn](https://vepg.vn/wp-content/uploads/2021/09/5.9.2021-Draft-PDP8_En.pdf?utm_source=openai))\n\n- **Lexcomm Vietnam. “Legal Update on draft PDP8.”** URL: https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf. Used for historical/draft LNG candidate discovery, including Long An 1/2 and earlier Son My/Nhon Trach/Bac Lieu status notes. ([lexcommvn.com](https://lexcommvn.com/image/files/Legal%20Update%20on%20draft%20PDP8%20%28Lexcomm%20Vietnam%20LLC%29.pdf?utm_source=openai))\n\n- **Tistory legal summary. “베트남 제8차 국가전력개발계획(PDP8) 프로젝트 (가스복합&석탄)” [Vietnam PDP8 projects — combined-cycle gas and coal].** URL: https://calilawyer.tistory.com/18. Used only as a secondary candidate-discovery aid for LNG and coal lists; not relied upon for HIGH confidence rows. ([calilawyer.tistory.com](https://calilawyer.tistory.com/18?utm_source=openai))\n\n- **Southeast Asia Infrastructure. “Vietnam’s National Power Development Plan (PDP8) updated.”** URL: https://southeastasiainfra.com/vietnams-national-power-development-plan-pdp8-updated/. Used for revised-PDP8 2025 context, especially policy direction toward more LNG capacity. ([southeastasiainfra.com](https://southeastasiainfra.com/vietnams-national-power-development-plan-pdp8-updated/?utm_source=openai))",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779660863.0,
+  "conversation": null,
+  "max_output_tokens": 50000,
+  "max_tool_calls": null,
+  "previous_response_id": "resp_09396e8e4df5d677006a13775dbc8481a39e5d3f29e8c5473f",
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 29872,
+    "input_tokens_details": {
+      "cached_tokens": 4224
+    },
+    "output_tokens": 16026,
+    "output_tokens_details": {
+      "reasoning_tokens": 384
+    },
+    "total_tokens": 45898
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

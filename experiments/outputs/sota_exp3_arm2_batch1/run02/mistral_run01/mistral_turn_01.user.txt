@@ -1,0 +1,21 @@
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, preamble, or overview. Structure as follows:
+
+1. **Inventory Table**: One pipe table with columns in this exact order:
+   Name (Vietnamese), Name (English), Province, Fuel (Coal/Domestic gas/Imported LNG), Technology (Subcritical/Supercritical/USC for coal; CCGT/OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+   - Do not split into sub-tables. Aggregate statistics may be folded into prose.
+   - Mark confidence as HIGH, MEDIUM, or LOW based on evidence and agreement.
+   - For disputed/ambiguous attributes, explain in Notes.
+
+2. **Per-Asset Notes**: Concise, sourced notes for major, disputed, ambiguous, or historically important assets. Straightforward assets need no note.
+
+3. **Annotated Bibliography**: Full citation for every source (URL if available; original-language title + English translation for non-English sources). Include a summary annotation of what was drawn from each.
+
+**Scope**: All thermal assets > 30 MWe at any lifecycle stage, including shelved/cancelled projects.
+
+**Rules**:
+- Never fabricate sources or URLs. If a source is unverified, write 'URL not verified'.
+- Include known plants even without a primary source (mark confidence LOW).
+- Use exact status terms: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired.
+- Record capacity in MWe (note if gross/net unspecified).
+
+Begin with a web search to identify leads, then verify each asset against admissible sources. Use early turns to decompose, search, and surface uncertainty. Do not aim to produce the inventory on the first turn. After the first report, you will receive one verify-and-polish pass.

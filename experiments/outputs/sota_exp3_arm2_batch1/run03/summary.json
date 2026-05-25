@@ -1,0 +1,38 @@
+[
+  {
+    "agent": "mistral",
+    "status": "pass",
+    "total_cost_usd": 0.21661950000000071,
+    "wall_s": 694.456,
+    "turns": 2,
+    "class_trace": "report,report",
+    "inventory_rows": 58
+  },
+  {
+    "agent": "openai",
+    "status": "pass",
+    "total_cost_usd": 0.7342924999999996,
+    "wall_s": 304.017,
+    "turns": 2,
+    "class_trace": "report,report",
+    "inventory_rows": 86
+  },
+  {
+    "agent": "anthropic",
+    "status": "error",
+    "total_cost_usd": 0.0,
+    "wall_s": 0.0,
+    "turns": 0,
+    "class_trace": "n/a",
+    "inventory_rows": 0
+  },
+  {
+    "agent": "qwen",
+    "status": "pass",
+    "total_cost_usd": 0.20284099999999863,
+    "wall_s": 141.556,
+    "turns": 2,
+    "class_trace": "report,report",
+    "inventory_rows": 25
+  }
+]

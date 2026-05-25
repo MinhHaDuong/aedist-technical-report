@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Ex post extractor for EXP3 outputs with unified data flow and source handling
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+EXP3 currently mixes raw provider outputs with inline extraction logic inherited
+from `experiments/sota/exp2_naive_arm.py`. This creates derivation drift:
+- table fragments are not always consolidated,
+- preambles leak into derived narratives,
+- Mistral `tool_reference` citations are not always placed in Source columns,
+- downstream scoring can read stale or non-canonical markdown.
+
+## Goal
+
+Create a dedicated ex post extractor pipeline in a separate directory and unify
+its data flow with arms 2 and 4.
+
+## Required changes
+
+- [ ] Introduce a standalone EXP3 ex post extractor module (separate directory,
+      no inline derivation in `exp2_naive_arm.py`).
+- [ ] Remove extractor responsibilities from `experiments/sota/exp2_naive_arm.py`.
+- [ ] Unify data flow conventions with arm2/arm4 artifacts (conversation/turn/raw
+      schemas and derived outputs).
+- [ ] Consolidate split tables into a single canonical inventory table.
+- [ ] Strip all non-table preambles from derived report outputs.
+- [ ] Map Mistral `tool_reference` citations into Source columns (Source 1/2)
+      and keep an audit trail for unresolved/ambiguous references.
+- [ ] Document "audit in progress" markers where extraction certainty is partial.
+
+## Exit criteria
+
+- [ ] Canonical derived outputs are reproducible from raw artifacts only.
+- [ ] No scoring component depends on legacy inline extractor behavior.
+- [ ] Integration test covers split-table consolidation + citation mapping.

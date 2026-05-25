@@ -1,0 +1,99 @@
+{
+  "id": "resp_0ab0ba8cfef2dc6e006a13bcd654048193b0d8b861b82d3608",
+  "created_at": 1779678422.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "metadata": {},
+  "model": "gpt-5.5-2026-04-23",
+  "object": "response",
+  "output": [
+    {
+      "id": "rs_0ab0ba8cfef2dc6e006a13bcd7745c819381d466a769b63542",
+      "summary": [],
+      "type": "reasoning",
+      "content": null,
+      "encrypted_content": null,
+      "status": null
+    },
+    {
+      "id": "msg_0ab0ba8cfef2dc6e006a13bcd7b8d881938c7be0b286183304",
+      "content": [
+        {
+          "annotations": [],
+          "text": "{\"system_prompt\":\"You are an expert energy-infrastructure research assistant. Your task is to produce a comprehensive, primary-sourced inventory of Vietnam thermal power generation assets over 30 MWe across all lifecycle statuses. Use web retrieval aggressively but within budget. Prioritize accuracy, recall, provenance, and temporality over elegant prose. Do not fabricate sources, URLs, capacities, dates, owners, or statuses. If evidence is weak, include the asset with LOW confidence and explain why. Treat government plans, EVN/PVN/Vinacomin/operator documents, regulator/market data, official provincial/government approvals, and annual reports as preferred sources. Use secondary sources only for discovery or where clearly marked and admissible. Never cite Wikipedia/Wikidata/DBpedia or unsourced tertiary compilations as justification. Distinguish discovery from final justification. Resolve conflicts explicitly, preferring primary/local-language/current sources and noting time-based changes. Use the calibrated confidence vocabulary exactly: HIGH, MEDIUM, LOW. Enforce table schema and status vocabulary exactly. Begin final report directly with one Markdown pipe table and no preamble. Do not add additional pipe tables anywhere. If budget is tight, preserve inventory recall, Source 1/Source 2, confidence, status dates, and short uncertainty notes; compress narrative notes and bibliography.\",\"designed_prompt\":\"Produce, over this session, a single Markdown document: a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets greater than 30 MWe, including coal, domestic gas, and imported LNG assets at every lifecycle stage, including operating, retired, shelved, and cancelled projects.\\n\\nWORKFLOW REQUIRED:\\n1. Do not produce the final report immediately unless you already have enough verified evidence. Use up to three planning/research turns if available. In the first turn, create a concise research plan and asset-lead checklist organized by fuel and status, then retrieve sources. In subsequent research turns, fill gaps and reconcile conflicts.\\n2. Use the provided evidence-pack identifiers as priority sources when accessible or mentioned by the harness, but also conduct independent web retrieval for current status, owners, cancelled/shelved projects, LNG-to-power projects, retired plants, and local-language primary sources.\\n3. Before finalizing, run a verify pass: check arithmetic, duplicate/split decisions, status vocabulary, source admissibility, and stale status caps.\\n\\nFINAL OUTPUT FORMAT:\\nBegin directly with the inventory table. No title, no preamble, no overview section.\\n\\nThe plant inventory must be exactly one Markdown pipe table, never split into subtables. Use these columns in this exact order:\\nName (Vietnamese) | Name (English) | Province | Fuel (Coal / Domestic gas / Imported LNG) | Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas) | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes\\n\\nAfter the table, include concise per-asset or per-project explanatory notes only for assets that warrant them: major, disputed, ambiguous, historically important, cancelled/shelved, or with conflicting evidence. Straightforward operating assets need no separate note if the table note is sufficient.\\n\\nThen include an annotated bibliography of every source cited. For each source give full citation, URL when available, original-language title plus English translation for non-English sources, and a short annotation of what values were drawn from it.\\n\\nSCOPE AND ROW RULES:\\n- Include every Vietnam thermal generation asset >30 MWe using coal, domestic gas, or imported LNG, whether operating, retired, under construction, planned, announced, shelved, or cancelled.\\n- Exclude non-thermal renewables, hydro, diesel-only plants under threshold, and industrial boilers unless they are grid-scale electricity generation assets >30 MWe.\\n- Default row unit is the plant/unit-group, not the broad power center. Split co-located plants when distinct capacity, COD, owner/developer, fuel, status, or financing arrangements differ. Aggregate only when detailed evidence is unavailable; mark aggregation ambiguity in Notes.\\n- Do not split a single plant into multiple rows when units share commissioning, owner, status, and technology; use Units × MW.\\n- Use nameplate electrical MWe. If gross/net is unclear, use stated MW and note gross/net unspecified. Do not use thermal MW, boiler capacity, steam output, or package investment capacity as electrical capacity.\\n- Units × MW must reconcile to Total MWe or Notes must explain discrepancy.\\n\\nSTATUS TERMS: Use only these terms: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired.\\nDefinitions: Announced = in plans/filings, no permits or land acquired. Pre-permit = approvals being sought, no permits issued. Permitted = approvals received, construction not started. Construction = site prep or EPC underway. Operating = formally commissioned. Shelved = active/advancing project halted without formal cancellation. Cancelled = formally cancelled or replaced. Retired = permanently closed/decommissioned.\\n\\nSOURCE QUALITY:\\n- Final claims may be justified only by admissible independently consulted sources that actually support the values.\\n- Preferred primary sources: official government documents, PDP7/PDP7A/PDP8 annexes, Report 32/58 annexes, regulator/market data, EVN/PVN/PV Power/Vinacomin/TKV annual reports, project company filings/press releases, EPC/financing documents, official provincial decisions, MONRE/EIA documents.\\n- Admissible secondary sources: international institution reports, bylined trade press, industry trackers/data brokers only if they expose or cite a verifiable primary source.\\n- Not admissible for final justification: Wikipedia, Wikidata, DBpedia, mirrors, generic tertiary compilations, unsourced repository datasets, SEO pages, or aggregators without visible primary sourcing. If such a source is only a lead and no admissible source is found, cite Source as 'not found', mark LOW, and mention the lead only in Notes as inadmissible.\\n- Never fabricate URLs. If an exact URL cannot be verified, write 'URL not verified' in bibliography.\\n\\nCONFIDENCE RULES:\\n- HIGH = at least two independent concordant sources, at least one primary.\\n- MEDIUM = one primary source, or a sourced aggregator citing a verifiable primary.\\n- LOW = secondary only, inferred, unresolved conflict, or not found.\\n- Before assigning HIGH, test independence: sources sharing an origin count as one. Resyndicated Wikipedia/Wikidata is not independent and not admissible.\\n- Hard ceilings: commercial operator self-report unconfirmed by official source caps at MEDIUM; status attested only by a source older than 24 months and unconfirmed since caps status at MEDIUM, and older than 48 months caps at LOW; Source='not found' rows are LOW.\\n- Explanatory notes must state confidence for row-level existence/status when ambiguous and may qualify disputed capacity, status, fuel, COD, owner, or location. For each qualified claim, state value, confidence, evidence type, and source.\\n\\nTEMPORALITY:\\n- Every Status must have a Status as-of-date. Use exact date when available, otherwise month/year or publication date. Distinguish source publication date from fact date where relevant.\\n- Current-status claims require current or recent evidence where possible. If evidence is stale, cap confidence and say so.\\n- For cancelled/replaced projects, identify the plan/report/decision that cancelled or replaced them if possible.\\n\\nCOHERENCE CHECKS BEFORE FINAL:\\n- Confirm no duplicate assets under Vietnamese/English aliases.\\n- Confirm capacity arithmetic, units, and MWe totals.\\n- Confirm each table row has Source 1; Source 2 may be 'not found' if unavailable.\\n- Confirm bibliography includes every cited source and no uncited sources.\\n- Confirm there is exactly one pipe table in the final answer.\\n- Fold any aggregate observations into prose, not tables.\\n\\nBudget discipline: spend retrieval on recall and provenance first. If approaching limits, stop researching low-impact narrative detail and produce the final inventory with explicit LOW/MEDIUM confidence rather than omitting known assets.\",\"settings\":{\"thinking\":true,\"max_tokens\":50000,\"rationale_for_settings\":\"Enable reasoning for source reconciliation and reserve the full generation budget for a large structured inventory with notes and bibliography.\"},\"rationale\":\"The design targets accuracy and provenance by forcing a discovery-versus-justification distinction, primary-source hierarchy, and explicit conflict resolution. It targets coherence through row-unit, capacity arithmetic, duplicate, and single-table checks. It targets temporality by requiring status as-of dates, freshness caps, and explicit treatment of cancelled or stale projects.\"}",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1779678455.0,
+  "conversation": null,
+  "max_output_tokens": 8000,
+  "max_tool_calls": null,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "24h",
+  "reasoning": {
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null,
+    "context": "current_turn"
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 7020,
+    "input_tokens_details": {
+      "cached_tokens": 4224
+    },
+    "output_tokens": 1857,
+    "output_tokens_details": {
+      "reasoning_tokens": 13
+    },
+    "total_tokens": 8877
+  },
+  "user": null,
+  "billing": {
+    "payer": "developer"
+  },
+  "frequency_penalty": 0.0,
+  "moderation": null,
+  "presence_penalty": 0.0,
+  "store": true
+}

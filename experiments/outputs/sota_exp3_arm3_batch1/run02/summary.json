@@ -3,12 +3,12 @@
     "agent": "mistral",
     "run": 1,
     "model": "mistral-large-2512",
-    "classification": "no_report",
-    "tokens_out": 744,
-    "wall_s": 21.47,
-    "cost_usd": 0.0396,
-    "classifier_cost_usd": 0.000463,
-    "narrative_chars": 3073,
+    "classification": "report",
+    "tokens_out": 16000,
+    "wall_s": 250.5,
+    "cost_usd": 0.063,
+    "classifier_cost_usd": 0.001483,
+    "narrative_chars": 75417,
     "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
   },
   {

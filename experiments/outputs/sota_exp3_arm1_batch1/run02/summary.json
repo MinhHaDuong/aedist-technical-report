@@ -1,0 +1,46 @@
+[
+  {
+    "agent": "mistral",
+    "run": 1,
+    "model": "mistral-large-2512",
+    "classification": "report",
+    "tokens_out": 7676,
+    "wall_s": 148.33,
+    "cost_usd": 0.1624,
+    "classifier_cost_usd": 0.000929,
+    "narrative_chars": 52318
+  },
+  {
+    "agent": "openai",
+    "run": 1,
+    "model": "gpt-5.5",
+    "classification": "report",
+    "tokens_out": 13926,
+    "wall_s": 172.11,
+    "cost_usd": 0.2664,
+    "classifier_cost_usd": 0.002456,
+    "narrative_chars": 53943
+  },
+  {
+    "agent": "anthropic",
+    "run": 1,
+    "model": "claude-opus-4-6",
+    "classification": "report",
+    "tokens_out": 54789,
+    "wall_s": 1027.57,
+    "cost_usd": 1.8781,
+    "classifier_cost_usd": 0.002775,
+    "narrative_chars": 48575
+  },
+  {
+    "agent": "qwen",
+    "run": 1,
+    "model": "qwen3.7-max-2026-05-20",
+    "classification": "report",
+    "tokens_out": 7617,
+    "wall_s": 139.4,
+    "cost_usd": 0.0613,
+    "classifier_cost_usd": 0.002481,
+    "narrative_chars": 25521
+  }
+]

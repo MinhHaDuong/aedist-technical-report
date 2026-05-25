@@ -1,0 +1,28 @@
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe). Begin the document directly with the inventory table — no title, no preamble, no overview section.
+
+**Structure:**
+1. **Plant Inventory:** A single pipe table with columns in this exact order:
+   Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+   - Do not split the table by status, fuel, or province.
+   - Aggregate ambiguous cases into a single row and explain in Notes.
+   - Use exact status terms: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired.
+
+2. **Per-Asset Notes:** Concise, sourced notes for major, disputed, ambiguous, or historically important assets. Straightforward operational assets need no note.
+
+3. **Annotated Bibliography:** Full citation for every source cited (original-language title + English translation for non-English sources; URL if available; summary annotation of what was drawn from each).
+
+**Scope:**
+- All thermal assets > 30 MWe at any stage of the lifecycle, including shelved or cancelled projects.
+- Include known plants even without a primary source (mark as LOW confidence and explain in Notes).
+
+**Rules:**
+- Never fabricate sources or URLs. If a source is unverified, mark it as 'URL not verified' or 'not found'.
+- Use the calibrated confidence vocabulary (HIGH, MEDIUM, LOW) based on evidence quality and independence.
+- Reconcile conflicting sources explicitly in Notes.
+- Record nameplate electrical capacity in MWe. If gross/net is unspecified, note it.
+- For multi-unit plants, record as Units × MW on one row unless distinct capacity, COD, owner, or status justifies separate rows.
+
+**Budget:**
+- Monitor token and dollar budgets closely. Preserve recall, provenance, and uncertainty notes; compress per-asset notes and bibliography annotations if budget becomes tight.
+
+Begin the inventory table immediately below this prompt.

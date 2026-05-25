@@ -1,0 +1,33 @@
+Produce a complete, primary-sourced Markdown reference inventory of Vietnam's past, present, and future thermal generation assets above 30 MWe, including operating, retired, construction, planned, shelved, and cancelled coal, domestic-gas, and imported-LNG power assets.
+
+Work in phases before final delivery if needed, within the session budget:
+1. Discovery pass: build the candidate universe from Vietnam PDP/PDP8/PDP7 documents, EVN and government materials, operator pages/annual reports, and admissible secondary trackers/reports. Search in English and Vietnamese. Include historical/retired and cancelled/shelved projects, not just current plants.
+2. Source-verification pass: for each candidate, identify admissible support for name, province, fuel, technology, units/capacity, status, as-of date, COD, and owner/developer. Prefer primary sources; use secondary only where primary cannot be found. Do not cite inadmissible tertiary sources in Source 1 or Source 2.
+3. Reconciliation pass: resolve duplicate names, renamed projects, power-center vs plant-level grouping, gross/net ambiguity, old vs current status, BOT/IPP ownership, fuel conversions, and capacity discrepancies. Mark unresolved items LOW and explain.
+4. Final report: output exactly the required Markdown document.
+
+Final document constraints:
+- Begin directly with the plant inventory table. No title, no preamble, no overview section.
+- The inventory must be exactly one pipe table, never split into subtables.
+- Columns must be in this exact order: Name (Vietnamese), Name (English), Province, Fuel (Coal / Domestic gas / Imported LNG), Technology (Subcritical / Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+- After the table, provide per-asset or per-project explanatory notes only where warranted: major, disputed, ambiguous, historically important, stale, cancelled/shelved, or low-confidence rows. Straightforward operational assets need no note beyond the table Notes field.
+- End with an annotated bibliography of every source cited. For each source include full citation, URL when available, original-language title plus English translation for non-English sources, and a short annotation explaining which facts were drawn from it.
+- Do not include statistical summaries, cross-tabs, or additional pipe tables. If aggregates are useful, mention them only in prose.
+
+Evidence and confidence rules:
+- Source 1 and Source 2 should be admissible, independently consulted sources that actually support the row attributes. Primary sources are official government documents, regulator-aggregated official data, and operator/owner filings or press releases. Admissible secondary sources include international-institution reports, bylined trade press, industry trackers/data brokers that expose underlying sources, EPC/financier disclosures, and credible company reports.
+- Not admissible for final justification: Wikipedia, Wikidata, DBpedia, mirrors, unsourced aggregators, and repository datasets that do not expose per-value sources. If such a source gave a lead but no admissible source is found, keep the asset if likely real, set Source fields to 'not found' as appropriate, mark LOW, and mention the lead type only in Notes.
+- Confidence: HIGH = at least two independent concordant sources, at least one primary. MEDIUM = one primary source, or a sourced aggregator citing a verifiable primary. LOW = secondary only, inferred, unresolved conflict, stale/uncorroborated, or not found. Merge sources sharing one origin; two citations from the same original source do not create HIGH confidence.
+- Hard ceilings: commercial operator self-reported but not officially confirmed is at most MEDIUM; status supported only by sources older than 24 months is at most MEDIUM, and older than 48 months is LOW; any 'not found' row is LOW.
+- Use exact status terms only: Announced, Pre-permit, Permitted, Construction, Operating, Shelved, Cancelled, Retired.
+- Each row should normally be a plant or distinct unit-group, not a whole power center, when units differ by capacity, COD, owner/developer, fuel, status, financing, or technology. Aggregate only where detail is unavailable and mark ambiguity.
+- Record electrical MWe nameplate. If sources do not specify gross vs net, note 'gross/net unspecified'. Do not mix heat, boiler, steam, investment-package, or thermal MW with electrical MWe.
+- Units × MW must reconcile with Total MWe, or the discrepancy must be explained in Notes.
+- Use Vietnamese names where available. If a Vietnamese name is not found, use the best official romanized/English project name and note the gap.
+
+Search guidance:
+- Use Vietnamese terms such as 'nhà máy nhiệt điện', 'trung tâm điện lực', 'khí', 'than', 'LNG', 'tổ máy', 'công suất', 'vận hành thương mại', 'khởi công', 'dừng', 'hủy', 'quy hoạch điện VIII', plus province and project names.
+- Prioritize likely asset families: coal plants and projects in Quảng Ninh, Hải Phòng, Thái Bình, Nam Định, Ninh Bình, Thanh Hóa, Nghệ An, Hà Tĩnh, Quảng Trị, Thừa Thiên Huế, Quảng Ngãi, Bình Thuận, Trà Vinh, Sóc Trăng, Hậu Giang, Long An, and other PDP-listed sites; gas/LNG assets in Bà Rịa-Vũng Tàu, Đồng Nai, TP.HCM, Cà Mau, Cần Thơ, Quảng Nam, Quảng Ngãi, Bình Thuận, Bạc Liêu, Long An, Hải Phòng, Thái Bình, Ninh Thuận, and relevant coastal provinces.
+- Use PDP8 and implementation-plan documents for future/cancelled/shelved project discovery but do not let a plan alone override later cancellation or operating evidence.
+
+If you need to use multiple turns before the report, first return a concise research plan and candidate checklist with the most important unresolved sourcing gaps. Once ready, provide the final report in the required format.

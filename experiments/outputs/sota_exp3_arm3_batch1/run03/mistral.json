@@ -1,0 +1,12 @@
+{
+  "agent": "mistral",
+  "run": 1,
+  "model": "mistral-large-2512",
+  "classification": "report",
+  "tokens_out": 15722,
+  "wall_s": 274.48,
+  "cost_usd": 0.0625,
+  "classifier_cost_usd": 0.001381,
+  "narrative_chars": 74865,
+  "evidence_pack_manifest": "evidence_packs/all18tables.yaml"
+}

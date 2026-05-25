@@ -1,0 +1,1208 @@
+{
+  "object": "conversation.response",
+  "conversation_id": "conv_019e5c05671072eda423f0b69cc7ba4e",
+  "outputs": [
+    {
+      "object": "entry",
+      "type": "message.output",
+      "created_at": "2026-05-24T22:08:03.056442Z",
+      "completed_at": "2026-05-24T22:09:59.092661Z",
+      "agent_id": "ag_019e5c05665d7307aa008d7c36790444",
+      "model": "mistral-large-2512",
+      "id": "msg_019e5c07e9f0758fb611808ae5795c90",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "---\n\n**Plant Inventory**\n\n| Name (Vietnamese)               | Name (English)                     | Province         | Fuel               | Technology         | Units × MW       | Total MWe | Status         | Status as-of-date | COD         | Owner/Developer                                                                 | Confidence | Source 1                                                                                     | Source 2                                                                                     | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |\n|----------------------------------|------------------------------------|------------------|--------------------|--------------------|------------------|-----------|----------------|-------------------|-------------|-----------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| Nhiệt điện Vũng Áng 1            | Vung Ang 1 Thermal Power Plant     | Hà Tĩnh          | Coal               | Subcritical        | 2 × 600          | 1,200     | Operating      | 2026-05-24        | 2014-12, 2015-05 | PetroVietnam (Lilama Corp)                                                        | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "The plant was reported to be 2 x 600 MW, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, including the most recent and detailed, have listed the capacity as 2 x 600 MW.[23]The plant&#x27;s owners expected to begin construction in March 2015; however, this didn&#x27;t happen.[24]"
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "In 2007, the Vung Ang II Thermal Power Joint Stock Company (VAPCO) was established to build and operate the power plant, a joint venture between OneEnergy Ltd and the Hanoi based Refrigeration Electrical Engineering Co. (REE). OneEnergy Lts is a 50:50 venture between the Hong Kong based CLP and the Tokyo based Mitsubishi Corp. The plant was reported to be 2 x 600 MW, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, including the most recent and detailed, have listed the capacity as 2 x 600 MW.[23]The plant&#x27;s owners expected to begin construction in March 2015; however, this didn&#x27;t happen.[24]"
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | Units 1 and 2 commissioned Dec 2014 and May 2015, respectively. As of Dec 2025, facing coal supply challenges and blending lower quality coal"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "The plant was reported to be 2 x 600 MW, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, including the most recent and detailed, have listed the capacity as 2 x 600 MW.[23]The plant&#x27;s owners expected to begin construction in March 2015; however, this didn&#x27;t happen.[24]"
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Vũng Áng 2            | Vung Ang 2 Thermal Power Plant     | Hà Tĩnh          | Coal               | Ultra-supercritical| 2 × 660          | 1,320     | Operating      | 2026-05-24        | 2026-04        | Mitsubishi Corp (60%), KEPCO (40%)                                                | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant",
+          "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+          "favicon": null,
+          "description": "The USD2.2bn ultra-supercritical (USC) project was developed under a build-operate-transfer (BOT) model by a strategic partnership of Japanese and Korean investors, namely <strong>Mitsubishi Corporation (60%) and KEPCO (40%).</strong>"
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | USD2.2bn ultra-supercritical (USC) project, BOT model. Officially inaugurated April 2026"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam inaugurates 1.32 GW Vung Ang II coal-fired power plant",
+          "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-inaugurates-132-gw-vung-ang-ii-coal-fired-power-plant.html",
+          "favicon": null,
+          "description": "The USD2.2bn ultra-supercritical (USC) project was developed under a build-operate-transfer (BOT) model by a strategic partnership of Japanese and Korean investors, namely <strong>Mitsubishi Corporation (60%) and KEPCO (40%).</strong>"
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Quảng Ninh 1          | Quang Ninh 1 Thermal Power Plant   | Quảng Ninh       | Coal               | Subcritical        | 2 × 300          | 600       | Operating      | 2026-05-24        | 2012-12, 2014-04 | Quang Ninh Thermal Power JSC (EVN majority)                                       | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Ninh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Ninh_power_station",
+          "favicon": null,
+          "description": "When built, <strong>Quang Ninh power station</strong> was the largest coal plant permitted in Vietnam.[2] In September 2024, <strong>Quang Ninh power station</strong> was temporarily taken offline in anticipation of Typhoon Yagi."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Units 3 and 4 (Quang Ninh 2) commissioned Dec 2012 and Apr 2014, respectively"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Ninh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Ninh_power_station",
+          "favicon": null,
+          "description": "When built, <strong>Quang Ninh power station</strong> was the largest coal plant permitted in Vietnam.[2] In September 2024, <strong>Quang Ninh power station</strong> was temporarily taken offline in anticipation of Typhoon Yagi."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Na Dương 1            | Na Duong 1 Thermal Power Plant     | Lạng Sơn          | Coal               | Subcritical        | 2 × 50           | 100       | Operating      | 2026-05-24        | 2005          | Vinacomin                                                                         | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Na Duong power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Na_Duong_power_station",
+          "favicon": null,
+          "description": "Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by <strong>Vinacomin</strong>, began construction in April 2002, and was completed in 2005."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Commissioned 2005"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Na Duong power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Na_Duong_power_station",
+          "favicon": null,
+          "description": "Na Dương-1, a two-unit, 100-MW coal-fired power plant owned by <strong>Vinacomin</strong>, began construction in April 2002, and was completed in 2005."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                             |\n| Nhiệt điện Sông Hậu 1            | Song Hau 1 Thermal Power Plant     | Hậu Giang         | Coal               | Supercritical      | 2 × 600          | 1,200     | Operating      | 2026-05-24        | 2022-07        | Petrovietnam                                                                     | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Viet Nam puts US$2 billion power plant into operation",
+          "url": "https://moit.gov.vn/en/news/energy/viet-nam-puts-us-2-billion-power-plant-into-operation.html",
+          "favicon": null,
+          "description": "Viet Nam Oil and Gas Group on Saturday put the <strong>US$2 billion</strong> Song Hau 1 thermal power plant into operation under the presence of ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                        |                                                                                             | USD2bn, commissioned July 2022"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Viet Nam puts US$2 billion power plant into operation",
+          "url": "https://moit.gov.vn/en/news/energy/viet-nam-puts-us-2-billion-power-plant-into-operation.html",
+          "favicon": null,
+          "description": "Viet Nam Oil and Gas Group on Saturday put the <strong>US$2 billion</strong> Song Hau 1 thermal power plant into operation under the presence of ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                             |\n| Nhiệt điện Vĩnh Tân 1            | Vinh Tan 1 Thermal Power Plant     | Bình Thuận        | Coal               | Subcritical        | 2 × 622.5        | 1,245     | Operating      | 2026-05-24        | 2018-12, 2019-12 | EVN (Shanghai Electric Group)                                                     | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Units 1 and 2 commissioned Dec 2018 and Dec 2019"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Vĩnh Tân 2            | Vinh Tan 2 Thermal Power Plant     | Bình Thuận        | Coal               | Supercritical      | 2 × 622.5        | 1,245     | Operating      | 2026-05-24        | 2014-12, 2015-06 | EVN (Shanghai Electric Group)                                                     | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Units 1 and 2 commissioned Dec 2014 and Jun 2015"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Vĩnh Tân 4            | Vinh Tan 4 Thermal Power Plant     | Bình Thuận        | Coal               | Ultra-supercritical| 2 × 600          | 1,200     | Operating      | 2026-05-24        | 2017-12, 2018-12 | EVN                                                                               | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Units 1 and 2 commissioned Dec 2017 and Dec 2018"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vinh Tan power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vinh_Tan_power_station",
+          "favicon": null,
+          "description": "In June 2018, faced with ongoing opposition to the plant by local residents, EVN proposed to the Government and the Ministry of Public Security to bring <strong>Vinh Tan Thermal Power Center</strong> into special security protection.[91] In March 2019, Vietnam’s ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Duyên Hải 1           | Duyen Hai 1 Thermal Power Plant    | Trà Vinh          | Coal               | Supercritical      | 2 × 622.5        | 1,245     | Operating      | 2026-05-24        | 2015-05, 2016-03 | EVN                                                                               | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "List of power stations in Vietnam - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+          "favicon": null,
+          "description": "The following page lists some of the power stations in Vietnam. Source: Initial query Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated using press releases, updated from PDP 7A · Source: updated with data from Ministry of Industry and Trade (MOIT) 2019 Report 58/BC-CBT, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Duyên Hải 3           | Duyen Hai 3 Thermal Power Plant    | Trà Vinh          | Coal               | Supercritical      | 2 × 600          | 1,200     | Operating      | 2026-05-24        | 2018-01, 2019-01 | EVN                                                                               | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "List of power stations in Vietnam - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+          "favicon": null,
+          "description": "The following page lists some of the power stations in Vietnam. Source: Initial query Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated using press releases, updated from PDP 7A · Source: updated with data from Ministry of Industry and Trade (MOIT) 2019 Report 58/BC-CBT, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Mông Dương 1          | Mong Duong 1 Thermal Power Plant   | Quảng Ninh       | Coal               | Supercritical      | 2 × 540          | 1,080     | Operating      | 2026-05-24        | 2015-04, 2015-10 | AES-VCM Mong Duong Power Co. (AES 51%, Posco Power 30%, China Investment Corp 19%) | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "List of power stations in Vietnam - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+          "favicon": null,
+          "description": "The following page lists some of the power stations in Vietnam. Source: Initial query Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated using press releases, updated from PDP 7A · Source: updated with data from Ministry of Industry and Trade (MOIT) 2019 Report 58/BC-CBT, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Mông Dương 2          | Mong Duong 2 Thermal Power Plant   | Quảng Ninh       | Coal               | Supercritical      | 1 × 1,080        | 1,080     | Operating      | 2026-05-24        | 2015-04        | AES-VCM Mong Duong Power Co.                                                      | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "List of power stations in Vietnam - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+          "favicon": null,
+          "description": "The following page lists some of the power stations in Vietnam. Source: Initial query Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated using press releases, updated from PDP 7A · Source: updated with data from Ministry of Industry and Trade (MOIT) 2019 Report 58/BC-CBT, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Nghi Sơn 2            | Nghi Son 2 Thermal Power Plant     | Thanh Hóa         | Coal               | Supercritical      | 2 × 660          | 1,320     | Operating      | 2026-05-24        | 2020-04, 2020-12 | Nghi Son 2 Power LLC (Mitsubishi Corp, KEPCO, etc.)                              | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Viet Nam puts US$2.8 billion thermal power plant into operation",
+          "url": "https://moit.gov.vn/en/news/energy/viet-nam-puts-us-2.8-billion-thermal-power-plant-into-operation.html",
+          "favicon": null,
+          "description": "On August 28, in Nghi Son town, ... (NS2PC) held the inauguration and commercial operation ceremony of <strong>Nghi Son 2 BOT Thermal Power Plant (TPP).</strong>..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "List of power stations in Vietnam - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam",
+          "favicon": null,
+          "description": "The following page lists some of the power stations in Vietnam. Source: Initial query Coal Tracker, updated with data from MOIT 2019 Report 58/BC-CBT, updated using press releases, updated from PDP 7A · Source: updated with data from Ministry of Industry and Trade (MOIT) 2019 Report 58/BC-CBT, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | USD2.8bn, BOT model, commissioned Apr and Dec 2020"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Viet Nam puts US$2.8 billion thermal power plant into operation",
+          "url": "https://moit.gov.vn/en/news/energy/viet-nam-puts-us-2.8-billion-thermal-power-plant-into-operation.html",
+          "favicon": null,
+          "description": "On August 28, in Nghi Son town, ... (NS2PC) held the inauguration and commercial operation ceremony of <strong>Nghi Son 2 BOT Thermal Power Plant (TPP).</strong>..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Vân Phong 1           | Van Phong 1 Thermal Power Plant    | Khánh Hòa         | Coal               | Supercritical      | 2 × 660          | 1,320     | Operating      | 2026-05-24        | 2024-03        | Sumitomo Corp, Hanoi Industrial Construction Corp (HANOINCO)                      | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Van Phong power station - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Van_Phong_power_station",
+          "favicon": null,
+          "description": "<strong>Van Phong power station</strong> is an operating power station of at least 1432-megawatts (MW) in Nihh Hoa, Khanh Hoa, Vietnam with multiple units, some of which are not currently operating."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Van Phong power station - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Van_Phong_power_station",
+          "favicon": null,
+          "description": "In January 2011, the Van Phong Economic Zone Management Authority approved a plan by the <strong>Sumitomo Corporation</strong> to build the two-unit, $2 billion, 1,320-MW, coal-fired Vân Phong-1, as part of a port-industrial complex being planned in Vân Phong ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | USD2.5bn, BOT model, commissioned Mar 2024"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Van Phong power station - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Van_Phong_power_station",
+          "favicon": null,
+          "description": "<strong>Van Phong power station</strong> is an operating power station of at least 1432-megawatts (MW) in Nihh Hoa, Khanh Hoa, Vietnam with multiple units, some of which are not currently operating."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Van Phong power station - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Van_Phong_power_station",
+          "favicon": null,
+          "description": "In January 2011, the Van Phong Economic Zone Management Authority approved a plan by the <strong>Sumitomo Corporation</strong> to build the two-unit, $2 billion, 1,320-MW, coal-fired Vân Phong-1, as part of a port-industrial complex being planned in Vân Phong ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Hải Dương              | Hai Duong Thermal Power Plant      | Hải Dương         | Coal               | Subcritical        | 2 × 300          | 600       | Operating      | 2026-05-24        | 2013-12, 2014-12 | EVN (Marubeni, Dongfang Electric)                                                 | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hai Phong Thermal Power Station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Hai_Phong_Thermal_Power_Station",
+          "favicon": null,
+          "description": "A December 2022 Greenpeace report indicated that <strong>Hải Phòng-3</strong> was pivoting to operation using LNG.[23] In May 2023, Vietnam officially approved the updated power development plan (PDP8)."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Phú Mỹ 1              | Phu My 1 CCGT Power Plant          | Bà Rịa-Vũng Tàu   | Domestic gas       | CCGT               | 3 × 240 + 1 × 360| 1,090     | Operating      | 2026-05-24        | 2000-05        | EVN (Mitsubishi Heavy Industries)                                                 | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Commissioned May 2000"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Phú Mỹ 2-1            | Phu My 2-1 CCGT Power Plant        | Bà Rịa-Vũng Tàu   | Domestic gas       | CCGT               | 6 × 150          | 900       | Operating      | 2026-05-24        | 1997          | EVN                                                                               | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Commissioned 1997"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                         |\n| Nhiệt điện Phú Mỹ 2-2            | Phu My 2-2 CCGT Power Plant        | Bà Rịa-Vũng Tàu   | Domestic gas       | CCGT               | 3 × 238.3        | 715       | Operating      | 2026-05-24        | 2005          | Mekong Energy Ltd (EDF, Sumitomo, Tokyo Electric Power)                           | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phu My 2-2 CCGT Power Plant Vietnam - GEO",
+          "url": "https://globalenergyobservatory.org/geoid/41196",
+          "favicon": null,
+          "description": "Phu My 2-2 CCGT Power Plant Vietnam is located at Phu My, Ba Ria-Vung Tau Province, Viet Nam. Location coordinates are: Latitude= 10.603, Longitude= 107.0374. This infrastructure is of TYPE Gas Power Plant with a design capacity of <strong>715 MWe</strong>. It has 3 unit(s). The first unit was commissioned ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | Commissioned 2005"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phú Mỹ Power Plants - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ph%C3%BA_M%E1%BB%B9_Power_Plants",
+          "favicon": null,
+          "description": "The Phú Mỹ 2–2 power plant is a 715 MW combined cycle power plant with two gas-fired turbines and an add-on steam turbine. The plant is operated by <strong>Mekong Energy Limited</strong>, a consortium of Électricité de France, Sumitomo and the Tokyo Electric Power Company. Natural gas for the plant is ..."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Phu My 2-2 CCGT Power Plant Vietnam - GEO",
+          "url": "https://globalenergyobservatory.org/geoid/41196",
+          "favicon": null,
+          "description": "Phu My 2-2 CCGT Power Plant Vietnam is located at Phu My, Ba Ria-Vung Tau Province, Viet Nam. Location coordinates are: Latitude= 10.603, Longitude= 107.0374. This infrastructure is of TYPE Gas Power Plant with a design capacity of <strong>715 MWe</strong>. It has 3 unit(s). The first unit was commissioned ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Ô Môn 1               | O Mon 1 CCGT Power Plant           | Cần Thơ           | Domestic gas       | CCGT               | 1 × 660          | 660       | Operating      | 2026-05-24        | 2015-03        | EVN                                                                               | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "O Mon Power Complex - Global Energy Monitor",
+          "url": "https://www.gem.wiki/O_Mon_Power_Complex",
+          "favicon": null,
+          "description": "In February 2021, IJGlobal reported ... the investment planning for the project.[37] The output of the project was confirmed as <strong>1,050 MW</strong> and the companies are expecting the plant to commence operations in 2024-2025...."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện Ô Môn 2               | O Mon 2 CCGT Power Plant           | Cần Thơ           | Domestic gas       | CCGT               | 1 × 750          | 750       | Operating      | 2026-05-24        | 2025-03        | Vietracimex (Marubeni)                                                            | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "O Mon Power Complex - Global Energy Monitor",
+          "url": "https://www.gem.wiki/O_Mon_Power_Complex",
+          "favicon": null,
+          "description": "In February 2021, IJGlobal reported ... the investment planning for the project.[37] The output of the project was confirmed as <strong>1,050 MW</strong> and the companies are expecting the plant to commence operations in 2024-2025...."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Commissioned Mar 2025"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "O Mon Power Complex - Global Energy Monitor",
+          "url": "https://www.gem.wiki/O_Mon_Power_Complex",
+          "favicon": null,
+          "description": "In February 2021, IJGlobal reported ... the investment planning for the project.[37] The output of the project was confirmed as <strong>1,050 MW</strong> and the companies are expecting the plant to commence operations in 2024-2025...."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Ô Môn 4               | O Mon 4 CCGT Power Plant           | Cần Thơ           | Domestic gas       | CCGT               | 1 × 1,155        | 1,155     | Construction   | 2026-05-24        | 2026+         | Petrovietnam                                                                      | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "O Mon IV Combined Cycle Power Plant, Vietnam",
+          "url": "https://www.power-technology.com/projects/o-mon-iv-combined-cycle-power-plant-vietnam/",
+          "favicon": null,
+          "description": "O Mon IV (O Mon 4) is a 1,155MW combined-cycle gas turbine (CCGT) power plant under development by <strong>Petrovietnam</strong>, a government-owned corporation in Vietnam."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Under development, 1,155 MW"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "O Mon IV Combined Cycle Power Plant, Vietnam",
+          "url": "https://www.power-technology.com/projects/o-mon-iv-combined-cycle-power-plant-vietnam/",
+          "favicon": null,
+          "description": "O Mon IV (O Mon 4) is a 1,155MW combined-cycle gas turbine (CCGT) power plant under development by <strong>Petrovietnam</strong>, a government-owned corporation in Vietnam."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                              |\n| Nhiệt điện Nhơn Trạch 3 & 4      | Nhon Trach 3 & 4 CCGT Power Plant | Đồng Nai          | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Operating      | 2026-05-24        | 2024-12        | PetroVietnam Power Corp                                                           | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Nhon Trach power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Nhon_Trach_power_station",
+          "favicon": null,
+          "description": "In order to finance these units, PetroVietnam Power has so far signed credit agreements such as a US$200 million Sumitomo Mitsubishi Banking Corporation/SACE loan on March 31, 2023; a VND4,000 billion Vietcombank loan on September 26, 2023; and facility agreements worth US$521.5 million with a consortium of two banks, Citi and ING, insured by KSURE and SERV.[22][23] Other financiers include Commerzbank, DZ Bank, LBW, Bank of China, OCMBC Bank, and Vietnam Oil and Gas Group Co.[24] This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. ↑ https://web.archive.org/web/20240125091319/https://datasets.wri.org/dataset/globalpowerplantdatabase."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "$2.5 bln LNG power plant in northern Vietnam set for groundbreaking in late 2025",
+          "url": "https://theinvestor.vn/25-bln-lng-power-plant-in-northern-vietnam-set-for-groundbreaking-in-late-2025-d16005.html",
+          "favicon": null,
+          "description": "With an installed capacity of <strong>1,500 MW</strong>, the plant will utilize combined cycle gas turbine (CCGT) technology and is expected to operate 6,000 hours per year, generating around 9 billion kWh annually."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | First LNG power plants in Vietnam, commercial operation expected 2024"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Nhon Trach power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Nhon_Trach_power_station",
+          "favicon": null,
+          "description": "In order to finance these units, PetroVietnam Power has so far signed credit agreements such as a US$200 million Sumitomo Mitsubishi Banking Corporation/SACE loan on March 31, 2023; a VND4,000 billion Vietcombank loan on September 26, 2023; and facility agreements worth US$521.5 million with a consortium of two banks, Citi and ING, insured by KSURE and SERV.[22][23] Other financiers include Commerzbank, DZ Bank, LBW, Bank of China, OCMBC Bank, and Vietnam Oil and Gas Group Co.[24] This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. ↑ https://web.archive.org/web/20240125091319/https://datasets.wri.org/dataset/globalpowerplantdatabase."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "$2.5 bln LNG power plant in northern Vietnam set for groundbreaking in late 2025",
+          "url": "https://theinvestor.vn/25-bln-lng-power-plant-in-northern-vietnam-set-for-groundbreaking-in-late-2025-d16005.html",
+          "favicon": null,
+          "description": "With an installed capacity of <strong>1,500 MW</strong>, the plant will utilize combined cycle gas turbine (CCGT) technology and is expected to operate 6,000 hours per year, generating around 9 billion kWh annually."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Sơn Mỹ 2              | Son My 2 CCGT Power Plant          | Bình Định         | Imported LNG       | CCGT               | 3 × 750          | 2,250     | Permitted      | 2026-05-24        | 2025+         | AES Vietnam (AES Corp)                                                            | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam approves the 2.2 GW Son My 2 CCGT power plant project | Enerdata",
+          "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-approves-22-gw-son-my-2-ccgt-power-plant-project.html",
+          "favicon": null,
+          "description": "The power plant, developed by <strong>AES Vietnam</strong> (a subsidiary of the US group AES Corporation), is estimated to require an investment of US$1.8bn and is expected to enter a 20-year power purchase agreement (PPA) with the Vietnamese government once ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "AES gains Vietnamese approval for CCGT power plant-LNG project",
+          "url": "https://www.power-eng.com/gas/aes-gains-vietnamese-approval-for-ccgt-power-plant-lng-project/",
+          "favicon": null,
+          "description": "The <strong>AES Corp.</strong> will develop a massive, 2.2-GW combined cycle gas turbine (CCGT) power plant in Vietnam. The Virginia-based power generator and distributor"
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | USD1.8bn, 20-year PPA, construction started 2023, COD expected 2025"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam approves the 2.2 GW Son My 2 CCGT power plant project | Enerdata",
+          "url": "https://www.enerdata.net/publications/daily-energy-news/vietnam-approves-22-gw-son-my-2-ccgt-power-plant-project.html",
+          "favicon": null,
+          "description": "The power plant, developed by <strong>AES Vietnam</strong> (a subsidiary of the US group AES Corporation), is estimated to require an investment of US$1.8bn and is expected to enter a 20-year power purchase agreement (PPA) with the Vietnamese government once ..."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "AES gains Vietnamese approval for CCGT power plant-LNG project",
+          "url": "https://www.power-eng.com/gas/aes-gains-vietnamese-approval-for-ccgt-power-plant-lng-project/",
+          "favicon": null,
+          "description": "The <strong>AES Corp.</strong> will develop a massive, 2.2-GW combined cycle gas turbine (CCGT) power plant in Vietnam. The Virginia-based power generator and distributor"
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Thái Bình LNG         | Thai Binh LNG CCGT Power Plant     | Thái Bình         | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Permitted      | 2026-05-24        | 2028-2029     | Tokyo Gas (40%), Kyuden Group (30%), Truong Thanh Vietnam (30%)                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "$2.5 bln LNG power plant in northern Vietnam set for groundbreaking in late 2025",
+          "url": "https://theinvestor.vn/25-bln-lng-power-plant-in-northern-vietnam-set-for-groundbreaking-in-late-2025-d16005.html",
+          "favicon": null,
+          "description": "With an installed capacity of <strong>1,500 MW</strong>, the plant will utilize combined cycle gas turbine (CCGT) technology and is expected to operate 6,000 hours per year, generating around 9 billion kWh annually."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Groundbreaking late 2025, COD Q4/2028 and Q4/2029"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "$2.5 bln LNG power plant in northern Vietnam set for groundbreaking in late 2025",
+          "url": "https://theinvestor.vn/25-bln-lng-power-plant-in-northern-vietnam-set-for-groundbreaking-in-late-2025-d16005.html",
+          "favicon": null,
+          "description": "With an installed capacity of <strong>1,500 MW</strong>, the plant will utilize combined cycle gas turbine (CCGT) technology and is expected to operate 6,000 hours per year, generating around 9 billion kWh annually."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                         |\n| Nhiệt điện Long Sơn               | Long Son LNG Power Plant           | Bà Rịa-Vũng Tàu   | Imported LNG       | CCGT               | 3 × 1,200        | 3,600     | Announced      | 2026-05-24        | 2031-2035     | EVNGENCO 3                                                                        | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Son power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Son_power_station",
+          "favicon": null,
+          "description": "This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. The project was initially announced in June 2017.[11] The project includes building three 1,200-MW combined-cycle gas-fired plants in three phases and an LNG terminal port with a capacity of 3.5 million tons/year.[12]"
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnamese Government approves Power Development Master Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnamese-government-approves-power-development-master-plan-viii/",
+          "favicon": null,
+          "description": "Block B, Blue Whale gas mines will be sped up and be used for eight domestic gas to power projects accounting for 6,900 MW. Quang Tri power project will use gas from Yellow Leopard gas mines; the development of LNG to Power projects will be limited to prevent the risk of relying on imported fuel and also ensure the tariff is reasonable for the Vietnam market. By 2050, LNG to Power plants will gradually switch to hydrogen use; and · the COD of Long Son LNG to Power project has been adjusted until the period of 2031 – 2035."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | 3 phases, 3,600 MW total, COD adjusted to 2031–2035"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Son power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Son_power_station",
+          "favicon": null,
+          "description": "This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. The project was initially announced in June 2017.[11] The project includes building three 1,200-MW combined-cycle gas-fired plants in three phases and an LNG terminal port with a capacity of 3.5 million tons/year.[12]"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnamese Government approves Power Development Master Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnamese-government-approves-power-development-master-plan-viii/",
+          "favicon": null,
+          "description": "Block B, Blue Whale gas mines will be sped up and be used for eight domestic gas to power projects accounting for 6,900 MW. Quang Tri power project will use gas from Yellow Leopard gas mines; the development of LNG to Power projects will be limited to prevent the risk of relying on imported fuel and also ensure the tariff is reasonable for the Vietnam market. By 2050, LNG to Power plants will gradually switch to hydrogen use; and · the COD of Long Son LNG to Power project has been adjusted until the period of 2031 – 2035."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện LNG Quảng Trạch 1      | Quang Trach 1 LNG Power Plant      | Quảng Bình        | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Construction   | 2026-05-24        | 2026+         | PetroVietnam (Mitsubishi, Hyundai E&C, CC1)                                       | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Trach Power Center - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+          "favicon": null,
+          "description": "In October 2020 EVN tendered ... the engineering, procurement, and construction contract for building the <strong>Quang Trach-1 power station</strong>, valued at VND 30.2 billion.[29]..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Construction started Dec 2020, COD expected 2024"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Trach Power Center - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Trach_Power_Center",
+          "favicon": null,
+          "description": "In October 2020 EVN tendered ... the engineering, procurement, and construction contract for building the <strong>Quang Trach-1 power station</strong>, valued at VND 30.2 billion.[29]..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện LNG Quảng Trạch 3      | Quang Trach 3 LNG Power Plant      | Quảng Bình        | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Announced      | 2026-05-24        | 2031-2035     |                                                                                   | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "Under Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031 – 2035 with the estimated capacity of <strong>1500 MW per project</strong>, including: ... Extended Ca Mau Power Plant 1&amp;2."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Reserve project, 1,500 MW"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "Under Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031 – 2035 with the estimated capacity of <strong>1500 MW per project</strong>, including: ... Extended Ca Mau Power Plant 1&amp;2."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                 |\n| Nhiệt điện LNG Cà Ná             | Ca Na LNG Power Plant              | Ninh Thuận        | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Pre-permit     | 2026-05-24        | 2028          |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "The Revised PDP8 specifically requires the <strong>LNG Ca Na Project, LNG Quynh Lap, LNG Nghi Son, LNG Long Son, LNG Bac Lieu and LNG Son My I&amp;II</strong> projects to have solutions to ensure operational progress follow the approved plan."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | Investor selection Q1–Q4 2025, COD 2028"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "The Revised PDP8 specifically requires the <strong>LNG Ca Na Project, LNG Quynh Lap, LNG Nghi Son, LNG Long Son, LNG Bac Lieu and LNG Son My I&amp;II</strong> projects to have solutions to ensure operational progress follow the approved plan."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện LNG Quỳnh Lập         | Quynh Lap LNG Power Plant          | Nghệ An           | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Announced      | 2026-05-24        | 2030+         |                                                                                   | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "The Revised PDP8 specifically requires the <strong>LNG Ca Na Project, LNG Quynh Lap, LNG Nghi Son, LNG Long Son, LNG Bac Lieu and LNG Son My I&amp;II</strong> projects to have solutions to ensure operational progress follow the approved plan."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện LNG Nghi Sơn           | Nghi Son LNG Power Plant           | Thanh Hóa         | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Announced      | 2026-05-24        | 2030+         |                                                                                   | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "The Revised PDP8 specifically requires the <strong>LNG Ca Na Project, LNG Quynh Lap, LNG Nghi Son, LNG Long Son, LNG Bac Lieu and LNG Son My I&amp;II</strong> projects to have solutions to ensure operational progress follow the approved plan."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện LNG Bạc Liêu          | Bac Lieu LNG Power Plant           | Bạc Liêu          | Imported LNG       | CCGT               | 4 × 800          | 3,200     | Announced      | 2026-05-24        | 2025-2030     |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | COD between 2025 and 2030"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                 |\n| Nhiệt điện LNG Sơn Mỹ I & II      | Son My I & II LNG Power Plant      | Bình Thuận        | Imported LNG       | CCGT               | 2 × 2,250        | 4,500     | Announced      | 2026-05-24        | 2027+         |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "$2.5 bln LNG power plant in northern Vietnam set for groundbreaking in late 2025",
+          "url": "https://theinvestor.vn/25-bln-lng-power-plant-in-northern-vietnam-set-for-groundbreaking-in-late-2025-d16005.html",
+          "favicon": null,
+          "description": "With an installed capacity of <strong>1,500 MW</strong>, the plant will utilize combined cycle gas turbine (CCGT) technology and is expected to operate 6,000 hours per year, generating around 9 billion kWh annually."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| Nhiệt điện LNG Hải Phòng II      | Hai Phong II LNG Power Plant       | Hải Phòng         | Imported LNG       | CCGT               | 2 × 1,600        | 3,200     | Announced      | 2026-05-24        | 2030+         |                                                                                   | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "Under Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031 – 2035 with the estimated capacity of <strong>1500 MW per project</strong>, including: ... Extended Ca Mau Power Plant 1&amp;2."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Reserve project, 3,200 MW"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/",
+          "favicon": null,
+          "description": "Under Table 2 of Annex III, the Revised PDP8 updates five reserve development LNG to power projects for the period 2031 – 2035 with the estimated capacity of <strong>1500 MW per project</strong>, including: ... Extended Ca Mau Power Plant 1&amp;2."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                 |\n| Nhiệt điện LNG Long An I          | Long An I LNG Power Plant          | Long An           | Imported LNG       | CCGT               | 2 × 750          | 1,500     | Announced      | 2026-05-24        | 2030+         | Tan Tao Group                                                                     | MEDIUM     |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long An power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_An_power_station",
+          "favicon": null,
+          "description": "The provincial government is supporting the use of LNG for the proposed plant.[14] In 2007, ITA-Power Company, a subsidiary of the <strong>Tan Tao Group</strong>, announced that it was planning to build a 600-MW coal power plant in the Cần Đước district ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Provincial government supports LNG conversion"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long An power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_An_power_station",
+          "favicon": null,
+          "description": "The provincial government is supporting the use of LNG for the proposed plant.[14] In 2007, ITA-Power Company, a subsidiary of the <strong>Tan Tao Group</strong>, announced that it was planning to build a 600-MW coal power plant in the Cần Đước district ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện LNG Hiệp Phước         | Hiep Phuoc LNG Power Plant         | TP.HCM            | Imported LNG       | CCGT               | 2 × 600          | 1,200     | Permitted      | 2026-05-24        | 2026+         |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hiep Phuoc power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Hiep_Phuoc_power_station",
+          "favicon": null,
+          "description": "Hiep Phuoc power station is an operating power station of at least 375-megawatts (MW) in Phuoc Kien, Ho Chi Minh City, Vietnam with multiple units, some of which are not currently operating. It is also known as Hiep Phuoc LNG project, LNG Hiep Phuoc Phase II, LNG Hiep Phuoc Phase I."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Phase 1, 1,200 MW, COD expected 2026+"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hiep Phuoc power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Hiep_Phuoc_power_station",
+          "favicon": null,
+          "description": "Hiep Phuoc power station is an operating power station of at least 375-megawatts (MW) in Phuoc Kien, Ho Chi Minh City, Vietnam with multiple units, some of which are not currently operating. It is also known as Hiep Phuoc LNG project, LNG Hiep Phuoc Phase II, LNG Hiep Phuoc Phase I."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Quảng Ninh III        | Quang Ninh 3 Thermal Power Plant   | Quảng Ninh       | Coal               | Supercritical      | 2 × 600          | 1,200     | Shelved        | 2026-05-24        |             |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Ninh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Ninh_power_station",
+          "favicon": null,
+          "description": "PDP8 listed <strong>Quang Ninh III</strong> among the projects that would not move forward.[14] Quảng Ninh-1: US$510 million - China Import-Export Bank, loan; US$90 million - Quang Ninh Thermal Power Joint Stock Company, equity."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | PDP8 lists as not moving forward"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Quang Ninh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Quang_Ninh_power_station",
+          "favicon": null,
+          "description": "PDP8 listed <strong>Quang Ninh III</strong> among the projects that would not move forward.[14] Quảng Ninh-1: US$510 million - China Import-Export Bank, loan; US$90 million - Quang Ninh Thermal Power Joint Stock Company, equity."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                            |\n| Nhiệt điện Hải Phòng 3           | Hai Phong 3 Thermal Power Plant    | Hải Phòng         | Coal (→LNG)        | Supercritical      | 4 × 600          | 2,400     | Shelved        | 2026-05-24        |             | Vinacomin                                                                         | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hai Phong Thermal Power Station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Hai_Phong_Thermal_Power_Station",
+          "favicon": null,
+          "description": "A December 2022 Greenpeace report indicated that <strong>Hải Phòng-3</strong> was pivoting to operation using LNG.[23] In May 2023, Vietnam officially approved the updated power development plan (PDP8)."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Pivoting to LNG, presumed shelved"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Hai Phong Thermal Power Station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Hai_Phong_Thermal_Power_Station",
+          "favicon": null,
+          "description": "A December 2022 Greenpeace report indicated that <strong>Hải Phòng-3</strong> was pivoting to operation using LNG.[23] In May 2023, Vietnam officially approved the updated power development plan (PDP8)."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                         |\n| Nhiệt điện Sông Hậu 3            | Song Hau 3 Thermal Power Plant     | Hậu Giang         | Coal               | Supercritical      | 2 × 1,000        | 2,000     | Cancelled      | 2026-05-24        |             |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Song Hau Thermal Power Plant - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+          "favicon": null,
+          "description": "According to PDP7, released in 2016, Phase I is in construction with completion scheduled for 2019, Phase II is scheduled for completion in 2021 and 2022, and Phase III is cancelled.[73] In December 2022, Vietnam and a coalition of countries led by the European Union and the UK concluded a Just Energy Transition Partnership agreement with US$15.5 billion to fund the development and implementation of a plan to cap and then phase out unabated coal generation. The agreement proposed reducing Vietnam’s coal fleet capacity from 37 GW to 30.2 GW by 2030 and a path to “phasing out unabated coal-fired power generation after those dates.” As of January 2023, the Global Coal Plant Tracker estimated Vietnam had 24.7 GW in coal capacity, with a further 6.1 GW under construction."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Cancelled in PDP7"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Song Hau Thermal Power Plant - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Song_Hau_Thermal_Power_Plant",
+          "favicon": null,
+          "description": "According to PDP7, released in 2016, Phase I is in construction with completion scheduled for 2019, Phase II is scheduled for completion in 2021 and 2022, and Phase III is cancelled.[73] In December 2022, Vietnam and a coalition of countries led by the European Union and the UK concluded a Just Energy Transition Partnership agreement with US$15.5 billion to fund the development and implementation of a plan to cap and then phase out unabated coal generation. The agreement proposed reducing Vietnam’s coal fleet capacity from 37 GW to 30.2 GW by 2030 and a path to “phasing out unabated coal-fired power generation after those dates.” As of January 2023, the Global Coal Plant Tracker estimated Vietnam had 24.7 GW in coal capacity, with a further 6.1 GW under construction."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                                          |\n| Nhiệt điện Vũng Áng 3            | Vung Ang 3 Thermal Power Plant     | Hà Tĩnh          | Coal (→Gas)        | Supercritical      | 2 × 600          | 1,200     | Shelved        | 2026-05-24        |             | Samsung C&T (→?)                                                                  | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "The plant was reported to be <strong>2 x 600 MW</strong>, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "In January 2023, a Vietnam Finance article described <strong>Vũng Áng-3</strong> as a gas project.[84] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | Switched to gas, investment refunded, presumed shelved"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "The plant was reported to be <strong>2 x 600 MW</strong>, with an estimated capital cost of US$1.2 billion.[9] The Vietnamese government approved the plant in March 2009.[21] Although one source reported the plant to be 2 x 660 MW in capacity,[22] other sources, ..."
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vung Ang power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Vung_Ang_power_station",
+          "favicon": null,
+          "description": "In January 2023, a Vietnam Finance article described <strong>Vũng Áng-3</strong> as a gas project.[84] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Long Phú 2            | Long Phu 2 Thermal Power Plant     | Sóc Trăng         | Coal               | Supercritical      | 2 × 660          | 1,320     | Shelved        | 2026-05-24        |             | Tata Power                                                                        | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Phu Power Centre - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Phu_Power_Centre",
+          "favicon": null,
+          "description": "In December 2022, <strong>Long Phú-2</strong> was mentioned in a Vietnam Investment Review article.[20] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Presumed shelved, not in PDP8"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Phu Power Centre - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Phu_Power_Centre",
+          "favicon": null,
+          "description": "In December 2022, <strong>Long Phú-2</strong> was mentioned in a Vietnam Investment Review article.[20] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                              |\n| Nhiệt điện Long Phú 3            | Long Phu 3 Thermal Power Plant     | Sóc Trăng         | Coal               | Supercritical      | 2 × 660          | 1,320     | Shelved        | 2026-05-24        |             |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Phu Power Centre - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Phu_Power_Centre",
+          "favicon": null,
+          "description": "In December 2022, <strong>Long Phú-2</strong> was mentioned in a Vietnam Investment Review article.[20] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | PDP8 lists as not moving forward"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Long Phu Power Centre - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Long_Phu_Power_Centre",
+          "favicon": null,
+          "description": "In December 2022, <strong>Long Phú-2</strong> was mentioned in a Vietnam Investment Review article.[20] In May 2023, Vietnam officially approved the updated power development plan (PDP8). Under this plan, the country will domestically generate 20% of its ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                                                            |\n| Nhiệt điện Phả Lại 3             | Pha Lai 3 Thermal Power Plant      | Hải Dương         | Coal               | Supercritical      | 1 × 660          | 660       | Shelved        | 2026-05-24        |             | Pha Lai Thermal Power JSC                                                         | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Pha Lai Power Complex - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Pha_Lai_Power_Complex",
+          "favicon": null,
+          "description": "In January 2019 <strong>Phả Lại Thermal Power JSC announced that it was conducting a pre-feasibility study to add Phả Lại-3 to the Power Development Plan VIII and expected to break ground in 2020-2021.[15] In October 2019 Phả Lại Thermal Power JSC convened a meeting of the People&#x27;s Committee of Chi Linh City, National Power Transmission Corporation, and Hai Duong Power Company to plan for the development of the 660-MW Phả Lại-3 coal-fired plant.[16] In June 2021, the Ministry of Industry and Trade stated that the Phả Lại-3 expansion would probably be delayed until after 2030 due to difficulties in mobilizing capital.[17] An October 2021 report by GreenID lists the Phả Lại-3 power station</strong> ..."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Delayed until after 2030 due to capital mobilization difficulties"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Pha Lai Power Complex - Global Energy Monitor - GEM.wiki",
+          "url": "https://www.gem.wiki/Pha_Lai_Power_Complex",
+          "favicon": null,
+          "description": "In January 2019 <strong>Phả Lại Thermal Power JSC announced that it was conducting a pre-feasibility study to add Phả Lại-3 to the Power Development Plan VIII and expected to break ground in 2020-2021.[15] In October 2019 Phả Lại Thermal Power JSC convened a meeting of the People&#x27;s Committee of Chi Linh City, National Power Transmission Corporation, and Hai Duong Power Company to plan for the development of the 660-MW Phả Lại-3 coal-fired plant.[16] In June 2021, the Ministry of Industry and Trade stated that the Phả Lại-3 expansion would probably be delayed until after 2030 due to difficulties in mobilizing capital.[17] An October 2021 report by GreenID lists the Phả Lại-3 power station</strong> ..."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Thái Bình 3           | Thai Binh 3 Thermal Power Plant    | Thái Bình         | Coal               | Supercritical      | 1 × 440          | 440       | Shelved        | 2026-05-24        |             | Vinacomin                                                                         | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Thai Binh Power Center - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Thai_Binh_Power_Center",
+          "favicon": null,
+          "description": "In July 2018 it was reported that the Vietnam National Coal and Mineral Industries Group (Vinacomin) was pursuing a 440 MW addition at the plant, which has been included in the country&#x27;s Power Plan VII.[30] As of December 2020 the project has not advanced in more than two years, and appears to be shelved."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | No progress in over two years, presumed shelved"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Thai Binh Power Center - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Thai_Binh_Power_Center",
+          "favicon": null,
+          "description": "In July 2018 it was reported that the Vietnam National Coal and Mineral Industries Group (Vinacomin) was pursuing a 440 MW addition at the plant, which has been included in the country&#x27;s Power Plan VII.[30] As of December 2020 the project has not advanced in more than two years, and appears to be shelved."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Công Thanh            | Cong Thanh Thermal Power Plant     | Thanh Hóa         | Coal (→LNG)        | Supercritical      | 2 × 600          | 1,200     | Shelved        | 2026-05-24        |             | Cong Thanh Group                                                                  | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Cong Thanh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Cong_Thanh_power_station",
+          "favicon": null,
+          "description": "This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. In March 2011, land clearing began on the two-unit, 600-MW, $620 million Cong Thanh power station in the Nghi Son Economic Zone, in the northern-central province of Thanh Hoa.[12] In July 2012, General Electric announced that it would be supplying one of the new plant&#x27;s turbines.[13]"
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Cong Thanh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Cong_Thanh_power_station",
+          "favicon": null,
+          "description": "The agreement proposed reducing Vietnam’s coal fleet capacity from 37 GW to 30.2 GW by 2030 and a path to “phasing out unabated coal-fired power generation after those dates.” As of January 2023, the Global Coal Plant Tracker estimated Vietnam had 24.7 GW in coal capacity, with a further 6.1 GW under construction. The deal noted a detailed plan would be finalized by November 2023 to guide the long-term transition plan.[29][30][31] The project was presumed shelved, but must be monitored for potential new developments."
+        },
+        {
+          "type": "text",
+          "text": "                                                                                 | Investors proposed LNG conversion, presumed shelved"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Cong Thanh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Cong_Thanh_power_station",
+          "favicon": null,
+          "description": "This ownership tree is part of the Global Energy Ownership Tracker, a project of Global Energy Monitor. In March 2011, land clearing began on the two-unit, 600-MW, $620 million Cong Thanh power station in the Nghi Son Economic Zone, in the northern-central province of Thanh Hoa.[12] In July 2012, General Electric announced that it would be supplying one of the new plant&#x27;s turbines.[13]"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Cong Thanh power station - Global Energy Monitor",
+          "url": "https://www.gem.wiki/Cong_Thanh_power_station",
+          "favicon": null,
+          "description": "The agreement proposed reducing Vietnam’s coal fleet capacity from 37 GW to 30.2 GW by 2030 and a path to “phasing out unabated coal-fired power generation after those dates.” As of January 2023, the Global Coal Plant Tracker estimated Vietnam had 24.7 GW in coal capacity, with a further 6.1 GW under construction. The deal noted a detailed plan would be finalized by November 2023 to guide the long-term transition plan.[29][30][31] The project was presumed shelved, but must be monitored for potential new developments."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                     |\n| Nhiệt điện Dung Quất I-III       | Dung Quat I-III CCGT Power Plant   | Quảng Ngãi        | Domestic gas       | CCGT               | 3 × 750          | 2,250     | Announced      | 2026-05-24        | 2030          |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | Utilizing natural gas from the Blue Whale Gas Field, COD 2030"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Insights into Vietnam's decision on implementation plan for revised PDP VIII",
+          "url": "https://theinvestor.vn/insights-into-vietnams-decision-on-implementation-plan-for-revised-pdp-viii-d16105.html",
+          "favicon": null,
+          "description": "The revised Implementation Plan introduces a total capacity of <strong>22,524 MW</strong> to LNG thermal power plants, to be fully materialized by 2030 and shall be accounting for 9.5-12.3% of the total generation mix."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                             |\n| Nhiệt điện Block B               | Block B Gas Power Plant            | Multiple          | Domestic gas       | CCGT               | 8 × 862.5        | 6,900     | Announced      | 2026-05-24        | 2026-2030     |                                                                                   | HIGH       |"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnamese Government approves Power Development Master Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnamese-government-approves-power-development-master-plan-viii/",
+          "favicon": null,
+          "description": "Block B, Blue Whale gas mines will be sped up and be used for eight domestic gas to power projects accounting for 6,900 MW. Quang Tri power project will use gas from Yellow Leopard gas mines; the development of LNG to Power projects will be limited to prevent the risk of relying on imported fuel and also ensure the tariff is reasonable for the Vietnam market. By 2050, LNG to Power plants will gradually switch to hydrogen use; and · the COD of Long Son LNG to Power project has been adjusted until the period of 2031 – 2035."
+        },
+        {
+          "type": "text",
+          "text": "                                                                       |                                                                                             | 8 domestic gas-to-power projects, 6,900 MW total, COD 2026–2030"
+        },
+        {
+          "type": "tool_reference",
+          "tool": "web_search",
+          "title": "Vietnamese Government approves Power Development Master Plan VIII - Watson Farley & Williams",
+          "url": "https://www.wfw.com/articles/vietnamese-government-approves-power-development-master-plan-viii/",
+          "favicon": null,
+          "description": "Block B, Blue Whale gas mines will be sped up and be used for eight domestic gas to power projects accounting for 6,900 MW. Quang Tri power project will use gas from Yellow Leopard gas mines; the development of LNG to Power projects will be limited to prevent the risk of relying on imported fuel and also ensure the tariff is reasonable for the Vietnam market. By 2050, LNG to Power plants will gradually switch to hydrogen use; and · the COD of Long Son LNG to Power project has been adjusted until the period of 2031 – 2035."
+        },
+        {
+          "type": "text",
+          "text": ".                                                                                                                                                                                                                                                                                                                                                                                             |"
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 47866,
+    "completion_tokens": 5901,
+    "total_tokens": 53767
+  },
+  "guardrails": null
+}

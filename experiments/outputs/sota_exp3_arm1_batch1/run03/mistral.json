@@ -1,0 +1,11 @@
+{
+  "agent": "mistral",
+  "run": 1,
+  "model": "mistral-large-2512",
+  "classification": "report",
+  "tokens_out": 12008,
+  "wall_s": 235.63,
+  "cost_usd": 0.2689,
+  "classifier_cost_usd": 0.001036,
+  "narrative_chars": 76061
+}
