@@ -79,7 +79,7 @@ How well do the state of the art tools perform when it comes to producing resear
 
 ![Figure 3](../report/inputs/generated/fig_exp2_arms_comparison.pdf)
 
-*Figure 3. Experiment 2 — naive (single-shot) vs optimised (multi-turn) arm, N=5 per agent. Panel A: inventory rows enumerated (coverage proxy, from markdown table-row count). Panel B: output length in thousands of characters. Panel C: total cost per run in USD. Thick bars mark the per-arm median; individual runs shown as dots; × markers at y=0 denote runs classified as no\_report. Row-level F1 against the 163-plant reference pending (Phase C).*
+*Figure 3. Experiment 2 — naive (single-shot) vs optimised (multi-turn) arm, N=5 per agent. Panel A: inventory rows enumerated (coverage proxy, from markdown table-row count). Panel B: output length in thousands of characters. Panel C: total cost per run in USD. Thick bars mark the per-arm median; individual runs shown as dots; × markers at y=0 denote runs classified as no\_report. Row-level F1 against the 163-plant reference pending (Phase C). Sign test across agents: 1/4 agents show arm2 > arm1 on inventory\_rows (p = 0.94), 0/2 eligible agents on n\_matched (p = 0.75); both tests are non-significant. Power caveat: N=4 agents, min attainable p = 0.0625 — interpret as directional evidence only.*
 
 <!-- TODO(ticket-0307): Re-enable the turn-trajectory figure once probe-per-turn mart data is available. -->
 
