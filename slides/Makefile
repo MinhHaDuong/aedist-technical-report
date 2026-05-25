@@ -23,6 +23,7 @@ SLIDE_ASSETS := \
 MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
@@ -58,6 +59,7 @@ $(GENERATED)/macros.tex: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/macros.tex
 $(LOCAL_ROOT_REPORT_GEN)/census_bars.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/census_bars.csv
 $(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_direct_p1_base.pdf
+$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf
 $(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/macros_p1_base.tex
 $(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/cost_quality.csv
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_timeline.pdf
