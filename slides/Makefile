@@ -27,7 +27,6 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
 	$(GENERATED)/fig_exp2_arms_comparison.pdf \
-	$(GENERATED)/fig_exp2_turn_trajectory.pdf \
 	$(GENERATED)/fig_exp2_coverage_certainty.pdf
 
 .PHONY: all clean manuscript
