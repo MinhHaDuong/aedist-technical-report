@@ -1,0 +1,35 @@
+%erg 0.1
+Title: Retire measurements.jsonl in favour of mart v2
+Created: 2026-05-25
+Author: haduong
+
+--- log ---
+2026-05-25T11:00Z haduong created
+2026-05-25T11:00Z haduong note Architectural direction set in conversation: mart (exp2_mart.jsonl) is the v2 successor to measurements.jsonl; retirement is post-talk
+
+--- body ---
+## Context
+
+`measurements.jsonl` / `RunRecord` (schema.py) is the current single source of truth for
+exp1 results. The new mart (`exp2_mart.jsonl`, `exp2_mart.py`) is structurally superior:
+SHA256-pinned artifact pointers, separate record_kind for run/probe/score, class_trace,
+provenance counts, bib/narrative/compliance pointers.
+
+Retirement does not mean deleting data — it means migrating the pipeline so the mart is the
+single source of truth for all experiments (exp1 through exp3+), and the old stack is removed.
+
+## What RunRecord has that mart v2 must absorb before retirement
+
+- `method` enum (direct, rag, fusion, agent…) → map to `arm` + `agent_mode`
+- `result_summary.tp / fp / fn` — raw match counts; mart today only stores ratios
+- `web_search_calls` / `citations` — tool-call trace
+- `agent_mode` (phase_a_design, phase_b_run, phase_c_score, smoke, probe)
+- `validation` dict — run-quality flag from `validate_run()`
+
+## Exit criteria
+
+- [ ] Mart schema absorbs all RunRecord fields listed above
+- [ ] Exp1 adapter: reads `exp1_batch2/*.json` → mart records (no arm, single turn, method=direct)
+- [ ] All figures/tables that currently read `measurements.jsonl` ported to read the mart
+- [ ] `measurements.jsonl`, `evaluate.py assemble`, `schema.RunRecord` deleted
+- [ ] `make check` passes with no reference to the old stack
