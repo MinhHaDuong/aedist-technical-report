@@ -1,25 +1,13 @@
-Execute the Vietnam thermal power plant inventory. You have up to 3 planning turns before producing the report.
+PHASE B — TURN 1 OF 3 PLANNING TURNS
 
-TURN 1 PLAN: Conduct initial broad searches to establish the master asset list. Execute these searches:
-- Vietnam PDP8 thermal power plant list (to get the official planning document's asset roster)
-- Vietnam coal power plants operating capacity (to get current operational fleet)
-- Vietnam gas power plants CCGT operating (to get gas fleet)
-- Vietnam LNG power projects planned (to get pipeline projects)
+Objective: Broad discovery of Vietnam's thermal generation fleet (coal, domestic gas, imported LNG; >30 MWe; all lifecycle stages including cancelled/shelved/retired).
 
-From each search, extract: plant name (Vietnamese + English), province, fuel, technology, units×MW, total MWe, status, COD, owner/developer, and note the source with its date.
+Instructions:
+1. Search for Vietnam's current and planned thermal power plants using 4-6 well-chosen queries covering: (a) the national power development plan PDP8 thermal components, (b) operating coal power plants in Vietnam, (c) Vietnam LNG and gas power projects, (d) cancelled or shelved coal projects in Vietnam.
+2. From search results + your parametric knowledge, compile a WORKING LIST of all thermal assets you can identify, organized as:
+   - Asset name (Vietnamese + English) | Province | Fuel | Approx MW | Status | Key source found
+3. Flag assets where you have LOW confidence or missing attributes.
+4. Identify specific gaps to fill in Turn 2 (e.g., specific plants needing COD verification, owner confirmation, status updates).
+5. Keep your output concise — a structured working list, not prose. Save generation budget for the final report.
 
-After searching, compile a working asset list organized by fuel type, noting which plants still need verification and which attributes are uncertain. Flag any plants you know from background knowledge that did NOT appear in search results — these become priority targets for Turn 2.
-
-TURN 2 PLAN: Fill gaps from Turn 1. Search for:
-- Specific plants not yet verified (especially smaller/older coal plants like Cao Ngạn, Na Dương, Ninh Bình, An Khánh, Cẩm Phả)
-- Recently cancelled or shelved projects (Bạc Liêu LNG, Sơn Mỹ LNG, cancelled coal BOTs)
-- Status updates for under-construction projects (Long Phú 1, Thái Bình 2, Quảng Trạch 1, Nhơn Trạch 3&4)
-- Vietnamese-language government sources for verification
-
-TURN 3 PLAN: Final verification pass. Search for:
-- Any remaining unverified attributes
-- Recent news on status changes (2024-2026)
-- Cross-check capacity totals against EVN or MOIT aggregate statistics
-- Resolve any source conflicts identified in Turns 1-2
-
-After Turn 3, produce the full report on Turn 4 with the single pipe table, per-asset notes, and annotated bibliography. Begin directly with the table — no title, no preamble.
+Do NOT produce the final inventory table yet. This is a research/discovery turn.

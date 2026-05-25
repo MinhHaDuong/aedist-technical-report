@@ -1,0 +1,216 @@
+{
+  "id": "msg_01McHNFqzoeCcEie98rbLjuy",
+  "container": null,
+  "content": [
+    {
+      "signature": "EtQGCmMIDhgCKkBMGnxoA4UawAyj6T1EalZISDFx548AOpwep+uOU4eMPNQ9bQFdOLZ2iSbykXmljKMGXbj2Pv8K5IB5B6CISsQQMg9jbGF1ZGUtb3B1cy00LTY4AEIIdGhpbmtpbmcSDHq7lKXtF8UbwlKrXhoMjQja8kAXhg+ly2PLIjCkgDeiRwuiI4mklqmVlGDoGEsjaSxIYRQzqttWH+wqGanmRn5rrYim+B+2C/MA16gqngVcMK/1m8B/nJQZ+zzDHgE/x8zQu6a8wV1B8m3QM8izhryq5ZhPIzkz8VrY7mXDDgqvDspynSZKuDYkzskdo17oN3CLFJoxQTnq4+NBYTbOGGWha4oeX9l8+rr+mVlPqaBKpN9g9FM2Hiwt47aNYSgs91X4N/ABxDXFGP5QJj9sRm1Am0vAJElSOIt9Tvi45Y4m1NAbkzUcaUVXKfWqbjXguoHTN0medbxWOZzs36ui6W3gaKo9YiJzsXwnWL1vUW/jxzPwMXreNcc4hS4K3LZJ+orTkLmKB+dInli+s0puurysVoCwyr4rYGSiHZqUkn/kc3VJw9Qayq4KHUgHCrPYcJqiVAex5BQsF8xo2U0i4ks/E9sBPJfG6wnTBta7esyxNTWV+M/xcrT1uwmmIHSGiwXBo2EX4TajwZT6iinfelU5pZyOcSz7BB3PKxHO3Xz43qQoGoryPMrEZ23Ckrg/IDqveUWpOYGuKiOcUoskfmHAfef8MSqOdXmdANJ2fNnEbMLwIYpp/xE300gQrHGY/KZ6oU75oJBK0j2SgYXcph6wpwF5qjjXILU19FkBZs6sd3yO9lYvL+bO/NstO8QPKgzADTs7m2NJ0nRQQanylGgvkZYNLWqlNN+7/alyIBr5bi+bo2qfmLILOcBXD13V8AA7v8xQT2DGcPnkAd45vfE4aqri5dREbMTiFovWVweOlKBQuXjk1C8NQzEfzwS+7HSFvR1LEHGpb7fFsDdranpzVyDkZA2TGzraeCGxm6TcVNwCdMtxfWzvWs+0dFmI1Q82G6xnXSJF3HMSh1TiCBfb0hfpIAIRTuEisBD8lH3eIMoLxhsTmjuTy0E/PVYHC7wM939va2j1s5s8lvkCHwvUrMMCu5x7GR99WuKnGAE=",
+      "thinking": "The user wants me to produce the final report table now. Let me compile everything I've gathered into the inventory table format. I need to be careful about token budget - I have 27.5K tokens remaining.\n\nLet me organize the table with these columns:\n- Asset Name (Vietnamese / English)\n- Province\n- Fuel\n- Units \u00d7 MW\n- Total MWe\n- Status\n- COD\n- Owner/Operator\n- Confidence\n- Notes\n\nStatus vocabulary I'll use: OPERATING, COMMISSIONING, UNDER CONSTRUCTION, PRE-CONSTRUCTION, PLANNED, SHELVED, CANCELLED, RETIRED, MOTHBALLED\n\n\nNow I'm pulling together the complete dataset, organizing everything by fuel type and operational status to make the table as clear as possible.",
+      "type": "thinking"
+    },
+    {
+      "citations": null,
+      "text": "## VIETNAM THERMAL GENERATION INVENTORY (>30 MWe) \u2014 FINAL REPORT\n\n### Methodology\nThis inventory was compiled across three planning turns using government decisions, operator disclosures, international institution reports, and trade press. Each asset is tagged with a confidence level (HIGH/MEDIUM/LOW) per the source hierarchy. Status vocabulary: OPERATING \u00b7 COMMISSIONING \u00b7 UNDER CONSTRUCTION \u00b7 PRE-CONSTRUCTION \u00b7 PLANNED \u00b7 SHELVED \u00b7 CANCELLED \u00b7 RETIRED \u00b7 MOTHBALLED.\n\n---\n\n### SECTION 1: COAL-FIRED PLANTS\n\n| # | Asset (Viet / Eng) | Province | Fuel | Units\u00d7MW | Total MWe | Status | COD | Owner / Operator | Conf. |\n|---|---|---|---|---|---|---|---|---|---|\n| 1 | U\u00f4ng B\u00ed MR / Uong Bi Expansion | Qu\u1ea3ng Ninh | Coal | 1\u00d7300 + 1\u00d7330 | 630 | OPERATING | 2007; 2013 | EVNGENCO1 | HIGH |\n| 2 | U\u00f4ng B\u00ed (legacy Units 1-6) / Uong Bi Old | Qu\u1ea3ng Ninh | Coal | 6\u00d7(12-55) | ~189 | RETIRED (est. 2023) | 1961-76 | EVNGENCO1 | MEDIUM |\n| 3 | Ph\u1ea3 L\u1ea1i 1 / Pha Lai 1 | H\u1ea3i D\u01b0\u01a1ng | Coal | 4\u00d7110 | 440 | OPERATING | 1983-86 | EVNGENCO2 | HIGH |\n| 4 | Ph\u1ea3 L\u1ea1i 2 / Pha Lai 2 | H\u1ea3i D\u01b0\u01a1ng | Coal | 2\u00d7300 | 600 | OPERATING | 2001-02 | EVNGENCO2 | HIGH |\n| 5 | Ninh B\u00ecnh / Ninh Binh | Ninh B\u00ecnh | Coal | 4\u00d725 | 100 | OPERATING | 1974 | EVN | MEDIUM |\n| 6 | Na D\u01b0\u01a1ng 1 / Na Duong 1 | L\u1ea1ng S\u01a1n | Coal | 2\u00d755 | 110 | OPERATING | 2004-05 | TKV (Vinacomin) | HIGH |\n| 7 | Cao Ng\u1ea1n / Cao Ngan | Th\u00e1i Nguy\u00ean | Coal | 2\u00d750 | 100 | OPERATING | 2005-06 | TKV (Vinacomin) | MEDIUM |\n| 8 | S\u01a1n \u0110\u1ed9ng / Son Dong | B\u1eafc Giang | Coal | 1\u00d7220 | 220 | OPERATING | ~2014 | TKV (Vinacomin) | LOW |\n| 9 | An Kh\u00e1nh / An Khanh | Th\u00e1i Nguy\u00ean | Coal | 1\u00d750 | 50 | OPERATING | ~2010 | An Khanh-TKV JV | LOW |\n| 10 | Qu\u1ea3ng Ninh 1 / Quang Ninh Phase 1 | Qu\u1ea3ng Ninh | Coal | 2\u00d7300 | 600 | OPERATING | 2010-11 | EVNGENCO1 | MEDIUM |\n| 11 | Qu\u1ea3ng Ninh 2 / Quang Ninh Phase 2 | Qu\u1ea3ng Ninh | Coal | 2\u00d7300 | 600 | OPERATING | 2012-14 | EVNGENCO1 | MEDIUM |\n| 12 | C\u1ea9m Ph\u1ea3 1&2 / Cam Pha 1&2 | Qu\u1ea3ng Ninh | Coal | 2\u00d7300 + other | ~680 | OPERATING | 2011 | TKV/NCP | HIGH |\n| 13 | M\u1ea1o Kh\u00ea / Mao Khe | Qu\u1ea3ng Ninh | Coal | 2\u00d7220 | 440 | OPERATING | 2012-13 | TKV (Vinacomin) | HIGH |\n| 14 | H\u1ea3i Ph\u00f2ng 1 / Hai Phong 1 | H\u1ea3i Ph\u00f2ng | Coal | 2\u00d7300 | 600 | OPERATING | 2010-11 | EVNGENCO3 | MEDIUM |\n| 15 | H\u1ea3i Ph\u00f2ng 2 / Hai Phong 2 | H\u1ea3i Ph\u00f2ng | Coal | 2\u00d7300 | 600 | OPERATING | 2013-14 | EVNGENCO3 | MEDIUM |\n| 16 | Nghi S\u01a1n 1 / Nghi Son 1 | Thanh H\u00f3a | Coal | 2\u00d7300 | 600 | OPERATING | 2013-15 | EVNGENCO1 | MEDIUM |\n| 17 | Nghi S\u01a1n 2 / Nghi Son 2 (BOT) | Thanh H\u00f3a | Coal | 2\u00d7600 | 1,200 | OPERATING | 2022-23 | Marubeni/KEPCO | MEDIUM |\n| 18 | Th\u00e1i B\u00ecnh 1 / Thai Binh 1 | Th\u00e1i B\u00ecnh | Coal | 2\u00d7300 | 600 | OPERATING | 2018 | EVNGENCO3 | MEDIUM |\n| 19 | Th\u00e1i B\u00ecnh 2 / Thai Binh 2 | Th\u00e1i B\u00ecnh | Coal | 2\u00d7300 | 600 | OPERATING | ~2022 | PVN/PVPower | MEDIUM |\n| 20 | V\u0169ng \u00c1ng 1 / Vung Ang 1 | H\u00e0 T\u0129nh | Coal | 2\u00d7600 | 1,200 | OPERATING | 2014-15 | EVNGENCO1 | HIGH |\n| 21 | V\u0129nh T\u00e2n 1 / Vinh Tan 1 (BOT) | B\u00ecnh Thu\u1eadn | Coal | 2\u00d7600 | 1,200 | OPERATING | 2019-20 | COPI (China) | MEDIUM |\n| 22 | V\u0129nh T\u00e2n 2 / Vinh Tan 2 | B\u00ecnh Thu\u1eadn | Coal | 2\u00d7622 | 1,244 | OPERATING | 2014-15 | EVNGENCO3 | HIGH |\n| 23 | V\u0129nh T\u00e2n 4 / Vinh Tan 4 | B\u00ecnh Thu\u1eadn | Coal | 2\u00d7600 | 1,200 | OPERATING | 2017-18 | EVNGENCO3 | HIGH |\n| 24 | V\u0129nh T\u00e2n 4 MR / Vinh Tan 4 Ext | B\u00ecnh Thu\u1eadn | Coal | 1\u00d7600 | 600 | OPERATING | 2019-20 | EVNGENCO3 | MEDIUM |\n| 25 | Duy\u00ean H\u1ea3i 1 / Duyen Hai 1 | Tr\u00e0 Vinh | Coal | 2\u00d7622 | 1,244 | OPERATING | 2015-16 | EVNGENCO1 | HIGH |\n| 26 | Duy\u00ean H\u1ea3i 2 / Duyen Hai 2 (BOT) | Tr\u00e0 Vinh | Coal | 2\u00d7660 | 1,320 | OPERATING | 2021 | Janakuasa (MY) | HIGH |\n| 27 | Duy\u00ean H\u1ea3i 3 / Duyen Hai 3 | Tr\u00e0 Vinh | Coal | 2\u00d7622 | 1,244 | OPERATING | 2017-18 | EVNGENCO1 | MEDIUM |\n| 28 | Duy\u00ean H\u1ea3i 3 MR / Duyen Hai 3 Ext | Tr\u00e0 Vinh | Coal | 1\u00d7688 | 688 | OPERATING | 2019 | EVNGENCO1 | MEDIUM |\n| 29 | M\u00f4ng D\u01b0\u01a1ng 1 / Mong Duong 1 | Qu\u1ea3ng Ninh | Coal | 2\u00d7540 | 1,080 | OPERATING | 2015 | EVNGENCO3 | MEDIUM |\n| 30 | M\u00f4ng D\u01b0\u01a1ng 2 / Mong Duong 2 (BOT) | Qu\u1ea3ng Ninh | Coal | 2\u00d7600 | 1,200 | OPERATING | 2015 | AES | HIGH |\n| 31 | S\u00f4ng H\u1eadu 1 / Song Hau 1 | H\u1eadu Giang | Coal | 2\u00d7600 | 1,200 | OPERATING | ~2022 | PVN/PVPower | MEDIUM |\n| 32 | H\u1ea3i D\u01b0\u01a1ng BOT / Hai Duong BOT | H\u1ea3i D\u01b0\u01a1ng | Coal | 2\u00d7600 | 1,200 | OPERATING | 2021-22 | Jaks (MY)/CPECC (CN) | MEDIUM |\n| 33 | V\u00e2n Phong 1 / Van Phong 1 (BOT) | Kh\u00e1nh H\u00f2a | Coal | 2\u00d7716 | 1,432 | OPERATING | 2023-24 | Sumitomo/KEPCO | HIGH |\n| 34 | Formosa H\u00e0 T\u0129nh / Formosa Ha Tinh (captive) | H\u00e0 T\u0129nh | Coal | ~5\u00d7100 | ~500 | OPERATING | ~2017 | Formosa Plastics | LOW |\n| 35 | Qu\u1ea3ng Tr\u1ea1ch 1 / Quang Trach 1 | Qu\u1ea3ng B\u00ecnh | Coal | 2\u00d7~700 | 1,403 | COMMISSIONING | Unit 1 mid-2026 target | EVNGENCO1 (EPC: CC1/Mitsubishi/Hyundai) | HIGH |\n| 36 | V\u0169ng \u00c1ng 2 / Vung Ang 2 (BOT) | H\u00e0 T\u0129nh | Coal | 2\u00d7600 | 1,200 | UNDER CONSTRUCTION | Unit 1 target mid-2025 | Mitsubishi/KEPCO/Chugoku | HIGH |\n| 37 | Long Ph\u00fa 1 / Long Phu 1 | S\u00f3c Tr\u0103ng | Coal | 2\u00d7600 | 1,200 | UNDER CONSTRUCTION | Target Q3-Q4/2027 | PVN | HIGH |\n| 38 | Na D\u01b0\u01a1ng 2 / Na Duong 2 | L\u1ea1ng S\u01a1n | Coal | 1\u00d7110 | 110 | UNDER CONSTRUCTION | ~2025-26 | TKV (Vinacomin) | HIGH |\n| 39 | Nam \u0110\u1ecbnh 1 / Nam Dinh 1 | Nam \u0110\u1ecbnh | Coal | 2\u00d7600 | 1,200 | PRE-CONSTRUCTION | \u2014 | Taekwang (KR)/ACWA | LOW |\n\n**CANCELLED / SHELVED COAL (removed under PDP8)**\n\n| # | Asset | Province | MW (planned) | Status |\n|---|---|---|---|---|\n| C1 | Qu\u1ea3ng Ninh 3 / Quang Ninh III | Qu\u1ea3ng Ninh | ~1,200 | CANCELLED |\n| C2 | C\u1ea9m Ph\u1ea3 3 / Cam Pha III | Qu\u1ea3ng Ninh | ~600 | CANCELLED |\n| C3 | H\u1ea3i Ph\u00f2ng 3 / Hai Phong III | H\u1ea3i Ph\u00f2ng | ~1,200 | CANCELLED |\n| C4 | Qu\u1ef3nh L\u1eadp 1 / Quynh Lap I | Ngh\u1ec7 An | ~1,200 | CANCELLED |\n| C5 | Qu\u1ef3nh L\u1eadp 2 / Quynh Lap II | Ngh\u1ec7 An | ~1,200 | CANCELLED |\n| C6 | V\u0169ng \u00c1ng 3 / Vung Ang III | H\u00e0 T\u0129nh | ~1,200 | CANCELLED |\n| C7 | Qu\u1ea3ng Tr\u1ea1ch 2 (coal version) | Qu\u1ea3ng B\u00ecnh | ~1,200 | CANCELLED (converted to LNG) |\n| C8 | Long Ph\u00fa 2 / Long Phu II | S\u00f3c Tr\u0103ng | ~1,200 | CANCELLED |\n| C9 | Long Ph\u00fa 3 / Long Phu III | S\u00f3c Tr\u0103ng | ~1,200 | CANCELLED |\n| C10 | T\u00e2n Ph\u01b0\u1edbc 1 / Tan Phuoc I | Ti\u1ec1n Giang | ~1,200 | CANCELLED |\n| C11 | T\u00e2n Ph\u01b0\u1edbc 2 / Tan Phuoc II | Ti\u1ec1n Giang | ~1,200 | CANCELLED |\n| C12 | An Kh\u00e1nh\u2013B\u1eafc Giang (coal exp.) | B\u1eafc Giang | ~650 | SHELVED |\n\n---\n\n### SECTION 2: GAS-FIRED PLANTS (Domestic Gas)\n\n| # | Asset (Viet / Eng) | Province | Fuel | Units\u00d7MW | Total MWe | Status | COD | Owner / Operator | Conf. |\n|---|---|---|---|---|---|---|---|---|---|\n| 40 | B\u00e0 R\u1ecba / Ba Ria | BR-VT | Gas | GT config | ~389 | OPERATING | 1995-96 | PVPower | LOW |\n| 41 | Ph\u00fa M\u1ef9 1 / Phu My 1 | BR-VT | Gas (CCGT) | 3\u00d7240GT+1\u00d7370ST | 1,090 | OPERATING | 2002 | EVNGENCO3 | HIGH |\n| 42 | Ph\u00fa M\u1ef9 2.1 / Phu My 2.1 | BR-VT | Gas (CCGT) | GT+ST | 477 | OPERATING | 2002 | EVNGENCO3 | HIGH |\n| 43 | Ph\u00fa M\u1ef9 2.1 MR / Phu My 2.1 Ext | BR-VT | Gas (CCGT) | 2\u00d7GT+1\u00d756ST | 468 | OPERATING | 2005 | EVNGENCO3 | HIGH |\n| 44 | Ph\u00fa M\u1ef9 2.2 / Phu My 2.2 (ex-BOT) | BR-VT | Gas (CCGT) | 2\u00d7GE 9FA+1\u00d7D11 ST | 715 | OPERATING | 2005 | EVN (transferred Feb 2025) | HIGH |\n| 45 | Ph\u00fa M\u1ef9 3 / Phu My 3 (BOT) | BR-VT | Gas (CCGT) | 2\u00d7GT+1\u00d7ST | 749 | OPERATING | 2004 | Sembcorp 66.7%/Kyuden 26.7%/Sojitz 6.7% | HIGH |\n| 46 | Ph\u00fa M\u1ef9 4 / Phu My 4 | BR-VT | Gas (CCGT) | 2\u00d7GT+1\u00d7ST | 450 | OPERATING | 2004 | EVNGENCO3 | MEDIUM |\n| 47 | Nh\u01a1n Tr\u1ea1ch 1 / Nhon Trach 1 | \u0110\u1ed3ng Nai | Gas (CCGT) | 2\u00d7GT+1\u00d7ST | 450 | OPERATING | Aug 2009 | PVPower | HIGH |\n| 48 | Nh\u01a1n Tr\u1ea1ch 2 / Nhon Trach 2 | \u0110\u1ed3ng Nai | Gas (CCGT) | 3\u00d7GT+1\u00d7ST | 750 | OPERATING | Oct 2011 | PVPower | HIGH |\n| 49 | C\u00e0 Mau 1 / Ca Mau 1 | C\u00e0 Mau | Gas (CCGT) | 2\u00d7GT+1\u00d7ST | 750 | OPERATING | 2008 | PVPower | HIGH |\n| 50 | C\u00e0 Mau 2 / Ca Mau 2 | C\u00e0 Mau | Gas (CCGT) | 2\u00d7GT+1\u00d7ST | 750 | OPERATING | 2008 | PVPower | HIGH |\n| 51 | \u00d4 M\u00f4n 1 / O Mon 1 | C\u1ea7n Th\u01a1 | Gas/Oil (CCGT) | 2\u00d7330 | 660 | OPERATING | 2009-15 | EVNGENCO2 | HIGH |\n| 52 | Hi\u1ec7p Ph\u01b0\u1edbc / Hiep Phuoc | HCMC | Gas/Oil | GT config | ~375 | OPERATING | ~2001 | EVN/EVNGENCO3 | LOW |\n\n---\n\n### SECTION 3: LNG-FIRED PLANTS (Imported LNG)\n\n| # | Asset (Viet / Eng) | Province | Fuel | Units\u00d7MW | Total MWe | Status | Target COD | Owner / Operator | Conf. |\n|---|---|---|---|---|---|---|---|---|---|\n| 53 | Nh\u01a1n Tr\u1ea1ch 3 / Nhon Trach 3 | \u0110\u1ed3ng Nai | LNG (CCGT) | 1\u00d7812 | 812 | OPERATING | Dec 2025 | PVPower | HIGH |\n| 54 | Nh\u01a1n Tr\u1ea1ch 4 / Nhon Trach 4 | \u0110\u1ed3ng Nai | LNG (CCGT) | 1\u00d7812 | 812 | OPERATING | Dec 2025 | PVPower | HIGH |\n| 55 | \u00d4 M\u00f4n 2 / O Mon 2 | C\u1ea7n Th\u01a1 | LNG (CCGT) | config TBD | 1,050 | PRE-CONSTRUCTION | ~2028 | Vietracimex/Marubeni JV | MEDIUM |\n| 56 | \u00d4 M\u00f4n 3 / O Mon 3 | C\u1ea7n Th\u01a1 | LNG (CCGT) | config TBD | 1,050 | PRE-CONSTRUCTION | ~2027 | PVN (transferred from EVN) | MEDIUM |\n| 57 | \u00d4 M\u00f4n 4 / O Mon 4 | C\u1ea7n Th\u01a1 | LNG (CCGT) | Mitsubishi J-series | 1,155 | UNDER CONSTRUCTION | Dec 2028 | PVN/PVPower (EPC: Doosan/PECC2) | HIGH |\n| 58 | Dung Qu\u1ea5t 1 / Dung Quat I LNG | Qu\u1ea3ng Ng\u00e3i | LNG (CCGT) | config TBD | ~750 | PRE-CONSTRUCTION | ~2028-30 | EVNGENCO2 | MEDIUM |\n| 59 | Dung Qu\u1ea5t 3 / Dung Quat III LNG | Qu\u1ea3ng Ng\u00e3i | LNG (CCGT) | config TBD | ~750 | PLANNED | 2031-35 | TBD | LOW |\n| 60 | Qu\u1ea3ng Tr\u1ea1ch 2 LNG / Quang Trach 2 LNG | Qu\u1ea3ng B\u00ecnh | LNG (CCGT) | config TBD | ~1,500 | PRE-CONSTRUCTION | ~2028-30 | TBD | MEDIUM |\n| 61 | Qu\u1ea3ng Tr\u1ea1ch 3 LNG / Quang Trach 3 LNG | Qu\u1ea3ng B\u00ecnh | LNG (CCGT) | config TBD | 1,500 | PLANNED | 2031-35 | TBD (approved Dec 2025) | MEDIUM |\n| 62 | Qu\u1ea3ng Ninh LNG | Qu\u1ea3ng Ninh | LNG (CCGT) | config TBD | 1,500 | PLANNED | 2028-29 | TBD | MEDIUM |\n| 63 | C\u00e0 Na LNG / Ca Na LNG | Ninh Thu\u1eadn | LNG (CCGT) | config TBD | 1,500 | PLANNED | pre-2030 | TBD | MEDIUM |\n| 64 | S\u01a1n M\u1ef9 1 / Son My I LNG | B\u00ecnh Thu\u1eadn | LNG (CCGT) | config TBD | 2,250 | SHELVED | indefinite | AES (partially withdrawn) | LOW |\n| 65 | S\u01a1n M\u1ef9 2 / Son My II LNG | B\u00ecnh Thu\u1eadn | LNG (CCGT) | config TBD | 2,250 | SHELVED | indefinite | TBD | LOW |\n| 66 | B\u1ea1c Li\u00eau LNG / Bac Lieu LNG | B\u1ea1c Li\u00eau | LNG (CCGT) | config TBD | 3,200 | SHELVED | indefinite | Delta Offshore Energy (US) | LOW |\n| 67 | LNG H\u1ea3i Ph\u00f2ng 1 / Hai Phong LNG I | H\u1ea3i Ph\u00f2ng | LNG (CCGT) | config TBD | 1,600 | PLANNED | post-2030 | TBD (added Rev. PDP8) | MEDIUM |\n| 68 | Hi\u1ec7p Ph\u01b0\u1edbc 2 / Hiep Phuoc II LNG | HCMC | LNG (CCGT) | config TBD | 1,500 | PLANNED | post-2030 | TBD (added Rev. PDP8) | MEDIUM |\n| 69 | Nghi S\u01a1n LNG / Nghi Son LNG | Thanh H\u00f3a | LNG (CCGT) | config TBD | 1,500 | SHELVED | bidding cancelled | TBD | MEDIUM |\n| 70 | C\u00f4ng Thanh LNG Ph 1 / Cong Thanh LNG | Thanh H\u00f3a | LNG (CCGT) | config TBD | 1,500 | PRE-CONSTRUCTION | ~2028-30 | Cong Thanh JSC / BP / Actis JV | MEDIUM |\n| 71 | LNG Th\u00e1i B\u00ecnh / Thai Binh LNG | Th\u00e1i B\u00ecnh | LNG (CCGT) | config TBD | ~1,500 | PLANNED (reserve) | 2031-35 | TBD | LOW |\n| 72 | TBKHH Qu\u1ea3ng Tr\u1ecb / Quang Tri mixed turbine | Qu\u1ea3ng Tr\u1ecb | Gas | config TBD | ~340 | SHELVED | \u2014 | EVNGENCO1 (EGATi withdrew) | LOW |\n\n---\n\n### SECTION 4: SUMMARY STATISTICS\n\n| Category | Count | Total MWe (approx) |\n|---|---|---|\n| Coal \u2014 Operating | 34 units at ~22 sites | ~25,100 |\n| Coal \u2014 Commissioning | 1 plant (Quang Trach 1) | 1,403 |\n| Coal \u2014 Under Construction | 3 plants | 2,510 |\n| Coal \u2014 Pre-construction | 1 plant (Nam Dinh 1) | 1,200 |\n| Coal \u2014 Cancelled/Shelved | 12 projects | ~13,250 |\n| Gas (domestic) \u2014 Operating | ~13 plants | ~7,850 |\n| LNG \u2014 Operating | 2 units (Nhon Trach 3&4) | 1,624 |\n| LNG \u2014 Under Construction | 1 plant (O Mon 4) | 1,155 |\n| LNG \u2014 Pre-construction | 5 plants | ~6,550 |\n| LNG \u2014 Planned | 6 plants | ~9,600 |\n| LNG \u2014 Shelved | 4 plants | ~9,290 |\n| **TOTAL OPERATING THERMAL** | | **~34,575** |\n| **TOTAL PIPELINE (constr.+pre-con+planned)** | | **~22,440** |\n\n---\n\n### NOTES ON MAJOR / DISPUTED / AMBIGUOUS ASSETS\n\n1. **U\u00f4ng B\u00ed (legacy):** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Uong Bi Thermal Power Plant was the first coal-fired power plant built in Vietnam. Construction of the plant began in September 1961 with assistance from China.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Original units 1-6 (12-55 MW each, ~189 MW total) are believed retired as of ~2023 given age >40 years. ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "A 300 MW expansion unit was commissioned in 2007, followed by a second expansion unit of 330 MW in 2013.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Only the expansion (630 MW) is counted as operating.\n\n2. **Ph\u1ea3 L\u1ea1i 1:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Pha Lai coal-fired power plant (CW-1) has a total capacity of 440 MW (4\u00d7110 MW)... in operation since 1986, making it nearly 40 years old.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Identified in World Bank/UNDP studies as a priority candidate for early retirement and repurposing.\n\n3. **Long Ph\u00fa 1:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "In January 2018, the project reached 78% completion when US sanctions on Russia halted work by Power Machines. Construction resumed in January 2025 following a relaunch ceremony.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Both boilers are expected to be fully installed and pressure-tested in the second and third quarters of 2026, ensuring Unit 1 begins power generation in the third quarter and Unit 2 in the fourth quarter of 2027.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": "\n\n4. **Qu\u1ea3ng Tr\u1ea1ch 1:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "The project comprises two generating units with a total installed capacity of 1,403 MW, utilizing USC technology, and commenced construction in December 2021.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Unit No. 1 successfully conducted its first coal firing on May 6, 2026.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Commissioning imminent.\n\n5. **Ph\u00fa M\u1ef9 2.2 (BOT transfer):** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "On February 4, 2025, the 715 MW Phu My 2.2 combined-cycle gas plant was transferred to EVN, ending its BOT concession period.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": "\n\n6. **Nh\u01a1n Tr\u1ea1ch 3&4:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Vietnam's first LNG-to-power project, the 1,624 MW Nhon Trach 3&4 complex uses GE 9HA.02 gas turbines and came online in late 2025.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " This makes it the country's inaugural imported LNG power plant.\n\n7. **\u00d4 M\u00f4n 4:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "O Mon IV is a 1,155 MW CCGT plant with Mitsubishi J-series gas turbines. Groundbreaking occurred late August 2025, with COD target December 2028. EPC by Doosan Enerbility and PECC2.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": "\n\n8. **\u00d4 M\u00f4n 2 & 3:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "O Mon 2, a 1,050 MW plant, is a JV between Vietracimex and Marubeni. O Mon 3 (also 1,050 MW) had a connection agreement signed March 2025.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Both depend on Block B gas supply from the \u00d4 M\u00f4n pipeline, which has faced repeated delays.\n\n9. **V\u00e2n Phong 1:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "The 1,432 MW Van Phong 1 BOT coal plant in Khanh Hoa, developed by Sumitomo and KEPCO, began commercial operation of Unit 2 in 2024.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " One of the last coal plants to reach COD under PDP7 commitments.\n\n10. **Cancelled coal under PDP8:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "PDP8 (Decision 500/Q\u0110-TTg, May 2023) removed approximately 13 GW of planned coal capacity,",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " including all greenfield coal projects not already under construction or with signed BOT/EPC contracts.\n\n11. **B\u1ea1c Li\u00eau LNG (3,200 MW):** Proposed by Delta Offshore Energy (US) since ~2019. Despite MOU and provincial support, no FID reached. Effectively shelved as of 2025 due to financing difficulties and lack of PPA.\n\n12. **Qu\u1ea3ng Tr\u1ea1ch Power Center LNG:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Upon completion of Quang Trach 1 and two LNG plants, the center will supply approximately 4,400 MW to the national grid.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " This implies Quang Trach 2 LNG (~1,500 MW) + Quang Trach 3 LNG (1,500 MW) alongside the 1,403 MW coal plant.\n\n13. **Formosa H\u00e0 T\u0129nh:** Captive coal plant at the Formosa steel complex. Estimated ~500 MW but exact configuration unconfirmed in primary sources. Not grid-dispatched by EVN. Included for completeness at LOW confidence.\n\n14. **Na D\u01b0\u01a1ng 2:** ",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": [],
+      "text": "Na Duong 2 (110 MW) signed its EPC contract in December 2023 and is under construction by TKV.",
+      "type": "text",
+      "parsed_output": null
+    },
+    {
+      "citations": null,
+      "text": " Uses local lignite; one of the last small coal plants approved.\n\n---\n\n### ANNOTATED BIBLIOGRAPHY\n\n| Ref | Source | Type | URL / ID |\n|---|---|---|---|\n| [2] | Decision 500/Q\u0110-TTg (PDP8), May 2023 \u2014 Vietnam Prime Minister | Gov. Decision (Primary) | URL not verified (Vietnamese govt gazette) |\n| [3] | Revised PDP8 / Decision 2634/Q\u0110-TTg amendments, 2024-25 | Gov. Decision (Primary) | URL not verified |\n| [10] | Revised PDP8 coverage, trade press (VnExpress / Thanh Nien) | Trade Press | Various |\n| [12] | Global Energy Monitor \u2014 Vietnam Coal Plant Tracker wiki | Secondary (cites primaries) | globalenergymonitor.org |\n| [13] | Global Energy Monitor \u2014 Na Duong power station | Secondary | globalenergymonitor.org/wiki/Na_Duong |\n| [14] | UNDP Vietnam \u2014 Coal Transition Assessment Report, 2023 | Intl Institution (Primary) | undp.org |\n| [15] | Global Energy Monitor \u2014 Van Phong 1 wiki | Secondary | globalenergymonitor.org |\n| [17] | Nam Dinh 1 project coverage (trade press) | Trade Press | Various |\n| [19] | GlobalData \u2014 Vietnam power plant profiles | Aggregator (Secondary) | globaldata.com |\n| [20] | Nhon Trach 3&4 commissioning reports (Nikkei Asia / VnExpress) | Trade Press | Various |\n| [21] | Nghi Son LNG / Cong Thanh LNG coverage | Trade Press | Various |\n| [22] | Eni Blue Whale project press releases | Operator PR (Primary) | eni.com |\n| [24] | PVPower press releases \u2014 Nhon Trach 3&4 | Operator PR (Primary) | pvpower.vn |\n| [25] | Decision 2634/Q\u0110-TTg text + MOIT coverage | Gov. Decision (Primary) | URL not verified |\n| [28] | Uong Bi TPP \u2014 GEM wiki + EVN history materials | Secondary + Primary | globalenergymonitor.org; evn.com.vn |\n| [29] | Long Phu 1 resumption coverage (VnExpress / Bao Dien Luc / GEM) | Trade Press + Secondary | Various |\n| [30] | Quang Trach 1 commissioning coverage (Bao Quang Binh / EVN press) | Operator PR / Local Press | Various |\n| [31] | Quang Trach Power Center LNG coverage | Trade Press | Various |\n| [33] | Phu My 2.2 BOT transfer coverage (NS Energy / Sembcorp) | Operator PR + Trade Press | nsenergybusiness.com |\n| [36] | O Mon complex coverage (Saigon Times / VnExpress / MOIT) | Trade Press | Various |\n\n---\n\n### CAVEATS & LIMITATIONS\n\n1. **Small/old plants (<100 MW):** Several TKV-owned plants (N\u00f4ng S\u01a1n ~30 MW, \u0110\u00f4ng Tri\u1ec1u, etc.) may exist near the 30 MW threshold but could not be confirmed from available sources. Thu Duc (~160 MW gas turbine, HCMC) is likely retired but could not be verified.\n2. **Captive/industrial plants:** Only Formosa H\u00e0 T\u0129nh is included; other industrial captive coal/gas plants (e.g., at cement works, refineries) are excluded for lack of data.\n3. **Oil/diesel peakers:** Several oil-fired GTs exist (notably at \u00d4 M\u00f4n 1, which currently burns fuel oil; Th\u1ee7 \u0110\u1ee9c; some Ph\u00fa M\u1ef9 units can burn diesel as backup). These are counted under their primary fuel.\n4. **LNG project MW figures:** Many planned LNG projects have only indicative capacities from PDP8 text; actual turbine configurations are not yet determined.\n5. **Revised PDP8 (Decision 2634, late 2024):** Added several LNG projects and reshuffled timelines. Some projects listed here as \"PLANNED\" may have been moved to reserve lists or vice versa in the latest revision.",
+      "type": "text",
+      "parsed_output": null
+    }
+  ],
+  "model": "claude-opus-4-6",
+  "role": "assistant",
+  "stop_details": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 11489
+    },
+    "cache_creation_input_tokens": 11489,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "input_tokens": 1642,
+    "output_tokens": 8935,
+    "server_tool_use": null,
+    "service_tier": "standard"
+  }
+}
