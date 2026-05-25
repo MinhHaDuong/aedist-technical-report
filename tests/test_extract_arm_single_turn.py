@@ -1,6 +1,8 @@
 import csv
 import json
 
+import pytest
+
 from aedist.build_exp2_mart import build_exp2_mart
 from aedist.extract_arm_single_turn import (
     _extract_bibliography_entries,
@@ -57,24 +59,32 @@ def _score_row(arm, model, run):
     }
 
 
-def test_extract_bibliography_entries_supports_sources_heading():
-    markdown = """# Report
+@pytest.mark.parametrize(
+    "heading",
+    ["## Sources", "## References", "## Bibliography", "## Annotated Bibliography"],
+)
+def test_extract_bibliography_entries_heading_variants(heading):
+    markdown = f"""# Report
 
-## Sources
+{heading}
 
-**[1]** First source title.
-Continuation line.
+**[1]** First source.
 
-2. Second source title.
+2. Second source.
 
 ## Next Section
 Ignored.
 """
+    assert _extract_bibliography_entries(markdown) == ["First source.", "Second source."]
 
-    assert _extract_bibliography_entries(markdown) == [
-        "First source title. Continuation line.",
-        "Second source title.",
-    ]
+
+def test_extract_bibliography_entries_empty_section():
+    markdown = "# Report\n\n## Sources\n\n## Next Section\nText.\n"
+    assert _extract_bibliography_entries(markdown) == []
+
+
+def test_extract_bibliography_entries_no_section():
+    assert _extract_bibliography_entries("Just a table.\n| A | B |\n") == []
 
 
 def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
@@ -168,7 +178,10 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
                 {
                     "role": "assistant",
                     "content": [
-                        {"type": "text", "text": "| A | B |\n|---|---|\n| m | n |\n\n## References\n\n- Mistral source."},
+                        {
+                            "type": "text",
+                            "text": "| A | B |\n|---|---|\n| m | n |\n\n## References\n\n- Mistral source.",
+                        },
                         {"type": "tool_reference", "url": "https://example.com"},
                     ],
                 }
@@ -182,8 +195,12 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
     anthropic_meta = json.loads((output_dir / "anthropic_run01.json").read_text(encoding="utf-8"))
     assert anthropic_meta["class_trace"] == ["report"]
     assert anthropic_meta["n_bib_entries"] == 1
-    assert (output_dir / "anthropic_run01_bib.md").read_text(encoding="utf-8") == "- Anthropic source.\n"
-    assert (output_dir / "mistral_run01_bib.md").read_text(encoding="utf-8") == "- Mistral source.\n"
+    assert (output_dir / "anthropic_run01_bib.md").read_text(
+        encoding="utf-8"
+    ) == "- Anthropic source.\n"
+    assert (output_dir / "mistral_run01_bib.md").read_text(
+        encoding="utf-8"
+    ) == "- Mistral source.\n"
     assert (output_dir / "openai_run01_bib.md").read_text(encoding="utf-8") == "- OpenAI source.\n"
 
     _write_json(
@@ -207,7 +224,10 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
     probe_dir = optimised_dir / "probes" / "anthropic_run01"
     probe_dir.mkdir(parents=True)
     _write_json(probe_dir / "anthropic_turn_01.classification.json", {"class": "report"})
-    _write_json(probe_dir / "anthropic_turn_01.raw.json", {"content": [{"type": "text", "text": "| B | 2 |\n"}]})
+    _write_json(
+        probe_dir / "anthropic_turn_01.raw.json",
+        {"content": [{"type": "text", "text": "| B | 2 |\n"}]},
+    )
 
     _write_cross_eval_csv(
         tmp_path / "sota_cross_eval.csv",
@@ -226,5 +246,7 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
         repo_root=tmp_path,
     )
 
-    run_records = [record for record in records if record.record_kind == "run" and record.arm == "naive"]
+    run_records = [
+        record for record in records if record.record_kind == "run" and record.arm == "naive"
+    ]
     assert len(run_records) == 3
