@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Preserve web/tool sources in naive-arm markdown narratives
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Closed: superseded by 0292 — insufficient fix
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+2026-05-25T00:00Z HDMX-coding-agent note bugfix implemented: exp2 naive probes now retain source references in generated .md narratives; regression test added and passing.
+2026-05-25T12:00Z haduong close superseded by 0292 — fix is insufficient: preserves tool_reference blocks as a ## Sources appendix but does not map bare reference numbers (e.g. "16,90") in Source 1/2 table cells to actual hyperlinks. The _render_mistral_content_with_sources helper and inline link rendering are reusable, but table-cell citation linkage was never implemented. 0292 must do it properly from the ex-post extractor.
+
+2026-05-25T06:49Z HDMX-coding-agent closed — superseded by 0292 — insufficient fix
+--- body ---
+## Context
+
+In Experiment 3 naive-arm outputs, provider raw payloads contain structured source
+references (for example `tool_reference` blocks in Mistral raw output), but
+`experiments/sota/exp2_naive_arm.py` extracted only text blocks when building
+`narrative`.
+
+As a result, generated markdown reports (for example `mistral.md`) silently
+dropped citations even though they were present in raw artifacts.
+
+This is a scoring bug because downstream checks evaluate whether sources are
+present in the report text.
+
+## Fix
+
+- Add source-preserving narrative assembly in `experiments/sota/exp2_naive_arm.py`.
+- Append normalized `## Sources` section to narrative markdown for references
+  extracted from provider payloads.
+- Keep existing behavior for text extraction while preserving reference evidence.
+
+## Tests
+
+- Add regression test in `tests/test_exp2_naive_arm.py` ensuring Mistral
+  `tool_reference` content appears in returned narrative markdown.
+- Run targeted test suite:
+  - `uv run pytest -q tests/test_exp2_naive_arm.py`
+  - Result: `10 passed`.
+
+## Exit criteria
+
+- [x] Source references are preserved in naive-arm narrative markdown.
+- [x] Regression test covers source-loss failure mode.
+- [x] Targeted tests pass locally.
+- [ ] Ticket closed after user confirmation and merge bookkeeping.
