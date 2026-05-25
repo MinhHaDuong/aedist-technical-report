@@ -48,10 +48,22 @@ its data flow with arms 2 and 4.
 - [ ] `exp2_phase_b0_consolidate.py` (or its replacement) correctly walks the
       new run{N}/ layout and produces the same aggregated output as before.
 
-## Coordination
+## Prompt-engineering actions (absorbed from 0290)
 
-- **0291** (Separate raw from derived): superseded — the snapshot commit in
-  branch `t0291-results-cleanstack-nomd` closes Action 1; this ticket closes
-  Action 2. Close 0291 when the branch merges.
-- **0290** (Anthropic table fragmentation): extraction side (sub-table
-  concatenation) tracked here. Prompt-engineering actions remain in 0290.
+The same table-fragmentation problem requires both extraction fixes (above) and
+prompt-level constraints:
+
+1. **Prescribe the exact table header** in the Phase A meta-prompt: instruct
+   the Phase A designer to begin the Plant Inventory Table section with a
+   specific header row, e.g. `| Plant name | Fuel | Capacity (MWe) | Status |
+   As-of date | Confidence | Source 1 | Source 2 |`. Hard constraint, not a
+   suggestion.
+2. **Add a table-unity reminder to `VERIFY_REPLY`**: append a sentence
+   instructing the agent to consolidate all sub-tables into one master table
+   before returning the corrected inventory.
+3. **Consider adding to `TERMINAL_REPLY`**: if the agent has not yet produced
+   a unified table, explicitly ask for consolidation as the final act.
+
+Additional exit criterion (arm4 anthropic smoke run):
+- [ ] Re-run produces ≤ 2 table headers in the final output turn and
+      `inventory_rows` ≥ 40.
