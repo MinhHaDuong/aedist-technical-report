@@ -1,0 +1,80 @@
+%erg 0.1
+Title: Review axis labels and captions for manuscript figures
+Created: 2026-05-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-25T15:00Z HDMX-coding-agent created
+2026-05-25T17:00Z HDMX-coding-agent rewritten — scope changed from manuscript title to figure language review
+
+--- body ---
+## Context
+
+Seven figures appear in `slides/manuscript/main.md`. Their axis labels,
+titles, and figure captions were written as technical documentation and
+reviewed in conversation 2026-05-25. Three issues recur:
+
+1. **Language mix** — French labels inside English figures (fig_direct_p1_base,
+   fig_direct_cost_quality).
+2. **Opaque jargon** — "F1 score", "active parameters", "Source 2",
+   "inventory rows", "arm" — unexplained for a non-specialist reader.
+3. **Missing or docstring-style titles** — capability_dag axis labels say
+   "Feature i (row)" / "Feature j (column)"; fig_exp2_arms_comparison
+   panel ylabels use internal variable names.
+
+Scope: the seven manuscript figures only (slides-only figures excluded as
+out of scope for the conference talk).
+
+## Figures and proposed changes
+
+### fig_direct_p1_base  (`plot_method_convergence.py`)
+- Add figure title (currently none)
+- xlabel: replace FR "Nombre de centrales bien identifiées" → EN
+  "Power plants identified (each dot = one plant)"
+- Proposed title: "Which models recall Vietnam's 163 thermal power plants
+  from memory?"
+
+### fig_direct_cost_quality  (`plot_cost_quality.py`)
+- ylabel: replace FR "Nombre de centrales bien identifiées"
+  → "Power plants correctly identified (out of 163)"
+- suptitle: replace "Experiment 1 baseline (no web search)"
+  → "More expensive models don't reliably produce better inventories"
+- Confirm panel labels use family names, not product names
+
+### fig_spider_exp1_families  (spider / radar, family quality profiles)
+- Add instructional subtitle explaining radar geometry
+- Spoke labels: "Provenance" → "Source citation";
+  "Temporality" → "Date accuracy"
+
+### fig_capability_timeline  (`plot_capability_timeline.py`)
+- Add title: "From chatbots to multi-agent systems: the AI capability
+  frontier (2022–2025)"
+- Add subtitle explaining 'TBD' markers
+
+### fig_capability_dag  (`plot_capability_dag.py`)
+- xlabel: replace "Feature j (column)" → "Shipped later →"
+- ylabel: replace "Feature i (row)" → "Shipped earlier →"
+- Title: replace docstring → "AI labs follow a consistent
+  capability build-up order"
+
+### fig_exp2_arms_comparison  (`plot_exp2_arms_comparison.py`)
+- Panel A ylabel: "inventory_rows" → "Power plants enumerated"
+- Panel B ylabel: "narrative_chars" → "Report length (thousands of characters)"
+- Panel C ylabel: "cost_usd" → "Cost per run (USD)"
+- suptitle: remove "arm" vocabulary; keep N=5 count
+
+### fig_exp2_coverage_certainty  (`plot_exp2_coverage_certainty.py`)
+- ylabel: "Rows with Source 2 (corroboration)"
+  → "Entries with two independent sources"
+- xlabel: "Inventory rows (coverage)" → "Power plants enumerated"
+- Add title: "Longer inventories tend to be better sourced"
+
+## Exit criteria
+
+- [ ] All French labels replaced with English equivalents
+- [ ] fig_capability_dag axis labels are human-readable
+- [ ] fig_exp2_arms_comparison panel ylabels use plain English
+- [ ] fig_exp2_coverage_certainty "Source 2" replaced
+- [ ] fig_capability_timeline and fig_direct_p1_base have titles
+- [ ] `make check-fast` passes
+- [ ] Figures regenerate without error
