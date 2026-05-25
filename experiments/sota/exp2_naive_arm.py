@@ -212,7 +212,7 @@ def probe_openai(prompt: str, output_dir: Path) -> dict:
             for content in item.content or []:
                 if getattr(content, "type", "") == "output_text":
                     narrative += content.text or ""
-                    for ann in (getattr(content, "annotations", None) or []):
+                    for ann in getattr(content, "annotations", None) or []:
                         url = getattr(ann, "url", None)
                         title = getattr(ann, "title", None) or ""
                         if isinstance(url, str):
@@ -321,8 +321,7 @@ def probe_anthropic(prompt: str, output_dir: Path) -> dict:
         for ws in record.web_search_calls or []:
             urls = ws.urls_returned or []
             query = ws.query or "web_search"
-            for url in urls:
-                sources.append((query, url))
+            sources.extend((query, url) for url in urls)
 
     narrative = _append_sources_section(narrative, sources)
     return {
