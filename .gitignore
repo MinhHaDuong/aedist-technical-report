@@ -35,9 +35,6 @@ htmlcov/
 
 # Generated slide data (report inputs are tracked)
 slides/inputs/generated/
-# Slide handoff artifacts committed by the analysis build
-!slides/inputs/generated/macros.tex
-!slides/inputs/generated/tab_exp2_2x2.tex
 
 # Slide assets: handoff artifacts derived from tracked sources
 !slides/inputs/logo-cired.pdf
