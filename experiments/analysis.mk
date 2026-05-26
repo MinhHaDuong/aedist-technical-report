@@ -47,6 +47,8 @@ ANALYSIS_EXP2_TURN_FIG := $(ANALYSIS_GEN)/fig_exp2_turn_trajectory.pdf
 ANALYSIS_EXP2_BIB_TABLE := $(ANALYSIS_GEN)/tab_exp2_bib_quality.tex
 ANALYSIS_EXP2_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty.pdf
 ANALYSIS_EXP2_SPIRE_FIG := $(ANALYSIS_GEN)/fig_quality_spider.pdf
+ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
+ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -319,6 +321,20 @@ ANALYSIS_EXP2_REPORT_TARGETS := \
 	$(ANALYSIS_EXP2_SPIRE_FIG) \
 	$(ANALYSIS_EXP2_OUTLINE_ARTIFACTS)
 
+# 2x2 factorial table (F1 + cost, query-mode x documents). Co-produces the
+# per-(agent,arm) CSV. Agent is the unit of replication; see the module docstring.
+$(ANALYSIS_EXP2_2X2_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+		$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_2x2 \
+	    --cross-eval-csv $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+	    --flat-root $(ANALYSIS_DERIVED_DIR) \
+	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
+	    --output-tex $@
+
 .PHONY: exp2-analysis-report
 
-exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS)
+exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) $(ANALYSIS_EXP2_2X2_TEX)
