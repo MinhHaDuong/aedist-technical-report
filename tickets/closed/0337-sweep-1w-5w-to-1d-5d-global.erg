@@ -1,10 +1,12 @@
-%erg v1
+%erg 0.1
 Title: Sweep global 1W/5W → 1D/5D dans tout le codebase
 Created: 2026-05-26
 Author: claude
+Closed: wontfix — audit found zero project occurrences of `\b[15]W\b` (excl. .venv/archive); the 1N/5N/1D/5D convention is already in use (slides.tex via #578). No rename needed.
 
 --- log ---
 2026-05-26T10:00Z claude created suite panel review (Sophie Lefèbvre C-8)
+2026-05-26T08:05Z HDMX-coding-agent closed — audit no-op: grep `\b[15]W\b` returns nothing in project; convention already 1N/5N/1D/5D
 
 --- body ---
 ## Context
