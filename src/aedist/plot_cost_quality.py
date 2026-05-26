@@ -112,6 +112,7 @@ def build_cost_quality_rows(
 
     reps_by_model: dict[str, list[dict]] = {}
     f1_by_model: dict[str, list[float]] = {}
+    fp_by_model: dict[str, list[int]] = {}
 
     for entry in metrics:
         slug = slug_from_label(entry["label"])
@@ -122,6 +123,9 @@ def build_cost_quality_rows(
             reps_by_model.setdefault(slug, []).append(
                 {"tp": int(tp), "cost": float(cost), "source": source}
             )
+        fp = entry.get("n_hallucinated")
+        if fp is not None:
+            fp_by_model.setdefault(slug, []).append(int(fp))
         f1 = entry.get("f1")
         if f1 is not None:
             f1_by_model.setdefault(slug, []).append(f1)
@@ -132,6 +136,7 @@ def build_cost_quality_rows(
         costs = [rep["cost"] for rep in reps]
         base_tp_values = [rep["tp"] for rep in reps if rep["source"] == "base"]
         topup_tp_values = [rep["tp"] for rep in reps if rep["source"] == "topup"]
+        fp_values = fp_by_model.get(slug, [])
         f1_values = f1_by_model.get(slug, [])
         mean_cost = round(sum(costs) / len(costs), 6) if costs else 0.0
         row = {
@@ -141,6 +146,9 @@ def build_cost_quality_rows(
             "median_tp": int(statistics.median(tp_values)),
             "min_tp": min(tp_values),
             "max_tp": max(tp_values),
+            "median_fp": int(statistics.median(fp_values)) if fp_values else 0,
+            "min_fp": min(fp_values) if fp_values else 0,
+            "max_fp": max(fp_values) if fp_values else 0,
             "tp_values": list(tp_values),
             "base_tp_values": base_tp_values,
             "topup_tp_values": topup_tp_values,
@@ -357,6 +365,9 @@ def main() -> None:
                     "median_tp",
                     "min_tp",
                     "max_tp",
+                    "median_fp",
+                    "min_fp",
+                    "max_fp",
                     "median_cost",
                     "mean_cost",
                     "median_f1",

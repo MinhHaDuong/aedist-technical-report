@@ -155,7 +155,7 @@ def _annotate_bar_labels(ax, include_e1: bool = True) -> None:
                 label,
                 ha="center",
                 va="bottom",
-                fontsize=7.5,
+                fontsize=9,
                 color="0.30",
                 zorder=6,
             )
