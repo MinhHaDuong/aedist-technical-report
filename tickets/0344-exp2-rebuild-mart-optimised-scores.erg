@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Exp2: régénérer exp2_mart.jsonl pour propager les scores optimisés (n_matched)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T11:45Z claude created issu de l'investigation 0336
+
+--- body ---
+## Context
+
+Suivi de l'investigation **0336**. Diagnostic complet là-bas.
+
+Le mart committé `experiments/derived/exp2_mart.jsonl` est **périmé** : il ne contient
+que les `score` records de l'arm *naive* (19), zéro pour l'arm *optimisée*. Du coup les
+vues dérivées (`tab_exp2_arms_runs_view.csv`) ont `n_matched` vide sur toute l'arm
+optimisée — ce qui bloque les figures coverage 0332 et 0333.
+
+Les données existent pourtant :
+- `experiments/derived/sota_cross_eval.csv` (committé) contient 12 lignes coverage
+  optimisées (claude run1/3, gpt run1-5, qwen run1-5 ; mistral/optimised = 0 scoré).
+- Les sorties brutes sont **archivées** :
+  `experiments/archive/outputs/sota_exp2_brerun1/` et `.../sota_exp2_naive_arm/`.
+  Les chemins canoniques `experiments/outputs/sota_exp2_{naive_arm,brerun1}/` sont vides.
+
+**Vérifié dans 0336** : reconstruire le mart depuis les chemins archive restaure les 12
+scores optimisés et peuple `n_matched` pour 12/20 lignes optimisées.
+
+## Décision à prendre (point d'entrée du travail)
+
+Le défaut de `build_exp2_mart` pointe vers `experiments/outputs/sota_exp2_*` (vides).
+Choisir UNE option :
+
+- **(A) Restaurer** les outputs depuis l'archive vers le chemin canonique
+  (`experiments/outputs/sota_exp2_{naive_arm,brerun1}/`), puis `make` régénère le mart
+  normalement. Risque : doublons/raw.json archivés ; vérifier la perm read-only des
+  archives (intégrité — ne pas chmod, copier).
+- **(B) Repointer** les chemins du mart vers l'archive dans `experiments/analysis.mk`
+  (variables `ANALYSIS_EXP2_NAIVE_DIR` / `ANALYSIS_EXP2_OPTIMISED_DIR`).
+  Plus propre côté DAG mais consacre l'archive comme source canonique.
+
+Demander à l'auteur si le choix n'est pas évident — l'archivage était délibéré.
+
+## Notes de mise en œuvre
+
+- Modèle qwen dans l'archive = `qwen3-max-2026-01-23` (l'ancien) ; le `sota_cross_eval.csv`
+  committé reste cohérent avec cette clé de jointure `(arm, model, run)`. Ne pas
+  introduire d'incohérence de nom de modèle.
+- Un `*.raw.json` parasite (run=None) traîne dans l'archive ; le `_RUN_RE` du build
+  l'ignore déjà — vérifier qu'il ne crée pas de ligne fantôme.
+- Après rebuild : 19 naive + 12 optimisées doivent avoir `n_matched`. **9 lignes restent
+  `None`** légitimement (naive claude run4 non scoré + 8 optimisées dont 5 mistral) →
+  fallback "Unscored", pas zéro.
+
+## Exit criteria
+- [ ] `experiments/derived/exp2_mart.jsonl` régénéré : `score` records = naive 19 +
+      optimisée 12 (vérifier via `record_kind=='score'` groupé par `arm`)
+- [ ] `tab_exp2_arms_runs_view.csv` montre `n_matched` peuplé pour les 31 runs scorés
+      (19 naive + 12 optimisées) ; les 9 non scorés restent vides
+- [ ] Décision (A) ou (B) documentée dans le log + DAG Makefile cohérent avec les
+      lectures/écritures réelles
+- [ ] `make` régénère le mart + les vues sans erreur (clean-room : prérequis présents)
+- [ ] Débloque 0332 et 0333
+
+## Premier test
+```python
+import json
+from collections import Counter
+recs = [json.loads(l) for l in open("experiments/derived/exp2_mart.jsonl") if l.strip()]
+scores = Counter(r["arm"] for r in recs if r["record_kind"] == "score")
+assert scores["optimised"] == 12, scores  # actuellement 0 — doit passer après rebuild
+assert scores["naive"] == 19, scores
+```
+
+## Bloque
+- 0332 (figure coverage and costs exp2)
+- 0333 (figure coverage vs corroboration)
