@@ -28,7 +28,7 @@ import logging
 from pathlib import Path
 
 from .util import (
-    COLOR_HALLUC,
+    COLOR_ALERT,
     COLOR_REFERENCE,
     SLIDE_FIGSIZE_FULL,
     model_family_color,
@@ -100,7 +100,7 @@ def load_exp2_rows(path: Path) -> list[dict]:
 
 
 def load_exp1_summary(path: Path) -> dict[str, dict]:
-    """Return {exp1_slug: {median_tp, min_tp, max_tp, mean_cost, min_cost, max_cost}} from cost_quality.csv."""
+    """Return {exp1_slug: {median_tp, …, median_fp, …, min_cost, max_cost}} from cost_quality.csv."""
     summary: dict[str, dict] = {}
     with path.open(newline="") as fh:
         for row in csv.DictReader(fh):
@@ -108,6 +108,9 @@ def load_exp1_summary(path: Path) -> dict[str, dict]:
                 "median_tp": int(row["median_tp"]),
                 "min_tp": int(row["min_tp"]),
                 "max_tp": int(row["max_tp"]),
+                "median_fp": int(row.get("median_fp") or 0),
+                "min_fp": int(row.get("min_fp") or 0),
+                "max_fp": int(row.get("max_fp") or 0),
                 "mean_cost": float(row["mean_cost"]),
                 "min_cost": float(row.get("min_cost") or row["mean_cost"]),
                 "max_cost": float(row.get("max_cost") or row["mean_cost"]),
@@ -151,7 +154,7 @@ def _annotate_bar_labels(ax, include_e1: bool = True) -> None:
                 label,
                 ha="center",
                 va="bottom",
-                fontsize=5.5,
+                fontsize=7.5,
                 color="0.30",
                 zorder=6,
             )
@@ -189,6 +192,16 @@ def make_coverage_figure(
             e1 = exp1_summary[exp1_slug]
             x = agent_idx + _CONDITION_OFFSET["e1"]
             ax.bar(x, e1["median_tp"], _BAR_WIDTH, color=color, alpha=0.55, hatch="//", zorder=3)
+            if e1["median_fp"] > 0:
+                ax.bar(
+                    x,
+                    -e1["median_fp"],
+                    _BAR_WIDTH,
+                    color=COLOR_ALERT,
+                    alpha=0.7,
+                    hatch="//",
+                    zorder=3,
+                )
             _draw_whiskers(ax, x, [e1["min_tp"], e1["max_tp"]])
 
         # Exp2 arms
@@ -205,7 +218,7 @@ def make_coverage_figure(
                 mean_halluc = _mean(halluc_vals)
                 ax.bar(x, mean_matched, _BAR_WIDTH, color=color, alpha=0.85, zorder=3)
                 if mean_halluc > 0:
-                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_HALLUC, alpha=0.9, zorder=3)
+                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_ALERT, alpha=0.9, zorder=3)
                 _draw_whiskers(ax, x, matched_vals)
             else:
                 inv_vals = [r["inventory_rows"] for r in subset if r["inventory_rows"] > 0]
