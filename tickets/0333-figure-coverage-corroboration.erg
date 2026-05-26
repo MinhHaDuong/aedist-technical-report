@@ -2,13 +2,15 @@
 Title: Figure Coverage vs Corroboration: alpha, rouge, cap 163, titre
 Created: 2026-05-26
 Author: claude
-Blocked-by: 0330
 Blocked-by: 0344
+Closed: delivered via PR #583
 
 --- log ---
 2026-05-26T10:00Z claude created
 2026-05-26T11:45Z claude note 0336 fermé (investigation) → bloqueur réel repointé sur 0344 (régénération mart). n_rows ≠ assets matchés : utiliser n_matched comme axe X, ne pas plafonner à 163. Détails findings dans 0336.
 
+2026-05-26T13:27Z HDMX-coding-agent note blocker 0330 closed — Blocked-by removed.
+2026-05-26T13:27Z HDMX-coding-agent closed — delivered via PR #583
 --- body ---
 ## Verbatim
 Voir `slides-review-verbatim.md` section « Figure Coverage vs Corroboration ».

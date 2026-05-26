@@ -1,11 +1,13 @@
-%erg v1
+%erg 0.1
 Title: Définir constantes figsize standards Beamer dans aedist.util
 Created: 2026-05-26
 Author: claude
+Closed: delivered via PR #579
 
 --- log ---
 2026-05-26T10:00Z claude created suite panel review (Lucas Moreau LM-11)
 
+2026-05-26T13:27Z HDMX-coding-agent closed — delivered via PR #579
 --- body ---
 ## Context
 Le bug systémique de décalage des figures (ticket 0330) vient de figsize en ratios trop
