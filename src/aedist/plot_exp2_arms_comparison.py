@@ -18,15 +18,13 @@ import argparse
 import csv
 import json
 import logging
-import random
 from pathlib import Path
 
 from .extract import count_best_table_rows
 from .util import (
     COLOR_HALLUC,
-    COLOR_MATCHED,
     COLOR_REFERENCE,
-    SLIDE_FIGSIZE_FULL,
+    SLIDE_FIGSIZE_WIDE,
     model_family_color,
 )
 
@@ -49,29 +47,16 @@ _AGENT_MODEL = {
     "qwen": "qwen3.7-max-2026-05-20",
 }
 
-_ARM_STYLE = {
-    "arm1": {"marker": "o", "filled": False, "offset": -0.27, "label": "Single query"},
-    "arm2": {"marker": "D", "filled": False, "offset": -0.09, "label": "Multi-turn"},
-    "arm3": {
-        "marker": "o",
-        "filled": True,
-        "offset": +0.09,
-        "label": "Single query with docs",
-    },
-    "arm4": {
-        "marker": "D",
-        "filled": True,
-        "offset": +0.27,
-        "label": "Multi-turn with docs",
-    },
-}
-
-_ARM_ORDER = ["arm1", "arm2", "arm3", "arm4"]
-
-_PANELS = [
-    ("inventory_rows", "(a) Coverage", "Assets correctly identified"),
-    ("cost_usd", "(b) Cost", "API cost per run (USD)"),
-]
+# Four experimental conditions, in display order within each model group.
+#   1N = single-shot, no docs  (arm1 / naive)
+#   5N = multi-turn,  no docs   (arm2 / optimised)
+#   1D = single-shot, docs      (arm3)
+#   5D = multi-turn,  docs      (arm4)
+_CONDITIONS = ["arm1", "arm2", "arm3", "arm4"]
+_CONDITION_LABEL = {"arm1": "1N", "arm2": "5N", "arm3": "1D", "arm4": "5D"}
+# Within-group bar centers; integer gap between models, small gap within a model.
+_CONDITION_OFFSET = {"arm1": -0.30, "arm2": -0.10, "arm3": +0.10, "arm4": +0.30}
+_BAR_WIDTH = 0.17
 
 
 def _canonical_arm(raw: str) -> str:
@@ -114,6 +99,8 @@ def _load_pack_arm_rows(base_dir: Path, arm: str) -> list[dict]:
                 "run": run,
                 "classification": classification,
                 "inventory_rows": _inventory_rows_from_flat(json_path),
+                # arm3/arm4 are unscored (no cross-eval coverage) -> no matched count.
+                "n_matched": None,
                 "cost_usd": float(payload.get("total_cost_usd", payload.get("cost_usd")) or 0.0),
                 "is_report": classification == "report",
             }
@@ -144,127 +131,128 @@ def _load_csv(path: Path) -> list[dict]:
     return rows
 
 
-def _draw_panel_a_diverging(ax, rows: list[dict]) -> None:
-    """Diverging bar: TP upward (blue/COLOR_MATCHED), FP downward (orange/COLOR_HALLUC)."""
-    import statistics
+def _mean(values: list[float]) -> float:
+    return sum(values) / len(values) if values else 0.0
 
-    bar_width = 0.35
-    arm_offsets = {"arm1": -0.2, "arm2": +0.2}
 
+def _draw_whiskers(ax, x_center: float, values: list[float]) -> None:
+    """Thin black vertical line spanning the run range + one short horizontal
+    segment per run, to show inter-run dispersion (ticket 0332)."""
+    if not values:
+        return
+    seg = _BAR_WIDTH * 0.6
+    ax.vlines(x_center, min(values), max(values), color="black", linewidth=0.7, zorder=5)
+    ax.hlines(
+        values,
+        x_center - seg / 2,
+        x_center + seg / 2,
+        color="black",
+        linewidth=0.8,
+        zorder=5,
+    )
+
+
+def _draw_coverage_panel(ax, rows: list[dict]) -> None:
+    """Diverging bars: matched assets (model colour, above 0), hallucinations /
+    false positives (red, below 0). 1D/5D (no scoring) render as gray bars."""
     for agent_idx, agent in enumerate(_AGENT_ORDER):
-        for arm_key, x_offset in arm_offsets.items():
+        for cond in _CONDITIONS:
             subset = [
-                r for r in rows if r["agent"] == agent and r["arm"] == arm_key and r["is_report"]
+                r for r in rows if r["agent"] == agent and r["arm"] == cond and r["is_report"]
             ]
             if not subset:
                 continue
+            x = agent_idx + _CONDITION_OFFSET[cond]
+            color = model_family_color(subset[0].get("model", _AGENT_MODEL[agent]))
 
-            inv_vals = [r["inventory_rows"] for r in subset]
-            matched_vals = [r["n_matched"] for r in subset]
-
-            has_scores = [m for m in matched_vals if m is not None]
-            if has_scores:
-                med_matched = statistics.median(has_scores)
-                inv_with_scores = [
-                    r["inventory_rows"] for r in subset if r["n_matched"] is not None
-                ]
-                med_inv = statistics.median(inv_with_scores)
-                med_halluc = max(0, med_inv - med_matched)
-                x = agent_idx + x_offset
-                ax.bar(x, med_matched, bar_width, color=COLOR_MATCHED, alpha=0.85, zorder=3)
-                if med_halluc > 0:
-                    ax.bar(x, -med_halluc, bar_width, color=COLOR_HALLUC, alpha=0.85, zorder=3)
+            scored = [r for r in subset if r["n_matched"] is not None]
+            if scored:
+                matched_vals = [r["n_matched"] for r in scored]
+                halluc_vals = [max(0, r["inventory_rows"] - r["n_matched"]) for r in scored]
+                mean_matched = _mean(matched_vals)
+                mean_halluc = _mean(halluc_vals)
+                ax.bar(x, mean_matched, _BAR_WIDTH, color=color, alpha=0.85, zorder=3)
+                if mean_halluc > 0:
+                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_HALLUC, alpha=0.9, zorder=3)
+                _draw_whiskers(ax, x, matched_vals)
             else:
-                med_inv = statistics.median(inv_vals) if inv_vals else 0
-                x = agent_idx + x_offset
-                ax.bar(x, med_inv, bar_width, color="0.70", alpha=0.85, zorder=3)
+                # 1D/5D or all-None scored runs: show inventory size, unscored gray.
+                inv_vals = [r["inventory_rows"] for r in subset if r["inventory_rows"] > 0]
+                ax.bar(x, _mean(inv_vals), _BAR_WIDTH, color="0.70", alpha=0.85, zorder=3)
+                _draw_whiskers(ax, x, inv_vals)
 
-    ax.axhline(0, color="black", linewidth=0.6, zorder=2)
+    ax.axhline(0, color=COLOR_REFERENCE, linewidth=1.4, zorder=2)
     ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
-
     ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
-    ax.set_ylabel("Plants", fontsize=8)
-    ax.set_ylim(-60, 180)
-    ax.set_xticks(range(len(_AGENT_ORDER)))
-    ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
-    ax.tick_params(axis="y", labelsize=7.5)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
+    ax.set_ylim(-50, 150)
+    ax.set_yticks([-50, 0, 50, 100, 150])
+    # Y-axis label, horizontal, at the top of the axis.
     ax.text(
-        0.5,
-        -0.23,
-        "(a) Coverage",
-        transform=ax.transAxes,
-        ha="center",
-        va="top",
-        fontsize=10,
+        -0.5,
+        150,
+        "163 plants",
+        ha="left",
+        va="bottom",
+        fontsize=8,
         fontweight="bold",
     )
+    _style_panel(ax, "Number of assets identified (red are False Positives)")
 
 
-def _draw_panel(ax, rows: list[dict], metric: str, title: str, ylabel: str) -> None:
-    rng = random.Random(42)
-
+def _draw_cost_panel(ax, rows: list[dict]) -> None:
+    """Mean API cost per run, 4 bars per model with inter-run whiskers."""
     for agent_idx, agent in enumerate(_AGENT_ORDER):
-        for arm in _ARM_ORDER:
-            style = _ARM_STYLE[arm]
-            subset = [r for r in rows if r["agent"] == agent and r["arm"] == arm]
+        for cond in _CONDITIONS:
+            subset = [
+                r for r in rows if r["agent"] == agent and r["arm"] == cond and r["is_report"]
+            ]
             if not subset:
                 continue
-
+            x = agent_idx + _CONDITION_OFFSET[cond]
             color = model_family_color(subset[0].get("model", _AGENT_MODEL[agent]))
-            x_center = agent_idx + style["offset"]
-            xs = [x_center + rng.uniform(-0.04, 0.04) for _ in subset]
+            cost_vals = [r["cost_usd"] for r in subset]
+            ax.bar(x, _mean(cost_vals), _BAR_WIDTH, color=color, alpha=0.85, zorder=3)
+            _draw_whiskers(ax, x, cost_vals)
 
-            report_xs = [x for x, r in zip(xs, subset, strict=True) if r["is_report"]]
-            report_ys = [r[metric] for r in subset if r["is_report"]]
+    ax.set_ylim(bottom=0)
+    ax.set_title("API Cost per run, USD", fontsize=9, fontweight="bold", pad=6)
+    _style_panel(ax, None)
 
-            if report_xs:
-                face = color if style["filled"] else "none"
-                ax.scatter(
-                    report_xs,
-                    report_ys,
-                    marker=style["marker"],
-                    s=24,
-                    facecolors=face,
-                    edgecolors=color,
-                    linewidths=1.0,
-                    zorder=3,
-                )
 
+def _annotate_conditions(ax) -> None:
+    """Small 1N/5N/1D/5D labels just below each bar, inside the axes."""
+    y0 = ax.get_ylim()[0]
+    span = ax.get_ylim()[1] - y0
+    for agent_idx in range(len(_AGENT_ORDER)):
+        for cond in _CONDITIONS:
+            ax.text(
+                agent_idx + _CONDITION_OFFSET[cond],
+                y0 + span * 0.015,
+                _CONDITION_LABEL[cond],
+                ha="center",
+                va="bottom",
+                fontsize=6.0,
+                color="0.30",
+                zorder=6,
+            )
+
+
+def _style_panel(ax, ylabel: str | None) -> None:
     ax.set_xticks(range(len(_AGENT_ORDER)))
     ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
-    ax.set_xlim(-0.5, len(_AGENT_ORDER) - 0.5)
-    ax.set_ylabel(ylabel, fontsize=8)
+    ax.set_xlim(-0.6, len(_AGENT_ORDER) - 0.4)
+    if ylabel:
+        ax.set_title(ylabel, fontsize=9, fontweight="bold", pad=6)
     ax.tick_params(axis="y", labelsize=7.5)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    if metric == "inventory_rows":
-        ax.axhline(
-            N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1
-        )
-        ax.set_ylim(0, 180)
-    else:
-        ax.set_ylim(bottom=0)
-
-    # Center panel captions below each subplot.
-    ax.text(
-        0.5,
-        -0.23,
-        title,
-        transform=ax.transAxes,
-        ha="center",
-        va="top",
-        fontsize=10,
-        fontweight="bold",
-    )
+    _annotate_conditions(ax)
 
 
 def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
-    from matplotlib.lines import Line2D
 
-    fig, axes = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_FULL)
+    fig, axes = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_WIDE)
     no_report_rows = [r for r in rows if not r["is_report"]]
     if no_report_rows:
         sample = ", ".join(f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6])
@@ -275,48 +263,20 @@ def make_figure(rows: list[dict], output: Path) -> None:
         )
     rows = [r for r in rows if r["is_report"]]
 
-    _draw_panel_a_diverging(axes[0], rows)
-    _draw_panel(axes[1], rows, "cost_usd", "(b) Cost", "API cost per run (USD)")
+    _draw_coverage_panel(axes[0], rows)
+    _draw_cost_panel(axes[1], rows)
 
-    legend_handles = [
-        Line2D([0], [0], color=COLOR_MATCHED, linewidth=6, alpha=0.85, label="Matched (TP)"),
-        Line2D([0], [0], color=COLOR_HALLUC, linewidth=6, alpha=0.85, label="Hallucinated (FP)"),
-        Line2D([0], [0], color="0.70", linewidth=6, alpha=0.85, label="Unscored"),
-    ]
-    arm_handles = []
-    for arm in ["arm1", "arm2"]:
-        style = _ARM_STYLE[arm]
-        arm_handles.append(
-            Line2D(
-                [0],
-                [0],
-                marker=style["marker"],
-                linestyle="",
-                markerfacecolor="none",
-                markeredgecolor=COLOR_REFERENCE,
-                markersize=6,
-                label=style["label"],
-            )
-        )
-    fig.legend(
-        handles=legend_handles + arm_handles,
-        loc="upper center",
-        ncol=5,
-        fontsize=7.5,
-        frameon=True,
-        bbox_to_anchor=(0.5, 0.945),
-        borderpad=0.6,
-        labelspacing=0.6,
-        columnspacing=1.2,
+    fig.suptitle("Coverage and costs, experiment 2", fontsize=13, fontweight="bold", y=0.99)
+    fig.text(
+        0.5,
+        0.925,
+        "1N = Singleshot, no doc  ·  5N = Multiturn, no doc  ·  "
+        "1D = Singleshot, docs  ·  5D = Multiturn, docs",
+        ha="center",
+        va="top",
+        fontsize=8.5,
     )
-
-    fig.suptitle(
-        "One query, providing documents works better than a conversation with web search",
-        fontsize=12,
-        fontweight="bold",
-        y=1.01,
-    )
-    fig.tight_layout(rect=(0.0, 0.08, 1.0, 0.92))
+    fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.90))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)

@@ -127,10 +127,12 @@ $(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality_view.csv
 
 # --- Figure: coverage vs. certainty scatter (reads from bib quality CSV) -----
 
-$(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality_view.csv
+$(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality_view.csv \
+		$(GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
-	    --input $< \
+	    --input $(GEN)/tab_exp2_bib_quality_view.csv \
+	    --arms-input $(GEN)/tab_exp2_arms_runs_view.csv \
 	    --output $@
 
 # --- Figure: five-axis quality spider from cross-eval scores -----------------
@@ -148,6 +150,15 @@ $(GEN)/fig_spider_exp1_families.pdf: experiments/derived/exp1_cross_eval.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_spider_exp1 \
 	    --input $< \
+	    --output $@
+
+# --- Figure: Claude-only single spider, 5 quality dims, FR criteria ---------
+
+$(GEN)/fig_spider_exp1_claude.pdf: experiments/derived/exp1_cross_eval.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $< \
+	    --family claude \
 	    --output $@
 
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
@@ -222,4 +233,5 @@ exp2-analysis-report: \
 	$(GEN)/tab_exp2_bib_quality.tex \
 	$(GEN)/fig_exp2_coverage_certainty.pdf \
 	$(GEN)/fig_quality_spider.pdf \
+	$(GEN)/fig_spider_exp1_claude.pdf \
 	$(EXP2_OUTLINE_ARTIFACTS)

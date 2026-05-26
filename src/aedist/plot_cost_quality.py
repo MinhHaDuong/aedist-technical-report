@@ -270,7 +270,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
     ax_a.set_ylabel("Assets correctly identified")
     fig.supxlabel("Cost per run (USD cents)")
     fig.suptitle(
-        "Cost vs. accuracy across 16 models (no web access)",
+        "Cost vs Accuracy across 5 model families (no search, one shot, no docs)",
         y=0.995,
         fontsize=13,
         fontweight="bold",
