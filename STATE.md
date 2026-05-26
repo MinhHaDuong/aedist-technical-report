@@ -1,4 +1,4 @@
-Last updated: 2026-05-27T09:00Z
+Last updated: 2026-05-27T22:00Z
 
 ## North star
 
@@ -10,18 +10,18 @@ Econom'IA 2026 talk delivered at Thema/Cergy 2026-05-27. Next: write the paper.
 
 ## Current goal
 
-Merge open PRs (#606 slides 0347, #612 spider 0348), re-enable CI, then open paper-writing tickets.
+Post-conference slides review done (PRs #615/#616). Open paper-writing tickets.
 
 ## Status
-<!-- generated 2026-05-27T09:00Z -->
+<!-- generated 2026-05-27T22:00Z -->
 
 **Tickets:** 29 ready · 20 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  1e1006bc slides(exp1): add hallucination examples slide after figure overlay
-  acd8d613 state: 0345 DAG done; mark stale remote branch for end-session prune
-  6d6ee192 tickets(0352,0353): tag deferred — post-conference follow-ups
-  4ffe7107 slides: rename FP category Connaissance périmée → Référence inexacte
-  68a0876b slides(discussion): add FP typology slide; rename hallucinées → non-reconnues
+  4948b617 chore: rebuild exp2 generated artifacts (side effect of analysis.mk)
+  c3bbdf83 fix(fig): E1 FP bars on coverage; larger condition labels
+  e9dc00e5 fix(slides): rebuild figs 16+17 with restored labels; fix hallucinations term
+  25018257 slides: hide RAG table (19), soften conclusions wording
+  7e0e386a slides(21): top-align Limites frame content
 
 ## Workplan
 
@@ -29,15 +29,14 @@ Merge open PRs (#606 slides 0347, #612 spider 0348), re-enable CI, then open pap
 2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
 3. **Update manuscript.** DONE — 0313–0318 closed.
 4. **Update slides.** DONE — conference delivered 2026-05-27.
-5. **Post-conference cleanup.** IN PROGRESS — merge PRs #606/#612, re-enable CI, prune stale branches.
+5. **Post-conference cleanup.** DONE — PRs #606/#612/#615/#616 merged, regressions fixed.
 6. **Paper writing.** Opens next.
 
 ## Backlog / deferred
 
 - Scaling-curve diagnosis — direct_complete F1=0 on 3 capable models (parser failure suspected).
-- Paper writing opens after post-conference cleanup.
+- Paper writing opens now.
 - Report clean-room build + uv-run guard deferred (tickets 0352/0353).
-- CI required-checks rule disabled 2026-05-26 — **re-enable now** (talk done).
-- Prune stale remote branches: `origin/t0345-collapse-exp2-single-producer`, `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.
+- CI required-checks rule disabled 2026-05-26 — **re-enable** (talk done, no longer blocking).
+- Stale remote branches to prune: `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.
 - `ticket/0345-collapse-exp2-single-producer` local branch has 3 pre-PR commits not in main — manual review before deleting.
-- `slides/conference-day-final` needs surgery before PR: drop slides.tex change (keep Préconisation frame), drop Makefile additions (zombie include + duplicates already in main), drop plot_cost_quality/plot_exp2_arms_split/test regressions vs PR #604. Keep: analysis.mk cleanup (finishes 0345), slides/Makefile delegation, .gitignore.
