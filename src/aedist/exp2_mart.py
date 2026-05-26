@@ -134,7 +134,7 @@ class Exp2MartBase(BaseModel):
     record_kind: Literal["run", "probe", "score"]
     record_id: str = Field(..., min_length=1)
     parent_record_id: str | None = Field(default=None)
-    arm: Literal["naive", "optimised"]
+    arm: Literal["naive", "optimised", "arm3", "arm4"]
     agent: str = Field(..., min_length=1)
     model: str = Field(..., min_length=1)
     run: int = Field(..., ge=1)
