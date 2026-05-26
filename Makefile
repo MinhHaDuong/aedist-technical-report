@@ -9,8 +9,6 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-include report/exp2-analysis.mk
-
 .PHONY: test test-fast lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
