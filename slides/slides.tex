@@ -118,44 +118,90 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
-\small
+\begin{frame}{La bonne statistique exige plus que des vrais chiffres}
 \begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Score} & & \textbf{Statut épistémique} \\
-\midrule
-5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
-4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
-3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
-2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
-1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
-\bottomrule
-\end{tabular}
+{\small\textit{«~Connaissance~: croyance vraie justifiée.~»}}
 \end{center}
-\smallskip
-{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
+
+\medskip
+\small
+Les données de qualité recherche se jugent sur cinq dimensions~:
+\begin{enumerate}\setlength\itemsep{4pt}
+  \item \textbf{Accuracy}~--- les bons actifs, les bons attributs (précision/recall, F1).
+  \item \textbf{Coherence}~--- totaux qui se réconcilient, valeurs plausibles, conflits arbitrés.
+  \item \textbf{Provenance}~--- chaque valeur tracée à une source qui la soutient vraiment.
+  \item \textbf{Temporality}~--- chaque valeur datée~; les changements de statut signalés.
+  \item \textbf{Fit for purpose}~--- niveau de détail approprié, opérationnel et mesuré.\\
+        {\small Ex.~: pour PyPSA la colonne Capacité doit être remplie --- on mesure le taux
+        de remplissage des champs critiques pour l'usage aval.}
+\end{enumerate}
+
+\bigskip
+\begin{center}
+\small\textbf{$\to$ Grille de notation multi-axes.}
+\end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Qualité de la méthode~: les conditions actives}
+\begin{frame}[fragile]{Structure du prompt \textit{Engineered}}
+\scriptsize
+\begin{verbatim}
+# GOAL
+
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and
+future thermal generation assets (> 30 MWe). Begin the document directly with the
+inventory table -- no title, no preamble, no overview section. Structure it as follows:
+
+- the plant inventory: ...: Name (Vietnamese), Name (English), Province, Fuel
+  (Coal / Domestic gas / Imported LNG), Technology (...), Units x MW, Total MWe, Status,
+  Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+  Do not add statistical summary, cross-tabulation, or any other pipe tables;
+  fold aggregate statistics into prose.
+- per-asset or per-project explanatory notes: ...
+- an annotated bibliography ...
+
+Scope includes ...
+
+When uncertain, mark confidence... .
+
+Output format: Markdown.
+
+# QUALITY DIMENSIONS
+
+# CONTEXT
+
+## Source quality management
+
+## Calibrated confidence vocabulary
+
+## Asset-row and status rules
+\end{verbatim}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Quality dimensions}
 \small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
-\bottomrule
-\end{tabular}
-\end{center}
+\textit{Your output is judged on four axes:}
+\begin{enumerate}\setlength\itemsep{4pt}
+  \item \textit{Accuracy} --- right assets and right attributes. Row level: recall and
+        precision against a curated reference (F1). Cell level: capacity, fuel, location,
+        operator, COD, status correct. Confident fabrication is the policed failure mode.
+  \item \textit{Coherence} --- internally and externally consistent. Totals reconcile with
+        known subtotals; no negative capacities, no double-counted units, no cross-row
+        contradiction; values plausible in unit, magnitude, geography, technology, date.
+        Conflicting sources reconciled explicitly (which chosen and why), not silently.
+  \item \textit{Provenance} --- each value traces to a source that actually supports it,
+        not a merely plausible citation. Two independent primaries is the ideal; one
+        primary, a regulator database, or a marked secondary is weaker but acceptable if
+        its status is explicit. Unsupported values are the failure.
+  \item \textit{Temporality} --- every value carries a best-effort as-of date; status
+        changes are flagged. Distinguish current status from past reports, planned from
+        operating capacity, source date from fact date.
+\end{enumerate}
+
 \smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+{\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed over
+a shortlist of well-known assets.}}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -177,6 +223,19 @@ Non-monotone
 \begin{frame}[plain]
 \centering
 \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{De l'Exp 1 à l'Exp 2 : si la mémoire ne suffit pas, les sources peuvent-elles aider~?}
+\begin{itemize}\setlength\itemsep{1.0em}
+  \item \textbf{Bilan Exp 1.} Les modèles connaissent mal les actifs vietnamiens
+        (one shot, aucun document, connaissance paramétrique seule).
+
+  \item \textbf{Question Exp 2.} Fournir des documents primaires résout-il le problème~?
+
+  \item \textbf{Second axe.} Un dialogue multi-tours peut-il aider le modèle à
+        explorer sa connaissance et celle des documents~?
+\end{itemize}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -246,7 +305,7 @@ Non-monotone
 \end{frame}
 
 % ===================================================================
-\section{Architecture}
+\section{Discussion}
 
 % -------------------------------------------------------------------
 \begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
@@ -262,28 +321,45 @@ et où mènent les architectures à états agentiques.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Quatre défaillances}
-\begin{center}
+\begin{frame}{Qualité de la méthode~: les conditions actives}
 \small
-\begin{tabular}{@{}ll@{}}
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
 \toprule
-\textbf{Défaillance} & \textbf{Symptôme} \\
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
 \midrule
-\textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources              \\
-\textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables         \\
-\textbf{Fraîcheur}                     & Instantané figé à la coupure       \\
-\textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées \\
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
 \bottomrule
 \end{tabular}
-\footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
-\footnotetext[2]{Popper, \textit{The Logic of Scientific Discovery}, 1959.}
-\footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants.}
 \end{center}
+\smallskip
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\end{frame}
 
-\bigskip
-\begin{center}
-\small\textit{Chaque défaillance a un mécanisme correcteur mesurable.}
-\end{center}
+% -------------------------------------------------------------------
+\begin{frame}{Directions futures}
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Intégration RAG HITL des sources}]
+        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
+        le corpus RAG grandit de façon contrôlée.
+
+  \item[\textbf{Vérifié $>$ vérifiable}]
+        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
+        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
+
+  \item[\textbf{Niveau cellule~: KG par document}]
+        Chaque cellule est un triple (sujet, prédicat, objet)~;
+        la fusion de sources concurrentes devient fusion d'ensembles de triples.
+        Graphe de connaissances en lieu et place d'une master-table plate.
+
+  \item[\textbf{Secteur $\times$ pays}]
+        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
+        à l'eau en Thaïlande. Architecture identique, paramètres différents.
+\end{description}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -360,28 +436,6 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 
   \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Directions futures}
-\begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Intégration RAG HITL des sources}]
-        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
-        le corpus RAG grandit de façon contrôlée.
-
-  \item[\textbf{Vérifié $>$ vérifiable}]
-        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
-        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
-
-  \item[\textbf{Niveau cellule~: KG par document}]
-        Chaque cellule est un triple (sujet, prédicat, objet)~;
-        la fusion de sources concurrentes devient fusion d'ensembles de triples.
-        Graphe de connaissances en lieu et place d'une master-table plate.
-
-  \item[\textbf{Secteur $\times$ pays}]
-        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
-        à l'eau en Thaïlande. Architecture identique, paramètres différents.
-\end{description}
 \end{frame}
 
 % -------------------------------------------------------------------
