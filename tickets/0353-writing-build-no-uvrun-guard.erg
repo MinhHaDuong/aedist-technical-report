@@ -3,10 +3,12 @@ Title: Add adherence test guarding the writing build against uv run leakage
 Created: 2026-05-26
 Author: HDMX-coding-agent
 Blocked-by: 0352
+Tag: deferred
 
 --- log ---
 2026-05-26T21:46Z HDMX-coding-agent created — class regression guard after 0345 + 0352 sweep found two instances
 
+2026-05-26T21:50Z HDMX-coding-agent tag deferred
 --- body ---
 ## Context
 
