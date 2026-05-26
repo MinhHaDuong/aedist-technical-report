@@ -63,9 +63,7 @@ class TestHeaderMapping:
         assert map_header_to_canonical(norm_header("Orig. Cap (MW)")) == "capacity_mwe"
 
     def test_current_status_resolution_header(self):
-        assert (
-            map_header_to_canonical(norm_header("Current Status / Resolution")) == "status"
-        )
+        assert map_header_to_canonical(norm_header("Current Status / Resolution")) == "status"
 
 
 class TestPipeTable:
@@ -182,6 +180,23 @@ class TestCountBestTableRows:
     def test_returns_zero_when_no_parseable_inventory_table_exists(self):
         text = "| Fuel | Capacity |\n| --- | --- |\n| Coal | 2910 |\n"
         assert count_best_table_rows(text) == 0
+
+    def test_counts_rows_when_narrative_glued_to_header(self):
+        """Arm3 (single-turn with docs) anthropic runs stream a reasoning
+        preamble onto the same physical line as the table header, e.g.
+        ``Let me search.| Name | Fuel |``. The glued prose must not add a
+        phantom header cell that drops every data row as a count mismatch.
+        """
+        text = (
+            "I need to research the current status of Vietnam's thermal "
+            "projects. Let me conduct several targeted searches."
+            "| Name | Fuel | Province | Capacity | Status | COD |\n"
+            "|---|---|---|---|---|---|\n"
+            "| Pha Lai | Coal | Hai Duong | 1040 | Operating | 1983 |\n"
+            "| Uong Bi | Coal | Quang Ninh | 630 | Operating | 2002 |\n"
+            "| Vinh Tan 1 | Coal | Binh Thuan | 1240 | Operating | 2018 |\n"
+        )
+        assert count_best_table_rows(text) == 3
 
     def test_merges_split_inventory_subtables_before_counting(self):
         text = (
@@ -355,7 +370,9 @@ class TestNormHeaderDiacritics:
 # ---------------------------------------------------------------------------
 class TestParseAndCanonicalize:
     def test_basic_csv(self):
-        csv_text = "Name,Fuel,Status,COD,Province,Capacity\nPha Lai,Coal,Operating,2001,Hai Duong,600"
+        csv_text = (
+            "Name,Fuel,Status,COD,Province,Capacity\nPha Lai,Coal,Operating,2001,Hai Duong,600"
+        )
         result = parse_and_canonicalize(csv_text)
         assert "Pha Lai" in result
         assert "600.0" in result
@@ -419,7 +436,7 @@ class TestParseAndCanonicalize:
         """parse_and_canonicalize keeps source_1, source_2, note from sourced runs."""
         csv_text = (
             "name,fuel,status,cod,province,capacity_mwe,source_1,source_2,note\n"
-            'Pha Lai,coal,operational,1983,Hai Duong,440,'
+            "Pha Lai,coal,operational,1983,Hai Duong,440,"
             '"Decision 1195/QD-TTg","EVN Annual Report 2017 p14","4x110MW Soviet-built"\n'
         )
         result = parse_and_canonicalize(csv_text)
@@ -623,9 +640,7 @@ class TestMainSkipsDerivedJson:
             json.dumps({"response": "```csv\nName,Fuel\nPha Lai,Coal\n```"})
         )
         # Eval file that should be skipped
-        (inp / "model-run1.eval.json").write_text(
-            json.dumps({"f1": 0.5, "precision": 0.6})
-        )
+        (inp / "model-run1.eval.json").write_text(json.dumps({"f1": 0.5, "precision": 0.6}))
         main(["--input", str(inp), "--output", str(out)])
         # Only the model reply should produce a CSV
         assert (out / "model-run1.csv").exists()
