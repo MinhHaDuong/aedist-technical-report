@@ -1,0 +1,130 @@
+%erg 0.1
+Title: Exp2 data: investiguer n_matched et n_rows pour figures coverage
+Created: 2026-05-26
+Author: claude
+Closed: n_matched existe (mart view) mais arm optimisée NULL — mart jsonl périmé; rebuild depuis archive récupère 12 scores. Suivi: 0344.
+
+--- log ---
+2026-05-26T10:00Z claude created bloqueur identifié par panel review (Lucas Moreau)
+2026-05-26T11:30Z claude investigated trouvé deux pipelines (legacy + mart); plot lit le mart view (avec n_matched), pas le CSV legacy
+2026-05-26T11:45Z claude closed cause racine = exp2_mart.jsonl périmé (scores naive uniquement); raw outputs archivés; suivi 0344 ouvert
+
+--- body ---
+## Context
+Bloqueur identifié par le panel de révision (Dr. Lucas Moreau, expert dataviz) :
+
+**Problème 1** : `tab_exp2_arms_runs.csv` n'a pas de colonne `n_matched`. La figure
+Coverage and costs exp2 (ticket 0332) demande des barres rouges pour les faux positifs
+(hallucinations) sous zéro — ce qui exige `n_halluc = n_inventory - n_matched`. Sans
+`n_matched` la décomposition TP/FP est impossible.
+
+**Problème 2** : `tab_exp2_bib_quality.csv` contient `n_rows = len(data_rows)` qui compte
+les lignes du tableau MD brut, pas les assets correctement identifiés. C'est pourquoi
+des valeurs > 163 apparaissent (ex. OpenAI/optimised n_rows=181). Le ticket 0333
+proposait de plafonner l'axe à 163 — ce serait masquer une erreur sémantique.
+
+## Actions
+1. Auditer le pipeline cross-eval Exp2 :
+   - `experiments/sota/exp2_naive_arm.py` et `exp2_phase_b0_consolidate.py`
+   - Identifier où n_matched devrait être calculé
+   - Vérifier si MILP matching ou name-similarity threshold est déjà appliqué
+2. Si n_matched n'est calculé nulle part : implémenter le calcul (matching contre
+   gold standard 163 plants, même métrique que Exp1)
+3. Ajouter la colonne `n_matched` à `tab_exp2_arms_runs.csv` et la régénérer
+4. Pour `tab_exp2_bib_quality.csv` : renommer `n_rows` en quelque chose de précis
+   (ex. `n_table_rows`) si elle ne représente pas n_matched, OU calculer n_matched
+   en parallèle et l'utiliser comme axe X dans la figure 0333
+5. Pour la figure 0333 (Coverage vs Corroboration) : ajouter aussi la colonne
+   `n_halluc_with_2_sources` (hallucinations corroborées par 2 sources)
+6. Documenter dans le log du ticket la définition exacte de chaque métrique
+
+## Bloque
+- 0332 (figure coverage and costs exp2)
+- 0333 (figure coverage vs corroboration)
+
+## Exit criteria
+- [ ] `n_matched` calculé et présent dans `tab_exp2_arms_runs.csv`
+- [ ] Sémantique de `n_rows` clarifiée dans `tab_exp2_bib_quality.csv` (renommée si nécessaire)
+- [ ] `n_halluc_with_2_sources` calculé et présent dans le CSV bib_quality
+- [ ] Documentation des définitions dans le log du ticket ou un README adjacent
+- [ ] `make` régénère les CSVs sans erreur
+
+## Findings (investigation 2026-05-26)
+
+Investigation only — no rescore/regeneration done here (time-boxed, conférence J-1).
+Travail de régénération transféré au ticket de suivi **0344**.
+
+### Le panel lisait le mauvais CSV
+
+Il existe **deux pipelines parallèles** produisant des tableaux `tab_exp2_arms_runs`:
+
+1. **Legacy** : `tabulate_exp2_arms_runs.py` → `tab_exp2_arms_runs.csv`. 10 colonnes,
+   **pas** de `n_matched` (colonne `inventory_rows` = `count_best_table_rows`). C'est le
+   fichier que le panel a inspecté. **C'est un artefact de parité (`exp2-old-path`),
+   PAS l'entrée de la figure.** Cf. `experiments/analysis.mk:138-143`, `170-174`.
+2. **Mart** : `build_exp2_mart_views.py` → `tab_exp2_arms_runs_view.csv`. 11 colonnes,
+   **inclut `n_matched`** (`build_exp2_mart_views.py:24`, calcul ligne 195 :
+   `n_matched = round(coverage × 163)`).
+
+La figure 0332 (`plot_exp2_arms_comparison.py`) est câblée sur le **mart view**
+(`analysis.mk:197-199`), pas sur le legacy. Le plot consomme déjà `n_matched`
+(`plot_exp2_arms_comparison.py:125-126, 156-166`) et a un fallback "Unscored" (barre
+grise) quand `n_matched is None` (ligne 172). Donc « n_matched n'existe nulle part »
+est **faux** : il est calculé, mais pour la moitié des données seulement.
+
+### Vrai bloqueur : `exp2_mart.jsonl` est périmé
+
+Le mart committé `experiments/derived/exp2_mart.jsonl` contient :
+- `run` records : naive 20, optimised 20 (OK)
+- `score` records : **naive 19, optimised 0** ← problème
+
+Conséquence : en joignant run↔score sur `(arm, model, run)`, **les 20 lignes de l'arm
+optimisée ressortent avec `n_matched` vide**. Les 20 lignes naive ont `n_matched`
+peuplé (72, 80, 69, 67, ...).
+
+Cause racine : le mart a été construit **avant** la régénération des scores cross-eval
+optimisés. `git log` : `74aeb44e data(0321): regenerate sota_cross_eval.csv` est
+postérieur au mart. Le code de build (`build_exp2_mart.py:299-333`) traite bien les deux
+arms — ce n'est pas un bug de code, juste un artefact non reconstruit.
+
+### Les données optimisées existent et sont récupérables
+
+`experiments/derived/sota_cross_eval.csv` (committé) **contient** 12 lignes de coverage
+optimisée : claude run1/3 (cov 0.31/0.53), gpt run1-5 (cov 0.46-0.51),
+qwen run1-5 (cov 0.10-0.17). mistral/optimised = **0 ligne scorée** (5/5 ratées).
+
+Les sorties brutes ne sont pas perdues : elles ont été **archivées** vers
+`experiments/archive/outputs/sota_exp2_brerun1/` (41 json) et
+`.../sota_exp2_naive_arm/` (37 json). Les chemins canoniques
+`experiments/outputs/sota_exp2_{naive_arm,brerun1}/` sont **vides** (d'où l'échec d'un
+`make` naïf : 0 records). **Vérifié** : reconstruire le mart depuis les chemins archive
+restaure les 12 scores optimisés et peuple `n_matched` pour 12/20 lignes optimisées
+(claude 50/87, gpt 75-83, qwen 16-28). mistral/optimised reste `None` (jamais scoré) —
+géré par le fallback gris de 0332.
+
+Note : `n_matched` (coverage×163) peut **dépasser** `inventory_rows` (ex. claude opt
+run1 : n_matched=50 > inv=47) car les deux utilisent des parses de table différents.
+Normal, pas un bug.
+
+### Problème 2 : `n_rows` dans bib_quality n'est pas un bug
+
+`tab_exp2_bib_quality.csv` `n_rows = len(data_rows)` (`extract_exp2_bib.py:426`) compte les
+lignes de la table markdown **porteuse de colonnes Source 1/Source 2** (parse différent de
+`count_best_table_rows`). Les valeurs > 163 (openai/optimised/run3 = 181) ne sont **pas**
+une erreur sémantique : c'est une métrique distincte (lignes de table de sources, pas
+assets matchés). Plafonner l'axe à 163 (proposition 0333) masquerait la vraie métrique.
+Le bon correctif pour 0333 : utiliser **`n_matched`** comme axe X (en joignant bib_quality
+sur arms_runs_view), pas renommer `n_rows`.
+
+### Ce que 0332 / 0333 doivent supposer
+
+- **NE PAS** consommer `tab_exp2_arms_runs.csv` (legacy, sans n_matched). Consommer
+  `tab_exp2_arms_runs_view.csv` (mart, avec n_matched). Vérifier le câblage.
+- Après régénération du mart (ticket **0344**) : 19 naive + 12 optimisées auront
+  `n_matched`. **9 lignes resteront `None`** (naive claude run4, + 8 optimisées dont
+  les 5 mistral/optimised non scorées) → traiter comme "Unscored", pas zéro.
+- `n_halluc = inventory_rows − n_matched`, **clampé à ≥ 0** (déjà fait :
+  `plot_exp2_arms_comparison.py:166`).
+- `n_rows` (bib_quality) ≠ assets matchés. Pour 0333, joindre sur `n_matched`.
+- `n_halluc_with_2_sources` (critère 0333) n'est calculé nulle part aujourd'hui — il
+  faut croiser hallucinations × `src2_present`. Hors périmètre ici ; à spécifier dans 0333.
