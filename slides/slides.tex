@@ -54,7 +54,7 @@
 \section{Problème}
 
 % -------------------------------------------------------------------
-\begin{frame}{Le problème}
+\begin{frame}{L'IA peut-elle produire des données qualité recherche~?}
 \begin{columns}[T]
 \column{0.55\textwidth}
 \textbf{Les modèles ont besoin de données fiables.}
@@ -64,9 +64,6 @@ Exemple: Un modèle électrique de l'ASEAN nécessite des inventaires de central
 
 \smallskip
 Dans les pays à agences statistiques faibles, ces données sont difficiles d'accès.
-
-\smallskip
-\textbf{L'IA peut-elle produire des données de qualité recherche~?}
 
 \column{0.42\textwidth}
 \textbf{Difficultés~:}
@@ -89,9 +86,12 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
 
 \textbf{\NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
-``{\ttfamily \input{../experiments/prompts/prompt_extract.txt}}''
+prompt \textit{Engineered}, 84 lignes.
 
 \smallskip
+{\small \textit{Conditions~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé. Effort de raisonnement par défaut.}}
+
+\medskip
 \textbf{Résultats (163 centrales à identifier)~:}
 \begin{itemize}\setlength\itemsep{0pt}
   \item Centrales identifiées~: \CensusTPMin{}--\CensusTPMax{} par run
@@ -99,17 +99,14 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
   \item Durée~: \CensusWallMin{}--\CensusWallMax{}~s
   \item Coût~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
-
-\medskip
-{\small \textit{Condition~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé.}}
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
-\centering
+\noindent
 \includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
 \begin{tikzpicture}[remember picture,overlay]
-\node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
+\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
 \sout{Récalcitrant}\\
 Incomplet\\
 Hallucinant\\
