@@ -103,6 +103,42 @@ prompt \textit{Engineered}, 84 lignes.
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}[fragile]{Structure du prompt \textit{Engineered}}
+\scriptsize
+\begin{verbatim}
+# GOAL
+
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and
+future thermal generation assets (> 30 MWe). Begin the document directly with the
+inventory table -- no title, no preamble, no overview section. Structure it as follows:
+
+- the plant inventory: ...: Name (Vietnamese), Name (English), Province, Fuel
+  (Coal / Domestic gas / Imported LNG), Technology (...), Units x MW, Total MWe, Status,
+  Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+  Do not add statistical summary, cross-tabulation, or any other pipe tables;
+  fold aggregate statistics into prose.
+- per-asset or per-project explanatory notes: ...
+- an annotated bibliography ...
+
+Scope includes ...
+
+When uncertain, mark confidence... .
+
+Output format: Markdown.
+
+# QUALITY DIMENSIONS
+
+# CONTEXT
+
+## Source quality management
+
+## Calibrated confidence vocabulary
+
+## Asset-row and status rules
+\end{verbatim}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}[plain]
 \noindent
 \includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
@@ -118,24 +154,29 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Qualité du résultat~: échelle d'ancrage par donnée}
+\begin{frame}{Quality dimensions}
 \small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Score} & & \textbf{Statut épistémique} \\
-\midrule
-5 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Corroboré}~: deux sources primaires \emph{indépendantes} confirmées \\
-4 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Confirmé}~: une source primaire validée (HITL ou recoupement factuel) \\
-3 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Falsifiable}~: une source primaire identifiée par heuristique domaine \\
-2 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Faiblement falsifiable}~: une source secondaire (peut être dérivée) \\
-1 & \textcolor{qualgray}{\rule{8pt}{8pt}} & \textbf{Non falsifiable}~: aucune source proposée \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Fabriqué}~: source vérifiée et trouvée fausse \\
-\bottomrule
-\end{tabular}
-\end{center}
+\textit{Your output is judged on four axes:}
+\begin{enumerate}\setlength\itemsep{4pt}
+  \item \textit{Accuracy} --- right assets and right attributes. Row level: recall and
+        precision against a curated reference (F1). Cell level: capacity, fuel, location,
+        operator, COD, status correct. Confident fabrication is the policed failure mode.
+  \item \textit{Coherence} --- internally and externally consistent. Totals reconcile with
+        known subtotals; no negative capacities, no double-counted units, no cross-row
+        contradiction; values plausible in unit, magnitude, geography, technology, date.
+        Conflicting sources reconciled explicitly (which chosen and why), not silently.
+  \item \textit{Provenance} --- each value traces to a source that actually supports it,
+        not a merely plausible citation. Two independent primaries is the ideal; one
+        primary, a regulator database, or a marked secondary is weaker but acceptable if
+        its status is explicit. Unsupported values are the failure.
+  \item \textit{Temporality} --- every value carries a best-effort as-of date; status
+        changes are flagged. Distinguish current status from past reports, planned from
+        operating capacity, source date from fact date.
+\end{enumerate}
+
 \smallskip
-{\small Ce pilote opère aux niveaux~3--4. Atteindre le niveau~5 exige une carte de dépendance des producteurs de données sectoriels.}
+{\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed over
+a shortlist of well-known assets.}}
 \end{frame}
 
 % -------------------------------------------------------------------
