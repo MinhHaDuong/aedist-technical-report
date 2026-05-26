@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from aedist.extract_arm_multi_turn import (
+    _count_inventory_rows,
     extract_agent_name,
     extract_bibliography,
     extract_output_text,
@@ -202,6 +203,112 @@ def test_extract_bibliography_no_heading() -> None:
     text, n = extract_bibliography("just some text")
     assert text is None
     assert n == 0
+
+
+def test_extract_output_text_mistral_content_blocks() -> None:
+    """Mistral Agents return ``outputs[].content`` as a list of mixed blocks.
+
+    The report text lives in ``type="text"`` blocks interleaved with
+    ``type="tool_reference"`` blocks (citations). Extraction must concatenate
+    the text blocks into a non-empty narrative carrying the markdown table.
+    """
+    raw = {
+        "object": "conversation.response",
+        "outputs": [
+            {
+                "type": "message.output",
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Here is the inventory:\n\n"},
+                    {
+                        "type": "tool_reference",
+                        "tool": "web_search",
+                        "title": "EVN",
+                        "url": "https://example.invalid",
+                    },
+                    {
+                        "type": "text",
+                        "text": (
+                            "| Name | Fuel | Capacity | Status | COD | Province |\n"
+                            "| --- | --- | --- | --- | --- | --- |\n"
+                            "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n"
+                            "| Uong Bi | Coal | 330 | Operating | 2011 | Quang Ninh |\n"
+                        ),
+                    },
+                ],
+            }
+        ],
+    }
+
+    text = extract_output_text(raw)
+    assert text, "mistral content-block payload must yield non-empty text"
+    assert "Pha Lai" in text
+    assert _count_inventory_rows(text) > 0
+
+
+def test_process_batch_falls_back_to_raw_when_record_text_empty(tmp_path: Path) -> None:
+    """mistral-direct writes the report only into the sibling .raw.json.
+
+    Its .record.json carries an empty ``justification`` / ``result_summary``,
+    so ``extract_output_text`` returns ``""`` on the record. ``process_batch``
+    must then fall back to the matching ``.raw.json`` for the same turn.
+    """
+    input_dir = tmp_path / "input"
+    output_dir = tmp_path / "output"
+    run_dir = input_dir / "run01"
+    agent_dir = run_dir / "mistral_run01"
+    agent_dir.mkdir(parents=True)
+
+    summary = [
+        {
+            "agent": "mistral",
+            "status": "pass",
+            "total_cost_usd": 1.0,
+            "wall_s": 1.0,
+            "turns": 2,
+            "class_trace": "report,report",
+            "inventory_rows": 0,
+        }
+    ]
+    (run_dir / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+
+    # Text-less record (mistral-direct shape): justification is None and
+    # result_summary has no narrative.
+    record = {
+        "justification": None,
+        "result_summary": {"status": "ok", "f1": None},
+        "method_params": {"model": "mistral-large-2512"},
+    }
+    (agent_dir / "mistral_turn_02.record.json").write_text(json.dumps(record), encoding="utf-8")
+
+    # The report lives only in the sibling raw payload.
+    raw_payload = {
+        "object": "conversation.response",
+        "outputs": [
+            {
+                "type": "message.output",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            "| Name | Fuel | Capacity | Status | COD | Province |\n"
+                            "| --- | --- | --- | --- | --- | --- |\n"
+                            "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n"
+                            "| Uong Bi | Coal | 330 | Operating | 2011 | Quang Ninh |\n"
+                        ),
+                    }
+                ],
+            }
+        ],
+    }
+    (agent_dir / "mistral_turn_02.raw.json").write_text(json.dumps(raw_payload), encoding="utf-8")
+
+    process_batch(input_dir, output_dir)
+
+    meta = json.loads((output_dir / "mistral_run01.json").read_text(encoding="utf-8"))
+    assert meta["narrative_chars"] > 0
+    assert meta["n_rows"] == 2
+    assert "Pha Lai" in (output_dir / "mistral_run01.md").read_text(encoding="utf-8")
 
 
 def test_process_batch_counts_inventory_rows_from_raw_payload(tmp_path: Path) -> None:

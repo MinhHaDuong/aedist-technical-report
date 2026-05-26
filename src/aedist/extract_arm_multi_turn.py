@@ -63,6 +63,18 @@ def find_last_turn(agent_dir: Path) -> Path | None:
     return candidates[-1][1]
 
 
+def _raw_sibling(turn_path: Path) -> Path | None:
+    """Map a ``*_turn_N.record.json`` path to its ``*_turn_N.raw.json`` sibling.
+
+    Returns ``None`` when *turn_path* is not a record file (e.g. it is already a
+    raw file, so there is no further fallback to attempt).
+    """
+    if not turn_path.name.endswith(".record.json"):
+        return None
+    raw_name = turn_path.name[: -len(".record.json")] + ".raw.json"
+    return turn_path.with_name(raw_name)
+
+
 def extract_output_text(record: dict[str, Any]) -> str:
     """Pull the model's text response out of a record JSON.
 
@@ -221,6 +233,18 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 record = json.load(fh)
 
             text = extract_output_text(record)
+
+            # Fallback: some providers (mistral-direct) write the report only
+            # into the sibling .raw.json — their .record.json has an empty
+            # justification/result_summary. When the record yields no text,
+            # re-extract from the matching raw payload for the same turn.
+            if not text:
+                raw_path = _raw_sibling(last_turn_path)
+                if raw_path is not None and raw_path.exists():
+                    with raw_path.open(encoding="utf-8") as fh:
+                        raw_record = json.load(fh)
+                    text = extract_output_text(raw_record)
+
             bib_text, n_bib = extract_bibliography(text)
 
             model: str | None = None
