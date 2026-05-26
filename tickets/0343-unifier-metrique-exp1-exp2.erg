@@ -1,0 +1,34 @@
+%erg v1
+Title: Unifier la métrique principale entre Exp 1 et Exp 2 dans le talk
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Antoine Maurel AM-9)
+
+--- body ---
+## Context
+Le talk présente plusieurs métriques sans unification explicite :
+- Exp 1 : TP/FP bruts (centrales identifiées / hallucinées) et F1
+- Tableau RAG : médiane du nombre de « centrales trouvées »
+- Figure Coverage Exp 2 : couverture en nombre d'assets
+
+Pour un public d'économistes, ce glissement entre F1, nombre brut et couverture est source
+de confusion : « sont-ce les mêmes 163 centrales ? Pourquoi le score change de forme ? »
+
+## Actions
+1. Décider de la métrique principale du talk (recommandation : nombre d'assets identifiés
+   sur 163, plus intuitif que F1 pour un public économiste)
+2. Ajouter un rappel court de la définition à un endroit stratégique :
+   - Soit sur la slide de transition Exp1→Exp2 (T-0339)
+   - Soit sur la slide « La bonne statistique exige plus que des vrais chiffres » (T-0326)
+   - Soit en pied de figure sur la première occurrence
+3. Si F1 est conservé : ajouter une phrase « F1 = moyenne harmonique de précision et recall
+   sur les 163 plants de référence »
+4. Vérifier que toutes les figures utilisent la même unité d'axe (ou justifient le changement)
+
+## Exit criteria
+- [ ] Métrique principale identifiée et nommée dans le talk
+- [ ] Rappel de définition présent à au moins un endroit avant la première figure complexe
+- [ ] Cohérence vérifiée entre figures (mêmes 163 plants, même formule)
+- [ ] `tectonic slides/slides.tex` passe sans erreur

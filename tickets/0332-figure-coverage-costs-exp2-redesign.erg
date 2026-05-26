@@ -3,6 +3,7 @@ Title: Figure Coverage and costs exp2: redesign complet
 Created: 2026-05-26
 Author: claude
 Blocked-by: 0330
+Blocked-by: 0336
 
 --- log ---
 2026-05-26T10:00Z claude created
@@ -31,8 +32,12 @@ RAG doit être introduit dans la timeline industrie et dans la diapo description
 - Pour chaque modèle : 4 barres (1N, 5N, 1D, 5D)
   - Petit espace entre barres d'un même modèle, grand espace entre modèles
   - Hauteur = moyenne des 5 reps
-  - Couleur = couleur du modèle dans le talk
-  - Variance : ligne noire fine verticale avec les 5 valeurs individuelles comme petits segments horizontaux
+  - Couleur = couleur du modèle dans le talk via `aedist.util.model_family_color()`
+    (palette dans `palette.toml` section `[model_families]` : Claude=#0072B2, GPT=#D55E00,
+    Mistral=#009E73, Qwen=#CC79A7, DeepSeek=#E69F00). Ne pas redéfinir localement.
+  - Variance : ligne noire fine verticale (`ax.vlines`) + 5 segments horizontaux courts
+    (`ax.hlines`) un par run. Largeur des segments ≈ 60% de la largeur d'une barre.
+    But : montrer la dispersion des 5 répétitions par condition.
 
 ## Actions — Panel gauche (Coverage)
 - Hallucinations (faux positifs) en **rouge** dans les négatifs (sous zéro)

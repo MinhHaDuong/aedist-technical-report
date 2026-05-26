@@ -52,7 +52,9 @@ Output format: Markdown.
 ```
 
 ## Actions — Slide B : Quality dimensions
-Créer une diapo avec ce contenu verbatim extrait de `protocol_07_naive_prompt.md` :
+Créer une diapo avec ce contenu **verbatim brut** extrait de `protocol_07_naive_prompt.md`.
+Décision auteur : **pas de chapeau français**, pas de phrase d'introduction française —
+la slide reste en anglais brut, telle quelle.
 
 ```
 # QUALITY DIMENSIONS
@@ -78,8 +80,17 @@ We prefer a comprehensive inventory with uncertainty clearly expressed over a
 shortlist of well-known assets.
 ```
 
+## Note de cohérence avec ticket 0326
+La diapo « Quality dimensions » verbatim ci-dessus contient **4 axes** (Accuracy,
+Coherence, Provenance, Temporality) tels qu'ils apparaissent dans le prompt.
+Le ticket 0326 ajoute une **5e dimension** (« Fit for purpose ») sur la diapo 16
+de notation. Cette 5e dimension est opérationnelle et mesurée mais ne figure
+pas dans le prompt — elle relève de la grille d'évaluation post-hoc et non du
+cahier des charges donné au modèle. Cette asymétrie est intentionnelle ; ne pas
+ajouter « Fit for purpose » au verbatim de la slide B.
+
 ## Exit criteria
 - [ ] Slide A insérée avec la structure du prompt (sections visibles, corps tronqué)
-- [ ] Slide B insérée avec Quality dimensions verbatim
+- [ ] Slide B insérée avec Quality dimensions verbatim (4 axes, sans Fit for purpose)
 - [ ] Ordre des slides cohérent avec ticket 0326
 - [ ] `tectonic slides/slides.tex` passe sans erreur

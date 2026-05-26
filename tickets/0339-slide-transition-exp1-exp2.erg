@@ -1,0 +1,34 @@
+%erg v1
+Title: Ajouter slide de transition Exp1 → Exp2
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Isabelle Charpentier IC-8)
+
+--- body ---
+## Context
+Le panel de communication (Dr. Isabelle Charpentier) a noté qu'entre la fin Exp1 et la
+diapo « Expérience 2 » (diapo 10), il n'y a aucune slide de transition. Le public d'économistes
+bascule sans accroche narrative d'une expérience à l'autre, ce qui affaiblit la motivation
+de l'Exp 2.
+
+## Actions
+1. Ajouter une slide juste avant « Expérience 2 : web search on... » (diapo 10 actuelle)
+2. Contenu suggéré (1 slide, court) :
+   - Titre : « De Exp 1 à Exp 2 : si la mémoire ne suffit pas, les sources peuvent-elles aider ? »
+   - Corps :
+     - Bilan Exp 1 : les modèles connaissent mal les actifs vietnamiens (one shot, no docs).
+     - Question Exp 2 : fournir des documents primaires résout-il le problème ?
+     - Et un second axe : un dialogue multitour peut-il aider à explorer la connaissance ?
+   - (À ajuster avec le ton du reste du talk)
+3. Si l'auteur préfère, alternative minimaliste : un sous-titre de section ou un teaser
+   en 1 phrase ajouté en bas de la dernière slide Exp 1
+
+## Note
+À coordonner avec ticket 0341 (ordre final des slides).
+
+## Exit criteria
+- [ ] Slide de transition (ou phrase de teaser) en place avant la diapo 10
+- [ ] `tectonic slides/slides.tex` passe sans erreur
+- [ ] Lisibilité confirmée par lecture critique

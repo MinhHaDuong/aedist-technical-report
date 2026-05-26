@@ -1,0 +1,36 @@
+%erg v1
+Title: Sweep global 1W/5W → 1D/5D dans tout le codebase
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Sophie Lefèbvre C-8)
+
+--- body ---
+## Context
+Décision auteur : renommer la convention des conditions Exp2.
+- `1W` (singleshot With docs) → `1D` (singleshot Docs)
+- `5W` (multiturn With docs) → `5D` (multiturn Docs)
+
+Le ticket 0327 traite uniquement les diapos 10-12. Ce ticket couvre le reste du codebase
+pour éviter des occurrences résiduelles dans figures, scripts, outputs.
+
+## Actions
+1. Grep `1W\|5W` dans tout le repo (hors archive/ et .claude/)
+2. Lister les fichiers concernés : scripts Python, configs YAML/TOML, fichiers de données,
+   tex hors slides.tex, documentation manuscript, etc.
+3. Décider par fichier : remplacer, garder (ex. archive figée), ou autre traitement
+4. Remplacer là où c'est pertinent
+5. Régénérer les artefacts dépendants (figures, tables) après le sweep
+
+## Hors scope
+- `experiments/archive/**` : on n'altère pas les runs historiques
+- `.claude/worktrees/**` : worktrees jetables
+- Les diapos 10-12 sont déjà couvertes par 0327
+
+## Exit criteria
+- [ ] `grep -rE '\b[15]W\b' --include="*.py" --include="*.toml" --include="*.yaml" --include="*.tex" --include="*.md"`
+  ne retourne plus d'occurrences pertinentes (sauf archive/)
+- [ ] Figures et tables régénérées
+- [ ] `make check` passe
+- [ ] `tectonic` builds passent

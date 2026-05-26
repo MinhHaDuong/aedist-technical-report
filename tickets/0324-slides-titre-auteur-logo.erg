@@ -14,12 +14,17 @@ Voir `slides-review-verbatim.md` section « Diapo 1 (Titre) ».
 Diapo de titre des slides Econom'IA 2026.
 
 ## Actions
-1. Ajouter « Dr. » devant Minh dans le champ auteur
+1. Ajouter « Dr. » devant le nom complet : `Dr. Minh Ha-Duong` (pas seulement « Dr. Minh »)
 2. Remplacer le second « CIRED - CNRS » par le multi-logo (chercher l'asset logo dans `slides/`)
    - Fallback si logo absent : logo CIRED avec tutelles en texte
-3. Titre : laisser un `% TODO: revoir titre selon programme Econom'IA` — ne pas modifier le titre actuel
+3. Titre : laisser un `% TODO` commentaire mentionnant les **3 critères de jugement** :
+   - le résultat principal du papier
+   - le take-home message
+   - l'intitulé annoncé dans le programme Econom'IA
+   Ne pas modifier le titre actuel — l'auteur le fera après ce ticket.
 
 ## Exit criteria
-- [ ] « Dr. Minh » apparaît dans le PDF compilé
+- [ ] « Dr. Minh Ha-Duong » (nom complet) apparaît dans le champ auteur du PDF
 - [ ] Second logo remplacé (ou fallback texte en place)
+- [ ] Commentaire TODO sur le titre liste les 3 critères
 - [ ] `tectonic slides/slides.tex` passe sans erreur

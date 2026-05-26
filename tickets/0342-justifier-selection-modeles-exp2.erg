@@ -1,0 +1,32 @@
+%erg v1
+Title: Justifier la sélection des 4 modèles SOTA pour Exp 2
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Antoine Maurel AM-10)
+
+--- body ---
+## Context
+Le ticket 0327 retire la mention « 4 SOTA » du tableau Exp 2. Mais aucun ticket ne demande
+d'expliciter **pourquoi** les 4 modèles retenus (Opus 4.6, GPT-5.5, Mistral Large, Qwen 3.7 max)
+ont été choisis parmi les 46 testés en Exp 1. Pour un public académique, l'absence de critère
+de sélection explicite fragilise la généralisabilité.
+
+Le ticket 0327 supprime aussi la colonne « Enjeu » du tableau, réduisant l'espace narratif
+pour cette justification.
+
+## Actions
+1. Vérifier la motivation de la sélection (top-4 par F1 en Exp 1 ? top-4 par famille ?
+   sélection stratégique pour couvrir les principaux fournisseurs ?)
+2. Ajouter une ligne sur la diapo 10 (après l'application de 0327) :
+   - Soit en pied de tableau (note bas de slide)
+   - Soit en ligne ajoutée au tableau 2-colonnes : « Sélection : 4 SOTA, un par fournisseur principal
+     (Anthropic, OpenAI, Mistral, Alibaba) »
+   - Soit dans la slide de transition créée par 0339
+3. Formulation à valider avec l'auteur si la motivation exacte n'est pas évidente dans le manuscrit
+
+## Exit criteria
+- [ ] Justification de sélection présente dans le talk avant la présentation des résultats Exp 2
+- [ ] Formulation tient en 1 ligne maximum
+- [ ] `tectonic slides/slides.tex` passe sans erreur

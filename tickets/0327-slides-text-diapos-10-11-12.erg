@@ -29,10 +29,23 @@ Ne jamais utiliser A, B, W.
 
 ## Actions — Diapo 11
 1. Supprimer le second « Infrastructure : »
-2. Remplacer « Même script, .. hash » par « 5 claws : Imagine, Plan, Execute, Verify, Celebrate. »
+2. Remplacer la phrase actuelle « Même script, n'importe quel fournisseur ; les runs sont
+   reproductibles à partir du hash. » par une formulation **qui conserve la garantie de
+   reproductibilité** et ajoute les 5 claws. Proposition :
+   « 5 claws : Imagine, Plan, Execute, Verify, Celebrate. Runs reproductibles à partir du hash. »
+   (Important : ne pas supprimer l'information de reproductibilité hash, c'est une garantie
+   méthodologique valorisée par le public académique.)
 3. Supprimer les « / 4 »
 4. Ajouter « codéveloppé, » avant « relu »
-5. Après « fondées : » rappeler très brièvement les réserves (consulter le manuscrit pour formulation)
+5. Après « fondées : » rappeler très brièvement les réserves.
+   Source : `experiments/sota/protocol_06_validation_round_1.md` (open limitations § 4.3)
+   + round 2 reviews (`experiments/archive/outputs/sota_exp2_protocol_review_round2/`)
+   Réserves maintenues round 2 par Qwen+OpenAI : enforcement instructionnel des bans
+   Wikipedia/subagents (pas API-level), cross-évaluation par les mêmes 4 modèles non
+   indépendante, fuite paramétrique, énergie/CO₂ non exposés par les vendeurs.
+   Formulation recommandée (à choisir selon espace disponible) :
+   - Court : « enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO₂ non exposés »
+   - Télégraphique : « budget · enforcement · leakage · CO₂ »
 
 ## Actions — Diapo 12
 1. Supprimer « (Exp 2) »

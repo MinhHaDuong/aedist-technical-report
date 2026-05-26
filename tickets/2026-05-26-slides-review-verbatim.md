@@ -136,6 +136,36 @@ Source : `experiments/sota/protocol_07_naive_prompt.md` lignes 15-26
 >
 > We prefer a comprehensive inventory with uncertainty clearly expressed over a shortlist of well-known assets.
 
+## Réponses auteur (post-panel review)
+
+### Q-1 (réserves diapo 11)
+Sources trouvées : `experiments/sota/protocol_06_validation_round_1.md` (§4.3 open limitations)
++ round 2 reviews `experiments/archive/outputs/sota_exp2_protocol_review_round2/`.
+Réserves round 2 par Qwen+OpenAI : enforcement instructionnel (bans Wikipedia/subagents pas API-level), cross-éval non indépendante, fuite paramétrique, énergie/CO₂ non exposés.
+
+### Q-2 (« Anthropic trop cher »)
+> Intentionnelle (on le discutera sur la figure, ce n'est pas un résultat stable dans le temps)
+
+Suppression intentionnelle — sera discuté sur la figure cost/quality. Prix non stable dans le temps.
+
+### Q-3 (5e dimension)
+> La 5e dim est opérationnelle, Fit for purpose: pour PyPSA il faut que la colonne Capacité soit remplie, on le mesure.
+
+5e dimension = **Fit for purpose**. Opérationnelle, mesurée. Exemple PyPSA :
+taux de remplissage de la colonne Capacité. Asymétrie intentionnelle entre prompt
+(4 axes) et grille de notation (5 axes) — la 5e dimension est post-hoc, pas demandée
+au modèle dans le prompt.
+
+### Q-4 (slide Quality dimensions en anglais)
+> Verbatim
+
+Laisser verbatim brut. Pas de chapeau français. La slide reste en anglais comme dans le prompt.
+
+### Q-5 (« KG » dans la punchline)
+> Développer
+
+« Knowledge Graphs » écrit en toutes lettres (déjà fait dans ticket 0327). Pas de sigle KG.
+
 ## Corrections globales
 > Dans TOUT ce qui précède, remplacer 1W → 1D et 5W → 5D (W → D pour « documents »)
 > Bug toutes figures : décalage à droite — fix systémique suspicion canvas trop large puis clippé

@@ -21,7 +21,8 @@ Voir `slides-review-verbatim.md` sections « Diapo 2 », « Diapo 3 », « Diapo
 4. Remonter le bloc Conditions au niveau du bloc modèle (pas en bas de diapo)
 
 ## Actions — Diapo 4
-1. Layout : image alignée à gauche, colonne de texte alignée à droite avec marge 2em
+1. Layout : image alignée à gauche, colonne de texte **au fer alignée à droite** (`\raggedleft`,
+   pas de justification) avec marge 2em
 2. Titre hardcodé dans le fichier figure : « How do models recall Vietnam's thermal power assets? Not well. »
    (chercher le script Python qui génère cette figure et modifier le titre là)
 
