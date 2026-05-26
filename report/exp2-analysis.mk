@@ -128,11 +128,13 @@ $(GEN)/tab_exp2_bib_quality.tex: $(GEN)/tab_exp2_bib_quality_view.csv
 # --- Figure: coverage vs. certainty scatter (reads from bib quality CSV) -----
 
 $(GEN)/fig_exp2_coverage_certainty.pdf: $(GEN)/tab_exp2_bib_quality_view.csv \
-		$(GEN)/tab_exp2_arms_runs_view.csv
+		$(GEN)/tab_exp2_arms_runs_view.csv \
+		experiments/derived/sota_cross_eval.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
 	    --input $(GEN)/tab_exp2_bib_quality_view.csv \
 	    --arms-input $(GEN)/tab_exp2_arms_runs_view.csv \
+	    --cross-eval experiments/derived/sota_cross_eval.csv \
 	    --output $@
 
 # --- Figure: five-axis quality spider from cross-eval scores -----------------

@@ -10,10 +10,16 @@ Glyph encoding (two-dimensional):
   Fill   — documents: plein (filled) = avec docs (D),  vide (empty) = sans docs (N)
   Colour — model family
 
+D-arm data (arm3, arm4): from tab_exp2_bib_quality_view.csv + tab_exp2_arms_runs_view.csv.
+N-arm data (naive, optimised): from sota_cross_eval.csv
+  X = accuracy_coverage × N_REF_PLANTS
+  Y = provenance_high_conf_dual_source × n_rows  (skip if missing)
+
 Usage:
     python -m aedist.plot_exp2_coverage_certainty \
         --input report/inputs/generated/tab_exp2_bib_quality_view.csv \
         --arms-input report/inputs/generated/tab_exp2_arms_runs_view.csv \
+        --cross-eval experiments/derived/sota_cross_eval.csv \
         --output report/inputs/generated/fig_exp2_coverage_certainty.pdf
 """
 
@@ -26,6 +32,8 @@ from pathlib import Path
 from .util import SLIDE_FIGSIZE_FULL, model_family_color
 
 log = logging.getLogger(__name__)
+
+_N_REFERENCE_PLANTS = 163
 
 _AGENT_SLUG = {
     "anthropic": "claude",
@@ -43,12 +51,24 @@ _AGENT_LABELS = {
 
 _AGENT_COLORS = {agent: model_family_color(slug) for agent, slug in _AGENT_SLUG.items()}
 
+# Model name → agent family (cross-eval uses versioned model names)
+_MODEL_TO_AGENT: dict[str, str] = {
+    "claude-opus-4-6": "anthropic",
+    "mistral-large-2512": "mistral",
+    "gpt-5.5": "openai",
+    "gpt-5.5-2026-04-23": "openai",
+    "qwen3.7-max-2026-05-20": "qwen",
+}
+
 # Glyph encoding: shape = tours (cercle=1, carré=5); fill = docs (plein=D, vide=N)
 _COND_LABEL = {"naive": "1N", "optimised": "5N", "arm3": "1D", "arm4": "5D"}
 _COND_MARKER = {"naive": "o", "optimised": "s", "arm3": "o", "arm4": "s"}
 _COND_FILLED = {"naive": False, "optimised": False, "arm3": True, "arm4": True}
 # Legend order: 1D, 1N, 5D, 5N (cercles first, then carrés)
 _COND_ORDER = ["arm3", "naive", "arm4", "optimised"]
+
+_N_ARMS = {"naive", "optimised"}
+_D_ARMS = {"arm3", "arm4"}
 
 
 def _load_matched(path: Path) -> dict[tuple[str, str, int], int]:
@@ -63,19 +83,21 @@ def _load_matched(path: Path) -> dict[tuple[str, str, int], int]:
     return matched
 
 
-def _load_points(bib_path: Path, matched: dict[tuple[str, str, int], int]) -> list[dict]:
-    """Join bib-quality src2_present with arms n_matched on (agent, arm, run)."""
+def _load_d_points(bib_path: Path, matched: dict[tuple[str, str, int], int]) -> list[dict]:
+    """D-arm points: join bib-quality src2_present with n_matched."""
     points: list[dict] = []
     with bib_path.open(newline="") as fh:
         for row in csv.DictReader(fh):
             agent = row["agent"]
             arm = row["arm"]
-            if agent not in _AGENT_SLUG or arm not in _COND_LABEL:
+            if agent not in _AGENT_SLUG or arm not in _D_ARMS:
                 continue
+            src2 = int(row["src2_present"])
+            if src2 == 0 and int(row.get("n_rows", 0)) == 0:
+                continue  # mart parse failure: no bib data for this run
             key = (agent, arm, int(row["run"]))
             n_matched = matched.get(key)
             if n_matched is None:
-                # Unscored run (no cross-eval coverage): cannot place on X axis.
                 continue
             points.append(
                 {
@@ -83,7 +105,37 @@ def _load_points(bib_path: Path, matched: dict[tuple[str, str, int], int]) -> li
                     "arm": arm,
                     "run": int(row["run"]),
                     "x": n_matched,
-                    "y": int(row["src2_present"]),
+                    "y": src2,
+                }
+            )
+    return points
+
+
+def _load_n_points(cross_eval_path: Path) -> list[dict]:
+    """N-arm points from cross-eval CSV: coverage→n_matched, dual_source×n_rows→src2."""
+    points: list[dict] = []
+    with cross_eval_path.open(newline="") as fh:
+        for row in csv.DictReader(fh):
+            arm = row.get("arm", "")
+            if arm not in _N_ARMS:
+                continue
+            agent = _MODEL_TO_AGENT.get(row.get("model", ""))
+            if agent not in _AGENT_SLUG:
+                continue
+            cov_raw = row.get("accuracy_coverage", "")
+            dual_raw = row.get("provenance_high_conf_dual_source", "")
+            n_rows_raw = row.get("n_rows", "")
+            if not cov_raw or not dual_raw or not n_rows_raw:
+                continue
+            n_matched = round(float(cov_raw) * _N_REFERENCE_PLANTS)
+            src2 = round(float(dual_raw) * int(n_rows_raw))
+            points.append(
+                {
+                    "agent": agent,
+                    "arm": arm,
+                    "run": int(row["run"]),
+                    "x": n_matched,
+                    "y": src2,
                 }
             )
     return points
@@ -108,8 +160,8 @@ def make_figure(points: list[dict], output: Path) -> None:
             s=28,
             facecolors=color if filled else "none",
             edgecolors="none" if filled else color,
-            linewidths=0.8,
-            alpha=0.15,
+            linewidths=1.2,
+            alpha=0.15 if filled else 0.40,
             zorder=2,
         )
 
@@ -122,10 +174,10 @@ def make_figure(points: list[dict], output: Path) -> None:
             mean_x,
             mean_y,
             marker=_COND_MARKER[arm],
-            s=70,
+            s=80,
             facecolors=color if filled else "none",
             edgecolors="black" if filled else color,
-            linewidths=0.8 if filled else 1.2,
+            linewidths=0.8 if filled else 2.0,
             alpha=0.95,
             zorder=4,
         )
@@ -140,47 +192,23 @@ def make_figure(points: list[dict], output: Path) -> None:
         "How many rows are justified by two sources?",
         fontsize=13,
         fontweight="bold",
-        pad=18,
+        pad=28,
+    )
+    ax.text(
+        0.5,
+        1.02,
+        "rond = 1 tour   carré = 5 tours   |   plein = avec documents   vide = sans documents",
+        transform=ax.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=8.5,
+        color="0.45",
     )
     ax.set_xlim(left=-3)
     ax.set_ylim(bottom=-3)
     ax.tick_params(labelsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-
-    # Glyph legend row above the plot, encoding explanation as figure footnote
-    cond_handles = [
-        Line2D(
-            [0],
-            [0],
-            marker=_COND_MARKER[cond],
-            linestyle="",
-            markerfacecolor="0.4" if _COND_FILLED[cond] else "none",
-            markeredgecolor="0.4",
-            markersize=7,
-            label=_COND_LABEL[cond],
-        )
-        for cond in _COND_ORDER
-    ]
-    cond_legend = ax.legend(
-        handles=cond_handles,
-        loc="lower center",
-        bbox_to_anchor=(0.5, 1.0),
-        ncol=4,
-        fontsize=9,
-        frameon=False,
-        handletextpad=0.3,
-        columnspacing=1.4,
-    )
-    ax.add_artist(cond_legend)
-    fig.text(
-        0.5,
-        0.01,
-        "rond = 1 tour   carré = 5 tours   |   plein = avec documents   vide = sans documents",
-        ha="center",
-        fontsize=7.5,
-        color="0.4",
-    )
 
     model_handles = [
         Line2D(
@@ -208,7 +236,9 @@ def make_figure(points: list[dict], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
-    log.info("Wrote %s (%d run points)", output, len(points))
+    n_d = sum(1 for p in points if p["arm"] in _D_ARMS)
+    n_n = sum(1 for p in points if p["arm"] in _N_ARMS)
+    log.info("Wrote %s (%d D-arm + %d N-arm points)", output, n_d, n_n)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -219,18 +249,24 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--input",
         required=True,
-        help="Path to tab_exp2_bib_quality_view.csv (provides src2_present)",
+        help="Path to tab_exp2_bib_quality_view.csv (D-arm src2_present)",
     )
     parser.add_argument(
         "--arms-input",
         default="report/inputs/generated/tab_exp2_arms_runs_view.csv",
-        help="Path to tab_exp2_arms_runs_view.csv (provides n_matched for the X axis)",
+        help="Path to tab_exp2_arms_runs_view.csv (D-arm n_matched)",
+    )
+    parser.add_argument(
+        "--cross-eval",
+        default="experiments/derived/sota_cross_eval.csv",
+        help="Path to sota_cross_eval.csv (N-arm coverage and dual_source)",
     )
     parser.add_argument("--output", required=True, help="Path to write PDF figure")
     args = parser.parse_args(argv)
     matched = _load_matched(Path(args.arms_input))
-    points = _load_points(Path(args.input), matched)
-    assert len(points) > 0, f"No joined points from {args.input} + {args.arms_input}"
+    points = _load_d_points(Path(args.input), matched)
+    points += _load_n_points(Path(args.cross_eval))
+    assert len(points) > 0, "No points loaded"
     make_figure(points, Path(args.output))
 
 
