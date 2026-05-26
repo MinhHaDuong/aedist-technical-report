@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-26T11:45Z claude created issu de l'investigation 0336
+2026-05-26T12:30Z claude note rebuilt mart from exp3 arm data; archive A/B framing moot (DAG already sources exp3)
 
 --- body ---
 ## Context
@@ -75,3 +76,52 @@ assert scores["naive"] == 19, scores
 ## Bloque
 - 0332 (figure coverage and costs exp2)
 - 0333 (figure coverage vs corroboration)
+
+## Resolution (2026-05-26)
+
+Mart reconstruit **depuis les données exp3**, pas depuis l'archive `sota_exp2_*`.
+Le cadrage « décision A (restaurer) vs B (repointer vers l'archive) » de 0344/0336 était
+**caduc** : le DAG de `experiments/analysis.mk` source déjà les arm flats exp3
+(`ANALYSIS_EXP2_NAIVE_DIR = experiments/derived/arm1_flat` ←
+`experiments/outputs/sota_exp3_arm1_batch1`, idem arm2). Le diagnostic 0336 « reconstruire
+depuis l'archive » regardait les répertoires `sota_exp2_*` dépréciés (pipeline
+`report/exp2-analysis.mk`, non utilisé pour le mart canonique).
+
+Le seul problème était que le `exp2_mart.jsonl` committé était périmé par timestamp ; make
+le considérait à jour et ne le régénérait pas.
+
+### Invocation
+
+```bash
+rm -f experiments/derived/exp2_mart.jsonl \
+      experiments/derived/arm1_flat/.done \
+      experiments/derived/arm2_flat/.done \
+      experiments/derived/sota_cross_eval.csv
+make -f experiments/analysis.mk \
+    ANALYSIS_EXP2_MART_JSONL=experiments/derived/exp2_mart.jsonl \
+    experiments/derived/exp2_mart.jsonl
+make -f experiments/analysis.mk \
+    ANALYSIS_EXP2_MART_JSONL=experiments/derived/exp2_mart.jsonl \
+    report/inputs/generated/tab_exp2_arms_runs_view.csv
+```
+
+L'override `ANALYSIS_EXP2_MART_JSONL` est nécessaire : le défaut du DAG pointe vers
+`report/inputs/generated/exp2_mart.jsonl` (gitignored), alors que le fichier committé et
+canonique est `experiments/derived/exp2_mart.jsonl`. Cette incohérence de chemin par défaut
+dans `analysis.mk` est à corriger dans un ticket de suivi (hors périmètre ici).
+
+### Résultat
+- `exp2_mart.jsonl` : 71 records (40 run + 31 score). `score` par arm : naive 19,
+  optimisée 12 → **premier test passe**.
+- `tab_exp2_arms_runs_view.csv` : `n_matched` peuplé pour 31/40 runs ; les 9 non scorés
+  (naive claude run4 + 8 optimisées dont 5 mistral) restent vides, conforme à 0336.
+- `measurements.jsonl` et `exp1_batch2/*.record.json` **non modifiés**.
+
+### Effet de bord audité
+Le re-flatten d'arm2 met à jour 7 fichiers `arm2_flat/*.json` (5 mistral + qwen run02/05) :
+leurs `n_rows`/`narrative_chars` diffèrent des valeurs committées car le commit `8d0df30b`
+(« fix(extract): add Anthropic/Qwen/Mistral format branches ») a modifié
+`extract_output_text` **après** la dernière génération des flats (db3d42bc). Les nouvelles
+valeurs sont reproductibles depuis le code + la source exp3 committés. Les 5 mistral ont
+`narrative_chars: 0` (extraction texte vide malgré coût/wall réels) — anomalie préexistante,
+à traiter dans un ticket de suivi.
