@@ -36,6 +36,10 @@ htmlcov/
 # Generated slide data (report inputs are tracked)
 slides/inputs/generated/
 
+# Slide assets: handoff artifacts derived from tracked sources
+!slides/inputs/logo-cired.pdf
+!slides/inputs/QR-aedist.pdf
+
 # Intermediate report-generated files — rebuilt by make, not handoff artifacts
 report/inputs/generated/census_bars.csv
 report/inputs/generated/cost_quality.csv
