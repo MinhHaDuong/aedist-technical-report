@@ -1,6 +1,6 @@
 {
   "agent": "mistral",
-  "model": null,
+  "model": "mistral-large-2512",
   "run": 1,
   "classification": "report",
   "total_cost_usd": 0.062318,

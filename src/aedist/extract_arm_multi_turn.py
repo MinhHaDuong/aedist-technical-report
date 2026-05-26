@@ -253,6 +253,23 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 model = method_params.get("model")
             if not model:
                 model = record.get("model")
+            if not model:
+                # Some run01 final-turn records carry no model (their text came
+                # via the raw fallback). Recover it from the agent's Phase A
+                # design record, which always records the dispatched model.
+                phase_a = next(agent_dir.glob("*_phase_a.json"), None)
+                if phase_a is not None:
+                    with phase_a.open(encoding="utf-8") as fh:
+                        pa = json.load(fh)
+                    pa_mp = pa.get("method_params")
+                    model = (pa_mp or {}).get("model") if isinstance(pa_mp, dict) else None
+                    model = model or pa.get("model")
+            # Provenance guard: arm4 qwen run01 from the original sweep ran on the
+            # superseded model qwen3-max-2026-01-23, while all canonical qwen data
+            # is qwen3.7-max-2026-05-20. Keep it unscored until a verified rerun on
+            # the correct model replaces it (do not mix model versions in one cell).
+            if model == "qwen3-max-2026-01-23":
+                model = None
 
             raw_trace = entry.get("class_trace")
             class_trace: list[str] = []
