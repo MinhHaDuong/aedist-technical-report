@@ -1,0 +1,39 @@
+%erg 0.1
+Title: fig coverage (slide 15): faux positifs rouge, labels, barres hallu Exp1
+Created: 2026-05-26
+Author: haduong
+
+--- log ---
+2026-05-26T20:30Z haduong created
+
+--- body ---
+## Context
+La figure `fig_exp2_coverage.pdf` (slide 15) présente plusieurs problèmes
+visuels et d'exactitude identifiés lors de la revue du 2026-05-26.
+
+## Changements
+
+### Faux positifs en rouge
+- Les barres représentant les hallucinations (faux positifs) doivent être
+  colorées en **rouge** (actuellement ambiguë ou absente)
+
+### Agrandir les labels de modalités
+- Les étiquettes 1N, 5N, 1D, 5D sont trop petites — augmenter la taille
+
+### Hallucinations pour Exp 1
+- Ajouter les barres de hallucinations pour la condition Exp 1 (baseline)
+- Actuellement la barre Exp 1 ne montre peut-être que les vrais positifs
+
+### Vérifier la barre Exp 1
+- Confirmer que la hauteur de la barre Exp 1 représente bien les
+  **vrais positifs** (centrales correctement identifiées), pas le total
+  des actifs retournés
+- Script concerné : `src/aedist/plot_exp2_arms_split.py`
+
+## Exit criteria
+- [ ] Faux positifs en rouge sur toutes les conditions y compris Exp 1
+- [ ] Labels modalités lisibles (taille de police agrandie)
+- [ ] Barres hallucinations présentes pour Exp 1
+- [ ] Vérification que barre Exp 1 = vrais positifs
+- [ ] `make report/inputs/generated/fig_exp2_coverage.pdf` régénère sans erreur
+- [ ] Vérification visuelle

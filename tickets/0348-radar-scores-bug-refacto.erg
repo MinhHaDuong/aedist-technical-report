@@ -1,0 +1,50 @@
+%erg 0.1
+Title: radar spiders: corriger scores à 100% implausibles et refactoriser
+Created: 2026-05-26
+Author: haduong
+
+--- log ---
+2026-05-26T20:30Z haduong created
+
+--- body ---
+## Context
+Les radars des slides 6 (Claude) et 7 (familles) affichent des valeurs à 100%
+sur plusieurs axes, ce qui est manifestement faux. Exemple : « Seulement les
+bons actifs » = 1.0 alors que la slide 4 montre des hallucinations. Idem pour
+Précision, Source, As-of, Core fields (slide 7).
+
+## Investigation requise
+1. `src/aedist/score_exp1.py` — vérifier le calcul de chaque critère
+2. `src/aedist/plot_quality_spider_exp1.py` — vérifier le wiring
+   (lecture des colonnes, normalisation, agrégation par modèle/famille)
+3. Définitions des critères : s'assurer qu'un critère binaire parfait
+   nécessite réellement 100% des runs, pas juste un seul
+
+## Changements attendus
+
+### Correction bug
+- Identifier et corriger la source des scores à 1.0 erronés
+- Les valeurs sur les radars doivent être cohérentes avec les chiffres
+  de couverture/hallucination observés en Exp 1
+
+### Slide 6 : Opus uniquement
+- Ne montrer que **Claude Opus 4.6** (supprimer Haiku et Sonnet)
+- Mettre à jour le titre pour le mentionner
+- Supprimer la légende (inutile avec un seul modèle)
+
+### Code modulaire
+- Axes identiques (labels français) entre slide 6 et slide 7
+- Extraire la définition des axes dans une fonction/constante partagée
+  entre les deux scripts de plot
+
+### Axes en français
+- Utiliser les mêmes labels français sur les deux radars
+  (référence : version française déjà présente sur slide 6)
+
+## Exit criteria
+- [ ] Scores plausibles (pas de valeur à 1.0 là où des erreurs sont connues)
+- [ ] Slide 6 : Opus uniquement, titre et légende mis à jour
+- [ ] Axes identiques et en français sur les deux spiders
+- [ ] Code partagé entre les deux plots (pas de duplication)
+- [ ] `make figures` régénère les deux PDFs sans erreur
+- [ ] Vérification visuelle des deux slides

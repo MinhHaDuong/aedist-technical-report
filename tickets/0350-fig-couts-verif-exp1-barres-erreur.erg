@@ -1,0 +1,33 @@
+%erg 0.1
+Title: fig coûts (slide 17): vérifier Exp1 et ajouter barres d'erreur
+Created: 2026-05-26
+Author: haduong
+
+--- log ---
+2026-05-26T20:30Z haduong created
+
+--- body ---
+## Context
+La figure `fig_exp2_cost.pdf` (slide 17) présente deux problèmes identifiés
+lors de la revue du 2026-05-26.
+
+## Changements
+
+### Vérifier coûts Exp 1
+- Les coûts affichés pour la condition Exp 1 semblent trop bas
+- Vérifier la source des valeurs dans `plot_exp2_arms_split.py`
+  (lecture de `cost_quality.csv`) et comparer avec les coûts réels
+  enregistrés dans `measurements.jsonl`
+- Coût total Exp 1 connu : ~$2.85 pour 16 modèles × 5 reps,
+  soit ~$0.036 par run en moyenne
+
+### Ajouter barres d'erreur (dispersion inter-runs)
+- Ajouter des barres d'erreur sur chaque barre de coût
+  représentant la dispersion inter-runs (min-max ou écart-type)
+- Script : `src/aedist/plot_exp2_arms_split.py`
+
+## Exit criteria
+- [ ] Coûts Exp 1 vérifiés et cohérents avec measurements.jsonl
+- [ ] Barres d'erreur ajoutées sur toutes les conditions
+- [ ] `make report/inputs/generated/fig_exp2_cost.pdf` régénère sans erreur
+- [ ] Vérification visuelle

@@ -1,0 +1,43 @@
+%erg 0.1
+Title: slides: nouvelle slide préconisation "1 tour, avec documents"
+Created: 2026-05-26
+Author: haduong
+
+--- log ---
+2026-05-26T20:30Z haduong created
+
+--- body ---
+## Context
+Le slide 19 actuel (tableau 2×2 F1/coûts) est trop complexe pour la conférence.
+L'auteur souhaite le remplacer par un slide de préconisation actionnable,
+avec des chiffres bruts percutants — sans p-value ni test statistique.
+
+## Changements
+
+### Commenter slide 19
+- Mettre le frame actuel en commentaire dans slides.tex (ne pas supprimer)
+
+### Nouvelle slide : « Préconisation : 1 tour, avec documents »
+
+**Étape 1 : Vérification des données**
+Avant de coder, interroger `measurements.jsonl` ou `tab_exp2_arms_runs_view.csv`
+pour confirmer que la condition 1D (single turn, with docs) est bien la
+meilleure sur F1, et extraire les chiffres clés :
+- F1 moyen condition 1D vs 1N, 5N, 5D
+- Coût moyen 1D vs autres
+- Éventuellement : nombre de modèles pour lesquels 1D > toutes les autres
+
+**Étape 2 : Créer le frame**
+Titre : « Préconisation : 1 tour, avec documents »
+Contenu : chiffres bruts en gros, 3-4 lignes max, pas de tableau complexe.
+Exemple de structure :
+  - F1 moyen : 0.63 (1D) vs 0.51 (1N) vs 0.44 (5N)
+  - Coût : 1.33× le naïf — pas 3×
+  - Conclusion en gras
+
+## Exit criteria
+- [ ] Données vérifiées : 1D est bien la condition dominante
+- [ ] Slide 19 commenté dans le .tex
+- [ ] Nouveau frame créé avec chiffres vérifiés
+- [ ] `tectonic slides.tex` compile sans erreur
+- [ ] Vérification visuelle

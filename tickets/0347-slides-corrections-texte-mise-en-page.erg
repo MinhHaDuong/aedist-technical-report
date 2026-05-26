@@ -1,0 +1,59 @@
+%erg 0.1
+Title: slides: corrections texte et mise en page (revue 2026-05-26)
+Created: 2026-05-26
+Author: haduong
+
+--- log ---
+2026-05-26T20:30Z haduong created
+
+--- body ---
+## Context
+Revue complète des slides avant conférence Econom'IA 2026-05-27.
+Corrections purement textuelles et de mise en page dans slides/slides.tex.
+
+## Changements
+
+### Slide 3
+- « Centrales identifiées » → « Centrales **bien** identifiées »
+- Vérifier micro-typographie : espaces autour du tiret long dans les plages
+  (ex. `\CensusTPMin{}--\CensusTPMax{}` → `\CensusTPMin{}~--~\CensusTPMax{}` si nécessaire)
+
+### Slide 6
+- Titre frame → « 84 lignes car la statistique exige plus que les chiffres »
+- Traduire les labels des axes en français (comme sur le radar slide 7)
+
+### Slide 9
+- Déplacer la citation Las Vergnas & Jeunesse (Las Vergnas et Jeunesse, Econom'IA 2026)
+  en ouverture du talk (juste après ou avant le frame titre)
+
+### Slide 10
+- Ajouter le label « 4. Files upload (RAG) » (préciser emplacement exact à l'implémentation)
+
+### Slide 11
+- « Quatre conditions : 1N ; 5N ; 1D ; 5D » → en sous-titre en haut du frame
+- Supprimer la définition du RAG (note en bas `\footnotesize`)
+- Supprimer la ligne « 1D comparable à Exp 1 + Websearch »
+
+### Slide 13
+- Supprimer le contenu entre parenthèses à la fin
+  (bloc `{\small ...Les réserves étaient fondées...}`)
+
+### Slides 14 et 16
+- Supprimer les frames [plain] redondants (garder uniquement 15 et 17)
+
+### Slide 15
+- Titre : « Fournir les documents repêche Qwen et Mistral. Le multi-tour n'aide pas. Variance et hallucinations persistent. »
+
+### Slide 17
+- Titre : « Les coûts restent très variables entre modèles, runs et modalités. »
+
+### Slide 19
+- Commenter le frame dans le .tex (ne pas supprimer, laisser en `%`)
+
+### Slides 20, 21
+- Remise en page (à apprécier à l'implémentation)
+
+## Exit criteria
+- [ ] Tous les changements ci-dessus appliqués dans slides/slides.tex
+- [ ] `tectonic slides.tex` compile sans erreur
+- [ ] Relecture visuelle du PDF généré
