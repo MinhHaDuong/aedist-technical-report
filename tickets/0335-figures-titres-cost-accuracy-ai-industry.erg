@@ -1,0 +1,33 @@
+%erg v1
+Title: Figures: titres Cost-Accuracy et AI-industry
+Created: 2026-05-26
+Author: claude
+Blocked-by: 0330
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Figure Cost vs Accuracy » et « Figure suivante (AI industry) ».
+
+## Actions — Figure Cost vs Accuracy
+1. Titre : « Cost vs Accuracy across 5 model families (no search, one shot, no docs) »
+   (correction : « familly » → « families »)
+
+## Actions — Figure AI industry
+1. Dans le titre : remplacer « AI » par « AI industry »
+
+## Note
+Le décalage à droite de ces deux figures est traité dans le ticket 0330 (fix systémique).
+Ce ticket couvre uniquement les corrections de titre.
+
+**À exécuter dans la même PR que 0330** (mêmes fichiers scripts touchés → risque de conflit
+merge sinon). Ordre suggéré : appliquer 0335 (titre) puis 0330 (figsize) dans le même commit
+ou commits successifs sur la même branche.
+
+## Exit criteria
+- [ ] Titre Cost vs Accuracy mis à jour dans le script Python
+- [ ] Titre AI industry mis à jour dans le script Python
+- [ ] Figures régénérées
+- [ ] `tectonic slides/slides.tex` passe sans erreur

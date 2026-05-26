@@ -1,0 +1,62 @@
+%erg v1
+Title: Slides: éditions texte diapos 10, 11, 12
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Diapo 10 », « Diapo 11 », « Diapo 12 ».
+
+## Nomenclature labels conditions
+Partout dans les slides : 1N (singleshot, no docs), 5N (multiturn, no docs), 1D (singleshot, docs), 5D (multiturn, docs).
+Ne jamais utiliser A, B, W.
+
+## Actions — Diapo 10
+1. Titre : « Expérience 2 : web search on, (oneshot, multiturn) × (without, with docs) »
+2. Supprimer colonne « Enjeu » et ligne « Facteur, Valeurs »
+3. `(3 relances)` → `(3 à 5)`
+4. Retirer « + web search »
+5. Retirer « 4 SOTA », remplacer « Qwen3-max » par « Qwen 3.7 max »
+6. `Runs` → `Répétitions`
+7. Ajouter ligne **Contrôles** : « Default reasoning effort, Web search allowed, no tools, no code, direct lab API provider, même prompt de base, < $6, < 50 000 tokens »
+8. Ajouter ligne **Documents** : « 18 tables, sources primaires, format MD »
+9. Supprimer le tableau « arm 1... » et la ligne « Les 4 agents... »
+10. À la fin de la diapo, introduire les 4 labels : « Quatre conditions : 1N (single turn, no docs) ; 5N ; 1D ; 5D (multiturn, with docs) »
+11. Résultat : titre + tableau 2 colonnes, colonne de droite = 1 mot en gras
+
+## Actions — Diapo 11
+1. Supprimer le second « Infrastructure : »
+2. Remplacer la phrase actuelle « Même script, n'importe quel fournisseur ; les runs sont
+   reproductibles à partir du hash. » par une formulation **qui conserve la garantie de
+   reproductibilité** et ajoute les 5 claws. Proposition :
+   « 5 claws : Imagine, Plan, Execute, Verify, Celebrate. Runs reproductibles à partir du hash. »
+   (Important : ne pas supprimer l'information de reproductibilité hash, c'est une garantie
+   méthodologique valorisée par le public académique.)
+3. Supprimer les « / 4 »
+4. Ajouter « codéveloppé, » avant « relu »
+5. Après « fondées : » rappeler très brièvement les réserves.
+   Source : `experiments/sota/protocol_06_validation_round_1.md` (open limitations § 4.3)
+   + round 2 reviews (`experiments/archive/outputs/sota_exp2_protocol_review_round2/`)
+   Réserves maintenues round 2 par Qwen+OpenAI : enforcement instructionnel des bans
+   Wikipedia/subagents (pas API-level), cross-évaluation par les mêmes 4 modèles non
+   indépendante, fuite paramétrique, énergie/CO₂ non exposés par les vendeurs.
+   Formulation recommandée (à choisir selon espace disponible) :
+   - Court : « enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO₂ non exposés »
+   - Télégraphique : « budget · enforcement · leakage · CO₂ »
+
+## Actions — Diapo 12
+1. Supprimer « (Exp 2) »
+2. Phase A : remplacer « et planifie le job » par « connaissant le protocole »
+3. Supprimer « ($1) »
+4. Remplacer « Un jury de pairs — mais le jury est aussi un modèle » par « Évaluation par les pairs : TBD »
+5. Remplacer « L'agent conçoit son propre protocole, l'exécute, et un autre LLM l'arbitre » par :
+   « *It's LLMs all the way down* — but Knowledge Graphs are not dead. »
+
+## Exit criteria
+- [ ] Diapo 10 : tableau restructuré, labels 1N/5N/1D/5D introduits
+- [ ] Diapo 11 : toutes les éditions appliquées
+- [ ] Diapo 12 : toutes les éditions appliquées
+- [ ] `tectonic slides/slides.tex` passe sans erreur

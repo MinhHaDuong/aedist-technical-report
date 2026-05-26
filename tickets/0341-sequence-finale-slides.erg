@@ -1,0 +1,55 @@
+%erg v1
+Title: Séquence finale des slides — ordre cible global
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Sophie Lefèbvre C-10)
+
+--- body ---
+## Context
+Plusieurs tickets bougent des slides indépendamment :
+- 0326 : restructure section Architecture en Discussion ; remonte diapo 16 ; déplace Qualité méthode
+- 0329 : insère 2 nouvelles slides (structure prompt + Quality dimensions)
+- 0339 : ajoute slide de transition Exp1 → Exp2
+
+Sans séquence cible écrite, ces tickets peuvent être exécutés dans un ordre contradictoire
+et produire des résultats incohérents (ex. 0329 insère après diapo 3 en supposant un ordre
+que 0326 va casser).
+
+## Actions
+1. Établir l'ordre final cible de toutes les slides, du titre à la slide Merci
+2. Documenter la séquence dans ce ticket et la communiquer aux tickets dépendants
+3. Indiquer pour chaque slide : son ID, son titre, et le ticket qui la modifie/crée
+
+## Séquence cible (proposition initiale — à valider)
+1. **Titre** — Dr. Minh Ha-Duong (T-0324)
+2. **L'IA peut-elle produire des données qualité recherche ?** (T-0325)
+3. **Expérience 1** — Engineered 84 lignes, conditions (T-0325)
+4. **Slide A** — Structure du prompt (T-0329)
+5. **Slide B** — Quality dimensions verbatim (T-0329)
+6. **Figure** — How do models recall Vietnam's thermal power assets? Not well. (T-0325)
+7. **La bonne statistique exige plus que des vrais chiffres** (T-0326 — diapo 16 remontée)
+8. **Figure araignées** — multipanel (T-0331)
+9. **Figure araignée Claude seul** (T-0331 — nouvelle)
+10. **Figure Cost vs Accuracy** (T-0335)
+11. **Transition Exp 1 → Exp 2** (T-0339)
+12. **Timeline industrie + RAG** (T-0335, T-0340)
+13. **Expérience 2** — design (T-0327)
+14. **Infrastructure** (T-0327)
+15. **Protocole multitour** (T-0327)
+16. **Figure Coverage and costs exp2** (T-0332)
+17. **Figure Coverage vs Corroboration** (T-0333)
+18. **Diapos 17-18 vérif quanti** (T-0328)
+19. **Section Discussion**
+    - Question centrale
+    - Qualité de la méthode (T-0326, déplacée)
+    - Messages clés (diapo 19 réordonnée) (T-0328)
+    - Directions Futures (T-0326, remontée)
+20. **Merci** — QR code + lien actif (T-0328)
+
+## Exit criteria
+- [ ] Séquence validée par l'auteur
+- [ ] Tous les tickets impactés mis à jour pour référencer cette séquence
+- [ ] Slides en ordre dans le PDF final
+- [ ] `tectonic slides/slides.tex` passe sans erreur

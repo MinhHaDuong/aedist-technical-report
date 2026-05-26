@@ -1,0 +1,45 @@
+%erg v1
+Title: Figures: fix décalage droite systémique (toutes figures slides)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Bug global figures ».
+
+## Context
+Toutes les figures des slides débordent/sont clippées à droite.
+
+**Cause identifiée par revue expert** (Lucas Moreau, panel) : les `figsize` des scripts Python
+sont en ratio plus large que le 16:9 du slide Beamer. Exemple : `plot_cost_quality` utilise
+`figsize=(11, 4.5)` → ratio 2,44:1 contre 1,78:1 (16:9). Avec `\includegraphics[width=\paperwidth,
+height=\paperheight,keepaspectratio]`, la contrainte `height=\paperheight` prend le dessus :
+matplotlib rend à ~8,65 pouces de large pour 3,54 pouces de papier disponible → 37 % de la figure
+sort à droite. **Ce n'est pas un problème de centrage LaTeX**, c'est un mauvais ratio source.
+
+## Actions
+1. Auditer tous les scripts `src/aedist/plot_*.py` : relever les `figsize` actuels et leurs ratios
+2. Définir le ratio cible :
+   - Pour figures plein-slide (`\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]`) :
+     ratio ≤ 1,78:1 (16:9). Cible recommandée : `figsize=(10, 5.6)` ou `(11.2, 6.3)`.
+   - Pour figures avec titre de frame (`width=\textwidth`) : ratio plus carré OK.
+3. Ajuster les `figsize` à la source dans chaque script. Ne PAS patcher le LaTeX.
+4. (Préférable) Référencer une constante centrale `SLIDE_FIGSIZE_WIDE` dans `aedist.util` —
+   voir ticket 0338 (N-2) si créé.
+5. Régénérer toutes les figures via `make figures` ou équivalent.
+6. Vérifier visuellement le rendu PDF des slides ; aucune figure ne doit déborder.
+
+## Note sur ticket 0335
+Le ticket 0335 (titres Cost-Accuracy et AI-industry) touche les mêmes scripts. **À exécuter
+dans la même PR que 0330** pour éviter conflits de merge. Ordre : appliquer d'abord les
+corrections de titre (0335), puis le fix figsize (0330), même commit ou commits successifs.
+
+## Exit criteria
+- [ ] Tous les `figsize` des scripts plot_*.py audités et listés dans le log du ticket
+- [ ] Ratios ajustés à ≤ 1,78:1 pour les figures plein-slide
+- [ ] Toutes les figures régénérées
+- [ ] Vérification visuelle PDF : aucune figure ne déborde à droite
+- [ ] `tectonic slides/slides.tex` passe sans erreur

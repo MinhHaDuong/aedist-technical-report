@@ -1,0 +1,33 @@
+%erg v1
+Title: Slides: restructuration ordre (diapo 5, 16, section Discussion)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Diapo 5 » et « Diapo 16 (remonte) ».
+
+## Actions — Diapo 5
+1. Remplacer la diapo « Qualité du résultat » par une diapo « Quality dimensions » verbatim du prompt
+2. La diapo « Qualité de la méthode » migre dans la section « Architecture » renommée « Discussion »,
+   positionnée juste après « Question centrale » et avant « Directions Futures »
+3. « Directions Futures » remonte dans la section Discussion
+
+## Actions — Diapo 16
+1. La diapo 16 remonte juste après « Which models recall » et avant la diapo prompt
+2. Titre : « La bonne statistique exige plus que des vrais chiffres »
+3. Citer « Connaissance : croyance vraie justifiée »
+4. Aligner sur les 4 dimensions du manuscrit (Accuracy, Coherence, Provenance, Temporality)
+5. Ajouter la 5e dimension : **« Fit for purpose »** (niveau de détail approprié).
+   Opérationnelle, mesurée. Exemple : pour PyPSA, la colonne Capacité doit être
+   remplie — on le mesure (taux de remplissage des champs critiques pour l'usage aval).
+6. Remplacer « Chaque défaillance a un mécanisme correcteur » par « → Grille de notation multi-axes »
+
+## Exit criteria
+- [ ] Diapo 5 remplacée par Quality dimensions verbatim
+- [ ] Section Discussion en place avec Qualité méthode + Directions Futures
+- [ ] Diapo 16 repositionnée avec titre et contenu mis à jour
+- [ ] `tectonic slides/slides.tex` passe sans erreur

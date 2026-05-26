@@ -1,0 +1,44 @@
+%erg v1
+Title: Définir constantes figsize standards Beamer dans aedist.util
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Lucas Moreau LM-11)
+
+--- body ---
+## Context
+Le bug systémique de décalage des figures (ticket 0330) vient de figsize en ratios trop
+larges pour le 16:9 Beamer. Sans constante centrale, chaque nouvelle figure créée risque
+de régresser. Définir des constantes garantit la cohérence et facilite l'audit.
+
+## Actions
+1. Ajouter dans `src/aedist/util.py` (ou module équivalent) :
+   ```python
+   # Beamer 16:9 — figures plein-slide via \includegraphics[width=\paperwidth,
+   # height=\paperheight,keepaspectratio]. Ratio ≤ 1.78 pour éviter clipping droit.
+   SLIDE_FIGSIZE_FULL = (10.0, 5.6)   # 16:9
+   SLIDE_FIGSIZE_WIDE = (11.2, 6.3)   # 16:9 plus grand
+
+   # Figures à côté d'un texte (column 0.55-0.6 textwidth)
+   SLIDE_FIGSIZE_HALF = (5.5, 4.0)    # ratio plus carré OK avec width=\textwidth
+
+   # Figures multipanel polaire (araignées)
+   SLIDE_FIGSIZE_POLAR_2x2 = (10.0, 8.0)
+   ```
+2. Refactorer les scripts plot_*.py existants pour utiliser ces constantes
+   (à coordonner avec le ticket 0330)
+3. Ajouter un test d'adhérence qui détecte les `figsize=(...)` hardcodés dans plot_*.py
+   et fail si la valeur n'est pas une constante importée
+
+## Lien avec 0330
+0330 corrige les figsize au cas par cas dans les scripts existants. 0338 introduit la
+constante centrale. **Ordre suggéré** : 0338 d'abord (créer les constantes), 0330 ensuite
+(les utiliser dans le refactor). Si 0330 est exécuté en premier, c'est OK aussi —
+0338 ajoute la constante et migre les valeurs.
+
+## Exit criteria
+- [ ] Constantes définies dans `aedist.util`
+- [ ] Scripts plot_*.py refactorés pour les utiliser
+- [ ] Test d'adhérence en place
+- [ ] `make check` passe

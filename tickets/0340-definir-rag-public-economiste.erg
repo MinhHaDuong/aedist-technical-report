@@ -1,0 +1,32 @@
+%erg v1
+Title: Définir RAG pour public économiste (1 phrase)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created suite panel review (Isabelle Charpentier IC-4)
+
+--- body ---
+## Context
+Le titre du talk contient « Beyond RAG » et la section architecturale en fait le pivot.
+Aucune diapo ne définit RAG pour un public d'économistes non spécialistes IA. Sans définition
+minimale, le public peut suivre les résultats (« avec sources ça marche mieux ») sans
+comprendre pourquoi l'architecture est intéressante.
+
+## Actions
+1. Ajouter une définition courte de RAG sur :
+   - **soit** la diapo timeline industrie (avant son premier usage technique)
+   - **soit** la diapo Expérience 2 (description)
+   - **soit** une note en bas de slide quand le sigle apparaît pour la première fois
+
+2. Formulation suggérée (1 phrase, 1 ligne) :
+   > RAG (Retrieval-Augmented Generation) : le modèle reçoit des documents sources en
+   > entrée et génère sa réponse à partir de ces documents, plutôt que de répondre de mémoire.
+
+3. À coordonner avec ticket 0332 qui demande aussi d'introduire RAG dans la timeline et
+   la description Exp 2 — pour éviter de dupliquer le travail.
+
+## Exit criteria
+- [ ] Définition de RAG présente avant son premier usage dans le talk
+- [ ] Définition tient en 1-2 lignes maximum (pas un encart pédagogique long)
+- [ ] `tectonic slides/slides.tex` passe sans erreur

@@ -1,0 +1,47 @@
+%erg v1
+Title: Exp2 data: investiguer n_matched et n_rows pour figures coverage
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created bloqueur identifié par panel review (Lucas Moreau)
+
+--- body ---
+## Context
+Bloqueur identifié par le panel de révision (Dr. Lucas Moreau, expert dataviz) :
+
+**Problème 1** : `tab_exp2_arms_runs.csv` n'a pas de colonne `n_matched`. La figure
+Coverage and costs exp2 (ticket 0332) demande des barres rouges pour les faux positifs
+(hallucinations) sous zéro — ce qui exige `n_halluc = n_inventory - n_matched`. Sans
+`n_matched` la décomposition TP/FP est impossible.
+
+**Problème 2** : `tab_exp2_bib_quality.csv` contient `n_rows = len(data_rows)` qui compte
+les lignes du tableau MD brut, pas les assets correctement identifiés. C'est pourquoi
+des valeurs > 163 apparaissent (ex. OpenAI/optimised n_rows=181). Le ticket 0333
+proposait de plafonner l'axe à 163 — ce serait masquer une erreur sémantique.
+
+## Actions
+1. Auditer le pipeline cross-eval Exp2 :
+   - `experiments/sota/exp2_naive_arm.py` et `exp2_phase_b0_consolidate.py`
+   - Identifier où n_matched devrait être calculé
+   - Vérifier si MILP matching ou name-similarity threshold est déjà appliqué
+2. Si n_matched n'est calculé nulle part : implémenter le calcul (matching contre
+   gold standard 163 plants, même métrique que Exp1)
+3. Ajouter la colonne `n_matched` à `tab_exp2_arms_runs.csv` et la régénérer
+4. Pour `tab_exp2_bib_quality.csv` : renommer `n_rows` en quelque chose de précis
+   (ex. `n_table_rows`) si elle ne représente pas n_matched, OU calculer n_matched
+   en parallèle et l'utiliser comme axe X dans la figure 0333
+5. Pour la figure 0333 (Coverage vs Corroboration) : ajouter aussi la colonne
+   `n_halluc_with_2_sources` (hallucinations corroborées par 2 sources)
+6. Documenter dans le log du ticket la définition exacte de chaque métrique
+
+## Bloque
+- 0332 (figure coverage and costs exp2)
+- 0333 (figure coverage vs corroboration)
+
+## Exit criteria
+- [ ] `n_matched` calculé et présent dans `tab_exp2_arms_runs.csv`
+- [ ] Sémantique de `n_rows` clarifiée dans `tab_exp2_bib_quality.csv` (renommée si nécessaire)
+- [ ] `n_halluc_with_2_sources` calculé et présent dans le CSV bib_quality
+- [ ] Documentation des définitions dans le log du ticket ou un README adjacent
+- [ ] `make` régénère les CSVs sans erreur

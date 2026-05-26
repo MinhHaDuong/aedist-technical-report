@@ -1,0 +1,36 @@
+%erg v1
+Title: Prompt améliorations: format réponse, caption, notes, sources
+Created: 2026-05-26
+Author: claude
+Tag: deferred
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Ticket DÉFERRÉ (hors slides, créé pendant diapo 3) ».
+
+## Context
+Améliorations au prompt `prompts/sotal/protocol_07...` pour forcer un format de réponse plus
+structuré et traçable. Déferré car non bloquant pour Econom'IA 2026.
+
+## Actions
+1. Ajouter une instruction pour commencer la réponse EXACTEMENT par :
+   `| Status | Nom (Tieng Viet) | Nom (EN) | Province | Fuel | Capacity | ...`
+   suivi de 2 lignes d'exemples concrets.
+
+2. Ajouter une instruction pour inclure après la table un `# Caption` avec ce modèle à trou :
+   « Inventaire historico-prospectif des assets et projets de génération thermique au Vietnam.
+   Table statistique générée le <YYYY-MM-DD> à <HH-MM-SS> par <NOM DU MODELE, VARIANTE>
+   pour Minh Ha-Duong (CIRED-CNRS). »
+
+3. Après le `# Caption` : section `# Notes to the table`
+
+4. Après les notes : section `# Sources`
+
+## Exit criteria
+- [ ] Instructions ajoutées au prompt
+- [ ] Test sur 1 modèle : réponse commence bien par le header de table
+- [ ] Caption présent avec les champs de remplissage corrects
+- [ ] `make check` passe
