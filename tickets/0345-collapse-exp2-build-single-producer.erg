@@ -2,11 +2,13 @@
 Title: Collapse Exp2 build to a single producer; writing build consumes committed artifacts only
 Created: 2026-05-26
 Author: HDMX-coding-agent
+Closed: merged PR #609 — single producer, writing build from artifacts only
 
 --- log ---
 2026-05-26T12:30Z HDMX-coding-agent created — DAG audit found a stale duplicate analysis makefile wired into the root build
 2026-05-26T22:40Z HDMX-coding-agent note scope-add: the 2x2 table (PRs #598/#601) now has a DUPLICATE producer — a `tabulate_exp2_2x2` rule in BOTH experiments/analysis.mk (target ANALYSIS_EXP2_2X2_TEX, --lang en) AND root Makefile (two rules: $(GEN)/tab_exp2_2x2.tex --lang en + $(SLIDE_GEN)/tab_exp2_2x2.tex --lang fr). Fix: remove the root rules; analysis.mk emits BOTH en (report/inputs/generated) and fr (slides/inputs/generated, --lang fr). `make slides` currently fires `uv run tabulate_exp2_2x2` (criterion-4 violation). The slide fr tex slides/inputs/generated/tab_exp2_2x2.tex is gitignored — must become a committed handoff artifact. Also: ANALYSIS_EXP2_MART_JSONL defaults to $(ANALYSIS_GEN)/exp2_mart.jsonl but canonical is experiments/derived/exp2_mart.jsonl (criterion 2). Verify slides.pdf prereqs against actual slides.tex \includegraphics — the deck now uses fig_exp2_coverage/cost (split, via root plot_exp2_arms_split) + fig_exp2_coverage_certainty + fig_exp2_arms_comparison.
 
+2026-05-26T21:29Z HDMX-coding-agent closed — merged PR #609 — single producer, writing build from artifacts only
 --- body ---
 ## Context
 
