@@ -1,10 +1,18 @@
-Execute Phase B. Produce a single Markdown document containing a complete, primary-sourced reference inventory of Vietnam's thermal generation assets (> 30 MWe).
+Execute Vietnam thermal power inventory (>30 MWe) in phased turns:
 
-Turn 1: Outline your search strategy, decompose the task, and conduct initial web searches using the evidence pack and external tools to map the asset landscape. Do not output the final table yet.
-Turn 2: Draft the comprehensive single pipe table, per-asset notes, and annotated bibliography. Ensure strict adherence to column order, status definitions, and confidence rules.
-Turn 3: Verify, reconcile conflicts, and polish.
+TURN 1 (Discovery): Search authoritative sources for sector context. Query: 'Vietnam PDP8 thermal capacity targets site:moit.gov.vn', 'EVN annual report 2023 electricity mix', 'ERAV power plant registry Vietnam'. Output: 150-word sector overview (mix, policy, actors, challenges) with 3 primary source citations.
 
-Remember: Begin the final document directly with the inventory table. No title, no preamble. Exactly one pipe table. Fold aggregate statistics into prose. Cite sources meticulously.
+TURN 2 (Asset List): Compile master plant list. Query: 'Vietnam coal power plant list filetype:pdf MOIT', 'Vinh Tan Duyen Hai Phu My plant database', 'Global Energy Monitor Vietnam coal (trace to primary sources)'. Output: Raw plant names + provinces + initial capacity/status hypotheses. Flag conflicts.
+
+TURN 3-4 (Attribute Verification): For each plant, search targeted queries: '[Plant Name] commissioning date EVN press release', '[Plant] capacity MW MOIT decision 963', '[Plant] owner BOT agreement'. Record: source publication date, fact as-of date, confidence per attribute. Resolve conflicts explicitly (e.g., 'MOIT 2022 report overrides 2019 news article due to recency').
+
+TURN 5 (Table Assembly): Build final table with exact columns. Generate statistical summaries (capacity by fuel×status; top 15 provinces; timeline). Reconcile totals against national aggregates (e.g., 'Sum operational coal = 18,500 MWe vs MOIT 2023 report 18,450 MWe—difference attributed to unit retirement at [Plant]').
+
+TURN 6 (Finalize): Add concise narratives ONLY for plants with LOW confidence, status changes, or historical significance (e.g., Vinh Tan 1 per knowledge base [7]). Compile annotated bibliography: full citation, URL (or 'URL not verified'), original title + [translation], annotation of extracted facts.
+
+BUDGET RULES: After each turn, state remaining budget estimate. If tokens <10k or cost guard <$0.60 remain, compress non-core sections but preserve all table rows with confidence/source fields. STOP if budget reaches 20% threshold; output current state with incompleteness note.
+
+OUTPUT: Pure Markdown. Table must use exact column headers specified. Confidence field = HIGH/MEDIUM/LOW with justification in Notes if disputed.
 
 # Evidence pack
 
