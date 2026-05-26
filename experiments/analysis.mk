@@ -34,7 +34,8 @@ ANALYSIS_EXP2_ARM4_MDS := $(wildcard $(ANALYSIS_EXP2_ARM4_DIR)/*.md)
 ANALYSIS_EXP2_PROBE_RAWS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.raw.json)
 ANALYSIS_EXP2_PROBE_CLSF := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.classification.json)
 
-ANALYSIS_EXP2_MART_JSONL := $(ANALYSIS_GEN)/exp2_mart.jsonl
+ANALYSIS_SLIDE_GEN ?= $(ANALYSIS_REPO_ROOT)/slides/inputs/generated
+ANALYSIS_EXP2_MART_JSONL := $(ANALYSIS_DERIVED_DIR)/exp2_mart.jsonl
 ANALYSIS_EXP2_MART_VIEWS := \
 	$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
 	$(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
@@ -49,6 +50,10 @@ ANALYSIS_EXP2_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty.pdf
 ANALYSIS_EXP2_SPIRE_FIG := $(ANALYSIS_GEN)/fig_quality_spider.pdf
 ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
 ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
+ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_SLIDE_GEN)/tab_exp2_2x2.tex
+ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
+ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
+ANALYSIS_SLIDE_MACROS := $(ANALYSIS_SLIDE_GEN)/macros.tex
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -333,8 +338,41 @@ $(ANALYSIS_EXP2_2X2_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 	    --cross-eval-csv $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 	    --flat-root $(ANALYSIS_DERIVED_DIR) \
 	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
-	    --output-tex $@
+	    --output-tex $@ --lang en
+
+$(ANALYSIS_EXP2_2X2_FR_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+		$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_2x2 \
+	    --cross-eval-csv $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+	    --flat-root $(ANALYSIS_DERIVED_DIR) \
+	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
+	    --output-tex $@ --lang fr
+
+# --- Coverage/cost split figures (reads from mart views + Exp1 cost CSV) ------
+
+$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) &: \
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_GEN)/cost_quality.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_arms_split \
+	    --input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
+	    --exp1-input $(ANALYSIS_GEN)/cost_quality.csv \
+	    --coverage-output $(ANALYSIS_EXP2_COVERAGE_SPLIT) \
+	    --cost-output $(ANALYSIS_EXP2_COST_SPLIT)
+
+# --- Slide macros (census + measurements → slides/inputs/generated/) ----------
+
+$(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_GEN)/census_bars.csv $(ANALYSIS_REPO_ROOT)/measurements.jsonl
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_macros \
+	    --census-csv $(ANALYSIS_GEN)/census_bars.csv --output $@
 
 .PHONY: exp2-analysis-report
 
-exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) $(ANALYSIS_EXP2_2X2_TEX)
+exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
+	$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_FR_TEX) \
+	$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) \
+	$(ANALYSIS_SLIDE_MACROS)
