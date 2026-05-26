@@ -45,8 +45,12 @@ def extract_agent_name(dir_name: str) -> str:
     return re.sub(r"_run\d+$", "", dir_name)
 
 
-def find_last_turn(agent_dir: Path) -> Path | None:
-    """Return the path to the highest-numbered turn record in *agent_dir*."""
+def find_turns_descending(agent_dir: Path) -> list[Path]:
+    """Return turn record paths in *agent_dir* ordered most-recent-first.
+
+    Prefers ``*_turn_N.record.json`` files; falls back to ``*_turn_N.raw.json``
+    only when no record files exist (mirrors the historical lookup order).
+    """
     candidates: list[tuple[int, Path]] = []
     for path in agent_dir.glob("*_turn_*.record.json"):
         match = _TURN_RECORD_RE.search(path.name)
@@ -57,10 +61,14 @@ def find_last_turn(agent_dir: Path) -> Path | None:
             match = _TURN_RAW_RE.search(path.name)
             if match:
                 candidates.append((int(match.group(1)), path))
-    if not candidates:
-        return None
-    candidates.sort(key=lambda x: x[0])
-    return candidates[-1][1]
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return [path for _, path in candidates]
+
+
+def find_last_turn(agent_dir: Path) -> Path | None:
+    """Return the path to the highest-numbered turn record in *agent_dir*."""
+    turns = find_turns_descending(agent_dir)
+    return turns[0] if turns else None
 
 
 def _raw_sibling(turn_path: Path) -> Path | None:
@@ -150,6 +158,25 @@ def extract_output_text(record: dict[str, Any]) -> str:
     return ""
 
 
+def _read_turn_text(turn_path: Path) -> str:
+    """Read the model text from a turn record, with raw-sibling fallback.
+
+    Some providers (mistral-direct) write the report only into the sibling
+    ``.raw.json`` — their ``.record.json`` has an empty justification. When the
+    record yields no text, re-extract from the matching raw payload.
+    """
+    with turn_path.open(encoding="utf-8") as fh:
+        record = json.load(fh)
+    text = extract_output_text(record)
+    if not text:
+        raw_path = _raw_sibling(turn_path)
+        if raw_path is not None and raw_path.exists():
+            with raw_path.open(encoding="utf-8") as fh:
+                raw_record = json.load(fh)
+            text = extract_output_text(raw_record)
+    return text
+
+
 def _count_inventory_rows(text: str) -> int:
     tables = _extract_pipe_tables(text)
     if not tables:
@@ -225,25 +252,30 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 continue
             agent_dir = agent_dirs[0]
 
-            last_turn_path = find_last_turn(agent_dir)
-            if last_turn_path is None:
+            turns_desc = find_turns_descending(agent_dir)
+            if not turns_desc:
                 continue
 
-            with last_turn_path.open(encoding="utf-8") as fh:
+            chosen_turn_path = turns_desc[0]
+            text = _read_turn_text(chosen_turn_path)
+
+            # Earlier-turn fallback: some runs end with a short meta-message
+            # ("the inventory table has been produced in full above … budget
+            # won't permit more") whose turn yields no inventory rows. The
+            # actual table lives in an earlier turn. When the last turn has no
+            # inventory table, scan earlier turns most-recent-first and adopt
+            # the first one that does. Runs whose last turn already carries a
+            # table are unaffected.
+            if _count_inventory_rows(text) == 0:
+                for earlier_path in turns_desc[1:]:
+                    earlier_text = _read_turn_text(earlier_path)
+                    if _count_inventory_rows(earlier_text) > 0:
+                        chosen_turn_path = earlier_path
+                        text = earlier_text
+                        break
+
+            with chosen_turn_path.open(encoding="utf-8") as fh:
                 record = json.load(fh)
-
-            text = extract_output_text(record)
-
-            # Fallback: some providers (mistral-direct) write the report only
-            # into the sibling .raw.json — their .record.json has an empty
-            # justification/result_summary. When the record yields no text,
-            # re-extract from the matching raw payload for the same turn.
-            if not text:
-                raw_path = _raw_sibling(last_turn_path)
-                if raw_path is not None and raw_path.exists():
-                    with raw_path.open(encoding="utf-8") as fh:
-                        raw_record = json.load(fh)
-                    text = extract_output_text(raw_record)
 
             bib_text, n_bib = extract_bibliography(text)
 

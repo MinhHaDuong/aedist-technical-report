@@ -11,6 +11,7 @@ from aedist.extract_arm_multi_turn import (
     extract_bibliography,
     extract_output_text,
     find_last_turn,
+    find_turns_descending,
     process_batch,
 )
 
@@ -357,3 +358,113 @@ def test_process_batch_counts_inventory_rows_from_raw_payload(tmp_path: Path) ->
 
     meta = json.loads((output_dir / "testagent_run01.json").read_text(encoding="utf-8"))
     assert meta["n_rows"] == 2
+
+
+def test_find_turns_descending_orders_most_recent_first(tmp_path: Path) -> None:
+    agent_dir = tmp_path / "testagent_run01"
+    agent_dir.mkdir(parents=True)
+    for n in (1, 2, 10):
+        (agent_dir / f"testagent_turn_{n:02d}.record.json").write_text("{}")
+
+    turns = find_turns_descending(agent_dir)
+    nums = [int(p.name.split("_turn_")[1].split(".")[0]) for p in turns]
+    assert nums == [10, 2, 1]
+    # find_last_turn must still return the highest-numbered turn.
+    assert find_last_turn(agent_dir) == turns[0]
+
+
+def test_process_batch_falls_back_to_earlier_turn_when_last_has_no_table(
+    tmp_path: Path,
+) -> None:
+    """SOTA arm4 anthropic run04: the final turn is a short meta-message
+    ("the inventory table … has been produced in full above … budget won't
+    permit more") with no inventory rows, while the actual table lives in an
+    earlier turn. process_batch must scan earlier turns and adopt the one that
+    carries an inventory table.
+    """
+    input_dir = tmp_path / "input"
+    output_dir = tmp_path / "output"
+    run_dir = input_dir / "run04"
+    agent_dir = run_dir / "testagent_run04"
+    agent_dir.mkdir(parents=True)
+
+    summary = [
+        {
+            "agent": "testagent",
+            "status": "pass",
+            "total_cost_usd": 5.0,
+            "wall_s": 800.0,
+            "turns": 4,
+            "class_trace": "no_report,no_report,report,no_report",
+            "inventory_rows": 2,
+        }
+    ]
+    (run_dir / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+
+    inventory_text = (
+        "Here is the final inventory.\n\n"
+        "| Name | Fuel | Capacity | Status | COD | Province |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| Pha Lai | Coal | 440 | Operating | 1983 | Hai Duong |\n"
+        "| Uong Bi | Coal | 330 | Operating | 2011 | Quang Ninh |\n"
+    )
+    meta_message = (
+        "The inventory table and bibliography have been produced in full "
+        "above. The remaining budget will not permit further searches."
+    )
+    # Turn 03 carries the table; turn 04 is the budget meta-message.
+    (agent_dir / "testagent_turn_03.record.json").write_text(
+        json.dumps({"output": inventory_text, "method_params": {"model": "claude-x"}}),
+        encoding="utf-8",
+    )
+    (agent_dir / "testagent_turn_04.record.json").write_text(
+        json.dumps({"output": meta_message, "method_params": {"model": "claude-x"}}),
+        encoding="utf-8",
+    )
+
+    process_batch(input_dir, output_dir)
+
+    meta = json.loads((output_dir / "testagent_run04.json").read_text(encoding="utf-8"))
+    assert meta["n_rows"] == 2
+    md = (output_dir / "testagent_run04.md").read_text(encoding="utf-8")
+    assert "Pha Lai" in md  # adopted the earlier turn's text, not the meta-message
+    assert "budget will not permit" not in md
+
+
+def test_process_batch_keeps_last_turn_when_it_has_a_table(tmp_path: Path) -> None:
+    """The earlier-turn fallback must not fire when the last turn already
+    carries an inventory table — runs that already work stay unchanged.
+    """
+    input_dir = tmp_path / "input"
+    output_dir = tmp_path / "output"
+    run_dir = input_dir / "run01"
+    agent_dir = run_dir / "testagent_run01"
+    agent_dir.mkdir(parents=True)
+
+    summary = [
+        {
+            "agent": "testagent",
+            "status": "pass",
+            "total_cost_usd": 1.0,
+            "wall_s": 10.0,
+            "turns": 2,
+            "class_trace": "report,report",
+            "inventory_rows": 1,
+        }
+    ]
+    (run_dir / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+
+    earlier = "| Name | Fuel | Capacity | Status | COD | Province |\n| --- | --- | --- | --- | --- | --- |\n| Old Plant | Coal | 100 | Retired | 1970 | Hanoi |\n"
+    last = "| Name | Fuel | Capacity | Status | COD | Province |\n| --- | --- | --- | --- | --- | --- |\n| New Plant | Gas | 500 | Operating | 2024 | Da Nang |\n"
+    (agent_dir / "testagent_turn_01.record.json").write_text(
+        json.dumps({"output": earlier, "method_params": {"model": "m"}}), encoding="utf-8"
+    )
+    (agent_dir / "testagent_turn_02.record.json").write_text(
+        json.dumps({"output": last, "method_params": {"model": "m"}}), encoding="utf-8"
+    )
+
+    process_batch(input_dir, output_dir)
+
+    md = (output_dir / "testagent_run01.md").read_text(encoding="utf-8")
+    assert "New Plant" in md  # used the last turn
+    assert "Old Plant" not in md

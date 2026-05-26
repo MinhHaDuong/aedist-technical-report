@@ -65,6 +65,23 @@ class TestHeaderMapping:
     def test_current_status_resolution_header(self):
         assert map_header_to_canonical(norm_header("Current Status / Resolution")) == "status"
 
+    def test_asset_name_header(self):
+        """SOTA arm4 qwen run02 labels the plant-name column 'Asset Name'."""
+        assert map_header_to_canonical(norm_header("Asset Name")) == "name"
+
+    def test_asset_name_vn_en_header(self):
+        """SOTA arm2 anthropic run02 header: 'Asset Name (VN / EN)'."""
+        assert map_header_to_canonical(norm_header("Asset Name (VN / EN)")) == "name"
+
+    def test_asset_bare_header(self):
+        """Arm2 anthropic run04/run05 use bare 'Asset (...)' name columns."""
+        assert map_header_to_canonical(norm_header("Asset (Viet / Eng)")) == "name"
+        assert map_header_to_canonical(norm_header("Asset (Vietnamese)")) == "name"
+
+    def test_capacity_mw_header(self):
+        """SOTA arm4 qwen run02 uses 'Capacity (MW)' for capacity."""
+        assert map_header_to_canonical(norm_header("Capacity (MW)")) == "capacity_mwe"
+
 
 class TestPipeTable:
     """Markdown pipe tables should be converted to CSV."""
@@ -210,6 +227,55 @@ class TestCountBestTableRows:
             "| Nghi Son 2 | Coal | Thanh Hoa | 1320 | Operating | 2023 |\n"
         )
         assert count_best_table_rows(text) == 4
+
+    def test_counts_asset_name_header_with_leading_index(self):
+        """SOTA arm2 anthropic runs use an 'Asset Name (VN / EN)' name column
+        preceded by a leading numeric '#' index column. The index column
+        normalises to nothing (mapped to None) and must be tolerated; the
+        plant-name column must still be recognised so rows are counted.
+        """
+        text = (
+            "| # | Asset Name (VN / EN) | Province | Fuel | Units×MW | "
+            "Total MWe | Status | COD / Expected | Owner / Operator | Confidence |\n"
+            "|---|---|---|---|---|---|---|---|---|---|\n"
+            "| 1 | Pha Lai 1 / Phả Lại 1 | Hai Duong | Coal | 4×110 | 440 | "
+            "Operating | 1983 | EVN | HIGH |\n"
+            "| 2 | Uong Bi MR | Quang Ninh | Coal | 1×300 | 300 | "
+            "Operating | 2002 | EVN | MEDIUM |\n"
+        )
+        assert count_best_table_rows(text) == 2
+
+    def test_counts_asset_name_capacity_mw_header(self):
+        """SOTA arm4 qwen run02 header: 'Asset Name' + 'Capacity (MW)' columns."""
+        text = (
+            "| Asset Name | Fuel | Capacity (MW) | Status | Owner / Operator | "
+            "COD / Target | As-Of / Status Note | Confidence | Source 1 | Source 2 |\n"
+            "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n"
+            "| Pha Lai 1 & 2 | Coal | 1040 | Operating | EVN GENCO 2 | "
+            "2002 / 2007 | As-of 2018 AR | HIGH | evn_ar | https://evn.com.vn |\n"
+            "| Quang Ninh 1 & 2 | Coal | 1200 | Operating | EVN GENCO 1 | "
+            "2008 / 2010 | As-of 2018 AR | HIGH | evn_ar | https://evn.com.vn |\n"
+        )
+        assert count_best_table_rows(text) == 2
+
+    def test_asset_inventory_wins_over_asset_recap_subtable(self):
+        """With the asset->name mapping, a small 'Asset' recap table must not
+        out-score the larger 'Asset' inventory table in the same response.
+        Guards against the mapping being too loose for merge/selection.
+        """
+        text = (
+            "| # | Asset | Province | Fuel | Total MWe | Status | COD |\n"
+            "|---|---|---|---|---|---|---|\n"
+            "| 1 | Pha Lai | Hai Duong | Coal | 440 | Operating | 1983 |\n"
+            "| 2 | Uong Bi | Quang Ninh | Coal | 330 | Operating | 2011 |\n"
+            "| 3 | Vinh Tan 1 | Binh Thuan | Coal | 1240 | Operating | 2018 |\n\n"
+            "Planned pipeline summary:\n\n"
+            "| # | Asset | Province | MW (planned) | Status |\n"
+            "|---|---|---|---|---|\n"
+            "| 1 | Future Plant | Quang Tri | 1320 | Planned |\n"
+        )
+        # The 3-row inventory table (more rows, more recognised columns) wins.
+        assert count_best_table_rows(text) == 3
 
 
 class TestFallbackInlineCSV:
