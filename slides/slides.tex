@@ -324,30 +324,8 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
 \centering
 \small
 
-\begin{tabular}{lcc}
-\toprule
-\textbf{F1} ($\pm$SD inter-modèle) & Sans documents & Avec documents \\
-\midrule
-Requête unique & $0{,}51 \pm 0{,}11$ & $\mathbf{0{,}63 \pm 0{,}05}$ \\
-Multi-tours    & $0{,}44 \pm 0{,}16$ & $0{,}54 \pm 0{,}11$ \\
-\midrule
-\textbf{Coût/run} (ratio vs naïf) & & \\
-Requête unique & $1{,}00\times$ & $1{,}33\times$ \\
-Multi-tours    & $1{,}65\times$ & $2{,}97\times$ \\
-\bottomrule
-\end{tabular}
-
-\vspace{0.9em}
-
-\begin{tabular}{lcc}
-\toprule
-Effet (intra-modèle, moyenne ; $k/n$ même signe) & F1 (points) & Coût \\
-\midrule
-Documents              & $+0{,}11$ (3/4) & $1{,}55\times$ (3/4) \\
-Multi-tours $-$ unique  & $-0{,}08$ (1/4) & $1{,}92\times$ (4/4) \\
-Interaction            & $-0{,}03$ (2/4) & $1{,}35\times$ (2/4) \\
-\bottomrule
-\end{tabular}
+% Data-driven: regenerated from sota_cross_eval.csv by aedist.tabulate_exp2_2x2 (--lang fr).
+\input{inputs/generated/tab_exp2_2x2.tex}
 
 \vspace{0.8em}
 {\footnotesize $N=4$ modèles (facteur de blocage), 5 reps/cellule. On rapporte la cohérence directionnelle $k/n$, pas un seuil de significativité : à $n=4$, $p_{\min}=1/2^4=0{,}0625$ est inatteignable.}

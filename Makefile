@@ -224,6 +224,27 @@ $(GEN)/fig_exp2_coverage.pdf $(GEN)/fig_exp2_cost.pdf &: $(GEN)/tab_exp2_arms_ru
 $(SLIDE_GEN)/macros.tex: $(GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 
+# Exp2 2x2 factorial table (F1 + cost). Generated from the cross-eval handoff
+# (itself rebuilt from model replies by experiments/analysis.mk). English for
+# the report, French for the slide deck — same data, --lang switches labels.
+EXP2_2X2_SRC := experiments/derived/sota_cross_eval.csv $(wildcard experiments/derived/arm*_flat/*.json)
+
+$(GEN)/tab_exp2_2x2.tex: $(EXP2_2X2_SRC)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_2x2 \
+	    --cross-eval-csv experiments/derived/sota_cross_eval.csv \
+	    --flat-root experiments/derived \
+	    --output-csv experiments/derived/tab_exp2_2x2.csv \
+	    --output-tex $@ --lang en
+
+$(SLIDE_GEN)/tab_exp2_2x2.tex: $(EXP2_2X2_SRC)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_2x2 \
+	    --cross-eval-csv experiments/derived/sota_cross_eval.csv \
+	    --flat-root experiments/derived \
+	    --output-csv experiments/derived/tab_exp2_2x2.csv \
+	    --output-tex $@ --lang fr
+
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
@@ -250,6 +271,7 @@ slides/slides.pdf: slides/slides.tex \
     $(GEN)/fig_exp2_cost.pdf \
     $(GEN)/fig_exp2_coverage_certainty.pdf \
     $(SLIDE_GEN)/macros.tex \
+    $(SLIDE_GEN)/tab_exp2_2x2.tex \
     $(GEN)/macros_p1_base.tex
 	$(MAKE) -C slides
 
@@ -259,7 +281,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
 figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_census_direct.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
 select: experiments/models_selected.yaml
 census:
