@@ -211,6 +211,13 @@ $(GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
 	uv run python -m aedist.plot_capability_dag \
 	    --input $< --output $@
 
+$(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experiments/derived/sota_cross_eval.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_spider_cross_exp \
+	    --exp1 experiments/derived/exp1_cross_eval.csv \
+	    --exp2 experiments/derived/sota_cross_eval.csv \
+	    --output $@
+
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
@@ -232,6 +239,7 @@ slides/slides.pdf: slides/slides.tex \
     $(GEN)/fig_direct_p1_base.pdf \
     $(GEN)/fig_spider_exp1_claude.pdf \
     $(GEN)/fig_spider_exp1_families.pdf \
+    $(GEN)/fig_spider_cross_exp.pdf \
     $(GEN)/fig_capability_timeline.pdf \
     $(GEN)/fig_exp2_coverage.pdf \
     $(GEN)/fig_exp2_cost.pdf \

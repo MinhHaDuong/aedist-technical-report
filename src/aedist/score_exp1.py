@@ -23,6 +23,9 @@ log = logging.getLogger(__name__)
 
 _FILENAME_RE = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")
 _CAPACITY_KEYS = ("capacity_mwe", "total_mwe", "total_mw", "capacity")
+_SOURCE_DIVERSITY_CLIP = 20
+_SOURCE_NOT_FOUND = frozenset({"not found", "n/a", "unknown", ""})
+_YEAR_RE = re.compile(r"\b(19\d{2}|20\d{2})\b")
 
 _CSV_COLUMNS = [
     "arm",
@@ -50,10 +53,16 @@ _CSV_COLUMNS = [
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
     "provenance_high_conf_dual_source_annotation",
+    "provenance_source_diversity",
+    "provenance_source_diversity_annotation",
+    "provenance_source_spread",
+    "provenance_source_spread_annotation",
     "temporality_asof_presence",
     "temporality_asof_presence_annotation",
     "temporality_plausible_range",
     "temporality_plausible_range_annotation",
+    "temporality_cod_plausible",
+    "temporality_cod_plausible_annotation",
     "field_completeness_core",
     "field_completeness_core_annotation",
     "field_completeness_capacity",
@@ -116,6 +125,58 @@ def _capacity_nonnegative(rows: list[dict[str, str]]) -> tuple[float | None, str
     return round(nonnegative / seen, 4), None
 
 
+def _source_diversity(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
+    if not rows:
+        return None, "no_rows"
+    sources = {
+        v
+        for r in rows
+        for v in [(r.get("source_1") or "").strip()]
+        if v.lower() not in _SOURCE_NOT_FOUND
+    }
+    if not sources:
+        return 0.0, "column_empty"
+    return round(min(len(sources) / _SOURCE_DIVERSITY_CLIP, 1.0), 4), None
+
+
+def _source_spread(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
+    if not rows:
+        return None, "no_rows"
+    vals = [
+        v
+        for r in rows
+        for v in [(r.get("source_1") or "").strip()]
+        if v.lower() not in _SOURCE_NOT_FOUND
+    ]
+    if not vals:
+        return 0.0, "column_empty"
+    from collections import Counter
+
+    top1_count = Counter(vals).most_common(1)[0][1]
+    return round(1.0 - top1_count / len(vals), 4), None
+
+
+def _cod_plausible(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
+    if not rows:
+        return None, "no_rows"
+    cod_vals: list[str] = []
+    years: list[int] = []
+    for r in rows:
+        cell = (r.get("cod") or "").strip()
+        if not cell:
+            continue
+        cod_vals.append(cell)
+        m = _YEAR_RE.search(cell)
+        if m:
+            years.append(int(m.group(1)))
+    if not cod_vals:
+        return None, "column_empty"
+    if len(set(cod_vals)) <= 1:
+        return 0.0, "all_identical"
+    plausible = sum(1 for y in years if 1960 <= y <= 2035)
+    return round(plausible / len(cod_vals), 4), None
+
+
 def _append_rows(csv_path: Path, rows: list[dict[str, str]]) -> None:
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     needs_header = not csv_path.exists()
@@ -136,6 +197,9 @@ def score_file(csv_path: Path, reference: Path, prompt_version: str) -> dict[str
     temporality = score_temporality(rows)
     completeness = score_field_completeness(rows)
     coherence_capacity, coherence_capacity_annotation = _capacity_nonnegative(rows)
+    src_div, src_div_ann = _source_diversity(rows)
+    src_spread, src_spread_ann = _source_spread(rows)
+    cod_plaus, cod_plaus_ann = _cod_plausible(rows)
 
     return {
         "arm": "parametric",
@@ -164,10 +228,16 @@ def score_file(csv_path: Path, reference: Path, prompt_version: str) -> dict[str
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),
         "provenance_high_conf_dual_source_annotation": provenance.high_conf_dual_source_annotation
         or "",
+        "provenance_source_diversity": _fmt(src_div),
+        "provenance_source_diversity_annotation": src_div_ann or "",
+        "provenance_source_spread": _fmt(src_spread),
+        "provenance_source_spread_annotation": src_spread_ann or "",
         "temporality_asof_presence": _fmt(temporality.asof_presence),
         "temporality_asof_presence_annotation": temporality.asof_presence_annotation or "",
         "temporality_plausible_range": _fmt(temporality.plausible_range),
         "temporality_plausible_range_annotation": temporality.plausible_range_annotation or "",
+        "temporality_cod_plausible": _fmt(cod_plaus),
+        "temporality_cod_plausible_annotation": cod_plaus_ann or "",
         "field_completeness_core": _fmt(completeness.core_fields),
         "field_completeness_core_annotation": completeness.annotation or "",
         "field_completeness_capacity": _fmt(completeness.capacity_present),

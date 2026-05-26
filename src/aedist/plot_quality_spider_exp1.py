@@ -1,14 +1,25 @@
-"""Radar/spider figure for Exp1 quality profiles by model family.
+"""Radar/spider figures for Exp1 quality profiles.
+
+Two modes:
+  - Family 2×2 panels (default): one subplot per model family.
+  - Single model (--model): one large spider for a single model,
+    with 5 quality dimensions and 2 French-labelled indicators each.
 
 Usage:
     python -m aedist.plot_quality_spider_exp1 \
         --input experiments/derived/exp1_cross_eval.csv \
         --output report/inputs/generated/fig_spider_exp1_families.pdf
+
+    python -m aedist.plot_quality_spider_exp1 \
+        --input experiments/derived/exp1_cross_eval.csv \
+        --model claude-opus-4.6 \
+        --output report/inputs/generated/fig_spider_exp1_claude.pdf
 """
 
 import argparse
 import csv
 import logging
+import math
 from collections import defaultdict
 from pathlib import Path
 
@@ -22,26 +33,48 @@ from .util import (
 
 log = logging.getLogger(__name__)
 
-_AXES = [
+# ── Unified 5×2 axes: 5 quality dimensions, 2 indicators each ──────────────
+#
+# Ordered so adjacent pairs share a dimension and cardinal directions
+# on the spider correspond to dimension centres.
+
+SPIDER_AXES = [
     "accuracy_coverage",
     "accuracy_precision",
     "accuracy_fuel",
     "accuracy_status",
     "accuracy_province",
-    "provenance_source_presence",
-    "temporality_asof_presence",
-    "field_completeness_core",
+    "coherence_vocab_adherence",
+    "provenance_source_diversity",
+    "provenance_source_spread",
+    "temporality_plausible_range",
+    "temporality_cod_plausible",
 ]
 
-_AXIS_LABELS = {
-    "accuracy_coverage": "Coverage",
-    "accuracy_precision": "Precision",
-    "accuracy_fuel": "Fuel",
-    "accuracy_status": "Status",
-    "accuracy_province": "Province",
-    "provenance_source_presence": "Source",
-    "temporality_asof_presence": "As-of",
-    "field_completeness_core": "Core fields",
+SPIDER_DIMENSION = {
+    "accuracy_coverage": "Exactitude",
+    "accuracy_precision": "Exactitude",
+    "accuracy_fuel": "Contenu",
+    "accuracy_status": "Contenu",
+    "accuracy_province": "Cohérence",
+    "coherence_vocab_adherence": "Cohérence",
+    "provenance_source_diversity": "Provenance",
+    "provenance_source_spread": "Provenance",
+    "temporality_plausible_range": "Temporalité",
+    "temporality_cod_plausible": "Temporalité",
+}
+
+SPIDER_LABEL = {
+    "accuracy_coverage": "Actifs\ntrouvés",
+    "accuracy_precision": "Actifs\ncorrects",
+    "accuracy_fuel": "Combustible\ncorrect",
+    "accuracy_status": "Statut\ncorrect",
+    "accuracy_province": "Province\ncorrecte",
+    "coherence_vocab_adherence": "Vocabulaire\nrespecté",
+    "provenance_source_diversity": "Diversité\ndes sources",
+    "provenance_source_spread": "Répartition\ndes sources",
+    "temporality_plausible_range": "Date\nplausible",
+    "temporality_cod_plausible": "Date COD\nplausible",
 }
 
 _PANELS = [
@@ -50,50 +83,6 @@ _PANELS = [
     ("mistral", "(c) Mistral", {"mistral"}),
     ("qwen", "(d) Qwen", {"qwen"}),
 ]
-
-# --- Single-family spider: 5 quality dimensions, 2 indicators each (FR labels) ---
-# The 5th dimension ("Adéquation à l'usage") is operational, measured post hoc
-# (e.g. fill rate of the Capacity column for PyPSA); it is not asked in the prompt.
-_FR_INDICATOR_AXES = [
-    "accuracy_coverage",
-    "accuracy_precision",
-    "coherence_vocab_adherence",
-    "coherence_capacity_nonnegative",
-    "provenance_source_presence",
-    "provenance_high_conf_dual_source",
-    "temporality_asof_presence",
-    "temporality_plausible_range",
-    "field_completeness_core",
-    "field_completeness_capacity",
-]
-
-_FR_INDICATOR_TO_DIMENSION = {
-    "accuracy_coverage": "Exactitude",
-    "accuracy_precision": "Exactitude",
-    "coherence_vocab_adherence": "Cohérence",
-    "coherence_capacity_nonnegative": "Cohérence",
-    "provenance_source_presence": "Provenance",
-    "provenance_high_conf_dual_source": "Provenance",
-    "temporality_asof_presence": "Temporalité",
-    "temporality_plausible_range": "Temporalité",
-    "field_completeness_core": "Adéquation à l'usage",
-    "field_completeness_capacity": "Adéquation à l'usage",
-}
-
-_FR_INDICATOR_LABEL = {
-    "accuracy_coverage": "Tous les\nactifs trouvés",
-    "accuracy_precision": "Seulement les\nbons actifs",
-    "coherence_vocab_adherence": "Vocabulaire\nrespecté",
-    "coherence_capacity_nonnegative": "Capacités\nnon négatives",
-    "provenance_source_presence": "Une source\ncitée",
-    "provenance_high_conf_dual_source": "Deux sources\nindépendantes",
-    "temporality_asof_presence": "Date de\nvalidité",
-    "temporality_plausible_range": "Date\nplausible",
-    "field_completeness_core": "Champs clés\nremplis",
-    "field_completeness_capacity": "Colonne\nCapacité remplie",
-}
-
-_FR_DIMENSIONS_CLOSE = {"Exactitude", "Temporalité"}
 
 
 def _parse_optional_float(raw: str | None) -> float | None:
@@ -123,7 +112,6 @@ def _median(values: list[float]) -> float:
 
 
 def _lighten(hex_color: str, amount: float) -> tuple[float, float, float]:
-    # amount=0.0 keeps original color, amount=1.0 becomes white.
     import matplotlib.colors as mcolors
 
     r, g, b = mcolors.to_rgb(hex_color)
@@ -135,9 +123,6 @@ def _lighten(hex_color: str, amount: float) -> tuple[float, float, float]:
 
 
 def _model_label(model: str) -> str:
-    """Short legend label, e.g. "claude-haiku-4.5" -> "Haiku 4.5"."""
-    # Claude/Mistral style "claude-haiku-4.5" -> "Haiku 4.5"; keep other slugs
-    # readable by stripping a leading family token and de-duplicating tier words.
     slug = model.lower()
     for tier in ("haiku", "sonnet", "opus", "small", "medium", "large"):
         if tier in slug:
@@ -167,7 +152,7 @@ def _aggregate(rows: list[dict[str, str]]) -> dict[str, dict[str, dict[str, floa
         model = str(row.get("model", "")).strip()
         if not model:
             continue
-        for axis in _AXES:
+        for axis in SPIDER_AXES:
             value = _parse_optional_float(row.get(axis))
             if value is not None:
                 by_model[model][axis].append(value)
@@ -177,7 +162,7 @@ def _aggregate(rows: list[dict[str, str]]) -> dict[str, dict[str, dict[str, floa
         if not axis_values:
             continue
         model_stats: dict[str, dict[str, float]] = {}
-        for axis in _AXES:
+        for axis in SPIDER_AXES:
             values = axis_values.get(axis, [])
             if not values:
                 continue
@@ -186,7 +171,7 @@ def _aggregate(rows: list[dict[str, str]]) -> dict[str, dict[str, dict[str, floa
                 "min": min(values),
                 "max": max(values),
             }
-        if len(model_stats) == len(_AXES):
+        if model_stats:
             stats[model] = model_stats
     return stats
 
@@ -195,6 +180,40 @@ def _panel_models(stats: dict[str, dict[str, dict[str, float]]], families: set[s
     models = [m for m in stats if model_family(m) in families]
     models.sort(key=lambda m: (_model_size_rank(m), m))
     return models
+
+
+def _draw_axis_labels(
+    ax, angles, axes_order, *, label_fontsize: float = 10, dim_fontsize: float = 12.5
+):
+    dimension_angles: dict[str, list[float]] = defaultdict(list)
+    for theta, axis in zip(angles, axes_order, strict=True):
+        dimension = SPIDER_DIMENSION[axis]
+        ax.text(theta, 1.28, SPIDER_LABEL[axis], ha="center", va="center", fontsize=label_fontsize)
+        dimension_angles[dimension].append(theta)
+
+    for dimension, group in dimension_angles.items():
+        center = math.atan2(sum(math.sin(a) for a in group), sum(math.cos(a) for a in group))
+        radius = 1.46
+        ax.text(
+            center,
+            radius,
+            dimension,
+            ha="center",
+            va="center",
+            fontsize=dim_fontsize,
+            fontweight="bold",
+            color=COLOR_NEUTRAL,
+        )
+
+
+def _style_polar_ax(ax, angles):
+    ax.set_xticks(angles)
+    ax.set_xticklabels([])
+    ax.set_yticks([0.25, 0.5, 0.75, 1.0])
+    ax.set_yticklabels([])
+    ax.set_ylim(0, 1.0)
+    ax.grid(color=COLOR_NEUTRAL, alpha=0.30, linewidth=0.8)
+    ax.spines["polar"].set_color(COLOR_NEUTRAL)
 
 
 def make_figure(rows: list[dict[str, str]], output: Path) -> None:
@@ -206,20 +225,19 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
         msg = "exp1 spider: no profiles available from input"
         raise ValueError(msg)
 
+    n_axes = len(SPIDER_AXES)
     fig, axes = plt.subplots(
         2, 2, figsize=SLIDE_FIGSIZE_POLAR_2x2, subplot_kw={"projection": "polar"}
     )
-    angles = np.linspace(0, 2 * np.pi, len(_AXES), endpoint=False)
+    angles = np.linspace(0, 2 * np.pi, n_axes, endpoint=False) + (np.pi / n_axes)
     closed_angles = np.concatenate((angles, [angles[0]]))
 
-    med_prov = []
-    med_temp = []
-
     for ax, (_panel_key, panel_title, families) in zip(axes.flatten(), _PANELS, strict=True):
-        panel_models = _panel_models(stats, families)
-        for theta, axis in zip(angles, _AXES, strict=True):
-            ax.text(theta, 1.12, _AXIS_LABELS[axis], ha="center", va="center", fontsize=8)
+        _draw_axis_labels(ax, angles, SPIDER_AXES, label_fontsize=7, dim_fontsize=8.5)
+        ax.set_theta_offset(np.pi / 2)
+        ax.set_theta_direction(-1)
 
+        panel_models = _panel_models(stats, families)
         if panel_models:
             family_buckets: dict[str, list[str]] = defaultdict(list)
             for model in panel_models:
@@ -231,9 +249,9 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
                 for i, model in enumerate(fam_models):
                     lighten = 0.55 - (0.50 * (i / max(1, n - 1)))
                     color = _lighten(base_color, max(0.0, lighten))
-                    med = [stats[model][a]["median"] for a in _AXES]
-                    low = [stats[model][a]["min"] for a in _AXES]
-                    high = [stats[model][a]["max"] for a in _AXES]
+                    med = [stats[model].get(a, {}).get("median", 0.0) for a in SPIDER_AXES]
+                    low = [stats[model].get(a, {}).get("min", 0.0) for a in SPIDER_AXES]
+                    high = [stats[model].get(a, {}).get("max", 0.0) for a in SPIDER_AXES]
                     med_closed = med + [med[0]]
                     low_closed = low + [low[0]]
                     high_closed = high + [high[0]]
@@ -248,22 +266,11 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
                         linewidth=1.8,
                         label=_model_label(model),
                     )
-
-                    med_prov.append(stats[model]["provenance_source_presence"]["median"])
-                    med_temp.append(stats[model]["temporality_asof_presence"]["median"])
         else:
             ax.text(0.5, 0.5, "No models", transform=ax.transAxes, ha="center", va="center")
 
-        ax.set_xticks(angles)
-        ax.set_xticklabels([])
-        ax.set_yticks([0.25, 0.5, 0.75, 1.0])
-        ax.set_yticklabels([])
-        ax.set_ylim(0, 1.0)
-        ax.grid(color=COLOR_NEUTRAL, alpha=0.30, linewidth=0.8)
-        ax.spines["polar"].set_color(COLOR_NEUTRAL)
+        _style_polar_ax(ax, angles)
         if panel_models:
-            # Legend in a dedicated column immediately to the right of each
-            # panel; its title is the panel label so the label is not repeated.
             ax.legend(
                 loc="center left",
                 bbox_to_anchor=(1.18, 0.5),
@@ -276,22 +283,8 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
                 frameon=False,
             )
 
-    if med_prov and med_temp:
-        prov_med = _median(med_prov)
-        temp_med = _median(med_temp)
-        if prov_med < 0.05 or temp_med < 0.05:
-            fig.text(
-                0.5,
-                0.01,
-                "Provenance and temporality remain near-zero across Exp1 models.",
-                ha="center",
-                va="bottom",
-                fontsize=9,
-                color=COLOR_NEUTRAL,
-            )
-
     fig.suptitle(
-        "Qualité des réponses : ask one shot, reasoning on, websearch off, docs provided none.",
+        "Source is the universal failure mode",
         fontsize=12,
         y=0.995,
     )
@@ -302,131 +295,77 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
     log.info("Wrote %s", output)
 
 
-def _aggregate_indicators(rows: list[dict[str, str]], family: str) -> dict[str, dict[str, float]]:
-    """Median per model over the 10 single-family indicator axes."""
-    by_model: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
-    for row in rows:
-        model = str(row.get("model", "")).strip()
-        if not model or model_family(model) != family:
-            continue
-        for axis in _FR_INDICATOR_AXES:
-            value = _parse_optional_float(row.get(axis))
-            if value is not None:
-                by_model[model][axis].append(value)
-
-    stats: dict[str, dict[str, float]] = {}
-    for model, axis_values in by_model.items():
-        profile = {axis: _median(vals) for axis, vals in axis_values.items() if vals}
-        if profile:
-            stats[model] = profile
-    return stats
-
-
-def make_single_family_figure(rows: list[dict[str, str]], family: str, output: Path) -> None:
-    """One large spider for a single family: 5 quality dimensions, 2 FR-labelled
-    indicators per dimension, one ring per model."""
-    import math
-
+def make_single_model_figure(rows: list[dict[str, str]], model_slug: str, output: Path) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
-    stats = _aggregate_indicators(rows, family)
-    if not stats:
-        msg = f"single-family spider: no profiles for family {family!r}"
+    stats = _aggregate(rows)
+    if model_slug not in stats:
+        msg = f"single-model spider: no profile for {model_slug!r}"
         raise ValueError(msg)
 
-    axes_order = _FR_INDICATOR_AXES
+    n_axes = len(SPIDER_AXES)
     fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_POLAR_SINGLE, subplot_kw={"projection": "polar"})
-    # Spin so each cardinal direction centers a quality dimension, with its two
-    # indicators straddling it (10 indicators -> 1/20-turn offset).
-    angles = np.linspace(0, 2 * np.pi, len(axes_order), endpoint=False) + (np.pi / 10)
+    angles = np.linspace(0, 2 * np.pi, n_axes, endpoint=False) + (np.pi / n_axes)
     closed_angles = np.concatenate((angles, [angles[0]]))
 
-    for theta, axis in zip(angles, axes_order, strict=True):
-        dimension = _FR_INDICATOR_TO_DIMENSION[axis]
-        radius = 1.18 if dimension in _FR_DIMENSIONS_CLOSE else 1.28
-        ax.text(theta, radius, _FR_INDICATOR_LABEL[axis], ha="center", va="center", fontsize=10)
-
-    dimension_angles: dict[str, list[float]] = defaultdict(list)
-    for theta, axis in zip(angles, axes_order, strict=True):
-        dimension_angles[_FR_INDICATOR_TO_DIMENSION[axis]].append(theta)
-    for dimension, group in dimension_angles.items():
-        center = math.atan2(sum(math.sin(a) for a in group), sum(math.cos(a) for a in group))
-        radius = 1.34 if dimension in _FR_DIMENSIONS_CLOSE else 1.46
-        ax.text(
-            center,
-            radius,
-            dimension,
-            ha="center",
-            va="center",
-            fontsize=12.5,
-            fontweight="bold",
-            color=COLOR_NEUTRAL,
-        )
-
-    ax.set_xticks(angles)
+    _draw_axis_labels(ax, angles, SPIDER_AXES)
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
-    ax.set_xticklabels([])
-    ax.set_yticks([0.25, 0.5, 0.75, 1.0])
-    ax.set_yticklabels([])
-    ax.set_ylim(0, 1.0)
-    ax.grid(color=COLOR_NEUTRAL, alpha=0.35, linewidth=0.8)
-    ax.spines["polar"].set_color(COLOR_NEUTRAL)
+    _style_polar_ax(ax, angles)
 
-    base_color = model_family_color(next(iter(stats)))
-    ordered_models = sorted(stats, key=lambda m: (_model_size_rank(m), m))
-    n = len(ordered_models)
-    for i, model in enumerate(ordered_models):
-        lighten = 0.55 - (0.50 * (i / max(1, n - 1)))
-        color = _lighten(base_color, max(0.0, lighten))
-        values = [stats[model].get(axis, 0.0) for axis in axes_order]
-        closed_values = values + [values[0]]
-        ax.plot(
-            closed_angles, closed_values, color=color, linewidth=2.2, label=_model_label(model)
-        )
-        ax.fill(closed_angles, closed_values, color=color, alpha=0.08)
+    color = model_family_color(model_slug)
+    profile = stats[model_slug]
+    values = [profile.get(axis, {}).get("median", 0.0) for axis in SPIDER_AXES]
+    closed_values = values + [values[0]]
+    ax.plot(closed_angles, closed_values, color=color, linewidth=2.2)
+    ax.fill(closed_angles, closed_values, color=color, alpha=0.12)
 
     ax.set_title(
-        f"Profil de qualité — {family.capitalize()} (Expérience 1)",
+        f"Profil de qualité — {_model_label(model_slug)} (Expérience 1)",
         fontsize=14,
         y=1.18,
         pad=6,
     )
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=n, fontsize=11, frameon=False)
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
-    log.info("Wrote %s (single family: %s)", output, family)
+    log.info("Wrote %s (model: %s)", output, model_slug)
 
 
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    parser = argparse.ArgumentParser(description="Render Exp1 family spider chart")
+    parser = argparse.ArgumentParser(description="Render Exp1 quality spider chart")
     parser.add_argument(
         "--input",
         type=Path,
         default=Path("experiments/derived/exp1_cross_eval.csv"),
-        help="Path to exp1_cross_eval.csv",
     )
     parser.add_argument(
         "--output",
         type=Path,
         default=Path("report/inputs/generated/fig_spider_exp1_families.pdf"),
-        help="Path to write PDF figure",
     )
     parser.add_argument(
-        "--family",
+        "--model",
         type=str,
         default=None,
-        help="If set, render a single large spider for this family (e.g. 'claude') "
-        "with the 5 quality dimensions and 2 French-labelled criteria per axis.",
+        help="If set, render a single large spider for this model slug (e.g. 'claude-opus-4.6').",
     )
+    # Kept for Makefile back-compat; --model takes priority.
+    parser.add_argument("--family", type=str, default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
-    if args.family:
-        make_single_family_figure(_load_rows(args.input), args.family, args.output)
+    rows = _load_rows(args.input)
+    if args.model:
+        make_single_model_figure(rows, args.model, args.output)
+    elif args.family:
+        stats = _aggregate(rows)
+        match = next((m for m in stats if model_family(m) == args.family), None)
+        if match is None:
+            raise ValueError(f"--family {args.family!r}: no model found in data")
+        make_single_model_figure(rows, match, args.output)
     else:
-        make_figure(_load_rows(args.input), args.output)
+        make_figure(rows, args.output)
 
 
 if __name__ == "__main__":
