@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Add analytical titled frames for remaining plain-frame figures in slides
+Created: 2026-05-26
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-26T12:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #597 established the pattern: plain `[plain]` figure frame → titled analytical companion
+with the key finding in the title.
+
+Four plain frames in `slides/slides.tex` still lack titled companions:
+- `fig_direct_p1_base.pdf` (line 104) — Exp1 per-model recall performance
+- `fig_spider_exp1_claude.pdf` (line 188) — Claude quality dimensions spider
+- `fig_spider_exp1_families.pdf` (line 194) — Family-level quality dimensions spider
+- `fig_exp2_coverage_certainty.pdf` (line 300) — Coverage vs corroboration scatter
+
+## Exit criteria
+
+- [ ] Each of the four plain frames above has a `\begin{frame}{Key finding}` companion
+- [ ] Titles are evidence-grounded (data checked before writing)
+- [ ] `make check` passes
