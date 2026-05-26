@@ -77,8 +77,6 @@ SPIDER_LABEL = {
     "temporality_cod_plausible": "Date COD\nplausible",
 }
 
-_DIMENSIONS_CLOSE = {"Exactitude", "Temporalité"}
-
 _PANELS = [
     ("claude", "(a) Claude", {"claude"}),
     ("gpt", "(b) GPT", {"gpt"}),
@@ -190,15 +188,12 @@ def _draw_axis_labels(
     dimension_angles: dict[str, list[float]] = defaultdict(list)
     for theta, axis in zip(angles, axes_order, strict=True):
         dimension = SPIDER_DIMENSION[axis]
-        radius = 1.18 if dimension in _DIMENSIONS_CLOSE else 1.28
-        ax.text(
-            theta, radius, SPIDER_LABEL[axis], ha="center", va="center", fontsize=label_fontsize
-        )
+        ax.text(theta, 1.28, SPIDER_LABEL[axis], ha="center", va="center", fontsize=label_fontsize)
         dimension_angles[dimension].append(theta)
 
     for dimension, group in dimension_angles.items():
         center = math.atan2(sum(math.sin(a) for a in group), sum(math.cos(a) for a in group))
-        radius = 1.34 if dimension in _DIMENSIONS_CLOSE else 1.46
+        radius = 1.46
         ax.text(
             center,
             radius,
@@ -364,7 +359,11 @@ def main(argv: list[str] | None = None) -> None:
     if args.model:
         make_single_model_figure(rows, args.model, args.output)
     elif args.family:
-        make_single_model_figure(rows, args.family, args.output)
+        stats = _aggregate(rows)
+        match = next((m for m in stats if model_family(m) == args.family), None)
+        if match is None:
+            raise ValueError(f"--family {args.family!r}: no model found in data")
+        make_single_model_figure(rows, match, args.output)
     else:
         make_figure(rows, args.output)
 

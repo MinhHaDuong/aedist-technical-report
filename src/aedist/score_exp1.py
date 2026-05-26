@@ -24,6 +24,7 @@ log = logging.getLogger(__name__)
 _FILENAME_RE = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")
 _CAPACITY_KEYS = ("capacity_mwe", "total_mwe", "total_mw", "capacity")
 _SOURCE_DIVERSITY_CLIP = 20
+_SOURCE_NOT_FOUND = frozenset({"not found", "n/a", "unknown", ""})
 _YEAR_RE = re.compile(r"\b(19\d{2}|20\d{2})\b")
 
 _CSV_COLUMNS = [
@@ -127,7 +128,12 @@ def _capacity_nonnegative(rows: list[dict[str, str]]) -> tuple[float | None, str
 def _source_diversity(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
     if not rows:
         return None, "no_rows"
-    sources = {(r.get("source_1") or "").strip() for r in rows} - {""}
+    sources = {
+        v
+        for r in rows
+        for v in [(r.get("source_1") or "").strip()]
+        if v.lower() not in _SOURCE_NOT_FOUND
+    }
     if not sources:
         return 0.0, "column_empty"
     return round(min(len(sources) / _SOURCE_DIVERSITY_CLIP, 1.0), 4), None
@@ -136,14 +142,18 @@ def _source_diversity(rows: list[dict[str, str]]) -> tuple[float | None, str | N
 def _source_spread(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
     if not rows:
         return None, "no_rows"
-    vals = [(r.get("source_1") or "").strip() for r in rows]
-    nonempty = [v for v in vals if v]
-    if not nonempty:
+    vals = [
+        v
+        for r in rows
+        for v in [(r.get("source_1") or "").strip()]
+        if v.lower() not in _SOURCE_NOT_FOUND
+    ]
+    if not vals:
         return 0.0, "column_empty"
     from collections import Counter
 
-    top1_count = Counter(nonempty).most_common(1)[0][1]
-    return round(1.0 - top1_count / len(nonempty), 4), None
+    top1_count = Counter(vals).most_common(1)[0][1]
+    return round(1.0 - top1_count / len(vals), 4), None
 
 
 def _cod_plausible(rows: list[dict[str, str]]) -> tuple[float | None, str | None]:
