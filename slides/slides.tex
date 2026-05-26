@@ -321,6 +321,28 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \end{frame}
 
 % -------------------------------------------------------------------
+% Préconisation 1D — replaces 2×2 table (ticket 0351)
+\begin{frame}{Préconisation~: 1 tour, avec documents}
+
+\centering
+
+\vspace{1em}
+{\Large\textbf{F1 moyen = 0{,}63}}\\[0.5em]
+{\normalsize contre 0{,}51 sans documents \quad·\quad 0{,}54 multi-tours avec docs \quad·\quad 0{,}44 multi-tours sans docs}
+
+\bigskip
+{\large Meilleure condition pour \textbf{4/4 modèles}}
+
+\bigskip
+{\large Surcoût~: \textbf{$\times$\,1{,}4} en moyenne \quad {\small (multi-tours avec docs~: $\times$\,2{,}2)}}
+
+\vspace{1.5em}
+{\Large\bfseries\textcolor{matched}{$\to$ Fournir les sources~; un seul tour suffit.}}
+
+\end{frame}
+
+% --- Frame commenté (2×2 statistique, réactivable post-conférence) ---
+\iffalse
 \begin{frame}{Effet du RAG > Effet du multitour}
 \centering
 \small
@@ -331,6 +353,7 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \vspace{0.8em}
 {\footnotesize $N=4$ modèles (facteur de blocage), 5 reps/cellule. On rapporte la cohérence directionnelle $k/n$, pas un seuil de significativité : à $n=4$, $p_{\min}=1/2^4=0{,}0625$ est inatteignable.}
 \end{frame}
+\fi
 
 
 
