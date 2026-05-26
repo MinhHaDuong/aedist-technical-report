@@ -49,6 +49,14 @@
 \end{tikzpicture}
 \end{frame}
 
+% -------------------------------------------------------------------
+\begin{frame}{}
+\begin{center}
+{\small\textit{LLM actual competencies: reformulation, translation, comparison, synthesis, or controlled hybridization of textual corpora. Such operations may be mobilized through short prompts, or integrated into hybrid processing loops combining scripts, applications, or agents programmed in Python.}}\\[0.5em]
+{\footnotesize --- Las Vergnas et Jeunesse, Econom'IA 2026}
+\end{center}
+\end{frame}
+
 % ===================================================================
 \section{Problème}
 
@@ -209,7 +217,7 @@ Règles de saisie par ligne d'actif.}
 
 
 % -------------------------------------------------------------------
-\begin{frame}{La bonne statistique exige plus que des vrais chiffres}
+\begin{frame}{84 lignes car la statistique exige plus que les chiffres}
 \begin{center}
 {\small\textit{«~Connaissance~: croyance vraie justifiée.~»}}
 \end{center}
@@ -218,11 +226,11 @@ Règles de saisie par ligne d'actif.}
 \small
 Cinq axes pour juger la qualité des données statistiques de recherche~:
 \begin{enumerate}\setlength\itemsep{4pt}
-  \item \textbf{Accuracy}~--- tous les actifs, que les actifs.
-  \item \textbf{Coherence}~--- totaux réconciliés, valeurs plausibles, conflits arbitrés.
+  \item \textbf{Exactitude}~--- tous les actifs, que les actifs.
+  \item \textbf{Cohérence}~--- totaux réconciliés, valeurs plausibles, conflits arbitrés.
   \item \textbf{Provenance}~--- énoncés corroborés par deux sources sérieuses indépendantes.
-  \item \textbf{Temporality}~--- énoncés datés~; changements de statut signalés.
-      \item \textbf{Fit for purpose}~--- niveau de détail approprié.
+  \item \textbf{Temporalité}~--- énoncés datés~; changements de statut signalés.
+      \item \textbf{Adéquation à l'usage}~--- niveau de détail approprié.
 \end{enumerate}
 
 \bigskip
@@ -254,8 +262,6 @@ Cinq axes pour juger la qualité des données statistiques de recherche~:
   \item \textbf{Question Exp 2.} Comment faire mieux~? Quels facteurs comptent~: Autoriser la recherche web~? Approfondir le dialogue~? Fournir des documents sources~? Modèle plus puissant~?
 \end{itemize}
 
-LLM \textit{actual competencies: reformulation, translation, comparison, synthesis, or controlled hybridization of textual corpora.Such operations may be mobilized through short prompts, or integrated into hybrid processing loops combining scripts, applications, or agents programmed in Python.} (Las Vergnas et Jeunesse, Econom'IA 2026)
-
 \end{frame}
 
 
@@ -263,13 +269,16 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
 \begin{frame}[plain]
 \centering
 \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,font=\small\bfseries,text=matched] at ([xshift=-2em,yshift=-2em]current page.north east)
+    {4. Files upload (RAG)};
+\end{tikzpicture}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Expérience 2 design : (single turn, multiturn) × (no docs, with docs)}
+\begin{frame}{Expérience 2 design : (single turn, multitour) × (no docs, with docs)}
+\framesubtitle{Quatre conditions : 1N (single turn, no docs) ; 5N ; 1D ; 5D (multitour, with docs)}
 \begin{center}
-\bigskip
-{\small \textit{Quatre conditions : 1N (single turn, no docs)~; 5N~; 1D~; 5D (multiturn, with docs).}}
 \small
 \begin{tabular}{@{}l p{8.5cm}@{}}
 \textbf{Nombre de tours}  & question unique (prompt Exp 1) / multi-tours (3 à 5) \\
@@ -279,13 +288,6 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
 \textbf{Contrôles}        & default reasoning effort, web search allowed, no tools, no code, direct lab API provider \\
 \textbf{Ressources}      & coût < \$6, longueur < 50\,000 tokens \\
 \end{tabular}
-
-\medskip
-{\footnotesize RAG (\emph{Retrieval-Augmented Generation})~: le modèle reçoit des documents sources en entrée et génère sa réponse à partir de ces documents, plutôt que de répondre de mémoire.}
-
-\medskip
-{\footnotesize 1D comparable à Exp 1 + Websearch.}
-
 \end{center}
 \end{frame}
 
@@ -311,8 +313,7 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
   \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
         {\small 5 claws~: Imagine, Plan, Execute, Verify, Celebrate.}
   \item \textbf{Protocole codéveloppé, relu et validé par les LLM eux-mêmes}\\
-        {\small Agents consultés~: 2 ont validé sans réserve, 2 avec réserves.\\
-        \textit{(Les réserves étaient fondées~: enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO\textsubscript{2} non exposés.)}}
+        {\small Agents consultés~: 2 ont validé sans réserve, 2 avec réserves.}
 \end{itemize}
 \end{frame}
 
@@ -320,25 +321,13 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
 \section{Résultats}
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage.pdf}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Le RAG efface l'écart~: Qwen et Mistral doublent leur couverture~; Claude ne progresse pas}
+\begin{frame}{Fournir les documents repêche Qwen et Mistral. Le multi-tour n'aide pas. Variance et hallucinations persistent.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_cost.pdf}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Docs $\times$\,3--8 le coût~; Mistral reste l'option la plus économique à toutes les conditions}
+\begin{frame}{Les coûts restent très variables entre modèles, runs et modalités.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_cost.pdf}
 \end{frame}
@@ -400,14 +389,14 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \begin{frame}{Limites}
 
 Prompt:
-\begin{description}\setlength\itemsep{8pt}
+\begin{description}\setlength\itemsep{4pt}
   \item[\textbf{Optimisation en Phase A}]: facteur de variance non contrôlé.
   \item[\textbf{Language}]: facteur de variance non contrôlé.
   \item[\textbf{Optimalité}]: critères formels de qualités à développer.
 \end{description}
 
 Expérimentales:
-\begin{description}\setlength\itemsep{8pt}
+\begin{description}\setlength\itemsep{4pt}
   \item[\textbf{Cible mobile}]: Modèles évolutifs, hébergeurs fluctuants.
   \item[\textbf{Petits échantillons}]: 5 runs par condition, 4 modèles.
   \item[\textbf{Préregistration, évaluation par les pairs}]: pas encore réalisés.
@@ -443,7 +432,7 @@ Trois causes distinctes~:
 % -------------------------------------------------------------------
 \begin{frame}{Directions futures: vers l'hybridation avec les graphes de connaissances}
 
-\begin{description}\setlength\itemsep{8pt}
+\begin{description}\setlength\itemsep{4pt}
   \item[\textbf{Découverte et gestion des sources}] avec vérification humaine.
   \item[\textbf{Incrémentalité}] avec mémoire des résolutions des cas difficiles.
   \item[\textbf{Vérifié $>$ vérifiable}] la présence de citation ne suffit pas.
