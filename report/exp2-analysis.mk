@@ -150,6 +150,15 @@ $(GEN)/fig_spider_exp1_families.pdf: experiments/derived/exp1_cross_eval.csv
 	    --input $< \
 	    --output $@
 
+# --- Figure: Claude-only single spider, 5 quality dims, FR criteria ---------
+
+$(GEN)/fig_spider_exp1_claude.pdf: experiments/derived/exp1_cross_eval.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $< \
+	    --family claude \
+	    --output $@
+
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
 EXP2_OUTLINE_ARTIFACTS := \
@@ -222,4 +231,5 @@ exp2-analysis-report: \
 	$(GEN)/tab_exp2_bib_quality.tex \
 	$(GEN)/fig_exp2_coverage_certainty.pdf \
 	$(GEN)/fig_quality_spider.pdf \
+	$(GEN)/fig_spider_exp1_claude.pdf \
 	$(EXP2_OUTLINE_ARTIFACTS)

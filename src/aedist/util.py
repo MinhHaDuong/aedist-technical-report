@@ -83,6 +83,9 @@ SLIDE_FIGSIZE_HALF = (5.5, 4.0)
 # Multipanel polar (spider) grids — taller than wide, never décalage-prone.
 SLIDE_FIGSIZE_POLAR_2x2 = (10.0, 8.0)
 
+# Single large polar (spider) — one panel filling the slide, taller than wide.
+SLIDE_FIGSIZE_POLAR_SINGLE = (8.2, 6.6)
+
 _LANGUAGE_FAMILIES = _palette["language_families"]
 _LANG_DIRECT = {
     code: _LANGUAGE_FAMILIES[code]
