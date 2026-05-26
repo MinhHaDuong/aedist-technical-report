@@ -341,6 +341,97 @@ def test_build_exp2_mart_matches_score_row_with_model_drift(tmp_path):
     assert score_record.score_summary.n_rows == 1
 
 
+def test_build_exp2_mart_includes_arm3_and_arm4(tmp_path):
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    arm3_dir = tmp_path / "arm3"
+    arm4_dir = tmp_path / "arm4"
+    for d in (naive_dir, optimised_dir, arm3_dir, arm4_dir):
+        d.mkdir()
+
+    table = (
+        "| Name | Fuel | Capacity | Status | COD | Province |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| A | Coal | 1 | Operating | 1983 | HN |\n"
+    )
+    for arm_dir in (naive_dir, optimised_dir, arm3_dir, arm4_dir):
+        _write_json(
+            arm_dir / "anthropic_run01.json",
+            {
+                "model": "claude-opus-4-6",
+                "run": 1,
+                "classification": "report",
+                "narrative_chars": 4,
+            },
+        )
+        _write_md(arm_dir / "anthropic_run01.md", table)
+
+    _write_cross_eval_csv(
+        tmp_path / "sota_cross_eval.csv",
+        [
+            _score_row("naive", "claude-opus-4-6", 1),
+            _score_row("optimised", "claude-opus-4-6", 1),
+            _score_row("arm3", "claude-opus-4-6", 1),
+            _score_row("arm4", "claude-opus-4-6", 1),
+        ],
+    )
+
+    records = build_exp2_mart(
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+        arm3_dir=arm3_dir,
+        arm4_dir=arm4_dir,
+        cross_eval_csv=tmp_path / "sota_cross_eval.csv",
+        repo_root=tmp_path,
+    )
+
+    arms_with_run = {r.arm for r in records if r.record_kind == "run"}
+    arms_with_score = {r.arm for r in records if r.record_kind == "score"}
+    assert arms_with_run == {"naive", "optimised", "arm3", "arm4"}
+    assert arms_with_score == {"naive", "optimised", "arm3", "arm4"}
+
+    # Single-turn arms (naive, arm3) default turns=1; multi-turn arms leave it unset.
+    arm3_run = next(r for r in records if r.record_kind == "run" and r.arm == "arm3")
+    arm4_run = next(r for r in records if r.record_kind == "run" and r.arm == "arm4")
+    assert arm3_run.run_summary.turns == 1
+    assert arm4_run.run_summary.turns is None
+
+
+def test_build_exp2_mart_falls_back_to_agent_for_null_model(tmp_path):
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    arm4_dir = tmp_path / "arm4"
+    for d in (naive_dir, optimised_dir, arm4_dir):
+        d.mkdir()
+
+    # model: null is a real extraction artifact in arm4 mistral/qwen run01.
+    _write_json(
+        arm4_dir / "mistral_run01.json", {"model": None, "run": 1, "classification": "report"}
+    )
+    _write_md(
+        arm4_dir / "mistral_run01.md",
+        "| Name | Fuel | Capacity | Status | COD | Province |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| A | Coal | 1 | Operating | 1983 | HN |\n",
+    )
+
+    _write_cross_eval_csv(tmp_path / "sota_cross_eval.csv", [_score_row("naive", "x", 99)])
+
+    records = build_exp2_mart(
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+        arm4_dir=arm4_dir,
+        cross_eval_csv=tmp_path / "sota_cross_eval.csv",
+        repo_root=tmp_path,
+    )
+
+    arm4_run = next(r for r in records if r.record_kind == "run" and r.arm == "arm4")
+    # No model in metadata → record falls back to the agent name, stays valid,
+    # and carries no paired score record.
+    assert arm4_run.model == "mistral"
+    assert not any(r.record_kind == "score" and r.arm == "arm4" for r in records)
+
+
 def test_build_exp2_mart_allows_missing_score_rows(tmp_path):
     naive_dir = tmp_path / "naive"
     optimised_dir = tmp_path / "optimised"

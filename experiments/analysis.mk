@@ -16,6 +16,8 @@ ANALYSIS_DERIVED_DIR ?= $(ANALYSIS_EXPERIMENTS_DIR)/derived
 
 ANALYSIS_EXP2_NAIVE_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm1_flat
 ANALYSIS_EXP2_OPTIMISED_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm2_flat
+ANALYSIS_EXP2_ARM3_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm3_flat
+ANALYSIS_EXP2_ARM4_DIR ?= $(ANALYSIS_DERIVED_DIR)/arm4_flat
 ANALYSIS_EXP2_CROSS_EVAL_CSV ?= $(ANALYSIS_DERIVED_DIR)/sota_cross_eval.csv
 ANALYSIS_EXP1_CROSS_EVAL_CSV ?= $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval.csv
 
@@ -23,8 +25,12 @@ ANALYSIS_EXP1_INPUT_CSVS := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_
 
 ANALYSIS_EXP2_NAIVE_JSONS := $(wildcard $(ANALYSIS_EXP2_NAIVE_DIR)/*.json)
 ANALYSIS_EXP2_OPTIMISED_JSONS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json)
+ANALYSIS_EXP2_ARM3_JSONS := $(wildcard $(ANALYSIS_EXP2_ARM3_DIR)/*.json)
+ANALYSIS_EXP2_ARM4_JSONS := $(wildcard $(ANALYSIS_EXP2_ARM4_DIR)/*.json)
 ANALYSIS_EXP2_NAIVE_MDS := $(wildcard $(ANALYSIS_EXP2_NAIVE_DIR)/*.md)
 ANALYSIS_EXP2_OPTIMISED_MDS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.md)
+ANALYSIS_EXP2_ARM3_MDS := $(wildcard $(ANALYSIS_EXP2_ARM3_DIR)/*.md)
+ANALYSIS_EXP2_ARM4_MDS := $(wildcard $(ANALYSIS_EXP2_ARM4_DIR)/*.md)
 ANALYSIS_EXP2_PROBE_RAWS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.raw.json)
 ANALYSIS_EXP2_PROBE_CLSF := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.classification.json)
 
@@ -92,19 +98,37 @@ $(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/
 # --- Cross-eval CSV (scored per-run, both arms) ----------------------------
 
 $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
-		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done
+		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done
 	@mkdir -p $(dir $@)
 	rm -f $@
 	@for f in $(ANALYSIS_EXP2_NAIVE_DIR)/*.json; do \
 		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm naive --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json; do \
 		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm optimised --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
+		    --output-csv $@ || true; \
+	done
+	@for f in $(ANALYSIS_EXP2_ARM3_DIR)/*.json; do \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
+		uv run python -m aedist.score_mechanical --arm arm3 --model "$$m" --run "$$r" \
+		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
+		    --output-csv $@ || true; \
+	done
+	@for f in $(ANALYSIS_EXP2_ARM4_DIR)/*.json; do \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
+		uv run python -m aedist.score_mechanical --arm arm4 --model "$$m" --run "$$r" \
+		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
 		    --output-csv $@ || true; \
 	done
 
@@ -112,13 +136,19 @@ $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 
 $(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done \
+		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done \
 		$(ANALYSIS_EXP2_NAIVE_JSONS) $(ANALYSIS_EXP2_NAIVE_MDS) \
 		$(ANALYSIS_EXP2_OPTIMISED_JSONS) $(ANALYSIS_EXP2_OPTIMISED_MDS) \
+		$(ANALYSIS_EXP2_ARM3_JSONS) $(ANALYSIS_EXP2_ARM3_MDS) \
+		$(ANALYSIS_EXP2_ARM4_JSONS) $(ANALYSIS_EXP2_ARM4_MDS) \
 		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.build_exp2_mart \
 	    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) \
 	    --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
+	    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) \
+	    --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
 	    --cross-eval-csv $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 	    --output $@ \
 	    --repo-root $(ANALYSIS_REPO_ROOT)

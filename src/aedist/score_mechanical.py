@@ -353,7 +353,7 @@ def _append_row(csv_path: Path, row: dict[str, str]) -> None:
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description="Compute mechanical scores for one Exp2 run")
-    parser.add_argument("--arm", required=True, choices=["naive", "optimised"])
+    parser.add_argument("--arm", required=True, choices=["naive", "optimised", "arm3", "arm4"])
     parser.add_argument("--model", required=True)
     parser.add_argument("--run", required=True, type=int)
     parser.add_argument("--prompt-version", default="exp2")
@@ -373,10 +373,26 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         default=Path("experiments/outputs/sota_exp2_brerun1"),
     )
+    parser.add_argument(
+        "--arm3-dir",
+        type=Path,
+        default=Path("experiments/derived/arm3_flat"),
+    )
+    parser.add_argument(
+        "--arm4-dir",
+        type=Path,
+        default=Path("experiments/derived/arm4_flat"),
+    )
     args = parser.parse_args(argv)
 
     locator = RunLocator(arm=args.arm, model=args.model, run=args.run)
-    ingested = ingest_run(locator, naive_dir=args.naive_dir, optimised_dir=args.optimised_dir)
+    ingested = ingest_run(
+        locator,
+        naive_dir=args.naive_dir,
+        optimised_dir=args.optimised_dir,
+        arm3_dir=args.arm3_dir,
+        arm4_dir=args.arm4_dir,
+    )
 
     accuracy = score_accuracy(ingested.rows, ref_path=args.reference)
     coherence = score_coherence(ingested.rows)

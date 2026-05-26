@@ -30,7 +30,13 @@ log = logging.getLogger(__name__)
 
 _DEFAULT_NAIVE_DIR = Path("experiments/outputs/sota_exp2_naive_arm")
 _DEFAULT_OPTIMISED_DIR = Path("experiments/outputs/sota_exp2_brerun1")
+_DEFAULT_ARM3_DIR = Path("experiments/derived/arm3_flat")
+_DEFAULT_ARM4_DIR = Path("experiments/derived/arm4_flat")
 _DEFAULT_CROSS_EVAL = Path("experiments/derived/sota_cross_eval.csv")
+
+# Single-turn arms emit one turn; multi-turn arms leave turns unset unless the
+# run metadata records it explicitly.
+_SINGLE_TURN_ARMS = {"naive", "arm3"}
 _DEFAULT_OUTPUT = Path("report/inputs/generated/exp2_mart.jsonl")
 _RUN_RE = re.compile(r"^([a-z]+)_run(\d+)\.json$")
 
@@ -182,6 +188,8 @@ def _build_run_records(
     repo_root: Path,
     naive_dir: Path,
     optimised_dir: Path,
+    arm3_dir: Path,
+    arm4_dir: Path,
 ) -> list[Exp2RunMartRecord]:
     records: list[Exp2RunMartRecord] = []
     for json_path in sorted(arm_dir.glob("*.json")):
@@ -191,33 +199,50 @@ def _build_run_records(
         agent, run_raw = match.groups()
         run = int(run_raw)
         meta = json.loads(json_path.read_text(encoding="utf-8"))
-        locator = RunLocator(arm=arm, model=meta.get("model", ""), run=run)
+        # Some run summaries carry model=null (extraction-side artifact); fall
+        # back to the agent name so the record stays valid and is still grouped
+        # with its arm. The mechanical scorer skips these (no model to resolve),
+        # so they appear as run records without a paired score record.
+        model = meta.get("model") or agent
+        locator = RunLocator(arm=arm, model=model, run=run)
         md_path = json_path.with_suffix(".md")
         md_text = md_path.read_text(encoding="utf-8", errors="replace")
         legacy_n_rows = count_best_table_rows(md_text)
 
         try:
-            ingest_run(locator, naive_dir=naive_dir, optimised_dir=optimised_dir)
+            ingest_run(
+                locator,
+                naive_dir=naive_dir,
+                optimised_dir=optimised_dir,
+                arm3_dir=arm3_dir,
+                arm4_dir=arm4_dir,
+            )
         except IngestionError as exc:
-            # Some runs have empty or non-canonical markdown tables.
-            # Fall back to the legacy row counter used by tabulate_exp2_arms_runs.
-            if exc.kind in {IngestionErrorKind.NO_TABLE, IngestionErrorKind.PARSE_FAILED}:
+            # Some runs have empty or non-canonical markdown tables, or carry an
+            # unresolvable model field. Fall back to the legacy row counter used
+            # by tabulate_exp2_arms_runs.
+            if exc.kind in {
+                IngestionErrorKind.NO_TABLE,
+                IngestionErrorKind.PARSE_FAILED,
+                IngestionErrorKind.RUN_NOT_FOUND,
+                IngestionErrorKind.AMBIGUOUS_RUN,
+            }:
                 pass
             else:
                 raise
 
         records.append(
             Exp2RunMartRecord(
-                record_id=_record_id(arm, meta.get("model", agent), run),
+                record_id=_record_id(arm, model, run),
                 arm=arm,
                 agent=agent,
-                model=meta.get("model", ""),
+                model=model,
                 run=run,
                 prompt_version=meta.get("prompt_version"),
                 run_summary=RunSummary(
                     n_rows=legacy_n_rows,
                     classification=meta.get("classification"),
-                    turns=meta.get("turns", 1 if arm == "naive" else None),
+                    turns=meta.get("turns", 1 if arm in _SINGLE_TURN_ARMS else None),
                     tokens_out=meta.get("tokens_out"),
                     wall_s=meta.get("wall_s"),
                     cost_usd=meta.get("cost_usd", meta.get("total_cost_usd")),
@@ -288,21 +313,32 @@ def build_exp2_mart(
     optimised_dir: Path | None = None,
     cross_eval_csv: Path | None = None,
     repo_root: Path | None = None,
+    arm3_dir: Path | None = None,
+    arm4_dir: Path | None = None,
 ) -> list[Exp2RunMartRecord | Exp2ScoreMartRecord]:
     repo_root = (repo_root or Path.cwd()).resolve()
     naive_dir = _resolve_repo_path(repo_root, naive_dir, _DEFAULT_NAIVE_DIR)
     optimised_dir = _resolve_repo_path(repo_root, optimised_dir, _DEFAULT_OPTIMISED_DIR)
+    arm3_dir = _resolve_repo_path(repo_root, arm3_dir, _DEFAULT_ARM3_DIR)
+    arm4_dir = _resolve_repo_path(repo_root, arm4_dir, _DEFAULT_ARM4_DIR)
     cross_eval_csv = _resolve_repo_path(repo_root, cross_eval_csv, _DEFAULT_CROSS_EVAL)
     score_rows, _rows_by_arm_run, rows_by_arm_agent_run = _load_score_rows(cross_eval_csv)
     records: list[Exp2RunMartRecord | Exp2ScoreMartRecord] = []
 
-    for arm, arm_dir in (("naive", naive_dir), ("optimised", optimised_dir)):
+    for arm, arm_dir in (
+        ("naive", naive_dir),
+        ("optimised", optimised_dir),
+        ("arm3", arm3_dir),
+        ("arm4", arm4_dir),
+    ):
         for run_record in _build_run_records(
             arm_dir,
             arm,
             repo_root=repo_root,
             naive_dir=naive_dir,
             optimised_dir=optimised_dir,
+            arm3_dir=arm3_dir,
+            arm4_dir=arm4_dir,
         ):
             records.append(run_record)
             score_row = _resolve_score_row(
@@ -343,12 +379,16 @@ def write_exp2_mart(
     optimised_dir: Path | None = None,
     cross_eval_csv: Path | None = None,
     repo_root: Path | None = None,
+    arm3_dir: Path | None = None,
+    arm4_dir: Path | None = None,
 ) -> list[Exp2RunMartRecord | Exp2ScoreMartRecord]:
     records = build_exp2_mart(
         naive_dir=naive_dir,
         optimised_dir=optimised_dir,
         cross_eval_csv=cross_eval_csv,
         repo_root=repo_root,
+        arm3_dir=arm3_dir,
+        arm4_dir=arm4_dir,
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8") as handle:
@@ -364,6 +404,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--output")
     parser.add_argument("--naive-dir")
     parser.add_argument("--optimised-dir")
+    parser.add_argument("--arm3-dir")
+    parser.add_argument("--arm4-dir")
     parser.add_argument("--cross-eval-csv")
     parser.add_argument("--repo-root")
     args = parser.parse_args(argv)
@@ -380,6 +422,12 @@ def main(argv: list[str] | None = None) -> None:
         Path(args.optimised_dir) if args.optimised_dir else None,
         _DEFAULT_OPTIMISED_DIR,
     )
+    arm3_dir = _resolve_repo_path(
+        repo_root, Path(args.arm3_dir) if args.arm3_dir else None, _DEFAULT_ARM3_DIR
+    )
+    arm4_dir = _resolve_repo_path(
+        repo_root, Path(args.arm4_dir) if args.arm4_dir else None, _DEFAULT_ARM4_DIR
+    )
     cross_eval_csv = _resolve_repo_path(
         repo_root,
         Path(args.cross_eval_csv) if args.cross_eval_csv else None,
@@ -392,6 +440,8 @@ def main(argv: list[str] | None = None) -> None:
         optimised_dir=optimised_dir,
         cross_eval_csv=cross_eval_csv,
         repo_root=repo_root,
+        arm3_dir=arm3_dir,
+        arm4_dir=arm4_dir,
     )
     log.info("Wrote %d mart records to %s", len(records), output)
 

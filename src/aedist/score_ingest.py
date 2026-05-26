@@ -67,15 +67,28 @@ class IngestionError(RuntimeError):
         super().__init__(f"{kind.value}: {detail}")
 
 
-def _arm_dir(arm: str, naive_dir: Path, optimised_dir: Path) -> Path:
-    if arm == "naive":
-        return naive_dir
-    if arm == "optimised":
-        return optimised_dir
+def _arm_dir(
+    arm: str,
+    naive_dir: Path,
+    optimised_dir: Path,
+    arm3_dir: Path | None = None,
+    arm4_dir: Path | None = None,
+) -> Path:
+    mapping: dict[str, Path | None] = {
+        "naive": naive_dir,
+        "optimised": optimised_dir,
+        "arm3": arm3_dir,
+        "arm4": arm4_dir,
+    }
+    resolved = mapping.get(arm)
+    if resolved is not None:
+        return resolved
     raise IngestionError(
         IngestionErrorKind.UNKNOWN_ARM,
         RunLocator(arm=arm, model="", run=0),
-        f"unknown arm '{arm}'",
+        f"unknown arm '{arm}'"
+        if arm not in mapping
+        else f"no directory configured for arm '{arm}'",
     )
 
 
@@ -84,8 +97,10 @@ def resolve_run_paths(
     *,
     naive_dir: Path = _DEFAULT_NAIVE_DIR,
     optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
+    arm3_dir: Path | None = None,
+    arm4_dir: Path | None = None,
 ) -> ResolvedRunPaths:
-    arm_dir = _arm_dir(locator.arm, naive_dir, optimised_dir)
+    arm_dir = _arm_dir(locator.arm, naive_dir, optimised_dir, arm3_dir, arm4_dir)
     pattern = f"*_run{locator.run:02d}.json"
     matches: list[Path] = []
     for json_path in sorted(arm_dir.glob(pattern)):
@@ -122,8 +137,16 @@ def ingest_run(
     *,
     naive_dir: Path = _DEFAULT_NAIVE_DIR,
     optimised_dir: Path = _DEFAULT_OPTIMISED_DIR,
+    arm3_dir: Path | None = None,
+    arm4_dir: Path | None = None,
 ) -> IngestedRun:
-    resolved = resolve_run_paths(locator, naive_dir=naive_dir, optimised_dir=optimised_dir)
+    resolved = resolve_run_paths(
+        locator,
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+        arm3_dir=arm3_dir,
+        arm4_dir=arm4_dir,
+    )
     try:
         text = resolved.markdown_path.read_text(encoding="utf-8", errors="strict")
     except UnicodeDecodeError as exc:
