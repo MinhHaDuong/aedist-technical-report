@@ -30,10 +30,17 @@
 \definecolor{qualgreen}{HTML}{27AE60}
 \definecolor{qualblue}{HTML}{2E86AB}
 
+% TODO (auteur) : revoir le titre en fonction des 3 critères de jugement —
+%   (1) le résultat principal du papier, (2) le take-home message,
+%   (3) l'intitulé annoncé dans le programme Econom'IA.
+%   Ne pas modifier le titre dans ce ticket : l'auteur le tranchera ensuite.
 \title{Beyond RAG}
 \subtitle{Vers des statistiques économiques fiables}
-\author{Minh Ha-Duong\\CIRED -- CNRS}
-\institute{CIRED -- CNRS}
+\author{Dr. Minh Ha-Duong}
+% TODO (auteur) : remplacer le bloc affiliation ci-dessous par le multi-logo
+%   (CIRED + tutelles) lorsque l'asset image sera disponible dans slides/.
+%   Fallback texte (logo CIRED avec tutelles) en place ci-dessous.
+\institute{CIRED -- CNRS\\{\small CNRS \textperiodcentered{} École des Ponts ParisTech \textperiodcentered{} AgroParisTech \textperiodcentered{} EHESS \textperiodcentered{} UPEC \textperiodcentered{} Université Gustave Eiffel}}
 \date{Econom'IA 2026 --- Thema, Cergy --- 27 mai 2026}
 
 \begin{document}
@@ -47,7 +54,7 @@
 \section{Problème}
 
 % -------------------------------------------------------------------
-\begin{frame}{Le problème}
+\begin{frame}{L'IA peut-elle produire des données qualité recherche~?}
 \begin{columns}[T]
 \column{0.55\textwidth}
 \textbf{Les modèles ont besoin de données fiables.}
@@ -57,9 +64,6 @@ Exemple: Un modèle électrique de l'ASEAN nécessite des inventaires de central
 
 \smallskip
 Dans les pays à agences statistiques faibles, ces données sont difficiles d'accès.
-
-\smallskip
-\textbf{L'IA peut-elle produire des données de qualité recherche~?}
 
 \column{0.42\textwidth}
 \textbf{Difficultés~:}
@@ -82,27 +86,28 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
 
 \textbf{\NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
-``{\ttfamily \input{../experiments/prompts/prompt_extract.txt}}''
+prompt \textit{Engineered}, 84 lignes.
 
 \smallskip
+{\small \textit{Conditions~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé. Effort de raisonnement par défaut.}}
+
+\medskip
 \textbf{Résultats (163 centrales à identifier)~:}
+{\small\textit{Métrique principale du talk~: nombre d'assets identifiés sur 163 (F1 = moyenne harmonique précision/recall sur ce même référentiel).}}
 \begin{itemize}\setlength\itemsep{0pt}
   \item Centrales identifiées~: \CensusTPMin{}--\CensusTPMax{} par run
   \item Centrales hallucinées~: \CensusFPMin{}--\CensusFPMax{} par run
   \item Durée~: \CensusWallMin{}--\CensusWallMax{}~s
   \item Coût~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
-
-\medskip
-{\small \textit{Condition~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé.}}
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
-\centering
+\noindent
 \includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
 \begin{tikzpicture}[remember picture,overlay]
-\node[anchor=east,align=left,font=\bfseries\small] at ([xshift=-0.5cm]current page.east) {
+\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
 \sout{Récalcitrant}\\
 Incomplet\\
 Hallucinant\\
@@ -175,62 +180,56 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Expérience 2 : le SOTA avec web search ne suffit pas}
+\begin{frame}{Expérience 2 : web search on, (oneshot, multiturn) × (without, with docs)}
 \begin{center}
 \small
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}l p{8.5cm}@{}}
 \toprule
-\textbf{Facteur} & \textbf{Valeurs} & \textbf{Enjeu} \\
-\midrule
-\textbf{Nombre de tours}  & passe unique / multi-tours (3 relances) & protocole \\
-\textbf{Documentation}    & aucune / RAG massif (155 ko) + web search & ancrage \\
-\textbf{Agents}           & 4 SOTA : Opus~4.6, GPT-5.5, Mistral Large, Qwen3-Max & contrôle \\
-\textbf{Runs}             & 5 par cellule & variance \\
+\textbf{Nombre de tours}  & passe unique / \textbf{multi-tours} (3 à 5) \\
+\textbf{Documentation}    & aucune / \textbf{RAG} massif (155 ko) \\
+\textbf{Agents}           & Opus~4.6, GPT-5.5, Mistral Large, \textbf{Qwen 3.7 max} \\
+\textbf{Documents}        & 18 tables, sources primaires, format \textbf{MD} \\
+\textbf{Répétitions}      & 5 par \textbf{cellule} \\
+\textbf{Contrôles}        & default reasoning effort, web search allowed, no tools, no code, direct lab API provider, même prompt de base, \textbf{< \$6}, < 50\,000 tokens \\
 \bottomrule
 \end{tabular}
 
-\bigskip
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-& \textbf{arm 1} & \textbf{arm 2} & \textbf{arm 3} & \textbf{arm 4} \\
-& passe unique & multi-tours & +docs, passe unique & +docs, multi-tours \\
-\midrule
-Nombre de tours & 1 & 3+ & 1 & 3+ \\
-Docs + web      & \texttimes & \texttimes & \checkmark & \checkmark \\
-\bottomrule
-\end{tabular}
+\smallskip
+{\footnotesize Sélection~: 4 SOTA, un par fournisseur principal (Anthropic, OpenAI, Mistral, Alibaba).}
+
+\medskip
+{\footnotesize RAG (\emph{Retrieval-Augmented Generation})~: le modèle reçoit des documents sources en entrée et génère sa réponse à partir de ces documents, plutôt que de répondre de mémoire.}
 
 \bigskip
-{\small \textit{Les 4 agents ont accès au même corpus RAG vérifié manuellement (PDP7, PDP7A, PDP8, EVN).}}
+{\small \textit{Quatre conditions : 1N (single turn, no docs)~; 5N~; 1D~; 5D (multiturn, with docs).}}
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{La méthode --- Infrastructure}
-\textbf{Infrastructure~:}
 \begin{itemize}\setlength\itemsep{6pt}
   \item \textbf{git-erg}~: gestion de tickets locale, agent-friendly\\
         {\small Format texte versionné~; les agents lisent et ferment les tickets comme des humains.}
   \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
-        {\small Même script, n'importe quel fournisseur~; les runs sont reproductibles à partir du hash.}
-  \item \textbf{Protocole relu et validé par les LLM eux-mêmes}\\
-        {\small 4 agents consultés~: 2/4 ont validé sans réserve, 2/4 avec réserves.\\
-        \textit{(Les réserves étaient fondées.)}}
+        {\small 5 claws~: Imagine, Plan, Execute, Verify, Celebrate. Runs reproductibles à partir du hash.}
+  \item \textbf{Protocole codéveloppé, relu et validé par les LLM eux-mêmes}\\
+        {\small Agents consultés~: 2 ont validé sans réserve, 2 avec réserves.\\
+        \textit{(Les réserves étaient fondées~: enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO\textsubscript{2} non exposés.)}}
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{La méthode --- Protocole multi-tours (Exp~2)}
+\begin{frame}{La méthode --- Protocole multi-tours}
 \begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Phase A}] Chaque agent optimise son propre prompt et planifie le job ($\leq$\$1).
+  \item[\textbf{Phase A}] Chaque agent optimise son propre prompt connaissant le protocole.
   \item[\textbf{Phase B}] Jusqu'à 3 tours de recherche + 1 tour de finalisation.
   \item[\textbf{Transitions}] Script state machine~; un LLM juge à chaque tour si l'agent a produit un rapport ou doit continuer.
+  \item[\textbf{Évaluation par les pairs}] TBD.
 \end{description}
 
 \medskip
 \begin{center}
-{\small\textit{L'agent conçoit son propre protocole, l'exécute, et un autre LLM arbitre.\\
-Un jury de pairs --- mais le jury est aussi un modèle.}}
+{\small\textit{It's LLMs all the way down --- but Knowledge Graphs are not dead.}}
 \end{center}
 \end{frame}
 
@@ -289,6 +288,9 @@ et où mènent les architectures à états agentiques.}
 
 % -------------------------------------------------------------------
 \begin{frame}{Le RAG élève le plancher~: régime de documentation}
+{\small\textit{Vérifions sur les chiffres les messages-clés lus sur les graphes --- sans aller jusqu'aux p-values.}}
+
+\smallskip
 \textbf{Mêmes 5 modèles}, 3 conditions $\times$ 3 runs
 
 \medskip
@@ -348,17 +350,15 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 % -------------------------------------------------------------------
 \begin{frame}{Messages clés}
 \begin{enumerate}\setlength\itemsep{1.2em}
-  \item \textbf{RAG FTW~: la méthode domine le modèle.}\\
-        {\small +18--43\,pp de F1 avec RAG~; un modèle bon marché + RAG surpasse
-        les modèles chers sans RAG.}
+  \item \textbf{Multi-tour~: pas si utile.}\\
+        {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain.}
 
-  \item \textbf{Multi-tours~: pas si utile.}\\
-        {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain~;
-        le RAG massif est l'intervention dominante.}
+  \item \textbf{Fournir les sources~: nécessaire.}\\
+        {\small Le RAG massif est l'intervention dominante~; la méthode domine le modèle.}
 
-  \item \textbf{Anthropic trop cher~--- mais c'est juste une question de temps.}\\
-        {\small Opus~4.6 à \$1{,}23 total~: F1 moyen 0{,}46. GPT-OSS-20B à \$0{,}01~: F1 0{,}58.\\
-        Les modèles locaux approchent déjà la frontière.}
+  \item \textbf{Coût~: de quelques centimes à quelques euros par requête.}
+
+  \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
 \end{frame}
 
@@ -391,7 +391,12 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 
 \medskip
 \normalsize
-Code \& données~: \texttt{github.com/minhhaduong/aedist-technical-report}
+Code \& données~: \href{https://github.com/minhhaduong/aedist-technical-report}{\texttt{github.com/minhhaduong/aedist-technical-report}}
+% TODO (auteur) : ajouter un QR code EN GROS vers le repo GitHub.
+%   Aucun générateur de QR disponible dans cet environnement (ni qrencode,
+%   ni la lib Python qrcode). Générer le QR (PNG/PDF), le déposer dans
+%   slides/inputs/ puis l'inclure ici, par ex. :
+%   \includegraphics[width=0.4\paperwidth]{inputs/qr_repo.pdf}
 \end{center}
 \end{frame}
 
