@@ -118,47 +118,64 @@ Non-monotone
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{Structure du prompt}
-\scriptsize
+% OPTION A — version épurée (Claude, pour choix auteur)
+\begin{frame}{Le prompt en 84 lignes~: trois blocs}
+\begin{columns}[T]
+\column{0.33\textwidth}
 \textbf{\# GOAL}
 
-Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe) [...] Structure it as follows:
+\smallskip
+{\small Inventorier les centrales $>30$\,MWe~: statut, carburant, capacité, exploitant, date de mise en service.\\[4pt]
+Citer deux sources indépendantes par valeur.\\[4pt]
+Dater chaque information.}
 
-- the plant inventory: [...]: Name (Vietnamese), Name (English), Province, Fuel [...], Confidence, Source 1, Source 2, Notes.
-- per-asset or per-project explanatory notes: [...]
-- an annotated bibliography [...]
-
-Scope includes [...]
-
-When uncertain, mark confidence [...]
-
-Output format: Markdown.
-
-\textbf{\# QUALITY DIMENSIONS} [...voir slide suivante...]
-
-\textbf{\# CONTEXT} (
-\#\# Source quality management
-\#\# Calibrated confidence vocabulary
-\#\# Asset-row and status rules
-)
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{\# Quality dimensions (prompt partie 2)}
-\small
-\textit{Your output is judged on four axes:}
-\begin{enumerate}\setlength\itemsep{4pt}
-  \item \textit{Accuracy} --- right assets and right attributes. [...]
-  \item \textit{Coherence} --- internally and externally consistent. [...]
-  \item \textit{Provenance} --- each value traces to a source that actually supports it,
-        not a merely plausible citation. Two independent primaries [...]
-  \item \textit{Temporality} --- every value carries a best-effort as-of date; [...]
-\end{enumerate}
+\column{0.33\textwidth}
+\textbf{\# QUALITÉ}
 
 \smallskip
-{\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed over
-a shortlist of well-known assets.}}
+{\small Quatre axes notés~: accuracy, cohérence, provenance, temporalité.\\[4pt]
+\textit{«~Préférer un inventaire complet avec incertitude explicitée plutôt qu'une liste courte bien connue.~»}}
+
+\column{0.33\textwidth}
+\textbf{\# CONTEXTE}
+
+\smallskip
+{\small Gestion des sources~: primaire, réglementaire, secondaire.\\[4pt]
+Vocabulaire de confiance calibré.\\[4pt]
+Règles de saisie par ligne d'actif.}
+\end{columns}
+
+\medskip
+\begin{center}
+{\small\textit{84 lignes d'instructions~; le modèle répond en Markdown.}}
+\end{center}
 \end{frame}
+
+% OPTION B — version originale (verbatim, pour choix auteur)
+%\begin{frame}[fragile]{Structure du prompt}
+%\scriptsize
+%\textbf{\# GOAL}
+%
+%Produce a complete, primary-sourced reference inventory [...] Structure it as follows:
+%- the plant inventory: Name, Province, Fuel, Confidence, Source 1, Source 2, Notes.
+%- per-asset explanatory notes / annotated bibliography
+%Scope includes [...] When uncertain, mark confidence [...] Output format: Markdown.
+%
+%\textbf{\# QUALITY DIMENSIONS} [...voir slide suivante...]
+%
+%\textbf{\# CONTEXT} (\#\# Source quality management / Calibrated confidence vocabulary / Asset-row rules)
+%\end{frame}
+%
+%\begin{frame}{\# Quality dimensions (prompt partie 2)}
+%\small \textit{Your output is judged on four axes:}
+%\begin{enumerate}\setlength\itemsep{4pt}
+%  \item \textit{Accuracy} --- right assets and right attributes. [...]
+%  \item \textit{Coherence} --- internally consistent. [...]
+%  \item \textit{Provenance} --- each value traces to a source that supports it. [...]
+%  \item \textit{Temporality} --- every value carries a best-effort as-of date. [...]
+%\end{enumerate}
+%{\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed.}}
+%\end{frame}
 
 
 % -------------------------------------------------------------------
@@ -247,7 +264,7 @@ LLM \textit{actual competencies: reformulation, translation, comparison, synthes
 \begin{description}\setlength\itemsep{8pt}
   \item[\textbf{Phase A}] Chaque agent optimise son propre prompt connaissant le protocole.
   \item[\textbf{Phase B}] Jusqu'à 3 tours de recherche + 1 tour de finalisation.
-  \item[\textbf{Transitions}] Script state machine~; un LLM juge à chaque tour si l'agent a produit un rapport ou doit continuer.
+  \item[\textbf{Transitions}] Script state machine~; DeepSeek V3.2 juge à chaque tour si l'agent a produit un rapport ou doit continuer~{\footnotesize (rôle~: juge, non évalué)}.
 \end{description}
 
 \medskip
@@ -352,8 +369,13 @@ Chaque document est un graphe de connaissances partiel, daté, bruité, redondan
 
   \item \textbf{Coût~: de quelques centimes à quelques euros par requête.}
 
-  \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
+  \item \textbf{L'IA produit-elle des données de qualité recherche~?}
 \end{enumerate}
+
+\bigskip
+\begin{center}
+\Large\textcolor{red}{\textbf{Pas encore.}}
+\end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
