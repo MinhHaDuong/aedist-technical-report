@@ -281,6 +281,9 @@ et où mènent les architectures à états agentiques.}
 
 % -------------------------------------------------------------------
 \begin{frame}{Le RAG élève le plancher~: régime de documentation}
+{\small\textit{Vérifions sur les chiffres les messages-clés lus sur les graphes --- sans aller jusqu'aux p-values.}}
+
+\smallskip
 \textbf{Mêmes 5 modèles}, 3 conditions $\times$ 3 runs
 
 \medskip
@@ -340,17 +343,15 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 % -------------------------------------------------------------------
 \begin{frame}{Messages clés}
 \begin{enumerate}\setlength\itemsep{1.2em}
-  \item \textbf{RAG FTW~: la méthode domine le modèle.}\\
-        {\small +18--43\,pp de F1 avec RAG~; un modèle bon marché + RAG surpasse
-        les modèles chers sans RAG.}
+  \item \textbf{Multi-tour~: pas si utile.}\\
+        {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain.}
 
-  \item \textbf{Multi-tours~: pas si utile.}\\
-        {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain~;
-        le RAG massif est l'intervention dominante.}
+  \item \textbf{Fournir les sources~: nécessaire.}\\
+        {\small Le RAG massif est l'intervention dominante~; la méthode domine le modèle.}
 
-  \item \textbf{Anthropic trop cher~--- mais c'est juste une question de temps.}\\
-        {\small Opus~4.6 à \$1{,}23 total~: F1 moyen 0{,}46. GPT-OSS-20B à \$0{,}01~: F1 0{,}58.\\
-        Les modèles locaux approchent déjà la frontière.}
+  \item \textbf{Coût~: de quelques centimes à quelques euros par requête.}
+
+  \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
 \end{frame}
 
@@ -383,7 +384,12 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 
 \medskip
 \normalsize
-Code \& données~: \texttt{github.com/minhhaduong/aedist-technical-report}
+Code \& données~: \href{https://github.com/minhhaduong/aedist-technical-report}{\texttt{github.com/minhhaduong/aedist-technical-report}}
+% TODO (auteur) : ajouter un QR code EN GROS vers le repo GitHub.
+%   Aucun générateur de QR disponible dans cet environnement (ni qrencode,
+%   ni la lib Python qrcode). Générer le QR (PNG/PDF), le déposer dans
+%   slides/inputs/ puis l'inclure ici, par ex. :
+%   \includegraphics[width=0.4\paperwidth]{inputs/qr_repo.pdf}
 \end{center}
 \end{frame}
 
