@@ -103,46 +103,6 @@ prompt \textit{Engineered}, 84 lignes.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
-\noindent
-\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
-\begin{tikzpicture}[remember picture,overlay]
-\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
-\sout{Récalcitrant}\\
-Incomplet\\
-Hallucinant\\
-Non-déterministe\\
-Non-monotone
-};
-\end{tikzpicture}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{La bonne statistique exige plus que des vrais chiffres}
-\begin{center}
-{\small\textit{«~Connaissance~: croyance vraie justifiée.~»}}
-\end{center}
-
-\medskip
-\small
-Les données de qualité recherche se jugent sur cinq dimensions~:
-\begin{enumerate}\setlength\itemsep{4pt}
-  \item \textbf{Accuracy}~--- les bons actifs, les bons attributs (précision/recall, F1).
-  \item \textbf{Coherence}~--- totaux qui se réconcilient, valeurs plausibles, conflits arbitrés.
-  \item \textbf{Provenance}~--- chaque valeur tracée à une source qui la soutient vraiment.
-  \item \textbf{Temporality}~--- chaque valeur datée~; les changements de statut signalés.
-  \item \textbf{Fit for purpose}~--- niveau de détail approprié, opérationnel et mesuré.\\
-        {\small Ex.~: pour PyPSA la colonne Capacité doit être remplie --- on mesure le taux
-        de remplissage des champs critiques pour l'usage aval.}
-\end{enumerate}
-
-\bigskip
-\begin{center}
-\small\textbf{$\to$ Grille de notation multi-axes.}
-\end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}[fragile]{Structure du prompt \textit{Engineered}}
 \scriptsize
 \begin{verbatim}
@@ -206,6 +166,46 @@ a shortlist of well-known assets.}}
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
+\noindent
+\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
+\sout{Récalcitrant}\\
+Incomplet\\
+Hallucinant\\
+Non-déterministe\\
+Non-monotone
+};
+\end{tikzpicture}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{La bonne statistique exige plus que des vrais chiffres}
+\begin{center}
+{\small\textit{«~Connaissance~: croyance vraie justifiée.~»}}
+\end{center}
+
+\medskip
+\small
+Les données de qualité recherche se jugent sur cinq dimensions~:
+\begin{enumerate}\setlength\itemsep{4pt}
+  \item \textbf{Accuracy}~--- les bons actifs, les bons attributs (précision/recall, F1).
+  \item \textbf{Coherence}~--- totaux qui se réconcilient, valeurs plausibles, conflits arbitrés.
+  \item \textbf{Provenance}~--- chaque valeur tracée à une source qui la soutient vraiment.
+  \item \textbf{Temporality}~--- chaque valeur datée~; les changements de statut signalés.
+  \item \textbf{Fit for purpose}~--- niveau de détail approprié, opérationnel et mesuré.\\
+        {\small Ex.~: pour PyPSA la colonne Capacité doit être remplie --- on mesure le taux
+        de remplissage des champs critiques pour l'usage aval.}
+\end{enumerate}
+
+\bigskip
+\begin{center}
+\small\textbf{$\to$ Grille de notation multi-axes.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
 \centering
 \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
 \end{frame}
@@ -226,12 +226,6 @@ a shortlist of well-known assets.}}
 \section{Expérience 2}
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{De l'Exp 1 à l'Exp 2 : si la mémoire ne suffit pas, les sources peuvent-elles aider~?}
 \begin{itemize}\setlength\itemsep{1.0em}
   \item \textbf{Bilan Exp 1.} Les modèles connaissent mal les actifs vietnamiens
@@ -242,6 +236,12 @@ a shortlist of well-known assets.}}
   \item \textbf{Second axe.} Un dialogue multi-tours peut-il aider le modèle à
         explorer sa connaissance et celle des documents~?
 \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[plain]
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -310,64 +310,6 @@ a shortlist of well-known assets.}}
 \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
 \end{frame}
 
-% ===================================================================
-\section{Discussion}
-
-% -------------------------------------------------------------------
-\begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
-\begin{center}
-\large
-Les données de qualité recherche ne sont pas des données correctes.\\
-Ce sont des données dont les erreurs sont \textbf{localisables}.
-
-\bigskip
-\textit{Cet exposé~: ce qui accroche, ce qui permet la localisabilité,\\
-et où mènent les architectures à états agentiques.}
-\end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Qualité de la méthode~: les conditions actives}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Directions futures}
-\begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Intégration RAG HITL des sources}]
-        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
-        le corpus RAG grandit de façon contrôlée.
-
-  \item[\textbf{Vérifié $>$ vérifiable}]
-        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
-        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
-
-  \item[\textbf{Niveau cellule~: KG par document}]
-        Chaque cellule est un triple (sujet, prédicat, objet)~;
-        la fusion de sources concurrentes devient fusion d'ensembles de triples.
-        Graphe de connaissances en lieu et place d'une master-table plate.
-
-  \item[\textbf{Secteur $\times$ pays}]
-        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
-        à l'eau en Thaïlande. Architecture identique, paramètres différents.
-\end{description}
-\end{frame}
-
 % -------------------------------------------------------------------
 \begin{frame}{Le RAG élève le plancher~: régime de documentation}
 {\small\textit{Vérifions sur les chiffres les messages-clés lus sur les graphes --- sans aller jusqu'aux p-values.}}
@@ -427,7 +369,40 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 \end{frame}
 
 % ===================================================================
-\section{Conclusions}
+\section{Discussion}
+
+% -------------------------------------------------------------------
+\begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
+\begin{center}
+\large
+Les données de qualité recherche ne sont pas des données correctes.\\
+Ce sont des données dont les erreurs sont \textbf{localisables}.
+
+\bigskip
+\textit{Cet exposé~: ce qui accroche, ce qui permet la localisabilité,\\
+et où mènent les architectures à états agentiques.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Qualité de la méthode~: les conditions actives}
+\small
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
+\toprule
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
+\midrule
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{Messages clés}
@@ -443,6 +418,31 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
   \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
 \end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Directions futures}
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Intégration RAG HITL des sources}]
+        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
+        le corpus RAG grandit de façon contrôlée.
+
+  \item[\textbf{Vérifié $>$ vérifiable}]
+        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
+        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
+
+  \item[\textbf{Niveau cellule~: KG par document}]
+        Chaque cellule est un triple (sujet, prédicat, objet)~;
+        la fusion de sources concurrentes devient fusion d'ensembles de triples.
+        Graphe de connaissances en lieu et place d'une master-table plate.
+
+  \item[\textbf{Secteur $\times$ pays}]
+        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
+        à l'eau en Thaïlande. Architecture identique, paramètres différents.
+\end{description}
+\end{frame}
+
+% ===================================================================
+\section{Conclusions}
 
 % -------------------------------------------------------------------
 \begin{frame}{}
