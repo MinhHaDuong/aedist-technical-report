@@ -242,14 +242,15 @@ report/report.pdf: report/report.tex report/refs.bib \
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
-    $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf \
-    $(SLIDE_GEN)/regimes.csv $(GEN)/fig_direct_p1_base.pdf \
-    $(GEN)/macros_p1_base.tex \
-    $(SLIDE_GEN)/fig_method_convergence.pdf \
-    $(SLIDE_GEN)/fig_regimes_scatter.pdf \
-    $(SLIDE_GEN)/fig_scaling_curve.pdf \
-    $(SLIDE_GEN)/fig_ablation_strip.pdf \
-    $(SLIDE_GEN)/macros.tex
+    $(GEN)/fig_direct_p1_base.pdf \
+    $(GEN)/fig_spider_exp1_claude.pdf \
+    $(GEN)/fig_spider_exp1_families.pdf \
+    $(GEN)/fig_capability_timeline.pdf \
+    $(GEN)/fig_exp2_coverage.pdf \
+    $(GEN)/fig_exp2_cost.pdf \
+    $(GEN)/fig_exp2_coverage_certainty.pdf \
+    $(SLIDE_GEN)/macros.tex \
+    $(GEN)/macros_p1_base.tex
 	$(MAKE) -C slides
 
 # --- Convenience aliases ------------------------------------------------------

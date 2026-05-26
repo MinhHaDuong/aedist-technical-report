@@ -9,19 +9,13 @@ ROOT_REPORT_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
 
 SLIDE_ASSETS := \
-	$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_claude.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
-	$(GENERATED)/regimes.csv \
-	$(GENERATED)/fig_method_convergence.pdf \
-	$(GENERATED)/fig_regimes_scatter.pdf \
-	$(GENERATED)/fig_scaling_curve.pdf \
-	$(GENERATED)/fig_ablation_strip.pdf \
 	$(GENERATED)/macros.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
 
@@ -52,18 +46,12 @@ manuscript/main.pdf: manuscript/main.md $(MANUSCRIPT_ASSETS) ../report/refs.bib
 		--citeproc \
 		--bibliography=../report/refs.bib
 
-# Slides-only assets generated under slides/inputs/generated.
-$(GENERATED)/regimes.csv: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/regimes.csv
-$(GENERATED)/fig_method_convergence.pdf: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/fig_method_convergence.pdf
-$(GENERATED)/fig_regimes_scatter.pdf: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/fig_regimes_scatter.pdf
-$(GENERATED)/fig_scaling_curve.pdf: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/fig_scaling_curve.pdf
-$(GENERATED)/fig_ablation_strip.pdf: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/fig_ablation_strip.pdf
+# Slides-only asset generated under slides/inputs/generated.
 $(GENERATED)/macros.tex: ; $(MAKE) -C .. $(ROOT_SLIDE_GEN)/macros.tex
 
 # Report-canonical assets — trigger generation under report/inputs/generated.
-$(LOCAL_ROOT_REPORT_GEN)/census_bars.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/census_bars.csv
-$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_direct_p1_base.pdf
+$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_claude.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_spider_exp1_claude.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf
 $(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/macros_p1_base.tex
 $(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/cost_quality.csv
