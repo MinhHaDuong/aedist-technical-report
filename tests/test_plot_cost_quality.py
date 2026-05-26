@@ -36,8 +36,12 @@ _EXPECTED_KEYS = {
     "min_tp",
     "max_tp",
     "tp_values",
+    "fp_values",
     "base_tp_values",
     "topup_tp_values",
+    "median_fp",
+    "min_fp",
+    "max_fp",
     "median_cost",
     "min_cost",
     "max_cost",
@@ -52,6 +56,7 @@ _EXPECTED_KEYS = {
 _CSV_EXPECTED_KEYS = _EXPECTED_KEYS - {
     "reps",
     "tp_values",
+    "fp_values",
     "base_tp_values",
     "topup_tp_values",
 }
