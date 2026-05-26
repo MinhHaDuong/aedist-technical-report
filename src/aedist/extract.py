@@ -102,6 +102,15 @@ def _extract_pipe_tables(text: str) -> list[str]:
 
     for ln in lines:
         stripped = ln.strip()
+        # Some models (observed in streaming anthropic output) emit a reasoning
+        # preamble glued onto the same physical line as the table header, e.g.
+        # "Let me search.| Name | Fuel |". The leading prose adds a phantom
+        # first cell to the header, so every data row is later dropped as a
+        # column-count mismatch. A genuine pipe-table row opens with `|`; when a
+        # line ends with `|` but does not start with one, the text before the
+        # first `|` is a glued prefix — slice it off so cell counts align.
+        if stripped.endswith("|") and not stripped.startswith("|") and stripped.count("|") >= 3:
+            stripped = stripped[stripped.index("|") :]
         if "|" in stripped and stripped.count("|") >= 3:
             if re.match(r"^\|?[\s\-:|]+\|?$", stripped):
                 continue  # skip separator rows
@@ -138,10 +147,7 @@ def _is_inventory_header(header_line: str) -> bool:
     except Exception:
         return False
 
-    canonical = {
-        map_header_to_canonical(norm_header(cell))
-        for cell in header_cells
-    }
+    canonical = {map_header_to_canonical(norm_header(cell)) for cell in header_cells}
     canonical.discard(None)
 
     # Inventory table must have a plant-name column and enough plant-attribute
