@@ -149,7 +149,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.set_title(
-        "From chatbots to multi-agent systems: the AI capability frontier (2022-2025)",
+        "From chatbots to multi-agent systems: the AI industry capability frontier (2022-2025)",
         fontsize=12,
         fontweight="bold",
         pad=8,
