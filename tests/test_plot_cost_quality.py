@@ -39,6 +39,8 @@ _EXPECTED_KEYS = {
     "base_tp_values",
     "topup_tp_values",
     "median_cost",
+    "min_cost",
+    "max_cost",
     "mean_cost",
     "median_f1",
     "min_f1",
