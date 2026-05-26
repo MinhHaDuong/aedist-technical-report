@@ -488,5 +488,32 @@ Code \& données~: \href{https://github.com/minhhaduong/aedist-technical-report}
 \end{frame}
 
 % ===================================================================
+% ANNEXE — Q&A slides
+% ===================================================================
+
+\appendix
+
+\begin{frame}{Grille de notation~: 5 axes $\times$ 2 indicateurs}
+\small
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{Dimension} & \textbf{Indicateur 1} & \textbf{Indicateur 2} \\
+\midrule
+Exactitude & Actifs trouvés (rappel)     & Actifs corrects (précision) \\
+Contenu    & Combustible correct         & Statut correct \\
+Cohérence  & Province correcte           & Vocabulaire respecté \\
+Provenance & Diversité des sources       & Répartition des sources \\
+Temporalité & Date plausible (as-of)     & Date COD plausible \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\begin{itemize}\setlength\itemsep{0.6em}
+  \item Tous les axes~: $0 =$ nul, $1 =$ parfait.
+  \item Provenance~: diversité $= \min(n_{\text{sources distinctes}}/20,\; 1)$~;
+        répartition $= 1 - \text{concentration top-1}$.
+  \item Temporalité~: effondrement à $0$ si toutes les dates identiques (signal d'hallucination).
+\end{itemize}
+\end{frame}
 
 \end{document}
