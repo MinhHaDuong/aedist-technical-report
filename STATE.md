@@ -37,5 +37,5 @@ Finalize slides and manuscript for conference delivery (2026-05-27). Analysis pi
 
 - Scaling-curve diagnosis — direct_complete F1=0 on 3 capable models (parser failure suspected).
 - Paper writing opens after slides locked post-conference.
-- Makefile DAG (ticket 0345): Exp2 build has a stale duplicate producer (`report/exp2-analysis.mk` reads deprecated dirs) and `make slides` omits 5 deck figures — `make slides` not yet reproducible. Collapse to single producer post-conference.
+- Makefile DAG: slides build collapsed to single producer + clean-room (0345 done, PR #609); report-side clean-room + uv-run guard deferred (tickets 0352/0353). End-session: prune stale remote branch `origin/t0345-collapse-exp2-single-producer` (orphan, no PR, behind main).
 - CI required-checks rule was disabled 2026-05-26 for the conference push — re-enable after the talk.
