@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Collapse Exp2 build to a single producer; writing build consumes committed artifacts only
+Created: 2026-05-26
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-26T12:30Z HDMX-coding-agent created — DAG audit found a stale duplicate analysis makefile wired into the root build
+
+--- body ---
+## Context
+
+The Exp2 build DAG (`make slides` → figures+macros → views → mart → extracts → runs)
+is broken: the current 80-run figures on main are NOT reproducible from `make slides`.
+Root cause is a stale **duplicate producer**, not the (intentional) analysis/writing
+workpackage split.
+
+Two makefiles produce the same Exp2 artifacts:
+
+- `experiments/analysis.mk` — the correct, current producer. 4-arm
+  (`arm{1,2,3,4}_flat ← experiments/outputs/sota_exp3_arm*_batch1`), builds the
+  canonical mart `experiments/derived/exp2_mart.jsonl`, scores all 80 runs. **Not**
+  included by the root Makefile; driven by hand with
+  `make -f experiments/analysis.mk … ANALYSIS_EXP2_MART_JSONL=…` overrides.
+- `report/exp2-analysis.mk` — **included by the root Makefile** (Makefile:12), but a
+  stale duplicate of the analysis: reads the deprecated/empty dirs
+  `experiments/outputs/sota_exp2_naive_arm` + `sota_exp2_brerun1`, only 2 arms,
+  writes the mart to the gitignored `report/inputs/generated/exp2_mart.jsonl`. It also
+  runs `uv run build_exp2_mart` — analysis work leaking into the writing workpackage,
+  which violates the rule that a writing-side build consumes handoff artifacts only.
+
+Two broken links:
+1. `slides/slides.pdf` (Makefile:236) omits 5 figures the deck `\includegraphics`:
+   `fig_exp2_arms_comparison`, `fig_exp2_coverage_certainty`, `fig_capability_timeline`,
+   `fig_spider_exp1_families`, `fig_spider_exp1_claude`. It also lists 3 figures no
+   longer in the deck (`fig_method_convergence`, `fig_scaling_curve`,
+   `fig_ablation_strip`). So `make slides` neither rebuilds the live figures nor matches
+   the deck.
+2. The root build's fig→view→mart→extract→runs chain points at empty deprecated dirs
+   (see above), so a clean `make` / `make exp2-analysis-report` produces wrong/empty
+   figures.
+
+Not deck-blocking now: the committed figure PDFs are the correct 80-run versions
+(produced via experiments/analysis.mk). This is a reproducibility / DAG-integrity fix
+for post-conference.
+
+## Decision (intended shape — honors the workpackage rule)
+
+- `experiments/analysis.mk` is the **sole producer** of all Exp2 artifacts (figures,
+  views, mart, macros), reading the exp3 4-arm run dirs and the canonical
+  `experiments/derived/` mart. It commits the figure PDFs as handoff artifacts.
+- The **writing build** (`make slides`) only *compiles*: depends on the committed
+  figure PDFs + macros, no `uv run`, no data access.
+- Delete `report/exp2-analysis.mk`'s analysis duplication (and audit the root Makefile
+  for other figure-rebuild rules that should move to the analysis workpackage).
+
+## Exit criteria
+- [ ] One producer of Exp2 figures/views/mart (`experiments/analysis.mk`); the stale
+      duplicate in `report/exp2-analysis.mk` is removed or reduced to artifact consumption.
+- [ ] `experiments/analysis.mk` mart targets need no manual `ANALYSIS_EXP2_MART_JSONL=`
+      override to hit the canonical `experiments/derived/exp2_mart.jsonl` path.
+- [ ] `slides/slides.pdf` prerequisites match the figures the deck actually includes
+      (add the 5 missing, drop the 3 stale).
+- [ ] Writing build (`make slides`) contains no `uv run` / data-access rules — compiles
+      from committed handoff artifacts only.
+- [ ] Clean-room check: from a fresh checkout, the analysis build regenerates the mart +
+      figures and reproduces the committed 80-run PDFs (byte-identical or visually
+      equivalent); `make slides` then compiles the deck from them.
+- [ ] `make check` passes.
