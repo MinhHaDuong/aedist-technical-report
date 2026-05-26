@@ -100,7 +100,7 @@ def load_exp2_rows(path: Path) -> list[dict]:
 
 
 def load_exp1_summary(path: Path) -> dict[str, dict]:
-    """Return {exp1_slug: {median_tp, min_tp, max_tp, mean_cost}} from cost_quality.csv."""
+    """Return {exp1_slug: {median_tp, min_tp, max_tp, mean_cost, min_cost, max_cost}} from cost_quality.csv."""
     summary: dict[str, dict] = {}
     with path.open(newline="") as fh:
         for row in csv.DictReader(fh):
@@ -109,6 +109,8 @@ def load_exp1_summary(path: Path) -> dict[str, dict]:
                 "min_tp": int(row["min_tp"]),
                 "max_tp": int(row["max_tp"]),
                 "mean_cost": float(row["mean_cost"]),
+                "min_cost": float(row.get("min_cost") or row["mean_cost"]),
+                "max_cost": float(row.get("max_cost") or row["mean_cost"]),
             }
     return summary
 
@@ -254,9 +256,10 @@ def make_cost_figure(
         # E1 bar
         exp1_slug = _AGENT_EXP1_SLUG[agent]
         if exp1_slug in exp1_summary:
+            e1 = exp1_summary[exp1_slug]
             x = agent_idx + _CONDITION_OFFSET["e1"]
-            mean_cost = exp1_summary[exp1_slug]["mean_cost"]
-            ax.bar(x, mean_cost, _BAR_WIDTH, color=color, alpha=0.55, hatch="//", zorder=3)
+            ax.bar(x, e1["mean_cost"], _BAR_WIDTH, color=color, alpha=0.55, hatch="//", zorder=3)
+            _draw_whiskers(ax, x, [e1["min_cost"], e1["max_cost"]])
 
         # Exp2 arms
         for cond in _CONDITIONS:
