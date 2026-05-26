@@ -296,12 +296,6 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                     pa_mp = pa.get("method_params")
                     model = (pa_mp or {}).get("model") if isinstance(pa_mp, dict) else None
                     model = model or pa.get("model")
-            # Provenance guard: arm4 qwen run01 from the original sweep ran on the
-            # superseded model qwen3-max-2026-01-23, while all canonical qwen data
-            # is qwen3.7-max-2026-05-20. Keep it unscored until a verified rerun on
-            # the correct model replaces it (do not mix model versions in one cell).
-            if model == "qwen3-max-2026-01-23":
-                model = None
 
             raw_trace = entry.get("class_trace")
             class_trace: list[str] = []
