@@ -16,7 +16,7 @@ to visually signal that they come from a different experiment.
 
 Usage:
     python -m aedist.plot_exp2_arms_split \
-        --input report/inputs/generated/tab_exp2_arms_runs.csv \
+        --input report/inputs/generated/tab_exp2_arms_runs_view.csv \
         --exp1-input report/inputs/generated/cost_quality.csv \
         --coverage-output report/inputs/generated/fig_exp2_coverage.pdf \
         --cost-output report/inputs/generated/fig_exp2_cost.pdf
@@ -24,11 +24,9 @@ Usage:
 
 import argparse
 import csv
-import json
 import logging
 from pathlib import Path
 
-from .extract import count_best_table_rows
 from .util import (
     COLOR_HALLUC,
     COLOR_REFERENCE,
@@ -84,47 +82,8 @@ def _canonical_arm(raw: str) -> str:
 # ---- data loading ------------------------------------------------------------
 
 
-def _inventory_rows_from_flat(json_path: Path) -> int:
-    payload = json.loads(json_path.read_text(encoding="utf-8"))
-    for key in ("inventory_rows", "n_rows"):
-        val = payload.get(key)
-        if isinstance(val, int):
-            return val
-    md_path = json_path.with_suffix(".md")
-    if md_path.exists():
-        return count_best_table_rows(md_path.read_text(encoding="utf-8"))
-    return 0
-
-
-def _load_pack_arm_rows(base_dir: Path, arm: str) -> list[dict]:
-    if not base_dir.exists():
-        return []
-    rows: list[dict] = []
-    for json_path in sorted(base_dir.glob("*.json")):
-        payload = json.loads(json_path.read_text(encoding="utf-8"))
-        agent = str(payload.get("agent") or "").strip()
-        if agent not in _AGENT_ORDER:
-            continue
-        model = str(payload.get("model") or _AGENT_MODEL[agent])
-        run = int(payload.get("run") or 0)
-        classification = str(payload.get("classification") or "report")
-        rows.append(
-            {
-                "arm": arm,
-                "agent": agent,
-                "model": model,
-                "run": run,
-                "classification": classification,
-                "inventory_rows": _inventory_rows_from_flat(json_path),
-                "n_matched": None,
-                "cost_usd": float(payload.get("total_cost_usd", payload.get("cost_usd")) or 0.0),
-                "is_report": classification == "report",
-            }
-        )
-    return rows
-
-
 def load_exp2_rows(path: Path) -> list[dict]:
+    """Load from tab_exp2_arms_runs_view.csv, which carries n_matched for all 4 arms."""
     rows = []
     with path.open(newline="") as fh:
         for row in csv.DictReader(fh):
@@ -137,13 +96,6 @@ def load_exp2_rows(path: Path) -> list[dict]:
             row["arm"] = _canonical_arm(row["arm"])
             row["is_report"] = row["classification"] == "report"
             rows.append(row)
-
-    present_arms = {r["arm"] for r in rows}
-    root = path.parents[3]
-    if "arm3" not in present_arms:
-        rows.extend(_load_pack_arm_rows(root / "experiments/derived/arm3_flat", "arm3"))
-    if "arm4" not in present_arms:
-        rows.extend(_load_pack_arm_rows(root / "experiments/derived/arm4_flat", "arm4"))
     return rows
 
 
@@ -343,7 +295,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Split Exp2 arms figure into separate coverage and cost panels with Exp1 baseline"
     )
-    parser.add_argument("--input", required=True, help="Path to tab_exp2_arms_runs.csv")
+    parser.add_argument("--input", required=True, help="Path to tab_exp2_arms_runs_view.csv")
     parser.add_argument(
         "--exp1-input", required=True, help="Path to cost_quality.csv (Exp1 summary)"
     )
