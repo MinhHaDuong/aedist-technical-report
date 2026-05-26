@@ -212,10 +212,12 @@ $(ANALYSIS_EXP2_BIB_TABLE): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
 	    --input $< \
 	    --output $@
 
-$(ANALYSIS_EXP2_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
+$(ANALYSIS_EXP2_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
-	    --input $< \
+	    --input $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
+	    --arms-input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
 	    --output $@
 
 $(ANALYSIS_EXP2_SPIRE_FIG): $(ANALYSIS_GEN)/sota_cross_eval_view.csv experiments/quality_spider_config.yaml
