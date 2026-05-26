@@ -1,0 +1,17 @@
+agent,arm,mode,docs,f1_mean,n_f1,n_total,cost_mean
+anthropic,naive,single,no,0.5892,5,5,2.0170
+anthropic,optimised,multi,no,0.5731,5,5,1.7801
+anthropic,arm3,single,yes,0.6075,5,5,2.7387
+anthropic,arm4,multi,yes,0.3945,5,5,3.5968
+mistral,naive,single,no,0.4853,5,5,0.2477
+mistral,optimised,multi,no,0.3375,5,5,0.2291
+mistral,arm3,single,yes,0.5879,5,5,0.0602
+mistral,arm4,multi,yes,0.5236,5,5,0.2106
+openai,naive,single,no,0.6109,5,5,0.2727
+openai,optimised,multi,no,0.6276,5,5,0.6802
+openai,arm3,single,yes,0.7170,5,5,0.4817
+openai,arm4,multi,yes,0.7088,5,5,1.0462
+qwen,naive,single,no,0.3428,5,5,0.0562
+qwen,optimised,multi,no,0.2295,5,5,0.2059
+qwen,arm3,single,yes,0.6008,5,5,0.3042
+qwen,arm4,multi,yes,0.5202,5,5,0.7552
