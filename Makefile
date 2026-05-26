@@ -9,8 +9,6 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-include report/exp2-analysis.mk
-
 .PHONY: test test-fast lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
@@ -212,38 +210,6 @@ $(GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_capability_dag \
 	    --input $< --output $@
-
-$(GEN)/fig_exp2_coverage.pdf $(GEN)/fig_exp2_cost.pdf &: $(GEN)/tab_exp2_arms_runs_view.csv $(GEN)/cost_quality.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_exp2_arms_split \
-	    --input $(GEN)/tab_exp2_arms_runs_view.csv \
-	    --exp1-input $(GEN)/cost_quality.csv \
-	    --coverage-output $(GEN)/fig_exp2_coverage.pdf \
-	    --cost-output $(GEN)/fig_exp2_cost.pdf
-
-$(SLIDE_GEN)/macros.tex: $(GEN)/census_bars.csv $(MEASUREMENTS)
-	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
-
-# Exp2 2x2 factorial table (F1 + cost). Generated from the cross-eval handoff
-# (itself rebuilt from model replies by experiments/analysis.mk). English for
-# the report, French for the slide deck — same data, --lang switches labels.
-EXP2_2X2_SRC := experiments/derived/sota_cross_eval.csv $(wildcard experiments/derived/arm*_flat/*.json)
-
-$(GEN)/tab_exp2_2x2.tex: $(EXP2_2X2_SRC)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_exp2_2x2 \
-	    --cross-eval-csv experiments/derived/sota_cross_eval.csv \
-	    --flat-root experiments/derived \
-	    --output-csv experiments/derived/tab_exp2_2x2.csv \
-	    --output-tex $@ --lang en
-
-$(SLIDE_GEN)/tab_exp2_2x2.tex: $(EXP2_2X2_SRC)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_exp2_2x2 \
-	    --cross-eval-csv experiments/derived/sota_cross_eval.csv \
-	    --flat-root experiments/derived \
-	    --output-csv experiments/derived/tab_exp2_2x2.csv \
-	    --output-tex $@ --lang fr
 
 # --- Publications -------------------------------------------------------------
 
