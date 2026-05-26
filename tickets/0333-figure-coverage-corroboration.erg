@@ -1,0 +1,33 @@
+%erg v1
+Title: Figure Coverage vs Corroboration: alpha, rouge, cap 163, titre
+Created: 2026-05-26
+Author: claude
+Blocked-by: 0330
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Figure Coverage vs Corroboration ».
+
+## Nomenclature
+Labels conditions : 1N, 5N, 1D, 5D. Ne jamais utiliser A, B, W.
+
+## Actions
+1. Titre : « How many rows are justified by two sources? »
+2. Sous-titre : légende glyph style sur une ligne avec 1N, 5N, 1D, 5D (sans nommer les arms)
+3. Runs individuels : alpha très faible (quasi invisible)
+4. Moyennes : alpha normal (pleinement visibles)
+5. Debug valeur max : plafonner l'axe X à 163 (163 = nombre d'assets de référence)
+   — valeur 175+ est incohérente, vérifier et corriger dans le script
+6. Ajouter les hallucinations en **rouge** (points/glyphs sans label de modèle) :
+   montrer si les hallucinations sont quand même corroborées par 2 sources
+
+## Exit criteria
+- [ ] Titre et sous-titre corrects avec labels 1N/5N/1D/5D
+- [ ] Runs individuels quasi invisibles, moyennes en alpha normal
+- [ ] Axe X plafonné à 163, valeur 175+ disparue
+- [ ] Hallucinations en rouge visibles sur la figure
+- [ ] Figure régénérée et insérée dans slides
+- [ ] `tectonic slides/slides.tex` passe sans erreur

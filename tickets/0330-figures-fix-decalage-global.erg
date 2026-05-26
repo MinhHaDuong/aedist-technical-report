@@ -1,0 +1,29 @@
+%erg v1
+Title: Figures: fix décalage droite systémique (toutes figures slides)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Bug global figures ».
+
+## Context
+Toutes les figures des slides débordent/sont clippées à droite.
+Hypothèse : figures générées avec un canvas plus large que le rendu final des slides,
+puis centrées dans ce canvas, ce qui les fait clipper à droite dans Beamer.
+
+## Actions
+1. Identifier comment les figures sont incluses dans les slides (chemin, `\includegraphics` options)
+2. Identifier les scripts Python qui génèrent les figures (chercher dans `src/aedist/plot_*.py`)
+3. Diagnostiquer la cause : figsize trop large ? bbox_inches manquant ? pad_inches ? savefig DPI ?
+4. Appliquer le fix systémique sur tous les scripts concernés (ne pas patcher slide par slide)
+5. Régénérer toutes les figures affectées via `make`
+
+## Exit criteria
+- [ ] Cause du décalage identifiée et documentée dans le log
+- [ ] Fix appliqué à la source (scripts Python), pas dans le LaTeX
+- [ ] Toutes les figures régénérées et alignées à gauche dans le rendu PDF des slides
+- [ ] `tectonic slides/slides.tex` passe sans erreur

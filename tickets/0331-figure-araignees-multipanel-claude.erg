@@ -1,0 +1,37 @@
+%erg v1
+Title: Figure araignées: multipanel + nouvelle diapo Claude seul
+Created: 2026-05-26
+Author: claude
+Blocked-by: 0330
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Diapo 7 (araignées) ».
+
+## Actions — Multipanel existant
+1. Subplot bas-droite : garder seulement Qwen, supprimer DeepSeek
+2. Titre : « Qualité des réponses : ask one shot, reasoning on, websearch off, docs provided none. »
+3. Axes : garder seulement les noms d'axes, supprimer les critères détaillés sur le graphe
+4. Légendes : passer en colonne à côté (pas en dessous) pour gagner de la taille
+5. Titre de panel intègre la légende, non répété. Format :
+   ```
+   (a) Claude
+   — Haiku 4.5
+   — Sonnet 4.6
+   — Opus 4.6
+   ```
+
+## Actions — Nouvelle diapo : araignée Claude seul
+1. Créer une nouvelle figure : une seule araignée en grand pour les 3 modèles Claude
+2. Afficher les 5 axes avec les 2 critères par axe en français explicite (pas d'abréviation)
+3. Insérer cette diapo juste après le multipanel dans les slides
+
+## Exit criteria
+- [ ] Subplot Qwen sans DeepSeek
+- [ ] Titre multipanel mis à jour
+- [ ] Légendes en colonne, titre panel intègre la légende
+- [ ] Nouvelle figure Claude seul générée et insérée
+- [ ] `tectonic slides/slides.tex` passe sans erreur

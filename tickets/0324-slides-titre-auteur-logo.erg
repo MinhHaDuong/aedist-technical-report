@@ -1,0 +1,25 @@
+%erg v1
+Title: Slides: titre diapo 1, Dr. Minh, multi-logo
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Diapo 1 (Titre) ».
+
+## Context
+Diapo de titre des slides Econom'IA 2026.
+
+## Actions
+1. Ajouter « Dr. » devant Minh dans le champ auteur
+2. Remplacer le second « CIRED - CNRS » par le multi-logo (chercher l'asset logo dans `slides/`)
+   - Fallback si logo absent : logo CIRED avec tutelles en texte
+3. Titre : laisser un `% TODO: revoir titre selon programme Econom'IA` — ne pas modifier le titre actuel
+
+## Exit criteria
+- [ ] « Dr. Minh » apparaît dans le PDF compilé
+- [ ] Second logo remplacé (ou fallback texte en place)
+- [ ] `tectonic slides/slides.tex` passe sans erreur

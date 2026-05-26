@@ -1,0 +1,33 @@
+%erg v1
+Title: Slides: diapos 17-18, 19, Merci (texte + QR)
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Diapos 17-18 », « Diapo 19 », « Diapo Merci ».
+
+## Actions — Diapos 17-18
+Reformuler l'intro/titre pour clarifier la fonction : vérification quantitative des messages-clés
+vus sur les graphes — sans aller jusqu'aux p-values.
+
+## Actions — Diapo 19
+Reformuler et réordonner en exactement 4 points :
+1. Multi-tour : pas si utile
+2. Fournir les sources : nécessaire
+3. Coût : de quelques centimes à quelques euros par requête
+4. L'IA produit-elle des données de qualité recherche : pas encore
+
+## Actions — Diapo Merci
+1. Lien vers le repo : s'assurer qu'il est cliquable (hyperlien actif dans le PDF)
+2. Ajouter un QR code en grand vers le repo GitHub du projet
+   (générer le QR code PNG/PDF via `qrencode` ou équivalent disponible)
+
+## Exit criteria
+- [ ] Diapos 17-18 : reformulation en place
+- [ ] Diapo 19 : 4 points dans le bon ordre
+- [ ] Diapo Merci : lien actif + QR code visible en grand
+- [ ] `tectonic slides/slides.tex` passe sans erreur

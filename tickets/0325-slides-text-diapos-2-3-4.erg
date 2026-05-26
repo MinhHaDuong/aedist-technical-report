@@ -1,0 +1,32 @@
+%erg v1
+Title: Slides: éditions texte diapos 2, 3, 4
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Diapo 2 », « Diapo 3 », « Diapo 4 ».
+
+## Actions — Diapo 2
+1. Titre : remplacer « Le problème » par « L'IA peut-elle produire des données qualité recherche ? »
+2. Supprimer cette même phrase du corps de la diapo
+
+## Actions — Diapo 3
+1. Vérifier les chiffres cités dans la diapo contre les logs (fichier de run ou measurements.jsonl)
+2. Supprimer le texte du prompt de la diapo ; remplacer par « Engineered, 84 lignes »
+3. Ajouter « Effort de raisonnement par défaut. » dans le bloc Conditions
+4. Remonter le bloc Conditions au niveau du bloc modèle (pas en bas de diapo)
+
+## Actions — Diapo 4
+1. Layout : image alignée à gauche, colonne de texte alignée à droite avec marge 2em
+2. Titre hardcodé dans le fichier figure : « How do models recall Vietnam's thermal power assets? Not well. »
+   (chercher le script Python qui génère cette figure et modifier le titre là)
+
+## Exit criteria
+- [ ] Diapo 2 : titre mis à jour, phrase supprimée du corps
+- [ ] Diapo 3 : chiffres vérifiés, prompt remplacé, Conditions repositionnées
+- [ ] Diapo 4 : layout image/texte correct, titre figure mis à jour
+- [ ] `tectonic slides/slides.tex` passe sans erreur

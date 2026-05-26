@@ -1,0 +1,85 @@
+%erg v1
+Title: Slides: 2 nouvelles diapos structure prompt + Quality dimensions
+Created: 2026-05-26
+Author: claude
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` sections « Diapo 3 » (structure) et « Diapo 5 » (quality dimensions).
+Source : `experiments/sota/protocol_07_naive_prompt.md`
+
+## Context
+Deux nouvelles diapos à insérer dans la section prompt de la présentation :
+- Slide A (structure) : après la diapo qui mentionne « Engineered, 84 lignes »
+- Slide B (quality dimensions) : remplace l'ancienne diapo « Qualité du résultat » (voir ticket 0326)
+
+## Actions — Slide A : Structure du prompt
+Créer une diapo avec ce contenu verbatim (sections/sous-sections, corps tronqué avec `...`) :
+
+```
+# GOAL
+
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future
+thermal generation assets (> 30 MWe). Begin the document directly with the inventory table —
+no title, no preamble, no overview section. Structure it as follows:
+
+- the plant inventory: ...: Name (Vietnamese), Name (English), Province, Fuel
+  (Coal / Domestic gas / Imported LNG), Technology (...), Units × MW, Total MWe, Status,
+  Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
+  Do not add statistical summary, cross-tabulation, or any other pipe tables;
+  fold aggregate statistics into prose.
+- per-asset or per-project explanatory notes: ...
+- an annotated bibliography ...
+
+Scope includes ...
+
+When uncertain, mark confidence... .
+
+Output format: Markdown.
+
+# QUALITY DIMENSIONS
+
+# CONTEXT
+
+## Source quality management
+
+## Calibrated confidence vocabulary
+
+## Asset-row and status rules
+```
+
+## Actions — Slide B : Quality dimensions
+Créer une diapo avec ce contenu verbatim extrait de `protocol_07_naive_prompt.md` :
+
+```
+# QUALITY DIMENSIONS
+
+Your output is judged on four axes:
+
+1. *Accuracy* — right assets and right attributes. Row level: recall and precision against
+   a curated reference (F1). Cell level: capacity, fuel, location, operator, COD, status correct.
+   Confident fabrication is the policed failure mode.
+2. *Coherence* — internally and externally consistent. Totals reconcile with known subtotals;
+   no negative capacities, no double-counted units, no cross-row contradiction; values plausible
+   in unit, magnitude, geography, technology, date. Conflicting sources reconciled explicitly
+   (which chosen and why), not silently.
+3. *Provenance* — each value traces to a source that actually supports it, not a merely plausible
+   citation. Two independent primaries is the ideal; one primary, a regulator database, or a
+   marked secondary is weaker but acceptable if its status is explicit. Unsupported values
+   are the failure.
+4. *Temporality* — every value carries a best-effort as-of date; status changes are flagged.
+   Distinguish current status from past reports, planned from operating capacity, source date
+   from fact date.
+
+We prefer a comprehensive inventory with uncertainty clearly expressed over a
+shortlist of well-known assets.
+```
+
+## Exit criteria
+- [ ] Slide A insérée avec la structure du prompt (sections visibles, corps tronqué)
+- [ ] Slide B insérée avec Quality dimensions verbatim
+- [ ] Ordre des slides cohérent avec ticket 0326
+- [ ] `tectonic slides/slides.tex` passe sans erreur

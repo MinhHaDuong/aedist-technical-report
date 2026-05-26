@@ -1,0 +1,56 @@
+%erg v1
+Title: Figure Coverage and costs exp2: redesign complet
+Created: 2026-05-26
+Author: claude
+Blocked-by: 0330
+
+--- log ---
+2026-05-26T10:00Z claude created
+
+--- body ---
+## Verbatim
+Voir `slides-review-verbatim.md` section « Figure Coverage and costs, experiment 2 ».
+
+## Nomenclature
+Labels conditions : 1N (singleshot, no docs), 5N (multiturn, no docs), 1D (singleshot, docs), 5D (multiturn, docs).
+Ne jamais utiliser A, B, W.
+
+## Context
+La figure actuelle s'appelle « One query providing documents... ».
+RAG doit être introduit dans la timeline industrie et dans la diapo description exp2 AVANT cette figure.
+À la fin de la diapo exp2 (ticket 0327), ajouter : « Quatre conditions : 1N ; 5N ; 1D ; 5D »
+
+## Actions — Diapo et contexte
+1. Introduire RAG dans la diapo timeline industrie (chercher dans slides)
+2. Introduire RAG dans la description de l'exp2 (diapo 10 — ticket 0327)
+3. Supprimer « Matched / Hallucinated » du titre/légende actuelle
+
+## Actions — Figure : structure générale
+- Titre : « Coverage and costs, experiment 2 »
+- Sous-titre : légende sur une ligne — « 1N = Singleshot, no doc · 5N = Multiturn, no doc · 1D = Singleshot, docs · 5D = Multiturn, docs »
+- Pour chaque modèle : 4 barres (1N, 5N, 1D, 5D)
+  - Petit espace entre barres d'un même modèle, grand espace entre modèles
+  - Hauteur = moyenne des 5 reps
+  - Couleur = couleur du modèle dans le talk
+  - Variance : ligne noire fine verticale avec les 5 valeurs individuelles comme petits segments horizontaux
+
+## Actions — Panel gauche (Coverage)
+- Hallucinations (faux positifs) en **rouge** dans les négatifs (sous zéro)
+- Assets correctement identifiés en couleur du modèle dans les positifs
+- Même principe que la figure « Which model recalls... » exp1 mais barres verticales à moustaches
+- Conserver axe Y (-50 → +150) avec barre verte horizontale à 0
+- Label axe Y en haut, écriture horizontale : « 163 plants »
+- Titre axe : « Number of assets identified (red are False Positives) »
+
+## Actions — Panel droit (Cost)
+- Même structure 4 barres à moustaches par modèle
+- Titre axe Y : « API Cost per run, USD »
+- Supprimer la légende d'axe Y (redondant avec titre)
+
+## Exit criteria
+- [ ] Titre et sous-titre corrects avec labels 1N/5N/1D/5D
+- [ ] Panel gauche : rouge pour faux positifs, couleur modèle pour vrais positifs, axe Y correct
+- [ ] Panel droit : titre axe correct
+- [ ] Variance inter-run visible (ligne + segments)
+- [ ] Figure régénérée et insérée dans slides
+- [ ] `tectonic slides/slides.tex` passe sans erreur
