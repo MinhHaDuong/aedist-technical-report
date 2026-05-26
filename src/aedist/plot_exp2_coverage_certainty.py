@@ -5,6 +5,11 @@ figure); Y = assets backed by two sources (``src2_present``). One point per
 run; per-model colour; condition (1N/5N/1D/5D) shown by glyph. Individual runs
 are drawn at low alpha and the per-(model, condition) means at full alpha.
 
+Glyph encoding (two-dimensional):
+  Shape  — tours:     cercle (o) = 1 tour,  carré (s) = multitour (5 tours)
+  Fill   — documents: plein (filled) = avec docs (D),  vide (empty) = sans docs (N)
+  Colour — model family
+
 Usage:
     python -m aedist.plot_exp2_coverage_certainty \
         --input report/inputs/generated/tab_exp2_bib_quality_view.csv \
@@ -38,10 +43,12 @@ _AGENT_LABELS = {
 
 _AGENT_COLORS = {agent: model_family_color(slug) for agent, slug in _AGENT_SLUG.items()}
 
-# Condition labels (no arm names): glyph encodes turns x docs.
+# Glyph encoding: shape = tours (cercle=1, carré=5); fill = docs (plein=D, vide=N)
 _COND_LABEL = {"naive": "1N", "optimised": "5N", "arm3": "1D", "arm4": "5D"}
-_COND_MARKER = {"naive": "o", "optimised": "D", "arm3": "s", "arm4": "^"}
-_COND_ORDER = ["naive", "optimised", "arm3", "arm4"]
+_COND_MARKER = {"naive": "o", "optimised": "s", "arm3": "o", "arm4": "s"}
+_COND_FILLED = {"naive": False, "optimised": False, "arm3": True, "arm4": True}
+# Legend order: 1D, 1N, 5D, 5N (cercles first, then carrés)
+_COND_ORDER = ["arm3", "naive", "arm4", "optimised"]
 
 
 def _load_matched(path: Path) -> dict[tuple[str, str, int], int]:
@@ -92,13 +99,16 @@ def make_figure(points: list[dict], output: Path) -> None:
     grouped: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for p in points:
         grouped[(p["agent"], p["arm"])].append(p)
+        filled = _COND_FILLED[p["arm"]]
+        color = _AGENT_COLORS[p["agent"]]
         ax.scatter(
             p["x"],
             p["y"],
             marker=_COND_MARKER[p["arm"]],
             s=28,
-            facecolors=_AGENT_COLORS[p["agent"]],
-            edgecolors="none",
+            facecolors=color if filled else "none",
+            edgecolors="none" if filled else color,
+            linewidths=0.8,
             alpha=0.15,
             zorder=2,
         )
@@ -106,14 +116,16 @@ def make_figure(points: list[dict], output: Path) -> None:
     for (agent, arm), pts in grouped.items():
         mean_x = sum(p["x"] for p in pts) / len(pts)
         mean_y = sum(p["y"] for p in pts) / len(pts)
+        filled = _COND_FILLED[arm]
+        color = _AGENT_COLORS[agent]
         ax.scatter(
             mean_x,
             mean_y,
             marker=_COND_MARKER[arm],
             s=70,
-            facecolors=_AGENT_COLORS[agent],
-            edgecolors="black",
-            linewidths=0.8,
+            facecolors=color if filled else "none",
+            edgecolors="black" if filled else color,
+            linewidths=0.8 if filled else 1.2,
             alpha=0.95,
             zorder=4,
         )
@@ -136,14 +148,14 @@ def make_figure(points: list[dict], output: Path) -> None:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Subtitle: glyph legend on one line, conditions only (no arm names).
+    # Glyph legend row above the plot, encoding explanation as figure footnote
     cond_handles = [
         Line2D(
             [0],
             [0],
             marker=_COND_MARKER[cond],
             linestyle="",
-            markerfacecolor="0.4",
+            markerfacecolor="0.4" if _COND_FILLED[cond] else "none",
             markeredgecolor="0.4",
             markersize=7,
             label=_COND_LABEL[cond],
@@ -161,6 +173,14 @@ def make_figure(points: list[dict], output: Path) -> None:
         columnspacing=1.4,
     )
     ax.add_artist(cond_legend)
+    fig.text(
+        0.5,
+        0.01,
+        "rond = 1 tour   carré = 5 tours   |   plein = avec documents   vide = sans documents",
+        ha="center",
+        fontsize=7.5,
+        color="0.4",
+    )
 
     model_handles = [
         Line2D(

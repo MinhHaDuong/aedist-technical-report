@@ -12,11 +12,31 @@ from aedist.tabulate_exp2_2x2 import (
     cell_table,
     collapse_runs,
     factor_effects,
+    render_tex,
 )
 
 
 def _rec(agent, arm, run, f1, cost):
     return {"arm": arm, "agent": agent, "model": agent, "run": str(run), "cost": cost, "f1": f1}
+
+
+def _render_inputs():
+    cell = {"f1_mean": 0.5, "f1_sd": 0.1, "cost_ratio": 1.0, "cost_abs": 0.65}
+    cells = {a: dict(cell) for a in ("naive", "optimised", "arm3", "arm4")}
+    eff = {k: {"effect": 0.1, "k_positive": 3, "n": 4} for k in ("docs", "mode", "interaction")}
+    return cells, eff, dict(eff)
+
+
+def test_render_tex_lang_switches_labels():
+    cells, f1_eff, cost_eff = _render_inputs()
+    en = render_tex(cells, f1_eff, cost_eff, lang="en")
+    fr = render_tex(cells, f1_eff, cost_eff, lang="fr")
+    assert "Without docs" in en and "Single query" in en
+    assert "Sans documents" in fr and "Requête unique" in fr
+    assert "Without docs" not in fr
+    # numbers are locale-neutral and identical across languages
+    assert "0.500" in en and "0.500" in fr
+    assert en.strip().endswith("\\end{tabular}")
 
 
 def _f1_records():

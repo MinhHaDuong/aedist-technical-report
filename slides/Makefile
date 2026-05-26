@@ -17,6 +17,7 @@ SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
 	$(GENERATED)/macros.tex \
+	$(GENERATED)/tab_exp2_2x2.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
 
 MANUSCRIPT_ASSETS := \
