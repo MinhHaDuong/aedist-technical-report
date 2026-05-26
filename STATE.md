@@ -1,4 +1,4 @@
-Last updated: 2026-05-26T07:57Z
+Last updated: 2026-05-26T13:29Z
 
 ## North star
 
@@ -15,25 +15,27 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 Finalize slides and manuscript for conference delivery (2026-05-27). Analysis pipeline complete; figures produced for Exp 1, 2, 3; take-home messages ratified.
 
 ## Status
-<!-- generated 2026-05-26T07:57Z -->
+<!-- generated 2026-05-26T13:29Z -->
 
-**Tickets:** 44 ready · 19 blocked — `erg ready tickets/` for full list
+**Tickets:** 29 ready · 4 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  1b5d6c2 Merge pull request #573 from MinhHaDuong/tickets/slides-econom-ia-2026-batch
-  ab8703b tickets: panel review corrections + 8 new tickets (0336-0343)
-  54fe077 tickets: open 0324-0335 slides review batch (Econom'IA 2026)
-  b2c0cf4 Merge pull request #572 from MinhHaDuong/chore/close-0323-orphan-branches
-  29ab5ce tickets: close 0323 — content already on main, branch deleted
+  2ea1cc2 tickets: archive closed raid batch 0324-0344 to closed/
+  bd15908 data(exp2): absorb qwen arm4 run01 rerun on correct model → 80/80 scored
+  592d0fa fix(exp2): recover 5 unscored runs (non-canonical headers + earlier-turn)
+  3b83100 tickets: open 0345 — collapse Exp2 build to a single producer
+  5e7bc0b fix(exp2): recover mistral arm4 run01; guard old qwen
 
 ## Workplan
 
 1. **Experiment 3 runs.** DONE.
 2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
 3. **Update manuscript.** Integrate figures and narrative. DONE — 0313–0318 closed.
-4. **Update slides.** Review batch in flight — 20 tickets opened 2026-05-26 (0324–0343) covering text, figures, restructuration, prompt slides. Raid from padme.
-5. **Present.** Final rehearsal and delivery at Econom'IA 2026.
+4. **Update slides.** DONE — review batch 0324–0343 raided + merged (text, figures, restructuration, prompt slides, final order 0341). Exp2 rescored to **80/80** (full 2×2, all correct models: mistral/arm3/4-arm extraction fixes + qwen rerun on qwen3.7-max); coverage figures regenerated + verified. Author hand-tuning slides.tex.
+5. **Present.** Final rehearsal and delivery at Econom'IA 2026 (2026-05-27).
 
 ## Backlog / deferred
 
 - Scaling-curve diagnosis — direct_complete F1=0 on 3 capable models (parser failure suspected).
 - Paper writing opens after slides locked post-conference.
+- Makefile DAG (ticket 0345): Exp2 build has a stale duplicate producer (`report/exp2-analysis.mk` reads deprecated dirs) and `make slides` omits 5 deck figures — `make slides` not yet reproducible. Collapse to single producer post-conference.
+- CI required-checks rule was disabled 2026-05-26 for the conference push — re-enable after the talk.
