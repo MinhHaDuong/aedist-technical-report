@@ -1,4 +1,4 @@
-Last updated: 2026-05-26T05:00Z
+Last updated: 2026-05-26T07:57Z
 
 ## North star
 
@@ -15,21 +15,22 @@ Abstract: `docs/HaDuong-2026-EconomIA-Abstract.md`. Milestone: runs → analysis
 Finalize slides and manuscript for conference delivery (2026-05-27). Analysis pipeline complete; figures produced for Exp 1, 2, 3; take-home messages ratified.
 
 ## Status
-<!-- generated 2026-05-26T05:00Z -->
-**Tickets:** 25 ready · 42 open — `erg ready tickets/` for full list
+<!-- generated 2026-05-26T07:57Z -->
+
+**Tickets:** 44 ready · 19 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  f73ea715 Merge pull request #569 — ticket-housekeeping-0318
-  07d84303 Merge pull request #568 — raid-320-321-322-ticket-lifecycle
-  25994741 Merge PR #567: add Makefile rule to rebuild sota_cross_eval.csv (0321)
-  0268a4af Merge PR #566: fix coherence column name mismatch (0322)
-  3fd380f3 Merge PR #565: fix cost_usd fallback for arm4 arms comparison (0320)
+  1b5d6c2 Merge pull request #573 from MinhHaDuong/tickets/slides-econom-ia-2026-batch
+  ab8703b tickets: panel review corrections + 8 new tickets (0336-0343)
+  54fe077 tickets: open 0324-0335 slides review batch (Econom'IA 2026)
+  b2c0cf4 Merge pull request #572 from MinhHaDuong/chore/close-0323-orphan-branches
+  29ab5ce tickets: close 0323 — content already on main, branch deleted
 
 ## Workplan
 
 1. **Experiment 3 runs.** DONE.
 2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
 3. **Update manuscript.** Integrate figures and narrative. DONE — 0313–0318 closed.
-4. **Update slides.** Align conference slides with refreshed evidence. DONE — 0318 closed.
+4. **Update slides.** Review batch in flight — 20 tickets opened 2026-05-26 (0324–0343) covering text, figures, restructuration, prompt slides. Raid from padme.
 5. **Present.** Final rehearsal and delivery at Econom'IA 2026.
 
 ## Backlog / deferred
