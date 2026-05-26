@@ -29,7 +29,7 @@ from pathlib import Path
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-from .util import model_family_color
+from .util import SLIDE_FIGSIZE_FULL, model_family_color
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +91,7 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
             continue
         by_stage[stage].append((lab, ship_date))
 
-    fig, ax = plt.subplots(figsize=(9, 5.2))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_FULL)
 
     # One y position per stage; stage 1 at the top.
     stages_sorted = sorted(FEATURE_LABELS)

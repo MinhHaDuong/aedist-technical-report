@@ -22,7 +22,13 @@ import random
 from pathlib import Path
 
 from .extract import count_best_table_rows
-from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, model_family_color
+from .util import (
+    COLOR_HALLUC,
+    COLOR_MATCHED,
+    COLOR_REFERENCE,
+    SLIDE_FIGSIZE_FULL,
+    model_family_color,
+)
 
 log = logging.getLogger(__name__)
 
@@ -258,7 +264,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.0, 5.1))
+    fig, axes = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_FULL)
     no_report_rows = [r for r in rows if not r["is_report"]]
     if no_report_rows:
         sample = ", ".join(f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6])

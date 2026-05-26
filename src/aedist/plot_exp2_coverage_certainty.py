@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 from .extract_exp2_bib import parse_md
-from .util import glyph_scatter_kwargs, model_family_color
+from .util import SLIDE_FIGSIZE_HALF, glyph_scatter_kwargs, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
-    fig, ax = plt.subplots(figsize=(5.5, 4.0))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_HALF)
 
     rows = [r for r in rows if r["n_rows"] > 0]
 

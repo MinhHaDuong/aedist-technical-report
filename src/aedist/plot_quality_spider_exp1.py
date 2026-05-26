@@ -12,7 +12,7 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
-from .util import COLOR_NEUTRAL, model_family, model_family_color
+from .util import COLOR_NEUTRAL, SLIDE_FIGSIZE_POLAR_2x2, model_family, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -140,7 +140,9 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
         msg = "exp1 spider: no profiles available from input"
         raise ValueError(msg)
 
-    fig, axes = plt.subplots(2, 2, figsize=(10.4, 8.4), subplot_kw={"projection": "polar"})
+    fig, axes = plt.subplots(
+        2, 2, figsize=SLIDE_FIGSIZE_POLAR_2x2, subplot_kw={"projection": "polar"}
+    )
     angles = np.linspace(0, 2 * np.pi, len(_AXES), endpoint=False)
     closed_angles = np.concatenate((angles, [angles[0]]))
 
