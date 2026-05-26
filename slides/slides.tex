@@ -103,6 +103,46 @@ prompt \textit{Engineered}, 84 lignes.
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}[plain]
+\noindent
+\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
+\sout{Récalcitrant}\\
+Incomplet\\
+Hallucinant\\
+Non-déterministe\\
+Non-monotone
+};
+\end{tikzpicture}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{La bonne statistique exige plus que des vrais chiffres}
+\begin{center}
+{\small\textit{«~Connaissance~: croyance vraie justifiée.~»}}
+\end{center}
+
+\medskip
+\small
+Les données de qualité recherche se jugent sur cinq dimensions~:
+\begin{enumerate}\setlength\itemsep{4pt}
+  \item \textbf{Accuracy}~--- les bons actifs, les bons attributs (précision/recall, F1).
+  \item \textbf{Coherence}~--- totaux qui se réconcilient, valeurs plausibles, conflits arbitrés.
+  \item \textbf{Provenance}~--- chaque valeur tracée à une source qui la soutient vraiment.
+  \item \textbf{Temporality}~--- chaque valeur datée~; les changements de statut signalés.
+  \item \textbf{Fit for purpose}~--- niveau de détail approprié, opérationnel et mesuré.\\
+        {\small Ex.~: pour PyPSA la colonne Capacité doit être remplie --- on mesure le taux
+        de remplissage des champs critiques pour l'usage aval.}
+\end{enumerate}
+
+\bigskip
+\begin{center}
+\small\textbf{$\to$ Grille de notation multi-axes.}
+\end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}[fragile]{Structure du prompt \textit{Engineered}}
 \scriptsize
 \begin{verbatim}
@@ -139,21 +179,6 @@ Output format: Markdown.
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
-\noindent
-\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
-\begin{tikzpicture}[remember picture,overlay]
-\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
-\sout{Récalcitrant}\\
-Incomplet\\
-Hallucinant\\
-Non-déterministe\\
-Non-monotone
-};
-\end{tikzpicture}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{Quality dimensions}
 \small
 \textit{Your output is judged on four axes:}
@@ -177,26 +202,6 @@ Non-monotone
 \smallskip
 {\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed over
 a shortlist of well-known assets.}}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Qualité de la méthode~: les conditions actives}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -300,7 +305,7 @@ a shortlist of well-known assets.}}
 \end{frame}
 
 % ===================================================================
-\section{Architecture}
+\section{Discussion}
 
 % -------------------------------------------------------------------
 \begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
@@ -316,28 +321,45 @@ et où mènent les architectures à états agentiques.}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Quatre défaillances}
-\begin{center}
+\begin{frame}{Qualité de la méthode~: les conditions actives}
 \small
-\begin{tabular}{@{}ll@{}}
+\begin{center}
+\begin{tabular}{@{}c l p{8.5cm}@{}}
 \toprule
-\textbf{Défaillance} & \textbf{Symptôme} \\
+\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
 \midrule
-\textbf{Ancrage}\footnotemark[1]       & Chiffres sans sources              \\
-\textbf{Auditabilité}\footnotemark[2]  & Affirmations non traçables         \\
-\textbf{Fraîcheur}                     & Instantané figé à la coupure       \\
-\textbf{Fiabilité}\footnotemark[3]     & Cellules incertaines non signalées \\
+4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
+3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
+2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
+1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
+0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
 \bottomrule
 \end{tabular}
-\footnotetext[1]{van Fraassen, \textit{The Scientific Image}, 1980.}
-\footnotetext[2]{Popper, \textit{The Logic of Scientific Discovery}, 1959.}
-\footnotetext[3]{Intersubjectivité~: accord entre auditeurs indépendants.}
 \end{center}
+\smallskip
+{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\end{frame}
 
-\bigskip
-\begin{center}
-\small\textit{Chaque défaillance a un mécanisme correcteur mesurable.}
-\end{center}
+% -------------------------------------------------------------------
+\begin{frame}{Directions futures}
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Intégration RAG HITL des sources}]
+        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
+        le corpus RAG grandit de façon contrôlée.
+
+  \item[\textbf{Vérifié $>$ vérifiable}]
+        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
+        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
+
+  \item[\textbf{Niveau cellule~: KG par document}]
+        Chaque cellule est un triple (sujet, prédicat, objet)~;
+        la fusion de sources concurrentes devient fusion d'ensembles de triples.
+        Graphe de connaissances en lieu et place d'une master-table plate.
+
+  \item[\textbf{Secteur $\times$ pays}]
+        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
+        à l'eau en Thaïlande. Architecture identique, paramètres différents.
+\end{description}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -414,28 +436,6 @@ Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sa
 
   \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Directions futures}
-\begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Intégration RAG HITL des sources}]
-        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
-        le corpus RAG grandit de façon contrôlée.
-
-  \item[\textbf{Vérifié $>$ vérifiable}]
-        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
-        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
-
-  \item[\textbf{Niveau cellule~: KG par document}]
-        Chaque cellule est un triple (sujet, prédicat, objet)~;
-        la fusion de sources concurrentes devient fusion d'ensembles de triples.
-        Graphe de connaissances en lieu et place d'une master-table plate.
-
-  \item[\textbf{Secteur $\times$ pays}]
-        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
-        à l'eau en Thaïlande. Architecture identique, paramètres différents.
-\end{description}
 \end{frame}
 
 % -------------------------------------------------------------------
