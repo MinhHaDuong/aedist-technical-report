@@ -30,17 +30,10 @@
 \definecolor{qualgreen}{HTML}{27AE60}
 \definecolor{qualblue}{HTML}{2E86AB}
 
-% TODO (auteur) : revoir le titre en fonction des 3 critères de jugement —
-%   (1) le résultat principal du papier, (2) le take-home message,
-%   (3) l'intitulé annoncé dans le programme Econom'IA.
-%   Ne pas modifier le titre dans ce ticket : l'auteur le tranchera ensuite.
 \title{Beyond RAG}
-\subtitle{Vers des statistiques économiques fiables}
+\subtitle{Architectures for Reliable Economic Statistics with Agentic Systems}
 \author{Dr. Minh Ha-Duong}
-% TODO (auteur) : remplacer le bloc affiliation ci-dessous par le multi-logo
-%   (CIRED + tutelles) lorsque l'asset image sera disponible dans slides/.
-%   Fallback texte (logo CIRED avec tutelles) en place ci-dessous.
-\institute{CIRED -- CNRS\\{\small CNRS \textperiodcentered{} École des Ponts ParisTech \textperiodcentered{} AgroParisTech \textperiodcentered{} EHESS \textperiodcentered{} UPEC \textperiodcentered{} Université Gustave Eiffel}}
+\institute{CIRED, CNRS}
 \date{Econom'IA 2026 --- Thema, Cergy --- 27 mai 2026}
 
 \begin{document}
@@ -48,6 +41,12 @@
 % ===================================================================
 \begin{frame}
 \titlepage
+\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,inner sep=6pt] at (current page.north east)
+    {\includegraphics[height=1.4cm]{inputs/logo-cired.pdf}};
+  \node[anchor=south,inner sep=6pt] at (current page.south)
+    {\includegraphics[width=0.7\paperwidth]{inputs/Bandeau5Tutelles_2024.png}};
+\end{tikzpicture}
 \end{frame}
 
 % ===================================================================
@@ -85,62 +84,68 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 % -------------------------------------------------------------------
 \begin{frame}{Expérience 1 : utiliser un générateur de mots aléatoires}
 
-\textbf{\NumCensusModels{} modèles, 5 runs chacun (\CensusNumRuns{} runs, \CensusNumOk{} ok, \CensusNumRefusal{} refus)~:}
-prompt \textit{Engineered}, 84 lignes.
+\smallskip
+\textbf{Tâche~: Donne l'inventaire des centrales thermiques au Vietnam} en prompt de 84 lignes. Connaissance paramétrique uniquement: ni recherche web, ni documents fournis. Effort de raisonnement par défaut. Température = 0.
 
 \smallskip
-{\small \textit{Conditions~: \textbf{one shot}, connaissance paramétrique uniquement. Aucun document fourni. Web search désactivé. Effort de raisonnement par défaut.}}
+\textbf{Métrique principale~:} Nombre d'actifs correctement identifiés. Référence~: 163 centrales charbon, gaz, fioul $>30 MWe$
 
-\medskip
-\textbf{Résultats (163 centrales à identifier)~:}
-{\small\textit{Métrique principale du talk~: nombre d'assets identifiés sur 163 (F1 = moyenne harmonique précision/recall sur ce même référentiel).}}
+\smallskip
+\textbf{Résultats \NumCensusModels{} modèles, 5 runs chacun~:}
 \begin{itemize}\setlength\itemsep{0pt}
   \item Centrales identifiées~: \CensusTPMin{}--\CensusTPMax{} par run
   \item Centrales hallucinées~: \CensusFPMin{}--\CensusFPMax{} par run
-  \item Durée~: \CensusWallMin{}--\CensusWallMax{}~s
-  \item Coût~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
+  \item Durée par run~: \CensusWallMin{} s --20 min
+  \item Coûts~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}[fragile]{Structure du prompt \textit{Engineered}}
-\scriptsize
-\begin{verbatim}
-# GOAL
-
-Produce a complete, primary-sourced reference inventory of Vietnam's past, present and
-future thermal generation assets (> 30 MWe). Begin the document directly with the
-inventory table -- no title, no preamble, no overview section. Structure it as follows:
-
-- the plant inventory: ...: Name (Vietnamese), Name (English), Province, Fuel
-  (Coal / Domestic gas / Imported LNG), Technology (...), Units x MW, Total MWe, Status,
-  Status as-of-date, COD, Owner/Developer, Confidence, Source 1, Source 2, Notes.
-  Do not add statistical summary, cross-tabulation, or any other pipe tables;
-  fold aggregate statistics into prose.
-- per-asset or per-project explanatory notes: ...
-- an annotated bibliography ...
-
-Scope includes ...
-
-When uncertain, mark confidence... .
-
-Output format: Markdown.
-
-# QUALITY DIMENSIONS
-
-# CONTEXT
-
-## Source quality management
-
-## Calibrated confidence vocabulary
-
-## Asset-row and status rules
-\end{verbatim}
+\begin{frame}[plain]
+\noindent
+\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
+\begin{tikzpicture}[remember picture,overlay]
+\only<2->{%
+\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-1em]current page.east) {
+\sout{Récalcitrant}\\
+Incomplet\\
+Hallucinant\\
+Non-déterministe\\
+Non-monotone
+};
+}
+\end{tikzpicture}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Quality dimensions}
-\small
+\begin{frame}[fragile]{Structure du prompt}
+\scriptsize
+\textbf{\# GOAL}
+
+Produce a complete, primary-sourced reference inventory of Vietnam's past, present and future thermal generation assets (> 30 MWe) [...] Structure it as follows:
+
+- the plant inventory: [...]: Name (Vietnamese), Name (English), Province, Fuel [...], Confidence, Source 1, Source 2, Notes.
+- per-asset or per-project explanatory notes: [...]
+- an annotated bibliography [...]
+
+Scope includes [...]
+
+When uncertain, mark confidence [...]
+
+Output format: Markdown.
+
+\textbf{\# QUALITY DIMENSIONS} [...voir slide suivante...]
+
+\textbf{\# CONTEXT} (
+\#\# Source quality management
+\#\# Calibrated confidence vocabulary
+\#\# Asset-row and status rules
+)
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{\# Quality dimensions (prompt partie 2)}
+\smaller
 \textit{Your output is judged on four axes:}
 \begin{enumerate}\setlength\itemsep{4pt}
   \item \textit{Accuracy} --- right assets and right attributes. Row level: recall and
@@ -164,20 +169,6 @@ Output format: Markdown.
 a shortlist of well-known assets.}}
 \end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}[plain]
-\noindent
-\includegraphics[height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_p1_base.pdf}
-\begin{tikzpicture}[remember picture,overlay]
-\node[anchor=east,align=right,font=\bfseries\small] at ([xshift=-2em]current page.east) {
-\sout{Récalcitrant}\\
-Incomplet\\
-Hallucinant\\
-Non-déterministe\\
-Non-monotone
-};
-\end{tikzpicture}
-\end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{La bonne statistique exige plus que des vrais chiffres}
@@ -187,27 +178,19 @@ Non-monotone
 
 \medskip
 \small
-Les données de qualité recherche se jugent sur cinq dimensions~:
+Cinq axes pour juger la qualité des données statistiques de recherche~:
 \begin{enumerate}\setlength\itemsep{4pt}
-  \item \textbf{Accuracy}~--- les bons actifs, les bons attributs (précision/recall, F1).
-  \item \textbf{Coherence}~--- totaux qui se réconcilient, valeurs plausibles, conflits arbitrés.
-  \item \textbf{Provenance}~--- chaque valeur tracée à une source qui la soutient vraiment.
-  \item \textbf{Temporality}~--- chaque valeur datée~; les changements de statut signalés.
-  \item \textbf{Fit for purpose}~--- niveau de détail approprié, opérationnel et mesuré.\\
-        {\small Ex.~: pour PyPSA la colonne Capacité doit être remplie --- on mesure le taux
-        de remplissage des champs critiques pour l'usage aval.}
+  \item \textbf{Accuracy}~--- tous les actifs, que les actifs.
+  \item \textbf{Coherence}~--- totaux réconciliés, valeurs plausibles, conflits arbitrés.
+  \item \textbf{Provenance}~--- énoncés corroborés par deux sources sérieuses indépendantes.
+  \item \textbf{Temporality}~--- énoncés datés~; changements de statut signalés.
+      \item \textbf{Fit for purpose}~--- niveau de détail approprié.
 \end{enumerate}
 
 \bigskip
 \begin{center}
-\small\textbf{$\to$ Grille de notation multi-axes.}
+\small\textbf{$\to$ Grille de notation multi-axes, 2 scores par axe.}
 \end{center}
-\end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}[plain]
-\centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -219,24 +202,24 @@ Les données de qualité recherche se jugent sur cinq dimensions~:
 % -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_direct_cost_quality.pdf}
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
 \end{frame}
 
 % ===================================================================
 \section{Expérience 2}
 
 % -------------------------------------------------------------------
-\begin{frame}{De l'Exp 1 à l'Exp 2 : si la mémoire ne suffit pas, les sources peuvent-elles aider~?}
+\begin{frame}{De l'Exp 1 à l'Exp 2 : technique~?}
 \begin{itemize}\setlength\itemsep{1.0em}
-  \item \textbf{Bilan Exp 1.} Les modèles connaissent mal les actifs vietnamiens
-        (one shot, aucun document, connaissance paramétrique seule).
+  \item \textbf{Bilan Exp 1.} Les réponses d'un chatbot à un prompt de 84 lignes sont-elles des données de qualité recherche~? Non.
 
-  \item \textbf{Question Exp 2.} Fournir des documents primaires résout-il le problème~?
-
-  \item \textbf{Second axe.} Un dialogue multi-tours peut-il aider le modèle à
-        explorer sa connaissance et celle des documents~?
+  \item \textbf{Question Exp 2.} Comment faire mieux~? Quels facteurs comptent~: Autoriser la recherche web~? Approfondir le dialogue~? Fournir des documents sources~? Modèle plus puissant~?
 \end{itemize}
+
+LLM \textit{actual competencies: reformulation, translation, comparison, synthesis, or controlled hybridization of textual corpora.Such operations may be mobilized through short prompts, or integrated into hybrid processing loops combining scripts, applications, or agents programmed in Python.} (Las Vergnas et Jeunesse, Econom'IA 2026)
+
 \end{frame}
+
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
@@ -245,42 +228,27 @@ Les données de qualité recherche se jugent sur cinq dimensions~:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Expérience 2 : web search on, (oneshot, multiturn) × (without, with docs)}
+\begin{frame}{Expérience 2 design : (single turn, multiturn) × (no docs, with docs)}
 \begin{center}
+\bigskip
+{\small \textit{Quatre conditions : 1N (single turn, no docs)~; 5N~; 1D~; 5D (multiturn, with docs).}}
 \small
 \begin{tabular}{@{}l p{8.5cm}@{}}
-\toprule
-\textbf{Nombre de tours}  & passe unique / \textbf{multi-tours} (3 à 5) \\
-\textbf{Documentation}    & aucune / \textbf{RAG} massif (155 ko) \\
-\textbf{Agents}           & Opus~4.6, GPT-5.5, Mistral Large, \textbf{Qwen 3.7 max} \\
-\textbf{Documents}        & 18 tables, sources primaires, format \textbf{MD} \\
-\textbf{Répétitions}      & 5 par \textbf{cellule} \\
-\textbf{Contrôles}        & default reasoning effort, web search allowed, no tools, no code, direct lab API provider, même prompt de base, \textbf{< \$6}, < 50\,000 tokens \\
-\bottomrule
+\textbf{Nombre de tours}  & question unique (prompt Exp 1) / multi-tours (3 à 5) \\
+\textbf{Documentation}    & aucune / RAG 18 tables, sources primaires, Markdown \\
+\textbf{Agents}           & Opus~4.6, GPT-5.5, Mistral Large, Qwen 3.7 max \\
+\textbf{Répétitions}      & 5 (variabilité modèle) \\
+\textbf{Contrôles}        & default reasoning effort, web search allowed, no tools, no code, direct lab API provider \\
+\textbf{Ressources}      & coût < \$6, longueur < 50\,000 tokens \\
 \end{tabular}
-
-\smallskip
-{\footnotesize Sélection~: 4 SOTA, un par fournisseur principal (Anthropic, OpenAI, Mistral, Alibaba).}
 
 \medskip
 {\footnotesize RAG (\emph{Retrieval-Augmented Generation})~: le modèle reçoit des documents sources en entrée et génère sa réponse à partir de ces documents, plutôt que de répondre de mémoire.}
 
-\bigskip
-{\small \textit{Quatre conditions : 1N (single turn, no docs)~; 5N~; 1D~; 5D (multiturn, with docs).}}
-\end{center}
-\end{frame}
+\medskip
+{\footnotesize 1D comparable à Exp 1 + Websearch.}
 
-% -------------------------------------------------------------------
-\begin{frame}{La méthode --- Infrastructure}
-\begin{itemize}\setlength\itemsep{6pt}
-  \item \textbf{git-erg}~: gestion de tickets locale, agent-friendly\\
-        {\small Format texte versionné~; les agents lisent et ferment les tickets comme des humains.}
-  \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
-        {\small 5 claws~: Imagine, Plan, Execute, Verify, Celebrate. Runs reproductibles à partir du hash.}
-  \item \textbf{Protocole codéveloppé, relu et validé par les LLM eux-mêmes}\\
-        {\small Agents consultés~: 2 ont validé sans réserve, 2 avec réserves.\\
-        \textit{(Les réserves étaient fondées~: enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO\textsubscript{2} non exposés.)}}
-\end{itemize}
+\end{center}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -299,6 +267,22 @@ Les données de qualité recherche se jugent sur cinq dimensions~:
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}{La méthode --- Infrastructure}
+\begin{itemize}\setlength\itemsep{6pt}
+  \item \textbf{git-erg}~: gestion de tickets locale, agent-friendly\\
+        {\small Format texte versionné~; les agents lisent et ferment les tickets comme des humains.}
+  \item \textbf{Imperial Dragon Harness}~: harnais de développement agent-agnostic\\
+        {\small 5 claws~: Imagine, Plan, Execute, Verify, Celebrate.}
+  \item \textbf{Protocole codéveloppé, relu et validé par les LLM eux-mêmes}\\
+        {\small Agents consultés~: 2 ont validé sans réserve, 2 avec réserves.\\
+        \textit{(Les réserves étaient fondées~: enforcement instructionnel, cross-éval non indépendante, fuite paramétrique, énergie/CO\textsubscript{2} non exposés.)}}
+\end{itemize}
+\end{frame}
+
+% ===================================================================
+\section{Résultats}
+
+% -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
 \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_exp2_arms_comparison.pdf}
@@ -311,98 +295,55 @@ Les données de qualité recherche se jugent sur cinq dimensions~:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Le RAG élève le plancher~: régime de documentation}
-{\small\textit{Vérifions sur les chiffres les messages-clés lus sur les graphes --- sans aller jusqu'aux p-values.}}
+\begin{frame}{Effet du RAG > Effet du multitour}
 
-\smallskip
-\textbf{Mêmes 5 modèles}, 3 conditions $\times$ 3 runs
+INSÉRER ICI UNE TABLE 3x3 COMPARANT LES 4 CONDITIONS (1N, 5N, 1D, 5D) SUR F1 et coût, AVEC DES ASTÉRISQUES POUR LES COMPARAISONS SIGNIFICATIVES.
 
-\medskip
-\begin{columns}[T]
-\column{0.42\textwidth}
-\textbf{Niveaux~:}
-\begin{enumerate}
-  \item \textbf{Aucun} --- one shot, connaissance paramétrique
-  \item \textbf{Multi-tours} --- 3 relances conversationnelles
-  \item \textbf{RAG massif} --- 18 tableaux sources (155 ko)
-\end{enumerate}
-
-\medskip
-{\scriptsize Corpus~: PDP7, PDP7A, PDP8, rapports EVN, étude E542}
-
-\column{0.56\textwidth}
-\includegraphics[width=\textwidth]{inputs/generated/fig_regimes_scatter.pdf}
-\end{columns}
 \end{frame}
 
-% -------------------------------------------------------------------
-\begin{frame}{RAG inverse la relation coût-performance}
-\textbf{Corpus~:} 18 tableaux Markdown vérifiés manuellement (155 ko)
 
-\medskip
-\begin{columns}[T]
-\column{0.55\textwidth}
-\begin{tabular}{lrr}
-\toprule
-\textbf{Modèle} & \textbf{Direct} & \textbf{+ RAG} \\
-\midrule
-Mistral Small 4 (\$0.15/M)   &  83 & \textbf{141} \\
-GPT-5.4 (\$2.50/M)           & 107 & \textbf{126} \\
-Gemini Flash Lite (\$0.10/M)  &  91 & \textbf{126} \\
-Mistral Large 3 (\$0.50/M)   &  62 & \textbf{118} \\
-DeepSeek V3.2 (\$0.26/M)     &  63 & \textbf{98}  \\
-\bottomrule
-\end{tabular}
-
-\medskip
-{\small Médiane des centrales trouvées (sur 163), 3 runs chacun}
-
-\column{0.42\textwidth}
-\textbf{Résultat clé~:}
-
-\smallskip
-Avec RAG, un modèle à \$0{,}15/M \textbf{surpasse} un modèle à \$2{,}50/M sans RAG.
-
-\medskip
-\textbf{La méthode domine le modèle.}
-\end{columns}
-\end{frame}
 
 % ===================================================================
 \section{Discussion}
 
 % -------------------------------------------------------------------
-\begin{frame}{Question centrale~: «~quelle architecture~?», pas «~quel modèle~?»}
-\begin{center}
-\large
-Les données de qualité recherche ne sont pas des données correctes.\\
-Ce sont des données dont les erreurs sont \textbf{localisables}.
+\begin{frame}{Limites}
 
-\bigskip
-\textit{Cet exposé~: ce qui accroche, ce qui permet la localisabilité,\\
-et où mènent les architectures à états agentiques.}
-\end{center}
+Prompt:
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Optimisation en Phase A}]: facteur de variance non contrôlé.
+  \item[\textbf{Language}]: facteur de variance non contrôlé.
+  \item[\textbf{Optimalité}]: critères formels de qualités à développer.
+\end{description}
+
+Expérimentales:
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Cible mobile}]: Modèles évolutifs, hébergeurs fluctuants.
+  \item[\textbf{Petits échantillons}]: 5 runs par condition, 4 modèles.
+  \item[\textbf{Préregistration, évaluation par les pairs}]: pas encore réalisés.
+  \item[\textbf{Généralisation secteur $\times$ pays}] de l'électricité au Vietnam aux hydrocarbures en Indonésie, à l'eau en Thaïlande.
+\end{description}
+
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Qualité de la méthode~: les conditions actives}
-\small
-\begin{center}
-\begin{tabular}{@{}c l p{8.5cm}@{}}
-\toprule
-\textbf{Niveau} & & \textbf{Garantie apportée (cumulative)} \\
-\midrule
-4 & \textcolor{qualblue}{\rule{8pt}{8pt}} & \textbf{Fiabilité}~: vérification 3~niveaux (auto $\to$ HITL $\to$ recoupement) \\
-3 & \textcolor{qualgreen}{\rule{8pt}{8pt}} & \textbf{Fraîcheur}~: fusion incrémentale, état persistant versionnable sous git \\
-2 & \textcolor{qualorange}{\rule{8pt}{8pt}} & \textbf{Auditabilité}~: citation par cellule, traçabilité source-à-chiffre \\
-1 & \textcolor{qualyellow}{\rule{8pt}{8pt}} & \textbf{Ancrage}~: sources documentaires injectées (RAG massif) \\
-0 & \textcolor{qualred}{\rule{8pt}{8pt}} & \textbf{Paramétrique}~: connaissance mémorisée seule, aucune source externe \\
-\bottomrule
-\end{tabular}
-\end{center}
-\smallskip
-{\small Ce pilote mesure les transitions 0~$\to$~1 (RAG) et 1~$\to$~2 (extraction sourcée). Les niveaux~3--4 font l'objet du benchmark post-exposé.}
+\begin{frame}{Directions futures: vers l'hybridation avec les graphes de connaissances}
+
+\begin{description}\setlength\itemsep{8pt}
+  \item[\textbf{Découverte et gestion des sources}] avec vérification humaine.
+  \item[\textbf{Incrémentalité}] avec mémoire des résolutions des cas difficiles.
+  \item[\textbf{Vérifié $>$ vérifiable}] la présence de citation ne suffit pas.
+  \item[\textbf{Valeurs des attributs $>$ lignes d'actifs}]
+\end{description}
+
+Chaque cellule d'une table est un triplet [sujet (rangée), prédicat (colonne), objet (valeur)].
+Chaque document est un graphe de connaissances partiel, daté, bruité, redondant, contradictoire.
+
 \end{frame}
+
+
+% ===================================================================
+\section{Conclusions}
 
 % -------------------------------------------------------------------
 \begin{frame}{Messages clés}
@@ -418,31 +359,6 @@ et où mènent les architectures à états agentiques.}
   \item \textbf{L'IA produit-elle des données de qualité recherche~? Pas encore.}
 \end{enumerate}
 \end{frame}
-
-% -------------------------------------------------------------------
-\begin{frame}{Directions futures}
-\begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Intégration RAG HITL des sources}]
-        Vérification humaine-dans-la-boucle à chaque nouvelle source~;
-        le corpus RAG grandit de façon contrôlée.
-
-  \item[\textbf{Vérifié $>$ vérifiable}]
-        Passer du niveau «~une citation est présente~» au niveau «~la citation a été confirmée~».
-        L'humain ratifie une règle une fois, pas chaque cellule à chaque run.
-
-  \item[\textbf{Niveau cellule~: KG par document}]
-        Chaque cellule est un triple (sujet, prédicat, objet)~;
-        la fusion de sources concurrentes devient fusion d'ensembles de triples.
-        Graphe de connaissances en lieu et place d'une master-table plate.
-
-  \item[\textbf{Secteur $\times$ pays}]
-        De l'électricité au Vietnam aux hydrocarbures en Indonésie,
-        à l'eau en Thaïlande. Architecture identique, paramètres différents.
-\end{description}
-\end{frame}
-
-% ===================================================================
-\section{Conclusions}
 
 % -------------------------------------------------------------------
 \begin{frame}{}
