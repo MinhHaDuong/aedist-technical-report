@@ -40,4 +40,4 @@ Merge open PRs (#606 slides 0347, #612 spider 0348), re-enable CI, then open pap
 - CI required-checks rule disabled 2026-05-26 — **re-enable now** (talk done).
 - Prune stale remote branches: `origin/t0345-collapse-exp2-single-producer`, `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.
 - `ticket/0345-collapse-exp2-single-producer` local branch has 3 pre-PR commits not in main — manual review before deleting.
-- Conference-day slides edits (appendix Q&A, spider cross-exp frame) on branch `slides/conference-day-final` — pending PR.
+- `slides/conference-day-final` needs surgery before PR: drop slides.tex change (keep Préconisation frame), drop Makefile additions (zombie include + duplicates already in main), drop plot_cost_quality/plot_exp2_arms_split/test regressions vs PR #604. Keep: analysis.mk cleanup (finishes 0345), slides/Makefile delegation, .gitignore.
