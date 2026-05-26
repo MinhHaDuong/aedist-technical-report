@@ -246,7 +246,7 @@ Cinq axes pour juger la qualité des données statistiques de recherche~:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Source is the universal failure mode}
+\begin{frame}{Famille et taille comptent~; description des centrales~: point faible}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../report/inputs/generated/fig_spider_exp1_families.pdf}
 \end{frame}
@@ -321,7 +321,7 @@ Cinq axes pour juger la qualité des données statistiques de recherche~:
 \section{Résultats}
 
 % -------------------------------------------------------------------
-\begin{frame}{Fournir les documents repêche Qwen et Mistral. Le multi-tour n'aide pas. Variance et hallucinations persistent.}
+\begin{frame}{Fournir les documents repêche Qwen et Mistral. Le multi-tour n'aide pas. Variance et actifs non reconnus persistent.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage.pdf}
 \end{frame}
@@ -340,6 +340,7 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \end{frame}
 
 % -------------------------------------------------------------------
+\iffalse
 \begin{frame}{Effet du RAG > Effet du multitour}
 \centering
 \small
@@ -350,6 +351,7 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \vspace{0.8em}
 {\footnotesize $N=4$ modèles (facteur de blocage), 5 reps/cellule. On rapporte la cohérence directionnelle $k/n$, pas un seuil de significativité : à $n=4$, $p_{\min}=1/2^4=0{,}0625$ est inatteignable.}
 \end{frame}
+\fi
 
 
 
@@ -363,7 +365,7 @@ quand la mémoire (ou l'imagination) du modèle ne suffit pas.}
 \section{Discussion}
 
 % -------------------------------------------------------------------
-\begin{frame}{Limites}
+\begin{frame}[t]{Limites}
 
 Prompt:
 \begin{description}\setlength\itemsep{4pt}
@@ -428,10 +430,10 @@ Chaque document est un graphe de connaissances partiel, daté, bruité, redondan
 % -------------------------------------------------------------------
 \begin{frame}{Messages clés}
 \begin{enumerate}\setlength\itemsep{1.2em}
-  \item \textbf{Multi-tour~: pas si utile.}\\
+  \item \textbf{Multi-tour inutile.}\\
         {\small L'ajout de tours conversationnels n'explique qu'une fraction du gain.}
 
-  \item \textbf{Fournir les sources~: nécessaire.}\\
+  \item \textbf{Fournir les sources aide certains modèles.}\\
         {\small Le RAG massif est l'intervention dominante~; la méthode domine le modèle.}
 
   \item \textbf{Coût~: de quelques centimes à quelques euros par requête.}
@@ -441,7 +443,7 @@ Chaque document est un graphe de connaissances partiel, daté, bruité, redondan
 
 \bigskip
 \begin{center}
-\Large\textcolor{red}{\textbf{Pas encore.}}
+\Large\textcolor{red}{\textbf{Pas encore vérifié.}}
 \end{center}
 \end{frame}
 
