@@ -300,6 +300,12 @@ def map_header_to_canonical(norm: str) -> str | None:
         "project",
         "project_name",
         "plant_name_project",
+        # SOTA arm2/arm4 runs label the plant-name column "Asset" / "Asset Name"
+        # (sometimes with a "(VN / EN)" or "(Vietnamese)/(English)" suffix that
+        # norm_header strips). These are the same plant-name column.
+        "asset",
+        "asset_name",
+        "assetname",
     }:
         return "name"
     if norm in {"fuel", "fuel_type", "fueltype", "fuel_source", "source_fuel"}:
