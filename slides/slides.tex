@@ -94,7 +94,7 @@ Gold standard: liste compilée par l'auteur sur plusieurs années, en ligne.}
 \textbf{Résultats \NumCensusModels{} modèles, 5 runs chacun~:}
 \begin{itemize}\setlength\itemsep{0pt}
   \item Centrales identifiées~: \CensusTPMin{}--\CensusTPMax{} par run
-  \item Centrales hallucinées~: \CensusFPMin{}--\CensusFPMax{} par run
+  \item Centrales non-reconnues~: \CensusFPMin{}--\CensusFPMax{} par run
   \item Durée par run~: \CensusWallMin{} s --20 min
   \item Coûts~: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ par run)
 \end{itemize}
@@ -354,6 +354,30 @@ Expérimentales:
   \item[\textbf{Préregistration, évaluation par les pairs}]: pas encore réalisés.
   \item[\textbf{Généralisation secteur $\times$ pays}] de l'électricité au Vietnam aux hydrocarbures en Indonésie, à l'eau en Thaïlande.
 \end{description}
+
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Précision~: actifs non-reconnus, pas nécessairement hallucinés}
+
+\textbf{Faux positif}~$=$~actif listé par le modèle que le LP ne parvient pas à réconcilier.
+Trois causes distinctes~:
+
+\medskip
+\begin{description}\setlength\itemsep{6pt}
+  \item[\textbf{Limite du LP}] Actif réel, nom divergent.
+        Ex.~: \emph{Nhơn Trạch 3 \& 4} (agrégé) vs \emph{LNG Nhơn Trạch 3} + \emph{4} (référence)~;
+        \emph{NMĐ Bà Rịa} vs \emph{Bà Rịa GT}~;
+        \emph{Vedan} vs \emph{Vedan Vietnam Cogeneration}.
+  \item[\textbf{Hors périmètre}] Actif réel, absent du référentiel~:
+        extensions (\emph{Mở Rộng}), centrales CHP industrielles (\emph{Đồng Phát}),
+        projets planifiés non encore intégrés.
+  \item[\textbf{Connaissance périmée}] Projets annulés ou reportés connus de la mémoire paramétrique~:
+        \emph{Kiên Lương} charbon, \emph{Rạng Đông}, \emph{Bình Định} charbon.
+\end{description}
+
+\medskip
+\small Améliorer la précision exige à la fois un meilleur matching \emph{et} un meilleur ancrage aux sources.
 
 \end{frame}
 
