@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Add adherence test guarding the writing build against uv run leakage
+Created: 2026-05-26
+Author: HDMX-coding-agent
+Blocked-by: 0352
+
+--- log ---
+2026-05-26T21:46Z HDMX-coding-agent created — class regression guard after 0345 + 0352 sweep found two instances
+
+--- body ---
+## Context
+
+The analysis/writing workpackage split (`.claude/rules/coding-python.md`,
+Build section) requires the writing build to compile from committed handoff
+artifacts only — no `uv run`, no data access. This rule was violated in TWO
+places, found one after the other:
+- 0345: `make slides` triggered `uv run` (fixed)
+- 0352: `make report` triggers `uv run` (to be fixed)
+
+Two instances of the same shape means it is a class, not a one-off — it will
+come back in an unrelated future PR. `/verify` is a per-PR gate; it will not
+catch the class reappearing elsewhere. A standing adherence test will.
+
+Blocked-by 0352: write this guard only after the report side is clean, so the
+test passes on a green tree.
+
+## Relevant files
+- `Makefile` — root build; `make -n slides` / `make -n report` dry-run traces
+- `tests/` — adherence tests live here (`@pytest.mark.adherence`)
+- `.claude/rules/coding-python.md` — the rule being enforced
+
+## Actions
+1. Write an adherence test that runs `make -n slides` and `make -n report`
+   (dry-run, no execution) and asserts no recipe line contains `uv run`.
+2. Guard against the recursive-trigger variant too: ensure no
+   `$(MAKE) -C ..` in `slides/Makefile` / `report/Makefile` re-enters root
+   analysis rules. (Static grep of the sub-Makefiles is sufficient.)
+3. Mark `@pytest.mark.adherence`. Keep it fast — dry-run + string match, no
+   real build, no subprocess sleep. If it must spawn make, mark
+   `@pytest.mark.integration` per the testing rules.
+
+## Test
+This ticket IS the test. Red step: before 0352 lands, the test fails on
+`make -n report` (finds `uv run`). After 0352, it passes. Confirm it would
+have failed pre-0345 too (catches the original slides leak).
+
+## Verification
+- [ ] Test fails when a `uv run` rule is introduced into a writing-build path
+- [ ] Test passes on current main (after 0352)
+- [ ] `pytest -m adherence` runs it in < 30s
+
+## Invariants
+- Test must catch the class, not just the two known instances — phrase the
+  assertion over the dry-run recipe trace, not a hardcoded rule list
+
+## Exit criteria
+- An adherence test asserts `make slides` and `make report` invoke no
+  `uv run` / data-access commands
+- `make check` passes

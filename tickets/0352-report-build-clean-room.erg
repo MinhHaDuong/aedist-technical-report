@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Make the report writing build clean-room (handoff artifacts only)
+Created: 2026-05-26
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-26T21:45Z HDMX-coding-agent created — sweep after 0345 found the same anti-pattern on the report side
+
+--- body ---
+## Context
+
+Ticket 0345 collapsed the **slides** writing build to consume committed
+handoff artifacts only (no `uv run`, no data access), honoring the
+analysis/writing workpackage split in `.claude/rules/coding-python.md`.
+
+A celebrate-phase sweep found the **report** side still has the same
+anti-pattern: the root `Makefile`'s `report/report.pdf` target depends on
+~10–13 prerequisites that each have `uv run` recipes. So `make report`
+triggers Python data analysis (tabulate_census, plot_ablation,
+tabulate_variance, etc.) — it is NOT clean-room. The `report/Makefile`
+sub-build itself is clean (no `uv run`), but the root `report/report.pdf`
+rule pulls analysis in directly.
+
+This is post-conference work (the 2026-05-27 talk is slides-driven; the
+report stays exploratory, paper writing opens after the talk). Not urgent,
+but it closes the workpackage-split loophole symmetrically with 0345.
+
+## Relevant files
+- `Makefile` — `report/report.pdf` target (~line 216) and its `uv run`
+  prerequisite rules (tab_census, macros, tab_relances, tab_comparaison,
+  tab_variance, tab_verification, fig_census_direct, tab_base_vs_census,
+  fig_ablation_strip, fig_ablation_heatmap, etc.)
+- `experiments/analysis.mk` — the analysis workpackage; missing report-side
+  producers should move here (mirror the 0345 pattern)
+- `report/Makefile` — already clean; consumes committed artifacts
+- `.claude/rules/coding-python.md` — Build section, workpackage-split rule
+
+## Actions
+1. Inventory every prerequisite of `report/report.pdf` in the root Makefile.
+   Classify each as: (a) committed handoff artifact with no recipe, or
+   (b) `uv run` analysis rule.
+2. For each (b): move the generation rule into `experiments/analysis.mk`
+   (or the appropriate analysis driver), generate the artifact, and commit
+   it as a handoff artifact. Remove the `uv run` rule from the root Makefile.
+3. Verify `report/report.pdf` then depends only on committed files.
+4. Confirm `report/Makefile` still compiles the PDF from committed inputs
+   with no recursive `$(MAKE) -C ..` that re-triggers analysis.
+
+## Test
+Clean-room check: from a fresh checkout with no Python env / no `.venv`,
+`make -C report report.pdf` (or the report sub-build) compiles using only
+committed artifacts — zero `uv run` invocations. Capture the make dry-run
+(`make -n report`) and assert no line contains `uv run`.
+
+## Verification
+- [ ] `make -n report` shows no `uv run` in the recipe trace
+- [ ] All `report/report.pdf` prerequisites are committed (verify each via
+      `git cat-file -e HEAD:<path>`)
+- [ ] Report-side analysis rules now live in `experiments/analysis.mk`
+- [ ] `experiments/analysis.mk` regenerates the report artifacts end-to-end
+
+## Invariants
+- Do not break `make slides` (0345's clean-room property must hold)
+- `make check` passes
+- The committed report figures/tables remain byte-equivalent (or visually
+  equivalent) after regeneration from the analysis build
+
+## Exit criteria
+- `make report` (writing build) contains no `uv run` / data-access rules —
+  compiles from committed handoff artifacts only
+- `experiments/analysis.mk` is the sole producer of report figures/tables
+- `make check` passes
