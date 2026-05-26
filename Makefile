@@ -213,6 +213,14 @@ $(GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
 	uv run python -m aedist.plot_capability_dag \
 	    --input $< --output $@
 
+$(GEN)/fig_exp2_coverage.pdf $(GEN)/fig_exp2_cost.pdf &: $(GEN)/tab_exp2_arms_runs.csv $(GEN)/cost_quality.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_arms_split \
+	    --input $(GEN)/tab_exp2_arms_runs.csv \
+	    --exp1-input $(GEN)/cost_quality.csv \
+	    --coverage-output $(GEN)/fig_exp2_coverage.pdf \
+	    --cost-output $(GEN)/fig_exp2_cost.pdf
+
 $(SLIDE_GEN)/macros.tex: $(GEN)/census_bars.csv $(MEASUREMENTS)
 	uv run python -m aedist.tabulate_macros --census-csv $< --output $@
 

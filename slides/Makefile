@@ -14,7 +14,8 @@ SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
 	$(GENERATED)/regimes.csv \
 	$(GENERATED)/fig_method_convergence.pdf \
@@ -68,7 +69,8 @@ $(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/
 $(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/cost_quality.csv
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_timeline.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_capability_dag.pdf
-$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf
+$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage.pdf $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf &: ; \
+	$(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_coverage.pdf
 $(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf: ; $(MAKE) -C .. $(ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 
 clean:
