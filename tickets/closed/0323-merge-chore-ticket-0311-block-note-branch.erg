@@ -1,0 +1,26 @@
+%erg 0.1
+Title: Merge chore/ticket-0311-block-note branch (ticket note + ruff rules sharpening)
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Closed: wontfix — both commits already on main via different hashes (housekeeping sweep applied same content); branch deleted 2026-05-26
+
+--- log ---
+2026-05-25T20:52Z HDMX-coding-agent created
+2026-05-26T05:00Z HDMX-coding-agent closed — content already on main (8ba149a4 + 0311 log entry); branch deleted
+
+--- body ---
+## Context
+
+Branch `chore/ticket-0311-block-note` has 2 unmerged commits with no open PR:
+
+- `55ec5be9 chore(tickets): record 0311 scoring-data blocker`
+- `19c0bf87 chore(rules): sharpen ruff import-strip rule after 0302 double-hit`
+
+Both are chore-class changes (ticket log entry + harness rules refinement).
+Discovered by housekeeping sweep 2026-05-25.
+
+## Exit criteria
+
+- [ ] Both commits merged to main (via PR)
+- [ ] Branch `chore/ticket-0311-block-note` deleted after merge
+- [ ] `make check` passes
