@@ -65,6 +65,24 @@ COLOR_ARM_OPTIMISED = _palette["semantic"]["arm_optimised"]
 COLOR_IDENTIFIED = _palette["quality"]["identified"]
 FAMILY_COLORS = _palette["families"]
 
+# ── Beamer slide figure sizes ────────────────────────────────────────────────
+#
+# Full-slide figures are included with
+# ``\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]``.
+# When the source figure is wider than 16:9 (ratio > 1.78), ``height=\paperheight``
+# wins and the figure renders wider than the slide, so its right edge is clipped
+# (the systemic "décalage droite" bug). Keep every full-slide figure at ratio
+# ≤ 1.78 by sizing from one of these constants instead of a hardcoded tuple.
+SLIDE_FIGSIZE_FULL = (10.0, 5.625)  # exact 16:9 full slide
+SLIDE_FIGSIZE_WIDE = (11.2, 6.3)  # 16:9, larger canvas for dense two-panel figures
+
+# Figures placed beside text in a column (width=\textwidth, ~0.55-0.6 of slide).
+# A squarer ratio is fine here — the column, not the slide, bounds the width.
+SLIDE_FIGSIZE_HALF = (5.5, 4.0)
+
+# Multipanel polar (spider) grids — taller than wide, never décalage-prone.
+SLIDE_FIGSIZE_POLAR_2x2 = (10.0, 8.0)
+
 _LANGUAGE_FAMILIES = _palette["language_families"]
 _LANG_DIRECT = {
     code: _LANGUAGE_FAMILIES[code]

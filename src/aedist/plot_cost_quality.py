@@ -45,6 +45,7 @@ from pathlib import Path
 from .tabulate_utils import strip_label as slug_from_label
 from .util import (
     COLOR_REFERENCE,
+    SLIDE_FIGSIZE_WIDE,
     glyph_for_method,
     glyph_scatter_kwargs,
     model_family,
@@ -250,7 +251,7 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
         )
         panel_a = panel_a + unassigned
 
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(11, 4.5), sharex=True, sharey=True)
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_WIDE, sharex=True, sharey=True)
 
     for r in panel_a:
         _plot_one_row(ax_a, r)
