@@ -64,12 +64,6 @@ $(GEN)/tab_census.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census --output $@
 
-P1_BASE_RECORDS := $(wildcard experiments/outputs/ablation/direct/p1_base/*.record.json)
-
-$(GEN)/tab_base_vs_census.tex: $(MEASUREMENTS) $(P1_BASE_RECORDS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_base_vs_census --output $@
-
 DECOMP_BEFORE := $(wildcard experiments/outputs/rag_per_fuel/reconciliation_*.csv)
 DECOMP_AFTER := $(wildcard experiments/outputs/rag_per_fuel_v2/reconciliation_*.csv)
 
@@ -87,10 +81,6 @@ $(GEN)/tab_coherence.tex: $(RAG_CSVS) src/aedist/tabulate_coherence.py src/aedis
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_coherence \
 	    --input experiments/outputs/rag_extract --output $@
-
-$(GEN)/fig_base_vs_census.pdf: $(MEASUREMENTS) $(P1_BASE_RECORDS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_base_vs_census --output $@
 
 $(GEN)/macros.tex: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
@@ -157,11 +147,16 @@ $(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
 
-$(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
+# Produces macros_census.tex (consumed by slides via \NumCensusModels). The
+# census figure was retired from the report with the ablation thread (0361) but
+# is still written by this script, so fig_census_direct.pdf is declared a grouped
+# co-target — both outputs hardcoded (not $@) so either grouped member resolves
+# correctly. Full producer migration is 0352.
+$(GEN)/macros_census.tex $(GEN)/fig_census_direct.pdf &: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
-	    --output $@ --methods direct --prompt-version census \
-	    --output-macros $(dir $@)macros_census.tex
+	    --output $(GEN)/fig_census_direct.pdf --methods direct --prompt-version census \
+	    --output-macros $(GEN)/macros_census.tex
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
@@ -187,18 +182,6 @@ $(SLIDE_GEN)/fig_scaling_curve.pdf: $(MEASUREMENTS)
 	uv run python -m aedist.plot_scaling_curve \
 	    --output $@
 
-$(GEN)/fig_ablation_strip.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_ablation --strip $@
-
-$(SLIDE_GEN)/fig_ablation_strip.pdf: $(GEN)/fig_ablation_strip.pdf
-	@mkdir -p $(dir $@)
-	cp $< $@
-
-$(GEN)/fig_ablation_heatmap.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_ablation --heatmap $@
-
 $(GEN)/fig_capability_timeline.pdf: data/capability_timeline.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_capability_timeline \
@@ -219,18 +202,14 @@ $(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experim
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
-    $(GEN)/tab_census.tex $(GEN)/macros.tex \
-	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex \
+    $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex \
+	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
 		$(GEN)/fig_spider_exp1_families.pdf \
-	$(GEN)/fig_quality_spider.pdf \
-    $(GEN)/fig_census_direct.pdf \
-    $(GEN)/tab_base_vs_census.tex $(GEN)/fig_base_vs_census.pdf \
     $(GEN)/tab_decomposition_fix.tex \
     $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex \
     $(GEN)/tab_coherence.tex \
-    $(GEN)/tab_reconciliation.tex \
-    $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
+    $(GEN)/tab_reconciliation.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
@@ -253,8 +232,8 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_base_vs_census.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
-figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_census_direct.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf $(GEN)/fig_base_vs_census.pdf $(SLIDE_GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_strip.pdf $(GEN)/fig_ablation_heatmap.pdf
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
+figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census

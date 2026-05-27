@@ -3,10 +3,10 @@ Title: Add per-workpackage clean + project cleaner as a content-diff reproducibi
 Created: 2026-05-27
 Author: claude
 Blocked-by: 0352
-Blocked-by: 0354
 
 --- log ---
 2026-05-27T00:00Z claude created
+2026-05-27T00:00Z claude note — dropped stale Blocked-by 0354 (common.mk dedup merged via PR #627); body refs to common.mk's target vars remain the design foundation
 
 --- body ---
 ## Context

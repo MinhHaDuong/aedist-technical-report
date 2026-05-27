@@ -2,9 +2,6 @@
 Title: Make the report writing build clean-room (handoff artifacts only)
 Created: 2026-05-26
 Author: HDMX-coding-agent
-Tag: deferred
-Blocked-by: 0361
-Blocked-by: 0362
 
 --- log ---
 2026-05-26T21:45Z HDMX-coding-agent created — sweep after 0345 found the same anti-pattern on the report side
@@ -12,6 +9,9 @@ Blocked-by: 0362
 2026-05-26T21:50Z HDMX-coding-agent tag deferred
 
 2026-05-27T00:00Z claude note re-scoped — first attempt stalled on two unbuildable figures (fig_census_direct, fig_base_vs_census: prompt_version tag dropped in mart rebuild). MHD decision: abandon that attempt; ablation thread is deleted via 0358, not migrated. Now Blocked-by 0358; charter unchanged (no uv run in make report). Inventory reduced — see Re-scope note.
+2026-05-27T20:54Z Claude note blocker 0361 closed — Blocked-by removed.
+2026-05-27T20:54Z Claude note blocker 0362 closed — Blocked-by removed.
+2026-05-27T20:59Z Claude untag deferred
 --- body ---
 ## Re-scope (2026-05-27)
 

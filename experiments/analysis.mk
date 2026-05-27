@@ -42,7 +42,6 @@ ANALYSIS_EXP2_MART_VIEWS := \
 	$(ANALYSIS_GEN)/exp2_turn_trajectory_view.csv \
 	$(ANALYSIS_GEN)/sota_cross_eval_view.csv
 
-ANALYSIS_EXP2_TABLE := $(ANALYSIS_GEN)/tab_exp2_arms.tex
 ANALYSIS_EXP2_ARM_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_comparison.pdf
 ANALYSIS_EXP2_TURN_FIG := $(ANALYSIS_GEN)/fig_exp2_turn_trajectory.pdf
 ANALYSIS_EXP2_BIB_TABLE := $(ANALYSIS_GEN)/tab_exp2_bib_quality.tex
@@ -226,14 +225,6 @@ check-mart-parity: exp2-old-path exp2-mart-path
 
 # --- Tables and figures -----------------------------------------------------
 
-$(ANALYSIS_EXP2_TABLE): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_exp2_arms \
-	    --input $< \
-	    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) \
-	    --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
-	    --output $@
-
 $(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
@@ -336,7 +327,6 @@ $(ANALYSIS_GEN)/tab_exp2_outline_hypothesis_status.tex:
 
 ANALYSIS_EXP2_REPORT_TARGETS := \
 	$(ANALYSIS_EXP2_MART_VIEWS) \
-	$(ANALYSIS_EXP2_TABLE) \
 	$(ANALYSIS_EXP2_ARM_FIG) \
 	$(ANALYSIS_EXP2_TURN_FIG) \
 	$(ANALYSIS_EXP2_BIB_TABLE) \

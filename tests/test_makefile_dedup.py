@@ -4,7 +4,7 @@ Shared plumbing lives once in experiments/common.mk: the canonical UV_RUN, the
 OpenRouter worker-drain loop, and a single self-consistency producer. These
 guards fail if a divergent copy creeps back in.
 
-Orthogonal to tests/test_makefile_dag.py (DAG completeness, ticket 0356): this
+Orthogonal to tests/test_makefile_dag.py (DAG completeness, ticket 0363): this
 asserts de-duplication invariants, not producer coverage.
 """
 
