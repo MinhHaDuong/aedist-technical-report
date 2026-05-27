@@ -10,8 +10,6 @@ Author: claude
 
 2026-05-27T00:00Z claude REVISED scope — dependency audit found the original deletion list UNSAFE: plot_exp2_arms_split.py produces fig_exp2_coverage/cost (slides prereqs) and tabulate_exp2_arms_runs.py feeds the mart view tab_exp2_arms_runs_view.csv consumed by the live 2×2, plot_exp2_coverage_certainty (slides fig), and tabulate_stat_tests. The 2×2 producer itself depends on arm1-4_flat/.done — the "arms" ARE the four 2×2 cells. Deleting the literal list would break the conference slides + the 2×2. Scope below narrowed to the two genuinely-dead artifacts; mart "arms" terminology rename split to 0364. fig_quality_spider: RETIRE from report (MHD). Not executed — awaiting review of this revised scope.
 
-2026-05-27T00:00Z claude executed (revised scope) — report.tex §Exp2 now includes tab_exp2_2x2 (wrapped in a captioned float, \ref{tab:exp2-2x2}) with 2×2/RAG>multitour framing prose; fig_quality_spider retired from report; tab_exp2_arms swapped out of Makefile prereqs/tables. Deleted ONLY tabulate_exp2_arms.py + its test + tab_exp2_arms.tex + the ANALYSIS_EXP2_TABLE rule. The DAG guard (0363) CAUGHT my initial over-deletion of plot_exp2_arms_comparison — it feeds the live manuscript (slides/manuscript/main.md Figure 3) + slides/Makefile, NOT an orphan — so it was restored. VERIFIED: test_exp2_arms_retired + DAG/dedup/figsize/ablation guards green; 25 adherence pass; 1716 collect clean; make -n report parses. NOT verified: full LaTeX compile (no engine).
-
 --- body ---
 ## Context
 
@@ -45,18 +43,17 @@ experiment; only its old "arms" framing is stale.
   the dedicated exp2 4-way spider (0311). Leave its producer (`plot_quality_spider`
   in analysis.mk) untouched.
 
-**Retire ONLY the one genuinely-dead arms artifact** (the DAG guard caught that
-`plot_exp2_arms_comparison` is NOT an orphan — see log):
-- `src/aedist/tabulate_exp2_arms.py` (→ retired `tab_exp2_arms.tex`, used by no
-  surviving consumer) + `tests/test_tabulate_exp2_arms.py`
-  + `report/inputs/generated/tab_exp2_arms.tex`.
-- Rules: `analysis.mk` ANALYSIS_EXP2_TABLE (var + rule + ANALYSIS_EXP2_REPORT_TARGETS
-  line); root `Makefile` `tab_exp2_arms.tex` tokens (report.pdf prereq, `tables:`).
+**Retire ONLY the two genuinely-dead arms artifacts:**
+- `src/aedist/tabulate_exp2_arms.py` (→ retired `tab_exp2_arms.tex`)
+  + `tests/test_tabulate_exp2_arms.py` + `report/inputs/generated/tab_exp2_arms.tex`.
+- `src/aedist/plot_exp2_arms_comparison.py` (→ `fig_exp2_arms_comparison.pdf`,
+  an ORPHAN — included in no .tex) + `tests/test_plot_exp2_arms_comparison.py`
+  + `report/inputs/generated/fig_exp2_arms_comparison.pdf`.
+- Rules: `analysis.mk` ANALYSIS_EXP2_TABLE (~229-231) + ANALYSIS_EXP2_ARM_FIG
+  (~237-239); root `Makefile` `tab_exp2_arms` tokens (report.pdf prereq ~204,
+  `tables:` ~234).
 
-**KEEP — load-bearing for the slides, the live 2×2, and the manuscript (do NOT delete):**
-- `plot_exp2_arms_comparison.py` → `fig_exp2_arms_comparison.pdf` — consumed by the
-  **live manuscript** `slides/manuscript/main.md` (Figure 3) and `slides/Makefile`.
-  NOT an orphan (the first revision wrongly called it one).
+**KEEP — load-bearing for the slides + the live 2×2 (do NOT delete):**
 - `plot_exp2_arms_split.py` → `fig_exp2_coverage.pdf`/`fig_exp2_cost.pdf` (slides
   prereqs, Makefile:220-221).
 - `tabulate_exp2_arms_runs.py` → `tab_exp2_arms_runs.csv` → mart view
@@ -72,16 +69,13 @@ experiment; only its old "arms" framing is stale.
 - the report **table** `tab_exp2_arms` appears in NO `report/*.tex` — do NOT forbid
   `exp2_arms` broadly (structural in the mart pipeline);
 - report Exp2 presents the 2×2 (`report.tex` includes `tab_exp2_2x2`);
-- `tabulate_exp2_arms.py` is gone from `src/aedist/`, while
-  `plot_exp2_arms_comparison.py` + `plot_exp2_arms_split.py` +
-  `tabulate_exp2_arms_runs.py` REMAIN (regression guard against the over-deletion
-  the DAG guard caught — the first two feed the manuscript / slides / 2×2).
+- `tabulate_exp2_arms.py` + `plot_exp2_arms_comparison.py` are gone from
+  `src/aedist/`, while `plot_exp2_arms_split.py` + `tabulate_exp2_arms_runs.py`
+  REMAIN (regression guard against the over-deletion this preflight caught).
 
 ## Exit criteria
-- [x] report Exp2 includes `tab_exp2_2x2`; `tab_exp2_arms` no longer included
-- [x] `fig_quality_spider` retired from the report (block + prereq removed)
-- [x] only `tabulate_exp2_arms` (+test+artifact) removed; `plot_exp2_arms_comparison`
-      + `plot_exp2_arms_split` + `tabulate_exp2_arms_runs` + mart modules intact
-- [ ] `make report` and `make slides` build; `make check` passes (UNVERIFIED — no
-      LaTeX engine in this env; make slides has the pre-existing fig_capability_dag
-      break); test_exp2_arms_retired + DAG/dedup/figsize guards green
+- [ ] report Exp2 includes `tab_exp2_2x2`; `tab_exp2_arms` no longer included
+- [ ] `fig_quality_spider` retired from the report (block + prereq removed)
+- [ ] only `tabulate_exp2_arms` / `plot_exp2_arms_comparison` (+tests+artifacts) removed;
+      `plot_exp2_arms_split` + `tabulate_exp2_arms_runs` + mart modules intact
+- [ ] `make report` and `make slides` build; `make check` passes; test green

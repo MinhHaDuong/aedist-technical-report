@@ -201,9 +201,10 @@ $(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experim
 
 report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_census.tex $(GEN)/macros.tex \
-	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex \
+	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
 		$(GEN)/fig_spider_exp1_families.pdf \
+	$(GEN)/fig_quality_spider.pdf \
     $(GEN)/tab_decomposition_fix.tex \
     $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex \
     $(GEN)/tab_coherence.tex \
@@ -230,7 +231,7 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
+tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_arms.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
 figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
 select: experiments/models_selected.yaml
 census:
