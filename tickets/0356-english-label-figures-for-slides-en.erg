@@ -1,0 +1,69 @@
+%erg 0.1
+Title: English-label variants of slide figures for slides-en.tex
+Created: 2026-05-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-27T10:45Z HDMX-coding-agent created
+2026-05-27T14:30Z HDMX-coding-agent note slides-en.tex crops the fig_spider_exp1_families baked-in title ("Source is the universal failure mode") with trim+clip (PR #621) — a band-aid. When regenerating that figure, drop its title so the crop hack can be removed.
+
+--- body ---
+## Context
+`slides/slides-en.tex` (English Econom'IA deck, added in PR #620) reuses the
+same figure PDFs as the French `slides/slides.tex`. A visual check found some
+of those figures embed **French** text, which now appears in the English deck:
+
+- `fig_spider_exp1_claude.pdf` and `fig_spider_exp1_families.pdf` — French
+  radar-axis labels (Exactitude, Actifs trouvés, Actifs corrects, Contenu,
+  Statut correct, Province correcte, Cohérence, Vocabulaire respecté,
+  Diversité des sources, Provenance, Répartition des sources, Date plausible,
+  Temporalité, Date COD plausible, Combustible correct).
+- `fig_spider_cross_exp.pdf` — same radar-axis family (verify; its script does
+  not define the labels inline, likely shares them with the exp1 spider).
+- `fig_exp2_coverage_certainty.pdf` — French legend caption
+  (rond = 1 tour, carré = 5 tours | plein = avec documents, vide = sans documents).
+
+Already English, no work needed: `fig_direct_p1_base.pdf`, `fig_exp2_coverage.pdf`,
+`fig_exp2_cost.pdf` (confirm cost).
+
+**Design constraint:** the FR and EN decks `\includegraphics` the *same* paths
+(`../report/inputs/generated/fig_*.pdf`). Regenerating those files in English
+would break the French deck. So produce **language variants**, do not relabel
+in place. Follow the existing `--lang {fr,en}` precedent already used by
+`aedist.tabulate_exp2_2x2` (see the comment in the disabled `\iffalse` 2×2
+frame of `slides-en.tex`, which notes `tab_exp2_2x2.tex` is `--lang fr`).
+
+## Relevant files
+- `src/aedist/plot_quality_spider_exp1.py` — fig_spider_exp1_claude, fig_spider_exp1_families; holds the French axis labels.
+- `src/aedist/plot_spider_cross_exp.py` — fig_spider_cross_exp.
+- `src/aedist/plot_exp2_coverage_certainty.py` — fig_exp2_coverage_certainty; holds the French legend caption.
+- `experiments/analysis.mk` — Makefile targets that build these PDFs.
+- `slides/slides-en.tex` — consumer; switch its 4 includes to the `_en` variants.
+- `slides/Makefile` — `slides-en.pdf` target; add the EN figures to `$(SLIDE_ASSETS)` (or an EN-specific asset list).
+
+## Actions
+1. Add a `--lang {fr,en}` argument (argparse) to the three plot scripts, defaulting to `fr` (no behavior change for existing FR builds). Gate every user-facing string (axis labels, legend captions, titles) on the chosen language.
+2. Emit language-suffixed outputs (e.g. `fig_spider_exp1_families_en.pdf`) so FR and EN variants coexist. Pick one suffix convention and apply it consistently.
+3. Wire the new `_en` targets into `experiments/analysis.mk` (one output per rule; keep the DAG honest).
+4. Repoint the 4 `\includegraphics` calls in `slides/slides-en.tex` to the `_en` variants, and add those variants to the slides build assets so `make slides-en.pdf` declares them as prerequisites.
+5. (Optional, low priority) Generate `tab_exp2_2x2_en.tex` via `aedist.tabulate_exp2_2x2 --lang en` and update the disabled 2×2 frame; it is `\iffalse`-d so non-blocking.
+
+## Test
+- A unit test asserting each plot script's argparse exposes `--lang` with choices `{fr, en}` (source-inspection per coding-python.md CLI-flag rule, not subprocess `--help`).
+- A label-mapping test: for `lang="en"`, the produced axis/legend label list contains no French strings (assert absence of e.g. "Exactitude", "avec documents") and contains the English equivalents.
+
+## Verification
+- [ ] `make -f experiments/analysis.mk` regenerates both FR and EN figure variants without error.
+- [ ] French deck unchanged: `cd slides && tectonic slides.tex` still shows French figures.
+- [ ] `cd slides && make slides-en.pdf` renders with English figure text on the spider and coverage-certainty frames.
+- [ ] Visual check of the 4 affected EN frames.
+
+## Invariants
+- The French deck (`slides.tex`) keeps its French figures — no regression.
+- `make check` and the no-inline-plots adherence test stay green.
+- One output per Make rule; prerequisites match each script's actual reads/writes.
+
+## Exit criteria
+- [ ] `--lang en` produces English variants of the 3 spider figures and the coverage-certainty legend.
+- [ ] `slides-en.tex` includes the English variants; `make slides-en.pdf` builds clean with no French text in those figures.
+- [ ] FR deck and `make check` unaffected.

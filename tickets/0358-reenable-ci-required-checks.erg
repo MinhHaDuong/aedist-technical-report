@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Re-enable CI required status checks on main
+Created: 2026-05-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-27T13:39Z HDMX-coding-agent created from STATE.md backlog during housekeeping sweep
+
+--- body ---
+## Context
+STATE.md backlog records: "CI required-checks rule disabled 2026-05-26 —
+**re-enable** (talk done, no longer blocking)." The Econom'IA talk was
+delivered 2026-05-27, so the temporary relaxation of branch protection is no
+longer needed. The rule was disabled to unblock pre-talk slide merges; merges
+since (#619–#624) went through without required checks gating them.
+
+## Actions
+1. Decide which checks to require on `main` (the test/lint workflow(s) that
+   were gating before 2026-05-26).
+2. Re-enable required status checks in the `main` branch-protection rule
+   (forge settings / `gh api`), matching the pre-2026-05-26 configuration.
+3. Confirm a trivial PR is now gated by the required check(s) before closing.
+4. Remove the backlog note from STATE.md.
+
+## Verification
+- [ ] Branch-protection on `main` lists the required check(s) again.
+- [ ] A test PR cannot merge until the required check passes.
+- [ ] STATE.md backlog line removed.
+
+## Exit criteria
+- [ ] Required status checks re-enabled on `main`; STATE.md backlog note cleared.
