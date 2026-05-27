@@ -170,7 +170,7 @@ EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 $(GEN)/fig_direct_p1_base.pdf $(GEN)/macros_p1_base.tex &: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
-	    --output $@ --methods direct \
+	    --output $(GEN)/fig_direct_p1_base.pdf --methods direct \
 	    --label-x 100 --label-ha left \
 	    --xlabel "Assets identified (1 dot = 1 power plant / project)" \
 	    --title "How do models recall Vietnam's thermal power assets? Not well." \
