@@ -2,6 +2,7 @@
 Title: Rename ablation legacy to exp1 throughout pipeline
 Created: 2026-05-20
 Author: claude
+Tag: deferred
 
 --- log ---
 2026-05-20T22:10Z claude created
@@ -10,7 +11,6 @@ Author: claude
 
 2026-05-25T16:21Z 2026-05-25T18:30Z claude note imagine: keeping deferred. 0178 conflict risk gone but blast radius wider than listed — 7 src/ files + 141 measurements.jsonl path strings + figure regen needed; git mv moot (dir already archived to experiments/archive/). Two YAGNI smuggles: new Makefile target group (separate ticket), ablation/livesearch cleanup (unrelated). p1_composite scope self-contradiction needs deliberate decision. Execute post-conference.
 2026-05-25T17:03Z 2026-05-25T20:15Z haduong defer — confirmed post-conference. Scope to clean before executing: resolve p1_composite ambiguity, split new Makefile target group into separate ticket, drop ablation/livesearch cleanup, document measurements.jsonl migration plan.
-2026-05-27T20:59Z Claude untag deferred
 --- body ---
 ## Context
 
