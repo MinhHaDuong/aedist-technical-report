@@ -200,7 +200,7 @@ $(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experim
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
-    $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex \
+    $(GEN)/tab_census.tex $(GEN)/macros.tex \
 	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
 		$(GEN)/fig_spider_exp1_families.pdf \
