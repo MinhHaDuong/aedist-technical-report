@@ -2,6 +2,7 @@
 Title: Reconcile report Experiment 2 onto the live 2x2 features design (retire arms framing)
 Created: 2026-05-27
 Author: claude
+Closed: executed (revised scope) — report Exp2 reframed onto tab_exp2_2x2, dead arms table retired, fig_quality_spider retired; guards green; full compile unverified; closed per user authorization
 
 --- log ---
 2026-05-27T01:30Z claude created — branch #1 of the two abandoned design threads (companion to 0358)
@@ -12,6 +13,7 @@ Author: claude
 
 2026-05-27T00:00Z claude executed (revised scope) — report.tex §Exp2 now includes tab_exp2_2x2 (wrapped in a captioned float, \ref{tab:exp2-2x2}) with 2×2/RAG>multitour framing prose; fig_quality_spider retired from report; tab_exp2_arms swapped out of Makefile prereqs/tables. Deleted ONLY tabulate_exp2_arms.py + its test + tab_exp2_arms.tex + the ANALYSIS_EXP2_TABLE rule. The DAG guard (0363) CAUGHT my initial over-deletion of plot_exp2_arms_comparison — it feeds the live manuscript (slides/manuscript/main.md Figure 3) + slides/Makefile, NOT an orphan — so it was restored. VERIFIED: test_exp2_arms_retired + DAG/dedup/figsize/ablation guards green; 25 adherence pass; 1716 collect clean; make -n report parses. NOT verified: full LaTeX compile (no engine).
 
+2026-05-27T20:54Z Claude closed — executed (revised scope) — report Exp2 reframed onto tab_exp2_2x2, dead arms table retired, fig_quality_spider retired; guards green; full compile unverified; closed per user authorization
 --- body ---
 ## Context
 
