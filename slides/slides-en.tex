@@ -252,11 +252,10 @@ Five axes for judging the quality of research statistical data:
 \section{Experiment 2}
 
 % -------------------------------------------------------------------
-\begin{frame}{From Exp 1 to Exp 2: a matter of technique?}
+\begin{frame}{What do we get with a RAG Agentic Architecture ?}
 \begin{itemize}\setlength\itemsep{1.0em}
-  \item \textbf{Exp 1 takeaway.} Are these chatbots' answers to our 84-line prompt\\research-grade data? \textcolor{red}{Non!}.
-
-  \item \textbf{Exp 2 question.} How to do better? Which factors matter: Allow web search? Deepen the dialogue? Provide source documents?
+  \item \textbf{Exp 1 takeaway.} Are these chatbots' answers to our 84-line prompt\\research-grade data? Non.
+  \item \textbf{Exp 2 question.} Which factors matter to do better?\\Allow web search? Deepen the dialogue? Provide source documents?
 \end{itemize}
 
 \bigskip
@@ -268,10 +267,10 @@ Five axes for judging the quality of research statistical data:
 
 
 % -------------------------------------------------------------------
-\begin{frame}[plain]
+\begin{frame}{Features of commercial general AI products, by arrival date}
 \centering
 %\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
-\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+\includegraphics[height=0.85\textheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
 
 % The figure code itself needed patching; the agent attempted an overlay instead
 % \begin{tikzpicture}[remember picture,overlay]
@@ -286,7 +285,7 @@ Five axes for judging the quality of research statistical data:
 \framesubtitle{Four conditions: 1N (single turn + no docs); 5N; 1D; 5D (multi-turn + with docs)}
 \begin{center}
 \begin{tabular}{@{}l p{8.5cm}@{}}
-\textbf{Architecture}         & One prompt vs. Agentic (3--5 turns) \\
+\textbf{Architecture}         & One prompt (single turn as Exp 1) vs. Agentic (3--5 turns) \\
 \textbf{Documentation}    & None vs. RAG (18 tables, primary sources, Markdown) \\
 \\
 \textbf{Agents  }               & Opus~4.6, GPT-5.5, Mistral Large, Qwen 3.7 max \\
@@ -298,11 +297,10 @@ Five axes for judging the quality of research statistical data:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The method --- Multi-turn protocol}
+\begin{frame}{The method --- Agentic architecture condition}
 \begin{description}\setlength\itemsep{8pt}
-  \item[\textbf{Phase A}] Each agent optimizes its own prompt, knowing the protocol.
-  \item[\textbf{Phase B}] Up to 3 research turns + 1 finalization turn.
-  \item[\textbf{Transitions}] Script state machine; DeepSeek V3.2 judges at each turn whether the agent has produced a report or should continue~{\footnotesize (role: judge, not evaluated)}.
+  \item[\textbf{Phase A is reflexive}] Each agent optimizes its own prompt, knowing the protocol.
+  \item[\textbf{Phase B is scripted}] Up to 3 research turns + 1 finalization turn. DeepSeek V3.2 reads the agent's work and replies with Encourage\_Continue or Ask\_Final\_Verify prompts.
 \end{description}
 
 \medskip
@@ -327,20 +325,19 @@ Five axes for judging the quality of research statistical data:
 \section{Results}
 
 % -------------------------------------------------------------------
-\begin{frame}{Providing documents rescues Qwen and Mistral. Multi-turn does not help. Variance and unrecognized assets persist.}
+\begin{frame}{RAG rescues Qwen and Mistral. Multi-turn hurts. Variance still high.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Costs remain highly variable across models, runs, and modalities.}
+\begin{frame}{Costs differences++. Multi-turn hurts more. Cost (=effort) variance.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_cost.pdf}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Documents ease corroboration\\
-when the model's memory (or imagination) is not enough.}
+\begin{frame}{Providing documents ensures sources-citing but are not required:\\model's memory (or imagination) can also provide.}
 \centering\vspace{-0.4em}
 \includegraphics[width=\textwidth,keepaspectratio]{../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
 \end{frame}
@@ -374,35 +371,42 @@ when the model's memory (or imagination) is not enough.}
 % -------------------------------------------------------------------
 \begin{frame}[t]{Limitations}
 
-Prompt:
-\begin{description}\setlength\itemsep{4pt}
-  \item[\textbf{Phase-A optimization}]: uncontrolled variance factor.
-  \item[\textbf{Language}]: uncontrolled variance factor.
-  \item[\textbf{Optimality}]: formal quality criteria yet to be developed.
-\end{description}
-
-Experimental:
-\begin{description}\setlength\itemsep{4pt}
-  \item[\textbf{Moving target}]: evolving models, fluctuating providers.
-  \item[\textbf{Small samples}]: 5 runs per condition, 4 models.
-  \item[\textbf{Preregistration, peer review}]: not yet done.
-  \item[\textbf{Sector $\times$ country generalization}] from electricity in Vietnam to hydrocarbons in Indonesia, to water in Thailand.
-\end{description}
+\textbf{Prompt:}
+\begin{itemize}
+  \item Phase-A optimization is an uncontrolled variance factor.
+  \item Language is an uncontrolled variance factor.
+  \item Baseline prompt could be improved (but against which criteria?)
+\end{itemize}
+\medskip
+\textbf{Method:}
+\begin{itemize}
+  \item Moving target: evolving models, fluctuating providers.
+  \item Small sample size: 5 runs per condition, 4 models.
+  \item Preregistration, peer review: not yet done.
+  \item Generalization not proven. From electricity in Vietnam to hydrocarbons in Indonesia, to water in Thailand.
+\end{itemize}
 
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{Beyond RAG: toward hybridization with knowledge graphs}
 
-\begin{description}\setlength\itemsep{4pt}
-  \item[\textbf{Source discovery and management}] with human verification.
-  \item[\textbf{Incrementality}] with memory of how hard cases were resolved.
-  \item[\textbf{Verify}] the presence of citations (verifiable) is not enough.
-  \item[\textbf{Detailed attributes}] knowing the asset exists is not enough.
-\end{description}
+Choose 1D, develop towards:
 
-Each table cell is a triple [subject (row), predicate (column), object (value)].
-Each document is a partial knowledge graph: dated, noisy, redundant, contradictory.
+\begin{itemize}
+  \item Source discovery and management with human verification.
+  \item Incrementality with memory of how hard cases were human-resolved.
+  \item Verify the presence of citations (verifiable) is not enough.
+  \item Detailed attributes knowing the asset exists is not enough.
+  \item Coldstart with intermodel, multirun fusion
+\end{itemize}
+
+Why Knowledge Graphs?
+\begin{itemize}
+\item Efficiency and incrementality
+\item Table cells map on KG triples: subject (row), predicate (column), object (value).
+\item Document are knowledge graph: partial, dated, noisy, redundant, less contradictory.
+\end{itemize}
 
 \end{frame}
 
