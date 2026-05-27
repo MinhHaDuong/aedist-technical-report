@@ -1,0 +1,95 @@
+%erg 0.1
+Title: Ablate Experiment 3 (prompt-composition ablation) from report, slides, and build
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T00:00Z claude created — MHD decision: butcher the abandoned ablation thread; runs before 0352
+
+--- body ---
+## Context
+
+Experiment 3 (the prompt-composition ablation, `\label{sec:exp3}` in
+`report/inputs/plan_ablation.tex`) is an abandoned pilot. The file itself labels
+its results *"Résultats pilotes (design initial, invalidés)"* (line ~548) and the
+underlying arms were never committed to the scientific record: the
+`prompt_version` tag that distinguished the **base** vs **census** arms was
+dropped in the mart rebuild (0297/0344), so its figures
+(`fig_base_vs_census`, `fig_census_direct`) can no longer be regenerated — they
+crash or render an empty 0-model placeholder.
+
+Decision (2026-05-27, MHD): **remove the whole ablation thread** rather than
+recover or freeze it. "Ablate ablation." This also unblocks 0352 — the
+unbuildable ablation figures were that ticket's wall; deleting them shrinks its
+migration inventory to regenerable artifacts only.
+
+Talk-safety: the 2026-05-27 talk is slides-driven. `fig_ablation_strip`/`heatmap`
+are **not** `\includegraphics`'d in `slides.tex` (Makefile-only / orphan), so this
+removal barely touches the deck — see the keep/flag note below.
+
+## Scope — kill-closure
+
+**Prose / structure (report.tex):**
+- Delete `report/inputs/plan_ablation.tex` entirely (the whole §Expérience 3).
+- Remove its include: `report.tex:244 \input{inputs/plan_ablation}`.
+- Rewrite the **three** forward-references to `sec:exp3` (report.tex ~219, ~236,
+  ~242) so Exp1/Exp2 no longer promise an ablation: drop the
+  "isole systématiquement l'effet de chaque composant", "condition de contrôle
+  externe dans l'expérience d'ablation", and "régime de l'étude d'ablation"
+  clauses. The paper becomes a 2-experiment paper. Leave no dangling `\ref`.
+
+**Artifacts (delete file + every Makefile rule/target token):**
+- base-vs-census: `report/inputs/generated/{fig_base_vs_census.pdf,
+  tab_base_vs_census.tex}`, `src/aedist/{plot_base_vs_census.py,
+  tabulate_base_vs_census.py}`, `tests/{test_plot_base_vs_census.py,
+  test_tabulate_base_vs_census.py}`.
+- ablation figs: `report/inputs/generated/{fig_ablation_strip.pdf,
+  fig_ablation_heatmap.pdf}`, the `$(SLIDE_GEN)/fig_ablation_strip.pdf` rule,
+  `src/aedist/plot_ablation.py` (+ any test).
+- `experiments/models_ablation_p2_rag.yaml`.
+- Makefile rules to delete: `P1_BASE_RECORDS` (~67), `tab_base_vs_census` (~69),
+  `fig_base_vs_census` (~91), `fig_ablation_strip` (~190 + ~194),
+  `fig_ablation_heatmap` (~198); strip ablation tokens from `tables:` (~256),
+  `figures:` (~257), and the report.pdf prereq list (~228, ~233).
+
+**Also remove the stale Exp1 census figure** (same dropped-tag root cause, MHD
+said it goes): the figure block at `report.tex` ~136–141 (`fig_census_direct`) and
+its Makefile rule (~160). **KEEP** the §exp1 prose, `tab_census`, `census_bars`,
+and `macros_census` — those are Exp1/slides, regenerable, not ablation. No `\ref`
+to `fig:census-direct`, safe.
+
+## Decision needed during execution (flag, default = KEEP)
+`fig_direct_p1_base.pdf` + `macros_p1_base.tex` appear in the **slides**
+(`slides.tex:114`, `:17`) and derive from `EXP1_BATCH2_RECORDS`, not the ablation
+sweep — likely an **Exp1** result, not Exp3. Default: **keep** (and keep Makefile
+rule ~168 + `macros_p1_base`). Only remove if MHD rules the p1_base slide is part
+of the ablation.
+
+## Optional (defer unless asked)
+342 archived raw files under `experiments/archive/outputs/ablation/` — harmless;
+leave unless a purge is requested.
+
+## Test (first)
+`tests/test_no_ablation_residue.py` (`@pytest.mark.adherence`):
+```python
+def test_no_ablation_residue():
+    # grep the live tree (exclude tickets/, experiments/archive/)
+    needles = ["sec:exp3", "plan_ablation", "base_vs_census",
+               "fig_ablation_", "plot_ablation", "models_ablation"]
+    hits = grep_tree(needles, include=["report/**/*.tex", "slides/*.tex",
+                                       "Makefile", "src/aedist/*.py"])
+    assert hits == [], f"ablation residue: {hits}"
+
+def test_no_dangling_refs():
+    # every \ref/\Cref target resolves to a surviving \label
+    assert unresolved_refs("report/report.tex") == []
+```
+
+## Exit criteria
+- [ ] `plan_ablation.tex` deleted; `\input` removed; 3 `sec:exp3` refs rewritten; no dangling `\ref`
+- [ ] all base-vs-census + ablation figures/tables/scripts/tests removed
+- [ ] Makefile carries no rule or target token for any removed artifact
+- [ ] `fig_census_direct` figure + rule removed; §exp1 prose + `tab_census` kept
+- [ ] `fig_direct_p1_base`/`macros_p1_base` fate ruled (default keep)
+- [ ] `make report` and `make slides` both build; `make -n report` references no removed artifact
+- [ ] `make check` passes; `test_no_ablation_residue.py` green

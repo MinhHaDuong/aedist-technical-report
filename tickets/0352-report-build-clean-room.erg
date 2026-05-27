@@ -3,12 +3,31 @@ Title: Make the report writing build clean-room (handoff artifacts only)
 Created: 2026-05-26
 Author: HDMX-coding-agent
 Tag: deferred
+Blocked-by: 0358
 
 --- log ---
 2026-05-26T21:45Z HDMX-coding-agent created — sweep after 0345 found the same anti-pattern on the report side
 
 2026-05-26T21:50Z HDMX-coding-agent tag deferred
+
+2026-05-27T00:00Z claude note re-scoped — first attempt stalled on two unbuildable figures (fig_census_direct, fig_base_vs_census: prompt_version tag dropped in mart rebuild). MHD decision: abandon that attempt; ablation thread is deleted via 0358, not migrated. Now Blocked-by 0358; charter unchanged (no uv run in make report). Inventory reduced — see Re-scope note.
 --- body ---
+## Re-scope (2026-05-27)
+
+The first execution attempt is **abandoned**: it hit two report figures that
+cannot be regenerated (`fig_census_direct`, `fig_base_vs_census`) because the
+`prompt_version` tag was dropped in the 0297/0344 mart rebuild. Rather than
+recover or freeze them, ticket **0358** deletes the whole Experiment-3 / ablation
+thread (and the stale `fig_census_direct`). This ticket is **Blocked-by 0358** and
+runs **after** it, on the already-pruned tree. The charter below is unchanged — no
+`uv run` in `make report` — but the migration inventory shrinks: every ablation
+artifact in "Relevant files" below is **removed by 0358, not migrated**
+(`fig_census_direct`, `tab_base_vs_census`, `fig_ablation_strip`,
+`fig_ablation_heatmap`, `plot_ablation`). What remains to migrate into
+`experiments/analysis.mk`: `tab_census`, `macros`, `tab_relances`,
+`tab_comparaison`, `tab_variance`, `tab_verification`, and the other regenerable
+handoff artifacts.
+
 ## Context
 
 Ticket 0345 collapsed the **slides** writing build to consume committed
