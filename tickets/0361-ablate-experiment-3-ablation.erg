@@ -16,7 +16,7 @@ prompt-composition / ablation** experiment: a base CSV prompt + 7 modules, cross
 add-one (composition) / remove-one (ablation) arms × 3 access modes — 18 prompts.
 **Designed but never ran**; the file labels its only data *"Résultats pilotes
 (design initial, invalidés)"* (~line 548). It is **one of two abandoned design
-branches** — the other is Exp2 "arms 3/4 extension" → reframed as a 2×2 (**0359**).
+branches** — the other is Exp2 "arms 3/4 extension" → reframed as a 2×2 (**0362**).
 
 This is **not a wholesale `rm`** (the first draft of this ticket was). §Exp3 is a
 dead *experiment* hosting live *cross-cutting framing*: every section it
@@ -35,7 +35,7 @@ multi-turn) × (no-docs vs RAG), conditions 1N/5N/1D/5D — with reasoning (defa
 web-search (off in Exp1, allowed in Exp2), provider/tools as controls, and
 language/provider/reflexivity as confounders. Delete `sec:regime-linkage`'s regime
 abstraction and its prompt×regime payoff. (Adopting the 2×2 features framing in the
-*report* is **0359**, not here.)
+*report* is **0362**, not here.)
 
 **2. Verification framing → KEEP & relocate to Discussion.** Salvage the
 "multi-tour ⊂ vérification" argument (generic relances are a weaker special case of
