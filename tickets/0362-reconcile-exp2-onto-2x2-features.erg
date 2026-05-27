@@ -8,6 +8,8 @@ Author: claude
 
 2026-05-27T00:00Z claude note preflight — CAUTION on report.tex:404 "bras corrigé": that is the false-positive decomposition-fix sub-experiment (naive prompt vs anchor-corrected prompt), NOT the Exp2 2×2 (1N/5N/1D/5D). KEEP that language as-is; do NOT 2×2-ify it. Only the Exp2 arms 1–4 framing (tab_exp2_arms, report.tex:200/206) is stale. Also: COLLISION with 0361 on Makefile:256 (tables:) — both delete a token from that one line; land 0361 first, then rebase this.
 
+2026-05-27T00:00Z claude REVISED scope — dependency audit found the original deletion list UNSAFE: plot_exp2_arms_split.py produces fig_exp2_coverage/cost (slides prereqs) and tabulate_exp2_arms_runs.py feeds the mart view tab_exp2_arms_runs_view.csv consumed by the live 2×2, plot_exp2_coverage_certainty (slides fig), and tabulate_stat_tests. The 2×2 producer itself depends on arm1-4_flat/.done — the "arms" ARE the four 2×2 cells. Deleting the literal list would break the conference slides + the 2×2. Scope below narrowed to the two genuinely-dead artifacts; mart "arms" terminology rename split to 0364. fig_quality_spider: RETIRE from report (MHD). Not executed — awaiting review of this revised scope.
+
 --- body ---
 ## Context
 
@@ -24,34 +26,56 @@ The **report never finished the migration**: it still
 generators. This is a **reconciliation, not a deletion** — Exp2 is a live
 experiment; only its old "arms" framing is stale.
 
-## Scope
+## Scope (REVISED 2026-05-27 — original deletion list was unsafe; see log)
 
-**Report (adopt the 2×2 features framing):**
-- Replace `tab_exp2_arms` (report.tex:200) with the 2×2 presentation (`tab_exp2_2x2`
-  or a report-tuned variant from `tabulate_exp2_2x2.py`).
-- Align Exp2 prose with the 1N/5N/1D/5D conditions and the "RAG > multitour"
-  finding: the "bras naive/optimisé" caption (report.tex:206) and "bras corrigé"
-  (report.tex:404) language.
-- Decide `fig_quality_spider` (`fig:exp2-quality-spider`, report.tex:202-208,
-  `\IfFileExists`, "bras naive et optimise"): re-label to 2×2 or retire.
+**Report (adopt the 2×2 features framing) — the substance of this ticket:**
+- Replace `tab_exp2_arms` (report.tex:193, post-0361) with `tab_exp2_2x2` —
+  ALREADY committed at `report/inputs/generated/tab_exp2_2x2.tex` (produced by
+  `analysis.mk` ANALYSIS_EXP2_2X2_TEX, the 0345 handoff pattern; no new producer).
+- Align the Exp2 prose with the 1N/5N/1D/5D conditions and the "RAG > multitour"
+  finding (the committed 2×2 shows Documents +0.108 vs Query-mode −0.078); rewrite
+  the "bras naive et optimise" caption (report.tex ~199).
+  **Do NOT touch report.tex:404 "bras corrigé"** — decomposition-fix sub-experiment,
+  not the Exp2 2×2 (preflight).
+- `fig_quality_spider` (`fig:exp2-quality-spider`, report.tex:195-202): **RETIRE
+  from the report** (MHD 2026-05-27) — remove the `\IfFileExists` block + the
+  report.pdf prereq. Naive/optimise data contradicts the 2×2 framing; superseded by
+  the dedicated exp2 4-way spider (0311). Leave its producer (`plot_quality_spider`
+  in analysis.mk) untouched.
 
-**Retire the 'arms' artifacts:**
-- `report/inputs/generated/tab_exp2_arms.tex`,
-  `src/aedist/{plot_exp2_arms_comparison.py, plot_exp2_arms_split.py,
-  tabulate_exp2_arms.py, tabulate_exp2_arms_runs.py}` + their tests.
-- Makefile: the `tab_exp2_arms` rule + tokens (report.pdf prereqs ~223, `tables:` ~256).
-- **KEEP** `tabulate_exp2_2x2.py` and `tab_exp2_2x2` (the live design).
+**Retire ONLY the two genuinely-dead arms artifacts:**
+- `src/aedist/tabulate_exp2_arms.py` (→ retired `tab_exp2_arms.tex`)
+  + `tests/test_tabulate_exp2_arms.py` + `report/inputs/generated/tab_exp2_arms.tex`.
+- `src/aedist/plot_exp2_arms_comparison.py` (→ `fig_exp2_arms_comparison.pdf`,
+  an ORPHAN — included in no .tex) + `tests/test_plot_exp2_arms_comparison.py`
+  + `report/inputs/generated/fig_exp2_arms_comparison.pdf`.
+- Rules: `analysis.mk` ANALYSIS_EXP2_TABLE (~229-231) + ANALYSIS_EXP2_ARM_FIG
+  (~237-239); root `Makefile` `tab_exp2_arms` tokens (report.pdf prereq ~204,
+  `tables:` ~234).
+
+**KEEP — load-bearing for the slides + the live 2×2 (do NOT delete):**
+- `plot_exp2_arms_split.py` → `fig_exp2_coverage.pdf`/`fig_exp2_cost.pdf` (slides
+  prereqs, Makefile:220-221).
+- `tabulate_exp2_arms_runs.py` → `tab_exp2_arms_runs.csv` → mart view
+  `tab_exp2_arms_runs_view.csv`, consumed by the 2×2, `plot_exp2_coverage_certainty`
+  (slides fig), `tabulate_stat_tests`.
+- `build_exp2_mart*.py`, `check_exp2_mart_parity.py`, `plot_exp2_coverage_certainty.py`,
+  `tabulate_stat_tests.py`, the `arm1..arm4_flat` stages, `tabulate_exp2_2x2.py`.
+- The mart-internal "arms" terminology is the 2×2's data foundation (arm1-4 = the
+  four cells). Any rename is OUT of scope → **0364**.
 
 ## Test (first)
 `tests/test_exp2_arms_retired.py` (`@pytest.mark.adherence`):
-- no `tab_exp2_arms` / `exp2_arms`-generator refs in `report/*.tex`, `Makefile`,
-  `src/aedist/`;
-- report Exp2 presents the 2×2 (grep for `tab_exp2_2x2` or the 1N/5N/1D/5D
-  conditions);
-- `make report` and `make slides` build.
+- the report **table** `tab_exp2_arms` appears in NO `report/*.tex` — do NOT forbid
+  `exp2_arms` broadly (structural in the mart pipeline);
+- report Exp2 presents the 2×2 (`report.tex` includes `tab_exp2_2x2`);
+- `tabulate_exp2_arms.py` + `plot_exp2_arms_comparison.py` are gone from
+  `src/aedist/`, while `plot_exp2_arms_split.py` + `tabulate_exp2_arms_runs.py`
+  REMAIN (regression guard against the over-deletion this preflight caught).
 
 ## Exit criteria
-- [ ] report Exp2 presents the 2×2 features design; `tab_exp2_arms` no longer used
-- [ ] arms generators/tables/tests removed; Makefile carries no `exp2_arms` token; `tabulate_exp2_2x2` kept
-- [ ] `fig_quality_spider` re-labeled to 2×2 or retired
+- [ ] report Exp2 includes `tab_exp2_2x2`; `tab_exp2_arms` no longer included
+- [ ] `fig_quality_spider` retired from the report (block + prereq removed)
+- [ ] only `tabulate_exp2_arms` / `plot_exp2_arms_comparison` (+tests+artifacts) removed;
+      `plot_exp2_arms_split` + `tabulate_exp2_arms_runs` + mart modules intact
 - [ ] `make report` and `make slides` build; `make check` passes; test green

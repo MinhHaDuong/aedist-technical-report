@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Evaluate renaming the Exp2 mart "arms" terminology to the 2x2 cell labels
+Created: 2026-05-27
+Author: claude
+Tag: deferred
+
+--- log ---
+2026-05-27T00:00Z claude created — split out of 0362's scope revision; the mart "arms" rename is a separate, larger, lower-payoff refactor
+
+--- body ---
+## Context
+
+Split from **0362**. A dependency audit while preflighting 0362 found that the
+"arms" terminology (`arm1`..`arm4`) is **load-bearing structural vocabulary** in
+the live Experiment-2 mart pipeline, not just stale report framing:
+
+- the 2×2 table producer (`tabulate_exp2_2x2`) depends on `arm1_flat`..`arm4_flat`
+  stages — the four arms ARE the four 2×2 cells (single/multi-turn × no-docs/RAG,
+  i.e. 1N/5N/1D/5D);
+- the mart view `tab_exp2_arms_runs_view.csv` (from `build_exp2_mart_views`) feeds
+  the 2×2, `plot_exp2_coverage_certainty` (slides fig), `plot_exp2_arms_split`
+  (slides `fig_exp2_coverage`/`fig_exp2_cost`), and `tabulate_stat_tests`.
+
+So "arms" cannot be excised — only the report-facing stale arms *table* can (that
+is 0362). This ticket asks the separate, optional question: should the
+mart-internal `arm1..arm4` naming be renamed to the 2×2 cell labels (1N/5N/1D/5D,
+or coverage labels) for cross-artifact consistency?
+
+## Imagine (decide first — do not assume yes)
+
+"Arms" is standard experimental-design vocabulary (treatment arms); the 2×2 is the
+*presentation* of those arms. A rename is a wide, mechanical change touching mart
+builders, views, parity checks, plot/table generators, `analysis.mk` stage names,
+and likely **derived-data column names** in committed mart artifacts — which would
+invalidate committed CSVs and force a mart rebuild. High blast radius, low
+functional payoff.
+
+**Default recommendation: WON'T-DO** unless a reader-facing artifact (report/slides
+table or figure axis) still exposes "arm" in a way that confuses the audience after
+0362 lands. If the only "arm" left is internal mart plumbing, close as a documented
+non-finding (per `.claude/rules/workflow.md` "Audit before instrumenting").
+
+## If pursued — scope sketch
+Rename `arm1..arm4` → 2×2 cell labels across: `build_exp2_mart*.py`,
+`check_exp2_mart_parity.py`, `tabulate_exp2_arms_runs.py`, `plot_exp2_arms_split.py`,
+`plot_exp2_coverage_certainty.py`, `tabulate_stat_tests.py`, `tabulate_exp2_2x2.py`,
+`analysis.mk` (`arm*_flat` stages, `tab_exp2_arms_runs_view.csv`), and the derived
+mart column schema. Requires a mart rebuild + parity re-check.
+
+## Test (first, if pursued)
+Adherence test that reader-facing Exp2 artifacts (report/slides `.tex` + figure
+captions) carry no bare "arm N" label; mart-internal naming is consistent end to
+end. If not pursued, this ticket closes with a one-line non-finding and no code.
+
+## Related
+- 0362 (report reframing onto `tab_exp2_2x2`; retires only the dead arms table).
+- 0311 (exp2 4-way spider — the live quality figure that supersedes
+  `fig_quality_spider`).
