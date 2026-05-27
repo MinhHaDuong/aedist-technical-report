@@ -2,11 +2,13 @@
 Title: Consolidate Makefile cross-file duplication and divergence (shared common.mk)
 Created: 2026-05-27
 Author: claude
+Closed: merged PR #627 — experiments/common.mk is the single source of UV_RUN/drain/self-consistency; env policy clean; guarded by tests/test_makefile_dedup.py
 
 --- log ---
 2026-05-27T00:00Z claude created — modularity audit of the 7 makefiles found duplicate producers, 4 divergent UV_RUN definitions, a 6x copy-pasted drain recipe, and an env-policy violation in experiment1.mk
 
-2026-05-27T07:14Z note scope refined — cross-ref 0352/0353/0356 for producer-migration + DAG-completeness; this ticket is dedup-only
+2026-05-27T07:14Z note scope refined — cross-ref 0352/0353/0363 for producer-migration + DAG-completeness; this ticket is dedup-only
+2026-05-27T00:00Z claude closed — merged PR #627; all exit criteria met (common.mk single source, 6 drain copies collapsed, one self-consistency producer, no ~/.claude/.env, make -n report/slides resolve, test_makefile_dedup.py green)
 --- body ---
 ## Context
 
