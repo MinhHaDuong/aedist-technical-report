@@ -96,21 +96,21 @@ Gold standard: a list compiled by the author over several years, published onlin
 \section{Experiment 1}
 
 % -------------------------------------------------------------------
-\begin{frame}{Experiment 1: using a random word generator}
+\begin{frame}{Experiment 1: Asking a random words generator}
 
 \smallskip
-\textbf{Task: Give the inventory of thermal power plants in Vietnam} via an 84-line prompt. Parametric knowledge only: no web search, no documents provided. Default reasoning effort. Temperature = 0.
+\textbf{Task: ``Give me the inventory of thermal power plants in Vietnam''} (in a 84-line prompt). Parametric knowledge only: no web search, no documents provided. Default reasoning effort. Temperature = 0.
 
 \smallskip
-\textbf{Primary metric:} number of assets correctly identified. Reference: 163 coal, gas, and oil plants $>30$\,MWe
+\textbf{Primary metric:} number of assets correctly identified in the 163 reference list.
 
 \smallskip
 \textbf{Results, \NumCensusModels{} models, 5 runs each:}
 \begin{itemize}\setlength\itemsep{0pt}
-  \item Plants identified: \CensusTPMin{}--\CensusTPMax{} per run
+  \item Plants identified in the list: \CensusTPMin{}--\CensusTPMax{} per run
   \item Plants not recognized: \CensusFPMin{}--\CensusFPMax{} per run
-  \item Time per run: \CensusWallMin{} s --20 min
-  \item Cost: \CensusCostTotal{}\,\$ total (\CensusCostMin{}--\CensusCostMax{}\,\$ per run)
+  \item Reply speed: \CensusWallMin{} seconds to 20 minutes per run
+  \item Cost: \CensusCostMin{}--\CensusCostMax{}\,\$ per run, \CensusCostTotal{}\,\$ total
 \end{itemize}
 \end{frame}
 
@@ -132,12 +132,12 @@ Non-monotonic
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{``Hallucinating'': two recurring modes}
+\begin{frame}{Hallucination patterns examples -- predict-next loops in replies}
 
 \begin{columns}[T]
 \column{0.50\textwidth}
-\textbf{Mode 1: one plant per province}\\
-{\small Claude Haiku, T$=0$ --- the same 15 plants across all 5 runs:}
+\textbf{One plant per province}\\
+{\small Claude Haiku, all runs:}
 \begin{itemize}\setlength\itemsep{1pt}
   \item{\small NMĐ Hà Nội}
   \item{\small NMĐ Đà Nẵng}
@@ -148,8 +148,8 @@ Non-monotonic
 {\small None exist in the reference list.}
 
 \column{0.50\textwidth}
-\textbf{Mode 2: recursion}\\
-{\small GPT OSS 20B --- run 3: 83 rows, a single company:}
+\textbf{Recursion on plant number}\\
+{\small GPT OSS 20B run 3:}
 \begin{itemize}\setlength\itemsep{1pt}
   \item{\small Trung Nam 1 (coal, 600 MW)}
   \item{\small Trung Nam 2 (coal, 600 MW)}
@@ -162,29 +162,27 @@ Non-monotonic
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Precision: unrecognized assets, not necessarily hallucinated}
+\begin{frame}{Unrecognized assets are not always hallucinations}
 
-\textbf{False positive}~$=$~an asset listed by the model that could not be reconciled.
+\textbf{False positives}~are assets from the model list that could not be reconciled with ours.
 
 \medskip
 \begin{description}\setlength\itemsep{6pt}
-  \item[\textbf{Matcher limitation}] Real asset, divergent name.
-        E.g.: \emph{Nhơn Trạch 3 \& 4} vs \emph{LNG Nhơn Trạch 3} + \emph{4};
-        \emph{NMĐ Bà Rịa} vs \emph{Bà Rịa GT};
+  \item[\textbf{Matcher limitation}] Real asset, divergent name.\\
+        \emph{Nhơn Trạch 3 \& 4} vs \emph{LNG Nhơn Trạch 3} + \emph{4};\\
+        \emph{NMĐ Bà Rịa} vs \emph{Bà Rịa GT};\\
         \emph{Vedan} vs \emph{Vedan Vietnam Cogeneration}.
-  \item[\textbf{Reference limitation}] Real asset, absent from the reference list.
+  \item[\textbf{Reference limitation}] Real asset, absent from our reference list.
   \item[\textbf{Statistical judgment calls}] Combined heat and power, incineration, size cutoff\ldots
 \end{description}
 
 \medskip
-\small A quality statistical table acknowledges the judgment calls.
+\small A quality statistical table recognizes real world fuzziness.
 
 \end{frame}
 
 
-% -------------------------------------------------------------------
-% OPTION A — streamlined version (Claude, for author's choice)
-\begin{frame}{The 84-line prompt: three blocks}
+\begin{frame}{The 84-line prompt's three blocks}
 \begin{columns}[T]
 \column{0.33\textwidth}
 \textbf{\# GOAL}
@@ -192,10 +190,11 @@ Non-monotonic
 \smallskip
 {\small Inventory plants $>30$\,MWe: status, fuel, capacity, operator, commissioning date.\\[4pt]
 Cite two independent sources per value.\\[4pt]
-Date every piece of information.}
+Date every piece of information.\\[4pt]
+Reply in Markdown}
 
 \column{0.33\textwidth}
-\textbf{\# QUALITY}
+\textbf{\# QUALITY DIMENSIONS}
 
 \smallskip
 {\small Four scored axes: accuracy, coherence, provenance, temporality.\\[4pt]
@@ -210,41 +209,10 @@ Calibrated confidence vocabulary.\\[4pt]
 Per-asset-row entry rules.}
 \end{columns}
 
-\medskip
-\begin{center}
-{\small\textit{84 lines of instructions; the model responds in Markdown.}}
-\end{center}
 \end{frame}
 
-% OPTION B — original version (verbatim, for author's choice)
-%\begin{frame}[fragile]{Structure du prompt}
-%\scriptsize
-%\textbf{\# GOAL}
-%
-%Produce a complete, primary-sourced reference inventory [...] Structure it as follows:
-%- the plant inventory: Name, Province, Fuel, Confidence, Source 1, Source 2, Notes.
-%- per-asset explanatory notes / annotated bibliography
-%Scope includes [...] When uncertain, mark confidence [...] Output format: Markdown.
-%
-%\textbf{\# QUALITY DIMENSIONS} [...see next slide...]
-%
-%\textbf{\# CONTEXT} (\#\# Source quality management / Calibrated confidence vocabulary / Asset-row rules)
-%\end{frame}
-%
-%\begin{frame}{\# Quality dimensions (prompt part 2)}
-%\small \textit{Your output is judged on four axes:}
-%\begin{enumerate}\setlength\itemsep{4pt}
-%  \item \textit{Accuracy} --- right assets and right attributes. [...]
-%  \item \textit{Coherence} --- internally consistent. [...]
-%  \item \textit{Provenance} --- each value traces to a source that supports it. [...]
-%  \item \textit{Temporality} --- every value carries a best-effort as-of date. [...]
-%\end{enumerate}
-%{\small\textit{We prefer a comprehensive inventory with uncertainty clearly expressed.}}
-%\end{frame}
-
-
 % -------------------------------------------------------------------
-\begin{frame}{84 lines, because statistics demand more than numbers}
+\begin{frame}{84 lines because we demand more than just numbers}
 \begin{center}
 {\small\textit{``Knowledge: justified true belief.''}}
 \end{center}
@@ -286,9 +254,9 @@ Five axes for judging the quality of research statistical data:
 % -------------------------------------------------------------------
 \begin{frame}{From Exp 1 to Exp 2: a matter of technique?}
 \begin{itemize}\setlength\itemsep{1.0em}
-  \item \textbf{Exp 1 takeaway.} Are a chatbot's answers to an 84-line prompt research-grade data? No.
+  \item \textbf{Exp 1 takeaway.} Are these chatbots' answers to our 84-line prompt\\research-grade data? \textcolor{red}{Non!}.
 
-  \item \textbf{Exp 2 question.} How to do better? Which factors matter: Allow web search? Deepen the dialogue? Provide source documents? A more powerful model?
+  \item \textbf{Exp 2 question.} How to do better? Which factors matter: Allow web search? Deepen the dialogue? Provide source documents?
 \end{itemize}
 
 \bigskip
@@ -302,7 +270,8 @@ Five axes for judging the quality of research statistical data:
 % -------------------------------------------------------------------
 \begin{frame}[plain]
 \centering
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+%\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
+\includegraphics[width=\paperwidth,keepaspectratio]{../report/inputs/generated/fig_capability_timeline.pdf}
 
 % The figure code itself needed patching; the agent attempted an overlay instead
 % \begin{tikzpicture}[remember picture,overlay]
@@ -314,16 +283,16 @@ Five axes for judging the quality of research statistical data:
 
 % -------------------------------------------------------------------
 \begin{frame}{Experiment 2 design: (single turn, multi-turn) × (no docs, with docs)}
-\framesubtitle{Four conditions: 1N (single turn, no docs); 5N; 1D; 5D (multi-turn, with docs)}
+\framesubtitle{Four conditions: 1N (single turn + no docs); 5N; 1D; 5D (multi-turn + with docs)}
 \begin{center}
 \begin{tabular}{@{}l p{8.5cm}@{}}
-\textbf{Architecture}     & One prompt vs. Agentic (3--5 turns) \\
-\textbf{Documentation}    & none vs. RAG: 18 tables, primary sources, Markdown \\
+\textbf{Architecture}         & One prompt vs. Agentic (3--5 turns) \\
+\textbf{Documentation}    & None vs. RAG (18 tables, primary sources, Markdown) \\
 \\
-\textbf{Agents}           & Opus~4.6, GPT-5.5, Mistral Large, Qwen 3.7 max \\
-\textbf{Repetitions}      & 5 (model variability) \\
-\textbf{Controls}         & default reasoning effort, web search allowed, no tools, no code, direct lab API provider \\
-\textbf{Resources}        & cost < \$6, length < 50\,000 tokens \\
+\textbf{Agents  }               & Opus~4.6, GPT-5.5, Mistral Large, Qwen 3.7 max \\
+\textbf{Repetitions}         & 5 (model variability) \\
+\textbf{Controls}              & default reasoning effort, web search allowed, no tools, no code, direct lab API provider \\
+\textbf{Resources}          & cost < \$6, length < 50\,000 tokens per run\\
 \end{tabular}
 \end{center}
 \end{frame}
