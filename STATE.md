@@ -1,4 +1,4 @@
-Last updated: 2026-05-27T13:39Z
+Last updated: 2026-05-27T23:15Z
 
 ## North star
 
@@ -31,12 +31,26 @@ Post-conference slides review done (PRs #615/#616). Open paper-writing tickets.
 4. **Update slides.** DONE — conference delivered 2026-05-27.
 5. **Post-conference cleanup.** DONE — PRs #606/#612/#615/#616 merged, regressions fixed.
 6. **Paper writing.** Opens next.
+7. **Report/ablation cleanup.** Planning done (merged #627): tickets 0360/0361/0362 ready, 0352 re-scoped — see Handoff.
+
+## Handoff — report/ablation cleanup (merged via #627)
+
+Run order: **0361 + 0362 (independent) → 0352 → 0353**. Every ticket body carries its first test + literal scope.
+
+- **0361** retire §Exp3 modular ablation (designed, never ran; pilot invalidated). NOT a wholesale rm: salvage the verification paragraphs (multi-turn ⊂ verification; per-row sourcing → independent verifier) into **Discussion**; CUT the "information regime" construct (replaced by the observable product-features framing already live in the slides 2×2); acknowledge decomposition (divide & conquer) as non-priority. Deletes `base_vs_census` + the hard-broken figs; fixes the duplicate "Expérience 3" heading (`sec:exp3` vs `sec:rag`). KEEP `sec:direct_complete`.
+- **0362** reconcile report Exp2 onto the live 2×2 features design (slides already use `tab_exp2_2x2`; report still on stale `tab_exp2_arms` + 4 arms scripts). Reconciliation, not deletion — Exp2 is live.
+- **0352** clean-room report build (no `uv run` in `make report`; rules → `experiments/analysis.mk`), re-scoped to run on the pruned tree. NB its append-only log still says "0358" — historical; real blockers are 0361/0362.
+- **0360** clean/cleaner reproducibility oracle (content-diff, **no timestamps**). Independent.
+
+Root cause behind the dead figures: the `prompt_version` tag was dropped in the 0297/0344 mart rebuild → census/ablation figures filter to empty (data untagged, not lost).
+
+Gotchas: the prior agent-352 attempt at 0352 (recover/freeze figures) is **abandoned** — discard that WIP branch. 0354 dedup (`experiments/common.mk`) already merged here.
 
 ## Backlog / deferred
 
 - Scaling-curve diagnosis — direct_complete F1=0 on 3 capable models (parser failure suspected).
 - Paper writing opens now.
-- Report clean-room build + uv-run guard deferred (tickets 0352/0353).
+- Report/ablation cleanup (0360/0361/0362; 0352 re-scoped + Blocked-by 0361/0362; 0353 after 0352) — see Handoff.
 - CI required-checks rule disabled 2026-05-26 — **re-enable** (talk done, no longer blocking).
 - Stale remote branches to prune: `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.
 - `ticket/0345-collapse-exp2-single-producer` local branch has 3 pre-PR commits not in main — manual review before deleting.
