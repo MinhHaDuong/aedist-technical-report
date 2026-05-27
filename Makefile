@@ -147,14 +147,16 @@ $(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
 
-# Produces macros_census.tex (consumed by slides via \NumCensusModels); the
-# census figure itself was retired with the ablation thread (ticket 0361), so
-# --output writes an unconsumed byproduct. Full producer migration is 0352.
-$(GEN)/macros_census.tex: $(MEASUREMENTS)
+# Produces macros_census.tex (consumed by slides via \NumCensusModels). The
+# census figure was retired from the report with the ablation thread (0361) but
+# is still written by this script, so fig_census_direct.pdf is declared a grouped
+# co-target — both outputs hardcoded (not $@) so either grouped member resolves
+# correctly. Full producer migration is 0352.
+$(GEN)/macros_census.tex $(GEN)/fig_census_direct.pdf &: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $(GEN)/fig_census_direct.pdf --methods direct --prompt-version census \
-	    --output-macros $@
+	    --output-macros $(GEN)/macros_census.tex
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
@@ -200,7 +202,7 @@ $(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experim
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
-    $(GEN)/tab_census.tex $(GEN)/macros.tex \
+    $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex \
 	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex \
     $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
 		$(GEN)/fig_spider_exp1_families.pdf \
