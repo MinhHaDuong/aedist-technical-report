@@ -167,7 +167,7 @@ $(GEN)/fig_census_direct.pdf: $(MEASUREMENTS)
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
-$(GEN)/fig_direct_p1_base.pdf: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
+$(GEN)/fig_direct_p1_base.pdf $(GEN)/macros_p1_base.tex &: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --methods direct \

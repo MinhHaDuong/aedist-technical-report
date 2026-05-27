@@ -55,6 +55,9 @@ ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
 ANALYSIS_SLIDE_MACROS := $(ANALYSIS_SLIDE_GEN)/macros.tex
 
+ANALYSIS_EXP1_SPIDER_FAMILIES := $(ANALYSIS_GEN)/fig_spider_exp1_families.pdf
+ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
+
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
 	$(ANALYSIS_GEN)/fig_exp2_outline_dataset.tex \
@@ -264,6 +267,21 @@ $(ANALYSIS_EXP2_SPIRE_FIG): $(ANALYSIS_GEN)/sota_cross_eval_view.csv experiments
 	    --config experiments/quality_spider_config.yaml \
 	    --output $@
 
+# Exp1 quality spiders: one script, two invocations (family 2x2 panels vs a
+# single-model large spider) -> two targets, not a grouped rule.
+$(ANALYSIS_EXP1_SPIDER_FAMILIES): $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@
+
+$(ANALYSIS_EXP1_SPIDER_CLAUDE): $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --model claude-opus-4.6 \
+	    --output $@
+
 $(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_stat_tests \
@@ -370,9 +388,11 @@ $(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_GEN)/census_bars.csv $(ANALYSIS_REPO_ROOT)/
 	uv run python -m aedist.tabulate_macros \
 	    --census-csv $(ANALYSIS_GEN)/census_bars.csv --output $@
 
-.PHONY: exp2-analysis-report
+.PHONY: exp2-analysis-report exp1-analysis-figures
 
 exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_FR_TEX) \
 	$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) \
 	$(ANALYSIS_SLIDE_MACROS)
+
+exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_CLAUDE)

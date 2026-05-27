@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Wire orphaned generated figures into the build DAG; add completeness guard
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T00:00Z claude created — red adherence test committed first (TDD), fix follows
+
+--- body ---
+## Context
+
+A union-aware Makefile DAG-completeness test (`tests/test_makefile_dag.py`,
+`@pytest.mark.adherence`, committed on branch
+`claude/slides-figures-list-3GC71`) asserts that every generated `.pdf`/`.tex`
+consumed as a prerequisite is the target of some rule across the union of all
+makefiles (writing + analysis workpackages), with variable expansion so
+`analysis.mk`'s `$(ANALYSIS_*)` targets are recognised.
+
+It is currently **red**, documenting three artifacts orphaned from the DAG —
+committed, consumed by the build, but produced by no makefile rule:
+
+- `report/inputs/generated/fig_spider_exp1_claude.pdf`
+- `report/inputs/generated/fig_spider_exp1_families.pdf`
+- `report/inputs/generated/macros_p1_base.tex`
+
+This completes the unchecked exit criterion of **0345** ("slides.pdf
+prerequisites match the figures the deck includes — add the 5 missing":
+the two `fig_spider_exp1_*` were among them) and is a slice of **0352**
+(analysis.mk as sole figure producer). Sibling exp1 cross-eval figure
+`fig_spider_cross_exp` and the input variable
+`ANALYSIS_EXP1_CROSS_EVAL_CSV` (analysis.mk:22, declared but unused) confirm
+analysis.mk is the intended home.
+
+## Test
+
+`tests/test_makefile_dag.py::test_generated_artifacts_have_a_producer` —
+red now (3 orphans), green when each has a producing rule. This IS the
+first test.
+
+## Actions
+
+1. `experiments/analysis.mk`: add producers for `fig_spider_exp1_families.pdf`
+   (default) and `fig_spider_exp1_claude.pdf` (`--model claude-opus-4.6`) via
+   `aedist.plot_quality_spider_exp1`, depending on the
+   `exp1_cross_eval/.done` stamp (analysis.mk:85). Two rules, one script, two
+   invocations (not a grouped target). Attach to a phony aggregate.
+2. `Makefile`: declare `macros_p1_base.tex` a grouped co-target of the
+   existing `fig_direct_p1_base.pdf` rule (it is already written via
+   `--output-macros` in the same invocation) — `a b &: deps`. DAG honesty,
+   no new `uv run` leakage. Full migration to analysis.mk stays 0352's scope.
+
+## Definition of done
+
+- `pytest tests/test_makefile_dag.py` is green.
+- `make -n slides` / `make -n report` introduce no NEW `uv run` (clean-room
+  property of 0345 preserved; the writing build still consumes committed
+  PDFs).
+- One real invocation of each new recipe (to a temp output) succeeds against
+  committed `exp1_cross_eval.csv` with slug `claude-opus-4.6`.
+
+## Related
+- 0345 (closed, PR #609): analysis.mk sole producer, writing build from artifacts.
+- 0352 (deferred): report writing build clean-room — full producer migration.
+- 0353 (deferred): adherence guard against `uv run` in the writing build —
+  sibling guard to this DAG-completeness test.
