@@ -2,7 +2,6 @@
 Title: Cross-evaluation rubric + scoring harness (Phase C)
 Created: 2026-05-14
 Author: claude
-Tag: deferred
 
 --- log ---
 2026-05-14T12:00Z claude created
@@ -11,6 +10,7 @@ Tag: deferred
 2026-05-20T21:47Z HDMX-coding-agent note blocker 0167 closed — Blocked-by removed.
 2026-05-21T16:00Z HDMX-coding-agent note tagged deferred — backlog audit; full Phase C cross-eval matrix is post-talk work, not in critical path for 2026-05-27
 2026-05-23T13:30Z HDMX-coding-agent note rehomed under 0199 as the Phase-C cross-eval leg; refreshed stale surface (synopsis→main.md §4, umbrella 0166→parent 0199, three evaluators). Scope corrected for Exp 2's two arms: 2 arms × 4 agents × 5 reps = 40 subject outputs → 120 scoring calls + baseline. Rubric design unchanged; stays deferred (post-talk). NB manuscript §4 still says N=3 / single-arm — 0199 to sync.
+2026-05-27T20:59Z Claude untag deferred
 --- body ---
 ## Context
 
