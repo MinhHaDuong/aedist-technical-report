@@ -190,16 +190,15 @@ Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesu
 Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211 sur 280~sorties) ont été réalisés sans spécifier le paramètre \emph{temperature} de l'API~; le fournisseur applique alors sa valeur par défaut (typiquement~1,0 pour les API compatibles OpenAI). Seuls les sweeps direct\_complete et les bras paramétrique et livesearch de l'ablation utilisent explicitement $t{=}0$. Les modèles de raisonnement (o3, DeepSeek~R1, QwQ) ignorent ce paramètre~: leur température interne est fixée par le fournisseur. Le bras RAG de l'ablation a été exécuté à $t{\approx}1$ tandis que les autres bras utilisaient $t{=}0$, introduisant un confondant potentiel. L'amplitude de ce biais est bornée~: l'extraction structurée en CSV est vraisemblablement moins sensible à la température que la génération de texte libre, et les classements entre modèles, fondés sur le F1 médian de trois runs, restent robustes pour les différences supérieures à~0,05. Les scripts d'interrogation sont désormais instrumentés pour imposer $t{=}0$ par défaut sur toutes les futures expériences.
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
-\InputIfFileExists{inputs/generated/tab_exp2_arms}{}{}
 
-\IfFileExists{inputs/generated/fig_quality_spider.pdf}{
-\begin{figure}[h]
+Au-delà des relances, l'expérience~2 se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
+
+\begin{table}[h]
 \centering
-\includegraphics[width=0.78\linewidth]{inputs/generated/fig_quality_spider.pdf}
-\caption{Profils de qualite sur huit axes en vocabulaire non specialistes pour les bras naive et optimise de l'experience 2.}
-\label{fig:exp2-quality-spider}
-\end{figure}
-}{}
+\caption{Expérience~2 en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
+\label{tab:exp2-2x2}
+\InputIfFileExists{inputs/generated/tab_exp2_2x2}{}{}
+\end{table}
 
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
