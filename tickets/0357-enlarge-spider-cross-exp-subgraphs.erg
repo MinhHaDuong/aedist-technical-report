@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Enlarge the five subgraphs in fig_spider_cross_exp
+Created: 2026-05-27
+Author: haduong
+
+--- log ---
+2026-05-27T15:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The cross-experiment spider figure `fig_spider_cross_exp.pdf` (the author's
+"slide 5 / five spiders" — the full-bleed `[plain]` frame in the Results
+section) packs five radar panels (E1, 1N, 5N, 1D, 5D) into a **3×3 polar
+grid** but fills only 5 of the 9 cells in an X/quincunx pattern
+(corners + center). The four empty edge cells waste a large fraction of the
+canvas, so each radar is small and hard to read when projected. Enlarge the
+subgraphs.
+
+## Relevant files
+- `src/aedist/plot_spider_cross_exp.py` — `make_figure()`; `plt.figure(figsize=(14, 11))` at L131, `fig.add_subplot(3, 3, ...)` quincunx placement at L130-135, `fig.tight_layout(rect=(0, 0.06, 1, 0.97))` at L192.
+- `report/inputs/generated/fig_spider_cross_exp.pdf` — the output.
+- `experiments/analysis.mk` — build target for the PDF.
+- `slides/slides-en.tex` and `slides/slides.tex` — both `\includegraphics` this figure on a `[plain]` frame.
+
+## Actions
+1. Replace the 3×3-grid quincunx with a compact layout that gives each panel more area — e.g. a `GridSpec` with the four empty edge cells removed (top row 1N / E1 / 5N, bottom row 1D / 5D, or 3-top/2-bottom), keeping the conceptual grouping legible (no-docs vs with-docs; 1 vs 5 turns).
+2. Increase per-panel radar radius and ensure panel titles no longer overlap the axis labels (currently e.g. "5N (optim., 5 tours)" overlaps "Date COD plausible" / "Actifs trouvés").
+3. Keep it readable at slide-projection size; verify the shared legend still fits.
+
+## Test
+- Source-inspection test (per coding-python CLI rule) asserting `make_figure` no longer uses the 3×3 quincunx (no `add_subplot(3, 3, ...)`), and a smoke test that the output PDF regenerates with five polar axes.
+
+## Verification
+- [ ] `make -f experiments/analysis.mk <fig_spider_cross_exp target>` regenerates without error.
+- [ ] The five subgraphs are visibly larger; panel titles do not overlap axis labels.
+- [ ] Both `slides.tex` and `slides-en.tex` render the figure cleanly on their `[plain]` frames.
+
+## Invariants
+- French deck (`slides.tex`) keeps rendering; `make check` stays green.
+- One output per Make rule; prerequisites match the script's reads/writes.
+
+## Exit criteria
+- [ ] Subgraphs enlarged, no title/label overlap, both decks render.
+
+Note: this figure also carries French labels (Exactitude, Actifs trouvés,
+\ldots) — the language fix is tracked in [[0356]]. This ticket is
+layout/size only; if regenerating anyway, consider doing both in one pass.
