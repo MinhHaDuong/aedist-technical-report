@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-27T23:40Z claude created
 2026-05-27T23:55Z claude note Hardened after design challenge: split safety into Tier 1 (work-loss guards, now fail-closed + working-tree-aware) and Tier 2 (correctness: structural-invariant check + compile + human diff). Hardcoded EN→FR direction so the source of truth is never a write target. Added a deterministic (non-LLM) include-path remap to flip `_en` figure/table variants back to FR. See "Coordination with 0356".
+2026-05-27T23:59Z claude note Delivered scripts/translate_slides.py + tests/test_translate_slides.py (12 tests, all guards covered) + optional `make translate-slides` PHONY target (not a slides.pdf prereq). Verified: --dry-run assembles prompt + passes Tier-1 with no write; lint + full fast suite green. A real claude run that overwrites slides.tex is left to the human (spends money, churns the currently-synced FR deck) — pending user go-ahead.
 
 --- body ---
 ## Context
