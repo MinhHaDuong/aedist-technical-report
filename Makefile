@@ -148,13 +148,13 @@ $(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
 	    --output $@ --core-only
 
 # Produces macros_census.tex (consumed by slides via \NumCensusModels); the
-# census figure itself was retired with the ablation thread (ticket 0361), so
-# --output writes an unconsumed byproduct. Full producer migration is 0352.
-$(GEN)/macros_census.tex: $(MEASUREMENTS)
+# census figure itself was retired with the ablation thread (ticket 0361).
+# Full producer migration is 0352.
+$(GEN)/fig_census_direct.pdf $(GEN)/macros_census.tex &: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $(GEN)/fig_census_direct.pdf --methods direct --prompt-version census \
-	    --output-macros $@
+	    --output-macros $(GEN)/macros_census.tex
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
