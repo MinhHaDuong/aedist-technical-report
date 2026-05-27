@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Add per-workpackage clean + project cleaner as a content-diff reproducibility oracle
+Created: 2026-05-27
+Author: claude
+Blocked-by: 0352
+Blocked-by: 0354
+
+--- log ---
+2026-05-27T00:00Z claude created
+
+--- body ---
+## Context
+
+Motivating finding (session 2026-05-27). Another instance reported: "slides
+rebuild clean because the figures are committed up to date." That verifies the
+*writing* build compiles offline from committed includes (the goal of 0352) — it
+does **not** verify the committed figures are faithful to the data. On a fresh
+checkout `make` sees a committed `*.pdf` no older than its sources and **no-ops**:
+it never runs `plot_*.py`. "Up to date" is therefore an unverified assertion. The
+build cannot detect a stale committed figure: edit `measurements.jsonl`, regen the
+table, forget one figure, commit → green forever, stale slide.
+
+Committing figures (writing rule: figures are committed PDFs via
+`\includegraphics`) is deliberate — it lets the report build without the
+python/data stack. But that *removes* the build's ability to catch staleness, so
+faithfulness needs a separate check.
+
+Build chain (source floor → up):
+`runs` results files → mart → views → includes (figures, tables, macros) → slides/report.
+
+## Design
+
+Two-tier, content-based.
+
+- **Per-workpackage `make clean`** (experiments, writing): remove intermediates
+  **and** committed-derived artifacts down to — but never including — the runs
+  floor. The removed file set is sourced from the same make variables that
+  declare those targets (centralized in 0354's `experiments/common.mk`), never a
+  hand-listed `rm foo.pdf bar.pdf` (that drifts from the targets — the exact
+  divergence 0354 fixed).
+- **Project-level `make cleaner`**: aggregate the workpackage cleans, then
+  **regenerate and content-diff**.
+
+The faithfulness oracle is **content-based, not timestamp-based**:
+
+    make cleaner && make && git diff --quiet -- <includes paths>
+
+Non-empty diff ⇒ a committed include is stale, or a source is hidden/missing ⇒
+the DAG is lying. **No mtime / "is X newer than Y" logic anywhere in the
+clean-or-oracle path** — make's timestamp model is precisely what produced the
+false "up to date", so we do not reuse it to detect drift.
+
+**Source floor is hard.** `measurements.jsonl` and raw result JSON are committed,
+expensive (API $, MoE `repeat=3`, non-deterministic), and irreproducible offline.
+They are sources that happen to be generated. No clean target — not `clean`, not
+`cleaner`, not any `git clean` it invokes — may ever list them.
+
+**Scope boundary vs 0352.** 0352 makes the *writing* workpackage compile from
+committed includes (offline). This ticket makes the *experiments* workpackage
+regenerate those includes from runs and proves faithfulness by content-diff.
+Complementary, not overlapping. `Blocked-by: 0352` is for sequencing only — avoid
+two instances editing Makefiles at once; land after the clean-room build settles.
+`Blocked-by: 0354` because the clean sets source from `common.mk`'s target vars.
+
+## Test (first, red)
+
+`tests/test_cleaner_reproducibility.py`, marked slow/adherence (regenerates
+figures; needs uv + committed measurements, **no API key**). Operates in an
+**isolated checkout** (throwaway worktree or `cp -r` to tmp) so the user's tree is
+never dirtied:
+
+```python
+def test_cleaner_regenerates_committed_includes_byte_clean(tmp_repo):
+    # tmp_repo = fresh worktree/copy of HEAD
+    run("make cleaner", cwd=tmp_repo)              # removes committed includes, keeps runs floor
+    assert measurements_jsonl_unchanged(tmp_repo)  # source floor untouched
+    run("make", cwd=tmp_repo)                      # regenerate from runs
+    dirty = run("git status --porcelain -- <includes>", cwd=tmp_repo)
+    assert dirty == "", f"committed includes drifted from data:\n{dirty}"
+```
+
+Second guard (fast, static) `test_clean_never_lists_runs_floor`: expand each clean
+target's file set from the make vars; assert the intersection with committed
+results files (`measurements.jsonl`, raw result JSON) is empty.
+
+## Exit criteria
+
+- [ ] `make clean` in experiments and writing workpackages; removed set sourced from declared-target make vars, not hand-listed
+- [ ] `make cleaner` at project root aggregates the workpackage cleans
+- [ ] `make cleaner && make && git diff --quiet -- <includes>` is clean (content-based; no mtime logic in the clean-or-oracle path)
+- [ ] adherence test: no clean target ever lists `measurements.jsonl` or raw result JSON
+- [ ] `test_cleaner_reproducibility.py` runs in an isolated checkout and never dirties the working tree
+- [ ] `make check` passes
