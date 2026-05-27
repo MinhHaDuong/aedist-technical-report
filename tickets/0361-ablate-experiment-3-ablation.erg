@@ -8,6 +8,8 @@ Author: claude
 
 2026-05-27T01:30Z claude note rescoped after reading contents — NOT a wholesale rm. §Exp3 is one of two abandoned branches (other = Exp2 arms→2x2, now 0359) and hosts live cross-cutting framing. MHD calls on the 3 argument groups recorded below.
 
+2026-05-27T00:00Z claude note preflight — (1) base_vs_census include is in plan_ablation.tex:413/417, NOT report.tex:417 (corrected in scope). (2) fig_census_direct.pdf and fig_base_vs_census.pdf are NOT committed; make report regenerates them from untagged data into empty figures, so the "before" state is build-green-but-wrong, not red. (3) COLLISION with 0362 on Makefile:256 (tables:) — both delete a token from that one line; serialize (land this first, rebase 0362) rather than parallel worktrees. (4) slides reference none of the deleted artifacts — conference deck cannot regress.
+
 --- body ---
 ## Context
 
@@ -62,7 +64,9 @@ results; otherwise drop.
   Protocole, Décisions de conception, Hypothèses pré-enregistrées, Résultats pilotes
   (invalidés). Figures `fig_ablation_strip`, `fig_ablation_heatmap` (both
   `\IfFileExists` — graceful, never build-blockers).
-- base-vs-census (a real **hard** `\includegraphics` blocker, line 417):
+- base-vs-census (hard `\includegraphics` at **plan_ablation.tex:417** + `\input`
+  at plan_ablation.tex:413 — NOT in report.tex; both vanish when the file is
+  deleted, so no separate report.tex surgery):
   `report/inputs/generated/{fig_base_vs_census.pdf, tab_base_vs_census.tex}`,
   `src/aedist/{plot_base_vs_census.py, tabulate_base_vs_census.py}`,
   `tests/{test_plot_base_vs_census.py, test_tabulate_base_vs_census.py}`.

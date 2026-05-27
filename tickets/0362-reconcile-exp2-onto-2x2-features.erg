@@ -6,6 +6,8 @@ Author: claude
 --- log ---
 2026-05-27T01:30Z claude created — branch #1 of the two abandoned design threads (companion to 0358)
 
+2026-05-27T00:00Z claude note preflight — CAUTION on report.tex:404 "bras corrigé": that is the false-positive decomposition-fix sub-experiment (naive prompt vs anchor-corrected prompt), NOT the Exp2 2×2 (1N/5N/1D/5D). KEEP that language as-is; do NOT 2×2-ify it. Only the Exp2 arms 1–4 framing (tab_exp2_arms, report.tex:200/206) is stale. Also: COLLISION with 0361 on Makefile:256 (tables:) — both delete a token from that one line; land 0361 first, then rebase this.
+
 --- body ---
 ## Context
 
