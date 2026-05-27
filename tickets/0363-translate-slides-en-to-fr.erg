@@ -1,0 +1,160 @@
+%erg 0.1
+Title: Script to translate slides-en.tex (source of truth) to French slides.tex via claude CLI
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T23:40Z claude created
+
+--- body ---
+## Context
+
+After the Econom'IA 2026 talk, the English deck `slides/slides-en.tex` becomes
+the **single source of truth** for slide prose. The French deck
+`slides/slides.tex` is a derived translation. Today the two are kept in sync by
+hand — the git log shows a string of manual "align FR on EN revision" /
+"align French deck on the revised English deck" commits. That manual loop is
+error-prone and easy to forget.
+
+The two files are structurally parallel (both 476 lines, identical LaTeX
+scaffolding — same preamble, `\definecolor`s, `\includegraphics` paths, macros,
+frame structure); only the human-readable prose differs. This makes a
+prose-only LLM translation tractable and low-risk **if** the surrounding LaTeX
+is preserved verbatim.
+
+This ticket delivers a script that translates EN → FR by calling the `claude`
+CLI, with two safety guards so the script can never silently destroy French
+work. Per the user's framing, "securely" means exactly: **check anteriority**
+and **ensure FR is saved in git** before overwriting `slides.tex`.
+
+## Design decisions (settled)
+
+- **Language:** Python — `scripts/translate_slides.py` with `argparse`. Fits the
+  repo's ruff hook + unit-test conventions (cf. ticket 0356's source-inspection
+  CLI tests) and lets the guards be unit-tested as pure functions.
+- **Guard failure → abort.** On either guard tripping, print a clear, actionable
+  message and exit non-zero. The script NEVER auto-commits and NEVER clobbers.
+  No `--force`. (User decision.)
+- **Direction is one-way:** EN is source, FR is output. The script reads
+  `slides/slides-en.tex` and writes `slides/slides.tex`. It does NOT commit FR —
+  the human reviews and commits. (Guard #2 only *checks* that the prior FR is
+  committed; it does not commit for you.)
+- **Not in the build DAG.** `slides.tex` stays a committed source file. Do NOT
+  make it a Make file-rule target of `slides-en.tex`: that would put a
+  non-deterministic, network-dependent LLM call inside `make`. If a Makefile
+  entry point is wanted, add a `.PHONY` `translate-slides` convenience target
+  only — never a prerequisite of `slides.pdf`.
+
+## The two guards (run BEFORE any claude call or write)
+
+1. **Anteriority (EN must not be older than FR).**
+   Compare the *last-commit* timestamps from git, NOT filesystem mtimes — a
+   fresh clone stamps every file with the checkout time, so mtimes are
+   meaningless here. Use `git log -1 --format=%ct -- <path>` for each deck.
+   If FR's last commit is **strictly newer** than EN's, abort: FR was
+   hand-edited more recently than EN, so translating would overwrite newer
+   French work. (Normal flow keeps EN >= FR: you edit+commit EN, then run the
+   script, then commit the generated FR — after which FR == newer, and the next
+   EN edit makes EN newer again.)
+
+2. **FR saved in git (clean working tree for the output file).**
+   The about-to-be-overwritten `slides/slides.tex` must have no uncommitted
+   changes, so the prior FR is recoverable from git. Check
+   `git status --porcelain -- slides/slides.tex` is empty. If dirty, abort and
+   tell the user to commit or stash `slides.tex` first.
+
+## Safety of the claude invocation
+
+- **No shell injection.** Use `subprocess.run([...])` with an argument list,
+  `shell=False`. Pass the EN document on **stdin** (`input=...`), never
+  interpolated into a shell string.
+- **Validate before overwrite.** Reject empty output, or output that does not
+  look like the beamer doc (must start with `\documentclass` and contain
+  `\end{document}`). On invalid output, abort WITHOUT touching `slides.tex` —
+  guards against the CLI returning a refusal, an error string, or nothing.
+- **Atomic write.** Write to a temp file, validate, then `os.replace` over
+  `slides.tex`, so a crash mid-call cannot leave a half-written FR deck.
+- **Translation prompt** must instruct: translate only human-readable prose
+  EN→FR; preserve ALL LaTeX verbatim — commands, environments, `\includegraphics`
+  paths, `\label`/`\ref`, macro names, color defs, comments-as-structure; keep
+  the document structure and (where natural) line parallelism intact; output the
+  full `.tex` and nothing else (no markdown fences, no commentary).
+- **Exact `claude` flags are not guessed in this ticket.** At execute time,
+  confirm the non-interactive invocation (expected: `claude -p` print mode,
+  text output, document via stdin) against `claude --help`. A `--dry-run` flag
+  (assemble prompt + run guards + print plan, no claude call, no write) lets you
+  test prompt assembly for free before spending a call (cf. "Test one before
+  blasting" workflow rule).
+
+## Relevant files
+
+- `slides/slides-en.tex` — EN source of truth (input).
+- `slides/slides.tex` — FR output (overwritten; must be committed-clean first).
+- `scripts/translate_slides.py` — NEW. The translator + guards.
+- `tests/test_translate_slides.py` — NEW. Guard unit tests (see First test).
+- `slides/Makefile` — OPTIONAL `.PHONY: translate-slides` convenience target only.
+
+## First test (write this first; it fails until the script exists)
+
+`tests/test_translate_slides.py` — guards are pure/injectable so they need no
+real git or claude:
+
+```python
+import pytest
+from scripts import translate_slides as ts
+
+def test_aborts_when_fr_dirty(monkeypatch, tmp_path):
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: False)   # dirty FR
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: True)
+    called = []
+    monkeypatch.setattr(ts, "run_claude", lambda *a, **k: called.append(1) or "x")
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr="slides/slides.tex")
+    assert called == []          # claude never invoked when a guard trips
+
+def test_aborts_when_fr_newer_than_en(monkeypatch):
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: True)
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: False)  # FR newer
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr="slides/slides.tex")
+
+def test_rejects_non_latex_claude_output(monkeypatch, tmp_path):
+    fr = tmp_path / "slides.tex"; fr.write_text("OLD FR")
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: True)
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: True)
+    monkeypatch.setattr(ts, "run_claude", lambda *a, **k: "I cannot do that.")
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr=str(fr))
+    assert fr.read_text() == "OLD FR"   # never overwritten on invalid output
+```
+
+Plus a source-inspection test (per coding-python CLI-flag rule) asserting the
+argparse parser exposes `--dry-run`.
+
+## Verification
+
+- [ ] `pytest tests/test_translate_slides.py` passes.
+- [ ] `--dry-run` prints the assembled prompt + guard results, makes no claude
+      call, and writes nothing.
+- [ ] With EN committed-newer and FR committed-clean, a real run rewrites
+      `slides/slides.tex`; `cd slides && tectonic slides.tex` compiles; a visual
+      diff vs the previous FR shows prose-only changes (no LaTeX/structure drift).
+- [ ] Dirty `slides.tex` → script aborts non-zero, FR untouched.
+- [ ] FR committed newer than EN → script aborts non-zero, FR untouched.
+- [ ] `make check` stays green.
+
+## Invariants
+
+- The script never commits and never overwrites a dirty or newer FR.
+- `slides.tex` is not added as a Make file-rule prerequisite of `slides.pdf`.
+- No `shell=True`; EN content reaches `claude` via stdin, not argv/shell.
+- LaTeX scaffolding preserved verbatim; only prose is translated.
+
+## Exit criteria
+
+- [ ] `scripts/translate_slides.py` translates `slides-en.tex` → `slides.tex`
+      via the `claude` CLI, with both guards enforced (abort-on-fail, non-zero).
+- [ ] Output is validated and atomically written; invalid/empty output leaves
+      FR untouched.
+- [ ] First test + `--dry-run` flag test pass; `make check` green.
+- [ ] The manual "align FR on EN" loop is replaced by `translate_slides.py`.
