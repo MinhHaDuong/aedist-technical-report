@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Align manuscript title, key messages, and argument flow onto the conference slides
+Created: 2026-05-27
+Author: haduong
+
+--- log ---
+2026-05-27T13:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The slides were refined through the Econom'IA 2026 talk (delivered 2026-05-27)
+and a post-talk revision pass (PRs #619-#625): retitled, argument flow settled
+to Problème -> Expérience 1 -> Expérience 2 -> Résultats -> Discussion ->
+Conclusions, and four key messages crystallized. The companion synopsis
+manuscript has drifted from this now-authoritative framing and should be
+brought into line. (Sibling concern: [[0152]] aligned the slides on the
+argument; this aligns the manuscript on the slides.)
+
+Concrete divergences:
+- **Title.** Manuscript: "Beyond RAG: Stateful-Agentic Architectures for
+  Reliable Economic Statistics" (main.md:10). Slides: "Beyond RAG" /
+  "Architectures for Reliable Economic Statistics with Agentic Systems".
+  ("Stateful-Agentic" vs "with Agentic Systems"; word order.)
+- **Key messages.** The slides' Conclusions state four: (+) from weeks of
+  monitoring to a few euros per query; (+) providing sources saves money and
+  improves; (-) but ensuring quality demands more; (-) multi-turn
+  unconvincing, external verification needed anyway; thesis "Beyond RAG --
+  not yet." The manuscript does not foreground these.
+- **Argument flow.** Manuscript spine is "First (baseline) / Second (quality
+  bar) / Third (chatbots -> knowledge management) / Fourth (frontier falls
+  short) / Fifth (tailored solution) / Discussion". Slides arc is Problem ->
+  Exp 1 -> Exp 2 (2x2 design) -> Results -> Discussion -> Beyond-RAG conclusion.
+
+## Relevant files
+- `slides/manuscript/main.md` — the synopsis to align (title L10; "First..Fifth" spine + Discussion; Annexes A-D + Bibliography below).
+- `slides/slides.tex` / `slides/slides-en.tex` — alignment source: `\title`/`\subtitle`, `\section` flow, the Conclusions frame.
+- `slides/Makefile` — `make manuscript` builds `manuscript/main.pdf` via pandoc.
+
+## Actions
+1. Retitle main.md:10 to match the slides title/subtitle; reconcile "Stateful-Agentic" vs "with Agentic Systems" with the author.
+2. State the slides' four key messages + the "Beyond RAG -- not yet" thesis explicitly in the manuscript (intro or a key-messages paragraph).
+3. Reframe the narrative spine to the slides' arc (Problem -> Exp 1 baseline -> Exp 2 design/method -> Results -> Discussion/Limitations -> Beyond-RAG conclusion); map "Fifth: tailored solution" onto the RAG-agentic result and fold in the 2x2 framing.
+4. Rebuild: `make -C slides manuscript` -> `manuscript/main.pdf` clean.
+
+## Test
+Writing ticket (no unit test). Verify by build + a structural diff of the
+manuscript section order against the slides' `\section` order.
+
+## Verification
+- [ ] main.md title == slides title/subtitle.
+- [ ] The four key messages + "Beyond RAG -- not yet" appear explicitly in the body.
+- [ ] Section order mirrors the slides' Problem -> Exp1 -> Exp2 -> Results -> Discussion -> Conclusions arc.
+- [ ] `make -C slides manuscript` builds without error.
+
+## Invariants
+- Annexes A-D (technical specs, temporality) and the Bibliography are preserved -- align the narrative spine, do not drop the annexes.
+
+## Exit criteria
+- [ ] Manuscript title, key messages, and argument flow match the slides; `make manuscript` builds clean.
+
+## Scope note
+Targets the companion synopsis `slides/manuscript/main.md`. If "manuscript"
+means the full `report/report.tex`, that is a separate, larger alignment
+ticket -- redirect before starting.
