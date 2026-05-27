@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Consolidate Makefile cross-file duplication and divergence (shared common.mk)
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T00:00Z claude created — modularity audit of the 7 makefiles found duplicate producers, 4 divergent UV_RUN definitions, a 6x copy-pasted drain recipe, and an env-policy violation in experiment1.mk
+
+--- body ---
+## Context
+
+Audit of the 7 makefiles (`Makefile`, `experiments/Makefile`,
+`experiments/{analysis,experiment1,experiment2}.mk`, `report/Makefile`,
+`slides/Makefile`). The directory split (experiments = data/analysis,
+report/slides = writing) is sound, and the analysis-vs-writing workpackage
+split (analysis.mk produces handoff artifacts, the writing build only
+compiles) is **intentional** — established by ticket 0345 / PR #609, and
+documented in `slides/Makefile` lines 2-6. This ticket does NOT relitigate
+that split.
+
+What it targets is cross-file duplication and divergence that no longer has a
+reason to exist:
+
+1. **Duplicate self-consistency producer.** `tab_self_consistency.tex` +
+   `tab_per_run.tex` are produced by TWO rules: root `Makefile:80-84` and
+   `experiments/Makefile:213-216` (via `SC_TEX`/`SC_PERRUN`). Same outputs, two
+   recipes — exactly the duplicate-producer anti-pattern 0345 removed for the
+   2x2 table. Whichever fires depends on which makefile is invoked.
+
+2. **Four divergent `UV_RUN` definitions** for the same operation:
+   - `experiments/Makefile:48` — `uv run --project .. --env-file ../.env` (the
+     documented-policy form)
+   - `experiment2.mk:20` — `PYTHONPATH=.. uv run --project .. --env-file ../.env`
+   - `experiment1.mk:10` — `env PYTHONPATH=.. uv run --env-file $(HOME)/.claude/.env --project ..`
+   - `analysis.mk` — bare `uv run` (no `--project`, no `--env-file`; cwd-dependent)
+
+3. **`experiment1.mk:10` violates the documented ENV POLICY.**
+   `experiments/Makefile:13-29` makes the project `../.env` the single source of
+   truth and explicitly warns against `~/.claude/.env` (stale-key + `ps -ef`
+   leak history). `experiment1.mk` uses `--env-file $(HOME)/.claude/.env`.
+
+4. **Drain recipe copy-pasted 6x.** `census-run`, `regimes-run`,
+   `decomposed-run`, `verification-run`, `sourced-run`, `frontier-run` in
+   `experiments/Makefile` are byte-identical
+   (`for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; wait`).
+   The matching `*-generate` targets differ only by `--sweep` name.
+
+Out of scope (note for a possible follow-up tracking ticket): the root
+`Makefile` is itself an undocumented analysis producer — ~20 `uv run` rules
+writing into `report/inputs/generated/` — parallel to `analysis.mk`. Folding
+the whole presentation layer into the analysis workpackage is a larger
+architecture change; this ticket only removes the clear duplication above.
+
+## Actions
+1. Add `experiments/common.mk` defining `UV_RUN`, `WORKER`, `MANAGER`,
+   `OR_*`, and a canned drain recipe (`define drain ... endef`). `include` it
+   from `experiments/Makefile` and the three `.mk` files. Keep `analysis.mk`'s
+   overridable `?=` path-var style.
+2. Replace the 6 `*-run` recipes with the shared drain define; collapse the
+   near-identical `*-generate` targets where it does not hurt readability.
+3. Remove the duplicate self-consistency rule from the root `Makefile`
+   (keep the `experiments/Makefile` producer, since measurements live there).
+4. Point `experiment1.mk` at `../.env`, matching the ENV POLICY.
+5. Verify the full DAG still resolves: `make report`, `make slides`,
+   `make -f experiments/analysis.mk exp2-analysis-report`,
+   `make -C experiments rebuild-measurements` (dry-run `-n` is enough for the
+   long data targets).
+
+## Test
+First (red) test — an adherence check in `tests/` (pytest, `@pytest.mark.adherence`)
+asserting the de-duplication holds, so regressions are caught:
+- no makefile under the repo contains the literal `$(HOME)/.claude/.env`;
+- the drain loop literal `openrouter --drain & done` appears in at most one
+  recipe location (i.e. in the `common.mk` define, not 6 inline copies);
+- `tabulate_self_consistency` is invoked by exactly one makefile recipe.
+Plus a build smoke test: `make -n report` and `make -n slides` exit 0 with no
+"No rule to make target" error.
+
+## Exit criteria
+- [ ] One `experiments/common.mk` is the single definition of `UV_RUN`/`WORKER`/
+      `MANAGER`/drain; the four makefiles include it, no local redefinitions.
+- [ ] The 6 `*-run` recipes share the drain define (no copy-paste).
+- [ ] Exactly one producer of `tab_self_consistency.tex` / `tab_per_run.tex`.
+- [ ] No makefile references `$(HOME)/.claude/.env`.
+- [ ] `make -n report` and `make -n slides` resolve with no missing-rule error.
+- [ ] New adherence test added and `make check` passes.
