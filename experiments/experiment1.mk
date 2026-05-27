@@ -7,7 +7,8 @@
 # then WORKERS worker processes drain the queue concurrently.
 # Set WORKERS on the command line: make -f experiment1.mk WORKERS=12 exp1-batch2
 
-UV_RUN  := env PYTHONPATH=.. uv run --env-file $(HOME)/.claude/.env --project ..
+include common.mk
+
 SWEEP   := sweep_exp1_batch2
 JOBS    := $(CURDIR)/jobs/exp1_batch2
 WORKERS := 12
@@ -19,13 +20,13 @@ WORKERS := 12
 exp1-batch2: exp1-generate exp1-drain
 
 exp1-generate:
-	$(UV_RUN) python -m aedist.manager generate \
+	$(UV_RUN_ROOTPATH) python -m aedist.manager generate \
 	    --sweep $(SWEEP) \
 	    --jobs-dir $(JOBS)
 
 exp1-drain:
 	seq $(WORKERS) | xargs -P $(WORKERS) -I{} \
-	    $(UV_RUN) python -m aedist.worker openrouter --jobs-root $(JOBS) --drain
+	    $(UV_RUN_ROOTPATH) python -m aedist.worker openrouter --jobs-root $(JOBS) --drain
 
 exp1-status:
 	@echo "pending:  $$(ls $(JOBS)/pending/ 2>/dev/null | wc -l)"
