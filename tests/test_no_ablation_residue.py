@@ -59,9 +59,11 @@ def test_no_ablation_residue_tokens():
     violations = []
     for f in _live_build_files():
         text = f.read_text()
-        for tok in FORBIDDEN_TOKENS:
-            if tok in text:
-                violations.append(f"{f.relative_to(REPO_ROOT)} :: {tok}")
+        violations.extend(
+            f"{f.relative_to(REPO_ROOT)} :: {tok}"
+            for tok in FORBIDDEN_TOKENS
+            if tok in text
+        )
     assert not violations, (
         "retired-ablation residue in the live build tree:\n"
         + "\n".join(f"  {v}" for v in violations)
