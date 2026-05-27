@@ -33,9 +33,14 @@ MANUSCRIPT_ASSETS := \
 
 .PHONY: all clean manuscript
 
-all: slides.pdf manuscript/main.pdf
+all: slides.pdf slides-en.pdf manuscript/main.pdf
 
 slides.pdf: slides.tex $(SLIDE_ASSETS)
+	tectonic $<
+
+# English deck. Shares all SLIDE_ASSETS; figures keep their generated-language
+# labels (regenerating figures in English is a separate analysis-side task).
+slides-en.pdf: slides-en.tex $(SLIDE_ASSETS)
 	tectonic $<
 
 manuscript: manuscript/main.pdf
@@ -49,4 +54,4 @@ manuscript/main.pdf: manuscript/main.md $(MANUSCRIPT_ASSETS) ../report/refs.bib
 		--bibliography=../report/refs.bib
 
 clean:
-	rm -f slides.pdf manuscript/main.pdf *.aux *.log *.nav *.out *.snm *.toc
+	rm -f slides.pdf slides-en.pdf manuscript/main.pdf *.aux *.log *.nav *.out *.snm *.toc
