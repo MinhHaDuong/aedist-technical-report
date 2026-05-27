@@ -1,0 +1,582 @@
+% Experimental plan: prompt composition and ablation
+% Included from report.tex, Chapter 2
+
+\section{Expérience~3~: composition et ablation de prompts}\label{sec:exp3}
+
+L'expérience~1 utilise un prompt minimaliste de 40~mots~; l'expérience direct\_complete
+un prompt de 1\,200~mots intégrant cadrage sectoriel, narratifs par centrale,
+statistiques croisées et bibliographie annotée. Or Opus obtient F1\,=\,0,64
+avec le prompt court et F1\,=\,0,54 avec le prompt long~: davantage
+d'instructions \emph{dégrade} l'extraction structurée. Plutôt que de
+diagnostiquer ce prompt existant, nous concevons une famille de prompts
+modulaires pour déterminer quels composants améliorent ou dégradent
+l'extraction~:
+
+Deux approches symétriques isolent les effets~:
+
+\begin{description}
+\item[Composition] Partir d'un prompt de base optimisé pour l'extraction CSV,
+  puis ajouter un module à la fois. Mesure~: quel ajout améliore ou dégrade le
+  score~?
+\item[Ablation] Partir du prompt complet (base + tous les modules), puis
+  retirer un module à la fois. Mesure~: quel retrait améliore ou dégrade le
+  score~?
+\end{description}
+
+\noindent La comparaison des deux bras révèle les \emph{effets d'interaction}~:
+un module peut aider seul mais nuire en combinaison, ou inversement.
+
+\subsection{Prompt de base}\label{sec:prompt-base}
+
+Le prompt de base a été conçu par itérations successives avec les critères
+suivants~: (a)~demander un CSV structuré avec colonnes nommées correspondant
+au parseur d'évaluation, (b)~spécifier un seuil d'inclusion (30~MWe),
+(c)~couvrir tout le cycle de vie des projets (proposition à démantèlement),
+(d)~inclure les centrales captives et de cogénération industrielle,
+(e)~exclure explicitement la biomasse et les déchets (suivis séparément),
+(f)~utiliser un vocabulaire de statut ouvert reflétant la multiplicité des
+autorités décisionnaires (investisseurs, provinces, ministère, accords
+internationaux), (g)~ne pas inclure de persona (la littérature sur le
+\emph{role prompting} suggère un effet négatif sur l'extraction structurée),
+(h)~ne pas révéler le nombre attendu de résultats.
+
+\medskip
+\noindent La terminologie est alignée sur l'Open Energy Ontology (OEO)
+avec trois divergences délibérées~: inclusion des centrales hors réseau
+(l'OEO exige la connexion au réseau), distinction gaz domestique / GNL
+importé (l'OEO ne distingue pas la provenance), et regroupement «~thermique~»
+par usage commun plutôt que par classe OEO formelle.
+
+\label{prompt:base}%
+\begin{Prompt}
+Produce a comprehensive CSV table listing ALL thermal power plants in
+Vietnam with capacity of 30 MWe or above, at every stage from early
+proposal through decommissioning. Include grid-connected utility plants,
+captive (self-generation) plants, and industrial cogeneration facilities.
+
+Columns:
+- Name_VI: plant name in Vietnamese
+- Name_EN: plant name in English
+- Fuel: the primary fuel — e.g. Coal, Domestic gas, Imported LNG, Oil.
+  Exclude biomass and waste-to-energy plants (tracked separately).
+- Technology: Subcritical / Supercritical / USC / CCGT / OCGT / CFB
+- Status: current stage of the project, e.g. Operational, Under
+  construction, Proposed, Permitted, Financed, Suspended, Cancelled,
+  Decommissioned. Use the most specific term that applies. Projects may
+  have been proposed by investors, provincial authorities, international
+  partners, or national planners — capture all regardless of which
+  authority originated them.
+- COD: actual or expected commercial operation date
+- Province: location
+- Capacity_MWe: current or as-built net generation capacity in MWe.
+  If the plant was proposed at a different capacity, note the difference.
+- Owner: key investors or controlling entities — e.g. "EVN/GENCO 1",
+  "Marubeni + KEPCO (BOT)", "Formosa Plastics". Skip single-purpose
+  project vehicles.
+- Note: additional context — e.g. original proposed capacity if different
+  from as-built, unit breakdowns, phase information, ownership changes.
+
+Be exhaustive. Cover every thermal power plant you know of, whether it
+appeared in a national power development plan, regulatory filing,
+investment proposal, international agreement, news report, or any other
+source. Include cancelled projects, suspended proposals, and plants that
+were planned but never built. Missing plants reduces the value of this
+inventory.
+
+Format the response as CSV with a header row.
+\end{Prompt}
+
+\subsection{Modules}\label{sec:modules}
+
+Sept modules sont testés. Chacun est un paragraphe ajouté à la fin du prompt
+de base.
+
+\paragraph{Persona} Ajoute une consigne de rôle en tête du prompt.
+\label{prompt:mod-persona}%
+\begin{Prompt}
+You are a senior energy analyst.
+\end{Prompt}
+
+\paragraph{Cadrage sectoriel} Demande un paragraphe introductif avant le CSV.
+\label{prompt:mod-overview}%
+\begin{Prompt}
+Before the CSV table, provide a sector overview covering: Vietnam's
+electricity generation mix (installed capacity, generation shares by
+fuel), key policy documents and their thermal targets, fuel supply
+landscape (domestic coal, domestic gas, LNG import projects), and key
+institutional actors (state utilities, gas companies, BOT investors,
+provincial authorities).
+\end{Prompt}
+
+\paragraph{Narratifs par centrale} Demande un commentaire sourcé après le CSV.
+\label{prompt:mod-narratives}%
+\begin{Prompt}
+After the CSV table, provide a sourced paragraph for each plant complex
+covering: development history and timeline, notable issues (delays,
+financing changes, ownership transfers, technology changes), and status
+confidence (HIGH = government decision or company report, MEDIUM =
+multiple news sources, LOW = older plans only, status uncertain).
+\end{Prompt}
+
+\paragraph{Bibliographie} Demande une liste annotée de sources.
+\label{prompt:mod-bibliography}%
+\begin{Prompt}
+After completing the inventory, list every source you relied on as an
+annotated bibliography organized by category (government decisions,
+power development plans, utility reports, company filings, news). For
+each source: full citation, URL if known ("URL not verified" if
+unsure), and one sentence on what information was drawn from it.
+\end{Prompt}
+
+\paragraph{Tableaux statistiques} Demande des tableaux croisés récapitulatifs.
+\label{prompt:mod-statistics}%
+\begin{Prompt}
+After the inventory, produce cross-tabulation summary tables:
+a) Capacity by fuel x status (total MWe per cell, with row and column
+   totals)
+b) Top 15 provinces by total thermal capacity, broken down by fuel
+c) Timeline of capacity additions by period and fuel type
+\end{Prompt}
+
+\paragraph{Sourçage-trace ($S_t$)} Ajoute des colonnes de citation par ligne,
+sans demander de justification.
+\label{prompt:mod-sourcing-trace}%
+\begin{Prompt}
+For each row, include Source_1 and Source_2 columns citing the primary
+source for that plant's data. After the table, list all cited sources
+with full citations. Do not fabricate URLs — write "URL not verified"
+if unsure of the exact address.
+\end{Prompt}
+
+\paragraph{Sourçage-ground ($S_g$)} Demande une justification de confiance par
+entrée, sans colonnes de citation.
+\label{prompt:mod-sourcing-ground}%
+\begin{Prompt}
+For each plant, state your confidence level (HIGH / MEDIUM / LOW) and the
+primary evidence you relied on (one sentence). Do not fabricate
+sources — write "evidence uncertain" if unsure.
+\end{Prompt}
+
+\subsection{Plan de mesures}\label{sec:plan-mesures}
+
+Le design expérimental croise deux axes~: la \textbf{composition du prompt}
+(7~modules, 2~bras) et le \textbf{régime d'information} (3~modes d'accès
+aux connaissances). Chaque cellule du tableau prompt~$\times$~régime est
+un point de mesure indépendant.
+
+\paragraph{Points d'ancrage}
+
+\begin{description}
+\item[Census] Le Prompt~1 original (40~mots), point de référence bas.
+\item[Base] Le prompt de base manuel (section~\ref{sec:prompt-base}), point de référence intermédiaire.
+\item[Complet] Le prompt de base + les 7~modules, point de référence haut.
+\item[Direct complet] Le prompt direct\_complete existant (1\,200~mots), contrôle externe.
+\end{description}
+
+\paragraph{Bras composition} À partir du prompt de base, ajouter un seul module
+à la fois (7~variantes).
+
+\paragraph{Bras ablation} À partir du prompt complet, retirer un seul module
+à la fois (7~variantes).
+
+\medskip
+\noindent Soit 18~prompts au total~:
+
+\begin{center}
+\small
+\begin{tabular}{rllc}
+\toprule
+\textbf{\#} & \textbf{Prompt} & \textbf{Bras} & \textbf{Modules} \\
+\midrule
+ 0 & Census (Prompt~1 existant)   & Ancrage     & -- \\
+ 1 & Base                         & Ancrage     & $\emptyset$ \\
+ 2 & Base + persona               & Composition & \{P\} \\
+ 3 & Base + cadrage               & Composition & \{O\} \\
+ 4 & Base + narratifs             & Composition & \{N\} \\
+ 5 & Base + bibliographie         & Composition & \{B\} \\
+ 6 & Base + statistiques          & Composition & \{T\} \\
+ 7 & Base + sourçage-trace        & Composition & \{$S_t$\} \\
+ 8 & Base + sourçage-ground       & Composition & \{$S_g$\} \\
+ 9 & Complet                      & Ancrage     & \{P,O,N,B,T,$S_t$,$S_g$\} \\
+10 & Complet $-$ persona          & Ablation    & \{O,N,B,T,$S_t$,$S_g$\} \\
+11 & Complet $-$ cadrage          & Ablation    & \{P,N,B,T,$S_t$,$S_g$\} \\
+12 & Complet $-$ narratifs        & Ablation    & \{P,O,B,T,$S_t$,$S_g$\} \\
+13 & Complet $-$ bibliographie    & Ablation    & \{P,O,N,T,$S_t$,$S_g$\} \\
+14 & Complet $-$ statistiques     & Ablation    & \{P,O,N,B,$S_t$,$S_g$\} \\
+15 & Complet $-$ sourçage-trace   & Ablation    & \{P,O,N,B,T,$S_g$\} \\
+16 & Complet $-$ sourçage-ground  & Ablation    & \{P,O,N,B,T,$S_t$\} \\
+17 & Frontier (existant)          & Contrôle    & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Régimes d'information}
+
+Trois régimes d'accès aux connaissances sont testés en croisant les 18~prompts~:
+
+\begin{description}
+\item[Paramétrique] Le modèle répond uniquement à partir de ses poids
+  pré-entraînés (requête directe, un seul tour).
+\item[RAG wholesale] Le corpus de 18~documents est injecté intégralement
+  dans le contexte avant la requête.
+\item[Recherche web] Le modèle dispose d'un outil de recherche Internet
+  (Tavily ou plugin natif). Ce régime est exécuté sur les 4~prompts
+  d'ancrage uniquement (coût par appel élevé).
+\end{description}
+
+\subsection{Protocole}\label{sec:protocole-ablation}
+
+\paragraph{Contrôle de la variance}
+
+Tous les appels sont effectués avec $t{=}0{,}0$, graine fixée (\texttt{seed=42})
+et fournisseur épinglé via OpenRouter (\texttt{provider\_order}). Pour les
+modèles MoE à grande échelle (DeepSeek~R1~0528 et Kimi~K2~Thinking, 671B),
+le parallélisme tensoriel introduit un non-déterminisme résiduel même avec
+ces verrous~; trois répétitions sont donc obligatoires (\texttt{repeat=3})
+pour ces modèles.
+
+\paragraph{Exécution}
+
+Les 18~prompts sont exécutés sur le panel \texttt{modelset\_ablation\_phase2}
+(4~modèles raisonnants~: DeepSeek~R1~0528, Ernie~4.5~Thinking,
+Qwen3-Max-Thinking, Kimi~K2~Thinking) dans les régimes paramétrique et RAG,
+\textbf{3~répétitions} par condition. Le régime livesearch est exécuté sur
+les 4~prompts d'ancrage uniquement. Chaque run produit un CSV évalué contre
+l'inventaire de référence (section~\ref{sec:metrics}).
+
+\paragraph{Analyse}
+\begin{itemize}
+\item \textbf{Effets principaux}~: pour chaque module $m$, comparer
+  F1(base) \emph{vs} F1(base+$m$) (composition) et F1(complet) \emph{vs}
+  F1(complet$-m$) (ablation). Les intervalles de confiance bootstrap à
+  95\,\% sur le $\Delta$F1 déterminent la significativité.
+\item \textbf{Effets d'interaction prompt~$\times$~régime}~: un module peut
+  aider en paramétrique (amorçage de connaissances) et nuire en RAG
+  (redondance avec le contexte documentaire). L'asymétrie des effets entre
+  régimes est le signal principal de cette expérience.
+\item \textbf{Coût de la traçabilité}~: $S_t$ et $S_g$ sont séparés pour
+  distinguer le coût de format (colonnes supplémentaires, $S_t$) du coût de
+  raisonnement (justification explicite, $S_g$). Les deux sont non négociables
+  pour le pipeline de production~; leur $\Delta$F1 mesure le prix, en points
+  d'extraction, de la traçabilité et du grounding.
+\end{itemize}
+
+\paragraph{Budget prévisionnel}
+
+Panel de 4~modèles, 18~prompts, 3~répétitions, 2~régimes (paramétrique et RAG)~:
+$4 \times 18 \times 3 \times 2 = 432$~runs, ${\approx}\,15$--40~\$.
+Régime livesearch sur 4~prompts d'ancrage~:
+$4 \times 4 \times 3 = 48$~runs supplémentaires, ${\approx}\,5$--10~\$.
+
+\paragraph{Limites du design}
+
+\begin{itemize}
+\item \textbf{Plan fractionnaire (résolution~III).} Le design teste les
+  effets principaux de 7~modules (18~prompts) mais pas les
+  $\binom{7}{2}=21$~interactions par paires (qui nécessiteraient un plan
+  factoriel $2^7=128$~prompts). L'asymétrie composition/ablation détecte la
+  \emph{présence} d'interactions mais ne les attribue pas à un couple
+  spécifique.
+\end{itemize}
+
+\subsection{Décisions de conception}\label{sec:decisions-conception}
+
+\paragraph{Baseline fixe, non optimisée}
+
+L'ablation quantifie la contribution de chaque module~; ce signal est
+interprétable seulement si la baseline est fixe et connue. Un optimiseur
+de prompt automatique (DSPy / MIPROv2) peut absorber le signal d'un module
+dans le texte du prompt base~: si c'est le cas, l'ablation renvoie un
+$\Delta$F1 proche de zéro non pas parce que le module est sans effet,
+mais parce que son effet a déjà été capturé par l'optimiseur. Lancer
+l'ablation depuis une baseline DSPy rend le résultat ininterprétable.
+L'optimisation automatique est la bonne étape suivante \emph{après}
+l'ablation, une fois que les modules à conserver sont identifiés~;
+les deux expériences sont orthogonales et doivent rester séparées.
+
+\paragraph{Trois régimes, pas quatre}
+
+Le régime incrémental (le modèle reçoit les documents un par un,
+18~tours par run) n'est pas un régime d'information distinct~: c'est
+une architecture de pipeline différente, applicable dans chacun des
+trois régimes. De plus, son coût ($18\times$ plus de tokens par run)
+est incompatible avec un design factoriel complet prompt~$\times$~régime
+sur 18~prompts. La question «~quelle est la valeur marginale de chaque
+document ajouté~?~» est orthogonale à la question de l'ablation et
+constitue une expérience séparée.
+
+\subsection{Hypothèses pré-enregistrées}\label{sec:hypotheses-ablation}
+
+Les hypothèses ci-dessous sont formulées \emph{avant} l'analyse des données
+d'ablation. Elles s'appuient sur trois mécanismes théoriques issus de la
+littérature sur l'extraction structurée par LLM~:
+
+\begin{enumerate}
+\item \textbf{Compétition de budget de sortie.} Tout module demandant du texte
+  non tabulaire (narratifs, bibliographie, cadrage) consomme des tokens qui
+  auraient pu produire des lignes CSV. Ce mécanisme dégrade le rappel sans
+  affecter directement la précision.
+\item \textbf{Amorçage par contexte (\emph{priming}).} Un module qui active
+  des connaissances pertinentes (noms de centrales, vocabulaire sectoriel) peut
+  améliorer le rappel en rendant ces entrées plus saillantes dans la génération.
+\item \textbf{Surcharge d'instructions (\emph{instruction overload}).} Un
+  prompt trop long dilue les consignes d'extraction structurée, ce qui peut
+  dégrader la précision (erreurs de format, colonnes manquantes).
+\end{enumerate}
+
+\paragraph{Hypothèses par module}
+
+\begin{center}
+\small
+\begin{tabular}{l c c p{0.52\textwidth}}
+\toprule
+\textbf{Module} & \textbf{Rappel} & \textbf{Précision} & \textbf{Mécanisme attendu} \\
+\midrule
+Persona       & neutre  & neutre
+  & Un rôle générique (\emph{senior energy analyst}) n'ajoute ni
+    connaissances ni contraintes. La littérature sur le \emph{role
+    prompting} montre un effet nul ou négatif sur l'extraction
+    structurée. \\
+\addlinespace
+Cadrage       & $+$     & neutre
+  & Le résumé sectoriel amorce le vocabulaire du domaine (noms de
+    centrales, provinces, acteurs) et rend des entrées marginales
+    plus saillantes. Coût de budget modéré ($\sim$200~tokens). \\
+\addlinespace
+Narratifs     & $-$     & neutre
+  & Demander un paragraphe par complexe industriel consomme
+    ${>}\,2\,000$~tokens de sortie. Mécanisme dominant~: compétition
+    de budget. Effet de rappel négatif attendu le plus fort. \\
+\addlinespace
+Bibliographie & $-$     & neutre
+  & La liste de sources annotées consomme ${\sim}\,1\,000$~tokens de
+    sortie. Même mécanisme de compétition de budget que les
+    narratifs, mais moindre car le texte est plus compact. \\
+\addlinespace
+Statistiques  & $-$     & neutre
+  & Les tableaux croisés consomment ${\sim}\,500$~tokens de sortie.
+    Compétition de budget modérée. Effet attendu faible. \\
+\addlinespace
+$S_t$ (trace) & $-$     & neutre
+  & Ajouter Source\_1 et Source\_2 élargit le format (12~colonnes au lieu
+    de~10), réduisant le nombre de lignes produites par contrainte de budget
+    de sortie (rappel~$-$). Aucun mécanisme de filtrage d'hallucinations
+    attendu~: le modèle indique une source sans vérifier l'entrée. \\
+\addlinespace
+$S_g$ (ground)& $-$     & $+$
+  & Demander une justification explicite force le modèle à évaluer chaque
+    entrée, ce qui filtre les hallucinations (précision~$+$). Le coût de
+    raisonnement supplémentaire réduit le nombre de lignes (rappel~$-$). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Hypothèses composites}
+
+\begin{enumerate}
+\item \textbf{Base \emph{vs} Census.} Le prompt de base est attendu supérieur
+  au census (prompt~1 de 40~mots) en rappel et en précision. Le prompt de base
+  spécifie le format CSV, les colonnes exactes, le seuil de 30~MWe et les
+  critères d'inclusion/exclusion~; le census ne fournit qu'une consigne
+  minimale. $H_1 : \text{F1}_{\text{base}} > \text{F1}_{\text{census}}$.
+
+\item \textbf{Complet \emph{vs} Base.} Le prompt complet (7~modules) est
+  attendu inférieur au prompt de base en rappel, en raison de la compétition
+  de budget cumulée (narratifs + bibliographie + statistiques + $S_t$ + $S_g$).
+  L'effet d'amorçage du cadrage ne compense pas le coût combiné.
+  $H_2 : \text{Rappel}_{\text{complet}} < \text{Rappel}_{\text{base}}$.
+
+\item \textbf{Complet \emph{vs} Direct complet.} Le prompt complet et le prompt
+  direct\_complete sont de longueur comparable ($\sim$1\,200~mots). Le prompt complet
+  est attendu supérieur car sa base a été optimisée pour l'extraction CSV
+  structurée, alors que le direct\_complete mêle instructions et contenu éditorial.
+  $H_3 : \text{F1}_{\text{complet}} > \text{F1}_{\text{direct\_complete}}$.
+
+\item \textbf{Module à effet individuel le plus fort.} Les narratifs sont
+  attendus comme le module ayant le plus grand $|\Delta\text{F1}|$ individuel,
+  car ils imposent la plus forte compétition de budget de sortie
+  ($>$2\,000~tokens de texte libre demandé). $S_g$ (sourçage-ground) est le
+  second candidat, car la justification explicite modifie à la fois le
+  processus de génération et filtre les hallucinations.
+\end{enumerate}
+
+\paragraph{Analyse empirique Base \emph{vs} Census (H$_1$)}
+
+L'intersection des deux bras couvre désormais neuf modèles (DeepSeek-V3.2,
+Mistral-Small-2603, Gemini-2.5-Flash-Lite, Gemini-3-Flash-Preview,
+Kimi-K2.5, Minimax-M2.7, Qwen3.5-122b-A10b, Qwen3.5-35b-A3b et
+Seed-2.0-Lite), après avoir étendu la campagne pilote à sept modèles
+\emph{cloud} bon marché supplémentaires déjà présents dans le panel
+\emph{census}. L'échantillon reste modeste mais autorise une décomposition
+quantitative.
+
+\input{inputs/generated/tab_base_vs_census.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{inputs/generated/fig_base_vs_census.pdf}
+\caption{F1 par modèle sur le prompt \emph{base} \emph{vs} le prompt
+\emph{census}. La diagonale $y=x$ matérialise l'absence d'effet~; la taille
+des points est proportionnelle à $\log(\Delta\text{tok}_\text{in} + 1)$.}
+\label{fig:base-vs-census}
+\end{figure}
+
+La macro-moyenne mesurée est $\Delta\text{F1} = +17{,}3$~pp avec un
+intervalle de confiance bootstrap 95\,\% de $[+8{,}4\,;\,+25{,}1]$~pp
+(n${=}9$, graine fixée). L'IC exclut zéro dans la direction prédite~:
+\textbf{H$_1$ est corroborée}. Huit modèles sur neuf affichent un gain
+positif (de $+3{,}2$~pp pour Mistral-Small-2603 à $+34{,}3$~pp pour
+Minimax-M2.7)~; le seul cas négatif est Gemini-2.5-Flash-Lite à
+$-10{,}6$~pp, où le bras \emph{base} a saturé la fenêtre de sortie
+(\emph{finish=length}) en générant 476 faux positifs et faisant chuter la
+précision à 35{,}6\,\%. La décomposition précision/rappel est éclairante~:
+pour la majorité des modèles (DeepSeek, Mistral, Gemini-3-Flash, Kimi,
+Qwen3.5-122b, Seed) la précision reste à 100\,\% sur les deux bras et
+\emph{l'intégralité du gain en F1 provient d'un meilleur rappel} — le
+format colonné et l'instruction d'exhaustivité agissent comme
+amplificateurs de rappel plutôt que comme filtres d'hallucinations.
+Cependant, sur deux modèles (Gemini-2.5-Flash-Lite, Qwen3.5-35b-A3b) le
+prompt \emph{base} déclenche une dégradation de la précision~: le modèle
+tente de remplir des colonnes qu'il devine, au lieu d'omettre les valeurs
+manquantes. L'effet est donc fortement \emph{model-dependent} et
+non-monotone~: les modèles déjà calibrés tirent un bénéfice de rappel sans
+coût de précision, tandis que certains petits modèles ou modèles
+expérimentaux peuvent payer un coût de précision en suivant les
+instructions plus prescriptives. Nous différons à un travail ultérieur la
+vérification de robustesse au seuil 30~MWe (retirer explicitement le seuil
+du prompt \emph{base} et re-tester) qui isolerait la contribution
+spécifique de cette contrainte au sein de l'écart observé.
+
+\paragraph{Prompt census \emph{vs} prompt base~: deux objets différents}
+L'écart mesuré entre census et base ne relève pas du bruit~: il reflète
+une distinction fonctionnelle. Le prompt \emph{census} (40~mots, sans
+seuil, sans vocabulaire de statut) mesure la capacité brute d'extraction
+du modèle — c'est l'analogue d'un test de QI pour l'extraction
+structurée. Le prompt \emph{base} (280~mots, 9~colonnes, seuil 30~MWe,
+règles d'inclusion/exclusion) mesure l'utilisabilité dans un pipeline de
+production. L'écart de F1 entre les deux est donc le \emph{prix de la
+mise en production}~: les tokens d'instruction supplémentaires
+($\Delta\text{tok}_\text{in} \approx +370$ par appel) achètent un
+rappel accru sans dégradation de précision chez la majorité des modèles.
+Ce coût est modeste ($< 0{,}001$~USD par appel aux tarifs actuels), mais
+se multiplie par le nombre de campagnes et de répétitions dans un
+déploiement à l'échelle (60~campagnes $\times$ 3~répétitions = 180
+appels dans le scénario Auto-PyPSA ASEAN). Le prompt \emph{census}
+reste pertinent comme référence de capacité minimale~; le prompt
+\emph{base} est l'ancrage opérationnel pour les comparaisons
+d'ablation.
+
+\paragraph{Seuils de falsification} Une hypothèse directionnelle est réfutée
+si l'intervalle de confiance bootstrap à 95\,\% sur $\Delta$F1 exclut zéro
+dans la direction opposée à la prédiction. Une hypothèse «~neutre~» est
+réfutée si $|\Delta\text{F1}| > 0{,}03$ (3~points) avec un IC à 95\,\%
+excluant zéro.
+
+\subsection{Régimes d'information et méthodes du benchmark}\label{sec:regime-linkage}
+
+Le benchmark présenté aux chapitres~\ref{chap:evaluation} et~\ref{chap:rag}
+évalue cinq méthodes d'extraction sur un panel de modèles~:
+
+\begin{enumerate}
+\item \textbf{Requête directe} (section~\ref{sec:exp1})~: un seul prompt,
+  sans document externe ni recherche.
+\item \textbf{Multi-tour} (section~\ref{sec:exp2})~: conversation avec
+  relances successives.
+\item \textbf{RAG wholesale} (section~\ref{sec:rag})~: injection de
+  l'intégralité d'un corpus de 18~documents dans le contexte.
+\item \textbf{Décomposition} (section~\ref{sec:rag_per_fuel})~: découpage
+  de la requête par type de combustible, puis fusion.
+\item \textbf{Recherche web}~: le modèle accède à Internet via un outil
+  de recherche (Tavily ou plugin natif).
+\end{enumerate}
+
+L'expérience d'ablation (section~\ref{sec:plan-mesures}) croise 18~variantes
+de prompt avec trois \emph{régimes d'information}, c'est-à-dire trois modes
+d'accès aux connaissances~:
+
+\begin{description}
+\item[Paramétrique] Le modèle répond uniquement à partir de ses poids
+  pré-entraînés. Ce régime correspond à la \textbf{requête directe}.
+\item[RAG] Le modèle reçoit le corpus de 18~documents en contexte.
+  Ce régime correspond au \textbf{RAG wholesale}.
+\item[Recherche web] Le modèle dispose d'un outil de recherche Internet.
+  Ce régime correspond à la \textbf{recherche web}.
+\end{description}
+
+\noindent Les deux méthodes restantes ne constituent pas des régimes
+d'information et sont traitées par des expériences dédiées~:
+
+\paragraph{Multi-tour $\to$ vérification.}
+L'approche conversationnelle du benchmark utilise des relances génériques
+(«~Avez-vous oublié des centrales~?~»). Or l'expérience de vérification
+multi-agents (section~\ref{sec:exp5}) subsume cette approche en remplaçant
+les relances aveugles par des vérifications ciblées --- chaque tour a un
+objectif spécifique (contrôler la provenance, détecter les hallucinations,
+croiser avec le référentiel). Le multi-tour générique est donc un cas
+particulier, moins motivé, du protocole de vérification.
+
+\paragraph{Décomposition $\to$ exclue (axe orthogonal).}
+La décomposition par combustible (section~\ref{sec:rag_per_fuel}) modifie
+la \emph{granularité de la requête}, non le régime d'information~: on peut
+décomposer en paramétrique, en RAG ou en recherche web. C'est un axe
+orthogonal. De plus, la décomposition introduit des hallucinations non
+thermiques (centrales hydroélectriques ou éoliennes ajoutées dans la
+catégorie «~autres combustibles~»), ce qui en fait un facteur confondant
+plutôt qu'un régime à tester. L'interaction
+décomposition~$\times$~régime constitue un travail futur.
+
+\medskip
+\noindent En résumé, l'ablation couvre trois des cinq méthodes du benchmark
+en les reformulant comme des régimes d'information. Cette reformulation
+permet de mesurer l'effet du prompt \emph{à régime fixe}~: un module qui
+aide en paramétrique pourrait nuire en RAG (où le contexte documentaire
+rend le cadrage sectoriel redondant), et inversement. Le croisement
+prompt~$\times$~régime est le design central de cette expérience.
+
+\subsection{Lien avec la vérification multi-agents}\label{sec:lien-verification}
+
+Cette expérience mesure l'effet du prompt sur l'extraction en un seul tour. La
+vérification --- un agent indépendant contrôle la sortie d'un autre ---
+constitue une expérience séparée. La littérature sur la self-consistency
+et les protocoles de débat montre que la vérification par
+agents multiples et indépendants est plus efficace que l'auto-révision par le
+même modèle. Le module sourçage (colonnes Source\_1, Source\_2) est conçu pour
+alimenter cette phase~: chaque ligne du CSV porte ses propres références,
+permettant à un agent vérificateur de contrôler la provenance sans accéder au
+prompt original.
+
+\subsection{Résultats pilotes (design initial, invalidés)}\label{sec:results-ablation}
+
+\textit{Note~: les résultats ci-dessous sont issus d'un pilote de 64~appels
+(16~prompts $\times$ 2~modèles $\times$ 2~répétitions, régime RAG uniquement)
+exécuté sous le design initial. Ils sont invalidés pour deux raisons~:
+(a)~\texttt{temperature=null} au moment des runs (PR\,\#244 a corrigé ce
+point a posteriori)~; (b)~le design a été révisé (7~modules, prompt base
+manuel, 3~régimes d'information, sourcing\_ground ajouté). Les figures seront régénérées après la campagne principale. Les résultats pilotes sont conservés ici à titre d'orientation
+qualitative seulement.}
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{inputs/generated/fig_ablation_strip.pdf}{%
+  \includegraphics[width=0.85\linewidth]{inputs/generated/fig_ablation_strip.pdf}%
+}{\textit{[fig\_ablation\_strip.pdf not generated --- run \texttt{make measurements}]}}
+\caption{Strip plot pilote~: ablation, régime RAG, design initial (invalidé).
+Bleu~: TP. Orange~: FP. Croix grises~: refus du modèle.}
+\label{fig:ablation-strip}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{inputs/generated/fig_ablation_heatmap.pdf}{%
+  \includegraphics[width=0.7\linewidth]{inputs/generated/fig_ablation_heatmap.pdf}%
+}{\textit{[fig\_ablation\_heatmap.pdf not generated --- run \texttt{make measurements}]}}
+\caption{Heatmap pilote~: effets par module, régime RAG, design initial
+(invalidé). Les données DeepSeek sont incomplètes (refus sur 16/32~variantes).}
+\label{fig:ablation-heatmap}
+\end{figure}
+
+Le signal qualitatif le plus robuste de ce pilote~: pour Kimi~K2~Thinking,
+le module \emph{statistiques} nuit fortement en composition ($-30{,}4$\,pp)
+et son retrait améliore le composite ($+11{,}5$\,pp), suggérant une
+interférence avec le contexte RAG structuré. Ce signal sera prioritaire
+à confirmer en la campagne principale.
