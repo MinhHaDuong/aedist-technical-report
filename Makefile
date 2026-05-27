@@ -77,11 +77,9 @@ $(GEN)/tab_decomposition_fix.tex: $(DECOMP_BEFORE) $(DECOMP_AFTER)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_decomposition_fix --output $@
 
-$(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex &: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_self_consistency \
-	    --output $(GEN)/tab_self_consistency.tex \
-	    --per-run-output $(GEN)/tab_per_run.tex
+# tab_self_consistency.tex / tab_per_run.tex are produced by the analysis
+# workpackage (experiments/Makefile `self-consistency`) and consumed here as
+# committed handoff artifacts — single producer, see ticket 0354.
 
 RAG_CSVS := $(wildcard experiments/outputs/rag_extract/*.csv)
 

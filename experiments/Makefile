@@ -28,8 +28,7 @@
 # values onto Make's command line and on into spawned process arguments,
 # the same leak path we just closed.
 
-SHELL := /bin/bash
-.SHELLFLAGS := -o pipefail -c
+include common.mk
 
 # --- Sentinel: project .env exists for targets that need API keys -------------
 # Targets in this list will fail fast with a readable message if .env is
@@ -42,17 +41,9 @@ ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
 endif
 
 # --- Common -------------------------------------------------------------------
-# UV_RUN: canonical macro for every uv invocation. --env-file injects the
-# project .env directly into the spawned process; nothing transits Make
-# variables or process command lines.
-UV_RUN  := uv run --project .. --env-file ../.env
-MANAGER := $(UV_RUN) python -m aedist.manager generate
-WORKER  := $(UV_RUN) python -m aedist.worker
-# Cap concurrent OpenRouter workers at API rate limit (default 8).
-# Override: make census-run OR_MAX=16
-OR_MAX  ?= 8
-OR_PENDING = $(words $(wildcard jobs/pending/*.yaml))
-OR_JOBS = $(shell python3 -c "print(min($(OR_PENDING), $(OR_MAX)))")
+# UV_RUN / UV_RUN_ROOTPATH / MANAGER / WORKER / OR_* / OR_DRAIN are defined in
+# experiments/common.mk (included above) — the single source of truth shared
+# with experiment1.mk and experiment2.mk.
 
 # Read a single field from a sweep config in experiments.toml.
 cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml','rb')); print(c['sweeps']['$(1)'].get('$(2)',''))")
@@ -68,9 +59,7 @@ census-generate:
 	$(MANAGER) --sweep census_local --experiments experiments.toml
 
 census-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	$(WORKER) padme --drain & \
-	wait
+	$(OR_DRAIN); $(WORKER) padme --drain & wait
 
 census-summary: rebuild-measurements
 
@@ -86,8 +75,7 @@ regimes-generate:
 	$(MANAGER) --sweep web --experiments experiments.toml
 
 regimes-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	wait
+	$(OR_DRAIN); wait
 
 # --- Decomposed: task decomposition by fuel type -----------------------------
 
@@ -99,8 +87,7 @@ decomposed-generate:
 	$(MANAGER) --sweep decomposed --experiments experiments.toml
 
 decomposed-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	wait
+	$(OR_DRAIN); wait
 
 # --- Verification: verification regimes --------------------------------------
 
@@ -112,8 +99,7 @@ verification-generate:
 	$(MANAGER) --sweep verification --experiments experiments.toml
 
 verification-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	wait
+	$(OR_DRAIN); wait
 
 # --- Sourced: sourced extraction (citations upfront) -------------------------
 
@@ -125,8 +111,7 @@ sourced-generate:
 	$(MANAGER) --sweep sourced --experiments experiments.toml
 
 sourced-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	wait
+	$(OR_DRAIN); wait
 
 # --- Frontier: deep-research models ------------------------------------------
 
@@ -140,8 +125,7 @@ frontier-generate:
 	$(MANAGER) --sweep frontier_skill --experiments experiments.toml
 
 frontier-run:
-	for i in $$(seq 1 $(OR_JOBS)); do $(WORKER) openrouter --drain & done; \
-	wait
+	$(OR_DRAIN); wait
 
 # --- Rebuild measurements (materialized view of all outputs) -----------------
 

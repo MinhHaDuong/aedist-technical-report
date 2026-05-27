@@ -17,7 +17,8 @@
 #   mkdir -p outputs/sota_exp3_arm4_batch1/run01
 #   echo '[]' > outputs/sota_exp3_arm4_batch1/run01/summary.json
 
-UV_RUN  := PYTHONPATH=.. uv run --project .. --env-file ../.env
+include common.mk
+
 AGENTS  := mistral openai anthropic qwen
 EP      := evidence_packs/all18tables.yaml
 ARM1    := outputs/sota_exp3_arm1_batch1
@@ -28,14 +29,14 @@ ARM4    := outputs/sota_exp3_arm4_batch1
 # ─── Arm 1: naive single-shot, no evidence pack ───────────────────────────────
 
 $(ARM1)/run%/summary.json:
-	$(UV_RUN) python sota/exp2_naive_arm.py \
+	$(UV_RUN_ROOTPATH) python sota/exp2_naive_arm.py \
 	    --agents $(AGENTS) \
 	    --output-dir $(@D)
 
 # ─── Arm 2: interactive multi-turn, no evidence pack ─────────────────────────
 
 $(ARM2)/run%/summary.json:
-	$(UV_RUN) python sota/exp2_interactive_smoke.py \
+	$(UV_RUN_ROOTPATH) python sota/exp2_interactive_smoke.py \
 	    --agents $(AGENTS) \
 	    --output-dir $(@D) \
 	    --no-confirm
@@ -43,7 +44,7 @@ $(ARM2)/run%/summary.json:
 # ─── Arm 3: naive single-shot + evidence pack ─────────────────────────────────
 
 $(ARM3)/run%/summary.json: $(EP)
-	$(UV_RUN) python sota/exp2_naive_arm.py \
+	$(UV_RUN_ROOTPATH) python sota/exp2_naive_arm.py \
 	    --agents $(AGENTS) \
 	    --output-dir $(@D) \
 	    --evidence-pack-manifest $(EP)
@@ -51,7 +52,7 @@ $(ARM3)/run%/summary.json: $(EP)
 # ─── Arm 4: interactive multi-turn + evidence pack ────────────────────────────
 
 $(ARM4)/run%/summary.json: $(EP)
-	$(UV_RUN) python sota/exp2_interactive_smoke.py \
+	$(UV_RUN_ROOTPATH) python sota/exp2_interactive_smoke.py \
 	    --agents $(AGENTS) \
 	    --output-dir $(@D) \
 	    --evidence-pack-manifest $(EP) \

@@ -1,0 +1,109 @@
+%erg 0.1
+Title: Retire the modular prompt-composition ablation (§Exp3), salvaging live framing
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T00:00Z claude created — MHD decision: butcher the abandoned ablation thread; runs before 0352
+
+2026-05-27T01:30Z claude note rescoped after reading contents — NOT a wholesale rm. §Exp3 is one of two abandoned branches (other = Exp2 arms→2x2, now 0359) and hosts live cross-cutting framing. MHD calls on the 3 argument groups recorded below.
+
+--- body ---
+## Context
+
+§Exp3 (`report/inputs/plan_ablation.tex`, `\label{sec:exp3}`) is the **modular
+prompt-composition / ablation** experiment: a base CSV prompt + 7 modules, crossed
+add-one (composition) / remove-one (ablation) arms × 3 access modes — 18 prompts.
+**Designed but never ran**; the file labels its only data *"Résultats pilotes
+(design initial, invalidés)"* (~line 548). It is **one of two abandoned design
+branches** — the other is Exp2 "arms 3/4 extension" → reframed as a 2×2 (**0362**).
+
+This is **not a wholesale `rm`** (the first draft of this ticket was). §Exp3 is a
+dead *experiment* hosting live *cross-cutting framing*: every section it
+cross-references is live (`sec:exp1/2`, `sec:rag`, `sec:rag_per_fuel`, `sec:exp5`
+verification, `sec:direct_complete`). Renumbering-churn symptom: the report has
+**two "Expérience 3" headings** — this zombie (`sec:exp3`) and RAG wholesale
+(`sec:rag`, report.tex:333). Removing §Exp3 resolves the clash.
+
+## Decisions (MHD, 2026-05-27)
+
+**1. Information-regime taxonomy → CUT (do not salvage).** "Features are observable
+objects; *information regime* is an awkward, abstract, ad-hoc construct." The live
+framing is **observable commercial-AI-product features as experimental variables**,
+already in the slides (slides.tex:279-292): Exp2 as a 2×2 — (single-turn vs
+multi-turn) × (no-docs vs RAG), conditions 1N/5N/1D/5D — with reasoning (default-on),
+web-search (off in Exp1, allowed in Exp2), provider/tools as controls, and
+language/provider/reflexivity as confounders. Delete `sec:regime-linkage`'s regime
+abstraction and its prompt×regime payoff. (Adopting the 2×2 features framing in the
+*report* is **0362**, not here.)
+
+**2. Verification framing → KEEP & relocate to Discussion.** Salvage the
+"multi-tour ⊂ vérification" argument (generic relances are a weaker special case of
+targeted multi-agent verification, `sec:exp5`) and `sec:lien-verification` (per-row
+sourcing columns are designed to feed an independent verifier). Move this
+future-directions framing into the manuscript **Discussion**. These bridge live
+sections (Exp2 ↔ verification; `tab_source_grounding` is a hard `\input`).
+
+**3. Decomposition → acknowledge, don't develop.** Reduce the "orthogonal axis /
+confound" argument to a brief nod: decomposition ≈ *divide and conquer*, a
+recognized idea, explicitly **non-priority future work** (Discussion). Keep the
+non-thermal-hallucination observation only if it supports the live `sec:rag_per_fuel`
+results; otherwise drop.
+
+## Scope
+
+**SALVAGE + RELOCATE first (decisions 2 & 3), before deleting the file:**
+- Lift the verification paragraphs + the divide-and-conquer nod into the manuscript
+  **Discussion** (future directions). Verify relocated text still resolves its
+  `\ref`s (`sec:exp5`, `sec:rag_per_fuel`).
+
+**DELETE — the dead experiment:**
+- `plan_ablation.tex` subsections: Prompt de base, Modules, Plan de mesures,
+  Protocole, Décisions de conception, Hypothèses pré-enregistrées, Résultats pilotes
+  (invalidés). Figures `fig_ablation_strip`, `fig_ablation_heatmap` (both
+  `\IfFileExists` — graceful, never build-blockers).
+- base-vs-census (a real **hard** `\includegraphics` blocker, line 417):
+  `report/inputs/generated/{fig_base_vs_census.pdf, tab_base_vs_census.tex}`,
+  `src/aedist/{plot_base_vs_census.py, tabulate_base_vs_census.py}`,
+  `tests/{test_plot_base_vs_census.py, test_tabulate_base_vs_census.py}`.
+- `src/aedist/plot_ablation.py` (+ any test), `experiments/models_ablation_p2_rag.yaml`.
+- Makefile: `P1_BASE_RECORDS` (~67), `tab_base_vs_census` (~69), `fig_base_vs_census`
+  (~91), `fig_ablation_strip` (~190 + ~194), `fig_ablation_heatmap` (~198); strip the
+  tokens from `tables:` (~256), `figures:` (~257), report.pdf prereqs (~228, ~233).
+
+**FIX:**
+- Remove `\input{inputs/plan_ablation}` (report.tex:244) and delete the file (after salvage).
+- Rewrite the **3** forward-refs to `sec:exp3` (report.tex ~219, 236, 242): drop
+  "isole systématiquement…", "condition de contrôle externe dans l'expérience
+  d'ablation", "régime de l'étude d'ablation". No dangling `\ref`.
+- Confirm RAG wholesale is now the sole "Expérience 3"; verify Exp1…Exp5 numbering is
+  consistent end-to-end.
+
+**ALSO — stale Exp1 census figure (separate cause, same call):**
+`fig_census_direct` (hard include report.tex:138; empty since the `prompt_version`
+tag was dropped in the 0297/0344 mart rebuild) — remove the figure block (~136–141)
+and its Makefile rule (~160). **KEEP** §exp1 prose, `tab_census`, `census_bars`,
+`macros_census` (Exp1/slides, regenerable). No `\ref` to `fig:census-direct`.
+
+**KEEP (live, out of scope):** `sec:direct_complete`, `sec:rag`, `sec:exp5` +
+`tab_source_grounding`/`tab_verification`, all Exp1 census artifacts.
+**Flag / default-keep:** `fig_direct_p1_base`/`macros_p1_base` (slides; derive from
+`EXP1_BATCH2_RECORDS` — an Exp1 result, not Exp3) unless MHD rules otherwise.
+
+## Test (first)
+`tests/test_no_ablation_residue.py` (`@pytest.mark.adherence`):
+- no live-tree refs to `sec:exp3` / `plan_ablation` / `base_vs_census` /
+  `fig_ablation_` / `plot_ablation` / `models_ablation` (scan `report/**/*.tex`,
+  `slides/*.tex`, `Makefile`, `src/aedist/*.py`);
+- exactly one "Expérience 3" heading in `report.tex`;
+- no dangling `\ref` in `report.tex`;
+- the relocated verification text is present in the Discussion section.
+
+## Exit criteria
+- [ ] verification paragraphs + divide-and-conquer nod relocated to Discussion; refs resolve
+- [ ] regime taxonomy cut (no `sec:regime-linkage` regime abstraction survives)
+- [ ] `plan_ablation.tex` deleted; `\input` removed; 3 `sec:exp3` refs rewritten; no dangling `\ref`
+- [ ] exactly one "Expérience 3" heading; Exp1…Exp5 numbering consistent
+- [ ] all base-vs-census + ablation figures/tables/scripts/tests + `models_ablation_p2_rag.yaml` removed; Makefile carries no token for them
+- [ ] `fig_census_direct` figure + rule removed; §exp1 prose + `tab_census` kept
+- [ ] `make report` and `make slides` build; `make check` passes; `test_no_ablation_residue.py` green
