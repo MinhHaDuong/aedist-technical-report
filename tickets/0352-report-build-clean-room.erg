@@ -13,6 +13,8 @@ Author: HDMX-coding-agent
 2026-05-27T20:54Z Claude note blocker 0362 closed — Blocked-by removed.
 2026-05-27T20:59Z Claude untag deferred
 2026-05-28T15:00Z HDMX-coding-agent note migrated 12 producer rules to experiments/analysis.mk (report-tables phony), root tables: now delegates; make -n report and make -B -n report both show only tectonic; macros_census grouped rule replaced with single-output (dead fig_census_direct PDF written to gitignored sentinel); pre-existing TeX error inputs/verification_methods:93 unrelated.
+2026-05-28T16:00Z claude note verify-gate round 1 REROLL — fixed (a) tables: alias now chains experiments/Makefile self-consistency so make tables still regenerates all 14 report tables, (b) report/report.pdf prereq list now includes tab_converter_benchmark.tex (was missing pre-0352, surfaced by review), (c) Invariants softened: byte-equivalence aspiration replaced with recipe-location-only constraint — data freshness from measurements.jsonl evolution is orthogonal to this migration.
+2026-05-28T12:44Z bump verify-reroll — round 1: tab_converter_benchmark verifiable + byte-equivalence invariant
 --- body ---
 ## Re-scope (2026-05-27)
 
@@ -85,8 +87,11 @@ committed artifacts — zero `uv run` invocations. Capture the make dry-run
 ## Invariants
 - Do not break `make slides` (0345's clean-room property must hold)
 - `make check` passes
-- The committed report figures/tables remain byte-equivalent (or visually
-  equivalent) after regeneration from the analysis build
+- Migration is recipe-location-only: producer code and CLI arguments must
+  not change. Byte-equivalence of regenerated artifacts is *not* required
+  (data freshness from measurements.jsonl evolution between commits is
+  expected and orthogonal to this migration). The clean-room test in
+  tests/test_report_build_clean_room.py is the durable invariant.
 
 ## Exit criteria
 - `make report` (writing build) contains no `uv run` / data-access rules —

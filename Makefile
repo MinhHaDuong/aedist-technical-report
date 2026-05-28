@@ -138,7 +138,8 @@ report/report.pdf: report/report.tex report/refs.bib \
     $(GEN)/tab_decomposition_fix.tex \
     $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex \
     $(GEN)/tab_coherence.tex \
-    $(GEN)/tab_reconciliation.tex
+    $(GEN)/tab_reconciliation.tex \
+    $(GEN)/tab_converter_benchmark.tex
 	$(MAKE) -C report
 
 slides/slides.pdf: slides/slides.tex \
