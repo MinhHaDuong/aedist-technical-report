@@ -1,10 +1,12 @@
 %erg 0.1
 Title: Adherence guard against silent pipe-swallow failures in workflow YAML
 Created: 2026-05-28
+Closed: 2026-05-28
 Author: HDMX-coding-agent
 
 --- log ---
 2026-05-28T15:00Z HDMX-coding-agent created — surfaced during 0365 raid. PR #636's "Verify pandoc available" step ran `pandoc --version | head -n1`, reported ✓ green in the GHA UI despite `pandoc: command not found` in the log, then the manuscript build failed two steps later. The check was load-bearing (supposed to fast-fail when pandoc is missing) and it lied.
+2026-05-28T20:30Z HDMX-coding-agent closed — tests/test_workflow_pipe_swallow.py added with 6 parametrised synthetic cases proving the regex fires as specified and a main guard that walks .github/workflows/*.yml. Current sweep clean; future regressions caught at make check-fast time.
 
 --- body ---
 ## Context
