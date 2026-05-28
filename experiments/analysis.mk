@@ -378,7 +378,7 @@ $(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_GEN)/census_bars.csv $(ANALYSIS_REPO_ROOT)/
 	uv run python -m aedist.tabulate_macros \
 	    --census-csv $(ANALYSIS_GEN)/census_bars.csv --output $@
 
-.PHONY: exp2-analysis-report exp1-analysis-figures
+.PHONY: exp2-analysis-report exp1-analysis-figures report-tables report-figures
 
 exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_FR_TEX) \
@@ -386,3 +386,108 @@ exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_SLIDE_MACROS)
 
 exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_CLAUDE)
+
+# --- Report-side tables and figures (migrated from root Makefile by 0352) ---
+# These produce committed handoff artifacts under $(ANALYSIS_GEN). The root
+# Makefile's `report/report.pdf` rule depends on these files but has no
+# recipes — `make report` is a writing-only build (tectonic) consuming
+# committed artifacts. Regenerate them from this file:
+#     make -f experiments/analysis.mk report-tables report-figures
+
+ANALYSIS_MEASUREMENTS ?= $(ANALYSIS_REPO_ROOT)/measurements.jsonl
+
+ANALYSIS_REPORT_DERIVED_DIR ?= $(ANALYSIS_REPO_ROOT)/derived
+ANALYSIS_VARIANCE_JSON := $(ANALYSIS_REPORT_DERIVED_DIR)/variance_decomposition.json
+ANALYSIS_VERIFICATION_DIR := $(ANALYSIS_REPORT_DERIVED_DIR)/verification
+ANALYSIS_VERIFICATION_TRADEOFF := $(ANALYSIS_VERIFICATION_DIR)/tradeoff.csv
+
+ANALYSIS_DECOMP_BEFORE := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_per_fuel/reconciliation_*.csv)
+ANALYSIS_DECOMP_AFTER  := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_per_fuel_v2/reconciliation_*.csv)
+ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_extract/*.csv)
+ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv
+ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
+
+ANALYSIS_CONVERTER_TEST := $(ANALYSIS_EXPERIMENTS_DIR)/data/converter_test
+ANALYSIS_CONVERTER_META := $(ANALYSIS_CONVERTER_TEST)/benchmark_meta.yaml
+ANALYSIS_CONVERTER_DOCS := $(wildcard $(ANALYSIS_CONVERTER_TEST)/*/Decision-1509.md)
+
+$(ANALYSIS_GEN)/tab_census.tex: $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_census --output $@
+
+$(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_macros --output $@
+
+# Co-target fig_census_direct.pdf was retired with the ablation thread (0361);
+# the script still requires --output, so the PDF is written to a sentinel path
+# in $(ANALYSIS_REPORT_DERIVED_DIR) and not consumed by any downstream rule.
+$(ANALYSIS_GEN)/macros_census.tex: $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@) $(ANALYSIS_REPORT_DERIVED_DIR)
+	uv run python -m aedist.plot_method_convergence \
+	    --output $(ANALYSIS_REPORT_DERIVED_DIR)/_macros_census_unused.pdf \
+	    --methods direct --prompt-version census \
+	    --output-macros $@
+
+$(ANALYSIS_GEN)/tab_relances.tex: $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_relances --output $@
+
+$(ANALYSIS_GEN)/tab_comparaison.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_VARIANCE_JSON)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_comparaison --output $@ --variance-json $(ANALYSIS_VARIANCE_JSON)
+
+$(ANALYSIS_GEN)/tab_reconciliation.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_reconciliation --output $@ --expert-ref $(ANALYSIS_EXPERT_REF) --gem-ref $(ANALYSIS_GEM_REF)
+
+$(ANALYSIS_VARIANCE_JSON): $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.variance_decomposition --output $@
+
+$(ANALYSIS_GEN)/tab_variance.tex: $(ANALYSIS_VARIANCE_JSON)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_variance --input $< --output $@
+
+$(ANALYSIS_VERIFICATION_TRADEOFF): $(wildcard $(ANALYSIS_VERIFICATION_DIR)/*-run*.csv)
+	uv run python -m aedist.tabulate_verification \
+	    --input $(ANALYSIS_VERIFICATION_DIR) --output $@
+
+$(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_verification \
+	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@
+
+$(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_DECOMP_AFTER)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_decomposition_fix --output $@
+
+$(ANALYSIS_GEN)/tab_coherence.tex: $(ANALYSIS_RAG_CSVS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_coherence.py $(ANALYSIS_REPO_ROOT)/src/aedist/coherence.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_coherence \
+	    --input $(ANALYSIS_OUTPUTS_DIR)/rag_extract --output $@
+
+$(ANALYSIS_GEN)/tab_converter_benchmark.tex: $(ANALYSIS_CONVERTER_META) $(ANALYSIS_CONVERTER_DOCS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.compare_converters \
+	    --input $(ANALYSIS_CONVERTER_TEST) --meta $(ANALYSIS_CONVERTER_META) --output $@
+
+# Grouping targets — drive end-to-end regeneration of report-side handoff
+# artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
+# experiments/Makefile self-consistency target (single producer, 0354) and
+# remain committed handoff artifacts without a rule here.
+report-tables: \
+	$(ANALYSIS_GEN)/tab_census.tex \
+	$(ANALYSIS_GEN)/macros.tex \
+	$(ANALYSIS_GEN)/macros_census.tex \
+	$(ANALYSIS_GEN)/tab_relances.tex \
+	$(ANALYSIS_EXP2_2X2_TEX) \
+	$(ANALYSIS_GEN)/tab_comparaison.tex \
+	$(ANALYSIS_GEN)/tab_variance.tex \
+	$(ANALYSIS_GEN)/tab_verification.tex \
+	$(ANALYSIS_GEN)/tab_decomposition_fix.tex \
+	$(ANALYSIS_GEN)/tab_coherence.tex \
+	$(ANALYSIS_GEN)/tab_reconciliation.tex \
+	$(ANALYSIS_GEN)/tab_converter_benchmark.tex
+
+report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
