@@ -271,7 +271,7 @@ Instrumentation-phase test (only if audit confirms):
 ## Out of scope
 
 - Mistral / Qwen cost reduction (no client-side cache lever).
-- Changing the orchestration shape (see ticket 0366 — alternative
+- Changing the orchestration shape (see ticket 0368 — alternative
   designs would themselves change the cost profile and the protocol).
 - Cross-rep cache TTL extensions beyond what Anthropic exposes (no
   client-side knob).
@@ -285,7 +285,7 @@ Instrumentation-phase test (only if audit confirms):
   path; the cache_control wiring lives here, not in `query_anthropic.py`.
 - `src/aedist/query_anthropic.py:257-296` — cost breakdown computation;
   source of the audit inputs.
-- 0366 — Simple-harness framing; the "Cons → Cost overhead" bullet there
+- 0368 — Simple-harness framing; the "Cons → Cost overhead" bullet there
   pointed at this ticket as the place where the actual cost numbers live.
 - `.claude/rules/workflow.md` — "Audit before instrumenting" rule that
   governs the two-phase structure above.
