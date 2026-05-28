@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Cover orchestration and adapter error paths: build_corpus, worker, adapters (P3)
+Created: 2026-05-28
+Author: Claude
+
+--- log ---
+2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
+
+--- body ---
+## Context
+
+These modules are partially covered, but the untested lines are the
+risky branches (retry/backoff, malformed responses, error paths):
+
+- `build_corpus.py` (27%) — Zotero HTTP fetch (`_zotero_get`,
+  `zotero_search`, `zotero_download_pdf`), `score_section`, and the whole
+  `main()` (`:342-559`). Needs `httpx` mocking; section/selection logic
+  is already covered.
+- `worker.py` (78%) — `_execute_decomposed` (`:669-699`) and `main()`
+  (`:883-936`) untested; other `_execute_*` arms are covered.
+  Decomposed-arm execution is a real behavioral gap.
+- `query_anthropic.py` (65%) — `dispatch`/`_call_with_retry`
+  (`:400-453`, `:533-596`) and malformed-response parsing.
+- `adapter_openai_responses.py` (59%) — response-parsing edge cases
+  (`:433-560`).
+
+Retry/backoff and malformed-response handling are exactly where adapters
+break in production.
+
+## Approach
+
+- Mock `httpx`/client objects; assert retry count, backoff schedule,
+  and graceful handling of 5xx / truncated JSON.
+- For `worker._execute_decomposed`, drive it with a fake client and a
+  decomposed `JobSpec`, assert the result/record shape.
+
+## Exit criteria
+
+- [ ] `_call_with_retry` retry-exhaustion + backoff path tested.
+- [ ] `worker._execute_decomposed` has a happy-path test.
+- [ ] Adapter response parsers tested against a malformed/truncated payload.
+- [ ] `make test-fast` passes.
+
+## Out of scope
+
+- Live network calls (keep these in `slow`-marked tests if added at all).
