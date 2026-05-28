@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Trier les faux négatifs de l'exp 3 (comparateur, liste, définition, résidu)
+Created: 2026-05-28
+Author: minh
+
+--- log ---
+2026-05-28T19:47Z minh created — Exp 3 false negatives currently lumped together; need to know how much of the gap is real model failure vs. evaluation artifact
+
+--- body ---
+## Context
+
+Exp 3 false negatives (gold-list plants the model failed to recall) are
+counted in the aggregate but never triaged. The headline "low coverage"
+number conflates four distinct causes:
+
+1. **Comparator limit** — the matching/scoring code failed to recognize
+   that the model *did* mention the plant (alias, typo, partial name).
+   Fix: improve `score_mechanical` / fuzzy matcher.
+2. **List limit** — the model named something real and arguably valid
+   that the gold list does not contain (so it's actually a miss against
+   our reference, not against reality). Fix: expand/audit gold list.
+3. **Definition limit** — disagreement about what counts (e.g. >30 MW
+   threshold edge cases, "thermal" vs. "fossil", project-vs-plant
+   granularity). Fix: clarify scope in protocol; possibly reclassify.
+4. **Residual** — genuine recall failure. Nothing to fix on our side;
+   this is the real benchmark signal.
+
+Without this triage, we can't tell readers what fraction of the reported
+gap is the model's failing vs. our evaluation's.
+
+## Relevant files
+- `experiments/outputs/sota_exp3_*/` — Exp 3 raw outputs and probes
+- `experiments/derived/sota_cross_eval.csv` — current scoring
+- `src/aedist/score_mechanical.py` — comparator
+- `data/reference/vietnam_thermal_v1.csv` — gold list
+- `src/aedist/coherence.py` and friends — alias handling
+
+## Actions
+1. Sample the false negatives from the best-performing Exp 3 arm
+   (deliberately, not random — focus on the highest-recall model so the
+   residual category is small and the triage is informative). Target n=50
+   to keep manual review tractable.
+2. For each false negative, classify into the 4 buckets above. Record in
+   a triage CSV (`experiments/derived/exp3_fn_triage.csv`).
+3. Write `src/aedist/tabulate_exp3_fn_triage.py` to produce a summary
+   table from the CSV (counts and percentages per bucket, per arm).
+4. Wire as a report-tables target in `experiments/analysis.mk`.
+5. Include in the report Discussion section, with a paragraph explaining
+   what we found (and what we'd fix next).
+
+## Test
+`tests/test_tabulate_exp3_fn_triage.py` — fixture CSV with known bucket
+counts, verify the tabulate script produces the expected LaTeX table.
+
+## Verification
+- [ ] Triage CSV exists with ≥50 manually classified rows
+- [ ] Summary table generated and committed
+- [ ] Report discusses the four buckets explicitly, with numbers
+- [ ] `make check` passes
+
+## Invariants
+- Triage is human-judged — do not script the classification. Manual
+  decisions go in the CSV with a "rationale" column.
+- Clean-room writing build (no `uv run` in `make report`)
+
+## Exit criteria
+- Exp 3 false negatives are categorized into the four buckets with
+  concrete counts; the residual ("real failure") number is reported as
+  the headline benchmark signal

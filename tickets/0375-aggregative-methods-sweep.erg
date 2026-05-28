@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Tester les méthodes d'agrégation (merge × pool size × diversity rule)
+Created: 2026-05-28
+Author: minh
+
+--- log ---
+2026-05-28T19:48Z minh created — single-run recall is the floor; aggregating runs is the cheapest path to a higher coverage number, but the optimal recipe is unknown
+
+--- body ---
+## Context
+
+Single LLM runs leave coverage on the table. Aggregating multiple runs
+("self-ensembling") is well-known to raise recall. The open question for
+AEDIST: which aggregation recipe is best?
+
+Three orthogonal dimensions:
+
+1. **Merging method**
+   - Union (any run mentioned the plant → include)
+   - Majority (≥k of n runs)
+   - Confidence-weighted (sum/avg per-run confidence, threshold)
+2. **Pool size**: 2, 3, 4 runs
+3. **Diversity rule** (how to compose the pool)
+   - One model, n runs (intra-model variance)
+   - n different models, one run each from smallest-budget runs
+   - n different models, one run each from largest-budget runs
+   - Mixed (some same-model reruns, some different-model)
+
+Full factorial: 3 × 3 × 4 = 36 cells. Some are degenerate (e.g. union on
+pool size 1) but a clean factorial design is worth the budget.
+
+Output: a table showing recall (and cost) for each cell, and a recommended
+aggregation recipe to use as the "AEDIST default" headline number.
+
+## Relevant files
+- `experiments/outputs/exp1_batch2/*.record.json` — per-run hits (already
+  have n>1 runs per model for many models, no new API calls needed)
+- `experiments/outputs/sota_exp3_*/` — Exp 3 multi-run data
+- `src/aedist/score_mechanical.py` — comparator (reuse for evaluating
+  aggregated lists)
+- `experiments/derived/*` — derived CSVs go here
+
+## Actions
+1. Inventory existing data: which models have ≥4 runs available for free
+   re-aggregation? Likely covers pool sizes 2–4 for one-model recipes.
+   Cross-model recipes need only 1 run per model — already have those.
+2. Write `src/aedist/aggregate_runs.py` with three merge primitives
+   (union, majority, confidence-weighted) and a CLI taking a JSONL of
+   per-run record paths plus a merge method.
+3. Write `src/aedist/sweep_aggregations.py` that generates all 36 cells
+   from committed per-run records (no new API spend) and writes a
+   results CSV (`experiments/derived/aggregation_sweep.csv`) with columns:
+   merge_method, pool_size, diversity_rule, mean_F1, mean_cost, n_pools.
+4. Tabulate (and figure?) the sweep results in `experiments/analysis.mk`.
+5. Include in the report — likely a new section "Run aggregation as a
+   coverage lever" with the recommended recipe.
+
+## Test
+`tests/test_aggregate_runs.py` — fixture with 3 synthetic runs over
+4 plants:
+- Run 1: {A, B}
+- Run 2: {B, C}
+- Run 3: {B, D}
+Verify union = {A, B, C, D}; majority(k=2) = {B}; confidence-weighted
+behaves per spec.
+
+## Verification
+- [ ] All 36 cells (or documented subset with rationale) populated
+- [ ] No new API calls — only aggregation over committed run records
+- [ ] Recommended recipe documented with the F1/cost trade-off it implies
+- [ ] `make check` passes
+
+## Invariants
+- Read-only over experiment outputs; no new sweep launches without
+  explicit scope expansion
+- Clean-room writing build (rule lives in analysis.mk)
+- Confidence-weighted aggregation needs a per-plant confidence number
+  from each run — if records lack it, mark that cell as N/A rather
+  than fabricating confidence
+
+## Exit criteria
+- Aggregation sweep results table in the report
+- A recommended (merge, pool, diversity) recipe with F1 and cost numbers
+- The headline coverage number for AEDIST is updated (or argued not to
+  be updated) based on the best aggregation recipe
