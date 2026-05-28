@@ -97,7 +97,7 @@ harness only forwards calls and budget-caps the loop.
   to DeepSeek every turn. The current classifier sees ONLY the latest
   assistant turn (~1–4 KTok). A tool-use orchestrator pays for the full
   conversation in DeepSeek tokens *too*, doubling the multi-turn cost
-  footprint just when ticket 0367 is asking why multi-turn is already
+  footprint just when ticket 0369 is asking why multi-turn is already
   expensive.
 - **Scope creep.** Changing the orchestration shape mid-paper invalidates
   prior arm-4 measurements; the rerun cost is material (Anthropic in
@@ -141,7 +141,7 @@ If the design alternative is pursued (NOT recommended for this paper):
 ## Related
 
 - 0364 — arms vocabulary 2×2 rename (presentation layer).
-- 0367 — RAG-cell caching audit (multi-turn cost driver this ticket touches
+- 0369 — RAG-cell caching audit (multi-turn cost driver this ticket touches
   in the "Cons → Cost overhead" bullet).
 - `experiments/sota/exp2_interactive_smoke.py` — the loop and reply slots.
 - `experiments/sota/dialogue_classifier.py` — the DeepSeek orchestrator.
