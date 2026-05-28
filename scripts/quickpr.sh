@@ -53,11 +53,8 @@ if ! repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
     exit 1
 fi
 
-if ! gh auth status >/dev/null 2>&1; then
-    echo "quickpr: gh not authenticated (run \`gh auth login\`)" >&2
-    exit 1
-fi
-
+# Fence check first — it's pure path inspection, no external deps.
+# Order matters: tests rely on the fence firing before any auth/network check.
 forbidden_re='^(src|tests|experiments)/'
 for f in "${files[@]}"; do
     if [ ! -e "$f" ]; then
@@ -75,6 +72,11 @@ done
 starting_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$starting_branch" = "HEAD" ]; then
     echo "quickpr: detached HEAD — switch to a branch first" >&2
+    exit 1
+fi
+
+if ! gh auth status >/dev/null 2>&1; then
+    echo "quickpr: gh not authenticated (run \`gh auth login\`)" >&2
     exit 1
 fi
 
