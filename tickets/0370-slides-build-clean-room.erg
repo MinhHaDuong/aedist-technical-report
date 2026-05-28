@@ -2,10 +2,12 @@
 Title: Make the slides writing build clean-room under force-rebuild (symmetric to 0352)
 Created: 2026-05-28
 Author: HDMX-coding-agent
+Closed: 2026-05-28
 Blocked-by: 0352
 
 --- log ---
 2026-05-28T17:00Z HDMX-coding-agent created — 0352 celebrate sweep found `make -B -n slides` shows 42 uv-run lines despite 0345 closing the slides workpackage split. Plain `make -n slides` looks clean only because committed handoff artifacts are timestamp-fresh; the rules are still wired in the writing-side build.
+2026-05-28T19:30Z HDMX-coding-agent closed — PR #640 merged. Migrated 12 chart-data rules to analysis.mk, committed fig_capability_dag.pdf, new adherence test guards both -n and -B -n variants.
 
 --- body ---
 ## Context
