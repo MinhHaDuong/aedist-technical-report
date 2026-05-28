@@ -163,9 +163,12 @@ report: report/report.pdf
 slides: slides/slides.pdf
 # Report-side tables are produced by the analysis workpackage. The figures
 # alias still mixes report and slides outputs because slides-side rules remain
-# in this Makefile.
+# in this Makefile. tab_self_consistency.tex and tab_per_run.tex live in
+# experiments/Makefile under `self-consistency` (single producer, 0354), so
+# the `tables:` alias chains both to preserve the pre-0352 UX.
 tables:
 	$(MAKE) -f experiments/analysis.mk report-tables
+	$(MAKE) -C experiments self-consistency
 figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
 select: experiments/models_selected.yaml
 census:
