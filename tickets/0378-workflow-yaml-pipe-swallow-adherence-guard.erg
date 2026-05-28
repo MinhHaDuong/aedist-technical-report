@@ -1,0 +1,133 @@
+%erg 0.1
+Title: Adherence guard against silent pipe-swallow failures in workflow YAML
+Created: 2026-05-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-28T15:00Z HDMX-coding-agent created — surfaced during 0365 raid. PR #636's "Verify pandoc available" step ran `pandoc --version | head -n1`, reported ✓ green in the GHA UI despite `pandoc: command not found` in the log, then the manuscript build failed two steps later. The check was load-bearing (supposed to fast-fail when pandoc is missing) and it lied.
+
+--- body ---
+## Context
+
+GitHub Actions runs `run:` blocks under `/usr/bin/bash -e {0}`. With
+`bash -e` alone (no `pipefail`):
+
+> The exit status of a pipeline is the exit status of its last command.
+
+So `pandoc --version | head -n1`:
+- `pandoc` fails (exit 127 — command not found)
+- `head -n1` reads empty stdin and exits 0
+- pipeline exit code = head's = 0
+- `bash -e` sees success → step reports ✓
+
+The intended "fast-fail when pandoc is missing" property is silently
+broken. This bit us once — single instance fixed in PR #636 commit
+`750276e` (apt-installed pandoc and removed the broken verify step).
+The class is silent by definition and will recur. A standing adherence
+test catches it.
+
+## Sweep on 2026-05-28 (clean)
+
+```
+grep -rnE 'run:.*--(version|help).* \| (head|tail|grep)' .github/workflows/
+```
+
+Returns 0 hits across the repo. The 0365 instance was the only one
+and is fixed. Adherence test is preventive, not reactive.
+
+## Relevant files
+
+- `.github/workflows/CI.yml`, `.github/workflows/docs-build.yml` — the
+  only workflow files in scope.
+- `tests/test_docs_build_workflow.py` — natural home for the test, or
+  a new `tests/test_workflow_pipe_swallow.py` if scope grows.
+
+## Actions
+
+1. Write `tests/test_workflow_pipe_swallow.py` (`@pytest.mark.adherence`):
+   - Walk every `.yml` under `.github/workflows/`.
+   - Parse YAML, find every job step's `run:` script.
+   - For each script, flag lines matching the pattern:
+     `<sentinel-command> [args...] | (head|tail|grep|awk|cut|sed)`
+     where `<sentinel-command>` is one of:
+     - any command followed by `--version`, `--help`, `-V`, `-v` (when not a long-form arg)
+     - any command in a known fail-fast position (e.g. `which X`, `command -v X`)
+   - For each hit, assert that the same `run:` block earlier contains
+     `set -o pipefail` (or `set -euo pipefail`).
+   - On mismatch: fail with the file path, line excerpt, and a remediation
+     hint suggesting `set -euo pipefail` or dropping the pipe.
+
+2. Add a fixture / parametrised case that exercises the rule on a
+   synthetic minimal-failing example to prove the test fires when it
+   should (TDD red step).
+
+3. Confirm `make check-fast` clean. Document the rule in
+   `.claude/rules/` (if `workflow-yaml.md` doesn't exist, propose adding
+   it — out of scope for this ticket, see Out of scope below).
+
+## First failing test
+
+```python
+@pytest.mark.adherence
+def test_no_silent_pipe_swallow_in_workflows():
+    bad = []
+    for wf in (REPO_ROOT / ".github/workflows").glob("*.yml"):
+        data = yaml.safe_load(wf.read_text())
+        for jobname, job in data.get("jobs", {}).items():
+            for step in job.get("steps", []):
+                script = step.get("run")
+                if not script:
+                    continue
+                if "set -o pipefail" in script or "set -euo pipefail" in script:
+                    continue
+                for line in script.splitlines():
+                    if re.search(r'(--version|--help)\s.*\|\s*(head|tail|grep|awk|cut|sed)', line):
+                        bad.append((wf.name, jobname, step.get("name", "?"), line.strip()))
+    assert not bad, "Pipe-swallow risk in workflow steps:\n" + "\n".join(
+        f"  {wf}:{job}:{step}: {line}" for wf, job, step, line in bad
+    )
+```
+
+Adjust the regex if it false-positives on legitimate uses.
+
+## Verification
+
+- [ ] Test exists in `tests/`, marked `@pytest.mark.adherence`.
+- [ ] Test PASSES on current main (clean sweep result).
+- [ ] Demonstrably FAILS on a synthetic example (e.g. add a temporary
+      `pandoc --version | head -n1` step, run, see red, remove).
+- [ ] `make check-fast` green.
+
+## Invariants
+
+- The test is a static check on YAML; it does not execute workflows.
+- False-positive rate: if a step legitimately needs a pipe to a tail
+  command (rare), it gets caught and fixed by adding `set -o pipefail`,
+  which is the desired behaviour anyway.
+
+## Exit criteria
+
+- [ ] `tests/test_workflow_pipe_swallow.py` (or equivalent in existing test
+      file) added, marked adherence, passing on current state.
+- [ ] Demonstrated to fire on synthetic example (commit + revert; or
+      inline test parametrisation).
+- [ ] `make check-fast` green; PR merged through the new 4-check gate.
+
+## Out of scope
+
+- Writing a project rule file `.claude/rules/workflow-yaml.md`. That's
+  a separate doc ticket if we want the rule articulated outside the
+  test.
+- Extending to other shell-disciplined languages (Dockerfiles, sh
+  scripts) — focus on `.github/workflows/`. Generalise in a follow-up
+  if the same pattern recurs there.
+- Switching workflows to default `set -euo pipefail` via a shared
+  reusable workflow or composite action. Could be a follow-on cleanup;
+  not this ticket.
+
+## Related
+
+- Spun off from: 0365 raid (2026-05-28 celebrate-sweep) where the bug
+  surfaced concretely on PR #636.
+- Adjacent to: 0377 (chore-filter not matching — different bug, same
+  workflow files).
