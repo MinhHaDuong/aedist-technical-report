@@ -21,35 +21,88 @@ def _load() -> dict:
     return yaml.safe_load(WORKFLOW.read_text())
 
 
+def _triggers(wf: dict) -> dict:
+    # YAML's `on:` key is sometimes parsed as the boolean True by PyYAML.
+    triggers = wf.get("on") or wf.get(True)
+    assert triggers, "no triggers defined"
+    return triggers
+
+
 def test_workflow_file_exists():
     assert WORKFLOW.exists(), f"missing workflow file: {WORKFLOW}"
 
 
-def test_pull_request_paths_cover_build_inputs():
+def test_docs_build_runs_on_all_pull_requests():
+    """The workflow must run on every PR for the required-check gate to clear.
+
+    A `pull_request.paths` filter would skip chore-only PRs and leave the
+    required `build` check pending forever. Heavy work is gated inside the
+    `build` job via the `changes` job's `chore` output instead.
+    """
     wf = _load()
-    # YAML's `on:` key is sometimes parsed as the boolean True by PyYAML.
-    triggers = wf.get("on") or wf.get(True)
-    assert triggers, "no triggers defined"
-    pr = triggers.get("pull_request")
-    assert pr, "pull_request trigger missing"
-    paths = pr.get("paths") or []
-    required = {"report/**", "slides/**", "Makefile"}
-    missing = required - set(paths)
-    assert not missing, f"pull_request.paths missing entries: {missing}"
+    triggers = _triggers(wf)
+    assert "pull_request" in triggers, "pull_request trigger missing"
+    pr = triggers["pull_request"]
+    # pull_request without a paths filter — None (bare `pull_request:`) or a
+    # dict that does not key `paths`.
+    assert pr is None or (isinstance(pr, dict) and "paths" not in pr), (
+        "docs-build.yml must run on every PR for the required-check gate; "
+        "use the internal `changes` job to skip heavy work on chore diffs."
+    )
 
 
 def test_push_main_and_dispatch_triggers():
     wf = _load()
-    triggers = wf.get("on") or wf.get(True)
+    triggers = _triggers(wf)
     push = triggers.get("push") or {}
     assert "main" in (push.get("branches") or []), "push trigger must target main"
     assert "workflow_dispatch" in triggers, "workflow_dispatch trigger missing"
 
 
-def test_build_job_present():
+def test_changes_and_build_jobs_present():
     wf = _load()
     jobs = wf.get("jobs") or {}
+    assert "changes" in jobs, "job named 'changes' is required (chore detector)"
     assert "build" in jobs, "job named 'build' is required (required-check id)"
+
+
+def test_changes_job_uses_paths_filter():
+    wf = _load()
+    changes = wf["jobs"]["changes"]
+    steps = changes.get("steps") or []
+    uses = [s.get("uses", "") for s in steps]
+    assert any("dorny/paths-filter" in u for u in uses), (
+        "changes job must use dorny/paths-filter to compute chore output"
+    )
+    outputs = changes.get("outputs") or {}
+    assert "chore" in outputs, "changes job must expose `chore` output"
+
+
+def test_build_depends_on_changes():
+    wf = _load()
+    build = wf["jobs"]["build"]
+    needs = build.get("needs")
+    assert needs == "changes" or (isinstance(needs, list) and "changes" in needs), (
+        "build job must declare `needs: changes`"
+    )
+    # `!cancelled()` so build still runs (as a no-op) when `changes` returns
+    # chore=true; without it, a skipped dependency would skip `build` too.
+    assert "cancelled()" in str(build.get("if", "")), (
+        "build job must guard with `if: !cancelled()` so it always reports a status"
+    )
+
+
+def test_build_steps_gated_on_chore_flag():
+    """Every concrete step in `build` must skip when the diff is chore-only."""
+    wf = _load()
+    steps = wf["jobs"]["build"].get("steps") or []
+    assert steps, "build job has no steps"
+    ungated = [
+        s.get("name") or s.get("uses") or "<unnamed>"
+        for s in steps
+        if "needs.changes.outputs.chore" not in str(s.get("if", ""))
+    ]
+    assert not ungated, f"every build step must gate on the chore flag; ungated: {ungated}"
 
 
 def test_slides_step_has_continue_on_error():
@@ -85,3 +138,10 @@ def test_tectonic_cache_key():
 def test_setup_uv_action_used():
     text = WORKFLOW.read_text()
     assert "astral-sh/setup-uv@v4" in text, "uv setup action must be pinned to v4"
+
+
+def test_build_runner_pinned():
+    wf = _load()
+    assert wf["jobs"]["build"].get("runs-on") == "ubuntu-24.04", (
+        "build job must pin runner to ubuntu-24.04 for reproducibility"
+    )
