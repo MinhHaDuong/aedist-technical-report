@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Fix make slides: add fig_capability_dag.pdf to root prereq list
+Created: 2026-05-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-28T13:00Z HDMX-coding-agent created — spun off from 0365 as the green-baseline precondition for the docs-build workflow; STATE.md backlog had it as a candidate
+
+--- body ---
+## Context
+
+`make slides` fails with `No rule to make target '…fig_capability_dag.pdf'`.
+The 0365 docs-build workflow lands with `continue-on-error: true` on the
+slides step until this is fixed; 0358's required-checks flip (which now
+includes `docs-build` per user direction) cannot complete until this is
+green.
+
+The mismatch:
+
+- Root `Makefile:215-227` `slides/slides.pdf` rule lists
+  `$(GEN)/fig_capability_timeline.pdf` as a prereq but **not**
+  `$(GEN)/fig_capability_dag.pdf`.
+- `slides/Makefile:16,29-30` consumes both
+  `fig_capability_timeline.pdf` (twice) and `fig_capability_dag.pdf`.
+- The recursive sub-make cannot resolve `fig_capability_dag.pdf`
+  because the root never builds it for the slides path. The root
+  Makefile *does* have a rule (`Makefile:190`), but the rule only
+  fires if something declares the file as a prereq.
+
+The DAG guard (0363) does not catch this — recursive-make visibility
+is its known limit.
+
+## Relevant files
+
+- `Makefile:215-227` — `slides/slides.pdf` prereq list (needs the addition).
+- `Makefile:190` — `fig_capability_dag.pdf` rule (already exists; correct).
+- `slides/Makefile:16,29-30` — consumer side (already references both).
+- `tests/test_makefile_dag.py` (or equivalent) — DAG guard; verify it now sees the link.
+
+## Actions
+
+1. Add `$(GEN)/fig_capability_dag.pdf` to the `slides/slides.pdf` prereq list in `Makefile` (after line 220 `fig_capability_timeline.pdf`).
+2. Run `make slides` locally if an engine is available; otherwise rely on `make -n slides | grep fig_capability_dag` to confirm the prereq is visible.
+3. Confirm `tests/test_makefile_dag.py` (or whichever DAG guard exists) still passes — and ideally tightens its visibility into this case.
+
+## Test
+
+First failing test (TDD red): `make -n slides | grep -F 'fig_capability_dag.pdf'` returns at least one hit at the root-make level (currently zero). After the fix, it returns at least one. Wrap as a pytest adherence test if not already covered.
+
+## Verification
+
+- [ ] `make -n slides | grep -F 'fig_capability_dag.pdf'` shows the prereq.
+- [ ] `make slides` succeeds on an engine-equipped host (or the docs-build workflow from 0365 reports a green slides step).
+- [ ] `make check` still passes.
+
+## Invariants
+
+- The existing DAG/Makefile adherence tests do not regress.
+- `fig_capability_timeline.pdf` remains a prereq (don't replace, add).
+
+## Exit criteria
+
+- [ ] `Makefile` `slides/slides.pdf` rule lists both `fig_capability_timeline.pdf` and `fig_capability_dag.pdf` as prereqs.
+- [ ] `make -n slides` references both figures.
+- [ ] `make check` green.
+
+## Related
+
+- Blocker-of: 0358 (cannot mark `docs-build` required until slides step is green per the user-confirmed required-check list `lint+tests+changes+docs-build`).
+- Spun off from: 0365 ("Known precondition — separate ticket"); STATE.md backlog candidate.
