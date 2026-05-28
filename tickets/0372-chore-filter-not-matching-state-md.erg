@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Diagnose chore-filter not matching STATE.md / pure-tickets diffs (dorny/paths-filter)
+Created: 2026-05-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-28T14:10Z HDMX-coding-agent created — surfaced during 0358 raid: both `.github/workflows/CI.yml`'s and `.github/workflows/docs-build.yml`'s `changes` jobs returned `chore=false` for PR #638's STATE.md-only diff. The intended chore short-circuit on lint/tests/build never fires, so chore-only PRs run the full pipelines.
+
+--- body ---
+## Context
+
+The `changes` job in `CI.yml` and the parallel one in `docs-build.yml`
+both use `dorny/paths-filter@v3` with `predicate-quantifier: 'every'`
+to detect chore-only diffs and short-circuit heavy steps. PR #638 was
+a clean test case: the diff was a single line removed from `STATE.md`.
+
+Observed in PR #638's CI run for commit `64aed47`
+(`https://github.com/MinhHaDuong/aedist-technical-report/actions/runs/26579725697`):
+```
+Detected 1 changed files
+Filter chore = false
+Matching files: none
+Changes output set to []
+```
+
+`STATE.md` is in the chore filter pattern list. `Matching files: none`
+means paths-filter did not consider STATE.md to match the literal
+`'STATE.md'` pattern. Result: `chore != 'true'` → all gated steps ran
+full → `build` took 1m16s instead of the ~10s no-op design.
+
+Pre-existing: the same pattern in `CI.yml` has presumably been silently
+broken since its `changes` job was added (commit `9205df8`, PR #458).
+Confirmed: PR #638's `lint` ran 15s and `tests` 39s — durations
+consistent with full ruff + pytest, not skipped steps. Wasted CI
+minutes have been accumulating, no functional break.
+
+This does NOT block 0358 — `build` now runs full on chore PRs and
+still passes (PR #638 demonstrated). Branch protection works as
+designed because the check still reports SUCCESS.
+
+## Relevant files
+
+- `.github/workflows/CI.yml` — original `changes` job (presumed broken).
+- `.github/workflows/docs-build.yml` — new `changes` job (broken same way).
+- PR #638 run logs above for the empirical evidence.
+
+## Hypotheses to test (rank-ordered)
+
+1. **Filter syntax: bare `STATE.md` literal needs `**/STATE.md`** or `/STATE.md` to match a root-level file under `dorny/paths-filter@v3`. Picomatch's globstar rules may require an explicit anchor.
+2. **`predicate-quantifier: every` interaction**: with `every`, if no pattern matches a given file, the file is "non-matching" and `chore=false`. The pattern itself may be evaluated correctly per-file but the "every" semantics make a single non-matching file flip the result. (Not the case here: only one file, STATE.md, is the entire diff.)
+3. **Base-ref calculation**: paths-filter compares HEAD to a base ref. On `pull_request`, that's the PR base. On `push: main`, it's the parent commit. Maybe the base ref isn't what we think (e.g., `actions/checkout@v4` with default `fetch-depth: 1` doesn't have enough history).
+4. **Action version bug**: `dorny/paths-filter@v3` may have a regression with literal-file patterns.
+
+## Actions
+
+1. Reproduce locally with `act` or a minimal forked repo; isolate which hypothesis is correct.
+2. Try `**/STATE.md` first — it's a one-line fix in BOTH workflows if it works.
+3. If that fails, try pinning to `dorny/paths-filter@v2` or removing `predicate-quantifier: 'every'` and using `if: needs.changes.outputs.chore_any == 'true'` semantics instead.
+4. Add an adherence test that mocks/simulates a STATE-only diff and asserts the chore output is `true`. Project pattern: see existing workflow adherence tests in `tests/test_docs_build_workflow.py`.
+
+## Test (first failing)
+
+Once the fix lands, open a deliberately-chore PR (e.g. tiny STATE.md
+edit) and verify the `build` job in `docs-build.yml` completes in
+~10s with all heavy steps skipped. Same for `lint`/`tests` in `CI.yml`.
+
+## Exit criteria
+
+- [ ] `dorny/paths-filter` returns `chore=true` for a STATE.md-only PR.
+- [ ] `build`, `lint`, `tests` jobs short-circuit (durations ≤ 15s) on chore PRs.
+- [ ] Adherence test in place to prevent regression.
+- [ ] CI minutes per chore PR drops from ~2 min to ~30s.
+
+## Out of scope
+
+- Rethinking the chore-vs-build path partition — the patterns are correct, the matcher is buggy.
+- Removing `predicate-quantifier: every` if the simpler `**/STATE.md` anchor fix works.
+
+## Related
+
+- Spun off from: 0358 raid (2026-05-28). The chore-filter bug was a
+  pre-existing latent issue surfaced when 0371's `docs-build` chore
+  filter copied the same broken pattern.
+- Adjacent to: 0371 (which added the docs-build chore filter using
+  the same pattern — fix here will benefit both workflows).
