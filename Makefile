@@ -58,74 +58,14 @@ experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
 	    --registry experiments/models.yaml \
 	    --output $@ --n 1
 
-# --- Tables for report --------------------------------------------------------
-
-$(GEN)/tab_census.tex: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_census --output $@
-
-DECOMP_BEFORE := $(wildcard experiments/outputs/rag_per_fuel/reconciliation_*.csv)
-DECOMP_AFTER := $(wildcard experiments/outputs/rag_per_fuel_v2/reconciliation_*.csv)
-
-$(GEN)/tab_decomposition_fix.tex: $(DECOMP_BEFORE) $(DECOMP_AFTER)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_decomposition_fix --output $@
-
-# tab_self_consistency.tex / tab_per_run.tex are produced by the analysis
-# workpackage (experiments/Makefile `self-consistency`) and consumed here as
-# committed handoff artifacts — single producer, see ticket 0354.
-
-RAG_CSVS := $(wildcard experiments/outputs/rag_extract/*.csv)
-
-$(GEN)/tab_coherence.tex: $(RAG_CSVS) src/aedist/tabulate_coherence.py src/aedist/coherence.py
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_coherence \
-	    --input experiments/outputs/rag_extract --output $@
-
-$(GEN)/macros.tex: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_macros --output $@
-
-$(GEN)/tab_relances.tex: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_relances --output $@
-
-$(GEN)/tab_comparaison.tex: $(MEASUREMENTS) derived/variance_decomposition.json
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_comparaison --output $@ --variance-json derived/variance_decomposition.json
-
-EXPERT_REF := data/reference/vietnam_thermal_v1.csv
-GEM_REF    := data/reference/gem_thermal.csv
-
-$(GEN)/tab_reconciliation.tex: $(MEASUREMENTS) $(EXPERT_REF) $(GEM_REF)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_reconciliation --output $@ --expert-ref $(EXPERT_REF) --gem-ref $(GEM_REF)
-
-derived/variance_decomposition.json: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.variance_decomposition --output $@
-
-$(GEN)/tab_variance.tex: derived/variance_decomposition.json
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_variance --input $< --output $@
-
-CONVERTER_TEST := experiments/data/converter_test
-CONVERTER_META := $(CONVERTER_TEST)/benchmark_meta.yaml
-CONVERTER_DOCS := $(wildcard $(CONVERTER_TEST)/*/Decision-1509.md)
-
-derived/verification/tradeoff.csv: $(wildcard derived/verification/*-run*.csv)
-	uv run python -m aedist.tabulate_verification \
-	    --input derived/verification --output $@
-
-$(GEN)/tab_verification.tex: derived/verification/tradeoff.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_verification \
-	    --input derived/verification --latex $@
-
-$(GEN)/tab_converter_benchmark.tex: $(CONVERTER_META) $(CONVERTER_DOCS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.compare_converters \
-	    --input $(CONVERTER_TEST) --meta $(CONVERTER_META) --output $@
+# Report-side tables (tab_census, macros, macros_census, tab_relances,
+# tab_comparaison, tab_variance, tab_verification, tab_decomposition_fix,
+# tab_coherence, tab_reconciliation, tab_converter_benchmark) and the
+# intermediate derived/*.json|csv artifacts they consume are produced by the
+# analysis workpackage. To regenerate:
+#     make -f experiments/analysis.mk report-tables
+# tab_self_consistency.tex and tab_per_run.tex come from
+# experiments/Makefile `self-consistency` (single producer, 0354).
 
 # --- Chart data (report canonical; slides references ../report/inputs/generated/) ---
 
@@ -146,17 +86,6 @@ $(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
-
-# Produces macros_census.tex (consumed by slides via \NumCensusModels). The
-# census figure was retired from the report with the ablation thread (0361) but
-# is still written by this script, so fig_census_direct.pdf is declared a grouped
-# co-target — both outputs hardcoded (not $@) so either grouped member resolves
-# correctly. Full producer migration is 0352.
-$(GEN)/macros_census.tex $(GEN)/fig_census_direct.pdf &: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_method_convergence \
-	    --output $(GEN)/fig_census_direct.pdf --methods direct --prompt-version census \
-	    --output-macros $(GEN)/macros_census.tex
 
 EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
 
@@ -232,7 +161,11 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-tables: $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex $(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex $(GEN)/tab_converter_benchmark.tex $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex $(GEN)/tab_decomposition_fix.tex $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex $(GEN)/tab_coherence.tex $(GEN)/tab_reconciliation.tex
+# Report-side tables are produced by the analysis workpackage. The figures
+# alias still mixes report and slides outputs because slides-side rules remain
+# in this Makefile.
+tables:
+	$(MAKE) -f experiments/analysis.mk report-tables
 figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
 select: experiments/models_selected.yaml
 census:

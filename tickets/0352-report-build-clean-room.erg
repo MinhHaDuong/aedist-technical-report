@@ -12,6 +12,7 @@ Author: HDMX-coding-agent
 2026-05-27T20:54Z Claude note blocker 0361 closed — Blocked-by removed.
 2026-05-27T20:54Z Claude note blocker 0362 closed — Blocked-by removed.
 2026-05-27T20:59Z Claude untag deferred
+2026-05-28T15:00Z HDMX-coding-agent note migrated 12 producer rules to experiments/analysis.mk (report-tables phony), root tables: now delegates; make -n report and make -B -n report both show only tectonic; macros_census grouped rule replaced with single-output (dead fig_census_direct PDF written to gitignored sentinel); pre-existing TeX error inputs/verification_methods:93 unrelated.
 --- body ---
 ## Re-scope (2026-05-27)
 
