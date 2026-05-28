@@ -2,10 +2,12 @@
 Title: Refactor docs-build workflow to always-run with internal chore-filter
 Created: 2026-05-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #639
 
 --- log ---
 2026-05-28T13:30Z HDMX-coding-agent created — surfaced by 0358 raid: GitHub branch protection requires the `build` status to report on every PR, but the current `pull_request.paths` trigger skips PRs that don't touch build inputs (STATE.md, ticket-only PRs, .claude/** edits). Required-check + skipped workflow = unmergeable PR.
 
+2026-05-28T14:04Z HDMX-coding-agent closed — autoclosed — PR #639
 --- body ---
 ## Context
 
