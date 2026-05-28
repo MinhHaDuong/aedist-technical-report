@@ -68,8 +68,8 @@ product co-deployment view: each marker is the date all three lined up.
 ## Capability stages (schema)
 
 1. **Chat LLM** — consumer-facing chat product backed by a chat-tuned model (RLHF for dialogue). No retrieval, no tools, no reasoning surface. Pretrained base LLMs and bare "Instruct" checkpoints, which exist earlier or in parallel, are excluded — they were never shipped as standalone consumer products; at most a continuation / completion API.
-2. **Retrieval / RAG / file upload** — documents at inference time.
-3. **Browsing / web search** — live external retrieval as a product.
+2. **Files upload (RAG)** — documents at inference time.
+3. **Web search** — live external retrieval as a product.
 4. **Reasoning / chain-of-thought as a product surface** — visible
    thinking, test-time compute exposed to users.
 5. **Deep research** — multi-step web + reasoning, long-running, citations.
@@ -77,12 +77,13 @@ product co-deployment view: each marker is the date all three lined up.
    as a built-in tool in a consumer product. Outputs include text,
    computed values, and visualisations. Distinct from stage 7 in being
    a single fixed sandbox rather than an extensible tool registry.*
-7. **External tool use (MCP-like) / computer use / coding agents** —
+7. **External tool use (MCP) / computer use / coding agents** —
    autonomous action over an extensible tool surface (we record the
    *agentic surface* form, not the bare function-calling API; the API
    form is noted in the bibliography for context).
-8. **Multi-agent coordination** — agent teams, sub-agent dispatch,
-   orchestrator-worker patterns.
+8. **Autonomous agents** — agent teams, sub-agent dispatch,
+   orchestrator-worker patterns; sandboxed shell + open-ended loop
+   exposed to end users without per-step approval.
 
 ## Matrix: stage x lab
 
@@ -97,13 +98,13 @@ panel.
 | Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
 |---|---|---|---|---|---|
 | **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2024-02-26 Le Chat beta [(blog)][41] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
-| **2. Retrieval / file upload** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
-| **3. Browsing / web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | 2025-01-24 Qwen Chat v0.2 web search [(X)][42] | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
+| **2. Files upload (RAG)** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
+| **3. Web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | 2025-01-24 Qwen Chat v0.2 web search [(X)][42] | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
 | **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
 | **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
 | **6. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
-| **7. External tool use (MCP-like) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
-| **8. Multi-agent coordination** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] | absent | absent |
+| **7. External tool use (MCP) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
+| **8. Autonomous agents** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] | absent | absent |
 
 ## Parallel branches: where the chain becomes a DAG
 
