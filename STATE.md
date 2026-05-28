@@ -54,6 +54,5 @@ Remaining run order: **0352 → 0353 ∥ 0360**.
 - Paper writing opens now.
 - Report/ablation cleanup: 0361/0362 done+closed on branch `claude/pr617-makefile-audit-S4US7` (needs merge + a LaTeX/pandoc build to confirm); then 0352 → 0353 ∥ 0360; 0364 deferred — see Handoff.
 - New ticket candidate: fix the pre-existing `make slides` break (`fig_capability_dag` vs `fig_capability_timeline` recursive-make mismatch).
-- CI required-checks rule disabled 2026-05-26 — **re-enable** (talk done, no longer blocking).
 - Stale remote branches to prune: `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.
 - `ticket/0345-collapse-exp2-single-producer` local branch has 3 pre-PR commits not in main — manual review before deleting.
