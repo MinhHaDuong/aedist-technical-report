@@ -218,6 +218,7 @@ slides/slides.pdf: slides/slides.tex \
     $(GEN)/fig_spider_exp1_families.pdf \
     $(GEN)/fig_spider_cross_exp.pdf \
     $(GEN)/fig_capability_timeline.pdf \
+    $(GEN)/fig_capability_dag.pdf \
     $(GEN)/fig_exp2_coverage.pdf \
     $(GEN)/fig_exp2_cost.pdf \
     $(GEN)/fig_exp2_coverage_certainty.pdf \
