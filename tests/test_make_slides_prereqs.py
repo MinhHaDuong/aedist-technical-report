@@ -35,8 +35,11 @@ def test_make_slides_lists_fig_capability_dag_as_prereq():
     up-to-date — either way it appears on stdout (when missing on disk,
     as a recipe; when present, the dry-run still surfaces it).
     """
+    # -B forces make to plan every recipe regardless of file mtimes. Without
+    # it, after a successful `make slides` the targets are up-to-date and
+    # `make -n` emits only "Nothing to be done", hiding what we're guarding.
     result = subprocess.run(
-        ["make", "-n", "slides"],
+        ["make", "-B", "-n", "slides"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

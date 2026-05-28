@@ -2,10 +2,12 @@
 Title: Add GHA docs-build workflow — compile report/slides/manuscript on every PR
 Created: 2026-05-28
 Author: claude
+Closed: autoclosed — PR #636
 
 --- log ---
 2026-05-28T00:00Z claude created — closes the merge-time verification gap that PR #630 exposed (Copilot reverts went green on lint/tests/changes because no check compiles the PDFs); also the only path to in-env build verification for 0352/0353 that does not require relaxing the Claude Code cloud env's network policy
 
+2026-05-28T13:23Z HDMX-coding-agent closed — autoclosed — PR #636
 --- body ---
 ## Context
 
