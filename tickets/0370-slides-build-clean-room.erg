@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Make the slides writing build clean-room under force-rebuild (symmetric to 0352)
+Created: 2026-05-28
+Author: HDMX-coding-agent
+Blocked-by: 0352
+
+--- log ---
+2026-05-28T17:00Z HDMX-coding-agent created — 0352 celebrate sweep found `make -B -n slides` shows 42 uv-run lines despite 0345 closing the slides workpackage split. Plain `make -n slides` looks clean only because committed handoff artifacts are timestamp-fresh; the rules are still wired in the writing-side build.
+
+--- body ---
+## Context
+
+Ticket 0345 collapsed the slides writing build to consume committed handoff
+artifacts only, and 0352 did the same for the report side. The 0352 celebrate
+sweep used `make -B -n` (force-rebuild dry-run) as the strict clean-room test
+and found the slides side still fails:
+
+- `make -n slides` — 0 `uv run` (passes — but only because timestamps happen
+  to be fresh)
+- `make -B -n slides` — **42 `uv run` lines**
+
+Root cause: the `slides/slides.pdf` rule in the root Makefile lists prereqs
+whose recipes are still in the root Makefile (`fig_direct_p1_base.pdf`,
+`fig_capability_timeline.pdf`, `fig_spider_cross_exp.pdf`,
+`fig_method_convergence.pdf` via SLIDE_GEN, `fig_regimes_scatter.pdf`,
+`fig_scaling_curve.pdf`, `macros_p1_base.tex` grouped with the p1_base figure,
+and the SLIDE_GEN cp-from-report rules). These rules survived 0345 — that
+ticket fixed the Exp2-specific producer duplication, not the broader
+workpackage split for slides.
+
+0352 added `tests/test_report_build_clean_room.py` which guards report under
+both `-n` and `-B -n`. The analogous slides test should ship alongside the
+fix here (or via 0353, which is now unblocked and explicitly scoped to the
+class regression guard).
+
+## Relevant files
+- `Makefile` — `slides/slides.pdf` rule (~line 155 post-0352) and its
+  uv-run prereq rules (fig_direct_p1_base, fig_capability_timeline,
+  fig_spider_cross_exp, fig_method_convergence, fig_regimes_scatter,
+  fig_scaling_curve, macros_p1_base, SLIDE_GEN copies)
+- `experiments/analysis.mk` — destination for migrated rules; already has
+  `exp1-analysis-figures` and the new `report-figures` phony from 0352
+- `slides/Makefile` — already clean (just runs tectonic)
+- `tests/test_report_build_clean_room.py` — pattern for the slides
+  equivalent
+- `.claude/rules/coding-python.md` — Build section, workpackage-split rule
+
+## Actions
+1. Inventory every prerequisite of `slides/slides.pdf` in the root
+   Makefile. Classify: (a) committed handoff artifact with no recipe, or
+   (b) `uv run` analysis rule.
+2. For each (b): move the rule into `experiments/analysis.mk` under a new
+   `slides-figures` phony (mirror of 0352's `report-tables`). Confirm the
+   target artifact is already committed; do not bundle regeneration.
+3. Audit the SLIDE_GEN `cp` rules (`$(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv`
+   etc.) — these are simple copies, fine if both sides are committed, but
+   the producer must live in analysis.mk.
+4. The `figures:` alias in root Makefile becomes fully delegatable, mirroring
+   what 0352 did for `tables:`.
+
+## Test
+`make -B -n slides` must contain zero `uv run` invocations. Same test pattern
+as `tests/test_report_build_clean_room.py`. If 0353 has already shipped a
+class-level test by the time this ticket runs, that test will fail until
+this work is done — that's the desired ordering.
+
+## Verification
+- [ ] `make -n slides` shows no `uv run`
+- [ ] `make -B -n slides` (force rebuild) shows no `uv run`
+- [ ] All `slides/slides.pdf` prerequisites are committed
+      (`git cat-file -e HEAD:<path>`)
+- [ ] Slides-side analysis rules now live in `experiments/analysis.mk`
+- [ ] `make check` passes
+
+## Invariants
+- Do not break `make report` (0352's clean-room property must hold)
+- Producer code and CLI arguments must not change — recipe-location-only
+  migration (per 0352's updated Invariants language)
+- Slides PDFs remain visually equivalent after regeneration
+
+## Exit criteria
+- `make slides` (writing build) contains no `uv run` / data-access rules
+  under either plain `-n` or `-B -n` — compiles from committed handoff
+  artifacts only
+- `experiments/analysis.mk` is the sole producer of slides figures
+- Companion adherence test (here or via 0353) guards the invariant
+- `make check` passes
