@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-28T00:00Z claude created — Claude costs on arm4 (5D) and possibly arm3 (1D) look high; hypothesis is mid-conversation tail not cached
+2026-05-28T00:00Z claude note — TTL vulnerability surfaced: arm4 Claude wall_s median 253s / max 449s / 31% of turns > 5min ephemeral TTL; cache misses are likely the norm, not the exception (see §TTL vulnerability)
 
 --- body ---
 ## Context
@@ -41,6 +42,38 @@ distributed across days), every rep pays write.
 For arm 4 (multi-turn + EP), the mid-conv tail effect grows roughly
 linearly in turns and is the strongest candidate for the high-cost
 observation.
+
+## TTL vulnerability — the cache is shorter than Claude's wall time
+
+Anthropic ephemeral cache TTL is **5 minutes**. The cache is refreshed on
+every cache READ within that window, so back-to-back turns chain hits as
+long as no individual `(response_N_complete → response_N+1_request)` gap
+exceeds 5 minutes.
+
+Pulled from existing arm 4 records
+(`outputs/sota_exp3_arm4_batch1/run*/anthropic_run01/*.record.json`,
+n=13 turns):
+
+| metric | value |
+|--------|------:|
+| median wall_s | 253 s (4 m 13 s) |
+| p90 wall_s | 372 s (6 m 12 s) |
+| max wall_s | 449 s (7 m 29 s) |
+| turns > 300 s (5 min) | 4 / 13 (31 %) |
+| turns > 240 s | 8 / 13 (62 %) |
+
+Turn-1 calls — the ones that *write* the system + designed_prompt cache
+— dominate the long tail (4 of the top-5 longest turns are turn_01,
+280–449 s). So the cache write often expires before turn 2 even fires.
+Net effect: Breakpoints 1 and 2 (already wired) probably miss the TTL
+on a majority of turn-to-turn transitions on this workload. Adding
+mid-conversation breakpoints (3 and 4) inherits the same TTL ceiling
+and would also miss whenever the prior turn ran > 5 min.
+
+**This reframes the audit hypothesis.** The mid-conv tail effect is one
+contributor, but the dominant problem may be that the cache is the wrong
+*shape* for Claude Opus 4.6 + adaptive thinking + 20K-output workloads,
+which routinely overrun the 5-min window.
 
 ## Audit first (per `.claude/rules/workflow.md`: "Audit before instrumenting")
 
@@ -81,6 +114,29 @@ Audit steps:
 - If arm 3 shows the cross-rep TTL-miss pattern, that is a separate
   small fix (warm up the cache by ordering arm 3 reps tight in time, or
   accept the loss — single-turn is cheap anyway).
+
+## Mitigation options — the TTL is the actual lever
+
+In rough order of leverage:
+
+1. **Switch to the 1-hour extended cache TTL.** Anthropic exposes a
+   `ttl: "1h"` cache_control variant behind the
+   `extended-cache-ttl-2025-04-11` beta header. Cache write rate is
+   higher (~2× ephemeral write), but for a workload whose turns
+   routinely run 250–450 s, paying ~2× write *once* per conversation
+   buys ~12× more TTL headroom and turns the cache from "lottery" into
+   "reliable". Single biggest cost win available. Verify pricing and
+   availability before commit.
+2. **Cache-keepalive ping.** Issue a tiny no-op call (e.g., 1-token
+   completion against the cached prefix) just before the long
+   generation, to refresh the TTL. Cheap on input (cache read), cheap
+   on output. Only worth doing if extended TTL is not available.
+3. **Add mid-conversation breakpoints (the original plan below).**
+   Still useful — but only conditional on TTL surviving. Pairs with
+   option 1.
+4. **Cap max_tokens lower on arm 4.** Reduces wall time, but is a
+   protocol change (would shorten Claude's output on the experimental
+   arm) and confounds the measurement. Reject.
 
 ## Instrumentation (only if audit confirms)
 
