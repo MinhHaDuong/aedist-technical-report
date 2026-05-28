@@ -51,8 +51,12 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/tectonic" --version
 
-      - name: Verify pandoc available (Ubuntu 24.04 preinstalled)
-        run: pandoc --version | head -n1
+      - name: Install pandoc
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq pandoc
+          pandoc --version | head -n1
 
       - name: Build report
         run: make report
