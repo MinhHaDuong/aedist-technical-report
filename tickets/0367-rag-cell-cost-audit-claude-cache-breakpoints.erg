@@ -115,6 +115,81 @@ Audit steps:
   small fix (warm up the cache by ordering arm 3 reps tight in time, or
   accept the loss — single-turn is cheap anyway).
 
+## Empirical cache hit-rate today: zero
+
+Sampled 6 raw turn JSON files across runs 01-03 of arm 4 Claude. Every
+single one reports `cache_read_input_tokens=0` AND
+`cache_creation_input_tokens=0`. The recorded `input_tokens` on turn 1
+ranges 222K-235K — i.e. the entire conversation prefix is being billed
+at full input rate, every turn.
+
+Two non-exclusive explanations:
+
+1. **The runs predate the cache_control wiring.** `git log` is
+   squash-flattened — cannot confirm. If so, new runs will at least
+   benefit from the existing 2-breakpoint setup (under the TTL
+   constraint above).
+2. **The wiring is silently dropping caching.** The
+   `system_prompt` from Phase A is a model-designed self-instruction —
+   typically ~1-2K tokens, below the 4096-token cache minimum on Opus
+   4.6. The API silently ignores `cache_control` on under-minimum
+   blocks. Whether under-minimum Block 1 *also* invalidates Block 2's
+   cache (the turn-1 user with designed_prompt + EP at ~200K tokens,
+   well above minimum) needs verification.
+
+The audit step is now SHARPER: before any TTL-extension work, confirm
+whether the existing 5-min wiring fires at all on a fresh smoke run.
+If it doesn't, fix the bug first — most likely by skipping the
+breakpoint on system when system is below minimum, or by collapsing
+the two breakpoints into one on the big block.
+
+## Economics of the 1-hour extended TTL on Opus 4.6
+
+Using registry rates (`models.yaml`: input $5/MTok, cache read
+$0.50/MTok = 10% of input, cache write ephemeral $6.25/MTok = 1.25×
+input). Anthropic's 1-hour cache write is 2× input = **$10/MTok** for
+Opus 4.6 (per the standard published multiplier — verify against the
+beta header docs before commit).
+
+Workload from existing data: cached prefix ≈ 220K tokens
+(system + designed_prompt + EP), conversation ≈ 3 turns.
+
+| component | 5-min ideal | 5-min real | 1-hour |
+|---|---:|---:|---:|
+| write rate $/MTok | 6.25 | 6.25 | 10.00 |
+| turn 1 write cost (220K) | $1.38 | $1.38 | $2.20 |
+| turn 2 cache hit | yes | ~50% miss¹ | yes |
+| turn 3 cache hit | yes | ~50% miss¹ | yes |
+| cached-prefix cost / conv. | $1.60² | ~$2.49³ | $2.42⁴ |
+
+¹ Driven by the wall-time-vs-TTL data: 31% of turns exceed 5 min, p90
+turn-1 ≈ 372 s. Real hit rate is between 50 % and 80 % — model-dependent.
+² $1.38 (write) + 2 × $0.11 (read 220K).
+³ $1.38 (write) + 0.5 × ($0.11 + $1.38) × 2 — averaging hit and miss.
+⁴ $2.20 (write) + 2 × $0.11 (read).
+
+**Break-even** for 1-hour vs. 5-min-ideal: 1-hour pays a $0.82
+premium per write, but saves $1.27 every time it converts a 5-min miss
+into a hit. So **1 saved miss per conversation covers the premium**.
+Given 31-50% turn-2 miss rates today, the 1-hour TTL is net-positive
+on this workload.
+
+Cross-rep amortisation under 1-hour: arm 4 runs ~12 min per rep × 3
+reps = ~36 min total per model, well under 1 hour. If the harness
+runs reps back-to-back, the cached prefix survives all three reps —
+1 write across 9 turns instead of 3 writes. Per-Claude-arm-4
+savings: roughly **$2-3** (5-min real → 1-hour, full reuse).
+
+Across all 4 models × arms 3 + 4 with EP attached: rough envelope
+$8-15 saved per full Exp 2 SOTA rerun. Not enormous, but the
+deterministic cache (vs lottery) is the larger qualitative win.
+
+**Caveat that dominates the math:** if the recorded `cache_read=0`
+observation reflects a real wiring bug rather than pre-caching runs,
+the economic comparison above is the *floor* — the actual delta vs.
+"do nothing" is much larger because today's runs pay full input rate
+on every turn for the whole 220K-token prefix (~$1.10/turn extra).
+
 ## Mitigation options — the TTL is the actual lever
 
 In rough order of leverage:
