@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Aligner verticalement les plants sur la liste de référence dans la figure Exp 1
+Created: 2026-05-28
+Author: minh
+
+--- log ---
+2026-05-28T19:46Z minh created — current Exp 1 figure left-packs each row's recalled plants, hiding which gold-list plants each model missed
+
+--- body ---
+## Context
+
+The current Exp 1 figure (`fig_direct_p1_base.pdf`, produced by
+`aedist.plot_method_convergence` with `--methods direct`) packs each
+model's recalled plants to the left of its row. Two models recalling the
+same number of plants look identical even when they recall *different*
+plants. The reader cannot tell which gold-list assets each model misses.
+
+Replace the left-packed dots with a boolean matrix: rows = (model, run),
+columns = gold-list plants in a fixed order (e.g. by status × capacity).
+A filled cell means "this model recalled this plant"; an empty cell means
+"miss". The vertical alignment makes coverage patterns immediately legible
+— famous plants form dense columns; obscure plants form sparse ones.
+
+## Relevant files
+- `src/aedist/plot_method_convergence.py` — current figure producer
+- `data/reference/vietnam_thermal_v1.csv` — gold list ordering source
+- `experiments/outputs/exp1_batch2/*.record.json` — per-run hits
+- `report/inputs/generated/fig_direct_p1_base.pdf` — committed handoff artifact
+
+## Actions
+1. Decide whether to extend `plot_method_convergence.py` with a new mode
+   (`--layout matrix`) or write a sibling script (`plot_exp1_matrix.py`).
+   Sibling is likely cleaner — different visual primitive.
+2. Define column ordering. Options: by status group then by capacity, by
+   famousness proxy (recall frequency across all models), or alphabetical.
+   Order will significantly shape the reader's takeaway — pick deliberately.
+3. Implement and wire as an analysis.mk chart-figures target.
+4. Swap `\includegraphics{fig_direct_p1_base.pdf}` in the report (and slides
+   if applicable) to the new figure, or use as a companion.
+5. Commit the generated PDF as a handoff artifact.
+
+## Test
+`tests/test_plot_exp1_matrix.py` — golden test on synthetic fixture:
+- N models × M plants matrix, half hit half miss
+- Verify the script produces a non-empty PDF
+- Verify (via the script's CSV side-output, if any) that the boolean
+  matrix matches the input hits
+
+## Verification
+- [ ] Figure produces a boolean matrix with plants aligned vertically
+- [ ] Column ordering documented in caption and ticket log
+- [ ] Generated PDF committed as handoff artifact
+- [ ] `make check` passes
+
+## Invariants
+- Clean-room writing build — no `uv run` in `make report` / `make slides`
+- Existing `fig_direct_p1_base.pdf` not silently removed without a
+  replacement decision (keep both or swap explicitly)
+
+## Exit criteria
+- New Exp 1 figure aligns plants vertically on the reference list
+- Committed in `report/inputs/generated/` and included in the report
