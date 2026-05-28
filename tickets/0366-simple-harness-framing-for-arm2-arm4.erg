@@ -1,0 +1,147 @@
+%erg 0.1
+Title: Frame Exp2 arms 2 & 4 as "Simple harness" — agentic LLM orchestrator + loop + tool
+Created: 2026-05-28
+Author: claude
+
+--- log ---
+2026-05-28T00:00Z claude created — naming + design Q for arms 2/4: keep fixed reply-slot protocol or hand control to DeepSeek via tool calls
+
+--- body ---
+## Context
+
+Arms 2 (5N, multi-turn no-docs) and 4 (5D, multi-turn + EP) of Exp 2 are
+**already structurally agentic**, but the report and slides do not name them
+that way. The pieces:
+
+- **Orchestrator (LLM):** `experiments/sota/dialogue_classifier.py:41` pins
+  `CLASSIFIER_MODEL = "deepseek/deepseek-v4-pro"`. DeepSeek reads each
+  assistant turn and classifies it `report` vs `no_report`.
+- **Loop:** `experiments/sota/exp2_interactive_smoke.py` runs the turn loop
+  (`TURN_SAFETY_CAP=20`) with a 3-slot state machine — ENCOURAGE (≤3),
+  VERIFY (once after first `report`), TERMINAL (dual-axis budget trigger or
+  encouragement exhaustion). See `compute_next_user_reply` (~line 800).
+- **Tool (the tested LLM):** Claude / Mistral / OpenAI / Qwen.
+  Continuation is per-provider: full-history resend (Anthropic, Qwen),
+  `previous_response_id` (OpenAI), `conversation_id` (Mistral).
+
+So "Simple harness" is descriptively accurate. The question is whether to
+*formalize* the agentic framing and whether to *go further* by replacing the
+hand-written state machine with native tool-calling, where the tested LLM
+becomes a registered tool that DeepSeek invokes.
+
+## Naming question (low-cost, decide here)
+
+Adopt **"Simple harness"** for the multi-turn arms in §Methods / §Protocol of
+the Exp 2 report and on the spider/scatter slide captions. Disambiguates from
+arms 1/3 (single-shot) without committing to "agentic framework" buzzwords.
+The harness *is* simple: one classifier model, three fixed reply texts, a
+budget guard. The word "agentic" can appear once in the §Methods sentence
+that names the orchestrator+loop+tool decomposition; do not re-stamp it on
+every figure caption.
+
+**Action if adopted:** sweep `report/sections/exp2_*.md`, slides captions,
+and the 2x2 figure labels for "multi-turn" → consider "Simple-harness
+multi-turn" on first mention then "multi-turn" thereafter. No change to mart
+column names (`arm2`, `arm4`); cross-ref ticket 0364.
+
+## Design question — should the tested LLM be a *tool* of DeepSeek?
+
+Current shape: DeepSeek *classifies*, the harness *decides reply slot* from
+class via Python state machine, the tested LLM *answers*. DeepSeek and the
+tested LLM never share a context.
+
+Alternative shape: DeepSeek runs in a tool-use loop where `ask_tested_llm`
+is a registered tool. DeepSeek writes the next user message itself; the
+harness only forwards calls and budget-caps the loop.
+
+### Pros of embedding-as-tool
+
+- **Single control surface.** DeepSeek owns the dialogue; the state machine,
+  the three reply texts, and the encouragement counter all collapse into one
+  prompt + tool spec. Less code path branching.
+- **More natural recovery from edge cases.** When the tested LLM produces a
+  partial table or asks a clarifying question, DeepSeek can respond with a
+  fitted reply instead of a fixed slot. (Today: classifier sees `no_report`
+  → ENCOURAGE, even when a specific nudge would be better.)
+- **Conceptually cleaner mapping to the "agent" literature.** If the paper
+  positions this as a frontier-agent benchmark, the tool-use shape is the
+  conventional thing readers expect.
+- **One natural place to attach evidence-pack tools.** Arm 4 currently
+  injects the EP as system text; a tool-use orchestrator could expose
+  `lookup_evidence_pack(query)` as a separate retrieval tool the tested LLM
+  invokes only when needed — closer to real RAG.
+
+### Cons of embedding-as-tool
+
+- **Loss of protocol determinism — the measurement gets noisier.** Today
+  the *prompts to the tested LLM* are fixed bytes (Phase A designed prompt
+  + ENCOURAGE/VERIFY/TERMINAL constants). Three reps see three identical
+  prompts. Under tool-use, DeepSeek writes a fresh nudge each turn — the
+  *protocol itself* now varies across reps and across tested LLMs, mixing
+  two factors that the 2×2 was designed to separate.
+- **MoE non-determinism amplifies.** Per `.claude/rules/experiment-design.md`:
+  "MoE models require repeat=3". DeepSeek V3.2 / V4-pro produces different
+  output lengths across identical calls. The classifier-only path absorbs
+  this in a single `report` / `no_report` token (one-token output, low
+  variance). A tool-use orchestrator's variance bleeds into every nudge.
+- **Confound: the tested LLM is now scored partly on DeepSeek's prompting
+  skill.** Currently DeepSeek's quality affects classification only; the
+  tested LLM never sees DeepSeek text. Under tool-use, "Claude scored 0.39
+  on arm 4" becomes "Claude+DeepSeek-as-orchestrator scored 0.39", which is
+  a different scientific claim.
+- **Auditability regression.** The 3-slot state machine is one diagram;
+  TERMINAL means "budget hit or 3 no_reports". A DeepSeek-driven loop
+  needs a transcript and a per-turn rationale to be auditable, and
+  reviewers can no longer reason about the protocol from `compute_next_user_reply`.
+- **Cost overhead.** Tool-use loops resend the full tool spec + dialogue
+  to DeepSeek every turn. The current classifier sees ONLY the latest
+  assistant turn (~1–4 KTok). A tool-use orchestrator pays for the full
+  conversation in DeepSeek tokens *too*, doubling the multi-turn cost
+  footprint just when ticket 0367 is asking why multi-turn is already
+  expensive.
+- **Scope creep.** Changing the orchestration shape mid-paper invalidates
+  prior arm-4 measurements; the rerun cost is material (Anthropic in
+  particular). Out-of-scope unless the paper's thesis changes.
+
+### Recommendation
+
+**Adopt the "Simple harness" name; do NOT embed the tested LLM as a tool of
+DeepSeek for the Exp 2 measurements that ship in this paper.** Reasons in
+order: (1) protocol determinism is the experiment's load-bearing property
+and tool-use breaks it, (2) the tested-LLM-as-tool reading conflates two
+factors the 2×2 was designed to separate, (3) the rerun cost is concrete
+and the scientific gain is speculative.
+
+Document the alternative in §Limits / §Future Work as one paragraph: the
+benchmark could be extended in a follow-up by letting an orchestrator
+choose nudges adaptively, with the explicit caveat that the comparison
+would no longer be apples-to-apples with arms 1/3.
+
+## Test / definition of done (if pursued)
+
+If only the naming part is adopted:
+- `report/sections/exp2_protocol.md` (or equivalent) contains one sentence
+  defining "Simple harness" as orchestrator (DeepSeek) + loop + tool
+  (tested LLM), and arms 2/4 are referenced via that term on first mention.
+- Slides §Exp 2 method slide has the same one-sentence framing.
+- No code change.
+
+If the design alternative is pursued (NOT recommended for this paper):
+- Out of scope here — spin a follow-up ticket whose first test is "the
+  tool-use orchestrator produces the same H2 result direction on a 1-model
+  smoke (Claude only) before any rerun is authorised."
+
+## Out of scope
+
+- Renaming arm{1..4} → cell labels (ticket 0364).
+- Modifying the classifier prompt or threshold (separate audit).
+- Adding new evidence-pack retrieval tools (would belong to the future-work
+  ticket if the design alternative is ever pursued).
+
+## Related
+
+- 0364 — arms vocabulary 2×2 rename (presentation layer).
+- 0367 — RAG-cell caching audit (multi-turn cost driver this ticket touches
+  in the "Cons → Cost overhead" bullet).
+- `experiments/sota/exp2_interactive_smoke.py` — the loop and reply slots.
+- `experiments/sota/dialogue_classifier.py` — the DeepSeek orchestrator.
