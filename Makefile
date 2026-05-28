@@ -67,67 +67,6 @@ experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
 # tab_self_consistency.tex and tab_per_run.tex come from
 # experiments/Makefile `self-consistency` (single producer, 0354).
 
-# --- Chart data (report canonical; slides references ../report/inputs/generated/) ---
-
-$(GEN)/census_bars.csv: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_census --output $@
-
-$(GEN)/fig_direct_cost_quality.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_cost_quality \
-	    --output $(GEN)/cost_quality.csv --figure $@
-
-$(SLIDE_GEN)/regimes.csv: $(GEN)/regimes.csv
-	@mkdir -p $(dir $@)
-	cp $< $@
-
-$(SLIDE_GEN)/fig_method_convergence.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_method_convergence \
-	    --output $@ --core-only
-
-EXP1_BATCH2_RECORDS := $(wildcard experiments/outputs/exp1_batch2/*.record.json)
-
-$(GEN)/fig_direct_p1_base.pdf $(GEN)/macros_p1_base.tex &: $(MEASUREMENTS) $(EXP1_BATCH2_RECORDS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_method_convergence \
-	    --output $(GEN)/fig_direct_p1_base.pdf --methods direct \
-	    --label-x 100 --label-ha left \
-	    --xlabel "Assets identified (1 dot = 1 power plant / project)" \
-	    --title "How do models recall Vietnam's thermal power assets? Not well." \
-	    --ui-scale 1.35 \
-	    --fig-width 12 --fig-height-min 8 --fig-height-per-run 0.06 --fig-height-per-method 0.35 \
-	    --result-dir experiments/outputs/exp1_batch2/ \
-	    --output-macros $(dir $@)macros_p1_base.tex
-
-$(SLIDE_GEN)/fig_regimes_scatter.pdf: $(MEASUREMENTS) experiments/figures.toml
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_regimes_scatter \
-	    --output $@
-
-$(SLIDE_GEN)/fig_scaling_curve.pdf: $(MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_scaling_curve \
-	    --output $@
-
-$(GEN)/fig_capability_timeline.pdf: data/capability_timeline.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_capability_timeline \
-	    --input $< --output $@
-
-$(GEN)/fig_capability_dag.pdf: data/capability_timeline.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_capability_dag \
-	    --input $< --output $@
-
-$(GEN)/fig_spider_cross_exp.pdf: experiments/derived/exp1_cross_eval.csv experiments/derived/sota_cross_eval.csv
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_spider_cross_exp \
-	    --exp1 experiments/derived/exp1_cross_eval.csv \
-	    --exp2 experiments/derived/sota_cross_eval.csv \
-	    --output $@
-
 # --- Publications -------------------------------------------------------------
 
 report/report.pdf: report/report.tex report/refs.bib \
@@ -163,15 +102,15 @@ slides/slides.pdf: slides/slides.tex \
 
 report: report/report.pdf
 slides: slides/slides.pdf
-# Report-side tables are produced by the analysis workpackage. The figures
-# alias still mixes report and slides outputs because slides-side rules remain
-# in this Makefile. tab_self_consistency.tex and tab_per_run.tex live in
+# Report-side tables, figures, and slide chart data are produced by the
+# analysis workpackage. tab_self_consistency.tex and tab_per_run.tex live in
 # experiments/Makefile under `self-consistency` (single producer, 0354), so
 # the `tables:` alias chains both to preserve the pre-0352 UX.
 tables:
 	$(MAKE) -f experiments/analysis.mk report-tables
 	$(MAKE) -C experiments self-consistency
-figures: $(GEN)/census_bars.csv $(GEN)/fig_direct_cost_quality.pdf $(GEN)/fig_direct_p1_base.pdf $(GEN)/fig_spider_exp1_families.pdf $(SLIDE_GEN)/fig_method_convergence.pdf $(SLIDE_GEN)/fig_regimes_scatter.pdf $(SLIDE_GEN)/fig_scaling_curve.pdf
+figures:
+	$(MAKE) -f experiments/analysis.mk chart-figures
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census
