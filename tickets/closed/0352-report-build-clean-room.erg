@@ -2,6 +2,7 @@
 Title: Make the report writing build clean-room (handoff artifacts only)
 Created: 2026-05-26
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #634
 
 --- log ---
 2026-05-26T21:45Z HDMX-coding-agent created — sweep after 0345 found the same anti-pattern on the report side
@@ -15,6 +16,7 @@ Author: HDMX-coding-agent
 2026-05-28T15:00Z HDMX-coding-agent note migrated 12 producer rules to experiments/analysis.mk (report-tables phony), root tables: now delegates; make -n report and make -B -n report both show only tectonic; macros_census grouped rule replaced with single-output (dead fig_census_direct PDF written to gitignored sentinel); pre-existing TeX error inputs/verification_methods:93 unrelated.
 2026-05-28T16:00Z claude note verify-gate round 1 REROLL — fixed (a) tables: alias now chains experiments/Makefile self-consistency so make tables still regenerates all 14 report tables, (b) report/report.pdf prereq list now includes tab_converter_benchmark.tex (was missing pre-0352, surfaced by review), (c) Invariants softened: byte-equivalence aspiration replaced with recipe-location-only constraint — data freshness from measurements.jsonl evolution is orthogonal to this migration.
 2026-05-28T12:44Z bump verify-reroll — round 1: tab_converter_benchmark verifiable + byte-equivalence invariant
+2026-05-28T12:54Z HDMX-coding-agent closed — autoclosed — PR #634
 --- body ---
 ## Re-scope (2026-05-27)
 
