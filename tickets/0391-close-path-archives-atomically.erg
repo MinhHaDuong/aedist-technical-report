@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Make the ticket-close path archive atomically (today it marks the ticket but leaves the file in the open dir)
+Created: 2026-05-29
+Author: Claude
+
+--- log ---
+2026-05-29T14:20Z Claude created — prevention pair for 0388. The project ticket-close skill marks a ticket closed but never archives, and it edits a legacy Status: line that erg v1 does not use. This is the root cause of the closed-but-unarchived tickets (0370, 0378) the audit found.
+
+--- body ---
+## Context
+
+[[0388]] adds a guard that *detects* closed-but-unarchived tickets after
+the fact. This ticket fixes the *cause* so they stop being produced.
+
+The project-level close skill `.claude/skills/ticket-close/SKILL.md` is
+broken two ways:
+
+1. **It edits the wrong field.** Step 2 says "Change `Status:` line to
+   `Status: closed`". But erg v1 has **no `Status:` header** — closed
+   state is the `Closed:` header (see `tickets/AGENTS.md` and
+   `tickets/spec-erg-v1.md`). The `erg` binary already does this
+   correctly via `erg close ID REASON`.
+2. **It never archives.** Step 3 commits the status change but does not
+   move the file to `tickets/closed/`. The `erg` binary has a separate
+   `erg archive [ID...]` command that the skill never calls.
+
+Together these explain the audit findings: 0370 and 0378 ended up with a
+`Closed:` header sitting in the open `tickets/` dir, polluting
+`ticket-ready` sweeps — both on the same day, so this is the repeatable
+production path, not a one-off slip.
+
+## Approach (Imagine before Execute)
+
+Primary fix — rewrite the skill steps to delegate to the binary:
+
+```
+2. Close the ticket:    tickets/erg close $ARGUMENTS "<reason>"
+3. Archive it:          tickets/erg archive $ARGUMENTS
+4. Commit the move (closed/$ARGUMENTS-*.erg added, tickets/$ARGUMENTS-*.erg removed).
+```
+
+Open questions for Execute to resolve:
+- Should `erg close` itself archive (a `--archive` flag, or close→archive
+  by default), making step 3 unnecessary? That is a Go change in
+  `tickets/tools/go/` — larger, but removes the two-step footgun for
+  every caller, not just this skill. Decide skill-only vs binary-level.
+- Audit the **other** close paths for the same gap: `erg-pr-merge`
+  (auto-close on PR merge — does it archive?) and the user-level
+  `~/.claude/skills/ticket-close`. Fix or explicitly scope out each.
+
+## Definition of done
+
+- `.claude/skills/ticket-close/SKILL.md` no longer references the legacy
+  `Status:` field and archives the ticket (moves it to `tickets/closed/`)
+  as part of closing.
+- A closed ticket is never left in the open dir by following the skill.
+- The [[0388]] adherence guard still passes (it is the regression test
+  for this fix — no separate test needed if 0388 covers it; otherwise add
+  one).
+- Decision recorded (in this ticket's log) on skill-only vs binary-level
+  fix, and on the status of the other close paths.
+
+## Out of scope
+
+- Retroactively archiving any existing stranded tickets (the audit
+  already cleared 0370/0378 in PR #655).
