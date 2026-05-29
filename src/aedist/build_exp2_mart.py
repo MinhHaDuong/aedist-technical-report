@@ -90,6 +90,10 @@ def _score_summary(row: dict[str, str]) -> ScoreSummary:
                 row.get("coherence_vocab_adherence_annotation"),
             ),
             status_vocab_adherence=_metric(
+                row.get("coherence_status_vocab_adherence"),
+                row.get("coherence_status_vocab_adherence_annotation"),
+            ),
+            capacity_nonnegative=_metric(
                 row.get("coherence_capacity_nonnegative"),
                 row.get("coherence_capacity_nonnegative_annotation"),
             ),

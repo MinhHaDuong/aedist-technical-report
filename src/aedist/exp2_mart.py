@@ -57,6 +57,7 @@ class CoherenceMetrics(BaseModel):
 
     vocab_adherence: MetricValue = Field(default_factory=MetricValue)
     status_vocab_adherence: MetricValue = Field(default_factory=MetricValue)
+    capacity_nonnegative: MetricValue = Field(default_factory=MetricValue)
 
 
 class ProvenanceMetrics(BaseModel):

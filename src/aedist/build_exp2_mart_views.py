@@ -75,6 +75,8 @@ _SCORE_VIEW_FIELDS = [
     "accuracy_province_annotation",
     "coherence_vocab_adherence",
     "coherence_vocab_adherence_annotation",
+    "coherence_status_vocab_adherence",
+    "coherence_status_vocab_adherence_annotation",
     "coherence_capacity_nonnegative",
     "coherence_capacity_nonnegative_annotation",
     "provenance_source_presence",
@@ -261,11 +263,17 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "coherence_vocab_adherence_annotation": summary["coherence"][
                     "vocab_adherence"
                 ].get("annotation", ""),
-                "coherence_capacity_nonnegative": _fmt(
+                "coherence_status_vocab_adherence": _fmt(
                     summary["coherence"]["status_vocab_adherence"].get("value")
                 ),
-                "coherence_capacity_nonnegative_annotation": summary["coherence"][
+                "coherence_status_vocab_adherence_annotation": summary["coherence"][
                     "status_vocab_adherence"
+                ].get("annotation", ""),
+                "coherence_capacity_nonnegative": _fmt(
+                    summary["coherence"]["capacity_nonnegative"].get("value")
+                ),
+                "coherence_capacity_nonnegative_annotation": summary["coherence"][
+                    "capacity_nonnegative"
                 ].get("annotation", ""),
                 "provenance_source_presence": _fmt(
                     summary["provenance"]["source_presence"].get("value")
