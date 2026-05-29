@@ -191,12 +191,23 @@ def test_master_to_plants_converts_records():
         fuel=_sf(FuelType.COAL, tier=3, year=2020),
         capacity_mwe=_sf(400.0, tier=3, year=2020),
         status=_sf(PlantStatus.OPERATIONAL, tier=3, year=2020),
+        province=_sf("Hai Duong", tier=3, year=2020),
+        cod=_sf("1983", tier=3, year=2020),
     )
     plants = master_to_plants([rec])
     assert len(plants) == 1
     assert plants[0].name == "Pha Lai"
     assert plants[0].fuel == FuelType.COAL
     assert plants[0].capacity_mwe == 400.0
+    assert plants[0].province == "Hai Duong"
+    # Regression: to_plant() previously dropped the fused commissioning date.
+    assert plants[0].cod == "1983"
+
+
+def test_master_to_plants_cod_none_when_unset():
+    rec = MasterRecord(name="No COD", fuel=_sf(FuelType.GAS, tier=2, year=2019))
+    plants = master_to_plants([rec])
+    assert plants[0].cod is None
 
 
 # ---------------------------------------------------------------------------
