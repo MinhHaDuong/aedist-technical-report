@@ -31,9 +31,16 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
 
-.PHONY: all clean manuscript
+.PHONY: all clean manuscript translate-slides
 
 all: slides.pdf slides-en.pdf manuscript/main.pdf
+
+# Convenience entry point only. slides.tex stays a committed source file, so
+# this is deliberately NOT a prerequisite of slides.pdf — a non-deterministic
+# network LLM call has no place inside the build DAG. Pure stdlib, no uv.
+# Pass flags via ARGS, e.g. `make translate-slides ARGS="--dry-run"`.
+translate-slides:
+	python3 ../scripts/translate_slides.py $(ARGS)
 
 slides.pdf: slides.tex $(SLIDE_ASSETS)
 	tectonic $<

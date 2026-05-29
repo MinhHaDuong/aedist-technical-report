@@ -1,4 +1,4 @@
-Last updated: 2026-05-27T21:10Z
+Last updated: 2026-05-27T23:45Z
 
 ## North star
 
@@ -10,7 +10,9 @@ Econom'IA 2026 talk delivered at Thema/Cergy 2026-05-27. Next: write the paper.
 
 ## Current goal
 
-Post-conference slides review done (PRs #615/#616). Open paper-writing tickets.
+Post-conference slides review done (PRs #615/#616). Talk delivered. `slides-en.tex`
+created and is now the **single source of truth** for slide prose; `slides.tex` (FR)
+is a derived translation. Open paper-writing tickets.
 
 ## Status
 <!-- generated 2026-05-27T22:00Z -->
@@ -28,7 +30,8 @@ Post-conference slides review done (PRs #615/#616). Open paper-writing tickets.
 1. **Experiment 3 runs.** DONE.
 2. **Experiments analysis.** DONE — Exp 1/2/3 figures produced, take-home messages A–D ratified.
 3. **Update manuscript.** DONE — 0313–0318 closed.
-4. **Update slides.** DONE — conference delivered 2026-05-27.
+4. **Update slides.** DONE — conference delivered 2026-05-27. `slides-en.tex` created;
+   EN is now source of truth, FR is translated (script: ticket 0389).
 5. **Post-conference cleanup.** DONE — PRs #606/#612/#615/#616 merged, regressions fixed.
 6. **Paper writing.** Opens next.
 7. **Report/ablation cleanup.** 0361 + 0362 EXECUTED + closed on branch `claude/pr617-makefile-audit-S4US7` (build-unverified, see Handoff); 0352 unblocked (still `deferred`); 0364 spun off; 0353/0360 still blocked on 0352.
@@ -52,6 +55,7 @@ Remaining run order: **0352 → 0353 ∥ 0360**.
 
 - Scaling-curve diagnosis — direct_complete F1=0 on 3 capable models (parser failure suspected).
 - Paper writing opens now.
+- Slides EN→FR translation script (0389): `slides-en.tex` is source of truth; script calls `claude` CLI to regen `slides.tex`, guarded by anteriority + FR-committed-clean checks.
 - Report/ablation cleanup: 0361/0362 done+closed on branch `claude/pr617-makefile-audit-S4US7` (needs merge + a LaTeX/pandoc build to confirm); then 0352 → 0353 ∥ 0360; 0364 deferred — see Handoff.
 - New ticket candidate: fix the pre-existing `make slides` break (`fig_capability_dag` vs `fig_capability_timeline` recursive-make mismatch).
 - Stale remote branches to prune: `origin/score-4-arms-2x2`, `origin/chore/restore-panel-state`.

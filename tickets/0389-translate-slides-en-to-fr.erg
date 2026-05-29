@@ -1,0 +1,247 @@
+%erg 0.1
+Title: Script to translate slides-en.tex (source of truth) to French slides.tex via claude CLI
+Created: 2026-05-27
+Author: claude
+
+--- log ---
+2026-05-27T23:40Z claude created
+2026-05-27T23:55Z claude note Hardened after design challenge: split safety into Tier 1 (work-loss guards, now fail-closed + working-tree-aware) and Tier 2 (correctness: structural-invariant check + compile + human diff). Hardcoded EN→FR direction so the source of truth is never a write target. Added a deterministic (non-LLM) include-path remap to flip `_en` figure/table variants back to FR. See "Coordination with 0356".
+2026-05-27T23:59Z claude note Delivered scripts/translate_slides.py + tests/test_translate_slides.py (12 tests, all guards covered) + optional `make translate-slides` PHONY target (not a slides.pdf prereq). Verified: --dry-run assembles prompt + passes Tier-1 with no write; lint + full fast suite green. A real claude run that overwrites slides.tex is left to the human (spends money, churns the currently-synced FR deck) — pending user go-ahead.
+2026-05-29T13:40Z Claude renamed 0363 → 0389 to resolve an ID collision: 0363 was already taken by closed/0363-wire-orphaned-figures-into-dag.erg (renumbered there from 0354). Updated refs in STATE.md, scripts/translate_slides.py, and tests/test_translate_slides.py. Also merged origin/main (PR was 104 commits behind; only STATE.md conflicted).
+
+--- body ---
+## Context
+
+After the Econom'IA 2026 talk, the English deck `slides/slides-en.tex` becomes
+the **single source of truth** for slide prose. The French deck
+`slides/slides.tex` is a derived translation. Today the two are kept in sync by
+hand — the git log shows a string of manual "align FR on EN revision" /
+"align French deck on the revised English deck" commits. That manual loop is
+error-prone and easy to forget.
+
+The two files are structurally parallel (both 476 lines, identical LaTeX
+scaffolding — same preamble, `\definecolor`s, `\includegraphics` paths, macros,
+frame structure); only the human-readable prose differs. This makes a
+prose-only LLM translation tractable and low-risk **if** the surrounding LaTeX
+is preserved verbatim.
+
+This ticket delivers a script that translates EN → FR by calling the `claude`
+CLI. Safety is split into **two tiers** — do not conflate them:
+
+- **Tier 1 — work-loss insurance.** "Securely" per the user's framing: *check
+  anteriority* and *ensure FR is saved in git* before overwriting `slides.tex`.
+  This is cheap insurance; git already recovers anything committed.
+- **Tier 2 — correctness.** The real risk is shipping a *subtly broken French
+  deck* (dropped frame, leftover English, translated `\label`, wrong figure).
+  A "looks like LaTeX" check does NOT catch this. Tier 2 is structural-invariant
+  checks + a compile + a mandatory human diff. Tier 1 protects the old FR; Tier 2
+  protects the new one.
+
+## Design decisions (settled)
+
+- **Language:** Python — `scripts/translate_slides.py` with `argparse`. Fits the
+  repo's ruff hook + unit-test conventions (cf. ticket 0356's source-inspection
+  CLI tests) and lets the guards be unit-tested as pure functions.
+- **Guard failure → abort.** On any guard tripping (Tier 1 or Tier 2), print a
+  clear, actionable message and exit non-zero. The script NEVER auto-commits and
+  NEVER clobbers. No `--force`. (User decision.)
+- **Direction is hardcoded EN→FR.** Read `slides/slides-en.tex`, write
+  `slides/slides.tex`. Do NOT expose a generic `--from/--to`: an arg swap would
+  translate FR *into* the EN file and destroy the source of truth. The only path
+  that ever *writes* is `slides.tex`; `slides-en.tex` is read-only to this script.
+- **The script does NOT commit FR.** The human reviews the diff and commits.
+  (Tier-1 guard #2 only *checks* that the prior FR is committed.)
+- **Not in the build DAG.** `slides.tex` stays a committed source file. Do NOT
+  make it a Make file-rule target of `slides-en.tex` — that would put a
+  non-deterministic, network LLM call inside `make`. If a Makefile entry point is
+  wanted, add a `.PHONY` `translate-slides` target only — never a prerequisite of
+  `slides.pdf`.
+
+## Tier 1 — work-loss guards (run BEFORE any claude call or write)
+
+All git invocations are **fail-closed**: any git error, or not being inside a
+repo, aborts. Resolve the repo root with `git rev-parse --show-toplevel` and run
+all git with repo-root-relative pathspecs — never rely on the caller's CWD. A
+guard that returns "looks clean" because `git` errored or the pathspec missed is
+a silent clobber; treat empty/ambiguous output as abort, not as pass.
+
+1. **Anteriority (EN must not be older than FR).**
+   Compare *last-commit* timestamps from git, NOT filesystem mtimes — a fresh
+   clone stamps every file with checkout time. Use `git log -1 --format=%ct -- <path>`.
+   If FR's last commit is **strictly newer** than EN's, abort (FR was hand-edited
+   more recently; translating would overwrite newer French work).
+   Edge cases:
+   - **EN is dirty** (uncommitted working-tree edits): commit-time is then the
+     wrong signal — we translate the *working tree*, which is newer than any
+     commit. Treat a dirty EN as "newest" → anteriority satisfied. (Document this;
+     do not compare a committed timestamp against content you aren't translating.)
+   - **EN never committed** (empty `%ct`): nothing older to clobber → satisfied.
+
+2. **FR saved in git (recoverable before overwrite).**
+   `slides/slides.tex` must be a tracked file with no uncommitted changes, so the
+   prior FR is recoverable. Check `git status --porcelain -- slides/slides.tex` is
+   empty AND the file is tracked. **Untracked FR (`??`) → abort**: overwriting an
+   untracked file loses it with no git recovery (fail-closed). Tell the user to
+   commit or stash first.
+
+## Tier 2 — correctness guards (run AFTER claude returns, BEFORE write)
+
+The translation is non-deterministic; never trust an unreviewed result.
+
+1. **Looks-like-the-deck.** Non-empty; starts with `\documentclass`; contains
+   `\end{document}`; no stray markdown fences (```), no leading prose.
+2. **Length floor.** FR byte length ≥ ~80% of EN — catches max-token truncation
+   that lands after a spurious `\end{document}` or mid-deck.
+3. **Structural invariants (EN candidate-FR must match).** Parse both and assert:
+   - equal count of `\begin{frame}` and balanced `\begin/\end{frame}`;
+   - identical *set* of `\includegraphics{...}` paths, `\input{...}` /
+     `\InputIfFileExists{...}` paths, and `\label{...}` keys **after** the path
+     remap below is applied to EN. A translated `\label` key, a dropped frame, or
+     a localized figure path trips this.
+   On any mismatch → abort, leave `slides.tex` untouched, print the offending diff.
+4. **Compile (acceptance gate).** "Valid-looking" ≠ "compiles" (stray `%`,
+   unbalanced `$`, bad accent). Provide `--compile` to run `tectonic slides.tex`
+   after the write; make a clean compile a required verification step regardless.
+5. **Human diff (mandatory).** Because Tier-1 guard #2 forces FR committed-clean,
+   `git diff -- slides/slides.tex` after the run *is* the review surface. The
+   script prints a reminder (and optionally `--show-diff`). No unattended/cron use.
+
+## Deterministic include-path remap (NOT the model's job)
+
+The LLM is told to preserve all paths verbatim; **code** owns path localization.
+Once ticket 0356 lands, `slides-en.tex` includes English figure/table variants
+(`fig_*_en.pdf`, `tab_exp2_2x2_en.tex`); the FR deck must include the FR
+(base-name) variants. Apply a deterministic transform to the translated output:
+strip the `_en` suffix before `.pdf`/`.tex` on `\includegraphics` / `\input` /
+`\InputIfFileExists` targets (EN variant → FR base name). **Today this is a
+no-op** (the EN deck still shares FR paths — line 353 notes `tab_exp2_2x2.tex` is
+`--lang fr`), so it is safe to add now and correct after 0356. Run the structural
+invariant check (Tier 2.3) *after* this remap so the path sets line up.
+
+## Coordination with ticket 0356
+
+0356 (open) introduces `_en` figure/table variants and repoints `slides-en.tex`
+to them. That is exactly when "preserve paths verbatim" would otherwise leak
+English figures into the FR deck. The deterministic remap above **decouples**
+0389 from 0356 ordering (no-op before, correct after), so 0389 is intentionally
+**not** `Blocked-by: 0356`. But: when 0356 lands, re-verify the remap covers
+every `_en` artifact it introduced (add any new suffix/name to the remap table).
+
+## Safety of the claude invocation
+
+- **No shell injection.** `subprocess.run([...])`, `shell=False`. EN document on
+  **stdin** (`input=...`), never interpolated into a shell string.
+- **Non-interactive + timeout.** Use `claude -p` (print mode) so it cannot hang on
+  an interactive login prompt; pass an explicit `timeout=`. Catch
+  `FileNotFoundError` (CLI not on PATH), non-zero return code, and `TimeoutExpired`
+  → abort with a clear message (auth failures surface as non-zero + stderr).
+- **Atomic write, utf-8.** Write to a temp file with `encoding="utf-8"` (French
+  accents), validate (Tier 2), then `os.replace` over `slides.tex`. A crash
+  mid-call cannot leave a half-written deck.
+- **Translation prompt** must instruct: translate only human-readable prose
+  EN→FR; preserve ALL LaTeX verbatim — commands, environments, `\includegraphics`
+  paths, `\label`/`\ref`, macro names, color defs, structural comments
+  (incl. `\iffalse` blocks); output the full `.tex` and nothing else (no markdown
+  fences, no commentary).
+- **Exact `claude` flags confirmed at execute time** against `claude --help`
+  (expected: `claude -p`, text output, document via stdin). A `--dry-run` flag
+  (assemble prompt + run Tier-1 guards + print plan; no claude call, no write)
+  lets you test prompt assembly for free (cf. "Test one before blasting").
+
+## Relevant files
+
+- `slides/slides-en.tex` — EN source of truth (read-only input).
+- `slides/slides.tex` — FR output (overwritten; must be tracked + committed-clean).
+- `scripts/translate_slides.py` — NEW. Translator + Tier-1/Tier-2 guards + remap.
+- `tests/test_translate_slides.py` — NEW. Guard unit tests (see First test).
+- `slides/Makefile` — OPTIONAL `.PHONY: translate-slides` convenience target only.
+
+## First test (write this first; it fails until the script exists)
+
+`tests/test_translate_slides.py` — guards are pure/injectable so they need no
+real git or claude:
+
+```python
+import pytest
+from scripts import translate_slides as ts
+
+def test_aborts_when_fr_dirty(monkeypatch):
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: False)   # dirty/untracked FR
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: True)
+    called = []
+    monkeypatch.setattr(ts, "run_claude", lambda *a, **k: called.append(1) or "x")
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr="slides/slides.tex")
+    assert called == []          # claude never invoked when a Tier-1 guard trips
+
+def test_aborts_when_fr_newer_than_en(monkeypatch):
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: True)
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: False)  # FR newer
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr="slides/slides.tex")
+
+def test_git_error_fails_closed(monkeypatch):
+    def boom(*a, **k): raise ts.GitError("not a repo")
+    monkeypatch.setattr(ts, "fr_is_committed", boom)
+    with pytest.raises(ts.TranslationAborted):   # git error => abort, never proceed
+        ts.translate(en="slides/slides-en.tex", fr="slides/slides.tex")
+
+def test_rejects_structural_drift(monkeypatch, tmp_path):
+    fr = tmp_path / "slides.tex"; fr.write_text("OLD FR")
+    monkeypatch.setattr(ts, "fr_is_committed", lambda p: True)
+    monkeypatch.setattr(ts, "en_at_least_as_new", lambda en, fr: True)
+    # claude drops a frame / leaves a valid-but-wrong deck
+    monkeypatch.setattr(ts, "run_claude",
+        lambda *a, **k: r"\documentclass{beamer}\begin{document}\end{document}")
+    with pytest.raises(ts.TranslationAborted):
+        ts.translate(en="slides/slides-en.tex", fr=str(fr))
+    assert fr.read_text() == "OLD FR"   # never overwritten on failed correctness check
+```
+
+Plus a source-inspection test (per coding-python CLI-flag rule) asserting the
+argparse parser exposes `--dry-run`, `--compile`, and NO `--from/--to`.
+
+## Actions
+
+1. Tier-1 guards as pure, injectable functions (`fr_is_committed`,
+   `en_at_least_as_new`), fail-closed, repo-root-relative.
+2. `run_claude` wrapper: `subprocess`, list args, stdin, timeout, exit/timeout/PATH
+   handling.
+3. Deterministic `_en`→base path remap on the translated output.
+4. Tier-2 correctness checks (looks-like-deck, length floor, structural invariants
+   after remap), then atomic utf-8 write.
+5. `--dry-run`, `--compile`, `--show-diff` flags; print the human-diff reminder.
+6. First test + source-inspection CLI test.
+7. (Optional) `.PHONY: translate-slides` in `slides/Makefile`.
+
+## Verification
+
+- [ ] `pytest tests/test_translate_slides.py` passes.
+- [ ] `--dry-run` prints prompt + Tier-1 results, no claude call, no write.
+- [ ] Real run with EN committed-newer and FR committed-clean rewrites
+      `slides/slides.tex`; `--compile` (or `cd slides && tectonic slides.tex`)
+      compiles clean; `git diff` shows prose-only changes, no structure/path drift.
+- [ ] Dirty/untracked `slides.tex` → abort non-zero, FR untouched.
+- [ ] FR committed newer than EN → abort non-zero, FR untouched.
+- [ ] Simulated git error → abort (fail-closed), FR untouched.
+- [ ] Structural drift (dropped frame / translated label) → abort, FR untouched.
+- [ ] `make check` stays green.
+
+## Invariants
+
+- Tier 1 protects the old FR; Tier 2 protects the new FR. Never skip either.
+- All git guards fail-closed; `slides-en.tex` is never a write target.
+- `slides.tex` is not a Make file-rule prerequisite of `slides.pdf`.
+- No `shell=True`; EN content reaches `claude` via stdin, not argv/shell.
+- LaTeX scaffolding preserved verbatim; only prose translated; paths localized in
+  code, not by the model.
+
+## Exit criteria
+
+- [ ] `scripts/translate_slides.py` translates `slides-en.tex` → `slides.tex` via
+      the `claude` CLI, with Tier-1 + Tier-2 guards enforced (abort-on-fail,
+      non-zero) and the deterministic path remap applied.
+- [ ] Output is validated (structural invariants + compile) and atomically written
+      utf-8; any failed guard leaves FR untouched.
+- [ ] First test + flag test pass; `make check` green.
+- [ ] The manual "align FR on EN" loop is replaced by `translate_slides.py`.
