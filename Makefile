@@ -9,7 +9,7 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test test-fast lint check-fast check census census-summary show-prompts
+.PHONY: test test-fast coverage lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
 
@@ -19,13 +19,22 @@ test-fast:
 test:
 	uv run pytest
 
+# Coverage gate on the fast suite (the suite the floor was measured against:
+# 73% on 2026-05-29). Floor starts at 70% — just under baseline — and ratchets
+# up as new tests land. Kept off test-fast/check-fast so the dev loop stays
+# quick; enforced via `make check` (and thus in CI through docs-build's
+# `make check` step).
+coverage:
+	uv run pytest -m "not integration and not slow" \
+		--cov=src/aedist --cov-report=term-missing --cov-fail-under=70
+
 lint:
 	uv run ruff check src/ tests/ scripts/
 	uv run python scripts/check_ticket_structure.py
 
 check-fast: test-fast lint
 
-check: test lint
+check: test coverage lint
 
 # --- Prompt inspection -------------------------------------------------------
 

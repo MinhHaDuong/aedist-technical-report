@@ -6,6 +6,7 @@ Author: Claude
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
 2026-05-29T00:00Z Claude — re-measured fast-suite coverage: now 73% (was 68% at creation). Gate/dep still absent. 0379/0380/0381 (the baseline-raising tickets) are all CLOSED — soft ordering is satisfied, this ticket is now fully unblocked and ready to implement. Floor recommendation raised to 70% (3 pts below current, leaving headroom for the ratchet).
+2026-05-29T00:00Z Claude — IMPLEMENTED: added pytest-cov>=5 to [dependency-groups] dev; added `make coverage` target (fast suite, --cov-fail-under=70) wired into `make check` (kept off check-fast to keep the dev loop quick; enforced in CI via docs-build's `make check`). Verified: gate passes at 72.89%, and exits non-zero when below floor. All exit criteria met — recommend close.
 
 --- body ---
 ## Context
@@ -26,9 +27,9 @@ regress, and `coverage`/`pytest-cov` is not a declared dev dependency
 
 ## Exit criteria
 
-- [ ] `coverage`/`pytest-cov` in `[dependency-groups] dev`.
-- [ ] `make test` (or `make coverage`) fails when coverage drops below floor.
-- [ ] Floor documented; ratchet plan noted.
+- [x] `coverage`/`pytest-cov` in `[dependency-groups] dev`.
+- [x] `make test` (or `make coverage`) fails when coverage drops below floor.
+- [x] Floor documented; ratchet plan noted.
 
 ## Blocked-by ordering
 
