@@ -5,22 +5,24 @@ Author: Claude
 
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
+2026-05-29T00:00Z Claude — re-measured fast-suite coverage: now 73% (was 68% at creation). Gate/dep still absent; 0379/0380/0381 still open. Floor recommendation raised to 70% (5 pts below current, leaving headroom for the ratchet).
 
 --- body ---
 ## Context
 
-Current fast-suite line coverage is **68%**. There is no coverage gate,
-so coverage can silently regress, and `coverage`/`pytest-cov` is not a
-declared dev dependency (the analysis had to run `uv run --with coverage`).
+Current fast-suite line coverage is **73%** (re-measured 2026-05-29; was
+68% at creation). There is no coverage gate, so coverage can silently
+regress, and `coverage`/`pytest-cov` is not a declared dev dependency
+(the analysis had to run `uv run --with coverage`).
 
 ## Approach
 
 - Add `pytest-cov` (or `coverage`) to the `dev` dependency group in
   `pyproject.toml`.
-- Add `--cov=src/aedist --cov-fail-under=65` to `make test` (not
+- Add `--cov=src/aedist --cov-fail-under=70` to `make test` (not
   `test-fast`, to keep the dev loop quick), or a dedicated `make coverage`
-  target. Start the floor slightly below current (65%) and ratchet up as
-  0379/0380/0381 land.
+  target. Start the floor slightly below current (70%, baseline now 73%)
+  and ratchet up as 0379/0380/0381 land.
 
 ## Exit criteria
 
