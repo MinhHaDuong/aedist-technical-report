@@ -72,7 +72,16 @@ def load_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(f))
 
 
-def render(rows: list[dict[str, str]], output: Path) -> None:
+def bucket_by_stage(
+    rows: list[dict[str, str]],
+) -> tuple[dict[int, list[tuple[str, date]]], dict[int, dict[str, list[str]]]]:
+    """Group rows into shipped dates per stage and missing labs per stage/source_kind.
+
+    Returns ``(by_stage, missing_by_stage)`` where ``by_stage`` maps a stage to
+    ``(lab, ship_date)`` pairs and ``missing_by_stage`` maps a stage to
+    ``{source_kind: [labs]}`` for rows with a blank date. Unparseable dates are
+    logged and skipped.
+    """
     by_stage: dict[int, list[tuple[str, date]]] = defaultdict(list)
     missing_by_stage: dict[int, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
 
@@ -90,6 +99,12 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
             logger.warning("unparseable date %r for %s/%s — skipping", raw_date, lab, stage)
             continue
         by_stage[stage].append((lab, ship_date))
+
+    return by_stage, missing_by_stage
+
+
+def render(rows: list[dict[str, str]], output: Path) -> None:
+    by_stage, missing_by_stage = bucket_by_stage(rows)
 
     fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_FULL)
 
