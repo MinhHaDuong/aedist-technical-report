@@ -1,0 +1,72 @@
+%erg 0.1
+Title: [tracking] Mart audit redress — close Layer-2 drift left open by 0322
+Created: 2026-05-29
+Author: Claude
+
+--- log ---
+2026-05-29T00:00Z Claude created — mart building audit ("columns really feed on what they say they encode"); tracking ticket for redress course
+
+--- body ---
+## Context
+
+A mart-building audit asked whether the Exp2 mart's columns "really feed
+on what they say they encode." They mostly do — a data round-trip over all
+1,120 score cells in `experiments/derived/exp2_mart.jsonl` showed **zero
+value mismatches** against `sota_cross_eval.csv`. The defects are in the
+**labels and the wiring**, not the values.
+
+The mart is a three-layer pipeline, and each layer can mislabel
+independently:
+
+```
+score_mechanical.py ─cols─▶ sota_cross_eval.csv ─read by─▶ build_exp2_mart.py ─▶ exp2_mart.jsonl ─▶ build_exp2_mart_views.py
+      Layer 1                                      Layer 2 (schema)                                   Layer 3 (views)
+```
+
+Closed ticket **0322** fixed a name mismatch at **Layer 1 only** (scorer
+output ↔ CSV header) and added an adherence guard there. It renamed the
+CSV column to `coherence_capacity_nonnegative` and ported the real
+capacity computation — but left the **Layer-2 schema field**
+`CoherenceMetrics.status_vocab_adherence` untouched, and added no guard
+that a schema field's *name* matches the *meaning* of the column feeding
+it, nor that every computed column / populated source key actually reaches
+the mart. Three further drifts accumulated undetected.
+
+## Findings (confirmed against real data)
+
+| # | Finding | Severity | Where |
+|---|---------|----------|-------|
+| 1 | `status_vocab_adherence` schema field is fed by the `coherence_capacity_nonnegative` column — name lies, values consistent | naming lie | exp2_mart.py:59, build_exp2_mart.py:92, build_exp2_mart_views.py:264-269 |
+| 2 | `provenance_source_diversity`, `provenance_source_spread`, `temporality_cod_plausible` are computed by the scorer but **dropped** — `_score_summary` never reads them, schema has no field | contract violation (mart claims "complete score payload", scoring-contract.md:238) | build_exp2_mart.py:70-126 |
+| 3 | `class_trace` (80/80 records) and `n_bib_entries` (80/80) are present in the source run JSON and populated by `extract_arm_*.py`, but `_build_run_records` never wires them into `RunSummary` → always null | real data loss | build_exp2_mart.py:242-251 |
+
+## Non-findings (audited and dismissed)
+
+- **ProbeSummary fields all-null / 0 probe records** — the committed mart
+  was built only from `arm3_flat`/`arm4_flat`; the naive/optimised source
+  dirs (which carry `probes/`) are not present in this checkout. Data
+  availability, not a bug.
+- **`RunSummary.tokens_in` always null** — not emitted in the source JSON
+  for these arms (`tokens_out` is, `tokens_in` is not). Declared-but-unfed,
+  not a wiring bug.
+
+## Redress course (guard first, then redress under the guard)
+
+1. **#1 fix is already in flight** (residue of 0322) — do not duplicate.
+2. **0384** installs the missing Layer-2 adherence guard so every redress
+   lands green and cannot regress. This is the generic mechanism 0322
+   should have added at Layer 2.
+3. **0385** (data-loss wiring) and **0386** (dropped-column scope decision)
+   redress under the guard; parallel once 0384 exists.
+
+## Sub-tickets
+
+- 0384 — Add Layer-2 mart adherence guard (keystone)
+- 0385 — Wire `class_trace` + `n_bib_entries` into `RunSummary` (#3)
+- 0386 — Decide & resolve dropped scorer columns (#2)
+
+## Definition of done
+
+- [ ] 0384, 0385, 0386 closed
+- [ ] Finding #1 resolved (its own PR)
+- [ ] `make check` green

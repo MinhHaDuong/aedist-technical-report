@@ -53,6 +53,10 @@ report/inputs/generated/sota_cross_eval_view.csv
 report/inputs/generated/tab_exp2_arms_runs_view.csv
 report/inputs/generated/tab_exp2_bib_quality_view.csv
 
+# Sentinel for plot_method_convergence --output when only macros_census.tex
+# is needed (the PDF co-output is the retired fig_census_direct, ticket 0361).
+derived/_macros_census_unused.pdf
+
 # Experiment working files (large intermediates, not needed for analysis)
 experiments/data/rag_work/
 experiments/jobs/

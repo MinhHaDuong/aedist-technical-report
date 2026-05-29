@@ -1,0 +1,291 @@
+%erg 0.1
+Title: Audit RAG-cell costs (arms 3 & 4) — confirm full-convo resend, then add cache breakpoints
+Created: 2026-05-28
+Author: claude
+
+--- log ---
+2026-05-28T00:00Z claude created — Claude costs on arm4 (5D) and possibly arm3 (1D) look high; hypothesis is mid-conversation tail not cached
+2026-05-28T00:00Z claude note — TTL vulnerability surfaced: arm4 Claude wall_s median 253s / max 449s / 31% of turns > 5min ephemeral TTL; cache misses are likely the norm, not the exception (see §TTL vulnerability)
+
+--- body ---
+## Context
+
+Author observation: Anthropic costs on Exp 2 RAG cells (arms 3 & 4 — the
+"D" column of the 2×2, evidence pack attached) look high relative to the
+no-docs cells. Working hypothesis: we resend the full conversation every
+turn without caching the partial answers, so each turn pays full input
+rate on a growing tail.
+
+What is actually wired today, from
+`experiments/sota/exp2_interactive_smoke.py:514-540` (Anthropic path):
+
+- **Breakpoint 1 — system prompt.** `payload["system"]` is wrapped with
+  `cache_control: ephemeral`. Comment claims ~4700 tokens, exceeds the
+  4096-token cache minimum on Opus 4.6, and turns 2+ within the 5-min
+  TTL read at cache-read rate (~$0.50/MTok vs $5/MTok write).
+- **Breakpoint 2 — turn-1 user message.** Same cache_control wrapper
+  applied to the designed_prompt on the first turn only.
+- **Mid-conversation tail (turns 2..N): no cache_control.** Each new
+  turn appends `(assistant N-1, user N)` to `messages` and resends.
+  Those bytes are NOT marked for caching, so the turn-N input cost
+  scales as full-rate × (sum of all prior assistant replies + all
+  prior nudges).
+
+For arm 3 (single-turn + EP), there is only one assistant turn per call,
+so within a single run the mid-conv issue doesn't apply. The cost
+hypothesis still has a foothold: across the 3 reps and across models,
+each rep pays full write rate for the system block on its first call
+unless the prior rep landed inside the 5-min ephemeral TTL. If reps run
+sequentially fast, most should hit; if they're spaced out (or runs are
+distributed across days), every rep pays write.
+
+For arm 4 (multi-turn + EP), the mid-conv tail effect grows roughly
+linearly in turns and is the strongest candidate for the high-cost
+observation.
+
+## TTL vulnerability — the cache is shorter than Claude's wall time
+
+Anthropic ephemeral cache TTL is **5 minutes**. The cache is refreshed on
+every cache READ within that window, so back-to-back turns chain hits as
+long as no individual `(response_N_complete → response_N+1_request)` gap
+exceeds 5 minutes.
+
+Pulled from existing arm 4 records
+(`outputs/sota_exp3_arm4_batch1/run*/anthropic_run01/*.record.json`,
+n=13 turns):
+
+| metric | value |
+|--------|------:|
+| median wall_s | 253 s (4 m 13 s) |
+| p90 wall_s | 372 s (6 m 12 s) |
+| max wall_s | 449 s (7 m 29 s) |
+| turns > 300 s (5 min) | 4 / 13 (31 %) |
+| turns > 240 s | 8 / 13 (62 %) |
+
+Turn-1 calls — the ones that *write* the system + designed_prompt cache
+— dominate the long tail (4 of the top-5 longest turns are turn_01,
+280–449 s). So the cache write often expires before turn 2 even fires.
+Net effect: Breakpoints 1 and 2 (already wired) probably miss the TTL
+on a majority of turn-to-turn transitions on this workload. Adding
+mid-conversation breakpoints (3 and 4) inherits the same TTL ceiling
+and would also miss whenever the prior turn ran > 5 min.
+
+**This reframes the audit hypothesis.** The mid-conv tail effect is one
+contributor, but the dominant problem may be that the cache is the wrong
+*shape* for Claude Opus 4.6 + adaptive thinking + 20K-output workloads,
+which routinely overrun the 5-min window.
+
+## Audit first (per `.claude/rules/workflow.md`: "Audit before instrumenting")
+
+Before any code change, confirm the phenomenon from existing data. The
+adapter already records `cache_read_input_tokens` and
+`cache_creation_input_tokens` in the per-call cost breakdown
+(`query_anthropic.py:278-279`, persisted into the run JSON under
+`cost_breakdown`).
+
+Audit steps:
+
+1. **Pull per-turn cost rows** for arm3 and arm4 from
+   `experiments/outputs/sota_exp3_arm3_batch1/` and
+   `experiments/outputs/sota_exp3_arm4_batch1/` (raw JSON per turn under
+   `runNN/<agent>_*.json`). Sum `cost_breakdown.input`,
+   `cost_breakdown.cache_read`, `cost_breakdown.cache_write` per agent
+   per arm.
+2. **Compute the three ratios** per agent per arm:
+   - `cache_hit_rate = cache_read / (cache_read + cache_write + input)`
+   - `mid_conv_uncached_input_per_turn` (arm 4 only) — input cost on
+     turn N minus cache-read cost; expect to grow with N if the
+     hypothesis holds.
+   - `system_cache_amortisation_per_rep` (arm 3 only) — was write paid
+     once per rep across the 3 reps (TTL miss) or once total (TTL hit)?
+3. **Cross-check OpenAI / Mistral / Qwen.** OpenAI uses
+   `previous_response_id` chaining (server-side state) and is probably
+   the cheapest; Mistral / Qwen resend full history like Anthropic but
+   without an exposed cache API, so they should look "uniformly
+   expensive" rather than "tail-heavy". This separates the
+   *protocol-shape* cost from the *missing-cache-breakpoint* cost.
+
+**Exit of audit phase:**
+- If `cache_hit_rate < 0.3` and the mid-conv tail dominates, proceed to
+  the instrumentation phase below.
+- If the cache is already working well and the high cost is just "lots
+  of turns × long replies", close as a documented non-finding (cost is
+  inherent to the protocol, not a caching bug).
+- If arm 3 shows the cross-rep TTL-miss pattern, that is a separate
+  small fix (warm up the cache by ordering arm 3 reps tight in time, or
+  accept the loss — single-turn is cheap anyway).
+
+## Empirical cache hit-rate today: zero
+
+Sampled 6 raw turn JSON files across runs 01-03 of arm 4 Claude. Every
+single one reports `cache_read_input_tokens=0` AND
+`cache_creation_input_tokens=0`. The recorded `input_tokens` on turn 1
+ranges 222K-235K — i.e. the entire conversation prefix is being billed
+at full input rate, every turn.
+
+Two non-exclusive explanations:
+
+1. **The runs predate the cache_control wiring.** `git log` is
+   squash-flattened — cannot confirm. If so, new runs will at least
+   benefit from the existing 2-breakpoint setup (under the TTL
+   constraint above).
+2. **The wiring is silently dropping caching.** The
+   `system_prompt` from Phase A is a model-designed self-instruction —
+   typically ~1-2K tokens, below the 4096-token cache minimum on Opus
+   4.6. The API silently ignores `cache_control` on under-minimum
+   blocks. Whether under-minimum Block 1 *also* invalidates Block 2's
+   cache (the turn-1 user with designed_prompt + EP at ~200K tokens,
+   well above minimum) needs verification.
+
+The audit step is now SHARPER: before any TTL-extension work, confirm
+whether the existing 5-min wiring fires at all on a fresh smoke run.
+If it doesn't, fix the bug first — most likely by skipping the
+breakpoint on system when system is below minimum, or by collapsing
+the two breakpoints into one on the big block.
+
+## Economics of the 1-hour extended TTL on Opus 4.6
+
+Using registry rates (`models.yaml`: input $5/MTok, cache read
+$0.50/MTok = 10% of input, cache write ephemeral $6.25/MTok = 1.25×
+input). Anthropic's 1-hour cache write is 2× input = **$10/MTok** for
+Opus 4.6 (per the standard published multiplier — verify against the
+beta header docs before commit).
+
+Workload from existing data: cached prefix ≈ 220K tokens
+(system + designed_prompt + EP), conversation ≈ 3 turns.
+
+| component | 5-min ideal | 5-min real | 1-hour |
+|---|---:|---:|---:|
+| write rate $/MTok | 6.25 | 6.25 | 10.00 |
+| turn 1 write cost (220K) | $1.38 | $1.38 | $2.20 |
+| turn 2 cache hit | yes | ~50% miss¹ | yes |
+| turn 3 cache hit | yes | ~50% miss¹ | yes |
+| cached-prefix cost / conv. | $1.60² | ~$2.49³ | $2.42⁴ |
+
+¹ Driven by the wall-time-vs-TTL data: 31% of turns exceed 5 min, p90
+turn-1 ≈ 372 s. Real hit rate is between 50 % and 80 % — model-dependent.
+² $1.38 (write) + 2 × $0.11 (read 220K).
+³ $1.38 (write) + 0.5 × ($0.11 + $1.38) × 2 — averaging hit and miss.
+⁴ $2.20 (write) + 2 × $0.11 (read).
+
+**Break-even** for 1-hour vs. 5-min-ideal: 1-hour pays a $0.82
+premium per write, but saves $1.27 every time it converts a 5-min miss
+into a hit. So **1 saved miss per conversation covers the premium**.
+Given 31-50% turn-2 miss rates today, the 1-hour TTL is net-positive
+on this workload.
+
+Cross-rep amortisation under 1-hour: arm 4 runs ~12 min per rep × 3
+reps = ~36 min total per model, well under 1 hour. If the harness
+runs reps back-to-back, the cached prefix survives all three reps —
+1 write across 9 turns instead of 3 writes. Per-Claude-arm-4
+savings: roughly **$2-3** (5-min real → 1-hour, full reuse).
+
+Across all 4 models × arms 3 + 4 with EP attached: rough envelope
+$8-15 saved per full Exp 2 SOTA rerun. Not enormous, but the
+deterministic cache (vs lottery) is the larger qualitative win.
+
+**Caveat that dominates the math:** if the recorded `cache_read=0`
+observation reflects a real wiring bug rather than pre-caching runs,
+the economic comparison above is the *floor* — the actual delta vs.
+"do nothing" is much larger because today's runs pay full input rate
+on every turn for the whole 220K-token prefix (~$1.10/turn extra).
+
+## Mitigation options — the TTL is the actual lever
+
+In rough order of leverage:
+
+1. **Switch to the 1-hour extended cache TTL.** Anthropic exposes a
+   `ttl: "1h"` cache_control variant behind the
+   `extended-cache-ttl-2025-04-11` beta header. Cache write rate is
+   higher (~2× ephemeral write), but for a workload whose turns
+   routinely run 250–450 s, paying ~2× write *once* per conversation
+   buys ~12× more TTL headroom and turns the cache from "lottery" into
+   "reliable". Single biggest cost win available. Verify pricing and
+   availability before commit.
+2. **Cache-keepalive ping.** Issue a tiny no-op call (e.g., 1-token
+   completion against the cached prefix) just before the long
+   generation, to refresh the TTL. Cheap on input (cache read), cheap
+   on output. Only worth doing if extended TTL is not available.
+3. **Add mid-conversation breakpoints (the original plan below).**
+   Still useful — but only conditional on TTL surviving. Pairs with
+   option 1.
+4. **Cap max_tokens lower on arm 4.** Reduces wall time, but is a
+   protocol change (would shorten Claude's output on the experimental
+   arm) and confounds the measurement. Reject.
+
+## Instrumentation (only if audit confirms)
+
+Anthropic supports up to 4 `cache_control` breakpoints per request. Two
+are already spent (system + turn-1 user). Two remain.
+
+Sketch:
+
+- **Breakpoint 3 — last assistant turn before current user.** Wrap
+  `messages[-2]` (the most recent assistant) in
+  `cache_control: ephemeral` so the conversation prefix up to and
+  including that assistant becomes the cache key for turn N+1 onward.
+- **Breakpoint 4 — sliding window over the next turn.** On turn N+2,
+  promote breakpoint 3's target to the new `messages[-2]` and shed the
+  old one. Net effect: the entire conversation prefix up to "two turns
+  ago" stays cached.
+
+Open questions to resolve in code review:
+
+- Does Anthropic's cache key match on *trailing content equality* or
+  *exact byte equality*? If the latter, sliding the breakpoint forward
+  invalidates the cache; we'd want to keep the OLD breakpoint and stack
+  a new one instead, which costs us a breakpoint slot. Verify against
+  current Anthropic docs (the comment in `exp2_interactive_smoke.py:514`
+  cites a 2026-05-20 verification — re-verify before committing).
+- Token-minimum gate: ephemeral cache has a 1024-token minimum on
+  Sonnet, 4096 on Opus. A 200-token assistant reply won't be cached.
+  Need a guard: only add the mid-conv breakpoint when the cumulative
+  prefix length crosses the minimum.
+
+## Cross-provider notes (in scope for the audit, out of scope for the fix)
+
+- **OpenAI.** `previous_response_id` already gives server-side caching.
+  Expect low cost — confirm in the audit, do not change.
+- **Mistral.** No client-controlled cache. Cost is inherent.
+- **Qwen DashScope.** Same as Mistral. Cost is inherent.
+
+If the audit finds Mistral/Qwen are the biggest contributors, the
+remediation is not caching — it's reducing turn count or output length,
+which is a *different* ticket (and possibly conflicts with the protocol).
+
+## First failing test
+
+Audit-phase test (write before any code):
+- A short script `tools/audit_arm34_cache.py` (or a notebook cell) that
+  loads `outputs/sota_exp3_arm{3,4}_batch1/runNN/anthropic_*.json`,
+  aggregates `cost_breakdown` by turn, and prints the three ratios above
+  per agent per arm. **Test: rerun on the existing data and report the
+  numbers in a follow-up note on this ticket.** No code change yet.
+
+Instrumentation-phase test (only if audit confirms):
+- Smoke run of arm 4 with one Claude model, turn count 5, with and
+  without the new breakpoints; assert `cache_read` proportion increases
+  on turns 3+ by at least 50%. Concrete cost-reduction target: ≥30%
+  total billed cost on a 5-turn arm 4 trace for Anthropic.
+
+## Out of scope
+
+- Mistral / Qwen cost reduction (no client-side cache lever).
+- Changing the orchestration shape (see ticket 0368 — alternative
+  designs would themselves change the cost profile and the protocol).
+- Cross-rep cache TTL extensions beyond what Anthropic exposes (no
+  client-side knob).
+- Re-running arms 3 & 4 after the fix to retroactively cheapen prior
+  measurements — not free, and not required for the paper unless the
+  numbers themselves are wrong (they aren't).
+
+## Related
+
+- `experiments/sota/exp2_interactive_smoke.py:472-607` — Anthropic call
+  path; the cache_control wiring lives here, not in `query_anthropic.py`.
+- `src/aedist/query_anthropic.py:257-296` — cost breakdown computation;
+  source of the audit inputs.
+- 0368 — Simple-harness framing; the "Cons → Cost overhead" bullet there
+  pointed at this ticket as the place where the actual cost numbers live.
+- `.claude/rules/workflow.md` — "Audit before instrumenting" rule that
+  governs the two-phase structure above.

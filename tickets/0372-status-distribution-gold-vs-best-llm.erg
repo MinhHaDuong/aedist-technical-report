@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Présenter la distribution par status sur la gold list vs. best LLM
+Created: 2026-05-28
+Author: minh
+
+--- log ---
+2026-05-28T19:45Z minh created — illustrate task difficulty by comparing the status mix of the reference list against the best LLM's recall
+
+--- body ---
+## Context
+
+The "Vietnam thermal" benchmark is hard not just because LLMs miss assets but
+because the gold list itself spans many lifecycle statuses (operating,
+construction, planned, retired, cancelled, mothballed, …). A single figure
+contrasting the *status distribution* of the gold list against the best LLM's
+recall (per status bin) would make the difficulty concrete: models tend to
+recall famous operating plants and miss everything else.
+
+This is a presentation/figure ticket — the data already lives in
+`measurements.jsonl` and the reference CSV (`data/reference/vietnam_thermal_v1.csv`).
+
+## Relevant files
+- `data/reference/vietnam_thermal_v1.csv` — gold list with status column
+- `measurements.jsonl` — per-(model, run, plant) hits
+- `src/aedist/plot_*.py` — existing plot modules (pick the closest pattern, e.g. `plot_census.py`)
+- `experiments/analysis.mk` — add the new figure as a chart-figures target
+- `report/report.tex` and/or `slides/slides.tex` — where the figure is included
+
+## Actions
+1. Pick the "best LLM" definition (top-F1 single model on Exp 1? on direct
+   prompt? clarify in the ticket discussion before implementing).
+2. Write `src/aedist/plot_status_distribution.py` that produces a grouped or
+   stacked bar chart: x-axis = status category, y-axis = count, two series
+   (gold list, best LLM recall).
+3. Wire as a `chart-figures` target in `experiments/analysis.mk`.
+4. Include in the report (and/or slides) with a caption that names the model.
+5. Commit the generated PDF as a handoff artifact.
+
+## Test
+`tests/test_plot_status_distribution.py` — golden test on a small synthetic
+fixture verifying the script produces a non-empty PDF and the underlying
+counts match expected bins.
+
+## Verification
+- [ ] Figure renders without warnings
+- [ ] Counts in figure match a hand-computed pivot on the fixture
+- [ ] Best-LLM choice is documented in the figure caption and the ticket log
+- [ ] `make check` passes
+
+## Invariants
+- Clean-room writing build — no `uv run` in `make report` / `make slides`
+  (rule lives in analysis.mk)
+
+## Exit criteria
+- New figure committed and included in the report (or slides), showing the
+  status-distribution gap that makes the benchmark hard

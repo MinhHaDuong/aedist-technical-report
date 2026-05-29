@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Regenerate exp2_mart.jsonl with full data after coherence field split
+Created: 2026-05-29
+Author: Claude
+Tag: needs-human
+
+--- log ---
+2026-05-29T12:14Z Claude created — follow-up to PR #651 (coherence status_vocab/capacity split). The committed mart cannot be regenerated in a clean clone, so #651 ships a defensive reader as an interim; the artifact itself still needs a full-data regen.
+2026-05-29T13:00Z Claude renamed 0383 → 0387 to resolve an ID collision with the mart-audit tracking ticket 0383 (which 0384/0385/0386 are Blocked-by); the tracking ticket keeps 0383.
+
+--- body ---
+## Context
+
+PR #651 fixed a class-shape bug: `CoherenceMetrics.status_vocab_adherence`
+was carrying `capacity_nonnegative` data. The fix adds a distinct
+`capacity_nonnegative` field and wires each metric to its own column end to
+end (scorer → mart schema → mart views).
+
+The committed scientific artifact `experiments/derived/exp2_mart.jsonl`
+(160 records: 80 run + 80 score, across arms naive/optimised/arm3/arm4)
+still carries the **pre-split shape**: `status_vocab_adherence` holds the
+old capacity values and there is no `capacity_nonnegative` key.
+
+It could not be regenerated inside #651's CI/dev environment: the
+`naive`/`optimised` records derive from raw output dirs
+(`experiments/outputs/sota_exp2_naive_arm`, `.../sota_exp2_brerun1`) that
+are **not committed** to the repo. Regenerating in a clean clone silently
+drops those two arms (160 → 80 records). To keep CI green without data
+loss, #651 made `build_exp2_mart_views` read the two newer coherence fields
+defensively (`.get(..., {})`), so the view builds against the stale mart
+with empty `capacity_nonnegative` cells.
+
+Net: the corrected coherence metric is **not yet realized** in the
+published mart or any view/figure derived from it. It is only tolerated.
+
+## Actions
+
+1. On a machine where the raw Exp2 outputs live, regenerate the mart from
+   the (already-corrected) cross-eval CSV + raw dirs:
+   `python -m aedist.build_exp2_mart --output experiments/derived/exp2_mart.jsonl`
+2. Confirm the result still has **160 records** and all four arms
+   (`naive`, `optimised`, `arm3`, `arm4`) — guard against the silent
+   half-drop described above.
+3. Confirm every score record's `coherence` block now carries distinct
+   `status_vocab_adherence` and `capacity_nonnegative` values.
+4. Regenerate any downstream mart views / figures that read the mart and
+   verify no other column drifts.
+5. Commit the refreshed artifact. Once landed, the defensive `.get`
+   fallbacks in `build_exp2_mart_views` become belt-and-suspenders (keep
+   them for schema-evolution robustness; they are correct either way).
+
+## Test
+
+After regeneration, the committed mart must satisfy:
+- `wc -l experiments/derived/exp2_mart.jsonl` == 160
+- every score record's `coherence` has both `status_vocab_adherence` and
+  `capacity_nonnegative` keys
+- the two values are not universally equal (the bug made them collapse)
+
+## Exit criteria
+
+- [ ] `exp2_mart.jsonl` regenerated with full data (160 records, 4 arms).
+- [ ] `coherence.capacity_nonnegative` present and distinct from
+      `status_vocab_adherence` across score records.
+- [ ] Downstream views/figures regenerated; no unexpected column drift.
+- [ ] Committed to the branch/PR consuming it.
+
+## Blocked-by ordering
+
+Best done on the full-data environment after PR #651 merges (the schema +
+defensive reader land there first). Not blocking #651's merge — #651 is
+green and correct as an interim via the defensive reader.

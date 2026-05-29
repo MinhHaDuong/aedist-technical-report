@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Wire class_trace and n_bib_entries into RunSummary
+Created: 2026-05-29
+Author: Claude
+Blocked-by: 0384
+
+--- log ---
+2026-05-29T00:00Z Claude created — finding #3 from the mart audit (0383); real data loss
+
+--- body ---
+## Context
+
+Finding #3 from 0383. `RunSummary` (exp2_mart.py:99-114) declares
+`class_trace: list[str] | None` and `n_bib_entries: int | None`, and both
+keys are present and non-null in **80/80** source run JSONs (populated by
+`extract_arm_single_turn.py:194,197` and `extract_arm_multi_turn.py`).
+
+But `_build_run_records` in `build_exp2_mart.py:242-251` constructs
+`RunSummary(...)` without passing either field, so both are null in every
+mart record. The field exists, the data exists, the wire is missing — silent
+data loss.
+
+## Approach
+
+In `build_exp2_mart.py:_build_run_records`, add to the `RunSummary(...)` call:
+
+```python
+class_trace=meta.get("class_trace"),
+n_bib_entries=meta.get("n_bib_entries"),
+```
+
+Note `class_trace` arrives from extraction already as a `list[str]` (e.g.
+`["report"]`), matching the schema type — no split needed here. Then
+regenerate `experiments/derived/exp2_mart.jsonl` via the Makefile target and
+commit the updated artifact.
+
+## First test
+
+Extend `tests/test_build_exp2_mart.py`: a run whose source JSON carries
+`class_trace` and `n_bib_entries` produces a `RunSummary` with both
+populated (not None).
+
+## Definition of done
+
+- [ ] `_build_run_records` wires `class_trace` and `n_bib_entries`
+- [ ] `experiments/derived/exp2_mart.jsonl` regenerated; class_trace and
+      n_bib_entries non-null where the source has them
+- [ ] 0384's adherence guard passes for these two keys
+- [ ] Unit test added; Makefile DAG prerequisites/targets still match the
+      script's actual reads/writes
+- [ ] `make check` green

@@ -1,0 +1,98 @@
+%erg 0.1
+Title: Align capability-timeline stage numbering across data, prose, and proposal docs
+Created: 2026-05-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-28T12:04Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The capability-timeline material uses three different stage numberings
+that disagree on which integer points to which capability. PR #632
+(label rename) flagged this drift but did not fix it.
+
+The three numberings observed today:
+
+1. **Data + figure** — `data/capability_timeline.csv` and
+   `src/aedist/plot_capability_timeline.py::FEATURE_LABELS`:
+   1 Chat LLM, 2 Web search, 3 Code execution, 4 Files upload (RAG),
+   5 Reasoning, 6 External tool use (MCP), 7 Deep research,
+   8 Autonomous agents.
+2. **Prose schema + matrix** — `docs/capability-timeline.md`:
+   1 Chat LLM, 2 Files upload (RAG), 3 Web search, 4 Reasoning,
+   5 Deep research, 6 Code execution, 7 External tool use (MCP),
+   8 Autonomous agents.
+3. **Proposal draft** — `docs/section3-proposal.md` (ticket 0219):
+   uses yet another scheme labelling file-upload rows as
+   "2 Retrieval / file upload" (now stale string and stale number).
+
+The data/figure numbering is the source of truth — it is what readers
+of the paper see on the figure y-axis, and it is the structure tests
+key off. The doc and proposal need to be brought into line with it
+(or, if the prose numbering is preferred, the CSV/py need to change;
+that path is harder because the data file is a tracked artefact and
+re-numbering touches every row).
+
+## Relevant files
+
+- `data/capability_timeline.csv` — source of truth (stage column)
+- `src/aedist/plot_capability_timeline.py` — `FEATURE_LABELS` dict
+- `docs/capability-timeline.md` — schema list (lines ~70–85) and
+  matrix (lines ~97–106)
+- `docs/section3-proposal.md` — lines 175, 182 (and possibly more)
+- `tests/test_capability_timeline_sync.py` — currently checks dates
+  only; should be extended to enforce stage-number agreement
+
+## Actions
+
+1. Decide which numbering is authoritative — recommend keeping the
+   CSV/py order since the figure is the user-facing artefact and the
+   CSV is the tested data file.
+2. Re-number the prose schema and matrix in
+   `docs/capability-timeline.md` to match the CSV order (8 row swaps
+   in the matrix, 8 list-item renumbers in the schema, plus any prose
+   that cross-references "stage N" within the doc).
+3. Audit `docs/section3-proposal.md` — either renumber the table rows
+   in place or mark the doc as historical and add a one-line note at
+   the top pointing to the current schema.
+4. Extend `tests/test_capability_timeline_sync.py` with an assertion
+   that every `**N. <label>**` heading in the prose matrix matches the
+   CSV's `(stage, stage_name)` pair, so future renames cannot
+   re-introduce the same drift silently.
+
+## Test
+
+Extend `tests/test_capability_timeline_sync.py` with a new
+`@pytest.mark.adherence` test that parses the prose matrix headers
+(regex `\*\*(\d+)\. ([^*]+?)\*\*`) and asserts each `(stage_number,
+label_string)` tuple appears as a `(stage, stage_name)` row in
+`data/capability_timeline.csv`. The test should fail today on the
+unaligned doc, then pass after the renumbering.
+
+## Verification
+
+- [ ] `pytest tests/test_capability_timeline_sync.py` passes including
+      the new assertion
+- [ ] Visual diff of the rendered prose matrix shows stage numbers
+      now match the figure y-axis numbering
+- [ ] `docs/section3-proposal.md` either reflects the canonical
+      numbering or carries a "historical, see capability-timeline.md"
+      banner
+
+## Invariants
+
+- `data/capability_timeline.csv` row content (dates, sources, notes)
+  must not change — only the prose and the test change
+- The rebuilt `report/inputs/generated/fig_capability_timeline.pdf`
+  must remain byte-identical to the version landed in PR #632 (the
+  figure depends only on the CSV, which is unchanged)
+- Existing test `test_csv_dates_present_in_prose` must continue to
+  pass
+
+## Exit criteria
+
+- All three documents use the same stage numbering
+- Sync test enforces the alignment so future drift fails fast
+- PR merged and `tests/test_capability_timeline_sync.py` green on main

@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Adherence guard — no closed ticket left in the open dir (Closed: header but not archived)
+Created: 2026-05-29
+Author: Claude
+
+--- log ---
+2026-05-29T13:30Z Claude created — found during a ticket-staleness audit: 0370 and 0378 both carried a Closed: header but were never moved to tickets/closed/, polluting ticket-ready sweeps
+
+--- body ---
+## Context
+
+During a ticket-pipeline staleness audit, two tickets (0370, 0378) were
+found sitting in the open `tickets/` directory while carrying a non-empty
+`Closed:` header (`Closed: 2026-05-28`). Per the erg spec, a non-empty
+`Closed:` header means the ticket is closed — so these were logically
+closed but physically un-archived. Their "close and archive" commits had
+added the header but skipped the `erg archive` step.
+
+Both slipped through on the same day, which suggests the gap is a
+repeatable failure mode, not a one-off. The consequence is silent:
+`ticket-ready` / healthcheck sweeps and `ls tickets/*.erg` over-report
+the open backlog, and `Blocked-by:` resolution can match a stale file.
+
+Per "audit before instrumenting": the phenomenon is already confirmed
+present (0370, 0378 were archived in the same audit, PR #655), so this
+guard is justified, not speculative.
+
+## First test
+
+`tests/test_closed_tickets_archived.py`, `@pytest.mark.adherence`:
+
+```python
+"""A closed ticket must live in tickets/closed/, not the open dir.
+
+A non-empty `Closed:` header means the ticket is closed (erg spec). Such
+a file in the open `tickets/` directory is closed-but-unarchived — it
+pollutes ticket-ready sweeps. Run `erg archive <id>` to fix.
+"""
+
+import re
+from pathlib import Path
+
+import pytest
+
+pytestmark = pytest.mark.adherence
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+TICKETS_DIR = REPO_ROOT / "tickets"
+
+_CLOSED_RE = re.compile(r"^Closed:\s*\S", re.MULTILINE)
+
+
+def test_no_closed_ticket_in_open_dir():
+    offenders = []
+    for erg in sorted(TICKETS_DIR.glob("*.erg")):  # open dir only, not closed/
+        if _CLOSED_RE.search(erg.read_text(encoding="utf-8")):
+            offenders.append(erg.name)
+    assert not offenders, (
+        f"{len(offenders)} closed ticket(s) left in the open dir — "
+        f"run `tickets/erg archive <id>`:\n"
+        + "\n".join(f"  {o}" for o in offenders)
+    )
+```
+
+The test must PASS on current `main` (0370/0378 already archived in
+#655) and FAIL if a ticket with a `Closed:` header is reintroduced into
+the open dir.
+
+## Exit criteria
+
+- [ ] `tests/test_closed_tickets_archived.py` added, marked
+      `@pytest.mark.adherence`, passing on current state.
+- [ ] Demonstrated to fire on a synthetic example (add `Closed:` header
+      to an open ticket → test fails; revert).
+- [ ] `make check-fast` green.
+
+## Out of scope
+
+- Auto-archiving in a hook/CI (this is a detection guard only; the fix is
+  the human/agent running `erg archive`).
+- The erg binary's own close path — changing `erg close` to always
+  archive is a separate, larger change; track it elsewhere if wanted.

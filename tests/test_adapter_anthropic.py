@@ -434,3 +434,23 @@ def test_anthropic_retry_retries_500(_no_sleep_anthropic, monkeypatch):
     result = _call_with_retry(FakeClient(), {"model": "test"})
     assert result == {"result": "ok"}
     assert call_count == 2
+
+
+def test_parse_empty_payload_does_not_raise():
+    """A response with no content block parses to empty text / no citations."""
+    parsed = _parse_anthropic_response({})
+    assert parsed["text"] == ""
+    assert parsed["citations"] == []
+    assert parsed["web_search_calls"] == []
+
+
+def test_parse_truncated_payload_keeps_partial_text():
+    """A truncated stream (text block, max_tokens stop) still yields its text."""
+    resp = {
+        "content": [{"type": "text", "text": "partial answer"}],
+        "stop_reason": "max_tokens",
+    }
+    parsed = _parse_anthropic_response(resp)
+    assert parsed["text"] == "partial answer"
+    assert parsed["finish_reason"] == "max_tokens"
+    assert parsed["citations"] == []

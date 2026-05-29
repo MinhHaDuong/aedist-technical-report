@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Add coverage gate to make test plus coverage dev dependency
+Created: 2026-05-28
+Author: Claude
+
+--- log ---
+2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
+2026-05-29T00:00Z Claude — re-measured fast-suite coverage: now 73% (was 68% at creation). Gate/dep still absent. 0379/0380/0381 (the baseline-raising tickets) are all CLOSED — soft ordering is satisfied, this ticket is now fully unblocked and ready to implement. Floor recommendation raised to 70% (3 pts below current, leaving headroom for the ratchet).
+2026-05-29T00:00Z Claude — IMPLEMENTED: added pytest-cov>=5 to [dependency-groups] dev; added `make coverage` target (fast suite, --cov-fail-under=70) wired into `make check` (kept off check-fast to keep the dev loop quick; enforced in CI via docs-build's `make check`). Verified: gate passes at 72.89%, and exits non-zero when below floor. All exit criteria met — recommend close.
+2026-05-29T06:54Z Claude closed — coverage gate implemented and verified; all exit criteria met.
+
+--- body ---
+## Context
+
+Current fast-suite line coverage is **73%** (re-measured 2026-05-29; was
+68% at creation). There is no coverage gate, so coverage can silently
+regress, and `coverage`/`pytest-cov` is not a declared dev dependency
+(the analysis had to run `uv run --with coverage`).
+
+## Approach
+
+- Add `pytest-cov` (or `coverage`) to the `dev` dependency group in
+  `pyproject.toml`.
+- Add `--cov=src/aedist --cov-fail-under=70` to `make test` (not
+  `test-fast`, to keep the dev loop quick), or a dedicated `make coverage`
+  target. Start the floor slightly below current (70%, baseline now 73%)
+  and ratchet up as 0379/0380/0381 land.
+
+## Exit criteria
+
+- [x] `coverage`/`pytest-cov` in `[dependency-groups] dev`.
+- [x] `make test` (or `make coverage`) fails when coverage drops below floor.
+- [x] Floor documented; ratchet plan noted.
+
+## Blocked-by ordering
+
+Was best landed after 0379/0380/0381 raise the baseline, so the floor
+could be set meaningfully. All three are now CLOSED (baseline 68%→73%),
+so this ordering is satisfied — no remaining blockers.
