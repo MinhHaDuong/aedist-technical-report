@@ -272,6 +272,45 @@ def test_records_to_metrics_includes_error_when_set():
     assert m["retry_count"] == 3
 
 
+def test_records_to_metrics_projects_verification_scalars_from_justification():
+    """Per ADR-7: verification scalars in justification flow through metrics."""
+    record = RunRecord(
+        method=Method.DIRECT,
+        method_params=MethodParams(model="gpt-5.5"),
+        justification={
+            "verification_mode": "source_grounding",
+            "mean_evidence_score": 0.82,
+            "verification_cost_usd": 0.0123,
+            # nested structures must NOT be projected
+            "score_distribution": {"high": 10, "low": 2},
+            "filtered_metrics": {"f1": 0.7},
+        },
+    )
+    [m] = records_to_metrics([record])
+    assert m["verification_mode"] == "source_grounding"
+    assert m["mean_evidence_score"] == 0.82
+    assert m["verification_cost_usd"] == 0.0123
+    assert "score_distribution" not in m
+    assert "filtered_metrics" not in m
+
+
+def test_records_to_metrics_omits_verification_scalars_when_no_justification():
+    """Omit-when-absent: no justification dict means no verification columns.
+
+    Also covers the adapter's {"output_text": ...} shape, which carries no
+    verification scalars and must not leak narrative text into metrics."""
+    record = RunRecord(
+        method=Method.DIRECT,
+        method_params=MethodParams(model="gpt-5.5"),
+        justification={"output_text": "some narrative"},
+    )
+    [m] = records_to_metrics([record])
+    assert "verification_mode" not in m
+    assert "mean_evidence_score" not in m
+    assert "verification_cost_usd" not in m
+    assert "output_text" not in m
+
+
 def test_fixture_line_32_is_byte_identical_to_source():
     """Sanity: the inlined fixture is valid JSON and has the expected run_id.
 
