@@ -2,11 +2,13 @@
 Title: Test untested score_mechanical scoring functions (P1)
 Created: 2026-05-28
 Author: Claude
+Closed: Completed in PR #648 (merged 2026-05-29) — 20 tests for the untested score_mechanical scoring functions; module 60%->83%; cod_plausible denominator assertion hardened during review.
 
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
 
 2026-05-28T17:49Z Claude implemented — added 20 tests for _capacity_nonnegative, score_source_diversity/spread, score_cod_plausible, score_accuracy. Module 60%->83%; remaining misses are main()/CLI (out of scope).
+2026-05-29T06:24Z Claude closed — Completed in PR #648 (merged 2026-05-29) — 20 tests for the untested score_mechanical scoring functions; module 60%->83%; cod_plausible denominator assertion hardened during review.
 --- body ---
 ## Context
 
