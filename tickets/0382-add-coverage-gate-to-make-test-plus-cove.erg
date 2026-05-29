@@ -5,7 +5,7 @@ Author: Claude
 
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
-2026-05-29T00:00Z Claude — re-measured fast-suite coverage: now 73% (was 68% at creation). Gate/dep still absent; 0379/0380/0381 still open. Floor recommendation raised to 70% (5 pts below current, leaving headroom for the ratchet).
+2026-05-29T00:00Z Claude — re-measured fast-suite coverage: now 73% (was 68% at creation). Gate/dep still absent. 0379/0380/0381 (the baseline-raising tickets) are all CLOSED — soft ordering is satisfied, this ticket is now fully unblocked and ready to implement. Floor recommendation raised to 70% (3 pts below current, leaving headroom for the ratchet).
 
 --- body ---
 ## Context
@@ -32,5 +32,6 @@ regress, and `coverage`/`pytest-cov` is not a declared dev dependency
 
 ## Blocked-by ordering
 
-Best landed after 0379/0380 raise the baseline, so the floor can be set
-meaningfully. Not strictly blocking.
+Was best landed after 0379/0380/0381 raise the baseline, so the floor
+could be set meaningfully. All three are now CLOSED (baseline 68%→73%),
+so this ordering is satisfied — no remaining blockers.
