@@ -287,11 +287,13 @@ def test_cod_plausible_mixed_years() -> None:
     rows = [
         {"cod": "1983"},
         {"cod": "commissioned 2010"},
-        {"cod": "1950"},  # implausible (<1960)
+        {"cod": "1950"},  # parses, implausible (<1960)
+        {"cod": "TBD"},  # no parseable year — counts toward denominator, not plausible
     ]
     score, annotation = score_cod_plausible(rows)
-    # 2 of 3 within [1960, 2035]
-    assert score == round(2 / 3, 4)
+    # Denominator is len(cod_vals)=4 (all non-empty), not len(parsed years)=3:
+    # 2 plausible (1983, 2010) of 4 -> 0.5. A `plausible/len(years)` bug would give 2/3.
+    assert score == round(2 / 4, 4)
     assert annotation is None
 
 
