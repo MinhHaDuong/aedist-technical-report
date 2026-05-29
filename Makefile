@@ -9,7 +9,7 @@ MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 SLIDE_GEN    := slides/inputs/generated
 
-.PHONY: test test-fast coverage lint check-fast check census census-summary show-prompts
+.PHONY: test test-fast test-slow coverage lint check-fast check census census-summary show-prompts
 
 # --- Tests --------------------------------------------------------------------
 
@@ -18,6 +18,12 @@ test-fast:
 
 test:
 	uv run pytest
+
+# Integration/slow complement of the fast suite. `make check` runs this
+# after `coverage` so the full suite executes exactly once between them
+# (fast under coverage + slow here), with no duplicated runs.
+test-slow:
+	uv run pytest -m "integration or slow"
 
 # Coverage gate on the fast suite (the suite the floor was measured against:
 # 73% on 2026-05-29). Floor starts at 70% — just under baseline — and ratchets
@@ -34,7 +40,7 @@ lint:
 
 check-fast: test-fast lint
 
-check: test coverage lint
+check: coverage test-slow lint
 
 # --- Prompt inspection -------------------------------------------------------
 
