@@ -1,4 +1,4 @@
-"""Unit tests for scripts/translate_slides.py (ticket 0363).
+"""Unit tests for scripts/translate_slides.py (ticket 0389).
 
 Guards are pure/injectable, so these need no real git or claude binary.
 They belong in ``make check-fast``.

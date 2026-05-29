@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Cleanup stale fig_capability_dag.pdf workaround in docs-build.yml
+Created: 2026-05-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-05-28T20:00Z HDMX-coding-agent created — PR #640 made fig_capability_dag.pdf a committed handoff artifact; the docs-build.yml pre-build step is now a no-op with a misleading comment
+
+--- body ---
+## Context
+
+`.github/workflows/docs-build.yml` (lines 97-105) has a "Build manuscript"
+step that pre-builds `fig_capability_dag.pdf` before running the slides
+manuscript build:
+
+```yaml
+- name: Build manuscript
+  # Pre-build fig_capability_dag.pdf (root Makefile owns the rule; the
+  # slides sub-make has no rule for it — same recursive-make gap that
+  # makes `make slides` red. Pre-building here lets manuscript pass even
+  # before ticket 0367's fix lands.
+  if: needs.changes.outputs.chore != 'true'
+  run: |
+    make report/inputs/generated/fig_capability_dag.pdf
+    make -C slides manuscript/main.pdf
+```
+
+After ticket 0370 (PR #640 merged 2026-05-28):
+- The root Makefile has no recipe for `fig_capability_dag.pdf` — it lives
+  in `experiments/analysis.mk` now
+- The file is a committed handoff artifact in `report/inputs/generated/`
+- `make report/inputs/generated/fig_capability_dag.pdf` is now a no-op
+  (file exists, no rule → "Nothing to be done")
+- The comment references ticket 0367 as if the fix were pending — but
+  both 0367 and 0370 are merged
+
+The step still works but the line and comment are misleading. Anyone
+reading the workflow will be confused about which gap is still open.
+
+## Relevant files
+- `.github/workflows/docs-build.yml` — lines 97-105
+- `tickets/0367-*.erg` and `tickets/0370-*.erg` — closed, give context
+
+## Actions
+1. Delete the `make report/inputs/generated/fig_capability_dag.pdf` line
+2. Replace the multi-line comment with a one-liner (or remove it)
+3. Optionally collapse "Build slides" and "Build manuscript" into one step
+   since the pre-build hack is the only reason they were separate
+
+## Test
+None — this is a CI-config simplification. The existing docs-build CI
+pass on the resulting branch IS the test.
+
+## Verification
+- [ ] docs-build.yml no longer pre-builds the capability-dag figure
+- [ ] CI green on the cleanup PR
+- [ ] No comment references ticket 0367 as pending
+
+## Invariants
+- Slides, manuscript, and report builds still all run on every non-chore PR
+- Clean-room writing build property preserved (no `uv run` in `make slides`
+  or `make report`)
+
+## Exit criteria
+- The workaround is removed; CI workflow reads cleanly without referencing
+  closed tickets as if they were open

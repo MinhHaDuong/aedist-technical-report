@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Decide and resolve scorer columns dropped at the mart boundary
+Created: 2026-05-29
+Author: Claude
+Blocked-by: 0384
+
+--- log ---
+2026-05-29T00:00Z Claude created — finding #2 from the mart audit (0383); scope decision required
+
+--- body ---
+## Context
+
+Finding #2 from 0383. `score_mechanical.py` computes and writes three
+columns into `sota_cross_eval.csv` that `build_exp2_mart._score_summary`
+never reads, so they vanish at the mart boundary — the schema has no field
+for any of them:
+
+- `provenance_source_diversity`
+- `provenance_source_spread`
+- `temporality_cod_plausible`
+
+These three feed Exp1 figures directly from the CSV (`score_exp1.py`,
+`plot_quality_spider_exp1.py`), so nothing is *broken* downstream — but the
+mart's own contract claims it is "the mechanical-score payload for one run"
+(scoring-contract.md:238), and it is not complete.
+
+## Decision required (Imagine before Execute)
+
+This is a scope decision, not a mechanical fix. Two coherent options:
+
+**Option A — extend the schema.** Add `source_diversity`, `source_spread`
+to `ProvenanceMetrics` and `cod_plausible` to `TemporalityMetrics`; wire
+them in `_score_summary` and `build_exp2_mart_views.py`. Bump
+`mart_schema_version` to 2 and ship a new validator model (required by
+scoring-contract.md:246). Heavier, but the mart becomes truly complete.
+
+**Option B — declare them out of scope.** Document in scoring-contract.md
+that these three are Exp1-spider metrics intentionally excluded from the
+Exp2 mart, and add them to 0384's `OUT_OF_SCOPE` allowlist with that reason.
+Lighter; makes the omission intentional and guarded rather than silent.
+
+Recommendation to weigh in Imagine: Option B unless a downstream consumer
+actually needs these three *from the mart* (not from the CSV). The audit
+found none.
+
+## Definition of done
+
+- [ ] Decision recorded (A or B) with rationale in the log
+- [ ] If A: schema fields added, `_score_summary` + views wired,
+      `mart_schema_version` bumped, validator updated, mart regenerated
+- [ ] If B: scoring-contract.md documents the exclusion; 0384 OUT_OF_SCOPE
+      updated to reference it
+- [ ] 0384's completeness check reflects the decision (no silent drop)
+- [ ] `make check` green

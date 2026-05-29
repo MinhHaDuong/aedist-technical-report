@@ -2,11 +2,13 @@
 Title: Consolidate Makefile cross-file duplication and divergence (shared common.mk)
 Created: 2026-05-27
 Author: claude
+Closed: merged PR #627 — experiments/common.mk is the single source of UV_RUN/drain/self-consistency; env policy clean; guarded by tests/test_makefile_dedup.py
 
 --- log ---
 2026-05-27T00:00Z claude created — modularity audit of the 7 makefiles found duplicate producers, 4 divergent UV_RUN definitions, a 6x copy-pasted drain recipe, and an env-policy violation in experiment1.mk
 
-2026-05-27T07:14Z note scope refined — cross-ref 0352/0353/0356 for producer-migration + DAG-completeness; this ticket is dedup-only
+2026-05-27T07:14Z note scope refined — cross-ref 0352/0353/0363 for producer-migration + DAG-completeness; this ticket is dedup-only
+2026-05-27T00:00Z claude closed — merged PR #627; all exit criteria met (common.mk single source, 6 drain copies collapsed, one self-consistency producer, no ~/.claude/.env, make -n report/slides resolve, test_makefile_dedup.py green)
 --- body ---
 ## Context
 
@@ -52,11 +54,11 @@ Out of scope — already tracked, do not duplicate here:
   (report-build clean-room / full producer migration);
 - the no-`uv run` writing-build guard → **0353**;
 - DAG completeness / orphaned figure producers → the union-aware guard in
-  `tests/test_makefile_dag.py` (PR #617, ticket renumbered to 0356).
+  `tests/test_makefile_dag.py` (PR #617, ticket renumbered to 0363).
 
 This ticket touches none of those. It only removes cross-file duplication in
 the data/run plumbing (`UV_RUN`/drain/self-consistency/env), which 0352/0353/
-0356 do not address.
+0363 do not address.
 
 ## Actions
 1. Add `experiments/common.mk` defining `UV_RUN`, `WORKER`, `MANAGER`,
@@ -82,7 +84,7 @@ asserting the de-duplication holds, so regressions are caught:
 - `tabulate_self_consistency` is invoked by exactly one makefile recipe.
 Plus a build smoke test: `make -n report` and `make -n slides` exit 0 with no
 "No rule to make target" error. This guard is **orthogonal** to
-`tests/test_makefile_dag.py` (DAG completeness, from 0356) — do not
+`tests/test_makefile_dag.py` (DAG completeness, from 0363) — do not
 re-implement producer coverage here; assert the dedup invariants only.
 
 ## Exit criteria

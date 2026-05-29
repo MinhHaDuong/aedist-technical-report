@@ -1,0 +1,101 @@
+%erg 0.1
+Title: Refactor docs-build workflow to always-run with internal chore-filter
+Created: 2026-05-28
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #639
+
+--- log ---
+2026-05-28T13:30Z HDMX-coding-agent created — surfaced by 0358 raid: GitHub branch protection requires the `build` status to report on every PR, but the current `pull_request.paths` trigger skips PRs that don't touch build inputs (STATE.md, ticket-only PRs, .claude/** edits). Required-check + skipped workflow = unmergeable PR.
+
+2026-05-28T14:04Z HDMX-coding-agent closed — autoclosed — PR #639
+--- body ---
+## Context
+
+The `docs-build` workflow added by ticket 0365 uses `pull_request.paths` to
+trigger only on PRs touching `report/**`, `slides/**`, `Makefile`,
+`experiments/analysis.mk`, `src/aedist/**`, `tests/**`, `data/**`, or
+`.github/workflows/docs-build.yml`. That's the right scope for *running*
+the build, but it has a fatal interaction with branch protection:
+
+> A required status check that never reports on a PR keeps the PR pending
+> forever — the merge button stays disabled.
+
+Ticket 0358 needs to add `build` (the docs-build job) to the required
+status checks on `main`. PR #638 (0358's deliverable) only edits STATE.md;
+under the current trigger it does not start `docs-build`. Required-check
++ workflow-never-runs = PR #638 cannot merge. The same trap waits for
+every future STATE/ticket-only PR.
+
+## Fix
+
+Mirror the pattern already used by `.github/workflows/CI.yml`:
+
+1. Remove `pull_request.paths` from `docs-build.yml`'s trigger so the
+   workflow starts on every PR.
+2. Add a `changes` job (or reuse its `predicate-quantifier: every` filter
+   pattern) that detects chore-only diffs (`tickets/**`, `STATE.md`,
+   `.claude/**`, `README.md`, etc.) and exports a `chore` boolean output.
+3. Gate every heavy step in the `build` job behind
+   `if: needs.changes.outputs.chore != 'true'` so the job still reports
+   SUCCESS on chore PRs but does no real work.
+
+This matches `CI.yml`'s structure exactly — `lint` and `tests` already
+report SUCCESS as no-ops on chore PRs — so the four required checks
+(`changes`, `lint`, `tests`, `build`) behave consistently.
+
+## Relevant files
+
+- `.github/workflows/docs-build.yml` — refactor target.
+- `.github/workflows/CI.yml` — reference pattern (do not edit, just mirror).
+- `tests/test_docs_build_workflow.py` — adherence test; the assertions
+  on trigger paths and on `continue-on-error` may need adjustment to
+  reflect the new shape (paths filter moves from workflow trigger to
+  `changes` job input).
+
+## Actions
+
+1. Branch off `main`.
+2. Refactor `.github/workflows/docs-build.yml`:
+   - Trigger: `pull_request:` (no paths), `push: { branches: [main] }`, `workflow_dispatch:`.
+   - Add `changes` job at top with `dorny/paths-filter@v3`, outputs `chore`.
+   - `build` job: `needs: changes`, `if: ${{ !cancelled() }}`. Every existing step gets `if: needs.changes.outputs.chore != 'true'`.
+3. Update `tests/test_docs_build_workflow.py` — re-aim the `required` set: it should now assert the `changes` job exists, the `build` job depends on it, the build step gating uses the chore flag.
+4. Run `make check-fast` — must pass.
+5. Optional but recommended: trigger one `workflow_dispatch` on main after merge to confirm the refactored workflow still produces a green build PDF artifact.
+
+## Test (first failing)
+
+`tests/test_docs_build_workflow.py::test_docs_build_runs_on_all_pull_requests` —
+assert that the loaded YAML has `on.pull_request` set to a dict WITHOUT a `paths`
+key (i.e., runs on every PR). Currently the file has `paths: [...]` → red.
+After refactor → green.
+
+## Verification
+
+- [ ] `docs-build / build` reports SUCCESS on a STATE-only PR (e.g. PR #638 after rebase).
+- [ ] `docs-build / build` reports SUCCESS on a build-input PR and *actually* builds the PDFs (the existing functionality is preserved).
+- [ ] `make check` green.
+- [ ] Adherence test reflects the new structure.
+
+## Invariants
+
+- The existing build steps (report, slides with `continue-on-error: true`, manuscript, `make check`, artifact uploads) still run on PRs that touch build paths.
+- Tectonic + pandoc setup steps still run on those PRs.
+- Cache key strategy unchanged.
+
+## Exit criteria
+
+- [ ] `.github/workflows/docs-build.yml` refactored to mirror `CI.yml`'s changes-job pattern.
+- [ ] Adherence test passes against the new shape.
+- [ ] On a chore PR (no build paths touched), `build` reports SUCCESS as a no-op.
+- [ ] On a build-paths PR, `build` runs full pipeline.
+
+## Out of scope
+
+- Removing `continue-on-error: true` from the slides step. That follow-on is gated on having a stable green slides baseline, which now exists (0367 landed) — but the explicit ticket for that flip is still pending and not in 0371's scope.
+- Changing the trigger paths content beyond removing them from `pull_request.paths` (the path list lives in `changes` job's filter now, same content).
+
+## Related
+
+- Blocker-of: 0358 (cannot flip `build` to required on `main` until this lands; orchestrator must defer the `gh api` branch-protection PATCH until 0371 is merged and a chore PR has demonstrated `build` reporting SUCCESS).
+- Spun off from: 0358's raid; chicken-and-egg surfaced 2026-05-28.

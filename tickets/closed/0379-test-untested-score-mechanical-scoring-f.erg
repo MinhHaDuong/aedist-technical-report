@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Test untested score_mechanical scoring functions (P1)
+Created: 2026-05-28
+Author: Claude
+Closed: Completed in PR #648 (merged 2026-05-29) — 20 tests for the untested score_mechanical scoring functions; module 60%->83%; cod_plausible denominator assertion hardened during review.
+
+--- log ---
+2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
+
+2026-05-28T17:49Z Claude implemented — added 20 tests for _capacity_nonnegative, score_source_diversity/spread, score_cod_plausible, score_accuracy. Module 60%->83%; remaining misses are main()/CLI (out of scope).
+2026-05-29T06:24Z Claude closed — Completed in PR #648 (merged 2026-05-29) — 20 tests for the untested score_mechanical scoring functions; module 60%->83%; cod_plausible denominator assertion hardened during review.
+--- body ---
+## Context
+
+A coverage run of the fast suite (`uv run --with coverage python -m
+coverage run --source=src/aedist -m pytest -m "not integration and not
+slow"`) reports `src/aedist/score_mechanical.py` at **60%**. The existing
+`tests/test_score_mechanical.py` covers `score_coherence`,
+`score_temporality`, `score_provenance`, `score_field_completeness` —
+but several **pure** scoring functions that feed the headline metrics
+have zero coverage:
+
+- `_capacity_nonnegative` (`score_mechanical.py:168`)
+- `score_source_diversity` (`:199`)
+- `score_source_spread` (`:213`)
+- `score_cod_plausible` (`:230`)
+- `score_accuracy` (`:247`, partial)
+
+Per ADR-7 (`metrics dict is the complete scientific record`) these scores
+flow into `measurements.jsonl`. A silent bug here corrupts the paper's
+numbers. These are deterministic `rows -> (score, detail)` functions,
+trivial to table-test. Highest test ROI in the codebase.
+
+## Test (first failing)
+
+```python
+from aedist.score_mechanical import score_source_diversity
+
+def test_source_diversity_counts_distinct_sources():
+    rows = [
+        {"source_1": "Decision 1195/QD-TTg", "source_2": "EVN 2024"},
+        {"source_1": "Decision 1195/QD-TTg", "source_2": ""},
+    ]
+    score, detail = score_source_diversity(rows)
+    assert score is not None
+```
+
+## Exit criteria
+
+- [ ] Each of `_capacity_nonnegative`, `score_source_diversity`,
+      `score_source_spread`, `score_cod_plausible`, `score_accuracy`
+      has at least one happy-path + one edge-case (empty rows / missing
+      cols / None return) test.
+- [ ] `score_mechanical.py` line coverage of the scoring functions
+      (excluding `main()`) reaches 90%+.
+- [ ] `make test-fast` passes.
+
+## Out of scope
+
+- `main()` CLI body (`:409-507`) — separate concern, lower value.

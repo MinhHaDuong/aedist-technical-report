@@ -133,13 +133,6 @@ La limite de taille des réponses (4K--8K tokens) joue un rôle critique~: l'inf
 
 \input{inputs/generated/tab_census}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.85\linewidth]{inputs/generated/fig_census_direct.pdf}
-\caption{Résultats des \NumCensusModels{} modèles sur le prompt census (passe unique, sans documentation). Chaque barre~: un run, une couleur par modèle. Ligne verte~: référence (163 centrales).}
-\label{fig:census-direct}
-\end{figure}
-
 \paragraph{Capture de l'intensité de raisonnement et variabilité interjournalière.}
 La table~\ref{tab:exp1-reasoning-topup} prolonge la cohorte du 20~mai~2026 (16 modèles, $N{=}5$~répétitions) par une cohorte complémentaire du 21~mai~2026 ($N{\leq}3$) exécutée après le correctif de harnais PR\#379, qui rend visible le compteur \texttt{reasoning\_tokens} exposé par OpenRouter dans \texttt{completion\_tokens\_details}. Les deux cohortes partagent la même configuration d'appel (\texttt{model\_set}, prompt, température, \texttt{seed}, \texttt{system\_instruction}, \texttt{max\_tokens})~; seules diffèrent la date d'exécution et la version du harnais. Trois modèles présentent un écart $|\Delta\text{F1}| > 2\sigma_{\text{baseline}}$ entre les deux jours~: \emph{DeepSeek-V4-Pro} ($-0.185$, raisonnement intensif à 16~774~tokens), \emph{Qwen3.6-27b} ($+0.289$) et \emph{Qwen3.6-35b-A3b} ($+0.165$). Cette variabilité interjournalière, à configuration d'appel inchangée et à \texttt{seed=42}, illustre que les contrôles habituels (température nulle, \emph{seed} fixe) ne suffisent pas à neutraliser les déplacements silencieux côté fournisseur (routage, mise à jour de checkpoint). Le compteur \texttt{reasoning\_tokens} confirme par ailleurs deux régimes contrastés~: les modèles Anthropic et Mistral du panel ne rapportent aucun token de raisonnement, tandis que les modèles DeepSeek V4, Qwen3.6 et GPT-OSS en allouent entre quelques dizaines (déclaration \texttt{reasoning\_effort="minimal"}) et plus de 16~000.
 
@@ -197,16 +190,15 @@ Comme il ne s'agit que d'une étude de faisabilité, on ne répète pas les mesu
 Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211 sur 280~sorties) ont été réalisés sans spécifier le paramètre \emph{temperature} de l'API~; le fournisseur applique alors sa valeur par défaut (typiquement~1,0 pour les API compatibles OpenAI). Seuls les sweeps direct\_complete et les bras paramétrique et livesearch de l'ablation utilisent explicitement $t{=}0$. Les modèles de raisonnement (o3, DeepSeek~R1, QwQ) ignorent ce paramètre~: leur température interne est fixée par le fournisseur. Le bras RAG de l'ablation a été exécuté à $t{\approx}1$ tandis que les autres bras utilisaient $t{=}0$, introduisant un confondant potentiel. L'amplitude de ce biais est bornée~: l'extraction structurée en CSV est vraisemblablement moins sensible à la température que la génération de texte libre, et les classements entre modèles, fondés sur le F1 médian de trois runs, restent robustes pour les différences supérieures à~0,05. Les scripts d'interrogation sont désormais instrumentés pour imposer $t{=}0$ par défaut sur toutes les futures expériences.
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
-\InputIfFileExists{inputs/generated/tab_exp2_arms}{}{}
 
-\IfFileExists{inputs/generated/fig_quality_spider.pdf}{
-\begin{figure}[h]
+Au-delà des relances, l'expérience~2 se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
+
+\begin{table}[h]
 \centering
-\includegraphics[width=0.78\linewidth]{inputs/generated/fig_quality_spider.pdf}
-\caption{Profils de qualite sur huit axes en vocabulaire non specialistes pour les bras naive et optimise de l'experience 2.}
-\label{fig:exp2-quality-spider}
-\end{figure}
-}{}
+\caption{Expérience~2 en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
+\label{tab:exp2-2x2}
+\InputIfFileExists{inputs/generated/tab_exp2_2x2}{}{}
+\end{table}
 
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
@@ -216,7 +208,7 @@ Les résultats confirment que les modèles ne révèlent qu'un tiers de leur con
 
 L'approche conversationnelle soulève cependant une contrainte technique~: l'accumulation du contexte. À chaque tour, le modèle reçoit l'historique complet de la conversation~; les tokens de prompt croissent linéairement. L'analyse des données de Sweep~2 (4~tours, 7~modèles, 3~runs chacun) montre que la plupart des modèles n'utilisent que 1 à 7\% de leur fenêtre de contexte. L'exception notable est DeepSeek~V3.2~: lors d'un run, ses réponses particulièrement verbeuses ont consommé 53\% de sa fenêtre de 164K tokens en seulement 4~tours. L'extrapolation linéaire prédit un dépassement à 15~tours. Pour les modèles à fenêtre réduite, un mode «~sans état~» --- où chaque relance est envoyée indépendamment, sans historique --- garantit un budget token constant par tour, au prix de la perte de raffinement itératif.
 
-Plusieurs techniques d'amélioration existent~: prompt engineering avancé, Chain of Thought, Few-shot learning, Self-Consistency, ou encore optimisation automatique des prompts via DSPy \citep{ATRGAC9J}. Le Retrieval-Augmented Generation (RAG) \citep{2U9Y8AJK} enrichit les capacités du modèle en intégrant des documents de référence \citep{JNKUDLN8,Y95UBRJ9}. L'expérience~3 (section~\ref{sec:exp3}) isole systématiquement l'effet de chaque composant du prompt sur la qualité de l'extraction.
+Plusieurs techniques d'amélioration existent~: prompt engineering avancé, Chain of Thought, Few-shot learning, Self-Consistency, ou encore optimisation automatique des prompts via DSPy \citep{ATRGAC9J}. Le Retrieval-Augmented Generation (RAG) \citep{2U9Y8AJK} enrichit les capacités du modèle en intégrant des documents de référence \citep{JNKUDLN8,Y95UBRJ9}.
 
 Deux limites fondamentales demeurent~:
 
@@ -233,15 +225,13 @@ Avant de recourir au RAG, on peut enrichir le prompt lui-même. Un prompt de 1\,
 
 Neuf modèles sur douze produisent un inventaire exploitable (18 à 63~centrales). Les trois échecs relèvent de mécanismes distincts~: GPT-5.4 refuse de produire l'inventaire par précaution sur la fiabilité, Grok~4.20 déclenche un filtre de sécurité, ERNIE~4.5~Thinking retourne une sortie non structurée. Parmi les modèles fonctionnels, le F1 médian est de 0,53 (référence~: 163~centrales), le meilleur résultat étant GLM-5~Turbo (63~centrales, F1 = 0,56). Aucun modèle ne produit de faux positifs~: la précision est de 100\,\% pour les neuf modèles, la limite étant le rappel.
 
-Le rapport qualité-coût varie sur deux ordres de grandeur~: Claude~Opus (0,79\,\$, 491\,s, 61~centrales) contre DeepSeek~V3.2 (0,004\,\$, 281\,s, 49~centrales). Le prompt direct complet sert de condition de contrôle externe dans l'expérience d'ablation (section~\ref{sec:exp3}).
+Le rapport qualité-coût varie sur deux ordres de grandeur~: Claude~Opus (0,79\,\$, 491\,s, 61~centrales) contre DeepSeek~V3.2 (0,004\,\$, 281\,s, 49~centrales).
 
 \subsection{Expérience RAG livesearch~: recherche internet augmentée}\label{sec:rag_livesearch}
 
 On teste si l'augmentation par recherche web améliore l'extraction par rapport au mode paramétrique. Cinq modèles (DeepSeek~V3.2, GPT-5.4, Gemini~2.5~Flash~Lite, Mistral~Large, Mistral~Small) sont interrogés 3 fois chacun avec le Prompt~2 (section~\ref{sec:methode}), après injection dans le contexte système des résultats d'une recherche Tavily sur les centrales thermiques vietnamiennes.
 
-Les résultats sont décevants~: F1 médian de 0,39 sur les 15~runs, avec un maximum de 0,53 (Gemini). Le nombre de centrales retournées varie de 34 à 58, soit moins que l'expérience single-shot pour la plupart des modèles. Aucun faux positif n'est observé (précision 100\,\%), mais le rappel reste faible (21--36\,\%). La recherche web retrouve des sources pertinentes mais ne parvient pas à en extraire des données tabulaires structurées~: les résultats Tavily contiennent du texte narratif, pas des tables, et les modèles ne compensent pas cette limitation. Le mode web est évalué comme régime de l'étude d'ablation (section~\ref{sec:exp3}), où il confirme que le prompt composite n'améliore pas les performances en l'absence de documents structurés.
-
-\input{inputs/plan_ablation}
+Les résultats sont décevants~: F1 médian de 0,39 sur les 15~runs, avec un maximum de 0,53 (Gemini). Le nombre de centrales retournées varie de 34 à 58, soit moins que l'expérience single-shot pour la plupart des modèles. Aucun faux positif n'est observé (précision 100\,\%), mais le rappel reste faible (21--36\,\%). La recherche web retrouve des sources pertinentes mais ne parvient pas à en extraire des données tabulaires structurées~: les résultats Tavily contiennent du texte narratif, pas des tables, et les modèles ne compensent pas cette limitation.
 
 \chapter{Documents sources et RAG}\label{chap:rag}
 
@@ -654,6 +644,9 @@ Une expérience de vérification automatisée quantifie ce compromis~: sur la me
 \label{tab:verification}
 \InputIfFileExists{inputs/generated/tab_verification}{}{}
 \end{table}
+
+% --- Para 5c: targeted verification subsumes generic multi-turn (future direction) ---
+La vérification multi-agents ouvre une direction complémentaire. Les relances conversationnelles génériques de l'expérience multi-tour (section~\ref{sec:exp2}, «~Avez-vous oublié des centrales~?~») apparaissent rétrospectivement comme un cas particulier, moins motivé, d'un protocole de vérification ciblée~: plutôt que des relances aveugles, chaque tour poursuit un objectif précis --- contrôler la provenance, détecter les hallucinations, croiser avec le référentiel. La littérature sur la self-consistency et les protocoles de débat suggère qu'une vérification par agents indépendants surpasse l'auto-révision par le même modèle. Le module de sourçage par ligne (colonnes \texttt{source\_1}, \texttt{source\_2}, section~\ref{sec:rag_cited}) est conçu pour alimenter cette phase~: chaque ligne portant ses propres références, un agent vérificateur peut en contrôler la provenance sans accès au prompt d'origine. La décomposition par sous-requêtes (diviser pour régner, section~\ref{sec:rag_per_fuel}) constitue un axe orthogonal --- elle modifie la granularité de la requête, non le contrôle de la sortie --- dont l'interaction avec la vérification reste un travail futur non prioritaire.
 
 % --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.

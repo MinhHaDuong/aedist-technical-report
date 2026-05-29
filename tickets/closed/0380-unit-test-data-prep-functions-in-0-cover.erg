@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Unit-test data-prep functions in 0%-covered plot/tabulate modules (P2)
+Created: 2026-05-28
+Author: Claude
+Closed: Completed in commits 5168443 + c31e961 on claude/test-coverage-analysis-OwuVY — all 0%-covered plot/tabulate data-transform functions now tested.
+
+--- log ---
+2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
+
+2026-05-28T17:49Z Claude partial — added test files for tabulate_stat_tests (0->89%), plot_quality_spider (0->40%), tabulate_exp2_bib_quality (0->53%), plot_spider_cross_exp (0->44%), plot_capability_dag (0->44%), plot_exp2_arms_split (0->29%). Data-transform functions covered; matplotlib rendering left out. Remaining 0380 modules: plot_scaling_curve, plot_capability_timeline, tabulate_source_grounding.
+2026-05-29T05:24Z Claude completed — added remaining 3 modules: plot_scaling_curve (0->48%, collect_data + _compute_cloud_refs via monkeypatched load), plot_capability_timeline (0->42%, extracted bucket_by_stage from render() and tested it), tabulate_source_grounding (0->41%, _fmt_pct + CSV/JSON loaders). All 0380 exit criteria met.
+2026-05-29T05:42Z Claude closed — Completed in commits 5168443 + c31e961 on claude/test-coverage-analysis-OwuVY — all 0%-covered plot/tabulate data-transform functions now tested.
+--- body ---
+## Context
+
+Several plot/tabulate modules report **0%** coverage. They follow the
+project's own "figures are artifacts" architecture (`.claude/rules/writing.md`):
+a data-transform function (`build_*_rows`-style) plus matplotlib/LaTeX
+rendering. The data half is unit-testable exactly as
+`tests/test_plot_census.py` already does for `build_census_rows` — but
+these aren't:
+
+- `plot_quality_spider.py` (165 stmts, 0%)
+- `plot_exp2_arms_split.py` (157, 0%)
+- `tabulate_stat_tests.py` (152, 0%) — statistical computations, not just formatting
+- `plot_scaling_curve.py` (124, 0%)
+- `plot_spider_cross_exp.py` (96, 0%)
+- `plot_capability_dag.py` / `plot_capability_timeline.py` (84 / 82, 0%)
+- `tabulate_exp2_bib_quality.py` (97, 0%)
+- `tabulate_source_grounding.py` (61, 0%)
+
+## Approach
+
+For each module: identify (or extract) the pure data-transform function,
+feed it a small in-memory metrics fixture, assert on the returned
+rows/structure. Leave matplotlib rendering untested. `tabulate_stat_tests.py`
+deserves correctness tests (p-values / effect sizes), not just shape.
+
+## Test (first failing)
+
+Mirror `tests/test_plot_census.py`: import the data function, pass
+`SAMPLE_METRICS`, assert sorting/aggregation.
+
+## Exit criteria
+
+- [ ] Each module above has a `tests/test_<module>.py` exercising its
+      data-transform function on a fixture.
+- [ ] `tabulate_stat_tests.py` data functions reach 80%+.
+- [ ] `make test-fast` passes.
+
+## Out of scope
+
+- Pixel/PDF rendering correctness (covered by Makefile build + clean-room tests).
+- Thin 16-stmt `tabulate_exp2_outline_*` wrappers — not worth the cost.

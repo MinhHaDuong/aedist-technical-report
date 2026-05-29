@@ -7,6 +7,7 @@ Author: claude
 2026-05-27T23:40Z claude created
 2026-05-27T23:55Z claude note Hardened after design challenge: split safety into Tier 1 (work-loss guards, now fail-closed + working-tree-aware) and Tier 2 (correctness: structural-invariant check + compile + human diff). Hardcoded EN→FR direction so the source of truth is never a write target. Added a deterministic (non-LLM) include-path remap to flip `_en` figure/table variants back to FR. See "Coordination with 0356".
 2026-05-27T23:59Z claude note Delivered scripts/translate_slides.py + tests/test_translate_slides.py (12 tests, all guards covered) + optional `make translate-slides` PHONY target (not a slides.pdf prereq). Verified: --dry-run assembles prompt + passes Tier-1 with no write; lint + full fast suite green. A real claude run that overwrites slides.tex is left to the human (spends money, churns the currently-synced FR deck) — pending user go-ahead.
+2026-05-29T13:40Z Claude renamed 0363 → 0389 to resolve an ID collision: 0363 was already taken by closed/0363-wire-orphaned-figures-into-dag.erg (renumbered there from 0354). Updated refs in STATE.md, scripts/translate_slides.py, and tests/test_translate_slides.py. Also merged origin/main (PR was 104 commits behind; only STATE.md conflicted).
 
 --- body ---
 ## Context
@@ -122,7 +123,7 @@ invariant check (Tier 2.3) *after* this remap so the path sets line up.
 0356 (open) introduces `_en` figure/table variants and repoints `slides-en.tex`
 to them. That is exactly when "preserve paths verbatim" would otherwise leak
 English figures into the FR deck. The deterministic remap above **decouples**
-0363 from 0356 ordering (no-op before, correct after), so 0363 is intentionally
+0389 from 0356 ordering (no-op before, correct after), so 0389 is intentionally
 **not** `Blocked-by: 0356`. But: when 0356 lands, re-verify the remap covers
 every `_en` artifact it introduced (add any new suffix/name to the remap table).
 

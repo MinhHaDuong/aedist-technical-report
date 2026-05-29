@@ -75,6 +75,8 @@ _SCORE_VIEW_FIELDS = [
     "accuracy_province_annotation",
     "coherence_vocab_adherence",
     "coherence_vocab_adherence_annotation",
+    "coherence_status_vocab_adherence",
+    "coherence_status_vocab_adherence_annotation",
     "coherence_capacity_nonnegative",
     "coherence_capacity_nonnegative_annotation",
     "provenance_source_presence",
@@ -261,12 +263,23 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "coherence_vocab_adherence_annotation": summary["coherence"][
                     "vocab_adherence"
                 ].get("annotation", ""),
-                "coherence_capacity_nonnegative": _fmt(
-                    summary["coherence"]["status_vocab_adherence"].get("value")
+                # Defensive .get on the two newer coherence fields: marts written
+                # before the status_vocab_adherence/capacity_nonnegative split lack
+                # these keys. Tolerate their absence (empty cell) rather than
+                # KeyError, so the view builds against pre-schema committed marts
+                # until they are regenerated with full data. See ticket below.
+                "coherence_status_vocab_adherence": _fmt(
+                    summary["coherence"].get("status_vocab_adherence", {}).get("value")
                 ),
-                "coherence_capacity_nonnegative_annotation": summary["coherence"][
-                    "status_vocab_adherence"
-                ].get("annotation", ""),
+                "coherence_status_vocab_adherence_annotation": summary["coherence"]
+                .get("status_vocab_adherence", {})
+                .get("annotation", ""),
+                "coherence_capacity_nonnegative": _fmt(
+                    summary["coherence"].get("capacity_nonnegative", {}).get("value")
+                ),
+                "coherence_capacity_nonnegative_annotation": summary["coherence"]
+                .get("capacity_nonnegative", {})
+                .get("annotation", ""),
                 "provenance_source_presence": _fmt(
                     summary["provenance"]["source_presence"].get("value")
                 ),

@@ -163,6 +163,7 @@ class MasterRecord:
             status=status if status is not None else PlantStatus.UNKNOWN,
             capacity_mwe=cap,
             province=self.province.value if self.province else None,
+            cod=self.cod.value if self.cod else None,
         )
 
 

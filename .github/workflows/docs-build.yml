@@ -1,0 +1,137 @@
+name: docs-build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # Decide whether the diff touches anything the docs-build cares about.
+  # `chore` is true ONLY when *every* changed file matches the chore filter
+  # (predicate-quantifier: every) — ticket-only, STATE, in-repo notes, top-
+  # level READMEs, .claude/** harness files. Anything else — including a
+  # mixed diff or an empty/errored output — leaves it != 'true', so the
+  # heavy build steps below run. Fail-safe: ambiguity always builds.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      chore: ${{ steps.filter.outputs.chore }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          predicate-quantifier: 'every'
+          filters: |
+            chore:
+              - 'tickets/**'
+              - '.claude/**'
+              - 'docs/**'
+              - 'STATE.md'
+              - 'README.md'
+              - 'AGENTS.md'
+              - 'CLAUDE.md'
+              - 'ADR.md'
+              - 'MASTERPLAN.md'
+              - 'PLAN.md'
+
+  build:
+    needs: changes
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    env:
+      TECTONIC_VERSION: '0.15.0'
+    steps:
+      - name: Checkout
+        if: needs.changes.outputs.chore != 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup uv (respects uv.lock)
+        if: needs.changes.outputs.chore != 'true'
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: uv sync (dev group for make check)
+        if: needs.changes.outputs.chore != 'true'
+        run: uv sync --group dev
+
+      - name: Cache Tectonic bundle
+        if: needs.changes.outputs.chore != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Tectonic
+          key: tectonic-0.15.0-${{ runner.os }}
+
+      - name: Install Tectonic 0.15.0 (static musl binary)
+        if: needs.changes.outputs.chore != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL -o /tmp/tectonic.tar.gz \
+            "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic@${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          tar -xzf /tmp/tectonic.tar.gz -C "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/tectonic"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/tectonic" --version
+
+      - name: Install pandoc
+        if: needs.changes.outputs.chore != 'true'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq pandoc
+          pandoc --version | head -n1
+
+      - name: Build report
+        if: needs.changes.outputs.chore != 'true'
+        run: make report
+
+      - name: Build slides
+        id: slides
+        if: needs.changes.outputs.chore != 'true'
+        continue-on-error: true
+        run: make slides
+
+      - name: Build manuscript
+        # Pre-build fig_capability_dag.pdf (root Makefile owns the rule; the
+        # slides sub-make has no rule for it — same recursive-make gap that
+        # makes `make slides` red. Pre-building here lets manuscript pass even
+        # before ticket 0367's fix lands.
+        if: needs.changes.outputs.chore != 'true'
+        run: |
+          make report/inputs/generated/fig_capability_dag.pdf
+          make -C slides manuscript/main.pdf
+
+      - name: Run make check (lint + tests)
+        if: needs.changes.outputs.chore != 'true'
+        run: make check
+
+      - name: Upload PDF artifacts
+        if: needs.changes.outputs.chore != 'true' && (success() || failure())
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-pdfs
+          path: |
+            report/report.pdf
+            slides/slides.pdf
+            slides/slides-en.pdf
+            slides/manuscript/main.pdf
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload build logs on failure
+        if: needs.changes.outputs.chore != 'true' && failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            report/*.log
+            report/*.aux
+            slides/*.log
+            slides/*.aux
+            slides/*.snm
+            slides/*.toc
+          if-no-files-found: ignore
+          retention-days: 14

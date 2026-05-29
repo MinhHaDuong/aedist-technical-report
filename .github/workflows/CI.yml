@@ -5,10 +5,12 @@ on:
   pull_request:
 jobs:
   # Decide whether the diff touches anything that lint/tests care about.
-  # `chore` is true ONLY when *every* changed file is a ticket or STATE.md
-  # (predicate-quantifier: every). Anything else — code, configs, docs, a
-  # mixed diff, or an empty/errored output — leaves it != 'true', so the
+  # `chore` is true ONLY when *every* changed file matches the chore filter
+  # (predicate-quantifier: every) — ticket-only, STATE, in-repo notes, top-
+  # level READMEs, .claude/** harness files. Anything else — including a
+  # mixed diff or an empty/errored output — leaves it != 'true', so the
   # heavy steps below run. Fail-safe: ambiguity always runs full CI.
+  # Kept in sync with docs-build.yml.
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -22,7 +24,15 @@ jobs:
           filters: |
             chore:
               - 'tickets/**'
+              - '.claude/**'
+              - 'docs/**'
               - 'STATE.md'
+              - 'README.md'
+              - 'AGENTS.md'
+              - 'CLAUDE.md'
+              - 'ADR.md'
+              - 'MASTERPLAN.md'
+              - 'PLAN.md'
   lint:
     needs: changes
     if: ${{ !cancelled() }}

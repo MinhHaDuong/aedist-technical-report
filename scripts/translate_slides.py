@@ -57,7 +57,7 @@ TRANSLATION_PROMPT = (
 )
 
 
-class TranslationAborted(Exception):  # noqa: N818 — name fixed by ticket 0363 test contract
+class TranslationAborted(Exception):  # noqa: N818 — name fixed by ticket 0389 test contract
     """A Tier-1 or Tier-2 guard tripped; the FR deck is left untouched."""
 
 

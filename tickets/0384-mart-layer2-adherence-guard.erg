@@ -1,0 +1,84 @@
+%erg 0.1
+Title: Add Layer-2 mart adherence guard — schema field semantics + completeness
+Created: 2026-05-29
+Author: Claude
+Blocked-by: 0383
+
+--- log ---
+2026-05-29T00:00Z Claude created — keystone guard for the mart audit redress (0383)
+
+--- body ---
+## Context
+
+Closed ticket 0322 added an adherence guard at Layer 1 (scorer output ↔
+CSV header). No equivalent guard exists at Layer 2 (the mart schema in
+`exp2_mart.py` and the projection in `build_exp2_mart.py`). Because of
+that gap, three Layer-2 drifts accumulated undetected — see 0383.
+
+This ticket adds the missing structural guard. Per the "audit before
+instrumenting" rule, the phenomenon is already confirmed present (findings
+#1–#3 in 0383), so the test is justified, not speculative.
+
+Per "design for genericity": the guard checks the *contract* (every
+`score_summary` field is fed by a column whose meaning matches its name;
+every extraction-populated source key is either wired into the schema or
+explicitly listed out-of-scope), not these three specific fields.
+
+## First test
+
+`tests/test_exp2_mart_contract.py`, `@pytest.mark.adherence`, run against
+the committed `experiments/derived/exp2_mart.jsonl` (skip if absent):
+
+```python
+import json
+from pathlib import Path
+import pytest
+
+MART = Path("experiments/derived/exp2_mart.jsonl")
+
+# Source-JSON keys that extract_arm_*.py populates and the mart is expected
+# to either wire into a schema field or explicitly exempt. Out-of-scope keys
+# (bookkeeping / not-emitted-for-these-arms) are listed, with a reason, in
+# OUT_OF_SCOPE so the test documents intent rather than rubber-stamping nulls.
+EXPECTED_WIRED = {"classification", "class_trace", "turns", "tokens_out",
+                  "cost_usd", "classifier_cost_usd", "narrative_chars",
+                  "n_bib_entries", "n_rows", "wall_s"}
+OUT_OF_SCOPE = {"agent", "model", "run", "total_cost_usd",
+                "evidence_pack_manifest", "tokens_in"}
+
+@pytest.mark.adherence
+def test_runsummary_wires_every_populated_source_key():
+    if not MART.exists():
+        pytest.skip("mart artifact absent")
+    recs = [json.loads(l) for l in MART.read_text().splitlines() if l.strip()]
+    runs = [r for r in recs if r["record_kind"] == "run"]
+    assert runs, "no run records to audit"
+    wired = {k for r in runs for k, v in r["run_summary"].items() if v is not None}
+    # Every key we claim to wire must actually be non-null somewhere.
+    missing = EXPECTED_WIRED - wired - OUT_OF_SCOPE
+    assert not missing, f"declared-wired source keys never populated in mart: {missing}"
+```
+
+Plus a semantic-name check: assert no `score_summary` field name encodes a
+metric different from the column that feeds it (i.e. the `status_vocab_adherence`
+↔ `coherence_capacity_nonnegative` class of lie cannot recur). After #1
+lands, that field is renamed; the test pins the corrected mapping.
+
+This test goes **red today** on `class_trace` / `n_bib_entries` (both in
+`EXPECTED_WIRED`, both null in the mart) — proving it bites. It turns green
+only after 0385.
+
+## Definition of done
+
+- [ ] `tests/test_exp2_mart_contract.py` added with `@pytest.mark.adherence`
+- [ ] Test asserts (a) field-name ↔ source-column semantic match,
+      (b) every EXPECTED_WIRED key is populated, with a documented
+      OUT_OF_SCOPE allowlist
+- [ ] Test is red on current mart (demonstrated in PR), green after 0385/0386
+- [ ] `make check` green (test may xfail/skip-gate until 0385 lands, or land
+      together — sequence in PR)
+
+## Notes
+
+Coordinate with finding #1's PR: import the corrected field name once it
+lands so the semantic check pins the fixed mapping rather than the buggy one.

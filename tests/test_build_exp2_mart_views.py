@@ -45,7 +45,9 @@ def _score_row(arm):
         "accuracy_province_annotation": "",
         "coherence_vocab_adherence": "1.0000",
         "coherence_vocab_adherence_annotation": "",
-        "coherence_capacity_nonnegative": "1.0000",
+        "coherence_status_vocab_adherence": "0.7500",
+        "coherence_status_vocab_adherence_annotation": "",
+        "coherence_capacity_nonnegative": "0.5000",
         "coherence_capacity_nonnegative_annotation": "",
         "provenance_source_presence": "1.0000",
         "provenance_source_presence_annotation": "",
@@ -141,3 +143,24 @@ def test_write_exp2_mart_views(tmp_path):
     assert turn_rows[0]["rows"] == "1"
     assert len(score_rows) == 2
     assert score_rows[0]["accuracy_coverage"] == "0.5000"
+
+
+def test_mart_views_keep_status_vocab_and_capacity_distinct(tmp_path):
+    """Regression: status_vocab_adherence and capacity_nonnegative are separate
+    coherence metrics. A prior shape bug fed capacity data into the mart's
+    status_vocab_adherence field and round-tripped it back into the
+    capacity_nonnegative column, collapsing two distinct metrics into one.
+    The fixture seeds distinct values (0.75 vs 0.50); the view must preserve
+    each in its own column."""
+    mart_path = _mart_fixture(tmp_path)
+    output_dir = tmp_path / "generated"
+
+    outputs = write_exp2_mart_views(mart_path, output_dir, repo_root=tmp_path)
+    score_rows = list(csv.DictReader(outputs["sota_cross_eval_view.csv"].open(encoding="utf-8")))
+
+    row = score_rows[0]
+    assert row["coherence_status_vocab_adherence"] == "0.7500"
+    assert row["coherence_capacity_nonnegative"] == "0.5000"
+    assert (
+        row["coherence_status_vocab_adherence"] != row["coherence_capacity_nonnegative"]
+    )

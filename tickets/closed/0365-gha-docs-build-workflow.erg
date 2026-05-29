@@ -1,0 +1,125 @@
+%erg 0.1
+Title: Add GHA docs-build workflow — compile report/slides/manuscript on every PR
+Created: 2026-05-28
+Author: claude
+Closed: autoclosed — PR #636
+
+--- log ---
+2026-05-28T00:00Z claude created — closes the merge-time verification gap that PR #630 exposed (Copilot reverts went green on lint/tests/changes because no check compiles the PDFs); also the only path to in-env build verification for 0352/0353 that does not require relaxing the Claude Code cloud env's network policy
+
+2026-05-28T13:23Z HDMX-coding-agent closed — autoclosed — PR #636
+--- body ---
+## Context
+
+PR #630 demonstrated two problems with the same root cause: **no CI check exercises the actual document build**.
+
+1. `copilot-swe-agent[bot]` pushed 10 reverts that ripped out 0361/0362's work; all three existing checks (`changes`, `lint`, `tests`) stayed green throughout. The reverts were caught only because a human noticed.
+2. The Claude Code cloud env this project runs in blocks `relay.fullyjustified.net` (tectonic bundle), Docker Hub blobs, and GHCR blobs (HTTP 403 — see PR #630 thread). So `tectonic` cannot fetch a bundle in-env, and any agent here can only run the dry-run side of the clean-room test (`make -n report | grep -c "uv run"`), never the full compile. That left 0361 and 0362 closed-with-build-unverified.
+
+GHA runners have unrestricted network egress. Moving the actual compile to GHA closes both gaps in one move: every PR is build-verified, and an agent in the cloud env can rely on CI to confirm what it cannot run locally.
+
+## Goal
+
+A required PR check that compiles `report.pdf`, `slides.pdf`, `slides-en.pdf`, and `manuscript/main.pdf` and runs `make check` on every PR that touches build inputs.
+
+## Costs / risks (both real — name them up front)
+
+- **CI minutes**: ~3–5 min/PR cold, target <2 min warm with proper caching. Free on public repos; small private-repo cost.
+- **Engine version drift**: if pinned versions (tectonic, pandoc, texlive subset) are not maintained, a quiet engine bump could silently change rendering. Mitigation: pin everything; bumps require an intentional PR.
+- **False-positive flakiness**: a network blip during tectonic bundle fetch can fail a run. Mitigation: cache bundle on first download; retry once.
+- **`make slides` is already broken** (pre-existing, see "Known precondition" below) — first run of this workflow will be red on the slides job. Decision: ship workflow with slides allowed-to-fail, fix slides in a separate ticket, then flip the gate to required after a green baseline.
+- **Required-check trap**: marking the check required *before* a green baseline blocks all merges. Mitigation: explicit sequencing in exit criteria below.
+
+## Benefits
+
+- **PR-time verification** of the substance the project actually ships. The existing `tests`/`lint` checks verify *code*; this verifies the *deliverable*.
+- **Bot-vandalism guard**. Future agent reverts (or any other change) that break the build fail visibly.
+- **Unblocks 0352, 0353, and any future report-build ticket** from inside the Claude Code cloud env. Their exit criteria ("`make report` builds, `make check` passes") become CI-enforced; no laptop or network-policy relaxation required.
+- **Paper-writing track ahead** (post-conference) has dense build-verification needs; this infrastructure pays off across many PRs.
+
+## Design
+
+### Triggers
+```yaml
+on:
+  pull_request:
+    paths:
+      - 'report/**'
+      - 'slides/**'
+      - 'Makefile'
+      - 'experiments/analysis.mk'
+      - 'src/aedist/**'
+      - 'tests/**'
+      - 'data/**'
+      - '.github/workflows/docs-build.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+```
+
+### Engines — pinned
+- `tectonic@0.15.0` (static musl binary from github release; reachable from any runner; reproducible)
+- `pandoc` from Ubuntu 24.04 LTS runner's apt (current stable; if reproducibility tightens, pin via download)
+- `uv` via `astral-sh/setup-uv@v3` (respects `uv.lock`)
+
+No reliance on Docker images for the runtime — keeps the workflow simple, the layers transparent in the logs, and avoids the registry-blob blocking that affects this project's other environment. (A custom pre-bundled tectonic image is a future optimization, not blocking; see 0364-pattern.)
+
+### Job shape — start single, split only if cold-start matters
+
+Single job runs sequentially: setup → `uv sync` → `make report` → `make slides` → `make check` → upload artifacts. Simpler YAML, single status line, one cache. If/when cold-start becomes a feedback-loop irritant, split into parallel jobs (`report`, `slides`, `manuscript`, `check`) keyed on the same cache.
+
+### Caching (target warm-run <2 min)
+- `~/.cache/Tectonic` keyed on `tectonic-0.15.0-${{ runner.os }}` — bundle downloaded once per version bump
+- `uv` cache via `setup-uv@v3` — respects `uv.lock`
+- Apt cache: rely on runner's preinstalled pandoc (no install needed on Ubuntu 24.04)
+
+### Artifacts
+- On success: `report.pdf`, `slides.pdf`, `slides-en.pdf`, `manuscript/main.pdf` — 14-day retention; reviewers can download and inspect.
+- On failure: relevant `.log`/`.aux`/`.snm`/`.toc` for the failing target — helps diagnose what went wrong without re-running.
+
+### Required-check sequencing
+1. Land the workflow with `continue-on-error: true` on the slides step (so red slides ≠ red PR while the precondition is unfixed).
+2. Land the fig_capability_dag fix (separate ticket — see below).
+3. Confirm one green baseline on `main`.
+4. **Then** flip slides to required: remove `continue-on-error`, add `docs-build / build` to branch protection on `main`.
+
+This sequencing is manual (repo settings UI), not in the YAML; document the step in the PR description.
+
+## Known precondition — separate ticket
+
+`make slides` currently fails on a pre-existing recursive-make mismatch: the root `Makefile`'s `slides/slides.pdf` rule lists `$(GEN)/fig_capability_timeline.pdf` as a prereq, but `slides/Makefile` (sub-make) consumes `../report/inputs/generated/fig_capability_dag.pdf`. The DAG guard (0363) doesn't catch this — recursive-make visibility is its known limit. **This is out of scope for 0365**; spin a focused ticket for it. The fix is likely a one-line correction in either the root prereq or `slides/Makefile`'s prereq, depending on which name is canonical.
+
+## First failing test
+
+The workflow itself is the test. Red-state baseline (validates the workflow):
+- push to a feature branch with the new `.yml`
+- `report` step: PASS (produces report.pdf)
+- `slides` step: FAIL on `No rule to make target '…fig_capability_dag.pdf'` (the precondition)
+- `manuscript` step: PASS (produces main.pdf)
+- `check` step: PASS
+
+Green-state (after fig_capability_dag fix lands):
+- all four steps PASS, artifacts uploaded, cold-start <4 min, warm <2 min.
+
+## Exit criteria
+
+- [ ] `.github/workflows/docs-build.yml` present, valid, triggers on the paths above
+- [ ] On a clean PR: report + manuscript + check steps green; slides step red on the documented precondition (red-state baseline)
+- [ ] Tectonic bundle is cached across runs (warm run <2 min)
+- [ ] PDFs uploaded as artifacts on success; logs on failure
+- [ ] Documented in ticket body: the two manual repo-settings steps for marking the check required after green baseline
+- [ ] (Sequenced via the fig_capability_dag fix ticket) all four steps green; check marked required on `main`
+
+## Out of scope
+
+- Fix for `fig_capability_dag` (separate ticket).
+- Building a custom tectonic+bundle docker image (future optimization; see Option 1 from the design conversation).
+- Network policy relaxation in the Claude Code cloud env (user-side; see Option 2).
+- Migrating the writing build off `tectonic` to another engine (not desired; tectonic is the project's chosen engine).
+- Coverage / quality gates beyond "does it compile" (could be future tickets: PDF size sanity check, diff vs main, etc.).
+
+## Related
+
+- Closes the verification gap behind 0361, 0362 (both merged with build-unverified).
+- CI-enforces the exit criteria for 0352 (`make report` clean-room) and 0353 (no-`uv run` writing-build guard) when those land.
+- Backlog entry in STATE.md: "fix the pre-existing `make slides` break (`fig_capability_dag` vs `fig_capability_timeline` recursive-make mismatch)" — this ticket assumes that fix lands as a separate ticket.

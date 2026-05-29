@@ -95,6 +95,13 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
     reasoning_summary, thinking_tokens, cost_breakdown, tool_calls_cost_usd
     are surfaced when the underlying RunRecord field is non-None. Lists
     are projected as counts; the raw lists stay in the RunRecord.
+
+    Verification scalars from ``justification`` (source-grounding pipeline):
+    verification_mode, mean_evidence_score, verification_cost_usd are
+    projected when the justification dict carries them (omit-when-absent).
+    Nested structures (score_distribution, filtered_metrics) and the
+    adapter's {"output_text": ...} narrative shape are not projected; they
+    remain in the RunRecord.
     """
     result = []
     for r in records:
@@ -207,6 +214,21 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
             d["thinking_tokens"] = r.resource_use.thinking_tokens
         if r.resource_use.cost_breakdown is not None:
             d["cost_breakdown"] = r.resource_use.cost_breakdown
+
+        # --- verification scalars from justification (source-grounding) ------
+        # justification is a free-form dict whose verification-mode shape
+        # (query_verification.py) carries scientific scalars. Project those so
+        # ADR-7 holds without re-reading raw JSON; omit-when-absent. Nested
+        # structures (score_distribution, filtered_metrics) and the adapter's
+        # {"output_text": ...} narrative shape stay in the RunRecord.
+        if isinstance(r.justification, dict):
+            for src_key, out_key in (
+                ("verification_mode", "verification_mode"),
+                ("mean_evidence_score", "mean_evidence_score"),
+                ("verification_cost_usd", "verification_cost_usd"),
+            ):
+                if r.justification.get(src_key) is not None:
+                    d[out_key] = r.justification[src_key]
 
         result.append(d)
     return result
