@@ -1,0 +1,89 @@
+%erg 0.1
+Title: Adherence guard — unique ticket IDs across the open and archived stores
+Created: 2026-05-29
+Author: Claude
+
+--- log ---
+2026-05-29T14:00Z Claude created — class-shape regression guard. A ticket-staleness audit hit TWO live ID collisions in one session (0383 ×2, 0363 ×2); git history shows prior ones (0354→0363, 0372→0377). The erg validator checks within a directory but not the open∪closed union, so collisions slip through until they bite Blocked-by resolution or erg-pr-merge.
+
+--- body ---
+## Context
+
+Ticket IDs must be unique across the whole store, but collisions keep
+recurring:
+
+- This session: `0383` (mart-audit tracking **and** exp2-mart regen) and
+  `0363` (closed wire-orphaned-figures-into-dag **and** a new
+  translate-slides ticket) — both fixed by renaming the newcomer.
+- Git history: `0354` was renumbered → `0363`; `0372` → `0377`.
+
+The damage is silent: `Blocked-by: NNNN` resolves ambiguously, and
+`erg-pr-merge` closes "whatever ticket appears in the **Ticket:** line"
+— if two tickets share that ID, the wrong one can be touched.
+
+Per "audit before instrumenting": the phenomenon is confirmed present
+(four collisions across history), so this guard is justified.
+
+This is the sibling guard to [[0388]] (closed-but-unarchived). Both are
+ticket-store hygiene and may share `tests/test_ticket_store_hygiene.py`.
+
+## First test
+
+`tests/test_ticket_ids_unique.py` (or a case in the shared hygiene
+module), `@pytest.mark.adherence`:
+
+```python
+"""Every ticket ID is unique across tickets/ ∪ tickets/closed/.
+
+An ID reused across the open and closed dirs makes Blocked-by and
+erg-pr-merge resolution ambiguous. Renumber the newer ticket to the
+next free ID.
+"""
+
+import re
+from collections import defaultdict
+from pathlib import Path
+
+import pytest
+
+pytestmark = pytest.mark.adherence
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+TICKETS = REPO_ROOT / "tickets"
+_ID_RE = re.compile(r"^(\d+)-")
+
+
+def _id(p: Path) -> str | None:
+    m = _ID_RE.match(p.name)
+    return m.group(1) if m else None
+
+
+def test_ticket_ids_unique_across_open_and_closed():
+    by_id: dict[str, list[str]] = defaultdict(list)
+    for erg in [*TICKETS.glob("*.erg"), *(TICKETS / "closed").glob("*.erg")]:
+        tid = _id(erg)
+        if tid:
+            by_id[tid].append(str(erg.relative_to(REPO_ROOT)))
+    dups = {k: v for k, v in by_id.items() if len(v) > 1}
+    assert not dups, "Duplicate ticket IDs — renumber the newer to a free ID:\n" + "\n".join(
+        f"  {k}: {', '.join(sorted(v))}" for k, v in sorted(dups.items())
+    )
+```
+
+The test must PASS on current `main` (0383/0363 collisions already
+resolved this session) and FAIL if any ID is reused.
+
+## Exit criteria
+
+- [ ] Test added (own file or in a shared `test_ticket_store_hygiene.py`
+      with the 0388 guard), marked `@pytest.mark.adherence`, passing.
+- [ ] Demonstrated to fire on a synthetic duplicate (copy a closed
+      ticket's ID into an open-dir filename → fails; revert).
+- [ ] `make check-fast` green.
+
+## Out of scope
+
+- Picking the next free ID automatically (the fix is a human/agent
+  `git mv` + ref update, as done for 0383/0363 this session).
+- Teaching the `erg` binary itself to reject cross-dir duplicates — a
+  larger upstream change; track separately if wanted.
