@@ -13,17 +13,22 @@ SLIDE_GEN    := slides/inputs/generated
 
 # --- Tests --------------------------------------------------------------------
 
+# Single source of truth for the fast/slow split. test-slow is the exact
+# complement (negation), so the partition stays coherent if this expression
+# changes — no second list to keep in sync.
+FAST_MARKERS := not integration and not slow
+
 test-fast:
-	uv run pytest -m "not integration and not slow"
+	uv run pytest -m "$(FAST_MARKERS)"
 
 test:
 	uv run pytest
 
-# Integration/slow complement of the fast suite. `make check` runs this
-# after `coverage` so the full suite executes exactly once between them
-# (fast under coverage + slow here), with no duplicated runs.
+# Integration/slow complement of the fast suite, derived by negation so the
+# two targets together run the full suite exactly once (no duplication, no
+# gap). `make check` runs this after `coverage`.
 test-slow:
-	uv run pytest -m "integration or slow"
+	uv run pytest -m "not ($(FAST_MARKERS))"
 
 # Coverage gate on the fast suite (the suite the floor was measured against:
 # 73% on 2026-05-29). Floor starts at 70% — just under baseline — and ratchets
@@ -31,7 +36,7 @@ test-slow:
 # quick; enforced via `make check` (and thus in CI through docs-build's
 # `make check` step).
 coverage:
-	uv run pytest -m "not integration and not slow" \
+	uv run pytest -m "$(FAST_MARKERS)" \
 		--cov=src/aedist --cov-report=term-missing --cov-fail-under=70
 
 lint:
