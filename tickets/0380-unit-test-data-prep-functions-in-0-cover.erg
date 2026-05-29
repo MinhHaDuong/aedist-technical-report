@@ -7,6 +7,7 @@ Author: Claude
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
 
 2026-05-28T17:49Z Claude partial — added test files for tabulate_stat_tests (0->89%), plot_quality_spider (0->40%), tabulate_exp2_bib_quality (0->53%), plot_spider_cross_exp (0->44%), plot_capability_dag (0->44%), plot_exp2_arms_split (0->29%). Data-transform functions covered; matplotlib rendering left out. Remaining 0380 modules: plot_scaling_curve, plot_capability_timeline, tabulate_source_grounding.
+2026-05-29T05:24Z Claude completed — added remaining 3 modules: plot_scaling_curve (0->48%, collect_data + _compute_cloud_refs via monkeypatched load), plot_capability_timeline (0->42%, extracted bucket_by_stage from render() and tested it), tabulate_source_grounding (0->41%, _fmt_pct + CSV/JSON loaders). All 0380 exit criteria met.
 --- body ---
 ## Context
 

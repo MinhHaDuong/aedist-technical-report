@@ -6,6 +6,7 @@ Author: Claude
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
 
+2026-05-29T05:24Z Claude implemented — added _call_with_retry tests (exhaustion, 5xx, connection-error retry, streaming fallback) using real anthropic exceptions; Worker._execute_decomposed tests (corpus guard, query-failure RuntimeError, happy path); malformed/truncated payload tests for _parse_anthropic_response. query_anthropic 65->69%, worker 78->79%.
 --- body ---
 ## Context
 
