@@ -79,6 +79,10 @@ Cleanup worktrees and branches, summarize what was accomplished, reflect on less
 | `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
 | `/update-publist` | Adding/updating a publication | Edit Ha-Duong.bib, deposit on HAL via SWORD |
 
+### Chore tooling
+
+For one-shot chore PRs (tickets/, docs/, .claude/, top-level docs, .github/workflows/, *.md) use `scripts/quickpr.sh "<message>" <files...>` — one command branches off main, commits, pushes, opens a PR with auto-merge, and restores the starting branch. Refuses src/, tests/, experiments/ so implementation work still goes through `/start-ticket` → `/celebrate`.
+
 ## Autonomous workflow (details in /orchestrator skill)
 
 Orchestrator runs tickets in waves with isolated worktrees and one ordered loop:
