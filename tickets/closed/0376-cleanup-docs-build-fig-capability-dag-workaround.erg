@@ -2,10 +2,12 @@
 Title: Cleanup stale fig_capability_dag.pdf workaround in docs-build.yml
 Created: 2026-05-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #660
 
 --- log ---
 2026-05-28T20:00Z HDMX-coding-agent created — PR #640 made fig_capability_dag.pdf a committed handoff artifact; the docs-build.yml pre-build step is now a no-op with a misleading comment
 
+2026-06-03T06:19Z HDMX-coding-agent closed — autoclosed — PR #660
 --- body ---
 ## Context
 
