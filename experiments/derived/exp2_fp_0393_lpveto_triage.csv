@@ -1,0 +1,69 @@
+triage,n_appearances,clean_name,display_name,cur_score,cur_ref,models,arms,capacities,provinces
+0393_combined,29,nhon trach 3 & 4,Nhơn Trạch 3 & 4,100.0,LNG Nhơn Trạch 3,claude-opus-4-6;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,1500.0;1600.0;1620.0;1624.0;1760.0,dong nai
+0393_combined,10,ca mau 1 & 2,Nhiệt điện Cà Mau 1 & 2,100.0,LNG Cà Mau 1,claude-opus-4-6;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,1500.0;3000.0,ca mau
+0393_combined,7,cam pha 1 & 2,Cẩm Phả I & II,100.0,Cẩm Phả 1,claude-opus-4-6;qwen3.7-max-2026-05-20,arm2;arm3;arm4,600.0;670.0,quang ninh
+0393_combined,6,kien giang 1 & 2,TBKHH Kiên Giang I & II,92.9,"TBKHH Kiên Giang I, II",claude-opus-4-6;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm1;arm3;arm4,1500.0,kien giang
+0393_combined,6,nhon trach 3 va 4,Nhiệt điện Nhơn Trạch 3 và 4,100.0,LNG Nhơn Trạch 3,gpt-5.5;gpt-5.5-2026-04-23,arm2;arm3;arm4,1624.0,dong nai
+0393_combined,5,pha lai 1 & 2,Nhiệt điện Phả Lại 1 & 2,100.0,Phả Lại 1,mistral-large-2512;qwen3.7-max-2026-05-20,arm2;arm4,1040.0;1800.0;2400.0,hai duong
+0393_combined,3,duyen hai 1 & 3,Nhiệt điện Duyên Hải 1 & 3,100.0,Duyen Hai 1,mistral-large-2512,arm1;arm2,2488.0;2490.0,tra vinh
+0393_combined,3,dien khi nhon trach 3 & 4,Nhà máy Điện khí Nhơn Trạch 3 & 4,100.0,LNG Nhơn Trạch 3,qwen3.7-max-2026-05-20,arm1,1600.0;1760.0,dong nai
+0393_combined,3,son my 1 & 2,Sơn Mỹ I & II,100.0,LNG Sơn Mỹ I,qwen3.7-max-2026-05-20,arm2;arm4,3750.0;4500.0,binh thuan
+0393_combined,3,mien trung 1 & 2,Miền Trung I & II,100.0,TBKHH miền Trung I,qwen3.7-max-2026-05-20,arm4,1500.0,quang nam;quang tri / quang ngai
+0393_combined,2,nhon trach 1 & 2,Nhơn Trạch 1 & 2,100.0,TBKHH Nhơn Trạch I,qwen3.7-max-2026-05-20,arm2;arm4,1200.0;1215.0,dong nai
+0393_combined,1,dien khi lng son my 1 & 2,Điện khí LNG Sơn Mỹ I & II,100.0,LNG Sơn Mỹ I,mistral-large-2512,arm1,3000.0,binh thuan
+0393_combined,1,du an o mon 3 & 4,Dự án Nhiệt điện Ô Môn III & IV,100.0,TBKHH Ô Môn III,qwen3.7-max-2026-05-20,arm1,1500.0,can tho
+0393_combined,1,dien nhon trach 3 & 4,Nhà máy Điện Nhơn Trạch 3 & 4,100.0,LNG Nhơn Trạch 3,qwen3.7-max-2026-05-20,arm1,1760.0,dong nai
+0393_combined,1,o mon 3 & 4,Nhiệt điện Ô Môn 3 & 4,100.0,TBKHH Ô Môn III,mistral-large-2512,arm2,1500.0,can tho
+0393_combined,1,ca mau 1 va 2,Nhiệt điện Cà Mau 1 và 2,100.0,LNG Cà Mau 1,gpt-5.5-2026-04-23,arm2,1500.0,ca mau
+0393_combined,1,long phu 2 & 3,Long Phu 2 & 3,100.0,Long Phú 2,qwen3.7-max-2026-05-20,arm2,2400.0,soc trang
+0393_combined,1,vung ang 2 & 3,Vung Ang 2 & 3,100.0,Vung Ang 2,qwen3.7-max-2026-05-20,arm2,2400.0,ha tinh
+0393_combined,1,dien ca mau 1 & 2,Nhà máy Điện Cà Mau 1 & 2,100.0,LNG Cà Mau 1,qwen3.7-max-2026-05-20,arm2,1420.0,ca mau
+0393_combined,1,dien nhon trach 3 va 4,Nhà máy Điện Nhơn Trạch 3 và 4,100.0,LNG Nhơn Trạch 3,qwen3.7-max-2026-05-20,arm2,900.0,dong nai
+0393_combined,1,nhon trach 3&4,NMĐ Nhơn Trạch 3&4 (row),100.0,LNG Nhơn Trạch 3,claude-opus-4-6,arm3,0.0,—
+0393_combined,1,long an 1 & 2,LNG Long An I & II,100.0,Long An 1,qwen3.7-max-2026-05-20,arm4,3000.0,long an
+0393_combined,1,long an 1 & 2 lng,Long An I & II LNG,100.0,Long An 1,qwen3.7-max-2026-05-20,arm4,3000.0,long an
+0393_contention,4,cong thanh,LNG Công Thanh,100.0,Cong Thanh,claude-opus-4-6;gpt-5.5-2026-04-23,arm1;arm2;arm3;arm4,1500.0,thanh hoa
+0393_contention,3,can tho,"NĐ Cần Thơ (S4, dầu)",100.0,NĐ Cần Thơ,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,33.0,can tho
+0393_contention,3,thu duc,TBK Thủ Đức,100.0,NĐ Thủ Đức,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,113.0;114.0,tp ho chi minh;tp.hcm
+0393_contention,2,thai binh,LNG Thái Bình,100.0,LNG Thái Bình,mistral-large-2512,arm3;arm4,1500.0,thai binh
+0393_contention,1,duyen hai 1,Nhiệt điện Duyên Hải 1 (mở rộng),100.0,Duyen Hai 1,mistral-large-2512,arm1,622.5,tra vinh
+0393_contention,1,na duong 2,Nhiệt điện Na Dương 2 (mở rộng),100.0,Na Dương 2,mistral-large-2512,arm1,300.0,lang son
+0395_sibling,17,song hau 3,Nhiệt điện Sông Hậu 3,94.7,Sông Hậu 1,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,1200.0;2000.0,hau giang
+0395_sibling,11,nam dinh 2,NĐ Nam Định II,94.7,Nam Dinh 1,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm3;arm4,1200.0;2000.0,nam dinh
+0395_sibling,8,binh dinh 1,Bình Định I,100.0,LNG Bình Định,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,1200.0,binh dinh
+0395_sibling,7,kien giang 1,Nhiệt điện Kiên Giang 1,100.0,"TBKHH Kiên Giang I, II",claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,750.0,kien giang
+0395_sibling,6,binh dinh 2,Bình Định II,100.0,LNG Bình Định,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,1200.0;2000.0,binh dinh
+0395_sibling,4,uong bi 3,NĐ Uông Bí III,94.1,Uong Bi I,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,1200.0,quang ninh
+0395_sibling,3,mien trung 3,TBKHH Miền Trung III,95.7,TBKHH miền Trung I,gpt-5.5,arm3,750.0,quang nam / quang ngai;quang nam / quang ngai unresolved;quang ngai / quang tri uncertain
+0395_sibling,2,can tho s4,NĐ Cần Thơ S4,100.0,NĐ Cần Thơ,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,33.0,can tho
+0395_sibling,2,formosa ha tinh hien huu,Nhiệt điện Formosa Hà Tĩnh hiện hữu,100.0,LNG Hà Tĩnh,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,150.0,ha tinh
+0395_sibling,2,uong bi ext 2,Uông Bí Ext 2,94.1,Uong Bi I,claude-opus-4-6;qwen3.7-max-2026-05-20,arm4,330.0,quang ninh
+0395_sibling,2,an khanh 2,NĐ An Khánh II,94.7,An Khánh - Bac Giang,gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm4,300.0,bac giang/thai nguyen;thai nguyen
+0395_sibling,2,cong thanh lng,Công Thanh LNG,100.0,Cong Thanh,claude-opus-4-6,arm1,1500.0;600.0,thanh hoa
+0395_sibling,2,lng cong thanh,Nhiệt điện LNG Công Thanh,100.0,Cong Thanh,mistral-large-2512,arm1,1500.0,thanh hoa
+0395_sibling,2,thu duc dau,NĐ Thủ Đức dầu,100.0,NĐ Thủ Đức,gpt-5.5,arm3,165.0,tp. ho chi minh
+0395_sibling,2,an khanh 2 / bac giang,NĐ An Khánh II / Bắc Giang,94.7,An Khánh 1,gpt-5.5,arm3,650.0,bac giang
+0395_sibling,2,than binh dinh 1,NĐ Than Bình Định I,100.0,LNG Bình Định,gpt-5.5,arm3,1200.0,binh dinh
+0395_sibling,2,vinh tan vi,NĐ Vĩnh Tân VI,94.7,Vinh Tan 1,gpt-5.5,arm3,1200.0,binh thuan
+0395_sibling,1,mong duong,Nhiệt điện Mông Dương,100.0,Mong Duong 1,mistral-large-2512,arm1,1080.0,quang ninh
+0395_sibling,1,duyen hai 4,Nhiệt điện Duyên Hải 4,95.2,Duyen Hai 1,mistral-large-2512,arm1,600.0,tra vinh
+0395_sibling,1,trung tam dien luc mien trung 500 mw,Trung tâm điện lực miền Trung 500 MW,91.7,TBKHH miền Trung I,gpt-5.5,arm1,500.0,not specified
+0395_sibling,1,bot mong duong 2,Nhiệt điện BOT Mông Dương 2,100.0,Mong Duong 2,mistral-large-2512,arm2,1244.0,quang ninh
+0395_sibling,1,lng quang trach 3,Nhiệt điện LNG Quảng Trạch 3,92.3,Quảng Trạch 2,mistral-large-2512,arm2,1500.0,quang binh
+0395_sibling,1,vinh tan 5,Nhiệt điện Vĩnh Tân 5,94.7,Vinh Tan 1,gpt-5.5-2026-04-23,arm2,1200.0,binh thuan
+0395_sibling,1,formosa ht,NĐ Formosa HT (Phase 1),100.0,Formosa HT2,claude-opus-4-6,arm3,500.0,ha tinh
+0395_sibling,1,tua bin khi thu duc,Tua bin khí Thủ Đức,100.0,NĐ Thủ Đức,claude-opus-4-6,arm3,113.0,hcm city
+0395_sibling,1,tua bin khi can tho,Tua bin khí Cần Thơ,100.0,NĐ Cần Thơ,claude-opus-4-6,arm3,155.0,can tho
+0395_sibling,1,nghi son 3,Nghi Sơn III,100.0,LNG Nghi Sơn (Thanh Hóa),mistral-large-2512,arm3,1200.0,thanh hoa
+0395_sibling,1,can tho hoi nuoc,NĐ Cần Thơ hơi nước,100.0,NĐ Cần Thơ,gpt-5.5,arm3,33.0,can tho
+0395_sibling,1,can tho s4 dau,Nhiệt điện Cần Thơ S4 dầu,100.0,NĐ Cần Thơ,gpt-5.5,arm3,33.0,can tho
+0395_sibling,1,formosa ha tinh 1,Nhiệt điện Formosa Hà Tĩnh I,100.0,LNG Hà Tĩnh,gpt-5.5,arm3,150.0,ha tinh
+0395_sibling,1,bac giang,Nhiệt điện Bắc Giang,100.0,An Khánh - Bac Giang,gpt-5.5,arm3,600.0,bac giang
+0395_sibling,1,than binh dinh 2,Nhiệt điện than Bình Định II,100.0,LNG Bình Định,gpt-5.5,arm3,2000.0,binh dinh
+0395_sibling,1,dau thu duc,Nhiệt điện Dầu Thủ Đức,100.0,NĐ Thủ Đức,qwen3.7-max-2026-05-20,arm3,165.0,tp ho chi minh
+0395_sibling,1,formosa ht ph.1,Formosa HT Ph.1,95.2,Formosa HT2,claude-opus-4-6,arm4,500.0,ha tinh
+0395_sibling,1,long an 3,Long An III,94.1,Long An 1,mistral-large-2512,arm4,1200.0,long an
+0395_sibling,1,tan phuoc 3,NĐ Tân Phước III,100.0,LNG Tân Phước,gpt-5.5-2026-04-23,arm4,1200.0,tien giang
+0395_sibling,1,vung ang 3 than,NĐ Vũng Áng III than,100.0,Vung Ang 3,gpt-5.5-2026-04-23,arm4,1200.0,ha tinh
+0395_sibling,1,thai binh giai doan 2,LNG Thái Bình giai đoạn 2,100.0,LNG Thái Bình,gpt-5.5-2026-04-23,arm4,1500.0,thai binh
+0395_sibling,1,dau/khi thu duc,NĐ dầu/khí Thủ Đức,100.0,NĐ Thủ Đức,gpt-5.5-2026-04-23,arm4,165.0,tp ho chi minh
