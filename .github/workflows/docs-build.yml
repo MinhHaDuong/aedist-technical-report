@@ -95,14 +95,8 @@ jobs:
         run: make slides
 
       - name: Build manuscript
-        # Pre-build fig_capability_dag.pdf (root Makefile owns the rule; the
-        # slides sub-make has no rule for it — same recursive-make gap that
-        # makes `make slides` red. Pre-building here lets manuscript pass even
-        # before ticket 0367's fix lands.
         if: needs.changes.outputs.chore != 'true'
-        run: |
-          make report/inputs/generated/fig_capability_dag.pdf
-          make -C slides manuscript/main.pdf
+        run: make -C slides manuscript/main.pdf
 
       - name: Run make check (lint + tests)
         if: needs.changes.outputs.chore != 'true'
