@@ -2,7 +2,7 @@
 Title: Active VoI-cost model selection with capture-recapture completeness and a stopping rule
 Created: 2026-06-03
 Author: claude
-Blocked-by: 0396
+Blocked-by: 0398
 
 --- log ---
 2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
@@ -20,7 +20,7 @@ easy core).
 Three coupled mechanisms (see `docs/2026-06-03-list-fusion-litreview.md` §5, §7):
 
 1. **Active selection.** Choose the next (model, run) maximizing expected information gain
-   per cost on the 0396 posterior. **Adaptive submodularity** (Golovin & Krause 2011, JAIR
+   per cost on the 0398 posterior. **Adaptive submodularity** (Golovin & Krause 2011, JAIR
    42) makes greedy "highest VoI-per-cost next" (1−1/e)-competitive — the right backbone,
    because LLM errors are correlated so the marginal value of each added model **diminishes**
    (arXiv:2602.08003). Weight information gain by **capacity (MW)**: a missed 2000 MW coal
@@ -72,7 +72,7 @@ def test_stop_when_missed_mw_below_tolerance():
 
 - [ ] `src/aedist/active_select.py`:
       `select_next_model(candidates, posterior, weight="capacity_mw") -> Candidate`
-      via greedy expected-information-gain / cost on the 0396 posterior, MW-weighted.
+      via greedy expected-information-gain / cost on the 0398 posterior, MW-weighted.
 - [ ] **Cold-start** reliability prior over un-run variants from family/size/version
       (hierarchical), so candidates with zero runs still get a VoI estimate
       (`test_coldstart_unrun_variant_has_voi`).
@@ -91,7 +91,7 @@ def test_stop_when_missed_mw_below_tolerance():
 ## Guidance / hands-off context
 
 - Litreview + citations: `docs/2026-06-03-list-fusion-litreview.md` (§5, §7).
-- Blocked by 0396 (consumes its posterior). 0397's quality gate should run inside the loop so
+- Blocked by 0398 (consumes its posterior). 0399's quality gate should run inside the loop so
   vetoed runs do not feed VoI updates.
 - LCMCR has an R package; a Python reimplementation or rpy2 bridge is acceptable — pick the
   lighter path and record the choice.

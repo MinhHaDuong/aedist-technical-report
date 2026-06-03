@@ -14,7 +14,7 @@ unknown list of ASEAN thermal power plants. Each item is a multi-attribute **ent
 (name / capacity-MW / fuel / lifecycle status). We must fuse all runs into one inventory
 while jointly estimating the latent true list and per-model/per-run reliability, so that
 bad runs and non-credible models fall out as low-weight posteriors (not hard filters here;
-hard gating lives in 0397).
+hard gating lives in 0399).
 
 Four design constraints, each grounded in the literature
 (see `docs/2026-06-03-list-fusion-litreview.md`):
@@ -99,4 +99,4 @@ def test_pu_anchor_absence_is_not_negative():
   is out of scope here — open a follow-up if it dominates.
 - Keep the model **generic** (Country X / subsector Y), with ASEAN thermal as the first
   parameterized application (project rule: design for genericity).
-- Do not hard-discard models/runs in this ticket — emit continuous weights; gating is 0397.
+- Do not hard-discard models/runs in this ticket — emit continuous weights; gating is 0399.

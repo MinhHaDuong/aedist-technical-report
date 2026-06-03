@@ -9,7 +9,7 @@ Author: claude
 --- body ---
 ## Context
 
-Beyond down-weighting by consensus (0396), we need to detect and **reject** bad runs and
+Beyond down-weighting by consensus (0398), we need to detect and **reject** bad runs and
 non-credible models on grounds that do NOT depend on the group. The classic failure of
 consensus-based truth discovery is **herding**: a majority of correlated-wrong runs is
 endorsed with confidence. Model-free intrinsic checks are the antidote — a confident
@@ -22,7 +22,7 @@ Two **independent evidence channels** on run quality, fused into one trust opini
   (capacity ≤ 0 or absurd), heaping (capacities all multiples of 100 ⇒ guessing), duplicate
   records, internal inconsistency (status=retired with future commissioning date), aberrant
   row count. Tooling pattern: Deequ-style column profiling (Schelter et al., VLDB 2018).
-- **Extrinsic (consensus):** disagreement with the 0396 fused posterior; and a Raykar–Yu
+- **Extrinsic (consensus):** disagreement with the 0398 fused posterior; and a Raykar–Yu
   (2012) **spammer score** (is the run's output distribution independent of the inferred
   truth? — the "constant column" is literally the spammer signature).
 
@@ -70,7 +70,7 @@ def test_t0_reps_identical_is_not_degenerate():
       mass function: zero/low-entropy column, schema/unit violation, out-of-domain numeric,
       heaping, duplicate rows, internal inconsistency, aberrant row count. The variability
       axis is **across rows**, never across T=0 reps (`test_t0_reps_identical_is_not_degenerate`).
-- [ ] **Extrinsic** channel: consensus-disagreement against the 0396 posterior + Raykar–Yu
+- [ ] **Extrinsic** channel: consensus-disagreement against the 0398 posterior + Raykar–Yu
       spammer score for label-independent output.
 - [ ] Fusion uses a **conflict-robust** rule (Subjective-Logic discounting / Dubois–Prade /
       Yager), NOT normalized Dempster (`test_high_conflict_does_not_produce_false_certainty`).
@@ -83,7 +83,7 @@ def test_t0_reps_identical_is_not_degenerate():
 ## Guidance / hands-off context
 
 - Litreview + citations: `docs/2026-06-03-list-fusion-litreview.md` (§2, §6).
-- This ticket consumes the 0396 posterior for the consensus channel but its intrinsic
+- This ticket consumes the 0398 posterior for the consensus channel but its intrinsic
   detectors are standalone — keep them runnable on a single run with no fusion context, so
   they can also gate runs BEFORE fusion (cheap early kill, cf. "test one before blasting").
 - Keep detectors generic/configurable (thresholds per attribute type), not hardcoded to
