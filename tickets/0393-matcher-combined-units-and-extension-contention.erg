@@ -7,6 +7,7 @@ Blocked-by: 0392
 --- log ---
 2026-06-03T00:00Z claude created — from the Exp2 FP audit: the LP-veto bucket is the single largest, 112 distinct / 276 FP occurrences, where the name already matches a reference row at ≥90 but the global LP leaves it unmatched
 
+2026-06-03T08:09Z scope note: a 1NF handoff (docs/inventory-1nf-handoff-exp2.md) measured merged 'X & Y' rows at 2.6% of rows, 91% self-decomposing across peer runs. KEY DISTINCTION for this ticket: its 'do not decompose' rule is for the REFERENCE-FREE consolidation objective, NOT for 0393. Here the gold reference attests both units, so decomposing 'Cẩm Phả I & II' to match reference 'Cẩm Phả 1'+'Cẩm Phả 2' fabricates nothing and IS the fix. Do not import the reference-free no-decompose rule into the matcher.
 --- body ---
 ## Context
 
