@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Model emits `level`; level-conditioned capacity-plausibility coherence check
+Created: 2026-06-03
+Author: claude
+Blocked-by: 0401
+
+--- log ---
+2026-06-03T00:00Z claude created — Imagine session. Once `level` exists in the schema and is validated on the reference (0401), the capacity-plausibility check becomes a per-row INTERNAL self-consistency signal: is the capacity plausible *given the level the model declared*, and is the declared level consistent with the name. This replaces the flat [30,1600] band that the verification proved wrong (operating max 1500, but power-centers reach 6000). Author decision: the model assigns level.
+
+--- body ---
+## Context
+
+The flat external capacity band died on contact with the data (0401 context):
+plausibility is level-conditional. With `level` a first-class field, capacity
+becomes an **internal-coherence** signal, and it catches a defect the verbal
+1NF detector (0396) cannot: a power-center row like `LNG Mỹ Giang | 6000` has no
+"1 & 2" in its name, so the name regex passes it — but `level=Plant ∧ 6000 MW`
+is incoherent, and `level=Complex` when the task asked for Plant grain is a
+scope violation. Name-based 1NF and capacity-vs-level are complementary.
+
+## Two pieces
+
+**A. Model emits `level` (answer-side).**
+- Prompt change so each output row declares its granularity
+  (Unit/Block/Plant/Complex/Unknown), per the 0401 enum and the "finest grain
+  represented" rule.
+- **Audit before the full sweep** (.claude/rules): one test call per regime,
+  inspect whether models label grain coherently, BEFORE re-running the batch. If
+  models cannot self-classify grain reliably, fall back to deriving level
+  post-hoc from the emitted name (Site+number→Plant, bare Site→Complex) and
+  record that the "model-assigned" goal was not met — do not silently ship a
+  noisy hallucination axis.
+- New runs carry `level`; existing `measurements.jsonl` rows are backfilled by
+  the same post-hoc name derivation (flagged as derived, not model-emitted).
+
+**B. Level-conditioned capacity coherence (internal).**
+- Per-row predicate `capacity_plausible_for_level`, using the 0401 caps:
+  Unit ≤1350 (coal) / ≤~900 (CCGT); Block >1300 ok; Plant ≤~3200; Complex any;
+  Unknown skipped. Lower bound: ≥30 MWe = task scope (already in 0397's external
+  check; keep it there, it is not level-conditional).
+- Per-row predicate `level_consistent_with_name`: a name with a merge marker
+  (0396's regex) cannot be `Unit`; a bare-Site name is not `Unit`/`Plant`.
+- Both feed the **internal** composite of 0397 (a row passes internal coherence
+  only if its capacity is plausible for its declared level and its level matches
+  its name). Wire as `coherence_*` columns (+ `_annotation`), ADR-7 into
+  `records_to_metrics()`.
+
+## First failing test
+`tests/test_score_coherence_level.py` (red→green):
+- `{name:"Cẩm Phả 1", level:"Plant", fuel:"coal", capacity_mwe:6000}` →
+  `capacity_plausible_for_level` False (Plant ≤3200) → fails internal.
+- `{name:"LNG Mỹ Giang", level:"Complex", capacity_mwe:6000}` → plausible for
+  Complex → passes the capacity predicate (granularity-scope is a separate
+  signal, not this predicate).
+- `{name:"Nhơn Trạch 3 & 4", level:"Unit", capacity_mwe:1500}` →
+  `level_consistent_with_name` False (merge marker can't be a Unit).
+- `{name:"Vinh Tan 2", level:"Unit", fuel:"coal", capacity_mwe:1244}` →
+  fails Unit cap (≤1350 is fine, but 1244 with 2 units → really a Plant); pin
+  the intended verdict so the Unit/Plant boundary is explicit in tests.
+
+## Exit criteria
+- [ ] Prompt emits `level`; one-call-per-regime audit recorded before any batch.
+- [ ] `measurements.jsonl` rows carry `level` (model-emitted on new runs, derived
+      + flagged on existing).
+- [ ] `capacity_plausible_for_level` and `level_consistent_with_name` predicates
+      land with unit tests on the curated fixtures above.
+- [ ] Both feed 0397's internal composite; `coherence_*` columns + ADR-7 wiring.
+- [ ] `make check` passes.
+
+## Out of scope
+- The flat upper capacity band (deleted — superseded by this).
+- Re-running the full Exp2 sweep is gated on the audit verdict; if the model
+  cannot label grain, ship the derived fallback and ticket the sweep separately.
+- Entity resolution / consensus fusion (handoff §5).
+
+## Related
+- 0401 — prerequisite: `level` schema + reference derivation + taxonomy audit
+- 0397 — consumes these predicates in its internal composite; its external
+  check keeps only province + capacity≥30
+- 0396 — verbal 1NF, complementary detector
+- 0201 — quality composite axis
+- docs/inventory-1nf-handoff-exp2.md

@@ -6,6 +6,7 @@ Blocked-by: 0396
 
 --- log ---
 2026-06-03T00:00Z claude created — Imagine-phase design with the author. Sits ABOVE the per-field coherence indicators (0396 row_atomicity, plus the existing vocab/status/capacity adherence): aggregates them into two reference-free composites, internal (response-only) and external (world-knowledge, not gold), with per-row pass/fail aggregation. Blocked-by 0396 because the internal composite ANDs the per-row atomicity predicate that 0396 introduces.
+2026-06-03T10:00Z claude — Imagine-session verification killed the external [30,1600] band: operating centrales max ≈1500 MW but reference power-centers legitimately reach 6000 MW, so a flat ceiling mislabels ~25% of the gold. Capacity plausibility is level-conditional → spun out the `level` schema (0401) and the level-conditioned capacity coherence check (0402). 0397's external check now keeps only province + capacity≥30-numeric; the upper-plausibility signal lives in 0402.
 
 --- body ---
 ## Context
@@ -49,14 +50,14 @@ they are not mistaken for the per-field numbers.
 **External composite — per-row AND of:**
 - province ∈ gazetteer (reuse `_province_known` from `coherence.py`; promote it
   to a scored column with `_annotation`)
-- capacity ∈ [30, 1600] MW. **Two distinct semantics, document both:**
-  - lower bound 30 = task-scope compliance (the prompt asked for >30 MWe; a
-    sub-30 row is out-of-requested-scope, not implausible).
-  - upper bound 1600 = loose physical plausibility (max nuclear unit, EPR). Real
-    VN thermal max ≈ 600–750 MW/unit — TODO verify and record the real thermal
-    max in the docstring. 1600 is a garbage-catcher (negatives, 5e4), NOT a 1NF
-    detector (two 600 MW units merged = 1200 < 1600); the 1NF regex (0396) owns
-    merged-row detection. Do not tighten the band to chase merged rows.
+- capacity ≥ 30 MWe and numeric. Lower bound 30 = task-scope compliance (the
+  prompt asked for >30 MWe; a sub-30 row is out-of-requested-scope). **No flat
+  upper band.** The Imagine-session verification killed the [30,1600] idea: a
+  flat ceiling is meaningless because capacity plausibility is *level-conditional*
+  (operating centrales max ≈1500 MW, but reference power-centers legitimately
+  reach 6000 MW). The level-conditioned upper-plausibility check is a separate,
+  richer signal that lives in 0402 (needs the `level` schema field from 0401);
+  do not put a flat ceiling here.
 
 Both composites land as per-run scalars in `records_to_metrics()` (ADR-7) and as
 `coherence_*` columns (+ `_annotation`), threaded through scorer → mart → views
@@ -76,8 +77,9 @@ into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
 - `{"name":"Nhơn Trạch 3 & 4","fuel":"gas","status":"operating",
   "capacity_mwe":1200,"province":"Đồng Nai"}` → fails internal (non-atomic),
   passes external.
-- `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":12000,
-  "province":"Hà Tĩnh"}` → fails external (out of [30,1600]), passes internal.
+- `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":12,
+  "province":"Hà Tĩnh"}` → fails external (below the 30 MWe task scope), passes
+  internal.
 - `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":600,
   "province":"Hà Tĩnh"}` → passes both → both composites = 1.0 on a singleton.
 
@@ -86,11 +88,9 @@ into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
       pass/fail fractions, alongside (not replacing) the per-field indicators.
 - [ ] Internal AND includes 0396's per-row atomicity predicate (consumed, not
       re-implemented); external AND includes a new `coherence_province_known`
-      column and the [30,1600] band.
+      column and a capacity ≥30-and-numeric check (no flat upper band).
 - [ ] Both composites in `records_to_metrics()` (ADR-7); per-field breakdown
       retained.
-- [ ] Capacity-band docstring records the verified real VN thermal max and the
-      task-scope (30) vs plausibility (1600) rationale.
 - [ ] `tests/test_score_coherence.py` green; `make check` passes.
 - [ ] Mart/view schema accepts the new columns (defensive `.get` per #651);
       real regen is out of scope → 0387.
@@ -108,6 +108,9 @@ into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
 ## Related
 - 0396 — prerequisite: per-field 1NF row-atomicity indicator (provides the
   per-row predicate the internal composite ANDs)
+- 0401 — `level` schema + reference derivation (foundation for 0402)
+- 0402 — level-conditioned capacity-plausibility coherence; feeds this internal
+  composite (replaces the deleted flat upper band)
 - 0201 — parent: quality composite axis
 - 0387 — downstream: mart regen after coherence-field additions
 - 0393 — reference-based counterpart; opposite 1NF reading (do not conflate)

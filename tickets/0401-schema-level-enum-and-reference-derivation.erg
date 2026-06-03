@@ -1,0 +1,95 @@
+%erg 0.1
+Title: Schema: add `level` enum (Unit/Block/Plant/Complex/Unknown) + derive reference Level + taxonomy audit
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T00:00Z claude created — Imagine session with the author. The capacity-plausibility paradox (operating centrales max ≈1500 MW yet reference rows reach 6000 MW) turned out to be a MISSING DIMENSION: rows live at different granularities (turbo-set / plant / power-center), and plausibility is level-conditional. A flat capacity band cannot work. The clean fix is to make granularity a first-class schema field. Author decisions: Site = Complex; the MODEL assigns level (answer-side, → 0402); reference level is derived mechanically; plants are conventionally named "Site + number" (so Plant = Site+N, Complex = bare Site).
+
+--- body ---
+## Context
+
+Verified during the Imagine session against `data/reference/`:
+- operating/constructing centrales max = **1500 MW**, none > 1600;
+- the 6000 MW rows are **power centers** (LNG Mỹ Giang/Hà Tĩnh/Cái Mép Hạ),
+  i.e. several plants aggregated into one row;
+- planned single LNG centrales reach ~3200 MW (Bạc Liêu).
+
+So capacity plausibility is meaningless without knowing the row's granularity.
+This ticket adds that granularity as a schema field and proves the taxonomy
+holds on the real reference. The capacity *scoring* that consumes it is 0402.
+
+This is the AGENTS.md "transform a codesmell metric into a design architecture
+improvement" move, and the experiment-design "lead with the generic abstraction"
+rule: `level` is the generic container hierarchy; the first application is the
+VN thermal inventory asked at Plant granularity.
+
+## The enum (author-fixed)
+
+`level ∈ {Unit, Block, Plant, Complex, Unknown}`
+
+| Value | Meaning | Plausibility cap (domain note) |
+|---|---|---|
+| Unit | one turbo-set / tranche (single shaft) | coal ≤1350 (world record), VN typ. 300/600/660; CCGT mono-shaft ≤~900; VN alert >700 |
+| Block | CCGT multi-shaft assembly (2+ GT / 1 ST) — **CCGT only** | >1300 normal; not a single turbo-set |
+| Plant | a centrale = "Site + number" (Vĩnh Tân 2, Vung Ang 1) | ≤~1500 operating, ≤~3200 planned |
+| Complex | a site / power center = bare "Site" (several plants) | >3200, up to 6000+ |
+| Unknown | grain not determinable | no capacity check |
+
+Note the hierarchy is **not** a clean linear order: `Block` is a CCGT-only rung
+between Unit and Plant, and a single-block CCGT is simultaneously a Block and a
+Plant. Rule of assignment: the row's level is the **finest grain it represents**;
+for a single-block CCGT prefer Plant unless the row is explicitly one turbo-set.
+
+## Scope of THIS ticket (offline, mechanical, no model calls)
+
+1. **Schema.** Add `level: Level = Unknown` to `Plant`/`SourcedPlant`
+   (`src/aedist/schema.py`), enum with the five values above.
+2. **Reference derivation.** A function that assigns `level` to every reference
+   row from the unit-level data we already have (`data/reference/gem_units.csv`,
+   `vietnam_thermal_units_v1.csv`) and the `units_included` column of
+   `vietnam_thermal_v1.csv`: bare Site / ≥2 distinct named plants → Complex;
+   "Site + number" with its own units → Plant; a single turbo-set row → Unit;
+   CCGT multi-shaft → Block. Use the "Site + number" naming convention as the
+   primary signal, `units_included` cardinality as the tie-breaker.
+3. **Taxonomy audit (audit-before-instrumenting — this GATES 0402).** Confirm on
+   the real reference that (a) every row receives exactly one non-Unknown level
+   (report the Unknown rate), and (b) the per-level caps actually separate the
+   levels (no operating Plant > 1600, no Unit > 1350, Complexes are the >3200
+   tail). If the taxonomy does NOT partition the reference cleanly, STOP and
+   record the non-finding — do not proceed to 0402's prompt/scoring work.
+
+## First failing test
+`tests/test_level.py` (red→green):
+- `Level` enum importable with the five members; `Plant(level=...)` round-trips.
+- `derive_reference_level`: "Vung Ang" (units_included lists ≥2 plants) → Complex;
+  "Vĩnh Tân 2" (Site+number, own units) → Plant; a bare single turbo-set → Unit.
+- audit assertion: over `vietnam_thermal_v1.csv`, every operating/constructing
+  row classified Plant has capacity ≤ 1600 (catches a broken derivation that
+  labels a 6000 MW Complex as Plant).
+
+## Exit criteria
+- [ ] `Level` enum + `level` field on `Plant`/`SourcedPlant`; ADR-7: when a row
+      carries `level`, it flows into `records_to_metrics()`.
+- [ ] `derive_reference_level` assigns a level to every reference row; Unknown
+      rate reported.
+- [ ] Taxonomy audit passes (clean partition + caps separate levels) OR a
+      documented non-finding closes the ticket without 0402.
+- [ ] `tests/test_level.py` green; `make check` passes.
+
+## Out of scope
+- Model emitting `level` (prompt change, new runs) → 0402.
+- Level-conditioned capacity plausibility *scoring* → 0402.
+- Entity-resolution thresholds and the consensus-fusion objective (handoff §5).
+- Reference de-dup / hygiene that the derivation may surface → 0394/0395.
+
+## Related
+- 0402 — downstream: model emission + level-conditioned capacity coherence
+- 0397 — its external capacity check drops the flat band; level-conditioned
+  plausibility moves to 0402
+- 0396 — verbal 1NF (name "1&2"); complementary — the Level+capacity signal
+  catches power-centers whose NAME has no merge marker (LNG Mỹ Giang 6000)
+- 0201 — the quality composite axis this feeds
+- 0394 / 0395 — reference-v2 hygiene (derivation may surface granularity issues)
+- docs/inventory-1nf-handoff-exp2.md — granularity / 1NF background
+- data/reference/gem_units.csv, vietnam_thermal_units_v1.csv — unit-level source
