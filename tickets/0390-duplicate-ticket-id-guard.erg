@@ -5,6 +5,7 @@ Author: Claude
 
 --- log ---
 2026-05-29T14:00Z Claude created — class-shape regression guard. A ticket-staleness audit hit TWO live ID collisions in one session (0383 ×2, 0363 ×2); git history shows prior ones (0354→0363, 0372→0377). The erg validator checks within a directory but not the open∪closed union, so collisions slip through until they bite Blocked-by resolution or erg-pr-merge.
+2026-06-03T11:40Z claude note — recurrence: an Imagine session and a parallel session both created `0396` (`0396-coherence-internal-external-composite` vs `0396-scoring-row-atomicity-coherence-indicator`); caught only by manual ls before quickpr, fixed by renaming the newcomer to 0397/0401/0402. Confirms the gap is now hit by concurrent autonomous sessions racing the same next-id, not just intra-session audits — the guard should also flag the local working tree against origin/main, not just the committed union.
 
 --- body ---
 ## Context
