@@ -74,3 +74,31 @@ def test_stage_numbers_match_csv():
         "Prose matrix headers do not match CSV stage numbering "
         "(canonical = CSV chronological order):\n" + "\n".join(f"  {m}" for m in mismatches)
     )
+
+
+@pytest.mark.adherence
+def test_no_inline_stage_numbers_outside_blockquote():
+    """Inline 'stage N' references outside the historical blockquote must not
+    carry the argument — the PR decouples prose from numbers.  Any surviving
+    'stage N' (case-insensitive) outside the blockquote is drift risk.
+
+    Allowed zones:
+    - Lines starting with '>' (the historical edit-note blockquote)
+    - **N. label** bold headers (already covered by test_stage_numbers_match_csv)
+    """
+    md_text = MD_PATH.read_text()
+    violations = []
+    for i, line in enumerate(md_text.splitlines(), 1):
+        if line.lstrip().startswith(">"):
+            continue
+        stripped = line.lstrip("| ")
+        if stripped.startswith("**") and re.match(r"\*\*\d+\.", stripped):
+            continue
+        hits = re.findall(r"[Ss]tages?[\s-]+\d+", line)
+        if hits:
+            violations.append(f"  line {i}: {hits} — {line.strip()[:80]}")
+
+    assert not violations, (
+        "Inline stage-number references found outside the blockquote.\n"
+        "Use capability names instead of stage numbers in prose:\n" + "\n".join(violations)
+    )
