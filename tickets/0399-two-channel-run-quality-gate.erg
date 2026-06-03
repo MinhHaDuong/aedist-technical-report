@@ -1,0 +1,90 @@
+%erg 0.1
+Title: Two-channel run-quality gate (intrinsic model-free veto + consensus) via evidential fusion
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
+
+--- body ---
+## Context
+
+Beyond down-weighting by consensus (0398), we need to detect and **reject** bad runs and
+non-credible models on grounds that do NOT depend on the group. The classic failure of
+consensus-based truth discovery is **herding**: a majority of correlated-wrong runs is
+endorsed with confidence. Model-free intrinsic checks are the antidote — a confident
+majority cannot fool a variability check (project rule: "audit before instrumenting").
+
+Two **independent evidence channels** on run quality, fused into one trust opinion:
+
+- **Intrinsic (model-free), can VETO:** degeneracy (a column with zero/near-zero entropy,
+  a single distinct value, all-null), schema/unit violations (MW vs kW), out-of-domain
+  (capacity ≤ 0 or absurd), heaping (capacities all multiples of 100 ⇒ guessing), duplicate
+  records, internal inconsistency (status=retired with future commissioning date), aberrant
+  row count. Tooling pattern: Deequ-style column profiling (Schelter et al., VLDB 2018).
+- **Extrinsic (consensus):** disagreement with the 0398 fused posterior; and a Raykar–Yu
+  (2012) **spammer score** (is the run's output distribution independent of the inferred
+  truth? — the "constant column" is literally the spammer signature).
+
+Fuse the two channels with **evidence theory**, NOT normalized Dempster (it misbehaves
+under high conflict — Zadeh counterexample). Use **Subjective-Logic discounting**
+(Jøsang 2016) or **Dubois–Prade disjunctive / Yager** so the intrinsic channel can pull the
+fused trust toward reject regardless of consensus. Few-observation models get **wide
+uncertainty mass** that shrinks with more runs (honest about K < N heterogeneity).
+
+CRITICAL — the variability axis (project rule: pinned reps are the control):
+- no variability *across rows of a column* (all plants same status) = degenerate ⇒ reject;
+- no variability *across reps of the same model at T=0* = EXPECTED ⇒ NOT a defect.
+Conflating these would reject the reproducibility we are trying to measure.
+
+## First test
+
+`tests/test_run_quality_gate.py::test_intrinsic_veto_overrides_consensus`
+
+```python
+def test_intrinsic_veto_overrides_consensus():
+    # A run whose `status` column is a single constant value across all rows
+    # (zero entropy) — a model-free degeneracy — must be vetoed EVEN IF it agrees
+    # with the consensus on existence. The fused trust opinion must fall below the
+    # reject threshold, driven by the intrinsic channel, not the consensus channel.
+    run = make_run(rows=fake_plants(n=200), status_column=["operational"] * 200)
+    consensus_agreement = 0.95                      # high — would pass on consensus alone
+    opinion = run_quality_opinion(run, consensus_agreement)
+    assert opinion.is_vetoed                          # intrinsic veto fired
+    assert opinion.belief_reject > opinion.belief_accept
+    assert opinion.cause == "degenerate_column:status:zero_entropy"
+
+def test_t0_reps_identical_is_not_degenerate():
+    # Three T=0 reps of the SAME model producing identical lists is the
+    # reproducibility control, NOT a degeneracy. Must not be vetoed.
+    reps = [identical_list()] * 3
+    assert not run_quality_opinion_for_reps(reps, temperature=0.0).is_vetoed
+```
+
+## Definition of done
+
+- [ ] `src/aedist/run_quality.py` exposes `run_quality_opinion(run, consensus_agreement)
+      -> Opinion` with explicit `belief_accept / belief_reject / uncertainty` mass
+      (Subjective-Logic / Dempster-Shafer), an `is_vetoed` flag, and a human-readable `cause`.
+- [ ] **Intrinsic** checks implemented as independent detectors over a run, each returning a
+      mass function: zero/low-entropy column, schema/unit violation, out-of-domain numeric,
+      heaping, duplicate rows, internal inconsistency, aberrant row count. The variability
+      axis is **across rows**, never across T=0 reps (`test_t0_reps_identical_is_not_degenerate`).
+- [ ] **Extrinsic** channel: consensus-disagreement against the 0398 posterior + Raykar–Yu
+      spammer score for label-independent output.
+- [ ] Fusion uses a **conflict-robust** rule (Subjective-Logic discounting / Dubois–Prade /
+      Yager), NOT normalized Dempster (`test_high_conflict_does_not_produce_false_certainty`).
+- [ ] Few-observation runs carry larger uncertainty mass that shrinks with N
+      (`test_uncertainty_shrinks_with_observations`).
+- [ ] A model whose runs are systematically vetoed (cheap hallucinator) is flagged as a
+      **spammer/non-credible model** (hard exclusion), distinct from a one-off bad run.
+- [ ] `make check` passes; the named tests above are green.
+
+## Guidance / hands-off context
+
+- Litreview + citations: `docs/2026-06-03-list-fusion-litreview.md` (§2, §6).
+- This ticket consumes the 0398 posterior for the consensus channel but its intrinsic
+  detectors are standalone — keep them runnable on a single run with no fusion context, so
+  they can also gate runs BEFORE fusion (cheap early kill, cf. "test one before blasting").
+- Keep detectors generic/configurable (thresholds per attribute type), not hardcoded to
+  power-plant specifics where avoidable (project rule: design for genericity).

@@ -1,0 +1,102 @@
+%erg 0.1
+Title: Latent-truth multi-attribute PU fusion of model runs with status-stratified reliability
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
+
+--- body ---
+## Context
+
+We run N runs across K LLMs (size/version variants of shared families) to enumerate an
+unknown list of ASEAN thermal power plants. Each item is a multi-attribute **entity**
+(name / capacity-MW / fuel / lifecycle status). We must fuse all runs into one inventory
+while jointly estimating the latent true list and per-model/per-run reliability, so that
+bad runs and non-credible models fall out as low-weight posteriors (not hard filters here;
+hard gating lives in 0399).
+
+Four design constraints, each grounded in the literature
+(see `docs/2026-06-03-list-fusion-litreview.md`):
+
+1. **Two-sided error, multi-truth.** A run both omits real plants (FN) and hallucinates
+   fake ones (FP), and a query maps to a *set* of plants. Build on **LTM** (Zhao et al.
+   2012, PVLDB 5(6)) / MBM-SmartMTD family, not single-truth TruthFinder/CRH-only.
+2. **Heterogeneous per-attribute loss** (CRH, Li et al. SIGMOD 2014): Gaussian/GTM for
+   capacity-MW, categorical Dawid–Skene confusion matrix for fuel, **time-indexed**
+   categorical for status (model training-cutoff is a covariate — a 2022 model saying
+   "construction" and a 2024 model saying "operational" are both right at their vintage;
+   do not score this as disagreement).
+3. **Presence-only anchor = PU, not semi-supervised.** OSM/Wikipedia/trackers give
+   positives only; "absent from anchor" ≠ false. Calibrate a coverage frequency `c`
+   (Elkan & Noto 2008) and treat inclusion as **SNAR** (PULSNAR, arXiv:2303.08269): the
+   anchor over-represents large/operational plants, so reliability calibrated on the
+   easy core must NOT be pooled with the hard tail — **stratify (sens, spec) by status**.
+4. **Anti-contamination / anti-copying.** OSM/Wikipedia are in LLM training data (GeoLLM,
+   ICLR 2024); LLMs are more correlated with each other than with truth (arXiv:2506.07962).
+   Agreement-with-anchor is regurgitation, not independent corroboration. Down-weight
+   anchor-agreement vs agreement on the **hard tail the model could not have copied**
+   (Dong et al. 2009 source-dependence; dependence-aware aggregation arXiv:2601.22336).
+
+Reps at temperature=0 ARE the chain-reproducibility control (project rule); do not add a
+separate control call. MoE models require repeat=3 (project rule).
+
+## First test
+
+`tests/test_latent_truth_fusion.py::test_pu_anchor_absence_is_not_negative`
+
+```python
+def test_pu_anchor_absence_is_not_negative():
+    # Two plants. p_anchored is in the presence-only anchor (operational core);
+    # p_dark is real but appears in NO anchor source (hard tail) — it is asserted
+    # by 3 of 4 independent-ish runs. A naive semi-supervised fusion that treats
+    # "absent from anchor" as a negative label would push p_dark's existence
+    # posterior below 0.5. The PU model must NOT.
+    runs = make_runs(
+        anchored={"p_anchored"},                      # presence-only positives
+        run_assertions=[
+            {"p_anchored", "p_dark"},                 # run 1
+            {"p_anchored", "p_dark"},                 # run 2
+            {"p_anchored"},                           # run 3 (omits p_dark)
+            {"p_anchored", "p_dark"},                 # run 4
+        ],
+        model_of_run=[0, 1, 2, 3],                    # distinct models, low dependence
+    )
+    post = fuse(runs, anchor_mode="pu")               # PU, not semi-supervised
+    assert post.existence["p_dark"] > 0.5             # absence-from-anchor != false
+    assert post.coverage_frequency_c == pytest.approx(..., abs=0.2)  # c estimated, not 1.0
+```
+
+## Definition of done
+
+- [ ] `src/aedist/fuse_runs.py` exposes `fuse(runs, anchor_mode="pu") -> Posterior` with
+      `existence[entity]`, per-attribute value posteriors, and per-(model, status-stratum)
+      `(sensitivity, specificity)`.
+- [ ] Existence layer is **two-sided-error multi-truth** (LTM-style FP/FN), fitted by
+      EM or variational inference; identifiability anchored by the presence-only positives.
+- [ ] Anchor handled as **PU** with an estimated coverage frequency `c` (Elkan-Noto), under
+      a **SNAR** propensity (not SCAR): inclusion propensity may depend on capacity/status.
+- [ ] Reliability is **stratified by status**; the test
+      `test_reliability_not_pooled_across_strata` shows a model strong on operational and
+      weak on planned gets two different specificities, not one pooled value.
+- [ ] Per-attribute loss: GTM/Gaussian for capacity, DS confusion for fuel, **time-indexed**
+      DS for status with model training-cutoff as covariate
+      (`test_status_vintage_not_penalized`).
+- [ ] Anchor-agreement is **down-weighted** as evidence of model reliability relative to
+      hard-tail agreement (`test_anchor_agreement_discounted` — a model that only ever
+      reproduces anchored plants does not earn high reliability).
+- [ ] All new run parameters wired into `records_to_metrics()` in `measurements.py` in THIS
+      MR (ADR-7).
+- [ ] `make check` passes; first test + the four named tests above are green.
+
+## Guidance / hands-off context
+
+- Litreview with citations and the 5 load-bearing refs: `docs/2026-06-03-list-fusion-litreview.md`.
+- Start from the LTM generative model; add the CRH heterogeneous-loss layer per attribute;
+  graft the PU coverage-frequency correction on the existence variable only.
+- The matcher (entity resolution on records) is a *third* noisy measurement; for THIS ticket
+  assume the slow matcher is applied and treat identity as given. Matcher-error propagation
+  is out of scope here — open a follow-up if it dominates.
+- Keep the model **generic** (Country X / subsector Y), with ASEAN thermal as the first
+  parameterized application (project rule: design for genericity).
+- Do not hard-discard models/runs in this ticket — emit continuous weights; gating is 0399.
