@@ -102,6 +102,14 @@ def test_clean_name_never_emptied_by_drops(cleaner):
     assert cleaner.clean_name("Nhà máy nhiệt điện").strip() != ""
 
 
+def test_clean_name_drops_tolerate_nonbreaking_and_double_space(cleaner):
+    """Ticket 0392: drops run before whitespace is collapsed, so multi-word
+    prefixes must match \\s+ (nbsp / double space), like the reference's own
+    'Long An\\u00a01'. A literal space would leak the prefix as an FP."""
+    assert cleaner.clean_name("Nhiệt điện Bà Rịa") == cleaner.clean_name("Bà Rịa")
+    assert cleaner.clean_name("Nhà  máy  Nhiệt  điện Na Dương") == cleaner.clean_name("Na Dương")
+
+
 def test_clean_province(cleaner):
     """Test cleaning of the 'province' column."""
     province = "Ho Chi Minh City"
