@@ -2,9 +2,11 @@
 Title: Align capability-timeline stage numbering across data, prose, and proposal docs
 Created: 2026-05-28
 Author: HDMX-coding-agent
+Tag: needs-human
 
 --- log ---
 2026-05-28T12:04Z HDMX-coding-agent created
+2026-06-03T09:12Z claude note Not a mechanical renumber — needs an author decision before execute. The CSV/py order (1 Chat, 2 Web search, 3 Code execution, 4 Files upload, 5 Reasoning, 6 MCP, 7 Deep research, 8 Autonomous) and the docs/capability-timeline.md order (1 Chat, 2 Files upload, 3 Web search, 4 Reasoning, 5 Deep research, 6 Code execution, 7 MCP, 8 Autonomous) encode DIFFERENT conceptual orderings, and the doc's analytical prose is load-bearing on its numbering: the "expected 1->2->3->4->5 emergence ladder", "stage 3 || stage 4 parallel branches" (web ∥ reasoning), and "stage 5 = stage 3 join stage 4" (deep research = web + reasoning) all key off the doc's order. Renumbering the doc to CSV order yields "3 Code execution, 4 Files upload", which is not a sensible emergence ladder, breaking the prose argument. The ticket premise conflates the figure y-axis data ordering with the narrative ordering. Decide which numbering is canonical FOR THE ARGUMENT (likely the doc's logical order should become the data order, which the ticket notes is the harder path) before any renumber. Tagged needs-human; skipped by the low-risk sweep.
 
 --- body ---
 ## Context
