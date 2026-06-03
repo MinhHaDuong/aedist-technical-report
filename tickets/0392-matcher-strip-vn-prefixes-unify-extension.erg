@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-03T00:00Z claude created — from the Exp2 FP audit (docs/fp-audit-exp2.md): name-normalization gap is 57 distinct / 152 FP occurrences, all recover to a real reference row once normalized
 
+2026-06-03T07:28Z executed: added name_drops nhiet dien/nha may/dong phat/tbk/nmn?d + mo rong|mr->extension substitution + empty-name guard. Verified on existing Exp2 outputs: matched(TP) 5182->5423 (+241), FP 640->399 (-241, no TP regression); matcher_fail_normalization occ 152->5 (<=20 criterion). 17 cleaner tests + 1814 fast tests + ruff all green.
 --- body ---
 ## Context
 

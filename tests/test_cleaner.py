@@ -80,6 +80,28 @@ def test_clean_name(cleaner):
     assert cleaned == "plant a"
 
 
+def test_clean_name_drops_vietnamese_facility_prefixes(cleaner):
+    """Ticket 0392: nhiệt điện / nhà máy / đồng phát / TBK / NMĐ prefixes must
+    drop so model names match the reference (Exp2 FP audit)."""
+    assert cleaner.clean_name("Nhiệt điện Bà Rịa") == cleaner.clean_name("Bà Rịa")
+    assert cleaner.clean_name("Nhà máy Nhiệt điện Na Dương") == cleaner.clean_name("Na Dương")
+    assert cleaner.clean_name("NĐ đồng phát Hải Hà 1") == cleaner.clean_name("Hải Hà 1")
+    assert cleaner.clean_name("TBK Thủ Đức") == cleaner.clean_name("Thủ Đức")
+    assert cleaner.clean_name("NMĐ Bà Rịa") == cleaner.clean_name("Bà Rịa")
+
+
+def test_clean_name_unifies_extension_marker(cleaner):
+    """Ticket 0392: mở rộng / MR / extension collapse to one token so the
+    Vietnamese and English reference spellings reconcile."""
+    assert cleaner.clean_name("Vĩnh Tân 4 mở rộng") == cleaner.clean_name("Vinh Tan 4 extension")
+    assert "extension" in cleaner.clean_name("Uông Bí MR 2")
+
+
+def test_clean_name_never_emptied_by_drops(cleaner):
+    """Ticket 0392: dropping every token must not reduce a name to empty."""
+    assert cleaner.clean_name("Nhà máy nhiệt điện").strip() != ""
+
+
 def test_clean_province(cleaner):
     """Test cleaning of the 'province' column."""
     province = "Ho Chi Minh City"
