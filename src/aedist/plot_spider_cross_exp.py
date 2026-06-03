@@ -1,12 +1,13 @@
-"""Cross-experiment spider multiplot: E1 (centre) + 4 Exp2 conditions (corners).
+"""Cross-experiment spider multiplot: E1 + 4 Exp2 conditions.
 
-Layout (3×3 grid, 5 panels occupied):
+Layout (compact GridSpec, 2 rows — no wasted edge cells):
 
-   [1N]       [5N]
-         [E1]
-   [1D]       [5D]
+   [1N]  [E1]  [5N]      no-docs / baseline / no-docs
+      [1D]  [5D]         with-docs (1 turn / 5 turns)
 
-Each panel shows the 4 shared models superposed.
+Top row groups the no-docs runs around the parametric baseline (E1);
+bottom row holds the with-docs runs, centred. Each panel shows the 4
+shared models superposed.
 Both Exp1 and Exp2 CSVs must have the 10 SPIDER_AXES columns.
 
 Usage:
@@ -21,6 +22,10 @@ import csv
 import logging
 from collections import defaultdict
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 from .plot_quality_spider_exp1 import (
     SPIDER_AXES,
@@ -65,13 +70,16 @@ _CONDITIONS = [
     ("5D\n(optim.+docs, 5 tours)", "arm4", "exp2"),
 ]
 
-# Panel positions in a 3×3 grid (row, col)
-_PANEL_POS = {
-    "E1\n(param.)": (1, 1),  # centre
-    "1N\n(naïf, 1 tour)": (0, 0),  # top-left
-    "5N\n(optim., 5 tours)": (0, 2),  # top-right
-    "1D\n(naïf+docs, 1 tour)": (2, 0),  # bottom-left
-    "5D\n(optim.+docs, 5 tours)": (2, 2),  # bottom-right
+# Panel placement on a 2×6 GridSpec. Each panel spans two columns, so the top
+# row holds three panels (cols 0-2, 2-4, 4-6) and the bottom row holds two,
+# centred (cols 1-3, 3-5). No empty cells: every panel is larger than the old
+# 3×3 quincunx, which filled only 5 of 9 cells.
+_PANEL_CELL = {
+    "1N\n(naïf, 1 tour)": (0, slice(0, 2)),  # top-left
+    "E1\n(param.)": (0, slice(2, 4)),  # top-centre
+    "5N\n(optim., 5 tours)": (0, slice(4, 6)),  # top-right
+    "1D\n(naïf+docs, 1 tour)": (1, slice(1, 3)),  # bottom-left (centred)
+    "5D\n(optim.+docs, 5 tours)": (1, slice(3, 5)),  # bottom-right (centred)
 }
 
 
@@ -119,31 +127,27 @@ def make_figure(
     exp1_path: Path,
     exp2_path: Path,
     output: Path,
-) -> None:
+) -> "Figure":
     import matplotlib.pyplot as plt
     import numpy as np
+    from matplotlib.gridspec import GridSpec
 
     n_axes = len(SPIDER_AXES)
     angles = np.linspace(0, 2 * np.pi, n_axes, endpoint=False) + (np.pi / n_axes)
     closed_angles = np.concatenate((angles, [angles[0]]))
 
-    # Build one figure with a 3×3 polar subplot grid
-    fig = plt.figure(figsize=(14, 11))
-    ax_grid: dict[tuple[int, int], plt.Axes] = {}
-    for row_i in range(3):
-        for col_i in range(3):
-            ax = fig.add_subplot(3, 3, row_i * 3 + col_i + 1, projection="polar")
-            ax_grid[(row_i, col_i)] = ax
-
-    # Hide unused cells
-    used_positions = set(_PANEL_POS.values())
-    for pos, ax in ax_grid.items():
-        if pos not in used_positions:
-            ax.set_visible(False)
+    # Compact 2-row layout: each panel spans two GridSpec columns, so no canvas
+    # is wasted on empty cells (cf. the old 3×3 quincunx). Wider, shorter figure
+    # gives each radar more area than the previous 14×11 / 3×3 arrangement.
+    fig = plt.figure(figsize=(16, 10))
+    gs = GridSpec(2, 6, figure=fig, hspace=0.95, wspace=0.6)
+    axes_by_label: dict[str, plt.Axes] = {
+        label: fig.add_subplot(gs[row, cols], projection="polar")
+        for label, (row, cols) in _PANEL_CELL.items()
+    }
 
     for label, arm, csv_src in _CONDITIONS:
-        pos = _PANEL_POS[label]
-        ax = ax_grid[pos]
+        ax = axes_by_label[label]
         path = exp1_path if csv_src == "exp1" else exp2_path
         rows = _load_rows(path, arm)
         profiles = _aggregate_condition(rows)
@@ -169,10 +173,15 @@ def make_figure(
             )
             ax.fill(closed_angles, closed_values, color=color, alpha=0.06)
 
-        ax.set_title(label, fontsize=9, pad=16, fontweight="bold")
+        # Lift the title clear of the polar label rings: axis labels sit at
+        # r=1.28 and dimension labels at r=1.46 (see _draw_axis_labels), which
+        # the old pad=16 could not clear on the enlarged panels — the two-line
+        # titles (1N/5N/1D/5D) overlapped "Date COD plausible"/"Actifs trouvés".
+        # y is in axes-fraction units, so 1.55 clears the r=1.46 ring.
+        ax.set_title(label, fontsize=8.5, y=1.55, fontweight="bold")
 
-    # Shared legend below the figure
-    handles, labels = ax_grid[(1, 1)].get_legend_handles_labels()
+    # Shared legend below the figure (E1 panel carries all four models)
+    handles, labels = axes_by_label["E1\n(param.)"].get_legend_handles_labels()
     if handles:
         fig.legend(
             handles,
@@ -189,11 +198,12 @@ def make_figure(
         fontsize=13,
         y=0.99,
     )
-    fig.tight_layout(rect=(0, 0.06, 1, 0.97))
+    fig.tight_layout(rect=(0, 0.06, 1, 0.96))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
     log.info("Wrote %s", output)
+    return fig
 
 
 def main(argv: list[str] | None = None) -> None:

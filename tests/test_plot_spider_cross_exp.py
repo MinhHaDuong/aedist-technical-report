@@ -1,11 +1,20 @@
 """Tests for aedist.plot_spider_cross_exp — model-slug canonicalisation + aggregation."""
 
+from pathlib import Path
+
+import pytest
+
 from aedist.plot_quality_spider_exp1 import SPIDER_AXES
 from aedist.plot_spider_cross_exp import (
     _aggregate_condition,
     _canonical_model,
     _normalize_model_slug,
 )
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+_SRC = _REPO_ROOT / "src" / "aedist" / "plot_spider_cross_exp.py"
+_EXP1_CSV = _REPO_ROOT / "experiments" / "derived" / "exp1_cross_eval.csv"
+_EXP2_CSV = _REPO_ROOT / "experiments" / "derived" / "sota_cross_eval.csv"
 
 
 def test_normalize_model_slug_lowercases_and_dashes() -> None:
@@ -33,3 +42,26 @@ def test_aggregate_condition_medians_for_known_models_only() -> None:
     result = _aggregate_condition(rows)
     assert set(result) == {"gpt-5.5"}
     assert result["gpt-5.5"][axis] == 0.5
+
+
+def test_layout_is_not_quincunx_3x3_grid() -> None:
+    """0357: the compact layout must drop the wasteful 3×3 quincunx grid."""
+    src = _SRC.read_text(encoding="utf-8")
+    assert "add_subplot(3, 3" not in src, (
+        "fig_spider_cross_exp must not pack five panels into a 3×3 grid "
+        "(four empty edge cells waste the canvas) — use a compact GridSpec."
+    )
+    assert "GridSpec" in src, "compact layout should be built with a GridSpec"
+
+
+@pytest.mark.slow
+def test_regenerates_with_five_polar_axes(tmp_path) -> None:
+    """0357: the figure rebuilds from the tracked CSVs with exactly five radars."""
+    from aedist.plot_spider_cross_exp import make_figure
+
+    output = tmp_path / "fig_spider_cross_exp.pdf"
+    fig = make_figure(_EXP1_CSV, _EXP2_CSV, output)
+
+    polar_axes = [ax for ax in fig.axes if ax.name == "polar"]
+    assert len(polar_axes) == 5, f"expected 5 polar panels, got {len(polar_axes)}"
+    assert output.exists() and output.stat().st_size > 0
