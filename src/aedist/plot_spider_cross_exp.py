@@ -140,7 +140,7 @@ def make_figure(
     # is wasted on empty cells (cf. the old 3×3 quincunx). Wider, shorter figure
     # gives each radar more area than the previous 14×11 / 3×3 arrangement.
     fig = plt.figure(figsize=(16, 10))
-    gs = GridSpec(2, 6, figure=fig, hspace=0.55, wspace=0.6)
+    gs = GridSpec(2, 6, figure=fig, hspace=0.95, wspace=0.6)
     axes_by_label: dict[str, plt.Axes] = {
         label: fig.add_subplot(gs[row, cols], projection="polar")
         for label, (row, cols) in _PANEL_CELL.items()
@@ -173,7 +173,12 @@ def make_figure(
             )
             ax.fill(closed_angles, closed_values, color=color, alpha=0.06)
 
-        ax.set_title(label, fontsize=9, pad=16, fontweight="bold")
+        # Lift the title clear of the polar label rings: axis labels sit at
+        # r=1.28 and dimension labels at r=1.46 (see _draw_axis_labels), which
+        # the old pad=16 could not clear on the enlarged panels — the two-line
+        # titles (1N/5N/1D/5D) overlapped "Date COD plausible"/"Actifs trouvés".
+        # y is in axes-fraction units, so 1.55 clears the r=1.46 ring.
+        ax.set_title(label, fontsize=8.5, y=1.55, fontweight="bold")
 
     # Shared legend below the figure (E1 panel carries all four models)
     handles, labels = axes_by_label["E1\n(param.)"].get_legend_handles_labels()
