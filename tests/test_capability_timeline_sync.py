@@ -42,3 +42,35 @@ def test_csv_dates_present_in_prose():
     assert not mismatches, "CSV dates missing from docs/capability-timeline.md:\n" + "\n".join(
         f"  {m}" for m in mismatches
     )
+
+
+@pytest.mark.adherence
+def test_stage_numbers_match_csv():
+    """Every **N. label** header in the prose matrix must match the CSV's
+    (stage, stage_name) pair.  Catches numbering drift between the figure
+    y-axis and the docs.  Ratified 2026-06-03: CSV chronological order is
+    canonical."""
+    csv_stages: dict[int, str] = {}
+    with CSV_PATH.open() as f:
+        for row in csv.DictReader(f):
+            n = int(row["stage"])
+            csv_stages[n] = row["stage_name"]
+
+    md_text = MD_PATH.read_text()
+    prose_headers = re.findall(r"\*\*(\d+)\.\s+([^*]+?)\*\*", md_text)
+    assert prose_headers, "no **N. label** headers found in the prose matrix"
+
+    mismatches = []
+    for num_str, label in prose_headers:
+        num = int(num_str)
+        label_clean = label.strip().rstrip("—").strip()
+        csv_name = csv_stages.get(num)
+        if csv_name is None:
+            mismatches.append(f"prose has stage {num} ({label_clean}) but CSV has no stage {num}")
+        elif not csv_name.startswith(label_clean) and not label_clean.startswith(csv_name):
+            mismatches.append(f"stage {num}: prose='{label_clean}' vs CSV='{csv_name}'")
+
+    assert not mismatches, (
+        "Prose matrix headers do not match CSV stage numbering "
+        "(canonical = CSV chronological order):\n" + "\n".join(f"  {m}" for m in mismatches)
+    )

@@ -36,18 +36,19 @@ The eight capability stages we track are not a strict chain. The claim:
   reasoning model surfaces both shipped as products in 2024).
 - **Stage 5 (deep research) is the join of 3 + 4** — multi-step web
   retrieval driven by a reasoning model, with citations.
-- **Stages 6 -> 7 -> 8 follow** (code execution as a fixed
-  sandbox, then general / extensible tool use, then multi-agent
-  coordination). Stage 6 ships earliest of the three at OpenAI
-  (~18 months before stage 7) because a single fixed Python sandbox
-  is a smaller surface than an extensible tool registry.
+- **Code execution → external tool use → autonomous agents follow**
+  (fixed sandbox, then extensible tool registry, then multi-agent
+  coordination). Code execution ships earliest of the three at OpenAI
+  (~18 months before external tool use) because a single fixed Python
+  sandbox is a smaller surface than an extensible tool registry.
 
 The "ladder" is therefore a small DAG, not a chain, with a fork between
-1-2 and 5, and a merge at 5. The hypothesis is industry-level: at any
-single lab, stage 3 (browsing) was usually shipped well before stage 4
-(reasoning), but the *industry-level emergence window* of stage 4 (late
-2024) overlaps the steady-state availability of stage 3 across labs, so
-stage 5 became reachable for all four labs within a six-month window.
+web search and reasoning, and a merge at deep research. The hypothesis
+is industry-level: at any single lab, web search was usually shipped
+well before reasoning, but the *industry-level emergence window* for
+reasoning (late 2024) overlaps the steady-state availability of web
+search across labs, so deep research became reachable for all four labs
+within a six-month window.
 
 ## Date definition
 
@@ -58,9 +59,10 @@ this matrix uses the consumer-product signal because that is the
 relevant threshold for "a working analyst can rely on this capability."
 
 A consequence of this choice: an *absent* cell whose framework
-prerequisites are present (e.g., DeepSeek stage 5 = deep research,
-with stages 3 and 4 shipped) is evidence that the *composer* — the
-framework loop that joins the prerequisites into the named capability
+prerequisites are present (e.g., DeepSeek has no deep research product
+despite having shipped both web search and reasoning) is evidence that
+the *composer* — the framework loop that joins the prerequisites into
+the named capability
 — has not been packaged as a public product, not that the underlying
 model components are missing. This is the framework × trained-model ×
 product co-deployment view: each marker is the date all three lined up.
@@ -68,19 +70,19 @@ product co-deployment view: each marker is the date all three lined up.
 ## Capability stages (schema)
 
 1. **Chat LLM** — consumer-facing chat product backed by a chat-tuned model (RLHF for dialogue). No retrieval, no tools, no reasoning surface. Pretrained base LLMs and bare "Instruct" checkpoints, which exist earlier or in parallel, are excluded — they were never shipped as standalone consumer products; at most a continuation / completion API.
-2. **Files upload (RAG)** — documents at inference time.
-3. **Web search** — live external retrieval as a product.
-4. **Reasoning / chain-of-thought as a product surface** — visible
-   thinking, test-time compute exposed to users.
-5. **Deep research** — multi-step web + reasoning, long-running, citations.
-6. **Code execution** — *sandboxed code runtime (Python / JS / shell)
+2. **Web search** — live external retrieval as a product.
+3. **Code execution** — *sandboxed code runtime (Python / JS / shell)
    as a built-in tool in a consumer product. Outputs include text,
-   computed values, and visualisations. Distinct from stage 7 in being
-   a single fixed sandbox rather than an extensible tool registry.*
-7. **External tool use (MCP) / computer use / coding agents** —
-   autonomous action over an extensible tool surface (we record the
+   computed values, and visualisations. Distinct from external tool use
+   in being a single fixed sandbox rather than an extensible tool registry.*
+4. **Files upload (RAG)** — documents at inference time.
+5. **Reasoning** — visible chain-of-thought / test-time compute exposed
+   to users as a product surface.
+6. **External tool use (MCP)** — autonomous action over an extensible
+   tool surface, including computer use and coding agents (we record the
    *agentic surface* form, not the bare function-calling API; the API
    form is noted in the bibliography for context).
+7. **Deep research** — multi-step web + reasoning, long-running, citations.
 8. **Autonomous agents** — agent teams, sub-agent dispatch,
    orchestrator-worker patterns; sandboxed shell + open-ended loop
    exposed to end users without per-step approval.
@@ -98,84 +100,84 @@ panel.
 | Stage | OpenAI | Anthropic | Mistral | Alibaba (Qwen) | DeepSeek |
 |---|---|---|---|---|---|
 | **1. Chat LLM** | 2022-11-30 ChatGPT [(blog)][1] | 2023-03-14 Claude [(blog)][8] | 2024-02-26 Le Chat beta [(blog)][41] | 2023-09-13 Tongyi Qianwen public launch [(news)][28] | 2023-11-29 DeepSeek LLM + chat.deepseek.com [(repo)][33] |
-| **2. Files upload (RAG)** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
-| **3. Web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | 2025-01-24 Qwen Chat v0.2 web search [(X)][42] | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
-| **4. Reasoning surface** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
-| **5. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
-| **6. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
-| **7. External tool use (MCP) / computer use / coding agent** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
+| **2. Web search** | 2023-05-12 Browse with Bing (Plus rollout) [(plugin post)][2] | 2025-03-20 Claude web search [(blog)][10] | 2025-02-06 Le Chat web search [(blog)][23] | 2025-01-24 Qwen Chat v0.2 web search [(X)][42] | 2024-12-10 Internet Search on chat.deepseek.com [(news)][35] |
+| **3. Code execution** | 2023-07-06 ChatGPT Code Interpreter beta (Plus) [(release notes)][38] | 2024-10-24 Analysis tool (JS sandbox in Claude.ai) [(blog)][39] | 2025-02-06 Le Chat code interpreter [(blog)][23] | absent | absent |
+| **4. Files upload (RAG)** | 2023-10-30 ChatGPT All-Tools (PDF / file analysis) [(coverage)][6] | 2024-06-25 Projects (file upload to Claude.ai) [(blog)][9] | 2025-02-06 Le Chat (document upload) [(blog)][23] | 2023-10-31 Tongyi ZoneWit document upload (Apsara 2023) [(blog)][29] | 2025-01-15 DeepSeek App launch with file upload [(news)][34] |
+| **5. Reasoning** | 2024-09-12 o1-preview [(blog)][3] | 2025-02-24 Claude 3.7 extended thinking [(blog)][11] | 2025-06-10 Magistral [(blog)][24] | 2024-11-28 QwQ-32B-Preview [(blog)][30] | 2025-01-20 DeepSeek-R1 [(blog)][37] |
+| **6. External tool use (MCP)** | 2025-01-23 Operator (CUA) [(blog)][5] | 2024-10-22 Computer use beta [(blog)][13] / 2025-02-24 Claude Code [(blog)][11] | 2025-05-27 Agents API [(blog)][26] | 2025-07-11 Qwen Chat Desktop (macOS, MCP support) [(news)][40] | absent |
+| **7. Deep research** | 2025-02-02 Deep Research [(blog)][4] | 2025-04-15 Research [(blog)][12] | 2025-07-17 Le Chat dives deep [(blog)][25] | 2025-05-13 Deep Research on Qwen Chat [(X)][31] | absent |
 | **8. Autonomous agents** | 2024-10 Swarm (experimental) -> 2025-03 Agents SDK [(blog)][7] | 2025-06-13 multi-agent Research system + Claude Code subagents [(eng blog)][21] | 2025-05-27 Agents API multi-agent orchestration [(blog)][26] | absent | absent |
 
 ## Parallel branches: where the chain becomes a DAG
 
 The matrix shows three reasons the linear "ladder" framing breaks down.
 
-**Stage 3 || stage 4 at the industry level.** Browsing (stage 3) shipped
-two years before the reasoning surface (stage 4) at OpenAI (May 2023 vs
+**Web search and reasoning emerged as parallel branches.** Web search
+shipped two years before the reasoning surface at OpenAI (May 2023 vs
 Sept 2024) and at Google (Bard 2023 search grounding vs Dec 2024 Flash
-Thinking). Per-lab at those two labs, the *per-product* sequence is the
-expected 1 -> 2 -> 3 -> 4 -> 5. But Anthropic shipped its reasoning
+Thinking). At those two labs, the *per-product* chronological sequence
+tracks the figure's y-axis order. But Anthropic shipped its reasoning
 surface (extended thinking, 2025-02-24) *before* its consumer web search
-(2025-03-20) — a per-product inversion of 3 and 4 that would be
-impossible if 3 strictly preceded 4. Mistral shipped both within weeks
+(2025-03-20) — a per-product inversion that would be impossible if web
+search strictly preceded reasoning. Mistral shipped both within weeks
 in 2025, with web search (Feb) before reasoning (June). Across the four
-labs, the *industry-level emergence window* for stage 4
-(Sept 2024 - June 2025) is so compressed that, for any given calendar
-month in that window, some labs are in stage 3 and others in stage 4
-with similar maturity. Treating 3 and 4 as parallel branches of the
-DAG matches the cross-lab data — and Anthropic's per-lab inversion —
-better than treating them as sequential.
+labs, the *industry-level emergence window* for reasoning
+(Sept 2024 – June 2025) is so compressed that, for any given calendar
+month in that window, some labs have web search and others have
+reasoning with similar maturity. Treating web search and reasoning as
+parallel branches of the DAG matches the cross-lab data — and
+Anthropic's per-lab inversion — better than treating them as sequential.
 
-**Stage 5 = stage 3 join stage 4.** Deep research products are not new
-capabilities but compositions: each lab ships deep research within
-2-7 months of having both a reasoning surface and a web tool. OpenAI:
-Sept 2024 (o1) + May 2023 (Bing) -> Feb 2025 deep research (5 months
-after o1). Google: Dec 2024 (Flash Thinking) + 2023 (search) -> Dec
-2024 deep research (same week as Flash Thinking, on Gemini 1.5 Pro).
-Mistral: June 2025 (Magistral) + Feb 2025 (Le Chat search) -> July 2025
-deep research (5 weeks after Magistral). The composition is *forced*:
-the moment a lab has both prerequisites, the deep-research product
-follows quickly. This is the strongest evidence that stage 5 is a
-join, not a separate capability that the lab "decides" to build.
+**Deep research = web search ⋈ reasoning.** Deep research products are
+not new capabilities but compositions: each lab ships deep research
+within 2–7 months of having both a reasoning surface and a web tool.
+OpenAI: Sept 2024 (o1) + May 2023 (Bing) → Feb 2025 deep research
+(5 months after o1). Google: Dec 2024 (Flash Thinking) + 2023 (search)
+→ Dec 2024 deep research (same week as Flash Thinking, on Gemini 1.5
+Pro). Mistral: June 2025 (Magistral) + Feb 2025 (Le Chat search) →
+July 2025 deep research (5 weeks after Magistral). The composition is
+*forced*: the moment a lab has both prerequisites, the deep-research
+product follows quickly. This is the strongest evidence that deep
+research is a join of web search and reasoning, not a separate
+capability that the lab "decides" to build.
 
-**Stage 6 (code execution) is the earliest tool surface to ship.** Of
-the three tool-use stages (6 code execution, 7 extensible MCP-like tool
-use, 8 multi-agent recursion), code execution shipped first at every
-lab that has it: OpenAI 2023-07-06 ChatGPT Code Interpreter beta
-predates Operator (stage 7) by ~18 months; Anthropic ships
-its analysis tool (2024-10-24) two days after Computer Use beta
-(2024-10-22), with both within the same week, so stage 6 and stage 7
-overlap rather than lead at Anthropic; Mistral's code interpreter ships
-alongside Le Chat (2025-02-06), well before the Agents API (2025-05-27).
-A single fixed Python / JS sandbox is a smaller surface than an
-extensible tool registry — the build effort scales differently — which
-is consistent with stage 6 leading stages 7 and 8 in the cross-lab data.
+**Code execution is the earliest tool surface to ship.** Of the three
+agentic-tool capabilities (code execution, extensible tool use, and
+autonomous agents), code execution shipped first at every lab that has
+it: OpenAI 2023-07-06 ChatGPT Code Interpreter beta predates Operator
+by ~18 months; Anthropic ships its analysis tool (2024-10-24) two days
+after Computer Use beta (2024-10-22), with both within the same week, so
+code execution and external tool use overlap rather than lead at
+Anthropic; Mistral's code interpreter ships alongside Le Chat
+(2025-02-06), well before the Agents API (2025-05-27). A single fixed
+Python / JS sandbox is a smaller surface than an extensible tool
+registry — the build effort scales differently — which is consistent
+with code execution leading external tool use and autonomous agents in
+the cross-lab data.
 
-**Stage 7 splits between research-preview and API form.** The "general
-tool use" cell is awkward because each lab has at least two distinct
-surfaces: the bare function-calling / tool-use API (OpenAI 2023-06-13,
-Anthropic via tool-use API 2024, Google via Gemini API 2024, Mistral
-function calling 2024) and the agentic consumer surface (Operator,
-Computer Use beta, Project Mariner, Agents API). We record the agentic
-surface in the matrix because that is the product form; the API form is
-typically a precondition rather than the capability itself.
+**External tool use splits between research-preview and API form.** The
+"general tool use" cell is awkward because each lab has at least two
+distinct surfaces: the bare function-calling / tool-use API (OpenAI
+2023-06-13, Anthropic via tool-use API 2024, Google via Gemini API 2024,
+Mistral function calling 2024) and the agentic consumer surface
+(Operator, Computer Use beta, Project Mariner, Agents API). We record
+the agentic surface in the matrix because that is the product form; the
+API form is typically a precondition rather than the capability itself.
 
 ## Honest gaps and divergences
 
 - **Mistral has the most compressed timeline.** All eight
-  product-stage cells (1-8) ship between Feb 2024 and July 2025,
-  ~17 months, with stages 2/3/6 (file upload, web search, code
-  interpreter) shipping in a single 2025-02-06 Le Chat launch and
-  stages 7/8 (Agents API tool use and multi-agent orchestration) in
-  a single 2025-05-27 launch. By contrast OpenAI's stage 1 to stage
-  5 spans 27 months and Anthropic's spans 25 months. Mistral arrived
-  later and shipped the stack faster because the scaffold (RAG
-  patterns, web search APIs, reasoning RL recipes) was already public
-  by 2025.
-- **Stage 8 is fuzzy and we did not pin sharp dates.** "Multi-agent
-  coordination" as a *product surface* (vs a paper / experimental
-  framework) is still emerging. OpenAI's Swarm (Oct 2024) was
-  explicitly experimental and not for production; the Agents SDK
+  product-stage cells ship between Feb 2024 and July 2025, ~17 months,
+  with file upload, web search, and code execution shipping in a single
+  2025-02-06 Le Chat launch and external tool use and autonomous agents
+  in a single 2025-05-27 launch. By contrast OpenAI's chat-to-reasoning
+  span is 27 months and Anthropic's is 25 months. Mistral arrived later
+  and shipped the stack faster because the scaffold (RAG patterns, web
+  search APIs, reasoning RL recipes) was already public by 2025.
+- **Autonomous agents are fuzzy and we did not pin sharp dates.**
+  "Multi-agent coordination" as a *product surface* (vs a paper /
+  experimental framework) is still emerging. OpenAI's Swarm (Oct 2024)
+  was explicitly experimental and not for production; the Agents SDK
   (March 2025) is the real shipped surface. Anthropic's multi-agent
   Research system was disclosed in a June 2025 engineering blog post,
   but the consumer-facing Research feature predates that. Google's
@@ -183,15 +185,14 @@ typically a precondition rather than the capability itself.
   2025) [(blog)][27], which is the closest thing to a multi-agent
   consumer surface. Mistral's Agents API (May 2025) advertises
   orchestration but the multi-agent semantics are not yet a separate
-  product. Reading the matrix row honestly: stage 8 is an industry
-  trajectory, not a clean product line.
-- **Mistral stage 2 (file upload) is late.** Le Chat got document
-  upload in Feb 2025, about a year after Le Chat beta launched in
-  Feb 2024. The API supported function calling and external retrieval
-  patterns earlier, but the *consumer-facing* file upload — which is
-  what stage 2 is — arrived in 2025.
-- **OpenAI stage 2 boundary is fuzzy.** ChatGPT plugins (March 2023)
-  included a retrieval plugin and a browsing plugin; we treat the
+  product. Reading the matrix row honestly: autonomous agents are an
+  industry trajectory, not a clean product line.
+- **Mistral's file upload is late.** Le Chat got document upload in
+  Feb 2025, about a year after Le Chat beta launched in Feb 2024. The
+  API supported function calling and external retrieval patterns earlier,
+  but the *consumer-facing* file upload arrived in 2025.
+- **OpenAI's file-upload boundary is fuzzy.** ChatGPT plugins (March
+  2023) included a retrieval plugin and a browsing plugin; we treat the
   October 2023 "All Tools" rollout (PDF analysis + Code Interpreter +
   uploads, no plugin needed) as the stage-2 milestone because that is
   when retrieval became a default consumer surface. The plugin era
@@ -203,7 +204,7 @@ typically a precondition rather than the capability itself.
 - **Anthropic API web search vs consumer web search.** Consumer web
   search shipped 2025-03-20; API web search shipped 2025-05-07
   separately (mentioned in the same blog rollup [(10)][10]). We
-  record the consumer date as the stage-3 milestone.
+  record the consumer date as the web-search milestone.
 - **Alibaba (Qwen) has the broadest agentic developer surface but
   multiple absent consumer cells.** Tongyi Qianwen opened to the
   public on 2023-09-13 [(news)][28] after receiving Chinese
