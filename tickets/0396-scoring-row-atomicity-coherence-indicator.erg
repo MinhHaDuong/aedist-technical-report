@@ -1,0 +1,114 @@
+%erg 0.1
+Title: Scoring: add coherence_row_atomicity (1NF / FN1) — reference-free internal-coherence indicator
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T00:00Z claude created — promote row atomicity (1NF) from a matcher artefact (0393) to a first-class reference-free coherence indicator, measured at the verbal level
+
+--- body ---
+## Context
+
+The Exp2 FP audit and the 1NF handoff (`docs/inventory-1nf-handoff-exp2.md`)
+established that some model rows merge ≥2 distinct numbered plants into one
+(`Nhơn Trạch 3 & 4`, `Cẩm Phả I & II`, `Phả Lại 1 & 2`, `… và …`, ranges
+`1–3`). Measured extent: **2.6 % of rows, 57/80 runs (71 %)**, with real
+inter-arm spread (arm2 4.7 %, arm3 1.3 %). The handoff §3(a) showed this is
+**model behaviour, not a parser bug** — a legitimate scientific signal.
+
+Today this phenomenon is only visible *indirectly*, as false positives when
+scoring against the reference (the 0393 `lp_veto` bucket). That couples a
+reference-free property of the output to the gold table and to the matcher.
+
+**This ticket promotes atomicity to a first-class coherence indicator.**
+Atomicity is exactly the coherence family's remit — "is the row internally
+well-formed, without consulting the reference?" — alongside the existing
+`vocab_adherence` (fuel in-vocab) and `status_vocab_adherence`. It is detectable
+**at the verbal level**: from the `name` string alone, via a regex, **with no
+entity resolution and no reference**. That is what makes it isolable now (unlike
+the reference-free *consensus fusion*, which the handoff §5 shows is downstream
+of entity resolution).
+
+**Strategic note:** measuring non-atomicity as a coherence defect may make the
+0393 matcher fix optional for the paper — report the defect rate instead of
+cleaning it out of precision. 0393 (reference-based) and this (reference-free)
+answer different questions; this one is the lower-risk, higher-altitude move
+(turn a codesmell metric into a quality axis, per AGENTS.md).
+
+## The indicator
+
+`coherence_row_atomicity` = atomic rows / `n_rows`.
+- **Numerator:** rows whose `name` does NOT merge ≥2 distinct plant identifiers.
+- **Denominator:** `n_rows`.
+- **Null condition:** `n_rows == 0` → annotation `no_rows`.
+- Higher is better (1.0 = every row is one plant).
+
+## The detector — the over-counting trap is THE hard part (handoff §2)
+
+A naive regex counts **14 %**; the correct, tightened detector counts **2.6 %**.
+The 11.4-point gap is all false positives that MUST be excluded. The detector
+operates **only on the `name` field**, matching joins of plant *identifiers*:
+
+Flag as non-atomic (1NF violation):
+`\d\s*&\s*\d` · `[ivx]+\s*&\s*[ivx]+` · `[ivx0-9]\s*\+\s*[ivx0-9]` (identifier
+join) · `\d\s*và\s*\d` · `\d\s*[-–]\s*\d` (numbered range).
+
+Do NOT flag (legitimate, atomic):
+- **Technology composition** in `Units×MW` / `Technology` / fuel fields:
+  `2 GT + 1 ST`, `Coal + BFG`, `1 CC` — these describe ONE CCGT/plant. The
+  detector never reads those columns.
+- **Separate Phase rows**: `Phase I` and `Phase II` as two distinct rows = good
+  decomposition, each row is atomic. (A single row literally named
+  `… Phase I & II` IS a violation; two rows are not.)
+- **Soft "multiple"/"aggregate"/"unspecified"** in `Units×MW`: that is missing
+  data, not a 1NF violation — out of scope for this metric.
+
+Reuse the handoff §6 detector (it already did the 14 %→2.6 % tightening); do not
+re-derive from the naive form.
+
+## Wiring (this is a contract change, not just a column)
+
+1. `score_mechanical.py`: add to `CoherenceScores` + compute in
+   `score_coherence` (it already iterates rows); add CSV columns
+   `coherence_row_atomicity` (+ `_annotation`) to `_CSV_COLUMNS`.
+2. `docs/scoring-contract.md`: add the per-metric definition under Coherence;
+   while there, fix the doc's existing drift (it omits `status_vocab_adherence`,
+   `source_diversity/spread`, `cod_plausible`).
+3. Mart: surface it in `score_summary.coherence`; **bump `mart_schema_version`
+   1 → 2** and ship the updated validator (per the contract's versioning rule).
+4. ADR-7: wire it into `records_to_metrics()` in the same MR so the metrics dict
+   stays the complete scientific record.
+
+## Exit criteria
+- [ ] `coherence_row_atomicity` emitted per run in `sota_cross_eval.csv` + mart
+- [ ] Detector classifies `Cẩm Phả I & II`, `Nhơn Trạch 3 & 4`, `Phả Lại 1 và 2`
+      as non-atomic; `Phú Mỹ 2.1`, a `2 GT + 1 ST` row, a `Coal + BFG` CCGT row,
+      and two separate `Phase I`/`Phase II` rows as atomic
+- [ ] Whole-corpus rate matches the handoff (≈2.6 %, arm spread 1.3–4.7 %) — a
+      naive-regex result (~14 %) fails this gate
+- [ ] `scoring-contract.md` updated (new metric + existing-drift fixes)
+- [ ] `mart_schema_version` bumped to 2 with validator; `records_to_metrics`
+      wired
+- [ ] `make check` passes
+
+## First failing test
+`tests/test_score_mechanical.py` (red→green): `score_coherence` over a small row
+set returns `row_atomicity == expected_fraction`, with the curated atomic /
+non-atomic fixtures above. Add a corpus-level adherence assertion that the Exp2
+rate is in `[0.01, 0.06]` (catches a naive regex).
+
+## Out of scope
+- The 0393 matcher fix (combined-units split) — complementary; may become
+  optional once this lands.
+- The reference-free consensus fusion / `do not decompose` rule (a separate,
+  deferred objective; see `docs/inventory-1nf-handoff-exp2.md` §Status). That one
+  is `Blocked-by` entity resolution; this verbal metric is not.
+- Entity resolution thresholds.
+
+## Related
+- `docs/inventory-1nf-handoff-exp2.md` (§2 over-counting, §3a model-behaviour,
+  §6 detector)
+- `docs/scoring-contract.md`, `src/aedist/score_mechanical.py`,
+  `src/aedist/exp2_mart.py` (schema bump), `src/aedist/measurements.py`
+  (records_to_metrics, ADR-7)
+- 0393 (the matcher-side counterpart this may make optional)
