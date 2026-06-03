@@ -1,0 +1,117 @@
+%erg 0.1
+Title: Coherence: internal + external per-row pass/fail composites (over the per-field indicators)
+Created: 2026-06-03
+Author: claude
+Blocked-by: 0396
+
+--- log ---
+2026-06-03T00:00Z claude created — Imagine-phase design with the author. Sits ABOVE the per-field coherence indicators (0396 row_atomicity, plus the existing vocab/status/capacity adherence): aggregates them into two reference-free composites, internal (response-only) and external (world-knowledge, not gold), with per-row pass/fail aggregation. Blocked-by 0396 because the internal composite ANDs the per-row atomicity predicate that 0396 introduces.
+
+--- body ---
+## Context
+
+0201 tracks the §2 quality "Coherence" axis. The per-field indicators are
+landing piecemeal: `coherence_vocab_adherence`, `coherence_status_vocab_adherence`,
+`coherence_capacity_nonnegative` (PR #651), and `coherence_row_atomicity` (0396).
+Each is a per-run fraction = a diagnostic breakdown.
+
+This ticket adds the layer *above* them: two **reference-free composite** scores
+the author specified —
+
+- **`coherence_internal`** — verifiable from the response alone.
+- **`coherence_external`** — verifiable against world knowledge, *not* gold.
+
+Their value: in production (PyPSA-ASEAN consolidation) there is no gold, so these
+are the only quality signal available. Coherence ⟂ F1 — a model can be 100%
+coherent yet 0% accurate; coherence is necessary, not sufficient, for accuracy.
+
+## Design (locked with author)
+
+**Aggregation: per-row pass/fail.** A row is internally coherent iff it passes
+*all* internal checks; `coherence_internal = (fully-internal rows) / n_rows`.
+Same for external. Rationale: the per-field signals are correlated (a merged
+1NF row also has doubled, often out-of-band capacity); per-row pass/fail counts
+such a row once per composite instead of double-penalising it. The per-field
+fractions are kept as the diagnostic breakdown beneath the two scalars (ADR-7,
+the #651 keep-fields-distinct precedent). The composites are therefore *stricter*
+than any single adherence fraction (≈ product of pass rates) — document this so
+they are not mistaken for the per-field numbers.
+
+**Internal composite — per-row AND of:**
+- fuel ∈ allowed vocabulary (reuse `_ALLOWED_FUELS`)
+- status ∈ allowed vocabulary (reuse `_ALLOWED_STATUSES`)
+- row is 1NF-atomic — **reuse 0396's per-row predicate; do not re-specify the
+  detector here** (0396 owns the 14%→2.6% tightening and the false-positive
+  exclusions). This ticket only needs 0396 to expose a row-level boolean, not
+  just the run fraction.
+- capacity numeric and ≥ 0 (reuse `_capacity_nonnegative`)
+
+**External composite — per-row AND of:**
+- province ∈ gazetteer (reuse `_province_known` from `coherence.py`; promote it
+  to a scored column with `_annotation`)
+- capacity ∈ [30, 1600] MW. **Two distinct semantics, document both:**
+  - lower bound 30 = task-scope compliance (the prompt asked for >30 MWe; a
+    sub-30 row is out-of-requested-scope, not implausible).
+  - upper bound 1600 = loose physical plausibility (max nuclear unit, EPR). Real
+    VN thermal max ≈ 600–750 MW/unit — TODO verify and record the real thermal
+    max in the docstring. 1600 is a garbage-catcher (negatives, 5e4), NOT a 1NF
+    detector (two 600 MW units merged = 1200 < 1600); the 1NF regex (0396) owns
+    merged-row detection. Do not tighten the band to chase merged rows.
+
+Both composites land as per-run scalars in `records_to_metrics()` (ADR-7) and as
+`coherence_*` columns (+ `_annotation`), threaded through scorer → mart → views
+like their per-field predecessors.
+
+## Two objectives — do not conflate
+
+The internal composite treats a 1NF-violating row as a defect because this score
+serves the **reference-free** objective. The matcher (0393) serves the
+**reference-based** objective, where a merged "Cẩm Phả I & II" is decomposed and
+matched (fabricates nothing) and is NOT a defect. Do not import either reading
+into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
+
+## First failing test
+
+`tests/test_score_coherence.py` (red→green):
+- `{"name":"Nhơn Trạch 3 & 4","fuel":"gas","status":"operating",
+  "capacity_mwe":1200,"province":"Đồng Nai"}` → fails internal (non-atomic),
+  passes external.
+- `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":12000,
+  "province":"Hà Tĩnh"}` → fails external (out of [30,1600]), passes internal.
+- `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":600,
+  "province":"Hà Tĩnh"}` → passes both → both composites = 1.0 on a singleton.
+
+## Exit criteria
+- [ ] `coherence_internal` and `coherence_external` emitted per run as per-row
+      pass/fail fractions, alongside (not replacing) the per-field indicators.
+- [ ] Internal AND includes 0396's per-row atomicity predicate (consumed, not
+      re-implemented); external AND includes a new `coherence_province_known`
+      column and the [30,1600] band.
+- [ ] Both composites in `records_to_metrics()` (ADR-7); per-field breakdown
+      retained.
+- [ ] Capacity-band docstring records the verified real VN thermal max and the
+      task-scope (30) vs plausibility (1600) rationale.
+- [ ] `tests/test_score_coherence.py` green; `make check` passes.
+- [ ] Mart/view schema accepts the new columns (defensive `.get` per #651);
+      real regen is out of scope → 0387.
+
+## Out of scope
+- The 1NF detector itself → 0396 (prerequisite).
+- "Confidence vs number of sources" consistency check → v2; `confidence`,
+  `sources[]`, `evidence_score` are not emitted at extraction today (needs a
+  prompt+schema ticket first).
+- Mart regeneration with the new columns → 0387 (needs-human, full-data env).
+- Spider figure axis change (one "Cohérence" axis → two interne/externe) or
+  folding into the 0201 composite → follow-up under 0201.
+- Provenance and Temporality dimensions → 0201.
+
+## Related
+- 0396 — prerequisite: per-field 1NF row-atomicity indicator (provides the
+  per-row predicate the internal composite ANDs)
+- 0201 — parent: quality composite axis
+- 0387 — downstream: mart regen after coherence-field additions
+- 0393 — reference-based counterpart; opposite 1NF reading (do not conflate)
+- docs/inventory-1nf-handoff-exp2.md — 1NF extent, detector, two-objectives split
+- src/aedist/coherence.py — `VIETNAM_PROVINCES`, `_province_known`
+- src/aedist/score_mechanical.py / score_exp1.py — existing `coherence_*` scorers
+- src/aedist/build_exp2_mart.py, build_exp2_mart_views.py — downstream schema
