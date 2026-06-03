@@ -3,7 +3,7 @@ title: "§3 proposal — from chatbots to knowledge management"
 author: claude (drafting), Ha-Duong Minh (author directive)
 ticket: 0219
 date: 2026-05-21
-status: DRAFT — awaiting author sign-off before touching slides/manuscript/main.md
+status: HISTORICAL — stage numbering in this draft predates the 2026-06-03 canonical renumbering. See `docs/capability-timeline.md` for the authoritative schema and numbering (CSV chronological order).
 ---
 
 # §3 proposal — envelope being pushed, not a ladder being climbed
