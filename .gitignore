@@ -32,6 +32,8 @@ htmlcov/
 *.ilg
 *.ind
 *.pdf
+# Source documents deposited in docs/ are durable references, not rendered output
+!docs/*.pdf
 
 # Generated slide data (report inputs are tracked)
 slides/inputs/generated/
