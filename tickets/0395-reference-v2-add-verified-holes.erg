@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Reference v2: add verified missing plants (Kiên Lương, Hòa Phát, Kim Sơn, Yên Hưng, Rạng Đông)
+Created: 2026-06-03
+Author: claude
+Blocked-by: 0394
+Tag: needs-human
+
+--- log ---
+2026-06-03T00:00Z claude created — from the Exp2 FP audit: 48 distinct / 95 FP occurrences are real Vietnamese plants absent from the 163-row reference under any spelling
+2026-06-03T00:00Z claude note — needs-human: adding plants to the scientific reference requires sourcing each against primary documents and a version bump
+
+--- body ---
+## Context
+
+The Exp2 FP audit (`docs/fp-audit-exp2.md`,
+`experiments/derived/exp2_fp_classified.csv`) flagged **48 distinct plants /
+95 FP occurrences** as `reference_hole`: real Vietnamese thermal plants > 30 MWe
+that no model could match because they are absent from
+`data/reference/vietnam_thermal_v1.csv` under any spelling, and recur across
+multiple models (so they are not hallucination).
+
+High-confidence additions (sum of appearances):
+- **Kiên Lương 1 / 2 / 3** (23×) — Kiên Giang, coal, cancelled (~4400 MW
+  complex); distinct from the existing "TBKHH Kiên Giang I, II" gas entry.
+- **Hòa Phát Dung Quất** captive power (13×) — Quảng Ngãi, BFG/coal, operating.
+- **Rạng Đông** (6×) — Nam Định, coal, proposed/cancelled.
+- **Kim Sơn** (5×) — Ninh Bình, LNG/coal, proposed.
+- **Yên Hưng** (4×) — Quảng Ninh, LNG, planned (PDP8).
+
+Triage candidates from `statistical_borderline` (sum ≥ 2×), verify before
+adding: `Cẩm Thanh` (likely the existing "Cong Thanh"? — may be a dedup, not an
+add), `Bảo Đại`, `Cái Lân`, `Lục Nam`, `Vedan` cogeneration.
+
+**Explicitly do NOT add** (out of scope, from the audit's `other` bucket):
+`Ninh Thuận 1/2` (nuclear, not thermal-fossil), `Đạm Phú Mỹ` (21 MW),
+`Bourbon` (24 MW) — both below the 30 MWe threshold.
+
+## Why needs-human / Blocked-by 0394
+
+Each plant must be sourced against primary documents (PDP7/7A/8 annexes in
+`data/rag_corpus/`, EVN reports, GEM) before entering the reference — a manual
+compilation step matching `PROVENANCE.md`'s single-author method. This builds on
+the cleaned v2 file from 0394 so there is one version bump, not two.
+
+## Approach
+1. For each high-confidence plant, locate a primary source in `data/rag_corpus/`
+   or an EVN/GEM record; record name, province, fuel, capacity_mwe, status,
+   units_included, and the source line.
+2. Re-check each borderline candidate against the v2 reference first — some are
+   dedup targets (existing row under a variant), not new plants.
+3. Append rows to `vietnam_thermal_v2.csv`; extend `PROVENANCE.md` source
+   inventory; update the status distribution counts in PROVENANCE.
+4. Re-score Exp1–3 from existing outputs; the `reference_hole` occurrences in the
+   re-run audit should fall to near zero for the added plants.
+
+## Exit criteria
+- [ ] Each added plant has a cited primary source in PROVENANCE
+- [ ] Kiên Lương 1/2/3, Hòa Phát Dung Quất, Kim Sơn, Yên Hưng, Rạng Đông present
+- [ ] Borderline candidates resolved as add / dedup / reject with a note each
+- [ ] Nuclear and sub-30-MWe entries NOT added
+- [ ] `experiments/scripts/fp_audit_exp2.py` re-run: `reference_hole` occurrences
+      drop by ≥ 70%
+- [ ] PROVENANCE status-distribution counts updated; `make check` passes
+
+## First failing test
+Extend `tests/test_reference_integrity.py`: assert the named high-confidence
+plants resolve to exactly one reference row, and that no added plant is < 30 MWe.
+
+## Out of scope
+- Matcher changes (→ 0392 / 0393).
+- Reference de-duplication and romanization (→ 0394, prerequisite).
+- Re-running the models (re-scoring existing outputs suffices).
+
+## Related
+- `docs/fp-audit-exp2.md` — §Reference extension
+- `data/reference/PROVENANCE.md`, `data/rag_corpus/` (primary sources)
+- 0394 (prerequisite, v2 base), 0392 / 0393 (matcher program)

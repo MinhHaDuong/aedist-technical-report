@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Matcher: strip missing Vietnamese facility prefixes and unify mở rộng↔extension
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T00:00Z claude created — from the Exp2 FP audit (docs/fp-audit-exp2.md): name-normalization gap is 57 distinct / 152 FP occurrences, all recover to a real reference row once normalized
+
+2026-06-03T07:28Z executed: added name_drops nhiet dien/nha may/dong phat/tbk/nmn?d + mo rong|mr->extension substitution + empty-name guard. Verified on existing Exp2 outputs: matched(TP) 5182->5423 (+241), FP 640->399 (-241, no TP regression); matcher_fail_normalization occ 152->5 (<=20 criterion). 17 cleaner tests + 1814 fast tests + ruff all green.
+--- body ---
+## Context
+
+The Exp2 false-positive audit (`docs/fp-audit-exp2.md`,
+`experiments/derived/exp2_fp_classified.csv`) found that **152 of 640 FP
+occurrences (24%)** are pure name-normalization failures: the model name
+carries a Vietnamese facility-type prefix the cleaner does not strip, or uses
+`mở rộng` where the reference uses `extension`/`MR`. Every one recovers to a real
+reference plant once normalized (`new_score ≥ 88`).
+
+`src/aedist/cleaner/config.json:name_drops` currently strips (post diacritic
+fold, lower-cased): `^tbkhh`, `^lng`, `^nd`, `power plant`, `thermal`, and
+parentheticals. It does **not** strip the single most common prefix
+`nhiệt điện` (→ `nhiet dien`), nor `nhà máy` (`nha may`), `đồng phát`
+(`dong phat`), or bare `tbk`. And `mở rộng`/`MR` is never unified with the
+reference's English `extension`.
+
+Worst offenders (count → reference target, cur_score → new_score):
+- Nhiệt điện Bà Rịa (18×) → Bà Rịa GT — 85.7 → 100
+- Nhiệt điện Cẩm Phả (11×) → Cam Pha 3 — 87.5 → 100
+- NĐ đồng phát Hải Hà 1 (10×) → Hai Ha CHP Phase 1 — 77.8 → 93.3
+- Nhiệt điện Na Dương (9×) → Na Dương 1 — 88.9 → 100
+- NĐ đồng phát Đức Giang (5×) → Duc Giang – Lao Cai Chemical — 85.7 → 100
+
+The reference change is **zero**: this only edits the cleaner, so existing Exp2
+runs can be re-scored in place (no model re-runs).
+
+## Approach
+
+1. Add to `name_drops` (anchored / word-boundary forms, post-fold): `nhiet dien`,
+   `nha may`, `dong phat`, `\btbk\b`, `nmnd?`. Keep them order-safe with the
+   existing roman-numeral substitution.
+2. Add a `name_substitutions` rule unifying the extension marker:
+   `mo rong` / `\bmr\b` / `extension` → one canonical token. It must run so the
+   downstream unit-number veto in `matching/lp.py` sees identical names.
+3. Guard against over-stripping a name to empty (e.g. a row literally named
+   "Nhà máy nhiệt điện"): if drops would empty the name, keep the pre-drop form.
+
+## Exit criteria
+- [ ] `name_drops` strips `nhiet dien`, `nha may`, `dong phat`, bare `tbk`
+- [ ] `mở rộng` / `MR` / `extension` collapse to one token before veto
+- [ ] No name is reduced to the empty string by the new drops (unit-tested)
+- [ ] Re-run `uv run python experiments/scripts/fp_audit_exp2.py`:
+      `matcher_fail_normalization` occurrences drop from 152 to ≤ 20
+- [ ] No regression in matched plants on any existing run (TP count never drops)
+- [ ] `make check` passes
+
+## First failing test
+`tests/test_cleaner.py` (red→green): assert
+`clean_name("Nhiệt điện Bà Rịa") == clean_name("Bà Rịa")` and
+`clean_name("Vĩnh Tân 4 mở rộng") == clean_name("Vinh Tan 4 extension")`.
+
+## Out of scope
+- The LP-veto / combined `X & Y` failures (→ 0393).
+- Any edit to `data/reference/vietnam_thermal_v1.csv` (→ 0394 / 0395).
+- Re-running the models — re-scoring existing outputs is enough.
+
+## Related
+- `docs/fp-audit-exp2.md` — §Matcher repair, steps 1–2 (this ticket)
+- `src/aedist/cleaner/config.json`, `src/aedist/cleaner/cleaner.py`
+- `experiments/scripts/fp_audit_exp2.py` — regression oracle
+- 0393 (LP veto), 0394 (reference hygiene), 0395 (reference extension) — same program

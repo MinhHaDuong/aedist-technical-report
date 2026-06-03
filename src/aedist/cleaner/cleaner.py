@@ -146,6 +146,11 @@ class PowerPlantDataframeCleaner:
         cleaned = self.clean_text(
             name, drops=self.name_drops, substitutions=self.name_substitutions
         )
+        # Guard: facility-type drops (nhà máy / nhiệt điện / đồng phát ...) must
+        # not reduce a real name to empty (e.g. "Nhà máy nhiệt điện"). Fall back
+        # to the un-dropped normalization so the row keeps a matchable name.
+        if cleaned == "" and name is not None and str(name).strip():
+            cleaned = self.clean_text(name, drops=None, substitutions=self.name_substitutions)
         return cleaned
 
     def clean_province(self, province: str) -> str:

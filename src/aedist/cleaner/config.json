@@ -3,11 +3,17 @@
         "^tbkhh\\s*",
         "^lng\\s*",
         "^nd\\s*",
+        "\\bnmn?d\\b",
+        "\\bnha\\s+may\\b",
+        "\\bnhiet\\s+dien\\b",
+        "\\bdong\\s+phat\\b",
+        "\\btbk\\b",
         "power\\s*plant",
         "thermal",
         "\\(.*?\\)"
     ],
     "name_substitutions": {
+        "\\b(mo\\s+rong|mr)\\b": "extension",
         "\\biv\\b": "4",
         "\\biii\\b": "3",
         "\\bii\\b": "2",

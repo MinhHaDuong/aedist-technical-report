@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Matcher: resolve combined "X & Y" rows and base/extension LP contention
+Created: 2026-06-03
+Author: claude
+Blocked-by: 0392
+
+--- log ---
+2026-06-03T00:00Z claude created — from the Exp2 FP audit: the LP-veto bucket is the single largest, 112 distinct / 276 FP occurrences, where the name already matches a reference row at ≥90 but the global LP leaves it unmatched
+
+--- body ---
+## Context
+
+The Exp2 FP audit (`docs/fp-audit-exp2.md`) found the **largest** FP bucket is
+`matcher_fail_lp_veto`: **276 of 640 occurrences (43%)** where the cleaned name
+already fuzzy-matches a reference row at `cur_score ≥ 90`, yet the global
+one-to-one LP (`src/aedist/matching/lp.py`) leaves the row unmatched. Three
+sub-mechanisms:
+
+1. **Combined `X & Y` rows.** "Nhơn Trạch 3 & 4" (17×), "Cẩm Phả I & II" (6×):
+   the cleaned name carries two digit tokens {3,4}; the unit-number veto makes it
+   cheaper to leave the row unmatched than to pair it with either "Nhơn Trạch 3"
+   or "Nhơn Trạch 4".
+2. **Base/extension contention.** "Duyên Hải 3 mở rộng" (17×), "Vĩnh Tân 4 mở
+   rộng" (16×): the reference holds both the base ("Duyen Hai 3") and the
+   extension ("Duyen Hai 3 Extension"). When a model lists both, the cleaned
+   names collide or the capacity weight misassigns the LP and one is dropped as
+   an FP. Note: 0392 unifies `mở rộng`↔`extension`, which is a prerequisite for
+   the base and extension to be distinguishable here — hence `Blocked-by: 0392`.
+3. **Sibling unit not in reference** (caveat). "Sông Hậu 3"/"Sông Hậu III" (17×),
+   "Nam Định II" (7×) fuzzy-match a *sibling* (Sông Hậu 1/2; Nam Dinh 1) at ≥90
+   but the named unit number is genuinely absent — these are really
+   reference-holes, not LP failures, and should be re-routed to 0395, not
+   "fixed" by loosening the veto. Re-run the audit after 0392 to re-measure the
+   true LP-veto residue before touching `lp.py`.
+
+## Approach (audit-gated, per .claude/rules: "Audit before instrumenting")
+
+1. **Re-baseline.** After 0392 lands, re-run `experiments/scripts/fp_audit_exp2.py`
+   and recount the `lp_veto` bucket. Subtract the sibling-not-in-ref cases
+   (route to 0395). Only the genuine contention/combined residue justifies an
+   `lp.py` change.
+2. **Combined-unit handling.** Pre-reconciliation, split a system row whose name
+   matches `(.+?)\s*(\d+)\s*[&]\s*(\d+)` (and roman "I & II") into two rows
+   sharing the base and capacity, OR relax the unit-number veto when one side is
+   an aggregate and capacities are compatible. Prefer the split — it keeps the
+   one-to-one LP semantics intact.
+3. **Base/extension.** Ensure base and extension remain distinct cleaned names
+   after 0392 (do not let `extension` get dropped), so the LP has two reference
+   targets for two system rows.
+
+## Exit criteria
+- [ ] Post-0392 audit re-baseline recorded as a log note here (true residue count)
+- [ ] "Nhơn Trạch 3 & 4" and "Cẩm Phả I & II" families match (≈40 occ recovered)
+- [ ] Base + extension both match when both are present (Duyên Hải 3 family)
+- [ ] Sibling-not-in-ref cases are NOT force-matched (no precision regression);
+      they are listed for 0395 instead
+- [ ] `matcher_fail_lp_veto` residue drops by ≥ 60% vs the post-0392 baseline
+- [ ] `make check` passes; `tests/test_matching*` green
+
+## First failing test
+`tests/test_matching_lp.py` (red→green): a system list
+`["Nhơn Trạch 3 & 4"]` against a reference `["LNG Nhơn Trạch 3","LNG Nhơn Trạch 4"]`
+yields two matched entries (or one matched + no FP), not a SYSTEM_ONLY.
+
+## Out of scope
+- Name-prefix normalization (→ 0392, prerequisite).
+- Adding the missing sibling units to the reference (→ 0395).
+- Reference de-duplication (→ 0394).
+
+## Related
+- `docs/fp-audit-exp2.md` — §Matcher repair step 5, and the lp_veto caveat
+- `src/aedist/matching/lp.py` (unit-number veto), `src/aedist/reconcile.py`
+- 0392 (prerequisite), 0395 (sibling reference holes)
