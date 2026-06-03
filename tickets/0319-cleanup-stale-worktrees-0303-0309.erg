@@ -2,10 +2,12 @@
 Title: Clean up stale worktrees for merged tickets 0303–0309
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: already-done: all 7 worktrees (aedist-wt-0303..0309) removed and branches t0303..t0309 deleted; verified absent from git worktree list and branch list 2026-06-03
 
 --- log ---
 2026-05-25T16:10Z HDMX-coding-agent created — found by housekeeping sweep
 
+2026-06-03T12:16Z HDMX-coding-agent closed — already-done: all 7 worktrees (aedist-wt-0303..0309) removed and branches t0303..t0309 deleted; verified absent from git worktree list and branch list 2026-06-03
 --- body ---
 ## Context
 
