@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Unify FP-bar colour convention — plot_exp2_arms_comparison still uses orange
+Created: 2026-06-03
+Author: claude
+
+--- log ---
+2026-06-03T21:55Z claude created
+
+--- body ---
+## Context
+
+PR #678 (ticket 0349) unified the false-positive bars on the slide-15
+coverage figure (`fig_exp2_coverage.pdf`) onto red (`COLOR_ALERT
+#E74C3C`), matching its E1 baseline bar and its title's "red = false
+positives". The /verify consistency review found the sibling figure
+still on the old convention: `plot_exp2_arms_comparison.py:176` draws
+FP bars with `COLOR_HALLUC` (orange `#F5A623`). That figure
+(`fig_exp2_arms_comparison.pdf`) is live — `slides/manuscript/main.md`
+"Figure 3", built by `slides/Makefile`. The two live Exp2 figures now
+disagree on what colour means "false positive".
+
+## Relevant files
+
+- `src/aedist/plot_exp2_arms_comparison.py` — FP bars at ~line 176
+  (`COLOR_HALLUC`)
+- `report/inputs/generated/fig_exp2_arms_comparison.pdf` — committed
+  handoff artifact (regenerate from the COMMITTED mart view; do NOT run
+  the full DAG — see 0383 mart-staleness note)
+- `slides/manuscript/main.md` — Figure 3 caption; check whether it
+  names the FP colour
+- `tests/test_plot_exp2_arms_comparison.py` — extend with the same
+  negative-bars-are-red assertion as
+  `tests/test_plot_exp2_arms_split.py::test_all_false_positive_bars_are_red`
+- `src/aedist/palette.toml` — consider whether `semantic.halluc`
+  (orange) still has any live consumer afterwards; if not, decide
+  retire-or-keep
+
+## Actions
+
+1. Switch FP bars in `plot_exp2_arms_comparison.py` to `COLOR_ALERT`,
+   mirroring PR #678 (let ruff drop the unused `COLOR_HALLUC` import).
+2. Make the figure builder return the `Figure` (same testability
+   pattern as 0349/0357) and add the negative-bars-are-red test.
+3. Regenerate the committed PDF from the committed mart view
+   (`build_exp2_mart_views` directly, not the full make DAG).
+4. Check the Figure 3 caption in `main.md` mentions/needs "red = false
+   positives"; align the wording if it names a colour.
+5. Sweep: grep `COLOR_HALLUC` for any remaining live FP-bar consumer;
+   list survivors in the PR (legitimate non-FP uses stay).
+
+## Test
+
+Clone of `test_all_false_positive_bars_are_red` against
+`make_comparison_figure` (or equivalent builder): synthetic rows with
+one FP bar per arm; assert every negative bar's facecolor is
+`COLOR_ALERT`. RED on current code (orange), GREEN after.
+
+## Verification
+
+- [ ] Both live Exp2 figures use red for FP bars
+- [ ] Test passes; `make check-fast` green
+- [ ] Committed PDF regenerated from committed mart data (no mart churn
+      in the diff)
+- [ ] Caption wording consistent if it names the colour
+
+## Invariants
+
+- `experiments/derived/exp2_mart.jsonl` and `sota_cross_eval.csv`
+  unchanged (mart staleness is 0383's, not this ticket's)
+- French deck and manuscript still build
+
+## Exit criteria
+
+- One FP-bar colour convention (red) across all live Exp2 figures, with
+  a regression test on each figure builder
