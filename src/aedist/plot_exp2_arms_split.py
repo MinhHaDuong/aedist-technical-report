@@ -26,10 +26,13 @@ import argparse
 import csv
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 from .util import (
     COLOR_ALERT,
-    COLOR_HALLUC,
     COLOR_REFERENCE,
     SLIDE_FIGSIZE_FULL,
     model_family_color,
@@ -155,7 +158,7 @@ def _annotate_bar_labels(ax, include_e1: bool = True) -> None:
                 label,
                 ha="center",
                 va="bottom",
-                fontsize=9,
+                fontsize=11,
                 color="0.30",
                 zorder=6,
             )
@@ -177,7 +180,7 @@ def make_coverage_figure(
     exp2_rows: list[dict],
     exp1_summary: dict[str, dict],
     output: Path,
-) -> None:
+) -> "Figure":
     import matplotlib.pyplot as plt
 
     exp2_rows = [r for r in exp2_rows if r["is_report"]]
@@ -219,7 +222,8 @@ def make_coverage_figure(
                 mean_halluc = _mean(halluc_vals)
                 ax.bar(x, mean_matched, _BAR_WIDTH, color=color, alpha=0.85, zorder=3)
                 if mean_halluc > 0:
-                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_HALLUC, alpha=0.9, zorder=3)
+                    # Same red as the E1 FP bar — the title promises "red = false positives"
+                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_ALERT, alpha=0.9, zorder=3)
                 _draw_whiskers(ax, x, matched_vals)
             else:
                 inv_vals = [r["inventory_rows"] for r in subset if r["inventory_rows"] > 0]
@@ -251,13 +255,14 @@ def make_coverage_figure(
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
     log.info("Wrote %s", output)
+    return fig
 
 
 def make_cost_figure(
     exp2_rows: list[dict],
     exp1_summary: dict[str, dict],
     output: Path,
-) -> None:
+) -> "Figure":
     import matplotlib.pyplot as plt
 
     exp2_rows = [r for r in exp2_rows if r["is_report"]]
@@ -306,6 +311,7 @@ def make_cost_figure(
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
     log.info("Wrote %s", output)
+    return fig
 
 
 def main(argv: list[str] | None = None) -> None:
