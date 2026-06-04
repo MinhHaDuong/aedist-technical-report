@@ -1,0 +1,101 @@
+%erg 0.1
+Title: [tracking] One .mk per phase — hard boundaries for dev, root include-all for staleness
+Created: 2026-06-04
+Author: claude
+Blocked-by: 0405
+
+--- log ---
+2026-06-04T07:40Z claude created — design ratified by author in conversation (views in P3; S-order; P1 .PHONY-only; measurements.jsonl = mart v0 until 0297; dual-mode root; .mk lives with its deliverables)
+
+--- body ---
+## Context
+
+Author-ratified build restructure implementing the phase-stratified
+artifact policy (0405). Today five makefiles interleave phases:
+`experiments/analysis.mk` (568 l) holds P2 (extraction stamps l.74-107,
+cross-eval 108-144, mart 145-226) AND P3 (figures/tables 227-568) in one
+DAG with cross-phase prerequisites — which is how a figure build
+silently regenerated the mart with new scorers on 2026-06-03 (see 0383
+log). `experiments/Makefile` mixes P1 sweeps with P2 verbs; the root
+Makefile mixes the dev loop with P2/P3/P4 orchestration.
+
+## Ratified design
+
+**Hard boundaries for dev; one visible full DAG for assurance.**
+
+| Phase | .mk (lives with its deliverables) | Sources (NO rules for them) | Outcomes (tracked) |
+|-------|-----------------------------------|------------------------------|--------------------|
+| P1 acquire | `experiments/acquire.mk` | experiments.toml, corpus | raw replies: `experiments/outputs/**`, `archive/**` |
+| P2 score | `experiments/derived/score.mk` | `experiments/outputs/**` | `measurements.jsonl` (mart v0, transitional until 0297; do NOT move it), `exp2_mart.jsonl`, cross-eval CSVs |
+| P3 render | `experiments/render.mk` (lives with its scripts `src/aedist/plot_*`; deliverables span two trees — see note) | committed P2 outcomes | `report/inputs/generated/*`, `slides/inputs/generated/*` |
+| P4 write | `slides/Makefile`, `report/Makefile` (unchanged) | committed P3 outcomes | final PDFs (non-precious) |
+
+- **Views are P3** (mart→view projection is render-time shaping); view
+  CSVs stay gitignored intermediates.
+- **P1 is .PHONY-only**: every acquire.mk target is .PHONY, manually
+  invoked, money-gated; no file target downstream can depend on.
+- **Root Makefile**: dev loop (test/lint/coverage/check) + `include` of
+  all phase .mks exposed through exactly two entries —
+  `make staleness` (dry-run report: what would rebuild, touches nothing)
+  and `make world` (deliberate full re-run; output reviewed via git diff
+  before commit). Per-phase .mks are the documented dev path
+  (convention, not mechanism). No other root target may carry a
+  cross-phase prerequisite edge.
+- **CI freshness twin**: mtime staleness is meaningless after a git
+  clone, so the CI-side "paper up to date all the way" check is
+  content-diff: `make world && git diff --exit-code` — that is ticket
+  0360's oracle. Wire 0360 to this design instead of duplicating it.
+- **Note (out of scope, optional later)**: unifying the two generated/
+  trees would give render.mk a single deliverable home; not done here
+  (churns \input paths).
+
+## Migration steps (ratified order; ONE CHILD TICKET + ONE PR PER STEP)
+
+Cut child tickets at execution start, each `Blocked-by:` its
+predecessor; this tracker stays open until all four land.
+
+- **S1 → child**: extract `render.mk` (analysis.mk l.227-568 + view
+  projections). Guard: `test_render_build_clean_room` — dry-run trace
+  contains no scoring/extraction scripts; no target path under P2
+  outcome paths. This kills the cascade first.
+- **S2 → child**: carve `score.mk` (analysis.mk l.74-226 + the
+  extract/evaluate-all-records/rebuild-measurements verbs from
+  experiments/Makefile). Guard: trace contains no worker/query calls; no
+  target under `experiments/outputs/**`. `rebuild-measurements`
+  documented as deliberate-and-reviewed (0383 lesson).
+- **S3 → child**: `experiments/Makefile` → `acquire.mk`, pure P1
+  (.PHONY sweeps + corpus utils pdf2md/build-corpus). Guard: adherence
+  test that every acquire.mk target is .PHONY.
+- **S4 → child**: root Makefile rewrite (dev loop + include-all +
+  staleness/world only); keep `make report`/`make slides`/`make check`
+  working for CI (docs-build.yml); delete root figure prereq lists.
+
+## Documentation contract (author requirement — applies to every step)
+
+1. `docs/pipeline-phases.md` (from 0405) gains the detailed per-file
+   manifest and stays the single policy reference.
+2. `README.md` gains a build-overview section: the four phases, the two
+   root entries, the per-phase dev convention.
+3. **Articulation points**: every phase .mk opens with a header comment
+   stating its phase, its sources, its outcomes, and the invariant ("no
+   rules for upstream outcomes"); every script invoked by a phase .mk
+   states its phase in its module docstring.
+4. Each child PR propagates docs for what it moved — no doc debt to S4.
+
+## Invariants
+
+- No data content changes in any step (mart staleness stays 0383's).
+- CI (`docs-build.yml`) green at every step; clean-room tests
+  (report/slides) keep passing throughout.
+- Small sequential same-day PRs; never a long-lived refactor branch
+  (0140 died of drift).
+
+## Exit criteria
+
+- Four phase .mks in place, each with the header contract; root has
+  exactly two cross-phase entries (staleness, world)
+- Per-phase boundary guards green (render no-scoring, score no-API,
+  acquire all-.PHONY) alongside the existing P4 clean-room tests
+- README overview + pipeline-phases.md manifest complete
+- 0205 closed as subsumed; 0360 re-pointed at `make world` content-diff
+- `make check` green; a figure build can no longer regenerate the mart
