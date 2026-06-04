@@ -10,6 +10,7 @@ Label: needs-human
 2026-06-03T00:00Z claude note — needs-human: adding plants to the scientific reference requires sourcing each against primary documents and a version bump
 
 2026-06-04T11:37Z claude note — FN recount (0394, 80 runs): top-missed reference rows are the LNG-project holes; fix1's merged scope leaves hole-filling entirely to this ticket (FP reference_hole bucket: 99 occ)
+2026-06-04T12:19Z claude note — Blocked-by candidate: 0416 fixes the aggregator that will regenerate plant rows when plants are added; adding via the unfixed aggregator reintroduces duplicate-name collisions
 --- body ---
 ## Context
 
