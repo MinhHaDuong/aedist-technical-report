@@ -1,0 +1,110 @@
+%erg 0.1
+Title: Extract experiments/render.mk — P3 rules out of analysis.mk (0406 S2)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T10:05Z claude created — S2 child of tracker 0406; S1 (0408, PR #692) landed, single P3 tree in place
+
+--- body ---
+## Context
+
+Tracker 0406, step S2: move every P3 (render) rule out of
+`experiments/analysis.mk` into a new `experiments/render.mk`, so a
+figure build can never again regenerate the mart (the 2026-06-03
+cascade, see 0383). After S1 (0408) all P3 deliverables live in the
+single tree `report/inputs/generated/`.
+
+Current analysis.mk layout (563 lines, post-#692 — re-verify before
+cutting; use the section comments as anchors, not line numbers):
+
+| Lines | Section | Phase |
+|-------|---------|-------|
+| 1-72 | ANALYSIS_* variable block (41 defs, shared) | both |
+| 73-143 | extraction stamps, cross-eval CSV | P2 |
+| 144-165 | mart rule (`$(ANALYSIS_EXP2_MART_JSONL)`) | P2 |
+| 166-171 | view projections (`$(ANALYSIS_EXP2_MART_VIEWS)`) | **P3** (design: views are render-time shaping) |
+| 172-225 | dual-run parity staging | P2 |
+| 226-563 | tables, figures, slide macros, chart-data figures | P3 |
+
+## Design (from tracker 0406, ratified)
+
+- `experiments/render.mk` = P3: lines 226-563 + the
+  `ANALYSIS_EXP2_MART_VIEWS` rule. Sources (NO rules for them):
+  committed P2 outcomes — `measurements.jsonl`, `exp2_mart.jsonl`,
+  cross-eval CSVs, `experiments/outputs/**`. Their absence must be a
+  hard "No rule to make target" error, never a rebuild.
+- **Shared variable block**: factor the path/variable definitions needed
+  by both phases into `experiments/paths.mk` — variables ONLY, zero
+  rules — included by both analysis.mk and render.mk. Variables used by
+  only one phase may live in that phase's .mk instead; keep paths.mk
+  minimal.
+- **Header contract** (doc contract, tracker item 3): render.mk opens
+  with a comment block stating phase (P3 render), sources, outcomes,
+  and the invariant "no rules for upstream (P1/P2) outcomes". Scripts
+  it invokes (aedist.plot_*, tabulate_*, build_exp2_mart_views, ...)
+  state their phase in the module docstring (one line each).
+- analysis.mk keeps P2 only (it becomes score.mk in S3 — do not rename
+  now), includes paths.mk.
+
+## Relevant files
+
+- `experiments/analysis.mk` — the split source
+- root `Makefile` — delegations `$(MAKE) -f experiments/analysis.mk
+  <P3 verbs>` (report-tables, report-figures, chart-figures, ...)
+  repoint to render.mk; NO other root restructuring (that is S5)
+- `.github/workflows/` — check whether CI invokes analysis.mk P3 verbs
+- `tests/test_makefile_dag.py` (if present) and clean-room tests —
+  paths may reference analysis.mk
+- `docs/pipeline-phases.md` — P3 section gains render.mk; manifest
+  unchanged (no artifact moves in this step)
+
+## Actions
+
+1. Red test first: `tests/test_render_build_clean_room.py`
+   (`@pytest.mark.adherence`): run
+   `make -f experiments/render.mk -n <each P3 aggregate target>` and
+   assert the dry-run trace contains NO scoring/extraction/acquire
+   invocations (build_exp2_mart, extract_, evaluate_, score_, worker,
+   query_) and NO target path under P2 outcome paths
+   (measurements.jsonl, exp2_mart.jsonl, cross-eval CSVs,
+   experiments/outputs/). Red today (render.mk absent), green after.
+2. Create paths.mk (shared vars) + render.mk (P3 rules + view
+   projections + header contract); shrink analysis.mk to P2 + include.
+3. Repoint root Makefile P3 delegations and any CI/test references.
+4. Add phase line to invoked scripts' docstrings.
+5. Update docs/pipeline-phases.md.
+
+## Test
+
+The test of action 1. Also: `make -n -f experiments/render.mk` on a
+tree where `exp2_mart.jsonl` is treated as missing must FAIL with "No
+rule to make target", not regenerate it (this is the cascade-death
+property; assert it in the same test file if cheaply doable via a
+temp-dir copy of the .mk DAG, else document the manual check in the
+test docstring).
+
+## Verification
+
+- [ ] New clean-room render test green; all existing tests green
+- [ ] `grep -n "build_exp2_mart\b\|extract_\|evaluate_" experiments/render.mk`
+      → only build_exp2_mart_views (the P3 projection), nothing else
+- [ ] analysis.mk contains zero rules writing under
+      `report/inputs/generated/`
+- [ ] `make check` green; CI (docs-build.yml) green
+- [ ] `make report` / `make slides` still build (writing-only)
+
+## Invariants
+
+- No artifact content changes; never RUN P2/P3 targets for real (0383
+  mart staleness) — dry-run (-n) only for DAG verification
+- Root Makefile entry points keep working (report, slides, check)
+- One PR, this child only; tracker 0406 stays open
+
+## Exit criteria
+
+- `experiments/render.mk` exists with header contract; analysis.mk is
+  P2-only; shared vars in paths.mk
+- A figure/table/view build cannot trigger mart or cross-eval
+  regeneration (guard test proves it)
+- Root delegations repointed; docs propagated
