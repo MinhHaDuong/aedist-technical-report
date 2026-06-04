@@ -1,0 +1,145 @@
+%erg 0.1
+Title: Root Makefile rewrite — dev loop + two cross-phase entries (staleness, world) (0406 S5)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T13:15Z claude created — S5 child, final step of tracker 0406; S1-S4 landed (PRs #692/#694/#696/#698)
+
+--- body ---
+## Context
+
+Tracker 0406, final step S5. The phase .mks exist (acquire.mk, score.mk,
+render.mk, report/ and slides/ Makefiles). The root Makefile still
+carries cross-phase machinery: a `$(MEASUREMENTS)` wildcard rule
+delegating to score.mk, long P3 prereq lists on `report/report.pdf` and
+`slides/slides.pdf`, and delegating aliases (tables, figures, census,
+select, measurements). S5 rewrites root to the ratified shape.
+
+## Ratified design (tracker 0406)
+
+Root = dev loop (test/test-fast/test-slow/coverage/lint/check-fast/
+check, show-prompts) + the full pipeline DAG exposed through EXACTLY
+TWO cross-phase entries:
+
+- `make staleness` — dry-run report: what would rebuild across P2+P3
+  (+P4), touches nothing.
+- `make world` — deliberate full re-run of P2+P3+P4; output reviewed
+  via `git diff` before committing (this is ticket 0360's CI oracle:
+  `make world && git diff --exit-code`).
+
+Constraints:
+- `make report`, `make slides`, `make check` keep working for CI
+  (docs-build.yml) — but as PURE P4 verbs: `report:` and `slides:`
+  delegate to `$(MAKE) -C report` / `-C slides` with NO generated-file
+  prerequisite lists (the writing build consumes committed artifacts;
+  clean-room tests already guard this). DELETE the P3 prereq lists and
+  the `report/report.pdf` / `slides/slides.pdf` wrapper rules' prereqs.
+- No other root target may carry a cross-phase prerequisite edge.
+  Remove: the `$(MEASUREMENTS)` wildcard rule + `measurements` verb,
+  `tables`, `figures`, `select`, `census` aliases (per-phase .mks are
+  the documented dev path; README documents the invocations).
+  `experiments/models_selected.yaml` rule: relocate to acquire.mk
+  (it configures sweeps) or drop to README documentation — decide and
+  flag.
+- **P1 is excluded from world/staleness** (money gate — a full re-run
+  must never trigger API sweeps). Document this exclusion in the root
+  header and docs/pipeline-phases.md.
+
+## Mechanism guidance (binding intent, flexible mechanism)
+
+The tracker text says "include of all phase .mks". HAZARDS found
+during S2-S4 that the implementer must reconcile:
+- acquire.mk recipes assume cwd=experiments/ (env contract ../.env,
+  experiments.toml, jobs/). It is P1 → NOT included (excluded above).
+- score.mk captures its self-path via $(lastword $(MAKEFILE_LIST))
+  BEFORE its includes and recurses via that absolute path — verify
+  this survives being `include`d by root (MAKEFILE_LIST differs), and
+  that paths.mk/common.mk double-inclusion (root → score.mk AND
+  render.mk both include them) is idempotent (?=, no rule dups).
+- If literal `include` proves unsound, the fallback preserving the
+  ratified INTENT (one visible full DAG behind two entries) is
+  recursive delegation: `world: ; $(MAKE) -f experiments/derived/score.mk all-outcomes
+  && $(MAKE) -f experiments/render.mk all && $(MAKE) -C report && $(MAKE) -C slides`
+  and `staleness:` as the same chain with -n + a one-line-per-target
+  summary. Choose whichever is sound, document the choice in the PR
+  body and the root header comment.
+- `world` runs P2 for REAL — that rewrites committed scored data
+  (0383). That is its PURPOSE (deliberate, reviewed via git diff), but
+  the implementer must NOT run `make world` during development of this
+  PR beyond `-n` verification. Add a prominent recipe comment: output
+  must be reviewed via git diff before commit. If a cheap guard is
+  feasible (e.g. refuse to run with a dirty working tree), add it.
+
+## Documentation contract (tracker items 1-2, due this step)
+
+- README.md gains the build-overview section: four phases, the two
+  root entries, the per-phase dev convention (how to invoke each .mk).
+- docs/pipeline-phases.md: root section updated; P1 exclusion from
+  world/staleness documented.
+- Root Makefile header comment: the two-entry rule and where each
+  phase lives.
+
+## Tracker closeout inputs (do in this PR, do NOT close the tracker)
+
+- 0205 (split-makefile-by-workpackage-v2) is already in tickets/closed/
+  — verify and note in PR body; no action if so.
+- tickets/0360-cleaner-target-reproducibility-oracle.erg: append a log
+  line (before --- body ---): `2026-06-04T{HH:MM}Z claude note 0406 S5
+  landed make world — the oracle is now: make world && git diff
+  --exit-code (CI-side content diff). Re-point implementation here.`
+
+## Relevant files
+
+- `Makefile` (root) — the rewrite target
+- `.github/workflows/docs-build.yml` — verify entry points unchanged
+- `README.md`, `docs/pipeline-phases.md` — doc contract
+- `tests/test_makefile_dag.py` + clean-room tests — root rules change;
+  update scan expectations
+- `tickets/0360-*.erg` — log line
+
+## Actions
+
+1. Red test first: extend or add an adherence test asserting the root
+   Makefile carries no cross-phase prerequisite edge (no target whose
+   prereqs live under report/inputs/generated/, experiments/outputs/,
+   or measurements.jsonl; allowed exceptions: none) and that
+   `staleness` and `world` exist. Red today (prereq lists present).
+2. Rewrite root Makefile per design.
+3. Wire staleness/world (include or recursive — see mechanism
+   guidance); `-n` verify both.
+4. Docs: README overview, pipeline-phases.md, root header.
+5. 0360 log line.
+
+## Test
+
+The adherence test of action 1. Existing gates that must stay green:
+all four phase guards (render no-scoring, score no-acquire, acquire
+all-.PHONY, no-tracked-ignored), both P4 clean-room tests,
+test_makefile_dag.
+
+## Verification
+
+- [ ] `make staleness` runs, touches nothing (verify: git status clean
+      after), reports stale targets
+- [ ] `make world -n` resolves the full P2+P3+P4 chain, zero acquire
+      invocations
+- [ ] `make report`, `make slides`, `make check` work (CI green)
+- [ ] Root has no cross-phase prereq edge (guard test green)
+- [ ] README + pipeline-phases.md updated
+
+## Invariants
+
+- NEVER run `make world` for real in this PR (0383 mart staleness);
+  -n only
+- CI entry points (report, slides, check) unchanged in name and
+  behavior
+- One PR, this child only; tracker 0406 stays OPEN (integration review
+  then closes it separately)
+
+## Exit criteria
+
+- Root Makefile: dev loop + exactly two cross-phase entries
+  (staleness, world); no figure/table prereq lists; no P2/P3 aliases
+- 0360 re-pointed; README build overview present
+- All phase guards + clean-room tests green; CI green
