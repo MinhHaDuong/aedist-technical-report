@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Restore tab_decomposition_fix reproducibility via reconcile-from-archive P2 step
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T15:16Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`tab_decomposition_fix.tex` (the 0068 hallucination-fix result,
+report.tex:396) was FROZEN by 0421: its inputs (reconciliation_*.csv in
+rag_per_fuel{,_v2}/) were gitignored (c14136ff) and never archived. The
+committed table is correct but unreproducible — entry documented in
+FROZEN_ALLOWLIST (tests/test_makefile_dag.py).
+
+The raw model JSONs/CSVs ARE in experiments/archive/outputs/
+rag_per_fuel{,_v2}/. Reproducibility needs a P2 step that re-runs
+reconciliation (evaluate.py) on the archived raw replies into a
+derived/ location, then a repointed tabulate_decomposition_fix.
+
+## Risk — 0383
+
+The LP matcher changed since the table was generated (e.g. PR #547
+fixed Mismatched routing, memory: pre-fix metrics inflated). A re-run
+will likely NOT be byte-identical: the regenerated numbers reflect the
+current scorer, not the published ones. The redress must (a) regenerate
+under explicit review, (b) decide whether the paper keeps the frozen
+numbers (with a scorer-version note) or adopts the new ones, with the
+author in the loop. Do NOT auto-commit a changed table.
+
+## Actions
+
+1. Wire a score.mk rule: archive/outputs/rag_per_fuel{,_v2}/*.csv ->
+   derived/decomp_fix/reconciliation_*.csv via evaluate.py reconcile.
+2. Repoint tabulate_decomposition_fix defaults + restore the render.mk
+   rule (preserved in comment at render.mk, near tab_coherence).
+3. Regenerate; diff against the frozen table; surface any drift to the
+   author (0383 review) before committing.
+4. On success, drop the FROZEN_ALLOWLIST entry.
+
+## Exit criteria
+
+- tab_decomposition_fix.tex has a producer rule again; FROZEN_ALLOWLIST
+  entry removed
+- Any numeric drift vs the frozen table explicitly reviewed and decided
+  by the author
+- make check green
