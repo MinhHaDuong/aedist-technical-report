@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Config: dedup GEM reference path constants + generalize the hardcoded-path ratchet
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T20:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Celebrate sweep after raid 419-420 (PR #712): the 0419 class — duplicated
+reference-path default constants — has a GEM twin that 0419's scope
+(vietnam_thermal_v1.csv only) did not cover:
+
+- `src/aedist/tabulate_reconciliation.py:36` `_GEM_REF` (gem_thermal.csv)
+- `scripts/audit_source_urls.py:39` `_DEFAULT_GEM` (gem_thermal.csv)
+- make-side `render.mk:83 ANALYSIS_GEM_REF` is the single point — fine.
+
+The 0419 ratchet test (`tests/test_no_hardcoded_reference_path.py`) only
+guards the literal `vietnam_thermal_v1.csv`; the CLASS is "any
+data/reference CSV filename hardcoded outside config.py".
+
+## Quoi faire
+
+1. Add `DEFAULT_GEM_REFERENCE` to `src/aedist/config.py`; re-point the two
+   constants (ruff trap: import + usage in one edit batch).
+2. Generalize the ratchet: assert NO `*.csv` filename under `data/reference/`
+   appears in string literals in `src/aedist/*.py` outside config.py
+   (docstrings/comments exempt, same AST mechanics as the existing test).
+3. Consider scripts/ coverage in the ratchet (0419 fixed scripts/ consumers
+   but the test does not guard them).
+
+## Exit criteria
+
+- [ ] Zero gem_thermal.csv / gem_units.csv literals in src/ outside config.py
+- [ ] Ratchet test covers the class (all data/reference CSV names), not the
+      single filename
+- [ ] `make check` vert
+
+## Related
+
+- 0419 (template: PR #712), tests/test_no_hardcoded_reference_path.py,
+  src/aedist/config.py
