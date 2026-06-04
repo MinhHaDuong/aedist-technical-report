@@ -63,11 +63,17 @@ SCORE_DERIVED   := $(ANALYSIS_DERIVED_DIR)
 # === measurements.jsonl: materialized view of all outputs ===================
 # (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3)
 
-SCORE_STRUCTURED_DIRS := census multiturn web rag \
-                   decomposed decomposed_v2 sourced frontier \
-                   ablation/direct/p1_base ablation/direct/p1_base.topup \
-                   ablation/direct/p1_composite \
-                   exp1_batch2
+# Dropped entries (0422): pre-0122 names and record-only dirs have no
+# extractable JSON/CSV for extract to scan. Raw replies were moved to
+# experiments/archive/outputs/ (edda724b); renamed dirs under
+# $(SCORE_OUTPUTS) hold only .record.json pointers.
+#   census, multiturn, web, frontier: dirs never created post-archive
+#   rag (→ rag_extract): record-only after edda724b
+#   decomposed (→ rag_per_fuel): record-only after edda724b
+#   decomposed_v2 (→ rag_per_fuel_v2): record-only after edda724b
+#   sourced (→ rag_cited): record-only after edda724b
+#   ablation/direct/p1_base, p1_base.topup, p1_composite: record-only
+SCORE_STRUCTURED_DIRS := exp1_batch2
 
 SCORE_OUTPUT_FILES := $(filter-out %.record.json $(SCORE_DERIVED)/rag_consistency/%,\
                    $(wildcard $(SCORE_OUTPUTS)/*/*.json) $(wildcard $(SCORE_DERIVED)/*/*.json)) \
