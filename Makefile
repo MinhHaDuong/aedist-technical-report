@@ -1,14 +1,43 @@
 # AEDIST Technical Report — Root Makefile
 #
-# Complete DAG: `make report` or `make slides` pulls all dependencies.
+# The root holds the DEVELOPER LOOP (tests, lint, coverage, prompt inspection)
+# plus the writing-side (P4) verbs CI invokes, and exposes the full data
+# pipeline through EXACTLY TWO cross-phase entries:
 #
-#   report.pdf ← tab_census.tex, macros.tex ← measurements.jsonl
-#   slides.pdf ← fig_direct_p1_base.pdf, cost_quality.csv ← measurements.jsonl
+#   make staleness   Dry-run report: what WOULD rebuild across P2 + P3 (+ P4).
+#                    Touches nothing — safe to run anytime.
+#   make world       Deliberate, full re-run of P2 + P3 + P4. Runs P2 scoring
+#                    for REAL, which (re)writes committed scored data (the 0383
+#                    mart-staleness hazard). REVIEW the result via `git diff`
+#                    before committing. This is ticket 0360's reproducibility
+#                    oracle: `make world && git diff --exit-code`.
+#
+# The four phases each own a makefile; per-phase dev work invokes them directly
+# (README "Build pipeline" documents the conventions):
+#
+#   P1 Acquire  experiments/acquire.mk   make -C experiments -f acquire.mk <verb>
+#               (money-gated API sweeps — cwd contract needs -C experiments)
+#   P2 Score    experiments/derived/score.mk   make -f experiments/derived/score.mk <verb>
+#   P3 Render   experiments/render.mk          make -f experiments/render.mk <verb>
+#   P4 Write    report/Makefile, slides/Makefile   make report / make slides
+#
+# MECHANISM (tracker 0406 S5, ticket 0415): the two entries delegate to the
+# phase makefiles by RECURSIVE $(MAKE) -f/-C, not literal `include`. A literal
+# include would merge the P2 scoring rules into the root namespace, defeating
+# the clean-room phase isolation the split exists to enforce (a P4 `make report`
+# could then reach the scoring DAG) and risking default-goal hijack. Recursive
+# delegation keeps each phase's namespace sealed and matches how every phase is
+# already invoked (`-f <phase>.mk`). Tradeoff: `make world -n` is a sequence of
+# per-phase dry-runs, so a clean checkout's P2→P3 chain only fully resolves once
+# P2 outputs exist on disk; that is acceptable because `world` is a deliberate
+# full re-run, not an incremental build.
+#
+# P1 (acquire) is EXCLUDED from world/staleness — it makes paid API calls, and a
+# full re-run must never trigger a money-costing re-acquisition. Re-acquire raw
+# replies only by explicitly invoking experiments/acquire.mk.
 
-MEASUREMENTS := measurements.jsonl
-GEN          := report/inputs/generated
-
-.PHONY: test test-fast test-slow coverage lint check-fast check census show-prompts
+.PHONY: test test-fast test-slow coverage lint check-fast check show-prompts \
+	report slides staleness world
 
 # --- Tests --------------------------------------------------------------------
 
@@ -57,88 +86,57 @@ show-prompts:
 	configs = [('base', []), ('composite', ALL)] + [(m, [m]) for m in ALL]; \
 	[print(f'=== {n} ({len(assemble_prompt(d,ms).split(chr(10)))} lines) ===\n{assemble_prompt(d,ms)}\n') for n,ms in configs]"
 
-# --- Measurements (materialized view of all outputs) -------------------------
+# --- Publications (P4 write — pure clean-room delegations) --------------------
 #
-# measurements.jsonl is rebuilt from all experiments/outputs/*/ by:
-#   1. Extracting CSVs from structured conditions (extract.py)
-#   2. Evaluating each CSV against reference (evaluate.py evaluate)
-#   3. Assembling record JSONs into measurements.jsonl (evaluate.py assemble)
+# `report` and `slides` compile the PDFs from COMMITTED P3 handoff artifacts
+# (report/inputs/generated/**). They carry NO generated-file prerequisites: the
+# writing build is clean-room (no `uv run`, no data pipeline), guarded by
+# tests/test_report_build_clean_room.py and tests/test_slides_build_clean_room.py.
+# To (re)generate the artifacts they consume, run the P3 render phase
+# (`make -f experiments/render.mk <verb>`) or the full `make world`.
 
-$(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json) $(wildcard experiments/outputs/*/*.csv)
-	$(MAKE) -f experiments/derived/score.mk measurements.jsonl
-
-.PHONY: measurements
-measurements: $(MEASUREMENTS)
-
-# --- Model selection ----------------------------------------------------------
-
-experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
-	uv run python -m aedist.select_models \
-	    --registry experiments/models.yaml \
-	    --output $@ --n 1
-
-# Report-side tables (tab_census, macros, macros_census, tab_relances,
-# tab_comparaison, tab_variance, tab_verification, tab_decomposition_fix,
-# tab_coherence, tab_reconciliation, tab_converter_benchmark) and the
-# intermediate derived/*.json|csv artifacts they consume are produced by the
-# render (P3) workpackage. To regenerate:
-#     make -f experiments/render.mk report-tables
-# tab_self_consistency.tex and tab_per_run.tex come from
-# experiments/render.mk `self-consistency` (single producer, 0354 →
-# migrated from the P1 makefile, now experiments/acquire.mk, by 0410).
-
-# --- Publications -------------------------------------------------------------
-
-report/report.pdf: report/report.tex report/refs.bib \
-    $(GEN)/tab_census.tex $(GEN)/macros.tex $(GEN)/macros_census.tex \
-	$(GEN)/tab_relances.tex $(GEN)/tab_exp2_2x2.tex $(GEN)/tab_comparaison.tex \
-    $(GEN)/tab_variance.tex $(GEN)/tab_verification.tex \
-		$(GEN)/fig_spider_exp1_families.pdf \
-    $(GEN)/tab_decomposition_fix.tex \
-    $(GEN)/tab_self_consistency.tex $(GEN)/tab_per_run.tex \
-    $(GEN)/tab_coherence.tex \
-    $(GEN)/tab_reconciliation.tex \
-    $(GEN)/tab_converter_benchmark.tex
+report:
 	$(MAKE) -C report
 
-slides/slides.pdf: slides/slides.tex \
-    $(GEN)/fig_direct_p1_base.pdf \
-    $(GEN)/fig_spider_exp1_claude.pdf \
-    $(GEN)/fig_spider_exp1_families.pdf \
-    $(GEN)/fig_spider_cross_exp.pdf \
-    $(GEN)/fig_capability_timeline.pdf \
-    $(GEN)/fig_capability_dag.pdf \
-    $(GEN)/fig_exp2_coverage.pdf \
-    $(GEN)/fig_exp2_cost.pdf \
-    $(GEN)/fig_exp2_coverage_certainty.pdf \
-    $(GEN)/macros_slides.tex \
-    $(GEN)/tab_exp2_2x2_fr.tex \
-    $(GEN)/macros_p1_base.tex
+slides:
 	$(MAKE) -C slides
 
-# --- Convenience aliases ------------------------------------------------------
+# --- Cross-phase entries: staleness (dry-run) and world (full re-run) ---------
+#
+# The full pipeline DAG behind two recursive entries. Phase legs, in order:
+#   P2 score   experiments/derived/score.mk all-outcomes
+#              → measurements.jsonl, exp2_mart.jsonl, both cross-eval CSVs, SC
+#   P3 render  experiments/render.mk all   (every committed handoff artifact)
+#   P4 write   -C report, -C slides        (the PDFs)
+# P1 acquire is excluded (money gate — see header).
 
-.PHONY: report slides tables figures select
+SCORE_MK := experiments/derived/score.mk
+RENDER_MK := experiments/render.mk
 
-report: report/report.pdf
-slides: slides/slides.pdf
-# Report-side tables, figures, and slide chart data are produced by the
-# render (P3) workpackage (experiments/render.mk). tab_self_consistency.tex and
-# tab_per_run.tex live in experiments/render.mk under `self-consistency`
-# (single producer, 0354 → migrated from the P1 makefile, now
-# experiments/acquire.mk, by 0410), so the `tables:` alias chains both to
-# preserve the pre-0352 UX.
-tables:
-	$(MAKE) -f experiments/render.mk report-tables
-	$(MAKE) -f experiments/render.mk self-consistency
-figures:
-	$(MAKE) -f experiments/render.mk chart-figures
-select: experiments/models_selected.yaml
-# P1 acquire (money-gated sweeps) lives in experiments/acquire.mk (0411). Use
-# -C experiments so the sweep recipes inherit cwd=experiments/ — the env
-# contract (../.env, UV_RUN's --env-file ../.env), experiments.toml, and the
-# jobs/ board are all resolved relative to experiments/. `-f acquire.mk` then
-# resolves against that cwd. A bare `-f experiments/acquire.mk` from repo root
-# would break every one of those relative paths.
-census:
-	$(MAKE) -C experiments -f acquire.mk census
+# staleness: dry-run every phase leg, prefixed so the output reads as one
+# report. Each leg is a `-n` (dry-run) sub-make, so staleness touches nothing
+# and is always safe to run. P1 (acquire) is omitted — the money gate.
+staleness:
+	@echo '=== P2 score (experiments/derived/score.mk all-outcomes) ==='
+	@$(MAKE) -n -f $(SCORE_MK) all-outcomes
+	@echo '=== P3 render (experiments/render.mk all) ==='
+	@$(MAKE) -n -f $(RENDER_MK) all
+	@echo '=== P4 write (report) ==='
+	@$(MAKE) -n -C report
+	@echo '=== P4 write (slides) ==='
+	@$(MAKE) -n -C slides
+
+# world: DELIBERATE full re-run. The P2 leg runs scoring for real and REWRITES
+# committed scored data (0383 mart staleness) — its OUTPUT MUST BE REVIEWED via
+# `git diff` BEFORE COMMITTING. Cheap guard: refuse to start on a dirty working
+# tree, so a re-score never silently mixes with unrelated uncommitted edits.
+world:
+	@git diff --quiet || { \
+		echo 'make world: working tree is dirty.'; \
+		echo 'world rewrites committed scored data (0383) — commit or stash first,'; \
+		echo 'then review the re-run via `git diff` before committing the result.'; \
+		exit 1; }
+	$(MAKE) -f $(SCORE_MK) all-outcomes
+	$(MAKE) -f $(RENDER_MK) all
+	$(MAKE) -C report
+	$(MAKE) -C slides

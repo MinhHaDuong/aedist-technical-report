@@ -2,10 +2,12 @@
 Title: Root Makefile rewrite — dev loop + two cross-phase entries (staleness, world) (0406 S5)
 Created: 2026-06-04
 Author: claude
+Closed: root rewritten: dev loop + staleness/world; prereq lists gone
 
 --- log ---
 2026-06-04T13:15Z claude created — S5 child, final step of tracker 0406; S1-S4 landed (PRs #692/#694/#696/#698)
 
+2026-06-04T12:11Z HDMX-coding-agent closed — root rewritten: dev loop + staleness/world; prereq lists gone
 --- body ---
 ## Context
 

@@ -121,6 +121,33 @@ rebuild-measurements:
 	find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.record.json' ! -path '*/_extracted/*' -delete
 	$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
 
+# === Full-phase aggregate (P2 outcomes) =====================================
+# all-outcomes builds every P2 outcome a downstream phase consumes, in one
+# target, so the root `world`/`staleness` entries (tracker 0406 S5, ticket 0415)
+# can drive the whole P2 surface through a single recursive `-f score.mk`
+# delegation instead of enumerating P2 paths in the root Makefile. Members:
+#   * measurements.jsonl                  (mart v0)
+#   * exp2_mart.jsonl                     (consolidated Exp2 mart; transitively
+#                                          pulls $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
+#                                          = sota_cross_eval.csv + the arm .done
+#                                          stamps)
+#   * exp1_cross_eval/.done               (produces exp1_cross_eval.csv — a
+#                                          side-effect of this stamp, named here
+#                                          because the CSV itself is not a make
+#                                          target)
+#   * self_consistency_summary.json       (P2 SC outcome; no current P3 consumer
+#                                          but part of a full P2 re-run)
+# This rule runs P2 for REAL (extract → evaluate → assemble): it (re)writes
+# committed scored data. It is only ever reached deliberately via `make world`
+# (reviewed by git diff) — never as an incidental dependency, because the root
+# carries no prereq edge into this DAG. Self-path recurse keeps cwd = repo root.
+.PHONY: all-outcomes
+all-outcomes:
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_EXP2_MART_JSONL)
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(SCORE_SC_JSON)
+
 # === Self-consistency scorer (outputs/rag → derived/rag_consistency) ========
 # (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3
 #  — P2 score half only; the tabulate→report/inputs/generated/ render half is in
