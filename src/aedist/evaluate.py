@@ -25,6 +25,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from .config import DEFAULT_REFERENCE
 from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
 from .schema import (
@@ -156,12 +157,8 @@ def plants_from_dicts(rows: list[dict]) -> list[Plant]:
 
 
 # ---------------------------------------------------------------------------
-# Default reference path and project root
+# Project root
 # ---------------------------------------------------------------------------
-
-_DEFAULT_REF = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 
@@ -322,7 +319,7 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
     reconciliation CSV.
     """
     system_path = Path(args.system_file)
-    ref_path = Path(args.reference) if args.reference else _DEFAULT_REF
+    ref_path = Path(args.reference) if args.reference else DEFAULT_REFERENCE
 
     if system_path.suffix == ".json":
         _evaluate_qualitative(system_path, args)

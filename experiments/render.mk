@@ -301,14 +301,16 @@ $(ANALYSIS_GEN)/tab_variance.tex: $(ANALYSIS_VARIANCE_JSON)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_variance --input $< --output $@
 
-$(ANALYSIS_VERIFICATION_TRADEOFF): $(wildcard $(ANALYSIS_VERIFICATION_DIR)/*-run*.csv)
+$(ANALYSIS_VERIFICATION_TRADEOFF): $(wildcard $(ANALYSIS_VERIFICATION_DIR)/*-run*.csv) $(ANALYSIS_EXPERT_REF)
 	uv run python -m aedist.tabulate_verification \
-	    --input $(ANALYSIS_VERIFICATION_DIR) --output $@
+	    --input $(ANALYSIS_VERIFICATION_DIR) --output $@ \
+	    --reference $(ANALYSIS_EXPERT_REF)
 
 $(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_verification \
-	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@
+	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@ \
+	    --reference $(ANALYSIS_EXPERT_REF)
 
 # tab_decomposition_fix.tex: FROZEN — reconciliation_*.csv inputs were
 # gitignored (c14136ff) and never archived. The committed table is correct

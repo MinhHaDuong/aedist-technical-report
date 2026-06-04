@@ -23,6 +23,7 @@ import logging
 import time
 from pathlib import Path
 
+from .config import DEFAULT_REFERENCE
 from .evaluate import load_plants_csv
 from .harness import load_experiments, make_client
 from .prototype_v1_fusion import (
@@ -46,7 +47,6 @@ from .prototype_v1_fusion import (
 log = logging.getLogger(__name__)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
-_DEFAULT_REF = _PROJECT_ROOT / "data" / "reference" / "vietnam_thermal_v1.csv"
 _DEFAULT_CORPUS = _PROJECT_ROOT / "data" / "rag_corpus"
 
 # Keys in experiments.toml [sweeps.fusion*] that query_fusion.py reads.
@@ -98,7 +98,7 @@ def run_fusion(
     provider:
         Pin OpenRouter provider, e.g. ``"Alibaba"`` for DeepSeek.
     reference:
-        Path to reference CSV for F1 scoring (defaults to vietnam_thermal_v1.csv).
+        Path to reference CSV for F1 scoring (defaults to config.DEFAULT_REFERENCE).
 
     Returns
     -------
@@ -107,7 +107,7 @@ def run_fusion(
         ``n_fragments``, ``wall_seconds``.
     """
     if reference is None:
-        reference = _DEFAULT_REF
+        reference = DEFAULT_REFERENCE
 
     sequence = DEFAULT_SEQUENCE
     if fragments is not None:
@@ -260,7 +260,7 @@ def main(argv: list[str] | None = None) -> None:
     fragments = args.fragments or sweep_cfg.get("fragments")
     output_dir = Path(args.output or sweep_cfg.get("output", "derived/fusion_proto"))
     corpus_dir = Path(sweep_cfg.get("corpus", str(_DEFAULT_CORPUS)))
-    reference = Path(sweep_cfg.get("reference", str(_DEFAULT_REF)))
+    reference = Path(sweep_cfg.get("reference", str(DEFAULT_REFERENCE)))
     seed = sweep_cfg.get("seed")
     provider = sweep_cfg.get("provider")
 

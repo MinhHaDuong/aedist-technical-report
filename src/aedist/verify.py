@@ -26,6 +26,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from .config import DEFAULT_REFERENCE
 from .evaluate import load_plants_csv, plants_from_dicts
 from .extract import (
     extract_fenced_blocks,
@@ -48,10 +49,6 @@ _MATCHED_TYPES = frozenset(
 )
 
 log = logging.getLogger(__name__)
-
-_DEFAULT_REF = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
 
 # Default subject for LLM verification prompts (configurable for other domains)
 DEFAULT_VERIFICATION_SUBJECT = "thermal power plants in Vietnam"
@@ -723,7 +720,7 @@ def main():
     if args.mode == "unverified":
         annotated, summary = verify_unverified(rows)
     elif args.mode == "tool":
-        ref_path = Path(args.reference) if args.reference else _DEFAULT_REF
+        ref_path = Path(args.reference) if args.reference else DEFAULT_REFERENCE
         annotated, summary = verify_tool(rows, ref_path)
     elif args.mode == "self":
         model_id = record.get("model")

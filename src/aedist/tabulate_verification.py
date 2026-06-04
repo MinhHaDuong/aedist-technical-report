@@ -22,15 +22,12 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+from .config import DEFAULT_REFERENCE
 from .evaluate import load_plants_csv, plants_from_dicts
 from .metrics import compute_metrics
 from .reconcile import reconcile
 
 log = logging.getLogger(__name__)
-
-_DEFAULT_REF = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
 
 # Pattern: {model}-{mode}-run{N}.csv (not *_filtered.csv)
 _CSV_PATTERN = re.compile(r"^(.+)-(\w+)-run(\d+)\.csv$")
@@ -96,7 +93,7 @@ def compute_tradeoff(verification_dir: Path, reference: Path | None = None) -> l
 
     Returns list of dicts ready for CSV output.
     """
-    ref_path = reference or _DEFAULT_REF
+    ref_path = reference or DEFAULT_REFERENCE
     ref_plants = load_plants_csv(ref_path)
 
     by_mode = _load_annotated_csvs(verification_dir)
@@ -127,17 +124,19 @@ def compute_tradeoff(verification_dir: Path, reference: Path | None = None) -> l
             avg_total = n_total_sum / n_runs
             retention = (avg_retained / avg_total * 100) if avg_total > 0 else 0.0
 
-            results.append({
-                "mode": mode,
-                "threshold": threshold,
-                "n_retained": round(avg_retained),
-                "n_total": round(avg_total),
-                "retention_pct": round(retention, 1),
-                "precision": round(precision_sum / n_runs, 4),
-                "coverage": round(coverage_sum / n_runs, 4),
-                "f1": round(f1_sum / n_runs, 4),
-                "n_runs": n_runs,
-            })
+            results.append(
+                {
+                    "mode": mode,
+                    "threshold": threshold,
+                    "n_retained": round(avg_retained),
+                    "n_total": round(avg_total),
+                    "retention_pct": round(retention, 1),
+                    "precision": round(precision_sum / n_runs, 4),
+                    "coverage": round(coverage_sum / n_runs, 4),
+                    "f1": round(f1_sum / n_runs, 4),
+                    "n_runs": n_runs,
+                }
+            )
 
     return results
 
@@ -212,12 +211,18 @@ def main():
         help="Output CSV path",
     )
     parser.add_argument("--latex", help="Optional LaTeX output path")
+    parser.add_argument(
+        "--reference",
+        type=Path,
+        default=DEFAULT_REFERENCE,
+        help="Reference CSV path",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     vdir = Path(args.input)
-    rows = compute_tradeoff(vdir)
+    rows = compute_tradeoff(vdir, Path(args.reference))
     if not rows:
         log.warning("No verification data found in %s", vdir)
         return

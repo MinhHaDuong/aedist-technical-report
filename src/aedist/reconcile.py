@@ -14,6 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 from .cleaner import PowerPlantDataframeCleaner
+from .config import DEFAULT_REFERENCE
 from .matching.lp import reconcile as reconcile_lp
 from .schema import MatchType, Plant, ReconciliationEntry
 
@@ -22,7 +23,6 @@ from .schema import MatchType, Plant, ReconciliationEntry
 # ---------------------------------------------------------------------------
 
 _CLEANER_CONFIG = Path(__file__).parent / "cleaner" / "config.json"
-_REFERENCE = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
 
 # Strips any trailing digit block (used for base computation only).
 _UNIT_SUFFIX = re.compile(r"\s+\d+$")
@@ -30,16 +30,20 @@ _UNIT_SUFFIX = re.compile(r"\s+\d+$")
 _FIRST_UNIT_SUFFIX = re.compile(r"\s+1$")
 
 
-def _build_single_unit_names() -> frozenset[str]:
+def _build_single_unit_names(reference_path: Path | None = None) -> frozenset[str]:
     """Names of plants that are the sole unit under their base name (from the fixed reference).
 
     Rule: name must end in " 1" AND no sibling unit exists in the reference.
     "An Khanh 1" qualifies; "Na Duong 1" does not (Na Duong 2 exists).
+
+    The reference defaults to ``config.DEFAULT_REFERENCE`` but may be overridden
+    (e.g. when switching the pipeline to a regenerated reference table).
     """
-    if not _REFERENCE.exists():
+    ref = reference_path or DEFAULT_REFERENCE
+    if not ref.exists():
         return frozenset()
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))
-    raw_names = pd.read_csv(_REFERENCE)["name"].dropna()
+    raw_names = pd.read_csv(ref)["name"].dropna()
     cleaned = raw_names.apply(cleaner.clean_name)
     bases = cleaned.apply(lambda s: _UNIT_SUFFIX.sub("", s))
     base_counts = bases.value_counts()
