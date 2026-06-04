@@ -1,0 +1,35 @@
+{
+  "run_id": "aac586032370",
+  "timestamp": "2026-05-24T19:44:43.528787Z",
+  "method": "direct",
+  "method_params": {
+    "model": "devstral-small-2",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 48.138,
+    "tokens_in": 611,
+    "tokens_out": 891
+  },
+  "result_file": "experiments/outputs/direct_extract/padme--devstral-small-2-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 25,
+    "tp": 25,
+    "fp": 0,
+    "fn": 138,
+    "f1": 0.266,
+    "fuel_accuracy": 0.48,
+    "status_accuracy": 0.32,
+    "province_accuracy": 0.2632
+  },
+  "finish_reason": "stop"
+}

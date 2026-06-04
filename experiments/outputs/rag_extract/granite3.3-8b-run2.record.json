@@ -1,0 +1,27 @@
+{
+  "run_id": "826eea49414b",
+  "timestamp": "2026-05-24T19:45:58.642227Z",
+  "method": "rag",
+  "method_params": {
+    "model": "granite3.3:8b",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 406.887,
+    "tokens_in": 80220,
+    "tokens_out": 441
+  },
+  "result_file": "experiments/outputs/rag_extract/granite3.3-8b-run2.json",
+  "result_summary": {
+    "status": "refusal"
+  },
+  "finish_reason": "stop"
+}

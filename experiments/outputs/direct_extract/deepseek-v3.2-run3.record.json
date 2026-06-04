@@ -1,0 +1,36 @@
+{
+  "run_id": "1ffa4a8fb044",
+  "timestamp": "2026-05-24T19:44:37.525256Z",
+  "method": "direct",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 90.304,
+    "cost_usd": 0.00047436,
+    "tokens_in": 56,
+    "tokens_out": 1210
+  },
+  "result_file": "experiments/outputs/direct_extract/deepseek-v3.2-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 35,
+    "tp": 35,
+    "fp": 0,
+    "fn": 128,
+    "f1": 0.3535,
+    "fuel_accuracy": 0.7429,
+    "status_accuracy": 0.4571,
+    "province_accuracy": 0.8286
+  },
+  "finish_reason": "stop"
+}

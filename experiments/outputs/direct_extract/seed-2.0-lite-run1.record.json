@@ -1,0 +1,36 @@
+{
+  "run_id": "4a74fff15dfb",
+  "timestamp": "2026-05-24T19:44:47.085634Z",
+  "method": "direct",
+  "method_params": {
+    "model": "bytedance-seed/seed-2.0-lite",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "ByteDance",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 29.084,
+    "cost_usd": 0.00177525,
+    "tokens_in": 101,
+    "tokens_out": 875
+  },
+  "result_file": "experiments/outputs/direct_extract/seed-2.0-lite-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 18,
+    "tp": 18,
+    "fp": 0,
+    "fn": 145,
+    "f1": 0.1989,
+    "fuel_accuracy": 0.6667,
+    "status_accuracy": 0.7222,
+    "province_accuracy": 0.8889
+  },
+  "finish_reason": "stop"
+}

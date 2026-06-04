@@ -1,0 +1,29 @@
+{
+  "run_id": "f31363f21b95",
+  "timestamp": "2026-05-24T19:46:07.963669Z",
+  "method": "direct",
+  "method_params": {
+    "model": "ministral-3:14b",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 1004.543,
+    "tokens_in": 610,
+    "tokens_out": 2404
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_extract/ministral-3-14b-run1.json",
+  "result_summary": {
+    "status": "error"
+  },
+  "finish_reason": "stop"
+}

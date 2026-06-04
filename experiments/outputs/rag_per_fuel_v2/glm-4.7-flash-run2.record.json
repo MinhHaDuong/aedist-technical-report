@@ -1,0 +1,14 @@
+{
+  "run_id": "6cd59abfc8bc",
+  "timestamp": "2026-05-24T19:46:02.384875Z",
+  "method": "rag",
+  "method_params": {
+    "model": "glm-4.7-flash",
+    "prompt_version": "rag_per_fuel_v2"
+  },
+  "resource_use": {},
+  "result_file": "experiments/outputs/rag_per_fuel_v2/glm-4.7-flash-run2.json",
+  "result_summary": {
+    "status": "empty"
+  }
+}

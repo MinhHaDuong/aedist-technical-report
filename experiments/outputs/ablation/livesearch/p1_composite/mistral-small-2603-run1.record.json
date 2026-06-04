@@ -1,0 +1,38 @@
+{
+  "run_id": "e17e5528449e",
+  "timestamp": "2026-05-24T19:44:36.869930Z",
+  "method": "direct",
+  "method_params": {
+    "model": "mistralai/mistral-small-2603",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_composite",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Mistral",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 75.115,
+    "cost_usd": 0.006924,
+    "tokens_in": 860,
+    "tokens_out": 11325
+  },
+  "result_file": "experiments/outputs/ablation/livesearch/p1_composite/mistral-small-2603-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 78,
+    "tp": 78,
+    "fp": 0,
+    "fn": 85,
+    "f1": 0.6473,
+    "fuel_accuracy": 0.3974,
+    "status_accuracy": 0.4872,
+    "province_accuracy": 0.5641
+  },
+  "finish_reason": "stop"
+}

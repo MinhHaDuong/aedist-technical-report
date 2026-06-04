@@ -1,0 +1,36 @@
+{
+  "run_id": "7d402ab923d9",
+  "timestamp": "2026-05-24T19:44:39.750542Z",
+  "method": "direct",
+  "method_params": {
+    "model": "meta-llama/llama-4-maverick",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "large",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "Meta",
+      "context_window": 1048576,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 2.573,
+    "cost_usd": 0.00017669999999999999,
+    "tokens_in": 130,
+    "tokens_out": 262
+  },
+  "result_file": "experiments/outputs/direct_extract/llama-4-maverick-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 8,
+    "tp": 8,
+    "fp": 0,
+    "fn": 155,
+    "f1": 0.0936,
+    "fuel_accuracy": 0.875,
+    "status_accuracy": 0.5,
+    "province_accuracy": 0.875
+  },
+  "finish_reason": "stop"
+}

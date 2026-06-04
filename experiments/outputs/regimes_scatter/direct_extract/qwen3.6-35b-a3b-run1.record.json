@@ -1,0 +1,30 @@
+{
+  "run_id": "f9ff7881555d",
+  "timestamp": "2026-05-24T19:46:12.549284Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen/qwen3.6-35b-a3b",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 28.387,
+    "cost_usd": 0.00471458,
+    "tokens_in": 63,
+    "tokens_out": 4850
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_extract/qwen3.6-35b-a3b-run1.json",
+  "result_summary": {
+    "status": "refusal"
+  },
+  "finish_reason": "stop"
+}

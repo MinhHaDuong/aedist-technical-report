@@ -1,0 +1,32 @@
+{
+  "run_id": "7af07a2d18a4",
+  "timestamp": "2026-05-24T19:44:50.718784Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840
+    }
+  },
+  "resource_use": {
+    "wall_s": 233.85399999999998,
+    "cost_usd": 0.00500506
+  },
+  "result_file": "experiments/outputs/direct_multiturn/deepseek-v3.2-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 67,
+    "tp": 67,
+    "fp": 0,
+    "fn": 96,
+    "f1": 0.5826,
+    "fuel_accuracy": 0.6567,
+    "status_accuracy": 0.3284,
+    "province_accuracy": 0.6716
+  }
+}

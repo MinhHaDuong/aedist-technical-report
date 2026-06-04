@@ -1,0 +1,33 @@
+{
+  "run_id": "5af325bf682b",
+  "timestamp": "2026-05-24T19:44:41.445272Z",
+  "method": "direct",
+  "method_params": {
+    "model": "minimax/minimax-m2.7",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "MiniMax",
+      "context_window": 204800,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 8.457,
+    "cost_usd": 0.0003894,
+    "tokens_in": 90,
+    "tokens_out": 302
+  },
+  "result_file": "experiments/outputs/direct_extract/minimax-m2.7-run3.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 163,
+    "f1": 0.0
+  },
+  "finish_reason": "stop"
+}

@@ -1,0 +1,36 @@
+{
+  "run_id": "690df4173bba",
+  "timestamp": "2026-05-24T19:44:42.851407Z",
+  "method": "direct",
+  "method_params": {
+    "model": "nvidia/nemotron-3-nano-30b-a3b",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "NVIDIA",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 84.589,
+    "cost_usd": 0.001529,
+    "tokens_in": 72,
+    "tokens_out": 7627
+  },
+  "result_file": "experiments/outputs/direct_extract/nemotron-3-nano-30b-a3b-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 24,
+    "tp": 24,
+    "fp": 0,
+    "fn": 139,
+    "f1": 0.2567,
+    "fuel_accuracy": 0.7917,
+    "status_accuracy": 0.4167,
+    "province_accuracy": 0.2083
+  },
+  "finish_reason": "stop"
+}

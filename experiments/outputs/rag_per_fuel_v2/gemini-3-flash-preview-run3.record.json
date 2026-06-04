@@ -1,0 +1,36 @@
+{
+  "run_id": "7bf9fe9cd8fe",
+  "timestamp": "2026-05-24T19:45:12.484048Z",
+  "method": "rag",
+  "method_params": {
+    "model": "google/gemini-3-flash-preview",
+    "prompt_version": "rag_per_fuel_v2",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576,
+      "finish_reason": "merged"
+    }
+  },
+  "resource_use": {
+    "wall_s": 21.788,
+    "cost_usd": 0.09384900000000002,
+    "tokens_in": 166134,
+    "tokens_out": 3594
+  },
+  "result_file": "experiments/outputs/rag_per_fuel_v2/gemini-3-flash-preview-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 114,
+    "tp": 114,
+    "fp": 0,
+    "fn": 49,
+    "f1": 0.8231,
+    "fuel_accuracy": 0.5702,
+    "status_accuracy": 0.4035,
+    "province_accuracy": 0.7807
+  },
+  "finish_reason": "merged"
+}

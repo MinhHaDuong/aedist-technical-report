@@ -1,0 +1,35 @@
+{
+  "run_id": "d1a207130c2a",
+  "timestamp": "2026-05-24T19:44:52.134760Z",
+  "method": "rag",
+  "method_params": {
+    "model": "cogito:8b",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 96.643,
+    "tokens_in": 67588,
+    "tokens_out": 396
+  },
+  "result_file": "experiments/outputs/rag_extract/cogito-8b-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 13,
+    "tp": 13,
+    "fp": 0,
+    "fn": 150,
+    "f1": 0.1477,
+    "fuel_accuracy": 0.0,
+    "status_accuracy": 0.2308,
+    "province_accuracy": 0.3846
+  },
+  "finish_reason": "stop"
+}

@@ -1,0 +1,35 @@
+{
+  "run_id": "a9ef573a7425",
+  "timestamp": "2026-05-24T19:45:41.083816Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen3.5:2b",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 398.875,
+    "tokens_in": 63,
+    "tokens_out": 32732
+  },
+  "result_file": "experiments/outputs/direct_extract/padme-qwen3.5-2b-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 1475,
+    "tp": 163,
+    "fp": 1312,
+    "fn": 0,
+    "f1": 0.199,
+    "fuel_accuracy": 0.4233,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.0123
+  },
+  "finish_reason": "stop"
+}

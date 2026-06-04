@@ -1,0 +1,36 @@
+{
+  "run_id": "a2907881e976",
+  "timestamp": "2026-05-24T19:45:14.598533Z",
+  "method": "rag",
+  "method_params": {
+    "model": "minimax/minimax-m2.7",
+    "prompt_version": "rag_per_fuel_v2",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "MiniMax",
+      "context_window": 204800,
+      "finish_reason": "merged"
+    }
+  },
+  "resource_use": {
+    "wall_s": 721.295,
+    "cost_usd": 0.11950350000000001,
+    "tokens_in": 225341,
+    "tokens_out": 43251
+  },
+  "result_file": "experiments/outputs/rag_per_fuel_v2/minimax-m2.7-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 142,
+    "tp": 142,
+    "fp": 0,
+    "fn": 21,
+    "f1": 0.9311,
+    "fuel_accuracy": 0.2887,
+    "status_accuracy": 0.3451,
+    "province_accuracy": 0.3662
+  },
+  "finish_reason": "merged"
+}
