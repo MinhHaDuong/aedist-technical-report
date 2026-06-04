@@ -1,0 +1,109 @@
+%erg 0.1
+Title: experiments/Makefile → acquire.mk, pure P1 with all-.PHONY guard (0406 S4)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T11:45Z claude created — S4 child of tracker 0406; S3 (0410, PR #696) landed: experiments/Makefile is already P1+utils only
+
+--- body ---
+## Context
+
+Tracker 0406, step S4. After S3, `experiments/Makefile` holds only P1
+sweep verbs (census, regimes, decomposed, verification, sourced,
+frontier — money-gated API runs) and corpus utils (pdf2md, build-corpus,
+preflight, help), plus one P2-delegating alias (`census-summary`,
+explicitly deferred to this step by S3 review). S4 renames it to
+`experiments/acquire.mk`, applies the header contract, and adds the
+mechanical guard for the P1 invariant: every target is .PHONY (manually
+invoked, money-gated; no file target downstream can depend on).
+
+## Design (ratified, tracker 0406)
+
+- `experiments/acquire.mk` = P1. Sources: `experiments.toml`, corpus.
+  Outcomes: raw replies under `experiments/outputs/**`, `archive/**`
+  (tracked by the 0405 policy). NO file targets — every target .PHONY.
+- Header contract: phase (P1 acquire), sources, outcomes, invariant
+  ("every target is .PHONY; nothing downstream may depend on a P1
+  target as a file"), and the money-gate warning (sweeps cost API
+  dollars; test-one-before-blasting).
+- **census-summary alias: DROP it.** P1 may not carry a cross-phase
+  delegation edge (root's two-entry rule arrives in S5; the documented
+  dev path is calling score.mk directly). Sweep call sites first:
+  root Makefile l.137 (`$(MAKE) -C experiments census`) is the CENSUS
+  sweep (P1, different from census-summary) — leave its semantics,
+  repoint its invocation to acquire.mk. Grep for census-summary
+  callers (CI, docs, scripts) and repoint them to
+  `make -f experiments/derived/score.mk census-summary` or its
+  equivalent target there.
+- Guard: `tests/test_acquire_all_phony.py` (@pytest.mark.adherence) —
+  parse acquire.mk (and its includes if any, excluding paths.mk vars):
+  every rule target is declared .PHONY; zero rules whose target is a
+  filesystem path (no `/` in target names is a reasonable first
+  needle; refine against the actual file). Also assert no rule writes
+  outside experiments/ (no `../` targets).
+- After the rename, `make -C experiments` no longer finds a default
+  Makefile — that is intended (per-phase .mks are the dev path).
+  Repoint every reference; the phase .mk invocation convention is
+  `make -f experiments/acquire.mk <sweep>`.
+
+## Relevant files
+
+- `experiments/Makefile` — becomes acquire.mk (git mv + header edits)
+- root `Makefile` — l.137 `$(MAKE) -C experiments census` and any other
+  `-C experiments` delegations repoint to `-f experiments/acquire.mk`
+  (check UV_RUN/.env handling still reaches the sweeps — they make API
+  calls and need the env)
+- `tests/test_score_build_no_acquire.py` — docstrings/comments
+  reference experiments/Makefile (l.5, 13, 107, 124); update wording
+  and any needle lists
+- `tests/test_makefile_dag.py` and other tests scanning Makefiles —
+  ensure acquire.mk is picked up (or deliberately excluded) per each
+  test's purpose
+- `docs/pipeline-phases.md` — P1 rows reference experiments/Makefile
+  (l.15, 23); update to acquire.mk
+- `.github/workflows/`, `README.md`, `scripts/` — sweep
+  `grep -rn "experiments/Makefile\|-C experiments" --exclude-dir=.git .`
+
+## Actions
+
+1. Red test first: `tests/test_acquire_all_phony.py` — red today
+   (file experiments/acquire.mk absent; write it to target acquire.mk
+   so it fails on missing file, green after the rename + cleanup).
+2. `git mv experiments/Makefile experiments/acquire.mk`; add header
+   contract; drop census-summary (repoint callers to score.mk).
+3. Repoint all references (root Makefile, tests, docs, CI, README).
+4. Verify every remaining target is .PHONY; fix any stragglers found
+   by the guard (decide per target: it is either a P1 verb → .PHONY,
+   or it does not belong in acquire.mk → relocate, flag in PR).
+5. Update docs/pipeline-phases.md.
+
+## Test
+
+The guard test of action 1. Existing gates that must stay green:
+test_score_build_no_acquire, test_render_build_clean_room,
+test_makefile_dag, both P4 clean-room tests,
+test_no_tracked_ignored_files.
+
+## Verification
+
+- [ ] `grep -rn "experiments/Makefile" --exclude-dir=.git .` → zero in
+      Makefiles/tests/CI/docs (tickets history OK)
+- [ ] Guard test green: all acquire.mk targets .PHONY, no path targets
+- [ ] `make check` green; `make report` / `make slides` build; CI green
+- [ ] Sweep verbs still resolve in dry-run:
+      `make -f experiments/acquire.mk -n census` (NEVER for real —
+      money gate)
+
+## Invariants
+
+- No artifact content changes; NEVER run sweeps for real (API cost)
+- score.mk / render.mk untouched except reference wording
+- One PR, this child only; tracker 0406 stays open
+
+## Exit criteria
+
+- experiments/acquire.mk exists (header contract, all-.PHONY,
+  money-gate doc); experiments/Makefile gone
+- census-summary alias dropped, callers repointed
+- Guard test enforces the P1 invariant mechanically
