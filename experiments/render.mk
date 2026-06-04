@@ -320,6 +320,18 @@ $(ANALYSIS_GEN)/tab_converter_benchmark.tex: $(ANALYSIS_CONVERTER_META) $(ANALYS
 	uv run python -m aedist.compare_converters \
 	    --input $(ANALYSIS_CONVERTER_TEST) --meta $(ANALYSIS_CONVERTER_META) --output $@
 
+# Rule restored by ticket 0417 (orphan found by the 0415 world-reach audit).
+# The script writes the repo-rooted default path itself (== $@ under the
+# default $(ANALYSIS_GEN)); it reads P1 raw replies directly, like
+# tab_coherence above. The raw replies live under experiments/archive/
+# (tracked P1 outcomes per 0405; live outputs/ keeps only .record.json).
+$(ANALYSIS_GEN)/tab_source_grounding.tex: \
+		$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_cited/claude-opus-4.6-run*.csv) \
+		$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/deepseek-v3.2-run*.json) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_grounding.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_source_grounding
+
 # --- Self-consistency tables (render half; migrated from the P1 makefile (now
 #     experiments/acquire.mk) by ticket 0410, tracker 0406 S3) ----------------
 # The P2 score half ($(SCORE_SC_JSON): outputs/rag → derived/rag_consistency)
@@ -374,7 +386,8 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_decomposition_fix.tex \
 	$(ANALYSIS_GEN)/tab_coherence.tex \
 	$(ANALYSIS_GEN)/tab_reconciliation.tex \
-	$(ANALYSIS_GEN)/tab_converter_benchmark.tex
+	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
+	$(ANALYSIS_GEN)/tab_source_grounding.tex
 
 report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
 
