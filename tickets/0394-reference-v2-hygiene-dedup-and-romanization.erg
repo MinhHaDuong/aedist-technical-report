@@ -35,8 +35,10 @@ disjoint `units_included`); they are the data model, not defects.
 
 - `data/reference/vietnam_thermal_v1_fix1.csv` (162 rows) and
   `vietnam_thermal_units_v1_fix1.csv` (249 rows), built reproducibly from the
-  frozen v1 by `experiments/scripts/build_reference_v1_fix1.py` (verbatim text
-  transform — a spreadsheet round-trip had coerced `ires_code` 0121->121).
+  frozen v1 by `experiments/scripts/build_reference_v1_fix1.sh` — plain
+  grep/sed/awk filters + count guards; untouched lines byte-identical by
+  construction (the python predecessor silently rewrote CRLF->LF on every
+  line; a spreadsheet round-trip had coerced `ires_code` 0121->121).
 - Two defects fixed: DH2 romanization dup deleted (both levels);
   `Quảng Trị 1` "Unit 2, Unit 2" transcription error -> Units 1+2 (both
   levels; upstream unit master is sound — root cause is the aggregator, 0416).

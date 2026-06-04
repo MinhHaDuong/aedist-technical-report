@@ -115,11 +115,13 @@ Experiments 2–3.
 
 `vietnam_thermal_v1_fix1.csv` (162 rows) and
 `vietnam_thermal_units_v1_fix1.csv` (249 rows) are built from the frozen
-v1 files by `experiments/scripts/build_reference_v1_fix1.py` — a pure
-text transform that preserves every untouched field verbatim (a
-spreadsheet round-trip during adjudication coerced `ires_code` 0121 to
-121; the scripted rebuild is the countermeasure, and
-`tests/test_reference_integrity.py` guards the invariants).
+v1 files by `experiments/scripts/build_reference_v1_fix1.sh` — plain
+grep/sed/awk line filters with loud count guards, so untouched lines
+(line endings included) are byte-identical to v1 by construction: the
+diff against v1 is exactly the adjudicated edits. (A spreadsheet
+round-trip during adjudication had coerced `ires_code` 0121 to 121; the
+scripted rebuild is the countermeasure, and
+`tests/test_reference_integrity.py` guards the invariants.)
 
 Two defects, adjudicated by the author on 2026-06-03/04:
 
