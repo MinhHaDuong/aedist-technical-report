@@ -19,13 +19,13 @@ from pathlib import Path
 
 import yaml
 
+from .config import DEFAULT_REFERENCE
 from .evaluate import load_plants_csv
 from .harness import BudgetTracker
 from .metrics import compute_metrics
 from .reconcile import reconcile
 from .schema import Method, MethodParams, ResourceUse, ResultSummary, RunRecord
 from .verify import (
-    _DEFAULT_REF,
     extract_csv_rows,
     extract_response_text,
     filter_by_score,
@@ -381,7 +381,7 @@ def main():
     cross_verifier = config.get("cross_verifier")
     verifier_panel = config.get("verifier_panel")
     ref_path_str = config.get("reference")
-    reference_path = Path(ref_path_str) if ref_path_str else _DEFAULT_REF
+    reference_path = Path(ref_path_str) if ref_path_str else DEFAULT_REFERENCE
 
     tavily_key = os.environ.get("TAVILY_API_KEY")
 

@@ -1,0 +1,286 @@
+%erg 0.1
+Title: Pipeline référence 3/3: un seul chemin de référence côté consommateurs
+Created: 2026-06-04
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #712
+
+--- log ---
+2026-06-04T12:56Z HDMX-coding-agent created
+
+2026-06-04T14:10Z claude reimagine raid 419-420 — drift guard PASS; refinements appended to body §Notes Imagine; Blocked-by 0420/0416 suggested by agent REJECTED (exit criteria verifiable today; v1→v2 switch is 0413's payoff)
+
+2026-06-04T14:30Z claude plan raid — actions + first test + deps; tautology scan done
+2026-06-04T14:45Z claude feasibility PASS — render.mk:78 ANALYSIS_EXPERT_REF in scope for the two tabulate_verification rules (no SCORE_REFERENCE import needed); file sets disjoint from 0420
+2026-06-04T20:12Z HDMX-coding-agent closed — autoclosed — PR #712
+--- body ---
+## Contexte
+
+Règle auteur (2026-06-04) : les scripts qui comparent une sortie extraite de
+modèle à une liste de référence prennent les fichiers en ARGUMENTS de ligne
+de commande — pas de chemin de référence en dur.
+
+État : la plupart des entry points ont déjà `--reference`, mais le chemin par
+défaut est dupliqué en ~8 constantes module éparpillées :
+
+- `evaluate.py:_DEFAULT_REF`, `query_fusion.py:_DEFAULT_REF`,
+  `prototype_v1_fusion.py:_DEFAULT_REF`, `verify.py` (copie),
+  `tabulate_verification.py` (copie), `verify_source_grounding.py` (copie),
+  `reconcile.py:_REFERENCE`, `tabulate_reconciliation.py:_EXPERT_REF`
+- Côté make, `score.mk:SCORE_REFERENCE` est déjà le point unique — bien.
+
+## Quoi faire
+
+1. Une seule source du chemin par défaut (petit module/config partagé,
+   cf. règle « No hardcoded paths : defaults from config ») ; les 8
+   constantes dupliquées meurent.
+2. Chaque entry point qui compare sortie-modèle vs référence expose
+   `--reference` (compléter les manquants) et le défaut vient de la config.
+3. Vérifier qu'aucun module n'utilise la constante en interne sans passer
+   par le paramètre (ex. `reconcile.py:_REFERENCE`).
+4. Effet attendu : la bascule v1 → v2-du-pipe (0413) = un changement de
+   variable make + un défaut de config, zéro chasse aux constantes.
+
+## Exit criteria
+
+- [ ] Zéro occurrence de `vietnam_thermal_v1.csv` en dur dans `src/`
+      (hors module de config et docstrings)
+- [ ] Tous les entry points de comparaison acceptent `--reference`
+- [ ] `make check` vert (le DAG score.mk continue de passer `--reference`)
+
+## Notes Imagine (raid 2026-06-04)
+
+- Chemin le plus simple : déplacer `_DEFAULT_REF` d'`evaluate.py` vers un
+  petit `src/aedist/config.py` (~3 lignes, constantes de chemin uniquement).
+  Pas de système de config (TOML/env/classes) — YAGNI.
+- TROIS modules importent déjà `from .evaluate import _DEFAULT_REF` :
+  `score_exp1.py`, `score_mechanical.py`, `self_consistency.py` — à
+  re-pointer dans le MÊME commit atomique (piège ruff : retrait
+  d'evaluate.py + ajout config.py + re-pointage en un seul lot d'édits).
+- `reconcile.py` est une BIBLIOTHÈQUE (pas d'entry point) : `_REFERENCE`
+  sert à construire `_SINGLE_UNIT_NAMES` au chargement. Fix : paramètre de
+  chemin optionnel sur `_build_single_unit_names()` avec défaut config —
+  pas d'argparse à y ajouter.
+- Lacune réelle : `tabulate_verification.py` n'expose PAS `--reference`
+  (la signature `compute_tradeoff(reference=...)` existe déjà) ET la règle
+  Makefile ne le passe pas — câbler les deux (argparse + analysis.mk).
+- Critère 1 vérifiable dès aujourd'hui (grep) — indépendant de 0420/0416.
+
+## Plan (raid 2026-06-04)
+
+### Actions (ordered)
+
+All paths relative to repo root. Verification of assumptions documented inline.
+
+**Step 1 — Create `src/aedist/config.py`** (new file; does NOT exist yet — confirmed)
+
+```python
+# src/aedist/config.py — path constants only; no config system (YAGNI)
+from pathlib import Path
+
+_REPO_ROOT = Path(__file__).parent.parent.parent
+
+DEFAULT_REFERENCE = _REPO_ROOT / "data" / "reference" / "vietnam_thermal_v1.csv"
+```
+
+One public name (`DEFAULT_REFERENCE`), nothing else.
+
+**Step 2 — Atomic ruff-safe batch: remove `_DEFAULT_REF` from `evaluate.py` + re-point 3 importers**
+
+This must be ONE atomic edit batch (ruff fires after every Edit and strips unused
+imports between Edits — trap documented in project rules):
+
+- `evaluate.py:162-164`: remove the `_DEFAULT_REF` block (confirmed: 3-line block at
+  lines 162-164 — `_DEFAULT_REF = (` on 162, filename on 163, `)` on 164).
+  Keep `_PROJECT_ROOT` at line 166 (other consumers exist, e.g. line 325
+  `ref_path = Path(args.reference) if args.reference else _DEFAULT_REF` — update that too).
+- `score_exp1.py:15`: `from .evaluate import _DEFAULT_REF` → `from .config import DEFAULT_REFERENCE`
+  and update argparse default at line 265 to `DEFAULT_REFERENCE`.
+- `score_mechanical.py:16`: `from .evaluate import _DEFAULT_REF, load_plants_csv, plants_from_dicts`
+  → `from .evaluate import load_plants_csv, plants_from_dicts` + add
+  `from .config import DEFAULT_REFERENCE`; update argparse default at line 420.
+- `self_consistency.py:25`: `from .evaluate import _DEFAULT_REF, load_plants_csv` →
+  `from .evaluate import load_plants_csv` + add `from .config import DEFAULT_REFERENCE`;
+  update ref_path fallback at line 467.
+
+**Step 3 — Replace `_DEFAULT_REF` in `verify.py`** (confirmed: lines 52-54)
+
+- Remove `_DEFAULT_REF` block at lines 52-54; add `from .config import DEFAULT_REFERENCE`.
+- Line 726: `_DEFAULT_REF` → `DEFAULT_REFERENCE`.
+- Line 13 (module docstring usage example): no code change needed — it's a
+  CLI example showing a concrete path, acceptable in a docstring.
+- Line 262 (docstring body): acceptable — describes the file semantically; the
+  ratchet test will exclude docstrings/comments.
+
+**Step 4 — Replace `_DEFAULT_REF` in `tabulate_verification.py`** (confirmed: lines 31-33)
+
+- Remove `_DEFAULT_REF` block; add `from .config import DEFAULT_REFERENCE`.
+- Line 99: `ref_path = reference or _DEFAULT_REF` → `ref_path = reference or DEFAULT_REFERENCE`.
+- Add `--reference` argument to argparse in `main()` (after line 214):
+  ```python
+  parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE,
+                      help="Reference CSV path")
+  ```
+- Update the `main()` body at line 220:
+  `rows = compute_tradeoff(vdir)` → `rows = compute_tradeoff(vdir, Path(args.reference))`.
+
+**Step 5 — Wire `--reference` in `render.mk` for `tabulate_verification`** (confirmed: 2 rules at lines 300-307)
+
+Both rules invoke `tabulate_verification` without `--reference`.
+`SCORE_REFERENCE` is defined in `score.mk:58` but is NOT in scope in `render.mk`
+(different makefile). Check what reference variable `render.mk` uses:
+
+  - If `render.mk` includes `score.mk` or defines its own `SCORE_REFERENCE`, use it.
+  - If not, add `RENDER_REFERENCE ?= $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv`
+    near the top of `render.mk` and thread it through both rules.
+  - Both rules get `--reference $(RENDER_REFERENCE)` appended.
+
+Note: the execute agent must verify `render.mk` variable scope before writing.
+
+**Step 6 — Replace `_DEFAULT_REF`/`_EXPERT_REF` in `prototype_v1_fusion.py` and `query_fusion.py`**
+
+- `prototype_v1_fusion.py:51`: `_DEFAULT_REF = _PROJECT_ROOT / ...` → remove;
+  add `from .config import DEFAULT_REFERENCE`; update argparse at line 733.
+- `query_fusion.py:49`: same pattern; update line 110 (`reference = _DEFAULT_REF`
+  → `reference = DEFAULT_REFERENCE`) and line 263 (`str(_DEFAULT_REF)` →
+  `str(DEFAULT_REFERENCE)`).
+- `query_fusion.py:101` (docstring): update to `(defaults to DEFAULT_REFERENCE)`.
+
+**Step 7 — Replace `_DEFAULT_REF`/`_DEFAULT_REFERENCE_PATH` in `verify_source_grounding.py`** (confirmed: lines 167-169)
+
+- Remove `_DEFAULT_REFERENCE_PATH` block; add `from .config import DEFAULT_REFERENCE`.
+- Line 200: `reference_path = _DEFAULT_REFERENCE_PATH` → `reference_path = DEFAULT_REFERENCE`.
+- Line 189 (docstring): update to `Defaults to ``config.DEFAULT_REFERENCE```.
+
+**Step 8 — Fix `reconcile.py`** (confirmed: `_REFERENCE` at line 25, used in `_build_single_unit_names()` at line 42, frozen to module-level set at line 54)
+
+The function is called at import time (`_SINGLE_UNIT_NAMES = _build_single_unit_names()`).
+Fix: add optional `reference_path` parameter to `_build_single_unit_names()` with
+default from config; call with default at module level.
+
+```python
+# Before:
+_REFERENCE = Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
+def _build_single_unit_names() -> frozenset[str]:
+    ...uses _REFERENCE...
+_SINGLE_UNIT_NAMES: frozenset[str] = _build_single_unit_names()
+
+# After:
+from .config import DEFAULT_REFERENCE
+def _build_single_unit_names(reference_path: Path | None = None) -> frozenset[str]:
+    ref = reference_path or DEFAULT_REFERENCE
+    ...uses ref...
+_SINGLE_UNIT_NAMES: frozenset[str] = _build_single_unit_names()
+```
+
+No argparse change needed (reconcile.py is a library, not an entry point).
+
+**Step 9 — Replace `_EXPERT_REF` in `tabulate_reconciliation.py`** (confirmed: line 35)
+
+- Remove `_EXPERT_REF = _REPO_ROOT / ...`; add `from .config import DEFAULT_REFERENCE`.
+- Line 52 default: `expert_path: Path = _EXPERT_REF` → `expert_path: Path = DEFAULT_REFERENCE`.
+- Line 288 argparse default: same substitution.
+
+**Step 10 — Run `make check` to validate the full DAG**
+
+`score.mk:SCORE_REFERENCE` already passes the explicit path to `evaluate`. The
+migrated modules get their default from `config.DEFAULT_REFERENCE`. No functional
+change to the build — this is a constant consolidation only.
+
+### First test (TDD-first)
+
+File: `tests/test_no_hardcoded_reference_path.py`
+
+```python
+"""No hardcoded 'vietnam_thermal_v1.csv' outside config.py and comments/docstrings.
+
+Exit criterion 1 of ticket 0419: single source of truth for the reference path.
+"""
+import ast
+from pathlib import Path
+
+import pytest
+
+pytestmark = pytest.mark.adherence
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SRC_DIR = REPO_ROOT / "src" / "aedist"
+CONFIG_MODULE = SRC_DIR / "config.py"
+TARGET = "vietnam_thermal_v1.csv"
+
+
+def _source_lines(path: Path) -> list[tuple[int, str]]:
+    """Return (lineno, line) pairs that are NOT inside string literals or comments."""
+    source = path.read_text()
+    # Walk AST to collect line ranges of string nodes (docstrings + string literals)
+    string_lines: set[int] = set()
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            # ast gives lineno/end_lineno for the string span
+            for ln in range(node.lineno, (node.end_lineno or node.lineno) + 1):
+                string_lines.add(ln)
+    result = []
+    for i, line in enumerate(source.splitlines(), 1):
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            continue  # comment line — allowed
+        if i in string_lines:
+            continue  # inside a string literal / docstring — allowed
+        result.append((i, line))
+    return result
+
+
+def test_no_hardcoded_reference_path():
+    """TARGET must not appear in code lines of any src/aedist/*.py except config.py."""
+    violations = []
+    for py_file in sorted(SRC_DIR.glob("*.py")):
+        if py_file == CONFIG_MODULE:
+            continue  # config.py is the allowed home
+        for lineno, line in _source_lines(py_file):
+            if TARGET in line:
+                violations.append(f"{py_file.relative_to(REPO_ROOT)}:{lineno}: {line.strip()}")
+    assert not violations, (
+        f"{len(violations)} hardcoded reference path(s) outside config.py:\n"
+        + "\n".join(f"  {v}" for v in violations)
+    )
+
+
+def test_config_default_reference_exists():
+    """config.DEFAULT_REFERENCE must point to an existing file."""
+    from aedist.config import DEFAULT_REFERENCE  # noqa: PLC0415
+
+    assert DEFAULT_REFERENCE.exists(), (
+        f"config.DEFAULT_REFERENCE points to a non-existent file: {DEFAULT_REFERENCE}"
+    )
+```
+
+The AST-based approach skips docstrings and string literals, so the
+`verify.py:262` docstring mention and `verify.py:13` usage example are
+automatically excluded. No manual exception list needed.
+
+### Dependencies
+
+- **0420** (1/3 — raw data pipeline): touches `data/reference/raw/`, `docs/pipeline.ods`,
+  new `extract_ods.py`. Fully disjoint from `src/aedist/` changes here. No conflict.
+- **0416** (2/3 — aggregator): not yet planned; disjoint from constants-migration.
+- **0413** (adoption, beneficiary): blocked on this ticket; no shared files.
+- **0406** (paths.mk): closed; `score.mk:SCORE_REFERENCE` already correct.
+- No other blockers identified.
+
+### Tautological-test scan
+
+| Test | Catches wrong impl? |
+|------|---------------------|
+| `test_no_hardcoded_reference_path` — grep for `vietnam_thermal_v1.csv` in non-comment, non-docstring code lines | YES: if any constant is not removed (e.g. developer leaves `_DEFAULT_REF` in one file), test fails on that line. Does NOT catch wrong path in config.py (acceptable — config.py is the single allowed location). |
+| `test_config_default_reference_exists` — asserts `DEFAULT_REFERENCE.exists()` | YES: catches a typo'd path or wrong filename in config.py. Fails if the file doesn't exist on disk at test time (expected: data/reference/vietnam_thermal_v1.csv is tracked). Does NOT catch a semantically wrong path that happens to exist — unlikely given the specific filename. |
+
+Both tests are non-tautological and complementary: one enforces zero duplication
+outside config.py, the other enforces config.py correctness.
+
+## Related
+
+- 0420 (1/3 extraction), 0416 (2/3 agrégateur), 0413 (adoption — bénéficiaire
+  direct), refonte Makefile 0406 (paths.mk)

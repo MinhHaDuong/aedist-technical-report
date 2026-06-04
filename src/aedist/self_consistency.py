@@ -22,7 +22,8 @@ import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
-from .evaluate import _DEFAULT_REF, load_plants_csv
+from .config import DEFAULT_REFERENCE
+from .evaluate import load_plants_csv
 from .extract import extract_one
 from .metrics import BenchmarkMetrics, compute_metrics
 from .reconcile import reconcile
@@ -455,7 +456,9 @@ def main() -> None:
         "--output", required=True, help="Output directory for consolidated CSVs and results"
     )
     p.add_argument(
-        "--reference", default=None, help="Path to reference CSV (default: vietnam_thermal_v1.csv)"
+        "--reference",
+        default=None,
+        help="Path to reference CSV (default: config.DEFAULT_REFERENCE)",
     )
     p.add_argument(
         "--measurements", default=None, help="Path to measurements.jsonl (updates per-run records)"
@@ -464,7 +467,7 @@ def main() -> None:
 
     input_dir = Path(args.input)
     output_dir = Path(args.output)
-    ref_path = Path(args.reference) if args.reference else _DEFAULT_REF
+    ref_path = Path(args.reference) if args.reference else DEFAULT_REFERENCE
 
     if not input_dir.exists():
         raise SystemExit(f"Input dir not found: {input_dir}")

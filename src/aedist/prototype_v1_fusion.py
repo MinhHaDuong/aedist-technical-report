@@ -36,6 +36,7 @@ from typing import Any
 
 from rapidfuzz import fuzz
 
+from .config import DEFAULT_REFERENCE
 from .evaluate import load_plants_csv
 from .extract import extract_fenced_blocks, fallback_extract_inline_csv, parse_and_canonicalize
 from .harness import load_experiments, make_client, query_model
@@ -48,7 +49,6 @@ log = logging.getLogger(__name__)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _DEFAULT_CORPUS = _PROJECT_ROOT / "data" / "rag_corpus"
-_DEFAULT_REF = _PROJECT_ROOT / "data" / "reference" / "vietnam_thermal_v1.csv"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "derived" / "fusion_proto"
 _PROMPT_DIR = _PROJECT_ROOT / "experiments" / "prompts"
 
@@ -730,7 +730,7 @@ def main(argv: list[str] | None = None) -> None:
         help="[md] Prompt for each incremental md fusion step. Default: built-in.",
     )
     p.add_argument("--corpus", type=Path, default=_DEFAULT_CORPUS)
-    p.add_argument("--reference", type=Path, default=_DEFAULT_REF)
+    p.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
     p.add_argument("--output", type=Path, default=_DEFAULT_OUTPUT)
     p.add_argument(
         "--seed",

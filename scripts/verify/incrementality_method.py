@@ -25,6 +25,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from aedist.config import DEFAULT_REFERENCE
 from aedist.evaluate import load_plants_csv
 from aedist.harness import make_client
 from aedist.prototype_v1_fusion import (
@@ -41,7 +42,6 @@ log = logging.getLogger(__name__)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _DEFAULT_CORPUS = _PROJECT_ROOT / "data" / "rag_corpus"
-_DEFAULT_REF = _PROJECT_ROOT / "data" / "reference" / "vietnam_thermal_v1.csv"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "derived" / "fusion_proto"
 _DEFAULT_MODEL = "openai/gpt-4o-mini"
 
@@ -254,9 +254,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument(
         "--reference",
         type=Path,
-        default=_DEFAULT_REF,
+        default=DEFAULT_REFERENCE,
         metavar="FILE",
-        help=f"Reference CSV file (default: {_DEFAULT_REF})",
+        help=f"Reference CSV file (default: {DEFAULT_REFERENCE})",
     )
     p.add_argument("--verbose", action="store_true")
     args = p.parse_args(argv)

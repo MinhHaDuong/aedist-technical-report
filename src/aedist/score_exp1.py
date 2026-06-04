@@ -12,7 +12,7 @@ import logging
 import re
 from pathlib import Path
 
-from .evaluate import _DEFAULT_REF
+from .config import DEFAULT_REFERENCE
 from .score_mechanical import (
     score_accuracy,
     score_coherence,
@@ -262,7 +262,7 @@ def main(argv: list[str] | None = None) -> None:
         default=Path("experiments/derived/exp1_cross_eval.csv"),
         help="CSV to append one scored row per run",
     )
-    parser.add_argument("--reference", type=Path, default=_DEFAULT_REF)
+    parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--prompt-version", default="exp1")
     args = parser.parse_args(argv)
 

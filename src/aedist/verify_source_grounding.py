@@ -30,6 +30,8 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from .config import DEFAULT_REFERENCE
+
 log = logging.getLogger(__name__)
 
 # Minimum fuzzy-match score for citation -> corpus filename
@@ -164,11 +166,6 @@ def _name_in_reference(
     return False
 
 
-_DEFAULT_REFERENCE_PATH = (
-    Path(__file__).parent.parent.parent / "data" / "reference" / "vietnam_thermal_v1.csv"
-)
-
-
 def verify_source_grounding(
     rows: list[dict],
     corpus_dir: Path,
@@ -186,7 +183,7 @@ def verify_source_grounding(
         Directory containing the .md corpus files.
     reference_path : Path | None
         Path to the reference CSV with a ``name`` column.  Defaults to
-        ``data/reference/vietnam_thermal_v1.csv`` relative to the project root.
+        ``config.DEFAULT_REFERENCE``.
 
     Returns
     -------
@@ -198,7 +195,7 @@ def verify_source_grounding(
         and a 2x2 counts table.
     """
     if reference_path is None:
-        reference_path = _DEFAULT_REFERENCE_PATH
+        reference_path = DEFAULT_REFERENCE
 
     # Load reference names
     if reference_path.is_file():
