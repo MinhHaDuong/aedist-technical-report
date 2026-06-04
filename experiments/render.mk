@@ -320,8 +320,8 @@ $(ANALYSIS_GEN)/tab_converter_benchmark.tex: $(ANALYSIS_CONVERTER_META) $(ANALYS
 	uv run python -m aedist.compare_converters \
 	    --input $(ANALYSIS_CONVERTER_TEST) --meta $(ANALYSIS_CONVERTER_META) --output $@
 
-# --- Self-consistency tables (render half; migrated from experiments/Makefile
-#     by ticket 0410, tracker 0406 S3) --------------------------------------
+# --- Self-consistency tables (render half; migrated from the P1 makefile (now
+#     experiments/acquire.mk) by ticket 0410, tracker 0406 S3) ----------------
 # The P2 score half ($(SCORE_SC_JSON): outputs/rag → derived/rag_consistency)
 # lives in experiments/derived/score.mk. This render half tabulates the mart
 # into the committed LaTeX handoff artifacts. Reads only measurements.jsonl (a
@@ -337,7 +337,7 @@ $(ANALYSIS_SC_TEX) $(ANALYSIS_SC_PERRUN) &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_
 .PHONY: self-consistency
 self-consistency: $(ANALYSIS_SC_TEX) $(ANALYSIS_SC_PERRUN)
 
-# --- Experiment 1 cost summary (migrated from experiments/Makefile, 0410) ---
+# --- Experiment 1 cost summary (migrated from the P1 makefile, now acquire.mk, 0410) ---
 
 ANALYSIS_EXP1_COST_TEX := $(ANALYSIS_GEN)/tab_exp1_cost_summary.tex
 
@@ -348,7 +348,7 @@ $(ANALYSIS_EXP1_COST_TEX): $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/ae
 .PHONY: exp1-cost-summary
 exp1-cost-summary: $(ANALYSIS_EXP1_COST_TEX)
 
-# --- Experiment 1 reasoning top-up (migrated from experiments/Makefile, 0410)
+# --- Experiment 1 reasoning top-up (migrated from the P1 makefile, now acquire.mk, 0410)
 
 ANALYSIS_EXP1_TOPUP_TEX := $(ANALYSIS_GEN)/tab_exp1_reasoning_topup.tex
 

@@ -8,7 +8,7 @@
 MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
 
-.PHONY: test test-fast test-slow coverage lint check-fast check census census-summary show-prompts
+.PHONY: test test-fast test-slow coverage lint check-fast check census show-prompts
 
 # --- Tests --------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
 #     make -f experiments/render.mk report-tables
 # tab_self_consistency.tex and tab_per_run.tex come from
 # experiments/render.mk `self-consistency` (single producer, 0354 →
-# migrated from experiments/Makefile by 0410).
+# migrated from the P1 makefile, now experiments/acquire.mk, by 0410).
 
 # --- Publications -------------------------------------------------------------
 
@@ -125,13 +125,20 @@ slides: slides/slides.pdf
 # Report-side tables, figures, and slide chart data are produced by the
 # render (P3) workpackage (experiments/render.mk). tab_self_consistency.tex and
 # tab_per_run.tex live in experiments/render.mk under `self-consistency`
-# (single producer, 0354 → migrated from experiments/Makefile by 0410), so the
-# `tables:` alias chains both to preserve the pre-0352 UX.
+# (single producer, 0354 → migrated from the P1 makefile, now
+# experiments/acquire.mk, by 0410), so the `tables:` alias chains both to
+# preserve the pre-0352 UX.
 tables:
 	$(MAKE) -f experiments/render.mk report-tables
 	$(MAKE) -f experiments/render.mk self-consistency
 figures:
 	$(MAKE) -f experiments/render.mk chart-figures
 select: experiments/models_selected.yaml
+# P1 acquire (money-gated sweeps) lives in experiments/acquire.mk (0411). Use
+# -C experiments so the sweep recipes inherit cwd=experiments/ — the env
+# contract (../.env, UV_RUN's --env-file ../.env), experiments.toml, and the
+# jobs/ board are all resolved relative to experiments/. `-f acquire.mk` then
+# resolves against that cwd. A bare `-f experiments/acquire.mk` from repo root
+# would break every one of those relative paths.
 census:
-	$(MAKE) -C experiments census
+	$(MAKE) -C experiments -f acquire.mk census

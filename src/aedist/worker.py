@@ -181,7 +181,7 @@ class Worker:
         """
         client = self.make_client()
         if job.prompt_modules is not None:
-            # Default resolves relative to cwd; the experiments/Makefile sets
+            # Default resolves relative to cwd; experiments/acquire.mk sets
             # cwd=experiments/ before invoking the worker (see UV_RUN macro),
             # so "prompts/modules" finds experiments/prompts/modules/*.txt.
             modules_dir = Path(job.modules_dir) if job.modules_dir else Path("prompts/modules")

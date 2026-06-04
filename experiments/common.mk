@@ -2,9 +2,9 @@
 #
 # Single source of truth for the canonical uv invocation, the manager/worker
 # entry points, OpenRouter concurrency, and the worker-drain loop. Included by
-# experiments/Makefile and the experiment*.mk runners so they cannot drift.
+# experiments/acquire.mk and the experiment*.mk runners so they cannot drift.
 #
-# ENV POLICY (see experiments/Makefile header): the project ../.env is the only
+# ENV POLICY (see experiments/acquire.mk header): the project ../.env is the only
 # source of API keys; never ~/.claude/.env. UV_RUN injects it via --env-file at
 # child-process spawn time, so no secret transits a Make variable or argv.
 
