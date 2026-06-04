@@ -146,6 +146,14 @@ prevents recurrence:
 | `report/inputs/generated/tab_exp2_arms_runs.csv` | superseded by the mart view `tab_exp2_arms_runs_view.csv` (P3 intermediate, ignored) | none | RETIRED 0417 (`git rm`) |
 | `report/inputs/generated/tab_exp2_bib_quality.csv` | superseded by the mart view `tab_exp2_bib_quality_view.csv` (P3 intermediate, ignored) | none | RETIRED 0417 (`git rm`) |
 
+## 0421 follow-up — render/score rules broken by archive move (edda724b)
+
+| Rule | Fix | Byte-verify |
+|------|-----|-------------|
+| `tab_coherence.tex` (render.mk) | Repointed wildcard + `--input` to `archive/outputs/rag_extract` | PASS (15 models, identical) |
+| self-consistency (score.mk `SCORE_SC_INPUT`) | Repointed to `archive/outputs/rag_extract` (was doubly stale: `rag` renamed to `rag_extract` + archived) | NOT RUN (writes measurements.jsonl — 0383 hazard) |
+| `tab_decomposition_fix.tex` (render.mk) | FROZEN — reconciliation CSVs gitignored (c14136ff), never archived; rule removed, added to `FROZEN_ALLOWLIST`; reproducibility restoration deferred | N/A (committed table is correct, ticket 0068) |
+
 ## Spot-check coverage (other generated paths in the DAG)
 
 | File | Phase | Verdict | Why |

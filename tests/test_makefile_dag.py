@@ -197,8 +197,15 @@ def _all_targets_any_ext(path: Path) -> set[str]:
 # Deliberately frozen artifacts: committed under report/inputs/generated/
 # without a producer rule, each with a documented reason (ticket 0417 action
 # 1(b) escape hatch). Keep one comment per entry explaining why regeneration
-# is impossible or deliberately suspended. Currently empty.
-FROZEN_ALLOWLIST: dict[str, str] = {}
+# is impossible or deliberately suspended.
+FROZEN_ALLOWLIST: dict[str, str] = {
+    "report/inputs/generated/tab_decomposition_fix.tex": (
+        "Reconciliation CSVs were gitignored (c14136ff) and never archived. "
+        "The committed table is correct (ticket 0068) but unreproducible from "
+        "the current DAG. Restore requires wiring a reconcile-from-archive P2 "
+        "step (ticket 0421 follow-up)."
+    ),
+}
 
 
 def test_tracked_generated_artifacts_have_a_producer():

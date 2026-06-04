@@ -72,9 +72,13 @@ ANALYSIS_VARIANCE_JSON := $(ANALYSIS_REPORT_DERIVED_DIR)/variance_decomposition.
 ANALYSIS_VERIFICATION_DIR := $(ANALYSIS_REPORT_DERIVED_DIR)/verification
 ANALYSIS_VERIFICATION_TRADEOFF := $(ANALYSIS_VERIFICATION_DIR)/tradeoff.csv
 
-ANALYSIS_DECOMP_BEFORE := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_per_fuel/reconciliation_*.csv)
-ANALYSIS_DECOMP_AFTER  := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_per_fuel_v2/reconciliation_*.csv)
-ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_OUTPUTS_DIR)/rag_extract/*.csv)
+# Reconciliation CSVs were gitignored (c14136ff) and never archived — the
+# committed tab_decomposition_fix.tex is frozen; see FROZEN_ALLOWLIST in
+# tests/test_makefile_dag.py (ticket 0421).
+ANALYSIS_DECOMP_BEFORE :=
+ANALYSIS_DECOMP_AFTER  :=
+# Raw rag_extract CSVs moved to archive/ by edda724b.
+ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
 ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv
 ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
 
@@ -306,14 +310,19 @@ $(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF)
 	uv run python -m aedist.tabulate_verification \
 	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@
 
-$(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_DECOMP_AFTER)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_decomposition_fix --output $@
+# tab_decomposition_fix.tex: FROZEN — reconciliation_*.csv inputs were
+# gitignored (c14136ff) and never archived. The committed table is correct
+# but unreproducible from the current DAG. See FROZEN_ALLOWLIST in
+# tests/test_makefile_dag.py. Reproducibility restoration deferred to a
+# follow-up ticket (requires wiring a reconcile-from-archive P2 step).
+# Original rule:
+#   $(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_DECOMP_AFTER)
+#   	uv run python -m aedist.tabulate_decomposition_fix --output $@
 
 $(ANALYSIS_GEN)/tab_coherence.tex: $(ANALYSIS_RAG_CSVS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_coherence.py $(ANALYSIS_REPO_ROOT)/src/aedist/coherence.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_coherence \
-	    --input $(ANALYSIS_OUTPUTS_DIR)/rag_extract --output $@
+	    --input $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract --output $@
 
 $(ANALYSIS_GEN)/tab_converter_benchmark.tex: $(ANALYSIS_CONVERTER_META) $(ANALYSIS_CONVERTER_DOCS)
 	@mkdir -p $(dir $@)
@@ -383,7 +392,6 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_comparaison.tex \
 	$(ANALYSIS_GEN)/tab_variance.tex \
 	$(ANALYSIS_GEN)/tab_verification.tex \
-	$(ANALYSIS_GEN)/tab_decomposition_fix.tex \
 	$(ANALYSIS_GEN)/tab_coherence.tex \
 	$(ANALYSIS_GEN)/tab_reconciliation.tex \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
