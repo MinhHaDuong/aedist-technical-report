@@ -194,7 +194,7 @@ CORPUS_VISION  ?= gemma4:31b
 CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
-.PHONY: pdf2md build-corpus preflight help
+.PHONY: pdf2md build-corpus preflight help extract-reference-ods
 
 pdf2md:
 ifndef PDF
@@ -256,6 +256,16 @@ preflight:
 	    echo ""; echo "All critical checks passed."; \
 	fi
 
+# Extract the Vietnam thermal-units reference list from the imported ODS
+# snapshot. A utility verb (.PHONY), not a score/render dependency: it reads a
+# tracked snapshot and writes a reference CSV, and HARD-FAILS on a dirty input
+# (duplicate names, Level/name inconsistency). Paths are ../-relative because
+# this makefile runs with cwd=experiments/ (UV_RUN uses --project ..).
+extract-reference-ods:
+	$(UV_RUN) python ../data/reference/extract_ods.py \
+	    --input ../data/reference/raw/pipeline.ods \
+	    --output ../data/reference/vietnam_thermal_units_v2.csv
+
 help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make census               Generate jobs + run workers (model census)"
@@ -277,6 +287,7 @@ help:
 	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
 	@echo ""
 	@echo "  make preflight             Check env vars and services before long jobs"
+	@echo "  make extract-reference-ods Extract reference CSV from raw/pipeline.ods (validated)"
 	@echo ""
 	@echo "Config in experiments.toml [sweeps.*] sections"
 	@echo "Job board in jobs/{pending,running,done,failed}/"
