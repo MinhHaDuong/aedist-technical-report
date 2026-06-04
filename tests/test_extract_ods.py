@@ -18,6 +18,8 @@ import pandas as pd
 import pytest
 
 from data.reference.extract_ods import (
+    read_ods,
+    select_columns,
     validate_input,
     validate_no_duplicate_names,
     validate_unit_level_consistency,
@@ -102,17 +104,105 @@ def test_validate_input_runs_both_checks():
         validate_input(df)
 
 
+# --- select_columns: success path (projection, rename, Level passthrough) ----
+
+
+def _full_raw_frame(with_level: bool = False) -> pd.DataFrame:
+    """A raw frame carrying every source column select_columns expects."""
+    data = {
+        "Project name": ["Plant A"],
+        "Province / Tỉnh": ["Hà Nội"],
+        "Asset type": ["Power plant"],
+        "Capacity (MW)": ["650"],
+        "Project stage": ["Operating"],
+    }
+    if with_level:
+        data["Level"] = ["plant"]
+    return pd.DataFrame(data)
+
+
+def test_select_columns_renames_to_snake_case():
+    """Source columns are projected and renamed; unmapped columns are dropped."""
+    out = select_columns(_full_raw_frame())
+    assert list(out.columns) == ["name", "province", "asset_type", "capacity_mwe", "status"]
+    assert out["name"].iloc[0] == "Plant A"
+    assert out["capacity_mwe"].iloc[0] == "650"
+
+
+def test_select_columns_level_passthrough_when_present():
+    """A Level column passes through, renamed to `level` (exit criterion)."""
+    out = select_columns(_full_raw_frame(with_level=True))
+    assert "level" in out.columns
+    assert out["level"].iloc[0] == "plant"
+
+
+def test_select_columns_omits_level_when_absent():
+    """No `level` column when the source has no Level (graceful no-op)."""
+    out = select_columns(_full_raw_frame(with_level=False))
+    assert "level" not in out.columns
+
+
+def test_select_columns_missing_source_column_raises():
+    """A missing expected source column is an actionable error, not silent NaN."""
+    df = pd.DataFrame({"Project name": ["Plant A"]})
+    with pytest.raises(ValueError, match="absent"):
+        select_columns(df)
+
+
 # --- zero-prefix / dtype=str preservation (unit, synthetic) ------------------
 
 
-def test_zero_prefix_preserved_as_string():
-    """dtype=str round-trips a zero-prefixed code without numeric coercion.
+def _write_ods(path: Path, rows: list[dict[str, str]]) -> None:
+    """Write a minimal ODS whose "Power plants" sheet matches the real layout.
 
-    Documents the invariant directly: '0121' must stay '0121', never become
-    '121' or 121. This is the column-agnostic guarantee extract_ods relies on.
+    Mirrors the master: row 0 = title, rows 1-3 = metadata, row 4 = headers,
+    then data — so read_ods's header=4 lands on the real column names.
     """
-    df = pd.DataFrame({"ires_code": ["0121"]}, dtype=str)
-    assert df["ires_code"].iloc[0] == "0121"
+    from odf.opendocument import OpenDocumentSpreadsheet
+    from odf.table import Table, TableCell, TableRow
+    from odf.text import P
+
+    doc = OpenDocumentSpreadsheet()
+    table = Table(name="Power plants")
+
+    def _row(cells: list[str]) -> TableRow:
+        tr = TableRow()
+        for value in cells:
+            tc = TableCell(valuetype="string")
+            tc.addElement(P(text=value))
+            tr.addElement(tc)
+        return tr
+
+    headers = list(rows[0].keys())
+    table.addElement(_row(["Pipeline master"]))  # row 0: title
+    for _ in range(3):  # rows 1-3: metadata padding
+        table.addElement(_row([""]))
+    table.addElement(_row(headers))  # row 4: column names
+    for record in rows:
+        table.addElement(_row([record[h] for h in headers]))
+    doc.spreadsheet.addElement(table)
+    doc.save(str(path))
+
+
+def test_read_ods_keeps_zero_prefix_as_string(tmp_path):
+    """read_ods round-trips a zero-prefixed value as a string via the real read.
+
+    Anchors the dtype=str exit criterion to extract_ods's own read path, not a
+    hand-built DataFrame: '0121' read from an ODS cell must stay '0121', never
+    become '121' or the int 121. Capacity is likewise kept as a string.
+    """
+    ods = tmp_path / "tiny.ods"
+    _write_ods(
+        ods,
+        [
+            {"Project name": "Plant A", "ires_code": "0121", "Capacity (MW)": "650"},
+            {"Project name": "Plant B", "ires_code": "0007", "Capacity (MW)": "60"},
+        ],
+    )
+    df = read_ods(ods)
+    assert df["ires_code"].tolist() == ["0121", "0007"]
+    assert df["Capacity (MW)"].iloc[0] == "650"
+    assert isinstance(df["Capacity (MW)"].iloc[0], str)
 
 
 # --- integration: the real tracked ODS must be refused -----------------------
