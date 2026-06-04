@@ -11,6 +11,7 @@ Author: claude
 2026-06-04T09:05Z claude note Author confirmed destination: report/inputs/generated/ is the single P3 tree. S1 child needs no layout decision — purely mechanical (move slides artifacts, repoint paths, update guards).
 2026-06-04T08:55Z claude note S1 done (PR #692): slides/inputs/generated retired; S2 (render.mk) unblocked.
 2026-06-04T09:44Z claude note S2 done (PR #694): render.mk extracted, cascade dead; S3 (score.mk) unblocked.
+2026-06-04T10:36Z claude note S3 done (PR #696): score.mk carved, analysis.mk dissolved, P3 strays relocated; S4 (acquire.mk) unblocked.
 --- body ---
 ## Context
 
