@@ -158,6 +158,18 @@ Concrete, test-first. Each step is independently shippable.
 6. **Re-audit, do not re-instrument blindly.** After steps 1–2 (the cheap,
    high-yield ones) re-run this script; the FP count is the regression oracle.
 
+**Outcome for proposals 3–4 (ticket 0394, 2026-06-04).** Re-running this audit
+with the reference swapped (`--reference`, `--label`) measured the collision
+repair directly: FP 399 → 399, FN 7617 → 7537 — the delta is the phantom
+misses of the deleted `Duyen Hai 2` duplicate. Adjudication with
+`units_included` in hand showed only `Duyên Hải 2` was a true duplicate;
+`Dong Nai Formosa` and `Ha Tinh Formosa` are base/extension pairs sharing one
+name string, renamed `... extension` in
+`data/reference/vietnam_thermal_v1_fix1.csv` (see `PROVENANCE.md` §fix1, plus
+a `Quảng Trị 1` "Unit 2, Unit 2" typo found by the new integrity test). The 14
+cleaner-collapsed pairs cause neither FP nor FN, so the `lng`-drop gate and
+the romanised alias column (proposal 3) were dropped — documented non-finding.
+
 ## Reference extension (proposals)
 
 Add the verified reference holes (status as noted; all > 30 MWe). Each needs a

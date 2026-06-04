@@ -110,3 +110,40 @@ Vietnam's thermal generation fleet that would let an independent
 reviewer reconstruct the compilation row by row. Closing that gap
 is the motivation for the source-citation infrastructure in
 Experiments 2–3.
+
+## fix1 integrity patch (2026-06-04, ticket 0394)
+
+`vietnam_thermal_v1_fix1.csv` (162 rows) and
+`vietnam_thermal_units_v1_fix1.csv` (249 rows) are built from the frozen
+v1 files by `experiments/scripts/build_reference_v1_fix1.py` — a pure
+text transform that preserves every untouched field verbatim (a
+spreadsheet round-trip during adjudication coerced `ires_code` 0121 to
+121; the scripted rebuild is the countermeasure, and
+`tests/test_reference_integrity.py` guards the invariants).
+
+Four defects, adjudicated by the author on 2026-06-03/04. The `name`
+column is the de-facto key (matcher, plant↔units linkage, diagnostics);
+defects 1–3 are key collisions, defect 4 a data-entry typo:
+
+1. `Duyen Hai 2` (ASCII, 600 MW, Unit 1) deleted at both levels —
+   romanization duplicate subsumed by `Duyên Hải 2` (1200 MW, Units 1+2).
+2. `Dong Nai Formosa` (proposed, Unit 3) renamed
+   `Dong Nai Formosa extension` — two distinct assets (operational base
+   vs proposed extension) shared one identical name string; renamed
+   following the file's existing `extension` convention.
+3. `Ha Tinh Formosa Plastics Steel Complex` (proposed, Units 6/7/10)
+   renamed `... extension` — same pattern.
+4. `Quảng Trị 1` typo: `units_included` listed Unit 2 twice; first
+   occurrence corrected to Unit 1 at both levels (1320 MW = 2x660,
+   sibling plants all have Units 1+2).
+
+Effect, measured by re-reconciling all Exp2 outputs (80 runs): FP
+unchanged (399 -> 399); FN 7617 -> 7537, the delta being phantom misses
+carried by the deleted duplicate row. The 14 remaining `clean_name`
+collisions (distinct gas/LNG plants merged by the cleaner's prefix
+drops) cause neither FP nor FN and are left untouched — a documented
+non-finding; see ticket 0394.
+
+The frozen v1 files remain the scoring reference for Exp1–3. Adoption
+of fix1 (figure-level before/after validation, then rewiring) is
+tracked in a separate ticket.

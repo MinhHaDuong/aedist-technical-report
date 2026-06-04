@@ -1,81 +1,66 @@
 %erg 0.1
-Title: Reference v2 hygiene: dedup 17 cleaned-name collisions and unify romanization
+Title: Reference fix1: minimal integrity patch (was: v2 hygiene, dedup + romanization)
 Created: 2026-06-03
 Author: claude
-Label: needs-human
 
 --- log ---
 2026-06-03T00:00Z claude created — from the Exp2 FP audit: the reference has 17 cleaned-name collisions (true duplicates + distinct plants the cleaner wrongly collapses) and mixes 54 ASCII names with 109 diacritic names
 2026-06-03T00:00Z claude note — tagged needs-human: editing the frozen reference is a scientific decision (version bump + re-score), not a mechanical fix
+2026-06-04T00:00Z claude note — author adjudicated all 17 groups line-by-line: 3 raw-name key collisions fixed (DH2 romanization dup deleted, DNF/HTF renamed per the existing extension convention); 14 clean_name-only collisions left pending measurement
+2026-06-04T00:00Z claude note — measured on 80 Exp2 runs re-reconciled: FP 399->399 (zero effect), FN 7617->7537 (delta = phantom misses of the deleted dup row); Famille B collisions cause neither FP nor FN -> non-finding, cleaner untouched
+2026-06-04T00:00Z claude note — rescoped per author to minimal integrity patch (fix1, not v2): romanization unification and name_ascii dropped; adoption (before/after figures, Makefile rewire) deferred to follow-up ticket
+2026-06-04T00:00Z claude note — fold-uniqueness test caught a 4th defect nobody had seen: Quảng Trị 1 lists "Unit 2, Unit 2" (typo for Units 1+2); fixed at both levels
+2026-06-04T00:00Z claude note — needs-human tag dropped: all adjudications made by the author in-session
 
 --- body ---
 ## Context
 
 `data/reference/vietnam_thermal_v1.csv` is frozen at commit `85a0e6c7` for
-Exp1–3 (see `data/reference/PROVENANCE.md`). The Exp2 FP audit
-(`docs/fp-audit-exp2.md`) surfaced two internal-consistency problems that
-directly cause FPs and mis-scoring:
+Exp1–3 (see `data/reference/PROVENANCE.md`). The Exp2 FP audit surfaced 17
+`clean_name` collisions and mixed romanization. Line-by-line adjudication
+(units_included in hand) re-diagnosed the picture: only 1 true duplicate
+(`Duyen Hai 2`, romanization), 2 raw-name key collisions (`Dong Nai Formosa`,
+`Ha Tinh Formosa` — distinct base/extension assets sharing one name string),
+and 14 distinct-plant pairs that collide only after the cleaner's
+`^lng`/`^nd`/`^tbkhh`/paren drops.
 
-**A. 17 cleaned-name collisions** (`PowerPlantDataframeCleaner.clean_name`
-maps two reference rows to the same string). Two kinds:
-- *True duplicates to delete*: `Dong Nai Formosa` ×2,
-  `Ha Tinh Formosa Plastics Steel Complex` ×2, `Duyên Hải 2` (appears as both
-  `Duyen Hai 2` and `Duyên Hải 2`).
-- *Distinct plants wrongly collapsed by the cleaner*: `Cà Mau I` (gas turbine)
-  vs `LNG Cà Mau 1`; `Quang Ninh 1` (coal) vs `LNG Quảng Ninh 1 (Cẩm Phả)`;
-  `NĐ Ô Môn I` vs `TBKHH Ô Môn I`; `LNG Bà Rịa 2` vs `TBKHH Bà Rịa 2`;
-  `LNG Long An I` vs `Long An 1`; etc. Here the `^lng` drop + roman→arabic
-  substitution is too aggressive and merges a plant with its LNG successor.
+## Delivered (fix1 — minimal integrity patch)
 
-**B. Mixed romanization.** 54 names are ASCII-only (`Duyen Hai 1`,
-`Cam Pha 3`), 109 carry diacritics (`Duyên Hải 2`, `Phả Lại 1`). Models emit
-diacritic Vietnamese, so the 54 ASCII rows are systematically harder to match —
-a hidden bias in coverage/precision across all of Exp1–3.
+- `data/reference/vietnam_thermal_v1_fix1.csv` (162 rows) and
+  `vietnam_thermal_units_v1_fix1.csv` (249 rows), built reproducibly from the
+  frozen v1 by `experiments/scripts/build_reference_v1_fix1.py` (verbatim text
+  transform — a spreadsheet round-trip had coerced `ires_code` 0121->121).
+- Four defects fixed: DH2 dup deleted (both levels); DNF + HTF proposed rows
+  renamed `... extension`; `Quảng Trị 1` "Unit 2, Unit 2" typo corrected
+  (both levels).
+- `tests/test_reference_integrity.py`: fold-uniqueness (red on v1, green on
+  fix1), 4-digit `ires_code` guard, no repeated unit in `units_included`.
+- `PROVENANCE.md` fix1 entry; `fp_audit_exp2.py` gains `--reference/--label`.
 
-## Why needs-human
+## Measured non-finding (audit before instrumenting)
 
-This edits the frozen scientific reference. It requires a **new version tag**
-(`vietnam_thermal_v2.csv`), a `PROVENANCE.md` entry, and a decision on whether
-to re-score (cheap: re-run scoring on existing model outputs) — the model runs
-themselves do not change. The collision resolutions (especially gas-vs-LNG)
-need a domain call. Do not edit in place.
+Re-reconciling all 80 Exp2 runs: FP 399->399; FN 7617->7537 (the delta is
+phantom misses of the deleted duplicate row; DNF/HTF FN merely relabel —
+models rarely report those plants at all). The 14 remaining `clean_name`
+collisions cause neither FP nor FN. FP is dominated by `matcher_fail_lp_veto`
+(201 occ -> 0393) and `reference_hole` (99 occ -> 0395). Therefore the
+cleaner gate and `name_ascii` alias are deliberately NOT implemented — no
+over-fitting the cleaner to the Vietnam instance.
 
-## Approach
-1. Produce a collision report: extend `experiments/scripts/fp_audit_exp2.py`
-   logic (the `seen` map) into a small checked artifact listing all 17 groups
-   with row attributes, for human adjudication.
-2. Delete confirmed true duplicates.
-3. For distinct-but-collapsed pairs, decide the fix: either keep both with names
-   that survive cleaning (e.g. retain the `LNG` token for the successor), or
-   gate the `^lng` drop / roman-numeral substitution in the cleaner so a gas
-   plant and its LNG project stay distinct (coordinate with 0392/0393).
-4. Normalize romanization to one scheme — recommend: keep diacritic Vietnamese
-   as the canonical `name`, add a romanized `name_ascii` alias column for
-   robustness. Update loaders/PROVENANCE.
-5. Write `vietnam_thermal_v2.csv`; bump `PROVENANCE.md`; re-score Exp1–3 from
-   existing outputs and confirm no metric collapses unexpectedly.
+## Exit criteria (rescoped)
 
-## Exit criteria
-- [ ] Collision report artifact committed; 17 groups each adjudicated
-- [ ] Zero `clean_name` collisions among *distinct* plants in v2
-      (true duplicates removed; legitimate distinct pairs kept separable)
-- [ ] Single romanization policy applied; `name_ascii` alias present
-- [ ] `vietnam_thermal_v2.csv` + `PROVENANCE.md` version entry committed
-- [ ] Exp1–3 re-scored from existing outputs; metric deltas explained
-- [ ] `make check` passes
-
-## First failing test
-A new `tests/test_reference_integrity.py` (red→green): assert that no two rows
-of the reference share a `clean_name`, and that every `name` matches the chosen
-romanization policy.
-
-## Out of scope
-- Adding new plants (→ 0395, which should build on v2 here).
-- Cleaner prefix/extension changes (→ 0392) and LP-veto (→ 0393), except where
-  the gas-vs-LNG collision fix requires a coordinated cleaner gate.
+- [x] All 17 collision groups adjudicated by the author (3+1 fixed, 14
+      documented non-finding)
+- [x] fix1 files built reproducibly; untouched fields byte-identical
+- [x] `tests/test_reference_integrity.py` green on fix1, red on v1
+- [x] `PROVENANCE.md` version entry
+- [x] FP/FN deltas measured on existing outputs and explained
+- Descoped: `name_ascii`, cleaner gate, Makefile wiring and adoption
+  (follow-up ticket; Makefile redesign 0406 in flight — do not touch)
 
 ## Related
-- `docs/fp-audit-exp2.md` — §Matcher repair steps 3–4
-- `data/reference/vietnam_thermal_v1.csv`, `data/reference/PROVENANCE.md`
-- `src/aedist/cleaner/` — collision source
-- 0392, 0393 (matcher), 0395 (extension — Blocked-by this)
+
+- `data/reference/PROVENANCE.md` §fix1 — canonical record of the edits
+- 0392/0393 (matcher — FP levers), 0395 (reference holes; unblocked by this)
+- Follow-up tickets: archive Cergy communication (release/tag/HAL/page perso);
+  adopt fix1 (before/after figures, then rewire)

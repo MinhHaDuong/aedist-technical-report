@@ -32,6 +32,7 @@ The classification buckets are:
                               (nuclear, <30 MWe captive cogen).
 """
 
+import argparse
 import csv
 import io
 import json
@@ -74,10 +75,18 @@ def _proposed_norm(s: str) -> str:
 
 
 # Domain knowledge: real plants verified ABSENT from the reference name list.
-_REF_HOLE = ["kien luong", "hoa phat", "kim son", "yen hung", "rang dong",
-             "bao dai", "cai lan", "luc nam"]
-_OTHER = ["hat nhan", "bourbon", "dam phu my"]          # nuclear / <30 MWe scope
-_HALLU = ["phu yen", "than an giang"]                   # implausible / non-existent
+_REF_HOLE = [
+    "kien luong",
+    "hoa phat",
+    "kim son",
+    "yen hung",
+    "rang dong",
+    "bao dai",
+    "cai lan",
+    "luc nam",
+]
+_OTHER = ["hat nhan", "bourbon", "dam phu my"]  # nuclear / <30 MWe scope
+_HALLU = ["phu yen", "than an giang"]  # implausible / non-existent
 
 
 def _parse_rows(md_path: Path) -> list[dict]:
@@ -93,8 +102,8 @@ def _parse_rows(md_path: Path) -> list[dict]:
     return list(csv.DictReader(io.StringIO(canonical_csv)))
 
 
-def sweep() -> list[dict]:
-    reference = load_plants_csv(_DEFAULT_REF)
+def sweep(reference_path: Path) -> list[dict]:
+    reference = load_plants_csv(reference_path)
     occ: list[dict] = []
     for arm, sub in ARMS.items():
         for md in sorted((DERIVED / sub).glob("*_run*.md")):
@@ -112,15 +121,21 @@ def sweep() -> list[dict]:
                 if e.match_type != MatchType.SYSTEM_ONLY:
                     continue
                 p = by_name.get(e.system_name)
-                occ.append({
-                    "arm": arm, "model": model, "run": run,
-                    "name": e.system_name or "",
-                    "fuel": e.system_fuel or (p.fuel.value if p and p.fuel else ""),
-                    "status": (p.status.value if p and p.status else ""),
-                    "capacity_mwe": e.system_capacity_mwe if e.system_capacity_mwe is not None else "",
-                    "province": e.system_province or "",
-                    "clean_name": _CLEANER.clean_name(e.system_name or ""),
-                })
+                occ.append(
+                    {
+                        "arm": arm,
+                        "model": model,
+                        "run": run,
+                        "name": e.system_name or "",
+                        "fuel": e.system_fuel or (p.fuel.value if p and p.fuel else ""),
+                        "status": (p.status.value if p and p.status else ""),
+                        "capacity_mwe": e.system_capacity_mwe
+                        if e.system_capacity_mwe is not None
+                        else "",
+                        "province": e.system_province or "",
+                        "clean_name": _CLEANER.clean_name(e.system_name or ""),
+                    }
+                )
     return occ
 
 
@@ -150,12 +165,38 @@ def classify(r: dict) -> str:
 
 
 def main() -> None:
-    occ = sweep()
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--reference",
+        type=Path,
+        default=_DEFAULT_REF,
+        help="reference CSV to reconcile against (default: frozen v1)",
+    )
+    ap.add_argument(
+        "--label", default="", help="suffix for output filenames, e.g. _v2 (avoids clobbering)"
+    )
+    args = ap.parse_args()
+
+    occ = sweep(args.reference)
     DERIVED.mkdir(parents=True, exist_ok=True)
 
-    with (DERIVED / "exp2_fp_occurrences.csv").open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["arm", "model", "run", "name", "clean_name",
-                                          "fuel", "status", "capacity_mwe", "province"])
+    with (DERIVED / f"exp2_fp_occurrences{args.label}.csv").open(
+        "w", newline="", encoding="utf-8"
+    ) as f:
+        w = csv.DictWriter(
+            f,
+            fieldnames=[
+                "arm",
+                "model",
+                "run",
+                "name",
+                "clean_name",
+                "fuel",
+                "status",
+                "capacity_mwe",
+                "province",
+            ],
+        )
         w.writeheader()
         for o in occ:
             w.writerow({k: o[k] for k in w.fieldnames})
@@ -166,7 +207,7 @@ def main() -> None:
         groups[o["clean_name"]].append(o)
 
     # Reference keys under current and proposed normalisation, for scoring.
-    ref_rows = list(csv.DictReader(open(ROOT / "data/reference/vietnam_thermal_v1.csv")))
+    ref_rows = list(csv.DictReader(open(args.reference)))
     ref_cur = {_CLEANER.clean_name(r["name"]): r["name"] for r in ref_rows}
     ref_new = {_proposed_norm(_CLEANER.clean_name(r["name"])): r["name"] for r in ref_rows}
     keys_cur, keys_new = list(ref_cur), list(ref_new)
@@ -176,32 +217,39 @@ def main() -> None:
         disp = Counter(o["name"] for o in occs).most_common(1)[0][0]
         m = process.extractOne(key, keys_cur, scorer=fuzz.partial_ratio)
         m2 = process.extractOne(_proposed_norm(key), keys_new, scorer=fuzz.partial_ratio)
-        dedup.append({
-            "clean_name": key, "display_name": disp,
-            "n_appearances": len(occs),
-            "n_models": len({o["model"] for o in occs}),
-            "n_arms": len({o["arm"] for o in occs}),
-            "models": ";".join(sorted({o["model"] for o in occs})),
-            "arms": ";".join(sorted({o["arm"] for o in occs})),
-            "fuels": ";".join(sorted({o["fuel"] for o in occs if o["fuel"]})),
-            "statuses": ";".join(sorted({o["status"] for o in occs if o["status"]})),
-            "capacities": ";".join(sorted({str(o["capacity_mwe"]) for o in occs if o["capacity_mwe"] != ""})),
-            "provinces": ";".join(sorted({o["province"] for o in occs if o["province"]})),
-            "cur_score": round(m[1], 1) if m else 0.0,
-            "cur_ref": ref_cur[m[0]] if m else "",
-            "new_score": round(m2[1], 1) if m2 else 0.0,
-            "new_ref": ref_new[m2[0]] if m2 else "",
-        })
+        dedup.append(
+            {
+                "clean_name": key,
+                "display_name": disp,
+                "n_appearances": len(occs),
+                "n_models": len({o["model"] for o in occs}),
+                "n_arms": len({o["arm"] for o in occs}),
+                "models": ";".join(sorted({o["model"] for o in occs})),
+                "arms": ";".join(sorted({o["arm"] for o in occs})),
+                "fuels": ";".join(sorted({o["fuel"] for o in occs if o["fuel"]})),
+                "statuses": ";".join(sorted({o["status"] for o in occs if o["status"]})),
+                "capacities": ";".join(
+                    sorted({str(o["capacity_mwe"]) for o in occs if o["capacity_mwe"] != ""})
+                ),
+                "provinces": ";".join(sorted({o["province"] for o in occs if o["province"]})),
+                "cur_score": round(m[1], 1) if m else 0.0,
+                "cur_ref": ref_cur[m[0]] if m else "",
+                "new_score": round(m2[1], 1) if m2 else 0.0,
+                "new_ref": ref_new[m2[0]] if m2 else "",
+            }
+        )
     dedup.sort(key=lambda r: (-r["n_appearances"], -r["n_models"]))
 
-    with (DERIVED / "exp2_fp_dedup.csv").open("w", newline="", encoding="utf-8") as f:
+    with (DERIVED / f"exp2_fp_dedup{args.label}.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(dedup[0].keys()))
         w.writeheader()
         w.writerows(dedup)
 
     for r in dedup:
         r["category"] = classify(r)
-    with (DERIVED / "exp2_fp_classified.csv").open("w", newline="", encoding="utf-8") as f:
+    with (DERIVED / f"exp2_fp_classified{args.label}.csv").open(
+        "w", newline="", encoding="utf-8"
+    ) as f:
         w = csv.DictWriter(f, fieldnames=list(dedup[0].keys()))
         w.writeheader()
         w.writerows(dedup)
