@@ -2,10 +2,12 @@
 Title: Adopt erg cross-session ID reservation (git-erg#282) when it lands
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: wontfix — author retained optimistic concurrency: collision = renumber to next free ID; CI gate (0418) detects, no reservation machinery
 
 --- log ---
 2026-06-04T16:26Z HDMX-coding-agent created
 
+2026-06-04T16:31Z HDMX-coding-agent closed — wontfix — author retained optimistic concurrency: collision = renumber to next free ID; CI gate (0418) detects, no reservation machinery
 --- body ---
 ## Context
 
