@@ -12,6 +12,8 @@ Author: HDMX-coding-agent
 2026-06-04T14:13Z HDMX-coding-agent note Page perso préparée (files/ + Ha-Duong.bib + index.html régénéré), make sync laissé à l'auteur. Drift skill /update-publist → ticket 0421
 2026-06-04T14:18Z HDMX-coding-agent note Précision: la réponse SWORD dit 'stored in HAL workspace' — statut réel (brouillon vs file de modération) à confirmer dans le compte HAL de l'auteur
 2026-06-04T14:30Z HDMX-coding-agent note Slides EN archivés: PDF construit à 1b8efe3c (pré-adoption v2) joint à la release, copié dans html/files + mission releases/; paire bib EN/FR translationof/translatedin (convention booklaunch), EN affiché en premier, FR (as presented) entre crochets avec l'eprint HAL
+2026-06-04T15:45Z HDMX-coding-agent note Ticket 0421 déplacé vers IDH (ticket 0214, PR ImperialDragonHarness#279) — le travail skill appartient au dépôt du harness
+2026-06-04T15:45Z HDMX-coding-agent note Ack HAL reçu par l'auteur: hal-05644906 v1 confirmé en modération (soumis 2026-06-04 16:11). Page perso publiée (make sync fait)
 --- body ---
 ## Contexte
 
@@ -34,10 +36,9 @@ exactement présenté AVANT toute adoption (prérequis de 0413).
 
 - [x] Tag poussé sur le commit de la version présentée (economia-2026-cergy → bbc4a013)
 - [x] Release GitHub avec le PDF des slides attaché
-- [ ] Notice HAL en ligne (hal-05644906 déposé via SWORD — réponse « stored in
-      HAL workspace » ; à vérifier dans le compte HAL : statut, PDF joint,
-      typologie COMM, affiliation struct-1380080, titre = celui du deck)
-- [ ] Page perso à jour (préparée localement ; `make sync` à lancer)
+- [ ] Notice HAL en ligne (hal-05644906 v1 soumis 2026-06-04, en modération —
+      confirmé par l'ack HAL reçu par l'auteur ; reste l'attente de validation)
+- [x] Page perso à jour (entrée fusionnée EN/FR publiée — `make sync` fait)
 
 ## Related
 
