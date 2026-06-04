@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-04T14:55Z claude created — raid 405-406 celebrate sweep; the 0412 ID collision (fixed by PR #701) sat on main with erg check FAILED and no CI signal
 
+2026-06-04T13:20Z claude note — live instance for this ticket: 0418-pipeline-reference collided with this very ID from a sibling branch (both erg-new allocations passed locally); renumbered to 0420
 --- body ---
 ## Context
 
