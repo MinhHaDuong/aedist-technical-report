@@ -1,0 +1,125 @@
+%erg 0.1
+Title: Carve experiments/derived/score.mk — P2 consolidated, P3 strays to render.mk (0406 S3)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T10:50Z claude created — S3 child of tracker 0406; S2 (0409, PR #694) landed: render.mk exists, analysis.mk is P2-only
+
+--- body ---
+## Context
+
+Tracker 0406, step S3. After S2, `experiments/analysis.mk` (186 l) is
+P2-only and `experiments/render.mk` holds P3. But `experiments/Makefile`
+(330 l) still mixes P1 sweeps with P2 scoring verbs AND several P3
+render rules. S3 consolidates all P2 into
+`experiments/derived/score.mk` (the .mk lives with its deliverables) and
+moves the P3 strays to render.mk, leaving experiments/Makefile pure P1
+for S4.
+
+Classification of experiments/Makefile content (verified 2026-06-04;
+re-anchor on target names, not line numbers):
+
+| Target/rule | Phase | Destination |
+|-------------|-------|-------------|
+| census/regimes/decomposed/verification/sourced/frontier sweeps (l.~53-127) | P1 | stays (S4 renames file) |
+| `extract` (l.145) | P2 | score.mk |
+| `outputs/%.record.json`, `derived/%.record.json` pattern rules + .PRECIOUS | P2 | score.mk |
+| `../measurements.jsonl` rule | P2 | score.mk |
+| `evaluate-all-records`, `rebuild-measurements` | P2 | score.mk |
+| `$(SC_JSON)` (self_consistency scorer: outputs/rag → derived/rag_consistency) | P2 | score.mk |
+| `$(SC_TEX) $(SC_PERRUN)` grouped rule + `self-consistency` verb (tabulate → report/inputs/generated/) | P3 | render.mk |
+| `exp1-cost-summary` + `$(EXP1_COST_TEX)` | P3 | render.mk |
+| `exp1-reasoning-topup` + `$(EXP1_TOPUP_TEX)` | P3 | render.mk |
+| pdf2md/build-corpus/preflight/help, Zotero/corpus config | P1 utils | stays |
+
+Plus: ALL of analysis.mk (extraction stamps, cross-eval CSV, mart rule,
+dual-run parity staging) → score.mk; analysis.mk is then deleted and
+every reference to it repointed.
+
+## Design constraints (ratified, tracker 0406)
+
+- score.mk lives at `experiments/derived/score.mk`. Sources:
+  `experiments/outputs/**` (NO rules for them — that is P1's outcome).
+  Outcomes: `measurements.jsonl` (mart v0 — do NOT move/rename it),
+  `exp2_mart.jsonl`, cross-eval CSVs.
+- Header contract: opening comment with phase (P2 score), sources,
+  outcomes, invariant "no rules for upstream (P1) outcomes"; scripts
+  newly invoked from score.mk get a phase line in their module
+  docstring (extract, evaluate/assemble CLI, build_exp2_mart,
+  self_consistency, ...). Many already carry one from S2 — only add
+  where missing, and fix any now-wrong P3 label on scripts that
+  turn out to be P2 (self_consistency.py if S2 labeled it).
+- `rebuild-measurements` keeps working and its recipe comment documents
+  the deliberate-and-reviewed protocol (0383 lesson: destroys all
+  .record.json; output reviewed via git diff before commit).
+- **Path discipline**: the moved verbs use cwd-relative paths
+  (`outputs/...`, `../measurements.jsonl`) that assume
+  cwd=experiments/. Anchor score.mk's paths via the shared
+  `experiments/paths.mk` variables (extend it if needed) so
+  `make -f experiments/derived/score.mk <verb>` works from repo root;
+  use $(CURDIR)-anchored or paths.mk-derived absolutes, not fragile
+  relatives.
+- Guard test: `tests/test_score_build_no_acquire.py`
+  (@pytest.mark.adherence) — dry-run trace of score.mk verbs contains
+  no worker/query/sweep invocations (worker, query_, run_sweep,
+  aedist.census etc. — derive the needle list from acquire-side
+  scripts) and no TARGET under `experiments/outputs/`.
+  CAUTION with -n on .PHONY verbs that wrap $(MAKE): recursive make
+  still executes the inner make with -n propagated — acceptable; but
+  never run the verbs for real (0383 mart staleness).
+
+## Relevant files
+
+- `experiments/analysis.mk` — dissolves into score.mk (delete after)
+- `experiments/Makefile` — P2 verbs + P3 strays leave; P1 stays
+- `experiments/render.mk` — receives the three P3 stray rule groups
+- `experiments/paths.mk` — gains any vars score.mk needs shared
+- root `Makefile` — repoint any `-f experiments/analysis.mk` /
+  `-C experiments <P2 verb>` delegations to score.mk
+- `.github/workflows/` + `tests/` — sweep for analysis.mk references
+  (test_makefile_dag.py, clean-room tests mention it post-S2)
+- `docs/pipeline-phases.md` — P2 section gains score.mk; note
+  analysis.mk is gone
+
+## Actions
+
+1. Red test first (the guard test above; red while score.mk absent).
+2. Create score.mk (header contract; analysis.mk content + P2 verbs
+   from experiments/Makefile, paths anchored).
+3. Move the three P3 stray groups into render.mk (keep recipes
+   verbatim; only path-var adjustments).
+4. Delete analysis.mk; sweep and repoint every reference (grep -rn
+   "analysis.mk" --exclude-dir=.git).
+5. Docstring phase lines where missing/wrong.
+6. Update docs/pipeline-phases.md.
+
+## Test
+
+The guard test of action 1. Existing gates that must stay green:
+test_render_build_clean_room, test_makefile_dag, both P4 clean-room
+tests, test_no_tracked_ignored_files.
+
+## Verification
+
+- [ ] `grep -rn "analysis.mk" --exclude-dir=.git .` → only historical
+      mentions in docs/tickets, zero in Makefiles/tests/CI
+- [ ] score.mk dry-run verbs work from repo root; no outputs/ targets,
+      no acquire invocations (guard test)
+- [ ] experiments/Makefile contains zero rules writing outside
+      experiments/ (pure P1 + utils, ready for S4)
+- [ ] `make check` green; `make report` / `make slides` build
+- [ ] CI green
+
+## Invariants
+
+- No artifact content changes; NEVER run P2 targets for real — dry-run
+  only (0383)
+- `measurements.jsonl` path and name unchanged (mart v0 until 0297)
+- One PR, this child only; tracker 0406 stays open
+
+## Exit criteria
+
+- score.mk exists (header contract, anchored paths); analysis.mk gone
+- experiments/Makefile is P1+utils only — zero P2/P3 rules
+- render.mk owns the three former strays; all guards green
