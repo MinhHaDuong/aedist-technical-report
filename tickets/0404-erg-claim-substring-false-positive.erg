@@ -1,0 +1,52 @@
+%erg 0.1
+Title: erg claim detection false-positives on date-stamped branch names (substring match)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T06:40Z claude created — found during 2026-06-04 housekeeping triage
+
+--- body ---
+## Context
+
+`erg ready` reports a ticket as "claimed" when any git branch *contains*
+the ticket ID as a substring. Date-stamped branch names defeat this:
+`quickpr/docs-add-econom-ia-2026-conference-progr-20260604-061904`
+contains "0260" (inside `20260604`), so ticket 0260 (Write Exp2 H6
+section) was reported claimed although nobody works on it. Every
+quickpr/* branch created on 2026-06-04 shadows 0260 and 0604; on
+2026-12-31 it would shadow 0261 and 1231, etc.
+
+Consequence: falsely-claimed tickets disappear from the ready list, so
+pick-ticket/raid sweeps silently skip real work for as long as any
+same-day quickpr branch lives.
+
+## Relevant files
+
+- `tickets/tools/go/` — erg source (claim detection in the ready
+  command); upstream is the git-erg project
+- `scripts/quickpr.sh` — generates the date-stamped branch names that
+  trigger the collision
+
+## Actions
+
+1. Tighten the claim heuristic to match the ID at a path/word boundary,
+   e.g. branch matches `(^|/)t?<ID>([-_/]|$)` — `t0260`, `ticket/0260-…`,
+   `0260-slug` claim; `…-20260604-…` does not.
+2. Add a unit test in the erg test suite: branch
+   `quickpr/x-20260604-061904` must NOT claim ticket 0260; branch
+   `t0260` and `ticket/0260-fix` must.
+3. Rebuild the committed `tickets/erg` binary; consider upstreaming to
+   git-erg.
+
+## Test
+
+Red step: with a branch named `quickpr/x-20260604-1` present, `erg
+ready --json` currently reports id 0260 with claimed=true; after the
+fix it reports claimed=false.
+
+## Exit criteria
+
+- Date-stamped branches no longer claim numerically-colliding tickets
+- Boundary-form branches (tNNNN, ticket/NNNN-…) still claim
+- erg test covers both cases; committed binary rebuilt
