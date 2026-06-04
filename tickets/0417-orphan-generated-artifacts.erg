@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Four tracked report/inputs/generated artifacts have no producer rule
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T14:10Z claude created — pre-existing finding surfaced during 0415 (root rewrite, PR #702) world-reach audit; out of scope there
+
+--- body ---
+## Context
+
+While verifying that `make world` reaches every committed handoff
+artifact (0415), four tracked files under `report/inputs/generated/`
+turned out to have NO producer rule anywhere in the phase makefiles:
+
+- `regimes.csv`
+- `tab_exp2_arms_runs.csv`
+- `tab_exp2_bib_quality.csv`
+- `tab_source_grounding.tex`
+
+Pre-existing: the old root Makefile never reached them either. They are
+committed (the 0405 policy tracks the P3 tree) but unreproducible from
+the DAG — a gap in the "each phase rebuilds from the previous phase's
+tracked outcomes alone" invariant.
+
+## Actions
+
+1. For each file: find its generating script (git log / grep src/ for
+   the output filename) and classify — (a) live artifact whose rule was
+   lost in a migration → restore a rule in render.mk; (b) consumed by
+   report/slides but generator gone → decide regenerate-vs-freeze,
+   document; (c) consumed by nothing → retire (git rm, manifest row
+   update in docs/pipeline-phases.md).
+2. Extend the DAG guard (test_makefile_dag or a small adherence test):
+   every tracked file under report/inputs/generated/ has a producer
+   rule in render.mk (allowlist for deliberately frozen artifacts, with
+   a comment per entry).
+
+## Test
+
+The guard of action 2 — red today (4 files), green after action 1.
+
+## Verification
+
+- [ ] Each of the four classified with evidence (producer found or
+      consumer absence shown)
+- [ ] Guard green; make check green; clean-room tests green
+
+## Invariants
+
+- No data content changes without explicit regeneration review (0383)
+
+## Exit criteria
+
+- Zero tracked P3 artifacts without producer rule or documented freeze
+- Guard prevents recurrence

@@ -99,7 +99,7 @@ make -f experiments/render.mk report-tables                # P3: regenerate the 
 make -f experiments/render.mk all                          # P3: regenerate every committed handoff artifact
 ```
 
-The two deleted convenience aliases (`tables`, `figures`, `select`, `census`,
+The five deleted convenience aliases (`tables`, `figures`, `select`, `census`,
 `measurements`) are replaced by the explicit per-phase invocations above — the
 phase makefiles are the single documented dev path.
 

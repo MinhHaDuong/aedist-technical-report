@@ -4,7 +4,7 @@ All figure colours route through the shared palette (``palette.toml`` +
 ``aedist.util``). Inline hex literals (``"#FF00FF"``) and RGB tuples
 (``color=(0.1, 0.2, 0.3)``) are banned in plot scripts so the palette
 remains the single source of truth — change it once and every figure
-updates on next ``make figures``.
+updates on the next ``make -f experiments/render.mk chart-figures``.
 
 A small list of named-colour exceptions (``"black"``, ``"white"``,
 ``"gray"``) is allowed for axis spines, separators, and placeholder
