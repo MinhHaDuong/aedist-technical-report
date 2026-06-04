@@ -33,6 +33,8 @@ jobs:
               - 'ADR.md'
               - 'MASTERPLAN.md'
               - 'PLAN.md'
+      - name: Check ticket corpus integrity
+        run: tickets/erg check tickets/
   lint:
     needs: changes
     if: ${{ !cancelled() }}
