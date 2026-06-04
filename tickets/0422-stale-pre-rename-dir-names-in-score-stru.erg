@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Stale pre-rename dir names in SCORE_STRUCTURED_DIRS extract loop
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T15:16Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`SCORE_STRUCTURED_DIRS` (experiments/derived/score.mk:66) lists the dirs
+the `extract` loop scans under `$(SCORE_OUTPUTS)/`:
+
+    census multiturn web rag decomposed decomposed_v2 sourced frontier
+    ablation/direct/p1_base ablation/direct/p1_base.topup
+    ablation/direct/p1_composite exp1_batch2
+
+Several entries are pre-rename names (the 0122 namespace migration,
+026f0e72, renamed e.g. rag -> rag_extract, decomposed -> rag_per_fuel,
+sourced -> rag_cited) and were never updated. The loop silently no-ops
+on missing dirs — no data corruption, but extract has not covered those
+dirs since the rename, and the stale list misleads readers about the P2
+surface. Surfaced by /verify on PR #713 (ticket 0421).
+
+## Actions
+
+1. For each entry, check existence under experiments/outputs/ (live) —
+   map old -> new names via the 026f0e72 rename table.
+2. Decide per entry: rename to the current dir, or drop (raw replies
+   archived per edda724b mean extract has nothing to scan there;
+   exp1_batch2 is the only live-data dir today).
+3. Consider asserting every SCORE_STRUCTURED_DIRS entry exists, so
+   future renames fail loudly instead of no-oping.
+
+## Exit criteria
+
+- Every SCORE_STRUCTURED_DIRS entry points at an existing dir (or the
+  variable is reduced to the dirs extract actually serves)
+- make check green

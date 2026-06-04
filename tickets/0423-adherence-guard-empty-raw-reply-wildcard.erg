@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Adherence guard: empty raw-reply wildcard with non-empty archive sibling
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T15:16Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0421 found three render/score rules whose `$(wildcard ...)` over
+`experiments/outputs/<dir>/` silently expanded to empty after the
+edda724b archive move — the rules then produced empty tables (latent
+0383 hazard: a rebuild clobbers correct committed tables). The 0417
+guard checks rule *existence*, not rule *correctness*: a rule with an
+empty input wildcard passes it. The bug has a class shape: any future
+dir rename or archive sweep recreates it silently.
+
+This was action 4 of 0421, deferred out of its scope.
+
+## First test (the deliverable)
+
+Adherence test (tests/test_makefile_dag.py or a sibling): for every
+`$(wildcard <pattern>)` in the phase makefiles whose pattern points
+under `experiments/outputs/`, if the wildcard expands empty AND the
+matching `experiments/archive/outputs/` sibling pattern is non-empty,
+fail with a "repoint to archive?" message. Reuse the existing makefile
+scanner (`_parse_to_vars_rules`).
+
+Expected green today (0421 repointed all known cases) — the test guards
+the class coming back.
+
+## Exit criteria
+
+- Standing adherence test as above, green on current main
+- Red if any repointed wildcard in render.mk/score.mk is reverted to
+  the live outputs/ path (verify by temporary mutation)
