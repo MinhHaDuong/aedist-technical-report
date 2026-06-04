@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Pipeline GEM: tracked raw input + argparse + validation for GEM_aggregate.py (mirror 0420/0416)
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T20:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Celebrate sweep after raid 419-420 (PR #711): the 0420 class — manual,
+lost, un-tracked data-transformation arrows — is textbook in the GEM chain:
+
+- `data/reference/GEM_aggregate.py` reads `file_path = "GEM.csv"` with the
+  comment "Replace with the actual file path"; no argparse, no logging,
+  module-level execution.
+- `GEM.csv` is NOT tracked anywhere in the repo: the input that produced
+  `gem_thermal.csv` / `gem_units.csv` is a lost manual export (same lost
+  arrow that let the ires_code coercion slip through the HDM chain).
+- Regenerating gem_thermal.csv today is impossible without recreating the
+  export by hand.
+
+## Quoi faire
+
+Mirror the 0420/0416 treatment, scaled to GEM's lower churn (the GEM data
+is a frozen comparator, not the living master):
+
+1. Track the raw input: `data/reference/raw/GEM.csv` (or document the exact
+   GEM Wiki export recipe in raw/README.md if the file is too big / has
+   licensing constraints — decide with the author).
+2. `GEM_aggregate.py`: argparse (--input/--output), main() guard, logging,
+   dtype=str read (zero-prefix discipline), output-key uniqueness guard
+   (the 0416 invariant: no duplicate plant Name in output).
+3. Make verb in acquire.mk (.PHONY, same as extract-reference-ods).
+4. PROVENANCE.md: document the GEM chain alongside the HDM v2 pipe.
+
+## Exit criteria
+
+- [ ] GEM_aggregate.py is reproducible: argparse, no hardcoded path, main()
+- [ ] Raw input tracked OR export recipe documented (author decision)
+- [ ] Output uniqueness guard refuses duplicate plant names
+- [ ] `make check` vert
+
+## Related
+
+- 0420 (template extraction, PR #711), 0416 (aggregator invariants),
+  data/reference/PROVENANCE.md, raid 419-420 celebrate sweep
