@@ -1,0 +1,38 @@
+{
+  "run_id": "54f8bbb5fea6",
+  "timestamp": "2026-05-24T19:44:35.645252Z",
+  "method": "direct",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 280.78,
+    "cost_usd": 0.0035812599999999997,
+    "tokens_in": 1066,
+    "tokens_out": 8695
+  },
+  "result_file": "experiments/outputs/direct_complete/deepseek-v3.2-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 49,
+    "tp": 49,
+    "fp": 0,
+    "fn": 114,
+    "f1": 0.4623,
+    "fuel_accuracy": 0.5306,
+    "status_accuracy": 0.4082,
+    "province_accuracy": 0.6939
+  },
+  "finish_reason": "stop"
+}

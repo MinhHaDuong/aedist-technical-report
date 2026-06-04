@@ -1,0 +1,25 @@
+{
+  "run_id": "6b9d5fd816f1",
+  "timestamp": "2026-05-24T19:46:23.106865Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "qwen/qwen3.6-35b-a3b",
+    "temperature": 0.0,
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 120.358,
+    "cost_usd": 0.02849148
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_multiturn/qwen3.6-35b-a3b-run1.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

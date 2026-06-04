@@ -1,0 +1,25 @@
+{
+  "run_id": "db1a40629c14",
+  "timestamp": "2026-05-24T19:46:21.608618Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "qwen3.5:9b",
+    "temperature": 0.0,
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "small",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 840.576,
+    "cost_usd": 0.0
+  },
+  "result_file": "experiments/outputs/regimes_scatter/direct_multiturn/qwen3.5-9b-run2.json",
+  "result_summary": {
+    "status": "error"
+  }
+}

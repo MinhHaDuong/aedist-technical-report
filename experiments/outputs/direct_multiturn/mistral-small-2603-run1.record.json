@@ -1,0 +1,31 @@
+{
+  "run_id": "952b09dcf631",
+  "timestamp": "2026-05-24T19:44:51.360978Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "mistralai/mistral-small-2603",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Mistral",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 56.63199999999999,
+    "cost_usd": 0.0066976499999999994
+  },
+  "result_file": "experiments/outputs/direct_multiturn/mistral-small-2603-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 40,
+    "tp": 40,
+    "fp": 0,
+    "fn": 123,
+    "f1": 0.3941,
+    "fuel_accuracy": 0.05,
+    "status_accuracy": 0.125
+  }
+}

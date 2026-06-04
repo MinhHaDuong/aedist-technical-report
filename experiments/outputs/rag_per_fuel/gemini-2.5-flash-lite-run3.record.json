@@ -1,0 +1,36 @@
+{
+  "run_id": "e6d80394fb03",
+  "timestamp": "2026-05-24T19:45:07.854435Z",
+  "method": "rag",
+  "method_params": {
+    "model": "google/gemini-2.5-flash-lite",
+    "prompt_version": "rag_per_fuel",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576,
+      "finish_reason": "merged"
+    }
+  },
+  "resource_use": {
+    "wall_s": 27.27,
+    "cost_usd": 0.0182598,
+    "tokens_in": 166126,
+    "tokens_out": 4118
+  },
+  "result_file": "experiments/outputs/rag_per_fuel/gemini-2.5-flash-lite-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 155,
+    "tp": 155,
+    "fp": 0,
+    "fn": 8,
+    "f1": 0.9748,
+    "fuel_accuracy": 0.5226,
+    "status_accuracy": 0.3742,
+    "province_accuracy": 0.5352
+  },
+  "finish_reason": "merged"
+}

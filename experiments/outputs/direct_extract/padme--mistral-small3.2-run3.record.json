@@ -1,0 +1,32 @@
+{
+  "run_id": "9c6986e94010",
+  "timestamp": "2026-05-24T19:44:43.850384Z",
+  "method": "direct",
+  "method_params": {
+    "model": "mistral-small3.2",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 2.869,
+    "tokens_in": 563,
+    "tokens_out": 67
+  },
+  "result_file": "experiments/outputs/direct_extract/padme--mistral-small3.2-run3.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 163,
+    "f1": 0.0
+  },
+  "finish_reason": "stop"
+}

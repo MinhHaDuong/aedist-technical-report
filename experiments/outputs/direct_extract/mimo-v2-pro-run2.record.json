@@ -1,0 +1,33 @@
+{
+  "run_id": "19ad64525b63",
+  "timestamp": "2026-05-24T19:44:40.800345Z",
+  "method": "direct",
+  "method_params": {
+    "model": "xiaomi/mimo-v2-pro",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Xiaomi",
+      "context_window": 1048576,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 10.367,
+    "cost_usd": 0.001808,
+    "tokens_in": 302,
+    "tokens_out": 502
+  },
+  "result_file": "experiments/outputs/direct_extract/mimo-v2-pro-run2.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 163,
+    "f1": 0.0
+  },
+  "finish_reason": "stop"
+}

@@ -1,0 +1,36 @@
+{
+  "run_id": "25d6eefc825b",
+  "timestamp": "2026-05-24T19:44:55.665440Z",
+  "method": "rag",
+  "method_params": {
+    "model": "google/gemma-4-31b-it",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 238.587,
+    "cost_usd": 0.01041328,
+    "tokens_in": 80864,
+    "tokens_out": 1774
+  },
+  "result_file": "experiments/outputs/rag_extract/gemma-4-31b-it-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 67,
+    "tp": 67,
+    "fp": 0,
+    "fn": 96,
+    "f1": 0.5826,
+    "fuel_accuracy": 0.7761,
+    "status_accuracy": 0.5821,
+    "province_accuracy": 0.791
+  },
+  "finish_reason": "stop"
+}

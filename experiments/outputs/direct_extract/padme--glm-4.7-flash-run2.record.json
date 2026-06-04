@@ -1,0 +1,35 @@
+{
+  "run_id": "26205d84da55",
+  "timestamp": "2026-05-24T19:44:45.187898Z",
+  "method": "direct",
+  "method_params": {
+    "model": "glm-4.7-flash",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 72.799,
+    "tokens_in": 58,
+    "tokens_out": 4500
+  },
+  "result_file": "experiments/outputs/direct_extract/padme--glm-4.7-flash-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 56,
+    "tp": 56,
+    "fp": 0,
+    "fn": 107,
+    "f1": 0.5114,
+    "fuel_accuracy": 0.375,
+    "status_accuracy": 0.0536,
+    "province_accuracy": 0.375
+  },
+  "finish_reason": "stop"
+}

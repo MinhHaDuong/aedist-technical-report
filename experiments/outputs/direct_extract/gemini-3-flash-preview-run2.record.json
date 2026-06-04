@@ -1,0 +1,36 @@
+{
+  "run_id": "352ea904642a",
+  "timestamp": "2026-05-24T19:44:39.790829Z",
+  "method": "direct",
+  "method_params": {
+    "model": "google/gemini-3-flash-preview",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 9.319,
+    "cost_usd": 0.005147,
+    "tokens_in": 52,
+    "tokens_out": 1707
+  },
+  "result_file": "experiments/outputs/direct_extract/gemini-3-flash-preview-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 54,
+    "tp": 54,
+    "fp": 0,
+    "fn": 109,
+    "f1": 0.4977,
+    "fuel_accuracy": 0.7963,
+    "status_accuracy": 0.7407,
+    "province_accuracy": 0.8889
+  },
+  "finish_reason": "stop"
+}

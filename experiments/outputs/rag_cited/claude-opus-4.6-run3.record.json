@@ -1,0 +1,36 @@
+{
+  "run_id": "7d54851093a8",
+  "timestamp": "2026-05-24T19:44:54.862245Z",
+  "method": "rag",
+  "method_params": {
+    "model": "anthropic/claude-opus-4.6",
+    "prompt_version": "rag_cited",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Anthropic",
+      "context_window": 1000000,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 193.295,
+    "cost_usd": 0.75403,
+    "tokens_in": 87266,
+    "tokens_out": 12708
+  },
+  "result_file": "experiments/outputs/rag_cited/claude-opus-4.6-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 102,
+    "tp": 102,
+    "fp": 0,
+    "fn": 61,
+    "f1": 0.7698,
+    "fuel_accuracy": 0.7451,
+    "status_accuracy": 0.5588,
+    "province_accuracy": 0.8333
+  },
+  "finish_reason": "stop"
+}
