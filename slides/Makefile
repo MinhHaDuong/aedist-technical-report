@@ -1,8 +1,8 @@
 # Beamer slides and manuscript handout
 #
 # The writing build compiles from committed handoff artifacts only — no uv run,
-# no data access. To regenerate figures/tables, run the analysis workpackage:
-#   make -f experiments/analysis.mk exp2-analysis-report
+# no data access. To regenerate figures/tables, run the render (P3) workpackage:
+#   make -f experiments/render.mk exp2-analysis-report
 
 ROOT_REPORT_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated

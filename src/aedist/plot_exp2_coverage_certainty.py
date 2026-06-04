@@ -1,5 +1,7 @@
 """Coverage vs. corroboration scatter for all Exp2 runs.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 X = assets correctly identified (``n_matched``, same axis as the coverage
 figure); Y = assets backed by two sources (``src2_present``). One point per
 run; per-model colour; condition (1N/5N/1D/5D) shown by glyph. Individual runs

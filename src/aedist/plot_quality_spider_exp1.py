@@ -1,5 +1,7 @@
 """Radar/spider figures for Exp1 quality profiles.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Two modes:
   - Family 2×2 panels (default): one subplot per model family.
   - Single model (--model): one large spider for a single model,

@@ -1,5 +1,7 @@
 """Compute directional statistical tests comparing arm1 (naive) vs arm2 (optimised).
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads tab_exp2_arms_runs_view.csv and produces stat_tests_arm1_vs_arm2.txt with:
 1. Sign test across agents on n_matched (arm2 > arm1 direction)
 2. Effect size on n_matched: median differences per agent and pooled

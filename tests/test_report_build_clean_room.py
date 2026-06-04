@@ -6,9 +6,10 @@ Python data pipeline. This test guards that invariant.
 
 The check uses `make -n` (and a force-rebuild variant) on the report target and
 asserts the recipe trace contains no `uv run` invocation. New producer rules
-belong in `experiments/analysis.mk`; the root Makefile's `report/report.pdf`
-rule must depend only on files that either have no recipe in the writing-side
-makefiles or are produced by `$(MAKE) -C report` (i.e. tectonic itself).
+belong in `experiments/render.mk` (the P3 render phase); the root Makefile's
+`report/report.pdf` rule must depend only on files that either have no recipe
+in the writing-side makefiles or are produced by `$(MAKE) -C report` (i.e.
+tectonic itself).
 """
 
 import subprocess
@@ -36,7 +37,7 @@ def _assert_no_uv_run(trace: str, label: str) -> None:
     offending = [line for line in trace.splitlines() if "uv run" in line]
     assert not offending, (
         f"{label} must not invoke `uv run` (writing build = clean-room). "
-        "Move producer rules to experiments/analysis.mk.\n" + "\n".join(offending)
+        "Move producer rules to experiments/render.mk.\n" + "\n".join(offending)
     )
 
 

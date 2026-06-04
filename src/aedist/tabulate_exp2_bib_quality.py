@@ -1,5 +1,7 @@
 """Render bibliography quality LaTeX table from Exp2 bib quality CSV.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Usage:
     python -m aedist.tabulate_exp2_bib_quality \
         --input report/inputs/generated/tab_exp2_bib_quality_view.csv \

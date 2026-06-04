@@ -1,4 +1,7 @@
-"""Build CSV views from the Exp2 mart JSONL artifact."""
+"""Build CSV views from the Exp2 mart JSONL artifact.
+
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+"""
 
 import argparse
 import csv

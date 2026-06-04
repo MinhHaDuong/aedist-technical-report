@@ -1,5 +1,7 @@
 """Generate cost × quality CSV and scatter PDF from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Scope: **Experiment 1 only** (the parametric baseline sweep,
 ``experiments/outputs/ablation/direct/p1_base/``). Pilot rows under
 ``p1_base.pilot/`` are excluded. The figure is descriptive — no

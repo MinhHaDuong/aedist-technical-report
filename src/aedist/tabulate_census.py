@@ -1,5 +1,7 @@
 """Generate census results LaTeX table from measurements.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads per-run metrics, groups by model (stripping -runN suffix),
 computes medians, and emits a longtable sorted by F1 descending.
 Local (Padme) models are marked with (L).

@@ -1,5 +1,7 @@
 """Three-way reference reconciliation: expert vs GEM vs system.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Ticket 0082 — inter-annotator agreement analysis.
 
 1. Reconciles expert reference against GEM reference using the LP matcher.

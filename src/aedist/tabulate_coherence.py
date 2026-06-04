@@ -1,5 +1,7 @@
 """Generate internal-coherence LaTeX table from RAG extraction CSVs.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Usage:
     python -m aedist.tabulate_coherence \\
         --input experiments/outputs/rag_extract \\

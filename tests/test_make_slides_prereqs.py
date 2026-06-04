@@ -4,7 +4,8 @@ The slides sub-make (`slides/Makefile`) consumes
 `$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf` as a manuscript prereq.
 After ticket 0370, the writing build is clean-room: no producing recipe
 exists in the writing-side Makefiles. The file must be a committed handoff
-artifact. The producer rule lives in `experiments/analysis.mk`.
+artifact. The producer rule lives in `experiments/render.mk` (the P3 render
+phase, extracted from analysis.mk by ticket 0409).
 
 This is the adherence companion to tickets 0367 and 0370.
 """
@@ -28,6 +29,6 @@ def test_fig_capability_dag_is_committed_artifact():
     )
     assert result.stdout.strip(), (
         "report/inputs/generated/fig_capability_dag.pdf is not tracked by git — "
-        "regenerate via `make -f experiments/analysis.mk chart-figures` "
+        "regenerate via `make -f experiments/render.mk chart-figures` "
         "then `git add -f` and commit."
     )

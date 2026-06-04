@@ -13,15 +13,17 @@ file is non-precious (regenerable) and is `.gitignore`d.
 | Phase | What it does | Outcome (TRACK) | Non-precious (IGNORE) |
 |-------|--------------|-----------------|-----------------------|
 | **P1 Acquire** | API runs against models (`experiments/Makefile`) | raw model replies: `experiments/outputs/**`, `experiments/archive/**` (incl. extracted `*.md` siblings of tracked `*.json`) | run logs, retries, jobs/, `rag_work/` |
-| **P2 Score & consolidate** | extract → evaluate → assemble (`experiments/Makefile`, mart build in `analysis.mk`) | `measurements.jsonl` (mart v0, transitional until 0297), `experiments/derived/exp2_mart.jsonl` | per-run `experiments/derived/**/*.record.json`, mart→view CSVs |
-| **P3 Analyze & render** | plot/tabulate scripts (`experiments/analysis.mk`) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/` (the single P3 deliverable tree; the slides-side tree was retired, 0408) | plotting intermediates consumed only inside P3 (`census_bars.csv`, view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
+| **P2 Score & consolidate** | extract → evaluate → assemble (`experiments/Makefile`, mart build in `experiments/analysis.mk`) | `measurements.jsonl` (mart v0, transitional until 0297), `experiments/derived/exp2_mart.jsonl` | per-run `experiments/derived/**/*.record.json`, mart→view CSVs |
+| **P3 Analyze & render** | plot/tabulate scripts (`experiments/render.mk`, including the mart→view projection) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/` (the single P3 deliverable tree; the slides-side tree was retired, 0408) | plotting intermediates consumed only inside P3 (`census_bars.csv`, view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
 | **P4 Write** | tectonic / pandoc (`report/Makefile`, `slides/Makefile`) | — (final PDFs are regenerable) | `report.pdf`, `slides.pdf`, LaTeX aux files |
 
 ## The classification test
 
 For any generated file, find its **producing rule** and its **consuming
 rule(s)** in the Makefile DAG (`Makefile`, `experiments/Makefile`,
-`experiments/analysis.mk`, `report/Makefile`, `slides/Makefile`):
+`experiments/analysis.mk` for P2, `experiments/render.mk` for P3,
+`experiments/paths.mk` for shared variables, `report/Makefile`,
+`slides/Makefile`):
 
 - **Producing phase ≠ consuming phase → boundary outcome → TRACK.**
 - **Same phase, or no consumer at all → intra-phase intermediate → IGNORE**

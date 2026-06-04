@@ -2,10 +2,12 @@
 Title: Extract experiments/render.mk — P3 rules out of analysis.mk (0406 S2)
 Created: 2026-06-04
 Author: claude
+Closed: render.mk extracted; figure builds can no longer regenerate the mart
 
 --- log ---
 2026-06-04T10:05Z claude created — S2 child of tracker 0406; S1 (0408, PR #692) landed, single P3 tree in place
 
+2026-06-04T09:43Z HDMX-coding-agent closed — render.mk extracted; figure builds can no longer regenerate the mart
 --- body ---
 ## Context
 

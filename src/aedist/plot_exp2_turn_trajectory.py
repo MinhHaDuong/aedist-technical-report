@@ -1,5 +1,7 @@
 """Turn-by-turn inventory rows for Exp2 Arm 2 (optimised) — Figure 4.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Four panels, one per agent, sharing a common y-axis scale.  Each panel shows
 N=5 runs as connected lines.  Filled dots = turn classified 'report'; open
 circles = 'no_report'.  Colors from the model-family palette.

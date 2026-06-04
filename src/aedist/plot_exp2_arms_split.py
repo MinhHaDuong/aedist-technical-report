@@ -1,5 +1,7 @@
 """Coverage and Cost single-panel figures for Exp2, with Exp1 baseline bar.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Each model group shows 5 bars:
   E1  = Experiment 1 parametric baseline (from cost_quality.csv)
   1N  = arm1: single-shot, no docs
