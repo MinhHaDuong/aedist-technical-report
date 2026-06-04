@@ -1,5 +1,7 @@
 """Self-consistency evaluation for rag outputs.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 For each model with 3 runs, merge them by majority vote (plant kept if it
 appears in 2+ of 3 runs), evaluate the consolidated result, and compare
 against the single-run median F1.

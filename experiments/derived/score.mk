@@ -1,17 +1,139 @@
-# Exp2 analysis DAG — P2 (score & consolidate) build phase.
+# AEDIST P2 (score & consolidate) build phase.
 #
-# PHASE: P2 score & consolidate. This file extracts run outputs, scores them,
-# and assembles the canonical mart ($(ANALYSIS_EXP2_MART_JSONL)) and the
-# cross-eval CSVs. The P3 (render) phase that turns these outcomes into
-# figures/tables/macros lives in experiments/render.mk (ticket 0409, tracker
-# 0406 S2) — a figure build can no longer reach back into this scoring DAG.
+# PHASE: P2 score & consolidate. This file extracts run outputs, scores them
+# against the reference, and assembles the canonical outcomes: the mart v0
+# (measurements.jsonl), the consolidated Exp2 mart (exp2_mart.jsonl), and the
+# cross-eval CSVs. It lives in experiments/derived/ — next to the P2 derived
+# data it produces. The P3 (render) phase that turns these outcomes into
+# figures/tables/macros lives in experiments/render.mk (tracker 0406 S2); a
+# figure build can no longer reach back into this scoring DAG. The P1 (acquire)
+# sweeps that produce the raw model replies this file consumes live in
+# experiments/Makefile.
 #
-# Shared path variables come from experiments/paths.mk. Override the path
-# variables there to relocate the repository or point at alternate output
-# trees. (analysis.mk becomes score.mk in tracker 0406 step S3 — not renamed
-# yet.)
+# SOURCES (consumed, never produced here — they appear only as prerequisites,
+# and score.mk carries NO rule able to (re)acquire them):
+#   * experiments/outputs/**           (P1 raw model replies + flat arm dirs)
+#   * data/reference/vietnam_thermal_v1.csv  (expert reference)
+#
+# OUTCOMES (produced):
+#   * measurements.jsonl               (mart v0 — do NOT move or rename it,
+#                                        transitional until ticket 0297)
+#   * experiments/derived/exp2_mart.jsonl    (consolidated Exp2 mart)
+#   * experiments/derived/sota_cross_eval.csv, .../exp1_cross_eval.csv
+#                                            (per-run cross-eval CSVs)
+#   * experiments/derived/rag_consistency/self_consistency_summary.json
+#   * the *.record.json evaluation siblings under outputs/** and derived/**
+#     (P2 scoring artifacts, NOT re-acquired raw replies)
+#
+# INVARIANT: score.mk declares NO rule for an upstream (P1) outcome. It never
+#   fans out a worker/manager drain, runs a sweep, or calls an LLM adapter —
+#   the only way to (re)acquire raw replies is experiments/Makefile's P1 sweep
+#   verbs (which cost money). If a P1 source is missing, make MUST stop with
+#   "No rule to make target", never silently re-acquire. Guarded by
+#   tests/test_score_build_no_acquire.py.
+#
+# Path discipline: this file is invoked from the repo ROOT
+#   (`make -f experiments/derived/score.mk <verb>`), so cwd = repo root, NOT
+#   experiments/. Every path is anchored via the shared experiments/paths.mk
+#   variables ($(ANALYSIS_*)) — no fragile cwd-relative `outputs/` or
+#   `../measurements.jsonl`. Recursive `$(MAKE)` calls re-invoke THIS file by
+#   absolute self-path so the default makefile (root ./Makefile) is never hit.
+#
+# Tracker 0406 step S3 (ticket 0410) consolidated the former P2 score makefile
+# plus the P2 verbs from experiments/Makefile into this file.
 
-include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk
+# Self-path for recursive $(MAKE): captured BEFORE the include extends
+# MAKEFILE_LIST, so it always points at this score.mk regardless of cwd.
+SCORE_MK_SELF := $(abspath $(lastword $(MAKEFILE_LIST)))
+
+include $(dir $(lastword $(MAKEFILE_LIST)))../paths.mk
+
+# --- P2-local tooling -------------------------------------------------------
+# Bare `uv run` (no --env-file): P2 scoring makes no API calls, so it needs no
+# secrets. This mirrors the former P2 score makefile's convention and keeps
+# the acquire-only ENV policy in experiments/common.mk.
+
+SCORE_EVAL      := uv run python -m aedist.evaluate
+SCORE_REFERENCE := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv
+SCORE_SRC       := $(ANALYSIS_REPO_ROOT)/src/aedist
+SCORE_OUTPUTS   := $(ANALYSIS_OUTPUTS_DIR)
+SCORE_DERIVED   := $(ANALYSIS_DERIVED_DIR)
+
+# === measurements.jsonl: materialized view of all outputs ===================
+# (migrated from experiments/Makefile, tracker 0406 S3)
+
+SCORE_STRUCTURED_DIRS := census multiturn web rag \
+                   decomposed decomposed_v2 sourced frontier \
+                   ablation/direct/p1_base ablation/direct/p1_base.topup \
+                   ablation/direct/p1_composite \
+                   exp1_batch2
+
+SCORE_OUTPUT_FILES := $(filter-out %.record.json $(SCORE_DERIVED)/rag_consistency/%,\
+                   $(wildcard $(SCORE_OUTPUTS)/*/*.json) $(wildcard $(SCORE_DERIVED)/*/*.json)) \
+                $(filter-out $(SCORE_DERIVED)/rag_consistency/%,\
+                   $(wildcard $(SCORE_OUTPUTS)/*/*.csv) $(wildcard $(SCORE_DERIVED)/*/*.csv))
+
+# Extract structured outputs from LLM JSON responses into CSVs.
+.PHONY: extract
+extract:
+	@for dir in $(SCORE_STRUCTURED_DIRS); do \
+	    uv run python -m aedist.extract \
+	        --input $(SCORE_OUTPUTS)/$$dir --output $(SCORE_OUTPUTS)/$$dir; \
+	done
+
+.PRECIOUS: $(SCORE_OUTPUTS)/%.record.json $(SCORE_DERIVED)/%.record.json
+$(SCORE_OUTPUTS)/%.record.json: $(SCORE_OUTPUTS)/%.csv $(SCORE_REFERENCE)
+	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $<)
+$(SCORE_DERIVED)/%.record.json: $(SCORE_DERIVED)/%.csv $(SCORE_REFERENCE)
+	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $<)
+
+# Recursive Make: extract may create CSVs, so the second invocation must
+# re-scan to find them.  Orphan JSONs (qualitative, no CSV) need nullglob.
+# Recurse re-invokes THIS file by absolute self-path (cwd is repo root, so a
+# bare `$(MAKE) extract` would hit root ./Makefile and fail).
+$(ANALYSIS_MEASUREMENTS): $(SCORE_OUTPUT_FILES)
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) extract
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) evaluate-all-records
+	@$(SCORE_EVAL) assemble $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.record.json' ! -path '*/_extracted/*' | sort) --output $@
+
+.PHONY: evaluate-all-records
+evaluate-all-records:
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) -j$$(nproc) \
+	    $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.csv' ! -name 'reconciliation_*' ! -name '*_audit.csv' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
+	@shopt -s nullglob; \
+	for f in $(SCORE_OUTPUTS)/*/*-run*.json $(SCORE_OUTPUTS)/*/*/*-run*.json $(SCORE_DERIVED)/*/*-run*.json; do \
+	    [[ "$$f" == *.record.json ]] && continue; \
+	    [ -f "$${f%.json}.csv" ] && continue; \
+	    rec="$${f%.json}.record.json"; \
+	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \
+	    $(SCORE_EVAL) evaluate "$$f" --output "$$(dirname $$f)"; \
+	done
+
+# rebuild-measurements is a DELIBERATE, REVIEWED destructive protocol (0383
+# mart-staleness lesson): it DELETES every committed *.record.json under
+# outputs/ and derived/, then re-evaluates from scratch. ALWAYS review the
+# resulting `git diff` on measurements.jsonl before committing — a silent
+# re-score with a changed scorer or a missing input would corrupt the mart.
+# Never run as a side effect; run it intentionally and inspect the diff.
+.PHONY: rebuild-measurements
+rebuild-measurements:
+	find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.record.json' ! -path '*/_extracted/*' -delete
+	$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
+
+# === Self-consistency scorer (outputs/rag → derived/rag_consistency) ========
+# (migrated from experiments/Makefile, tracker 0406 S3 — P2 score half only;
+#  the tabulate→report/inputs/generated/ render half is in render.mk.)
+
+SCORE_SC_INPUT  := $(SCORE_OUTPUTS)/rag
+SCORE_SC_OUTPUT := $(SCORE_DERIVED)/rag_consistency
+SCORE_SC_JSON   := $(SCORE_SC_OUTPUT)/self_consistency_summary.json
+
+$(SCORE_SC_JSON): $(wildcard $(SCORE_SC_INPUT)/*.json) $(SCORE_SRC)/self_consistency.py
+	uv run python -m aedist.self_consistency \
+	    --input $(SCORE_SC_INPUT) --output $(SCORE_SC_OUTPUT) --measurements $(ANALYSIS_MEASUREMENTS)
+
+# === Exp2 analysis DAG (consolidated into this P2 score makefile) ===========
+# extract → score → assemble the Exp2 mart and cross-eval CSVs.
 
 # --- P2-local input wildcards -----------------------------------------------
 
@@ -130,7 +252,7 @@ $(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 # --- Dual-run parity staging -------------------------------------------------
 # P2 mart-validation scratch. Staged under the P2-owned derived/ tree (NOT the
 # P3 handoff tree report/inputs/generated/) so this P2 file never writes a
-# render artifact — the analysis.mk/render.mk seam stays clean (ticket 0409).
+# render artifact — the score.mk/render.mk seam stays clean (ticket 0409).
 # Transient: untracked, consumed only by check-mart-parity below.
 
 ANALYSIS_EXP2_OLD_STAGE := $(ANALYSIS_DERIVED_DIR)/parity/exp2-old-path

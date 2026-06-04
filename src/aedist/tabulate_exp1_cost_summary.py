@@ -1,5 +1,7 @@
 """Generate Experiment 1 cost summary LaTeX table from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Per-model totals for the parametric baseline sweep
 (``experiments/outputs/ablation/direct/p1_base/``): how many reps succeeded,
 how many refused, how many tokens in / out the sweep cost, and total
@@ -29,7 +31,11 @@ P1_PILOT_MARKER = "/p1_base.pilot/"
 
 
 def _is_p1_base_row(result_file: str) -> bool:
-    return isinstance(result_file, str) and result_file.startswith(P1_BASE_PATH_PREFIX) and P1_PILOT_MARKER not in result_file
+    return (
+        isinstance(result_file, str)
+        and result_file.startswith(P1_BASE_PATH_PREFIX)
+        and P1_PILOT_MARKER not in result_file
+    )
 
 
 def aggregate_per_model(records: list[dict]) -> list[dict]:

@@ -1,4 +1,7 @@
-"""Flatten single-turn arm outputs into Exp2-mart-compatible per-run artifacts."""
+"""Flatten single-turn arm outputs into Exp2-mart-compatible per-run artifacts.
+
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+"""
 
 import argparse
 import json

@@ -1,5 +1,7 @@
 """Extract CSV tables from LLM JSON responses.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Each JSON file contains raw assistant text which usually embeds a CSV inside
 Markdown code fences.  This script extracts that CSV, canonicalizes the
 columns, and writes a clean comma-delimited CSV so it can be evaluated.

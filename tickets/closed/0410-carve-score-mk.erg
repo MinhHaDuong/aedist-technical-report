@@ -2,10 +2,12 @@
 Title: Carve experiments/derived/score.mk — P2 consolidated, P3 strays to render.mk (0406 S3)
 Created: 2026-06-04
 Author: claude
+Closed: score.mk carved; experiments/Makefile is pure P1; P3 strays in render.mk
 
 --- log ---
 2026-06-04T10:50Z claude created — S3 child of tracker 0406; S2 (0409, PR #694) landed: render.mk exists, analysis.mk is P2-only
 
+2026-06-04T10:36Z HDMX-coding-agent closed — score.mk carved; experiments/Makefile is pure P1; P3 strays in render.mk
 --- body ---
 ## Context
 

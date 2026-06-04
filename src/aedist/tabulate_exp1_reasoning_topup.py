@@ -1,5 +1,7 @@
 """Generate Annex A reasoning-tokens + interday-variability table.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Joins two cohorts of Experiment 1 runs:
 - baseline: ``outputs/ablation/direct/p1_base/``  (2026-05-20, N=5)
 - topup:    ``outputs/ablation/direct/p1_base.topup/``  (2026-05-21, N≤3)

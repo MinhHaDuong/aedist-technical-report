@@ -34,7 +34,9 @@ include common.mk
 # Targets in this list will fail fast with a readable message if .env is
 # missing. Keys themselves are not read into Make variables — uv loads them
 # at child-process spawn time via --env-file.
-_NEEDS_ENV := census census-run census-summary regimes regimes-run \
+# census-summary delegates to the P2 scorer (experiments/derived/score.mk), a
+# pure offline rebuild — no API keys — so it is NOT in this list (ticket 0410).
+_NEEDS_ENV := census census-run regimes regimes-run \
 						 sourced sourced-run frontier frontier-run
 ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
   $(if $(wildcard ../.env),,$(error ../.env not found — copy ../.env.example and populate API keys))
@@ -61,7 +63,11 @@ census-generate:
 census-run:
 	$(OR_DRAIN); $(WORKER) padme --drain & wait
 
-census-summary: rebuild-measurements
+# Score & consolidate (P2) now lives in experiments/derived/score.mk, invoked
+# from the repo root. Delegate there (-C .. so cwd = repo root, which score.mk's
+# paths.mk-anchored paths assume).
+census-summary:
+	$(MAKE) -C .. -f experiments/derived/score.mk rebuild-measurements
 
 # --- Regimes: information regimes ---------------------------------------------
 
@@ -127,98 +133,16 @@ frontier-generate:
 frontier-run:
 	$(OR_DRAIN); wait
 
-# --- Rebuild measurements (materialized view of all outputs) -----------------
-
-EVAL      := $(UV_RUN) python -m aedist.evaluate
-REFERENCE := ../data/reference/vietnam_thermal_v1.csv
-
-STRUCTURED_DIRS := census multiturn web rag \
-                   decomposed decomposed_v2 sourced frontier \
-                   ablation/direct/p1_base ablation/direct/p1_base.topup \
-                   ablation/direct/p1_composite \
-                   exp1_batch2
-
-OUTPUT_FILES := $(filter-out %.record.json derived/rag_consistency/%,$(wildcard outputs/*/*.json) $(wildcard derived/*/*.json)) \
-				$(filter-out derived/rag_consistency/%,$(wildcard outputs/*/*.csv) $(wildcard derived/*/*.csv))
-
-# Extract structured outputs from LLM JSON responses into CSVs.
-.PHONY: extract
-extract:
-	@for dir in $(STRUCTURED_DIRS); do \
-	    $(UV_RUN) python -m aedist.extract \
-	        --input outputs/$$dir --output outputs/$$dir; \
-	done
-
-.PRECIOUS: outputs/%.record.json derived/%.record.json
-outputs/%.record.json: outputs/%.csv $(REFERENCE)
-	@$(EVAL) evaluate $< --reference $(REFERENCE) --output $(dir $<)
-derived/%.record.json: derived/%.csv $(REFERENCE)
-	@$(EVAL) evaluate $< --reference $(REFERENCE) --output $(dir $<)
-
-# Recursive Make: extract may create CSVs, so the second invocation must
-# re-scan to find them.  Orphan JSONs (qualitative, no CSV) need nullglob.
-../measurements.jsonl: $(OUTPUT_FILES)
-	@$(MAKE) --no-print-directory extract
-	@$(MAKE) --no-print-directory evaluate-all-records
-	@$(EVAL) assemble $$(find outputs derived -name '*.record.json' ! -path '*/_extracted/*' | sort) --output $@
-
-.PHONY: evaluate-all-records
-evaluate-all-records:
-	@$(MAKE) --no-print-directory -j$$(nproc) \
-	    $$(find outputs derived -name '*.csv' ! -name 'reconciliation_*' ! -name '*_audit.csv' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
-	@shopt -s nullglob; \
-	for f in outputs/*/*-run*.json outputs/*/*/*-run*.json derived/*/*-run*.json; do \
-	    [[ "$$f" == *.record.json ]] && continue; \
-	    [ -f "$${f%.json}.csv" ] && continue; \
-	    rec="$${f%.json}.record.json"; \
-	    [ -f "$$rec" ] && [ "$$rec" -nt "$$f" ] && continue; \
-	    $(EVAL) evaluate "$$f" --output "$$(dirname $$f)"; \
-	done
-
-.PHONY: rebuild-measurements
-rebuild-measurements:
-	find outputs derived -name '*.record.json' ! -path '*/_extracted/*' -delete
-	$(MAKE) --no-print-directory ../measurements.jsonl
-
-# --- Analysis: self-consistency -----------------------------------------------
-
-SC_INPUT  := outputs/rag
-SC_OUTPUT := derived/rag_consistency
-SC_JSON   := $(SC_OUTPUT)/self_consistency_summary.json
-SC_TEX    := ../report/inputs/generated/tab_self_consistency.tex
-SC_PERRUN := ../report/inputs/generated/tab_per_run.tex
-
-.PHONY: self-consistency
-
-$(SC_JSON): $(wildcard $(SC_INPUT)/*.json) ../src/aedist/self_consistency.py
-	$(UV_RUN) python -m aedist.self_consistency \
-	    --input $(SC_INPUT) --output $(SC_OUTPUT) --measurements ../measurements.jsonl
-
-$(SC_TEX) $(SC_PERRUN) &: ../measurements.jsonl ../src/aedist/tabulate_self_consistency.py
-	$(UV_RUN) python -m aedist.tabulate_self_consistency \
-	    --output $(SC_TEX) --per-run-output $(SC_PERRUN)
-
-self-consistency: $(SC_TEX) $(SC_PERRUN)
-
-# --- Experiment 1 cost summary ----------------------------------------------
-
-EXP1_COST_TEX := ../report/inputs/generated/tab_exp1_cost_summary.tex
-
-$(EXP1_COST_TEX): ../measurements.jsonl ../src/aedist/tabulate_exp1_cost_summary.py
-	$(UV_RUN) python -m aedist.tabulate_exp1_cost_summary \
-	    --measurements ../measurements.jsonl --output $(EXP1_COST_TEX)
-
-.PHONY: exp1-cost-summary
-exp1-cost-summary: $(EXP1_COST_TEX)
-
-EXP1_TOPUP_TEX := ../report/inputs/generated/tab_exp1_reasoning_topup.tex
-
-$(EXP1_TOPUP_TEX): ../measurements.jsonl ../src/aedist/tabulate_exp1_reasoning_topup.py
-	$(UV_RUN) python -m aedist.tabulate_exp1_reasoning_topup \
-	    --measurements ../measurements.jsonl --output $(EXP1_TOPUP_TEX)
-
-.PHONY: exp1-reasoning-topup
-exp1-reasoning-topup: $(EXP1_TOPUP_TEX)
+# --- Score & consolidate (P2) and render (P3) now live elsewhere -------------
+# extract / evaluate / measurements.jsonl / rebuild-measurements / the
+# self-consistency scorer (the P2 score & consolidate phase) moved to
+# experiments/derived/score.mk (tracker 0406 S3, ticket 0410). The
+# self-consistency / exp1-cost-summary / exp1-reasoning-topup LaTeX tables (the
+# P3 render half) moved to experiments/render.mk. Both are invoked from the
+# repo root:
+#     make -f experiments/derived/score.mk rebuild-measurements
+#     make -f experiments/render.mk self-consistency
+# This Makefile is now pure P1 acquire (sweeps) + corpus utilities.
 
 # --- Utility -----------------------------------------------------------------
 
@@ -316,8 +240,11 @@ help:
 	@echo "  make verification         Generate + run verification sweep"
 	@echo "  make sourced              Generate + run sourced extraction sweep"
 	@echo "  make frontier             Generate + run frontier deep-research (3 prompts)"
-	@echo "  make rebuild-measurements Extract + evaluate all outputs → measurements.jsonl"
-	@echo "  make self-consistency     Majority/union vote analysis + LaTeX tables"
+	@echo "  make census-summary       Score & consolidate all outputs → measurements.jsonl"
+	@echo ""
+	@echo "Score & render (run from repo root):"
+	@echo "  make -f experiments/derived/score.mk rebuild-measurements  Extract + evaluate → measurements.jsonl (P2)"
+	@echo "  make -f experiments/render.mk self-consistency             Majority/union vote LaTeX tables (P3)"
 	@echo ""
 	@echo "Tools:"
 	@echo "  make pdf2md PDF=file.pdf  Convert PDF to Markdown (for RAG corpus)"

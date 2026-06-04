@@ -1,9 +1,10 @@
 """`experiments/render.mk` is the P3 (render) phase — it never regenerates P2.
 
-Ticket 0409 (tracker 0406, step S2) split every render rule out of
-`experiments/analysis.mk` into `experiments/render.mk`, so a figure/table/view
-build can no longer trigger the scoring/extraction cascade that produced the
-2026-06-03 mart staleness incident (ticket 0383).
+Ticket 0409 (tracker 0406, step S2) split every render rule out of the P2
+score makefile into `experiments/render.mk`, so a figure/table/view build can
+no longer trigger the scoring/extraction cascade that produced the 2026-06-03
+mart staleness incident (ticket 0383). The P2 score makefile was itself
+consolidated into `experiments/derived/score.mk` by S3 (ticket 0410).
 
 render.mk consumes committed P2 outcomes (``measurements.jsonl``,
 ``experiments/derived/exp2_mart.jsonl``, the cross-eval CSVs,
@@ -88,8 +89,8 @@ def _dry_run(target: str) -> str:
 
 def test_render_mk_exists():
     assert RENDER_MK.is_file(), (
-        "experiments/render.mk must exist (P3 render rules extracted from "
-        "analysis.mk by ticket 0409)."
+        "experiments/render.mk must exist (P3 render rules extracted from the "
+        "P2 score makefile by ticket 0409)."
     )
 
 
@@ -118,13 +119,14 @@ def test_render_mk_has_no_p2_outcome_targets():
     offending = [ln for ln in rule_lines if P2_OUTCOME_TARGET_RE.search(ln + "\n")]
     assert not offending, (
         "render.mk declares a rule whose target is a P2 outcome (mart / "
-        "cross-eval / experiments outputs). Those rules belong in analysis.mk; "
-        "render.mk references them only as prerequisites.\n" + "\n".join(offending)
+        "cross-eval / experiments outputs). Those rules belong in "
+        "experiments/derived/score.mk; render.mk references them only as "
+        "prerequisites.\n" + "\n".join(offending)
     )
 
 
 def test_render_mk_views_rule_is_present():
-    """The mart→view projection (P3) lives in render.mk, not analysis.mk."""
+    """The mart→view projection (P3) lives in render.mk, not the P2 score makefile."""
     text = RENDER_MK.read_text()
     assert "build_exp2_mart_views" in text, (
         "render.mk must carry the ANALYSIS_EXP2_MART_VIEWS projection rule "

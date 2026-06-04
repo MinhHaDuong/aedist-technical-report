@@ -1,5 +1,7 @@
 """Extract bibliography quality metrics from Exp2 markdown narratives.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Usage:
     python -m aedist.extract_exp2_bib \
         --naive-dir experiments/outputs/sota_exp2_naive_arm \

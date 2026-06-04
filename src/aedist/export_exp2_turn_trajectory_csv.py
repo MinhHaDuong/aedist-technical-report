@@ -1,4 +1,7 @@
-"""Export the legacy Exp2 turn-trajectory CSV from raw probe artifacts."""
+"""Export the legacy Exp2 turn-trajectory CSV from raw probe artifacts.
+
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+"""
 
 import argparse
 import csv

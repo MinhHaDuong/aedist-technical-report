@@ -1,4 +1,7 @@
-"""Build the Exp2 mart JSONL artifact from immutable run outputs."""
+"""Build the Exp2 mart JSONL artifact from immutable run outputs.
+
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+"""
 
 import argparse
 import csv
