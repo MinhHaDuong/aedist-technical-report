@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Adopter la référence fix1: figures avant/après puis recâblage
+Created: 2026-06-04
+Author: HDMX-coding-agent
+Blocked-by: 0394
+Blocked-by: 0412
+
+--- log ---
+2026-06-04T11:37Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+0394 (PR #699) livre la référence fix1 — patch d'intégrité minimal, avec
+non-finding mesuré : FP 399→399, FN 7617→7537 (delta = FN fantômes du doublon
+supprimé). Le v1 gelé reste la référence de scoring tant que ce ticket n'est
+pas passé. Les correctifs matcher 0392/0393 + fix1 peuvent déplacer les
+figures. La refonte Makefile (0406) est en cours : NE RIEN recâbler avant
+qu'elle soit posée.
+
+Séquence imposée par l'auteur : archiver d'abord la version présentée à Cergy
+(0412), puis valider visuellement, et seulement ensuite recâbler.
+
+## Étapes
+
+1. Régénérer les figures avec la base v1 puis avec fix1 (matcher courant) ;
+   comparer avant/après ; expliquer chaque delta. Le non-finding 0394 prédit
+   des deltas quasi nuls — toute surprise est un signal.
+2. Si validé : recâbler scoring + Makefile sur fix1 — règle de build pour
+   `experiments/scripts/build_reference_v1_fix1.py`, consommateurs sur
+   `vietnam_thermal_v1_fix1.csv` — en coordination avec la structure 0406.
+3. Re-score officiel Exp1–3 depuis les sorties existantes ; mart + tables
+   régénérés ; PROVENANCE/docs mis à jour (« v1 reste la référence » → fix1).
+
+## Exit criteria
+
+- [ ] Comparaison figures avant/après commitée et expliquée
+- [ ] Scoring + Makefile recâblés sur fix1 (post-0406, DAG propre)
+- [ ] Exp1–3 re-scorés ; deltas documentés
+- [ ] `make check` vert
+
+## Related
+
+- 0394 (livre fix1), 0412 (archive Cergy — prérequis), 0406 (refonte Makefile)
+- `data/reference/PROVENANCE.md` §fix1
