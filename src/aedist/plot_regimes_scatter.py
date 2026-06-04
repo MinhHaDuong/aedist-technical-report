@@ -5,7 +5,7 @@ Median TP across runs per model-method combo.
 
 Usage:
     uv run python -m aedist.plot_regimes_scatter \
-        --output slides/inputs/generated/fig_regimes_scatter.pdf
+        --output report/inputs/generated/fig_regimes_scatter.pdf
 """
 
 import argparse

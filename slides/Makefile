@@ -4,8 +4,6 @@
 # no data access. To regenerate figures/tables, run the analysis workpackage:
 #   make -f experiments/analysis.mk exp2-analysis-report
 
-GENERATED := inputs/generated
-ROOT_SLIDE_GEN := slides/inputs/generated
 ROOT_REPORT_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
 
@@ -17,8 +15,8 @@ SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
-	$(GENERATED)/macros.tex \
-	$(GENERATED)/tab_exp2_2x2.tex \
+	$(LOCAL_ROOT_REPORT_GEN)/macros_slides.tex \
+	$(LOCAL_ROOT_REPORT_GEN)/tab_exp2_2x2_fr.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
 
 MANUSCRIPT_ASSETS := \

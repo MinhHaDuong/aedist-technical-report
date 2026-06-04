@@ -13,7 +13,7 @@
 \usecolortheme{metropolis}
 \setbeamertemplate{frame numbering}[fraction]
 
-\InputIfFileExists{inputs/generated/macros}{}{}
+\InputIfFileExists{../report/inputs/generated/macros_slides}{}{}
 \InputIfFileExists{../report/inputs/generated/macros_p1_base}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
@@ -350,7 +350,7 @@ la mémoire (ou l'imagination) du modèle peut aussi y pourvoir.}
 \small
 
 % Data-driven: regenerated from sota_cross_eval.csv by aedist.tabulate_exp2_2x2 (--lang fr).
-\input{inputs/generated/tab_exp2_2x2.tex}
+\input{../report/inputs/generated/tab_exp2_2x2_fr.tex}
 
 \vspace{0.8em}
 {\footnotesize $N=4$ modèles (facteur de blocage), 5 reps/cellule. On rapporte la cohérence directionnelle $k/n$, pas un seuil de significativité : à $n=4$, $p_{\min}=1/2^4=0{,}0625$ est inatteignable.}

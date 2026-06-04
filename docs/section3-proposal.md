@@ -224,7 +224,7 @@ envelope is uneven across the industry).
      primary-announcements style.
    - `src/aedist/plot_capability_timeline.py` — new script, follows the
      figures-are-artifacts rule (`.claude/rules/writing.md`); writes
-     `slides/inputs/generated/fig_capability_timeline.pdf` and the
+     `report/inputs/generated/fig_capability_timeline.pdf` and the
      backing CSV.
    - `Makefile` — wire the new figure as an artifact target.
    - `slides/manuscript/main.md` §3 — replace lines 40–51 with the
