@@ -156,3 +156,45 @@ FP nor FN — documented non-finding, the cleaner stays untouched.
 These defects double as the **expected-delta checklist** when validating
 v2 against v1 at adoption time (0413): any v1→v2 difference beyond them
 and the master's own evolution must be explained.
+
+## Pipeline v2 (ticket 0420)
+
+The v2 reference list is produced by a single, reproducible extraction step
+that replaces the lost manual-export chain (`pipeline.ods` → hand export →
+`HDM.csv` → `HDM_aggregate.py` with hard-coded paths → manual curation). Every
+arrow in that chain was manual and uncommitted — the seam through which the
+`ires_code` 0121→121 coercion entered.
+
+**Source.** The master spreadsheet lives in the author's "Market report on Gas
+to Power" project. A read-only snapshot is imported to
+`data/reference/raw/pipeline.ods` by `data/reference/raw/import.sh` (the master
+is absent from CI and the workstation, so the script is documentation-grade and
+never runs in CI). Files under `raw/` are never hand-edited; corrections go into
+the master, then re-import (see `data/reference/raw/README.md`).
+
+**Extraction.** `data/reference/extract_ods.py` reads sheet `"Power plants"`
+with `header=4` (row 0 = title, rows 1–3 = metadata/sub-headers, row 4 = column
+names; 250 data rows) using `pandas.read_excel(engine="odf", dtype=str)`. Every
+value stays a string — no numeric coercion, so leading zeros survive by
+construction. It projects to `name`, `province`, `asset_type`, `capacity_mwe`,
+`status`, plus `level` if a `Level` column is present (passthrough; absent in
+the current snapshot, forthcoming in the master). Run via
+`make -C experiments -f acquire.mk extract-reference-ods`.
+
+**Input validation (hard stop, no tolerance).** `validate_input` runs before
+any transformation:
+- `validate_no_duplicate_names` — fails if any project name repeats *modulo
+  diacritics and case* (NFKD fold + drop combining marks + casefold), listing
+  the original surface forms.
+- `validate_unit_level_consistency` — when a `Level` column exists, fails if a
+  name contains "Unit" but `Level` is not unit-level (graceful no-op when the
+  column is absent).
+A failure writes no CSV. The tracked snapshot (26 May) predates the master's
+2026-06-03/04 fixes, so it still carries defects 1–2 above (`Duyên Hải 2 Unit 1`
+diacritic-variant pair and `Quảng Trị 1 Unit 2` ×2); extraction therefore
+currently refuses it by design — a data-quality signal, not a blocker. Once the
+fixed master is re-imported, extraction will succeed.
+
+The `ires_code`, `ires_label`, `isic_code`, and `pypsa_carrier` columns are NOT
+in the ODS; they are added downstream (ticket 0416 aggregator, or manually), not
+by this extraction step.
