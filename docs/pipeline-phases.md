@@ -14,7 +14,7 @@ file is non-precious (regenerable) and is `.gitignore`d.
 |-------|--------------|-----------------|-----------------------|
 | **P1 Acquire** | API runs against models (`experiments/Makefile`) | raw model replies: `experiments/outputs/**`, `experiments/archive/**` (incl. extracted `*.md` siblings of tracked `*.json`) | run logs, retries, jobs/, `rag_work/` |
 | **P2 Score & consolidate** | extract → evaluate → assemble (`experiments/Makefile`, mart build in `analysis.mk`) | `measurements.jsonl` (mart v0, transitional until 0297), `experiments/derived/exp2_mart.jsonl` | per-run `experiments/derived/**/*.record.json`, mart→view CSVs |
-| **P3 Analyze & render** | plot/tabulate scripts (`experiments/analysis.mk`) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/`, the consumed files in `slides/inputs/generated/` | plotting intermediates consumed only inside P3 (`cost_quality.csv`, `census_bars.csv`, view CSVs, unconsumed figs) |
+| **P3 Analyze & render** | plot/tabulate scripts (`experiments/analysis.mk`) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/`, the consumed files in `slides/inputs/generated/` | plotting intermediates consumed only inside P3 (slides-dir `cost_quality.csv`, `census_bars.csv`, view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
 | **P4 Write** | tectonic / pandoc (`report/Makefile`, `slides/Makefile`) | — (final PDFs are regenerable) | `report.pdf`, `slides.pdf`, LaTeX aux files |
 
 ## The classification test
@@ -53,8 +53,11 @@ empty, so no file is ever tracked and ignore-matched at the same time.
   policy tracks them rather than churning the index each time prose catches up.
 - **`slides/inputs/generated/`** has no such directory-level "track all" intent:
   only the files `\input` by `slides.tex` are tracked (`macros.tex`,
-  `tab_exp2_2x2.tex`). `fig_regimes_scatter.pdf`, `fig_scaling_curve.pdf` and
-  `cost_quality.csv` have no P4 consumer → intermediates → ignored.
+  `tab_exp2_2x2.tex`). The slides-dir `fig_regimes_scatter.pdf`,
+  `fig_scaling_curve.pdf` and `cost_quality.csv` have no P4 consumer →
+  intermediates → ignored. (The **report**-dir `cost_quality.csv` is a separate
+  file and *is* a P4 prerequisite of `manuscript/main.pdf` via `slides/Makefile`
+  → tracked.)
 
 ## Manifest (the 22 reconciled files)
 
@@ -80,7 +83,7 @@ producer phase, consumer, and verdict.
 | `slides/inputs/generated/macros.tex` | `tabulate_macros` (P3) | slides.tex (P4) | TRACK |
 | `slides/inputs/generated/tab_exp2_2x2.tex` | `tabulate_exp2_2x2` (P3) | slides.tex (P4) | TRACK |
 | `experiments/outputs/sota_exp3_arm3_batch1/archive/run02_rerun_mistral_20260525T0521_local/mistral.md` | API run extraction (P1) | provenance sibling of tracked `mistral.json` | TRACK (exact-path negation) |
-| `report/inputs/generated/cost_quality.csv` | `plot_cost_quality` (P3) | `plot_exp2_arms_split` (P3, same phase) | IGNORE (`git rm --cached`) |
+| `report/inputs/generated/cost_quality.csv` | `plot_cost_quality` (P3) | `manuscript/main.pdf` via slides/Makefile (P4) | TRACK |
 | `slides/inputs/generated/cost_quality.csv` | analysis copy (P3) | none in P4 | IGNORE (`git rm --cached`) |
 | `slides/inputs/generated/fig_regimes_scatter.pdf` | `plot_regimes_scatter` (P3) | none in P4 | IGNORE (`git rm --cached`) |
 | `slides/inputs/generated/fig_scaling_curve.pdf` | `plot_scaling_curve` (P3) | none in P4 | IGNORE (`git rm --cached`) |

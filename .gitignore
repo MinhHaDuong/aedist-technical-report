@@ -56,14 +56,17 @@ slides/inputs/generated/*
 !slides/inputs/QR-aedist.pdf
 
 # Intermediate report-generated files — P3-internal, rebuilt by make, not
-# handoff artifacts. cost_quality.csv is consumed only inside P3 (its rows feed
-# plot_exp2_arms_split; the manuscript caption merely cites it for audit). The
-# view CSVs are mart→view projections (P3). macros_p1_base.tex is deliberately
-# NOT listed here: it is a P3→P4 boundary outcome (`\InputIfFileExists` by both
-# report.tex and slides.tex). No global pattern matches .tex, so dropping its
-# ignore line is enough to track it.
+# handoff artifacts. The view CSVs are mart→view projections (P3).
+# cost_quality.csv is deliberately NOT listed here: it is a P3→P4 boundary
+# outcome — slides/Makefile lists report/inputs/generated/cost_quality.csv as a
+# hard prerequisite of manuscript/main.pdf (a P4 write target), so by the
+# producer-phase≠consumer-phase test it must be tracked. A clean checkout has
+# no working-tree copy, so untracking it broke `make slides`/`make manuscript`
+# and the clean-room tests. No global pattern matches .csv beyond these explicit
+# lines, so omitting it is enough to track it. macros_p1_base.tex is likewise
+# omitted: a P3→P4 boundary outcome (`\InputIfFileExists` by report.tex and
+# slides.tex).
 report/inputs/generated/census_bars.csv
-report/inputs/generated/cost_quality.csv
 report/inputs/generated/exp2_mart.jsonl
 report/inputs/generated/exp2_turn_trajectory_view.csv
 report/inputs/generated/sota_cross_eval_view.csv
