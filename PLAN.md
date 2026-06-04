@@ -85,8 +85,8 @@ heuristics or keyword lists needed.
      - JSON with multiturn format, no table → status="refusal"
 
 4. **Rebuild measurements**
-   - `make -C experiments rebuild-measurements` to regenerate all
-     `.record.json` and `measurements.jsonl`.
+   - `make -f experiments/derived/score.mk rebuild-measurements` (from the repo
+     root) to regenerate all `.record.json` and `measurements.jsonl`.
    - Expected outcome: 27 former "qualitative" records become "ok"
      (they now have CSVs), ~5 become "refusal", ~6 become "error",
      0 remain "qualitative".

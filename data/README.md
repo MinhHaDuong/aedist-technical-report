@@ -57,5 +57,5 @@ reports, and government studies/decisions. Each file contains markdown
 tables preserving the original document structure.
 
 Referenced by `experiments/experiments.toml` (`sweeps.rag.corpus`) and
-`experiments/Makefile` (`CORPUS_OUTPUT`). To rebuild the corpus, run
-`make build-corpus` from `experiments/`.
+`experiments/acquire.mk` (`CORPUS_OUTPUT`). To rebuild the corpus, run
+`make -f acquire.mk build-corpus` from `experiments/`.

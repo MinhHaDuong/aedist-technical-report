@@ -8,7 +8,7 @@
 # figures/tables/macros lives in experiments/render.mk (tracker 0406 S2); a
 # figure build can no longer reach back into this scoring DAG. The P1 (acquire)
 # sweeps that produce the raw model replies this file consumes live in
-# experiments/Makefile.
+# experiments/acquire.mk.
 #
 # SOURCES (consumed, never produced here — they appear only as prerequisites,
 # and score.mk carries NO rule able to (re)acquire them):
@@ -27,7 +27,7 @@
 #
 # INVARIANT: score.mk declares NO rule for an upstream (P1) outcome. It never
 #   fans out a worker/manager drain, runs a sweep, or calls an LLM adapter —
-#   the only way to (re)acquire raw replies is experiments/Makefile's P1 sweep
+#   the only way to (re)acquire raw replies is experiments/acquire.mk's P1 sweep
 #   verbs (which cost money). If a P1 source is missing, make MUST stop with
 #   "No rule to make target", never silently re-acquire. Guarded by
 #   tests/test_score_build_no_acquire.py.
@@ -40,7 +40,8 @@
 #   absolute self-path so the default makefile (root ./Makefile) is never hit.
 #
 # Tracker 0406 step S3 (ticket 0410) consolidated the former P2 score makefile
-# plus the P2 verbs from experiments/Makefile into this file.
+# plus the P2 verbs from the P1 makefile (now experiments/acquire.mk) into this
+# file.
 
 # Self-path for recursive $(MAKE): captured BEFORE the include extends
 # MAKEFILE_LIST, so it always points at this score.mk regardless of cwd.
@@ -60,7 +61,7 @@ SCORE_OUTPUTS   := $(ANALYSIS_OUTPUTS_DIR)
 SCORE_DERIVED   := $(ANALYSIS_DERIVED_DIR)
 
 # === measurements.jsonl: materialized view of all outputs ===================
-# (migrated from experiments/Makefile, tracker 0406 S3)
+# (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3)
 
 SCORE_STRUCTURED_DIRS := census multiturn web rag \
                    decomposed decomposed_v2 sourced frontier \
@@ -121,8 +122,9 @@ rebuild-measurements:
 	$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
 
 # === Self-consistency scorer (outputs/rag → derived/rag_consistency) ========
-# (migrated from experiments/Makefile, tracker 0406 S3 — P2 score half only;
-#  the tabulate→report/inputs/generated/ render half is in render.mk.)
+# (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3
+#  — P2 score half only; the tabulate→report/inputs/generated/ render half is in
+#  render.mk.)
 
 SCORE_SC_INPUT  := $(SCORE_OUTPUTS)/rag
 SCORE_SC_OUTPUT := $(SCORE_DERIVED)/rag_consistency

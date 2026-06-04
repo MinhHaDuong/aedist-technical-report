@@ -1,0 +1,51 @@
+%erg 0.1
+Title: _NEEDS_ENV sentinel covers only 4 of 6 paid sweeps — add decomposed, verification
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T12:40Z claude created — follow-up surfaced by /verify on PR #698 (0411, acquire.mk); pre-existing gap, out of scope there
+
+--- body ---
+## Context
+
+`experiments/acquire.mk` guards paid sweeps with a `_NEEDS_ENV`
+sentinel (fails fast when `.env`/API keys are absent instead of
+launching a sweep that errors mid-run). The /verify pass on PR #698
+found the sentinel list covers only 4 of the 6 paid sweeps:
+`decomposed` and `verification` are omitted. Pre-existing gap (predates
+the acquire.mk rename), non-blocking for S4, ticketed for follow-up.
+
+## Relevant files
+
+- `experiments/acquire.mk` — `_NEEDS_ENV` definition and the six sweep
+  verb groups (census, regimes, decomposed, verification, sourced,
+  frontier)
+
+## Actions
+
+1. Add `decomposed` and `verification` (and their -generate/-run
+   variants as appropriate — mirror how the four covered sweeps are
+   listed) to `_NEEDS_ENV`.
+2. Audit while there: any other money-gated verb missing from the
+   sentinel (grep for worker/manager invocations with --env-file).
+
+## Test
+
+Extend the existing acquire guard test (or add a small adherence case):
+every acquire.mk verb whose recipe passes `--env-file` appears in
+`_NEEDS_ENV`. Red today (2 missing), green after action 1.
+
+## Verification
+
+- [ ] Guard/adherence test green
+- [ ] `make -C experiments -f acquire.mk -n decomposed` without .env
+      fails fast at the sentinel (manual check note: do NOT run real)
+
+## Invariants
+
+- No sweep is ever run for real (money gate); dry-run only
+
+## Exit criteria
+
+- All paid sweeps covered by _NEEDS_ENV, enforced by a test

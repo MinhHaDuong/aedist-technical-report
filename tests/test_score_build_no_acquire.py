@@ -2,15 +2,16 @@
 
 Ticket 0410 (tracker 0406, step S3) consolidated all P2 scoring/extraction
 into `experiments/derived/score.mk` (folding in the former P2 score makefile
-and pulling the P2 verbs out of `experiments/Makefile`), leaving the P3 strays
-in `experiments/render.mk`. score.mk is the *consumer* of P1 outcomes
+and pulling the P2 verbs out of the P1 makefile, now `experiments/acquire.mk`),
+leaving the P3 strays in `experiments/render.mk`. score.mk is the *consumer* of
+P1 outcomes
 (`experiments/outputs/**`, the raw model replies) and the *producer* of the P2
 outcomes (`measurements.jsonl`, `exp2_mart.jsonl`, the cross-eval CSVs).
 
 The invariant this guard enforces is the OTHER seam: score.mk must never reach
 DOWN into P1 (acquire). A P2 scoring/extraction dry-run must not fan out
 manager/worker drains, run a sweep, or call an LLM adapter — the only way to
-(re)acquire raw replies is `experiments/Makefile`'s P1 sweep verbs, which cost
+(re)acquire raw replies is `experiments/acquire.mk`'s P1 sweep verbs, which cost
 money and rewrite `experiments/outputs/**`. score.mk reads those outputs as
 committed sources; it carries no rule able to rebuild them.
 
@@ -104,8 +105,8 @@ def _dry_run(target: str) -> str:
 def test_score_mk_exists():
     assert SCORE_MK.is_file(), (
         "experiments/derived/score.mk must exist (P2 score rules consolidated "
-        "from the former P2 score makefile + experiments/Makefile by ticket "
-        "0410, tracker 0406 step S3)."
+        "from the former P2 score makefile + the P1 makefile (now "
+        "experiments/acquire.mk) by ticket 0410, tracker 0406 step S3)."
     )
 
 
@@ -121,7 +122,7 @@ def test_p2_verb_does_not_invoke_acquire(target):
         f"`make -f experiments/derived/score.mk -n {target}` invokes a P1 "
         "acquire step (worker/manager/sweep/query). score.mk (P2) consumes "
         "experiments/outputs/** as committed sources only — re-acquisition "
-        "lives in experiments/Makefile.\n" + "\n".join(offending)
+        "lives in experiments/acquire.mk.\n" + "\n".join(offending)
     )
 
 

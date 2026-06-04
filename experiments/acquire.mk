@@ -1,17 +1,42 @@
-# aedist/Makefile — Reproducible experiment pipeline
+# experiments/acquire.mk — P1 ACQUIRE phase (tracker 0406, step S4 / ticket 0411)
+#
+# Phase:    P1 acquire. Run API sweeps against models; (re)acquire raw replies.
+# Sources:  experiments.toml ([sweeps.*] sections), the RAG corpus, models.yaml.
+# Outcomes: raw model replies under experiments/outputs/**, experiments/archive/**
+#           (tracked by the 0405 policy). The worker pipeline writes these; they
+#           are NOT make file targets.
+# Invariant: EVERY target is .PHONY. P1 produces no file a downstream phase may
+#           depend on — nothing in score.mk (P2) or render.mk (P3) may depend on
+#           a P1 target as a file, or an ordinary timestamp rebuild could trigger
+#           a money-costing re-acquisition. Enforced by
+#           tests/test_acquire_all_phony.py.
+#
+# MONEY GATE: the sweep verbs below (census, regimes, decomposed, verification,
+#   sourced, frontier) make real, paid OpenRouter API calls. NEVER run them on a
+#   hunch. Test one before blasting: dry-run
+#   (`make -C experiments -f acquire.mk -n census`) to inspect prompt assembly,
+#   then one real call per regime, inspect tokens/cost/quality, then launch the
+#   full batch. (The `-C experiments` is mandatory — the env contract resolves
+#   ../.env / experiments.toml / jobs/ relative to experiments/; a bare
+#   `-f experiments/acquire.mk` from repo root trips the .env sentinel.)
 #
 # Sweep configs live in [sweeps.*] sections of experiments.toml.
 # Job dispatch is handled by the manager + worker pipeline:
 #   1. `make census-generate`  — fan out sweep config into per-model jobs
 #   2. `make census-run`       — start workers to execute the jobs
-#   3. `make census-summary`   — extract → evaluate → summarize
 #
 # Or simply: `make census` to generate + run in one step.
+# Score & consolidate (P2) is a separate phase — see experiments/derived/score.mk.
+#
+# Invocation: per-phase .mks are the dev path. From the repo root, preserve the
+# experiments/ cwd (the env/relative-path contract: ../.env, experiments.toml,
+# jobs/) with `make -C experiments -f acquire.mk <sweep>`. After this rename,
+# `make -C experiments` finds no default Makefile — that is intended.
 #
 # Adding a model to models.yaml → re-run generate (idempotent) + run.
 #
 # --- ENV POLICY ---------------------------------------------------------------
-# All API keys live in the PROJECT .env (../.env relative to this Makefile),
+# All API keys live in the PROJECT .env (../.env relative to acquire.mk),
 # not in ~/.claude/.env. Decision 2026-04-30:
 #   - Project .env is the single source of truth for OPENROUTER_API_KEY,
 #     TAVILY_API_KEY, HF_TOKEN, ZENODO_TOKEN, HAL_*, etc.
@@ -24,18 +49,19 @@
 #     because doing so leaked all keys via `ps -ef`.
 # Loading mechanism: every `uv run` goes through $(UV_RUN), which uses
 # `--env-file ../.env` so uv populates the env from the file directly.
-# Do NOT `export KEY := $(shell grep ...)` from the Makefile — that puts
+# Do NOT `export KEY := $(shell grep ...)` from acquire.mk — that puts
 # values onto Make's command line and on into spawned process arguments,
 # the same leak path we just closed.
 
-include common.mk
+# cwd-independent include: resolve common.mk relative to THIS makefile, not the
+# caller's cwd, so the clean-room gate (`make -f experiments/acquire.mk -n ...`
+# from repo root) parses without a "no such file" error.
+include $(dir $(lastword $(MAKEFILE_LIST)))common.mk
 
 # --- Sentinel: project .env exists for targets that need API keys -------------
 # Targets in this list will fail fast with a readable message if .env is
 # missing. Keys themselves are not read into Make variables — uv loads them
 # at child-process spawn time via --env-file.
-# census-summary delegates to the P2 scorer (experiments/derived/score.mk), a
-# pure offline rebuild — no API keys — so it is NOT in this list (ticket 0410).
 _NEEDS_ENV := census census-run regimes regimes-run \
 						 sourced sourced-run frontier frontier-run
 ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
@@ -52,7 +78,7 @@ cfg = $(shell python3 -c "import tomllib; c=tomllib.load(open('experiments.toml'
 
 # --- Census: model census -----------------------------------------------------
 
-.PHONY: census census-generate census-run census-summary
+.PHONY: census census-generate census-run
 
 census: census-generate census-run
 
@@ -63,11 +89,10 @@ census-generate:
 census-run:
 	$(OR_DRAIN); $(WORKER) padme --drain & wait
 
-# Score & consolidate (P2) now lives in experiments/derived/score.mk, invoked
-# from the repo root. Delegate there (-C .. so cwd = repo root, which score.mk's
-# paths.mk-anchored paths assume).
-census-summary:
-	$(MAKE) -C .. -f experiments/derived/score.mk rebuild-measurements
+# Score & consolidate (P2) lives in experiments/derived/score.mk, invoked from
+# the repo root: `make -f experiments/derived/score.mk rebuild-measurements`.
+# (The former `census-summary` alias that delegated there was dropped in S4 /
+# ticket 0411 — P1 acquire may not carry a cross-phase delegation edge.)
 
 # --- Regimes: information regimes ---------------------------------------------
 
@@ -142,7 +167,7 @@ frontier-run:
 # repo root:
 #     make -f experiments/derived/score.mk rebuild-measurements
 #     make -f experiments/render.mk self-consistency
-# This Makefile is now pure P1 acquire (sweeps) + corpus utilities.
+# acquire.mk is now pure P1 acquire (sweeps) + corpus utilities.
 
 # --- Utility -----------------------------------------------------------------
 
@@ -240,7 +265,6 @@ help:
 	@echo "  make verification         Generate + run verification sweep"
 	@echo "  make sourced              Generate + run sourced extraction sweep"
 	@echo "  make frontier             Generate + run frontier deep-research (3 prompts)"
-	@echo "  make census-summary       Score & consolidate all outputs → measurements.jsonl"
 	@echo ""
 	@echo "Score & render (run from repo root):"
 	@echo "  make -f experiments/derived/score.mk rebuild-measurements  Extract + evaluate → measurements.jsonl (P2)"
