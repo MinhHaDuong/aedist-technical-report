@@ -13,7 +13,7 @@ Author: claude
 2026-06-04T09:44Z claude note S2 done (PR #694): render.mk extracted, cascade dead; S3 (score.mk) unblocked.
 2026-06-04T10:36Z claude note S3 done (PR #696): score.mk carved, analysis.mk dissolved, P3 strays relocated; S4 (acquire.mk) unblocked.
 2026-06-04T11:15Z claude note S4 done (PR #698): acquire.mk pure P1 all-.PHONY; census-summary dropped; S5 (root rewrite) unblocked.
-2026-06-04T12:12Z claude note S5 done (PR #PENDING): root = dev loop + staleness/world. All five steps landed; tracker awaits integration review before close.
+2026-06-04T12:12Z claude note S5 done (PR #702): root = dev loop + staleness/world. All five steps landed; tracker awaits integration review before close.
 --- body ---
 ## Context
 
