@@ -9,8 +9,9 @@ The build is split into two workpackages (see slides/Makefile header):
                  PDFs from those artifacts treated as committed inputs.
 
 A producing rule may therefore live in *any* of the makefiles. This test
-takes the UNION of all makefiles, expands variables (analysis.mk names its
-targets through $(ANALYSIS_*) variables, so a literal scan misses them), and
+takes the UNION of all makefiles, expands variables (score.mk and render.mk
+name their targets through $(ANALYSIS_*) variables, so a literal scan misses
+them), and
 asserts that every generated .pdf/.tex used as a prerequisite is the target
 of some rule somewhere in that union. Grouped targets (`a b &:`) count as
 producers of each member.
@@ -178,6 +179,6 @@ def test_generated_artifacts_have_a_producer():
         "rule (orphaned from the build DAG):\n"
         f"{detail}\n\n"
         "Add a producing rule (in experiments/render.mk for P3 render "
-        "artifacts, experiments/analysis.mk for P2 mart/cross-eval) or, for "
-        "multi-output scripts, a grouped target `a b &:`."
+        "artifacts, experiments/derived/score.mk for P2 mart/cross-eval) or, "
+        "for multi-output scripts, a grouped target `a b &:`."
     )

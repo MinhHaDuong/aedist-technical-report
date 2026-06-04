@@ -1,5 +1,7 @@
 """Mechanical scoring helpers for Exp2 outputs.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Consumes canonical rows (from score_ingest), computes five scoring dimensions,
 and appends one row to experiments/derived/sota_cross_eval.csv.
 """

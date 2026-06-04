@@ -1,5 +1,7 @@
 """Produce a flat per-run CSV for Exp2 naive vs optimised arms.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Usage:
     python -m aedist.tabulate_exp2_arms_runs --output report/inputs/generated/tab_exp2_arms_runs.csv
 

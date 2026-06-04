@@ -5,7 +5,7 @@ The slides sub-make (`slides/Makefile`) consumes
 After ticket 0370, the writing build is clean-room: no producing recipe
 exists in the writing-side Makefiles. The file must be a committed handoff
 artifact. The producer rule lives in `experiments/render.mk` (the P3 render
-phase, extracted from analysis.mk by ticket 0409).
+phase, split out by ticket 0409).
 
 This is the adherence companion to tickets 0367 and 0370.
 """

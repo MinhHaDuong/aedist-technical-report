@@ -1,5 +1,7 @@
 """CLI module to extract multi-turn arm2 outputs into flat files.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Walks an input directory shaped like::
 
     sota_exp3_arm2_batch1/

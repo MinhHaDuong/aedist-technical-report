@@ -1,5 +1,7 @@
 """Compare legacy Exp2 CSV intermediates against mart-derived views.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Tolerance policy:
 - row counts must match exactly
 - column sets must match exactly
@@ -52,7 +54,9 @@ def _compare_csvs(left: Path, right: Path, key_fields: list[str], name: str) -> 
     right_rows = _load_csv(right)
 
     if len(left_rows) != len(right_rows):
-        return ParityResult(name, False, f"row-count mismatch: {len(left_rows)} != {len(right_rows)}")
+        return ParityResult(
+            name, False, f"row-count mismatch: {len(left_rows)} != {len(right_rows)}"
+        )
 
     if not left_rows and not right_rows:
         return ParityResult(name, True, "empty")
@@ -60,12 +64,16 @@ def _compare_csvs(left: Path, right: Path, key_fields: list[str], name: str) -> 
     left_fields = set(left_rows[0].keys())
     right_fields = set(right_rows[0].keys())
     if left_fields != right_fields:
-        return ParityResult(name, False, f"column-set mismatch: {sorted(left_fields)} != {sorted(right_fields)}")
+        return ParityResult(
+            name, False, f"column-set mismatch: {sorted(left_fields)} != {sorted(right_fields)}"
+        )
 
     left_rows = sorted(left_rows, key=lambda row: tuple(row[field] for field in key_fields))
     right_rows = sorted(right_rows, key=lambda row: tuple(row[field] for field in key_fields))
 
-    for index, (left_row, right_row) in enumerate(zip(left_rows, right_rows, strict=True), start=1):
+    for index, (left_row, right_row) in enumerate(
+        zip(left_rows, right_rows, strict=True), start=1
+    ):
         for field in left_fields:
             if not _compare_cells(left_row[field], right_row[field]):
                 return ParityResult(
@@ -79,7 +87,12 @@ def _compare_csvs(left: Path, right: Path, key_fields: list[str], name: str) -> 
 
 def check_parity(left_dir: Path, right_dir: Path) -> list[ParityResult]:
     specs = [
-        ("tab_exp2_arms_runs", "tab_exp2_arms_runs.csv", "tab_exp2_arms_runs_view.csv", ["agent", "arm", "model", "run"]),
+        (
+            "tab_exp2_arms_runs",
+            "tab_exp2_arms_runs.csv",
+            "tab_exp2_arms_runs_view.csv",
+            ["agent", "arm", "model", "run"],
+        ),
         (
             "tab_exp2_bib_quality",
             "tab_exp2_bib_quality.csv",
@@ -116,8 +129,12 @@ def check_parity(left_dir: Path, right_dir: Path) -> list[ParityResult]:
 
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    parser = argparse.ArgumentParser(description="Compare legacy Exp2 CSV intermediates against mart views")
-    parser.add_argument("--left-dir", required=True, help="Directory with legacy CSV intermediates")
+    parser = argparse.ArgumentParser(
+        description="Compare legacy Exp2 CSV intermediates against mart views"
+    )
+    parser.add_argument(
+        "--left-dir", required=True, help="Directory with legacy CSV intermediates"
+    )
     parser.add_argument("--right-dir", required=True, help="Directory with mart-derived view CSVs")
     args = parser.parse_args(argv)
 

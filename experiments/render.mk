@@ -21,12 +21,14 @@
 #   source is missing, make MUST stop with "No rule to make target" — it must
 #   never fall back to regenerating the mart or cross-eval CSVs (the
 #   2026-06-03 cascade, ticket 0383). Shared path variables come from
-#   experiments/paths.mk; analysis.mk (P2) owns the producing rules.
+#   experiments/paths.mk; experiments/derived/score.mk (P2) owns the producing
+#   rules.
 #
 # Regenerate (mart-staleness hazard 0383: prefer dry-run for DAG checks):
 #   make -f experiments/render.mk report-tables report-figures chart-figures
 #
-# Tracker 0406 step S2 (ticket 0409) extracted this file from analysis.mk.
+# Tracker 0406 step S2 (ticket 0409) extracted this file from the former P2
+# score makefile (since consolidated into experiments/derived/score.mk, S3).
 
 include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk
 
@@ -61,7 +63,8 @@ ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_hypothesis_status.tex
 
 # Report-side (measurements/mart-derived) P3 inputs and intermediates.
-ANALYSIS_MEASUREMENTS ?= $(ANALYSIS_REPO_ROOT)/measurements.jsonl
+# ANALYSIS_MEASUREMENTS is defined in paths.mk (shared P2 outcome, now produced
+# by score.mk and consumed here as a source).
 ANALYSIS_EXP1_BATCH2_RECORDS := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json)
 
 ANALYSIS_REPORT_DERIVED_DIR ?= $(ANALYSIS_REPO_ROOT)/derived
@@ -317,10 +320,48 @@ $(ANALYSIS_GEN)/tab_converter_benchmark.tex: $(ANALYSIS_CONVERTER_META) $(ANALYS
 	uv run python -m aedist.compare_converters \
 	    --input $(ANALYSIS_CONVERTER_TEST) --meta $(ANALYSIS_CONVERTER_META) --output $@
 
+# --- Self-consistency tables (render half; migrated from experiments/Makefile
+#     by ticket 0410, tracker 0406 S3) --------------------------------------
+# The P2 score half ($(SCORE_SC_JSON): outputs/rag → derived/rag_consistency)
+# lives in experiments/derived/score.mk. This render half tabulates the mart
+# into the committed LaTeX handoff artifacts. Reads only measurements.jsonl (a
+# P2 source) — writes nothing under a P2 outcome path.
+
+ANALYSIS_SC_TEX    := $(ANALYSIS_GEN)/tab_self_consistency.tex
+ANALYSIS_SC_PERRUN := $(ANALYSIS_GEN)/tab_per_run.tex
+
+$(ANALYSIS_SC_TEX) $(ANALYSIS_SC_PERRUN) &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_self_consistency.py
+	uv run python -m aedist.tabulate_self_consistency \
+	    --output $(ANALYSIS_SC_TEX) --per-run-output $(ANALYSIS_SC_PERRUN)
+
+.PHONY: self-consistency
+self-consistency: $(ANALYSIS_SC_TEX) $(ANALYSIS_SC_PERRUN)
+
+# --- Experiment 1 cost summary (migrated from experiments/Makefile, 0410) ---
+
+ANALYSIS_EXP1_COST_TEX := $(ANALYSIS_GEN)/tab_exp1_cost_summary.tex
+
+$(ANALYSIS_EXP1_COST_TEX): $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp1_cost_summary.py
+	uv run python -m aedist.tabulate_exp1_cost_summary \
+	    --measurements $(ANALYSIS_MEASUREMENTS) --output $(ANALYSIS_EXP1_COST_TEX)
+
+.PHONY: exp1-cost-summary
+exp1-cost-summary: $(ANALYSIS_EXP1_COST_TEX)
+
+# --- Experiment 1 reasoning top-up (migrated from experiments/Makefile, 0410)
+
+ANALYSIS_EXP1_TOPUP_TEX := $(ANALYSIS_GEN)/tab_exp1_reasoning_topup.tex
+
+$(ANALYSIS_EXP1_TOPUP_TEX): $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp1_reasoning_topup.py
+	uv run python -m aedist.tabulate_exp1_reasoning_topup \
+	    --measurements $(ANALYSIS_MEASUREMENTS) --output $(ANALYSIS_EXP1_TOPUP_TEX)
+
+.PHONY: exp1-reasoning-topup
+exp1-reasoning-topup: $(ANALYSIS_EXP1_TOPUP_TEX)
+
 # Grouping targets — drive end-to-end regeneration of report-side handoff
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
-# experiments/Makefile self-consistency target (single producer, 0354) and
-# remain committed handoff artifacts without a rule here.
+# `self-consistency` verb above (single producer, 0354 → migrated here 0410).
 report-tables: \
 	$(ANALYSIS_GEN)/tab_census.tex \
 	$(ANALYSIS_GEN)/macros.tex \

@@ -65,7 +65,7 @@ show-prompts:
 #   3. Assembling record JSONs into measurements.jsonl (evaluate.py assemble)
 
 $(MEASUREMENTS): $(wildcard experiments/outputs/*/*.json) $(wildcard experiments/outputs/*/*.csv)
-	$(MAKE) -C experiments ../measurements.jsonl
+	$(MAKE) -f experiments/derived/score.mk measurements.jsonl
 
 .PHONY: measurements
 measurements: $(MEASUREMENTS)
@@ -84,7 +84,8 @@ experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
 # render (P3) workpackage. To regenerate:
 #     make -f experiments/render.mk report-tables
 # tab_self_consistency.tex and tab_per_run.tex come from
-# experiments/Makefile `self-consistency` (single producer, 0354).
+# experiments/render.mk `self-consistency` (single producer, 0354 →
+# migrated from experiments/Makefile by 0410).
 
 # --- Publications -------------------------------------------------------------
 
@@ -123,12 +124,12 @@ report: report/report.pdf
 slides: slides/slides.pdf
 # Report-side tables, figures, and slide chart data are produced by the
 # render (P3) workpackage (experiments/render.mk). tab_self_consistency.tex and
-# tab_per_run.tex live in experiments/Makefile under `self-consistency`
-# (single producer, 0354), so the `tables:` alias chains both to preserve the
-# pre-0352 UX.
+# tab_per_run.tex live in experiments/render.mk under `self-consistency`
+# (single producer, 0354 → migrated from experiments/Makefile by 0410), so the
+# `tables:` alias chains both to preserve the pre-0352 UX.
 tables:
 	$(MAKE) -f experiments/render.mk report-tables
-	$(MAKE) -C experiments self-consistency
+	$(MAKE) -f experiments/render.mk self-consistency
 figures:
 	$(MAKE) -f experiments/render.mk chart-figures
 select: experiments/models_selected.yaml

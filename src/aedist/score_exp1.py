@@ -1,5 +1,7 @@
 """Score Exp1 flat CSV outputs across quality axes.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Reads canonical CSV outputs from Exp1 batch runs, computes quality metrics
 using score_mechanical helpers, and appends one row per run to a cross-eval CSV.
 """

@@ -1,5 +1,7 @@
 """Command-line tools for the aedist benchmark.
 
+Pipeline phase: P2 (score & consolidate) — invoked by experiments/derived/score.mk.
+
 Usage:
     aedist evaluate <system_file> [--reference <ref_csv>] [--output <dir>]
     aedist assemble <record_files>... --output <measurements.jsonl>
@@ -7,7 +9,7 @@ Usage:
 The ``evaluate`` command scores a single system output (CSV or qualitative
 JSON) against the reference and writes a ``.record.json`` RunRecord plus a
 reconciliation CSV.  Batch scheduling belongs in Make; see
-``experiments/Makefile`` for the pattern-rule orchestration.
+``experiments/derived/score.mk`` for the pattern-rule orchestration.
 
 The ``assemble`` command concatenates record JSON files into a single
 ``measurements.jsonl``.
