@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Run erg check in CI lint — duplicate ticket IDs reached main undetected
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T14:55Z claude created — raid 405-406 celebrate sweep; the 0412 ID collision (fixed by PR #701) sat on main with erg check FAILED and no CI signal
+
+--- body ---
+## Context
+
+During the 2026-06-04 raid, two parallel sessions allocated ticket ID
+0412 (one on main via 990a1743, one riding PR #698). Main carried a
+duplicate ID — `tickets/erg check tickets/` FAILED — until PR #701
+renamed one file. No CI job noticed: the lint step runs only
+`scripts/check_ticket_structure.py` (log-placement check), not
+`erg check` (duplicate IDs, dangling Blocked-by refs,
+closed-not-archived). This is the second ID-collision incident
+(see memory feedback_ticket_id_collision_check); the class deserves a
+mechanical gate.
+
+## Relevant files
+
+- root `Makefile` `lint:` target — runs check_ticket_structure.py
+- `tickets/erg` — committed binary, `check` verb is CI-safe
+  (read-only, exit 1 on violation)
+- `.github/workflows/docs-build.yml` — lint job; note the chore-bypass
+  path filter (ticket/STATE-only diffs skip lint) — ticket-only PRs
+  are exactly the ones that introduce collisions, so erg check must
+  run ON ticket diffs. Either add tickets/ to the lint path filter or
+  run erg check in the `changes` job that already executes on every PR.
+
+## Actions
+
+1. Add `tickets/erg check tickets/` to the `lint:` target (or a
+   dedicated `lint-tickets:` target included in lint and check-fast).
+2. Ensure the CI path-filter actually runs it on tickets-only PRs
+   (see note above) — this is the load-bearing part.
+3. Verify a deliberate duplicate in a scratch branch turns CI red
+   (do not merge the scratch).
+
+## Test
+
+Local red step: create a throwaway duplicate-ID .erg, run
+`make lint` → must exit non-zero; delete the throwaway.
+
+## Verification
+
+- [ ] make lint runs erg check; duplicate ID turns it red
+- [ ] A tickets-only PR triggers the job that runs erg check
+- [ ] make check-fast still < 30 s
+
+## Invariants
+
+- erg binary invoked read-only (check), never migrate/close in CI
+
+## Exit criteria
+
+- A duplicate ticket ID (or dangling ref / closed-not-archived) on any
+  PR turns CI red before merge
