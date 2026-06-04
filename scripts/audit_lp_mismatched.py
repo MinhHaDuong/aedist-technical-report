@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from aedist.config import DEFAULT_REFERENCE
 from aedist.evaluate import load_plants_csv
 from aedist.matching.lp import reconcile as reconcile_lp
 from aedist.reconcile import plants_to_dataframe
@@ -31,7 +32,6 @@ from aedist.reconcile import plants_to_dataframe
 log = logging.getLogger(__name__)
 
 _REPO = Path(__file__).parent.parent
-_REF_CSV = _REPO / "data" / "reference" / "vietnam_thermal_v1.csv"
 _EXP1_DIR = _REPO / "experiments" / "outputs" / "exp1_batch2"
 _DEFAULT_OUT = _REPO / "experiments" / "derived" / "exp1_mismatched_audit.csv"
 
@@ -159,7 +159,7 @@ def _print_summary(rows: list[dict]) -> None:
 def main(argv=None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--ref", default=str(_REF_CSV), help="Reference CSV path")
+    p.add_argument("--ref", default=str(DEFAULT_REFERENCE), help="Reference CSV path")
     p.add_argument("--exp1-dir", default=str(_EXP1_DIR), help="exp1_batch2 output directory")
     p.add_argument("--output", default=str(_DEFAULT_OUT), help="Output audit CSV path")
     args = p.parse_args(argv)
