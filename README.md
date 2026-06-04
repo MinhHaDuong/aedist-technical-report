@@ -61,10 +61,9 @@ make report            # Build report/report.pdf
 make slides            # Build slides/slides.pdf
 make tables            # Generate LaTeX tables from experiment results
 
-# Experiments (from experiments/ directory):
-cd experiments
-make -j8 census        # Census: all models × 3 runs (parallel)
-make rebuild-measurements  # Extract → evaluate all outputs → measurements.jsonl
+# Experiments (from the repo root):
+make census            # P1 acquire: census sweep, all models (delegates to experiments/acquire.mk)
+make -f experiments/derived/score.mk rebuild-measurements  # P2: extract → evaluate all outputs → measurements.jsonl
 ```
 
 ## License
