@@ -2,10 +2,12 @@
 Title: experiments/Makefile → acquire.mk, pure P1 with all-.PHONY guard (0406 S4)
 Created: 2026-06-04
 Author: claude
+Closed: acquire.mk pure P1, all-.PHONY guarded; census-summary alias dropped
 
 --- log ---
 2026-06-04T11:45Z claude created — S4 child of tracker 0406; S3 (0410, PR #696) landed: experiments/Makefile is already P1+utils only
 
+2026-06-04T11:13Z HDMX-coding-agent closed — acquire.mk pure P1, all-.PHONY guarded; census-summary alias dropped
 --- body ---
 ## Context
 
