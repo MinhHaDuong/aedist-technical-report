@@ -163,12 +163,15 @@ with the reference swapped (`--reference`, `--label`) measured the collision
 repair directly: FP 399 → 399, FN 7617 → 7537 — the delta is the phantom
 misses of the deleted `Duyen Hai 2` duplicate. Adjudication with
 `units_included` in hand showed only `Duyên Hải 2` was a true duplicate;
-`Dong Nai Formosa` and `Ha Tinh Formosa` are base/extension pairs sharing one
-name string, renamed `... extension` in
-`data/reference/vietnam_thermal_v1_fix1.csv` (see `PROVENANCE.md` §fix1, plus
-a `Quảng Trị 1` "Unit 2, Unit 2" typo found by the new integrity test). The 14
-cleaner-collapsed pairs cause neither FP nor FN, so the `lng`-drop gate and
-the romanised alias column (proposal 3) were dropped — documented non-finding.
+`Dong Nai Formosa` and `Ha Tinh Formosa` are distinct unit groups of one
+complex sharing a source-attested name — kept as-is in
+`data/reference/vietnam_thermal_v1_fix1.csv` (inventing project names is not
+permitted; the integrity invariant is structural — see `PROVENANCE.md` §fix1.
+A `Quảng Trị 1` "Unit 2, Unit 2" transcription error was also found by the
+new integrity test and fixed). The 14 cleaner-collapsed pairs cause neither
+FP nor FN, so the `lng`-drop gate and the romanised alias column (proposal 3)
+were dropped — documented non-finding. Root cause of the duplicates lives in
+the unit→plant aggregator (ticket 0416).
 
 ## Reference extension (proposals)
 

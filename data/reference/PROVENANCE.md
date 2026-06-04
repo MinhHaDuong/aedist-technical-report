@@ -121,29 +121,32 @@ spreadsheet round-trip during adjudication coerced `ires_code` 0121 to
 121; the scripted rebuild is the countermeasure, and
 `tests/test_reference_integrity.py` guards the invariants).
 
-Four defects, adjudicated by the author on 2026-06-03/04. The `name`
-column is the de-facto key (matcher, plant↔units linkage, diagnostics);
-defects 1–3 are key collisions, defect 4 a data-entry typo:
+Two defects, adjudicated by the author on 2026-06-03/04:
 
 1. `Duyen Hai 2` (ASCII, 600 MW, Unit 1) deleted at both levels —
    romanization duplicate subsumed by `Duyên Hải 2` (1200 MW, Units 1+2).
-2. `Dong Nai Formosa` (proposed, Unit 3) renamed
-   `Dong Nai Formosa extension` — two distinct assets (operational base
-   vs proposed extension) shared one identical name string; renamed
-   following the file's existing `extension` convention.
-3. `Ha Tinh Formosa Plastics Steel Complex` (proposed, Units 6/7/10)
-   renamed `... extension` — same pattern.
-4. `Quảng Trị 1` typo: `units_included` listed Unit 2 twice; first
-   occurrence corrected to Unit 1 at both levels (1320 MW = 2x660,
-   sibling plants all have Units 1+2).
+2. `Quảng Trị 1` transcription error: `units_included` listed Unit 2
+   twice; first occurrence corrected to Unit 1 at both levels (the
+   upstream unit-level master has Units 1+2; 1320 MW = 2x660, sibling
+   plants all have Units 1+2).
+
+Names are never invented (author's rule): `Dong Nai Formosa` and
+`Ha Tinh Formosa Plastics Steel Complex` each keep two rows bearing the
+same source-attested name — distinct unit groups of one complex
+(operational base vs proposed expansion). The integrity invariant is
+structural, not nominal: rows sharing a name must differ in `status`
+and be disjoint in `units_included`; unit-level names are unique modulo
+diacritics. Both defects originate in the unit→plant aggregation step
+(`HDM_aggregate.py`, no input/output guards — ticket 0416); the
+upstream unit-level master is sound.
 
 Effect, measured by re-reconciling all Exp2 outputs (80 runs): FP
 unchanged (399 -> 399); FN 7617 -> 7537, the delta being phantom misses
-carried by the deleted duplicate row. The 14 remaining `clean_name`
-collisions (distinct gas/LNG plants merged by the cleaner's prefix
-drops) cause neither FP nor FN and are left untouched — a documented
-non-finding; see ticket 0394.
+carried by the deleted duplicate row. The 14 `clean_name` collisions
+(distinct gas/LNG plants merged by the cleaner's prefix drops) cause
+neither FP nor FN and are left untouched — a documented non-finding;
+see ticket 0394.
 
 The frozen v1 files remain the scoring reference for Exp1–3. Adoption
 of fix1 (figure-level before/after validation, then rewiring) is
-tracked in a separate ticket.
+tracked in ticket 0413, after the Cergy archive (0412).

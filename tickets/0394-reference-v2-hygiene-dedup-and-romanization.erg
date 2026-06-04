@@ -12,6 +12,8 @@ Author: claude
 2026-06-04T00:00Z claude note — fold-uniqueness test caught a 4th defect nobody had seen: Quảng Trị 1 lists "Unit 2, Unit 2" (typo for Units 1+2); fixed at both levels
 2026-06-04T00:00Z claude note — needs-human tag dropped: all adjudications made by the author in-session
 
+2026-06-04T12:27Z claude note — author review of PR #699: REJECTED — il n'est pas permis d'inventer un nom de projet; the extension renames fabricated designations absent from primary sources
+2026-06-04T12:27Z claude note — reworked: DNF/HTF keep their attested names (two same-name, status-distinct rows each); the integrity invariant becomes structural (same name => pairwise distinct statuses + disjoint units_included); fix1 reduces to DH2 dedup + QT1 transcription fix
 --- body ---
 ## Context
 
@@ -24,17 +26,23 @@ Exp1–3 (see `data/reference/PROVENANCE.md`). The Exp2 FP audit surfaced 17
 and 14 distinct-plant pairs that collide only after the cleaner's
 `^lng`/`^nd`/`^tbkhh`/paren drops.
 
-## Delivered (fix1 — minimal integrity patch)
+## Delivered (fix1 — minimal integrity patch, reworked after author review)
+
+Author rule (review of PR #699): names are source-attested, never invented.
+`Dong Nai Formosa` and `Ha Tinh Formosa` keep two same-name rows each —
+distinct unit groups of one complex (operational base vs proposed expansion,
+disjoint `units_included`); they are the data model, not defects.
 
 - `data/reference/vietnam_thermal_v1_fix1.csv` (162 rows) and
   `vietnam_thermal_units_v1_fix1.csv` (249 rows), built reproducibly from the
   frozen v1 by `experiments/scripts/build_reference_v1_fix1.py` (verbatim text
   transform — a spreadsheet round-trip had coerced `ires_code` 0121->121).
-- Four defects fixed: DH2 dup deleted (both levels); DNF + HTF proposed rows
-  renamed `... extension`; `Quảng Trị 1` "Unit 2, Unit 2" typo corrected
-  (both levels).
-- `tests/test_reference_integrity.py`: fold-uniqueness (red on v1, green on
-  fix1), 4-digit `ires_code` guard, no repeated unit in `units_included`.
+- Two defects fixed: DH2 romanization dup deleted (both levels);
+  `Quảng Trị 1` "Unit 2, Unit 2" transcription error -> Units 1+2 (both
+  levels; upstream unit master is sound — root cause is the aggregator, 0416).
+- `tests/test_reference_integrity.py` (red on v1, green on fix1): unit names
+  fold-unique; same-name plant rows pairwise status-distinct with disjoint
+  `units_included`; 4-digit `ires_code` guard; no repeated unit in a row.
 - `PROVENANCE.md` fix1 entry; `fp_audit_exp2.py` gains `--reference/--label`.
 
 ## Measured non-finding (audit before instrumenting)
@@ -49,9 +57,11 @@ over-fitting the cleaner to the Vietnam instance.
 
 ## Exit criteria (rescoped)
 
-- [x] All 17 collision groups adjudicated by the author (3+1 fixed, 14
-      documented non-finding)
-- [x] fix1 files built reproducibly; untouched fields byte-identical
+- [x] All 17 collision groups adjudicated by the author (1 dup deleted +
+      1 typo fixed; DNF/HTF legitimate same-name rows; 14 documented
+      non-finding)
+- [x] fix1 files built reproducibly; untouched fields byte-identical;
+      no invented names
 - [x] `tests/test_reference_integrity.py` green on fix1, red on v1
 - [x] `PROVENANCE.md` version entry
 - [x] FP/FN deltas measured on existing outputs and explained

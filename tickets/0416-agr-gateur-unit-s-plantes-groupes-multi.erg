@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
 
+2026-06-04T12:25Z claude note — author review verdict (PR #699): inventing project names is not permitted; drop the extension-suffix disambiguation — same-name multi-status rows are the data model, guards must be structural (status-distinct, disjoint units)
 --- body ---
 ## Contexte
 
@@ -20,28 +21,36 @@ le même `Name` (Dong Nai Formosa ×2, Ha Tinh Formosa ×2 — la collision de
 clé exacte de 0394). Et aucun garde-fou : « Quảng Trị 1 Unit 2 » dupliqué en
 entrée a été sommé (660+660=1320) et joint « Unit 2, Unit 2 » sans erreur.
 
-Toute régénération depuis pipeline.ods réintroduirait ces collisions (les
-renames `extension` de fix1 n'existent pas en amont). 0395 (ajout de
-centrales) passera vraisemblablement par ce chemin — corriger AVANT.
+0395 (ajout de centrales) passera vraisemblablement par ce chemin —
+corriger AVANT.
+
+RÈGLE AUTEUR (revue PR #699, 2026-06-04) : il n'est pas permis d'inventer
+un nom de projet. Les lignes de même nom multi-statuts sont le modèle de
+données légitime (groupes de tranches distincts d'un même complexe) — pas
+un défaut à renommer. Les défauts réels sont structurels : unités
+chevauchantes ou répétées, statuts dupliqués à nom égal.
 
 ## Quoi faire
 
-1. Disambiguïser les groupes multi-statuts d'une même centrale : suffixer le
-   groupe non-dominant selon la convention `extension` du fichier (le groupe
-   *operating* garde le nom nu ; le groupe proposed/announced devient
-   `<Name> extension`) — c'est exactement ce que fix1 a fait à la main.
-2. Garde-fous en sortie : assert « aucun `Name` dupliqué » et « aucune unité
-   répétée dans `Units Included` » — refuser de produire, lister les groupes
-   fautifs pour adjudication.
+1. Garde-fous en sortie : pour les groupes partageant un même `Name`,
+   assert statuts deux-à-deux distincts ET `Units Included` deux-à-deux
+   disjoints ; assert aucune unité répétée dans un groupe ; refuser de
+   produire et lister les groupes fautifs pour adjudication. Ne JAMAIS
+   synthétiser de nom.
+2. Garde-fou en entrée : refuser les lignes unité dupliquées (le
+   « Quảng Trị 1 Unit 2 » ×2 doit faire échouer l'agrégation, pas être
+   sommé en silence).
 3. Brancher les invariants de `tests/test_reference_integrity.py`
-   (fold-uniqueness) sur la sortie de l'agrégateur.
+   (fold-uniqueness unités ; même-nom ⇒ statuts distincts + unités
+   disjointes) sur la sortie de l'agrégateur.
 4. Vérifier que la régénération depuis le fichier unités fix1 reproduit le
    fichier plantes fix1 (oracle de non-régression).
 
 ## Exit criteria
 
-- [ ] Agrégateur : groupes multi-statuts disambiguïsés (convention extension)
-- [ ] Sortie refusée si noms dupliqués ou unités répétées (message actionnable)
+- [ ] Entrée refusée si lignes unité dupliquées (message actionnable)
+- [ ] Sortie refusée si, à nom égal, statuts répétés ou unités
+      chevauchantes / répétées ; aucun nom synthétisé
 - [ ] Régénération depuis units_v1_fix1 == vietnam_thermal_v1_fix1 (modulo
       colonnes de classification ajoutées en aval)
 - [ ] `make check` vert

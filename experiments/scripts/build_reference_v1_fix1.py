@@ -6,31 +6,35 @@ like ``ires_code`` ``0121`` keep their significant leading zero (hand-editing
 v1 in a spreadsheet silently coerced ``0121`` -> ``121``; this script is the
 fix).
 
-Integrity edits (human-adjudicated 2026-06-03/04, ticket 0394):
+Names are never invented: every ``name`` in the output is attested by the
+primary sources (author's rule). ``Dong Nai Formosa`` and ``Ha Tinh Formosa
+Plastics Steel Complex`` therefore each keep two same-name rows — distinct
+unit groups of one named complex (operational base vs proposed expansion).
+The integrity invariant is structural, not nominal: same-name rows must have
+different ``status`` and disjoint ``units_included``
+(see ``tests/test_reference_integrity.py``).
+
+Integrity edits (author-adjudicated 2026-06-03/04, ticket 0394):
 
 Plant level (``vietnam_thermal_v1.csv`` -> ``vietnam_thermal_v1_fix1.csv``):
   - DELETE the subset-duplicate ``Duyen Hai 2`` 600 MW (Unit 1) row; the
     ``Duyên Hải 2`` 1200 MW (Units 1+2) row subsumes it (overlapping units).
-  - RENAME the *proposed* extension row of two identical-name base/extension
-    pairs, adopting the reference's own ``extension`` convention (cf.
-    ``Duyen Hai 3 Extension``, ``Vinh Tan 4 extension``):
-      ``Dong Nai Formosa`` (proposed, Unit 3)               -> ``Dong Nai Formosa extension``
-      ``Ha Tinh Formosa Plastics Steel Complex`` (proposed) -> ``... extension``
-  - FIX the ``Quảng Trị 1`` units_included typo: the same unit was listed
-    twice ("Unit 2, Unit 2"); 1320 MW = 2 x 660 and sibling plants all have
-    "Unit 1, Unit 2".
+  - FIX the ``Quảng Trị 1`` units_included transcription error: the same unit
+    was listed twice ("Unit 2, Unit 2"); upstream master has Units 1+2
+    (1320 MW = 2 x 660, sibling plants all have Units 1+2).
 
 Unit level (``vietnam_thermal_units_v1.csv`` -> ``vietnam_thermal_units_v1_fix1.csv``):
   - DELETE the romanization duplicate ``Duyen Hai 2 Unit 1`` (ASCII); the
     diacritic ``Duyên Hải 2 Unit 1`` row is the same physical unit.
   - RENAME the first of the two identical ``Quảng Trị 1 Unit 2`` rows to
-    ``Quảng Trị 1 Unit 1`` (same data-entry typo as above).
+    ``Quảng Trị 1 Unit 1`` (same transcription error as above; Unit 1 is the
+    attested upstream designation, not an invention).
 
 Scope: integrity only. The Exp2 FP/FN recounts showed reference hygiene
-removes 0 FP and only the duplicate row's ~80 phantom FN; the cleaner-gate
+removes 0 FP and only the duplicate row's phantom FN; the cleaner-gate
 (Famille B) and the name_ascii alias are deliberately NOT done (documented
-non-finding, see ticket 0394). DNF/HTF need no unit-level change (distinct
-unit numbers -> no collision).
+non-finding, see ticket 0394). The defects originate in the unit->plant
+aggregator (ticket 0416).
 """
 
 import argparse
@@ -38,16 +42,6 @@ import csv
 from pathlib import Path
 
 PLANT_DELETE = [{"name": "Duyen Hai 2", "capacity_mwe": "600.0"}]
-PLANT_RENAME = [
-    {
-        "match": {"name": "Dong Nai Formosa", "status": "proposed"},
-        "new_name": "Dong Nai Formosa extension",
-    },
-    {
-        "match": {"name": "Ha Tinh Formosa Plastics Steel Complex", "status": "proposed"},
-        "new_name": "Ha Tinh Formosa Plastics Steel Complex extension",
-    },
-]
 PLANT_FIELD_FIX = [
     {
         "match": {"name": "Quảng Trị 1"},
@@ -56,7 +50,7 @@ PLANT_FIELD_FIX = [
 ]
 
 UNIT_DELETE = [{"Name": "Duyen Hai 2 Unit 1"}]
-# First occurrence of the duplicated row gets the corrected name.
+# First occurrence of the duplicated row gets the attested upstream name.
 UNIT_RENAME_FIRST = [
     {
         "match": {"Name": "Quảng Trị 1 Unit 2"},
@@ -91,14 +85,6 @@ def build_plants(src: Path, dst: Path) -> str:
     deleted = len(rows) - len(kept)
     assert deleted == len(PLANT_DELETE), f"expected {len(PLANT_DELETE)} deletion(s), got {deleted}"
 
-    renamed = 0
-    for r in kept:
-        for spec in PLANT_RENAME:
-            if _matches(r, spec["match"]):
-                r["name"] = spec["new_name"]
-                renamed += 1
-    assert renamed == len(PLANT_RENAME), f"expected {len(PLANT_RENAME)} rename(s), got {renamed}"
-
     fixed = 0
     for r in kept:
         for spec in PLANT_FIELD_FIX:
@@ -110,7 +96,7 @@ def build_plants(src: Path, dst: Path) -> str:
     )
 
     _write(dst, fieldnames, kept)
-    return f"{dst}: {len(kept)} rows (deleted {deleted}, renamed {renamed}, fixed {fixed})"
+    return f"{dst}: {len(kept)} rows (deleted {deleted}, fixed {fixed})"
 
 
 def build_units(src: Path, dst: Path) -> str:
@@ -128,7 +114,9 @@ def build_units(src: Path, dst: Path) -> str:
         hits[0]["Name"] = spec["new_name"]
 
     _write(dst, fieldnames, kept)
-    return f"{dst}: {len(kept)} rows (deleted {deleted}, renamed first-of-dup {len(UNIT_RENAME_FIRST)})"
+    return (
+        f"{dst}: {len(kept)} rows (deleted {deleted}, fixed first-of-dup {len(UNIT_RENAME_FIRST)})"
+    )
 
 
 def main() -> None:
