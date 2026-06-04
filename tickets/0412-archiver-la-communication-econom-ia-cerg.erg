@@ -6,6 +6,10 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-04T11:37Z HDMX-coding-agent created
 
+2026-06-04T14:13Z HDMX-coding-agent note Tag economia-2026-cergy poussé sur bbc4a013 (vérifié par diff: aucun changement deck entre ce commit et la 1re révision post-conf)
+2026-06-04T14:13Z HDMX-coding-agent note Release GitHub créée avec le PDF reconstruit au tag (HaDuong-2026-EconomIA-slides.pdf)
+2026-06-04T14:13Z HDMX-coding-agent note Dépôt HAL SWORD accepté: hal-05644906 v1, en modération. Mission archivée dans done/Conférences avec releases/
+2026-06-04T14:13Z HDMX-coding-agent note Page perso préparée (files/ + Ha-Duong.bib + index.html régénéré), make sync laissé à l'auteur. Drift skill /update-publist → ticket 0421
 --- body ---
 ## Contexte
 
@@ -26,10 +30,10 @@ exactement présenté AVANT toute adoption (prérequis de 0413).
 
 ## Exit criteria
 
-- [ ] Tag poussé sur le commit de la version présentée
-- [ ] Release GitHub avec le PDF des slides attaché
-- [ ] Notice HAL en ligne
-- [ ] Page perso à jour
+- [x] Tag poussé sur le commit de la version présentée (economia-2026-cergy → bbc4a013)
+- [x] Release GitHub avec le PDF des slides attaché
+- [ ] Notice HAL en ligne (hal-05644906 déposé, en modération)
+- [ ] Page perso à jour (préparée localement ; `make sync` à lancer)
 
 ## Related
 
