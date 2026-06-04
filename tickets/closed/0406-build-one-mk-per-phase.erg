@@ -2,6 +2,7 @@
 Title: [tracking] One .mk per phase — hard boundaries for dev, root include-all for staleness
 Created: 2026-06-04
 Author: claude
+Closed: all five children landed (S1 #692, S2 #694, S3 #696, S4 #698, S5 #702); wave integration review: COMPOSES, all exit criteria verified on merged main
 
 --- log ---
 2026-06-04T07:40Z claude created — design ratified by author in conversation (views in P3; S-order; P1 .PHONY-only; measurements.jsonl = mart v0 until 0297; dual-mode root; .mk lives with its deliverables)
@@ -14,6 +15,7 @@ Author: claude
 2026-06-04T10:36Z claude note S3 done (PR #696): score.mk carved, analysis.mk dissolved, P3 strays relocated; S4 (acquire.mk) unblocked.
 2026-06-04T11:15Z claude note S4 done (PR #698): acquire.mk pure P1 all-.PHONY; census-summary dropped; S5 (root rewrite) unblocked.
 2026-06-04T12:12Z claude note S5 done (PR #702): root = dev loop + staleness/world. All five steps landed; tracker awaits integration review before close.
+2026-06-04T12:53Z HDMX-coding-agent closed — all five children landed (S1 #692, S2 #694, S3 #696, S4 #698, S5 #702); wave integration review: COMPOSES, all exit criteria verified on merged main
 --- body ---
 ## Context
 
