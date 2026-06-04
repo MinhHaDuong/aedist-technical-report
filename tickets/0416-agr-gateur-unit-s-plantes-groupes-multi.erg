@@ -2,13 +2,13 @@
 Title: Pipeline référence 2/3: agrégateur unités→plantes refondu, sortie à clé unique
 Created: 2026-06-04
 Author: HDMX-coding-agent
-Blocked-by: 0420
 
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
 2026-06-04T12:25Z claude note — author review verdict (PR #699): inventing project names is not permitted; drop the extension-suffix disambiguation — same-name multi-status rows are the data model, guards must be structural (status-distinct, disjoint units)
 2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0420 added
 2026-06-04T13:35Z claude note — attribution nuance: the master DID carry defects 1-2 (both now fixed there by the author); input guards are thus the primary catch for master regressions, not just defense in depth
+2026-06-04T20:05Z HDMX-coding-agent note blocker 0420 closed — Blocked-by removed.
 --- body ---
 ## Contexte
 

@@ -2,6 +2,7 @@
 Title: Pipeline référence 1/3: data/reference/raw + import.sh + extraction ODS→CSV validée
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #711
 
 --- log ---
 2026-06-04T12:56Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-06-04T14:30Z claude plan raid — actions + first test + deps; tautology scan done
 2026-06-04T14:45Z claude feasibility PASS — acquire.mk all-.PHONY + $(UV_RUN) convention confirmed; score.mk at experiments/derived/score.mk; file sets disjoint from 0419
 2026-06-04T14:33Z bump verify-reroll — round 1: stale docs/pipeline.ods ref in verification_methods.tex:91
+2026-06-04T20:05Z HDMX-coding-agent closed — autoclosed — PR #711
 --- body ---
 ## Contexte
 
