@@ -132,6 +132,20 @@ producer phase, consumer, and verdict.
 | `slides/inputs/generated/fig_scaling_curve.pdf` | `plot_scaling_curve` (P3) | none in P4 | RETIRED 0408 — producer redirected to report tree |
 | `derived/fusion_proto/growth_curve.pdf` | none (orphan prototype) | none | IGNORE (`git rm --cached`) |
 
+## 0417 follow-up — tracked artifacts without a producer rule
+
+The 0415 world-reach audit found four tracked `report/inputs/generated/`
+files no makefile rule produced. Resolution (ticket 0417); the guard
+`tests/test_makefile_dag.py::test_tracked_generated_artifacts_have_a_producer`
+prevents recurrence:
+
+| File | Producer (phase) | Consumer (phase) | Verdict |
+|------|------------------|------------------|---------|
+| `report/inputs/generated/tab_source_grounding.tex` | `tabulate_source_grounding` (P3; rule restored in render.mk, reads archived P1 raw replies) | `report.tex` (P4) | TRACK |
+| `report/inputs/generated/regimes.csv` | none (zero references repo-wide) | none | RETIRED 0417 (`git rm`) |
+| `report/inputs/generated/tab_exp2_arms_runs.csv` | superseded by the mart view `tab_exp2_arms_runs_view.csv` (P3 intermediate, ignored) | none | RETIRED 0417 (`git rm`) |
+| `report/inputs/generated/tab_exp2_bib_quality.csv` | superseded by the mart view `tab_exp2_bib_quality_view.csv` (P3 intermediate, ignored) | none | RETIRED 0417 (`git rm`) |
+
 ## Spot-check coverage (other generated paths in the DAG)
 
 | File | Phase | Verdict | Why |
