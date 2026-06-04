@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Adopt erg cross-session ID reservation (git-erg#282) when it lands
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T16:26Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Three ticket-ID collisions on 2026-06-04 alone (0412 → PR #701; 0418 →
+renumbered 0420, commit 9e32373f; 0421 → flagged on PR #710): parallel
+sessions each scan their own checkout, so `erg new`'s O_EXCL retry loop
+(same-checkout races only) cannot see a sibling branch's allocation.
+The collision surfaces at merge.
+
+Author ratified the prevention approach ("push immédiat"): reserve the
+ID on the remote at allocation time. Upstream feature request filed as
+git-erg#282 — atomic reservation via `git push origin
+HEAD:refs/erg-ids/NNNN` (server-side ref creation fails if the ref
+exists → retry next ID; offline → warn + fall back to current
+behavior).
+
+Detection-side complement: 0418 (erg check in CI) — both layers wanted;
+this ticket is the prevention layer.
+
+## Blocked on upstream
+
+git-erg#282 must land and a release build published. Until then the
+interim discipline stands: fetch + scan origin/main before `erg new`
+(memory: ticket-id-collision-check), CI gate per 0418.
+
+## Actions (once upstream lands)
+
+1. Refresh `tickets/erg` from the git-erg release (same flow as 0407:
+   binary + provenance `.erg-assets` rev bump, atomic).
+2. Verify reservation round-trip against this repo's origin: two
+   concurrent `erg new` from separate worktrees must yield distinct IDs.
+3. Prune any stale `refs/erg-ids/*` whose ticket is on main (upstream
+   may ship the prune verb; otherwise document the one-liner).
+4. Drop/soften the interim fetch-first rule in memory once verified.
+
+## Exit criteria
+
+- `tickets/erg` at a rev including git-erg#282
+- Two-worktree concurrent allocation test yields distinct IDs
+- Reservation refs visible on origin during allocation, pruned after
+  the tickets land on main
