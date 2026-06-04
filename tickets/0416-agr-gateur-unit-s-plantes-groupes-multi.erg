@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Agrégateur unités→plantes: groupes multi-statuts → noms de plante dupliqués
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T12:18Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Diagnostic auteur (2026-06-04) : pipeline.ods (maître, une ligne par unité)
+est bon — c'est l'agrégateur qui a fabriqué les défauts corrigés à la main
+par fix1 (ticket 0394, PR #699).
+
+`data/reference/HDM_aggregate.py` groupe par
+`["Normalized Name", "Status", "Province", "Fuel"]` : une centrale dont les
+tranches ont des statuts différents sort en PLUSIEURS lignes plante portant
+le même `Name` (Dong Nai Formosa ×2, Ha Tinh Formosa ×2 — la collision de
+clé exacte de 0394). Et aucun garde-fou : « Quảng Trị 1 Unit 2 » dupliqué en
+entrée a été sommé (660+660=1320) et joint « Unit 2, Unit 2 » sans erreur.
+
+Toute régénération depuis pipeline.ods réintroduirait ces collisions (les
+renames `extension` de fix1 n'existent pas en amont). 0395 (ajout de
+centrales) passera vraisemblablement par ce chemin — corriger AVANT.
+
+## Quoi faire
+
+1. Disambiguïser les groupes multi-statuts d'une même centrale : suffixer le
+   groupe non-dominant selon la convention `extension` du fichier (le groupe
+   *operating* garde le nom nu ; le groupe proposed/announced devient
+   `<Name> extension`) — c'est exactement ce que fix1 a fait à la main.
+2. Garde-fous en sortie : assert « aucun `Name` dupliqué » et « aucune unité
+   répétée dans `Units Included` » — refuser de produire, lister les groupes
+   fautifs pour adjudication.
+3. Brancher les invariants de `tests/test_reference_integrity.py`
+   (fold-uniqueness) sur la sortie de l'agrégateur.
+4. Vérifier que la régénération depuis le fichier unités fix1 reproduit le
+   fichier plantes fix1 (oracle de non-régression).
+
+## Exit criteria
+
+- [ ] Agrégateur : groupes multi-statuts disambiguïsés (convention extension)
+- [ ] Sortie refusée si noms dupliqués ou unités répétées (message actionnable)
+- [ ] Régénération depuis units_v1_fix1 == vietnam_thermal_v1_fix1 (modulo
+      colonnes de classification ajoutées en aval)
+- [ ] `make check` vert
+
+## Related
+
+- 0394 (fix1 — patch des artefacts ; ce ticket répare le générateur)
+- 0395 (ajout de centrales — consommateur direct de ce fix)
+- 0413 (adoption fix1), `data/reference/HDM_aggregate.py`,
+  `tests/test_reference_integrity.py`
