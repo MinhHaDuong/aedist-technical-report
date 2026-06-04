@@ -34,4 +34,7 @@ Write the Exp 2 paper sections (0251–0262) and finish cross-eval scoring (0171
 - Slides EN→FR translation script (0389), in flight (anteriority + FR-clean guarded).
 - Reproducibility oracle (0360); mart 2×2 rename (0364, default won't-do).
 - New research track 0396–0400 (latent-truth fusion, quality gates) — needs scoping into bounded sub-tickets.
-- Hygiene: 0319/0353 closed but unarchived (0388 guard covers); prune stale remotes score-4-arms-2x2, chore/restore-panel-state.
+- Hygiene: `origin/chore/restore-panel-state` (1 unmerged commit) and local `ticket/0345` (3 unmerged commits) need manual review before deletion.
+- Mart staleness (0383): full-DAG runs rewrite committed scores until the 0384–0386 redress lands — do not run analysis make targets casually.
+
+Housekeeping: last run 2026-06-04T06:35Z (archived 0319/0353/0366, closed-header fix 0382, pruned merged remote, branch cleanup).
