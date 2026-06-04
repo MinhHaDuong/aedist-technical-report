@@ -131,8 +131,8 @@ staleness:
 # `git diff` BEFORE COMMITTING. Cheap guard: refuse to start on a dirty working
 # tree, so a re-score never silently mixes with unrelated uncommitted edits.
 world:
-	@git diff --quiet || { \
-		echo 'make world: working tree is dirty.'; \
+	@git diff --quiet && git diff --cached --quiet || { \
+		echo 'make world: working tree is dirty (unstaged or staged changes).'; \
 		echo 'world rewrites committed scored data (0383) — commit or stash first,'; \
 		echo 'then review the re-run via `git diff` before committing the result.'; \
 		exit 1; }
