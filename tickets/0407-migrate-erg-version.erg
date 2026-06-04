@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Migrate erg to the current version — binary, corpus format, and integration re-test
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T07:55Z claude created — author decided to migrate; checklist captured from the 2026-06-04 session findings
+
+--- body ---
+## Context
+
+The project's committed `tickets/erg` (8 MB, built 2026-05-13) has
+drifted from the current git-erg version and from IDH tooling:
+
+- `~/.claude/scripts/refresh-STATE.py` fails against it ("Unknown
+  command: list") — STATE Status regeneration is broken.
+- The updated spec (global `tickets/AGENTS.md`, 2026-06-03) uses
+  `Label:` headers and an `erg spec` command; this corpus uses `Tag:`
+  (+ `tickets/.ergrc [tags]`). `erg migrate` exists for legacy files.
+- IDH's own erg is a different build (2.3 MB) — two versions in play.
+
+## Critical ordering constraint
+
+**Binary + corpus + `.ergrc` must land in ONE PR.** The pre-commit hook
+runs `erg validate`; if the binary and the ~390 ticket files (open +
+closed) update in separate commits, the hook wedges in between. Run
+`erg migrate` with the NEW binary, validate the whole corpus with the
+NEW binary, commit everything together.
+
+## Relevant files
+
+- `tickets/erg` — committed bootstrap binary (project has NO
+  `tickets/tools/go/` source; decide: copy a git-erg release binary vs
+  vendor the source — check IDH / git-erg repo for the canonical
+  distribution)
+- `tickets/*.erg`, `tickets/closed/*.erg` — corpus to migrate (~390)
+- `tickets/.ergrc` — `[tags]` section may rename with Tag->Label
+- `scripts/check_ticket_structure.py` — project CI lint; may assume the
+  old format
+- `.claude/skills/ticket-*` (project) + IDH skills `pick-ticket`,
+  `housekeeping`, `celebrate` — parse `erg ready --json` fields,
+  `erg archive`, `erg close` output
+
+## Actions
+
+1. Obtain the current erg binary (or source); note its version in the
+   PR body.
+2. On a branch: replace `tickets/erg`, run `erg migrate` over the
+   corpus, adapt `.ergrc`, run `erg check tickets/` until PASS.
+3. Re-test integration points with the new binary:
+   - `refresh-STATE.py` (the currently-broken `list` call)
+   - `pick-ticket` / `housekeeping` flows: `ready --json` field names,
+     `next-id`, `close`, `archive`
+   - `scripts/check_ticket_structure.py` and the pre-commit hook
+   - quickpr-style in-place close (Closed: header inference)
+4. Re-triage against the new version's changelog/behaviour — possible
+   free closures:
+   - 0404: claim-detection substring false-positive (date-stamped
+     branches claim 0260/0604) — fixed upstream?
+   - 0391: atomic close+archive — now native?
+   - 0388 / 0390: closed-in-open-dir guard, duplicate-ID guard — now
+     native checks of `erg check`?
+   Close any that the new version satisfies, with evidence in the log.
+5. Update `.claude/CLAUDE.md` git-erg section / `tickets/AGENTS.md`
+   pointer if commands or build instructions changed.
+
+## Test
+
+Red step before the swap: `tickets/erg list tickets/` (or the command
+refresh-STATE.py uses) errors with "Unknown command". Green after: it
+succeeds AND `erg check tickets/` passes on the migrated corpus AND
+`pytest -m adherence` stays green.
+
+## Verification
+
+- [ ] `erg check tickets/` PASS with the new binary on the migrated corpus
+- [ ] `refresh-STATE.py` runs end-to-end (Status block regenerates)
+- [ ] pick-ticket / housekeeping / celebrate flows exercised once each
+- [ ] CI green (pre-commit validate + check_ticket_structure)
+- [ ] 0404/0391/0388/0390 re-triaged with evidence
+
+## Invariants
+
+- No ticket CONTENT changes — format/header migration only; log lines
+  append-only
+- `tickets/closed/` stays archived; no resurrection of closed tickets
+- One PR, atomic
+
+## Exit criteria
+
+- New erg binary committed; corpus validates with it; the four
+  integration surfaces work; re-triage logged on the four candidate
+  tickets
