@@ -1,0 +1,92 @@
+%erg 0.1
+Title: Phase-stratified artifact policy — track phase outcomes, ignore intra-phase intermediates
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T07:05Z claude created — author ratified the policy during 2026-06-04 triage (follow-up to the 22 tracked-but-ignored files found by housekeeping)
+
+--- body ---
+## Context
+
+The repo has 22 tracked files that match .gitignore patterns (dead-letter
+ignore lines: .gitignore declares e.g. `report/inputs/generated/
+cost_quality.csv` "intermediate, not handoff" at lines 48-54 while the
+file is committed). Conversely, until 2026-06-04 the raw outputs behind
+460 measurements.jsonl rows were untracked. Artifact tracking has been
+decided file-by-file; the author ratified a general rule instead:
+
+**Organize the pipeline in phases. Track the OUTCOME of each phase so
+every phase can rebuild without re-running its parent. All other
+artifacts are non-precious (regenerable -> gitignored).**
+
+Phase model (generalizes the existing P4 clean-room rule to every
+boundary):
+
+| Phase | Outcome (tracked) | Non-precious (ignored) |
+|-------|-------------------|------------------------|
+| P1 Acquire — API runs | raw model replies: `experiments/outputs/**`, `experiments/archive/**` | run logs, retries |
+| P2 Score & consolidate | `measurements.jsonl`, `experiments/derived/exp2_mart.jsonl`, extracted/parsed tables (`arm*_flat`), cross-eval CSVs | per-run `experiments/derived/**/*.record.json` (already ignored), mart view CSVs |
+| P3 Analyze & render | figures/tables/macros the manuscript includes: `report/inputs/generated/`, `slides/inputs/generated/` | plotting intermediates consumed only inside P3 |
+| P4 Write — tectonic/pandoc | — (final PDFs regenerable) | `report.pdf`, `slides.pdf`, aux files |
+
+Operational classification test for any generated file: find its
+producing rule and its consuming rule(s) in the Makefile DAG. Producing
+phase != consuming phase -> boundary outcome -> TRACK. Same phase (or no
+consumer) -> intermediate -> IGNORE. When a file has consumers in both
+(e.g. `cost_quality.csv` if both P3-internal and a committed prereq),
+the boundary classification wins.
+
+## Relevant files
+
+- `.gitignore` — lines 34-54 carry the dead-letter section to reconcile
+- `Makefile`, `experiments/analysis.mk`, `slides/Makefile`,
+  `report/Makefile` — the DAG that defines producer/consumer phases
+- `git ls-files -i -c --exclude-standard` — current 22-file ambiguity
+  list (15 report/inputs/generated, 5 slides/inputs/generated,
+  1 derived/fusion_proto, 1 sota archive .md)
+- `docs/` — landing place for the policy note
+- `tests/` — adherence guards live here
+
+## Actions
+
+1. Write `docs/pipeline-phases.md` (~1 page): the four phases, the
+   outcome-vs-intermediate rule, the classification test, and a manifest
+   table of every generated artifact with its phase + verdict.
+2. Audit the Makefile DAG and classify every generated file. For each of
+   the 22 tracked-but-ignored files: boundary outcome -> delete its
+   dead ignore line; intermediate -> `git rm --cached` it (keep the
+   ignore line). Sweep the rest of .gitignore lines 34-54 against the
+   manifest while there.
+3. Verify the invariant per boundary: P3 targets rebuild with only P2
+   outcomes present (no API calls), P4 already guarded by the clean-room
+   tests. Extend an existing dry-run guard only if a gap is found — do
+   not duplicate test_report/slides_build_clean_room.
+4. Add the ambiguity guard: an `@pytest.mark.adherence` test asserting
+   `git ls-files -i -c --exclude-standard` is empty, so a file can never
+   again be tracked and ignore-matched simultaneously.
+
+## Test
+
+Red step: the new adherence test fails today (22 files). Green after the
+reconciliation in action 2.
+
+## Verification
+
+- [ ] `git ls-files -i -c --exclude-standard` empty; adherence test green
+- [ ] Manifest in docs/pipeline-phases.md covers every generated path in
+      the DAG (spot-check: census_bars, cost_quality, view CSVs, macros)
+- [ ] `make check` green; writing builds still compile from artifacts only
+
+## Invariants
+
+- No P1/P2 data content changes (this is a tracking-policy change only;
+  mart staleness stays in 0383)
+- `git rm --cached` only — never delete working-tree copies of
+  reclassified intermediates
+
+## Exit criteria
+
+- Policy documented with the per-file manifest
+- Zero tracked-but-ignored files, enforced by an adherence test
+- Each phase rebuilds from the previous phase's tracked outcomes alone
