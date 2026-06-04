@@ -35,6 +35,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # A generated artifact lives under <report|slides>/inputs/generated/ and is a
 # figure (.pdf) or a LaTeX include (.tex). CSV data marts are out of scope.
 GEN_RE = re.compile(r"(report|slides)/inputs/generated/([^/\s:*?)]+\.(?:pdf|tex))")
+# Any-extension variant for the tracked-artifact guard below (ticket 0417):
+# committed CSV/txt handoff artifacts count there, not just figures/includes.
+GEN_ANY_RE = re.compile(r"report/inputs/generated/[^/\s:*?)]+\.[A-Za-z0-9]+")
 ASSIGN_RE = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(:=|\?=|\+=|=)\s*(.*)$")
 VAR_REF_RE = re.compile(r"\$\(([A-Za-z_][A-Za-z0-9_]*)\)")
 
@@ -115,8 +118,14 @@ def _collect_assignments(path: Path, variables: dict[str, str]) -> None:
                 variables[name] = val
 
 
-def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
-    """Return (targets, prereq_sources) of generated-artifact keys."""
+def _parse_to_vars_rules(path: Path) -> tuple[dict[str, str], list[str]]:
+    """Scan `path` into (resolved variables, rule lines).
+
+    Shared preamble for _parse and _all_targets_any_ext: skips recipe and
+    comment lines, pulls sibling-include variable assignments in, applies
+    `+=`/`?=`/`=` semantics, and collects every non-recipe line containing
+    a `:` as a rule line for the caller to split.
+    """
     variables: dict[str, str] = {}
     rules: list[str] = []
     for raw in _logical_lines(path):
@@ -144,7 +153,12 @@ def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
             continue
         if ":" in line:
             rules.append(line)
+    return variables, rules
 
+
+def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
+    """Return (targets, prereq_sources) of generated-artifact keys."""
+    variables, rules = _parse_to_vars_rules(path)
     mk_dir = path.parent.relative_to(REPO_ROOT)
     targets: set[str] = set()
     prereqs: dict[str, set[str]] = {}
@@ -159,6 +173,65 @@ def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
             if (key := _key(tok, mk_dir)) is not None:
                 prereqs.setdefault(key, set()).add(rel)
     return targets, prereqs
+
+
+def _all_targets_any_ext(path: Path) -> set[str]:
+    """All rule targets of `path` that resolve under report/inputs/generated/.
+
+    Same scan as _parse but keyed on GEN_ANY_RE (any extension) and targets
+    only — prerequisites are irrelevant to the tracked-artifact guard.
+    """
+    variables, rules = _parse_to_vars_rules(path)
+    mk_dir = path.parent.relative_to(REPO_ROOT)
+    targets: set[str] = set()
+    for line in rules:
+        lhs, _, _rhs = line.partition(":")
+        lhs = lhs.rstrip().rstrip("&").rstrip()  # drop grouped-target marker
+        for tok in _expand(lhs, variables).split():
+            norm = os.path.normpath(os.path.join(str(mk_dir), tok))
+            if (m := GEN_ANY_RE.search(norm)) is not None:
+                targets.add(m.group(0))
+    return targets
+
+
+# Deliberately frozen artifacts: committed under report/inputs/generated/
+# without a producer rule, each with a documented reason (ticket 0417 action
+# 1(b) escape hatch). Keep one comment per entry explaining why regeneration
+# is impossible or deliberately suspended. Currently empty.
+FROZEN_ALLOWLIST: dict[str, str] = {}
+
+
+def test_tracked_generated_artifacts_have_a_producer():
+    """Every tracked file under report/inputs/generated/ has a producer rule.
+
+    Complements the prereq-side test below: that one only catches artifacts
+    some makefile *consumes*; a committed handoff artifact consumed only by
+    LaTeX (or by nothing) can still be orphaned from the DAG and silently go
+    stale or unreproducible (ticket 0417 found four such files).
+    """
+    all_targets: set[str] = set()
+    for mk in _makefiles():
+        all_targets |= _all_targets_any_ext(mk)
+
+    tracked = subprocess.run(
+        ["git", "ls-files", "report/inputs/generated/"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+
+    orphans = sorted(f for f in tracked if f not in all_targets and f not in FROZEN_ALLOWLIST)
+    detail = "\n".join(f"  - {f}" for f in orphans)
+    assert not orphans, (
+        "Tracked files under report/inputs/generated/ with no producer rule "
+        "in any makefile (unreproducible from the DAG):\n"
+        f"{detail}\n\n"
+        "Either add a producing rule (experiments/render.mk for P3 render "
+        "artifacts), retire the file (git rm + manifest row update in "
+        "docs/pipeline-phases.md), or — for a deliberate freeze — add it to "
+        "FROZEN_ALLOWLIST in this test with a reason."
+    )
 
 
 def test_generated_artifacts_have_a_producer():

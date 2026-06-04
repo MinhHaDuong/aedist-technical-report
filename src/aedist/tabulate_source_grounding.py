@@ -21,8 +21,10 @@ log = logging.getLogger(__name__)
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _CORPUS_DIR = _PROJECT_ROOT / "data" / "rag_corpus"
-_SOURCED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "rag_cited"
-_DECOMPOSED_DIR = _PROJECT_ROOT / "experiments" / "outputs" / "rag_per_fuel"
+# Raw replies moved from experiments/outputs/ to experiments/archive/outputs/
+# (commit edda724b); the live outputs dirs keep only .record.json pointers.
+_SOURCED_DIR = _PROJECT_ROOT / "experiments" / "archive" / "outputs" / "rag_cited"
+_DECOMPOSED_DIR = _PROJECT_ROOT / "experiments" / "archive" / "outputs" / "rag_per_fuel"
 _OUTPUT_PATH = _PROJECT_ROOT / "report" / "inputs" / "generated" / "tab_source_grounding.tex"
 
 
