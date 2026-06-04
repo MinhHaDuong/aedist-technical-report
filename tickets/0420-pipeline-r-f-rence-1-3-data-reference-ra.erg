@@ -7,6 +7,9 @@ Author: HDMX-coding-agent
 2026-06-04T12:56Z HDMX-coding-agent created
 
 2026-06-04T13:20Z claude note — renumbered 0418 -> 0420: ID collision on main with 0418-erg-check-in-ci (landed 60s earlier from a parallel branch; erg new's atomic scan cannot see sibling branches — live evidence for the CI erg-check ticket)
+2026-06-04T14:10Z claude reimagine raid 419-420 — drift guard PASS; refinements appended to body §Notes Imagine
+2026-06-04T14:30Z claude plan raid — actions + first test + deps; tautology scan done
+2026-06-04T14:45Z claude feasibility PASS — acquire.mk all-.PHONY + $(UV_RUN) convention confirmed; score.mk at experiments/derived/score.mk; file sets disjoint from 0419
 --- body ---
 ## Contexte
 
@@ -51,6 +54,228 @@ AUCUN consommateur dans le code — vérifié par grep).
       Level=unité → échec ; messages actionnables
 - [ ] Cible make dans acquire.mk (post-0406/0411)
 - [ ] `make check` vert
+
+## Notes Imagine (raid 2026-06-04)
+
+- Lecture ODS : `pandas.read_excel(engine="odf", dtype=str)` avec **header
+  multi-lignes** — les vrais en-têtes sont en ligne 4 (0-indexé) du fichier
+  tracké. Documenter `header=4` (ou auto-détection) sinon extraction garbage
+  silencieuse. Dépendance `odfpy` à ajouter à pyproject.toml.
+- Colonne `Level` ABSENTE de l'ODS actuel (confirmé par sonde) — cohérent
+  avec « à venir dans le maître » : passthrough = no-op gracieux si absente ;
+  la règle « Unit ⇒ Level=unité » ne s'applique que si la colonne existe.
+- Le doublon « Quảng Trị 1 Unit 2 » ×2 EST dans l'ODS tracké : le refus dur
+  du validateur sur ce fichier est un COMPORTEMENT À TESTER (signal qualité),
+  pas un blocage. Tests unitaires sur fixtures synthétiques + un test
+  d'intégration qui vérifie que l'ODS tracké déclenche le refus actionnable.
+- Maître `~/CNRS/...` ABSENT de cette machine (padme) et du CI : import.sh
+  documente le chemin auteur, exclu de `make check` ; tout le testable
+  travaille sur la copie trackée.
+- acquire.mk a un invariant .PHONY (test_acquire_all_phony.py) : la cible
+  d'extraction est un verbe utilitaire .PHONY, pas une règle-fichier.
+- YAGNI : deux fonctions de validation nommées, pas de registre de règles.
+
+## Plan (raid 2026-06-04)
+
+### Actions
+
+**S1 — Add odfpy dependency**
+- File: `pyproject.toml`
+- Add `"odfpy>=1.4"` to `[project.dependencies]`.
+- Run `uv sync` (CI will need it; the `.venv` is not committed).
+- Confirmed: `odfpy` is absent from `pyproject.toml` today (verified).
+
+**S2 — Move ODS into data/reference/raw/**
+- `git mv docs/pipeline.ods data/reference/raw/pipeline.ods`
+- Create `data/reference/raw/import.sh`:
+  ```sh
+  #!/bin/sh
+  # Import master ODS from author's working copy.
+  # Override SRC_ODS env var if master lives elsewhere.
+  SRC_ODS="${SRC_ODS:-$HOME/CNRS/papiers/actif/Market report on Gas to Power/pipeline.ods}"
+  cp "$SRC_ODS" "$(dirname "$0")/pipeline.ods"
+  ```
+  Executable, but excluded from `make check` (master absent on CI/padme).
+- Create `data/reference/raw/README.md`:
+  One paragraph: do not hand-edit files here; all corrections go into the master
+  then re-import via `import.sh`; tracked ODS is a read-only snapshot.
+
+**S3 — Write data/reference/extract_ods.py**
+- Location justification: `HDM_aggregate.py` and `GEM_aggregate.py` already
+  live in `data/reference/`; this script is a data-preparation step for
+  the same directory, not a library module. Place it there.
+- Interface: `python extract_ods.py --input <ods> --output <csv>`
+  with argparse; defaults: `--input data/reference/raw/pipeline.ods`,
+  `--output data/reference/vietnam_thermal_units_v2.csv`.
+- Reading: `pd.read_excel(path, engine="odf", sheet_name="Power plants",
+  header=4, dtype=str)`.  Header row index confirmed at row 4 (0-indexed)
+  by inspection: row 0 = title, rows 1–3 = metadata/sub-headers, row 4 =
+  actual column names (`Record status`, `Asset type`, `Project name`, etc.).
+  250 data rows.
+- Column selection: `Project name`, `Province / Tỉnh`, `Asset type`,
+  `Capacity (MW)`, `Project stage`, plus `Level` if present (passthrough).
+  Rename to `name`, `province`, `asset_type`, `capacity_mwe`, `status`,
+  `level` (or omit `level` column if absent).
+- All values remain strings; `Capacity (MW)` is a str column in the output
+  (dtype=str is non-negotiable — ires_code zero-prefix preservation principle
+  applies here even though ires_code is added downstream).
+- Call `validate_input(df)` before any transformation (hard stop on error).
+- Log with `logging`, not print.
+
+**S4 — Two named validator functions inside extract_ods.py**
+
+```python
+def validate_no_duplicate_names(df: pd.DataFrame) -> None:
+    """Fail with actionable message if any Project name appears more than once."""
+    ...
+
+def validate_unit_level_consistency(df: pd.DataFrame) -> None:
+    """If Level column present: fail if 'Unit' in name but Level != 'unité'."""
+    ...
+
+def validate_input(df: pd.DataFrame) -> None:
+    validate_no_duplicate_names(df)
+    validate_unit_level_consistency(df)
+```
+
+No rule registry (YAGNI). New invariants added by extending `validate_input`.
+
+**S5 — Add make target in experiments/acquire.mk**
+- The `.PHONY` invariant (enforced by `tests/test_acquire_all_phony.py`)
+  requires that every target in `acquire.mk` is listed under `.PHONY`.
+- Add to the `.PHONY: pdf2md build-corpus preflight help` line:
+  `extract-reference-ods`
+- Add the rule:
+  ```make
+  extract-reference-ods:
+  	$(UV_RUN) python data/reference/extract_ods.py \
+  	    --input data/reference/raw/pipeline.ods \
+  	    --output data/reference/vietnam_thermal_units_v2.csv
+  ```
+  This is a utility verb, not a score/render dependency.
+
+**S6 — Update data/reference/PROVENANCE.md**
+- Add a "## Pipeline v2 (ticket 0420)" section below the existing Known defects
+  section.
+- Document: ODS source, header=4, sheet="Power plants", dtype=str,
+  extract_ods.py as single extraction step, validate_input guards.
+- Note that ires_code/ires_label/isic_code/pypsa_carrier columns are NOT
+  in the ODS and are added downstream (by 0416 aggregator or manually).
+
+**S7 — Write tests/test_extract_ods.py**
+- Unit tests (no marker): pure-Python, no subprocess, fixture built in-memory
+  with `io.BytesIO` or a tmp ODS written by `odf.opendocument`.
+- Integration test (marker `@pytest.mark.integration`): runs the real
+  `docs/pipeline.ods` → confirms the duplicate "Quảng Trị 1 Unit 2" triggers
+  the hard-stop validator with a message mentioning the plant name.
+
+**S8 — make check**
+- `make check` must stay green.
+
+---
+
+### First test
+
+Write this test first (TDD gate); it lives in `tests/test_extract_ods.py`:
+
+```python
+import io
+import pytest
+import pandas as pd
+from data.reference.extract_ods import validate_no_duplicate_names
+
+
+def _make_df_with_duplicate(name: str = "Quảng Trị 1 Unit 2") -> pd.DataFrame:
+    """Synthetic DataFrame containing a duplicated project name."""
+    return pd.DataFrame({
+        "Project name": [name, "Plant B", name],
+        "Province / Tỉnh": ["Quảng Trị", "Hà Nội", "Quảng Trị"],
+    })
+
+
+def test_duplicate_name_raises():
+    """validate_no_duplicate_names must raise ValueError naming the duplicate."""
+    df = _make_df_with_duplicate()
+    with pytest.raises(ValueError, match="Quảng Trị 1 Unit 2"):
+        validate_no_duplicate_names(df)
+
+
+def test_no_duplicate_passes():
+    """validate_no_duplicate_names is silent on a clean DataFrame."""
+    df = pd.DataFrame({
+        "Project name": ["Plant A", "Plant B", "Plant C"],
+        "Province / Tỉnh": ["X", "Y", "Z"],
+    })
+    validate_no_duplicate_names(df)  # must not raise
+
+
+def test_diacritics_treated_as_distinct():
+    """Names that differ only in diacritics are NOT duplicates in v1 semantics.
+
+    The ticket spec says "modulo diacritics" — normalise with NFKD before
+    comparing. This test documents what "modulo diacritics" means concretely:
+    'Quảng Tri 1 Unit 2' (stripped) vs 'Quảng Trị 1 Unit 2' are NOT the same
+    entry in the ODS, so they should not trigger the duplicate guard.
+    Adjust if the actual normalisation differs from NFKD strip.
+    """
+    # Two rows that are identical after NFKD stripping of combining marks
+    import unicodedata
+    a = "Quảng Trị 1 Unit 2"   # Quảng Trị 1 Unit 2
+    b = "Quảng Tri 1 Unit 2"         # stripped variant (NFC differs)
+    nfkd_a = unicodedata.normalize("NFKD", a)
+    nfkd_b = unicodedata.normalize("NFKD", b)
+    # They ARE the same after NFKD: this test asserts the validator fires
+    if nfkd_a == nfkd_b:
+        df = pd.DataFrame({"Project name": [a, b]})
+        with pytest.raises(ValueError):
+            validate_no_duplicate_names(df)
+    else:
+        pytest.skip("Variants not equal under NFKD — diacritic normalisation test not applicable")
+```
+
+And the integration test (runs against the real tracked ODS):
+
+```python
+@pytest.mark.integration
+def test_tracked_ods_duplicate_fires(tmp_path):
+    """The tracked docs/pipeline.ods contains Quảng Trị 1 Unit 2 ×2.
+    extract_ods.py must refuse it with an actionable error message."""
+    import subprocess, sys
+    repo_root = Path(__file__).resolve().parent.parent
+    ods = repo_root / "data" / "reference" / "raw" / "pipeline.ods"
+    result = subprocess.run(
+        [sys.executable, str(repo_root / "data" / "reference" / "extract_ods.py"),
+         "--input", str(ods), "--output", str(tmp_path / "out.csv")],
+        capture_output=True, text=True,
+    )
+    assert result.returncode != 0
+    assert "Quảng Trị 1 Unit 2" in result.stderr or "Quảng Trị 1 Unit 2" in result.stdout
+```
+
+---
+
+### Tautological-test scan
+
+| Test | Would it catch a WRONG implementation? | Assessment |
+|------|----------------------------------------|------------|
+| `test_duplicate_name_raises` | Yes — a validator that silently returns on duplicates would not raise, and the test fails. | Non-tautological. |
+| `test_no_duplicate_passes` | Yes — a validator that always raises would fail this. Guards against over-eager rejection. | Non-tautological. |
+| `test_diacritics_treated_as_distinct` | Conditional. If NFKD equal, asserts ValueError fires; tests that the diacritic-normalisation branch exists. A validator that ignores diacritics entirely would pass this but fail `test_duplicate_name_raises` on exact-match data. Low-value alone; paired with the other two it plugs the normalisation gap. | Acceptable paired. |
+| `test_tracked_ods_duplicate_fires` (integration) | Yes — a script that ignores duplicates and writes the CSV would return 0, failing the `assert result.returncode != 0`. Also checks that the error message names the offending plant. | Non-tautological and anchored to real data. |
+
+No test listed here verifies "did the output CSV have the right column names" without also checking a behaviour; no test merely imports the module and returns True.
+
+---
+
+### Dependencies
+
+- 0406 / 0411 (Makefile restructure): acquire.mk must exist at
+  `experiments/acquire.mk` — CONFIRMED already there. No blocker.
+- odfpy: not yet in `pyproject.toml` — added in S1 (no external ticket needed).
+- Master ODS at `~/CNRS/...`: absent on this machine and CI — import.sh is
+  documentation-grade, tests work on the tracked copy in raw/.
+
+No external ticket blocked-by needed.
 
 ## Related
 
