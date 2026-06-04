@@ -2,7 +2,6 @@
 Title: Adopter la référence fix1: figures avant/après puis recâblage
 Created: 2026-06-04
 Author: HDMX-coding-agent
-Blocked-by: 0394
 Blocked-by: 0412
 Blocked-by: 0416
 
@@ -10,6 +9,7 @@ Blocked-by: 0416
 2026-06-04T11:37Z HDMX-coding-agent created
 
 2026-06-04T12:58Z claude note — pipeline revision (0418/0416/0419): adoption now targets the pipe-produced v2 regenerated from the corrected master; fix1 (PR #699) is the interim integrity patch; Blocked-by 0416 added
+2026-06-04T13:37Z HDMX-coding-agent note blocker 0394 closed — Blocked-by removed.
 --- body ---
 ## Contexte
 

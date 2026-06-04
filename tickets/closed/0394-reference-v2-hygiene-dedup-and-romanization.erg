@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Reference v1: defects adjudicated, measured and documented; corrections delegated to the pipeline
+Created: 2026-06-03
+Author: claude
+Closed: autoclosed — PR #699
+
+--- log ---
+2026-06-03T00:00Z claude created — from the Exp2 FP audit: the reference has 17 cleaned-name collisions (true duplicates + distinct plants the cleaner wrongly collapses) and mixes 54 ASCII names with 109 diacritic names
+2026-06-03T00:00Z claude note — tagged needs-human: editing the frozen reference is a scientific decision (version bump + re-score), not a mechanical fix
+2026-06-04T00:00Z claude note — author adjudicated all 17 groups line-by-line: 3 raw-name key collisions fixed (DH2 romanization dup deleted, DNF/HTF renamed per the existing extension convention); 14 clean_name-only collisions left pending measurement
+2026-06-04T00:00Z claude note — measured on 80 Exp2 runs re-reconciled: FP 399->399 (zero effect), FN 7617->7537 (delta = phantom misses of the deleted dup row); Famille B collisions cause neither FP nor FN -> non-finding, cleaner untouched
+2026-06-04T00:00Z claude note — rescoped per author to minimal integrity patch (fix1, not v2): romanization unification and name_ascii dropped; adoption (before/after figures, Makefile rewire) deferred to follow-up ticket
+2026-06-04T00:00Z claude note — fold-uniqueness test caught a 4th defect nobody had seen: Quảng Trị 1 lists "Unit 2, Unit 2" (typo for Units 1+2); fixed at both levels
+2026-06-04T00:00Z claude note — needs-human tag dropped: all adjudications made by the author in-session
+2026-06-04T12:27Z claude note — author review of PR #699: REJECTED — il n'est pas permis d'inventer un nom de projet; the extension renames fabricated designations absent from primary sources
+2026-06-04T12:27Z claude note — reworked: DNF/HTF keep their attested names (two same-name, status-distinct rows each); the integrity invariant becomes structural (same name => pairwise distinct statuses + disjoint units_included); fix1 reduces to DH2 dedup + QT1 transcription fix
+2026-06-04T13:16Z claude note — author decision: leapfrog fix1, go straight to the clean pipeline; PR #699 stripped to documentation + instrumentation (PROVENANCE known-defects entry, fp-audit outcome, fp_audit --reference); fix1 artifacts, builder and test dropped — invariants rebirth with 0420/0416 validation
+2026-06-04T13:35Z claude note — author confirmed defect 2 sat in the MASTER itself (duplicated 'Quảng Trị 1 Unit 2', no Unit 1, in pipeline.ods) and fixed it there; attribution corrected: master carried defects 1-2, the aggregator passed them silently (no input guards) and manufactures defect 3 on its own
+2026-06-04T13:37Z HDMX-coding-agent closed — autoclosed — PR #699
+--- body ---
+## Context
+
+`data/reference/vietnam_thermal_v1.csv` is frozen at commit `85a0e6c7` for
+Exp1–3 (see `data/reference/PROVENANCE.md`). The Exp2 FP audit surfaced 17
+`clean_name` collisions and mixed romanization. Line-by-line adjudication
+(units_included in hand) re-diagnosed the picture: 1 romanization duplicate
+(`Duyen Hai 2`), 1 transcription error (`Quảng Trị 1` "Unit 2, Unit 2"),
+2 duplicated-name key collisions (`Dong Nai Formosa`, `Ha Tinh Formosa` —
+distinct unit groups sharing one name string), and 14 distinct-plant pairs
+that collide only after the cleaner's `^lng`/`^nd`/`^tbkhh`/paren drops.
+Root cause of the first three: the unit→plant aggregator (ticket 0416).
+
+## Delivered (final scope: leapfrog — document, measure, delegate)
+
+An interim patched copy ("fix1") was built, twice reworked under author
+review, measured, and finally dropped: nothing consumed it, its impact was
+nil, and it duplicated upstream truth downstream. What ships:
+
+- `PROVENANCE.md` § "Known defects of v1": the adjudications, the measured
+  impact, the no-invented-names rule, and the expected-delta checklist for
+  validating v2 at adoption (0413).
+- `docs/fp-audit-exp2.md` § Outcome: proposals 3–4 settled by measurement.
+- `experiments/scripts/fp_audit_exp2.py` gains `--reference/--label`
+  (reference-swap recounts — the instrument that produced the numbers and
+  will validate v2).
+- Corrections delegated: master (DH2.1 already fixed there 2026-06-03) +
+  regeneration pipeline 0420 (extraction, input validation) → 0416
+  (aggregator, output validation: plant name = unique key) → 0419
+  (consumers) → 0413 (adoption).
+
+## Measured non-finding (audit before instrumenting)
+
+Re-reconciling all 80 Exp2 runs against a corrected variant: FP 399->399;
+FN 7617->7537 (the delta is phantom misses of the duplicate row; DNF/HTF FN
+merely relabel — models rarely report those plants at all). The 14
+`clean_name` collisions cause neither FP nor FN. FP is dominated by
+`matcher_fail_lp_veto` (201 occ -> 0393) and `reference_hole` (99 occ ->
+0395). Therefore the cleaner gate and `name_ascii` alias are deliberately
+NOT implemented — no over-fitting the cleaner to the Vietnam instance.
+
+## Exit criteria (final)
+
+- [x] All 17 collision groups adjudicated by the author
+- [x] FP/FN impact measured on existing outputs and explained
+- [x] Defects, measurements and v2 expected-delta checklist recorded in
+      `PROVENANCE.md`; fp-audit doc outcome updated
+- [x] No patched reference shipped; no invented names anywhere
+- [x] Corrections delegated with tickets in place (0420/0416/0419/0413;
+      0395 rewired onto the pipe)
+
+## Related
+
+- `data/reference/PROVENANCE.md` § Known defects of v1 — canonical record
+- 0420/0416/0419 (pipeline), 0413 (adoption), 0412 (Cergy archive)
+- 0392/0393 (matcher — FP levers), 0395 (reference holes)

@@ -110,3 +110,49 @@ Vietnam's thermal generation fleet that would let an independent
 reviewer reconstruct the compilation row by row. Closing that gap
 is the motivation for the source-citation infrastructure in
 Experiments 2–3.
+
+## Known defects of v1 (2026-06-04, ticket 0394)
+
+The frozen v1 files keep scoring Exp1–3 **as-is**. The defects below are
+documented, their scoring impact is measured (nil for FP), and their
+correction is deliberately delegated to the master + regeneration
+pipeline (tickets 0420 → 0416 → 0419; adoption in 0413 after the Cergy
+archive 0412). An interim patched copy ("fix1", PR #699 first versions)
+was built, measured, and then dropped: it duplicated upstream truth
+downstream and nothing consumed it.
+
+Adjudicated by the author on 2026-06-03/04:
+
+1. `Duyen Hai 2` (ASCII, 600 MW, Unit 1) duplicates `Duyên Hải 2`
+   (1200 MW, Units 1+2) under a second romanization — at plant and unit
+   level. Already fixed in the master (pipeline.ods, 2026-06-03).
+2. `Quảng Trị 1` transcription error: `units_included` lists Unit 2
+   twice ("Unit 2, Unit 2"), and the unit file carries two identical
+   `Quảng Trị 1 Unit 2` rows — the plant is 1320 MW = 2 x 660, Units 1+2
+   (sibling plants all have Units 1+2). Present in the unit-level master
+   itself (a duplicated "Unit 2" row, no Unit 1); fixed there by the
+   author on 2026-06-04.
+3. `Dong Nai Formosa` ×2 and `Ha Tinh Formosa Plastics Steel Complex`
+   ×2: two rows sharing one name (operational base vs proposed
+   expansion, disjoint units). The plant name is the key and must be
+   unique in v2; resolution happens in the master with source-attested
+   designations — names are never invented.
+
+Origin: defects 1–2 sat in the unit-level master itself and have been
+fixed there by the author (DH2 on 2026-06-03, Quảng Trị 1 on
+2026-06-04); the aggregation step passed them through silently — no
+input guards — and manufactures defect 3 on its own
+(`HDM_aggregate.py` groups by name+status — ticket 0416). A spreadsheet
+round-trip during adjudication also coerced `ires_code` 0121 to 121 —
+which is why the v2 pipeline reads everything as text (ticket 0420).
+
+Measured impact (all 80 Exp2 runs re-reconciled against a corrected
+variant via `fp_audit_exp2.py --reference`): FP unchanged, 399 -> 399;
+FN 7617 -> 7537, the delta being phantom misses carried by the
+duplicate row. The 14 `clean_name` collisions among *distinct* plants
+(gas/LNG successors merged by the cleaner's prefix drops) cause neither
+FP nor FN — documented non-finding, the cleaner stays untouched.
+
+These defects double as the **expected-delta checklist** when validating
+v2 against v1 at adoption time (0413): any v1→v2 difference beyond them
+and the master's own evolution must be explained.

@@ -158,6 +158,21 @@ Concrete, test-first. Each step is independently shippable.
 6. **Re-audit, do not re-instrument blindly.** After steps 1–2 (the cheap,
    high-yield ones) re-run this script; the FP count is the regression oracle.
 
+**Outcome for proposals 3–4 (ticket 0394, 2026-06-04).** Re-running this audit
+with the reference swapped (`--reference`, `--label`) measured the collision
+repair directly on a corrected variant: FP 399 → 399, FN 7617 → 7537 — the
+delta is the phantom misses of the `Duyen Hai 2` romanization duplicate.
+Since the impact is nil, no patched reference was shipped: v1 keeps scoring
+as-is and its defects are documented in `PROVENANCE.md` §"Known defects of
+v1" (the `Duyên Hải 2` duplicate, a `Quảng Trị 1` "Unit 2, Unit 2"
+transcription error, and the `Dong Nai Formosa` / `Ha Tinh Formosa`
+duplicated-name rows — the plant name is the key and will be unique in v2,
+resolved in the master with source-attested designations, never invented
+ones). Corrections flow through the master + regeneration pipeline (tickets
+0420/0416, root cause = the unit→plant aggregator). The 14 cleaner-collapsed
+pairs cause neither FP nor FN, so the `lng`-drop gate and the romanised
+alias column (proposal 3) were dropped — documented non-finding.
+
 ## Reference extension (proposals)
 
 Add the verified reference holes (status as noted; all > 30 MWe). Each needs a
