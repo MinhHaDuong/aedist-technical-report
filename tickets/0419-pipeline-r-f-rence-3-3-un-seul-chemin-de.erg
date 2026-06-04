@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Pipeline référence 3/3: un seul chemin de référence côté consommateurs
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T12:56Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Règle auteur (2026-06-04) : les scripts qui comparent une sortie extraite de
+modèle à une liste de référence prennent les fichiers en ARGUMENTS de ligne
+de commande — pas de chemin de référence en dur.
+
+État : la plupart des entry points ont déjà `--reference`, mais le chemin par
+défaut est dupliqué en ~8 constantes module éparpillées :
+
+- `evaluate.py:_DEFAULT_REF`, `query_fusion.py:_DEFAULT_REF`,
+  `prototype_v1_fusion.py:_DEFAULT_REF`, `verify.py` (copie),
+  `tabulate_verification.py` (copie), `verify_source_grounding.py` (copie),
+  `reconcile.py:_REFERENCE`, `tabulate_reconciliation.py:_EXPERT_REF`
+- Côté make, `score.mk:SCORE_REFERENCE` est déjà le point unique — bien.
+
+## Quoi faire
+
+1. Une seule source du chemin par défaut (petit module/config partagé,
+   cf. règle « No hardcoded paths : defaults from config ») ; les 8
+   constantes dupliquées meurent.
+2. Chaque entry point qui compare sortie-modèle vs référence expose
+   `--reference` (compléter les manquants) et le défaut vient de la config.
+3. Vérifier qu'aucun module n'utilise la constante en interne sans passer
+   par le paramètre (ex. `reconcile.py:_REFERENCE`).
+4. Effet attendu : la bascule v1 → v2-du-pipe (0413) = un changement de
+   variable make + un défaut de config, zéro chasse aux constantes.
+
+## Exit criteria
+
+- [ ] Zéro occurrence de `vietnam_thermal_v1.csv` en dur dans `src/`
+      (hors module de config et docstrings)
+- [ ] Tous les entry points de comparaison acceptent `--reference`
+- [ ] `make check` vert (le DAG score.mk continue de passer `--reference`)
+
+## Related
+
+- 0418 (1/3 extraction), 0416 (2/3 agrégateur), 0413 (adoption — bénéficiaire
+  direct), refonte Makefile 0406 (paths.mk)

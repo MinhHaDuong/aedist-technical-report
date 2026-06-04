@@ -3,6 +3,7 @@ Title: Reference v2: add verified missing plants (Kiên Lương, Hòa Phát, Kim
 Created: 2026-06-03
 Author: claude
 Blocked-by: 0394
+Blocked-by: 0416
 Label: needs-human
 
 --- log ---
@@ -11,6 +12,7 @@ Label: needs-human
 
 2026-06-04T11:37Z claude note — FN recount (0394, 80 runs): top-missed reference rows are the LNG-project holes; fix1's merged scope leaves hole-filling entirely to this ticket (FP reference_hole bucket: 99 occ)
 2026-06-04T12:19Z claude note — Blocked-by candidate: 0416 fixes the aggregator that will regenerate plant rows when plants are added; adding via the unfixed aggregator reintroduces duplicate-name collisions
+2026-06-04T12:58Z claude note — Blocked-by 0416 formalized: additions flow through the master ods + validated pipe (0418→0416), not hand-appends to CSVs
 --- body ---
 ## Context
 
