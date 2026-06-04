@@ -129,18 +129,22 @@ Adjudicated by the author on 2026-06-03/04:
 2. `Quảng Trị 1` transcription error: `units_included` lists Unit 2
    twice ("Unit 2, Unit 2"), and the unit file carries two identical
    `Quảng Trị 1 Unit 2` rows — the plant is 1320 MW = 2 x 660, Units 1+2
-   (sibling plants all have Units 1+2).
+   (sibling plants all have Units 1+2). Present in the unit-level master
+   itself (a duplicated "Unit 2" row, no Unit 1); fixed there by the
+   author on 2026-06-04.
 3. `Dong Nai Formosa` ×2 and `Ha Tinh Formosa Plastics Steel Complex`
    ×2: two rows sharing one name (operational base vs proposed
    expansion, disjoint units). The plant name is the key and must be
    unique in v2; resolution happens in the master with source-attested
    designations — names are never invented.
 
-All three originate in the unit→plant aggregation step
-(`HDM_aggregate.py` groups by name+status with no input/output guards —
-ticket 0416); the unit-level master is sound. A spreadsheet round-trip
-during adjudication also coerced `ires_code` 0121 to 121 — which is why
-the v2 pipeline reads everything as text (ticket 0420).
+Origin: defects 1–2 sat in the unit-level master itself and have been
+fixed there by the author (DH2 on 2026-06-03, Quảng Trị 1 on
+2026-06-04); the aggregation step passed them through silently — no
+input guards — and manufactures defect 3 on its own
+(`HDM_aggregate.py` groups by name+status — ticket 0416). A spreadsheet
+round-trip during adjudication also coerced `ires_code` 0121 to 121 —
+which is why the v2 pipeline reads everything as text (ticket 0420).
 
 Measured impact (all 80 Exp2 runs re-reconciled against a corrected
 variant via `fp_audit_exp2.py --reference`): FP unchanged, 399 -> 399;

@@ -8,11 +8,14 @@ Blocked-by: 0420
 2026-06-04T12:18Z HDMX-coding-agent created
 2026-06-04T12:25Z claude note — author review verdict (PR #699): inventing project names is not permitted; drop the extension-suffix disambiguation — same-name multi-status rows are the data model, guards must be structural (status-distinct, disjoint units)
 2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0420 added
+2026-06-04T13:35Z claude note — attribution nuance: the master DID carry defects 1-2 (both now fixed there by the author); input guards are thus the primary catch for master regressions, not just defense in depth
 --- body ---
 ## Contexte
 
-Diagnostic auteur (2026-06-04) : pipeline.ods (maître) est bon — c'est
-l'agrégateur qui a fabriqué les défauts documentés dans
+Diagnostic auteur (2026-06-04, affiné) : le maître (pipeline.ods)
+portait les défauts 1–2 — corrigés là-bas par l'auteur — et l'agrégateur
+les a laissés passer sans garde ; il fabrique lui-même le défaut 3. Le
+tout documenté dans
 `PROVENANCE.md` § « Known defects of v1 » (ticket 0394, leapfrog : aucun
 patch intermédiaire livré, les corrections passent par ce pipe).
 

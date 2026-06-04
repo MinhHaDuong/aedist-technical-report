@@ -14,6 +14,7 @@ Author: claude
 2026-06-04T12:27Z claude note — author review of PR #699: REJECTED — il n'est pas permis d'inventer un nom de projet; the extension renames fabricated designations absent from primary sources
 2026-06-04T12:27Z claude note — reworked: DNF/HTF keep their attested names (two same-name, status-distinct rows each); the integrity invariant becomes structural (same name => pairwise distinct statuses + disjoint units_included); fix1 reduces to DH2 dedup + QT1 transcription fix
 2026-06-04T13:16Z claude note — author decision: leapfrog fix1, go straight to the clean pipeline; PR #699 stripped to documentation + instrumentation (PROVENANCE known-defects entry, fp-audit outcome, fp_audit --reference); fix1 artifacts, builder and test dropped — invariants rebirth with 0420/0416 validation
+2026-06-04T13:35Z claude note — author confirmed defect 2 sat in the MASTER itself (duplicated 'Quảng Trị 1 Unit 2', no Unit 1, in pipeline.ods) and fixed it there; attribution corrected: master carried defects 1-2, the aggregator passed them silently (no input guards) and manufactures defect 3 on its own
 --- body ---
 ## Context
 
