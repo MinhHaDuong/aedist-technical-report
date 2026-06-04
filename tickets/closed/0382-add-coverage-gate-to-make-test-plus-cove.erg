@@ -2,6 +2,7 @@
 Title: Add coverage gate to make test plus coverage dev dependency
 Created: 2026-05-28
 Author: Claude
+Closed: coverage gate implemented and verified 2026-05-29 — pytest-cov dev dep + make coverage (--cov-fail-under=70) wired into make check
 
 --- log ---
 2026-05-28T17:42Z Claude created — surfaced during test-coverage analysis (branch claude/test-coverage-analysis-OwuVY)
