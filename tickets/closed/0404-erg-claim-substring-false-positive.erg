@@ -2,10 +2,12 @@
 Title: erg claim detection false-positives on date-stamped branch names (substring match)
 Created: 2026-06-04
 Author: claude
+Closed: fixed upstream: erg 9c23c37 ref-matching no longer substring-matches date stamps — synthetic branch test-claim-20260604-000000 yields zero refs on 0260/0604 (empirical test in 0407 migration)
 
 --- log ---
 2026-06-04T06:40Z claude created — found during 2026-06-04 housekeeping triage
 
+2026-06-04T07:30Z HDMX-coding-agent closed — fixed upstream: erg 9c23c37 ref-matching no longer substring-matches date stamps — synthetic branch test-claim-20260604-000000 yields zero refs on 0260/0604 (empirical test in 0407 migration)
 --- body ---
 ## Context
 

@@ -6,6 +6,7 @@ Author: Claude
 --- log ---
 2026-05-29T14:20Z Claude created — prevention pair for 0388. The project ticket-close skill marks a ticket closed but never archives, and it edits a legacy Status: line that erg v1 does not use. This is the root cause of the closed-but-unarchived tickets (0370, 0378) the audit found.
 
+2026-06-04T07:30Z claude note re-triage vs erg 9c23c37 (0407): NOT native — erg close and erg archive remain two commands; mitigated by the native closed-not-archived check warning (0388 closed on that basis); keeping open
 --- body ---
 ## Context
 

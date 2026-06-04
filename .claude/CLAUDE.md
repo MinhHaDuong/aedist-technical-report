@@ -1,28 +1,30 @@
 # --- git-erg --- begin
 # Ticket system
 
-This project uses `%erg v1` local tickets for work coordination.
-You read and write `.erg` text files directly — no CLI needed.
+This project uses `%erg 0.1` local tickets for work coordination.
+The committed CLI is `tickets/erg` (role: traveling; provenance in
+`tickets/.erg-assets`) — use it rather than hand-editing where a verb
+exists.
 
 ## Commands
 
-- `/ticket-new [title]` — create a ticket
-- `/ticket-ready` — list unblocked tickets
-- `/ticket-close [id]` — close a ticket
-
-## Workflow
-
-1. `/ticket-ready` to see what's available
-2. Pick a ticket and do the work
-3. `/ticket-close 0042` when done
+- `tickets/erg new TITLE` — create a ticket (atomic ID allocation)
+- `tickets/erg ready` — list unblocked tickets (`--json` for tooling)
+- `tickets/erg close ID REASON` then `tickets/erg archive` — close + file
+- `tickets/erg log ID "actor verb detail"` — append a log entry
+- `tickets/erg check tickets/` — corpus integrity (duplicate IDs, refs,
+  closed-not-archived)
+- `tickets/erg migrate tickets/` — idempotent legacy-format fixer
 
 ## Notes
 
-- The validator lives in `tickets/tools/go/` with its own `go.mod` — this is isolated from any project-level Go modules.
-- Build it with `cd tickets/tools/go && go build -o erg .`
+- The binary is refreshed by copying from a git-erg release/main build —
+  there is no vendored source (`tickets/tools/go/` was removed in the
+  2026-06-04 migration, ticket 0407).
+- Agent rules live in `tickets/AGENTS.md`.
 
 ## Format spec
 
-See `tickets/spec-erg-v1.md` for the full format specification.
+Run `tickets/erg spec` (print-on-demand; the committed spec file is gone).
 
 # --- git-erg --- end

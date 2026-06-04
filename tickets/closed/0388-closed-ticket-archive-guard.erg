@@ -2,10 +2,12 @@
 Title: Adherence guard — no closed ticket left in the open dir (Closed: header but not archived)
 Created: 2026-05-29
 Author: Claude
+Closed: native in erg 9c23c37: erg check warns 'closed ticket not in closed/ directory' — proven on this corpus (flagged 0205 during the 0407 migration)
 
 --- log ---
 2026-05-29T13:30Z Claude created — found during a ticket-staleness audit: 0370 and 0378 both carried a Closed: header but were never moved to tickets/closed/, polluting ticket-ready sweeps
 
+2026-06-04T07:30Z HDMX-coding-agent closed — native in erg 9c23c37: erg check warns 'closed ticket not in closed/ directory' — proven on this corpus (flagged 0205 during the 0407 migration)
 --- body ---
 ## Context
 

@@ -1,4 +1,4 @@
-Last updated: 2026-06-03T16:00Z
+Last updated: 2026-06-04T07:29Z
 
 ## North star
 
@@ -13,14 +13,15 @@ Econom'IA 2026 talk delivered at Thema/Cergy 2026-05-27. Next: write the paper.
 Write the Exp 2 paper sections (0251–0262) and finish cross-eval scoring (0171). `slides-en.tex` is the single source of truth for slide prose; `slides.tex` (FR) is a derived translation (script in flight, 0389). Clean-room writing build landed (0352/0370): `make report` / `make slides` carry no `uv run`, guarded by adherence tests.
 
 ## Status
-<!-- generated 2026-06-03T16:00Z -->
-**Tickets:** 52 ready · 26 blocked — `erg ready tickets/` for full list
+<!-- generated 2026-06-04T07:29Z -->
+
+**Tickets:** 57 ready · 23 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  9ff41e25 tickets: log 0396-collision recurrence on 0390
-  cfa08bc1 ticket(0319): close as already-done — stale worktrees 0303-0309
-  32429feb tickets: open 0401 + 0402 (level schema / capacity coherence)
-  b8892bd4 tickets: renumber 0396/0397 -> 0398/0399/0400
-  84a81b18 report: ground the open-world dark figure in bound-coherence (HDR ch.8)
+  80ac6a5b Merge pull request #688 from MinhHaDuong/quickpr/ticket-0407-open-migrate-erg-version-bin-20260604-072510
+  e6f8ae2c ticket(0407): open — migrate erg version (binary + corpus + integration re-test, atomic)
+  11d3babe Merge pull request #687 from MinhHaDuong/quickpr/tickets-phase-reorg-plumbing-0406-design-20260604-071918
+  a9346c86 tickets: phase-reorg plumbing — 0406 design tracker, 0405 ratification log, 0205 superseded
+  89579623 Merge pull request #686 from MinhHaDuong/quickpr/ticket-0405-open-phase-stratified-artifa-20260604-064213
 
 ## Workplan
 
