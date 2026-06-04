@@ -5,8 +5,10 @@ Author: claude
 
 --- log ---
 2026-06-04T07:40Z claude created — design ratified by author in conversation (views in P3; S-order; P1 .PHONY-only; measurements.jsonl = mart v0 until 0297; dual-mode root; .mk lives with its deliverables)
-
 2026-06-04T08:11Z HDMX-coding-agent note blocker 0405 closed — Blocked-by removed.
+2026-06-04T08:30Z claude note Raid feasibility check: line ranges exact (227 = clean cut at "Tables and figures" comment); S-order confirmed safest. Two gaps for the render/acquire children: (a) shared ANALYSIS_* variable block (analysis.mk l.1-73) consumed by both P2 and P3 — render extraction must decide ownership (score.mk, duplication, or shared variables.mk include); (b) experiments/Makefile `self-consistency` (l.190-200) writes to report/inputs/generated/ — P3-adjacent, not pure P1, needs explicit placement at the acquire step.
+2026-06-04T08:55Z claude note Author decision: slides/inputs/generated/ is RETIRED — generated-tree unification is now IN scope, no longer optional-later. Inserted as new S1 (retire slides tree, single P3 deliverable home) so render.mk is written once against the final layout; old S1-S4 renumbered to S2-S5.
+2026-06-04T09:05Z claude note Author confirmed destination: report/inputs/generated/ is the single P3 tree. S1 child needs no layout decision — purely mechanical (move slides artifacts, repoint paths, update guards).
 --- body ---
 ## Context
 
@@ -27,7 +29,7 @@ Makefile mixes the dev loop with P2/P3/P4 orchestration.
 |-------|-----------------------------------|------------------------------|--------------------|
 | P1 acquire | `experiments/acquire.mk` | experiments.toml, corpus | raw replies: `experiments/outputs/**`, `archive/**` |
 | P2 score | `experiments/derived/score.mk` | `experiments/outputs/**` | `measurements.jsonl` (mart v0, transitional until 0297; do NOT move it), `exp2_mart.jsonl`, cross-eval CSVs |
-| P3 render | `experiments/render.mk` (lives with its scripts `src/aedist/plot_*`; deliverables span two trees — see note) | committed P2 outcomes | `report/inputs/generated/*`, `slides/inputs/generated/*` |
+| P3 render | `experiments/render.mk` (lives with its scripts `src/aedist/plot_*`; single deliverable tree after S1) | committed P2 outcomes | `report/inputs/generated/*` (single P3 home; slides tree retired by S1) |
 | P4 write | `slides/Makefile`, `report/Makefile` (unchanged) | committed P3 outcomes | final PDFs (non-precious) |
 
 - **Views are P3** (mart→view projection is render-time shaping); view
@@ -45,28 +47,41 @@ Makefile mixes the dev loop with P2/P3/P4 orchestration.
   clone, so the CI-side "paper up to date all the way" check is
   content-diff: `make world && git diff --exit-code` — that is ticket
   0360's oracle. Wire 0360 to this design instead of duplicating it.
-- **Note (out of scope, optional later)**: unifying the two generated/
-  trees would give render.mk a single deliverable home; not done here
-  (churns \input paths).
+- **Single P3 deliverable tree (author decision 2026-06-04)**:
+  `slides/inputs/generated/` is retired. All P3 outcomes live in
+  `report/inputs/generated/` (author-confirmed destination; minimal
+  churn — report tree survives as the single home). Slides
+  `\input`/`\includegraphics` paths and `slides/Makefile` prerequisites
+  repoint; clean-room test paths and .gitignore negations (from 0405)
+  updated to match.
 
 ## Migration steps (ratified order; ONE CHILD TICKET + ONE PR PER STEP)
 
 Cut child tickets at execution start, each `Blocked-by:` its
-predecessor; this tracker stays open until all four land.
+predecessor; this tracker stays open until all five land.
 
-- **S1 → child**: extract `render.mk` (analysis.mk l.227-568 + view
-  projections). Guard: `test_render_build_clean_room` — dry-run trace
-  contains no scoring/extraction scripts; no target path under P2
-  outcome paths. This kills the cascade first.
-- **S2 → child**: carve `score.mk` (analysis.mk l.74-226 + the
+- **S1 → child**: retire `slides/inputs/generated/` — move its tracked
+  P3 outcomes into `report/inputs/generated/`, repoint slides
+  `\input`/`\includegraphics` and `slides/Makefile` prereqs, update
+  .gitignore negations + clean-room/adherence test paths +
+  docs/pipeline-phases.md manifest. Done first so render.mk (S2) is
+  written once against the final layout. Guard: slides clean-room test
+  green; no path under `slides/inputs/generated/` remains in tree,
+  Makefiles, or .tex.
+- **S2 → child**: extract `render.mk` (analysis.mk l.227-568 + view
+  projections), all outputs to `report/inputs/generated/`. Guard:
+  `test_render_build_clean_room` — dry-run trace contains no
+  scoring/extraction scripts; no target path under P2 outcome paths.
+  This kills the cascade.
+- **S3 → child**: carve `score.mk` (analysis.mk l.74-226 + the
   extract/evaluate-all-records/rebuild-measurements verbs from
   experiments/Makefile). Guard: trace contains no worker/query calls; no
   target under `experiments/outputs/**`. `rebuild-measurements`
   documented as deliberate-and-reviewed (0383 lesson).
-- **S3 → child**: `experiments/Makefile` → `acquire.mk`, pure P1
+- **S4 → child**: `experiments/Makefile` → `acquire.mk`, pure P1
   (.PHONY sweeps + corpus utils pdf2md/build-corpus). Guard: adherence
   test that every acquire.mk target is .PHONY.
-- **S4 → child**: root Makefile rewrite (dev loop + include-all +
+- **S5 → child**: root Makefile rewrite (dev loop + include-all +
   staleness/world only); keep `make report`/`make slides`/`make check`
   working for CI (docs-build.yml); delete root figure prereq lists.
 
@@ -94,6 +109,8 @@ predecessor; this tracker stays open until all four land.
 
 - Four phase .mks in place, each with the header contract; root has
   exactly two cross-phase entries (staleness, world)
+- `slides/inputs/generated/` gone — one P3 deliverable tree, slides and
+  report both consume from it
 - Per-phase boundary guards green (render no-scoring, score no-API,
   acquire all-.PHONY) alongside the existing P4 clean-room tests
 - README overview + pipeline-phases.md manifest complete

@@ -1,0 +1,95 @@
+%erg 0.1
+Title: Retire slides/inputs/generated/ — single P3 deliverable tree (0406 S1)
+Created: 2026-06-04
+Author: claude
+
+--- log ---
+2026-06-04T09:20Z claude created — S1 child of tracker 0406; author confirmed destination report/inputs/generated/ as the single P3 tree
+
+--- body ---
+## Context
+
+Tracker 0406 restructures the build into one .mk per phase. Its S1
+(author-ratified 2026-06-04): retire `slides/inputs/generated/` so P3
+has a single deliverable tree, `report/inputs/generated/`. Done before
+the render.mk extraction (S2) so render.mk is written once against the
+final layout.
+
+The slides tree is already almost empty: slides consume nearly all
+artifacts via `../report/inputs/generated/`. Only 2 tracked files
+remain, BOTH with name collisions against different-content report
+files, so the move is a move-with-rename:
+
+| slides/inputs/generated/ | producer | destination |
+|--------------------------|----------|-------------|
+| `macros.tex` | `tabulate_macros --census-csv census_bars.csv` (rule at analysis.mk:377-380; report's `macros.tex` is tabulate_macros WITHOUT the flag — different content) | `report/inputs/generated/macros_slides.tex` |
+| `tab_exp2_2x2.tex` | FR variant (`ANALYSIS_EXP2_2X2_FR_TEX`, analysis.mk:53; report's is EN) | `report/inputs/generated/tab_exp2_2x2_fr.tex` |
+
+NOT a dedup: `macros_census.tex` (plot_method_convergence) is a third,
+unrelated generator — leave it alone. No content changes: `git mv` +
+repoint, never regenerate (mart staleness hazard, 0383).
+
+## Relevant files
+
+- `experiments/analysis.mk` — `ANALYSIS_SLIDE_GEN` (l.38),
+  `ANALYSIS_EXP2_2X2_FR_TEX` (l.53), `ANALYSIS_SLIDE_MACROS` (l.56),
+  slide-macros rule (l.375-380), `exp2-analysis-report` aggregate
+- root `Makefile` — `SLIDE_GEN` var (l.10) + its uses
+- `slides/Makefile` — `ROOT_SLIDE_GEN` (l.8) + prerequisite lists
+- `slides/slides.tex`, `slides/slides-en.tex` — l.16
+  `\InputIfFileExists{inputs/generated/macros}` →
+  `{../report/inputs/generated/macros_slides}`; l.353
+  `\input{inputs/generated/tab_exp2_2x2.tex}` →
+  `{../report/inputs/generated/tab_exp2_2x2_fr.tex}`
+- `.gitignore` — drop the `slides/inputs/generated/*` block + its
+  negations (added by 0405/PR #690)
+- `tests/` — `test_slides_build_clean_room`, `test_make_slides_prereqs`,
+  the 0405 adherence test; grep tests/ for `slides/inputs/generated`
+- `docs/pipeline-phases.md` — manifest rows for the two moved files;
+  P3 section now states the single-tree rule
+- Sweep: `grep -rn "slides/inputs/generated" --exclude-dir=.git .` must
+  end empty (translation script 0389, scripts/, src/, CI workflows)
+
+## Actions
+
+1. Red test first: adherence test asserting no reference to
+   `slides/inputs/generated` in Makefiles, .tex, tests, scripts, src,
+   and that the directory does not exist in the git index.
+2. `git mv` the two files to their renamed destinations.
+3. Repoint producers (analysis.mk vars/rules), consumers (slides .tex
+   ×2), and orchestration (root Makefile, slides/Makefile prereqs).
+4. Reconcile .gitignore (delete the slides-tree block; ensure the two
+   renamed files are covered by the existing
+   `!report/inputs/generated/...` negation scheme — they are .tex, which
+   is not wildcard-ignored, so just confirm).
+5. Update tests + docs/pipeline-phases.md manifest.
+6. Delete untracked leftovers in `slides/inputs/generated/` (regenerable
+   intermediates untracked by 0405) and the empty directory.
+
+## Test
+
+The adherence test of action 1 (red today: analysis.mk, Makefile,
+slides/Makefile, slides.tex, slides-en.tex, .gitignore all reference the
+tree). Green after actions 2-6.
+
+## Verification
+
+- [ ] `grep -rn "slides/inputs/generated" --exclude-dir=.git .` empty
+- [ ] `slides/inputs/generated/` absent from index and working tree
+- [ ] `test_slides_build_clean_room` + `test_make_slides_prereqs` green
+- [ ] 0405 adherence test (no tracked-but-ignored) still green
+- [ ] `make slides` builds (tectonic, artifacts only) — both FR and EN
+- [ ] `make check` green
+
+## Invariants
+
+- No artifact content changes — `git mv` only, never regenerate (0383)
+- Report tree files untouched except the two arrivals
+- CI (docs-build.yml) green; clean-room tests keep passing
+
+## Exit criteria
+
+- `slides/inputs/generated/` gone — tree, references, ignore lines
+- The two artifacts live renamed in `report/inputs/generated/`, slides
+  build consumes them from there
+- Guard test prevents reintroduction
