@@ -169,7 +169,7 @@ transcription error, and the `Dong Nai Formosa` / `Ha Tinh Formosa`
 duplicated-name rows — the plant name is the key and will be unique in v2,
 resolved in the master with source-attested designations, never invented
 ones). Corrections flow through the master + regeneration pipeline (tickets
-0418/0416, root cause = the unit→plant aggregator). The 14 cleaner-collapsed
+0420/0416, root cause = the unit→plant aggregator). The 14 cleaner-collapsed
 pairs cause neither FP nor FN, so the `lng`-drop gate and the romanised
 alias column (proposal 3) were dropped — documented non-finding.
 

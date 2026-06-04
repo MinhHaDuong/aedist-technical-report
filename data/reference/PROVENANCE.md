@@ -116,7 +116,7 @@ Experiments 2–3.
 The frozen v1 files keep scoring Exp1–3 **as-is**. The defects below are
 documented, their scoring impact is measured (nil for FP), and their
 correction is deliberately delegated to the master + regeneration
-pipeline (tickets 0418 → 0416 → 0419; adoption in 0413 after the Cergy
+pipeline (tickets 0420 → 0416 → 0419; adoption in 0413 after the Cergy
 archive 0412). An interim patched copy ("fix1", PR #699 first versions)
 was built, measured, and then dropped: it duplicated upstream truth
 downstream and nothing consumed it.
@@ -140,7 +140,7 @@ All three originate in the unit→plant aggregation step
 (`HDM_aggregate.py` groups by name+status with no input/output guards —
 ticket 0416); the unit-level master is sound. A spreadsheet round-trip
 during adjudication also coerced `ires_code` 0121 to 121 — which is why
-the v2 pipeline reads everything as text (ticket 0418).
+the v2 pipeline reads everything as text (ticket 0420).
 
 Measured impact (all 80 Exp2 runs re-reconciled against a corrected
 variant via `fp_audit_exp2.py --reference`): FP unchanged, 399 -> 399;

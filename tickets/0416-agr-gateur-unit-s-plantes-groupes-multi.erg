@@ -2,12 +2,12 @@
 Title: Pipeline référence 2/3: agrégateur unités→plantes refondu, sortie à clé unique
 Created: 2026-06-04
 Author: HDMX-coding-agent
-Blocked-by: 0418
+Blocked-by: 0420
 
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
 2026-06-04T12:25Z claude note — author review verdict (PR #699): inventing project names is not permitted; drop the extension-suffix disambiguation — same-name multi-status rows are the data model, guards must be structural (status-distinct, disjoint units)
-2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0418 added
+2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0420 added
 --- body ---
 ## Contexte
 
@@ -37,18 +37,18 @@ RÈGLES AUTEUR (2026-06-04) :
 ## Quoi faire
 
 1. Réécrire l'agrégateur en `aggregate_units.py` (argparse, entrée→sortie,
-   lecture intégrale en texte) consommant le CSV unités produit par 0418 ;
+   lecture intégrale en texte) consommant le CSV unités produit par 0420 ;
    propagation de la colonne `Level` (les lignes Level=unité s'agrègent ;
    le devenir des lignes d'autres niveaux se règle avec le maître en main).
 2. VALIDATION D'ENTRÉE : refuser les lignes unité dupliquées (le
    « Quảng Trị 1 Unit 2 » ×2 doit faire échouer l'agrégation, pas être
-   sommé en silence). Redondant avec 0418 par conception — défense en
+   sommé en silence). Redondant avec 0420 par conception — défense en
    profondeur.
 3. VALIDATION DE SORTIE : refuser si un nom de plante apparaît deux fois
    (clé unique), si une unité est répétée dans `Units Included`, ou si une
    unité apparaît dans deux groupes. Message actionnable listant les
    groupes fautifs pour résolution dans le maître.
-4. Câblage acquire.mk (post-0406/0411) : unités 0418 → plantes →
+4. Câblage acquire.mk (post-0406/0411) : unités 0420 → plantes →
    `add_classifications.py` réécrit en entrée→sortie (plus de modification
    en place).
 5. Oracle de validation : le diff v1 → sortie régénérée doit s'expliquer
@@ -68,7 +68,7 @@ RÈGLES AUTEUR (2026-06-04) :
 
 ## Related
 
-- 0418 (1/3 — extraction validée, prérequis), 0419 (3/3 — consommateurs)
+- 0420 (1/3 — extraction validée, prérequis), 0419 (3/3 — consommateurs)
 - 0394 (défauts documentés — la checklist), 0395 (ajouts — consommateur),
   0413 (adoption v2)
 - `data/reference/HDM_aggregate.py` (à remplacer),
