@@ -262,3 +262,97 @@ def test_generated_artifacts_have_a_producer():
         "artifacts, experiments/derived/score.mk for P2 mart/cross-eval) or, "
         "for multi-output scripts, a grouped target `a b &:`."
     )
+
+
+# ---------------------------------------------------------------------------
+# Guard: empty $(wildcard experiments/outputs/...) with non-empty archive
+# sibling (ticket 0423 — class guard for the edda724b archive move)
+# ---------------------------------------------------------------------------
+
+_PHASE_MKS: list[Path] = [
+    REPO_ROOT / "experiments" / "render.mk",
+    REPO_ROOT / "experiments" / "derived" / "score.mk",
+    REPO_ROOT / "experiments" / "acquire.mk",
+]
+
+
+def _extract_wildcard_patterns(text: str) -> list[str]:
+    """Return every PATTERN from $(wildcard PATTERN) in text, nesting-aware."""
+    out: list[str] = []
+    i = 0
+    while i < len(text):
+        idx = text.find("$(wildcard ", i)
+        if idx == -1:
+            break
+        start = idx + len("$(wildcard ")
+        depth, j = 1, start
+        while j < len(text) and depth:
+            depth += (text[j] == "(") - (text[j] == ")")
+            j += 1
+        if depth == 0:
+            out.append(text[start : j - 1].strip())
+        i = max(j, i + 1)
+    return out
+
+
+def _phase_variables(mk_path: Path) -> dict[str, str]:
+    """Variables dict for a phase makefile, with experiments/paths.mk pre-loaded."""
+    variables: dict[str, str] = {}
+    shared = REPO_ROOT / "experiments" / "paths.mk"
+    if shared.is_file():
+        _collect_assignments(shared, variables)
+    _collect_assignments(mk_path, variables)
+    return variables
+
+
+@pytest.mark.adherence
+def test_no_empty_outputs_wildcard_with_nonempty_archive_sibling() -> None:
+    """$(wildcard experiments/outputs/...) empty + non-empty archive sibling → fail.
+
+    Guards the class of bug fixed by ticket 0421: after the edda724b archive
+    move, any $(wildcard experiments/outputs/<dir>/...) that silently expands
+    to zero files while the matching archive/outputs/ sibling is non-empty
+    indicates a stale wildcard that should be repointed to archive.
+    """
+    import glob as _glob
+
+    live_pfx = str(REPO_ROOT / "experiments" / "outputs") + os.sep
+    arch_pfx = str(REPO_ROOT / "experiments" / "archive" / "outputs") + os.sep
+    failures: list[str] = []
+
+    for mk_path in _PHASE_MKS:
+        if not mk_path.is_file():
+            continue
+        variables = _phase_variables(mk_path)
+        mk_rel = mk_path.relative_to(REPO_ROOT)
+        for raw in _logical_lines(mk_path):
+            if raw.startswith("\t"):
+                continue
+            line = raw.split("#", 1)[0]
+            if not line.strip():
+                continue
+            for pat in _extract_wildcard_patterns(line):
+                expanded = _expand(pat, variables)
+                if "$(" in expanded:
+                    continue  # unexpanded make function — skip
+                norm = os.path.normpath(
+                    os.path.join(str(REPO_ROOT), expanded.strip())
+                )
+                if not norm.startswith(live_pfx):
+                    continue
+                if _glob.glob(norm):
+                    continue  # wildcard resolves to files — OK
+                arch = arch_pfx + norm[len(live_pfx):]
+                arch_hits = _glob.glob(arch)
+                if arch_hits:
+                    failures.append(
+                        f"  {mk_rel}: $(wildcard {expanded}) → 0 files; "
+                        f"archive sibling has {len(arch_hits)} file(s) — "
+                        f"repoint to archive?"
+                    )
+
+    assert not failures, (
+        "$(wildcard experiments/outputs/...) expands empty but the archive "
+        "sibling is non-empty (edda724b class guard — ticket 0423):\n"
+        + "\n".join(failures)
+    )
