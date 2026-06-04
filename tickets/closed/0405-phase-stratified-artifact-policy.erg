@@ -2,11 +2,13 @@
 Title: Phase-stratified artifact policy — track phase outcomes, ignore intra-phase intermediates
 Created: 2026-06-04
 Author: claude
+Closed: policy documented, 22 files reconciled, adherence guard added
 
 --- log ---
 2026-06-04T07:05Z claude created — author ratified the policy during 2026-06-04 triage (follow-up to the 22 tracked-but-ignored files found by housekeeping)
 2026-06-04T07:45Z claude note Design refinements ratified, binding on this ticket's manifest: (1) mart→view projections are P3, so view CSVs classify as render intermediates (stay ignored); (2) measurements.jsonl is mart v0 — a P2 outcome, transitional until 0297 retires it, do NOT move or untrack it; (3) this ticket is S0 of the build restructure tracked by 0406 (one .mk per phase) — the manifest written here is the spec 0406 enforces structurally.
 
+2026-06-04T08:11Z HDMX-coding-agent closed — policy documented, 22 files reconciled, adherence guard added
 --- body ---
 ## Context
 

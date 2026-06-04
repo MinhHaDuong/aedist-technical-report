@@ -2,11 +2,11 @@
 Title: [tracking] One .mk per phase — hard boundaries for dev, root include-all for staleness
 Created: 2026-06-04
 Author: claude
-Blocked-by: 0405
 
 --- log ---
 2026-06-04T07:40Z claude created — design ratified by author in conversation (views in P3; S-order; P1 .PHONY-only; measurements.jsonl = mart v0 until 0297; dual-mode root; .mk lives with its deliverables)
 
+2026-06-04T08:11Z HDMX-coding-agent note blocker 0405 closed — Blocked-by removed.
 --- body ---
 ## Context
 

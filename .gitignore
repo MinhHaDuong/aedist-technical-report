@@ -34,10 +34,20 @@ htmlcov/
 *.pdf
 # Source documents deposited in docs/ are durable references, not rendered output
 !docs/*.pdf
+# P3→P4 boundary: report/inputs/generated/ is the analysis→writing handoff
+# surface. Its figure PDFs are phase OUTCOMES the manuscript/slides include
+# (policy: docs/pipeline-phases.md). The global *.pdf above still ignores
+# report.pdf and LaTeX aux PDFs (those live elsewhere / are P4 finals).
+!report/inputs/generated/*.pdf
 
-# Generated slide data (report inputs are tracked)
-slides/inputs/generated/
-# Slide handoff artifacts committed by the analysis build
+# Generated slide data: ignore the directory CONTENTS (`/*`, not the
+# directory itself) so the per-file negations below can re-include the
+# tracked boundary outcomes. The trailing-slash form `slides/inputs/generated/`
+# excludes the whole tree and makes negations dead — see docs/pipeline-phases.md.
+slides/inputs/generated/*
+# Slide P3→P4 boundary outcomes: the only slides/inputs/generated files
+# `\input` by slides.tex (everything else there — fig_regimes_scatter.pdf,
+# fig_scaling_curve.pdf, cost_quality.csv — has no P4 consumer = intermediate).
 !slides/inputs/generated/macros.tex
 !slides/inputs/generated/tab_exp2_2x2.tex
 
@@ -45,10 +55,15 @@ slides/inputs/generated/
 !slides/inputs/logo-cired.pdf
 !slides/inputs/QR-aedist.pdf
 
-# Intermediate report-generated files — rebuilt by make, not handoff artifacts
+# Intermediate report-generated files — P3-internal, rebuilt by make, not
+# handoff artifacts. cost_quality.csv is consumed only inside P3 (its rows feed
+# plot_exp2_arms_split; the manuscript caption merely cites it for audit). The
+# view CSVs are mart→view projections (P3). macros_p1_base.tex is deliberately
+# NOT listed here: it is a P3→P4 boundary outcome (`\InputIfFileExists` by both
+# report.tex and slides.tex). No global pattern matches .tex, so dropping its
+# ignore line is enough to track it.
 report/inputs/generated/census_bars.csv
 report/inputs/generated/cost_quality.csv
-report/inputs/generated/macros_p1_base.tex
 report/inputs/generated/exp2_mart.jsonl
 report/inputs/generated/exp2_turn_trajectory_view.csv
 report/inputs/generated/sota_cross_eval_view.csv
@@ -78,6 +93,10 @@ attic/
 experiments/outputs/sota_exp3_*/**/*.md
 !experiments/outputs/sota_exp3_*/**/README.md
 !experiments/outputs/sota_exp3_*/**/summary_*.md
+# Exception: this one mistral.md is a tracked P1 raw-output sibling of its
+# mistral.json (committed for provenance). Negation is scoped to the EXACT
+# path — never a `*.md` glob — so no other extracted markdown is re-included.
+!experiments/outputs/sota_exp3_arm3_batch1/archive/run02_rerun_mistral_20260525T0521_local/mistral.md
 
 # Evaluation reconciliation artifacts (generated)
 reconciliation_*.csv
