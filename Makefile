@@ -7,7 +7,6 @@
 
 MEASUREMENTS := measurements.jsonl
 GEN          := report/inputs/generated
-SLIDE_GEN    := slides/inputs/generated
 
 .PHONY: test test-fast test-slow coverage lint check-fast check census census-summary show-prompts
 
@@ -111,8 +110,8 @@ slides/slides.pdf: slides/slides.tex \
     $(GEN)/fig_exp2_coverage.pdf \
     $(GEN)/fig_exp2_cost.pdf \
     $(GEN)/fig_exp2_coverage_certainty.pdf \
-    $(SLIDE_GEN)/macros.tex \
-    $(SLIDE_GEN)/tab_exp2_2x2.tex \
+    $(GEN)/macros_slides.tex \
+    $(GEN)/tab_exp2_2x2_fr.tex \
     $(GEN)/macros_p1_base.tex
 	$(MAKE) -C slides
 

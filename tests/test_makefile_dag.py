@@ -3,8 +3,8 @@
 The build is split into two workpackages (see slides/Makefile header):
 
   * analysis  -- experiments/*.mk, run on demand with data/network access,
-                 writes artifacts into report/inputs/generated/ and
-                 slides/inputs/generated/.
+                 writes artifacts into report/inputs/generated/ (the single
+                 P3 deliverable tree; the slides-side tree was retired, 0408).
   * writing   -- Makefile + report/Makefile + slides/Makefile, compiles the
                  PDFs from those artifacts treated as committed inputs.
 
@@ -123,8 +123,7 @@ def test_generated_artifacts_have_a_producer():
 
     orphans = sorted(k for k in all_prereqs if k not in all_targets)
     detail = "\n".join(
-        f"  - {k}  (required by: {', '.join(sorted(all_prereqs[k]))})"
-        for k in orphans
+        f"  - {k}  (required by: {', '.join(sorted(all_prereqs[k]))})" for k in orphans
     )
     assert not orphans, (
         "Generated artifacts used as prerequisites but produced by no makefile "

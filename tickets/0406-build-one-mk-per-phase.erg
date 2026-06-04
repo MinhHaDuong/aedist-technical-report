@@ -9,6 +9,7 @@ Author: claude
 2026-06-04T08:30Z claude note Raid feasibility check: line ranges exact (227 = clean cut at "Tables and figures" comment); S-order confirmed safest. Two gaps for the render/acquire children: (a) shared ANALYSIS_* variable block (analysis.mk l.1-73) consumed by both P2 and P3 — render extraction must decide ownership (score.mk, duplication, or shared variables.mk include); (b) experiments/Makefile `self-consistency` (l.190-200) writes to report/inputs/generated/ — P3-adjacent, not pure P1, needs explicit placement at the acquire step.
 2026-06-04T08:55Z claude note Author decision: slides/inputs/generated/ is RETIRED — generated-tree unification is now IN scope, no longer optional-later. Inserted as new S1 (retire slides tree, single P3 deliverable home) so render.mk is written once against the final layout; old S1-S4 renumbered to S2-S5.
 2026-06-04T09:05Z claude note Author confirmed destination: report/inputs/generated/ is the single P3 tree. S1 child needs no layout decision — purely mechanical (move slides artifacts, repoint paths, update guards).
+2026-06-04T08:55Z claude note S1 done (PR #692): slides/inputs/generated retired; S2 (render.mk) unblocked.
 --- body ---
 ## Context
 

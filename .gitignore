@@ -40,17 +40,6 @@ htmlcov/
 # report.pdf and LaTeX aux PDFs (those live elsewhere / are P4 finals).
 !report/inputs/generated/*.pdf
 
-# Generated slide data: ignore the directory CONTENTS (`/*`, not the
-# directory itself) so the per-file negations below can re-include the
-# tracked boundary outcomes. The trailing-slash form `slides/inputs/generated/`
-# excludes the whole tree and makes negations dead — see docs/pipeline-phases.md.
-slides/inputs/generated/*
-# Slide P3→P4 boundary outcomes: the only slides/inputs/generated files
-# `\input` by slides.tex (everything else there — fig_regimes_scatter.pdf,
-# fig_scaling_curve.pdf, cost_quality.csv — has no P4 consumer = intermediate).
-!slides/inputs/generated/macros.tex
-!slides/inputs/generated/tab_exp2_2x2.tex
-
 # Slide assets: handoff artifacts derived from tracked sources
 !slides/inputs/logo-cired.pdf
 !slides/inputs/QR-aedist.pdf

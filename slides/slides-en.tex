@@ -13,7 +13,7 @@
 \usecolortheme{metropolis}
 \setbeamertemplate{frame numbering}[fraction]
 
-\InputIfFileExists{inputs/generated/macros}{}{}
+\InputIfFileExists{../report/inputs/generated/macros_slides}{}{}
 \InputIfFileExists{../report/inputs/generated/macros_p1_base}{}{}
 
 \definecolor{matched}{HTML}{2E86AB}
@@ -349,8 +349,8 @@ Five axes for judging the quality of research statistical data:
 \small
 
 % Data-driven: regenerated from sota_cross_eval.csv by aedist.tabulate_exp2_2x2.
-% NOTE: tab_exp2_2x2.tex is currently generated with --lang fr; regenerate with --lang en for an English render.
-\input{inputs/generated/tab_exp2_2x2.tex}
+% NOTE: tab_exp2_2x2_fr.tex is the FR table (tabulate_exp2_2x2 --lang fr); regenerate with --lang en for an English render.
+\input{../report/inputs/generated/tab_exp2_2x2_fr.tex}
 
 \vspace{0.8em}
 {\footnotesize $N=4$ models (blocking factor), 5 reps/cell. We report directional consistency $k/n$, not a significance threshold: at $n=4$, $p_{\min}=1/2^4=0.0625$ is unreachable.}

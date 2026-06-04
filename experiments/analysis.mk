@@ -35,7 +35,6 @@ ANALYSIS_EXP2_ARM4_MDS := $(wildcard $(ANALYSIS_EXP2_ARM4_DIR)/*.md)
 ANALYSIS_EXP2_PROBE_RAWS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.raw.json)
 ANALYSIS_EXP2_PROBE_CLSF := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.classification.json)
 
-ANALYSIS_SLIDE_GEN ?= $(ANALYSIS_REPO_ROOT)/slides/inputs/generated
 ANALYSIS_EXP2_MART_JSONL := $(ANALYSIS_DERIVED_DIR)/exp2_mart.jsonl
 ANALYSIS_EXP2_MART_VIEWS := \
 	$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
@@ -50,10 +49,10 @@ ANALYSIS_EXP2_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty.pdf
 ANALYSIS_EXP2_SPIRE_FIG := $(ANALYSIS_GEN)/fig_quality_spider.pdf
 ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
 ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
-ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_SLIDE_GEN)/tab_exp2_2x2.tex
+ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_fr.tex
 ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
-ANALYSIS_SLIDE_MACROS := $(ANALYSIS_SLIDE_GEN)/macros.tex
+ANALYSIS_SLIDE_MACROS := $(ANALYSIS_GEN)/macros_slides.tex
 
 ANALYSIS_EXP1_SPIDER_FAMILIES := $(ANALYSIS_GEN)/fig_spider_exp1_families.pdf
 ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
@@ -372,7 +371,7 @@ $(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) &: \
 	    --coverage-output $(ANALYSIS_EXP2_COVERAGE_SPLIT) \
 	    --cost-output $(ANALYSIS_EXP2_COST_SPLIT)
 
-# --- Slide macros (census + measurements → slides/inputs/generated/) ----------
+# --- Slide macros (census + measurements → report/inputs/generated/macros_slides.tex) ---
 
 $(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_GEN)/census_bars.csv $(ANALYSIS_REPO_ROOT)/measurements.jsonl
 	@mkdir -p $(dir $@)
@@ -507,11 +506,7 @@ $(ANALYSIS_GEN)/fig_direct_cost_quality.pdf $(ANALYSIS_GEN)/cost_quality.csv &: 
 	uv run python -m aedist.plot_cost_quality \
 	    --output $(ANALYSIS_GEN)/cost_quality.csv --figure $(ANALYSIS_GEN)/fig_direct_cost_quality.pdf
 
-$(ANALYSIS_SLIDE_GEN)/regimes.csv: $(ANALYSIS_GEN)/regimes.csv
-	@mkdir -p $(dir $@)
-	cp $< $@
-
-$(ANALYSIS_SLIDE_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
@@ -528,12 +523,12 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 	    --result-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/ \
 	    --output-macros $(dir $@)macros_p1_base.tex
 
-$(ANALYSIS_SLIDE_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
+$(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_regimes_scatter \
 	    --output $@
 
-$(ANALYSIS_SLIDE_GEN)/fig_scaling_curve.pdf: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/fig_scaling_curve.pdf: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_scaling_curve \
 	    --output $@
@@ -563,6 +558,6 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
-	$(ANALYSIS_SLIDE_GEN)/fig_method_convergence.pdf \
-	$(ANALYSIS_SLIDE_GEN)/fig_regimes_scatter.pdf \
-	$(ANALYSIS_SLIDE_GEN)/fig_scaling_curve.pdf
+	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
+	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
+	$(ANALYSIS_GEN)/fig_scaling_curve.pdf

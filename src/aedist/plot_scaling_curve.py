@@ -7,7 +7,7 @@ Horizontal reference lines show best cloud API results.
 
 Usage:
     uv run python -m aedist.plot_scaling_curve \
-        --output slides/inputs/generated/fig_scaling_curve.pdf
+        --output report/inputs/generated/fig_scaling_curve.pdf
 """
 
 import argparse

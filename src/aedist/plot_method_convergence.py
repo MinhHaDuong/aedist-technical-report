@@ -9,7 +9,7 @@ A good method drives all bars to 163 with nothing in orange.
 
 Usage:
     uv run python -m aedist.plot_method_convergence \
-        --output slides/inputs/generated/fig_method_convergence.pdf
+        --output report/inputs/generated/fig_method_convergence.pdf
 """
 
 import argparse
@@ -209,7 +209,9 @@ def write_pdf(
         if models:
             method_rows = [r for r in method_rows if r["model"] in models]
         total_runs += len(_select_min_median_max(method_rows))
-    fig_height = max(fig_height_min, fig_height_per_run * total_runs + fig_height_per_method * len(order))
+    fig_height = max(
+        fig_height_min, fig_height_per_run * total_runs + fig_height_per_method * len(order)
+    )
 
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
@@ -311,7 +313,12 @@ def write_pdf(
                 va="center",
                 fontsize=13.5 * ui_scale,
                 color=model_family_color(model),
-                bbox={"boxstyle": "round,pad=0.15", "facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
+                bbox={
+                    "boxstyle": "round,pad=0.15",
+                    "facecolor": "white",
+                    "alpha": 0.75,
+                    "edgecolor": "none",
+                },
             )
 
         band_center = band_start + (len(method_rows) - 1) * spacing / 2
