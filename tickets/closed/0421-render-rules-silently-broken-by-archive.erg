@@ -2,12 +2,14 @@
 Title: Render rules silently broken by archive move: empty tables from record-only outputs dirs
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #713
 
 --- log ---
 2026-06-04T13:58Z HDMX-coding-agent created
 
 2026-06-04T14:25Z claude claimed t421 branch, raid launch
 2026-06-04T14:35Z claude note three dispositions landed: tab_coherence repointed+byte-verified, self-consistency repointed (0383 unsafe to verify), tab_decomposition_fix frozen+allowlisted; check-fast green
+2026-06-04T14:48Z HDMX-coding-agent closed — autoclosed — PR #713
 --- body ---
 ## Context
 
