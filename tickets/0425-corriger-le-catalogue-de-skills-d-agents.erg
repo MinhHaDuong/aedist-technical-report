@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Corriger le catalogue de skills d'AGENTS.md — références fantômes et renommage
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T16:18Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Sweep /celebrate du ticket 0412 : la découverte du skill fantôme
+`/update-publist` (→ IDH 0214) a déclenché un audit complet du catalogue
+de skills d'AGENTS.md contre les skills réellement résolubles
+(`~/.claude/skills/` + `.claude/skills/` + builtins Claude Code).
+Six références ne résolvent pas :
+
+| Référence AGENTS.md | Réalité | Action probable |
+|---|---|---|
+| `/new-ticket` | le skill s'appelle `ticket-new` | renommer la ligne |
+| `/autonomous` | n'existe nulle part | supprimer ou re-pointer (beat/raid/nightbeat ont repris ce rôle) |
+| `/submission-branch` | n'existe nulle part | supprimer ou re-pointer |
+| `/submission-readiness` | n'existe nulle part | supprimer ou re-pointer |
+| `/orchestrator` (§ Autonomous workflow, l.86) | n'existe nulle part | re-pointer vers `/raid` ou supprimer la mention |
+| `/update-publist` | n'existe nulle part | garder la ligne, IDH 0214 va le créer — ou retirer en attendant |
+
+`/review` et `/simplify` sont des builtins Claude Code : OK, ne pas toucher.
+
+## Actions
+
+1. Pour chaque ligne du tableau, décider : renommer, supprimer, ou re-pointer
+   (décision éditoriale — si un skill a un successeur réel, pointer dessus).
+2. Mettre à jour la table Skills et le § Autonomous workflow d'AGENTS.md.
+3. Vérifier qu'aucune autre prose du dépôt ne référence les noms supprimés
+   (`rg '/(autonomous|new-ticket|submission-branch|submission-readiness|orchestrator)\b' --type md`).
+
+## Test
+
+Voir ticket 0426 (garde-fou pérenne) — ce ticket-ci est la correction
+éditoriale ponctuelle ; son « test » est la revue de la MR.
+
+## Exit criteria
+
+- [ ] Chaque `/skill` cité dans AGENTS.md résout vers un skill installé ou builtin
+      (ou est explicitement marqué « à créer », avec ticket lié)
+- [ ] Aucune référence orpheline dans les autres .md du dépôt
+
+## Related
+
+- 0426 (test d'adhérence pérenne)
+- IDH 0214 (création de /update-publist)

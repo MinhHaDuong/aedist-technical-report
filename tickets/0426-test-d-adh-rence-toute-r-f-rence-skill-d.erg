@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Test d'adhérence: toute référence /skill d'AGENTS.md doit résoudre vers un skill réel
+Created: 2026-06-04
+Author: HDMX-coding-agent
+Blocked-by: 0425
+
+--- log ---
+2026-06-04T16:18Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Garde-fou de classe issu du sweep /celebrate 0412 : le catalogue de skills
+d'AGENTS.md est maintenu à la main et a accumulé 6 références qui ne
+résolvent pas (voir ticket 0425). IDH protège son propre README par
+`make check-skills-drift` ; AEDIST n'a aucun équivalent pour AGENTS.md.
+Sans garde-fou, la classe revient : chaque renommage ou suppression de
+skill dans IDH peut re-casser silencieusement le catalogue d'ici.
+
+Bloqué par 0425 : le test doit naître vert sur un catalogue corrigé.
+
+## Actions
+
+1. Écrire `tests/test_agents_md_skills.py`, marqué `@pytest.mark.adherence` :
+   - extraire les références `` `/skill` `` d'AGENTS.md (regex sur backticks)
+   - résoudre contre : `.claude/skills/`, `~/.claude/skills/`, et une liste
+     explicite de builtins Claude Code (`review`, `simplify`, `code-review`,
+     `verify`, `init`, …) maintenue dans le test
+   - autoriser un marqueur d'exception explicite (ex. ligne « à créer,
+     ticket NNNN ») pour les skills planifiés
+2. Brancher dans `make check-fast` (test pur, pas de subprocess).
+
+## Test
+
+Rouge d'abord : sur l'AGENTS.md actuel (avant 0425), le test doit lister
+exactement les références fantômes du tableau de 0425. Vert après 0425.
+
+## Exit criteria
+
+- [ ] Test présent, marqué adherence, listant les références non résolues
+- [ ] `make check-fast` le couvre
+- [ ] Vert sur main après merge de 0425
+
+## Related
+
+- 0425 (correction éditoriale — prérequis)
