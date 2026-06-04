@@ -118,8 +118,14 @@ def _collect_assignments(path: Path, variables: dict[str, str]) -> None:
                 variables[name] = val
 
 
-def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
-    """Return (targets, prereq_sources) of generated-artifact keys."""
+def _parse_to_vars_rules(path: Path) -> tuple[dict[str, str], list[str]]:
+    """Scan `path` into (resolved variables, rule lines).
+
+    Shared preamble for _parse and _all_targets_any_ext: skips recipe and
+    comment lines, pulls sibling-include variable assignments in, applies
+    `+=`/`?=`/`=` semantics, and collects every non-recipe line containing
+    a `:` as a rule line for the caller to split.
+    """
     variables: dict[str, str] = {}
     rules: list[str] = []
     for raw in _logical_lines(path):
@@ -147,7 +153,12 @@ def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
             continue
         if ":" in line:
             rules.append(line)
+    return variables, rules
 
+
+def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
+    """Return (targets, prereq_sources) of generated-artifact keys."""
+    variables, rules = _parse_to_vars_rules(path)
     mk_dir = path.parent.relative_to(REPO_ROOT)
     targets: set[str] = set()
     prereqs: dict[str, set[str]] = {}
@@ -170,34 +181,7 @@ def _all_targets_any_ext(path: Path) -> set[str]:
     Same scan as _parse but keyed on GEN_ANY_RE (any extension) and targets
     only — prerequisites are irrelevant to the tracked-artifact guard.
     """
-    variables: dict[str, str] = {}
-    rules: list[str] = []
-    for raw in _logical_lines(path):
-        if raw.startswith("\t"):
-            continue
-        line = raw.split("#", 1)[0]
-        if not line.strip():
-            continue
-        inc = INCLUDE_RE.match(line)
-        if inc:
-            for name in INCLUDE_MK_RE.findall(inc.group(1)):
-                sibling = path.parent / name
-                if sibling.is_file():
-                    _collect_assignments(sibling, variables)
-            continue
-        m = ASSIGN_RE.match(line)
-        if m:
-            name, op, val = m.group(1), m.group(2), m.group(3).strip()
-            if op == "+=":
-                variables[name] = f"{variables.get(name, '')} {val}".strip()
-            elif op == "?=" and name in variables:
-                pass
-            else:
-                variables[name] = val
-            continue
-        if ":" in line:
-            rules.append(line)
-
+    variables, rules = _parse_to_vars_rules(path)
     mk_dir = path.parent.relative_to(REPO_ROOT)
     targets: set[str] = set()
     for line in rules:
