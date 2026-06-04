@@ -447,3 +447,16 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
 	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
 	$(ANALYSIS_GEN)/fig_scaling_curve.pdf
+
+# --- Full-phase aggregate (P3 render surface) -------------------------------
+# `all` rebuilds every committed handoff artifact this phase produces, so the
+# root `world`/`staleness` entries (tracker 0406 S5, ticket 0415) drive the
+# whole P3 surface through one recursive `-f render.mk all` delegation. It is
+# the UNION of every P3 grouping target — dropping any member would silently
+# omit those figures/tables from a "full" rebuild. Consumes committed P2
+# outcomes as sources only (clean-room: no scoring/extraction here, guarded by
+# tests/test_render_build_clean_room.py).
+.PHONY: all
+all: report-tables report-figures chart-figures self-consistency \
+	exp1-cost-summary exp1-reasoning-topup \
+	exp2-analysis-report exp1-analysis-figures

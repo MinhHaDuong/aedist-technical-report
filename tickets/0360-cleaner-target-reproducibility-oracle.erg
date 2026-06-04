@@ -8,6 +8,7 @@ Author: claude
 2026-05-27T00:00Z claude note — dropped stale Blocked-by 0354 (common.mk dedup merged via PR #627); body refs to common.mk's target vars remain the design foundation
 
 2026-05-28T12:54Z HDMX-coding-agent note blocker 0352 closed — Blocked-by removed.
+2026-06-04T12:11Z claude note 0406 S5 landed make world — the oracle is now: make world && git diff --exit-code (CI-side content diff). Re-point implementation here.
 --- body ---
 ## Context
 

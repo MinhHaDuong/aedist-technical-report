@@ -52,7 +52,8 @@ def load(method: Method | str | None = None) -> list[RunRecord]:
     """Load measurements, optionally filtered by method.
 
     Reads the cache file declared in ``experiments.toml [paths].measurements``.
-    Returns an empty list if the file does not exist yet (run ``make measurements``).
+    Returns an empty list if the file does not exist yet
+    (run ``make -f experiments/derived/score.mk measurements.jsonl``).
     """
     paths = _load_paths()
     measurements_path = _resolve(paths.get("measurements", "measurements.jsonl"))

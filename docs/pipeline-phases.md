@@ -17,6 +17,38 @@ file is non-precious (regenerable) and is `.gitignore`d.
 | **P3 Analyze & render** | plot/tabulate scripts (`experiments/render.mk`, including the mart→view projection) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/` (the single P3 deliverable tree; the slides-side tree was retired, 0408) | plotting intermediates consumed only inside P3 (`census_bars.csv`, view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
 | **P4 Write** | tectonic / pandoc (`report/Makefile`, `slides/Makefile`) | — (final PDFs are regenerable) | `report.pdf`, `slides.pdf`, LaTeX aux files |
 
+## The root Makefile: two cross-phase entries
+
+The phase split (tracker 0406) gives each phase its own makefile; the root
+`Makefile` (step S5, ticket 0415) holds the **developer loop** (tests, lint,
+coverage, `show-prompts`) plus the **P4 writing verbs** CI invokes (`report`,
+`slides`, `check`) — and exposes the full data pipeline through **exactly two
+cross-phase entries**:
+
+- **`make staleness`** — dry-run (`-n`) of every downstream phase leg; reports
+  what *would* rebuild without touching anything. Always safe to run.
+- **`make world`** — deliberate, full re-run of P2 → P3 → P4. Runs P2 scoring
+  for real, so it *rewrites committed scored data* (the 2026-06-03 mart
+  staleness incident, ticket 0383). Its output must be reviewed via `git diff`
+  before committing; it refuses to start on a dirty working tree. This is
+  ticket 0360's reproducibility oracle (`make world && git diff --exit-code`).
+
+Both entries delegate to the phase makefiles by **recursive `$(MAKE)` -f/-C**,
+never by literal `include`: an `include` would merge the P2 scoring rules into
+the root namespace and let a P4 `make report` reach the scoring DAG, defeating
+the clean-room isolation the split enforces. The root carries **no cross-phase
+prerequisite edge** (no target whose prereqs live under
+`report/inputs/generated/`, `experiments/outputs/`, `experiments/derived/`, or
+name `measurements.jsonl`) — guarded by
+`tests/test_root_no_cross_phase_prereq.py`. The full-phase aggregate targets the
+two entries drive are `all-outcomes` (P2, in `score.mk`) and `all` (P3, in
+`render.mk`).
+
+**P1 (acquire) is excluded from `world`/`staleness`.** The P1 sweep verbs make
+paid OpenRouter API calls (the money gate); a full pipeline re-run must never
+trigger a re-acquisition. Raw replies are (re)acquired only by explicitly
+invoking `experiments/acquire.mk`.
+
 ## The classification test
 
 For any generated file, find its **producing rule** and its **consuming
