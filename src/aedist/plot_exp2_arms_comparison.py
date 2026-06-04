@@ -1,5 +1,7 @@
 """Two-panel comparison figure for Exp2 4-arm design.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Usage:
     python -m aedist.plot_exp2_arms_comparison \
         --input report/inputs/generated/tab_exp2_arms_runs.csv \

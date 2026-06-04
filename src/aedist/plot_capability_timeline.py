@@ -1,5 +1,7 @@
 """Render the capability-rollout swimlane for §3 of the manuscript.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 For each lab in Experiment 1's panel (Anthropic, OpenAI, Mistral, Alibaba,
 DeepSeek), place a marker at the date the lab first shipped each of the
 eight capability features as a consumer-facing product surface. Rows are

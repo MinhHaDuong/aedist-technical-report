@@ -1,5 +1,7 @@
 """Compare PDF converter backends on table extraction quality.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads pre-generated markdown outputs from each backend and produces
 a side-by-side quality report: tables detected, rows, Vietnamese
 diacritics, file size.  When ``--meta`` points to a YAML sidecar the

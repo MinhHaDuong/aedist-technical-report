@@ -1,5 +1,7 @@
 """Cross-experiment spider multiplot: E1 + 4 Exp2 conditions.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Layout (compact GridSpec, 2 rows — no wasted edge cells):
 
    [1N]  [E1]  [5N]      no-docs / baseline / no-docs

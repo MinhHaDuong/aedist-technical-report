@@ -1,5 +1,7 @@
 """Render the empirical capability transition matrix for §3.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 8×8 heatmap: for each ordered pair (i, j) of capability stages, the
 fraction of labs where feature i shipped before feature j (conditional on
 both being present). White = no lab made that transition; green = all

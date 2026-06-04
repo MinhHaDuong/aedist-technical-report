@@ -1,5 +1,7 @@
 """Generate LaTeX \\newcommand macros from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads per-run metrics, groups by model slug (stripping -runN suffix
 and directory prefix), computes median F1, and emits macros for
 the report preamble.

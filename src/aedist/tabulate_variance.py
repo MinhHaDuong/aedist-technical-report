@@ -1,5 +1,7 @@
 """Generate variance decomposition LaTeX table.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads the output of ``variance_decomposition()`` and produces a longtable
 showing SS, df, F, p, eta-squared, and omega-squared for each ANOVA source.
 

@@ -1,5 +1,7 @@
 """Generate method-convergence strip plot from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 For each method (Y axis), plots every run as a horizontal bar.
 Each bar is a row of dots: 1 dot = 1 plant.
 Blue dots = correctly identified (TP). Orange dots = hallucinated (FP).

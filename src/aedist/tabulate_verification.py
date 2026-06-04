@@ -1,5 +1,7 @@
 """Generate verification tradeoff table.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Reads annotated verification CSVs from derived/verification/ and produces
 a precision-coverage tradeoff table by sweeping evidence_score thresholds.
 Evaluates each filtered subset against the reference to compute precision,

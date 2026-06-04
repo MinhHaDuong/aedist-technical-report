@@ -1,5 +1,7 @@
 """Generate census bar-chart CSV from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Writes census_bars.csv with columns: model, f1, n_tp, n_fp, local
 sorted by f1 descending. f1 is median across runs as a decimal 0-1.
 n_tp and n_fp are median matched/hallucinated plant counts (integers).

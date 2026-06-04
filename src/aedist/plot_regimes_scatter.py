@@ -1,5 +1,7 @@
 """Generate regimes scatter plot: 5 models × 3 methods, one dot per TP plant.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Shows how RAG lifts the identification floor across all models.
 Median TP across runs per model-method combo.
 

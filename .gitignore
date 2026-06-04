@@ -122,3 +122,7 @@ tickets/tools/go/erg
 # experiments/outputs/ stay tracked (provenance, cf. exp1_batch2).
 experiments/derived/*.record.json
 experiments/derived/**/*.record.json
+
+# Dual-run mart-parity staging scratch (P2 validation, check-mart-parity).
+# Transient, regenerated; never a tracked handoff artifact (ticket 0409).
+experiments/derived/parity/

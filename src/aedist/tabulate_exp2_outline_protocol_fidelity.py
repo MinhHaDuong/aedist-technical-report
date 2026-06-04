@@ -1,4 +1,7 @@
-"""Generate protocol-fidelity table placeholder for Exp2 outline."""
+"""Generate protocol-fidelity table placeholder for Exp2 outline.
+
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+"""
 
 import argparse
 import logging

@@ -1,5 +1,7 @@
 """Scaling curve: F1 vs active parameters under RAG wholesale.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Compares single-shot (parametric knowledge only) vs RAG wholesale
 for two model families (Qwen 3.5, Gemma 4) from edge to cloud.
 X-axis: active parameters (log scale) — relevant for MoE models.

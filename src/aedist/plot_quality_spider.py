@@ -1,5 +1,7 @@
 """Radar/spider figure for Exp2 quality profiles.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Usage:
     python -m aedist.plot_quality_spider \
         --input experiments/derived/sota_cross_eval.csv \

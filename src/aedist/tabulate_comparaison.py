@@ -1,5 +1,7 @@
 """Generate RAG comparison LaTeX table from measurements.jsonl.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Usage:
     python -m aedist.tabulate_comparaison \\
         --measurements measurements.jsonl \\

@@ -1,5 +1,7 @@
 """Variance decomposition of F1 scores via two-way ANOVA.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 Computes eta-squared and omega-squared for model, method, interaction,
 and residual effects on F1 variance.  Uses only stdlib — no scipy, no numpy.
 

@@ -81,8 +81,8 @@ experiments/models_selected.yaml: $(MEASUREMENTS) experiments/models.yaml
 # tab_comparaison, tab_variance, tab_verification, tab_decomposition_fix,
 # tab_coherence, tab_reconciliation, tab_converter_benchmark) and the
 # intermediate derived/*.json|csv artifacts they consume are produced by the
-# analysis workpackage. To regenerate:
-#     make -f experiments/analysis.mk report-tables
+# render (P3) workpackage. To regenerate:
+#     make -f experiments/render.mk report-tables
 # tab_self_consistency.tex and tab_per_run.tex come from
 # experiments/Makefile `self-consistency` (single producer, 0354).
 
@@ -122,14 +122,15 @@ slides/slides.pdf: slides/slides.tex \
 report: report/report.pdf
 slides: slides/slides.pdf
 # Report-side tables, figures, and slide chart data are produced by the
-# analysis workpackage. tab_self_consistency.tex and tab_per_run.tex live in
-# experiments/Makefile under `self-consistency` (single producer, 0354), so
-# the `tables:` alias chains both to preserve the pre-0352 UX.
+# render (P3) workpackage (experiments/render.mk). tab_self_consistency.tex and
+# tab_per_run.tex live in experiments/Makefile under `self-consistency`
+# (single producer, 0354), so the `tables:` alias chains both to preserve the
+# pre-0352 UX.
 tables:
-	$(MAKE) -f experiments/analysis.mk report-tables
+	$(MAKE) -f experiments/render.mk report-tables
 	$(MAKE) -C experiments self-consistency
 figures:
-	$(MAKE) -f experiments/analysis.mk chart-figures
+	$(MAKE) -f experiments/render.mk chart-figures
 select: experiments/models_selected.yaml
 census:
 	$(MAKE) -C experiments census

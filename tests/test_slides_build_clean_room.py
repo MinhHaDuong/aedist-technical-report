@@ -6,7 +6,8 @@ data pipeline. This test guards that invariant.
 
 The check uses `make -n` (and a force-rebuild variant) on the slides target
 and asserts the recipe trace contains no `uv run` invocation. Producer rules
-belong in `experiments/analysis.mk`; the root Makefile's `slides/slides.pdf`
+belong in `experiments/render.mk` (the P3 render phase); the root Makefile's
+`slides/slides.pdf`
 rule must depend only on committed artifacts or targets produced by
 `$(MAKE) -C slides` (i.e. tectonic itself).
 """
@@ -36,7 +37,7 @@ def _assert_no_uv_run(trace: str, label: str) -> None:
     offending = [line for line in trace.splitlines() if "uv run" in line]
     assert not offending, (
         f"{label} must not invoke `uv run` (writing build = clean-room). "
-        "Move producer rules to experiments/analysis.mk.\n" + "\n".join(offending)
+        "Move producer rules to experiments/render.mk.\n" + "\n".join(offending)
     )
 
 

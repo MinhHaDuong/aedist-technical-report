@@ -1,5 +1,7 @@
 """Exp2 2x2 factorial table: F1 and cost across query-mode x documents.
 
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
 The four Exp2 arms form a 2x2 factorial:
 
                  | without docs      | with docs

@@ -73,6 +73,47 @@ def _key(token: str, mk_dir: Path) -> str | None:
     return f"{m.group(1)}/inputs/generated/{m.group(2)}" if m else None
 
 
+INCLUDE_RE = re.compile(r"^\s*include\s+(.+)$")
+# A sibling makefile name inside an include argument, tolerating a leading
+# `$(dir $(lastword $(MAKEFILE_LIST)))` prefix glued to the basename.
+INCLUDE_MK_RE = re.compile(r"([A-Za-z0-9_.-]+\.mk)\b")
+
+
+def _collect_assignments(path: Path, variables: dict[str, str]) -> None:
+    """Merge variable assignments from `path` (and its includes) into `variables`.
+
+    GNU make's `include` is followed so a producer .mk that factors its shared
+    path variables into a sibling file (e.g. render.mk including paths.mk) still
+    has its $(ANALYSIS_*) target names expand. Only variable definitions are
+    pulled in here; rules are parsed by the caller for the including file.
+    """
+    for raw in _logical_lines(path):
+        if raw.startswith("\t"):
+            continue
+        line = raw.split("#", 1)[0]
+        if not line.strip():
+            continue
+        inc = INCLUDE_RE.match(line)
+        if inc:
+            # The committed convention is
+            # `include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk`; resolve any
+            # sibling .mk basename relative to the including file's directory.
+            for name in INCLUDE_MK_RE.findall(inc.group(1)):
+                sibling = path.parent / name
+                if sibling.is_file():
+                    _collect_assignments(sibling, variables)
+            continue
+        m = ASSIGN_RE.match(line)
+        if m:
+            name, op, val = m.group(1), m.group(2), m.group(3).strip()
+            if op == "+=":
+                variables[name] = f"{variables.get(name, '')} {val}".strip()
+            elif op == "?=" and name in variables:
+                pass
+            else:
+                variables[name] = val
+
+
 def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
     """Return (targets, prereq_sources) of generated-artifact keys."""
     variables: dict[str, str] = {}
@@ -82,6 +123,13 @@ def _parse(path: Path) -> tuple[set[str], dict[str, set[str]]]:
             continue
         line = raw.split("#", 1)[0]
         if not line.strip():
+            continue
+        inc = INCLUDE_RE.match(line)
+        if inc:
+            for name in INCLUDE_MK_RE.findall(inc.group(1)):
+                sibling = path.parent / name
+                if sibling.is_file():
+                    _collect_assignments(sibling, variables)
             continue
         m = ASSIGN_RE.match(line)
         if m:
@@ -129,6 +177,7 @@ def test_generated_artifacts_have_a_producer():
         "Generated artifacts used as prerequisites but produced by no makefile "
         "rule (orphaned from the build DAG):\n"
         f"{detail}\n\n"
-        "Add a producing rule (in experiments/analysis.mk for analysis "
-        "artifacts) or, for multi-output scripts, a grouped target `a b &:`."
+        "Add a producing rule (in experiments/render.mk for P3 render "
+        "artifacts, experiments/analysis.mk for P2 mart/cross-eval) or, for "
+        "multi-output scripts, a grouped target `a b &:`."
     )
