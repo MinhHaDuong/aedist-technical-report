@@ -63,6 +63,7 @@ include $(dir $(lastword $(MAKEFILE_LIST)))common.mk
 # missing. Keys themselves are not read into Make variables — uv loads them
 # at child-process spawn time via --env-file.
 _NEEDS_ENV := census census-run regimes regimes-run \
+						 decomposed decomposed-run verification verification-run \
 						 sourced sourced-run frontier frontier-run
 ifneq ($(filter $(_NEEDS_ENV),$(MAKECMDGOALS)),)
   $(if $(wildcard ../.env),,$(error ../.env not found — copy ../.env.example and populate API keys))
