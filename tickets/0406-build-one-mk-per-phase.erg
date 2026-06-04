@@ -10,6 +10,7 @@ Author: claude
 2026-06-04T08:55Z claude note Author decision: slides/inputs/generated/ is RETIRED — generated-tree unification is now IN scope, no longer optional-later. Inserted as new S1 (retire slides tree, single P3 deliverable home) so render.mk is written once against the final layout; old S1-S4 renumbered to S2-S5.
 2026-06-04T09:05Z claude note Author confirmed destination: report/inputs/generated/ is the single P3 tree. S1 child needs no layout decision — purely mechanical (move slides artifacts, repoint paths, update guards).
 2026-06-04T08:55Z claude note S1 done (PR #692): slides/inputs/generated retired; S2 (render.mk) unblocked.
+2026-06-04T09:44Z claude note S2 done (PR #694): render.mk extracted, cascade dead; S3 (score.mk) unblocked.
 --- body ---
 ## Context
 
