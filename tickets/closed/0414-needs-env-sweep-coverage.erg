@@ -2,10 +2,14 @@
 Title: _NEEDS_ENV sentinel covers only 4 of 6 paid sweeps — add decomposed, verification
 Created: 2026-06-04
 Author: claude
+Closed: decomposed+verification covered; guard test enforces --env-file ⊆ _NEEDS_ENV
 
 --- log ---
 2026-06-04T12:40Z claude created — follow-up surfaced by /verify on PR #698 (0411, acquire.mk); pre-existing gap, out of scope there
 
+2026-06-04T12:50Z claude claimed t414 (remote run)
+
+2026-06-04T17:20Z Claude closed — decomposed+verification covered; guard test enforces --env-file ⊆ _NEEDS_ENV
 --- body ---
 ## Context
 

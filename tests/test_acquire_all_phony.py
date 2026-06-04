@@ -113,3 +113,48 @@ def test_no_filesystem_path_targets():
         "target. A path target (especially one escaping experiments/ via '..') "
         "would couple a money-gated re-acquisition to a timestamp rebuild."
     )
+
+
+def _parse_needs_env(text: str) -> set[str]:
+    """Return the set of names declared in the _NEEDS_ENV assignment."""
+    joined = text.replace("\\\n", " ")
+    m = re.search(r"_NEEDS_ENV\s*:=\s*([^\n#]+)", joined)
+    if not m:
+        return set()
+    return set(m.group(1).split())
+
+
+def test_env_file_verbs_covered_by_needs_env():
+    """Every sweep group X (with X-generate and X-run) must have X and X-run in _NEEDS_ENV.
+
+    All sweep groups invoke the manager/worker pipeline via $(MANAGER) / $(OR_DRAIN),
+    which expand through $(UV_RUN) and carry --env-file ../.env.  The _NEEDS_ENV
+    sentinel must cover the top-level verb X and its X-run sub-target so that
+    invoking either without a populated .env fails fast rather than burning API
+    quota mid-run.
+    """
+    text = ACQUIRE_MK.read_text()
+    phony, _ = _phony_names_and_targets(text)
+
+    sweep_groups = sorted(
+        name[: -len("-generate")]
+        for name in phony
+        if name.endswith("-generate")
+        and name[: -len("-generate")] + "-run" in phony
+    )
+
+    needs_env = _parse_needs_env(text)
+
+    missing = []
+    for group in sweep_groups:
+        if group not in needs_env:
+            missing.append(group)
+        if f"{group}-run" not in needs_env:
+            missing.append(f"{group}-run")
+
+    assert not missing, (
+        f"Sweep verbs with --env-file recipes not covered by _NEEDS_ENV: "
+        f"{sorted(missing)}. "
+        "Add them to the _NEEDS_ENV list so `make <verb>` fails fast when "
+        "../.env is absent instead of launching a money-costing API sweep."
+    )
