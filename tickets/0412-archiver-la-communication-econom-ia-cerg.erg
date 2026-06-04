@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Archiver la communication Econom'IA Cergy: release + tag + HAL + page perso
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T11:37Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Communication présentée à Econom'IA 2026 (Cergy, 2026-05-27) — slides Beamer
+(EN/FR) construits depuis ce dépôt. Les correctifs matcher (0392/0393) et la
+référence fix1 (0394) vont changer les figures : il faut archiver l'état
+exactement présenté AVANT toute adoption (prérequis de 0413).
+
+## Étapes
+
+1. Identifier le commit correspondant à la version présentée le 2026-05-27 ;
+   créer un tag git (ex. `economia-2026-cergy`) et le pousser.
+2. Créer une release GitHub sur ce tag, avec le PDF des slides présentés en
+   pièce jointe.
+3. Déposer la communication sur HAL — passer par le skill `/update-publist`
+   (Ha-Duong.bib + dépôt SWORD).
+4. Publier le lien/PDF sur la page perso de l'auteur.
+
+## Exit criteria
+
+- [ ] Tag poussé sur le commit de la version présentée
+- [ ] Release GitHub avec le PDF des slides attaché
+- [ ] Notice HAL en ligne
+- [ ] Page perso à jour
+
+## Related
+
+- 0413 (adoption fix1 — bloqué par ce ticket)
+- Slides : cible `slides-en`/`slides-fr` du dépôt
