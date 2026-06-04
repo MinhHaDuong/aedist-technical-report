@@ -4,7 +4,7 @@ Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Usage:
     python -m aedist.tabulate_coherence \\
-        --input experiments/outputs/rag_extract \\
+        --input experiments/archive/outputs/rag_extract \\
         --output report/inputs/generated/tab_coherence.tex
 
 Loads every model-run CSV, runs ``coherence.check_coherence()`` on

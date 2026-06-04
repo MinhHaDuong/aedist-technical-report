@@ -8,7 +8,7 @@ against the single-run median F1.
 
 Usage:
     python -m aedist.self_consistency \
-        --input experiments/outputs/rag_extract \
+        --input experiments/archive/outputs/rag_extract \
         --output experiments/derived/rag_consistency
 """
 

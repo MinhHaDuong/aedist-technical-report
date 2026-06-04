@@ -148,12 +148,15 @@ all-outcomes:
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(SCORE_SC_JSON)
 
-# === Self-consistency scorer (outputs/rag → derived/rag_consistency) ========
+# === Self-consistency scorer (archive rag_extract → derived/rag_consistency)
 # (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3
 #  — P2 score half only; the tabulate→report/inputs/generated/ render half is in
 #  render.mk.)
+# Path was doubly stale: renamed rag→rag_extract (026f0e72), then archived
+# (edda724b, ticket 0421). WARNING: this rule writes measurements.jsonl
+# (--measurements) — do not run casually (0383).
 
-SCORE_SC_INPUT  := $(SCORE_OUTPUTS)/rag
+SCORE_SC_INPUT  := $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract
 SCORE_SC_OUTPUT := $(SCORE_DERIVED)/rag_consistency
 SCORE_SC_JSON   := $(SCORE_SC_OUTPUT)/self_consistency_summary.json
 
