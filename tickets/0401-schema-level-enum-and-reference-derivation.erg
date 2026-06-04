@@ -2,8 +2,10 @@
 Title: Schema: add `level` enum (Unit/Block/Plant/Complex/Unknown) + derive reference Level + taxonomy audit
 Created: 2026-06-03
 Author: claude
+Blocked-by: 0416
 
 --- log ---
+2026-06-04T20:30Z claude note — Blocked-by 0416 added (raid curation): the aggregator rework propagates Level through the pipe; derive/audit reference Level on its output, not on the soon-replaced v1
 2026-06-03T00:00Z claude created — Imagine session with the author. The capacity-plausibility paradox (operating centrales max ≈1500 MW yet reference rows reach 6000 MW) turned out to be a MISSING DIMENSION: rows live at different granularities (turbo-set / plant / power-center), and plausibility is level-conditional. A flat capacity band cannot work. The clean fix is to make granularity a first-class schema field. Author decisions: Site = Complex; the MODEL assigns level (answer-side, → 0402); reference level is derived mechanically; plants are conventionally named "Site + number" (so Plant = Site+N, Complex = bare Site).
 
 --- body ---
