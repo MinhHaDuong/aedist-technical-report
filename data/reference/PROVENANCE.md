@@ -111,44 +111,44 @@ reviewer reconstruct the compilation row by row. Closing that gap
 is the motivation for the source-citation infrastructure in
 Experiments 2–3.
 
-## fix1 integrity patch (2026-06-04, ticket 0394)
+## Known defects of v1 (2026-06-04, ticket 0394)
 
-`vietnam_thermal_v1_fix1.csv` (162 rows) and
-`vietnam_thermal_units_v1_fix1.csv` (249 rows) are built from the frozen
-v1 files by `experiments/scripts/build_reference_v1_fix1.sh` — plain
-grep/sed/awk line filters with loud count guards, so untouched lines
-(line endings included) are byte-identical to v1 by construction: the
-diff against v1 is exactly the adjudicated edits. (A spreadsheet
-round-trip during adjudication had coerced `ires_code` 0121 to 121; the
-scripted rebuild is the countermeasure, and
-`tests/test_reference_integrity.py` guards the invariants.)
+The frozen v1 files keep scoring Exp1–3 **as-is**. The defects below are
+documented, their scoring impact is measured (nil for FP), and their
+correction is deliberately delegated to the master + regeneration
+pipeline (tickets 0418 → 0416 → 0419; adoption in 0413 after the Cergy
+archive 0412). An interim patched copy ("fix1", PR #699 first versions)
+was built, measured, and then dropped: it duplicated upstream truth
+downstream and nothing consumed it.
 
-Two defects, adjudicated by the author on 2026-06-03/04:
+Adjudicated by the author on 2026-06-03/04:
 
-1. `Duyen Hai 2` (ASCII, 600 MW, Unit 1) deleted at both levels —
-   romanization duplicate subsumed by `Duyên Hải 2` (1200 MW, Units 1+2).
-2. `Quảng Trị 1` transcription error: `units_included` listed Unit 2
-   twice; first occurrence corrected to Unit 1 at both levels (the
-   upstream unit-level master has Units 1+2; 1320 MW = 2x660, sibling
-   plants all have Units 1+2).
+1. `Duyen Hai 2` (ASCII, 600 MW, Unit 1) duplicates `Duyên Hải 2`
+   (1200 MW, Units 1+2) under a second romanization — at plant and unit
+   level. Already fixed in the master (pipeline.ods, 2026-06-03).
+2. `Quảng Trị 1` transcription error: `units_included` lists Unit 2
+   twice ("Unit 2, Unit 2"), and the unit file carries two identical
+   `Quảng Trị 1 Unit 2` rows — the plant is 1320 MW = 2 x 660, Units 1+2
+   (sibling plants all have Units 1+2).
+3. `Dong Nai Formosa` ×2 and `Ha Tinh Formosa Plastics Steel Complex`
+   ×2: two rows sharing one name (operational base vs proposed
+   expansion, disjoint units). The plant name is the key and must be
+   unique in v2; resolution happens in the master with source-attested
+   designations — names are never invented.
 
-Names are never invented (author's rule): `Dong Nai Formosa` and
-`Ha Tinh Formosa Plastics Steel Complex` each keep two rows bearing the
-same source-attested name — distinct unit groups of one complex
-(operational base vs proposed expansion). The integrity invariant is
-structural, not nominal: rows sharing a name must differ in `status`
-and be disjoint in `units_included`; unit-level names are unique modulo
-diacritics. Both defects originate in the unit→plant aggregation step
-(`HDM_aggregate.py`, no input/output guards — ticket 0416); the
-upstream unit-level master is sound.
+All three originate in the unit→plant aggregation step
+(`HDM_aggregate.py` groups by name+status with no input/output guards —
+ticket 0416); the unit-level master is sound. A spreadsheet round-trip
+during adjudication also coerced `ires_code` 0121 to 121 — which is why
+the v2 pipeline reads everything as text (ticket 0418).
 
-Effect, measured by re-reconciling all Exp2 outputs (80 runs): FP
-unchanged (399 -> 399); FN 7617 -> 7537, the delta being phantom misses
-carried by the deleted duplicate row. The 14 `clean_name` collisions
-(distinct gas/LNG plants merged by the cleaner's prefix drops) cause
-neither FP nor FN and are left untouched — a documented non-finding;
-see ticket 0394.
+Measured impact (all 80 Exp2 runs re-reconciled against a corrected
+variant via `fp_audit_exp2.py --reference`): FP unchanged, 399 -> 399;
+FN 7617 -> 7537, the delta being phantom misses carried by the
+duplicate row. The 14 `clean_name` collisions among *distinct* plants
+(gas/LNG successors merged by the cleaner's prefix drops) cause neither
+FP nor FN — documented non-finding, the cleaner stays untouched.
 
-The frozen v1 files remain the scoring reference for Exp1–3. Adoption
-of fix1 (figure-level before/after validation, then rewiring) is
-tracked in ticket 0413, after the Cergy archive (0412).
+These defects double as the **expected-delta checklist** when validating
+v2 against v1 at adoption time (0413): any v1→v2 difference beyond them
+and the master's own evolution must be explained.

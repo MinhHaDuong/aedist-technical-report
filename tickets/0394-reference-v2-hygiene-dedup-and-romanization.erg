@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Reference fix1: minimal integrity patch (was: v2 hygiene, dedup + romanization)
+Title: Reference v1: defects adjudicated, measured and documented; corrections delegated to the pipeline
 Created: 2026-06-03
 Author: claude
 
@@ -11,68 +11,62 @@ Author: claude
 2026-06-04T00:00Z claude note — rescoped per author to minimal integrity patch (fix1, not v2): romanization unification and name_ascii dropped; adoption (before/after figures, Makefile rewire) deferred to follow-up ticket
 2026-06-04T00:00Z claude note — fold-uniqueness test caught a 4th defect nobody had seen: Quảng Trị 1 lists "Unit 2, Unit 2" (typo for Units 1+2); fixed at both levels
 2026-06-04T00:00Z claude note — needs-human tag dropped: all adjudications made by the author in-session
-
 2026-06-04T12:27Z claude note — author review of PR #699: REJECTED — il n'est pas permis d'inventer un nom de projet; the extension renames fabricated designations absent from primary sources
 2026-06-04T12:27Z claude note — reworked: DNF/HTF keep their attested names (two same-name, status-distinct rows each); the integrity invariant becomes structural (same name => pairwise distinct statuses + disjoint units_included); fix1 reduces to DH2 dedup + QT1 transcription fix
+2026-06-04T13:16Z claude note — author decision: leapfrog fix1, go straight to the clean pipeline; PR #699 stripped to documentation + instrumentation (PROVENANCE known-defects entry, fp-audit outcome, fp_audit --reference); fix1 artifacts, builder and test dropped — invariants rebirth with 0418/0416 validation
 --- body ---
 ## Context
 
 `data/reference/vietnam_thermal_v1.csv` is frozen at commit `85a0e6c7` for
 Exp1–3 (see `data/reference/PROVENANCE.md`). The Exp2 FP audit surfaced 17
 `clean_name` collisions and mixed romanization. Line-by-line adjudication
-(units_included in hand) re-diagnosed the picture: only 1 true duplicate
-(`Duyen Hai 2`, romanization), 2 raw-name key collisions (`Dong Nai Formosa`,
-`Ha Tinh Formosa` — distinct base/extension assets sharing one name string),
-and 14 distinct-plant pairs that collide only after the cleaner's
-`^lng`/`^nd`/`^tbkhh`/paren drops.
+(units_included in hand) re-diagnosed the picture: 1 romanization duplicate
+(`Duyen Hai 2`), 1 transcription error (`Quảng Trị 1` "Unit 2, Unit 2"),
+2 duplicated-name key collisions (`Dong Nai Formosa`, `Ha Tinh Formosa` —
+distinct unit groups sharing one name string), and 14 distinct-plant pairs
+that collide only after the cleaner's `^lng`/`^nd`/`^tbkhh`/paren drops.
+Root cause of the first three: the unit→plant aggregator (ticket 0416).
 
-## Delivered (fix1 — minimal integrity patch, reworked after author review)
+## Delivered (final scope: leapfrog — document, measure, delegate)
 
-Author rule (review of PR #699): names are source-attested, never invented.
-`Dong Nai Formosa` and `Ha Tinh Formosa` keep two same-name rows each —
-distinct unit groups of one complex (operational base vs proposed expansion,
-disjoint `units_included`); they are the data model, not defects.
+An interim patched copy ("fix1") was built, twice reworked under author
+review, measured, and finally dropped: nothing consumed it, its impact was
+nil, and it duplicated upstream truth downstream. What ships:
 
-- `data/reference/vietnam_thermal_v1_fix1.csv` (162 rows) and
-  `vietnam_thermal_units_v1_fix1.csv` (249 rows), built reproducibly from the
-  frozen v1 by `experiments/scripts/build_reference_v1_fix1.sh` — plain
-  grep/sed/awk filters + count guards; untouched lines byte-identical by
-  construction (the python predecessor silently rewrote CRLF->LF on every
-  line; a spreadsheet round-trip had coerced `ires_code` 0121->121).
-- Two defects fixed: DH2 romanization dup deleted (both levels);
-  `Quảng Trị 1` "Unit 2, Unit 2" transcription error -> Units 1+2 (both
-  levels; upstream unit master is sound — root cause is the aggregator, 0416).
-- `tests/test_reference_integrity.py` (red on v1, green on fix1): unit names
-  fold-unique; same-name plant rows pairwise status-distinct with disjoint
-  `units_included`; 4-digit `ires_code` guard; no repeated unit in a row.
-- `PROVENANCE.md` fix1 entry; `fp_audit_exp2.py` gains `--reference/--label`.
+- `PROVENANCE.md` § "Known defects of v1": the adjudications, the measured
+  impact, the no-invented-names rule, and the expected-delta checklist for
+  validating v2 at adoption (0413).
+- `docs/fp-audit-exp2.md` § Outcome: proposals 3–4 settled by measurement.
+- `experiments/scripts/fp_audit_exp2.py` gains `--reference/--label`
+  (reference-swap recounts — the instrument that produced the numbers and
+  will validate v2).
+- Corrections delegated: master (DH2.1 already fixed there 2026-06-03) +
+  regeneration pipeline 0418 (extraction, input validation) → 0416
+  (aggregator, output validation: plant name = unique key) → 0419
+  (consumers) → 0413 (adoption).
 
 ## Measured non-finding (audit before instrumenting)
 
-Re-reconciling all 80 Exp2 runs: FP 399->399; FN 7617->7537 (the delta is
-phantom misses of the deleted duplicate row; DNF/HTF FN merely relabel —
-models rarely report those plants at all). The 14 remaining `clean_name`
-collisions cause neither FP nor FN. FP is dominated by `matcher_fail_lp_veto`
-(201 occ -> 0393) and `reference_hole` (99 occ -> 0395). Therefore the
-cleaner gate and `name_ascii` alias are deliberately NOT implemented — no
-over-fitting the cleaner to the Vietnam instance.
+Re-reconciling all 80 Exp2 runs against a corrected variant: FP 399->399;
+FN 7617->7537 (the delta is phantom misses of the duplicate row; DNF/HTF FN
+merely relabel — models rarely report those plants at all). The 14
+`clean_name` collisions cause neither FP nor FN. FP is dominated by
+`matcher_fail_lp_veto` (201 occ -> 0393) and `reference_hole` (99 occ ->
+0395). Therefore the cleaner gate and `name_ascii` alias are deliberately
+NOT implemented — no over-fitting the cleaner to the Vietnam instance.
 
-## Exit criteria (rescoped)
+## Exit criteria (final)
 
-- [x] All 17 collision groups adjudicated by the author (1 dup deleted +
-      1 typo fixed; DNF/HTF legitimate same-name rows; 14 documented
-      non-finding)
-- [x] fix1 files built reproducibly; untouched fields byte-identical;
-      no invented names
-- [x] `tests/test_reference_integrity.py` green on fix1, red on v1
-- [x] `PROVENANCE.md` version entry
-- [x] FP/FN deltas measured on existing outputs and explained
-- Descoped: `name_ascii`, cleaner gate, Makefile wiring and adoption
-  (follow-up ticket; Makefile redesign 0406 in flight — do not touch)
+- [x] All 17 collision groups adjudicated by the author
+- [x] FP/FN impact measured on existing outputs and explained
+- [x] Defects, measurements and v2 expected-delta checklist recorded in
+      `PROVENANCE.md`; fp-audit doc outcome updated
+- [x] No patched reference shipped; no invented names anywhere
+- [x] Corrections delegated with tickets in place (0418/0416/0419/0413;
+      0395 rewired onto the pipe)
 
 ## Related
 
-- `data/reference/PROVENANCE.md` §fix1 — canonical record of the edits
-- 0392/0393 (matcher — FP levers), 0395 (reference holes; unblocked by this)
-- Follow-up tickets: archive Cergy communication (release/tag/HAL/page perso);
-  adopt fix1 (before/after figures, then rewire)
+- `data/reference/PROVENANCE.md` § Known defects of v1 — canonical record
+- 0418/0416/0419 (pipeline), 0413 (adoption), 0412 (Cergy archive)
+- 0392/0393 (matcher — FP levers), 0395 (reference holes)

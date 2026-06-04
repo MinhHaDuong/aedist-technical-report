@@ -160,18 +160,18 @@ Concrete, test-first. Each step is independently shippable.
 
 **Outcome for proposals 3–4 (ticket 0394, 2026-06-04).** Re-running this audit
 with the reference swapped (`--reference`, `--label`) measured the collision
-repair directly: FP 399 → 399, FN 7617 → 7537 — the delta is the phantom
-misses of the deleted `Duyen Hai 2` duplicate. Adjudication with
-`units_included` in hand showed only `Duyên Hải 2` was a true duplicate;
-`Dong Nai Formosa` and `Ha Tinh Formosa` are distinct unit groups of one
-complex sharing a source-attested name — kept as-is in
-`data/reference/vietnam_thermal_v1_fix1.csv` (inventing project names is not
-permitted; the integrity invariant is structural — see `PROVENANCE.md` §fix1.
-A `Quảng Trị 1` "Unit 2, Unit 2" transcription error was also found by the
-new integrity test and fixed). The 14 cleaner-collapsed pairs cause neither
-FP nor FN, so the `lng`-drop gate and the romanised alias column (proposal 3)
-were dropped — documented non-finding. Root cause of the duplicates lives in
-the unit→plant aggregator (ticket 0416).
+repair directly on a corrected variant: FP 399 → 399, FN 7617 → 7537 — the
+delta is the phantom misses of the `Duyen Hai 2` romanization duplicate.
+Since the impact is nil, no patched reference was shipped: v1 keeps scoring
+as-is and its defects are documented in `PROVENANCE.md` §"Known defects of
+v1" (the `Duyên Hải 2` duplicate, a `Quảng Trị 1` "Unit 2, Unit 2"
+transcription error, and the `Dong Nai Formosa` / `Ha Tinh Formosa`
+duplicated-name rows — the plant name is the key and will be unique in v2,
+resolved in the master with source-attested designations, never invented
+ones). Corrections flow through the master + regeneration pipeline (tickets
+0418/0416, root cause = the unit→plant aggregator). The 14 cleaner-collapsed
+pairs cause neither FP nor FN, so the `lng`-drop gate and the romanised
+alias column (proposal 3) were dropped — documented non-finding.
 
 ## Reference extension (proposals)
 

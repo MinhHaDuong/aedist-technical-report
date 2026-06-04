@@ -1,63 +1,75 @@
 %erg 0.1
-Title: Agrégateur unités→plantes: groupes multi-statuts → noms de plante dupliqués
+Title: Pipeline référence 2/3: agrégateur unités→plantes refondu, sortie à clé unique
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Blocked-by: 0418
 
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
-
 2026-06-04T12:25Z claude note — author review verdict (PR #699): inventing project names is not permitted; drop the extension-suffix disambiguation — same-name multi-status rows are the data model, guards must be structural (status-distinct, disjoint units)
+2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0418 added
 --- body ---
 ## Contexte
 
-Diagnostic auteur (2026-06-04) : pipeline.ods (maître, une ligne par unité)
-est bon — c'est l'agrégateur qui a fabriqué les défauts corrigés à la main
-par fix1 (ticket 0394, PR #699).
+Diagnostic auteur (2026-06-04) : pipeline.ods (maître) est bon — c'est
+l'agrégateur qui a fabriqué les défauts documentés dans
+`PROVENANCE.md` § « Known defects of v1 » (ticket 0394, leapfrog : aucun
+patch intermédiaire livré, les corrections passent par ce pipe).
 
 `data/reference/HDM_aggregate.py` groupe par
 `["Normalized Name", "Status", "Province", "Fuel"]` : une centrale dont les
 tranches ont des statuts différents sort en PLUSIEURS lignes plante portant
-le même `Name` (Dong Nai Formosa ×2, Ha Tinh Formosa ×2 — la collision de
-clé exacte de 0394). Et aucun garde-fou : « Quảng Trị 1 Unit 2 » dupliqué en
-entrée a été sommé (660+660=1320) et joint « Unit 2, Unit 2 » sans erreur.
+le même `Name` (Dong Nai Formosa ×2, Ha Tinh Formosa ×2). Et aucun
+garde-fou : « Quảng Trị 1 Unit 2 » dupliqué en entrée a été sommé
+(660+660=1320) et joint « Unit 2, Unit 2 » sans erreur. Chemins en dur
+("HDM.csv"), pas d'argparse, pas de pipe Makefile.
 
-0395 (ajout de centrales) passera vraisemblablement par ce chemin —
-corriger AVANT.
+0395 (ajout de centrales) passe par ce chemin — corriger AVANT.
 
-RÈGLE AUTEUR (revue PR #699, 2026-06-04) : il n'est pas permis d'inventer
-un nom de projet. Les lignes de même nom multi-statuts sont le modèle de
-données légitime (groupes de tranches distincts d'un même complexe) — pas
-un défaut à renommer. Les défauts réels sont structurels : unités
-chevauchantes ou répétées, statuts dupliqués à nom égal.
+RÈGLES AUTEUR (2026-06-04) :
+- Il n'est pas permis d'inventer un nom de projet — jamais de nom
+  synthétisé, à aucun étage.
+- En sortie, le nom de centrale est LA CLÉ : unicité stricte. Un complexe
+  dont les tranches portent plusieurs statuts sous un même nom est une
+  ERREUR à résoudre dans le maître (désignations attestées par les
+  sources), pas à contourner dans le code.
 
 ## Quoi faire
 
-1. Garde-fous en sortie : pour les groupes partageant un même `Name`,
-   assert statuts deux-à-deux distincts ET `Units Included` deux-à-deux
-   disjoints ; assert aucune unité répétée dans un groupe ; refuser de
-   produire et lister les groupes fautifs pour adjudication. Ne JAMAIS
-   synthétiser de nom.
-2. Garde-fou en entrée : refuser les lignes unité dupliquées (le
+1. Réécrire l'agrégateur en `aggregate_units.py` (argparse, entrée→sortie,
+   lecture intégrale en texte) consommant le CSV unités produit par 0418 ;
+   propagation de la colonne `Level` (les lignes Level=unité s'agrègent ;
+   le devenir des lignes d'autres niveaux se règle avec le maître en main).
+2. VALIDATION D'ENTRÉE : refuser les lignes unité dupliquées (le
    « Quảng Trị 1 Unit 2 » ×2 doit faire échouer l'agrégation, pas être
-   sommé en silence).
-3. Brancher les invariants de `tests/test_reference_integrity.py`
-   (fold-uniqueness unités ; même-nom ⇒ statuts distincts + unités
-   disjointes) sur la sortie de l'agrégateur.
-4. Vérifier que la régénération depuis le fichier unités fix1 reproduit le
-   fichier plantes fix1 (oracle de non-régression).
+   sommé en silence). Redondant avec 0418 par conception — défense en
+   profondeur.
+3. VALIDATION DE SORTIE : refuser si un nom de plante apparaît deux fois
+   (clé unique), si une unité est répétée dans `Units Included`, ou si une
+   unité apparaît dans deux groupes. Message actionnable listant les
+   groupes fautifs pour résolution dans le maître.
+4. Câblage acquire.mk (post-0406/0411) : unités 0418 → plantes →
+   `add_classifications.py` réécrit en entrée→sortie (plus de modification
+   en place).
+5. Oracle de validation : le diff v1 → sortie régénérée doit s'expliquer
+   entièrement par la checklist « Known defects of v1 » de PROVENANCE.md
+   plus l'évolution propre du maître — tout écart inexpliqué bloque.
 
 ## Exit criteria
 
+- [ ] `aggregate_units.py` : argparse, texte intégral, Level propagé
 - [ ] Entrée refusée si lignes unité dupliquées (message actionnable)
-- [ ] Sortie refusée si, à nom égal, statuts répétés ou unités
-      chevauchantes / répétées ; aucun nom synthétisé
-- [ ] Régénération depuis units_v1_fix1 == vietnam_thermal_v1_fix1 (modulo
-      colonnes de classification ajoutées en aval)
+- [ ] Sortie refusée si nom de plante dupliqué, unité répétée ou unité
+      dans deux groupes ; aucun nom synthétisé
+- [ ] `add_classifications.py` en entrée→sortie, câblé dans le pipe
+- [ ] Diff v1→régénéré expliqué par la checklist PROVENANCE (+ évolution
+      maître documentée)
 - [ ] `make check` vert
 
 ## Related
 
-- 0394 (fix1 — patch des artefacts ; ce ticket répare le générateur)
-- 0395 (ajout de centrales — consommateur direct de ce fix)
-- 0413 (adoption fix1), `data/reference/HDM_aggregate.py`,
-  `tests/test_reference_integrity.py`
+- 0418 (1/3 — extraction validée, prérequis), 0419 (3/3 — consommateurs)
+- 0394 (défauts documentés — la checklist), 0395 (ajouts — consommateur),
+  0413 (adoption v2)
+- `data/reference/HDM_aggregate.py` (à remplacer),
+  `data/reference/add_classifications.py`, `PROVENANCE.md`
