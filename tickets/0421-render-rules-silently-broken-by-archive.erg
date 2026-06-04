@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Render rules silently broken by archive move: empty tables from record-only outputs dirs
+Created: 2026-06-04
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-04T13:58Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Commit edda724b moved raw model replies from `experiments/outputs/<dir>/`
+to `experiments/archive/outputs/<dir>/`, leaving only `.record.json`
+pointers in the live dirs. Render/score rules that read raw replies from
+the live dirs via `$(wildcard ...)` now expand to EMPTY prerequisite
+lists and produce empty or failing output — the exact failure pattern
+0417 fixed for `tab_source_grounding.tex`, on other files.
+
+Confirmed by running the producers (2026-06-04, during 0417):
+
+- `tabulate_coherence --input experiments/outputs/rag_extract` →
+  "No extractions found — table will be empty. Wrote ... (0 models)".
+  `outputs/rag_extract/` has 0 CSVs live; 39 in archive.
+  (`ANALYSIS_RAG_CSVS`, render.mk:77 + recipe render.mk:316)
+- `tabulate_decomposition_fix` → "No reconciliation CSVs found in
+  either directory". `outputs/rag_per_fuel{,_v2}/` are record-only.
+  (`ANALYSIS_DECOMP_BEFORE/AFTER`, render.mk:75-76)
+- Suspect, not yet confirmed: `SCORE_SC_INPUT := $(SCORE_OUTPUTS)/rag`
+  (score.mk:156) — `experiments/outputs/rag/` does not exist at all
+  (neither does `archive/outputs/rag/`); check what the
+  self-consistency scorer actually needs.
+
+NOT affected (verified): `exp1_batch2/` (140 data files live),
+`sota_exp3_arm*_batch1/` (data in `run*/` subdirs, untouched).
+
+The committed tables (`tab_coherence.tex`, `tab_decomposition_fix.tex`)
+are still the correct pre-move content — the breakage is latent: any
+rebuild would silently REPLACE them with empty tables (0383 hazard).
+The 0417 guard does not catch this: it checks rule existence, not rule
+correctness.
+
+## Actions
+
+1. Sweep every `$(wildcard ...)` / `--input` over `experiments/outputs/`
+   in render.mk and score.mk; classify each dir live-data vs record-only.
+2. Repoint broken readers to `experiments/archive/outputs/` (tracked P1
+   outcomes per 0405), following the 0417 pattern
+   (`tabulate_source_grounding`: script constant + rule prereqs).
+3. Apply the 0383 gate per fix: regenerate, require byte-identical
+   output before committing; any diff stops for review.
+4. Consider a guard: a rule whose raw-reply wildcard expands empty
+   while the matching archive dir is non-empty is a red flag
+   (adherence test or build-time assertion).
+
+## Exit criteria
+
+- Every render/score rule reading raw replies resolves to non-empty
+  inputs (or is retired with evidence)
+- Regenerated tables byte-identical to committed ones (0383)
+- `make check` green
