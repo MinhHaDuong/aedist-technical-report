@@ -2,7 +2,7 @@
 Title: Regenerate exp2_mart.jsonl with full data after coherence field split
 Created: 2026-05-29
 Author: Claude
-Tag: needs-human
+Label: needs-human
 
 --- log ---
 2026-05-29T12:14Z Claude created — follow-up to PR #651 (coherence status_vocab/capacity split). The committed mart cannot be regenerated in a clean clone, so #651 ships a defensive reader as an interim; the artifact itself still needs a full-data regen.

@@ -2,7 +2,7 @@
 Title: Reference v2 hygiene: dedup 17 cleaned-name collisions and unify romanization
 Created: 2026-06-03
 Author: claude
-Tag: needs-human
+Label: needs-human
 
 --- log ---
 2026-06-03T00:00Z claude created — from the Exp2 FP audit: the reference has 17 cleaned-name collisions (true duplicates + distinct plants the cleaner wrongly collapses) and mixes 54 ASCII names with 109 diacritic names

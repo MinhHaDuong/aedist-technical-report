@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-04T07:55Z claude created — author decided to migrate; checklist captured from the 2026-06-04 session findings
 
+2026-06-04T07:30Z claude note migration done: binary f2a97e1->9c23c37 (traveling, manifest), 15 Tag->Label + 2 header-blank + .ergrc [labels], 0292 Supersedes header folded to log, 391/391 validate+check PASS; smokes: erg list (refresh-STATE fixed), ready --json fields OK, check_ticket_structure OK; re-triage: 0404/0388/0390 closed with evidence, 0391 stays
 --- body ---
 ## Context
 

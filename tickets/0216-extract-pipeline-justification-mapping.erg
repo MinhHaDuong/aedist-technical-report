@@ -2,7 +2,7 @@
 Title: Extract justification mapping from docs/pipeline.ods
 Created: 2026-05-21
 Author: HDMX-coding-agent
-Tag: deferred
+Label: deferred
 
 --- log ---
 2026-05-21T18:15Z HDMX-coding-agent created — gold-standard justification table is human-workflow shaped; needs ingestion + transform into a callable `justifies(doc_url, row_id) -> bool/evidence` API for downstream source-validation work

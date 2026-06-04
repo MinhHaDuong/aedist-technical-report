@@ -2,7 +2,7 @@
 Title: adapter_mistral: self-guard against metadata on follow-up turns
 Created: 2026-05-23
 Author: claude
-Tag: deferred
+Label: deferred
 
 --- log ---
 2026-05-23T00:00Z claude created — residual from 0218; caller-guard exists, adapter still attaches metadata on follow-up (footgun)
