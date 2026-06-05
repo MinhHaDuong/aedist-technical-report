@@ -192,15 +192,6 @@ Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
 
-Au-delà des relances, l'Expérience~2 (frontière SOTA) se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
-
-\begin{table}[h]
-\centering
-\caption{Expérience~2 (frontière SOTA) en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
-\label{tab:exp2-2x2}
-\InputIfFileExists{inputs/generated/tab_exp2_2x2}{}{}
-\end{table}
-
 Note~: Interrogations réalisées les 27-28 janvier 2025, le 2 février pour o3-mini. Le Prompt~2 ne retourne pas toujours plus de résultats que le Prompt~1~: \citep{2UNSUP7I} avertit que o3-mini fonctionne mieux avec un prompt simple et direct.
 
 \section{Discussion}
@@ -274,7 +265,30 @@ H6 & Les rangs de l'évaluation croisée (phase~C) concordent avec les rangs des
 Les exclusions au niveau des données --- sessions individuelles retirées sur la base des sorties observées --- relèvent du jeu de données et sont décrites à la section~\ref{sec:exp2-sota:donnees}.
 
 \section{Jeu de données et statistiques descriptives}\label{sec:exp2-sota:donnees}
-% TODO(0254 — Blocked-by 0383: post-re-baseline numbers)
+
+\paragraph{Provenance et décompte des exécutions.} Le plan enregistré déroule quatre agents (\emph{Mistral~Large~2512}, \emph{Qwen3-Max}, \emph{GPT-5.5}, \emph{Claude~Opus~4.6}) dans deux bras --- naïf et optimisé --- répétés $N{=}5$ fois chacun, soit 40~sessions de production. Chaque session est notée contre le jeu de référence \texttt{vietnam\_thermal\_v1.csv} (\NumRefPlants~centrales). Les artefacts consolidés vivent dans \texttt{experiments/derived/exp2\_mart.jsonl}, qui apparie pour chaque session un enregistrement d'exécution (\texttt{run}) et un enregistrement de notation (\texttt{score})~; à ces 40~sessions enregistrées s'ajoutent deux bras \emph{exploratoires} non enregistrés (avec documents joints), portant le mart à 80~exécutions et 160~enregistrements au total. Les chiffres ci-dessous proviennent exclusivement des artefacts versionnés post-rebaselinage (\texttt{tab\_exp2\_2x2}, \texttt{tab\_exp2\_bib\_quality})~; les temps de calcul et nombres de tours, absents des tableaux versionnés, ne sont pas rapportés ici.
+
+\paragraph{Validité par bras et exclusions au niveau des données.} La validité dépend de la dimension considérée, et ces deux dimensions ne coïncident pas. Sur l'axe \textbf{F1 par ligne} (appariement de lignes d'inventaire contre la référence), les 40~sessions enregistrées sont toutes notables~: $n_{\mathrm{f1}}{=}5/5$ pour chacun des huit couples agent~$\times$~bras (tableau~\ref{tab:exp2-2x2}). Aucune session n'obtient un F1 indéfini~; la seule session classée \texttt{no\_report} par le classifieur de dialogue (Claude, bras avec-documents exploratoire) a malgré tout produit un inventaire et reste donc notée, conformément au critère d'exclusion verrouillé. Sur l'axe distinct de la \textbf{parsabilité bibliographique} (présence d'au moins une ligne d'inventaire récupérable par l'analyseur de bibliographie, \texttt{n\_rows}${>}0$), les fractions valides diffèrent~: Claude bras naïf 4/5, Claude bras optimisé \textbf{0/5} (exclu des moyennes du tableau~\ref{tab:exp2-bib-quality}), Qwen bras optimisé 4/5, et les autres couples 5/5. Le cas Claude optimisé est instructif et ne doit pas être confondu avec une absence de notation~: ses cinq sorties ne sont pas \emph{parsables} par l'analyseur de structure bibliographique, mais elles restent notées en F1 (cellule à 0,582, $n_{\mathrm{f1}}{=}5/5$ dans le tableau~\ref{tab:exp2-2x2}) via le chemin d'appariement de lignes. L'exclusion 0/5 porte donc sur la parsabilité de la bibliographie, non sur la calculabilité du F1. Les sources tierces inadmissibles --- Wikipedia, Wikidata et leurs miroirs --- sont exclues par construction du protocole optimisé (interdiction de citation en Source~1 ou~2, section~\ref{sec:exp2-sota:protocole})~; le bras naïf, dépourvu de toute taxonomie de sources, ne mesure que le comportement de sourçage non assisté.
+
+\paragraph{Qualité descriptive (F1 et coût).} Le tableau~\ref{tab:exp2-2x2} résume la qualité (F1 par ligne, moyenne~$\pm$~écart-type inter-agents) et le coût relatif. Le contraste enregistré oppose les deux bras \emph{sans documents}~: le bras naïf (requête unique) obtient $0{,}534 \pm 0{,}109$ et le bras optimisé (multi-tours) $0{,}463 \pm 0{,}174$ --- l'écart-type traduit la dispersion entre les quatre agents, non la variabilité intra-bras. Par agent (\texttt{tab\_exp2\_2x2.csv}, $n_{\mathrm{f1}}{=}5$ partout), le F1 moyen naïf~/ optimisé vaut~: GPT-5.5 0,648~/~0,674, Claude~Opus~4.6 0,616~/~0,582, Mistral~Large 0,500~/~0,365, Qwen3-Max 0,370~/~0,232. Descriptivement, le bras optimisé est ici en deçà du bras naïf pour trois agents sur quatre~; cette observation est purement descriptive et le verdict inférentiel correspondant relève de H1 (section~\ref{sec:exp2-sota:hypotheses}). Les deux conditions \emph{avec documents} (requête unique et multi-tours) figurent dans le tableau à titre \textbf{exploratoire}~: non enregistrées, elles ne sont jamais agrégées avec les deux bras enregistrés et servent seulement de repère sur l'apport descriptif d'un corpus de référence. La figure~\ref{fig:exp2-arms-comparison} décline ces F1, couvertures et coûts par agent et par bras.
+
+\begin{table}[h]
+\centering
+\caption{Expérience~2 (frontière SOTA)~: qualité (F1 par ligne, moyenne~$\pm$~écart-type inter-agents) et coût relatif. Les deux bras enregistrés sont les conditions sans documents (naïf~$=$~requête unique~; optimisé~$=$~multi-tours)~; les deux conditions avec documents sont exploratoires (non enregistrées). Quatre agents, 5~répétitions par cellule.}
+\label{tab:exp2-2x2}
+\InputIfFileExists{inputs/generated/tab_exp2_2x2_fr}{}{}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{inputs/generated/fig_exp2_arms_comparison.pdf}
+\caption{Expérience~2 (frontière SOTA)~: F1 par ligne, couverture et coût par exécution, regroupés par agent. Les barres distinguent les deux bras enregistrés (sans documents) des deux conditions exploratoires (avec documents). Quatre agents, 5~répétitions par cellule.}
+\label{fig:exp2-arms-comparison}
+\end{figure}
+
+\paragraph{Provenance des citations.} Le tableau~\ref{tab:exp2-bib-quality} agrège, par agent et par bras, la structure de citation des inventaires (lignes, taux de Source~1 et~2, part de sources primaires, taux de Notes, entrées bibliographiques), moyennée sur les seules exécutions parsables (\texttt{n\_rows}${>}0$), l'étendue figurant entre crochets. Ce tableau est purement descriptif et sert de socle de provenance aux audits ultérieurs (H5, conformité Wikipedia)~; son interprétation par agent est développée avec ces tests.
+
+\InputIfFileExists{inputs/generated/tab_exp2_bib_quality}{}{}
 
 \section{Résultats par hypothèse (H1--H6)}\label{sec:exp2-sota:hypotheses}
 
