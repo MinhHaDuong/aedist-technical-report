@@ -275,7 +275,7 @@ one plant in v2); v2 = 170 plants.
 | Common (unchanged identity) | 150 v1 names → 149 v2 plants | name present as a plant in both (one fold-collision, next row) |
 | Defect-1 dedup (Duyên Hải romanization ×2 → ×1) | −1 | `Duyên Hải 2` and ASCII `Duyen Hai 2` are two v1 names that fold to one v2 plant; the ASCII duplicate was merged in the master (PROVENANCE defect 1) |
 | Defect-3 dedup (Formosa ×2 → ×1) | −2 rows in v1 | `Dong Nai Formosa`, `Ha Tinh Formosa` each two same-name multi-status rows in v1, one plant in v2 (PROVENANCE defect 3) |
-| Absorbed as unit (master split) | −4 from v1 | `Duyen Hai 3 / Uong Bi I / Uong Bi II / Vinh Tan 4 extension` were standalone v1 plant rows; the master made each a UNIT of its parent plant |
+| Absorbed as unit (master split) | −4 from v1 | `Duyen Hai 3 Extension / Uong Bi I extension / Uong Bi II extension / Vinh Tan 4 extension` were standalone v1 plant rows; the master made each a UNIT of its parent plant |
 | LNG combined → split | 7 v1 → 12 v2 | `LNG Cà Mau 2,3 → 2 + 3`, `LNG Cà Ná II+III → II + III`, `LNG Hải Lăng / (2 and 3) → (1)/2/3`, `LNG Long Sơn / II+III → (I)/II/III`, `LNG Mũi Kê Gà 2,3 → 2 + 3` |
 | Genuinely new master rows | +9 | `Bảo Đài`, `Long Son Chemical`, `Luc Nam`, `NĐ Miền Bắc 1/2/3`, `NĐ khí dư Hòa Phát II`, `Rang Dong cogeneration`, `Uong Bi II` |
 
