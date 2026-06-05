@@ -36,7 +36,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .exp1_recognition import load_exp1_recognition, top_false_positives
 from .plot_method_convergence import _model_size_b
 from .util import COLOR_ALERT, COLOR_MATCHED, model_family
@@ -166,7 +166,9 @@ def write_pdf(
     ax_fp.set_xticklabels(fp_names, rotation=90, fontsize=5.5 * ui_scale)
     ax_fp.set_yticks(range(n_runs))
     ax_fp.set_yticklabels([f"{m} · r{r}" for m, r in runs], fontsize=5.5 * ui_scale)
-    ax_fp.set_title(f"{n_fps} most common false positives", fontsize=8 * ui_scale, color=COLOR_ALERT)
+    ax_fp.set_title(
+        f"{n_fps} most common false positives", fontsize=8 * ui_scale, color=COLOR_ALERT
+    )
     ax_fp.tick_params(length=0)
     for s in ax_fp.spines.values():
         s.set_visible(False)
@@ -251,7 +253,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--reference",
         type=Path,
-        default=DEFAULT_REFERENCE,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
         help="Reference CSV (gold list); read at build time, no hardcoded count",
     )
     parser.add_argument("--output", type=Path, required=True, help="Output PDF path")
