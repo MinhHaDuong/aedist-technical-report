@@ -1,0 +1,78 @@
+%erg 0.1
+Title: Render DAG: no P3-to-P3 side-output edges — figures and tables read mart views directly
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T07:54Z claude created
+
+--- body ---
+## Context
+
+Author directive (2026-06-05, during the 0373/0434 respec): figures and
+tables must each build from their OWN view of the data mart —
+consistency by common cause (shared mart), never by one P3 script
+consuming another P3 script's side-output. Sweep of experiments/render.mk
+found three instances of the bug class:
+
+1. **cost_quality.csv** — co-product of `plot_cost_quality`
+   (fig_direct_cost_quality.pdf + CSV), consumed by
+   `plot_exp2_arms_split --exp1-input` to build fig_exp2_coverage.pdf /
+   fig_exp2_cost.pdf. Figure script feeding a figure script.
+2. **census_bars.csv** — written by `plot_census.py` (a plot_ script
+   that in this rule emits ONLY a CSV — a view-builder wearing a figure
+   script's name), consumed by `tabulate_macros --census-csv` for
+   macros_slides.tex.
+3. **macros_census.tex** — produced by `plot_method_convergence` with
+   its PDF discarded to a sentinel `_macros_census_unused.pdf`; a
+   figure script invoked purely to harvest a table side-output.
+
+Sanctioned patterns, for contrast: `*_view.csv` produced by the
+dedicated `build_exp2_mart_views` projection module; `tabulate_exp2_2x2`
+co-producing CSV+tex from the P2 source in one invocation.
+
+## Quoi faire
+
+1. **cost_quality.csv**: move the Exp1 cost/quality summary derivation
+   into a mart view or library helper (`src/aedist/`); both
+   `plot_cost_quality` and `plot_exp2_arms_split` call it directly.
+   Drop the CSV co-product (or keep it as a pure view artifact produced
+   by a view-builder, not by the figure script).
+2. **census_bars.csv**: rename/move the derivation out of
+   plot_census.py into the view layer (or a library function shared
+   with tabulate_macros); plot_ scripts emit figures only.
+3. **macros_census.tex**: extract the macro computation from
+   plot_method_convergence into a tabulate_/view path; retire the
+   sentinel-PDF invocation.
+4. **Adherence guard** so the class stays dead: parse render.mk —
+   collect outputs of rules invoking `plot_*`/`tabulate_*` modules;
+   assert no other rule lists them as prerequisites (whitelist:
+   `*_view.csv` from build_exp2_mart_views). Same mechanics as
+   tests/test_makefile_dag.py.
+
+## First test
+
+```python
+@pytest.mark.adherence
+def test_no_p3_to_p3_side_output_edges():
+    rules = parse_render_mk()
+    p3_outputs = outputs_of_rules_invoking(rules, ("plot_", "tabulate_"))
+    view_ok = outputs_of_rules_invoking(rules, ("build_exp2_mart_views",))
+    bad = [(t, p) for t, prereqs in rules.items()
+           for p in prereqs if p in p3_outputs - view_ok]
+    assert bad == [], f"P3 artifacts consumed by other P3 rules: {bad}"
+```
+
+## Exit criteria
+
+- [ ] The three instances re-plumbed: consumers read the mart/views or
+      a shared library helper, not another figure/table script's output
+- [ ] No figure script emits a non-figure artifact consumed downstream
+- [ ] Adherence guard above green and protecting render.mk
+- [ ] Committed handoff artifacts regenerated; `make check` passes
+
+## Related
+
+- 0373/0434 (the respec that named the rule), 0383 (mart staleness —
+  the audit context), tests/test_makefile_dag.py (guard mechanics),
+  ADR-7 (figures and tables are projections of the mart).
