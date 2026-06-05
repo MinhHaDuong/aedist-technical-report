@@ -6,17 +6,23 @@ reference pipeline (ticket 0420); it replaces the lost manual-export chain
 (`pipeline.ods` -> hand export -> HDM.csv -> ...) that let the `ires_code`
 zero-prefix coercion (0121 -> 121) slip through.
 
+Since ticket 0439 the master carries a three-column address — `Complex |
+Plant | Unit` (one denormalized table, dimension-path pattern). Parentage is
+data, never an inference from name strings. Empty cells are declared
+semantics: Unit empty means the row IS the plant (unknown split); Complex
+empty means a standalone plant; Complex alone means a complex-grain row.
+`name` (the attested designation) and `level` (the finest non-empty address
+column, ticket 0401) are derived here.
+
 Two invariants are non-negotiable:
 
 1. **dtype=str throughout.** Every value is read as a string and stays a
    string. No numeric coercion, ever — leading zeros survive by construction.
-2. **Hard validation, no tolerance.** A duplicate name (modulo diacritics) or
-   a Level/name inconsistency aborts extraction with an actionable message.
-   No CSV is written. Corrections belong in the master, not here.
-
-The `Level` column does not yet exist in the tracked ODS; it is forthcoming in
-the master. It passes through untouched when present and is a graceful no-op
-when absent.
+2. **Hard validation, no tolerance.** A duplicate designation (modulo
+   diacritics) or an address-shape violation aborts extraction with an
+   actionable message. No CSV is written. Corrections belong in the master,
+   not here. (Deeper conventions — grain exclusivity, controlled status
+   vocabulary — are the 0416 contrat v2 layer.)
 
 Run as a script (argparse) or import the validators for testing. Kept
 self-contained (stdlib + pandas) so it runs via `python data/reference/
@@ -35,21 +41,66 @@ logger = logging.getLogger(__name__)
 
 # Sheet and header layout of the master ODS, confirmed by inspection:
 # row 0 = title, rows 1-3 = metadata/sub-headers, row 4 (0-indexed) = the
-# actual column names. 250 data rows.
+# actual column names.
 SHEET_NAME = "Power plants"
 HEADER_ROW = 4
 
-# Source -> output column mapping. `Level` is added conditionally (passthrough).
+# The three-column address (ticket 0439). Order matters: finest grain last.
+ADDRESS_COLUMNS = ["Complex", "Plant", "Unit"]
+
+# Source -> output column mapping. `name` and `level` are derived, not mapped.
 COLUMN_MAP = {
-    "Project name": "name",
+    "Complex": "complex",
+    "Plant": "plant",
+    "Unit": "unit",
     "Province / Tỉnh": "province",
     "Asset type": "asset_type",
     "Capacity (MW)": "capacity_mwe",
     "Project stage": "status",
 }
 
-# Level values that denote a unit-level (as opposed to plant-level) record.
-UNIT_LEVEL_VALUES = {"unit", "unité", "unite"}
+# Closed status vocabulary (master Conventions sheet, ratified 2026-06-05):
+# a single ordinal ladder, rungs 7-8 reserved for future extension. Any value
+# outside this list is a data-entry error — hard stop, no silent coercion.
+STATUS_VOCABULARY = (
+    "0 exploring",
+    "1 announced",
+    "2 proposed",
+    "3 added to PDP",
+    "4 permitted",
+    "5 construction",
+    "6 operating",
+    "9 cancelled",
+    "10 retired",
+)
+
+# Project stage (master, fine grain) -> v1-compatible reference status.
+# The master keeps the fine grain; the pipe owns the derivation (same doctrine
+# as Fuel, 0439 convention 4). "4 permitted -> planned" reads "planned" as
+# *inscribed in the plan / authorized* (PDP reading) — if "planned" ever came
+# to mean ready-to-build, that row must be revisited. NOT wired to extraction
+# output: v2 carries the raw stage; consumers project at 0413 adoption time.
+V1_STATUS_BY_STAGE = {
+    "0 exploring": "proposed",
+    "1 announced": "proposed",
+    "2 proposed": "proposed",
+    "3 added to PDP": "planned",
+    "4 permitted": "planned",
+    "5 construction": "constructing",
+    "6 operating": "operational",
+    "9 cancelled": "cancelled",
+    "10 retired": "retired",
+}
+assert set(V1_STATUS_BY_STAGE) == set(STATUS_VOCABULARY)
+
+
+def derive_v1_status(stage: str) -> str:
+    """Project a master stage onto the 6-status v1 vocabulary.
+
+    Exhaustive table lookup — an unknown stage raises KeyError loudly (never
+    a .get default): silently mapping a typo would corrupt scoring downstream.
+    """
+    return V1_STATUS_BY_STAGE[stage]
 
 
 def _fold(name: str) -> str:
@@ -64,45 +115,97 @@ def _fold(name: str) -> str:
     return stripped.strip().casefold()
 
 
-def validate_no_duplicate_names(df: pd.DataFrame) -> None:
-    """Abort if any Project name appears more than once, modulo diacritics.
+def _cell(value) -> str:
+    """A trimmed string cell; NaN and whitespace-only become empty."""
+    return value.strip() if isinstance(value, str) else ""
 
-    Two names that differ only by diacritical marks or case are the same unit
-    recorded twice — a master-file data error. The message lists the offending
-    *original* surface forms so the author can find and fix them in the master.
+
+def derive_name(row: pd.Series) -> str:
+    """The attested designation: Plant + Unit concatenated, or the bare grain.
+
+    The 0439 split never invents names — Plant and Unit always concatenate
+    back to the designation the sources attest. A complex-grain row's
+    designation is the Complex itself.
     """
-    names = df["Project name"].dropna().astype(str)
+    complex_, plant, unit = (_cell(row[c]) for c in ADDRESS_COLUMNS)
+    if unit:
+        return f"{plant} {unit}"
+    return plant or complex_
+
+
+def derive_level(row: pd.Series) -> str:
+    """The finest non-empty address column (Level as derivation, ticket 0401)."""
+    complex_, plant, unit = (_cell(row[c]) for c in ADDRESS_COLUMNS)
+    if unit:
+        return "unit"
+    if plant:
+        return "plant"
+    if complex_:
+        return "complex"
+    return ""
+
+
+def validate_address_shape(df: pd.DataFrame) -> None:
+    """Every row needs an address, and a Unit needs its Plant.
+
+    A row with a Unit but no Plant is an unfinished 0439 split (parentage
+    would be an inference again); a row with no address at all carries data
+    that nothing can reference. Both are master-file errors.
+    """
+    offenders = []
+    for idx, row in df.iterrows():
+        complex_, plant, unit = (_cell(row[c]) for c in ADDRESS_COLUMNS)
+        if unit and not plant:
+            offenders.append(f"row {idx + HEADER_ROW + 2}: Unit={unit!r} without a Plant")
+        elif not (complex_ or plant):
+            offenders.append(f"row {idx + HEADER_ROW + 2}: no address (all three columns empty)")
+    if offenders:
+        raise ValueError(
+            "Address-shape violations in the master ODS — fix them in the "
+            "master, then re-import:\n  " + "\n  ".join(offenders)
+        )
+
+
+def validate_no_duplicate_names(df: pd.DataFrame) -> None:
+    """Abort if any derived designation appears more than once, modulo diacritics.
+
+    Two designations that differ only by diacritical marks or case are the
+    same asset recorded twice — a master-file data error. The message lists
+    the offending *original* surface forms so the author can find and fix
+    them in the master.
+    """
+    names = df.apply(derive_name, axis=1)
+    names = names[names != ""]
     folded = names.map(_fold)
     duplicated_mask = folded.duplicated(keep=False)
     if not duplicated_mask.any():
         return
     offenders = sorted(set(names[duplicated_mask]))
     raise ValueError(
-        "Duplicate project names (modulo diacritics) in the master ODS — "
+        "Duplicate designations (modulo diacritics) in the master ODS — "
         "fix them in the master, then re-import. Offending names:\n  " + "\n  ".join(offenders)
     )
 
 
-def validate_unit_level_consistency(df: pd.DataFrame) -> None:
-    """If a Level column is present, a 'Unit' name must have a unit-level Level.
+def validate_status_vocabulary(df: pd.DataFrame) -> None:
+    """Abort on any Project stage outside the closed 9-label vocabulary.
 
-    No-op when the Level column is absent (it is forthcoming in the master).
-    The message lists every name that contains "Unit" but is not marked as a
-    unit-level record.
+    The ladder is closed by convention (master Conventions sheet): an unknown
+    value is a data-entry error in the master, never something to coerce or
+    pass through. The message lists each offending value with its rows.
     """
-    if "Level" not in df.columns:
-        return
-    offenders = []
-    for name, level in zip(df["Project name"], df["Level"], strict=False):
-        if not isinstance(name, str) or "unit" not in name.casefold():
-            continue
-        level_norm = level.strip().casefold() if isinstance(level, str) else ""
-        if level_norm not in UNIT_LEVEL_VALUES:
-            offenders.append(f"{name!r} (Level={level!r})")
+    allowed = set(STATUS_VOCABULARY)
+    offenders: dict[str, list[int]] = {}
+    for idx, value in df["Project stage"].items():
+        stage = _cell(value)
+        if stage not in allowed:
+            offenders.setdefault(stage or "<empty>", []).append(idx + HEADER_ROW + 2)
     if offenders:
+        detail = "\n  ".join(f"{v!r} (rows {r})" for v, r in sorted(offenders.items()))
         raise ValueError(
-            "Names containing 'Unit' must have a unit-level Level — fix in the "
-            "master, then re-import. Inconsistent entries:\n  " + "\n  ".join(offenders)
+            "Project stage values outside the closed vocabulary — fix them in "
+            "the master (Conventions sheet lists the 9 valid labels), then "
+            "re-import:\n  " + detail
         )
 
 
@@ -110,10 +213,11 @@ def validate_input(df: pd.DataFrame) -> None:
     """Run every input validator. Hard stop on the first failure.
 
     New invariants are added by extending this function (no rule registry —
-    YAGNI). The two named validators below are the current invariant set.
+    YAGNI). Shape first: duplicate detection relies on well-formed addresses.
     """
+    validate_address_shape(df)
     validate_no_duplicate_names(df)
-    validate_unit_level_consistency(df)
+    validate_status_vocabulary(df)
 
 
 def read_ods(path: Path) -> pd.DataFrame:
@@ -128,10 +232,11 @@ def read_ods(path: Path) -> pd.DataFrame:
 
 
 def select_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Project to the curated output columns, renaming to snake_case.
+    """Project to the curated output columns, deriving `name` and `level`.
 
-    `Level` passes through (renamed to `level`) when present; omitted when
-    absent. Missing mapped columns raise rather than silently emitting NaN.
+    Missing mapped columns raise rather than silently emitting NaN. `name`
+    leads the output for continuity with the v1 schema; the address columns
+    follow so downstream consumers (0416 contrat v2) get parentage as data.
     """
     missing = [src for src in COLUMN_MAP if src not in df.columns]
     if missing:
@@ -139,10 +244,10 @@ def select_columns(df: pd.DataFrame) -> pd.DataFrame:
             f"Expected columns absent from the ODS sheet {SHEET_NAME!r}: {missing}. "
             "Has the master layout changed? Check the header row."
         )
-    column_map = dict(COLUMN_MAP)
-    if "Level" in df.columns:
-        column_map["Level"] = "level"
-    return df[list(column_map)].rename(columns=column_map)
+    out = df[list(COLUMN_MAP)].rename(columns=COLUMN_MAP)
+    out.insert(0, "name", df.apply(derive_name, axis=1))
+    out["level"] = df.apply(derive_level, axis=1)
+    return out
 
 
 def extract(input_path: Path, output_path: Path) -> pd.DataFrame:
@@ -169,7 +274,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path("data/reference/raw/pipeline-2026-05-26.ods"),
+        default=Path("data/reference/raw/pipeline-2026-06-05.ods"),
         help="Path to the master ODS snapshot (default: %(default)s). "
         "Non-authoritative fallback for standalone runs; the acquire.mk DAG "
         "overrides this with config.VN_THERMAL_MASTER_SNAPSHOT_ODS.",

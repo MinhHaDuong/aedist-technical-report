@@ -17,4 +17,4 @@ VN_THERMAL_PLANTS_RELEASE_CSV = _REPO_ROOT / "data" / "reference" / "vietnam_the
 # Vietnam thermal master snapshot (pipeline.ods) — the pinned ODS capture
 # from the author's "Market report on Gas to Power" master spreadsheet.
 # Datestamped immutable; extraction reads this to produce v2 releases.
-VN_THERMAL_MASTER_SNAPSHOT_ODS = _REPO_ROOT / "data" / "reference" / "raw" / "pipeline-2026-05-26.ods"
+VN_THERMAL_MASTER_SNAPSHOT_ODS = _REPO_ROOT / "data" / "reference" / "raw" / "pipeline-2026-06-05.ods"

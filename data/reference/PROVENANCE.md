@@ -179,28 +179,47 @@ snapshot (see `data/reference/raw/README.md`). Config pins
 
 **Extraction.** `data/reference/extract_ods.py` reads sheet `"Power plants"`
 with `header=4` (row 0 = title, rows 1–3 = metadata/sub-headers, row 4 = column
-names; 250 data rows) using `pandas.read_excel(engine="odf", dtype=str)`. Every
-value stays a string — no numeric coercion, so leading zeros survive by
-construction. It projects to `name`, `province`, `asset_type`, `capacity_mwe`,
-`status`, plus `level` if a `Level` column is present (passthrough; absent in
-the current snapshot, forthcoming in the master). Run via
+names; 254 data rows as of the 2026-06-05 snapshot) using
+`pandas.read_excel(engine="odf", dtype=str)`. Every value stays a string — no
+numeric coercion, so leading zeros survive by construction. It projects to
+`name`, `complex`, `plant`, `unit`, `province`, `asset_type`, `capacity_mwe`,
+`status`, `level`; `name` (the attested designation: Plant + Unit concatenated,
+or the bare grain) and `level` (the finest non-empty address column, ticket
+0401) are derived, never stored. Run via
 `make -C experiments -f acquire.mk extract-reference-ods` (the Makefile consults
 `config.VN_THERMAL_MASTER_SNAPSHOT_ODS` for the pinned snapshot path).
 
 **Input validation (hard stop, no tolerance).** `validate_input` runs before
 any transformation:
-- `validate_no_duplicate_names` — fails if any project name repeats *modulo
-  diacritics and case* (NFKD fold + drop combining marks + casefold), listing
-  the original surface forms.
-- `validate_unit_level_consistency` — when a `Level` column exists, fails if a
-  name contains "Unit" but `Level` is not unit-level (graceful no-op when the
-  column is absent).
-A failure writes no CSV. The tracked snapshot (26 May 2026, committed as
-`pipeline-2026-05-26.ods`) predates the master's 2026-06-03/04 fixes, so it
-still carries defects 1–2 above (`Duyên Hải 2 Unit 1` diacritic-variant pair and
-`Quảng Trị 1 Unit 2` ×2); extraction therefore currently refuses it by design —
-a data-quality signal, not a blocker. Once the fixed master is re-imported,
-extraction will succeed.
+- `validate_address_shape` — fails on a Unit without a Plant (an unfinished
+  split: parentage would be a name inference again) or a row with all three
+  address columns empty.
+- `validate_no_duplicate_names` — fails if any derived designation repeats
+  *modulo diacritics and case* (NFKD fold + drop combining marks + casefold),
+  listing the original surface forms.
+A failure writes no CSV. Deeper conventions — grain exclusivity, controlled
+status vocabulary, Plant→Complex consistency — are the 0416 contrat v2 layer.
+
+## Master migration to the three-column address (ticket 0439, 2026-06-05)
+
+**Motif.** The root defect class of v1 was identity carried by name strings
+("X Unit 2" duplicated by hand — defects 1–3 above). The master now carries a
+three-column address `Complex | Plant | Unit` (one denormalized table,
+dimension-path pattern): parentage is data, never an inference. Design
+ratified in the 2026-06-05 Imagine dialogue (alternatives — Parent column,
+3NF tables, surrogate IDs, sidecar — documented in session); conventions live
+in the master's own `Conventions` sheet (grain exclusivity, empty-cell
+semantics, no Block column, controlled status vocabulary, human attestation).
+
+**The pass.** One editing surgery on the author's working copy: defect fixes
+1–2 re-done (ASCII `Duyen Hai 2` row removed, `Quảng Trị 1` duplicate Unit 2
+renamed Unit 1), 250→254 rows (LNG complex-grain additions), 176 designations
+split mechanically via a reviewed proposal CSV (author adjudicated: `GT` stays
+in the plant name, extensions become units), project stages renumbered into a
+single ladder (0 exploring … 6 operating, 9 cancelled, 10 retired; the
+`4 Construction`/`4 construction` case split unified). Captured as
+`pipeline-2026-06-05.ods` and pinned. Extraction is green on this snapshot —
+the first snapshot accepted since the validator hard-stop landed (0420).
 
 The `ires_code`, `ires_label`, `isic_code`, and `pypsa_carrier` columns are NOT
 in the ODS; they are added downstream (ticket 0416 aggregator, or manually), not
