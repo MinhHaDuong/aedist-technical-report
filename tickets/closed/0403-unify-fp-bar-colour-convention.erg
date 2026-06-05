@@ -2,11 +2,13 @@
 Title: Unify FP-bar colour convention — plot_exp2_arms_comparison still uses orange
 Created: 2026-06-03
 Author: claude
+Closed: delivered by PR #738 — uniform red FP bars, gate APPROVED
 
 --- log ---
 2026-06-03T21:55Z claude created
 
 2026-06-05T08:13Z claude execute FP bars switched to COLOR_ALERT red; regression test + caption fix; PDF regenerated from committed mart
+2026-06-05T08:29Z HDMX-coding-agent closed — delivered by PR #738 — uniform red FP bars, gate APPROVED
 --- body ---
 ## Context
 
