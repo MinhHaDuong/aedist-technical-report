@@ -3,7 +3,9 @@
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Each model group shows 5 bars:
-  E1  = Experiment 1 parametric baseline (from cost_quality.csv)
+  E1  = Experiment 1 parametric baseline (derived from the mart via the shared
+        aedist.exp1_cost_quality library — common cause, not read from another
+        figure script's CSV side-output; ticket 0436)
   1N  = arm1: single-shot, no docs
   5N  = arm2: multi-turn, no docs
   1D  = arm3: single-shot, with docs
@@ -19,7 +21,6 @@ to visually signal that they come from a different experiment.
 Usage:
     python -m aedist.plot_exp2_arms_split \
         --input report/inputs/generated/tab_exp2_arms_runs_view.csv \
-        --exp1-input report/inputs/generated/cost_quality.csv \
         --coverage-output report/inputs/generated/fig_exp2_coverage.pdf \
         --cost-output report/inputs/generated/fig_exp2_cost.pdf
 """
@@ -33,6 +34,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
+from .exp1_cost_quality import load_cost_quality_rows, summary_by_slug
 from .util import (
     COLOR_ALERT,
     COLOR_REFERENCE,
@@ -105,23 +107,16 @@ def load_exp2_rows(path: Path) -> list[dict]:
     return rows
 
 
-def load_exp1_summary(path: Path) -> dict[str, dict]:
-    """Return {exp1_slug: {median_tp, …, median_fp, …, min_cost, max_cost}} from cost_quality.csv."""
-    summary: dict[str, dict] = {}
-    with path.open(newline="") as fh:
-        for row in csv.DictReader(fh):
-            summary[row["model"]] = {
-                "median_tp": int(row["median_tp"]),
-                "min_tp": int(row["min_tp"]),
-                "max_tp": int(row["max_tp"]),
-                "median_fp": int(row.get("median_fp") or 0),
-                "min_fp": int(row.get("min_fp") or 0),
-                "max_fp": int(row.get("max_fp") or 0),
-                "mean_cost": float(row["mean_cost"]),
-                "min_cost": float(row.get("min_cost") or row["mean_cost"]),
-                "max_cost": float(row.get("max_cost") or row["mean_cost"]),
-            }
-    return summary
+def load_exp1_summary() -> dict[str, dict]:
+    """Return {exp1_slug: {median_tp, …, median_fp, …, min_cost, max_cost}}.
+
+    Derived from the mart via the shared :mod:`aedist.exp1_cost_quality`
+    library — the same derivation the cost × quality figure and its audit CSV
+    use (common cause, ticket 0436). E1 cost whiskers are degenerate
+    (min_cost == max_cost == mean_cost), matching the historical CSV which
+    never carried per-rep cost spread.
+    """
+    return summary_by_slug(load_cost_quality_rows())
 
 
 # ---- drawing helpers ---------------------------------------------------------
@@ -322,15 +317,12 @@ def main(argv: list[str] | None = None) -> None:
         description="Split Exp2 arms figure into separate coverage and cost panels with Exp1 baseline"
     )
     parser.add_argument("--input", required=True, help="Path to tab_exp2_arms_runs_view.csv")
-    parser.add_argument(
-        "--exp1-input", required=True, help="Path to cost_quality.csv (Exp1 summary)"
-    )
     parser.add_argument("--coverage-output", required=True, help="Path to write coverage PDF")
     parser.add_argument("--cost-output", required=True, help="Path to write cost PDF")
     args = parser.parse_args(argv)
 
     exp2_rows = load_exp2_rows(Path(args.input))
-    exp1_summary = load_exp1_summary(Path(args.exp1_input))
+    exp1_summary = load_exp1_summary()
 
     make_coverage_figure(exp2_rows, exp1_summary, Path(args.coverage_output))
     make_cost_figure(exp2_rows, exp1_summary, Path(args.cost_output))

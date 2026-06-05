@@ -13,7 +13,6 @@ Usage:
 """
 
 import argparse
-import csv
 import logging
 import statistics
 from pathlib import Path
@@ -43,19 +42,6 @@ def load_and_summarize(metrics: list[dict]) -> dict[str, dict]:
             "runs": len(f1_values),
             "f1_values": f1_values,
         }
-    return summary
-
-
-def load_census(path: str) -> dict[str, dict]:
-    """Load census_bars.csv into the same format as load_and_summarize."""
-    summary = {}
-    with open(path) as f:
-        for row in csv.DictReader(f):
-            summary[row["model"]] = {
-                "median_f1": float(row["f1"]),
-                "is_local": row["local"] == "1",
-                "runs": 1,
-            }
     return summary
 
 
@@ -181,7 +167,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate LaTeX macros from measurements.jsonl",
     )
-    parser.add_argument("--census-csv", help="Census CSV for baseline model counts (slides)")
+    parser.add_argument(
+        "--census",
+        action="store_true",
+        help="Use the baseline census summary (median F1 per model, baseline "
+        "models only) for the slide macros, derived from the mart directly via "
+        "aedist.exp1_census — no CSV side-output (ticket 0436).",
+    )
     parser.add_argument("--output", required=True, help="Path to write macros.tex")
     parser.add_argument(
         "--headline-model",
@@ -197,16 +189,16 @@ def main() -> None:
 
     output_path = Path(args.output)
 
+    from .exp1_census import build_census_summary
     from .measurements import load_metrics
 
-    if args.census_csv:
-        summary = load_census(args.census_csv)
-        # Always load run data for headline macros, even when summary comes from CSV
-        headline_metrics = load_metrics()
+    all_metrics = load_metrics()
+    if args.census:
+        summary = build_census_summary(all_metrics)
     else:
-        all_metrics = load_metrics()
         summary = load_and_summarize(all_metrics)
-        headline_metrics = all_metrics
+    # Headline macros always need the raw run data, even for the census summary.
+    headline_metrics = all_metrics
 
     tex = generate_macros(
         summary,

@@ -8,7 +8,8 @@ import sys
 import pytest
 from conftest import patch_measurements_loader, write_measurements
 
-from aedist.plot_cost_quality import _is_p1_base_row, build_cost_quality_rows, write_pdf
+from aedist.exp1_cost_quality import _is_exp1_row, build_cost_quality_rows
+from aedist.plot_cost_quality import write_pdf
 from aedist.util import family_color, model_family_color
 
 # Sample with three architectural families (Claude/Mistral/Qwen) and varying
@@ -90,18 +91,18 @@ def test_cost_mean_across_reps():
     assert by_model["mistral-large-2512"]["cost_usd"] == 0.05
 
 
-def test_is_p1_base_row():
+def test_is_exp1_row():
     """Filter accepts exp1_batch2, rejects everything else."""
-    assert _is_p1_base_row("experiments/outputs/exp1_batch2/claude-opus-4.6-run1.csv")
-    assert _is_p1_base_row("experiments/outputs/exp1_batch2/mistral-large-2512-run3.json")
+    assert _is_exp1_row("experiments/outputs/exp1_batch2/claude-opus-4.6-run1.csv")
+    assert _is_exp1_row("experiments/outputs/exp1_batch2/mistral-large-2512-run3.json")
     # Rejected — old p1_base directories no longer included:
-    assert not _is_p1_base_row(
+    assert not _is_exp1_row(
         "experiments/outputs/ablation/direct/p1_base/claude-opus-4.6-run1.csv"
     )
-    assert not _is_p1_base_row(
+    assert not _is_exp1_row(
         "experiments/outputs/ablation/direct/p1_base.pilot/claude-opus-4.6-run1.csv"
     )
-    assert not _is_p1_base_row(
+    assert not _is_exp1_row(
         "experiments/outputs/ablation/livesearch/p1_base/claude-opus-4.6-run1.csv"
     )
 
@@ -196,8 +197,6 @@ def test_cost_quality_xscale_flag(tmp_path, monkeypatch):
 
         sys.argv = [
             "plot_cost_quality",
-            "--output",
-            str(tmp_path / f"cost_quality_{scale}.csv"),
             "--figure",
             str(figure_path),
             "--xscale",
@@ -208,17 +207,22 @@ def test_cost_quality_xscale_flag(tmp_path, monkeypatch):
         assert figure_path.stat().st_size > 0
 
 
-def test_main_writes_csv(tmp_path, monkeypatch):
-    """CLI writes well-formed CSV with the TP + F1 schema."""
+def test_tabulate_cost_quality_writes_csv(tmp_path, monkeypatch):
+    """The audit-CSV table module writes well-formed CSV with the TP + F1 schema.
+
+    Post-ticket-0436 the CSV is emitted by aedist.tabulate_cost_quality (table
+    half), not by the figure script — both derive rows from the shared
+    aedist.exp1_cost_quality library.
+    """
     input_path = tmp_path / "measurements.jsonl"
     _write_p1_base_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
     output_path = tmp_path / "cost_quality.csv"
 
-    from aedist.plot_cost_quality import main
+    from aedist.tabulate_cost_quality import main
 
     sys.argv = [
-        "plot_cost_quality",
+        "tabulate_cost_quality",
         "--output",
         str(output_path),
     ]
@@ -232,7 +236,7 @@ def test_main_writes_csv(tmp_path, monkeypatch):
 
 
 def test_main_writes_figure(tmp_path, monkeypatch):
-    """CLI --figure writes a PDF."""
+    """CLI --figure writes a PDF (figure-only; no CSV side-output)."""
     input_path = tmp_path / "measurements.jsonl"
     _write_p1_base_measurements(input_path, SAMPLE_METRICS)
     patch_measurements_loader(monkeypatch, input_path)
@@ -242,8 +246,6 @@ def test_main_writes_figure(tmp_path, monkeypatch):
 
     sys.argv = [
         "plot_cost_quality",
-        "--output",
-        str(tmp_path / "cost_quality.csv"),
         "--figure",
         str(figure_path),
     ]
