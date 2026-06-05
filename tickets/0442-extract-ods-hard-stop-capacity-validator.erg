@@ -1,0 +1,42 @@
+%erg 0.1
+Title: extract_ods: hard-stop capacity validator (Err:510 leaked through extraction)
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T11:39Z claude created
+
+--- body ---
+## Context
+
+Found during 0416 (PR #760): the pinned snapshot pipeline-2026-06-05.ods
+carries a leaked spreadsheet formula error (`Err:510`) in the capacity
+column for Vung Ang 2 Unit 1/2. `extract_ods.py`'s validate_input
+green-lit it; the failure surfaced only downstream, in
+aggregate_units.py's capacity-numericness guard. Per the layered-guards
+doctrine (0416 log 2026-06-04T13:35Z): extraction is the PRIMARY catch
+for master regressions.
+
+## Quoi faire
+
+1. validate_input in data/reference/extract_ods.py: capacity column
+   must parse as a positive number on every unit/plant-grain row;
+   spreadsheet error strings (Err:NNN, #VALUE!, #REF!, ...) are named
+   explicitly in the diagnostic. Hard stop, no CSV written.
+2. Regression test: fixture row with Err:510 -> extraction refuses with
+   actionable message naming row and value.
+3. Keep redundant with the 0416 aggregate guard (defence in depth) —
+   do NOT remove the downstream check.
+
+## Exit criteria
+
+- [ ] Extraction refuses non-numeric capacity with actionable message
+- [ ] Regression test green
+- [ ] `make check` passes
+
+## Related
+
+- 0416 (PR #760 — discovery + downstream guard), 0420 (extraction),
+  0439 (master conventions). NOTE: the master itself still needs the
+  formula fix + re-import (author, needs-human path documented in
+  PR #760).
