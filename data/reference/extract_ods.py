@@ -59,6 +59,49 @@ COLUMN_MAP = {
     "Project stage": "status",
 }
 
+# Closed status vocabulary (master Conventions sheet, ratified 2026-06-05):
+# a single ordinal ladder, rungs 7-8 reserved for future extension. Any value
+# outside this list is a data-entry error — hard stop, no silent coercion.
+STATUS_VOCABULARY = (
+    "0 exploring",
+    "1 announced",
+    "2 proposed",
+    "3 added to PDP",
+    "4 permitted",
+    "5 construction",
+    "6 operating",
+    "9 cancelled",
+    "10 retired",
+)
+
+# Project stage (master, fine grain) -> v1-compatible reference status.
+# The master keeps the fine grain; the pipe owns the derivation (same doctrine
+# as Fuel, 0439 convention 4). "4 permitted -> planned" reads "planned" as
+# *inscribed in the plan / authorized* (PDP reading) — if "planned" ever came
+# to mean ready-to-build, that row must be revisited. NOT wired to extraction
+# output: v2 carries the raw stage; consumers project at 0413 adoption time.
+V1_STATUS_BY_STAGE = {
+    "0 exploring": "proposed",
+    "1 announced": "proposed",
+    "2 proposed": "proposed",
+    "3 added to PDP": "planned",
+    "4 permitted": "planned",
+    "5 construction": "constructing",
+    "6 operating": "operational",
+    "9 cancelled": "cancelled",
+    "10 retired": "retired",
+}
+assert set(V1_STATUS_BY_STAGE) == set(STATUS_VOCABULARY)
+
+
+def derive_v1_status(stage: str) -> str:
+    """Project a master stage onto the 6-status v1 vocabulary.
+
+    Exhaustive table lookup — an unknown stage raises KeyError loudly (never
+    a .get default): silently mapping a typo would corrupt scoring downstream.
+    """
+    return V1_STATUS_BY_STAGE[stage]
+
 
 def _fold(name: str) -> str:
     """Normalise a name for diacritics-insensitive, case-insensitive comparison.
@@ -144,6 +187,28 @@ def validate_no_duplicate_names(df: pd.DataFrame) -> None:
     )
 
 
+def validate_status_vocabulary(df: pd.DataFrame) -> None:
+    """Abort on any Project stage outside the closed 9-label vocabulary.
+
+    The ladder is closed by convention (master Conventions sheet): an unknown
+    value is a data-entry error in the master, never something to coerce or
+    pass through. The message lists each offending value with its rows.
+    """
+    allowed = set(STATUS_VOCABULARY)
+    offenders: dict[str, list[int]] = {}
+    for idx, value in df["Project stage"].items():
+        stage = _cell(value)
+        if stage not in allowed:
+            offenders.setdefault(stage or "<empty>", []).append(idx + HEADER_ROW + 2)
+    if offenders:
+        detail = "\n  ".join(f"{v!r} (rows {r})" for v, r in sorted(offenders.items()))
+        raise ValueError(
+            "Project stage values outside the closed vocabulary — fix them in "
+            "the master (Conventions sheet lists the 9 valid labels), then "
+            "re-import:\n  " + detail
+        )
+
+
 def validate_input(df: pd.DataFrame) -> None:
     """Run every input validator. Hard stop on the first failure.
 
@@ -152,6 +217,7 @@ def validate_input(df: pd.DataFrame) -> None:
     """
     validate_address_shape(df)
     validate_no_duplicate_names(df)
+    validate_status_vocabulary(df)
 
 
 def read_ods(path: Path) -> pd.DataFrame:

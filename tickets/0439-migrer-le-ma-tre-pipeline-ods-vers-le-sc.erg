@@ -12,6 +12,7 @@ Label: needs-human
 2026-06-05T10:01Z claude note Conventions sheet injected (5 conventions + vocab statut x10, fuel x5, record-status); full checker green 0 violations; awaiting author LibreOffice pass (validity dropdowns, cond. formatting, eyeball) before snapshot
 2026-06-05T10:25Z claude note snapshot pipeline-2026-06-05.ods cut and pinned; extract_ods.py migrated to three-column schema (name/level derived, shape validator); 23 tests green incl. integration acceptance; stages renumbered by author (0-6,9,10); exit criteria amended per author footprint decision (assist script stays throwaway)
 2026-06-05T10:30Z claude note for 0416: extract dedup invariant is derived-designation uniqueness (Plant+Unit); throwaway session checker also enforced composite-key (Complex,Plant,Unit) uniqueness — contrat v2 must pick the canonical one. v1/v2 status ladders differ post-renumber (5 operating -> 6 operating etc.); 0413 adoption diff must map them
+2026-06-05T10:35Z claude note handoff 2: derivation conventions injected into Conventions sheet (9-rung table, permitted->planned PDP reading, GEM alignment note, rungs 7-8 reserved/closed vocabulary); extract_ods.py gains validate_status_vocabulary (hard stop) + derive_v1_status (pipe-owned, exhaustive, KeyError on unknown, NOT wired); snapshot refreshed on unmerged branch (same capture date, same surgery); 34 tests green
 --- body ---
 ## Contexte
 

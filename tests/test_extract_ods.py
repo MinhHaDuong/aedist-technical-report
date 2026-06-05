@@ -20,13 +20,17 @@ import pandas as pd
 import pytest
 
 from data.reference.extract_ods import (
+    STATUS_VOCABULARY,
+    V1_STATUS_BY_STAGE,
     derive_level,
     derive_name,
+    derive_v1_status,
     read_ods,
     select_columns,
     validate_address_shape,
     validate_input,
     validate_no_duplicate_names,
+    validate_status_vocabulary,
 )
 
 
@@ -165,6 +169,86 @@ def test_validate_input_runs_shape_then_duplicates():
     df = _df([("", "Dup", ""), ("", "Dup", "")])
     with pytest.raises(ValueError):
         validate_input(df)
+
+
+# --- validate_status_vocabulary -------------------------------------------------
+
+
+def _stage_df(stages: list[str]) -> pd.DataFrame:
+    return pd.DataFrame({"Project stage": stages})
+
+
+def test_all_nine_labels_accepted():
+    """Every label of the closed vocabulary passes (no over-eager rejection)."""
+    validate_status_vocabulary(_stage_df(list(STATUS_VOCABULARY)))  # must not raise
+
+
+def test_unknown_stage_hard_stops():
+    """A value outside the ladder is a data-entry error — hard stop, named."""
+    df = _stage_df(["6 operating", "7 mothballed"])
+    with pytest.raises(ValueError, match="7 mothballed"):
+        validate_status_vocabulary(df)
+
+
+def test_pre_renumber_label_hard_stops():
+    """The old ladder's labels are no longer valid — no silent coercion.
+
+    '5 operating' was the pre-2026-06-05 label for today's '6 operating'; a
+    validator that normalized instead of refusing would mask a master file
+    saved with the wrong vocabulary version.
+    """
+    with pytest.raises(ValueError, match="5 operating"):
+        validate_status_vocabulary(_stage_df(["5 operating"]))
+
+
+def test_empty_stage_hard_stops():
+    """An empty stage cell is out-of-vocabulary too (every row carries one)."""
+    with pytest.raises(ValueError, match="<empty>"):
+        validate_status_vocabulary(_stage_df([""]))
+
+
+def test_validate_input_includes_vocabulary():
+    """validate_input composes the vocabulary check."""
+    df = _df([("", "Plant A", "")], **{"Project stage": ["bogus"]})
+    with pytest.raises(ValueError, match="bogus"):
+        validate_input(df)
+
+
+# --- derive_v1_status (pipe-owned projection, NOT wired to extraction) ----------
+
+
+@pytest.mark.parametrize(
+    ("stage", "expected"),
+    [
+        ("0 exploring", "proposed"),
+        ("1 announced", "proposed"),
+        ("2 proposed", "proposed"),
+        ("3 added to PDP", "planned"),
+        ("4 permitted", "planned"),
+        ("5 construction", "constructing"),
+        ("6 operating", "operational"),
+        ("9 cancelled", "cancelled"),
+        ("10 retired", "retired"),
+    ],
+)
+def test_derive_v1_status_all_rungs(stage, expected):
+    """The exhaustive derivation table, rung by rung (Conventions sheet)."""
+    assert derive_v1_status(stage) == expected
+
+
+def test_derive_v1_status_unknown_raises_keyerror():
+    """An invented stage raises KeyError — never a .get default.
+
+    Silently mapping a typo would corrupt scoring downstream; the projection
+    is only as trustworthy as its refusal to guess.
+    """
+    with pytest.raises(KeyError):
+        derive_v1_status("11 dismantled")
+
+
+def test_derivation_table_covers_exactly_the_vocabulary():
+    """Table exhaustiveness is structural: keys == closed vocabulary."""
+    assert set(V1_STATUS_BY_STAGE) == set(STATUS_VOCABULARY)
 
 
 # --- select_columns: projection, rename, derivations ---------------------------
