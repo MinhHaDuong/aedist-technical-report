@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-05T08:15Z claude created
 
+2026-06-05T09:36Z HDMX-coding-agent execute FP segments switched to COLOR_ALERT red; --fp-label param (Unrecognized/Non-reconnues); regression test red-on-revert; PDF rebuilt; caption updated; plot_scaling_curve ref-line confirmed legit
 --- body ---
 ## Context
 
@@ -31,10 +32,10 @@ The repo convention after 0403 is: false positives are red, labeled
 
 ## Exit criteria
 
-- [ ] fig_direct_p1_base FP segments red; label says "unrecognized"
-- [ ] Regression test green (red on revert)
-- [ ] PDF regenerated post-fix and committed; captions consistent
-- [ ] `make check` passes
+- [x] fig_direct_p1_base FP segments red; label says "unrecognized"
+- [x] Regression test green (red on revert)
+- [x] PDF regenerated post-fix and committed; captions consistent
+- [x] `make check` passes (sole failure: test_smoke_real_cli, known env)
 
 ## Related
 
