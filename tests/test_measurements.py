@@ -162,6 +162,27 @@ class TestRecordsToMetrics:
         metrics = records_to_metrics([record])
         assert "max_tokens" not in metrics[0]
 
+    def test_metrics_record_cites_reference(self):
+        """Ticket 0431: scores must cite the reference dataset they were
+        computed against. When the RunRecord carries a reference filename it
+        is projected into the complete scientific record (ADR-7)."""
+        record = RunRecord(
+            method=Method.DIRECT,
+            method_params=MethodParams(model="m"),
+            result_summary=ResultSummary(tp=1, fp=0, fn=0, f1=1.0),
+            result_file="census/m-run1.csv",
+            reference="vietnam_thermal_v1.csv",
+        )
+        [m] = records_to_metrics([record])
+        assert m["reference"] == "vietnam_thermal_v1.csv"
+
+    def test_metrics_record_legacy_row_omits_reference(self):
+        """Omit-when-absent (0139 precedent): a pre-0431 row has no reference
+        field, so the metrics dict must not introduce a stray key."""
+        record = _make_record("census/m-run1", tp=1, fp=0, fn=0, f1=1.0)  # reference=None
+        metrics = records_to_metrics([record])
+        assert "reference" not in metrics[0]
+
 
 class TestOutputEquivalence:
     """Pure reporting functions produce identical output from RunRecords."""

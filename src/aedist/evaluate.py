@@ -277,10 +277,14 @@ def _metrics_to_runrecord(
     metrics: BenchmarkMetrics,
     label: str,
     result_file: str,
+    reference: str | None = None,
 ) -> RunRecord:
     """Build a RunRecord from evaluation metrics.
 
     *result_file* should be a relative path (e.g. experiments/outputs/...).
+    *reference* is the release filename of the dataset the scores were
+    computed against (ticket 0431); stamped onto the record so the metrics
+    dict cites its reference (ADR-7).
     """
     condition = label.split("/")[0] if "/" in label else ""
     stem = label.rsplit("/", 1)[-1]
@@ -293,6 +297,7 @@ def _metrics_to_runrecord(
             prompt_version=condition,
         ),
         result_file=result_file,
+        reference=reference,
         result_summary=ResultSummary(
             n_plants=metrics.n_system,
             tp=metrics.n_matched,
@@ -342,7 +347,9 @@ def _evaluate_csv_file(system_path: Path, ref_path: Path, args: argparse.Namespa
     if args.output:
         out = Path(args.output)
         label = f"{system_path.parent.name}/{system_path.stem}"
-        record = _metrics_to_runrecord(metrics, label, _rel_path(system_path))
+        record = _metrics_to_runrecord(
+            metrics, label, _rel_path(system_path), reference=ref_path.name
+        )
 
         # Mark empty system CSVs so they appear as status="empty" in the
         # measurements table rather than the default "ok".

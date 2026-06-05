@@ -2,10 +2,13 @@
 Title: Scientific record cites its reference: propagate reference identity into metrics
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #753 — reference stamped across scorers, schema v2, gate APPROVED
 
 --- log ---
 2026-06-05T06:31Z claude created
 
+2026-06-05T10:35Z claude execute reference field + metrics projection + scorer sweep + exp2 mart v2; PR opened
+2026-06-05T10:51Z HDMX-coding-agent closed — delivered by PR #753 — reference stamped across scorers, schema v2, gate APPROVED
 --- body ---
 ## Context
 
@@ -60,12 +63,17 @@ def test_metrics_record_legacy_row_omits_reference():
 
 ## Exit criteria
 
-- [ ] Scoring rows record the reference they were computed against
+- [x] Scoring rows record the reference they were computed against
       (RunRecord field + records_to_metrics projection, omit-when-absent)
-- [ ] Every scorer entry point stamps it (sweep documented in the MR)
-- [ ] Exp2 mart rows carry reference identity; parity check green
-- [ ] No rebuild-measurements; legacy rows untouched
-- [ ] `make check` passes
+- [x] Every scorer entry point stamps it (sweep documented in the MR)
+- [x] Exp2 mart rows carry reference identity; parity check green
+      (parity is a manual diagnostic target, not in make check/CI; post-0386
+      it is intentionally column-asymmetric — Option B. The reference column
+      is added symmetrically to both the legacy CSV and the mart view so no
+      NEW asymmetry is introduced; the pre-existing 6-column gap is 0386's.)
+- [x] No rebuild-measurements; legacy rows untouched (additive surgical
+      column-add on committed artifacts, byte-identity proven)
+- [x] `make check` passes
 
 ## Related
 

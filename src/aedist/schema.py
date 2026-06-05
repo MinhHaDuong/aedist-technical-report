@@ -283,6 +283,18 @@ class RunRecord(BaseModel):
         default=None,
         description="Error string when status != ok; None on success.",
     )
+    # Reference release filename (e.g. the VN thermal v1 CSV), stamped from the
+    # scorer's --reference so the metrics dict cites what tp/fp/fn were scored
+    # against. None on legacy rows and non-scored runs (generations, refusals).
+    reference: str | None = Field(
+        default=None,
+        description=(
+            "Release filename of the reference dataset the scores (tp/fp/fn/f1) "
+            "were computed against (ticket 0431). Stamped at evaluation time "
+            "from the scorer's --reference. None on legacy rows and on "
+            "non-scored runs (generations, refusals)."
+        ),
+    )
     reasoning_summary: str | None = Field(
         default=None,
         description="Provider-supplied summary of the model's reasoning trace.",

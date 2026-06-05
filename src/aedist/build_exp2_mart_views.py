@@ -63,6 +63,7 @@ _SCORE_VIEW_FIELDS = [
     "model",
     "run",
     "prompt_version",
+    "reference",
     "n_rows",
     "accuracy_coverage",
     "accuracy_coverage_annotation",
@@ -241,6 +242,10 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 "model": record["model"],
                 "run": str(record["run"]),
                 "prompt_version": record.get("prompt_version", ""),
+                # Defensive .get: marts written before ticket 0431 (schema v1)
+                # lack the reference field. Tolerate absence (empty cell) so the
+                # view builds against pre-v2 committed marts until regenerated.
+                "reference": record.get("reference") or "",
                 "n_rows": str(summary["n_rows"]),
                 "accuracy_coverage": _fmt(summary["accuracy"]["coverage"].get("value")),
                 "accuracy_coverage_annotation": summary["accuracy"]["coverage"].get(

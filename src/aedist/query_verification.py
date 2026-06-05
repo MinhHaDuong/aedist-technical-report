@@ -321,6 +321,7 @@ def run_condition(
         ),
         resource_use=ResourceUse(cost_usd=verification_cost),
         result_file=result_file_path,
+        reference=reference_path.name,
         result_summary=ResultSummary(
             status="ok",
             n_plants=full_metrics["n_plants"],

@@ -97,6 +97,10 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
     are surfaced when the underlying RunRecord field is non-None. Lists
     are projected as counts; the raw lists stay in the RunRecord.
 
+    Reference identity (ticket 0431): ``reference`` — the release filename of
+    the dataset tp/fp/fn were scored against — is projected when present
+    (omit-when-absent for legacy rows).
+
     Verification scalars from ``justification`` (source-grounding pipeline):
     verification_mode, mean_evidence_score, verification_cost_usd are
     projected when the justification dict carries them (omit-when-absent).
@@ -207,6 +211,12 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
             d["retry_count"] = r.retry_count
         if r.error is not None:
             d["error"] = r.error
+        # --- 0431: reference dataset the scores were computed against -------
+        # Omit-when-None (0139 precedent): legacy rows lack it. When v2 is
+        # adopted (0413) tp/fp/fn change and this field is what distinguishes
+        # pre- from post-adoption rows in the metrics dict (ADR-7).
+        if r.reference is not None:
+            d["reference"] = r.reference
         if r.reasoning_summary is not None:
             d["reasoning_summary"] = r.reasoning_summary
         if r.tool_calls_cost_usd is not None:
