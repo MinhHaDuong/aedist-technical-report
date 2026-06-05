@@ -272,14 +272,20 @@ one plant in v2); v2 = 170 plants.
 
 | Class | Δ | Detail |
 |---|---|---|
-| Common (unchanged identity) | 150 | name present as a plant in both |
-| Defect-3 dedup (Formosa ×2 → ×1) | −2 rows in v1 | same-name multi-status rows collapsed to one plant each |
+| Common (unchanged identity) | 150 v1 names → 149 v2 plants | name present as a plant in both (one fold-collision, next row) |
+| Defect-1 dedup (Duyên Hải romanization ×2 → ×1) | −1 | `Duyên Hải 2` and ASCII `Duyen Hai 2` are two v1 names that fold to one v2 plant; the ASCII duplicate was merged in the master (PROVENANCE defect 1) |
+| Defect-3 dedup (Formosa ×2 → ×1) | −2 rows in v1 | `Dong Nai Formosa`, `Ha Tinh Formosa` each two same-name multi-status rows in v1, one plant in v2 (PROVENANCE defect 3) |
 | Absorbed as unit (master split) | −4 from v1 | `Duyen Hai 3 / Uong Bi I / Uong Bi II / Vinh Tan 4 extension` were standalone v1 plant rows; the master made each a UNIT of its parent plant |
 | LNG combined → split | 7 v1 → 12 v2 | `LNG Cà Mau 2,3 → 2 + 3`, `LNG Cà Ná II+III → II + III`, `LNG Hải Lăng / (2 and 3) → (1)/2/3`, `LNG Long Sơn / II+III → (I)/II/III`, `LNG Mũi Kê Gà 2,3 → 2 + 3` |
 | Genuinely new master rows | +9 | `Bảo Đài`, `Long Son Chemical`, `Luc Nam`, `NĐ Miền Bắc 1/2/3`, `NĐ khí dư Hòa Phát II`, `Rang Dong cogeneration`, `Uong Bi II` |
 
-Balance: 150 common + 4 absorbed + 7 LNG-combined = 161 (v1); 150 common + 12
-LNG-split + 9 new = 171 ... the LNG `(1)`/`(I)` rows of Hải Lăng and Long Sơn are
-the v1 base rows re-keyed (combined → primary), so the net v2 plant count is 170.
-No unexplained delta in the plant SET; capacity/status per-plant diffs are
-deferred to the 0413 adoption ceremony and require the clean (Err-free) snapshot.
+Balance (closes exactly): v1 = 161 unique names (163 rows − 2 defect-3
+duplicates). Of those 161: 150 are still present as a plant name in v2 (but two
+of them — defect 1, the Duyên Hải romanization pair — fold to a single v2 plant,
+so 149 distinct surviving plants), 4 became units of their parent, 7 were LNG
+combined designations. v2 = **149 surviving v1 plants + 12 LNG-split + 9
+genuinely new = 170**. No unexplained delta in the plant SET; every difference
+maps to a PROVENANCE "Known defects of v1" entry (defects 1 and 3) or the
+master's own evolution (extension-as-unit splits, LNG splits, new rows).
+Per-plant capacity/status diffs are deferred to the 0413 adoption ceremony and
+require the clean (Err-free) snapshot.
