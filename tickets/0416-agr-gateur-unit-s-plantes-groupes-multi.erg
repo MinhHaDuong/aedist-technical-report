@@ -2,6 +2,7 @@
 Title: Pipeline référence 2/3: agrégateur unités→plantes refondu, sortie à clé unique
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Blocked-by: 0439
 
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-06-04T13:35Z claude note — attribution nuance: the master DID carry defects 1-2 (both now fixed there by the author); input guards are thus the primary catch for master regressions, not just defense in depth
 2026-06-04T20:05Z HDMX-coding-agent note blocker 0420 closed — Blocked-by removed.
 2026-06-05T07:27Z claude note — raid 2026-06-05 Imagine: ESCALATE — grouping contract unspecified under no-synthesis rule (Q1/Q2 in body, § Imagine review). On hold for author; 0401 held with it.
+2026-06-05T09:12Z claude note — author ratified three-column master design (Complex|Plant|Unit): ESCALATE resolved, contrat v2 in body, Blocked-by 0439 (master migration, needs-human)
 --- body ---
 ## Contexte
 
@@ -119,3 +121,37 @@ PROCEED-able facts for the eventual Execute agent:
   Phase/Extension regex — synthesis-adjacent, violates doctrine.
 
 DRIFT CHECK: no exit criterion dropped/reworded/added.
+
+## Contrat v2 (ratifié par l'auteur 2026-06-05) — ESCALATE résolu
+
+Le maître adopte trois colonnes d'adresse `Complex | Plant | Unit`
+(migration : 0439, needs-human, Blocked-by ajouté). Q1 dissoute : le
+parentage est une donnée. Q2 tranchée : statut = vocabulaire contrôlé au
+maître (feuille Conventions) ; fuel = dérivation possédée par le pipe.
+Architecture d'application en quatre couches (typing/extraction/CI/oracle) :
+
+1. **extract_ods.py étendu** (et non l'agrégateur) porte les validateurs,
+   fail-closed, messages actionnables listant les lignes fautives :
+   V1 clé composite (Complex,Plant,Unit) unique · V2 DF même Plant ⇒ même
+   Complex · V3 Unit rempli ⇒ Plant rempli · V4 exclusivité de grain
+   (lignes unité XOR ligne grain-centrale par centrale) · V5 statut/fuel ∈
+   vocabulaire de la feuille Conventions (l'extracteur lit LES MÊMES plages
+   que les listes déroulantes) · V6 ≥1 cellule d'adresse remplie ·
+   V7 cellule Plant constante par groupe d'unités.
+2. **aggregate_units.py rétréci** : groupby(Plant) pur + asserts de sortie
+   (clé centrale unique, aucune unité dans deux groupes, Units Included
+   sans répétition) — garanti structurellement, asserté en défense en
+   profondeur. Level dérivé = colonne non-vide la plus fine. Aucun parsing
+   de nom, nulle part.
+3. **Garde de parité CI** (marqueur integration) : ré-exécuter
+   extract+aggregate sur l'instantané committé reproduit les CSV release
+   byte-identiques. + Tests d'intégrité rapides sur les CSV committés
+   (clé unique, capacité = somme des unités, vocabulaire). + Ratchet
+   adherence : aucun code de src/ ne parse les noms de centrale (regex
+   « Unit \d » bannie hors scripts/migrate_master_split.py).
+4. **Oracle d'adoption** (critère 5) inchangé : diff v1→v2 expliqué par la
+   checklist PROVENANCE — cérémonie d'acceptation 0413, hors CI.
+
+Les critères de sortie originaux restent valides sous ce contrat ; le
+critère 1 « Level propagé » se lit désormais « Level dérivé des colonnes
+d'adresse ».

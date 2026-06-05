@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Migrer le maître pipeline.ods vers le schéma d'adresse à trois colonnes (Complex/Plant/Unit)
+Created: 2026-06-05
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-05T09:11Z HDMX-coding-agent created
+
+2026-06-05T09:12Z claude note — design ratified in raid Imagine dialogue; enforcement layers in 0416 contrat v2
+--- body ---
+## Contexte
+
+Design ratifié par l'auteur (2026-06-05, dialogue Imagine raid) : le maître
+pipeline.ods adopte TROIS colonnes d'adresse `Complex | Plant | Unit` — une
+table unique dénormalisée (motif chemin-de-dimension), PAS trois tables.
+Racine du problème résolu : l'identité portée par la chaîne de caractères du
+nom (« X Unit 2 » dupliqué à la main) — le parentage devient une donnée, plus
+jamais une inférence. Q1 de 0416 dissoute ; Level (0401) devient une
+dérivation (colonne non-vide la plus fine).
+
+## Conventions ratifiées
+
+1. **Exclusivité de grain** : une centrale apparaît SOIT en lignes unité,
+   SOIT en une ligne grain-centrale — jamais les deux (double comptage).
+2. **Cellule vide = sémantique déclarée** : Unit vide ⇒ la ligne EST la
+   centrale (découpage inconnu) ; Complex vide ⇒ centrale isolée (cas
+   courant) ; Complex seul ⇒ ligne grain-complexe (ex. LNG Mỹ Giang).
+3. **Block (CCGT)** : pas de 4e colonne ; appartenance au bloc dans la
+   désignation Unit quand les sources l'attestent. À revisiter sur cas réels.
+4. **Statut** : vocabulaire contrôlé (feuille Conventions), porté par la
+   ligne au grain le plus fin ; multi-statut même nom = erreur à résoudre
+   par désignations attestées (doctrine inchangée). Fuel : reste brut au
+   maître, dérivation possédée par le pipe.
+5. **Attestation = humaine.** Les couches mécaniques garantissent la
+   cohérence, pas la vérité ; les noms restent des désignations attestées
+   par les sources.
+
+## Quoi faire (needs-human : les mains de l'auteur sur l'ODS)
+
+1. Script d'assistance `scripts/migrate_master_split.py` (jetable, SEUL
+   endroit autorisé à parser les noms — quarantaine nominale pour le
+   ratchet) : propose le découpage Complex/Plant/Unit depuis les noms
+   actuels (~250 lignes) ; sortie CSV de revue.
+2. L'auteur revoit/corrige la proposition, reporte dans l'ODS (la passe
+   d'autorat attestée), Y COMPRIS la ré-importation des correctifs
+   défauts 1–2 déjà faits dans sa copie du maître — une seule chirurgie.
+3. Feuille « Conventions » dans l'ODS : vocabulaires (statut, fuel) +
+   les 5 conventions ci-dessus. Data▸Validité (listes déroulantes) branchée
+   sur ces plages ; mise en forme conditionnelle sur doublons de clé
+   composite et dérive Plant→Complex.
+4. Nouvel instantané daté `data/reference/raw/pipeline-2026-06-JJ.ods`
+   (politique 0430), jamais écrasé.
+5. Vérification : l'extraction (0416 contrat v2, validateurs V1–V7) passe
+   sur le nouvel instantané et produit vietnam_thermal_units_v2.csv.
+
+## Exit criteria
+
+- [ ] Instantané daté committé, extraction V1–V7 verte dessus
+- [ ] Feuille Conventions présente (vocabulaires + 5 conventions)
+- [ ] Script d'assistance committé sous scripts/ (quarantaine ratchet)
+- [ ] PROVENANCE.md : entrée migration (date, motif, lien design)
+
+## Related
+
+- 0416 (contrat v2 — consommateur direct, Blocked-by ce ticket)
+- 0430 (politique d'instantanés datés), 0401 (Level dérivé), 0413 (adoption)
+- Mémoire de conception : dialogue Imagine 2026-06-05 (trois colonnes vs
+  Parent/3NF/IDs/sidecar — alternatives écartées documentées en session)
