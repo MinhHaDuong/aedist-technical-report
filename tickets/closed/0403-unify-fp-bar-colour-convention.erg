@@ -2,10 +2,13 @@
 Title: Unify FP-bar colour convention — plot_exp2_arms_comparison still uses orange
 Created: 2026-06-03
 Author: claude
+Closed: delivered by PR #738 — uniform red FP bars, gate APPROVED
 
 --- log ---
 2026-06-03T21:55Z claude created
 
+2026-06-05T08:13Z claude execute FP bars switched to COLOR_ALERT red; regression test + caption fix; PDF regenerated from committed mart
+2026-06-05T08:29Z HDMX-coding-agent closed — delivered by PR #738 — uniform red FP bars, gate APPROVED
 --- body ---
 ## Context
 
@@ -57,11 +60,11 @@ one FP bar per arm; assert every negative bar's facecolor is
 
 ## Verification
 
-- [ ] Both live Exp2 figures use red for FP bars
-- [ ] Test passes; `make check-fast` green
-- [ ] Committed PDF regenerated from committed mart data (no mart churn
+- [x] Both live Exp2 figures use red for FP bars
+- [x] Test passes; `make check-fast` green
+- [x] Committed PDF regenerated from committed mart data (no mart churn
       in the diff)
-- [ ] Caption wording consistent if it names the colour
+- [x] Caption wording consistent if it names the colour
 
 ## Invariants
 

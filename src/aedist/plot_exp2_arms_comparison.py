@@ -22,9 +22,11 @@ import json
 import logging
 from pathlib import Path
 
+from matplotlib.figure import Figure
+
 from .extract import count_best_table_rows
 from .util import (
-    COLOR_HALLUC,
+    COLOR_ALERT,
     COLOR_REFERENCE,
     SLIDE_FIGSIZE_WIDE,
     model_family_color,
@@ -175,7 +177,7 @@ def _draw_coverage_panel(ax, rows: list[dict]) -> None:
                 mean_halluc = _mean(halluc_vals)
                 ax.bar(x, mean_matched, _BAR_WIDTH, color=color, alpha=0.85, zorder=3)
                 if mean_halluc > 0:
-                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_HALLUC, alpha=0.9, zorder=3)
+                    ax.bar(x, -mean_halluc, _BAR_WIDTH, color=COLOR_ALERT, alpha=0.9, zorder=3)
                 _draw_whiskers(ax, x, matched_vals)
             else:
                 # 1D/5D or all-None scored runs: show inventory size, unscored gray.
@@ -251,7 +253,7 @@ def _style_panel(ax, ylabel: str | None) -> None:
     _annotate_conditions(ax)
 
 
-def make_figure(rows: list[dict], output: Path) -> None:
+def make_figure(rows: list[dict], output: Path) -> Figure:
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_WIDE)
@@ -283,6 +285,7 @@ def make_figure(rows: list[dict], output: Path) -> None:
     fig.savefig(output, bbox_inches="tight", dpi=150)
     plt.close(fig)
     log.info("Wrote %s", output)
+    return fig
 
 
 def main(argv: list[str] | None = None) -> None:
