@@ -9,6 +9,7 @@ Author: Claude
 
 2026-06-05T08:35Z Claude note Re-baseline executed (PR pending): re-scored exp2_mart.jsonl + sota_cross_eval.csv through score.mk with current matcher/coherence scorers; regenerated mart-downstream committed artifacts via render.mk. Row set unchanged (80/80); 63/80 rows changed >=1 accuracy_* metric (matcher fix), e.g. arm3/claude run01 coverage 0.2883->0.3006 precision 0.9216->0.9608 f1 0.4393->0.4579; mean precision +0.0389, coverage +0.0185, f1 +0.0242. No coherence/provenance flips on the current base. class_trace/n_bib_entries stay null (0385 unchanged); Layer-2 strict-xfail still XFAILs. The 'rebuild + re-baseline' body decision is now done; umbrella stays open for 0384/0385/0386 + finding #1.
 2026-06-05T08:39Z Claude note Re-baseline PR is #743 (ticket/0383-rebaseline). Non-closing Ticket-ref; umbrella stays open for 0384/0385/0386 + finding #1.
+2026-06-05T09:15Z claude correction (gate REROLL PR #743): delta narrative was wrong on coherence — capacity_nonnegative newly populated None->1.0 on 80/80 (field not computed in old mart); status_vocab_adherence changed on 27/80 (1.0 -> lower, 6 rows to 0.0) — the INTENTIONAL surfacing of the Finding-1 naming bug (old mart read capacity_nonneg column for this field, masking real values). Provenance/temporality/field_completeness: zero changes. Accuracy delta figures confirmed independently by gate.
 --- body ---
 ## Context
 
