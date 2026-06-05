@@ -1,0 +1,34 @@
+%erg 0.1
+Title: French variant of tab_exp2_bib_quality (i18n the bib-quality longtable)
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T11:16Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The report (French) includes `tab_exp2_bib_quality.tex` in
+§sec:exp2-sota:donnees (added by 0254). The artefact is English: caption
+("Experiment 2: bibliography quality by agent and arm"), column headers
+(Rows, S1 (%), S1 Prim., Notes, Bib) and arm labels (Naive/Optimised/Arm3/
+Arm4) are all English. It is the only English table in the French Exp2
+chapter. The 2×2 table already has a `_fr` variant precedent
+(`tab_exp2_2x2_fr.tex` via `tabulate_exp2_2x2.py` locale labels).
+
+## Actions
+1. Parameterize `src/aedist/tabulate_exp2_bib_quality.py` labels (caption,
+   headers, arm display names) by language, mirroring the `_TEX_LABELS`
+   pattern in `tabulate_exp2_2x2.py`. Numbers stay locale-neutral.
+2. Emit `tab_exp2_bib_quality_fr.tex` (new Makefile target in
+   `experiments/render.mk`, committed handoff artifact).
+3. Switch the report `\InputIfFileExists` to the French file.
+
+## Test
+`tab_exp2_bib_quality_fr.tex` caption/headers are French; the report PDF
+greps clean of "Experiment 2: bibliography quality" in the donnees section.
+
+## Exit criteria
+- [ ] French variant generated and committed.
+- [ ] Report includes the French variant; no English bib table survives.
+- [ ] `make report` clean-room build passes.
