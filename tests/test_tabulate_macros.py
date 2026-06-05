@@ -154,12 +154,13 @@ def test_main_writes_file(tmp_path, monkeypatch):
     assert r"\newcommand" in content
 
 
-def test_main_census_csv_headline_macros_nonzero(tmp_path, monkeypatch):
-    """CLI with --census-csv still emits non-zero \\Headline* macros from measurements."""
-    # Write census CSV (summary source)
-    csv_path = tmp_path / "census_bars.csv"
-    csv_path.write_text("model,f1,local\ngpt-5.4,0.70,0\npadme-qwen,0.50,1\n")
+def test_main_census_headline_macros_nonzero(tmp_path, monkeypatch):
+    """CLI with --census still emits non-zero \\Headline* macros from measurements.
 
+    Post-ticket-0436 the census summary is derived from measurements.jsonl
+    directly (via aedist.exp1_census), not round-tripped through a CSV
+    side-output; the headline macros still load the raw run data.
+    """
     # Write measurements JSONL with headline-eligible rows
     meas_path = tmp_path / "measurements.jsonl"
     write_measurements(meas_path, HEADLINE_METRICS)
@@ -171,8 +172,7 @@ def test_main_census_csv_headline_macros_nonzero(tmp_path, monkeypatch):
 
     sys.argv = [
         "tabulate_macros",
-        "--census-csv",
-        str(csv_path),
+        "--census",
         "--output",
         str(output_path),
     ]

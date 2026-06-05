@@ -229,23 +229,25 @@ $(ANALYSIS_EXP2_2X2_FR_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
 	    --output-tex $@ --lang fr
 
-# --- Coverage/cost split figures (reads from mart views + Exp1 cost CSV) ------
-
+# --- Coverage/cost split figures (mart views + Exp1 mart-derived baseline) ----
+# The E1 baseline bars come from the shared aedist.exp1_cost_quality library
+# (which reads measurements.jsonl directly), NOT from another figure script's
+# cost_quality.csv — common cause, no P3-to-P3 side-output edge (ticket 0436).
 $(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) &: \
-		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_GEN)/cost_quality.csv
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_split \
 	    --input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
-	    --exp1-input $(ANALYSIS_GEN)/cost_quality.csv \
 	    --coverage-output $(ANALYSIS_EXP2_COVERAGE_SPLIT) \
 	    --cost-output $(ANALYSIS_EXP2_COST_SPLIT)
 
-# --- Slide macros (census + measurements → report/inputs/generated/macros_slides.tex) ---
-
-$(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_GEN)/census_bars.csv $(ANALYSIS_MEASUREMENTS)
+# --- Slide macros (measurements → report/inputs/generated/macros_slides.tex) ---
+# The baseline census summary is derived from measurements.jsonl directly inside
+# tabulate_macros (via aedist.exp1_census) — no census_bars.csv side-output from
+# a figure script feeding this table rule (ticket 0436).
+$(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
-	uv run python -m aedist.tabulate_macros \
-	    --census-csv $(ANALYSIS_GEN)/census_bars.csv --output $@
+	uv run python -m aedist.tabulate_macros --census --output $@
 
 .PHONY: exp2-analysis-report exp1-analysis-figures report-tables report-figures chart-figures
 
@@ -271,15 +273,15 @@ $(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --output $@
 
-# Co-target fig_census_direct.pdf was retired with the ablation thread (0361);
-# the script still requires --output, so the PDF is written to a sentinel path
-# in $(ANALYSIS_REPORT_DERIVED_DIR) and not consumed by any downstream rule.
+# Census macros: emitted by the dedicated table module (tabulate_census_macros),
+# which derives them from measurements.jsonl directly. Before ticket 0436 this
+# was harvested as a side-output of plot_method_convergence, invoked purely to
+# dump the macros while discarding its PDF to a sentinel path — a figure script
+# run only to produce a table. The sentinel-PDF invocation is now retired.
 $(ANALYSIS_GEN)/macros_census.tex: $(ANALYSIS_MEASUREMENTS)
-	@mkdir -p $(dir $@) $(ANALYSIS_REPORT_DERIVED_DIR)
-	uv run python -m aedist.plot_method_convergence \
-	    --output $(ANALYSIS_REPORT_DERIVED_DIR)/_macros_census_unused.pdf \
-	    --methods direct --prompt-version census \
-	    --output-macros $@
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_census_macros \
+	    --prompt-version census --output $@
 
 $(ANALYSIS_GEN)/tab_relances.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
@@ -407,14 +409,19 @@ report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
 # The writing-side `make report` and `make slides` have no recipes for these
 # outputs — they are clean-room builds from committed artifacts only.
 
-$(ANALYSIS_GEN)/census_bars.csv: $(ANALYSIS_MEASUREMENTS)
-	@mkdir -p $(dir $@)
-	uv run python -m aedist.plot_census --output $@
-
-$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf $(ANALYSIS_GEN)/cost_quality.csv &: $(ANALYSIS_MEASUREMENTS)
+# Exp1 cost × quality: the figure (plot_) emits only the PDF; the audit CSV is
+# emitted by the table half (tabulate_). Both derive their rows from the shared
+# aedist.exp1_cost_quality library — no figure-script side-output another rule
+# consumes (ticket 0436).
+$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_cost_quality \
-	    --output $(ANALYSIS_GEN)/cost_quality.csv --figure $(ANALYSIS_GEN)/fig_direct_cost_quality.pdf
+	    --figure $(ANALYSIS_GEN)/fig_direct_cost_quality.pdf
+
+$(ANALYSIS_GEN)/cost_quality.csv: $(ANALYSIS_MEASUREMENTS)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_cost_quality \
+	    --output $(ANALYSIS_GEN)/cost_quality.csv
 
 $(ANALYSIS_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
@@ -487,8 +494,8 @@ $(ANALYSIS_GEN)/fig_spider_cross_exp.pdf: $(ANALYSIS_EXP1_CROSS_EVAL_CSV) $(ANAL
 	    --output $@
 
 chart-figures: \
-	$(ANALYSIS_GEN)/census_bars.csv \
 	$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf \
+	$(ANALYSIS_GEN)/cost_quality.csv \
 	$(ANALYSIS_GEN)/fig_direct_p1_base.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \

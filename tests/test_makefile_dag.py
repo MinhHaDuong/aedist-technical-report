@@ -305,6 +305,141 @@ def _phase_variables(mk_path: Path) -> dict[str, str]:
     return variables
 
 
+# ---------------------------------------------------------------------------
+# Guard: no P3-to-P3 side-output edges in render.mk (ticket 0436)
+# ---------------------------------------------------------------------------
+# Figures and tables must each build from their OWN view of the data mart —
+# consistency by common cause (the shared mart), never by one P3 script
+# consuming another P3 script's side-output (a figure script feeding a figure
+# script, or a plot_ script emitting a CSV/macro that a tabulate_ rule reads).
+# The sanctioned exception is the dedicated projection module
+# build_exp2_mart_views, whose *_view.csv outputs are the canonical mart views
+# both figures and tables read.
+
+_RENDER_MK = REPO_ROOT / "experiments" / "render.mk"
+# A recipe that derives an artifact from the mart: any plot_*/tabulate_* module
+# invoked as `python -m aedist.<module>`. build_exp2_mart_views is the
+# sanctioned projection module (its outputs ARE the shared views) and is
+# whitelisted as a producer below.
+_P3_MODULE_RE = re.compile(r"\baedist\.(plot_[A-Za-z0-9_]+|tabulate_[A-Za-z0-9_]+)\b")
+_VIEW_MODULE_RE = re.compile(r"\baedist\.build_exp2_mart_views\b")
+# Any committed/handoff artifact under report/inputs/generated/ (any extension);
+# derived/ intermediates are out of scope — the render.mk header sanctions them
+# as "P3-internal derived analysis files consumed only by later P3 rules".
+_GEN_PREREQ_RE = re.compile(r"report/inputs/generated/[^/\s:*?)]+\.[A-Za-z0-9]+")
+
+
+def _parse_render_rules_with_recipes(
+    path: Path,
+) -> tuple[list[dict], dict[str, str]]:
+    """Parse `path` into per-rule (targets, prereqs, recipe-module-tags).
+
+    Unlike _parse, this keeps recipe lines so each rule's targets and
+    prerequisites can be tagged with the aedist modules its recipe invokes.
+    Returns (rules, variables) where each rule dict has keys:
+        ``targets`` (set of generated-artifact keys),
+        ``prereqs`` (set of generated-artifact keys),
+        ``p3`` (True if the recipe invokes a plot_/tabulate_ module),
+        ``view`` (True if the recipe invokes build_exp2_mart_views).
+    """
+    variables, _ = _parse_to_vars_rules(path)
+    # Join backslash continuations into logical lines, but remember whether each
+    # logical line began as a recipe line (leading TAB) so recipes stay
+    # distinguishable from rule headers (a wrapped prereq list continues onto
+    # TAB-prefixed lines that are NOT recipes — make joins them into the header).
+    logical = _logical_lines(path)
+    rules: list[dict] = []
+    current: dict | None = None
+    for raw in logical:
+        is_recipe = raw.startswith("\t")
+        if is_recipe:
+            if current is not None:
+                if _P3_MODULE_RE.search(raw):
+                    current["p3"] = True
+                if _VIEW_MODULE_RE.search(raw):
+                    current["view"] = True
+            continue
+        # Non-recipe line: close any open rule, then look for a new target line.
+        if current is not None:
+            rules.append(current)
+            current = None
+        line = raw.split("#", 1)[0]
+        if not line.strip() or line.lstrip().startswith(("include", ".PHONY")):
+            continue
+        if ":" not in line:
+            continue
+        lhs, _, rhs = line.partition(":")
+        lhs = lhs.rstrip().rstrip("&").rstrip()
+        targets = set()
+        for tok in _expand(lhs, variables).split():
+            m = _GEN_PREREQ_RE.search(os.path.normpath(tok))
+            if m:
+                targets.add(m.group(0))
+        prereqs = set()
+        for tok in _expand(rhs, variables).split():
+            m = _GEN_PREREQ_RE.search(os.path.normpath(tok))
+            if m:
+                prereqs.add(m.group(0))
+        current = {"targets": targets, "prereqs": prereqs, "p3": False, "view": False}
+    if current is not None:
+        rules.append(current)
+    return rules, variables
+
+
+@pytest.mark.adherence
+def test_no_p3_to_p3_side_output_edges() -> None:
+    """No render.mk rule consumes another P3 script's generated side-output.
+
+    Collects every report/inputs/generated/ artifact produced by a rule whose
+    recipe invokes a plot_/tabulate_ module (a P3 figure/table script), then
+    asserts no *other* rule lists any of them as a prerequisite — unless the
+    producer is the sanctioned mart-view builder (build_exp2_mart_views), whose
+    *_view.csv outputs are the canonical shared views.
+
+    Mechanics mirror tests/test_makefile_dag.py. Class guard for ticket 0436:
+    figures and tables each read their own view of the mart (common cause),
+    never one feeding another via an intermediate file.
+    """
+    rules, _ = _parse_render_rules_with_recipes(_RENDER_MK)
+
+    # Outputs of P3 figure/table scripts (excluding the sanctioned view builder).
+    p3_outputs: set[str] = set()
+    # Whitelisted shared-view outputs of build_exp2_mart_views.
+    view_outputs: set[str] = set()
+    for rule in rules:
+        if rule["view"]:
+            view_outputs |= rule["targets"]
+        elif rule["p3"]:
+            p3_outputs |= rule["targets"]
+
+    forbidden = p3_outputs - view_outputs
+
+    # Consumer side: only real P3 script rules (recipe invokes a plot_/tabulate_
+    # module) count. The .PHONY grouping targets (report-tables, chart-figures,
+    # all, …) list every artifact as a prerequisite but run no recipe — they are
+    # aggregation aliases, not data-flow edges, and must not be flagged.
+    bad: list[tuple[str, str]] = []
+    for rule in rules:
+        if not rule["p3"]:
+            continue
+        for prereq in rule["prereqs"]:
+            if prereq in forbidden:
+                target = next(iter(sorted(rule["targets"])), "<phony>")
+                bad.append((target, prereq))
+
+    detail = "\n".join(f"  - {t}  consumes  {p}" for t, p in sorted(bad))
+    assert not bad, (
+        "render.mk rules consume a P3 figure/table script's generated "
+        "side-output (P3-to-P3 edge — ticket 0436):\n"
+        f"{detail}\n\n"
+        "Figures and tables must each build their own view of the mart "
+        "(common cause), never one feeding another via an intermediate file. "
+        "Move the shared derivation into a library helper both consumers import "
+        "(precedent: src/aedist/exp1_recognition.py), or produce the artifact "
+        "from the sanctioned build_exp2_mart_views projection module."
+    )
+
+
 @pytest.mark.adherence
 def test_no_empty_outputs_wildcard_with_nonempty_archive_sibling() -> None:
     """$(wildcard experiments/outputs/...) empty + non-empty archive sibling → fail.

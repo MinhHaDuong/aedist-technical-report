@@ -68,10 +68,13 @@ Generate LaTeX tables and plot CSVs from `measurements.jsonl`.
 | `tabulate_comparaison.py` | Census vs RAG side-by-side |
 | `tabulate_relances.py` | Multi-turn F1 progression |
 | `tabulate_self_consistency.py` | Single-run vs majority/union vote |
-| `tabulate_macros.py` | `\newcommand` macros for inline numbers |
+| `tabulate_macros.py` | `\newcommand` macros for inline numbers (`--census` for the slide-deck subset) |
+| `tabulate_census_macros.py` | Census `\newcommand` macros (`\NumCensusModels`, `\Census*`) |
+| `tabulate_cost_quality.py` | Cost × quality audit CSV (Experiment 1) |
 | `tabulate_utils.py` | Shared label parsing utilities |
-| `plot_census.py` | Census bar-chart CSV |
-| `plot_cost_quality.py` | Cost × quality CSV + scatter (TP vs cost, Experiment 1) |
+| `plot_cost_quality.py` | Cost × quality scatter PDF (TP vs cost, Experiment 1) |
+| `exp1_cost_quality.py` | Shared Exp1 cost/quality derivation (figure + audit CSV + Exp2 baseline) |
+| `exp1_census.py` | Shared baseline-census summary derivation (slide macros) |
 
 ### Data processing
 

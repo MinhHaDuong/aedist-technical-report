@@ -1,6 +1,12 @@
-"""Generate cost × quality CSV and scatter PDF from measurements.jsonl.
+"""Generate the cost × quality scatter PDF from measurements.jsonl.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
+Figure script only: it emits the PDF. The per-model summary it plots is
+derived by the shared :mod:`aedist.exp1_cost_quality` library; the audit CSV
+that companions this figure is written by :mod:`aedist.tabulate_cost_quality`,
+not by this script (ticket 0436 — figures emit figures only, no side-output
+another rule consumes).
 
 Scope: **Experiment 1 only** (the parametric baseline sweep,
 ``experiments/outputs/ablation/direct/p1_base/``). Pilot rows under
@@ -34,136 +40,24 @@ reused for Experiments 2/3.
 Usage::
 
     uv run python -m aedist.plot_cost_quality \\
-        --output report/inputs/generated/cost_quality.csv \\
         --figure report/inputs/generated/fig_direct_cost_quality.pdf \\
         --xscale log
 """
 
 import argparse
-import csv
 import logging
 from pathlib import Path
 
-from .tabulate_utils import strip_label as slug_from_label
+from .exp1_cost_quality import N_REFERENCE_PLANTS, load_cost_quality_rows
 from .util import (
     COLOR_REFERENCE,
     SLIDE_FIGSIZE_WIDE,
     glyph_for_method,
     glyph_scatter_kwargs,
-    model_family,
     model_family_color,
 )
 
 log = logging.getLogger(__name__)
-
-# Experiment 1 lives under outputs/ablation/direct/. The journal sweep wrote
-# to p1_base/ on 2026-05-20; the reasoning-token top-up (ticket 0198) added
-# reps to p1_base.topup_canary/ and p1_base.topup/. We pool all three
-# directories into the Exp 1 distribution unconditionally — no canary gate,
-# intra-day variability is absorbed into the reported within-model variance.
-# Pilot runs (p1_base.pilot/) remain excluded.
-P1_BASE_DIR = "experiments/outputs/ablation/direct/"
-P1_INCLUDED_SUBDIRS = (
-    "p1_base/",
-    "p1_base.topup/",
-    "p1_base.topup_canary/",
-)
-P1_PILOT_MARKER = "/p1_base.pilot/"
-EXP1_BATCH2_DIR = "experiments/outputs/exp1_batch2/"
-
-# Vietnam thermal reference inventory size (Annex A, line 72).
-N_REFERENCE_PLANTS = 163
-
-
-def _is_p1_base_row(result_file: str) -> bool:
-    """Return True for direct-baseline rows that count toward Experiment 1.
-
-    Pools the original journal sweep with the post-PR-#379 top-up reps
-    (ticket 0198). Excludes pilot runs.
-    """
-    return result_file.startswith(EXP1_BATCH2_DIR)
-
-
-def build_cost_quality_rows(
-    metrics: list[dict],
-    source_by_label: dict[str, str] | None = None,
-) -> list[dict]:
-    """Build rows for the cost × quality chart.
-
-    Returns list of dicts. Each row carries per-rep ``(tp, cost, source)``
-    tuples under ``reps`` so the figure can plot each rep at its own cost
-    rather than collapsing all reps onto a single x-coordinate. Per-model
-    summary statistics (median, min, max for TP and cost) are also
-    surfaced for the median marker and the min-max range line.
-
-    Schema: model, family, reps (list of ``{tp, cost, source}``),
-    median_tp, min_tp, max_tp, tp_values, base_tp_values, topup_tp_values,
-    median_cost, mean_cost, median_f1, min_f1, max_f1, cost_usd
-    (alias for mean_cost, kept for CSV stability).
-    Sorted by median_tp descending — the plotted Y axis.
-
-    *source_by_label* maps each metric's ``label`` to either ``"base"``
-    (original sweep) or ``"topup"`` (post-2026-05-21 reasoning-token
-    top-up reps, ticket 0198). Labels not in the map default to
-    ``"base"``.
-    """
-    import statistics
-
-    if source_by_label is None:
-        source_by_label = {}
-
-    reps_by_model: dict[str, list[dict]] = {}
-    f1_by_model: dict[str, list[float]] = {}
-    fp_by_model: dict[str, list[int]] = {}
-
-    for entry in metrics:
-        slug = slug_from_label(entry["label"])
-        source = source_by_label.get(entry["label"], "base")
-        tp = entry.get("n_matched")
-        cost = entry.get("cost_usd")
-        if tp is not None and cost is not None and cost > 0:
-            reps_by_model.setdefault(slug, []).append(
-                {"tp": int(tp), "cost": float(cost), "source": source}
-            )
-        fp = entry.get("n_hallucinated")
-        if fp is not None:
-            fp_by_model.setdefault(slug, []).append(int(fp))
-        f1 = entry.get("f1")
-        if f1 is not None:
-            f1_by_model.setdefault(slug, []).append(f1)
-
-    rows = []
-    for slug, reps in reps_by_model.items():
-        tp_values = [rep["tp"] for rep in reps]
-        costs = [rep["cost"] for rep in reps]
-        base_tp_values = [rep["tp"] for rep in reps if rep["source"] == "base"]
-        topup_tp_values = [rep["tp"] for rep in reps if rep["source"] == "topup"]
-        fp_values = fp_by_model.get(slug, [])
-        f1_values = f1_by_model.get(slug, [])
-        mean_cost = round(sum(costs) / len(costs), 6) if costs else 0.0
-        row = {
-            "model": slug,
-            "family": model_family(slug),
-            "reps": list(reps),
-            "median_tp": int(statistics.median(tp_values)),
-            "min_tp": min(tp_values),
-            "max_tp": max(tp_values),
-            "median_fp": int(statistics.median(fp_values)) if fp_values else 0,
-            "min_fp": min(fp_values) if fp_values else 0,
-            "max_fp": max(fp_values) if fp_values else 0,
-            "tp_values": list(tp_values),
-            "base_tp_values": base_tp_values,
-            "topup_tp_values": topup_tp_values,
-            "median_cost": round(statistics.median(costs), 6) if costs else 0.0,
-            "mean_cost": mean_cost,
-            "median_f1": round(statistics.median(f1_values), 4) if f1_values else 0.0,
-            "min_f1": round(min(f1_values), 4) if f1_values else 0.0,
-            "max_f1": round(max(f1_values), 4) if f1_values else 0.0,
-            "cost_usd": mean_cost,
-        }
-        rows.append(row)
-    rows.sort(key=lambda r: r["median_tp"], reverse=True)
-    return rows
 
 
 # Family assignment for the 2-panel split. Panel A holds Western families
@@ -319,10 +213,9 @@ def write_pdf(rows: list[dict], output: Path, xscale: str = "log") -> None:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
-        description="Generate cost × quality CSV and/or scatter PDF (Experiment 1 only)",
+        description="Generate the cost × quality scatter PDF (Experiment 1 only)",
     )
-    parser.add_argument("--output", help="Path to write cost_quality.csv")
-    parser.add_argument("--figure", help="Path to write scatter PDF")
+    parser.add_argument("--figure", required=True, help="Path to write scatter PDF")
     parser.add_argument(
         "--xscale",
         choices=("linear", "log"),
@@ -332,59 +225,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if not args.output and not args.figure:
-        parser.error("at least one of --output or --figure is required")
-
-    from .measurements import load, records_to_metrics
-
-    # Filter at the boundary: Experiment 1 == p1_base + topup variants.
-    records = [r for r in load() if r.result_file and _is_p1_base_row(r.result_file)]
-    metrics = records_to_metrics(records)
-
-    # Build label → "base" | "topup" map so the plotter can render the two
-    # cohorts with different glyphs. Label format matches records_to_metrics:
-    # f"{prompt_version}/{stem}" (or just the stem when prompt_version is empty).
-    source_by_label: dict[str, str] = {}
-    for r in records:
-        if not r.result_file:
-            continue
-        stem = Path(r.result_file).stem
-        prompt_version = r.method_params.prompt_version or ""
-        label = f"{prompt_version}/{stem}" if prompt_version else stem
-        source_by_label[label] = "topup" if ".topup" in r.result_file else "base"
-
-    rows = build_cost_quality_rows(metrics, source_by_label=source_by_label)
-
-    if args.output:
-        output_path = Path(args.output)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", newline="") as f:
-            writer = csv.DictWriter(
-                f,
-                fieldnames=[
-                    "model",
-                    "family",
-                    "median_tp",
-                    "min_tp",
-                    "max_tp",
-                    "median_fp",
-                    "min_fp",
-                    "max_fp",
-                    "median_cost",
-                    "mean_cost",
-                    "median_f1",
-                    "min_f1",
-                    "max_f1",
-                    "cost_usd",
-                ],
-                extrasaction="ignore",
-            )
-            writer.writeheader()
-            writer.writerows(rows)
-        log.info("Wrote %d rows to %s", len(rows), output_path)
-
-    if args.figure:
-        write_pdf(rows, Path(args.figure), xscale=args.xscale)
+    rows = load_cost_quality_rows()
+    write_pdf(rows, Path(args.figure), xscale=args.xscale)
 
 
 if __name__ == "__main__":

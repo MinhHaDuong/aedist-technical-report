@@ -14,7 +14,7 @@ file is non-precious (regenerable) and is `.gitignore`d.
 |-------|--------------|-----------------|-----------------------|
 | **P1 Acquire** | API runs against models (`experiments/acquire.mk`) | raw model replies: `experiments/outputs/**`, `experiments/archive/**` (incl. extracted `*.md` siblings of tracked `*.json`) | run logs, retries, jobs/, `rag_work/` |
 | **P2 Score & consolidate** | extract → evaluate → assemble (all P2 verbs + the mart build in `experiments/derived/score.mk`, invoked from the repo root) | `measurements.jsonl` (mart v0, transitional until 0297), `experiments/derived/exp2_mart.jsonl` | per-run `experiments/derived/**/*.record.json`, mart→view CSVs |
-| **P3 Analyze & render** | plot/tabulate scripts (`experiments/render.mk`, including the mart→view projection) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/` (the single P3 deliverable tree; the slides-side tree was retired, 0408) | plotting intermediates consumed only inside P3 (`census_bars.csv`, view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
+| **P3 Analyze & render** | plot/tabulate scripts (`experiments/render.mk`, including the mart→view projection) | figures/tables/macros the manuscript or slides include: `report/inputs/generated/` (the single P3 deliverable tree; the slides-side tree was retired, 0408) | plotting intermediates consumed only inside P3 (view CSVs, unconsumed figs; the report-dir `cost_quality.csv` is a P4 prereq → tracked) |
 | **P4 Write** | tectonic / pandoc (`report/Makefile`, `slides/Makefile`) | — (final PDFs are regenerable) | `report.pdf`, `slides.pdf`, LaTeX aux files |
 
 ## The root Makefile: two cross-phase entries
@@ -123,10 +123,10 @@ producer phase, consumer, and verdict.
 | `report/inputs/generated/fig_spider_exp1_claude.pdf` | `plot_spider_exp1` (P3) | slides.tex (P4) | TRACK |
 | `report/inputs/generated/fig_spider_exp1_families.pdf` | `plot_spider_exp1` (P3) | report.tex / slides.tex / manuscript (P4) | TRACK |
 | `report/inputs/generated/macros_p1_base.tex` | `plot_method_convergence` (P3) | report.tex / slides.tex (P4) | TRACK |
-| `report/inputs/generated/macros_slides.tex` (was `slides/.../macros.tex`, renamed 0408) | `tabulate_macros --census-csv` (P3) | slides.tex (P4) | TRACK |
+| `report/inputs/generated/macros_slides.tex` (was `slides/.../macros.tex`, renamed 0408) | `tabulate_macros --census` (P3) | slides.tex (P4) | TRACK |
 | `report/inputs/generated/tab_exp2_2x2_fr.tex` (was `slides/.../tab_exp2_2x2.tex`, renamed 0408) | `tabulate_exp2_2x2 --lang fr` (P3) | slides.tex (P4) | TRACK |
 | `experiments/outputs/sota_exp3_arm3_batch1/archive/run02_rerun_mistral_20260525T0521_local/mistral.md` | API run extraction (P1) | provenance sibling of tracked `mistral.json` | TRACK (exact-path negation) |
-| `report/inputs/generated/cost_quality.csv` | `plot_cost_quality` (P3) | `manuscript/main.pdf` via slides/Makefile (P4) | TRACK |
+| `report/inputs/generated/cost_quality.csv` | `tabulate_cost_quality` (P3) | `manuscript/main.pdf` via slides/Makefile (P4) | TRACK |
 | `slides/inputs/generated/cost_quality.csv` (slide copy) | analysis copy (P3) | none in P4 | RETIRED 0408 — copy rule dropped |
 | `slides/inputs/generated/fig_regimes_scatter.pdf` | `plot_regimes_scatter` (P3) | none in P4 | RETIRED 0408 — producer redirected to report tree |
 | `slides/inputs/generated/fig_scaling_curve.pdf` | `plot_scaling_curve` (P3) | none in P4 | RETIRED 0408 — producer redirected to report tree |
@@ -161,7 +161,6 @@ prevents recurrence:
 | `measurements.jsonl` | P2 outcome | TRACK | mart v0, transitional (0297) |
 | `experiments/derived/exp2_mart.jsonl` | P2 outcome | TRACK | consolidated mart |
 | `experiments/derived/**/*.record.json` | P2 intermediate | IGNORE | per-run scoring sidecars, regenerated |
-| `report/inputs/generated/census_bars.csv` | P3 intermediate | IGNORE | feeds `tabulate_macros` (same phase) |
 | `report/inputs/generated/exp2_mart.jsonl` | P3 staging copy | IGNORE | mart staged into report dir, not handoff |
 | `report/inputs/generated/*_view.csv` | P3 intermediate | IGNORE | mart→view projections |
 | `report/inputs/generated/tab_*.tex` (non-ignored) | P3 outcome | TRACK | `\input` by report.tex (already tracked, not ignore-matched) |
