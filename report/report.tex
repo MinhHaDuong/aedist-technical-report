@@ -102,7 +102,7 @@ Ce rapport progresse du plus simple au plus sophistiqué. Le chapitre~\ref{chap:
 
 \chapter{Évaluation des LLM}\label{chap:evaluation}
 
-Ce chapitre évalue la capacité des grands modèles de langage à produire des tables statistiques, d'abord en requête directe (expérience~1), puis par approche conversationnelle avec relances (expérience~2).
+Ce chapitre évalue la capacité des grands modèles de langage à produire des tables statistiques au moyen de deux études préliminaires~: d'abord en requête directe (single-shot), puis par approche conversationnelle avec relances.
 
 \section{Méthodologie}
 
@@ -110,7 +110,7 @@ On évalue la performance de différents modèles d'IA dans la production direct
 
 \begin{enumerate}
 \item Sélection d'un échantillon diversifié de modèles, incluant des modèles de grande taille (400B+ paramètres) et des modèles plus modestes (70B).
-\item Requête standardisée demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques (Prompt~1 pour l'expérience~1, Prompt~2 avec relances pour l'expérience~2).
+\item Requête standardisée demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques (Prompt~1 pour l'étude en requête directe, Prompt~2 avec relances pour l'étude conversationnelle).
 \item Évaluation de l'exhaustivité des réponses par rapport à la page Wikipedia \citep{TQ8TFB8H} qui recense 88 centrales à charbon et 26 centrales à gaz.
 \end{enumerate}
 
@@ -123,7 +123,7 @@ connection date (observed or planned COD), province, and generation capacity
 (in MWe). Format the response in CSV.
 \end{Prompt}
 
-\section{Expérience 1~: requête directe (single-shot)}\label{sec:exp1}
+\section{Étude préliminaire~: requête directe (single-shot)}\label{sec:exp1}
 
 Les résultats sont loin de la qualité statistique. Les modèles flagship retournent entre 18 et 64 centrales~: R1-DeepSeek with search en trouve 64, Gemini-2-flash 41, Claude~3.5 Sonnet 38, GPT-4o 33. La performance est corrélée à la nouveauté des modèles.
 
@@ -138,7 +138,7 @@ La table~\ref{tab:exp1-reasoning-topup} prolonge la cohorte du 20~mai~2026 (16 m
 
 \input{inputs/generated/tab_exp1_reasoning_topup}
 
-\section{Expérience 2~: approche conversationnelle avec relances}\label{sec:exp2}
+\section{Étude préliminaire~: approche conversationnelle avec relances}\label{sec:exp2}
 
 Les modèles de chat tendent à fournir des réponses courtes. Une approche conversationnelle permet-elle de découvrir toute l'étendue de leurs connaissances~? Pour vérifier cette hypothèse, on utilise le \emph{Prompt~2}\label{sec:methode}, plus détaillé, suivi de trois relances~:
 
@@ -191,11 +191,11 @@ Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
 
-Au-delà des relances, l'expérience~2 se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
+Au-delà des relances, l'Expérience~2 (frontière SOTA) se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
 
 \begin{table}[h]
 \centering
-\caption{Expérience~2 en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
+\caption{Expérience~2 (frontière SOTA) en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
 \label{tab:exp2-2x2}
 \InputIfFileExists{inputs/generated/tab_exp2_2x2}{}{}
 \end{table}
@@ -660,7 +660,7 @@ Une expérience de vérification automatisée quantifie ce compromis~: sur la me
 \end{table}
 
 % --- Para 5c: targeted verification subsumes generic multi-turn (future direction) ---
-La vérification multi-agents ouvre une direction complémentaire. Les relances conversationnelles génériques de l'expérience multi-tour (section~\ref{sec:exp2}, «~Avez-vous oublié des centrales~?~») apparaissent rétrospectivement comme un cas particulier, moins motivé, d'un protocole de vérification ciblée~: plutôt que des relances aveugles, chaque tour poursuit un objectif précis --- contrôler la provenance, détecter les hallucinations, croiser avec le référentiel. La littérature sur la self-consistency et les protocoles de débat suggère qu'une vérification par agents indépendants surpasse l'auto-révision par le même modèle. Le module de sourçage par ligne (colonnes \texttt{source\_1}, \texttt{source\_2}, section~\ref{sec:rag_cited}) est conçu pour alimenter cette phase~: chaque ligne portant ses propres références, un agent vérificateur peut en contrôler la provenance sans accès au prompt d'origine. La décomposition par sous-requêtes (diviser pour régner, section~\ref{sec:rag_per_fuel}) constitue un axe orthogonal --- elle modifie la granularité de la requête, non le contrôle de la sortie --- dont l'interaction avec la vérification reste un travail futur non prioritaire.
+La vérification multi-agents ouvre une direction complémentaire. Les relances conversationnelles génériques de l'étude préliminaire multi-tour (section~\ref{sec:exp2}, «~Avez-vous oublié des centrales~?~») apparaissent rétrospectivement comme un cas particulier, moins motivé, d'un protocole de vérification ciblée~: plutôt que des relances aveugles, chaque tour poursuit un objectif précis --- contrôler la provenance, détecter les hallucinations, croiser avec le référentiel. La littérature sur la self-consistency et les protocoles de débat suggère qu'une vérification par agents indépendants surpasse l'auto-révision par le même modèle. Le module de sourçage par ligne (colonnes \texttt{source\_1}, \texttt{source\_2}, section~\ref{sec:rag_cited}) est conçu pour alimenter cette phase~: chaque ligne portant ses propres références, un agent vérificateur peut en contrôler la provenance sans accès au prompt d'origine. La décomposition par sous-requêtes (diviser pour régner, section~\ref{sec:rag_per_fuel}) constitue un axe orthogonal --- elle modifie la granularité de la requête, non le contrôle de la sortie --- dont l'interaction avec la vérification reste un travail futur non prioritaire.
 
 % --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.

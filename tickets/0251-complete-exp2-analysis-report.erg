@@ -8,6 +8,7 @@ Author: Copilot
 2026-05-23T17:31Z Copilot note Umbrella ticket tracking section-level report delivery from protocol-locked outline.
 2026-05-23T21:00Z claude note Conference/post-conference split decided: (1) 0263 is the conference-critical deliverable — metadata-first Figure 3 from arm summary JSONs (inventory_rows, narrative_chars, cost), wired into exp2-analysis.mk, feeds main.md §4 Figure 3 placeholder before 2026-05-27. Full F1 evaluation against the 163-plant reference and H1-H6 hypothesis tests stay in child tickets 0253-0261, 0262 — post-conference. Canonical data: sota_exp2_naive_arm/ (Arm 1) and sota_exp2_brerun1/ (Arm 2, corrected classifier). sota_exp2_phase_b_full/ excluded (weak classifier). Child 0252 renamed 0262 to avoid ID collision with main.
 
+2026-06-05T07:25Z claude note — author containment decision 2026-06-05: sections land in a STANDALONE report.tex chapter (registration, plan, deviations, salvageable results, H1-H6), not in §sec:exp2. Naming canon ratified: epithets + registry (0432), 2025 probes demoted, « 2.0 » rejected. Annex C candid as-run rewrite = 0433. H6 still gated on 0171.
 --- body ---
 ## Context
 This umbrella ticket coordinates full delivery of the Exp2 report from the protocol-first outline in `docs/exp2-analysis-v0.md`.

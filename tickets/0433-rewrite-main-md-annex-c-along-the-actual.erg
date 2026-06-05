@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Rewrite main.md Annex C along the actual Exp2 run — candid preregistration story
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T07:24Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author decision (raid Imagine, 2026-06-05, containment approach): the full
+registered-report write-up of Expérience 2 (frontière SOTA) — registration,
+initial plan, deviations in execution, salvageable results, H1–H6 analysis —
+goes to a standalone chapter in report.tex (0253/0254 + 0255–0262). Annex C
+of slides/manuscript/main.md is then rewritten along the ACTUAL run only:
+descriptive, a candid preregistration story referencing the technical report
+for detail, without pretending the experiment worked as intended.
+
+Annex C (main.md l.256–339) is currently a PRE-RUN spec snapshot, stale on:
+
+| Annex C says | As-run reality |
+|---|---|
+| Phase B = N=3, no arms | Two arms (naive vs optimized), N=5 per agent per arm |
+| $10-per-call dollar cap | Dual-axis cap: 50K tokens + $3 guard (protocol_05) |
+| "Phase B not yet executed" (l.258 status note) | Phase B done both arms; 0263 Figure 3 delivered |
+| No analysis plan | H1–H6 pre-registered (protocol_05 §3.5.1) |
+
+## Relevant files
+
+- `slides/manuscript/main.md` l.256–339 (Annex C) — the rewrite target
+- `experiments/sota/protocol_05_experiment.md` — locked protocol (source of truth)
+- `report/report.tex` — the chapter to reference for detail (after 0253/0254 land)
+- `report/inputs/generated/tab_exp2_bib_quality.tex`, `experiments/derived/tab_exp2_2x2.csv` — as-run facts (run counts, 0/5 Claude-optimized exclusion)
+
+## Actions
+
+1. Drop the bracketed pre-run status note (l.258); replace with one as-run
+   provenance sentence (dates, arms, N).
+2. Rewrite Phase structure + Budget to what actually ran (two arms, N=5,
+   dual-axis cap); keep the dialogue-policy strings (they were the run).
+3. Add a short candid paragraph: the experiment was pre-registered
+   (protocol_05), execution deviated (enumerate the headline deviations,
+   incl. Claude-optimized 0/5), full registered-report analysis in the
+   technical report chapter (cite it).
+4. Keep Agents table, Task, Evaluation, does/does-not-test — correcting any
+   detail contradicted by the run.
+
+## Test
+
+Prose review (MR review is the test): no sentence in Annex C claims an
+unexecuted design as executed; every number traces to a committed artifact
+or the protocol.
+
+## Invariants
+
+- main.md §4 untouched (talk-as-delivered prose)
+- English; no statistics (those live in the report chapter)
+- No full-DAG regeneration (0383 mart staleness)
+
+## Exit criteria
+
+- [ ] Annex C describes the as-run experiment only, candidly noting the
+      preregistration and deviations
+- [ ] References the report.tex chapter for the registered analysis
+- [ ] No stale pre-run claims (N=3, $10 cap, "not yet executed") remain
+
+## Related
+
+- Soft ordering after 0253/0254 (the chapter it references) — not a hard
+  erg Blocked-by: the rewrite can cite the chapter as forthcoming
+- 0251 (umbrella), 0263 (Figure 3), protocol_05_experiment.md

@@ -51,3 +51,21 @@ Voir ticket 0426 (garde-fou pérenne) — ce ticket-ci est la correction
 
 - 0426 (test d'adhérence pérenne)
 - IDH 0214 (création de /update-publist)
+
+## Imagine (raid 2026-06-05) — PROCEED, dispositions proposées
+
+| Réf. | Réalité vérifiée | Disposition |
+|---|---|---|
+| `/new-ticket` | skill = `ticket-new` (user+projet) | renommer → `/ticket-new` |
+| `/autonomous` | absent, pas de successeur direct | re-pointer → `/beat` (cycle non supervisé ; `/raid` en est le sous-pas) |
+| `/submission-branch` | absent | supprimer OU garder + « à créer » + ticket (phase soumission journal s'ouvre — choix éditorial à l'exécution, défaut : supprimer) |
+| `/submission-readiness` | absent | idem ci-dessus |
+| `/orchestrator` (l.86) | absent | re-pointer l'en-tête → « (details in /raid skill) » |
+| `/update-publist` | absent (IDH 0214 non livré) | garder + marqueur « à créer (IDH 0214) » — exerce l'échappatoire du critère 1 |
+
+- Portée orphelins : les 6 réfs sont TOUTES dans AGENTS.md (5 lignes de
+  table l.73-80 + 1 en-tête l.86) ; zéro ailleurs dans les .md. CLAUDE.md
+  intouchable (hook).
+- Route PR : branche normale + `**Ticket:** tickets/0425` — quickpr.sh
+  code en dur le corps de PR (l.118) et `gh pr edit` est bloqué ici, donc
+  quickpr ne peut PAS porter la ligne Ticket (pas de fermeture erg).
