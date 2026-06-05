@@ -2,6 +2,7 @@
 Title: Write Exp2 context and protocol lock section
 Created: 2026-05-23
 Author: Copilot
+Closed: autoclosed — PR #742
 
 --- log ---
 2026-05-23T17:30Z Copilot created
@@ -9,6 +10,7 @@ Author: Copilot
 2026-06-05T07:25Z claude note — raid Imagine 2026-06-05: target resolved by author (containment): standalone chapter in report.tex « Expérience 2 (frontière SOTA) : protocole pré-enregistré, déviations et résultats ». Gated on 0432 (canonical naming) merging first.
 2026-06-05T08:28Z claude note — chapter created, §protocole filled (PR pending)
 2026-06-05T08:44Z claude bump verify-reroll — round 1: verifiable Bonferroni minor (chapter approx 0,017 vs protocol 0,0167)
+2026-06-05T08:53Z HDMX-coding-agent closed — autoclosed — PR #742
 --- body ---
 ## Context
 Write the Context and Protocol Lock section from `docs/exp2-analysis-v0.md`.
