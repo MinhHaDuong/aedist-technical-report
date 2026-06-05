@@ -102,7 +102,7 @@ Ce rapport progresse du plus simple au plus sophistiqué. Le chapitre~\ref{chap:
 
 \chapter{Évaluation des LLM}\label{chap:evaluation}
 
-Ce chapitre évalue la capacité des grands modèles de langage à produire des tables statistiques, d'abord en requête directe (expérience~1), puis par approche conversationnelle avec relances (expérience~2).
+Ce chapitre évalue la capacité des grands modèles de langage à produire des tables statistiques au moyen de deux études préliminaires~: d'abord en requête directe (single-shot), puis par approche conversationnelle avec relances.
 
 \section{Méthodologie}
 
@@ -110,7 +110,7 @@ On évalue la performance de différents modèles d'IA dans la production direct
 
 \begin{enumerate}
 \item Sélection d'un échantillon diversifié de modèles, incluant des modèles de grande taille (400B+ paramètres) et des modèles plus modestes (70B).
-\item Requête standardisée demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques (Prompt~1 pour l'expérience~1, Prompt~2 avec relances pour l'expérience~2).
+\item Requête standardisée demandant une liste complète des centrales thermiques du Vietnam avec leurs caractéristiques techniques (Prompt~1 pour l'étude en requête directe, Prompt~2 avec relances pour l'étude conversationnelle).
 \item Évaluation de l'exhaustivité des réponses par rapport à la page Wikipedia \citep{TQ8TFB8H} qui recense 88 centrales à charbon et 26 centrales à gaz.
 \end{enumerate}
 
