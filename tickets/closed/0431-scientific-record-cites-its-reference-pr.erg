@@ -2,11 +2,13 @@
 Title: Scientific record cites its reference: propagate reference identity into metrics
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #753 — reference stamped across scorers, schema v2, gate APPROVED
 
 --- log ---
 2026-06-05T06:31Z claude created
 
 2026-06-05T10:35Z claude execute reference field + metrics projection + scorer sweep + exp2 mart v2; PR opened
+2026-06-05T10:51Z HDMX-coding-agent closed — delivered by PR #753 — reference stamped across scorers, schema v2, gate APPROVED
 --- body ---
 ## Context
 
