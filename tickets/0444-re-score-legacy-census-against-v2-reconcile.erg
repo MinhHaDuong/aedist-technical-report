@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-05T13:00Z claude created — deferred from 0413 (v2 adoption); author greenlit "nice-to-have, ticket it for later"
+2026-06-05T14:35Z claude note macroization criterion gated on 0445 (settle plant count via extension measurement) so the literal 163s are macroized once, against the final count — see criterion text
 
 --- body ---
 ## Context
@@ -60,20 +61,29 @@ predate 0413):
       regimes from the v2-scored mart; centralize the `tabulate_macros`
       `ref_plants` constant via `evaluate.reference_plant_count()` (deferred from
       0413 to keep the census source+output revert mutually consistent).
-- [ ] Manuscript reference-count propagation. Once Exp3 (RAG) is re-scored to v2,
-      replace the literal `163` reference-size mentions with the `\NumRefPlants`
-      macro and update the Exp3 RAG recall denominators (`report.tex` §«Expérience
-      direct complet» line ~218, §«Expérience 3 RAG» lines ~406/412/420/422/449/485,
-      abstract ~49, conclusion ~669; `slides/manuscript/main.md` Exp1/Exp2/Exp3
-      captions; `slides/slides*.tex` line ~105). These stay LITERAL 163 in 0413
-      because they are recall against the still-v1 archived RAG data — rendering
-      `\NumRefPlants`=170 there would falsely claim 170/170 recall. 0413 already
-      macro-ized the v2-coherent mentions (Exp2 provenance §269, reconciliation
-      §396) and applied the #547 de-inflation corrections to §396/§734.
+- [ ] Manuscript reference-count propagation — GATED on two upstream settlements,
+      do it once against the final state:
+      (a) Exp3 (RAG) re-scored to v2 (this ticket) — unlocks the RAG recall
+          *denominators* (`report.tex` §«Expérience 3 RAG» lines ~406/412/420/422/
+          449/485). These stay LITERAL 163 until then because they are recall
+          against still-v1 archived RAG data — `\NumRefPlants`=170 there would
+          falsely claim 170/170 recall.
+      (b) Plant count SETTLED by ticket 0445 (extension-as-unit vs standalone) —
+          fixes the value `\NumRefPlants` resolves to (170 vs 174). Macroizing the
+          reference-size mentions before 0445 risks doing it twice if the count
+          moves.
+      Then replace the literal `163` reference-size mentions with `\NumRefPlants`
+      and update the recall numbers (`report.tex` §«Expérience direct complet»
+      ~218, abstract ~49, conclusion ~669; `slides/manuscript/main.md` Exp1/Exp2
+      captions if not already v2). 0413 already macro-ized the v2-coherent mentions
+      (Exp2 provenance §269, reconciliation §396, slides §105) and applied the
+      #547 de-inflation corrections to §396/§734.
 - [ ] `make check` green.
 
 ## Related
 
 - 0413 (v2 adoption — this ticket's parent; covers Exp1–3, defers the census)
+- 0445 (extension-as-unit measurement — settles the final plant count the
+  macroization resolves to; macroization criterion (b) gated on it)
 - `data/reference/v1_v2_adoption_comparison.md` (records the re-score scope split)
 - `data/reference/PROVENANCE.md` § "Re-score scope" (names this ticket)
