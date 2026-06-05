@@ -750,14 +750,23 @@ nombre effectif de paramètres décroissant). Une case bleue indique que le run 
 reconnu la centrale~(vrai positif)~; une case vide marque un oubli. Les
 \ExpOneMatrixPlants{}~colonnes de référence sont ordonnées par groupe de statut
 puis par capacité décroissante, de sorte que les bandes de statut s'alignent sur
-le tableau de difficulté par statut (en préparation). Le panneau de gauche
+le tableau de difficulté par statut~(table~\ref{tab:status-difficulty}). Le
+panneau de gauche
 montre les \ExpOneMatrixFPs{}~faux positifs les plus fréquents sur l'ensemble des
 runs, triés par occurrence décroissante~; le rouge suit la convention faux
 positif. Contrairement à la figure du corps de texte qui tasse les centrales
 reconnues vers la gauche, l'alignement vertical révèle quelles centrales chaque
 modèle manque~: les centrales célèbres forment des colonnes denses, les
-obscures des colonnes clairsemées. Le tableau de difficulté par statut, qui
-partage la même dérivation des données, prendra place dans cette annexe.
+obscures des colonnes clairsemées.
+
+Le tableau~\ref{tab:status-difficulty}, qui partage la même dérivation des
+données~(bibliothèque \texttt{aedist.exp1\_recognition}, cause commune sans
+chaînage producteur-consommateur), décompose cette difficulté par statut. La
+liste de référence est dominée par les centrales \emph{en projet} — la part la
+plus large — que la connaissance paramétrique des modèles ne peut pas connaître,
+d'où un taux de reconnaissance moyen bien plus faible que pour les centrales
+opérationnelles. La faible reconnaissance globale est donc structurelle, liée à
+la composition de la liste, et non un simple défaut des modèles.
 
 \begin{figure}[htbp]
 \centering
@@ -768,6 +777,8 @@ de référence (colonnes, par statut puis capacité décroissante) contre
 les \ExpOneMatrixFPs{}~faux positifs les plus fréquents (rouge).}
 \label{fig:recognition-matrix}
 \end{figure}
+
+\input{inputs/generated/tab_status_difficulty}
 
 \input{glossaire}
 

@@ -1,0 +1,190 @@
+"""Generate the Exp1 status difficulty table (reference composition vs recall).
+
+Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
+
+Companion to the recognition matrix figure (ticket 0373), placed in the report
+annex right after it. One row per reference-list status group:
+
+    * status
+    * n plants of that status in the reference, and its share of the list
+    * mean recognition rate — over all (run x plant) cells where the plant has
+      this status, the fraction recognized (TP).
+
+The point it makes: the reference list is dominated by *proposed* / pipeline
+assets that memory-based recall cannot know, so a low mean recall is structural,
+not a model failing.
+
+Derivation (author directive 2026-06-05): build from this table's OWN view of
+the data mart by importing :mod:`aedist.exp1_recognition` — the same shared
+library the matrix figure (0373) imports. Figure and table agree by common
+cause (shared mart), never by consuming each other's output file. Status group
+order also comes from the shared library so the table rows align with the
+matrix's column bands.
+
+Usage:
+    uv run python -m aedist.tabulate_status_difficulty \\
+        --records-glob "experiments/outputs/exp1_batch2/*.record.json" \\
+        --reference data/reference/vietnam_thermal_v1.csv \\
+        --output report/inputs/generated/tab_status_difficulty.tex
+"""
+
+import argparse
+import logging
+from pathlib import Path
+
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
+from .exp1_recognition import (
+    RecognitionCell,
+    load_exp1_recognition,
+    status_rank,
+)
+
+log = logging.getLogger(__name__)
+
+# French status labels for the report annex. Ordering comes from the shared
+# library's STATUS_ORDER (via status_rank); only the display string is localized
+# here so the table reads in the manuscript's language while its rows stay
+# aligned with the matrix figure's column bands.
+_STATUS_LABELS_FR = {
+    "operational": "Opérationnelle",
+    "proposed": "En projet",
+    "planned": "Planifiée",
+    "constructing": "En construction",
+    "cancelled": "Annulée",
+    "retired": "Retirée",
+}
+
+
+def build_status_table(cells: list[RecognitionCell]) -> dict[str, tuple[int, float]]:
+    """Aggregate recognition cells into per-status ``(n_plants, mean_rate)``.
+
+    Args:
+        cells: one :class:`RecognitionCell` per (model, run, reference plant),
+            as produced by :func:`aedist.exp1_recognition.load_exp1_recognition`.
+
+    Returns:
+        Ordered mapping ``status -> (n_plants, mean_rate)`` where:
+          * ``n_plants`` is the number of *distinct* reference plants of that
+            status (counted by ``plant_id``, so the two same-name Formosa phases
+            stay distinct — same convention as the matrix), and
+          * ``mean_rate`` is the cell-level recall: recognized cells divided by
+            total cells for that status, over all runs.
+
+        Statuses are ordered by the shared :data:`STATUS_ORDER` rank (unknown
+        statuses appended, then alphabetical) so rows align with the matrix's
+        column bands.
+    """
+    plants_by_status: dict[str, set[int]] = {}
+    hits_by_status: dict[str, int] = {}
+    total_by_status: dict[str, int] = {}
+    for c in cells:
+        plants_by_status.setdefault(c.status, set()).add(c.plant_id)
+        total_by_status[c.status] = total_by_status.get(c.status, 0) + 1
+        if c.recognized:
+            hits_by_status[c.status] = hits_by_status.get(c.status, 0) + 1
+
+    statuses = sorted(plants_by_status, key=lambda s: (status_rank(s), s))
+    rows: dict[str, tuple[int, float]] = {}
+    for status in statuses:
+        n_plants = len(plants_by_status[status])
+        total = total_by_status[status]
+        rate = hits_by_status.get(status, 0) / total if total else 0.0
+        rows[status] = (n_plants, rate)
+    return rows
+
+
+def format_status_latex(rows: dict[str, tuple[int, float]]) -> str:
+    """Render the per-status ``(n, rate)`` rows as a booktabs LaTeX table.
+
+    Adds a per-status share-of-list column (computed here, not stored in
+    ``rows``) and a closing total row over the whole reference list.
+    """
+    total_plants = sum(n for n, _ in rows.values())
+    # Each reference plant contributes the same number of cells (one per run),
+    # so plant-weighting per-status rates by n reproduces the cell-level overall
+    # mean exactly — this is the same quantity the matrix figure renders.
+    weighted_hits = 0.0
+
+    body_lines: list[str] = []
+    for status, (n, rate) in rows.items():
+        label = _STATUS_LABELS_FR.get(status, status.capitalize())
+        share = (n / total_plants * 100.0) if total_plants else 0.0
+        weighted_hits += n * rate
+        body_lines.append(f"{label} & {n} & {share:.1f}\\% & {rate * 100:.1f}\\% \\\\")
+
+    overall_rate = (weighted_hits / total_plants) if total_plants else 0.0
+
+    lines = [
+        "% Auto-generated by aedist.tabulate_status_difficulty — do not edit",
+        "\\begin{table}[htbp]",
+        "\\centering",
+        (
+            "\\caption{Composition de la liste de référence par statut, "
+            "et taux de reconnaissance moyen (Expérience~1, méthode directe~: "
+            "les 14~modèles à cinq répétitions). Le taux est la proportion de "
+            "cellules (run~$\\times$~centrale) reconnues parmi les centrales du "
+            "statut. La liste est dominée par les centrales en projet, que la "
+            "mémoire des modèles ne peut connaître.}\\label{tab:status-difficulty}"
+        ),
+        "\\begin{tabular}{@{}lrrr@{}}",
+        "\\toprule",
+        "Statut & $n$ & Part de la liste & Taux de reconnaissance \\\\",
+        "\\midrule",
+        *body_lines,
+        "\\midrule",
+        f"Ensemble & {total_plants} & 100.0\\% & {overall_rate * 100:.1f}\\% \\\\",
+        "\\bottomrule",
+        "\\end{tabular}",
+        "\\end{table}",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def write_table(records_glob: str, reference_path: Path, output: Path) -> None:
+    """Build the status difficulty table from the mart and write the LaTeX file."""
+    data = load_exp1_recognition(records_glob, reference_path)
+    if not data.cells:
+        log.warning("No recognition data for pattern: %s", records_glob)
+        return
+    rows = build_status_table(data.cells)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(format_status_latex(rows), encoding="utf-8")
+    log.info("Wrote status difficulty table to %s", output)
+    for status, (n, rate) in rows.items():
+        log.info("  %-13s n=%3d  rate=%.3f", status, n, rate)
+
+
+def main(argv: list[str] | None = None) -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    parser = argparse.ArgumentParser(
+        description="Generate the Exp1 status difficulty table (reference composition vs recall)"
+    )
+    parser.add_argument(
+        "--records-glob",
+        default="experiments/outputs/exp1_batch2/*.record.json",
+        help="Glob for exp1_batch2 record.json files",
+    )
+    parser.add_argument(
+        "--reference",
+        type=Path,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
+        help="Reference CSV (gold list); read at build time, no hardcoded count",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("report/inputs/generated/tab_status_difficulty.tex"),
+        help="Output .tex path",
+    )
+    args = parser.parse_args(argv)
+
+    write_table(
+        records_glob=args.records_glob,
+        reference_path=args.reference,
+        output=args.output,
+    )
+
+
+if __name__ == "__main__":
+    main()
