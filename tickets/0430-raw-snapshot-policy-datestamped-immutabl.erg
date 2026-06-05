@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-05T06:31Z claude created
 
+2026-06-05T06:45Z claude note author directive — config key names state dataset+role; 'REFERENCE' too large a word, bare 'PIPELINE' collides with data-pipeline vocabulary; body updated with concrete proposals
 --- body ---
 ## Context
 
@@ -36,14 +37,23 @@ diff audit, cf. 0413). The current layout blurs this:
    per PROVENANCE.md; verify against git history before stamping).
 2. **import.sh** writes `pipeline-$(date +%F).ods` and refuses to
    overwrite a snapshot already known to git.
-3. **Pins in config.py, explicit key names** (author: key names must
-   encode the snapshot/release distinction):
-   - `SNAPSHOT_PIPELINE_ODS` — the pinned capture the v2 extraction reads.
-   - Rename `DEFAULT_REFERENCE` → release-explicit name (e.g.
-     `REFERENCE_RELEASE`); sweep all consumers (~10 files; ruff
-     import-strip trap: replace_all first, import edits with a usage).
-   - Coordinate naming with 0428 (`DEFAULT_GEM_REFERENCE` should follow
-     the same scheme).
+3. **Pins in config.py, explicit key names.** Author directive
+   (2026-06-05): names state **dataset + role**; category words as head
+   noun are too large — "REFERENCE" is out, and bare "PIPELINE"
+   collides with the data-pipeline vocabulary (in the master's filename
+   it means the *power-projects* pipeline). Proposed names (executor
+   may refine within the directive):
+   - `VN_THERMAL_MASTER_SNAPSHOT_ODS` — the pinned capture of the
+     Gas-to-Power master (the file keeps the master's own name:
+     `raw/pipeline-YYYY-MM-DD.ods`).
+   - Rename `DEFAULT_REFERENCE` → `VN_THERMAL_PLANTS_RELEASE_CSV`
+     (plants-level scoring ground truth, `vietnam_thermal_v1.csv`).
+     Mind the plants/units distinction: the v2 extraction emits the
+     *units*-level `vietnam_thermal_units_v2.csv`. Sweep all consumers
+     (~10 files; ruff import-strip trap: replace_all first, import
+     edits with a usage).
+   - Coordinate with 0428: the GEM key follows the same scheme (e.g.
+     `GEM_THERMAL_PLANTS_CSV`, not `DEFAULT_GEM_REFERENCE`).
 4. **Single source for the Make side.** `acquire.mk`
    `extract-reference-ods` input must agree with the config pin —
    extend the 0419 ratchet (`tests/test_no_hardcoded_reference_path.py`)
@@ -77,9 +87,10 @@ def test_raw_snapshots_are_datestamped():
       so NOT a quickpr — quickpr cannot rename)
 - [ ] `import.sh` produces datestamped destinations, refuses overwrite of
       committed snapshots
-- [ ] `SNAPSHOT_PIPELINE_ODS` in config.py; extraction + acquire.mk agree
-      with it, ratchet-guarded
-- [ ] `DEFAULT_REFERENCE` renamed release-explicit, all consumers swept
+- [ ] `VN_THERMAL_MASTER_SNAPSHOT_ODS` in config.py; extraction +
+      acquire.mk agree with it, ratchet-guarded
+- [ ] `DEFAULT_REFERENCE` renamed dataset+role-explicit (no "REFERENCE"
+      head noun), all consumers swept
 - [ ] Adherence test above green
 - [ ] README.md / PROVENANCE.md use the snapshot/release vocabulary
 - [ ] `make check` passes
