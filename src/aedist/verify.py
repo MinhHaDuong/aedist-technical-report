@@ -10,7 +10,7 @@ Usage:
     python -m aedist.verify \
         --input outputs/rag_extract/2026-04-02/claude-sonnet-4.6-run1.json \
         --mode tool \
-        --reference data/reference/vietnam_thermal_v1.csv \
+        --reference data/reference/vietnam_thermal_plants_v2_classified.csv \
         --output derived/verification/
 """
 
@@ -256,9 +256,10 @@ def load_reference(path: Path) -> list[dict]:
 
     Supports both lowercase headers (name, province, fuel, capacity_mwe,
     status) and title-case headers (Name, Province, Fuel, Capacity, Status).
-    The primary reference is vietnam_thermal_v1.csv, hand-assembled from
-    government sources (PDP7, PDP7A, PDP8, EVN reports). Secondary sources
-    like GEM may use title-case headers and serve as cross-checks only.
+    The primary reference is vietnam_thermal_plants_v2_classified.csv,
+    pipe-regenerated from the master snapshot (extract → aggregate → classify).
+    Secondary sources like GEM may use title-case headers and serve as
+    cross-checks only.
     """
     rows = []
     with open(path, newline="", encoding="utf-8") as f:

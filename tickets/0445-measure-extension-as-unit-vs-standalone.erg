@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Measure extension-as-unit vs standalone net error; settle final plant count
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T14:30Z claude created — author flagged extension-as-unit as an uninformed master choice during 0413 adoption; measure-then-decide upstream rather than revert mid-adoption
+
+--- body ---
+## Context
+
+The 0439 master pass absorbed four "extension" rows as UNITS of their parent
+plant (`Duyen Hai 3 Extension` → unit of Duyen Hai 3; same for `Uong Bi I
+extension`, `Uong Bi II extension`, `Vinh Tan 4 extension`). During the 0413 v2
+adoption the author observed this was an uninformed choice and asked whether it
+only increased errors.
+
+Measured during 0413 (one side of the ledger only): absorption added **15 new
+false positives** — model emissions of the extension names are now LP-vetoed
+against the absorbed parent (the `matcher_fail_lp_veto` jump in
+`fp_audit_exp2.py`, full v1→v2 audit in `data/reference/v1_v2_adoption_comparison.md`).
+
+But absorption is **also** the entire mechanism behind the clean +212 TP /
+−212 FP gain and the parent capacity corrections (Duyen Hai 3 1244→1904 =
+parent + ext, etc.). So "did it only increase errors?" cannot be answered from
+the FP column alone — the honest measurement is **net** TP/FP/FN across both
+arms. This was deliberately NOT done in 0413: changing what the pipe produces is
+a master/aggregator decision (0439/0416), not the adoption ceremony, and a
+revert mid-adoption would re-run the entire 0413 gate (count 170→174,
+v1↔v2 accounting, every figure, the re-score).
+
+## Approach
+
+1. Build a **standalone-extensions variant** of the v2 reference: the 4
+   extensions become standalone one-unit plants instead of absorbed units
+   (count 170→174, parents lose the ext capacity). Do this in the MASTER
+   (`pipeline.ods` Plant/Unit address cells) + re-run the pipe, NOT by hand-editing
+   the CSV — parentage is data, not a name inference (0439 contract).
+2. Re-score Exp1 (exp1_batch2) under both variants from existing archived
+   outputs (LP matcher, zero API spend) and compare **aggregate TP / FP / FN**,
+   not just FP. Decision rule: adopt whichever variant has the lower net error
+   (FP + FN) on the reference, holding TP recall in view.
+3. If standalone wins: it becomes the v2 reference (new version entry in
+   PROVENANCE, before/after gate against current v2, re-score, figures). If
+   absorbed wins: document the measurement as the justification and keep current
+   v2 — the choice is then informed, not accidental.
+
+## Definition of done
+
+- [ ] Standalone-extensions variant produced via the master + pipe (not a hand
+      edit); count and per-plant capacity diffs vs absorbed documented.
+- [ ] Exp1 re-scored under both variants; net TP/FP/FN compared in a committed
+      note under `data/reference/`.
+- [ ] Decision recorded with the measurement as evidence (no loaded causal
+      label — report the net effect, not "absorption broke scoring").
+- [ ] If reverted: PROVENANCE version entry + before/after gate + figures
+      regenerated, same discipline as 0413.
+- [ ] The final adopted plant count is settled (this is the count the
+      `\NumRefPlants` macro and all manuscript reference-size mentions resolve
+      to — see 0444 macroization, blocked on this).
+- [ ] `make check` green.
+
+## Related
+
+- 0413 (v2 adoption — measured the FP side; deferred the net measurement here)
+- 0439 / 0416 (master three-column address + aggregator — where the
+  extension-as-unit choice lives, and where a revert must land)
+- 0444 (manuscript plant-count macroization — Blocked-by this ticket: the
+  literal `163` reference-size mentions must macroize against the *settled*
+  count, not be done twice if the count moves 170→174)
+- `data/reference/v1_v2_adoption_comparison.md` (the FP-side measurement)

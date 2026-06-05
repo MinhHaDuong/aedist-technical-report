@@ -1,6 +1,6 @@
 {
-  "run_id": "9b66f51b925e",
-  "timestamp": "2026-05-25T14:02:36.015672Z",
+  "run_id": "fcc0279af48f",
+  "timestamp": "2026-06-05T12:52:12.575980Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-oss-20b",
@@ -34,8 +34,9 @@
     "n_plants": 105,
     "tp": 0,
     "fp": 105,
-    "fn": 163,
+    "fn": 170,
     "f1": 0.0
   },
-  "finish_reason": "stop"
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
 }

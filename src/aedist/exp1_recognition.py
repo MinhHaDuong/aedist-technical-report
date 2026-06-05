@@ -114,7 +114,8 @@ def load_exp1_recognition(
     Args:
         records_glob: Glob for record.json files
             (e.g. ``experiments/outputs/exp1_batch2/*.record.json``).
-        reference_path: Path to the gold reference CSV (vietnam_thermal_v1.csv).
+        reference_path: Path to the gold reference CSV
+            (vietnam_thermal_plants_v2_classified.csv by default).
 
     Returns:
         :class:`RecognitionData`. ``cells`` holds one cell per

@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
-from .exp1_cost_quality import load_cost_quality_rows, summary_by_slug
+from .exp1_cost_quality import N_REFERENCE_PLANTS, load_cost_quality_rows, summary_by_slug
 from .util import (
     COLOR_ALERT,
     COLOR_REFERENCE,
@@ -43,8 +43,9 @@ from .util import (
 )
 
 log = logging.getLogger(__name__)
-
-N_REFERENCE_PLANTS = 163
+# N_REFERENCE_PLANTS (reference inventory size) imported above from
+# exp1_cost_quality — single source of truth (ticket 0413); used at the
+# axhline reference line below.
 
 _AGENT_LABELS = {
     "anthropic": "Anthropic\nOpus 4.6",
@@ -230,9 +231,18 @@ def make_coverage_figure(
     ax.axhline(0, color=COLOR_REFERENCE, linewidth=1.4, zorder=2)
     ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
     ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
-    ax.set_ylim(-50, 150)
+    # Top of the axis tracks the reference size so the dashed line stays visible.
+    ax.set_ylim(-50, N_REFERENCE_PLANTS + 15)
     ax.set_yticks([-50, 0, 50, 100, 150])
-    ax.text(-0.55, 150, "163 plants", ha="left", va="bottom", fontsize=8, fontweight="bold")
+    ax.text(
+        -0.55,
+        N_REFERENCE_PLANTS,
+        f"{N_REFERENCE_PLANTS} plants",
+        ha="left",
+        va="bottom",
+        fontsize=8,
+        fontweight="bold",
+    )
     _style_axis(ax)
     _annotate_bar_labels(ax, include_e1=True)
     ax.set_title(

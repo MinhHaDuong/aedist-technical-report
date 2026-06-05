@@ -1,6 +1,47 @@
 """Tests for _classify_orphan and cmd_assemble in aedist.evaluate."""
 
-from aedist.evaluate import _classify_orphan
+from aedist.evaluate import _classify_orphan, project_status
+from aedist.schema import PlantStatus
+
+
+class TestProjectStatus:
+    """v2 ordinal-ladder projection + v1 inertness (ticket 0413)."""
+
+    def test_v2_ordinal_ladder_projection(self):
+        # Author-ratified bands: ≤2 proposed, 3-4 planned, 5 constructing,
+        # 6 operational, 9 cancelled, 10 retired.
+        cases = {
+            "0 exploring": PlantStatus.PROPOSED,
+            "1 announced": PlantStatus.PROPOSED,
+            "2 proposed": PlantStatus.PROPOSED,
+            "3 added to PDP": PlantStatus.PLANNED,
+            "4 permitted": PlantStatus.PLANNED,
+            "5 construction": PlantStatus.CONSTRUCTING,
+            "6 operating": PlantStatus.OPERATIONAL,
+            "9 cancelled": PlantStatus.CANCELLED,
+            "10 retired": PlantStatus.RETIRED,
+        }
+        for raw, expected in cases.items():
+            assert project_status(raw) == expected, raw
+
+    def test_v1_strings_unchanged(self):
+        # v1 vocabulary has no leading digit — must pass through _STATUS_MAP,
+        # so adopting v2 does not perturb v1-derived figures.
+        cases = {
+            "operational": PlantStatus.OPERATIONAL,
+            "proposed": PlantStatus.PROPOSED,
+            "planned": PlantStatus.PLANNED,
+            "constructing": PlantStatus.CONSTRUCTING,
+            "cancelled": PlantStatus.CANCELLED,
+            "retired": PlantStatus.RETIRED,
+        }
+        for raw, expected in cases.items():
+            assert project_status(raw) == expected, raw
+
+    def test_unknown_and_empty(self):
+        assert project_status("") == PlantStatus.UNKNOWN
+        assert project_status("7 something-unmapped") == PlantStatus.UNKNOWN
+        assert project_status("gobbledygook") == PlantStatus.UNKNOWN
 
 
 class TestClassifyOrphan:

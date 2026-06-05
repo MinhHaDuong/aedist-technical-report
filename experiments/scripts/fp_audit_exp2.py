@@ -2,7 +2,8 @@
 
 An FP is a SYSTEM_ONLY reconciliation entry: a plant the model reported that
 the LP matcher could not pair with any row of the frozen reference
-(``data/reference/vietnam_thermal_v1.csv``). This is the ``hallucinated_plant``
+(``data/reference/vietnam_thermal_plants_v2_classified.csv`` by default; the
+v1 ``--reference`` is still selectable). This is the ``hallucinated_plant``
 error in ``metrics.py`` — but, as this audit shows, two thirds of these are
 reconciliation artefacts, not model hallucination.
 
@@ -24,8 +25,8 @@ The classification buckets are:
                               the global LP left it unmatched (combined ``X & Y``
                               rows, aggregate-vs-split, base-vs-extension
                               contention, unit-number veto).
-  reference_hole              real Vietnamese plant absent from the 163-row
-                              reference under any spelling.
+  reference_hole              real Vietnamese plant absent from the reference
+                              under any spelling.
   statistical_borderline      mid-similarity, few appearances; ambiguous.
   likely_hallucination        implausible capacity / no such plant.
   other                       out of thermal-fossil scope or below 30 MWe

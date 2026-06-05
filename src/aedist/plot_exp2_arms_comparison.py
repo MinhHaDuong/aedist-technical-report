@@ -24,6 +24,7 @@ from pathlib import Path
 
 from matplotlib.figure import Figure
 
+from .evaluate import reference_plant_count
 from .extract import count_best_table_rows
 from .util import (
     COLOR_ALERT,
@@ -34,7 +35,9 @@ from .util import (
 
 log = logging.getLogger(__name__)
 
-N_REFERENCE_PLANTS = 163
+# Reference inventory size — derived from the adopted release (ticket 0413,
+# single source of truth). Used at the axhline reference line below.
+N_REFERENCE_PLANTS = reference_plant_count()
 
 _AGENT_LABELS = {
     "anthropic": "Anthropic\nOpus 4.6",
@@ -188,13 +191,14 @@ def _draw_coverage_panel(ax, rows: list[dict]) -> None:
     ax.axhline(0, color=COLOR_REFERENCE, linewidth=1.4, zorder=2)
     ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
     ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
-    ax.set_ylim(-50, 150)
+    # Top of the axis tracks the reference size so the dashed line stays visible.
+    ax.set_ylim(-50, N_REFERENCE_PLANTS + 15)
     ax.set_yticks([-50, 0, 50, 100, 150])
-    # Y-axis label, horizontal, at the top of the axis.
+    # Reference-line label, horizontal, on the dashed line.
     ax.text(
         -0.5,
-        150,
-        "163 plants",
+        N_REFERENCE_PLANTS,
+        f"{N_REFERENCE_PLANTS} plants",
         ha="left",
         va="bottom",
         fontsize=8,

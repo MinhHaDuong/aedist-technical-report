@@ -17,6 +17,7 @@ The ``assemble`` command concatenates record JSON files into a single
 
 import argparse
 import csv
+import functools
 import json
 import logging
 import re
@@ -72,6 +73,54 @@ _STATUS_MAP = {
     "shelved": PlantStatus.CANCELLED,
 }
 
+# v2 reference (ticket 0413) carries the master's unified ordinal status ladder
+# ("0 exploring" … "6 operating", "9 cancelled", "10 retired"). The downstream
+# schema and every status consumer (recognition matrix, status-difficulty table)
+# speak the v1 four-bucket-plus-tails vocabulary. This is the author-ratified
+# v1-compat projection, keyed on the leading ordinal so it is *inert* for v1
+# (v1 status strings have no leading digit and fall through to _STATUS_MAP):
+#   ordinal ≤2 → proposed, 3–4 → planned, 5 → constructing,
+#   6 → operational, 9 → cancelled, 10 → retired.
+_STATUS_ORDINAL_PROJECTION = {
+    0: PlantStatus.PROPOSED,
+    1: PlantStatus.PROPOSED,
+    2: PlantStatus.PROPOSED,
+    3: PlantStatus.PLANNED,
+    4: PlantStatus.PLANNED,
+    5: PlantStatus.CONSTRUCTING,
+    6: PlantStatus.OPERATIONAL,
+    9: PlantStatus.CANCELLED,
+    10: PlantStatus.RETIRED,
+}
+
+
+def project_status(status_raw: str) -> PlantStatus:
+    """Map a reference/system status string to the canonical PlantStatus.
+
+    Handles two vocabularies in one place:
+    - v2 ordinal-prefixed strings (``"6 operating"``, ``"9 cancelled"``):
+      projected to the v1 four-bucket-plus-tails scale by the leading ordinal
+      via :data:`_STATUS_ORDINAL_PROJECTION` (author-ratified bands).
+    - v1 / model strings (``"operational"``, ``"announced"``): looked up in
+      :data:`_STATUS_MAP`.
+
+    Unknown values fall to :data:`PlantStatus.UNKNOWN`. Inert for v1 inputs,
+    so adopting v2 does not perturb v1-derived figures.
+
+    Note: this also runs on *system* outputs via :func:`plants_from_dicts`. A
+    model emitting a bare numeric-leading status (e.g. ``"5"``) would now
+    project to ``constructing`` where it was ``UNKNOWN`` before — implausible in
+    practice and only affects ``status_match``, but a deliberate consequence of
+    sharing one status parser, not an accident.
+    """
+    s = status_raw.strip()
+    if not s:
+        return PlantStatus.UNKNOWN
+    head = s.split(None, 1)[0]
+    if head.isdigit():
+        return _STATUS_ORDINAL_PROJECTION.get(int(head), PlantStatus.UNKNOWN)
+    return _STATUS_MAP.get(s.lower(), PlantStatus.UNKNOWN)
+
 
 def _get(row: dict, col_map: dict, candidates: list[str]) -> str | None:
     for c in candidates:
@@ -106,11 +155,7 @@ def load_plants_csv(path: Path) -> list[Plant]:
                 if fuel_raw
                 else FuelType.UNKNOWN
             )
-            status = (
-                _STATUS_MAP.get(status_raw.strip().lower(), PlantStatus.UNKNOWN)
-                if status_raw
-                else PlantStatus.UNKNOWN
-            )
+            status = project_status(status_raw) if status_raw else PlantStatus.UNKNOWN
 
             cap = None
             if cap_raw:
@@ -136,6 +181,20 @@ def load_plants_csv(path: Path) -> list[Plant]:
             except (ValueError, ValidationError):
                 continue
     return plants
+
+
+@functools.lru_cache(maxsize=4)
+def reference_plant_count(reference_path: Path = VN_THERMAL_PLANTS_RELEASE_CSV) -> int:
+    """Number of plants in the adopted reference release.
+
+    Single source of truth for the "full inventory" constant used as a figure
+    reference line and as the coverage-ratio denominator. Derived from the
+    reference CSV (lazy + cached) rather than hardcoded, so it tracks the
+    adopted release automatically — v1 (163) → v2 (170) on the 0413 switch,
+    with no constant to chase. A drift guard lives in
+    ``tests/test_reference_count.py``.
+    """
+    return len(load_plants_csv(reference_path))
 
 
 def plants_from_dicts(rows: list[dict]) -> list[Plant]:
