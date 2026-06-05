@@ -82,3 +82,55 @@ def test_load_pack_arm_rows_total_cost_usd(tmp_path):
     rows = _load_pack_arm_rows(tmp_path, "arm4")
     assert len(rows) == 1
     assert rows[0]["cost_usd"] > 0
+
+
+def test_all_false_positive_bars_are_red(tmp_path) -> None:
+    """0403: every FP (negative) bar must use red (COLOR_ALERT), matching the
+    'red = false positives' convention unified in PR #678 (ticket 0349)."""
+    from matplotlib.colors import to_hex
+
+    from aedist.util import COLOR_ALERT
+
+    # Synthetic rows with one FP bar per arm (scored arms only).
+    csv_path = tmp_path / "rows.csv"
+    rows_data = [
+        {
+            "arm": "arm1",
+            "agent": "anthropic",
+            "model": "claude-opus-4-6",
+            "run": "1",
+            "classification": "report",
+            "narrative_chars": "15000",
+            "inventory_rows": "114",
+            "cost_usd": "0.4",
+            "wall_s": "120.0",
+            "turns": "1",
+        },
+        {
+            "arm": "arm2",
+            "agent": "mistral",
+            "model": "mistral-large-2512",
+            "run": "1",
+            "classification": "report",
+            "narrative_chars": "15000",
+            "inventory_rows": "120",
+            "cost_usd": "0.5",
+            "wall_s": "120.0",
+            "turns": "5",
+        },
+    ]
+    _write_csv(csv_path, rows_data)
+
+    # Load and inject n_matched manually (scored arms have this field).
+    rows = _load_csv(csv_path)
+    rows[0]["n_matched"] = 100  # 14 FP
+    rows[1]["n_matched"] = 110  # 10 FP
+
+    fig = make_figure(rows, tmp_path / "fig.pdf")
+    ax = fig.axes[0]  # coverage panel
+    negative_bars = [p for p in ax.patches if p.get_height() < 0]
+    assert len(negative_bars) == 2, f"expected 2 FP bars (arm1+arm2), got {len(negative_bars)}"
+    colors = {to_hex(p.get_facecolor()[:3]) for p in negative_bars}
+    assert colors == {to_hex(COLOR_ALERT)}, (
+        f"FP bars must all be red (COLOR_ALERT={COLOR_ALERT}); got {colors}"
+    )
