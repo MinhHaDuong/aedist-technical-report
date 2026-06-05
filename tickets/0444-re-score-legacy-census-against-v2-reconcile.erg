@@ -60,6 +60,16 @@ predate 0413):
       regimes from the v2-scored mart; centralize the `tabulate_macros`
       `ref_plants` constant via `evaluate.reference_plant_count()` (deferred from
       0413 to keep the census source+output revert mutually consistent).
+- [ ] Manuscript reference-count propagation. Once Exp3 (RAG) is re-scored to v2,
+      replace the literal `163` reference-size mentions with the `\NumRefPlants`
+      macro and update the Exp3 RAG recall denominators (`report.tex` §«Expérience
+      direct complet» line ~218, §«Expérience 3 RAG» lines ~406/412/420/422/449/485,
+      abstract ~49, conclusion ~669; `slides/manuscript/main.md` Exp1/Exp2/Exp3
+      captions; `slides/slides*.tex` line ~105). These stay LITERAL 163 in 0413
+      because they are recall against the still-v1 archived RAG data — rendering
+      `\NumRefPlants`=170 there would falsely claim 170/170 recall. 0413 already
+      macro-ized the v2-coherent mentions (Exp2 provenance §269, reconciliation
+      §396) and applied the #547 de-inflation corrections to §396/§734.
 - [ ] `make check` green.
 
 ## Related
