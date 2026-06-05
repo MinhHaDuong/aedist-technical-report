@@ -75,7 +75,7 @@ def _order_plants(cells: list) -> tuple[list[int], dict[int, tuple[str, str, flo
 
     Returns (ordered_plant_ids, info) where info[plant_id] = (name, status,
     capacity_mw). Columns are keyed by plant_id so same-name reference plants
-    (Formosa phases) keep distinct columns and the reference count stays at 163.
+    (Formosa phases) keep distinct columns and the reference count stays exact.
     """
     info: dict[int, tuple[str, str, float]] = {}
     for c in cells:

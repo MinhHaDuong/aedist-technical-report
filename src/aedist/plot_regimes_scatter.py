@@ -16,9 +16,12 @@ from collections import defaultdict
 from pathlib import Path
 from statistics import median
 
+from .evaluate import reference_plant_count
 from .figures_config import load_modelset
 from .measurements import SYNTHETIC_SUFFIXES, load
 from .util import COLOR_REFERENCE, normalize_model
+
+_N_REFERENCE_PLANTS = reference_plant_count()
 
 log = logging.getLogger(__name__)
 
@@ -96,12 +99,12 @@ def write_pdf(
                         linewidths=0,
                     )
 
-    ax.axvline(x=163, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7)
+    ax.axvline(x=_N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7)
 
     ax.set_yticks(yticks)
     ax.set_yticklabels(ytick_labels, fontsize=7)
     ax.set_xlabel("Centrales identifiées (un point = une centrale)", fontsize=9)
-    ax.set_xlim(0, 175)
+    ax.set_xlim(0, _N_REFERENCE_PLANTS + 12)
     ymax = (len(models) - 1) * 4 + 2
     ax.set_ylim(-0.5, ymax + 0.5)
     ax.invert_yaxis()

@@ -16,7 +16,7 @@ Pareto-efficient envelope is drawn.
 Y axis: per-model **count of correctly identified plants** (true positives,
 ``n_matched`` in measurements) plotted as median with min/max whiskers
 across the 5 reps. A horizontal reference line marks the full reference
-inventory size (163 thermal plants).
+inventory size (reference_plant_count() thermal plants).
 
 Writes a CSV with columns:
     model, family, median_tp, min_tp, max_tp,
