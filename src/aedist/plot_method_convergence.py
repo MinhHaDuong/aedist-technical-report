@@ -7,9 +7,9 @@ Each bar is a row of dots: 1 dot = 1 plant.
 Family-coloured dots (right of 0) = correctly identified (TP).
 Red dots (left of 0) = unrecognized (FP), using the repo-wide
 COLOR_ALERT false-positive convention.
-Dashed green line at 163 = complete inventory.
+Dashed green line at the reference size = complete inventory.
 
-A good method drives all bars to 163 with nothing in red.
+A good method drives all bars to the reference line with nothing in red.
 
 Usage:
     uv run python -m aedist.plot_method_convergence \

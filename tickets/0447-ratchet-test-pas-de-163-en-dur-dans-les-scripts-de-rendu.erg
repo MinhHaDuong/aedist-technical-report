@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Ratchet adhérence: pas de taille de référence en dur dans les scripts de rendu
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T17:00Z claude created — roar sweep post-#767: la classe a mordu 4 scripts le même jour
+
+--- body ---
+## Contexte
+
+L'adoption v2 (163→170 centrales) a révélé une classe de bug : la taille
+de la liste de référence codée en dur dans les scripts de rendu —
+étiquette `"163 plants"`, `axvline(x=163)`, `set_ylim(-50, 150)` qui
+clippe la ligne à 170 hors cadre. Quatre scripts touchés le 2026-06-05 :
+plot_exp2_arms_split, plot_exp2_arms_comparison, plot_method_convergence
+(PR #767), plot_regimes_scatter (PR de suite). Le point d'entrée
+canonique existe : `evaluate.reference_plant_count()`.
+
+Les tests structurels ne voient pas les pixels : la ligne clippée et le
+label menteur ont été attrapés par la comparaison visuelle de l'auteur,
+pas par la CI. Un ratchet textuel attrape la classe à la source.
+
+## Spécification du test
+
+`@pytest.mark.adherence` dans tests/test_no_hardcoded_reference_size.py :
+- Scanne `src/aedist/plot_*.py` et `src/aedist/tabulate_*.py`
+- Échoue sur le littéral `163` (et `170` !) hors commentaires/docstrings
+  — la valeur courante en dur est le même bug avec un an de retard
+- Allowlist explicite et commentée pour les exceptions légitimes :
+  `tabulate_self_consistency.py` (fallback n_reference des records
+  legacy v1, sémantiquement correct)
+- AST de préférence au regex (cf. test_no_hardcoded_reference_path.py
+  comme modèle existant)
+
+## Exit criteria
+
+- [ ] Test ratchet en place, passe sur l'arbre courant
+- [ ] Mutation check: réintroduire `axvline(x=163)` dans un plot_*.py
+      fait échouer le test (vérifié à la main, pas commité)
+- [ ] `make check-fast` vert
+
+## Related
+
+- PR #767 (la vague de fixes), 0446 (retravail figure matrice)
+- tests/test_no_hardcoded_reference_path.py (modèle AST existant)
