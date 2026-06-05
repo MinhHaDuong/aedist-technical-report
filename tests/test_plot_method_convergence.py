@@ -154,6 +154,130 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     assert set(reader.fieldnames) == {"method", "model", "tp", "fp", "fn", "local", "size_class"}
 
 
+def test_result_dir_dot_prefix_matches(tmp_path, monkeypatch):
+    """0440: a ./-prefixed --result-dir still matches bare experiments/ paths.
+
+    Records store result_file as bare-relative (experiments/...), but the
+    Makefile default ANALYSIS_REPO_ROOT=. expands --result-dir to
+    ./experiments/... — the prefix comparison must be cwd-invariant.
+    """
+    metrics = [
+        {
+            "label": "rag/modelA-run1",
+            "n_matched": 100,
+            "n_hallucinated": 5,
+            "n_missed": 58,
+            "result_file": "experiments/outputs/exp1_batch2/modelA-run1.csv",
+        },
+        {
+            "label": "rag/modelB-run1",
+            "n_matched": 90,
+            "n_hallucinated": 2,
+            "n_missed": 71,
+            "result_file": "experiments/outputs/other/modelB-run1.csv",
+        },
+    ]
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, metrics)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    bare = load_convergence_data(result_dir="experiments/outputs/exp1_batch2/")
+    dotted = load_convergence_data(result_dir="./experiments/outputs/exp1_batch2/")
+    # Only the exp1_batch2 record is selected; the other/ record is excluded.
+    assert {r["model"] for r in bare} == {"modelA-run1"}
+    # Identical selection from the ./-prefixed (repo-root cwd) form.
+    assert [r["model"] for r in dotted] == [r["model"] for r in bare]
+    assert {r["model"] for r in dotted} == {"modelA-run1"}
+
+
+def test_result_dir_no_sibling_prefix_match(tmp_path, monkeypatch):
+    """0440: a directory prefix must not match a sibling sharing a name stem.
+
+    experiments/outputs/exp1 must not select experiments/outputs/exp1_batch2.
+    """
+    metrics = [
+        {
+            "label": "rag/modelA-run1",
+            "n_matched": 100,
+            "n_hallucinated": 5,
+            "n_missed": 58,
+            "result_file": "experiments/outputs/exp1_batch2/modelA-run1.csv",
+        },
+    ]
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, metrics)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    import pytest
+
+    with pytest.raises(ValueError, match="No measurement records matched"):
+        load_convergence_data(result_dir="experiments/outputs/exp1/")
+
+
+def test_zero_match_result_dir_raises(tmp_path, monkeypatch):
+    """0440: a result_dir that selects nothing is a hard error, not an empty figure."""
+    metrics = [
+        {
+            "label": "rag/modelA-run1",
+            "n_matched": 100,
+            "n_hallucinated": 5,
+            "n_missed": 58,
+            "result_file": "experiments/outputs/exp1_batch2/modelA-run1.csv",
+        },
+    ]
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, metrics)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    import pytest
+
+    with pytest.raises(ValueError) as exc:
+        load_convergence_data(result_dir="experiments/outputs/nonexistent/")
+    msg = str(exc.value)
+    # Diagnostic names the offending filter and an example available path.
+    assert "result_dir" in msg
+    assert "experiments/outputs/exp1_batch2/modelA-run1.csv" in msg
+
+
+def test_zero_match_prompt_version_raises(tmp_path, monkeypatch):
+    """0440: an empty prompt_version selection raises before min()-of-empty crash.
+
+    Covers the census-macro path (PR #754): measurements with no census records
+    must fail loudly, not crash on min() of an empty list.
+    """
+    metrics = [
+        {"label": "rag/modelA-run1", "n_matched": 100, "n_hallucinated": 5, "n_missed": 58},
+    ]
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, metrics)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    import pytest
+
+    with pytest.raises(ValueError, match="prompt_version"):
+        load_convergence_data(prompt_version="census")
+
+
+def test_no_filter_empty_does_not_raise(tmp_path, monkeypatch):
+    """0440: the unfiltered call returns [] for unrelated data without raising.
+
+    The hard error is scoped to an active filter — an empty unfiltered result
+    (e.g. a fixture with only excluded artifacts) must not raise.
+    """
+    # "verification/..." → Method.RAG_VERIFICATION, which is NOT in
+    # _METHOD_ORDER, so every row is dropped and the result is empty.
+    metrics = [
+        {"label": "verification/modelA-run1", "n_matched": 50, "n_hallucinated": 1, "n_missed": 0},
+    ]
+    input_path = tmp_path / "measurements.jsonl"
+    write_measurements(input_path, metrics)
+    patch_measurements_loader(monkeypatch, input_path)
+
+    # No filter active → no raise even though the result is empty.
+    rows = load_convergence_data()
+    assert rows == []
+
+
 def test_fp_segments_are_red(tmp_path):
     """0438: false-positive (negative-x) dots use red (COLOR_ALERT).
 
