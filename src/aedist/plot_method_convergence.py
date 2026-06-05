@@ -24,6 +24,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+from .evaluate import reference_plant_count
 from .measurements import SYNTHETIC_SUFFIXES, load
 from .util import (
     COLOR_ALERT,
@@ -32,6 +33,8 @@ from .util import (
     model_family_color,
     normalize_model,
 )
+
+_N_REFERENCE_PLANTS = reference_plant_count()
 
 _SIZE_CLASS_B = {"edge": 4, "small": 9, "medium": 30, "large": 100, "frontier": 300}
 
@@ -386,15 +389,17 @@ def write_pdf(
         method_ticks.append((band_center, _METHOD_LABELS.get(method, method)))
         y_offset += len(method_rows) * spacing + gap
 
-    # Reference line at 163
-    ax.axvline(x=163, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2)
+    # Reference line at the inventory size
+    ax.axvline(
+        x=_N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2
+    )
 
     # Zero line
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
     ax.set_yticks([])
     ax.set_xlabel(x_label, fontsize=11 * ui_scale)
-    ax.set_xlim(-max_fp - 15, 185)
+    ax.set_xlim(-max_fp - 15, _N_REFERENCE_PLANTS + 22)
     # Invert via ylim order (no invert_yaxis) so set_ylim stays predictable
     ax.set_ylim(y_last + spacing, -spacing)
     ax.grid(axis="x", linewidth=0.2, alpha=0.3)
@@ -403,9 +408,9 @@ def write_pdf(
     # Labels at graph level (data coordinates)
     y_top = -spacing * 0.5
     ax.text(
-        163,
+        _N_REFERENCE_PLANTS,
         y_top,
-        "163\nplants",
+        f"{_N_REFERENCE_PLANTS}\nplants",
         color=COLOR_REFERENCE,
         fontsize=16 * ui_scale,
         va="bottom",
