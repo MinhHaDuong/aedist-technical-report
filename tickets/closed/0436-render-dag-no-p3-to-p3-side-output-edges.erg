@@ -2,11 +2,13 @@
 Title: Render DAG: no P3-to-P3 side-output edges — figures and tables read mart views directly
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #754 — P3-to-P3 edges re-plumbed, guard bites, gate APPROVED
 
 --- log ---
 2026-06-05T07:54Z claude created
 
 2026-06-05T10:40Z claude execute Re-plumbed all three P3-to-P3 edges; shared libs exp1_cost_quality + exp1_census; tabulate_cost_quality/tabulate_census_macros emit the artifacts; plot_census retired; adherence guard test_no_p3_to_p3_side_output_edges green (whitelist: 4 build_exp2_mart_views *_view.csv). Byte-stable cost_quality.csv/macros_slides.tex/figures.
+2026-06-05T10:54Z HDMX-coding-agent closed — delivered by PR #754 — P3-to-P3 edges re-plumbed, guard bites, gate APPROVED
 --- body ---
 ## Context
 
