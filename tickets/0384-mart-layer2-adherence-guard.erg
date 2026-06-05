@@ -2,12 +2,12 @@
 Title: Add Layer-2 mart adherence guard — schema field semantics + completeness
 Created: 2026-05-29
 Author: Claude
-Blocked-by: 0383
 
 --- log ---
 2026-05-29T00:00Z Claude created — keystone guard for the mart audit redress (0383)
 
 2026-06-05T08:15Z HDMX-coding-agent note Layer-2 guard delivered as tests/test_exp2_mart_contract.py: 5 adherence tests. Finding #3 (class_trace/n_bib_entries) asserted via strict-xfail on _build_run_records source (code-contract, not stale committed mart) — bites today (real AssertionError under --runxfail), strict so 0385's wiring forces marker removal. Finding #1 mapping pinned (already fixed f7f5c4ea). Finding #2 dropped columns documented out-of-scope pending 0386. Zero changes to contention file exp2_mart.py.
+2026-06-05T10:55Z HDMX-coding-agent note blocker 0383 closed — Blocked-by removed.
 --- body ---
 ## Context
 
