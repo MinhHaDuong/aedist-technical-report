@@ -289,6 +289,16 @@ post-adoption rows. The `sota_cross_eval.csv` carries the same value in a
 `reference` metadata column, and `build_exp2_mart_views.py` projects it
 back into the score view.
 
+**Design note — backfill vs omit-when-absent:** The mart and the
+`measurements.jsonl` metrics dict use different migration strategies for
+legacy rows, and both are intentional. The mart is a *completeness
+snapshot*: committed mart rows were backfilled with the known default
+(`vietnam_thermal_v1.csv`) so the mart is queryable without gaps.
+`measurements.jsonl` is *append-only history*: `records_to_metrics()`
+omits the `reference` key when it is `None`, following the 0139
+precedent — legacy rows are preserved exactly as written and a missing
+key is the faithful signal that the row predates the reference stamp.
+
 ### Artifact pointers
 
 Each pointer field is a repo-relative path plus a SHA-256 digest of the target
