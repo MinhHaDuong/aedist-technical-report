@@ -12,6 +12,7 @@ Author: HDMX-coding-agent
 2026-06-05T07:27Z claude note — raid 2026-06-05 Imagine: ESCALATE — grouping contract unspecified under no-synthesis rule (Q1/Q2 in body, § Imagine review). On hold for author; 0401 held with it.
 2026-06-05T09:12Z claude note — author ratified three-column master design (Complex|Plant|Unit): ESCALATE resolved, contrat v2 in body, Blocked-by 0439 (master migration, needs-human)
 2026-06-05T11:01Z HDMX-coding-agent note blocker 0439 closed — Blocked-by removed.
+2026-06-05T11:08Z claude note celebrate-0439 sweep: ratchet adherence (line ~150) says 'src/' only — HDM_aggregate.py and GEM_aggregate.py (the two live unit-name parsers) are in data/reference/; widen the ratchet glob to cover data/reference/ too
 --- body ---
 ## Contexte
 
