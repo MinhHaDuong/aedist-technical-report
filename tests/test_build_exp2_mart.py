@@ -140,6 +140,58 @@ def test_build_exp2_mart_ignores_raw_payload_files(tmp_path):
     assert score_record.score_summary.accuracy.coverage.value == 0.5
 
 
+def test_build_exp2_mart_wires_class_trace_and_n_bib_entries(tmp_path):
+    """Finding #3 (ticket 0385): a run whose source JSON carries ``class_trace``
+    and ``n_bib_entries`` produces a RunSummary with both populated, not None."""
+    naive_dir = tmp_path / "naive"
+    optimised_dir = tmp_path / "optimised"
+    naive_dir.mkdir()
+    optimised_dir.mkdir()
+
+    for arm_dir, arm_name in ((naive_dir, "naive"), (optimised_dir, "optimised")):
+        _write_json(
+            arm_dir / "anthropic_run01.json",
+            {
+                "model": "claude-opus-4-6",
+                "run": 1,
+                "arm": arm_name,
+                "classification": "report",
+                "class_trace": ["report"],
+                "n_bib_entries": 7,
+                "turns": 1 if arm_name == "naive" else 3,
+                "narrative_chars": 4,
+                "cost_usd": 0.1,
+            },
+        )
+        _write_md(
+            arm_dir / "anthropic_run01.md",
+            "| Name | Fuel | Capacity | Status | COD | Province |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| A | Coal | 1 | Operating | 1983 | HN |\n",
+        )
+
+    _write_cross_eval_csv(
+        tmp_path / "sota_cross_eval.csv",
+        [
+            _score_row("naive", "claude-opus-4-6", 1),
+            _score_row("optimised", "claude-opus-4-6", 1),
+        ],
+    )
+
+    records = build_exp2_mart(
+        naive_dir=naive_dir,
+        optimised_dir=optimised_dir,
+        cross_eval_csv=tmp_path / "sota_cross_eval.csv",
+        repo_root=tmp_path,
+    )
+
+    run_records = [record for record in records if record.record_kind == "run"]
+    assert run_records, "expected at least one run record"
+    for run_record in run_records:
+        assert run_record.run_summary.class_trace == ["report"]
+        assert run_record.run_summary.n_bib_entries == 7
+
+
 def test_build_exp2_mart_resolves_repo_relative_paths_from_repo_root(tmp_path, monkeypatch):
     repo_root = tmp_path / "repo"
     cwd = tmp_path / "elsewhere"

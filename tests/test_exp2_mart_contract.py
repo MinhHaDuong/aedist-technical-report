@@ -157,19 +157,11 @@ def test_run_summary_wiring_documents_every_source_key() -> None:
 
 
 @pytest.mark.adherence
-@pytest.mark.xfail(
-    strict=True,
-    reason="finding #3: class_trace/n_bib_entries are present in source JSON and "
-    "in the RunSummary schema but never wired in _build_run_records — ticket 0385 "
-    "wires them and removes this marker (xfail strict => XPASS fails the suite, "
-    "forcing 0385 to drop the marker rather than leave it lying).",
-)
 def test_run_summary_wires_class_trace_and_n_bib_entries() -> None:
-    """Finding #3 data-loss guard. ``class_trace`` and ``n_bib_entries`` are
-    declared on ``RunSummary`` and populated in the source JSON, but the wiring in
-    ``_build_run_records`` drops them, so they are always null in the mart. This
-    asserts against the projection *code* (not the stale committed mart), so 0385
-    flips it green by adding the wiring."""
+    """Finding #3 data-loss guard (resolved by ticket 0385). ``class_trace`` and
+    ``n_bib_entries`` are declared on ``RunSummary`` and populated in the source
+    JSON; ``_build_run_records`` now wires them through. This asserts against the
+    projection *code* so the wiring cannot silently regress."""
     src = inspect.getsource(build_exp2_mart._build_run_records)
     missing = [key for key in ("class_trace", "n_bib_entries") if f'"{key}"' not in src]
     assert not missing, (
@@ -178,18 +170,20 @@ def test_run_summary_wires_class_trace_and_n_bib_entries() -> None:
 
 
 @pytest.mark.adherence
-def test_committed_mart_class_trace_n_bib_entries_null() -> None:
-    """Corroborating data check: in the committed (stale) mart the unwired keys
-    are null on every run record. Documents finding #3's footprint in the data;
-    skips when the artifact is absent (clean-room checkout)."""
+def test_committed_mart_class_trace_n_bib_entries_populated() -> None:
+    """Corroborating data check (ticket 0385): in the committed mart the
+    previously-unwired keys are now populated on every run record. Guards against
+    a regenerated mart that drops finding #3's fix; skips when the artifact is
+    absent (clean-room checkout)."""
     if not MART.exists():
         pytest.skip("mart artifact absent")
     recs = [json.loads(line) for line in MART.read_text().splitlines() if line.strip()]
     runs = [r for r in recs if r["record_kind"] == "run"]
     assert runs, "no run records to audit"
     for key in ("class_trace", "n_bib_entries"):
-        populated = [r for r in runs if r["run_summary"].get(key) is not None]
-        assert not populated, (
-            f"{key} is unexpectedly populated in the committed mart — finding #3 "
-            f"may have been redressed; flip the xfail guard if so"
+        missing = [r["record_id"] for r in runs if r["run_summary"].get(key) is None]
+        assert not missing, (
+            f"{key} is null in the committed mart for run records {missing} — "
+            f"finding #3's wiring (ticket 0385) regressed or the mart is stale; "
+            f"regenerate via the score.mk mart target"
         )
