@@ -2,11 +2,13 @@
 Title: Exp1 fig_direct_p1_base: FP segments orange to red (repo-wide FP colour convention)
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #747 — Exp1 FP red, gate APPROVED
 
 --- log ---
 2026-06-05T08:15Z claude created
 
 2026-06-05T09:36Z HDMX-coding-agent execute FP segments switched to COLOR_ALERT red; --fp-label param (Unrecognized/Non-reconnues); regression test red-on-revert; PDF rebuilt; caption updated; plot_scaling_curve ref-line confirmed legit
+2026-06-05T09:51Z HDMX-coding-agent closed — delivered by PR #747 — Exp1 FP red, gate APPROVED
 --- body ---
 ## Context
 
