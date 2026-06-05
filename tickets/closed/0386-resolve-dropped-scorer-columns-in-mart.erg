@@ -2,12 +2,13 @@
 Title: Decide and resolve scorer columns dropped at the mart boundary
 Created: 2026-05-29
 Author: Claude
-Blocked-by: 0384
+Closed: delivered by PR #750 — Option B intentional exclusion, gate APPROVED
 
 --- log ---
 2026-05-29T00:00Z Claude created — finding #2 from the mart audit (0383); scope decision required
 
 2026-06-05T09:52Z Claude decision Option B — out of scope; rationale: Exp1-spider metrics consumed from sota_cross_eval.csv directly (score_exp1.py, plot_quality_spider_exp1.py); audit found no mart consumer; lighter than a schema bump that 0431 can own.
+2026-06-05T10:00Z HDMX-coding-agent closed — delivered by PR #750 — Option B intentional exclusion, gate APPROVED
 --- body ---
 ## Context
 
