@@ -123,7 +123,7 @@ connection date (observed or planned COD), province, and generation capacity
 (in MWe). Format the response in CSV.
 \end{Prompt}
 
-\section{Expérience 1~: requête directe (single-shot)}\label{sec:exp1}
+\section{Étude préliminaire~: requête directe (single-shot)}\label{sec:exp1}
 
 Les résultats sont loin de la qualité statistique. Les modèles flagship retournent entre 18 et 64 centrales~: R1-DeepSeek with search en trouve 64, Gemini-2-flash 41, Claude~3.5 Sonnet 38, GPT-4o 33. La performance est corrélée à la nouveauté des modèles.
 
@@ -138,7 +138,7 @@ La table~\ref{tab:exp1-reasoning-topup} prolonge la cohorte du 20~mai~2026 (16 m
 
 \input{inputs/generated/tab_exp1_reasoning_topup}
 
-\section{Expérience 2~: approche conversationnelle avec relances}\label{sec:exp2}
+\section{Étude préliminaire~: approche conversationnelle avec relances}\label{sec:exp2}
 
 Les modèles de chat tendent à fournir des réponses courtes. Une approche conversationnelle permet-elle de découvrir toute l'étendue de leurs connaissances~? Pour vérifier cette hypothèse, on utilise le \emph{Prompt~2}\label{sec:methode}, plus détaillé, suivi de trois relances~:
 
@@ -660,7 +660,7 @@ Une expérience de vérification automatisée quantifie ce compromis~: sur la me
 \end{table}
 
 % --- Para 5c: targeted verification subsumes generic multi-turn (future direction) ---
-La vérification multi-agents ouvre une direction complémentaire. Les relances conversationnelles génériques de l'expérience multi-tour (section~\ref{sec:exp2}, «~Avez-vous oublié des centrales~?~») apparaissent rétrospectivement comme un cas particulier, moins motivé, d'un protocole de vérification ciblée~: plutôt que des relances aveugles, chaque tour poursuit un objectif précis --- contrôler la provenance, détecter les hallucinations, croiser avec le référentiel. La littérature sur la self-consistency et les protocoles de débat suggère qu'une vérification par agents indépendants surpasse l'auto-révision par le même modèle. Le module de sourçage par ligne (colonnes \texttt{source\_1}, \texttt{source\_2}, section~\ref{sec:rag_cited}) est conçu pour alimenter cette phase~: chaque ligne portant ses propres références, un agent vérificateur peut en contrôler la provenance sans accès au prompt d'origine. La décomposition par sous-requêtes (diviser pour régner, section~\ref{sec:rag_per_fuel}) constitue un axe orthogonal --- elle modifie la granularité de la requête, non le contrôle de la sortie --- dont l'interaction avec la vérification reste un travail futur non prioritaire.
+La vérification multi-agents ouvre une direction complémentaire. Les relances conversationnelles génériques de l'étude préliminaire multi-tour (section~\ref{sec:exp2}, «~Avez-vous oublié des centrales~?~») apparaissent rétrospectivement comme un cas particulier, moins motivé, d'un protocole de vérification ciblée~: plutôt que des relances aveugles, chaque tour poursuit un objectif précis --- contrôler la provenance, détecter les hallucinations, croiser avec le référentiel. La littérature sur la self-consistency et les protocoles de débat suggère qu'une vérification par agents indépendants surpasse l'auto-révision par le même modèle. Le module de sourçage par ligne (colonnes \texttt{source\_1}, \texttt{source\_2}, section~\ref{sec:rag_cited}) est conçu pour alimenter cette phase~: chaque ligne portant ses propres références, un agent vérificateur peut en contrôler la provenance sans accès au prompt d'origine. La décomposition par sous-requêtes (diviser pour régner, section~\ref{sec:rag_per_fuel}) constitue un axe orthogonal --- elle modifie la granularité de la requête, non le contrôle de la sortie --- dont l'interaction avec la vérification reste un travail futur non prioritaire.
 
 % --- Para 6: from thermal to full power system (Level 4 — scope) ---
 Ce rapport valide la méthode d'extraction sur \emph{une} classe de composants~: les centrales thermiques. Or un modèle complet de système énergétique -- tel que PyPSA-Earth \citep{UMGUESAZ}, dont une instance vietnamienne PyPSA-VN existe déjà \citep{VGASHFPT} -- requiert l'ensemble des composants~: générateurs thermiques (validés ici), énergies renouvelables (solaire, éolien, présents dans les annexes du PDP8), hydroélectricité, stockage (batteries, stations de pompage-turbinage, émergents dans le PDP8 révisé), et réseau de transport (lignes, postes, interconnexions dans les plans d'expansion d'EVN). Les mêmes documents gouvernementaux qui contiennent les tables de centrales thermiques contiennent ces autres composants. La chaîne d'extraction en cinq étapes s'applique, paramétrée par classe de composants plutôt que figée sur le thermique.
