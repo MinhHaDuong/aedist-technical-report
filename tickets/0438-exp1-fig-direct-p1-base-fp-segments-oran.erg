@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Exp1 fig_direct_p1_base: FP segments orange to red (repo-wide FP colour convention)
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T08:15Z claude created
+
+--- body ---
+## Context
+
+Flagged by the 0403 worker's sweep (PR #738): 0403 unified FP bars to
+red (COLOR_ALERT) across the **Exp2** figures, but the Exp1 main-text
+figure `fig_direct_p1_base.pdf` (produced by
+`aedist.plot_method_convergence`) still draws its FP segments orange.
+The repo convention after 0403 is: false positives are red, labeled
+"unrecognized" (never "hallucinated").
+
+## Quoi faire
+
+1. `src/aedist/plot_method_convergence.py`: FP segments → COLOR_ALERT
+   red. Note its "Hallucinations" text label was judged a legitimate
+   non-FP-bar use in the 0403 sweep — re-examine: if the label names
+   the red segments, relabel "unrecognized" per convention.
+2. Sweep siblings for remaining orange-FP uses the 0403 Exp2-scoped
+   sweep deliberately left (plot_scaling_curve.py reference line was
+   judged legitimate — confirm).
+3. Regression test mirroring tests/test_plot_exp2_arms_comparison.py.
+4. REBUILD the committed PDF after the change (stale-PDF trap); check
+   any caption naming the colour (report + manuscript).
+
+## Exit criteria
+
+- [ ] fig_direct_p1_base FP segments red; label says "unrecognized"
+- [ ] Regression test green (red on revert)
+- [ ] PDF regenerated post-fix and committed; captions consistent
+- [ ] `make check` passes
+
+## Related
+
+- 0403 (Exp2 half, PR #738), PR #678 (coverage figure precedent),
+  0373 (matrix FP panel uses the same red convention).
