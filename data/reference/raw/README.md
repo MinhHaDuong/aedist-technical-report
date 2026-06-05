@@ -19,14 +19,17 @@ before the first commit may overwrite; a committed snapshot never. See
 ## `pipeline-YYYY-MM-DD.ods`
 
 The master spreadsheet for the Vietnam thermal-units reference list, maintained
-in the author's "Market report on Gas to Power" project. One row per unit.
-Imported here by `import.sh` (which copies from the author's working copy and
-stamps with today's date; the master is absent from CI and from the workstation,
-so `import.sh` is documentation-grade and is never run in CI).
+in the author's "Market report on Gas to Power" project. One row per asset at
+its finest known grain — unit, plant, or complex — addressed by the
+three-column `Complex | Plant | Unit` scheme (ticket 0439; conventions live in
+the master's own `Conventions` sheet). Imported here by `import.sh` (which
+copies from the author's working copy and stamps with today's date; the master
+is absent from CI and from the workstation, so `import.sh` is
+documentation-grade and is never run in CI).
 
-To correct a data error (a duplicate name, a wrong capacity, a missing `Level`),
-fix it **in the master**, then re-run `import.sh` to produce a new datestamped
-snapshot. Config pins (e.g., `config.VN_THERMAL_MASTER_SNAPSHOT_ODS`) point at a
+To correct a data error (a duplicate designation, a wrong capacity, an
+out-of-vocabulary status), fix it **in the master**, then re-run `import.sh`
+to produce a new datestamped snapshot. Config pins (e.g., `config.VN_THERMAL_MASTER_SNAPSHOT_ODS`) point at a
 specific snapshot; downstream extraction reads from that pinned snapshot via
 `data/reference/extract_ods.py`. See `data/reference/PROVENANCE.md` for the full
 pipeline and the snapshot→release distinction.
