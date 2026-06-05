@@ -2,11 +2,13 @@
 Title: render.mk path mismatch: ANALYSIS_REPO_ROOT=. breaks record-prefix matching, degenerate figure
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #759 — cwd-invariant result-dir, loud zero-match, gate APPROVED
 
 --- log ---
 2026-06-05T09:41Z claude created
 
 2026-06-05T11:25Z claude execute normalized prefix matching (normpath), repo-root-relative --result-dir constant in render.mk, loud zero-match ValueError, 5 regression tests
+2026-06-05T11:31Z HDMX-coding-agent closed — delivered by PR #759 — cwd-invariant result-dir, loud zero-match, gate APPROVED
 --- body ---
 ## Context
 
