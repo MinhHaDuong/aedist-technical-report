@@ -196,9 +196,9 @@ def write_pdf(
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
-    Each run becomes a thin horizontal line: blue segment from 0 to TP,
-    orange segment from 0 to -FP. Within each method band, runs are
-    stacked vertically and sorted by TP descending.
+    Each run becomes a thin horizontal line: family-coloured dots from 0 to TP
+    (right), red dots (COLOR_ALERT) from 0 to -FP (left). Within each method
+    band, runs are stacked vertically and sorted by TP descending.
     """
     import matplotlib.pyplot as plt
     import numpy as np
