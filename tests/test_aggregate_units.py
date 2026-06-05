@@ -337,10 +337,10 @@ def test_aggregate_rejects_duplicate_unit_input():
 def test_real_units_aggregate_synthetic_clean_frame(tmp_path):
     """A clean unit frame aggregates to unique plants, capacity = sum of units.
 
-    This anchors the end-to-end contract to a realistic frame WITHOUT depending
-    on the master snapshot, which currently carries a spreadsheet `Err:510` in
-    Vung Ang 2 (see test_real_snapshot_refused_on_err_capacity). Plant names are
-    unique, none synthesized; capacity is the unit sum.
+    This anchors the end-to-end contract to a small synthetic frame so failures
+    localize to the aggregator, independent of master-snapshot content (see
+    test_real_snapshot_aggregates_green for the real-snapshot path). Plant names
+    are unique, none synthesized; capacity is the unit sum.
     """
     import subprocess
 
@@ -374,14 +374,15 @@ def test_real_units_aggregate_synthetic_clean_frame(tmp_path):
 
 
 @pytest.mark.integration
-def test_real_snapshot_refused_on_err_capacity(tmp_path):
-    """The pinned snapshot is REFUSED: Vung Ang 2 carries a spreadsheet Err:510.
+def test_real_snapshot_aggregates_green(tmp_path):
+    """The pinned snapshot extracts and aggregates end-to-end without refusal.
 
-    This documents a real master-file defect (a leaked formula error) and locks
-    in the doctrine: a non-numeric capacity is corruption, not data, and aborts
-    aggregation with an actionable message. Ticket 0416 criterion 5 (the v1->v2
-    oracle) is BLOCKED until the author fixes the formula in the master and
-    re-imports a clean snapshot. When that lands, flip this to assert success.
+    History: the first 2026-06-05 capture carried a leaked spreadsheet Err:510
+    in Vung Ang 2's capacity and this test asserted REFUSAL (non-numeric
+    capacity is corruption, not data). The author fixed the formula in the
+    master and the snapshot was same-day recaptured (see PROVENANCE.md), so the
+    real-snapshot path now asserts the green pipeline: unique plant names, no
+    synthesized names, numeric capacities throughout.
     """
     import subprocess
 
@@ -405,6 +406,18 @@ def test_real_snapshot_refused_on_err_capacity(tmp_path):
         capture_output=True,
         text=True,
     )
-    assert r2.returncode == 1, (r2.stdout, r2.stderr)
-    assert "Err:510" in r2.stderr
-    assert not plants.exists()
+    assert r2.returncode == 0, (r2.stdout, r2.stderr)
+
+    out = pd.read_csv(plants, dtype=str)
+    assert len(out) == 170  # frozen snapshot: v1's 161 names -> 170 v2 plants
+    assert not out["name"].duplicated().any()
+    assert (out["name"].str.strip() != "").all()
+    capacities = pd.to_numeric(out["capacity_mwe"], errors="coerce")
+    assert capacities.notna().all()
+    assert (capacities >= 0).all()
+    # Zero capacity is legitimate only for placeholder rows the master keeps
+    # for traceability: exploring (no design yet) or cancelled (never built).
+    zero_cap = out[capacities == 0]
+    assert zero_cap["status"].isin(["0 exploring", "9 cancelled"]).all(), (
+        zero_cap[["name", "status"]].to_string()
+    )

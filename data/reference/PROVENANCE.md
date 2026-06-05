@@ -221,6 +221,15 @@ single ladder (0 exploring … 6 operating, 9 cancelled, 10 retired; the
 `pipeline-2026-06-05.ods` and pinned. Extraction is green on this snapshot —
 the first snapshot accepted since the validator hard-stop landed (0420).
 
+**Same-day recapture (Err:510 fix).** The first 2026-06-05 capture carried a
+leaked spreadsheet formula error (`Err:510`) in the capacity of Vung Ang 2
+Unit 1/2, caught by the 0416 aggregator's capacity guard (PR #760; extraction
+had green-lit it — closed by the 0442 extraction validator). The author fixed
+the formula in the master and the snapshot was recaptured the same day,
+replacing the defective blob. Legitimate exception to snapshot immutability:
+no release or artifact ever derived from the defective capture (the pipe
+refused it), and git history preserves the original blob.
+
 The `ires_code`, `ires_label`, `isic_code`, and `pypsa_carrier` columns are NOT
 in the ODS; they are added downstream (ticket 0416 aggregator, or manually), not
 by this extraction step.
