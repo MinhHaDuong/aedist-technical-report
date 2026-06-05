@@ -2,7 +2,6 @@
 Title: Write Exp2 dataset and descriptive statistics section
 Created: 2026-05-23
 Author: Copilot
-Blocked-by: 0383
 
 --- log ---
 2026-05-23T17:30Z Copilot created
@@ -10,6 +9,7 @@ Blocked-by: 0383
 2026-06-05T07:25Z claude note — raid Imagine 2026-06-05: target = same report.tex chapter as 0253 (containment decision); committed artifacts only (tab_exp2_bib_quality.tex, tab_exp2_2x2.csv); no turns/wall-time (not in committed artifacts); gated on 0432.
 2026-06-05T07:36Z claude note Blocked-by 0383 added — descriptive statistics must quote post-re-baseline numbers (mart staleness evidence in 0383 log)
 2026-06-05T07:50Z claude note — raid: 0254 PULLED from night-queue execute wave (newly Blocked-by 0383, supersedes the committed-artifacts-only plan below); 0253 proceeds alone, chapter stub for §donnees stays TODO(0254)
+2026-06-05T10:55Z HDMX-coding-agent note blocker 0383 closed — Blocked-by removed.
 --- body ---
 ## Context
 Write the Dataset and Descriptive Statistics section from `docs/exp2-analysis-v0.md`.
