@@ -6,6 +6,7 @@ Author: minh
 --- log ---
 2026-05-28T19:46Z minh created — current Exp 1 figure left-packs each row's recalled plants, hiding which gold-list plants each model missed
 2026-06-05T07:35Z claude respec — author ratified: all 5 reps (not min/median/max), X-order = status group then capacity desc, NEW 40-most-common-FP left panel, annex placement, per-cell CSV side-output feeds 0434; NOT blocked on 0413 (build on v1, DAG rebuild refreshes)
+2026-06-05T08:05Z claude respec — author: NO side-output pattern; figure builds from its own view of the data mart, 0434 builds from its own; consistency by common cause (shared mart), shared derivation as library code only
 
 --- body ---
 ## Context
@@ -44,26 +45,31 @@ A filled cell means "this model recalled this plant"; an empty cell means
   columns (gap or rule); FP marks use the red FP convention (0403).
 - **Placement: report annex** (companion — `fig_direct_p1_base.pdf`
   stays in the main text).
-- **Side artifact**: emit the per-(run x plant) boolean matrix as a CSV
-  (committed, P2) — 0434 consumes it.
+- **Own mart view, no side-output** (author 2026-06-05): the figure
+  derives its per-(run x plant) recognition from the mart/records
+  layer directly. The status table (0434) derives the same data
+  independently — consistency by common cause (shared mart), never by
+  one script consuming the other's output file. If a shared derivation
+  helper is warranted, it is library code in `src/aedist/` that both
+  import.
 - **No hardcoded plant count**: read the reference at build time
   (caption count via macro). NOT blocked on 0413; after v2 adoption the
-  DAG rebuild regenerates figure + CSV.
+  DAG rebuild regenerates the figure.
 
 ## Actions
 1. Sibling script `src/aedist/plot_exp1_matrix.py` (different visual
    primitive than plot_method_convergence; reference path from config,
    0419 ratchet).
-2. Implement spec above; wire figure + CSV side-output in render.mk.
+2. Implement spec above; wire the figure in render.mk.
 3. Include in the report annex; keep `fig_direct_p1_base.pdf` in place.
-4. Commit the generated PDF + CSV as handoff artifacts.
+4. Commit the generated PDF as handoff artifact.
 
 ## Test
 `tests/test_plot_exp1_matrix.py` — golden test on synthetic fixture:
 - N models × M plants matrix, half hit half miss
 - Verify the script produces a non-empty PDF
-- Verify (via the script's CSV side-output, if any) that the boolean
-  matrix matches the input hits
+- Verify the derivation helper returns a boolean matrix matching the
+  input hits (unit-test the library function, not a file)
 
 ## Verification
 - [ ] Figure produces a boolean matrix with plants aligned vertically,
@@ -71,7 +77,8 @@ A filled cell means "this model recalled this plant"; an empty cell means
 - [ ] Columns ordered status group then capacity desc; documented in
       caption
 - [ ] FP panel: 40 most common FPs, count-sorted, seeded tie-shuffle
-- [ ] Per-(run x plant) CSV side-output committed (feeds 0434)
+- [ ] No side-output: derivation via library helper, no intermediate
+      file consumed by 0434
 - [ ] Generated PDF committed as handoff artifact, included in annex
 - [ ] `make check` passes
 

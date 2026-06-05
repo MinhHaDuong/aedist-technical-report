@@ -6,6 +6,7 @@ Label: needs-human
 
 --- log ---
 2026-06-05T07:33Z claude created
+2026-06-05T08:10Z claude respec — author: conference comments are already absorbed (they ARE what led to the perimeter tickets); no separate comment dump needed. Integration = short acknowledgements crediting Econom'IA participants with a glose on the additions
 
 --- body ---
 ## Context
@@ -34,22 +35,27 @@ This is the milestone ticket; the supporting perimeter
 
 ## Quoi faire
 
-1. needs-human: the author supplies the main conference comments
-   (notes, questions from the room, panel feedback). Existing inputs:
-   `slides/manuscript/synopsys-experiment-comments-{chatgpt,claude}.md`,
-   `docs/2026-05-26-panel-review-state.md`, tour-2 panel review
-   (PR #683).
-2. Integrate the comments into main.md — speech-notes polish, no
-   restructure.
-3. Refresh quoted numbers AFTER 0413 + 0383 land (the v2 reference and
+1. **Conference comments are already absorbed** (author, 2026-06-05):
+   they are what led to the perimeter tickets — the up-to-date
+   reference list, the recognition matrix + status table annex, the
+   FP-as-unrecognized framing. No separate comment dump to integrate.
+2. **Acknowledgements**: add a short rationale crediting the
+   participants, e.g. "We thank Econom'IA 2026 participants for their
+   comments, in particular those that led to the updated reference
+   list, the per-plant recognition matrix, and the status-composition
+   analysis of task difficulty in the annex." Glose to match what
+   actually lands; author validates wording.
+3. Speech-notes polish of main.md — no restructure.
+4. Refresh quoted numbers AFTER 0413 + 0383 land (the v2 reference and
    the re-baselined mart change them).
-4. Reference the annex figure + table (0373/0434).
-5. arXiv-ready build (pandoc/tectonic path of slides/Makefile — verify;
+5. Reference the annex figure + table (0373/0434).
+6. arXiv-ready build (pandoc/tectonic path of slides/Makefile — verify;
    clean-room rule applies).
 
 ## Exit criteria
 
-- [ ] Conference comments integrated (author-validated)
+- [ ] Acknowledgements credit Econom'IA participants with glose on the
+      additions (author-validated wording)
 - [ ] Numbers consistent with post-v2, post-re-baseline artifacts
 - [ ] Annex figure + table referenced
 - [ ] Reproducible arXiv-ready PDF build
