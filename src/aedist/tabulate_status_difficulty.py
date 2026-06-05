@@ -34,25 +34,13 @@ from pathlib import Path
 
 from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .exp1_recognition import (
+    STATUS_LABELS,
     RecognitionCell,
     load_exp1_recognition,
     status_rank,
 )
 
 log = logging.getLogger(__name__)
-
-# French status labels for the report annex. Ordering comes from the shared
-# library's STATUS_ORDER (via status_rank); only the display string is localized
-# here so the table reads in the manuscript's language while its rows stay
-# aligned with the matrix figure's column bands.
-_STATUS_LABELS_FR = {
-    "operational": "Opérationnelle",
-    "proposed": "En projet",
-    "planned": "Planifiée",
-    "constructing": "En construction",
-    "cancelled": "Annulée",
-    "retired": "Retirée",
-}
 
 
 def build_status_table(cells: list[RecognitionCell]) -> dict[str, tuple[int, float]]:
@@ -107,7 +95,7 @@ def format_status_latex(rows: dict[str, tuple[int, float]]) -> str:
 
     body_lines: list[str] = []
     for status, (n, rate) in rows.items():
-        label = _STATUS_LABELS_FR.get(status, status.capitalize())
+        label = STATUS_LABELS.get(status, status.capitalize())
         share = (n / total_plants * 100.0) if total_plants else 0.0
         weighted_hits += n * rate
         body_lines.append(f"{label} & {n} & {share:.1f}\\% & {rate * 100:.1f}\\% \\\\")

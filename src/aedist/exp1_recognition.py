@@ -32,13 +32,16 @@ from .util import normalize_model
 # consumers order statuses identically from one source — common cause, no
 # producer-consumer chaining.
 STATUS_ORDER = ["operational", "proposed", "planned", "constructing", "cancelled", "retired"]
+# French display labels — shared by the recognition matrix figure (0373, column
+# band annotations) and the status difficulty table (0434, row labels) so both
+# consumers render the same language in the French-language report annex.
 STATUS_LABELS = {
-    "operational": "Operational",
-    "proposed": "Proposed",
-    "planned": "Planned",
-    "constructing": "Constructing",
-    "cancelled": "Cancelled",
-    "retired": "Retired",
+    "operational": "Opérationnelle",
+    "proposed": "En projet",
+    "planned": "Planifiée",
+    "constructing": "En construction",
+    "cancelled": "Annulée",
+    "retired": "Retirée",
 }
 
 
