@@ -2,12 +2,13 @@
 Title: Wire class_trace and n_bib_entries into RunSummary
 Created: 2026-05-29
 Author: Claude
-Blocked-by: 0384
+Closed: delivered by PR #746 — fields wired, xfail handshake completed, gate APPROVED
 
 --- log ---
 2026-05-29T00:00Z Claude created — finding #3 from the mart audit (0383); real data loss
 2026-06-05T10:00Z Claude wired both fields in _build_run_records; removed PR #740 strict-xfail; regenerated mart (80/80 run records flip null->populated, all other fields byte-identical to #743 baseline); make check green (only env failure test_smoke_real_cli)
 
+2026-06-05T09:45Z HDMX-coding-agent closed — delivered by PR #746 — fields wired, xfail handshake completed, gate APPROVED
 --- body ---
 ## Context
 
