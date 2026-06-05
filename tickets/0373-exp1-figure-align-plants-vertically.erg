@@ -9,6 +9,7 @@ Author: minh
 2026-06-05T08:05Z claude respec — author: NO side-output pattern; figure builds from its own view of the data mart, 0434 builds from its own; consistency by common cause (shared mart), shared derivation as library code only
 
 2026-06-05T07:52Z claude respec — author: figure+0434 table go in a NEW annex; cite from Discussion future-work para (fusion/truth discovery/inter-run inter-model coherence) as preview of research track 0396-0400
+2026-06-05T08:52Z claude execute delivered: shared library aedist.exp1_recognition (single-pass reconcile -> recognition cells + per-run FP presence, TP=_MATCHED_TYPES, name+capacity column key fixes 161->163), plot_exp1_matrix figure (all 5 reps, status x capacity columns, top-40 FP red panel, palette colors, count macros), wired in render.mk, new report annex + Discussion future-work citation; committed PDF handoff; 8 tests + adherence + make check pass (only slow claude-cli smoke fails on exhausted credits, env)
 --- body ---
 ## Context
 
@@ -87,18 +88,19 @@ A filled cell means "this model recalled this plant"; an empty cell means
   input hits (unit-test the library function, not a file)
 
 ## Verification
-- [ ] Figure produces a boolean matrix with plants aligned vertically,
+- [x] Figure produces a boolean matrix with plants aligned vertically,
       all 5 reps per model
-- [ ] Columns ordered status group then capacity desc; documented in
+- [x] Columns ordered status group then capacity desc; documented in
       caption
-- [ ] FP panel: 40 most common FPs, count-sorted, seeded tie-shuffle
-- [ ] No side-output: derivation via library helper, no intermediate
+- [x] FP panel: 40 most common FPs, count-sorted, seeded tie-shuffle
+- [x] No side-output: derivation via library helper, no intermediate
       file consumed by 0434
-- [ ] Generated PDF committed as handoff artifact, included in a NEW
+- [x] Generated PDF committed as handoff artifact, included in a NEW
       annex shared with 0434's table
-- [ ] Discussion future-work paragraph cites the annex figure (fusion /
+- [x] Discussion future-work paragraph cites the annex figure (fusion /
       truth discovery / inter-run, inter-model coherence preview)
-- [ ] `make check` passes
+- [x] `make check` passes (only the @slow claude-cli smoke fails, on
+      exhausted API credits — environmental, not in this diff)
 
 ## Invariants
 - Clean-room writing build — no `uv run` in `make report` / `make slides`

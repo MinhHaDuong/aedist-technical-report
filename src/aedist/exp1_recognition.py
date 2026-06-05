@@ -1,147 +1,179 @@
 """Exp1 recognition matrix derivation — shared library for figure 0373 and table 0434.
 
 Common-cause consistency: both the recognition matrix figure (0373) and the
-status difficulty table (0434) derive the per-(run × plant) recognition data
-from this shared helper. No side-output chaining.
+status difficulty table (0434) derive the per-(run x plant) recognition data
+from this shared helper. No side-output chaining: each consumer imports this
+library and builds its own view; neither reads the other's output file.
+
+The single entry point :func:`load_exp1_recognition` reconciles every record
+once and returns *both* the per-(run x reference-plant) recognition cells and
+the per-run false-positive presence, so the figure's TP view and its FP view
+cannot silently diverge.
 """
 
 import csv
+import glob as globmod
 import json
-from collections import defaultdict
-from dataclasses import dataclass
+import random
+from collections import Counter
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .evaluate import load_plants_csv, plants_from_dicts
+from .metrics import _MATCHED_TYPES
 from .reconcile import reconcile
 from .schema import MatchType
+from .util import normalize_model
 
 
-@dataclass
+@dataclass(frozen=True)
 class RecognitionCell:
-    """One cell in the (run × plant) recognition matrix."""
+    """One cell in the (run x reference-plant) recognition matrix.
+
+    ``plant_id`` is the reference plant's positional index in the loaded
+    reference list. It distinguishes the two pairs of reference plants that
+    share a name (Formosa phases differing by capacity/status) so each gets its
+    own matrix column — keying columns by name alone would silently merge them
+    and miscount the reference (161 vs the 163 distinct plants).
+    """
 
     model: str
     run: int
+    size_class: str | None
+    plant_id: int
     plant_name: str
     status: str
     capacity_mw: float
-    recognized: bool  # True if TP, False if FN
+    recognized: bool  # True if matched (TP), False if missed (FN)
 
 
-def load_exp1_recognition_matrix(
+@dataclass
+class RecognitionData:
+    """Result of reconciling all Exp1 records once.
+
+    Attributes:
+        cells: one RecognitionCell per (model, run, reference plant).
+        fp_presence: maps (model, run) -> set of false-positive system names
+            emitted by that run (SYSTEM_ONLY matches).
+    """
+
+    cells: list[RecognitionCell] = field(default_factory=list)
+    fp_presence: dict[tuple[str, int], set[str]] = field(default_factory=dict)
+
+
+def _parse_model_run(record_path: Path, record: dict) -> tuple[str, int] | None:
+    """Resolve (model, run) for a record.
+
+    Model comes from the record's ``method_params.model`` (normalized), so it
+    matches measurements.jsonl rather than the filename. Run number is parsed
+    from the ``-run{N}`` filename suffix.
+    """
+    model = normalize_model(record.get("method_params", {}).get("model", ""))
+    stem = record_path.stem
+    if stem.endswith(".record"):
+        stem = stem[: -len(".record")]
+    parts = stem.rsplit("-run", 1)
+    if len(parts) != 2 or not parts[1].isdigit():
+        return None
+    return (model, int(parts[1]))
+
+
+def load_exp1_recognition(
     records_glob: str,
     reference_path: Path,
-) -> list[RecognitionCell]:
-    """Load per-(run × plant) recognition data for Exp1 direct/p1-base sweeps.
+) -> RecognitionData:
+    """Reconcile every Exp1 record once; return recognition cells and FP presence.
 
     Args:
-        records_glob: Glob pattern for record.json files (e.g. "experiments/outputs/exp1_batch2/*.record.json")
-        reference_path: Path to gold reference CSV (vietnam_thermal_v1.csv)
+        records_glob: Glob for record.json files
+            (e.g. ``experiments/outputs/exp1_batch2/*.record.json``).
+        reference_path: Path to the gold reference CSV (vietnam_thermal_v1.csv).
 
     Returns:
-        List of RecognitionCell, one per (model, run, plant) combination.
-        Only reference plants (TP + FN) are included; FPs are excluded.
-        The 'recognized' field is True for TP, False for FN.
+        :class:`RecognitionData`. ``cells`` holds one cell per
+        (model, run, reference plant); ``recognized`` is True when the plant is
+        matched (any of :data:`aedist.metrics._MATCHED_TYPES`), False when it is
+        a reference-only miss. ``fp_presence`` maps each run to its set of
+        false-positive (SYSTEM_ONLY) system names.
     """
-    # Load reference plants
     reference = load_plants_csv(reference_path)
-    ref_by_name = {p.name: p for p in reference}
+    data = RecognitionData()
 
-    # Process each record
-    cells = []
-    for record_path in sorted(Path().glob(records_glob)):
-        # Parse model and run from filename: "{model}-run{N}.record.json"
-        stem = record_path.stem
-        if not stem.endswith(".record"):
-            stem = stem  # Already stripped
-        parts = stem.rsplit("-run", 1)
-        if len(parts) != 2:
-            continue
-        model = parts[0]
-        run = int(parts[1].replace(".record", ""))
-
-        # Load record and its CSV output
+    for record_str in sorted(globmod.glob(records_glob)):
+        record_path = Path(record_str)
         with open(record_path) as f:
             record = json.load(f)
+        model_run = _parse_model_run(record_path, record)
+        if model_run is None:
+            continue
+        model, run = model_run
+        size_class = (record.get("method_params", {}).get("extra") or {}).get("size_class")
+
         result_file = Path(record["result_file"])
         if not result_file.exists():
             continue
-
-        # Load model output and reconcile
         with open(result_file, newline="", encoding="utf-8") as f:
             model_rows = list(csv.DictReader(f))
         system = plants_from_dicts(model_rows)
-        reconciliation = reconcile(reference, system)
+        entries = reconcile(reference, system)
 
-        # Build per-plant recognition map for this run
-        recognized_plants = set()
-        for entry in reconciliation:
-            # TP = EXACT or FUZZY match
-            if entry.match_type in (MatchType.EXACT, MatchType.FUZZY):
-                if entry.reference_name:
-                    recognized_plants.add(entry.reference_name)
+        # Recognized reference plants, keyed by (name, capacity) so the two
+        # same-name Formosa phases are told apart wherever capacity differs.
+        recognized: set[tuple[str, float]] = set()
+        fps: set[str] = set()
+        for entry in entries:
+            if entry.match_type in _MATCHED_TYPES and entry.reference_name:
+                recognized.add((entry.reference_name, round(entry.reference_capacity_mwe or 0.0, 1)))
+            elif entry.match_type == MatchType.SYSTEM_ONLY and entry.system_name:
+                fps.add(entry.system_name)
 
-        # Emit one cell per reference plant
-        for plant_name, plant in ref_by_name.items():
-            cells.append(
+        for plant_id, plant in enumerate(reference):
+            key = (plant.name, round(plant.capacity_mwe or 0.0, 1))
+            data.cells.append(
                 RecognitionCell(
                     model=model,
                     run=run,
-                    plant_name=plant_name,
+                    size_class=size_class,
+                    plant_id=plant_id,
+                    plant_name=plant.name,
                     status=plant.status.value if plant.status else "",
                     capacity_mw=plant.capacity_mwe or 0.0,
-                    recognized=plant_name in recognized_plants,
+                    recognized=key in recognized,
                 )
             )
+        data.fp_presence[(model, run)] = fps
 
-    return cells
+    return data
 
 
-def get_top_false_positives(
-    records_glob: str,
-    reference_path: Path,
+def top_false_positives(
+    fp_presence: dict[tuple[str, int], set[str]],
     top_n: int = 40,
     seed: int = 42,
 ) -> list[tuple[str, int]]:
-    """Get the top N most common false-positive plants across all runs.
+    """Return the top-N most common false positives across all runs.
+
+    Counts how many runs emitted each false-positive system name, sorts by
+    count descending, and breaks ties with a fixed-seed shuffle so the result
+    is rebuild-stable.
 
     Args:
-        records_glob: Glob pattern for record.json files
-        reference_path: Path to gold reference CSV
-        top_n: Number of FPs to return
-        seed: Random seed for tie-breaking (rebuild-stable)
+        fp_presence: per-run FP sets from :func:`load_exp1_recognition`.
+        top_n: number of false positives to return.
+        seed: random seed for tie-breaking.
 
     Returns:
-        List of (plant_name, count) tuples, sorted by count descending.
-        Ties are shuffled with the given seed.
+        List of ``(system_name, run_count)`` tuples, longest first.
     """
-    import random
+    counts: Counter[str] = Counter()
+    for fps in fp_presence.values():
+        counts.update(fps)
 
-    reference = load_plants_csv(reference_path)
-    fp_counts: dict[str, int] = defaultdict(int)
-
-    for record_path in sorted(Path().glob(records_glob)):
-        with open(record_path) as f:
-            record = json.load(f)
-        result_file = Path(record["result_file"])
-        if not result_file.exists():
-            continue
-
-        with open(result_file, newline="", encoding="utf-8") as f:
-            model_rows = list(csv.DictReader(f))
-        system = plants_from_dicts(model_rows)
-        reconciliation = reconcile(reference, system)
-
-        # Count system-only (FP) plants
-        for entry in reconciliation:
-            if entry.match_type == MatchType.SYSTEM_ONLY:
-                if entry.system_name:
-                    fp_counts[entry.system_name] += 1
-
-    # Sort by count, shuffle ties with fixed seed
-    items = list(fp_counts.items())
-    random.seed(seed)
-    random.shuffle(items)  # Shuffle first, then stable-sort by count
-    items.sort(key=lambda x: x[1], reverse=True)
-
+    # Sort by name first so the input order is independent of set-iteration /
+    # hash randomization across processes; then the seeded shuffle and the
+    # stable count-sort make the tie order fully rebuild-stable.
+    items = sorted(counts.items(), key=lambda kv: kv[0])
+    rng = random.Random(seed)
+    rng.shuffle(items)
+    items.sort(key=lambda kv: kv[1], reverse=True)
     return items[:top_n]

@@ -432,6 +432,19 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 	    --result-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/ \
 	    --output-macros $(dir $@)macros_p1_base.tex
 
+# Exp1 recognition matrix (ticket 0373): plants aligned vertically on the
+# reference list, plus a top-40 false-positive panel. Derives per-(run x plant)
+# recognition from the records + reference via aedist.exp1_recognition (shared
+# library; the status table 0434 derives the same data independently — no
+# side-output). Emits a macros file for the caption's plant/run/FP counts.
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matrix.tex &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
+	    --output-macros $(ANALYSIS_GEN)/macros_exp1_matrix.tex
+
 $(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_regimes_scatter \
@@ -463,6 +476,7 @@ chart-figures: \
 	$(ANALYSIS_GEN)/census_bars.csv \
 	$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf \
 	$(ANALYSIS_GEN)/fig_direct_p1_base.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
