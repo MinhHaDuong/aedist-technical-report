@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Retravailler la figure matrice de reconnaissance (lisibilité, rendu)
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T16:30Z claude created — author directive at #767 merge: « Approuvé. On retravaillera la figure après. »
+
+--- body ---
+## Contexte
+
+La matrice de reconnaissance (fig_exp1_recognition_matrix, script
+src/aedist/plot_exp1_matrix.py) a été livrée dans l'annexe du rapport
+(0373) puis portée dans le manuscrit préprint en Annexe E (PR #767,
+Figure 7). L'auteur a approuvé le merge en notant que la figure
+elle-même est à retravailler.
+
+État actuel : 170 colonnes (statut puis capacité décroissante) × 70
+runs, panneau gauche des 40 FP les plus fréquents en rouge. À l'échelle
+d'une page A4 du manuscrit, les colonnes sont très fines et les labels
+difficiles à lire.
+
+## Pistes (à arbitrer avec l'auteur avant exécution)
+
+- Lisibilité : taille des labels modèles/centrales, épaisseur des
+  cellules, séparateurs de bandes de statut plus marqués
+- Orientation : pleine page paysage (rotation) dans le manuscrit ?
+- Légende : intégrer les bandes de statut (la table de difficulté les
+  nomme, la figure pourrait les annoter directement)
+- Caption pandoc : le motif `![Figure 7](...)` rend « Figure 7: Figure 7 »
+  (même défaut que Figure 6 — fix global du style de captions, pas local)
+
+## Exit criteria
+
+- [ ] Choix de retravail validés par l'auteur
+- [ ] plot_exp1_matrix.py mis à jour ; figure régénérée via le DAG
+- [ ] Rendu vérifié visuellement dans le manuscrit ET le rapport
+- [ ] `make check-fast` + `pytest -m adherence` verts
+
+## Related
+
+- 0373 (matrice, clos), 0434 (table de difficulté, clos), PR #767
+- .claude/rules/writing.md (figures = artefacts, jamais inline)
